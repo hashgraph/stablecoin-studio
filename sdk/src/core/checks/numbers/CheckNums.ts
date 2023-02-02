@@ -18,8 +18,7 @@
  *
  */
 
-import BigDecimal from "../../../domain/context/shared/BigDecimal.js";
-
+import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export default class CheckNums {
@@ -28,7 +27,10 @@ export default class CheckNums {
 		min: T,
 		max: T,
 	): boolean {
-		return this.isLessOrEqualThan(value, max) && this.isGreaterOrEqualThan(value, min);
+		return (
+			this.isLessOrEqualThan(value, max) &&
+			this.isGreaterOrEqualThan(value, min)
+		);
 	}
 
 	public static isLessThan<T extends number | bigint | BigDecimal>(

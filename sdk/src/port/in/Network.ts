@@ -20,8 +20,6 @@
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import Injectable from '../../core/Injectable.js';
-import NetworkService from '../../app/service/NetworkService.js';
-import { QueryBus } from '../../core/query/QueryBus.js';
 import { CommandBus } from '../../core/command/CommandBus.js';
 import { InitializationData } from '../out/TransactionAdapter.js';
 import { ConnectCommand } from '../../app/usecase/command/network/connect/ConnectCommand.js';
@@ -35,7 +33,7 @@ import InitializationRequest from './request/InitializationRequest.js';
 import Event, { WalletEvents } from './Event.js';
 import RPCTransactionAdapter from '../out/rpc/RPCTransactionAdapter.js';
 import { HashpackTransactionAdapter } from '../out/hs/hashpack/HashpackTransactionAdapter.js';
-import RPCQueryAdapter from '../out/rpc/RPCQueryAdapter.js';
+import { LogError } from '../../core/decorator/LogErrorDecorator.js';
 
 export { InitializationData, SupportedWallets };
 
@@ -62,6 +60,7 @@ class NetworkInPort implements INetworkInPort {
 		),
 	) {}
 
+	@LogError
 	async setNetwork(req: SetNetworkRequest): Promise<NetworkResponse> {
 		const res = await this.commandBus.execute(
 			new SetNetworkCommand(
@@ -74,6 +73,7 @@ class NetworkInPort implements INetworkInPort {
 		return res;
 	}
 
+	@LogError
 	async init(req: InitializationRequest): Promise<SupportedWallets[]> {
 		await this.setNetwork(
 			new SetNetworkRequest({ environment: req.network }),
@@ -94,6 +94,7 @@ class NetworkInPort implements INetworkInPort {
 		return wallets;
 	}
 
+	@LogError
 	async connect(req: ConnectRequest): Promise<InitializationData> {
 		const account = RequestMapper.mapAccount(req.account);
 		const res = await this.commandBus.execute(

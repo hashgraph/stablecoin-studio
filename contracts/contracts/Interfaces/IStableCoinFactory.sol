@@ -5,9 +5,13 @@ interface IStableCoinFactory {
     event Deployed(DeployedStableCoin);
 
     struct KeysStruct {
-        uint256 keyType; // Key id as defined for the Hedera Tokens
-        bytes PublicKey; // Public Key bytes of the EOA that will be assigned to the key Role. If "0x" (empty bytes) the stable coin proxy will be selected.
-        bool isED25519; // If the PublicKey is an EOA (not empty) indicates whether it is an ED25519 or ECDSA key
+        // Key id as defined for the Hedera Tokens
+        uint256 keyType;
+        // Public Key bytes of the EOA that will be assigned to the key Role
+        // If "0x" (empty bytes) the stable coin proxy will be selected
+        bytes publicKey;
+        // If the PublicKey is an EOA (not empty) indicates whether it is an ED25519 or ECDSA key
+        bool isED25519;
     }
 
     struct TokenStruct {
@@ -23,6 +27,7 @@ interface IStableCoinFactory {
         address reserveAddress;
         int256 reserveInitialAmount;
         bool createReserve;
+        bool grantKYCToOriginalSender;
         KeysStruct[] keys;
     }
 

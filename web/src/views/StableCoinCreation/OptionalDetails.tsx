@@ -52,7 +52,7 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 	};
 
 	const isSupplyTypeFinite = form.getValues().supplyType?.value === 1;
-	request.supplyType = isSupplyTypeFinite ? TokenSupplyType.FINITE: TokenSupplyType.INFINITE;
+	request.supplyType = isSupplyTypeFinite ? TokenSupplyType.FINITE : TokenSupplyType.INFINITE;
 
 	const handleResetMaxSupply = () => {
 		const { maxSupply, initialSupply } = form.getValues();
@@ -88,9 +88,11 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 						control={control}
 						name={'initialSupply'}
 						label={t('stableCoinCreation:optionalDetails.initialSupply') ?? propertyNotFound}
-						placeholder={t('stableCoinCreation:optionalDetails.placeholder', {
-							placeholder: t('stableCoinCreation:optionalDetails.initialSupply'),
-						}) ?? propertyNotFound}
+						placeholder={
+							t('stableCoinCreation:optionalDetails.placeholder', {
+								placeholder: t('stableCoinCreation:optionalDetails.initialSupply'),
+							}) ?? propertyNotFound
+						}
 						onChangeAux={handleResetMaxSupply}
 					/>
 					<SelectController
@@ -120,9 +122,11 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 							control={control}
 							name={'maxSupply'}
 							label={t('stableCoinCreation:optionalDetails.maxSupply') ?? propertyNotFound}
-							placeholder={t('stableCoinCreation:optionalDetails.placeholder', {
-								placeholder: t('stableCoinCreation:optionalDetails.maxSupply'),
-							}) ?? propertyNotFound}
+							placeholder={
+								t('stableCoinCreation:optionalDetails.placeholder', {
+									placeholder: t('stableCoinCreation:optionalDetails.maxSupply'),
+								}) ?? propertyNotFound
+							}
 						/>
 					)}
 					<InputNumberController
@@ -139,10 +143,12 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 						isRequired
 						control={control}
 						name={'decimals'}
-						label={t('stableCoinCreation:optionalDetails.decimals')  ?? propertyNotFound}
-						placeholder={t('stableCoinCreation:optionalDetails.placeholder', {
-							placeholder: t('stableCoinCreation:optionalDetails.decimals'),
-						}) ?? propertyNotFound}
+						label={t('stableCoinCreation:optionalDetails.decimals') ?? propertyNotFound}
+						placeholder={
+							t('stableCoinCreation:optionalDetails.placeholder', {
+								placeholder: t('stableCoinCreation:optionalDetails.decimals'),
+							}) ?? propertyNotFound
+						}
 						maxValue={18}
 						initialValue={6}
 					/>

@@ -29,6 +29,7 @@ import {
     DELETE_ROLE,
     WITHOUT_ROLE,
     DEFAULT_ADMIN_ROLE,
+    KYC_ROLE,
     RolesId,
 } from '../scripts/constants'
 
@@ -59,8 +60,8 @@ const INIT_SUPPLY = BigNumber.from(0).mul(TokenFactor)
 const MAX_SUPPLY = BigNumber.from(1).mul(TokenFactor)
 const TokenMemo = 'Hedera Accelerator Stable Coin'
 
-describe('Roles Tests', function() {
-    before(async function() {
+describe('Roles Tests', function () {
+    before(async function () {
         // Generate Client 1 and Client 2
         const [
             client1,
@@ -128,7 +129,7 @@ describe('Roles Tests', function() {
         proxyAddress = result[0]
     })
 
-    it('Getting roles', async function() {
+    it('Getting roles', async function () {
         // Checking roles
         let result = await getRoles(
             proxyAddress,
@@ -198,6 +199,13 @@ describe('Roles Tests', function() {
             nonOperatorAccount,
             nonOperatorIsE25519
         )
+        await grantRole(
+            KYC_ROLE,
+            proxyAddress,
+            operatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
 
         // Checking roles
         result = await getRoles(
@@ -235,6 +243,10 @@ describe('Roles Tests', function() {
             else if (i == RolesId.Pause)
                 expect(result[i].toUpperCase()).to.equals(
                     PAUSE_ROLE.toUpperCase()
+                )
+            else if (i == RolesId.Kyc)
+                expect(result[i].toUpperCase()).to.equals(
+                    KYC_ROLE.toUpperCase()
                 )
             else if (i == RolesId.Admin)
                 expect(result[i].toUpperCase()).to.equals(
@@ -297,6 +309,13 @@ describe('Roles Tests', function() {
             nonOperatorIsE25519
         )
         await revokeRole(
+            KYC_ROLE,
+            proxyAddress,
+            operatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
+        await revokeRole(
             DEFAULT_ADMIN_ROLE,
             proxyAddress,
             operatorClient,
@@ -317,7 +336,7 @@ describe('Roles Tests', function() {
         })
     })
 
-    it('Getting roles Id', async function() {
+    it('Getting roles Id', async function () {
         // Retrieving roles
         const roleAdmin = await getRoleId(
             proxyAddress,
@@ -359,6 +378,11 @@ describe('Roles Tests', function() {
             operatorClient,
             RolesId.Delete
         )
+        const roleKyc = await getRoleId(
+            proxyAddress,
+            operatorClient,
+            RolesId.Kyc
+        )
 
         // Checking
         expect(roleAdmin.toUpperCase()).to.equals(
@@ -371,5 +395,6 @@ describe('Roles Tests', function() {
         expect(roleRescue.toUpperCase()).to.equals(RESCUE_ROLE.toUpperCase())
         expect(roleFreeze.toUpperCase()).to.equals(FREEZE_ROLE.toUpperCase())
         expect(roleDelete.toUpperCase()).to.equals(DELETE_ROLE.toUpperCase())
+        expect(roleKyc.toUpperCase()).to.equals(KYC_ROLE.toUpperCase())
     })
 })

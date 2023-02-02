@@ -81,7 +81,7 @@ describe('🧪 Stablecoin test', () => {
 			autoRenewAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
 			adminKey: Account.NullPublicKey,
 			freezeKey: Account.NullPublicKey,
-			KYCKey: Account.NullPublicKey,
+			kycKey: Account.NullPublicKey,
 			wipeKey: Account.NullPublicKey,
 			pauseKey: Account.NullPublicKey,
 			supplyKey: Account.NullPublicKey,
@@ -90,6 +90,7 @@ describe('🧪 Stablecoin test', () => {
 			stableCoinFactory: FactoryAddressTestnet,
 			hederaERC20: HederaERC20AddressTestnet,
 			createReserve: false,
+			grantKYCToOriginalSender: true,
 		});
 		const requestHTS = new CreateRequest({
 			name: 'TEST_ACCELERATOR_HTS',
@@ -100,7 +101,7 @@ describe('🧪 Stablecoin test', () => {
 			autoRenewAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
 			adminKey: CLIENT_ACCOUNT_ED25519.publicKey,
 			freezeKey: CLIENT_ACCOUNT_ED25519.publicKey,
-			KYCKey: CLIENT_ACCOUNT_ED25519.publicKey,
+			kycKey: CLIENT_ACCOUNT_ED25519.publicKey,
 			wipeKey: CLIENT_ACCOUNT_ED25519.publicKey,
 			pauseKey: CLIENT_ACCOUNT_ED25519.publicKey,
 			supplyKey: CLIENT_ACCOUNT_ED25519.publicKey,
@@ -109,11 +110,14 @@ describe('🧪 Stablecoin test', () => {
 			stableCoinFactory: FactoryAddressTestnet,
 			hederaERC20: HederaERC20AddressTestnet,
 			createReserve: false,
+			grantKYCToOriginalSender: true,
 			// reserveAddress: '0.0.11111111'
 		});
 
 		stableCoinSC = (await StableCoin.create(requestSC)).coin;
+		console.log(stableCoinSC);
 		stableCoinHTS = (await StableCoin.create(requestHTS)).coin;
+		console.log(stableCoinHTS);
 	}, 60_000);
 
 	it('Gets a coin', async () => {

@@ -42,7 +42,7 @@ const CoinDropdown = () => {
 	const capabilities = useSelector(SELECTED_WALLET_CAPABILITIES);
 	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 	const tokenIsPaused = useSelector(SELECTED_TOKEN_PAUSED);
-	const tokenIsDeleted =useSelector(SELECTED_TOKEN_DELETED);
+	const tokenIsDeleted = useSelector(SELECTED_TOKEN_DELETED);
 
 	const [options, setOptions] = useState<Option[]>([]);
 
@@ -54,7 +54,7 @@ const CoinDropdown = () => {
 	useEffect(() => {
 		if (selectedStableCoin) {
 			getCapabilities();
-		}else{
+		} else {
 			searcheableRef.current?.clearValue();
 		}
 	}, [selectedStableCoin]);
@@ -99,7 +99,7 @@ const CoinDropdown = () => {
 				evmAddress: accountInfo.accountEvmAddress,
 			},
 			tokenIsDeleted,
-			tokenIsPaused
+			tokenIsPaused,
 		});
 		dispatch(walletActions.setCapabilities(capabilities));
 	};
@@ -141,7 +141,7 @@ const CoinDropdown = () => {
 	};
 
 	const handleSelectCoin = async (event: any) => {
-		if(!event?.value) return;
+		if (!event?.value) return;
 		const selectedCoin = event.value;
 		const stableCoinDetails = await SDKService.getStableCoinDetails(
 			new GetStableCoinDetailsRequest({
@@ -230,9 +230,11 @@ const CoinDropdown = () => {
 				styles={styles}
 				name='coin-dropdown'
 				options={options}
-				placeholder={selectedStableCoin? 
-					selectedStableCoin.tokenId + " - " + selectedStableCoin.symbol 
-					: t('topbar.coinDropdown.placeholder')}
+				placeholder={
+					selectedStableCoin
+						? selectedStableCoin.tokenId + ' - ' + selectedStableCoin.symbol
+						: t('topbar.coinDropdown.placeholder')
+				}
 				iconStyles={{ color: 'brand.primary200' }}
 				onChangeAux={handleSelectCoin}
 				noOptionsMessage={handleNoOptionsMessage}

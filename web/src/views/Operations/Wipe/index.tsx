@@ -52,7 +52,11 @@ const WipeOperation = () => {
 
 	useRefreshCoinInfo();
 
-	const handleWipe: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError, onLoading }) => {
+	const handleWipe: ModalsHandlerActionsProps['onConfirm'] = async ({
+		onSuccess,
+		onError,
+		onLoading,
+	}) => {
 		try {
 			onLoading();
 			if (!selectedStableCoin?.proxyAddress || !selectedStableCoin?.tokenId) {
@@ -82,12 +86,12 @@ const WipeOperation = () => {
 						<Stack as='form' spacing={6} maxW='520px'>
 							<InputController
 								rules={{
-									required: t(`global:validations.required`)??propertyNotFound,
+									required: t(`global:validations.required`) ?? propertyNotFound,
 									validate: {
 										validDecimals: (value: string) => {
 											return (
 												validateDecimalsString(value, decimals) ||
-												(t('global:validations.decimalsValidation')??propertyNotFound)
+												(t('global:validations.decimalsValidation') ?? propertyNotFound)
 											);
 										},
 										validation: (value: string) => {
@@ -101,8 +105,8 @@ const WipeOperation = () => {
 								isRequired
 								control={control}
 								name={'amount'}
-								label={t('wipe:amountLabel')??propertyNotFound}
-								placeholder={t('wipe:amountPlaceholder')??propertyNotFound}
+								label={t('wipe:amountLabel') ?? propertyNotFound}
+								placeholder={t('wipe:amountPlaceholder') ?? propertyNotFound}
 							/>
 							<InputController
 								rules={{

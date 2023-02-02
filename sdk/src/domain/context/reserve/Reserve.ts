@@ -18,7 +18,7 @@
  *
  */
 
-import BaseEntity from "../BaseEntity.js";
+import BaseEntity from '../BaseEntity.js';
 
 export const RESERVE_DECIMALS = 2;
 

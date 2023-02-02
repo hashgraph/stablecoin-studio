@@ -4,14 +4,11 @@ pragma solidity 0.8.16;
 import '@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol';
 
 interface IHederaReserve is AggregatorV3Interface {
-
     event ReserveInitialized(int256 initialReserve);
 
     event AdminChanged(address previousAdmin, address newAdmin);
 
     event AmountChanged(int256 previousAmount, int256 newAmount);
-
-
 
     /**
      *  @dev Sets a new reserve amount

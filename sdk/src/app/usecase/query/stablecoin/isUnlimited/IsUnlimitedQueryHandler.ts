@@ -18,13 +18,16 @@
  *
  */
 
-import { lazyInject } from "../../../../../core/decorator/LazyInjectDecorator.js";
-import { QueryHandler } from "../../../../../core/decorator/QueryHandlerDecorator.js";
-import { IQueryHandler } from "../../../../../core/query/QueryHandler.js";
-import { MirrorNodeAdapter } from "../../../../../port/out/mirror/MirrorNodeAdapter.js";
-import RPCQueryAdapter from "../../../../../port/out/rpc/RPCQueryAdapter.js";
-import StableCoinService from "../../../../service/StableCoinService.js";
-import { IsUnlimitedQuery, IsUnlimitedQueryResponse } from "./IsUnlimitedQuery.js";
+import { lazyInject } from '../../../../../core/decorator/LazyInjectDecorator.js';
+import { QueryHandler } from '../../../../../core/decorator/QueryHandlerDecorator.js';
+import { IQueryHandler } from '../../../../../core/query/QueryHandler.js';
+import { MirrorNodeAdapter } from '../../../../../port/out/mirror/MirrorNodeAdapter.js';
+import RPCQueryAdapter from '../../../../../port/out/rpc/RPCQueryAdapter.js';
+import StableCoinService from '../../../../service/StableCoinService.js';
+import {
+	IsUnlimitedQuery,
+	IsUnlimitedQueryResponse,
+} from './IsUnlimitedQuery.js';
 
 @QueryHandler(IsUnlimitedQuery)
 export class IsUnlimitedQueryHandler
@@ -43,14 +46,14 @@ export class IsUnlimitedQueryHandler
 		command: IsUnlimitedQuery,
 	): Promise<IsUnlimitedQueryResponse> {
 		const { targetId, tokenId } = command;
-	
-		
+
 		const coin = await this.stableCoinService.get(tokenId);
 		if (!coin.evmProxyAddress) throw new Error('Invalid token id');
 
 		const res = await this.queryAdapter.isUnlimited(
-				coin.evmProxyAddress,
-				await this.mirrorNode.accountToEvmAddress(targetId));
+			coin.evmProxyAddress,
+			await this.mirrorNode.accountToEvmAddress(targetId),
+		);
 
 		return Promise.resolve({ payload: res });
 	}

@@ -93,7 +93,9 @@ const ProofOfReserve = (props: ProofOfReserveProps) => {
 							control={control}
 							name={'reserveAddress'}
 							label={t('stableCoinCreation:proofOfReserve.dataFeed') ?? propertyNotFound}
-							placeholder={t('stableCoinCreation:proofOfReserve.dataFeedPlaceholder') ?? propertyNotFound}
+							placeholder={
+								t('stableCoinCreation:proofOfReserve.dataFeedPlaceholder') ?? propertyNotFound
+							}
 						/>
 					</HStack>
 				)}

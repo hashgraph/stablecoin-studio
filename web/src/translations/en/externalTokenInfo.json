@@ -1,60 +1,61 @@
 {
-    "common": {
-      "nextStep" : "Next step",
-      "goBack" : "Go back",
-      "createStableCoin": "Create stable coin",
-      "createNewStableCoin": "Add token",
-      "cancel": "Cancel",
-      "addExternalToken": "Add token"
-    },
-    "tabs": {
-      "externalTokenInfo": "Token info"
-    },
-    "externalTokenInfo": {
-      "stableCoinId": "Stable coin id",
-      "stableCoinIdPlaceholder": "0.0.0",
-      "title": "Add token",
-      "autoCheckRoles": "Do you want to get the roles automatically? This operation will incur a cost",
-      "rolesPlaceholder": "Select the roles"
-    },
-    "optionalDetails": {
-      "decimals": "Decimals",
-      "finite": "Finite",
-      "initialSupply": "Initial supply",
-      "infinite": "Infinite",
-      "placeholder": "Enter the {{placeholder}}",
-      "maxSupply": "Max supply",
-      "title": "Stable coin optional details",
-      "typeSupply": "Type supply",
-      "typeSupplyPlaceholder": "Choose type supply"
-    },
-    "managementPermissions": {
-      "currentUserKey": "Current user key",
-      "description": "Allow all the following features to be managed through smart contracts",
-      "pause": "Pause",
-      "freeze": "Freeze",
-      "introduce": "Enter the {{name}}",
-      "none": "None",
-      "otherKey": "Other key",
-      "placeholder": "Enter the {{placeholder}}",
-      "rescue": "Rescue",
-      "admin": "Admin",
-      "supply": "Supply",
-      "theSmartContract": "The smart contract",
-      "title": "Stable coin management permissions",
-      "totalSupply": "Total supply",
-      "treasuryAccountAddress": "Treasury account address",
-      "wipe": "Wipe"
-    },
-    "review": {
-      "basicDetails": "Basic details",
-      "managementPermissions": "Management permissions",
-      "optionalDetails": "Optional details",
-      "title": "Stable coin review"
-    },
-    "notification": {
-      "title": "{{ result }} adding the stable coin",
-      "descriptionSuccess": "",
-      "descriptionError": "Sorry, there was an error creating the stable coin"
-    }
-  }
+	"common": {
+		"nextStep": "Next step",
+		"goBack": "Go back",
+		"createStableCoin": "Create stable coin",
+		"createNewStableCoin": "Add token",
+		"cancel": "Cancel",
+		"addExternalToken": "Add token"
+	},
+	"tabs": {
+		"externalTokenInfo": "Token info"
+	},
+	"externalTokenInfo": {
+		"stableCoinId": "Stable coin id",
+		"stableCoinIdPlaceholder": "0.0.0",
+		"title": "Add token",
+		"autoCheckRoles": "Do you want to get the roles automatically? This operation will incur a cost",
+		"rolesPlaceholder": "Select the roles"
+	},
+	"optionalDetails": {
+		"decimals": "Decimals",
+		"finite": "Finite",
+		"initialSupply": "Initial supply",
+		"infinite": "Infinite",
+		"placeholder": "Enter the {{placeholder}}",
+		"maxSupply": "Max supply",
+		"title": "Stable coin optional details",
+		"typeSupply": "Type supply",
+		"typeSupplyPlaceholder": "Choose type supply"
+	},
+	"managementPermissions": {
+		"currentUserKey": "Current user key",
+		"description": "Allow all the following features to be managed through smart contracts",
+		"pause": "Pause",
+		"freeze": "Freeze",
+		"kyc": "KYC",
+		"introduce": "Enter the {{name}}",
+		"none": "None",
+		"otherKey": "Other key",
+		"placeholder": "Enter the {{placeholder}}",
+		"rescue": "Rescue",
+		"admin": "Admin",
+		"supply": "Supply",
+		"theSmartContract": "The smart contract",
+		"title": "Stable coin management permissions",
+		"totalSupply": "Total supply",
+		"treasuryAccountAddress": "Treasury account address",
+		"wipe": "Wipe"
+	},
+	"review": {
+		"basicDetails": "Basic details",
+		"managementPermissions": "Management permissions",
+		"optionalDetails": "Optional details",
+		"title": "Stable coin review"
+	},
+	"notification": {
+		"title": "{{ result }} adding the stable coin",
+		"descriptionSuccess": "",
+		"descriptionError": "Sorry, there was an error creating the stable coin"
+	}
+}

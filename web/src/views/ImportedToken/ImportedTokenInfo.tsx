@@ -66,18 +66,23 @@ const ImportedTokenInfo = (props: ImportedTokenInfoProps) => {
 				<Stack as='form' spacing={6}>
 					<InputController
 						rules={{
-							required: t(`global:validations.required`)??propertyNotFound,
+							required: t(`global:validations.required`) ?? propertyNotFound,
 							validate: {
 								validCoinId: (value: string) => {
-									return validateAccount(value) || (t('global:validations.invalidCoinId')??propertyNotFound);
+									return (
+										validateAccount(value) ||
+										(t('global:validations.invalidCoinId') ?? propertyNotFound)
+									);
 								},
 							},
 						}}
 						isRequired
 						control={control}
 						name={'stableCoinId'}
-						label={t('externalTokenInfo:externalTokenInfo.stableCoinId')??propertyNotFound}
-						placeholder={t('externalTokenInfo:externalTokenInfo.stableCoinIdPlaceholder')??propertyNotFound}
+						label={t('externalTokenInfo:externalTokenInfo.stableCoinId') ?? propertyNotFound}
+						placeholder={
+							t('externalTokenInfo:externalTokenInfo.stableCoinIdPlaceholder') ?? propertyNotFound
+						}
 					/>
 					<HStack mb={4}>
 						<Text fontSize='14px' fontWeight='400' lineHeight='17px'>

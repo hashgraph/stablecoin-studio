@@ -23,10 +23,7 @@ import ImportedTokenInfo from './ImportedTokenInfo';
 import type { IAccountToken } from '../../interfaces/IAccountToken.js';
 import type { IRole } from '../../interfaces/IRole.js';
 import type { IExternalToken } from '../../interfaces/IExternalToken';
-import {
-	GetRolesRequest,
-	GetStableCoinDetailsRequest,
-} from 'hedera-stable-coin-sdk';
+import { GetRolesRequest, GetStableCoinDetailsRequest } from 'hedera-stable-coin-sdk';
 
 const ImportedTokenCreation = () => {
 	const navigate = useNavigate();

@@ -47,7 +47,11 @@ const FreezeOperation = () => {
 	};
 	useRefreshCoinInfo();
 
-	const handleFreeze: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError, onLoading}) => {
+	const handleFreeze: ModalsHandlerActionsProps['onConfirm'] = async ({
+		onSuccess,
+		onError,
+		onLoading,
+	}) => {
 		try {
 			onLoading();
 			if (!selectedStableCoin?.proxyAddress || !selectedStableCoin?.tokenId?.toString()) {
@@ -77,7 +81,7 @@ const FreezeOperation = () => {
 						<Stack as='form' spacing={6} maxW='520px'>
 							<InputController
 								rules={{
-									required: t('global:validations.required')??propertyNotFound,
+									required: t('global:validations.required') ?? propertyNotFound,
 									validate: {
 										validation: (value: string) => {
 											request.targetId = value;
@@ -89,8 +93,8 @@ const FreezeOperation = () => {
 								isRequired
 								control={control}
 								name='targetAccount'
-								placeholder={t('freeze:accountPlaceholder')??propertyNotFound}
-								label={t('freeze:accountLabel')??propertyNotFound}
+								placeholder={t('freeze:accountPlaceholder') ?? propertyNotFound}
+								label={t('freeze:accountLabel') ?? propertyNotFound}
 							/>
 						</Stack>
 					</>

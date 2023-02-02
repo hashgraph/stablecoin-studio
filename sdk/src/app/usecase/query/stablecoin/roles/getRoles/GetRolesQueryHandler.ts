@@ -26,11 +26,8 @@ import { GetRolesQuery, GetRolesQueryResponse } from './GetRolesQuery.js';
 import RPCQueryAdapter from '../../../../../../port/out/rpc/RPCQueryAdapter.js';
 import { MirrorNodeAdapter } from '../../../../../../port/out/mirror/MirrorNodeAdapter.js';
 
-
 @QueryHandler(GetRolesQuery)
-export class GetRolesQueryHandler
-	implements IQueryHandler<GetRolesQuery>
-{
+export class GetRolesQueryHandler implements IQueryHandler<GetRolesQuery> {
 	constructor(
 		@lazyInject(StableCoinService)
 		public readonly stableCoinService: StableCoinService,

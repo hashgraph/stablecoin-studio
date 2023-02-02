@@ -8,5 +8,5 @@ contract HederaReserveProxy is TransparentUpgradeableProxy {
         address _logic,
         address admin_,
         bytes memory _data
-    ) payable TransparentUpgradeableProxy(_logic, admin_, _data) {}
+    ) payable TransparentUpgradeableProxy(_logic, admin_, _data) {} // solhint-disable-line no-empty-blocks
 }

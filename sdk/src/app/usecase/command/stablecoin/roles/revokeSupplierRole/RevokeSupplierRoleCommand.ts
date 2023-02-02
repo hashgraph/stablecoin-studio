@@ -1,6 +1,6 @@
-import { Command } from "../../../../../../core/command/Command.js";
-import { CommandResponse } from "../../../../../../core/command/CommandResponse.js";
-import { HederaId } from "../../../../../../domain/context/shared/HederaId.js";
+import { Command } from '../../../../../../core/command/Command.js';
+import { CommandResponse } from '../../../../../../core/command/CommandResponse.js';
+import { HederaId } from '../../../../../../domain/context/shared/HederaId.js';
 
 export class RevokeSupplierRoleCommandResponse implements CommandResponse {
 	constructor(public readonly payload: boolean) {}

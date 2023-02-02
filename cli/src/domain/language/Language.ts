@@ -29,25 +29,21 @@ export default class Language extends BaseEntity {
     return String.raw({ raw: parts }, ...parameters);
   }
 
-  /*public getArray(attribute: string): Array<string> {
-    return lodash.get(this.lang, attribute);
-  }*/
-
   public getArrayFromObject(attribute: string): Array<string> {
     const values = [];
 
     let obj = this.lang;
 
-    if(!obj || attribute === '') return values;
+    if (!obj || attribute === '') return values;
 
-    attribute.split(".").forEach(item => {
+    attribute.split('.').forEach((item) => {
       obj = obj[item];
     });
 
     const objKeys = Object.keys(obj);
 
-    objKeys.forEach(key => {
-      values.push(lodash.get(this.lang, attribute + "." + key));
+    objKeys.forEach((key) => {
+      values.push(lodash.get(this.lang, attribute + '.' + key));
     });
 
     return values;

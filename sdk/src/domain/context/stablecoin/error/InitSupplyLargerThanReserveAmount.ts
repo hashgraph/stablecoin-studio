@@ -18,11 +18,13 @@
  *
  */
 
-import BaseError, { ErrorCode } from "../../../../core/error/BaseError.js";
-
+import BaseError, { ErrorCode } from '../../../../core/error/BaseError.js';
 
 export class InitSupplyLargerThanReserveAmount extends BaseError {
-    constructor(initSupply: string, reserveInitialAmount: string) {
-        super(ErrorCode.InvalidRange, `Initial supply ${initSupply} is bigger than PoR initial amount ${reserveInitialAmount}`);        
-    }
+	constructor(initSupply: string, reserveInitialAmount: string) {
+		super(
+			ErrorCode.InvalidRange,
+			`Initial supply ${initSupply} is bigger than PoR initial amount ${reserveInitialAmount}`,
+		);
+	}
 }

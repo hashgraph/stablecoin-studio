@@ -9,7 +9,6 @@ import {
 	ModalFooter,
 	ModalHeader,
 	ModalOverlay,
-	Spinner,
 	Text,
 } from '@chakra-ui/react';
 import type { ModalProps } from '@chakra-ui/react';
@@ -17,6 +16,7 @@ import { useTranslation } from 'react-i18next';
 import SUCCESS_ICON from '../assets/svg/success.svg';
 import ERROR_ICON from '../assets/svg/error.svg';
 import WARNING_ICON from '../assets/svg/warning.svg';
+import HederaSpinner from './HederaSpinner';
 
 const SUCCESS = 'success';
 const WARNING = 'warning';
@@ -27,7 +27,7 @@ interface ModalNotificationProps extends Omit<ModalProps, 'children'> {
 	icon?: string;
 	isOpen: boolean;
 	onClose: () => void;
-	title: string|null;
+	title: string | null;
 	variant?: 'error' | 'success' | 'warning' | 'loading';
 	onClick?: () => void;
 	closeButton?: boolean;
@@ -84,9 +84,7 @@ const ModalNotification = (props: ModalNotificationProps) => {
 						/>
 					</ModalHeader>
 				)}
-				{isLoading && (
-					<Spinner w='54px' h='54px' justifyContent='center' alignSelf={'center'} color='#C6AEFA' thickness='4px'/>
-				)}
+				{isLoading && <HederaSpinner />}
 				<ModalBody textAlign='center' pt='14px'>
 					<Text
 						data-testid='modal-notification-title'

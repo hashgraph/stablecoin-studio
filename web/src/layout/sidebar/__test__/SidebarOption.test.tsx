@@ -7,7 +7,7 @@ import { RouterManager } from '../../../Router/RouterManager';
 jest.mock('../../../Router/RouterManager', () => ({
 	RouterManager: {
 		to: jest.fn(),
-		getUrl:jest.fn()
+		getUrl: jest.fn(),
 	},
 }));
 

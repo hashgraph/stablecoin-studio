@@ -34,7 +34,7 @@ describe(`<${DirectAccess.name} />`, () => {
 		expect(icon).toBeInTheDocument();
 	});
 
-	test('on click should redirect',async () => {
+	test('on click should redirect', async () => {
 		const component = render(<DirectAccess {...directAccessProps} />);
 
 		const container = component.getByTestId(`direct-access-${directAccessProps.route}`);

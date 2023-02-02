@@ -27,9 +27,7 @@ import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 import InvalidDecimalRange from '../../../domain/context/stablecoin/error/InvalidDecimalRange.js';
 import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply.js';
-import {
-	RequestPublicKey
-} from './BaseRequest.js';
+import { RequestPublicKey } from './BaseRequest.js';
 import { InvalidType } from './error/InvalidType.js';
 import { InvalidValue } from './error/InvalidValue.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
@@ -77,7 +75,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 	freezeKey?: RequestPublicKey;
 
 	@OptionalField()
-	KYCKey?: RequestPublicKey;
+	kycKey?: RequestPublicKey;
 
 	@OptionalField()
 	wipeKey?: RequestPublicKey;
@@ -94,6 +92,9 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 	@OptionalField()
 	supplyType?: TokenSupplyType;
 
+	@OptionalField()
+	grantKYCToOriginalSender?: boolean;
+
 	constructor({
 		name,
 		symbol,
@@ -104,7 +105,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		autoRenewAccount,
 		adminKey,
 		freezeKey,
-		KYCKey,
+		kycKey,
 		wipeKey,
 		pauseKey,
 		supplyKey,
@@ -114,7 +115,8 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		hederaERC20,
 		reserveAddress,
 		reserveInitialAmount,
-		createReserve
+		createReserve,
+		grantKYCToOriginalSender,
 	}: {
 		name: string;
 		symbol: string;
@@ -125,7 +127,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		autoRenewAccount?: string;
 		adminKey?: RequestPublicKey;
 		freezeKey?: RequestPublicKey;
-		KYCKey?: RequestPublicKey;
+		kycKey?: RequestPublicKey;
 		wipeKey?: RequestPublicKey;
 		pauseKey?: RequestPublicKey;
 		supplyKey?: RequestPublicKey;
@@ -136,6 +138,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		reserveAddress?: string;
 		reserveInitialAmount?: string;
 		createReserve: boolean;
+		grantKYCToOriginalSender?: boolean;
 	}) {
 		super({
 			name: (val) => {
@@ -225,7 +228,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 			},
 			adminKey: Validation.checkPublicKey(),
 			freezeKey: Validation.checkPublicKey(),
-			KYCKey: Validation.checkPublicKey(),
+			kycKey: Validation.checkPublicKey(),
 			wipeKey: Validation.checkPublicKey(),
 			pauseKey: Validation.checkPublicKey(),
 			supplyKey: Validation.checkPublicKey(),
@@ -234,7 +237,11 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 			hederaERC20: Validation.checkContractId(),
 			reserveAddress: Validation.checkContractId(),
 			reserveInitialAmount: (val) => {
-				if (val === undefined || val === '' || this.createReserve == false) {
+				if (
+					val === undefined ||
+					val === '' ||
+					this.createReserve == false
+				) {
 					return;
 				}
 				if (!BigDecimal.isBigDecimal(val)) {
@@ -244,7 +251,10 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 					return [new InvalidDecimalRange(val, RESERVE_DECIMALS)];
 				}
 
-				const commonDecimals = (RESERVE_DECIMALS > this.decimals)? RESERVE_DECIMALS : this.decimals;
+				const commonDecimals =
+					RESERVE_DECIMALS > this.decimals
+						? RESERVE_DECIMALS
+						: this.decimals;
 
 				const reserveInitialAmount = BigDecimal.fromString(
 					val,
@@ -281,7 +291,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		this.autoRenewAccount = autoRenewAccount;
 		this.adminKey = adminKey;
 		this.freezeKey = freezeKey;
-		this.KYCKey = KYCKey;
+		this.kycKey = kycKey;
 		this.wipeKey = wipeKey;
 		this.pauseKey = pauseKey;
 		this.supplyKey = supplyKey;
@@ -292,6 +302,6 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		this.reserveAddress = reserveAddress;
 		this.reserveInitialAmount = reserveInitialAmount;
 		this.createReserve = createReserve;
-
+		this.grantKYCToOriginalSender = grantKYCToOriginalSender;
 	}
 }

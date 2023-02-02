@@ -37,6 +37,7 @@ import {
 import { MirrorNodeAdapter } from './mirror/MirrorNodeAdapter.js';
 import { Environment } from '../../domain/context/network/Environment.js';
 import EvmAddress from '../../domain/context/contract/EvmAddress.js';
+import LogService from '../../app/service/LogService.js';
 
 export interface InitializationData {
 	account?: Account;
@@ -176,6 +177,14 @@ interface RoleTransactionAdapter {
 		targetId: HederaId,
 		amount: BigDecimal,
 	): Promise<TransactionResponse>;
+	grantKyc(
+		coin: StableCoinCapabilities,
+		targetId: HederaId,
+	): Promise<TransactionResponse<boolean, Error>>;
+	revokeKyc(
+		coin: StableCoinCapabilities,
+		targetId: HederaId,
+	): Promise<TransactionResponse<boolean, Error>>;
 	getRoles(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
@@ -375,6 +384,18 @@ export default abstract class TransactionAdapter
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
+	grantKyc(
+		coin: StableCoinCapabilities,
+		targetId: HederaId,
+	): Promise<TransactionResponse<boolean, Error>> {
+		throw new Error('Method not implemented.');
+	}
+	revokeKyc(
+		coin: StableCoinCapabilities,
+		targetId: HederaId,
+	): Promise<TransactionResponse<boolean, Error>> {
+		throw new Error('Method not implemented.');
+	}
 
 	getRoles(
 		coin: StableCoinCapabilities,
@@ -393,5 +414,15 @@ export default abstract class TransactionAdapter
 
 	async contractToEvmAddress(contractId: ContractId): Promise<EvmAddress> {
 		return this.getMirrorNodeAdapter().contractToEvmAddress(contractId);
+	}
+
+	logTransaction(id: string): void {
+		const HASHSCAN_URL = 'https://hashscan.io/testnet/transactionsById/';
+		const HASHSCAN_TX_URL = 'https://hashscan.io/testnet/tx/';
+		const msg = `\nYou can see your transaction at ${
+			id.startsWith('0x') ? HASHSCAN_TX_URL : HASHSCAN_URL
+		}${id}\n`;
+		LogService.logInfo(msg);
+		console.log(msg);
 	}
 }

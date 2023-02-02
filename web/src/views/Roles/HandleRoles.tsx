@@ -11,10 +11,10 @@ import type { Detail } from '../../components/DetailsReview';
 import type { ModalsHandlerActionsProps } from '../../components/ModalsHandler';
 import SDKService from '../../services/SDKService';
 import { useSelector } from 'react-redux';
-import { 
+import {
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_CAPABILITIES,
-	SELECTED_WALLET_PAIRED_ACCOUNTID
+	SELECTED_WALLET_PAIRED_ACCOUNTID,
 } from '../../store/slices/walletSlice';
 import { SelectController } from '../../components/Form/SelectController';
 import {
@@ -34,7 +34,7 @@ import InputController from '../../components/Form/InputController';
 import { handleRequestValidation, validateDecimalsString } from '../../utils/validationsHelper';
 import { useRefreshCoinInfo } from '../../hooks/useRefreshCoinInfo';
 import type { IExternalToken } from '../../interfaces/IExternalToken.js';
-import type  { IAccountToken } from '../../interfaces/IAccountToken.js';
+import type { IAccountToken } from '../../interfaces/IAccountToken.js';
 import type { IRole } from '../../interfaces/IRole.js';
 import { propertyNotFound } from '../../constant';
 
@@ -102,66 +102,91 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 	const askRolesToSDK = watch(fields.autoCheckRoles);
 	const roles = watch(fields.roles);
 	const role = watch(fields.role);
-	
+
 	const operations = capabilities?.capabilities.map((x) => x.operation);
 	const filteredCapabilities = roleOptions.filter((option) => {
 		if (
-			!(operations?.includes(Operation.CASH_IN) && 
-			getAccessByOperation(Operation.CASH_IN) === Access.CONTRACT) &&  
+			!(
+				operations?.includes(Operation.CASH_IN) &&
+				getAccessByOperation(Operation.CASH_IN) === Access.CONTRACT
+			) &&
 			option.label === 'Cash in'
 		) {
 			return false;
 		}
 		if (
-			!(operations?.includes(Operation.BURN) && 
-			getAccessByOperation(Operation.BURN) === Access.CONTRACT) && 
+			!(
+				operations?.includes(Operation.BURN) &&
+				getAccessByOperation(Operation.BURN) === Access.CONTRACT
+			) &&
 			option.label === 'Burn'
 		) {
 			return false;
 		}
 		if (
-			!(operations?.includes(Operation.WIPE) && 
-			getAccessByOperation(Operation.WIPE) === Access.CONTRACT) && 
+			!(
+				operations?.includes(Operation.WIPE) &&
+				getAccessByOperation(Operation.WIPE) === Access.CONTRACT
+			) &&
 			option.label === 'Wipe'
 		) {
 			return false;
 		}
 		if (
-			!(operations?.includes(Operation.PAUSE) && 
-			getAccessByOperation(Operation.PAUSE) === Access.CONTRACT) && 
+			!(
+				operations?.includes(Operation.PAUSE) &&
+				getAccessByOperation(Operation.PAUSE) === Access.CONTRACT
+			) &&
 			option.label === 'Pause'
 		) {
 			return false;
 		}
 		if (
-			!(operations?.includes(Operation.RESCUE) && 
-			getAccessByOperation(Operation.RESCUE) === Access.CONTRACT) && 
+			!(
+				operations?.includes(Operation.RESCUE) &&
+				getAccessByOperation(Operation.RESCUE) === Access.CONTRACT
+			) &&
 			option.label === 'Rescue'
 		) {
 			return false;
 		}
 		if (
-			!(operations?.includes(Operation.FREEZE) && 
-			getAccessByOperation(Operation.FREEZE) === Access.CONTRACT) && 
+			!(
+				operations?.includes(Operation.FREEZE) &&
+				getAccessByOperation(Operation.FREEZE) === Access.CONTRACT
+			) &&
 			option.label === 'Freeze'
 		) {
 			return false;
 		}
 		if (
-			!(operations?.includes(Operation.DELETE) && 
-			getAccessByOperation(Operation.DELETE) === Access.CONTRACT) && 
+			!(
+				operations?.includes(Operation.DELETE) &&
+				getAccessByOperation(Operation.DELETE) === Access.CONTRACT
+			) &&
 			option.label === 'Delete'
 		) {
 			return false;
-		}		
-		
+		}
 		if (
-			!(operations?.includes(Operation.ROLE_ADMIN_MANAGEMENT) && 
-			getAccessByOperation(Operation.ROLE_ADMIN_MANAGEMENT) === Access.CONTRACT) && 
+			!(
+				operations?.includes(Operation.GRANT_KYC) &&
+				getAccessByOperation(Operation.GRANT_KYC) === Access.CONTRACT
+			) &&
+			option.label === 'KYC'
+		) {
+			return false;
+		}
+
+		if (
+			!(
+				operations?.includes(Operation.ROLE_ADMIN_MANAGEMENT) &&
+				getAccessByOperation(Operation.ROLE_ADMIN_MANAGEMENT) === Access.CONTRACT
+			) &&
 			option.label === 'Admin Role'
 		) {
 			return false;
-		}		
+		}
 
 		return true;
 	});
@@ -234,7 +259,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 		onSuccess,
 		onError,
 		onWarning,
-		onLoading
+		onLoading,
 	}) => {
 		try {
 			onLoading();
@@ -378,14 +403,14 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 						externalToken.roles = await SDKService.getRoles(
 							new GetRolesRequest({
 								targetId: account,
-								tokenId: selectedStableCoin.tokenId.toString()
-							})
+								tokenId: selectedStableCoin.tokenId.toString(),
+							}),
 						);
 					} else {
 						externalToken.roles = roles.map((role: IRole) => role.value);
 					}
 					localStorage.setItem('tokensAccount', JSON.stringify(tokensAccount));
-					break;					
+					break;
 			}
 			onSuccess();
 		} catch (error: any) {
@@ -395,9 +420,11 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 	};
 
 	function getAccessByOperation(operation: Operation): Access | undefined {
-		return capabilities?.capabilities.filter((capability) => {
-			return (capability.operation === operation);
-		})[0].access ?? undefined;
+		return (
+			capabilities?.capabilities.filter((capability) => {
+				return capability.operation === operation;
+			})[0].access ?? undefined
+		);
 	}
 
 	const renderSupplierQuantity = () => {
@@ -436,7 +463,9 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 							isRequired
 							control={control}
 							name={fields.amount}
-							placeholder={t(`roles:${action}.supplierQuantityInputPlaceholder`) ?? propertyNotFound}
+							placeholder={
+								t(`roles:${action}.supplierQuantityInputPlaceholder`) ?? propertyNotFound
+							}
 						/>
 					</Box>
 				)}
@@ -536,7 +565,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 			},
 		];
 		if (action === actions.refresh) {
-			details = [];				
+			details = [];
 		} else if (action !== actions.edit) {
 			const value = role?.label;
 			const roleAction: Detail = {

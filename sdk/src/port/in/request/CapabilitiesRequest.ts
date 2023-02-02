@@ -38,7 +38,7 @@ export default class CapabilitiesRequest
 		account,
 		tokenId,
 		tokenIsPaused,
-		tokenIsDeleted
+		tokenIsDeleted,
 	}: {
 		account: RequestAccount;
 		tokenId: string;
@@ -47,7 +47,7 @@ export default class CapabilitiesRequest
 	}) {
 		super({
 			account: Validation.checkAccount(),
-			tokenId: Validation.checkHederaIdFormat()
+			tokenId: Validation.checkHederaIdFormat(),
 		});
 		this.account = account;
 		this.tokenId = tokenId;

@@ -1,0 +1,13 @@
+{
+	"title": "Check KYC operation",
+	"operationTitle": "Operation details",
+	"accountLabel": "Enter the account",
+	"accountPlaceholder": "0.0.0",
+	"modalHasKyc": "The account {{ account }} has KYC status.",
+	"modalNotHasKyc": "The account {{ account }} has not been granted KYC status.",
+	"modalAction": {
+		"subtitle": "Operation details review",
+		"account": "Account",
+		"accept": "Get KYC account status"
+	}
+}

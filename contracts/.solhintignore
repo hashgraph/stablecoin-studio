@@ -2,3 +2,13 @@ node_modules/
 contracts/hts-precompile/HederaResponseCodes.sol
 contracts/hts-precompile/HederaTokenService.sol
 contracts/hts-precompile/IHederaTokenService.sol
+export/
+deployments/
+artifacts/
+cache/
+coverage/
+typechain/
+scripts/
+tasks/
+test/
+.vscode/

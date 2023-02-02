@@ -1,6 +1,6 @@
-
-import { Flex, Spinner, Text } from '@chakra-ui/react';
+import { Flex, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
+import HederaSpinner from './HederaSpinner';
 
 const AwaitingWalletSignature = () => {
 	const { t } = useTranslation('global');
@@ -16,15 +16,7 @@ const AwaitingWalletSignature = () => {
 			flexDirection='column'
 		>
 			<>
-				<Spinner
-					data-testid='awaiting-wallet-signature-logo'
-					w='54px'
-					h='54px'
-					justifyContent='center'
-					alignSelf={'center'}
-					color='#C6AEFA'
-					thickness='4px'
-				/>
+				<HederaSpinner />
 				<Text
 					data-testid='no-proof-of-reserve-title'
 					fontSize='22px'

@@ -18,37 +18,34 @@
  *
  */
 
-import {
-	AccountId as HAccountId,
-} from '@hashgraph/sdk';
+import { AccountId as HAccountId } from '@hashgraph/sdk';
 
 export class StableCoinMemo {
 	proxyContract: string;
-    proxyAdminContract: string;
+	proxyAdminContract: string;
 
 	constructor(proxyContract: string, proxyAdminContract: string) {
 		this.proxyContract = this.getHederaIdfromContractAddress(proxyContract);
-		this.proxyAdminContract = this.getHederaIdfromContractAddress(proxyAdminContract);
+		this.proxyAdminContract =
+			this.getHederaIdfromContractAddress(proxyAdminContract);
 	}
 
-    getHederaIdfromContractAddress(contractAddress: string): string{
-		if(!contractAddress) return '';
-        if(contractAddress.length >= 40) return HAccountId.fromSolidityAddress(contractAddress).toString();
+	getHederaIdfromContractAddress(contractAddress: string): string {
+		if (!contractAddress) return '';
+		if (contractAddress.length >= 40)
+			return HAccountId.fromSolidityAddress(contractAddress).toString();
 		return contractAddress;
-    }
+	}
 
 	public static fromJson(json: string): StableCoinMemo {
 		const jsonObject = JSON.parse(json);
-		return new StableCoinMemo(
-			jsonObject.p,
-            jsonObject.a
-		);
+		return new StableCoinMemo(jsonObject.p, jsonObject.a);
 	}
 
 	public static empty(): StableCoinMemo {
 		const emptyObject = {
 			proxyContract: '',
-            proxyAdminContract: ''
+			proxyAdminContract: '',
 		};
 		return this.fromJson(JSON.stringify(emptyObject));
 	}
@@ -56,7 +53,7 @@ export class StableCoinMemo {
 	public toJson(): string {
 		return JSON.stringify({
 			proxyContract: this.proxyContract,
-            proxyAdminContract: this.proxyAdminContract
+			proxyAdminContract: this.proxyAdminContract,
 		});
 	}
 }

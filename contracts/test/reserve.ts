@@ -46,8 +46,8 @@ const TokenMemo = 'Hedera Accelerator Stable Coin'
 const INIT_RESERVE = BigNumber.from(INIT_AMOUNT).pow(ReserveDecimal)
 let hederaReserveProxy: ContractId
 
-describe('Reserve Tests', function() {
-    before(async function() {
+describe('Reserve Tests', function () {
+    before(async function () {
         // Generate Client 1 and Client 2
         const [
             client1,

@@ -53,7 +53,9 @@ export class HashpackTransactionResponseAdapter extends TransactionResponseAdapt
 			await this.getReceipt(signer, transactionResponse);
 			let transId;
 			if (transactionResponse instanceof HTransactionResponse) {
-				transId = transactionResponse.transactionId.toString();
+				transId = JSON.parse(
+					JSON.stringify(transactionResponse),
+				).response.transactionId.toString();
 			} else {
 				transId = transactionResponse.id;
 			}
@@ -85,7 +87,7 @@ export class HashpackTransactionResponseAdapter extends TransactionResponseAdapt
 			const transactionId =
 				transactionResponse instanceof HTransactionResponse
 					? transactionResponse.transactionId.toString()
-					: transactionResponse.id;
+					: (transactionResponse as any).response.transactionId;
 			LogService.logTrace(
 				`Creating RECORD response from TRX (${transactionId}) from record: `,
 				record?.toString(),
@@ -145,6 +147,7 @@ export class HashpackTransactionResponseAdapter extends TransactionResponseAdapt
 			}
 		} catch (error) {
 			const res: any = transactionResponse.error;
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				message: res.message,
 				name: res.name,
@@ -216,6 +219,7 @@ export class HashpackTransactionResponseAdapter extends TransactionResponseAdapt
 			try {
 				return new Uint32Array(Object.values(record));
 			} catch (err) {
+				LogService.logError(err);
 				throw new TransactionResponseError({
 					message: `Could not determine response type for: ${record}`,
 				});

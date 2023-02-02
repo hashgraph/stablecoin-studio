@@ -1,13 +1,13 @@
 {
-    "title": "Get balance operation",
-    "operationTitle": "Operation details",
-    "accountLabel": "Enter the account",
-    "accountPlaceholder": "0.0.0",
-    "modalSuccessBalance": "The account {{ account }} balance is {{ balance }}.",
-    "modalAction": {
-        "subtitle": "Operation details review",
-        "account": "Account",
-        "balance": "Balance",
-        "accept": "Get balance"
-    }
+	"title": "Get balance operation",
+	"operationTitle": "Operation details",
+	"accountLabel": "Enter the account",
+	"accountPlaceholder": "0.0.0",
+	"modalSuccessBalance": "The account {{ account }} balance is {{ balance }}.",
+	"modalAction": {
+		"subtitle": "Operation details review",
+		"account": "Account",
+		"balance": "Balance",
+		"accept": "Get balance"
+	}
 }

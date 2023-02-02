@@ -18,7 +18,7 @@
  *
  */
 
-import { HederaId } from "../../../domain/context/shared/HederaId.js";
+import { HederaId } from '../../../domain/context/shared/HederaId.js';
 
 export default class CheckStrings {
 	public static isNotEmpty(value?: string): boolean {
@@ -46,7 +46,7 @@ export default class CheckStrings {
 			HederaId.from(value);
 			return true;
 		} catch (err) {
-			return false
+			return false;
 		}
 	}
 }

@@ -65,7 +65,7 @@ const CashInOperation = () => {
 			await SDKService.cashIn(request);
 			onSuccess();
 		} catch (error: any) {
-			console.log(JSON.stringify(error))
+			console.log(JSON.stringify(error));
 			setErrorTransactionUrl(error.transactionUrl);
 			setErrorOperation(error.message);
 			onError();
@@ -86,12 +86,12 @@ const CashInOperation = () => {
 						<Stack as='form' spacing={6} maxW='520px'>
 							<InputController
 								rules={{
-									required: t(`global:validations.required`)??propertyNotFound,
+									required: t(`global:validations.required`) ?? propertyNotFound,
 									validate: {
 										validDecimals: (value: string) => {
 											return (
 												validateDecimalsString(value, decimals) ||
-												(t('global:validations.decimalsValidation')??propertyNotFound)
+												(t('global:validations.decimalsValidation') ?? propertyNotFound)
 											);
 										},
 										validation: (value: string) => {
@@ -104,12 +104,12 @@ const CashInOperation = () => {
 								isRequired
 								control={control}
 								name={'amount'}
-								label={t('cashIn:amountLabel')??propertyNotFound}
-								placeholder={t('cashIn:amountPlaceholder')??propertyNotFound}
+								label={t('cashIn:amountLabel') ?? propertyNotFound}
+								placeholder={t('cashIn:amountPlaceholder') ?? propertyNotFound}
 							/>
 							<InputController
 								rules={{
-									required: t('global:validations.required')??propertyNotFound,
+									required: t('global:validations.required') ?? propertyNotFound,
 									validate: {
 										validation: (value: string) => {
 											request.targetId = value;
@@ -121,8 +121,8 @@ const CashInOperation = () => {
 								isRequired
 								control={control}
 								name='destinationAccount'
-								placeholder={t('cashIn:destinationAccountPlaceholder')??propertyNotFound}
-								label={t('cashIn:destinationAccountLabel')??propertyNotFound}
+								placeholder={t('cashIn:destinationAccountPlaceholder') ?? propertyNotFound}
+								label={t('cashIn:destinationAccountLabel') ?? propertyNotFound}
 							/>
 						</Stack>
 					</>

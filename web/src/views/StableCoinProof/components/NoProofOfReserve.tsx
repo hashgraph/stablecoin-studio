@@ -1,4 +1,3 @@
-
 import { Flex, Image, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import SAFE_BOX from '../../../assets/svg/safe-box.svg';

@@ -14,25 +14,25 @@ abstract contract TokenOwner is
     Initializable
 {
     // Hedera HTS precompiled contract
-    address internal constant PRECOMPILED_ADDRESS = address(0x167);
+    address internal constant _PRECOMPILED_ADDRESS = address(0x167);
     // HTS Token this contract owns
-    address private tokenAddress;
+    address private _tokenAddress;
 
     // modifier to check that an address is not 0
-    modifier checkAddressIsNotZero(address addr)
-    {
+    modifier checkAddressIsNotZero(address addr) {
         _checkAddressIsNotZero(addr);
         _;
     }
 
-    function _checkAddressIsNotZero(address addr) internal pure
-    {
-        require(addr != address(0), "Provided address is 0");
+    function _checkAddressIsNotZero(address addr) internal pure {
+        require(addr != address(0), 'Provided address is 0');
     }
 
     // Initiliazes the token address
-    function __tokenOwner_init(address initTokenAddress) internal onlyInitializing {
-        tokenAddress = initTokenAddress;
+    function __tokenOwnerInit(
+        address initTokenAddress
+    ) internal onlyInitializing {
+        _tokenAddress = initTokenAddress;
     }
 
     /**
@@ -40,7 +40,12 @@ abstract contract TokenOwner is
      *
      * @return address of The token address
      */
-    function getTokenAddress() external override(ITokenOwner) view returns (address) {
+    function getTokenAddress()
+        external
+        view
+        override(ITokenOwner)
+        returns (address)
+    {
         return _getTokenAddress();
     }
 
@@ -50,7 +55,7 @@ abstract contract TokenOwner is
      * @return address of The token address
      */
     function _getTokenAddress() internal view returns (address) {
-        return tokenAddress;
+        return _tokenAddress;
     }
 
     /**
@@ -69,7 +74,7 @@ abstract contract TokenOwner is
      * @return uint256 The total number of tokens that exists
      */
     function _totalSupply() internal view returns (uint256) {
-        return IHederaERC20Upgradeable(tokenAddress).totalSupply();
+        return IHederaERC20Upgradeable(_tokenAddress).totalSupply();
     }
 
     /**
@@ -78,7 +83,7 @@ abstract contract TokenOwner is
      * @return uint8 The number of decimals of the token
      */
     function _decimals() internal view returns (uint8) {
-        return IERC20MetadataUpgradeable(tokenAddress).decimals();
+        return IERC20MetadataUpgradeable(_tokenAddress).decimals();
     }
 
     /**
@@ -104,4 +109,11 @@ abstract contract TokenOwner is
         address to,
         uint256 amount
     ) internal virtual;
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[49] private __gap;
 }

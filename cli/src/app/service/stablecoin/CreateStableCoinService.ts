@@ -99,6 +99,7 @@ export default class CreateStableCoinService extends Service {
       stableCoinFactory: currentFactory.id,
       hederaERC20: currentHederaERC20.id,
       createReserve: false,
+      grantKYCToOriginalSender: false,
     });
 
     // Name
@@ -204,28 +205,40 @@ export default class CreateStableCoinService extends Service {
       decimals: tokenToCreate.decimals,
       initialSupply:
         initialSupply === '' || !initialSupply ? undefined : initialSupply,
-      supplyType: supplyType ? TokenSupplyType.INFINITE : TokenSupplyType.FINITE,
+      supplyType: supplyType
+        ? TokenSupplyType.INFINITE
+        : TokenSupplyType.FINITE,
       maxSupply: tokenToCreate.maxSupply,
     });
 
     if (managedBySC) {
       tokenToCreate.adminKey = Account.NullPublicKey;
       tokenToCreate.freezeKey = Account.NullPublicKey;
-      //KYCKey,
+      tokenToCreate.kycKey = Account.NullPublicKey;
       tokenToCreate.wipeKey = Account.NullPublicKey;
       tokenToCreate.supplyKey = Account.NullPublicKey;
       tokenToCreate.pauseKey = Account.NullPublicKey;
-    } else {
 
-      const { adminKey, supplyKey, freezeKey, wipeKey, pauseKey } =
-        await this.configureManagedFeatures();
+      tokenToCreate.grantKYCToOriginalSender =
+        await this.askForKYCGrantToSender();
+    } else {
+      const {
+        adminKey,
+        supplyKey,
+        freezeKey,
+        wipeKey,
+        pauseKey,
+        KYCKey,
+        grantKYCToOriginalSender,
+      } = await this.configureManagedFeatures();
 
       tokenToCreate.adminKey = adminKey;
       tokenToCreate.supplyKey = supplyKey;
-      //tokenToCreate.KYCKey = KYCKey;
+      tokenToCreate.kycKey = KYCKey;
       tokenToCreate.freezeKey = freezeKey;
       tokenToCreate.wipeKey = wipeKey;
       tokenToCreate.pauseKey = pauseKey;
+      tokenToCreate.grantKYCToOriginalSender = grantKYCToOriginalSender;
 
       const treasury = this.getTreasuryAccountFromSupplyKey(supplyKey);
       tokenToCreate.treasury = treasury;
@@ -234,23 +247,26 @@ export default class CreateStableCoinService extends Service {
     // Proof of Reserve
     let reserve = false;
     let existingReserve = false;
-    if (tokenToCreate.supplyKey !== undefined && 
-        tokenToCreate.supplyKey.key === 'null') {
+    if (
+      tokenToCreate.supplyKey !== undefined &&
+      tokenToCreate.supplyKey.key === 'null'
+    ) {
       reserve = await this.askForReserve();
 
-      if(reserve){
+      if (reserve) {
         existingReserve = await this.askForExistingReserve();
-        if(!existingReserve){
+        if (!existingReserve) {
           tokenToCreate.createReserve = true;
-          tokenToCreate.reserveInitialAmount = await this.askForReserveInitialAmount();
+          tokenToCreate.reserveInitialAmount =
+            await this.askForReserveInitialAmount();
           await utilsService.handleValidation(
             () => tokenToCreate.validate('reserveInitialAmount'),
             async () => {
-              tokenToCreate.reserveInitialAmount = await this.askForReserveInitialAmount();
+              tokenToCreate.reserveInitialAmount =
+                await this.askForReserveInitialAmount();
             },
           );
-        }
-        else{
+        } else {
           tokenToCreate.reserveAddress = await utilsService.defaultSingleAsk(
             language.getText('stablecoin.askReserveAddress'),
             tokenToCreate.reserveAddress || '0.0.0',
@@ -258,10 +274,11 @@ export default class CreateStableCoinService extends Service {
           await utilsService.handleValidation(
             () => tokenToCreate.validate('reserveAddress'),
             async () => {
-              tokenToCreate.reserveAddress = await utilsService.defaultSingleAsk(
-                language.getText('stablecoin.askReserveAddress'),
-                tokenToCreate.reserveAddress || '0.0.0',
-              );
+              tokenToCreate.reserveAddress =
+                await utilsService.defaultSingleAsk(
+                  language.getText('stablecoin.askReserveAddress'),
+                  tokenToCreate.reserveAddress || '0.0.0',
+                );
             },
           );
         }
@@ -274,7 +291,9 @@ export default class CreateStableCoinService extends Service {
       autoRenewAccount: tokenToCreate.autoRenewAccount,
       decimals: tokenToCreate.decimals,
       initialSupply: initialSupply === '' ? undefined : initialSupply,
-      supplyType: supplyType ? TokenSupplyType.INFINITE : TokenSupplyType.FINITE,
+      supplyType: supplyType
+        ? TokenSupplyType.INFINITE
+        : TokenSupplyType.FINITE,
       maxSupply: totalSupply ? BigInt(totalSupply) : totalSupply,
       freezeKey:
         tokenToCreate.freezeKey === undefined
@@ -282,7 +301,12 @@ export default class CreateStableCoinService extends Service {
           : tokenToCreate.freezeKey.key !== 'null'
           ? tokenToCreate.freezeKey
           : language.getText('wizard.featureOptions.SmartContract'),
-      //KYCKey,
+      KYCKey:
+        tokenToCreate.kycKey === undefined
+          ? language.getText('wizard.featureOptions.None')
+          : tokenToCreate.kycKey.key !== 'null'
+          ? tokenToCreate.kycKey
+          : language.getText('wizard.featureOptions.SmartContract'),
       wipeKey:
         tokenToCreate.wipeKey === undefined
           ? language.getText('wizard.featureOptions.None')
@@ -307,16 +331,19 @@ export default class CreateStableCoinService extends Service {
           : tokenToCreate.pauseKey.key !== 'null'
           ? tokenToCreate.pauseKey
           : language.getText('wizard.featureOptions.SmartContract'),
-      treasury: tokenToCreate.treasury !== '0.0.0' && tokenToCreate.treasury !== undefined 
-          ? tokenToCreate.treasury 
+      treasury:
+        tokenToCreate.treasury !== '0.0.0' &&
+        tokenToCreate.treasury !== undefined
+          ? tokenToCreate.treasury
           : language.getText('wizard.featureOptions.SmartContract'),
-      reserve: (reserve == false) 
-        ? '-' 
-        : (
-          (existingReserve) 
+      reserve:
+        reserve == false
+          ? '-'
+          : existingReserve
           ? tokenToCreate.reserveAddress
-          : "Proof of Reserve Feed initial amount : " + tokenToCreate.reserveInitialAmount
-        ),
+          : 'Proof of Reserve Feed initial amount : ' +
+            tokenToCreate.reserveInitialAmount,
+      grantKYCToOriginalSender: tokenToCreate.grantKYCToOriginalSender,
     });
     if (
       !(await utilsService.defaultConfirmAsk(
@@ -394,6 +421,13 @@ export default class CreateStableCoinService extends Service {
     );
   }
 
+  private async askForKYCGrantToSender(): Promise<boolean> {
+    return await utilsService.defaultConfirmAsk(
+      language.getText('stablecoin.askGrantKYCToSender'),
+      true,
+    );
+  }
+
   private async configureManagedFeatures(): Promise<IManagedFeatures> {
     const adminKey = await this.checkAnswer(
       await utilsService.defaultMultipleAsk(
@@ -430,7 +464,28 @@ export default class CreateStableCoinService extends Service {
       ),
     );
 
-    return { adminKey, supplyKey, freezeKey, wipeKey, pauseKey };
+    const KYCKey = await this.checkAnswer(
+      await utilsService.defaultMultipleAsk(
+        language.getText('stablecoin.features.KYC'),
+        language.getArrayFromObject('wizard.featureOptions'),
+      ),
+    );
+
+    let grantKYCToOriginalSender = false;
+
+    if (supplyKey == Account.NullPublicKey && KYCKey == Account.NullPublicKey) {
+      grantKYCToOriginalSender = await this.askForKYCGrantToSender();
+    }
+
+    return {
+      adminKey,
+      supplyKey,
+      freezeKey,
+      wipeKey,
+      pauseKey,
+      KYCKey,
+      grantKYCToOriginalSender,
+    };
   }
 
   private async checkAnswer(answer: string): Promise<RequestPublicKey> {
@@ -464,8 +519,8 @@ export default class CreateStableCoinService extends Service {
       case language.getText('wizard.featureOptions.SmartContract'):
         return Account.NullPublicKey;
 
-        default:
-          throw new Error('Selected option not recognized : ' + answer)
+      default:
+        throw new Error('Selected option not recognized : ' + answer);
     }
   }
 

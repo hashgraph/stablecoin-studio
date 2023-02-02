@@ -49,7 +49,7 @@ describe(`<${ModalAction.name} />`, () => {
 		expect(cancelButton).toHaveTextContent(defaultProps.cancelButtonLabel);
 	});
 
-	test('cancel button close modal by default',async () => {
+	test('cancel button close modal by default', async () => {
 		const component = render(
 			<ModalAction {...defaultProps}>
 				<Detail />
@@ -86,7 +86,7 @@ describe(`<${ModalAction.name} />`, () => {
 		expect(confirmButton).toHaveTextContent(defaultProps.confirmButtonLabel);
 	});
 
-	test('confirm button call confirm function', async() => {
+	test('confirm button call confirm function', async () => {
 		const component = render(
 			<ModalAction {...defaultProps}>
 				<Detail />

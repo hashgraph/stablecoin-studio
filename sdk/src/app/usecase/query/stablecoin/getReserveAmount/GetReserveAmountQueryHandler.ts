@@ -18,44 +18,50 @@
  *
  */
 
-import { lazyInject } from "../../../../../core/decorator/LazyInjectDecorator.js"
-import { QueryHandler } from "../../../../../core/decorator/QueryHandlerDecorator.js"
-import { IQueryHandler } from "../../../../../core/query/QueryHandler.js"
-import { RESERVE_DECIMALS } from "../../../../../domain/context/reserve/Reserve.js"
-import BigDecimal from "../../../../../domain/context/shared/BigDecimal.js"
-import { MirrorNodeAdapter } from "../../../../../port/out/mirror/MirrorNodeAdapter.js"
-import RPCQueryAdapter from "../../../../../port/out/rpc/RPCQueryAdapter.js"
-import StableCoinService from "../../../../service/StableCoinService.js"
-import { GetReserveAmountQuery, GetReserveAmountQueryResponse } from "./GetReserveAmountQuery.js"
+import { lazyInject } from '../../../../../core/decorator/LazyInjectDecorator.js';
+import { QueryHandler } from '../../../../../core/decorator/QueryHandlerDecorator.js';
+import { IQueryHandler } from '../../../../../core/query/QueryHandler.js';
+import { RESERVE_DECIMALS } from '../../../../../domain/context/reserve/Reserve.js';
+import BigDecimal from '../../../../../domain/context/shared/BigDecimal.js';
+import { MirrorNodeAdapter } from '../../../../../port/out/mirror/MirrorNodeAdapter.js';
+import RPCQueryAdapter from '../../../../../port/out/rpc/RPCQueryAdapter.js';
+import StableCoinService from '../../../../service/StableCoinService.js';
+import {
+	GetReserveAmountQuery,
+	GetReserveAmountQueryResponse,
+} from './GetReserveAmountQuery.js';
 
 @QueryHandler(GetReserveAmountQuery)
-export class GetReserveAmountQueryHandler implements IQueryHandler<GetReserveAmountQuery> {
-constructor(
-	@lazyInject(StableCoinService)
-	public readonly stableCoinService: StableCoinService,
-	@lazyInject(MirrorNodeAdapter)
-	public readonly mirrorNode: MirrorNodeAdapter,
-	@lazyInject(RPCQueryAdapter)
-	public readonly queryAdapter: RPCQueryAdapter,
-) {}
+export class GetReserveAmountQueryHandler
+	implements IQueryHandler<GetReserveAmountQuery>
+{
+	constructor(
+		@lazyInject(StableCoinService)
+		public readonly stableCoinService: StableCoinService,
+		@lazyInject(MirrorNodeAdapter)
+		public readonly mirrorNode: MirrorNodeAdapter,
+		@lazyInject(RPCQueryAdapter)
+		public readonly queryAdapter: RPCQueryAdapter,
+	) {}
 
-
-	async execute(command: GetReserveAmountQuery): Promise<GetReserveAmountQueryResponse> {
+	async execute(
+		command: GetReserveAmountQuery,
+	): Promise<GetReserveAmountQueryResponse> {
 		const { tokenId } = command;
 
 		const coin = await this.stableCoinService.get(tokenId);
-		
+
 		if (!coin.evmProxyAddress) throw new Error('Invalid token id');
 
-		const res = await this.queryAdapter.getReserveAmount(coin.evmProxyAddress);
+		const res = await this.queryAdapter.getReserveAmount(
+			coin.evmProxyAddress,
+		);
 
 		const amount = BigDecimal.fromStringFixed(
 			res.toString(),
 			RESERVE_DECIMALS,
 		);
 
-		return Promise.resolve(
-			new GetReserveAmountQueryResponse(amount),
-		);
+		return Promise.resolve(new GetReserveAmountQueryResponse(amount));
 	}
 }

@@ -2,17 +2,18 @@
 pragma solidity 0.8.16;
 
 interface IRoles {
-
-    enum RoleName{ADMIN,
+    enum RoleName {
+        ADMIN,
         CASHIN,
         BURN,
         WIPE,
         RESCUE,
         PAUSE,
         FREEZE,
-        DELETE
+        DELETE,
+        KYC
     }
-    
+
     /**
      * @dev Returns an array of roles the account currently has
      *
@@ -27,5 +28,5 @@ interface IRoles {
      * @param role The role we want to retrieve the bytes32 for
      * @return bytes32 The bytes32 of the role
      */
-    function getRoleId(RoleName role) external view returns(bytes32);
+    function getRoleId(RoleName role) external view returns (bytes32);
 }

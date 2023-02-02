@@ -51,8 +51,8 @@ const INIT_SUPPLY = BigNumber.from(100).mul(TokenFactor)
 const MAX_SUPPLY = BigNumber.from(1000).mul(TokenFactor)
 const TokenMemo = 'Hedera Accelerator Stable Coin'
 
-describe('Rescue Tests', function() {
-    before(async function() {
+describe('Rescue Tests', function () {
+    before(async function () {
         // Generate Client 1 and Client 2
         const [
             client1,
@@ -120,7 +120,7 @@ describe('Rescue Tests', function() {
         proxyAddress = result[0]
     })
 
-    it('Admin account can grant and revoke rescue role to an account', async function() {
+    it('Admin account can grant and revoke rescue role to an account', async function () {
         // Admin grants rescue role : success
         let result = await hasRole(
             RESCUE_ROLE,
@@ -166,7 +166,7 @@ describe('Rescue Tests', function() {
         expect(result).to.equals(false)
     })
 
-    it('Non Admin account can not grant rescue role to an account', async function() {
+    it('Non Admin account can not grant rescue role to an account', async function () {
         // Non Admin grants rescue role : fail
         await expect(
             grantRole(
@@ -179,7 +179,7 @@ describe('Rescue Tests', function() {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('Non Admin account can not revoke rescue role to an account', async function() {
+    it('Non Admin account can not revoke rescue role to an account', async function () {
         // Non Admin revokes rescue role : fail
         await grantRole(
             RESCUE_ROLE,
@@ -208,7 +208,7 @@ describe('Rescue Tests', function() {
         )
     })
 
-    it('Should rescue 10 token', async function() {
+    it('Should rescue 10 token', async function () {
         const AmountToRescue = BigNumber.from(10).mul(TokenFactor)
 
         // Get the initial balance of the token owner and client
@@ -244,9 +244,8 @@ describe('Rescue Tests', function() {
             operatorIsE25519
         )
 
-        const expectedTokenOwnerBalance = initialTokenOwnerBalance.sub(
-            AmountToRescue
-        )
+        const expectedTokenOwnerBalance =
+            initialTokenOwnerBalance.sub(AmountToRescue)
         const expectedClientBalance = initialClientBalance.add(AmountToRescue)
 
         expect(finalTokenOwnerBalance.toString()).to.equals(
@@ -257,7 +256,7 @@ describe('Rescue Tests', function() {
         )
     })
 
-    it('we cannot rescue more tokens than the token owner balance', async function() {
+    it('we cannot rescue more tokens than the token owner balance', async function () {
         // Get the initial balance of the token owner
         const TokenOwnerBalance = await getBalanceOf(
             proxyAddress,
@@ -273,14 +272,14 @@ describe('Rescue Tests', function() {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('User without rescue role cannot rescue tokens', async function() {
+    it('User without rescue role cannot rescue tokens', async function () {
         // Account without rescue role, rescues tokens : fail
         await expect(
             rescue(proxyAddress, BigNumber.from(1), nonOperatorClient)
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('User with granted rescue role can rescue tokens', async function() {
+    it('User with granted rescue role can rescue tokens', async function () {
         const AmountToRescue = BigNumber.from(1)
 
         // Retrieve original balances
@@ -333,9 +332,8 @@ describe('Rescue Tests', function() {
             nonOperatorIsE25519
         )
 
-        const expectedTokenOwnerBalance = initialTokenOwnerBalance.sub(
-            AmountToRescue
-        )
+        const expectedTokenOwnerBalance =
+            initialTokenOwnerBalance.sub(AmountToRescue)
         const expectedClientBalance = initialClientBalance.add(AmountToRescue)
 
         expect(finalTokenOwnerBalance.toString()).to.equals(

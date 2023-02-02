@@ -52,7 +52,11 @@ const RescueTokenOperation = () => {
 
 	useRefreshCoinInfo();
 
-	const handleRescueToken: ModalsHandlerActionsProps['onConfirm'] = async ({ onSuccess, onError, onLoading }) => {
+	const handleRescueToken: ModalsHandlerActionsProps['onConfirm'] = async ({
+		onSuccess,
+		onError,
+		onLoading,
+	}) => {
 		try {
 			onLoading();
 			if (!selectedStableCoin?.proxyAddress || !selectedStableCoin?.tokenId) {
@@ -83,12 +87,12 @@ const RescueTokenOperation = () => {
 						<Stack as='form' spacing={6}>
 							<InputController
 								rules={{
-									required: t(`global:validations.required`)??propertyNotFound,
+									required: t(`global:validations.required`) ?? propertyNotFound,
 									validate: {
 										validDecimals: (value: string) => {
 											return (
 												validateDecimalsString(value, decimals) ||
-												(t('global:validations.decimalsValidation')??propertyNotFound)
+												(t('global:validations.decimalsValidation') ?? propertyNotFound)
 											);
 										},
 										validation: (value: string) => {
@@ -101,8 +105,8 @@ const RescueTokenOperation = () => {
 								isRequired
 								control={control}
 								name={'amount'}
-								label={t('rescueTokens:amountLabel')??propertyNotFound}
-								placeholder={t('rescueTokens:amountPlaceholder')??propertyNotFound}
+								label={t('rescueTokens:amountLabel') ?? propertyNotFound}
+								placeholder={t('rescueTokens:amountPlaceholder') ?? propertyNotFound}
 							/>
 						</Stack>
 					</>

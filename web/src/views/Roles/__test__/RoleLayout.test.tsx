@@ -25,7 +25,7 @@ const defaultProps: RoleLayoutProps = {
 	selectorPlaceholder: translations.selectPlaceholder,
 	title: en.give,
 	roleRequest: true,
-	request: undefined
+	request: undefined,
 };
 
 const RenderWithForm = (props: RoleLayoutProps) => {
@@ -76,7 +76,7 @@ describe(`<${RoleLayout.name} />`, () => {
 		expect(children).toBeInTheDocument();
 	});
 
-	test('Confirm button call to onConfirm',async () => {
+	test('Confirm button call to onConfirm', async () => {
 		const component = factoryComponent();
 
 		const confirmButton = component.getByTestId('confirm-btn');
@@ -84,7 +84,7 @@ describe(`<${RoleLayout.name} />`, () => {
 		expect(defaultProps.onConfirm).toHaveBeenCalled();
 	});
 
-	test('Confirm button can be setted as disabled',async () => {
+	test('Confirm button can be setted as disabled', async () => {
 		defaultProps.buttonConfirmEnable = false;
 		const component = factoryComponent();
 
@@ -94,7 +94,7 @@ describe(`<${RoleLayout.name} />`, () => {
 		expect(defaultProps.onConfirm).not.toHaveBeenCalled();
 	});
 
-	test('Cancel button redirect to Roles view', async() => {
+	test('Cancel button redirect to Roles view', async () => {
 		const component = factoryComponent();
 		const anything = expect.any(Function);
 

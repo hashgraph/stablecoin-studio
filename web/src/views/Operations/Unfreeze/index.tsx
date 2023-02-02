@@ -84,7 +84,7 @@ const UnfreezeOperation = () => {
 						<Stack as='form' spacing={6} maxW='520px'>
 							<InputController
 								rules={{
-									required: t('global:validations.required')??propertyNotFound,
+									required: t('global:validations.required') ?? propertyNotFound,
 									validate: {
 										validation: (value: string) => {
 											request.targetId = value;
@@ -96,8 +96,8 @@ const UnfreezeOperation = () => {
 								isRequired
 								control={control}
 								name='targetAccount'
-								placeholder={t('unfreeze:accountPlaceholder')??propertyNotFound}
-								label={t('unfreeze:accountLabel')??propertyNotFound}
+								placeholder={t('unfreeze:accountPlaceholder') ?? propertyNotFound}
+								label={t('unfreeze:accountLabel') ?? propertyNotFound}
 							/>
 						</Stack>
 					</>

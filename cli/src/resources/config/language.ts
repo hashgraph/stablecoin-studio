@@ -79,12 +79,12 @@ export const english = {
     askDoSomething: 'What do you want to do?',
     askOptionalProps:
       'Do you want to configure the initial supply, max supply or decimals?',
-    askReserve:
-      'Do you want to link the stable coin to a Proof of Reserve?',
+    askReserve: 'Do you want to link the stable coin to a Proof of Reserve?',
     askExistingReserve:
       'Do you want to link it to an already existing Proof of Reserve?',
 
-    askReserveAddress: 'Enter the Proof of Reserve Feed you wish to link your stable coin to',
+    askReserveAddress:
+      'Enter the Proof of Reserve Feed you wish to link your stable coin to',
     askReserveInitialAmount: 'Enter the Proof of Reserve Feed initial amount',
     askInitialSupply: 'Enter the initial supply',
     askSupplyType: 'Do you want the token max supply to be infinite?',
@@ -117,6 +117,7 @@ export const english = {
     askBurnAmount: 'How many tokens do you want to burn?',
     askWipeAmount: 'How many tokens do you want to wipe?',
     askRescueAmount: 'How many tokens do you want to rescue?',
+    askGrantKYCToSender: 'Do you want to grant KYC to your current account?',
     askTargetAccount: 'What is the target account?',
     askAccountToBalance:
       'Which account would you like to obtain the balance from?',
@@ -192,6 +193,10 @@ export const english = {
     accountsChanged: '\nAccounts changed successfully',
     freezeAccount: 'Which account do you want to freeze?',
     unfreezeAccount: 'Which account do you want to unfreeze?',
+    grantKYCToAccount: 'Which account do you want to grant KYC to?',
+    revokeKYCFromAccount: 'Which account do you want to revoke KYC from?',
+    checkAccountKYCGranted:
+      'which account do you want to know if it has been granted the KYC for the token?',
     returnOption: {
       ...returnToMainMenu,
     },
@@ -204,6 +209,9 @@ export const english = {
       Rescue: 'Rescue',
       Freeze: 'Freeze an account',
       UnFreeze: 'Unfreeze an account',
+      GrantKYC: 'Grant KYC to an account',
+      RevokeKYC: 'Revoke KYC from an account',
+      AccountKYCGranted: 'Check KYC status from an account',
       RoleMgmt: 'Role management',
       RoleRefresh: 'Refresh roles',
       DangerZone: colors.red('Danger zone'),
@@ -303,8 +311,14 @@ export const english = {
     deleteCompleted: 'Stable coin deleted',
     pauseCompleted: 'Stable coin paused',
     unpauseCompleted: 'Stable coin unpaused',
-    freezeCompleted: 'Account freezed',
-    unfreezeCompleted: 'Account unfreezed',
+    freezeCompleted: 'Account frozen',
+    unfreezeCompleted: 'Account unfrozen',
+    KYCGranted: 'Account KYC granted',
+    KYCRevoked: 'Account KYC revoked',
+    accountKYCGranted:
+      'The account ${address} has KYC granted for the ${token} token',
+    accountKYCNotGranted:
+      'The account ${address} has not KYC granted for the ${token} token',
   },
   operation: {
     success: colors.green('Operation has been completed successfully.'),

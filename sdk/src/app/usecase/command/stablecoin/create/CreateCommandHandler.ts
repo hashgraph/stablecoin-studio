@@ -30,7 +30,6 @@ import { OperationNotAllowed } from '../error/OperationNotAllowed.js';
 import { CreateCommand, CreateCommandResponse } from './CreateCommand.js';
 import { RESERVE_DECIMALS } from '../../../../../domain/context/reserve/Reserve.js';
 
-
 @CommandHandler(CreateCommand)
 export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 	constructor(
@@ -41,7 +40,14 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 	) {}
 
 	async execute(command: CreateCommand): Promise<CreateCommandResponse> {
-		const { coin, factory, hederaERC20, reserveAddress, reserveInitialAmount, createReserve } = command;
+		const {
+			coin,
+			factory,
+			hederaERC20,
+			reserveAddress,
+			reserveInitialAmount,
+			createReserve,
+		} = command;
 		const handler = this.transactionService.getHandler();
 		if (
 			coin.maxSupply &&
@@ -53,13 +59,16 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 			);
 		}
 
-		const commonDecimals = (RESERVE_DECIMALS > coin.decimals)? RESERVE_DECIMALS : coin.decimals;
-		
+		const commonDecimals =
+			RESERVE_DECIMALS > coin.decimals ? RESERVE_DECIMALS : coin.decimals;
+
 		if (
 			createReserve &&
 			reserveInitialAmount &&
 			coin.initialSupply &&
-			coin.initialSupply.setDecimals(commonDecimals).isGreaterThan(reserveInitialAmount.setDecimals(commonDecimals))
+			coin.initialSupply
+				.setDecimals(commonDecimals)
+				.isGreaterThan(reserveInitialAmount.setDecimals(commonDecimals))
 		) {
 			throw new OperationNotAllowed(
 				'Initial supply cannot be more than the reserve initial amount',
@@ -72,7 +81,7 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 			hederaERC20,
 			createReserve,
 			reserveAddress,
-			reserveInitialAmount
+			reserveInitialAmount,
 		);
 		return Promise.resolve(
 			new CreateCommandResponse(

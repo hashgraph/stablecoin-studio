@@ -72,7 +72,9 @@ const BasicDetails = (props: BasicDetailsProps) => {
 						control={control}
 						name={'autorenewAccount'}
 						label={t('stableCoinCreation:basicDetails.autorenewAccount') ?? propertyNotFound}
-						placeholder={t('stableCoinCreation:basicDetails.autorenewAccountPlaceholder') ?? propertyNotFound}
+						placeholder={
+							t('stableCoinCreation:basicDetails.autorenewAccountPlaceholder') ?? propertyNotFound
+						}
 						value={pairingData ? pairingData.account?.id.toString() : ''}
 						isReadOnly
 					/>

@@ -55,8 +55,8 @@ const INIT_SUPPLY = BigNumber.from(0).mul(TokenFactor)
 const MAX_SUPPLY = BigNumber.from(1000).mul(TokenFactor)
 const TokenMemo = 'Hedera Accelerator Stable Coin'
 
-describe('Supplier Admin Tests - (roles)', function() {
-    before(async function() {
+describe('Supplier Admin Tests - (roles)', function () {
+    before(async function () {
         // Generate Client 1 and Client 2
         const [
             client1,
@@ -124,7 +124,7 @@ describe('Supplier Admin Tests - (roles)', function() {
         proxyAddress = result[0]
     })
 
-    it('Admin account can grant and revoke supplier(s) role to an account', async function() {
+    it('Admin account can grant and revoke supplier(s) role to an account', async function () {
         const cashInLimit = BigNumber.from(1)
 
         // Admin grants limited supplier role : success
@@ -248,7 +248,7 @@ describe('Supplier Admin Tests - (roles)', function() {
         expect(Role).to.equals(false)
     })
 
-    it('Admin account can increase, decrease and reset supplier(s) amount', async function() {
+    it('Admin account can increase, decrease and reset supplier(s) amount', async function () {
         const cashInLimit = BigNumber.from(1)
         const amount = BigNumber.from(1)
 
@@ -317,7 +317,7 @@ describe('Supplier Admin Tests - (roles)', function() {
         )
     })
 
-    it('Non Admin account can not grant nor revoke supplier(s) role to an account', async function() {
+    it('Non Admin account can not grant nor revoke supplier(s) role to an account', async function () {
         const cashInLimit = BigNumber.from(1)
 
         // Non admin grants limited supplier role : fail
@@ -383,7 +383,7 @@ describe('Supplier Admin Tests - (roles)', function() {
         )
     })
 
-    it('Non Admin account can not increase, decrease and reset supplier(s) amount', async function() {
+    it('Non Admin account can not increase, decrease and reset supplier(s) amount', async function () {
         const cashInLimit = BigNumber.from(10)
         const amount = BigNumber.from(1)
 
@@ -436,8 +436,8 @@ describe('Supplier Admin Tests - (roles)', function() {
     })
 })
 
-describe('Supplier Admin Tests - (Unlimited)', function() {
-    before(async function() {
+describe('Supplier Admin Tests - (Unlimited)', function () {
+    before(async function () {
         // Generate Client 1 and Client 2
         const [
             client1,
@@ -521,7 +521,7 @@ describe('Supplier Admin Tests - (Unlimited)', function() {
         )
     })
 
-    it('An account with unlimited supplier role can cash in 100 tokens', async function() {
+    it('An account with unlimited supplier role can cash in 100 tokens', async function () {
         const AmountToMint = BigNumber.from(100).mul(TokenFactor)
 
         // Get the initial total supply and account's balanceOf
@@ -567,7 +567,7 @@ describe('Supplier Admin Tests - (Unlimited)', function() {
         )
     })
 
-    it('An account with unlimited supplier role can not cash in more than maxSupply tokens', async function() {
+    it('An account with unlimited supplier role can not cash in more than maxSupply tokens', async function () {
         // Retrieve current total supply
         const TotalSupply = await getTotalSupply(proxyAddress, operatorClient)
 
@@ -583,7 +583,7 @@ describe('Supplier Admin Tests - (Unlimited)', function() {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('An account with unlimited supplier role can not be granted limited supplier role', async function() {
+    it('An account with unlimited supplier role can not be granted limited supplier role', async function () {
         // Grant limited supplier role to account with unlimited supplier role : fail
         await expect(
             grantSupplierRole(
@@ -596,7 +596,7 @@ describe('Supplier Admin Tests - (Unlimited)', function() {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('An account with unlimited supplier role, but revoked, can not cash in anything at all', async function() {
+    it('An account with unlimited supplier role, but revoked, can not cash in anything at all', async function () {
         // Revoke unlimited supplier role
         await revokeSupplierRole(
             proxyAddress,
@@ -618,10 +618,10 @@ describe('Supplier Admin Tests - (Unlimited)', function() {
     })
 })
 
-describe('Supplier Admin Tests - (Limited)', function() {
+describe('Supplier Admin Tests - (Limited)', function () {
     const cashInLimit = BigNumber.from(100).mul(TokenFactor)
 
-    before(async function() {
+    before(async function () {
         // Generate Client 1 and Client 2
         const [
             client1,
@@ -697,7 +697,7 @@ describe('Supplier Admin Tests - (Limited)', function() {
         )
     })
 
-    beforeEach(async function() {
+    beforeEach(async function () {
         // Reset cash in limit for account with limited supplier role
         await grantSupplierRole(
             proxyAddress,
@@ -708,7 +708,7 @@ describe('Supplier Admin Tests - (Limited)', function() {
         )
     })
 
-    it('An account with supplier role and an allowance of 100 tokens can cash in 100 tokens', async function() {
+    it('An account with supplier role and an allowance of 100 tokens can cash in 100 tokens', async function () {
         const AmountToMint = cashInLimit
 
         // Get the initial total supply and account's balanceOf
@@ -754,7 +754,7 @@ describe('Supplier Admin Tests - (Limited)', function() {
         )
     })
 
-    it('An account with supplier role and an allowance of 90 tokens can not cash in 91 tokens', async function() {
+    it('An account with supplier role and an allowance of 90 tokens can not cash in 91 tokens', async function () {
         const cashInDecreaseAmount = BigNumber.from(10).mul(TokenFactor)
 
         // decrease allowance
@@ -778,7 +778,7 @@ describe('Supplier Admin Tests - (Limited)', function() {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('An account with supplier role and an allowance of (100 + maxsupply) tokens can not cash more than maxSupply tokens', async function() {
+    it('An account with supplier role and an allowance of (100 + maxsupply) tokens can not cash more than maxSupply tokens', async function () {
         // Increase total allowance by maxsupply
         await increaseSupplierAllowance(
             proxyAddress,
@@ -800,7 +800,7 @@ describe('Supplier Admin Tests - (Limited)', function() {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('An account with supplier role and an allowance of 100 tokens, can mint 90 tokens but, later on, cannot mint 11 tokens', async function() {
+    it('An account with supplier role and an allowance of 100 tokens, can mint 90 tokens but, later on, cannot mint 11 tokens', async function () {
         const amountToMintlater = BigNumber.from(10).mul(TokenFactor)
 
         // Cashin all allowed token minus "amountToMintLater"
@@ -824,7 +824,7 @@ describe('Supplier Admin Tests - (Limited)', function() {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('An account with supplier role will reset allowance when unlimited supplier role is granted', async function() {
+    it('An account with supplier role will reset allowance when unlimited supplier role is granted', async function () {
         // Grant unlimited supplier role
         await grantUnlimitedSupplierRole(
             proxyAddress,
@@ -851,7 +851,7 @@ describe('Supplier Admin Tests - (Limited)', function() {
         )
     })
 
-    it('An account with supplier role, but revoked, can not cash in anything at all', async function() {
+    it('An account with supplier role, but revoked, can not cash in anything at all', async function () {
         // Revoke supplier role
         await revokeSupplierRole(
             proxyAddress,

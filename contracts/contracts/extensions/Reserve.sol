@@ -29,7 +29,7 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
         _;
     }
 
-    function __reserve_init(address dataFeed) internal onlyInitializing {
+    function __reserveInit(address dataFeed) internal onlyInitializing {
         _reserveAddress = dataFeed;
     }
 
@@ -63,7 +63,12 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
         }
     }
 
-    function getReserveAmount() external override(IReserve) view returns (int256) {
+    function getReserveAmount()
+        external
+        view
+        override(IReserve)
+        returns (int256)
+    {
         return _getReserveAmount();
     }
 
@@ -78,14 +83,25 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
 
     function updateReserveAddress(
         address newAddress
-    ) external override(IReserve)
-    onlyRole(_getRoleId(RoleName.ADMIN)) {
+    ) external override(IReserve) onlyRole(_getRoleId(RoleName.ADMIN)) {
         address previous = _reserveAddress;
         _reserveAddress = newAddress;
         emit ReserveAddressChanged(previous, newAddress);
     }
 
-    function getReserveAddress() external override(IReserve) view returns (address) {
+    function getReserveAddress()
+        external
+        view
+        override(IReserve)
+        returns (address)
+    {
         return _reserveAddress;
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[49] private __gap;
 }

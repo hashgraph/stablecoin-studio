@@ -27,11 +27,11 @@ import {
 
 const hre = require('hardhat')
 
-const hederaERC20Address = '0.0.49318811'
+const hederaERC20Address = '0.0.3121145' //'0.0.49414839' //'0.0.49394934'
 
-const factoryProxyAddress = '0.0.49318817'
-const factoryProxyAdminAddress = '0.0.49318815'
-const factoryAddress = '0.0.49318813'
+const factoryProxyAddress = '0.0.3121759' //'0.0.3071443' //'0.0.49414875' //'0.0.49394940'
+const factoryProxyAdminAddress = '0.0.3121755' //'0.0.3071439' //'0.0.49414871' //'0.0.49394938'
+const factoryAddress = '0.0.3121752' //'0.0.3071436' //'0.0.49414862' //'0.0.49394936'
 
 export const ADDRESS_0 = '0x0000000000000000000000000000000000000000'
 const hreConfig = hre.network.config
@@ -252,6 +252,8 @@ export type DeployParameters = {
     reserveAddress?: string
     initialAmountDataFeed?: string
     createReserve?: boolean
+    grantKYCToOriginalSender?: boolean
+    addKyc?: boolean
 }
 export async function deployContractsWithSDK({
     name,
@@ -269,6 +271,8 @@ export async function deployContractsWithSDK({
     reserveAddress = ADDRESS_0,
     initialAmountDataFeed = initialSupply,
     createReserve = true,
+    grantKYCToOriginalSender = false,
+    addKyc = false,
 }: DeployParameters): Promise<ContractId[]> {
     const AccountEvmAddress = await toEvmAddress(account, isED25519Type)
 
@@ -325,8 +329,9 @@ export async function deployContractsWithSDK({
         reserveAddress,
         reserveInitialAmount: initialAmountDataFeed,
         createReserve,
+        grantKYCToOriginalSender,
         keys: allToContract
-            ? tokenKeystoContract()
+            ? tokenKeystoContract(addKyc)
             : tokenKeystoKey(publicKey, isED25519Type),
     }
 
@@ -403,34 +408,41 @@ export async function deployContractsWithSDK({
     ]
 }
 
-function tokenKeystoContract() {
+function tokenKeystoContract(addKyc = false) {
     const keys = [
         {
             keyType: 1, // admin
-            PublicKey: '0x', // PublicKey.fromString(publicKey).toBytes(),
+            publicKey: '0x', // PublicKey.fromString(publicKey).toBytes(),
             isED25519: false,
         },
         {
             keyType: 4, // freeze
-            PublicKey: '0x', // PublicKey.fromString(publicKey).toBytes(),
+            publicKey: '0x', // PublicKey.fromString(publicKey).toBytes(),
             isED25519: false,
         },
         {
             keyType: 8, // wipe
-            PublicKey: '0x',
+            publicKey: '0x',
             isED25519: false,
         },
         {
             keyType: 16, // supply
-            PublicKey: '0x',
+            publicKey: '0x',
             isED25519: false,
         },
         {
             keyType: 64, // pause
-            PublicKey: '0x',
+            publicKey: '0x',
             isED25519: false,
         },
     ]
+    if (addKyc) {
+        keys.push({
+            keyType: 2, // KYC
+            publicKey: '0x', // PublicKey.fromString(publicKey).toBytes(),
+            isED25519: false,
+        })
+    }
 
     return keys
 }
@@ -440,27 +452,32 @@ function tokenKeystoKey(publicKey: string, isED25519: boolean) {
     const keys = [
         {
             keyType: 1, // admin
-            PublicKey: PK,
+            publicKey: PK,
+            isED25519: isED25519,
+        },
+        {
+            keyType: 2, // KYC
+            publicKey: PK,
             isED25519: isED25519,
         },
         {
             keyType: 4, // freeze
-            PublicKey: PK,
+            publicKey: PK,
             isED25519: isED25519,
         },
         {
             keyType: 8, // wipe
-            PublicKey: PK,
+            publicKey: PK,
             isED25519: isED25519,
         },
         {
             keyType: 16, // supply
-            PublicKey: PK,
+            publicKey: PK,
             isED25519: isED25519,
         },
         {
             keyType: 64, // pause
-            PublicKey: PK,
+            publicKey: PK,
             isED25519: isED25519,
         },
     ]

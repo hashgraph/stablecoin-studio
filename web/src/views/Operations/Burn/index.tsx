@@ -62,7 +62,7 @@ const BurnOperation = () => {
 			await SDKService.burn(request);
 			onSuccess();
 		} catch (error: any) {
-			console.log(JSON.stringify(error))
+			console.log(JSON.stringify(error));
 			setErrorTransactionUrl(error.transactionUrl);
 			setErrorOperation(error.message);
 			onError();
@@ -83,18 +83,18 @@ const BurnOperation = () => {
 						<Stack as='form' spacing={6}>
 							<InputController
 								rules={{
-									required: t(`global:validations.required`)??propertyNotFound,
+									required: t(`global:validations.required`) ?? propertyNotFound,
 									validate: {
 										validDecimals: (value: string) => {
 											return (
 												validateDecimalsString(value, decimals) ||
-												(t('global:validations.decimalsValidation')??propertyNotFound)
+												(t('global:validations.decimalsValidation') ?? propertyNotFound)
 											);
 										},
 										validation: (value: string) => {
 											request.amount = value;
 											const res = handleRequestValidation(request.validate('amount'));
-											
+
 											return res;
 										},
 									},
@@ -102,8 +102,8 @@ const BurnOperation = () => {
 								isRequired
 								control={control}
 								name={'amount'}
-								label={t('burn:amountLabel')??propertyNotFound}
-								placeholder={t('burn:amountPlaceholder')??propertyNotFound}
+								label={t('burn:amountLabel') ?? propertyNotFound}
+								placeholder={t('burn:amountPlaceholder') ?? propertyNotFound}
 							/>
 						</Stack>
 					</>

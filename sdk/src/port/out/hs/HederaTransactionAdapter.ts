@@ -114,7 +114,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 						}
 					}
 					const providedKeyCasted = providedKey as PublicKey;
-					key.PublicKey =
+					key.publicKey =
 						providedKeyCasted.key == PublicKey.NULL.key
 							? '0x'
 							: HPublicKey.fromString(
@@ -156,8 +156,12 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					? reserveInitialAmount.toFixedNumber()
 					: BigDecimal.ZERO.toFixedNumber(),
 				createReserve,
+				coin.grantKYCToOriginalSender
+					? coin.grantKYCToOriginalSender
+					: false,
 				keys,
 			);
+
 			const params = [
 				stableCoinToCreate,
 				'0x' +
@@ -176,8 +180,9 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				TOKEN_CREATION_COST_HBAR,
 			);
 		} catch (error) {
+			LogService.logError(error);
 			throw new Error(
-				`Unexpected error in HederaTransactionHandler create operation : ${error}`,
+				`Unexpected error in HederaTransactionHandler create operation: ${error}`,
 			);
 		}
 	}
@@ -685,6 +690,38 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		);
 	}
 
+	public async grantKyc(
+		coin: StableCoinCapabilities,
+		targetId: HederaId,
+	): Promise<TransactionResponse<boolean, Error>> {
+		const params = new Params({
+			targetId: targetId,
+		});
+		return this.performOperation(
+			coin,
+			Operation.GRANT_KYC,
+			'grantKyc',
+			120000,
+			params,
+		);
+	}
+
+	public async revokeKyc(
+		coin: StableCoinCapabilities,
+		targetId: HederaId,
+	): Promise<TransactionResponse<boolean, Error>> {
+		const params = new Params({
+			targetId: targetId,
+		});
+		return this.performOperation(
+			coin,
+			Operation.REVOKE_KYC,
+			'revokeKyc',
+			120000,
+			params,
+		);
+	}
+
 	private async performOperation(
 		coin: StableCoinCapabilities,
 		operation: Operation,
@@ -692,14 +729,14 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		gas: number,
 		params?: Params,
 		transactionType: TransactionType = TransactionType.RECEIPT,
-		contractAbi: any = HederaERC20__factory.abi
+		contractAbi: any = HederaERC20__factory.abi,
 	): Promise<TransactionResponse> {
 		try {
 			switch (CapabilityDecider.decide(coin, operation)) {
 				case Decision.CONTRACT:
 					if (!coin.coin.proxyAddress)
 						throw new Error(
-							`StableCoin ${coin.coin.name} does not have a proxy Address`,
+							`StableCoin ${coin.coin.name} does not have a proxy address`,
 						);
 					return await this.performSmartContractOperation(
 						coin.coin.proxyAddress!.value,
@@ -733,9 +770,12 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					);
 			}
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
-				message: `Unexpected error in HederaTransactionHandler ${operationName} operation : ${error}`,
-				transactionId: (error as any).error?.transactionId,
+				message: `Unexpected error in HederaTransactionHandler ${operationName} operation: ${error}`,
+				transactionId:
+					(error as any).error?.transactionId ??
+					(error as any)?.transactionId,
 			});
 		}
 	}
@@ -746,7 +786,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		gas: number,
 		params?: Params,
 		transactionType: TransactionType = TransactionType.RECEIPT,
-		contractAbi: any = HederaERC20__factory.abi
+		contractAbi: any = HederaERC20__factory.abi,
 	): Promise<TransactionResponse> {
 		const filteredContractParams: any[] =
 			params === undefined || params === null
@@ -865,6 +905,20 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				);
 				break;
 
+			case Operation.GRANT_KYC:
+				t = HTSTransactionBuilder.buildGrantTokenKycTransaction(
+					coin.coin.tokenId?.value!,
+					params.targetId!.toString(),
+				);
+				break;
+
+			case Operation.REVOKE_KYC:
+				t = HTSTransactionBuilder.buildRevokeTokenKycTransaction(
+					coin.coin.tokenId?.value!,
+					params.targetId!.toString(),
+				);
+				break;
+
 			case Operation.DELETE:
 				t = HTSTransactionBuilder.buildDeleteTransaction(
 					coin.coin.tokenId?.value!,
@@ -872,7 +926,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				break;
 
 			default:
-				throw new Error(`Rescue operation does not exist through HTS`);
+				throw new Error(`Operation does not exist through HTS`);
 		}
 		return this.signAndSendTransaction(t, TransactionType.RECEIPT);
 	}

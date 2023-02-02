@@ -41,6 +41,9 @@ export enum ErrorCode {
 	RoleNotAssigned = '20003',
 	OperationNotAllowed = '20004',
 	InsufficientFunds = '20005',
+	KYCNotEnabled = '20006',
+	AccountNotKyc = '20007',
+	AccountFreeze = '20008',
 	ReceiptNotReceived = '30001',
 	ContractNotFound = '30002',
 	Unexpected = '30003',
@@ -89,5 +92,9 @@ export default class BaseError extends Error {
 		this.errorCode = code;
 		this.errorCategory = getErrorCategory(code);
 		Object.setPrototypeOf(this, BaseError.prototype);
+	}
+
+	toString(stack = false): string {
+		return `${this.errorCode} - ${stack ? this.stack : this.message}`;
 	}
 }

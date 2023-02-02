@@ -1,29 +1,38 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
-import "./TokenOwner.sol";
-import "./Roles.sol";
-import "./Interfaces/IDeletable.sol";
-import "../hts-precompile/IHederaTokenService.sol";
+import './TokenOwner.sol';
+import './Roles.sol';
+import './Interfaces/IDeletable.sol';
+import '../hts-precompile/IHederaTokenService.sol';
 
 abstract contract Deletable is IDeletable, TokenOwner, Roles {
-    
     /**
-     * @dev Deletes the token 
+     * @dev Deletes the token
      *
      */
-    function deleteToken() 
-        external       
-        onlyRole(_getRoleId(RoleName.DELETE)) 
-        override(IDeletable) 
+    function deleteToken()
+        external
+        override(IDeletable)
+        onlyRole(_getRoleId(RoleName.DELETE))
         returns (bool)
-    {         
-        emit TokenDeleted(_getTokenAddress()); 
+    {
+        address currentTokenAddress = _getTokenAddress();
 
-        int256 responseCode = IHederaTokenService(PRECOMPILED_ADDRESS).deleteToken(_getTokenAddress());
+        int256 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
+            .deleteToken(currentTokenAddress);
 
         bool success = _checkResponse(responseCode);
-        
+
+        emit TokenDeleted(currentTokenAddress);
+
         return success;
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[50] private __gap;
 }

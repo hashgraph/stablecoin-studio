@@ -33,7 +33,7 @@ describe(`<${ModalsHandler.name} />`, () => {
 		expect(title).toHaveTextContent(props.modalActionProps.title);
 	});
 
-	test('Cancel button call onClose function', async() => {
+	test('Cancel button call onClose function', async () => {
 		const component = render(<ModalsHandler {...props} />);
 
 		const cancelButton = component.getByTestId('modal-action-cancel-button');
@@ -45,7 +45,7 @@ describe(`<${ModalsHandler.name} />`, () => {
 		expect(props.modalActionProps.onClose).toHaveBeenCalled();
 	});
 
-	test('Confirm button call onConfirm function', async() => {
+	test('Confirm button call onConfirm function', async () => {
 		const component = render(<ModalsHandler {...props} />);
 
 		const confirmButton = component.getByTestId('modal-action-confirm-button');

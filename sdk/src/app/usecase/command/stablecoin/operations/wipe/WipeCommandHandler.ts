@@ -26,7 +26,9 @@ import BigDecimal from '../../../../../../domain/context/shared/BigDecimal.js';
 import AccountService from '../../../../../service/AccountService.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
+import { GetAccountTokenRelationshipQuery } from '../../../../query/account/tokenRelationship/GetAccountTokenRelationshipQuery.js';
 import { DecimalsOverRange } from '../../error/DecimalsOverRange.js';
+import { StableCoinNotAssociated } from '../../error/StableCoinNotAssociated.js';
 import { WipeCommand, WipeCommandResponse } from './WipeCommand.js';
 
 @CommandHandler(WipeCommand)
@@ -44,6 +46,20 @@ export class WipeCommandHandler implements ICommandHandler<WipeCommand> {
 		const { amount, targetId, tokenId } = command;
 		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
+
+		const tokenRelationship = (
+			await this.stableCoinService.queryBus.execute(
+				new GetAccountTokenRelationshipQuery(targetId, tokenId),
+			)
+		).payload;
+
+		if (!tokenRelationship) {
+			throw new StableCoinNotAssociated(
+				targetId.toString(),
+				tokenId.toString(),
+			);
+		}
+
 		const capabilities = await this.stableCoinService.getCapabilities(
 			account,
 			tokenId,

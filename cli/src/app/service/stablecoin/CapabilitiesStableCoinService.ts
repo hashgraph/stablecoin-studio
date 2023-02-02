@@ -15,10 +15,15 @@ export default class CapabilitiesStableCoinsService extends Service {
     tokenId: string,
     account: RequestAccount,
     tokenIsPaused?: boolean,
-    tokenIsDeleted?: boolean
+    tokenIsDeleted?: boolean,
   ): Promise<StableCoinCapabilities> {
     const capabilities = await StableCoin.capabilities(
-      new CapabilitiesRequest({ account, tokenId, tokenIsPaused, tokenIsDeleted }),
+      new CapabilitiesRequest({
+        account,
+        tokenId,
+        tokenIsPaused,
+        tokenIsDeleted,
+      }),
     );
 
     return capabilities;

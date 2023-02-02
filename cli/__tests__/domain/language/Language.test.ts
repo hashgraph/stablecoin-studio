@@ -24,6 +24,7 @@ describe(`Testing ${Language.name}.ts class`, () => {
     expect(allTexts).not.toBeNull();
   });
 
+  // eslint-disable-next-line jest/no-commented-out-tests
   /*it('Should return not null when request some array', () => {
     const allTexts = language.getArray('wizard.options');
 

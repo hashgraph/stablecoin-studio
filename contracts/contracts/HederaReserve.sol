@@ -5,8 +5,8 @@ import './Interfaces/IHederaReserve.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 
 contract HederaReserve is IHederaReserve, Initializable {
-    uint8 private constant _decimals = 2;
-    uint80 private constant _cRoundId = 0;
+    uint8 private constant _DECIMALS = 2;
+    uint80 private constant _ROUND_ID = 0;
     int256 private _reserveAmount;
     address private _admin;
 
@@ -19,15 +19,13 @@ contract HederaReserve is IHederaReserve, Initializable {
     }
 
     // modifier to check that an address is not 0
-    modifier checkAddressIsNotZero(address addr)
-    {
+    modifier checkAddressIsNotZero(address addr) {
         _checkAddressIsNotZero(addr);
         _;
     }
 
-    function _checkAddressIsNotZero(address addr) internal pure
-    {
-        require(addr != address(0), "Provided address is 0");
+    function _checkAddressIsNotZero(address addr) internal pure {
+        require(addr != address(0), 'Provided address is 0');
     }
 
     /**
@@ -35,11 +33,10 @@ contract HederaReserve is IHederaReserve, Initializable {
      *
      *  @param initialReserve The initial amount to be on the reserve
      */
-    function initialize(int256 initialReserve, address admin)
-        external
-        initializer
-        checkAddressIsNotZero(admin)
-    {
+    function initialize(
+        int256 initialReserve,
+        address admin
+    ) external initializer checkAddressIsNotZero(admin) {
         _reserveAmount = initialReserve;
         _admin = admin;
         emit ReserveInitialized(initialReserve);
@@ -60,11 +57,9 @@ contract HederaReserve is IHederaReserve, Initializable {
      *
      *  @param admin The new admin
      */
-    function setAdmin(address admin) 
-        external 
-        isAdmin
-        checkAddressIsNotZero(admin) 
-    {
+    function setAdmin(
+        address admin
+    ) external isAdmin checkAddressIsNotZero(admin) {
         emit AdminChanged(_admin, admin);
         _admin = admin;
     }
@@ -75,7 +70,7 @@ contract HederaReserve is IHederaReserve, Initializable {
      *  @return The decimals
      */
     function decimals() external pure returns (uint8) {
-        return _decimals;
+        return _DECIMALS;
     }
 
     /**
@@ -106,10 +101,10 @@ contract HederaReserve is IHederaReserve, Initializable {
         external
         pure
         returns (
-            uint80, /* roundId */
-            int256, /* answer */
-            uint256, /* startedAt */
-            uint256, /* updatedAt */
+            uint80 /* roundId */,
+            int256 /* answer */,
+            uint256 /* startedAt */,
+            uint256 /* updatedAt */,
             uint80 /* answeredInRound */
         )
     {
@@ -131,11 +126,11 @@ contract HederaReserve is IHederaReserve, Initializable {
         )
     {
         return (
-            _cRoundId,
+            _ROUND_ID,
             _reserveAmount,
             block.timestamp,
             block.timestamp,
-            _cRoundId
+            _ROUND_ID
         );
     }
 }

@@ -35,6 +35,7 @@ import { HederaId } from '../../domain/context/shared/HederaId.js';
 import { GetAccountInfoQuery } from '../../app/usecase/query/account/info/GetAccountInfoQuery.js';
 import { InvalidResponse } from '../out/mirror/error/InvalidResponse.js';
 import { handleValidation } from './Common.js';
+import { LogError } from '../../core/decorator/LogErrorDecorator.js';
 
 export { AccountViewModel, StableCoinListViewModel };
 
@@ -54,6 +55,7 @@ class AccountInPort implements IAccountInPort {
 		private readonly queryBus: QueryBus = Injectable.resolve(QueryBus),
 	) {}
 
+	@LogError
 	async getPublicKey(request: GetPublicKeyRequest): Promise<PublicKey> {
 		handleValidation('GetPublicKeyRequest', request);
 		const res = await this.queryBus.execute(
@@ -70,6 +72,7 @@ class AccountInPort implements IAccountInPort {
 		return res.account.publicKey;
 	}
 
+	@LogError
 	async listStableCoins(
 		request: GetListStableCoinRequest,
 	): Promise<StableCoinListViewModel> {
@@ -83,6 +86,7 @@ class AccountInPort implements IAccountInPort {
 		).list;
 	}
 
+	@LogError
 	async getInfo(request: GetAccountInfoRequest): Promise<AccountViewModel> {
 		handleValidation('GetAccountInfoRequest', request);
 		return (

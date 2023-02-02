@@ -52,8 +52,10 @@ export default class PrivateKey implements KeyProps {
 	}
 
 	public validateType(type?: string): KeyType {
-		if(type && Object.keys(KeyType).includes(type)){
-			return Object.entries(KeyType).filter(([key,]) => key === type)[0][1];
+		if (type && Object.keys(KeyType).includes(type)) {
+			return Object.entries(KeyType).filter(
+				([key]) => key === type,
+			)[0][1];
 		}
 		return KeyType.NULL;
 	}

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as inquirer from 'inquirer';
 import figlet from 'figlet-promised';
 import Service from '../Service.js';
@@ -307,7 +308,8 @@ export default class UtilitiesService extends Service {
    */
   public async defaultPublicKeyAsk(): Promise<{ key: string }> {
     let publicKey: string = await this.defaultSingleAsk(
-      language.getText('configuration.askPublicKey') + ` '96|64|66|68 characters'`,
+      language.getText('configuration.askPublicKey') +
+        ` '96|64|66|68 characters'`,
       undefined,
     );
 
@@ -320,7 +322,7 @@ export default class UtilitiesService extends Service {
       return await this.defaultPublicKeyAsk();
     }
 
-    return { key: publicKey};
+    return { key: publicKey };
   }
 
   public async drawTableListStableCoin(
@@ -355,11 +357,16 @@ export default class UtilitiesService extends Service {
   }
 
   public async askErrorConfirmation(
-    cll?: (cause?: string) => unknown,
-    cause?: string,
+    cll?: (cause?: any) => unknown,
+    cause?: any,
   ): Promise<void> {
     await this.cleanAndShowBanner();
     if (cause) {
+      if (cause.transactionUrl) {
+        this.showError(
+          `You can see the transaction here: ${cause.transactionUrl}\n`,
+        );
+      }
       this.showError(`${cause}\n`);
     }
     await this.defaultErrorConfirm(language.getText('general.error'));

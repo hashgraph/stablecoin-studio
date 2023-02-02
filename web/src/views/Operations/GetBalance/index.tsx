@@ -52,7 +52,7 @@ const GetBalanceOperation = () => {
 	const handleGetBalance: ModalsHandlerActionsProps['onConfirm'] = async ({
 		onSuccess,
 		onError,
-		onLoading
+		onLoading,
 	}) => {
 		try {
 			onLoading();
@@ -85,7 +85,7 @@ const GetBalanceOperation = () => {
 						<Stack as='form' spacing={6} maxW='520px'>
 							<InputController
 								rules={{
-									required: t('global:validations.required')??propertyNotFound,
+									required: t('global:validations.required') ?? propertyNotFound,
 									validate: {
 										validation: (value: string) => {
 											request.targetId = value;
@@ -97,8 +97,8 @@ const GetBalanceOperation = () => {
 								isRequired
 								control={control}
 								name='targetAccount'
-								placeholder={t('getBalance:accountPlaceholder')??propertyNotFound}
-								label={t('getBalance:accountLabel')??propertyNotFound}
+								placeholder={t('getBalance:accountPlaceholder') ?? propertyNotFound}
+								label={t('getBalance:accountLabel') ?? propertyNotFound}
 							/>
 						</Stack>
 					</>

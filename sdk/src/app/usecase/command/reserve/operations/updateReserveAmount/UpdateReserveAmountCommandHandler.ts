@@ -22,20 +22,30 @@ import { ICommandHandler } from '../../../../../../core/command/CommandHandler.j
 import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
 import TransactionService from '../../../../../service/TransactionService.js';
-import { UpdateReserveAmountCommand, UpdateReserveAmountCommandResponse } from './UpdateReserveAmountCommand.js';
+import {
+	UpdateReserveAmountCommand,
+	UpdateReserveAmountCommandResponse,
+} from './UpdateReserveAmountCommand.js';
 
 @CommandHandler(UpdateReserveAmountCommand)
-export class UpdateReserveAmountCommandHandler implements ICommandHandler<UpdateReserveAmountCommand> {
+export class UpdateReserveAmountCommandHandler
+	implements ICommandHandler<UpdateReserveAmountCommand>
+{
 	constructor(
 		@lazyInject(TransactionService)
 		public readonly transactionService: TransactionService,
 	) {}
 
-	async execute(command: UpdateReserveAmountCommand): Promise<UpdateReserveAmountCommandResponse> {
+	async execute(
+		command: UpdateReserveAmountCommand,
+	): Promise<UpdateReserveAmountCommandResponse> {
 		const { reserveAddress, reserveAmount } = command;
 		const handler = this.transactionService.getHandler();
 
-		const res = await handler.updateReserveAmount(reserveAddress, reserveAmount);
+		const res = await handler.updateReserveAmount(
+			reserveAddress,
+			reserveAmount,
+		);
 		return Promise.resolve(
 			new UpdateReserveAmountCommandResponse(res.error === undefined),
 		);

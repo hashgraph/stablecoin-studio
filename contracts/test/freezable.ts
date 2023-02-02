@@ -49,8 +49,8 @@ const INIT_SUPPLY = BigNumber.from(10).mul(TokenFactor)
 const MAX_SUPPLY = BigNumber.from(10).mul(TokenFactor)
 const TokenMemo = 'Hedera Accelerator Stable Coin'
 
-describe('Freeze Tests', function() {
-    before(async function() {
+describe('Freeze Tests', function () {
+    before(async function () {
         // Generate Client 1 and Client 2
         const [
             client1,
@@ -118,7 +118,7 @@ describe('Freeze Tests', function() {
         proxyAddress = result[0]
     })
 
-    it('Admin account can grant and revoke freeze role to an account', async function() {
+    it('Admin account can grant and revoke freeze role to an account', async function () {
         // Admin grants freeze role : success
         let result = await hasRole(
             FREEZE_ROLE,
@@ -164,7 +164,7 @@ describe('Freeze Tests', function() {
         expect(result).to.equals(false)
     })
 
-    it('Non Admin account can not grant freeze role to an account', async function() {
+    it('Non Admin account can not grant freeze role to an account', async function () {
         // Non Admin grants freeze role : fail
         await expect(
             grantRole(
@@ -177,7 +177,7 @@ describe('Freeze Tests', function() {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('Non Admin account can not revoke freeze role to an account', async function() {
+    it('Non Admin account can not revoke freeze role to an account', async function () {
         // Non Admin revokes freeze role : fail
         await grantRole(
             FREEZE_ROLE,
@@ -206,7 +206,7 @@ describe('Freeze Tests', function() {
         )
     })
 
-    it("An account without freeze role can't freeze transfers of the token for the account", async function() {
+    it("An account without freeze role can't freeze transfers of the token for the account", async function () {
         await expect(
             freeze(
                 proxyAddress,
@@ -217,7 +217,7 @@ describe('Freeze Tests', function() {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it("An account without freeze role can't unfreeze transfers of the token for the account", async function() {
+    it("An account without freeze role can't unfreeze transfers of the token for the account", async function () {
         await expect(
             unfreeze(
                 proxyAddress,
@@ -228,7 +228,7 @@ describe('Freeze Tests', function() {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('An account with freeze role can freeze transfers of the token for the account', async function() {
+    it('An account with freeze role can freeze transfers of the token for the account', async function () {
         await grantRole(
             FREEZE_ROLE,
             proxyAddress,
@@ -262,7 +262,7 @@ describe('Freeze Tests', function() {
         )
     })
 
-    it('An account with freeze role can unfreeze transfers of the token for the account', async function() {
+    it('An account with freeze role can unfreeze transfers of the token for the account', async function () {
         await grantRole(
             FREEZE_ROLE,
             proxyAddress,
@@ -290,7 +290,7 @@ describe('Freeze Tests', function() {
         )
     })
 
-    it('When freezing transfers of the token for the account a rescue operation can not be performed', async function() {
+    it('When freezing transfers of the token for the account a rescue operation can not be performed', async function () {
         const AmountToRescue = BigNumber.from(1).mul(TokenFactor)
 
         await freeze(
@@ -312,7 +312,7 @@ describe('Freeze Tests', function() {
         )
     })
 
-    it('When unfreezing transfers of the token for the account a rescue operation can be performed', async function() {
+    it('When unfreezing transfers of the token for the account a rescue operation can be performed', async function () {
         const AmountToRescue = BigNumber.from(1).mul(TokenFactor)
 
         await freeze(

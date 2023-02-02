@@ -7,10 +7,9 @@ import { screen } from '@testing-library/react';
 const mockStore = configureMockStore();
 
 describe(`<${StableCoinProof.name} />`, () => {
-
 	afterEach(() => {
 		jest.clearAllMocks();
-	})
+	});
 
 	test('should render correctly', () => {
 		const component = render(<StableCoinProof />);
@@ -45,6 +44,10 @@ describe(`<${StableCoinProof.name} />`, () => {
 				key: 'key',
 				type: 'ED25519',
 			},
+			kycKey: {
+				key: 'key',
+				type: 'ED25519',
+			},
 			wipeKey: {
 				id: '0.0.48160285',
 			},
@@ -60,7 +63,7 @@ describe(`<${StableCoinProof.name} />`, () => {
 				selectedStableCoin,
 			},
 		});
-		
+
 		const getAddressMock = sdkMock('getReserveAddress');
 		const getAmountMock = sdkMock('getReserveAmount');
 

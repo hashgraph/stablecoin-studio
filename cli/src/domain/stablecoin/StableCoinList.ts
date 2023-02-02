@@ -1,4 +1,3 @@
-
 export interface StableCoinList {
   id: string;
   symbol: string;

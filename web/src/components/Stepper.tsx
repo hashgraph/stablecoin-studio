@@ -50,17 +50,22 @@ const Stepper = (props: StepperProps) => {
 		setCurrentStep,
 		handleFirstButtonSecondary,
 		handleLastButtonPrimary,
-		supplyKey
+		supplyKey,
 	} = props;
 
 	const handleStep = (e: MouseEvent<HTMLButtonElement>, index: number, type: 'next' | 'prev') => {
 		e.preventDefault();
 
-	    if (supplyKey !== 2) {
-			return type === 'next' ? index === 2 ? setCurrentStep(4) : setCurrentStep(index + 1) : 
-				index === 4 ? setCurrentStep(2) : setCurrentStep(index - 1);
+		if (supplyKey !== 2) {
+			return type === 'next'
+				? index === 2
+					? setCurrentStep(4)
+					: setCurrentStep(index + 1)
+				: index === 4
+				? setCurrentStep(2)
+				: setCurrentStep(index - 1);
 		} else {
-			return type === 'next' ? setCurrentStep(index + 1) : setCurrentStep(index - 1);			
+			return type === 'next' ? setCurrentStep(index + 1) : setCurrentStep(index - 1);
 		}
 	};
 
@@ -79,9 +84,7 @@ const Stepper = (props: StepperProps) => {
 						<Tab
 							key={index}
 							p='15px'
-					
-							isDisabled={ supplyKey !== 2 && index === 3 || index > currentStep }
-					
+							isDisabled={(supplyKey !== 2 && index === 3) || index > currentStep}
 							onClick={handleChangeTab}
 							_hover={{
 								cursor: index < currentStep ? 'pointer' : 'default',

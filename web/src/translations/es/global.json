@@ -1,35 +1,35 @@
 {
-  "login": {
-    "button": "Entrar",
-    "greeting": "Bienvenido a la",
-    "pretitle": "Iniciar sesión",
-    "subtitle": "Ejemplo de subtitlo",
-    "subtitleImage": "Ejemplo de subtitulo de imagen",
-    "title": "IOB App Genérica"
-  },
-  "topbar": {
-    "license": "IOB Licencia",
-    "logout": "Cerrar sesión",
-    "title": "IOB App Genérica"
-  },
-  "sidebar": {
-    "option1": "Cuadro de mandos",
-    "option2": "Catálogo Comp.",
-    "settings": "Configuración"
-  },
-  "sidebarContent": {
-    "message": "Bienvenido, "
-  },
-  "components": {
-    "header": {
-      "goBack": "Volver"
-    },
-    "controller": {
-      "required": "Es obligatorio",
-      "tooManyChar": "Se ha superado la longitud máxima"
-    }
-  },
-  "dashboard": {
-    "title": "Cuadro de mandos"
-  }
+	"login": {
+		"button": "Entrar",
+		"greeting": "Bienvenido a la",
+		"pretitle": "Iniciar sesión",
+		"subtitle": "Ejemplo de subtitlo",
+		"subtitleImage": "Ejemplo de subtitulo de imagen",
+		"title": "IOB App Genérica"
+	},
+	"topbar": {
+		"license": "IOB Licencia",
+		"logout": "Cerrar sesión",
+		"title": "IOB App Genérica"
+	},
+	"sidebar": {
+		"option1": "Cuadro de mandos",
+		"option2": "Catálogo Comp.",
+		"settings": "Configuración"
+	},
+	"sidebarContent": {
+		"message": "Bienvenido, "
+	},
+	"components": {
+		"header": {
+			"goBack": "Volver"
+		},
+		"controller": {
+			"required": "Es obligatorio",
+			"tooManyChar": "Se ha superado la longitud máxima"
+		}
+	},
+	"dashboard": {
+		"title": "Cuadro de mandos"
+	}
 }

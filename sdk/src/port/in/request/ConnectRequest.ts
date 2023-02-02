@@ -21,10 +21,7 @@
 import { OptionalField } from '../../../core/decorator/OptionalDecorator.js';
 import { Environment } from '../../../domain/context/network/Environment.js';
 import { SupportedWallets } from '../../../domain/context/network/Wallet.js';
-import {
-	BaseRequest,
-	RequestAccount,
-} from './BaseRequest.js';
+import { BaseRequest, RequestAccount } from './BaseRequest.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
 

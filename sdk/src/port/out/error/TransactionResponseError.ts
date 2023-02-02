@@ -18,7 +18,7 @@
  *
  */
 
-import BaseError, { ErrorCode } from "../../../core/error/BaseError.js";
+import BaseError, { ErrorCode } from '../../../core/error/BaseError.js';
 
 const REGEX_TRANSACTION =
 	/^(0|(?:[1-9]\d*))\.(0|(?:[1-9]\d*))\.(0|(?:[1-9]\d*))(?:-([a-z]{5}))?@([1-9]\d*)\.([1-9]\d*)$/;
@@ -35,19 +35,16 @@ type TransactionResponseErrorPayload = {
 
 export class TransactionResponseError extends BaseError {
 	error: TransactionResponseErrorPayload;
-	transactionUrl: string|null;
+	transactionUrl: string | null;
 	constructor(val: TransactionResponseErrorPayload) {
 		super(ErrorCode.TransactionError, `Transaction failed: ${val.message}`);
 		this.error = val;
 		if (val.transactionId) {
-			if(val.RPC_relay){
-				this.transactionUrl =`${HASHSCAN_URL_RPC_RELAY}${val.transactionId}`;
+			if (val.RPC_relay) {
+				this.transactionUrl = `${HASHSCAN_URL_RPC_RELAY}${val.transactionId}`;
+			} else {
+				this.transactionUrl = `${HASHSCAN_URL}${val.transactionId}`;
 			}
-			else{
-				const transaction =
-					val.transactionId.match(REGEX_TRANSACTION) ?? [];
-				this.transactionUrl = `${HASHSCAN_URL}${transaction[1]}.${transaction[2]}.${transaction[3]}-${transaction[5]}-${transaction[6]}`;
-			}	
 		}
 	}
 }

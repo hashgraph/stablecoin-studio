@@ -1,0 +1,12 @@
+{
+	"title": "Grant KYC operation",
+	"operationTitle": "Operation details",
+	"accountLabel": "Enter the account",
+	"accountPlaceholder": "0.0.0",
+	"modalSuccess": "The account {{ account }} has been granted KYC.",
+	"modalAction": {
+		"subtitle": "Operation details review",
+		"account": "Account",
+		"accept": "Grant KYC to account"
+	}
+}

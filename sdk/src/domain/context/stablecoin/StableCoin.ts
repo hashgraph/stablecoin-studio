@@ -74,6 +74,7 @@ export interface StableCoinProps {
 	tokenType?: TokenType;
 	supplyType?: TokenSupplyType;
 	tokenId?: HederaId;
+	grantKYCToOriginalSender?: boolean;
 	autoRenewAccount?: HederaId;
 	autoRenewAccountPeriod?: number;
 	deleted?: boolean;
@@ -102,6 +103,7 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 	tokenType?: TokenType;
 	supplyType?: TokenSupplyType;
 	tokenId?: HederaId;
+	grantKYCToOriginalSender?: boolean;
 	autoRenewAccount?: HederaId;
 	autoRenewAccountPeriod?: number;
 	deleted?: boolean;
@@ -132,6 +134,7 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 			paused,
 			evmProxyAddress,
 			proxyAddress,
+			grantKYCToOriginalSender,
 		} = params;
 		super();
 		this.adminKey = adminKey;
@@ -141,9 +144,7 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 		this.initialSupply = initialSupply ?? BigDecimal.ZERO;
 		this.totalSupply = totalSupply ?? BigDecimal.ZERO;
 		this.maxSupply = maxSupply ?? undefined;
-		this.memo = memo ? 
-				 memo
-				 : StableCoinMemo.empty().toJson();
+		this.memo = memo ? memo : StableCoinMemo.empty().toJson();
 		this.freezeKey = freezeKey;
 		this.freezeDefault = freezeDefault ?? false;
 		this.kycKey = kycKey;
@@ -152,12 +153,11 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 		this.supplyKey = supplyKey;
 		this.treasury = treasury;
 		this.tokenType = tokenType ?? TokenType.FUNGIBLE_COMMON;
-		this.supplyType =
-			(supplyType)
-				? supplyType
-				: (maxSupply && maxSupply.isGreaterThan(BigDecimal.ZERO)) 
-					? TokenSupplyType.FINITE
-					: TokenSupplyType.INFINITE;
+		this.supplyType = supplyType
+			? supplyType
+			: maxSupply && maxSupply.isGreaterThan(BigDecimal.ZERO)
+			? TokenSupplyType.FINITE
+			: TokenSupplyType.INFINITE;
 		this.tokenId = tokenId ?? HederaId.from('0.0.0');
 		this.autoRenewAccount = autoRenewAccount ?? HederaId.from('0.0.0');
 		this.autoRenewAccountPeriod = autoRenewAccountPeriod ?? 0;
@@ -165,6 +165,7 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 		this.deleted = deleted ?? false;
 		this.evmProxyAddress = evmProxyAddress;
 		this.proxyAddress = proxyAddress;
+		this.grantKYCToOriginalSender = grantKYCToOriginalSender;
 	}
 
 	public static checkName(value: string): BaseError[] {
@@ -286,7 +287,7 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 
 	public static checkReserveAmount(
 		reserveAmount: BigDecimal,
-		decimals: number
+		decimals: number,
 	): BaseError[] {
 		const list: BaseError[] = [];
 
@@ -300,18 +301,24 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 		}
 		if (CheckNums.isGreaterThan(reserveAmount, max)) {
 			list.push(
-				new ReserveAmountOverLimit(reserveAmount.toString(), max.toString()),
-			);			
+				new ReserveAmountOverLimit(
+					reserveAmount.toString(),
+					max.toString(),
+				),
+			);
 		}
 
 		return list;
-	}	
+	}
 
 	public static checkMemo(value: string): BaseError[] {
 		const maxMemoLength = ONE_HUNDRED;
 		const errorList: BaseError[] = [];
 
-		if (CheckStrings.isNotEmpty(value) && !CheckStrings.isLengthUnder(value, maxMemoLength))
+		if (
+			CheckStrings.isNotEmpty(value) &&
+			!CheckStrings.isLengthUnder(value, maxMemoLength)
+		)
 			errorList.push(new MemoLength(value, maxMemoLength));
 
 		return errorList;

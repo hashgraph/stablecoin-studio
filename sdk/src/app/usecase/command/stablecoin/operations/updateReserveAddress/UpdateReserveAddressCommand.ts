@@ -30,7 +30,7 @@ export class UpdateReserveAddressCommandResponse implements CommandResponse {
 export class UpdateReserveAddressCommand extends Command<UpdateReserveAddressCommandResponse> {
 	constructor(
 		public readonly tokenId: HederaId,
-        public readonly reserveAddress: ContractId
+		public readonly reserveAddress: ContractId,
 	) {
 		super();
 	}

@@ -51,15 +51,13 @@ export default class AccountService extends Service {
 
 	async getAccountInfo(id: HederaId): Promise<Account> {
 		const account = (
-			await this.queryBus.execute(
-				new GetAccountInfoQuery(id),
-			)
+			await this.queryBus.execute(new GetAccountInfoQuery(id))
 		).account;
 		if (!account.id) throw new AccountIdNotValid(id.toString());
 		return new Account({
 			id: account.id,
 			publicKey: account.publicKey,
-			evmAddress: account.accountEvmAddress
-		})
+			evmAddress: account.accountEvmAddress,
+		});
 	}
 }

@@ -12,9 +12,7 @@ export default class AssociateStableCoinsService extends Service {
     super('Associate Stable Coin');
   }
 
-  public async associateStableCoin(
-    account: RequestAccount,
-  ): Promise<void> {
+  public async associateStableCoin(account: RequestAccount): Promise<void> {
     let respDetail;
 
     await utilsService.showSpinner(

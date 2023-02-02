@@ -65,7 +65,6 @@ import { FreezeCommand } from '../../app/usecase/command/stablecoin/operations/f
 import { UnFreezeCommand } from '../../app/usecase/command/stablecoin/operations/unfreeze/UnFreezeCommand.js';
 import { GetAccountInfoQuery } from '../../app/usecase/query/account/info/GetAccountInfoQuery.js';
 import { handleValidation } from './Common.js';
-import { GetAccountTokenAssociatedQuery } from '../../app/usecase/query/account/tokenAssociated/GetAccountTokenAssociatedQuery.js';
 import UpdateReserveAddressRequest from './request/UpdateReserveAddressRequest.js';
 import GetReserveAddressRequest from './request/GetReserveAddressRequest.js';
 import { UpdateReserveAddressCommand } from '../../app/usecase/command/stablecoin/operations/updateReserveAddress/UpdateReserveAddressCommand.js';
@@ -73,11 +72,17 @@ import { RESERVE_DECIMALS } from '../../domain/context/reserve/Reserve.js';
 import ReserveViewModel from '../out/mirror/response/ReserveViewModel.js';
 import { BalanceOfQuery } from '../../app/usecase/query/stablecoin/balanceof/BalanceOfQuery.js';
 import { GetReserveAddressQuery } from '../../app/usecase/query/stablecoin/getReserveAddress/GetReserveAddressQuey.js';
+import KYCRequest from './request/KYCRequest.js';
+import { GrantKycCommand } from '../../app/usecase/command/stablecoin/operations/grantKyc/GrantKycCommand.js';
+import { RevokeKycCommand } from '../../app/usecase/command/stablecoin/operations/revokeKyc/RevokeKycCommand.js';
+import { LogError } from '../../core/decorator/LogErrorDecorator.js';
+import { GetAccountTokenRelationshipQuery } from '../../app/usecase/query/account/tokenRelationship/GetAccountTokenRelationshipQuery.js';
+import { KycStatus } from '../out/mirror/response/AccountTokenRelationViewModel.js';
 
-export const HederaERC20AddressTestnet = '0.0.2383187';
+export const HederaERC20AddressTestnet = '0.0.3121145';
 export const HederaERC20AddressPreviewnet = '0.0.11111111';
 
-export const FactoryAddressTestnet = '0.0.2383520';
+export const FactoryAddressTestnet = '0.0.3121759';
 export const FactoryAddressPreviewnet = '0.0.11111111';
 
 export { StableCoinViewModel, StableCoinListViewModel, ReserveViewModel };
@@ -109,6 +114,9 @@ interface IStableCoinInPort {
 	updateReserveAddress(
 		request: UpdateReserveAddressRequest,
 	): Promise<boolean>;
+	grantKyc(request: KYCRequest): Promise<boolean>;
+	revokeKyc(request: KYCRequest): Promise<boolean>;
+	isAccountKYCGranted(request: KYCRequest): Promise<boolean>;
 }
 
 class StableCoinInPort implements IStableCoinInPort {
@@ -122,6 +130,7 @@ class StableCoinInPort implements IStableCoinInPort {
 		),
 	) {}
 
+	@LogError
 	async create(req: CreateRequest): Promise<{
 		coin: StableCoinViewModel;
 		reserve: ReserveViewModel;
@@ -165,6 +174,12 @@ class StableCoinInPort implements IStableCoinInPort {
 						type: req.wipeKey.type,
 				  })
 				: undefined,
+			kycKey: req.kycKey
+				? new PublicKey({
+						key: req.kycKey.key,
+						type: req.kycKey.type,
+				  })
+				: undefined,
 			pauseKey: req.pauseKey
 				? new PublicKey({
 						key: req.pauseKey.key,
@@ -182,6 +197,9 @@ class StableCoinInPort implements IStableCoinInPort {
 			autoRenewAccount: req.autoRenewAccount
 				? new HederaId(req.autoRenewAccount)
 				: undefined,
+			grantKYCToOriginalSender: req.grantKYCToOriginalSender
+				? req.grantKYCToOriginalSender
+				: false,
 		};
 
 		const createResponse = await this.commandBus.execute(
@@ -213,6 +231,7 @@ class StableCoinInPort implements IStableCoinInPort {
 		};
 	}
 
+	@LogError
 	async getInfo(
 		request: GetStableCoinDetailsRequest,
 	): Promise<StableCoinViewModel> {
@@ -226,6 +245,7 @@ class StableCoinInPort implements IStableCoinInPort {
 		return coin;
 	}
 
+	@LogError
 	async cashIn(request: CashInRequest): Promise<boolean> {
 		const { tokenId, amount, targetId } = request;
 		handleValidation('CashInRequest', request);
@@ -241,6 +261,7 @@ class StableCoinInPort implements IStableCoinInPort {
 		).payload;
 	}
 
+	@LogError
 	async burn(request: BurnRequest): Promise<boolean> {
 		const { tokenId, amount } = request;
 		handleValidation('BurnRequest', request);
@@ -252,6 +273,7 @@ class StableCoinInPort implements IStableCoinInPort {
 		).payload;
 	}
 
+	@LogError
 	async rescue(request: RescueRequest): Promise<boolean> {
 		const { tokenId, amount } = request;
 		handleValidation('RescueRequest', request);
@@ -263,6 +285,7 @@ class StableCoinInPort implements IStableCoinInPort {
 		).payload;
 	}
 
+	@LogError
 	async wipe(request: WipeRequest): Promise<boolean> {
 		const { tokenId, amount, targetId } = request;
 		handleValidation('WipeRequest', request);
@@ -278,10 +301,12 @@ class StableCoinInPort implements IStableCoinInPort {
 		).payload;
 	}
 
+	@LogError
 	async associate(request: AssociateTokenRequest): Promise<boolean> {
 		throw new Error('Method not implemented.');
 	}
 
+	@LogError
 	async getBalanceOf(request: GetAccountBalanceRequest): Promise<Balance> {
 		handleValidation('GetAccountBalanceRequest', request);
 
@@ -295,6 +320,7 @@ class StableCoinInPort implements IStableCoinInPort {
 		return new Balance(res.payload);
 	}
 
+	@LogError
 	async capabilities(
 		request: CapabilitiesRequest,
 	): Promise<StableCoinCapabilities> {
@@ -314,6 +340,7 @@ class StableCoinInPort implements IStableCoinInPort {
 		);
 	}
 
+	@LogError
 	async pause(request: PauseRequest): Promise<boolean> {
 		const { tokenId } = request;
 		handleValidation('PauseRequest', request);
@@ -325,6 +352,7 @@ class StableCoinInPort implements IStableCoinInPort {
 		).payload;
 	}
 
+	@LogError
 	async unPause(request: PauseRequest): Promise<boolean> {
 		const { tokenId } = request;
 		handleValidation('PauseRequest', request);
@@ -336,6 +364,7 @@ class StableCoinInPort implements IStableCoinInPort {
 		).payload;
 	}
 
+	@LogError
 	async delete(request: DeleteRequest): Promise<boolean> {
 		const { tokenId } = request;
 		handleValidation('DeleteRequest', request);
@@ -347,6 +376,7 @@ class StableCoinInPort implements IStableCoinInPort {
 		).payload;
 	}
 
+	@LogError
 	async freeze(request: FreezeAccountRequest): Promise<boolean> {
 		const { tokenId, targetId } = request;
 		handleValidation('FreezeAccountRequest', request);
@@ -361,6 +391,7 @@ class StableCoinInPort implements IStableCoinInPort {
 		).payload;
 	}
 
+	@LogError
 	async unFreeze(request: FreezeAccountRequest): Promise<boolean> {
 		const { tokenId, targetId } = request;
 		handleValidation('FreezeAccountRequest', request);
@@ -375,21 +406,71 @@ class StableCoinInPort implements IStableCoinInPort {
 		).payload;
 	}
 
+	@LogError
+	async grantKyc(request: KYCRequest): Promise<boolean> {
+		const { tokenId, targetId } = request;
+		handleValidation('KYCRequest', request);
+
+		return (
+			await this.commandBus.execute(
+				new GrantKycCommand(
+					HederaId.from(targetId),
+					HederaId.from(tokenId),
+				),
+			)
+		).payload;
+	}
+
+	@LogError
+	async revokeKyc(request: KYCRequest): Promise<boolean> {
+		const { tokenId, targetId } = request;
+		handleValidation('KYCRequest', request);
+		return (
+			await this.commandBus.execute(
+				new RevokeKycCommand(
+					HederaId.from(targetId),
+					HederaId.from(tokenId),
+				),
+			)
+		).payload;
+	}
+
+	@LogError
+	async isAccountKYCGranted(request: KYCRequest): Promise<boolean> {
+		const { tokenId, targetId } = request;
+		handleValidation('KYCRequest', request);
+
+		return (
+			(
+				await this.queryBus.execute(
+					new GetAccountTokenRelationshipQuery(
+						HederaId.from(targetId),
+						HederaId.from(tokenId),
+					),
+				)
+			).payload?.kycStatus === KycStatus.GRANTED
+		);
+	}
+
+	@LogError
 	async isAccountAssociated(
 		request: IsAccountAssociatedTokenRequest,
 	): Promise<boolean> {
 		handleValidation('IsAccountAssociatedTokenRequest', request);
 
 		return (
-			await this.queryBus.execute(
-				new GetAccountTokenAssociatedQuery(
-					HederaId.from(request.targetId),
-					HederaId.from(request.tokenId),
-				),
-			)
-		).isAssociated;
+			(
+				await this.queryBus.execute(
+					new GetAccountTokenRelationshipQuery(
+						HederaId.from(request.targetId),
+						HederaId.from(request.tokenId),
+					),
+				)
+			).payload !== undefined
+		);
 	}
 
+	@LogError
 	async getReserveAddress(
 		request: GetReserveAddressRequest,
 	): Promise<string> {
@@ -402,6 +483,7 @@ class StableCoinInPort implements IStableCoinInPort {
 		).payload.toString();
 	}
 
+	@LogError
 	async updateReserveAddress(
 		request: UpdateReserveAddressRequest,
 	): Promise<boolean> {

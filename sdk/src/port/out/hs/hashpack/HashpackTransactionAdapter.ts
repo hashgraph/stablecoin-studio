@@ -33,6 +33,8 @@ import {
 	TokenUnpauseTransaction,
 	TokenWipeTransaction,
 	TransferTransaction,
+	TokenRevokeKycTransaction,
+	TokenGrantKycTransaction,
 } from '@hashgraph/sdk';
 import { singleton } from 'tsyringe';
 import { HederaTransactionAdapter } from '../HederaTransactionAdapter.js';
@@ -244,18 +246,28 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 				t instanceof TokenDeleteTransaction ||
 				t instanceof TokenFreezeTransaction ||
 				t instanceof TokenUnfreezeTransaction ||
+				t instanceof TokenGrantKycTransaction ||
+				t instanceof TokenRevokeKycTransaction ||
 				t instanceof TransferTransaction
 			) {
 				hashPackTransactionResponse = await t.executeWithSigner(
 					this.signer,
+				);
+				this.logTransaction(
+					JSON.parse(
+						JSON.stringify(hashPackTransactionResponse),
+					).response.transactionId.toString(),
 				);
 			} else {
 				hashPackTransactionResponse = await this.hc.sendTransaction(
 					this.initData.topic,
 					hashPackTrx,
 				);
+				this.logTransaction(
+					(hashPackTransactionResponse.response as any)
+						.transactionId ?? '',
+				);
 			}
-
 			return HashpackTransactionResponseAdapter.manageResponse(
 				this.signer,
 				hashPackTransactionResponse,
@@ -264,6 +276,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 				abi,
 			);
 		} catch (error) {
+			LogService.logError(error);
 			throw new SigningError(error);
 		}
 	}
@@ -325,6 +338,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 					throw new PairingError(data);
 				}
 			} catch (error) {
+				LogService.logError(error);
 				throw new PairingError(error);
 			}
 		});

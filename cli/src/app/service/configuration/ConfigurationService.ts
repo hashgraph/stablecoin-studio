@@ -13,6 +13,8 @@ import MaskData from 'maskdata';
 import {
   DailyRotateFile,
   DefaultLoggerFormat,
+  FactoryAddressTestnet,
+  HederaERC20AddressTestnet,
   LogOptions,
 } from 'hedera-stable-coin-sdk';
 import { ILogConfig } from '../../../domain/configuration/interfaces/ILogConfig.js';
@@ -153,6 +155,18 @@ export default class ConfigurationService extends Service {
         'hederaERC20s'
       ] as unknown as IHederaERC20Config[],
     };
+    this.logFactoryIdWarning(
+      FactoryAddressTestnet,
+      'Factory',
+      config.defaultNetwork ?? '',
+      config.factories,
+    );
+    this.logFactoryIdWarning(
+      HederaERC20AddressTestnet,
+      'HederaERC20Factory',
+      config.defaultNetwork ?? '',
+      config.hederaERC20s,
+    );
     this.setConfiguration(config);
     return config;
   }
@@ -182,5 +196,21 @@ export default class ConfigurationService extends Service {
       Array.isArray(config?.accounts) &&
       config?.accounts[0].accountId.length > 0
     );
+  }
+
+  public logFactoryIdWarning(
+    targetId: string,
+    targetName: string,
+    network: string,
+    arr?: { id: string; network: string }[],
+  ): void {
+    if (arr && arr.length > 0) {
+      arr.map(({ id, network: n }) => {
+        if (network === n && id !== targetId)
+          utilsService.showWarning(
+            `The ${targetName} version in the configuration does not match the latest version of the SDK:\n\tLatest: ${targetId}\n\tCurrently: ${id}\n`,
+          );
+      });
+    }
   }
 }

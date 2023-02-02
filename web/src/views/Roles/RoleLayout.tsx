@@ -104,10 +104,9 @@ const RoleLayout = (props: RoleLayoutProps) => {
 		{
 			label: t('operations:details.supplyType'),
 			// @ts-ignore Property 'supplyType' does not exist on type 'IStableCoinDetail'.
-			value:
-				selectedStableCoin?.maxSupply?.isZero()
-					? t('operations:details.infinite')
-					: t('operations:details.finite'),
+			value: selectedStableCoin?.maxSupply?.isZero()
+				? t('operations:details.infinite')
+				: t('operations:details.finite'),
 		},
 	];
 
@@ -123,10 +122,9 @@ const RoleLayout = (props: RoleLayoutProps) => {
 		{
 			label: t('operations:details.supplyType'),
 			// @ts-ignore Property 'supplyType' does not exist on type 'IStableCoinDetail'.
-			value:
-				selectedStableCoin?.maxSupply?.isZero()
-					? t('operations:details.infinite')
-					: t('operations:details.finite'),
+			value: selectedStableCoin?.maxSupply?.isZero()
+				? t('operations:details.infinite')
+				: t('operations:details.finite'),
 		},
 	];
 

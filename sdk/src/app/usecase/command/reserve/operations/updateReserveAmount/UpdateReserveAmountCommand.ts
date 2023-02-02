@@ -30,7 +30,7 @@ export class UpdateReserveAmountCommandResponse implements CommandResponse {
 export class UpdateReserveAmountCommand extends Command<UpdateReserveAmountCommandResponse> {
 	constructor(
 		public readonly reserveAddress: ContractId,
-        public readonly reserveAmount: BigDecimal
+		public readonly reserveAmount: BigDecimal,
 	) {
 		super();
 	}

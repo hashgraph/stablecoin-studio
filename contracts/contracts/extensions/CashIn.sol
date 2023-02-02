@@ -14,25 +14,38 @@ abstract contract CashIn is ICashIn, SupplierAdmin, Reserve {
      * @param account The address that receives minted tokens
      * @param amount The number of tokens to be minted
      */
-    function mint(address account, uint256 amount)
+    function mint(
+        address account,
+        uint256 amount
+    )
         external
+        override(ICashIn)
         onlyRole(_getRoleId(RoleName.CASHIN))
         checkReserveIncrease(amount)
         checkAddressIsNotZero(account)
-        override(ICashIn)
         returns (bool)
     {
-        if (!unlimitedSupplierAllowances[msg.sender])_decreaseSupplierAllowance(msg.sender, amount);
-        
-        emit TokensMinted(msg.sender, _getTokenAddress(), amount, account);
+        if (!_unlimitedSupplierAllowances[msg.sender])
+            _decreaseSupplierAllowance(msg.sender, amount);
 
-        (int256 responseCode, , ) = IHederaTokenService(PRECOMPILED_ADDRESS)
-            .mintToken(_getTokenAddress(), uint64(amount), new bytes[](0));
+        address currentTokenAddress = _getTokenAddress();
+
+        (int256 responseCode, , ) = IHederaTokenService(_PRECOMPILED_ADDRESS)
+            .mintToken(currentTokenAddress, uint64(amount), new bytes[](0));
 
         bool success = _checkResponse(responseCode);
 
         _transfer(address(this), account, amount);
 
+        emit TokensMinted(msg.sender, currentTokenAddress, amount, account);
+
         return success;
     }
+
+    /**
+     * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[50] private __gap;
 }

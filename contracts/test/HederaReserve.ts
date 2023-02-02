@@ -59,8 +59,8 @@ const reserve = BigNumber.from('100').mul(TokenFactor)
 
 const proxyAdminAbi = HederaReserveProxyAdmin__factory.abi
 
-describe('HederaReserve Tests', function() {
-    before(async function() {
+describe('HederaReserve Tests', function () {
+    before(async function () {
         // Generate Client 1 and Client 2
 
         const [
@@ -121,7 +121,7 @@ describe('HederaReserve Tests', function() {
         hederaReserveAddress = result[2]
     })
 
-    it('Check initialize can only be run once', async function() {
+    it('Check initialize can only be run once', async function () {
         expect(
             initializeHederaReserve(
                 BigNumber.from(1000),
@@ -131,7 +131,7 @@ describe('HederaReserve Tests', function() {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('Update admin address', async function() {
+    it('Update admin address', async function () {
         const ONE = BigNumber.from(1)
 
         await setAdminHederaReserve(
@@ -161,7 +161,7 @@ describe('HederaReserve Tests', function() {
         expect(amountReset).to.equals(reserve.toString())
     })
 
-    it('Update admin address throw error client no isAdmin', async function() {
+    it('Update admin address throw error client no isAdmin', async function () {
         expect(
             setAdminHederaReserve(
                 await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519),
@@ -171,7 +171,7 @@ describe('HederaReserve Tests', function() {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('Update reserve throw error client no isAdmin', async function() {
+    it('Update reserve throw error client no isAdmin', async function () {
         expect(
             setAmountHederaReserve(
                 BigNumber.from(1),
@@ -181,7 +181,7 @@ describe('HederaReserve Tests', function() {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('Update reserve', async function() {
+    it('Update reserve', async function () {
         const beforeUpdateAmount = await latestRoundDataDataHederaReserve(
             proxyAddress,
             operatorClient
@@ -207,7 +207,7 @@ describe('HederaReserve Tests', function() {
         expect(amountReset).to.equals(reserve.toString())
     })
 
-    it('Get decimals', async function() {
+    it('Get decimals', async function () {
         const decimals = await decimalsHederaReserve(
             proxyAddress,
             operatorClient
@@ -215,7 +215,7 @@ describe('HederaReserve Tests', function() {
         expect(decimals).to.equals('2')
     })
 
-    it('Get description', async function() {
+    it('Get description', async function () {
         const decimals = await descriptionHederaReserve(
             proxyAddress,
             operatorClient
@@ -223,7 +223,7 @@ describe('HederaReserve Tests', function() {
         expect(decimals).to.equals('Example Hedera Reserve for ChainLink')
     })
 
-    it('Get version', async function() {
+    it('Get version', async function () {
         const decimals = await versionHederaReserve(
             proxyAddress,
             operatorClient
@@ -231,7 +231,7 @@ describe('HederaReserve Tests', function() {
         expect(decimals).to.equals('1')
     })
 
-    it('Get latestRoundData', async function() {
+    it('Get latestRoundData', async function () {
         const amountReset = await latestRoundDataDataHederaReserve(
             proxyAddress,
             operatorClient
@@ -240,8 +240,8 @@ describe('HederaReserve Tests', function() {
     })
 })
 
-describe('HederaReserveProxy and HederaReserveProxyAdmin Tests', function() {
-    before(async function() {
+describe('HederaReserveProxy and HederaReserveProxyAdmin Tests', function () {
+    before(async function () {
         // Generate Client 1 and Client 2
 
         const [
@@ -302,7 +302,7 @@ describe('HederaReserveProxy and HederaReserveProxyAdmin Tests', function() {
         hederaReserveAddress = result[2]
     })
 
-    it('Retrieve admin and implementation addresses for the Proxy', async function() {
+    it('Retrieve admin and implementation addresses for the Proxy', async function () {
         // We retreive the HederaERC20Proxy admin and implementation
         const implementation = await getProxyImplementation(
             proxyAdminAbi,
@@ -326,7 +326,7 @@ describe('HederaReserveProxy and HederaReserveProxyAdmin Tests', function() {
         )
     })
 
-    it('Retrieve proxy admin owner', async function() {
+    it('Retrieve proxy admin owner', async function () {
         // We retreive the HederaERC20Proxy admin and implementation
         const ownerAccount = await owner(
             proxyAdminAbi,
@@ -342,7 +342,7 @@ describe('HederaReserveProxy and HederaReserveProxyAdmin Tests', function() {
         )
     })
 
-    it('Upgrade Proxy implementation without the proxy admin', async function() {
+    it('Upgrade Proxy implementation without the proxy admin', async function () {
         // Deploy a new contract
         const result = await deployHederaReserve(
             reserve,
@@ -365,7 +365,7 @@ describe('HederaReserveProxy and HederaReserveProxyAdmin Tests', function() {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('Change Proxy admin without the proxy admin', async function() {
+    it('Change Proxy admin without the proxy admin', async function () {
         // Non Admin changes admin : fail
         await expect(
             changeAdmin(
@@ -377,7 +377,7 @@ describe('HederaReserveProxy and HederaReserveProxyAdmin Tests', function() {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('Upgrade Proxy implementation with the proxy admin but without the owner account', async function() {
+    it('Upgrade Proxy implementation with the proxy admin but without the owner account', async function () {
         // Deploy a new contract
         const result = await deployHederaReserve(
             reserve,
@@ -400,7 +400,7 @@ describe('HederaReserveProxy and HederaReserveProxyAdmin Tests', function() {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('Change Proxy admin with the proxy admin but without the owner account', async function() {
+    it('Change Proxy admin with the proxy admin but without the owner account', async function () {
         // Non Owner changes admin : fail
         await expect(
             changeProxyAdmin(
@@ -414,7 +414,7 @@ describe('HederaReserveProxy and HederaReserveProxyAdmin Tests', function() {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('Upgrade Proxy implementation with the proxy admin and the owner account', async function() {
+    it('Upgrade Proxy implementation with the proxy admin and the owner account', async function () {
         // Deploy a new contract
         const result = await deployHederaReserve(
             reserve,
@@ -456,7 +456,7 @@ describe('HederaReserveProxy and HederaReserveProxyAdmin Tests', function() {
         )
     })
 
-    it('Change Proxy admin with the proxy admin and the owner account', async function() {
+    it('Change Proxy admin with the proxy admin and the owner account', async function () {
         // Owner changes admin : success
         await changeProxyAdmin(
             proxyAdminAbi,
@@ -504,7 +504,7 @@ describe('HederaReserveProxy and HederaReserveProxyAdmin Tests', function() {
         )
     })
 
-    it('Transfers Proxy admin owner without the owner account', async function() {
+    it('Transfers Proxy admin owner without the owner account', async function () {
         // Non Owner transfers owner : fail
         await expect(
             transferOwnership(
@@ -517,7 +517,7 @@ describe('HederaReserveProxy and HederaReserveProxyAdmin Tests', function() {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('Transfers Proxy admin owner with the owner account', async function() {
+    it('Transfers Proxy admin owner with the owner account', async function () {
         // Owner transfers owner : success
         await transferOwnership(
             proxyAdminAbi,

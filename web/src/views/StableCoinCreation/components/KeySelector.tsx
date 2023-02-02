@@ -66,8 +66,7 @@ const KeySelector = ({ control, name, label, request }: KeySelectorProps) => {
 	});
 
 	const availableOptions = () => {
-		if (name === 'adminKey')
-			return optionsKeys.filter((option) => option.value !== 3);
+		if (name === 'adminKey') return optionsKeys.filter((option) => option.value !== 3);
 
 		return optionsKeys;
 	};
@@ -101,9 +100,11 @@ const KeySelector = ({ control, name, label, request }: KeySelectorProps) => {
 					isRequired
 					control={control}
 					name={name + 'Other'}
-					 placeholder={t('stableCoinCreation:managementPermissions.introduce', {
-						name: label,
-					 }) ?? propertyNotFound}
+					placeholder={
+						t('stableCoinCreation:managementPermissions.introduce', {
+							name: label,
+						}) ?? propertyNotFound
+					}
 				/>
 			)}
 		</VStack>

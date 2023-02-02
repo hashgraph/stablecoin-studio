@@ -49,68 +49,57 @@ const Roles = () => {
 	const operations = capabilities?.capabilities.map((x) => x.operation);
 
 	const filteredCapabilities = roleOptions.filter((option) => {
-		if (
-			!operations?.includes(Operation.CASH_IN) &&
-			option.label === 'Cash in'
-		) {
+		if (!operations?.includes(Operation.CASH_IN) && option.label === 'Cash in') {
 			return false;
 		}
-		if (
-			!operations?.includes(Operation.BURN) &&
-			option.label === 'Burn'
-		) {
+		if (!operations?.includes(Operation.BURN) && option.label === 'Burn') {
 			return false;
 		}
-		if (
-			!operations?.includes(Operation.WIPE) &&
-			option.label === 'Wipe'
-		) {
+		if (!operations?.includes(Operation.WIPE) && option.label === 'Wipe') {
 			return false;
 		}
-		if (
-			!operations?.includes(Operation.PAUSE) &&
-			option.label === 'Pause'
-		) {
+		if (!operations?.includes(Operation.PAUSE) && option.label === 'Pause') {
 			return false;
 		}
-		if (
-			!operations?.includes(Operation.RESCUE) &&
-			option.label === 'Rescue'
-		) {
+		if (!operations?.includes(Operation.RESCUE) && option.label === 'Rescue') {
 			return false;
 		}
-		if (
-			!operations?.includes(Operation.FREEZE) &&
-			option.label === 'Freeze'
-		) {
+		if (!operations?.includes(Operation.FREEZE) && option.label === 'Freeze') {
 			return false;
 		}
-		if (
-			!operations?.includes(Operation.ROLE_ADMIN_MANAGEMENT) &&
-			option.label === 'Admin Role'
-		) {
+		if (!operations?.includes(Operation.ROLE_ADMIN_MANAGEMENT) && option.label === 'Admin Role') {
 			return false;
 		}
-		
-		
+
 		return true;
 	});
 
 	const { t } = useTranslation('roles');
-	
+
 	const directAccesses = [
 		{
 			icon: 'PlusCircle',
 			route: NamedRoutes.GiveRole,
 			title: t('give'),
-			isDisabled: filteredCapabilities.length === 0 
-			 || isExternal && !JSON.parse(localStorage.tokensAccount).find((t:any) =>t.id === accountId?.toString()).externalTokens.find((t:any)=>t.id ===coinSelected?.tokenId).roles?.includes(StableCoinRole.DEFAULT_ADMIN_ROLE),
+			isDisabled:
+				filteredCapabilities.length === 0 ||
+				(isExternal &&
+					!JSON.parse(localStorage.tokensAccount)
+						.find((t: any) => t.id === accountId?.toString())
+						.externalTokens.find((t: any) => t.id === coinSelected?.tokenId)
+						.roles?.includes(StableCoinRole.DEFAULT_ADMIN_ROLE)),
 		},
 		{
 			icon: 'MinusCircle',
 			route: NamedRoutes.RevokeRole,
 			title: t('revoke'),
-			isDisabled: filteredCapabilities.length === 0 || isExternal && !JSON.parse(localStorage.tokensAccount).find((t:any) =>t.id === accountId?.toString()).externalTokens.find((t:any)=>t.id ===coinSelected?.tokenId).roles?.includes(StableCoinRole.DEFAULT_ADMIN_ROLE),
+			isDisabled:
+				filteredCapabilities.length === 0 ||
+				(isExternal &&
+					!JSON.parse(localStorage.tokensAccount)
+						.find((t: any) => t.id === accountId?.toString())
+						.externalTokens.find((t: any) => t.id === coinSelected?.tokenId)
+						.roles?.includes(StableCoinRole.DEFAULT_ADMIN_ROLE)),
 		},
 		{
 			icon: 'PencilSimple',
@@ -118,7 +107,11 @@ const Roles = () => {
 			title: t('edit'),
 			isDisabled:
 				!operations?.includes(Operation.CASH_IN) ||
-				isExternal && !JSON.parse(localStorage.tokensAccount).find((t:any) =>t.id === accountId?.toString()).externalTokens.find((t:any)=>t.id ===coinSelected?.tokenId).roles?.includes(StableCoinRole.DEFAULT_ADMIN_ROLE),
+				(isExternal &&
+					!JSON.parse(localStorage.tokensAccount)
+						.find((t: any) => t.id === accountId?.toString())
+						.externalTokens.find((t: any) => t.id === coinSelected?.tokenId)
+						.roles?.includes(StableCoinRole.DEFAULT_ADMIN_ROLE)),
 		},
 		{
 			icon: 'ArrowsClockwise',

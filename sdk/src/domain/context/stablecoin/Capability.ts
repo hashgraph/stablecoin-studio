@@ -29,8 +29,10 @@ export enum Operation {
 	DELETE = 'Delete',
 	RESCUE = 'Rescue',
 	ROLE_MANAGEMENT = 'Role_Management',
-	ROLE_ADMIN_MANAGEMENT = 'Admin Role',
-	RESERVE_MANAGEMENT = 'Admin Role',
+	ROLE_ADMIN_MANAGEMENT = 'Admin_Role',
+	RESERVE_MANAGEMENT = 'Admin_Role',
+	GRANT_KYC = 'Grant_KYC',
+	REVOKE_KYC = 'Revoke_KYC',
 }
 
 export enum Access {

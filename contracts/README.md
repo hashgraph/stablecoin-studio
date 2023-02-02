@@ -48,8 +48,9 @@ The remaining smart contracts have been implemented for this specific project:
    - `CashIn.sol`: abstract contract implementing the *cash-in* operation (mint new tokens and assign them to an account, increases the total supply).
    - `Deletable.sol`: abstract contract implementing the *delete* operation (deletes the satble coin's underlying token. **WARNING** : THIS OPERATION CANNOT BE ROLLED-BACK AND A STABLECOIN WITHOUT AN UNDERLYING TOKEN WILL NOT WORK ANYMORE).
    - `Freezable.sol`: abstract contract implementing the *freeze* and *unfreeze* operations (if an account is frozen, it will not be able to operate with the stable coin until unfrozen).
+   - `KYC.sol`: abstract contract implementing the *grantKyc* and *revokeKyc* operations to grant or revoke KYC flag to an Hedera account for the stable coin.
    - `Pausable.sol`: abstract contract implementing the *pause* and *unpause* operations (if a token is paused, nobody will be able to operate with it until the token is unpaused).  
-   - `Rescatbale.sol`: abstract contract implementing the *rescue* operation (transfer tokens from the treasury to another account).
+   - `Rescatable.sol`: abstract contract implementing the *rescue* operation (transfer tokens from the treasury to another account).
    - `Reserve.sol`: abstract contract implementing the reserve for the stable coin (checking against the current reserve before minting, changing the reserve data feed, etc.).
    - `Roles.sol`: Contains the definition of the roles that can be assigned for every stable coin.
    - `Supplieradmin.sol`: abstract contract implementing all the cashin role assignment and management (assigning/removing the role as well as setting, increasing and decreasing the cash-in limit).
@@ -133,10 +134,13 @@ Typescript test files can be foud in the `test` folder:
 
 - `burnable.ts`: Tests the stable coin burn functionality.
 - `deletable.ts`: Tests the stable coin delete functionality.
+- `deployFactory.ts`: Tests the stable coin factory deployment functionality.
 - `freezable.ts`: Tests the stable coin freeze/unfreeze functionality.
 - `HederaERC20.ts`: Tests the HederaERC20 functionality.
+- `KYC.ts`: Tests the KYC grant/revoke functionality to account for stable coins.
 - `pausable.ts`: Tests the stable coin pause functionality.
 - `rescatable.ts`: Tests the stable coin rescue functionality.
+- `reserve.ts`: Tests the stable coin reserve functionality.
 - `roles.ts`: Tests the stable coin roles functionality.
 - `StableCoinFactory.ts`: Tests the Factory functionality.
 - `supplieradmin.ts`: Tests the stable coin cashin functionality.
@@ -231,6 +235,17 @@ If you want to deploy your own Factory contracts do the following steps:
    1. Deploy the Factory **Logic** smart contract (*StableCoinFactory.sol*).
    2. Deploy the Factory **Proxy Admin** smart contract (*StableCoinFactoryProxyAdmin.sol*).
    3. Deploy the Factory **Proxy** smart contract (*StableCoinFactoryProxy.sol*) setting the Factory logic as the implementation and the Factory proxy admin as the admin.
+
+You may also clone this repository, install the dependecies (see [Build](#Build)) and run `npm run test:testnet:deployFactory` in order to deploy all factories (HederaERC20 and StableCoinFactory) and its proxies onto the testnet network. Once completed, an output with the new addresses is provided:
+
+`````
+Proxy Address:           0.0.7110 
+Proxy Admin Address:     0.0.7108 
+Factory Address:         0.0.7106 
+HederaERC20 Address:     0.0.7102
+`````
+
+> The account used to deploy will be determined by the values in the `.env` file, that must contain the `HEDERA_OPERATOR_` entries for the account id, public / private key and evm address. See the `.env.sample` file to see all the attributes. See [Test accounts](#Tests-accounts) to learn more.
 
 
 ## Create Stable Coins

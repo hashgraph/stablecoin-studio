@@ -61,7 +61,9 @@
 		"format:imports": "npx format-imports ./src",
 		"test:watch": "concurrently --kill-others \"npm run build:watch\" \"npm run test:jest:watch\"",
 		"test:jest:watch": "NODE_OPTIONS=--experimental-vm-modules npx jest --watch",
-		"test:ci": "NODE_OPTIONS=--experimental-vm-modules npx jest --ci --json --coverage --forceExit --testLocationInResults --outputFile=report.json"
+		"test:ci": "NODE_OPTIONS=--experimental-vm-modules npx jest --ci --json --coverage --forceExit --testLocationInResults --outputFile=report.json",
+		"pre-commit": "npm run lint && npm run prettier",
+		"prettierCheck": "prettier --config .prettierrc --check"
 	},
 	"license": "Apache-2.0",
 	"dependencies": {

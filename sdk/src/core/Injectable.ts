@@ -67,13 +67,16 @@ import { HashpackTransactionAdapter } from '../port/out/hs/hashpack/HashpackTran
 import { RevokeSupplierRoleCommandHandler } from '../app/usecase/command/stablecoin/roles/revokeSupplierRole/RevokeSupplierRoleCommandHandler.js';
 import { GrantSupplierRoleCommandHandler } from '../app/usecase/command/stablecoin/roles/grantSupplierRole/GrantSupplierRoleCommandHandler.js';
 import { GrantUnlimitedSupplierRoleCommandHandler } from '../app/usecase/command/stablecoin/roles/granUnlimitedSupplierRole/GrantUnlimitedSupplierRoleCommandHandler.js';
-import { GetAccountTokenAssociatedQueryHandler } from '../app/usecase/query/account/tokenAssociated/GetAccountTokenAssociatedQueryHandler.js';
-import { GetReserveAmountQueryHandler } from '../app/usecase/query/stablecoin/getReserveAmount/GetReserveAmountQueryHandler.js'; 
+import { GetReserveAmountQueryHandler } from '../app/usecase/query/stablecoin/getReserveAmount/GetReserveAmountQueryHandler.js';
 import { UpdateReserveAddressCommandHandler } from '../app/usecase/command/stablecoin/operations/updateReserveAddress/UpdateReserveAddressCommandHandler.js';
 import { UpdateReserveAmountCommandHandler } from '../app/usecase/command/reserve/operations/updateReserveAmount/UpdateReserveAmountCommandHandler.js';
 import { BalanceOfQueryHandler } from '../app/usecase/query/stablecoin/balanceof/BalanceOfQueryHandler.js';
 import { GetReserveAddressQueryHandler } from '../app/usecase/query/stablecoin/getReserveAddress/GetReserveAddressQueryHandler.js';
 import { IsUnlimitedQueryHandler } from '../app/usecase/query/stablecoin/isUnlimited/IsUnlimitedQueryHandler.js';
+import { RevokeKycCommandHandler } from '../app/usecase/command/stablecoin/operations/revokeKyc/RevokeKycCommandHandler.js';
+import { GrantKycCommandHandler } from '../app/usecase/command/stablecoin/operations/grantKyc/GrantKycCommandHandler.js';
+import { GetAccountTokenRelationshipQueryHandler } from '../app/usecase/query/account/tokenRelationship/GetAccountTokenRelationshipQueryHandler.js';
+import { SDK } from '../port/in/Common.js';
 
 export const TOKENS = {
 	COMMAND_HANDLER: Symbol('CommandHandler'),
@@ -166,6 +169,14 @@ const COMMAND_HANDLERS = [
 		token: TOKENS.COMMAND_HANDLER,
 		useClass: GrantUnlimitedSupplierRoleCommandHandler,
 	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: GrantKycCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: RevokeKycCommandHandler,
+	},
 	// Network Operations
 	{
 		token: TOKENS.COMMAND_HANDLER,
@@ -208,10 +219,6 @@ const QUERY_HANDLERS = [
 	},
 	{
 		token: TOKENS.QUERY_HANDLER,
-		useClass: GetAccountTokenAssociatedQueryHandler,
-	},
-	{
-		token: TOKENS.QUERY_HANDLER,
 		useClass: BalanceOfQueryHandler,
 	},
 	{
@@ -221,7 +228,6 @@ const QUERY_HANDLERS = [
 	{
 		token: TOKENS.QUERY_HANDLER,
 		useClass: GetReserveAddressQueryHandler,
-		
 	},
 	{
 		token: TOKENS.QUERY_HANDLER,
@@ -234,12 +240,14 @@ const QUERY_HANDLERS = [
 	{
 		token: TOKENS.QUERY_HANDLER,
 		useClass: GetAllowanceQueryHandler,
-
 	},
 	{
 		token: TOKENS.QUERY_HANDLER,
 		useClass: IsUnlimitedQueryHandler,
-
+	},
+	{
+		token: TOKENS.QUERY_HANDLER,
+		useClass: GetAccountTokenRelationshipQueryHandler,
 	},
 ];
 
@@ -270,6 +278,11 @@ container.register<NetworkProps>('NetworkProps', {
 // Wallet events
 container.register<typeof WalletEvents>('WalletEvents', {
 	useValue: WalletEvents,
+});
+
+// SDK Logs
+container.register<typeof SDK>('SDK', {
+	useValue: SDK,
 });
 
 @registry([...COMMAND_HANDLERS, ...QUERY_HANDLERS, ...TRANSACTION_HANDLER])

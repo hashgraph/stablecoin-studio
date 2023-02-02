@@ -145,7 +145,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 						}
 					}
 					const providedKeyCasted = providedKey as PublicKey;
-					key.PublicKey =
+					key.publicKey =
 						providedKeyCasted.key == PublicKey.NULL.key
 							? '0x'
 							: HPublicKey.fromString(
@@ -187,6 +187,9 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					? reserveInitialAmount.toFixedNumber()
 					: BigDecimal.ZERO.toFixedNumber(),
 				createReserve,
+				coin.grantKYCToOriginalSender
+					? coin.grantKYCToOriginalSender
+					: false,
 				keys,
 			);
 
@@ -223,8 +226,8 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				res,
 				'Deployed',
 			);
-
 		} catch (error) {
+			LogService.logError(error);
 			throw new SigningError(
 				`Unexpected error in RPCTransactionAdapter create operation : ${error}`,
 			);
@@ -382,9 +385,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 
 			return new TransactionResponse(undefined, res.toString());
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
-				message: `Unexpected error in HederaTransactionHandler update reserve operation : ${error}`,
+				message: `Unexpected error in RPCTransactionAdapter update reserve operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
 			});
 		}
@@ -410,9 +414,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				),
 			);
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
-				message: `Unexpected error in HederaTransactionHandler update reserve operation : ${error}`,
+				message: `Unexpected error in RPCTransactionAdapter update reserve operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
 			});
 		}
@@ -438,9 +443,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				BigDecimal.fromStringFixed(res.toString(), RESERVE_DECIMALS),
 			);
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
-				message: `Unexpected error in HederaTransactionHandler update reserve operation : ${error}`,
+				message: `Unexpected error in RPCTransactionAdapter update reserve operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
 			});
 		}
@@ -458,9 +464,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				).setAmount(amount.toBigNumber()),
 			);
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
-				message: `Unexpected error in HederaTransactionHandler updatePorAmount operation : ${error}`,
+				message: `Unexpected error in RPCTransactionAdapter updatePorAmount operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
 			});
 		}
@@ -492,9 +499,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				),
 			);
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
-				message: `Unexpected error in HederaTransactionHandler grantRole operation : ${error}`,
+				message: `Unexpected error in RPCTransactionAdapter grantRole operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
 			});
 		}
@@ -526,9 +534,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				),
 			);
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
-				message: `Unexpected error in HederaTransactionHandler revokeRole operation : ${error}`,
+				message: `Unexpected error in RPCTransactionAdapter revokeRole operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
 			});
 		}
@@ -556,9 +565,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				),
 			);
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
-				message: `Unexpected error in HederaTransactionHandler grantSupplierRole operation : ${error}`,
+				message: `Unexpected error in RPCTransactionAdapter grantSupplierRole operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
 			});
 		}
@@ -584,9 +594,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				),
 			);
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
-				message: `Unexpected error in HederaTransactionHandler grantUnlimitedSupplierRole operation : ${error}`,
+				message: `Unexpected error in RPCTransactionAdapter grantUnlimitedSupplierRole operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
 			});
 		}
@@ -616,9 +627,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				),
 			);
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
-				message: `Unexpected error in HederaTransactionHandler revokeSupplierRole operation : ${error}`,
+				message: `Unexpected error in RPCTransactionAdapter revokeSupplierRole operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
 			});
 		}
@@ -648,9 +660,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 
 			return new TransactionResponse(undefined, res.valueOf());
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
-				message: `Unexpected error in HederaTransactionHandler hasRole operation : ${error}`,
+				message: `Unexpected error in RPCTransactionAdapter hasRole operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
 			});
 		}
@@ -680,9 +693,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				BigDecimal.fromStringFixed(res.toString(), coin.coin.decimals),
 			);
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
-				message: `Unexpected error in HederaTransactionHandler balanceOf operation : ${error}`,
+				message: `Unexpected error in RPCTransactionAdapter balanceOf operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
 			});
 		}
@@ -712,9 +726,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				),
 			);
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
-				message: `Unexpected error in HederaTransactionHandler associateToken operation : ${error}`,
+				message: `Unexpected error in RPCTransactionAdapter associateToken operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
 			});
 		}
@@ -744,9 +759,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				),
 			);
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
-				message: `Unexpected error in HederaTransactionHandler dissociateToken operation : ${error}`,
+				message: `Unexpected error in RPCTransactionAdapter dissociateToken operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
 			});
 		}
@@ -773,9 +789,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				),
 			);
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
-				message: `Unexpected error in HederaTransactionHandler isUnlimitedSupplierAllowance operation : ${error}`,
+				message: `Unexpected error in RPCTransactionAdapter isUnlimitedSupplierAllowance operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
 			});
 		}
@@ -804,9 +821,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				BigDecimal.fromStringFixed(res.toString(), coin.coin.decimals),
 			);
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
-				message: `Unexpected error in HederaTransactionHandler supplierAllowance operation : ${error}`,
+				message: `Unexpected error in RPCTransactionAdapter supplierAllowance operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
 			});
 		}
@@ -836,9 +854,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				),
 			);
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
-				message: `Unexpected error in HederaTransactionHandler resetSupplierAllowance operation : ${error}`,
+				message: `Unexpected error in RPCTransactionAdapter resetSupplierAllowance operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
 			});
 		}
@@ -866,9 +885,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				),
 			);
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
-				message: `Unexpected error in HederaTransactionHandler increaseSupplierAllowance operation : ${error}`,
+				message: `Unexpected error in RPCTransactionAdapter increaseSupplierAllowance operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
 			});
 		}
@@ -896,9 +916,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				),
 			);
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
-				message: `Unexpected error in HederaTransactionHandler decreaseSupplierAllowance operation : ${error}`,
+				message: `Unexpected error in RPCTransactionAdapter decreaseSupplierAllowance operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
 			});
 		}
@@ -929,9 +950,68 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				),
 			);
 		} catch (error) {
+			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
-				message: `Unexpected error in HederaTransactionHandler getRoles operation : ${error}`,
+				message: `Unexpected error in RPCTransactionAdapter getRoles operation : ${error}`,
+				transactionId: (error as any).error?.transactionId,
+			});
+		}
+	}
+
+	async grantKyc(
+		coin: StableCoinCapabilities,
+		targetId: HederaId,
+	): Promise<TransactionResponse<boolean, Error>> {
+		try {
+			if (!coin.coin.evmProxyAddress?.toString())
+				throw new TransactionResponseError({
+					RPC_relay: true,
+					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
+				});
+
+			return RPCTransactionResponseAdapter.manageResponse(
+				await HederaERC20__factory.connect(
+					coin.coin.evmProxyAddress?.toString(),
+					this.signerOrProvider,
+				).grantKyc(
+					(await this.accountToEvmAddress(targetId)).toString(),
+				),
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new TransactionResponseError({
+				RPC_relay: true,
+				message: `Unexpected error in RPCTransactionAdapter grantKyc operation : ${error}`,
+				transactionId: (error as any).error?.transactionId,
+			});
+		}
+	}
+
+	async revokeKyc(
+		coin: StableCoinCapabilities,
+		targetId: HederaId,
+	): Promise<TransactionResponse<boolean, Error>> {
+		try {
+			if (!coin.coin.evmProxyAddress?.toString())
+				throw new TransactionResponseError({
+					RPC_relay: true,
+					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
+				});
+
+			return RPCTransactionResponseAdapter.manageResponse(
+				await HederaERC20__factory.connect(
+					coin.coin.evmProxyAddress?.toString(),
+					this.signerOrProvider,
+				).revokeKyc(
+					(await this.accountToEvmAddress(targetId)).toString(),
+				),
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new TransactionResponseError({
+				RPC_relay: true,
+				message: `Unexpected error in RPCTransactionAdapter revokeKyc operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
 			});
 		}
@@ -1111,6 +1191,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				}
 			});
 		} catch (error) {
+			LogService.logError(error);
 			throw new WalletConnectError('Ethereum is not defined');
 		}
 	}
@@ -1121,17 +1202,20 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		params?: Params,
 	): Promise<TransactionResponse> {
 		try {
+			let response;
 			switch (CapabilityDecider.decide(coin, operation)) {
 				case Decision.CONTRACT:
 					if (!coin.coin.evmProxyAddress?.toString())
 						throw new Error(
 							`StableCoin ${coin.coin.name} does not have a proxy address`,
 						);
-					return this.performSmartContractOperation(
+					response = await this.performSmartContractOperation(
 						coin,
 						operation,
 						params,
 					);
+					this.logTransaction(response.id ?? '');
+					return response;
 
 				case Decision.HTS:
 					if (!coin.coin.evmProxyAddress?.toString())
@@ -1142,8 +1226,13 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 						throw new Error(
 							`StableCoin ${coin.coin.name}  does not have an underlying token`,
 						);
-
-					return this.performHTSOperation(coin, operation, params);
+					response = await this.performHTSOperation(
+						coin,
+						operation,
+						params,
+					);
+					this.logTransaction(response.id ?? '');
+					return response;
 
 				default:
 					const tokenId = coin.coin.tokenId
@@ -1161,9 +1250,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					);
 			}
 		} catch (error) {
+			LogService.logError(error);
+			this.logTransaction((error as any).error.transactionHash ?? '');
 			throw new TransactionResponseError({
 				RPC_relay: true,
-				message: `Unexpected error in HederaTransactionHandler ${operation} operation : ${error}`,
+				message: `Unexpected error in RPCTransactionAdapter ${operation} operation : ${error}`,
 				transactionId: (error as any).error.transactionHash,
 			});
 		}
@@ -1403,6 +1494,8 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		const txResponse = await this.mirrorNodeAdapter.getTransactionResult(
 			transaction.id,
 		);
+
+		this.logTransaction(transaction.id);
 
 		if (
 			!txResponse.result ||

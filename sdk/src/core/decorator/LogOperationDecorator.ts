@@ -34,7 +34,9 @@ export const LogOperation = (
 		const start = p.now();
 		const result = originalMethod.apply(this, args);
 		const finish = p.now();
-		LogService.logTrace(`Execution time [${propertyKey}]: ${finish - start} milliseconds`);
+		LogService.logTrace(
+			`Execution time [${propertyKey}]: ${finish - start} milliseconds`,
+		);
 		return result;
 	};
 

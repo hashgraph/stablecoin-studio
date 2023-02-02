@@ -27,12 +27,12 @@ describe(`<${HandleRoles.name} />`, () => {
 		});
 	});
 
-	test('should has disabled confirm button as default', async() => {
-		const component = render(<HandleRoles action='giveRole' />);		
+	test('should has disabled confirm button as default', async () => {
+		const component = render(<HandleRoles action='giveRole' />);
 		const confirmButton = component.getByTestId('confirm-btn');
 		await waitFor(() => {
 			expect(confirmButton).toBeDisabled();
-		})
+		});
 	});
 
 	test('should enable confirm button after fill form correctly', async () => {

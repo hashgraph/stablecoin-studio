@@ -1195,3 +1195,43 @@ export async function latestRoundDataDataHederaReserve(
 
     return result['answer']
 }
+
+// KYC ///////////////////////////////////////////////////
+export async function grantKyc(
+    proxyAddress: ContractId,
+    accountToGrantKyc: string,
+    accountIsED25519: boolean,
+    client: Client
+) {
+    const params: string[] = [
+        await toEvmAddress(accountToGrantKyc, accountIsED25519),
+    ]
+    const result = await contractCall(
+        proxyAddress,
+        'grantKyc',
+        params,
+        client,
+        Gas1,
+        HederaERC20__factory.abi
+    )
+    if (result[0] != true) throw Error
+}
+export async function revokeKyc(
+    proxyAddress: ContractId,
+    accountToGrantKyc: string,
+    accountIsED25519: boolean,
+    client: Client
+) {
+    const params: string[] = [
+        await toEvmAddress(accountToGrantKyc, accountIsED25519),
+    ]
+    const result = await contractCall(
+        proxyAddress,
+        'revokeKyc',
+        params,
+        client,
+        Gas1,
+        HederaERC20__factory.abi
+    )
+    if (result[0] != true) throw Error
+}

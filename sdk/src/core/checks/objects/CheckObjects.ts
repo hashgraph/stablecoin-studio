@@ -18,7 +18,7 @@
  *
  */
 
-import { IndexableObject } from "../../Type.js";
+import { IndexableObject } from '../../Type.js';
 
 export default class CheckObjects {
 	public static hasShape(o1: IndexableObject, o2: IndexableObject): boolean {

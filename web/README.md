@@ -121,7 +121,7 @@ Stable coin supply and accuracy definition (inital supply, max supply, decimals)
 
 Underlying token's keys definition (stable coin smart contract or another account)
 
-![image](https://user-images.githubusercontent.com/110089113/212882025-89045f22-7ffd-4e46-a419-7bc7efda54a3.png)
+![image](docs/images/creationKeys.png?raw=true)
 
 **Proof Of Reserve**
 

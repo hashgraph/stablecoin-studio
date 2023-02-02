@@ -53,6 +53,7 @@ const StableCoinCreation = () => {
 		getValues,
 		watch,
 		formState: { errors },
+		setValue,
 	} = form;
 
 	const [request] = useState(
@@ -93,7 +94,14 @@ const StableCoinCreation = () => {
 		{
 			number: '03',
 			title: t('tabs.managementPermissions'),
-			children: <ManagementPermissions control={control} request={request} />,
+			children: (
+				<ManagementPermissions
+					control={control}
+					request={request}
+					watch={watch}
+					setValue={setValue}
+				/>
+			),
 		},
 		{
 			number: '04',
@@ -131,7 +139,7 @@ const StableCoinCreation = () => {
 			const managePermissions = watch('managementPermissions');
 
 			if (!managePermissions) {
-				const keys = ['adminKey', 'supplyKey', 'wipeKey', 'freezeKey', 'pauseKey'];
+				const keys = ['adminKey', 'supplyKey', 'wipeKey', 'freezeKey', 'pauseKey', 'kycKey'];
 
 				// @ts-ignore
 				fieldsStep = watch(keys);
@@ -192,11 +200,13 @@ const StableCoinCreation = () => {
 			autorenewAccount,
 			managementPermissions,
 			freezeKey,
+			kycKey,
 			wipeKey,
 			pauseKey,
 			supplyKey,
 			reserveInitialAmount,
 			reserveAddress,
+			grantKYCToOriginalSender,
 		} = getValues();
 
 		request.autoRenewAccount = autorenewAccount;
@@ -213,13 +223,17 @@ const StableCoinCreation = () => {
 		if (managementPermissions) {
 			request.adminKey = Account.NullPublicKey; // accountInfo.publicKey;
 			request.freezeKey = Account.NullPublicKey;
+			request.kycKey = Account.NullPublicKey;
 			request.wipeKey = Account.NullPublicKey;
 			request.pauseKey = Account.NullPublicKey;
 			request.supplyKey = Account.NullPublicKey;
 			request.treasury = undefined;
+			request.grantKYCToOriginalSender = grantKYCToOriginalSender;
 		} else {
 			request.adminKey = accountInfo.publicKey;
 			request.freezeKey = formatKey(freezeKey.label, 'freezeKey');
+			request.kycKey = formatKey(kycKey.label, 'kycKey');
+			request.grantKYCToOriginalSender = grantKYCToOriginalSender;
 			request.wipeKey = formatKey(wipeKey.label, 'wipeKey');
 			request.pauseKey = formatKey(pauseKey.label, 'pauseKey');
 			request.supplyKey = formatKey(supplyKey.label, 'supplyKey');
@@ -247,7 +261,7 @@ const StableCoinCreation = () => {
 	const handleCancel = () => {
 		RouterManager.to(navigate, NamedRoutes.Operations);
 	};
-	
+
 	const supplyKey = watch('supplyKey') ? watch('supplyKey')!.value : 2;
 	const stepperProps = {
 		steps,
@@ -257,7 +271,7 @@ const StableCoinCreation = () => {
 		isValid: isValidForm,
 		currentStep,
 		setCurrentStep,
-		supplyKey
+		supplyKey,
 	};
 
 	const variant = loading ? 'loading' : success ? 'success' : 'error';

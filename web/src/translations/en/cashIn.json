@@ -1,15 +1,15 @@
 {
-    "title": "Cash in operation",
-    "operationTitle": "Operation details",
-    "amountLabel": "Enter the amount",
-    "amountPlaceholder": "0",
-    "destinationAccountLabel": "Destination account",
-    "destinationAccountPlaceholder": "0.0.0",
-    "modalSuccessDesc": "The cash in operation finished successfully.",
-    "modalAction": {
-        "subtitle": "Operation details review",
-        "destinationAccount": "Destination account",
-        "amount": "Amount",
-        "accept": "Cash in tokens"
-    }
+	"title": "Cash in operation",
+	"operationTitle": "Operation details",
+	"amountLabel": "Enter the amount",
+	"amountPlaceholder": "0",
+	"destinationAccountLabel": "Destination account",
+	"destinationAccountPlaceholder": "0.0.0",
+	"modalSuccessDesc": "The cash in operation finished successfully.",
+	"modalAction": {
+		"subtitle": "Operation details review",
+		"destinationAccount": "Destination account",
+		"amount": "Amount",
+		"accept": "Cash in tokens"
+	}
 }

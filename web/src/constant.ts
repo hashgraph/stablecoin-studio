@@ -1,2 +1,1 @@
-export const propertyNotFound:string =  "propertyNotFound"
-
+export const propertyNotFound: string = 'propertyNotFound';

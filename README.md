@@ -21,6 +21,8 @@
 - **[Technologies](#Technologies)**<br>
 - **[Installation](#Installation)**<br>
 - **[Build](#Build)**<br>
+- **[Testnet reset procedure](#Testnet-reset-procedure)**<br>
+- **[Deploying the stable coin factories](#Deploying-the-stable-coin-factories)**<br>
 - **[Development Manifesto](#Development-Manifesto)**<br>
 - **[Support](#Support)**<br>
 - **[Contributing](#Contributing)**<br>
@@ -181,6 +183,19 @@ Or within any of the modules:
   $ cd [module] // sdk, web, contracts, etc
   $ npm run build
 ````
+
+# Testnet reset procedure
+Whenever a testnet reset occures, the factories must be re-deployed and the addresses on the SDK must be updated.
+1. Follow the steps in  [Deploying the stable coin factories](#Deploying-the-stable-coin-factories) to deploy the factories.
+2. Update the addresses in `sdk/src/port/in/StableCoin.ts` to the newly deployed factories.
+3. Create a PR to be validated and merged for the new version.
+
+# Deploying the stable coin factories
+In order to be able to deploy any stable coins, the HederaERC20 and StablecoinFactory contracts must be deployed on the network. Whenever a new version of the contracts is published or when the testnet is reset, new contracts need to be deployed and well as the addresses that the SDK provides by default.
+
+We provide default addresses for the factories that we have deployed for anyone to use that are updated whenever a new version is released.
+
+Follow the steps in the [contracts docs](https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/contracts#deploy-factory) to learn how to deploy the factories.
 
 # Development Manifesto
 The development of the project follows enterprise-grade practices for software development. Using DDD, hexagonal architecture, and the CQS pattern, all  within an agile methodology.
