@@ -16,6 +16,7 @@ import {
     HederaReserveProxyAdmin__factory,
     HederaReserve__factory,
     HederaReserveProxy__factory,
+    UpgradeTestContract__factory,
 } from '../typechain-types'
 
 import {
@@ -501,6 +502,52 @@ export async function deployHederaReserve(
 
     const hederaReserve = await deployContractSDK(
         HederaReserve__factory,
+        privateKeyOperatorEd25519,
+        clientOperator
+    )
+
+    const params = new ContractFunctionParameters()
+        .addAddress(hederaReserve.toSolidityAddress())
+        .addAddress(hederaReserveProxyAdmin.toSolidityAddress())
+        .addBytes(new Uint8Array([]))
+
+    const hederaReserveProxy = await deployContractSDK(
+        HederaReserveProxy__factory,
+        privateKeyOperatorEd25519,
+        clientOperator,
+        params
+    )
+
+    const AccountEvmAddress = await toEvmAddress(account, isED25519)
+
+    contractCall(
+        hederaReserveProxy,
+        'initialize',
+        [initialAmountDataFeed.toString(), AccountEvmAddress],
+        clientOperator,
+        130000,
+        HederaReserve__factory.abi
+    )
+
+    return [hederaReserveProxy, hederaReserveProxyAdmin, hederaReserve]
+}
+
+export async function deployUpgradeTestContract(
+    initialAmountDataFeed: BigNumber,
+    account: string,
+    isED25519: boolean,
+    clientOperator: Client,
+    privateKeyOperatorEd25519: string
+): Promise<ContractId[]> {
+    console.log(`Deploying HederaReserve logic. please wait...`)
+    const hederaReserveProxyAdmin = await deployContractSDK(
+        HederaReserveProxyAdmin__factory,
+        privateKeyOperatorEd25519,
+        clientOperator
+    )
+
+    const hederaReserve = await deployContractSDK(
+        UpgradeTestContract__factory,
         privateKeyOperatorEd25519,
         clientOperator
     )
