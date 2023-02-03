@@ -28,12 +28,14 @@ import RequestMapper from './request/mapping/RequestMapper.js';
 import TransactionService from '../../app/service/TransactionService.js';
 import SetNetworkRequest from './request/SetNetworkRequest.js';
 import { SetNetworkCommand } from '../../app/usecase/command/network/setNetwork/SetNetworkCommand.js';
+import { SetConfigurationCommand } from '../../app/usecase/command/network/setConfiguration/SetConfigurationCommand.js';
 import { Environment } from '../../domain/context/network/Environment.js';
 import InitializationRequest from './request/InitializationRequest.js';
 import Event, { WalletEvents } from './Event.js';
 import RPCTransactionAdapter from '../out/rpc/RPCTransactionAdapter.js';
 import { HashpackTransactionAdapter } from '../out/hs/hashpack/HashpackTransactionAdapter.js';
 import { LogError } from '../../core/decorator/LogErrorDecorator.js';
+import SetConfigurationRequest from './request/SetConfigurationRequest.js';
 
 export { InitializationData, SupportedWallets };
 
@@ -44,10 +46,16 @@ export type NetworkResponse = {
 	consensusNodes: string;
 };
 
+export type ConfigResponse = {
+	hederaERC20Address: string;
+	factoryAddress: string;
+};
+
 interface INetworkInPort {
 	connect(req: ConnectRequest): Promise<InitializationData>;
 	disconnect(): Promise<boolean>;
 	setNetwork(req: SetNetworkRequest): Promise<NetworkResponse>;
+	setConfig(req: SetConfigurationRequest): Promise<ConfigResponse>;
 }
 
 class NetworkInPort implements INetworkInPort {
@@ -59,6 +67,17 @@ class NetworkInPort implements INetworkInPort {
 			TransactionService,
 		),
 	) {}
+
+	@LogError
+	async setConfig(req: SetConfigurationRequest): Promise<ConfigResponse> {
+		const res = await this.commandBus.execute(
+			new SetConfigurationCommand(
+				req.factoryAddress,
+				req.hederaERC20Address,
+			),
+		);
+		return res;
+	}
 
 	@LogError
 	async setNetwork(req: SetNetworkRequest): Promise<NetworkResponse> {
@@ -78,6 +97,13 @@ class NetworkInPort implements INetworkInPort {
 		await this.setNetwork(
 			new SetNetworkRequest({ environment: req.network }),
 		);
+		req.configuration &&
+			(await this.setConfig(
+				new SetConfigurationRequest({
+					factoryAddress: req.configuration?.factoryAddress,
+					hederaERC20Address: req.configuration?.hederaERC20Address,
+				}),
+			));
 		req.events && Event.register(req.events);
 		const wallets: SupportedWallets[] = [];
 		const instances = Injectable.registerTransactionAdapterInstances();

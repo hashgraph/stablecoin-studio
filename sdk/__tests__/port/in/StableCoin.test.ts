@@ -24,8 +24,6 @@ import Injectable from '../../../src/core/Injectable.js';
 import {
 	Account,
 	Balance,
-	FactoryAddressTestnet,
-	HederaERC20AddressTestnet,
 	Network,
 	StableCoin,
 	StableCoinViewModel,
@@ -50,7 +48,12 @@ import ConnectRequest, {
 	SupportedWallets,
 } from '../../../src/port/in/request/ConnectRequest.js';
 import GetStableCoinDetailsRequest from '../../../src/port/in/request/GetStableCoinDetailsRequest.js';
-import { CLIENT_ACCOUNT_ECDSA, CLIENT_ACCOUNT_ED25519 } from '../../config.js';
+import {
+	CLIENT_ACCOUNT_ECDSA,
+	CLIENT_ACCOUNT_ED25519,
+	FACTORY_ADDRESS,
+	HEDERA_ERC20_ADDRESS,
+} from '../../config.js';
 
 describe('🧪 Stablecoin test', () => {
 	let stableCoinSC: StableCoinViewModel;
@@ -87,8 +90,8 @@ describe('🧪 Stablecoin test', () => {
 			supplyKey: Account.NullPublicKey,
 			// treasury: CLIENT_ACCOUNT_ED25519.id.toString(),
 			supplyType: TokenSupplyType.INFINITE,
-			stableCoinFactory: FactoryAddressTestnet,
-			hederaERC20: HederaERC20AddressTestnet,
+			stableCoinFactory: FACTORY_ADDRESS,
+			hederaERC20: HEDERA_ERC20_ADDRESS,
 			createReserve: false,
 			grantKYCToOriginalSender: true,
 		});
@@ -107,8 +110,8 @@ describe('🧪 Stablecoin test', () => {
 			supplyKey: CLIENT_ACCOUNT_ED25519.publicKey,
 			// treasury: CLIENT_ACCOUNT_ED25519.id.toString(),
 			supplyType: TokenSupplyType.INFINITE,
-			stableCoinFactory: FactoryAddressTestnet,
-			hederaERC20: HederaERC20AddressTestnet,
+			stableCoinFactory: FACTORY_ADDRESS,
+			hederaERC20: HEDERA_ERC20_ADDRESS,
 			createReserve: false,
 			grantKYCToOriginalSender: true,
 			// reserveAddress: '0.0.11111111'

@@ -44,9 +44,11 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		this._decimals = typeof value === 'number' ? value : parseFloat(value);
 	}
 
-	stableCoinFactory: string;
+	@OptionalField()
+	stableCoinFactory?: string;
 
-	hederaERC20: string;
+	@OptionalField()
+	hederaERC20?: string;
 
 	createReserve: boolean;
 
@@ -133,8 +135,8 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		supplyKey?: RequestPublicKey;
 		treasury?: string;
 		supplyType?: TokenSupplyType;
-		stableCoinFactory: string;
-		hederaERC20: string;
+		stableCoinFactory?: string;
+		hederaERC20?: string;
 		reserveAddress?: string;
 		reserveInitialAmount?: string;
 		createReserve: boolean;

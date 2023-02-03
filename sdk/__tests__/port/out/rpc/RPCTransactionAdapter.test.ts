@@ -33,12 +33,12 @@ import Injectable from '../../../../src/core/Injectable.js';
 import { MirrorNodeAdapter } from '../../../../src/port/out/mirror/MirrorNodeAdapter.js';
 import PublicKey from '../../../../src/domain/context/account/PublicKey.js';
 import ContractId from '../../../../src/domain/context/contract/ContractId.js';
+import { TokenSupplyType } from '../../../../src/port/in/StableCoin.js';
 import {
-	HederaERC20AddressTestnet,
-	FactoryAddressTestnet,
-	TokenSupplyType,
-} from '../../../../src/port/in/StableCoin.js';
-import { CLIENT_ACCOUNT_ECDSA } from '../../../config.js';
+	CLIENT_ACCOUNT_ECDSA,
+	FACTORY_ADDRESS,
+	HEDERA_ERC20_ADDRESS,
+} from '../../../config.js';
 import Account from '../../../../src/domain/context/account/Account.js';
 import NetworkService from '../../../../src/app/service/NetworkService.js';
 import { ContractId as HContractId } from '@hashgraph/sdk';
@@ -64,8 +64,8 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 	): Promise<StableCoinCapabilities> => {
 		tr = await th.create(
 			stablecoin,
-			new ContractId(FactoryAddressTestnet),
-			new ContractId(HederaERC20AddressTestnet),
+			new ContractId(FACTORY_ADDRESS),
+			new ContractId(HEDERA_ERC20_ADDRESS),
 			true,
 			undefined,
 			BigDecimal.fromString('100000000', RESERVE_DECIMALS),
@@ -149,8 +149,8 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 		});
 		tr = await th.create(
 			coin,
-			new ContractId(FactoryAddressTestnet),
-			new ContractId(HederaERC20AddressTestnet),
+			new ContractId(FACTORY_ADDRESS),
+			new ContractId(HEDERA_ERC20_ADDRESS),
 			true,
 		);
 	}, 1500000);

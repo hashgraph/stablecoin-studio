@@ -32,8 +32,6 @@ import ConnectRequest, {
 	SupportedWallets,
 } from '../../../../../src/port/in/request/ConnectRequest.js';
 import {
-	HederaERC20AddressTestnet,
-	FactoryAddressTestnet,
 	TokenSupplyType,
 } from '../../../../../src/port/in/StableCoin.js';
 import PublicKey from '../../../../../src/domain/context/account/PublicKey.js';
@@ -42,6 +40,8 @@ import { ContractId as HContractId } from '@hashgraph/sdk';
 import {
 	CLIENT_ACCOUNT_ECDSA,
 	CLIENT_ACCOUNT_ED25519,
+	FACTORY_ADDRESS,
+	HEDERA_ERC20_ADDRESS,
 } from '../../../../config.js';
 import StableCoinService from '../../../../../src/app/service/StableCoinService.js';
 import { RESERVE_DECIMALS } from '../../../../../src/domain/context/reserve/Reserve.js';
@@ -86,8 +86,8 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		});
 		tr = await th.create(
 			coinSC,
-			new ContractId(FactoryAddressTestnet),
-			new ContractId(HederaERC20AddressTestnet),
+			new ContractId(FACTORY_ADDRESS),
+			new ContractId(HEDERA_ERC20_ADDRESS),
 			true,
 			undefined,
 			BigDecimal.fromString('100000000', RESERVE_DECIMALS),
@@ -119,8 +119,8 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		});
 		tr = await th.create(
 			coinHTS,
-			new ContractId(FactoryAddressTestnet),
-			new ContractId(HederaERC20AddressTestnet),
+			new ContractId(FACTORY_ADDRESS),
+			new ContractId(HEDERA_ERC20_ADDRESS),
 			false,
 		);
 
@@ -516,8 +516,8 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		await expect(
 			th.create(
 				coinHTS,
-				new ContractId(FactoryAddressTestnet),
-				new ContractId(HederaERC20AddressTestnet),
+				new ContractId(FACTORY_ADDRESS),
+				new ContractId(HEDERA_ERC20_ADDRESS),
 				true,
 				undefined,
 				BigDecimal.fromString('200', RESERVE_DECIMALS),
@@ -617,8 +617,8 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 		});
 		tr = await th.create(
 			coinSC,
-			new ContractId(FactoryAddressTestnet),
-			new ContractId(HederaERC20AddressTestnet),
+			new ContractId(FACTORY_ADDRESS),
+			new ContractId(HEDERA_ERC20_ADDRESS),
 			true,
 			undefined,
 			BigDecimal.fromString('100000000', RESERVE_DECIMALS),
@@ -648,8 +648,8 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 		});
 		tr = await th.create(
 			coinHTS,
-			new ContractId(FactoryAddressTestnet),
-			new ContractId(HederaERC20AddressTestnet),
+			new ContractId(FACTORY_ADDRESS),
+			new ContractId(HEDERA_ERC20_ADDRESS),
 			true,
 			undefined,
 			BigDecimal.fromString('12.35', RESERVE_DECIMALS),
