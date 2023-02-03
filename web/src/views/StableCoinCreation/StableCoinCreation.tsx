@@ -22,8 +22,6 @@ import {
 import SDKService from '../../services/SDKService';
 import ModalNotification from '../../components/ModalNotification';
 import {
-	FactoryAddressTestnet,
-	HederaERC20AddressTestnet,
 	Account,
 	CreateRequest,
 } from 'hedera-stable-coin-sdk';
@@ -61,8 +59,6 @@ const StableCoinCreation = () => {
 			name: '',
 			symbol: '',
 			decimals: 6,
-			hederaERC20: HederaERC20AddressTestnet,
-			stableCoinFactory: FactoryAddressTestnet,
 			createReserve: false,
 		}),
 	);
