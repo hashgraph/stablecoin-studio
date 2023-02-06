@@ -31,9 +31,7 @@ import { Network } from '../../../../../src/index.js';
 import ConnectRequest, {
 	SupportedWallets,
 } from '../../../../../src/port/in/request/ConnectRequest.js';
-import {
-	TokenSupplyType,
-} from '../../../../../src/port/in/StableCoin.js';
+import { TokenSupplyType } from '../../../../../src/port/in/StableCoin.js';
 import PublicKey from '../../../../../src/domain/context/account/PublicKey.js';
 import ContractId from '../../../../../src/domain/context/contract/ContractId.js';
 import { ContractId as HContractId } from '@hashgraph/sdk';

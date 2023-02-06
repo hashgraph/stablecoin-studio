@@ -45,7 +45,11 @@ import ConnectRequest, {
 	SupportedWallets,
 } from '../../../src/port/in/request/ConnectRequest.js';
 
-import { CLIENT_ACCOUNT_ED25519, FACTORY_ADDRESS, HEDERA_ERC20_ADDRESS } from '../../config.js';
+import {
+	CLIENT_ACCOUNT_ED25519,
+	FACTORY_ADDRESS,
+	HEDERA_ERC20_ADDRESS,
+} from '../../config.js';
 import BigDecimal from '../../../src/domain/context/shared/BigDecimal.js';
 
 describe('🧪 Role test', () => {

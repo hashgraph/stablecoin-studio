@@ -48,7 +48,12 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 			command;
 		let { factory, hederaERC20 } = command;
 
-		if (!factory && !hederaERC20 && !this.networkService.configuration) {
+		if (
+			!factory &&
+			!hederaERC20 &&
+			this.networkService.configuration.factoryAddress === '' &&
+			this.networkService.configuration.hederaERC20Address === ''
+		) {
 			throw new InvalidRequest(
 				'HederaERC20 and factory not found in request or in configuration',
 			);
