@@ -6,7 +6,9 @@ import {
     UpgradeTestContract_Wrong_2__factory,
     UpgradeTestContract_Wrong_3__factory,
     UpgradeTestContract_Wrong_4__factory,
-    UpgradeTestContract_Correct__factory,
+    UpgradeTestContract_Wrong_5__factory,
+    UpgradeTestContract_Correct_1__factory,
+    UpgradeTestContract_Correct_2__factory,
 } from '../typechain-types'
 
 export async function checkUpgradeTestContractUpgradability_Correct_1(): Promise<void> {
@@ -14,7 +16,21 @@ export async function checkUpgradeTestContractUpgradability_Correct_1(): Promise
 
     await validateUpgrade(
         createHContractFactory(UpgradeTestContract__factory),
-        createHContractFactory(UpgradeTestContract_Correct__factory),
+        createHContractFactory(UpgradeTestContract_Correct_1__factory),
+        {
+            unsafeAllowRenames: false,
+            unsafeSkipStorageCheck: false,
+            kind: 'transparent',
+        }
+    )
+}
+
+export async function checkUpgradeTestContractUpgradability_Correct_1_2(): Promise<void> {
+    console.log(`Checking upgrade compatibility for Correct 1 (2). please wait...`)
+
+    await validateUpgrade(
+        createHContractFactory(UpgradeTestContract__factory),
+        createHContractFactory(UpgradeTestContract_Correct_2__factory),
         {
             unsafeAllowRenames: false,
             unsafeSkipStorageCheck: false,
@@ -79,6 +95,20 @@ export async function checkUpgradeTestContractUpgradability_Correct_5(): Promise
     )
 }
 
+export async function checkUpgradeTestContractUpgradability_Correct_6(): Promise<void> {
+    console.log(`Checking upgrade compatibility for Correct 6. please wait...`)
+
+    await validateUpgrade(
+        createHContractFactory(UpgradeTestContract__factory),
+        createHContractFactory(UpgradeTestContract_Wrong_5__factory),
+        {
+            unsafeAllowRenames: false,
+            unsafeSkipStorageCheck: true,
+            kind: 'transparent',
+        }
+    )
+}
+
 export async function checkUpgradeTestContractUpgradability_Wrong_1(): Promise<void> {
     console.log(`Checking upgrade compatibility for Wrong 1. please wait...`)
 
@@ -127,6 +157,20 @@ export async function checkUpgradeTestContractUpgradability_Wrong_4(): Promise<v
     await validateUpgrade(
         createHContractFactory(UpgradeTestContract__factory),
         createHContractFactory(UpgradeTestContract_Wrong_4__factory),
+        {
+            unsafeAllowRenames: false,
+            unsafeSkipStorageCheck: false,
+            kind: 'transparent',
+        }
+    )
+}
+
+export async function checkUpgradeTestContractUpgradability_Wrong_5(): Promise<void> {
+    console.log(`Checking upgrade compatibility for Wrong 5. please wait...`)
+
+    await validateUpgrade(
+        createHContractFactory(UpgradeTestContract__factory),
+        createHContractFactory(UpgradeTestContract_Wrong_5__factory),
         {
             unsafeAllowRenames: false,
             unsafeSkipStorageCheck: false,
