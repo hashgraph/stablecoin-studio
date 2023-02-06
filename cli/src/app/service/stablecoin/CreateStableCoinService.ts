@@ -239,6 +239,14 @@ export default class CreateStableCoinService extends Service {
       tokenToCreate.treasury = treasury;
     }
 
+    const feeScheduleKey = await this.checkAnswer(
+      await utilsService.defaultMultipleAsk(
+        language.getText('stablecoin.features.feeSchedule'),
+        language.getArrayFromObject('wizard.nonSmartContractFeatureOptions'),
+      ),
+    );
+    tokenToCreate.feeScheduleKey = feeScheduleKey;
+
     // Proof of Reserve
     let reserve = false;
     let existingReserve = false;
@@ -325,6 +333,12 @@ export default class CreateStableCoinService extends Service {
           ? language.getText('wizard.featureOptions.None')
           : tokenToCreate.pauseKey.key !== 'null'
           ? tokenToCreate.pauseKey
+          : language.getText('wizard.featureOptions.SmartContract'),
+      feeScheduleKey:
+        tokenToCreate.feeScheduleKey === undefined
+          ? language.getText('wizard.featureOptions.None')
+          : tokenToCreate.feeScheduleKey.key !== 'null'
+          ? tokenToCreate.feeScheduleKey
           : language.getText('wizard.featureOptions.SmartContract'),
       treasury:
         tokenToCreate.treasury !== '0.0.0' &&
@@ -465,6 +479,13 @@ export default class CreateStableCoinService extends Service {
         language.getArrayFromObject('wizard.featureOptions'),
       ),
     );
+
+    /* const feeScheduleKey = await this.checkAnswer(
+      await utilsService.defaultMultipleAsk(
+        language.getText('stablecoin.features.feeSchedule'),
+        language.getArrayFromObject('wizard.nonSmartContractFeatureOptions'),
+      ),
+    );*/
 
     let grantKYCToOriginalSender = false;
 

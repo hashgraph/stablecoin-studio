@@ -18,7 +18,7 @@
  *
  */
 
-import axios, { responseEncoding } from 'axios';
+import axios from 'axios';
 import { AxiosInstance } from 'axios';
 import { singleton } from 'tsyringe';
 import StableCoinViewModel from '../../out/mirror/response/StableCoinViewModel.js';

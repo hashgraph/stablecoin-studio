@@ -82,6 +82,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				coin.freezeKey,
 				coin.wipeKey,
 				coin.supplyKey,
+				coin.feeScheduleKey,
 				coin.pauseKey,
 			];
 
@@ -110,6 +111,10 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 							break;
 						}
 						case 5: {
+							key.keyType = 32; // fee schedule
+							break;
+						}
+						case 6: {
 							key.keyType = 64; // pause
 							break;
 						}

@@ -186,6 +186,12 @@ class StableCoinInPort implements IStableCoinInPort {
 						type: req.supplyKey.type,
 				  })
 				: undefined,
+			feeScheduleKey: req.feeScheduleKey
+				? new PublicKey({
+						key: req.feeScheduleKey.key,
+						type: req.feeScheduleKey.type,
+				  })
+				: undefined,
 			treasury: new HederaId(req.treasury ?? '0.0.0'),
 			supplyType: req.supplyType,
 			autoRenewAccount: req.autoRenewAccount

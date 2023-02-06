@@ -68,6 +68,7 @@ export interface StableCoinProps {
 	kycKey?: PublicKey | ContractId;
 	wipeKey?: PublicKey | ContractId;
 	pauseKey?: PublicKey | ContractId;
+	feeScheduleKey?: PublicKey;
 	paused?: boolean;
 	supplyKey?: PublicKey | ContractId;
 	treasury?: HederaId;
@@ -97,6 +98,7 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 	kycKey?: PublicKey | ContractId;
 	wipeKey?: PublicKey | ContractId;
 	pauseKey?: PublicKey | ContractId;
+	feeScheduleKey?: PublicKey;
 	paused?: boolean;
 	supplyKey?: PublicKey | ContractId;
 	treasury?: HederaId;
@@ -124,6 +126,7 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 			wipeKey,
 			pauseKey,
 			supplyKey,
+			feeScheduleKey,
 			treasury,
 			tokenType,
 			supplyType,
@@ -151,6 +154,7 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 		this.wipeKey = wipeKey;
 		this.pauseKey = pauseKey;
 		this.supplyKey = supplyKey;
+		this.feeScheduleKey = feeScheduleKey;
 		this.treasury = treasury;
 		this.tokenType = tokenType ?? TokenType.FUNGIBLE_COMMON;
 		this.supplyType = supplyType

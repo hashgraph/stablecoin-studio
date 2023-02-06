@@ -259,6 +259,11 @@ export const english = {
     adminFeatureOptions: {
       ...basicFeatureOptions,
     },
+    nonSmartContractFeatureOptions: {
+      CurrentUser: 'Current user key',
+      None: 'None',
+      OtherKey: 'Other public key',
+    },
     featureOptions: {
       ...basicFeatureOptions,
       OtherKey: 'Other public key',
