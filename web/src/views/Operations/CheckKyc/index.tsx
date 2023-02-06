@@ -16,6 +16,7 @@ import { RouterManager } from '../../../Router/RouterManager';
 
 import { KYCRequest } from 'hedera-stable-coin-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
+import { propertyNotFound } from '../../../constant';
 
 const CheckKycOperation = () => {
 	const {
@@ -84,7 +85,7 @@ const CheckKycOperation = () => {
 						<Stack as='form' spacing={6} maxW='520px'>
 							<InputController
 								rules={{
-									required: t('global:validations.required'),
+									required: t('global:validations.required') ?? propertyNotFound,
 									validate: {
 										validation: (value: string) => {
 											request.targetId = value;
@@ -96,8 +97,8 @@ const CheckKycOperation = () => {
 								isRequired
 								control={control}
 								name='targetAccount'
-								placeholder={t('checkKyc:accountPlaceholder')}
-								label={t('checkKyc:accountLabel')}
+								placeholder={t('checkKyc:accountPlaceholder') ?? propertyNotFound}
+								label={t('checkKyc:accountLabel') ?? propertyNotFound}
 							/>
 						</Stack>
 					</>
