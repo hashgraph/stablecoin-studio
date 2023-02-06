@@ -18,7 +18,7 @@
  *
  */
 
-import axios from 'axios';
+import axios, { responseEncoding } from 'axios';
 import { AxiosInstance } from 'axios';
 import { singleton } from 'tsyringe';
 import StableCoinViewModel from '../../out/mirror/response/StableCoinViewModel.js';
@@ -45,9 +45,11 @@ import {
 	FreezeStatus,
 	KycStatus,
 } from './response/AccountTokenRelationViewModel.js';
+import { REGEX_TRANSACTION } from '../error/TransactionResponseError.js';
 
 @singleton()
 export class MirrorNodeAdapter {
+
 	private instance: AxiosInstance;
 	private URI_BASE: string;
 
@@ -263,7 +265,6 @@ export class MirrorNodeAdapter {
 			const url = this.URI_BASE + 'contracts/results/' + transactionId;
 			LogService.logTrace(url);
 			const res = await axios.get<ITransactionResult>(url);
-
 			if (!res.data.call_result)
 				throw new Error(
 					'Response does not contain a transaction result',
@@ -271,6 +272,43 @@ export class MirrorNodeAdapter {
 
 			const result: TransactionResultViewModel = {
 				result: res.data.call_result.toString(),
+			};
+
+			return result;
+		} catch (error) {
+			LogService.logError(error);
+			return Promise.reject<TransactionResultViewModel>(
+				new InvalidResponse(error),
+			);
+		}
+	}
+
+	public async getTransactionFinalError(
+		transactionId: string,
+	): Promise<TransactionResultViewModel> {
+		try {
+			if (transactionId.match(REGEX_TRANSACTION))
+				transactionId = transactionId.replace('@', '-')
+											 .replace(/.([^.]*)$/, '-$1');
+
+			const url = this.URI_BASE + 'transactions/' + transactionId;
+			LogService.logTrace(url);
+
+			await new Promise(resolve => setTimeout(resolve, 5000));
+			const res = await axios.get<ITransactionList>(url);
+
+			let lastChildtransaction: ITransaction;
+			if (res.data.transactions) {
+				lastChildtransaction = res.data.transactions[res.data.transactions.length-1];	
+				LogService.logTrace(JSON.stringify(lastChildtransaction));			
+			} else {
+				throw new Error(
+					'Response does not contain any transaction',
+				);
+			}
+
+			const result: TransactionResultViewModel = {
+				result: lastChildtransaction.result,
 			};
 
 			return result;
@@ -400,8 +438,17 @@ interface IAccount {
 	alias: string;
 	account: string;
 }
+
 interface ITransactionResult {
 	call_result?: string;
+}
+
+interface ITransactionList {
+	transactions: ITransaction[];
+}
+
+interface ITransaction {
+	result: string;
 }
 
 interface IKey {
