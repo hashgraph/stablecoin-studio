@@ -248,6 +248,7 @@ https://user-images.githubusercontent.com/108128685/214292138-c5d44bc6-3fc1-4995
     - RESCUE_ROLE
     - PAUSE_ROLE
     - FREEZE_ROLE
+    - KYC_ROLE
     - DELETE_ROLE
 
 - **Danger Zone**: This section contains the stable coin operations deemed as particularily "dangerous" either because they affect every single token owner (PAUSE) or because they can not be rolled-back (DELETE).
