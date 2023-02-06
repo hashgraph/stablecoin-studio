@@ -889,7 +889,7 @@ contract upgradeTestContract_Correct_2 is IUpgradeTestContract, Initializable, p
     uint80 private constant _ROUND_ID = 0;
 
     uint256 someOtherVble_2;
-    uint256 someOtherVble_2_bis;
+    uint256 someOtherVble_2_bis; // new variable
 
     modifier isAdmin() {
         require(
@@ -1020,9 +1020,9 @@ contract upgradeTestContract_Correct_2 is IUpgradeTestContract, Initializable, p
 contract parentContract_1_Correct_1{
     int256 _reserveAmount;
     address _admin;
-    uint256 _test;
-    uint256 _test_2;
-    uint256[46] private __gap;
+    uint256 _test; // new variable
+    uint256 _test_2; // new variable
+    uint256[46] private __gap; // gap reduced by two
 }
 
 contract parentContract_2_Correct_1 is parentContract_1_Correct_1{
@@ -1035,7 +1035,7 @@ contract upgradeTestContract_Correct_1 is IUpgradeTestContract, Initializable, p
     uint80 private constant _ROUND_ID = 0;
 
     uint256 someOtherVble_2;
-    uint256 someOtherVble_2_bis;
+    uint256 someOtherVble_2_bis; // new variable
 
     modifier isAdmin() {
         require(
