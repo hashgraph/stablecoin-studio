@@ -9,14 +9,12 @@
 </div>
 
 # Table of contents
-- [Hedera Stable Coin SDK](#hedera-stable-coin-sdk)
-- [Table of contents](#table-of-contents)
 - [Overview](#overview)
-- [Installing](#installing)
-		- [Pre-requirements](#pre-requirements)
-		- [Steps](#steps)
-			- [**For projects (WIP - when published)**](#for-projects-wip---when-published)
-			- [**For development**](#for-development)
+- [Installation](#installation)
+	- [Pre-requirements](#pre-requirements)
+	- [Steps](#steps)
+		- [For projects (WIP - when published)](#for-projects-wip---when-published)
+		- [For development](#for-development)
 - [Build](#build)
 - [Quick Start](#quick-start)
 	- [Initialization](#initialization)
@@ -38,6 +36,8 @@
 		- [Unpause](#unpause)
 		- [Freeze](#freeze)
 		- [Unfreeze](#unfreeze)
+		- [Grant KYC](#grant-kyc)
+		- [Revoke KYC](#revoke-kyc)
 		- [Delete](#delete)
 		- [GetReserveAddress](#getreserveaddress)
 		- [Update Reserve Address](#update-reserve-address)
@@ -68,7 +68,7 @@
 		- [Update Reserve Amount](#update-reserve-amount)
 	- [Common](#common)
 - [Testing](#testing)
-		- [Jest](#jest)
+	- [Jest](#jest)
 - [Typescript](#typescript)
 	- [Tsconfig](#tsconfig)
 		- [Client side](#client-side)
@@ -76,7 +76,7 @@
 - [Support](#support)
 - [Contributing](#contributing)
 - [Code of Conduct](#code-of-conduct)
-	- [License](#license)
+- [License](#license)
 
 # Overview
 
@@ -90,7 +90,7 @@ If you want to see server side implementation you can see it in this project - [
 
 If you want to see an example of a React web app you can see it in this project - [Web](../web)
 
-# Installing
+# Installation
 
 ### Pre-requirements
 
@@ -602,6 +602,46 @@ Unfreezes transfers of a stable coin for an account. The operating account must 
 	);
 ```
 
+### Grant KYC
+Grants KYC to an account. If a Token has KYC enabled, only accounts with KYC can operate it. The operating account must have the KYC role.
+
+**Spec:**
+
+```Typescript
+	StableCoin.grantKyc(request: KYCRequest): Promise<boolean>
+```
+
+**Example:**
+
+```Typescript
+	const result: boolean = await StableCoin.grantKyc(
+		new KYCRequest({
+			tokenId: "0.0.1",
+			targetId: "0.0.2"
+		})
+	);
+```
+
+### Revoke KYC
+Revokes KYC from an account. If a Token has KYC enabled, only accounts with KYC can operate it. The operating account must have the KYC role.
+
+**Spec:**
+
+```Typescript
+	StableCoin.revokeKyc(request: KYCRequest): Promise<boolean> 
+```
+
+**Example:**
+
+```Typescript
+	await StableCoin.revokeKyc(
+		new KYCRequest({
+			tokenId: "0.0.1",
+			targetId: "0.0.2"
+		})
+	);
+```
+
 
 ### Delete
 Deletes a stable coin. **Important** this operation is not reversible.
@@ -736,6 +776,10 @@ See the spec below for all the atributes you can get from the request.
 		DELETE = 'Delete',
 		RESCUE = 'Rescue',
 		ROLE_MANAGEMENT = 'Role_Management',
+		ROLE_ADMIN_MANAGEMENT = 'Admin_Role',
+		RESERVE_MANAGEMENT = 'Admin_Role',
+		GRANT_KYC = 'Grant_KYC',
+		REVOKE_KYC = 'Revoke_KYC',
 	}
 
 	enum Access {
