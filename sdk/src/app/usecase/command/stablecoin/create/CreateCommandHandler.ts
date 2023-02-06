@@ -26,9 +26,11 @@ import ContractId from '../../../../../domain/context/contract/ContractId.js';
 import { StableCoin } from '../../../../../domain/context/stablecoin/StableCoin.js';
 import AccountService from '../../../../service/AccountService.js';
 import TransactionService from '../../../../service/TransactionService.js';
+import NetworkService from '../../../../service/NetworkService.js';
 import { OperationNotAllowed } from '../error/OperationNotAllowed.js';
 import { CreateCommand, CreateCommandResponse } from './CreateCommand.js';
 import { RESERVE_DECIMALS } from '../../../../../domain/context/reserve/Reserve.js';
+import { InvalidRequest } from '../error/InvalidRequest.js';
 
 @CommandHandler(CreateCommand)
 export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
@@ -37,17 +39,36 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 		public readonly accountService: AccountService,
 		@lazyInject(TransactionService)
 		public readonly transactionService: TransactionService,
+		@lazyInject(NetworkService)
+		public readonly networkService: NetworkService,
 	) {}
 
 	async execute(command: CreateCommand): Promise<CreateCommandResponse> {
-		const {
-			coin,
-			factory,
-			hederaERC20,
-			reserveAddress,
-			reserveInitialAmount,
-			createReserve,
-		} = command;
+		const { coin, reserveAddress, reserveInitialAmount, createReserve } =
+			command;
+		let { factory, hederaERC20 } = command;
+
+		if (
+			!factory &&
+			!hederaERC20 &&
+			this.networkService.configuration.factoryAddress === '' &&
+			this.networkService.configuration.hederaERC20Address === ''
+		) {
+			throw new InvalidRequest(
+				'HederaERC20 and factory not found in request or in configuration',
+			);
+		}
+		if (!hederaERC20) {
+			hederaERC20 = new ContractId(
+				this.networkService.configuration.hederaERC20Address,
+			);
+		}
+		if (!factory) {
+			factory = new ContractId(
+				this.networkService.configuration.factoryAddress,
+			);
+		}
+
 		const handler = this.transactionService.getHandler();
 		if (
 			coin.maxSupply &&

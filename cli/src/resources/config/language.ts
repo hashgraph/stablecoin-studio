@@ -65,6 +65,8 @@ export const english = {
     askNode: 'Enter the node id',
     askOperateWithNewAccount:
       'Would you like to operate with the account you have just created?',
+    askFactoryAddress: 'Enter your factory address',
+    askHederaERC20Address: 'Enter your Hedera ERC20 address',
   },
   stablecoin: {
     askConfirmCreation:

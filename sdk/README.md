@@ -142,6 +142,18 @@ await Network.init(
 );
 ```  
 
+In the configuration, you can also specify the addresses that will be invoked when creating a stable coin.
+```Typescript
+const init = await Network.init(
+	new InitializationRequest({
+		network: 'testnet',
+		configuration: {
+			factoryAddress: '0.0.0',
+			hederaERC20Address: '0.0.0',
+		},
+	}),
+);
+```
 ## Connect SDK
 The next step would be to connect to the network. Currently 3 types of connections are offered: Client (an Hedera account configured in an application configuration file), Metamask and HashPack. These 3 connection types are in the SupportedWallets enum.
 

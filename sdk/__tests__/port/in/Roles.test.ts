@@ -22,8 +22,6 @@ import Injectable from '../../../src/core/Injectable.js';
 import {
 	Account,
 	Balance,
-	FactoryAddressTestnet,
-	HederaERC20AddressTestnet,
 	Network,
 	Role,
 	StableCoin,
@@ -47,7 +45,11 @@ import ConnectRequest, {
 	SupportedWallets,
 } from '../../../src/port/in/request/ConnectRequest.js';
 
-import { CLIENT_ACCOUNT_ED25519 } from '../../config.js';
+import {
+	CLIENT_ACCOUNT_ED25519,
+	FACTORY_ADDRESS,
+	HEDERA_ERC20_ADDRESS,
+} from '../../config.js';
 import BigDecimal from '../../../src/domain/context/shared/BigDecimal.js';
 
 describe('🧪 Role test', () => {
@@ -79,8 +81,8 @@ describe('🧪 Role test', () => {
 			supplyKey: Account.NullPublicKey,
 			// treasury: CLIENT_ACCOUNT_ED25519.id.toString(),
 			supplyType: TokenSupplyType.INFINITE,
-			stableCoinFactory: FactoryAddressTestnet,
-			hederaERC20: HederaERC20AddressTestnet,
+			stableCoinFactory: FACTORY_ADDRESS,
+			hederaERC20: HEDERA_ERC20_ADDRESS,
 			createReserve: true,
 			reserveInitialAmount: '1000',
 			grantKYCToOriginalSender: false,

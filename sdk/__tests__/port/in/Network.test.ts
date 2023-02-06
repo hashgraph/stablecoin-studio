@@ -29,7 +29,11 @@ import ConnectRequest, {
 	SupportedWallets,
 } from '../../../src/port/in/request/ConnectRequest.js';
 
-import { CLIENT_ACCOUNT_ED25519 } from '../../config.js';
+import {
+	CLIENT_ACCOUNT_ED25519,
+	FACTORY_ADDRESS,
+	HEDERA_ERC20_ADDRESS,
+} from '../../config.js';
 
 describe('🧪 Network test', () => {
 	afterEach(() => {
@@ -68,6 +72,10 @@ describe('🧪 Network test', () => {
 		const init = await Network.init(
 			new InitializationRequest({
 				network: 'previewnet',
+				configuration: {
+					factoryAddress: FACTORY_ADDRESS,
+					hederaERC20Address: HEDERA_ERC20_ADDRESS,
+				},
 			}),
 		);
 		expect(spy).toHaveBeenCalled();
@@ -75,6 +83,10 @@ describe('🧪 Network test', () => {
 		expect(networkService.mirrorNode).toBeUndefined();
 		expect(networkService.rpcNode).toBeUndefined();
 		expect(networkService.environment).toEqual('previewnet');
+		expect(networkService.configuration).toStrictEqual({
+			factoryAddress: FACTORY_ADDRESS,
+			hederaERC20Address: HEDERA_ERC20_ADDRESS,
+		});
 		expect(init).toBeTruthy();
 		expect(init.length).toBeGreaterThan(0);
 	}, 60_000);

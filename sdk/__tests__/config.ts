@@ -24,7 +24,8 @@ import PublicKey from '../src/domain/context/account/PublicKey.js';
 import { HederaId } from '../src/domain/context/shared/HederaId.js';
 
 export const ENVIRONMENT = 'testnet';
-
+export const HEDERA_ERC20_ADDRESS = process.env.HEDERA_ERC20_ADDRESS ?? '';
+export const FACTORY_ADDRESS = process.env.FACTORY_ADDRESS ?? '';
 export const CLIENT_PRIVATE_KEY_ECDSA = new PrivateKey({
 	key: '9f3243750c56fa6856e2acc5cc5438883e8cab089b836112dbef9a5a449ca9be',
 	type: 'ECDSA',

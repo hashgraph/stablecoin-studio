@@ -79,12 +79,6 @@ import { LogError } from '../../core/decorator/LogErrorDecorator.js';
 import { GetAccountTokenRelationshipQuery } from '../../app/usecase/query/account/tokenRelationship/GetAccountTokenRelationshipQuery.js';
 import { KycStatus } from '../out/mirror/response/AccountTokenRelationViewModel.js';
 
-export const HederaERC20AddressTestnet = '0.0.3121145';
-export const HederaERC20AddressPreviewnet = '0.0.11111111';
-
-export const FactoryAddressTestnet = '0.0.3121759';
-export const FactoryAddressPreviewnet = '0.0.11111111';
-
 export { StableCoinViewModel, StableCoinListViewModel, ReserveViewModel };
 export { StableCoinCapabilities, Capability, Access, Operation, Balance };
 export { TokenSupplyType };
@@ -205,9 +199,11 @@ class StableCoinInPort implements IStableCoinInPort {
 		const createResponse = await this.commandBus.execute(
 			new CreateCommand(
 				coin,
-				new ContractId(stableCoinFactory),
-				new ContractId(hederaERC20),
 				createReserve,
+				stableCoinFactory
+					? new ContractId(stableCoinFactory)
+					: undefined,
+				hederaERC20 ? new ContractId(hederaERC20) : undefined,
 				reserveAddress ? new ContractId(reserveAddress) : undefined,
 				reserveInitialAmount
 					? BigDecimal.fromString(

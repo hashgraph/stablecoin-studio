@@ -18,9 +18,7 @@
  *
  */
 
-import BaseError, { ErrorCode } from '../../../../../core/error/BaseError.js';
-export class AccountFreeze extends BaseError {
-	constructor(targetId: unknown) {
-		super(ErrorCode.AccountFreeze, `The account ${targetId} is frozen`);
-	}
+export default interface Configuration {
+	hederaERC20Address: string;
+	factoryAddress: string;
 }
