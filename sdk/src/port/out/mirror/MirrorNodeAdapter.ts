@@ -139,7 +139,6 @@ export class MirrorNodeAdapter {
 			if (response.status !== 200) {
 				throw new StableCoinNotFound(tokenId.toString());
 			}
-
 			const decimals = parseInt(response.data.decimals ?? '0');
 			const proxyAddress = response.data.memo
 				? StableCoinMemo.fromJson(response.data.memo).proxyContract
@@ -190,6 +189,9 @@ export class MirrorNodeAdapter {
 					response.data.supply_key,
 				) as PublicKey,
 				pauseKey: getKeyOrDefault(response.data.pause_key) as PublicKey,
+				feeScheduleKey: getKeyOrDefault(
+					response.data.fee_schedule_key,
+				) as PublicKey,
 			};
 			return stableCoinDetail;
 		} catch (error) {
@@ -418,6 +420,7 @@ interface IHederaStableCoinDetail {
 	wipe_key?: IPublicKey;
 	supply_key?: IPublicKey;
 	pause_key?: IPublicKey;
+	fee_schedule_key?: IPublicKey;
 }
 
 interface ICustomFees {

@@ -59,6 +59,9 @@ export default class DetailsStableCoinsService extends Service {
         wipeKey: respDetail.wipeKey ? respDetail.wipeKey.toString() : '-',
         supplyKey: respDetail.supplyKey ? respDetail.supplyKey.toString() : '-',
         pauseKey: respDetail.pauseKey ? respDetail.pauseKey.toString() : '-',
+        feeScheduleKey: respDetail.feeScheduleKey
+          ? respDetail.feeScheduleKey.toString()
+          : '-',
         ...reserveData,
       };
       console.log(out);

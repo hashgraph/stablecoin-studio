@@ -48,6 +48,7 @@ export default interface StableCoinViewModel extends QueryResponse {
 	wipeKey?: ContractId | PublicKey | undefined;
 	supplyKey?: ContractId | PublicKey | undefined;
 	pauseKey?: ContractId | PublicKey | undefined;
+	feeScheduleKey?: PublicKey | undefined;
 	reserveAddress?: ContractId;
 	reserveAmount?: BigDecimal;
 }
