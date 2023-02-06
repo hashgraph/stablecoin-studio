@@ -29,13 +29,13 @@ describe(`<${SidebarOption.name} />`, () => {
 		expect(component.asFragment()).toMatchSnapshot();
 	});
 
-	test('on click should redirect', () => {
+	test('on click should redirect', async () => {
 		const component = render(<SidebarOption {...sidebarOptionProps} />);
 
 		const button = component.getByTestId('sidebar-option-Coin');
 		const anything = expect.any(Function);
 
-		userEvent.click(button);
+		await userEvent.click(button);
 		expect(RouterManager.to).toHaveBeenCalledTimes(1);
 		expect(RouterManager.to).toHaveBeenCalledWith(anything, sidebarOptionProps.route);
 	});

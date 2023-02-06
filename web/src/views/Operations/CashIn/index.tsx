@@ -15,6 +15,7 @@ import { CashInRequest } from 'hedera-stable-coin-sdk';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
+import { propertyNotFound } from '../../../constant';
 
 const CashInOperation = () => {
 	const {
@@ -85,12 +86,12 @@ const CashInOperation = () => {
 						<Stack as='form' spacing={6} maxW='520px'>
 							<InputController
 								rules={{
-									required: t(`global:validations.required`),
+									required: t(`global:validations.required`) ?? propertyNotFound,
 									validate: {
 										validDecimals: (value: string) => {
 											return (
 												validateDecimalsString(value, decimals) ||
-												t('global:validations.decimalsValidation')
+												(t('global:validations.decimalsValidation') ?? propertyNotFound)
 											);
 										},
 										validation: (value: string) => {
@@ -103,12 +104,12 @@ const CashInOperation = () => {
 								isRequired
 								control={control}
 								name={'amount'}
-								label={t('cashIn:amountLabel')}
-								placeholder={t('cashIn:amountPlaceholder')}
+								label={t('cashIn:amountLabel') ?? propertyNotFound}
+								placeholder={t('cashIn:amountPlaceholder') ?? propertyNotFound}
 							/>
 							<InputController
 								rules={{
-									required: t('global:validations.required'),
+									required: t('global:validations.required') ?? propertyNotFound,
 									validate: {
 										validation: (value: string) => {
 											request.targetId = value;
@@ -120,8 +121,8 @@ const CashInOperation = () => {
 								isRequired
 								control={control}
 								name='destinationAccount'
-								placeholder={t('cashIn:destinationAccountPlaceholder')}
-								label={t('cashIn:destinationAccountLabel')}
+								placeholder={t('cashIn:destinationAccountPlaceholder') ?? propertyNotFound}
+								label={t('cashIn:destinationAccountLabel') ?? propertyNotFound}
 							/>
 						</Stack>
 					</>
