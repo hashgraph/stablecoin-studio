@@ -20,7 +20,7 @@
 
 import BaseError, { ErrorCode } from '../../../core/error/BaseError.js';
 
-const REGEX_TRANSACTION =
+export const REGEX_TRANSACTION =
 	/^(0|(?:[1-9]\d*))\.(0|(?:[1-9]\d*))\.(0|(?:[1-9]\d*))(?:-([a-z]{5}))?@([1-9]\d*)\.([1-9]\d*)$/;
 const HASHSCAN_URL = 'https://hashscan.io/testnet/transactionsById/';
 const HASHSCAN_URL_RPC_RELAY = 'https://hashscan.io/testnet/tx/';
