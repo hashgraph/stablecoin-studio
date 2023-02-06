@@ -49,7 +49,6 @@ import { REGEX_TRANSACTION } from '../error/TransactionResponseError.js';
 
 @singleton()
 export class MirrorNodeAdapter {
-
 	private instance: AxiosInstance;
 	private URI_BASE: string;
 
@@ -288,23 +287,23 @@ export class MirrorNodeAdapter {
 	): Promise<TransactionResultViewModel> {
 		try {
 			if (transactionId.match(REGEX_TRANSACTION))
-				transactionId = transactionId.replace('@', '-')
-											 .replace(/.([^.]*)$/, '-$1');
+				transactionId = transactionId
+					.replace('@', '-')
+					.replace(/.([^.]*)$/, '-$1');
 
 			const url = this.URI_BASE + 'transactions/' + transactionId;
 			LogService.logTrace(url);
 
-			await new Promise(resolve => setTimeout(resolve, 5000));
+			await new Promise((resolve) => setTimeout(resolve, 5000));
 			const res = await axios.get<ITransactionList>(url);
 
 			let lastChildtransaction: ITransaction;
 			if (res.data.transactions) {
-				lastChildtransaction = res.data.transactions[res.data.transactions.length-1];	
-				LogService.logTrace(JSON.stringify(lastChildtransaction));			
+				lastChildtransaction =
+					res.data.transactions[res.data.transactions.length - 1];
+				LogService.logError(JSON.stringify(lastChildtransaction));
 			} else {
-				throw new Error(
-					'Response does not contain any transaction',
-				);
+				throw new Error('Response does not contain any transaction');
 			}
 
 			const result: TransactionResultViewModel = {

@@ -772,13 +772,18 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			}
 		} catch (error) {
 			LogService.logError(error);
-			const transactionId: string = (error as any).error?.transactionId.toString() ??
-										  (error as any)?.transactionId.toString();
-			const transactionError: TransactionResultViewModel = 
-				await this.mirrorNodeAdapter.getTransactionFinalError(transactionId);
+			const transactionId: string =
+				(error as any).error?.transactionId.toString() ??
+				(error as any)?.transactionId.toString();
+			const transactionError: TransactionResultViewModel =
+				await this.mirrorNodeAdapter.getTransactionFinalError(
+					transactionId,
+				);
 			throw new TransactionResponseError({
-				message: `Unexpected error in HederaTransactionHandler ${operationName} operation: ${JSON.stringify(transactionError)}`,
-				transactionId: transactionId
+				message: `Unexpected error in HederaTransactionHandler ${operationName} operation: ${JSON.stringify(
+					transactionError,
+				)}`,
+				transactionId: transactionId,
 			});
 		}
 	}
