@@ -1,17 +1,20 @@
 import { BigNumber } from 'ethers'
 import {
-    checkUpgradeTestContractUpgradability_Correct_1,
+    checkUpgradeTestContractUpgradability_Correct_1_1,
     checkUpgradeTestContractUpgradability_Correct_1_2,
+    checkUpgradeTestContractUpgradability_Correct_1_3,
     checkUpgradeTestContractUpgradability_Correct_2,
     checkUpgradeTestContractUpgradability_Correct_3,
     checkUpgradeTestContractUpgradability_Correct_4,
     checkUpgradeTestContractUpgradability_Correct_5,
     checkUpgradeTestContractUpgradability_Correct_6,
+    checkUpgradeTestContractUpgradability_Correct_7,
     checkUpgradeTestContractUpgradability_Wrong_1,
     checkUpgradeTestContractUpgradability_Wrong_2,
     checkUpgradeTestContractUpgradability_Wrong_3,
     checkUpgradeTestContractUpgradability_Wrong_4,
     checkUpgradeTestContractUpgradability_Wrong_5,
+    checkUpgradeTestContractUpgradability_Wrong_6,
 } from '../scripts/upgrade'
 import {
     upgradeTo,
@@ -136,13 +139,19 @@ describe('UpgradeTestContract Tests', function () {
 
         console.log('TESTING')
         try {
-            await checkUpgradeTestContractUpgradability_Correct_1()
+            await checkUpgradeTestContractUpgradability_Correct_1_1()
         } catch (e) {
             console.log(e)
         }
 
         try {
             await checkUpgradeTestContractUpgradability_Correct_1_2()
+        } catch (e) {
+            console.log(e)
+        }
+
+        try {
+            await checkUpgradeTestContractUpgradability_Correct_1_3()
         } catch (e) {
             console.log(e)
         }
@@ -178,6 +187,12 @@ describe('UpgradeTestContract Tests', function () {
         }
 
         try {
+            await checkUpgradeTestContractUpgradability_Correct_7()
+        } catch (e) {
+            console.log(e)
+        }
+
+        try {
             await checkUpgradeTestContractUpgradability_Wrong_1()
         } catch (e) {
             console.log(e)
@@ -203,6 +218,12 @@ describe('UpgradeTestContract Tests', function () {
 
         try {
             await checkUpgradeTestContractUpgradability_Wrong_5()
+        } catch (e) {
+            console.log(e)
+        }
+
+        try {
+            await checkUpgradeTestContractUpgradability_Wrong_6()
         } catch (e) {
             console.log(e)
         }
