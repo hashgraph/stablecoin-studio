@@ -11,7 +11,7 @@
 - **[Context](#Context)**<br>
 - **[Objective](#Objective)**<br>
 - **[Overview](#Overview)**<br>
-  - [Stable Coin definition](#Stable-Coin-definition)<br>
+  - [What is a stable coin](#What-is-a-stable-coin)<br>
   - [Creating Stable Coins](#Creating-Stable-Coins)<br>
   - [Managing Stable Coins](#Managing-Stable-Coins)<br>
   - [Operating Stable Coins](#Operating-Stable-Coins)<br>
@@ -47,7 +47,7 @@ A stable coin is a type of cryptocurrency that is designed to maintain a stable 
 # Overview
 This solution consists of a set of tools, including Smart Contracts, SDK, CLI and UI to facilitate the deployment and management of Stable Coins in Hedera Hashgraph.
 
-## Stable Coin definition
+## What is a stable coin
 A Stable Coin is a **decorator** to a standard Hedera Token.
 Each stable coin maps to an *underlying* Hedera Token and adds the following functionality:
 
