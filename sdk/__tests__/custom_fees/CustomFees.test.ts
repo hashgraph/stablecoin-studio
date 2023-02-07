@@ -23,7 +23,11 @@ import { Network, StableCoinCapabilities } from '../../src/index.js';
 import ConnectRequest, {
 	SupportedWallets,
 } from '../../src/port/in/request/ConnectRequest.js';
-import { CustomFee, CustomFixedFee, CustomFractionalFee } from '@hashgraph/sdk';
+import {
+	CustomFee as HCustomFee,
+	CustomFixedFee,
+	CustomFractionalFee,
+} from '@hashgraph/sdk';
 import { CLIENT_ACCOUNT_ED25519 } from '../config.js';
 import { HTSTransactionAdapter } from '../../src/port/out/hs/hts/HTSTransactionAdapter.js';
 import Injectable from '../../src/core/Injectable.js';
@@ -60,7 +64,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 			.setDenominatingTokenId(denominatingTokenId) // The token to charge the fee in
 			.setFeeCollectorAccountId(feeCollectorAccountId);
 
-		const customFee: CustomFee[] = [customFixedFee];
+		const customFee: HCustomFee[] = [customFixedFee];
 		await th.updateCustomFees(stableCoinCapabilitiesHTS, customFee);
 	}, 150000);
 
@@ -71,7 +75,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 				.setDenominator(10) // The denominator of the fraction
 				.setFeeCollectorAccountId(feeCollectorAccountId); // The account collecting the 10% custom fee each time the token is transferred
 
-		const customFee: CustomFee[] = [customFractionalFee];
+		const customFee: HCustomFee[] = [customFractionalFee];
 		await th.updateCustomFees(stableCoinCapabilitiesHTS, customFee);
 	}, 150000);
 
@@ -87,7 +91,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 				.setDenominator(10) // The denominator of the fraction
 				.setFeeCollectorAccountId(feeCollectorAccountId); // The account collecting the 10% custom fee each time the token is transferred
 
-		const customFee: CustomFee[] = [customFixedFee, customFractionalFee];
+		const customFee: HCustomFee[] = [customFixedFee, customFractionalFee];
 		await th.updateCustomFees(stableCoinCapabilitiesHTS, customFee);
 	}, 150000);
 
@@ -104,12 +108,12 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 				.setAssessmentMethod(new FeeAssessmentMethod(true))
 				.setFeeCollectorAccountId(feeCollectorAccountId); // The account collecting the 10% custom fee each time the token is transferred
 
-		const customFee: CustomFee[] = [customFixedFee, customFractionalFee];
+		const customFee: HCustomFee[] = [customFixedFee, customFractionalFee];
 		await th.updateCustomFees(stableCoinCapabilitiesHTS, customFee);
 	}, 150000);
 
 	it('Clear custom fees for an existing stable coin', async () => {
-		const customFee: CustomFee[] = [];
+		const customFee: HCustomFee[] = [];
 		await th.updateCustomFees(stableCoinCapabilitiesHTS, customFee);
 	}, 150000);
 });

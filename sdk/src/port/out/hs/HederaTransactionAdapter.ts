@@ -26,7 +26,7 @@ import {
 	Transaction,
 	PublicKey as HPublicKey,
 	ContractId as HContractId,
-	CustomFee,
+	CustomFee as HCustomFee,
 } from '@hashgraph/sdk';
 import TransactionAdapter from '../TransactionAdapter';
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
@@ -731,7 +731,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 
 	public async updateCustomFees(
 		coin: StableCoinCapabilities,
-		customFees: CustomFee[],
+		customFees: HCustomFee[],
 	): Promise<TransactionResponse<boolean, Error>> {
 		const params = new Params({
 			customFees: customFees,
@@ -1031,7 +1031,7 @@ class Params {
 	targetId?: HederaId;
 	amount?: BigDecimal;
 	reserveAddress?: ContractId;
-	customFees?: CustomFee[];
+	customFees?: HCustomFee[];
 
 	constructor({
 		role,
@@ -1044,7 +1044,7 @@ class Params {
 		targetId?: HederaId;
 		amount?: BigDecimal;
 		reserveAddress?: ContractId;
-		customFees?: CustomFee[];
+		customFees?: HCustomFee[];
 	}) {
 		this.role = role;
 		this.targetId = targetId;

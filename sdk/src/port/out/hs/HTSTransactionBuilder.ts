@@ -36,7 +36,7 @@ import {
 	TokenAssociateTransaction,
 	TokenGrantKycTransaction,
 	TokenRevokeKycTransaction,
-	CustomFee,
+	CustomFee as HCustomFee,
 	TokenFeeScheduleUpdateTransaction,
 } from '@hashgraph/sdk';
 import LogService from '../../../app/service/LogService.js';
@@ -267,7 +267,7 @@ export class HTSTransactionBuilder {
 
 	public static buildUpdateCustomFeesTransaction(
 		tokenId: string,
-		customFees: CustomFee[],
+		customFees: HCustomFee[],
 	): Transaction {
 		try {
 			return new TokenFeeScheduleUpdateTransaction({
