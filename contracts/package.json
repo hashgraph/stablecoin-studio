@@ -1,6 +1,6 @@
 {
     "name": "hedera-stable-coin-contracts",
-    "version": "0.0.7",
+    "version": "0.0.8",
     "description": "",
     "publishConfig": {
         "registry": "https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/"
