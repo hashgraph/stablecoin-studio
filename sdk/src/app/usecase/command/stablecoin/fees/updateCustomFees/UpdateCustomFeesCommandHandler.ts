@@ -31,12 +31,15 @@ import {
 import {
 	CustomFee as HCustomFee,
 	CustomFixedFee as HCustomFixedFee,
-	CustomFractionalFee as HCustomFractionalFee
+	CustomFractionalFee as HCustomFractionalFee,
 } from '@hashgraph/sdk';
-import { CustomFee, FixedFee, FractionalFee } from '../../../../../../domain/context/fee/CustomFee.js';
+import {
+	CustomFee,
+	FixedFee,
+	FractionalFee,
+} from '../../../../../../domain/context/fee/CustomFee.js';
 import { HederaId } from '../../../../../../domain/context/shared/HederaId.js';
 import FeeAssessmentMethod from '@hashgraph/sdk/lib/token/FeeAssessmentMethod.js';
-
 
 @CommandHandler(UpdateCustomFeesCommand)
 export class UpdateCustomFeesCommandHandler
@@ -63,41 +66,53 @@ export class UpdateCustomFeesCommandHandler
 		);
 		const HcustomFee: HCustomFee[] = [];
 
-		customFees.forEach(customFee => {
-			if(customFee instanceof FixedFee){
-				HcustomFee.push(new HCustomFixedFee()
-					.setAmount(customFee.amount?
-						customFee.amount.toLong()
-						: 0)
-					.setDenominatingTokenId(customFee.tokenId?
-						customFee.tokenId.toString()
-						: HederaId.NULL.toString())
-					.setFeeCollectorAccountId(customFee.collectorId?
-						customFee.collectorId.toString()
-						: HederaId.NULL.toString()));
-			}
-			else if(customFee instanceof FractionalFee){
+		customFees.forEach((customFee) => {
+			if (customFee instanceof FixedFee) {
+				HcustomFee.push(
+					new HCustomFixedFee()
+						.setAmount(
+							customFee.amount ? customFee.amount.toLong() : 0,
+						)
+						.setDenominatingTokenId(
+							customFee.tokenId
+								? customFee.tokenId.toString()
+								: HederaId.NULL.toString(),
+						)
+						.setFeeCollectorAccountId(
+							customFee.collectorId
+								? customFee.collectorId.toString()
+								: HederaId.NULL.toString(),
+						),
+				);
+			} else if (customFee instanceof FractionalFee) {
 				const newFee = new HCustomFractionalFee()
-					.setNumerator(customFee.amountNumerator?
+					.setNumerator(
 						customFee.amountNumerator
-						: 0)
-					.setDenominator(customFee.amountDenominator?
+							? customFee.amountNumerator
+							: 0,
+					)
+					.setDenominator(
 						customFee.amountDenominator
-						: 0) 
-					.setMin(customFee.min?
-						customFee.min.toLong()
-						: 0)
-					.setAssessmentMethod(new FeeAssessmentMethod(customFee.net ?? false))
-					.setFeeCollectorAccountId(customFee.collectorId?
-						customFee.collectorId.toString()
-						: HederaId.NULL.toString()); 
+							? customFee.amountDenominator
+							: 0,
+					)
+					.setMin(customFee.min ? customFee.min.toLong() : 0)
+					.setAssessmentMethod(
+						new FeeAssessmentMethod(customFee.net ?? false),
+					)
+					.setFeeCollectorAccountId(
+						customFee.collectorId
+							? customFee.collectorId.toString()
+							: HederaId.NULL.toString(),
+					);
 
-				if(customFee.max){
-					(newFee as HCustomFractionalFee).setMax(customFee.max.toLong())
+				if (customFee.max) {
+					(newFee as HCustomFractionalFee).setMax(
+						customFee.max.toLong(),
+					);
 				}
 				HcustomFee.push(newFee);
 			}
-
 		});
 
 		const res = await handler.updateCustomFees(capabilities, HcustomFee);

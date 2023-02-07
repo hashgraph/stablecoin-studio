@@ -20,11 +20,18 @@
 
 import { CommandBus } from '../../core/command/CommandBus.js';
 import Injectable from '../../core/Injectable.js';
-import UpdateCustomFeesRequest from './request/UpdateCustomFeesRequest.js';
+import { UpdateCustomFeesRequest } from './request/index.js';
 import { LogError } from '../../core/decorator/LogErrorDecorator.js';
 import { handleValidation } from './Common.js';
 import { HederaId } from '../../domain/context/shared/HederaId.js';
 import { UpdateCustomFeesCommand } from '../../app/usecase/command/stablecoin/fees/updateCustomFees/UpdateCustomFeesCommand.js';
+import {
+	CustomFee,
+	FixedFee,
+	FractionalFee,
+} from '../../domain/context/fee/CustomFee.js';
+
+export { CustomFee, FixedFee, FractionalFee };
 
 interface ICustomFees {
 	updateCustomFees(request: UpdateCustomFeesRequest): Promise<boolean>;
@@ -37,22 +44,17 @@ class CustomFeesInPort implements ICustomFees {
 		),
 	) {}
 
-
 	@LogError
 	async updateCustomFees(request: UpdateCustomFeesRequest): Promise<boolean> {
-		const { tokenId, customFees} = request;
+		const { tokenId, customFees } = request;
 		handleValidation('UpdateCustomFeesRequest', request);
 
 		return (
 			await this.commandBus.execute(
-				new UpdateCustomFeesCommand(
-					HederaId.from(tokenId),
-					customFees
-				),
+				new UpdateCustomFeesCommand(HederaId.from(tokenId), customFees),
 			)
 		).payload;
 	}
-
 }
 
 const Fees = new CustomFeesInPort();

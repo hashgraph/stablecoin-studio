@@ -370,6 +370,10 @@ export const english = {
     noRoles: 'You do not have any roles.',
   },
   feeManagement: {
+    chooseFeeType: {
+      FixedFee: 'Fixed Fee',
+      FractionalFee: 'Fractional Fee',
+    },
     confirmCreate:
       'Are you sure want to add this custom fee to the stable coin?',
     confirmRemove:
