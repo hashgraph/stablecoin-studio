@@ -4,7 +4,11 @@ pragma solidity 0.8.16;
 import './Interfaces/IUpgradeTestContract.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 
-// Original
+/**
+ * Original
+ * hierarchy : parentContract_1 -> parentContract_2 -> parentContract_3 -> parentContract_4 -> upgradeTestContract
+ * 
+ *  */ 
 abstract contract parentContract_1{
     int256 _reserveAmount;
     address _admin;
