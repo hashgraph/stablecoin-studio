@@ -27,7 +27,6 @@ import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 
 export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractionalFeeRequest> {
 	collectorId: string;
-	tokenId: string;
 	amountNumerator: string;
 	amountDenominator: string;
 	min: string;
@@ -36,7 +35,6 @@ export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractio
 
 	constructor({
 		collectorId,
-		tokenId,
 		amountNumerator,
 		amountDenominator,
 		min,
@@ -44,7 +42,6 @@ export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractio
 		net,
 	}: {
 		collectorId: string;
-		tokenId: string;
 		amountNumerator: string;
 		amountDenominator: string;
 		min: string;
@@ -53,7 +50,6 @@ export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractio
 	}) {
 		super({
 			collectorId: Validation.checkHederaIdFormat(),
-			tokenId: Validation.checkHederaIdFormat(),
 			amountNumerator: (val) => {
 				const numerator = parseInt(val);
 				if (isNaN(numerator)) return [new InvalidType(val, 'integer')];
@@ -97,7 +93,6 @@ export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractio
 			},
 		});
 		this.collectorId = collectorId;
-		this.tokenId = tokenId;
 		this.amountNumerator = amountNumerator;
 		this.amountDenominator = amountDenominator;
 		this.min = min;

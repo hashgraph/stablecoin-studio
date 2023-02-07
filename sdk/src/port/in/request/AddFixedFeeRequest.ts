@@ -24,29 +24,24 @@ import Validation from './validation/Validation.js';
 
 export default class AddFixedFeeRequest extends ValidatedRequest<AddFixedFeeRequest> {
 	collectorId: string;
-	tokenId: string;
 	tokenIdCollected: string;
 	amount: string;
 
 	constructor({
 		collectorId,
-		tokenId,
 		tokenIdCollected,
 		amount,
 	}: {
 		collectorId: string;
-		tokenId: string;
 		tokenIdCollected: string;
 		amount: string;
 	}) {
 		super({
 			collectorId: Validation.checkHederaIdFormat(),
-			tokenId: Validation.checkHederaIdFormat(),
 			tokenIdCollected: Validation.checkHederaIdFormat(),
 			amount: Validation.checkAmount(),
 		});
 		this.collectorId = collectorId;
-		this.tokenId = tokenId;
 		this.tokenIdCollected = tokenIdCollected;
 		this.amount = amount;
 	}
