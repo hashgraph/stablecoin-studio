@@ -739,7 +739,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		return this.performHTSOperation(
 			coin,
 			Operation.CREATE_CUSTOM_FEE,
-			params
+			params,
 		);
 	}
 
