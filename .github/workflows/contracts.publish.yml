@@ -38,4 +38,5 @@ jobs:
             //us-npm.pkg.dev/hedera-registry/stablecoin-npm/:_authToken="${{ steps.auth.outputs.access_token }}"
             //us-npm.pkg.dev/hedera-registry/stablecoin-npm/:always-auth=true
           EOF 
-
+      - name: Publish contracts package
+        run: npm publish
