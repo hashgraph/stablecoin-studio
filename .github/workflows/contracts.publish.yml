@@ -10,6 +10,9 @@ jobs:
   test-node:
     name: Publish contracts package
     runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
     steps:
       - name: Use Node.js TLS 16.x
         uses: actions/setup-node@v1
@@ -35,6 +38,4 @@ jobs:
             //us-npm.pkg.dev/hedera-registry/stablecoin-npm/:_authToken="${{ steps.auth.outputs.access_token }}"
             //us-npm.pkg.dev/hedera-registry/stablecoin-npm/:always-auth=true
           EOF 
-  permissions:
-    contents: 'read'
-    id-token: 'write'   
+
