@@ -1,6 +1,6 @@
 {
     "name": "hedera-stable-coin-contracts",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "description": "",
     "publishConfig": {
         "registry": "https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/"
@@ -18,7 +18,6 @@
         }
     },
     "scripts": {
-        "postinstall": "npm run compile:force",
         "compile": "npx hardhat compile",
         "compile:force": "npx hardhat compile --force && npm run build",
         "test": "npx hardhat test",
