@@ -62,6 +62,7 @@ export default class DetailsStableCoinsService extends Service {
         feeScheduleKey: respDetail.feeScheduleKey
           ? respDetail.feeScheduleKey.toString()
           : '-',
+        customFees: respDetail.customFees,
         ...reserveData,
       };
       console.log(out);

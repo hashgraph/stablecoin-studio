@@ -683,6 +683,7 @@ export default class OperationStableCoinService extends Service {
         switch (option) {
           case language.getText('feeManagement.options.Create'):
           case language.getText('feeManagement.options.Remove'):
+          case language.getText('feeManagement.options.List'):
             const showCustomFee: boolean =
               option == language.getText('feeManagement.options.Create')
                 ? capabilities.includes(Operation.CREATE_CUSTOM_FEE)

@@ -24,10 +24,10 @@ import { HederaId } from '../shared/HederaId.js';
 export const MAX_CUSTOM_FEES = 10;
 
 export class CustomFee {
-	collector?: HederaId;
+	collectorId?: HederaId;
 
-	constructor(collector: HederaId) {
-		this.collector = collector;
+	constructor(collectorId: HederaId) {
+		this.collectorId = collectorId;
 	}
 }
 
@@ -39,14 +39,14 @@ export class FractionalFee extends CustomFee {
 	net?: boolean;
 
 	constructor(
-		collector: HederaId,
+		collectorId: HederaId,
 		amountNumerator: number,
 		amountDenominator: number,
 		min: BigDecimal,
 		max: BigDecimal,
 		net: boolean,
 	) {
-		super(collector);
+		super(collectorId);
 		this.amountNumerator = amountNumerator;
 		this.amountDenominator = amountDenominator;
 		this.min = min;
@@ -59,8 +59,8 @@ export class FixedFee extends CustomFee {
 	amount?: BigDecimal;
 	tokenId?: HederaId;
 
-	constructor(collector: HederaId, amount: BigDecimal, tokenId: HederaId) {
-		super(collector);
+	constructor(collectorId: HederaId, amount: BigDecimal, tokenId: HederaId) {
+		super(collectorId);
 		this.amount = amount;
 		this.tokenId = tokenId;
 	}
