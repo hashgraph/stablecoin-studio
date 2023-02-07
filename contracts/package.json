@@ -2,6 +2,9 @@
     "name": "hedera-stable-coin-contracts",
     "version": "0.0.2",
     "description": "",
+    "publishConfig": {
+        "registry": "https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/"
+    },
     "main": "./build/typechain-types/index.js",
     "module": "./build/typechain-types/index.js",
     "exports": {
