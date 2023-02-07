@@ -760,26 +760,12 @@ export default class OperationStableCoinService extends Service {
 
         break;
       case language.getText('feeManagement.options.List'):
-        /* const confirmDelete = await utilsService.defaultConfirmAsk(
-          language.getText('dangerZone.confirmDelete'),
-          true,
-        );
-        if (confirmDelete) {
-          try {
-            const req = new DeleteRequest({
-              tokenId: this.stableCoinId,
-            });
-
-            await new DeleteStableCoinService().deleteStableCoin(req);
-            this.stableCoinDeleted = true;
-            await wizardService.mainMenu();
-          } catch (error) {
-            await utilsService.askErrorConfirmation(
-              async () => await this.operationsStableCoin(),
-              error,
-            );
-          }
-        }*/
+        const detailsStableCoin =
+          await new DetailsStableCoinsService().getDetailsStableCoins(
+            this.stableCoinId,
+            false,
+          );
+        console.log(detailsStableCoin.customFees);
         break;
       case feeManagementOptionsFiltered[
         feeManagementOptionsFiltered.length - 1
