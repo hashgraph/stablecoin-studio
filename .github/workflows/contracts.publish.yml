@@ -35,4 +35,6 @@ jobs:
             //us-npm.pkg.dev/hedera-registry/stablecoin-npm/:_authToken="${{ steps.auth.outputs.access_token }}"
             //us-npm.pkg.dev/hedera-registry/stablecoin-npm/:always-auth=true
           EOF 
-      
+  permissions:
+    contents: 'read'
+    id-token: 'write'   
