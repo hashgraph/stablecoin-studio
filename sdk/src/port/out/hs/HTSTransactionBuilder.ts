@@ -36,6 +36,8 @@ import {
 	TokenAssociateTransaction,
 	TokenGrantKycTransaction,
 	TokenRevokeKycTransaction,
+	CustomFee,
+	TokenFeeScheduleUpdateTransaction,
 } from '@hashgraph/sdk';
 import LogService from '../../../app/service/LogService.js';
 import { TransactionBuildingError } from './error/TransactionBuildingError.js';
@@ -262,4 +264,19 @@ export class HTSTransactionBuilder {
 			throw new TransactionBuildingError(error);
 		}
 	}
-}
+
+	public static buildUpdateCustomFeesTransaction(
+		tokenId: string,
+		customFees: CustomFee[],
+	): Transaction {
+		try {
+			return new TokenFeeScheduleUpdateTransaction({
+            	tokenId: tokenId,
+            	customFees: customFees
+			});
+		} catch (error) {
+			LogService.logError(error);
+			throw new TransactionBuildingError(error);
+		}
+	}
+}	
