@@ -271,12 +271,12 @@ export class HTSTransactionBuilder {
 	): Transaction {
 		try {
 			return new TokenFeeScheduleUpdateTransaction({
-            	tokenId: tokenId,
-            	customFees: customFees
+				tokenId: tokenId,
+				customFees: customFees,
 			});
 		} catch (error) {
 			LogService.logError(error);
 			throw new TransactionBuildingError(error);
 		}
 	}
-}	
+}

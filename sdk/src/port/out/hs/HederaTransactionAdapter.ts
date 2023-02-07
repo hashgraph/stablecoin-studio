@@ -731,10 +731,10 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 
 	public async updateCustomFees(
 		coin: StableCoinCapabilities,
-		customFees: CustomFee[]
+		customFees: CustomFee[],
 	): Promise<TransactionResponse<boolean, Error>> {
 		const params = new Params({
-			customFees: customFees
+			customFees: customFees,
 		});
 		return this.performHTSOperation(
 			coin,
@@ -956,9 +956,9 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			case Operation.CREATE_CUSTOM_FEE:
 				t = HTSTransactionBuilder.buildUpdateCustomFeesTransaction(
 					coin.coin.tokenId?.value!,
-					params.customFees!
+					params.customFees!,
 				);
-				break;				
+				break;
 
 			default:
 				throw new Error(`Operation does not exist through HTS`);
@@ -1038,7 +1038,7 @@ class Params {
 		targetId,
 		amount,
 		reserveAddress,
-		customFees
+		customFees,
 	}: {
 		role?: string;
 		targetId?: HederaId;
