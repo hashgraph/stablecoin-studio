@@ -370,10 +370,14 @@ export const english = {
     noRoles: 'You do not have any roles.',
   },
   feeManagement: {
+    askFeeType: 'What kind of fee do you want to add?',
     chooseFeeType: {
       FixedFee: 'Fixed Fee',
       FractionalFee: 'Fractional Fee',
     },
+    askAmount: 'Enter the fixed fee amount',
+    askTokenId: 'Enter the token Id',
+    askCollectorId: 'Enter the collector Id',
     confirmCreate:
       'Are you sure want to add this custom fee to the stable coin?',
     confirmRemove:

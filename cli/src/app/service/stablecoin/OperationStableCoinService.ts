@@ -32,6 +32,8 @@ import {
   PauseRequest,
   DeleteRequest,
   GetSupplierAllowanceRequest,
+  AddFixedFeeRequest,
+  AddFractionalFeeRequest,
 } from 'hedera-stable-coin-sdk';
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
 import CashInStableCoinsService from './CashInStableCoinService.js';
@@ -674,6 +676,11 @@ export default class OperationStableCoinService extends Service {
     const capabilities: Operation[] = stableCoinCapabilities.capabilities.map(
       (a) => a.operation,
     );
+    const detailsStableCoin =
+      await new DetailsStableCoinsService().getDetailsStableCoins(
+        this.stableCoinId,
+        false,
+      );
 
     //const rolesAccount = this.getRolesAccount();
 
@@ -718,23 +725,24 @@ export default class OperationStableCoinService extends Service {
       )
     ) {
       case language.getText('feeManagement.options.Create'):
-        const confirmCreate = await utilsService.defaultConfirmAsk(
-          language.getText('feeManagement.confirmCreate'),
-          true,
+        await utilsService.cleanAndShowBanner();
+
+        utilsService.displayCurrentUserInfo(
+          configAccount,
+          this.stableCoinWithSymbol,
         );
-        if (confirmCreate) {
-          /*try {
-            const req = new PauseRequest({
-              tokenId: this.stableCoinId,
-            });
-            await new PauseStableCoinService().pauseStableCoin(req);
-            this.stableCoinPaused = true;
-          } catch (error) {
-            await utilsService.askErrorConfirmation(
-              async () => await this.operationsStableCoin(),
-              error,
-            );
-          }*/
+
+        const feeType = await utilsService.defaultMultipleAsk(
+          language.getText('feeManagement.askFeeType'),
+          language.getArrayFromObject('feeManagement.chooseFeeType'),
+        );
+
+        if (
+          feeType == language.getText('feeManagement.chooseFeeType.FixedFee')
+        ) {
+          await this.askFixedFee();
+        } else {
+          await this.askFractionalFee();
         }
 
         break;
@@ -760,11 +768,6 @@ export default class OperationStableCoinService extends Service {
 
         break;
       case language.getText('feeManagement.options.List'):
-        const detailsStableCoin =
-          await new DetailsStableCoinsService().getDetailsStableCoins(
-            this.stableCoinId,
-            false,
-          );
         console.log(detailsStableCoin.customFees);
         break;
       case feeManagementOptionsFiltered[
@@ -775,6 +778,90 @@ export default class OperationStableCoinService extends Service {
         await this.operationsStableCoin();
     }
     await this.feesManagementFlow();
+  }
+
+  private async askFractionalFee(): Promise<AddFractionalFeeRequest> {
+    const addFractionalFeeRequest: AddFractionalFeeRequest =
+      new AddFractionalFeeRequest({
+        collectorId: '',
+        amountNumerator: '',
+        amountDenominator: '',
+        min: '',
+        max: '',
+        net: false,
+      });
+
+    return addFractionalFeeRequest;
+  }
+
+  private async askFixedFee(): Promise<void> {
+    const addFixedFeeRequest: AddFixedFeeRequest = new AddFixedFeeRequest({
+      amount: '',
+      tokenIdCollected: '',
+      collectorId: '',
+    });
+
+    addFixedFeeRequest.amount = await utilsService.defaultSingleAsk(
+      language.getText('feeManagement.askAmount'),
+      '0',
+    );
+    await utilsService.handleValidation(
+      () => addFixedFeeRequest.validate('amount'),
+      async () => {
+        addFixedFeeRequest.amount = await utilsService.defaultSingleAsk(
+          language.getText('feeManagement.askAmount'),
+          '0',
+        );
+      },
+    );
+
+    addFixedFeeRequest.tokenIdCollected = await utilsService.defaultSingleAsk(
+      language.getText('feeManagement.askTokenId'),
+      this.stableCoinId,
+    );
+
+    await utilsService.handleValidation(
+      () => addFixedFeeRequest.validate('tokenIdCollected'),
+      async () => {
+        addFixedFeeRequest.tokenIdCollected =
+          await utilsService.defaultSingleAsk(
+            language.getText('feeManagement.askTokenId'),
+            this.stableCoinId,
+          );
+      },
+    );
+
+    addFixedFeeRequest.collectorId = await utilsService.defaultSingleAsk(
+      language.getText('feeManagement.askCollectorId'),
+      '0.0.0',
+    );
+
+    await utilsService.handleValidation(
+      () => addFixedFeeRequest.validate('collectorId'),
+      async () => {
+        addFixedFeeRequest.collectorId = await utilsService.defaultSingleAsk(
+          language.getText('feeManagement.askCollectorId'),
+          '0.0.0',
+        );
+      },
+    );
+
+    console.log({
+      amount: addFixedFeeRequest.amount,
+      token: addFixedFeeRequest.tokenIdCollected,
+      collector: addFixedFeeRequest.collectorId,
+    });
+
+    const confirm = await this.askFeeCreationConfirmation();
+
+    if (!confirm) return;
+  }
+
+  private async askFeeCreationConfirmation(): Promise<boolean> {
+    return await utilsService.defaultConfirmAsk(
+      language.getText('feeManagement.confirmCreate'),
+      true,
+    );
   }
 
   /**
