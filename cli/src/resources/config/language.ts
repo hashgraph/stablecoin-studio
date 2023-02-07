@@ -214,6 +214,7 @@ export const english = {
       GrantKYC: 'Grant KYC to an account',
       RevokeKYC: 'Revoke KYC from an account',
       AccountKYCGranted: 'Check KYC status from an account',
+      FeesMgmt: 'Fees management',
       RoleMgmt: 'Role management',
       RoleRefresh: 'Refresh roles',
       DangerZone: colors.red('Danger zone'),
@@ -367,6 +368,18 @@ export const english = {
       ...goBack,
     },
     noRoles: 'You do not have any roles.',
+  },
+  feeManagement: {
+    confirmCreate:
+      'Are you sure want to add this custom fee to the stable coin?',
+    confirmRemove:
+      'Are you sure you want to remove this custom fee to the stable coin?',
+    options: {
+      Create: 'Create fee',
+      Remove: 'Remove fee',
+      List: 'Fees list',
+      ...goBack,
+    },
   },
   dangerZone: {
     confirmDelete: 'Are you sure want to delete the stable coin?',

@@ -59,6 +59,7 @@ export default class OperationStableCoinService extends Service {
   private stableCoinPaused;
   private stableCoinDeleted;
   private hasKycKey;
+  private hasfeeScheduleKey;
 
   constructor(tokenId?: string, memo?: string, symbol?: string) {
     super('Operation Stable Coin');
@@ -149,6 +150,8 @@ export default class OperationStableCoinService extends Service {
     this.stableCoinDeleted = capabilitiesStableCoin.coin.deleted;
     this.stableCoinPaused = capabilitiesStableCoin.coin.paused;
     this.hasKycKey = capabilitiesStableCoin.coin.kycKey !== undefined;
+    this.hasfeeScheduleKey =
+      capabilitiesStableCoin.coin.feeScheduleKey !== undefined;
 
     switch (
       await utilsService.defaultMultipleAsk(
@@ -582,6 +585,12 @@ export default class OperationStableCoinService extends Service {
           );
         }
         break;
+      case language.getText('wizard.stableCoinOptions.FeesMgmt'):
+        await utilsService.cleanAndShowBanner();
+
+        // Call to Supplier Role
+        await this.feesManagementFlow();
+        break;
       case language.getText('wizard.stableCoinOptions.RoleMgmt'):
         await utilsService.cleanAndShowBanner();
 
@@ -640,6 +649,145 @@ export default class OperationStableCoinService extends Service {
       tokenIsPaused,
       tokenIsDeleted,
     );
+  }
+
+  /**
+   * FeeManagement Flow
+   */
+
+  private async feesManagementFlow(): Promise<void> {
+    const configAccount = utilsService.getCurrentAccount();
+    const privateKey: RequestPrivateKey = {
+      key: configAccount.privateKey.key,
+      type: configAccount.privateKey.type,
+    };
+    const currentAccount: RequestAccount = {
+      accountId: configAccount.accountId,
+      privateKey: privateKey,
+    };
+
+    const stableCoinCapabilities = await this.getCapabilities(
+      currentAccount,
+      this.stableCoinPaused,
+      this.stableCoinDeleted,
+    );
+    const capabilities: Operation[] = stableCoinCapabilities.capabilities.map(
+      (a) => a.operation,
+    );
+
+    //const rolesAccount = this.getRolesAccount();
+
+    const feeManagementOptionsFiltered = language
+      .getArrayFromObject('feeManagement.options')
+      .filter((option) => {
+        switch (option) {
+          case language.getText('feeManagement.options.Create'):
+          case language.getText('feeManagement.options.Remove'):
+            const showCustomFee: boolean =
+              option == language.getText('feeManagement.options.Create')
+                ? capabilities.includes(Operation.CREATE_CUSTOM_FEE)
+                : capabilities.includes(Operation.REMOVE_CUSTOM_FEE);
+            /*if (showCustomFee && rolesAccount) {
+              showCustomFee =
+                rolesAccount.includes(StableCoinRole.CREATE_CUSTOM_FEE) ||
+                this.isOperationAccess(
+                  stableCoinCapabilities,
+                  Operation.CREATE_CUSTOM_FEE,
+                  Access.HTS,
+                );
+            }*/
+            return showCustomFee;
+            break;
+        }
+        // TODO DELETE STABLE COIN
+        return true;
+      });
+
+    // const accountTarget = '0.0.0';
+    switch (
+      await utilsService.defaultMultipleAsk(
+        language.getText('stablecoin.askEditCashInRole'),
+        feeManagementOptionsFiltered,
+        false,
+        configAccount.network,
+        `${configAccount.accountId} - ${configAccount.alias}`,
+        this.stableCoinWithSymbol,
+        this.stableCoinPaused,
+        this.stableCoinDeleted,
+      )
+    ) {
+      case language.getText('feeManagement.options.Create'):
+        const confirmCreate = await utilsService.defaultConfirmAsk(
+          language.getText('feeManagement.confirmCreate'),
+          true,
+        );
+        if (confirmCreate) {
+          /*try {
+            const req = new PauseRequest({
+              tokenId: this.stableCoinId,
+            });
+            await new PauseStableCoinService().pauseStableCoin(req);
+            this.stableCoinPaused = true;
+          } catch (error) {
+            await utilsService.askErrorConfirmation(
+              async () => await this.operationsStableCoin(),
+              error,
+            );
+          }*/
+        }
+
+        break;
+      case language.getText('feeManagement.options.Remove'):
+        const confirmRemove = await utilsService.defaultConfirmAsk(
+          language.getText('feeManagement.confirmRemove'),
+          true,
+        );
+        if (confirmRemove) {
+          /*try {
+            const req = new PauseRequest({
+              tokenId: this.stableCoinId,
+            });
+            await new PauseStableCoinService().unpauseStableCoin(req);
+            this.stableCoinPaused = false;
+          } catch (error) {
+            await utilsService.askErrorConfirmation(
+              async () => await this.operationsStableCoin(),
+              error,
+            );
+          }*/
+        }
+
+        break;
+      case language.getText('feeManagement.options.List'):
+        /* const confirmDelete = await utilsService.defaultConfirmAsk(
+          language.getText('dangerZone.confirmDelete'),
+          true,
+        );
+        if (confirmDelete) {
+          try {
+            const req = new DeleteRequest({
+              tokenId: this.stableCoinId,
+            });
+
+            await new DeleteStableCoinService().deleteStableCoin(req);
+            this.stableCoinDeleted = true;
+            await wizardService.mainMenu();
+          } catch (error) {
+            await utilsService.askErrorConfirmation(
+              async () => await this.operationsStableCoin(),
+              error,
+            );
+          }
+        }*/
+        break;
+      case feeManagementOptionsFiltered[
+        feeManagementOptionsFiltered.length - 1
+      ]:
+      default:
+        await utilsService.cleanAndShowBanner();
+        await this.operationsStableCoin();
+    }
+    await this.feesManagementFlow();
   }
 
   /**
@@ -1304,6 +1452,8 @@ export default class OperationStableCoinService extends Service {
             capabilities.includes(Operation.DELETE))) ||
         (option === language.getText('wizard.stableCoinOptions.RoleMgmt') &&
           capabilities.includes(Operation.ROLE_MANAGEMENT)) ||
+        (option === language.getText('wizard.stableCoinOptions.FeesMgmt') &&
+          this.hasfeeScheduleKey) ||
         (option === language.getText('wizard.stableCoinOptions.RoleRefresh') &&
           !this.stableCoinDeleted) ||
         (option === language.getText('wizard.stableCoinOptions.Details') &&

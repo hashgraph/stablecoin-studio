@@ -36,6 +36,11 @@ import {
 import PublicKey from '../../../domain/context/account/PublicKey.js';
 import { StableCoinMemo } from '../../../domain/context/stablecoin/StableCoinMemo.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
+import {
+	CustomFee,
+	FixedFee,
+	FractionalFee,
+} from '../../../domain/context/fee/CustomFee.js';
 import { InvalidResponse } from './error/InvalidResponse.js';
 import { HederaId } from '../../../domain/context/shared/HederaId.js';
 import { KeyType } from '../../../domain/context/account/KeyProps.js';
@@ -136,6 +141,47 @@ export class MirrorNodeAdapter {
 				}
 			};
 
+			const getCustomFeesOrDefault = (
+				val?: ICustomFees,
+			): CustomFee[] | undefined => {
+				if (!val) return undefined;
+				const customFees: CustomFee[] = [];
+
+				val.fixed_fees.forEach((fixedFee) => {
+					customFees.push(
+						new FixedFee(
+							HederaId.from(fixedFee.collector_account_id),
+							BigDecimal.fromStringFixed(
+								fixedFee.amount,
+								decimals,
+							),
+							HederaId.from(fixedFee.denominating_token_id),
+						),
+					);
+				});
+
+				val.fractional_fees.forEach((fractionalFee) => {
+					customFees.push(
+						new FractionalFee(
+							HederaId.from(fractionalFee.collector_account_id),
+							parseInt(fractionalFee.amount.numerator),
+							parseInt(fractionalFee.amount.denominator),
+							BigDecimal.fromStringFixed(
+								fractionalFee.minimum,
+								decimals,
+							),
+							BigDecimal.fromStringFixed(
+								fractionalFee.maximum,
+								decimals,
+							),
+							fractionalFee.net_of_transfers,
+						),
+					);
+				});
+
+				return customFees;
+			};
+
 			if (response.status !== 200) {
 				throw new StableCoinNotFound(tokenId.toString());
 			}
@@ -192,6 +238,7 @@ export class MirrorNodeAdapter {
 				feeScheduleKey: getKeyOrDefault(
 					response.data.fee_schedule_key,
 				) as PublicKey,
+				customFees: getCustomFeesOrDefault(response.data.custom_fees),
 			};
 			return stableCoinDetail;
 		} catch (error) {
@@ -425,8 +472,28 @@ interface IHederaStableCoinDetail {
 
 interface ICustomFees {
 	created_timestamp: string;
-	fixed_fees: string[];
-	fractional_fees: string[];
+	fixed_fees: IFixedFee[];
+	fractional_fees: IFractionalFee[];
+}
+
+interface IFixedFee {
+	amount: string;
+	collector_account_id: string;
+	denominating_token_id: string;
+}
+
+interface IFractionalFee {
+	amount: IFractionAmount;
+	collector_account_id: string;
+	denominating_token_id: string;
+	maximum: string;
+	minimum: string;
+	net_of_transfers: boolean;
+}
+
+interface IFractionAmount {
+	numerator: string;
+	denominator: string;
 }
 
 interface IPublicKey {

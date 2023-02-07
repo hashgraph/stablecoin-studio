@@ -21,6 +21,7 @@
 import { QueryResponse } from '../../../../core/query/QueryResponse.js';
 import PublicKey from '../../../../domain/context/account/PublicKey.js';
 import ContractId from '../../../../domain/context/contract/ContractId.js';
+import { CustomFee } from '../../../../domain/context/fee/CustomFee.js';
 import EvmAddress from '../../../../domain/context/contract/EvmAddress.js';
 import BigDecimal from '../../../../domain/context/shared/BigDecimal.js';
 import { HederaId } from '../../../../domain/context/shared/HederaId.js';
@@ -51,4 +52,5 @@ export default interface StableCoinViewModel extends QueryResponse {
 	feeScheduleKey?: PublicKey | undefined;
 	reserveAddress?: ContractId;
 	reserveAmount?: BigDecimal;
+	customFees?: CustomFee[];
 }

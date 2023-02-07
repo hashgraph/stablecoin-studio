@@ -45,6 +45,7 @@ import SymbolLength from './error/SymbolLength.js';
 import { TokenSupplyType } from './TokenSupply.js';
 import { TokenType } from './TokenType.js';
 import EvmAddress from '../contract/EvmAddress.js';
+import { CustomFee } from '../fee/CustomFee.js';
 
 const MAX_SUPPLY = 9_223_372_036_854_775_807n;
 const TEN = 10;
@@ -79,6 +80,7 @@ export interface StableCoinProps {
 	autoRenewAccount?: HederaId;
 	autoRenewAccountPeriod?: number;
 	deleted?: boolean;
+	customFees?: CustomFee[];
 }
 
 export class StableCoin extends BaseEntity implements StableCoinProps {
@@ -109,6 +111,7 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 	autoRenewAccount?: HederaId;
 	autoRenewAccountPeriod?: number;
 	deleted?: boolean;
+	customFees?: CustomFee[];
 
 	constructor(params: StableCoinProps) {
 		const {
@@ -138,6 +141,7 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 			evmProxyAddress,
 			proxyAddress,
 			grantKYCToOriginalSender,
+			customFees,
 		} = params;
 		super();
 		this.adminKey = adminKey;
@@ -170,6 +174,7 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 		this.evmProxyAddress = evmProxyAddress;
 		this.proxyAddress = proxyAddress;
 		this.grantKYCToOriginalSender = grantKYCToOriginalSender;
+		this.customFees = customFees;
 	}
 
 	public static checkName(value: string): BaseError[] {
@@ -207,6 +212,7 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 
 		return errorList;
 	}
+
 	public static checkInteger(value: number): BaseError[] {
 		const errorList: BaseError[] = [];
 
