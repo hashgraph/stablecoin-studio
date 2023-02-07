@@ -7,7 +7,7 @@
     },
     "main": "./build/typechain-types/index.js",
     "module": "./build/typechain-types/index.js",
-    "files": ["/build/*"],
+    "files": ["./build/*"],
     "exports": {
         ".": {
             "import": "./build/typechain-types/index.js",
