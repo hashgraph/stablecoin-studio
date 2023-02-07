@@ -148,14 +148,13 @@ export class MirrorNodeAdapter {
 				const customFees: CustomFee[] = [];
 
 				val.fixed_fees.forEach((fixedFee) => {
-
 					customFees.push(
 						new FixedFee(
 							HederaId.from(fixedFee.collector_account_id),
 							BigDecimal.fromStringFixed(
-								fixedFee.amount ?
-								fixedFee.amount.toString()
-								: "0",
+								fixedFee.amount
+									? fixedFee.amount.toString()
+									: '0',
 								decimals,
 							),
 							HederaId.from(fixedFee.denominating_token_id),
@@ -170,15 +169,15 @@ export class MirrorNodeAdapter {
 							parseInt(fractionalFee.amount.numerator),
 							parseInt(fractionalFee.amount.denominator),
 							BigDecimal.fromStringFixed(
-								fractionalFee.minimum ?
-								fractionalFee.minimum.toString()
-								: "0",
+								fractionalFee.minimum
+									? fractionalFee.minimum.toString()
+									: '0',
 								decimals,
 							),
 							BigDecimal.fromStringFixed(
-								fractionalFee.maximum ?
-								fractionalFee.maximum.toString()
-								: "0",
+								fractionalFee.maximum
+									? fractionalFee.maximum.toString()
+									: '0',
 								decimals,
 							),
 							fractionalFee.net_of_transfers,
