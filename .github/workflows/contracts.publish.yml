@@ -43,4 +43,4 @@ jobs:
             //us-npm.pkg.dev/hedera-registry/stablecoin-npm/:always-auth=true
           EOF 
       - name: Publish contracts package
-        run: npm publish --registry https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/
+        run: npm publish
