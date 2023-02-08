@@ -1,5 +1,5 @@
 {
-	"name": "hedera-stable-coin-sdk",
+	"name": "@hashgraph/stablecoin-npm-sdk",
 	"version": "0.0.1",
 	"description": "",
 	"main": "./build/cjs/src/index.js",
@@ -10,6 +10,9 @@
 	"files": [
 		"./build"
 	],
+	"publishConfig": {
+		"registry": "https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/"
+	},
 	"readme": "README.md",
 	"types": "./build/esm/src/index.d.ts",
 	"exports": {
@@ -46,7 +49,6 @@
 		"typescript": "^4.9.4"
 	},
 	"scripts": {
-		"postinstall": "npm run build",
 		"start": "node build/src/index.js",
 		"clean": "rimraf coverage build",
 		"prebuild": "npm run lint",
