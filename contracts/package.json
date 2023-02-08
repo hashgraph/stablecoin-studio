@@ -1,6 +1,6 @@
 {
     "name": "@hashgraph/stablecoin-npm-contracts",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "",
     "publishConfig": {
         "registry": "https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/"
