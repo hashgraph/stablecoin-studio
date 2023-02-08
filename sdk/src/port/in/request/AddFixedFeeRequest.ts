@@ -39,7 +39,7 @@ export default class AddFixedFeeRequest extends ValidatedRequest<AddFixedFeeRequ
 		super({
 			collectorId: Validation.checkHederaIdFormat(),
 			tokenIdCollected: Validation.checkHederaIdFormat(),
-			amount: Validation.checkAmount(),
+			amount: Validation.checkAmount(true),
 		});
 		this.collectorId = collectorId;
 		this.tokenIdCollected = tokenIdCollected;

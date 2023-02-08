@@ -24,6 +24,7 @@ import Validation from './validation/Validation.js';
 import { InvalidType } from './error/InvalidType.js';
 import { InvalidValue } from './error/InvalidValue.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
+import { InvalidRange } from './error/InvalidRange.js';
 
 export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractionalFeeRequest> {
 	collectorId: string;
@@ -53,6 +54,8 @@ export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractio
 			amountNumerator: (val) => {
 				const numerator = parseInt(val);
 				if (isNaN(numerator)) return [new InvalidType(val, 'integer')];
+				if (numerator < 0)
+					return [new InvalidRange(val, '0', undefined)];
 			},
 			amountDenominator: (val) => {
 				const denominator = parseInt(val);
@@ -67,18 +70,7 @@ export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractio
 						),
 					];
 			},
-			min: (val) => {
-				if (val === undefined || val === '') {
-					return [
-						new InvalidValue(
-							`The minimum (${val}) should not be empty.`,
-						),
-					];
-				}
-				if (!BigDecimal.isBigDecimal(val)) {
-					return [new InvalidType(val, 'BigDecimal')];
-				}
-			},
+			min: Validation.checkAmount(true),
 			max: (val) => {
 				if (val === undefined || val === '') {
 					return [
@@ -90,6 +82,15 @@ export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractio
 				if (!BigDecimal.isBigDecimal(val)) {
 					return [new InvalidType(val, 'BigDecimal')];
 				}
+				const maximum = BigDecimal.fromString(val);
+				const minimum = BigDecimal.fromString(this.min);
+
+				if (minimum.isGreaterThan(maximum))
+					return [
+						new InvalidValue(
+							`The maximum (${val}) should be greater than or equal to the minimum (${this.min}).`,
+						),
+					];
 			},
 		});
 		this.collectorId = collectorId;
