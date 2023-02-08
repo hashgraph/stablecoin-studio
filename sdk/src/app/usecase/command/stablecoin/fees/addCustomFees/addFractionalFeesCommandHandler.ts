@@ -88,6 +88,9 @@ export class addFractionalFeesCommandHandler
 							customFee.collectorId
 								? customFee.collectorId.toString()
 								: HederaId.NULL.toString(),
+						)
+						.setAllCollectorsAreExempt(
+							customFee.collectorsExempt ?? false,
 						);
 
 					if (customFee.tokenId && !customFee.tokenId.isNull()) {
