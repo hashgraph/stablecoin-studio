@@ -39,7 +39,7 @@
 		"eslint-plugin-jest": "^27.2.1",
 		"eslint-plugin-license-header": "^0.6.0",
 		"format-imports": "^3.2.2",
-		"hedera-stable-coin-contracts": "file:../contracts",
+		"@hashgraph/stablecoin-npm-contracts": "file:../contracts",
 		"jest": "^29.3.1",
 		"prettier": "^ 2.8.3",
 		"rimraf": "^4.1.1",
