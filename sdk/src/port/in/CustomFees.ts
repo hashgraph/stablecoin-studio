@@ -20,21 +20,27 @@
 
 import { CommandBus } from '../../core/command/CommandBus.js';
 import Injectable from '../../core/Injectable.js';
-import { UpdateCustomFeesRequest } from './request/index.js';
+import { 
+	AddFixedFeeRequest,
+	AddFractionalFeeRequest
+} from './request/index.js';
 import { LogError } from '../../core/decorator/LogErrorDecorator.js';
 import { handleValidation } from './Common.js';
 import { HederaId } from '../../domain/context/shared/HederaId.js';
-import { UpdateCustomFeesCommand } from '../../app/usecase/command/stablecoin/fees/updateCustomFees/UpdateCustomFeesCommand.js';
+import { addFixedFeesCommand } from '../../app/usecase/command/stablecoin/fees/addCustomFees/addFixedFeesCommand.js';
 import {
 	CustomFee,
 	FixedFee,
 	FractionalFee,
 } from '../../domain/context/fee/CustomFee.js';
+import BigDecimal from '../../domain/context/shared/BigDecimal.js';
 
 export { CustomFee, FixedFee, FractionalFee };
 
 interface ICustomFees {
-	updateCustomFees(request: UpdateCustomFeesRequest): Promise<boolean>;
+	addFixedFee(request: AddFixedFeeRequest): Promise<boolean>;
+	addFractionalFee(request: AddFractionalFeeRequest): Promise<boolean>;
+	//updateCustomFees(request: UpdateCustomFeesRequest): Promise<boolean>;
 }
 
 class CustomFeesInPort implements ICustomFees {
@@ -45,6 +51,33 @@ class CustomFeesInPort implements ICustomFees {
 	) {}
 
 	@LogError
+	async addFixedFee(request: AddFixedFeeRequest): Promise<boolean>{
+		const { 
+			tokenId, 
+			collectorId,
+			tokenIdCollected,
+			amount,
+		 } = request;
+		handleValidation('AddFixedFeeRequest', request);
+
+		return (
+			await this.commandBus.execute(
+				new addFixedFeesCommand(
+					HederaId.from(tokenId), 
+					HederaId.from(collectorId),
+					HederaId.from(tokenIdCollected),
+					BigDecimal.fromString(amount)
+				),
+			)
+		).payload;
+	}
+
+	@LogError
+	async addFractionalFee(request: AddFractionalFeeRequest): Promise<boolean>{
+		return true;
+	}
+
+	/*@LogError
 	async updateCustomFees(request: UpdateCustomFeesRequest): Promise<boolean> {
 		const { tokenId, customFees } = request;
 		handleValidation('UpdateCustomFeesRequest', request);
@@ -54,7 +87,7 @@ class CustomFeesInPort implements ICustomFees {
 				new UpdateCustomFeesCommand(HederaId.from(tokenId), customFees),
 			)
 		).payload;
-	}
+	}*/
 }
 
 const Fees = new CustomFeesInPort();

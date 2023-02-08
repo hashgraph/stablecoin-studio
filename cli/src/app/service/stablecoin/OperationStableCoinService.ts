@@ -48,6 +48,7 @@ import FreezeStableCoinService from './FreezeStableCoinService.js';
 import KYCStableCoinService from './KYCStableCoinService.js';
 import ListStableCoinsService from './ListStableCoinsService.js';
 import CapabilitiesStableCoinService from './CapabilitiesStableCoinService.js';
+import FeeStableCoinService from './FeeStableCoinService.js';
 
 /**
  * Operation Stable Coin Service
@@ -783,6 +784,7 @@ export default class OperationStableCoinService extends Service {
   private async createFractionalFee(): Promise<void> {
     const addFractionalFeeRequest: AddFractionalFeeRequest =
       new AddFractionalFeeRequest({
+        tokenId: this.stableCoinId,
         collectorId: '',
         amountNumerator: '',
         amountDenominator: '',
@@ -888,6 +890,7 @@ export default class OperationStableCoinService extends Service {
 
   private async createFixedFee(): Promise<void> {
     const addFixedFeeRequest: AddFixedFeeRequest = new AddFixedFeeRequest({
+      tokenId: this.stableCoinId,
       amount: '',
       tokenIdCollected: '',
       collectorId: '',
@@ -947,6 +950,15 @@ export default class OperationStableCoinService extends Service {
     const confirm = await this.askFeeCreationConfirmation();
 
     if (!confirm) return;
+
+    try {
+      await new FeeStableCoinService().addFixedFee(addFixedFeeRequest);
+    } catch (error) {
+      await utilsService.askErrorConfirmation(
+        async () => await this.operationsStableCoin(),
+        error,
+      );
+    }
   }
 
   private async askFeeCreationConfirmation(): Promise<boolean> {

@@ -327,6 +327,8 @@ export const english = {
       'The account ${address} has KYC granted for the ${token} token',
     accountKYCNotGranted:
       'The account ${address} has not KYC granted for the ${token} token',
+    customFeeCreated: 'Custom fee created',
+    customFeeRemoved: 'Custom fee removed',
   },
   operation: {
     success: colors.green('Operation has been completed successfully.'),

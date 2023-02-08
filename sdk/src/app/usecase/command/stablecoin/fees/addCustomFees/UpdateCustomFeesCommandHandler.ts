@@ -39,7 +39,7 @@ import {
 	FractionalFee,
 } from '../../../../../../domain/context/fee/CustomFee.js';
 import { HederaId } from '../../../../../../domain/context/shared/HederaId.js';
-import FeeAssessmentMethod from '@hashgraph/sdk/lib/token/FeeAssessmentMethod.js';
+//import FeeAssessmentMethod from '@hashgraph/sdk/lib/token/FeeAssessmentMethod.js';
 
 @CommandHandler(UpdateCustomFeesCommand)
 export class UpdateCustomFeesCommandHandler
@@ -97,9 +97,9 @@ export class UpdateCustomFeesCommandHandler
 							: 0,
 					)
 					.setMin(customFee.min ? customFee.min.toLong() : 0)
-					.setAssessmentMethod(
+					/*.setAssessmentMethod(
 						new FeeAssessmentMethod(customFee.net ?? false),
-					)
+					)*/
 					.setFeeCollectorAccountId(
 						customFee.collectorId
 							? customFee.collectorId.toString()

@@ -27,6 +27,7 @@ import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 import { InvalidRange } from './error/InvalidRange.js';
 
 export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractionalFeeRequest> {
+	tokenId: string;
 	collectorId: string;
 	amountNumerator: string;
 	amountDenominator: string;
@@ -35,6 +36,7 @@ export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractio
 	net: boolean;
 
 	constructor({
+		tokenId,
 		collectorId,
 		amountNumerator,
 		amountDenominator,
@@ -42,6 +44,7 @@ export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractio
 		max,
 		net,
 	}: {
+		tokenId: string;
 		collectorId: string;
 		amountNumerator: string;
 		amountDenominator: string;
@@ -50,6 +53,7 @@ export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractio
 		net: boolean;
 	}) {
 		super({
+			tokenId: Validation.checkHederaIdFormat(),
 			collectorId: Validation.checkHederaIdFormat(),
 			amountNumerator: (val) => {
 				const numerator = parseInt(val);
@@ -93,6 +97,7 @@ export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractio
 					];
 			},
 		});
+		this.tokenId = tokenId;
 		this.collectorId = collectorId;
 		this.amountNumerator = amountNumerator;
 		this.amountDenominator = amountDenominator;

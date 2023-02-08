@@ -33,7 +33,7 @@ import AddFractionalFeeRequest from './AddFractionalFeeRequest.js';
 import { InvalidType } from './error/InvalidType.js';
 
 export default class UpdateCustomFeesRequest extends ValidatedRequest<UpdateCustomFeesRequest> {
-	customFees: CustomFee[];
+	/*customFees: CustomFee[];
 	tokenId: string;
 
 	constructor({
@@ -93,5 +93,5 @@ export default class UpdateCustomFeesRequest extends ValidatedRequest<UpdateCust
 		});
 		this.customFees = customFees;
 		this.tokenId = tokenId;
-	}
+	}*/
 }
