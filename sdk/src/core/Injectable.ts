@@ -53,6 +53,7 @@ import { GetListStableCoinQueryHandler } from '../app/usecase/query/stablecoin/l
 import { GetAccountInfoQueryHandler } from '../app/usecase/query/account/info/GetAccountInfoQueryHandler.js';
 import { SetNetworkCommandHandler } from '../app/usecase/command/network/setNetwork/SetNetworkCommandHandler.js';
 import { addFixedFeesCommandHandler } from '../app/usecase/command/stablecoin/fees/addCustomFees/addFixedFeesCommandHandler.js';
+import { addFractionalFeesCommandHandler } from '../app/usecase/command/stablecoin/fees/addCustomFees/addFractionalFeesCommandHandler.js';
 
 import { WalletEvents } from '../app/service/event/WalletEvent.js';
 import { CommandHandlerType } from './command/CommandBus.js';
@@ -110,6 +111,10 @@ const COMMAND_HANDLERS = [
 	{
 		token: TOKENS.COMMAND_HANDLER,
 		useClass: addFixedFeesCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: addFractionalFeesCommandHandler,
 	},
 	{
 		token: TOKENS.COMMAND_HANDLER,

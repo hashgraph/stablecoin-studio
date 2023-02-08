@@ -20,9 +20,9 @@
 
 import { CommandBus } from '../../core/command/CommandBus.js';
 import Injectable from '../../core/Injectable.js';
-import { 
+import {
 	AddFixedFeeRequest,
-	AddFractionalFeeRequest
+	AddFractionalFeeRequest,
 } from './request/index.js';
 import { LogError } from '../../core/decorator/LogErrorDecorator.js';
 import { handleValidation } from './Common.js';
@@ -34,6 +34,7 @@ import {
 	FractionalFee,
 } from '../../domain/context/fee/CustomFee.js';
 import BigDecimal from '../../domain/context/shared/BigDecimal.js';
+import { addFractionalFeesCommand } from '../../app/usecase/command/stablecoin/fees/addCustomFees/addFractionalFeesCommand.js';
 
 export { CustomFee, FixedFee, FractionalFee };
 
@@ -51,30 +52,48 @@ class CustomFeesInPort implements ICustomFees {
 	) {}
 
 	@LogError
-	async addFixedFee(request: AddFixedFeeRequest): Promise<boolean>{
-		const { 
-			tokenId, 
-			collectorId,
-			tokenIdCollected,
-			amount,
-		 } = request;
+	async addFixedFee(request: AddFixedFeeRequest): Promise<boolean> {
+		const { tokenId, collectorId, tokenIdCollected, amount } = request;
 		handleValidation('AddFixedFeeRequest', request);
 
 		return (
 			await this.commandBus.execute(
 				new addFixedFeesCommand(
-					HederaId.from(tokenId), 
+					HederaId.from(tokenId),
 					HederaId.from(collectorId),
 					HederaId.from(tokenIdCollected),
-					BigDecimal.fromString(amount)
+					BigDecimal.fromString(amount),
 				),
 			)
 		).payload;
 	}
 
 	@LogError
-	async addFractionalFee(request: AddFractionalFeeRequest): Promise<boolean>{
-		return true;
+	async addFractionalFee(request: AddFractionalFeeRequest): Promise<boolean> {
+		const {
+			tokenId,
+			collectorId,
+			amountNumerator,
+			amountDenominator,
+			min,
+			max,
+			net,
+		} = request;
+		handleValidation('AddFractionalFeeRequest', request);
+
+		return (
+			await this.commandBus.execute(
+				new addFractionalFeesCommand(
+					HederaId.from(tokenId),
+					HederaId.from(collectorId),
+					parseInt(amountNumerator),
+					parseInt(amountDenominator),
+					BigDecimal.fromString(min),
+					BigDecimal.fromString(max),
+					net,
+				),
+			)
+		).payload;
 	}
 
 	/*@LogError

@@ -886,6 +886,17 @@ export default class OperationStableCoinService extends Service {
     const confirm = await this.askFeeCreationConfirmation();
 
     if (!confirm) return;
+
+    try {
+      await new FeeStableCoinService().addFractionalFee(
+        addFractionalFeeRequest,
+      );
+    } catch (error) {
+      await utilsService.askErrorConfirmation(
+        async () => await this.operationsStableCoin(),
+        error,
+      );
+    }
   }
 
   private async createFixedFee(): Promise<void> {

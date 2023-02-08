@@ -25,9 +25,9 @@ import AccountService from '../../../../../service/AccountService.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
 import {
-	addFixedFeesCommand,
-	addFixedFeesCommandResponse,
-} from './addFixedFeesCommand.js';
+	addFractionalFeesCommand,
+	addFractionalFeesCommandResponse,
+} from './addFractionalFeesCommand.js';
 import {
 	CustomFee as HCustomFee,
 	CustomFixedFee as HCustomFixedFee,
@@ -40,9 +40,9 @@ import {
 import { HederaId } from '../../../../../../domain/context/shared/HederaId.js';
 //import FeeAssessmentMethod from '@hashgraph/sdk/lib/token/FeeAssessmentMethod.js';
 
-@CommandHandler(addFixedFeesCommand)
-export class addFixedFeesCommandHandler
-	implements ICommandHandler<addFixedFeesCommand>
+@CommandHandler(addFractionalFeesCommand)
+export class addFractionalFeesCommandHandler
+	implements ICommandHandler<addFractionalFeesCommand>
 {
 	constructor(
 		@lazyInject(StableCoinService)
@@ -54,9 +54,17 @@ export class addFixedFeesCommandHandler
 	) {}
 
 	async execute(
-		command: addFixedFeesCommand,
-	): Promise<addFixedFeesCommandResponse> {
-		const { tokenId, collectorId, tokenIdCollected, amount } = command;
+		command: addFractionalFeesCommand,
+	): Promise<addFractionalFeesCommandResponse> {
+		const {
+			tokenId,
+			collectorId,
+			amountNumerator,
+			amountDenominator,
+			min,
+			max,
+			net,
+		} = command;
 
 		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
@@ -120,20 +128,19 @@ export class addFixedFeesCommandHandler
 			});
 		}
 
-		const customFeeToAdd = new HCustomFixedFee()
-			.setAmount(amount.toLong())
+		const customFeeToAdd = new HCustomFractionalFee()
+			.setNumerator(amountNumerator)
+			.setDenominator(amountDenominator)
+			.setMin(min.toLong())
+			.setMax(max.toLong())
 			.setFeeCollectorAccountId(collectorId.toString());
-
-		if (!tokenIdCollected.isNull()) {
-			customFeeToAdd.setDenominatingTokenId(tokenIdCollected.toString());
-		}
 
 		HcustomFee.push(customFeeToAdd);
 
 		const res = await handler.updateCustomFees(capabilities, HcustomFee);
 
 		return Promise.resolve(
-			new addFixedFeesCommandResponse(res.error === undefined),
+			new addFractionalFeesCommandResponse(res.error === undefined),
 		);
 	}
 }
