@@ -740,9 +740,9 @@ export default class OperationStableCoinService extends Service {
         if (
           feeType == language.getText('feeManagement.chooseFeeType.FixedFee')
         ) {
-          await this.askFixedFee();
+          await this.createFixedFee();
         } else {
-          await this.askFractionalFee();
+          await this.createFractionalFee();
         }
 
         break;
@@ -780,7 +780,7 @@ export default class OperationStableCoinService extends Service {
     await this.feesManagementFlow();
   }
 
-  private async askFractionalFee(): Promise<AddFractionalFeeRequest> {
+  private async createFractionalFee(): Promise<void> {
     const addFractionalFeeRequest: AddFractionalFeeRequest =
       new AddFractionalFeeRequest({
         collectorId: '',
@@ -791,10 +791,102 @@ export default class OperationStableCoinService extends Service {
         net: false,
       });
 
-    return addFractionalFeeRequest;
+    addFractionalFeeRequest.amountNumerator =
+      await utilsService.defaultSingleAsk(
+        language.getText('feeManagement.askNumerator'),
+        '0',
+      );
+    await utilsService.handleValidation(
+      () => addFractionalFeeRequest.validate('amountNumerator'),
+      async () => {
+        addFractionalFeeRequest.amountNumerator =
+          await utilsService.defaultSingleAsk(
+            language.getText('feeManagement.askNumerator'),
+            '0',
+          );
+      },
+    );
+
+    addFractionalFeeRequest.amountDenominator =
+      await utilsService.defaultSingleAsk(
+        language.getText('feeManagement.askDenominator'),
+        '1',
+      );
+    await utilsService.handleValidation(
+      () => addFractionalFeeRequest.validate('amountDenominator'),
+      async () => {
+        addFractionalFeeRequest.amountDenominator =
+          await utilsService.defaultSingleAsk(
+            language.getText('feeManagement.askDenominator'),
+            '1',
+          );
+      },
+    );
+
+    addFractionalFeeRequest.min = await utilsService.defaultSingleAsk(
+      language.getText('feeManagement.askMin'),
+      '0',
+    );
+    await utilsService.handleValidation(
+      () => addFractionalFeeRequest.validate('min'),
+      async () => {
+        addFractionalFeeRequest.min = await utilsService.defaultSingleAsk(
+          language.getText('feeManagement.askMin'),
+          '0',
+        );
+      },
+    );
+
+    addFractionalFeeRequest.max = await utilsService.defaultSingleAsk(
+      language.getText('feeManagement.askMax'),
+      '0',
+    );
+    await utilsService.handleValidation(
+      () => addFractionalFeeRequest.validate('max'),
+      async () => {
+        addFractionalFeeRequest.max = await utilsService.defaultSingleAsk(
+          language.getText('feeManagement.askMax'),
+          '0',
+        );
+      },
+    );
+
+    addFractionalFeeRequest.net = await utilsService.defaultConfirmAsk(
+      language.getText('feeManagement.askAssesmentMethod'),
+      true,
+    );
+
+    addFractionalFeeRequest.collectorId = await utilsService.defaultSingleAsk(
+      language.getText('feeManagement.askCollectorId'),
+      '0.0.0',
+    );
+
+    await utilsService.handleValidation(
+      () => addFractionalFeeRequest.validate('collectorId'),
+      async () => {
+        addFractionalFeeRequest.collectorId =
+          await utilsService.defaultSingleAsk(
+            language.getText('feeManagement.askCollectorId'),
+            '0.0.0',
+          );
+      },
+    );
+
+    console.log({
+      numerator: addFractionalFeeRequest.amountNumerator,
+      denominator: addFractionalFeeRequest.amountDenominator,
+      min: addFractionalFeeRequest.min,
+      max: addFractionalFeeRequest.max,
+      feesPaidBy: addFractionalFeeRequest.net ? 'Sender' : 'Receiver',
+      collector: addFractionalFeeRequest.collectorId,
+    });
+
+    const confirm = await this.askFeeCreationConfirmation();
+
+    if (!confirm) return;
   }
 
-  private async askFixedFee(): Promise<void> {
+  private async createFixedFee(): Promise<void> {
     const addFixedFeeRequest: AddFixedFeeRequest = new AddFixedFeeRequest({
       amount: '',
       tokenIdCollected: '',

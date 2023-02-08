@@ -378,6 +378,12 @@ export const english = {
     askAmount: 'Enter the fixed fee amount',
     askTokenId: 'Enter the token Id',
     askCollectorId: 'Enter the collector Id',
+    askNumerator: "Enter the fraction's numerator",
+    askDenominator: "Enter the fraction's denominator",
+    askMin: 'Enter the minimum fee',
+    askMax: 'Enter the maximum fee',
+    askAssesmentMethod:
+      'Do you want the fees to be deducted from the transfered amount?',
     confirmCreate:
       'Are you sure want to add this custom fee to the stable coin?',
     confirmRemove:
