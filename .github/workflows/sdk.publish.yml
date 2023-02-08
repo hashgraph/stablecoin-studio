@@ -7,7 +7,7 @@ on:
       - 'sdk/**'
 defaults:
   run:
-    working-directory: SDK
+    working-directory: sdk
 jobs:
   test-node:
     name: Publish SDK package
