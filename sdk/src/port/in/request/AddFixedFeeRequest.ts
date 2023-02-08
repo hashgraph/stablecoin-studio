@@ -65,8 +65,8 @@ export default class AddFixedFeeRequest extends ValidatedRequest<AddFixedFeeRequ
 				const zero = BigDecimal.fromString('0', this.decimals);
 				const value = BigDecimal.fromString(val, this.decimals);
 
-				if (value.isLowerThan(zero)) {
-					return [new InvalidRange(val, '0', undefined)];
+				if (value.isLowerOrEqualThan(zero)) {
+					return [new InvalidRange(val, '0..', undefined)];
 				}
 			},
 		});
