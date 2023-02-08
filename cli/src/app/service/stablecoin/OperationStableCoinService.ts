@@ -910,21 +910,30 @@ export default class OperationStableCoinService extends Service {
       },
     );
 
-    addFixedFeeRequest.tokenIdCollected = await utilsService.defaultSingleAsk(
-      language.getText('feeManagement.askTokenId'),
-      this.stableCoinId,
+    const feesInHBAR = await utilsService.defaultConfirmAsk(
+      language.getText('feeManagement.askHBAR'),
+      true,
     );
 
-    await utilsService.handleValidation(
-      () => addFixedFeeRequest.validate('tokenIdCollected'),
-      async () => {
-        addFixedFeeRequest.tokenIdCollected =
-          await utilsService.defaultSingleAsk(
-            language.getText('feeManagement.askTokenId'),
-            this.stableCoinId,
-          );
-      },
-    );
+    addFixedFeeRequest.tokenIdCollected = '0.0.0';
+
+    if (!feesInHBAR) {
+      addFixedFeeRequest.tokenIdCollected = await utilsService.defaultSingleAsk(
+        language.getText('feeManagement.askTokenId'),
+        this.stableCoinId,
+      );
+
+      await utilsService.handleValidation(
+        () => addFixedFeeRequest.validate('tokenIdCollected'),
+        async () => {
+          addFixedFeeRequest.tokenIdCollected =
+            await utilsService.defaultSingleAsk(
+              language.getText('feeManagement.askTokenId'),
+              this.stableCoinId,
+            );
+        },
+      );
+    }
 
     addFixedFeeRequest.collectorId = await utilsService.defaultSingleAsk(
       language.getText('feeManagement.askCollectorId'),
@@ -943,7 +952,10 @@ export default class OperationStableCoinService extends Service {
 
     console.log({
       amount: addFixedFeeRequest.amount,
-      token: addFixedFeeRequest.tokenIdCollected,
+      token:
+        addFixedFeeRequest.tokenIdCollected !== '0.0.0'
+          ? addFixedFeeRequest.tokenIdCollected
+          : 'HBAR',
       collector: addFixedFeeRequest.collectorId,
     });
 

@@ -378,6 +378,7 @@ export const english = {
       FractionalFee: 'Fractional Fee',
     },
     askAmount: 'Enter the fixed fee amount',
+    askHBAR: 'Do you want the fees to be paid in HBARs?',
     askTokenId: 'Enter the token Id',
     askCollectorId: 'Enter the collector Id',
     askNumerator: "Enter the fraction's numerator",

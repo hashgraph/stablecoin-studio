@@ -76,22 +76,25 @@ export class addFixedFeesCommandHandler
 		if(stableCoin.customFees){
 			stableCoin.customFees.forEach((customFee) => {
 				if (customFee instanceof FixedFee) {
-					HcustomFee.push(
-						new HCustomFixedFee()
-							.setAmount(
-								customFee.amount ? customFee.amount.toLong() : 0,
-							)
-							.setDenominatingTokenId(
-								customFee.tokenId
-									? customFee.tokenId.toString()
-									: HederaId.NULL.toString(),
-							)
-							.setFeeCollectorAccountId(
-								customFee.collectorId
-									? customFee.collectorId.toString()
-									: HederaId.NULL.toString(),
-							),
-					);
+					const newFee = new HCustomFixedFee()
+						.setAmount(
+							customFee.amount ? customFee.amount.toLong() : 0,
+						)
+						.setFeeCollectorAccountId(
+							customFee.collectorId
+								? customFee.collectorId.toString()
+								: HederaId.NULL.toString(),
+						);
+
+					if(customFee.tokenId &&
+						!customFee.tokenId.isNull()){
+						newFee.setDenominatingTokenId(
+							customFee.tokenId.toString()
+						)
+					}
+
+					HcustomFee.push(newFee);
+
 				} else if (customFee instanceof FractionalFee) {
 					const newFee = new HCustomFractionalFee()
 						.setNumerator(
@@ -124,18 +127,21 @@ export class addFixedFeesCommandHandler
 			});
 		}
 		
-		HcustomFee.push(
-			new HCustomFixedFee()
-				.setAmount(
-					amount.toLong(),
-				)
-				.setDenominatingTokenId(
-					tokenIdCollected.toString(),
-				)
-				.setFeeCollectorAccountId(
-					collectorId.toString(),
-				),
-		);
+		const customFeeToAdd = new HCustomFixedFee()
+			.setAmount(
+				amount.toLong(),
+			)
+			.setFeeCollectorAccountId(
+				collectorId.toString(),
+			);
+
+		if(!tokenIdCollected.isNull()){
+			customFeeToAdd.setDenominatingTokenId(
+				tokenIdCollected.toString(),
+			)
+		}
+			
+		HcustomFee.push(customFeeToAdd);
 
 		const res = await handler.updateCustomFees(capabilities, HcustomFee);
 

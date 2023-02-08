@@ -148,6 +148,10 @@ export class MirrorNodeAdapter {
 				const customFees: CustomFee[] = [];
 
 				val.fixed_fees.forEach((fixedFee) => {
+					const denominatingToken = fixedFee.denominating_token_id ? 
+						HederaId.from(fixedFee.denominating_token_id)
+						: HederaId.NULL;
+
 					customFees.push(
 						new FixedFee(
 							HederaId.from(fixedFee.collector_account_id),
@@ -157,7 +161,7 @@ export class MirrorNodeAdapter {
 									: '0',
 								decimals,
 							),
-							HederaId.from(fixedFee.denominating_token_id),
+							denominatingToken,
 						),
 					);
 				});
