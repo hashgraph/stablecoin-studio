@@ -25,6 +25,8 @@ import { InvalidType } from './error/InvalidType.js';
 import { InvalidValue } from './error/InvalidValue.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 import { InvalidRange } from './error/InvalidRange.js';
+import CheckNums from '../../../core/checks/numbers/CheckNums.js';
+import InvalidDecimalRange from '../../../domain/context/stablecoin/error/InvalidDecimalRange.js';
 
 export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractionalFeeRequest> {
 	tokenId: string;
@@ -33,6 +35,7 @@ export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractio
 	amountDenominator: string;
 	min: string;
 	max: string;
+	decimals: number;
 	net: boolean;
 	collectorsExempt: boolean;
 
@@ -43,6 +46,7 @@ export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractio
 		amountDenominator,
 		min,
 		max,
+		decimals,
 		net,
 		collectorsExempt,
 	}: {
@@ -52,6 +56,7 @@ export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractio
 		amountDenominator: string;
 		min: string;
 		max: string;
+		decimals: number;
 		net: boolean;
 		collectorsExempt: boolean;
 	}) {
@@ -77,7 +82,21 @@ export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractio
 						),
 					];
 			},
-			min: Validation.checkAmount(true),
+			min: (val) => {
+				if (!BigDecimal.isBigDecimal(val)) {
+					return [new InvalidType(val, 'BigDecimal')];
+				}
+				if (CheckNums.hasMoreDecimals(val, this.decimals)) {
+					return [new InvalidDecimalRange(val, this.decimals)];
+				}
+
+				const zero = BigDecimal.fromString('0', this.decimals);
+				const value = BigDecimal.fromString(val, this.decimals);
+
+				if (value.isLowerThan(zero)) {
+					return [new InvalidRange(val, '0', undefined)];
+				}
+			},
 			max: (val) => {
 				if (val === undefined || val === '') {
 					return [
@@ -89,8 +108,11 @@ export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractio
 				if (!BigDecimal.isBigDecimal(val)) {
 					return [new InvalidType(val, 'BigDecimal')];
 				}
-				const maximum = BigDecimal.fromString(val);
-				const minimum = BigDecimal.fromString(this.min);
+				if (CheckNums.hasMoreDecimals(val, this.decimals)) {
+					return [new InvalidDecimalRange(val, this.decimals)];
+				}
+				const maximum = BigDecimal.fromString(val, this.decimals);
+				const minimum = BigDecimal.fromString(this.min, this.decimals);
 
 				if (minimum.isGreaterThan(maximum))
 					return [
@@ -106,6 +128,7 @@ export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractio
 		this.amountDenominator = amountDenominator;
 		this.min = min;
 		this.max = max;
+		this.decimals = decimals;
 		this.net = net;
 		this.collectorsExempt = collectorsExempt;
 	}

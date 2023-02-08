@@ -60,6 +60,7 @@ class CustomFeesInPort implements ICustomFees {
 			collectorId,
 			tokenIdCollected,
 			amount,
+			decimals,
 			collectorsExempt,
 		} = request;
 		handleValidation('AddFixedFeeRequest', request);
@@ -70,7 +71,7 @@ class CustomFeesInPort implements ICustomFees {
 					HederaId.from(tokenId),
 					HederaId.from(collectorId),
 					HederaId.from(tokenIdCollected),
-					BigDecimal.fromString(amount),
+					BigDecimal.fromString(amount, decimals),
 					collectorsExempt,
 				),
 			)
@@ -86,6 +87,7 @@ class CustomFeesInPort implements ICustomFees {
 			amountDenominator,
 			min,
 			max,
+			decimals,
 			net,
 			collectorsExempt,
 		} = request;
@@ -98,8 +100,8 @@ class CustomFeesInPort implements ICustomFees {
 					HederaId.from(collectorId),
 					parseInt(amountNumerator),
 					parseInt(amountDenominator),
-					BigDecimal.fromString(min),
-					BigDecimal.fromString(max),
+					BigDecimal.fromString(min, decimals),
+					BigDecimal.fromString(max, decimals),
 					net,
 					collectorsExempt,
 				),

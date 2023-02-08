@@ -51,6 +51,7 @@ import {
 	KycStatus,
 } from './response/AccountTokenRelationViewModel.js';
 import { REGEX_TRANSACTION } from '../error/TransactionResponseError.js';
+const HBAR_DECIMALS = 8;
 
 @singleton()
 export class MirrorNodeAdapter {
@@ -159,7 +160,9 @@ export class MirrorNodeAdapter {
 								fixedFee.amount
 									? fixedFee.amount.toString()
 									: '0',
-								decimals,
+								denominatingToken.isNull()
+									? HBAR_DECIMALS
+									: decimals,
 							),
 							denominatingToken,
 							fixedFee.all_collectors_are_exempt,

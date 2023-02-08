@@ -51,6 +51,7 @@ import KYCStableCoinService from './KYCStableCoinService.js';
 import ListStableCoinsService from './ListStableCoinsService.js';
 import CapabilitiesStableCoinService from './CapabilitiesStableCoinService.js';
 import FeeStableCoinService from './FeeStableCoinService.js';
+const HBAR_DECIMALS = 8;
 
 /**
  * Operation Stable Coin Service
@@ -743,9 +744,9 @@ export default class OperationStableCoinService extends Service {
         if (
           feeType == language.getText('feeManagement.chooseFeeType.FixedFee')
         ) {
-          await this.createFixedFee();
+          await this.createFixedFee(detailsStableCoin.decimals ?? 0);
         } else {
-          await this.createFractionalFee();
+          await this.createFractionalFee(detailsStableCoin.decimals ?? 0);
         }
 
         break;
@@ -761,7 +762,7 @@ export default class OperationStableCoinService extends Service {
 
         break;
       case language.getText('feeManagement.options.List'):
-        console.log(detailsStableCoin.customFees);
+        new FeeStableCoinService().displayFees(detailsStableCoin.customFees);
         break;
       case feeManagementOptionsFiltered[
         feeManagementOptionsFiltered.length - 1
@@ -779,7 +780,7 @@ export default class OperationStableCoinService extends Service {
 
     for (let i = 0; i < customFees.length; i++) {
       const fee = customFees[i];
-      console.log(fee);
+      new FeeStableCoinService().displayFees([fee]);
       const remove = await utilsService.defaultConfirmAsk(
         language.getText('feeManagement.askRemoveFee'),
         false,
@@ -789,7 +790,7 @@ export default class OperationStableCoinService extends Service {
     }
 
     console.log(language.getText('feeManagement.listOfFeesToRemove'));
-    console.log(FeesToRemove);
+    new FeeStableCoinService().displayFees(FeesToRemove);
 
     const confirm = await this.askFeeOperationConfirmation(
       language.getText('feeManagement.confirmRemove'),
@@ -812,7 +813,7 @@ export default class OperationStableCoinService extends Service {
     }
   }
 
-  private async createFractionalFee(): Promise<void> {
+  private async createFractionalFee(decimals: number): Promise<void> {
     const addFractionalFeeRequest: AddFractionalFeeRequest =
       new AddFractionalFeeRequest({
         tokenId: this.stableCoinId,
@@ -821,6 +822,7 @@ export default class OperationStableCoinService extends Service {
         amountDenominator: '',
         min: '',
         max: '',
+        decimals: decimals,
         net: false,
         collectorsExempt: true,
       });
@@ -940,28 +942,15 @@ export default class OperationStableCoinService extends Service {
     }
   }
 
-  private async createFixedFee(): Promise<void> {
+  private async createFixedFee(decimals: number): Promise<void> {
     const addFixedFeeRequest: AddFixedFeeRequest = new AddFixedFeeRequest({
       tokenId: this.stableCoinId,
       amount: '',
+      decimals: HBAR_DECIMALS,
       tokenIdCollected: '',
       collectorId: '',
       collectorsExempt: true,
     });
-
-    addFixedFeeRequest.amount = await utilsService.defaultSingleAsk(
-      language.getText('feeManagement.askAmount'),
-      '0',
-    );
-    await utilsService.handleValidation(
-      () => addFixedFeeRequest.validate('amount'),
-      async () => {
-        addFixedFeeRequest.amount = await utilsService.defaultSingleAsk(
-          language.getText('feeManagement.askAmount'),
-          '0',
-        );
-      },
-    );
 
     const feesInHBAR = await utilsService.defaultConfirmAsk(
       language.getText('feeManagement.askHBAR'),
@@ -976,6 +965,8 @@ export default class OperationStableCoinService extends Service {
         this.stableCoinId,
       );
 
+      addFixedFeeRequest.decimals = decimals;
+
       await utilsService.handleValidation(
         () => addFixedFeeRequest.validate('tokenIdCollected'),
         async () => {
@@ -987,6 +978,20 @@ export default class OperationStableCoinService extends Service {
         },
       );
     }
+
+    addFixedFeeRequest.amount = await utilsService.defaultSingleAsk(
+      language.getText('feeManagement.askAmount'),
+      '0',
+    );
+    await utilsService.handleValidation(
+      () => addFixedFeeRequest.validate('amount'),
+      async () => {
+        addFixedFeeRequest.amount = await utilsService.defaultSingleAsk(
+          language.getText('feeManagement.askAmount'),
+          '0',
+        );
+      },
+    );
 
     addFixedFeeRequest.collectorsExempt = await utilsService.defaultConfirmAsk(
       language.getText('feeManagement.askCollectorsExempt'),

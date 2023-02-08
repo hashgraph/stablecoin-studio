@@ -4,6 +4,9 @@ import Service from '../Service.js';
 import {
   AddFixedFeeRequest,
   AddFractionalFeeRequest,
+  CustomFee,
+  FixedFee,
+  FractionalFee,
   Fees,
   UpdateCustomFeesRequest,
 } from 'hedera-stable-coin-sdk';
@@ -47,5 +50,30 @@ export default class FeeStableCoinService extends Service {
     console.log(language.getText('operation.success'));
 
     utilsService.breakLine();
+  }
+
+  public displayFees(listOfFees: CustomFee[]) {
+    listOfFees.forEach((fee) => {
+      if (fee instanceof FixedFee) {
+        console.log({
+          Fee_Type: 'Fixed',
+          Collector_Id: fee.collectorId.toString(),
+          All_Collectors_Exempt: fee.collectorsExempt,
+          Amount: fee.amount.toString(),
+          Token: fee.tokenId.isNull() ? 'HBAR' : fee.tokenId.toString(),
+        });
+      } else if (fee instanceof FractionalFee) {
+        console.log({
+          Fee_Type: 'Fractional',
+          Collector_Id: fee.collectorId.toString(),
+          All_Collectors_Exempt: fee.collectorsExempt,
+          Numerator: fee.amountNumerator.toString(),
+          Denominator: fee.amountDenominator.toString(),
+          Min: fee.min.toString(),
+          Max: fee.max.toString(),
+          Fees_Paid_By: fee.net ? 'Sender' : 'Receiver',
+        });
+      }
+    });
   }
 }

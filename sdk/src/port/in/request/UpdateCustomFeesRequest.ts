@@ -69,6 +69,7 @@ export default class UpdateCustomFeesRequest extends ValidatedRequest<UpdateCust
 							amount: customFee.amount
 								? customFee.amount.toString()
 								: '',
+							decimals: 0, // just for checking we do not need the actual decimals
 							collectorsExempt:
 								customFee.collectorsExempt ?? false,
 						});
@@ -86,6 +87,7 @@ export default class UpdateCustomFeesRequest extends ValidatedRequest<UpdateCust
 								: '',
 							min: customFee.min ? customFee.min.toString() : '',
 							max: customFee.max ? customFee.max.toString() : '',
+							decimals: 0, // just for checking we do not need the actual decimals
 							net: customFee.net ?? false,
 							collectorsExempt:
 								customFee.collectorsExempt ?? false,
