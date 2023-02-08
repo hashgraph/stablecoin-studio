@@ -32,7 +32,7 @@ import {
 	HederaReserve__factory,
 	StableCoinFactory__factory,
 	IHederaTokenService__factory,
-} from 'hedera-stable-coin-contracts';
+} from '@hashgraph/stablecoin-npm-contracts';
 import TransactionAdapter, { InitializationData } from '../TransactionAdapter';
 import { ContractTransaction, ethers, Signer } from 'ethers';
 import { singleton } from 'tsyringe';

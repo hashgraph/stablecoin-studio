@@ -42,7 +42,7 @@ import {
 	HederaERC20__factory,
 	HederaReserve__factory,
 	StableCoinFactory__factory,
-} from 'hedera-stable-coin-contracts';
+} from '@hashgraph/stablecoin-npm-contracts';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 import { TransactionType } from '../TransactionResponseEnums.js';
 import { HTSTransactionBuilder } from './HTSTransactionBuilder.js';
