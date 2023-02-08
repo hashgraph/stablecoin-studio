@@ -13,6 +13,7 @@ export class addFixedFeesCommand extends Command<addFixedFeesCommandResponse> {
 		public readonly collectorId: HederaId,
 		public readonly tokenIdCollected: HederaId,
 		public readonly amount: BigDecimal,
+		public readonly collectorsExempt: boolean,
 	) {
 		super();
 	}

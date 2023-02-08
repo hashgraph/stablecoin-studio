@@ -162,6 +162,7 @@ export class MirrorNodeAdapter {
 								decimals,
 							),
 							denominatingToken,
+							fixedFee.all_collectors_are_exempt,
 						),
 					);
 				});
@@ -185,6 +186,7 @@ export class MirrorNodeAdapter {
 								decimals,
 							),
 							fractionalFee.net_of_transfers,
+							fractionalFee.all_collectors_are_exempt,
 						),
 					);
 				});
@@ -490,6 +492,7 @@ interface IFixedFee {
 	amount: string;
 	collector_account_id: string;
 	denominating_token_id: string;
+	all_collectors_are_exempt: boolean;
 }
 
 interface IFractionalFee {
@@ -499,6 +502,7 @@ interface IFractionalFee {
 	maximum: string;
 	minimum: string;
 	net_of_transfers: boolean;
+	all_collectors_are_exempt: boolean;
 }
 
 interface IFractionAmount {

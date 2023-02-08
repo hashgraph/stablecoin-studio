@@ -64,6 +64,7 @@ export class addFractionalFeesCommandHandler
 			min,
 			max,
 			net,
+			collectorsExempt,
 		} = command;
 
 		const handler = this.transactionService.getHandler();
@@ -133,7 +134,8 @@ export class addFractionalFeesCommandHandler
 			.setDenominator(amountDenominator)
 			.setMin(min.toLong())
 			.setMax(max.toLong())
-			.setFeeCollectorAccountId(collectorId.toString());
+			.setFeeCollectorAccountId(collectorId.toString())
+			.setAllCollectorsAreExempt(collectorsExempt);
 
 		HcustomFee.push(customFeeToAdd);
 

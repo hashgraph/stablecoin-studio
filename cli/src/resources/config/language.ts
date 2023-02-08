@@ -377,6 +377,8 @@ export const english = {
       FixedFee: 'Fixed Fee',
       FractionalFee: 'Fractional Fee',
     },
+    askCollectorsExempt:
+      'Do you want collectors to be exempt from paying this fee?',
     askAmount: 'Enter the fixed fee amount',
     askHBAR: 'Do you want the fees to be paid in HBARs?',
     askTokenId: 'Enter the token Id',

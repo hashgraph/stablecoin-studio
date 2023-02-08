@@ -16,6 +16,7 @@ export class addFractionalFeesCommand extends Command<addFractionalFeesCommandRe
 		public readonly min: BigDecimal,
 		public readonly max: BigDecimal,
 		public readonly net: boolean,
+		public readonly collectorsExempt: boolean,
 	) {
 		super();
 	}

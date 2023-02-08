@@ -53,7 +53,13 @@ class CustomFeesInPort implements ICustomFees {
 
 	@LogError
 	async addFixedFee(request: AddFixedFeeRequest): Promise<boolean> {
-		const { tokenId, collectorId, tokenIdCollected, amount } = request;
+		const {
+			tokenId,
+			collectorId,
+			tokenIdCollected,
+			amount,
+			collectorsExempt,
+		} = request;
 		handleValidation('AddFixedFeeRequest', request);
 
 		return (
@@ -63,6 +69,7 @@ class CustomFeesInPort implements ICustomFees {
 					HederaId.from(collectorId),
 					HederaId.from(tokenIdCollected),
 					BigDecimal.fromString(amount),
+					collectorsExempt,
 				),
 			)
 		).payload;
@@ -78,6 +85,7 @@ class CustomFeesInPort implements ICustomFees {
 			min,
 			max,
 			net,
+			collectorsExempt,
 		} = request;
 		handleValidation('AddFractionalFeeRequest', request);
 
@@ -91,6 +99,7 @@ class CustomFeesInPort implements ICustomFees {
 					BigDecimal.fromString(min),
 					BigDecimal.fromString(max),
 					net,
+					collectorsExempt,
 				),
 			)
 		).payload;

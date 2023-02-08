@@ -34,6 +34,7 @@ export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractio
 	min: string;
 	max: string;
 	net: boolean;
+	collectorsExempt: boolean;
 
 	constructor({
 		tokenId,
@@ -43,6 +44,7 @@ export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractio
 		min,
 		max,
 		net,
+		collectorsExempt,
 	}: {
 		tokenId: string;
 		collectorId: string;
@@ -51,6 +53,7 @@ export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractio
 		min: string;
 		max: string;
 		net: boolean;
+		collectorsExempt: boolean;
 	}) {
 		super({
 			tokenId: Validation.checkHederaIdFormat(),
@@ -104,5 +107,6 @@ export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractio
 		this.min = min;
 		this.max = max;
 		this.net = net;
+		this.collectorsExempt = collectorsExempt;
 	}
 }

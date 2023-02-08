@@ -791,6 +791,7 @@ export default class OperationStableCoinService extends Service {
         min: '',
         max: '',
         net: false,
+        collectorsExempt: true,
       });
 
     addFractionalFeeRequest.amountNumerator =
@@ -858,6 +859,12 @@ export default class OperationStableCoinService extends Service {
       true,
     );
 
+    addFractionalFeeRequest.collectorsExempt =
+      await utilsService.defaultConfirmAsk(
+        language.getText('feeManagement.askCollectorsExempt'),
+        true,
+      );
+
     addFractionalFeeRequest.collectorId = await utilsService.defaultSingleAsk(
       language.getText('feeManagement.askCollectorId'),
       '0.0.0',
@@ -881,6 +888,7 @@ export default class OperationStableCoinService extends Service {
       max: addFractionalFeeRequest.max,
       feesPaidBy: addFractionalFeeRequest.net ? 'Sender' : 'Receiver',
       collector: addFractionalFeeRequest.collectorId,
+      collectorsExempt: addFractionalFeeRequest.collectorsExempt,
     });
 
     const confirm = await this.askFeeCreationConfirmation();
@@ -905,6 +913,7 @@ export default class OperationStableCoinService extends Service {
       amount: '',
       tokenIdCollected: '',
       collectorId: '',
+      collectorsExempt: true,
     });
 
     addFixedFeeRequest.amount = await utilsService.defaultSingleAsk(
@@ -946,6 +955,11 @@ export default class OperationStableCoinService extends Service {
       );
     }
 
+    addFixedFeeRequest.collectorsExempt = await utilsService.defaultConfirmAsk(
+      language.getText('feeManagement.askCollectorsExempt'),
+      true,
+    );
+
     addFixedFeeRequest.collectorId = await utilsService.defaultSingleAsk(
       language.getText('feeManagement.askCollectorId'),
       '0.0.0',
@@ -968,6 +982,7 @@ export default class OperationStableCoinService extends Service {
           ? addFixedFeeRequest.tokenIdCollected
           : 'HBAR',
       collector: addFixedFeeRequest.collectorId,
+      collectorsExempt: addFixedFeeRequest.collectorsExempt,
     });
 
     const confirm = await this.askFeeCreationConfirmation();

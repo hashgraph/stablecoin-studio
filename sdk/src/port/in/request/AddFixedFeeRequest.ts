@@ -27,17 +27,20 @@ export default class AddFixedFeeRequest extends ValidatedRequest<AddFixedFeeRequ
 	collectorId: string;
 	tokenIdCollected: string;
 	amount: string;
+	collectorsExempt: boolean;
 
 	constructor({
 		tokenId,
 		collectorId,
 		tokenIdCollected,
 		amount,
+		collectorsExempt,
 	}: {
 		tokenId: string;
 		collectorId: string;
 		tokenIdCollected: string;
 		amount: string;
+		collectorsExempt: boolean;
 	}) {
 		super({
 			tokenId: Validation.checkHederaIdFormat(),
@@ -49,5 +52,6 @@ export default class AddFixedFeeRequest extends ValidatedRequest<AddFixedFeeRequ
 		this.collectorId = collectorId;
 		this.tokenIdCollected = tokenIdCollected;
 		this.amount = amount;
+		this.collectorsExempt = collectorsExempt;
 	}
 }

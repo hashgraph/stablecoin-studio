@@ -56,7 +56,13 @@ export class addFixedFeesCommandHandler
 	async execute(
 		command: addFixedFeesCommand,
 	): Promise<addFixedFeesCommandResponse> {
-		const { tokenId, collectorId, tokenIdCollected, amount } = command;
+		const {
+			tokenId,
+			collectorId,
+			tokenIdCollected,
+			amount,
+			collectorsExempt,
+		} = command;
 
 		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
@@ -122,7 +128,8 @@ export class addFixedFeesCommandHandler
 
 		const customFeeToAdd = new HCustomFixedFee()
 			.setAmount(amount.toLong())
-			.setFeeCollectorAccountId(collectorId.toString());
+			.setFeeCollectorAccountId(collectorId.toString())
+			.setAllCollectorsAreExempt(collectorsExempt);
 
 		if (!tokenIdCollected.isNull()) {
 			customFeeToAdd.setDenominatingTokenId(tokenIdCollected.toString());
