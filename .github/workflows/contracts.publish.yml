@@ -3,6 +3,8 @@ on:
   workflow_dispatch:
   push:
     branches: [feature/npm-gitflow]
+    paths:
+      - 'contracts/**'
 defaults:
   run:
     working-directory: contracts
