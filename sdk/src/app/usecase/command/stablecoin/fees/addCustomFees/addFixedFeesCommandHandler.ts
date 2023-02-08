@@ -31,13 +31,8 @@ import {
 import {
 	CustomFee as HCustomFee,
 	CustomFixedFee as HCustomFixedFee,
-	CustomFractionalFee as HCustomFractionalFee,
 } from '@hashgraph/sdk';
-import {
-	FixedFee,
-	FractionalFee,
-} from '../../../../../../domain/context/fee/CustomFee.js';
-import { HederaId } from '../../../../../../domain/context/shared/HederaId.js';
+import { fromCustomFeesToHCustomFees } from '../../../../../../domain/context/fee/CustomFee.js';
 //import FeeAssessmentMethod from '@hashgraph/sdk/lib/token/FeeAssessmentMethod.js';
 
 @CommandHandler(addFixedFeesCommand)
@@ -72,65 +67,9 @@ export class addFixedFeesCommandHandler
 		);
 		const stableCoin = await this.stableCoinService.get(tokenId);
 
-		const HcustomFee: HCustomFee[] = [];
-
-		if (stableCoin.customFees) {
-			stableCoin.customFees.forEach((customFee) => {
-				if (customFee instanceof FixedFee) {
-					const newFee = new HCustomFixedFee()
-						.setAmount(
-							customFee.amount ? customFee.amount.toLong() : 0,
-						)
-						.setFeeCollectorAccountId(
-							customFee.collectorId
-								? customFee.collectorId.toString()
-								: HederaId.NULL.toString(),
-						)
-						.setAllCollectorsAreExempt(
-							customFee.collectorsExempt ?? false,
-						);
-
-					if (customFee.tokenId && !customFee.tokenId.isNull()) {
-						newFee.setDenominatingTokenId(
-							customFee.tokenId.toString(),
-						);
-					}
-
-					HcustomFee.push(newFee);
-				} else if (customFee instanceof FractionalFee) {
-					const newFee = new HCustomFractionalFee()
-						.setNumerator(
-							customFee.amountNumerator
-								? customFee.amountNumerator
-								: 0,
-						)
-						.setDenominator(
-							customFee.amountDenominator
-								? customFee.amountDenominator
-								: 0,
-						)
-						.setMin(customFee.min ? customFee.min.toLong() : 0)
-						/*.setAssessmentMethod(
-							new FeeAssessmentMethod(customFee.net ?? false),
-						)*/
-						.setFeeCollectorAccountId(
-							customFee.collectorId
-								? customFee.collectorId.toString()
-								: HederaId.NULL.toString(),
-						)
-						.setAllCollectorsAreExempt(
-							customFee.collectorsExempt ?? false,
-						);
-
-					if (customFee.max) {
-						(newFee as HCustomFractionalFee).setMax(
-							customFee.max.toLong(),
-						);
-					}
-					HcustomFee.push(newFee);
-				}
-			});
-		}
+		const HcustomFee: HCustomFee[] = fromCustomFeesToHCustomFees(
+			stableCoin.customFees,
+		);
 
 		const customFeeToAdd = new HCustomFixedFee()
 			.setAmount(amount.toLong())

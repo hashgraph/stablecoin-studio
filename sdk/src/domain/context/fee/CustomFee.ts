@@ -20,6 +20,11 @@
 
 import BigDecimal from '../shared/BigDecimal.js';
 import { HederaId } from '../shared/HederaId.js';
+import {
+	CustomFee as HCustomFee,
+	CustomFixedFee as HCustomFixedFee,
+	CustomFractionalFee as HCustomFractionalFee,
+} from '@hashgraph/sdk';
 
 export const MAX_CUSTOM_FEES = 10;
 
@@ -72,4 +77,67 @@ export class FixedFee extends CustomFee {
 		this.amount = amount;
 		this.tokenId = tokenId;
 	}
+}
+
+export function fromCustomFeesToHCustomFees(
+	customFees: CustomFee[] | undefined,
+): HCustomFee[] {
+	const HcustomFee: HCustomFee[] = [];
+
+	if (customFees) {
+		customFees.forEach((customFee) => {
+			if (customFee instanceof FixedFee) {
+				const newFee = new HCustomFixedFee()
+					.setAmount(customFee.amount ? customFee.amount.toLong() : 0)
+					.setFeeCollectorAccountId(
+						customFee.collectorId
+							? customFee.collectorId.toString()
+							: HederaId.NULL.toString(),
+					)
+					.setAllCollectorsAreExempt(
+						customFee.collectorsExempt ?? false,
+					);
+
+				if (customFee.tokenId && !customFee.tokenId.isNull()) {
+					newFee.setDenominatingTokenId(customFee.tokenId.toString());
+				}
+
+				HcustomFee.push(newFee);
+			} else if (customFee instanceof FractionalFee) {
+				const newFee = new HCustomFractionalFee()
+					.setNumerator(
+						customFee.amountNumerator
+							? customFee.amountNumerator
+							: 0,
+					)
+					.setDenominator(
+						customFee.amountDenominator
+							? customFee.amountDenominator
+							: 0,
+					)
+					.setMin(customFee.min ? customFee.min.toLong() : 0)
+					/*.setAssessmentMethod(
+							new FeeAssessmentMethod(customFee.net ?? false),
+					)*/
+					.setFeeCollectorAccountId(
+						customFee.collectorId
+							? customFee.collectorId.toString()
+							: HederaId.NULL.toString(),
+					)
+					.setAllCollectorsAreExempt(
+						customFee.collectorsExempt ?? false,
+					);
+
+				if (customFee.max) {
+					(newFee as HCustomFractionalFee).setMax(
+						customFee.max.toLong(),
+					);
+				}
+
+				HcustomFee.push(newFee);
+			}
+		});
+	}
+
+	return HcustomFee;
 }

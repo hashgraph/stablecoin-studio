@@ -5,6 +5,7 @@ import {
   AddFixedFeeRequest,
   AddFractionalFeeRequest,
   Fees,
+  UpdateCustomFeesRequest,
 } from 'hedera-stable-coin-sdk';
 
 /**
@@ -30,6 +31,17 @@ export default class FeeStableCoinService extends Service {
     await utilsService.showSpinner(Fees.addFractionalFee(req), {
       text: language.getText('state.loading'),
       successText: language.getText('state.customFeeCreated') + '\n',
+    });
+
+    console.log(language.getText('operation.success'));
+
+    utilsService.breakLine();
+  }
+
+  public async updateFees(req: UpdateCustomFeesRequest): Promise<void> {
+    await utilsService.showSpinner(Fees.updateCustomFees(req), {
+      text: language.getText('state.loading'),
+      successText: language.getText('state.customFeesRemoved') + '\n',
     });
 
     console.log(language.getText('operation.success'));

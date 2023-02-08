@@ -328,7 +328,7 @@ export const english = {
     accountKYCNotGranted:
       'The account ${address} has not KYC granted for the ${token} token',
     customFeeCreated: 'Custom fee created',
-    customFeeRemoved: 'Custom fee removed',
+    customFeesRemoved: 'Custom fees removed',
   },
   operation: {
     success: colors.green('Operation has been completed successfully.'),
@@ -387,12 +387,14 @@ export const english = {
     askDenominator: "Enter the fraction's denominator",
     askMin: 'Enter the minimum fee',
     askMax: 'Enter the maximum fee',
+    askRemoveFee: 'Do you want to remove this fee?',
+    listOfFeesToRemove: 'These are the fees you selected to be removed',
     askAssesmentMethod:
       'Do you want the fees to be deducted from the transfered amount?',
     confirmCreate:
       'Are you sure want to add this custom fee to the stable coin?',
     confirmRemove:
-      'Are you sure you want to remove this custom fee to the stable coin?',
+      'Are you sure you want to remove these custom fees from the stable coin?',
     options: {
       Create: 'Create fee',
       Remove: 'Remove fee',

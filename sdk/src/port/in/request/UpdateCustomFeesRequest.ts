@@ -33,7 +33,7 @@ import AddFractionalFeeRequest from './AddFractionalFeeRequest.js';
 import { InvalidType } from './error/InvalidType.js';
 
 export default class UpdateCustomFeesRequest extends ValidatedRequest<UpdateCustomFeesRequest> {
-	/*customFees: CustomFee[];
+	customFees: CustomFee[];
 	tokenId: string;
 
 	constructor({
@@ -44,6 +44,7 @@ export default class UpdateCustomFeesRequest extends ValidatedRequest<UpdateCust
 		tokenId: string;
 	}) {
 		super({
+			tokenId: Validation.checkHederaIdFormat(),
 			customFees: (val) => {
 				if (val === undefined || val.length == 0) return;
 				if (val.length > MAX_CUSTOM_FEES)
@@ -58,6 +59,7 @@ export default class UpdateCustomFeesRequest extends ValidatedRequest<UpdateCust
 				val.forEach((customFee) => {
 					if (customFee instanceof FixedFee)
 						return new AddFixedFeeRequest({
+							tokenId: this.tokenId,
 							collectorId: customFee.collectorId
 								? customFee.collectorId.toString()
 								: '',
@@ -67,9 +69,12 @@ export default class UpdateCustomFeesRequest extends ValidatedRequest<UpdateCust
 							amount: customFee.amount
 								? customFee.amount.toString()
 								: '',
+							collectorsExempt:
+								customFee.collectorsExempt ?? false,
 						});
 					else if (customFee instanceof FractionalFee)
 						return new AddFractionalFeeRequest({
+							tokenId: this.tokenId,
 							collectorId: customFee.collectorId
 								? customFee.collectorId.toString()
 								: '',
@@ -82,6 +87,8 @@ export default class UpdateCustomFeesRequest extends ValidatedRequest<UpdateCust
 							min: customFee.min ? customFee.min.toString() : '',
 							max: customFee.max ? customFee.max.toString() : '',
 							net: customFee.net ?? false,
+							collectorsExempt:
+								customFee.collectorsExempt ?? false,
 						});
 					else
 						return [
@@ -89,9 +96,8 @@ export default class UpdateCustomFeesRequest extends ValidatedRequest<UpdateCust
 						];
 				});
 			},
-			tokenId: Validation.checkHederaIdFormat(),
 		});
 		this.customFees = customFees;
 		this.tokenId = tokenId;
-	}*/
+	}
 }

@@ -34,6 +34,8 @@ import {
   GetSupplierAllowanceRequest,
   AddFixedFeeRequest,
   AddFractionalFeeRequest,
+  CustomFee,
+  UpdateCustomFeesRequest,
 } from 'hedera-stable-coin-sdk';
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
 import CashInStableCoinsService from './CashInStableCoinService.js';
@@ -748,24 +750,14 @@ export default class OperationStableCoinService extends Service {
 
         break;
       case language.getText('feeManagement.options.Remove'):
-        const confirmRemove = await utilsService.defaultConfirmAsk(
-          language.getText('feeManagement.confirmRemove'),
-          true,
+        await utilsService.cleanAndShowBanner();
+
+        utilsService.displayCurrentUserInfo(
+          configAccount,
+          this.stableCoinWithSymbol,
         );
-        if (confirmRemove) {
-          /*try {
-            const req = new PauseRequest({
-              tokenId: this.stableCoinId,
-            });
-            await new PauseStableCoinService().unpauseStableCoin(req);
-            this.stableCoinPaused = false;
-          } catch (error) {
-            await utilsService.askErrorConfirmation(
-              async () => await this.operationsStableCoin(),
-              error,
-            );
-          }*/
-        }
+
+        await this.removeFees(detailsStableCoin.customFees);
 
         break;
       case language.getText('feeManagement.options.List'):
@@ -779,6 +771,45 @@ export default class OperationStableCoinService extends Service {
         await this.operationsStableCoin();
     }
     await this.feesManagementFlow();
+  }
+
+  private async removeFees(customFees): Promise<void> {
+    const FeesToKeep: CustomFee[] = [];
+    const FeesToRemove: CustomFee[] = [];
+
+    for (let i = 0; i < customFees.length; i++) {
+      const fee = customFees[i];
+      console.log(fee);
+      const remove = await utilsService.defaultConfirmAsk(
+        language.getText('feeManagement.askRemoveFee'),
+        false,
+      );
+      if (remove) FeesToRemove.push(fee);
+      else FeesToKeep.push(fee);
+    }
+
+    console.log(language.getText('feeManagement.listOfFeesToRemove'));
+    console.log(FeesToRemove);
+
+    const confirm = await this.askFeeOperationConfirmation(
+      language.getText('feeManagement.confirmRemove'),
+    );
+
+    if (!confirm) return;
+
+    try {
+      const updateCustomFeesRequest: UpdateCustomFeesRequest =
+        new UpdateCustomFeesRequest({
+          tokenId: this.stableCoinId,
+          customFees: FeesToKeep,
+        });
+      await new FeeStableCoinService().updateFees(updateCustomFeesRequest);
+    } catch (error) {
+      await utilsService.askErrorConfirmation(
+        async () => await this.operationsStableCoin(),
+        error,
+      );
+    }
   }
 
   private async createFractionalFee(): Promise<void> {
@@ -891,7 +922,9 @@ export default class OperationStableCoinService extends Service {
       collectorsExempt: addFractionalFeeRequest.collectorsExempt,
     });
 
-    const confirm = await this.askFeeCreationConfirmation();
+    const confirm = await this.askFeeOperationConfirmation(
+      language.getText('feeManagement.confirmCreate'),
+    );
 
     if (!confirm) return;
 
@@ -985,7 +1018,9 @@ export default class OperationStableCoinService extends Service {
       collectorsExempt: addFixedFeeRequest.collectorsExempt,
     });
 
-    const confirm = await this.askFeeCreationConfirmation();
+    const confirm = await this.askFeeOperationConfirmation(
+      language.getText('feeManagement.confirmCreate'),
+    );
 
     if (!confirm) return;
 
@@ -999,11 +1034,8 @@ export default class OperationStableCoinService extends Service {
     }
   }
 
-  private async askFeeCreationConfirmation(): Promise<boolean> {
-    return await utilsService.defaultConfirmAsk(
-      language.getText('feeManagement.confirmCreate'),
-      true,
-    );
+  private async askFeeOperationConfirmation(Text: string): Promise<boolean> {
+    return await utilsService.defaultConfirmAsk(Text, true);
   }
 
   /**

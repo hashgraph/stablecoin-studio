@@ -23,6 +23,7 @@ import Injectable from '../../core/Injectable.js';
 import {
 	AddFixedFeeRequest,
 	AddFractionalFeeRequest,
+	UpdateCustomFeesRequest,
 } from './request/index.js';
 import { LogError } from '../../core/decorator/LogErrorDecorator.js';
 import { handleValidation } from './Common.js';
@@ -35,13 +36,14 @@ import {
 } from '../../domain/context/fee/CustomFee.js';
 import BigDecimal from '../../domain/context/shared/BigDecimal.js';
 import { addFractionalFeesCommand } from '../../app/usecase/command/stablecoin/fees/addCustomFees/addFractionalFeesCommand.js';
+import { UpdateCustomFeesCommand } from '../../app/usecase/command/stablecoin/fees/updateCustomFees/UpdateCustomFeesCommand.js';
 
 export { CustomFee, FixedFee, FractionalFee };
 
 interface ICustomFees {
 	addFixedFee(request: AddFixedFeeRequest): Promise<boolean>;
 	addFractionalFee(request: AddFractionalFeeRequest): Promise<boolean>;
-	//updateCustomFees(request: UpdateCustomFeesRequest): Promise<boolean>;
+	updateCustomFees(request: UpdateCustomFeesRequest): Promise<boolean>;
 }
 
 class CustomFeesInPort implements ICustomFees {
@@ -105,7 +107,7 @@ class CustomFeesInPort implements ICustomFees {
 		).payload;
 	}
 
-	/*@LogError
+	@LogError
 	async updateCustomFees(request: UpdateCustomFeesRequest): Promise<boolean> {
 		const { tokenId, customFees } = request;
 		handleValidation('UpdateCustomFeesRequest', request);
@@ -115,7 +117,7 @@ class CustomFeesInPort implements ICustomFees {
 				new UpdateCustomFeesCommand(HederaId.from(tokenId), customFees),
 			)
 		).payload;
-	}*/
+	}
 }
 
 const Fees = new CustomFeesInPort();
