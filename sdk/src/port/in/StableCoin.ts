@@ -82,6 +82,7 @@ import { KycStatus } from '../out/mirror/response/AccountTokenRelationViewModel.
 export { StableCoinViewModel, StableCoinListViewModel, ReserveViewModel };
 export { StableCoinCapabilities, Capability, Access, Operation, Balance };
 export { TokenSupplyType };
+export { BigDecimal };
 
 interface IStableCoinInPort {
 	create(request: CreateRequest): Promise<{

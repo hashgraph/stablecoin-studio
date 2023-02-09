@@ -37,6 +37,8 @@ import {
   CustomFee,
   UpdateCustomFeesRequest,
   HBAR_DECIMALS,
+  MAX_PERCENTAGE_DECIMALS,
+  BigDecimal,
 } from 'hedera-stable-coin-sdk';
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
 import CashInStableCoinsService from './CashInStableCoinService.js';
@@ -52,6 +54,7 @@ import KYCStableCoinService from './KYCStableCoinService.js';
 import ListStableCoinsService from './ListStableCoinsService.js';
 import CapabilitiesStableCoinService from './CapabilitiesStableCoinService.js';
 import FeeStableCoinService from './FeeStableCoinService.js';
+import UtilitiesService from '../utilities/UtilitiesService.js';
 
 /**
  * Operation Stable Coin Service
@@ -831,37 +834,91 @@ export default class OperationStableCoinService extends Service {
         collectorsExempt: true,
       });
 
-    addFractionalFeeRequest.amountNumerator =
-      await utilsService.defaultSingleAsk(
-        language.getText('feeManagement.askNumerator'),
-        '0',
-      );
-    await utilsService.handleValidation(
-      () => addFractionalFeeRequest.validate('amountNumerator'),
-      async () => {
-        addFractionalFeeRequest.amountNumerator =
-          await utilsService.defaultSingleAsk(
-            language.getText('feeManagement.askNumerator'),
-            '0',
-          );
-      },
+    const fractionType = await utilsService.defaultMultipleAsk(
+      language.getText('feeManagement.askFractionType'),
+      language.getArrayFromObject('feeManagement.chooseFractionalType'),
     );
 
-    addFractionalFeeRequest.amountDenominator =
-      await utilsService.defaultSingleAsk(
-        language.getText('feeManagement.askDenominator'),
-        '1',
-      );
-    await utilsService.handleValidation(
-      () => addFractionalFeeRequest.validate('amountDenominator'),
-      async () => {
-        addFractionalFeeRequest.amountDenominator =
-          await utilsService.defaultSingleAsk(
-            language.getText('feeManagement.askDenominator'),
-            '1',
+    if (
+      fractionType ==
+      language.getText('feeManagement.chooseFractionalType.Percentage')
+    ) {
+      let check_Ok = true;
+      let numerator = BigDecimal.fromString('0');
+      const exponential = 10 ** MAX_PERCENTAGE_DECIMALS;
+      const denominator = 100 * exponential;
+
+      do {
+        check_Ok = true;
+
+        const percentage = await utilsService.defaultSingleAsk(
+          language.getText('feeManagement.askPercentageFee'),
+          '1',
+        );
+
+        try {
+          const valueDecimals = BigDecimal.getDecimalsFromString(percentage);
+          if (valueDecimals > MAX_PERCENTAGE_DECIMALS) throw new Error();
+
+          numerator = BigDecimal.fromString(
+            percentage,
+            MAX_PERCENTAGE_DECIMALS,
           );
-      },
-    );
+
+          const zero = BigDecimal.fromString('0', MAX_PERCENTAGE_DECIMALS);
+
+          if (
+            !numerator.isGreaterThan(zero) ||
+            numerator.isGreaterOrEqualThan(
+              BigDecimal.fromString(denominator.toString()),
+            )
+          )
+            throw new Error();
+        } catch (e) {
+          new UtilitiesService().showError(
+            `Invalid Percentage. Please check that the entered value is a positive number with no more than ${MAX_PERCENTAGE_DECIMALS} decimals`,
+          );
+          check_Ok = false;
+        }
+      } while (!check_Ok);
+
+      addFractionalFeeRequest.amountNumerator = Math.floor(
+        numerator.toUnsafeFloat() * exponential,
+      ).toString();
+      addFractionalFeeRequest.amountDenominator = denominator.toString();
+    } else {
+      addFractionalFeeRequest.amountNumerator =
+        await utilsService.defaultSingleAsk(
+          language.getText('feeManagement.askNumerator'),
+          '1',
+        );
+      await utilsService.handleValidation(
+        () => addFractionalFeeRequest.validate('amountNumerator'),
+        async () => {
+          addFractionalFeeRequest.amountNumerator =
+            await utilsService.defaultSingleAsk(
+              language.getText('feeManagement.askNumerator'),
+              '1',
+            );
+        },
+      );
+
+      addFractionalFeeRequest.amountDenominator =
+        await utilsService.defaultSingleAsk(
+          language.getText('feeManagement.askDenominator'),
+          '1',
+        );
+      await utilsService.handleValidation(
+        () => addFractionalFeeRequest.validate('amountDenominator'),
+        async () => {
+          addFractionalFeeRequest.amountDenominator =
+            await utilsService.defaultSingleAsk(
+              language.getText('feeManagement.askDenominator'),
+              '1',
+            );
+        },
+      );
+    }
 
     addFractionalFeeRequest.min = await utilsService.defaultSingleAsk(
       language.getText('feeManagement.askMin'),

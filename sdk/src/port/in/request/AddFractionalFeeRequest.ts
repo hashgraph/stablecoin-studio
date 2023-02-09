@@ -65,14 +65,25 @@ export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractio
 			collectorId: Validation.checkHederaIdFormat(),
 			amountNumerator: (val) => {
 				const numerator = parseInt(val);
+
 				if (isNaN(numerator)) return [new InvalidType(val, 'integer')];
-				if (numerator < 0)
-					return [new InvalidRange(val, '0', undefined)];
+
+				if (CheckNums.hasMoreDecimals(val, 0)) {
+					return [new InvalidDecimalRange(val, 0)];
+				}
+
+				if (numerator < 1)
+					return [new InvalidRange(val, '1', undefined)];
 			},
 			amountDenominator: (val) => {
 				const denominator = parseInt(val);
+
 				if (isNaN(denominator))
 					return [new InvalidType(val, 'integer')];
+
+				if (CheckNums.hasMoreDecimals(val, 0)) {
+					return [new InvalidDecimalRange(val, 0)];
+				}
 
 				const numerator = parseInt(this.amountNumerator);
 				if (numerator >= denominator)

@@ -377,6 +377,12 @@ export const english = {
       FixedFee: 'Fixed Fee',
       FractionalFee: 'Fractional Fee',
     },
+    askFractionType: 'How would you like to specify your Fractional Fee?',
+    chooseFractionalType: {
+      Percentage: 'Percentage',
+      Fraction: 'Fraction (Numerator and Denominator)',
+    },
+    askPercentageFee: 'Enter the percentage fee',
     askCollectorsExempt:
       'Do you want collectors to be exempt from paying this fee?',
     askAmount: 'Enter the fixed fee amount',
