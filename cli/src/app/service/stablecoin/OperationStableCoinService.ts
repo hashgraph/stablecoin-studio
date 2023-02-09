@@ -36,6 +36,7 @@ import {
   AddFractionalFeeRequest,
   CustomFee,
   UpdateCustomFeesRequest,
+  HBAR_DECIMALS,
 } from 'hedera-stable-coin-sdk';
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
 import CashInStableCoinsService from './CashInStableCoinService.js';
@@ -51,7 +52,6 @@ import KYCStableCoinService from './KYCStableCoinService.js';
 import ListStableCoinsService from './ListStableCoinsService.js';
 import CapabilitiesStableCoinService from './CapabilitiesStableCoinService.js';
 import FeeStableCoinService from './FeeStableCoinService.js';
-const HBAR_DECIMALS = 8;
 
 /**
  * Operation Stable Coin Service
@@ -762,7 +762,11 @@ export default class OperationStableCoinService extends Service {
 
         break;
       case language.getText('feeManagement.options.List'):
-        new FeeStableCoinService().displayFees(detailsStableCoin.customFees);
+        console.log(
+          new FeeStableCoinService().getFormatedFees(
+            detailsStableCoin.customFees,
+          ),
+        );
         break;
       case feeManagementOptionsFiltered[
         feeManagementOptionsFiltered.length - 1
@@ -780,7 +784,7 @@ export default class OperationStableCoinService extends Service {
 
     for (let i = 0; i < customFees.length; i++) {
       const fee = customFees[i];
-      new FeeStableCoinService().displayFees([fee]);
+      console.log(new FeeStableCoinService().getFormatedFees([fee]));
       const remove = await utilsService.defaultConfirmAsk(
         language.getText('feeManagement.askRemoveFee'),
         false,
@@ -790,7 +794,7 @@ export default class OperationStableCoinService extends Service {
     }
 
     console.log(language.getText('feeManagement.listOfFeesToRemove'));
-    new FeeStableCoinService().displayFees(FeesToRemove);
+    console.log(new FeeStableCoinService().getFormatedFees(FeesToRemove));
 
     const confirm = await this.askFeeOperationConfirmation(
       language.getText('feeManagement.confirmRemove'),
@@ -965,7 +969,15 @@ export default class OperationStableCoinService extends Service {
         this.stableCoinId,
       );
 
-      addFixedFeeRequest.decimals = decimals;
+      if (addFixedFeeRequest.tokenIdCollected !== this.stableCoinId) {
+        const detailsExternalStableCoin =
+          await new DetailsStableCoinsService().getDetailsStableCoins(
+            addFixedFeeRequest.tokenIdCollected,
+            false,
+          );
+
+        addFixedFeeRequest.decimals = detailsExternalStableCoin.decimals ?? 0;
+      } else addFixedFeeRequest.decimals = decimals;
 
       await utilsService.handleValidation(
         () => addFixedFeeRequest.validate('tokenIdCollected'),

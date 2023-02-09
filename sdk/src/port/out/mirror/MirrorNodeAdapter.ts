@@ -40,6 +40,7 @@ import {
 	CustomFee,
 	FixedFee,
 	FractionalFee,
+	HBAR_DECIMALS,
 } from '../../../domain/context/fee/CustomFee.js';
 import { InvalidResponse } from './error/InvalidResponse.js';
 import { HederaId } from '../../../domain/context/shared/HederaId.js';
@@ -51,7 +52,6 @@ import {
 	KycStatus,
 } from './response/AccountTokenRelationViewModel.js';
 import { REGEX_TRANSACTION } from '../error/TransactionResponseError.js';
-const HBAR_DECIMALS = 8;
 
 @singleton()
 export class MirrorNodeAdapter {
@@ -103,28 +103,31 @@ export class MirrorNodeAdapter {
 		}
 	}
 
+	private async getTokenInfo(tokenId: HederaId): Promise<any> {
+		const url = `${this.URI_BASE}tokens/${tokenId.toString()}`;
+
+		LogService.logTrace('Getting stable coin from mirror node -> ', url);
+
+		const retry = 10;
+		let i = 0;
+
+		let response;
+		do {
+			if (i > 0)
+				await new Promise((resolve) => setTimeout(resolve, 2000));
+
+			response = await this.instance.get<IHederaStableCoinDetail>(url);
+			i++;
+		} while (response.status !== 200 && i < retry);
+
+		return response;
+	}
+
 	public async getStableCoin(
 		tokenId: HederaId,
 	): Promise<StableCoinViewModel> {
 		try {
-			const url = `${this.URI_BASE}tokens/${tokenId.toString()}`;
-			LogService.logTrace(
-				'Getting stable coin from mirror node -> ',
-				url,
-			);
-
-			const retry = 10;
-			let i = 0;
-
-			let response;
-			do {
-				if (i > 0)
-					await new Promise((resolve) => setTimeout(resolve, 2000));
-				response = await this.instance.get<IHederaStableCoinDetail>(
-					url,
-				);
-				i++;
-			} while (response.status !== 200 && i < retry);
+			const response = await this.getTokenInfo(tokenId);
 
 			const getKeyOrDefault = (
 				val?: IPublicKey,
@@ -142,16 +145,28 @@ export class MirrorNodeAdapter {
 				}
 			};
 
-			const getCustomFeesOrDefault = (
+			const getCustomFeesOrDefault = async (
 				val?: ICustomFees,
-			): CustomFee[] | undefined => {
+			): Promise<CustomFee[] | undefined> => {
 				if (!val) return undefined;
 				const customFees: CustomFee[] = [];
 
-				val.fixed_fees.forEach((fixedFee) => {
+				val.fixed_fees.forEach(async (fixedFee) => {
 					const denominatingToken = fixedFee.denominating_token_id
 						? HederaId.from(fixedFee.denominating_token_id)
 						: HederaId.NULL;
+
+					let feeDecimals = decimals;
+
+					if (denominatingToken.isNull()) feeDecimals = HBAR_DECIMALS;
+					else if (
+						denominatingToken.toString() !== tokenId.toString()
+					) {
+						feeDecimals = parseInt(
+							(await this.getTokenInfo(denominatingToken)).data
+								.decimals ?? '0',
+						);
+					}
 
 					customFees.push(
 						new FixedFee(
@@ -160,9 +175,7 @@ export class MirrorNodeAdapter {
 								fixedFee.amount
 									? fixedFee.amount.toString()
 									: '0',
-								denominatingToken.isNull()
-									? HBAR_DECIMALS
-									: decimals,
+								feeDecimals,
 							),
 							denominatingToken,
 							fixedFee.all_collectors_are_exempt,
@@ -253,7 +266,9 @@ export class MirrorNodeAdapter {
 				feeScheduleKey: getKeyOrDefault(
 					response.data.fee_schedule_key,
 				) as PublicKey,
-				customFees: getCustomFeesOrDefault(response.data.custom_fees),
+				customFees: await getCustomFeesOrDefault(
+					response.data.custom_fees,
+				),
 			};
 			return stableCoinDetail;
 		} catch (error) {

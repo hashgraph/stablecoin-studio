@@ -52,7 +52,36 @@ export default class FeeStableCoinService extends Service {
     utilsService.breakLine();
   }
 
-  public displayFees(listOfFees: CustomFee[]) {
+  public getFormatedFees(listOfFees: CustomFee[]): any[] {
+    const FormatedFees = [];
+
+    listOfFees.forEach((fee) => {
+      if (fee instanceof FixedFee) {
+        FormatedFees.push({
+          Fee_Type: 'Fixed',
+          Collector_Id: fee.collectorId.toString(),
+          All_Collectors_Exempt: fee.collectorsExempt,
+          Amount: fee.amount.toString(),
+          Token: fee.tokenId.isNull() ? 'HBAR' : fee.tokenId.toString(),
+        });
+      } else if (fee instanceof FractionalFee) {
+        FormatedFees.push({
+          Fee_Type: 'Fractional',
+          Collector_Id: fee.collectorId.toString(),
+          All_Collectors_Exempt: fee.collectorsExempt,
+          Numerator: fee.amountNumerator.toString(),
+          Denominator: fee.amountDenominator.toString(),
+          Min: fee.min.toString(),
+          Max: fee.max.isZero() ? 'Unlimited' : fee.max.toString(),
+          Fees_Paid_By: fee.net ? 'Sender' : 'Receiver',
+        });
+      }
+    });
+
+    return FormatedFees;
+  }
+
+  /*public displayFees(listOfFees: CustomFee[]) {
     listOfFees.forEach((fee) => {
       if (fee instanceof FixedFee) {
         console.log({
@@ -75,5 +104,5 @@ export default class FeeStableCoinService extends Service {
         });
       }
     });
-  }
+  }*/
 }

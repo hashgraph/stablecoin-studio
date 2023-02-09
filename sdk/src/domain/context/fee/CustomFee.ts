@@ -27,6 +27,7 @@ import {
 } from '@hashgraph/sdk';
 
 export const MAX_CUSTOM_FEES = 10;
+export const HBAR_DECIMALS = 8;
 
 export class CustomFee {
 	collectorId?: HederaId;
