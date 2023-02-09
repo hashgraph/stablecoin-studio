@@ -26,7 +26,6 @@ import { StableCoin } from '../../../../src/domain/context/stablecoin/StableCoin
 import TransactionResponse from '../../../../src/domain/context/transaction/TransactionResponse.js';
 import StableCoinCapabilities from '../../../../src/domain/context/stablecoin/StableCoinCapabilities.js';
 import BigDecimal from '../../../../src/domain/context/shared/BigDecimal.js';
-import RPCTransactionAdapter from '../../../../src/port/out/rpc/RPCTransactionAdapter.js';
 import { Wallet } from 'ethers';
 import { StableCoinRole } from '../../../../src/domain/context/stablecoin/StableCoinRole.js';
 import Injectable from '../../../../src/core/Injectable.js';
@@ -36,6 +35,7 @@ import ContractId from '../../../../src/domain/context/contract/ContractId.js';
 import { TokenSupplyType } from '../../../../src/port/in/StableCoin.js';
 import {
 	CLIENT_ACCOUNT_ECDSA,
+	CLIENT_ACCOUNT_ED25519,
 	FACTORY_ADDRESS,
 	HEDERA_ERC20_ADDRESS,
 } from '../../../config.js';
@@ -44,7 +44,11 @@ import NetworkService from '../../../../src/app/service/NetworkService.js';
 import { ContractId as HContractId } from '@hashgraph/sdk';
 import StableCoinService from '../../../../src/app/service/StableCoinService.js';
 import { RESERVE_DECIMALS } from '../../../../src/domain/context/reserve/Reserve.js';
+import RPCTransactionAdapter from '../../../../src/port/out/rpc/RPCTransactionAdapter.js';
+import RPCQueryAdapter from '../../../../src/port/out/rpc/RPCQueryAdapter.js';
+import { LoggerTransports, SDK } from '../../../../src/index.js';
 
+SDK.log = { level: 'ERROR', transports: new LoggerTransports.Console() };
 describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 	let stableCoinCapabilitiesHTS: StableCoinCapabilities;
 	let stableCoinCapabilitiesSC: StableCoinCapabilities;
@@ -52,6 +56,7 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 	let th: RPCTransactionAdapter;
 	let tr: TransactionResponse;
 	let ns: NetworkService;
+	let rpcQueryAdapter:RPCQueryAdapter;
 	let stableCoinService: StableCoinService;
 	const delay = async (seconds = 2): Promise<void> => {
 		seconds = seconds * 1000;
@@ -78,6 +83,8 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 	beforeAll(async () => {
 		th = Injectable.resolve(RPCTransactionAdapter);
 		ns = Injectable.resolve(NetworkService);
+		rpcQueryAdapter = Injectable.resolve(RPCQueryAdapter);
+		rpcQueryAdapter.init();
 		ns.environment = 'testnet';
 		await th.init(true);
 		await th.register(CLIENT_ACCOUNT_ECDSA, true);
@@ -101,6 +108,7 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 			pauseKey: PublicKey.NULL,
 			supplyKey: PublicKey.NULL,
 			supplyType: TokenSupplyType.INFINITE,
+			// grantKYCToOriginalSender:true
 		});
 
 		const coinHTS = new StableCoin({
@@ -115,6 +123,7 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 			pauseKey: CLIENT_ACCOUNT_ECDSA.publicKey,
 			supplyKey: CLIENT_ACCOUNT_ECDSA.publicKey,
 			supplyType: TokenSupplyType.INFINITE,
+			// grantKYCToOriginalSender:true,
 		});
 
 		stableCoinCapabilitiesSC = await createToken(
@@ -156,7 +165,7 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 	}, 1500000);
 
 	it('Test hasRole', async () => {
-		await await delay();
+		await delay();
 		tr = await th.hasRole(
 			stableCoinCapabilitiesSC,
 			CLIENT_ACCOUNT_ECDSA.id,
@@ -265,7 +274,7 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 		tr = await th.cashin(
 			stableCoinCapabilitiesHTS,
 			CLIENT_ACCOUNT_ECDSA.id,
-			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
+			BigDecimal.fromString('1', stableCoinCapabilitiesHTS.coin.decimals),
 		);
 	}, 1500000);
 
