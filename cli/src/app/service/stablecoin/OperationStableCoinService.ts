@@ -881,8 +881,7 @@ export default class OperationStableCoinService extends Service {
           check_Ok = false;
         }
       } while (!check_Ok);
-
-      addFractionalFeeRequest.amountNumerator = Math.floor(
+      addFractionalFeeRequest.amountNumerator = Math.fround(
         numerator.toUnsafeFloat() * exponential,
       ).toString();
       addFractionalFeeRequest.amountDenominator = denominator.toString();
