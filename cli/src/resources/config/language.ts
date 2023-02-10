@@ -95,7 +95,7 @@ export const english = {
     askMemo: 'Enter the token memo',
     askFreezeAccount: 'Should the Hedera account be frozen for this token?',
     askFeaturesManagedBy:
-      'Should the smart contract be used for all roles management?',
+      'Assign all token keys to the Smart Contract except for the Fee Schedule key (assigned to the current user) and the KYC key (unassigned)?',
     features: {
       admin: 'Enter the admin key',
       supply: 'Enter the supply key',

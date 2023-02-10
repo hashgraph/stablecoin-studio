@@ -7,5 +7,6 @@ export interface IManagedFeatures {
   freezeKey: RequestPublicKey;
   wipeKey: RequestPublicKey;
   pauseKey: RequestPublicKey;
+  feeScheduleKey: RequestPublicKey;
   grantKYCToOriginalSender: boolean;
 }

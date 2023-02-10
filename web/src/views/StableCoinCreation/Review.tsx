@@ -105,7 +105,7 @@ const Review = (props: ReviewProps) => {
 							{
 								label: t('stableCoinCreation:managementPermissions.admin'),
 								value: managementPermissions
-									? t('stableCoinCreation:managementPermissions.currentUserKey')
+									? t('stableCoinCreation:managementPermissions.theSmartContract')
 									: getKey(adminKey, 'adminKeyOther'),
 							},
 							{
