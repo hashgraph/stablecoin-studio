@@ -26,7 +26,6 @@ const ManagementPermissions = ({
 		control,
 		name: 'managementPermissions',
 	});
-
 	useEffect(() => {
 		if (watch('kycKey')?.value !== 2 || watch('supplyKey')?.value === 1) {
 			setValue('grantKYCToOriginalSender', false);
@@ -58,6 +57,10 @@ const ManagementPermissions = ({
 			name: 'pauseKey',
 			nameTranslate: t('stableCoinCreation:managementPermissions.pause'),
 		},
+		{
+			name: 'feeScheduleKey',
+			nameTranslate: t('stableCoinCreation:managementPermissions.feeSchedule'),
+		}
 	];
 
 	return (
@@ -106,8 +109,8 @@ const ManagementPermissions = ({
 						</Stack>
 					)}
 
-					{(watch('kycKey') === undefined ||
-						(watch('kycKey')?.value === 2 && watch('supplyKey')?.value !== 1)) && (
+					{(!isManagementPermissions &&
+					  watch('kycKey')?.value === 2 && watch('supplyKey')?.value !== 1) && (
 						<Stack minW={400}>
 							<HStack mb={4} justifyContent='space-between'>
 								<Text maxW={'252px'} fontSize='14px' fontWeight='400' lineHeight='17px'>

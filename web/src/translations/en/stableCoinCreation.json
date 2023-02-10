@@ -36,7 +36,7 @@
 	},
 	"managementPermissions": {
 		"currentUserKey": "Current user key",
-		"description": "Allow all the following features to be managed through smart contract",
+		"description": "Assign all token's keys to the Smart Contract except for the Fee Schedule key (assigned to the current user) and the KYC key (unassigned)",
 		"pause": "Pause",
 		"freeze": "Freeze",
 		"kyc": "KYC",
@@ -48,6 +48,7 @@
 		"rescue": "Rescue",
 		"admin": "Admin",
 		"supply": "Supply",
+		"feeSchedule": "Fee Schedule",
 		"theSmartContract": "The smart contract",
 		"title": "Permission management",
 		"totalSupply": "Total supply",

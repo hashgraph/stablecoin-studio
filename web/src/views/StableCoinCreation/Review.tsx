@@ -28,6 +28,7 @@ const Review = (props: ReviewProps) => {
 		freezeKey,
 		kycKey,
 		pauseKey,
+		feeScheduleKey,
 		reserveAddress,
 		reserveInitialAmount,
 		grantKYCToOriginalSender,
@@ -104,7 +105,7 @@ const Review = (props: ReviewProps) => {
 							{
 								label: t('stableCoinCreation:managementPermissions.admin'),
 								value: managementPermissions
-									? t('stableCoinCreation:managementPermissions.theSmartContract')
+									? t('stableCoinCreation:managementPermissions.currentUserKey')
 									: getKey(adminKey, 'adminKeyOther'),
 							},
 							{
@@ -128,7 +129,7 @@ const Review = (props: ReviewProps) => {
 							{
 								label: t('stableCoinCreation:managementPermissions.kyc'),
 								value: managementPermissions
-									? t('stableCoinCreation:managementPermissions.theSmartContract')
+									? t('stableCoinCreation:managementPermissions.none')
 									: getKey(kycKey, 'kycKeyOther'),
 							},
 							{
@@ -137,6 +138,12 @@ const Review = (props: ReviewProps) => {
 									? t('stableCoinCreation:managementPermissions.theSmartContract')
 									: getKey(pauseKey, 'pauseKeyOther'),
 							},
+							{
+								label: t('stableCoinCreation:managementPermissions.feeSchedule'),
+								value: managementPermissions
+									? t('stableCoinCreation:managementPermissions.currentUserKey')
+									: getKey(feeScheduleKey, 'feeScheduleKeyOther'),
+							}
 						]}
 					/>
 					<DetailsReview
@@ -145,7 +152,7 @@ const Review = (props: ReviewProps) => {
 						details={[
 							{
 								label: t('stableCoinCreation:managementPermissions.grantKYCToOriginalSender'),
-								value: grantKYCToOriginalSender
+								value: !managementPermissions && grantKYCToOriginalSender
 									? t('stableCoinCreation:managementPermissions.CreatorGrantedKYC')
 									: t('stableCoinCreation:managementPermissions.CreatorNotGrantedKYC'),
 							},

@@ -67,6 +67,7 @@ const KeySelector = ({ control, name, label, request }: KeySelectorProps) => {
 
 	const availableOptions = () => {
 		if (name === 'adminKey') return optionsKeys.filter((option) => option.value !== 3);
+		if (name === 'feeScheduleKey') return optionsKeys.filter((option) => option.value !== 2);
 
 		return optionsKeys;
 	};
@@ -77,7 +78,7 @@ const KeySelector = ({ control, name, label, request }: KeySelectorProps) => {
 				control={control}
 				name={name}
 				options={availableOptions()}
-				defaultValue={name === 'adminKey' ? '0' : '1'}
+				defaultValue={['adminKey', 'feeScheduleKey'].includes(name) ? '0' : name === 'kycKey' ? '3' : '1'}
 				label={label}
 				overrideStyles={selectorStyle}
 				addonLeft={true}
