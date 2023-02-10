@@ -35,7 +35,6 @@ import ContractId from '../../../../src/domain/context/contract/ContractId.js';
 import { TokenSupplyType } from '../../../../src/port/in/StableCoin.js';
 import {
 	CLIENT_ACCOUNT_ECDSA,
-	CLIENT_ACCOUNT_ED25519,
 	FACTORY_ADDRESS,
 	HEDERA_ERC20_ADDRESS,
 } from '../../../config.js';

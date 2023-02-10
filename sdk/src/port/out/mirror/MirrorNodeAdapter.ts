@@ -103,6 +103,7 @@ export class MirrorNodeAdapter {
 		}
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	private async getTokenInfo(tokenId: HederaId): Promise<any> {
 		const url = `${this.URI_BASE}tokens/${tokenId.toString()}`;
 

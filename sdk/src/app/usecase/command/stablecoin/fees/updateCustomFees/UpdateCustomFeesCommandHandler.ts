@@ -30,8 +30,6 @@ import {
 } from './UpdateCustomFeesCommand.js';
 import { CustomFee as HCustomFee } from '@hashgraph/sdk';
 import { fromCustomFeesToHCustomFees } from '../../../../../../domain/context/fee/CustomFee.js';
-import { HederaId } from '../../../../../../domain/context/shared/HederaId.js';
-//import FeeAssessmentMethod from '@hashgraph/sdk/lib/token/FeeAssessmentMethod.js';
 
 @CommandHandler(UpdateCustomFeesCommand)
 export class UpdateCustomFeesCommandHandler
