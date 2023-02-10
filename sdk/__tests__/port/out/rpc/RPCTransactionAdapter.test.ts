@@ -56,7 +56,7 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 	let th: RPCTransactionAdapter;
 	let tr: TransactionResponse;
 	let ns: NetworkService;
-	let rpcQueryAdapter:RPCQueryAdapter;
+	let rpcQueryAdapter: RPCQueryAdapter;
 	let stableCoinService: StableCoinService;
 	const delay = async (seconds = 2): Promise<void> => {
 		seconds = seconds * 1000;

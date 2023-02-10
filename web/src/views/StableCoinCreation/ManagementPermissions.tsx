@@ -60,7 +60,7 @@ const ManagementPermissions = ({
 		{
 			name: 'feeScheduleKey',
 			nameTranslate: t('stableCoinCreation:managementPermissions.feeSchedule'),
-		}
+		},
 	];
 
 	return (
@@ -109,22 +109,23 @@ const ManagementPermissions = ({
 						</Stack>
 					)}
 
-					{(!isManagementPermissions &&
-					  watch('kycKey')?.value === 2 && watch('supplyKey')?.value !== 1) && (
-						<Stack minW={400}>
-							<HStack mb={4} justifyContent='space-between'>
-								<Text maxW={'252px'} fontSize='14px' fontWeight='400' lineHeight='17px'>
-									{t('stableCoinCreation:managementPermissions.grantKYCToOriginalSender')}
-								</Text>
+					{!isManagementPermissions &&
+						watch('kycKey')?.value === 2 &&
+						watch('supplyKey')?.value !== 1 && (
+							<Stack minW={400}>
+								<HStack mb={4} justifyContent='space-between'>
+									<Text maxW={'252px'} fontSize='14px' fontWeight='400' lineHeight='17px'>
+										{t('stableCoinCreation:managementPermissions.grantKYCToOriginalSender')}
+									</Text>
 
-								<SwitchController
-									control={control}
-									name={'grantKYCToOriginalSender'}
-									defaultValue={true}
-								/>
-							</HStack>
-						</Stack>
-					)}
+									<SwitchController
+										control={control}
+										name={'grantKYCToOriginalSender'}
+										defaultValue={true}
+									/>
+								</HStack>
+							</Stack>
+						)}
 				</Stack>
 			</Stack>
 		</VStack>

@@ -143,7 +143,7 @@ const Review = (props: ReviewProps) => {
 								value: managementPermissions
 									? t('stableCoinCreation:managementPermissions.currentUserKey')
 									: getKey(feeScheduleKey, 'feeScheduleKeyOther'),
-							}
+							},
 						]}
 					/>
 					<DetailsReview
@@ -152,9 +152,10 @@ const Review = (props: ReviewProps) => {
 						details={[
 							{
 								label: t('stableCoinCreation:managementPermissions.grantKYCToOriginalSender'),
-								value: !managementPermissions && grantKYCToOriginalSender
-									? t('stableCoinCreation:managementPermissions.CreatorGrantedKYC')
-									: t('stableCoinCreation:managementPermissions.CreatorNotGrantedKYC'),
+								value:
+									!managementPermissions && grantKYCToOriginalSender
+										? t('stableCoinCreation:managementPermissions.CreatorGrantedKYC')
+										: t('stableCoinCreation:managementPermissions.CreatorNotGrantedKYC'),
 							},
 						]}
 					/>

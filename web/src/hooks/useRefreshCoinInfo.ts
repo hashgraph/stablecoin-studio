@@ -49,6 +49,8 @@ export const useRefreshCoinInfo = (): boolean => {
 				freezeKey: resp?.freezeKey?.toString() && JSON.parse(JSON.stringify(resp.freezeKey)),
 				wipeKey: resp?.wipeKey?.toString() && JSON.parse(JSON.stringify(resp.wipeKey)),
 				supplyKey: resp?.supplyKey?.toString() && JSON.parse(JSON.stringify(resp.supplyKey)),
+				feeScheduleKey:
+					resp?.feeScheduleKey?.toString() && JSON.parse(JSON.stringify(resp.feeScheduleKey)),
 				pauseKey: resp?.pauseKey?.toString() && JSON.parse(JSON.stringify(resp.pauseKey)),
 				reserveAmount: resp?.reserveAmount?.toString(),
 				reserveAddress: resp?.reserveAddress?.toString(),
