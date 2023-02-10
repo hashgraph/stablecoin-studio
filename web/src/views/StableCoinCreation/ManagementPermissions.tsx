@@ -104,7 +104,14 @@ const ManagementPermissions = ({
 					) : (
 						<Stack spacing={2} fontSize='14px' fontWeight='400'>
 							{keys.map((item, index) => {
-								return <Text key={index}>{item.nameTranslate}</Text>;
+								switch(item.name) {
+									case t('kycKey'):
+										return <Text key={index} color='red'>{item.nameTranslate + " - " + t('stableCoinCreation:managementPermissions.none')}</Text>;	
+									case t('feeScheduleKey'):
+										return <Text key={index}>{item.nameTranslate + " - " + t('stableCoinCreation:managementPermissions.currentUserKey')}</Text>;	
+									default: 
+										return <Text key={index}>{item.nameTranslate + " - " + t('stableCoinCreation:managementPermissions.theSmartContract')}</Text>;
+								}
 							})}
 						</Stack>
 					)}

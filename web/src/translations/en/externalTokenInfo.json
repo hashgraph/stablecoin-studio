@@ -30,7 +30,7 @@
 	},
 	"managementPermissions": {
 		"currentUserKey": "Current user key",
-		"description": "Assign all token's keys to the Smart Contract except for the Fee Schedule key (assigned to the current user) and the KYC key (unassigned)",
+		"description": "Assign default values",
 		"pause": "Pause",
 		"freeze": "Freeze",
 		"kyc": "KYC",

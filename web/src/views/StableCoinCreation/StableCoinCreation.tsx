@@ -215,7 +215,7 @@ const StableCoinCreation = () => {
 		}
 
 		if (managementPermissions) {
-			request.adminKey = accountInfo.publicKey; // accountInfo.publicKey;
+			request.adminKey = Account.NullPublicKey; // accountInfo.publicKey;
 			request.freezeKey = Account.NullPublicKey;
 			request.kycKey = undefined;
 			request.wipeKey = Account.NullPublicKey;

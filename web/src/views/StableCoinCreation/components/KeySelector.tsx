@@ -79,7 +79,7 @@ const KeySelector = ({ control, name, label, request }: KeySelectorProps) => {
 				name={name}
 				options={availableOptions()}
 				defaultValue={
-					['adminKey', 'feeScheduleKey'].includes(name) ? '0' : name === 'kycKey' ? '3' : '1'
+					name === 'feeScheduleKey' ? '0' : name === 'kycKey' ? '3' : '1'
 				}
 				label={label}
 				overrideStyles={selectorStyle}
