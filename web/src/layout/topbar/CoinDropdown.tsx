@@ -23,7 +23,10 @@ import {
 import { RouterManager } from '../../Router/RouterManager';
 import { matchPath, useLocation, useNavigate } from 'react-router-dom';
 import { NamedRoutes } from '../../Router/NamedRoutes';
-import { GetStableCoinDetailsRequest, GetAccountInfoRequest } from 'hedera-stable-coin-sdk';
+import {
+	GetStableCoinDetailsRequest,
+	GetAccountInfoRequest,
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 import type { IExternalToken } from '../../interfaces/IExternalToken';
 import type { GroupBase, SelectInstance } from 'chakra-react-select';
 import { validateAccount } from '../../utils/validationsHelper';

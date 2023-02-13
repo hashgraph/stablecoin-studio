@@ -7,7 +7,7 @@ import {
 	ConnectRequest,
 	InitializationRequest,
 	ReserveDataFeed,
-} from 'hedera-stable-coin-sdk';
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 import type {
 	WalletEvent,
 	SupportedWallets,
@@ -43,7 +43,7 @@ import type {
 	UpdateReserveAddressRequest,
 	UpdateReserveAmountRequest,
 	KYCRequest,
-} from 'hedera-stable-coin-sdk';
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 
 export type StableCoinListRaw = Array<Record<'id' | 'symbol', string>>;
 

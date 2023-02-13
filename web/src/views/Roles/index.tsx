@@ -14,7 +14,7 @@ import {
 import { useEffect, useState } from 'react';
 import type { IAccountToken } from '../../interfaces/IAccountToken.js';
 import type { IExternalToken } from '../../interfaces/IExternalToken.js';
-import { Operation, StableCoinRole } from 'hedera-stable-coin-sdk';
+import { Operation, StableCoinRole } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 const Roles = () => {
 	const capabilities = useSelector(SELECTED_WALLET_CAPABILITIES);

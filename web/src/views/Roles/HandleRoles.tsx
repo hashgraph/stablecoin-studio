@@ -29,7 +29,7 @@ import {
 	Operation,
 	GetRolesRequest,
 	Access,
-} from 'hedera-stable-coin-sdk';
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 import InputController from '../../components/Form/InputController';
 import { handleRequestValidation, validateDecimalsString } from '../../utils/validationsHelper';
 import { useRefreshCoinInfo } from '../../hooks/useRefreshCoinInfo';

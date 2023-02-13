@@ -30,8 +30,8 @@ import {
 } from '../store/slices/walletSlice';
 import ImportedTokenCreation from '../views/ImportedToken/ImportedTokenCreation';
 import DangerZoneOperations from '../views/Operations/DangerZone';
-import type { EventParameter, WalletEvent } from 'hedera-stable-coin-sdk';
-import { LoggerTransports, SDK, ConnectionState } from 'hedera-stable-coin-sdk';
+import type { EventParameter, WalletEvent } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { LoggerTransports, SDK, ConnectionState } from '@hashgraph-dev/stablecoin-npm-sdk';
 import StableCoinProof from '../views/StableCoinProof';
 import GrantKycOperation from '../views/Operations/GrantKyc';
 import RevokeKycOperation from '../views/Operations/RevokeKyc';

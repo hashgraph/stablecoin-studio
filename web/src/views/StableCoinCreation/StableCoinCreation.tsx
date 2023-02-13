@@ -21,8 +21,8 @@ import {
 } from '../../store/slices/walletSlice';
 import SDKService from '../../services/SDKService';
 import ModalNotification from '../../components/ModalNotification';
-import { Account, CreateRequest } from 'hedera-stable-coin-sdk';
-import type { RequestPublicKey } from 'hedera-stable-coin-sdk';
+import { Account, CreateRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
+import type { RequestPublicKey } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch } from '../../store/store';
 import ProofOfReserve from './ProofOfReserve';
