@@ -34,7 +34,6 @@
         "test:reserve": "npx hardhat test test/reserve.ts",
         "test:kyc": "npx hardhat test test/kyc.ts",
         "test:HederaReserve": "npx hardhat test test/HederaReserve.ts",
-        "test:UpgradeTestContract": "npx hardhat test test/UpgradeTestContract.ts",
         "test:testnet:roles": "npx hardhat test --network testnet test/roles.ts",
         "test:testnet:deployFactory": "npx hardhat test --network testnet test/deployFactory.ts",
         "test:testnet:burnable": "npx hardhat test --network testnet test/burnable.ts",

@@ -3,7 +3,16 @@ import {
     PrivateKey,
     ContractCreateFlow,
     ContractId,
+    ContractFunctionParameters,
 } from '@hashgraph/sdk'
+import {
+    ProxyAdmin__factory,
+    TransparentUpgradeableProxy__factory,
+} from '../../typechain-types'
+import { contractCall } from './utils'
+
+const GasDeploy = 250000
+const GasContractInitialize = 130000
 
 export async function deployContract(
     factory: any,
@@ -16,8 +25,9 @@ export async function deployContract(
 
     const transaction = new ContractCreateFlow()
         .setBytecode(factory.bytecode)
-        .setGas(250_000)
+        .setGas(GasDeploy)
         .setAdminKey(Key)
+
     if (constructorParameters) {
         transaction.setConstructorParameters(constructorParameters)
     }
@@ -31,7 +41,7 @@ export async function deployContract(
 
     const contractId = receipt.contractId
     if (!contractId) {
-        throw Error('Error deploying contractSDK')
+        throw Error('Error deploying contract')
     }
     console.log(
         ` ${
@@ -39,4 +49,56 @@ export async function deployContract(
         } - contractId ${contractId} -contractId ${contractId?.toSolidityAddress()}   `
     )
     return contractId
+}
+
+export async function deployUpgradableContract(
+    factory: any,
+    clientOperator: Client,
+    privateKeyOperator: string,
+    init_params?: any[]
+): Promise<ContractId[]> {
+    console.log(`Deploying proxy admin. please wait...`)
+
+    const ProxyAdmin = await deployContract(
+        ProxyAdmin__factory,
+        privateKeyOperator,
+        clientOperator
+    )
+
+    console.log(`Deploying logic. please wait...`)
+
+    const Logic = await deployContract(
+        factory,
+        privateKeyOperator,
+        clientOperator
+    )
+
+    console.log(`Deploying proxy. please wait...`)
+
+    const params = new ContractFunctionParameters()
+        .addAddress(Logic.toSolidityAddress())
+        .addAddress(ProxyAdmin.toSolidityAddress())
+        .addBytes(new Uint8Array([]))
+
+    const Proxy = await deployContract(
+        TransparentUpgradeableProxy__factory,
+        privateKeyOperator,
+        clientOperator,
+        params
+    )
+
+    if (init_params) {
+        console.log(`Initializing the proxy. please wait...`)
+
+        await contractCall(
+            Proxy,
+            'initialize',
+            init_params,
+            clientOperator,
+            GasContractInitialize,
+            factory.abi
+        )
+    }
+
+    return [Proxy, ProxyAdmin, Logic]
 }

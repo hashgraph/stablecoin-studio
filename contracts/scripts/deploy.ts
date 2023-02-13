@@ -3,25 +3,21 @@ import {
     PublicKey,
     TokenSupplyType,
     PrivateKey,
-    ContractFunctionParameters,
     Client,
 } from '@hashgraph/sdk'
 import { BigNumber } from 'ethers'
-
 import {
     StableCoinFactory__factory,
-    StableCoinFactoryProxyAdmin__factory,
-    StableCoinFactoryProxy__factory,
     HederaERC20__factory,
-    HederaReserveProxyAdmin__factory,
     HederaReserve__factory,
-    HederaReserveProxy__factory,
-    UpgradeTestContract__factory,
 } from '../typechain-types'
 
 import { getClient, toEvmAddress } from './utils'
 
-import { deployContract } from './contractsLifeCycle/deploy'
+import {
+    deployContract,
+    deployUpgradableContract,
+} from './contractsLifeCycle/deploy'
 
 import { contractCall } from './contractsLifeCycle/utils'
 
@@ -174,7 +170,7 @@ export async function deployHederaERC20(
     privateKey: string
 ) {
     // Deploying Factory logic
-    console.log(`Deploying HederaERC20 logic. please wait...`)
+    console.log(`Deploying HederaERC20. please wait...`)
 
     const hederaERC20 = await deployContract(
         HederaERC20__factory,
@@ -182,7 +178,7 @@ export async function deployHederaERC20(
         clientOperator
     )
 
-    console.log(`HederaERC20 logic deployed ${hederaERC20.toSolidityAddress()}`)
+    console.log(`HederaERC20 deployed ${hederaERC20.toSolidityAddress()}`)
 
     return hederaERC20
 }
@@ -194,44 +190,17 @@ export async function deployFactory(
     // Deploying Factory logic
     console.log(`Deploying Contract Factory. please wait...`)
 
-    const factory = await deployContract(
-        StableCoinFactory__factory,
-        privateKey,
-        clientOperator
-    )
-
-    console.log(`Contract Factory deployed ${factory.toSolidityAddress()}`)
-
-    // Deploying Factory Proxy Admin
-    console.log(`Deploying Contract Factory Proxy Admin. please wait...`)
-
-    const factoryProxyAdmin = await deployContract(
-        StableCoinFactoryProxyAdmin__factory,
-        privateKey,
-        clientOperator
-    )
+    const [factoryProxy, factoryProxyAdmin, factory] =
+        await deployUpgradableContract(
+            StableCoinFactory__factory,
+            clientOperator,
+            privateKey
+        )
 
     console.log(
-        `Contract Factory Proxy Admin deployed ${factoryProxyAdmin.toSolidityAddress()}`
-    )
-
-    // Deploying Factory Proxy
-    console.log(`Deploying Contract Factory Proxy. please wait...`)
-
-    const params = new ContractFunctionParameters()
-        .addAddress(factory.toSolidityAddress())
-        .addAddress(factoryProxyAdmin.toSolidityAddress())
-        .addBytes(new Uint8Array([]))
-
-    const factoryProxy = await deployContract(
-        StableCoinFactoryProxy__factory,
-        privateKey,
-        clientOperator,
-        params
-    )
-
-    console.log(
-        `Contract Factory Proxy deployed ${factoryProxy.toSolidityAddress()}`
+        `Contract Factory Proxy deployed ${factoryProxy.toSolidityAddress()},
+        Contract Factory Proxy Admin deployed ${factoryProxyAdmin.toSolidityAddress()},
+        Contract Factory Logic deployed ${factory.toSolidityAddress()}`
     )
 
     return [factoryProxy, factoryProxyAdmin, factory]
@@ -493,85 +462,21 @@ export async function deployHederaReserve(
     privateKeyOperatorEd25519: string
 ): Promise<ContractId[]> {
     console.log(`Deploying HederaReserve logic. please wait...`)
-    const hederaReserveProxyAdmin = await deployContract(
-        HederaReserveProxyAdmin__factory,
-        privateKeyOperatorEd25519,
-        clientOperator
-    )
-
-    const hederaReserve = await deployContract(
-        HederaReserve__factory,
-        privateKeyOperatorEd25519,
-        clientOperator
-    )
-
-    const params = new ContractFunctionParameters()
-        .addAddress(hederaReserve.toSolidityAddress())
-        .addAddress(hederaReserveProxyAdmin.toSolidityAddress())
-        .addBytes(new Uint8Array([]))
-
-    const hederaReserveProxy = await deployContract(
-        HederaReserveProxy__factory,
-        privateKeyOperatorEd25519,
-        clientOperator,
-        params
-    )
 
     const AccountEvmAddress = await toEvmAddress(account, isED25519)
 
-    contractCall(
-        hederaReserveProxy,
-        'initialize',
-        [initialAmountDataFeed.toString(), AccountEvmAddress],
-        clientOperator,
-        130000,
-        HederaReserve__factory.abi
-    )
+    const [hederaReserveProxy, hederaReserveProxyAdmin, hederaReserve] =
+        await deployUpgradableContract(
+            HederaReserve__factory,
+            clientOperator,
+            privateKeyOperatorEd25519,
+            [initialAmountDataFeed.toString(), AccountEvmAddress]
+        )
 
-    return [hederaReserveProxy, hederaReserveProxyAdmin, hederaReserve]
-}
-
-export async function deployUpgradeTestContract(
-    initialAmountDataFeed: BigNumber,
-    account: string,
-    isED25519: boolean,
-    clientOperator: Client,
-    privateKeyOperatorEd25519: string
-): Promise<ContractId[]> {
-    console.log(`Deploying HederaReserve logic. please wait...`)
-    const hederaReserveProxyAdmin = await deployContract(
-        HederaReserveProxyAdmin__factory,
-        privateKeyOperatorEd25519,
-        clientOperator
-    )
-
-    const hederaReserve = await deployContract(
-        UpgradeTestContract__factory,
-        privateKeyOperatorEd25519,
-        clientOperator
-    )
-
-    const params = new ContractFunctionParameters()
-        .addAddress(hederaReserve.toSolidityAddress())
-        .addAddress(hederaReserveProxyAdmin.toSolidityAddress())
-        .addBytes(new Uint8Array([]))
-
-    const hederaReserveProxy = await deployContract(
-        HederaReserveProxy__factory,
-        privateKeyOperatorEd25519,
-        clientOperator,
-        params
-    )
-
-    const AccountEvmAddress = await toEvmAddress(account, isED25519)
-
-    contractCall(
-        hederaReserveProxy,
-        'initialize',
-        [initialAmountDataFeed.toString(), AccountEvmAddress],
-        clientOperator,
-        130000,
-        HederaReserve__factory.abi
+    console.log(
+        `Contract hederaReserve Proxy deployed ${hederaReserveProxy.toSolidityAddress()},
+        Contract hederaReserve Proxy Admin deployed ${hederaReserveProxyAdmin.toSolidityAddress()},
+        Contract hederaReserve Logic deployed ${hederaReserve.toSolidityAddress()}`
     )
 
     return [hederaReserveProxy, hederaReserveProxyAdmin, hederaReserve]
