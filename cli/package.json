@@ -1,6 +1,6 @@
 {
-  "name": "hedera-stable-coin-cli",
-  "version": "0.0.1-SNAPSHOT",
+  "name": "@hashgraph-dev/stablecoin-npm-cli",
+  "version": "0.0.1",
   "description": "CLI for Hedera Stable Coin",
   "main": "./build/src/index.js",
   "bin": {
@@ -10,11 +10,11 @@
     ".": "./build/src/index.js"
   },
   "publishConfig": {
-		"registry": "https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/"
-	},
+    "registry": "https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/"
+  },
   "files": [
-        "build/"
-    ],
+    "build/"
+  ],
   "scripts": {
     "start": "clear && npx tsc && node ./build/src/index.js",
     "start:wizard": "clear && npx tsc && node ./build/src/index.js wizard -cp './hsca-config.yaml' -n 'testnet'",
@@ -58,7 +58,7 @@
     "commander": "^10.0.0",
     "figlet-promised": "^1.0.0",
     "fs-extra": "^11.1.0",
-    "@hashgraph-dev/stablecoin-npm-sdk":"^0.0.2",
+    "@hashgraph-dev/stablecoin-npm-sdk": "^0.0.2",
     "inquirer": "^8.0.0",
     "js-yaml": "^4.1.0",
     "lodash": "^4.17.21",
