@@ -33,6 +33,7 @@ import AccountViewModel from './mirror/response/AccountViewModel.js';
 import {
 	PublicKey as HPublicKey,
 	ContractId as HContractId,
+	CustomFee as HCustomFee,
 } from '@hashgraph/sdk';
 import { MirrorNodeAdapter } from './mirror/MirrorNodeAdapter.js';
 import { Environment } from '../../domain/context/network/Environment.js';
@@ -184,6 +185,10 @@ interface RoleTransactionAdapter {
 	revokeKyc(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
+	): Promise<TransactionResponse<boolean, Error>>;
+	updateCustomFees(
+		coin: StableCoinCapabilities,
+		customFees: HCustomFee[],
 	): Promise<TransactionResponse<boolean, Error>>;
 	getRoles(
 		coin: StableCoinCapabilities,
@@ -393,6 +398,12 @@ export default abstract class TransactionAdapter
 	revokeKyc(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
+	): Promise<TransactionResponse<boolean, Error>> {
+		throw new Error('Method not implemented.');
+	}
+	public async updateCustomFees(
+		coin: StableCoinCapabilities,
+		customFees: HCustomFee[],
 	): Promise<TransactionResponse<boolean, Error>> {
 		throw new Error('Method not implemented.');
 	}

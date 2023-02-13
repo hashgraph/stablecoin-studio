@@ -89,6 +89,9 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 	supplyKey?: RequestPublicKey;
 
 	@OptionalField()
+	feeScheduleKey?: RequestPublicKey;
+
+	@OptionalField()
 	treasury?: string | undefined;
 
 	@OptionalField()
@@ -113,6 +116,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		supplyKey,
 		treasury,
 		supplyType,
+		feeScheduleKey,
 		stableCoinFactory,
 		hederaERC20,
 		reserveAddress,
@@ -133,6 +137,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		wipeKey?: RequestPublicKey;
 		pauseKey?: RequestPublicKey;
 		supplyKey?: RequestPublicKey;
+		feeScheduleKey?: RequestPublicKey;
 		treasury?: string;
 		supplyType?: TokenSupplyType;
 		stableCoinFactory?: string;
@@ -234,6 +239,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 			wipeKey: Validation.checkPublicKey(),
 			pauseKey: Validation.checkPublicKey(),
 			supplyKey: Validation.checkPublicKey(),
+			feeScheduleKey: Validation.checkPublicKey(),
 			treasury: Validation.checkHederaIdFormat(),
 			stableCoinFactory: Validation.checkContractId(),
 			hederaERC20: Validation.checkContractId(),
@@ -297,6 +303,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		this.wipeKey = wipeKey;
 		this.pauseKey = pauseKey;
 		this.supplyKey = supplyKey;
+		this.feeScheduleKey = feeScheduleKey;
 		this.treasury = treasury;
 		this.supplyType = supplyType;
 		this.stableCoinFactory = stableCoinFactory;

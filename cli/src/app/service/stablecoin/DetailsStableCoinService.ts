@@ -6,6 +6,7 @@ import {
   StableCoin,
   StableCoinViewModel,
 } from 'hedera-stable-coin-sdk';
+import FeeStableCoinService from './FeeStableCoinService.js';
 
 /**
  * Create Stable Coin Service
@@ -59,6 +60,12 @@ export default class DetailsStableCoinsService extends Service {
         wipeKey: respDetail.wipeKey ? respDetail.wipeKey.toString() : '-',
         supplyKey: respDetail.supplyKey ? respDetail.supplyKey.toString() : '-',
         pauseKey: respDetail.pauseKey ? respDetail.pauseKey.toString() : '-',
+        feeScheduleKey: respDetail.feeScheduleKey
+          ? respDetail.feeScheduleKey.toString()
+          : '-',
+        customFees: new FeeStableCoinService().getFormatedFees(
+          respDetail.customFees,
+        ),
         ...reserveData,
       };
       console.log(out);
