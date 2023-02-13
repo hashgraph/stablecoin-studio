@@ -68,7 +68,7 @@
     "build-all": "yarn clean && yarn build",
     "copy-readme": "cp ../README.md README.md",
     "copy-changelog": "cp ../CHANGELOG.md CHANGELOG.md",
-    "prepack": "npm run build && npm run copy-readme && npm run copy-changelog"
+    "prepack": "npm run build"
   },
   "devDependencies": {
     "@types/jest": "^27.1.4",
