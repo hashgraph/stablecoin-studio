@@ -145,7 +145,7 @@ export default class Validation {
 		};
 	};
 
-	public static checkHederaIdFormat = () => {
+	public static checkHederaIdFormat = (zeroIsValid = false) => {
 		return (val: any): BaseError[] => {
 			// Account Id defined in hip-15 : https://hips.hedera.com/hip/hip-15
 			const regEx =
@@ -153,14 +153,14 @@ export default class Validation {
 			const err: BaseError[] = [];
 			if (!regEx.exec(val)) {
 				err.push(new InvalidIdFormatHedera(val));
-			} else if (val === '0.0.0') {
+			} else if (!zeroIsValid && val === '0.0.0') {
 				err.push(new AccountIdNotValid(val));
 			}
 			return err;
 		};
 	};
 
-	public static checkAmount = () => {
+	public static checkAmount = (zeroIsValid = false) => {
 		return (val: any): BaseError[] => {
 			const err: BaseError[] = [];
 			const isBigDecimal: boolean = CheckNums.isBigDecimal(val);
@@ -171,9 +171,12 @@ export default class Validation {
 			const valueDecimals = BigDecimal.getDecimalsFromString(val);
 			const zero = BigDecimal.fromString('0', valueDecimals);
 			const value = BigDecimal.fromString(val);
-			if (value.isLowerOrEqualThan(zero)) {
+
+			if (zeroIsValid && value.isLowerThan(zero))
 				err.push(new InvalidRange(val, '0', undefined));
-			}
+			else if (!zeroIsValid && value.isLowerOrEqualThan(zero))
+				err.push(new InvalidRange(val, '0..', undefined));
+
 			if (valueDecimals > 18) {
 				err.push(new InvalidDecimalRange(val, 0, 18));
 			}

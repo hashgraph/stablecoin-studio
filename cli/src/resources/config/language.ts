@@ -95,7 +95,7 @@ export const english = {
     askMemo: 'Enter the token memo',
     askFreezeAccount: 'Should the Hedera account be frozen for this token?',
     askFeaturesManagedBy:
-      'Should the smart contract be used for all roles management?',
+      'Assign all token keys to the Smart Contract except for the Fee Schedule key (assigned to the current user) and the KYC key (unassigned)?',
     features: {
       admin: 'Enter the admin key',
       supply: 'Enter the supply key',
@@ -214,6 +214,7 @@ export const english = {
       GrantKYC: 'Grant KYC to an account',
       RevokeKYC: 'Revoke KYC from an account',
       AccountKYCGranted: 'Check KYC status from an account',
+      FeesMgmt: 'Fees management',
       RoleMgmt: 'Role management',
       RoleRefresh: 'Refresh roles',
       DangerZone: colors.red('Danger zone'),
@@ -258,6 +259,11 @@ export const english = {
     },
     adminFeatureOptions: {
       ...basicFeatureOptions,
+    },
+    nonSmartContractFeatureOptions: {
+      CurrentUser: 'Current user key',
+      None: 'None',
+      OtherKey: 'Other public key',
     },
     featureOptions: {
       ...basicFeatureOptions,
@@ -321,6 +327,8 @@ export const english = {
       'The account ${address} has KYC granted for the ${token} token',
     accountKYCNotGranted:
       'The account ${address} has not KYC granted for the ${token} token',
+    customFeeCreated: 'Custom fee created',
+    customFeesRemoved: 'Custom fees removed',
   },
   operation: {
     success: colors.green('Operation has been completed successfully.'),
@@ -362,6 +370,43 @@ export const english = {
       ...goBack,
     },
     noRoles: 'You do not have any roles.',
+  },
+  feeManagement: {
+    askFeeType: 'What kind of fee do you want to add?',
+    chooseFeeType: {
+      FixedFee: 'Fixed Fee',
+      FractionalFee: 'Fractional Fee',
+    },
+    askFractionType: 'How would you like to specify your Fractional Fee?',
+    chooseFractionalType: {
+      Percentage: 'Percentage',
+      Fraction: 'Fraction (Numerator and Denominator)',
+    },
+    askPercentageFee: 'Enter the percentage fee',
+    askCollectorsExempt:
+      'Do you want collectors to be exempt from paying this fee?',
+    askAmount: 'Enter the fixed fee amount',
+    askHBAR: 'Do you want the fees to be paid in HBARs?',
+    askTokenId: 'Enter the token Id',
+    askCollectorId: 'Enter the collector Id',
+    askNumerator: "Enter the fraction's numerator",
+    askDenominator: "Enter the fraction's denominator",
+    askMin: 'Enter the minimum fee',
+    askMax: 'Enter the maximum fee',
+    askRemoveFee: 'Do you want to remove this fee?',
+    listOfFeesToRemove: 'These are the fees you selected to be removed',
+    askAssesmentMethod:
+      'Do you want the fees to be deducted from the transfered amount?',
+    confirmCreate:
+      'Are you sure want to add this custom fee to the stable coin?',
+    confirmRemove:
+      'Are you sure you want to remove these custom fees from the stable coin?',
+    options: {
+      Create: 'Create fee',
+      Remove: 'Remove fee',
+      List: 'Fees list',
+      ...goBack,
+    },
   },
   dangerZone: {
     confirmDelete: 'Are you sure want to delete the stable coin?',

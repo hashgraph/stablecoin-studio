@@ -24,4 +24,5 @@ module.exports = {
 	},
 	transformIgnorePatterns: ['node_modules/(?!@ngrx|(?!deck.gl)|ng-dynamic)'],
 	setupFilesAfterEnv: ['./__tests__/jest-setup-file.ts'],
+	testTimeout: 10_000,
 };

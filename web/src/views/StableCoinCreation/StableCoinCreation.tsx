@@ -21,10 +21,7 @@ import {
 } from '../../store/slices/walletSlice';
 import SDKService from '../../services/SDKService';
 import ModalNotification from '../../components/ModalNotification';
-import {
-	Account,
-	CreateRequest,
-} from 'hedera-stable-coin-sdk';
+import { Account, CreateRequest } from 'hedera-stable-coin-sdk';
 import type { RequestPublicKey } from 'hedera-stable-coin-sdk';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch } from '../../store/store';
@@ -200,6 +197,7 @@ const StableCoinCreation = () => {
 			wipeKey,
 			pauseKey,
 			supplyKey,
+			feeScheduleKey,
 			reserveInitialAmount,
 			reserveAddress,
 			grantKYCToOriginalSender,
@@ -219,12 +217,13 @@ const StableCoinCreation = () => {
 		if (managementPermissions) {
 			request.adminKey = Account.NullPublicKey; // accountInfo.publicKey;
 			request.freezeKey = Account.NullPublicKey;
-			request.kycKey = Account.NullPublicKey;
+			request.kycKey = undefined;
 			request.wipeKey = Account.NullPublicKey;
 			request.pauseKey = Account.NullPublicKey;
 			request.supplyKey = Account.NullPublicKey;
+			request.feeScheduleKey = accountInfo.publicKey;
 			request.treasury = undefined;
-			request.grantKYCToOriginalSender = grantKYCToOriginalSender;
+			request.grantKYCToOriginalSender = false;
 		} else {
 			request.adminKey = accountInfo.publicKey;
 			request.freezeKey = formatKey(freezeKey.label, 'freezeKey');
@@ -233,6 +232,7 @@ const StableCoinCreation = () => {
 			request.wipeKey = formatKey(wipeKey.label, 'wipeKey');
 			request.pauseKey = formatKey(pauseKey.label, 'pauseKey');
 			request.supplyKey = formatKey(supplyKey.label, 'supplyKey');
+			request.feeScheduleKey = formatKey(feeScheduleKey.label, 'feeScheduleKey');
 			request.treasury =
 				formatKey(supplyKey.label, 'supplyKey')?.key !== Account.NullPublicKey.key && accountInfo.id
 					? accountInfo.id

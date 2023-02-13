@@ -18,28 +18,110 @@
  *
  */
 
+/* eslint-disable jest/no-standalone-expect */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { StableCoin } from '../../../../src/domain/context/stablecoin/StableCoin.js';
 import StableCoinList from '../../../../src/port/out/mirror/response/StableCoinListViewModel.js';
 import StableCoinDetail from '../../../../src/port/out/mirror/response/StableCoinViewModel.js';
 import AccountInfo from '../../../../src/port/out/mirror/response/AccountViewModel.js';
-import { MirrorNodeAdapter } from '../../../../src/port/out/mirror/MirrorNodeAdapter.js';
-import { HederaId } from '../../../../src/domain/context/shared/HederaId.js';
 import {
 	HEDERA_ID_ACCOUNT_ECDSA,
 	HEDERA_ID_ACCOUNT_ED25519,
 	CLIENT_ACCOUNT_ECDSA,
 	CLIENT_ACCOUNT_ED25519,
 	ENVIRONMENT,
+	FACTORY_ADDRESS,
+	HEDERA_ERC20_ADDRESS,
 } from '../../../config.js';
+import {
+	BigDecimal,
+	LoggerTransports,
+	SDK,
+	StableCoinCapabilities,
+	TokenSupplyType,
+} from '../../../../src/index.js';
+import Account from '../../../../src/domain/context/account/Account.js';
+import { MirrorNodeAdapter } from '../../../../src/port/out/mirror/MirrorNodeAdapter.js';
+import RPCTransactionAdapter from '../../../../src/port/out/rpc/RPCTransactionAdapter.js';
+import TransactionResponse from '../../../../src/domain/context/transaction/TransactionResponse.js';
+import NetworkService from '../../../../src/app/service/NetworkService.js';
+import RPCQueryAdapter from '../../../../src/port/out/rpc/RPCQueryAdapter.js';
+import StableCoinService from '../../../../src/app/service/StableCoinService.js';
+import Injectable from '../../../../src/core/Injectable.js';
+import { Wallet } from 'ethers';
+import { ContractId as HContractId } from '@hashgraph/sdk';
+import PublicKey from '../../../../src/domain/context/account/PublicKey.js';
+import ContractId from '../../../../src/domain/context/contract/ContractId.js';
+import { RESERVE_DECIMALS } from '../../../../src/domain/context/reserve/Reserve.js';
+
+SDK.log = { level: 'ERROR', transports: new LoggerTransports.Console() };
 
 describe('🧪 MirrorNodeAdapter', () => {
-	const tokenId = HederaId.from('0.0.49117058');
-	const proxyEvmAddress = '0000000000000000000000000000000002ed7781';
+	let stableCoinCapabilitiesSC: StableCoinCapabilities;
 
 	let mn: MirrorNodeAdapter;
+	let th: RPCTransactionAdapter;
+	let tr: TransactionResponse;
+	let ns: NetworkService;
+	let rpcQueryAdapter: RPCQueryAdapter;
+	let stableCoinService: StableCoinService;
+	const createToken = async (
+		stablecoin: StableCoin,
+		account: Account,
+	): Promise<StableCoinCapabilities> => {
+		tr = await th.create(
+			stablecoin,
+			new ContractId(FACTORY_ADDRESS),
+			new ContractId(HEDERA_ERC20_ADDRESS),
+			true,
+			undefined,
+			BigDecimal.fromString('100000000', RESERVE_DECIMALS),
+		);
+		const tokenIdSC = ContractId.fromHederaContractId(
+			HContractId.fromSolidityAddress(tr.response[0][3]),
+		);
+		return await stableCoinService.getCapabilities(account, tokenIdSC);
+	};
 	beforeAll(async () => {
 		mn = new MirrorNodeAdapter();
 		mn.setEnvironment(ENVIRONMENT);
-	});
+		th = Injectable.resolve(RPCTransactionAdapter);
+		ns = Injectable.resolve(NetworkService);
+		rpcQueryAdapter = Injectable.resolve(RPCQueryAdapter);
+		rpcQueryAdapter.init();
+		ns.environment = 'testnet';
+		await th.init(true);
+		await th.register(CLIENT_ACCOUNT_ECDSA, true);
+		th.signerOrProvider = new Wallet(
+			CLIENT_ACCOUNT_ECDSA.privateKey?.key ?? '',
+			th.provider,
+		);
+		const mirrorNodeAdapter = Injectable.resolve(MirrorNodeAdapter);
+		mirrorNodeAdapter.setEnvironment('testnet');
+		stableCoinService = Injectable.resolve(StableCoinService);
+
+		const coinSC = new StableCoin({
+			name: 'TEST_ACCELERATOR_SC',
+			symbol: 'TEST',
+			decimals: 6,
+			initialSupply: BigDecimal.fromString('1000', 6),
+			autoRenewAccount: CLIENT_ACCOUNT_ECDSA.id,
+			adminKey: PublicKey.NULL,
+			freezeKey: PublicKey.NULL,
+			wipeKey: PublicKey.NULL,
+			pauseKey: PublicKey.NULL,
+			supplyKey: PublicKey.NULL,
+			supplyType: TokenSupplyType.INFINITE,
+			// grantKYCToOriginalSender:true
+		});
+
+		stableCoinCapabilitiesSC = await createToken(
+			coinSC,
+			CLIENT_ACCOUNT_ECDSA,
+		);
+
+		expect(stableCoinCapabilitiesSC).not.toBeNull();
+	}, 1500000);
 
 	// eslint-disable-next-line jest/no-disabled-tests
 	it('Test get stable coins list', async () => {
@@ -50,39 +132,48 @@ describe('🧪 MirrorNodeAdapter', () => {
 	});
 
 	it('Test get stable coin', async () => {
-		// StableCoin.create();
 		const stableCoinDetail: StableCoinDetail = await mn.getStableCoin(
-			tokenId,
+			stableCoinCapabilitiesSC!.coin!.tokenId!,
 		);
-		expect(stableCoinDetail.tokenId).toEqual(tokenId);
-		expect(stableCoinDetail.name).toEqual('TEST_ACCELERATOR_HTS');
-		expect(stableCoinDetail.symbol).toEqual('TEST');
-		expect(stableCoinDetail.decimals).toEqual(6);
+		expect(stableCoinDetail.tokenId).toEqual(
+			stableCoinCapabilitiesSC!.coin!.tokenId,
+		);
+		expect(stableCoinDetail.name).toEqual(
+			stableCoinCapabilitiesSC!.coin!.name,
+		);
+		expect(stableCoinDetail.symbol).toEqual(
+			stableCoinCapabilitiesSC!.coin!.symbol,
+		);
+		expect(stableCoinDetail.decimals).toEqual(
+			stableCoinCapabilitiesSC!.coin!.decimals,
+		);
 		expect(stableCoinDetail.evmProxyAddress?.toString()).toEqual(
-			'0x' + proxyEvmAddress,
+			stableCoinCapabilitiesSC!.coin!.evmProxyAddress?.value,
 		);
 		expect(stableCoinDetail.autoRenewAccount).toEqual(
-			CLIENT_ACCOUNT_ED25519.id,
+			CLIENT_ACCOUNT_ECDSA.id,
 		);
-		expect(stableCoinDetail.autoRenewAccountPeriod).toEqual(90);
+		expect(stableCoinDetail.autoRenewAccountPeriod).toEqual(
+			stableCoinCapabilitiesSC!.coin!.autoRenewAccountPeriod,
+		);
 		// expect(stableCoinDetail.treasury).toEqual(CLIENT_ACCOUNT_ECDSA.id);
 		expect(stableCoinDetail.paused).toEqual(false);
 		expect(stableCoinDetail.deleted).toEqual(false);
 		expect(stableCoinDetail.adminKey).toEqual(
-			CLIENT_ACCOUNT_ED25519.publicKey,
+			stableCoinCapabilitiesSC!.coin!.adminKey,
 		);
 		expect(stableCoinDetail.supplyKey).toEqual(
-			CLIENT_ACCOUNT_ED25519.publicKey,
+			stableCoinCapabilitiesSC!.coin!.supplyKey,
 		);
 		expect(stableCoinDetail.wipeKey).toEqual(
-			CLIENT_ACCOUNT_ED25519.publicKey,
+			stableCoinCapabilitiesSC!.coin!.wipeKey,
 		);
 		expect(stableCoinDetail.freezeKey).toEqual(
-			CLIENT_ACCOUNT_ED25519.publicKey,
+			stableCoinCapabilitiesSC!.coin!.freezeKey,
 		);
 		expect(stableCoinDetail.kycKey).toEqual(undefined);
 		expect(stableCoinDetail.pauseKey).toEqual(
-			CLIENT_ACCOUNT_ED25519.publicKey,
+			stableCoinCapabilitiesSC!.coin!.pauseKey,
 		);
 	}, 150000000);
 
@@ -113,13 +204,14 @@ describe('🧪 MirrorNodeAdapter', () => {
 
 	it('Test get account relationship token', async () => {
 		// StableCoin.create();
-		const tokenId = HederaId.from('0.0.49171802');
 		const accountTokenRelation = await mn.getAccountToken(
-			HEDERA_ID_ACCOUNT_ED25519,
-			tokenId,
+			CLIENT_ACCOUNT_ECDSA.id,
+			stableCoinCapabilitiesSC.coin.tokenId!,
 		);
 		expect(accountTokenRelation).toBeTruthy();
-		expect(accountTokenRelation?.tokenId).toStrictEqual(tokenId);
+		expect(accountTokenRelation?.tokenId).toStrictEqual(
+			stableCoinCapabilitiesSC.coin.tokenId!,
+		);
 		expect(accountTokenRelation?.createdTimestamp).not.toBeNull();
 		expect(accountTokenRelation?.balance).not.toBeNull();
 		expect(accountTokenRelation?.automaticAssociation).not.toBeNull();
@@ -129,10 +221,9 @@ describe('🧪 MirrorNodeAdapter', () => {
 
 	it('Test get account no relationship token', async () => {
 		// StableCoin.create();
-		const tokenId = HederaId.from('0.0.49207748');
 		const accountTokenRelation = await mn.getAccountToken(
 			HEDERA_ID_ACCOUNT_ED25519,
-			tokenId,
+			stableCoinCapabilitiesSC.coin.tokenId!,
 		);
 		expect(accountTokenRelation).toBeFalsy();
 	}, 150000000);

@@ -24,8 +24,9 @@ import Role from './Role.js';
 import StableCoin from './StableCoin.js';
 import Event from './Event.js';
 import ReserveDataFeed from './ReserveDataFeed.js';
+import Fees from './CustomFees.js';
 
-export { StableCoin, Account, Network, Role, Event, ReserveDataFeed };
+export { StableCoin, Account, Network, Role, Event, ReserveDataFeed, Fees };
 
 export * from './request';
 
@@ -36,3 +37,4 @@ export * from './Role.js';
 export * from './Event.js';
 export * from './Common.js';
 export * from './ReserveDataFeed.js';
+export * from './CustomFees.js';

@@ -18,7 +18,6 @@
  *
  */
 
-import { HTSTransactionAdapter } from '../../../../../src/port/out/hs/hts/HTSTransactionAdapter.js';
 import TransactionResponse from '../../../../../src/domain/context/transaction/TransactionResponse.js';
 import StableCoinCapabilities from '../../../../../src/domain/context/stablecoin/StableCoinCapabilities.js';
 import { StableCoin } from '../../../../../src/domain/context/stablecoin/StableCoin.js';
@@ -27,7 +26,7 @@ import BigDecimal from '../../../../../src/domain/context/shared/BigDecimal.js';
 import { HederaId } from '../../../../../src/domain/context/shared/HederaId.js';
 import { StableCoinRole } from '../../../../../src/domain/context/stablecoin/StableCoinRole.js';
 import Injectable from '../../../../../src/core/Injectable.js';
-import { Network } from '../../../../../src/index.js';
+import { LoggerTransports, Network, SDK } from '../../../../../src/index.js';
 import ConnectRequest, {
 	SupportedWallets,
 } from '../../../../../src/port/in/request/ConnectRequest.js';
@@ -43,13 +42,16 @@ import {
 } from '../../../../config.js';
 import StableCoinService from '../../../../../src/app/service/StableCoinService.js';
 import { RESERVE_DECIMALS } from '../../../../../src/domain/context/reserve/Reserve.js';
+import RPCQueryAdapter from '../../../../../src/port/out/rpc/RPCQueryAdapter.js';
+import { HTSTransactionAdapter } from '../../../../../src/port/out/hs/hts/HTSTransactionAdapter.js';
 
+SDK.log = { level: 'ERROR', transports: new LoggerTransports.Console() };
 describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 	// token to operate through HTS
 	let stableCoinCapabilitiesHTS: StableCoinCapabilities;
 	let stableCoinCapabilitiesSC: StableCoinCapabilities;
 	let stableCoinService: StableCoinService;
-
+	let rpcQueryAdapter: RPCQueryAdapter;
 	let th: HTSTransactionAdapter;
 	let tr: TransactionResponse;
 	const getBalance = async function (
@@ -65,6 +67,8 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		await connectAccount(CLIENT_ACCOUNT_ECDSA);
 		th = Injectable.resolve(HTSTransactionAdapter);
 		stableCoinService = Injectable.resolve(StableCoinService);
+		rpcQueryAdapter = Injectable.resolve(RPCQueryAdapter);
+		rpcQueryAdapter.init();
 
 		const coinSC = new StableCoin({
 			name: 'TestCoinSC',
@@ -374,6 +378,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 			StableCoinRole.PAUSE_ROLE,
 			StableCoinRole.FREEZE_ROLE,
 			StableCoinRole.DELETE_ROLE,
+			StableCoinRole.KYC_ROLE,
 		]);
 	}, 10000);
 
@@ -584,6 +589,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 
 	let th: HTSTransactionAdapter;
 	let tr: TransactionResponse;
+	let rpcQueryAdapter: RPCQueryAdapter;
 	const getBalance = async function (
 		hederaId: HederaId,
 		stableCoinCapabilities: StableCoinCapabilities,
@@ -597,6 +603,8 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 		await connectAccount(CLIENT_ACCOUNT_ED25519);
 		th = Injectable.resolve(HTSTransactionAdapter);
 		stableCoinService = Injectable.resolve(StableCoinService);
+		rpcQueryAdapter = Injectable.resolve(RPCQueryAdapter);
+		rpcQueryAdapter.init();
 
 		const coinSC = new StableCoin({
 			name: 'TestCoinSC',

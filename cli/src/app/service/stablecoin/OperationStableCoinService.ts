@@ -32,6 +32,13 @@ import {
   PauseRequest,
   DeleteRequest,
   GetSupplierAllowanceRequest,
+  AddFixedFeeRequest,
+  AddFractionalFeeRequest,
+  CustomFee,
+  UpdateCustomFeesRequest,
+  HBAR_DECIMALS,
+  MAX_PERCENTAGE_DECIMALS,
+  BigDecimal,
 } from 'hedera-stable-coin-sdk';
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
 import CashInStableCoinsService from './CashInStableCoinService.js';
@@ -46,6 +53,8 @@ import FreezeStableCoinService from './FreezeStableCoinService.js';
 import KYCStableCoinService from './KYCStableCoinService.js';
 import ListStableCoinsService from './ListStableCoinsService.js';
 import CapabilitiesStableCoinService from './CapabilitiesStableCoinService.js';
+import FeeStableCoinService from './FeeStableCoinService.js';
+import UtilitiesService from '../utilities/UtilitiesService.js';
 
 /**
  * Operation Stable Coin Service
@@ -59,6 +68,7 @@ export default class OperationStableCoinService extends Service {
   private stableCoinPaused;
   private stableCoinDeleted;
   private hasKycKey;
+  private hasfeeScheduleKey;
 
   constructor(tokenId?: string, memo?: string, symbol?: string) {
     super('Operation Stable Coin');
@@ -149,6 +159,8 @@ export default class OperationStableCoinService extends Service {
     this.stableCoinDeleted = capabilitiesStableCoin.coin.deleted;
     this.stableCoinPaused = capabilitiesStableCoin.coin.paused;
     this.hasKycKey = capabilitiesStableCoin.coin.kycKey !== undefined;
+    this.hasfeeScheduleKey =
+      capabilitiesStableCoin.coin.feeScheduleKey !== undefined;
 
     switch (
       await utilsService.defaultMultipleAsk(
@@ -582,6 +594,12 @@ export default class OperationStableCoinService extends Service {
           );
         }
         break;
+      case language.getText('wizard.stableCoinOptions.FeesMgmt'):
+        await utilsService.cleanAndShowBanner();
+
+        // Call to Supplier Role
+        await this.feesManagementFlow();
+        break;
       case language.getText('wizard.stableCoinOptions.RoleMgmt'):
         await utilsService.cleanAndShowBanner();
 
@@ -640,6 +658,457 @@ export default class OperationStableCoinService extends Service {
       tokenIsPaused,
       tokenIsDeleted,
     );
+  }
+
+  /**
+   * FeeManagement Flow
+   */
+
+  private async feesManagementFlow(): Promise<void> {
+    const configAccount = utilsService.getCurrentAccount();
+    const privateKey: RequestPrivateKey = {
+      key: configAccount.privateKey.key,
+      type: configAccount.privateKey.type,
+    };
+    const currentAccount: RequestAccount = {
+      accountId: configAccount.accountId,
+      privateKey: privateKey,
+    };
+
+    const stableCoinCapabilities = await this.getCapabilities(
+      currentAccount,
+      this.stableCoinPaused,
+      this.stableCoinDeleted,
+    );
+    const capabilities: Operation[] = stableCoinCapabilities.capabilities.map(
+      (a) => a.operation,
+    );
+    const detailsStableCoin =
+      await new DetailsStableCoinsService().getDetailsStableCoins(
+        this.stableCoinId,
+        false,
+      );
+
+    //const rolesAccount = this.getRolesAccount();
+
+    const feeManagementOptionsFiltered = language
+      .getArrayFromObject('feeManagement.options')
+      .filter((option) => {
+        switch (option) {
+          case language.getText('feeManagement.options.Create'):
+          case language.getText('feeManagement.options.Remove'):
+          case language.getText('feeManagement.options.List'):
+            const showCustomFee: boolean =
+              option == language.getText('feeManagement.options.Create')
+                ? capabilities.includes(Operation.CREATE_CUSTOM_FEE)
+                : capabilities.includes(Operation.REMOVE_CUSTOM_FEE);
+            /*if (showCustomFee && rolesAccount) {
+              showCustomFee =
+                rolesAccount.includes(StableCoinRole.CREATE_CUSTOM_FEE) ||
+                this.isOperationAccess(
+                  stableCoinCapabilities,
+                  Operation.CREATE_CUSTOM_FEE,
+                  Access.HTS,
+                );
+            }*/
+            return showCustomFee;
+            break;
+        }
+        // TODO DELETE STABLE COIN
+        return true;
+      });
+
+    // const accountTarget = '0.0.0';
+    switch (
+      await utilsService.defaultMultipleAsk(
+        language.getText('stablecoin.askEditCashInRole'),
+        feeManagementOptionsFiltered,
+        false,
+        configAccount.network,
+        `${configAccount.accountId} - ${configAccount.alias}`,
+        this.stableCoinWithSymbol,
+        this.stableCoinPaused,
+        this.stableCoinDeleted,
+      )
+    ) {
+      case language.getText('feeManagement.options.Create'):
+        await utilsService.cleanAndShowBanner();
+
+        utilsService.displayCurrentUserInfo(
+          configAccount,
+          this.stableCoinWithSymbol,
+        );
+
+        const feeType = await utilsService.defaultMultipleAsk(
+          language.getText('feeManagement.askFeeType'),
+          language.getArrayFromObject('feeManagement.chooseFeeType'),
+        );
+
+        if (
+          feeType == language.getText('feeManagement.chooseFeeType.FixedFee')
+        ) {
+          await this.createFixedFee(detailsStableCoin.decimals ?? 0);
+        } else {
+          await this.createFractionalFee(detailsStableCoin.decimals ?? 0);
+        }
+
+        break;
+      case language.getText('feeManagement.options.Remove'):
+        await utilsService.cleanAndShowBanner();
+
+        utilsService.displayCurrentUserInfo(
+          configAccount,
+          this.stableCoinWithSymbol,
+        );
+
+        await this.removeFees(detailsStableCoin.customFees);
+
+        break;
+      case language.getText('feeManagement.options.List'):
+        console.log(
+          new FeeStableCoinService().getFormatedFees(
+            detailsStableCoin.customFees,
+          ),
+        );
+        break;
+      case feeManagementOptionsFiltered[
+        feeManagementOptionsFiltered.length - 1
+      ]:
+      default:
+        await utilsService.cleanAndShowBanner();
+        await this.operationsStableCoin();
+    }
+    await this.feesManagementFlow();
+  }
+
+  private async removeFees(customFees): Promise<void> {
+    const FeesToKeep: CustomFee[] = [];
+    const FeesToRemove: CustomFee[] = [];
+
+    for (let i = 0; i < customFees.length; i++) {
+      const fee = customFees[i];
+      console.log(new FeeStableCoinService().getFormatedFees([fee]));
+      const remove = await utilsService.defaultConfirmAsk(
+        language.getText('feeManagement.askRemoveFee'),
+        false,
+      );
+      if (remove) FeesToRemove.push(fee);
+      else FeesToKeep.push(fee);
+    }
+
+    console.log(language.getText('feeManagement.listOfFeesToRemove'));
+    console.log(new FeeStableCoinService().getFormatedFees(FeesToRemove));
+
+    const confirm = await this.askFeeOperationConfirmation(
+      language.getText('feeManagement.confirmRemove'),
+    );
+
+    if (!confirm) return;
+
+    try {
+      const updateCustomFeesRequest: UpdateCustomFeesRequest =
+        new UpdateCustomFeesRequest({
+          tokenId: this.stableCoinId,
+          customFees: FeesToKeep,
+        });
+      await new FeeStableCoinService().updateFees(updateCustomFeesRequest);
+    } catch (error) {
+      await utilsService.askErrorConfirmation(
+        async () => await this.operationsStableCoin(),
+        error,
+      );
+    }
+  }
+
+  private async createFractionalFee(decimals: number): Promise<void> {
+    const addFractionalFeeRequest: AddFractionalFeeRequest =
+      new AddFractionalFeeRequest({
+        tokenId: this.stableCoinId,
+        collectorId: '',
+        amountNumerator: '',
+        amountDenominator: '',
+        min: '',
+        max: '',
+        decimals: decimals,
+        net: false,
+        collectorsExempt: true,
+      });
+
+    const fractionType = await utilsService.defaultMultipleAsk(
+      language.getText('feeManagement.askFractionType'),
+      language.getArrayFromObject('feeManagement.chooseFractionalType'),
+    );
+
+    if (
+      fractionType ==
+      language.getText('feeManagement.chooseFractionalType.Percentage')
+    ) {
+      let check_Ok = true;
+      let numerator = BigDecimal.fromString('0');
+      const exponential = 10 ** MAX_PERCENTAGE_DECIMALS;
+      const denominator = 100 * exponential;
+
+      do {
+        check_Ok = true;
+
+        const percentage = await utilsService.defaultSingleAsk(
+          language.getText('feeManagement.askPercentageFee'),
+          '1',
+        );
+
+        try {
+          const valueDecimals = BigDecimal.getDecimalsFromString(percentage);
+          if (valueDecimals > MAX_PERCENTAGE_DECIMALS) throw new Error();
+
+          numerator = BigDecimal.fromString(
+            percentage,
+            MAX_PERCENTAGE_DECIMALS,
+          );
+
+          const zero = BigDecimal.fromString('0', MAX_PERCENTAGE_DECIMALS);
+
+          if (
+            !numerator.isGreaterThan(zero) ||
+            numerator.isGreaterOrEqualThan(
+              BigDecimal.fromString(denominator.toString()),
+            )
+          )
+            throw new Error();
+        } catch (e) {
+          new UtilitiesService().showError(
+            `Invalid Percentage. Please check that the entered value is a positive number with no more than ${MAX_PERCENTAGE_DECIMALS} decimals`,
+          );
+          check_Ok = false;
+        }
+      } while (!check_Ok);
+      addFractionalFeeRequest.amountNumerator = Math.round(
+        numerator.toUnsafeFloat() * exponential,
+      ).toString();
+      addFractionalFeeRequest.amountDenominator = denominator.toString();
+    } else {
+      addFractionalFeeRequest.amountNumerator =
+        await utilsService.defaultSingleAsk(
+          language.getText('feeManagement.askNumerator'),
+          '1',
+        );
+      await utilsService.handleValidation(
+        () => addFractionalFeeRequest.validate('amountNumerator'),
+        async () => {
+          addFractionalFeeRequest.amountNumerator =
+            await utilsService.defaultSingleAsk(
+              language.getText('feeManagement.askNumerator'),
+              '1',
+            );
+        },
+      );
+
+      addFractionalFeeRequest.amountDenominator =
+        await utilsService.defaultSingleAsk(
+          language.getText('feeManagement.askDenominator'),
+          '1',
+        );
+      await utilsService.handleValidation(
+        () => addFractionalFeeRequest.validate('amountDenominator'),
+        async () => {
+          addFractionalFeeRequest.amountDenominator =
+            await utilsService.defaultSingleAsk(
+              language.getText('feeManagement.askDenominator'),
+              '1',
+            );
+        },
+      );
+    }
+
+    addFractionalFeeRequest.min = await utilsService.defaultSingleAsk(
+      language.getText('feeManagement.askMin'),
+      '0',
+    );
+    await utilsService.handleValidation(
+      () => addFractionalFeeRequest.validate('min'),
+      async () => {
+        addFractionalFeeRequest.min = await utilsService.defaultSingleAsk(
+          language.getText('feeManagement.askMin'),
+          '0',
+        );
+      },
+    );
+
+    addFractionalFeeRequest.max = await utilsService.defaultSingleAsk(
+      language.getText('feeManagement.askMax'),
+      '0',
+    );
+    await utilsService.handleValidation(
+      () => addFractionalFeeRequest.validate('max'),
+      async () => {
+        addFractionalFeeRequest.max = await utilsService.defaultSingleAsk(
+          language.getText('feeManagement.askMax'),
+          '0',
+        );
+      },
+    );
+
+    addFractionalFeeRequest.net = await utilsService.defaultConfirmAsk(
+      language.getText('feeManagement.askAssesmentMethod'),
+      true,
+    );
+
+    addFractionalFeeRequest.collectorsExempt =
+      await utilsService.defaultConfirmAsk(
+        language.getText('feeManagement.askCollectorsExempt'),
+        true,
+      );
+
+    addFractionalFeeRequest.collectorId = await utilsService.defaultSingleAsk(
+      language.getText('feeManagement.askCollectorId'),
+      '0.0.0',
+    );
+
+    await utilsService.handleValidation(
+      () => addFractionalFeeRequest.validate('collectorId'),
+      async () => {
+        addFractionalFeeRequest.collectorId =
+          await utilsService.defaultSingleAsk(
+            language.getText('feeManagement.askCollectorId'),
+            '0.0.0',
+          );
+      },
+    );
+
+    console.log({
+      numerator: addFractionalFeeRequest.amountNumerator,
+      denominator: addFractionalFeeRequest.amountDenominator,
+      min: addFractionalFeeRequest.min,
+      max: addFractionalFeeRequest.max,
+      feesPaidBy: addFractionalFeeRequest.net ? 'Sender' : 'Receiver',
+      collector: addFractionalFeeRequest.collectorId,
+      collectorsExempt: addFractionalFeeRequest.collectorsExempt,
+    });
+
+    const confirm = await this.askFeeOperationConfirmation(
+      language.getText('feeManagement.confirmCreate'),
+    );
+
+    if (!confirm) return;
+
+    try {
+      await new FeeStableCoinService().addFractionalFee(
+        addFractionalFeeRequest,
+      );
+    } catch (error) {
+      await utilsService.askErrorConfirmation(
+        async () => await this.operationsStableCoin(),
+        error,
+      );
+    }
+  }
+
+  private async createFixedFee(decimals: number): Promise<void> {
+    const addFixedFeeRequest: AddFixedFeeRequest = new AddFixedFeeRequest({
+      tokenId: this.stableCoinId,
+      amount: '',
+      decimals: HBAR_DECIMALS,
+      tokenIdCollected: '',
+      collectorId: '',
+      collectorsExempt: true,
+    });
+
+    const feesInHBAR = await utilsService.defaultConfirmAsk(
+      language.getText('feeManagement.askHBAR'),
+      true,
+    );
+
+    addFixedFeeRequest.tokenIdCollected = '0.0.0';
+
+    if (!feesInHBAR) {
+      addFixedFeeRequest.tokenIdCollected = await utilsService.defaultSingleAsk(
+        language.getText('feeManagement.askTokenId'),
+        this.stableCoinId,
+      );
+
+      if (addFixedFeeRequest.tokenIdCollected !== this.stableCoinId) {
+        const detailsExternalStableCoin =
+          await new DetailsStableCoinsService().getDetailsStableCoins(
+            addFixedFeeRequest.tokenIdCollected,
+            false,
+          );
+
+        addFixedFeeRequest.decimals = detailsExternalStableCoin.decimals ?? 0;
+      } else addFixedFeeRequest.decimals = decimals;
+
+      await utilsService.handleValidation(
+        () => addFixedFeeRequest.validate('tokenIdCollected'),
+        async () => {
+          addFixedFeeRequest.tokenIdCollected =
+            await utilsService.defaultSingleAsk(
+              language.getText('feeManagement.askTokenId'),
+              this.stableCoinId,
+            );
+        },
+      );
+    }
+
+    addFixedFeeRequest.amount = await utilsService.defaultSingleAsk(
+      language.getText('feeManagement.askAmount'),
+      '0',
+    );
+    await utilsService.handleValidation(
+      () => addFixedFeeRequest.validate('amount'),
+      async () => {
+        addFixedFeeRequest.amount = await utilsService.defaultSingleAsk(
+          language.getText('feeManagement.askAmount'),
+          '0',
+        );
+      },
+    );
+
+    addFixedFeeRequest.collectorsExempt = await utilsService.defaultConfirmAsk(
+      language.getText('feeManagement.askCollectorsExempt'),
+      true,
+    );
+
+    addFixedFeeRequest.collectorId = await utilsService.defaultSingleAsk(
+      language.getText('feeManagement.askCollectorId'),
+      '0.0.0',
+    );
+
+    await utilsService.handleValidation(
+      () => addFixedFeeRequest.validate('collectorId'),
+      async () => {
+        addFixedFeeRequest.collectorId = await utilsService.defaultSingleAsk(
+          language.getText('feeManagement.askCollectorId'),
+          '0.0.0',
+        );
+      },
+    );
+
+    console.log({
+      amount: addFixedFeeRequest.amount,
+      token:
+        addFixedFeeRequest.tokenIdCollected !== '0.0.0'
+          ? addFixedFeeRequest.tokenIdCollected
+          : 'HBAR',
+      collector: addFixedFeeRequest.collectorId,
+      collectorsExempt: addFixedFeeRequest.collectorsExempt,
+    });
+
+    const confirm = await this.askFeeOperationConfirmation(
+      language.getText('feeManagement.confirmCreate'),
+    );
+
+    if (!confirm) return;
+
+    try {
+      await new FeeStableCoinService().addFixedFee(addFixedFeeRequest);
+    } catch (error) {
+      await utilsService.askErrorConfirmation(
+        async () => await this.operationsStableCoin(),
+        error,
+      );
+    }
+  }
+
+  private async askFeeOperationConfirmation(Text: string): Promise<boolean> {
+    return await utilsService.defaultConfirmAsk(Text, true);
   }
 
   /**
@@ -1304,6 +1773,8 @@ export default class OperationStableCoinService extends Service {
             capabilities.includes(Operation.DELETE))) ||
         (option === language.getText('wizard.stableCoinOptions.RoleMgmt') &&
           capabilities.includes(Operation.ROLE_MANAGEMENT)) ||
+        (option === language.getText('wizard.stableCoinOptions.FeesMgmt') &&
+          this.hasfeeScheduleKey) ||
         (option === language.getText('wizard.stableCoinOptions.RoleRefresh') &&
           !this.stableCoinDeleted) ||
         (option === language.getText('wizard.stableCoinOptions.Details') &&

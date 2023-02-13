@@ -30,7 +30,7 @@
 	},
 	"managementPermissions": {
 		"currentUserKey": "Current user key",
-		"description": "Allow all the following features to be managed through smart contracts",
+		"description": "Assign default values",
 		"pause": "Pause",
 		"freeze": "Freeze",
 		"kyc": "KYC",
@@ -41,6 +41,7 @@
 		"rescue": "Rescue",
 		"admin": "Admin",
 		"supply": "Supply",
+		"feeSchedule": "Fee Schedule",
 		"theSmartContract": "The smart contract",
 		"title": "Stable coin management permissions",
 		"totalSupply": "Total supply",

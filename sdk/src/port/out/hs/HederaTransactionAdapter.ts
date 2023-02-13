@@ -26,6 +26,7 @@ import {
 	Transaction,
 	PublicKey as HPublicKey,
 	ContractId as HContractId,
+	CustomFee as HCustomFee,
 } from '@hashgraph/sdk';
 import TransactionAdapter from '../TransactionAdapter';
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
@@ -82,6 +83,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				coin.freezeKey,
 				coin.wipeKey,
 				coin.supplyKey,
+				coin.feeScheduleKey,
 				coin.pauseKey,
 			];
 
@@ -110,6 +112,10 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 							break;
 						}
 						case 5: {
+							key.keyType = 32; // fee schedule
+							break;
+						}
+						case 6: {
 							key.keyType = 64; // pause
 							break;
 						}
@@ -723,6 +729,20 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		);
 	}
 
+	public async updateCustomFees(
+		coin: StableCoinCapabilities,
+		customFees: HCustomFee[],
+	): Promise<TransactionResponse<boolean, Error>> {
+		const params = new Params({
+			customFees: customFees,
+		});
+		return this.performHTSOperation(
+			coin,
+			Operation.CREATE_CUSTOM_FEE,
+			params,
+		);
+	}
+
 	private async performOperation(
 		coin: StableCoinCapabilities,
 		operation: Operation,
@@ -933,6 +953,13 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				);
 				break;
 
+			case Operation.CREATE_CUSTOM_FEE:
+				t = HTSTransactionBuilder.buildUpdateCustomFeesTransaction(
+					coin.coin.tokenId?.value!,
+					params.customFees!,
+				);
+				break;
+
 			default:
 				throw new Error(`Operation does not exist through HTS`);
 		}
@@ -1004,21 +1031,25 @@ class Params {
 	targetId?: HederaId;
 	amount?: BigDecimal;
 	reserveAddress?: ContractId;
+	customFees?: HCustomFee[];
 
 	constructor({
 		role,
 		targetId,
 		amount,
 		reserveAddress,
+		customFees,
 	}: {
 		role?: string;
 		targetId?: HederaId;
 		amount?: BigDecimal;
 		reserveAddress?: ContractId;
+		customFees?: HCustomFee[];
 	}) {
 		this.role = role;
 		this.targetId = targetId;
 		this.amount = amount;
 		this.reserveAddress = reserveAddress;
+		this.customFees = customFees;
 	}
 }

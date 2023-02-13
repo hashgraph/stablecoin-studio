@@ -176,6 +176,9 @@ const CoinDropdown = () => {
 					stableCoinDetails?.supplyKey && JSON.parse(JSON.stringify(stableCoinDetails.supplyKey)),
 				pauseKey:
 					stableCoinDetails?.pauseKey && JSON.parse(JSON.stringify(stableCoinDetails.pauseKey)),
+				feeScheduleKey:
+					stableCoinDetails?.feeScheduleKey &&
+					JSON.parse(JSON.stringify(stableCoinDetails.feeScheduleKey)),
 			}),
 		);
 	};
