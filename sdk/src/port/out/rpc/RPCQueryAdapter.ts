@@ -31,7 +31,7 @@ import LogService from '../../../app/service/LogService.js';
 import {
 	AggregatorV3Interface__factory,
 	HederaERC20__factory,
-} from '@hashgraph/stablecoin-npm-contracts';
+} from '@hashgraph-dev/stablecoin-npm-contracts';
 import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
 import EvmAddress from '../../../domain/context/contract/EvmAddress.js';
