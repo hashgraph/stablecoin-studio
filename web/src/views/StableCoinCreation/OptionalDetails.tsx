@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import InputController from '../../components/Form/InputController';
 import InputNumberController from '../../components/Form/InputNumberController';
 import { SelectController } from '../../components/Form/SelectController';
+import { propertyNotFound } from '../../constant';
 import { handleRequestValidation } from '../../utils/validationsHelper';
 
 interface OptionalDetailsProps {
@@ -86,10 +87,12 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 						isRequired
 						control={control}
 						name={'initialSupply'}
-						label={t('stableCoinCreation:optionalDetails.initialSupply')}
-						placeholder={t('stableCoinCreation:optionalDetails.placeholder', {
-							placeholder: t('stableCoinCreation:optionalDetails.initialSupply'),
-						})}
+						label={t('stableCoinCreation:optionalDetails.initialSupply') ?? propertyNotFound}
+						placeholder={
+							t('stableCoinCreation:optionalDetails.placeholder', {
+								placeholder: t('stableCoinCreation:optionalDetails.initialSupply'),
+							}) ?? propertyNotFound
+						}
 						onChangeAux={handleResetMaxSupply}
 					/>
 					<SelectController
@@ -106,7 +109,7 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 					{isSupplyTypeFinite && (
 						<InputController
 							rules={{
-								required: t(`global:validations.required`),
+								required: t(`global:validations.required`) ?? propertyNotFound,
 								validate: {
 									validation: (value: string) => {
 										request.maxSupply = value;
@@ -118,15 +121,17 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 							isRequired
 							control={control}
 							name={'maxSupply'}
-							label={t('stableCoinCreation:optionalDetails.maxSupply')}
-							placeholder={t('stableCoinCreation:optionalDetails.placeholder', {
-								placeholder: t('stableCoinCreation:optionalDetails.maxSupply'),
-							})}
+							label={t('stableCoinCreation:optionalDetails.maxSupply') ?? propertyNotFound}
+							placeholder={
+								t('stableCoinCreation:optionalDetails.placeholder', {
+									placeholder: t('stableCoinCreation:optionalDetails.maxSupply'),
+								}) ?? propertyNotFound
+							}
 						/>
 					)}
 					<InputNumberController
 						rules={{
-							required: t(`global:validations.required`),
+							required: t(`global:validations.required`) ?? propertyNotFound,
 							validate: {
 								validation: (value: string) => {
 									request.decimals = value;
@@ -138,10 +143,12 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 						isRequired
 						control={control}
 						name={'decimals'}
-						label={t('stableCoinCreation:optionalDetails.decimals')}
-						placeholder={t('stableCoinCreation:optionalDetails.placeholder', {
-							placeholder: t('stableCoinCreation:optionalDetails.decimals'),
-						})}
+						label={t('stableCoinCreation:optionalDetails.decimals') ?? propertyNotFound}
+						placeholder={
+							t('stableCoinCreation:optionalDetails.placeholder', {
+								placeholder: t('stableCoinCreation:optionalDetails.decimals'),
+							}) ?? propertyNotFound
+						}
 						maxValue={18}
 						initialValue={6}
 					/>

@@ -17,7 +17,7 @@ import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import {
     upgradeContract,
-    rollBack,
+    rollBackContract,
 } from '../scripts/contractsLifeCycle/upgrade'
 import {
     UpgradeTestContract__factory,
@@ -236,7 +236,7 @@ async function checkUpgradeTestContractUpgradability_Correct_1_1(): Promise<void
     // Rolling Back test
     console.log(`Rolling back. please wait...`)
 
-    await rollBack(
+    await rollBackContract(
         hederaReserveAddress.toSolidityAddress(),
         newImpl.toSolidityAddress(),
         operatorClient,
@@ -267,7 +267,7 @@ async function checkUpgradeTestContractUpgradability_Correct_1_2(): Promise<void
     // Rolling Back test
     console.log(`Rolling back. please wait...`)
 
-    await rollBack(
+    await rollBackContract(
         hederaReserveAddress.toSolidityAddress(),
         newImpl.toSolidityAddress(),
         operatorClient,
@@ -298,7 +298,7 @@ async function checkUpgradeTestContractUpgradability_Correct_1_3(): Promise<void
     // Rolling Back test
     console.log(`Rolling back. please wait...`)
 
-    await rollBack(
+    await rollBackContract(
         hederaReserveAddress.toSolidityAddress(),
         newImpl.toSolidityAddress(),
         operatorClient,
@@ -327,7 +327,7 @@ async function checkUpgradeTestContractUpgradability_Correct_2(): Promise<void> 
     // Rolling Back test
     console.log(`Rolling back. please wait...`)
 
-    await rollBack(
+    await rollBackContract(
         hederaReserveAddress.toSolidityAddress(),
         newImpl.toSolidityAddress(),
         operatorClient,
@@ -356,7 +356,7 @@ async function checkUpgradeTestContractUpgradability_Correct_3(): Promise<void> 
     // Rolling Back test
     console.log(`Rolling back. please wait...`)
 
-    await rollBack(
+    await rollBackContract(
         hederaReserveAddress.toSolidityAddress(),
         newImpl.toSolidityAddress(),
         operatorClient,
@@ -385,7 +385,7 @@ async function checkUpgradeTestContractUpgradability_Correct_4(): Promise<void> 
     // Rolling Back test
     console.log(`Rolling back. please wait...`)
 
-    await rollBack(
+    await rollBackContract(
         hederaReserveAddress.toSolidityAddress(),
         newImpl.toSolidityAddress(),
         operatorClient,
@@ -414,7 +414,7 @@ async function checkUpgradeTestContractUpgradability_Correct_5(): Promise<void> 
     // Rolling Back test
     console.log(`Rolling back. please wait...`)
 
-    await rollBack(
+    await rollBackContract(
         hederaReserveAddress.toSolidityAddress(),
         newImpl.toSolidityAddress(),
         operatorClient,
@@ -443,7 +443,7 @@ async function checkUpgradeTestContractUpgradability_Correct_6(): Promise<void> 
     // Rolling Back test
     console.log(`Rolling back. please wait...`)
 
-    await rollBack(
+    await rollBackContract(
         hederaReserveAddress.toSolidityAddress(),
         newImpl.toSolidityAddress(),
         operatorClient,
@@ -472,7 +472,7 @@ async function checkUpgradeTestContractUpgradability_Correct_7(): Promise<void> 
     // Rolling Back test
     console.log(`Rolling back. please wait...`)
 
-    await rollBack(
+    await rollBackContract(
         hederaReserveAddress.toSolidityAddress(),
         newImpl.toSolidityAddress(),
         operatorClient,

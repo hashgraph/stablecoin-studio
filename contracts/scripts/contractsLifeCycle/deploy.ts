@@ -5,7 +5,7 @@ import {
     ContractId,
 } from '@hashgraph/sdk'
 
-export async function deployContractSDK(
+export async function deployContract(
     factory: any,
     privateKey: string,
     clientOperator: Client,

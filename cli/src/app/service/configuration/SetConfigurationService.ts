@@ -11,12 +11,6 @@ import { IConsensusNodeConfig } from '../../../domain/configuration/interfaces/I
 import { INetworkConfig } from '../../../domain/configuration/interfaces/INetworkConfig.js';
 import { IFactoryConfig } from '../../../domain/configuration/interfaces/IFactoryConfig.js';
 import { IHederaERC20Config } from '../../../domain/configuration/interfaces/IHederaERC20Config.js';
-import {
-  HederaERC20AddressTestnet,
-  HederaERC20AddressPreviewnet,
-  FactoryAddressTestnet,
-  FactoryAddressPreviewnet,
-} from 'hedera-stable-coin-sdk';
 const colors = require('colors');
 
 /**
@@ -26,6 +20,7 @@ export default class SetConfigurationService extends Service {
   constructor() {
     super('Set Configuration');
   }
+  private ZERO_ADDRESS = '0.0.0';
 
   /**
    * Initialise the configuration for first time or with "init" command
@@ -147,13 +142,13 @@ export default class SetConfigurationService extends Service {
 
       let accountId = await utilsService.defaultSingleAsk(
         language.getText('configuration.askAccountId'),
-        '0.0.0',
+        this.ZERO_ADDRESS,
       );
       while (!/\d\.\d\.\d/.test(accountId)) {
         console.log(language.getText('validations.wrongFormatAddress'));
         accountId = await utilsService.defaultSingleAsk(
           language.getText('configuration.askAccountId'),
-          '0.0.0',
+          this.ZERO_ADDRESS,
         );
       }
 
@@ -206,12 +201,34 @@ export default class SetConfigurationService extends Service {
 
   public async configureFactories(): Promise<IFactoryConfig[]> {
     const factories: IFactoryConfig[] = [];
+    let factory_testnet = await utilsService.defaultSingleAsk(
+      language.getText('configuration.askFactoryAddress') + ' | TESTNET',
+      this.ZERO_ADDRESS,
+    );
+    while (!/\d\.\d\.\d/.test(factory_testnet)) {
+      console.log(language.getText('validations.wrongFormatAddress'));
+      factory_testnet = await utilsService.defaultSingleAsk(
+        language.getText('configuration.askFactoryAddress') + ' | TESTNET',
+        this.ZERO_ADDRESS,
+      );
+    }
+    let factory_previewnet = await utilsService.defaultSingleAsk(
+      language.getText('configuration.askFactoryAddress') + ' | PREVIEWNET',
+      this.ZERO_ADDRESS,
+    );
+    while (!/\d\.\d\.\d/.test(factory_previewnet)) {
+      console.log(language.getText('validations.wrongFormatAddress'));
+      factory_previewnet = await utilsService.defaultSingleAsk(
+        language.getText('configuration.askFactoryAddress') + ' | PREVIEWNET',
+        this.ZERO_ADDRESS,
+      );
+    }
     factories.push({
-      id: FactoryAddressTestnet,
+      id: factory_testnet,
       network: 'testnet',
     });
     factories.push({
-      id: FactoryAddressPreviewnet,
+      id: factory_previewnet,
       network: 'previewnet',
     });
 
@@ -224,12 +241,35 @@ export default class SetConfigurationService extends Service {
 
   public async configureHederaERC20s(): Promise<IHederaERC20Config[]> {
     const hederaERC20s: IHederaERC20Config[] = [];
+    let hederaERC20_testnet = await utilsService.defaultSingleAsk(
+      language.getText('configuration.askHederaERC20Address') + ' | TESTNET',
+      this.ZERO_ADDRESS,
+    );
+    while (!/\d\.\d\.\d/.test(hederaERC20_testnet)) {
+      console.log(language.getText('validations.wrongFormatAddress'));
+      hederaERC20_testnet = await utilsService.defaultSingleAsk(
+        language.getText('configuration.askHederaERC20Address') + ' | TESTNET',
+        this.ZERO_ADDRESS,
+      );
+    }
+    let hederaERC20_previewnet = await utilsService.defaultSingleAsk(
+      language.getText('configuration.askHederaERC20Address') + ' | PREVIEWNET',
+      this.ZERO_ADDRESS,
+    );
+    while (!/\d\.\d\.\d/.test(hederaERC20_previewnet)) {
+      console.log(language.getText('validations.wrongFormatAddress'));
+      hederaERC20_previewnet = await utilsService.defaultSingleAsk(
+        language.getText('configuration.askHederaERC20Address') +
+          ' | PREVIEWNET',
+        this.ZERO_ADDRESS,
+      );
+    }
     hederaERC20s.push({
-      id: HederaERC20AddressTestnet,
+      id: hederaERC20_testnet,
       network: 'testnet',
     });
     hederaERC20s.push({
-      id: HederaERC20AddressPreviewnet,
+      id: hederaERC20_previewnet,
       network: 'previewnet',
     });
 

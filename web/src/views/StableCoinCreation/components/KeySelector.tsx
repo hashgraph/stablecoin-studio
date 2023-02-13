@@ -5,6 +5,7 @@ import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import InputController from '../../../components/Form/InputController';
 import { SelectController } from '../../../components/Form/SelectController';
+import { propertyNotFound } from '../../../constant';
 import { handleRequestValidation } from '../../../utils/validationsHelper';
 
 export const OTHER_KEY_VALUE = 3;
@@ -85,7 +86,7 @@ const KeySelector = ({ control, name, label, request }: KeySelectorProps) => {
 			{isOtherKeyOptionSelected?.value === OTHER_KEY_VALUE && (
 				<InputController
 					rules={{
-						required: t(`global:validations.required`),
+						required: t(`global:validations.required`) ?? propertyNotFound,
 						validate: {
 							validation: (value: string) => {
 								// @ts-ignore
@@ -99,9 +100,11 @@ const KeySelector = ({ control, name, label, request }: KeySelectorProps) => {
 					isRequired
 					control={control}
 					name={name + 'Other'}
-					placeholder={t('stableCoinCreation:managementPermissions.introduce', {
-						name: label,
-					})}
+					placeholder={
+						t('stableCoinCreation:managementPermissions.introduce', {
+							name: label,
+						}) ?? propertyNotFound
+					}
 				/>
 			)}
 		</VStack>

@@ -1,6 +1,6 @@
 import { upgrades } from 'hardhat'
 import { Client, ContractId } from '@hashgraph/sdk'
-import { deployContractSDK } from './deploy'
+import { deployContract } from './deploy'
 import { ValidationOptions } from '@openzeppelin/upgrades-core'
 import { ProxyAdmin__factory } from '../../typechain-types'
 import { contractCall, createContractFactory } from './utils'
@@ -47,7 +47,7 @@ export async function upgradeContract(
         `Deploying New ${newImpl__factory.name} Implementation. please wait...`
     )
 
-    const newImpl = await deployContractSDK(
+    const newImpl = await deployContract(
         newImpl__factory,
         privateKey,
         clientOperator
@@ -81,7 +81,7 @@ export async function upgradeContract(
     return newImpl
 }
 
-export async function rollBack(
+export async function rollBackContract(
     oldImpl__address: string,
     newImpl__address: string,
     clientOperator: Client,

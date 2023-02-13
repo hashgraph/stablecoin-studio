@@ -54,8 +54,9 @@ import { FactoryKey } from '../../../domain/context/factory/FactoryKey.js';
 import { FactoryStableCoin } from '../../../domain/context/factory/FactoryStableCoin.js';
 import { TOKEN_CREATION_COST_HBAR } from '../../../core/Constants.js';
 import LogService from '../../../app/service/LogService.js';
-import { TransactionResponseError } from '../error/TransactionResponseError.js';
 import { RESERVE_DECIMALS } from '../../../domain/context/reserve/Reserve.js';
+import TransactionResultViewModel from '../mirror/response/TransactionResultViewModel.js';
+import { TransactionResponseError } from '../error/TransactionResponseError.js';
 
 export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	private web3 = new Web3();
@@ -729,7 +730,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		gas: number,
 		params?: Params,
 		transactionType: TransactionType = TransactionType.RECEIPT,
-		contractAbi: any[] = HederaERC20__factory.abi,
+		contractAbi: any = HederaERC20__factory.abi,
 	): Promise<TransactionResponse> {
 		try {
 			switch (CapabilityDecider.decide(coin, operation)) {
@@ -771,11 +772,18 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			}
 		} catch (error) {
 			LogService.logError(error);
+			const transactionId: string =
+				(error as any).error?.transactionId.toString() ??
+				(error as any)?.transactionId.toString();
+			const transactionError: TransactionResultViewModel =
+				await this.mirrorNodeAdapter.getTransactionFinalError(
+					transactionId,
+				);
 			throw new TransactionResponseError({
-				message: `Unexpected error in HederaTransactionHandler ${operationName} operation: ${error}`,
-				transactionId:
-					(error as any).error?.transactionId ??
-					(error as any)?.transactionId,
+				message: `Unexpected error in HederaTransactionHandler ${operationName} operation: ${JSON.stringify(
+					transactionError,
+				)}`,
+				transactionId: transactionId,
 			});
 		}
 	}
@@ -786,7 +794,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		gas: number,
 		params?: Params,
 		transactionType: TransactionType = TransactionType.RECEIPT,
-		contractAbi: any[] = HederaERC20__factory.abi,
+		contractAbi: any = HederaERC20__factory.abi,
 	): Promise<TransactionResponse> {
 		const filteredContractParams: any[] =
 			params === undefined || params === null
@@ -937,7 +945,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		parameters: any[],
 		gas: number,
 		trxType: TransactionType,
-		abi: any[],
+		abi: any,
 		value?: number,
 	): Promise<TransactionResponse> {
 		const functionCallParameters = this.encodeFunctionCall(
@@ -964,7 +972,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	private encodeFunctionCall(
 		functionName: string,
 		parameters: any[],
-		abi: any[],
+		abi: any,
 	): Uint8Array {
 		const functionAbi = abi.find(
 			(func: { name: any; type: string }) =>

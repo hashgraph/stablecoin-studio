@@ -19,6 +19,7 @@
  */
 
 import WalletEvent from '../../../app/service/event/WalletEvent.js';
+import Configuration from '../../../domain/context/network/Configuration.js';
 import { Environment } from '../../../domain/context/network/Environment.js';
 import { SupportedWallets } from '../../../domain/context/network/Wallet.js';
 import { BaseRequest } from './BaseRequest.js';
@@ -32,16 +33,20 @@ export default class InitializationRequest
 {
 	network: Environment;
 	events?: Partial<WalletEvent>;
+	configuration?: Configuration;
 
 	constructor({
 		network,
 		events,
+		configuration,
 	}: {
 		network: Environment;
 		events?: Partial<WalletEvent>;
+		configuration?: Configuration;
 	}) {
 		super({});
 		this.network = network;
 		this.events = events;
+		this.configuration = configuration;
 	}
 }

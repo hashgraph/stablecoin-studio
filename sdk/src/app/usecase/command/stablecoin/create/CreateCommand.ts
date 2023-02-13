@@ -43,9 +43,9 @@ export class CreateCommandResponse implements CommandResponse {
 export class CreateCommand extends Command<CreateCommandResponse> {
 	constructor(
 		public readonly coin: StableCoinProps,
-		public readonly factory: ContractId,
-		public readonly hederaERC20: ContractId,
 		public readonly createReserve: boolean,
+		public readonly factory?: ContractId,
+		public readonly hederaERC20?: ContractId,
 		public readonly reserveAddress?: ContractId,
 		public readonly reserveInitialAmount?: BigDecimal,
 	) {

@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import type { CreateRequest } from 'hedera-stable-coin-sdk';
 import { SELECTED_WALLET_PAIRED } from '../../store/slices/walletSlice';
 import { handleRequestValidation } from '../../utils/validationsHelper';
+import { propertyNotFound } from '../../constant';
 interface BasicDetailsProps {
 	control: Control<FieldValues>;
 	request: CreateRequest;
@@ -34,7 +35,7 @@ const BasicDetails = (props: BasicDetailsProps) => {
 				<Stack as='form' spacing={6}>
 					<InputController
 						rules={{
-							required: t(`global:validations.required`),
+							required: t(`global:validations.required`) ?? propertyNotFound,
 							validate: {
 								validation: (value: string) => {
 									request.name = value;
@@ -46,12 +47,12 @@ const BasicDetails = (props: BasicDetailsProps) => {
 						isRequired
 						control={control}
 						name={'name'}
-						label={t('stableCoinCreation:basicDetails.name')}
-						placeholder={t('stableCoinCreation:basicDetails.namePlaceholder')}
+						label={t('stableCoinCreation:basicDetails.name') ?? propertyNotFound}
+						placeholder={t('stableCoinCreation:basicDetails.namePlaceholder') ?? propertyNotFound}
 					/>
 					<InputController
 						rules={{
-							required: t(`global:validations.required`),
+							required: t(`global:validations.required`) ?? propertyNotFound,
 							validate: {
 								validation: (value: string) => {
 									request.symbol = value;
@@ -63,15 +64,17 @@ const BasicDetails = (props: BasicDetailsProps) => {
 						isRequired
 						control={control}
 						name={'symbol'}
-						label={t('stableCoinCreation:basicDetails.symbol')}
-						placeholder={t('stableCoinCreation:basicDetails.symbolPlaceholder')}
+						label={t('stableCoinCreation:basicDetails.symbol') ?? propertyNotFound}
+						placeholder={t('stableCoinCreation:basicDetails.symbolPlaceholder') ?? propertyNotFound}
 					/>
 					<InputController
 						isRequired
 						control={control}
 						name={'autorenewAccount'}
-						label={t('stableCoinCreation:basicDetails.autorenewAccount')}
-						placeholder={t('stableCoinCreation:basicDetails.autorenewAccountPlaceholder')}
+						label={t('stableCoinCreation:basicDetails.autorenewAccount') ?? propertyNotFound}
+						placeholder={
+							t('stableCoinCreation:basicDetails.autorenewAccountPlaceholder') ?? propertyNotFound
+						}
 						value={pairingData ? pairingData.account?.id.toString() : ''}
 						isReadOnly
 					/>

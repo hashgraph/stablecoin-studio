@@ -65,8 +65,8 @@ export type Option = { label: string | ReactNode; value: number | string };
 export interface SelectControllerProps {
 	name: string;
 	rules?: UseControllerProps['rules'];
-	label?: string;
-	placeholder?: string;
+	label?: string | null;
+	placeholder?: string | null;
 	options: Array<Option>;
 	control: Control<Record<string, SelectOption['value']>>;
 	isRequired?: boolean;

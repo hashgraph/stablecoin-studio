@@ -83,21 +83,21 @@ describe(`<${ModalNotification.name} />`, () => {
 		expect(button).toBeInTheDocument();
 	});
 
-	test('Accept button should close modal by default', () => {
+	test('Accept button should close modal by default', async () => {
 		const component = render(<ModalNotification {...defaultProps} />);
 
 		const button = component.getByTestId('modal-notification-button');
-		userEvent.click(button);
+		await userEvent.click(button);
 
 		expect(defaultProps.onClose).toHaveBeenCalled();
 	});
 
-	test('Accept button should call function passed by onClick prop', () => {
+	test('Accept button should call function passed by onClick prop', async () => {
 		const acceptButton = jest.fn();
 		const component = render(<ModalNotification onClick={acceptButton} {...defaultProps} />);
 
 		const button = component.getByTestId('modal-notification-button');
-		userEvent.click(button);
+		await userEvent.click(button);
 
 		expect(acceptButton).toHaveBeenCalled();
 	});

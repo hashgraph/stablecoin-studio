@@ -70,6 +70,10 @@ export class SDKService {
 			new InitializationRequest({
 				network: 'testnet',
 				events,
+				configuration: {
+					factoryAddress: process.env.REACT_APP_STABLE_COIN_FACTORY_ADDRESS ?? '',
+					hederaERC20Address: process.env.REACT_APP_HEDERA_ERC20_ADDRESS ?? '',
+				},
 			}),
 		);
 		if (lastWallet) await this.connectWallet(lastWallet);
@@ -107,9 +111,9 @@ export class SDKService {
 	}
 
 	public static async createStableCoin(
-		CreateRequest: CreateRequest,
+		createRequest: CreateRequest,
 	): Promise<{ coin: StableCoinViewModel; reserve: ReserveViewModel } | null> {
-		return await StableCoin.create(CreateRequest);
+		return await StableCoin.create(createRequest);
 	}
 
 	public static async getBalance(req: GetAccountBalanceRequest) {

@@ -28,18 +28,18 @@ describe(`<${OperationLayout.name} />`, () => {
 		expect(component.getByTestId('left-content')).toBeInTheDocument();
 	});
 
-	test('should call onConfirm when confirm btn is clicked', () => {
+	test('should call onConfirm when confirm btn is clicked', async () => {
 		const component = render(<OperationLayout {...props} />);
 
-		userEvent.click(component.getByTestId('confirm-btn'));
+		await userEvent.click(component.getByTestId('confirm-btn'));
 
 		expect(props.onConfirm).toHaveBeenCalled();
 	});
 
-	test('should go to operations route when cancel btn is clicked', () => {
+	test('should go to operations route when cancel btn is clicked', async () => {
 		const component = render(<OperationLayout {...props} />);
 
-		userEvent.click(component.getByTestId('cancel-btn'));
+		await userEvent.click(component.getByTestId('cancel-btn'));
 
 		expect(RouterManager.goBack).toHaveBeenCalled();
 	});

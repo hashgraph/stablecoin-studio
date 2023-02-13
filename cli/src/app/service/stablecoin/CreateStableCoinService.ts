@@ -86,9 +86,6 @@ export default class CreateStableCoinService extends Service {
    */
   public async wizardCreateStableCoin(): Promise<CreateRequest> {
     const currentAccount = utilsService.getCurrentAccount();
-    const currentFactory = utilsService.getCurrentFactory();
-    const currentHederaERC20 = utilsService.getCurrentHederaERC20();
-
     utilsService.displayCurrentUserInfo(currentAccount);
 
     // Call to create stable coin sdk function
@@ -96,8 +93,6 @@ export default class CreateStableCoinService extends Service {
       name: '',
       symbol: '',
       decimals: 6,
-      stableCoinFactory: currentFactory.id,
-      hederaERC20: currentHederaERC20.id,
       createReserve: false,
       grantKYCToOriginalSender: false,
     });
@@ -197,40 +192,6 @@ export default class CreateStableCoinService extends Service {
       );
     }
 
-    // Proof of Reserve
-    const reserve = await this.askForReserve();
-    let existingReserve = false;
-
-    if (reserve) {
-      existingReserve = await this.askForExistingReserve();
-      if (!existingReserve) {
-        tokenToCreate.createReserve = true;
-        tokenToCreate.reserveInitialAmount =
-          await this.askForReserveInitialAmount();
-        await utilsService.handleValidation(
-          () => tokenToCreate.validate('reserveInitialAmount'),
-          async () => {
-            tokenToCreate.reserveInitialAmount =
-              await this.askForReserveInitialAmount();
-          },
-        );
-      } else {
-        tokenToCreate.reserveAddress = await utilsService.defaultSingleAsk(
-          language.getText('stablecoin.askReserveAddress'),
-          tokenToCreate.reserveAddress || '0.0.0',
-        );
-        await utilsService.handleValidation(
-          () => tokenToCreate.validate('reserveAddress'),
-          async () => {
-            tokenToCreate.reserveAddress = await utilsService.defaultSingleAsk(
-              language.getText('stablecoin.askReserveAddress'),
-              tokenToCreate.reserveAddress || '0.0.0',
-            );
-          },
-        );
-      }
-    }
-
     const managedBySC = await this.askForManagedFeatures();
 
     if (managedBySC) {
@@ -288,16 +249,58 @@ export default class CreateStableCoinService extends Service {
       grantKYCToOriginalSender,
     } = await this.configureManagedFeatures();
 
-    tokenToCreate.adminKey = adminKey;
-    tokenToCreate.supplyKey = supplyKey;
-    tokenToCreate.kycKey = KYCKey;
-    tokenToCreate.freezeKey = freezeKey;
-    tokenToCreate.wipeKey = wipeKey;
-    tokenToCreate.pauseKey = pauseKey;
-    tokenToCreate.grantKYCToOriginalSender = grantKYCToOriginalSender;
+      tokenToCreate.adminKey = adminKey;
+      tokenToCreate.supplyKey = supplyKey;
+      tokenToCreate.kycKey = KYCKey;
+      tokenToCreate.freezeKey = freezeKey;
+      tokenToCreate.wipeKey = wipeKey;
+      tokenToCreate.pauseKey = pauseKey;
+      tokenToCreate.grantKYCToOriginalSender = grantKYCToOriginalSender;
 
-    const treasury = this.getTreasuryAccountFromSupplyKey(supplyKey);
-    tokenToCreate.treasury = treasury;
+      const treasury = this.getTreasuryAccountFromSupplyKey(supplyKey);
+      tokenToCreate.treasury = treasury;
+    }
+
+    // Proof of Reserve
+    let reserve = false;
+    let existingReserve = false;
+    if (
+      tokenToCreate.supplyKey !== undefined &&
+      tokenToCreate.supplyKey.key === 'null'
+    ) {
+      reserve = await this.askForReserve();
+
+      if (reserve) {
+        existingReserve = await this.askForExistingReserve();
+        if (!existingReserve) {
+          tokenToCreate.createReserve = true;
+          tokenToCreate.reserveInitialAmount =
+            await this.askForReserveInitialAmount();
+          await utilsService.handleValidation(
+            () => tokenToCreate.validate('reserveInitialAmount'),
+            async () => {
+              tokenToCreate.reserveInitialAmount =
+                await this.askForReserveInitialAmount();
+            },
+          );
+        } else {
+          tokenToCreate.reserveAddress = await utilsService.defaultSingleAsk(
+            language.getText('stablecoin.askReserveAddress'),
+            tokenToCreate.reserveAddress || '0.0.0',
+          );
+          await utilsService.handleValidation(
+            () => tokenToCreate.validate('reserveAddress'),
+            async () => {
+              tokenToCreate.reserveAddress =
+                await utilsService.defaultSingleAsk(
+                  language.getText('stablecoin.askReserveAddress'),
+                  tokenToCreate.reserveAddress || '0.0.0',
+                );
+            },
+          );
+        }
+      }
+    }
 
     console.log({
       name: tokenToCreate.name,
@@ -310,44 +313,45 @@ export default class CreateStableCoinService extends Service {
         : TokenSupplyType.FINITE,
       maxSupply: totalSupply ? BigInt(totalSupply) : totalSupply,
       freezeKey:
-        freezeKey === undefined
+        tokenToCreate.freezeKey === undefined
           ? language.getText('wizard.featureOptions.None')
-          : freezeKey.key !== 'null'
-          ? freezeKey
+          : tokenToCreate.freezeKey.key !== 'null'
+          ? tokenToCreate.freezeKey
           : language.getText('wizard.featureOptions.SmartContract'),
       KYCKey:
-        KYCKey === undefined
+        tokenToCreate.kycKey === undefined
           ? language.getText('wizard.featureOptions.None')
-          : KYCKey.key !== 'null'
-          ? KYCKey
+          : tokenToCreate.kycKey.key !== 'null'
+          ? tokenToCreate.kycKey
           : language.getText('wizard.featureOptions.SmartContract'),
       wipeKey:
-        wipeKey === undefined
+        tokenToCreate.wipeKey === undefined
           ? language.getText('wizard.featureOptions.None')
-          : wipeKey.key !== 'null'
-          ? wipeKey
+          : tokenToCreate.wipeKey.key !== 'null'
+          ? tokenToCreate.wipeKey
           : language.getText('wizard.featureOptions.SmartContract'),
       adminKey:
-        adminKey === undefined
+        tokenToCreate.adminKey === undefined
           ? language.getText('wizard.adminFeatureOptions.None')
-          : adminKey.key !== 'null'
-          ? adminKey
+          : tokenToCreate.adminKey.key !== 'null'
+          ? tokenToCreate.adminKey
           : language.getText('wizard.adminFeatureOptions.SmartContract'),
       supplyKey:
-        supplyKey === undefined
+        tokenToCreate.supplyKey === undefined
           ? language.getText('wizard.featureOptions.None')
-          : supplyKey.key !== 'null'
-          ? supplyKey
+          : tokenToCreate.supplyKey.key !== 'null'
+          ? tokenToCreate.supplyKey
           : language.getText('wizard.featureOptions.SmartContract'),
       pauseKey:
-        pauseKey === undefined
+        tokenToCreate.pauseKey === undefined
           ? language.getText('wizard.featureOptions.None')
-          : pauseKey.key !== 'null'
-          ? pauseKey
+          : tokenToCreate.pauseKey.key !== 'null'
+          ? tokenToCreate.pauseKey
           : language.getText('wizard.featureOptions.SmartContract'),
       treasury:
-        treasury !== '0.0.0'
-          ? treasury
+        tokenToCreate.treasury !== '0.0.0' &&
+        tokenToCreate.treasury !== undefined
+          ? tokenToCreate.treasury
           : language.getText('wizard.featureOptions.SmartContract'),
       reserve:
         reserve == false
@@ -356,7 +360,7 @@ export default class CreateStableCoinService extends Service {
           ? tokenToCreate.reserveAddress
           : 'Proof of Reserve Feed initial amount : ' +
             tokenToCreate.reserveInitialAmount,
-      grantKYCToOriginalSender: grantKYCToOriginalSender,
+      grantKYCToOriginalSender: tokenToCreate.grantKYCToOriginalSender,
     });
     if (
       !(await utilsService.defaultConfirmAsk(

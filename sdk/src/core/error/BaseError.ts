@@ -36,6 +36,7 @@ export enum ErrorCode {
 	InvalidValue = '10021',
 	ValidationChecks = '10022',
 	InvalidEvmAddress = '10023',
+	InvalidRequest = '10024',
 	AccountNotAssociatedToToken = '20001',
 	MaxSupplyReached = '20002',
 	RoleNotAssigned = '20003',

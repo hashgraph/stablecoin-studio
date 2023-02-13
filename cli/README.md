@@ -8,10 +8,8 @@
 
 ### Table of contents
 
-- [Hedera Accelerator Stablecoin - Command Line Interface (CLI)](#hedera-accelerator-stablecoin---command-line-interface-cli)
-    - [Table of contents](#table-of-contents)
-  - [Overview](#overview)
-  - [Installation](#installation)
+- [Overview](#overview)
+- [Installation](#installation)
 - [Build](#build)
   - [Pre-requirements](#pre-requirements)
   - [Steps](#steps)
@@ -33,11 +31,11 @@
 - [Code of Conduct](#code-of-conduct)
 - [License](#license)
 
-## Overview
+# Overview
 
 The Command Line Interface (CLI) uses the API exposed by the SDK to create, manage and operate Stable Coins. It is meant as a "demo tool" to showcase the project's functionalities.
 
-## Installation
+# Installation
 
 The command below can be used to install the official release from the NPM repository. This version may not reflect the most recent changes to the main branch of this repository.
 
@@ -250,6 +248,7 @@ https://user-images.githubusercontent.com/108128685/214292138-c5d44bc6-3fc1-4995
     - RESCUE_ROLE
     - PAUSE_ROLE
     - FREEZE_ROLE
+    - KYC_ROLE
     - DELETE_ROLE
 
 - **Danger Zone**: This section contains the stable coin operations deemed as particularily "dangerous" either because they affect every single token owner (PAUSE) or because they can not be rolled-back (DELETE).
