@@ -26,7 +26,6 @@ const ManagementPermissions = ({
 		control,
 		name: 'managementPermissions',
 	});
-
 	useEffect(() => {
 		if (watch('kycKey')?.value !== 2 || watch('supplyKey')?.value === 1) {
 			setValue('grantKYCToOriginalSender', false);
@@ -57,6 +56,10 @@ const ManagementPermissions = ({
 		{
 			name: 'pauseKey',
 			nameTranslate: t('stableCoinCreation:managementPermissions.pause'),
+		},
+		{
+			name: 'feeScheduleKey',
+			nameTranslate: t('stableCoinCreation:managementPermissions.feeSchedule'),
 		},
 	];
 
@@ -101,27 +104,53 @@ const ManagementPermissions = ({
 					) : (
 						<Stack spacing={2} fontSize='14px' fontWeight='400'>
 							{keys.map((item, index) => {
-								return <Text key={index}>{item.nameTranslate}</Text>;
+								switch (item.name) {
+									case t('kycKey'):
+										return (
+											<Text key={index} color='red'>
+												{item.nameTranslate +
+													' - ' +
+													t('stableCoinCreation:managementPermissions.none')}
+											</Text>
+										);
+									case t('feeScheduleKey'):
+										return (
+											<Text key={index}>
+												{item.nameTranslate +
+													' - ' +
+													t('stableCoinCreation:managementPermissions.currentUserKey')}
+											</Text>
+										);
+									default:
+										return (
+											<Text key={index}>
+												{item.nameTranslate +
+													' - ' +
+													t('stableCoinCreation:managementPermissions.theSmartContract')}
+											</Text>
+										);
+								}
 							})}
 						</Stack>
 					)}
 
-					{(watch('kycKey') === undefined ||
-						(watch('kycKey')?.value === 2 && watch('supplyKey')?.value !== 1)) && (
-						<Stack minW={400}>
-							<HStack mb={4} justifyContent='space-between'>
-								<Text maxW={'252px'} fontSize='14px' fontWeight='400' lineHeight='17px'>
-									{t('stableCoinCreation:managementPermissions.grantKYCToOriginalSender')}
-								</Text>
+					{!isManagementPermissions &&
+						watch('kycKey')?.value === 2 &&
+						watch('supplyKey')?.value !== 1 && (
+							<Stack minW={400}>
+								<HStack mb={4} justifyContent='space-between'>
+									<Text maxW={'252px'} fontSize='14px' fontWeight='400' lineHeight='17px'>
+										{t('stableCoinCreation:managementPermissions.grantKYCToOriginalSender')}
+									</Text>
 
-								<SwitchController
-									control={control}
-									name={'grantKYCToOriginalSender'}
-									defaultValue={true}
-								/>
-							</HStack>
-						</Stack>
-					)}
+									<SwitchController
+										control={control}
+										name={'grantKYCToOriginalSender'}
+										defaultValue={true}
+									/>
+								</HStack>
+							</Stack>
+						)}
 				</Stack>
 			</Stack>
 		</VStack>

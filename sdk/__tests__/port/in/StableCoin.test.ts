@@ -118,9 +118,9 @@ describe('🧪 Stablecoin test', () => {
 		});
 
 		stableCoinSC = (await StableCoin.create(requestSC)).coin;
-		console.log(stableCoinSC);
+		// console.log(stableCoinSC);
 		stableCoinHTS = (await StableCoin.create(requestHTS)).coin;
-		console.log(stableCoinHTS);
+		// console.log(stableCoinHTS);
 	}, 60_000);
 
 	it('Gets a coin', async () => {

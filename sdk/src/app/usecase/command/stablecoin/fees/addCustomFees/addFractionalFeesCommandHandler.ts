@@ -58,6 +58,7 @@ export class addFractionalFeesCommandHandler
 			amountDenominator,
 			min,
 			max,
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			net,
 			collectorsExempt,
 		} = command;

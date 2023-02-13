@@ -132,6 +132,12 @@ const StableCoinDetails = () => {
 				key: selectedStableCoin?.pauseKey as any,
 			}),
 		},
+		{
+			label: t('feeScheduleKey'),
+			value: renderKeys({
+				key: selectedStableCoin?.feeScheduleKey as any,
+			}),
+		},
 	];
 
 	if (selectedStableCoin?.reserveAddress) {

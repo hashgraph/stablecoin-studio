@@ -226,48 +226,41 @@ export default class CreateStableCoinService extends Service {
         grantKYCToOriginalSender: tokenToCreate.grantKYCToOriginalSender,
       });
 
-      if (
-        !(await utilsService.defaultConfirmAsk(
-          language.getText('stablecoin.askConfirmCreation'),
-          true,
-        ))
-      ) {
-        await utilsService.cleanAndShowBanner();
-
-        tokenToCreate = await this.wizardCreateStableCoin();
-      }
-      return tokenToCreate;
-    }
-
-    const {
-      adminKey,
-      supplyKey,
-      freezeKey,
-      wipeKey,
-      pauseKey,
-      KYCKey,
-      grantKYCToOriginalSender,
-    } = await this.configureManagedFeatures();
-
+    if (managedBySC) {
+      const currentUserPublicKey = await this.checkAnswer(
+        language.getText('wizard.featureOptions.CurrentUser'),
+      );
+      tokenToCreate.adminKey = Account.NullPublicKey;
+      tokenToCreate.freezeKey = Account.NullPublicKey;
+      tokenToCreate.kycKey = Account.NullPublicKey;
+      tokenToCreate.wipeKey = Account.NullPublicKey;
+      tokenToCreate.supplyKey = Account.NullPublicKey;
+      tokenToCreate.pauseKey = Account.NullPublicKey;
+      tokenToCreate.kycKey = undefined;
+      tokenToCreate.feeScheduleKey = currentUserPublicKey;
+    } else {
+      const {
+        adminKey,
+        supplyKey,
+        freezeKey,
+        wipeKey,
+        pauseKey,
+        KYCKey,
+        feeScheduleKey,
+        grantKYCToOriginalSender,
+      } = await this.configureManagedFeatures();
       tokenToCreate.adminKey = adminKey;
       tokenToCreate.supplyKey = supplyKey;
       tokenToCreate.kycKey = KYCKey;
       tokenToCreate.freezeKey = freezeKey;
       tokenToCreate.wipeKey = wipeKey;
       tokenToCreate.pauseKey = pauseKey;
+      tokenToCreate.feeScheduleKey = feeScheduleKey;
       tokenToCreate.grantKYCToOriginalSender = grantKYCToOriginalSender;
 
       const treasury = this.getTreasuryAccountFromSupplyKey(supplyKey);
       tokenToCreate.treasury = treasury;
     }
-
-    const feeScheduleKey = await this.checkAnswer(
-      await utilsService.defaultMultipleAsk(
-        language.getText('stablecoin.features.feeSchedule'),
-        language.getArrayFromObject('wizard.nonSmartContractFeatureOptions'),
-      ),
-    );
-    tokenToCreate.feeScheduleKey = feeScheduleKey;
 
     // Proof of Reserve
     let reserve = false;
@@ -502,12 +495,12 @@ export default class CreateStableCoinService extends Service {
       ),
     );
 
-    /* const feeScheduleKey = await this.checkAnswer(
+    const feeScheduleKey = await this.checkAnswer(
       await utilsService.defaultMultipleAsk(
         language.getText('stablecoin.features.feeSchedule'),
         language.getArrayFromObject('wizard.nonSmartContractFeatureOptions'),
       ),
-    );*/
+    );
 
     let grantKYCToOriginalSender = false;
 
@@ -522,6 +515,7 @@ export default class CreateStableCoinService extends Service {
       wipeKey,
       pauseKey,
       KYCKey,
+      feeScheduleKey,
       grantKYCToOriginalSender,
     };
   }
