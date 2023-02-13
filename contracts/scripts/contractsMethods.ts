@@ -14,7 +14,8 @@ import {
     HederaReserve__factory,
 } from '../typechain-types'
 
-import { contractCall, toEvmAddress } from './utils'
+import { toEvmAddress } from './utils'
+import { contractCall } from './contractsLifeCycle/utils'
 import { Gas1, Gas2, Gas3, Gas4, Gas5 } from './constants'
 
 import { BigNumber } from 'ethers'

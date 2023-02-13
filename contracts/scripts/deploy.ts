@@ -19,12 +19,11 @@ import {
     UpgradeTestContract__factory,
 } from '../typechain-types'
 
-import {
-    getClient,
-    deployContractSDK,
-    contractCall,
-    toEvmAddress,
-} from './utils'
+import { getClient, toEvmAddress } from './utils'
+
+import { deployContractSDK } from './contractsLifeCycle/deploy'
+
+import { contractCall } from './contractsLifeCycle/utils'
 
 const hre = require('hardhat')
 
