@@ -1,4 +1,4 @@
-import { RequestPublicKey } from 'hedera-stable-coin-sdk';
+import { RequestPublicKey } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 export interface IManagedFeatures {
   adminKey: RequestPublicKey;

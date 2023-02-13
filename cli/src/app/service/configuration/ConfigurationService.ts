@@ -10,13 +10,13 @@ import { IHederaERC20Config } from '../../../domain/configuration/interfaces/IHe
 import { configurationService, utilsService } from '../../../index.js';
 import SetConfigurationService from './SetConfigurationService.js';
 import MaskData from 'maskdata';
+import { ILogConfig } from '../../../domain/configuration/interfaces/ILogConfig.js';
+import { IFactoryConfig } from '../../../domain/configuration/interfaces/IFactoryConfig.js';
 import {
   DailyRotateFile,
   DefaultLoggerFormat,
   LogOptions,
-} from 'hedera-stable-coin-sdk';
-import { ILogConfig } from '../../../domain/configuration/interfaces/ILogConfig.js';
-import { IFactoryConfig } from '../../../domain/configuration/interfaces/IFactoryConfig.js';
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 
 /**
  * Configuration Service

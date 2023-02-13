@@ -14,7 +14,7 @@ import {
   DecreaseSupplierAllowanceRequest,
   ResetSupplierAllowanceRequest,
   GetSupplierAllowanceRequest,
-} from 'hedera-stable-coin-sdk';
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 import colors from 'colors';
 
 /**

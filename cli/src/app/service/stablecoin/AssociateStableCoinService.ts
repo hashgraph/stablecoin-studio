@@ -5,7 +5,7 @@ import {
   AssociateTokenRequest,
   RequestAccount,
   StableCoin,
-} from 'hedera-stable-coin-sdk';
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 
 export default class AssociateStableCoinsService extends Service {
   constructor() {

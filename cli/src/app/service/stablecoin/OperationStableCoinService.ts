@@ -39,7 +39,7 @@ import {
   HBAR_DECIMALS,
   MAX_PERCENTAGE_DECIMALS,
   BigDecimal,
-} from 'hedera-stable-coin-sdk';
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
 import CashInStableCoinsService from './CashInStableCoinService.js';
 import WipeStableCoinsService from './WipeStableCoinService.js';

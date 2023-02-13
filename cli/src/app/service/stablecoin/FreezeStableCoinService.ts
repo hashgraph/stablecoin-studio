@@ -1,7 +1,10 @@
 import { language } from '../../../index.js';
 import { utilsService } from '../../../index.js';
 import Service from '../Service.js';
-import { FreezeAccountRequest, StableCoin } from 'hedera-stable-coin-sdk';
+import {
+  FreezeAccountRequest,
+  StableCoin,
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 
 /**
  * Create Role Stable Coin Service

@@ -6,7 +6,10 @@ import {
   utilsService,
   configurationService,
 } from '../../../index.js';
-import { GetRolesRequest, StableCoinViewModel } from 'hedera-stable-coin-sdk';
+import {
+  GetRolesRequest,
+  StableCoinViewModel,
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 import RoleStableCoinsService from './RoleStableCoinService';
 import DetailsStableCoinsService from './DetailsStableCoinService.js';
 

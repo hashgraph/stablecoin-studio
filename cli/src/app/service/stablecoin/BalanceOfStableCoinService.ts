@@ -5,7 +5,7 @@ import {
   GetAccountBalanceRequest,
   StableCoin,
   Balance,
-} from 'hedera-stable-coin-sdk';
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 
 export default class BalanceOfStableCoinsService extends Service {
   constructor() {

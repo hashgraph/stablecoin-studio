@@ -9,7 +9,7 @@ import {
   FractionalFee,
   Fees,
   UpdateCustomFeesRequest,
-} from 'hedera-stable-coin-sdk';
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 
 /**
  * Create Role Stable Coin Service

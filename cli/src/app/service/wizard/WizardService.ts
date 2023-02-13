@@ -16,7 +16,7 @@ import {
   Network,
   SetNetworkRequest,
   StableCoinViewModel,
-} from 'hedera-stable-coin-sdk';
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 
 /**
  * Wizard Service
