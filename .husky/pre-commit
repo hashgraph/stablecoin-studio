@@ -42,8 +42,8 @@ fi
 if ( [ "$CONTRACTS_STAGED_FILES" != "" ] ); then
     cd contracts
     echo "$CONTRACTS_STAGED_FILES"
-    #checkPrettier $CONTRACTS_STAGED_FILES
-    #checkLinter
+    checkPrettier $CONTRACTS_STAGED_FILES
+    checkLinter
     cd ..
 fi
 
