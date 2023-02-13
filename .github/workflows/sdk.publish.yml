@@ -3,8 +3,8 @@ on:
   workflow_dispatch:
   push:
     branches: [feature/npm-gitflow]
-    # paths:
-    #   - 'sdk/**'
+    paths:
+      - 'sdk/**'
 defaults:
   run:
     working-directory: sdk
