@@ -9,6 +9,12 @@
   "exports": {
     ".": "./build/src/index.js"
   },
+  "publishConfig": {
+		"registry": "https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/"
+	},
+  "files": [
+        "build/"
+    ],
   "scripts": {
     "start": "clear && npx tsc && node ./build/src/index.js",
     "start:wizard": "clear && npx tsc && node ./build/src/index.js wizard -cp './hsca-config.yaml' -n 'testnet'",
@@ -23,7 +29,8 @@
     "prettier": "prettier --config .prettierrc --write .",
     "prettierCheck": "prettier --config .prettierrc --check",
     "test:watch": "jest --watch",
-    "pre-commit": "npm run lint && npm run prettier"
+    "pre-commit": "npm run lint && npm run prettier",
+    "prepack": "npm run build"
   },
   "keywords": [],
   "author": "",
