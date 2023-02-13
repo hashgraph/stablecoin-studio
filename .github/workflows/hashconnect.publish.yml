@@ -7,7 +7,7 @@ on:
       - 'hashconnect/**'
 defaults:
   run:
-    working-directory: hashconnect
+    working-directory: hashconnect/lib
 jobs:
   test-node:
     name: Publish hashconnect package
