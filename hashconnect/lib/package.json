@@ -3,7 +3,6 @@
   "version": "0.0.1",
   "description": "hashconnect interoperability library",
   "author": "Tyler Coté <tyler@hashpack.app>, Nick Hanna <nick@hashpack.app>",
-  "repository": "https://github.com/Hashpack/hashconnect",
   "license": "MIT",
   "keywords": [
     "hashgraph",
