@@ -150,11 +150,11 @@ const StableCoinProof = () => {
 
 	const feeData = [
 		t('feesManagement:columns:feeType'),
-		t('feesManagement:columns:collectorsExempt'),
 		t('feesManagement:columns:amount'),
-		t('feesManagement:columns:maximumAmount'),
 		t('feesManagement:columns:minimumAmount'),
+		t('feesManagement:columns:maximumAmount'),
 		t('feesManagement:columns:collectorAccount'),
+		t('feesManagement:columns:collectorsExempt'),
 		t('feesManagement:columns:assessmentMethod'),
 		t('feesManagement:columns:actions')
 	]
@@ -195,17 +195,6 @@ const StableCoinProof = () => {
 													addonLeft={true}
 													variant='unstyled'
 													defaultValue={customFees[i] !== undefined ? customFees[i].amountDenominator ? '1' : '0' : '0'}
-												/>
-											</Td>
-											<Td>
-												<SelectController
-													control={control}
-													name={`collectorsExempt-${i}`}
-													options={collectorsExempt}
-													overrideStyles={selectorStyle}
-													addonLeft={true}
-													variant='unstyled'
-													defaultValue={customFees[i] !== undefined ? customFees[i].collectorsExempt ? '1' : '0' : '1'}
 												/>
 											</Td>
 											<Td>
@@ -296,6 +285,17 @@ const StableCoinProof = () => {
 													defaultValue={customFees[i] !== undefined ? customFees[i].collectorId.value.toString() : ''}
 													isReadOnly={false}		
 												/>										
+											</Td>
+											<Td>
+												<SelectController
+													control={control}
+													name={`collectorsExempt-${i}`}
+													options={collectorsExempt}
+													overrideStyles={selectorStyle}
+													addonLeft={true}
+													variant='unstyled'
+													defaultValue={customFees[i] !== undefined ? customFees[i].collectorsExempt ? '1' : '0' : '1'}
+												/>
 											</Td>
 											<Td>
 												<SelectController

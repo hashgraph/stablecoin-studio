@@ -1,5 +1,5 @@
 {
-	"title": "Fees Management",
+	"title": "Fees management",
 	"operationTitle": "Fees Management",
 	"subtitle": "Manage Custom Fees",
 	"noFeesManagement": {
@@ -8,27 +8,23 @@
 	},
 	"columns": {
 		"feeType": "Fee type",
-		"collectorsExempt": "Collectors Exempt",
+		"collectorsExempt": "Collectors exempt",
 		"amount": "Amount",
 		"percentage": "Percentage",
-		"numerator": "Numerator",
-		"denominator": "Denominator",
-		"maximumAmount": "Maximum amount",
-		"minimumAmount": "Minimum amount",
+		"maximumAmount": "Max",
+		"minimumAmount": "Min",
 		"collectorAccount": "Collector account",
 		"assessmentMethod": "Payer",
-		"actions": "Actions"
+		"actions": ""
 	},
 	"feeType": {
 		"fixed": "Fixed",
 		"fractional": "Fractional"
 	},
-	"amountPlaceholder": "Introduce amount",
-	"percentagePlaceholder": "Introduce percentage",
-	"numeratorPlaceholder": "Introduce numerator",
-	"denominatorPlaceholder": "Introduce denominator",
-	"minPlaceholder": "Introduce minimum",
-	"maxPlaceholder": "Introduce maximum",
+	"amountPlaceholder": "0",
+	"percentagePlaceholder": "0",
+	"minPlaceholder": "0",
+	"maxPlaceholder": "0",
 	"collectorAccountPlaceholder": "0.0.0",
 	"updateTokenFees": {
 		"buttonText": "Save changes"
