@@ -152,6 +152,20 @@ const FeesManagement = () => {
 		return customFees;
 	}
 
+	const handleRemoveRow = async (pos: number) => {
+		if (selectedStableCoin?.customFees) {
+		 	const customFees = [...selectedStableCoin?.customFees];
+			customFees.splice(pos, 1);
+			alert(JSON.stringify(control._fields))
+			dispatch(
+				walletActions.setSelectedStableCoin({
+					...selectedStableCoin,
+					customFees: customFees,
+				}),
+			);
+		}
+	}
+
 	const handleAddNewRow = async () => {
 		if (selectedStableCoin?.customFees) {
 			const customFees = [...selectedStableCoin?.customFees, new CustomFee()];
@@ -365,7 +379,7 @@ const FeesManagement = () => {
 												/>
 											</Td>
 											<Td>
-												<Icon name='Trash' fontSize='22px' />
+												<Icon name='Trash' fontSize='22px' onClick={async() => await handleRemoveRow(i)}/>
 											</Td>
 											{/* <Td display={customFees[i] !== undefined ? 'block' : 'none'}><Icon name="Trash" fontSize='22px'/></Td> */}
 										</Tr>
