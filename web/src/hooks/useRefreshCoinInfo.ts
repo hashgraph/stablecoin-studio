@@ -54,6 +54,8 @@ export const useRefreshCoinInfo = (): boolean => {
 				pauseKey: resp?.pauseKey?.toString() && JSON.parse(JSON.stringify(resp.pauseKey)),
 				reserveAmount: resp?.reserveAmount?.toString(),
 				reserveAddress: resp?.reserveAddress?.toString(),
+				customFees: 
+					resp.customFees && JSON.parse(JSON.stringify(resp.customFees)),
 			}),
 		);
 		setIsLoading(false);

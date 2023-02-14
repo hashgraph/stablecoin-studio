@@ -21,6 +21,7 @@ import PROOF_OF_RESERVE_EN from './translations/en/proofOfReserve.json';
 import GRANT_KYC_EN from './translations/en/grantKYC.json';
 import REVOKE_KYC_EN from './translations/en/revokeKYC.json';
 import CHECK_KYC_EN from './translations/en/checkKyc.json';
+import FEES_MANAGEMENT_EN from './translations/en/feesManagement.json';
 
 const options = {
 	order: ['localStorage', 'navigator'],
@@ -54,6 +55,7 @@ i18n
 				grantKYC: GRANT_KYC_EN,
 				revokeKYC: REVOKE_KYC_EN,
 				checkKyc: CHECK_KYC_EN,
+				feesManagement: FEES_MANAGEMENT_EN
 			},
 			es: {
 				global: GLOBAL_ES,

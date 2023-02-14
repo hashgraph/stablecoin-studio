@@ -1,0 +1,36 @@
+{
+	"title": "Fees Management",
+	"operationTitle": "Fees Management",
+	"subtitle": "Manage Custom Fees",
+	"noFeesManagement": {
+		"title": "Missing Fees Management",
+		"description": "The stable coin you have chosen does not allow fees management, please, select a different stable coin."
+	},
+	"columns": {
+		"feeType": "Fee type",
+		"collectorsExempt": "Collectors Exempt",
+		"amount": "Amount",
+		"percentage": "Percentage",
+		"numerator": "Numerator",
+		"denominator": "Denominator",
+		"maximumAmount": "Maximum amount",
+		"minimumAmount": "Minimum amount",
+		"collectorAccount": "Collector account",
+		"assessmentMethod": "Payer",
+		"actions": "Actions"
+	},
+	"feeType": {
+		"fixed": "Fixed",
+		"fractional": "Fractional"
+	},
+	"amountPlaceholder": "Introduce amount",
+	"percentagePlaceholder": "Introduce percentage",
+	"numeratorPlaceholder": "Introduce numerator",
+	"denominatorPlaceholder": "Introduce denominator",
+	"minPlaceholder": "Introduce minimum",
+	"maxPlaceholder": "Introduce maximum",
+	"collectorAccountPlaceholder": "0.0.0",
+	"updateTokenFees": {
+		"buttonText": "Save changes"
+	}
+}

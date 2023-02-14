@@ -148,6 +148,7 @@ const CoinDropdown = () => {
 				id: selectedCoin,
 			}),
 		);
+
 		dispatch(walletActions.setDeletedToken(undefined));
 		dispatch(walletActions.setPausedToken(undefined));
 
@@ -179,6 +180,8 @@ const CoinDropdown = () => {
 				feeScheduleKey:
 					stableCoinDetails?.feeScheduleKey &&
 					JSON.parse(JSON.stringify(stableCoinDetails.feeScheduleKey)),
+				customFees: 
+					stableCoinDetails?.customFees && JSON.parse(JSON.stringify(stableCoinDetails.customFees)),
 			}),
 		);
 	};
