@@ -55,7 +55,7 @@ i18n
 				grantKYC: GRANT_KYC_EN,
 				revokeKYC: REVOKE_KYC_EN,
 				checkKyc: CHECK_KYC_EN,
-				feesManagement: FEES_MANAGEMENT_EN
+				feesManagement: FEES_MANAGEMENT_EN,
 			},
 			es: {
 				global: GLOBAL_ES,

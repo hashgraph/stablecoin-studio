@@ -42,7 +42,7 @@ const Sidebar = () => {
 			icon: 'File',
 			title: t('sidebar.proofOfReserve'),
 			route: NamedRoutes.ProofOfReserve,
-		}
+		},
 	];
 
 	return (

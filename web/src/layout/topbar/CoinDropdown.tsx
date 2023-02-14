@@ -180,7 +180,7 @@ const CoinDropdown = () => {
 				feeScheduleKey:
 					stableCoinDetails?.feeScheduleKey &&
 					JSON.parse(JSON.stringify(stableCoinDetails.feeScheduleKey)),
-				customFees: 
+				customFees:
 					stableCoinDetails?.customFees && JSON.parse(JSON.stringify(stableCoinDetails.customFees)),
 			}),
 		);
