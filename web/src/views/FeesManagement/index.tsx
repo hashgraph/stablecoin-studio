@@ -14,8 +14,7 @@ import {
 import type { ChangeEvent } from 'react';
 import { useState } from 'react';
 
-import type { FieldValues } from 'react-hook-form';
-import { useForm } from 'react-hook-form';
+import { FieldValues, useFieldArray, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import AwaitingWalletSignature from '../../components/AwaitingWalletSignature';
@@ -162,11 +161,14 @@ const FeesManagement = () => {
 
 	const isLoading = useRefreshCoinInfo();
 
-	const form = useForm<FieldValues>({
+	const { control, getValues } = useForm({
 		mode: 'onChange',
 	});
 
-	const { control, getValues } = form;
+	const { fields, append, prepend, remove, swap, move, insert } = useFieldArray({
+		control, // control props comes from useForm (optional: if you are using FormContext)
+		name: 'customFeesList', // unique name for your Field Array
+	});
 
 	function getCustomFees() {
 		const customFees = new Array(selectedStableCoin?.customFees?.length);
@@ -204,14 +206,16 @@ const FeesManagement = () => {
 
 	const handleUpdateTokenFees = async () => {
 		const formData = getValues();
-		for (let i = 0; i < 10; i++) {
+		console.log(JSON.stringify(formData));
+		remove();
+		/* for (let i = 0; i < 10; i++) {
 			const feeType = formData[`feeType-${i}`].value;
 			console.log(`feeType-${i}: ${feeType}`);
 			const collectorsExempt = formData[`collectorsExempt-${i}`].value;
 			console.log(`collectorsExempt-${i}: ${collectorsExempt}`);
 			const amountOrPercentage = formData[`amountOrPercentage-${i}`];
 			console.log(`amountOrPercentage-${i}: ${amountOrPercentage}`);
-		}
+		} */
 	};
 
 	const feeData = [
@@ -256,13 +260,13 @@ const FeesManagement = () => {
 							</GridItem>
 						))}
 
-						{customFees.map((_, i: number) => {
+						{fields.map((field, i) => {
 							return (
-								<>
+								<p key={field.id}>
 									<GridItem>
 										<SelectController
 											control={control}
-											name={`feeType-${i}`}
+											name={`test.${i}.feeType`}
 											options={feeTypes}
 											overrideStyles={selectorStyle}
 											addonLeft={true}
@@ -289,7 +293,7 @@ const FeesManagement = () => {
 													},
 												},
 											}}
-											name={`amountOrPercentage-${i}`}
+											name={`test.${i}.amountOrPercentage`}
 											placeholder={t('amountPlaceholder') ?? propertyNotFound}
 											defaultValue={
 												customFees[i] !== undefined
@@ -316,7 +320,7 @@ const FeesManagement = () => {
 													},
 												},
 											}}
-											name={`min-${i}`}
+											name={`test.${i}.min`}
 											placeholder={t('minPlaceholder') ?? propertyNotFound}
 											defaultValue={
 												customFees[i] !== undefined && customFees[i].min
@@ -341,7 +345,7 @@ const FeesManagement = () => {
 													},
 												},
 											}}
-											name={`max-${i}`}
+											name={`test.${i}.max`}
 											placeholder={t('maxPlaceholder') ?? propertyNotFound}
 											defaultValue={
 												customFees[i] !== undefined && customFees[i].max
@@ -367,7 +371,7 @@ const FeesManagement = () => {
 											}}
 											isRequired
 											control={control}
-											name={`collectorAccount-${i}`}
+											name={`test.${i}.collectorAccount`}
 											placeholder={t('collectorAccountPlaceholder') ?? propertyNotFound}
 											defaultValue={
 												customFees[i] !== undefined && customFees[i].collectorId !== undefined
@@ -380,7 +384,7 @@ const FeesManagement = () => {
 									<GridItem>
 										<SelectController
 											control={control}
-											name={`collectorsExempt-${i}`}
+											name={`test.${i}.collectorsExempt`}
 											options={collectorsExempt}
 											overrideStyles={selectorStyle}
 											addonLeft={true}
@@ -397,7 +401,7 @@ const FeesManagement = () => {
 									<GridItem>
 										<SelectController
 											control={control}
-											name={`senderOrReceiver-${i}`}
+											name={`test.${i}.senderOrReceiver`}
 											options={senderOrReceiver}
 											overrideStyles={selectorStyle}
 											addonLeft={true}
@@ -416,20 +420,16 @@ const FeesManagement = () => {
 									<GridItem>
 										<FeeSelectController
 											styles={selectorStyle}
-											name='moneda'
+											name={`test.${i}.moneda`}
 											control={control}
 											options={options}
 											onChangeAux={onChangeFee}
 										/>
 									</GridItem>
 									<GridItem>
-										<Icon
-											name='Trash'
-											fontSize='22px'
-											onClick={async () => await handleRemoveRow(i)}
-										/>
+										<Icon name='Trash' fontSize='22px' onClick={() => remove(i)} />
 									</GridItem>
-								</>
+								</p>
 							);
 						})}
 					</SimpleGrid>
@@ -440,7 +440,7 @@ const FeesManagement = () => {
 							</Button>
 							<Button
 								variant='primary'
-								onClick={handleAddNewRow}
+								onClick={() => append({ name: 'append' })}
 								isDisabled={customFees.length > 9}
 							>
 								{t('updateTokenFees.addRowButtonText')}
