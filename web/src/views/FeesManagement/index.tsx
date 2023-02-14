@@ -440,7 +440,7 @@ const FeesManagement = () => {
 							</Button>
 							<Button
 								variant='primary'
-								onClick={() => append({ name: 'append' })}
+								onClick={() => append({})}
 								isDisabled={customFees.length > 9}
 							>
 								{t('updateTokenFees.addRowButtonText')}
