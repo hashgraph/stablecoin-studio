@@ -27,6 +27,7 @@
 	"maxPlaceholder": "0",
 	"collectorAccountPlaceholder": "0.0.0",
 	"updateTokenFees": {
-		"buttonText": "Save changes"
+		"saveChangesButtonText": "Save changes",
+		"addRowButtonText": "Add new row"
 	}
 }

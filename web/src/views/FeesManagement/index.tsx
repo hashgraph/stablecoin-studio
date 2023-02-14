@@ -1,32 +1,31 @@
-import { VStack, Button, useDisclosure, Heading, Text, SimpleGrid, Flex, Box, Spacer, Divider, TableContainer, Table, TableCaption, Tr, Th, Td, Tbody, Thead, Center } from '@chakra-ui/react';
+import { Button, useDisclosure, Flex, Box, TableContainer, Table, Tr, Td, Tbody, Thead, Stack } from '@chakra-ui/react';
 
-import type { ReactNode } from 'react';
 import { useState } from 'react';
 
 import type { FieldValues } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import AwaitingWalletSignature from '../../components/AwaitingWalletSignature';
 import BaseContainer from '../../components/BaseContainer';
 import InputController from '../../components/Form/InputController';
-import ModalNotification from '../../components/ModalNotification';
 import { propertyNotFound } from '../../constant';
 import { SelectController } from '../../components/Form/SelectController';
 import Icon from '../../components/Icon';
 
 import { useRefreshCoinInfo } from '../../hooks/useRefreshCoinInfo';
-import SDKService from '../../services/SDKService';
 import {
 	SELECTED_TOKEN_RESERVE_ADDRESS,
 	SELECTED_TOKEN_RESERVE_AMOUNT,
 	SELECTED_WALLET_COIN,
+	walletActions,
 } from '../../store/slices/walletSlice';
-import { AddFixedFeeRequest, AddFractionalFeeRequest } from 'hedera-stable-coin-sdk';
+import { AddFixedFeeRequest, AddFractionalFeeRequest, BigDecimal, CustomFee } from 'hedera-stable-coin-sdk';
 import { handleRequestValidation } from '../../utils/validationsHelper';
 import NoFeesManagement from './components/NoFeesManagement';
+import { HederaId } from 'hedera-stable-coin-sdk/build/esm/src/domain/context/shared/HederaId.js';
 
-const StableCoinProof = () => {
+const FeesManagement = () => {
 	const [awaitingUpdate, setAwaitingUpdate] = useState<boolean>(false);
 	const [success, setSuccess] = useState<boolean>();
 	const [error, setError] = useState<any>();
@@ -34,6 +33,7 @@ const StableCoinProof = () => {
 	const variant = awaitingUpdate ? 'loading' : success ? 'success' : 'error';
 
 	const { t } = useTranslation(['feesManagement', 'global']);
+	const dispatch = useDispatch();
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const reserveAddress = useSelector(SELECTED_TOKEN_RESERVE_ADDRESS);
@@ -128,16 +128,25 @@ const StableCoinProof = () => {
 	const { control, getValues } = form;
 
 	function getCustomFees() {
-		const customFees = new Array(10);
+		const customFees = new Array(selectedStableCoin?.customFees?.length);
 		selectedStableCoin?.customFees!.forEach((x, i) => {
 			customFees[i] = JSON.parse(JSON.stringify(x));
 		});		
 		return customFees;
 	}
 
+	const handleAddNewRow = async () => {
+		if (selectedStableCoin?.customFees) {
+			const customFees = [...selectedStableCoin?.customFees, new CustomFee()];
+			dispatch(walletActions.setSelectedStableCoin({					
+				...selectedStableCoin,
+				customFees: customFees
+			}));
+		}
+	}
+
 	const handleUpdateTokenFees = async () => {
 		const formData = getValues();
-		console.log(formData);
 		for (let i=0; i < 10; i++) {
 			const feeType = formData[`feeType-${i}`].value;
 			console.log(`feeType-${i}: ${feeType}`);
@@ -184,7 +193,7 @@ const StableCoinProof = () => {
 									</Tr>
 								</Thead>
 								<Tbody>
-									{[...Array(10).fill(0)].map((_, i: number) => (
+									{customFees.map((_, i: number) => (
 										<Tr key={`fee-${i}`}>
 											<Td>
 												<SelectController
@@ -282,7 +291,7 @@ const StableCoinProof = () => {
 													control={control}
 													name={`collectorAccount-${i}`}
 													placeholder={t('collectorAccountPlaceholder') ?? propertyNotFound}
-													defaultValue={customFees[i] !== undefined ? customFees[i].collectorId.value.toString() : ''}
+													defaultValue={customFees[i] !== undefined && customFees[i].collectorId ? customFees[i].collectorId.value.toString() : ''}
 													isReadOnly={false}		
 												/>										
 											</Td>
@@ -315,16 +324,18 @@ const StableCoinProof = () => {
 								</Tbody>
 							</Table>
 						</TableContainer>					
-						<Flex>
-  							<Spacer />
-  							<Box p='6'>
-  								<Button	data-testid={`update-token-fees-button`}
-										variant='primary'
+						<Flex justify='flex-end' pt={6} px={6} pb={6}>
+							<Stack direction='row' spacing={6}>
+								<Button	variant='primary'
 										onClick={handleUpdateTokenFees}>
-											{t('updateTokenFees.buttonText')}
-								</Button>	
-  							</Box>
-						</Flex>
+									{t('updateTokenFees.saveChangesButtonText')}
+								</Button>
+								<Button variant='primary'
+										onClick={handleAddNewRow}>
+									{t('updateTokenFees.addRowButtonText')}
+								</Button>
+							</Stack>
+						</Flex>												
 					</Box>
 				</Flex>
 			)}
@@ -336,4 +347,4 @@ const StableCoinProof = () => {
 	);
 };
 
-export default StableCoinProof;
+export default FeesManagement;
