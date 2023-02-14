@@ -3,15 +3,15 @@ import {
 	useDisclosure,
 	Flex,
 	Box,
-	TableContainer,
-	Table,
-	Tr,
 	Td,
-	Tbody,
-	Thead,
 	Stack,
+	Grid,
+	GridItem,
+	Tr,
+	SimpleGrid,
 } from '@chakra-ui/react';
 
+import type { ChangeEvent } from 'react';
 import { useState } from 'react';
 
 import type { FieldValues } from 'react-hook-form';
@@ -22,6 +22,7 @@ import AwaitingWalletSignature from '../../components/AwaitingWalletSignature';
 import BaseContainer from '../../components/BaseContainer';
 import InputController from '../../components/Form/InputController';
 import { propertyNotFound } from '../../constant';
+import type { Option } from '../../components/Form/SelectController';
 import { SelectController } from '../../components/Form/SelectController';
 import Icon from '../../components/Icon';
 
@@ -40,8 +41,7 @@ import {
 } from 'hedera-stable-coin-sdk';
 import { handleRequestValidation } from '../../utils/validationsHelper';
 import NoFeesManagement from './components/NoFeesManagement';
-import { HederaId } from 'hedera-stable-coin-sdk/build/esm/src/domain/context/shared/HederaId.js';
-
+import FeeSelectController from './components/FeeSelectController';
 const FeesManagement = () => {
 	const [awaitingUpdate, setAwaitingUpdate] = useState<boolean>(false);
 	const [success, setSuccess] = useState<boolean>();
@@ -53,8 +53,6 @@ const FeesManagement = () => {
 	const dispatch = useDispatch();
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
-	const reserveAddress = useSelector(SELECTED_TOKEN_RESERVE_ADDRESS);
-	const reserveAmount = useSelector(SELECTED_TOKEN_RESERVE_AMOUNT);
 
 	const [fixedFeeRequest] = useState(
 		new AddFixedFeeRequest({
@@ -135,6 +133,32 @@ const FeesManagement = () => {
 			fontWeight: '500',
 		},
 	};
+	const styles = {
+		menuList: {
+			maxH: '220px',
+			overflowY: 'auto',
+			bg: 'brand.white',
+			boxShadow: 'down-black',
+			p: 2,
+			zIndex: 99,
+		},
+		wrapper: {
+			border: '1px',
+			borderColor: 'brand.black',
+			borderRadius: '8px',
+			height: 'min',
+			width: '120px',
+		},
+		valueSelected: {
+			fontSize: '14px',
+			fontWeight: '500',
+		},
+		// wrapperOpened: { borderWidth: '0' },
+		container: {
+			// minW: '244px',
+			w: 'fit-content',
+		},
+	};
 
 	const isLoading = useRefreshCoinInfo();
 
@@ -158,7 +182,7 @@ const FeesManagement = () => {
 			dispatch(
 				walletActions.setSelectedStableCoin({
 					...selectedStableCoin,
-					customFees: customFees,
+					customFees,
 				}),
 			);
 		}
@@ -184,210 +208,227 @@ const FeesManagement = () => {
 		t('feesManagement:columns:collectorAccount'),
 		t('feesManagement:columns:collectorsExempt'),
 		t('feesManagement:columns:assessmentMethod'),
+		'Moneda',
 		t('feesManagement:columns:actions'),
 	];
 
 	const customFees = getCustomFees();
+
+	const [options, setOptions] = useState<Option[]>([
+		{ label: 'HBAR', value: 'HBAR' },
+		{ label: 'Current token', value: selectedStableCoin!.tokenId!.toString() },
+		{ label: 'Another token', value: '' },
+	]);
+	const onChangeFee = (event: ChangeEvent<HTMLInputElement>) => {
+		console.log(event);
+	};
+	console.log(feeData);
+
 	return (
 		<BaseContainer title={t('feesManagement:title')}>
 			{isLoading && <AwaitingWalletSignature />}
 			{selectedStableCoin && !isLoading && selectedStableCoin.feeScheduleKey && (
-				<Flex px={{ base: 3, lg: 10 }} pt={{ base: 3, lg: 10 }} bg='brand.gray100'>
-					<Box flex={1}>
-						<TableContainer>
-							<Table variant='simple'>
-								<Thead>
-									<Tr>
-										{feeData.map((feeColumn: string, index: number) => (
-											<Td key={`details-fee-${index}`} fontSize='14px' fontWeight='bold'>
-												{feeColumn}
-											</Td>
-										))}
-									</Tr>
-								</Thead>
-								<Tbody>
-									{customFees.map((_, i: number) => (
-										<Tr key={`fee-${i}`}>
-											<Td>
-												<SelectController
-													control={control}
-													name={`feeType-${i}`}
-													options={feeTypes}
-													overrideStyles={selectorStyle}
-													addonLeft={true}
-													variant='unstyled'
-													defaultValue={
-														customFees[i] !== undefined
-															? customFees[i].amountDenominator
-																? '1'
-																: '0'
-															: '0'
-													}
-												/>
-											</Td>
-											<Td>
-												<InputController
-													control={control}
-													rules={{
-														required: t('global:validations.required') ?? propertyNotFound,
-														validate: {
-															validation: (value: string) => {
-																fixedFeeRequest.amount = value;
-																const res = handleRequestValidation(
-																	fixedFeeRequest.validate('amount'),
-																);
-																return res;
-															},
-														},
-													}}
-													name={`amountOrPercentage-${i}`}
-													placeholder={t('amountPlaceholder') ?? propertyNotFound}
-													defaultValue={
-														customFees[i] !== undefined
-															? customFees[i].amount
-																? customFees[i].amount._value
-																: ''
-															: ''
-													}
-													isReadOnly={false}
-												/>
-											</Td>
-											<Td>
-												<InputController
-													control={control}
-													rules={{
-														required: t('global:validations.required') ?? propertyNotFound,
-														validate: {
-															validation: (value: string) => {
-																fractionalFeeRequest.min = value;
-																const res = handleRequestValidation(
-																	fractionalFeeRequest.validate('min'),
-																);
-																return res;
-															},
-														},
-													}}
-													name={`min-${i}`}
-													placeholder={t('minPlaceholder') ?? propertyNotFound}
-													defaultValue={
-														customFees[i] !== undefined && customFees[i].min
-															? customFees[i].min._value.toString()
-															: ''
-													}
-													isReadOnly={false}
-												/>
-											</Td>
-											<Td>
-												<InputController
-													control={control}
-													rules={{
-														required: t('global:validations.required') ?? propertyNotFound,
-														validate: {
-															validation: (value: string) => {
-																fractionalFeeRequest.max = value;
-																const res = handleRequestValidation(
-																	fractionalFeeRequest.validate('max'),
-																);
-																return res;
-															},
-														},
-													}}
-													name={`max-${i}`}
-													placeholder={t('maxPlaceholder') ?? propertyNotFound}
-													defaultValue={
-														customFees[i] !== undefined && customFees[i].max
-															? customFees[i].max._value.toString()
-															: ''
-													}
-													isReadOnly={false}
-												/>
-											</Td>
-											<Td>
-												<InputController
-													rules={{
-														required: t('global:validations.required') ?? propertyNotFound,
-														validate: {
-															validation: (value: string) => {
-																fixedFeeRequest.collectorId = value;
-																const res = handleRequestValidation(
-																	fixedFeeRequest.validate('collectorId'),
-																);
-																return res;
-															},
-														},
-													}}
-													isRequired
-													control={control}
-													name={`collectorAccount-${i}`}
-													placeholder={t('collectorAccountPlaceholder') ?? propertyNotFound}
-													defaultValue={
-														customFees[i] !== undefined && customFees[i].collectorId
-															? customFees[i].collectorId.value.toString()
-															: ''
-													}
-													isReadOnly={false}
-												/>
-											</Td>
-											<Td>
-												<SelectController
-													control={control}
-													name={`collectorsExempt-${i}`}
-													options={collectorsExempt}
-													overrideStyles={selectorStyle}
-													addonLeft={true}
-													variant='unstyled'
-													defaultValue={
-														customFees[i] !== undefined
-															? customFees[i].collectorsExempt
-																? '1'
-																: '0'
+				<Flex
+					direction='column'
+					bg='brand.gray100'
+					px={{ base: 4, lg: 14 }}
+					pt={{ base: 4, lg: 14 }}
+					pb={6}
+				>
+					<SimpleGrid columns={{ base: 9 }} gap={{ base: 4 }}>
+						{feeData.map((feeColumn: string, index: number) => (
+							<GridItem key={`details-fee-${index}`} fontSize='14px' fontWeight='bold'>
+								{feeColumn}
+							</GridItem>
+						))}
+
+						{customFees.map((_, i: number) => {
+							return (
+								<>
+									<GridItem>
+										<SelectController
+											control={control}
+											name={`feeType-${i}`}
+											options={feeTypes}
+											overrideStyles={selectorStyle}
+											addonLeft={true}
+											variant='unstyled'
+											defaultValue={
+												customFees[i] !== undefined
+													? customFees[i].amountDenominator
+														? '1'
+														: '0'
+													: '0'
+											}
+										/>
+									</GridItem>
+									<GridItem>
+										<InputController
+											control={control}
+											rules={{
+												required: t('global:validations.required') ?? propertyNotFound,
+												validate: {
+													validation: (value: string) => {
+														fixedFeeRequest.amount = value;
+														const res = handleRequestValidation(fixedFeeRequest.validate('amount'));
+														return res;
+													},
+												},
+											}}
+											name={`amountOrPercentage-${i}`}
+											placeholder={t('amountPlaceholder') ?? propertyNotFound}
+											defaultValue={
+												customFees[i] !== undefined
+													? customFees[i].amount
+														? customFees[i].amount._value
+														: ''
+													: ''
+											}
+											isReadOnly={false}
+										/>
+									</GridItem>
+									<GridItem>
+										<InputController
+											control={control}
+											rules={{
+												required: t('global:validations.required') ?? propertyNotFound,
+												validate: {
+													validation: (value: string) => {
+														fractionalFeeRequest.min = value;
+														const res = handleRequestValidation(
+															fractionalFeeRequest.validate('min'),
+														);
+														return res;
+													},
+												},
+											}}
+											name={`min-${i}`}
+											placeholder={t('minPlaceholder') ?? propertyNotFound}
+											defaultValue={
+												customFees[i] !== undefined && customFees[i].min
+													? customFees[i].min._value.toString()
+													: ''
+											}
+											isReadOnly={false}
+										/>
+									</GridItem>
+									<GridItem>
+										<InputController
+											control={control}
+											rules={{
+												required: t('global:validations.required') ?? propertyNotFound,
+												validate: {
+													validation: (value: string) => {
+														fractionalFeeRequest.max = value;
+														const res = handleRequestValidation(
+															fractionalFeeRequest.validate('max'),
+														);
+														return res;
+													},
+												},
+											}}
+											name={`max-${i}`}
+											placeholder={t('maxPlaceholder') ?? propertyNotFound}
+											defaultValue={
+												customFees[i] !== undefined && customFees[i].max
+													? customFees[i].max._value.toString()
+													: ''
+											}
+											isReadOnly={false}
+										/>
+									</GridItem>
+									<GridItem>
+										<InputController
+											rules={{
+												required: t('global:validations.required') ?? propertyNotFound,
+												validate: {
+													validation: (value: string) => {
+														fixedFeeRequest.collectorId = value;
+														const res = handleRequestValidation(
+															fixedFeeRequest.validate('collectorId'),
+														);
+														return res;
+													},
+												},
+											}}
+											isRequired
+											control={control}
+											name={`collectorAccount-${i}`}
+											placeholder={t('collectorAccountPlaceholder') ?? propertyNotFound}
+											defaultValue={
+												customFees[i] !== undefined && customFees[i].collectorId !== undefined
+													? customFees[i].collectorId.value.toString()
+													: ''
+											}
+											isReadOnly={false}
+										/>
+									</GridItem>
+									<GridItem>
+										<SelectController
+											control={control}
+											name={`collectorsExempt-${i}`}
+											options={collectorsExempt}
+											overrideStyles={selectorStyle}
+											addonLeft={true}
+											variant='unstyled'
+											defaultValue={
+												customFees[i] !== undefined
+													? customFees[i].collectorsExempt
+														? '1'
+														: '0'
+													: '1'
+											}
+										/>
+									</GridItem>
+									<GridItem>
+										<SelectController
+											control={control}
+											name={`senderOrReceiver-${i}`}
+											options={senderOrReceiver}
+											overrideStyles={selectorStyle}
+											addonLeft={true}
+											variant='unstyled'
+											defaultValue={
+												customFees[i] !== undefined
+													? customFees[i].amountDenominator
+														? customFees[i].net
+															? '0'
 															: '1'
-													}
-												/>
-											</Td>
-											<Td>
-												<SelectController
-													control={control}
-													name={`senderOrReceiver-${i}`}
-													options={senderOrReceiver}
-													overrideStyles={selectorStyle}
-													addonLeft={true}
-													variant='unstyled'
-													defaultValue={
-														customFees[i] !== undefined
-															? customFees[i].amountDenominator
-																? customFees[i].net
-																	? '0'
-																	: '1'
-																: '0'
-															: '0'
-													}
-												/>
-											</Td>
-											<Td>
-												<Icon name='Trash' fontSize='22px' />
-											</Td>
-											{/* <Td display={customFees[i] !== undefined ? 'block' : 'none'}><Icon name="Trash" fontSize='22px'/></Td> */}
-										</Tr>
-									))}
-								</Tbody>
-							</Table>
-						</TableContainer>
-						<Flex justify='flex-end' pt={6} px={6} pb={6}>
-							<Stack direction='row' spacing={6}>
-								<Button variant='primary' onClick={handleUpdateTokenFees}>
-									{t('updateTokenFees.saveChangesButtonText')}
-								</Button>
-								<Button
-									variant='primary'
-									onClick={handleAddNewRow}
-									isDisabled={customFees.length > 9}
-								>
-									{t('updateTokenFees.addRowButtonText')}
-								</Button>
-							</Stack>
-						</Flex>
-					</Box>
+														: '0'
+													: '0'
+											}
+										/>
+									</GridItem>
+									<GridItem>
+										<FeeSelectController
+											styles={selectorStyle}
+											name='moneda'
+											control={control}
+											options={options}
+											onChangeAux={onChangeFee}
+										/>
+									</GridItem>
+									<GridItem>
+										<Icon name='Trash' fontSize='22px' />
+									</GridItem>
+								</>
+							);
+						})}
+					</SimpleGrid>
+					<Flex justify='flex-end' pt={6} px={6} pb={6}>
+						<Stack direction='row' spacing={6}>
+							<Button variant='primary' onClick={handleUpdateTokenFees}>
+								{t('updateTokenFees.saveChangesButtonText')}
+							</Button>
+							<Button
+								variant='primary'
+								onClick={handleAddNewRow}
+								isDisabled={customFees.length > 9}
+							>
+								{t('updateTokenFees.addRowButtonText')}
+							</Button>
+						</Stack>
+					</Flex>
 				</Flex>
 			)}
 
