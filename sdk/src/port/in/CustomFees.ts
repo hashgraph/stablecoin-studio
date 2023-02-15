@@ -110,7 +110,10 @@ class CustomFeesInPort implements ICustomFees {
 				requestedCustomFee.push(
 					new FixedFee(
 						HederaId.from(customFee.collectorId),
-						BigDecimal.fromString(customFee.amount),
+						BigDecimal.fromString(
+							customFee.amount,
+							customFee.decimals,
+						),
 						HederaId.from(customFee.tokenIdCollected),
 						customFee.collectorsExempt,
 					),
@@ -121,8 +124,14 @@ class CustomFeesInPort implements ICustomFees {
 						HederaId.from(customFee.collectorId),
 						parseInt(customFee.amountNumerator),
 						parseInt(customFee.amountDenominator),
-						BigDecimal.fromString(customFee.min),
-						BigDecimal.fromString(customFee.max),
+						BigDecimal.fromString(
+							customFee.min,
+							customFee.decimals,
+						),
+						BigDecimal.fromString(
+							customFee.max,
+							customFee.decimals,
+						),
 						customFee.net,
 						customFee.collectorsExempt,
 					),

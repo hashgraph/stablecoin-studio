@@ -34,7 +34,7 @@ import {
   GetSupplierAllowanceRequest,
   AddFixedFeeRequest,
   AddFractionalFeeRequest,
-  CustomFee,
+  RequestCustomFee,
   UpdateCustomFeesRequest,
   HBAR_DECIMALS,
   MAX_PERCENTAGE_DECIMALS,
@@ -689,6 +689,10 @@ export default class OperationStableCoinService extends Service {
         false,
       );
 
+    const requestCustomFees = new FeeStableCoinService().toRequestCustomFees(
+      detailsStableCoin.customFees,
+    );
+
     //const rolesAccount = this.getRolesAccount();
 
     const feeManagementOptionsFiltered = language
@@ -752,7 +756,10 @@ export default class OperationStableCoinService extends Service {
             configAccount.accountId,
           );
         } else {
-          await this.createFractionalFee(detailsStableCoin.decimals ?? 0);
+          await this.createFractionalFee(
+            detailsStableCoin.decimals ?? 0,
+            configAccount.accountId,
+          );
         }
 
         break;
@@ -764,14 +771,12 @@ export default class OperationStableCoinService extends Service {
           this.stableCoinWithSymbol,
         );
 
-        await this.removeFees(detailsStableCoin.customFees);
+        await this.removeFees(requestCustomFees);
 
         break;
       case language.getText('feeManagement.options.List'):
         console.log(
-          new FeeStableCoinService().getFormatedFees(
-            detailsStableCoin.customFees,
-          ),
+          new FeeStableCoinService().getFormatedFees(requestCustomFees),
         );
         break;
       case feeManagementOptionsFiltered[
@@ -784,9 +789,9 @@ export default class OperationStableCoinService extends Service {
     await this.feesManagementFlow();
   }
 
-  private async removeFees(customFees): Promise<void> {
-    const FeesToKeep: CustomFee[] = [];
-    const FeesToRemove: CustomFee[] = [];
+  private async removeFees(customFees: RequestCustomFee[]): Promise<void> {
+    const FeesToKeep: RequestCustomFee[] = [];
+    const FeesToRemove: RequestCustomFee[] = [];
 
     for (let i = 0; i < customFees.length; i++) {
       const fee = customFees[i];
@@ -823,18 +828,23 @@ export default class OperationStableCoinService extends Service {
     }
   }
 
-  private async createFractionalFee(decimals: number): Promise<void> {
+  private async createFractionalFee(
+    decimals: number,
+    currentAccount: string,
+  ): Promise<void> {
     const addFractionalFeeRequest: AddFractionalFeeRequest =
       new AddFractionalFeeRequest({
         tokenId: this.stableCoinId,
-        collectorId: '',
-        amountNumerator: '',
-        amountDenominator: '',
-        min: '',
-        max: '',
-        decimals: decimals,
-        net: false,
-        collectorsExempt: true,
+        fee: {
+          collectorId: currentAccount,
+          collectorsExempt: true,
+          amountNumerator: '1',
+          amountDenominator: '2',
+          min: '0',
+          max: '0',
+          decimals: decimals,
+          net: false,
+        },
       });
 
     const fractionType = await utilsService.defaultMultipleAsk(
@@ -884,20 +894,20 @@ export default class OperationStableCoinService extends Service {
           check_Ok = false;
         }
       } while (!check_Ok);
-      addFractionalFeeRequest.amountNumerator = Math.round(
+      addFractionalFeeRequest.fee.amountNumerator = Math.round(
         numerator.toUnsafeFloat() * exponential,
       ).toString();
-      addFractionalFeeRequest.amountDenominator = denominator.toString();
+      addFractionalFeeRequest.fee.amountDenominator = denominator.toString();
     } else {
-      addFractionalFeeRequest.amountNumerator =
+      addFractionalFeeRequest.fee.amountNumerator =
         await utilsService.defaultSingleAsk(
           language.getText('feeManagement.askNumerator'),
           '1',
         );
       await utilsService.handleValidation(
-        () => addFractionalFeeRequest.validate('amountNumerator'),
+        () => addFractionalFeeRequest.validate('fee'),
         async () => {
-          addFractionalFeeRequest.amountNumerator =
+          addFractionalFeeRequest.fee.amountNumerator =
             await utilsService.defaultSingleAsk(
               language.getText('feeManagement.askNumerator'),
               '1',
@@ -905,86 +915,87 @@ export default class OperationStableCoinService extends Service {
         },
       );
 
-      addFractionalFeeRequest.amountDenominator =
+      addFractionalFeeRequest.fee.amountDenominator =
         await utilsService.defaultSingleAsk(
           language.getText('feeManagement.askDenominator'),
-          '1',
+          '2',
         );
       await utilsService.handleValidation(
-        () => addFractionalFeeRequest.validate('amountDenominator'),
+        () => addFractionalFeeRequest.validate('fee'),
         async () => {
-          addFractionalFeeRequest.amountDenominator =
+          addFractionalFeeRequest.fee.amountDenominator =
             await utilsService.defaultSingleAsk(
               language.getText('feeManagement.askDenominator'),
-              '1',
+              '2',
             );
         },
       );
     }
 
-    addFractionalFeeRequest.min = await utilsService.defaultSingleAsk(
+    addFractionalFeeRequest.fee.min = await utilsService.defaultSingleAsk(
       language.getText('feeManagement.askMin'),
       '0',
     );
     await utilsService.handleValidation(
-      () => addFractionalFeeRequest.validate('min'),
+      () => addFractionalFeeRequest.validate('fee'),
       async () => {
-        addFractionalFeeRequest.min = await utilsService.defaultSingleAsk(
+        addFractionalFeeRequest.fee.min = await utilsService.defaultSingleAsk(
           language.getText('feeManagement.askMin'),
           '0',
         );
       },
     );
 
-    addFractionalFeeRequest.max = await utilsService.defaultSingleAsk(
+    addFractionalFeeRequest.fee.max = await utilsService.defaultSingleAsk(
       language.getText('feeManagement.askMax'),
       '0',
     );
     await utilsService.handleValidation(
-      () => addFractionalFeeRequest.validate('max'),
+      () => addFractionalFeeRequest.validate('fee'),
       async () => {
-        addFractionalFeeRequest.max = await utilsService.defaultSingleAsk(
+        addFractionalFeeRequest.fee.max = await utilsService.defaultSingleAsk(
           language.getText('feeManagement.askMax'),
           '0',
         );
       },
     );
 
-    addFractionalFeeRequest.net = await utilsService.defaultConfirmAsk(
+    addFractionalFeeRequest.fee.net = await utilsService.defaultConfirmAsk(
       language.getText('feeManagement.askAssesmentMethod'),
       true,
     );
 
-    addFractionalFeeRequest.collectorsExempt =
+    addFractionalFeeRequest.fee.collectorsExempt =
       await utilsService.defaultConfirmAsk(
         language.getText('feeManagement.askCollectorsExempt'),
         true,
       );
 
-    addFractionalFeeRequest.collectorId = await utilsService.defaultSingleAsk(
-      language.getText('feeManagement.askCollectorId'),
-      '0.0.0',
-    );
+    addFractionalFeeRequest.fee.collectorId =
+      await utilsService.defaultSingleAsk(
+        language.getText('feeManagement.askCollectorId'),
+        currentAccount,
+      );
 
     await utilsService.handleValidation(
-      () => addFractionalFeeRequest.validate('collectorId'),
+      () => addFractionalFeeRequest.validate('fee'),
       async () => {
-        addFractionalFeeRequest.collectorId =
+        addFractionalFeeRequest.fee.collectorId =
           await utilsService.defaultSingleAsk(
             language.getText('feeManagement.askCollectorId'),
-            '0.0.0',
+            currentAccount,
           );
       },
     );
 
     console.log({
-      numerator: addFractionalFeeRequest.amountNumerator,
-      denominator: addFractionalFeeRequest.amountDenominator,
-      min: addFractionalFeeRequest.min,
-      max: addFractionalFeeRequest.max,
-      feesPaidBy: addFractionalFeeRequest.net ? 'Sender' : 'Receiver',
-      collector: addFractionalFeeRequest.collectorId,
-      collectorsExempt: addFractionalFeeRequest.collectorsExempt,
+      numerator: addFractionalFeeRequest.fee.amountNumerator,
+      denominator: addFractionalFeeRequest.fee.amountDenominator,
+      min: addFractionalFeeRequest.fee.min,
+      max: addFractionalFeeRequest.fee.max,
+      feesPaidBy: addFractionalFeeRequest.fee.net ? 'Sender' : 'Receiver',
+      collector: addFractionalFeeRequest.fee.collectorId,
+      collectorsExempt: addFractionalFeeRequest.fee.collectorsExempt,
     });
 
     const confirm = await this.askFeeOperationConfirmation(

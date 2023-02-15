@@ -4,9 +4,11 @@ import Service from '../Service.js';
 import {
   AddFixedFeeRequest,
   AddFractionalFeeRequest,
-  CustomFee,
-  FixedFee,
-  FractionalFee,
+  RequestCustomFee,
+  RequestFixedFee,
+  RequestFractionalFee,
+  isRequestFixedFee,
+  isRequestFractionalFee,
   Fees,
   UpdateCustomFeesRequest,
 } from 'hedera-stable-coin-sdk';
@@ -52,27 +54,27 @@ export default class FeeStableCoinService extends Service {
     utilsService.breakLine();
   }
 
-  public getFormatedFees(listOfFees: CustomFee[]): any[] {
+  public getFormatedFees(listOfFees: RequestCustomFee[]): any[] {
     const FormatedFees = [];
 
     listOfFees.forEach((fee) => {
-      if (fee instanceof FixedFee) {
+      if (isRequestFixedFee(fee)) {
         FormatedFees.push({
           Fee_Type: 'Fixed',
-          Collector_Id: fee.collectorId.toString(),
+          Collector_Id: fee.collectorId,
           All_Collectors_Exempt: fee.collectorsExempt,
-          Amount: fee.amount.toString(),
-          Token: fee.tokenId.isNull() ? 'HBAR' : fee.tokenId.toString(),
+          Amount: fee.amount,
+          Token: !fee.tokenIdCollected ? 'HBAR' : fee.tokenIdCollected,
         });
-      } else if (fee instanceof FractionalFee) {
+      } else if (isRequestFractionalFee(fee)) {
         FormatedFees.push({
           Fee_Type: 'Fractional',
-          Collector_Id: fee.collectorId.toString(),
+          Collector_Id: fee.collectorId,
           All_Collectors_Exempt: fee.collectorsExempt,
-          Numerator: fee.amountNumerator.toString(),
-          Denominator: fee.amountDenominator.toString(),
-          Min: fee.min.toString(),
-          Max: fee.max.isZero() ? 'Unlimited' : fee.max.toString(),
+          Numerator: fee.amountNumerator,
+          Denominator: fee.amountDenominator,
+          Min: fee.min,
+          Max: fee.max == '0' ? 'Unlimited' : fee.max,
           Fees_Paid_By: fee.net ? 'Sender' : 'Receiver',
         });
       }
@@ -81,28 +83,43 @@ export default class FeeStableCoinService extends Service {
     return FormatedFees;
   }
 
-  /*public displayFees(listOfFees: CustomFee[]) {
-    listOfFees.forEach((fee) => {
-      if (fee instanceof FixedFee) {
-        console.log({
-          Fee_Type: 'Fixed',
-          Collector_Id: fee.collectorId.toString(),
-          All_Collectors_Exempt: fee.collectorsExempt,
-          Amount: fee.amount.toString(),
-          Token: fee.tokenId.isNull() ? 'HBAR' : fee.tokenId.toString(),
-        });
-      } else if (fee instanceof FractionalFee) {
-        console.log({
-          Fee_Type: 'Fractional',
-          Collector_Id: fee.collectorId.toString(),
-          All_Collectors_Exempt: fee.collectorsExempt,
-          Numerator: fee.amountNumerator.toString(),
-          Denominator: fee.amountDenominator.toString(),
-          Min: fee.min.toString(),
-          Max: fee.max.toString(),
-          Fees_Paid_By: fee.net ? 'Sender' : 'Receiver',
-        });
-      }
+  public toRequestCustomFee(customFee: any): RequestCustomFee {
+    if ('amount' in customFee) {
+      let requestFixFee: RequestFixedFee;
+
+      requestFixFee.amount = customFee.amount.toString();
+      requestFixFee.collectorId = customFee.collectorId.toString();
+      requestFixFee.collectorsExempt = customFee.collectorsExempt;
+      requestFixFee.decimals = customFee.amount.decimals.toString();
+      requestFixFee.tokenIdCollected = customFee.tokenId.isNull()
+        ? '0.0.0'
+        : customFee.tokenId.toString();
+
+      return requestFixFee;
+    } else {
+      let requestFractionFee: RequestFractionalFee;
+
+      requestFractionFee.amountDenominator =
+        customFee.amountDenominator.toString();
+      requestFractionFee.amountNumerator = customFee.amountNumerator.toString();
+      requestFractionFee.collectorId = customFee.collectorId.toString();
+      requestFractionFee.collectorsExempt = customFee.collectorsExempt;
+      requestFractionFee.decimals = customFee.max.decimals.toString();
+      requestFractionFee.max = customFee.max.toString();
+      requestFractionFee.min = customFee.min.toString();
+      requestFractionFee.net = customFee.net;
+
+      return requestFractionFee;
+    }
+  }
+
+  public toRequestCustomFees(customFees: any[]): RequestCustomFee[] {
+    const requestFees: RequestCustomFee[] = [];
+
+    customFees.forEach((customFee) => {
+      requestFees.push(this.toRequestCustomFee(customFee));
     });
-  }*/
+
+    return requestFees;
+  }
 }
