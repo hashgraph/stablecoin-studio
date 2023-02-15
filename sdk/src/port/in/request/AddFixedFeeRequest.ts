@@ -21,18 +21,61 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
-import { RequestFixedFee } from './BaseRequest.js';
+import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
+import CheckNums from '../../../core/checks/numbers/CheckNums.js';
+import { InvalidType } from './error/InvalidType.js';
+import InvalidDecimalRange from '../../../domain/context/stablecoin/error/InvalidDecimalRange.js';
+import { InvalidRange } from './error/InvalidRange.js';
 
 export default class AddFixedFeeRequest extends ValidatedRequest<AddFixedFeeRequest> {
 	tokenId: string;
-	fee: RequestFixedFee;
+	collectorId: string;
+	collectorsExempt: boolean;
+	decimals: number;
+	tokenIdCollected: string;
+	amount: string;
 
-	constructor({ tokenId, fee }: { tokenId: string; fee: RequestFixedFee }) {
+	constructor({
+		tokenId,
+		collectorId,
+		collectorsExempt,
+		decimals,
+		tokenIdCollected,
+		amount,
+	}: {
+		tokenId: string;
+		collectorId: string;
+		collectorsExempt: boolean;
+		decimals: number;
+		tokenIdCollected: string;
+		amount: string;
+	}) {
 		super({
 			tokenId: Validation.checkHederaIdFormat(),
-			fee: Validation.checkFixedFee(),
+			collectorId: Validation.checkHederaIdFormat(),
+			tokenIdCollected: Validation.checkHederaIdFormat(true),
+			amount: (val) => {
+				if (!BigDecimal.isBigDecimal(val)) {
+					return [new InvalidType(val, 'BigDecimal')];
+				}
+
+				if (CheckNums.hasMoreDecimals(val, this.decimals)) {
+					return [new InvalidDecimalRange(val, this.decimals)];
+				}
+
+				const zero = BigDecimal.fromString('0', this.decimals);
+				const value = BigDecimal.fromString(val, this.decimals);
+
+				if (value.isLowerOrEqualThan(zero)) {
+					return [new InvalidRange(value, '0..', undefined)];
+				}
+			},
 		});
 		this.tokenId = tokenId;
-		this.fee = fee;
+		this.collectorId = collectorId;
+		this.collectorsExempt = collectorsExempt;
+		this.decimals = decimals;
+		this.tokenIdCollected = tokenIdCollected;
+		this.amount = amount;
 	}
 }

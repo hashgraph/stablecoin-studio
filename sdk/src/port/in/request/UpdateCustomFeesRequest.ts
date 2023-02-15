@@ -65,12 +65,23 @@ export default class UpdateCustomFeesRequest extends ValidatedRequest<UpdateCust
 					if (isRequestFixedFee(customFee))
 						return new AddFixedFeeRequest({
 							tokenId: this.tokenId,
-							fee: customFee,
+							collectorId: customFee.collectorId,
+							collectorsExempt: customFee.collectorsExempt,
+							decimals: customFee.decimals,
+							tokenIdCollected: customFee.tokenIdCollected,
+							amount: customFee.amount,
 						});
 					else if (isRequestFractionalFee(customFee))
 						return new AddFractionalFeeRequest({
 							tokenId: this.tokenId,
-							fee: customFee,
+							collectorId: customFee.collectorId,
+							collectorsExempt: customFee.collectorsExempt,
+							decimals: customFee.decimals,
+							amountNumerator: customFee.amountNumerator,
+							amountDenominator: customFee.amountDenominator,
+							min: customFee.min,
+							max: customFee.max,
+							net: customFee.net,
 						});
 					else
 						return [

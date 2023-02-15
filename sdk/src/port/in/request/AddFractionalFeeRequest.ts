@@ -21,24 +21,127 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
-import { RequestFractionalFee } from './BaseRequest.js';
+import { InvalidType } from './error/InvalidType.js';
+import InvalidDecimalRange from '../../../domain/context/stablecoin/error/InvalidDecimalRange.js';
+import { InvalidValue } from './error/InvalidValue.js';
+import CheckNums from '../../../core/checks/numbers/CheckNums.js';
+import { InvalidRange } from './error/InvalidRange.js';
+import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 
 export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractionalFeeRequest> {
 	tokenId: string;
-	fee: RequestFractionalFee;
+	collectorId: string;
+	collectorsExempt: boolean;
+	decimals: number;
+	amountNumerator: string;
+	amountDenominator: string;
+	min: string;
+	max: string;
+	net: boolean;
 
 	constructor({
 		tokenId,
-		fee,
+		collectorId,
+		collectorsExempt,
+		decimals,
+		amountNumerator,
+		amountDenominator,
+		min,
+		max,
+		net,
 	}: {
 		tokenId: string;
-		fee: RequestFractionalFee;
+		collectorId: string;
+		collectorsExempt: boolean;
+		decimals: number;
+		amountNumerator: string;
+		amountDenominator: string;
+		min: string;
+		max: string;
+		net: boolean;
 	}) {
 		super({
 			tokenId: Validation.checkHederaIdFormat(),
-			fee: Validation.checkFractionalFee(),
+			collectorId: Validation.checkHederaIdFormat(),
+			amountNumerator: (val) => {
+				const numerator = parseInt(val);
+
+				if (isNaN(numerator)) return [new InvalidType(val, 'integer')];
+
+				if (CheckNums.hasMoreDecimals(val, 0)) {
+					return [new InvalidDecimalRange(val, 0)];
+				}
+
+				if (numerator < 1)
+					return [new InvalidRange(val, '1', undefined)];
+			},
+			amountDenominator: (val) => {
+				const denominator = parseInt(val);
+
+				if (isNaN(denominator))
+					return [new InvalidType(val, 'integer')];
+
+				if (CheckNums.hasMoreDecimals(val, 0)) {
+					return [new InvalidDecimalRange(val, 0)];
+				}
+
+				const numerator = parseInt(this.amountNumerator);
+
+				if (numerator >= denominator)
+					return [
+						new InvalidValue(
+							`The denominator (${denominator}) should be greater than the numerator (${numerator}).`,
+						),
+					];
+			},
+			min: (val) => {
+				if (!BigDecimal.isBigDecimal(val)) {
+					return [new InvalidType(val, 'BigDecimal')];
+				}
+				if (CheckNums.hasMoreDecimals(val, this.decimals)) {
+					return [new InvalidDecimalRange(val, this.decimals)];
+				}
+
+				const zero = BigDecimal.fromString('0', this.decimals);
+				const minimum = BigDecimal.fromString(val, this.decimals);
+
+				if (minimum.isLowerThan(zero)) {
+					return [new InvalidRange(val, '0', undefined)];
+				}
+			},
+			max: (val) => {
+				if (val === undefined || val === '') {
+					return [
+						new InvalidValue(
+							`The maximum (${val}) should not be empty.`,
+						),
+					];
+				}
+				if (!BigDecimal.isBigDecimal(val)) {
+					return [new InvalidType(val, 'BigDecimal')];
+				}
+				if (CheckNums.hasMoreDecimals(val, this.decimals)) {
+					return [new InvalidDecimalRange(val, this.decimals)];
+				}
+				const maximum = BigDecimal.fromString(val, this.decimals);
+				const minimum = BigDecimal.fromString(this.min, this.decimals);
+
+				if (minimum.isGreaterThan(maximum))
+					return [
+						new InvalidValue(
+							`The maximum (${val}) should be greater than or equal to the minimum (${this.min}).`,
+						),
+					];
+			},
 		});
 		this.tokenId = tokenId;
-		this.fee = fee;
+		this.collectorId = collectorId;
+		this.collectorsExempt = collectorsExempt;
+		this.decimals = decimals;
+		this.amountDenominator = amountDenominator;
+		this.amountNumerator = amountNumerator;
+		this.min = min;
+		this.max = max;
+		this.net = net;
 	}
 }

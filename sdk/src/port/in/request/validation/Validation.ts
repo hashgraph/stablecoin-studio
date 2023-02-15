@@ -130,7 +130,7 @@ export default class Validation {
 		};
 	};
 
-	public static checkFractionalFee = () => {
+	/*public static checkFractionalFee = () => {
 		return (val: any): BaseError[] => {
 			const {
 				collectorId,
@@ -213,9 +213,9 @@ export default class Validation {
 
 			return err;
 		};
-	};
+	};*/
 
-	public static checkFixedFee = () => {
+	/*public static checkFixedFee = () => {
 		return (val: any): BaseError[] => {
 			const {
 				collectorId,
@@ -249,7 +249,7 @@ export default class Validation {
 
 			return err;
 		};
-	};
+	};*/
 
 	public static checkAccount = () => {
 		return (val: any): void => {
