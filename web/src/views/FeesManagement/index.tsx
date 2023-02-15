@@ -1,7 +1,6 @@
 import { Button, useDisclosure, Flex, Stack, GridItem, SimpleGrid } from '@chakra-ui/react';
 
-import type { ChangeEvent } from 'react';
-import React, { useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -17,43 +16,50 @@ import { useRefreshCoinInfo } from '../../hooks/useRefreshCoinInfo';
 import { SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
 import NoFeesManagement from './components/NoFeesManagement';
 import FeeSelectController from './components/FeeSelectController';
-import {
-	AddFixedFeeRequest,
-	AddFractionalFeeRequest,
+import type {
+	RequestFixedFee,
+	RequestFractionalFee,
+	RequestCustomFee,
 	UpdateCustomFeesRequest,
 } from 'hedera-stable-coin-sdk';
+import { AddFixedFeeRequest, AddFractionalFeeRequest } from 'hedera-stable-coin-sdk';
 import { handleRequestValidation } from '../../utils/validationsHelper';
+import ModalInput from '../../components/ModalInput';
+
+type a = RequestFractionalFee | RequestFixedFee | RequestCustomFee;
 
 const FeesManagement = () => {
 	const [awaitingUpdate, setAwaitingUpdate] = useState<boolean>(false);
 	const [success, setSuccess] = useState<boolean>();
 	const [error, setError] = useState<any>();
-	const { isOpen, onOpen, onClose } = useDisclosure();
+	const {
+		isOpen: isOpenCustomToken,
+		onOpen: onOpenCustomToken,
+		onClose: onCloseCustomToken,
+	} = useDisclosure();
 	const variant = awaitingUpdate ? 'loading' : success ? 'success' : 'error';
-	const { control, getValues } = useForm({
+	const [feesArray, setFeesArray] = useState<a[]>();
+
+	const { control, getValues, setValue } = useForm({
 		mode: 'onChange',
+		// values:feesArray
 	});
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
-	const [customFeesRequest, setCustomFeesRequest] = useState(
-		new UpdateCustomFeesRequest({
-			tokenId: selectedStableCoin!.tokenId!.toString(),
-			customFees: [],
-		}),
-	);
 
 	const fixedFee = new AddFixedFeeRequest({
 		tokenId: selectedStableCoin!.tokenId!.toString(),
-		fee: {
-			amount: '1',
-			collectorId: '0.0.1',
-			collectorsExempt: false,
-			decimals: 0,
-			tokenIdCollected: '0.0.0',
-		},
+		amount: '1',
+		collectorId: '0.0.1',
+		collectorsExempt: false,
+		decimals: 0,
+		tokenIdCollected: '0.0.0',
 	});
 
 	// TODO: Add useEffect to load current customFees from stablecoin
+	useEffect(() => {
+		setFeesArray(selectedStableCoin!.customFees!);
+	}, []);
 
 	// const isLoading = useRefreshCoinInfo();
 
@@ -108,25 +114,31 @@ const FeesManagement = () => {
 		console.log(event.value);
 		if (event.value === '') {
 			// TODO
+			onOpenCustomToken();
 			console.log('show modal');
 		}
 	};
-	const handleAddNewRow = () => {
+	const handleAddNewRow = async () => {
 		// const newCustomFees = {...customFeesRequest};
-		console.log(customFeesRequest);
-		
+		console.log('Añadir nuevo row');
+
 		// const updatedCustomFeesRequest = { ...customFeesRequest };
-		// updatedCustomFeesRequest.customFees.push({
+		// const updateFee = {
 		// 	collectorId: '',
 		// 	collectorsExempt: true,
 		// 	decimals: selectedStableCoin?.decimals!,
-		// 	fee
-		// });
-		// console.log(updatedCustomFeesRequest as UpdateCustomFeesRequest,customFeesRequest);
+		// } as RequestCustomFee
 
+		// updatedCustomFeesRequest.customFees = [ ...updatedCustomFeesRequest.customFees, updateFee ];
 		// setCustomFeesRequest(updatedCustomFeesRequest as UpdateCustomFeesRequest);
 	};
-	const customFees: any[] = ['a'];
+
+	async function handleRemoveRow(i: number): Promise<void> {
+		// const updatedCustomFeesRequest = { ...customFeesRequest };
+		// console.log(updatedCustomFeesRequest.customFees.splice(i,1));
+		// setCustomFeesRequest(updatedCustomFeesRequest as UpdateCustomFeesRequest);
+	}
+
 	return (
 		<BaseContainer title={t('feesManagement:title')}>
 			{selectedStableCoin && selectedStableCoin.feeScheduleKey && (
@@ -144,208 +156,213 @@ const FeesManagement = () => {
 							</GridItem>
 						))}
 
-						{customFees.map((field, i) => {
-							return (
-								<React.Fragment key={i}>
-									<GridItem>
-										<SelectController
-											control={control}
-											name={`${i}.feeType`}
-											options={[
-												{
-													value: 0,
-													label: t('feeType.fixed'),
-												},
-												{
-													value: 1,
-													label: t('feeType.fractional'),
-												},
-											]}
-											overrideStyles={selectorStyle}
-											addonLeft={true}
-											variant='unstyled'
-											// defaultValue={
-											// 	customFees[i] !== undefined
-											// 		? customFees[i].amountDenominator
-											// 			? '1'
-											// 			: '0'
-											// 		: '0'
-											// }
-										/>
-									</GridItem>
-									<GridItem>
-										<InputController
-											control={control}
-											rules={{
-												required: t('global:validations.required') ?? propertyNotFound,
-												validate: {
-													validation: (value: string) => {
-														fixedFee.fee.amount = value;
-														const res = handleRequestValidation(fixedFee.validate('fee'));
-														return res;
-														// return true;
+						{feesArray &&
+							feesArray.map((field, i) => {
+								return (
+									<React.Fragment key={i}>
+										<GridItem>
+											<SelectController
+												control={control}
+												name={`${field}.${i}.feeType`}
+												options={[
+													{
+														value: 0,
+														label: t('feeType.fixed'),
 													},
-												},
-											}}
-											name={`${i}.amountOrPercentage`}
-											placeholder={t('amountPlaceholder') ?? propertyNotFound}
-											// defaultValue={
-											// 	customFees[i] !== undefined
-											// 		? customFees[i].amount
-											// 			? customFees[i].amount._value
-											// 			: ''
-											// 		: ''
-											// }
-											isReadOnly={false}
-										/>
-									</GridItem>
-									<GridItem>
-										<InputController
-											control={control}
-											rules={{
-												required: t('global:validations.required') ?? propertyNotFound,
-												validate: {
-													validation: (value: string) => {
-														// fractionalFeeRequest.fee.min = value;
-														// const res = handleRequestValidation(
-														// 	fractionalFeeRequest.validate('min'),
-														// );
-														// return res;
-														return true;
+													{
+														value: 1,
+														label: t('feeType.fractional'),
 													},
-												},
-											}}
-											name={`${i}.min`}
-											placeholder={t('minPlaceholder') ?? propertyNotFound}
-											// defaultValue={
-											// 	customFees[i] !== undefined && customFees[i].min
-											// 		? customFees[i].min._value.toString()
-											// 		: ''
-											// }
-											isReadOnly={false}
-										/>
-									</GridItem>
-									<GridItem>
-										<InputController
-											control={control}
-											rules={{
-												required: t('global:validations.required') ?? propertyNotFound,
-												validate: {
-													validation: (value: string) => {
-														// fractionalFeeRequest.fee.max = value;
-														// const res = handleRequestValidation(
-														// 	fractionalFeeRequest.fee.validate('max'),
-														// );
-														// return res;
-														return true;
+												]}
+												overrideStyles={selectorStyle}
+												addonLeft={true}
+												variant='unstyled'
+												// onChangeAux={ ()=>{
+												// 	field.
+												// }}
+												defaultValue={field !== undefined ? ('amount' in field ? '1' : '0') : '0'}
+											/>
+										</GridItem>
+										<GridItem>
+											<InputController
+												control={control}
+												rules={{
+													required: t('global:validations.required') ?? propertyNotFound,
+													validate: {
+														validation: (value: string) => {
+															fixedFee.amount = value;
+															const res = handleRequestValidation(fixedFee.validate('amount'));
+															return res;
+															// return true;
+														},
 													},
-												},
-											}}
-											name={`${i}.max`}
-											placeholder={t('maxPlaceholder') ?? propertyNotFound}
-											// defaultValue={
-											// 	customFees[i] !== undefined && customFees[i].max
-											// 		? customFees[i].max._value.toString()
-											// 		: ''
-											// }
-											isReadOnly={false}
-										/>
-									</GridItem>
-									<GridItem>
-										<InputController
-											rules={{
-												required: t('global:validations.required') ?? propertyNotFound,
-												validate: {
-													validation: (value: string) => {
-														fixedFee.fee.collectorId = value;
-														const res = handleRequestValidation(fixedFee.validate('fee'));
-														return res;
-													
+												}}
+												name={`${field}.${i}.amountOrPercentage`}
+												placeholder={t('amountPlaceholder') ?? propertyNotFound}
+												defaultValue={
+													field !== undefined ? ('amount' in field ? field.amount : '') : ''
+												}
+												isReadOnly={false}
+											/>
+										</GridItem>
+										<GridItem>
+											<InputController
+												control={control}
+												rules={{
+													required: t('global:validations.required') ?? propertyNotFound,
+													// validate: {
+													// 	validation: (value: string) => {
+													// 		// fractionalFeeRequest.fee.min = value;
+													// 		// const res = handleRequestValidation(
+													// 		// 	fractionalFeeRequest.validate('min'),
+													// 		// );
+													// 		// return res;
+													// 		return true;
+													// 	},
+													// },
+												}}
+												name={`${field}.${i}.min`}
+												placeholder={t('minPlaceholder') ?? propertyNotFound}
+												// defaultValue={
+												// 	customFees[i] !== undefined && customFees[i].min
+												// 		? customFees[i].min._value.toString()
+												// 		: ''
+												// }
+												isReadOnly={false}
+											/>
+										</GridItem>
+										<GridItem>
+											<InputController
+												control={control}
+												rules={{
+													required: t('global:validations.required') ?? propertyNotFound,
+													validate: {
+														validation: (value: string) => {
+															// fractionalFeeRequest.fee.max = value;
+															// const res = handleRequestValidation(
+															// 	fractionalFeeRequest.fee.validate('max'),
+															// );
+															// return res;
+															return true;
+														},
 													},
-												},
-											}}
-											isRequired
-											control={control}
-											name={`${i}.collectorAccount`}
-											placeholder={t('collectorAccountPlaceholder') ?? propertyNotFound}
-											// defaultValue={
-											// 	customFees[i] !== undefined && customFees[i].collectorId !== undefined
-											// 		? customFees[i].collectorId.value.toString()
-											// 		: ''
-											// }
-											isReadOnly={false}
-										/>
-									</GridItem>
-									<GridItem>
-										<SelectController
-											control={control}
-											name={`${i}.collectorsExempt`}
-											options={collectorsExempt}
-											overrideStyles={selectorStyle}
-											addonLeft={true}
-											variant='unstyled'
-											// defaultValue={
-											// 	customFees[i] !== undefined
-											// 		? customFees[i].collectorsExempt
-											// 			? '1'
-											// 			: '0'
-											// 		: '1'
-											// }
-										/>
-									</GridItem>
-									<GridItem>
-										<SelectController
-											control={control}
-											name={`${i}.senderOrReceiver`}
-											options={[
-												{
-													value: 0,
-													label: 'sender',
-												},
-												{
-													value: 1,
-													label: 'receiver',
-												},
-											]}
-											overrideStyles={selectorStyle}
-											addonLeft={true}
-											variant='unstyled'
-											// defaultValue={
-											// 	customFees[i] !== undefined
-											// 		? customFees[i].amountDenominator
-											// 			? customFees[i].net
-											// 				? '0'
-											// 				: '1'
-											// 			: '0'
-											// 		: '0'
-											// }
-										/>
-									</GridItem>
-									<GridItem>
-										<FeeSelectController
-											styles={selectorStyle}
-											name={`${i}.moneda`}
-											control={control}
-											options={[
-												{ label: 'HBAR', value: 'HBAR' },
-												{
-													label: t('feesManagement:tokensFeeOption:currentToken'),
-													value: selectedStableCoin!.tokenId!.toString(),
-												},
-												{
-													label: t('feesManagement:tokensFeeOption:customToken'),
-													value: '',
-												},
-											]}
-											onChangeAux={handleSelectFee}
-										/>
-									</GridItem>
-									<GridItem>
-										<Icon name='Trash' fontSize='22px' onClick={() => handleRemoveRow(i)} />
-									</GridItem>
-								</React.Fragment>
-							);
-						})}
+												}}
+												name={`${field}.${i}.max`}
+												placeholder={t('maxPlaceholder') ?? propertyNotFound}
+												// defaultValue={
+												// 	customFees[i] !== undefined && customFees[i].max
+												// 		? customFees[i].max._value.toString()
+												// 		: ''
+												// }
+												isReadOnly={false}
+											/>
+										</GridItem>
+										<GridItem>
+											<InputController
+												rules={{
+													required: t('global:validations.required') ?? propertyNotFound,
+													// validate: {
+													// 	validation: (value: string) => {
+													// 		fixedFee.fee.collectorId = value;
+													// 		const res = handleRequestValidation(fixedFee.validate('fee'));
+													// 		return res;
+													// 	},
+													// },
+												}}
+												isRequired
+												control={control}
+												name={`${field}.${i}.collectorAccount`}
+												placeholder={t('collectorAccountPlaceholder') ?? propertyNotFound}
+												// defaultValue={
+												// 	customFees[i] !== undefined && customFees[i].collectorId !== undefined
+												// 		? customFees[i].collectorId.value.toString()
+												// 		: ''
+												// }
+												isReadOnly={false}
+											/>
+										</GridItem>
+										<GridItem>
+											<SelectController
+												control={control}
+												name={`${field}.${i}.collectorsExempt`}
+												options={collectorsExempt}
+												overrideStyles={selectorStyle}
+												addonLeft={true}
+												variant='unstyled'
+												// defaultValue={
+												// 	customFees[i] !== undefined
+												// 		? customFees[i].collectorsExempt
+												// 			? '1'
+												// 			: '0'
+												// 		: '1'
+												// }
+											/>
+										</GridItem>
+										<GridItem>
+											<SelectController
+												control={control}
+												name={`${field}.${i}.senderOrReceiver`}
+												options={[
+													{
+														value: 0,
+														label: 'sender',
+													},
+													{
+														value: 1,
+														label: 'receiver',
+													},
+												]}
+												overrideStyles={selectorStyle}
+												addonLeft={true}
+												variant='unstyled'
+												// defaultValue={
+												// 	customFees[i] !== undefined
+												// 		? customFees[i].amountDenominator
+												// 			? customFees[i].net
+												// 				? '0'
+												// 				: '1'
+												// 			: '0'
+												// 		: '0'
+												// }
+											/>
+										</GridItem>
+										<GridItem>
+											<FeeSelectController
+												styles={selectorStyle}
+												name={`${field}.${i}.moneda`}
+												control={control}
+												options={[
+													{ label: 'HBAR', value: 'HBAR' },
+													{
+														label: t('feesManagement:tokensFeeOption:currentToken'),
+														value: selectedStableCoin!.tokenId!.toString(),
+													},
+													{
+														label: t('feesManagement:tokensFeeOption:customToken'),
+														value: '',
+													},
+												]}
+												onChangeAux={handleSelectFee}
+											/>
+										</GridItem>
+										<GridItem>
+											<Icon name='Trash' fontSize='22px' onClick={() => handleRemoveRow(i)} />
+										</GridItem>
+										{isOpenCustomToken && (
+											<ModalInput
+												setValue={(tokenId: string) => {
+													setValue(`${field}.${i}.moneda`, tokenId);
+													console.log(getValues());
+												}}
+												isOpen={isOpenCustomToken}
+												onClose={onCloseCustomToken}
+												placeholderInput='0.0.0'
+												title={'Introduce tokenId'}
+											/>
+										)}
+									</React.Fragment>
+								);
+							})}
 					</SimpleGrid>
 					<Flex justify='flex-end' pt={6} px={6} pb={6}>
 						<Stack direction='row' spacing={6}>
@@ -355,7 +372,7 @@ const FeesManagement = () => {
 							<Button
 								variant='primary'
 								onClick={handleAddNewRow}
-								isDisabled={customFees.length > 9}
+								// isDisabled={customFeesRequest.customFees.length > 9}
 							>
 								{t('updateTokenFees.addRowButtonText')}
 							</Button>
@@ -370,6 +387,3 @@ const FeesManagement = () => {
 };
 
 export default FeesManagement;
-function handleRemoveRow(i: number): void {
-	throw new Error('Function not implemented.');
-}
