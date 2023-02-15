@@ -39,14 +39,12 @@ import {
 import BigDecimal from '../../domain/context/shared/BigDecimal.js';
 import { addFractionalFeesCommand } from '../../app/usecase/command/stablecoin/fees/addCustomFees/addFractionalFeesCommand.js';
 import { UpdateCustomFeesCommand } from '../../app/usecase/command/stablecoin/fees/updateCustomFees/UpdateCustomFeesCommand.js';
+import {
+	isRequestFractionalFee,
+	isRequestFixedFee,
+} from './request/BaseRequest.js';
 
-export {
-	CustomFee,
-	FixedFee,
-	FractionalFee,
-	HBAR_DECIMALS,
-	MAX_PERCENTAGE_DECIMALS,
-};
+export { HBAR_DECIMALS, MAX_PERCENTAGE_DECIMALS };
 
 interface ICustomFees {
 	addFixedFee(request: AddFixedFeeRequest): Promise<boolean>;
@@ -63,24 +61,17 @@ class CustomFeesInPort implements ICustomFees {
 
 	@LogError
 	async addFixedFee(request: AddFixedFeeRequest): Promise<boolean> {
-		const {
-			tokenId,
-			collectorId,
-			tokenIdCollected,
-			amount,
-			decimals,
-			collectorsExempt,
-		} = request;
+		const { tokenId, fee } = request;
 		handleValidation('AddFixedFeeRequest', request);
 
 		return (
 			await this.commandBus.execute(
 				new addFixedFeesCommand(
 					HederaId.from(tokenId),
-					HederaId.from(collectorId),
-					HederaId.from(tokenIdCollected),
-					BigDecimal.fromString(amount, decimals),
-					collectorsExempt,
+					HederaId.from(fee.collectorId),
+					HederaId.from(fee.tokenIdCollected),
+					BigDecimal.fromString(fee.amount, fee.decimals),
+					fee.collectorsExempt,
 				),
 			)
 		).payload;
@@ -88,30 +79,20 @@ class CustomFeesInPort implements ICustomFees {
 
 	@LogError
 	async addFractionalFee(request: AddFractionalFeeRequest): Promise<boolean> {
-		const {
-			tokenId,
-			collectorId,
-			amountNumerator,
-			amountDenominator,
-			min,
-			max,
-			decimals,
-			net,
-			collectorsExempt,
-		} = request;
+		const { tokenId, fee } = request;
 		handleValidation('AddFractionalFeeRequest', request);
 
 		return (
 			await this.commandBus.execute(
 				new addFractionalFeesCommand(
 					HederaId.from(tokenId),
-					HederaId.from(collectorId),
-					parseInt(amountNumerator),
-					parseInt(amountDenominator),
-					BigDecimal.fromString(min, decimals),
-					BigDecimal.fromString(max, decimals),
-					net,
-					collectorsExempt,
+					HederaId.from(fee.collectorId),
+					parseInt(fee.amountNumerator),
+					parseInt(fee.amountDenominator),
+					BigDecimal.fromString(fee.min, fee.decimals),
+					BigDecimal.fromString(fee.max, fee.decimals),
+					fee.net,
+					fee.collectorsExempt,
 				),
 			)
 		).payload;
@@ -122,9 +103,39 @@ class CustomFeesInPort implements ICustomFees {
 		const { tokenId, customFees } = request;
 		handleValidation('UpdateCustomFeesRequest', request);
 
+		const requestedCustomFee: CustomFee[] = [];
+
+		customFees.forEach((customFee) => {
+			if (isRequestFixedFee(customFee)) {
+				requestedCustomFee.push(
+					new FixedFee(
+						HederaId.from(customFee.collectorId),
+						BigDecimal.fromString(customFee.amount),
+						HederaId.from(customFee.tokenIdCollected),
+						customFee.collectorsExempt,
+					),
+				);
+			} else if (isRequestFractionalFee(customFee)) {
+				requestedCustomFee.push(
+					new FractionalFee(
+						HederaId.from(customFee.collectorId),
+						parseInt(customFee.amountNumerator),
+						parseInt(customFee.amountDenominator),
+						BigDecimal.fromString(customFee.min),
+						BigDecimal.fromString(customFee.max),
+						customFee.net,
+						customFee.collectorsExempt,
+					),
+				);
+			}
+		});
+
 		return (
 			await this.commandBus.execute(
-				new UpdateCustomFeesCommand(HederaId.from(tokenId), customFees),
+				new UpdateCustomFeesCommand(
+					HederaId.from(tokenId),
+					requestedCustomFee,
+				),
 			)
 		).payload;
 	}

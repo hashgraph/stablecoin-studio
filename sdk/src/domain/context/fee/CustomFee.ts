@@ -34,10 +34,10 @@ export class CustomFee {
 	collectorId?: HederaId;
 	collectorsExempt?: boolean;
 
-	/*constructor(collectorId: HederaId, collectorsExempt: boolean) {
+	constructor(collectorId: HederaId, collectorsExempt: boolean) {
 		this.collectorId = collectorId;
 		this.collectorsExempt = collectorsExempt;
-	}*/
+	}
 }
 
 export class FractionalFee extends CustomFee {
@@ -56,9 +56,7 @@ export class FractionalFee extends CustomFee {
 		net: boolean,
 		collectorsExempt: boolean,
 	) {
-		super();
-		this.collectorId = collectorId;
-		this.collectorsExempt = collectorsExempt;
+		super(collectorId, collectorsExempt);
 		this.amountNumerator = amountNumerator;
 		this.amountDenominator = amountDenominator;
 		this.min = min;
@@ -77,9 +75,7 @@ export class FixedFee extends CustomFee {
 		tokenId: HederaId,
 		collectorsExempt: boolean,
 	) {
-		super();
-		this.collectorId = collectorId;
-		this.collectorsExempt = collectorsExempt;
+		super(collectorId, collectorsExempt);
 		this.amount = amount;
 		this.tokenId = tokenId;
 	}

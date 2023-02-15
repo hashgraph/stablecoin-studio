@@ -49,3 +49,35 @@ export interface AccountBaseRequest {
 export interface ContractBaseRequest extends BaseRequest, AccountBaseRequest {
 	proxyContractId: string;
 }
+
+export interface RequestCustomFee {
+	collectorId: string;
+	collectorsExempt: boolean;
+}
+
+export interface RequestFractionalFee extends RequestCustomFee {
+	amountNumerator: string;
+	amountDenominator: string;
+	min: string;
+	max: string;
+	decimals: number;
+	net: boolean;
+}
+
+export interface RequestFixedFee extends RequestCustomFee {
+	tokenIdCollected: string;
+	amount: string;
+	decimals: number;
+}
+
+export const isRequestFractionalFee = (
+	fee: RequestCustomFee,
+): fee is RequestFractionalFee => {
+	return 'amountNumerator' in fee;
+};
+
+export const isRequestFixedFee = (
+	fee: RequestCustomFee,
+): fee is RequestFixedFee => {
+	return 'amount' in fee;
+};
