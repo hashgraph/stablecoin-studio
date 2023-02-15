@@ -15,11 +15,16 @@
 		"minimumAmount": "Min",
 		"collectorAccount": "Collector account",
 		"assessmentMethod": "Payer",
+		"tokenFee": "Token fee",
 		"actions": ""
 	},
 	"feeType": {
 		"fixed": "Fixed",
 		"fractional": "Fractional"
+	},
+	"tokensFeeOption": {
+		"currentToken": "Current token",
+		"customToken": "Another token"
 	},
 	"amountPlaceholder": "0",
 	"percentagePlaceholder": "0",
