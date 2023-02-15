@@ -38,6 +38,7 @@ import { GetStableCoinQuery } from '../usecase/query/stablecoin/get/GetStableCoi
 import { StableCoinNotFound } from '../../port/out/mirror/error/StableCoinNotFound.js';
 import { Console } from 'console';
 import { MAX_CUSTOM_FEES } from '../../domain/context/fee/CustomFee.js';
+import { toCustomFees } from '../../port/in/request/BaseRequest.js';
 
 @singleton()
 export default class StableCoinService extends Service {
@@ -56,10 +57,17 @@ export default class StableCoinService extends Service {
 		const viewModel = (
 			await this.queryBus.execute(new GetStableCoinQuery(tokenId))
 		).coin;
-		const { name, decimals, symbol } = viewModel;
+		const { name, decimals, symbol, customFees } = viewModel;
 		if (!name || decimals === undefined || !symbol)
 			throw new StableCoinNotFound(tokenId);
-		return new StableCoin({ ...viewModel, name, decimals, symbol });
+		const _customFees = toCustomFees(customFees);
+		return new StableCoin({
+			...viewModel,
+			name,
+			decimals,
+			symbol,
+			customFees: _customFees,
+		});
 	}
 
 	async getCapabilities(

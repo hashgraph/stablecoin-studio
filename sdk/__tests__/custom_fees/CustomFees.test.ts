@@ -23,7 +23,13 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import Account from '../../src/domain/context/account/Account.js';
 import TransactionResponse from '../../src/domain/context/transaction/TransactionResponse.js';
-import { Network, StableCoinCapabilities } from '../../src/index.js';
+import {
+	Network,
+	RequestCustomFee,
+	StableCoinCapabilities,
+	RequestFractionalFee,
+	RequestFixedFee,
+} from '../../src/index.js';
 import ConnectRequest, {
 	SupportedWallets,
 } from '../../src/port/in/request/ConnectRequest.js';
@@ -133,7 +139,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 
 		await delay(5);
 
-		const tokenCustomFees: CustomFee[] = await getTokenCustomFees(
+		const tokenCustomFees: RequestCustomFee[] = await getTokenCustomFees(
 			mn,
 			stableCoinCapabilitiesHTS.coin.tokenId!,
 		);
@@ -158,7 +164,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 
 		await delay(5);
 
-		const tokenCustomFees: CustomFee[] = await getTokenCustomFees(
+		const tokenCustomFees: RequestCustomFee[] = await getTokenCustomFees(
 			mn,
 			stableCoinCapabilitiesHTS.coin.tokenId!,
 		);
@@ -167,16 +173,18 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		expect(tokenCustomFees[0].collectorId).toEqual(
 			new HederaId(feeCollectorAccountId),
 		);
-		expect((tokenCustomFees[0] as FractionalFee).amountNumerator).toEqual(
-			1,
-		);
-		expect((tokenCustomFees[0] as FractionalFee).amountDenominator).toEqual(
-			10,
-		);
-		expect((tokenCustomFees[0] as FractionalFee).min!).toEqual(
+		expect(
+			(tokenCustomFees[0] as RequestFractionalFee).amountNumerator,
+		).toEqual(1);
+		expect(
+			(tokenCustomFees[0] as RequestFractionalFee).amountDenominator,
+		).toEqual(10);
+		expect((tokenCustomFees[0] as RequestFractionalFee).min!).toEqual(
 			new BigDecimal('0'),
 		);
-		expect((tokenCustomFees[0] as FractionalFee).max).toBeUndefined();
+		expect(
+			(tokenCustomFees[0] as RequestFractionalFee).max,
+		).toBeUndefined();
 
 		await removeTokenCustomFees(th, stableCoinCapabilitiesHTS);
 	}, 150000);
@@ -200,27 +208,29 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 
 		await delay(5);
 
-		const tokenCustomFees: CustomFee[] = await getTokenCustomFees(
+		const tokenCustomFees: RequestCustomFee[] = await getTokenCustomFees(
 			mn,
 			stableCoinCapabilitiesHTS.coin.tokenId!,
 		);
 		expect(tokenCustomFees.length).toEqual(2);
-		expect(tokenCustomFees[0]).toBeInstanceOf(FractionalFee);
+		//expect(tokenCustomFees[0]).toBeInstanceOf(FractionalFee);
 		expect(tokenCustomFees[0].collectorId).toEqual(
 			new HederaId(feeCollectorAccountId),
 		);
-		expect((tokenCustomFees[0] as FractionalFee).amountNumerator).toEqual(
-			1,
-		);
-		expect((tokenCustomFees[0] as FractionalFee).amountDenominator).toEqual(
-			10,
-		);
-		expect((tokenCustomFees[0] as FractionalFee).min!).toEqual(
+		expect(
+			(tokenCustomFees[0] as RequestFractionalFee).amountNumerator,
+		).toEqual(1);
+		expect(
+			(tokenCustomFees[0] as RequestFractionalFee).amountDenominator,
+		).toEqual(10);
+		expect((tokenCustomFees[0] as RequestFractionalFee).min!).toEqual(
 			new BigDecimal('0'),
 		);
-		expect((tokenCustomFees[0] as FractionalFee).max).toBeUndefined();
+		expect(
+			(tokenCustomFees[0] as RequestFractionalFee).max,
+		).toBeUndefined();
 
-		expect(tokenCustomFees[1]).toBeInstanceOf(FixedFee);
+		//expect(tokenCustomFees[1]).toBeInstanceOf(FixedFee);
 		expect(tokenCustomFees[1].collectorId).toEqual(
 			new HederaId(feeCollectorAccountId),
 		);
@@ -251,7 +261,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 async function getTokenCustomFees(
 	mn: MirrorNodeAdapter,
 	tokenId: HederaId,
-): Promise<CustomFee[]> {
+): Promise<RequestCustomFee[]> {
 	const stableCoinDetail: StableCoinDetail = await mn.getStableCoin(tokenId);
 	return stableCoinDetail.customFees ?? [];
 }

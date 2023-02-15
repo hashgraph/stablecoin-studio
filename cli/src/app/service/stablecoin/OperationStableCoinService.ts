@@ -689,12 +689,6 @@ export default class OperationStableCoinService extends Service {
         false,
       );
 
-    const requestCustomFees = new FeeStableCoinService().toRequestCustomFees(
-      detailsStableCoin.customFees,
-    );
-
-    //const rolesAccount = this.getRolesAccount();
-
     const feeManagementOptionsFiltered = language
       .getArrayFromObject('feeManagement.options')
       .filter((option) => {
@@ -706,15 +700,6 @@ export default class OperationStableCoinService extends Service {
               option == language.getText('feeManagement.options.Create')
                 ? capabilities.includes(Operation.CREATE_CUSTOM_FEE)
                 : capabilities.includes(Operation.REMOVE_CUSTOM_FEE);
-            /*if (showCustomFee && rolesAccount) {
-              showCustomFee =
-                rolesAccount.includes(StableCoinRole.CREATE_CUSTOM_FEE) ||
-                this.isOperationAccess(
-                  stableCoinCapabilities,
-                  Operation.CREATE_CUSTOM_FEE,
-                  Access.HTS,
-                );
-            }*/
             return showCustomFee;
             break;
         }
@@ -771,12 +756,14 @@ export default class OperationStableCoinService extends Service {
           this.stableCoinWithSymbol,
         );
 
-        await this.removeFees(requestCustomFees);
+        await this.removeFees(detailsStableCoin.customFees);
 
         break;
       case language.getText('feeManagement.options.List'):
         console.log(
-          new FeeStableCoinService().getFormatedFees(requestCustomFees),
+          new FeeStableCoinService().getFormatedFees(
+            detailsStableCoin.customFees,
+          ),
         );
         break;
       case feeManagementOptionsFiltered[

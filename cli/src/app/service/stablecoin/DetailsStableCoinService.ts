@@ -44,10 +44,6 @@ export default class DetailsStableCoinsService extends Service {
           }
         : {};
 
-      const requestCustomFees = new FeeStableCoinService().toRequestCustomFees(
-        respDetail.customFees,
-      );
-
       const out = {
         ...respDetail,
         tokenId: respDetail.tokenId.toString(),
@@ -68,7 +64,7 @@ export default class DetailsStableCoinsService extends Service {
           ? respDetail.feeScheduleKey.toString()
           : '-',
         customFees: new FeeStableCoinService().getFormatedFees(
-          requestCustomFees,
+          respDetail.customFees,
         ),
         ...reserveData,
       };

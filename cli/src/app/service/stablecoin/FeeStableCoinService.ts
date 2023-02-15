@@ -5,8 +5,6 @@ import {
   AddFixedFeeRequest,
   AddFractionalFeeRequest,
   RequestCustomFee,
-  RequestFixedFee,
-  RequestFractionalFee,
   isRequestFixedFee,
   isRequestFractionalFee,
   Fees,
@@ -81,45 +79,5 @@ export default class FeeStableCoinService extends Service {
     });
 
     return FormatedFees;
-  }
-
-  public toRequestCustomFee(customFee: any): RequestCustomFee {
-    if ('amount' in customFee) {
-      let requestFixFee: RequestFixedFee;
-
-      requestFixFee.amount = customFee.amount.toString();
-      requestFixFee.collectorId = customFee.collectorId.toString();
-      requestFixFee.collectorsExempt = customFee.collectorsExempt;
-      requestFixFee.decimals = customFee.amount.decimals.toString();
-      requestFixFee.tokenIdCollected = customFee.tokenId.isNull()
-        ? '0.0.0'
-        : customFee.tokenId.toString();
-
-      return requestFixFee;
-    } else {
-      let requestFractionFee: RequestFractionalFee;
-
-      requestFractionFee.amountDenominator =
-        customFee.amountDenominator.toString();
-      requestFractionFee.amountNumerator = customFee.amountNumerator.toString();
-      requestFractionFee.collectorId = customFee.collectorId.toString();
-      requestFractionFee.collectorsExempt = customFee.collectorsExempt;
-      requestFractionFee.decimals = customFee.max.decimals.toString();
-      requestFractionFee.max = customFee.max.toString();
-      requestFractionFee.min = customFee.min.toString();
-      requestFractionFee.net = customFee.net;
-
-      return requestFractionFee;
-    }
-  }
-
-  public toRequestCustomFees(customFees: any[]): RequestCustomFee[] {
-    const requestFees: RequestCustomFee[] = [];
-
-    customFees.forEach((customFee) => {
-      requestFees.push(this.toRequestCustomFee(customFee));
-    });
-
-    return requestFees;
   }
 }
