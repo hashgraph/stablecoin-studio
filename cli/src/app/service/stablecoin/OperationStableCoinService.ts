@@ -822,16 +822,14 @@ export default class OperationStableCoinService extends Service {
     const addFractionalFeeRequest: AddFractionalFeeRequest =
       new AddFractionalFeeRequest({
         tokenId: this.stableCoinId,
-        fee: {
-          collectorId: currentAccount,
-          collectorsExempt: true,
-          amountNumerator: '1',
-          amountDenominator: '2',
-          min: '0',
-          max: '0',
-          decimals: decimals,
-          net: false,
-        },
+        collectorId: currentAccount,
+        collectorsExempt: true,
+        amountNumerator: '1',
+        amountDenominator: '2',
+        min: '0',
+        max: '0',
+        decimals: decimals,
+        net: false,
       });
 
     const fractionType = await utilsService.defaultMultipleAsk(
@@ -881,20 +879,20 @@ export default class OperationStableCoinService extends Service {
           check_Ok = false;
         }
       } while (!check_Ok);
-      addFractionalFeeRequest.fee.amountNumerator = Math.round(
+      addFractionalFeeRequest.amountNumerator = Math.round(
         numerator.toUnsafeFloat() * exponential,
       ).toString();
-      addFractionalFeeRequest.fee.amountDenominator = denominator.toString();
+      addFractionalFeeRequest.amountDenominator = denominator.toString();
     } else {
-      addFractionalFeeRequest.fee.amountNumerator =
+      addFractionalFeeRequest.amountNumerator =
         await utilsService.defaultSingleAsk(
           language.getText('feeManagement.askNumerator'),
           '1',
         );
       await utilsService.handleValidation(
-        () => addFractionalFeeRequest.validate('fee'),
+        () => addFractionalFeeRequest.validate('amountNumerator'),
         async () => {
-          addFractionalFeeRequest.fee.amountNumerator =
+          addFractionalFeeRequest.amountNumerator =
             await utilsService.defaultSingleAsk(
               language.getText('feeManagement.askNumerator'),
               '1',
@@ -902,15 +900,15 @@ export default class OperationStableCoinService extends Service {
         },
       );
 
-      addFractionalFeeRequest.fee.amountDenominator =
+      addFractionalFeeRequest.amountDenominator =
         await utilsService.defaultSingleAsk(
           language.getText('feeManagement.askDenominator'),
           '2',
         );
       await utilsService.handleValidation(
-        () => addFractionalFeeRequest.validate('fee'),
+        () => addFractionalFeeRequest.validate('amountDenominator'),
         async () => {
-          addFractionalFeeRequest.fee.amountDenominator =
+          addFractionalFeeRequest.amountDenominator =
             await utilsService.defaultSingleAsk(
               language.getText('feeManagement.askDenominator'),
               '2',
@@ -919,55 +917,54 @@ export default class OperationStableCoinService extends Service {
       );
     }
 
-    addFractionalFeeRequest.fee.min = await utilsService.defaultSingleAsk(
+    addFractionalFeeRequest.min = await utilsService.defaultSingleAsk(
       language.getText('feeManagement.askMin'),
       '0',
     );
     await utilsService.handleValidation(
-      () => addFractionalFeeRequest.validate('fee'),
+      () => addFractionalFeeRequest.validate('min'),
       async () => {
-        addFractionalFeeRequest.fee.min = await utilsService.defaultSingleAsk(
+        addFractionalFeeRequest.min = await utilsService.defaultSingleAsk(
           language.getText('feeManagement.askMin'),
           '0',
         );
       },
     );
 
-    addFractionalFeeRequest.fee.max = await utilsService.defaultSingleAsk(
+    addFractionalFeeRequest.max = await utilsService.defaultSingleAsk(
       language.getText('feeManagement.askMax'),
       '0',
     );
     await utilsService.handleValidation(
-      () => addFractionalFeeRequest.validate('fee'),
+      () => addFractionalFeeRequest.validate('max'),
       async () => {
-        addFractionalFeeRequest.fee.max = await utilsService.defaultSingleAsk(
+        addFractionalFeeRequest.max = await utilsService.defaultSingleAsk(
           language.getText('feeManagement.askMax'),
           '0',
         );
       },
     );
 
-    addFractionalFeeRequest.fee.net = await utilsService.defaultConfirmAsk(
+    addFractionalFeeRequest.net = await utilsService.defaultConfirmAsk(
       language.getText('feeManagement.askAssesmentMethod'),
       true,
     );
 
-    addFractionalFeeRequest.fee.collectorsExempt =
+    addFractionalFeeRequest.collectorsExempt =
       await utilsService.defaultConfirmAsk(
         language.getText('feeManagement.askCollectorsExempt'),
         true,
       );
 
-    addFractionalFeeRequest.fee.collectorId =
-      await utilsService.defaultSingleAsk(
-        language.getText('feeManagement.askCollectorId'),
-        currentAccount,
-      );
+    addFractionalFeeRequest.collectorId = await utilsService.defaultSingleAsk(
+      language.getText('feeManagement.askCollectorId'),
+      currentAccount,
+    );
 
     await utilsService.handleValidation(
-      () => addFractionalFeeRequest.validate('fee'),
+      () => addFractionalFeeRequest.validate('collectorId'),
       async () => {
-        addFractionalFeeRequest.fee.collectorId =
+        addFractionalFeeRequest.collectorId =
           await utilsService.defaultSingleAsk(
             language.getText('feeManagement.askCollectorId'),
             currentAccount,
@@ -976,13 +973,13 @@ export default class OperationStableCoinService extends Service {
     );
 
     console.log({
-      numerator: addFractionalFeeRequest.fee.amountNumerator,
-      denominator: addFractionalFeeRequest.fee.amountDenominator,
-      min: addFractionalFeeRequest.fee.min,
-      max: addFractionalFeeRequest.fee.max,
-      feesPaidBy: addFractionalFeeRequest.fee.net ? 'Sender' : 'Receiver',
-      collector: addFractionalFeeRequest.fee.collectorId,
-      collectorsExempt: addFractionalFeeRequest.fee.collectorsExempt,
+      numerator: addFractionalFeeRequest.amountNumerator,
+      denominator: addFractionalFeeRequest.amountDenominator,
+      min: addFractionalFeeRequest.min,
+      max: addFractionalFeeRequest.max,
+      feesPaidBy: addFractionalFeeRequest.net ? 'Sender' : 'Receiver',
+      collector: addFractionalFeeRequest.collectorId,
+      collectorsExempt: addFractionalFeeRequest.collectorsExempt,
     });
 
     const confirm = await this.askFeeOperationConfirmation(
@@ -1009,13 +1006,11 @@ export default class OperationStableCoinService extends Service {
   ): Promise<void> {
     const addFixedFeeRequest: AddFixedFeeRequest = new AddFixedFeeRequest({
       tokenId: this.stableCoinId,
-      fee: {
-        collectorId: currentAccount,
-        collectorsExempt: true,
-        tokenIdCollected: '0.0.0',
-        amount: '1',
-        decimals: HBAR_DECIMALS,
-      },
+      collectorId: currentAccount,
+      collectorsExempt: true,
+      tokenIdCollected: '0.0.0',
+      amount: '1',
+      decimals: HBAR_DECIMALS,
     });
 
     const feesInHBAR = await utilsService.defaultConfirmAsk(
@@ -1023,19 +1018,18 @@ export default class OperationStableCoinService extends Service {
       true,
     );
 
-    addFixedFeeRequest.fee.tokenIdCollected = '0.0.0';
+    addFixedFeeRequest.tokenIdCollected = '0.0.0';
 
     if (!feesInHBAR) {
-      addFixedFeeRequest.fee.tokenIdCollected =
-        await utilsService.defaultSingleAsk(
-          language.getText('feeManagement.askTokenId'),
-          this.stableCoinId,
-        );
+      addFixedFeeRequest.tokenIdCollected = await utilsService.defaultSingleAsk(
+        language.getText('feeManagement.askTokenId'),
+        this.stableCoinId,
+      );
 
       await utilsService.handleValidation(
-        () => addFixedFeeRequest.validate('fee'),
+        () => addFixedFeeRequest.validate('tokenIdCollected'),
         async () => {
-          addFixedFeeRequest.fee.tokenIdCollected =
+          addFixedFeeRequest.tokenIdCollected =
             await utilsService.defaultSingleAsk(
               language.getText('feeManagement.askTokenId'),
               this.stableCoinId,
@@ -1043,66 +1037,61 @@ export default class OperationStableCoinService extends Service {
         },
       );
 
-      if (addFixedFeeRequest.fee.tokenIdCollected == '0.0.0') {
+      if (addFixedFeeRequest.tokenIdCollected == '0.0.0') {
         console.log('HBAR selected');
-      } else if (
-        addFixedFeeRequest.fee.tokenIdCollected !== this.stableCoinId
-      ) {
+      } else if (addFixedFeeRequest.tokenIdCollected !== this.stableCoinId) {
         const detailsExternalStableCoin =
           await new DetailsStableCoinsService().getDetailsStableCoins(
-            addFixedFeeRequest.fee.tokenIdCollected,
+            addFixedFeeRequest.tokenIdCollected,
             false,
           );
 
-        addFixedFeeRequest.fee.decimals =
-          detailsExternalStableCoin.decimals ?? 0;
-      } else addFixedFeeRequest.fee.decimals = decimals;
+        addFixedFeeRequest.decimals = detailsExternalStableCoin.decimals ?? 0;
+      } else addFixedFeeRequest.decimals = decimals;
     }
 
-    addFixedFeeRequest.fee.amount = await utilsService.defaultSingleAsk(
+    addFixedFeeRequest.amount = await utilsService.defaultSingleAsk(
       language.getText('feeManagement.askAmount'),
-      '0',
+      '1',
     );
     await utilsService.handleValidation(
-      () => addFixedFeeRequest.validate('fee'),
+      () => addFixedFeeRequest.validate('amount'),
       async () => {
-        addFixedFeeRequest.fee.amount = await utilsService.defaultSingleAsk(
+        addFixedFeeRequest.amount = await utilsService.defaultSingleAsk(
           language.getText('feeManagement.askAmount'),
-          '0',
+          '1',
         );
       },
     );
 
-    addFixedFeeRequest.fee.collectorsExempt =
-      await utilsService.defaultConfirmAsk(
-        language.getText('feeManagement.askCollectorsExempt'),
-        true,
-      );
+    addFixedFeeRequest.collectorsExempt = await utilsService.defaultConfirmAsk(
+      language.getText('feeManagement.askCollectorsExempt'),
+      true,
+    );
 
-    addFixedFeeRequest.fee.collectorId = await utilsService.defaultSingleAsk(
+    addFixedFeeRequest.collectorId = await utilsService.defaultSingleAsk(
       language.getText('feeManagement.askCollectorId'),
       currentAccount,
     );
 
     await utilsService.handleValidation(
-      () => addFixedFeeRequest.validate('fee'),
+      () => addFixedFeeRequest.validate('collectorId'),
       async () => {
-        addFixedFeeRequest.fee.collectorId =
-          await utilsService.defaultSingleAsk(
-            language.getText('feeManagement.askCollectorId'),
-            currentAccount,
-          );
+        addFixedFeeRequest.collectorId = await utilsService.defaultSingleAsk(
+          language.getText('feeManagement.askCollectorId'),
+          currentAccount,
+        );
       },
     );
 
     console.log({
-      amount: addFixedFeeRequest.fee.amount,
+      amount: addFixedFeeRequest.amount,
       token:
-        addFixedFeeRequest.fee.tokenIdCollected !== '0.0.0'
-          ? addFixedFeeRequest.fee.tokenIdCollected
+        addFixedFeeRequest.tokenIdCollected !== '0.0.0'
+          ? addFixedFeeRequest.tokenIdCollected
           : 'HBAR',
-      collector: addFixedFeeRequest.fee.collectorId,
-      collectorsExempt: addFixedFeeRequest.fee.collectorsExempt,
+      collector: addFixedFeeRequest.collectorId,
+      collectorsExempt: addFixedFeeRequest.collectorsExempt,
     });
 
     const confirm = await this.askFeeOperationConfirmation(

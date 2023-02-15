@@ -62,7 +62,8 @@ export default class FeeStableCoinService extends Service {
           Collector_Id: fee.collectorId,
           All_Collectors_Exempt: fee.collectorsExempt,
           Amount: fee.amount,
-          Token: !fee.tokenIdCollected ? 'HBAR' : fee.tokenIdCollected,
+          Token:
+            fee.tokenIdCollected == '0.0.0' ? 'HBAR' : fee.tokenIdCollected,
         });
       } else if (isRequestFractionalFee(fee)) {
         FormatedFees.push({
