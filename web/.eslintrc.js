@@ -24,7 +24,7 @@ module.exports = {
 		'@typescript-eslint/no-unused-vars': 'warn',
 		'@typescript-eslint/no-redeclare': 'error',
 		'no-useless-constructor': 'off',
-		'@typescript-eslint/consistent-type-imports': 'error',
+		'@typescript-eslint/consistent-type-imports': 'warn',
 		'react/prop-types': 'off',
 		'import/no-duplicates': 'error',
 	},

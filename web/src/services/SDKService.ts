@@ -7,6 +7,10 @@ import {
 	ConnectRequest,
 	InitializationRequest,
 	ReserveDataFeed,
+	Fees,
+	AddFixedFeeRequest,
+	AddFractionalFeeRequest,
+	UpdateCustomFeesRequest
 } from 'hedera-stable-coin-sdk';
 import type {
 	WalletEvent,
@@ -231,6 +235,18 @@ export class SDKService {
 
 	public static async isAccountKYCGranted(data: KYCRequest) {
 		return await StableCoin.isAccountKYCGranted(data);
+	}
+
+	public static async addFixedFee(data: AddFixedFeeRequest) {
+		return await Fees.addFixedFee(data);
+	}
+
+	public static async addFractionalFee(data: AddFractionalFeeRequest) {
+		return await Fees.addFractionalFee(data);
+	}
+
+	public static async updateCustomFees(data: UpdateCustomFeesRequest) {
+		return await Fees.updateCustomFees(data);
 	}
 }
 

@@ -22,15 +22,17 @@ import Icon from '../../components/Icon';
 import { SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
 import NoFeesManagement from './components/NoFeesManagement';
 import FeeSelectController from './components/FeeSelectController';
-import type {
-	RequestFixedFee,
-	RequestFractionalFee,
-	RequestCustomFee,
-	UpdateCustomFeesRequest,
+
+import { AddFixedFeeRequest, 
+		 AddFractionalFeeRequest,
+		 RequestCustomFee, 
+		 RequestFixedFee, 
+		 RequestFractionalFee, 
+		 UpdateCustomFeesRequest 
 } from 'hedera-stable-coin-sdk';
-import { AddFixedFeeRequest, AddFractionalFeeRequest } from 'hedera-stable-coin-sdk';
 import { handleRequestValidation } from '../../utils/validationsHelper';
 import ModalInput from '../../components/ModalInput';
+import SDKService from '../../services/SDKService';
 
 const MAX_FEES = 10;
 
@@ -61,6 +63,12 @@ const FeesManagement = () => {
 	});
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
+	const [updateCustomFeesRequest] = useState<UpdateCustomFeesRequest>(
+		new UpdateCustomFeesRequest({
+			tokenId: selectedStableCoin!.tokenId!.toString(),
+			customFees: [],
+		}),
+	);
 
 	const defaultFee = {
 		feeType: undefined,
@@ -161,13 +169,76 @@ const FeesManagement = () => {
 		remove(i);
 	}
 
+	const handleUpdateTokenFees = async () => {
+		// console.log(`${JSON.stringify(getValues())}`);
+		// console.log(`${JSON.stringify(JSON.parse(JSON.stringify(getValues()))["object Object"])}`);	
+		const formData = JSON.parse(JSON.stringify(getValues()))["object Object"];
+
+		const requestCustomFeeArray : RequestCustomFee[] = [];
+		for (let i=0; i < formData.length; i++) {
+			const feeType: string = formData[i].feeType.label;
+			const collectorAccount: string = formData[i].collectorAccount;
+			const collectorsExempt: boolean = formData[i].collectorsExempt.label;
+	
+			switch(feeType){
+				case "Fractional": 
+				{
+					const min: string = formData[i].min;
+					const max: string = formData[i].max;
+
+					const requestFractionalFee = {
+						collectorId: collectorAccount,
+						collectorsExempt: collectorsExempt,
+						decimals: 2,
+						amountNumerator: "1",
+						amountDenominator: "20",
+						min: min,
+						max: max,
+						net: false
+					} as RequestFractionalFee;
+					requestCustomFeeArray.push(requestFractionalFee);
+					break;
+				}
+				
+				case "Fixed":
+				{
+					const amount: string = formData[i].amountOrPercentage;
+					const requestFixedFee = ({
+						collectorId: collectorAccount,
+						collectorsExempt: collectorsExempt,
+						decimals: 2,
+						tokenIdCollected: '0.0.0',
+						amount: amount
+					}) as RequestFixedFee;
+					requestCustomFeeArray.push(requestFixedFee);
+					break;
+				}
+			}
+		}
+
+		if (selectedStableCoin?.tokenId) {
+			updateCustomFeesRequest.customFees = requestCustomFeeArray;
+
+			try {
+				setAwaitingUpdate(true);
+				await SDKService.updateCustomFees(updateCustomFeesRequest);
+				setError('');
+				setAwaitingUpdate(false);
+				setSuccess(true);
+			} catch (error: any) {
+				setAwaitingUpdate(false);
+				console.log(error);
+				setError(error?.transactionError?.transactionUrl);
+				setSuccess(false);
+				setAwaitingUpdate(false);
+			} 
+		} 
+	}	
+
 	enum FeeType {
 		FIXED,
 		FRACTIONAL,
 	}
-	const handleUpdateTokenFees = () => {
-		console.log('SUBMIT', fees);
-	};
 
 	return (
 		<BaseContainer title={t('feesManagement:title')}>
@@ -208,9 +279,7 @@ const FeesManagement = () => {
 												overrideStyles={selectorStyle}
 												addonLeft={true}
 												variant='unstyled'
-												defaultValue={
-													field !== undefined ? (`fees.${i}.amount` in field ? '1' : '0') : '0'
-												}
+												defaultValue={field !== undefined ? ('amount' in field ? '0' : '1') : '0'}
 											/>
 										</GridItem>
 										<GridItem>
@@ -313,11 +382,12 @@ const FeesManagement = () => {
 												control={control}
 												name={`fees.${i}.collectorAccount`}
 												placeholder={t('collectorAccountPlaceholder') ?? propertyNotFound}
-												// defaultValue={
-												// 	customFees[i] !== undefined && customFees[i].collectorId !== undefined
-												// 		? customFees[i].collectorId.value.toString()
-												// 		: ''
-												// }
+												 defaultValue={
+													field !== undefined ? ('collectorId' in field ? field.collectorId as string : '') : ''
+												 	// customFees[i] !== undefined && customFees[i].collectorId !== undefined
+												 	//	? customFees[i].collectorId.value.toString()
+												 	//	: ''
+												}
 												isReadOnly={false}
 											/>
 										</GridItem>
@@ -330,13 +400,14 @@ const FeesManagement = () => {
 												overrideStyles={selectorStyle}
 												addonLeft={true}
 												variant='unstyled'
-												// defaultValue={
-												// 	customFees[i] !== undefined
-												// 		? customFees[i].collectorsExempt
-												// 			? '1'
-												// 			: '0'
-												// 		: '1'
-												// }
+												 defaultValue={
+													field !== undefined ? ('collectorsExempt' in field ? field.collectorsExempt ? 1 : 0 : 0) : 0
+												 	/* customFees[i] !== undefined
+												 		? customFees[i].collectorsExempt
+												 			? '1'
+												 			: '0'
+												 		: '1' */
+												}
 											/>
 										</GridItem>
 										<GridItem>
