@@ -207,7 +207,7 @@ const FeesManagement = () => {
 					const amount: string = formData[i].amountOrPercentage;
 					const currency: string = formData[i].currency.value;
 					let decimals = HBAR_DECIMALS;
-					if (currency === selectedStableCoin.tokenId) {
+					if (currency === selectedStableCoin!.tokenId!.toString()) {
 						decimals = selectedStableCoin!.decimals ?? 0;
 					} else {
 						const detailsExternalStableCoin: StableCoinViewModel =
@@ -247,9 +247,9 @@ const FeesManagement = () => {
 				setError(error?.transactionError?.transactionUrl);
 				setSuccess(false);
 				setAwaitingUpdate(false);
-			} 
-		} 
-	}	
+			}
+		}
+	};
 
 	enum FeeType {
 		FIXED,
@@ -401,7 +401,7 @@ const FeesManagement = () => {
 												defaultValue={
 													field !== undefined
 														? 'collectorId' in field
-															? field.collectorId as string
+															? (field.collectorId as string)
 															: ''
 														: ''
 													// customFees[i] !== undefined && customFees[i].collectorId !== undefined
