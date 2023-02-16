@@ -59,7 +59,7 @@ class CustomFeesInPort implements ICustomFees {
 		),
 	) {}
 
-	@LogError
+	// @LogError
 	async addFixedFee(request: AddFixedFeeRequest): Promise<boolean> {
 		const {
 			tokenId,
@@ -84,7 +84,7 @@ class CustomFeesInPort implements ICustomFees {
 		).payload;
 	}
 
-	@LogError
+	// @LogError
 	async addFractionalFee(request: AddFractionalFeeRequest): Promise<boolean> {
 		const {
 			tokenId,
@@ -124,7 +124,7 @@ class CustomFeesInPort implements ICustomFees {
 		).payload;
 	}
 
-	@LogError
+	// @LogError
 	async updateCustomFees(request: UpdateCustomFeesRequest): Promise<boolean> {
 		const { tokenId, customFees } = request;
 		handleValidation('UpdateCustomFeesRequest', request);
