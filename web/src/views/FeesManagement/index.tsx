@@ -49,11 +49,22 @@ const FeesManagement = () => {
 
 	const fixedFee = new AddFixedFeeRequest({
 		tokenId: selectedStableCoin!.tokenId!.toString(),
-		amount: '1',
 		collectorId: '0.0.1',
 		collectorsExempt: false,
 		decimals: 0,
 		tokenIdCollected: '0.0.0',
+		amount: '1',
+	});
+	const fractionalFee = new AddFractionalFeeRequest({
+		tokenId: selectedStableCoin!.tokenId!.toString(),
+		collectorId: '0.0.1',
+		collectorsExempt: false,
+		decimals: 0,
+		amountNumerator: '4',
+		amountDenominator: '2',
+		min: '1',
+		max: '5',
+		net: false,
 	});
 
 	// TODO: Add useEffect to load current customFees from stablecoin
@@ -210,16 +221,13 @@ const FeesManagement = () => {
 												control={control}
 												rules={{
 													required: t('global:validations.required') ?? propertyNotFound,
-													// validate: {
-													// 	validation: (value: string) => {
-													// 		// fractionalFeeRequest.fee.min = value;
-													// 		// const res = handleRequestValidation(
-													// 		// 	fractionalFeeRequest.validate('min'),
-													// 		// );
-													// 		// return res;
-													// 		return true;
-													// 	},
-													// },
+													validate: {
+														validation: (value: string) => {
+															fractionalFee.min = value;
+															const res = handleRequestValidation(fractionalFee.validate('min'));
+															return res;
+														},
+													},
 												}}
 												name={`${field}.${i}.min`}
 												placeholder={t('minPlaceholder') ?? propertyNotFound}
@@ -238,12 +246,9 @@ const FeesManagement = () => {
 													required: t('global:validations.required') ?? propertyNotFound,
 													validate: {
 														validation: (value: string) => {
-															// fractionalFeeRequest.fee.max = value;
-															// const res = handleRequestValidation(
-															// 	fractionalFeeRequest.fee.validate('max'),
-															// );
-															// return res;
-															return true;
+															fractionalFee.max = value;
+															const res = handleRequestValidation(fractionalFee.validate('max'));
+															return res;
 														},
 													},
 												}}
@@ -261,13 +266,13 @@ const FeesManagement = () => {
 											<InputController
 												rules={{
 													required: t('global:validations.required') ?? propertyNotFound,
-													// validate: {
-													// 	validation: (value: string) => {
-													// 		fixedFee.fee.collectorId = value;
-													// 		const res = handleRequestValidation(fixedFee.validate('fee'));
-													// 		return res;
-													// 	},
-													// },
+													validate: {
+														validation: (value: string) => {
+															fixedFee.collectorId = value;
+															const res = handleRequestValidation(fixedFee.validate('collectorId'));
+															return res;
+														},
+													},
 												}}
 												isRequired
 												control={control}
