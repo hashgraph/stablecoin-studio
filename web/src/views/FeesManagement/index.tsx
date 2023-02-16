@@ -8,9 +8,9 @@ import {
 	InputRightElement,
 } from '@chakra-ui/react';
 
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useMemo, useState } from 'react';
 
-import { useForm } from 'react-hook-form';
+import { useFieldArray, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import AwaitingWalletSignature from '../../components/AwaitingWalletSignature';
@@ -32,6 +32,8 @@ import { AddFixedFeeRequest, AddFractionalFeeRequest } from 'hedera-stable-coin-
 import { handleRequestValidation } from '../../utils/validationsHelper';
 import ModalInput from '../../components/ModalInput';
 
+const MAX_FEES = 10;
+
 type a = RequestFractionalFee | RequestFixedFee | RequestCustomFee;
 
 const FeesManagement = () => {
@@ -44,14 +46,27 @@ const FeesManagement = () => {
 		onClose: onCloseCustomToken,
 	} = useDisclosure();
 	const variant = awaitingUpdate ? 'loading' : success ? 'success' : 'error';
-	const [feesArray, setFeesArray] = useState<a[]>();
 
 	const { control, getValues, setValue, watch } = useForm({
 		mode: 'onChange',
-		// values:feesArray
+	});
+
+	const {
+		fields: fees,
+		append,
+		remove,
+	} = useFieldArray({
+		control,
+		name: 'fees',
 	});
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
+
+	const defaultFee = {
+		feeType: undefined,
+		min: undefined,
+		amount: undefined,
+	};
 
 	const fixedFee = new AddFixedFeeRequest({
 		tokenId: selectedStableCoin!.tokenId!.toString(),
@@ -61,6 +76,7 @@ const FeesManagement = () => {
 		tokenIdCollected: '0.0.0',
 		amount: '1',
 	});
+
 	const fractionalFee = new AddFractionalFeeRequest({
 		tokenId: selectedStableCoin!.tokenId!.toString(),
 		collectorId: '0.0.1',
@@ -75,10 +91,10 @@ const FeesManagement = () => {
 
 	// TODO: Add useEffect to load current customFees from stablecoin
 	useEffect(() => {
-		setFeesArray(selectedStableCoin!.customFees!);
+		setValue('fees', selectedStableCoin!.customFees!);
 	}, []);
 
-	// const isLoading = useRefreshCoinInfo();
+	const isMaxFees = useMemo(() => fees.length >= MAX_FEES, [fees]);
 
 	const { t } = useTranslation(['feesManagement', 'global']);
 
@@ -136,28 +152,23 @@ const FeesManagement = () => {
 		}
 	};
 	const handleAddNewRow = async () => {
-		// const newCustomFees = {...customFeesRequest};
-		// console.log('Añadir nuevo row');
-		// const updatedCustomFeesRequest = { ...customFeesRequest };
-		// const updateFee = {
-		// 	collectorId: '',
-		// 	collectorsExempt: true,
-		// 	decimals: selectedStableCoin?.decimals!,
-		// } as RequestCustomFee
-		// updatedCustomFeesRequest.customFees = [ ...updatedCustomFeesRequest.customFees, updateFee ];
-		// setCustomFeesRequest(updatedCustomFeesRequest as UpdateCustomFeesRequest);
+		if (fees.length >= 10) return;
+
+		append(fees[0]);
 	};
 
 	async function handleRemoveRow(i: number): Promise<void> {
-		// const updatedCustomFeesRequest = { ...customFeesRequest };
-		// console.log(updatedCustomFeesRequest.customFees.splice(i,1));
-		// setCustomFeesRequest(updatedCustomFeesRequest as UpdateCustomFeesRequest);
+		remove(i);
 	}
 
 	enum FeeType {
 		FIXED,
 		FRACTIONAL,
 	}
+	const handleUpdateTokenFees = () => {
+		console.log('SUBMIT', fees);
+	};
+
 	return (
 		<BaseContainer title={t('feesManagement:title')}>
 			{selectedStableCoin && selectedStableCoin.feeScheduleKey && (
@@ -175,14 +186,15 @@ const FeesManagement = () => {
 							</GridItem>
 						))}
 
-						{feesArray &&
-							feesArray.map((field, i) => {
+						{fees &&
+							fees.map((field, i) => {
 								return (
 									<React.Fragment key={i}>
 										<GridItem>
 											<SelectController
+												key={field.id}
 												control={control}
-												name={`${field}.${i}.feeType`}
+												name={`fees.${i}.feeType` as const}
 												options={[
 													{
 														value: FeeType.FIXED,
@@ -196,14 +208,14 @@ const FeesManagement = () => {
 												overrideStyles={selectorStyle}
 												addonLeft={true}
 												variant='unstyled'
-												// onChangeAux={ ()=>{
-												// 	field.
-												// }}
-												defaultValue={field !== undefined ? ('amount' in field ? '1' : '0') : '0'}
+												defaultValue={
+													field !== undefined ? (`fees.${i}.amount` in field ? '1' : '0') : '0'
+												}
 											/>
 										</GridItem>
 										<GridItem>
 											<InputController
+												key={field.id}
 												control={control}
 												rules={{
 													required: t('global:validations.required') ?? propertyNotFound,
@@ -219,14 +231,14 @@ const FeesManagement = () => {
 														},
 													},
 												}}
-												name={`${field}.${i}.amountOrPercentage`}
+												name={`fees.${i}.amountOrPercentage`}
 												placeholder={t('amountPlaceholder') ?? propertyNotFound}
-												defaultValue={
-													field !== undefined ? ('amount' in field ? field.amount : '') : ''
-												}
+												// defaultValue={
+												// 	field !== undefined ? ('amount' in field ? field.amount : '') : ''
+												// }
 												isReadOnly={false}
 												rightElement={
-													watch(`${field}.${i}.feeType`)?.value === FeeType.FRACTIONAL && (
+													watch(`fees.${i}.feeType`)?.value === FeeType.FRACTIONAL && (
 														<InputRightElement>
 															<Icon name='Percent' />
 														</InputRightElement>
@@ -236,6 +248,7 @@ const FeesManagement = () => {
 										</GridItem>
 										<GridItem>
 											<InputController
+												key={field.id}
 												control={control}
 												rules={{
 													required: t('global:validations.required') ?? propertyNotFound,
@@ -247,7 +260,7 @@ const FeesManagement = () => {
 														},
 													},
 												}}
-												name={`${field}.${i}.min`}
+												name={`fees.${i}.min`}
 												placeholder={t('minPlaceholder') ?? propertyNotFound}
 												// defaultValue={
 												// 	customFees[i] !== undefined && customFees[i].min
@@ -255,11 +268,12 @@ const FeesManagement = () => {
 												// 		: ''
 												// }
 												isReadOnly={false}
-												disabled={watch(`${field}.${i}.feeType`)?.value !== FeeType.FRACTIONAL}
+												disabled={watch(`fees.${i}.feeType`)?.value !== FeeType.FRACTIONAL}
 											/>
 										</GridItem>
 										<GridItem>
 											<InputController
+												key={field.id}
 												control={control}
 												rules={{
 													required: t('global:validations.required') ?? propertyNotFound,
@@ -271,7 +285,7 @@ const FeesManagement = () => {
 														},
 													},
 												}}
-												name={`${field}.${i}.max`}
+												name={`fees.${i}.max`}
 												placeholder={t('maxPlaceholder') ?? propertyNotFound}
 												// defaultValue={
 												// 	customFees[i] !== undefined && customFees[i].max
@@ -279,11 +293,12 @@ const FeesManagement = () => {
 												// 		: ''
 												// }
 												isReadOnly={false}
-												disabled={watch(`${field}.${i}.feeType`)?.value !== FeeType.FRACTIONAL}
+												disabled={watch(`fees.${i}.feeType`)?.value !== FeeType.FRACTIONAL}
 											/>
 										</GridItem>
 										<GridItem>
 											<InputController
+												key={field.id}
 												rules={{
 													required: t('global:validations.required') ?? propertyNotFound,
 													validate: {
@@ -296,7 +311,7 @@ const FeesManagement = () => {
 												}}
 												isRequired
 												control={control}
-												name={`${field}.${i}.collectorAccount`}
+												name={`fees.${i}.collectorAccount`}
 												placeholder={t('collectorAccountPlaceholder') ?? propertyNotFound}
 												// defaultValue={
 												// 	customFees[i] !== undefined && customFees[i].collectorId !== undefined
@@ -308,8 +323,9 @@ const FeesManagement = () => {
 										</GridItem>
 										<GridItem>
 											<SelectController
+												key={field.id}
 												control={control}
-												name={`${field}.${i}.collectorsExempt`}
+												name={`fees.${i}.collectorsExempt`}
 												options={collectorsExempt}
 												overrideStyles={selectorStyle}
 												addonLeft={true}
@@ -325,8 +341,9 @@ const FeesManagement = () => {
 										</GridItem>
 										<GridItem>
 											<SelectController
+												key={field.id}
 												control={control}
-												name={`${field}.${i}.senderOrReceiver`}
+												name={`fees.${i}.senderOrReceiver`}
 												options={[
 													{
 														value: 0,
@@ -353,8 +370,9 @@ const FeesManagement = () => {
 										</GridItem>
 										<GridItem>
 											<FeeSelectController
+												key={field.id}
 												styles={selectorStyle}
-												name={`${field}.${i}.moneda`}
+												name={`fees.${i}.moneda`}
 												control={control}
 												options={[
 													{ label: 'HBAR', value: 'HBAR' },
@@ -376,7 +394,7 @@ const FeesManagement = () => {
 										{isOpenCustomToken && (
 											<ModalInput
 												setValue={(tokenId: string) => {
-													setValue(`${field}.${i}.moneda`, tokenId);
+													setValue(`fees.${i}.moneda`, tokenId);
 													console.log(getValues());
 												}}
 												isOpen={isOpenCustomToken}
@@ -391,14 +409,10 @@ const FeesManagement = () => {
 					</SimpleGrid>
 					<Flex justify='flex-end' pt={6} px={6} pb={6}>
 						<Stack direction='row' spacing={6}>
-							<Button variant='primary' /* onClick={handleUpdateTokenFees} */>
+							<Button variant='primary' onClick={handleUpdateTokenFees}>
 								{t('updateTokenFees.saveChangesButtonText')}
 							</Button>
-							<Button
-								variant='primary'
-								onClick={handleAddNewRow}
-								// isDisabled={customFeesRequest.customFees.length > 9}
-							>
+							<Button variant='primary' onClick={handleAddNewRow} isDisabled={isMaxFees}>
 								{t('updateTokenFees.addRowButtonText')}
 							</Button>
 						</Stack>
