@@ -205,7 +205,7 @@ const FeesManagement = () => {
 
 				case 'Fixed': {
 					const amount: string = fee.amountOrPercentage;
-					const currency: string = 'HBAR';
+					const currency: string = fee.currency.value;
 					let decimals = HBAR_DECIMALS;
 					if (currency === selectedStableCoin!.tokenId!.toString()) {
 						decimals = selectedStableCoin!.decimals ?? 0;
@@ -497,7 +497,7 @@ const FeesManagement = () => {
 														display: 'none',
 													}),
 												}}
-												name={`fees.${i}.moneda`}
+												name={`fees.${i}.currency`}
 												control={control}
 												options={[...optionsDefault]}
 												// onChangeAux={handleSelectFee}
@@ -511,7 +511,7 @@ const FeesManagement = () => {
 										{/* {isOpenCustomToken && (
 											<ModalInput
 												setValue={(tokenId: string) => {
-													setValue(`fees.${i}.moneda`, tokenId);
+													setValue(`fees.${i}.currency`, tokenId);
 
 													console.log(getValues());
 												}}
