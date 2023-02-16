@@ -8,7 +8,7 @@ import {
 	Grid,
 	Center,
 } from '@chakra-ui/react';
-import React, { useEffect, useMemo,useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { useFieldArray, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -134,8 +134,6 @@ const FeesManagement = () => {
 		},
 	};
 	useEffect(() => {
-		console.log(selectedStableCoin!.customFees!);
-
 		const parsedFees = selectedStableCoin!.customFees!.map((item: FeeTypes) => {
 			if ('amount' in item) {
 				return {
@@ -161,7 +159,7 @@ const FeesManagement = () => {
 					senderOrReceiver: senderOrReceiverOption.SENDER,
 				};
 			}
-
+			// TODO
 			//  Fixed => sender
 			//  fractional => ambos, pero actualmente solo reciever
 			return {
@@ -230,8 +228,12 @@ const FeesManagement = () => {
 	const handleAddNewRow = async () => {
 		if (fees.length >= 10) return;
 
+		// Default values when add new row
 		append({
-			feeType: undefined,
+			feeType: feeTypeOption.FIXED,
+			collectorsExempt: collectorsExemptOption.FALSE,
+			senderOrReceiver: senderOrReceiverOption.SENDER,
+			tokenIdCollected: collectorIdOption.HBAR,
 			min: undefined,
 			amount: undefined,
 		});
@@ -243,7 +245,7 @@ const FeesManagement = () => {
 
 	const handleUpdateTokenFees = async () => {
 		const requestCustomFeeArray: RequestCustomFee[] = [];
-		console.log(getValues());
+		// console.log(getValues());
 
 		for (const fee of getValues().fees) {
 			const feeType: FeeTypeValue = fee.feeType.value;
@@ -301,12 +303,11 @@ const FeesManagement = () => {
 		}
 
 		if (selectedStableCoin?.tokenId) {
-
 			const updateCustomFeesRequest = new UpdateCustomFeesRequest({
 				tokenId: selectedStableCoin!.tokenId!.toString(),
 				customFees: requestCustomFeeArray,
 			});
-			
+
 			try {
 				onOpen();
 				setAwaitingUpdate(true);
@@ -361,9 +362,9 @@ const FeesManagement = () => {
 												// defaultValue={
 												// 	field !== undefined
 												// 		? `fees.${i}.amount` in field
-												// 			? FeeType.FRACTIONAL
-												// 			: FeeType.FIXED
-												// 		: FeeType.FIXED
+												// 			? feeTypeOption.FRACTIONAL.value
+												// 			: feeTypeOption.FIXED.value
+												// 		: feeTypeOption.FIXED.value
 												// }
 											/>
 										</GridItem>
