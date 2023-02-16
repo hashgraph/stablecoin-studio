@@ -174,20 +174,16 @@ const FeesManagement = () => {
 	}
 
 	const handleUpdateTokenFees = async () => {
-		// console.log(`${JSON.stringify(getValues())}`);
-		// console.log(`${JSON.stringify(JSON.parse(JSON.stringify(getValues()))["object Object"])}`);
-		const formData = JSON.parse(JSON.stringify(getValues()))['object Object'];
-
 		const requestCustomFeeArray: RequestCustomFee[] = [];
-		for (let i = 0; i < formData.length; i++) {
-			const feeType: string = formData[i].feeType.label;
-			const collectorAccount: string = formData[i].collectorAccount;
-			const collectorsExempt: boolean = formData[i].collectorsExempt.label;
+		for (const fee of getValues().fees) {
+			const feeType: string = fee.feeType.label;
+			const collectorAccount: string = fee.collectorAccount;
+			const collectorsExempt: boolean = fee.collectorsExempt.label;
 
 			switch (feeType) {
 				case 'Fractional': {
-					const min: string = formData[i].min;
-					const max: string = formData[i].max;
+					const min: string = fee.min;
+					const max: string = fee.max;
 
 					const requestFractionalFee = {
 						collectorId: collectorAccount,
@@ -204,12 +200,12 @@ const FeesManagement = () => {
 				}
 
 				case 'Fixed': {
-					const amount: string = formData[i].amountOrPercentage;
-					const currency: string = formData[i].currency.value;
+					const amount: string = fee.amountOrPercentage;
+					const currency: string = 'HBAR';
 					let decimals = HBAR_DECIMALS;
 					if (currency === selectedStableCoin!.tokenId!.toString()) {
 						decimals = selectedStableCoin!.decimals ?? 0;
-					} else {
+					} else if (currency !== 'HBAR') {
 						const detailsExternalStableCoin: StableCoinViewModel =
 							await SDKService.getStableCoinDetails(
 								new GetStableCoinDetailsRequest({
