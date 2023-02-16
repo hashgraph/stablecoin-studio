@@ -34,5 +34,10 @@
 	"updateTokenFees": {
 		"saveChangesButtonText": "Save changes",
 		"addRowButtonText": "Add new row"
+	},
+	"notification": {
+		"title": "{{ result }} updating token custom fees",
+		"descriptionSuccess": "Token custom fees were updated",
+		"descriptionError": "Sorry, there was an error updating token custom fees"
 	}
 }

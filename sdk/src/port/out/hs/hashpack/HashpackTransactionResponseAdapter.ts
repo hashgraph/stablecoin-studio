@@ -175,7 +175,7 @@ export class HashpackTransactionResponseAdapter extends TransactionResponseAdapt
 		}
 		return transactionReceipt;
 	}
-
+	  
 	private static async getRecord(
 		signer: Signer,
 		transactionResponse:

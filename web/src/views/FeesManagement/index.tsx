@@ -16,7 +16,6 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import AwaitingWalletSignature from '../../components/AwaitingWalletSignature';
 import BaseContainer from '../../components/BaseContainer';
 import InputController from '../../components/Form/InputController';
 import { propertyNotFound } from '../../constant';
@@ -38,10 +37,10 @@ import {
 	HBAR_DECIMALS,
 } from 'hedera-stable-coin-sdk';
 import { handleRequestValidation } from '../../utils/validationsHelper';
-import ModalInput from '../../components/ModalInput';
 import SDKService from '../../services/SDKService';
 import type { GroupBase, SelectInstance } from 'chakra-react-select';
 import SelectCreatableController from '../../components/Form/SelectCreatableController';
+import ModalNotification from '../../components/ModalNotification';
 
 const MAX_FEES = 10;
 
@@ -51,11 +50,7 @@ const FeesManagement = () => {
 	const [awaitingUpdate, setAwaitingUpdate] = useState<boolean>(false);
 	const [success, setSuccess] = useState<boolean>();
 	const [error, setError] = useState<any>();
-	const {
-		isOpen: isOpenCustomToken,
-		onOpen: onOpenCustomToken,
-		onClose: onCloseCustomToken,
-	} = useDisclosure();
+	const { isOpen, onOpen, onClose } = useDisclosure();
 	const variant = awaitingUpdate ? 'loading' : success ? 'success' : 'error';
 
 	const { control, handleSubmit, getValues, setValue, watch } = useForm({
@@ -161,7 +156,7 @@ const FeesManagement = () => {
 		t('feesManagement:columns:actions'),
 	];
 
-	const handleSelectFee = async (event: any) => {
+	/* const handleSelectFee = async (event: any) => {
 		console.log(event.value);
 		console.log(feeRef.current);
 		feeRef.current?.selectOption(0);
@@ -171,7 +166,7 @@ const FeesManagement = () => {
 			onOpenCustomToken();
 			console.log('show modal');
 		}
-	};
+	}; */
 	const handleAddNewRow = async () => {
 		if (fees.length >= 10) return;
 
@@ -241,6 +236,7 @@ const FeesManagement = () => {
 			updateCustomFeesRequest.customFees = requestCustomFeeArray;
 
 			try {
+				onOpen();
 				setAwaitingUpdate(true);
 				await SDKService.updateCustomFees(updateCustomFeesRequest);
 				setError('');
@@ -504,7 +500,7 @@ const FeesManagement = () => {
 												name={`fees.${i}.moneda`}
 												control={control}
 												options={[...optionsDefault]}
-												onChangeAux={handleSelectFee}
+												// onChangeAux={handleSelectFee}
 											/>
 										</GridItem>
 										<GridItem>
@@ -512,7 +508,7 @@ const FeesManagement = () => {
 												<Icon name='Trash' fontSize='22px' onClick={() => handleRemoveRow(i)} />
 											</Center>
 										</GridItem>
-										{isOpenCustomToken && (
+										{/* {isOpenCustomToken && (
 											<ModalInput
 												setValue={(tokenId: string) => {
 													setValue(`fees.${i}.moneda`, tokenId);
@@ -524,7 +520,7 @@ const FeesManagement = () => {
 												placeholderInput='0.0.0'
 												title={'Introduce tokenId'}
 											/>
-										)}
+											)} */}
 									</React.Fragment>
 								);
 							})}
@@ -541,7 +537,27 @@ const FeesManagement = () => {
 					</Flex>
 				</Flex>
 			)}
-
+			<ModalNotification
+				variant={variant}
+				title={
+					awaitingUpdate
+						? 'Loading'
+						: t('notification.title', {
+								result: success ? 'Success' : 'Error',
+						  })
+				}
+				description={
+					awaitingUpdate
+						? undefined
+						: t(`notification.description${success ? 'Success' : 'Error'}`)
+				}
+				isOpen={isOpen}
+				onClose={onClose}
+				onClick={onClose}
+				errorTransactionUrl={error}
+				closeButton={false}
+				closeOnOverlayClick={false}
+			/>
 			{selectedStableCoin && !selectedStableCoin.feeScheduleKey && <NoFeesManagement />}
 		</BaseContainer>
 	);
