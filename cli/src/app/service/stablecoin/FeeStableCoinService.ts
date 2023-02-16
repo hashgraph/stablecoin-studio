@@ -70,6 +70,7 @@ export default class FeeStableCoinService extends Service {
           Fee_Type: 'Fractional',
           Collector_Id: fee.collectorId,
           All_Collectors_Exempt: fee.collectorsExempt,
+          Percentage: fee.percentage,
           Numerator: fee.amountNumerator,
           Denominator: fee.amountDenominator,
           Min: fee.min,

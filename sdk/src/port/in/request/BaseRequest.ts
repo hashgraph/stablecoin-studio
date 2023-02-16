@@ -65,6 +65,7 @@ export interface RequestCustomFee {
 }
 
 export interface RequestFractionalFee extends RequestCustomFee {
+	percentage: string;
 	amountNumerator: string;
 	amountDenominator: string;
 	min: string;

@@ -37,10 +37,8 @@ import PublicKey from '../../../domain/context/account/PublicKey.js';
 import { StableCoinMemo } from '../../../domain/context/stablecoin/StableCoinMemo.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
 import {
-	//CustomFee,
-	//FixedFee,
-	//FractionalFee,
 	HBAR_DECIMALS,
+	MAX_PERCENTAGE_DECIMALS,
 } from '../../../domain/context/fee/CustomFee.js';
 import { InvalidResponse } from './error/InvalidResponse.js';
 import { HederaId } from '../../../domain/context/shared/HederaId.js';
@@ -196,6 +194,15 @@ export class MirrorNodeAdapter {
 						collectorId: fractionalFee.collector_account_id,
 						collectorsExempt:
 							fractionalFee.all_collectors_are_exempt,
+						percentage: BigDecimal.fromStringFixed(
+							Math.round(
+								(100 *
+									10 ** MAX_PERCENTAGE_DECIMALS *
+									parseInt(fractionalFee.amount.numerator)) /
+									parseInt(fractionalFee.amount.denominator),
+							).toString(),
+							MAX_PERCENTAGE_DECIMALS,
+						).toString(),
 						amountNumerator: fractionalFee.amount.numerator,
 						amountDenominator: fractionalFee.amount.denominator,
 						min: BigDecimal.fromStringFixed(

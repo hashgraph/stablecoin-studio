@@ -23,9 +23,6 @@ import {
 	RequestAccount,
 	RequestPrivateKey,
 	RequestPublicKey,
-	RequestCustomFee,
-	RequestFractionalFee,
-	RequestFixedFee,
 } from '../BaseRequest.js';
 import { EmptyValue } from '../error/EmptyValue.js';
 import { InvalidLength } from '../error/InvalidLength.js';

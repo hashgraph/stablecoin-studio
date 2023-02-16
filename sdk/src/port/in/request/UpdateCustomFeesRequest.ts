@@ -77,6 +77,7 @@ export default class UpdateCustomFeesRequest extends ValidatedRequest<UpdateCust
 							collectorId: customFee.collectorId,
 							collectorsExempt: customFee.collectorsExempt,
 							decimals: customFee.decimals,
+							percentage: customFee.percentage,
 							amountNumerator: customFee.amountNumerator,
 							amountDenominator: customFee.amountDenominator,
 							min: customFee.min,

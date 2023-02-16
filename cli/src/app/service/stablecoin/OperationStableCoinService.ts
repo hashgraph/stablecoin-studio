@@ -37,8 +37,6 @@ import {
   RequestCustomFee,
   UpdateCustomFeesRequest,
   HBAR_DECIMALS,
-  MAX_PERCENTAGE_DECIMALS,
-  BigDecimal,
 } from 'hedera-stable-coin-sdk';
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
 import CashInStableCoinsService from './CashInStableCoinService.js';
@@ -54,7 +52,6 @@ import KYCStableCoinService from './KYCStableCoinService.js';
 import ListStableCoinsService from './ListStableCoinsService.js';
 import CapabilitiesStableCoinService from './CapabilitiesStableCoinService.js';
 import FeeStableCoinService from './FeeStableCoinService.js';
-import UtilitiesService from '../utilities/UtilitiesService.js';
 
 /**
  * Operation Stable Coin Service
@@ -824,8 +821,6 @@ export default class OperationStableCoinService extends Service {
         tokenId: this.stableCoinId,
         collectorId: currentAccount,
         collectorsExempt: true,
-        amountNumerator: '1',
-        amountDenominator: '2',
         min: '0',
         max: '0',
         decimals: decimals,
@@ -841,48 +836,20 @@ export default class OperationStableCoinService extends Service {
       fractionType ==
       language.getText('feeManagement.chooseFractionalType.Percentage')
     ) {
-      let check_Ok = true;
-      let numerator = BigDecimal.fromString('0');
-      const exponential = 10 ** MAX_PERCENTAGE_DECIMALS;
-      const denominator = 100 * exponential;
-
-      do {
-        check_Ok = true;
-
-        const percentage = await utilsService.defaultSingleAsk(
-          language.getText('feeManagement.askPercentageFee'),
-          '1',
-        );
-
-        try {
-          const valueDecimals = BigDecimal.getDecimalsFromString(percentage);
-          if (valueDecimals > MAX_PERCENTAGE_DECIMALS) throw new Error();
-
-          numerator = BigDecimal.fromString(
-            percentage,
-            MAX_PERCENTAGE_DECIMALS,
-          );
-
-          const zero = BigDecimal.fromString('0', MAX_PERCENTAGE_DECIMALS);
-
-          if (
-            !numerator.isGreaterThan(zero) ||
-            numerator.isGreaterOrEqualThan(
-              BigDecimal.fromString(denominator.toString()),
-            )
-          )
-            throw new Error();
-        } catch (e) {
-          new UtilitiesService().showError(
-            `Invalid Percentage. Please check that the entered value is a positive number with no more than ${MAX_PERCENTAGE_DECIMALS} decimals`,
-          );
-          check_Ok = false;
-        }
-      } while (!check_Ok);
-      addFractionalFeeRequest.amountNumerator = Math.round(
-        numerator.toUnsafeFloat() * exponential,
-      ).toString();
-      addFractionalFeeRequest.amountDenominator = denominator.toString();
+      addFractionalFeeRequest.percentage = await utilsService.defaultSingleAsk(
+        language.getText('feeManagement.askPercentageFee'),
+        '1',
+      );
+      await utilsService.handleValidation(
+        () => addFractionalFeeRequest.validate('percentage'),
+        async () => {
+          addFractionalFeeRequest.percentage =
+            await utilsService.defaultSingleAsk(
+              language.getText('feeManagement.askPercentageFee'),
+              '1',
+            );
+        },
+      );
     } else {
       addFractionalFeeRequest.amountNumerator =
         await utilsService.defaultSingleAsk(
@@ -973,8 +940,9 @@ export default class OperationStableCoinService extends Service {
     );
 
     console.log({
-      numerator: addFractionalFeeRequest.amountNumerator,
-      denominator: addFractionalFeeRequest.amountDenominator,
+      percentage: addFractionalFeeRequest.percentage ?? '-',
+      numerator: addFractionalFeeRequest.amountNumerator ?? '-',
+      denominator: addFractionalFeeRequest.amountDenominator ?? '-',
       min: addFractionalFeeRequest.min,
       max: addFractionalFeeRequest.max,
       feesPaidBy: addFractionalFeeRequest.net ? 'Sender' : 'Receiver',

@@ -89,6 +89,7 @@ class CustomFeesInPort implements ICustomFees {
 		const {
 			tokenId,
 			collectorId,
+			percentage,
 			amountNumerator,
 			amountDenominator,
 			min,
@@ -99,13 +100,21 @@ class CustomFeesInPort implements ICustomFees {
 		} = request;
 		handleValidation('AddFractionalFeeRequest', request);
 
+		let _amountNumerator = amountNumerator ?? '';
+		let _amountDenominator = amountDenominator ?? '';
+
+		if (_amountNumerator === '') {
+			[_amountNumerator, _amountDenominator] =
+				this.getFractionFromPercentage(percentage ?? '');
+		}
+
 		return (
 			await this.commandBus.execute(
 				new addFractionalFeesCommand(
 					HederaId.from(tokenId),
 					HederaId.from(collectorId),
-					parseInt(amountNumerator),
-					parseInt(amountDenominator),
+					parseInt(_amountNumerator),
+					parseInt(_amountDenominator),
 					BigDecimal.fromString(min, decimals),
 					BigDecimal.fromString(max, decimals),
 					net,
@@ -136,11 +145,19 @@ class CustomFeesInPort implements ICustomFees {
 					),
 				);
 			} else if (isRequestFractionalFee(customFee)) {
+				let _amountNumerator = customFee.amountNumerator ?? '';
+				let _amountDenominator = customFee.amountDenominator ?? '';
+
+				if (_amountNumerator === '') {
+					[_amountNumerator, _amountDenominator] =
+						this.getFractionFromPercentage(customFee.percentage);
+				}
+
 				requestedCustomFee.push(
 					new FractionalFee(
 						HederaId.from(customFee.collectorId),
-						parseInt(customFee.amountNumerator),
-						parseInt(customFee.amountDenominator),
+						parseInt(_amountNumerator),
+						parseInt(_amountDenominator),
 						BigDecimal.fromString(
 							customFee.min,
 							customFee.decimals,
@@ -164,6 +181,28 @@ class CustomFeesInPort implements ICustomFees {
 				),
 			)
 		).payload;
+	}
+
+	getFractionFromPercentage(percentage: string): string[] {
+		const fraction: string[] = [];
+
+		const exponential = 10 ** MAX_PERCENTAGE_DECIMALS;
+
+		const amountDenominator = (100 * exponential).toString();
+
+		const numerator = BigDecimal.fromString(
+			percentage,
+			MAX_PERCENTAGE_DECIMALS,
+		);
+
+		const amountNumerator = Math.round(
+			numerator.toUnsafeFloat() * exponential,
+		).toString();
+
+		fraction.push(amountNumerator);
+		fraction.push(amountDenominator);
+
+		return fraction;
 	}
 }
 

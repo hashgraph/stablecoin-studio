@@ -27,14 +27,20 @@ import { InvalidValue } from './error/InvalidValue.js';
 import CheckNums from '../../../core/checks/numbers/CheckNums.js';
 import { InvalidRange } from './error/InvalidRange.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
+import { MAX_PERCENTAGE_DECIMALS } from '../CustomFees.js';
+import { OptionalField } from '../../../core/decorator/OptionalDecorator.js';
 
 export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractionalFeeRequest> {
 	tokenId: string;
 	collectorId: string;
 	collectorsExempt: boolean;
 	decimals: number;
-	amountNumerator: string;
-	amountDenominator: string;
+	@OptionalField()
+	percentage?: string;
+	@OptionalField()
+	amountNumerator?: string;
+	@OptionalField()
+	amountDenominator?: string;
 	min: string;
 	max: string;
 	net: boolean;
@@ -44,6 +50,7 @@ export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractio
 		collectorId,
 		collectorsExempt,
 		decimals,
+		percentage,
 		amountNumerator,
 		amountDenominator,
 		min,
@@ -54,8 +61,9 @@ export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractio
 		collectorId: string;
 		collectorsExempt: boolean;
 		decimals: number;
-		amountNumerator: string;
-		amountDenominator: string;
+		percentage?: string;
+		amountNumerator?: string;
+		amountDenominator?: string;
 		min: string;
 		max: string;
 		net: boolean;
@@ -64,6 +72,10 @@ export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractio
 			tokenId: Validation.checkHederaIdFormat(),
 			collectorId: Validation.checkHederaIdFormat(),
 			amountNumerator: (val) => {
+				if (val === undefined || val === '') {
+					return;
+				}
+
 				const numerator = parseInt(val);
 
 				if (isNaN(numerator)) return [new InvalidType(val, 'integer')];
@@ -76,6 +88,15 @@ export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractio
 					return [new InvalidRange(val, '1', undefined)];
 			},
 			amountDenominator: (val) => {
+				if (val === undefined || val === '') {
+					if (
+						this.amountNumerator === undefined ||
+						this.amountNumerator === ''
+					)
+						return;
+					else return [new InvalidType(val, 'integer')];
+				}
+
 				const denominator = parseInt(val);
 
 				if (isNaN(denominator))
@@ -85,7 +106,7 @@ export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractio
 					return [new InvalidDecimalRange(val, 0)];
 				}
 
-				const numerator = parseInt(this.amountNumerator);
+				const numerator = parseInt(this.amountNumerator!);
 
 				if (numerator >= denominator)
 					return [
@@ -93,6 +114,48 @@ export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractio
 							`The denominator (${denominator}) should be greater than the numerator (${numerator}).`,
 						),
 					];
+			},
+			percentage: (val) => {
+				if (
+					this.amountNumerator !== undefined &&
+					this.amountNumerator !== ''
+				) {
+					return;
+				}
+
+				if (val === undefined || val === '') {
+					return [new InvalidType(val, 'integer')];
+				}
+
+				if (!BigDecimal.isBigDecimal(val)) {
+					return [new InvalidType(val, 'BigDecimal')];
+				}
+
+				if (CheckNums.hasMoreDecimals(val, MAX_PERCENTAGE_DECIMALS)) {
+					return [
+						new InvalidDecimalRange(val, MAX_PERCENTAGE_DECIMALS),
+					];
+				}
+
+				const zero = BigDecimal.fromString(
+					'0',
+					MAX_PERCENTAGE_DECIMALS,
+				);
+				const oneHundred = BigDecimal.fromString(
+					'100',
+					MAX_PERCENTAGE_DECIMALS,
+				);
+				const value = BigDecimal.fromString(
+					val,
+					MAX_PERCENTAGE_DECIMALS,
+				);
+
+				if (
+					value.isLowerOrEqualThan(zero) ||
+					value.isGreaterOrEqualThan(oneHundred)
+				) {
+					return [new InvalidRange(value, '0+..100', undefined)];
+				}
 			},
 			min: (val) => {
 				if (!BigDecimal.isBigDecimal(val)) {
@@ -138,6 +201,7 @@ export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractio
 		this.collectorId = collectorId;
 		this.collectorsExempt = collectorsExempt;
 		this.decimals = decimals;
+		this.percentage = percentage;
 		this.amountDenominator = amountDenominator;
 		this.amountNumerator = amountNumerator;
 		this.min = min;
