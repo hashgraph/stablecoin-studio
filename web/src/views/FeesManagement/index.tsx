@@ -30,6 +30,9 @@ import {
 	RequestFixedFee,
 	RequestFractionalFee,
 	UpdateCustomFeesRequest,
+	GetStableCoinDetailsRequest,
+	StableCoinViewModel,
+	HBAR_DECIMALS
 } from 'hedera-stable-coin-sdk';
 import { handleRequestValidation } from '../../utils/validationsHelper';
 import ModalInput from '../../components/ModalInput';
@@ -202,11 +205,23 @@ const FeesManagement = () => {
 
 				case 'Fixed': {
 					const amount: string = formData[i].amountOrPercentage;
+					const currency: string = formData[i].currency.value;
+					let decimals = HBAR_DECIMALS;
+					if (currency === selectedStableCoin.tokenId) {
+						decimals = selectedStableCoin!.decimals ?? 0;
+					} else {
+						const detailsExternalStableCoin : StableCoinViewModel =
+						await SDKService.getStableCoinDetails(new GetStableCoinDetailsRequest({
+							id: currency
+						}));		
+						decimals = detailsExternalStableCoin.decimals ?? 0;							
+					}
+
 					const requestFixedFee = {
 						collectorId: collectorAccount,
 						collectorsExempt: collectorsExempt,
-						decimals: 2,
-						tokenIdCollected: '0.0.0',
+						decimals: decimals,
+						tokenIdCollected: currency === 'HBAR' ? '0.0.0' : currency,
 						amount: amount,
 					} as RequestFixedFee;
 					requestCustomFeeArray.push(requestFixedFee);
