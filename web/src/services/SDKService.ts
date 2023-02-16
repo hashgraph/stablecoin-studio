@@ -8,9 +8,6 @@ import {
 	InitializationRequest,
 	ReserveDataFeed,
 	Fees,
-	AddFixedFeeRequest,
-	AddFractionalFeeRequest,
-	UpdateCustomFeesRequest,
 } from 'hedera-stable-coin-sdk';
 import type {
 	WalletEvent,
@@ -47,6 +44,9 @@ import type {
 	UpdateReserveAddressRequest,
 	UpdateReserveAmountRequest,
 	KYCRequest,
+	AddFixedFeeRequest,
+	AddFractionalFeeRequest,
+	UpdateCustomFeesRequest,
 } from 'hedera-stable-coin-sdk';
 
 export type StableCoinListRaw = Array<Record<'id' | 'symbol', string>>;
