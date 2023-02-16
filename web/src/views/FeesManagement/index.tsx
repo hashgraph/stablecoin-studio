@@ -6,9 +6,12 @@ import {
 	GridItem,
 	SimpleGrid,
 	InputRightElement,
+	Grid,
+	Center,
 } from '@chakra-ui/react';
 
-import React, { ChangeEvent, useEffect, useMemo, useState } from 'react';
+import type { Ref } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import { useFieldArray, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -37,6 +40,8 @@ import {
 import { handleRequestValidation } from '../../utils/validationsHelper';
 import ModalInput from '../../components/ModalInput';
 import SDKService from '../../services/SDKService';
+import type { GroupBase, SelectInstance } from 'chakra-react-select';
+import SelectCreatableController from '../../components/Form/SelectCreatableController';
 
 const MAX_FEES = 10;
 
@@ -53,7 +58,7 @@ const FeesManagement = () => {
 	} = useDisclosure();
 	const variant = awaitingUpdate ? 'loading' : success ? 'success' : 'error';
 
-	const { control, getValues, setValue, watch } = useForm({
+	const { control, handleSubmit, getValues, setValue, watch } = useForm({
 		mode: 'onChange',
 	});
 
@@ -65,6 +70,7 @@ const FeesManagement = () => {
 		control,
 		name: 'fees',
 	});
+	const feeRef = useRef<SelectInstance<unknown, boolean, GroupBase<unknown>>>(null);
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const [updateCustomFeesRequest] = useState<UpdateCustomFeesRequest>(
@@ -127,7 +133,7 @@ const FeesManagement = () => {
 			borderColor: 'brand.black',
 			borderRadius: '8px',
 			height: 'min',
-			width: '120px',
+			width: 'full',
 		},
 		menuList: {
 			maxH: '220px',
@@ -157,6 +163,9 @@ const FeesManagement = () => {
 
 	const handleSelectFee = async (event: any) => {
 		console.log(event.value);
+		console.log(feeRef.current);
+		feeRef.current?.selectOption(0);
+
 		if (event.value === '') {
 			// TODO
 			onOpenCustomToken();
@@ -166,7 +175,7 @@ const FeesManagement = () => {
 	const handleAddNewRow = async () => {
 		if (fees.length >= 10) return;
 
-		append(fees[0]);
+		append(defaultFee);
 	};
 
 	async function handleRemoveRow(i: number): Promise<void> {
@@ -252,6 +261,18 @@ const FeesManagement = () => {
 		FRACTIONAL,
 	}
 
+	const optionsDefault = [
+		{ label: 'HBAR', value: 'HBAR' },
+		{
+			label: t('feesManagement:tokensFeeOption:currentToken'),
+			value: selectedStableCoin!.tokenId!.toString(),
+		},
+		{
+			label: t('feesManagement:tokensFeeOption:customToken'),
+			value: '',
+		},
+	];
+
 	return (
 		<BaseContainer title={t('feesManagement:title')}>
 			{selectedStableCoin && selectedStableCoin.feeScheduleKey && (
@@ -262,7 +283,11 @@ const FeesManagement = () => {
 					pt={{ base: 4, lg: 14 }}
 					pb={6}
 				>
-					<SimpleGrid columns={{ base: 9 }} gap={{ base: 4 }} alignItems='center'>
+					<Grid
+						templateColumns={'1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 0.2fr'}
+						gap={{ base: 4 }}
+						alignItems='center'
+					>
 						{feeDataHeader.map((feeColumn: string, index: number) => (
 							<GridItem key={`details-fee-${index}`} fontSize='14px' fontWeight='bold'>
 								{feeColumn}
@@ -462,32 +487,36 @@ const FeesManagement = () => {
 											/>
 										</GridItem>
 										<GridItem>
-											<FeeSelectController
+											<SelectCreatableController
 												key={field.id}
-												styles={selectorStyle}
+												styles={{
+													dropdownIndicator: (provided) => ({
+														...provided,
+														bg: 'transparent',
+														px: 2,
+														cursor: 'inherit',
+													}),
+													indicatorSeparator: (provided) => ({
+														...provided,
+														display: 'none',
+													}),
+												}}
 												name={`fees.${i}.moneda`}
 												control={control}
-												options={[
-													{ label: 'HBAR', value: 'HBAR' },
-													{
-														label: t('feesManagement:tokensFeeOption:currentToken'),
-														value: selectedStableCoin!.tokenId!.toString(),
-													},
-													{
-														label: t('feesManagement:tokensFeeOption:customToken'),
-														value: '',
-													},
-												]}
+												options={[...optionsDefault]}
 												onChangeAux={handleSelectFee}
 											/>
 										</GridItem>
 										<GridItem>
-											<Icon name='Trash' fontSize='22px' onClick={() => handleRemoveRow(i)} />
+											<Center>
+												<Icon name='Trash' fontSize='22px' onClick={() => handleRemoveRow(i)} />
+											</Center>
 										</GridItem>
 										{isOpenCustomToken && (
 											<ModalInput
 												setValue={(tokenId: string) => {
 													setValue(`fees.${i}.moneda`, tokenId);
+
 													console.log(getValues());
 												}}
 												isOpen={isOpenCustomToken}
@@ -499,7 +528,7 @@ const FeesManagement = () => {
 									</React.Fragment>
 								);
 							})}
-					</SimpleGrid>
+					</Grid>
 					<Flex justify='flex-end' pt={6} px={6} pb={6}>
 						<Stack direction='row' spacing={6}>
 							<Button variant='primary' onClick={handleUpdateTokenFees}>
