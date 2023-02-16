@@ -10,7 +10,7 @@ import {
 	Fees,
 	AddFixedFeeRequest,
 	AddFractionalFeeRequest,
-	UpdateCustomFeesRequest
+	UpdateCustomFeesRequest,
 } from 'hedera-stable-coin-sdk';
 import type {
 	WalletEvent,
