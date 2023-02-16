@@ -547,9 +547,7 @@ const FeesManagement = () => {
 						  })
 				}
 				description={
-					awaitingUpdate
-						? undefined
-						: t(`notification.description${success ? 'Success' : 'Error'}`)
+					awaitingUpdate ? undefined : t(`notification.description${success ? 'Success' : 'Error'}`)
 				}
 				isOpen={isOpen}
 				onClose={onClose}
