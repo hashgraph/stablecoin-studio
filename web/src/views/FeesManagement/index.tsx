@@ -32,7 +32,7 @@ import {
 	UpdateCustomFeesRequest,
 	GetStableCoinDetailsRequest,
 	StableCoinViewModel,
-	HBAR_DECIMALS
+	HBAR_DECIMALS,
 } from 'hedera-stable-coin-sdk';
 import { handleRequestValidation } from '../../utils/validationsHelper';
 import ModalInput from '../../components/ModalInput';
@@ -210,11 +210,13 @@ const FeesManagement = () => {
 					if (currency === selectedStableCoin.tokenId) {
 						decimals = selectedStableCoin!.decimals ?? 0;
 					} else {
-						const detailsExternalStableCoin : StableCoinViewModel =
-						await SDKService.getStableCoinDetails(new GetStableCoinDetailsRequest({
-							id: currency
-						}));		
-						decimals = detailsExternalStableCoin.decimals ?? 0;							
+						const detailsExternalStableCoin: StableCoinViewModel =
+							await SDKService.getStableCoinDetails(
+								new GetStableCoinDetailsRequest({
+									id: currency,
+								}),
+							);
+						decimals = detailsExternalStableCoin.decimals ?? 0;
 					}
 
 					const requestFixedFee = {
