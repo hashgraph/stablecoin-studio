@@ -1,4 +1,12 @@
-import { Button, useDisclosure, Flex, Stack, GridItem, SimpleGrid } from '@chakra-ui/react';
+import {
+	Button,
+	useDisclosure,
+	Flex,
+	Stack,
+	GridItem,
+	SimpleGrid,
+	InputRightElement,
+} from '@chakra-ui/react';
 
 import React, { ChangeEvent, useEffect, useState } from 'react';
 
@@ -11,8 +19,6 @@ import InputController from '../../components/Form/InputController';
 import { propertyNotFound } from '../../constant';
 import { SelectController } from '../../components/Form/SelectController';
 import Icon from '../../components/Icon';
-
-import { useRefreshCoinInfo } from '../../hooks/useRefreshCoinInfo';
 import { SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
 import NoFeesManagement from './components/NoFeesManagement';
 import FeeSelectController from './components/FeeSelectController';
@@ -40,7 +46,7 @@ const FeesManagement = () => {
 	const variant = awaitingUpdate ? 'loading' : success ? 'success' : 'error';
 	const [feesArray, setFeesArray] = useState<a[]>();
 
-	const { control, getValues, setValue } = useForm({
+	const { control, getValues, setValue, watch } = useForm({
 		mode: 'onChange',
 		// values:feesArray
 	});
@@ -131,15 +137,13 @@ const FeesManagement = () => {
 	};
 	const handleAddNewRow = async () => {
 		// const newCustomFees = {...customFeesRequest};
-		console.log('Añadir nuevo row');
-
+		// console.log('Añadir nuevo row');
 		// const updatedCustomFeesRequest = { ...customFeesRequest };
 		// const updateFee = {
 		// 	collectorId: '',
 		// 	collectorsExempt: true,
 		// 	decimals: selectedStableCoin?.decimals!,
 		// } as RequestCustomFee
-
 		// updatedCustomFeesRequest.customFees = [ ...updatedCustomFeesRequest.customFees, updateFee ];
 		// setCustomFeesRequest(updatedCustomFeesRequest as UpdateCustomFeesRequest);
 	};
@@ -150,6 +154,10 @@ const FeesManagement = () => {
 		// setCustomFeesRequest(updatedCustomFeesRequest as UpdateCustomFeesRequest);
 	}
 
+	enum FeeType {
+		FIXED,
+		FRACTIONAL,
+	}
 	return (
 		<BaseContainer title={t('feesManagement:title')}>
 			{selectedStableCoin && selectedStableCoin.feeScheduleKey && (
@@ -177,11 +185,11 @@ const FeesManagement = () => {
 												name={`${field}.${i}.feeType`}
 												options={[
 													{
-														value: 0,
+														value: FeeType.FIXED,
 														label: t('feeType.fixed'),
 													},
 													{
-														value: 1,
+														value: FeeType.FRACTIONAL,
 														label: t('feeType.fractional'),
 													},
 												]}
@@ -201,8 +209,11 @@ const FeesManagement = () => {
 													required: t('global:validations.required') ?? propertyNotFound,
 													validate: {
 														validation: (value: string) => {
+															// if fixed
 															fixedFee.amount = value;
 															const res = handleRequestValidation(fixedFee.validate('amount'));
+															// else fractional
+															// const res = handleRequestValidation(fractionalFee.validate('amount'));
 															return res;
 															// return true;
 														},
@@ -214,6 +225,13 @@ const FeesManagement = () => {
 													field !== undefined ? ('amount' in field ? field.amount : '') : ''
 												}
 												isReadOnly={false}
+												rightElement={
+													watch(`${field}.${i}.feeType`)?.value === FeeType.FRACTIONAL && (
+														<InputRightElement>
+															<Icon name='Percent' />
+														</InputRightElement>
+													)
+												}
 											/>
 										</GridItem>
 										<GridItem>
@@ -237,6 +255,7 @@ const FeesManagement = () => {
 												// 		: ''
 												// }
 												isReadOnly={false}
+												disabled={watch(`${field}.${i}.feeType`)?.value !== FeeType.FRACTIONAL}
 											/>
 										</GridItem>
 										<GridItem>
@@ -260,6 +279,7 @@ const FeesManagement = () => {
 												// 		: ''
 												// }
 												isReadOnly={false}
+												disabled={watch(`${field}.${i}.feeType`)?.value !== FeeType.FRACTIONAL}
 											/>
 										</GridItem>
 										<GridItem>
