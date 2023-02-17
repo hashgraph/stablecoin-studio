@@ -445,13 +445,13 @@ const FeesManagement = () => {
 			}
 		}
 	};
-
+	const columnsSizes = '1fr 1fr 1.5fr 0.5fr 0.5fr 1fr 1fr 1fr 0.2fr';
 	return (
 		<BaseContainer title={t('feesManagement:title')}>
 			{selectedStableCoin && selectedStableCoin.feeScheduleKey && (
 				<Flex direction='column' bg='brand.gray100' pt={{ base: 4, lg: 14 }} pb={6}>
 					<Grid
-						templateColumns='repeat(9, 1fr)'
+						templateColumns={columnsSizes}
 						gap={{ base: 4 }}
 						alignItems='center'
 						textAlign='center'
@@ -467,7 +467,7 @@ const FeesManagement = () => {
 						))}
 					</Grid>
 					<Grid
-						templateColumns='repeat(9, 1fr)'
+						templateColumns={columnsSizes}
 						gap={{ base: 4 }}
 						alignItems='center'
 						px={{ base: 4, lg: 14 }}
