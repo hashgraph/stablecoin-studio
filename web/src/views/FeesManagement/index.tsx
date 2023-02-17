@@ -495,6 +495,9 @@ const FeesManagement = () => {
 												overrideStyles={selectorStyle}
 												addonLeft={true}
 												variant='unstyled'
+												isDisabled={
+													watch(`fees.${i}.feeType`)?.value !== feeTypeOption.FRACTIONAL.value
+												}
 											/>
 										</GridItem>
 										<GridItem>
@@ -515,6 +518,7 @@ const FeesManagement = () => {
 												name={`fees.${i}.tokenIdCollected`}
 												control={control}
 												options={[...Object.values(collectorIdOption)]}
+												isDisabled={watch(`fees.${i}.feeType`)?.value !== feeTypeOption.FIXED.value}
 											/>
 										</GridItem>
 										<GridItem>
