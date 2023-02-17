@@ -378,7 +378,6 @@ const FeesManagement = () => {
 
 	const handleUpdateTokenFees = async () => {
 		const requestCustomFeeArray: RequestCustomFee[] = [];
-		// console.log(getValues());
 
 		getValues().fees.forEach((fee: any, index: number) => {
 			const feeType: FeeTypeValue = fee.feeType.value;
@@ -423,61 +422,6 @@ const FeesManagement = () => {
 				}
 			}
 		});
-
-		/* for (const fee of getValues().fees) {
-			const feeType: FeeTypeValue = fee.feeType.value;
-			const collectorAccount: string = fee.collectorAccount;
-			const collectorsExempt: boolean = fee.collectorsExempt.value;
-
-			switch (feeType) {
-				case FeeTypeValue.FRACTIONAL: {
-					const min: string = fee.min;
-					const max: string = fee.max;
-
-					const requestFractionalFee: RequestFractionalFee = {
-						collectorId: collectorAccount,
-						collectorsExempt,
-						decimals: selectedStableCoin!.decimals!,
-						amountNumerator: '1',
-						amountDenominator: '20',
-						min,
-						max,
-						net: false,
-						percentage: '', // TODO
-					};
-					requestCustomFeeArray.push(requestFractionalFee);
-					break;
-				}
-
-				case FeeTypeValue.FIXED: {
-					const amount: string = fee.amountOrPercentage;
-					const currency: string = fee.tokenIdCollected.value;
-					let decimals = HBAR_DECIMALS;
-					if (currency === selectedStableCoin!.tokenId!.toString()) {
-						decimals = selectedStableCoin!.decimals ?? 0;
-					} else if (currency !== collectorIdOption.HBAR.value) {
-						const detailsExternalStableCoin: StableCoinViewModel =
-							await SDKService.getStableCoinDetails(
-								new GetStableCoinDetailsRequest({
-									id: currency,
-								}),
-							);
-						decimals = detailsExternalStableCoin.decimals ?? 0;
-					}
-
-					const requestFixedFee: RequestFixedFee = {
-						collectorId: collectorAccount,
-						collectorsExempt,
-						decimals,
-						tokenIdCollected:
-							currency === collectorIdOption.HBAR.value ? collectorIdOption.HBAR.value : currency,
-						amount,
-					};
-					requestCustomFeeArray.push(requestFixedFee);
-					break;
-				}
-			}
-		} */
 
 		if (selectedStableCoin?.tokenId) {
 			const updateCustomFeesRequest = new UpdateCustomFeesRequest({
