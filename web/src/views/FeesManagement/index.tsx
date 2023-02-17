@@ -1,14 +1,5 @@
-import {
-	Button,
-	useDisclosure,
-	Flex,
-	GridItem,
-	InputRightElement,
-	Grid,
-	Center,
-} from '@chakra-ui/react';
+import { Button, useDisclosure, Flex, GridItem, InputRightElement, Grid } from '@chakra-ui/react';
 import React, { useEffect, useMemo, useState } from 'react';
-
 import { useFieldArray, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -744,29 +735,7 @@ const FeesManagement = () => {
 												}
 											/>
 										</GridItem>
-										<GridItem>
-											<SelectCreatableController
-												key={field.id}
-												isDisabled={watch(`fees.${i}.feeType`)?.value !== feeTypeOption.FIXED.value}
-												styles={{
-													dropdownIndicator: (provided) => ({
-														...provided,
-														bg: 'transparent',
-														px: 2,
-														cursor: 'inherit',
-													}),
-													indicatorSeparator: (provided) => ({
-														...provided,
-														display: 'none',
-													}),
-												}}
-												name={`fees.${i}.tokenIdCollected`}
-												onChangeAux={async () => await handleTokenIdCollectedChange(i)}
-												control={control}
-												options={[...Object.values(collectorIdOption)]}
-											/>
-										</GridItem>
-										<GridItem>
+										<GridItem textAlign='center'>
 											<Icon
 												name='Trash'
 												color='brand.primary'
