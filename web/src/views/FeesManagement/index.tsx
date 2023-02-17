@@ -555,6 +555,9 @@ const FeesManagement = () => {
 												name={`fees.${i}.tokenIdCollected`}
 												control={control}
 												options={[...Object.values(collectorIdOption)]}
+												onChangeAux={() => {
+													handleTokenIdCollectedChange(i);
+												}}
 												isDisabled={watch(`fees.${i}.feeType`)?.value !== feeTypeOption.FIXED.value}
 											/>
 										</GridItem>
