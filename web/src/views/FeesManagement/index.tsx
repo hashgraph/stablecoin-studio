@@ -211,7 +211,7 @@ const FeesManagement = () => {
 		t('feesManagement:columns:collectorAccount'),
 		t('feesManagement:columns:collectorsExempt'),
 		t('feesManagement:columns:assessmentMethod'),
-		t('feesManagement:columns:tokenFee'),
+		t('feesManagement:columns:feeToken'),
 		t('feesManagement:columns:actions'),
 	];
 

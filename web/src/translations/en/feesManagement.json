@@ -15,7 +15,7 @@
 		"minimumAmount": "Min",
 		"collectorAccount": "Collector account",
 		"assessmentMethod": "Payer",
-		"tokenFee": "Token fee",
+		"feeToken": "Fee token",
 		"actions": ""
 	},
 	"feeType": {
