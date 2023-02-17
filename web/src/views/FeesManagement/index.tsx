@@ -39,7 +39,7 @@ const FeesManagement = () => {
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const variant = awaitingUpdate ? 'loading' : success ? 'success' : 'error';
 
-	const { control, getValues, setValue, watch } = useForm({
+	const { control, getValues, setValue, watch, handleSubmit } = useForm({
 		mode: 'onChange',
 	});
 	const {
@@ -197,8 +197,9 @@ const FeesManagement = () => {
 			value: selectedStableCoin!.tokenId!.toString(),
 		},
 		CUSTOM: {
-			label: t('feesManagement:tokensFeeOption:customToken'),
+			label: 'Write your token',
 			value: '',
+			isDisabled: true,
 		},
 	};
 	useEffect(() => {
@@ -267,8 +268,8 @@ const FeesManagement = () => {
 					? collectorsExemptOption.TRUE
 					: collectorsExemptOption.FALSE,
 				senderOrReceiver: itemFractional.net
-					? senderOrReceiverOption.SENDER
-					: senderOrReceiverOption.RECIEVER,
+					? senderOrReceiverOption.SENDER.label
+					: senderOrReceiverOption.RECIEVER.label,
 				min: itemFractional.min,
 				max: itemFractional.max,
 				tokenIdCollected: collectorIdOption.CURRENT_TOKEN,
@@ -334,8 +335,8 @@ const FeesManagement = () => {
 		append({
 			feeType: feeTypeOption.FIXED,
 			collectorsExempt: collectorsExemptOption.FALSE,
-			senderOrReceiver: senderOrReceiverOption.SENDER,
-			tokenIdCollected: collectorIdOption.HBAR,
+			senderOrReceiver: senderOrReceiverOption.SENDER.label,
+			tokenIdCollected: undefined,
 			min: undefined,
 			amount: undefined,
 		});
@@ -361,7 +362,7 @@ const FeesManagement = () => {
 	async function handleTokenIdCollectedChange(i: number): Promise<void> {
 		const fee = getValues().fees[i];
 		const _fixedFee = fixedFee[i];
-		if (fee.tokenIdCollected.value === '0.0.0') {
+		if (fee.tokenIdCollected.value === collectorIdOption.HBAR.value) {
 			_fixedFee.decimals = HBAR_DECIMALS;
 		} else if (fee.tokenIdCollected.value === selectedStableCoin!.tokenId!.toString()) {
 			_fixedFee.decimals = selectedStableCoin!.decimals!;
@@ -487,13 +488,6 @@ const FeesManagement = () => {
 												addonLeft={true}
 												variant='unstyled'
 												onChangeAux={() => handleTypeChange(i)}
-												// defaultValue={
-												// 	field !== undefined
-												// 		? `fees.${i}.amount` in field
-												// 			? feeTypeOption.FRACTIONAL.value
-												// 			: feeTypeOption.FIXED.value
-												// 		: feeTypeOption.FIXED.value
-												// }
 											/>
 										</GridItem>
 										<GridItem>
@@ -526,9 +520,6 @@ const FeesManagement = () => {
 												}}
 												name={`fees.${i}.amountOrPercentage`}
 												placeholder={t('amountPlaceholder') ?? propertyNotFound}
-												// defaultValue={
-												// 	field !== undefined ? ('amount' in field ? field.amount : '') : ''
-												// }
 												isReadOnly={false}
 												rightElement={
 													watch(`fees.${i}.feeType`)?.value === feeTypeOption.FRACTIONAL.value && (
@@ -557,6 +548,7 @@ const FeesManagement = () => {
 												name={`fees.${i}.tokenIdCollected`}
 												control={control}
 												options={[...Object.values(collectorIdOption)]}
+												placeholder={t('feesManagement:tokensFeeOption:placeholder')}
 												onChangeAux={() => {
 													handleTokenIdCollectedChange(i);
 												}}
@@ -568,9 +560,10 @@ const FeesManagement = () => {
 												key={field.id}
 												control={control}
 												rules={{
-													required: t('global:validations.required') ?? propertyNotFound,
 													validate: {
 														validation: (value: string) => {
+															if (value === undefined) return true;
+
 															const _fractionalFee = fractionalFee[i];
 															_fractionalFee.min = value;
 															changeFractionalFee(_fractionalFee, i);
@@ -601,12 +594,13 @@ const FeesManagement = () => {
 												key={field.id}
 												control={control}
 												rules={{
-													required: t('global:validations.required') ?? propertyNotFound,
 													validate: {
 														validation: (value: string) => {
+															if (value === undefined) return true;
 															const _fractionalFee = fractionalFee[i];
 															_fractionalFee.max = value;
 															changeFractionalFee(_fractionalFee, i);
+
 															const res = handleRequestValidation(_fractionalFee.validate('max'));
 															return res;
 														},
@@ -671,17 +665,19 @@ const FeesManagement = () => {
 											/>
 										</GridItem>
 										<GridItem>
-											<SelectController
+											<InputController
 												key={field.id}
 												control={control}
 												name={`fees.${i}.senderOrReceiver`}
-												options={Object.values(senderOrReceiverOption)}
-												overrideStyles={selectorStyle}
-												addonLeft={true}
-												variant='unstyled'
-												isDisabled={
-													watch(`fees.${i}.feeType`)?.value !== feeTypeOption.FRACTIONAL.value
-												}
+												// options={Object.values(senderOrReceiverOption)}
+												// overrideStyles={selectorStyle}
+												isReadOnly={true}
+												disabled={true}
+												// addonLeft={true}
+												// variant='unstyled'
+												// isDisabled={
+												// 	watch(`fees.${i}.feeType`)?.value !== feeTypeOption.FRACTIONAL.value
+												// }
 											/>
 										</GridItem>
 										<GridItem textAlign='center'>
@@ -719,7 +715,7 @@ const FeesManagement = () => {
 						<Button variant='primary' onClick={handleAddNewRow} isDisabled={isMaxFees}>
 							{t('updateTokenFees.addRowButtonText')}
 						</Button>
-						<Button variant='primary' onClick={handleUpdateTokenFees}>
+						<Button variant='primary' onClick={handleSubmit(handleUpdateTokenFees)}>
 							{t('updateTokenFees.saveChangesButtonText')}
 						</Button>
 					</Flex>

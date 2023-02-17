@@ -51,6 +51,8 @@ const SelectCreatableController = ({
 	styles,
 	onChangeAux,
 	onBlurAux,
+	placeholder,
+	isDisabled,
 }: SelectCreatableControllerProps) => {
 	return (
 		<Controller
@@ -96,6 +98,8 @@ const SelectCreatableController = ({
 								options={options}
 								isClearable={true}
 								chakraStyles={styles}
+								placeholder={placeholder}
+								isDisabled={isDisabled}
 								{...field}
 								onChange={onChangeCustom as ReactSelectProps['onChange']}
 								onBlur={onBlurCustom as ReactSelectProps['onBlur']}

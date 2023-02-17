@@ -24,8 +24,10 @@
 	},
 	"tokensFeeOption": {
 		"currentToken": "Current token",
-		"customToken": "Another token"
+		"customToken": "Another token",
+		"placeholder": "Introduce token or select"
 	},
+
 	"amountPlaceholder": "0",
 	"percentagePlaceholder": "0",
 	"minPlaceholder": "0",
