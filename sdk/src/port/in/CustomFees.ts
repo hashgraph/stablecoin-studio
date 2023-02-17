@@ -35,6 +35,7 @@ import {
 	FractionalFee,
 	HBAR_DECIMALS,
 	MAX_PERCENTAGE_DECIMALS,
+	MAX_CUSTOM_FEES,
 } from '../../domain/context/fee/CustomFee.js';
 import BigDecimal from '../../domain/context/shared/BigDecimal.js';
 import { addFractionalFeesCommand } from '../../app/usecase/command/stablecoin/fees/addCustomFees/addFractionalFeesCommand.js';
@@ -44,7 +45,7 @@ import {
 	isRequestFixedFee,
 } from './request/BaseRequest.js';
 
-export { HBAR_DECIMALS, MAX_PERCENTAGE_DECIMALS };
+export { HBAR_DECIMALS, MAX_PERCENTAGE_DECIMALS, MAX_CUSTOM_FEES };
 
 interface ICustomFees {
 	addFixedFee(request: AddFixedFeeRequest): Promise<boolean>;

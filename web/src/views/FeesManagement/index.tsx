@@ -7,6 +7,7 @@ import {
 	InputRightElement,
 	Grid,
 	Center,
+	Hide,
 } from '@chakra-ui/react';
 import React, { useEffect, useMemo, useState } from 'react';
 
@@ -26,6 +27,7 @@ import {
 	UpdateCustomFeesRequest,
 	GetStableCoinDetailsRequest,
 	HBAR_DECIMALS,
+	MAX_CUSTOM_FEES,
 } from 'hedera-stable-coin-sdk';
 import type {
 	RequestFractionalFee,
@@ -37,8 +39,6 @@ import { handleRequestValidation } from '../../utils/validationsHelper';
 import SDKService from '../../services/SDKService';
 import SelectCreatableController from '../../components/Form/SelectCreatableController';
 import ModalNotification from '../../components/ModalNotification';
-
-const MAX_FEES = 10;
 
 type FeeTypes = RequestFractionalFee | RequestFixedFee | RequestCustomFee;
 
@@ -61,12 +61,13 @@ const FeesManagement = () => {
 		control,
 		name: 'fees',
 	});
+
 	// const feeRef = useRef<SelectInstance<unknown, boolean, GroupBase<unknown>>>(null);
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 
-	const isMaxFees = useMemo(() => fees.length >= MAX_FEES, [fees]);
+	const isMaxFees = useMemo(() => fees.length >= MAX_CUSTOM_FEES, [fees]);
 
-	const fixedFee = new AddFixedFeeRequest({
+	/* const fixedFee = new AddFixedFeeRequest({
 		tokenId: selectedStableCoin!.tokenId!.toString(),
 		collectorId: '0.0.1',
 		collectorsExempt: false,
@@ -85,12 +86,90 @@ const FeesManagement = () => {
 		min: '1',
 		max: '5',
 		net: false,
-	});
+	}); */
 
 	enum FeeTypeValue {
 		FIXED,
 		FRACTIONAL,
 	}
+
+	const initialFeeTypeValues: FeeTypeValue[] = [];
+
+	const emptyFixedFee = new AddFixedFeeRequest({
+		tokenId: selectedStableCoin!.tokenId!.toString(),
+		collectorId: '',
+		collectorsExempt: false,
+		decimals: HBAR_DECIMALS,
+		tokenIdCollected: '0.0.0',
+		amount: '',
+	});
+	const initialFixedFee: AddFixedFeeRequest[] = [];
+
+	const emptyFractionalFee = new AddFractionalFeeRequest({
+		tokenId: selectedStableCoin!.tokenId!.toString(),
+		collectorId: '',
+		collectorsExempt: false,
+		decimals: selectedStableCoin!.decimals!,
+		percentage: '',
+		amountNumerator: '',
+		amountDenominator: '',
+		min: '',
+		max: '',
+		net: false,
+	});
+	const initialFractionalFee: AddFractionalFeeRequest[] = [];
+
+	const [FeeTypeValues, setFeeTypeValues] = useState(initialFeeTypeValues);
+	const [fixedFee, setFixedFee] = useState(initialFixedFee);
+	const [fractionalFee, setFractionalFee] = useState(initialFractionalFee);
+
+	const addFixedFee = (fee: AddFixedFeeRequest) => {
+		const currentFixedFee = fixedFee;
+		currentFixedFee.push(fee);
+		setFixedFee(currentFixedFee);
+	};
+	const removeFixedFee = (i: number) => {
+		const currentFixedFee = fixedFee;
+		currentFixedFee.splice(i, 1);
+		setFixedFee(currentFixedFee);
+	};
+	const changeFixedFee = (fee: AddFixedFeeRequest, i: number) => {
+		const currentFixedFee = fixedFee;
+		currentFixedFee[i] = fee;
+		setFixedFee(currentFixedFee);
+	};
+
+	const addFractionalFee = (fee: AddFractionalFeeRequest) => {
+		const currentFractionalFee = fractionalFee;
+		currentFractionalFee.push(fee);
+		setFractionalFee(currentFractionalFee);
+	};
+	const removeFractionalFee = (i: number) => {
+		const currentFractionalFee = fractionalFee;
+		currentFractionalFee.splice(i, 1);
+		setFractionalFee(currentFractionalFee);
+	};
+	const changeFractionalFee = (fee: AddFractionalFeeRequest, i: number) => {
+		const currentFractionalFee = fractionalFee;
+		currentFractionalFee[i] = fee;
+		setFractionalFee(currentFractionalFee);
+	};
+
+	const addFeeTypeValues = (feeType: FeeTypeValue) => {
+		const currentFeeTypeValue = FeeTypeValues;
+		currentFeeTypeValue.push(feeType);
+		setFeeTypeValues(currentFeeTypeValue);
+	};
+	const removeFeeTypeValues = (i: number) => {
+		const currentFeeTypeValue = FeeTypeValues;
+		currentFeeTypeValue.splice(i, 1);
+		setFeeTypeValues(currentFeeTypeValue);
+	};
+	const changeFeeTypeValues = (feeType: FeeTypeValue, i: number) => {
+		const currentFeeTypeValue = FeeTypeValues;
+		currentFeeTypeValue[i] = feeType;
+		setFeeTypeValues(currentFeeTypeValue);
+	};
 
 	const feeTypeOption = {
 		FIXED: {
@@ -134,8 +213,20 @@ const FeesManagement = () => {
 		},
 	};
 	useEffect(() => {
-		const parsedFees = selectedStableCoin!.customFees!.map((item: FeeTypes) => {
+		const parsedFees = selectedStableCoin!.customFees!.map((item: FeeTypes, i: number) => {
 			if ('amount' in item) {
+				addFeeTypeValues(FeeTypeValue.FIXED);
+				addFixedFee(
+					new AddFixedFeeRequest({
+						tokenId: selectedStableCoin!.tokenId!.toString(),
+						collectorId: item.collectorId,
+						collectorsExempt: item.collectorsExempt,
+						decimals: item.decimals,
+						tokenIdCollected: item.tokenIdCollected,
+						amount: item.amount,
+					}),
+				);
+				addFractionalFee(emptyFractionalFee);
 				return {
 					feeType: feeTypeOption.FIXED,
 					amountOrPercentage: item.amount,
@@ -162,18 +253,35 @@ const FeesManagement = () => {
 			// TODO
 			//  Fixed => sender
 			//  fractional => ambos, pero actualmente solo reciever
+			const itemFractional = item as RequestFractionalFee;
+			addFeeTypeValues(FeeTypeValue.FRACTIONAL);
+			addFixedFee(emptyFixedFee);
+			addFractionalFee(
+				new AddFractionalFeeRequest({
+					tokenId: selectedStableCoin!.tokenId!.toString(),
+					collectorId: itemFractional.collectorId,
+					collectorsExempt: itemFractional.collectorsExempt,
+					decimals: itemFractional.decimals,
+					percentage: itemFractional.percentage,
+					amountNumerator: itemFractional.amountNumerator,
+					amountDenominator: itemFractional.amountDenominator,
+					min: itemFractional.min,
+					max: itemFractional.max,
+					net: itemFractional.net,
+				}),
+			);
 			return {
 				feeType: feeTypeOption.FRACTIONAL,
-				amountOrPercentage: (item as RequestFractionalFee).percentage,
+				amountOrPercentage: itemFractional.percentage,
 				collectorAccount: item.collectorId,
 				collectorsExempt: item.collectorsExempt
 					? collectorsExemptOption.TRUE
 					: collectorsExemptOption.FALSE,
-				senderOrReceiver: (item as RequestFractionalFee).net
+				senderOrReceiver: itemFractional.net
 					? senderOrReceiverOption.SENDER
 					: senderOrReceiverOption.RECIEVER,
-				min: (item as RequestFractionalFee).min,
-				max: (item as RequestFractionalFee).max,
+				min: itemFractional.min,
+				max: itemFractional.max,
 				tokenIdCollected: collectorIdOption.CURRENT_TOKEN,
 			};
 		});
@@ -228,6 +336,10 @@ const FeesManagement = () => {
 	const handleAddNewRow = async () => {
 		if (fees.length >= 10) return;
 
+		addFeeTypeValues(FeeTypeValue.FIXED);
+		addFixedFee(emptyFixedFee);
+		addFractionalFee(emptyFractionalFee);
+
 		// Default values when add new row
 		append({
 			feeType: feeTypeOption.FIXED,
@@ -240,7 +352,33 @@ const FeesManagement = () => {
 	};
 
 	async function handleRemoveRow(i: number): Promise<void> {
+		removeFeeTypeValues(i);
+		removeFixedFee(i);
+		removeFractionalFee(i);
 		remove(i);
+	}
+
+	async function handleTypeChange(i: number): Promise<void> {
+		const fee = getValues().fees[i];
+		changeFeeTypeValues(fee.feeType.value, i);
+		if (fee.feeType.value === FeeTypeValue.FIXED) {
+			changeFractionalFee(emptyFractionalFee, i);
+		} else {
+			changeFixedFee(emptyFixedFee, i);
+		}
+	}
+
+	async function handleTokenIdCollectedChange(i: number): Promise<void> {
+		const fee = getValues().fees[i];
+		const _fixedFee = fixedFee[i];
+		if (fee.tokenIdCollected.value === '0.0.0') {
+			_fixedFee.decimals = HBAR_DECIMALS;
+		} else if (fee.tokenIdCollected.value === selectedStableCoin!.tokenId!.toString()) {
+			_fixedFee.decimals = selectedStableCoin!.decimals!;
+		} else {
+			_fixedFee.decimals = 2; // to change
+		}
+		changeFixedFee(_fixedFee, i);
 	}
 
 	const handleUpdateTokenFees = async () => {
@@ -359,6 +497,7 @@ const FeesManagement = () => {
 												overrideStyles={selectorStyle}
 												addonLeft={true}
 												variant='unstyled'
+												onChangeAux={() => handleTypeChange(i)}
 												// defaultValue={
 												// 	field !== undefined
 												// 		? `fees.${i}.amount` in field
@@ -376,13 +515,21 @@ const FeesManagement = () => {
 													required: t('global:validations.required') ?? propertyNotFound,
 													validate: {
 														validation: (value: string) => {
-															// if fixed
-															fixedFee.amount = value;
-															const res = handleRequestValidation(fixedFee.validate('amount'));
-															// else fractional
-															// const res = handleRequestValidation(fractionalFee.validate('amount'));
-															return res;
-															// return true;
+															if (FeeTypeValues[i] === FeeTypeValue.FIXED) {
+																const _fixedFee = fixedFee[i];
+																_fixedFee.amount = value;
+																changeFixedFee(_fixedFee, i);
+																const res = handleRequestValidation(_fixedFee.validate('amount'));
+																return res;
+															} else {
+																const _fractionalFee = fractionalFee[i];
+																_fractionalFee.percentage = value;
+																changeFractionalFee(_fractionalFee, i);
+																const res = handleRequestValidation(
+																	_fractionalFee.validate('percentage'),
+																);
+																return res;
+															}
 														},
 													},
 												}}
@@ -409,8 +556,10 @@ const FeesManagement = () => {
 													required: t('global:validations.required') ?? propertyNotFound,
 													validate: {
 														validation: (value: string) => {
-															fractionalFee.min = value;
-															const res = handleRequestValidation(fractionalFee.validate('min'));
+															const _fractionalFee = fractionalFee[i];
+															_fractionalFee.min = value;
+															changeFractionalFee(_fractionalFee, i);
+															const res = handleRequestValidation(_fractionalFee.validate('min'));
 															return res;
 														},
 													},
@@ -436,8 +585,10 @@ const FeesManagement = () => {
 													required: t('global:validations.required') ?? propertyNotFound,
 													validate: {
 														validation: (value: string) => {
-															fractionalFee.max = value;
-															const res = handleRequestValidation(fractionalFee.validate('max'));
+															const _fractionalFee = fractionalFee[i];
+															_fractionalFee.max = value;
+															changeFractionalFee(_fractionalFee, i);
+															const res = handleRequestValidation(_fractionalFee.validate('max'));
 															return res;
 														},
 													},
@@ -462,9 +613,23 @@ const FeesManagement = () => {
 													required: t('global:validations.required') ?? propertyNotFound,
 													validate: {
 														validation: (value: string) => {
-															fixedFee.collectorId = value;
-															const res = handleRequestValidation(fixedFee.validate('collectorId'));
-															return res;
+															if (FeeTypeValues[i] === FeeTypeValue.FIXED) {
+																const _fixedFee = fixedFee[i];
+																_fixedFee.collectorId = value;
+																changeFixedFee(_fixedFee, i);
+																const res = handleRequestValidation(
+																	_fixedFee.validate('collectorId'),
+																);
+																return res;
+															} else {
+																const _fractionalFee = fractionalFee[i];
+																_fractionalFee.collectorId = value;
+																changeFractionalFee(_fractionalFee, i);
+																const res = handleRequestValidation(
+																	_fractionalFee.validate('collectorId'),
+																);
+																return res;
+															}
 														},
 													},
 												}}
@@ -503,6 +668,7 @@ const FeesManagement = () => {
 										<GridItem>
 											<SelectCreatableController
 												key={field.id}
+												isDisabled={watch(`fees.${i}.feeType`)?.value !== feeTypeOption.FIXED.value}
 												styles={{
 													dropdownIndicator: (provided) => ({
 														...provided,
@@ -516,9 +682,9 @@ const FeesManagement = () => {
 													}),
 												}}
 												name={`fees.${i}.tokenIdCollected`}
+												onChangeAux={() => handleTokenIdCollectedChange(i)}
 												control={control}
 												options={[...Object.values(collectorIdOption)]}
-												isDisabled={watch(`fees.${i}.feeType`)?.value !== feeTypeOption.FIXED.value}
 											/>
 										</GridItem>
 										<GridItem>
