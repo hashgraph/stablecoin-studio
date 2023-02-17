@@ -313,13 +313,13 @@ const FeesManagement = () => {
 
 	const feeDataHeader = [
 		t('feesManagement:columns:feeType'),
-		t('feesManagement:columns:amount'),
+		t('feesManagement:columns:feeToken'),
+		t('feesManagement:columns:amountOrPercentage'),
 		t('feesManagement:columns:minimumAmount'),
 		t('feesManagement:columns:maximumAmount'),
 		t('feesManagement:columns:collectorAccount'),
 		t('feesManagement:columns:collectorsExempt'),
 		t('feesManagement:columns:assessmentMethod'),
-		t('feesManagement:columns:tokenFee'),
 		t('feesManagement:columns:actions'),
 	];
 
@@ -333,6 +333,7 @@ const FeesManagement = () => {
 			onOpenCustomToken();
 		}
 	}; */
+
 	const handleAddNewRow = async () => {
 		if (fees.length >= 10) return;
 
@@ -466,24 +467,30 @@ const FeesManagement = () => {
 	return (
 		<BaseContainer title={t('feesManagement:title')}>
 			{selectedStableCoin && selectedStableCoin.feeScheduleKey && (
-				<Flex
-					direction='column'
-					bg='brand.gray100'
-					px={{ base: 4, lg: 14 }}
-					pt={{ base: 4, lg: 14 }}
-					pb={6}
-				>
+				<Flex direction='column' bg='brand.gray100' pt={{ base: 4, lg: 14 }} pb={6}>
 					<Grid
-						templateColumns={'1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 0.2fr'}
+						templateColumns='repeat(9, 1fr)'
 						gap={{ base: 4 }}
 						alignItems='center'
+						textAlign='center'
+						px={{ base: 4, lg: 14 }}
+						paddingBottom={{ base: 4 }}
+						borderBottom='0.5px solid'
+						borderBottomColor='light.secondary'
 					>
 						{feeDataHeader.map((feeColumn: string, index: number) => (
 							<GridItem key={`details-fee-${index}`} fontSize='14px' fontWeight='bold'>
 								{feeColumn}
 							</GridItem>
 						))}
-
+					</Grid>
+					<Grid
+						templateColumns='repeat(9, 1fr)'
+						gap={{ base: 4 }}
+						alignItems='center'
+						px={{ base: 4, lg: 14 }}
+						paddingTop={{ base: 8 }}
+					>
 						{fees &&
 							fees.map((field, i) => {
 								return (
@@ -505,6 +512,27 @@ const FeesManagement = () => {
 												// 			: feeTypeOption.FIXED.value
 												// 		: feeTypeOption.FIXED.value
 												// }
+											/>
+										</GridItem>
+										<GridItem>
+											<SelectCreatableController
+												key={field.id}
+												styles={{
+													dropdownIndicator: (provided) => ({
+														...provided,
+														bg: 'transparent',
+														px: 2,
+														cursor: 'inherit',
+													}),
+													indicatorSeparator: (provided) => ({
+														...provided,
+														display: 'none',
+													}),
+												}}
+												name={`fees.${i}.tokenIdCollected`}
+												control={control}
+												options={[...Object.values(collectorIdOption)]}
+												isDisabled={watch(`fees.${i}.feeType`)?.value !== feeTypeOption.FIXED.value}
 											/>
 										</GridItem>
 										<GridItem>
@@ -689,7 +717,13 @@ const FeesManagement = () => {
 										</GridItem>
 										<GridItem>
 											<Center>
-												<Icon name='Trash' fontSize='22px' onClick={() => handleRemoveRow(i)} />
+												<Icon
+													name='Trash'
+													color='brand.primary'
+													cursor='pointer'
+													fontSize='22px'
+													onClick={() => handleRemoveRow(i)}
+												/>
 											</Center>
 										</GridItem>
 										{/* {isOpenCustomToken && (
@@ -708,15 +742,19 @@ const FeesManagement = () => {
 								);
 							})}
 					</Grid>
-					<Flex justify='flex-end' pt={6} px={6} pb={6}>
-						<Stack direction='row' spacing={6}>
-							<Button variant='primary' onClick={handleUpdateTokenFees}>
-								{t('updateTokenFees.saveChangesButtonText')}
-							</Button>
-							<Button variant='primary' onClick={handleAddNewRow} isDisabled={isMaxFees}>
-								{t('updateTokenFees.addRowButtonText')}
-							</Button>
-						</Stack>
+					<Flex
+						justify='flex-end'
+						pt={6}
+						pb={6}
+						justifyContent='space-between'
+						px={{ base: 4, lg: 14 }}
+					>
+						<Button variant='primary' onClick={handleAddNewRow} isDisabled={isMaxFees}>
+							{t('updateTokenFees.addRowButtonText')}
+						</Button>
+						<Button variant='primary' onClick={handleUpdateTokenFees}>
+							{t('updateTokenFees.saveChangesButtonText')}
+						</Button>
 					</Flex>
 				</Flex>
 			)}

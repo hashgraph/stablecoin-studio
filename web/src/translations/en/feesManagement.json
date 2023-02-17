@@ -9,14 +9,14 @@
 	"columns": {
 		"feeType": "Fee type",
 		"collectorsExempt": "Collectors exempt",
-		"amount": "Amount",
+		"amountOrPercentage": "Amount or percentage",
 		"percentage": "Percentage",
 		"maximumAmount": "Max",
 		"minimumAmount": "Min",
-		"collectorAccount": "Collector account",
+		"collectorAccount": "Accounts receiving",
 		"assessmentMethod": "Payer",
-		"tokenFee": "Token fee",
-		"actions": ""
+		"feeToken": "Currency",
+		"actions": "Actions"
 	},
 	"feeType": {
 		"fixed": "Fixed",
