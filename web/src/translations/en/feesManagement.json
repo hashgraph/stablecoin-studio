@@ -13,10 +13,10 @@
 		"percentage": "Percentage",
 		"maximumAmount": "Max",
 		"minimumAmount": "Min",
-		"collectorAccount": "Collector account",
+		"collectorAccount": "Accounts receiving",
 		"assessmentMethod": "Payer",
-		"feeToken": "Fee token",
-		"actions": ""
+		"feeToken": "Currency",
+		"actions": "Actions"
 	},
 	"feeType": {
 		"fixed": "Fixed",
