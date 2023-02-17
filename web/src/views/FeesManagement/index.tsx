@@ -2,12 +2,10 @@ import {
 	Button,
 	useDisclosure,
 	Flex,
-	Stack,
 	GridItem,
 	InputRightElement,
 	Grid,
 	Center,
-	Hide,
 } from '@chakra-ui/react';
 import React, { useEffect, useMemo, useState } from 'react';
 
@@ -377,7 +375,12 @@ const FeesManagement = () => {
 		} else if (fee.tokenIdCollected.value === selectedStableCoin!.tokenId!.toString()) {
 			_fixedFee.decimals = selectedStableCoin!.decimals!;
 		} else {
-			_fixedFee.decimals = 2; // to change
+			const detailsExternalStableCoin: StableCoinViewModel = await SDKService.getStableCoinDetails(
+				new GetStableCoinDetailsRequest({
+					id: fee.tokenIdCollected.value,
+				}),
+			);
+			_fixedFee.decimals = detailsExternalStableCoin.decimals ?? 0;
 		}
 		changeFixedFee(_fixedFee, i);
 	}
@@ -386,7 +389,7 @@ const FeesManagement = () => {
 		const requestCustomFeeArray: RequestCustomFee[] = [];
 		// console.log(getValues());
 
-		for (const fee of getValues().fees) {
+		getValues().fees.forEach((fee: any, index: number) => {
 			const feeType: FeeTypeValue = fee.feeType.value;
 			const collectorAccount: string = fee.collectorAccount;
 			const collectorsExempt: boolean = fee.collectorsExempt.value;
@@ -399,7 +402,51 @@ const FeesManagement = () => {
 					const requestFractionalFee: RequestFractionalFee = {
 						collectorId: collectorAccount,
 						collectorsExempt,
-						decimals: 2,
+						decimals: selectedStableCoin!.decimals!,
+						amountNumerator: '1',
+						amountDenominator: '20',
+						min,
+						max,
+						net: false,
+						percentage: '', // TODO
+					};
+					requestCustomFeeArray.push(requestFractionalFee);
+					break;
+				}
+
+				case FeeTypeValue.FIXED: {
+					const amount: string = fee.amountOrPercentage;
+					const currency: string = fee.tokenIdCollected.value;
+					const decimals: number = fixedFee[index].decimals;
+
+					const requestFixedFee: RequestFixedFee = {
+						collectorId: collectorAccount,
+						collectorsExempt,
+						decimals,
+						tokenIdCollected:
+							currency === collectorIdOption.HBAR.value ? collectorIdOption.HBAR.value : currency,
+						amount,
+					};
+					requestCustomFeeArray.push(requestFixedFee);
+					break;
+				}
+			}
+		});
+
+		/* for (const fee of getValues().fees) {
+			const feeType: FeeTypeValue = fee.feeType.value;
+			const collectorAccount: string = fee.collectorAccount;
+			const collectorsExempt: boolean = fee.collectorsExempt.value;
+
+			switch (feeType) {
+				case FeeTypeValue.FRACTIONAL: {
+					const min: string = fee.min;
+					const max: string = fee.max;
+
+					const requestFractionalFee: RequestFractionalFee = {
+						collectorId: collectorAccount,
+						collectorsExempt,
+						decimals: selectedStableCoin!.decimals!,
 						amountNumerator: '1',
 						amountDenominator: '20',
 						min,
@@ -439,7 +486,7 @@ const FeesManagement = () => {
 					break;
 				}
 			}
-		}
+		} */
 
 		if (selectedStableCoin?.tokenId) {
 			const updateCustomFeesRequest = new UpdateCustomFeesRequest({
@@ -714,7 +761,7 @@ const FeesManagement = () => {
 													}),
 												}}
 												name={`fees.${i}.tokenIdCollected`}
-												onChangeAux={() => handleTokenIdCollectedChange(i)}
+												onChangeAux={async () => await handleTokenIdCollectedChange(i)}
 												control={control}
 												options={[...Object.values(collectorIdOption)]}
 											/>
