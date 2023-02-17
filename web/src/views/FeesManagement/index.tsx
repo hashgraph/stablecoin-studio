@@ -386,19 +386,19 @@ const FeesManagement = () => {
 
 			switch (feeType) {
 				case FeeTypeValue.FRACTIONAL: {
-					const min: string = fee.min;
-					const max: string = fee.max;
+					const min: string = fee.min ?? '0';
+					const max: string = fee.max ?? '0';
 
 					const requestFractionalFee: RequestFractionalFee = {
 						collectorId: collectorAccount,
 						collectorsExempt,
 						decimals: selectedStableCoin!.decimals!,
-						amountNumerator: '1',
-						amountDenominator: '20',
+						amountNumerator: fractionalFee[index].amountNumerator ?? '',
+						amountDenominator: fractionalFee[index].amountDenominator ?? '',
 						min,
 						max,
 						net: false,
-						percentage: '', // TODO
+						percentage: fee.percentage, // TODO
 					};
 					requestCustomFeeArray.push(requestFractionalFee);
 					break;
@@ -513,6 +513,8 @@ const FeesManagement = () => {
 															} else {
 																const _fractionalFee = fractionalFee[i];
 																_fractionalFee.percentage = value;
+																_fractionalFee.amountNumerator = '';
+																_fractionalFee.amountDenominator = '';
 																changeFractionalFee(_fractionalFee, i);
 																const res = handleRequestValidation(
 																	_fractionalFee.validate('percentage'),
