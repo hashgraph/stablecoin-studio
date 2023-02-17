@@ -9,7 +9,7 @@
 	"columns": {
 		"feeType": "Fee type",
 		"collectorsExempt": "Collectors exempt",
-		"amount": "Amount",
+		"amountOrPercentage": "Amount or percentage",
 		"percentage": "Percentage",
 		"maximumAmount": "Max",
 		"minimumAmount": "Min",

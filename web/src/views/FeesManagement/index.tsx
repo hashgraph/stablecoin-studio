@@ -205,7 +205,7 @@ const FeesManagement = () => {
 
 	const feeDataHeader = [
 		t('feesManagement:columns:feeType'),
-		t('feesManagement:columns:amount'),
+		t('feesManagement:columns:amountOrPercentage'),
 		t('feesManagement:columns:minimumAmount'),
 		t('feesManagement:columns:maximumAmount'),
 		t('feesManagement:columns:collectorAccount'),
