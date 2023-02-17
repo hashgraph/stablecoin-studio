@@ -27,7 +27,7 @@ import { InvalidValue } from './error/InvalidValue.js';
 import CheckNums from '../../../core/checks/numbers/CheckNums.js';
 import { InvalidRange } from './error/InvalidRange.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
-import { MAX_PERCENTAGE_DECIMALS } from '../CustomFees.js';
+import { MAX_PERCENTAGE_DECIMALS } from '../../../domain/context/fee/CustomFee.js';
 import { OptionalField } from '../../../core/decorator/OptionalDecorator.js';
 
 export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractionalFeeRequest> {
