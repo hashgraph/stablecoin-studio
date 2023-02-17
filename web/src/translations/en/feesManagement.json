@@ -16,7 +16,7 @@
 		"collectorAccount": "Accounts receiving",
 		"assessmentMethod": "Payer",
 		"feeToken": "Currency",
-		"actions": "Actions"
+		"actions": ""
 	},
 	"feeType": {
 		"fixed": "Fixed",

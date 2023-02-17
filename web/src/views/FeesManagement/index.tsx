@@ -311,8 +311,8 @@ const FeesManagement = () => {
 
 	const feeDataHeader = [
 		t('feesManagement:columns:feeType'),
-		t('feesManagement:columns:feeToken'),
 		t('feesManagement:columns:amountOrPercentage'),
+		t('feesManagement:columns:feeToken'),
 		t('feesManagement:columns:minimumAmount'),
 		t('feesManagement:columns:maximumAmount'),
 		t('feesManagement:columns:collectorAccount'),
@@ -562,27 +562,6 @@ const FeesManagement = () => {
 											/>
 										</GridItem>
 										<GridItem>
-											<SelectCreatableController
-												key={field.id}
-												styles={{
-													dropdownIndicator: (provided) => ({
-														...provided,
-														bg: 'transparent',
-														px: 2,
-														cursor: 'inherit',
-													}),
-													indicatorSeparator: (provided) => ({
-														...provided,
-														display: 'none',
-													}),
-												}}
-												name={`fees.${i}.tokenIdCollected`}
-												control={control}
-												options={[...Object.values(collectorIdOption)]}
-												isDisabled={watch(`fees.${i}.feeType`)?.value !== feeTypeOption.FIXED.value}
-											/>
-										</GridItem>
-										<GridItem>
 											<InputController
 												key={field.id}
 												control={control}
@@ -621,6 +600,27 @@ const FeesManagement = () => {
 														</InputRightElement>
 													)
 												}
+											/>
+										</GridItem>
+										<GridItem>
+											<SelectCreatableController
+												key={field.id}
+												styles={{
+													dropdownIndicator: (provided) => ({
+														...provided,
+														bg: 'transparent',
+														px: 2,
+														cursor: 'inherit',
+													}),
+													indicatorSeparator: (provided) => ({
+														...provided,
+														display: 'none',
+													}),
+												}}
+												name={`fees.${i}.tokenIdCollected`}
+												control={control}
+												options={[...Object.values(collectorIdOption)]}
+												isDisabled={watch(`fees.${i}.feeType`)?.value !== feeTypeOption.FIXED.value}
 											/>
 										</GridItem>
 										<GridItem>
@@ -767,15 +767,13 @@ const FeesManagement = () => {
 											/>
 										</GridItem>
 										<GridItem>
-											<Center>
-												<Icon
-													name='Trash'
-													color='brand.primary'
-													cursor='pointer'
-													fontSize='22px'
-													onClick={() => handleRemoveRow(i)}
-												/>
-											</Center>
+											<Icon
+												name='Trash'
+												color='brand.primary'
+												cursor='pointer'
+												fontSize='22px'
+												onClick={() => handleRemoveRow(i)}
+											/>
 										</GridItem>
 										{/* {isOpenCustomToken && (
 											<ModalInput
