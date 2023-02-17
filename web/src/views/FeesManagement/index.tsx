@@ -587,7 +587,11 @@ const FeesManagement = () => {
 															const _fractionalFee = fractionalFee[i];
 															_fractionalFee.min = value;
 															changeFractionalFee(_fractionalFee, i);
-															const res = handleRequestValidation(_fractionalFee.validate('min'));
+															const res =
+																handleRequestValidation(_fractionalFee.validate('min')) &&
+																(_fractionalFee.max
+																	? handleRequestValidation(_fractionalFee.validate('max'))
+																	: true);
 															return res;
 														},
 													},
