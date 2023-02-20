@@ -161,14 +161,14 @@ class CustomFeesInPort implements ICustomFees {
 						HederaId.from(customFee.collectorId),
 						parseInt(_amountNumerator),
 						parseInt(_amountDenominator),
-						BigDecimal.fromString(
+						customFee.min ? BigDecimal.fromString(
 							customFee.min,
 							customFee.decimals,
-						),
-						BigDecimal.fromString(
+						) : undefined,
+						customFee.max ? BigDecimal.fromString(
 							customFee.max,
 							customFee.decimals,
-						),
+						) : undefined,
 						customFee.net,
 						customFee.collectorsExempt,
 					),

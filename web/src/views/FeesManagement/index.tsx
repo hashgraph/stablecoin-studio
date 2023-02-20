@@ -354,12 +354,12 @@ const FeesManagement = () => {
 			const feeType: FeeTypeValue = fee.feeType.value;
 			const collectorAccount: string = fee.collectorAccount;
 			const collectorsExempt: boolean = fee.collectorsExempt.value;
+			const amountOrPercentage = fee.amountOrPercentage;
 
 			switch (feeType) {
 				case FeeTypeValue.FRACTIONAL: {
-					const min: string = fee.min ?? '0';
-					const max: string = fee.max ?? '0';
-
+					const min: string = fee.min;
+					const max: string = fee.max;
 					const requestFractionalFee: RequestFractionalFee = {
 						collectorId: collectorAccount,
 						collectorsExempt,
@@ -369,14 +369,14 @@ const FeesManagement = () => {
 						min,
 						max,
 						net: false,
-						percentage: fee.amountOrPercentage, // TODO
+						percentage: amountOrPercentage, // TODO
 					};
 					requestCustomFeeArray.push(requestFractionalFee);
 					break;
 				}
 
 				case FeeTypeValue.FIXED: {
-					const amount: string = fee.amountOrPercentage;
+					const amount: string = amountOrPercentage;
 					const currency: string = fee.tokenIdCollected.value;
 					const decimals: number = fixedFee[index].decimals;
 
@@ -548,11 +548,6 @@ const FeesManagement = () => {
 												}}
 												name={`fees.${i}.min`}
 												placeholder={t('minPlaceholder') ?? propertyNotFound}
-												// defaultValue={
-												// 	customFees[i] !== undefined && customFees[i].min
-												// 		? customFees[i].min._value.toString()
-												// 		: ''
-												// }
 												isReadOnly={false}
 												disabled={
 													watch(`fees.${i}.feeType`)?.value !== feeTypeOption.FRACTIONAL.value
@@ -578,11 +573,6 @@ const FeesManagement = () => {
 												}}
 												name={`fees.${i}.max`}
 												placeholder={t('maxPlaceholder') ?? propertyNotFound}
-												// defaultValue={
-												// 	customFees[i] !== undefined && customFees[i].max
-												// 		? customFees[i].max._value.toString()
-												// 		: ''
-												// }
 												isReadOnly={false}
 												disabled={
 													watch(`fees.${i}.feeType`)?.value !== feeTypeOption.FRACTIONAL.value
