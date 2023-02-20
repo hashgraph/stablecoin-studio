@@ -194,8 +194,7 @@ class CustomFeesInPort implements ICustomFees {
 		const numerator = BigDecimal.fromString(
 			percentage,
 			MAX_PERCENTAGE_DECIMALS,
-		);
-
+		);		
 		const amountNumerator = Math.round(
 			numerator.toUnsafeFloat() * exponential,
 		).toString();

@@ -369,7 +369,7 @@ const FeesManagement = () => {
 						min,
 						max,
 						net: false,
-						percentage: fee.percentage, // TODO
+						percentage: fee.amountOrPercentage, // TODO
 					};
 					requestCustomFeeArray.push(requestFractionalFee);
 					break;

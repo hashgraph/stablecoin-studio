@@ -187,14 +187,16 @@ export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractio
 					return [new InvalidDecimalRange(val, this.decimals)];
 				}
 				const maximum = BigDecimal.fromString(val, this.decimals);
-				const minimum = BigDecimal.fromString(this.min, this.decimals);
 
-				if (minimum.isGreaterThan(maximum))
+				if (this.min !== undefined && this.min !== '') {
+					const minimum = BigDecimal.fromString(this.min, this.decimals);
+					if (minimum.isGreaterThan(maximum))
 					return [
 						new InvalidValue(
 							`The maximum (${val}) should be greater than or equal to the minimum (${this.min}).`,
 						),
 					];
+				}
 			},
 		});
 		this.tokenId = tokenId;
