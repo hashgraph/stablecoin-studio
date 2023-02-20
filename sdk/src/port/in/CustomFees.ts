@@ -103,6 +103,8 @@ class CustomFeesInPort implements ICustomFees {
 
 		let _amountNumerator = amountNumerator ?? '';
 		let _amountDenominator = amountDenominator ?? '';
+		const _min = min ?? '0';
+		const _max = min ?? '0';
 
 		if (_amountNumerator === '') {
 			[_amountNumerator, _amountDenominator] =
@@ -116,8 +118,8 @@ class CustomFeesInPort implements ICustomFees {
 					HederaId.from(collectorId),
 					parseInt(_amountNumerator),
 					parseInt(_amountDenominator),
-					BigDecimal.fromString(min, decimals),
-					BigDecimal.fromString(max, decimals),
+					BigDecimal.fromString(_min, decimals),
+					BigDecimal.fromString(_max, decimals),
 					net,
 					collectorsExempt,
 				),

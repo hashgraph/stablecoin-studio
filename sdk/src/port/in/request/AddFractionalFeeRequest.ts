@@ -41,8 +41,10 @@ export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractio
 	amountNumerator?: string;
 	@OptionalField()
 	amountDenominator?: string;
-	min: string;
-	max: string;
+	@OptionalField()
+	min?: string;
+	@OptionalField()
+	max?: string;
 	net: boolean;
 
 	constructor({
@@ -64,8 +66,8 @@ export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractio
 		percentage?: string;
 		amountNumerator?: string;
 		amountDenominator?: string;
-		min: string;
-		max: string;
+		min?: string;
+		max?: string;
 		net: boolean;
 	}) {
 		super({
@@ -158,6 +160,9 @@ export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractio
 				}
 			},
 			min: (val) => {
+				if (val === undefined || val === '') {
+					return;
+				}
 				if (!BigDecimal.isBigDecimal(val)) {
 					return [new InvalidType(val, 'BigDecimal')];
 				}
@@ -174,11 +179,7 @@ export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractio
 			},
 			max: (val) => {
 				if (val === undefined || val === '') {
-					return [
-						new InvalidValue(
-							`The maximum (${val}) should not be empty.`,
-						),
-					];
+					return;
 				}
 				if (!BigDecimal.isBigDecimal(val)) {
 					return [new InvalidType(val, 'BigDecimal')];
