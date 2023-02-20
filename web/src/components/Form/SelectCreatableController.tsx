@@ -45,14 +45,14 @@ const SelectCreatableController = ({
 	defaultValue,
 	rules,
 	options,
-	isRequired,
 	label,
 	labelProps,
 	styles,
 	onChangeAux,
 	onBlurAux,
 	placeholder,
-	isDisabled,
+	isRequired = false,
+	isDisabled = false,
 }: SelectCreatableControllerProps) => {
 	return (
 		<Controller
@@ -100,6 +100,7 @@ const SelectCreatableController = ({
 								chakraStyles={styles}
 								placeholder={placeholder}
 								isDisabled={isDisabled}
+								isRequired={isRequired}
 								{...field}
 								onChange={onChangeCustom as ReactSelectProps['onChange']}
 								onBlur={onBlurCustom as ReactSelectProps['onBlur']}

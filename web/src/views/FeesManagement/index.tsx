@@ -51,31 +51,9 @@ const FeesManagement = () => {
 		name: 'fees',
 	});
 
-	// const feeRef = useRef<SelectInstance<unknown, boolean, GroupBase<unknown>>>(null);
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 
 	const isMaxFees = useMemo(() => fees.length >= MAX_CUSTOM_FEES, [fees]);
-
-	/* const fixedFee = new AddFixedFeeRequest({
-		tokenId: selectedStableCoin!.tokenId!.toString(),
-		collectorId: '0.0.1',
-		collectorsExempt: false,
-		decimals: 0,
-		tokenIdCollected: '0.0.0',
-		amount: '1',
-	});
-
-	const fractionalFee = new AddFractionalFeeRequest({
-		tokenId: selectedStableCoin!.tokenId!.toString(),
-		collectorId: '0.0.1',
-		collectorsExempt: false,
-		decimals: 0,
-		amountNumerator: '1',
-		amountDenominator: '10',
-		min: '1',
-		max: '5',
-		net: false,
-	}); */
 
 	enum FeeTypeValue {
 		FIXED,
@@ -202,8 +180,9 @@ const FeesManagement = () => {
 			isDisabled: true,
 		},
 	};
+
 	useEffect(() => {
-		const parsedFees = selectedStableCoin!.customFees!.map((item: FeeTypes, i: number) => {
+		const parsedFees = selectedStableCoin!.customFees!.map((item: FeeTypes) => {
 			if ('amount' in item) {
 				addFeeTypeValues(FeeTypeValue.FIXED);
 				addFixedFee(
@@ -268,8 +247,8 @@ const FeesManagement = () => {
 					? collectorsExemptOption.TRUE
 					: collectorsExemptOption.FALSE,
 				senderOrReceiver: itemFractional.net
-					? senderOrReceiverOption.SENDER.label
-					: senderOrReceiverOption.RECIEVER.label,
+					? senderOrReceiverOption.SENDER
+					: senderOrReceiverOption.RECIEVER,
 				min: itemFractional.min,
 				max: itemFractional.max,
 				tokenIdCollected: collectorIdOption.CURRENT_TOKEN,
@@ -313,17 +292,6 @@ const FeesManagement = () => {
 		t('feesManagement:columns:actions'),
 	];
 
-	/* const handleSelectFee = async (event: any) => {
-		console.log(event.value);
-		console.log(feeRef.current);
-		feeRef.current?.selectOption(0);
-
-		if (event.value === '') {
-			// TODO
-			onOpenCustomToken();
-		}
-	}; */
-
 	const handleAddNewRow = async () => {
 		if (fees.length >= 10) return;
 
@@ -335,7 +303,7 @@ const FeesManagement = () => {
 		append({
 			feeType: feeTypeOption.FIXED,
 			collectorsExempt: collectorsExemptOption.FALSE,
-			senderOrReceiver: senderOrReceiverOption.SENDER.label,
+			senderOrReceiver: senderOrReceiverOption.SENDER,
 			tokenIdCollected: undefined,
 			min: undefined,
 			amount: undefined,
@@ -354,8 +322,10 @@ const FeesManagement = () => {
 		changeFeeTypeValues(fee.feeType.value, i);
 		if (fee.feeType.value === FeeTypeValue.FIXED) {
 			changeFractionalFee(emptyFractionalFee, i);
+			setValue(`fees.${i}.senderOrReceiver`, senderOrReceiverOption.SENDER);
 		} else {
 			changeFixedFee(emptyFixedFee, i);
+			setValue(`fees.${i}.tokenIdCollected`, collectorIdOption.CURRENT_TOKEN);
 		}
 	}
 
@@ -399,7 +369,7 @@ const FeesManagement = () => {
 						min,
 						max,
 						net: false,
-						percentage: fee.amountOrPercentage, // TODO
+						percentage: fee.percentage, // TODO
 					};
 					requestCustomFeeArray.push(requestFractionalFee);
 					break;
@@ -665,19 +635,17 @@ const FeesManagement = () => {
 											/>
 										</GridItem>
 										<GridItem>
-											<InputController
+											<SelectController
 												key={field.id}
 												control={control}
 												name={`fees.${i}.senderOrReceiver`}
-												// options={Object.values(senderOrReceiverOption)}
-												// overrideStyles={selectorStyle}
-												isReadOnly={true}
-												disabled={true}
-												// addonLeft={true}
-												// variant='unstyled'
-												// isDisabled={
-												// 	watch(`fees.${i}.feeType`)?.value !== feeTypeOption.FRACTIONAL.value
-												// }
+												options={Object.values(senderOrReceiverOption)}
+												overrideStyles={selectorStyle}
+												addonLeft={true}
+												variant='unstyled'
+												isDisabled={
+													watch(`fees.${i}.feeType`)?.value !== feeTypeOption.FRACTIONAL.value
+												}
 											/>
 										</GridItem>
 										<GridItem textAlign='center'>
@@ -689,18 +657,6 @@ const FeesManagement = () => {
 												onClick={() => handleRemoveRow(i)}
 											/>
 										</GridItem>
-										{/* {isOpenCustomToken && (
-											<ModalInput
-												setValue={(tokenId: string) => {
-													setValue(`fees.${i}.tokenIdCollected`, tokenId);
-													console.log(getValues());
-												}}
-												isOpen={isOpenCustomToken}
-												onClose={onCloseCustomToken}
-												placeholderInput='0.0.0'
-												title={'Introduce tokenId'}
-											/>
-											)} */}
 									</React.Fragment>
 								);
 							})}
