@@ -446,10 +446,10 @@ export default class UtilitiesService extends Service {
     };
 
     let res;
-    do{
+    do {
       await cll(res ?? '');
       res = val();
       consoleOut && outputError(res);
-    }while (res.length > 0)
+    } while (res.length > 0);
   }
 }

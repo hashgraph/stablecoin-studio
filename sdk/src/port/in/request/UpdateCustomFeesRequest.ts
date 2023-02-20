@@ -21,12 +21,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
-import {
-	CustomFee,
-	FixedFee,
-	FractionalFee,
-	MAX_CUSTOM_FEES,
-} from '../../../domain/context/fee/CustomFee.js';
+import { MAX_CUSTOM_FEES } from '../../../domain/context/fee/CustomFee.js';
 import { InvalidLength } from './error/InvalidLength.js';
 import AddFixedFeeRequest from './AddFixedFeeRequest.js';
 import AddFractionalFeeRequest from './AddFractionalFeeRequest.js';

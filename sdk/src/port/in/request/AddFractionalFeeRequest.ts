@@ -108,14 +108,16 @@ export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractio
 					return [new InvalidDecimalRange(val, 0)];
 				}
 
-				const numerator = parseInt(this.amountNumerator!);
+				if (this.amountNumerator) {
+					const numerator = parseInt(this.amountNumerator);
 
-				if (numerator >= denominator)
-					return [
-						new InvalidValue(
-							`The denominator (${denominator}) should be greater than the numerator (${numerator}).`,
-						),
-					];
+					if (numerator >= denominator)
+						return [
+							new InvalidValue(
+								`The denominator (${denominator}) should be greater than the numerator (${numerator}).`,
+							),
+						];
+				}
 			},
 			percentage: (val) => {
 				if (

@@ -1068,7 +1068,7 @@ export default class OperationStableCoinService extends Service {
           );
 
           let grantAccountTargetId = accountTarget;
-  
+
           await utilsService.handleValidation(
             () => grantRoleRequest.validate('targetId'),
             async () => {
@@ -1896,7 +1896,6 @@ export default class OperationStableCoinService extends Service {
         );
       }
       if (grantRoleRequest.supplierType === supplierRoleType[1]) {
-
         await utilsService.handleValidation(
           () => grantRoleRequest.validate('amount'),
           async () => {

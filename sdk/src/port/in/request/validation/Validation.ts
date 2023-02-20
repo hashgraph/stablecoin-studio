@@ -41,7 +41,6 @@ import ContractId from '../../../../domain/context/contract/ContractId.js';
 import InvalidDecimalRange from '../../../../domain/context/stablecoin/error/InvalidDecimalRange.js';
 import { StableCoinRole } from '../../../../domain/context/stablecoin/StableCoinRole.js';
 import { InvalidRole } from '../../../../domain/context/stablecoin/error/InvalidRole.js';
-import { InvalidValue } from '../error/InvalidValue.js';
 
 export default class Validation {
 	public static checkPublicKey = () => {

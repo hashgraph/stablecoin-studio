@@ -28,7 +28,6 @@ import {
 	RequestCustomFee,
 	StableCoinCapabilities,
 	RequestFractionalFee,
-	RequestFixedFee,
 } from '../../src/index.js';
 import ConnectRequest, {
 	SupportedWallets,
@@ -56,7 +55,6 @@ import StableCoinService from '../../src/app/service/StableCoinService.js';
 import StableCoinDetail from '../../src/port/out/mirror/response/StableCoinViewModel.js';
 // import FeeAssessmentMethod from '@hashgraph/sdk/lib/token/FeeAssessmentMethod.js';
 import {
-	CustomFee,
 	FixedFee,
 	FractionalFee,
 } from '../../src/domain/context/fee/CustomFee.js';
