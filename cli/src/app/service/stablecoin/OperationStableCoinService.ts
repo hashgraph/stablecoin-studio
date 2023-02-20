@@ -190,10 +190,6 @@ export default class OperationStableCoinService extends Service {
         });
 
         // Call to mint
-        cashInRequest.targetId = await utilsService.defaultSingleAsk(
-          language.getText('stablecoin.askTargetAccount'),
-          currentAccount.accountId,
-        );
         await utilsService.handleValidation(
           () => cashInRequest.validate('targetId'),
           async () => {
@@ -203,10 +199,6 @@ export default class OperationStableCoinService extends Service {
             );
           },
         );
-
-        cashInRequest.amount = await utilsService
-          .defaultSingleAsk(language.getText('stablecoin.askCashInAmount'), '1')
-          .then((val) => val.replace(',', '.'));
 
         await utilsService.handleValidation(
           () => cashInRequest.validate('amount'),
@@ -251,10 +243,6 @@ export default class OperationStableCoinService extends Service {
         });
 
         // Call to mint
-        getAccountBalanceRequest.targetId = await utilsService.defaultSingleAsk(
-          language.getText('stablecoin.askAccountToBalance'),
-          currentAccount.accountId,
-        );
         await utilsService.handleValidation(
           () => getAccountBalanceRequest.validate('targetId'),
           async () => {
@@ -289,10 +277,6 @@ export default class OperationStableCoinService extends Service {
           tokenId: this.stableCoinId,
           amount: '',
         });
-
-        cashOutRequest.amount = await utilsService
-          .defaultSingleAsk(language.getText('stablecoin.askBurnAmount'), '1')
-          .then((val) => val.replace(',', '.'));
 
         await utilsService.handleValidation(
           () => cashOutRequest.validate('amount'),
@@ -331,10 +315,6 @@ export default class OperationStableCoinService extends Service {
         });
 
         // Call to wipe
-        wipeRequest.targetId = await utilsService.defaultSingleAsk(
-          language.getText('stablecoin.askTargetAccount'),
-          currentAccount.accountId,
-        );
         await utilsService.handleValidation(
           () => wipeRequest.validate('targetId'),
           async () => {
@@ -344,10 +324,6 @@ export default class OperationStableCoinService extends Service {
             );
           },
         );
-
-        wipeRequest.amount = await utilsService
-          .defaultSingleAsk(language.getText('stablecoin.askWipeAmount'), '1')
-          .then((val) => val.replace(',', '.'));
 
         await utilsService.handleValidation(
           () => wipeRequest.validate('amount'),
@@ -384,10 +360,6 @@ export default class OperationStableCoinService extends Service {
         });
 
         let rescuedAmount = '';
-        rescueRequest.amount = await utilsService.defaultSingleAsk(
-          language.getText('stablecoin.askRescueAmount'),
-          '1',
-        );
         await utilsService.handleValidation(
           () => rescueRequest.validate('amount'),
           async () => {
@@ -420,10 +392,6 @@ export default class OperationStableCoinService extends Service {
           tokenId: this.stableCoinId,
           targetId: '',
         });
-        freezeAccountRequest.targetId = await utilsService.defaultSingleAsk(
-          language.getText('wizard.freezeAccount'),
-          '0.0.0',
-        );
 
         await utilsService.handleValidation(
           () => freezeAccountRequest.validate('targetId'),
@@ -457,10 +425,6 @@ export default class OperationStableCoinService extends Service {
           tokenId: this.stableCoinId,
           targetId: '',
         });
-        unfreezeAccountRequest.targetId = await utilsService.defaultSingleAsk(
-          language.getText('wizard.unfreezeAccount'),
-          '0.0.0',
-        );
 
         await utilsService.handleValidation(
           () => unfreezeAccountRequest.validate('targetId'),
@@ -494,10 +458,6 @@ export default class OperationStableCoinService extends Service {
           tokenId: this.stableCoinId,
           targetId: '',
         });
-        grantKYCRequest.targetId = await utilsService.defaultSingleAsk(
-          language.getText('wizard.grantKYCToAccount'),
-          '0.0.0',
-        );
 
         await utilsService.handleValidation(
           () => grantKYCRequest.validate('targetId'),
@@ -529,10 +489,6 @@ export default class OperationStableCoinService extends Service {
           tokenId: this.stableCoinId,
           targetId: '',
         });
-        revokeKYCRequest.targetId = await utilsService.defaultSingleAsk(
-          language.getText('wizard.revokeKYCFromAccount'),
-          '0.0.0',
-        );
 
         await utilsService.handleValidation(
           () => revokeKYCRequest.validate('targetId'),
@@ -565,10 +521,6 @@ export default class OperationStableCoinService extends Service {
           tokenId: this.stableCoinId,
           targetId: '',
         });
-        checkAccountKYCRequest.targetId = await utilsService.defaultSingleAsk(
-          language.getText('wizard.checkAccountKYCGranted'),
-          '0.0.0',
-        );
 
         await utilsService.handleValidation(
           () => checkAccountKYCRequest.validate('targetId'),
@@ -836,10 +788,6 @@ export default class OperationStableCoinService extends Service {
       fractionType ==
       language.getText('feeManagement.chooseFractionalType.Percentage')
     ) {
-      addFractionalFeeRequest.percentage = await utilsService.defaultSingleAsk(
-        language.getText('feeManagement.askPercentageFee'),
-        '1',
-      );
       await utilsService.handleValidation(
         () => addFractionalFeeRequest.validate('percentage'),
         async () => {
@@ -851,11 +799,6 @@ export default class OperationStableCoinService extends Service {
         },
       );
     } else {
-      addFractionalFeeRequest.amountNumerator =
-        await utilsService.defaultSingleAsk(
-          language.getText('feeManagement.askNumerator'),
-          '1',
-        );
       await utilsService.handleValidation(
         () => addFractionalFeeRequest.validate('amountNumerator'),
         async () => {
@@ -867,11 +810,6 @@ export default class OperationStableCoinService extends Service {
         },
       );
 
-      addFractionalFeeRequest.amountDenominator =
-        await utilsService.defaultSingleAsk(
-          language.getText('feeManagement.askDenominator'),
-          '2',
-        );
       await utilsService.handleValidation(
         () => addFractionalFeeRequest.validate('amountDenominator'),
         async () => {
@@ -884,10 +822,6 @@ export default class OperationStableCoinService extends Service {
       );
     }
 
-    addFractionalFeeRequest.min = await utilsService.defaultSingleAsk(
-      language.getText('feeManagement.askMin'),
-      '0',
-    );
     await utilsService.handleValidation(
       () => addFractionalFeeRequest.validate('min'),
       async () => {
@@ -898,10 +832,6 @@ export default class OperationStableCoinService extends Service {
       },
     );
 
-    addFractionalFeeRequest.max = await utilsService.defaultSingleAsk(
-      language.getText('feeManagement.askMax'),
-      '0',
-    );
     await utilsService.handleValidation(
       () => addFractionalFeeRequest.validate('max'),
       async () => {
@@ -922,11 +852,6 @@ export default class OperationStableCoinService extends Service {
         language.getText('feeManagement.askCollectorsExempt'),
         true,
       );
-
-    addFractionalFeeRequest.collectorId = await utilsService.defaultSingleAsk(
-      language.getText('feeManagement.askCollectorId'),
-      currentAccount,
-    );
 
     await utilsService.handleValidation(
       () => addFractionalFeeRequest.validate('collectorId'),
@@ -989,11 +914,6 @@ export default class OperationStableCoinService extends Service {
     addFixedFeeRequest.tokenIdCollected = '0.0.0';
 
     if (!feesInHBAR) {
-      addFixedFeeRequest.tokenIdCollected = await utilsService.defaultSingleAsk(
-        language.getText('feeManagement.askTokenId'),
-        this.stableCoinId,
-      );
-
       await utilsService.handleValidation(
         () => addFixedFeeRequest.validate('tokenIdCollected'),
         async () => {
@@ -1018,10 +938,6 @@ export default class OperationStableCoinService extends Service {
       } else addFixedFeeRequest.decimals = decimals;
     }
 
-    addFixedFeeRequest.amount = await utilsService.defaultSingleAsk(
-      language.getText('feeManagement.askAmount'),
-      '1',
-    );
     await utilsService.handleValidation(
       () => addFixedFeeRequest.validate('amount'),
       async () => {
@@ -1035,11 +951,6 @@ export default class OperationStableCoinService extends Service {
     addFixedFeeRequest.collectorsExempt = await utilsService.defaultConfirmAsk(
       language.getText('feeManagement.askCollectorsExempt'),
       true,
-    );
-
-    addFixedFeeRequest.collectorId = await utilsService.defaultSingleAsk(
-      language.getText('feeManagement.askCollectorId'),
-      currentAccount,
     );
 
     await utilsService.handleValidation(
@@ -1157,10 +1068,7 @@ export default class OperationStableCoinService extends Service {
           );
 
           let grantAccountTargetId = accountTarget;
-          grantRoleRequest.targetId = await utilsService.defaultSingleAsk(
-            language.getText('stablecoin.accountTarget'),
-            accountTarget,
-          );
+  
           await utilsService.handleValidation(
             () => grantRoleRequest.validate('targetId'),
             async () => {
@@ -1221,10 +1129,7 @@ export default class OperationStableCoinService extends Service {
           );
 
           let revokeAccountTargetId = accountTarget;
-          revokeRoleRequest.targetId = await utilsService.defaultSingleAsk(
-            language.getText('stablecoin.accountTarget'),
-            accountTarget,
-          );
+
           await utilsService.handleValidation(
             () => revokeRoleRequest.validate('targetId'),
             async () => {
@@ -1290,11 +1195,7 @@ export default class OperationStableCoinService extends Service {
               ]);
 
               let increaseCashInLimitTargetId = accountTarget;
-              increaseCashInLimitRequest.targetId =
-                await utilsService.defaultSingleAsk(
-                  language.getText('stablecoin.accountTarget'),
-                  accountTarget,
-                );
+
               await utilsService.handleValidation(
                 () => increaseCashInLimitRequest.validate('targetId'),
                 async () => {
@@ -1339,11 +1240,7 @@ export default class OperationStableCoinService extends Service {
               }
 
               let increaseAmount = '';
-              increaseCashInLimitRequest.amount =
-                await utilsService.defaultSingleAsk(
-                  language.getText('stablecoin.amountIncrease'),
-                  '1',
-                );
+
               await utilsService.handleValidation(
                 () => increaseCashInLimitRequest.validate('amount'),
                 async () => {
@@ -1393,11 +1290,7 @@ export default class OperationStableCoinService extends Service {
             ]);
 
             let decreaseCashInLimitTargetId = accountTarget;
-            decreaseCashInLimitRequest.targetId =
-              await utilsService.defaultSingleAsk(
-                language.getText('stablecoin.accountTarget'),
-                accountTarget,
-              );
+
             await utilsService.handleValidation(
               () => decreaseCashInLimitRequest.validate('targetId'),
               async () => {
@@ -1443,11 +1336,7 @@ export default class OperationStableCoinService extends Service {
               }
 
               let decreaseAmount = '';
-              decreaseCashInLimitRequest.amount =
-                await utilsService.defaultSingleAsk(
-                  language.getText('stablecoin.amountDecrease'),
-                  '1',
-                );
+
               await utilsService.handleValidation(
                 () => decreaseCashInLimitRequest.validate('amount'),
                 async () => {
@@ -1490,11 +1379,7 @@ export default class OperationStableCoinService extends Service {
 
             //Reset
             let resetCashInLimitTargetId = accountTarget;
-            resetCashInLimitRequest.targetId =
-              await utilsService.defaultSingleAsk(
-                language.getText('stablecoin.accountTarget'),
-                accountTarget,
-              );
+
             await utilsService.handleValidation(
               () => resetCashInLimitRequest.validate('targetId'),
               async () => {
@@ -1565,11 +1450,7 @@ export default class OperationStableCoinService extends Service {
             ]);
 
             let cashInLimitTargetId = accountTarget;
-            checkCashInLimitRequest.targetId =
-              await utilsService.defaultSingleAsk(
-                language.getText('stablecoin.accountTarget'),
-                accountTarget,
-              );
+
             await utilsService.handleValidation(
               () => checkCashInLimitRequest.validate('targetId'),
               async () => {
@@ -1654,10 +1535,7 @@ export default class OperationStableCoinService extends Service {
           );
 
           let hasRoleAccountTargetId = accountTarget;
-          hasRoleRequest.targetId = await utilsService.defaultSingleAsk(
-            language.getText('stablecoin.accountTarget'),
-            accountTarget,
-          );
+
           await utilsService.handleValidation(
             () => hasRoleRequest.validate('targetId'),
             async () => {
@@ -1990,10 +1868,7 @@ export default class OperationStableCoinService extends Service {
       const supplierRoleType = language.getArrayFromObject(
         'wizard.supplierRoleType',
       );
-      grantRoleRequest.supplierType = await utilsService.defaultMultipleAsk(
-        language.getText('stablecoin.askCashInRoleType'),
-        supplierRoleType,
-      );
+
       await utilsService.handleValidation(
         () => grantRoleRequest.validate('supplierType'),
         async () => {
@@ -2021,10 +1896,7 @@ export default class OperationStableCoinService extends Service {
         );
       }
       if (grantRoleRequest.supplierType === supplierRoleType[1]) {
-        grantRoleRequest.amount = await utilsService.defaultSingleAsk(
-          language.getText('stablecoin.supplierRoleLimit'),
-          '1',
-        );
+
         await utilsService.handleValidation(
           () => grantRoleRequest.validate('amount'),
           async () => {

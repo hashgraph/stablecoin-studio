@@ -40,16 +40,12 @@ export default class ManageImportedTokenService extends Service {
           tokenId: '',
         });
 
-        getRolesRequestForAdding.tokenId = await utilsService.defaultSingleAsk(
-          language.getText('manageImportedToken.tokenId'),
-          '0.0.1234567',
-        );
         await utilsService.handleValidation(
           () => getRolesRequestForAdding.validate('tokenId'),
           async () => {
             tokenId = await utilsService.defaultSingleAsk(
               language.getText('manageImportedToken.tokenId'),
-              '',
+              '0.0.1234567',
             );
             getRolesRequestForAdding.tokenId = tokenId;
           },

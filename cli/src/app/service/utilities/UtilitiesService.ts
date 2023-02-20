@@ -431,7 +431,7 @@ export default class UtilitiesService extends Service {
 
   public async handleValidation(
     val: () => ValidationResponse[],
-    cll?: (res: ValidationResponse[]) => Promise<void>,
+    cll: (res: ValidationResponse[]) => Promise<void>,
     consoleOut = true,
   ): Promise<void> {
     const outputError = (res: ValidationResponse[]): void => {
@@ -445,15 +445,11 @@ export default class UtilitiesService extends Service {
       }
     };
 
-    let res = val();
-    if (cll) {
-      while (res.length > 0) {
-        consoleOut && outputError(res);
-        await cll(res);
-        res = val();
-      }
-    } else {
-      if (res.length > 0) consoleOut && outputError(res);
-    }
+    let res;
+    do{
+      await cll(res ?? '');
+      res = val();
+      consoleOut && outputError(res);
+    }while (res.length > 0)
   }
 }

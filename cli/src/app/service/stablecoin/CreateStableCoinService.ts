@@ -98,10 +98,6 @@ export default class CreateStableCoinService extends Service {
     });
 
     // Name
-    tokenToCreate.name = await utilsService.defaultSingleAsk(
-      language.getText('stablecoin.askName'),
-      tokenToCreate.name || 'HEDERACOIN',
-    );
     await utilsService.handleValidation(
       () => tokenToCreate.validate('name'),
       async () => {
@@ -113,10 +109,6 @@ export default class CreateStableCoinService extends Service {
     );
 
     // Symbol
-    tokenToCreate.symbol = await utilsService.defaultSingleAsk(
-      language.getText('stablecoin.askSymbol'),
-      tokenToCreate.symbol || 'HDC',
-    );
     await utilsService.handleValidation(
       () => tokenToCreate.validate('symbol'),
       async () => {
@@ -128,16 +120,12 @@ export default class CreateStableCoinService extends Service {
     );
 
     // Auto renew account
-    tokenToCreate.autoRenewAccount = await utilsService.defaultSingleAsk(
-      language.getText('stablecoin.askAutoRenewAccountId'),
-      tokenToCreate.autoRenewAccount || currentAccount.accountId,
-    );
     await utilsService.handleValidation(
       () => tokenToCreate.validate('autoRenewAccount'),
       async () => {
         tokenToCreate.autoRenewAccount = await utilsService.defaultSingleAsk(
           language.getText('stablecoin.askAutoRenewAccountId'),
-          tokenToCreate.autoRenewAccount || currentAccount.accountId,
+          currentAccount.accountId,
         );
       },
     );
@@ -148,9 +136,6 @@ export default class CreateStableCoinService extends Service {
     const totalSupply = undefined;
 
     if (optionalProps) {
-      tokenToCreate.decimals = await this.askForDecimals(
-        tokenToCreate.decimals.toString(),
-      );
       await utilsService.handleValidation(
         () => tokenToCreate.validate('decimals'),
         async () => {
@@ -168,7 +153,6 @@ export default class CreateStableCoinService extends Service {
       tokenToCreate.maxSupply = totalSupply;
 
       if (!supplyType) {
-        tokenToCreate.maxSupply = await this.askForTotalSupply();
         await utilsService.handleValidation(
           () => tokenToCreate.validate('maxSupply'),
           async () => {
@@ -177,10 +161,6 @@ export default class CreateStableCoinService extends Service {
         );
       }
 
-      initialSupply = await this.askForInitialSupply(
-        tokenToCreate.initialSupply?.toString(),
-      );
-      tokenToCreate.initialSupply = initialSupply;
       await utilsService.handleValidation(
         () => tokenToCreate.validate('initialSupply'),
         async () => {
@@ -255,8 +235,6 @@ export default class CreateStableCoinService extends Service {
         existingReserve = await this.askForExistingReserve();
         if (!existingReserve) {
           tokenToCreate.createReserve = true;
-          tokenToCreate.reserveInitialAmount =
-            await this.askForReserveInitialAmount();
           await utilsService.handleValidation(
             () => tokenToCreate.validate('reserveInitialAmount'),
             async () => {
@@ -265,10 +243,6 @@ export default class CreateStableCoinService extends Service {
             },
           );
         } else {
-          tokenToCreate.reserveAddress = await utilsService.defaultSingleAsk(
-            language.getText('stablecoin.askReserveAddress'),
-            tokenToCreate.reserveAddress || '0.0.0',
-          );
           await utilsService.handleValidation(
             () => tokenToCreate.validate('reserveAddress'),
             async () => {
