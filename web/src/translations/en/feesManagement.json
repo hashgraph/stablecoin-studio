@@ -35,7 +35,7 @@
 	"collectorAccountPlaceholder": "0.0.0",
 	"updateTokenFees": {
 		"saveChangesButtonText": "Save changes",
-		"addRowButtonText": "Add new row"
+		"addRowButtonText": "Add new fee"
 	},
 	"notification": {
 		"title": "{{ result }} updating token custom fees",

@@ -65,7 +65,7 @@ const FeesManagement = () => {
 	const emptyFixedFee = new AddFixedFeeRequest({
 		tokenId: selectedStableCoin!.tokenId!.toString(),
 		collectorId: '',
-		collectorsExempt: false,
+		collectorsExempt: true,
 		decimals: HBAR_DECIMALS,
 		tokenIdCollected: '0.0.0',
 		amount: '',
@@ -75,7 +75,7 @@ const FeesManagement = () => {
 	const emptyFractionalFee = new AddFractionalFeeRequest({
 		tokenId: selectedStableCoin!.tokenId!.toString(),
 		collectorId: '',
-		collectorsExempt: false,
+		collectorsExempt: true,
 		decimals: selectedStableCoin!.decimals!,
 		percentage: '',
 		amountNumerator: '',
@@ -299,10 +299,10 @@ const FeesManagement = () => {
 		addFixedFee(emptyFixedFee);
 		addFractionalFee(emptyFractionalFee);
 
-		// Default values when add new row
+		// Default values when add new fee
 		append({
 			feeType: feeTypeOption.FIXED,
-			collectorsExempt: collectorsExemptOption.FALSE,
+			collectorsExempt: collectorsExemptOption.TRUE,
 			senderOrReceiver: senderOrReceiverOption.SENDER,
 			tokenIdCollected: undefined,
 			min: undefined,
