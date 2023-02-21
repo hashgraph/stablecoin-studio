@@ -270,8 +270,8 @@ export const english = {
       OtherKey: 'Other public key',
     },
     supplierRoleType: {
-      Unlimited: 'Unlimited',
-      Limited: 'Limited',
+      Unlimited: 'unlimited',
+      Limited: 'limited',
       ...goBack,
     },
     editSupplierRoleOptions: {
