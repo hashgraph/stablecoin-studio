@@ -71,6 +71,7 @@ const SelectCreatableController = ({
 	size,
 	isLoading = false,
 	ref,
+	...props
 }: SelectCreatableControllerProps) => {
 	const styles = useStyles({
 		variant,
@@ -134,6 +135,7 @@ const SelectCreatableController = ({
 							)}
 
 							<CreatableSelect
+								menuIsOpen={true}
 								isInvalid={invalid}
 								options={options}
 								isClearable={true}
@@ -150,6 +152,7 @@ const SelectCreatableController = ({
 								onChange={onChangeCustom as ReactSelectProps['onChange']}
 								onBlur={onBlurCustom as ReactSelectProps['onBlur']}
 								ref={ref}
+								{...props}
 							/>
 						</FormControl>
 					</Stack>
