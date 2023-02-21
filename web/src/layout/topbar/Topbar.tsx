@@ -16,9 +16,9 @@ const Topbar = () => {
 		RouterManager.to(navigate, NamedRoutes.StableCoinCreation);
 	};
 
-	const handleNavigateEC = () => {
-		RouterManager.to(navigate, NamedRoutes.ImportedToken);
-	};
+	// const handleNavigateEC = () => {
+	// 	RouterManager.to(navigate, NamedRoutes.ImportedToken);
+	// };
 
 	return (
 		<Flex
@@ -45,11 +45,11 @@ const Topbar = () => {
 							text={t('topbar.createSC')}
 							onClick={handleNavigateSC}
 						/>
-						<CollapsibleButton
+						{/* <CollapsibleButton
 							nameIcon='ArrowLineDown'
 							text={t('topbar.addSC')}
 							onClick={handleNavigateEC}
-						/>
+						/> */}
 					</HStack>
 				</Flex>
 				<TopbarRight />

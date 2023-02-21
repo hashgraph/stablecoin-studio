@@ -32,7 +32,8 @@
 		"coinDropdown": {
 			"placeholder": "Choose stable coin",
 			"noStableCoin": "No stable coins found with that id, would you like to import it?",
-			"invalidStableCoinId": "Enter a valid token id"
+			"invalidStableCoinId": "Enter a valid token id",
+			"importToken": "Import stable coin: {{ tokenId }}"
 		},
 		"createSC": "Create coin",
 		"addSC": "Add token"

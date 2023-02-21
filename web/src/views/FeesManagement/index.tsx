@@ -457,6 +457,7 @@ const FeesManagement = () => {
 												overrideStyles={selectorStyle}
 												addonLeft={true}
 												variant='unstyled'
+												isSearchable={false}
 												onChangeAux={() => handleTypeChange(i)}
 											/>
 										</GridItem>
@@ -503,18 +504,10 @@ const FeesManagement = () => {
 										<GridItem>
 											<SelectCreatableController
 												key={field.id}
-												styles={{
-													dropdownIndicator: (provided) => ({
-														...provided,
-														bg: 'transparent',
-														px: 2,
-														cursor: 'inherit',
-													}),
-													indicatorSeparator: (provided) => ({
-														...provided,
-														display: 'none',
-													}),
-												}}
+												overrideStyles={selectorStyle}
+												addonLeft={true}
+												addonDown={<Icon name='CaretDown' w={4} h={4} />}
+												variant='unstyled'
 												name={`fees.${i}.tokenIdCollected`}
 												control={control}
 												options={[...Object.values(collectorIdOption)]}
@@ -622,6 +615,7 @@ const FeesManagement = () => {
 												overrideStyles={selectorStyle}
 												addonLeft={true}
 												variant='unstyled'
+												isSearchable={false}
 											/>
 										</GridItem>
 										<GridItem>
@@ -633,6 +627,7 @@ const FeesManagement = () => {
 												overrideStyles={selectorStyle}
 												addonLeft={true}
 												variant='unstyled'
+												isSearchable={false}
 												isDisabled={
 													watch(`fees.${i}.feeType`)?.value !== feeTypeOption.FRACTIONAL.value
 												}

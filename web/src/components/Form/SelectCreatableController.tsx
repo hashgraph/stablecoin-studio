@@ -1,13 +1,14 @@
 import type { ChangeEvent, ReactNode } from 'react';
-import { useEffect } from 'react';
 import type React from 'react';
+import { useEffect } from 'react';
 import type { Control, UseControllerProps } from 'react-hook-form';
 import { Controller } from 'react-hook-form';
 import type { SelectOption, SelectThemeStyle } from './SelectController';
-import type { GroupBase, Props as ReactSelectProps } from 'react-select';
+import { useComponents, useStyles } from './SelectController';
+import type { Props as ReactSelectProps } from 'react-select';
 import { FormControl, FormLabel, HStack, Stack, Text } from '@chakra-ui/react';
-import type { ChakraStylesConfig } from 'chakra-react-select';
 import { CreatableSelect } from 'chakra-react-select';
+import type { Variant } from 'chakra-react-select/dist/types/types';
 
 export type Option = { label: string | ReactNode; value: number | string };
 interface SelectCreatableControllerProps {
@@ -36,7 +37,11 @@ interface SelectCreatableControllerProps {
 	overrideStyles?: Partial<SelectThemeStyle>;
 	noOptionsMessage?: ReactSelectProps['noOptionsMessage'];
 	isMulti?: ReactSelectProps['isMulti'];
-	styles?: ChakraStylesConfig<any, false, GroupBase<any>>;
+	createOptionPosition?: 'first' | 'last';
+	formatCreateLabel?: (inputValue: string) => ReactNode;
+	variant?: Variant;
+	onCreateOption?: (inputValue: string) => void;
+	isLoading?: boolean;
 }
 
 const SelectCreatableController = ({
@@ -47,13 +52,45 @@ const SelectCreatableController = ({
 	options,
 	label,
 	labelProps,
-	styles,
 	onChangeAux,
 	onBlurAux,
 	placeholder,
 	isRequired = false,
 	isDisabled = false,
+	variant = 'outline',
+	overrideStyles,
+	onCreateOption,
+	createOptionPosition = 'last',
+	formatCreateLabel,
+	addonRight,
+	addonError,
+	addonDown,
+	addonLeft,
+	size,
+	isLoading = false,
 }: SelectCreatableControllerProps) => {
+	const styles = useStyles({
+		variant,
+		addonRight,
+		addonError,
+		addonDown,
+		addonLeft,
+		size,
+		isInvalid: false,
+		isDisabled,
+		overrideStyles,
+	});
+	const components = useComponents({
+		addonLeft,
+		addonRight,
+		addonError,
+		addonDown,
+		placeholder,
+		isInvalid: false,
+		isDisabled,
+		styles,
+		variant,
+	});
 	return (
 		<Controller
 			control={control}
@@ -97,10 +134,15 @@ const SelectCreatableController = ({
 								isInvalid={invalid}
 								options={options}
 								isClearable={true}
-								chakraStyles={styles}
+								components={components}
 								placeholder={placeholder}
 								isDisabled={isDisabled}
 								isRequired={isRequired}
+								createOptionPosition={createOptionPosition}
+								formatCreateLabel={formatCreateLabel}
+								onCreateOption={onCreateOption}
+								variant={variant}
+								isLoading={isLoading}
 								{...field}
 								onChange={onChangeCustom as ReactSelectProps['onChange']}
 								onBlur={onBlurCustom as ReactSelectProps['onBlur']}

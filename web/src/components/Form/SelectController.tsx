@@ -108,7 +108,7 @@ const IconContainer = ({ children, sx }: { children: ReactNode; sx?: SystemStyle
 	</Flex>
 );
 
-const useStyles = ({
+export const useStyles = ({
 	variant,
 	size,
 	isInvalid,
@@ -146,7 +146,7 @@ const useStyles = ({
 	return styles as SelectThemeStyle;
 };
 
-const useComponents = ({
+export const useComponents = ({
 	variant,
 	addonLeft,
 	addonRight,

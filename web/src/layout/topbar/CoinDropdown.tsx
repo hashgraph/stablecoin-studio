@@ -1,4 +1,4 @@
-import { Box, Button, HStack, Text, VStack } from '@chakra-ui/react';
+import { Box, HStack, Text, useDisclosure } from '@chakra-ui/react';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -23,10 +23,15 @@ import {
 import { RouterManager } from '../../Router/RouterManager';
 import { matchPath, useLocation, useNavigate } from 'react-router-dom';
 import { NamedRoutes } from '../../Router/NamedRoutes';
-import { GetStableCoinDetailsRequest, GetAccountInfoRequest } from 'hedera-stable-coin-sdk';
+import {
+	GetStableCoinDetailsRequest,
+	GetAccountInfoRequest,
+	GetRolesRequest,
+} from 'hedera-stable-coin-sdk';
 import type { IExternalToken } from '../../interfaces/IExternalToken';
 import type { GroupBase, SelectInstance } from 'chakra-react-select';
-import { validateAccount } from '../../utils/validationsHelper';
+import type { IAccountToken } from '../../interfaces/IAccountToken';
+import ModalNotification from '../../components/ModalNotification';
 
 const CoinDropdown = () => {
 	const dispatch = useDispatch<AppDispatch>();
@@ -45,6 +50,9 @@ const CoinDropdown = () => {
 	const tokenIsDeleted = useSelector(SELECTED_TOKEN_DELETED);
 
 	const [options, setOptions] = useState<Option[]>([]);
+	const [success, setSuccess] = useState<boolean>();
+	const { isOpen, onOpen, onClose } = useDisclosure();
+	const [isLoadingImportToken, setLoadingImportToken] = useState(false);
 
 	const isInStableCoinNotSelected = !!matchPath(
 		location.pathname,
@@ -186,33 +194,84 @@ const CoinDropdown = () => {
 		);
 	};
 
-	const onImportSearch = (value: string) => {
-		const params = { tokenId: value };
-		RouterManager.to(navigate, NamedRoutes.ImportedToken, undefined, { state: params });
-		searcheableRef.current?.blur();
-	};
-
-	const handleNoOptionsMessage = (obj: { inputValue: string }) => {
-		const { inputValue } = obj;
-		if (validateAccount(inputValue)) {
-			return (
-				<VStack gap={1}>
-					<Text>{t('topbar.coinDropdown.noStableCoin')}</Text>
-					<Button
-						data-testid='topbar-action-import-search'
-						onClick={() => onImportSearch(inputValue)}
-						flex={1}
-					>
-						Import
-					</Button>
-				</VStack>
+	const handleImportToken = async (inputValue: string) => {
+		setLoadingImportToken(true);
+		let checkRoles: string[] | null = [];
+		try {
+			const details = await SDKService.getStableCoinDetails(
+				new GetStableCoinDetailsRequest({
+					id: inputValue,
+				}),
 			);
-		} else {
-			return <Text>{t('topbar.coinDropdown.invalidStableCoinId')}</Text>;
+
+			checkRoles = await SDKService.getRoles(
+				new GetRolesRequest({
+					targetId: accountInfo && accountInfo.id ? accountInfo?.id : '',
+					tokenId: details?.tokenId?.toString() ?? '',
+				}),
+			);
+
+			const tokensAccount = localStorage?.tokensAccount;
+			if (tokensAccount) {
+				const tokensAccountParsed = JSON.parse(tokensAccount);
+				const accountToken = tokensAccountParsed.find(
+					(account: IAccountToken) => account.id === accountInfo.id,
+				);
+				if (
+					accountToken &&
+					accountToken.externalTokens.find((coin: IExternalToken) => coin.id === inputValue)
+				) {
+					accountToken.externalTokens = accountToken.externalTokens.filter(
+						(coin: IExternalToken) => coin.id !== inputValue,
+					);
+				}
+				accountToken
+					? accountToken.externalTokens.push({
+							id: inputValue,
+							symbol: details!.symbol,
+							roles: checkRoles,
+					  })
+					: tokensAccountParsed.push({
+							id: accountInfo.id,
+							externalTokens: [
+								{
+									id: inputValue,
+									symbol: details!.symbol,
+									roles: checkRoles,
+								},
+							],
+					  });
+				localStorage.setItem('tokensAccount', JSON.stringify(tokensAccountParsed));
+			} else {
+				localStorage.setItem(
+					'tokensAccount',
+					JSON.stringify([
+						{
+							id: accountInfo.id,
+							externalTokens: [
+								{
+									id: inputValue,
+									symbol: details!.symbol,
+									roles: checkRoles,
+								},
+							],
+						},
+					]),
+				);
+			}
+			dispatch(getExternalTokenList(accountInfo.id!));
+			handleSelectCoin({ value: inputValue });
+			setLoadingImportToken(false);
+		} catch (error) {
+			console.log(error);
+			setSuccess(false);
+			setLoadingImportToken(false);
+			onOpen();
 		}
 	};
 
-	const { t } = useTranslation('global');
+	const { t } = useTranslation(['global', 'externalTokenInfo']);
+
 	const { control } = useForm();
 
 	const styles = {
@@ -239,12 +298,28 @@ const CoinDropdown = () => {
 				placeholder={
 					selectedStableCoin
 						? selectedStableCoin.tokenId + ' - ' + selectedStableCoin.symbol
-						: t('topbar.coinDropdown.placeholder')
+						: t('global:topbar.coinDropdown.placeholder')
 				}
 				iconStyles={{ color: 'brand.primary200' }}
+				isLoading={isLoadingImportToken}
 				onChangeAux={handleSelectCoin}
-				noOptionsMessage={handleNoOptionsMessage}
-				ref={searcheableRef}
+				// noOptionsMessage={handleNoOptionsMessage}
+				formatCreateLabel={(inputValue) =>
+					t('global:topbar.coinDropdown.importToken', { tokenId: inputValue })
+				}
+				onCreateOption={handleImportToken}
+				// ref={searcheableRef}
+			/>
+			<ModalNotification
+				variant={success ? 'success' : 'error'}
+				title={t('externalTokenInfo:notification.title', { result: success ? 'Success' : 'Error' })}
+				description={t(
+					`externalTokenInfo:notification.description${success ? 'Success' : 'Error'}`,
+				)}
+				isOpen={isOpen}
+				onClose={onClose}
+				closeOnOverlayClick={false}
+				closeButton={true}
 			/>
 		</Box>
 	);
