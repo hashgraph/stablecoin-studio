@@ -135,7 +135,6 @@ const SelectCreatableController = ({
 							)}
 
 							<CreatableSelect
-								menuIsOpen={true}
 								isInvalid={invalid}
 								options={options}
 								isClearable={true}
