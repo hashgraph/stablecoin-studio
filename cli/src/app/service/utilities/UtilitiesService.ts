@@ -433,6 +433,7 @@ export default class UtilitiesService extends Service {
     val: () => ValidationResponse[],
     cll: (res: ValidationResponse[]) => Promise<void>,
     consoleOut = true,
+    checkBefore = false,
   ): Promise<void> {
     const outputError = (res: ValidationResponse[]): void => {
       for (let i = 0; i < res.length; i++) {
@@ -446,10 +447,19 @@ export default class UtilitiesService extends Service {
     };
 
     let res;
-    do {
+    let askCll = true;
+
+    if (checkBefore) {
+      res = val();
+      if (res.length == 0) askCll = false;
+    }
+
+    while (askCll) {
+      askCll = false;
       await cll(res ?? '');
       res = val();
       consoleOut && outputError(res);
-    } while (res.length > 0);
+      if (res.length > 0) askCll = true;
+    }
   }
 }

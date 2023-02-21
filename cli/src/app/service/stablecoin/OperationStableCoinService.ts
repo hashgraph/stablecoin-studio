@@ -1065,6 +1065,8 @@ export default class OperationStableCoinService extends Service {
                 stableCoinCapabilities,
               );
             },
+            true,
+            true,
           );
 
           let grantAccountTargetId = accountTarget;
@@ -1126,6 +1128,8 @@ export default class OperationStableCoinService extends Service {
                 stableCoinCapabilities,
               );
             },
+            true,
+            true,
           );
 
           let revokeAccountTargetId = accountTarget;
@@ -1532,6 +1536,8 @@ export default class OperationStableCoinService extends Service {
             async () => {
               hasRoleRequest.role = await this.getRole(stableCoinCapabilities);
             },
+            true,
+            true,
           );
 
           let hasRoleAccountTargetId = accountTarget;
@@ -1579,6 +1585,8 @@ export default class OperationStableCoinService extends Service {
         async () => {
           await this.operationsStableCoin();
         },
+        true,
+        true,
       );
     }
   }
