@@ -308,7 +308,6 @@ const CoinDropdown = () => {
 					t('global:topbar.coinDropdown.importToken', { tokenId: inputValue })
 				}
 				onCreateOption={handleImportToken}
-				// ref={searcheableRef}
 			/>
 			<ModalNotification
 				variant={success ? 'success' : 'error'}
