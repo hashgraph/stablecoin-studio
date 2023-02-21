@@ -281,7 +281,7 @@ const CoinDropdown = () => {
 			bg: 'brand.white',
 			boxShadow: 'down-black',
 			p: 4,
-			color :'gray.800',
+			color: 'gray.800',
 		},
 		wrapperOpened: { borderWidth: '0' },
 		container: {
