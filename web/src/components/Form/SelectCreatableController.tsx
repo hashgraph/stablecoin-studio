@@ -1,4 +1,4 @@
-import type { ChangeEvent, ReactNode } from 'react';
+import type { ChangeEvent, ReactNode, Ref } from 'react';
 import type React from 'react';
 import { useEffect } from 'react';
 import type { Control, UseControllerProps } from 'react-hook-form';
@@ -7,6 +7,7 @@ import type { SelectOption, SelectThemeStyle } from './SelectController';
 import { useComponents, useStyles } from './SelectController';
 import type { Props as ReactSelectProps } from 'react-select';
 import { FormControl, FormLabel, HStack, Stack, Text } from '@chakra-ui/react';
+import type { GroupBase, SelectInstance } from 'chakra-react-select';
 import { CreatableSelect } from 'chakra-react-select';
 import type { Variant } from 'chakra-react-select/dist/types/types';
 
@@ -42,6 +43,7 @@ interface SelectCreatableControllerProps {
 	variant?: Variant;
 	onCreateOption?: (inputValue: string) => void;
 	isLoading?: boolean;
+	ref?: Ref<SelectInstance<unknown, boolean, GroupBase<unknown>>>;
 }
 
 const SelectCreatableController = ({
@@ -68,6 +70,8 @@ const SelectCreatableController = ({
 	addonLeft,
 	size,
 	isLoading = false,
+	ref,
+	...props
 }: SelectCreatableControllerProps) => {
 	const styles = useStyles({
 		variant,
@@ -146,6 +150,8 @@ const SelectCreatableController = ({
 								{...field}
 								onChange={onChangeCustom as ReactSelectProps['onChange']}
 								onBlur={onBlurCustom as ReactSelectProps['onBlur']}
+								ref={ref}
+								{...props}
 							/>
 						</FormControl>
 					</Stack>
