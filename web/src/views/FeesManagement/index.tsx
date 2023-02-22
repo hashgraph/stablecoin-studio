@@ -526,12 +526,11 @@ const FeesManagement = () => {
 																	);
 																} catch (e) {
 																	console.log({ e });
-																	return t('global:validations.tokenIdNotExists',{
-																		tokenId:option.value 
+																	return t('global:validations.tokenIdNotExists', {
+																		tokenId: option.value,
 																	}) as string;
-																}finally{
+																} finally {
 																	console.log('Terminado');
-																	
 																}
 															}
 															return true;

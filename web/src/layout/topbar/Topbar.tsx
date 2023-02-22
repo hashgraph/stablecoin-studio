@@ -25,7 +25,10 @@ const Topbar = () => {
 	const [haveFactory, setHaveFactory] = useState<boolean>(true);
 
 	const handleNavigateSC = () => {
-		if (process.env.REACT_APP_STABLE_COIN_FACTORY_ADDRESS !== undefined) {
+		if (
+			process.env.REACT_APP_STABLE_COIN_FACTORY_ADDRESS !== undefined &&
+			process.env.REACT_APP_STABLE_COIN_FACTORY_ADDRESS !== ''
+		) {
 			RouterManager.to(navigate, NamedRoutes.StableCoinCreation);
 		} else {
 			setHaveFactory(false);
@@ -81,7 +84,7 @@ const Topbar = () => {
 							<AlertDescription>
 								<p>{t('topbar.alertNoEnv')}</p>
 								<Link
-									textDecoration='auto'
+									textDecoration='underline'
 									isExternal={true}
 									href='https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/web#env-vars'
 								>
