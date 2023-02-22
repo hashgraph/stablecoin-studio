@@ -86,8 +86,6 @@ export default class CreateStableCoinService extends Service {
    */
   public async wizardCreateStableCoin(): Promise<CreateRequest> {
     const currentAccount = utilsService.getCurrentAccount();
-    utilsService.displayCurrentUserInfo(currentAccount);
-
     // Call to create stable coin sdk function
     let tokenToCreate = new CreateRequest({
       name: '',

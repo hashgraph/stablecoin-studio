@@ -33,8 +33,14 @@ export default class SetConfigurationService extends Service {
     await this.configurePath(path);
     await this.configureDefaultNetwork(network);
     await this.configureAccounts();
-    await this.configureFactories();
-    await this.configureHederaERC20s();
+    const configFactories = await utilsService.defaultConfirmAsk(
+      language.getText('configuration.askConfigurateFactories'),
+      true,
+    );
+    if (configFactories) {
+      await this.configureFactories();
+      await this.configureHederaERC20s();
+    }
   }
 
   /**
