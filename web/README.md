@@ -61,6 +61,7 @@ The ENV file contains the following parameters:
 - **REACT_APP_STABLE_COIN_FACTORY_ADDRESS**: This var is required if you want to create a new stablecoin. The var must be in Hedera format `0.0.XXXXX`.
 If the env var is not setted when you click in "Create a new Stablecoin" will show an alert.
 ![Alt text](docs/images/alertNoEnv.png?raw=true 'alert when no env vars have been setted')
+You can use our [factories deployed](https://github.com/hashgraph/hedera-accelerator-stablecoin#deploying-the-stable-coin-factories).
 - **GENERATE_SOURCEMAP**: This is a proprietary Create React App configuration.You can read more information in its documentation.[Create React App documentation](https://create-react-app.dev/docs/advanced-configuration/)
 
 ## Starting the UI
