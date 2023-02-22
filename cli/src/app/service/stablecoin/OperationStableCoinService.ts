@@ -913,28 +913,41 @@ export default class OperationStableCoinService extends Service {
     addFixedFeeRequest.tokenIdCollected = '0.0.0';
 
     if (!feesInHBAR) {
-      await utilsService.handleValidation(
-        () => addFixedFeeRequest.validate('tokenIdCollected'),
-        async () => {
-          addFixedFeeRequest.tokenIdCollected =
-            await utilsService.defaultSingleAsk(
-              language.getText('feeManagement.askTokenId'),
-              this.stableCoinId,
+      let tryAgain: boolean;
+
+      do {
+        tryAgain = false;
+
+        await utilsService.handleValidation(
+          () => addFixedFeeRequest.validate('tokenIdCollected'),
+          async () => {
+            addFixedFeeRequest.tokenIdCollected =
+              await utilsService.defaultSingleAsk(
+                language.getText('feeManagement.askTokenId'),
+                this.stableCoinId,
+              );
+          },
+        );
+
+        if (addFixedFeeRequest.tokenIdCollected == '0.0.0') {
+          console.log('HBAR selected');
+        } else if (addFixedFeeRequest.tokenIdCollected !== this.stableCoinId) {
+          try {
+            const detailsExternalStableCoin =
+              await new DetailsStableCoinsService().getDetailsStableCoins(
+                addFixedFeeRequest.tokenIdCollected,
+                false,
+              );
+            addFixedFeeRequest.decimals =
+              detailsExternalStableCoin.decimals ?? 0;
+          } catch (error) {
+            utilsService.showError(
+              'Error getting the token details : ' + error.message,
             );
-        },
-      );
-
-      if (addFixedFeeRequest.tokenIdCollected == '0.0.0') {
-        console.log('HBAR selected');
-      } else if (addFixedFeeRequest.tokenIdCollected !== this.stableCoinId) {
-        const detailsExternalStableCoin =
-          await new DetailsStableCoinsService().getDetailsStableCoins(
-            addFixedFeeRequest.tokenIdCollected,
-            false,
-          );
-
-        addFixedFeeRequest.decimals = detailsExternalStableCoin.decimals ?? 0;
-      } else addFixedFeeRequest.decimals = decimals;
+            tryAgain = true;
+          }
+        } else addFixedFeeRequest.decimals = decimals;
+      } while (tryAgain);
     }
 
     await utilsService.handleValidation(
