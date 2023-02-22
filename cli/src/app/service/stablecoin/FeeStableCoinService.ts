@@ -10,13 +10,15 @@ import {
   Fees,
   UpdateCustomFeesRequest,
 } from 'hedera-stable-coin-sdk';
-const FixedTypeLabel = 'Fixed';
-const FractionalTypeLabel = 'Fractional';
+const fixedTypeLabel = 'Fixed';
+const fractionalTypeLabel = 'Fractional';
 const HBARLabel = 'HBAR';
 const separator = ' | ';
-const unlimited = 'unlimited';
-const sender = 'Sender';
-const receiver = 'Receiver';
+const unlimitedLabel = 'unlimited';
+const senderLabel = 'Sender';
+const receiverLabel = 'Receiver';
+const minLabel = 'Min: ';
+const maxLabel = 'Max: ';
 
 /**
  * Create Role Stable Coin Service
@@ -67,7 +69,7 @@ export default class FeeStableCoinService extends Service {
 
       if (isRequestFixedFee(fee))
         feeMessage = feeMessage.concat(
-          FixedTypeLabel,
+          fixedTypeLabel,
           separator,
           fee.tokenIdCollected == '0.0.0' ? HBARLabel : fee.tokenIdCollected,
           separator,
@@ -79,19 +81,21 @@ export default class FeeStableCoinService extends Service {
         );
       else if (isRequestFractionalFee(fee))
         feeMessage = feeMessage.concat(
-          FractionalTypeLabel,
+          fractionalTypeLabel,
           separator,
           fee.percentage,
           separator,
+          minLabel,
           fee.min,
           separator,
-          fee.max == '0' ? unlimited : fee.max,
+          maxLabel,
+          fee.max == '0' ? unlimitedLabel : fee.max,
           separator,
           fee.collectorId,
           separator,
           fee.collectorsExempt.toString(),
           separator,
-          fee.net ? sender : receiver,
+          fee.net ? senderLabel : receiverLabel,
         );
 
       SerializedFees.push(feeMessage);
