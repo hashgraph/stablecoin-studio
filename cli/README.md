@@ -163,6 +163,9 @@ When your configuration file is set up and at least one account is added and sel
 
 #### Create a new Stable Coin
 
+For use this option is required to have factories setted.
+You can check our factories deployed in [our documentation](https://github.com/hashgraph/hedera-accelerator-stablecoin#deploying-the-stable-coin-factories).
+
 With this option you are able to create a new stable coin adding the mandatory details like Name, Symbol and Autorenew account.
 
 > The autorenew account must be the user's current account otherwise the stable coin creation will not work, this is due to the fact that the autorenew account must sign the underlying token's creation transaction and currently we do not support multi-signatures transactions.
