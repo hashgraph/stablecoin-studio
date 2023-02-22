@@ -50,6 +50,7 @@ export const english = {
     askNotDefaultNetwork:
       'Your option is not one of the default networks, do you want to create a new network? (y/n)',
     askAccountId: 'Enter the account id',
+    askConfigurateFactories: 'Do you want to config your factories?',
     askNetworkAccount: 'Which network does this account belong to?',
     askPrivateKeyType: 'Which type of private key will the account use?',
     askAlias: 'Enter an alias for this account',
@@ -69,6 +70,8 @@ export const english = {
     askHederaERC20Address: 'Enter your Hedera ERC20 address',
   },
   stablecoin: {
+    noFactories:
+      "You don't have configured your factory and HederaERC20 address. Without this configuration you cannot create an stable coin. Check the following link for more information. https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/cli#creating-a-config-file",
     askConfirmCreation:
       'Are you sure you want to create the stable coin with these parameters?',
     description: 'Creating Stable Coin',

@@ -26,6 +26,7 @@ export default class WizardService extends Service {
 
   constructor() {
     super('Wizard');
+    this.setConfigurationService = new SetConfigurationService();
   }
 
   /**
@@ -48,6 +49,26 @@ export default class WizardService extends Service {
       ) {
         case language.getText('wizard.mainOptions.Create'):
           await utilsService.cleanAndShowBanner();
+          utilsService.displayCurrentUserInfo(currentAccount);
+          const configuration = await configurationService.getConfiguration();
+          if (
+            !configuration.factories.find(
+              (item) => item.network === currentAccount.network,
+            )
+          ) {
+            utilsService.showWarning(
+              language.getText('stablecoin.noFactories'),
+            );
+            const configFactories = await utilsService.defaultConfirmAsk(
+              language.getText('configuration.askConfigurateFactories'),
+              true,
+            );
+            if (configFactories) {
+              await this.setConfigurationService.configureFactories();
+            } else {
+              break;
+            }
+          }
           const stableCoin: StableCoinViewModel =
             await new CreateStableCoinService().createStableCoin(
               undefined,
@@ -82,7 +103,6 @@ export default class WizardService extends Service {
           break;
         case language.getText('wizard.mainOptions.Configuration'):
           await utilsService.cleanAndShowBanner();
-          this.setConfigurationService = new SetConfigurationService();
           await this.configurationMenu();
           break;
         default:
