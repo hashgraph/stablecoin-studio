@@ -95,7 +95,9 @@ export const english = {
     askMemo: 'Enter the token memo',
     askFreezeAccount: 'Should the Hedera account be frozen for this token?',
     askFeaturesManagedBy:
-      'Assign all token keys to the Smart Contract except for the Fee Schedule key (assigned to the current user) and the KYC key (unassigned)?',
+      'Should the smart contract be used for all roles management?',
+    askKYC: 'Do you want KYC?',
+    askCustomFees: 'Would you like to manage custom fees?',
     features: {
       admin: 'Enter the admin key',
       supply: 'Enter the supply key',
@@ -260,9 +262,13 @@ export const english = {
     adminFeatureOptions: {
       ...basicFeatureOptions,
     },
-    nonSmartContractFeatureOptions: {
+    nonNoneFeatureOptions: {
+      SmartContract: 'The Smart Contract',
       CurrentUser: 'Current user key',
-      None: 'None',
+      OtherKey: 'Other public key',
+    },
+    nonSmartContractAndNoneFeatureOptions: {
+      CurrentUser: 'Current user key',
       OtherKey: 'Other public key',
     },
     featureOptions: {
