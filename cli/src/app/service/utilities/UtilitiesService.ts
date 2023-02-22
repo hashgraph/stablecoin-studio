@@ -251,6 +251,21 @@ export default class UtilitiesService extends Service {
     return variable.response;
   }
 
+  public async checkBoxMultipleAsk(
+    question: string,
+    choices: Array<string>,
+    loop = false,
+  ): Promise<string[]> {
+    const variable = await inquirer.prompt({
+      name: 'response',
+      type: 'checkbox',
+      message: question,
+      choices: choices,
+      loop: loop,
+    });
+    return variable.response;
+  }
+
   /**
    * Function for multiple ask questions with inquire
    * @param question
@@ -431,8 +446,9 @@ export default class UtilitiesService extends Service {
 
   public async handleValidation(
     val: () => ValidationResponse[],
-    cll?: (res: ValidationResponse[]) => Promise<void>,
+    cll: (res: ValidationResponse[]) => Promise<void>,
     consoleOut = true,
+    checkBefore = false,
   ): Promise<void> {
     const outputError = (res: ValidationResponse[]): void => {
       for (let i = 0; i < res.length; i++) {
@@ -445,15 +461,20 @@ export default class UtilitiesService extends Service {
       }
     };
 
-    let res = val();
-    if (cll) {
-      while (res.length > 0) {
-        consoleOut && outputError(res);
-        await cll(res);
-        res = val();
-      }
-    } else {
-      if (res.length > 0) consoleOut && outputError(res);
+    let res;
+    let askCll = true;
+
+    if (checkBefore) {
+      res = val();
+      if (res.length == 0) askCll = false;
+    }
+
+    while (askCll) {
+      askCll = false;
+      await cll(res ?? '');
+      res = val();
+      consoleOut && outputError(res);
+      if (res.length > 0) askCll = true;
     }
   }
 }

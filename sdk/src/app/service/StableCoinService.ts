@@ -37,6 +37,8 @@ import PublicKey from '../../domain/context/account/PublicKey.js';
 import { GetStableCoinQuery } from '../usecase/query/stablecoin/get/GetStableCoinQuery.js';
 import { StableCoinNotFound } from '../../port/out/mirror/error/StableCoinNotFound.js';
 import { Console } from 'console';
+import { MAX_CUSTOM_FEES } from '../../domain/context/fee/CustomFee.js';
+import { toCustomFees } from '../../port/in/request/BaseRequest.js';
 
 @singleton()
 export default class StableCoinService extends Service {
@@ -55,10 +57,17 @@ export default class StableCoinService extends Service {
 		const viewModel = (
 			await this.queryBus.execute(new GetStableCoinQuery(tokenId))
 		).coin;
-		const { name, decimals, symbol } = viewModel;
+		const { name, decimals, symbol, customFees } = viewModel;
 		if (!name || decimals === undefined || !symbol)
 			throw new StableCoinNotFound(tokenId);
-		return new StableCoin({ ...viewModel, name, decimals, symbol });
+		const _customFees = toCustomFees(customFees);
+		return new StableCoin({
+			...viewModel,
+			name,
+			decimals,
+			symbol,
+			customFees: _customFees,
+		});
 	}
 
 	async getCapabilities(
@@ -197,6 +206,51 @@ export default class StableCoinService extends Service {
 				listCapabilities.push(
 					new Capability(Operation.REVOKE_KYC, Access.CONTRACT),
 				);
+			}
+			if (operable && _coin.feeScheduleKey instanceof PublicKey) {
+				if (
+					_coin.feeScheduleKey?.key.toString() ===
+					account.publicKey?.key
+				) {
+					if (_coin.customFees) {
+						if (_coin.customFees.length < MAX_CUSTOM_FEES) {
+							listCapabilities.push(
+								new Capability(
+									Operation.CREATE_CUSTOM_FEE,
+									Access.HTS,
+								),
+							);
+						}
+						if (_coin.customFees.length > 0) {
+							listCapabilities.push(
+								new Capability(
+									Operation.REMOVE_CUSTOM_FEE,
+									Access.HTS,
+								),
+							);
+						}
+					}
+				}
+			}
+			if (operable && _coin.feeScheduleKey instanceof HederaId) {
+				if (_coin.customFees) {
+					if (_coin.customFees.length < MAX_CUSTOM_FEES) {
+						listCapabilities.push(
+							new Capability(
+								Operation.CREATE_CUSTOM_FEE,
+								Access.CONTRACT,
+							),
+						);
+					}
+					if (_coin.customFees.length > 0) {
+						listCapabilities.push(
+							new Capability(
+								Operation.REMOVE_CUSTOM_FEE,
+								Access.CONTRACT,
+							),
+						);
+					}
+				}
 			}
 
 			const roleManagement = listCapabilities.some(

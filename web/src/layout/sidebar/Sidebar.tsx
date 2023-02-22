@@ -34,6 +34,11 @@ const Sidebar = () => {
 			route: NamedRoutes.StableCoinDetails,
 		},
 		{
+			icon: 'Receipt',
+			title: t('sidebar.feesManagement'),
+			route: NamedRoutes.FeesManagement,
+		},
+		{
 			icon: 'File',
 			title: t('sidebar.proofOfReserve'),
 			route: NamedRoutes.ProofOfReserve,

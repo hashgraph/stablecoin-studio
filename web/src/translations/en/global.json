@@ -32,23 +32,27 @@
 		"coinDropdown": {
 			"placeholder": "Choose stable coin",
 			"noStableCoin": "No stable coins found with that id, would you like to import it?",
-			"invalidStableCoinId": "Enter a valid token id"
+			"invalidStableCoinId": "Enter a valid token id",
+			"importToken": "Import stable coin: {{ tokenId }}"
 		},
 		"createSC": "Create coin",
-		"addSC": "Add token"
+		"alertNoEnv": "You have not configured your factory and ERC20 address. Without this configuration you can not create a stable coin.",
+		"alertNoEnvLink": "Go to documentation"
 	},
 	"sidebar": {
 		"operations": "Operations",
 		"role": "Role management",
 		"details": "Stable coin details",
-		"proofOfReserve": "Proof of reserve"
+		"proofOfReserve": "Proof of reserve",
+		"feesManagement": "Fees management"
 	},
 	"validations": {
 		"required": "This field is required",
 		"invalidAccount": "Incorrect account",
 		"invalidAmount": "Invalid amount",
 		"invalidCoinId": "Invalid stable coin id",
-		"decimalsValidation": "The amount has an invalid number of decimals"
+		"decimalsValidation": "The amount has an invalid number of decimals",
+		"tokenIdNotExists":" Token {{ tokenId }} not exists"
 	},
 	"operations": {
 		"title": "Operations"

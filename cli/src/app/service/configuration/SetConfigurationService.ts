@@ -205,13 +205,13 @@ export default class SetConfigurationService extends Service {
       language.getText('configuration.askFactoryAddress') + ' | TESTNET',
       this.ZERO_ADDRESS,
     );
-     while (!/\d\.\d\.\d/.test(factory_testnet)) {
-       console.log(language.getText('validations.wrongFormatAddress'));
-       factory_testnet = await utilsService.defaultSingleAsk(
-         language.getText('configuration.askFactoryAddress') + ' | TESTNET',
-         this.ZERO_ADDRESS,
-       );
-     }
+    while (!/\d\.\d\.\d/.test(factory_testnet)) {
+      console.log(language.getText('validations.wrongFormatAddress'));
+      factory_testnet = await utilsService.defaultSingleAsk(
+        language.getText('configuration.askFactoryAddress') + ' | TESTNET',
+        this.ZERO_ADDRESS,
+      );
+    }
     let factory_previewnet = await utilsService.defaultSingleAsk(
       language.getText('configuration.askFactoryAddress') + ' | PREVIEWNET',
       this.ZERO_ADDRESS,
@@ -219,8 +219,7 @@ export default class SetConfigurationService extends Service {
     while (!/\d\.\d\.\d/.test(factory_previewnet)) {
       console.log(language.getText('validations.wrongFormatAddress'));
       factory_previewnet = await utilsService.defaultSingleAsk(
-        language.getText('configuration.askFactoryAddress') +
-          ' | PREVIEWNET',
+        language.getText('configuration.askFactoryAddress') + ' | PREVIEWNET',
         this.ZERO_ADDRESS,
       );
     }

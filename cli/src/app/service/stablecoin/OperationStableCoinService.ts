@@ -32,6 +32,11 @@ import {
   PauseRequest,
   DeleteRequest,
   GetSupplierAllowanceRequest,
+  AddFixedFeeRequest,
+  AddFractionalFeeRequest,
+  RequestCustomFee,
+  UpdateCustomFeesRequest,
+  HBAR_DECIMALS,
 } from 'hedera-stable-coin-sdk';
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
 import CashInStableCoinsService from './CashInStableCoinService.js';
@@ -46,6 +51,7 @@ import FreezeStableCoinService from './FreezeStableCoinService.js';
 import KYCStableCoinService from './KYCStableCoinService.js';
 import ListStableCoinsService from './ListStableCoinsService.js';
 import CapabilitiesStableCoinService from './CapabilitiesStableCoinService.js';
+import FeeStableCoinService from './FeeStableCoinService.js';
 
 /**
  * Operation Stable Coin Service
@@ -59,6 +65,7 @@ export default class OperationStableCoinService extends Service {
   private stableCoinPaused;
   private stableCoinDeleted;
   private hasKycKey;
+  private hasfeeScheduleKey;
 
   constructor(tokenId?: string, memo?: string, symbol?: string) {
     super('Operation Stable Coin');
@@ -149,6 +156,8 @@ export default class OperationStableCoinService extends Service {
     this.stableCoinDeleted = capabilitiesStableCoin.coin.deleted;
     this.stableCoinPaused = capabilitiesStableCoin.coin.paused;
     this.hasKycKey = capabilitiesStableCoin.coin.kycKey !== undefined;
+    this.hasfeeScheduleKey =
+      capabilitiesStableCoin.coin.feeScheduleKey !== undefined;
 
     switch (
       await utilsService.defaultMultipleAsk(
@@ -181,10 +190,6 @@ export default class OperationStableCoinService extends Service {
         });
 
         // Call to mint
-        cashInRequest.targetId = await utilsService.defaultSingleAsk(
-          language.getText('stablecoin.askTargetAccount'),
-          currentAccount.accountId,
-        );
         await utilsService.handleValidation(
           () => cashInRequest.validate('targetId'),
           async () => {
@@ -194,10 +199,6 @@ export default class OperationStableCoinService extends Service {
             );
           },
         );
-
-        cashInRequest.amount = await utilsService
-          .defaultSingleAsk(language.getText('stablecoin.askCashInAmount'), '1')
-          .then((val) => val.replace(',', '.'));
 
         await utilsService.handleValidation(
           () => cashInRequest.validate('amount'),
@@ -242,10 +243,6 @@ export default class OperationStableCoinService extends Service {
         });
 
         // Call to mint
-        getAccountBalanceRequest.targetId = await utilsService.defaultSingleAsk(
-          language.getText('stablecoin.askAccountToBalance'),
-          currentAccount.accountId,
-        );
         await utilsService.handleValidation(
           () => getAccountBalanceRequest.validate('targetId'),
           async () => {
@@ -280,10 +277,6 @@ export default class OperationStableCoinService extends Service {
           tokenId: this.stableCoinId,
           amount: '',
         });
-
-        cashOutRequest.amount = await utilsService
-          .defaultSingleAsk(language.getText('stablecoin.askBurnAmount'), '1')
-          .then((val) => val.replace(',', '.'));
 
         await utilsService.handleValidation(
           () => cashOutRequest.validate('amount'),
@@ -322,10 +315,6 @@ export default class OperationStableCoinService extends Service {
         });
 
         // Call to wipe
-        wipeRequest.targetId = await utilsService.defaultSingleAsk(
-          language.getText('stablecoin.askTargetAccount'),
-          currentAccount.accountId,
-        );
         await utilsService.handleValidation(
           () => wipeRequest.validate('targetId'),
           async () => {
@@ -335,10 +324,6 @@ export default class OperationStableCoinService extends Service {
             );
           },
         );
-
-        wipeRequest.amount = await utilsService
-          .defaultSingleAsk(language.getText('stablecoin.askWipeAmount'), '1')
-          .then((val) => val.replace(',', '.'));
 
         await utilsService.handleValidation(
           () => wipeRequest.validate('amount'),
@@ -375,10 +360,6 @@ export default class OperationStableCoinService extends Service {
         });
 
         let rescuedAmount = '';
-        rescueRequest.amount = await utilsService.defaultSingleAsk(
-          language.getText('stablecoin.askRescueAmount'),
-          '1',
-        );
         await utilsService.handleValidation(
           () => rescueRequest.validate('amount'),
           async () => {
@@ -411,10 +392,6 @@ export default class OperationStableCoinService extends Service {
           tokenId: this.stableCoinId,
           targetId: '',
         });
-        freezeAccountRequest.targetId = await utilsService.defaultSingleAsk(
-          language.getText('wizard.freezeAccount'),
-          '0.0.0',
-        );
 
         await utilsService.handleValidation(
           () => freezeAccountRequest.validate('targetId'),
@@ -448,10 +425,6 @@ export default class OperationStableCoinService extends Service {
           tokenId: this.stableCoinId,
           targetId: '',
         });
-        unfreezeAccountRequest.targetId = await utilsService.defaultSingleAsk(
-          language.getText('wizard.unfreezeAccount'),
-          '0.0.0',
-        );
 
         await utilsService.handleValidation(
           () => unfreezeAccountRequest.validate('targetId'),
@@ -485,10 +458,6 @@ export default class OperationStableCoinService extends Service {
           tokenId: this.stableCoinId,
           targetId: '',
         });
-        grantKYCRequest.targetId = await utilsService.defaultSingleAsk(
-          language.getText('wizard.grantKYCToAccount'),
-          '0.0.0',
-        );
 
         await utilsService.handleValidation(
           () => grantKYCRequest.validate('targetId'),
@@ -520,10 +489,6 @@ export default class OperationStableCoinService extends Service {
           tokenId: this.stableCoinId,
           targetId: '',
         });
-        revokeKYCRequest.targetId = await utilsService.defaultSingleAsk(
-          language.getText('wizard.revokeKYCFromAccount'),
-          '0.0.0',
-        );
 
         await utilsService.handleValidation(
           () => revokeKYCRequest.validate('targetId'),
@@ -556,10 +521,6 @@ export default class OperationStableCoinService extends Service {
           tokenId: this.stableCoinId,
           targetId: '',
         });
-        checkAccountKYCRequest.targetId = await utilsService.defaultSingleAsk(
-          language.getText('wizard.checkAccountKYCGranted'),
-          '0.0.0',
-        );
 
         await utilsService.handleValidation(
           () => checkAccountKYCRequest.validate('targetId'),
@@ -581,6 +542,12 @@ export default class OperationStableCoinService extends Service {
             error,
           );
         }
+        break;
+      case language.getText('wizard.stableCoinOptions.FeesMgmt'):
+        await utilsService.cleanAndShowBanner();
+
+        // Call to Supplier Role
+        await this.feesManagementFlow();
         break;
       case language.getText('wizard.stableCoinOptions.RoleMgmt'):
         await utilsService.cleanAndShowBanner();
@@ -640,6 +607,402 @@ export default class OperationStableCoinService extends Service {
       tokenIsPaused,
       tokenIsDeleted,
     );
+  }
+
+  /**
+   * FeeManagement Flow
+   */
+
+  private async feesManagementFlow(): Promise<void> {
+    const configAccount = utilsService.getCurrentAccount();
+    const privateKey: RequestPrivateKey = {
+      key: configAccount.privateKey.key,
+      type: configAccount.privateKey.type,
+    };
+    const currentAccount: RequestAccount = {
+      accountId: configAccount.accountId,
+      privateKey: privateKey,
+    };
+
+    const stableCoinCapabilities = await this.getCapabilities(
+      currentAccount,
+      this.stableCoinPaused,
+      this.stableCoinDeleted,
+    );
+    const capabilities: Operation[] = stableCoinCapabilities.capabilities.map(
+      (a) => a.operation,
+    );
+    const detailsStableCoin =
+      await new DetailsStableCoinsService().getDetailsStableCoins(
+        this.stableCoinId,
+        false,
+      );
+
+    const feeManagementOptionsFiltered = language
+      .getArrayFromObject('feeManagement.options')
+      .filter((option) => {
+        switch (option) {
+          case language.getText('feeManagement.options.Create'):
+          case language.getText('feeManagement.options.Remove'):
+          case language.getText('feeManagement.options.List'):
+            const showCustomFee: boolean =
+              option == language.getText('feeManagement.options.Create')
+                ? capabilities.includes(Operation.CREATE_CUSTOM_FEE)
+                : capabilities.includes(Operation.REMOVE_CUSTOM_FEE);
+            return showCustomFee;
+            break;
+        }
+        // TODO DELETE STABLE COIN
+        return true;
+      });
+
+    // const accountTarget = '0.0.0';
+    switch (
+      await utilsService.defaultMultipleAsk(
+        language.getText('stablecoin.askEditCashInRole'),
+        feeManagementOptionsFiltered,
+        false,
+        configAccount.network,
+        `${configAccount.accountId} - ${configAccount.alias}`,
+        this.stableCoinWithSymbol,
+        this.stableCoinPaused,
+        this.stableCoinDeleted,
+      )
+    ) {
+      case language.getText('feeManagement.options.Create'):
+        await utilsService.cleanAndShowBanner();
+
+        utilsService.displayCurrentUserInfo(
+          configAccount,
+          this.stableCoinWithSymbol,
+        );
+
+        const feeType = await utilsService.defaultMultipleAsk(
+          language.getText('feeManagement.askFeeType'),
+          language.getArrayFromObject('feeManagement.chooseFeeType'),
+        );
+
+        if (
+          feeType == language.getText('feeManagement.chooseFeeType.FixedFee')
+        ) {
+          await this.createFixedFee(
+            detailsStableCoin.decimals ?? 0,
+            configAccount.accountId,
+          );
+        } else {
+          await this.createFractionalFee(
+            detailsStableCoin.decimals ?? 0,
+            configAccount.accountId,
+          );
+        }
+
+        break;
+      case language.getText('feeManagement.options.Remove'):
+        await utilsService.cleanAndShowBanner();
+
+        utilsService.displayCurrentUserInfo(
+          configAccount,
+          this.stableCoinWithSymbol,
+        );
+
+        await this.removeFees(detailsStableCoin.customFees);
+
+        break;
+      case language.getText('feeManagement.options.List'):
+        console.log(
+          new FeeStableCoinService().getSerializedFees(
+            detailsStableCoin.customFees,
+          ),
+        );
+        break;
+      case feeManagementOptionsFiltered[
+        feeManagementOptionsFiltered.length - 1
+      ]:
+      default:
+        await utilsService.cleanAndShowBanner();
+        await this.operationsStableCoin();
+    }
+    await this.feesManagementFlow();
+  }
+
+  private async removeFees(customFees: RequestCustomFee[]): Promise<void> {
+    let FeesToKeep: RequestCustomFee[] = [];
+
+    const options = new FeeStableCoinService().getSerializedFees(customFees);
+    const result = await utilsService.checkBoxMultipleAsk(
+      language.getText('feeManagement.askRemoveFee'),
+      options,
+    );
+
+    console.log(language.getText('feeManagement.listOfFeesToRemove'));
+    console.log(result);
+
+    const confirm = await this.askFeeOperationConfirmation(
+      language.getText('feeManagement.confirmRemove'),
+    );
+
+    if (!confirm) return;
+
+    try {
+      FeesToKeep = await new FeeStableCoinService().getRemainingFees(
+        customFees,
+        options,
+        result,
+      );
+      const updateCustomFeesRequest: UpdateCustomFeesRequest =
+        new UpdateCustomFeesRequest({
+          tokenId: this.stableCoinId,
+          customFees: FeesToKeep,
+        });
+      await new FeeStableCoinService().updateFees(updateCustomFeesRequest);
+    } catch (error) {
+      await utilsService.askErrorConfirmation(
+        async () => await this.operationsStableCoin(),
+        error,
+      );
+    }
+  }
+
+  private async createFractionalFee(
+    decimals: number,
+    currentAccount: string,
+  ): Promise<void> {
+    const addFractionalFeeRequest: AddFractionalFeeRequest =
+      new AddFractionalFeeRequest({
+        tokenId: this.stableCoinId,
+        collectorId: currentAccount,
+        collectorsExempt: true,
+        min: '0',
+        max: '0',
+        decimals: decimals,
+        net: false,
+      });
+
+    const fractionType = await utilsService.defaultMultipleAsk(
+      language.getText('feeManagement.askFractionType'),
+      language.getArrayFromObject('feeManagement.chooseFractionalType'),
+    );
+
+    if (
+      fractionType ==
+      language.getText('feeManagement.chooseFractionalType.Percentage')
+    ) {
+      await utilsService.handleValidation(
+        () => addFractionalFeeRequest.validate('percentage'),
+        async () => {
+          addFractionalFeeRequest.percentage =
+            await utilsService.defaultSingleAsk(
+              language.getText('feeManagement.askPercentageFee'),
+              '1',
+            );
+        },
+      );
+    } else {
+      await utilsService.handleValidation(
+        () => addFractionalFeeRequest.validate('amountNumerator'),
+        async () => {
+          addFractionalFeeRequest.amountNumerator =
+            await utilsService.defaultSingleAsk(
+              language.getText('feeManagement.askNumerator'),
+              '1',
+            );
+        },
+      );
+
+      await utilsService.handleValidation(
+        () => addFractionalFeeRequest.validate('amountDenominator'),
+        async () => {
+          addFractionalFeeRequest.amountDenominator =
+            await utilsService.defaultSingleAsk(
+              language.getText('feeManagement.askDenominator'),
+              '2',
+            );
+        },
+      );
+    }
+
+    await utilsService.handleValidation(
+      () => addFractionalFeeRequest.validate('min'),
+      async () => {
+        addFractionalFeeRequest.min = await utilsService.defaultSingleAsk(
+          language.getText('feeManagement.askMin'),
+          '0',
+        );
+      },
+    );
+
+    await utilsService.handleValidation(
+      () => addFractionalFeeRequest.validate('max'),
+      async () => {
+        addFractionalFeeRequest.max = await utilsService.defaultSingleAsk(
+          language.getText('feeManagement.askMax'),
+          '0',
+        );
+      },
+    );
+
+    addFractionalFeeRequest.net = await utilsService.defaultConfirmAsk(
+      language.getText('feeManagement.askAssesmentMethod'),
+      true,
+    );
+
+    addFractionalFeeRequest.collectorsExempt =
+      await utilsService.defaultConfirmAsk(
+        language.getText('feeManagement.askCollectorsExempt'),
+        true,
+      );
+
+    await utilsService.handleValidation(
+      () => addFractionalFeeRequest.validate('collectorId'),
+      async () => {
+        addFractionalFeeRequest.collectorId =
+          await utilsService.defaultSingleAsk(
+            language.getText('feeManagement.askCollectorId'),
+            currentAccount,
+          );
+      },
+    );
+
+    console.log({
+      percentage: addFractionalFeeRequest.percentage ?? '-',
+      numerator: addFractionalFeeRequest.amountNumerator ?? '-',
+      denominator: addFractionalFeeRequest.amountDenominator ?? '-',
+      min: addFractionalFeeRequest.min,
+      max: addFractionalFeeRequest.max,
+      feesPaidBy: addFractionalFeeRequest.net ? 'Sender' : 'Receiver',
+      collector: addFractionalFeeRequest.collectorId,
+      collectorsExempt: addFractionalFeeRequest.collectorsExempt,
+    });
+
+    const confirm = await this.askFeeOperationConfirmation(
+      language.getText('feeManagement.confirmCreate'),
+    );
+
+    if (!confirm) return;
+
+    try {
+      await new FeeStableCoinService().addFractionalFee(
+        addFractionalFeeRequest,
+      );
+    } catch (error) {
+      await utilsService.askErrorConfirmation(
+        async () => await this.operationsStableCoin(),
+        error,
+      );
+    }
+  }
+
+  private async createFixedFee(
+    decimals: number,
+    currentAccount: string,
+  ): Promise<void> {
+    const addFixedFeeRequest: AddFixedFeeRequest = new AddFixedFeeRequest({
+      tokenId: this.stableCoinId,
+      collectorId: currentAccount,
+      collectorsExempt: true,
+      tokenIdCollected: '0.0.0',
+      amount: '1',
+      decimals: HBAR_DECIMALS,
+    });
+
+    const feesInHBAR = await utilsService.defaultConfirmAsk(
+      language.getText('feeManagement.askHBAR'),
+      true,
+    );
+
+    addFixedFeeRequest.tokenIdCollected = '0.0.0';
+
+    if (!feesInHBAR) {
+      let tryAgain: boolean;
+
+      do {
+        tryAgain = false;
+
+        await utilsService.handleValidation(
+          () => addFixedFeeRequest.validate('tokenIdCollected'),
+          async () => {
+            addFixedFeeRequest.tokenIdCollected =
+              await utilsService.defaultSingleAsk(
+                language.getText('feeManagement.askTokenId'),
+                this.stableCoinId,
+              );
+          },
+        );
+
+        if (addFixedFeeRequest.tokenIdCollected == '0.0.0') {
+          console.log('HBAR selected');
+        } else if (addFixedFeeRequest.tokenIdCollected !== this.stableCoinId) {
+          try {
+            const detailsExternalStableCoin =
+              await new DetailsStableCoinsService().getDetailsStableCoins(
+                addFixedFeeRequest.tokenIdCollected,
+                false,
+              );
+            addFixedFeeRequest.decimals =
+              detailsExternalStableCoin.decimals ?? 0;
+          } catch (error) {
+            utilsService.showError(
+              'Error getting the token details : ' + error.message,
+            );
+            tryAgain = true;
+          }
+        } else addFixedFeeRequest.decimals = decimals;
+      } while (tryAgain);
+    }
+
+    await utilsService.handleValidation(
+      () => addFixedFeeRequest.validate('amount'),
+      async () => {
+        addFixedFeeRequest.amount = await utilsService.defaultSingleAsk(
+          language.getText('feeManagement.askAmount'),
+          '1',
+        );
+      },
+    );
+
+    addFixedFeeRequest.collectorsExempt = await utilsService.defaultConfirmAsk(
+      language.getText('feeManagement.askCollectorsExempt'),
+      true,
+    );
+
+    await utilsService.handleValidation(
+      () => addFixedFeeRequest.validate('collectorId'),
+      async () => {
+        addFixedFeeRequest.collectorId = await utilsService.defaultSingleAsk(
+          language.getText('feeManagement.askCollectorId'),
+          currentAccount,
+        );
+      },
+    );
+
+    console.log({
+      amount: addFixedFeeRequest.amount,
+      token:
+        addFixedFeeRequest.tokenIdCollected !== '0.0.0'
+          ? addFixedFeeRequest.tokenIdCollected
+          : 'HBAR',
+      collector: addFixedFeeRequest.collectorId,
+      collectorsExempt: addFixedFeeRequest.collectorsExempt,
+    });
+
+    const confirm = await this.askFeeOperationConfirmation(
+      language.getText('feeManagement.confirmCreate'),
+    );
+
+    if (!confirm) return;
+
+    try {
+      await new FeeStableCoinService().addFixedFee(addFixedFeeRequest);
+    } catch (error) {
+      await utilsService.askErrorConfirmation(
+        async () => await this.operationsStableCoin(),
+        error,
+      );
+    }
+  }
+
+  private async askFeeOperationConfirmation(Text: string): Promise<boolean> {
+    return await utilsService.defaultConfirmAsk(Text, true);
   }
 
   /**
@@ -714,13 +1077,12 @@ export default class OperationStableCoinService extends Service {
                 stableCoinCapabilities,
               );
             },
+            true,
+            true,
           );
 
           let grantAccountTargetId = accountTarget;
-          grantRoleRequest.targetId = await utilsService.defaultSingleAsk(
-            language.getText('stablecoin.accountTarget'),
-            accountTarget,
-          );
+
           await utilsService.handleValidation(
             () => grantRoleRequest.validate('targetId'),
             async () => {
@@ -778,13 +1140,12 @@ export default class OperationStableCoinService extends Service {
                 stableCoinCapabilities,
               );
             },
+            true,
+            true,
           );
 
           let revokeAccountTargetId = accountTarget;
-          revokeRoleRequest.targetId = await utilsService.defaultSingleAsk(
-            language.getText('stablecoin.accountTarget'),
-            accountTarget,
-          );
+
           await utilsService.handleValidation(
             () => revokeRoleRequest.validate('targetId'),
             async () => {
@@ -850,11 +1211,7 @@ export default class OperationStableCoinService extends Service {
               ]);
 
               let increaseCashInLimitTargetId = accountTarget;
-              increaseCashInLimitRequest.targetId =
-                await utilsService.defaultSingleAsk(
-                  language.getText('stablecoin.accountTarget'),
-                  accountTarget,
-                );
+
               await utilsService.handleValidation(
                 () => increaseCashInLimitRequest.validate('targetId'),
                 async () => {
@@ -899,11 +1256,7 @@ export default class OperationStableCoinService extends Service {
               }
 
               let increaseAmount = '';
-              increaseCashInLimitRequest.amount =
-                await utilsService.defaultSingleAsk(
-                  language.getText('stablecoin.amountIncrease'),
-                  '1',
-                );
+
               await utilsService.handleValidation(
                 () => increaseCashInLimitRequest.validate('amount'),
                 async () => {
@@ -953,11 +1306,7 @@ export default class OperationStableCoinService extends Service {
             ]);
 
             let decreaseCashInLimitTargetId = accountTarget;
-            decreaseCashInLimitRequest.targetId =
-              await utilsService.defaultSingleAsk(
-                language.getText('stablecoin.accountTarget'),
-                accountTarget,
-              );
+
             await utilsService.handleValidation(
               () => decreaseCashInLimitRequest.validate('targetId'),
               async () => {
@@ -1003,11 +1352,7 @@ export default class OperationStableCoinService extends Service {
               }
 
               let decreaseAmount = '';
-              decreaseCashInLimitRequest.amount =
-                await utilsService.defaultSingleAsk(
-                  language.getText('stablecoin.amountDecrease'),
-                  '1',
-                );
+
               await utilsService.handleValidation(
                 () => decreaseCashInLimitRequest.validate('amount'),
                 async () => {
@@ -1050,11 +1395,7 @@ export default class OperationStableCoinService extends Service {
 
             //Reset
             let resetCashInLimitTargetId = accountTarget;
-            resetCashInLimitRequest.targetId =
-              await utilsService.defaultSingleAsk(
-                language.getText('stablecoin.accountTarget'),
-                accountTarget,
-              );
+
             await utilsService.handleValidation(
               () => resetCashInLimitRequest.validate('targetId'),
               async () => {
@@ -1125,11 +1466,7 @@ export default class OperationStableCoinService extends Service {
             ]);
 
             let cashInLimitTargetId = accountTarget;
-            checkCashInLimitRequest.targetId =
-              await utilsService.defaultSingleAsk(
-                language.getText('stablecoin.accountTarget'),
-                accountTarget,
-              );
+
             await utilsService.handleValidation(
               () => checkCashInLimitRequest.validate('targetId'),
               async () => {
@@ -1211,13 +1548,12 @@ export default class OperationStableCoinService extends Service {
             async () => {
               hasRoleRequest.role = await this.getRole(stableCoinCapabilities);
             },
+            true,
+            true,
           );
 
           let hasRoleAccountTargetId = accountTarget;
-          hasRoleRequest.targetId = await utilsService.defaultSingleAsk(
-            language.getText('stablecoin.accountTarget'),
-            accountTarget,
-          );
+
           await utilsService.handleValidation(
             () => hasRoleRequest.validate('targetId'),
             async () => {
@@ -1261,6 +1597,8 @@ export default class OperationStableCoinService extends Service {
         async () => {
           await this.operationsStableCoin();
         },
+        true,
+        true,
       );
     }
   }
@@ -1304,6 +1642,8 @@ export default class OperationStableCoinService extends Service {
             capabilities.includes(Operation.DELETE))) ||
         (option === language.getText('wizard.stableCoinOptions.RoleMgmt') &&
           capabilities.includes(Operation.ROLE_MANAGEMENT)) ||
+        (option === language.getText('wizard.stableCoinOptions.FeesMgmt') &&
+          this.hasfeeScheduleKey) ||
         (option === language.getText('wizard.stableCoinOptions.RoleRefresh') &&
           !this.stableCoinDeleted) ||
         (option === language.getText('wizard.stableCoinOptions.Details') &&
@@ -1548,10 +1888,7 @@ export default class OperationStableCoinService extends Service {
       const supplierRoleType = language.getArrayFromObject(
         'wizard.supplierRoleType',
       );
-      grantRoleRequest.supplierType = await utilsService.defaultMultipleAsk(
-        language.getText('stablecoin.askCashInRoleType'),
-        supplierRoleType,
-      );
+
       await utilsService.handleValidation(
         () => grantRoleRequest.validate('supplierType'),
         async () => {
@@ -1579,10 +1916,6 @@ export default class OperationStableCoinService extends Service {
         );
       }
       if (grantRoleRequest.supplierType === supplierRoleType[1]) {
-        grantRoleRequest.amount = await utilsService.defaultSingleAsk(
-          language.getText('stablecoin.supplierRoleLimit'),
-          '1',
-        );
         await utilsService.handleValidation(
           () => grantRoleRequest.validate('amount'),
           async () => {

@@ -33,6 +33,8 @@ export enum Operation {
 	RESERVE_MANAGEMENT = 'Admin_Role',
 	GRANT_KYC = 'Grant_KYC',
 	REVOKE_KYC = 'Revoke_KYC',
+	CREATE_CUSTOM_FEE = 'Create_Custom_Fee',
+	REMOVE_CUSTOM_FEE = 'Remove_Custom_Fee',
 }
 
 export enum Access {

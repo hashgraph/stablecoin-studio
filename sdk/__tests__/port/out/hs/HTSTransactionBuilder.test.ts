@@ -36,7 +36,10 @@ import {
 	ContractId,
 } from '@hashgraph/sdk';
 import Long from 'long';
+import { LoggerTransports, SDK } from '../../../../src/index.js';
 import { HTSTransactionBuilder } from '../../../../src/port/out/hs/HTSTransactionBuilder.js';
+
+SDK.log = { level: 'ERROR', transports: new LoggerTransports.Console() };
 
 describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 	const contractId = '1111';
@@ -48,7 +51,6 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 	const tokenId2 = '3330';
 
 	// const accountId3 = '2200';
-
 	it('Test create contractExecuteTransaction', () => {
 		const t: ContractExecuteTransaction =
 			HTSTransactionBuilder.buildContractExecuteTransaction(

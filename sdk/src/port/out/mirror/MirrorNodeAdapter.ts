@@ -18,7 +18,7 @@
  *
  */
 
-import axios, { responseEncoding } from 'axios';
+import axios from 'axios';
 import { AxiosInstance } from 'axios';
 import { singleton } from 'tsyringe';
 import StableCoinViewModel from '../../out/mirror/response/StableCoinViewModel.js';
@@ -36,6 +36,10 @@ import {
 import PublicKey from '../../../domain/context/account/PublicKey.js';
 import { StableCoinMemo } from '../../../domain/context/stablecoin/StableCoinMemo.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
+import {
+	HBAR_DECIMALS,
+	MAX_PERCENTAGE_DECIMALS,
+} from '../../../domain/context/fee/CustomFee.js';
 import { InvalidResponse } from './error/InvalidResponse.js';
 import { HederaId } from '../../../domain/context/shared/HederaId.js';
 import { KeyType } from '../../../domain/context/account/KeyProps.js';
@@ -46,6 +50,11 @@ import {
 	KycStatus,
 } from './response/AccountTokenRelationViewModel.js';
 import { REGEX_TRANSACTION } from '../error/TransactionResponseError.js';
+import {
+	RequestCustomFee,
+	RequestFixedFee,
+	RequestFractionalFee,
+} from '../../in/request/BaseRequest.js';
 
 @singleton()
 export class MirrorNodeAdapter {
@@ -97,28 +106,32 @@ export class MirrorNodeAdapter {
 		}
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	private async getTokenInfo(tokenId: HederaId): Promise<any> {
+		const url = `${this.URI_BASE}tokens/${tokenId.toString()}`;
+
+		LogService.logTrace('Getting stable coin from mirror node -> ', url);
+
+		const retry = 10;
+		let i = 0;
+
+		let response;
+		do {
+			if (i > 0)
+				await new Promise((resolve) => setTimeout(resolve, 2000));
+
+			response = await this.instance.get<IHederaStableCoinDetail>(url);
+			i++;
+		} while (response.status !== 200 && i < retry);
+
+		return response;
+	}
+
 	public async getStableCoin(
 		tokenId: HederaId,
 	): Promise<StableCoinViewModel> {
 		try {
-			const url = `${this.URI_BASE}tokens/${tokenId.toString()}`;
-			LogService.logTrace(
-				'Getting stable coin from mirror node -> ',
-				url,
-			);
-
-			const retry = 10;
-			let i = 0;
-
-			let response;
-			do {
-				if (i > 0)
-					await new Promise((resolve) => setTimeout(resolve, 2000));
-				response = await this.instance.get<IHederaStableCoinDetail>(
-					url,
-				);
-				i++;
-			} while (response.status !== 200 && i < retry);
+			const response = await this.getTokenInfo(tokenId);
 
 			const getKeyOrDefault = (
 				val?: IPublicKey,
@@ -136,10 +149,86 @@ export class MirrorNodeAdapter {
 				}
 			};
 
+			const getCustomFeesOrDefault = async (
+				val?: ICustomFees,
+			): Promise<RequestCustomFee[] | undefined> => {
+				if (!val) return undefined;
+				const customFees: RequestCustomFee[] = [];
+
+				val.fixed_fees.forEach(async (fixedFee) => {
+					const denominatingToken = fixedFee.denominating_token_id
+						? HederaId.from(fixedFee.denominating_token_id)
+						: HederaId.NULL;
+
+					let feeDecimals = decimals;
+
+					if (denominatingToken.isNull()) feeDecimals = HBAR_DECIMALS;
+					else if (
+						denominatingToken.toString() !== tokenId.toString()
+					) {
+						feeDecimals = parseInt(
+							(await this.getTokenInfo(denominatingToken)).data
+								.decimals ?? '0',
+						);
+					}
+
+					const requestFixedFee: RequestFixedFee = {
+						tokenIdCollected: fixedFee.denominating_token_id
+							? fixedFee.denominating_token_id
+							: '0.0.0',
+						amount: BigDecimal.fromStringFixed(
+							fixedFee.amount ? fixedFee.amount.toString() : '0',
+							feeDecimals,
+						).toString(),
+						decimals: feeDecimals,
+						collectorId: fixedFee.collector_account_id,
+						collectorsExempt: fixedFee.all_collectors_are_exempt,
+					};
+
+					customFees.push(requestFixedFee);
+				});
+
+				val.fractional_fees.forEach((fractionalFee) => {
+					const requestFractionalFee: RequestFractionalFee = {
+						decimals: decimals,
+						collectorId: fractionalFee.collector_account_id,
+						collectorsExempt:
+							fractionalFee.all_collectors_are_exempt,
+						percentage: BigDecimal.fromStringFixed(
+							Math.round(
+								(100 *
+									10 ** MAX_PERCENTAGE_DECIMALS *
+									parseInt(fractionalFee.amount.numerator)) /
+									parseInt(fractionalFee.amount.denominator),
+							).toString(),
+							MAX_PERCENTAGE_DECIMALS,
+						).toString(),
+						amountNumerator: fractionalFee.amount.numerator,
+						amountDenominator: fractionalFee.amount.denominator,
+						min: BigDecimal.fromStringFixed(
+							fractionalFee.minimum
+								? fractionalFee.minimum.toString()
+								: '0',
+							decimals,
+						).toString(),
+						max: BigDecimal.fromStringFixed(
+							fractionalFee.maximum
+								? fractionalFee.maximum.toString()
+								: '0',
+							decimals,
+						).toString(),
+						net: fractionalFee.net_of_transfers,
+					};
+
+					customFees.push(requestFractionalFee);
+				});
+
+				return customFees;
+			};
+
 			if (response.status !== 200) {
 				throw new StableCoinNotFound(tokenId.toString());
 			}
-
 			const decimals = parseInt(response.data.decimals ?? '0');
 			const proxyAddress = response.data.memo
 				? StableCoinMemo.fromJson(response.data.memo).proxyContract
@@ -190,6 +279,12 @@ export class MirrorNodeAdapter {
 					response.data.supply_key,
 				) as PublicKey,
 				pauseKey: getKeyOrDefault(response.data.pause_key) as PublicKey,
+				feeScheduleKey: getKeyOrDefault(
+					response.data.fee_schedule_key,
+				) as PublicKey,
+				customFees: await getCustomFeesOrDefault(
+					response.data.custom_fees,
+				),
 			};
 			return stableCoinDetail;
 		} catch (error) {
@@ -418,12 +513,35 @@ interface IHederaStableCoinDetail {
 	wipe_key?: IPublicKey;
 	supply_key?: IPublicKey;
 	pause_key?: IPublicKey;
+	fee_schedule_key?: IPublicKey;
 }
 
 interface ICustomFees {
 	created_timestamp: string;
-	fixed_fees: string[];
-	fractional_fees: string[];
+	fixed_fees: IFixedFee[];
+	fractional_fees: IFractionalFee[];
+}
+
+interface IFixedFee {
+	amount: string;
+	collector_account_id: string;
+	denominating_token_id: string;
+	all_collectors_are_exempt: boolean;
+}
+
+interface IFractionalFee {
+	amount: IFractionAmount;
+	collector_account_id: string;
+	denominating_token_id: string;
+	maximum: string;
+	minimum: string;
+	net_of_transfers: boolean;
+	all_collectors_are_exempt: boolean;
+}
+
+interface IFractionAmount {
+	numerator: string;
+	denominator: string;
 }
 
 interface IPublicKey {

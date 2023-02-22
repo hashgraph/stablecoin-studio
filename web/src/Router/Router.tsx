@@ -33,6 +33,7 @@ import DangerZoneOperations from '../views/Operations/DangerZone';
 import type { EventParameter, WalletEvent } from 'hedera-stable-coin-sdk';
 import { LoggerTransports, SDK, ConnectionState } from 'hedera-stable-coin-sdk';
 import StableCoinProof from '../views/StableCoinProof';
+import FeesManagement from '../views/FeesManagement';
 import GrantKycOperation from '../views/Operations/GrantKyc';
 import RevokeKycOperation from '../views/Operations/RevokeKyc';
 import CheckKycOperation from '../views/Operations/CheckKyc';
@@ -165,6 +166,7 @@ const Router = () => {
 								<Route path={RoutesMappingUrl.roles} element={<Roles />} />
 								<Route path={RoutesMappingUrl.stableCoinDetails} element={<StableCoinDetails />} />
 								<Route path={RoutesMappingUrl.proofOfReserve} element={<StableCoinProof />} />
+								<Route path={RoutesMappingUrl.feesManagement} element={<FeesManagement />} />
 							</>
 						)}
 						<Route path={RoutesMappingUrl.stableCoinCreation} element={<StableCoinCreation />} />
