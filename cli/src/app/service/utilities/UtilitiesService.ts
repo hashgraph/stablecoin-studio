@@ -251,6 +251,21 @@ export default class UtilitiesService extends Service {
     return variable.response;
   }
 
+  public async checkBoxMultipleAsk(
+    question: string,
+    choices: Array<string>,
+    loop = false,
+  ): Promise<string[]> {
+    const variable = await inquirer.prompt({
+      name: 'response',
+      type: 'checkbox',
+      message: question,
+      choices: choices,
+      loop: loop,
+    });
+    return variable.response;
+  }
+
   /**
    * Function for multiple ask questions with inquire
    * @param question

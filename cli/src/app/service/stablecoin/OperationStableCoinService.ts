@@ -710,7 +710,7 @@ export default class OperationStableCoinService extends Service {
         break;
       case language.getText('feeManagement.options.List'):
         console.log(
-          new FeeStableCoinService().getFormatedFees(
+          new FeeStableCoinService().getSerializedFees(
             detailsStableCoin.customFees,
           ),
         );
@@ -726,22 +726,16 @@ export default class OperationStableCoinService extends Service {
   }
 
   private async removeFees(customFees: RequestCustomFee[]): Promise<void> {
-    const FeesToKeep: RequestCustomFee[] = [];
-    const FeesToRemove: RequestCustomFee[] = [];
+    let FeesToKeep: RequestCustomFee[] = [];
 
-    for (let i = 0; i < customFees.length; i++) {
-      const fee = customFees[i];
-      console.log(new FeeStableCoinService().getFormatedFees([fee]));
-      const remove = await utilsService.defaultConfirmAsk(
-        language.getText('feeManagement.askRemoveFee'),
-        false,
-      );
-      if (remove) FeesToRemove.push(fee);
-      else FeesToKeep.push(fee);
-    }
+    const options = new FeeStableCoinService().getSerializedFees(customFees);
+    const result = await utilsService.checkBoxMultipleAsk(
+      language.getText('feeManagement.askRemoveFee'),
+      options,
+    );
 
     console.log(language.getText('feeManagement.listOfFeesToRemove'));
-    console.log(new FeeStableCoinService().getFormatedFees(FeesToRemove));
+    console.log(result);
 
     const confirm = await this.askFeeOperationConfirmation(
       language.getText('feeManagement.confirmRemove'),
@@ -750,6 +744,11 @@ export default class OperationStableCoinService extends Service {
     if (!confirm) return;
 
     try {
+      FeesToKeep = await new FeeStableCoinService().getRemainingFees(
+        customFees,
+        options,
+        result,
+      );
       const updateCustomFeesRequest: UpdateCustomFeesRequest =
         new UpdateCustomFeesRequest({
           tokenId: this.stableCoinId,

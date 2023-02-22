@@ -10,6 +10,13 @@ import {
   Fees,
   UpdateCustomFeesRequest,
 } from 'hedera-stable-coin-sdk';
+const FixedTypeLabel = 'Fixed';
+const FractionalTypeLabel = 'Fractional';
+const HBARLabel = 'HBAR';
+const separator = ' | ';
+const unlimited = 'unlimited';
+const sender = 'Sender';
+const receiver = 'Receiver';
 
 /**
  * Create Role Stable Coin Service
@@ -52,34 +59,60 @@ export default class FeeStableCoinService extends Service {
     utilsService.breakLine();
   }
 
-  public getFormatedFees(listOfFees: RequestCustomFee[]): any[] {
-    const FormatedFees = [];
+  public getSerializedFees(listOfFees: RequestCustomFee[]): string[] {
+    const SerializedFees: string[] = [];
 
     listOfFees.forEach((fee) => {
-      if (isRequestFixedFee(fee)) {
-        FormatedFees.push({
-          Fee_Type: 'Fixed',
-          Collector_Id: fee.collectorId,
-          All_Collectors_Exempt: fee.collectorsExempt,
-          Amount: fee.amount,
-          Token:
-            fee.tokenIdCollected == '0.0.0' ? 'HBAR' : fee.tokenIdCollected,
-        });
-      } else if (isRequestFractionalFee(fee)) {
-        FormatedFees.push({
-          Fee_Type: 'Fractional',
-          Collector_Id: fee.collectorId,
-          All_Collectors_Exempt: fee.collectorsExempt,
-          Percentage: fee.percentage,
-          Numerator: fee.amountNumerator,
-          Denominator: fee.amountDenominator,
-          Min: fee.min,
-          Max: fee.max == '0' ? 'Unlimited' : fee.max,
-          Fees_Paid_By: fee.net ? 'Sender' : 'Receiver',
-        });
-      }
+      let feeMessage = separator;
+
+      if (isRequestFixedFee(fee))
+        feeMessage = feeMessage.concat(
+          FixedTypeLabel,
+          separator,
+          fee.tokenIdCollected == '0.0.0' ? HBARLabel : fee.tokenIdCollected,
+          separator,
+          fee.amount,
+          separator,
+          fee.collectorId,
+          separator,
+          fee.collectorsExempt.toString(),
+        );
+      else if (isRequestFractionalFee(fee))
+        feeMessage = feeMessage.concat(
+          FractionalTypeLabel,
+          separator,
+          fee.percentage,
+          separator,
+          fee.min,
+          separator,
+          fee.max == '0' ? unlimited : fee.max,
+          separator,
+          fee.collectorId,
+          separator,
+          fee.collectorsExempt.toString(),
+          separator,
+          fee.net ? sender : receiver,
+        );
+
+      SerializedFees.push(feeMessage);
     });
 
-    return FormatedFees;
+    return SerializedFees;
+  }
+
+  public getRemainingFees(
+    originalFees: RequestCustomFee[],
+    serializedOriginalFees: string[],
+    serializedRemovedFees: string[],
+  ): RequestCustomFee[] {
+    const remainingFees = originalFees;
+
+    serializedRemovedFees.forEach((feeToRemove) => {
+      const index = serializedOriginalFees.indexOf(feeToRemove);
+      serializedOriginalFees.splice(index, 1);
+      remainingFees.splice(index, 1);
+    });
+
+    return remainingFees;
   }
 }
