@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import BaseContainer from '../../components/BaseContainer';
 import InputController from '../../components/Form/InputController';
 import { propertyNotFound } from '../../constant';
+import type { Option } from '../../components/Form/SelectController';
 import { SelectController } from '../../components/Form/SelectController';
 import Icon from '../../components/Icon';
 import { SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
@@ -329,28 +330,10 @@ const FeesManagement = () => {
 		}
 	}
 
-	async function handleTokenIdCollectedChange(i: number): Promise<void> {
-		const fee = getValues().fees[i];
-		const _fixedFee = fixedFee[i];
-		if (fee.tokenIdCollected.value === collectorIdOption.HBAR.value) {
-			_fixedFee.decimals = HBAR_DECIMALS;
-		} else if (fee.tokenIdCollected.value === selectedStableCoin!.tokenId!.toString()) {
-			_fixedFee.decimals = selectedStableCoin!.decimals!;
-		} else {
-			const detailsExternalStableCoin: StableCoinViewModel = await SDKService.getStableCoinDetails(
-				new GetStableCoinDetailsRequest({
-					id: fee.tokenIdCollected.value,
-				}),
-			);
-			_fixedFee.decimals = detailsExternalStableCoin.decimals ?? 0;
-		}
-		changeFixedFee(_fixedFee, i);
-	}
-
 	const handleUpdateTokenFees = async () => {
 		const requestCustomFeeArray: RequestCustomFee[] = [];
 
-		getValues().fees.forEach((fee: any, index: number) => {
+		getValues().fees.forEach(async (fee: any, index: number) => {
 			const feeType: FeeTypeValue = fee.feeType.value;
 			const collectorAccount: string = fee.collectorAccount;
 			const collectorsExempt: boolean = fee.collectorsExempt.value;
@@ -377,8 +360,27 @@ const FeesManagement = () => {
 
 				case FeeTypeValue.FIXED: {
 					const amount: string = amountOrPercentage;
+					let decimals;
+					switch (fee.tokenIdCollected.value) {
+						case collectorIdOption.HBAR.value:
+							decimals = HBAR_DECIMALS;
+							break;
+						case selectedStableCoin!.tokenId!.toString():
+							decimals = selectedStableCoin!.decimals!;
+							break;
+						default: {
+							const detailsExternalStableCoin: StableCoinViewModel =
+								await SDKService.getStableCoinDetails(
+									new GetStableCoinDetailsRequest({
+										id: fee.tokenIdCollected.value,
+									}),
+								);
+							decimals = detailsExternalStableCoin.decimals ?? 0;
+							break;
+						}
+					}
+
 					const currency: string = fee.tokenIdCollected.value;
-					const decimals: number = fixedFee[index].decimals;
 
 					const requestFixedFee: RequestFixedFee = {
 						collectorId: collectorAccount,
@@ -440,7 +442,7 @@ const FeesManagement = () => {
 					<Grid
 						templateColumns={columnsSizes}
 						gap={{ base: 4 }}
-						alignItems='center'
+						alignItems='start'
 						px={{ base: 4, lg: 14 }}
 						paddingTop={{ base: 8 }}
 					>
@@ -506,15 +508,43 @@ const FeesManagement = () => {
 												key={field.id}
 												overrideStyles={selectorStyle}
 												addonLeft={true}
+												rules={{
+													required: t('global:validations.required') ?? propertyNotFound,
+													validate: {
+														validation: (option: Option) => {
+															const _fractionalFee = fractionalFee[i];
+															_fractionalFee.tokenId = option.value as string;
+															return handleRequestValidation(_fractionalFee.validate('tokenId'));
+														},
+														checkTokenID: async (option: any) => {
+															if (option.__isNew__) {
+																try {
+																	await SDKService.getStableCoinDetails(
+																		new GetStableCoinDetailsRequest({
+																			id: option.value as string,
+																		}),
+																	);
+																} catch (e) {
+																	console.log({ e });
+																	return t('global:validations.tokenIdNotExists',{
+																		tokenId:option.value 
+																	}) as string;
+																}finally{
+																	console.log('Terminado');
+																	
+																}
+															}
+															return true;
+														},
+													},
+												}}
 												addonDown={<Icon name='CaretDown' w={4} h={4} />}
 												variant='unstyled'
 												name={`fees.${i}.tokenIdCollected`}
 												control={control}
+												isRequired={true}
 												options={[...Object.values(collectorIdOption)]}
 												placeholder={t('feesManagement:tokensFeeOption:placeholder')}
-												onChangeAux={() => {
-													handleTokenIdCollectedChange(i);
-												}}
 												isDisabled={watch(`fees.${i}.feeType`)?.value !== feeTypeOption.FIXED.value}
 											/>
 										</GridItem>
@@ -633,7 +663,7 @@ const FeesManagement = () => {
 												}
 											/>
 										</GridItem>
-										<GridItem textAlign='center'>
+										<GridItem textAlign='center' marginTop={{ base: 2 }}>
 											<Icon
 												name='Trash'
 												color='brand.primary'

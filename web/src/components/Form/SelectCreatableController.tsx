@@ -6,7 +6,7 @@ import { Controller } from 'react-hook-form';
 import type { SelectOption, SelectThemeStyle } from './SelectController';
 import { useComponents, useStyles } from './SelectController';
 import type { Props as ReactSelectProps } from 'react-select';
-import { FormControl, FormLabel, HStack, Stack, Text } from '@chakra-ui/react';
+import { FormControl, FormErrorMessage, FormLabel, HStack, Stack, Text } from '@chakra-ui/react';
 import type { GroupBase, SelectInstance } from 'chakra-react-select';
 import { CreatableSelect } from 'chakra-react-select';
 import type { Variant } from 'chakra-react-select/dist/types/types';
@@ -63,6 +63,7 @@ const SelectCreatableController = ({
 	overrideStyles,
 	onCreateOption,
 	createOptionPosition = 'last',
+	showErrors = true,
 	formatCreateLabel,
 	addonRight,
 	addonError,
@@ -101,7 +102,7 @@ const SelectCreatableController = ({
 			name={name}
 			defaultValue={defaultValue}
 			rules={rules}
-			render={({ field, fieldState: { invalid } }) => {
+			render={({ field, fieldState: { invalid, error } }) => {
 				const { onChange } = field;
 
 				useEffect(() => {
@@ -153,6 +154,11 @@ const SelectCreatableController = ({
 								ref={ref}
 								{...props}
 							/>
+							{showErrors && (
+								<FormErrorMessage data-testid='form-error-msg'>
+									{error && error.message}
+								</FormErrorMessage>
+							)}
 						</FormControl>
 					</Stack>
 				);
