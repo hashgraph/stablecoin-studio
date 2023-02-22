@@ -33,6 +33,14 @@ import {
 	CustomFractionalFee as HCustomFractionalFee,
 } from '@hashgraph/sdk';
 import { fromCustomFeesToHCustomFees } from '../../../../../../domain/context/fee/CustomFee.js';
+import { GetAccountTokenRelationshipQuery } from '../../../../query/account/tokenRelationship/GetAccountTokenRelationshipQuery.js';
+import { StableCoinNotAssociated } from '../../error/StableCoinNotAssociated.js';
+import {
+	FreezeStatus,
+	KycStatus,
+} from '../../../../../../port/out/mirror/response/AccountTokenRelationViewModel.js';
+import { AccountFreeze } from '../../error/AccountFreeze.js';
+import { AccountNotKyc } from '../../error/AccountNotKyc.js';
 //import FeeAssessmentMethod from '@hashgraph/sdk/lib/token/FeeAssessmentMethod.js';
 
 @CommandHandler(addFractionalFeesCommand)
@@ -70,6 +78,26 @@ export class addFractionalFeesCommandHandler
 			tokenId,
 		);
 		const stableCoin = await this.stableCoinService.get(tokenId);
+
+		const tokenRelationship = (
+			await this.stableCoinService.queryBus.execute(
+				new GetAccountTokenRelationshipQuery(collectorId, tokenId),
+			)
+		).payload;
+
+		if (!tokenRelationship) {
+			throw new StableCoinNotAssociated(
+				collectorId.toString(),
+				tokenId.toString(),
+			);
+		}
+		if (tokenRelationship.freezeStatus === FreezeStatus.FROZEN) {
+			throw new AccountFreeze(collectorId.toString());
+		}
+
+		if (tokenRelationship.kycStatus === KycStatus.REVOKED) {
+			throw new AccountNotKyc(collectorId.toString());
+		}
 
 		const HcustomFee: HCustomFee[] = fromCustomFeesToHCustomFees(
 			stableCoin.customFees,
