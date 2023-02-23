@@ -26,8 +26,10 @@ const Review = (props: ReviewProps) => {
 		supplyKey,
 		wipeKey,
 		freezeKey,
+		kycRequired,
 		kycKey,
 		pauseKey,
+		manageCustomFees,
 		feeScheduleKey,
 		reserveAddress,
 		reserveInitialAmount,
@@ -128,9 +130,9 @@ const Review = (props: ReviewProps) => {
 							},
 							{
 								label: t('stableCoinCreation:managementPermissions.kyc'),
-								value: managementPermissions
-									? t('stableCoinCreation:managementPermissions.none')
-									: getKey(kycKey, 'kycKeyOther'),
+								value: kycRequired
+									? getKey(kycKey, 'kycKeyOther')
+									: t('stableCoinCreation:managementPermissions.none')
 							},
 							{
 								label: t('stableCoinCreation:managementPermissions.pause'),
@@ -140,9 +142,9 @@ const Review = (props: ReviewProps) => {
 							},
 							{
 								label: t('stableCoinCreation:managementPermissions.feeSchedule'),
-								value: managementPermissions
-									? t('stableCoinCreation:managementPermissions.currentUserKey')
-									: getKey(feeScheduleKey, 'feeScheduleKeyOther'),
+								value: manageCustomFees
+									? getKey(feeScheduleKey, 'feeScheduleKeyOther')
+									: t('stableCoinCreation:managementPermissions.none')
 							},
 						]}
 					/>

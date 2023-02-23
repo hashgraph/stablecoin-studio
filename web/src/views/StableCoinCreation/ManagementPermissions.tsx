@@ -26,6 +26,17 @@ const ManagementPermissions = ({
 		control,
 		name: 'managementPermissions',
 	});
+
+	const isKycRequired = useWatch({
+		control,
+		name: 'kycRequired',
+	});	
+	
+	const isManageCustomFees = useWatch({
+		control,
+		name: 'manageCustomFees',
+	});
+	
 	useEffect(() => {
 		if (watch('kycKey')?.value !== 2 || watch('supplyKey')?.value === 1) {
 			setValue('grantKYCToOriginalSender', false);
@@ -50,18 +61,20 @@ const ManagementPermissions = ({
 			nameTranslate: t('stableCoinCreation:managementPermissions.freeze'),
 		},
 		{
-			name: 'kycKey',
-			nameTranslate: t('stableCoinCreation:managementPermissions.kyc'),
-		},
-		{
 			name: 'pauseKey',
 			nameTranslate: t('stableCoinCreation:managementPermissions.pause'),
 		},
-		{
-			name: 'feeScheduleKey',
-			nameTranslate: t('stableCoinCreation:managementPermissions.feeSchedule'),
-		},
 	];
+
+	const kycKey = {
+		name: 'kycKey',
+		nameTranslate: t('stableCoinCreation:managementPermissions.kyc'),
+	};	
+
+	const feeScheduleKey = {
+		name: 'feeScheduleKey',
+		nameTranslate: t('stableCoinCreation:managementPermissions.feeSchedule'),
+	};			
 
 	return (
 		<VStack h='full' justify={'space-between'} pt='80px'>
@@ -133,24 +146,62 @@ const ManagementPermissions = ({
 							})}
 						</Stack>
 					)}
+					
+					<HStack mb={4} justifyContent='space-between'>
+						<Text maxW={'252px'} fontSize='14px' fontWeight='400' lineHeight='17px'>
+							{t('stableCoinCreation:managementPermissions.wantKyc')}
+						</Text>
+						<SwitchController
+							control={control}
+							name={'kycRequired'}
+							defaultValue={false}
+						/>
+					</HStack>	
+					{ isKycRequired === true && (
+						<KeySelector
+							key={kycKey.name}
+							control={control}
+							name={kycKey.name}
+							label={kycKey.nameTranslate}
+							request={request}
+						/>
+					)}				
+					{ watch('kycKey')?.value === 2 &&
+					  watch('supplyKey')?.value !== 1 && (
+						<Stack minW={400}>
+							<HStack mb={4} justifyContent='space-between'>
+								<Text maxW={'252px'} fontSize='14px' fontWeight='400' lineHeight='17px'>
+									{t('stableCoinCreation:managementPermissions.grantKYCToOriginalSender')}
+								</Text>
 
-					{!isManagementPermissions &&
-						watch('kycKey')?.value === 2 &&
-						watch('supplyKey')?.value !== 1 && (
-							<Stack minW={400}>
-								<HStack mb={4} justifyContent='space-between'>
-									<Text maxW={'252px'} fontSize='14px' fontWeight='400' lineHeight='17px'>
-										{t('stableCoinCreation:managementPermissions.grantKYCToOriginalSender')}
-									</Text>
+								<SwitchController
+									control={control}
+									name={'grantKYCToOriginalSender'}
+									defaultValue={true}
+								/>
+							</HStack>
+						</Stack>
+					)}					
 
-									<SwitchController
-										control={control}
-										name={'grantKYCToOriginalSender'}
-										defaultValue={true}
-									/>
-								</HStack>
-							</Stack>
-						)}
+					<HStack mb={4} justifyContent='space-between'>
+						<Text maxW={'252px'} fontSize='14px' fontWeight='400' lineHeight='17px'>
+							{t('stableCoinCreation:managementPermissions.manageCustomFees')}
+						</Text>
+						<SwitchController
+							control={control}
+							name={'manageCustomFees'}
+							defaultValue={true}
+						/>
+					</HStack>	
+					{ isManageCustomFees !== false && (
+						<KeySelector
+							key={feeScheduleKey.name}
+							control={control}
+							name={feeScheduleKey.name}
+							label={feeScheduleKey.nameTranslate}
+							request={request}
+						/>
+					)}										
 				</Stack>
 			</Stack>
 		</VStack>

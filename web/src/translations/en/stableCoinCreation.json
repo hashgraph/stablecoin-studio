@@ -56,7 +56,9 @@
 		"wipe": "Wipe",
 		"CreatorKYCFlag": "Creator account KYC",
 		"CreatorGrantedKYC": "TRUE",
-		"CreatorNotGrantedKYC": "FALSE"
+		"CreatorNotGrantedKYC": "FALSE",
+		"wantKyc": "Do you want KYC?",
+		"manageCustomFees": "Would you like to manage custom fees?"
 	},
 	"proofOfReserve": {
 		"title": "Proof of Reserve",

@@ -193,10 +193,12 @@ const StableCoinCreation = () => {
 			autorenewAccount,
 			managementPermissions,
 			freezeKey,
+			isKycRequired,
 			kycKey,
 			wipeKey,
 			pauseKey,
 			supplyKey,
+			manageCustomFees,
 			feeScheduleKey,
 			reserveInitialAmount,
 			reserveAddress,
@@ -217,28 +219,27 @@ const StableCoinCreation = () => {
 		if (managementPermissions) {
 			request.adminKey = Account.NullPublicKey; // accountInfo.publicKey;
 			request.freezeKey = Account.NullPublicKey;
-			request.kycKey = undefined;
 			request.wipeKey = Account.NullPublicKey;
 			request.pauseKey = Account.NullPublicKey;
 			request.supplyKey = Account.NullPublicKey;
-			request.feeScheduleKey = accountInfo.publicKey;
 			request.treasury = undefined;
 			request.grantKYCToOriginalSender = false;
 		} else {
 			request.adminKey = accountInfo.publicKey;
 			request.freezeKey = formatKey(freezeKey.label, 'freezeKey');
-			request.kycKey = formatKey(kycKey.label, 'kycKey');
 			request.grantKYCToOriginalSender = grantKYCToOriginalSender;
 			request.wipeKey = formatKey(wipeKey.label, 'wipeKey');
 			request.pauseKey = formatKey(pauseKey.label, 'pauseKey');
 			request.supplyKey = formatKey(supplyKey.label, 'supplyKey');
-			request.feeScheduleKey = formatKey(feeScheduleKey.label, 'feeScheduleKey');
 			request.treasury =
 				formatKey(supplyKey.label, 'supplyKey')?.key !== Account.NullPublicKey.key && accountInfo.id
 					? accountInfo.id
 					: undefined;
 		}
-		// alert(request.dataFeedAddress)
+
+		request.kycKey =  (isKycRequired) ? formatKey(kycKey.label, 'kycKey') : undefined;
+		request.feeScheduleKey = (manageCustomFees) ? formatKey(feeScheduleKey.label, 'feeScheduleKey') : undefined;
+
 		try {
 			onOpen();
 			setLoading(true);
