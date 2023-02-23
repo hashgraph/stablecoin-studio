@@ -21,7 +21,7 @@ abstract contract KYC is IKYC, TokenOwner, Roles {
     {
         address currentTokenAddress = _getTokenAddress();
 
-        int256 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
+        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
             .grantTokenKyc(currentTokenAddress, account);
 
         bool success = _checkResponse(responseCode);
@@ -45,7 +45,7 @@ abstract contract KYC is IKYC, TokenOwner, Roles {
     {
         address currentTokenAddress = _getTokenAddress();
 
-        int256 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
+        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
             .revokeTokenKyc(currentTokenAddress, account);
 
         bool success = _checkResponse(responseCode);

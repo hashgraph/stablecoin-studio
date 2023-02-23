@@ -16,26 +16,23 @@ abstract contract CashIn is ICashIn, SupplierAdmin, Reserve {
      */
     function mint(
         address account,
-        uint256 amount
+        int64 amount
     )
         external
         override(ICashIn)
         onlyRole(_getRoleId(RoleName.CASHIN))
-        checkReserveIncrease(amount)
+        checkReserveIncrease(uint256(uint64(amount)))
         checkAddressIsNotZero(account)
+        isNotNegative(amount)
         returns (bool)
     {
         if (!_unlimitedSupplierAllowances[msg.sender])
-            _decreaseSupplierAllowance(msg.sender, amount);
+            _decreaseSupplierAllowance(msg.sender, uint256(uint64(amount)));
 
         address currentTokenAddress = _getTokenAddress();
 
-        (int256 responseCode, , ) = IHederaTokenService(_PRECOMPILED_ADDRESS)
-            .mintToken(
-                currentTokenAddress,
-                int64(uint64(amount)),
-                new bytes[](0)
-            );
+        (int64 responseCode, , ) = IHederaTokenService(_PRECOMPILED_ADDRESS)
+            .mintToken(currentTokenAddress, amount, new bytes[](0));
 
         bool success = _checkResponse(responseCode);
 

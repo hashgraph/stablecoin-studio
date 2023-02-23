@@ -23,7 +23,7 @@ abstract contract Freezable is IFreezable, TokenOwner, Roles {
     {
         address currentTokenAddress = _getTokenAddress();
 
-        int256 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
+        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
             .freezeToken(currentTokenAddress, account);
 
         bool success = _checkResponse(responseCode);
@@ -49,7 +49,7 @@ abstract contract Freezable is IFreezable, TokenOwner, Roles {
     {
         address currentTokenAddress = _getTokenAddress();
 
-        int256 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
+        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
             .unfreezeToken(currentTokenAddress, account);
 
         bool success = _checkResponse(responseCode);

@@ -19,7 +19,7 @@ abstract contract Pausable is IPausable, TokenOwner, Roles {
     {
         address currentTokenAddress = _getTokenAddress();
 
-        int256 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
+        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
             .pauseToken(currentTokenAddress);
 
         bool success = _checkResponse(responseCode);
@@ -41,7 +41,7 @@ abstract contract Pausable is IPausable, TokenOwner, Roles {
     {
         address currentTokenAddress = _getTokenAddress();
 
-        int256 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
+        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
             .unpauseToken(currentTokenAddress);
 
         bool success = _checkResponse(responseCode);

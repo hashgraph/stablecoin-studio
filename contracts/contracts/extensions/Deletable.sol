@@ -19,7 +19,7 @@ abstract contract Deletable is IDeletable, TokenOwner, Roles {
     {
         address currentTokenAddress = _getTokenAddress();
 
-        int256 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
+        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
             .deleteToken(currentTokenAddress);
 
         bool success = _checkResponse(responseCode);

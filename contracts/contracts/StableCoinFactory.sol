@@ -209,26 +209,29 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
     function _validationReserveInitialAmount(
         uint8 reserveDecimals,
         int256 reserveInitialAmount,
-        uint32 tokenDecimals,
-        uint256 tokenInitialSupply
+        int32 tokenDecimals,
+        int64 tokenInitialSupply
     ) private pure {
-        //Validate initial reserve amount
         require(
             reserveInitialAmount >= 0,
-            'Reserve initial amount must be positive'
+            'Reserve Initial supply must be at least 0'
         );
-        uint256 initialReserve = uint(reserveInitialAmount);
-        if (tokenDecimals > reserveDecimals) {
+
+        uint256 initialReserve = uint256(reserveInitialAmount);
+        uint32 _tokenDecimals = uint32(tokenDecimals);
+        uint256 _tokenInitialSupply = uint256(uint64(tokenInitialSupply));
+
+        if (_tokenDecimals > reserveDecimals) {
             initialReserve =
                 initialReserve *
-                (10 ** (tokenDecimals - reserveDecimals));
+                (10 ** (_tokenDecimals - reserveDecimals));
         } else {
-            tokenInitialSupply =
-                tokenInitialSupply *
-                (10 ** (reserveDecimals - tokenDecimals));
+            _tokenInitialSupply =
+                _tokenInitialSupply *
+                (10 ** (reserveDecimals - _tokenDecimals));
         }
         require(
-            tokenInitialSupply <= initialReserve,
+            _tokenInitialSupply <= initialReserve,
             'Initial supply is lower than initial reserve'
         );
     }

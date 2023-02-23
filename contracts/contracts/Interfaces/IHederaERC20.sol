@@ -33,7 +33,7 @@ interface IHederaERC20 {
         address token,
         address sender,
         address receiver,
-        uint256 amount
+        int64 amount
     );
 
     /**
@@ -55,8 +55,8 @@ interface IHederaERC20 {
 
     struct InitializeStruct {
         IHederaTokenService.HederaToken token;
-        uint64 initialTotalSupply;
-        uint32 tokenDecimals;
+        int64 initialTotalSupply;
+        int32 tokenDecimals;
         address originalSender;
         address reserveAddress;
         bool grantKYCToOriginalSender;
@@ -121,7 +121,7 @@ interface IHederaERC20 {
      *
      * @param to The address the tokens are transferred to
      */
-    function transfer(address to, uint256 amount) external returns (bool);
+    function transfer(address to, int64 amount) external returns (bool);
 
     /**
      * @dev Function not already implemented

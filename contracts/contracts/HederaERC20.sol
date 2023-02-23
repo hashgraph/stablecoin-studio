@@ -46,6 +46,9 @@ contract HederaERC20 is
         payable
         initializer
         checkAddressIsNotZero(init.originalSender)
+        isNotNegative(init.initialTotalSupply)
+        isNotNegative(init.tokenDecimals)
+        isNotNegative(init.token.maxSupply)
         returns (address)
     {
         __reserveInit(init.reserveAddress); // Initialize reserve
@@ -66,8 +69,8 @@ contract HederaERC20 is
             _PRECOMPILED_ADDRESS
         ).createFungibleToken{value: msg.value}(
             init.token,
-            int64(init.initialTotalSupply),
-            int32(init.tokenDecimals)
+            init.initialTotalSupply,
+            init.tokenDecimals
         );
 
         require(
@@ -180,7 +183,7 @@ contract HederaERC20 is
     function _associateToken(address addr) private checkAddressIsNotZero(addr) {
         address currentTokenAddress = _getTokenAddress();
 
-        int256 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
+        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
             .associateToken(addr, currentTokenAddress);
 
         _checkResponse(responseCode);
@@ -199,7 +202,7 @@ contract HederaERC20 is
     ) external override(IHederaERC20) checkAddressIsNotZero(addr) {
         address currentTokenAddress = _getTokenAddress();
 
-        int256 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
+        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
             .dissociateToken(addr, currentTokenAddress);
 
         _checkResponse(responseCode);
@@ -216,24 +219,23 @@ contract HederaERC20 is
     function _transfer(
         address from,
         address to,
-        uint256 amount
+        int64 amount
     )
         internal
         override(TokenOwner)
         checkAddressIsNotZero(from)
         checkAddressIsNotZero(to)
+        isNotNegative(amount)
     {
-        require(_balanceOf(from) >= amount, 'Insufficient token balance');
+        require(
+            _balanceOf(from) >= uint256(uint64(amount)),
+            'Insufficient token balance'
+        );
 
         address currentTokenAddress = _getTokenAddress();
 
-        int256 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
-            .transferToken(
-                currentTokenAddress,
-                from,
-                to,
-                int64(int256(amount))
-            );
+        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
+            .transferToken(currentTokenAddress, from, to, amount);
 
         _checkResponse(responseCode);
 
@@ -247,7 +249,7 @@ contract HederaERC20 is
      */
     function transfer(
         address to,
-        uint256 amount
+        int64 amount
     ) external override(IHederaERC20) returns (bool) {
         _transfer(_msgSender(), to, amount);
 

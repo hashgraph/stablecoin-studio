@@ -20,27 +20,24 @@ abstract contract Wipeable is IWipeable, TokenOwner, Roles {
      */
     function wipe(
         address account,
-        uint256 amount
+        int64 amount
     )
         external
         override(IWipeable)
         onlyRole(_getRoleId(RoleName.WIPE))
         checkAddressIsNotZero(account)
+        isNotNegative(amount)
         returns (bool)
     {
         require(
-            _balanceOf(account) >= amount,
+            _balanceOf(account) >= uint256(uint64(amount)),
             'Insufficient token balance for wiped'
         );
 
         address currentTokenAddress = _getTokenAddress();
 
-        int256 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
-            .wipeTokenAccount(
-                currentTokenAddress,
-                account,
-                int64(uint64(amount))
-            );
+        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
+            .wipeTokenAccount(currentTokenAddress, account, amount);
 
         bool success = _checkResponse(responseCode);
 

@@ -18,6 +18,16 @@ abstract contract TokenOwner is
     // HTS Token this contract owns
     address private _tokenAddress;
 
+    // modifier to check that amount is not negative
+    modifier isNotNegative(int256 amount) {
+        _isNotNegative(amount);
+        _;
+    }
+
+    function _isNotNegative(int256 amount) internal pure {
+        require(amount >= 0, 'Amount must be at least 0');
+    }
+
     // modifier to check that an address is not 0
     modifier checkAddressIsNotZero(address addr) {
         _checkAddressIsNotZero(addr);
@@ -63,7 +73,7 @@ abstract contract TokenOwner is
      *
      * @param responseCode The Hedera response code to transform
      */
-    function _checkResponse(int256 responseCode) internal pure returns (bool) {
+    function _checkResponse(int64 responseCode) internal pure returns (bool) {
         require(responseCode == HederaResponseCodes.SUCCESS, 'Error');
         return true;
     }
@@ -71,7 +81,7 @@ abstract contract TokenOwner is
     /**
      * @dev Returns the total number of tokens that exits
      *
-     * @return uint256 The total number of tokens that exists
+     * @return int64 The total number of tokens that exists
      */
     function _totalSupply() internal view returns (uint256) {
         return IHederaERC20Upgradeable(_tokenAddress).totalSupply();
@@ -80,7 +90,7 @@ abstract contract TokenOwner is
     /**
      * @dev Returns the number of decimals of the token
      *
-     * @return uint8 The number of decimals of the token
+     * @return int32 The number of decimals of the token
      */
     function _decimals() internal view returns (uint8) {
         return IERC20MetadataUpgradeable(_tokenAddress).decimals();
@@ -91,7 +101,7 @@ abstract contract TokenOwner is
      *
      * @param account The address of the account to be consulted
      *
-     * @return uint256 The number number tokens that an account has
+     * @return int64 The number number tokens that an account has
      */
 
     function _balanceOf(
@@ -104,11 +114,7 @@ abstract contract TokenOwner is
      * @param from The address the tokens are transferred from
      * @param to The address the tokens are transferred to
      */
-    function _transfer(
-        address from,
-        address to,
-        uint256 amount
-    ) internal virtual;
+    function _transfer(address from, address to, int64 amount) internal virtual;
 
     /**
      * @dev This empty reserved space is put in place to allow future versions to add new
