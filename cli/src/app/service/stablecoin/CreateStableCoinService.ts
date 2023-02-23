@@ -347,6 +347,8 @@ export default class CreateStableCoinService extends Service {
 
       tokenToCreate = await this.wizardCreateStableCoin();
     }
+    tokenToCreate.stableCoinFactory = utilsService.getCurrentFactory().id;
+    tokenToCreate.hederaERC20 = utilsService.getCurrentHederaERC20().id;
     return tokenToCreate;
   }
 
