@@ -99,8 +99,8 @@ export const english = {
     askFreezeAccount: 'Should the Hedera account be frozen for this token?',
     askFeaturesManagedBy:
       'Should the smart contract be used for all roles management?',
-    askKYC: 'Do you want KYC?',
-    askCustomFees: 'Would you like to manage custom fees?',
+    askKYC: 'Do you want to enable KYC?',
+    askCustomFees: 'Do you want de add custom fees?',
     features: {
       admin: 'Enter the admin key',
       supply: 'Enter the supply key',
@@ -127,7 +127,7 @@ export const english = {
     askGrantKYCToSender: 'Do you want to grant KYC to your current account?',
     askTargetAccount: 'What is the target account?',
     askAccountToBalance:
-      'Which account would you like to obtain the balance from?',
+      'For which account would you like to get the balance of?',
     askCashInRoleType: 'What type of permission do you want to grant?',
     askCashInRoleRevokeType: 'What type of permission do you want to revoke?',
     askEditCashInRole: 'What action do you want to perform?',

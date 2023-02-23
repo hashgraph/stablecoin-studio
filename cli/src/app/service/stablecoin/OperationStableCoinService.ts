@@ -205,7 +205,7 @@ export default class OperationStableCoinService extends Service {
           async () => {
             cashInRequest.amount = await utilsService
               .defaultSingleAsk(
-                language.getText('stablecoin.askTargetAccount'),
+                language.getText('stablecoin.askCashInAmount'),
                 '1',
               )
               .then((val) => val.replace(',', '.'));
