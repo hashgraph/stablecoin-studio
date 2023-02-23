@@ -1,13 +1,15 @@
 import Service from '../Service.js';
-import shell from 'shelljs';
-import pkg from '../../../../package.json';
 import yaml from 'js-yaml';
 import fs from 'fs-extra';
 import { IConfiguration } from '../../../domain/configuration/interfaces/IConfiguration.js';
 import { INetworkConfig } from '../../../domain/configuration/interfaces/INetworkConfig.js';
 import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
 import { IHederaERC20Config } from '../../../domain/configuration/interfaces/IHederaERC20Config.js';
-import { configurationService, utilsService } from '../../../index.js';
+import {
+  configurationService,
+  packagePath,
+  utilsService,
+} from '../../../index.js';
 import SetConfigurationService from './SetConfigurationService.js';
 import MaskData from 'maskdata';
 import {
@@ -123,7 +125,9 @@ export default class ConfigurationService extends Service {
     try {
       const defaultConfig = yaml.load(
         fs.readFileSync(
-          `${this.getGlobalPath()}/src/resources/config/${this.configFileName}`,
+          `${this.getPackagePath()}/src/resources/config/${
+            this.configFileName
+          }`,
         ),
       );
       const filePath = path ?? this.getDefaultConfigurationPath();
@@ -163,13 +167,11 @@ export default class ConfigurationService extends Service {
    */
   public getDefaultConfigurationPath(): string {
     if (this.path) return this.path;
-    return `${this.getGlobalPath()}/config/${this.configFileName}`;
+    return `${this.getPackagePath()}/config/${this.configFileName}`;
   }
 
-  private getGlobalPath(): string {
-    shell.config.silent = true;
-    const { stdout } = shell.exec('npm root -g');
-    return `${stdout}/${pkg.name}`.replace(/(\r\n|\n|\r)/gm, '');
+  private getPackagePath(): string {
+    return packagePath;
   }
 
   public validateConfigurationFile(): boolean {
