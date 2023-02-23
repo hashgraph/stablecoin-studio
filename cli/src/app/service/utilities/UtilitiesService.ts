@@ -40,10 +40,6 @@ export default class UtilitiesService extends Service {
     await Network.init(
       new InitializationRequest({
         network: this.getCurrentNetwork().name,
-        configuration: {
-          factoryAddress: this.getCurrentFactory().id,
-          hederaERC20Address: this.getCurrentHederaERC20().id,
-        },
       }),
     );
     await Network.connect(
