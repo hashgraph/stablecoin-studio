@@ -28,7 +28,11 @@ abstract contract Burnable is IBurnable, TokenOwner, Roles {
         address currentTokenAddress = _getTokenAddress();
 
         (int256 responseCode, ) = IHederaTokenService(_PRECOMPILED_ADDRESS)
-            .burnToken(currentTokenAddress, uint64(amount), new int64[](0));
+            .burnToken(
+                currentTokenAddress,
+                int64(uint64(amount)),
+                new int64[](0)
+            );
 
         bool success = _checkResponse(responseCode);
 
