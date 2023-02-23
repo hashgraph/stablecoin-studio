@@ -1,4 +1,4 @@
-import { Box, Flex, Text, Tooltip } from '@chakra-ui/react';
+import { Box, Flex, Link, Text, Tooltip } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import BaseContainer from '../../components/BaseContainer';
@@ -18,10 +18,16 @@ const StableCoinDetails = () => {
 
 	const isLoading = useRefreshCoinInfo();
 
+	const hashScanURL = 'https://hashscan.io/testnet/contract';
+
 	const renderKeys = ({ key }: { key: any }) => {
 		if (!key) return t('none').toUpperCase();
-		if ('value' in key) return t('smartContract').toUpperCase();
 		if (key.key === account.publicKey?.toString()) return t('currentUser').toUpperCase();
+
+		const isSmartContract = 'value' in key;
+		const text = isSmartContract
+			? `${t('smartContract').toUpperCase()} - ${key.value}`
+			: formatShortKey({ key: key.key });
 		return (
 			<Flex
 				gap={2}
@@ -32,11 +38,18 @@ const StableCoinDetails = () => {
 				wordBreak='break-all'
 			>
 				<Tooltip label={key.key} bgColor='black' borderRadius='5px'>
-					<Text>{formatShortKey({ key: key.key })}</Text>
+					<Text>{text}</Text>
 				</Tooltip>
-				<TooltipCopy valueToCopy={key.key}>
-					<Icon name='Copy' />
-				</TooltipCopy>
+				{!isSmartContract && (
+					<TooltipCopy valueToCopy={key.key}>
+						<Icon name='Copy' />
+					</TooltipCopy>
+				)}
+				{isSmartContract && (
+					<Link isExternal={true} href={`${hashScanURL}/${key.value}`}>
+						<Icon name='ArrowSquareOut' />
+					</Link>
+				)}
 			</Flex>
 		);
 	};
