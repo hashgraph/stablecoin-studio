@@ -124,7 +124,7 @@ Stable coin supply and accuracy definition (inital supply, max supply, decimals)
 
 **Manage permissions**
 
-Underlying token's keys definition (stable coin smart contract or another account), plus the possibility to grant KYC to the creating account at creation time (this option is only available if the KYC key is assigned to the smart contract and the Supply Key is not assigned to the creating account)
+Underlying token's keys definition (stable coin smart contract, current key, another key or no key at all), plus the possibility to grant KYC to the creating account at creation time (this option is only available if the KYC key is assigned to the smart contract and the Supply Key is not assigned to the creating account)
 
 ![image](https://user-images.githubusercontent.com/114951681/216949188-1a0db0e7-f3bd-41ef-8de2-1fec06cbb36d.png)
 
