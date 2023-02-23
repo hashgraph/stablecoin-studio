@@ -66,8 +66,8 @@ contract HederaERC20 is
             _PRECOMPILED_ADDRESS
         ).createFungibleToken{value: msg.value}(
             init.token,
-            init.initialTotalSupply,
-            init.tokenDecimals
+            int64(init.initialTotalSupply),
+            int32(init.tokenDecimals)
         );
 
         require(

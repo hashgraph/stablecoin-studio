@@ -20,7 +20,7 @@ abstract contract Wipeable is IWipeable, TokenOwner, Roles {
      */
     function wipe(
         address account,
-        uint32 amount
+        uint256 amount
     )
         external
         override(IWipeable)
@@ -36,7 +36,11 @@ abstract contract Wipeable is IWipeable, TokenOwner, Roles {
         address currentTokenAddress = _getTokenAddress();
 
         int256 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
-            .wipeTokenAccount(currentTokenAddress, account, amount);
+            .wipeTokenAccount(
+                currentTokenAddress,
+                account,
+                int64(uint64(amount))
+            );
 
         bool success = _checkResponse(responseCode);
 

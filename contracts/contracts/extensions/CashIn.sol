@@ -31,7 +31,11 @@ abstract contract CashIn is ICashIn, SupplierAdmin, Reserve {
         address currentTokenAddress = _getTokenAddress();
 
         (int256 responseCode, , ) = IHederaTokenService(_PRECOMPILED_ADDRESS)
-            .mintToken(currentTokenAddress, uint64(amount), new bytes[](0));
+            .mintToken(
+                currentTokenAddress,
+                int64(uint64(amount)),
+                new bytes[](0)
+            );
 
         bool success = _checkResponse(responseCode);
 
