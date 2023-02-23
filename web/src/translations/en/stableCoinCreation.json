@@ -57,8 +57,8 @@
 		"CreatorKYCFlag": "Creator account KYC",
 		"CreatorGrantedKYC": "TRUE",
 		"CreatorNotGrantedKYC": "FALSE",
-		"wantKyc": "Do you want KYC?",
-		"manageCustomFees": "Would you like to manage custom fees?"
+		"wantKyc": "Do you want to enable KYC?",
+		"manageCustomFees": "Do you want to add custom fees?"
 	},
 	"proofOfReserve": {
 		"title": "Proof of Reserve",

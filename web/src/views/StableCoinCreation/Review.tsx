@@ -155,7 +155,7 @@ const Review = (props: ReviewProps) => {
 							{
 								label: t('stableCoinCreation:managementPermissions.grantKYCToOriginalSender'),
 								value:
-									!managementPermissions && grantKYCToOriginalSender
+									grantKYCToOriginalSender
 										? t('stableCoinCreation:managementPermissions.CreatorGrantedKYC')
 										: t('stableCoinCreation:managementPermissions.CreatorNotGrantedKYC'),
 							},

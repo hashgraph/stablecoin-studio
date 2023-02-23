@@ -193,7 +193,7 @@ const StableCoinCreation = () => {
 			autorenewAccount,
 			managementPermissions,
 			freezeKey,
-			isKycRequired,
+			kycRequired,
 			kycKey,
 			wipeKey,
 			pauseKey,
@@ -223,11 +223,9 @@ const StableCoinCreation = () => {
 			request.pauseKey = Account.NullPublicKey;
 			request.supplyKey = Account.NullPublicKey;
 			request.treasury = undefined;
-			request.grantKYCToOriginalSender = false;
 		} else {
 			request.adminKey = accountInfo.publicKey;
 			request.freezeKey = formatKey(freezeKey.label, 'freezeKey');
-			request.grantKYCToOriginalSender = grantKYCToOriginalSender;
 			request.wipeKey = formatKey(wipeKey.label, 'wipeKey');
 			request.pauseKey = formatKey(pauseKey.label, 'pauseKey');
 			request.supplyKey = formatKey(supplyKey.label, 'supplyKey');
@@ -237,7 +235,14 @@ const StableCoinCreation = () => {
 					: undefined;
 		}
 
-		request.kycKey =  (isKycRequired) ? formatKey(kycKey.label, 'kycKey') : undefined;
+		if (kycRequired) {
+			request.kycKey =  formatKey(kycKey.label, 'kycKey') 
+			request.grantKYCToOriginalSender = grantKYCToOriginalSender;
+		} else {
+			request.kycKey = undefined;
+			request.grantKYCToOriginalSender = false;
+		}
+
 		request.feeScheduleKey = (manageCustomFees) ? formatKey(feeScheduleKey.label, 'feeScheduleKey') : undefined;
 
 		try {

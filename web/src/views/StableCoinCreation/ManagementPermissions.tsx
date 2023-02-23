@@ -40,6 +40,8 @@ const ManagementPermissions = ({
 	useEffect(() => {
 		if (watch('kycKey')?.value !== 2 || watch('supplyKey')?.value === 1) {
 			setValue('grantKYCToOriginalSender', false);
+		} else {
+			setValue('grantKYCToOriginalSender', true);
 		}
 	}, [watch('kycKey'), watch('supplyKey')]);
 
