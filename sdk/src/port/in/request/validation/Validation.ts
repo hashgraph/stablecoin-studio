@@ -296,7 +296,7 @@ export default class Validation {
 			if (zeroIsValid && value.isLowerThan(zero))
 				err.push(new InvalidRange(val, '0', undefined));
 			else if (!zeroIsValid && value.isLowerOrEqualThan(zero))
-				err.push(new InvalidRange(val, '0..', undefined));
+				err.push(new InvalidRange(val, '0', undefined));
 
 			if (valueDecimals > 18) {
 				err.push(new InvalidDecimalRange(val, 0, 18));
