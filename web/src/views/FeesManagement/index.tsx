@@ -511,29 +511,29 @@ const FeesManagement = () => {
 												rules={{
 													required: t('global:validations.required') ?? propertyNotFound,
 													validate: {
-														validation: (option: Option) => {
+														validation: (option: any) => {
+															if (!option.__isNew__) return true;
 															const _fractionalFee = fractionalFee[i];
 															_fractionalFee.tokenId = option.value as string;
 															return handleRequestValidation(_fractionalFee.validate('tokenId'));
 														},
 														checkTokenID: async (option: any) => {
-															if (option.__isNew__) {
-																try {
-																	await SDKService.getStableCoinDetails(
-																		new GetStableCoinDetailsRequest({
-																			id: option.value as string,
-																		}),
-																	);
-																} catch (e) {
-																	console.log({ e });
-																	return t('global:validations.tokenIdNotExists', {
-																		tokenId: option.value,
-																	}) as string;
-																} finally {
-																	console.log('Terminado');
-																}
+															if (!option.__isNew__) return true;
+
+															try {
+																await SDKService.getStableCoinDetails(
+																	new GetStableCoinDetailsRequest({
+																		id: option.value as string,
+																	}),
+																);
+															} catch (e) {
+																console.log({ e });
+																return t('global:validations.tokenIdNotExists', {
+																	tokenId: option.value,
+																}) as string;
+															} finally {
+																console.log('Terminado');
 															}
-															return true;
 														},
 													},
 												}}
