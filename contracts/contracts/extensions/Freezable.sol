@@ -18,7 +18,7 @@ abstract contract Freezable is IFreezable, TokenOwner, Roles {
         external
         override(IFreezable)
         onlyRole(_getRoleId(RoleName.FREEZE))
-        checkAddressIsNotZero(account)
+        addressIsNotZero(account)
         returns (bool)
     {
         address currentTokenAddress = _getTokenAddress();
@@ -44,7 +44,7 @@ abstract contract Freezable is IFreezable, TokenOwner, Roles {
         external
         override(IFreezable)
         onlyRole(_getRoleId(RoleName.FREEZE))
-        checkAddressIsNotZero(account)
+        addressIsNotZero(account)
         returns (bool)
     {
         address currentTokenAddress = _getTokenAddress();

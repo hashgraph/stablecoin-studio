@@ -20,14 +20,14 @@ abstract contract Rescatable is IRescatable, TokenOwner, Roles {
         external
         override(IRescatable)
         onlyRole(_getRoleId(RoleName.RESCUE))
-        isNotNegative(amount)
+        amountIsNotNegative(amount, false)
+        valueIsNotGreaterThan(
+            uint256(uint64(amount)),
+            _balanceOf(address(this)),
+            true
+        )
         returns (bool)
     {
-        require(
-            _balanceOf(address(this)) >= uint256(uint64(amount)),
-            'Amount must not exceed the token balance'
-        );
-
         address currentTokenAddress = _getTokenAddress();
 
         int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)

@@ -17,6 +17,7 @@ abstract contract KYC is IKYC, TokenOwner, Roles {
         external
         override(IKYC)
         onlyRole(_getRoleId(RoleName.KYC))
+        addressIsNotZero(account)
         returns (bool)
     {
         address currentTokenAddress = _getTokenAddress();
@@ -41,6 +42,7 @@ abstract contract KYC is IKYC, TokenOwner, Roles {
         external
         override(IKYC)
         onlyRole(_getRoleId(RoleName.KYC))
+        addressIsNotZero(account)
         returns (bool)
     {
         address currentTokenAddress = _getTokenAddress();

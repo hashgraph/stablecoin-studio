@@ -3,6 +3,55 @@ pragma solidity 0.8.16;
 
 interface ISupplierAdmin {
     /**
+     * @dev Emitted when a supply controller increases a supplier's allowance
+     *
+     * @param sender The caller of the function that emitted the event
+     * @param supplier The supplier account
+     * @param amount The amount to increase supplier allowance by
+     * @param oldAllowance The supplier allowance before the increase
+     * @param newAllowance The supplier allowance after the increase
+     */
+    event SupplierAllowanceIncreased(
+        address indexed sender,
+        address indexed supplier,
+        uint256 amount,
+        uint256 oldAllowance,
+        uint256 newAllowance
+    );
+
+    /**
+     * @dev Emitted when a supply controller decreases a supplier's allowance
+     *
+     * @param sender The caller of the function that emitted the event
+     * @param supplier The supplier account
+     * @param amount The amount to decrease supplier allowance by
+     * @param oldAllowance The supplier allowance before the decrease
+     * @param newAllowance The supplier allowance after the decrease
+     */
+    event SupplierAllowanceDecreased(
+        address indexed sender,
+        address indexed supplier,
+        uint256 amount,
+        uint256 oldAllowance,
+        uint256 newAllowance
+    );
+
+    /**
+     * @dev Emitted when a supply controller resets a supplier's allowance
+     *
+     * @param sender The caller of the function that emitted the event
+     * @param supplier The supplier account
+     * @param oldAllowance The supplier allowance before the reset
+     * @param newAllowance The supplier allowance after the reset (expected to be 0)
+     */
+    event SupplierAllowanceReset(
+        address indexed sender,
+        address indexed supplier,
+        uint256 oldAllowance,
+        uint256 newAllowance
+    );
+
+    /**
      * @dev Return number of tokens allowed to be minted of the address account `supplier`
      *
      * @param supplier The address of the supplier

@@ -22,8 +22,8 @@ abstract contract CashIn is ICashIn, SupplierAdmin, Reserve {
         override(ICashIn)
         onlyRole(_getRoleId(RoleName.CASHIN))
         checkReserveIncrease(uint256(uint64(amount)))
-        checkAddressIsNotZero(account)
-        isNotNegative(amount)
+        addressIsNotZero(account)
+        amountIsNotNegative(amount, false)
         returns (bool)
     {
         if (!_unlimitedSupplierAllowances[msg.sender])
@@ -31,10 +31,15 @@ abstract contract CashIn is ICashIn, SupplierAdmin, Reserve {
 
         address currentTokenAddress = _getTokenAddress();
 
+        uint256 balance = _balanceOf(address(this));
+
         (int64 responseCode, , ) = IHederaTokenService(_PRECOMPILED_ADDRESS)
             .mintToken(currentTokenAddress, amount, new bytes[](0));
 
         bool success = _checkResponse(responseCode);
+
+        if (!((_balanceOf(address(this)) - balance) == uint256(uint64(amount))))
+            revert('The smart contract is not the treasury account');
 
         _transfer(address(this), account, amount);
 
