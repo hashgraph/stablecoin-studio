@@ -12,6 +12,7 @@ import {
     StableCoinFactoryProxy__factory,
     StableCoinFactoryProxyAdmin__factory,
     HederaReserve__factory,
+    StableCoinFactory__factory,
 } from '../typechain-types'
 
 import { contractCall, toEvmAddress } from './utils'
@@ -1234,4 +1235,52 @@ export async function revokeKyc(
         HederaERC20__factory.abi
     )
     if (result[0] != true) throw Error
+}
+
+// StableCoinFactory ///////////////////////////////////////////////////
+export async function getHederaERC20Addresses(
+    stableCoinFactoryProxy: ContractId,
+    client: Client
+) {
+    const result = await contractCall(
+        stableCoinFactoryProxy,
+        'getHederaERC20Address',
+        [],
+        client,
+        Gas1,
+        StableCoinFactory__factory.abi
+    )
+    return result[0]
+}
+
+export async function getHederaERC20(
+    stableCoinFactoryProxy: ContractId,
+    client: Client,
+    index: number
+) {
+    const result = await contractCall(
+        stableCoinFactoryProxy,
+        'hederaERC20Address',
+        [index],
+        client,
+        Gas1,
+        StableCoinFactory__factory.abi
+    )
+    return result[0]
+}
+
+export async function addHederaERC20Version(
+    stableCoinFactoryProxy: ContractId,
+    client: Client,
+    newAddress: string
+) {
+    const result = await contractCall(
+        stableCoinFactoryProxy,
+        'addHederaERC20Version',
+        [newAddress],
+        client,
+        Gas1,
+        StableCoinFactory__factory.abi
+    )
+    return result[0]
 }
