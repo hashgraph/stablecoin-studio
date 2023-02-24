@@ -236,14 +236,16 @@ const StableCoinCreation = () => {
 		}
 
 		if (kycRequired) {
-			request.kycKey =  formatKey(kycKey.label, 'kycKey') 
+			request.kycKey = formatKey(kycKey.label, 'kycKey');
 			request.grantKYCToOriginalSender = grantKYCToOriginalSender;
 		} else {
 			request.kycKey = undefined;
 			request.grantKYCToOriginalSender = false;
 		}
 
-		request.feeScheduleKey = (manageCustomFees) ? formatKey(feeScheduleKey.label, 'feeScheduleKey') : undefined;
+		request.feeScheduleKey = manageCustomFees
+			? formatKey(feeScheduleKey.label, 'feeScheduleKey')
+			: undefined;
 
 		try {
 			onOpen();
