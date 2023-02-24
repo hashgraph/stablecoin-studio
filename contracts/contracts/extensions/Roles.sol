@@ -81,19 +81,19 @@ abstract contract Roles is IRoles, AccessControlUpgradeable {
      * @dev Array containing all roles
      *
      */
-    bytes32[] private _roles;
+    bytes32[] private _listOfroles;
 
     function __rolesInit() internal onlyInitializing {
         __AccessControl_init();
-        _roles.push(DEFAULT_ADMIN_ROLE);
-        _roles.push(_CASHIN_ROLE);
-        _roles.push(_BURN_ROLE);
-        _roles.push(_WIPE_ROLE);
-        _roles.push(_RESCUE_ROLE);
-        _roles.push(_PAUSE_ROLE);
-        _roles.push(_FREEZE_ROLE);
-        _roles.push(_DELETE_ROLE);
-        _roles.push(_KYC_ROLE);
+        _listOfroles.push(DEFAULT_ADMIN_ROLE);
+        _listOfroles.push(_CASHIN_ROLE);
+        _listOfroles.push(_BURN_ROLE);
+        _listOfroles.push(_WIPE_ROLE);
+        _listOfroles.push(_RESCUE_ROLE);
+        _listOfroles.push(_PAUSE_ROLE);
+        _listOfroles.push(_FREEZE_ROLE);
+        _listOfroles.push(_DELETE_ROLE);
+        _listOfroles.push(_KYC_ROLE);
     }
 
     /**
@@ -105,12 +105,12 @@ abstract contract Roles is IRoles, AccessControlUpgradeable {
     function getRoles(
         address account
     ) external view override(IRoles) returns (bytes32[] memory rolesToReturn) {
-        uint256 rolesLength = _roles.length;
+        uint256 rolesLength = _listOfroles.length;
 
         rolesToReturn = new bytes32[](rolesLength);
 
         for (uint i = 0; i < rolesLength; i++) {
-            bytes32 role = _roles[i];
+            bytes32 role = _listOfroles[i];
 
             rolesToReturn[i] = hasRole(role, account) ? role : _WITHOUT_ROLE;
         }
@@ -129,7 +129,7 @@ abstract contract Roles is IRoles, AccessControlUpgradeable {
     }
 
     function _getRoleId(RoleName role) internal view returns (bytes32) {
-        return _roles[uint256(role)];
+        return _listOfroles[uint256(role)];
     }
 
     /**

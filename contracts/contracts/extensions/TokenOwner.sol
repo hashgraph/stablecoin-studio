@@ -18,24 +18,67 @@ abstract contract TokenOwner is
     // HTS Token this contract owns
     address private _tokenAddress;
 
-    // modifier to check that amount is not negative
-    modifier isNotNegative(int256 amount) {
-        _isNotNegative(amount);
+    // modifier to check that value is not less than ref
+    modifier valueIsNotLessThan(
+        uint256 value,
+        uint256 ref,
+        bool equalAccepted
+    ) {
+        _valueIsNotLessThan(value, ref, equalAccepted);
         _;
     }
 
-    function _isNotNegative(int256 amount) internal pure {
-        require(amount >= 0, 'Amount must be at least 0');
+    function _valueIsNotLessThan(
+        uint256 value,
+        uint256 ref,
+        bool equalAccepted
+    ) internal pure {
+        if (equalAccepted && value < ref) revert LessThan(value, ref);
+        else if (!equalAccepted && value <= ref) revert LessThan(value, ref);
+    }
+
+    // modifier to check that value is not greater than ref
+    modifier valueIsNotGreaterThan(
+        uint256 value,
+        uint256 ref,
+        bool equalAccepted
+    ) {
+        _valueIsNotGreaterThan(value, ref, equalAccepted);
+        _;
+    }
+
+    function _valueIsNotGreaterThan(
+        uint256 value,
+        uint256 ref,
+        bool equalAccepted
+    ) internal pure {
+        if (equalAccepted && value > ref) revert GreaterThan(value, ref);
+        else if (!equalAccepted && value >= ref) revert GreaterThan(value, ref);
+    }
+
+    // modifier to check that amount is not negative
+    modifier amountIsNotNegative(int256 amount, bool zeroAccepted) {
+        _amountIsNotNegative(amount, zeroAccepted);
+        _;
+    }
+
+    function _amountIsNotNegative(
+        int256 amount,
+        bool zeroAccepted
+    ) internal pure {
+        if (zeroAccepted && amount < 0) revert NegativeAmount(amount);
+        else if (!zeroAccepted && amount <= 0) revert NegativeAmount(amount);
     }
 
     // modifier to check that an address is not 0
-    modifier checkAddressIsNotZero(address addr) {
-        _checkAddressIsNotZero(addr);
+    modifier addressIsNotZero(address addr) {
+        _addressIsNotZero(addr);
         _;
     }
 
-    function _checkAddressIsNotZero(address addr) internal pure {
-        require(addr != address(0), 'Provided address is 0');
+    function _addressIsNotZero(address addr) internal pure {
+        //require(addr != address(0), 'Provided address is 0');
+        if (addr == address(0)) revert AddressZero(addr);
     }
 
     // Initiliazes the token address
@@ -74,7 +117,9 @@ abstract contract TokenOwner is
      * @param responseCode The Hedera response code to transform
      */
     function _checkResponse(int64 responseCode) internal pure returns (bool) {
-        require(responseCode == HederaResponseCodes.SUCCESS, 'Error');
+        //require(responseCode == HederaResponseCodes.SUCCESS, 'Error');
+        if (responseCode != HederaResponseCodes.SUCCESS)
+            revert ResponseCodeInvalid(responseCode);
         return true;
     }
 

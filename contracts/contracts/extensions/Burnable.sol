@@ -18,14 +18,14 @@ abstract contract Burnable is IBurnable, TokenOwner, Roles {
         external
         override(IBurnable)
         onlyRole(_getRoleId(RoleName.BURN))
-        isNotNegative(amount)
+        amountIsNotNegative(amount, false)
+        valueIsNotGreaterThan(
+            uint256(uint64(amount)),
+            _balanceOf(address(this)),
+            true
+        )
         returns (bool)
     {
-        require(
-            _balanceOf(address(this)) >= uint256(uint64(amount)),
-            'Amount is greater than treasury account balance'
-        );
-
         address currentTokenAddress = _getTokenAddress();
 
         (int64 responseCode, ) = IHederaTokenService(_PRECOMPILED_ADDRESS)
