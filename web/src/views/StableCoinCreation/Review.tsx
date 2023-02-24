@@ -132,7 +132,7 @@ const Review = (props: ReviewProps) => {
 								label: t('stableCoinCreation:managementPermissions.kyc'),
 								value: kycRequired
 									? getKey(kycKey, 'kycKeyOther')
-									: t('stableCoinCreation:managementPermissions.none')
+									: t('stableCoinCreation:managementPermissions.none'),
 							},
 							{
 								label: t('stableCoinCreation:managementPermissions.pause'),
@@ -144,7 +144,7 @@ const Review = (props: ReviewProps) => {
 								label: t('stableCoinCreation:managementPermissions.feeSchedule'),
 								value: manageCustomFees
 									? getKey(feeScheduleKey, 'feeScheduleKeyOther')
-									: t('stableCoinCreation:managementPermissions.none')
+									: t('stableCoinCreation:managementPermissions.none'),
 							},
 						]}
 					/>
@@ -154,10 +154,9 @@ const Review = (props: ReviewProps) => {
 						details={[
 							{
 								label: t('stableCoinCreation:managementPermissions.grantKYCToOriginalSender'),
-								value:
-									grantKYCToOriginalSender
-										? t('stableCoinCreation:managementPermissions.CreatorGrantedKYC')
-										: t('stableCoinCreation:managementPermissions.CreatorNotGrantedKYC'),
+								value: grantKYCToOriginalSender
+									? t('stableCoinCreation:managementPermissions.CreatorGrantedKYC')
+									: t('stableCoinCreation:managementPermissions.CreatorNotGrantedKYC'),
 							},
 						]}
 					/>
