@@ -122,6 +122,9 @@ export const english = {
       rescue: 'Choose the RESCUE admin account',
       pause: 'Choose the PAUSE admin account',
       freeze: 'Choose the FREEZE admin account',
+      delete: 'Choose the DELETE admin account',
+      kyc: 'Choose the KYC admin account',
+      cashin: 'Choose the CASHIN admin account',
       options: {
         currentAccount: 'Current User Account',
         otherAccount: 'Other Account',

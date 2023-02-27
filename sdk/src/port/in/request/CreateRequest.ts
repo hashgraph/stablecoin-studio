@@ -333,54 +333,14 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 					bInitialSupply,
 				);
 			},
-			burnRoleAccount: (val) => {
-				const err = Validation.checkHederaIdFormat()(val);
-				if (err.length > 0) {
-					return err;
-				}
-			},
-			wipeRoleAccount: (val) => {
-				const err = Validation.checkHederaIdFormat()(val);
-				if (err.length > 0) {
-					return err;
-				}
-			},
-			rescueRoleAccount: (val) => {
-				const err = Validation.checkHederaIdFormat()(val);
-				if (err.length > 0) {
-					return err;
-				}
-			},
-			pauseRoleAccount: (val) => {
-				const err = Validation.checkHederaIdFormat()(val);
-				if (err.length > 0) {
-					return err;
-				}
-			},
-			freezeRoleAccount: (val) => {
-				const err = Validation.checkHederaIdFormat()(val);
-				if (err.length > 0) {
-					return err;
-				}
-			},
-			deleteRoleAccount: (val) => {
-				const err = Validation.checkHederaIdFormat()(val);
-				if (err.length > 0) {
-					return err;
-				}
-			},
-			kycRoleAccount: (val) => {
-				const err = Validation.checkHederaIdFormat()(val);
-				if (err.length > 0) {
-					return err;
-				}
-			},
-			cashInRoleAccount: (val) => {
-				const err = Validation.checkHederaIdFormat()(val);
-				if (err.length > 0) {
-					return err;
-				}
-			},
+			burnRoleAccount: Validation.checkHederaIdFormat(),
+			wipeRoleAccount: Validation.checkHederaIdFormat(),
+			rescueRoleAccount: Validation.checkHederaIdFormat(),
+			pauseRoleAccount: Validation.checkHederaIdFormat(),
+			freezeRoleAccount: Validation.checkHederaIdFormat(),
+			deleteRoleAccount: Validation.checkHederaIdFormat(),
+			kycRoleAccount: Validation.checkHederaIdFormat(),
+			cashInRoleAccount: Validation.checkHederaIdFormat(),
 			cashInRoleAllowance: (val) => {
 				if (val === undefined || val === '') {
 					return;
