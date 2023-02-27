@@ -37,6 +37,8 @@ import {
     transferFrom,
     Burn,
     transfer,
+    getRoles,
+    isUnlimitedSupplierAllowance,
 } from '../scripts/contractsMethods'
 import { clientId, toEvmAddress } from '../scripts/utils'
 import { Client, ContractId } from '@hashgraph/sdk'
@@ -46,6 +48,19 @@ import {
 } from '../typechain-types'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
+import {
+    BURN_ROLE,
+    CASHIN_ROLE,
+    DEFAULT_ADMIN_ROLE,
+    DELETE_ROLE,
+    FREEZE_ROLE,
+    KYC_ROLE,
+    PAUSE_ROLE,
+    RESCUE_ROLE,
+    RolesId,
+    WIPE_ROLE,
+    WITHOUT_ROLE,
+} from '../scripts/constants'
 
 chai.use(chaiAsPromised)
 const expect = chai.expect
@@ -139,6 +154,144 @@ describe('HederaERC20 Tests', function () {
 
         proxyAddress = result[0]
         reserveProxy = result[6]
+    })
+
+    it('deploy SC with roles associated to another account', async function () {
+        // Deploy Token using Client
+        const creation = await deployContractsWithSDK({
+            name: TokenName,
+            symbol: TokenSymbol,
+            decimals: TokenDecimals,
+            initialSupply: INIT_SUPPLY.toString(),
+            maxSupply: MAX_SUPPLY.toString(),
+            memo: TokenMemo,
+            account: operatorAccount,
+            privateKey: operatorPriKey,
+            publicKey: operatorPubKey,
+            isED25519Type: operatorIsE25519,
+            initialAmountDataFeed: BigNumber.from('2000').toString(),
+            allRolesToCreator: false,
+            RolesToAccount: nonOperatorAccount,
+            isRolesToAccountE25519: nonOperatorIsE25519,
+        })
+
+        const newProxyAddress = creation[0]
+
+        // Checking roles
+        const resultNonOperatorAccount = await getRoles(
+            newProxyAddress,
+            operatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
+        const isUnlimitedNonOperator = await isUnlimitedSupplierAllowance(
+            newProxyAddress,
+            operatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
+
+        const resultOperatorAccount = await getRoles(
+            newProxyAddress,
+            operatorClient,
+            operatorAccount,
+            operatorIsE25519
+        )
+        const isUnlimitedOperator = await isUnlimitedSupplierAllowance(
+            newProxyAddress,
+            operatorClient,
+            operatorAccount,
+            operatorIsE25519
+        )
+
+        expect(isUnlimitedOperator).to.eq(false)
+        expect(isUnlimitedNonOperator).to.eq(true)
+
+        for (let i = 0; i < resultOperatorAccount.length; i++) {
+            if (i == RolesId.Cashin)
+                expect(resultOperatorAccount[i].toUpperCase()).to.equals(
+                    WITHOUT_ROLE.toUpperCase()
+                )
+            else if (i == RolesId.Burn)
+                expect(resultOperatorAccount[i].toUpperCase()).to.equals(
+                    WITHOUT_ROLE.toUpperCase()
+                )
+            else if (i == RolesId.Delete)
+                expect(resultOperatorAccount[i].toUpperCase()).to.equals(
+                    WITHOUT_ROLE.toUpperCase()
+                )
+            else if (i == RolesId.Freeze)
+                expect(resultOperatorAccount[i].toUpperCase()).to.equals(
+                    WITHOUT_ROLE.toUpperCase()
+                )
+            else if (i == RolesId.Wipe)
+                expect(resultOperatorAccount[i].toUpperCase()).to.equals(
+                    WITHOUT_ROLE.toUpperCase()
+                )
+            else if (i == RolesId.Rescue)
+                expect(resultOperatorAccount[i].toUpperCase()).to.equals(
+                    WITHOUT_ROLE.toUpperCase()
+                )
+            else if (i == RolesId.Pause)
+                expect(resultOperatorAccount[i].toUpperCase()).to.equals(
+                    WITHOUT_ROLE.toUpperCase()
+                )
+            else if (i == RolesId.Kyc)
+                expect(resultOperatorAccount[i].toUpperCase()).to.equals(
+                    WITHOUT_ROLE.toUpperCase()
+                )
+            else if (i == RolesId.Admin)
+                expect(resultOperatorAccount[i].toUpperCase()).to.equals(
+                    DEFAULT_ADMIN_ROLE.toUpperCase()
+                )
+            else
+                expect(resultOperatorAccount[i].toUpperCase()).to.equals(
+                    WITHOUT_ROLE.toUpperCase()
+                )
+        }
+
+        for (let i = 0; i < resultNonOperatorAccount.length; i++) {
+            if (i == RolesId.Cashin)
+                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
+                    CASHIN_ROLE.toUpperCase()
+                )
+            else if (i == RolesId.Burn)
+                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
+                    BURN_ROLE.toUpperCase()
+                )
+            else if (i == RolesId.Delete)
+                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
+                    DELETE_ROLE.toUpperCase()
+                )
+            else if (i == RolesId.Freeze)
+                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
+                    FREEZE_ROLE.toUpperCase()
+                )
+            else if (i == RolesId.Wipe)
+                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
+                    WIPE_ROLE.toUpperCase()
+                )
+            else if (i == RolesId.Rescue)
+                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
+                    RESCUE_ROLE.toUpperCase()
+                )
+            else if (i == RolesId.Pause)
+                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
+                    PAUSE_ROLE.toUpperCase()
+                )
+            else if (i == RolesId.Kyc)
+                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
+                    KYC_ROLE.toUpperCase()
+                )
+            else if (i == RolesId.Admin)
+                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
+                    WITHOUT_ROLE.toUpperCase()
+                )
+            else
+                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
+                    WITHOUT_ROLE.toUpperCase()
+                )
+        }
     })
 
     it('input parmeters check', async function () {

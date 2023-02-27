@@ -37,15 +37,10 @@ import {
 
 const hre = require('hardhat')
 
-// const hederaERC20Address = '0.0.3562139' //'0.0.3559149'
-// const factoryProxyAddress = '0.0.3562145' //'0.0.3559164'
-// const factoryProxyAdminAddress = '0.0.3562143' //'0.0.3559160'
-// const factoryAddress = '0.0.3562141' //'0.0.3559156'
-
-const hederaERC20Address = ''
-const factoryProxyAddress = ''
-const factoryProxyAdminAddress = ''
-const factoryAddress = ''
+const hederaERC20Address = '0.0.3583157'
+const factoryProxyAddress = '0.0.3583163'
+const factoryProxyAdminAddress = '0.0.3583161'
+const factoryAddress = '0.0.3583159'
 
 export const ADDRESS_0 = '0x0000000000000000000000000000000000000000'
 const hreConfig = hre.network.config
@@ -268,6 +263,9 @@ export type DeployParameters = {
     createReserve?: boolean
     grantKYCToOriginalSender?: boolean
     addKyc?: boolean
+    allRolesToCreator?: boolean
+    RolesToAccount?: string
+    isRolesToAccountE25519?: boolean
 }
 export async function deployContractsWithSDK({
     name,
@@ -287,6 +285,9 @@ export async function deployContractsWithSDK({
     createReserve = true,
     grantKYCToOriginalSender = false,
     addKyc = false,
+    allRolesToCreator = true,
+    RolesToAccount = '',
+    isRolesToAccountE25519 = false,
 }: DeployParameters): Promise<ContractId[]> {
     const AccountEvmAddress = await toEvmAddress(account, isED25519Type)
 
@@ -347,14 +348,22 @@ export async function deployContractsWithSDK({
         keys: allToContract
             ? tokenKeystoContract(addKyc)
             : tokenKeystoKey(publicKey, isED25519Type),
-        roles: allToContract ? rolestoAccountsByKeys() : [],
-        cashinRole: {
-            role: CASHIN_ROLE,
-            account: AccountId.fromString(
-                hreConfig.accounts[0].account
-            ).toSolidityAddress(),
-            allowance: 0,
-        },
+        roles: await rolestoAccountsByKeys(
+            allToContract,
+            allRolesToCreator,
+            account,
+            isED25519Type,
+            RolesToAccount,
+            isRolesToAccountE25519
+        ),
+        cashinRole: await cashInRoleAssignment(
+            allToContract,
+            allRolesToCreator,
+            account,
+            isED25519Type,
+            RolesToAccount,
+            isRolesToAccountE25519
+        ),
     }
 
     console.log(`Token Object: ${JSON.stringify(tokenObject)}`)
@@ -507,53 +516,70 @@ function tokenKeystoKey(publicKey: string, isED25519: boolean) {
     return keys
 }
 
-function rolestoAccountsByKeys() {
-    console.log('El rol para ' + hreConfig.accounts[0].account)
+async function rolestoAccountsByKeys(
+    allToContract: boolean,
+    allRolesToCreator: boolean,
+    CreatorAccount: string,
+    isCreatorE25519: boolean,
+    RolesToAccount: string,
+    isRolesToAccountE25519: boolean
+) {
+    if (!allToContract) return []
+    const RoleToAccount = allRolesToCreator
+        ? await toEvmAddress(CreatorAccount, isCreatorE25519)
+        : await toEvmAddress(RolesToAccount, isRolesToAccountE25519)
+
     const roles = [
         {
             role: BURN_ROLE,
-            account: AccountId.fromString(
-                hreConfig.accounts[0].account
-            ).toSolidityAddress(),
+            account: RoleToAccount,
         },
         {
             role: PAUSE_ROLE,
-            account: AccountId.fromString(
-                hreConfig.accounts[0].account
-            ).toSolidityAddress(),
+            account: RoleToAccount,
         },
         {
             role: WIPE_ROLE,
-            account: AccountId.fromString(
-                hreConfig.accounts[0].account
-            ).toSolidityAddress(),
+            account: RoleToAccount,
         },
         {
             role: FREEZE_ROLE,
-            account: AccountId.fromString(
-                hreConfig.accounts[0].account
-            ).toSolidityAddress(),
+            account: RoleToAccount,
         },
         {
             role: RESCUE_ROLE,
-            account: AccountId.fromString(
-                hreConfig.accounts[0].account
-            ).toSolidityAddress(),
+            account: RoleToAccount,
         },
         {
             role: DELETE_ROLE,
-            account: AccountId.fromString(
-                hreConfig.accounts[0].account
-            ).toSolidityAddress(),
+            account: RoleToAccount,
         },
         {
             role: KYC_ROLE,
-            account: AccountId.fromString(
-                hreConfig.accounts[0].account
-            ).toSolidityAddress(),
+            account: RoleToAccount,
         },
     ]
     return roles
+}
+
+async function cashInRoleAssignment(
+    allToContract: boolean,
+    allRolesToCreator: boolean,
+    CreatorAccount: string,
+    isCreatorE25519: boolean,
+    RolesToAccount: string,
+    isRolesToAccountE25519: boolean
+) {
+    const CashInRole = {
+        account: allToContract
+            ? allRolesToCreator
+                ? await toEvmAddress(CreatorAccount, isCreatorE25519)
+                : await toEvmAddress(RolesToAccount, isRolesToAccountE25519)
+            : ADDRESS_0,
+        allowance: 0,
+    }
+
+    return CashInRole
 }
 
 export async function deployHederaReserve(
