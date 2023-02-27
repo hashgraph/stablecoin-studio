@@ -72,8 +72,8 @@
 		"createDataFeed": "Create data feed",
 		"initialSupply": "Initial supply",
 		"addressPor": "Adrress proof of reserve  ",
-		"initialSupplyPor": "Initial supply POR",
-		"initialSupplyPorExternal": "External POR"
+		"initialSupplyPor": "Initial supply PoR",
+		"initialSupplyPorExternal": "External PoR"
 	},
 	"review": {
 		"basicDetails": "Basic details",

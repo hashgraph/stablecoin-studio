@@ -277,17 +277,21 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 	}
 
 	public static checkCashInAllowance(
-		initialSupply: BigDecimal,
+		cashInAllowance: BigDecimal,
 		decimals: number,
+		initialSupply?: BigDecimal,
 		maxSupply?: BigDecimal,
 	): BaseError[] {
 		const list: BaseError[] = [];
-		const min = BigDecimal.ZERO;
-		const max =
+		const min = initialSupply ?? BigDecimal.ZERO;
+		maxSupply =
 			maxSupply ??
 			BigDecimal.fromValue(BigNumber.from(MAX_SUPPLY), decimals);
-		if (!CheckNums.isWithinRange(initialSupply, min, max)) {
-			list.push(new CashInAllowanceInvalid(initialSupply.toString()));
+		const max: BigDecimal = BigDecimal.fromString(
+			(maxSupply.toUnsafeFloat() - min.toUnsafeFloat()).toString(),
+		);
+		if (!CheckNums.isWithinRange(cashInAllowance, min, max)) {
+			list.push(new CashInAllowanceInvalid(cashInAllowance.toString()));
 		}
 		return list;
 	}
