@@ -9,13 +9,11 @@ import {
 import { BigNumber } from 'ethers'
 
 import {
+    ProxyAdmin__factory,
+    TransparentUpgradeableProxy__factory,
     StableCoinFactory__factory,
-    StableCoinFactoryProxyAdmin__factory,
-    StableCoinFactoryProxy__factory,
     HederaERC20__factory,
-    HederaReserveProxyAdmin__factory,
     HederaReserve__factory,
-    HederaReserveProxy__factory,
 } from '../typechain-types'
 
 import {
@@ -27,11 +25,11 @@ import {
 
 const hre = require('hardhat')
 
-const hederaERC20Address = '0.0.3562139' //'0.0.3559149'
+const hederaERC20Address = '0.0.3579871' //'0.0.3562139'
 
-const factoryProxyAddress = '0.0.3562145' //'0.0.3559164'
-const factoryProxyAdminAddress = '0.0.3562143' //'0.0.3559160'
-const factoryAddress = '0.0.3562141' //'0.0.3559156'
+const factoryProxyAddress = '0.0.3579877' //'0.0.3562145'
+const factoryProxyAdminAddress = '0.0.3579875' //'0.0.3562143'
+const factoryAddress = '0.0.3579873' //'0.0.3562141'
 
 export const ADDRESS_0 = '0x0000000000000000000000000000000000000000'
 const hreConfig = hre.network.config
@@ -206,7 +204,7 @@ export async function deployFactory(
     console.log(`Deploying Contract Factory Proxy Admin. please wait...`)
 
     const factoryProxyAdmin = await deployContractSDK(
-        StableCoinFactoryProxyAdmin__factory,
+        ProxyAdmin__factory,
         privateKey,
         clientOperator
     )
@@ -224,7 +222,7 @@ export async function deployFactory(
         .addBytes(new Uint8Array([]))
 
     const factoryProxy = await deployContractSDK(
-        StableCoinFactoryProxy__factory,
+        TransparentUpgradeableProxy__factory,
         privateKey,
         clientOperator,
         params
@@ -494,7 +492,7 @@ export async function deployHederaReserve(
 ): Promise<ContractId[]> {
     console.log(`Deploying HederaReserve logic. please wait...`)
     const hederaReserveProxyAdmin = await deployContractSDK(
-        HederaReserveProxyAdmin__factory,
+        ProxyAdmin__factory,
         privateKeyOperatorEd25519,
         clientOperator
     )
@@ -511,7 +509,7 @@ export async function deployHederaReserve(
         .addBytes(new Uint8Array([]))
 
     const hederaReserveProxy = await deployContractSDK(
-        HederaReserveProxy__factory,
+        TransparentUpgradeableProxy__factory,
         privateKeyOperatorEd25519,
         clientOperator,
         params
