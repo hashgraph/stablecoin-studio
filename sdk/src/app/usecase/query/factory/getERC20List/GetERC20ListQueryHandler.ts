@@ -21,9 +21,8 @@
 import { lazyInject } from '../../../../../core/decorator/LazyInjectDecorator.js';
 import { QueryHandler } from '../../../../../core/decorator/QueryHandlerDecorator.js';
 import { IQueryHandler } from '../../../../../core/query/QueryHandler.js';
-import EvmAddress from '../../../../../domain/context/contract/EvmAddress.js';
+import ContractId from '../../../../../domain/context/contract/ContractId.js';
 import RPCQueryAdapter from '../../../../../port/out/rpc/RPCQueryAdapter.js';
-import StableCoinService from '../../../../service/StableCoinService.js';
 import {
 	GetERC20ListQuery,
 	GetERC20ListQueryResponse,
@@ -47,7 +46,7 @@ export class GetERC20ListQueryHandler
 		);
 		return Promise.resolve(
 			new GetERC20ListQueryResponse(
-				res.map((item) => new EvmAddress(item)),
+				res.map((item) => ContractId.fromHederaEthereumAddress(item)),
 			),
 		);
 	}

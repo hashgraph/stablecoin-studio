@@ -25,16 +25,15 @@ import { handleValidation } from './Common.js';
 import { QueryBus } from '../../core/query/QueryBus.js';
 import { LogError } from '../../core/decorator/LogErrorDecorator.js';
 import GetERC20ListRequest from './request/GetERC20ListRequest.js';
-import EvmAddress from '../../domain/context/contract/EvmAddress.js';
 import GetHederaERC20ByIndexRequest from './request/GetERC20ByIndexRequest.js';
 import { GetERC20ListQuery } from '../../app/usecase/query/factory/getERC20List/GetERC20ListQuery.js';
 import { GetERC20ByIndexQuery } from '../../app/usecase/query/factory/getERC20ByIndex/GetERC20ByIndexQuery.js';
 
 interface IFactoryInPort {
-	getHederaERC20List(request: GetERC20ListRequest): Promise<EvmAddress[]>;
+	getHederaERC20List(request: GetERC20ListRequest): Promise<ContractId[]>;
 	getHederaERC20ByIndex(
 		request: GetHederaERC20ByIndexRequest,
-	): Promise<EvmAddress>;
+	): Promise<ContractId>;
 }
 
 class FactoryInPort implements IFactoryInPort {
@@ -48,7 +47,7 @@ class FactoryInPort implements IFactoryInPort {
 	@LogError
 	async getHederaERC20List(
 		request: GetERC20ListRequest,
-	): Promise<EvmAddress[]> {
+	): Promise<ContractId[]> {
 		handleValidation('GetERC20ListRequest', request);
 
 		const res = await this.queryBus.execute(
@@ -61,7 +60,7 @@ class FactoryInPort implements IFactoryInPort {
 	@LogError
 	async getHederaERC20ByIndex(
 		request: GetHederaERC20ByIndexRequest,
-	): Promise<EvmAddress> {
+	): Promise<ContractId> {
 		handleValidation('GetERC20ListRequest', request);
 		const res = await this.queryBus.execute(
 			new GetERC20ByIndexQuery(

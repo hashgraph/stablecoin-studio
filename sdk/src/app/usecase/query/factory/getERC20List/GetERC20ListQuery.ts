@@ -21,10 +21,9 @@
 import { Query } from '../../../../../core/query/Query.js';
 import { QueryResponse } from '../../../../../core/query/QueryResponse.js';
 import ContractId from '../../../../../domain/context/contract/ContractId.js';
-import EvmAddress from '../../../../../domain/context/contract/EvmAddress.js';
 
 export class GetERC20ListQueryResponse implements QueryResponse {
-	constructor(public readonly payload: EvmAddress[]) {}
+	constructor(public readonly payload: ContractId[]) {}
 }
 
 export class GetERC20ListQuery extends Query<GetERC20ListQueryResponse> {

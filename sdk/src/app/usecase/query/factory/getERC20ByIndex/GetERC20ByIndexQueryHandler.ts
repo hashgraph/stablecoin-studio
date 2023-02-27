@@ -23,10 +23,6 @@ import { lazyInject } from '../../../../../core/decorator/LazyInjectDecorator.js
 import { QueryHandler } from '../../../../../core/decorator/QueryHandlerDecorator.js';
 import { IQueryHandler } from '../../../../../core/query/QueryHandler.js';
 import ContractId from '../../../../../domain/context/contract/ContractId.js';
-import EvmAddress from '../../../../../domain/context/contract/EvmAddress.js';
-import { RESERVE_DECIMALS } from '../../../../../domain/context/reserve/Reserve.js';
-import BigDecimal from '../../../../../domain/context/shared/BigDecimal.js';
-import { MirrorNodeAdapter } from '../../../../../port/out/mirror/MirrorNodeAdapter.js';
 import RPCQueryAdapter from '../../../../../port/out/rpc/RPCQueryAdapter.js';
 import StableCoinService from '../../../../service/StableCoinService.js';
 import {
@@ -55,7 +51,9 @@ export class GetERC20ByIndexQueryHandler
 			BigNumber.from(index),
 		);
 		return Promise.resolve(
-			new GetERC20ByIndexQueryResponse(new EvmAddress(res)),
+			new GetERC20ByIndexQueryResponse(
+				ContractId.fromHederaEthereumAddress(res),
+			),
 		);
 	}
 }
