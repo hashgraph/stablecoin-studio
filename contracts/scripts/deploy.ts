@@ -5,6 +5,7 @@ import {
     PrivateKey,
     ContractFunctionParameters,
     Client,
+    AccountId,
 } from '@hashgraph/sdk'
 import { BigNumber } from 'ethers'
 
@@ -19,6 +20,17 @@ import {
 } from '../typechain-types'
 
 import {
+    BURN_ROLE,
+    CASHIN_ROLE,
+    DELETE_ROLE,
+    FREEZE_ROLE,
+    KYC_ROLE,
+    PAUSE_ROLE,
+    RESCUE_ROLE,
+    WIPE_ROLE,
+} from './constants'
+
+import {
     getClient,
     deployContractSDK,
     contractCall,
@@ -27,11 +39,15 @@ import {
 
 const hre = require('hardhat')
 
-const hederaERC20Address = '0.0.3562139' //'0.0.3559149'
+// const hederaERC20Address = '0.0.3562139' //'0.0.3559149'
+// const factoryProxyAddress = '0.0.3562145' //'0.0.3559164'
+// const factoryProxyAdminAddress = '0.0.3562143' //'0.0.3559160'
+// const factoryAddress = '0.0.3562141' //'0.0.3559156'
 
-const factoryProxyAddress = '0.0.3562145' //'0.0.3559164'
-const factoryProxyAdminAddress = '0.0.3562143' //'0.0.3559160'
-const factoryAddress = '0.0.3562141' //'0.0.3559156'
+const hederaERC20Address = ''
+const factoryProxyAddress = ''
+const factoryProxyAdminAddress = ''
+const factoryAddress = ''
 
 export const ADDRESS_0 = '0x0000000000000000000000000000000000000000'
 const hreConfig = hre.network.config
@@ -333,6 +349,14 @@ export async function deployContractsWithSDK({
         keys: allToContract
             ? tokenKeystoContract(addKyc)
             : tokenKeystoKey(publicKey, isED25519Type),
+        roles: allToContract ? rolestoAccountsByKeys() : [],
+        cashinRole: {
+            role: CASHIN_ROLE,
+            account: AccountId.fromString(
+                hreConfig.accounts[0].account
+            ).toSolidityAddress(),
+            allowance: 0,
+        },
     }
 
     console.log(`Token Object: ${JSON.stringify(tokenObject)}`)
@@ -483,6 +507,55 @@ function tokenKeystoKey(publicKey: string, isED25519: boolean) {
     ]
 
     return keys
+}
+
+function rolestoAccountsByKeys() {
+    console.log('El rol para ' + hreConfig.accounts[0].account)
+    const roles = [
+        {
+            role: BURN_ROLE,
+            account: AccountId.fromString(
+                hreConfig.accounts[0].account
+            ).toSolidityAddress(),
+        },
+        {
+            role: PAUSE_ROLE,
+            account: AccountId.fromString(
+                hreConfig.accounts[0].account
+            ).toSolidityAddress(),
+        },
+        {
+            role: WIPE_ROLE,
+            account: AccountId.fromString(
+                hreConfig.accounts[0].account
+            ).toSolidityAddress(),
+        },
+        {
+            role: FREEZE_ROLE,
+            account: AccountId.fromString(
+                hreConfig.accounts[0].account
+            ).toSolidityAddress(),
+        },
+        {
+            role: RESCUE_ROLE,
+            account: AccountId.fromString(
+                hreConfig.accounts[0].account
+            ).toSolidityAddress(),
+        },
+        {
+            role: DELETE_ROLE,
+            account: AccountId.fromString(
+                hreConfig.accounts[0].account
+            ).toSolidityAddress(),
+        },
+        {
+            role: KYC_ROLE,
+            account: AccountId.fromString(
+                hreConfig.accounts[0].account
+            ).toSolidityAddress(),
+        },
+    ]
+    return roles
 }
 
 export async function deployHederaReserve(

@@ -108,7 +108,8 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
                 reserveAddress,
                 requestedToken.grantKYCToOriginalSender,
                 _treasuryIsContract(requestedToken.treasuryAddress),
-                requestedToken.roles
+                requestedToken.roles,
+                requestedToken.cashinRole
             );
 
         address tokenAddress = HederaERC20(address(stableCoinProxy)).initialize{

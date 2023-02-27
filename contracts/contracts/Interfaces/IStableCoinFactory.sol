@@ -32,6 +32,7 @@ interface IStableCoinFactory {
         bool grantKYCToOriginalSender;
         KeysStruct[] keys;
         IHederaERC20.RolesStruct[] roles;
+        IHederaERC20.CashinRoleStruct cashinRole;
     }
 
     struct DeployedStableCoin {

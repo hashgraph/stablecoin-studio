@@ -62,11 +62,17 @@ interface IHederaERC20 {
         bool grantKYCToOriginalSender;
         bool treasuryIsContract;
         RolesStruct[] roles;
+        CashinRoleStruct cashinRole;
     }
 
     struct RolesStruct {
         bytes32 role;
         address account;
+    }
+
+    struct CashinRoleStruct {
+        RolesStruct role;
+        uint256 allowance;
     }
 
     /**
