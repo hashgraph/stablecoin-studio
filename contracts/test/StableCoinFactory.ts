@@ -328,7 +328,7 @@ describe('StableCoinFactory Tests', function () {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('Get hederaERC20 addresses ', async function () {
+    it('Get hederaERC20 addresses', async function () {
         const addressArray: Array<string> = await getHederaERC20Addresses(
             ContractId.fromString(factoryProxyAddress),
             operatorClient
