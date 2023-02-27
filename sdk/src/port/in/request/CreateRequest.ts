@@ -333,78 +333,14 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 					bInitialSupply,
 				);
 			},
-			burnRoleAccount: (val) => {
-				if (val === undefined || val === '') {
-					return;
-				}
-				const err = Validation.checkHederaIdFormat()(val);
-				if (err.length > 0) {
-					return err;
-				}
-			},
-			wipeRoleAccount: (val) => {
-				if (val === undefined || val === '') {
-					return;
-				}
-				const err = Validation.checkHederaIdFormat()(val);
-				if (err.length > 0) {
-					return err;
-				}
-			},
-			rescueRoleAccount: (val) => {
-				if (val === undefined || val === '') {
-					return;
-				}
-				const err = Validation.checkHederaIdFormat()(val);
-				if (err.length > 0) {
-					return err;
-				}
-			},
-			pauseRoleAccount: (val) => {
-				if (val === undefined || val === '') {
-					return;
-				}
-				const err = Validation.checkHederaIdFormat()(val);
-				if (err.length > 0) {
-					return err;
-				}
-			},
-			freezeRoleAccount: (val) => {
-				if (val === undefined || val === '') {
-					return;
-				}
-				const err = Validation.checkHederaIdFormat()(val);
-				if (err.length > 0) {
-					return err;
-				}
-			},
-			deleteRoleAccount: (val) => {
-				if (val === undefined || val === '') {
-					return;
-				}
-				const err = Validation.checkHederaIdFormat()(val);
-				if (err.length > 0) {
-					return err;
-				}
-			},
-			kycRoleAccount: (val) => {
-				if (val === undefined || val === '') {
-					return;
-				}
-				const err = Validation.checkHederaIdFormat()(val);
-				if (err.length > 0) {
-					return err;
-				}
-			},
-			cashInRoleAccount: (val) => {
-				if (val === undefined || val === '') {
-					return;
-				}
-				const err = Validation.checkHederaIdFormat()(val);
-				if (err.length > 0) {
-					return err;
-				}
-			},
+			burnRoleAccount: Validation.checkHederaIdFormat(),
+			wipeRoleAccount: Validation.checkHederaIdFormat(),
+			rescueRoleAccount: Validation.checkHederaIdFormat(),
+			pauseRoleAccount: Validation.checkHederaIdFormat(),
+			freezeRoleAccount: Validation.checkHederaIdFormat(),
+			deleteRoleAccount: Validation.checkHederaIdFormat(),
+			kycRoleAccount: Validation.checkHederaIdFormat(),
+			cashInRoleAccount: Validation.checkHederaIdFormat(),
 			cashInRoleAllowance: (val) => {
 				if (val === undefined || val === '') {
 					return;
@@ -415,35 +351,9 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 				if (CheckNums.hasMoreDecimals(val, this.decimals)) {
 					return [new InvalidDecimalRange(val, this.decimals)];
 				}
-				const bCashInAllowance = BigDecimal.fromString(
-					val,
-					this.decimals,
-				);
-				const bInitialSupply =
-					this.initialSupply &&
-					BigDecimal.isBigDecimal(this.initialSupply) &&
-					!CheckNums.hasMoreDecimals(
-						this.initialSupply,
-						this.decimals,
-					)
-						? BigDecimal.fromString(
-								this.initialSupply,
-								this.decimals,
-						  )
-						: undefined;
-
-				const bMaxSupply =
-					this.maxSupply &&
-					BigDecimal.isBigDecimal(this.maxSupply) &&
-					!CheckNums.hasMoreDecimals(this.maxSupply, this.decimals)
-						? BigDecimal.fromString(this.maxSupply, this.decimals)
-						: undefined;
-
 				return StableCoin.checkCashInAllowance(
-					bCashInAllowance,
+					BigDecimal.fromString(val, this.decimals),
 					this.decimals,
-					bInitialSupply,
-					bMaxSupply,
 				);
 			},
 		});

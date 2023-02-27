@@ -257,7 +257,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		if (account && account !== HederaId.from('0.0.0')) {
 			const role = new FactoryRole();
 			role.role = stableCoinRole;
-			role.account = await this.accountToEvmAddress(account).toString();
+			role.account = (await this.accountToEvmAddress(account)).toString();
 			roles.push(role);
 		}
 	}
