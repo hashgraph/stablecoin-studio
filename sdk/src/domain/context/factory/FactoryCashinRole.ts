@@ -18,7 +18,7 @@
  *
  */
 
-import { BigNumber } from "@hashgraph/hethers";
+import { BigNumber } from '@hashgraph/hethers';
 
 export class FactoryCashinRole {
 	public account: string;

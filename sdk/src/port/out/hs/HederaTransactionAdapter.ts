@@ -80,12 +80,15 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			const keys: FactoryKey[] = [];
 			const roles: FactoryRole[] = [];
 			const cashinRole: FactoryCashinRole = {
-				account: coin.cashInRoleAccount == undefined ||
+				account:
+					coin.cashInRoleAccount == undefined ||
 					coin.cashInRoleAccount.toString() == '0.0.0'
-					? '0x0000000000000000000000000000000000000000'
-					: (
-							await this.accountToEvmAddress(coin.cashInRoleAccount)
-					  ).toString(),
+						? '0x0000000000000000000000000000000000000000'
+						: (
+								await this.accountToEvmAddress(
+									coin.cashInRoleAccount,
+								)
+						  ).toString(),
 				allowance: coin.cashInRoleAllowance
 					? coin.cashInRoleAllowance.toFixedNumber()
 					: BigDecimal.ZERO.toFixedNumber(),
@@ -180,7 +183,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					providedRole.role,
 					roles,
 				);
-			};
+			}
 
 			const stableCoinToCreate = new FactoryStableCoin(
 				coin.name,
