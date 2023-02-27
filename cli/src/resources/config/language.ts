@@ -115,6 +115,20 @@ export const english = {
       publicKey: 'Enter the public key',
       keyType: 'Key type',
     },
+    initialRoles: {
+      askAccount: 'Enter an account',
+      burn: 'Choose the BURN admin account',
+      wipe: 'Choose the WIPE admin account',
+      rescue: 'Choose the RESCUE admin account',
+      pause: 'Choose the PAUSE admin account',
+      freeze: 'Choose the FREEZE admin account',
+      options: {
+        currentAccount: 'Current User Account',
+        otherAccount: 'Other Account',
+      },
+      cashinAllowance:
+        "Enter the cashin allowance for the account ('0' if Unlimited)",
+    },
     askTreasuryAccountAddress: 'Enter the treasury account id?',
     askOperateStableCoin:
       'Do you want to operate with the stable coin you just created?',
