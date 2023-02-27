@@ -71,7 +71,7 @@ interface IHederaERC20 {
     }
 
     struct CashinRoleStruct {
-        RolesStruct role;
+        address account;
         uint256 allowance;
     }
 
