@@ -74,6 +74,8 @@ import { WalletConnectRejectedError } from '../../../domain/context/network/erro
 import { TransactionResponseError } from '../error/TransactionResponseError.js';
 import { SigningError } from '../hs/error/SigningError.js';
 import { RESERVE_DECIMALS } from '../../../domain/context/reserve/Reserve.js';
+import { FactoryRole } from '../../../domain/context/factory/FactoryRole.js';
+import { FactoryCashinRole } from '../../../domain/context/factory/FactoryCashinRole.js';
 
 // eslint-disable-next-line no-var
 declare var ethereum: MetaMaskInpageProvider;
@@ -105,6 +107,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	): Promise<TransactionResponse<any, Error>> {
 		try {
 			const keys: FactoryKey[] = [];
+			const roles: FactoryRole[] = [];
+			const cashinRole: FactoryCashinRole = {
+				account: coin.cashInRoleAccount ?? HederaId.NULL,
+				allowance: coin.cashInRoleAllowance ?? BigDecimal.ZERO,
+			};
 
 			const providedKeys = [
 				coin.adminKey,
@@ -156,6 +163,42 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				}
 			});
 
+			const providedRoles = [
+				{
+					account: coin.burnRoleAccount,
+					role: StableCoinRole.BURN_ROLE,
+				},
+				{
+					account: coin.wipeRoleAccount,
+					role: StableCoinRole.WIPE_ROLE,
+				},
+				{
+					account: coin.rescueRoleAccount,
+					role: StableCoinRole.RESCUE_ROLE,
+				},
+				{
+					account: coin.pauseRoleAccount,
+					role: StableCoinRole.PAUSE_ROLE,
+				},
+				{
+					account: coin.freezeRoleAccount,
+					role: StableCoinRole.FREEZE_ROLE,
+				},
+				{
+					account: coin.deleteRoleAccount,
+					role: StableCoinRole.DELETE_ROLE,
+				},
+				{ account: coin.kycRoleAccount, role: StableCoinRole.KYC_ROLE },
+			];
+
+			providedRoles.forEach((providedRole) => {
+				this.setFactoryRole(
+					providedRole.account,
+					providedRole.role,
+					roles,
+				);
+			});
+
 			const stableCoinToCreate = new FactoryStableCoin(
 				coin.name,
 				coin.symbol,
@@ -191,6 +234,8 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					? coin.grantKYCToOriginalSender
 					: false,
 				keys,
+				roles,
+				cashinRole,
 			);
 
 			const factoryInstance = StableCoinFactory__factory.connect(
@@ -231,6 +276,19 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			throw new SigningError(
 				`Unexpected error in RPCTransactionAdapter create operation : ${error}`,
 			);
+		}
+	}
+
+	private setFactoryRole(
+		account: HederaId | undefined,
+		stableCoinRole: StableCoinRole,
+		roles: FactoryRole[],
+	) {
+		if (account && account !== HederaId.from('0.0.0')) {
+			const role = new FactoryRole();
+			role.role = stableCoinRole;
+			role.account = account;
+			roles.push(role);
 		}
 	}
 

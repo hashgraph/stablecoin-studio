@@ -58,6 +58,8 @@ import LogService from '../../../app/service/LogService.js';
 import { RESERVE_DECIMALS } from '../../../domain/context/reserve/Reserve.js';
 import TransactionResultViewModel from '../mirror/response/TransactionResultViewModel.js';
 import { TransactionResponseError } from '../error/TransactionResponseError.js';
+import { FactoryRole } from '../../../domain/context/factory/FactoryRole.js';
+import { FactoryCashinRole } from '../../../domain/context/factory/FactoryCashinRole.js';
 
 export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	private web3 = new Web3();
@@ -76,6 +78,11 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	): Promise<TransactionResponse<any, Error>> {
 		try {
 			const keys: FactoryKey[] = [];
+			const roles: FactoryRole[] = [];
+			const cashinRole: FactoryCashinRole = {
+				account: coin.cashInRoleAccount ?? HederaId.NULL,
+				allowance: coin.cashInRoleAllowance ?? BigDecimal.ZERO,
+			};
 
 			const providedKeys = [
 				coin.adminKey,
@@ -132,6 +139,49 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				}
 			});
 
+			const providedRoles = [
+				{
+					account: coin.burnRoleAccount,
+					role: StableCoinRole.BURN_ROLE,
+				},
+				{
+					account: coin.wipeRoleAccount,
+					role: StableCoinRole.WIPE_ROLE,
+				},
+				{
+					account: coin.rescueRoleAccount,
+					role: StableCoinRole.RESCUE_ROLE,
+				},
+				{
+					account: coin.pauseRoleAccount,
+					role: StableCoinRole.PAUSE_ROLE,
+				},
+				{
+					account: coin.freezeRoleAccount,
+					role: StableCoinRole.FREEZE_ROLE,
+				},
+				{
+					account: coin.deleteRoleAccount,
+					role: StableCoinRole.DELETE_ROLE,
+				},
+				{ account: coin.kycRoleAccount, role: StableCoinRole.KYC_ROLE },
+			];
+
+			providedRoles.forEach((providedRole) => {
+				this.setFactoryRole(
+					providedRole.account,
+					providedRole.role,
+					roles,
+				);
+			});
+
+			if (coin.burnRoleAccount !== HederaId.from('0.0.0')) {
+				const role = new FactoryRole();
+				role.role = StableCoinRole.BURN_ROLE;
+				role.account = coin.burnRoleAccount ?? HederaId.NULL;
+				roles.push(role);
+			}
+
 			const stableCoinToCreate = new FactoryStableCoin(
 				coin.name,
 				coin.symbol,
@@ -167,6 +217,8 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					? coin.grantKYCToOriginalSender
 					: false,
 				keys,
+				roles,
+				cashinRole,
 			);
 
 			const params = [
@@ -191,6 +243,19 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			throw new Error(
 				`Unexpected error in HederaTransactionHandler create operation: ${error}`,
 			);
+		}
+	}
+
+	private setFactoryRole(
+		account: HederaId | undefined,
+		stableCoinRole: StableCoinRole,
+		roles: FactoryRole[],
+	) {
+		if (account && account !== HederaId.from('0.0.0')) {
+			const role = new FactoryRole();
+			role.role = stableCoinRole;
+			role.account = account;
+			roles.push(role);
 		}
 	}
 
