@@ -67,7 +67,6 @@ export const english = {
     askOperateWithNewAccount:
       'Would you like to operate with the account you have just created?',
     askFactoryAddress: 'Enter your factory address',
-    askHederaERC20Address: 'Enter your Hedera ERC20 address',
   },
   stablecoin: {
     noFactories:
@@ -101,7 +100,7 @@ export const english = {
       'Should the smart contract be used for all roles management?',
     askKYC: 'Do you want to enable KYC?',
     askCustomFees: 'Do you want de add custom fees?',
-    askHederaERC20Address: 'Select address of ERC20 you want to use:',
+    askHederaERC20Address: 'Select ERC20 address you want to use:',
     features: {
       admin: 'Enter the admin key',
       supply: 'Enter the supply key',
