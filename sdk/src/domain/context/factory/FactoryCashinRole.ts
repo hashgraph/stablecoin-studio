@@ -18,10 +18,9 @@
  *
  */
 
-import BigDecimal from '../shared/BigDecimal.js';
-import { HederaId } from '../shared/HederaId.js';
+import { BigNumber } from "@hashgraph/hethers";
 
 export class FactoryCashinRole {
-	public account: HederaId;
-	public allowance: BigDecimal;
+	public account: string;
+	public allowance: string;
 }

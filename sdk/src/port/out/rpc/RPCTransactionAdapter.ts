@@ -109,8 +109,15 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			const keys: FactoryKey[] = [];
 			const roles: FactoryRole[] = [];
 			const cashinRole: FactoryCashinRole = {
-				account: coin.cashInRoleAccount ?? HederaId.NULL,
-				allowance: coin.cashInRoleAllowance ?? BigDecimal.ZERO,
+				account: coin.cashInRoleAccount == undefined ||
+					coin.cashInRoleAccount.toString() == '0.0.0'
+					? '0x0000000000000000000000000000000000000000'
+					: (
+							await this.accountToEvmAddress(coin.cashInRoleAccount)
+					  ).toString(),
+				allowance: coin.cashInRoleAllowance
+					? coin.cashInRoleAllowance.toFixedNumber()
+					: BigDecimal.ZERO.toFixedNumber(),
 			};
 
 			const providedKeys = [
@@ -191,13 +198,13 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				{ account: coin.kycRoleAccount, role: StableCoinRole.KYC_ROLE },
 			];
 
-			providedRoles.forEach((providedRole) => {
-				this.setFactoryRole(
+			for (const providedRole of providedRoles) {
+				await this.setFactoryRole(
 					providedRole.account,
 					providedRole.role,
 					roles,
 				);
-			});
+			};
 
 			const stableCoinToCreate = new FactoryStableCoin(
 				coin.name,
@@ -279,7 +286,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		}
 	}
 
-	private setFactoryRole(
+	private async setFactoryRole(
 		account: HederaId | undefined,
 		stableCoinRole: StableCoinRole,
 		roles: FactoryRole[],
@@ -287,7 +294,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		if (account && account !== HederaId.from('0.0.0')) {
 			const role = new FactoryRole();
 			role.role = stableCoinRole;
-			role.account = account;
+			role.account = await this.accountToEvmAddress(account).toString();
 			roles.push(role);
 		}
 	}

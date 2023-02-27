@@ -18,9 +18,7 @@
  *
  */
 
-import { HederaId } from '../shared/HederaId.js';
-
 export class FactoryRole {
 	public role: string;
-	public account: HederaId;
+	public account: string;
 }
