@@ -9,8 +9,8 @@ import {
 
 import {
     HederaERC20__factory,
-    StableCoinFactoryProxy__factory,
-    StableCoinFactoryProxyAdmin__factory,
+    TransparentUpgradeableProxy__factory,
+    ProxyAdmin__factory,
     HederaReserve__factory,
     StableCoinFactory__factory,
 } from '../typechain-types'
@@ -525,7 +525,7 @@ export async function upgradeTo_SCF(
         params,
         client,
         Gas3,
-        StableCoinFactoryProxy__factory.abi
+        TransparentUpgradeableProxy__factory.abi
     )
 }
 
@@ -541,7 +541,7 @@ export async function changeAdmin_SCF(
         params,
         client,
         Gas3,
-        StableCoinFactoryProxy__factory.abi
+        TransparentUpgradeableProxy__factory.abi
     )
 }
 
@@ -556,7 +556,7 @@ export async function admin_SCF(
         params,
         client,
         Gas2,
-        StableCoinFactoryProxy__factory.abi
+        TransparentUpgradeableProxy__factory.abi
     )
     return result[0]
 }
@@ -573,7 +573,7 @@ export async function owner_SCF(
         params,
         client,
         Gas2,
-        StableCoinFactoryProxyAdmin__factory.abi
+        ProxyAdmin__factory.abi
     )
     return result[0]
 }
@@ -591,7 +591,7 @@ export async function upgrade_SCF(
         params,
         client,
         Gas3,
-        StableCoinFactoryProxyAdmin__factory.abi
+        ProxyAdmin__factory.abi
     )
 }
 
@@ -612,7 +612,7 @@ export async function changeProxyAdmin_SCF(
         params,
         client,
         Gas3,
-        StableCoinFactoryProxyAdmin__factory.abi
+        ProxyAdmin__factory.abi
     )
 }
 
@@ -629,7 +629,7 @@ export async function transferOwnership_SCF(
         params,
         client,
         Gas3,
-        StableCoinFactoryProxyAdmin__factory.abi
+        ProxyAdmin__factory.abi
     )
 }
 
@@ -645,7 +645,7 @@ export async function getProxyImplementation_SCF(
         params,
         client,
         Gas2,
-        StableCoinFactoryProxyAdmin__factory.abi
+        ProxyAdmin__factory.abi
     )
     return result[0]
 }
@@ -662,7 +662,7 @@ export async function getProxyAdmin_SCF(
         params,
         client,
         Gas2,
-        StableCoinFactoryProxyAdmin__factory.abi
+        ProxyAdmin__factory.abi
     )
     return result[0]
 }

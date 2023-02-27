@@ -41,8 +41,8 @@ import {
 import { clientId, toEvmAddress } from '../scripts/utils'
 import { Client, ContractId } from '@hashgraph/sdk'
 import {
-    HederaERC20ProxyAdmin__factory,
-    HederaERC20Proxy__factory,
+    ProxyAdmin__factory,
+    TransparentUpgradeableProxy__factory,
 } from '../typechain-types'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
@@ -71,7 +71,7 @@ const TokenFactor = BigNumber.from(10).pow(TokenDecimals)
 const INIT_SUPPLY = BigNumber.from(10).mul(TokenFactor)
 const MAX_SUPPLY = BigNumber.from(1000).mul(TokenFactor)
 const TokenMemo = 'Hedera Accelerator Stable Coin'
-const abiERC20ProxyAdmin = HederaERC20ProxyAdmin__factory.abi
+const abiERC20ProxyAdmin = ProxyAdmin__factory.abi
 
 describe('HederaERC20 Tests', function () {
     before(async function () {
@@ -744,7 +744,7 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function () {
 
         // Check that proxy admin has been changed
         const _admin = await admin(
-            HederaERC20Proxy__factory.abi,
+            TransparentUpgradeableProxy__factory.abi,
             proxyAddress,
             operatorClient
         )
@@ -756,13 +756,13 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function () {
 
         // reset
         await changeAdmin(
-            HederaERC20Proxy__factory.abi,
+            TransparentUpgradeableProxy__factory.abi,
             proxyAddress,
             operatorClient,
             await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)
         )
         await changeAdmin(
-            HederaERC20Proxy__factory.abi,
+            TransparentUpgradeableProxy__factory.abi,
             proxyAddress,
             nonOperatorClient,
             proxyAdminAddress.toSolidityAddress()

@@ -9,13 +9,11 @@ import {
 import { BigNumber } from 'ethers'
 
 import {
+    ProxyAdmin__factory,
+    TransparentUpgradeableProxy__factory,
     StableCoinFactory__factory,
-    StableCoinFactoryProxyAdmin__factory,
-    StableCoinFactoryProxy__factory,
     HederaERC20__factory,
-    HederaReserveProxyAdmin__factory,
     HederaReserve__factory,
-    HederaReserveProxy__factory,
 } from '../typechain-types'
 
 import {
@@ -206,7 +204,7 @@ export async function deployFactory(
     console.log(`Deploying Contract Factory Proxy Admin. please wait...`)
 
     const factoryProxyAdmin = await deployContractSDK(
-        StableCoinFactoryProxyAdmin__factory,
+        ProxyAdmin__factory,
         privateKey,
         clientOperator
     )
@@ -224,7 +222,7 @@ export async function deployFactory(
         .addBytes(new Uint8Array([]))
 
     const factoryProxy = await deployContractSDK(
-        StableCoinFactoryProxy__factory,
+        TransparentUpgradeableProxy__factory,
         privateKey,
         clientOperator,
         params
@@ -511,7 +509,7 @@ export async function deployHederaReserve(
 ): Promise<ContractId[]> {
     console.log(`Deploying HederaReserve logic. please wait...`)
     const hederaReserveProxyAdmin = await deployContractSDK(
-        HederaReserveProxyAdmin__factory,
+        ProxyAdmin__factory,
         privateKeyOperatorEd25519,
         clientOperator
     )
@@ -528,7 +526,7 @@ export async function deployHederaReserve(
         .addBytes(new Uint8Array([]))
 
     const hederaReserveProxy = await deployContractSDK(
-        HederaReserveProxy__factory,
+        TransparentUpgradeableProxy__factory,
         privateKeyOperatorEd25519,
         clientOperator,
         params
