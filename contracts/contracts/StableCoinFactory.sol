@@ -4,11 +4,9 @@ pragma solidity 0.8.16;
 import './hts-precompile/IHederaTokenService.sol';
 import './hts-precompile/HederaResponseCodes.sol';
 import './HederaERC20.sol';
-import './HederaERC20Proxy.sol';
-import './HederaERC20ProxyAdmin.sol';
+import '@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol';
+import '@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol';
 import './HederaReserve.sol';
-import './HederaReserveProxy.sol';
-import './HederaReserveProxyAdmin.sol';
 import './Interfaces/IStableCoinFactory.sol';
 import '@openzeppelin/contracts/utils/Strings.sol';
 
@@ -48,12 +46,10 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
                 requestedToken.tokenInitialSupply
             );
 
-            reserveProxyAdmin = address(new HederaReserveProxyAdmin());
-            HederaReserveProxyAdmin(reserveProxyAdmin).transferOwnership(
-                msg.sender
-            );
+            reserveProxyAdmin = address(new ProxyAdmin());
+            ProxyAdmin(reserveProxyAdmin).transferOwnership(msg.sender);
             reserveProxy = address(
-                new HederaReserveProxy(
+                new TransparentUpgradeableProxy(
                     address(reserveContract),
                     address(reserveProxyAdmin),
                     ''
@@ -79,17 +75,17 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
         }
 
         // Deploy Proxy Admin
-        HederaERC20ProxyAdmin stableCoinProxyAdmin = new HederaERC20ProxyAdmin();
+        ProxyAdmin stableCoinProxyAdmin = new ProxyAdmin();
 
         // Transfer Proxy Admin ownership
         stableCoinProxyAdmin.transferOwnership(msg.sender);
 
         // Deploy Proxy
-        HederaERC20Proxy stableCoinProxy = new HederaERC20Proxy(
-            stableCoinContractAddress,
-            address(stableCoinProxyAdmin),
-            ''
-        );
+        TransparentUpgradeableProxy stableCoinProxy = new TransparentUpgradeableProxy(
+                stableCoinContractAddress,
+                address(stableCoinProxyAdmin),
+                ''
+            );
 
         // Create Token
         IHederaTokenService.HederaToken memory token = _createToken(
