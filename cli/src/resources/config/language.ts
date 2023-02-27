@@ -101,6 +101,7 @@ export const english = {
       'Should the smart contract be used for all roles management?',
     askKYC: 'Do you want to enable KYC?',
     askCustomFees: 'Do you want de add custom fees?',
+    askHederaERC20Address: 'Select address of ERC20 you want to use:',
     features: {
       admin: 'Enter the admin key',
       supply: 'Enter the supply key',

@@ -10,6 +10,8 @@ import {
   GetPublicKeyRequest,
   RequestAccount,
   Account,
+  Factory,
+  GetERC20ListRequest,
 } from 'hedera-stable-coin-sdk';
 import { IManagedFeatures } from '../../../domain/configuration/interfaces/IManagedFeatures.js';
 import Service from '../Service.js';
@@ -271,6 +273,13 @@ export default class CreateStableCoinService extends Service {
       }
     }
 
+    // ASK HederaERC20 version
+    tokenToCreate.stableCoinFactory = utilsService.getCurrentFactory().id;
+
+    tokenToCreate.hederaERC20 = await this.askHederaERC20Version(
+      tokenToCreate.stableCoinFactory,
+    );
+
     console.log({
       name: tokenToCreate.name,
       symbol: tokenToCreate.symbol,
@@ -347,8 +356,6 @@ export default class CreateStableCoinService extends Service {
 
       tokenToCreate = await this.wizardCreateStableCoin();
     }
-    tokenToCreate.stableCoinFactory = utilsService.getCurrentFactory().id;
-    tokenToCreate.hederaERC20 = utilsService.getCurrentHederaERC20().id;
     return tokenToCreate;
   }
 
@@ -356,6 +363,16 @@ export default class CreateStableCoinService extends Service {
     return await utilsService.defaultSingleAsk(
       language.getText('stablecoin.askDecimals'),
       val || '6',
+    );
+  }
+
+  private async askHederaERC20Version(factory: string): Promise<string> {
+    const factoryListEvm = await Factory.getHederaERC20List(
+      new GetERC20ListRequest({ factoryId: factory }),
+    ).then(value =>value.reverse());
+    return await utilsService.defaultMultipleAsk(
+      language.getText('stablecoin.askHederaERC20Address'),
+      factoryListEvm.map((item) => item.toString()),
     );
   }
 
