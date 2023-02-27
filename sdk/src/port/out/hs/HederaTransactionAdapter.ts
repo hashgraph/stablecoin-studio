@@ -175,13 +175,6 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				);
 			});
 
-			if (coin.burnRoleAccount !== HederaId.from('0.0.0')) {
-				const role = new FactoryRole();
-				role.role = StableCoinRole.BURN_ROLE;
-				role.account = coin.burnRoleAccount ?? HederaId.NULL;
-				roles.push(role);
-			}
-
 			const stableCoinToCreate = new FactoryStableCoin(
 				coin.name,
 				coin.symbol,
