@@ -349,7 +349,6 @@ export async function deployContractsWithSDK({
             : tokenKeystoKey(publicKey, isED25519Type),
         roles: allToContract ? rolestoAccountsByKeys() : [],
         cashinRole: {
-            role: CASHIN_ROLE,
             account: AccountId.fromString(
                 hreConfig.accounts[0].account
             ).toSolidityAddress(),
