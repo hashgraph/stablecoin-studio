@@ -24,7 +24,9 @@ import CreateRequest from './CreateRequest.js';
 import GetListStableCoinRequest from './GetListStableCoinRequest.js';
 import GetStableCoinDetailsRequest from './GetStableCoinDetailsRequest.js';
 import GrantRoleRequest from './GrantRoleRequest.js';
+import GrantMultiRolesRequest from './GrantMultiRolesRequest.js';
 import RevokeRoleRequest from './RevokeRoleRequest.js';
+import RevokeMultiRolesRequest from './RevokeMultiRolesRequest.js';
 import HasRoleRequest from './HasRoleRequest.js';
 import CheckSupplierLimitRequest from './CheckSupplierLimitRequest.js';
 import GetSupplierAllowanceRequest from './GetSupplierAllowanceRequest.js';
@@ -70,7 +72,9 @@ export {
 	GetStableCoinDetailsRequest,
 	RescueRequest,
 	GrantRoleRequest,
+	GrantMultiRolesRequest,
 	RevokeRoleRequest,
+	RevokeMultiRolesRequest,
 	HasRoleRequest,
 	CheckSupplierLimitRequest,
 	GetSupplierAllowanceRequest,
