@@ -55,6 +55,19 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
         addressIsNotZero(supplier)
         valueIsNotLessThan(amount, 0, false)
     {
+        _grantSupplierRole(supplier, amount);
+    }
+
+    /**
+     * @dev  Gives `SUPPLIER ROLE' permissions to perform supplier's allowance and sets the `amount`
+     * the supplier can mint, if you don't already have unlimited supplier's allowance permission.
+     * Only the 'ADMIN SUPPLIER ROLE` can execute.
+     *
+     * @param supplier The address of the supplier
+     * @param amount The amount to add to the supplier's current minting allowance
+     *
+     */
+    function _grantSupplierRole(address supplier, uint256 amount) internal {
         require(
             !_unlimitedSupplierAllowances[supplier],
             'Account already has unlimited supplier allowance'

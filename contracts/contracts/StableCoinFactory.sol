@@ -8,7 +8,6 @@ import '@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.so
 import '@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol';
 import './HederaReserve.sol';
 import './Interfaces/IStableCoinFactory.sol';
-import './Interfaces/IHederaERC20.sol';
 import '@openzeppelin/contracts/utils/Strings.sol';
 
 contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
@@ -104,7 +103,9 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
                 msg.sender,
                 reserveAddress,
                 requestedToken.grantKYCToOriginalSender,
-                _treasuryIsContract(requestedToken.treasuryAddress)
+                _treasuryIsContract(requestedToken.treasuryAddress),
+                requestedToken.roles,
+                requestedToken.cashinRole
             );
 
         address tokenAddress = HederaERC20(address(stableCoinProxy)).initialize{
