@@ -5,7 +5,6 @@ import {
     PrivateKey,
     ContractFunctionParameters,
     Client,
-    AccountId,
 } from '@hashgraph/sdk'
 import { BigNumber } from 'ethers'
 
