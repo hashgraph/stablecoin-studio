@@ -37,3 +37,8 @@ export const Gas3 = 1800000
 export const Gas4 = 500000
 export const Gas5 = 130000
 export const Gas6 = 140000
+
+export const ADDRESS_0 = '0x0000000000000000000000000000000000000000'
+export const ADDRESS_1 = '0.0.1'
+export const ADDRESS_2 = '0.0.2'
+export const ADDRESS_3 = '0.0.3'

@@ -124,6 +124,17 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
         onlyRole(_getRoleId(RoleName.ADMIN))
         addressIsNotZero(supplier)
     {
+        _revokeSupplierRole(supplier);
+    }
+
+    /**
+     * @dev Revoke `SUPPLIER ROLE' permissions to perform supplier's allowance and revoke unlimited
+     * supplier's allowance permission.
+     * Only the 'ADMIN SUPPLIER ROLE` can execute.
+     *
+     * @param supplier The address of the supplier
+     */
+    function _revokeSupplierRole(address supplier) internal {
         _supplierAllowances[supplier] = 0;
         _unlimitedSupplierAllowances[supplier] = false;
         _revokeRole(_getRoleId(RoleName.CASHIN), supplier);

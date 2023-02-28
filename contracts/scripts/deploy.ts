@@ -26,6 +26,7 @@ import {
     PAUSE_ROLE,
     RESCUE_ROLE,
     WIPE_ROLE,
+    ADDRESS_0,
 } from './constants'
 
 import {
@@ -37,12 +38,11 @@ import {
 
 const hre = require('hardhat')
 
-const hederaERC20Address = '0.0.3565272'
-export const factoryProxyAddress = '0.0.3565312'
-const factoryProxyAdminAddress = '0.0.3565307'
-const factoryAddress = '0.0.3565302'
+const hederaERC20Address = '0.0.3594079'
+export const factoryProxyAddress = '0.0.3594086'
+const factoryProxyAdminAddress = '0.0.3594083'
+const factoryAddress = '0.0.3594081'
 
-export const ADDRESS_0 = '0x0000000000000000000000000000000000000000'
 const hreConfig = hre.network.config
 
 export function initializeClients(): [

@@ -14,7 +14,6 @@ import {
     getNonOperatorE25519,
     deployFactory,
     toHashgraphKey,
-    ADDRESS_0,
     deployHederaReserve,
     factoryProxyAddress,
     deployHederaERC20,
@@ -35,6 +34,7 @@ import {
     getHederaERC20,
     addHederaERC20Version,
 } from '../scripts/contractsMethods'
+import { ADDRESS_0 } from '../scripts/constants'
 
 import { clientId, toEvmAddress, getClient } from '../scripts/utils'
 import { Client, ContractId } from '@hashgraph/sdk'

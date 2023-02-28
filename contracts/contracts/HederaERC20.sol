@@ -14,6 +14,7 @@ import './extensions/Deletable.sol';
 import './extensions/Reserve.sol';
 import './extensions/TokenOwner.sol';
 import './extensions/KYC.sol';
+import './extensions/RoleManagement.sol';
 
 contract HederaERC20 is
     IHederaERC20,
@@ -24,7 +25,8 @@ contract HederaERC20 is
     Freezable,
     Deletable,
     Rescatable,
-    KYC
+    KYC,
+    RoleManagement
 {
     // using SafeERC20Upgradeable for IHederaERC20Upgradeable;
 
