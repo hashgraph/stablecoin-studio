@@ -130,6 +130,17 @@ interface RoleTransactionAdapter {
 		targetId: HederaId,
 		role: StableCoinRole,
 	): Promise<TransactionResponse>;
+	grantRoles(
+		coin: StableCoinCapabilities,
+		targetsId: HederaId[],
+		roles: StableCoinRole[],
+		amounts: BigDecimal[],
+	): Promise<TransactionResponse>;
+	revokeRoles(
+		coin: StableCoinCapabilities,
+		targetsId: HederaId[],
+		roles: StableCoinRole[],
+	): Promise<TransactionResponse>;
 	hasRole(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
@@ -317,6 +328,21 @@ export default abstract class TransactionAdapter
 		targetId: HederaId,
 		role: StableCoinRole,
 	): Promise<TransactionResponse<any, Error>> {
+		throw new Error('Method not implemented.');
+	}
+	grantRoles(
+		coin: StableCoinCapabilities,
+		targetsId: HederaId[],
+		roles: StableCoinRole[],
+		amounts: BigDecimal[],
+	): Promise<TransactionResponse> {
+		throw new Error('Method not implemented.');
+	}
+	revokeRoles(
+		coin: StableCoinCapabilities,
+		targetsId: HederaId[],
+		roles: StableCoinRole[],
+	): Promise<TransactionResponse> {
 		throw new Error('Method not implemented.');
 	}
 	hasRole(
