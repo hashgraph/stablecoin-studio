@@ -24,6 +24,11 @@ contract HederaReserve is IHederaReserve, Initializable {
         _;
     }
 
+    // Constructor required to avoid Initializer attack on logic contract
+    constructor() {
+        _disableInitializers();
+    }
+
     function _checkAddressIsNotZero(address addr) internal pure {
         require(addr != address(0), 'Provided address is 0');
     }

@@ -9,13 +9,58 @@ import '@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol';
 import './HederaReserve.sol';
 import './Interfaces/IStableCoinFactory.sol';
 import '@openzeppelin/contracts/utils/Strings.sol';
+import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 
-contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
+contract StableCoinFactory is
+    IStableCoinFactory,
+    HederaResponseCodes,
+    Initializable
+{
     // Hedera HTS precompiled contract
     address private constant _PRECOMPILED_ADDRESS = address(0x167);
     string private constant _MEMO_1 = '{"p":"';
     string private constant _MEMO_2 = '","a":"';
     string private constant _MEMO_3 = '"}';
+    address private _admin;
+    address[] public hederaERC20Address;
+
+    event StableCoinFactoryInitialized();
+
+    modifier isAdmin() {
+        require(
+            _admin == msg.sender,
+            'Only administrator can call this function'
+        );
+        _;
+    }
+
+    modifier checkAddressIsNotZero(address addr) {
+        _checkAddressIsNotZero(addr);
+        _;
+    }
+
+    function _checkAddressIsNotZero(address addr) internal pure {
+        require(addr != address(0), 'Provided address is 0');
+    }
+
+    function initialize(
+        address admin,
+        address hederaERC20
+    )
+        external
+        initializer
+        checkAddressIsNotZero(admin)
+        checkAddressIsNotZero(hederaERC20)
+    {
+        _admin = admin;
+        hederaERC20Address.push(hederaERC20);
+        emit StableCoinFactoryInitialized();
+    }
+
+    // Constructor required to avoid Initializer attack on logic contract
+    constructor() {
+        _disableInitializers();
+    }
 
     function deployStableCoin(
         TokenStruct calldata requestedToken,
@@ -231,5 +276,20 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
             _tokenInitialSupply <= initialReserve,
             'Initial supply is lower than initial reserve'
         );
+    }
+
+    function addHederaERC20Version(
+        address newAddress
+    ) public isAdmin checkAddressIsNotZero(newAddress) returns (bool) {
+        hederaERC20Address.push(newAddress);
+        return true;
+    }
+
+    function getHederaERC20Address()
+        public
+        view
+        returns (address[] memory hederaERC20ToReturn)
+    {
+        return hederaERC20Address;
     }
 }

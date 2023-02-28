@@ -16,6 +16,8 @@ import {
     toHashgraphKey,
     ADDRESS_0,
     deployHederaReserve,
+    factoryProxyAddress,
+    deployHederaERC20,
 } from '../scripts/deploy'
 import {
     upgradeTo_SCF,
@@ -29,6 +31,9 @@ import {
     getProxyImplementation_SCF,
     getReserveAddress,
     getReserveAmount,
+    getHederaERC20Addresses,
+    getHederaERC20,
+    addHederaERC20Version,
 } from '../scripts/contractsMethods'
 
 import { clientId, toEvmAddress, getClient } from '../scripts/utils'
@@ -320,6 +325,70 @@ describe('StableCoinFactory Tests', function () {
                 reserveAddress: String(DataFeedAddress),
                 createReserve: false,
             })
+        ).to.eventually.be.rejectedWith(Error)
+    })
+
+    it('Get hederaERC20 addresses', async function () {
+        const addressArray: Array<string> = await getHederaERC20Addresses(
+            ContractId.fromString(factoryProxyAddress),
+            operatorClient
+        )
+        expect(addressArray.length).to.greaterThan(0)
+    })
+
+    it('Get hederaERC20 by index', async function () {
+        const index = 0
+        const address: string = await getHederaERC20(
+            ContractId.fromString(factoryProxyAddress),
+            operatorClient,
+            index
+        )
+        expect(address).not.empty
+    })
+
+    it('Add new hederaERC20 address', async function () {
+        const newAddress = await deployHederaERC20(
+            operatorClient,
+            operatorPriKey
+        )
+        const successfull: string = await addHederaERC20Version(
+            ContractId.fromString(factoryProxyAddress),
+            operatorClient,
+            newAddress.toSolidityAddress()
+        )
+        const addressArray: Array<string> = await getHederaERC20Addresses(
+            ContractId.fromString(factoryProxyAddress),
+            operatorClient
+        )
+
+        expect(successfull).be.true
+        expect(addressArray.at(-1)).to.be.equal(
+            '0x' + newAddress.toSolidityAddress()
+        )
+    })
+
+    it('Add new hederaERC20 address, throw error address is zero', async function () {
+        const newAddress = ADDRESS_0
+        expect(
+            addHederaERC20Version(
+                ContractId.fromString(factoryProxyAddress),
+                operatorClient,
+                newAddress
+            )
+        ).to.eventually.be.rejectedWith(Error)
+    })
+
+    it('Add new hederaERC20 address throw error client no isAdmin', async function () {
+        const newAddress = await deployHederaERC20(
+            operatorClient,
+            operatorPriKey
+        )
+        expect(
+            addHederaERC20Version(
+                ContractId.fromString(factoryProxyAddress),
+                nonOperatorClient,
+                newAddress.toSolidityAddress()
+            )
         ).to.eventually.be.rejectedWith(Error)
     })
 })

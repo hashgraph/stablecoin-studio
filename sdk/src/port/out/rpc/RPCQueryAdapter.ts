@@ -31,6 +31,7 @@ import LogService from '../../../app/service/LogService.js';
 import {
 	AggregatorV3Interface__factory,
 	HederaERC20__factory,
+	StableCoinFactory__factory,
 } from 'hedera-stable-coin-contracts';
 import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
@@ -38,6 +39,7 @@ import EvmAddress from '../../../domain/context/contract/EvmAddress.js';
 
 const HederaERC20 = HederaERC20__factory;
 const Reserve = AggregatorV3Interface__factory;
+const Factory = StableCoinFactory__factory;
 
 type StaticConnect = { connect: (...args: any[]) => any };
 
@@ -167,5 +169,27 @@ export default class RPCQueryAdapter {
 			`Requesting balanceOf address: ${address.toString()}`,
 		);
 		return await this.connect(Reserve, address.toString()).decimals();
+	}
+
+	async getERC20List(factoryAddress: EvmAddress): Promise<string[]> {
+		LogService.logTrace(
+			`Requesting getERC20List factoryAddress: ${factoryAddress.toString()}`,
+		);
+		return await this.connect(
+			Factory,
+			factoryAddress.toString(),
+		).getHederaERC20Address();
+	}
+	async getERC20(
+		factoryAddress: EvmAddress,
+		index: BigNumber,
+	): Promise<string> {
+		LogService.logTrace(
+			`Requesting getERC20 factoryAddress: ${factoryAddress.toString()}, index: ${index.toString()}`,
+		);
+		return await this.connect(
+			Factory,
+			factoryAddress.toString(),
+		).hederaERC20Address(index);
 	}
 }

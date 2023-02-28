@@ -37,10 +37,10 @@ import {
 
 const hre = require('hardhat')
 
-const hederaERC20Address = '0.0.3583157' //
-const factoryProxyAddress = '0.0.3583163' //
-const factoryProxyAdminAddress = '0.0.3583161' //
-const factoryAddress = '0.0.3583159' //
+const hederaERC20Address = '0.0.3565272'
+export const factoryProxyAddress = '0.0.3565312'
+const factoryProxyAdminAddress = '0.0.3565307'
+const factoryAddress = '0.0.3565302'
 
 export const ADDRESS_0 = '0x0000000000000000000000000000000000000000'
 const hreConfig = hre.network.config
@@ -197,6 +197,7 @@ export async function deployHederaERC20(
 }
 
 export async function deployFactory(
+    initializeParams: { admin: string; erc20: string },
     clientOperator: Client,
     privateKey: string
 ) {
@@ -237,6 +238,15 @@ export async function deployFactory(
         privateKey,
         clientOperator,
         params
+    )
+
+    await contractCall(
+        factoryProxy,
+        'initialize',
+        [initializeParams.admin, initializeParams.erc20],
+        clientOperator,
+        130000,
+        StableCoinFactory__factory.abi
     )
 
     console.log(
@@ -316,7 +326,15 @@ export async function deployContractsWithSDK({
 
     // Deploying a Factory or using an already deployed one
     if (!factoryAddress) {
-        const result = await deployFactory(clientSdk, privateKey)
+        const initializeFactory = {
+            admin: AccountEvmAddress,
+            erc20: hederaERC20.toSolidityAddress(),
+        }
+        const result = await deployFactory(
+            initializeFactory,
+            clientSdk,
+            privateKey
+        )
         f_proxyAddress = result[0]
         f_proxyAdminAddress = result[1]
         f_address = result[2]
