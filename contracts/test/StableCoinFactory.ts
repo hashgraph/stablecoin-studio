@@ -580,7 +580,11 @@ describe('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', functio
             erc20: hederaERC20.toSolidityAddress(),
         }
         // Deploy a new contract
-        const result = await deployFactory(initializeFactory,clientSdk, operatorPriKey)
+        const result = await deployFactory(
+            initializeFactory,
+            clientSdk,
+            operatorPriKey
+        )
 
         const newImplementationContract = result[2]
 

@@ -35,6 +35,13 @@ import {
     ADDRESS_1,
     ADDRESS_2,
     ADDRESS_3,
+    ADDRESS_4,
+    ADDRESS_5,
+    ADDRESS_6,
+    ADDRESS_7,
+    ADDRESS_8,
+    ADDRESS_9,
+    ADDRESS_10,
 } from '../scripts/constants'
 
 import { clientId } from '../scripts/utils'
@@ -63,6 +70,18 @@ const TokenFactor = BigNumber.from(10).pow(TokenDecimals)
 const INIT_SUPPLY = BigNumber.from(0).mul(TokenFactor)
 const MAX_SUPPLY = BigNumber.from(1).mul(TokenFactor)
 const TokenMemo = 'Hedera Accelerator Stable Coin'
+const AllAccounts = [
+    ADDRESS_1,
+    ADDRESS_2,
+    ADDRESS_3,
+    ADDRESS_4,
+    ADDRESS_5,
+    ADDRESS_6,
+    ADDRESS_7,
+    ADDRESS_8,
+    ADDRESS_9,
+    ADDRESS_10,
+]
 
 describe('Role Management Tests', function () {
     before(async function () {
@@ -134,8 +153,6 @@ describe('Role Management Tests', function () {
     })
 
     it('Non Admin Cannot grant or revoke roles', async function () {
-        const AllAccounts = [ADDRESS_1, ADDRESS_2, ADDRESS_3]
-
         // Granting roles with non Admin
         const Roles = [BURN_ROLE, FREEZE_ROLE]
         const amounts: BigNumber[] = []
@@ -187,8 +204,6 @@ describe('Role Management Tests', function () {
     })
 
     it('Admin Cannot grant CashIn role without allowances', async function () {
-        const AllAccounts = [ADDRESS_1, ADDRESS_2, ADDRESS_3]
-
         // Granting roles with cash in but without allowances
         const Roles = [CASHIN_ROLE]
         const amounts: BigNumber[] = []
@@ -210,8 +225,6 @@ describe('Role Management Tests', function () {
     })
 
     it('Admin grants and revokes roles to multiple accounts including CashIn role', async function () {
-        const AllAccounts = [ADDRESS_1, ADDRESS_2, ADDRESS_3]
-
         // Checking roles
         for (let i = 0; i < AllAccounts.length; i++) {
             const result = await getRoles(
