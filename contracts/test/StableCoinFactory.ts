@@ -362,8 +362,8 @@ describe('StableCoinFactory Tests', function () {
         )
 
         expect(successfull).be.true
-        expect(addressArray.at(-1)).to.be.equal(
-            '0x' + newAddress.toSolidityAddress()
+        expect(addressArray.at(-1)?.toUpperCase()).to.be.equal(
+            '0X' + newAddress.toSolidityAddress().toUpperCase()
         )
     })
 
