@@ -100,6 +100,33 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 	@OptionalField()
 	grantKYCToOriginalSender?: boolean;
 
+	@OptionalField()
+	burnRoleAccount?: string | undefined;
+
+	@OptionalField()
+	wipeRoleAccount?: string | undefined;
+
+	@OptionalField()
+	rescueRoleAccount?: string | undefined;
+
+	@OptionalField()
+	pauseRoleAccount?: string | undefined;
+
+	@OptionalField()
+	freezeRoleAccount?: string | undefined;
+
+	@OptionalField()
+	deleteRoleAccount?: string | undefined;
+
+	@OptionalField()
+	kycRoleAccount?: string | undefined;
+
+	@OptionalField()
+	cashInRoleAccount?: string | undefined;
+
+	@OptionalField()
+	cashInRoleAllowance?: string | undefined;
+
 	constructor({
 		name,
 		symbol,
@@ -123,6 +150,15 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		reserveInitialAmount,
 		createReserve,
 		grantKYCToOriginalSender,
+		burnRoleAccount,
+		wipeRoleAccount,
+		rescueRoleAccount,
+		pauseRoleAccount,
+		freezeRoleAccount,
+		deleteRoleAccount,
+		kycRoleAccount,
+		cashInRoleAccount,
+		cashInRoleAllowance,
 	}: {
 		name: string;
 		symbol: string;
@@ -146,6 +182,15 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		reserveInitialAmount?: string;
 		createReserve: boolean;
 		grantKYCToOriginalSender?: boolean;
+		burnRoleAccount?: string;
+		wipeRoleAccount?: string;
+		rescueRoleAccount?: string;
+		pauseRoleAccount?: string;
+		freezeRoleAccount?: string;
+		deleteRoleAccount?: string;
+		kycRoleAccount?: string;
+		cashInRoleAccount?: string;
+		cashInRoleAllowance?: string;
 	}) {
 		super({
 			name: (val) => {
@@ -288,6 +333,29 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 					bInitialSupply,
 				);
 			},
+			burnRoleAccount: Validation.checkHederaIdFormat(),
+			wipeRoleAccount: Validation.checkHederaIdFormat(),
+			rescueRoleAccount: Validation.checkHederaIdFormat(),
+			pauseRoleAccount: Validation.checkHederaIdFormat(),
+			freezeRoleAccount: Validation.checkHederaIdFormat(),
+			deleteRoleAccount: Validation.checkHederaIdFormat(),
+			kycRoleAccount: Validation.checkHederaIdFormat(),
+			cashInRoleAccount: Validation.checkHederaIdFormat(),
+			cashInRoleAllowance: (val) => {
+				if (val === undefined || val === '') {
+					return;
+				}
+				if (!BigDecimal.isBigDecimal(val)) {
+					return [new InvalidType(val, 'BigDecimal')];
+				}
+				if (CheckNums.hasMoreDecimals(val, this.decimals)) {
+					return [new InvalidDecimalRange(val, this.decimals)];
+				}
+				return StableCoin.checkCashInAllowance(
+					BigDecimal.fromString(val, this.decimals),
+					this.decimals,
+				);
+			},
 		});
 		this.name = name;
 		this.symbol = symbol;
@@ -312,5 +380,14 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		this.reserveInitialAmount = reserveInitialAmount;
 		this.createReserve = createReserve;
 		this.grantKYCToOriginalSender = grantKYCToOriginalSender;
+		this.burnRoleAccount = burnRoleAccount;
+		this.wipeRoleAccount = wipeRoleAccount;
+		this.rescueRoleAccount = rescueRoleAccount;
+		this.pauseRoleAccount = pauseRoleAccount;
+		this.freezeRoleAccount = freezeRoleAccount;
+		this.deleteRoleAccount = deleteRoleAccount;
+		this.kycRoleAccount = kycRoleAccount;
+		this.cashInRoleAccount = cashInRoleAccount;
+		this.cashInRoleAllowance = cashInRoleAllowance;
 	}
 }

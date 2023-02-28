@@ -50,7 +50,7 @@ contract HederaERC20 is
     {
         __reserveInit(init.reserveAddress); // Initialize reserve
         __rolesInit();
-        _grantInitialRoles(init.originalSender);
+        _grantInitialRoles(init.originalSender, init.roles, init.cashinRole);
 
         (int64 responseCode, address createdTokenAddress) = IHederaTokenService(
             _PRECOMPILED_ADDRESS
@@ -84,17 +84,24 @@ contract HederaERC20 is
     }
 
     function _grantInitialRoles(
-        address originalSender
+        address originalSender,
+        RolesStruct[] memory roles,
+        CashinRoleStruct memory cashinRole
     ) private onlyInitializing {
-        _grantUnlimitedSupplierRole(originalSender);
-        _grantRole(_getRoleId(RoleName.BURN), originalSender);
-        _grantRole(_getRoleId(RoleName.RESCUE), originalSender);
-        _grantRole(_getRoleId(RoleName.WIPE), originalSender);
-        _grantRole(_getRoleId(RoleName.PAUSE), originalSender);
-        _grantRole(_getRoleId(RoleName.FREEZE), originalSender);
-        _grantRole(_getRoleId(RoleName.DELETE), originalSender);
-        _grantRole(_getRoleId(RoleName.KYC), originalSender);
-        _setupRole(_getRoleId(RoleName.ADMIN), originalSender); // Assign Admin role to the provided address
+        // granting all roles except cashin role
+        for (uint256 i = 0; i < roles.length; i++) {
+            _grantRole(roles[i].role, roles[i].account);
+        }
+
+        // granting cashin role
+        if (cashinRole.account != address(0)) {
+            if (cashinRole.allowance > 0)
+                _grantSupplierRole(cashinRole.account, cashinRole.allowance);
+            else _grantUnlimitedSupplierRole(cashinRole.account);
+        }
+
+        // granting admin role, always to the SC creator
+        _setupRole(_getRoleId(RoleName.ADMIN), originalSender);
     }
 
     /**

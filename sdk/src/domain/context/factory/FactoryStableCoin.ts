@@ -18,7 +18,9 @@
  *
  */
 
+import { FactoryCashinRole } from './FactoryCashinRole.js';
 import { FactoryKey } from './FactoryKey.js';
+import { FactoryRole } from './FactoryRole.js';
 
 export class FactoryStableCoin {
 	/**
@@ -91,6 +93,16 @@ export class FactoryStableCoin {
 	 */
 	public keys: FactoryKey[];
 
+	/**
+	 * Roles
+	 */
+	public roles: FactoryRole[];
+
+	/**
+	 * Cash In role
+	 */
+	public cashinRole: FactoryCashinRole;
+
 	constructor(
 		tokenName: string,
 		tokenSymbol: string,
@@ -106,6 +118,8 @@ export class FactoryStableCoin {
 		createReserve: boolean,
 		grantKYCToOriginalSender: boolean,
 		keys: FactoryKey[],
+		roles: FactoryRole[],
+		cashinRole: FactoryCashinRole,
 	) {
 		this.tokenName = tokenName;
 		this.tokenSymbol = tokenSymbol;
@@ -121,5 +135,7 @@ export class FactoryStableCoin {
 		this.createReserve = createReserve;
 		this.grantKYCToOriginalSender = grantKYCToOriginalSender;
 		this.keys = keys;
+		this.roles = roles;
+		this.cashinRole = cashinRole;
 	}
 }

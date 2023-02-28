@@ -46,6 +46,7 @@ import { TokenSupplyType } from './TokenSupply.js';
 import { TokenType } from './TokenType.js';
 import EvmAddress from '../contract/EvmAddress.js';
 import { CustomFee } from '../fee/CustomFee.js';
+import { CashInAllowanceInvalid } from './error/CashInAllowanceInvalid.js';
 
 const MAX_SUPPLY = 9_223_372_036_854_775_807n;
 const TEN = 10;
@@ -81,6 +82,15 @@ export interface StableCoinProps {
 	autoRenewAccountPeriod?: number;
 	deleted?: boolean;
 	customFees?: CustomFee[];
+	burnRoleAccount?: HederaId;
+	wipeRoleAccount?: HederaId;
+	rescueRoleAccount?: HederaId;
+	pauseRoleAccount?: HederaId;
+	freezeRoleAccount?: HederaId;
+	deleteRoleAccount?: HederaId;
+	kycRoleAccount?: HederaId;
+	cashInRoleAccount?: HederaId;
+	cashInRoleAllowance?: BigDecimal;
 }
 
 export class StableCoin extends BaseEntity implements StableCoinProps {
@@ -112,6 +122,15 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 	autoRenewAccountPeriod?: number;
 	deleted?: boolean;
 	customFees?: CustomFee[];
+	burnRoleAccount?: HederaId;
+	wipeRoleAccount?: HederaId;
+	rescueRoleAccount?: HederaId;
+	pauseRoleAccount?: HederaId;
+	freezeRoleAccount?: HederaId;
+	deleteRoleAccount?: HederaId;
+	kycRoleAccount?: HederaId;
+	cashInRoleAccount?: HederaId;
+	cashInRoleAllowance?: BigDecimal;
 
 	constructor(params: StableCoinProps) {
 		const {
@@ -142,6 +161,15 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 			proxyAddress,
 			grantKYCToOriginalSender,
 			customFees,
+			burnRoleAccount,
+			wipeRoleAccount,
+			rescueRoleAccount,
+			freezeRoleAccount,
+			pauseRoleAccount,
+			deleteRoleAccount,
+			kycRoleAccount,
+			cashInRoleAccount,
+			cashInRoleAllowance,
 		} = params;
 		super();
 		this.adminKey = adminKey;
@@ -175,6 +203,15 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 		this.proxyAddress = proxyAddress;
 		this.grantKYCToOriginalSender = grantKYCToOriginalSender;
 		this.customFees = customFees;
+		this.burnRoleAccount = burnRoleAccount ?? HederaId.from('0.0.0');
+		this.wipeRoleAccount = wipeRoleAccount ?? HederaId.from('0.0.0');
+		this.rescueRoleAccount = rescueRoleAccount ?? HederaId.from('0.0.0');
+		this.freezeRoleAccount = freezeRoleAccount ?? HederaId.from('0.0.0');
+		this.pauseRoleAccount = pauseRoleAccount ?? HederaId.from('0.0.0');
+		this.deleteRoleAccount = deleteRoleAccount ?? HederaId.from('0.0.0');
+		this.kycRoleAccount = kycRoleAccount ?? HederaId.from('0.0.0');
+		this.cashInRoleAccount = cashInRoleAccount ?? HederaId.from('0.0.0');
+		this.cashInRoleAllowance = cashInRoleAllowance;
 	}
 
 	public static checkName(value: string): BaseError[] {
@@ -235,6 +272,18 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 			BigDecimal.fromValue(BigNumber.from(MAX_SUPPLY), decimals);
 		if (!CheckNums.isWithinRange(initialSupply, min, max)) {
 			list.push(new InitSupplyInvalid(initialSupply.toString()));
+		}
+		return list;
+	}
+
+	public static checkCashInAllowance(
+		cashInAllowance: BigDecimal,
+		decimals: number,
+	): BaseError[] {
+		const list: BaseError[] = [];
+		const max = BigDecimal.fromValue(BigNumber.from(MAX_SUPPLY), decimals);
+		if (!CheckNums.isWithinRange(cashInAllowance, BigDecimal.ZERO, max)) {
+			list.push(new CashInAllowanceInvalid(cashInAllowance.toString()));
 		}
 		return list;
 	}

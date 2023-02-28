@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
+import './IHederaERC20.sol';
+
 interface IStableCoinFactory {
     event Deployed(DeployedStableCoin);
 
@@ -29,6 +31,8 @@ interface IStableCoinFactory {
         bool createReserve;
         bool grantKYCToOriginalSender;
         KeysStruct[] keys;
+        IHederaERC20.RolesStruct[] roles;
+        IHederaERC20.CashinRoleStruct cashinRole;
     }
 
     struct DeployedStableCoin {
