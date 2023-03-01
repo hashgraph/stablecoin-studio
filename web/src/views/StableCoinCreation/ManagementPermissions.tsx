@@ -265,7 +265,7 @@ const ManagementPermissions = ({
 										name={'cashInAllowance'}
 										placeholder={
 											t(
-												'stableCoinCreation:managementPermissions.cashinAllowanceInputPlaceholder',
+												'stableCoinCreation:managementPermissions.cashInAllowanceInputPlaceholder',
 											) ?? propertyNotFound
 										}
 									/>

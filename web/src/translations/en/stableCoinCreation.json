@@ -47,7 +47,7 @@
 		"kyc": "KYC",
 		"delete": "Delete",
 		"cashInAllowanceType": "Infinity?",
-		"cashUnAllowanceInputPlaceholder": "0",
+		"cashInAllowanceInputPlaceholder": "0",
 		"grantKYCToOriginalSender": "Grant KYC flag to the token creator",
 		"introduce": "Enter the {{name}}",
 		"none": "None",
