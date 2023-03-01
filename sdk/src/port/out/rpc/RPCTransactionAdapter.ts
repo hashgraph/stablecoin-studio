@@ -293,8 +293,8 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		account: HederaId | undefined,
 		stableCoinRole: StableCoinRole,
 		roles: FactoryRole[],
-	) {
-		if (account && account !== HederaId.from('0.0.0')) {
+	): Promise<void> {
+		if (account && account.value !== HederaId.NULL.value) {
 			const role = new FactoryRole();
 			role.role = stableCoinRole;
 			role.account = await this.accountToEvmAddress(account).toString();

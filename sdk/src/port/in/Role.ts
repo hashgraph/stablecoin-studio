@@ -46,6 +46,7 @@ import { DecreaseAllowanceCommand } from '../../app/usecase/command/stablecoin/r
 import {
 	StableCoinRole,
 	StableCoinRoleLabel,
+	MAX_ACCOUNTS_ROLES,
 } from '../../domain/context/stablecoin/StableCoinRole.js';
 import { GrantSupplierRoleCommand } from '../../app/usecase/command/stablecoin/roles/grantSupplierRole/GrantSupplierRoleCommand.js';
 import { GrantUnlimitedSupplierRoleCommand } from '../../app/usecase/command/stablecoin/roles/granUnlimitedSupplierRole/GrantUnlimitedSupplierRoleCommand.js';
@@ -60,7 +61,7 @@ import RevokeMultiRolesRequest from './request/RevokeMultiRolesRequest.js';
 import { GrantMultiRolesCommand } from '../../app/usecase/command/stablecoin/roles/grantMultiRoles/GrantMultiRolesCommand.js';
 import { RevokeMultiRolesCommand } from '../../app/usecase/command/stablecoin/roles/revokeMultiRoles/RevokeMultiRolesCommand.js';
 
-export { StableCoinRole, StableCoinRoleLabel };
+export { StableCoinRole, StableCoinRoleLabel, MAX_ACCOUNTS_ROLES };
 
 interface IRole {
 	hasRole(request: HasRoleRequest): Promise<boolean>;

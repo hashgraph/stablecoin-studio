@@ -21,7 +21,7 @@
 import { ICommandHandler } from '../../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
-import { BigDecimal } from '../../../../../../port/in/StableCoin.js';
+import BigDecimal from '../../../../../../domain/context/shared/BigDecimal.js';
 import AccountService from '../../../../../service/AccountService.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
@@ -67,7 +67,7 @@ export class GrantMultiRolesCommandHandler
 			roles,
 			amountsFormatted,
 		);
-		// return Promise.resolve({ payload: res.response });
+
 		return Promise.resolve(
 			new GrantMultiRolesCommandResponse(res.error === undefined),
 		);

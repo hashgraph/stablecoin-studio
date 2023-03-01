@@ -58,11 +58,19 @@ export default class GrantMultiRolesRequest extends ValidatedRequest<GrantMultiR
 					];
 				}
 
-				const err: any[] = [];
-				vals.forEach((val) => {
-					err.push(Validation.checkHederaIdFormat()(val));
-				});
-				return err;
+				for (let i = 0; i < vals.length; i++) {
+					const err = Validation.checkHederaIdFormat()(vals[i]);
+					if (err.length > 0) {
+						return err;
+					}
+					if (vals.indexOf(vals[i]) != i) {
+						return [
+							new InvalidValue(
+								`account ${vals[i]} is duplicated`,
+							),
+						];
+					}
+				}
 			},
 			roles: (vals) => {
 				if (vals.length == 0) {
@@ -71,12 +79,17 @@ export default class GrantMultiRolesRequest extends ValidatedRequest<GrantMultiR
 					];
 				}
 
-				const err: any[] = [];
-
-				vals.forEach((val) => {
-					err.push(Validation.checkRole()(val));
-				});
-				return err;
+				for (let i = 0; i < vals.length; i++) {
+					const err = Validation.checkRole()(vals[i]);
+					if (err.length > 0) {
+						return err;
+					}
+					if (vals.indexOf(vals[i]) != i) {
+						return [
+							new InvalidValue(`role ${vals[i]} is duplicated`),
+						];
+					}
+				}
 			},
 			amounts: (vals) => {
 				let cashInRole = false;
@@ -98,11 +111,12 @@ export default class GrantMultiRolesRequest extends ValidatedRequest<GrantMultiR
 						),
 					];
 
-				const err: any[] = [];
-				vals.forEach((val) => {
-					err.push(Validation.checkAmount(true)(val));
-				});
-				return err;
+				for (let i = 0; i < vals.length; i++) {
+					const err = Validation.checkAmount(true)(vals[i]);
+					if (err.length > 0) {
+						return err;
+					}
+				}
 			},
 		});
 		this.tokenId = tokenId;

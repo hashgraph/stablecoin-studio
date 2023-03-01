@@ -3,6 +3,7 @@ import type { UseFormReturn } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import DetailsReview from '../../components/DetailsReview';
 import { OTHER_KEY_VALUE } from './components/KeySelector';
+import { OTHER_ACCOUNT_VALUE } from './components/RoleSelector';
 
 interface ReviewProps {
 	form: UseFormReturn;
@@ -22,6 +23,7 @@ const Review = (props: ReviewProps) => {
 		maxSupply,
 		decimals,
 		managementPermissions,
+		isKycRequired,
 		adminKey,
 		supplyKey,
 		wipeKey,
@@ -29,6 +31,16 @@ const Review = (props: ReviewProps) => {
 		kycRequired,
 		kycKey,
 		pauseKey,
+		cashInRoleAccount,
+		burnRoleAccount,
+		wipeRoleAccount,
+		rescueRoleAccount,
+		pauseRoleAccount,
+		freezeRoleAccount,
+		deleteRoleAccount,
+		kycRoleAccount,
+		cashInAllowance,
+		cashInAllowanceType,
 		manageCustomFees,
 		feeScheduleKey,
 		reserveAddress,
@@ -45,6 +57,95 @@ const Review = (props: ReviewProps) => {
 
 		return label;
 	};
+
+	const getExtraInfo = (label: string, value: string) => {
+		if (label === t('stableCoinCreation:managementPermissions.cashin')) {
+			if (cashInAllowanceType) {
+				return `${value} - UNLIMITED`;
+			} else {
+				return `${value} - ${cashInAllowance}`;
+			}
+		} else {
+			return value;
+		}
+	};
+
+	const getRole = (accountSelected: { value: number; label: string }, nameOtherAccount: string) => {
+		let { value, label } = accountSelected;
+		if (value === OTHER_ACCOUNT_VALUE) {
+			label = `${label}: ${form.watch(nameOtherAccount)}`;
+		}
+		return label;
+	};
+
+	const setRoleAccountInfo = (label: string, roleValue: { value: number; label: string }) => {
+		const { value } = roleValue;
+		roleDetails.push({
+			label: label,
+			value:
+				value === 1
+					? getExtraInfo(label, t('stableCoinCreation:managementPermissions.currentUserAccount'))
+					: getExtraInfo(label, getRole(roleValue, `${label.toLowerCase()}RoleAccountOther`)),
+		});
+	};
+
+	const setRoleAccountInfoByKey = (
+		label: string,
+		roleValue: { value: number; label: string },
+		keyValue: { value: number; label: string },
+	) => {
+		if (managementPermissions || (keyValue && keyValue.value === 2)) {
+			setRoleAccountInfo(label, roleValue);
+		}
+	};
+
+	const setKycRoleAccountInfoByKey = (
+		label: string,
+		roleValue: { value: number; label: string },
+		keyValue: { value: number; label: string },
+	) => {
+		if (isKycRequired || (keyValue && keyValue.value === 2)) {
+			setRoleAccountInfo(label, roleValue);
+		}
+	};
+
+	const roleDetails: any[] = [];
+	setRoleAccountInfoByKey(
+		t('stableCoinCreation:managementPermissions.cashin'),
+		cashInRoleAccount,
+		supplyKey,
+	);
+	setRoleAccountInfoByKey(
+		t('stableCoinCreation:managementPermissions.burn'),
+		burnRoleAccount,
+		supplyKey,
+	);
+	setRoleAccountInfoByKey(
+		t('stableCoinCreation:managementPermissions.wipe'),
+		wipeRoleAccount,
+		wipeKey,
+	);
+	setRoleAccountInfo(t('stableCoinCreation:managementPermissions.rescue'), rescueRoleAccount);
+	setRoleAccountInfoByKey(
+		t('stableCoinCreation:managementPermissions.pause'),
+		pauseRoleAccount,
+		pauseKey,
+	);
+	setRoleAccountInfoByKey(
+		t('stableCoinCreation:managementPermissions.freeze'),
+		freezeRoleAccount,
+		freezeKey,
+	);
+	setRoleAccountInfoByKey(
+		t('stableCoinCreation:managementPermissions.delete'),
+		deleteRoleAccount,
+		adminKey,
+	);
+	setKycRoleAccountInfoByKey(
+		t('stableCoinCreation:managementPermissions.kyc'),
+		kycRoleAccount,
+		kycKey,
+	);
 
 	return (
 		<VStack h='full' justify={'space-between'} pt='80px'>
@@ -147,6 +248,11 @@ const Review = (props: ReviewProps) => {
 									: t('stableCoinCreation:managementPermissions.none'),
 							},
 						]}
+					/>
+					<DetailsReview
+						title={t('stableCoinCreation:review.rolesAssignment')}
+						titleProps={{ fontWeight: 700, color: 'brand.secondary' }}
+						details={roleDetails}
 					/>
 					<DetailsReview
 						title={t('stableCoinCreation:managementPermissions.CreatorKYCFlag')}

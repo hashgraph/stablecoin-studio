@@ -176,7 +176,6 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				},
 				{ account: coin.kycRoleAccount, role: StableCoinRole.KYC_ROLE },
 			];
-
 			for (const providedRole of providedRoles) {
 				await this.setFactoryRole(
 					providedRole.account,
@@ -253,8 +252,8 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		account: HederaId | undefined,
 		stableCoinRole: StableCoinRole,
 		roles: FactoryRole[],
-	) {
-		if (account && account !== HederaId.from('0.0.0')) {
+	): Promise<void> {
+		if (account && account.value !== HederaId.NULL.value) {
 			const role = new FactoryRole();
 			role.role = stableCoinRole;
 			role.account = (await this.accountToEvmAddress(account)).toString();

@@ -21,44 +21,44 @@
 /* eslint-disable jest/no-disabled-tests */
 /* eslint-disable jest/expect-expect */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import Account from '../../src/domain/context/account/Account.js';
-import TransactionResponse from '../../src/domain/context/transaction/TransactionResponse.js';
+import Account from '../../../src/domain/context/account/Account';
+import TransactionResponse from '../../../src/domain/context/transaction/TransactionResponse';
 import {
 	Network,
 	RequestCustomFee,
 	StableCoinCapabilities,
 	RequestFractionalFee,
-} from '../../src/index.js';
+} from '../../../src/index';
 import ConnectRequest, {
 	SupportedWallets,
-} from '../../src/port/in/request/ConnectRequest.js';
+} from '../../../src/port/in/request/ConnectRequest';
 import {
 	CustomFee as HCustomFee,
 	CustomFixedFee as HCustomFixedFee,
 	CustomFractionalFee as HCustomFractionalFee,
 	ContractId as HContractId,
 } from '@hashgraph/sdk';
-import ContractId from '../../src/domain/context/contract/ContractId.js';
-import { TokenSupplyType } from '../../src/port/in/StableCoin.js';
-import { StableCoin } from '../../src/domain/context/stablecoin/StableCoin.js';
+import ContractId from '../../../src/domain/context/contract/ContractId';
+import { TokenSupplyType } from '../../../src/port/in/StableCoin';
+import { StableCoin } from '../../../src/domain/context/stablecoin/StableCoin';
 import {
 	CLIENT_ACCOUNT_ED25519,
 	ENVIRONMENT,
 	FACTORY_ADDRESS,
 	HEDERA_ERC20_ADDRESS,
-} from '../config.js';
-import { HTSTransactionAdapter } from '../../src/port/out/hs/hts/HTSTransactionAdapter.js';
-import { MirrorNodeAdapter } from '../../src/port/out/mirror/MirrorNodeAdapter.js';
-import Injectable from '../../src/core/Injectable.js';
-import { HederaId } from '../../src/domain/context/shared/HederaId.js';
-import StableCoinService from '../../src/app/service/StableCoinService.js';
-import StableCoinDetail from '../../src/port/out/mirror/response/StableCoinViewModel.js';
+} from '../../config';
+import { HTSTransactionAdapter } from '../../../src/port/out/hs/hts/HTSTransactionAdapter';
+import { MirrorNodeAdapter } from '../../../src/port/out/mirror/MirrorNodeAdapter';
+import Injectable from '../../../src/core/Injectable';
+import { HederaId } from '../../../src/domain/context/shared/HederaId';
+import StableCoinService from '../../../src/app/service/StableCoinService';
+import StableCoinDetail from '../../../src/port/out/mirror/response/StableCoinViewModel';
 // import FeeAssessmentMethod from '@hashgraph/sdk/lib/token/FeeAssessmentMethod.js';
 import {
 	FixedFee,
 	FractionalFee,
-} from '../../src/domain/context/fee/CustomFee.js';
-import BigDecimal from '../../src/domain/context/shared/BigDecimal.js';
+} from '../../../src/domain/context/fee/CustomFee.js';
+import BigDecimal from '../../../src/domain/context/shared/BigDecimal.js';
 
 describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 	// token to operate through HTS
