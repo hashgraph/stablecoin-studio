@@ -333,14 +333,14 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 					bInitialSupply,
 				);
 			},
-			burnRoleAccount: Validation.checkHederaIdFormat(),
-			wipeRoleAccount: Validation.checkHederaIdFormat(),
-			rescueRoleAccount: Validation.checkHederaIdFormat(),
-			pauseRoleAccount: Validation.checkHederaIdFormat(),
-			freezeRoleAccount: Validation.checkHederaIdFormat(),
-			deleteRoleAccount: Validation.checkHederaIdFormat(),
-			kycRoleAccount: Validation.checkHederaIdFormat(),
-			cashInRoleAccount: Validation.checkHederaIdFormat(),
+			burnRoleAccount: Validation.checkHederaIdFormat(true),
+			wipeRoleAccount: Validation.checkHederaIdFormat(true),
+			rescueRoleAccount: Validation.checkHederaIdFormat(true),
+			pauseRoleAccount: Validation.checkHederaIdFormat(true),
+			freezeRoleAccount: Validation.checkHederaIdFormat(true),
+			deleteRoleAccount: Validation.checkHederaIdFormat(true),
+			kycRoleAccount: Validation.checkHederaIdFormat(true),
+			cashInRoleAccount: Validation.checkHederaIdFormat(true),
 			cashInRoleAllowance: (val) => {
 				if (val === undefined || val === '') {
 					return;
