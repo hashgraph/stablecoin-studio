@@ -279,11 +279,13 @@ export default class CreateStableCoinService extends Service {
     // ASK HederaERC20 version
     tokenToCreate.stableCoinFactory = utilsService.getCurrentFactory().id;
 
-    tokenToCreate.hederaERC20 = await this.askHederaERC20Version(
+    await this.askHederaERC20Version(
       tokenToCreate.stableCoinFactory,
+      tokenToCreate,
     );
 
     console.log({
+      hederaERC20: tokenToCreate.hederaERC20,
       name: tokenToCreate.name,
       symbol: tokenToCreate.symbol,
       autoRenewAccount: tokenToCreate.autoRenewAccount,
@@ -378,14 +380,35 @@ export default class CreateStableCoinService extends Service {
     );
   }
 
-  private async askHederaERC20Version(factory: string): Promise<string> {
-    const factoryListEvm = await Factory.getHederaERC20List(
-      new GetERC20ListRequest({ factoryId: factory }),
-    ).then((value) => value.reverse());
-    return await utilsService.defaultMultipleAsk(
-      language.getText('stablecoin.askHederaERC20Address'),
-      factoryListEvm.map((item) => item.toString()),
+  private async askHederaERC20Version(
+    factory: string,
+    request: any,
+  ): Promise<void> {
+    const Predeployed = await utilsService.defaultConfirmAsk(
+      language.getText('stablecoin.askHederaERC20Predeployed'),
+      true,
     );
+
+    if (Predeployed) {
+      const factoryListEvm = await Factory.getHederaERC20List(
+        new GetERC20ListRequest({ factoryId: factory }),
+      ).then((value) => value.reverse());
+
+      request.hederaERC20 = await utilsService.defaultMultipleAsk(
+        language.getText('stablecoin.askHederaERC20Version'),
+        factoryListEvm.map((item) => item.toString()),
+      );
+    } else {
+      await utilsService.handleValidation(
+        () => request.validate('hederaERC20'),
+        async () => {
+          request.hederaERC20 = await utilsService.defaultSingleAsk(
+            language.getText('stablecoin.askHederaERC20Implementation'),
+            '0.0.0',
+          );
+        },
+      );
+    }
   }
 
   private async askForOptionalProps(): Promise<boolean> {
