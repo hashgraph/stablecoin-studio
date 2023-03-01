@@ -91,14 +91,10 @@ export default class StableCoinService extends Service {
 				tokenIsDeleted != undefined ? tokenIsDeleted : _coin.deleted;
 			const operable = !deleted && !paused;
 
-			if (
-				operable &&
-				_coin.proxyAddress?.toString() === _coin.treasury?.toString()
-			) {
+			if (operable)
 				listCapabilities.push(
 					new Capability(Operation.RESCUE, Access.CONTRACT),
 				);
-			}
 
 			if (
 				operable &&
@@ -269,18 +265,6 @@ export default class StableCoinService extends Service {
 				listCapabilities.push(
 					new Capability(
 						Operation.ROLE_ADMIN_MANAGEMENT,
-						Access.CONTRACT,
-					),
-				);
-				listCapabilities.push(
-					new Capability(
-						Operation.RESERVE_MANAGEMENT,
-						Access.CONTRACT,
-					),
-				);
-				listCapabilities.push(
-					new Capability(
-						Operation.RESERVE_MANAGEMENT,
 						Access.CONTRACT,
 					),
 				);
