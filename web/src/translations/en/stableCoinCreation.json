@@ -68,7 +68,8 @@
 		"CreatorGrantedKYC": "TRUE",
 		"CreatorNotGrantedKYC": "FALSE",
 		"wantKyc": "Do you want to enable KYC?",
-		"manageCustomFees": "Do you want to add custom fees?"
+		"manageCustomFees": "Do you want to add custom fees?",
+		"accountPlaceholder": "0.0.0"
 	},
 	"proofOfReserve": {
 		"title": "Proof of Reserve",
