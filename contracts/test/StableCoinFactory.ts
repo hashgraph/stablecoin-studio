@@ -362,8 +362,8 @@ describe('StableCoinFactory Tests', function () {
         )
 
         expect(successfull).be.true
-        expect(addressArray.at(-1)).to.be.equal(
-            '0x' + newAddress.toSolidityAddress()
+        expect(addressArray.at(-1)?.toUpperCase()).to.be.equal(
+            '0X' + newAddress.toSolidityAddress().toUpperCase()
         )
     })
 
@@ -393,7 +393,7 @@ describe('StableCoinFactory Tests', function () {
     })
 })
 
-describe.skip('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', function () {
+describe('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', function () {
     before(async function () {
         // Generate Client 1 and Client 2
         const [
@@ -448,8 +448,16 @@ describe.skip('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', fu
             operatorAccount,
             toHashgraphKey(operatorPriKey, operatorIsE25519)
         )
-
-        const result = await deployFactory(clientSdk, operatorPriKey)
+        const hederaERC20 = await deployHederaERC20(clientSdk, operatorPriKey)
+        const initializeFactory = {
+            admin: await toEvmAddress(operatorAccount, operatorIsE25519),
+            erc20: hederaERC20.toSolidityAddress(),
+        }
+        const result = await deployFactory(
+            initializeFactory,
+            clientSdk,
+            operatorPriKey
+        )
 
         proxyAddress = result[0]
         proxyAdminAddress = result[1]
@@ -492,7 +500,16 @@ describe.skip('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', fu
 
     it('Upgrade Proxy implementation without the proxy admin', async function () {
         // Deploy a new contract
-        const result = await deployFactory(clientSdk, operatorPriKey)
+        const hederaERC20 = await deployHederaERC20(clientSdk, operatorPriKey)
+        const initializeFactory = {
+            admin: await toEvmAddress(operatorAccount, operatorIsE25519),
+            erc20: hederaERC20.toSolidityAddress(),
+        }
+        const result = await deployFactory(
+            initializeFactory,
+            clientSdk,
+            operatorPriKey
+        )
 
         const newImplementationContract = result[2]
 
@@ -518,8 +535,17 @@ describe.skip('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', fu
     })
 
     it('Upgrade Proxy implementation with the proxy admin but without the owner account', async function () {
+        const hederaERC20 = await deployHederaERC20(clientSdk, operatorPriKey)
+        const initializeFactory = {
+            admin: await toEvmAddress(operatorAccount, operatorIsE25519),
+            erc20: hederaERC20.toSolidityAddress(),
+        }
         // Deploy a new contract
-        const result = await deployFactory(clientSdk, operatorPriKey)
+        const result = await deployFactory(
+            initializeFactory,
+            clientSdk,
+            operatorPriKey
+        )
 
         const newImplementationContract = result[2]
 
@@ -548,8 +574,17 @@ describe.skip('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', fu
     })
 
     it('Upgrade Proxy implementation with the proxy admin and the owner account', async function () {
+        const hederaERC20 = await deployHederaERC20(clientSdk, operatorPriKey)
+        const initializeFactory = {
+            admin: await toEvmAddress(operatorAccount, operatorIsE25519),
+            erc20: hederaERC20.toSolidityAddress(),
+        }
         // Deploy a new contract
-        const result = await deployFactory(clientSdk, operatorPriKey)
+        const result = await deployFactory(
+            initializeFactory,
+            clientSdk,
+            operatorPriKey
+        )
 
         const newImplementationContract = result[2]
 

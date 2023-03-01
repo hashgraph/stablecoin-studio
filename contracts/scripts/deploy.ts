@@ -5,7 +5,6 @@ import {
     PrivateKey,
     ContractFunctionParameters,
     Client,
-    AccountId,
 } from '@hashgraph/sdk'
 import { BigNumber } from 'ethers'
 
@@ -37,10 +36,10 @@ import {
 
 const hre = require('hardhat')
 
-const hederaERC20Address = '0.0.3565272'
-export const factoryProxyAddress = '0.0.3565312'
-const factoryProxyAdminAddress = '0.0.3565307'
-const factoryAddress = '0.0.3565302'
+const hederaERC20Address = '0.0.3594427'
+export const factoryProxyAddress = '0.0.3594454'
+const factoryProxyAdminAddress = '0.0.3594446'
+const factoryAddress = '0.0.3594444'
 
 export const ADDRESS_0 = '0x0000000000000000000000000000000000000000'
 const hreConfig = hre.network.config
