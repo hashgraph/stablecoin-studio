@@ -135,16 +135,6 @@ factories: [
     network: 'previewnet'
   }
 ]
-hederaERC20s: [
-  {
-    id: '0.0.123456',
-    network: 'testnet'
-  },
-  {
-    id: '0.0.123456',
-    network: 'previewnet'
-  }
-]
 ```
 
 ## CLI flow
