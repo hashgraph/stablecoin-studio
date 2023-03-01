@@ -61,7 +61,7 @@ const Review = (props: ReviewProps) => {
 	const getExtraInfo = (label: string, value: string) => {
 		if (label === t('stableCoinCreation:managementPermissions.cashin')) {
 			if (cashInAllowanceType) {
-				return `${value} - INFINITE`;
+				return `${value} - UNLIMITED`;
 			} else {
 				return `${value} - ${cashInAllowance}`;
 			}
