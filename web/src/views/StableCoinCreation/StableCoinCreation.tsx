@@ -168,6 +168,42 @@ const StableCoinCreation = () => {
 		);
 	};
 
+	const formatRoleAccountByKey = (
+		managementPermissions: boolean,
+		key: { value: number; label: string },
+		role: { value: number; label: string },
+		roleName: string,
+	): string => {
+		if (managementPermissions || (key && key.value === 2)) {
+			return formatRoleAccount(role, roleName);
+		} else {
+			return '0.0.0';
+		}
+	};
+
+	const formatKycRoleAccountByKey = (
+		isKycRequired: boolean,
+		key: { value: number; label: string },
+		role: { value: number; label: string },
+		roleName: string,
+	): string => {
+		if (isKycRequired || (key && key.value === 2)) {
+			return formatRoleAccount(role, roleName);
+		} else {
+			return '0.0.0';
+		}
+	};
+
+	const formatRoleAccount = (role: { value: number; label: string }, roleName: string): string => {
+		const values = getValues();
+		if (role.label === 'Other account') {
+			const param = Object.keys(values).find((key) => key.includes(roleName + 'RoleAccountOther'));
+			return param ? values[param] : '';
+		} else {
+			return accountInfo.id!;
+		}
+	};
+
 	const formatKey = (keySelection: string, keyName: string): RequestPublicKey | undefined => {
 		const values = getValues();
 
@@ -192,6 +228,7 @@ const StableCoinCreation = () => {
 		const {
 			autorenewAccount,
 			managementPermissions,
+			adminKey,
 			freezeKey,
 			kycRequired,
 			kycKey,
@@ -203,6 +240,17 @@ const StableCoinCreation = () => {
 			reserveInitialAmount,
 			reserveAddress,
 			grantKYCToOriginalSender,
+			cashInRoleAccount,
+			burnRoleAccount,
+			wipeRoleAccount,
+			rescueRoleAccount,
+			pauseRoleAccount,
+			freezeRoleAccount,
+			deleteRoleAccount,
+			kycRoleAccount,
+			cashInAllowanceType,
+			cashInAllowance,
+			hederaERC20Id
 		} = getValues();
 
 		request.autoRenewAccount = autorenewAccount;
@@ -247,6 +295,47 @@ const StableCoinCreation = () => {
 			? formatKey(feeScheduleKey.label, 'feeScheduleKey')
 			: undefined;
 
+		request.cashInRoleAccount = formatRoleAccountByKey(
+			managementPermissions,
+			supplyKey,
+			cashInRoleAccount,
+			'cashIn',
+		);
+		request.cashInRoleAllowance = cashInAllowanceType ? '0' : cashInAllowance;
+		request.burnRoleAccount = formatRoleAccountByKey(
+			managementPermissions,
+			supplyKey,
+			burnRoleAccount,
+			'burn',
+		);
+		request.wipeRoleAccount = formatRoleAccountByKey(
+			managementPermissions,
+			wipeKey,
+			wipeRoleAccount,
+			'wipe',
+		);
+		request.rescueRoleAccount = formatRoleAccount(rescueRoleAccount, 'rescue');
+		request.pauseRoleAccount = formatRoleAccountByKey(
+			managementPermissions,
+			pauseKey,
+			pauseRoleAccount,
+			'pause',
+		);
+		request.freezeRoleAccount = formatRoleAccountByKey(
+			managementPermissions,
+			freezeKey,
+			freezeRoleAccount,
+			'freeze',
+		);
+		request.deleteRoleAccount = formatRoleAccountByKey(
+			managementPermissions,
+			adminKey,
+			deleteRoleAccount,
+			'delete',
+		);
+		request.kycRoleAccount = formatKycRoleAccountByKey(kycRequired, kycKey, kycRoleAccount, 'kyc');
+
+		request.hederaERC20 = hederaERC20Id.value;
 		try {
 			onOpen();
 			setLoading(true);

@@ -32,9 +32,9 @@ const textInBoldProps: ChakraTextProps = {
 	fontWeight: 700,
 	color: 'brand.black',
 };
-
 const DetailsReview = (props: DetailsReviewProps) => {
 	const { details, divider = true, title, titleProps, contentProps } = props;
+
 	return (
 		<Box textAlign='left'>
 			{title && (
