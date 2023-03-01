@@ -203,6 +203,7 @@ const StableCoinCreation = () => {
 			reserveInitialAmount,
 			reserveAddress,
 			grantKYCToOriginalSender,
+			hederaERC20Id,
 		} = getValues();
 
 		request.autoRenewAccount = autorenewAccount;
@@ -246,7 +247,7 @@ const StableCoinCreation = () => {
 		request.feeScheduleKey = manageCustomFees
 			? formatKey(feeScheduleKey.label, 'feeScheduleKey')
 			: undefined;
-
+		request.hederaERC20 = hederaERC20Id.value;
 		try {
 			onOpen();
 			setLoading(true);
