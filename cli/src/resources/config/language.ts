@@ -379,9 +379,8 @@ export const english = {
     lessZero: 'The number is 0 or less. Please use a number greater than 0.',
   },
   roleManagement: {
-    askRoles: 'Choose the roles to grant',
-    askGrantAccount: 'Enter an account to grant the roles to',
-    askRevokeAccount: 'Enter an account to revoke the roles from',
+    askRoles: 'Choose the roles',
+    askAccount: 'Enter an account',
     askMoreAccounts: 'Do you want to add another account?',
     askUnlimited:
       'Do you want the account to have an unlimited cashin allowance?',

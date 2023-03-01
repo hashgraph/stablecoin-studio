@@ -13,7 +13,6 @@ import {
   BurnRequest,
   GetAccountBalanceRequest,
   GetRolesRequest,
-  RevokeRoleRequest,
   HasRoleRequest,
   FreezeAccountRequest,
   KYCRequest,
@@ -38,6 +37,7 @@ import {
   HBAR_DECIMALS,
   GrantMultiRolesRequest,
   MAX_ACCOUNTS_ROLES,
+  RevokeMultiRolesRequest,
 } from 'hedera-stable-coin-sdk';
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
 import CashInStableCoinsService from './CashInStableCoinService.js';
@@ -1068,57 +1068,8 @@ export default class OperationStableCoinService extends Service {
           this.stableCoinWithSymbol,
         );
 
-        // Revoke role
-        //Lists all roles
-        const revokeRoleRequest = new RevokeRoleRequest({
-          tokenId: this.stableCoinId,
-          targetId: '',
-          role: undefined,
-        });
+        await this.revokeRoles(stableCoinCapabilities);
 
-        await this.validateNotRequestedData(revokeRoleRequest, ['tokenId']);
-
-        revokeRoleRequest.role = await this.getRole(stableCoinCapabilities);
-        if (
-          revokeRoleRequest.role !==
-          language.getText('wizard.backOption.goBack')
-        ) {
-          await utilsService.handleValidation(
-            () => revokeRoleRequest.validate('role'),
-            async () => {
-              revokeRoleRequest.role = await this.getRole(
-                stableCoinCapabilities,
-              );
-            },
-            true,
-            true,
-          );
-
-          let revokeAccountTargetId = accountTarget;
-
-          await utilsService.handleValidation(
-            () => revokeRoleRequest.validate('targetId'),
-            async () => {
-              revokeAccountTargetId = await utilsService.defaultSingleAsk(
-                language.getText('stablecoin.accountTarget'),
-                accountTarget,
-              );
-              revokeRoleRequest.targetId = revokeAccountTargetId;
-            },
-          );
-
-          //Call to SDK
-          try {
-            await this.roleStableCoinService.revokeRoleStableCoin(
-              revokeRoleRequest,
-            );
-          } catch (error) {
-            await utilsService.askErrorConfirmation(
-              async () => await this.operationsStableCoin(),
-              error,
-            );
-          }
-        }
         break;
       case language.getText('wizard.roleManagementOptions.Edit'):
         await utilsService.cleanAndShowBanner();
@@ -1587,6 +1538,48 @@ export default class OperationStableCoinService extends Service {
     }
   }
 
+  private async revokeRoles(stableCoinCapabilities): Promise<void> {
+    const revokeMultiRolesRequest = new RevokeMultiRolesRequest({
+      tokenId: this.stableCoinId,
+      roles: [],
+      targetsId: [],
+    });
+
+    await this.validateNotRequestedData(revokeMultiRolesRequest, ['tokenId']);
+
+    // choosing the roles to grant
+    const listOfRoles = await this.getRoles(
+      stableCoinCapabilities,
+      revokeMultiRolesRequest,
+    );
+
+    // choosing the accounts to grant the roles to
+    await this.getAccounts(revokeMultiRolesRequest, false);
+
+    console.log({
+      roles: listOfRoles,
+      accounts: revokeMultiRolesRequest.targetsId,
+    });
+
+    const confirm = await utilsService.defaultConfirmAsk(
+      language.getText('roleManagement.askConfirmation'),
+      true,
+    );
+
+    if (!confirm) return;
+
+    try {
+      await new RoleStableCoinsService().revokeMultiRolesStableCoin(
+        revokeMultiRolesRequest,
+      );
+    } catch (error) {
+      await utilsService.askErrorConfirmation(
+        async () => await this.operationsStableCoin(),
+        error,
+      );
+    }
+  }
+
   private async validateNotRequestedData(
     request: any,
     params: string[],
@@ -1975,7 +1968,7 @@ export default class OperationStableCoinService extends Service {
         () => request.validate('targetsId'),
         async () => {
           request.targetsId[index] = await utilsService.defaultSingleAsk(
-            language.getText('roleManagement.askGrantAccount'),
+            language.getText('roleManagement.askAccount'),
             '0.0.0',
           );
         },
@@ -2019,75 +2012,6 @@ export default class OperationStableCoinService extends Service {
     );
     return importedToken?.roles;
   }
-
-  /* private async grantSupplierRole(
-    grantRoleRequest: GrantRoleRequest,
-  ): Promise<void> {
-    const hasRole: boolean = await this.roleStableCoinService.hasRole(
-      new HasRoleRequest({
-        targetId: grantRoleRequest.targetId,
-        tokenId: grantRoleRequest.tokenId,
-        role: grantRoleRequest.role,
-      }),
-    );
-
-    if (hasRole) {
-      console.log(language.getText('cashin.alreadyRole'));
-    } else {
-      let limit = '';
-      const supplierRoleType = language.getArrayFromObject(
-        'wizard.supplierRoleType',
-      );
-
-      await utilsService.handleValidation(
-        () => grantRoleRequest.validate('supplierType'),
-        async () => {
-          const supplierType = await utilsService.defaultMultipleAsk(
-            language.getText('stablecoin.askCashInRoleType'),
-            supplierRoleType,
-          );
-          grantRoleRequest.supplierType = supplierType;
-        },
-      );
-
-      if (
-        grantRoleRequest.supplierType ===
-        supplierRoleType[supplierRoleType.length - 1]
-      )
-        await this.roleManagementFlow();
-      if (grantRoleRequest.supplierType === supplierRoleType[0]) {
-        //Give unlimited
-        //Call to SDK
-        grantRoleRequest.supplierType = language.getText(
-          'wizard.supplierRoleType.Unlimited',
-        );
-        await this.roleStableCoinService.giveSupplierRoleStableCoin(
-          grantRoleRequest,
-        );
-      }
-      if (grantRoleRequest.supplierType === supplierRoleType[1]) {
-        await utilsService.handleValidation(
-          () => grantRoleRequest.validate('amount'),
-          async () => {
-            limit = await utilsService.defaultSingleAsk(
-              language.getText('stablecoin.supplierRoleLimit'),
-              '1',
-            );
-            grantRoleRequest.amount = limit;
-          },
-        );
-
-        //Give limited
-        //Call to SDK
-        grantRoleRequest.supplierType = language.getText(
-          'wizard.supplierRoleType.Limited',
-        );
-        await this.roleStableCoinService.giveSupplierRoleStableCoin(
-          grantRoleRequest,
-        );
-      }
-    }
-  }*/
 
   private async checkSupplierType(
     req: CheckSupplierLimitRequest,
