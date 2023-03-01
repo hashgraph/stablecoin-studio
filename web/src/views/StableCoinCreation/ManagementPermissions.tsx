@@ -1,4 +1,16 @@
-import { Box, Heading, HStack, Stack, Text, VStack } from '@chakra-ui/react';
+import {
+	Box,
+	Heading,
+	HStack,
+	Stack,
+	Text,
+	VStack,
+	Accordion,
+	AccordionItem,
+	AccordionButton,
+	AccordionIcon,
+	AccordionPanel,
+} from '@chakra-ui/react';
 import type { CreateRequest } from 'hedera-stable-coin-sdk';
 import { useEffect } from 'react';
 import type { Control, FieldValues, UseFormSetValue, UseFormWatch } from 'react-hook-form';
@@ -210,131 +222,133 @@ const ManagementPermissions = ({
 				</Stack>
 			</Stack>
 			<Stack minW={400}>
-				<Heading
-					data-testid='title'
-					fontSize='16px'
-					fontWeight='600'
-					mb={10}
-					lineHeight='15.2px'
-					textAlign={'left'}
-				>
-					{t('stableCoinCreation:managementPermissions.rolesTitle')}
-				</Heading>
-				<Stack as='form' spacing={6} pb={6}>
-					{(isManagementPermissions !== false || watch('supplyKey')?.value === 2) && (
-						<Box data-testid='supplier-quantity'>
-							<RoleSelector
-								key={'cashinRole'}
-								control={control}
-								name={'cashInRoleAccount'}
-								label={t('stableCoinCreation:managementPermissions.cashin')}
-								request={request}
-							/>
-							<HStack mt='20px'>
-								<Text mr='10px'>
-									{t('stableCoinCreation:managementPermissions.cashInAllowanceType')}
-								</Text>
-								<SwitchController control={control} name={'cashInAllowanceType'} />
-							</HStack>
-							{infinity === false && (
-								<Box mt='20px'>
-									<InputController
-										data-testid='input-supplier-quantity'
-										rules={{
-											required: t(`global:validations.required`) ?? propertyNotFound,
-											validate: {
-												validDecimals: (value: string) => {
-													return (
-														validateDecimalsString(value, decimals) ||
-														(t('global:validations.decimalsValidation') ?? propertyNotFound)
-													);
-												},
-												validation: (value: string) => {
-													if (request && 'cashInRoleAllowance' in request) {
-														request.cashInRoleAllowance = value;
-														const res = handleRequestValidation(
-															request.validate('cashInRoleAllowance'),
-														);
-														return res;
+				<Accordion defaultIndex={[1]} allowMultiple>
+					<AccordionItem>
+						<AccordionButton>
+							<Box as='span' flex='1' textAlign='left' fontSize='16px' fontWeight='600'>
+								{t('stableCoinCreation:managementPermissions.rolesTitle')}
+							</Box>
+							<AccordionIcon />
+						</AccordionButton>
+						<AccordionPanel pb={4}>
+							<Stack as='form' spacing={6} pb={6}>
+								{(isManagementPermissions !== false || watch('supplyKey')?.value === 2) && (
+									<Box data-testid='supplier-quantity'>
+										<RoleSelector
+											key={'cashinRole'}
+											control={control}
+											name={'cashInRoleAccount'}
+											label={t('stableCoinCreation:managementPermissions.cashin')}
+											request={request}
+										/>
+										<HStack mt='20px'>
+											<Text mr='10px'>
+												{t('stableCoinCreation:managementPermissions.cashInAllowanceType')}
+											</Text>
+											<SwitchController control={control} name={'cashInAllowanceType'} />
+										</HStack>
+										{infinity === false && (
+											<Box mt='20px'>
+												<InputController
+													data-testid='input-supplier-quantity'
+													rules={{
+														required: t(`global:validations.required`) ?? propertyNotFound,
+														validate: {
+															validDecimals: (value: string) => {
+																return (
+																	validateDecimalsString(value, decimals) ||
+																	(t('global:validations.decimalsValidation') ?? propertyNotFound)
+																);
+															},
+															validation: (value: string) => {
+																if (request && 'cashInRoleAllowance' in request) {
+																	request.cashInRoleAllowance = value;
+																	const res = handleRequestValidation(
+																		request.validate('cashInRoleAllowance'),
+																	);
+																	return res;
+																}
+															},
+														},
+													}}
+													isRequired
+													control={control}
+													name={'cashInAllowance'}
+													placeholder={
+														t(
+															'stableCoinCreation:managementPermissions.cashInAllowanceInputPlaceholder',
+														) ?? propertyNotFound
 													}
-												},
-											},
-										}}
-										isRequired
+												/>
+											</Box>
+										)}
+									</Box>
+								)}
+								{(isManagementPermissions !== false || watch('supplyKey')?.value === 2) && (
+									<RoleSelector
+										key={'burnRole'}
 										control={control}
-										name={'cashInAllowance'}
-										placeholder={
-											t(
-												'stableCoinCreation:managementPermissions.cashInAllowanceInputPlaceholder',
-											) ?? propertyNotFound
-										}
+										name={'burnRoleAccount'}
+										label={t('stableCoinCreation:managementPermissions.burn')}
+										request={request}
 									/>
-								</Box>
-							)}
-						</Box>
-					)}
-					{(isManagementPermissions !== false || watch('supplyKey')?.value === 2) && (
-						<RoleSelector
-							key={'burnRole'}
-							control={control}
-							name={'burnRoleAccount'}
-							label={t('stableCoinCreation:managementPermissions.burn')}
-							request={request}
-						/>
-					)}
-					{(isManagementPermissions !== false || watch('wipeKey')?.value === 2) && (
-						<RoleSelector
-							key={'wipeRole'}
-							control={control}
-							name={'wipeRoleAccount'}
-							label={t('stableCoinCreation:managementPermissions.wipe')}
-							request={request}
-						/>
-					)}
-					<RoleSelector
-						key={'rescueRole'}
-						control={control}
-						name={'rescueRoleAccount'}
-						label={t('stableCoinCreation:managementPermissions.rescue')}
-						request={request}
-					/>
-					{(isManagementPermissions !== false || watch('pauseKey')?.value === 2) && (
-						<RoleSelector
-							key={'pauseRole'}
-							control={control}
-							name={'pauseRoleAccount'}
-							label={t('stableCoinCreation:managementPermissions.pause')}
-							request={request}
-						/>
-					)}
-					{(isManagementPermissions !== false || watch('freezeKey')?.value === 2) && (
-						<RoleSelector
-							key={'freezeRole'}
-							control={control}
-							name={'freezeRoleAccount'}
-							label={t('stableCoinCreation:managementPermissions.freeze')}
-							request={request}
-						/>
-					)}
-					{(isManagementPermissions !== false || watch('adminKey')?.value === 2) && (
-						<RoleSelector
-							key={'deleteRole'}
-							control={control}
-							name={'deleteRoleAccount'}
-							label={t('stableCoinCreation:managementPermissions.delete')}
-							request={request}
-						/>
-					)}
-					{isKycRequired === true && watch('kycKey')?.value === 2 && (
-						<RoleSelector
-							key={'kycRole'}
-							control={control}
-							name={'kycRoleAccount'}
-							label={t('stableCoinCreation:managementPermissions.kyc')}
-							request={request}
-						/>
-					)}
-				</Stack>
+								)}
+								{(isManagementPermissions !== false || watch('wipeKey')?.value === 2) && (
+									<RoleSelector
+										key={'wipeRole'}
+										control={control}
+										name={'wipeRoleAccount'}
+										label={t('stableCoinCreation:managementPermissions.wipe')}
+										request={request}
+									/>
+								)}
+								<RoleSelector
+									key={'rescueRole'}
+									control={control}
+									name={'rescueRoleAccount'}
+									label={t('stableCoinCreation:managementPermissions.rescue')}
+									request={request}
+								/>
+								{(isManagementPermissions !== false || watch('pauseKey')?.value === 2) && (
+									<RoleSelector
+										key={'pauseRole'}
+										control={control}
+										name={'pauseRoleAccount'}
+										label={t('stableCoinCreation:managementPermissions.pause')}
+										request={request}
+									/>
+								)}
+								{(isManagementPermissions !== false || watch('freezeKey')?.value === 2) && (
+									<RoleSelector
+										key={'freezeRole'}
+										control={control}
+										name={'freezeRoleAccount'}
+										label={t('stableCoinCreation:managementPermissions.freeze')}
+										request={request}
+									/>
+								)}
+								{(isManagementPermissions !== false || watch('adminKey')?.value === 2) && (
+									<RoleSelector
+										key={'deleteRole'}
+										control={control}
+										name={'deleteRoleAccount'}
+										label={t('stableCoinCreation:managementPermissions.delete')}
+										request={request}
+									/>
+								)}
+								{isKycRequired === true && watch('kycKey')?.value === 2 && (
+									<RoleSelector
+										key={'kycRole'}
+										control={control}
+										name={'kycRoleAccount'}
+										label={t('stableCoinCreation:managementPermissions.kyc')}
+										request={request}
+									/>
+								)}
+							</Stack>
+						</AccordionPanel>
+					</AccordionItem>
+				</Accordion>
 			</Stack>
 		</VStack>
 	);
