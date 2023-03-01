@@ -98,7 +98,7 @@ export const english = {
     askFeaturesManagedBy:
       'Should the smart contract be used for all roles management?',
     askKYC: 'Do you want to enable KYC?',
-    askCustomFees: 'Do you want de add custom fees?',
+    askCustomFees: 'Do you want to add custom fees?',
     askHederaERC20Predeployed:
       'Do you want to use one of the predeployed HederaERC20 implementations?',
     askHederaERC20Version:
