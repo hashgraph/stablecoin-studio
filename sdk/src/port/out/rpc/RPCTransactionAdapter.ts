@@ -107,7 +107,6 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	): Promise<TransactionResponse<any, Error>> {
 		try {
 			const keys: FactoryKey[] = [];
-			const roles: FactoryRole[] = [];
 			const cashinRole: FactoryCashinRole = {
 				account:
 					coin.cashInRoleAccount == undefined ||
@@ -201,13 +200,23 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				{ account: coin.kycRoleAccount, role: StableCoinRole.KYC_ROLE },
 			];
 
-			for (const providedRole of providedRoles) {
-				await this.setFactoryRole(
-					providedRole.account,
-					providedRole.role,
-					roles,
-				);
-			}
+			const roles = await Promise.all(
+				providedRoles
+					.filter((item) => {
+						return (
+							item.account &&
+							item.account.value !== HederaId.NULL.value
+						);
+					})
+					.map(async (item) => {
+						const role = new FactoryRole();
+						role.role = item.role;
+						role.account = (
+							await this.accountToEvmAddress(item.account!)
+						).toString();
+						return role;
+					}),
+			);
 
 			const stableCoinToCreate = new FactoryStableCoin(
 				coin.name,
@@ -286,19 +295,6 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			throw new SigningError(
 				`Unexpected error in RPCTransactionAdapter create operation : ${error}`,
 			);
-		}
-	}
-
-	private async setFactoryRole(
-		account: HederaId | undefined,
-		stableCoinRole: StableCoinRole,
-		roles: FactoryRole[],
-	): Promise<void> {
-		if (account && account.value !== HederaId.NULL.value) {
-			const role = new FactoryRole();
-			role.role = stableCoinRole;
-			role.account = await this.accountToEvmAddress(account).toString();
-			roles.push(role);
 		}
 	}
 
