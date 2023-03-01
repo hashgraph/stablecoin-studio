@@ -8,6 +8,7 @@ import {
 	InitializationRequest,
 	ReserveDataFeed,
 	Fees,
+	Factory,
 } from 'hedera-stable-coin-sdk';
 import type {
 	WalletEvent,
@@ -47,6 +48,7 @@ import type {
 	AddFixedFeeRequest,
 	AddFractionalFeeRequest,
 	UpdateCustomFeesRequest,
+	GetERC20ListRequest,
 } from 'hedera-stable-coin-sdk';
 
 export type StableCoinListRaw = Array<Record<'id' | 'symbol', string>>;
@@ -247,6 +249,10 @@ export class SDKService {
 
 	public static async updateCustomFees(data: UpdateCustomFeesRequest) {
 		return await Fees.updateCustomFees(data);
+	}
+
+	public static async getHederaERC20List(data: GetERC20ListRequest) {
+		return await Factory.getHederaERC20List(data);
 	}
 }
 

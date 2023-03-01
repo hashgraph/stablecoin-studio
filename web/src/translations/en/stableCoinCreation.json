@@ -21,7 +21,9 @@
 		"namePlaceholder": "Name",
 		"symbol": "Symbol",
 		"symbolPlaceholder": "Symbol",
-		"title": "Stable coin basic details"
+		"title": "Stable coin basic details",
+		"hederaERC20": "ERC20 address",
+		"hederaERC20Placeholder": "Choose ERC20 address ID"
 	},
 	"optionalDetails": {
 		"decimals": "Decimals",

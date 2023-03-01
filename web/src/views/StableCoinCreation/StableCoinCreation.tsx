@@ -250,6 +250,7 @@ const StableCoinCreation = () => {
 			kycRoleAccount,
 			cashInAllowanceType,
 			cashInAllowance,
+			hederaERC20Id
 		} = getValues();
 
 		request.autoRenewAccount = autorenewAccount;
@@ -334,7 +335,7 @@ const StableCoinCreation = () => {
 		);
 		request.kycRoleAccount = formatKycRoleAccountByKey(kycRequired, kycKey, kycRoleAccount, 'kyc');
 
-		console.log('request: ' + JSON.stringify(request));
+		request.hederaERC20 = hederaERC20Id.value;
 		try {
 			onOpen();
 			setLoading(true);
