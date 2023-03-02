@@ -8,8 +8,6 @@ import { GetERC20ListRequest } from 'hedera-stable-coin-sdk';
 import { SELECTED_WALLET_PAIRED } from '../../store/slices/walletSlice';
 import { handleRequestValidation } from '../../utils/validationsHelper';
 import { propertyNotFound } from '../../constant';
-import type { SelectOption } from '../../components/Form/SelectController';
-import { SelectController } from '../../components/Form/SelectController';
 import { useEffect, useState } from 'react';
 import SDKService from '../../services/SDKService';
 import SelectCreatableController, { Option } from '../../components/Form/SelectCreatableController';
