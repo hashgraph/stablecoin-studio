@@ -97,6 +97,8 @@ export const english = {
     askFreezeAccount: 'Should the Hedera account be frozen for this token?',
     askFeaturesManagedBy:
       'Should the smart contract be used for all roles management?',
+    askRolesManagedBy:
+      'You will be the admin for the keys that you have assigned to the Smart Contract, do you want to change the admin for one of these features?',
     askKYC: 'Do you want to enable KYC?',
     askCustomFees: 'Do you want to add custom fees?',
     askHederaERC20Predeployed:
