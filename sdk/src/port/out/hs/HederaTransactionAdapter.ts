@@ -939,15 +939,16 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 						return element !== undefined;
 				  });
 		for (let i = 0; i < filteredContractParams.length; i++) {
-			if (filteredContractParams[i] instanceof ContractId) {
-				filteredContractParams[i] = (
-					await this.contractToEvmAddress(filteredContractParams[i])
-				).toString();
-			} else if (filteredContractParams[i] instanceof HederaId) {
-				filteredContractParams[i] = (
-					await this.accountToEvmAddress(filteredContractParams[i])
-				).toString();
+			if (Array.isArray(filteredContractParams[i])) {
+				for (let j = 0; j < filteredContractParams[i].length; j++) {
+					filteredContractParams[i][j] = await this.getEVMAddress(
+						filteredContractParams[i][j],
+					);
+				}
 			}
+			filteredContractParams[i] = await this.getEVMAddress(
+				filteredContractParams[i],
+			);
 		}
 		return await this.contractCall(
 			contractAddress,
@@ -957,6 +958,15 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			transactionType,
 			contractAbi,
 		);
+	}
+
+	private async getEVMAddress(parameter: any): Promise<any> {
+		if (parameter instanceof ContractId) {
+			return (await this.contractToEvmAddress(parameter)).toString();
+		} else if (parameter instanceof HederaId) {
+			return (await this.accountToEvmAddress(parameter)).toString();
+		}
+		return parameter;
 	}
 
 	private async performHTSOperation(
