@@ -22,11 +22,9 @@ import { LoggerTransports, Network, SDK } from '../../../src/index.js';
 import ConnectRequest, {
 	SupportedWallets,
 } from '../../../src/port/in/request/ConnectRequest.js';
-
 import { CLIENT_ACCOUNT_ED25519, FACTORY_ADDRESS } from '../../config.js';
 import Factory from '../../../src/port/in/Factory.js';
 import GetERC20ListRequest from '../../../src/port/in/request/GetERC20ListRequest.js';
-import GetERC20ByIndexRequest from '../../../src/port/in/request/GetERC20ByIndexRequest.js';
 
 SDK.log = { level: 'ERROR', transports: new LoggerTransports.Console() };
 describe('🧪 Factory test', () => {
@@ -50,13 +48,4 @@ describe('🧪 Factory test', () => {
 		expect(res.length).toBeGreaterThan(0);
 	}, 60_000);
 
-	it('Get ERC20 by index', async () => {
-		const res = await Factory.getHederaERC20ByIndex(
-			new GetERC20ByIndexRequest({
-				factoryId: FACTORY_ADDRESS,
-				index: 0,
-			}),
-		);
-		expect(res.value).not.toBe('');
-	}, 60_000);
 });
