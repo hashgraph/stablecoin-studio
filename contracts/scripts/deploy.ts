@@ -36,10 +36,10 @@ import {
 
 const hre = require('hardhat')
 
-const hederaERC20Address = '0.0.3594427'
-export const factoryProxyAddress = '0.0.3594454'
-const factoryProxyAdminAddress = '0.0.3594446'
-const factoryAddress = '0.0.3594444'
+const hederaERC20Address = '0.0.3620646'
+export const factoryProxyAddress = '0.0.3620662'
+const factoryProxyAdminAddress = '0.0.3620655'
+const factoryAddress = '0.0.3620652'
 
 export const ADDRESS_0 = '0x0000000000000000000000000000000000000000'
 const hreConfig = hre.network.config

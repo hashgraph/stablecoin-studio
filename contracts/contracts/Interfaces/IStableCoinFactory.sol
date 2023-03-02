@@ -48,4 +48,17 @@ interface IStableCoinFactory {
         TokenStruct calldata requestedToken,
         address stableCoinContractAddress
     ) external payable returns (DeployedStableCoin memory);
+
+    function getHederaERC20Address() external view returns (address[] memory);
+
+    function addHederaERC20Version(address newAddress) external returns (bool);
+
+    function editHederaERC20Address(
+        uint256 index,
+        address newAddress
+    ) external returns (bool);
+
+    function changeAdmin(address newAddress) external returns (bool);
+
+    function removeHederaERC20Address(uint256 index) external returns (bool);
 }

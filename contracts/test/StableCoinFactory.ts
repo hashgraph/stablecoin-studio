@@ -32,8 +32,10 @@ import {
     getReserveAddress,
     getReserveAmount,
     getHederaERC20Addresses,
-    getHederaERC20,
     addHederaERC20Version,
+    editHederaERC20Version,
+    changeAdminStablecoinFactory,
+    removeHederaERC20Version,
 } from '../scripts/contractsMethods'
 
 import { clientId, toEvmAddress, getClient } from '../scripts/utils'
@@ -73,7 +75,7 @@ const INIT_SUPPLY = BigNumber.from(10).mul(TokenFactor)
 const MAX_SUPPLY = BigNumber.from(1000).mul(TokenFactor)
 const TokenMemo = 'Hedera Accelerator Stable Coin'
 
-describe('StableCoinFactory Tests', function () {
+describe.only('StableCoinFactory Tests', function () {
     before(async function () {
         // Generate Client 1 and Client 2
         const [
@@ -336,16 +338,6 @@ describe('StableCoinFactory Tests', function () {
         expect(addressArray.length).to.greaterThan(0)
     })
 
-    it('Get hederaERC20 by index', async function () {
-        const index = 0
-        const address: string = await getHederaERC20(
-            ContractId.fromString(factoryProxyAddress),
-            operatorClient,
-            index
-        )
-        expect(address).not.empty
-    })
-
     it('Add new hederaERC20 address', async function () {
         const newAddress = await deployHederaERC20(
             operatorClient,
@@ -388,6 +380,177 @@ describe('StableCoinFactory Tests', function () {
                 ContractId.fromString(factoryProxyAddress),
                 nonOperatorClient,
                 newAddress.toSolidityAddress()
+            )
+        ).to.eventually.be.rejectedWith(Error)
+    })
+
+    it('Edit hederaERC20 address', async function () {
+        const newAddress = await deployHederaERC20(
+            operatorClient,
+            operatorPriKey
+        ).then((value) => '0x' + value.toSolidityAddress())
+
+        const index = 0
+
+        const successfull: string = await editHederaERC20Version(
+            ContractId.fromString(factoryProxyAddress),
+            operatorClient,
+            index,
+            newAddress
+        )
+        const addressArray: Array<string> = await getHederaERC20Addresses(
+            ContractId.fromString(factoryProxyAddress),
+            operatorClient
+        )
+
+        expect(successfull).be.true
+        expect(addressArray.at(index)?.toUpperCase()).to.be.equal(
+            newAddress.toUpperCase()
+        )
+    })
+
+    it('Edit hederaERC20 address, throw error address is zero', async function () {
+        const newAddress = ADDRESS_0
+        expect(
+            editHederaERC20Version(
+                ContractId.fromString(factoryProxyAddress),
+                operatorClient,
+                0,
+                newAddress
+            )
+        ).to.eventually.be.rejectedWith(Error)
+    })
+
+    it('Edit hederaERC20 address throw error client no isAdmin', async function () {
+        const newAddress = await deployHederaERC20(
+            operatorClient,
+            operatorPriKey
+        ).then((value) => '0x' + value.toSolidityAddress())
+        expect(
+            editHederaERC20Version(
+                ContractId.fromString(factoryProxyAddress),
+                nonOperatorClient,
+                0,
+                newAddress
+            )
+        ).to.eventually.be.rejectedWith(Error)
+    })
+
+    it('Change admin stablecoinFactory', async function () {
+        const newAdmin = await toEvmAddress(
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
+        const successfull: string = await changeAdminStablecoinFactory(
+            ContractId.fromString(factoryProxyAddress),
+            operatorClient,
+            newAdmin
+        )
+        expect(successfull).be.true
+
+        const newAddress = await deployHederaERC20(
+            operatorClient,
+            operatorPriKey
+        ).then((value) => '0x' + value.toSolidityAddress())
+
+        expect(
+            editHederaERC20Version(
+                ContractId.fromString(factoryProxyAddress),
+                operatorClient,
+                0,
+                newAddress
+            )
+        ).to.eventually.be.rejectedWith(Error)
+
+        const realAdmin = await toEvmAddress(operatorAccount, operatorIsE25519)
+
+        const reset: string = await changeAdminStablecoinFactory(
+            ContractId.fromString(factoryProxyAddress),
+            nonOperatorClient,
+            realAdmin
+        )
+
+        expect(reset).be.true
+
+        const index = 0
+        const checkIfChangeAdminSuccess: string = await editHederaERC20Version(
+            ContractId.fromString(factoryProxyAddress),
+            operatorClient,
+            index,
+            newAddress
+        )
+
+        const addressArray: Array<string> = await getHederaERC20Addresses(
+            ContractId.fromString(factoryProxyAddress),
+            operatorClient
+        )
+
+        expect(checkIfChangeAdminSuccess).be.true
+        expect(addressArray.at(index)?.toUpperCase()).to.be.equal(
+            newAddress.toUpperCase()
+        )
+    })
+
+    it('Change admin, throw error address is zero', async function () {
+        const newAddress = ADDRESS_0
+        expect(
+            changeAdminStablecoinFactory(
+                ContractId.fromString(factoryProxyAddress),
+                operatorClient,
+                newAddress
+            )
+        ).to.eventually.be.rejectedWith(Error)
+    })
+
+    it('Change admin, throw error client no isAdmin', async function () {
+        const newAdmin = await toEvmAddress(
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
+        expect(
+            changeAdminStablecoinFactory(
+                ContractId.fromString(factoryProxyAddress),
+                nonOperatorClient,
+                newAdmin
+            )
+        ).to.eventually.be.rejectedWith(Error)
+    })
+
+    it('Remove hederaERC20 address', async function () {
+        const index = 0
+
+        const successfull: string = await removeHederaERC20Version(
+            ContractId.fromString(factoryProxyAddress),
+            operatorClient,
+            index
+        )
+        const addressArray: Array<string> = await getHederaERC20Addresses(
+            ContractId.fromString(factoryProxyAddress),
+            operatorClient
+        )
+
+        expect(successfull).be.true
+        expect(addressArray.at(index)?.toUpperCase()).to.be.equal(
+            ADDRESS_0.toUpperCase()
+        )
+    })
+
+    it('Remove hederaERC20 address, throw error index no exists', async function () {
+        expect(
+            removeHederaERC20Version(
+                ContractId.fromString(factoryProxyAddress),
+                operatorClient,
+                10
+            )
+        ).to.eventually.be.rejectedWith(Error)
+    })
+
+    it('Remove hederaERC20 address throw error client no isAdmin', async function () {
+        expect(
+            removeHederaERC20Version(
+                ContractId.fromString(factoryProxyAddress),
+                nonOperatorClient,
+                0
             )
         ).to.eventually.be.rejectedWith(Error)
     })

@@ -22,7 +22,7 @@ contract StableCoinFactory is
     string private constant _MEMO_2 = '","a":"';
     string private constant _MEMO_3 = '"}';
     address private _admin;
-    address[] public hederaERC20Address;
+    address[] private _hederaERC20Address;
 
     event StableCoinFactoryInitialized();
 
@@ -280,16 +280,55 @@ contract StableCoinFactory is
 
     function addHederaERC20Version(
         address newAddress
-    ) public isAdmin checkAddressIsNotZero(newAddress) returns (bool) {
+    )
+        external
+        override(IStableCoinFactory)
+        isAdmin
+        checkAddressIsNotZero(newAddress)
+        returns (bool)
+    {
         hederaERC20Address.push(newAddress);
         return true;
     }
 
-    function getHederaERC20Address()
-        public
-        view
-        returns (address[] memory hederaERC20ToReturn)
-    {
+    function getHederaERC20Address() external view returns (address[] memory) {
         return hederaERC20Address;
+    }
+
+    function editHederaERC20Address(
+        uint256 index,
+        address newAddress
+    )
+        external
+        override(IStableCoinFactory)
+        isAdmin
+        checkAddressIsNotZero(newAddress)
+        returns (bool)
+    {
+        return _edit(index, newAddress);
+    }
+
+    function _edit(uint256 index, address newAddress) internal returns (bool) {
+        hederaERC20Address[index] = newAddress;
+        return true;
+    }
+
+    function changeAdmin(
+        address newAddress
+    )
+        external
+        override(IStableCoinFactory)
+        isAdmin
+        checkAddressIsNotZero(newAddress)
+        returns (bool)
+    {
+        _admin = newAddress;
+        return true;
+    }
+
+    function removeHederaERC20Address(
+        uint256 index
+    ) external override(IStableCoinFactory) isAdmin returns (bool) {
+        return _edit(index, address(0));
     }
 }
