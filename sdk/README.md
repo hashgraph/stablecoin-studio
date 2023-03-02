@@ -1292,6 +1292,40 @@ Updates the reserve amount for certain stable coin.
 	);
 ```
 
+## Factory
+The following operations are always performed through smart contracts calls.
+
+### Get HederaERC20 List
+Get a list of hedera ERC20 addressess stored in the factory.
+
+**Spec:**
+
+```Typescript
+	Factory.getHederaERC20List = (request: GetERC20ListRequest): Promise<ContractId[]>;
+```
+**Example**
+```Typescript
+	const list = await Factory.getHederaERC20List(
+			new GetERC20ListRequest({ factoryId: FACTORY_ADDRESS }),
+		);
+```
+
+### Get HederaERC20 byindex
+Get a HederaERC20 address stored in the factory finde by index.
+
+**Spec:**
+
+```Typescript
+	Factory.getHederaERC20ByIndex = (request: GetERC20ByIndexRequest): Promise<ContractId>;
+```
+**Example**
+```Typescript
+	const hederaERC20 = await Factory.getHederaERC20ByIndex(
+			new GetERC20ByIndexRequest({ factoryId: FACTORY_ADDRESS ,
+			index: 0}),
+		);
+```
+
 ## Common
 The SDK class is exported. This static class allows to set the log level and application metadata at any point in your code, just import it and change the values.
 

@@ -86,7 +86,6 @@ export const english = {
     askReserve: 'Do you want to link the stable coin to a Proof of Reserve?',
     askExistingReserve:
       'Do you want to link it to an already existing Proof of Reserve?',
-
     askReserveAddress:
       'Enter the Proof of Reserve Feed you wish to link your stable coin to',
     askReserveInitialAmount: 'Enter the Proof of Reserve Feed initial amount',
@@ -99,8 +98,13 @@ export const english = {
     askFeaturesManagedBy:
       'Should the smart contract be used for all roles management?',
     askKYC: 'Do you want to enable KYC?',
-    askCustomFees: 'Do you want de add custom fees?',
-    askHederaERC20Address: 'Select ERC20 address you want to use:',
+    askCustomFees: 'Do you want to add custom fees?',
+    askHederaERC20Predeployed:
+      'Do you want to use one of the predeployed HederaERC20 implementations?',
+    askHederaERC20Version:
+      'Choose the HederaERC20 implementation you want to use',
+    askHederaERC20Implementation:
+      'Enter the address of the HederaERC20 implementation you want to use',
     features: {
       admin: 'Enter the admin key',
       supply: 'Enter the supply key',

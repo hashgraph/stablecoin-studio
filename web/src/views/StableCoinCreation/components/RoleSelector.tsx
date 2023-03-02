@@ -91,9 +91,7 @@ const RoleSelector = ({ control, name, label, request }: RoleSelectorProps) => {
 					control={control}
 					name={name + 'Other'}
 					placeholder={
-						t('stableCoinCreation:managementPermissions.introduce', {
-							name: label,
-						}) ?? propertyNotFound
+						t('stableCoinCreation:managementPermissions.accountPlaceholder') ?? propertyNotFound
 					}
 				/>
 			)}

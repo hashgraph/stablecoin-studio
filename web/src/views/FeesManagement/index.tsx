@@ -6,7 +6,6 @@ import { useSelector } from 'react-redux';
 import BaseContainer from '../../components/BaseContainer';
 import InputController from '../../components/Form/InputController';
 import { propertyNotFound } from '../../constant';
-import type { Option } from '../../components/Form/SelectController';
 import { SelectController } from '../../components/Form/SelectController';
 import Icon from '../../components/Icon';
 import { SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';

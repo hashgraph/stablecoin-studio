@@ -22,7 +22,7 @@
 		"symbol": "Symbol",
 		"symbolPlaceholder": "Symbol",
 		"title": "Stable coin basic details",
-		"hederaERC20": "ERC20 address",
+		"hederaERC20": "HederaERC20 impl.",
 		"hederaERC20Placeholder": "Choose ERC20 address ID"
 	},
 	"optionalDetails": {
@@ -46,7 +46,7 @@
 		"freeze": "Freeze",
 		"kyc": "KYC",
 		"delete": "Delete",
-		"cashInAllowanceType": "Infinity?",
+		"cashInAllowanceType": "Unlimited?",
 		"cashInAllowanceInputPlaceholder": "0",
 		"grantKYCToOriginalSender": "Grant KYC flag to the token creator",
 		"introduce": "Enter the {{name}}",
@@ -68,7 +68,8 @@
 		"CreatorGrantedKYC": "TRUE",
 		"CreatorNotGrantedKYC": "FALSE",
 		"wantKyc": "Do you want to enable KYC?",
-		"manageCustomFees": "Do you want to add custom fees?"
+		"manageCustomFees": "Do you want to add custom fees?",
+		"accountPlaceholder": "0.0.0"
 	},
 	"proofOfReserve": {
 		"title": "Proof of Reserve",

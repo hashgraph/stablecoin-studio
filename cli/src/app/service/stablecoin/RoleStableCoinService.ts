@@ -211,8 +211,11 @@ export default class RoleStableCoinsService extends Service {
       },
     );
     console.log(language.getText('operation.success'));
-    roles.length > 0
-      ? roles.forEach((role: StableCoinRole) => {
+    const filteredRoles = roles.filter(
+      (role) => role !== StableCoinRole.WITHOUT_ROLE,
+    );
+    filteredRoles.length > 0
+      ? filteredRoles.forEach((role: StableCoinRole) => {
           console.log(colors.yellow(StableCoinRoleLabel.get(role)));
         })
       : console.log(colors.red(language.getText('roleManagement.noRoles')));

@@ -1,5 +1,5 @@
 import type { FlexProps as ChakraFlexProps, TextProps as ChakraTextProps } from '@chakra-ui/react';
-import { Box, Divider, Flex, Text, HStack } from '@chakra-ui/react';
+import { Link, Box, Divider, Flex, Text, HStack } from '@chakra-ui/react';
 import Icon from './Icon';
 import TooltipCopy from './TooltipCopy';
 
@@ -9,6 +9,7 @@ export interface Detail {
 	value: any; // TODO: string | number
 	valueInBold?: boolean;
 	copyButton?: boolean;
+	hashScanURL?: string;
 }
 
 export interface DetailsReviewProps {
@@ -32,8 +33,10 @@ const textInBoldProps: ChakraTextProps = {
 	fontWeight: 700,
 	color: 'brand.black',
 };
+
 const DetailsReview = (props: DetailsReviewProps) => {
 	const { details, divider = true, title, titleProps, contentProps } = props;
+	console.log(details);
 
 	return (
 		<Box textAlign='left'>
@@ -71,6 +74,11 @@ const DetailsReview = (props: DetailsReviewProps) => {
 										<TooltipCopy valueToCopy={detail.value.toString() ?? ''}>
 											<Icon name='Copy' />
 										</TooltipCopy>
+									)}
+									{detail.hashScanURL && (
+										<Link isExternal={true} href={`${detail.hashScanURL}`}>
+											<Icon name='ArrowSquareOut' />
+										</Link>
 									)}
 								</HStack>
 							) : 'toString' in detail.value && 'value' in detail.value ? (

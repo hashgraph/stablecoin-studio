@@ -53,6 +53,7 @@ import KYCStableCoinService from './KYCStableCoinService.js';
 import ListStableCoinsService from './ListStableCoinsService.js';
 import CapabilitiesStableCoinService from './CapabilitiesStableCoinService.js';
 import FeeStableCoinService from './FeeStableCoinService.js';
+import { Capability } from 'hedera-stable-coin-sdk';
 
 /**
  * Operation Stable Coin Service
@@ -1766,55 +1767,88 @@ export default class OperationStableCoinService extends Service {
   private async getRole(
     stableCoinCapabilities: StableCoinCapabilities,
   ): Promise<any> {
-    const capabilities: Operation[] = stableCoinCapabilities.capabilities.map(
-      (a) => a.operation,
-    );
+    const capabilities: Capability[] = stableCoinCapabilities.capabilities;
     const rolesAvailability = [
       {
         role: {
-          availability: capabilities.includes(Operation.CASH_IN),
+          availability:
+            capabilities.filter(
+              (capability) =>
+                capability.operation === Operation.CASH_IN &&
+                capability.access === Access.CONTRACT,
+            ).length > 0,
           name: 'Cash in Role',
           value: StableCoinRole.CASHIN_ROLE,
         },
       },
       {
         role: {
-          availability: capabilities.includes(Operation.BURN),
+          availability:
+            capabilities.filter(
+              (capability) =>
+                capability.operation === Operation.BURN &&
+                capability.access === Access.CONTRACT,
+            ).length > 0,
           name: 'Burn Role',
           value: StableCoinRole.BURN_ROLE,
         },
       },
       {
         role: {
-          availability: capabilities.includes(Operation.WIPE),
+          availability:
+            capabilities.filter(
+              (capability) =>
+                capability.operation === Operation.WIPE &&
+                capability.access === Access.CONTRACT,
+            ).length > 0,
           name: 'Wipe Role',
           value: StableCoinRole.WIPE_ROLE,
         },
       },
       {
         role: {
-          availability: capabilities.includes(Operation.RESCUE),
+          availability:
+            capabilities.filter(
+              (capability) =>
+                capability.operation === Operation.RESCUE &&
+                capability.access === Access.CONTRACT,
+            ).length > 0,
           name: 'Rescue Role',
           value: StableCoinRole.RESCUE_ROLE,
         },
       },
       {
         role: {
-          availability: capabilities.includes(Operation.PAUSE),
+          availability:
+            capabilities.filter(
+              (capability) =>
+                capability.operation === Operation.PAUSE &&
+                capability.access === Access.CONTRACT,
+            ).length > 0,
           name: 'Pause Role',
           value: StableCoinRole.PAUSE_ROLE,
         },
       },
       {
         role: {
-          availability: capabilities.includes(Operation.FREEZE),
+          availability:
+            capabilities.filter(
+              (capability) =>
+                capability.operation === Operation.FREEZE &&
+                capability.access === Access.CONTRACT,
+            ).length > 0,
           name: 'Freeze Role',
           value: StableCoinRole.FREEZE_ROLE,
         },
       },
       {
         role: {
-          availability: capabilities.includes(Operation.GRANT_KYC),
+          availability:
+            capabilities.filter(
+              (capability) =>
+                capability.operation === Operation.GRANT_KYC &&
+                capability.access === Access.CONTRACT,
+            ).length > 0,
           name: 'KYC Role',
           value: StableCoinRole.KYC_ROLE,
         },
@@ -1822,14 +1856,24 @@ export default class OperationStableCoinService extends Service {
       {
         role: {
           // TODO Eliminar el DELETE HTS cuando se pueda eliminar desde contrato (SOLO para ver la opción)
-          availability: capabilities.includes(Operation.DELETE),
+          availability:
+            capabilities.filter(
+              (capability) =>
+                capability.operation === Operation.DELETE &&
+                capability.access === Access.CONTRACT,
+            ).length > 0,
           name: 'Delete Role',
           value: StableCoinRole.DELETE_ROLE,
         },
       },
       {
         role: {
-          availability: capabilities.includes(Operation.ROLE_ADMIN_MANAGEMENT),
+          availability:
+            capabilities.filter(
+              (capability) =>
+                capability.operation === Operation.ROLE_ADMIN_MANAGEMENT &&
+                capability.access === Access.CONTRACT,
+            ).length > 0,
           name: 'Admin Role',
           value: StableCoinRole.DEFAULT_ADMIN_ROLE,
         },
