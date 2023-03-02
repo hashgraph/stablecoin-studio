@@ -285,10 +285,8 @@ contract StableCoinFactory is
         override(IStableCoinFactory)
         isAdmin
         checkAddressIsNotZero(newAddress)
-        returns (bool)
     {
         _hederaERC20Address.push(newAddress);
-        return true;
     }
 
     function getHederaERC20Address() external view returns (address[] memory) {
@@ -303,14 +301,18 @@ contract StableCoinFactory is
         override(IStableCoinFactory)
         isAdmin
         checkAddressIsNotZero(newAddress)
-        returns (bool)
     {
-        return _edit(index, newAddress);
+        _edit(index, newAddress);
     }
 
-    function _edit(uint256 index, address newAddress) internal returns (bool) {
+    function _edit(uint256 index, address newAddress) internal {
         _hederaERC20Address[index] = newAddress;
-        return true;
+    }
+
+    function removeHederaERC20Address(
+        uint256 index
+    ) external override(IStableCoinFactory) isAdmin {
+        _edit(index, address(0));
     }
 
     function changeAdmin(
@@ -320,15 +322,11 @@ contract StableCoinFactory is
         override(IStableCoinFactory)
         isAdmin
         checkAddressIsNotZero(newAddress)
-        returns (bool)
     {
         _admin = newAddress;
-        return true;
     }
 
-    function removeHederaERC20Address(
-        uint256 index
-    ) external override(IStableCoinFactory) isAdmin returns (bool) {
-        return _edit(index, address(0));
+    function getAdmin() external view returns (address) {
+        return _admin;
     }
 }

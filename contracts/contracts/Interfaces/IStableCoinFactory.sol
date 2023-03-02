@@ -51,14 +51,13 @@ interface IStableCoinFactory {
 
     function getHederaERC20Address() external view returns (address[] memory);
 
-    function addHederaERC20Version(address newAddress) external returns (bool);
+    function addHederaERC20Version(address newAddress) external;
 
-    function editHederaERC20Address(
-        uint256 index,
-        address newAddress
-    ) external returns (bool);
+    function editHederaERC20Address(uint256 index, address newAddress) external;
 
-    function changeAdmin(address newAddress) external returns (bool);
+    function changeAdmin(address newAddress) external;
 
-    function removeHederaERC20Address(uint256 index) external returns (bool);
+    function removeHederaERC20Address(uint256 index) external;
+
+    function getAdmin() external view returns (address);
 }

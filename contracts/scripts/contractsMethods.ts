@@ -1258,7 +1258,7 @@ export async function addHederaERC20Version(
     client: Client,
     newAddress: string
 ) {
-    const result = await contractCall(
+    await contractCall(
         stableCoinFactoryProxy,
         'addHederaERC20Version',
         [newAddress],
@@ -1266,7 +1266,6 @@ export async function addHederaERC20Version(
         Gas1,
         StableCoinFactory__factory.abi
     )
-    return result[0]
 }
 
 export async function editHederaERC20Version(
@@ -1275,7 +1274,7 @@ export async function editHederaERC20Version(
     index: number,
     newAddress: string
 ) {
-    const result = await contractCall(
+    await contractCall(
         stableCoinFactoryProxy,
         'editHederaERC20Address',
         [index, newAddress],
@@ -1283,7 +1282,6 @@ export async function editHederaERC20Version(
         Gas1,
         StableCoinFactory__factory.abi
     )
-    return result[0]
 }
 
 export async function changeAdminStablecoinFactory(
@@ -1291,7 +1289,7 @@ export async function changeAdminStablecoinFactory(
     client: Client,
     newAdmin: string
 ) {
-    const result = await contractCall(
+    await contractCall(
         stableCoinFactoryProxy,
         'changeAdmin',
         [newAdmin],
@@ -1299,17 +1297,30 @@ export async function changeAdminStablecoinFactory(
         Gas1,
         StableCoinFactory__factory.abi
     )
-    return result[0]
 }
 export async function removeHederaERC20Version(
     stableCoinFactoryProxy: ContractId,
     client: Client,
     index: number
 ) {
-    const result = await contractCall(
+    await contractCall(
         stableCoinFactoryProxy,
         'removeHederaERC20Address',
         [index],
+        client,
+        Gas1,
+        StableCoinFactory__factory.abi
+    )
+}
+
+export async function getAdminStableCoinFactory(
+    stableCoinFactoryProxy: ContractId,
+    client: Client
+): Promise<string> {
+    const result = await contractCall(
+        stableCoinFactoryProxy,
+        'getAdmin',
+        [],
         client,
         Gas1,
         StableCoinFactory__factory.abi
