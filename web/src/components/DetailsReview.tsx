@@ -36,6 +36,8 @@ const textInBoldProps: ChakraTextProps = {
 
 const DetailsReview = (props: DetailsReviewProps) => {
 	const { details, divider = true, title, titleProps, contentProps } = props;
+	console.log(details);
+
 	return (
 		<Box textAlign='left'>
 			{title && (
@@ -74,7 +76,7 @@ const DetailsReview = (props: DetailsReviewProps) => {
 										</TooltipCopy>
 									)}
 									{detail.hashScanURL && (
-										<Link isExternal={true} href={`${detail.hashScanURL}}`}>
+										<Link isExternal={true} href={`${detail.hashScanURL}`}>
 											<Icon name='ArrowSquareOut' />
 										</Link>
 									)}
