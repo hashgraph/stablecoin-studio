@@ -18,6 +18,7 @@
  *
  */
 
+import { EVM_ZERO_ADDRESS } from '../../../../../core/Constants.js';
 import { lazyInject } from '../../../../../core/decorator/LazyInjectDecorator.js';
 import { QueryHandler } from '../../../../../core/decorator/QueryHandlerDecorator.js';
 import { IQueryHandler } from '../../../../../core/query/QueryHandler.js';
@@ -44,9 +45,15 @@ export class GetERC20ListQueryHandler
 		const res = await this.queryAdapter.getERC20List(
 			factoryId.toEvmAddress(),
 		);
+
+		const removeDeletedAddress = res.filter(
+			(item) => item !== EVM_ZERO_ADDRESS,
+		);
 		return Promise.resolve(
 			new GetERC20ListQueryResponse(
-				res.map((item) => ContractId.fromHederaEthereumAddress(item)),
+				removeDeletedAddress.map((item) =>
+					ContractId.fromHederaEthereumAddress(item),
+				),
 			),
 		);
 	}

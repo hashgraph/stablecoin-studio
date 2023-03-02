@@ -47,5 +47,4 @@ describe('🧪 Factory test', () => {
 		);
 		expect(res.length).toBeGreaterThan(0);
 	}, 60_000);
-
 });
