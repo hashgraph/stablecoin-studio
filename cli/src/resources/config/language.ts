@@ -280,7 +280,7 @@ export const english = {
       Grant: 'Grant roles',
       Revoke: 'Revoke roles',
       Edit: 'Edit role',
-      HasRole: 'Has role',
+      GetRole: 'Get roles',
       ...goBack,
     },
     adminFeatureOptions: {

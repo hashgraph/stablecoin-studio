@@ -13,7 +13,6 @@ import {
   BurnRequest,
   GetAccountBalanceRequest,
   GetRolesRequest,
-  HasRoleRequest,
   FreezeAccountRequest,
   KYCRequest,
   StableCoinCapabilities,
@@ -53,7 +52,7 @@ import KYCStableCoinService from './KYCStableCoinService.js';
 import ListStableCoinsService from './ListStableCoinsService.js';
 import CapabilitiesStableCoinService from './CapabilitiesStableCoinService.js';
 import FeeStableCoinService from './FeeStableCoinService.js';
-import { Capability } from 'hedera-stable-coin-sdk';
+//import { Capability } from 'hedera-stable-coin-sdk';
 
 /**
  * Operation Stable Coin Service
@@ -1424,7 +1423,7 @@ export default class OperationStableCoinService extends Service {
             await this.roleManagementFlow();
         }
         break;
-      case language.getText('wizard.roleManagementOptions.HasRole'):
+      case language.getText('wizard.roleManagementOptions.GetRole'):
         await utilsService.cleanAndShowBanner();
 
         utilsService.displayCurrentUserInfo(
@@ -1432,51 +1431,23 @@ export default class OperationStableCoinService extends Service {
           this.stableCoinWithSymbol,
         );
 
-        //Lists all roles
-        const hasRoleRequest = new HasRoleRequest({
-          tokenId: this.stableCoinId,
+        const getRolesRequest = new GetRolesRequest({
           targetId: '',
-          role: undefined,
+          tokenId: this.stableCoinId,
         });
 
-        await this.validateNotRequestedData(hasRoleRequest, ['tokenId']);
-
-        hasRoleRequest.role = await this.getRole(stableCoinCapabilities);
-        if (
-          hasRoleRequest.role !== language.getText('wizard.backOption.goBack')
-        ) {
-          await utilsService.handleValidation(
-            () => hasRoleRequest.validate('role'),
-            async () => {
-              hasRoleRequest.role = await this.getRole(stableCoinCapabilities);
-            },
-            true,
-            true,
-          );
-
-          let hasRoleAccountTargetId = accountTarget;
-
-          await utilsService.handleValidation(
-            () => hasRoleRequest.validate('targetId'),
-            async () => {
-              hasRoleAccountTargetId = await utilsService.defaultSingleAsk(
-                language.getText('stablecoin.accountTarget'),
-                accountTarget,
-              );
-              hasRoleRequest.targetId = hasRoleAccountTargetId;
-            },
-          );
-
-          //Call to SDK
-          try {
-            await this.roleStableCoinService.hasRoleStableCoin(hasRoleRequest);
-          } catch (error) {
-            await utilsService.askErrorConfirmation(
-              async () => await this.operationsStableCoin(),
-              error,
+        await utilsService.handleValidation(
+          () => getRolesRequest.validate('targetId'),
+          async () => {
+            getRolesRequest.targetId = await utilsService.defaultSingleAsk(
+              language.getText('roleManagement.askAccount'),
+              currentAccount.accountId,
             );
-          }
-        }
+          },
+        );
+
+        await new RoleStableCoinsService().getRoles(getRolesRequest);
+
         break;
       case roleManagementOptionsFiltered[
         roleManagementOptionsFiltered.length - 1
@@ -1764,7 +1735,7 @@ export default class OperationStableCoinService extends Service {
     );
   }
 
-  private async getRole(
+  /*private async getRole(
     stableCoinCapabilities: StableCoinCapabilities,
   ): Promise<any> {
     const capabilities: Capability[] = stableCoinCapabilities.capabilities;
@@ -1897,7 +1868,7 @@ export default class OperationStableCoinService extends Service {
       return roleValue;
     }
     return roleSelected;
-  }
+  }*/
 
   private async getRoles(
     stableCoinCapabilities: StableCoinCapabilities,
