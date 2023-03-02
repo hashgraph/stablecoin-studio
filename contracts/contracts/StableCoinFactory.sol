@@ -53,7 +53,7 @@ contract StableCoinFactory is
         checkAddressIsNotZero(hederaERC20)
     {
         _admin = admin;
-        hederaERC20Address.push(hederaERC20);
+        _hederaERC20Address.push(hederaERC20);
         emit StableCoinFactoryInitialized();
     }
 
@@ -287,12 +287,12 @@ contract StableCoinFactory is
         checkAddressIsNotZero(newAddress)
         returns (bool)
     {
-        hederaERC20Address.push(newAddress);
+        _hederaERC20Address.push(newAddress);
         return true;
     }
 
     function getHederaERC20Address() external view returns (address[] memory) {
-        return hederaERC20Address;
+        return _hederaERC20Address;
     }
 
     function editHederaERC20Address(
@@ -309,7 +309,7 @@ contract StableCoinFactory is
     }
 
     function _edit(uint256 index, address newAddress) internal returns (bool) {
-        hederaERC20Address[index] = newAddress;
+        _hederaERC20Address[index] = newAddress;
         return true;
     }
 
