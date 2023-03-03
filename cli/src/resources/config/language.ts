@@ -134,6 +134,7 @@ export const english = {
       options: {
         currentAccount: 'Current User Account',
         otherAccount: 'Other Account',
+        noAccount: 'None',
       },
       cashinAllowance:
         "Enter the cashin allowance for the account ('0' if Unlimited)",
