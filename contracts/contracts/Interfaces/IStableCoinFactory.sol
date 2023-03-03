@@ -6,6 +6,16 @@ import './IHederaERC20.sol';
 interface IStableCoinFactory {
     event Deployed(DeployedStableCoin);
 
+    event StableCoinFactoryInitialized();
+
+    event HederaERC20AddressEdited(address oldAddress, address newAddress);
+
+    event HederaERC20AddressRemoved(uint256 index, address addressRemoved);
+
+    event AdminChanged(address oldAdmin, address newAdmin);
+
+    event HederaERC20AddressAdded(address newHederaERC20);
+
     struct KeysStruct {
         // Key id as defined for the Hedera Tokens
         uint256 keyType;

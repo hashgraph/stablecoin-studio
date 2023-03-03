@@ -24,8 +24,6 @@ contract StableCoinFactory is
     address private _admin;
     address[] private _hederaERC20Address;
 
-    event StableCoinFactoryInitialized();
-
     modifier isAdmin() {
         require(
             _admin == msg.sender,
@@ -287,6 +285,7 @@ contract StableCoinFactory is
         checkAddressIsNotZero(newAddress)
     {
         _hederaERC20Address.push(newAddress);
+        emit HederaERC20AddressAdded(newAddress);
     }
 
     function getHederaERC20Address() external view returns (address[] memory) {
@@ -302,7 +301,9 @@ contract StableCoinFactory is
         isAdmin
         checkAddressIsNotZero(newAddress)
     {
+        address oldAddress = _hederaERC20Address[index];
         _edit(index, newAddress);
+        emit HederaERC20AddressEdited(oldAddress, newAddress);
     }
 
     function _edit(uint256 index, address newAddress) internal {
@@ -312,7 +313,9 @@ contract StableCoinFactory is
     function removeHederaERC20Address(
         uint256 index
     ) external override(IStableCoinFactory) isAdmin {
+        address addressRemoved = _hederaERC20Address[index];
         _edit(index, address(0));
+        emit HederaERC20AddressRemoved(index, addressRemoved);
     }
 
     function changeAdmin(
@@ -323,7 +326,9 @@ contract StableCoinFactory is
         isAdmin
         checkAddressIsNotZero(newAddress)
     {
+        address oldAdmin = _admin;
         _admin = newAddress;
+        emit AdminChanged(oldAdmin, newAddress);
     }
 
     function getAdmin() external view returns (address) {
