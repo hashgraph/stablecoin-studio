@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
-import './Interfaces/IHederaReserve.sol';
-import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
+import {IHederaReserve} from './Interfaces/IHederaReserve.sol';
+import {
+    Initializable
+} from '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 
 contract HederaReserve is IHederaReserve, Initializable {
     uint8 private constant _DECIMALS = 2;

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
-import './IHederaERC20.sol';
+import {IHederaERC20} from './IHederaERC20.sol';
 
 interface IStableCoinFactory {
     event Deployed(DeployedStableCoin);

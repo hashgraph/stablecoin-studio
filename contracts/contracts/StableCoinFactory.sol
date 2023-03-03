@@ -1,15 +1,21 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
-import './hts-precompile/IHederaTokenService.sol';
-import './hts-precompile/HederaResponseCodes.sol';
-import './HederaERC20.sol';
-import '@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol';
-import '@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol';
-import './HederaReserve.sol';
-import './Interfaces/IStableCoinFactory.sol';
-import '@openzeppelin/contracts/utils/Strings.sol';
-import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
+import {IHederaTokenService} from './hts-precompile/IHederaTokenService.sol';
+import {HederaResponseCodes} from './hts-precompile/HederaResponseCodes.sol';
+import {HederaERC20} from './HederaERC20.sol';
+import {
+    TransparentUpgradeableProxy
+} from '@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol';
+import {
+    ProxyAdmin
+} from '@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol';
+import {HederaReserve} from './HederaReserve.sol';
+import {IStableCoinFactory} from './Interfaces/IStableCoinFactory.sol';
+import {Strings} from '@openzeppelin/contracts/utils/Strings.sol';
+import {
+    Initializable
+} from '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 
 contract StableCoinFactory is
     IStableCoinFactory,
