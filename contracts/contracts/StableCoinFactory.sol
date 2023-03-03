@@ -3,7 +3,7 @@ pragma solidity 0.8.16;
 
 import {IHederaTokenService} from './hts-precompile/IHederaTokenService.sol';
 import {HederaResponseCodes} from './hts-precompile/HederaResponseCodes.sol';
-import {HederaERC20} from './HederaERC20.sol';
+import {HederaERC20, IHederaERC20} from './HederaERC20.sol';
 import {
     TransparentUpgradeableProxy
 } from '@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol';
