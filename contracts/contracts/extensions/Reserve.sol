@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
-import './Interfaces/IReserve.sol';
-import '@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol';
-import './Roles.sol';
-import './TokenOwner.sol';
+import {IReserve} from './Interfaces/IReserve.sol';
+import {
+    AggregatorV3Interface
+} from '@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol';
+import {Roles} from './Roles.sol';
+import {TokenOwner} from './TokenOwner.sol';
 
 abstract contract Reserve is IReserve, TokenOwner, Roles {
     // The address of the internal reserve

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
-import '../hts-precompile/IHederaTokenService.sol';
+import {IHederaTokenService} from '../hts-precompile/IHederaTokenService.sol';
 
 interface IHederaERC20 {
     /**

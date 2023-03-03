@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
-import './TokenOwner.sol';
-import './Roles.sol';
-import './Interfaces/IKYC.sol';
-import '../hts-precompile/IHederaTokenService.sol';
+import {TokenOwner} from './TokenOwner.sol';
+import {Roles} from './Roles.sol';
+import {IHederaTokenService} from '../hts-precompile/IHederaTokenService.sol';
+import {IKYC} from './Interfaces/IKYC.sol';
 
 abstract contract KYC is IKYC, TokenOwner, Roles {
     /**
