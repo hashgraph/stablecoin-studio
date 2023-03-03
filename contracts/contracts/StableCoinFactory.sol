@@ -22,9 +22,7 @@ contract StableCoinFactory is
     string private constant _MEMO_2 = '","a":"';
     string private constant _MEMO_3 = '"}';
     address private _admin;
-    address[] public hederaERC20Address;
-
-    event StableCoinFactoryInitialized();
+    address[] private _hederaERC20Address;
 
     modifier isAdmin() {
         require(
@@ -53,7 +51,7 @@ contract StableCoinFactory is
         checkAddressIsNotZero(hederaERC20)
     {
         _admin = admin;
-        hederaERC20Address.push(hederaERC20);
+        _hederaERC20Address.push(hederaERC20);
         emit StableCoinFactoryInitialized();
     }
 
@@ -280,16 +278,60 @@ contract StableCoinFactory is
 
     function addHederaERC20Version(
         address newAddress
-    ) public isAdmin checkAddressIsNotZero(newAddress) returns (bool) {
-        hederaERC20Address.push(newAddress);
-        return true;
+    )
+        external
+        override(IStableCoinFactory)
+        isAdmin
+        checkAddressIsNotZero(newAddress)
+    {
+        _hederaERC20Address.push(newAddress);
+        emit HederaERC20AddressAdded(newAddress);
     }
 
-    function getHederaERC20Address()
-        public
-        view
-        returns (address[] memory hederaERC20ToReturn)
+    function getHederaERC20Address() external view returns (address[] memory) {
+        return _hederaERC20Address;
+    }
+
+    function editHederaERC20Address(
+        uint256 index,
+        address newAddress
+    )
+        external
+        override(IStableCoinFactory)
+        isAdmin
+        checkAddressIsNotZero(newAddress)
     {
-        return hederaERC20Address;
+        address oldAddress = _hederaERC20Address[index];
+        _edit(index, newAddress);
+        emit HederaERC20AddressEdited(oldAddress, newAddress);
+    }
+
+    function _edit(uint256 index, address newAddress) internal {
+        _hederaERC20Address[index] = newAddress;
+    }
+
+    function removeHederaERC20Address(
+        uint256 index
+    ) external override(IStableCoinFactory) isAdmin {
+        address addressRemoved = _hederaERC20Address[index];
+        _edit(index, address(0));
+        emit HederaERC20AddressRemoved(index, addressRemoved);
+    }
+
+    function changeAdmin(
+        address newAddress
+    )
+        external
+        override(IStableCoinFactory)
+        isAdmin
+        checkAddressIsNotZero(newAddress)
+    {
+        address oldAdmin = _admin;
+        _admin = newAddress;
+        emit AdminChanged(oldAdmin, newAddress);
+    }
+
+    function getAdmin() external view returns (address) {
+        return _admin;
     }
 }

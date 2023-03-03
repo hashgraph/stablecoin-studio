@@ -6,6 +6,16 @@ import './IHederaERC20.sol';
 interface IStableCoinFactory {
     event Deployed(DeployedStableCoin);
 
+    event StableCoinFactoryInitialized();
+
+    event HederaERC20AddressEdited(address oldAddress, address newAddress);
+
+    event HederaERC20AddressRemoved(uint256 index, address addressRemoved);
+
+    event AdminChanged(address oldAdmin, address newAdmin);
+
+    event HederaERC20AddressAdded(address newHederaERC20);
+
     struct KeysStruct {
         // Key id as defined for the Hedera Tokens
         uint256 keyType;
@@ -48,4 +58,16 @@ interface IStableCoinFactory {
         TokenStruct calldata requestedToken,
         address stableCoinContractAddress
     ) external payable returns (DeployedStableCoin memory);
+
+    function getHederaERC20Address() external view returns (address[] memory);
+
+    function addHederaERC20Version(address newAddress) external;
+
+    function editHederaERC20Address(uint256 index, address newAddress) external;
+
+    function changeAdmin(address newAddress) external;
+
+    function removeHederaERC20Address(uint256 index) external;
+
+    function getAdmin() external view returns (address);
 }

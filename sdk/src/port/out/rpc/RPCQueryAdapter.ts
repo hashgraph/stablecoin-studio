@@ -180,16 +180,4 @@ export default class RPCQueryAdapter {
 			factoryAddress.toString(),
 		).getHederaERC20Address();
 	}
-	async getERC20(
-		factoryAddress: EvmAddress,
-		index: BigNumber,
-	): Promise<string> {
-		LogService.logTrace(
-			`Requesting getERC20 factoryAddress: ${factoryAddress.toString()}, index: ${index.toString()}`,
-		);
-		return await this.connect(
-			Factory,
-			factoryAddress.toString(),
-		).hederaERC20Address(index);
-	}
 }
