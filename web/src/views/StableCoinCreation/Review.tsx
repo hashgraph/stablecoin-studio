@@ -128,10 +128,7 @@ const Review = (props: ReviewProps) => {
 		wipeRoleAccount,
 		wipeKey,
 	);
-	setRoleAccountInfo(
-		t('stableCoinCreation:managementPermissions.rescue'), 
-		rescueRoleAccount
-	);
+	setRoleAccountInfo(t('stableCoinCreation:managementPermissions.rescue'), rescueRoleAccount);
 	setRoleAccountInfoByKey(
 		t('stableCoinCreation:managementPermissions.pause'),
 		pauseRoleAccount,
@@ -260,7 +257,7 @@ const Review = (props: ReviewProps) => {
 						]}
 					/>
 
-					{roleDetails && roleDetails.length > 0 &&(
+					{roleDetails && roleDetails.length > 0 && (
 						<DetailsReview
 							title={t('stableCoinCreation:review.rolesAssignment')}
 							titleProps={{ fontWeight: 700, color: 'brand.secondary' }}

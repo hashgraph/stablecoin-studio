@@ -32,7 +32,7 @@ const RoleSelector = ({ control, name, label, request }: RoleSelectorProps) => {
 		{
 			value: 3,
 			label: t('stableCoinCreation:managementPermissions.none'),
-		}	
+		},
 	];
 
 	const selectorStyle = {

@@ -93,7 +93,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 			deleteRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
 			kycRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
 			cashInRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
-			cashInRoleAllowance: BigDecimal.ZERO
+			cashInRoleAllowance: BigDecimal.ZERO,
 		});
 		tr = await th.create(
 			coinSC,
@@ -135,7 +135,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 			deleteRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
 			kycRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
 			cashInRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
-			cashInRoleAllowance: BigDecimal.ZERO
+			cashInRoleAllowance: BigDecimal.ZERO,
 		});
 		tr = await th.create(
 			coinHTS,
@@ -646,7 +646,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 			deleteRoleAccount: CLIENT_ACCOUNT_ED25519.id,
 			kycRoleAccount: CLIENT_ACCOUNT_ED25519.id,
 			cashInRoleAccount: CLIENT_ACCOUNT_ED25519.id,
-			cashInRoleAllowance: BigDecimal.ZERO
+			cashInRoleAllowance: BigDecimal.ZERO,
 		});
 		tr = await th.create(
 			coinSC,
@@ -686,7 +686,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 			deleteRoleAccount: CLIENT_ACCOUNT_ED25519.id,
 			kycRoleAccount: CLIENT_ACCOUNT_ED25519.id,
 			cashInRoleAccount: CLIENT_ACCOUNT_ED25519.id,
-			cashInRoleAllowance: BigDecimal.ZERO
+			cashInRoleAllowance: BigDecimal.ZERO,
 		});
 		tr = await th.create(
 			coinHTS,
