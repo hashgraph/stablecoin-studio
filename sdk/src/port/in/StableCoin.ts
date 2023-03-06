@@ -78,6 +78,8 @@ import { RevokeKycCommand } from '../../app/usecase/command/stablecoin/operation
 import { LogError } from '../../core/decorator/LogErrorDecorator.js';
 import { GetAccountTokenRelationshipQuery } from '../../app/usecase/query/account/tokenRelationship/GetAccountTokenRelationshipQuery.js';
 import { KycStatus } from '../out/mirror/response/AccountTokenRelationViewModel.js';
+import TransfersRequest from './request/TransfersRequest.js';
+import { TransfersCommand } from '../../app/usecase/command/stablecoin/operations/transfer/TransfersCommand.js';
 
 export { StableCoinViewModel, StableCoinListViewModel, ReserveViewModel };
 export { StableCoinCapabilities, Capability, Access, Operation, Balance };
@@ -112,6 +114,7 @@ interface IStableCoinInPort {
 	grantKyc(request: KYCRequest): Promise<boolean>;
 	revokeKyc(request: KYCRequest): Promise<boolean>;
 	isAccountKYCGranted(request: KYCRequest): Promise<boolean>;
+	transfers(request: TransfersRequest): Promise<boolean>;
 }
 
 class StableCoinInPort implements IStableCoinInPort {
@@ -507,6 +510,20 @@ class StableCoinInPort implements IStableCoinInPort {
 		return (
 			await this.commandBus.execute(
 				new UpdateReserveAddressCommand(
+					HederaId.from(request.tokenId),
+					new ContractId(request.reserveAddress),
+				),
+			)
+		).payload;
+	}
+
+	@LogError
+	transfers(request: TransfersRequest): Promise<boolean> {
+		handleValidation('TransfersRequest', request);
+
+		return (
+			await this.commandBus.execute(
+				new TransfersCommand(
 					HederaId.from(request.tokenId),
 					new ContractId(request.reserveAddress),
 				),

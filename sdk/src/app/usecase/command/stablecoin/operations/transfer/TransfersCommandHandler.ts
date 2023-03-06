@@ -31,11 +31,14 @@ import TransactionService from '../../../../../service/TransactionService.js';
 import { BalanceOfQuery } from '../../../../query/stablecoin/balanceof/BalanceOfQuery.js';
 import { DecimalsOverRange } from '../../error/DecimalsOverRange.js';
 import { OperationNotAllowed } from '../../error/OperationNotAllowed.js';
-import { TransferCommand, TransferCommandResponse } from './TransferCommand.js';
+import {
+	TransfersCommand,
+	TransfersCommandResponse,
+} from './TransfersCommand.js';
 
-@CommandHandler(TransferCommand)
-export class TransferCommandHandler
-	implements ICommandHandler<TransferCommand>
+@CommandHandler(TransfersCommand)
+export class TransfersCommandHandler
+	implements ICommandHandler<TransfersCommand>
 {
 	constructor(
 		@lazyInject(StableCoinService)
@@ -50,7 +53,9 @@ export class TransferCommandHandler
 		public readonly transactionService: TransactionService,
 	) {}
 
-	async execute(command: TransferCommand): Promise<TransferCommandResponse> {
+	async execute(
+		command: TransfersCommand,
+	): Promise<TransfersCommandResponse> {
 		const { amounts, targetIds, tokenId } = command;
 		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
@@ -74,7 +79,7 @@ export class TransferCommandHandler
 
 		const res = await handler.transfers(capabilities, amountsBd, targetIds);
 		return Promise.resolve(
-			new TransferCommandResponse(res.error === undefined),
+			new TransfersCommandResponse(res.error === undefined),
 		);
 	}
 }
