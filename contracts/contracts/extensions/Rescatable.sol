@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
-import './TokenOwner.sol';
-import './Roles.sol';
-import './Interfaces/IRescatable.sol';
-import '../hts-precompile/IHederaTokenService.sol';
+import {TokenOwner} from './TokenOwner.sol';
+import {Roles} from './Roles.sol';
+import {IRescatable} from './Interfaces/IRescatable.sol';
+import {IHederaTokenService} from '../hts-precompile/IHederaTokenService.sol';
 
 abstract contract Rescatable is IRescatable, TokenOwner, Roles {
     /**
@@ -15,21 +15,22 @@ abstract contract Rescatable is IRescatable, TokenOwner, Roles {
      * @param amount The number of tokens to rescuer
      */
     function rescue(
-        uint256 amount
+        int64 amount
     )
         external
         override(IRescatable)
         onlyRole(_getRoleId(RoleName.RESCUE))
+        amountIsNotNegative(amount, false)
+        valueIsNotGreaterThan(
+            uint256(uint64(amount)),
+            _balanceOf(address(this)),
+            true
+        )
         returns (bool)
     {
-        require(
-            _balanceOf(address(this)) >= amount,
-            'Amount must not exceed the token balance'
-        );
-
         address currentTokenAddress = _getTokenAddress();
 
-        int256 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
+        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
             .transferToken(
                 currentTokenAddress,
                 address(this),

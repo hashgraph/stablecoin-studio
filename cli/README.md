@@ -135,16 +135,6 @@ factories: [
     network: 'previewnet'
   }
 ]
-hederaERC20s: [
-  {
-    id: '0.0.123456',
-    network: 'testnet'
-  },
-  {
-    id: '0.0.123456',
-    network: 'previewnet'
-  }
-]
 ```
 
 ## CLI flow
@@ -184,7 +174,7 @@ The Wizard will give you the possibility to link your stable coin to an already 
 _For more information about PoR Feeds, check the official [ChainLink documentation](https://docs.chain.link/data-feeds/proof-of-reserve/)._
 
 
-Another question is prompt asking if you would like the smart contract to be set as the owner of all the underlying token keys (admin, wipe, ...), you could however set any account you wish as the owner of any token key.
+Another question is prompt asking if you would like the smart contract to be set as the owner of all the underlying token keys (admin, wipe, ...), you could however set any key you wish as the owner of any token key.
 If you set the smart contract as a key owner, you will be able to grant and revoke this capacity to any other account, since it is the smart contract that will be ultimately controlling the underlying token.
 The user that creates the stable coin is granted all the roles if the smart contract is the owner of all the underlying token's keys.
 

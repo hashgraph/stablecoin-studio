@@ -30,7 +30,7 @@ export enum Operation {
 	RESCUE = 'Rescue',
 	ROLE_MANAGEMENT = 'Role_Management',
 	ROLE_ADMIN_MANAGEMENT = 'Admin_Role',
-	RESERVE_MANAGEMENT = 'Admin_Role',
+	RESERVE_MANAGEMENT = 'Reserve_Management',
 	GRANT_KYC = 'Grant_KYC',
 	REVOKE_KYC = 'Revoke_KYC',
 	CREATE_CUSTOM_FEE = 'Create_Custom_Fee',

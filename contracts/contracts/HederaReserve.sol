@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
-import './Interfaces/IHederaReserve.sol';
-import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
+import {IHederaReserve} from './Interfaces/IHederaReserve.sol';
+import {
+    Initializable
+} from '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 
 contract HederaReserve is IHederaReserve, Initializable {
     uint8 private constant _DECIMALS = 2;
@@ -22,6 +24,11 @@ contract HederaReserve is IHederaReserve, Initializable {
     modifier checkAddressIsNotZero(address addr) {
         _checkAddressIsNotZero(addr);
         _;
+    }
+
+    // Constructor required to avoid Initializer attack on logic contract
+    constructor() {
+        _disableInitializers();
     }
 
     function _checkAddressIsNotZero(address addr) internal pure {

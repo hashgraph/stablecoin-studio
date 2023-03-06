@@ -1,65 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
-import './Interfaces/ISupplierAdmin.sol';
-import './TokenOwner.sol';
-import './Roles.sol';
+import {ISupplierAdmin} from './Interfaces/ISupplierAdmin.sol';
+import {TokenOwner} from './TokenOwner.sol';
+import {Roles} from './Roles.sol';
 
 abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
     mapping(address => uint256) internal _supplierAllowances;
     mapping(address => bool) internal _unlimitedSupplierAllowances;
 
     /**
-     * @dev Emitted when a supply controller increases a supplier's allowance
-     *
-     * @param sender The caller of the function that emitted the event
-     * @param supplier The supplier account
-     * @param amount The amount to increase supplier allowance by
-     * @param oldAllowance The supplier allowance before the increase
-     * @param newAllowance The supplier allowance after the increase
-     */
-    event SupplierAllowanceIncreased(
-        address indexed sender,
-        address indexed supplier,
-        uint256 amount,
-        uint256 oldAllowance,
-        uint256 newAllowance
-    );
-
-    /**
-     * @dev Emitted when a supply controller decreases a supplier's allowance
-     *
-     * @param sender The caller of the function that emitted the event
-     * @param supplier The supplier account
-     * @param amount The amount to decrease supplier allowance by
-     * @param oldAllowance The supplier allowance before the decrease
-     * @param newAllowance The supplier allowance after the decrease
-     */
-    event SupplierAllowanceDecreased(
-        address indexed sender,
-        address indexed supplier,
-        uint256 amount,
-        uint256 oldAllowance,
-        uint256 newAllowance
-    );
-
-    /**
-     * @dev Emitted when a supply controller resets a supplier's allowance
-     *
-     * @param sender The caller of the function that emitted the event
-     * @param supplier The supplier account
-     * @param oldAllowance The supplier allowance before the reset
-     * @param newAllowance The supplier allowance after the reset (expected to be 0)
-     */
-    event SupplierAllowanceReset(
-        address indexed sender,
-        address indexed supplier,
-        uint256 oldAllowance,
-        uint256 newAllowance
-    );
-
-    /**
-     * @dev Retrun number of tokens allowed to be minted of the address account `supplier`.
+     * @dev Return number of tokens allowed to be minted of the address account `supplier`.
      *
      * @param supplier The address of the supplier
      * @return The number of tokens allowed to be minted
@@ -101,8 +52,22 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
         virtual
         override(ISupplierAdmin)
         onlyRole(_getRoleId(RoleName.ADMIN))
-        checkAddressIsNotZero(supplier)
+        addressIsNotZero(supplier)
+        valueIsNotLessThan(amount, 0, false)
     {
+        _grantSupplierRole(supplier, amount);
+    }
+
+    /**
+     * @dev  Gives `SUPPLIER ROLE' permissions to perform supplier's allowance and sets the `amount`
+     * the supplier can mint, if you don't already have unlimited supplier's allowance permission.
+     * Only the 'ADMIN SUPPLIER ROLE` can execute.
+     *
+     * @param supplier The address of the supplier
+     * @param amount The amount to add to the supplier's current minting allowance
+     *
+     */
+    function _grantSupplierRole(address supplier, uint256 amount) internal {
         require(
             !_unlimitedSupplierAllowances[supplier],
             'Account already has unlimited supplier allowance'
@@ -120,7 +85,13 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
      */
     function grantUnlimitedSupplierRole(
         address supplier
-    ) external virtual override(ISupplierAdmin) {
+    )
+        external
+        virtual
+        override(ISupplierAdmin)
+        onlyRole(_getRoleId(RoleName.ADMIN))
+        addressIsNotZero(supplier)
+    {
         _grantUnlimitedSupplierRole(supplier);
     }
 
@@ -131,13 +102,7 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
      *
      * @param supplier The address of the supplier
      */
-    function _grantUnlimitedSupplierRole(
-        address supplier
-    )
-        internal
-        onlyRole(_getRoleId(RoleName.ADMIN))
-        checkAddressIsNotZero(supplier)
-    {
+    function _grantUnlimitedSupplierRole(address supplier) internal {
         _unlimitedSupplierAllowances[supplier] = true;
         _supplierAllowances[supplier] = 0;
         _grantRole(_getRoleId(RoleName.CASHIN), supplier);
@@ -157,7 +122,7 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
         virtual
         override(ISupplierAdmin)
         onlyRole(_getRoleId(RoleName.ADMIN))
-        checkAddressIsNotZero(supplier)
+        addressIsNotZero(supplier)
     {
         _supplierAllowances[supplier] = 0;
         _unlimitedSupplierAllowances[supplier] = false;
@@ -178,7 +143,7 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
         virtual
         override(ISupplierAdmin)
         onlyRole(_getRoleId(RoleName.ADMIN))
-        checkAddressIsNotZero(supplier)
+        addressIsNotZero(supplier)
     {
         uint256 oldAllowance = _supplierAllowances[supplier];
         uint256 newAllowance = 0;
@@ -209,10 +174,9 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
         virtual
         override(ISupplierAdmin)
         onlyRole(_getRoleId(RoleName.ADMIN))
-        checkAddressIsNotZero(supplier)
+        addressIsNotZero(supplier)
+        valueIsNotLessThan(amount, 0, false)
     {
-        require(amount > 0, 'Amount must be greater than zero');
-
         uint256 oldAllowance = _supplierAllowances[supplier];
         uint256 newAllowance = oldAllowance + amount;
         _supplierAllowances[supplier] = newAllowance;
@@ -243,6 +207,8 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
         virtual
         override(ISupplierAdmin)
         onlyRole(_getRoleId(RoleName.ADMIN))
+        addressIsNotZero(supplier)
+        valueIsNotLessThan(amount, 0, false)
     {
         _decreaseSupplierAllowance(supplier, amount);
     }
@@ -257,9 +223,7 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
     function _decreaseSupplierAllowance(
         address supplier,
         uint256 amount
-    ) internal virtual checkAddressIsNotZero(supplier) {
-        require(amount > 0, 'Amount must be greater than zero');
-
+    ) internal virtual {
         uint256 oldAllowance = _supplierAllowances[supplier];
         require(
             oldAllowance >= amount,

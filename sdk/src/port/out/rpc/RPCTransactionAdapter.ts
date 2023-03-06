@@ -74,6 +74,8 @@ import { WalletConnectRejectedError } from '../../../domain/context/network/erro
 import { TransactionResponseError } from '../error/TransactionResponseError.js';
 import { SigningError } from '../hs/error/SigningError.js';
 import { RESERVE_DECIMALS } from '../../../domain/context/reserve/Reserve.js';
+import { FactoryRole } from '../../../domain/context/factory/FactoryRole.js';
+import { FactoryCashinRole } from '../../../domain/context/factory/FactoryCashinRole.js';
 
 // eslint-disable-next-line no-var
 declare var ethereum: MetaMaskInpageProvider;
@@ -105,6 +107,20 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	): Promise<TransactionResponse<any, Error>> {
 		try {
 			const keys: FactoryKey[] = [];
+			const cashinRole: FactoryCashinRole = {
+				account:
+					coin.cashInRoleAccount == undefined ||
+					coin.cashInRoleAccount.toString() == '0.0.0'
+						? '0x0000000000000000000000000000000000000000'
+						: (
+								await this.accountToEvmAddress(
+									coin.cashInRoleAccount,
+								)
+						  ).toString(),
+				allowance: coin.cashInRoleAllowance
+					? coin.cashInRoleAllowance.toFixedNumber()
+					: BigDecimal.ZERO.toFixedNumber(),
+			};
 
 			const providedKeys = [
 				coin.adminKey,
@@ -156,6 +172,52 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				}
 			});
 
+			const providedRoles = [
+				{
+					account: coin.burnRoleAccount,
+					role: StableCoinRole.BURN_ROLE,
+				},
+				{
+					account: coin.wipeRoleAccount,
+					role: StableCoinRole.WIPE_ROLE,
+				},
+				{
+					account: coin.rescueRoleAccount,
+					role: StableCoinRole.RESCUE_ROLE,
+				},
+				{
+					account: coin.pauseRoleAccount,
+					role: StableCoinRole.PAUSE_ROLE,
+				},
+				{
+					account: coin.freezeRoleAccount,
+					role: StableCoinRole.FREEZE_ROLE,
+				},
+				{
+					account: coin.deleteRoleAccount,
+					role: StableCoinRole.DELETE_ROLE,
+				},
+				{ account: coin.kycRoleAccount, role: StableCoinRole.KYC_ROLE },
+			];
+
+			const roles = await Promise.all(
+				providedRoles
+					.filter((item) => {
+						return (
+							item.account &&
+							item.account.value !== HederaId.NULL.value
+						);
+					})
+					.map(async (item) => {
+						const role = new FactoryRole();
+						role.role = item.role;
+						role.account = (
+							await this.accountToEvmAddress(item.account!)
+						).toString();
+						return role;
+					}),
+			);
+
 			const stableCoinToCreate = new FactoryStableCoin(
 				coin.name,
 				coin.symbol,
@@ -191,6 +253,8 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					? coin.grantKYCToOriginalSender
 					: false,
 				keys,
+				roles,
+				cashinRole,
 			);
 
 			const factoryInstance = StableCoinFactory__factory.connect(

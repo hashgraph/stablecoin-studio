@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
-import '../hts-precompile/IHederaTokenService.sol';
+import {IHederaTokenService} from '../hts-precompile/IHederaTokenService.sol';
 
 interface IHederaERC20 {
     /**
@@ -33,7 +33,7 @@ interface IHederaERC20 {
         address token,
         address sender,
         address receiver,
-        uint256 amount
+        int64 amount
     );
 
     /**
@@ -55,12 +55,24 @@ interface IHederaERC20 {
 
     struct InitializeStruct {
         IHederaTokenService.HederaToken token;
-        uint64 initialTotalSupply;
-        uint32 tokenDecimals;
+        int64 initialTotalSupply;
+        int32 tokenDecimals;
         address originalSender;
         address reserveAddress;
         bool grantKYCToOriginalSender;
         bool treasuryIsContract;
+        RolesStruct[] roles;
+        CashinRoleStruct cashinRole;
+    }
+
+    struct RolesStruct {
+        bytes32 role;
+        address account;
+    }
+
+    struct CashinRoleStruct {
+        address account;
+        uint256 allowance;
     }
 
     /**
@@ -121,7 +133,7 @@ interface IHederaERC20 {
      *
      * @param to The address the tokens are transferred to
      */
-    function transfer(address to, uint256 amount) external returns (bool);
+    function transfer(address to, int64 amount) external returns (bool);
 
     /**
      * @dev Function not already implemented

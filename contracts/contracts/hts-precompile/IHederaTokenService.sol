@@ -61,12 +61,12 @@ interface IHederaTokenService {
     struct Expiry {
         // The epoch second at which the token should expire; if an auto-renew account and period are
         // specified, this is coerced to the current epoch second plus the autoRenewPeriod
-        uint32 second;
+        int64 second;
         // ID of an account which will be automatically charged to renew the token's expiration, at
         // autoRenewPeriod interval, expressed as a solidity address
         address autoRenewAccount;
         // The interval at which the auto-renew account will be charged to extend the token's expiry
-        uint32 autoRenewPeriod;
+        int64 autoRenewPeriod;
     }
 
     /// A Key can be a public key from either the Ed25519 or ECDSA(secp256k1) signature schemes, where
@@ -109,7 +109,7 @@ interface IHederaTokenService {
         // 5th bit: feeScheduleKey
         // 6th bit: pauseKey
         // 7th bit: ignored
-        uint256 keyType;
+        uint keyType;
         // the value that will be set to the key type
         KeyValue key;
     }
@@ -149,7 +149,7 @@ interface IHederaTokenService {
         /// Basic properties of a Hedera Token
         HederaToken token;
         /// The number of tokens (fungible) or serials (non-fungible) of the token
-        uint64 totalSupply;
+        int64 totalSupply;
         /// Specifies whether the token is deleted or not
         bool deleted;
         /// Specifies whether the token kyc was defaulted with KycNotApplicable (true) or Revoked (false)
@@ -171,7 +171,7 @@ interface IHederaTokenService {
         /// The shared hedera token info
         TokenInfo tokenInfo;
         /// The number of decimal places a token is divisible by
-        uint32 decimals;
+        int32 decimals;
     }
 
     /// Additional non fungible properties of a Hedera Token.
@@ -195,7 +195,7 @@ interface IHederaTokenService {
     /// the fee depends on the values of tokenId, useHbarsForPayment and
     /// useCurrentTokenForPayment. Exactly one of the values should be set.
     struct FixedFee {
-        uint32 amount;
+        int64 amount;
         // Specifies ID of token that should be used for fixed fee denomination
         address tokenId;
         // Specifies this fixed fee should be denominated in Hbar
@@ -211,13 +211,13 @@ interface IHederaTokenService {
     /// denomination is always units of the token to which this fractional fee is attached.
     struct FractionalFee {
         // A rational number's numerator, used to set the amount of a value transfer to collect as a custom fee
-        uint32 numerator;
+        int64 numerator;
         // A rational number's denominator, used to set the amount of a value transfer to collect as a custom fee
-        uint32 denominator;
+        int64 denominator;
         // The minimum amount to assess
-        uint32 minimumAmount;
+        int64 minimumAmount;
         // The maximum amount to assess (zero implies no maximum)
-        uint32 maximumAmount;
+        int64 maximumAmount;
         bool netOfTransfers;
         // The ID of the account to receive the custom fee, expressed as a solidity address
         address feeCollector;
@@ -230,15 +230,15 @@ interface IHederaTokenService {
     /// Royalty fees can only be added to tokens of type type NON_FUNGIBLE_UNIQUE.
     struct RoyaltyFee {
         // A fraction's numerator of fungible value exchanged for an NFT to collect as royalty
-        uint32 numerator;
+        int64 numerator;
         // A fraction's denominator of fungible value exchanged for an NFT to collect as royalty
-        uint32 denominator;
+        int64 denominator;
         // If present, the fee to assess to the NFT receiver when no fungible value
         // is exchanged with the sender. Consists of:
         // amount: the amount to charge for the fee
         // tokenId: Specifies ID of token that should be used for fixed fee denomination
         // useHbarsForPayment: Specifies this fee should be denominated in Hbar
-        uint32 amount;
+        int64 amount;
         address tokenId;
         bool useHbarsForPayment;
         // The ID of the account to receive the custom fee, expressed as a solidity address
@@ -271,13 +271,13 @@ interface IHederaTokenService {
     /// @return serialNumbers If the token is an NFT the newly generate serial numbers, othersise empty.
     function mintToken(
         address token,
-        uint64 amount,
+        int64 amount,
         bytes[] memory metadata
     )
         external
         returns (
             int64 responseCode,
-            uint64 newTotalSupply,
+            int64 newTotalSupply,
             int64[] memory serialNumbers
         );
 
@@ -292,9 +292,9 @@ interface IHederaTokenService {
     /// @return newTotalSupply The new supply of tokens. For NFTs it is the total count of NFTs
     function burnToken(
         address token,
-        uint64 amount,
+        int64 amount,
         int64[] memory serialNumbers
-    ) external returns (int64 responseCode, uint64 newTotalSupply);
+    ) external returns (int64 responseCode, int64 newTotalSupply);
 
     ///  Associates the provided account with the provided tokens. Must be signed by the provided
     ///  Account's key or called from the accounts contract key
@@ -366,8 +366,8 @@ interface IHederaTokenService {
     /// @return tokenAddress the created token's address
     function createFungibleToken(
         HederaToken memory token,
-        uint64 initialTotalSupply,
-        uint32 decimals
+        int64 initialTotalSupply,
+        int32 decimals
     ) external payable returns (int64 responseCode, address tokenAddress);
 
     /// Creates a Fungible Token with the specified properties
@@ -381,8 +381,8 @@ interface IHederaTokenService {
     /// @return tokenAddress the created token's address
     function createFungibleTokenWithCustomFees(
         HederaToken memory token,
-        uint64 initialTotalSupply,
-        uint32 decimals,
+        int64 initialTotalSupply,
+        int32 decimals,
         FixedFee[] memory fixedFees,
         FractionalFee[] memory fractionalFees
     ) external payable returns (int64 responseCode, address tokenAddress);
@@ -658,7 +658,7 @@ interface IHederaTokenService {
     /// @return key KeyValue info for key of type `keyType`
     function getTokenKey(
         address token,
-        uint256 keyType
+        uint keyType
     ) external returns (int64 responseCode, KeyValue memory key);
 
     /// Query non fungible token info
@@ -730,7 +730,7 @@ interface IHederaTokenService {
     function wipeTokenAccount(
         address token,
         address account,
-        uint32 amount
+        int64 amount
     ) external returns (int64 responseCode);
 
     /// Operation to wipe non fungible tokens from account

@@ -67,7 +67,6 @@ export const english = {
     askOperateWithNewAccount:
       'Would you like to operate with the account you have just created?',
     askFactoryAddress: 'Enter your factory address',
-    askHederaERC20Address: 'Enter your Hedera ERC20 address',
   },
   stablecoin: {
     noFactories:
@@ -87,7 +86,6 @@ export const english = {
     askReserve: 'Do you want to link the stable coin to a Proof of Reserve?',
     askExistingReserve:
       'Do you want to link it to an already existing Proof of Reserve?',
-
     askReserveAddress:
       'Enter the Proof of Reserve Feed you wish to link your stable coin to',
     askReserveInitialAmount: 'Enter the Proof of Reserve Feed initial amount',
@@ -98,7 +96,17 @@ export const english = {
     askMemo: 'Enter the token memo',
     askFreezeAccount: 'Should the Hedera account be frozen for this token?',
     askFeaturesManagedBy:
-      'Assign all token keys to the Smart Contract except for the Fee Schedule key (assigned to the current user) and the KYC key (unassigned)?',
+      'Should the smart contract be used for all roles management?',
+    askRolesManagedBy:
+      'You will be the admin for the keys that you have assigned to the Smart Contract, do you want to change the admin for one of these features?',
+    askKYC: 'Do you want to enable KYC?',
+    askCustomFees: 'Do you want to add custom fees?',
+    askHederaERC20Predeployed:
+      'Do you want to use one of the predeployed HederaERC20 implementations?',
+    askHederaERC20Version:
+      'Choose the HederaERC20 implementation you want to use',
+    askHederaERC20Implementation:
+      'Enter the address of the HederaERC20 implementation you want to use',
     features: {
       admin: 'Enter the admin key',
       supply: 'Enter the supply key',
@@ -113,6 +121,24 @@ export const english = {
       publicKey: 'Enter the public key',
       keyType: 'Key type',
     },
+    initialRoles: {
+      askAccount: 'Enter an account',
+      burn: 'Choose the BURN admin account',
+      wipe: 'Choose the WIPE admin account',
+      rescue: 'Choose the RESCUE admin account',
+      pause: 'Choose the PAUSE admin account',
+      freeze: 'Choose the FREEZE admin account',
+      delete: 'Choose the DELETE admin account',
+      kyc: 'Choose the KYC admin account',
+      cashin: 'Choose the CASHIN admin account',
+      options: {
+        currentAccount: 'Current User Account',
+        otherAccount: 'Other Account',
+        noAccount: 'None',
+      },
+      cashinAllowance:
+        "Enter the cashin allowance for the account ('0' if Unlimited)",
+    },
     askTreasuryAccountAddress: 'Enter the treasury account id?',
     askOperateStableCoin:
       'Do you want to operate with the stable coin you just created?',
@@ -125,7 +151,7 @@ export const english = {
     askGrantKYCToSender: 'Do you want to grant KYC to your current account?',
     askTargetAccount: 'What is the target account?',
     askAccountToBalance:
-      'Which account would you like to obtain the balance from?',
+      'For which account would you like to get the balance of?',
     askCashInRoleType: 'What type of permission do you want to grant?',
     askCashInRoleRevokeType: 'What type of permission do you want to revoke?',
     askEditCashInRole: 'What action do you want to perform?',
@@ -263,9 +289,13 @@ export const english = {
     adminFeatureOptions: {
       ...basicFeatureOptions,
     },
-    nonSmartContractFeatureOptions: {
+    nonNoneFeatureOptions: {
+      SmartContract: 'The Smart Contract',
       CurrentUser: 'Current user key',
-      None: 'None',
+      OtherKey: 'Other public key',
+    },
+    nonSmartContractAndNoneFeatureOptions: {
+      CurrentUser: 'Current user key',
       OtherKey: 'Other public key',
     },
     featureOptions: {

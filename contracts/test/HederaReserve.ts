@@ -32,8 +32,8 @@ import {
 import { clientId, toEvmAddress } from '../scripts/utils'
 import { Client, ContractId } from '@hashgraph/sdk'
 import {
-    HederaReserveProxyAdmin__factory,
-    HederaReserveProxy__factory,
+    ProxyAdmin__factory,
+    TransparentUpgradeableProxy__factory,
 } from '../typechain-types'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
@@ -57,7 +57,7 @@ let nonOperatorIsE25519: boolean
 const TokenFactor = BigNumber.from(10).pow(3)
 const reserve = BigNumber.from('100').mul(TokenFactor)
 
-const proxyAdminAbi = HederaReserveProxyAdmin__factory.abi
+const proxyAdminAbi = ProxyAdmin__factory.abi
 
 describe('HederaReserve Tests', function () {
     before(async function () {
@@ -479,7 +479,7 @@ describe('HederaReserveProxy and HederaReserveProxyAdmin Tests', function () {
 
         // Check that proxy admin has been changed
         const _admin = await admin(
-            HederaReserveProxy__factory.abi,
+            TransparentUpgradeableProxy__factory.abi,
             proxyAddress,
             operatorClient
         )
@@ -491,13 +491,13 @@ describe('HederaReserveProxy and HederaReserveProxyAdmin Tests', function () {
 
         // reset
         await changeAdmin(
-            HederaReserveProxy__factory.abi,
+            TransparentUpgradeableProxy__factory.abi,
             proxyAddress,
             operatorClient,
             await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)
         )
         await changeAdmin(
-            HederaReserveProxy__factory.abi,
+            TransparentUpgradeableProxy__factory.abi,
             proxyAddress,
             nonOperatorClient,
             proxyAdminAddress.toSolidityAddress()

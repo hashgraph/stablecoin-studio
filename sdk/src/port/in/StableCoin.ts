@@ -201,6 +201,18 @@ class StableCoinInPort implements IStableCoinInPort {
 			grantKYCToOriginalSender: req.grantKYCToOriginalSender
 				? req.grantKYCToOriginalSender
 				: false,
+			burnRoleAccount: new HederaId(req.burnRoleAccount ?? '0.0.0'),
+			wipeRoleAccount: new HederaId(req.wipeRoleAccount ?? '0.0.0'),
+			rescueRoleAccount: new HederaId(req.rescueRoleAccount ?? '0.0.0'),
+			pauseRoleAccount: new HederaId(req.pauseRoleAccount ?? '0.0.0'),
+			freezeRoleAccount: new HederaId(req.freezeRoleAccount ?? '0.0.0'),
+			deleteRoleAccount: new HederaId(req.deleteRoleAccount ?? '0.0.0'),
+			kycRoleAccount: new HederaId(req.kycRoleAccount ?? '0.0.0'),
+			cashInRoleAccount: new HederaId(req.cashInRoleAccount ?? '0.0.0'),
+			cashInRoleAllowance: BigDecimal.fromString(
+				req.cashInRoleAllowance ?? '0',
+				req.decimals,
+			),
 		};
 
 		const createResponse = await this.commandBus.execute(

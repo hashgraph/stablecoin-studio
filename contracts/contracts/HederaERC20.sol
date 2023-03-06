@@ -1,19 +1,28 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
-import './Interfaces/IHederaERC20Upgradeable.sol';
-import '@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol';
-import './Interfaces/IHederaERC20.sol';
-import './extensions/CashIn.sol';
-import './extensions/Burnable.sol';
-import './extensions/Wipeable.sol';
-import './extensions/Pausable.sol';
-import './extensions/Freezable.sol';
-import './extensions/Rescatable.sol';
-import './extensions/Deletable.sol';
-import './extensions/Reserve.sol';
-import './extensions/TokenOwner.sol';
-import './extensions/KYC.sol';
+import {
+    IHederaERC20Upgradeable
+} from './Interfaces/IHederaERC20Upgradeable.sol';
+import {
+    IERC20MetadataUpgradeable
+} from '@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol';
+import {IHederaERC20} from './Interfaces/IHederaERC20.sol';
+import {CashIn} from './extensions/CashIn.sol';
+import {Burnable} from './extensions/Burnable.sol';
+import {Wipeable} from './extensions/Wipeable.sol';
+import {Pausable} from './extensions/Pausable.sol';
+import {Freezable} from './extensions/Freezable.sol';
+import {Rescatable} from './extensions/Rescatable.sol';
+import {Deletable} from './extensions/Deletable.sol';
+import {Reserve} from './extensions/Reserve.sol';
+
+import {
+    TokenOwner,
+    HederaResponseCodes,
+    IHederaTokenService
+} from './extensions/TokenOwner.sol';
+import {KYC} from './extensions/KYC.sol';
 
 contract HederaERC20 is
     IHederaERC20,
@@ -45,22 +54,12 @@ contract HederaERC20 is
         external
         payable
         initializer
-        checkAddressIsNotZero(init.originalSender)
+        addressIsNotZero(init.originalSender)
         returns (address)
     {
         __reserveInit(init.reserveAddress); // Initialize reserve
         __rolesInit();
-        // Assign Admin role to calling contract/user in order to be able to set all the other roles
-        _setupRole(_getRoleId(RoleName.ADMIN), msg.sender);
-        _grantUnlimitedSupplierRole(init.originalSender);
-        _grantRole(_getRoleId(RoleName.BURN), init.originalSender);
-        _grantRole(_getRoleId(RoleName.RESCUE), init.originalSender);
-        _grantRole(_getRoleId(RoleName.WIPE), init.originalSender);
-        _grantRole(_getRoleId(RoleName.PAUSE), init.originalSender);
-        _grantRole(_getRoleId(RoleName.FREEZE), init.originalSender);
-        _grantRole(_getRoleId(RoleName.DELETE), init.originalSender);
-        _grantRole(_getRoleId(RoleName.KYC), init.originalSender);
-        _setupRole(_getRoleId(RoleName.ADMIN), init.originalSender); // Assign Admin role to the provided address
+        _grantInitialRoles(init.originalSender, init.roles, init.cashinRole);
 
         (int64 responseCode, address createdTokenAddress) = IHederaTokenService(
             _PRECOMPILED_ADDRESS
@@ -70,10 +69,7 @@ contract HederaERC20 is
             init.tokenDecimals
         );
 
-        require(
-            responseCode == HederaResponseCodes.SUCCESS,
-            'Token Creation failed'
-        );
+        _checkResponse(responseCode);
 
         __tokenOwnerInit(createdTokenAddress);
 
@@ -94,6 +90,27 @@ contract HederaERC20 is
         }
 
         return createdTokenAddress;
+    }
+
+    function _grantInitialRoles(
+        address originalSender,
+        RolesStruct[] memory roles,
+        CashinRoleStruct memory cashinRole
+    ) private onlyInitializing {
+        // granting all roles except cashin role
+        for (uint256 i = 0; i < roles.length; i++) {
+            _grantRole(roles[i].role, roles[i].account);
+        }
+
+        // granting cashin role
+        if (cashinRole.account != address(0)) {
+            if (cashinRole.allowance > 0)
+                _grantSupplierRole(cashinRole.account, cashinRole.allowance);
+            else _grantUnlimitedSupplierRole(cashinRole.account);
+        }
+
+        // granting admin role, always to the SC creator
+        _setupRole(_getRoleId(RoleName.ADMIN), originalSender);
     }
 
     /**
@@ -167,7 +184,7 @@ contract HederaERC20 is
      */
     function associateToken(
         address addr
-    ) external override(IHederaERC20) checkAddressIsNotZero(addr) {
+    ) external override(IHederaERC20) addressIsNotZero(addr) {
         _associateToken(addr);
     }
 
@@ -177,10 +194,10 @@ contract HederaERC20 is
      * @param addr The address of the account to associate
      *
      */
-    function _associateToken(address addr) private checkAddressIsNotZero(addr) {
+    function _associateToken(address addr) private addressIsNotZero(addr) {
         address currentTokenAddress = _getTokenAddress();
 
-        int256 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
+        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
             .associateToken(addr, currentTokenAddress);
 
         _checkResponse(responseCode);
@@ -196,10 +213,10 @@ contract HederaERC20 is
      */
     function dissociateToken(
         address addr
-    ) external override(IHederaERC20) checkAddressIsNotZero(addr) {
+    ) external override(IHederaERC20) addressIsNotZero(addr) {
         address currentTokenAddress = _getTokenAddress();
 
-        int256 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
+        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
             .dissociateToken(addr, currentTokenAddress);
 
         _checkResponse(responseCode);
@@ -216,24 +233,16 @@ contract HederaERC20 is
     function _transfer(
         address from,
         address to,
-        uint256 amount
+        int64 amount
     )
         internal
         override(TokenOwner)
-        checkAddressIsNotZero(from)
-        checkAddressIsNotZero(to)
+        valueIsNotGreaterThan(uint256(uint64(amount)), _balanceOf(from), true)
     {
-        require(_balanceOf(from) >= amount, 'Insufficient token balance');
-
         address currentTokenAddress = _getTokenAddress();
 
-        int256 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
-            .transferToken(
-                currentTokenAddress,
-                from,
-                to,
-                int64(int256(amount))
-            );
+        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
+            .transferToken(currentTokenAddress, from, to, amount);
 
         _checkResponse(responseCode);
 
@@ -247,9 +256,15 @@ contract HederaERC20 is
      */
     function transfer(
         address to,
-        uint256 amount
-    ) external override(IHederaERC20) returns (bool) {
-        _transfer(_msgSender(), to, amount);
+        int64 amount
+    )
+        external
+        override(IHederaERC20)
+        addressIsNotZero(to)
+        amountIsNotNegative(amount, false)
+        returns (bool)
+    {
+        _transfer(msg.sender, to, amount);
 
         return true;
     }
@@ -263,8 +278,8 @@ contract HederaERC20 is
     )
         external
         override(IHederaERC20)
-        checkAddressIsNotZero(owner)
-        checkAddressIsNotZero(spender)
+        addressIsNotZero(owner)
+        addressIsNotZero(spender)
         returns (uint256)
     {
         (, uint256 amount) = IHederaTokenService(_PRECOMPILED_ADDRESS)
@@ -278,12 +293,7 @@ contract HederaERC20 is
     function approve(
         address spender,
         uint256 amount
-    )
-        external
-        override(IHederaERC20)
-        checkAddressIsNotZero(spender)
-        returns (bool)
-    {
+    ) external override(IHederaERC20) addressIsNotZero(spender) returns (bool) {
         (bool success, bytes memory result) = _PRECOMPILED_ADDRESS.delegatecall(
             abi.encodeWithSelector(
                 IHederaTokenService.approve.selector,
@@ -313,12 +323,11 @@ contract HederaERC20 is
     )
         external
         override(IHederaERC20)
-        checkAddressIsNotZero(from)
-        checkAddressIsNotZero(to)
+        addressIsNotZero(from)
+        addressIsNotZero(to)
+        valueIsNotGreaterThan(amount, _balanceOf(from), true)
         returns (bool)
     {
-        require(_balanceOf(from) >= amount, 'Insufficient token balance');
-
         address currentTokenAddress = _getTokenAddress();
 
         (bool success, bytes memory result) = _PRECOMPILED_ADDRESS.delegatecall(

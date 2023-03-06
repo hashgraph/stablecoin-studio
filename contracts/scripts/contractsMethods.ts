@@ -9,9 +9,10 @@ import {
 
 import {
     HederaERC20__factory,
-    StableCoinFactoryProxy__factory,
-    StableCoinFactoryProxyAdmin__factory,
+    TransparentUpgradeableProxy__factory,
+    ProxyAdmin__factory,
     HederaReserve__factory,
+    StableCoinFactory__factory,
 } from '../typechain-types'
 
 import { contractCall, toEvmAddress } from './utils'
@@ -524,7 +525,7 @@ export async function upgradeTo_SCF(
         params,
         client,
         Gas3,
-        StableCoinFactoryProxy__factory.abi
+        TransparentUpgradeableProxy__factory.abi
     )
 }
 
@@ -540,7 +541,7 @@ export async function changeAdmin_SCF(
         params,
         client,
         Gas3,
-        StableCoinFactoryProxy__factory.abi
+        TransparentUpgradeableProxy__factory.abi
     )
 }
 
@@ -555,7 +556,7 @@ export async function admin_SCF(
         params,
         client,
         Gas2,
-        StableCoinFactoryProxy__factory.abi
+        TransparentUpgradeableProxy__factory.abi
     )
     return result[0]
 }
@@ -572,7 +573,7 @@ export async function owner_SCF(
         params,
         client,
         Gas2,
-        StableCoinFactoryProxyAdmin__factory.abi
+        ProxyAdmin__factory.abi
     )
     return result[0]
 }
@@ -590,7 +591,7 @@ export async function upgrade_SCF(
         params,
         client,
         Gas3,
-        StableCoinFactoryProxyAdmin__factory.abi
+        ProxyAdmin__factory.abi
     )
 }
 
@@ -611,7 +612,7 @@ export async function changeProxyAdmin_SCF(
         params,
         client,
         Gas3,
-        StableCoinFactoryProxyAdmin__factory.abi
+        ProxyAdmin__factory.abi
     )
 }
 
@@ -628,7 +629,7 @@ export async function transferOwnership_SCF(
         params,
         client,
         Gas3,
-        StableCoinFactoryProxyAdmin__factory.abi
+        ProxyAdmin__factory.abi
     )
 }
 
@@ -644,7 +645,7 @@ export async function getProxyImplementation_SCF(
         params,
         client,
         Gas2,
-        StableCoinFactoryProxyAdmin__factory.abi
+        ProxyAdmin__factory.abi
     )
     return result[0]
 }
@@ -661,7 +662,7 @@ export async function getProxyAdmin_SCF(
         params,
         client,
         Gas2,
-        StableCoinFactoryProxyAdmin__factory.abi
+        ProxyAdmin__factory.abi
     )
     return result[0]
 }
@@ -1234,4 +1235,95 @@ export async function revokeKyc(
         HederaERC20__factory.abi
     )
     if (result[0] != true) throw Error
+}
+
+// StableCoinFactory ///////////////////////////////////////////////////
+export async function getHederaERC20Addresses(
+    stableCoinFactoryProxy: ContractId,
+    client: Client
+) {
+    const result = await contractCall(
+        stableCoinFactoryProxy,
+        'getHederaERC20Address',
+        [],
+        client,
+        Gas1,
+        StableCoinFactory__factory.abi
+    )
+    return result[0]
+}
+
+export async function addHederaERC20Version(
+    stableCoinFactoryProxy: ContractId,
+    client: Client,
+    newAddress: string
+) {
+    await contractCall(
+        stableCoinFactoryProxy,
+        'addHederaERC20Version',
+        [newAddress],
+        client,
+        Gas1,
+        StableCoinFactory__factory.abi
+    )
+}
+
+export async function editHederaERC20Version(
+    stableCoinFactoryProxy: ContractId,
+    client: Client,
+    index: number,
+    newAddress: string
+) {
+    await contractCall(
+        stableCoinFactoryProxy,
+        'editHederaERC20Address',
+        [index, newAddress],
+        client,
+        Gas1,
+        StableCoinFactory__factory.abi
+    )
+}
+
+export async function changeAdminStablecoinFactory(
+    stableCoinFactoryProxy: ContractId,
+    client: Client,
+    newAdmin: string
+) {
+    await contractCall(
+        stableCoinFactoryProxy,
+        'changeAdmin',
+        [newAdmin],
+        client,
+        Gas1,
+        StableCoinFactory__factory.abi
+    )
+}
+export async function removeHederaERC20Version(
+    stableCoinFactoryProxy: ContractId,
+    client: Client,
+    index: number
+) {
+    await contractCall(
+        stableCoinFactoryProxy,
+        'removeHederaERC20Address',
+        [index],
+        client,
+        Gas1,
+        StableCoinFactory__factory.abi
+    )
+}
+
+export async function getAdminStableCoinFactory(
+    stableCoinFactoryProxy: ContractId,
+    client: Client
+): Promise<string> {
+    const result = await contractCall(
+        stableCoinFactoryProxy,
+        'getAdmin',
+        [],
+        client,
+        Gas1,
+        StableCoinFactory__factory.abi
+    )
+    return result[0]
 }

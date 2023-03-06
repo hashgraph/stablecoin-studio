@@ -10,6 +10,8 @@ import {
   GetPublicKeyRequest,
   RequestAccount,
   Account,
+  Factory,
+  GetERC20ListRequest,
 } from 'hedera-stable-coin-sdk';
 import { IManagedFeatures } from '../../../domain/configuration/interfaces/IManagedFeatures.js';
 import Service from '../Service.js';
@@ -185,39 +187,91 @@ export default class CreateStableCoinService extends Service {
     });
 
     if (managedBySC) {
-      const currentUserPublicKey = await this.checkAnswer(
-        language.getText('wizard.featureOptions.CurrentUser'),
-      );
       tokenToCreate.adminKey = Account.NullPublicKey;
       tokenToCreate.freezeKey = Account.NullPublicKey;
-      tokenToCreate.kycKey = Account.NullPublicKey;
       tokenToCreate.wipeKey = Account.NullPublicKey;
       tokenToCreate.supplyKey = Account.NullPublicKey;
       tokenToCreate.pauseKey = Account.NullPublicKey;
-      tokenToCreate.kycKey = undefined;
-      tokenToCreate.feeScheduleKey = currentUserPublicKey;
     } else {
-      const {
-        adminKey,
-        supplyKey,
-        freezeKey,
-        wipeKey,
-        pauseKey,
-        KYCKey,
-        feeScheduleKey,
-        grantKYCToOriginalSender,
-      } = await this.configureManagedFeatures();
+      const { adminKey, supplyKey, freezeKey, wipeKey, pauseKey } =
+        await this.configureManagedFeatures();
       tokenToCreate.adminKey = adminKey;
       tokenToCreate.supplyKey = supplyKey;
-      tokenToCreate.kycKey = KYCKey;
       tokenToCreate.freezeKey = freezeKey;
       tokenToCreate.wipeKey = wipeKey;
       tokenToCreate.pauseKey = pauseKey;
-      tokenToCreate.feeScheduleKey = feeScheduleKey;
-      tokenToCreate.grantKYCToOriginalSender = grantKYCToOriginalSender;
 
       const treasury = this.getTreasuryAccountFromSupplyKey(supplyKey);
       tokenToCreate.treasury = treasury;
+    }
+
+    // KYC
+    const kyc = await this.askForKYC();
+    if (kyc) {
+      const KYCKey = await this.checkAnswer(
+        await utilsService.defaultMultipleAsk(
+          language.getText('stablecoin.features.KYC'),
+          language.getArrayFromObject('wizard.nonNoneFeatureOptions'),
+        ),
+      );
+      tokenToCreate.kycKey = KYCKey;
+      if (
+        tokenToCreate.supplyKey == Account.NullPublicKey &&
+        KYCKey == Account.NullPublicKey
+      ) {
+        const grantKYCToOriginalSender = await this.askForKYCGrantToSender();
+        tokenToCreate.grantKYCToOriginalSender = grantKYCToOriginalSender;
+      }
+    }
+
+    // Custom fees
+    const customFees = await this.askForCustomFees();
+    if (customFees) {
+      const feeScheduleKey = await this.checkAnswer(
+        await utilsService.defaultMultipleAsk(
+          language.getText('stablecoin.features.feeSchedule'),
+          language.getArrayFromObject(
+            'wizard.nonSmartContractAndNoneFeatureOptions',
+          ),
+        ),
+      );
+      tokenToCreate.feeScheduleKey = feeScheduleKey;
+    }
+
+    // Manage the initial role assignment
+    const changeRoleAssignment = await this.askForRolesManagement();
+    if (changeRoleAssignment) {
+      await this.initialRoleAssignments(
+        tokenToCreate,
+        currentAccount.accountId,
+      );
+    } else {
+      if (tokenToCreate.supplyKey == Account.NullPublicKey)
+        tokenToCreate.burnRoleAccount = currentAccount.accountId;
+      if (tokenToCreate.wipeKey == Account.NullPublicKey)
+        tokenToCreate.wipeRoleAccount = currentAccount.accountId;
+      tokenToCreate.rescueRoleAccount = currentAccount.accountId;
+      if (tokenToCreate.pauseKey == Account.NullPublicKey)
+        tokenToCreate.pauseRoleAccount = currentAccount.accountId;
+      if (tokenToCreate.freezeKey == Account.NullPublicKey)
+        tokenToCreate.freezeRoleAccount = currentAccount.accountId;
+      if (tokenToCreate.adminKey == Account.NullPublicKey)
+        tokenToCreate.deleteRoleAccount = currentAccount.accountId;
+      if (tokenToCreate.kycKey == Account.NullPublicKey)
+        tokenToCreate.kycRoleAccount = currentAccount.accountId;
+      if (tokenToCreate.supplyKey == Account.NullPublicKey) {
+        tokenToCreate.cashInRoleAccount = currentAccount.accountId;
+        await utilsService.handleValidation(
+          () => tokenToCreate.validate('cashInRoleAllowance'),
+          async () => {
+            tokenToCreate.cashInRoleAllowance =
+              await utilsService.defaultSingleAsk(
+                language.getText('stablecoin.initialRoles.cashinAllowance'),
+                '0',
+              );
+          },
+        );
+      }
     }
 
     // Proof of Reserve
@@ -255,7 +309,16 @@ export default class CreateStableCoinService extends Service {
       }
     }
 
+    // ASK HederaERC20 version
+    tokenToCreate.stableCoinFactory = utilsService.getCurrentFactory().id;
+
+    await this.askHederaERC20Version(
+      tokenToCreate.stableCoinFactory,
+      tokenToCreate,
+    );
+
     console.log({
+      hederaERC20: tokenToCreate.hederaERC20,
       name: tokenToCreate.name,
       symbol: tokenToCreate.symbol,
       autoRenewAccount: tokenToCreate.autoRenewAccount,
@@ -320,6 +383,15 @@ export default class CreateStableCoinService extends Service {
           : 'Proof of Reserve Feed initial amount : ' +
             tokenToCreate.reserveInitialAmount,
       grantKYCToOriginalSender: tokenToCreate.grantKYCToOriginalSender,
+      burnRole: tokenToCreate.burnRoleAccount,
+      wipeRole: tokenToCreate.wipeRoleAccount,
+      rescueRole: tokenToCreate.rescueRoleAccount,
+      pauseRole: tokenToCreate.pauseRoleAccount,
+      freezeRole: tokenToCreate.freezeRoleAccount,
+      deleteRole: tokenToCreate.deleteRoleAccount,
+      kycRole: tokenToCreate.kycRoleAccount,
+      cashinRole: tokenToCreate.cashInRoleAccount,
+      cashinAllowance: tokenToCreate.cashInRoleAllowance,
     });
     if (
       !(await utilsService.defaultConfirmAsk(
@@ -339,6 +411,37 @@ export default class CreateStableCoinService extends Service {
       language.getText('stablecoin.askDecimals'),
       val || '6',
     );
+  }
+
+  private async askHederaERC20Version(
+    factory: string,
+    request: any,
+  ): Promise<void> {
+    const Predeployed = await utilsService.defaultConfirmAsk(
+      language.getText('stablecoin.askHederaERC20Predeployed'),
+      true,
+    );
+
+    if (Predeployed) {
+      const factoryListEvm = await Factory.getHederaERC20List(
+        new GetERC20ListRequest({ factoryId: factory }),
+      ).then((value) => value.reverse());
+
+      request.hederaERC20 = await utilsService.defaultMultipleAsk(
+        language.getText('stablecoin.askHederaERC20Version'),
+        factoryListEvm.map((item) => item.toString()),
+      );
+    } else {
+      await utilsService.handleValidation(
+        () => request.validate('hederaERC20'),
+        async () => {
+          request.hederaERC20 = await utilsService.defaultSingleAsk(
+            language.getText('stablecoin.askHederaERC20Implementation'),
+            '0.0.0',
+          );
+        },
+      );
+    }
   }
 
   private async askForOptionalProps(): Promise<boolean> {
@@ -397,11 +500,143 @@ export default class CreateStableCoinService extends Service {
     );
   }
 
+  private async askForRolesManagement(): Promise<boolean> {
+    return await utilsService.defaultConfirmAsk(
+      language.getText('stablecoin.askRolesManagedBy'),
+      true,
+    );
+  }
+
   private async askForKYCGrantToSender(): Promise<boolean> {
     return await utilsService.defaultConfirmAsk(
       language.getText('stablecoin.askGrantKYCToSender'),
       true,
     );
+  }
+
+  private async askForKYC(): Promise<boolean> {
+    return await utilsService.defaultConfirmAsk(
+      language.getText('stablecoin.askKYC'),
+      false,
+    );
+  }
+
+  private async askForCustomFees(): Promise<boolean> {
+    return await utilsService.defaultConfirmAsk(
+      language.getText('stablecoin.askCustomFees'),
+      true,
+    );
+  }
+
+  private async initialRoleAssignments(
+    tokenToCreate: any,
+    currentAccountId: string,
+  ) {
+    if (tokenToCreate.supplyKey == Account.NullPublicKey)
+      await this.askForAccount(
+        language.getText('stablecoin.initialRoles.burn'),
+        currentAccountId,
+        tokenToCreate,
+        'burnRoleAccount',
+      );
+
+    if (tokenToCreate.wipeKey == Account.NullPublicKey)
+      await this.askForAccount(
+        language.getText('stablecoin.initialRoles.wipe'),
+        currentAccountId,
+        tokenToCreate,
+        'wipeRoleAccount',
+      );
+
+    await this.askForAccount(
+      language.getText('stablecoin.initialRoles.rescue'),
+      currentAccountId,
+      tokenToCreate,
+      'rescueRoleAccount',
+    );
+
+    if (tokenToCreate.pauseKey == Account.NullPublicKey)
+      await this.askForAccount(
+        language.getText('stablecoin.initialRoles.pause'),
+        currentAccountId,
+        tokenToCreate,
+        'pauseRoleAccount',
+      );
+
+    if (tokenToCreate.freezeKey == Account.NullPublicKey)
+      await this.askForAccount(
+        language.getText('stablecoin.initialRoles.freeze'),
+        currentAccountId,
+        tokenToCreate,
+        'freezeRoleAccount',
+      );
+
+    if (tokenToCreate.adminKey == Account.NullPublicKey)
+      await this.askForAccount(
+        language.getText('stablecoin.initialRoles.delete'),
+        currentAccountId,
+        tokenToCreate,
+        'deleteRoleAccount',
+      );
+
+    if (tokenToCreate.kycKey == Account.NullPublicKey)
+      await this.askForAccount(
+        language.getText('stablecoin.initialRoles.kyc'),
+        currentAccountId,
+        tokenToCreate,
+        'kycRoleAccount',
+      );
+
+    if (tokenToCreate.supplyKey == Account.NullPublicKey) {
+      const result: string = await this.askForAccount(
+        language.getText('stablecoin.initialRoles.cashin'),
+        currentAccountId,
+        tokenToCreate,
+        'cashInRoleAccount',
+      );
+      if (
+        result !== language.getText('stablecoin.initialRoles.options.noAccount')
+      ) {
+        await utilsService.handleValidation(
+          () => tokenToCreate.validate('cashInRoleAllowance'),
+          async () => {
+            tokenToCreate.cashInRoleAllowance =
+              await utilsService.defaultSingleAsk(
+                language.getText('stablecoin.initialRoles.cashinAllowance'),
+                '0',
+              );
+          },
+        );
+      }
+    }
+  }
+
+  private async askForAccount(
+    text: string,
+    currentAccountId: string,
+    tokenToCreate: any,
+    fieldToValidate: string,
+  ): Promise<string> {
+    const options = [
+      language.getText('stablecoin.initialRoles.options.currentAccount'),
+      language.getText('stablecoin.initialRoles.options.otherAccount'),
+      language.getText('stablecoin.initialRoles.options.noAccount'),
+    ];
+    const result = await utilsService.defaultMultipleAsk(text, options);
+    if (result === options[0])
+      tokenToCreate[fieldToValidate] = currentAccountId;
+    else if (result === options[1]) {
+      await utilsService.handleValidation(
+        () => tokenToCreate.validate(fieldToValidate),
+        async () => {
+          tokenToCreate[fieldToValidate] = await utilsService.defaultSingleAsk(
+            language.getText('stablecoin.initialRoles.askAccount'),
+            '0.0.0',
+          );
+        },
+      );
+    }
+    return result;
   }
 
   private async configureManagedFeatures(): Promise<IManagedFeatures> {
@@ -440,35 +675,12 @@ export default class CreateStableCoinService extends Service {
       ),
     );
 
-    const KYCKey = await this.checkAnswer(
-      await utilsService.defaultMultipleAsk(
-        language.getText('stablecoin.features.KYC'),
-        language.getArrayFromObject('wizard.featureOptions'),
-      ),
-    );
-
-    const feeScheduleKey = await this.checkAnswer(
-      await utilsService.defaultMultipleAsk(
-        language.getText('stablecoin.features.feeSchedule'),
-        language.getArrayFromObject('wizard.nonSmartContractFeatureOptions'),
-      ),
-    );
-
-    let grantKYCToOriginalSender = false;
-
-    if (supplyKey == Account.NullPublicKey && KYCKey == Account.NullPublicKey) {
-      grantKYCToOriginalSender = await this.askForKYCGrantToSender();
-    }
-
     return {
       adminKey,
       supplyKey,
       freezeKey,
       wipeKey,
       pauseKey,
-      KYCKey,
-      feeScheduleKey,
-      grantKYCToOriginalSender,
     };
   }
 
