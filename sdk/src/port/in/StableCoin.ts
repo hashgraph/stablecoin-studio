@@ -518,14 +518,22 @@ class StableCoinInPort implements IStableCoinInPort {
 	}
 
 	@LogError
-	transfers(request: TransfersRequest): Promise<boolean> {
+	async transfers(request: TransfersRequest): Promise<boolean> {
+		const { tokenId, targetsId, amounts } = request;
+
 		handleValidation('TransfersRequest', request);
+
+		const targetsIdHederaIds: HederaId[] = [];
+		targetsId.forEach((targetId) => {
+			targetsIdHederaIds.push(HederaId.from(targetId));
+		});
 
 		return (
 			await this.commandBus.execute(
 				new TransfersCommand(
-					HederaId.from(request.tokenId),
-					new ContractId(request.reserveAddress),
+					amounts,
+					targetsIdHederaIds,
+					HederaId.from(tokenId),
 				),
 			)
 		).payload;
