@@ -18,21 +18,71 @@
  *
  */
 
+import { EmptyValue } from './error/EmptyValue.js';
+import { InvalidValue } from './error/InvalidValue.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
 
 export default class TransfersRequest extends ValidatedRequest<TransfersRequest> {
+	targetsId: string[];
 	amounts: string[];
-	targetIds: string[];
 	tokenId: string;
 
-	constructor({ amount, tokenId }: { amount: string; tokenId: string }) {
+	constructor({
+		targetsId,
+		amounts,
+		tokenId,
+	}: {
+		targetsId: string[];
+		amounts: string[];
+		tokenId: string;
+	}) {
 		super({
-			amount: Validation.checkAmount(),
+			targetsId: (vals) => {
+				if (vals.length == 0) {
+					return [
+						new InvalidValue(
+							`The list of accounts cannot be empty.`,
+						),
+					];
+				}
+
+				for (let i = 0; i < vals.length; i++) {
+					const err = Validation.checkHederaIdFormat()(vals[i]);
+					if (err.length > 0) {
+						return err;
+					}
+					if (vals.indexOf(vals[i]) != i) {
+						return [
+							new InvalidValue(
+								`account ${vals[i]} is duplicated`,
+							),
+						];
+					}
+				}
+			},
+			amounts: (vals) => {
+				if (!vals) return [new EmptyValue(vals)];
+
+				if (vals.length != this.targetsId.length)
+					return [
+						new InvalidValue(
+							`The list of amounts and the list of accounts must contain the same number of items.`,
+						),
+					];
+
+				for (let i = 0; i < vals.length; i++) {
+					const err = Validation.checkAmount()(vals[i]);
+					if (err.length > 0) {
+						return err;
+					}
+				}
+			},
 			tokenId: Validation.checkHederaIdFormat(),
 		});
 
-		this.amount = amount;
+		this.targetsId = targetsId;
+		this.amounts = amounts;
 		this.tokenId = tokenId;
 	}
 }
