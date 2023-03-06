@@ -85,6 +85,15 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 			autoRenewAccount: CLIENT_ACCOUNT_ECDSA.id,
 			supplyType: TokenSupplyType.INFINITE,
 			treasury: HederaId.NULL,
+			burnRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			wipeRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			rescueRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			freezeRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			pauseRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			deleteRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			kycRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			cashInRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			cashInRoleAllowance: BigDecimal.ZERO,
 		});
 		tr = await th.create(
 			coinSC,
@@ -118,6 +127,15 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 			autoRenewAccount: CLIENT_ACCOUNT_ECDSA.id,
 			supplyType: TokenSupplyType.FINITE,
 			treasury: CLIENT_ACCOUNT_ECDSA.id,
+			burnRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			wipeRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			rescueRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			freezeRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			pauseRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			deleteRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			kycRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			cashInRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			cashInRoleAllowance: BigDecimal.ZERO,
 		});
 		tr = await th.create(
 			coinHTS,
@@ -620,6 +638,15 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 			autoRenewAccount: CLIENT_ACCOUNT_ED25519.id,
 			supplyType: TokenSupplyType.INFINITE,
 			treasury: HederaId.NULL,
+			burnRoleAccount: CLIENT_ACCOUNT_ED25519.id,
+			wipeRoleAccount: CLIENT_ACCOUNT_ED25519.id,
+			rescueRoleAccount: CLIENT_ACCOUNT_ED25519.id,
+			freezeRoleAccount: CLIENT_ACCOUNT_ED25519.id,
+			pauseRoleAccount: CLIENT_ACCOUNT_ED25519.id,
+			deleteRoleAccount: CLIENT_ACCOUNT_ED25519.id,
+			kycRoleAccount: CLIENT_ACCOUNT_ED25519.id,
+			cashInRoleAccount: CLIENT_ACCOUNT_ED25519.id,
+			cashInRoleAllowance: BigDecimal.ZERO,
 		});
 		tr = await th.create(
 			coinSC,
@@ -651,6 +678,15 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 			autoRenewAccount: CLIENT_ACCOUNT_ED25519.id,
 			supplyType: TokenSupplyType.FINITE,
 			treasury: CLIENT_ACCOUNT_ED25519.id,
+			burnRoleAccount: CLIENT_ACCOUNT_ED25519.id,
+			wipeRoleAccount: CLIENT_ACCOUNT_ED25519.id,
+			rescueRoleAccount: CLIENT_ACCOUNT_ED25519.id,
+			freezeRoleAccount: CLIENT_ACCOUNT_ED25519.id,
+			pauseRoleAccount: CLIENT_ACCOUNT_ED25519.id,
+			deleteRoleAccount: CLIENT_ACCOUNT_ED25519.id,
+			kycRoleAccount: CLIENT_ACCOUNT_ED25519.id,
+			cashInRoleAccount: CLIENT_ACCOUNT_ED25519.id,
+			cashInRoleAllowance: BigDecimal.ZERO,
 		});
 		tr = await th.create(
 			coinHTS,
