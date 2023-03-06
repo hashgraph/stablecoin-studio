@@ -859,6 +859,24 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		);
 	}
 
+	public async transfers(
+		coin: StableCoinCapabilities,
+		amounts: BigDecimal[],
+		targetsId: HederaId[],
+		targetId: HederaId,
+	): Promise<TransactionResponse<any, Error>> {
+		const params = new Params({
+			targetId: targetId,
+			targetsId: targetsId,
+			amounts: amounts,
+		});
+		if (!coin.coin.tokenId)
+			throw new Error(
+				`StableCoin ${coin.coin.name} does not have an underlying token`,
+			);
+		return this.performHTSOperation(coin, Operation.TRANSFERS, params!);
+	}
+
 	private async performOperation(
 		coin: StableCoinCapabilities,
 		operation: Operation,
@@ -1083,6 +1101,24 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				t = HTSTransactionBuilder.buildUpdateCustomFeesTransaction(
 					coin.coin.tokenId?.value!,
 					params.customFees!,
+				);
+				break;
+
+			case Operation.TRANSFERS:
+				const amountsLong: Long[] = [];
+				params!.amounts!.forEach((amount) => {
+					amountsLong.push(amount.toLong());
+				});
+
+				const targetsIdString: string[] = [];
+				params.targetsId!.forEach((targetId) => {
+					targetsIdString.push(targetId.toString());
+				});
+				t = HTSTransactionBuilder.buildTransfersTransaction(
+					coin.coin.tokenId?.value!,
+					amountsLong,
+					params!.targetId!.toString(),
+					targetsIdString,
 				);
 				break;
 

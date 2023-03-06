@@ -238,7 +238,7 @@ If you want to deploy your own Factory contracts do the following steps:
    2. Deploy the Factory **Proxy Admin** smart contract (*StableCoinFactoryProxyAdmin.sol*).
    3. Deploy the Factory **Proxy** smart contract (*StableCoinFactoryProxy.sol*) setting the Factory logic as the implementation and the Factory proxy admin as the admin.
 
-You may also clone this repository, install the dependecies (see [Build](#Build)) and run `npm run test:testnet:deployFactory` in order to deploy all factories (HederaERC20 and StableCoinFactory) and its proxies onto the testnet network. Once completed, an output with the new addresses is provided:
+You may also clone this repository, install the dependecies (see [Build](#Build)) and run `npx hardhat deployFactory` in order to deploy all factories (HederaERC20 and StableCoinFactory) and its proxies onto the testnet network. Once completed, an output with the new addresses is provided:
 
 `````
 Proxy Address:           0.0.7110 
@@ -291,9 +291,34 @@ npm run doc
 
 Generated files will be stored in the `docs` folder.
 
+# Manage factory
+Some scripts have been developed to manage the stablecoin factory.
+- Add a new ERC20 address to stablecoin factory:
+```shell
+npx hardhat addNewVersionERC20 --erc20 <HederaId> --proxyfactory <HederaId>
+```
+- Update an ERC20 address:
+```shell
+npx hardhat addNewVersionERC20 --erc20 <HederaId> --proxyfactory <HederaId> --index <number>
+```
+- Remove an ERC20 address:
+```shell
+npx hardhat addNewVersionERC20 --proxyfactory <HederaId> --index <number>
+```
+- Get ERC20 address saved in factory:
+```shell
+npx hardhat getERC20 --proxyfactory <HederaId>
+```
+
+- Deploy a new ERC20 implementation:
+```shell
+npx hardhat deployERC20
+```
+
+
 # Other Scripts
 
-in addition to the compilation, build, test and documentation scripts we have already talked about, there are other scripts configured in `package.json` file:
+In addition to the compilation, build, test and documentation scripts we have already talked about, there are other scripts configured in `package.json` file:
 
 Checks the contracts size in KiB.
 

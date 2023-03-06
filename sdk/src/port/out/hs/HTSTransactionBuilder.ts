@@ -39,6 +39,7 @@ import {
 	CustomFee as HCustomFee,
 	TokenFeeScheduleUpdateTransaction,
 } from '@hashgraph/sdk';
+import Long from 'long';
 import LogService from '../../../app/service/LogService.js';
 import { TransactionBuildingError } from './error/TransactionBuildingError.js';
 
@@ -135,6 +136,40 @@ export class HTSTransactionBuilder {
 					AccountId.fromString(inAccountId),
 					amount,
 				);
+		} catch (error) {
+			LogService.logError(error);
+			throw new TransactionBuildingError(error);
+		}
+	}
+
+	public static buildTransfersTransaction(
+		tokenId: string,
+		amounts: Long[],
+		outAccountId: string,
+		inAccountsIds: string[],
+	): Transaction {
+		try {
+			const totalAmount: Long = new Long(0);
+
+			amounts.forEach((amount) => {
+				totalAmount.add(amount);
+			});
+
+			const t = new TransferTransaction().addTokenTransfer(
+				tokenId,
+				AccountId.fromString(outAccountId),
+				totalAmount.mul(-1),
+			);
+
+			for (let i = 0; i < inAccountsIds.length; i++) {
+				t.addTokenTransfer(
+					tokenId,
+					AccountId.fromString(inAccountsIds[i]),
+					amounts[i],
+				);
+			}
+
+			return t;
 		} catch (error) {
 			LogService.logError(error);
 			throw new TransactionBuildingError(error);

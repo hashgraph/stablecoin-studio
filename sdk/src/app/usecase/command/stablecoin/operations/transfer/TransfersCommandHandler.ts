@@ -56,7 +56,7 @@ export class TransfersCommandHandler
 	async execute(
 		command: TransfersCommand,
 	): Promise<TransfersCommandResponse> {
-		const { amounts, targetIds, tokenId } = command;
+		const { amounts, targetsIds, tokenId, targetId } = command;
 		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
 		const capabilities = await this.stableCoinService.getCapabilities(
@@ -77,7 +77,12 @@ export class TransfersCommandHandler
 			amountsBd.push(BigDecimal.fromString(amounts[i], coin.decimals));
 		}
 
-		const res = await handler.transfers(capabilities, amountsBd, targetIds);
+		const res = await handler.transfers(
+			capabilities,
+			amountsBd,
+			targetsIds,
+			targetId,
+		);
 		return Promise.resolve(
 			new TransfersCommandResponse(res.error === undefined),
 		);

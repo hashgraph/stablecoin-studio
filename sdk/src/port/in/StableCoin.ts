@@ -519,7 +519,7 @@ class StableCoinInPort implements IStableCoinInPort {
 
 	@LogError
 	async transfers(request: TransfersRequest): Promise<boolean> {
-		const { tokenId, targetsId, amounts } = request;
+		const { tokenId, targetsId, amounts, targetId } = request;
 
 		handleValidation('TransfersRequest', request);
 
@@ -534,6 +534,7 @@ class StableCoinInPort implements IStableCoinInPort {
 					amounts,
 					targetsIdHederaIds,
 					HederaId.from(tokenId),
+					HederaId.from(targetId),
 				),
 			)
 		).payload;

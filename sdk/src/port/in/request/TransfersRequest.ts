@@ -27,15 +27,18 @@ export default class TransfersRequest extends ValidatedRequest<TransfersRequest>
 	targetsId: string[];
 	amounts: string[];
 	tokenId: string;
+	targetId: string;
 
 	constructor({
 		targetsId,
 		amounts,
 		tokenId,
+		targetId,
 	}: {
 		targetsId: string[];
 		amounts: string[];
 		tokenId: string;
+		targetId: string;
 	}) {
 		super({
 			targetsId: (vals) => {
@@ -79,10 +82,12 @@ export default class TransfersRequest extends ValidatedRequest<TransfersRequest>
 				}
 			},
 			tokenId: Validation.checkHederaIdFormat(),
+			targetId: Validation.checkHederaIdFormat(),
 		});
 
 		this.targetsId = targetsId;
 		this.amounts = amounts;
 		this.tokenId = tokenId;
+		this.targetId = targetId;
 	}
 }

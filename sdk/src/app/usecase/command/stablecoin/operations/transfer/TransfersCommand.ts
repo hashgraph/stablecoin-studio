@@ -9,8 +9,9 @@ export class TransfersCommandResponse implements CommandResponse {
 export class TransfersCommand extends Command<TransfersCommandResponse> {
 	constructor(
 		public readonly amounts: string[],
-		public readonly targetIds: HederaId[],
+		public readonly targetsIds: HederaId[],
 		public readonly tokenId: HederaId,
+		public readonly targetId: HederaId,
 	) {
 		super();
 	}
