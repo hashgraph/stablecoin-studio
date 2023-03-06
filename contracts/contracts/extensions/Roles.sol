@@ -2,7 +2,6 @@
 pragma solidity 0.8.16;
 
 import {IRoles} from './Interfaces/IRoles.sol';
-// solhint-disable-next-line
 import {
     AccessControlUpgradeable
 } from '@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol';
