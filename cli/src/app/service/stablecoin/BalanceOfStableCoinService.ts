@@ -42,8 +42,8 @@ export default class BalanceOfStableCoinsService extends Service {
         respDetail = response;
       }),
       {
-        text: language.getText('state.loading'),
-        successText: language.getText('state.balanceCompleted') + '\n',
+        text: '',
+        successText: '',
       },
     );
 
