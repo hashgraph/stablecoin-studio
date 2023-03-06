@@ -147,43 +147,45 @@ task('removeERC20', 'Remove ERC20 in factory')
         }
     )
 
-task('deployFactory', 'Deploy new factory').setAction(async (arguements:any,hre) => {
-    const accounts = hre.network.config
-        .accounts as unknown as Array<AccountHedera>
-    const client = getClient(hre.network.name)
+task('deployFactory', 'Deploy new factory').setAction(
+    async (arguements: any, hre) => {
+        const accounts = hre.network.config
+            .accounts as unknown as Array<AccountHedera>
+        const client = getClient(hre.network.name)
 
-    const client1account: string = accounts[0].account
-    const client1privatekey: string = accounts[0].privateKey
-    const client1isED25519: boolean = accounts[0].isED25519Type === 'true'
+        const client1account: string = accounts[0].account
+        const client1privatekey: string = accounts[0].privateKey
+        const client1isED25519: boolean = accounts[0].isED25519Type === 'true'
 
-    client.setOperator(
-        client1account,
-        toHashgraphKey(client1privatekey, client1isED25519)
-    )
-    const erc20 = await deployHederaERC20(client, client1privatekey)
-    const initializeFactory = {
-        admin: await toEvmAddress(client1account, client1isED25519),
-        erc20: erc20.toSolidityAddress(),
+        client.setOperator(
+            client1account,
+            toHashgraphKey(client1privatekey, client1isED25519)
+        )
+        const erc20 = await deployHederaERC20(client, client1privatekey)
+        const initializeFactory = {
+            admin: await toEvmAddress(client1account, client1isED25519),
+            erc20: erc20.toSolidityAddress(),
+        }
+        const result = await deployFactory(
+            initializeFactory,
+            client,
+            client1privatekey
+        )
+        const proxyAddress = result[0]
+        const proxyAdminAddress = result[1]
+        const factoryAddress = result[2]
+        console.log(
+            '\nProxy Address: \t',
+            proxyAddress.toString(),
+            '\nProxy Admin Address: \t',
+            proxyAdminAddress.toString(),
+            '\nFactory Address: \t',
+            factoryAddress.toString(),
+            '\nHederaERC20 Address: \t',
+            erc20.toString()
+        )
     }
-    const result = await deployFactory(
-        initializeFactory,
-        client,
-        client1privatekey
-    )
-    const proxyAddress = result[0]
-    const proxyAdminAddress = result[1]
-    const factoryAddress = result[2]
-    console.log(
-        '\nProxy Address: \t',
-        proxyAddress.toString(),
-        '\nProxy Admin Address: \t',
-        proxyAdminAddress.toString(),
-        '\nFactory Address: \t',
-        factoryAddress.toString(),
-        '\nHederaERC20 Address: \t',
-        erc20.toString()
-    )
-})
+)
 
 task('deployERC20', 'Deploy new ERC20').setAction(
     async (arguements: any, hre) => {
@@ -201,9 +203,6 @@ task('deployERC20', 'Deploy new ERC20').setAction(
         )
         const erc20 = await deployHederaERC20(client, client1privatekey)
 
-        console.log(
-            '\nHederaERC20 Address: \t',
-            erc20.toString()
-        )
+        console.log('\nHederaERC20 Address: \t', erc20.toString())
     }
 )

@@ -101,6 +101,12 @@ interface ITransactionAdapter {
 		sourceId: Account,
 		targetId: HederaId,
 	): Promise<TransactionResponse>;
+	transfers(
+		coin: StableCoinCapabilities,
+		amounts: BigDecimal[],
+		targetsId: HederaId[],
+		targetId: HederaId,
+	): Promise<TransactionResponse>;
 	getAccount(): Account;
 	getReserveAddress(
 		coin: StableCoinCapabilities,
@@ -129,6 +135,17 @@ interface RoleTransactionAdapter {
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
 		role: StableCoinRole,
+	): Promise<TransactionResponse>;
+	grantRoles(
+		coin: StableCoinCapabilities,
+		targetsId: HederaId[],
+		roles: StableCoinRole[],
+		amounts: BigDecimal[],
+	): Promise<TransactionResponse>;
+	revokeRoles(
+		coin: StableCoinCapabilities,
+		targetsId: HederaId[],
+		roles: StableCoinRole[],
 	): Promise<TransactionResponse>;
 	hasRole(
 		coin: StableCoinCapabilities,
@@ -199,6 +216,14 @@ interface RoleTransactionAdapter {
 export default abstract class TransactionAdapter
 	implements ITransactionAdapter, RoleTransactionAdapter
 {
+	transfers(
+		coin: StableCoinCapabilities,
+		amounts: BigDecimal[],
+		targetsId: HederaId[],
+		targetId: HederaId,
+	): Promise<TransactionResponse<any, Error>> {
+		throw new Error('Method not implemented.');
+	}
 	init(): Promise<Environment> {
 		throw new Error('Method not implemented.');
 	}
@@ -317,6 +342,21 @@ export default abstract class TransactionAdapter
 		targetId: HederaId,
 		role: StableCoinRole,
 	): Promise<TransactionResponse<any, Error>> {
+		throw new Error('Method not implemented.');
+	}
+	grantRoles(
+		coin: StableCoinCapabilities,
+		targetsId: HederaId[],
+		roles: StableCoinRole[],
+		amounts: BigDecimal[],
+	): Promise<TransactionResponse> {
+		throw new Error('Method not implemented.');
+	}
+	revokeRoles(
+		coin: StableCoinCapabilities,
+		targetsId: HederaId[],
+		roles: StableCoinRole[],
+	): Promise<TransactionResponse> {
 		throw new Error('Method not implemented.');
 	}
 	hasRole(

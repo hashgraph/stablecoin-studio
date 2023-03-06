@@ -251,14 +251,27 @@ export default class UtilitiesService extends Service {
     question: string,
     choices: Array<string>,
     loop = false,
+    atLeastOne = false,
   ): Promise<string[]> {
-    const variable = await inquirer.prompt({
-      name: 'response',
-      type: 'checkbox',
-      message: question,
-      choices: choices,
-      loop: loop,
-    });
+    let NOK;
+    let variable;
+
+    do {
+      NOK = false;
+      variable = await inquirer.prompt({
+        name: 'response',
+        type: 'checkbox',
+        message: question,
+        choices: choices,
+        loop: loop,
+      });
+
+      if (atLeastOne && variable.response.length == 0) {
+        NOK = true;
+        this.showError('You must choose at least one option');
+      }
+    } while (NOK);
+
     return variable.response;
   }
 

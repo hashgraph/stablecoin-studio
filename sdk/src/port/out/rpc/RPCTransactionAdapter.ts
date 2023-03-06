@@ -34,7 +34,7 @@ import {
 	IHederaTokenService__factory,
 } from 'hedera-stable-coin-contracts';
 import TransactionAdapter, { InitializationData } from '../TransactionAdapter';
-import { ContractTransaction, ethers, Signer } from 'ethers';
+import { BigNumber, ContractTransaction, ethers, Signer } from 'ethers';
 import { singleton } from 'tsyringe';
 import StableCoinCapabilities from '../../../domain/context/stablecoin/StableCoinCapabilities.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
@@ -602,6 +602,82 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			throw new TransactionResponseError({
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter revokeRole operation : ${error}`,
+				transactionId: (error as any).error?.transactionId,
+			});
+		}
+	}
+
+	async grantRoles(
+		coin: StableCoinCapabilities,
+		targetsId: HederaId[],
+		roles: StableCoinRole[],
+		amounts: BigDecimal[],
+	): Promise<TransactionResponse> {
+		try {
+			if (!coin.coin.evmProxyAddress?.toString())
+				throw new TransactionResponseError({
+					RPC_relay: true,
+					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
+				});
+
+			const amountsFormatted: BigNumber[] = [];
+			amounts.forEach((amount) => {
+				amountsFormatted.push(amount.toBigNumber());
+			});
+
+			const accounts: string[] = [];
+			for (let i = 0; i < targetsId.length; i++) {
+				accounts.push(
+					(await this.accountToEvmAddress(targetsId[i])).toString(),
+				);
+			}
+
+			return RPCTransactionResponseAdapter.manageResponse(
+				await HederaERC20__factory.connect(
+					coin.coin.evmProxyAddress?.toString(),
+					this.signerOrProvider,
+				).grantRoles(roles, accounts, amountsFormatted),
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new TransactionResponseError({
+				RPC_relay: true,
+				message: `Unexpected error in RPCTransactionAdapter grantRoles operation : ${error}`,
+				transactionId: (error as any).error?.transactionId,
+			});
+		}
+	}
+
+	async revokeRoles(
+		coin: StableCoinCapabilities,
+		targetsId: HederaId[],
+		roles: StableCoinRole[],
+	): Promise<TransactionResponse> {
+		try {
+			if (!coin.coin.evmProxyAddress?.toString())
+				throw new TransactionResponseError({
+					RPC_relay: true,
+					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
+				});
+
+			const accounts: string[] = [];
+			for (let i = 0; i < targetsId.length; i++) {
+				accounts.push(
+					(await this.accountToEvmAddress(targetsId[i])).toString(),
+				);
+			}
+
+			return RPCTransactionResponseAdapter.manageResponse(
+				await HederaERC20__factory.connect(
+					coin.coin.evmProxyAddress?.toString(),
+					this.signerOrProvider,
+				).revokeRoles(roles, accounts),
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new TransactionResponseError({
+				RPC_relay: true,
+				message: `Unexpected error in RPCTransactionAdapter revokeRoles operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
 			});
 		}

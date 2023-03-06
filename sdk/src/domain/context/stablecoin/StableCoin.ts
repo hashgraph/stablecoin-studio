@@ -53,6 +53,7 @@ const TEN = 10;
 const ONE_HUNDRED = 100;
 const EIGHTEEN = 18;
 const ZERO = 0;
+export const TRANSFER_LIST_SIZE = 10;
 
 export interface StableCoinProps {
 	name: string;

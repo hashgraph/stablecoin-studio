@@ -31,4 +31,22 @@ export default class BalanceOfStableCoinsService extends Service {
 
     utilsService.breakLine();
   }
+
+  public async getBalanceOfStableCoin_2(
+    req: GetAccountBalanceRequest,
+  ): Promise<string> {
+    let respDetail: Balance;
+
+    await utilsService.showSpinner(
+      StableCoin.getBalanceOf(req).then((response) => {
+        respDetail = response;
+      }),
+      {
+        text: '',
+        successText: '',
+      },
+    );
+
+    return respDetail.value.toString();
+  }
 }

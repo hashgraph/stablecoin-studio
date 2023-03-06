@@ -46,6 +46,7 @@ import { DecreaseAllowanceCommand } from '../../app/usecase/command/stablecoin/r
 import {
 	StableCoinRole,
 	StableCoinRoleLabel,
+	MAX_ACCOUNTS_ROLES,
 } from '../../domain/context/stablecoin/StableCoinRole.js';
 import { GrantSupplierRoleCommand } from '../../app/usecase/command/stablecoin/roles/grantSupplierRole/GrantSupplierRoleCommand.js';
 import { GrantUnlimitedSupplierRoleCommand } from '../../app/usecase/command/stablecoin/roles/granUnlimitedSupplierRole/GrantUnlimitedSupplierRoleCommand.js';
@@ -55,13 +56,19 @@ import { Balance } from '../../domain/context/stablecoin/Balance.js';
 import { IsUnlimitedQuery } from '../../app/usecase/query/stablecoin/isUnlimited/IsUnlimitedQuery.js';
 import LogService from '../../app/service/LogService.js';
 import { LogError } from '../../core/decorator/LogErrorDecorator.js';
+import GrantMultiRolesRequest from './request/GrantMultiRolesRequest.js';
+import RevokeMultiRolesRequest from './request/RevokeMultiRolesRequest.js';
+import { GrantMultiRolesCommand } from '../../app/usecase/command/stablecoin/roles/grantMultiRoles/GrantMultiRolesCommand.js';
+import { RevokeMultiRolesCommand } from '../../app/usecase/command/stablecoin/roles/revokeMultiRoles/RevokeMultiRolesCommand.js';
 
-export { StableCoinRole, StableCoinRoleLabel };
+export { StableCoinRole, StableCoinRoleLabel, MAX_ACCOUNTS_ROLES };
 
 interface IRole {
 	hasRole(request: HasRoleRequest): Promise<boolean>;
 	grantRole(request: GrantRoleRequest): Promise<boolean>;
 	revokeRole(request: RevokeRoleRequest): Promise<boolean>;
+	grantMultiRoles(request: GrantMultiRolesRequest): Promise<boolean>;
+	revokeMultiRoles(request: RevokeMultiRolesRequest): Promise<boolean>;
 	getRoles(request: GetRolesRequest): Promise<string[]>;
 	//Supplier
 	getAllowance(request: GetSupplierAllowanceRequest): Promise<Balance>;
@@ -163,6 +170,49 @@ class RoleInPort implements IRole {
 				)
 			).payload;
 		}
+	}
+
+	@LogError
+	async grantMultiRoles(request: GrantMultiRolesRequest): Promise<boolean> {
+		const { tokenId, targetsId, roles, amounts } = request;
+		handleValidation('GrantMultiRolesRequest', request);
+
+		const targetsIdHederaIds: HederaId[] = [];
+		targetsId.forEach((targetId) => {
+			targetsIdHederaIds.push(HederaId.from(targetId));
+		});
+
+		return (
+			await this.commandBus.execute(
+				new GrantMultiRolesCommand(
+					roles,
+					targetsIdHederaIds,
+					amounts ?? [],
+					HederaId.from(tokenId),
+				),
+			)
+		).payload;
+	}
+
+	@LogError
+	async revokeMultiRoles(request: RevokeMultiRolesRequest): Promise<boolean> {
+		const { tokenId, targetsId, roles } = request;
+		handleValidation('HasRoleRequest', request);
+
+		const targetsIdHederaIds: HederaId[] = [];
+		targetsId.forEach((targetId) => {
+			targetsIdHederaIds.push(HederaId.from(targetId));
+		});
+
+		return (
+			await this.commandBus.execute(
+				new RevokeMultiRolesCommand(
+					roles,
+					targetsIdHederaIds,
+					HederaId.from(tokenId),
+				),
+			)
+		).payload;
 	}
 
 	@LogError

@@ -32,6 +32,7 @@ import { Constructor } from './Type.js';
 import { CreateCommandHandler } from '../app/usecase/command/stablecoin/create/CreateCommandHandler.js';
 import { CashInCommandHandler } from '../app/usecase/command/stablecoin/operations/cashin/CashInCommandHandler.js';
 import { BurnCommandHandler } from '../app/usecase/command/stablecoin/operations/burn/BurnCommandHandler.js';
+import { TransfersCommandHandler } from '../app/usecase/command/stablecoin/operations/transfer/TransfersCommandHandler.js';
 import { DeleteCommandHandler } from '../app/usecase/command/stablecoin/operations/delete/DeleteCommandHandler.js';
 import { FreezeCommandHandler } from '../app/usecase/command/stablecoin/operations/freeze/FreezeCommandHandler.js';
 import { PauseCommandHandler } from '../app/usecase/command/stablecoin/operations/pause/PauseCommandHandler.js';
@@ -43,10 +44,12 @@ import { DecreaseAllowanceCommandHandler } from '../app/usecase/command/stableco
 import { GetAllowanceQueryHandler } from '../app/usecase/query/stablecoin/roles/getAllowance/GetAllowanceQueryHandler.js';
 import { GetRolesQueryHandler } from '../app/usecase/query/stablecoin/roles/getRoles/GetRolesQueryHandler.js';
 import { GrantRoleCommandHandler } from '../app/usecase/command/stablecoin/roles/grantRole/GrantRoleCommandHandler.js';
+import { GrantMultiRolesCommandHandler } from '../app/usecase/command/stablecoin/roles/grantMultiRoles/GrantMultiRolesCommandHandler.js';
 import { HasRoleQueryHandler } from '../app/usecase/query/stablecoin/roles/hasRole/HasRoleQueryHandler.js';
 import { IncreaseAllowanceCommandHandler } from '../app/usecase/command/stablecoin/roles/increaseAllowance/IncreaseAllowanceCommandHandler.js';
 import { ResetAllowanceCommandHandler } from '../app/usecase/command/stablecoin/roles/resetAllowance/ResetAllowanceCommandHandler.js';
 import { RevokeRoleCommandHandler } from '../app/usecase/command/stablecoin/roles/revokeRole/RevokeRoleCommandHandler.js';
+import { RevokeMultiRolesCommandHandler } from '../app/usecase/command/stablecoin/roles/revokeMultiRoles/RevokeMultiRolesCommandHandler.js';
 import { ConnectCommandHandler } from '../app/usecase/command/network/connect/ConnectCommandHandler.js';
 import { DisconnectCommandHandler } from '../app/usecase/command/network/disconnect/DisconnectCommandHandler.js';
 import { GetListStableCoinQueryHandler } from '../app/usecase/query/stablecoin/list/GetListStableCoinQueryHandler.js';
@@ -112,6 +115,10 @@ const COMMAND_HANDLERS = [
 	},
 	{
 		token: TOKENS.COMMAND_HANDLER,
+		useClass: TransfersCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
 		useClass: addFixedFeesCommandHandler,
 	},
 	{
@@ -161,6 +168,10 @@ const COMMAND_HANDLERS = [
 	},
 	{
 		token: TOKENS.COMMAND_HANDLER,
+		useClass: GrantMultiRolesCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
 		useClass: IncreaseAllowanceCommandHandler,
 	},
 	{
@@ -170,6 +181,10 @@ const COMMAND_HANDLERS = [
 	{
 		token: TOKENS.COMMAND_HANDLER,
 		useClass: RevokeRoleCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: RevokeMultiRolesCommandHandler,
 	},
 	{
 		token: TOKENS.COMMAND_HANDLER,

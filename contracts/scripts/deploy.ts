@@ -24,6 +24,7 @@ import {
     PAUSE_ROLE,
     RESCUE_ROLE,
     WIPE_ROLE,
+    ADDRESS_0,
 } from './constants'
 
 import {
@@ -33,14 +34,10 @@ import {
     toEvmAddress,
 } from './utils'
 
-
-
 const hederaERC20Address = '0.0.3621781'
 export const factoryProxyAddress = '0.0.3621788'
 const factoryProxyAdminAddress = '0.0.3621786'
 const factoryAddress = '0.0.3621784'
-
-export const ADDRESS_0 = '0x0000000000000000000000000000000000000000'
 
 export function initializeClients(): [
     Client,

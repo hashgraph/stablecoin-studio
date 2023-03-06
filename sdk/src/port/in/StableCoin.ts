@@ -30,7 +30,10 @@ import AssociateTokenRequest from './request/AssociateTokenRequest.js';
 import BigDecimal from '../../domain/context/shared/BigDecimal.js';
 import { HederaId } from '../../domain/context/shared/HederaId.js';
 import ContractId from '../../domain/context/contract/ContractId.js';
-import { StableCoinProps } from '../../domain/context/stablecoin/StableCoin.js';
+import {
+	StableCoinProps,
+	TRANSFER_LIST_SIZE,
+} from '../../domain/context/stablecoin/StableCoin.js';
 import { QueryBus } from '../../core/query/QueryBus.js';
 import { CommandBus } from '../../core/command/CommandBus.js';
 import { CashInCommand } from '../../app/usecase/command/stablecoin/operations/cashin/CashInCommand.js';
@@ -78,8 +81,15 @@ import { RevokeKycCommand } from '../../app/usecase/command/stablecoin/operation
 import { LogError } from '../../core/decorator/LogErrorDecorator.js';
 import { GetAccountTokenRelationshipQuery } from '../../app/usecase/query/account/tokenRelationship/GetAccountTokenRelationshipQuery.js';
 import { KycStatus } from '../out/mirror/response/AccountTokenRelationViewModel.js';
+import TransfersRequest from './request/TransfersRequest.js';
+import { TransfersCommand } from '../../app/usecase/command/stablecoin/operations/transfer/TransfersCommand.js';
 
-export { StableCoinViewModel, StableCoinListViewModel, ReserveViewModel };
+export {
+	StableCoinViewModel,
+	StableCoinListViewModel,
+	ReserveViewModel,
+	TRANSFER_LIST_SIZE,
+};
 export { StableCoinCapabilities, Capability, Access, Operation, Balance };
 export { TokenSupplyType };
 export { BigDecimal };
@@ -112,6 +122,7 @@ interface IStableCoinInPort {
 	grantKyc(request: KYCRequest): Promise<boolean>;
 	revokeKyc(request: KYCRequest): Promise<boolean>;
 	isAccountKYCGranted(request: KYCRequest): Promise<boolean>;
+	transfers(request: TransfersRequest): Promise<boolean>;
 }
 
 class StableCoinInPort implements IStableCoinInPort {
@@ -509,6 +520,29 @@ class StableCoinInPort implements IStableCoinInPort {
 				new UpdateReserveAddressCommand(
 					HederaId.from(request.tokenId),
 					new ContractId(request.reserveAddress),
+				),
+			)
+		).payload;
+	}
+
+	@LogError
+	async transfers(request: TransfersRequest): Promise<boolean> {
+		const { tokenId, targetsId, amounts, targetId } = request;
+
+		handleValidation('TransfersRequest', request);
+
+		const targetsIdHederaIds: HederaId[] = [];
+		targetsId.forEach((targetId) => {
+			targetsIdHederaIds.push(HederaId.from(targetId));
+		});
+
+		return (
+			await this.commandBus.execute(
+				new TransfersCommand(
+					amounts,
+					targetsIdHederaIds,
+					HederaId.from(tokenId),
+					HederaId.from(targetId),
 				),
 			)
 		).payload;
