@@ -32,6 +32,7 @@ import { Constructor } from './Type.js';
 import { CreateCommandHandler } from '../app/usecase/command/stablecoin/create/CreateCommandHandler.js';
 import { CashInCommandHandler } from '../app/usecase/command/stablecoin/operations/cashin/CashInCommandHandler.js';
 import { BurnCommandHandler } from '../app/usecase/command/stablecoin/operations/burn/BurnCommandHandler.js';
+import { TransferCommandHandler } from '../app/usecase/command/stablecoin/operations/transfer/TransferCommandHandler.js';
 import { DeleteCommandHandler } from '../app/usecase/command/stablecoin/operations/delete/DeleteCommandHandler.js';
 import { FreezeCommandHandler } from '../app/usecase/command/stablecoin/operations/freeze/FreezeCommandHandler.js';
 import { PauseCommandHandler } from '../app/usecase/command/stablecoin/operations/pause/PauseCommandHandler.js';
@@ -109,6 +110,10 @@ const COMMAND_HANDLERS = [
 	{
 		token: TOKENS.COMMAND_HANDLER,
 		useClass: BurnCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: TransferCommandHandler,
 	},
 	{
 		token: TOKENS.COMMAND_HANDLER,

@@ -101,6 +101,11 @@ interface ITransactionAdapter {
 		sourceId: Account,
 		targetId: HederaId,
 	): Promise<TransactionResponse>;
+	transfers(
+		coin: StableCoinCapabilities,
+		amounts: BigDecimal[],
+		targetIds: HederaId[],
+	): Promise<TransactionResponse>;
 	getAccount(): Account;
 	getReserveAddress(
 		coin: StableCoinCapabilities,
@@ -199,6 +204,13 @@ interface RoleTransactionAdapter {
 export default abstract class TransactionAdapter
 	implements ITransactionAdapter, RoleTransactionAdapter
 {
+	transfers(
+		coin: StableCoinCapabilities,
+		amounts: BigDecimal[],
+		targetIds: HederaId[],
+	): Promise<TransactionResponse<any, Error>> {
+		throw new Error('Method not implemented.');
+	}
 	init(): Promise<Environment> {
 		throw new Error('Method not implemented.');
 	}
