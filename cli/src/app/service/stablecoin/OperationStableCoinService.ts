@@ -1,4 +1,5 @@
 import { StableCoinList } from '../../../domain/stablecoin/StableCoinList.js';
+import Big from 'big.js';
 import {
   language,
   utilsService,
@@ -632,6 +633,17 @@ export default class OperationStableCoinService extends Service {
    */
 
   private async sendTokens(sender: string): Promise<void> {
+    const getAccountBalanceRequest = new GetAccountBalanceRequest({
+      tokenId: this.stableCoinId,
+      targetId: sender,
+    });
+
+    const balance = new Big(
+      await new BalanceOfStableCoinsService().getBalanceOfStableCoin_2(
+        getAccountBalanceRequest,
+      ),
+    );
+
     const transfersRequest = new TransfersRequest({
       tokenId: this.stableCoinId,
       targetId: sender,
@@ -641,6 +653,7 @@ export default class OperationStableCoinService extends Service {
 
     let next = true;
     let index = 0;
+    let totalSent = new Big(0);
 
     do {
       transfersRequest.targetsId.push('');
@@ -655,19 +668,41 @@ export default class OperationStableCoinService extends Service {
         },
       );
 
-      transfersRequest.amounts.push('');
-      await utilsService.handleValidation(
-        () => transfersRequest.validate('amounts'),
-        async () => {
-          transfersRequest.amounts[index] = await utilsService.defaultSingleAsk(
-            language.getText('stablecoin.sendAmount'),
-            '1',
+      let totalAmountNOK;
+
+      do {
+        totalAmountNOK = false;
+
+        if (transfersRequest.amounts.length <= index)
+          transfersRequest.amounts.push('');
+        await utilsService.handleValidation(
+          () => transfersRequest.validate('amounts'),
+          async () => {
+            transfersRequest.amounts[index] =
+              await utilsService.defaultSingleAsk(
+                language.getText('stablecoin.sendAmount'),
+                '1',
+              );
+          },
+        );
+
+        totalSent = totalSent.plus(new Big(transfersRequest.amounts[index]));
+
+        if (totalSent.gt(balance)) {
+          totalAmountNOK = true;
+          totalSent = totalSent.minus(new Big(transfersRequest.amounts[index]));
+          const remainingBalance = balance.minus(totalSent);
+          await utilsService.showError(
+            'Remaining balance is only : ' + remainingBalance.toString(),
           );
-        },
-      );
+        }
+      } while (totalAmountNOK);
 
       index++;
-      if (index >= TRANSFER_LIST_SIZE - 1) next = false;
+
+      if (index >= TRANSFER_LIST_SIZE - 1 || totalSent.eq(balance))
+        next = false;
+
       if (next) {
         next = await utilsService.defaultConfirmAsk(
           language.getText('send.anotherAccount'),
