@@ -36,7 +36,6 @@ const textInBoldProps: ChakraTextProps = {
 
 const DetailsReview = (props: DetailsReviewProps) => {
 	const { details, divider = true, title, titleProps, contentProps } = props;
-	console.log(details);
 
 	return (
 		<Box textAlign='left'>

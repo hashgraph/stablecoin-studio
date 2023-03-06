@@ -81,13 +81,15 @@ const Review = (props: ReviewProps) => {
 
 	const setRoleAccountInfo = (label: string, roleValue: { value: number; label: string }) => {
 		const { value } = roleValue;
-		roleDetails.push({
-			label: label,
-			value:
-				value === 1
-					? getExtraInfo(label, t('stableCoinCreation:managementPermissions.currentUserAccount'))
-					: getExtraInfo(label, getRole(roleValue, `${label.toLowerCase()}RoleAccountOther`)),
-		});
+		if (roleValue.label !== t('stableCoinCreation:managementPermissions.none')) {
+			roleDetails.push({
+				label: label,
+				value:
+					value === 1
+						? getExtraInfo(label, t('stableCoinCreation:managementPermissions.currentUserAccount'))
+						: getExtraInfo(label, getRole(roleValue, `${label.toLowerCase()}RoleAccountOther`)),
+			});
+		}
 	};
 
 	const setRoleAccountInfoByKey = (
@@ -126,7 +128,10 @@ const Review = (props: ReviewProps) => {
 		wipeRoleAccount,
 		wipeKey,
 	);
-	setRoleAccountInfo(t('stableCoinCreation:managementPermissions.rescue'), rescueRoleAccount);
+	setRoleAccountInfo(
+		t('stableCoinCreation:managementPermissions.rescue'), 
+		rescueRoleAccount
+	);
 	setRoleAccountInfoByKey(
 		t('stableCoinCreation:managementPermissions.pause'),
 		pauseRoleAccount,
@@ -254,11 +259,15 @@ const Review = (props: ReviewProps) => {
 							},
 						]}
 					/>
-					<DetailsReview
-						title={t('stableCoinCreation:review.rolesAssignment')}
-						titleProps={{ fontWeight: 700, color: 'brand.secondary' }}
-						details={roleDetails}
-					/>
+
+					{roleDetails && roleDetails.length > 0 &&(
+						<DetailsReview
+							title={t('stableCoinCreation:review.rolesAssignment')}
+							titleProps={{ fontWeight: 700, color: 'brand.secondary' }}
+							details={roleDetails}
+						/>
+					)}
+
 					<DetailsReview
 						title={t('stableCoinCreation:managementPermissions.CreatorKYCFlag')}
 						titleProps={{ fontWeight: 700, color: 'brand.secondary' }}

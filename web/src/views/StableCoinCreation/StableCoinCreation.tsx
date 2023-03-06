@@ -174,7 +174,8 @@ const StableCoinCreation = () => {
 		role: { value: number; label: string },
 		roleName: string,
 	): string => {
-		if (managementPermissions || (key && key.value === 2)) {
+		if ((managementPermissions || (key && key.value === 2)) &&
+		     role.value !== 3) {
 			return formatRoleAccount(role, roleName);
 		} else {
 			return '0.0.0';
@@ -187,7 +188,8 @@ const StableCoinCreation = () => {
 		role: { value: number; label: string },
 		roleName: string,
 	): string => {
-		if (isKycRequired || (key && key.value === 2)) {
+		if ((isKycRequired || (key && key.value === 2)) &&
+		     role.value !== 3) {
 			return formatRoleAccount(role, roleName);
 		} else {
 			return '0.0.0';

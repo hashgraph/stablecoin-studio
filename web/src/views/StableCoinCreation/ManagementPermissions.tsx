@@ -58,6 +58,7 @@ const ManagementPermissions = ({
 		name: 'manageCustomFees',
 	});
 
+	const cashInRoleAccount = watch('cashInRoleAccount');
 	const infinity: boolean = watch('cashInAllowanceType');
 
 	useEffect(() => {
@@ -100,6 +101,7 @@ const ManagementPermissions = ({
 		name: 'feeScheduleKey',
 		nameTranslate: t('stableCoinCreation:managementPermissions.feeSchedule'),
 	};
+	
 	return (
 		<Box>
 			<Stack minW={400}>
@@ -240,13 +242,15 @@ const ManagementPermissions = ({
 										label={t('stableCoinCreation:managementPermissions.cashin')}
 										request={request}
 									/>
-									<HStack mt='20px'>
-										<Text mr='10px'>
-											{t('stableCoinCreation:managementPermissions.cashInAllowanceType')}
-										</Text>
-										<SwitchController control={control} name={'cashInAllowanceType'} />
-									</HStack>
-									{infinity === false && (
+									{cashInRoleAccount && cashInRoleAccount.value !== 3 && (
+										<HStack mt='20px'>
+											<Text mr='10px'>
+												{t('stableCoinCreation:managementPermissions.cashInAllowanceType')}
+											</Text>
+											<SwitchController control={control} name={'cashInAllowanceType'} />
+										</HStack>
+									)}
+									{infinity === false && (cashInRoleAccount && cashInRoleAccount.value !== 3) && (
 										<Box mt='20px'>
 											<InputController
 												data-testid='input-supplier-quantity'
