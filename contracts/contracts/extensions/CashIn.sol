@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
-import './Interfaces/ICashIn.sol';
-import './SupplierAdmin.sol';
-import './Reserve.sol';
-import '../hts-precompile/IHederaTokenService.sol';
+import {ICashIn} from './Interfaces/ICashIn.sol';
+import {SupplierAdmin} from './SupplierAdmin.sol';
+import {IHederaTokenService} from '../hts-precompile/IHederaTokenService.sol';
+import {Reserve} from './Reserve.sol';
 
 abstract contract CashIn is ICashIn, SupplierAdmin, Reserve {
     /**

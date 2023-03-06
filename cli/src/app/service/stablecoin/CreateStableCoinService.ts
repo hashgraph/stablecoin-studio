@@ -239,7 +239,40 @@ export default class CreateStableCoinService extends Service {
     }
 
     // Manage the initial role assignment
-    await this.initialRoleAssignments(tokenToCreate, currentAccount.accountId);
+    const changeRoleAssignment = await this.askForRolesManagement();
+    if (changeRoleAssignment) {
+      await this.initialRoleAssignments(
+        tokenToCreate,
+        currentAccount.accountId,
+      );
+    } else {
+      if (tokenToCreate.supplyKey == Account.NullPublicKey)
+        tokenToCreate.burnRoleAccount = currentAccount.accountId;
+      if (tokenToCreate.wipeKey == Account.NullPublicKey)
+        tokenToCreate.wipeRoleAccount = currentAccount.accountId;
+      tokenToCreate.rescueRoleAccount = currentAccount.accountId;
+      if (tokenToCreate.pauseKey == Account.NullPublicKey)
+        tokenToCreate.pauseRoleAccount = currentAccount.accountId;
+      if (tokenToCreate.freezeKey == Account.NullPublicKey)
+        tokenToCreate.freezeRoleAccount = currentAccount.accountId;
+      if (tokenToCreate.adminKey == Account.NullPublicKey)
+        tokenToCreate.deleteRoleAccount = currentAccount.accountId;
+      if (tokenToCreate.kycKey == Account.NullPublicKey)
+        tokenToCreate.kycRoleAccount = currentAccount.accountId;
+      if (tokenToCreate.supplyKey == Account.NullPublicKey) {
+        tokenToCreate.cashInRoleAccount = currentAccount.accountId;
+        await utilsService.handleValidation(
+          () => tokenToCreate.validate('cashInRoleAllowance'),
+          async () => {
+            tokenToCreate.cashInRoleAllowance =
+              await utilsService.defaultSingleAsk(
+                language.getText('stablecoin.initialRoles.cashinAllowance'),
+                '0',
+              );
+          },
+        );
+      }
+    }
 
     // Proof of Reserve
     let reserve = false;
@@ -467,6 +500,13 @@ export default class CreateStableCoinService extends Service {
     );
   }
 
+  private async askForRolesManagement(): Promise<boolean> {
+    return await utilsService.defaultConfirmAsk(
+      language.getText('stablecoin.askRolesManagedBy'),
+      true,
+    );
+  }
+
   private async askForKYCGrantToSender(): Promise<boolean> {
     return await utilsService.defaultConfirmAsk(
       language.getText('stablecoin.askGrantKYCToSender'),
@@ -547,25 +587,28 @@ export default class CreateStableCoinService extends Service {
         'kycRoleAccount',
       );
 
-    if (tokenToCreate.supplyKey == Account.NullPublicKey)
-      await this.askForAccount(
+    if (tokenToCreate.supplyKey == Account.NullPublicKey) {
+      const result: string = await this.askForAccount(
         language.getText('stablecoin.initialRoles.cashin'),
         currentAccountId,
         tokenToCreate,
         'cashInRoleAccount',
       );
-
-    if (tokenToCreate.supplyKey == Account.NullPublicKey)
-      await utilsService.handleValidation(
-        () => tokenToCreate.validate('cashInRoleAllowance'),
-        async () => {
-          tokenToCreate.cashInRoleAllowance =
-            await utilsService.defaultSingleAsk(
-              language.getText('stablecoin.initialRoles.cashinAllowance'),
-              '0',
-            );
-        },
-      );
+      if (
+        result !== language.getText('stablecoin.initialRoles.options.noAccount')
+      ) {
+        await utilsService.handleValidation(
+          () => tokenToCreate.validate('cashInRoleAllowance'),
+          async () => {
+            tokenToCreate.cashInRoleAllowance =
+              await utilsService.defaultSingleAsk(
+                language.getText('stablecoin.initialRoles.cashinAllowance'),
+                '0',
+              );
+          },
+        );
+      }
+    }
   }
 
   private async askForAccount(
@@ -573,13 +616,16 @@ export default class CreateStableCoinService extends Service {
     currentAccountId: string,
     tokenToCreate: any,
     fieldToValidate: string,
-  ) {
+  ): Promise<string> {
     const options = [
       language.getText('stablecoin.initialRoles.options.currentAccount'),
       language.getText('stablecoin.initialRoles.options.otherAccount'),
+      language.getText('stablecoin.initialRoles.options.noAccount'),
     ];
     const result = await utilsService.defaultMultipleAsk(text, options);
-    if (result != options[0]) {
+    if (result === options[0])
+      tokenToCreate[fieldToValidate] = currentAccountId;
+    else if (result === options[1]) {
       await utilsService.handleValidation(
         () => tokenToCreate.validate(fieldToValidate),
         async () => {
@@ -589,7 +635,8 @@ export default class CreateStableCoinService extends Service {
           );
         },
       );
-    } else tokenToCreate[fieldToValidate] = currentAccountId;
+    }
+    return result;
   }
 
   private async configureManagedFeatures(): Promise<IManagedFeatures> {

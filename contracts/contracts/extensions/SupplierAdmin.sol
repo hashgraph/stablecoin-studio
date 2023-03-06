@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
-import './Interfaces/ISupplierAdmin.sol';
-import './TokenOwner.sol';
-import './Roles.sol';
+import {ISupplierAdmin} from './Interfaces/ISupplierAdmin.sol';
+import {TokenOwner} from './TokenOwner.sol';
+import {Roles} from './Roles.sol';
 
 abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
     mapping(address => uint256) internal _supplierAllowances;

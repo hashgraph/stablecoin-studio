@@ -29,6 +29,10 @@ const RoleSelector = ({ control, name, label, request }: RoleSelectorProps) => {
 			value: 2,
 			label: t('stableCoinCreation:managementPermissions.otherAccount'),
 		},
+		{
+			value: 3,
+			label: t('stableCoinCreation:managementPermissions.none'),
+		},
 	];
 
 	const selectorStyle = {

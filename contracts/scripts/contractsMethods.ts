@@ -1312,31 +1312,74 @@ export async function getHederaERC20Addresses(
     return result[0]
 }
 
-export async function getHederaERC20(
-    stableCoinFactoryProxy: ContractId,
-    client: Client,
-    index: number
-) {
-    const result = await contractCall(
-        stableCoinFactoryProxy,
-        'hederaERC20Address',
-        [index],
-        client,
-        Gas1,
-        StableCoinFactory__factory.abi
-    )
-    return result[0]
-}
-
 export async function addHederaERC20Version(
     stableCoinFactoryProxy: ContractId,
     client: Client,
     newAddress: string
 ) {
-    const result = await contractCall(
+    await contractCall(
         stableCoinFactoryProxy,
         'addHederaERC20Version',
         [newAddress],
+        client,
+        Gas1,
+        StableCoinFactory__factory.abi
+    )
+}
+
+export async function editHederaERC20Version(
+    stableCoinFactoryProxy: ContractId,
+    client: Client,
+    index: number,
+    newAddress: string
+) {
+    await contractCall(
+        stableCoinFactoryProxy,
+        'editHederaERC20Address',
+        [index, newAddress],
+        client,
+        Gas1,
+        StableCoinFactory__factory.abi
+    )
+}
+
+export async function changeAdminStablecoinFactory(
+    stableCoinFactoryProxy: ContractId,
+    client: Client,
+    newAdmin: string
+) {
+    await contractCall(
+        stableCoinFactoryProxy,
+        'changeAdmin',
+        [newAdmin],
+        client,
+        Gas1,
+        StableCoinFactory__factory.abi
+    )
+}
+export async function removeHederaERC20Version(
+    stableCoinFactoryProxy: ContractId,
+    client: Client,
+    index: number
+) {
+    await contractCall(
+        stableCoinFactoryProxy,
+        'removeHederaERC20Address',
+        [index],
+        client,
+        Gas1,
+        StableCoinFactory__factory.abi
+    )
+}
+
+export async function getAdminStableCoinFactory(
+    stableCoinFactoryProxy: ContractId,
+    client: Client
+): Promise<string> {
+    const result = await contractCall(
+        stableCoinFactoryProxy,
+        'getAdmin',
+        [],
         client,
         Gas1,
         StableCoinFactory__factory.abi

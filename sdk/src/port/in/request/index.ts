@@ -59,7 +59,6 @@ import AddFixedFeeRequest from './AddFixedFeeRequest.js';
 import AddFractionalFeeRequest from './AddFractionalFeeRequest.js';
 import SetConfigurationRequest from './SetConfigurationRequest.js';
 import GetERC20ListRequest from './GetERC20ListRequest.js';
-import GetHederaERC20ByIndexRequest from './GetERC20ByIndexRequest.js';
 
 export * from './BaseRequest.js';
 export {
@@ -104,5 +103,4 @@ export {
 	AddFixedFeeRequest,
 	AddFractionalFeeRequest,
 	GetERC20ListRequest,
-	GetHederaERC20ByIndexRequest,
 };

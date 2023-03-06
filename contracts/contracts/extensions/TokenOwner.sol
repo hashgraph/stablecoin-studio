@@ -1,12 +1,18 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
-import './Interfaces/ITokenOwner.sol';
-import '../hts-precompile/HederaResponseCodes.sol';
-import '../hts-precompile/IHederaTokenService.sol';
-import '../Interfaces/IHederaERC20Upgradeable.sol';
-import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
-import '@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol';
+import {ITokenOwner} from './Interfaces/ITokenOwner.sol';
+import {HederaResponseCodes} from '../hts-precompile/HederaResponseCodes.sol';
+import {IHederaTokenService} from '../hts-precompile/IHederaTokenService.sol';
+import {
+    IHederaERC20Upgradeable
+} from '../Interfaces/IHederaERC20Upgradeable.sol';
+import {
+    Initializable
+} from '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
+import {
+    IERC20MetadataUpgradeable
+} from '@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol';
 
 abstract contract TokenOwner is
     ITokenOwner,

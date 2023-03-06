@@ -1,20 +1,28 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
-import './Interfaces/IHederaERC20Upgradeable.sol';
-import '@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol';
-import './Interfaces/IHederaERC20.sol';
-import './extensions/CashIn.sol';
-import './extensions/Burnable.sol';
-import './extensions/Wipeable.sol';
-import './extensions/Pausable.sol';
-import './extensions/Freezable.sol';
-import './extensions/Rescatable.sol';
-import './extensions/Deletable.sol';
-import './extensions/Reserve.sol';
-import './extensions/TokenOwner.sol';
-import './extensions/KYC.sol';
-import './extensions/RoleManagement.sol';
+import {
+    IHederaERC20Upgradeable
+} from './Interfaces/IHederaERC20Upgradeable.sol';
+import {
+    IERC20MetadataUpgradeable
+} from '@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol';
+import {IHederaERC20} from './Interfaces/IHederaERC20.sol';
+import {CashIn} from './extensions/CashIn.sol';
+import {Burnable} from './extensions/Burnable.sol';
+import {Wipeable} from './extensions/Wipeable.sol';
+import {Pausable} from './extensions/Pausable.sol';
+import {Freezable} from './extensions/Freezable.sol';
+import {Rescatable} from './extensions/Rescatable.sol';
+import {Deletable} from './extensions/Deletable.sol';
+import {Reserve} from './extensions/Reserve.sol';
+
+import {
+    TokenOwner,
+    HederaResponseCodes,
+    IHederaTokenService
+} from './extensions/TokenOwner.sol';
+import {KYC} from './extensions/KYC.sol';
 
 contract HederaERC20 is
     IHederaERC20,

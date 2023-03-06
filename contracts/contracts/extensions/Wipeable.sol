@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
-import './TokenOwner.sol';
-import './Roles.sol';
-import './Interfaces/IWipeable.sol';
-import '../hts-precompile/IHederaTokenService.sol';
+import {TokenOwner} from './TokenOwner.sol';
+import {Roles} from './Roles.sol';
+import {IWipeable} from './Interfaces/IWipeable.sol';
+import {IHederaTokenService} from '../hts-precompile/IHederaTokenService.sol';
 
 abstract contract Wipeable is IWipeable, TokenOwner, Roles {
     /**

@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
-import './Interfaces/IRoles.sol';
-import '@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol';
+import {IRoles} from './Interfaces/IRoles.sol';
+import {
+    AccessControlUpgradeable
+} from '@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol';
 
 abstract contract Roles is IRoles, AccessControlUpgradeable {
     /**

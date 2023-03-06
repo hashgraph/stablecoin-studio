@@ -7,7 +7,6 @@ import {
     Client,
 } from '@hashgraph/sdk'
 import { BigNumber } from 'ethers'
-
 import {
     ProxyAdmin__factory,
     TransparentUpgradeableProxy__factory,
@@ -35,14 +34,14 @@ import {
     toEvmAddress,
 } from './utils'
 
-const hre = require('hardhat')
 
-const hederaERC20Address = '0.0.3616448'
-export const factoryProxyAddress = '0.0.3616457'
-const factoryProxyAdminAddress = '0.0.3616453'
-const factoryAddress = '0.0.3616451'
 
-const hreConfig = hre.network.config
+const hederaERC20Address = '0.0.3621781'
+export const factoryProxyAddress = '0.0.3621788'
+const factoryProxyAdminAddress = '0.0.3621786'
+const factoryAddress = '0.0.3621784'
+
+export const ADDRESS_0 = '0x0000000000000000000000000000000000000000'
 
 export function initializeClients(): [
     Client,
@@ -56,6 +55,8 @@ export function initializeClients(): [
     string,
     boolean
 ] {
+    const hre = require('hardhat')
+    const hreConfig = hre.network.config
     const client1 = getClient()
     const client1account: string = hreConfig.accounts[0].account
     const client1privatekey: string = hreConfig.accounts[0].privateKey
