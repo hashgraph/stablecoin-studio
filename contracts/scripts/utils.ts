@@ -16,11 +16,8 @@ import {
 import Web3 from 'web3'
 import axios from 'axios'
 
-const hre = require('hardhat')
-
 const web3 = new Web3()
 
-const URI_BASE = `${getHederaNetworkMirrorNodeURL()}/api/v1/`
 
 export const clientId = 1
 
@@ -90,8 +87,12 @@ function decodeFunctionResult(
     return jsonParsedArray
 }
 
-export function getClient(): Client {
-    switch (hre.network.name) {
+export function getClient(network?:string): Client {
+    if(!network){
+        const hre = require('hardhat')
+        network = hre.network.name
+    }
+    switch (network) {
         case 'previewnet':
             return Client.forPreviewnet()
             break
@@ -196,6 +197,7 @@ export async function toEvmAddress(
         if (isE25519)
             return '0x' + AccountId.fromString(accountId).toSolidityAddress()
 
+        const URI_BASE = `${getHederaNetworkMirrorNodeURL()}/api/v1/`
         const url = URI_BASE + 'accounts/' + accountId
         const res = await axios.get<IAccount>(url)
         return res.data.evm_address
@@ -214,8 +216,12 @@ interface IKey {
     key: string
 }
 
-function getHederaNetworkMirrorNodeURL(): string {
-    switch (hre.network.name) {
+function getHederaNetworkMirrorNodeURL(network ?:string): string {
+    if (!network) {        
+        const hre = require('hardhat')
+        network = hre.network.name
+    }
+    switch (network) {
         case 'mainnet':
             return 'https://mainnet.mirrornode.hedera.com'
         case 'previewnet':
