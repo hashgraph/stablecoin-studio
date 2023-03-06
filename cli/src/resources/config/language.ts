@@ -156,6 +156,7 @@ export const english = {
     askCashInRoleRevokeType: 'What type of permission do you want to revoke?',
     askEditCashInRole: 'What action do you want to perform?',
     accountTarget: 'Enter the target account id',
+    sendAmount: 'Enter the amount you want to send to the account',
     supplierRoleLimit: 'What will the limit be?',
     amountIncrease: 'Amount to increase',
     amountDecrease: 'Amount to decrease',
@@ -232,6 +233,7 @@ export const english = {
       ...returnToMainMenu,
     },
     stableCoinOptions: {
+      Send: 'Send tokens',
       CashIn: 'Cash in',
       Details: 'Details',
       Balance: 'Balance',
@@ -362,10 +364,16 @@ export const english = {
       'The account ${address} has not KYC granted for the ${token} token',
     customFeeCreated: 'Custom fee created',
     customFeesRemoved: 'Custom fees removed',
+    transferCompleted: 'Transfer completed',
   },
   operation: {
     success: colors.green('Operation has been completed successfully.'),
     reject: colors.red('Operation has not been completed. Please, try again.'),
+  },
+  send: {
+    noTokens: 'You have no tokens',
+    anotherAccount: 'Do you want to send more tokens?',
+    confirmation: 'Do you want to proceed sending these amounts?',
   },
   cashin: {
     unlimitedRole: 'This account has unlimited cash in role',

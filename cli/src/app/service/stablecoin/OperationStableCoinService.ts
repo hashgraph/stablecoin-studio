@@ -36,7 +36,9 @@ import {
   HBAR_DECIMALS,
   GrantMultiRolesRequest,
   MAX_ACCOUNTS_ROLES,
+  TRANSFER_LIST_SIZE,
   RevokeMultiRolesRequest,
+  TransfersRequest,
 } from 'hedera-stable-coin-sdk';
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
 import CashInStableCoinsService from './CashInStableCoinService.js';
@@ -52,6 +54,7 @@ import KYCStableCoinService from './KYCStableCoinService.js';
 import ListStableCoinsService from './ListStableCoinsService.js';
 import CapabilitiesStableCoinService from './CapabilitiesStableCoinService.js';
 import FeeStableCoinService from './FeeStableCoinService.js';
+import TransfersStableCoinsService from './TransfersStableCoinService.js';
 //import { Capability } from 'hedera-stable-coin-sdk';
 
 /**
@@ -60,6 +63,7 @@ import FeeStableCoinService from './FeeStableCoinService.js';
 export default class OperationStableCoinService extends Service {
   private stableCoinId;
   private stableCoinWithSymbol;
+  private stableCoinSymbol;
   private roleStableCoinService = new RoleStableCoinsService();
   private capabilitiesStableCoinService = new CapabilitiesStableCoinService();
   private listStableCoinService = new ListStableCoinsService();
@@ -73,6 +77,7 @@ export default class OperationStableCoinService extends Service {
     if (tokenId && memo && symbol) {
       this.stableCoinId = tokenId; //TODO Cambiar name por el id que llegue en la creación del token
       this.stableCoinWithSymbol = `${tokenId} - ${symbol}`;
+      this.stableCoinSymbol = `${symbol}`;
     }
   }
 
@@ -108,6 +113,7 @@ export default class OperationStableCoinService extends Service {
               }`
             : this.stableCoinId;
         this.stableCoinId = this.stableCoinId.split(' - ')[0];
+        this.stableCoinSymbol = this.stableCoinWithSymbol.split('-')[1];
 
         if (
           this.stableCoinId === language.getText('wizard.backOption.goBack')
@@ -176,6 +182,17 @@ export default class OperationStableCoinService extends Service {
         this.stableCoinDeleted,
       )
     ) {
+      case language.getText('wizard.stableCoinOptions.Send'):
+        await utilsService.cleanAndShowBanner();
+
+        utilsService.displayCurrentUserInfo(
+          configAccount,
+          this.stableCoinWithSymbol,
+        );
+
+        await this.sendTokens(currentAccount.accountId);
+
+        break;
       case language.getText('wizard.stableCoinOptions.CashIn'):
         await utilsService.cleanAndShowBanner();
 
@@ -613,6 +630,78 @@ export default class OperationStableCoinService extends Service {
   /**
    * FeeManagement Flow
    */
+
+  private async sendTokens(sender: string): Promise<void> {
+    const transfersRequest = new TransfersRequest({
+      tokenId: this.stableCoinId,
+      targetId: sender,
+      amounts: [],
+      targetsId: [],
+    });
+
+    let next = true;
+    let index = 0;
+
+    do {
+      transfersRequest.targetsId.push('');
+      await utilsService.handleValidation(
+        () => transfersRequest.validate('targetsId'),
+        async () => {
+          transfersRequest.targetsId[index] =
+            await utilsService.defaultSingleAsk(
+              language.getText('stablecoin.accountTarget'),
+              '0.0.0',
+            );
+        },
+      );
+
+      transfersRequest.amounts.push('');
+      await utilsService.handleValidation(
+        () => transfersRequest.validate('amounts'),
+        async () => {
+          transfersRequest.amounts[index] = await utilsService.defaultSingleAsk(
+            language.getText('stablecoin.sendAmount'),
+            '1',
+          );
+        },
+      );
+
+      index++;
+      if (index >= TRANSFER_LIST_SIZE - 1) next = false;
+      if (next) {
+        next = await utilsService.defaultConfirmAsk(
+          language.getText('send.anotherAccount'),
+          true,
+        );
+      }
+    } while (next);
+
+    for (let i = 0; i < transfersRequest.targetsId.length; i++) {
+      console.log(
+        `${transfersRequest.amounts[i]} - ${this.stableCoinSymbol} --> ${transfersRequest.targetsId[i]}`,
+      );
+    }
+
+    const confirmation = await utilsService.defaultConfirmAsk(
+      language.getText('send.confirmation'),
+      true,
+    );
+
+    if (confirmation) {
+      try {
+        await new TransfersStableCoinsService().transfersStableCoin(
+          transfersRequest,
+        );
+      } catch (error) {
+        await utilsService.askErrorConfirmation(
+          async () => await this.operationsStableCoin(),
+          error,
+        );
+      }
+    }
+
+    return;
+  }
 
   private async feesManagementFlow(): Promise<void> {
     const configAccount = utilsService.getCurrentAccount();
@@ -1582,6 +1671,9 @@ export default class OperationStableCoinService extends Service {
 
     capabilitiesFilter = options.filter((option) => {
       if (
+        (option === language.getText('wizard.stableCoinOptions.Send') &&
+          !this.stableCoinDeleted &&
+          !this.stableCoinPaused) ||
         (option === language.getText('wizard.stableCoinOptions.CashIn') &&
           capabilities.includes(Operation.CASH_IN)) ||
         (option === language.getText('wizard.stableCoinOptions.Burn') &&

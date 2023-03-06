@@ -30,7 +30,10 @@ import AssociateTokenRequest from './request/AssociateTokenRequest.js';
 import BigDecimal from '../../domain/context/shared/BigDecimal.js';
 import { HederaId } from '../../domain/context/shared/HederaId.js';
 import ContractId from '../../domain/context/contract/ContractId.js';
-import { StableCoinProps } from '../../domain/context/stablecoin/StableCoin.js';
+import {
+	StableCoinProps,
+	TRANSFER_LIST_SIZE,
+} from '../../domain/context/stablecoin/StableCoin.js';
 import { QueryBus } from '../../core/query/QueryBus.js';
 import { CommandBus } from '../../core/command/CommandBus.js';
 import { CashInCommand } from '../../app/usecase/command/stablecoin/operations/cashin/CashInCommand.js';
@@ -81,7 +84,12 @@ import { KycStatus } from '../out/mirror/response/AccountTokenRelationViewModel.
 import TransfersRequest from './request/TransfersRequest.js';
 import { TransfersCommand } from '../../app/usecase/command/stablecoin/operations/transfer/TransfersCommand.js';
 
-export { StableCoinViewModel, StableCoinListViewModel, ReserveViewModel };
+export {
+	StableCoinViewModel,
+	StableCoinListViewModel,
+	ReserveViewModel,
+	TRANSFER_LIST_SIZE,
+};
 export { StableCoinCapabilities, Capability, Access, Operation, Balance };
 export { TokenSupplyType };
 export { BigDecimal };

@@ -1106,14 +1106,13 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 
 			case Operation.TRANSFERS:
 				const amountsLong: Long[] = [];
-				params!.amounts!.forEach((amount) => {
-					amountsLong.push(amount.toLong());
-				});
-
 				const targetsIdString: string[] = [];
-				params.targetsId!.forEach((targetId) => {
-					targetsIdString.push(targetId.toString());
-				});
+
+				for (let i = 0; i < params.amounts!.length; i++) {
+					amountsLong.push(params.amounts![i].toLong());
+					targetsIdString.push(params.targetsId![i].toString());
+				}
+
 				t = HTSTransactionBuilder.buildTransfersTransaction(
 					coin.coin.tokenId?.value!,
 					amountsLong,

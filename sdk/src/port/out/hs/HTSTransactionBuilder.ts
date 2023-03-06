@@ -149,25 +149,24 @@ export class HTSTransactionBuilder {
 		inAccountsIds: string[],
 	): Transaction {
 		try {
-			const totalAmount: Long = new Long(0);
+			const t = new TransferTransaction();
 
-			amounts.forEach((amount) => {
-				totalAmount.add(amount);
-			});
-
-			const t = new TransferTransaction().addTokenTransfer(
-				tokenId,
-				AccountId.fromString(outAccountId),
-				totalAmount.mul(-1),
-			);
+			let totalAmount: Long = new Long(0);
 
 			for (let i = 0; i < inAccountsIds.length; i++) {
+				totalAmount = totalAmount.add(amounts[i]);
 				t.addTokenTransfer(
 					tokenId,
 					AccountId.fromString(inAccountsIds[i]),
 					amounts[i],
 				);
 			}
+
+			t.addTokenTransfer(
+				tokenId,
+				AccountId.fromString(outAccountId),
+				totalAmount.mul(-1),
+			);
 
 			return t;
 		} catch (error) {
