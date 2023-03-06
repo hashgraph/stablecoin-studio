@@ -31,6 +31,8 @@ export enum StableCoinRole {
 	KYC_ROLE = '0xdb11624602202c396fa347735a55e345a3aeb3e60f8885e1a71f1bf8d5886db7',
 }
 
+export const MAX_ACCOUNTS_ROLES = 10;
+
 export const StableCoinRoleLabel = new Map<StableCoinRole, string>([
 	[StableCoinRole.CASHIN_ROLE, 'Cash in'],
 	[StableCoinRole.BURN_ROLE, 'Burn'],

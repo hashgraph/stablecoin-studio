@@ -280,10 +280,10 @@ export const english = {
       ...goBack,
     },
     roleManagementOptions: {
-      Grant: 'Grant role',
-      Revoke: 'Revoke role',
+      Grant: 'Grant roles',
+      Revoke: 'Revoke roles',
       Edit: 'Edit role',
-      HasRole: 'Has role',
+      GetRole: 'Get roles',
       ...goBack,
     },
     adminFeatureOptions: {
@@ -386,6 +386,13 @@ export const english = {
     lessZero: 'The number is 0 or less. Please use a number greater than 0.',
   },
   roleManagement: {
+    askRoles: 'Choose the roles',
+    askAccount: 'Enter an account',
+    askMoreAccounts: 'Do you want to add another account?',
+    askUnlimited:
+      'Do you want the account to have an unlimited cashin allowance?',
+    askAllowance: 'Enter the cashin allowance for the account ',
+    askConfirmation: 'Do you want to proceed?',
     askRole: 'Select a role',
     accountHasRoleCashInUnlimited:
       'The account ${address} has the unlimited cash in role',

@@ -4,6 +4,8 @@ import Service from '../Service.js';
 import {
   GrantRoleRequest,
   RevokeRoleRequest,
+  GrantMultiRolesRequest,
+  RevokeMultiRolesRequest,
   HasRoleRequest,
   GetRolesRequest,
   Role,
@@ -115,6 +117,30 @@ export default class RoleStableCoinsService extends Service {
 
   public async revokeRoleStableCoin(req: RevokeRoleRequest): Promise<void> {
     await utilsService.showSpinner(Role.revokeRole(req), {
+      text: language.getText('state.loading'),
+      successText: language.getText('state.loadCompleted') + '\n',
+    });
+
+    console.log(language.getText('operation.success'));
+    utilsService.breakLine();
+  }
+
+  public async grantMultiRolesStableCoin(
+    req: GrantMultiRolesRequest,
+  ): Promise<void> {
+    await utilsService.showSpinner(Role.grantMultiRoles(req), {
+      text: language.getText('state.loading'),
+      successText: language.getText('state.loadCompleted') + '\n',
+    });
+
+    console.log(language.getText('operation.success'));
+    utilsService.breakLine();
+  }
+
+  public async revokeMultiRolesStableCoin(
+    req: RevokeMultiRolesRequest,
+  ): Promise<void> {
+    await utilsService.showSpinner(Role.revokeMultiRoles(req), {
       text: language.getText('state.loading'),
       successText: language.getText('state.loadCompleted') + '\n',
     });

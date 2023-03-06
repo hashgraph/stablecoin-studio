@@ -573,6 +573,26 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		);
 	}
 
+	public async grantRoles(
+		coin: StableCoinCapabilities,
+		targetsId: HederaId[],
+		roles: StableCoinRole[],
+		amounts: BigDecimal[],
+	): Promise<TransactionResponse> {
+		const params = new Params({
+			roles: roles,
+			targetsId: targetsId,
+			amounts: amounts,
+		});
+		return this.performOperation(
+			coin,
+			Operation.ROLE_MANAGEMENT,
+			'grantRoles',
+			4000000,
+			params,
+		);
+	}
+
 	public async grantUnlimitedSupplierRole(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
@@ -621,6 +641,24 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			Operation.ROLE_MANAGEMENT,
 			'revokeRole',
 			400000,
+			params,
+		);
+	}
+
+	public async revokeRoles(
+		coin: StableCoinCapabilities,
+		targetsId: HederaId[],
+		roles: StableCoinRole[],
+	): Promise<TransactionResponse> {
+		const params = new Params({
+			roles: roles,
+			targetsId: targetsId,
+		});
+		return this.performOperation(
+			coin,
+			Operation.ROLE_MANAGEMENT,
+			'revokeRoles',
+			4000000,
 			params,
 		);
 	}
@@ -901,15 +939,16 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 						return element !== undefined;
 				  });
 		for (let i = 0; i < filteredContractParams.length; i++) {
-			if (filteredContractParams[i] instanceof ContractId) {
-				filteredContractParams[i] = (
-					await this.contractToEvmAddress(filteredContractParams[i])
-				).toString();
-			} else if (filteredContractParams[i] instanceof HederaId) {
-				filteredContractParams[i] = (
-					await this.accountToEvmAddress(filteredContractParams[i])
-				).toString();
+			if (Array.isArray(filteredContractParams[i])) {
+				for (let j = 0; j < filteredContractParams[i].length; j++) {
+					filteredContractParams[i][j] = await this.getEVMAddress(
+						filteredContractParams[i][j],
+					);
+				}
 			}
+			filteredContractParams[i] = await this.getEVMAddress(
+				filteredContractParams[i],
+			);
 		}
 		return await this.contractCall(
 			contractAddress,
@@ -919,6 +958,15 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			transactionType,
 			contractAbi,
 		);
+	}
+
+	private async getEVMAddress(parameter: any): Promise<any> {
+		if (parameter instanceof ContractId) {
+			return (await this.contractToEvmAddress(parameter)).toString();
+		} else if (parameter instanceof HederaId) {
+			return (await this.accountToEvmAddress(parameter)).toString();
+		}
+		return parameter;
 	}
 
 	private async performHTSOperation(
@@ -1110,6 +1158,9 @@ class Params {
 	amount?: BigDecimal;
 	reserveAddress?: ContractId;
 	customFees?: HCustomFee[];
+	roles?: string[];
+	targetsId?: HederaId[];
+	amounts?: BigDecimal[];
 
 	constructor({
 		role,
@@ -1117,17 +1168,26 @@ class Params {
 		amount,
 		reserveAddress,
 		customFees,
+		roles,
+		targetsId,
+		amounts,
 	}: {
 		role?: string;
 		targetId?: HederaId;
 		amount?: BigDecimal;
 		reserveAddress?: ContractId;
 		customFees?: HCustomFee[];
+		roles?: string[];
+		targetsId?: HederaId[];
+		amounts?: BigDecimal[];
 	}) {
 		this.role = role;
 		this.targetId = targetId;
 		this.amount = amount;
 		this.reserveAddress = reserveAddress;
 		this.customFees = customFees;
+		this.roles = roles;
+		this.targetsId = targetsId;
+		this.amounts = amounts;
 	}
 }

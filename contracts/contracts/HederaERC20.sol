@@ -33,7 +33,8 @@ contract HederaERC20 is
     Freezable,
     Deletable,
     Rescatable,
-    KYC
+    KYC,
+    RoleManagement
 {
     // using SafeERC20Upgradeable for IHederaERC20Upgradeable;
 
