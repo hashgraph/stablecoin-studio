@@ -15,6 +15,7 @@ import {
 
 import Web3 from 'web3'
 import axios from 'axios'
+import { ADDRESS_0 } from './constants'
 
 
 const web3 = new Web3()
@@ -210,7 +211,7 @@ export async function toEvmAddress(
 export async function evmToHederaFormat(
     evmAddress:string
 ):Promise<string>{
-    if (evmAddress === '0x0000000000000000000000000000000000000000')
+    if (evmAddress === ADDRESS_0)
         return '0.0.0'
     const URI_BASE = `${getHederaNetworkMirrorNodeURL()}/api/v1/`
     const url = URI_BASE + 'accounts/' + evmAddress
