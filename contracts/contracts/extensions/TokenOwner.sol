@@ -10,7 +10,6 @@ import {
 import {
     Initializable
 } from '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
-// solhint-disable-next-line
 import {
     IERC20MetadataUpgradeable
 } from '@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol';
