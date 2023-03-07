@@ -32,4 +32,8 @@ export default class FreezeStableCoinService extends Service {
 
     utilsService.breakLine();
   }
+
+  public async isAccountFrozen(req: FreezeAccountRequest): Promise<boolean> {
+    return await StableCoin.isAccountFrozen(req);
+  }
 }

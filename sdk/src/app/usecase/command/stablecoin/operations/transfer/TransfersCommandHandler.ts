@@ -23,14 +23,23 @@ import { CommandBus } from '../../../../../../core/command/CommandBus.js';
 import { ICommandHandler } from '../../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
+import BaseError from '../../../../../../core/error/BaseError.js';
 import { QueryBus } from '../../../../../../core/query/QueryBus.js';
 import BigDecimal from '../../../../../../domain/context/shared/BigDecimal.js';
+import {
+	FreezeStatus,
+	KycStatus,
+} from '../../../../../../port/out/mirror/response/AccountTokenRelationViewModel.js';
 import AccountService from '../../../../../service/AccountService.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
+import { GetAccountTokenRelationshipQuery } from '../../../../query/account/tokenRelationship/GetAccountTokenRelationshipQuery.js';
 import { BalanceOfQuery } from '../../../../query/stablecoin/balanceof/BalanceOfQuery.js';
+import { AccountFreeze } from '../../error/AccountFreeze.js';
+import { AccountNotKyc } from '../../error/AccountNotKyc.js';
 import { DecimalsOverRange } from '../../error/DecimalsOverRange.js';
 import { OperationNotAllowed } from '../../error/OperationNotAllowed.js';
+import { StableCoinNotAssociated } from '../../error/StableCoinNotAssociated.js';
 import {
 	TransfersCommand,
 	TransfersCommandResponse,
@@ -59,6 +68,35 @@ export class TransfersCommandHandler
 		const { amounts, targetsIds, tokenId, targetId } = command;
 		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
+
+		const errors: BaseError[] = [];
+
+		for (let i = 0; i < targetsIds.length; i++) {
+			const tokenRelationship = (
+				await this.stableCoinService.queryBus.execute(
+					new GetAccountTokenRelationshipQuery(
+						targetsIds[i],
+						tokenId,
+					),
+				)
+			).payload;
+
+			if (!tokenRelationship) {
+				errors.push(
+					new StableCoinNotAssociated(
+						targetsIds[i].toString(),
+						tokenId.toString(),
+					),
+				);
+			} else if (tokenRelationship.freezeStatus === FreezeStatus.FROZEN) {
+				errors.push(new AccountFreeze(targetsIds[i].toString()));
+			} else if (tokenRelationship.kycStatus === KycStatus.REVOKED) {
+				errors.push(new AccountNotKyc(targetsIds[i].toString()));
+			}
+		}
+
+		if (errors.length > 0) throw errors;
+
 		const capabilities = await this.stableCoinService.getCapabilities(
 			account,
 			tokenId,
