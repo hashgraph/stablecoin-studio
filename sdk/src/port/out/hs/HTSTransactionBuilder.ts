@@ -19,15 +19,16 @@
  */
 
 import {
+	Key,
+	TokenId,
+	AccountId,
 	Transaction,
+	CustomFee as HCustomFee,
 	ContractExecuteTransaction,
 	TokenWipeTransaction,
 	TokenMintTransaction,
 	TokenBurnTransaction,
-	TokenId,
-	AccountId,
 	TransferTransaction,
-	AccountAllowanceApproveTransaction,
 	TokenPauseTransaction,
 	TokenUnpauseTransaction,
 	TokenDeleteTransaction,
@@ -36,8 +37,8 @@ import {
 	TokenAssociateTransaction,
 	TokenGrantKycTransaction,
 	TokenRevokeKycTransaction,
-	CustomFee as HCustomFee,
 	TokenFeeScheduleUpdateTransaction,
+	TokenUpdateTransaction,
 } from '@hashgraph/sdk';
 import Long from 'long';
 import LogService from '../../../app/service/LogService.js';
@@ -79,15 +80,6 @@ export class HTSTransactionBuilder {
 			LogService.logError(error);
 			throw new TransactionBuildingError(error);
 		}
-	}
-
-	public static approveTokenAllowance(): Transaction {
-		return new AccountAllowanceApproveTransaction().approveTokenAllowance(
-			'0.0.48705516',
-			'0.0.47624288',
-			'0.0.47793222',
-			100000000000000,
-		);
 	}
 
 	public static buildTokenMintTransaction(
@@ -308,6 +300,34 @@ export class HTSTransactionBuilder {
 				tokenId: tokenId,
 				customFees: customFees,
 			});
+		} catch (error) {
+			LogService.logError(error);
+			throw new TransactionBuildingError(error);
+		}
+	}
+
+	public static buildUpdateTokenTransaction(
+		tokenId: string,
+		kycKey: Key | undefined,
+		freezeKey: Key | undefined,
+		feeScheduleKey: Key | undefined,
+		pauseKey: Key | undefined,
+		wipeKey: Key | undefined,
+		supplyKey: Key | undefined,
+	): Transaction {
+		try {
+			const tokenUpdateTransaction: TokenUpdateTransaction =
+				new TokenUpdateTransaction({
+					tokenId: tokenId,
+				});
+			if (kycKey) tokenUpdateTransaction.setKycKey(kycKey);
+			if (freezeKey) tokenUpdateTransaction.setFreezeKey(freezeKey);
+			if (feeScheduleKey)
+				tokenUpdateTransaction.setFeeScheduleKey(feeScheduleKey);
+			if (pauseKey) tokenUpdateTransaction.setPauseKey(pauseKey);
+			if (wipeKey) tokenUpdateTransaction.setWipeKey(wipeKey);
+			if (supplyKey) tokenUpdateTransaction.setSupplyKey(supplyKey);
+			return tokenUpdateTransaction;
 		} catch (error) {
 			LogService.logError(error);
 			throw new TransactionBuildingError(error);

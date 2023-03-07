@@ -27,6 +27,7 @@ import {
 	PublicKey as HPublicKey,
 	ContractId as HContractId,
 	CustomFee as HCustomFee,
+	DelegateContractId,
 } from '@hashgraph/sdk';
 import TransactionAdapter from '../TransactionAdapter';
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
@@ -1121,6 +1122,48 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				);
 				break;
 
+			case Operation.UPDATE:
+				t = HTSTransactionBuilder.buildUpdateTokenTransaction(
+					coin.coin.tokenId?.value!,
+					params.kycKey
+						? params.kycKey.key == PublicKey.NULL.key
+							? DelegateContractId.fromString(params.kycKey.key)
+							: HPublicKey.fromString(params.kycKey.key)
+						: undefined,
+					params.freezeKey
+						? params.freezeKey.key == PublicKey.NULL.key
+							? DelegateContractId.fromString(
+									params.freezeKey.key,
+							  )
+							: HPublicKey.fromString(params.freezeKey.key)
+						: undefined,
+					params.feeScheduleKey
+						? params.feeScheduleKey.key == PublicKey.NULL.key
+							? DelegateContractId.fromString(
+									params.feeScheduleKey.key,
+							  )
+							: HPublicKey.fromString(params.feeScheduleKey.key)
+						: undefined,
+					params.pauseKey
+						? params.pauseKey.key == PublicKey.NULL.key
+							? DelegateContractId.fromString(params.pauseKey.key)
+							: HPublicKey.fromString(params.pauseKey.key)
+						: undefined,
+					params.wipeKey
+						? params.wipeKey.key == PublicKey.NULL.key
+							? DelegateContractId.fromString(params.wipeKey.key)
+							: HPublicKey.fromString(params.wipeKey.key)
+						: undefined,
+					params.supplyKey
+						? params.supplyKey.key == PublicKey.NULL.key
+							? DelegateContractId.fromString(
+									params.supplyKey.key,
+							  )
+							: HPublicKey.fromString(params.supplyKey.key)
+						: undefined,
+				);
+				break;
+
 			default:
 				throw new Error(`Operation does not exist through HTS`);
 		}
@@ -1196,6 +1239,12 @@ class Params {
 	roles?: string[];
 	targetsId?: HederaId[];
 	amounts?: BigDecimal[];
+	kycKey?: PublicKey;
+	freezeKey?: PublicKey;
+	feeScheduleKey?: PublicKey;
+	pauseKey?: PublicKey;
+	wipeKey?: PublicKey;
+	supplyKey?: PublicKey;
 
 	constructor({
 		role,
@@ -1206,6 +1255,12 @@ class Params {
 		roles,
 		targetsId,
 		amounts,
+		kycKey,
+		freezeKey,
+		feeScheduleKey,
+		pauseKey,
+		wipeKey,
+		supplyKey,
 	}: {
 		role?: string;
 		targetId?: HederaId;
@@ -1215,6 +1270,12 @@ class Params {
 		roles?: string[];
 		targetsId?: HederaId[];
 		amounts?: BigDecimal[];
+		kycKey?: PublicKey;
+		freezeKey?: PublicKey;
+		feeScheduleKey?: PublicKey;
+		pauseKey?: PublicKey;
+		wipeKey?: PublicKey;
+		supplyKey?: PublicKey;
 	}) {
 		this.role = role;
 		this.targetId = targetId;
@@ -1224,5 +1285,11 @@ class Params {
 		this.roles = roles;
 		this.targetsId = targetsId;
 		this.amounts = amounts;
+		this.kycKey = kycKey;
+		this.freezeKey = freezeKey;
+		this.feeScheduleKey = feeScheduleKey;
+		this.pauseKey = pauseKey;
+		this.wipeKey = wipeKey;
+		this.supplyKey = supplyKey;
 	}
 }
