@@ -34,10 +34,10 @@ import {
     toEvmAddress,
 } from './utils'
 
-const hederaERC20Address = '0.0.3621781'
-export const factoryProxyAddress = '0.0.3621788'
-const factoryProxyAdminAddress = '0.0.3621786'
-const factoryAddress = '0.0.3621784'
+const hederaERC20Address = '0.0.3668055'
+export const factoryProxyAddress = '0.0.3668070'
+const factoryProxyAdminAddress = '0.0.3668066'
+const factoryAddress = '0.0.3668062'
 
 export function initializeClients(): [
     Client,
@@ -453,7 +453,7 @@ export async function deployContractsWithSDK({
     ]
 }
 
-function tokenKeystoContract(addKyc = false) {
+export function tokenKeystoContract(addKyc = false) {
     const keys = [
         {
             keyType: 1, // admin
@@ -492,16 +492,15 @@ function tokenKeystoContract(addKyc = false) {
     return keys
 }
 
-function tokenKeystoKey(publicKey: string, isED25519: boolean) {
+export function tokenKeystoKey(
+    publicKey: string,
+    isED25519: boolean,
+    addKyc = true
+) {
     const PK = PublicKey.fromString(publicKey).toBytesRaw()
     const keys = [
         {
             keyType: 1, // admin
-            publicKey: PK,
-            isED25519: isED25519,
-        },
-        {
-            keyType: 2, // KYC
             publicKey: PK,
             isED25519: isED25519,
         },
@@ -526,6 +525,13 @@ function tokenKeystoKey(publicKey: string, isED25519: boolean) {
             isED25519: isED25519,
         },
     ]
+
+    if (addKyc)
+        keys.push({
+            keyType: 2, // KYC
+            publicKey: PK,
+            isED25519: isED25519,
+        })
 
     return keys
 }
