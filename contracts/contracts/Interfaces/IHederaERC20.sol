@@ -53,6 +53,17 @@ interface IHederaERC20 {
         uint256 amount
     );
 
+    /**
+     * @dev Emitted when token keys updated
+     *
+     * @param token Token address
+     * @param newTokenKeys Token keys
+     */
+    event TokenKeysUpdated(
+        address token,
+        IHederaTokenService.TokenKey[] newTokenKeys
+    );
+
     struct InitializeStruct {
         IHederaTokenService.HederaToken token;
         int64 initialTotalSupply;
@@ -160,4 +171,13 @@ interface IHederaERC20 {
         address to,
         uint256 amount
     ) external returns (bool);
+
+    /**
+     * @dev Update token keys
+     *
+     * @param keys The new addresses to set for the underlying token
+     */
+    function updateTokenKeys(
+        IHederaTokenService.TokenKey[] calldata keys
+    ) external;
 }

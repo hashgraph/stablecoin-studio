@@ -356,4 +356,22 @@ contract HederaERC20 is
 
         return success;
     }
+
+    /**
+     * @dev Update token keys
+     *
+     * @param keys The new addresses to set for the underlying token
+     */
+    function updateTokenKeys(
+        IHederaTokenService.TokenKey[] calldata keys
+    ) external override(IHederaERC20) onlyRole(_getRoleId(RoleName.ADMIN)) {
+        address currentTokenAddress = _getTokenAddress();
+
+        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
+            .updateTokenKeys(currentTokenAddress, keys);
+
+        _checkResponse(responseCode);
+
+        emit TokenKeysUpdated(currentTokenAddress, keys);
+    }
 }
