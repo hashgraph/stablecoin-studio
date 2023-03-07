@@ -80,7 +80,10 @@ import { GrantKycCommand } from '../../app/usecase/command/stablecoin/operations
 import { RevokeKycCommand } from '../../app/usecase/command/stablecoin/operations/revokeKyc/RevokeKycCommand.js';
 import { LogError } from '../../core/decorator/LogErrorDecorator.js';
 import { GetAccountTokenRelationshipQuery } from '../../app/usecase/query/account/tokenRelationship/GetAccountTokenRelationshipQuery.js';
-import { KycStatus } from '../out/mirror/response/AccountTokenRelationViewModel.js';
+import {
+	FreezeStatus,
+	KycStatus,
+} from '../out/mirror/response/AccountTokenRelationViewModel.js';
 import TransfersRequest from './request/TransfersRequest.js';
 import { TransfersCommand } from '../../app/usecase/command/stablecoin/operations/transfer/TransfersCommand.js';
 
@@ -112,6 +115,7 @@ interface IStableCoinInPort {
 	delete(request: DeleteRequest): Promise<boolean>;
 	freeze(request: FreezeAccountRequest): Promise<boolean>;
 	unFreeze(request: FreezeAccountRequest): Promise<boolean>;
+	isAccountFrozen(request: FreezeAccountRequest): Promise<boolean>;
 	isAccountAssociated(
 		request: IsAccountAssociatedTokenRequest,
 	): Promise<boolean>;
@@ -430,6 +434,23 @@ class StableCoinInPort implements IStableCoinInPort {
 				),
 			)
 		).payload;
+	}
+
+	@LogError
+	async isAccountFrozen(request: FreezeAccountRequest): Promise<boolean> {
+		const { tokenId, targetId } = request;
+		handleValidation('FreezeAccountRequest', request);
+
+		return (
+			(
+				await this.queryBus.execute(
+					new GetAccountTokenRelationshipQuery(
+						HederaId.from(targetId),
+						HederaId.from(tokenId),
+					),
+				)
+			).payload?.freezeStatus === FreezeStatus.FROZEN
+		);
 	}
 
 	@LogError

@@ -72,6 +72,7 @@ export default class OperationStableCoinService extends Service {
   private stableCoinDeleted;
   private hasKycKey;
   private hasfeeScheduleKey;
+  private isFrozen;
 
   constructor(tokenId?: string, memo?: string, symbol?: string) {
     super('Operation Stable Coin');
@@ -166,6 +167,15 @@ export default class OperationStableCoinService extends Service {
     this.hasKycKey = capabilitiesStableCoin.coin.kycKey !== undefined;
     this.hasfeeScheduleKey =
       capabilitiesStableCoin.coin.feeScheduleKey !== undefined;
+
+    const freezeAccountRequest = new FreezeAccountRequest({
+      tokenId: this.stableCoinId,
+      targetId: currentAccount.accountId,
+    });
+
+    this.isFrozen = await new FreezeStableCoinService().isAccountFrozen(
+      freezeAccountRequest,
+    );
 
     switch (
       await utilsService.defaultMultipleAsk(
@@ -643,6 +653,17 @@ export default class OperationStableCoinService extends Service {
         getAccountBalanceRequest,
       ),
     );
+
+    console.log(this.stableCoinSymbol + ' Balance: ' + balance.toString());
+
+    if (balance.eq(0)) {
+      await utilsService.defaultMultipleAsk(
+        language.getText('send.noTokens'),
+        [],
+        true,
+      );
+      return;
+    }
 
     const transfersRequest = new TransfersRequest({
       tokenId: this.stableCoinId,
@@ -1708,7 +1729,8 @@ export default class OperationStableCoinService extends Service {
       if (
         (option === language.getText('wizard.stableCoinOptions.Send') &&
           !this.stableCoinDeleted &&
-          !this.stableCoinPaused) ||
+          !this.stableCoinPaused &&
+          !this.isFrozen) ||
         (option === language.getText('wizard.stableCoinOptions.CashIn') &&
           capabilities.includes(Operation.CASH_IN)) ||
         (option === language.getText('wizard.stableCoinOptions.Burn') &&
