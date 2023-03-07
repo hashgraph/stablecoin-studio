@@ -878,6 +878,36 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		return this.performHTSOperation(coin, Operation.TRANSFERS, params!);
 	}
 
+	public async update(
+		coin: StableCoinCapabilities,
+		kycKey: PublicKey | undefined,
+		freezeKey: PublicKey | undefined,
+		feeScheduleKey: PublicKey | undefined,
+		pauseKey: PublicKey | undefined,
+		wipeKey: PublicKey | undefined,
+		supplyKey: PublicKey | undefined,
+	): Promise<TransactionResponse<any, Error>> {
+		const params = new Params({
+			kycKey: kycKey,
+			freezeKey: freezeKey,
+			feeScheduleKey: feeScheduleKey,
+			pauseKey: pauseKey,
+			wipeKey: wipeKey,
+			supplyKey: supplyKey,
+		});
+		if (!coin.coin.tokenId)
+			throw new Error(
+				`StableCoin ${coin.coin.name} does not have an underlying token`,
+			);
+		return this.performOperation(
+			coin,
+			Operation.UPDATE,
+			'updateToken',
+			120000,
+			params,
+		);
+	}
+
 	private async performOperation(
 		coin: StableCoinCapabilities,
 		operation: Operation,
