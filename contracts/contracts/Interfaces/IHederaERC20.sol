@@ -58,9 +58,14 @@ interface IHederaERC20 {
      * @dev Emitted when token keys updated
      *
      * @param token Token address
+     * @param token Token address
      * @param newTokenKeys Token keys
      */
-    event TokenKeysUpdated(address token, KeysLib.KeysStruct[] newTokenKeys);
+    event TokenKeysUpdated(
+        address token,
+        address newTreasury,
+        KeysLib.KeysStruct[] newTokenKeys
+    );
 
     struct InitializeStruct {
         IHederaTokenService.HederaToken token;

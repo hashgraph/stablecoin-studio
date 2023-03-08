@@ -38,6 +38,8 @@ contract HederaERC20 is
     KYC,
     RoleManagement
 {
+    uint256 private constant _SUPPLY_KEY_BIT = 4;
+
     // using SafeERC20Upgradeable for IHederaERC20Upgradeable;
 
     // Constructor required to avoid Initializer attack on logic contract
@@ -368,6 +370,8 @@ contract HederaERC20 is
     ) external override(IHederaERC20) onlyRole(_getRoleId(RoleName.ADMIN)) {
         address currentTokenAddress = _getTokenAddress();
 
+        address newTreasury = address(0);
+
         // Token Keys
         IHederaTokenService.TokenKey[]
             memory hederaKeys = new IHederaTokenService.TokenKey[](keys.length);
@@ -381,13 +385,23 @@ contract HederaERC20 is
                     keys[i].isED25519
                 )
             });
+            if (KeysLib.containsKey(_SUPPLY_KEY_BIT, hederaKeys[i].keyType)) {
+                if (hederaKeys[i].key.delegatableContractId == address(this))
+                    newTreasury = address(this);
+                else newTreasury = msg.sender;
+            }
         }
 
+        // Hedera Token Info
+        IHederaTokenService.HederaToken memory hederaTokenInfo;
+        hederaTokenInfo.tokenKeys = hederaKeys;
+        if (newTreasury != address(0)) hederaTokenInfo.treasury = newTreasury;
+
         int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
-            .updateTokenKeys(currentTokenAddress, hederaKeys);
+            .updateTokenInfo(currentTokenAddress, hederaTokenInfo);
 
         _checkResponse(responseCode);
 
-        emit TokenKeysUpdated(currentTokenAddress, keys);
+        emit TokenKeysUpdated(currentTokenAddress, newTreasury, keys);
     }
 }
