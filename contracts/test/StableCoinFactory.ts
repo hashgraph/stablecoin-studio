@@ -76,7 +76,7 @@ const INIT_SUPPLY = BigNumber.from(10).mul(TokenFactor)
 const MAX_SUPPLY = BigNumber.from(1000).mul(TokenFactor)
 const TokenMemo = 'Hedera Accelerator Stable Coin'
 
-describe.only('StableCoinFactory Tests', function () {
+describe('StableCoinFactory Tests', function () {
     before(async function () {
         // Generate Client 1 and Client 2
         const [
@@ -682,7 +682,7 @@ describe('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', functio
         await expect(
             changeAdmin_SCF(
                 proxyAddress,
-                operatorClient,
+                nonOperatorClient,
                 await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)
             )
         ).to.eventually.be.rejectedWith(Error)
