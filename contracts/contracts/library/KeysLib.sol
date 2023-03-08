@@ -28,4 +28,11 @@ library KeysLib {
 
         return key;
     }
+
+    function containsKey(
+        uint256 keyBitIndex,
+        uint256 keyType
+    ) internal pure returns (bool) {
+        return (bytes32(keyType) & bytes32(1 << keyBitIndex)) != 0;
+    }
 }
