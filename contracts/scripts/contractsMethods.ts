@@ -348,6 +348,23 @@ export async function transferFrom(
     return response[0]
 }
 
+export async function updateTokenKeys(
+    proxyAddress: ContractId,
+    keys: any,
+    client: Client
+): Promise<boolean> {
+    const params = [keys]
+    const response = await contractCall(
+        proxyAddress,
+        'updateTokenKeys',
+        params,
+        client,
+        Gas1,
+        HederaERC20__factory.abi
+    )
+    return response[0]
+}
+
 // HederaERC20Proxy ///////////////////////////////////////////////////
 export async function upgradeTo(
     proxyAbi: any,

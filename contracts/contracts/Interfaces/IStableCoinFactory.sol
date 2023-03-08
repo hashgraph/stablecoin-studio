@@ -2,6 +2,7 @@
 pragma solidity 0.8.16;
 
 import {IHederaERC20} from './IHederaERC20.sol';
+import {KeysLib} from '../library/KeysLib.sol';
 
 interface IStableCoinFactory {
     event Deployed(DeployedStableCoin);
@@ -15,16 +16,6 @@ interface IStableCoinFactory {
     event AdminChanged(address oldAdmin, address newAdmin);
 
     event HederaERC20AddressAdded(address newHederaERC20);
-
-    struct KeysStruct {
-        // Key id as defined for the Hedera Tokens
-        uint256 keyType;
-        // Public Key bytes of the EOA that will be assigned to the key Role
-        // If "0x" (empty bytes) the stable coin proxy will be selected
-        bytes publicKey;
-        // If the PublicKey is an EOA (not empty) indicates whether it is an ED25519 or ECDSA key
-        bool isED25519;
-    }
 
     struct TokenStruct {
         string tokenName;
@@ -40,7 +31,7 @@ interface IStableCoinFactory {
         int256 reserveInitialAmount;
         bool createReserve;
         bool grantKYCToOriginalSender;
-        KeysStruct[] keys;
+        KeysLib.KeysStruct[] keys;
         IHederaERC20.RolesStruct[] roles;
         IHederaERC20.CashinRoleStruct cashinRole;
     }

@@ -24,6 +24,7 @@ import {
 } from './extensions/TokenOwner.sol';
 import {KYC} from './extensions/KYC.sol';
 import {RoleManagement} from './extensions/RoleManagement.sol';
+import {KeysLib} from './library/KeysLib.sol';
 
 contract HederaERC20 is
     IHederaERC20,
@@ -363,12 +364,27 @@ contract HederaERC20 is
      * @param keys The new addresses to set for the underlying token
      */
     function updateTokenKeys(
-        IHederaTokenService.TokenKey[] calldata keys
+        KeysLib.KeysStruct[] calldata keys
     ) external override(IHederaERC20) onlyRole(_getRoleId(RoleName.ADMIN)) {
         address currentTokenAddress = _getTokenAddress();
 
+        // Token Keys
+        IHederaTokenService.TokenKey[]
+            memory hederaKeys = new IHederaTokenService.TokenKey[](keys.length);
+
+        for (uint256 i = 0; i < keys.length; i++) {
+            hederaKeys[i] = IHederaTokenService.TokenKey({
+                keyType: keys[i].keyType,
+                key: KeysLib.generateKey(
+                    keys[i].publicKey,
+                    address(this),
+                    keys[i].isED25519
+                )
+            });
+        }
+
         int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
-            .updateTokenKeys(currentTokenAddress, keys);
+            .updateTokenKeys(currentTokenAddress, hederaKeys);
 
         _checkResponse(responseCode);
 
