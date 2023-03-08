@@ -37,6 +37,9 @@ import FeesManagement from '../views/FeesManagement';
 import GrantKycOperation from '../views/Operations/GrantKyc';
 import RevokeKycOperation from '../views/Operations/RevokeKyc';
 import CheckKycOperation from '../views/Operations/CheckKyc';
+import GrantRoleOperation from '../views/Roles/GrantRoles';
+import RevokeRoleOperation from '../views/Roles/RevokeRoles';
+import ManageCashIn from '../views/Roles/ManageCashIn';
 
 const LoginOverlayRoute = ({ show }: { show: boolean }) => {
 	return (
@@ -142,23 +145,14 @@ const Router = () => {
 								<Route path={RoutesMappingUrl.freeze} element={<FreezeOperation />} />
 								<Route path={RoutesMappingUrl.unfreeze} element={<UnfreezeOperation />} />
 								<Route path={RoutesMappingUrl.dashboard} element={<Dashboard />} />
-								<Route
-									path={RoutesMappingUrl.editRole}
-									element={<HandleRoles action={actions.edit} />}
-								/>
-								<Route
-									path={RoutesMappingUrl.giveRole}
-									element={<HandleRoles action={actions.give} />}
-								/>
+								<Route path={RoutesMappingUrl.editRole} element={<ManageCashIn />} />
+								<Route path={RoutesMappingUrl.giveRole} element={<GrantRoleOperation />} />
 								<Route path={RoutesMappingUrl.operations} element={<Operations />} />
 								<Route path={RoutesMappingUrl.dangerZone} element={<DangerZoneOperations />} />
 								<Route path={RoutesMappingUrl.grantKyc} element={<GrantKycOperation />} />
 								<Route path={RoutesMappingUrl.revokeKyc} element={<RevokeKycOperation />} />
 								<Route path={RoutesMappingUrl.checkKyc} element={<CheckKycOperation />} />
-								<Route
-									path={RoutesMappingUrl.revokeRole}
-									element={<HandleRoles action={actions.revoke} />}
-								/>
+								<Route path={RoutesMappingUrl.revokeRole} element={<RevokeRoleOperation />} />
 								<Route
 									path={RoutesMappingUrl.refreshRoles}
 									element={<HandleRoles action={actions.refresh} />}

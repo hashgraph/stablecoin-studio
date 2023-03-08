@@ -12,9 +12,10 @@ import {
 	SELECTED_WALLET_COIN,
 } from '../../store/slices/walletSlice';
 import { useEffect, useState } from 'react';
-import type { IAccountToken } from '../../interfaces/IAccountToken.js';
-import type { IExternalToken } from '../../interfaces/IExternalToken.js';
-import { Operation, StableCoinRole } from 'hedera-stable-coin-sdk';
+import type { IAccountToken } from '../../interfaces/IAccountToken';
+import type { IExternalToken } from '../../interfaces/IExternalToken';
+import { GetRolesRequest, Operation, StableCoinRole } from 'hedera-stable-coin-sdk';
+import SDKService from '../../services/SDKService';
 
 const Roles = () => {
 	const capabilities = useSelector(SELECTED_WALLET_CAPABILITIES);
@@ -75,6 +76,26 @@ const Roles = () => {
 	});
 
 	const { t } = useTranslation('roles');
+	// Add to action handler
+	const refreshRoles = async () => {
+		if (coinSelected && coinSelected?.tokenId) {
+			const tokensAccount = JSON.parse(localStorage.tokensAccount);
+			const myAccount = tokensAccount.find((acc: IAccountToken) => acc.id === accountId?.value);
+			const externalTokens = myAccount.externalTokens;
+			const externalToken = externalTokens.find(
+				(coin: IExternalToken) => coin.id === coinSelected.tokenId?.toString(),
+			);
+
+			externalToken.roles = await SDKService.getRoles(
+				new GetRolesRequest({
+					targetId: accountId!.toString(),
+					tokenId: coinSelected.tokenId.toString(),
+				}),
+			);
+
+			localStorage.setItem('tokensAccount', JSON.stringify(tokensAccount));
+		}
+	};
 
 	const directAccesses = [
 		{

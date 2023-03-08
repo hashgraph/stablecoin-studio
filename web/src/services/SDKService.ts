@@ -23,12 +23,10 @@ import type {
 	GetListStableCoinRequest,
 	GetRolesRequest,
 	GetStableCoinDetailsRequest,
-	GrantRoleRequest,
 	HasRoleRequest,
 	InitializationData,
 	PauseRequest,
 	RescueRequest,
-	RevokeRoleRequest,
 	StableCoinListViewModel,
 	StableCoinViewModel,
 	StableCoinCapabilities,
@@ -49,6 +47,8 @@ import type {
 	AddFractionalFeeRequest,
 	UpdateCustomFeesRequest,
 	GetERC20ListRequest,
+	RevokeMultiRolesRequest,
+	GrantMultiRolesRequest,
 } from 'hedera-stable-coin-sdk';
 
 export type StableCoinListRaw = Array<Record<'id' | 'symbol', string>>;
@@ -191,12 +191,12 @@ export class SDKService {
 		return await Role.getAllowance(req);
 	}
 
-	public static async grantRole(req: GrantRoleRequest) {
-		return await Role.grantRole(req);
+	public static async grantMultipleRole(req: GrantMultiRolesRequest) {
+		return await Role.grantMultiRoles(req);
 	}
 
-	public static async revokeRole(req: RevokeRoleRequest) {
-		return await Role.revokeRole(req);
+	public static async revokeMultiRolesRequest(req: RevokeMultiRolesRequest) {
+		return await Role.revokeMultiRoles(req);
 	}
 
 	public static async hasRole(req: HasRoleRequest) {
