@@ -609,7 +609,39 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		);
 	}, 20000);
 
-	it('Test update token keys', async () => {
+	it('Test update token keys through Smart Contract', async () => {
+		tr = await th.update(
+			stableCoinCapabilitiesSC,
+			undefined,
+			CLIENT_ACCOUNT_ED25519.publicKey,
+			undefined,
+			CLIENT_ACCOUNT_ED25519.publicKey,
+			CLIENT_ACCOUNT_ED25519.publicKey,
+			CLIENT_ACCOUNT_ED25519.publicKey,
+		);
+		const mirrorNodeAdapter: MirrorNodeAdapter = th.getMirrorNodeAdapter();
+		await delay(5);
+		const stableCoinViewModel: StableCoinViewModel =
+			await mirrorNodeAdapter.getStableCoin(
+				stableCoinCapabilitiesSC.coin.tokenId!,
+			);
+		expect(stableCoinViewModel.kycKey).toBeUndefined();
+		expect(stableCoinViewModel.freezeKey).toEqual(
+			CLIENT_ACCOUNT_ED25519.publicKey,
+		);
+		expect(stableCoinViewModel.feeScheduleKey).toBeUndefined();
+		expect(stableCoinViewModel.pauseKey).toEqual(
+			CLIENT_ACCOUNT_ED25519.publicKey,
+		);
+		expect(stableCoinViewModel.wipeKey).toEqual(
+			CLIENT_ACCOUNT_ED25519.publicKey,
+		);
+		expect(stableCoinViewModel.supplyKey).toEqual(
+			CLIENT_ACCOUNT_ED25519.publicKey,
+		);
+	}, 20000);
+
+	it('Test update token keys through HTS', async () => {
 		tr = await th.update(
 			stableCoinCapabilitiesHTS,
 			undefined,
@@ -1141,7 +1173,47 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 		);
 	}, 1200000000);
 
-	it('Test update token keys', async () => {
+	it('Test update token keys through Smart Contract', async () => {
+		tr = await th.hasRole(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
+			StableCoinRole.DEFAULT_ADMIN_ROLE,
+		);
+
+		expect(tr.response).toEqual(true);
+
+		tr = await th.update(
+			stableCoinCapabilitiesSC,
+			undefined,
+			CLIENT_ACCOUNT_ECDSA.publicKey,
+			undefined,
+			CLIENT_ACCOUNT_ECDSA.publicKey,
+			CLIENT_ACCOUNT_ECDSA.publicKey,
+			CLIENT_ACCOUNT_ECDSA.publicKey,
+		);
+		const mirrorNodeAdapter: MirrorNodeAdapter = th.getMirrorNodeAdapter();
+		await delay(5);
+		const stableCoinViewModel: StableCoinViewModel =
+			await mirrorNodeAdapter.getStableCoin(
+				stableCoinCapabilitiesSC.coin.tokenId!,
+			);
+		expect(stableCoinViewModel.kycKey).toBeUndefined();
+		expect(stableCoinViewModel.freezeKey?.toString).toEqual(
+			CLIENT_ACCOUNT_ECDSA.publicKey?.toString,
+		);
+		expect(stableCoinViewModel.feeScheduleKey).toBeUndefined();
+		expect(stableCoinViewModel.pauseKey?.toString).toEqual(
+			CLIENT_ACCOUNT_ECDSA.publicKey?.toString,
+		);
+		expect(stableCoinViewModel.wipeKey?.toString).toEqual(
+			CLIENT_ACCOUNT_ECDSA.publicKey?.toString,
+		);
+		expect(stableCoinViewModel.supplyKey?.toString).toEqual(
+			CLIENT_ACCOUNT_ECDSA.publicKey?.toString,
+		);
+	}, 20000);
+
+	it('Test update token keys through HTS', async () => {
 		tr = await th.update(
 			stableCoinCapabilitiesHTS,
 			undefined,

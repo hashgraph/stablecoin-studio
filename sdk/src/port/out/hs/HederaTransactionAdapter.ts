@@ -69,6 +69,56 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		super();
 	}
 
+	private setKeysForSmartContract(providedKeys: any[]): FactoryKey[] {
+		const keys: FactoryKey[] = [];
+
+		providedKeys.forEach((providedKey, index) => {
+			if (providedKey) {
+				const key = new FactoryKey();
+				switch (index) {
+					case 0: {
+						key.keyType = 1; // admin
+						break;
+					}
+					case 1: {
+						key.keyType = 2; // kyc
+						break;
+					}
+					case 2: {
+						key.keyType = 4; // freeze
+						break;
+					}
+					case 3: {
+						key.keyType = 8; // wipe
+						break;
+					}
+					case 4: {
+						key.keyType = 16; // supply
+						break;
+					}
+					case 5: {
+						key.keyType = 32; // fee schedule
+						break;
+					}
+					case 6: {
+						key.keyType = 64; // pause
+						break;
+					}
+				}
+				const providedKeyCasted = providedKey as PublicKey;
+				key.publicKey =
+					providedKeyCasted.key == PublicKey.NULL.key
+						? '0x'
+						: HPublicKey.fromString(
+								providedKeyCasted.key,
+						  ).toBytesRaw();
+				key.isED25519 = providedKeyCasted.type === 'ED25519';
+				keys.push(key);
+			}
+		});
+		return keys;
+	}
+
 	public async create(
 		coin: StableCoinProps,
 		factory: ContractId,
@@ -78,8 +128,6 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		reserveInitialAmount?: BigDecimal,
 	): Promise<TransactionResponse<any, Error>> {
 		try {
-			const keys: FactoryKey[] = [];
-
 			const cashinRole: FactoryCashinRole = {
 				account:
 					coin.cashInRoleAccount == undefined ||
@@ -105,50 +153,8 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				coin.pauseKey,
 			];
 
-			providedKeys.forEach((providedKey, index) => {
-				if (providedKey) {
-					const key = new FactoryKey();
-					switch (index) {
-						case 0: {
-							key.keyType = 1; // admin
-							break;
-						}
-						case 1: {
-							key.keyType = 2; // kyc
-							break;
-						}
-						case 2: {
-							key.keyType = 4; // freeze
-							break;
-						}
-						case 3: {
-							key.keyType = 8; // wipe
-							break;
-						}
-						case 4: {
-							key.keyType = 16; // supply
-							break;
-						}
-						case 5: {
-							key.keyType = 32; // fee schedule
-							break;
-						}
-						case 6: {
-							key.keyType = 64; // pause
-							break;
-						}
-					}
-					const providedKeyCasted = providedKey as PublicKey;
-					key.publicKey =
-						providedKeyCasted.key == PublicKey.NULL.key
-							? '0x'
-							: HPublicKey.fromString(
-									providedKeyCasted.key,
-							  ).toBytesRaw();
-					key.isED25519 = providedKeyCasted.type === 'ED25519';
-					keys.push(key);
-				}
-			});
+			const keys: FactoryKey[] =
+				this.setKeysForSmartContract(providedKeys);
 
 			const providedRoles = [
 				{
@@ -242,7 +248,6 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 						hederaERC20.value,
 					).toSolidityAddress(),
 			];
-
 			return await this.contractCall(
 				factory.value,
 				'deployStableCoin',
@@ -902,8 +907,8 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		return this.performOperation(
 			coin,
 			Operation.UPDATE,
-			'updateToken',
-			120000,
+			'updateTokenKeys',
+			15000000,
 			params,
 		);
 	}
@@ -981,23 +986,47 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		transactionType: TransactionType = TransactionType.RECEIPT,
 		contractAbi: any = HederaERC20__factory.abi,
 	): Promise<TransactionResponse> {
-		const filteredContractParams: any[] =
-			params === undefined || params === null
-				? []
-				: Object.values(params!).filter((element) => {
-						return element !== undefined;
-				  });
-		for (let i = 0; i < filteredContractParams.length; i++) {
-			if (Array.isArray(filteredContractParams[i])) {
-				for (let j = 0; j < filteredContractParams[i].length; j++) {
-					filteredContractParams[i][j] = await this.getEVMAddress(
-						filteredContractParams[i][j],
+		let filteredContractParams: any[] = [];
+
+		switch (operationName) {
+			case 'updateTokenKeys':
+				const providedKeys = [
+					undefined,
+					params?.kycKey,
+					params?.freezeKey,
+					params?.wipeKey,
+					params?.supplyKey,
+					params?.feeScheduleKey,
+					params?.pauseKey,
+				];
+				filteredContractParams[0] =
+					this.setKeysForSmartContract(providedKeys);
+				break;
+
+			default:
+				filteredContractParams =
+					params === undefined || params === null
+						? []
+						: Object.values(params!).filter((element) => {
+								return element !== undefined;
+						  });
+				for (let i = 0; i < filteredContractParams.length; i++) {
+					if (Array.isArray(filteredContractParams[i])) {
+						for (
+							let j = 0;
+							j < filteredContractParams[i].length;
+							j++
+						) {
+							filteredContractParams[i][j] =
+								await this.getEVMAddress(
+									filteredContractParams[i][j],
+								);
+						}
+					}
+					filteredContractParams[i] = await this.getEVMAddress(
+						filteredContractParams[i],
 					);
 				}
-			}
-			filteredContractParams[i] = await this.getEVMAddress(
-				filteredContractParams[i],
-			);
 		}
 		return await this.contractCall(
 			contractAddress,
