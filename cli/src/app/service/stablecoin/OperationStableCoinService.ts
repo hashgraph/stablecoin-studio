@@ -169,7 +169,7 @@ export default class OperationStableCoinService extends Service {
       capabilitiesStableCoin.coin.feeScheduleKey !== undefined;
 
     const freezeAccountRequest = new FreezeAccountRequest({
-      tokenId: this.stableCoinId,
+      tokenId: capabilitiesStableCoin.coin.tokenId.toString(),
       targetId: currentAccount.accountId,
     });
 
@@ -1776,6 +1776,7 @@ export default class OperationStableCoinService extends Service {
     result = roles
       ? capabilitiesFilter.filter((option) => {
           if (
+            option === language.getText('wizard.stableCoinOptions.Send') ||
             (option === language.getText('wizard.stableCoinOptions.CashIn') &&
               roles.includes(StableCoinRole.CASHIN_ROLE)) ||
             (option === language.getText('wizard.stableCoinOptions.CashIn') &&
