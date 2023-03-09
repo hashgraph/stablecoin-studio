@@ -48,7 +48,6 @@ const RevokeRoleOperation = ({
 	const handleRevokeRoles: ModalsHandlerActionsProps['onConfirm'] = async ({
 		onSuccess,
 		onError,
-		onWarning,
 		onLoading,
 	}) => {
 		onLoading();

@@ -1,7 +1,6 @@
 import {
 	Text,
 	Heading,
-	Stack,
 	CheckboxGroup,
 	Grid,
 	useDisclosure,
@@ -15,18 +14,19 @@ import React, { useMemo, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import BaseContainer from '../../components/BaseContainer';
 import type { Detail } from '../../components/DetailsReview';
 import DetailsReview from '../../components/DetailsReview';
 import { CheckboxController } from '../../components/Form/CheckboxController';
 import InputController from '../../components/Form/InputController';
 import SwitchController from '../../components/Form/SwitchController';
+import Icon from '../../components/Icon';
 import type { ModalsHandlerActionsProps } from '../../components/ModalsHandler';
 import ModalsHandler from '../../components/ModalsHandler';
 import { propertyNotFound } from '../../constant';
 import { SDKService } from '../../services/SDKService';
 import { SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
 import { handleRequestValidation, validateDecimalsString } from '../../utils/validationsHelper';
+import OperationLayout from '../Operations/OperationLayout';
 
 interface GrantRoleForm {
 	accountId: string;
@@ -46,11 +46,11 @@ const GrantRoleOperation = ({
 		onClose: onCloseModalAction,
 	} = useDisclosure();
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
-	const { control, watch, getValues } = useForm({ mode: 'onChange' });
+	const { control, watch, getValues, formState } = useForm({ mode: 'onChange' });
 	const {
 		fields: accounts,
 		append,
-		// remove,
+		remove,
 	} = useFieldArray({
 		control,
 		name: 'rol',
@@ -135,26 +135,40 @@ const GrantRoleOperation = ({
 		setGrantRoles(currentGrantRole);
 		append({ accountId: '', amount: '', infinity: true });
 	};
+	const removeAccount = (i: number) => {
+		if (accounts.length === 1) return;
+		const currentRoleRequest = grantRoles;
+		currentRoleRequest.splice(i, 1);
+		setGrantRoles(currentRoleRequest);
+		remove(i);
+	};
+
 	const renderSupplierQuantity = (index: number) => {
 		const { decimals = 0 } = selectedStableCoin || {};
 		return (
 			<>
 				<Box>
-					<HStack>
+					{/* <HStack>
 						<Text>{t(`roles:giveRole.supplierQuantityQuestion`)}</Text>
-					</HStack>
-					<HStack mt='20px'>
+					</HStack> */}
+					<HStack ml='16px' mt='24px'>
 						<Text mr='10px'>{t(`roles:giveRole.switchLabel`)}</Text>
 						<SwitchController control={control} name={`rol.${index}.infinity` as const} />
 					</HStack>
 				</Box>
 				{!watch(`rol.${index}.infinity`) && (
-					<Box mt='20px'>
+					<Box ml='16px'>
 						<InputController
 							data-testid='input-supplier-quantity'
 							rules={{
 								required: t(`global:validations.required`) ?? propertyNotFound,
 								validate: {
+									validDecimals: (value: string) => {
+										return (
+											validateDecimalsString(value, decimals) ||
+											(t('global:validations.decimalsValidation') ?? propertyNotFound)
+										);
+									},
 									validation: (value: string) => {
 										const _grantRole = grantRoles[index];
 										_grantRole.amount = value;
@@ -163,6 +177,7 @@ const GrantRoleOperation = ({
 									},
 								},
 							}}
+							label={t(`roles:giveRole.amountLabel`).toString()}
 							isRequired
 							control={control}
 							name={`rol.${index}.amount` as const}
@@ -173,23 +188,23 @@ const GrantRoleOperation = ({
 			</>
 		);
 	};
-
+	const isRoleSelected = (): boolean => {
+		// TODO: Check if one checkbox is selected
+		return false;
+	};
 	return (
 		<>
-			<BaseContainer title={t('roles:giveRole.title')}>
-				<Flex
-					direction='column'
-					bg='brand.gray100'
-					px={{ base: 4, lg: 14 }}
-					pt={{ base: 4, lg: 14 }}
-					pb={6}
-				>
-					<Stack as='form' spacing={6}>
+			<OperationLayout
+				LeftContent={
+					<>
 						<Heading data-testid='title' fontSize='24px' fontWeight='700' mb={10} lineHeight='16px'>
-							{t('roles:giveRole.titleRoleSection')}
+							{t('roles:giveRole.title')}
 						</Heading>
+						<Text color='brand.gray' fontSize='24px'>
+							{t(`roles:giveRole.titleRoleSection`)}
+						</Text>
 						<CheckboxGroup>
-							<Grid column='6' gap={{ base: 4 }} templateColumns='repeat(6, 1fr)'>
+							<Grid column='4' gap={{ base: 4 }} templateColumns='repeat(4, 1fr)'>
 								{filteredCapabilities.map((item, index) => {
 									return (
 										<CheckboxController
@@ -204,55 +219,65 @@ const GrantRoleOperation = ({
 								})}
 							</Grid>
 						</CheckboxGroup>
+						<Text color='brand.gray' fontSize='24px'>
+							{t(`roles:giveRole.titleAccountSection`)}
+						</Text>
 						{accounts &&
 							accounts.map((item, i) => {
 								return (
 									<React.Fragment key={i}>
-										<Flex>
-											<InputController
-												key={i}
-												rules={{
-													required: t('global:validations.required') ?? propertyNotFound,
-													validate: {
-														validation: (value: string) => {
-															const _grantRole = grantRoles[i];
-															_grantRole.targetId = value;
-															const res = handleRequestValidation(_grantRole.validate('targetId'));
-															return res;
+										<Flex alignItems="flex-start">
+											<Flex>
+												<InputController
+													key={i}
+													rules={{
+														required: t('global:validations.required') ?? propertyNotFound,
+														validate: {
+															validation: (value: string) => {
+																const _grantRole = grantRoles[i];
+																_grantRole.targetId = value;
+																const res = handleRequestValidation(
+																	_grantRole.validate('targetId'),
+																);
+																return res;
+															},
 														},
-													},
-												}}
-												style={{
-													width: '150px', // Arreglar tamaños
-												}}
-												isRequired
-												control={control}
-												name={`rol.${i}.accountId` as const}
-												label={t(`roles:giveRole.accountLabel`).toString()}
-												placeholder={t(`roles:giveRole.accountPlaceholder`).toString()}
-											/>
+													}}
+													// TODO: Fix tamaño más pequeño para evitar que cuando no sea infinity supply no haga salto raro
+													isRequired
+													control={control}
+													name={`rol.${i}.accountId` as const}
+													label={t(`roles:giveRole.accountLabel`).toString()}
+													placeholder={t(`roles:giveRole.accountPlaceholder`).toString()}
+												/>
+											</Flex>
 											{watch('cash in') && renderSupplierQuantity(i)}
+											<Icon
+												name='Trash'
+												color='brand.primary'
+												cursor='pointer'
+												fontSize='22px'
+												onClick={() => removeAccount(i)}
+												// alignSelf='flex-end'
+												marginLeft={{ base: 4 }}
+												// marginBottom='10px'
+												marginTop='40px'
+											/>
 										</Flex>
 									</React.Fragment>
 								);
 							})}
-					</Stack>
-					<Flex
-						justify='flex-end'
-						pt={6}
-						pb={6}
-						justifyContent='space-between'
-						px={{ base: 4, lg: 14 }}
-					>
-						<Button variant='primary' onClick={addNewAccount} isDisabled={isMaxAccounts}>
-							Añadir cuenta
-						</Button>
-						<Button variant='primary' onClick={onOpenModalAction}>
-							Guardar cambios
-						</Button>
-					</Flex>
-				</Flex>
-			</BaseContainer>
+
+						<Flex justify='flex-end' pt={6} pb={6} justifyContent='space-between'>
+							<Button variant='primary' onClick={addNewAccount} isDisabled={isMaxAccounts}>
+								{t(`roles:revokeRole.buttonAddAccount`)}
+							</Button>
+						</Flex>
+					</>
+				}
+				onConfirm={onOpenModalAction}
+				confirmBtnProps={{ isDisabled: !formState.isValid && !isRoleSelected() }}
+			/>
 
 			<ModalsHandler
 				errorNotificationTitle={t(`roles:giveRole.modalErrorTitle`)}
