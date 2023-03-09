@@ -101,8 +101,7 @@ export const english = {
       'You will be the admin for the keys that you have assigned to the Smart Contract, do you want to change the admin for one of these features?',
     askKYC: 'Do you want to enable KYC?',
     askCustomFees: 'Do you want to add custom fees?',
-    askHederaERC20Predeployed:
-      'Do you want to use one of the predeployed HederaERC20 implementations?',
+    askHederaERC20Other: 'Other',
     askHederaERC20Version:
       'Choose the HederaERC20 implementation you want to use',
     askHederaERC20Implementation:
