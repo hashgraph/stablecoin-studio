@@ -49,8 +49,10 @@ export const english = {
     askNetwork: 'Select the default network',
     askNotDefaultNetwork:
       'Your option is not one of the default networks, do you want to create a new network? (y/n)',
+    AccountsConfigurationMessage: 'You will now configure your accounts:',
     askAccountId: 'Enter the account id',
-    askConfigurateFactories: 'Do you want to config your factories?',
+    askConfigurateFactories:
+      'Do you want to config your factories? Check the documentation for more information : https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/cli#create-a-new-stable-coin',
     askNetworkAccount: 'Which network does this account belong to?',
     askPrivateKeyType: 'Which type of private key will the account use?',
     askAlias: 'Enter an alias for this account',
