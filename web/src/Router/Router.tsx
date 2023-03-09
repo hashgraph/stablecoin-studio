@@ -145,14 +145,23 @@ const Router = () => {
 								<Route path={RoutesMappingUrl.freeze} element={<FreezeOperation />} />
 								<Route path={RoutesMappingUrl.unfreeze} element={<UnfreezeOperation />} />
 								<Route path={RoutesMappingUrl.dashboard} element={<Dashboard />} />
-								<Route path={RoutesMappingUrl.editRole} element={<ManageCashIn />} />
-								<Route path={RoutesMappingUrl.giveRole} element={<GrantRoleOperation />} />
+								<Route
+									path={RoutesMappingUrl.editRole}
+									element={<HandleRoles action='editRole' />}
+								/>
+								<Route
+									path={RoutesMappingUrl.giveRole}
+									element={<HandleRoles action='giveRole' />}
+								/>
 								<Route path={RoutesMappingUrl.operations} element={<Operations />} />
 								<Route path={RoutesMappingUrl.dangerZone} element={<DangerZoneOperations />} />
 								<Route path={RoutesMappingUrl.grantKyc} element={<GrantKycOperation />} />
 								<Route path={RoutesMappingUrl.revokeKyc} element={<RevokeKycOperation />} />
 								<Route path={RoutesMappingUrl.checkKyc} element={<CheckKycOperation />} />
-								<Route path={RoutesMappingUrl.revokeRole} element={<RevokeRoleOperation />} />
+								<Route
+									path={RoutesMappingUrl.revokeRole}
+									element={<HandleRoles action='revokeRole' />}
+								/>
 								<Route
 									path={RoutesMappingUrl.refreshRoles}
 									element={<HandleRoles action={actions.refresh} />}

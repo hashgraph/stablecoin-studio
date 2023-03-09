@@ -10,7 +10,7 @@ import {
 	Box,
 	HStack,
 } from '@chakra-ui/react';
-import { Access, GrantMultiRolesRequest, Operation, StableCoinRole } from 'hedera-stable-coin-sdk';
+import { GrantRoleRequest, GrantMultiRolesRequest, StableCoinRole } from 'hedera-stable-coin-sdk';
 import React, { useMemo, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -25,9 +25,8 @@ import type { ModalsHandlerActionsProps } from '../../components/ModalsHandler';
 import ModalsHandler from '../../components/ModalsHandler';
 import { propertyNotFound } from '../../constant';
 import { SDKService } from '../../services/SDKService';
-import { SELECTED_WALLET_CAPABILITIES, SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
-import { validateDecimalsString } from '../../utils/validationsHelper';
-import { roleOptions } from './constants';
+import { SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
+import { handleRequestValidation, validateDecimalsString } from '../../utils/validationsHelper';
 
 interface GrantRoleForm {
 	accountId: string;
@@ -35,7 +34,11 @@ interface GrantRoleForm {
 	infinity?: boolean;
 }
 
-const GrantRoleOperation = () => {
+const GrantRoleOperation = ({
+	filteredCapabilities,
+}: {
+	filteredCapabilities: { id: string; value: StableCoinRole; label: string }[];
+}) => {
 	const { t } = useTranslation(['global', 'roles', 'stableCoinCreation', 'externalTokenInfo']);
 	const {
 		isOpen: isOpenModalAction,
@@ -43,7 +46,6 @@ const GrantRoleOperation = () => {
 		onClose: onCloseModalAction,
 	} = useDisclosure();
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
-	const capabilities = useSelector(SELECTED_WALLET_CAPABILITIES);
 	const { control, watch, getValues } = useForm({ mode: 'onChange' });
 	const {
 		fields: accounts,
@@ -55,106 +57,8 @@ const GrantRoleOperation = () => {
 	});
 	const isMaxAccounts = useMemo(() => accounts.length >= 10, [accounts]);
 	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
-	const operations = capabilities?.capabilities.map((x) => x.operation);
-	const filteredCapabilities = roleOptions
-		.filter((option) => {
-			if (
-				!(
-					operations?.includes(Operation.CASH_IN) &&
-					getAccessByOperation(Operation.CASH_IN) === Access.CONTRACT
-				) &&
-				option.label === 'Cash in'
-			) {
-				return false;
-			}
-			if (
-				!(
-					operations?.includes(Operation.BURN) &&
-					getAccessByOperation(Operation.BURN) === Access.CONTRACT
-				) &&
-				option.label === 'Burn'
-			) {
-				return false;
-			}
-			if (
-				!(
-					operations?.includes(Operation.WIPE) &&
-					getAccessByOperation(Operation.WIPE) === Access.CONTRACT
-				) &&
-				option.label === 'Wipe'
-			) {
-				return false;
-			}
-			if (
-				!(
-					operations?.includes(Operation.PAUSE) &&
-					getAccessByOperation(Operation.PAUSE) === Access.CONTRACT
-				) &&
-				option.label === 'Pause'
-			) {
-				return false;
-			}
-			if (
-				!(
-					operations?.includes(Operation.RESCUE) &&
-					getAccessByOperation(Operation.RESCUE) === Access.CONTRACT
-				) &&
-				option.label === 'Rescue'
-			) {
-				return false;
-			}
-			if (
-				!(
-					operations?.includes(Operation.FREEZE) &&
-					getAccessByOperation(Operation.FREEZE) === Access.CONTRACT
-				) &&
-				option.label === 'Freeze'
-			) {
-				return false;
-			}
-			if (
-				!(
-					operations?.includes(Operation.DELETE) &&
-					getAccessByOperation(Operation.DELETE) === Access.CONTRACT
-				) &&
-				option.label === 'Delete'
-			) {
-				return false;
-			}
-			if (
-				!(
-					operations?.includes(Operation.GRANT_KYC) &&
-					getAccessByOperation(Operation.GRANT_KYC) === Access.CONTRACT
-				) &&
-				option.label === 'KYC'
-			) {
-				return false;
-			}
+	const [grantRoles, setGrantRoles] = useState<GrantRoleRequest[]>([]);
 
-			if (
-				!(
-					operations?.includes(Operation.ROLE_ADMIN_MANAGEMENT) &&
-					getAccessByOperation(Operation.ROLE_ADMIN_MANAGEMENT) === Access.CONTRACT
-				) &&
-				option.label === 'Admin Role'
-			) {
-				return false;
-			}
-
-			return true;
-		})
-		.map((item) => {
-			return { ...item, id: item.label.toLowerCase() };
-		});
-	const action = 'giveRole';
-
-	function getAccessByOperation(operation: Operation): Access | undefined {
-		return (
-			capabilities?.capabilities.filter((capability) => {
-				return capability.operation === operation;
-			})[0].access ?? undefined
-		);
-	}
 	const handleGrantRoles: ModalsHandlerActionsProps['onConfirm'] = async ({
 		onSuccess,
 		onError,
@@ -166,7 +70,6 @@ const GrantRoleOperation = () => {
 		const rolesRequest: string[] = [];
 		for (const key in values) {
 			if (values[key] === true) {
-				console.log(key);
 				rolesRequest.push(filteredCapabilities.find((item) => item.id === key)!.value);
 			}
 		}
@@ -196,7 +99,7 @@ const GrantRoleOperation = () => {
 		if (values.rol) {
 			const details: Detail[] = values.rol.map((item: GrantRoleForm) => {
 				return {
-					label: t(`roles:${action}.modalActionDetailAccount`),
+					label: t(`roles:giveRole.modalActionDetailAccount`),
 					value: item.accountId,
 				};
 			});
@@ -213,15 +116,23 @@ const GrantRoleOperation = () => {
 
 		return filtered.map((item) => {
 			return {
-				label: t(`roles:${action}.modalActionDetailRole`),
+				label: t(`roles:giveRole.modalActionDetailRole`),
 				value: item[0],
 			};
 		});
 	};
 	const addNewAccount = () => {
-		console.log(accounts);
-
 		if (accounts.length >= 10) return;
+		const currentGrantRole = grantRoles;
+		currentGrantRole.push(
+			new GrantRoleRequest({
+				tokenId: selectedStableCoin!.tokenId!.toString(),
+				targetId: '',
+				role: undefined,
+				amount: '0',
+			}),
+		);
+		setGrantRoles(currentGrantRole);
 		append({ accountId: '', amount: '', infinity: true });
 	};
 	const renderSupplierQuantity = (index: number) => {
@@ -230,10 +141,10 @@ const GrantRoleOperation = () => {
 			<>
 				<Box>
 					<HStack>
-						<Text>{t(`roles:${action}.supplierQuantityQuestion`)}</Text>
+						<Text>{t(`roles:giveRole.supplierQuantityQuestion`)}</Text>
 					</HStack>
 					<HStack mt='20px'>
-						<Text mr='10px'>{t(`roles:${action}.switchLabel`)}</Text>
+						<Text mr='10px'>{t(`roles:giveRole.switchLabel`)}</Text>
 						<SwitchController control={control} name={`rol.${index}.infinity` as const} />
 					</HStack>
 				</Box>
@@ -244,27 +155,18 @@ const GrantRoleOperation = () => {
 							rules={{
 								required: t(`global:validations.required`) ?? propertyNotFound,
 								validate: {
-									validDecimals: (value: string) => {
-										return (
-											validateDecimalsString(value, decimals) ||
-											(t('global:validations.decimalsValidation') ?? propertyNotFound)
-										);
+									validation: (value: string) => {
+										const _grantRole = grantRoles[index];
+										_grantRole.amount = value;
+										const res = handleRequestValidation(_grantRole.validate('amount'));
+										return res;
 									},
-									// validation: (value: string) => {
-									// 	if (request && 'amount' in request) {
-									// 		request.amount = value;
-									// 		const res = handleRequestValidation(request.validate('amount'));
-									// 		return res;
-									// 	}
-									// },
 								},
 							}}
 							isRequired
 							control={control}
 							name={`rol.${index}.amount` as const}
-							placeholder={
-								t(`roles:${action}.supplierQuantityInputPlaceholder`) ?? propertyNotFound
-							}
+							placeholder={t(`roles:giveRole.supplierQuantityInputPlaceholder`) ?? propertyNotFound}
 						/>
 					</Box>
 				)}
@@ -312,13 +214,12 @@ const GrantRoleOperation = () => {
 												rules={{
 													required: t('global:validations.required') ?? propertyNotFound,
 													validate: {
-														// validation: (value: string) => {
-														// 	if (request) {
-														// 		request.targetId = value;
-														// 		const res = handleRequestValidation(request.validate('targetId'));
-														// 		return res;
-														// 	}
-														// },
+														validation: (value: string) => {
+															const _grantRole = grantRoles[i];
+															_grantRole.targetId = value;
+															const res = handleRequestValidation(_grantRole.validate('targetId'));
+															return res;
+														},
 													},
 												}}
 												style={{
@@ -327,8 +228,8 @@ const GrantRoleOperation = () => {
 												isRequired
 												control={control}
 												name={`rol.${i}.accountId` as const}
-												label={t(`roles:${action}.accountLabel`).toString()}
-												placeholder={t(`roles:${action}.accountPlaceholder`).toString()}
+												label={t(`roles:giveRole.accountLabel`).toString()}
+												placeholder={t(`roles:giveRole.accountPlaceholder`).toString()}
 											/>
 											{watch('cash in') && renderSupplierQuantity(i)}
 										</Flex>
@@ -354,37 +255,37 @@ const GrantRoleOperation = () => {
 			</BaseContainer>
 
 			<ModalsHandler
-				errorNotificationTitle={t(`roles:${action}.modalErrorTitle`)}
+				errorNotificationTitle={t(`roles:giveRole.modalErrorTitle`)}
 				// @ts-ignore-next-line
-				errorNotificationDescription={t(`roles:${action}.modalErrorDescription`)}
+				errorNotificationDescription={t(`roles:giveRole.modalErrorDescription`)}
 				errorTransactionUrl={errorTransactionUrl}
 				// @ts-ignore-next-line
-				warningNotificationDescription={t(`roles:${action}.modalErrorDescription`)}
+				warningNotificationDescription={t(`roles:giveRole.modalErrorDescription`)}
 				modalActionProps={{
 					isOpen: isOpenModalAction,
 					onClose: onCloseModalAction,
-					title: t(`roles:${action}.modalActionTitle`),
-					confirmButtonLabel: t(`roles:${action}.modalActionConfirmButton`),
+					title: t(`roles:giveRole.modalActionTitle`),
+					confirmButtonLabel: t(`roles:giveRole.modalActionConfirmButton`),
 					onConfirm: handleGrantRoles,
 				}}
 				ModalActionChildren={
 					<>
 						<DetailsReview
-							title={t(`roles:${action}.modalActionSubtitleAccountSection`)}
+							title={t(`roles:giveRole.modalActionSubtitleAccountSection`)}
 							details={getAccountsDetails()}
 							divider={true}
 						/>
 						<DetailsReview
-							title={t(`roles:${action}.modalActionSubtitleRolesSection`)}
+							title={t(`roles:giveRole.modalActionSubtitleRolesSection`)}
 							details={getRolesDetails()}
 						/>
 					</>
 				}
-				successNotificationTitle={t(`roles:${action}.modalSuccessTitle`)}
+				successNotificationTitle={t(`roles:giveRole.modalSuccessTitle`)}
 				successNotificationDescription={
 					// eslint-disable-next-line no-constant-condition
 					false // checkOptionSelected
-						? t(`roles:${action}.checkCashinLimitSuccessDesc`, {
+						? t(`roles:giveRole.checkCashinLimitSuccessDesc`, {
 								account: 'a',
 								limit: 'b',
 						  })

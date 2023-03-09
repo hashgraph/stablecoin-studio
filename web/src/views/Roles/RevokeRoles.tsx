@@ -1,11 +1,10 @@
-import { Heading, Stack, CheckboxGroup, Grid, useDisclosure, Flex, Button } from '@chakra-ui/react';
+import { Heading, Text, CheckboxGroup, Grid, useDisclosure, Flex, Button } from '@chakra-ui/react';
 import type { StableCoinRole } from 'hedera-stable-coin-sdk';
-import { Access, Operation, RevokeMultiRolesRequest } from 'hedera-stable-coin-sdk';
+import { RevokeRoleRequest, RevokeMultiRolesRequest } from 'hedera-stable-coin-sdk';
 import React, { useMemo, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import BaseContainer from '../../components/BaseContainer';
 import type { Detail } from '../../components/DetailsReview';
 import DetailsReview from '../../components/DetailsReview';
 import { CheckboxController } from '../../components/Form/CheckboxController';
@@ -15,12 +14,15 @@ import type { ModalsHandlerActionsProps } from '../../components/ModalsHandler';
 import ModalsHandler from '../../components/ModalsHandler';
 import { propertyNotFound } from '../../constant';
 import { SDKService } from '../../services/SDKService';
-import { SELECTED_WALLET_CAPABILITIES, SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
-import { validateDecimalsString } from '../../utils/validationsHelper';
+import { SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
+import { handleRequestValidation, validateDecimalsString } from '../../utils/validationsHelper';
 import OperationLayout from '../Operations/OperationLayout';
-import { roleOptions } from './constants';
 
-const RevokeRoleOperation = () => {
+const RevokeRoleOperation = ({
+	filteredCapabilities,
+}: {
+	filteredCapabilities: { id: string; value: StableCoinRole; label: string }[];
+}) => {
 	const { t } = useTranslation(['global', 'roles', 'stableCoinCreation', 'externalTokenInfo']);
 	const {
 		isOpen: isOpenModalAction,
@@ -28,7 +30,6 @@ const RevokeRoleOperation = () => {
 		onClose: onCloseModalAction,
 	} = useDisclosure();
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
-	const capabilities = useSelector(SELECTED_WALLET_CAPABILITIES);
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
 	});
@@ -42,107 +43,8 @@ const RevokeRoleOperation = () => {
 	});
 	const isMaxAccounts = useMemo(() => accounts.length >= 10, [accounts]);
 	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
+	const [revokeRoles, setRevokeRoles] = useState<RevokeRoleRequest[]>([]);
 
-	const operations = capabilities?.capabilities.map((x) => x.operation);
-	const filteredCapabilities = roleOptions
-		.filter((option) => {
-			if (
-				!(
-					operations?.includes(Operation.CASH_IN) &&
-					getAccessByOperation(Operation.CASH_IN) === Access.CONTRACT
-				) &&
-				option.label === 'Cash in'
-			) {
-				return false;
-			}
-			if (
-				!(
-					operations?.includes(Operation.BURN) &&
-					getAccessByOperation(Operation.BURN) === Access.CONTRACT
-				) &&
-				option.label === 'Burn'
-			) {
-				return false;
-			}
-			if (
-				!(
-					operations?.includes(Operation.WIPE) &&
-					getAccessByOperation(Operation.WIPE) === Access.CONTRACT
-				) &&
-				option.label === 'Wipe'
-			) {
-				return false;
-			}
-			if (
-				!(
-					operations?.includes(Operation.PAUSE) &&
-					getAccessByOperation(Operation.PAUSE) === Access.CONTRACT
-				) &&
-				option.label === 'Pause'
-			) {
-				return false;
-			}
-			if (
-				!(
-					operations?.includes(Operation.RESCUE) &&
-					getAccessByOperation(Operation.RESCUE) === Access.CONTRACT
-				) &&
-				option.label === 'Rescue'
-			) {
-				return false;
-			}
-			if (
-				!(
-					operations?.includes(Operation.FREEZE) &&
-					getAccessByOperation(Operation.FREEZE) === Access.CONTRACT
-				) &&
-				option.label === 'Freeze'
-			) {
-				return false;
-			}
-			if (
-				!(
-					operations?.includes(Operation.DELETE) &&
-					getAccessByOperation(Operation.DELETE) === Access.CONTRACT
-				) &&
-				option.label === 'Delete'
-			) {
-				return false;
-			}
-			if (
-				!(
-					operations?.includes(Operation.GRANT_KYC) &&
-					getAccessByOperation(Operation.GRANT_KYC) === Access.CONTRACT
-				) &&
-				option.label === 'KYC'
-			) {
-				return false;
-			}
-
-			if (
-				!(
-					operations?.includes(Operation.ROLE_ADMIN_MANAGEMENT) &&
-					getAccessByOperation(Operation.ROLE_ADMIN_MANAGEMENT) === Access.CONTRACT
-				) &&
-				option.label === 'Admin Role'
-			) {
-				return false;
-			}
-
-			return true;
-		})
-		.map((item) => {
-			return { ...item, id: item.label.toLowerCase() };
-		});
-	const action = 'revokeRole';
-
-	function getAccessByOperation(operation: Operation): Access | undefined {
-		return (
-			capabilities?.capabilities.filter((capability) => {
-				return capability.operation === operation;
-			})[0].access ?? undefined
-		);
-	}
 	const handleRevokeRoles: ModalsHandlerActionsProps['onConfirm'] = async ({
 		onSuccess,
 		onError,
@@ -178,7 +80,7 @@ const RevokeRoleOperation = () => {
 		if (values.rol) {
 			const details: Detail[] = values.rol.map((item: { accountId: string }) => {
 				return {
-					label: t(`roles:${action}.modalActionDetailAccount`),
+					label: t(`roles:revokeRole.modalActionDetailAccount`),
 					value: item.accountId,
 				};
 			});
@@ -195,18 +97,30 @@ const RevokeRoleOperation = () => {
 
 		return filtered.map((item) => {
 			return {
-				label: t(`roles:${action}.modalActionDetailRole`),
+				label: t(`roles:revokeRole.modalActionDetailRole`),
 				value: item[0],
 			};
 		});
 	};
 	const addNewAccount = () => {
 		if (accounts.length >= 10) return;
+		const currentRevokeRole = revokeRoles;
+		currentRevokeRole.push(
+			new RevokeRoleRequest({
+				tokenId: selectedStableCoin!.tokenId!.toString(),
+				targetId: '',
+				role: undefined,
+			}),
+		);
+		setRevokeRoles(currentRevokeRole);
 		append({ accountId: '' });
 	};
 
 	const removeAccount = (i: number) => {
 		if (accounts.length === 1) return;
+		const currentRoleRequest = revokeRoles;
+		currentRoleRequest.splice(i, 1);
+		setRevokeRoles(currentRoleRequest);
 		remove(i);
 	};
 
@@ -221,8 +135,11 @@ const RevokeRoleOperation = () => {
 				LeftContent={
 					<>
 						<Heading data-testid='title' fontSize='24px' fontWeight='700' mb={10} lineHeight='16px'>
-							{t(`roles:${action}.titleRoleSection`)}
+							{t(`roles:revokeRole.title`)}
 						</Heading>
+						<Text color='brand.gray' fontSize='24px'>
+							{t(`roles:revokeRole.titleRoleSection`)}
+						</Text>
 						<CheckboxGroup>
 							<Grid column='4' gap={{ base: 4 }} templateColumns='repeat(4, 1fr)'>
 								{filteredCapabilities.map((item, index) => {
@@ -239,16 +156,10 @@ const RevokeRoleOperation = () => {
 								})}
 							</Grid>
 						</CheckboxGroup>
-						<Heading
-							data-testid='title'
-							fontSize='24px'
-							fontWeight='700'
-							mb={10}
-							mt={10}
-							lineHeight='16px'
-						>
-							{t(`roles:${action}.titleAccountSection`)}
-						</Heading>
+						<Text color='brand.gray' fontSize='24px'>
+							{t(`roles:revokeRole.titleAccountSection`)}
+						</Text>
+
 						{accounts &&
 							accounts.map((item, i) => {
 								return (
@@ -259,20 +170,19 @@ const RevokeRoleOperation = () => {
 												rules={{
 													required: t('global:validations.required') ?? propertyNotFound,
 													validate: {
-														// validation: (value: string) => {
-														// 	if (request) {
-														// 		request.targetId = value;
-														// 		const res = handleRequestValidation(request.validate('targetId'));
-														// 		return res;
-														// 	}
-														// },
+														validation: (value: string) => {
+															const _revokeRole = revokeRoles[i];
+															_revokeRole.targetId = value;
+															const res = handleRequestValidation(_revokeRole.validate('targetId'));
+															return res;
+														},
 													},
 												}}
 												isRequired
 												control={control}
 												name={`rol.${i}.accountId`}
-												label={t(`roles:${action}.accountLabel`).toString()}
-												placeholder={t(`roles:${action}.accountPlaceholder`).toString()}
+												label={t(`roles:revokeRole.accountLabel`).toString()}
+												placeholder={t(`roles:revokeRole.accountPlaceholder`).toString()}
 												rightElement={
 													<Icon
 														name='Trash'
@@ -291,7 +201,7 @@ const RevokeRoleOperation = () => {
 							})}
 						<Flex justify='flex-end' pt={6} pb={6} justifyContent='space-between'>
 							<Button variant='primary' onClick={addNewAccount} isDisabled={isMaxAccounts}>
-								{t(`roles:${action}.buttonAddAccount`)}
+								{t(`roles:revokeRole.buttonAddAccount`)}
 							</Button>
 						</Flex>
 					</>
@@ -301,37 +211,37 @@ const RevokeRoleOperation = () => {
 			/>
 
 			<ModalsHandler
-				errorNotificationTitle={t(`roles:${action}.modalErrorTitle`)}
+				errorNotificationTitle={t(`roles:revokeRole.modalErrorTitle`)}
 				// @ts-ignore-next-line
-				errorNotificationDescription={t(`roles:${action}.modalErrorDescription`)}
+				errorNotificationDescription={t(`roles:revokeRole.modalErrorDescription`)}
 				errorTransactionUrl={errorTransactionUrl}
 				// @ts-ignore-next-line
-				warningNotificationDescription={t(`roles:${action}.modalErrorDescription`)}
+				warningNotificationDescription={t(`roles:revokeRole.modalErrorDescription`)}
 				modalActionProps={{
 					isOpen: isOpenModalAction,
 					onClose: onCloseModalAction,
-					title: t(`roles:${action}.modalActionTitle`),
-					confirmButtonLabel: t(`roles:${action}.modalActionConfirmButton`),
+					title: t(`roles:revokeRole.modalActionTitle`),
+					confirmButtonLabel: t(`roles:revokeRole.modalActionConfirmButton`),
 					onConfirm: handleRevokeRoles,
 				}}
 				ModalActionChildren={
 					<>
 						<DetailsReview
-							title={t(`roles:${action}.modalActionSubtitleAccountSection`)}
+							title={t(`roles:revokeRole.modalActionSubtitleAccountSection`)}
 							details={getAccountsDetails()}
 							divider={true}
 						/>
 						<DetailsReview
-							title={t(`roles:${action}.modalActionSubtitleRolesSection`)}
+							title={t(`roles:revokeRole.modalActionSubtitleRolesSection`)}
 							details={getRolesDetails()}
 						/>
 					</>
 				}
-				successNotificationTitle={t(`roles:${action}.modalSuccessTitle`)}
+				successNotificationTitle={t(`roles:revokeRole.modalSuccessTitle`)}
 				successNotificationDescription={
 					// eslint-disable-next-line no-constant-condition
 					false // checkOptionSelected
-						? t(`roles:${action}.checkCashinLimitSuccessDesc`, {
+						? t(`roles:revokeRole.checkCashinLimitSuccessDesc`, {
 								account: 'a',
 								limit: 'b',
 						  })
