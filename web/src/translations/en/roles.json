@@ -41,6 +41,8 @@
 		"title": "Revoke role",
 		"accountLabel": "Account",
 		"titleRoleSection": "Role",
+		"titleAccountSection": "Accounts",
+		"buttonAddAccount": "Add account",
 		"accountPlaceholder": "0.0.0",
 		"infinity": "",
 		"modalActionSubtitleAccountSection": "Accounts",

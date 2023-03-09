@@ -10,12 +10,14 @@ import type { Detail } from '../../components/DetailsReview';
 import DetailsReview from '../../components/DetailsReview';
 import { CheckboxController } from '../../components/Form/CheckboxController';
 import InputController from '../../components/Form/InputController';
+import Icon from '../../components/Icon';
 import type { ModalsHandlerActionsProps } from '../../components/ModalsHandler';
 import ModalsHandler from '../../components/ModalsHandler';
 import { propertyNotFound } from '../../constant';
 import { SDKService } from '../../services/SDKService';
 import { SELECTED_WALLET_CAPABILITIES, SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
 import { validateDecimalsString } from '../../utils/validationsHelper';
+import OperationLayout from '../Operations/OperationLayout';
 import { roleOptions } from './constants';
 
 const RevokeRoleOperation = () => {
@@ -27,11 +29,13 @@ const RevokeRoleOperation = () => {
 	} = useDisclosure();
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const capabilities = useSelector(SELECTED_WALLET_CAPABILITIES);
-	const { control, getValues } = useForm({ mode: 'onChange' });
+	const { control, getValues, formState } = useForm({
+		mode: 'onChange',
+	});
 	const {
 		fields: accounts,
 		append,
-		// remove,
+		remove,
 	} = useFieldArray({
 		control,
 		name: 'rol',
@@ -150,7 +154,6 @@ const RevokeRoleOperation = () => {
 		const rolesRequest: string[] = [];
 		for (const key in values) {
 			if (values[key] === true) {
-				console.log(key);
 				rolesRequest.push(filteredCapabilities.find((item) => item.id === key)!.value);
 			}
 		}
@@ -198,28 +201,30 @@ const RevokeRoleOperation = () => {
 		});
 	};
 	const addNewAccount = () => {
-		console.log(accounts);
-
 		if (accounts.length >= 10) return;
-		append({ accountId: '', amount: '', infinity: true });
+		append({ accountId: '' });
+	};
+
+	const removeAccount = (i: number) => {
+		if (accounts.length === 1) return;
+		remove(i);
+	};
+
+	const isRoleSelected = (): boolean => {
+		// TODO: Check if one checkbox is selected
+		return false;
 	};
 
 	return (
 		<>
-			<BaseContainer title={t(`roles:${action}.title`)}>
-				<Flex
-					direction='column'
-					bg='brand.gray100'
-					px={{ base: 4, lg: 14 }}
-					pt={{ base: 4, lg: 14 }}
-					pb={6}
-				>
-					<Stack as='form' spacing={6}>
+			<OperationLayout
+				LeftContent={
+					<>
 						<Heading data-testid='title' fontSize='24px' fontWeight='700' mb={10} lineHeight='16px'>
 							{t(`roles:${action}.titleRoleSection`)}
 						</Heading>
 						<CheckboxGroup>
-							<Grid column='6' gap={{ base: 4 }} templateColumns='repeat(6, 1fr)'>
+							<Grid column='4' gap={{ base: 4 }} templateColumns='repeat(4, 1fr)'>
 								{filteredCapabilities.map((item, index) => {
 									return (
 										<CheckboxController
@@ -234,11 +239,21 @@ const RevokeRoleOperation = () => {
 								})}
 							</Grid>
 						</CheckboxGroup>
+						<Heading
+							data-testid='title'
+							fontSize='24px'
+							fontWeight='700'
+							mb={10}
+							mt={10}
+							lineHeight='16px'
+						>
+							{t(`roles:${action}.titleAccountSection`)}
+						</Heading>
 						{accounts &&
 							accounts.map((item, i) => {
 								return (
-									<React.Fragment key={i}>
-										<Flex>
+									<React.Fragment key={item.id}>
+										<Flex mb={{ base: 4 }}>
 											<InputController
 												key={i}
 												rules={{
@@ -253,36 +268,37 @@ const RevokeRoleOperation = () => {
 														// },
 													},
 												}}
-												style={{
-													width: '150px', // Arreglar tamaños
-												}}
 												isRequired
 												control={control}
-												name={`rol.${i}.accountId` as const}
+												name={`rol.${i}.accountId`}
 												label={t(`roles:${action}.accountLabel`).toString()}
 												placeholder={t(`roles:${action}.accountPlaceholder`).toString()}
+												rightElement={
+													<Icon
+														name='Trash'
+														color='brand.primary'
+														cursor='pointer'
+														fontSize='22px'
+														onClick={() => removeAccount(i)}
+														alignSelf='center'
+														marginLeft={{ base: 4 }}
+													/>
+												}
 											/>
 										</Flex>
 									</React.Fragment>
 								);
 							})}
-					</Stack>
-					<Flex
-						justify='flex-end'
-						pt={6}
-						pb={6}
-						justifyContent='space-between'
-						px={{ base: 4, lg: 14 }}
-					>
-						<Button variant='primary' onClick={addNewAccount} isDisabled={isMaxAccounts}>
-							Añadir cuenta
-						</Button>
-						<Button variant='primary' onClick={onOpenModalAction}>
-							Guardar cambios
-						</Button>
-					</Flex>
-				</Flex>
-			</BaseContainer>
+						<Flex justify='flex-end' pt={6} pb={6} justifyContent='space-between'>
+							<Button variant='primary' onClick={addNewAccount} isDisabled={isMaxAccounts}>
+								{t(`roles:${action}.buttonAddAccount`)}
+							</Button>
+						</Flex>
+					</>
+				}
+				onConfirm={onOpenModalAction}
+				confirmBtnProps={{ isDisabled: !formState.isValid && !isRoleSelected() }}
+			/>
 
 			<ModalsHandler
 				errorNotificationTitle={t(`roles:${action}.modalErrorTitle`)}
