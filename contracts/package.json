@@ -71,7 +71,11 @@
         "lint": "npm run lint:sol && npm run lint:ts",
         "prettier": "prettier --write  \"**/*.{ts,js,sol}\"",
         "doc": "npx hardhat dodoc",
-        "security": "docker run -t --rm -v /var/run/docker.sock:/var/run/docker.sock -v \"$(pwd)\":\"/home/ethsec/contracts\" -w \"/home/ethsec/contracts\" -u 0:0 trailofbits/eth-security-toolbox -c \"solc-select install 0.8.16  && solc-select use 0.8.16  && slither ./contracts --solc-remaps @=node_modules/@\"",
+        "slither:analysis": "docker run -t --rm -v /var/run/docker.sock:/var/run/docker.sock -v \"$(pwd)\":\"/home/ethsec/contracts\" -w \"/home/ethsec/contracts\" -u 0:0 trailofbits/eth-security-toolbox -c \"solc-select install 0.8.16  && solc-select use 0.8.16  && slither ./contracts --solc-remaps @=node_modules/@ &> ./Slither/contract-analysis.txt\"",
+        "slither:storageLayout": "docker run -t --rm -v /var/run/docker.sock:/var/run/docker.sock -v \"$(pwd)\":\"/home/ethsec/contracts\" -w \"/home/ethsec/contracts\" -u 0:0 trailofbits/eth-security-toolbox -c \"solc-select install 0.8.16  && solc-select use 0.8.16  && slither ./contracts --print variable-order --solc-remaps @=node_modules/@ &> ./Slither/contract-storage-layout.txt\"",
+        "slither:inheritance": "docker run -t --rm -v /var/run/docker.sock:/var/run/docker.sock -v \"$(pwd)\":\"/home/ethsec/contracts\" -w \"/home/ethsec/contracts\" -u 0:0 trailofbits/eth-security-toolbox -c \"solc-select install 0.8.16  && solc-select use 0.8.16  && slither ./contracts --print inheritance --solc-remaps @=node_modules/@ &> ./Slither/contract-inheritance.txt\"",
+        "slither:summary": "docker run -t --rm -v /var/run/docker.sock:/var/run/docker.sock -v \"$(pwd)\":\"/home/ethsec/contracts\" -w \"/home/ethsec/contracts\" -u 0:0 trailofbits/eth-security-toolbox -c \"solc-select install 0.8.16  && solc-select use 0.8.16  && slither ./contracts --print human-summary --solc-remaps @=node_modules/@ &> ./Slither/contract-summary.txt\"",
+        "slither": "npm run slither:summary && npm run slither:storageLayout && npm run slither:inheritance && npm run slither:analysis",
         "pre-commit": "npm run prettier && npm run lint",
         "prettierCheck": "prettier --check"
     },
