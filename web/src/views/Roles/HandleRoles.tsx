@@ -1,13 +1,7 @@
-
-import { roleOptions} from './constants';
+import { roleOptions } from './constants';
 import { useSelector } from 'react-redux';
-import {
-	SELECTED_WALLET_CAPABILITIES,
-} from '../../store/slices/walletSlice';
-import {
-	Operation,
-	Access,
-} from 'hedera-stable-coin-sdk';
+import { SELECTED_WALLET_CAPABILITIES } from '../../store/slices/walletSlice';
+import { Operation, Access } from 'hedera-stable-coin-sdk';
 import { useRefreshCoinInfo } from '../../hooks/useRefreshCoinInfo';
 import RevokeRoleOperation from './RevokeRoles';
 import GrantRoleOperation from './GrantRoles';
