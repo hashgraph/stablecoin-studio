@@ -17,9 +17,7 @@ import Web3 from 'web3'
 import axios from 'axios'
 import { ADDRESS_0 } from './constants'
 
-
 const web3 = new Web3()
-
 
 export const clientId = 1
 
@@ -89,8 +87,8 @@ function decodeFunctionResult(
     return jsonParsedArray
 }
 
-export function getClient(network?:string): Client {
-    if(!network){
+export function getClient(network?: string): Client {
+    if (!network) {
         const hre = require('hardhat')
         network = hre.network.name
     }
@@ -208,11 +206,8 @@ export async function toEvmAddress(
     }
 }
 
-export async function evmToHederaFormat(
-    evmAddress:string
-):Promise<string>{
-    if (evmAddress === ADDRESS_0)
-        return '0.0.0'
+export async function evmToHederaFormat(evmAddress: string): Promise<string> {
+    if (evmAddress === ADDRESS_0) return '0.0.0'
     const URI_BASE = `${getHederaNetworkMirrorNodeURL()}/api/v1/`
     const url = URI_BASE + 'accounts/' + evmAddress
     const res = await axios.get<IAccount>(url)
@@ -222,7 +217,7 @@ export async function evmToHederaFormat(
 interface IAccount {
     evm_address: string
     key: IKey
-    account:string
+    account: string
 }
 
 interface IKey {
@@ -230,8 +225,8 @@ interface IKey {
     key: string
 }
 
-function getHederaNetworkMirrorNodeURL(network ?:string): string {
-    if (!network) {        
+function getHederaNetworkMirrorNodeURL(network?: string): string {
+    if (!network) {
         const hre = require('hardhat')
         network = hre.network.name
     }

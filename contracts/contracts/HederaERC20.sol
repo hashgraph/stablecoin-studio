@@ -91,6 +91,16 @@ contract HederaERC20 is
             }
         }
 
+        // Sending back the remaining HBARs from msg.value
+        uint256 currentBalance = address(this).balance;
+        if (currentBalance > 0) {
+            (bool s, ) = init.originalSender.call{value: currentBalance}('');
+            require(
+                s,
+                'Transfering funds back to Original sender did not work'
+            );
+        }
+
         return createdTokenAddress;
     }
 
