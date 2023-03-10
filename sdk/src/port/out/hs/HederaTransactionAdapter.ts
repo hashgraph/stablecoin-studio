@@ -1186,37 +1186,43 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					coin.coin.tokenId?.value!,
 					params.kycKey
 						? params.kycKey.key == PublicKey.NULL.key
-							? DelegateContractId.fromString(params.kycKey.key)
+							? DelegateContractId.fromString(
+									coin.coin.proxyAddress!.toString(),
+							  )
 							: HPublicKey.fromString(params.kycKey.key)
 						: undefined,
 					params.freezeKey
 						? params.freezeKey.key == PublicKey.NULL.key
 							? DelegateContractId.fromString(
-									params.freezeKey.key,
+									coin.coin.proxyAddress!.toString(),
 							  )
 							: HPublicKey.fromString(params.freezeKey.key)
 						: undefined,
 					params.feeScheduleKey
 						? params.feeScheduleKey.key == PublicKey.NULL.key
 							? DelegateContractId.fromString(
-									params.feeScheduleKey.key,
+									coin.coin.proxyAddress!.toString(),
 							  )
 							: HPublicKey.fromString(params.feeScheduleKey.key)
 						: undefined,
 					params.pauseKey
 						? params.pauseKey.key == PublicKey.NULL.key
-							? DelegateContractId.fromString(params.pauseKey.key)
+							? DelegateContractId.fromString(
+									coin.coin.proxyAddress!.toString(),
+							  )
 							: HPublicKey.fromString(params.pauseKey.key)
 						: undefined,
 					params.wipeKey
 						? params.wipeKey.key == PublicKey.NULL.key
-							? DelegateContractId.fromString(params.wipeKey.key)
+							? DelegateContractId.fromString(
+									coin.coin.proxyAddress!.toString(),
+							  )
 							: HPublicKey.fromString(params.wipeKey.key)
 						: undefined,
 					params.supplyKey
 						? params.supplyKey.key == PublicKey.NULL.key
 							? DelegateContractId.fromString(
-									params.supplyKey.key,
+									coin.coin.proxyAddress!.toString(),
 							  )
 							: HPublicKey.fromString(params.supplyKey.key)
 						: undefined,

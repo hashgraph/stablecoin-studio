@@ -248,6 +248,7 @@ export const english = {
       FeesMgmt: 'Fees management',
       RoleMgmt: 'Role management',
       RoleRefresh: 'Refresh roles',
+      Configuration: 'Configuration',
       DangerZone: colors.red('Danger zone'),
       ...returnToMainMenu,
     },
@@ -365,6 +366,7 @@ export const english = {
     customFeeCreated: 'Custom fee created',
     customFeesRemoved: 'Custom fees removed',
     transferCompleted: 'Transfer completed',
+    updateCompleted: 'Update completed',
   },
   operation: {
     success: colors.green('Operation has been completed successfully.'),
@@ -453,6 +455,20 @@ export const english = {
       Create: 'Create fee',
       Remove: 'Remove fee',
       List: 'Fees list',
+      ...goBack,
+    },
+  },
+  tokenConfiguration: {
+    options: {
+      keysManagement: 'Keys management',
+      ...goBack,
+    },
+  },
+  keysManagement: {
+    confirm: 'Are you sure you want to apply these changes?',
+    options: {
+      updateKeys: 'Update keys',
+      confirmChanges: 'Confirm changes',
       ...goBack,
     },
   },

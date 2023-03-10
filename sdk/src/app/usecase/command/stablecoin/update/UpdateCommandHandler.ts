@@ -55,7 +55,6 @@ export class UpdateCommandHandler implements ICommandHandler<UpdateCommand> {
 		);
 
 		const handler = this.transactionService.getHandler();
-
 		const res = await handler.update(
 			capabilities,
 			kycKey,

@@ -30,6 +30,7 @@ import { GetStableCoinQueryHandler } from '../app/usecase/query/stablecoin/get/G
 import RPCTransactionAdapter from '../port/out/rpc/RPCTransactionAdapter.js';
 import { Constructor } from './Type.js';
 import { CreateCommandHandler } from '../app/usecase/command/stablecoin/create/CreateCommandHandler.js';
+import { UpdateCommandHandler } from '../app/usecase/command/stablecoin/update/UpdateCommandHandler.js';
 import { CashInCommandHandler } from '../app/usecase/command/stablecoin/operations/cashin/CashInCommandHandler.js';
 import { BurnCommandHandler } from '../app/usecase/command/stablecoin/operations/burn/BurnCommandHandler.js';
 import { TransfersCommandHandler } from '../app/usecase/command/stablecoin/operations/transfer/TransfersCommandHandler.js';
@@ -103,6 +104,11 @@ const COMMAND_HANDLERS = [
 	{
 		token: TOKENS.COMMAND_HANDLER,
 		useClass: CreateCommandHandler,
+	},
+	// Stable Coin Update
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: UpdateCommandHandler,
 	},
 	// Stable Coin Operations
 	{
