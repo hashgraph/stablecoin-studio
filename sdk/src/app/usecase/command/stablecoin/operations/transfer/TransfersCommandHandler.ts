@@ -34,7 +34,6 @@ import AccountService from '../../../../../service/AccountService.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
 import { GetAccountTokenRelationshipQuery } from '../../../../query/account/tokenRelationship/GetAccountTokenRelationshipQuery.js';
-import { BalanceOfQuery } from '../../../../query/stablecoin/balanceof/BalanceOfQuery.js';
 import { AccountFreeze } from '../../error/AccountFreeze.js';
 import { AccountNotKyc } from '../../error/AccountNotKyc.js';
 import { DecimalsOverRange } from '../../error/DecimalsOverRange.js';

@@ -18,6 +18,7 @@
  *
  */
 
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import TransactionResponse from '../../../../../src/domain/context/transaction/TransactionResponse.js';
 import StableCoinCapabilities from '../../../../../src/domain/context/stablecoin/StableCoinCapabilities.js';
 import { StableCoin } from '../../../../../src/domain/context/stablecoin/StableCoin.js';
