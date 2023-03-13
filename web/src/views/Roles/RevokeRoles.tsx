@@ -15,7 +15,7 @@ import ModalsHandler from '../../components/ModalsHandler';
 import { propertyNotFound } from '../../constant';
 import { SDKService } from '../../services/SDKService';
 import { SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
-import { handleRequestValidation, validateDecimalsString } from '../../utils/validationsHelper';
+import { handleRequestValidation } from '../../utils/validationsHelper';
 import OperationLayout from '../Operations/OperationLayout';
 
 const RevokeRoleOperation = ({
@@ -51,16 +51,12 @@ const RevokeRoleOperation = ({
 	useEffect(() => {
 		addNewAccount();
 	}, []);
-	console.log('accounts', accounts);
 
 	const isNotValidAccount = () => {
-		const a = accounts.some((item: any) => {
+		return accounts.some((item: any) => {
 			return item.accountId === '';
 		});
-
-		return a;
 	};
-	console.log('isnotvalid', isNotValidAccount());
 
 	const handleRevokeRoles: ModalsHandlerActionsProps['onConfirm'] = async ({
 		onSuccess,
@@ -69,7 +65,6 @@ const RevokeRoleOperation = ({
 	}) => {
 		onLoading();
 		const values = getValues();
-		console.log(values);
 
 		const rolesRequest: string[] = [];
 		for (const key in values) {
@@ -111,6 +106,7 @@ const RevokeRoleOperation = ({
 		const obj = getValues();
 		const asArray = Object.entries(obj);
 
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const filtered = asArray.filter(([key, value]) => value === true);
 
 		return filtered.map((item) => {
@@ -143,17 +139,13 @@ const RevokeRoleOperation = ({
 	};
 
 	const isRoleSelected = (): boolean => {
-		// TODO: Check if one checkbox is selected
 		const values = getValues();
 		delete values.rol;
-		console.log(values);
-
 		return Object.values(values).some((item) => {
 			console.log(item);
 			return item === true;
 		});
 	};
-	console.log('ERRORS', formState.errors);
 
 	return (
 		<>
@@ -169,12 +161,9 @@ const RevokeRoleOperation = ({
 						<CheckboxGroup>
 							<Grid column='4' gap={{ base: 4 }} templateColumns='repeat(4, 1fr)'>
 								{filteredCapabilities.map((item, index) => {
-									// console.log(item);
-
 									return (
 										<CheckboxController
 											key={index}
-											// value={item.value}
 											control={control}
 											id={`${item.label?.toString().toLocaleLowerCase()}`}
 										>
@@ -266,15 +255,6 @@ const RevokeRoleOperation = ({
 					</>
 				}
 				successNotificationTitle={t(`roles:revokeRole.modalSuccessTitle`)}
-				successNotificationDescription={
-					// eslint-disable-next-line no-constant-condition
-					false // checkOptionSelected
-						? t(`roles:revokeRole.checkCashinLimitSuccessDesc`, {
-								account: 'a',
-								limit: 'b',
-						  })
-						: ''
-				}
 			/>
 		</>
 	);

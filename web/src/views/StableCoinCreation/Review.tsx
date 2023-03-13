@@ -83,7 +83,7 @@ const Review = (props: ReviewProps) => {
 		const { value } = roleValue;
 		if (roleValue.label !== t('stableCoinCreation:managementPermissions.none')) {
 			roleDetails.push({
-				label: label,
+				label,
 				value:
 					value === 1
 						? getExtraInfo(label, t('stableCoinCreation:managementPermissions.currentUserAccount'))

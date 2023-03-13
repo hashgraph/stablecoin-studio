@@ -10,7 +10,8 @@ import { handleRequestValidation } from '../../utils/validationsHelper';
 import { propertyNotFound } from '../../constant';
 import { useEffect, useState } from 'react';
 import SDKService from '../../services/SDKService';
-import SelectCreatableController, { Option } from '../../components/Form/SelectCreatableController';
+import type { Option } from '../../components/Form/SelectCreatableController';
+import SelectCreatableController from '../../components/Form/SelectCreatableController';
 
 interface BasicDetailsProps {
 	control: Control<FieldValues>;

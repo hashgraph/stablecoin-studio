@@ -4,7 +4,6 @@ import {
 	HStack,
 	Stack,
 	Text,
-	VStack,
 	Accordion,
 	AccordionItem,
 	AccordionButton,

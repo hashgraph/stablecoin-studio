@@ -37,9 +37,6 @@ import FeesManagement from '../views/FeesManagement';
 import GrantKycOperation from '../views/Operations/GrantKyc';
 import RevokeKycOperation from '../views/Operations/RevokeKyc';
 import CheckKycOperation from '../views/Operations/CheckKyc';
-import GrantRoleOperation from '../views/Roles/GrantRoles';
-import RevokeRoleOperation from '../views/Roles/RevokeRoles';
-import ManageCashIn from '../views/Roles/ManageCashIn';
 
 const LoginOverlayRoute = ({ show }: { show: boolean }) => {
 	return (

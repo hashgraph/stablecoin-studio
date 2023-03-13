@@ -1,7 +1,6 @@
 import { omit as _omit } from 'lodash';
 import type { Control, FieldValues, UseControllerProps } from 'react-hook-form';
 import { useController } from 'react-hook-form';
-import React from 'react';
 import type { CheckboxProps } from '@chakra-ui/react';
 import { Checkbox } from '@chakra-ui/react';
 
@@ -20,7 +19,6 @@ export const CheckboxController = (props: CheckboxControllerProps) => {
 		control,
 		id,
 		variant,
-		showErrors = true,
 		onChange,
 		onBlur,
 		defaultValue,
