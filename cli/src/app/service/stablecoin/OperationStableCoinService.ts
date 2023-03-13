@@ -2065,14 +2065,9 @@ export default class OperationStableCoinService extends Service {
       targetId: configAccount.accountId,
       tokenId: this.stableCoinId,
     });
-    // Call to Supplier Role
     return await new RoleStableCoinsService().getRolesWithoutPrinting(
       getRolesRequest,
     );
-    /*const importedToken = configAccount.importedTokens.find(
-      (token) => token.id === this.stableCoinId,
-    );
-    return importedToken?.roles;*/
   }
 
   private async checkSupplierType(
@@ -2107,7 +2102,7 @@ export default class OperationStableCoinService extends Service {
             false,
           );
         const tokenKeys = Object.keys(stableCoinViewModel)
-          .filter((key) => key.endsWith('Key'))
+          .filter((key) => key.endsWith('Key') && key !== 'adminKey')
           .reduce((obj, key) => {
             obj[key] = stableCoinViewModel[key];
             return obj;
@@ -2135,6 +2130,15 @@ export default class OperationStableCoinService extends Service {
     if (!this.tokenKeys || Object.keys(this.tokenKeys).length === 0) {
       const index = keysManagmentOptions.indexOf(
         language.getText('keysManagement.options.confirmChanges'),
+      );
+      if (index > -1) {
+        keysManagmentOptions.splice(index, 1);
+      }
+    }
+
+    if (Object.values(keys).filter((key) => key !== undefined).length === 0) {
+      const index = keysManagmentOptions.indexOf(
+        language.getText('keysManagement.options.updateKeys'),
       );
       if (index > -1) {
         keysManagmentOptions.splice(index, 1);
@@ -2317,7 +2321,9 @@ export default class OperationStableCoinService extends Service {
       feeScheduleKey = await this.checkAnswer(
         await utilsService.defaultMultipleAsk(
           language.getText('stablecoin.features.feeSchedule'),
-          language.getArrayFromObject('wizard.nonNoneFeatureOptions'),
+          language.getArrayFromObject(
+            'wizard.nonSmartContractAndNoneFeatureOptions',
+          ),
         ),
       );
     }
