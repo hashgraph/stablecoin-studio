@@ -261,16 +261,7 @@ export default class CreateStableCoinService extends Service {
         tokenToCreate.kycRoleAccount = currentAccount.accountId;
       if (tokenToCreate.supplyKey == Account.NullPublicKey) {
         tokenToCreate.cashInRoleAccount = currentAccount.accountId;
-        await utilsService.handleValidation(
-          () => tokenToCreate.validate('cashInRoleAllowance'),
-          async () => {
-            tokenToCreate.cashInRoleAllowance =
-              await utilsService.defaultSingleAsk(
-                language.getText('stablecoin.initialRoles.cashinAllowance'),
-                '0',
-              );
-          },
-        );
+        tokenToCreate.cashInRoleAllowance = '0';
       }
     }
 
