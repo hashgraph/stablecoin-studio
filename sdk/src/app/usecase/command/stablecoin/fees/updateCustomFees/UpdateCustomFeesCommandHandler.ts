@@ -38,6 +38,7 @@ import {
 } from '../../../../../../port/out/mirror/response/AccountTokenRelationViewModel.js';
 import { AccountFreeze } from '../../error/AccountFreeze.js';
 import { AccountNotKyc } from '../../error/AccountNotKyc.js';
+import { CustomFeeWithoutCollectorId } from '../../error/CustomFeeWithoutCollectorId.js';
 
 @CommandHandler(UpdateCustomFeesCommand)
 export class UpdateCustomFeesCommandHandler
@@ -64,27 +65,31 @@ export class UpdateCustomFeesCommandHandler
 		);
 
 		for (const customFee of customFees) {
-			const tokenRelationship = (
-				await this.stableCoinService.queryBus.execute(
-					new GetAccountTokenRelationshipQuery(
-						customFee.collectorId!,
-						tokenId,
-					),
-				)
-			).payload;
+			if (customFee.collectorId) {
+				const tokenRelationship = (
+					await this.stableCoinService.queryBus.execute(
+						new GetAccountTokenRelationshipQuery(
+							customFee.collectorId,
+							tokenId,
+						),
+					)
+				).payload;
 
-			if (!tokenRelationship) {
-				throw new StableCoinNotAssociated(
-					customFee.collectorId!.toString(),
-					tokenId.toString(),
-				);
-			}
-			if (tokenRelationship.freezeStatus === FreezeStatus.FROZEN) {
-				throw new AccountFreeze(customFee.collectorId!.toString());
-			}
+				if (!tokenRelationship) {
+					throw new StableCoinNotAssociated(
+						customFee.collectorId.toString(),
+						tokenId.toString(),
+					);
+				}
+				if (tokenRelationship.freezeStatus === FreezeStatus.FROZEN) {
+					throw new AccountFreeze(customFee.collectorId.toString());
+				}
 
-			if (tokenRelationship.kycStatus === KycStatus.REVOKED) {
-				throw new AccountNotKyc(customFee.collectorId!.toString());
+				if (tokenRelationship.kycStatus === KycStatus.REVOKED) {
+					throw new AccountNotKyc(customFee.collectorId.toString());
+				}
+			} else {
+				throw new CustomFeeWithoutCollectorId(tokenId.toString());
 			}
 		}
 

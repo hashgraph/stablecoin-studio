@@ -18,7 +18,12 @@
  *
  */
 
-export class FactoryCashinRole {
-	public account: string;
-	public allowance: string;
+import BaseError, { ErrorCode } from '../../../../../core/error/BaseError.js';
+export class CustomFeeWithoutCollectorId extends BaseError {
+	constructor(tokenId: string) {
+		super(
+			ErrorCode.AccountFreeze,
+			`The token ${tokenId} has some custom fee without collector id`,
+		);
+	}
 }

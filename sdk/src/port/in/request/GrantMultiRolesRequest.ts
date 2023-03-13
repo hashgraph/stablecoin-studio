@@ -22,8 +22,6 @@
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import { OptionalField } from '../../../core/decorator/OptionalDecorator.js';
 import Validation from './validation/Validation.js';
-import BaseError from '../../../core/error/BaseError.js';
-import { InvalidSupplierType } from '../../../domain/context/stablecoin/error/InvalidSupplierType.js';
 import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
 import { InvalidValue } from './error/InvalidValue.js';
 import { EmptyValue } from './error/EmptyValue.js';
