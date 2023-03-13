@@ -78,6 +78,7 @@ export default class OperationStableCoinService extends Service {
   private stableCoinPaused;
   private stableCoinDeleted;
   private hasKycKey;
+  private hasFreezeKey;
   private hasfeeScheduleKey;
   private isFrozen;
 
@@ -174,6 +175,7 @@ export default class OperationStableCoinService extends Service {
     this.stableCoinDeleted = capabilitiesStableCoin.coin.deleted;
     this.stableCoinPaused = capabilitiesStableCoin.coin.paused;
     this.hasKycKey = capabilitiesStableCoin.coin.kycKey !== undefined;
+    this.hasFreezeKey = capabilitiesStableCoin.coin.freezeKey !== undefined;
     this.hasfeeScheduleKey =
       capabilitiesStableCoin.coin.feeScheduleKey !== undefined;
 
@@ -419,71 +421,11 @@ export default class OperationStableCoinService extends Service {
           );
         }
         break;
-      case language.getText('wizard.stableCoinOptions.Freeze'):
+      case language.getText('wizard.stableCoinOptions.FreezeMgmt'):
         await utilsService.cleanAndShowBanner();
-        utilsService.displayCurrentUserInfo(
-          configAccount,
-          this.stableCoinWithSymbol,
-        );
 
-        const freezeAccountRequest = new FreezeAccountRequest({
-          tokenId: this.stableCoinId,
-          targetId: '',
-        });
+        await this.freezeManagementFlow();
 
-        await utilsService.handleValidation(
-          () => freezeAccountRequest.validate('targetId'),
-          async () => {
-            freezeAccountRequest.targetId = await utilsService.defaultSingleAsk(
-              language.getText('wizard.freezeAccount'),
-              '0.0.0',
-            );
-          },
-        );
-        try {
-          await new FreezeStableCoinService().freezeAccount(
-            freezeAccountRequest,
-          );
-        } catch (error) {
-          await utilsService.askErrorConfirmation(
-            async () => await this.operationsStableCoin(),
-            error,
-          );
-        }
-
-        break;
-      case language.getText('wizard.stableCoinOptions.UnFreeze'):
-        await utilsService.cleanAndShowBanner();
-        utilsService.displayCurrentUserInfo(
-          configAccount,
-          this.stableCoinWithSymbol,
-        );
-
-        const unfreezeAccountRequest = new FreezeAccountRequest({
-          tokenId: this.stableCoinId,
-          targetId: '',
-        });
-
-        await utilsService.handleValidation(
-          () => unfreezeAccountRequest.validate('targetId'),
-          async () => {
-            unfreezeAccountRequest.targetId =
-              await utilsService.defaultSingleAsk(
-                language.getText('wizard.unfreezeAccount'),
-                '0.0.0',
-              );
-          },
-        );
-        try {
-          await new FreezeStableCoinService().unfreezeAccount(
-            unfreezeAccountRequest,
-          );
-        } catch (error) {
-          await utilsService.askErrorConfirmation(
-            async () => await this.operationsStableCoin(),
-            error,
-          );
-        }
         break;
       case language.getText('wizard.stableCoinOptions.KYCMgmt'):
         await utilsService.cleanAndShowBanner();
@@ -812,6 +754,148 @@ export default class OperationStableCoinService extends Service {
         await this.operationsStableCoin();
     }
     await this.kycManagementFlow();
+  }
+
+  private async freezeManagementFlow(): Promise<void> {
+    const configAccount = utilsService.getCurrentAccount();
+    const privateKey: RequestPrivateKey = {
+      key: configAccount.privateKey.key,
+      type: configAccount.privateKey.type,
+    };
+    const currentAccount: RequestAccount = {
+      accountId: configAccount.accountId,
+      privateKey: privateKey,
+    };
+
+    const capabilitiesStableCoin: StableCoinCapabilities =
+      await this.getCapabilities(currentAccount);
+
+    const freezeOptions = language.getArrayFromObject(
+      'freezeManagement.options',
+    );
+    const freezeOptionsFiltered = this.filterFreezeMenuOptions(
+      freezeOptions,
+      capabilitiesStableCoin,
+      await this.getRolesAccount(),
+    );
+
+    switch (
+      await utilsService.defaultMultipleAsk(
+        language.getText('stablecoin.askAction'),
+        freezeOptionsFiltered,
+        true,
+        configAccount.network,
+        `${configAccount.accountId} - ${configAccount.alias}`,
+        this.stableCoinWithSymbol,
+        this.stableCoinPaused,
+        this.stableCoinDeleted,
+      )
+    ) {
+      case language.getText('freezeManagement.options.Freeze'):
+        await utilsService.cleanAndShowBanner();
+        utilsService.displayCurrentUserInfo(
+          configAccount,
+          this.stableCoinWithSymbol,
+        );
+
+        const freezeAccountRequest = new FreezeAccountRequest({
+          tokenId: this.stableCoinId,
+          targetId: '',
+        });
+
+        await utilsService.handleValidation(
+          () => freezeAccountRequest.validate('targetId'),
+          async () => {
+            freezeAccountRequest.targetId = await utilsService.defaultSingleAsk(
+              language.getText('wizard.freezeAccount'),
+              '0.0.0',
+            );
+          },
+        );
+        try {
+          await new FreezeStableCoinService().freezeAccount(
+            freezeAccountRequest,
+          );
+        } catch (error) {
+          await utilsService.askErrorConfirmation(
+            async () => await this.operationsStableCoin(),
+            error,
+          );
+        }
+
+        break;
+      case language.getText('freezeManagement.options.UnFreeze'):
+        await utilsService.cleanAndShowBanner();
+        utilsService.displayCurrentUserInfo(
+          configAccount,
+          this.stableCoinWithSymbol,
+        );
+
+        const unfreezeAccountRequest = new FreezeAccountRequest({
+          tokenId: this.stableCoinId,
+          targetId: '',
+        });
+
+        await utilsService.handleValidation(
+          () => unfreezeAccountRequest.validate('targetId'),
+          async () => {
+            unfreezeAccountRequest.targetId =
+              await utilsService.defaultSingleAsk(
+                language.getText('wizard.unfreezeAccount'),
+                '0.0.0',
+              );
+          },
+        );
+        try {
+          await new FreezeStableCoinService().unfreezeAccount(
+            unfreezeAccountRequest,
+          );
+        } catch (error) {
+          await utilsService.askErrorConfirmation(
+            async () => await this.operationsStableCoin(),
+            error,
+          );
+        }
+        break;
+      case language.getText('freezeManagement.options.AccountFrozen'):
+        await utilsService.cleanAndShowBanner();
+        utilsService.displayCurrentUserInfo(
+          configAccount,
+          this.stableCoinWithSymbol,
+        );
+
+        const checkAccountFrozenRequest = new FreezeAccountRequest({
+          tokenId: this.stableCoinId,
+          targetId: '',
+        });
+
+        await utilsService.handleValidation(
+          () => checkAccountFrozenRequest.validate('targetId'),
+          async () => {
+            checkAccountFrozenRequest.targetId =
+              await utilsService.defaultSingleAsk(
+                language.getText('wizard.checkAccountFrozen'),
+                '0.0.0',
+              );
+          },
+        );
+        try {
+          await new FreezeStableCoinService().isAccountFrozenDisplay(
+            checkAccountFrozenRequest,
+          );
+        } catch (error) {
+          await utilsService.askErrorConfirmation(
+            async () => await this.operationsStableCoin(),
+            error,
+          );
+        }
+        break;
+      case freezeOptionsFiltered[freezeOptionsFiltered.length - 1]:
+      default:
+        await utilsService.cleanAndShowBanner();
+        await this.operationsStableCoin();
+    }
+    await this.freezeManagementFlow();
   }
 
   private async feesManagementFlow(): Promise<void> {
@@ -1789,10 +1873,8 @@ export default class OperationStableCoinService extends Service {
           capabilities.includes(Operation.WIPE)) ||
         (option === language.getText('wizard.stableCoinOptions.Rescue') &&
           capabilities.includes(Operation.RESCUE)) ||
-        (option === language.getText('wizard.stableCoinOptions.Freeze') &&
-          capabilities.includes(Operation.FREEZE)) ||
-        (option === language.getText('wizard.stableCoinOptions.UnFreeze') &&
-          capabilities.includes(Operation.UNFREEZE)) ||
+        (option === language.getText('wizard.stableCoinOptions.FreezeMgmt') &&
+          this.hasFreezeKey) ||
         (option === language.getText('wizard.stableCoinOptions.KYCMgmt') &&
           this.hasKycKey) ||
         (option === language.getText('wizard.stableCoinOptions.DangerZone') &&
@@ -1845,22 +1927,6 @@ export default class OperationStableCoinService extends Service {
                 Operation.WIPE,
                 Access.HTS,
               )) ||
-            (option === language.getText('wizard.stableCoinOptions.Freeze') &&
-              roles.includes(StableCoinRole.FREEZE_ROLE)) ||
-            (option === language.getText('wizard.stableCoinOptions.Freeze') &&
-              this.isOperationAccess(
-                stableCoinCapabilities,
-                Operation.FREEZE,
-                Access.HTS,
-              )) ||
-            (option === language.getText('wizard.stableCoinOptions.UnFreeze') &&
-              roles.includes(StableCoinRole.FREEZE_ROLE)) ||
-            (option === language.getText('wizard.stableCoinOptions.UnFreeze') &&
-              this.isOperationAccess(
-                stableCoinCapabilities,
-                Operation.UNFREEZE,
-                Access.HTS,
-              )) ||
             (option ===
               language.getText('wizard.stableCoinOptions.DangerZone') &&
               roles.includes(StableCoinRole.PAUSE_ROLE)) ||
@@ -1888,6 +1954,8 @@ export default class OperationStableCoinService extends Service {
             option === language.getText('wizard.stableCoinOptions.Details') ||
             option === language.getText('wizard.stableCoinOptions.Balance') ||
             option === language.getText('wizard.stableCoinOptions.KYCMgmt') ||
+            option ===
+              language.getText('wizard.stableCoinOptions.FreezeMgmt') ||
             (option === language.getText('wizard.stableCoinOptions.RoleMgmt') &&
               roles.includes(StableCoinRole.DEFAULT_ADMIN_ROLE)) ||
             (option ===
@@ -1958,6 +2026,61 @@ export default class OperationStableCoinService extends Service {
               )) ||
             option ===
               language.getText('kycManagement.options.AccountKYCGranted')
+          ) {
+            return true;
+          }
+          return false;
+        })
+      : capabilitiesFilter;
+
+    return result;
+  }
+
+  private filterFreezeMenuOptions(
+    options: string[],
+    stableCoinCapabilities: StableCoinCapabilities,
+    roles?: string[],
+  ): string[] {
+    let result = [];
+    let capabilitiesFilter = [];
+    // if (stableCoinCapabilities.capabilities.length === 0) return options;
+    const capabilities: Operation[] = stableCoinCapabilities.capabilities.map(
+      (a) => a.operation,
+    );
+    capabilitiesFilter = options.filter((option) => {
+      if (
+        (option === language.getText('freezeManagement.options.Freeze') &&
+          capabilities.includes(Operation.FREEZE)) ||
+        (option === language.getText('freezeManagement.options.UnFreeze') &&
+          capabilities.includes(Operation.UNFREEZE)) ||
+        option === language.getText('freezeManagement.options.AccountFrozen')
+      ) {
+        return true;
+      }
+      return false;
+    });
+
+    result = roles
+      ? capabilitiesFilter.filter((option) => {
+          if (
+            (option === language.getText('freezeManagement.options.Freeze') &&
+              roles.includes(StableCoinRole.FREEZE_ROLE)) ||
+            (option === language.getText('freezeManagement.options.Freeze') &&
+              this.isOperationAccess(
+                stableCoinCapabilities,
+                Operation.FREEZE,
+                Access.HTS,
+              )) ||
+            (option === language.getText('freezeManagement.options.UnFreeze') &&
+              roles.includes(StableCoinRole.FREEZE_ROLE)) ||
+            (option === language.getText('freezeManagement.options.UnFreeze') &&
+              this.isOperationAccess(
+                stableCoinCapabilities,
+                Operation.UNFREEZE,
+                Access.HTS,
+              )) ||
+            option ===
+              language.getText('freezeManagement.options.AccountFrozen')
           ) {
             return true;
           }

@@ -226,6 +226,8 @@ export const english = {
     accountsChanged: '\nAccounts changed successfully',
     freezeAccount: 'Which account do you want to freeze?',
     unfreezeAccount: 'Which account do you want to unfreeze?',
+    checkAccountFrozen:
+      'which account do you want to know if it is frozen for the token?',
     grantKYCToAccount: 'Which account do you want to grant KYC to?',
     revokeKYCFromAccount: 'Which account do you want to revoke KYC from?',
     checkAccountKYCGranted:
@@ -241,8 +243,7 @@ export const english = {
       Burn: 'Burn',
       Wipe: 'Wipe',
       Rescue: 'Rescue',
-      Freeze: 'Freeze an account',
-      UnFreeze: 'Unfreeze an account',
+      FreezeMgmt: 'Freeze Management',
       KYCMgmt: 'KYC Management',
       FeesMgmt: 'Fees management',
       RoleMgmt: 'Role management',
@@ -356,6 +357,9 @@ export const english = {
     unpauseCompleted: 'Stable coin unpaused',
     freezeCompleted: 'Account frozen',
     unfreezeCompleted: 'Account unfrozen',
+    accountNotFrozen:
+      'The account ${address} is not frozen for the ${token} token',
+    accountFrozen: 'The account ${address} is frozen for the ${token} token',
     KYCGranted: 'Account KYC granted',
     KYCRevoked: 'Account KYC revoked',
     accountKYCGranted:
@@ -468,6 +472,13 @@ export const english = {
       GrantKYC: 'Grant KYC to an account',
       RevokeKYC: 'Revoke KYC from an account',
       AccountKYCGranted: 'Check KYC status from an account',
+    },
+  },
+  freezeManagement: {
+    options: {
+      Freeze: 'Freeze an account',
+      UnFreeze: 'Unfreeze an account',
+      AccountFrozen: 'Check if account is frozen',
     },
   },
   keysManagement: {
