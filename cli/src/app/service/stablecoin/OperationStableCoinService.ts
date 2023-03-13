@@ -2221,11 +2221,11 @@ export default class OperationStableCoinService extends Service {
         value && value['key'] === 'null'
           ? `Smart Contract - ${proxyAddress}`
           : value;
-      if (this.keyHaveChanged(originalKeys[key], value)) {
-        console.log(colors.yellow(`${key}: ${JSON.stringify(newValue)}`));
-      } else {
-        console.log(`${key}: ${JSON.stringify(newValue)}`);
+      if (!newValue || !this.keyHaveChanged(originalKeys[key], value)) {
+        console.log(`${key}: ${JSON.stringify(originalKeys[key])}`);
         this.removeKey(key);
+      } else {
+        console.log(colors.yellow(`${key}: ${JSON.stringify(newValue)}`));
       }
     }
   }
@@ -2267,8 +2267,15 @@ export default class OperationStableCoinService extends Service {
   }
 
   private async updateKeys(keys): Promise<IManagedFeatures> {
+    const selectedKeys: any = await utilsService.checkBoxMultipleAsk(
+      language.getText('keysManagement.askKeys'),
+      keys,
+      false,
+      true,
+    );
+
     let freezeKey;
-    if (keys.includes('freezeKey')) {
+    if (selectedKeys.includes('freezeKey')) {
       freezeKey = await this.checkAnswer(
         await utilsService.defaultMultipleAsk(
           language.getText('stablecoin.features.freeze'),
@@ -2278,7 +2285,7 @@ export default class OperationStableCoinService extends Service {
     }
 
     let wipeKey;
-    if (keys.includes('wipeKey')) {
+    if (selectedKeys.includes('wipeKey')) {
       wipeKey = await this.checkAnswer(
         await utilsService.defaultMultipleAsk(
           language.getText('stablecoin.features.wipe'),
@@ -2288,7 +2295,7 @@ export default class OperationStableCoinService extends Service {
     }
 
     let pauseKey;
-    if (keys.includes('pauseKey')) {
+    if (selectedKeys.includes('pauseKey')) {
       pauseKey = await this.checkAnswer(
         await utilsService.defaultMultipleAsk(
           language.getText('stablecoin.features.pause'),
@@ -2298,7 +2305,7 @@ export default class OperationStableCoinService extends Service {
     }
 
     let supplyKey;
-    if (keys.includes('supplyKey')) {
+    if (selectedKeys.includes('supplyKey')) {
       supplyKey = await this.checkAnswer(
         await utilsService.defaultMultipleAsk(
           language.getText('stablecoin.features.supply'),
@@ -2308,7 +2315,7 @@ export default class OperationStableCoinService extends Service {
     }
 
     let kycKey;
-    if (keys.includes('kycKey')) {
+    if (selectedKeys.includes('kycKey')) {
       kycKey = await this.checkAnswer(
         await utilsService.defaultMultipleAsk(
           language.getText('stablecoin.features.KYC'),
@@ -2318,7 +2325,7 @@ export default class OperationStableCoinService extends Service {
     }
 
     let feeScheduleKey;
-    if (keys.includes('feeScheduleKey')) {
+    if (selectedKeys.includes('feeScheduleKey')) {
       feeScheduleKey = await this.checkAnswer(
         await utilsService.defaultMultipleAsk(
           language.getText('stablecoin.features.feeSchedule'),
@@ -2328,7 +2335,6 @@ export default class OperationStableCoinService extends Service {
         ),
       );
     }
-
     return { kycKey, freezeKey, wipeKey, pauseKey, feeScheduleKey, supplyKey };
   }
 

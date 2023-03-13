@@ -466,6 +466,7 @@ export const english = {
     },
   },
   keysManagement: {
+    askKeys: 'Choose the keys',
     confirm: 'Are you sure you want to apply these changes?',
     options: {
       updateKeys: 'Update keys',
