@@ -485,101 +485,10 @@ export default class OperationStableCoinService extends Service {
           );
         }
         break;
-      case language.getText('wizard.stableCoinOptions.GrantKYC'):
+      case language.getText('wizard.stableCoinOptions.KYCMgmt'):
         await utilsService.cleanAndShowBanner();
-        utilsService.displayCurrentUserInfo(
-          configAccount,
-          this.stableCoinWithSymbol,
-        );
 
-        const grantKYCRequest = new KYCRequest({
-          tokenId: this.stableCoinId,
-          targetId: '',
-        });
-
-        await utilsService.handleValidation(
-          () => grantKYCRequest.validate('targetId'),
-          async () => {
-            grantKYCRequest.targetId = await utilsService.defaultSingleAsk(
-              language.getText('wizard.grantKYCToAccount'),
-              '0.0.0',
-            );
-          },
-        );
-        try {
-          await new KYCStableCoinService().grantKYCToAccount(grantKYCRequest);
-        } catch (error) {
-          await utilsService.askErrorConfirmation(
-            async () => await this.operationsStableCoin(),
-            error,
-          );
-        }
-
-        break;
-      case language.getText('wizard.stableCoinOptions.RevokeKYC'):
-        await utilsService.cleanAndShowBanner();
-        utilsService.displayCurrentUserInfo(
-          configAccount,
-          this.stableCoinWithSymbol,
-        );
-
-        const revokeKYCRequest = new KYCRequest({
-          tokenId: this.stableCoinId,
-          targetId: '',
-        });
-
-        await utilsService.handleValidation(
-          () => revokeKYCRequest.validate('targetId'),
-          async () => {
-            revokeKYCRequest.targetId = await utilsService.defaultSingleAsk(
-              language.getText('wizard.revokeKYCFromAccount'),
-              '0.0.0',
-            );
-          },
-        );
-        try {
-          await new KYCStableCoinService().revokeKYCFromAccount(
-            revokeKYCRequest,
-          );
-        } catch (error) {
-          await utilsService.askErrorConfirmation(
-            async () => await this.operationsStableCoin(),
-            error,
-          );
-        }
-        break;
-      case language.getText('wizard.stableCoinOptions.AccountKYCGranted'):
-        await utilsService.cleanAndShowBanner();
-        utilsService.displayCurrentUserInfo(
-          configAccount,
-          this.stableCoinWithSymbol,
-        );
-
-        const checkAccountKYCRequest = new KYCRequest({
-          tokenId: this.stableCoinId,
-          targetId: '',
-        });
-
-        await utilsService.handleValidation(
-          () => checkAccountKYCRequest.validate('targetId'),
-          async () => {
-            checkAccountKYCRequest.targetId =
-              await utilsService.defaultSingleAsk(
-                language.getText('wizard.checkAccountKYCGranted'),
-                '0.0.0',
-              );
-          },
-        );
-        try {
-          await new KYCStableCoinService().isAccountKYCGranted(
-            checkAccountKYCRequest,
-          );
-        } catch (error) {
-          await utilsService.askErrorConfirmation(
-            async () => await this.operationsStableCoin(),
-            error,
-          );
-        }
+        await this.kycManagementFlow();
         break;
       case language.getText('wizard.stableCoinOptions.FeesMgmt'):
         await utilsService.cleanAndShowBanner();
@@ -650,10 +559,6 @@ export default class OperationStableCoinService extends Service {
       tokenIsDeleted,
     );
   }
-
-  /**
-   * FeeManagement Flow
-   */
 
   private async sendTokens(sender: string): Promise<void> {
     const getAccountBalanceRequest = new GetAccountBalanceRequest({
@@ -772,6 +677,143 @@ export default class OperationStableCoinService extends Service {
     return;
   }
 
+  private async kycManagementFlow(): Promise<void> {
+    const configAccount = utilsService.getCurrentAccount();
+    const privateKey: RequestPrivateKey = {
+      key: configAccount.privateKey.key,
+      type: configAccount.privateKey.type,
+    };
+    const currentAccount: RequestAccount = {
+      accountId: configAccount.accountId,
+      privateKey: privateKey,
+    };
+
+    const capabilitiesStableCoin: StableCoinCapabilities =
+      await this.getCapabilities(currentAccount);
+
+    const kycOptions = language.getArrayFromObject('kycManagement.options');
+    const kycOptionsFiltered = this.filterKYCMenuOptions(
+      kycOptions,
+      capabilitiesStableCoin,
+      await this.getRolesAccount(),
+    );
+
+    switch (
+      await utilsService.defaultMultipleAsk(
+        language.getText('stablecoin.askAction'),
+        kycOptionsFiltered,
+        true,
+        configAccount.network,
+        `${configAccount.accountId} - ${configAccount.alias}`,
+        this.stableCoinWithSymbol,
+        this.stableCoinPaused,
+        this.stableCoinDeleted,
+      )
+    ) {
+      case language.getText('kycManagement.options.GrantKYC'):
+        await utilsService.cleanAndShowBanner();
+        utilsService.displayCurrentUserInfo(
+          configAccount,
+          this.stableCoinWithSymbol,
+        );
+
+        const grantKYCRequest = new KYCRequest({
+          tokenId: this.stableCoinId,
+          targetId: '',
+        });
+
+        await utilsService.handleValidation(
+          () => grantKYCRequest.validate('targetId'),
+          async () => {
+            grantKYCRequest.targetId = await utilsService.defaultSingleAsk(
+              language.getText('wizard.grantKYCToAccount'),
+              '0.0.0',
+            );
+          },
+        );
+        try {
+          await new KYCStableCoinService().grantKYCToAccount(grantKYCRequest);
+        } catch (error) {
+          await utilsService.askErrorConfirmation(
+            async () => await this.operationsStableCoin(),
+            error,
+          );
+        }
+
+        break;
+      case language.getText('kycManagement.options.RevokeKYC'):
+        await utilsService.cleanAndShowBanner();
+        utilsService.displayCurrentUserInfo(
+          configAccount,
+          this.stableCoinWithSymbol,
+        );
+
+        const revokeKYCRequest = new KYCRequest({
+          tokenId: this.stableCoinId,
+          targetId: '',
+        });
+
+        await utilsService.handleValidation(
+          () => revokeKYCRequest.validate('targetId'),
+          async () => {
+            revokeKYCRequest.targetId = await utilsService.defaultSingleAsk(
+              language.getText('wizard.revokeKYCFromAccount'),
+              '0.0.0',
+            );
+          },
+        );
+        try {
+          await new KYCStableCoinService().revokeKYCFromAccount(
+            revokeKYCRequest,
+          );
+        } catch (error) {
+          await utilsService.askErrorConfirmation(
+            async () => await this.operationsStableCoin(),
+            error,
+          );
+        }
+        break;
+      case language.getText('kycManagement.options.AccountKYCGranted'):
+        await utilsService.cleanAndShowBanner();
+        utilsService.displayCurrentUserInfo(
+          configAccount,
+          this.stableCoinWithSymbol,
+        );
+
+        const checkAccountKYCRequest = new KYCRequest({
+          tokenId: this.stableCoinId,
+          targetId: '',
+        });
+
+        await utilsService.handleValidation(
+          () => checkAccountKYCRequest.validate('targetId'),
+          async () => {
+            checkAccountKYCRequest.targetId =
+              await utilsService.defaultSingleAsk(
+                language.getText('wizard.checkAccountKYCGranted'),
+                '0.0.0',
+              );
+          },
+        );
+        try {
+          await new KYCStableCoinService().isAccountKYCGranted(
+            checkAccountKYCRequest,
+          );
+        } catch (error) {
+          await utilsService.askErrorConfirmation(
+            async () => await this.operationsStableCoin(),
+            error,
+          );
+        }
+        break;
+      case kycOptionsFiltered[kycOptionsFiltered.length - 1]:
+      default:
+        await utilsService.cleanAndShowBanner();
+        await this.operationsStableCoin();
+    }
+    await this.kycManagementFlow();
+  }
+
   private async feesManagementFlow(): Promise<void> {
     const configAccount = utilsService.getCurrentAccount();
     const privateKey: RequestPrivateKey = {
@@ -818,7 +860,7 @@ export default class OperationStableCoinService extends Service {
     // const accountTarget = '0.0.0';
     switch (
       await utilsService.defaultMultipleAsk(
-        language.getText('stablecoin.askEditCashInRole'),
+        language.getText('stablecoin.askAction'),
         feeManagementOptionsFiltered,
         false,
         configAccount.network,
@@ -1164,10 +1206,6 @@ export default class OperationStableCoinService extends Service {
     return await utilsService.defaultConfirmAsk(Text, true);
   }
 
-  /**
-   * RoleManagement Flow
-   */
-
   private async roleManagementFlow(): Promise<void> {
     const configAccount = utilsService.getCurrentAccount();
     const privateKey: RequestPrivateKey = {
@@ -1197,7 +1235,7 @@ export default class OperationStableCoinService extends Service {
     const accountTarget = '0.0.0';
     switch (
       await utilsService.defaultMultipleAsk(
-        language.getText('stablecoin.askEditCashInRole'),
+        language.getText('stablecoin.askAction'),
         roleManagementOptionsFiltered,
         false,
         configAccount.network,
@@ -1755,14 +1793,8 @@ export default class OperationStableCoinService extends Service {
           capabilities.includes(Operation.FREEZE)) ||
         (option === language.getText('wizard.stableCoinOptions.UnFreeze') &&
           capabilities.includes(Operation.UNFREEZE)) ||
-        (option === language.getText('wizard.stableCoinOptions.GrantKYC') &&
-          capabilities.includes(Operation.GRANT_KYC)) ||
-        (option === language.getText('wizard.stableCoinOptions.RevokeKYC') &&
-          capabilities.includes(Operation.REVOKE_KYC)) ||
-        (option ===
-          language.getText('wizard.stableCoinOptions.AccountKYCGranted') &&
-          capabilities.includes(Operation.GRANT_KYC) &&
-          capabilities.includes(Operation.REVOKE_KYC)) ||
+        (option === language.getText('wizard.stableCoinOptions.KYCMgmt') &&
+          this.hasKycKey) ||
         (option === language.getText('wizard.stableCoinOptions.DangerZone') &&
           (capabilities.includes(Operation.PAUSE) ||
             capabilities.includes(Operation.DELETE))) ||
@@ -1776,9 +1808,6 @@ export default class OperationStableCoinService extends Service {
           !this.stableCoinDeleted) ||
         (option === language.getText('wizard.stableCoinOptions.Balance') &&
           !this.stableCoinDeleted) ||
-        (option ===
-          language.getText('wizard.stableCoinOptions.AccountKYCGranted') &&
-          this.hasKycKey) ||
         (option ===
           language.getText('wizard.stableCoinOptions.Configuration') &&
           capabilities.includes(Operation.UPDATE))
@@ -1832,24 +1861,6 @@ export default class OperationStableCoinService extends Service {
                 Operation.UNFREEZE,
                 Access.HTS,
               )) ||
-            (option === language.getText('wizard.stableCoinOptions.GrantKYC') &&
-              roles.includes(StableCoinRole.KYC_ROLE)) ||
-            (option === language.getText('wizard.stableCoinOptions.GrantKYC') &&
-              this.isOperationAccess(
-                stableCoinCapabilities,
-                Operation.GRANT_KYC,
-                Access.HTS,
-              )) ||
-            (option ===
-              language.getText('wizard.stableCoinOptions.RevokeKYC') &&
-              roles.includes(StableCoinRole.KYC_ROLE)) ||
-            (option ===
-              language.getText('wizard.stableCoinOptions.RevokeKYC') &&
-              this.isOperationAccess(
-                stableCoinCapabilities,
-                Operation.REVOKE_KYC,
-                Access.HTS,
-              )) ||
             (option ===
               language.getText('wizard.stableCoinOptions.DangerZone') &&
               roles.includes(StableCoinRole.PAUSE_ROLE)) ||
@@ -1876,8 +1887,7 @@ export default class OperationStableCoinService extends Service {
               language.getText('wizard.stableCoinOptions.RoleRefresh') ||
             option === language.getText('wizard.stableCoinOptions.Details') ||
             option === language.getText('wizard.stableCoinOptions.Balance') ||
-            option ===
-              language.getText('wizard.stableCoinOptions.AccountKYCGranted') ||
+            option === language.getText('wizard.stableCoinOptions.KYCMgmt') ||
             (option === language.getText('wizard.stableCoinOptions.RoleMgmt') &&
               roles.includes(StableCoinRole.DEFAULT_ADMIN_ROLE)) ||
             (option ===
@@ -1898,6 +1908,64 @@ export default class OperationStableCoinService extends Service {
       : capabilitiesFilter;
 
     return result.concat(language.getArrayFromObject('wizard.returnOption'));
+  }
+
+  private filterKYCMenuOptions(
+    options: string[],
+    stableCoinCapabilities: StableCoinCapabilities,
+    roles?: string[],
+  ): string[] {
+    let result = [];
+    let capabilitiesFilter = [];
+    // if (stableCoinCapabilities.capabilities.length === 0) return options;
+    const capabilities: Operation[] = stableCoinCapabilities.capabilities.map(
+      (a) => a.operation,
+    );
+    capabilitiesFilter = options.filter((option) => {
+      if (
+        (option === language.getText('kycManagement.options.GrantKYC') &&
+          capabilities.includes(Operation.GRANT_KYC)) ||
+        (option === language.getText('kycManagement.options.RevokeKYC') &&
+          capabilities.includes(Operation.REVOKE_KYC)) ||
+        (option ===
+          language.getText('kycManagement.options.AccountKYCGranted') &&
+          capabilities.includes(Operation.GRANT_KYC) &&
+          capabilities.includes(Operation.REVOKE_KYC))
+      ) {
+        return true;
+      }
+      return false;
+    });
+
+    result = roles
+      ? capabilitiesFilter.filter((option) => {
+          if (
+            (option === language.getText('kycManagement.options.GrantKYC') &&
+              roles.includes(StableCoinRole.KYC_ROLE)) ||
+            (option === language.getText('kycManagement.options.GrantKYC') &&
+              this.isOperationAccess(
+                stableCoinCapabilities,
+                Operation.GRANT_KYC,
+                Access.HTS,
+              )) ||
+            (option === language.getText('kycManagement.options.RevokeKYC') &&
+              roles.includes(StableCoinRole.KYC_ROLE)) ||
+            (option === language.getText('kycManagement.options.RevokeKYC') &&
+              this.isOperationAccess(
+                stableCoinCapabilities,
+                Operation.REVOKE_KYC,
+                Access.HTS,
+              )) ||
+            option ===
+              language.getText('kycManagement.options.AccountKYCGranted')
+          ) {
+            return true;
+          }
+          return false;
+        })
+      : capabilitiesFilter;
+
+    return result;
   }
 
   private isOperationAccess(
@@ -2085,7 +2153,7 @@ export default class OperationStableCoinService extends Service {
 
     switch (
       await utilsService.defaultMultipleAsk(
-        language.getText('stablecoin.askEditCashInRole'),
+        language.getText('stablecoin.askAction'),
         tokenConfigurationOptions,
         false,
         configAccount.network,
@@ -2148,7 +2216,7 @@ export default class OperationStableCoinService extends Service {
 
     switch (
       await utilsService.defaultMultipleAsk(
-        language.getText('stablecoin.askEditCashInRole'),
+        language.getText('stablecoin.askAction'),
         keysManagmentOptions,
         false,
         configAccount.network,
@@ -2426,7 +2494,7 @@ export default class OperationStableCoinService extends Service {
     // const accountTarget = '0.0.0';
     switch (
       await utilsService.defaultMultipleAsk(
-        language.getText('stablecoin.askEditCashInRole'),
+        language.getText('stablecoin.askAction'),
         dangerZoneOptionsFiltered,
         false,
         configAccount.network,

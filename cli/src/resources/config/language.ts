@@ -155,7 +155,7 @@ export const english = {
       'For which account would you like to get the balance of?',
     askCashInRoleType: 'What type of permission do you want to grant?',
     askCashInRoleRevokeType: 'What type of permission do you want to revoke?',
-    askEditCashInRole: 'What action do you want to perform?',
+    askAction: 'What action do you want to perform?',
     accountTarget: 'Enter the target account id',
     sendAmount: 'Enter the amount you want to send to the account',
     supplierRoleLimit: 'What will the limit be?',
@@ -243,9 +243,7 @@ export const english = {
       Rescue: 'Rescue',
       Freeze: 'Freeze an account',
       UnFreeze: 'Unfreeze an account',
-      GrantKYC: 'Grant KYC to an account',
-      RevokeKYC: 'Revoke KYC from an account',
-      AccountKYCGranted: 'Check KYC status from an account',
+      KYCMgmt: 'KYC Management',
       FeesMgmt: 'Fees management',
       RoleMgmt: 'Role management',
       RoleRefresh: 'Refresh roles',
@@ -463,6 +461,13 @@ export const english = {
     options: {
       keysManagement: 'Keys management',
       ...goBack,
+    },
+  },
+  kycManagement: {
+    options: {
+      GrantKYC: 'Grant KYC to an account',
+      RevokeKYC: 'Revoke KYC from an account',
+      AccountKYCGranted: 'Check KYC status from an account',
     },
   },
   keysManagement: {
