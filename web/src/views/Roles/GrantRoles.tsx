@@ -10,7 +10,7 @@ import {
 	HStack,
 } from '@chakra-ui/react';
 import { GrantRoleRequest, GrantMultiRolesRequest, StableCoinRole } from 'hedera-stable-coin-sdk';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -59,10 +59,17 @@ const GrantRoleOperation = ({
 	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
 	const [grantRoles, setGrantRoles] = useState<GrantRoleRequest[]>([]);
 
+	useEffect(() => {
+		isRoleSelected();
+	}, [watch()]);
+
+	useEffect(() => {
+		addNewAccount();
+	}, []);
+
 	const handleGrantRoles: ModalsHandlerActionsProps['onConfirm'] = async ({
 		onSuccess,
 		onError,
-		onWarning,
 		onLoading,
 	}) => {
 		onLoading();
@@ -112,6 +119,7 @@ const GrantRoleOperation = ({
 		const obj = getValues();
 		const asArray = Object.entries(obj);
 
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const filtered = asArray.filter(([key, value]) => value === true);
 
 		return filtered.map((item) => {
@@ -148,10 +156,7 @@ const GrantRoleOperation = ({
 		return (
 			<>
 				<Box>
-					{/* <HStack>
-						<Text>{t(`roles:giveRole.supplierQuantityQuestion`)}</Text>
-					</HStack> */}
-					<HStack ml='16px' mt='24px'>
+					<HStack ml='16px' mt='24px' width='216px'>
 						<Text mr='10px'>{t(`roles:giveRole.switchLabel`)}</Text>
 						<SwitchController control={control} name={`rol.${index}.infinity` as const} />
 					</HStack>
@@ -188,10 +193,22 @@ const GrantRoleOperation = ({
 			</>
 		);
 	};
+
 	const isRoleSelected = (): boolean => {
-		// TODO: Check if one checkbox is selected
-		return false;
+		const values = getValues();
+		delete values.rol;
+		return Object.values(values).some((item) => {
+			console.log(item);
+			return item === true;
+		});
 	};
+
+	const isNotValidAccount = () => {
+		return accounts.some((item: any) => {
+			return item.accountId === '';
+		});
+	};
+
 	return (
 		<>
 			<OperationLayout
@@ -226,7 +243,7 @@ const GrantRoleOperation = ({
 							accounts.map((item, i) => {
 								return (
 									<React.Fragment key={i}>
-										<Flex alignItems="flex-start">
+										<Flex alignItems='flex-start'>
 											<Flex>
 												<InputController
 													key={i}
@@ -245,6 +262,9 @@ const GrantRoleOperation = ({
 													}}
 													// TODO: Fix tamaño más pequeño para evitar que cuando no sea infinity supply no haga salto raro
 													isRequired
+													style={{
+														width: '216px',
+													}}
 													control={control}
 													name={`rol.${i}.accountId` as const}
 													label={t(`roles:giveRole.accountLabel`).toString()}
@@ -276,7 +296,9 @@ const GrantRoleOperation = ({
 					</>
 				}
 				onConfirm={onOpenModalAction}
-				confirmBtnProps={{ isDisabled: !formState.isValid && !isRoleSelected() }}
+				confirmBtnProps={{
+					isDisabled: (isNotValidAccount() || !isRoleSelected()) && !formState.isValid,
+				}}
 			/>
 
 			<ModalsHandler
