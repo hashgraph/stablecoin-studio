@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useEffect, useMemo, useState } from 'react';
 import {
+	CheckSupplierLimitRequest,
 	DecreaseSupplierAllowanceRequest,
 	GetSupplierAllowanceRequest,
 	IncreaseSupplierAllowanceRequest,
@@ -152,14 +153,21 @@ const ManageCashIn = () => {
 					break;
 				case 'CHECK':
 					// eslint-disable-next-line no-case-declarations
-					const response = await SDKService.checkSupplierAllowance(
-						new GetSupplierAllowanceRequest({
+					const isUnlimitedAllowance = await SDKService.isUnlimitedSupplierAllowance(
+						new CheckSupplierLimitRequest({
 							tokenId: selectedStableCoin.tokenId.toString(),
 							targetId: values.account,
 						}),
 					);
-
-					setLimit(response.value.toString());
+					if (!isUnlimitedAllowance) {
+						const response = await SDKService.checkSupplierAllowance(
+							new GetSupplierAllowanceRequest({
+								tokenId: selectedStableCoin.tokenId.toString(),
+								targetId: values.account,
+							}),
+						);
+						setLimit(response.value.toString());
+					}
 					break;
 			}
 			onSuccess();
@@ -284,7 +292,7 @@ const ManageCashIn = () => {
 				successNotificationTitle={t('operations:modalSuccessTitle')}
 				successNotificationDescription={
 					supplierLimitOption === 'CHECK'
-						? limit === '0'
+						? !limit
 							? t(`roles:${action}.hasInfiniteAllowance`)
 							: t(`roles:${action}.checkCashinLimitSuccessDesc`, {
 									account: getValues().account,
