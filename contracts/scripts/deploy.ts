@@ -34,10 +34,10 @@ import {
     toEvmAddress,
 } from './utils'
 
-const hederaERC20Address = '0.0.3701087' // '0.0.3621781' // Wrong  //'0.0.3701087' // Correct
-export const factoryProxyAddress = '0.0.3621788'
-const factoryProxyAdminAddress = '0.0.3621786'
-const factoryAddress = '0.0.3621784'
+const hederaERC20Address = '0.0.3679946'
+export const factoryProxyAddress = '0.0.3679963'
+const factoryProxyAdminAddress = '0.0.3679957'
+const factoryAddress = '0.0.3679955'
 
 export function initializeClients(): [
     Client,
@@ -453,81 +453,76 @@ export async function deployContractsWithSDK({
     ]
 }
 
-function tokenKeystoContract(addKyc = false) {
+export function tokenKeystoContract(addKyc = false) {
+    const keyType = generateKeyType({
+        adminKey: true,
+        kycKey: addKyc,
+        freezeKey: true,
+        wipeKey: true,
+        supplyKey: true,
+        feeScheduleKey: false,
+        pauseKey: true,
+        ignored: false,
+    })
     const keys = [
         {
-            keyType: 1, // admin
-            publicKey: '0x', // PublicKey.fromString(publicKey).toBytes(),
-            isED25519: false,
-        },
-        {
-            keyType: 4, // freeze
-            publicKey: '0x', // PublicKey.fromString(publicKey).toBytes(),
-            isED25519: false,
-        },
-        {
-            keyType: 8, // wipe
-            publicKey: '0x',
-            isED25519: false,
-        },
-        {
-            keyType: 16, // supply
-            publicKey: '0x',
-            isED25519: false,
-        },
-        {
-            keyType: 64, // pause
+            keyType: keyType,
             publicKey: '0x',
             isED25519: false,
         },
     ]
-    if (addKyc) {
-        keys.push({
-            keyType: 2, // KYC
-            publicKey: '0x', // PublicKey.fromString(publicKey).toBytes(),
-            isED25519: false,
-        })
-    }
 
     return keys
 }
 
-function tokenKeystoKey(publicKey: string, isED25519: boolean) {
+export function tokenKeystoKey(
+    publicKey: string,
+    isED25519: boolean,
+    addKyc = true
+) {
     const PK = PublicKey.fromString(publicKey).toBytesRaw()
+    const keyType = generateKeyType({
+        adminKey: true,
+        kycKey: addKyc,
+        freezeKey: true,
+        wipeKey: true,
+        supplyKey: true,
+        feeScheduleKey: false,
+        pauseKey: true,
+        ignored: false,
+    })
     const keys = [
         {
-            keyType: 1, // admin
-            publicKey: PK,
-            isED25519: isED25519,
-        },
-        {
-            keyType: 2, // KYC
-            publicKey: PK,
-            isED25519: isED25519,
-        },
-        {
-            keyType: 4, // freeze
-            publicKey: PK,
-            isED25519: isED25519,
-        },
-        {
-            keyType: 8, // wipe
-            publicKey: PK,
-            isED25519: isED25519,
-        },
-        {
-            keyType: 16, // supply
-            publicKey: PK,
-            isED25519: isED25519,
-        },
-        {
-            keyType: 64, // pause
+            keyType: keyType,
             publicKey: PK,
             isED25519: isED25519,
         },
     ]
 
     return keys
+}
+
+function generateKeyType({
+    adminKey = false,
+    kycKey = false,
+    freezeKey = false,
+    wipeKey = false,
+    supplyKey = false,
+    feeScheduleKey = false,
+    pauseKey = false,
+    ignored = false,
+}) {
+    let keyType = 0
+    if (adminKey) keyType += 1
+    if (kycKey) keyType += 2
+    if (freezeKey) keyType += 4
+    if (wipeKey) keyType += 8
+    if (supplyKey) keyType += 16
+    if (feeScheduleKey) keyType += 32
+    if (pauseKey) keyType += 64
+    if (ignored) keyType += 128
+
+    return keyType
 }
 
 async function rolestoAccountsByKeys(

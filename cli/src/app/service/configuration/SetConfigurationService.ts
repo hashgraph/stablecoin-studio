@@ -142,7 +142,9 @@ export default class SetConfigurationService extends Service {
     let moreAccounts = true;
 
     while (moreAccounts) {
-      utilsService.showMessage(`Account:`);
+      utilsService.showMessage(
+        language.getText('configuration.AccountsConfigurationMessage'),
+      );
 
       let accountId = await utilsService.defaultSingleAsk(
         language.getText('configuration.askAccountId'),

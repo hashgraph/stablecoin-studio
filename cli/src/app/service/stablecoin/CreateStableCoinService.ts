@@ -417,21 +417,19 @@ export default class CreateStableCoinService extends Service {
     factory: string,
     request: any,
   ): Promise<void> {
-    const Predeployed = await utilsService.defaultConfirmAsk(
-      language.getText('stablecoin.askHederaERC20Predeployed'),
-      true,
+    const factoryListEvm = await Factory.getHederaERC20List(
+      new GetERC20ListRequest({ factoryId: factory }),
+    ).then((value) => value.reverse());
+
+    const choices = factoryListEvm.map((item) => item.toString());
+    choices.push(language.getText('stablecoin.askHederaERC20Other'));
+
+    const versionSelection = await utilsService.defaultMultipleAsk(
+      language.getText('stablecoin.askHederaERC20Version'),
+      choices,
     );
 
-    if (Predeployed) {
-      const factoryListEvm = await Factory.getHederaERC20List(
-        new GetERC20ListRequest({ factoryId: factory }),
-      ).then((value) => value.reverse());
-
-      request.hederaERC20 = await utilsService.defaultMultipleAsk(
-        language.getText('stablecoin.askHederaERC20Version'),
-        factoryListEvm.map((item) => item.toString()),
-      );
-    } else {
+    if (versionSelection === choices[choices.length - 1]) {
       await utilsService.handleValidation(
         () => request.validate('hederaERC20'),
         async () => {
@@ -441,7 +439,7 @@ export default class CreateStableCoinService extends Service {
           );
         },
       );
-    }
+    } else request.hederaERC20 = versionSelection;
   }
 
   private async askForOptionalProps(): Promise<boolean> {

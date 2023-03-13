@@ -28,17 +28,12 @@ import BigDecimal from '../../domain/context/shared/BigDecimal.js';
 import { StableCoinRole } from '../../domain/context/stablecoin/StableCoinRole.js';
 import Account from '../../domain/context/account/Account.js';
 import { HederaId } from '../../domain/context/shared/HederaId.js';
-import { KeyType } from '../../domain/context/account/KeyProps.js';
-import AccountViewModel from './mirror/response/AccountViewModel.js';
-import {
-	PublicKey as HPublicKey,
-	ContractId as HContractId,
-	CustomFee as HCustomFee,
-} from '@hashgraph/sdk';
+import { CustomFee as HCustomFee } from '@hashgraph/sdk';
 import { MirrorNodeAdapter } from './mirror/MirrorNodeAdapter.js';
 import { Environment } from '../../domain/context/network/Environment.js';
 import EvmAddress from '../../domain/context/contract/EvmAddress.js';
 import LogService from '../../app/service/LogService.js';
+import PublicKey from '../../domain/context/account/PublicKey.js';
 
 export interface InitializationData {
 	account?: Account;
@@ -101,6 +96,12 @@ interface ITransactionAdapter {
 		sourceId: Account,
 		targetId: HederaId,
 	): Promise<TransactionResponse>;
+	transfers(
+		coin: StableCoinCapabilities,
+		amounts: BigDecimal[],
+		targetsId: HederaId[],
+		targetId: HederaId,
+	): Promise<TransactionResponse>;
 	getAccount(): Account;
 	getReserveAddress(
 		coin: StableCoinCapabilities,
@@ -115,6 +116,15 @@ interface ITransactionAdapter {
 	updateReserveAmount(
 		reserveAddress: ContractId,
 		amount: BigDecimal,
+	): Promise<TransactionResponse>;
+	update(
+		coin: StableCoinCapabilities,
+		kycKey: PublicKey | undefined,
+		freezeKey: PublicKey | undefined,
+		feeScheduleKey: PublicKey | undefined,
+		pauseKey: PublicKey | undefined,
+		wipeKey: PublicKey | undefined,
+		supplyKey: PublicKey | undefined,
 	): Promise<TransactionResponse>;
 	getMirrorNodeAdapter(): MirrorNodeAdapter;
 }
@@ -210,6 +220,14 @@ interface RoleTransactionAdapter {
 export default abstract class TransactionAdapter
 	implements ITransactionAdapter, RoleTransactionAdapter
 {
+	transfers(
+		coin: StableCoinCapabilities,
+		amounts: BigDecimal[],
+		targetsId: HederaId[],
+		targetId: HederaId,
+	): Promise<TransactionResponse<any, Error>> {
+		throw new Error('Method not implemented.');
+	}
 	init(): Promise<Environment> {
 		throw new Error('Method not implemented.');
 	}
@@ -313,6 +331,17 @@ export default abstract class TransactionAdapter
 	updateReserveAmount(
 		reserveAddress: ContractId,
 		amount: BigDecimal,
+	): Promise<TransactionResponse<any, Error>> {
+		throw new Error('Method not implemented.');
+	}
+	update(
+		coin: StableCoinCapabilities,
+		kycKey: PublicKey | undefined,
+		freezeKey: PublicKey | undefined,
+		feeScheduleKey: PublicKey | undefined,
+		pauseKey: PublicKey | undefined,
+		wipeKey: PublicKey | undefined,
+		supplyKey: PublicKey | undefined,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}

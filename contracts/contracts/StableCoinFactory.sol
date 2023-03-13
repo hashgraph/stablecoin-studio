@@ -16,6 +16,7 @@ import {Strings} from '@openzeppelin/contracts/utils/Strings.sol';
 import {
     Initializable
 } from '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
+import {KeysLib} from './library/KeysLib.sol';
 
 contract StableCoinFactory is
     IStableCoinFactory,
@@ -205,7 +206,7 @@ contract StableCoinFactory is
         for (uint256 i = 0; i < requestedToken.keys.length; i++) {
             keys[i] = IHederaTokenService.TokenKey({
                 keyType: requestedToken.keys[i].keyType,
-                key: _generateKey(
+                key: KeysLib.generateKey(
                     requestedToken.keys[i].publicKey,
                     stableCoinProxyAddress,
                     requestedToken.keys[i].isED25519
@@ -229,21 +230,6 @@ contract StableCoinFactory is
             );
 
         return token;
-    }
-
-    function _generateKey(
-        bytes memory publicKey,
-        address stableCoinProxyAddress,
-        bool isED25519
-    ) private pure returns (IHederaTokenService.KeyValue memory) {
-        // If the Public Key is empty we assume the user has chosen the proxy
-        IHederaTokenService.KeyValue memory key;
-        if (publicKey.length == 0)
-            key.delegatableContractId = stableCoinProxyAddress;
-        else if (isED25519) key.ed25519 = publicKey;
-        else key.ECDSA_secp256k1 = publicKey;
-
-        return key;
     }
 
     function _treasuryIsContract(

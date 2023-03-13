@@ -32,6 +32,7 @@ import CheckSupplierLimitRequest from './CheckSupplierLimitRequest.js';
 import GetSupplierAllowanceRequest from './GetSupplierAllowanceRequest.js';
 import ValidationResponse from './validation/ValidationResponse.js';
 import WipeRequest from './WipeRequest.js';
+import TransfersRequest from './TransfersRequest.js';
 import RescueRequest from './RescueRequest.js';
 import ResetSupplierAllowanceRequest from './ResetSupplierAllowanceRequest.js';
 import IncreaseSupplierAllowanceRequest from './IncreaseSupplierAllowanceRequest.js';
@@ -59,6 +60,7 @@ import AddFixedFeeRequest from './AddFixedFeeRequest.js';
 import AddFractionalFeeRequest from './AddFractionalFeeRequest.js';
 import SetConfigurationRequest from './SetConfigurationRequest.js';
 import GetERC20ListRequest from './GetERC20ListRequest.js';
+import UpdateRequest from './UpdateRequest.js';
 
 export * from './BaseRequest.js';
 export {
@@ -67,6 +69,7 @@ export {
 	CashInRequest,
 	BurnRequest,
 	WipeRequest,
+	TransfersRequest,
 	GetListStableCoinRequest,
 	GetStableCoinDetailsRequest,
 	RescueRequest,
@@ -103,4 +106,5 @@ export {
 	AddFixedFeeRequest,
 	AddFractionalFeeRequest,
 	GetERC20ListRequest,
+	UpdateRequest,
 };

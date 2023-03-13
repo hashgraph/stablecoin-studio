@@ -35,6 +35,8 @@ export enum Operation {
 	REVOKE_KYC = 'Revoke_KYC',
 	CREATE_CUSTOM_FEE = 'Create_Custom_Fee',
 	REMOVE_CUSTOM_FEE = 'Remove_Custom_Fee',
+	TRANSFERS = 'Transfers',
+	UPDATE = 'Update',
 }
 
 export enum Access {

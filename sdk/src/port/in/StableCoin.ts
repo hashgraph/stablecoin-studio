@@ -30,7 +30,10 @@ import AssociateTokenRequest from './request/AssociateTokenRequest.js';
 import BigDecimal from '../../domain/context/shared/BigDecimal.js';
 import { HederaId } from '../../domain/context/shared/HederaId.js';
 import ContractId from '../../domain/context/contract/ContractId.js';
-import { StableCoinProps } from '../../domain/context/stablecoin/StableCoin.js';
+import {
+	StableCoinProps,
+	TRANSFER_LIST_SIZE,
+} from '../../domain/context/stablecoin/StableCoin.js';
 import { QueryBus } from '../../core/query/QueryBus.js';
 import { CommandBus } from '../../core/command/CommandBus.js';
 import { CashInCommand } from '../../app/usecase/command/stablecoin/operations/cashin/CashInCommand.js';
@@ -77,9 +80,21 @@ import { GrantKycCommand } from '../../app/usecase/command/stablecoin/operations
 import { RevokeKycCommand } from '../../app/usecase/command/stablecoin/operations/revokeKyc/RevokeKycCommand.js';
 import { LogError } from '../../core/decorator/LogErrorDecorator.js';
 import { GetAccountTokenRelationshipQuery } from '../../app/usecase/query/account/tokenRelationship/GetAccountTokenRelationshipQuery.js';
-import { KycStatus } from '../out/mirror/response/AccountTokenRelationViewModel.js';
+import {
+	FreezeStatus,
+	KycStatus,
+} from '../out/mirror/response/AccountTokenRelationViewModel.js';
+import TransfersRequest from './request/TransfersRequest.js';
+import UpdateRequest from './request/UpdateRequest.js';
+import { TransfersCommand } from '../../app/usecase/command/stablecoin/operations/transfer/TransfersCommand.js';
+import { UpdateCommand } from '../../app/usecase/command/stablecoin/update/UpdateCommand.js';
 
-export { StableCoinViewModel, StableCoinListViewModel, ReserveViewModel };
+export {
+	StableCoinViewModel,
+	StableCoinListViewModel,
+	ReserveViewModel,
+	TRANSFER_LIST_SIZE,
+};
 export { StableCoinCapabilities, Capability, Access, Operation, Balance };
 export { TokenSupplyType };
 export { BigDecimal };
@@ -102,6 +117,7 @@ interface IStableCoinInPort {
 	delete(request: DeleteRequest): Promise<boolean>;
 	freeze(request: FreezeAccountRequest): Promise<boolean>;
 	unFreeze(request: FreezeAccountRequest): Promise<boolean>;
+	isAccountFrozen(request: FreezeAccountRequest): Promise<boolean>;
 	isAccountAssociated(
 		request: IsAccountAssociatedTokenRequest,
 	): Promise<boolean>;
@@ -112,6 +128,8 @@ interface IStableCoinInPort {
 	grantKyc(request: KYCRequest): Promise<boolean>;
 	revokeKyc(request: KYCRequest): Promise<boolean>;
 	isAccountKYCGranted(request: KYCRequest): Promise<boolean>;
+	transfers(request: TransfersRequest): Promise<boolean>;
+	update(request: UpdateRequest): Promise<boolean>;
 }
 
 class StableCoinInPort implements IStableCoinInPort {
@@ -422,6 +440,23 @@ class StableCoinInPort implements IStableCoinInPort {
 	}
 
 	@LogError
+	async isAccountFrozen(request: FreezeAccountRequest): Promise<boolean> {
+		const { tokenId, targetId } = request;
+		handleValidation('FreezeAccountRequest', request);
+
+		return (
+			(
+				await this.queryBus.execute(
+					new GetAccountTokenRelationshipQuery(
+						HederaId.from(targetId),
+						HederaId.from(tokenId),
+					),
+				)
+			).payload?.freezeStatus === FreezeStatus.FROZEN
+		);
+	}
+
+	@LogError
 	async grantKyc(request: KYCRequest): Promise<boolean> {
 		const { tokenId, targetId } = request;
 		handleValidation('KYCRequest', request);
@@ -509,6 +544,88 @@ class StableCoinInPort implements IStableCoinInPort {
 				new UpdateReserveAddressCommand(
 					HederaId.from(request.tokenId),
 					new ContractId(request.reserveAddress),
+				),
+			)
+		).payload;
+	}
+
+	@LogError
+	async transfers(request: TransfersRequest): Promise<boolean> {
+		const { tokenId, targetsId, amounts, targetId } = request;
+
+		handleValidation('TransfersRequest', request);
+
+		const targetsIdHederaIds: HederaId[] = [];
+		targetsId.forEach((targetId) => {
+			targetsIdHederaIds.push(HederaId.from(targetId));
+		});
+
+		return (
+			await this.commandBus.execute(
+				new TransfersCommand(
+					amounts,
+					targetsIdHederaIds,
+					HederaId.from(tokenId),
+					HederaId.from(targetId),
+				),
+			)
+		).payload;
+	}
+
+	@LogError
+	async update(request: UpdateRequest): Promise<boolean> {
+		const {
+			tokenId,
+			kycKey,
+			freezeKey,
+			feeScheduleKey,
+			pauseKey,
+			wipeKey,
+			supplyKey,
+		} = request;
+
+		handleValidation('UpdateRequest', request);
+
+		return (
+			await this.commandBus.execute(
+				new UpdateCommand(
+					HederaId.from(tokenId),
+					kycKey
+						? new PublicKey({
+								key: kycKey.key,
+								type: kycKey.type,
+						  })
+						: undefined,
+					freezeKey
+						? new PublicKey({
+								key: freezeKey.key,
+								type: freezeKey.type,
+						  })
+						: undefined,
+					feeScheduleKey
+						? new PublicKey({
+								key: feeScheduleKey.key,
+								type: feeScheduleKey.type,
+						  })
+						: undefined,
+					pauseKey
+						? new PublicKey({
+								key: pauseKey.key,
+								type: pauseKey.type,
+						  })
+						: undefined,
+					wipeKey
+						? new PublicKey({
+								key: wipeKey.key,
+								type: wipeKey.type,
+						  })
+						: undefined,
+					supplyKey
+						? new PublicKey({
+								key: supplyKey.key,
+								type: supplyKey.type,
+						  })
+						: undefined,
 				),
 			)
 		).payload;

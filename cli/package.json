@@ -45,6 +45,7 @@
   },
   "dependencies": {
     "@iarna/toml": "^2.2.5",
+    "big.js": "^6.2.1",
     "chalk": "^5.2.0",
     "cli-table3": "^0.6.2",
     "colors": "^1.4.0",

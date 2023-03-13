@@ -49,8 +49,10 @@ export const english = {
     askNetwork: 'Select the default network',
     askNotDefaultNetwork:
       'Your option is not one of the default networks, do you want to create a new network? (y/n)',
+    AccountsConfigurationMessage: 'You will now configure your accounts:',
     askAccountId: 'Enter the account id',
-    askConfigurateFactories: 'Do you want to config your factories?',
+    askConfigurateFactories:
+      'Do you want to config your factories? Check the documentation for more information : https://github.com/hashgraph/hedera-accelerator-stablecoin#deploying-the-stable-coin-factories',
     askNetworkAccount: 'Which network does this account belong to?',
     askPrivateKeyType: 'Which type of private key will the account use?',
     askAlias: 'Enter an alias for this account',
@@ -101,8 +103,7 @@ export const english = {
       'You will be the admin for the keys that you have assigned to the Smart Contract, do you want to change the admin for one of these features?',
     askKYC: 'Do you want to enable KYC?',
     askCustomFees: 'Do you want to add custom fees?',
-    askHederaERC20Predeployed:
-      'Do you want to use one of the predeployed HederaERC20 implementations?',
+    askHederaERC20Other: 'Other',
     askHederaERC20Version:
       'Choose the HederaERC20 implementation you want to use',
     askHederaERC20Implementation:
@@ -156,6 +157,7 @@ export const english = {
     askCashInRoleRevokeType: 'What type of permission do you want to revoke?',
     askEditCashInRole: 'What action do you want to perform?',
     accountTarget: 'Enter the target account id',
+    sendAmount: 'Enter the amount you want to send to the account',
     supplierRoleLimit: 'What will the limit be?',
     amountIncrease: 'Amount to increase',
     amountDecrease: 'Amount to decrease',
@@ -232,6 +234,7 @@ export const english = {
       ...returnToMainMenu,
     },
     stableCoinOptions: {
+      Send: 'Send tokens',
       CashIn: 'Cash in',
       Details: 'Details',
       Balance: 'Balance',
@@ -246,6 +249,7 @@ export const english = {
       FeesMgmt: 'Fees management',
       RoleMgmt: 'Role management',
       RoleRefresh: 'Refresh roles',
+      Configuration: 'Configuration',
       DangerZone: colors.red('Danger zone'),
       ...returnToMainMenu,
     },
@@ -362,10 +366,17 @@ export const english = {
       'The account ${address} has not KYC granted for the ${token} token',
     customFeeCreated: 'Custom fee created',
     customFeesRemoved: 'Custom fees removed',
+    transferCompleted: 'Transfer completed',
+    updateCompleted: 'Update completed',
   },
   operation: {
     success: colors.green('Operation has been completed successfully.'),
     reject: colors.red('Operation has not been completed. Please, try again.'),
+  },
+  send: {
+    noTokens: 'You have no tokens',
+    anotherAccount: 'Do you want to send more tokens?',
+    confirmation: 'Do you want to proceed sending these amounts?',
   },
   cashin: {
     unlimitedRole: 'This account has unlimited cash in role',
@@ -445,6 +456,20 @@ export const english = {
       Create: 'Create fee',
       Remove: 'Remove fee',
       List: 'Fees list',
+      ...goBack,
+    },
+  },
+  tokenConfiguration: {
+    options: {
+      keysManagement: 'Keys management',
+      ...goBack,
+    },
+  },
+  keysManagement: {
+    confirm: 'Are you sure you want to apply these changes?',
+    options: {
+      updateKeys: 'Update keys',
+      confirmChanges: 'Confirm changes',
       ...goBack,
     },
   },

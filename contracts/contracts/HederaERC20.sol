@@ -24,6 +24,7 @@ import {
 } from './extensions/TokenOwner.sol';
 import {KYC} from './extensions/KYC.sol';
 import {RoleManagement} from './extensions/RoleManagement.sol';
+import {KeysLib} from './library/KeysLib.sol';
 
 contract HederaERC20 is
     IHederaERC20,
@@ -37,6 +38,8 @@ contract HederaERC20 is
     KYC,
     RoleManagement
 {
+    uint256 private constant _SUPPLY_KEY_BIT = 4;
+
     // using SafeERC20Upgradeable for IHederaERC20Upgradeable;
 
     // Constructor required to avoid Initializer attack on logic contract
@@ -365,5 +368,50 @@ contract HederaERC20 is
         );
 
         return success;
+    }
+
+    /**
+     * @dev Update token keys
+     *
+     * @param keys The new addresses to set for the underlying token
+     */
+    function updateTokenKeys(
+        KeysLib.KeysStruct[] calldata keys
+    ) external override(IHederaERC20) onlyRole(_getRoleId(RoleName.ADMIN)) {
+        address currentTokenAddress = _getTokenAddress();
+
+        address newTreasury = address(0);
+
+        // Token Keys
+        IHederaTokenService.TokenKey[]
+            memory hederaKeys = new IHederaTokenService.TokenKey[](keys.length);
+
+        for (uint256 i = 0; i < keys.length; i++) {
+            hederaKeys[i] = IHederaTokenService.TokenKey({
+                keyType: keys[i].keyType,
+                key: KeysLib.generateKey(
+                    keys[i].publicKey,
+                    address(this),
+                    keys[i].isED25519
+                )
+            });
+            if (KeysLib.containsKey(_SUPPLY_KEY_BIT, hederaKeys[i].keyType)) {
+                if (hederaKeys[i].key.delegatableContractId == address(this))
+                    newTreasury = address(this);
+                else newTreasury = msg.sender;
+            }
+        }
+
+        // Hedera Token Info
+        IHederaTokenService.HederaToken memory hederaTokenInfo;
+        hederaTokenInfo.tokenKeys = hederaKeys;
+        if (newTreasury != address(0)) hederaTokenInfo.treasury = newTreasury;
+
+        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
+            .updateTokenInfo(currentTokenAddress, hederaTokenInfo);
+
+        _checkResponse(responseCode);
+
+        emit TokenKeysUpdated(currentTokenAddress, newTreasury, keys);
     }
 }

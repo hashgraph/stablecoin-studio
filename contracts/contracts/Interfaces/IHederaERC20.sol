@@ -2,6 +2,7 @@
 pragma solidity 0.8.16;
 
 import {IHederaTokenService} from '../hts-precompile/IHederaTokenService.sol';
+import {KeysLib} from '../library/KeysLib.sol';
 
 interface IHederaERC20 {
     /**
@@ -51,6 +52,19 @@ interface IHederaERC20 {
         address from,
         address receiver,
         uint256 amount
+    );
+
+    /**
+     * @dev Emitted when token keys updated
+     *
+     * @param token Token address
+     * @param token Token address
+     * @param newTokenKeys Token keys
+     */
+    event TokenKeysUpdated(
+        address token,
+        address newTreasury,
+        KeysLib.KeysStruct[] newTokenKeys
     );
 
     struct InitializeStruct {
@@ -160,4 +174,11 @@ interface IHederaERC20 {
         address to,
         uint256 amount
     ) external returns (bool);
+
+    /**
+     * @dev Update token keys
+     *
+     * @param keys The new addresses to set for the underlying token
+     */
+    function updateTokenKeys(KeysLib.KeysStruct[] calldata keys) external;
 }
