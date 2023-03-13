@@ -235,7 +235,7 @@ const RevokeRoleOperation = ({
 					</>
 				}
 				onConfirm={onOpenModalAction}
-				confirmBtnProps={{ isDisabled: isNotValidAccount() || !isRoleSelected() }}
+				confirmBtnProps={{ isDisabled: (isNotValidAccount() || !isRoleSelected() ) && !formState.isValid }}
 			/>
 
 			<ModalsHandler

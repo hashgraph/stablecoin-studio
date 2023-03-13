@@ -1,7 +1,7 @@
 {
 	"edit": "Manage cash in limit",
-	"give": "Give role",
-	"revoke": "Revoke role",
+	"give": "Give roles",
+	"revoke": "Revoke roles",
 	"refresh": "Refresh roles",
 	"revokeModalErrorDesc": "Please try again later.",
 	"revokeModalErrorTitle": "Error revoking the role",
@@ -9,7 +9,7 @@
 	"subtitle": "Give / Revoke roles",
 	"title": "Role management",
 	"giveRole": {
-		"title": "Give Role",
+		"title": "Give Roles",
 		"accountLabel": "Account",
 		"accountPlaceholder": "0.0.0",
 		"infinity": "Infinity",
@@ -38,7 +38,7 @@
 		"hasNotRoleError": "This account has not the requested role"
 	},
 	"revokeRole": {
-		"title": "Revoke role",
+		"title": "Revoke roles",
 		"accountLabel": "Account",
 		"titleRoleSection": "Role",
 		"titleAccountSection": "Accounts",
