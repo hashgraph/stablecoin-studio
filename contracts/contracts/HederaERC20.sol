@@ -405,6 +405,8 @@ contract HederaERC20 is
         // Hedera Token Info
         IHederaTokenService.HederaToken memory hederaTokenInfo;
         hederaTokenInfo.tokenKeys = hederaKeys;
+        hederaTokenInfo.memo = _getTokenInfo(currentTokenAddress); // this is required because of an Hedera bug.
+
         if (newTreasury != address(0)) hederaTokenInfo.treasury = newTreasury;
 
         int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
@@ -413,5 +415,21 @@ contract HederaERC20 is
         _checkResponse(responseCode);
 
         emit TokenKeysUpdated(currentTokenAddress, newTreasury, keys);
+    }
+
+    // This method is required because of an Hedera's bug, when keys are updated for a token, the memo gets removed.
+    function _getTokenInfo(
+        address tokenAddress
+    ) private returns (string memory) {
+        (
+            int64 responseCode,
+            IHederaTokenService.TokenInfo memory info
+        ) = IHederaTokenService(_PRECOMPILED_ADDRESS).getTokenInfo(
+                tokenAddress
+            );
+
+        _checkResponse(responseCode);
+
+        return info.token.memo;
     }
 }
