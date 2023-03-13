@@ -178,11 +178,17 @@ export default class StableCoinService extends Service {
 					listCapabilities.push(
 						new Capability(Operation.DELETE, Access.HTS),
 					);
+					listCapabilities.push(
+						new Capability(Operation.UPDATE, Access.HTS),
+					);
 				}
 			}
 			if (operable && _coin.adminKey instanceof HederaId) {
 				listCapabilities.push(
 					new Capability(Operation.DELETE, Access.CONTRACT),
+				);
+				listCapabilities.push(
+					new Capability(Operation.UPDATE, Access.CONTRACT),
 				);
 			}
 			if (operable && _coin.kycKey instanceof PublicKey) {

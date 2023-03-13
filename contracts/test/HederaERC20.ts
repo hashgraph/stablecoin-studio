@@ -10,6 +10,8 @@ import {
     getNonOperatorClient,
     getNonOperatorAccount,
     getNonOperatorE25519,
+    tokenKeystoKey,
+    tokenKeystoContract,
 } from '../scripts/deploy'
 import {
     name,
@@ -39,6 +41,7 @@ import {
     transfer,
     getRoles,
     isUnlimitedSupplierAllowance,
+    updateTokenKeys,
 } from '../scripts/contractsMethods'
 import { clientId, toEvmAddress } from '../scripts/utils'
 import { Client, ContractId } from '@hashgraph/sdk'
@@ -154,6 +157,25 @@ describe('HederaERC20 Tests', function () {
 
         proxyAddress = result[0]
         reserveProxy = result[6]
+    })
+
+    it('Cannot Update Keys if not Admin', async function () {
+        const keys = tokenKeystoKey(operatorPubKey, operatorIsE25519)
+        await expect(
+            updateTokenKeys(proxyAddress, keys, nonOperatorClient)
+        ).to.eventually.be.rejectedWith(Error)
+    })
+
+    it('Admin can update keys', async function () {
+        const keysToKey = tokenKeystoKey(
+            operatorPubKey,
+            operatorIsE25519,
+            false
+        )
+        await updateTokenKeys(proxyAddress, keysToKey, operatorClient)
+
+        const keysToContract = tokenKeystoContract(false)
+        await updateTokenKeys(proxyAddress, keysToContract, operatorClient)
     })
 
     it('deploy SC with roles associated to another account', async function () {

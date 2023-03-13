@@ -199,6 +199,13 @@ export default class RoleStableCoinsService extends Service {
     );
   }
 
+  public async getRolesWithoutPrinting(
+    req: GetRolesRequest,
+  ): Promise<string[]> {
+    const roles: string[] = await Role.getRoles(req);
+    return roles.filter((role) => role !== StableCoinRole.WITHOUT_ROLE);
+  }
+
   public async getRoles(req: GetRolesRequest): Promise<string[]> {
     let roles;
     await utilsService.showSpinner(

@@ -85,7 +85,9 @@ import {
 	KycStatus,
 } from '../out/mirror/response/AccountTokenRelationViewModel.js';
 import TransfersRequest from './request/TransfersRequest.js';
+import UpdateRequest from './request/UpdateRequest.js';
 import { TransfersCommand } from '../../app/usecase/command/stablecoin/operations/transfer/TransfersCommand.js';
+import { UpdateCommand } from '../../app/usecase/command/stablecoin/update/UpdateCommand.js';
 
 export {
 	StableCoinViewModel,
@@ -127,6 +129,7 @@ interface IStableCoinInPort {
 	revokeKyc(request: KYCRequest): Promise<boolean>;
 	isAccountKYCGranted(request: KYCRequest): Promise<boolean>;
 	transfers(request: TransfersRequest): Promise<boolean>;
+	update(request: UpdateRequest): Promise<boolean>;
 }
 
 class StableCoinInPort implements IStableCoinInPort {
@@ -564,6 +567,65 @@ class StableCoinInPort implements IStableCoinInPort {
 					targetsIdHederaIds,
 					HederaId.from(tokenId),
 					HederaId.from(targetId),
+				),
+			)
+		).payload;
+	}
+
+	@LogError
+	async update(request: UpdateRequest): Promise<boolean> {
+		const {
+			tokenId,
+			kycKey,
+			freezeKey,
+			feeScheduleKey,
+			pauseKey,
+			wipeKey,
+			supplyKey,
+		} = request;
+
+		handleValidation('UpdateRequest', request);
+
+		return (
+			await this.commandBus.execute(
+				new UpdateCommand(
+					HederaId.from(tokenId),
+					kycKey
+						? new PublicKey({
+								key: kycKey.key,
+								type: kycKey.type,
+						  })
+						: undefined,
+					freezeKey
+						? new PublicKey({
+								key: freezeKey.key,
+								type: freezeKey.type,
+						  })
+						: undefined,
+					feeScheduleKey
+						? new PublicKey({
+								key: feeScheduleKey.key,
+								type: feeScheduleKey.type,
+						  })
+						: undefined,
+					pauseKey
+						? new PublicKey({
+								key: pauseKey.key,
+								type: pauseKey.type,
+						  })
+						: undefined,
+					wipeKey
+						? new PublicKey({
+								key: wipeKey.key,
+								type: wipeKey.type,
+						  })
+						: undefined,
+					supplyKey
+						? new PublicKey({
+								key: supplyKey.key,
+								type: supplyKey.type,
+						  })
+						: undefined,
 				),
 			)
 		).payload;

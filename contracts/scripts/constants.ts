@@ -31,7 +31,7 @@ export const RolesId = {
     Kyc: 8,
 }
 
-export const Gas1 = 4000000
+export const Gas1 = 4800000
 export const Gas2 = 60000
 export const Gas3 = 1800000
 export const Gas4 = 500000
