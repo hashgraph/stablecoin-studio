@@ -1,4 +1,4 @@
-import { Box, Heading } from '@chakra-ui/react';
+import { Box, Heading, useDisclosure } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import BaseContainer from '../../components/BaseContainer';
 import { NamedRoutes } from '../../Router/NamedRoutes';
@@ -16,14 +16,22 @@ import type { IAccountToken } from '../../interfaces/IAccountToken';
 import type { IExternalToken } from '../../interfaces/IExternalToken';
 import { GetRolesRequest, Operation, StableCoinRole } from 'hedera-stable-coin-sdk';
 import SDKService from '../../services/SDKService';
+import ModalNotification from '../../components/ModalNotification';
 
 const Roles = () => {
 	const capabilities = useSelector(SELECTED_WALLET_CAPABILITIES);
 	const accountId = useSelector(SELECTED_WALLET_PAIRED_ACCOUNTID);
 	const coinSelected = useSelector(SELECTED_WALLET_COIN);
 
+	const {
+		isOpen: isOpenRefreshRoles,
+		onOpen: onOpenRefreshRoles,
+		onClose: onCloseRefreshRoles,
+	} = useDisclosure();
 	const [isExternal, setIsExternal] = useState<boolean>(false);
-
+	const [statusRefreshRoles, setStatusRefreshRoles] = useState<
+		'error' | 'success' | 'warning' | 'loading'
+	>();
 	useEffect(() => {
 		const tokensAccount = localStorage?.tokensAccount;
 		if (tokensAccount) {
@@ -78,6 +86,8 @@ const Roles = () => {
 	const { t } = useTranslation('roles');
 	// Add to action handler
 	const refreshRoles = async () => {
+		setStatusRefreshRoles('loading');
+		onOpenRefreshRoles();
 		if (coinSelected && coinSelected?.tokenId) {
 			const tokensAccount = JSON.parse(localStorage.tokensAccount);
 			const myAccount = tokensAccount.find((acc: IAccountToken) => acc.id === accountId?.value);
@@ -94,7 +104,10 @@ const Roles = () => {
 			);
 
 			localStorage.setItem('tokensAccount', JSON.stringify(tokensAccount));
+			setStatusRefreshRoles('success');
+			return;
 		}
+		setStatusRefreshRoles('error');
 	};
 
 	const directAccesses = [
@@ -144,14 +157,23 @@ const Roles = () => {
 	];
 
 	return (
-		<BaseContainer title={t('title')}>
-			<Box p={{ base: 4, md: '128px' }}>
-				<Heading fontSize='20px' fontWeight='600' mb={14} data-testid='subtitle'>
-					{t('subtitle')}
-				</Heading>
-				<GridDirectAccess directAccesses={directAccesses} />
-			</Box>
-		</BaseContainer>
+		<>
+			<BaseContainer title={t('title')}>
+				<Box p={{ base: 4, md: '128px' }}>
+					<Heading fontSize='20px' fontWeight='600' mb={14} data-testid='subtitle'>
+						{t('subtitle')}
+					</Heading>
+					<GridDirectAccess directAccesses={directAccesses} />
+				</Box>
+			</BaseContainer>
+			<ModalNotification
+				variant={statusRefreshRoles}
+				isOpen={isOpenRefreshRoles}
+				onClose={onCloseRefreshRoles}
+				closeButton={true}
+				title={t('refreshRoles.modalActionTitle')}
+			/>
+		</>
 	);
 };
 
