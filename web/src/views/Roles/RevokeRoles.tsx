@@ -1,10 +1,14 @@
 import { Heading, Text, CheckboxGroup, Grid, useDisclosure, Flex, Button } from '@chakra-ui/react';
 import type { StableCoinRole } from 'hedera-stable-coin-sdk';
-import { RevokeMultiRolesRequest, RevokeRoleRequest } from 'hedera-stable-coin-sdk';
+import {
+	GetRolesRequest,
+	RevokeMultiRolesRequest,
+	RevokeRoleRequest,
+} from 'hedera-stable-coin-sdk';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import type { Detail } from '../../components/DetailsReview';
 import DetailsReview from '../../components/DetailsReview';
 import { CheckboxController } from '../../components/Form/CheckboxController';
@@ -14,7 +18,12 @@ import type { ModalsHandlerActionsProps } from '../../components/ModalsHandler';
 import ModalsHandler from '../../components/ModalsHandler';
 import { propertyNotFound } from '../../constant';
 import { SDKService } from '../../services/SDKService';
-import { SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
+import {
+	SELECTED_WALLET_COIN,
+	SELECTED_WALLET_PAIRED_ACCOUNTID,
+	walletActions,
+} from '../../store/slices/walletSlice';
+import type { AppDispatch } from '../../store/store';
 import { handleRequestValidation } from '../../utils/validationsHelper';
 import OperationLayout from '../Operations/OperationLayout';
 
@@ -23,6 +32,7 @@ const RevokeRoleOperation = ({
 }: {
 	filteredCapabilities: { id: string; value: StableCoinRole; label: string }[];
 }) => {
+	const dispatch = useDispatch<AppDispatch>();
 	const { t } = useTranslation(['global', 'roles', 'stableCoinCreation', 'externalTokenInfo']);
 	const {
 		isOpen: isOpenModalAction,
@@ -30,6 +40,7 @@ const RevokeRoleOperation = ({
 		onClose: onCloseModalAction,
 	} = useDisclosure();
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
+	const accountId = useSelector(SELECTED_WALLET_PAIRED_ACCOUNTID);
 	const { control, getValues, watch, formState } = useForm({
 		mode: 'onChange',
 	});
@@ -81,6 +92,19 @@ const RevokeRoleOperation = ({
 
 		try {
 			await SDKService.revokeMultiRolesRequest(request);
+			// Update current account role if is target
+			const isAccountTarget = targets.some(
+				(item: any) => item?.toString() === accountId?.toString(),
+			);
+			if (isAccountTarget) {
+				const roles = await SDKService.getRoles(
+					new GetRolesRequest({
+						tokenId: selectedStableCoin!.tokenId!.toString(),
+						targetId: accountId!.toString(),
+					}),
+				);
+				dispatch(walletActions.setRoles(roles));
+			}
 			onSuccess();
 		} catch (error: any) {
 			setErrorTransactionUrl(error.transactionUrl);
@@ -142,7 +166,6 @@ const RevokeRoleOperation = ({
 		const values = getValues();
 		delete values.rol;
 		return Object.values(values).some((item) => {
-			console.log(item);
 			return item === true;
 		});
 	};
