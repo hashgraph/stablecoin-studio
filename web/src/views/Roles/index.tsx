@@ -139,6 +139,7 @@ const Roles = () => {
 			route: NamedRoutes.RefreshRoles,
 			title: t('refresh'),
 			isDisabled: !isExternal,
+			customHandleClick: refreshRoles,
 		},
 	];
 

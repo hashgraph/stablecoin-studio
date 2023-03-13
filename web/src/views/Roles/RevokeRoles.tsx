@@ -1,7 +1,7 @@
 import { Heading, Text, CheckboxGroup, Grid, useDisclosure, Flex, Button } from '@chakra-ui/react';
 import type { StableCoinRole } from 'hedera-stable-coin-sdk';
-import { RevokeRoleRequest, RevokeMultiRolesRequest } from 'hedera-stable-coin-sdk';
-import React, { useMemo, useState } from 'react';
+import { RevokeMultiRolesRequest, RevokeRoleRequest } from 'hedera-stable-coin-sdk';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -30,7 +30,7 @@ const RevokeRoleOperation = ({
 		onClose: onCloseModalAction,
 	} = useDisclosure();
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
-	const { control, getValues, formState } = useForm({
+	const { control, getValues, watch, formState } = useForm({
 		mode: 'onChange',
 	});
 	const {
@@ -44,6 +44,23 @@ const RevokeRoleOperation = ({
 	const isMaxAccounts = useMemo(() => accounts.length >= 10, [accounts]);
 	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
 	const [revokeRoles, setRevokeRoles] = useState<RevokeRoleRequest[]>([]);
+	useEffect(() => {
+		isRoleSelected();
+	}, [watch()]);
+
+	useEffect(() => {
+		addNewAccount();
+	}, []);
+	console.log('accounts', accounts);
+
+	const isNotValidAccount = () => {
+		const a = accounts.some((item: any) => {
+			return item.accountId === '';
+		});
+
+		return a;
+	};
+	console.log('isnotvalid', isNotValidAccount());
 
 	const handleRevokeRoles: ModalsHandlerActionsProps['onConfirm'] = async ({
 		onSuccess,
@@ -52,6 +69,8 @@ const RevokeRoleOperation = ({
 	}) => {
 		onLoading();
 		const values = getValues();
+		console.log(values);
+
 		const rolesRequest: string[] = [];
 		for (const key in values) {
 			if (values[key] === true) {
@@ -125,8 +144,16 @@ const RevokeRoleOperation = ({
 
 	const isRoleSelected = (): boolean => {
 		// TODO: Check if one checkbox is selected
-		return false;
+		const values = getValues();
+		delete values.rol;
+		console.log(values);
+
+		return Object.values(values).some((item) => {
+			console.log(item);
+			return item === true;
+		});
 	};
+	console.log('ERRORS', formState.errors);
 
 	return (
 		<>
@@ -142,10 +169,12 @@ const RevokeRoleOperation = ({
 						<CheckboxGroup>
 							<Grid column='4' gap={{ base: 4 }} templateColumns='repeat(4, 1fr)'>
 								{filteredCapabilities.map((item, index) => {
+									// console.log(item);
+
 									return (
 										<CheckboxController
 											key={index}
-											value={item.value}
+											// value={item.value}
 											control={control}
 											id={`${item.label?.toString().toLocaleLowerCase()}`}
 										>
@@ -206,7 +235,7 @@ const RevokeRoleOperation = ({
 					</>
 				}
 				onConfirm={onOpenModalAction}
-				confirmBtnProps={{ isDisabled: !formState.isValid && !isRoleSelected() }}
+				confirmBtnProps={{ isDisabled: isNotValidAccount() || !isRoleSelected() }}
 			/>
 
 			<ModalsHandler
