@@ -50,7 +50,7 @@ const ManageCashIn = () => {
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const { decimals = 0 } = selectedStableCoin || {};
-	const [limit, setLimit] = useState<string | null>();
+	const [limit, setLimit] = useState<string>();
 	const [errorOperation, setErrorOperation] = useState();
 	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
 
@@ -284,10 +284,12 @@ const ManageCashIn = () => {
 				successNotificationTitle={t('operations:modalSuccessTitle')}
 				successNotificationDescription={
 					supplierLimitOption === 'CHECK'
-						? t(`roles:${action}.checkCashinLimitSuccessDesc`, {
-								account: getValues().account,
-								limit,
-						  })
+						? limit === '0'
+							? t(`roles:${action}.hasInfiniteAllowance`)
+							: t(`roles:${action}.checkCashinLimitSuccessDesc`, {
+									account: getValues().account,
+									limit,
+							  })
 						: ''
 				}
 				handleOnCloseModalError={handleCloseModal}
