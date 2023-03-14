@@ -26,12 +26,9 @@ import {
 import type { AppDispatch } from '../../store/store';
 import { handleRequestValidation } from '../../utils/validationsHelper';
 import OperationLayout from '../Operations/OperationLayout';
+import { roleOptions } from './constants';
 
-const RevokeRoleOperation = ({
-	filteredCapabilities,
-}: {
-	filteredCapabilities: { id: string; value: StableCoinRole; label: string }[];
-}) => {
+const RevokeRoleOperation = () => {
 	const dispatch = useDispatch<AppDispatch>();
 	const { t } = useTranslation(['global', 'roles', 'stableCoinCreation', 'externalTokenInfo']);
 	const {
@@ -80,7 +77,7 @@ const RevokeRoleOperation = ({
 		const rolesRequest: string[] = [];
 		for (const key in values) {
 			if (values[key] === true) {
-				rolesRequest.push(filteredCapabilities.find((item) => item.id === key)!.value);
+				rolesRequest.push(roleOptions.find((item) => item.label.toLowerCase() === key)!.value);
 			}
 		}
 		const targets = values.rol.map((item: { accountId: any }) => item.accountId);
@@ -183,7 +180,7 @@ const RevokeRoleOperation = ({
 						</Text>
 						<CheckboxGroup>
 							<Grid column='4' gap={{ base: 4 }} templateColumns='repeat(4, 1fr)'>
-								{filteredCapabilities.map((item, index) => {
+								{roleOptions.map((item, index) => {
 									return (
 										<CheckboxController
 											key={index}

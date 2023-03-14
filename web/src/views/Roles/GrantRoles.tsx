@@ -223,7 +223,6 @@ const GrantRoleOperation = ({
 		const values = getValues();
 		delete values.rol;
 		return Object.values(values).some((item) => {
-			console.log(item);
 			return item === true;
 		});
 	};

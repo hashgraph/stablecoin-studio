@@ -119,9 +119,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 
 	return (
 		<>
-			{action === 'revokeRole' && (
-				<RevokeRoleOperation filteredCapabilities={filteredCapabilities} />
-			)}
+			{action === 'revokeRole' && <RevokeRoleOperation />}
 			{action === 'giveRole' && <GrantRoleOperation filteredCapabilities={filteredCapabilities} />}
 			{action === 'editRole' && <ManageCashIn />}
 		</>
