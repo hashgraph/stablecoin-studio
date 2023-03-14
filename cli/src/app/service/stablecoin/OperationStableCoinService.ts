@@ -65,6 +65,15 @@ import { IManagedFeatures } from '../../../domain/configuration/interfaces/IMana
 import colors from 'colors';
 import UpdateStableCoinService from './UpdateStableCoinService.js';
 
+enum tokenKeys {
+  admin,
+  freeze,
+  kyc,
+  wipe,
+  pause,
+  feeSchedule,
+  supply,
+}
 /**
  * Operation Stable Coin Service
  */
@@ -1306,9 +1315,14 @@ export default class OperationStableCoinService extends Service {
       (a) => a.operation,
     );
 
+    const contractKeys = this.KeysAssignedToContract(stableCoinCapabilities);
+
     const roleManagementOptionsFiltered = language
       .getArrayFromObject('wizard.roleManagementOptions')
       .filter((option) => {
+        if (option == language.getText('wizard.roleManagementOptions.Grant')) {
+          return contractKeys.length > 0;
+        }
         if (option == language.getText('wizard.roleManagementOptions.Edit')) {
           return capabilities.includes(Operation.CASH_IN);
         }
@@ -1337,7 +1351,7 @@ export default class OperationStableCoinService extends Service {
           this.stableCoinWithSymbol,
         );
 
-        await this.grantRoles(stableCoinCapabilities);
+        await this.grantRoles(stableCoinCapabilities, contractKeys);
 
         break;
       case language.getText('wizard.roleManagementOptions.Revoke'):
@@ -1740,7 +1754,65 @@ export default class OperationStableCoinService extends Service {
     await this.roleManagementFlow();
   }
 
-  private async grantRoles(stableCoinCapabilities): Promise<void> {
+  private KeysAssignedToContract(capabilitiesStableCoin): number[] {
+    const contractKeys: number[] = [];
+
+    if (
+      capabilitiesStableCoin.coin.adminKey &&
+      capabilitiesStableCoin.coin.adminKey.toString() ===
+        capabilitiesStableCoin.coin.proxyAddress.toString()
+    )
+      contractKeys.push(tokenKeys.admin);
+
+    if (
+      capabilitiesStableCoin.coin.freezeKey &&
+      capabilitiesStableCoin.coin.freezeKey.toString() ===
+        capabilitiesStableCoin.coin.proxyAddress.toString()
+    )
+      contractKeys.push(tokenKeys.freeze);
+
+    if (
+      capabilitiesStableCoin.coin.kycKey &&
+      capabilitiesStableCoin.coin.kycKey.toString() ===
+        capabilitiesStableCoin.coin.proxyAddress.toString()
+    )
+      contractKeys.push(tokenKeys.kyc);
+
+    if (
+      capabilitiesStableCoin.coin.wipeKey &&
+      capabilitiesStableCoin.coin.wipeKey.toString() ===
+        capabilitiesStableCoin.coin.proxyAddress.toString()
+    )
+      contractKeys.push(tokenKeys.wipe);
+
+    if (
+      capabilitiesStableCoin.coin.pauseKey &&
+      capabilitiesStableCoin.coin.pauseKey.toString() ===
+        capabilitiesStableCoin.coin.proxyAddress.toString()
+    )
+      contractKeys.push(tokenKeys.pause);
+
+    if (
+      capabilitiesStableCoin.coin.feeScheduleKey &&
+      capabilitiesStableCoin.coin.feeScheduleKey.toString() ===
+        capabilitiesStableCoin.coin.proxyAddress.toString()
+    )
+      contractKeys.push(tokenKeys.feeSchedule);
+
+    if (
+      capabilitiesStableCoin.coin.supplyKey &&
+      capabilitiesStableCoin.coin.supplyKey.toString() ===
+        capabilitiesStableCoin.coin.proxyAddress.toString()
+    )
+      contractKeys.push(tokenKeys.supply);
+
+    return contractKeys;
+  }
+
+  private async grantRoles(
+    stableCoinCapabilities,
+    contractKeys,
+  ): Promise<void> {
     const grantMultiRolesRequest = new GrantMultiRolesRequest({
       tokenId: this.stableCoinId,
       roles: [],
@@ -1754,6 +1826,7 @@ export default class OperationStableCoinService extends Service {
     const listOfRoles = await this.getRoles(
       stableCoinCapabilities,
       grantMultiRolesRequest,
+      contractKeys,
     );
 
     // choosing the accounts to grant the roles to
@@ -2104,6 +2177,7 @@ export default class OperationStableCoinService extends Service {
   private async getRoles(
     stableCoinCapabilities: StableCoinCapabilities,
     request: any,
+    contractKeys: number[] = undefined,
   ): Promise<any> {
     const capabilities: Operation[] = stableCoinCapabilities.capabilities.map(
       (a) => a.operation,
@@ -2114,6 +2188,7 @@ export default class OperationStableCoinService extends Service {
           availability: capabilities.includes(Operation.CASH_IN),
           name: 'Cash in Role',
           value: StableCoinRole.CASHIN_ROLE,
+          id: tokenKeys.supply,
         },
       },
       {
@@ -2121,6 +2196,7 @@ export default class OperationStableCoinService extends Service {
           availability: capabilities.includes(Operation.BURN),
           name: 'Burn Role',
           value: StableCoinRole.BURN_ROLE,
+          id: tokenKeys.supply,
         },
       },
       {
@@ -2128,6 +2204,7 @@ export default class OperationStableCoinService extends Service {
           availability: capabilities.includes(Operation.WIPE),
           name: 'Wipe Role',
           value: StableCoinRole.WIPE_ROLE,
+          id: tokenKeys.wipe,
         },
       },
       {
@@ -2135,6 +2212,7 @@ export default class OperationStableCoinService extends Service {
           availability: capabilities.includes(Operation.RESCUE),
           name: 'Rescue Role',
           value: StableCoinRole.RESCUE_ROLE,
+          id: -1,
         },
       },
       {
@@ -2142,6 +2220,7 @@ export default class OperationStableCoinService extends Service {
           availability: capabilities.includes(Operation.PAUSE),
           name: 'Pause Role',
           value: StableCoinRole.PAUSE_ROLE,
+          id: tokenKeys.pause,
         },
       },
       {
@@ -2149,6 +2228,7 @@ export default class OperationStableCoinService extends Service {
           availability: capabilities.includes(Operation.FREEZE),
           name: 'Freeze Role',
           value: StableCoinRole.FREEZE_ROLE,
+          id: tokenKeys.freeze,
         },
       },
       {
@@ -2156,6 +2236,7 @@ export default class OperationStableCoinService extends Service {
           availability: capabilities.includes(Operation.GRANT_KYC),
           name: 'KYC Role',
           value: StableCoinRole.KYC_ROLE,
+          id: tokenKeys.kyc,
         },
       },
       {
@@ -2164,6 +2245,7 @@ export default class OperationStableCoinService extends Service {
           availability: capabilities.includes(Operation.DELETE),
           name: 'Delete Role',
           value: StableCoinRole.DELETE_ROLE,
+          id: tokenKeys.admin,
         },
       },
       {
@@ -2171,13 +2253,20 @@ export default class OperationStableCoinService extends Service {
           availability: capabilities.includes(Operation.ROLE_ADMIN_MANAGEMENT),
           name: 'Admin Role',
           value: StableCoinRole.DEFAULT_ADMIN_ROLE,
+          id: tokenKeys.admin,
         },
       },
     ];
 
     const rolesAvailable = rolesAvailability.filter(
-      ({ role }) => role.availability,
+      ({ role }) =>
+        role.availability &&
+        (contractKeys
+          ? contractKeys.find((contractKey) => contractKey == role.id) !=
+              undefined || role.id == -1
+          : true),
     );
+
     const rolesNames = rolesAvailable.map(({ role }) => role.name);
 
     const rolesSelected = await utilsService.checkBoxMultipleAsk(
