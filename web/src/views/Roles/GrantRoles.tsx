@@ -289,7 +289,7 @@ const GrantRoleOperation = ({
 													}}
 													// TODO: Fix tamaño más pequeño para evitar que cuando no sea infinity supply no haga salto raro
 													isRequired
-													style={{
+													formStyle={{
 														width: '216px',
 													}}
 													control={control}
