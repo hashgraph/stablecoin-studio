@@ -228,9 +228,12 @@ const GrantRoleOperation = ({
 	};
 
 	const isNotValidAccount = () => {
-		return accounts.some((item: any) => {
-			return item.accountId === '';
-		});
+		const values = getValues()?.rol;
+		return values
+			? values.some((item: any) => {
+					return item.accountId === '';
+			  })
+			: false;
 	};
 
 	return (
@@ -266,7 +269,7 @@ const GrantRoleOperation = ({
 						{accounts &&
 							accounts.map((item, i) => {
 								return (
-									<React.Fragment key={i}>
+									<React.Fragment key={item.id}>
 										<Flex alignItems='flex-start'>
 											<Flex>
 												<InputController
@@ -286,7 +289,7 @@ const GrantRoleOperation = ({
 													}}
 													// TODO: Fix tamaño más pequeño para evitar que cuando no sea infinity supply no haga salto raro
 													isRequired
-													style={{
+													formStyle={{
 														width: '216px',
 													}}
 													control={control}
@@ -321,7 +324,7 @@ const GrantRoleOperation = ({
 				}
 				onConfirm={onOpenModalAction}
 				confirmBtnProps={{
-					isDisabled: (isNotValidAccount() || !isRoleSelected()) && !formState.isValid,
+					isDisabled: isNotValidAccount() || !isRoleSelected() || !formState.isValid,
 				}}
 			/>
 

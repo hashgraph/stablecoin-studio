@@ -61,9 +61,12 @@ const RevokeRoleOperation = () => {
 	}, []);
 
 	const isNotValidAccount = () => {
-		return accounts.some((item: any) => {
-			return item.accountId === '';
-		});
+		const values = getValues()?.rol;
+		return values
+			? values.some((item: any) => {
+					return item.accountId === '';
+			  })
+			: false;
 	};
 
 	const handleRevokeRoles: ModalsHandlerActionsProps['onConfirm'] = async ({
@@ -245,7 +248,7 @@ const RevokeRoleOperation = () => {
 				}
 				onConfirm={onOpenModalAction}
 				confirmBtnProps={{
-					isDisabled: (isNotValidAccount() || !isRoleSelected()) && !formState.isValid,
+					isDisabled: isNotValidAccount() || !isRoleSelected() || !formState.isValid,
 				}}
 			/>
 

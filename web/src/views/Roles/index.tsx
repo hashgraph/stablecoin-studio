@@ -5,10 +5,7 @@ import { NamedRoutes } from '../../Router/NamedRoutes';
 import GridDirectAccess from '../../components/GridDirectAccess';
 import { useSelector } from 'react-redux';
 import { roleOptions } from './constants';
-import {
-	SELECTED_WALLET_CAPABILITIES,
-	SELECTED_TOKEN_ROLES,
-} from '../../store/slices/walletSlice';
+import { SELECTED_WALLET_CAPABILITIES, SELECTED_TOKEN_ROLES } from '../../store/slices/walletSlice';
 import { Operation, StableCoinRole } from 'hedera-stable-coin-sdk';
 
 const Roles = () => {
@@ -64,7 +61,7 @@ const Roles = () => {
 			title: t('edit'),
 			isDisabled:
 				!roles.includes(StableCoinRole.DEFAULT_ADMIN_ROLE) &&
-				operations?.includes(Operation.CASH_IN)
+				operations?.includes(Operation.CASH_IN),
 		},
 	];
 
