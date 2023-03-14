@@ -92,7 +92,7 @@ contract HederaERC20 is
                     'KYC grant failed'
                 );
             }
-        }
+        } else _associateToken(address(this));
 
         // Sending back the remaining HBARs from msg.value
         uint256 currentBalance = address(this).balance;
