@@ -124,11 +124,6 @@ const ImportedTokenCreation = () => {
 					? accountToken.externalTokens.push({
 							id: stableCoinId,
 							symbol: details!.symbol,
-							roles: autoCheckRoles
-								? checkRoles
-								: roles
-								? roles.map((role: IRole) => role.value)
-								: [],
 					  })
 					: tokensAccountParsed.push({
 							id: accountInfo.id,
@@ -136,11 +131,6 @@ const ImportedTokenCreation = () => {
 								{
 									id: stableCoinId,
 									symbol: details!.symbol,
-									roles: autoCheckRoles
-										? checkRoles
-										: roles
-										? roles.map((role: IRole) => role.value)
-										: [],
 								},
 							],
 					  });
@@ -155,11 +145,6 @@ const ImportedTokenCreation = () => {
 								{
 									id: stableCoinId,
 									symbol: details!.symbol,
-									roles: autoCheckRoles
-										? checkRoles
-										: roles
-										? roles.map((role: IRole) => role.value)
-										: [],
 								},
 							],
 						},
