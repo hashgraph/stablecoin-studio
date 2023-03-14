@@ -155,7 +155,7 @@ export const english = {
       'For which account would you like to get the balance of?',
     askCashInRoleType: 'What type of permission do you want to grant?',
     askCashInRoleRevokeType: 'What type of permission do you want to revoke?',
-    askEditCashInRole: 'What action do you want to perform?',
+    askAction: 'What action do you want to perform?',
     accountTarget: 'Enter the target account id',
     sendAmount: 'Enter the amount you want to send to the account',
     supplierRoleLimit: 'What will the limit be?',
@@ -226,6 +226,8 @@ export const english = {
     accountsChanged: '\nAccounts changed successfully',
     freezeAccount: 'Which account do you want to freeze?',
     unfreezeAccount: 'Which account do you want to unfreeze?',
+    checkAccountFrozen:
+      'which account do you want to know if it is frozen for the token?',
     grantKYCToAccount: 'Which account do you want to grant KYC to?',
     revokeKYCFromAccount: 'Which account do you want to revoke KYC from?',
     checkAccountKYCGranted:
@@ -241,11 +243,8 @@ export const english = {
       Burn: 'Burn',
       Wipe: 'Wipe',
       Rescue: 'Rescue',
-      Freeze: 'Freeze an account',
-      UnFreeze: 'Unfreeze an account',
-      GrantKYC: 'Grant KYC to an account',
-      RevokeKYC: 'Revoke KYC from an account',
-      AccountKYCGranted: 'Check KYC status from an account',
+      FreezeMgmt: 'Freeze Management',
+      KYCMgmt: 'KYC Management',
       FeesMgmt: 'Fees management',
       RoleMgmt: 'Role management',
       RoleRefresh: 'Refresh roles',
@@ -358,6 +357,9 @@ export const english = {
     unpauseCompleted: 'Stable coin unpaused',
     freezeCompleted: 'Account frozen',
     unfreezeCompleted: 'Account unfrozen',
+    accountNotFrozen:
+      'The account ${address} is not frozen for the ${token} token',
+    accountFrozen: 'The account ${address} is frozen for the ${token} token',
     KYCGranted: 'Account KYC granted',
     KYCRevoked: 'Account KYC revoked',
     accountKYCGranted:
@@ -463,6 +465,20 @@ export const english = {
     options: {
       keysManagement: 'Keys management',
       ...goBack,
+    },
+  },
+  kycManagement: {
+    options: {
+      GrantKYC: 'Grant KYC to an account',
+      RevokeKYC: 'Revoke KYC from an account',
+      AccountKYCGranted: 'Check KYC status from an account',
+    },
+  },
+  freezeManagement: {
+    options: {
+      Freeze: 'Freeze an account',
+      UnFreeze: 'Unfreeze an account',
+      AccountFrozen: 'Check if account is frozen',
     },
   },
   keysManagement: {
