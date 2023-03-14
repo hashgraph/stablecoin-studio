@@ -22,16 +22,7 @@ const Roles = () => {
 	const capabilities = useSelector(SELECTED_WALLET_CAPABILITIES);
 	const accountId = useSelector(SELECTED_WALLET_PAIRED_ACCOUNTID);
 	const coinSelected = useSelector(SELECTED_WALLET_COIN);
-
-	const {
-		isOpen: isOpenRefreshRoles,
-		onOpen: onOpenRefreshRoles,
-		onClose: onCloseRefreshRoles,
-	} = useDisclosure();
 	const [isExternal, setIsExternal] = useState<boolean>(false);
-	const [statusRefreshRoles, setStatusRefreshRoles] = useState<
-		'error' | 'success' | 'warning' | 'loading'
-	>();
 	useEffect(() => {
 		const tokensAccount = localStorage?.tokensAccount;
 		if (tokensAccount) {
@@ -84,31 +75,6 @@ const Roles = () => {
 	});
 
 	const { t } = useTranslation('roles');
-	// Add to action handler
-	const refreshRoles = async () => {
-		setStatusRefreshRoles('loading');
-		onOpenRefreshRoles();
-		if (coinSelected && coinSelected?.tokenId) {
-			const tokensAccount = JSON.parse(localStorage.tokensAccount);
-			const myAccount = tokensAccount.find((acc: IAccountToken) => acc.id === accountId?.value);
-			const externalTokens = myAccount.externalTokens;
-			const externalToken = externalTokens.find(
-				(coin: IExternalToken) => coin.id === coinSelected.tokenId?.toString(),
-			);
-
-			externalToken.roles = await SDKService.getRoles(
-				new GetRolesRequest({
-					targetId: accountId!.toString(),
-					tokenId: coinSelected.tokenId.toString(),
-				}),
-			);
-
-			localStorage.setItem('tokensAccount', JSON.stringify(tokensAccount));
-			setStatusRefreshRoles('success');
-			return;
-		}
-		setStatusRefreshRoles('error');
-	};
 
 	const directAccesses = [
 		{
@@ -147,33 +113,17 @@ const Roles = () => {
 						.externalTokens.find((t: any) => t.id === coinSelected?.tokenId)
 						.roles?.includes(StableCoinRole.DEFAULT_ADMIN_ROLE)),
 		},
-		{
-			icon: 'ArrowsClockwise',
-			route: NamedRoutes.RefreshRoles,
-			title: t('refresh'),
-			isDisabled: !isExternal,
-			customHandleClick: refreshRoles,
-		},
 	];
 
 	return (
-		<>
-			<BaseContainer title={t('title')}>
-				<Box p={{ base: 4, md: '128px' }}>
-					<Heading fontSize='20px' fontWeight='600' mb={14} data-testid='subtitle'>
-						{t('subtitle')}
-					</Heading>
-					<GridDirectAccess directAccesses={directAccesses} />
-				</Box>
-			</BaseContainer>
-			<ModalNotification
-				variant={statusRefreshRoles}
-				isOpen={isOpenRefreshRoles}
-				onClose={onCloseRefreshRoles}
-				closeButton={true}
-				title={t('refreshRoles.modalActionTitle')}
-			/>
-		</>
+		<BaseContainer title={t('title')}>
+			<Box p={{ base: 4, md: '128px' }}>
+				<Heading fontSize='20px' fontWeight='600' mb={14} data-testid='subtitle'>
+					{t('subtitle')}
+				</Heading>
+				<GridDirectAccess directAccesses={directAccesses} />
+			</Box>
+		</BaseContainer>
 	);
 };
 
