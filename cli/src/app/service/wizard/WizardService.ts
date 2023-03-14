@@ -50,7 +50,7 @@ export default class WizardService extends Service {
         case language.getText('wizard.mainOptions.Create'):
           await utilsService.cleanAndShowBanner();
           utilsService.displayCurrentUserInfo(currentAccount);
-          const configuration = await configurationService.getConfiguration();
+          let configuration = await configurationService.getConfiguration();
           if (
             !configuration.factories.find(
               (item) => item.network === currentAccount.network,
@@ -65,6 +65,13 @@ export default class WizardService extends Service {
             );
             if (configFactories) {
               await this.setConfigurationService.configureFactories();
+              configuration = await configurationService.getConfiguration();
+              const { factories } = configuration;
+              const currentFactory = factories.find(
+                (factory) => currentAccount.network === factory.network,
+              );
+
+              utilsService.setCurrentFactory(currentFactory);
             } else {
               break;
             }
