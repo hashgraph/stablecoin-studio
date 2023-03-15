@@ -53,18 +53,20 @@ export class RevokeMultiRolesCommandHandler
 			account,
 			tokenId,
 		);
-		const noExistsAccounts = targetsId.filter(async (hederaId) => {
-			try {
-				await this.accountService.getAccountInfo(hederaId);
-				return false;
-			} catch (error) {
-				return true;
-			}
-		});
-		if (noExistsAccounts) {
-			throw new AccountsIdNotExists(
-				noExistsAccounts.map((item) => item.toString()),
-			);
+
+		const noExistsAccounts: string[] = [];
+		await Promise.all(
+			targetsId.map(async (hederaId) => {
+				try {
+					await this.accountService.getAccountInfo(hederaId);
+				} catch (error) {
+					noExistsAccounts.push(hederaId.toString());
+				}
+			}),
+		);
+
+		if (noExistsAccounts.length) {
+			throw new AccountsIdNotExists(noExistsAccounts);
 		}
 
 		const res = await handler.revokeRoles(capabilities, targetsId, roles);
