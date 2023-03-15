@@ -21,9 +21,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch } from '../../store/store';
 import ImportedTokenInfo from './ImportedTokenInfo';
 import type { IAccountToken } from '../../interfaces/IAccountToken.js';
-import type { IRole } from '../../interfaces/IRole.js';
 import type { IExternalToken } from '../../interfaces/IExternalToken';
-import { GetRolesRequest, GetStableCoinDetailsRequest } from 'hedera-stable-coin-sdk';
+import { GetStableCoinDetailsRequest } from 'hedera-stable-coin-sdk';
 
 const ImportedTokenCreation = () => {
 	const navigate = useNavigate();
@@ -90,22 +89,15 @@ const ImportedTokenCreation = () => {
 	};
 
 	const handleFinish = async () => {
-		const { stableCoinId, autoCheckRoles, roles } = getValues();
-		let checkRoles: string[] | null = [];
+		const { stableCoinId } = getValues();
+
 		try {
 			const details = await SDKService.getStableCoinDetails(
 				new GetStableCoinDetailsRequest({
 					id: stableCoinId,
 				}),
 			);
-			if (autoCheckRoles) {
-				checkRoles = await SDKService.getRoles(
-					new GetRolesRequest({
-						targetId: accountInfo && accountInfo.id ? accountInfo?.id : '',
-						tokenId: details?.tokenId?.toString() ?? '',
-					}),
-				);
-			}
+
 			const tokensAccount = localStorage?.tokensAccount;
 			if (tokensAccount) {
 				const tokensAccountParsed = JSON.parse(tokensAccount);
