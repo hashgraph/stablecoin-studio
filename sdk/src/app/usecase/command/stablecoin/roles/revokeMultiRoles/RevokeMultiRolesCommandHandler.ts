@@ -24,6 +24,7 @@ import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator
 import AccountService from '../../../../../service/AccountService.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
+import { AccountsIdNotExists } from '../../error/AccountsIdNotExists.js';
 import {
 	RevokeMultiRolesCommand,
 	RevokeMultiRolesCommandResponse,
@@ -52,6 +53,20 @@ export class RevokeMultiRolesCommandHandler
 			account,
 			tokenId,
 		);
+		const noExistsAccounts = targetsId.filter(async (hederaId) => {
+			try {
+				await this.accountService.getAccountInfo(hederaId);
+				return false;
+			} catch (error) {
+				return true;
+			}
+		});
+		if (noExistsAccounts) {
+			throw new AccountsIdNotExists(
+				noExistsAccounts.map((item) => item.toString()),
+			);
+		}
+
 		const res = await handler.revokeRoles(capabilities, targetsId, roles);
 
 		// return Promise.resolve({ payload: res.response ?? false });

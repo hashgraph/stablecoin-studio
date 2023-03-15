@@ -25,6 +25,7 @@ import BigDecimal from '../../../../../../domain/context/shared/BigDecimal.js';
 import AccountService from '../../../../../service/AccountService.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
+import { AccountsIdNotExists } from '../../error/AccountsIdNotExists.js';
 import {
 	GrantMultiRolesCommand,
 	GrantMultiRolesCommandResponse,
@@ -53,6 +54,19 @@ export class GrantMultiRolesCommandHandler
 			account,
 			tokenId,
 		);
+		const noExistsAccounts = targetsId.filter(async (hederaId) => {
+			try {
+				await this.accountService.getAccountInfo(hederaId);
+				return false;
+			} catch (error) {
+				return true;
+			}
+		});
+		if (noExistsAccounts) {
+			throw new AccountsIdNotExists(
+				noExistsAccounts.map((item) => item.toString()),
+			);
+		}
 
 		const amountsFormatted: BigDecimal[] = [];
 		amounts.forEach((amount) => {
