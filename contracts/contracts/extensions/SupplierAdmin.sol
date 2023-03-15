@@ -49,7 +49,6 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
         uint256 amount
     )
         external
-        virtual
         override(ISupplierAdmin)
         onlyRole(_getRoleId(RoleName.ADMIN))
         addressIsNotZero(supplier)
@@ -87,7 +86,6 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
         address supplier
     )
         external
-        virtual
         override(ISupplierAdmin)
         onlyRole(_getRoleId(RoleName.ADMIN))
         addressIsNotZero(supplier)
@@ -119,7 +117,6 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
         address supplier
     )
         external
-        virtual
         override(ISupplierAdmin)
         onlyRole(_getRoleId(RoleName.ADMIN))
         addressIsNotZero(supplier)
@@ -151,7 +148,6 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
         address supplier
     )
         external
-        virtual
         override(ISupplierAdmin)
         onlyRole(_getRoleId(RoleName.ADMIN))
         addressIsNotZero(supplier)
@@ -182,7 +178,6 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
         uint256 amount
     )
         external
-        virtual
         override(ISupplierAdmin)
         onlyRole(_getRoleId(RoleName.ADMIN))
         addressIsNotZero(supplier)
@@ -215,7 +210,6 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
         uint256 amount
     )
         external
-        virtual
         override(ISupplierAdmin)
         onlyRole(_getRoleId(RoleName.ADMIN))
         addressIsNotZero(supplier)
@@ -234,7 +228,7 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
     function _decreaseSupplierAllowance(
         address supplier,
         uint256 amount
-    ) internal virtual {
+    ) internal {
         uint256 oldAllowance = _supplierAllowances[supplier];
         require(
             oldAllowance >= amount,

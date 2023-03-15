@@ -44,7 +44,7 @@ contract StableCoinFactory is
         _;
     }
 
-    function _checkAddressIsNotZero(address addr) internal pure {
+    function _checkAddressIsNotZero(address addr) private pure {
         require(addr != address(0), 'Provided address is 0');
     }
 
@@ -298,7 +298,7 @@ contract StableCoinFactory is
         emit HederaERC20AddressEdited(oldAddress, newAddress);
     }
 
-    function _edit(uint256 index, address newAddress) internal {
+    function _edit(uint256 index, address newAddress) private {
         _hederaERC20Address[index] = newAddress;
     }
 
