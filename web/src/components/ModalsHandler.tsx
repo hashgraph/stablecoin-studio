@@ -11,7 +11,10 @@ export interface ModalsHandlerActionsProps
 		onSuccess,
 		onError,
 		onWarning,
-	}: Record<'onSuccess' | 'onError' | 'onWarning' | 'onLoading', () => void>) => void;
+	}: Record<
+		'onSuccess' | 'onError' | 'onWarning' | 'onLoading' | 'onCloseModalLoading',
+		() => void
+	>) => void;
 }
 
 export interface ModalsHandlerProps {
@@ -81,6 +84,7 @@ const ModalsHandler = (props: ModalsHandlerProps) => {
 						onError: onOpenModalError,
 						onWarning: onOpenModalWarning,
 						onLoading: onOpenModalLoading,
+						onCloseModalLoading,
 					});
 				}}
 				cancelButtonLabel={t('global:common.goBack')}

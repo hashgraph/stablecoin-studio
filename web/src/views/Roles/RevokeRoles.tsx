@@ -38,7 +38,7 @@ const RevokeRoleOperation = () => {
 	} = useDisclosure();
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const accountId = useSelector(SELECTED_WALLET_PAIRED_ACCOUNTID);
-	const { control, getValues, watch, formState } = useForm({
+	const { control, getValues, watch, formState, setError } = useForm({
 		mode: 'onChange',
 	});
 	const {
@@ -73,6 +73,7 @@ const RevokeRoleOperation = () => {
 		onSuccess,
 		onError,
 		onLoading,
+		onCloseModalLoading,
 	}) => {
 		onLoading();
 		const values = getValues();
@@ -107,8 +108,24 @@ const RevokeRoleOperation = () => {
 			}
 			onSuccess();
 		} catch (error: any) {
-			setErrorTransactionUrl(error.transactionUrl);
-			onError();
+			// is MultiTargetsInvalid
+			if ('targetsId' in error) {
+				const targetsNoExists = error.targetsId;
+				values.rol.forEach((value: any, index: number) => {
+					if (targetsNoExists.find((item: any) => item === value.accountId)) {
+						setError(`rol[${index}].accountId`, {
+							type: 'invalidAccount',
+							message: t('roles:revokeRole.errorAccountIdNotExists', {
+								account: value.accountId,
+							})!,
+						});
+					}
+				});
+				onCloseModalLoading();
+			} else {
+				setErrorTransactionUrl(error.transactionUrl);
+				onError();
+			}
 		}
 	};
 	const getAccountsDetails = () => {
@@ -169,6 +186,37 @@ const RevokeRoleOperation = () => {
 			return item === true;
 		});
 	};
+
+
+		const handleSubmit = () => {
+			const values = getValues().rol;
+
+			const valuesDuplicated: { [index: string]: number[] } = {};
+			let sendRequest = true;
+			values.forEach((obj: any, index: number) => {
+				if (!valuesDuplicated[obj.accountId]) {
+					valuesDuplicated[obj.accountId] = [];
+				}
+				valuesDuplicated[obj.accountId].push(index);
+			});
+			for (const accountId in valuesDuplicated) {
+				if (valuesDuplicated[accountId].length > 1) {
+					sendRequest = false;
+					valuesDuplicated[accountId].map((index: number) =>
+						setError(`rol[${index}].accountId`, {
+							type: 'repeatedValue',
+							message: t('roles:giveRole.errorAccountIdDuplicated', {
+								account: accountId,
+							})!,
+						}),
+					);
+				}
+			}
+
+			if (sendRequest) {
+				onOpenModalAction();
+			}
+		};
 
 	return (
 		<>
@@ -246,7 +294,7 @@ const RevokeRoleOperation = () => {
 						</Flex>
 					</>
 				}
-				onConfirm={onOpenModalAction}
+				onConfirm={handleSubmit}
 				confirmBtnProps={{
 					isDisabled: isNotValidAccount() || !isRoleSelected() || !formState.isValid,
 				}}

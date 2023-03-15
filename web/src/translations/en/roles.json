@@ -35,7 +35,9 @@
 		"amountLabel": "Enter the amount",
 		"amountPlaceholder": "0",
 		"checkCashinLimitSuccessDesc": "",
-		"hasNotRoleError": "This account has not the requested role"
+		"hasNotRoleError": "This account has not the requested role",
+		"errorAccountIdDuplicated": "Account: {{ account }} is duplicated",
+		"errorAccountIdNotExists": "Account: {{ account }} not exists "
 	},
 	"revokeRole": {
 		"title": "Revoke roles",
@@ -64,7 +66,9 @@
 		"switchLabel": "",
 		"amountLabel": "Enter the amount",
 		"amountPlaceholder": "0",
-		"checkCashinLimitSuccessDesc": ""
+		"checkCashinLimitSuccessDesc": "",
+		"errorAccountIdNotExists": "Account: {{ account }} not exists ",
+		"errorAccountIdDuplicated": "Account: {{ account }} is duplicated"
 	},
 	"editRole": {
 		"title": "Manage cash in limit",
