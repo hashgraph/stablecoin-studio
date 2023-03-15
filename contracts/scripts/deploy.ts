@@ -34,10 +34,10 @@ import {
     toEvmAddress,
 } from './utils'
 
-const hederaERC20Address = '0.0.3776422'
-export const factoryProxyAddress = '0.0.3776451'
-const factoryProxyAdminAddress = '0.0.3776445'
-const factoryAddress = '0.0.3776438'
+const hederaERC20Address = '0.0.3805467'
+export const factoryProxyAddress = '0.0.3805474'
+const factoryProxyAdminAddress = '0.0.3805472'
+const factoryAddress = '0.0.3805470'
 
 export function initializeClients(): [
     Client,
@@ -272,6 +272,7 @@ export type DeployParameters = {
     allRolesToCreator?: boolean
     RolesToAccount?: string
     isRolesToAccountE25519?: boolean
+    treasuryAccount?: string
 }
 export async function deployContractsWithSDK({
     name,
@@ -294,6 +295,7 @@ export async function deployContractsWithSDK({
     allRolesToCreator = true,
     RolesToAccount = '',
     isRolesToAccountE25519 = false,
+    treasuryAccount = ADDRESS_0,
 }: DeployParameters): Promise<ContractId[]> {
     const AccountEvmAddress = await toEvmAddress(account, isED25519Type)
 
@@ -354,7 +356,7 @@ export async function deployContractsWithSDK({
         tokenInitialSupply: initialSupply,
         tokenDecimals: decimals,
         autoRenewAccountAddress: AccountEvmAddress,
-        treasuryAddress: ADDRESS_0,
+        treasuryAddress: treasuryAccount,
         reserveAddress,
         reserveInitialAmount: initialAmountDataFeed,
         createReserve,

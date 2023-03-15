@@ -279,28 +279,6 @@ export async function allowance(
     return BigNumber.from(response[0])
 }
 
-export async function approve(
-    proxyAddress: ContractId,
-    addressSpender: string,
-    spenderIsE25519: boolean,
-    amount: BigNumber,
-    client: Client
-): Promise<boolean> {
-    const params = [
-        await toEvmAddress(addressSpender, spenderIsE25519),
-        amount.toString(),
-    ]
-    const response = await contractCall(
-        proxyAddress,
-        'approve',
-        params,
-        client,
-        Gas1,
-        HederaERC20__factory.abi
-    )
-    return response[0]
-}
-
 export async function transfer(
     proxyAddress: ContractId,
     addressSpender: string,
@@ -315,31 +293,6 @@ export async function transfer(
     const response = await contractCall(
         proxyAddress,
         'transfer',
-        params,
-        client,
-        Gas1,
-        HederaERC20__factory.abi
-    )
-    return response[0]
-}
-
-export async function transferFrom(
-    proxyAddress: ContractId,
-    addressOwner: string,
-    ownerIsE25519: boolean,
-    addressSpender: string,
-    spenderIsE25519: boolean,
-    amount: BigNumber,
-    client: Client
-): Promise<boolean> {
-    const params: string[] = [
-        await toEvmAddress(addressOwner, ownerIsE25519),
-        await toEvmAddress(addressSpender, spenderIsE25519),
-        amount.toString(),
-    ]
-    const response = await contractCall(
-        proxyAddress,
-        'transferFrom',
         params,
         client,
         Gas1,

@@ -34,9 +34,7 @@ import {
     transferOwnership,
     getProxyAdmin,
     getProxyImplementation,
-    approve,
     allowance,
-    transferFrom,
     Burn,
     transfer,
     getRoles,
@@ -506,6 +504,70 @@ describe('HederaERC20 Tests', function () {
         expect('0').to.equals(newBalance.toString())
     })
 
+    it('Associate and Dissociate StableCoin to/from Token cannot be done, Minting if SC is not Treasury either', async function () {
+        const amountToMint = BigNumber.from(1).mul(TokenFactor)
+
+        // Create SC where the current account is the treasury
+        const result_2 = await deployContractsWithSDK({
+            name: TokenName,
+            symbol: TokenSymbol,
+            decimals: TokenDecimals,
+            initialSupply: INIT_SUPPLY.toString(),
+            maxSupply: MAX_SUPPLY.toString(),
+            memo: TokenMemo,
+            account: operatorAccount,
+            privateKey: operatorPriKey,
+            publicKey: operatorPubKey,
+            isED25519Type: operatorIsE25519,
+            initialAmountDataFeed: BigNumber.from('2000').toString(),
+            allToContract: false,
+            treasuryAccount: await toEvmAddress(
+                operatorAccount,
+                operatorIsE25519
+            ),
+        })
+
+        const newProxyAddress = result_2[0]
+
+        const proxyAddressString =
+            newProxyAddress.shard.toString() +
+            '.' +
+            newProxyAddress.realm.toString() +
+            '.' +
+            newProxyAddress.num.toString()
+
+        // proxy already associated to token, it cannot be associated again
+        await expect(
+            associateToken(
+                newProxyAddress,
+                nonOperatorClient,
+                proxyAddressString,
+                true
+            )
+        ).to.eventually.be.rejectedWith(Error)
+
+        // we cannot mint tokens using the SC
+        await expect(
+            Mint(
+                newProxyAddress,
+                amountToMint,
+                operatorClient,
+                nonOperatorAccount,
+                nonOperatorIsE25519
+            )
+        ).to.eventually.be.rejectedWith(Error)
+
+        // We dissociate the token from the account
+        await expect(
+            dissociateToken(
+                newProxyAddress,
+                operatorClient,
+                proxyAddressString,
+                true
+            )
+        ).to.eventually.be.rejectedWith(Error)
+    })
+
     it('Check initialize can only be run once', async function () {
         // Retrieve current Token address
         const TokenAddress = await getTokenAddress(proxyAddress, operatorClient)
@@ -516,7 +578,7 @@ describe('HederaERC20 Tests', function () {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('Check transfer and transferFrom', async () => {
+    it('Check transfer', async () => {
         const AMOUNT = BigNumber.from(10).mul(TokenFactor)
         await associateToken(
             proxyAddress,
@@ -524,13 +586,7 @@ describe('HederaERC20 Tests', function () {
             nonOperatorAccount,
             nonOperatorIsE25519
         )
-        const approveRes = await approve(
-            proxyAddress,
-            nonOperatorAccount,
-            nonOperatorIsE25519,
-            AMOUNT,
-            operatorClient
-        )
+
         await Mint(
             proxyAddress,
             AMOUNT,
@@ -539,36 +595,11 @@ describe('HederaERC20 Tests', function () {
             operatorIsE25519
         )
 
-        const allowanceRes = await allowance(
-            proxyAddress,
-            operatorAccount,
-            operatorIsE25519,
-            nonOperatorAccount,
-            nonOperatorIsE25519,
-            operatorClient
-        )
-        const transferFromRes = await transferFrom(
-            proxyAddress,
-            operatorAccount,
-            operatorIsE25519,
-            nonOperatorAccount,
-            nonOperatorIsE25519,
-            BigNumber.from('3').mul(TokenFactor),
-            nonOperatorClient
-        )
         const balanceResp = await getBalanceOf(
             proxyAddress,
             nonOperatorClient,
             nonOperatorAccount,
             nonOperatorIsE25519
-        )
-        const allowancePost = await allowance(
-            proxyAddress,
-            operatorAccount,
-            operatorIsE25519,
-            nonOperatorAccount,
-            nonOperatorIsE25519,
-            operatorClient
         )
 
         const transferRes = await transfer(
@@ -585,15 +616,9 @@ describe('HederaERC20 Tests', function () {
             nonOperatorIsE25519
         )
         // Reset accounts
-        await Burn(
-            proxyAddress,
-            BigNumber.from(7).mul(TokenFactor),
-            operatorClient
-        )
-
         await Wipe(
             proxyAddress,
-            BigNumber.from(6).mul(TokenFactor),
+            BigNumber.from(3).mul(TokenFactor),
             operatorClient,
             nonOperatorAccount,
             nonOperatorIsE25519
@@ -606,12 +631,8 @@ describe('HederaERC20 Tests', function () {
         )
 
         expect(transferRes).to.equals(true)
-        expect(approveRes).to.equals(true)
-        expect(allowanceRes).to.equals(AMOUNT)
-        expect(transferFromRes).to.equals(true)
-        expect(balanceResp).to.equals(BigNumber.from('3').mul(TokenFactor))
-        expect(allowancePost).to.equals(BigNumber.from('7').mul(TokenFactor))
-        expect(balanceResp2).to.equals(BigNumber.from('6').mul(TokenFactor))
+        expect(balanceResp).to.equals(BigNumber.from(0).mul(TokenFactor))
+        expect(balanceResp2).to.equals(BigNumber.from(3).mul(TokenFactor))
     })
 
     it('Mint token throw error format number incorrrect', async () => {

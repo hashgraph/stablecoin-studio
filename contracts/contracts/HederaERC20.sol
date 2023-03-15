@@ -229,6 +229,8 @@ contract HederaERC20 is
     function dissociateToken(
         address addr
     ) external override(IHederaERC20) addressIsNotZero(addr) {
+        require(addr != address(this), 'Cannot dissociate the contract');
+
         address currentTokenAddress = _getTokenAddress();
 
         int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
@@ -300,74 +302,6 @@ contract HederaERC20 is
         (, uint256 amount) = IHederaTokenService(_PRECOMPILED_ADDRESS)
             .allowance(_getTokenAddress(), owner, spender);
         return amount;
-    }
-
-    /**
-     * @dev Function not already implemented
-     */
-    function approve(
-        address spender,
-        uint256 amount
-    ) external override(IHederaERC20) addressIsNotZero(spender) returns (bool) {
-        (bool success, bytes memory result) = _PRECOMPILED_ADDRESS.delegatecall(
-            abi.encodeWithSelector(
-                IHederaTokenService.approve.selector,
-                _getTokenAddress(),
-                spender,
-                amount
-            )
-        );
-        int64 responseCode = success
-            ? abi.decode(result, (int32))
-            : HederaResponseCodes.UNKNOWN;
-        success = _checkResponse(responseCode);
-        return success;
-    }
-
-    /**
-     * @dev Transfers an amount of tokens from and account to another account
-     *
-     * @param from The address the tokens are transferred from
-     * @param to The address the tokens are transferred to
-     * @param amount The amount to transfer
-     */
-    function transferFrom(
-        address from,
-        address to,
-        uint256 amount
-    )
-        external
-        override(IHederaERC20)
-        addressIsNotZero(from)
-        addressIsNotZero(to)
-        valueIsNotGreaterThan(amount, _balanceOf(from), true)
-        returns (bool)
-    {
-        address currentTokenAddress = _getTokenAddress();
-
-        (bool success, bytes memory result) = _PRECOMPILED_ADDRESS.delegatecall(
-            abi.encodeWithSelector(
-                IHederaTokenService.transferFrom.selector,
-                currentTokenAddress,
-                from,
-                to,
-                amount
-            )
-        );
-        int64 responseCode = success
-            ? abi.decode(result, (int32))
-            : HederaResponseCodes.UNKNOWN;
-        success = _checkResponse(responseCode);
-
-        emit TokenTransferFrom(
-            currentTokenAddress,
-            msg.sender,
-            from,
-            to,
-            amount
-        );
-
-        return success;
     }
 
     /**

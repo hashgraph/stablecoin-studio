@@ -158,24 +158,6 @@ interface IHederaERC20 {
     ) external returns (uint256);
 
     /**
-     * @dev Function not already implemented
-     */
-    function approve(address spender, uint256 amount) external returns (bool);
-
-    /**
-     * @dev Transfers an amount of tokens from and account to another account
-     *
-     * @param from The address the tokens are transferred from
-     * @param to The address the tokens are transferred to
-     * @param amount The amount to transfer
-     */
-    function transferFrom(
-        address from,
-        address to,
-        uint256 amount
-    ) external returns (bool);
-
-    /**
      * @dev Update token keys
      *
      * @param keys The new addresses to set for the underlying token
