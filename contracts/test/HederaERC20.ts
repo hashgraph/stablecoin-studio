@@ -10,6 +10,8 @@ import {
     getNonOperatorClient,
     getNonOperatorAccount,
     getNonOperatorE25519,
+    tokenKeystoKey,
+    tokenKeystoContract,
 } from '../scripts/deploy'
 import {
     name,
@@ -32,20 +34,34 @@ import {
     transferOwnership,
     getProxyAdmin,
     getProxyImplementation,
-    approve,
     allowance,
-    transferFrom,
     Burn,
     transfer,
+    getRoles,
+    isUnlimitedSupplierAllowance,
+    updateTokenKeys,
 } from '../scripts/contractsMethods'
 import { clientId, toEvmAddress } from '../scripts/utils'
 import { Client, ContractId } from '@hashgraph/sdk'
 import {
-    HederaERC20ProxyAdmin__factory,
-    HederaERC20Proxy__factory,
+    ProxyAdmin__factory,
+    TransparentUpgradeableProxy__factory,
 } from '../typechain-types'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
+import {
+    BURN_ROLE,
+    CASHIN_ROLE,
+    DEFAULT_ADMIN_ROLE,
+    DELETE_ROLE,
+    FREEZE_ROLE,
+    KYC_ROLE,
+    PAUSE_ROLE,
+    RESCUE_ROLE,
+    RolesId,
+    WIPE_ROLE,
+    WITHOUT_ROLE,
+} from '../scripts/constants'
 
 chai.use(chaiAsPromised)
 const expect = chai.expect
@@ -71,7 +87,7 @@ const TokenFactor = BigNumber.from(10).pow(TokenDecimals)
 const INIT_SUPPLY = BigNumber.from(10).mul(TokenFactor)
 const MAX_SUPPLY = BigNumber.from(1000).mul(TokenFactor)
 const TokenMemo = 'Hedera Accelerator Stable Coin'
-const abiERC20ProxyAdmin = HederaERC20ProxyAdmin__factory.abi
+const abiERC20ProxyAdmin = ProxyAdmin__factory.abi
 
 describe('HederaERC20 Tests', function () {
     before(async function () {
@@ -139,6 +155,163 @@ describe('HederaERC20 Tests', function () {
 
         proxyAddress = result[0]
         reserveProxy = result[6]
+    })
+
+    it('Cannot Update Keys if not Admin', async function () {
+        const keys = tokenKeystoKey(operatorPubKey, operatorIsE25519)
+        await expect(
+            updateTokenKeys(proxyAddress, keys, nonOperatorClient)
+        ).to.eventually.be.rejectedWith(Error)
+    })
+
+    it('Admin can update keys', async function () {
+        const keysToKey = tokenKeystoKey(
+            operatorPubKey,
+            operatorIsE25519,
+            false
+        )
+        await updateTokenKeys(proxyAddress, keysToKey, operatorClient)
+
+        const keysToContract = tokenKeystoContract(false)
+        await updateTokenKeys(proxyAddress, keysToContract, operatorClient)
+    })
+
+    it('deploy SC with roles associated to another account', async function () {
+        // Deploy Token using Client
+        const creation = await deployContractsWithSDK({
+            name: TokenName,
+            symbol: TokenSymbol,
+            decimals: TokenDecimals,
+            initialSupply: INIT_SUPPLY.toString(),
+            maxSupply: MAX_SUPPLY.toString(),
+            memo: TokenMemo,
+            account: operatorAccount,
+            privateKey: operatorPriKey,
+            publicKey: operatorPubKey,
+            isED25519Type: operatorIsE25519,
+            initialAmountDataFeed: BigNumber.from('2000').toString(),
+            allRolesToCreator: false,
+            RolesToAccount: nonOperatorAccount,
+            isRolesToAccountE25519: nonOperatorIsE25519,
+        })
+
+        const newProxyAddress = creation[0]
+
+        // Checking roles
+        const resultNonOperatorAccount = await getRoles(
+            newProxyAddress,
+            operatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
+        const isUnlimitedNonOperator = await isUnlimitedSupplierAllowance(
+            newProxyAddress,
+            operatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
+
+        const resultOperatorAccount = await getRoles(
+            newProxyAddress,
+            operatorClient,
+            operatorAccount,
+            operatorIsE25519
+        )
+        const isUnlimitedOperator = await isUnlimitedSupplierAllowance(
+            newProxyAddress,
+            operatorClient,
+            operatorAccount,
+            operatorIsE25519
+        )
+
+        expect(isUnlimitedOperator).to.eq(false)
+        expect(isUnlimitedNonOperator).to.eq(true)
+
+        for (let i = 0; i < resultOperatorAccount.length; i++) {
+            if (i == RolesId.Cashin)
+                expect(resultOperatorAccount[i].toUpperCase()).to.equals(
+                    WITHOUT_ROLE.toUpperCase()
+                )
+            else if (i == RolesId.Burn)
+                expect(resultOperatorAccount[i].toUpperCase()).to.equals(
+                    WITHOUT_ROLE.toUpperCase()
+                )
+            else if (i == RolesId.Delete)
+                expect(resultOperatorAccount[i].toUpperCase()).to.equals(
+                    WITHOUT_ROLE.toUpperCase()
+                )
+            else if (i == RolesId.Freeze)
+                expect(resultOperatorAccount[i].toUpperCase()).to.equals(
+                    WITHOUT_ROLE.toUpperCase()
+                )
+            else if (i == RolesId.Wipe)
+                expect(resultOperatorAccount[i].toUpperCase()).to.equals(
+                    WITHOUT_ROLE.toUpperCase()
+                )
+            else if (i == RolesId.Rescue)
+                expect(resultOperatorAccount[i].toUpperCase()).to.equals(
+                    WITHOUT_ROLE.toUpperCase()
+                )
+            else if (i == RolesId.Pause)
+                expect(resultOperatorAccount[i].toUpperCase()).to.equals(
+                    WITHOUT_ROLE.toUpperCase()
+                )
+            else if (i == RolesId.Kyc)
+                expect(resultOperatorAccount[i].toUpperCase()).to.equals(
+                    WITHOUT_ROLE.toUpperCase()
+                )
+            else if (i == RolesId.Admin)
+                expect(resultOperatorAccount[i].toUpperCase()).to.equals(
+                    DEFAULT_ADMIN_ROLE.toUpperCase()
+                )
+            else
+                expect(resultOperatorAccount[i].toUpperCase()).to.equals(
+                    WITHOUT_ROLE.toUpperCase()
+                )
+        }
+
+        for (let i = 0; i < resultNonOperatorAccount.length; i++) {
+            if (i == RolesId.Cashin)
+                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
+                    CASHIN_ROLE.toUpperCase()
+                )
+            else if (i == RolesId.Burn)
+                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
+                    BURN_ROLE.toUpperCase()
+                )
+            else if (i == RolesId.Delete)
+                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
+                    DELETE_ROLE.toUpperCase()
+                )
+            else if (i == RolesId.Freeze)
+                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
+                    FREEZE_ROLE.toUpperCase()
+                )
+            else if (i == RolesId.Wipe)
+                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
+                    WIPE_ROLE.toUpperCase()
+                )
+            else if (i == RolesId.Rescue)
+                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
+                    RESCUE_ROLE.toUpperCase()
+                )
+            else if (i == RolesId.Pause)
+                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
+                    PAUSE_ROLE.toUpperCase()
+                )
+            else if (i == RolesId.Kyc)
+                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
+                    KYC_ROLE.toUpperCase()
+                )
+            else if (i == RolesId.Admin)
+                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
+                    WITHOUT_ROLE.toUpperCase()
+                )
+            else
+                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
+                    WITHOUT_ROLE.toUpperCase()
+                )
+        }
     })
 
     it('input parmeters check', async function () {
@@ -331,6 +504,70 @@ describe('HederaERC20 Tests', function () {
         expect('0').to.equals(newBalance.toString())
     })
 
+    it('Associate and Dissociate StableCoin to/from Token cannot be done, Minting if SC is not Treasury either', async function () {
+        const amountToMint = BigNumber.from(1).mul(TokenFactor)
+
+        // Create SC where the current account is the treasury
+        const result_2 = await deployContractsWithSDK({
+            name: TokenName,
+            symbol: TokenSymbol,
+            decimals: TokenDecimals,
+            initialSupply: INIT_SUPPLY.toString(),
+            maxSupply: MAX_SUPPLY.toString(),
+            memo: TokenMemo,
+            account: operatorAccount,
+            privateKey: operatorPriKey,
+            publicKey: operatorPubKey,
+            isED25519Type: operatorIsE25519,
+            initialAmountDataFeed: BigNumber.from('2000').toString(),
+            allToContract: false,
+            treasuryAccount: await toEvmAddress(
+                operatorAccount,
+                operatorIsE25519
+            ),
+        })
+
+        const newProxyAddress = result_2[0]
+
+        const proxyAddressString =
+            newProxyAddress.shard.toString() +
+            '.' +
+            newProxyAddress.realm.toString() +
+            '.' +
+            newProxyAddress.num.toString()
+
+        // proxy already associated to token, it cannot be associated again
+        await expect(
+            associateToken(
+                newProxyAddress,
+                nonOperatorClient,
+                proxyAddressString,
+                true
+            )
+        ).to.eventually.be.rejectedWith(Error)
+
+        // we cannot mint tokens using the SC
+        await expect(
+            Mint(
+                newProxyAddress,
+                amountToMint,
+                operatorClient,
+                nonOperatorAccount,
+                nonOperatorIsE25519
+            )
+        ).to.eventually.be.rejectedWith(Error)
+
+        // We dissociate the token from the account
+        await expect(
+            dissociateToken(
+                newProxyAddress,
+                operatorClient,
+                proxyAddressString,
+                true
+            )
+        ).to.eventually.be.rejectedWith(Error)
+    })
+
     it('Check initialize can only be run once', async function () {
         // Retrieve current Token address
         const TokenAddress = await getTokenAddress(proxyAddress, operatorClient)
@@ -341,7 +578,7 @@ describe('HederaERC20 Tests', function () {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('Check transfer and transferFrom', async () => {
+    it('Check transfer', async () => {
         const AMOUNT = BigNumber.from(10).mul(TokenFactor)
         await associateToken(
             proxyAddress,
@@ -349,13 +586,7 @@ describe('HederaERC20 Tests', function () {
             nonOperatorAccount,
             nonOperatorIsE25519
         )
-        const approveRes = await approve(
-            proxyAddress,
-            nonOperatorAccount,
-            nonOperatorIsE25519,
-            AMOUNT,
-            operatorClient
-        )
+
         await Mint(
             proxyAddress,
             AMOUNT,
@@ -364,36 +595,11 @@ describe('HederaERC20 Tests', function () {
             operatorIsE25519
         )
 
-        const allowanceRes = await allowance(
-            proxyAddress,
-            operatorAccount,
-            operatorIsE25519,
-            nonOperatorAccount,
-            nonOperatorIsE25519,
-            operatorClient
-        )
-        const transferFromRes = await transferFrom(
-            proxyAddress,
-            operatorAccount,
-            operatorIsE25519,
-            nonOperatorAccount,
-            nonOperatorIsE25519,
-            BigNumber.from('3').mul(TokenFactor),
-            nonOperatorClient
-        )
         const balanceResp = await getBalanceOf(
             proxyAddress,
             nonOperatorClient,
             nonOperatorAccount,
             nonOperatorIsE25519
-        )
-        const allowancePost = await allowance(
-            proxyAddress,
-            operatorAccount,
-            operatorIsE25519,
-            nonOperatorAccount,
-            nonOperatorIsE25519,
-            operatorClient
         )
 
         const transferRes = await transfer(
@@ -410,15 +616,9 @@ describe('HederaERC20 Tests', function () {
             nonOperatorIsE25519
         )
         // Reset accounts
-        await Burn(
-            proxyAddress,
-            BigNumber.from(7).mul(TokenFactor),
-            operatorClient
-        )
-
         await Wipe(
             proxyAddress,
-            BigNumber.from(6).mul(TokenFactor),
+            BigNumber.from(3).mul(TokenFactor),
             operatorClient,
             nonOperatorAccount,
             nonOperatorIsE25519
@@ -431,12 +631,8 @@ describe('HederaERC20 Tests', function () {
         )
 
         expect(transferRes).to.equals(true)
-        expect(approveRes).to.equals(true)
-        expect(allowanceRes).to.equals(AMOUNT)
-        expect(transferFromRes).to.equals(true)
-        expect(balanceResp).to.equals(BigNumber.from('3').mul(TokenFactor))
-        expect(allowancePost).to.equals(BigNumber.from('7').mul(TokenFactor))
-        expect(balanceResp2).to.equals(BigNumber.from('6').mul(TokenFactor))
+        expect(balanceResp).to.equals(BigNumber.from(0).mul(TokenFactor))
+        expect(balanceResp2).to.equals(BigNumber.from(3).mul(TokenFactor))
     })
 
     it('Mint token throw error format number incorrrect', async () => {
@@ -744,7 +940,7 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function () {
 
         // Check that proxy admin has been changed
         const _admin = await admin(
-            HederaERC20Proxy__factory.abi,
+            TransparentUpgradeableProxy__factory.abi,
             proxyAddress,
             operatorClient
         )
@@ -756,13 +952,13 @@ describe('HederaERC20Proxy and HederaERC20ProxyAdmin Tests', function () {
 
         // reset
         await changeAdmin(
-            HederaERC20Proxy__factory.abi,
+            TransparentUpgradeableProxy__factory.abi,
             proxyAddress,
             operatorClient,
             await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)
         )
         await changeAdmin(
-            HederaERC20Proxy__factory.abi,
+            TransparentUpgradeableProxy__factory.abi,
             proxyAddress,
             nonOperatorClient,
             proxyAdminAddress.toSolidityAddress()

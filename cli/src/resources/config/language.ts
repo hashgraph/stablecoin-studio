@@ -49,8 +49,10 @@ export const english = {
     askNetwork: 'Select the default network',
     askNotDefaultNetwork:
       'Your option is not one of the default networks, do you want to create a new network? (y/n)',
+    AccountsConfigurationMessage: 'You will now configure your accounts:',
     askAccountId: 'Enter the account id',
-    askConfigurateFactories: 'Do you want to config your factories?',
+    askConfigurateFactories:
+      'Do you want to config your factories? Check the documentation for more information : https://github.com/hashgraph/hedera-accelerator-stablecoin#deploying-the-stable-coin-factories',
     askNetworkAccount: 'Which network does this account belong to?',
     askPrivateKeyType: 'Which type of private key will the account use?',
     askAlias: 'Enter an alias for this account',
@@ -67,7 +69,6 @@ export const english = {
     askOperateWithNewAccount:
       'Would you like to operate with the account you have just created?',
     askFactoryAddress: 'Enter your factory address',
-    askHederaERC20Address: 'Enter your Hedera ERC20 address',
   },
   stablecoin: {
     noFactories:
@@ -87,7 +88,6 @@ export const english = {
     askReserve: 'Do you want to link the stable coin to a Proof of Reserve?',
     askExistingReserve:
       'Do you want to link it to an already existing Proof of Reserve?',
-
     askReserveAddress:
       'Enter the Proof of Reserve Feed you wish to link your stable coin to',
     askReserveInitialAmount: 'Enter the Proof of Reserve Feed initial amount',
@@ -98,7 +98,16 @@ export const english = {
     askMemo: 'Enter the token memo',
     askFreezeAccount: 'Should the Hedera account be frozen for this token?',
     askFeaturesManagedBy:
-      'Assign all token keys to the Smart Contract except for the Fee Schedule key (assigned to the current user) and the KYC key (unassigned)?',
+      'Should the smart contract be used for all roles management?',
+    askRolesManagedBy:
+      'You will be the admin for the keys that you have assigned to the Smart Contract, do you want to change the admin for one of these features?',
+    askKYC: 'Do you want to enable KYC?',
+    askCustomFees: 'Do you want to add custom fees?',
+    askHederaERC20Other: 'Other',
+    askHederaERC20Version:
+      'Choose the HederaERC20 implementation you want to use',
+    askHederaERC20Implementation:
+      'Enter the address of the HederaERC20 implementation you want to use',
     features: {
       admin: 'Enter the admin key',
       supply: 'Enter the supply key',
@@ -113,6 +122,24 @@ export const english = {
       publicKey: 'Enter the public key',
       keyType: 'Key type',
     },
+    initialRoles: {
+      askAccount: 'Enter an account',
+      burn: 'Choose the BURN admin account',
+      wipe: 'Choose the WIPE admin account',
+      rescue: 'Choose the RESCUE admin account',
+      pause: 'Choose the PAUSE admin account',
+      freeze: 'Choose the FREEZE admin account',
+      delete: 'Choose the DELETE admin account',
+      kyc: 'Choose the KYC admin account',
+      cashin: 'Choose the CASHIN admin account',
+      options: {
+        currentAccount: 'Current User Account',
+        otherAccount: 'Other Account',
+        noAccount: 'None',
+      },
+      cashinAllowance:
+        "Enter the cashin allowance for the account ('0' if Unlimited)",
+    },
     askTreasuryAccountAddress: 'Enter the treasury account id?',
     askOperateStableCoin:
       'Do you want to operate with the stable coin you just created?',
@@ -125,11 +152,12 @@ export const english = {
     askGrantKYCToSender: 'Do you want to grant KYC to your current account?',
     askTargetAccount: 'What is the target account?',
     askAccountToBalance:
-      'Which account would you like to obtain the balance from?',
+      'For which account would you like to get the balance of?',
     askCashInRoleType: 'What type of permission do you want to grant?',
     askCashInRoleRevokeType: 'What type of permission do you want to revoke?',
-    askEditCashInRole: 'What action do you want to perform?',
+    askAction: 'What action do you want to perform?',
     accountTarget: 'Enter the target account id',
+    sendAmount: 'Enter the amount you want to send to the account',
     supplierRoleLimit: 'What will the limit be?',
     amountIncrease: 'Amount to increase',
     amountDecrease: 'Amount to decrease',
@@ -198,6 +226,8 @@ export const english = {
     accountsChanged: '\nAccounts changed successfully',
     freezeAccount: 'Which account do you want to freeze?',
     unfreezeAccount: 'Which account do you want to unfreeze?',
+    checkAccountFrozen:
+      'which account do you want to know if it is frozen for the token?',
     grantKYCToAccount: 'Which account do you want to grant KYC to?',
     revokeKYCFromAccount: 'Which account do you want to revoke KYC from?',
     checkAccountKYCGranted:
@@ -206,20 +236,19 @@ export const english = {
       ...returnToMainMenu,
     },
     stableCoinOptions: {
+      Send: 'Send tokens',
       CashIn: 'Cash in',
       Details: 'Details',
       Balance: 'Balance',
       Burn: 'Burn',
       Wipe: 'Wipe',
       Rescue: 'Rescue',
-      Freeze: 'Freeze an account',
-      UnFreeze: 'Unfreeze an account',
-      GrantKYC: 'Grant KYC to an account',
-      RevokeKYC: 'Revoke KYC from an account',
-      AccountKYCGranted: 'Check KYC status from an account',
+      FreezeMgmt: 'Freeze Management',
+      KYCMgmt: 'KYC Management',
       FeesMgmt: 'Fees management',
       RoleMgmt: 'Role management',
       RoleRefresh: 'Refresh roles',
+      Configuration: 'Configuration',
       DangerZone: colors.red('Danger zone'),
       ...returnToMainMenu,
     },
@@ -254,18 +283,22 @@ export const english = {
       ...goBack,
     },
     roleManagementOptions: {
-      Grant: 'Grant role',
-      Revoke: 'Revoke role',
+      Grant: 'Grant roles',
+      Revoke: 'Revoke roles',
       Edit: 'Edit role',
-      HasRole: 'Has role',
+      GetRole: 'Get roles',
       ...goBack,
     },
     adminFeatureOptions: {
       ...basicFeatureOptions,
     },
-    nonSmartContractFeatureOptions: {
+    nonNoneFeatureOptions: {
+      SmartContract: 'The Smart Contract',
       CurrentUser: 'Current user key',
-      None: 'None',
+      OtherKey: 'Other public key',
+    },
+    nonSmartContractAndNoneFeatureOptions: {
+      CurrentUser: 'Current user key',
       OtherKey: 'Other public key',
     },
     featureOptions: {
@@ -324,6 +357,9 @@ export const english = {
     unpauseCompleted: 'Stable coin unpaused',
     freezeCompleted: 'Account frozen',
     unfreezeCompleted: 'Account unfrozen',
+    accountNotFrozen:
+      'The account ${address} is not frozen for the ${token} token',
+    accountFrozen: 'The account ${address} is frozen for the ${token} token',
     KYCGranted: 'Account KYC granted',
     KYCRevoked: 'Account KYC revoked',
     accountKYCGranted:
@@ -332,10 +368,17 @@ export const english = {
       'The account ${address} has not KYC granted for the ${token} token',
     customFeeCreated: 'Custom fee created',
     customFeesRemoved: 'Custom fees removed',
+    transferCompleted: 'Transfer completed',
+    updateCompleted: 'Update completed',
   },
   operation: {
     success: colors.green('Operation has been completed successfully.'),
     reject: colors.red('Operation has not been completed. Please, try again.'),
+  },
+  send: {
+    noTokens: 'You have no tokens',
+    anotherAccount: 'Do you want to send more tokens?',
+    confirmation: 'Do you want to proceed sending these amounts?',
   },
   cashin: {
     unlimitedRole: 'This account has unlimited cash in role',
@@ -356,6 +399,13 @@ export const english = {
     lessZero: 'The number is 0 or less. Please use a number greater than 0.',
   },
   roleManagement: {
+    askRoles: 'Choose the roles',
+    askAccount: 'Enter an account',
+    askMoreAccounts: 'Do you want to add another account?',
+    askUnlimited:
+      'Do you want the account to have an unlimited cashin allowance?',
+    askAllowance: 'Enter the cashin allowance for the account ',
+    askConfirmation: 'Do you want to proceed?',
     askRole: 'Select a role',
     accountHasRoleCashInUnlimited:
       'The account ${address} has the unlimited cash in role',
@@ -408,6 +458,35 @@ export const english = {
       Create: 'Create fee',
       Remove: 'Remove fee',
       List: 'Fees list',
+      ...goBack,
+    },
+  },
+  tokenConfiguration: {
+    options: {
+      keysManagement: 'Keys management',
+      ...goBack,
+    },
+  },
+  kycManagement: {
+    options: {
+      GrantKYC: 'Grant KYC to an account',
+      RevokeKYC: 'Revoke KYC from an account',
+      AccountKYCGranted: 'Check KYC status from an account',
+    },
+  },
+  freezeManagement: {
+    options: {
+      Freeze: 'Freeze an account',
+      UnFreeze: 'Unfreeze an account',
+      AccountFrozen: 'Check if account is frozen',
+    },
+  },
+  keysManagement: {
+    askKeys: 'Choose the keys',
+    confirm: 'Are you sure you want to apply these changes?',
+    options: {
+      updateKeys: 'Update keys',
+      confirmChanges: 'Confirm changes',
       ...goBack,
     },
   },

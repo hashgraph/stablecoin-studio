@@ -13,7 +13,7 @@ interface ICashIn {
     event TokensMinted(
         address minter,
         address token,
-        uint256 amount,
+        int64 amount,
         address account
     );
 
@@ -24,5 +24,5 @@ interface ICashIn {
      * @param account The address that receives minted tokens
      * @param amount The number of tokens to be minted
      */
-    function mint(address account, uint256 amount) external returns (bool);
+    function mint(address account, int64 amount) external returns (bool);
 }

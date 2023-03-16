@@ -18,6 +18,7 @@
  *
  */
 
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import TransactionResponse from '../../../../../src/domain/context/transaction/TransactionResponse.js';
 import StableCoinCapabilities from '../../../../../src/domain/context/stablecoin/StableCoinCapabilities.js';
 import { StableCoin } from '../../../../../src/domain/context/stablecoin/StableCoin.js';
@@ -30,7 +31,10 @@ import { LoggerTransports, Network, SDK } from '../../../../../src/index.js';
 import ConnectRequest, {
 	SupportedWallets,
 } from '../../../../../src/port/in/request/ConnectRequest.js';
-import { TokenSupplyType } from '../../../../../src/port/in/StableCoin.js';
+import {
+	StableCoinViewModel,
+	TokenSupplyType,
+} from '../../../../../src/port/in/StableCoin.js';
 import PublicKey from '../../../../../src/domain/context/account/PublicKey.js';
 import ContractId from '../../../../../src/domain/context/contract/ContractId.js';
 import { ContractId as HContractId } from '@hashgraph/sdk';
@@ -44,8 +48,15 @@ import StableCoinService from '../../../../../src/app/service/StableCoinService.
 import { RESERVE_DECIMALS } from '../../../../../src/domain/context/reserve/Reserve.js';
 import RPCQueryAdapter from '../../../../../src/port/out/rpc/RPCQueryAdapter.js';
 import { HTSTransactionAdapter } from '../../../../../src/port/out/hs/hts/HTSTransactionAdapter.js';
+import { MirrorNodeAdapter } from '../../../../../src/port/out/mirror/MirrorNodeAdapter.js';
 
 SDK.log = { level: 'ERROR', transports: new LoggerTransports.Console() };
+
+const delay = async (seconds = 2): Promise<void> => {
+	seconds = seconds * 1000;
+	await new Promise((r) => setTimeout(r, seconds));
+};
+
 describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 	// token to operate through HTS
 	let stableCoinCapabilitiesHTS: StableCoinCapabilities;
@@ -63,6 +74,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 			BigDecimal.ZERO
 		);
 	};
+
 	beforeAll(async () => {
 		await connectAccount(CLIENT_ACCOUNT_ECDSA);
 		th = Injectable.resolve(HTSTransactionAdapter);
@@ -85,6 +97,15 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 			autoRenewAccount: CLIENT_ACCOUNT_ECDSA.id,
 			supplyType: TokenSupplyType.INFINITE,
 			treasury: HederaId.NULL,
+			burnRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			wipeRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			rescueRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			freezeRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			pauseRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			deleteRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			kycRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			cashInRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			cashInRoleAllowance: BigDecimal.ZERO,
 		});
 		tr = await th.create(
 			coinSC,
@@ -118,6 +139,15 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 			autoRenewAccount: CLIENT_ACCOUNT_ECDSA.id,
 			supplyType: TokenSupplyType.FINITE,
 			treasury: CLIENT_ACCOUNT_ECDSA.id,
+			burnRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			wipeRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			rescueRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			freezeRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			pauseRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			deleteRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			kycRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			cashInRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			cashInRoleAllowance: BigDecimal.ZERO,
 		});
 		tr = await th.create(
 			coinHTS,
@@ -579,6 +609,70 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 				.toUpperCase()}`,
 		);
 	}, 20000);
+
+	it('Test update token keys through Smart Contract', async () => {
+		tr = await th.update(
+			stableCoinCapabilitiesSC,
+			undefined,
+			CLIENT_ACCOUNT_ED25519.publicKey,
+			undefined,
+			CLIENT_ACCOUNT_ED25519.publicKey,
+			CLIENT_ACCOUNT_ED25519.publicKey,
+			CLIENT_ACCOUNT_ED25519.publicKey,
+		);
+		const mirrorNodeAdapter: MirrorNodeAdapter = th.getMirrorNodeAdapter();
+		await delay(5);
+		const stableCoinViewModel: StableCoinViewModel =
+			await mirrorNodeAdapter.getStableCoin(
+				stableCoinCapabilitiesSC.coin.tokenId!,
+			);
+		expect(stableCoinViewModel.kycKey).toBeUndefined();
+		expect(stableCoinViewModel.freezeKey).toEqual(
+			CLIENT_ACCOUNT_ED25519.publicKey,
+		);
+		expect(stableCoinViewModel.feeScheduleKey).toBeUndefined();
+		expect(stableCoinViewModel.pauseKey).toEqual(
+			CLIENT_ACCOUNT_ED25519.publicKey,
+		);
+		expect(stableCoinViewModel.wipeKey).toEqual(
+			CLIENT_ACCOUNT_ED25519.publicKey,
+		);
+		expect(stableCoinViewModel.supplyKey).toEqual(
+			CLIENT_ACCOUNT_ED25519.publicKey,
+		);
+	}, 20000);
+
+	it('Test update token keys through HTS', async () => {
+		tr = await th.update(
+			stableCoinCapabilitiesHTS,
+			undefined,
+			CLIENT_ACCOUNT_ED25519.publicKey,
+			undefined,
+			CLIENT_ACCOUNT_ED25519.publicKey,
+			CLIENT_ACCOUNT_ED25519.publicKey,
+			CLIENT_ACCOUNT_ED25519.publicKey,
+		);
+		const mirrorNodeAdapter: MirrorNodeAdapter = th.getMirrorNodeAdapter();
+		await delay(5);
+		const stableCoinViewModel: StableCoinViewModel =
+			await mirrorNodeAdapter.getStableCoin(
+				stableCoinCapabilitiesHTS.coin.tokenId!,
+			);
+		expect(stableCoinViewModel.kycKey).toBeUndefined();
+		expect(stableCoinViewModel.freezeKey).toEqual(
+			CLIENT_ACCOUNT_ED25519.publicKey,
+		);
+		expect(stableCoinViewModel.feeScheduleKey).toBeUndefined();
+		expect(stableCoinViewModel.pauseKey).toEqual(
+			CLIENT_ACCOUNT_ED25519.publicKey,
+		);
+		expect(stableCoinViewModel.wipeKey).toEqual(
+			CLIENT_ACCOUNT_ED25519.publicKey,
+		);
+		expect(stableCoinViewModel.supplyKey).toEqual(
+			CLIENT_ACCOUNT_ED25519.publicKey,
+		);
+	}, 20000);
 });
 
 describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
@@ -620,6 +714,15 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 			autoRenewAccount: CLIENT_ACCOUNT_ED25519.id,
 			supplyType: TokenSupplyType.INFINITE,
 			treasury: HederaId.NULL,
+			burnRoleAccount: CLIENT_ACCOUNT_ED25519.id,
+			wipeRoleAccount: CLIENT_ACCOUNT_ED25519.id,
+			rescueRoleAccount: CLIENT_ACCOUNT_ED25519.id,
+			freezeRoleAccount: CLIENT_ACCOUNT_ED25519.id,
+			pauseRoleAccount: CLIENT_ACCOUNT_ED25519.id,
+			deleteRoleAccount: CLIENT_ACCOUNT_ED25519.id,
+			kycRoleAccount: CLIENT_ACCOUNT_ED25519.id,
+			cashInRoleAccount: CLIENT_ACCOUNT_ED25519.id,
+			cashInRoleAllowance: BigDecimal.ZERO,
 		});
 		tr = await th.create(
 			coinSC,
@@ -651,6 +754,15 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 			autoRenewAccount: CLIENT_ACCOUNT_ED25519.id,
 			supplyType: TokenSupplyType.FINITE,
 			treasury: CLIENT_ACCOUNT_ED25519.id,
+			burnRoleAccount: CLIENT_ACCOUNT_ED25519.id,
+			wipeRoleAccount: CLIENT_ACCOUNT_ED25519.id,
+			rescueRoleAccount: CLIENT_ACCOUNT_ED25519.id,
+			freezeRoleAccount: CLIENT_ACCOUNT_ED25519.id,
+			pauseRoleAccount: CLIENT_ACCOUNT_ED25519.id,
+			deleteRoleAccount: CLIENT_ACCOUNT_ED25519.id,
+			kycRoleAccount: CLIENT_ACCOUNT_ED25519.id,
+			cashInRoleAccount: CLIENT_ACCOUNT_ED25519.id,
+			cashInRoleAllowance: BigDecimal.ZERO,
 		});
 		tr = await th.create(
 			coinHTS,
@@ -1061,6 +1173,78 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 				.toUpperCase()}`,
 		);
 	}, 1200000000);
+
+	it('Test update token keys through Smart Contract', async () => {
+		tr = await th.hasRole(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
+			StableCoinRole.DEFAULT_ADMIN_ROLE,
+		);
+
+		expect(tr.response).toEqual(true);
+
+		tr = await th.update(
+			stableCoinCapabilitiesSC,
+			undefined,
+			CLIENT_ACCOUNT_ECDSA.publicKey,
+			undefined,
+			CLIENT_ACCOUNT_ECDSA.publicKey,
+			CLIENT_ACCOUNT_ECDSA.publicKey,
+			CLIENT_ACCOUNT_ECDSA.publicKey,
+		);
+		const mirrorNodeAdapter: MirrorNodeAdapter = th.getMirrorNodeAdapter();
+		await delay(5);
+		const stableCoinViewModel: StableCoinViewModel =
+			await mirrorNodeAdapter.getStableCoin(
+				stableCoinCapabilitiesSC.coin.tokenId!,
+			);
+		expect(stableCoinViewModel.kycKey).toBeUndefined();
+		expect(stableCoinViewModel.freezeKey?.toString).toEqual(
+			CLIENT_ACCOUNT_ECDSA.publicKey?.toString,
+		);
+		expect(stableCoinViewModel.feeScheduleKey).toBeUndefined();
+		expect(stableCoinViewModel.pauseKey?.toString).toEqual(
+			CLIENT_ACCOUNT_ECDSA.publicKey?.toString,
+		);
+		expect(stableCoinViewModel.wipeKey?.toString).toEqual(
+			CLIENT_ACCOUNT_ECDSA.publicKey?.toString,
+		);
+		expect(stableCoinViewModel.supplyKey?.toString).toEqual(
+			CLIENT_ACCOUNT_ECDSA.publicKey?.toString,
+		);
+	}, 20000);
+
+	it('Test update token keys through HTS', async () => {
+		tr = await th.update(
+			stableCoinCapabilitiesHTS,
+			undefined,
+			CLIENT_ACCOUNT_ECDSA.publicKey,
+			undefined,
+			CLIENT_ACCOUNT_ECDSA.publicKey,
+			CLIENT_ACCOUNT_ECDSA.publicKey,
+			CLIENT_ACCOUNT_ECDSA.publicKey,
+		);
+		const mirrorNodeAdapter: MirrorNodeAdapter = th.getMirrorNodeAdapter();
+		await delay(5);
+		const stableCoinViewModel: StableCoinViewModel =
+			await mirrorNodeAdapter.getStableCoin(
+				stableCoinCapabilitiesHTS.coin.tokenId!,
+			);
+		expect(stableCoinViewModel.kycKey).toBeUndefined();
+		expect(stableCoinViewModel.freezeKey?.toString).toEqual(
+			CLIENT_ACCOUNT_ECDSA.publicKey?.toString,
+		);
+		expect(stableCoinViewModel.feeScheduleKey).toBeUndefined();
+		expect(stableCoinViewModel.pauseKey?.toString).toEqual(
+			CLIENT_ACCOUNT_ECDSA.publicKey?.toString,
+		);
+		expect(stableCoinViewModel.wipeKey?.toString).toEqual(
+			CLIENT_ACCOUNT_ECDSA.publicKey?.toString,
+		);
+		expect(stableCoinViewModel.supplyKey?.toString).toEqual(
+			CLIENT_ACCOUNT_ECDSA.publicKey?.toString,
+		);
+	}, 20000);
 });
 
 async function connectAccount(account: Account): Promise<void> {

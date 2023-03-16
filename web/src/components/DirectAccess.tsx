@@ -11,6 +11,7 @@ export interface DirectAccessProps extends FlexProps {
 	route: NamedRoutes;
 	variant?: string;
 	isDisabled?: boolean;
+	customHandleClick?: () => void;
 }
 
 const DirectAccess = ({
@@ -19,6 +20,7 @@ const DirectAccess = ({
 	route,
 	isDisabled = false,
 	variant = 'primary',
+	customHandleClick,
 	...props
 }: DirectAccessProps) => {
 	const navigate = useNavigate();
@@ -34,7 +36,7 @@ const DirectAccess = ({
 			sx={style}
 			data-testid={`direct-access-${route}`}
 			as='button'
-			onClick={handleNavigate}
+			onClick={customHandleClick || handleNavigate}
 			disabled={isDisabled}
 			{...props}
 			h='150px'

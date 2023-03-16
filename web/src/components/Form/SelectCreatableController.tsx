@@ -1,6 +1,6 @@
 import type { ChangeEvent, ReactNode, Ref } from 'react';
+import { useState, useEffect } from 'react';
 import type React from 'react';
-import { useEffect } from 'react';
 import type { Control, UseControllerProps } from 'react-hook-form';
 import { Controller } from 'react-hook-form';
 import type { SelectOption, SelectThemeStyle } from './SelectController';
@@ -74,6 +74,7 @@ const SelectCreatableController = ({
 	ref,
 	...props
 }: SelectCreatableControllerProps) => {
+	const [isInvalid, setIsInvalid] = useState(false);
 	const styles = useStyles({
 		variant,
 		addonRight,
@@ -81,7 +82,7 @@ const SelectCreatableController = ({
 		addonDown,
 		addonLeft,
 		size,
-		isInvalid: false,
+		isInvalid,
 		isDisabled,
 		overrideStyles,
 	});
@@ -91,7 +92,7 @@ const SelectCreatableController = ({
 		addonError,
 		addonDown,
 		placeholder,
-		isInvalid: false,
+		isInvalid,
 		isDisabled,
 		styles,
 		variant,
@@ -113,6 +114,10 @@ const SelectCreatableController = ({
 						onChange(defaultOption);
 					}
 				}, []);
+
+				useEffect(() => {
+					setIsInvalid(invalid);
+				}, [invalid]);
 
 				const onChangeCustom = (event: ChangeEvent<HTMLInputElement>) => {
 					onChange(event);
@@ -136,12 +141,12 @@ const SelectCreatableController = ({
 							)}
 
 							<CreatableSelect
-								isInvalid={invalid}
+								isInvalid={isInvalid}
 								options={options}
 								isClearable={true}
 								components={components}
 								placeholder={placeholder}
-								isDisabled={isDisabled}
+								isDisabled={isDisabled || isLoading}
 								isRequired={isRequired}
 								createOptionPosition={createOptionPosition}
 								formatCreateLabel={formatCreateLabel}
@@ -152,6 +157,22 @@ const SelectCreatableController = ({
 								onChange={onChangeCustom as ReactSelectProps['onChange']}
 								onBlur={onBlurCustom as ReactSelectProps['onBlur']}
 								ref={ref}
+								chakraStyles={{
+									control: (baseStyles, state) => ({
+										...baseStyles,
+										borderWidth: '0px',
+										boxShadow: 'none !important',
+									}),
+									dropdownIndicator: (baseStyles, state) => ({
+										...baseStyles,
+										// padding:'0px',
+									}),
+
+									// dropdownIndicator: (baseStyles, state) => ({
+									// 	...baseStyles,
+									// 	paddingRight:'0px'
+									// }),
+								}}
 								{...props}
 							/>
 							{showErrors && (

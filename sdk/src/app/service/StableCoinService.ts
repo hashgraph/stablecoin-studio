@@ -91,14 +91,10 @@ export default class StableCoinService extends Service {
 				tokenIsDeleted != undefined ? tokenIsDeleted : _coin.deleted;
 			const operable = !deleted && !paused;
 
-			if (
-				operable &&
-				_coin.proxyAddress?.toString() === _coin.treasury?.toString()
-			) {
+			if (operable)
 				listCapabilities.push(
 					new Capability(Operation.RESCUE, Access.CONTRACT),
 				);
-			}
 
 			if (
 				operable &&
@@ -182,11 +178,17 @@ export default class StableCoinService extends Service {
 					listCapabilities.push(
 						new Capability(Operation.DELETE, Access.HTS),
 					);
+					listCapabilities.push(
+						new Capability(Operation.UPDATE, Access.HTS),
+					);
 				}
 			}
 			if (operable && _coin.adminKey instanceof HederaId) {
 				listCapabilities.push(
 					new Capability(Operation.DELETE, Access.CONTRACT),
+				);
+				listCapabilities.push(
+					new Capability(Operation.UPDATE, Access.CONTRACT),
 				);
 			}
 			if (operable && _coin.kycKey instanceof PublicKey) {
@@ -269,18 +271,6 @@ export default class StableCoinService extends Service {
 				listCapabilities.push(
 					new Capability(
 						Operation.ROLE_ADMIN_MANAGEMENT,
-						Access.CONTRACT,
-					),
-				);
-				listCapabilities.push(
-					new Capability(
-						Operation.RESERVE_MANAGEMENT,
-						Access.CONTRACT,
-					),
-				);
-				listCapabilities.push(
-					new Capability(
-						Operation.RESERVE_MANAGEMENT,
 						Access.CONTRACT,
 					),
 				);

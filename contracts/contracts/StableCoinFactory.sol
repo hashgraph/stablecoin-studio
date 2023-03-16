@@ -1,24 +1,71 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
-import './hts-precompile/IHederaTokenService.sol';
-import './hts-precompile/HederaResponseCodes.sol';
-import './HederaERC20.sol';
-import './HederaERC20Proxy.sol';
-import './HederaERC20ProxyAdmin.sol';
-import './HederaReserve.sol';
-import './HederaReserveProxy.sol';
-import './HederaReserveProxyAdmin.sol';
-import './Interfaces/IStableCoinFactory.sol';
-import './Interfaces/IHederaERC20.sol';
-import '@openzeppelin/contracts/utils/Strings.sol';
+import {IHederaTokenService} from './hts-precompile/IHederaTokenService.sol';
+import {HederaResponseCodes} from './hts-precompile/HederaResponseCodes.sol';
+import {HederaERC20, IHederaERC20} from './HederaERC20.sol';
+import {
+    TransparentUpgradeableProxy
+} from '@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol';
+import {
+    ProxyAdmin
+} from '@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol';
+import {HederaReserve} from './HederaReserve.sol';
+import {IStableCoinFactory} from './Interfaces/IStableCoinFactory.sol';
+import {Strings} from '@openzeppelin/contracts/utils/Strings.sol';
+import {
+    Initializable
+} from '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
+import {KeysLib} from './library/KeysLib.sol';
 
-contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
+contract StableCoinFactory is
+    IStableCoinFactory,
+    HederaResponseCodes,
+    Initializable
+{
     // Hedera HTS precompiled contract
     address private constant _PRECOMPILED_ADDRESS = address(0x167);
     string private constant _MEMO_1 = '{"p":"';
     string private constant _MEMO_2 = '","a":"';
     string private constant _MEMO_3 = '"}';
+    address private _admin;
+    address[] private _hederaERC20Address;
+
+    modifier isAdmin() {
+        require(
+            _admin == msg.sender,
+            'Only administrator can call this function'
+        );
+        _;
+    }
+
+    modifier checkAddressIsNotZero(address addr) {
+        _checkAddressIsNotZero(addr);
+        _;
+    }
+
+    function _checkAddressIsNotZero(address addr) private pure {
+        require(addr != address(0), 'Provided address is 0');
+    }
+
+    function initialize(
+        address admin,
+        address hederaERC20
+    )
+        external
+        initializer
+        checkAddressIsNotZero(admin)
+        checkAddressIsNotZero(hederaERC20)
+    {
+        _admin = admin;
+        _hederaERC20Address.push(hederaERC20);
+        emit StableCoinFactoryInitialized();
+    }
+
+    // Constructor required to avoid Initializer attack on logic contract
+    constructor() {
+        _disableInitializers();
+    }
 
     function deployStableCoin(
         TokenStruct calldata requestedToken,
@@ -49,12 +96,10 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
                 requestedToken.tokenInitialSupply
             );
 
-            reserveProxyAdmin = address(new HederaReserveProxyAdmin());
-            HederaReserveProxyAdmin(reserveProxyAdmin).transferOwnership(
-                msg.sender
-            );
+            reserveProxyAdmin = address(new ProxyAdmin());
+            ProxyAdmin(reserveProxyAdmin).transferOwnership(msg.sender);
             reserveProxy = address(
-                new HederaReserveProxy(
+                new TransparentUpgradeableProxy(
                     address(reserveContract),
                     address(reserveProxyAdmin),
                     ''
@@ -80,17 +125,17 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
         }
 
         // Deploy Proxy Admin
-        HederaERC20ProxyAdmin stableCoinProxyAdmin = new HederaERC20ProxyAdmin();
+        ProxyAdmin stableCoinProxyAdmin = new ProxyAdmin();
 
         // Transfer Proxy Admin ownership
         stableCoinProxyAdmin.transferOwnership(msg.sender);
 
         // Deploy Proxy
-        HederaERC20Proxy stableCoinProxy = new HederaERC20Proxy(
-            stableCoinContractAddress,
-            address(stableCoinProxyAdmin),
-            ''
-        );
+        TransparentUpgradeableProxy stableCoinProxy = new TransparentUpgradeableProxy(
+                stableCoinContractAddress,
+                address(stableCoinProxyAdmin),
+                ''
+            );
 
         // Create Token
         IHederaTokenService.HederaToken memory token = _createToken(
@@ -108,7 +153,9 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
                 msg.sender,
                 reserveAddress,
                 requestedToken.grantKYCToOriginalSender,
-                _treasuryIsContract(requestedToken.treasuryAddress)
+                _treasuryIsContract(requestedToken.treasuryAddress),
+                requestedToken.roles,
+                requestedToken.cashinRole
             );
 
         address tokenAddress = HederaERC20(address(stableCoinProxy)).initialize{
@@ -159,7 +206,7 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
         for (uint256 i = 0; i < requestedToken.keys.length; i++) {
             keys[i] = IHederaTokenService.TokenKey({
                 keyType: requestedToken.keys[i].keyType,
-                key: _generateKey(
+                key: KeysLib.generateKey(
                     requestedToken.keys[i].publicKey,
                     stableCoinProxyAddress,
                     requestedToken.keys[i].isED25519
@@ -185,21 +232,6 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
         return token;
     }
 
-    function _generateKey(
-        bytes memory publicKey,
-        address stableCoinProxyAddress,
-        bool isED25519
-    ) private pure returns (IHederaTokenService.KeyValue memory) {
-        // If the Public Key is empty we assume the user has chosen the proxy
-        IHederaTokenService.KeyValue memory key;
-        if (publicKey.length == 0)
-            key.delegatableContractId = stableCoinProxyAddress;
-        else if (isED25519) key.ed25519 = publicKey;
-        else key.ECDSA_secp256k1 = publicKey;
-
-        return key;
-    }
-
     function _treasuryIsContract(
         address treasuryAddress
     ) private pure returns (bool) {
@@ -209,27 +241,89 @@ contract StableCoinFactory is IStableCoinFactory, HederaResponseCodes {
     function _validationReserveInitialAmount(
         uint8 reserveDecimals,
         int256 reserveInitialAmount,
-        uint32 tokenDecimals,
-        uint256 tokenInitialSupply
+        int32 tokenDecimals,
+        int64 tokenInitialSupply
     ) private pure {
-        //Validate initial reserve amount
         require(
             reserveInitialAmount >= 0,
-            'Reserve initial amount must be positive'
+            'Reserve Initial supply must be at least 0'
         );
-        uint256 initialReserve = uint(reserveInitialAmount);
-        if (tokenDecimals > reserveDecimals) {
+
+        uint256 initialReserve = uint256(reserveInitialAmount);
+        uint32 _tokenDecimals = uint32(tokenDecimals);
+        uint256 _tokenInitialSupply = uint256(uint64(tokenInitialSupply));
+
+        if (_tokenDecimals > reserveDecimals) {
             initialReserve =
                 initialReserve *
-                (10 ** (tokenDecimals - reserveDecimals));
+                (10 ** (_tokenDecimals - reserveDecimals));
         } else {
-            tokenInitialSupply =
-                tokenInitialSupply *
-                (10 ** (reserveDecimals - tokenDecimals));
+            _tokenInitialSupply =
+                _tokenInitialSupply *
+                (10 ** (reserveDecimals - _tokenDecimals));
         }
         require(
-            tokenInitialSupply <= initialReserve,
+            _tokenInitialSupply <= initialReserve,
             'Initial supply is lower than initial reserve'
         );
+    }
+
+    function addHederaERC20Version(
+        address newAddress
+    )
+        external
+        override(IStableCoinFactory)
+        isAdmin
+        checkAddressIsNotZero(newAddress)
+    {
+        _hederaERC20Address.push(newAddress);
+        emit HederaERC20AddressAdded(newAddress);
+    }
+
+    function getHederaERC20Address() external view returns (address[] memory) {
+        return _hederaERC20Address;
+    }
+
+    function editHederaERC20Address(
+        uint256 index,
+        address newAddress
+    )
+        external
+        override(IStableCoinFactory)
+        isAdmin
+        checkAddressIsNotZero(newAddress)
+    {
+        address oldAddress = _hederaERC20Address[index];
+        _edit(index, newAddress);
+        emit HederaERC20AddressEdited(oldAddress, newAddress);
+    }
+
+    function _edit(uint256 index, address newAddress) private {
+        _hederaERC20Address[index] = newAddress;
+    }
+
+    function removeHederaERC20Address(
+        uint256 index
+    ) external override(IStableCoinFactory) isAdmin {
+        address addressRemoved = _hederaERC20Address[index];
+        _edit(index, address(0));
+        emit HederaERC20AddressRemoved(index, addressRemoved);
+    }
+
+    function changeAdmin(
+        address newAddress
+    )
+        external
+        override(IStableCoinFactory)
+        isAdmin
+        checkAddressIsNotZero(newAddress)
+    {
+        address oldAdmin = _admin;
+        _admin = newAddress;
+        emit AdminChanged(oldAdmin, newAddress);
+    }
+
+    function getAdmin() external view returns (address) {
+        return _admin;
     }
 }

@@ -157,8 +157,15 @@ const CoinDropdown = () => {
 			}),
 		);
 
+		const roles = await SDKService.getRoles(
+			new GetRolesRequest({
+				targetId: accountInfo && accountInfo.id ? accountInfo?.id : '',
+				tokenId: stableCoinDetails.tokenId!.toString(),
+			}),
+		);
 		dispatch(walletActions.setDeletedToken(undefined));
 		dispatch(walletActions.setPausedToken(undefined));
+		dispatch(walletActions.setRoles(roles));
 
 		dispatch(
 			walletActions.setSelectedStableCoin({
@@ -196,18 +203,10 @@ const CoinDropdown = () => {
 
 	const handleImportToken = async (inputValue: string) => {
 		setLoadingImportToken(true);
-		let checkRoles: string[] | null = [];
 		try {
 			const details = await SDKService.getStableCoinDetails(
 				new GetStableCoinDetailsRequest({
 					id: inputValue,
-				}),
-			);
-
-			checkRoles = await SDKService.getRoles(
-				new GetRolesRequest({
-					targetId: accountInfo && accountInfo.id ? accountInfo?.id : '',
-					tokenId: details?.tokenId?.toString() ?? '',
 				}),
 			);
 
@@ -229,7 +228,6 @@ const CoinDropdown = () => {
 					? accountToken.externalTokens.push({
 							id: inputValue,
 							symbol: details!.symbol,
-							roles: checkRoles,
 					  })
 					: tokensAccountParsed.push({
 							id: accountInfo.id,
@@ -237,7 +235,6 @@ const CoinDropdown = () => {
 								{
 									id: inputValue,
 									symbol: details!.symbol,
-									roles: checkRoles,
 								},
 							],
 					  });
@@ -252,7 +249,6 @@ const CoinDropdown = () => {
 								{
 									id: inputValue,
 									symbol: details!.symbol,
-									roles: checkRoles,
 								},
 							],
 						},

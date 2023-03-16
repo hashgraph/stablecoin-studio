@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
-import './TokenOwner.sol';
-import './Roles.sol';
-import './Interfaces/IKYC.sol';
-import '../hts-precompile/IHederaTokenService.sol';
+import {TokenOwner} from './TokenOwner.sol';
+import {Roles} from './Roles.sol';
+import {IHederaTokenService} from '../hts-precompile/IHederaTokenService.sol';
+import {IKYC} from './Interfaces/IKYC.sol';
 
 abstract contract KYC is IKYC, TokenOwner, Roles {
     /**
@@ -17,11 +17,12 @@ abstract contract KYC is IKYC, TokenOwner, Roles {
         external
         override(IKYC)
         onlyRole(_getRoleId(RoleName.KYC))
+        addressIsNotZero(account)
         returns (bool)
     {
         address currentTokenAddress = _getTokenAddress();
 
-        int256 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
+        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
             .grantTokenKyc(currentTokenAddress, account);
 
         bool success = _checkResponse(responseCode);
@@ -41,11 +42,12 @@ abstract contract KYC is IKYC, TokenOwner, Roles {
         external
         override(IKYC)
         onlyRole(_getRoleId(RoleName.KYC))
+        addressIsNotZero(account)
         returns (bool)
     {
         address currentTokenAddress = _getTokenAddress();
 
-        int256 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
+        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
             .revokeTokenKyc(currentTokenAddress, account);
 
         bool success = _checkResponse(responseCode);

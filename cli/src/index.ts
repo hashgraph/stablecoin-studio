@@ -5,7 +5,7 @@ import WizardService from './app/service/wizard/WizardService.js';
 import ConfigurationService from './app/service/configuration/ConfigurationService.js';
 import UtilitiesService from './app/service/utilities/UtilitiesService.js';
 import CommanderService from './app/service/commander/CommanderService.js';
-
+export const packagePath = process.cwd();
 export const language: Language = new Language();
 export const wizardService: WizardService = new WizardService();
 export const configurationService: ConfigurationService =

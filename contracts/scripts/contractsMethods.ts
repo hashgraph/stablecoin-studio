@@ -9,9 +9,10 @@ import {
 
 import {
     HederaERC20__factory,
-    StableCoinFactoryProxy__factory,
-    StableCoinFactoryProxyAdmin__factory,
+    TransparentUpgradeableProxy__factory,
+    ProxyAdmin__factory,
     HederaReserve__factory,
+    StableCoinFactory__factory,
 } from '../typechain-types'
 
 import { contractCall, toEvmAddress } from './utils'
@@ -278,28 +279,6 @@ export async function allowance(
     return BigNumber.from(response[0])
 }
 
-export async function approve(
-    proxyAddress: ContractId,
-    addressSpender: string,
-    spenderIsE25519: boolean,
-    amount: BigNumber,
-    client: Client
-): Promise<boolean> {
-    const params = [
-        await toEvmAddress(addressSpender, spenderIsE25519),
-        amount.toString(),
-    ]
-    const response = await contractCall(
-        proxyAddress,
-        'approve',
-        params,
-        client,
-        Gas1,
-        HederaERC20__factory.abi
-    )
-    return response[0]
-}
-
 export async function transfer(
     proxyAddress: ContractId,
     addressSpender: string,
@@ -322,23 +301,15 @@ export async function transfer(
     return response[0]
 }
 
-export async function transferFrom(
+export async function updateTokenKeys(
     proxyAddress: ContractId,
-    addressOwner: string,
-    ownerIsE25519: boolean,
-    addressSpender: string,
-    spenderIsE25519: boolean,
-    amount: BigNumber,
+    keys: any,
     client: Client
 ): Promise<boolean> {
-    const params: string[] = [
-        await toEvmAddress(addressOwner, ownerIsE25519),
-        await toEvmAddress(addressSpender, spenderIsE25519),
-        amount.toString(),
-    ]
+    const params = [keys]
     const response = await contractCall(
         proxyAddress,
-        'transferFrom',
+        'updateTokenKeys',
         params,
         client,
         Gas1,
@@ -524,7 +495,7 @@ export async function upgradeTo_SCF(
         params,
         client,
         Gas3,
-        StableCoinFactoryProxy__factory.abi
+        TransparentUpgradeableProxy__factory.abi
     )
 }
 
@@ -540,7 +511,7 @@ export async function changeAdmin_SCF(
         params,
         client,
         Gas3,
-        StableCoinFactoryProxy__factory.abi
+        TransparentUpgradeableProxy__factory.abi
     )
 }
 
@@ -555,7 +526,7 @@ export async function admin_SCF(
         params,
         client,
         Gas2,
-        StableCoinFactoryProxy__factory.abi
+        TransparentUpgradeableProxy__factory.abi
     )
     return result[0]
 }
@@ -572,7 +543,7 @@ export async function owner_SCF(
         params,
         client,
         Gas2,
-        StableCoinFactoryProxyAdmin__factory.abi
+        ProxyAdmin__factory.abi
     )
     return result[0]
 }
@@ -590,7 +561,7 @@ export async function upgrade_SCF(
         params,
         client,
         Gas3,
-        StableCoinFactoryProxyAdmin__factory.abi
+        ProxyAdmin__factory.abi
     )
 }
 
@@ -611,7 +582,7 @@ export async function changeProxyAdmin_SCF(
         params,
         client,
         Gas3,
-        StableCoinFactoryProxyAdmin__factory.abi
+        ProxyAdmin__factory.abi
     )
 }
 
@@ -628,7 +599,7 @@ export async function transferOwnership_SCF(
         params,
         client,
         Gas3,
-        StableCoinFactoryProxyAdmin__factory.abi
+        ProxyAdmin__factory.abi
     )
 }
 
@@ -644,7 +615,7 @@ export async function getProxyImplementation_SCF(
         params,
         client,
         Gas2,
-        StableCoinFactoryProxyAdmin__factory.abi
+        ProxyAdmin__factory.abi
     )
     return result[0]
 }
@@ -661,7 +632,7 @@ export async function getProxyAdmin_SCF(
         params,
         client,
         Gas2,
-        StableCoinFactoryProxyAdmin__factory.abi
+        ProxyAdmin__factory.abi
     )
     return result[0]
 }
@@ -886,6 +857,65 @@ export async function getRoleId(
         HederaERC20__factory.abi
     )
     return result[0]
+}
+
+// Roles Management ///////////////////////////////////////////////////
+export async function grantRoles(
+    ROLES: string[],
+    proxyAddress: ContractId,
+    clientGrantingRoles: Client,
+    accountsToGrantRolesTo: string[],
+    cashInLimits: BigNumber[],
+    areE25519: boolean[]
+) {
+    const cashInLimits_Strings: string[] = []
+    cashInLimits.forEach((cashInLimit) => {
+        cashInLimits_Strings.push(cashInLimit.toString())
+    })
+
+    const accountsToGrantRolesTo_EVM: string[] = []
+    for (let i = 0; i < accountsToGrantRolesTo.length; i++) {
+        accountsToGrantRolesTo_EVM.push(
+            await toEvmAddress(accountsToGrantRolesTo[i], areE25519[i])
+        )
+    }
+
+    const params = [ROLES, accountsToGrantRolesTo_EVM, cashInLimits_Strings]
+
+    await contractCall(
+        proxyAddress,
+        'grantRoles',
+        params,
+        clientGrantingRoles,
+        Gas1,
+        HederaERC20__factory.abi
+    )
+}
+
+export async function revokeRoles(
+    ROLES: string[],
+    proxyAddress: ContractId,
+    clientRevokingRoles: Client,
+    accountsToRevokeRolesFrom: string[],
+    areE25519: boolean[]
+) {
+    const accountsToRevokeRolesFrom_EVM: string[] = []
+    for (let i = 0; i < accountsToRevokeRolesFrom.length; i++) {
+        accountsToRevokeRolesFrom_EVM.push(
+            await toEvmAddress(accountsToRevokeRolesFrom[i], areE25519[i])
+        )
+    }
+
+    const params = [ROLES, accountsToRevokeRolesFrom_EVM]
+
+    await contractCall(
+        proxyAddress,
+        'revokeRoles',
+        params,
+        clientRevokingRoles,
+        Gas1,
+        HederaERC20__factory.abi
+    )
 }
 
 // SupplierAdmin ///////////////////////////////////////////////////
@@ -1234,4 +1264,95 @@ export async function revokeKyc(
         HederaERC20__factory.abi
     )
     if (result[0] != true) throw Error
+}
+
+// StableCoinFactory ///////////////////////////////////////////////////
+export async function getHederaERC20Addresses(
+    stableCoinFactoryProxy: ContractId,
+    client: Client
+) {
+    const result = await contractCall(
+        stableCoinFactoryProxy,
+        'getHederaERC20Address',
+        [],
+        client,
+        Gas1,
+        StableCoinFactory__factory.abi
+    )
+    return result[0]
+}
+
+export async function addHederaERC20Version(
+    stableCoinFactoryProxy: ContractId,
+    client: Client,
+    newAddress: string
+) {
+    await contractCall(
+        stableCoinFactoryProxy,
+        'addHederaERC20Version',
+        [newAddress],
+        client,
+        Gas1,
+        StableCoinFactory__factory.abi
+    )
+}
+
+export async function editHederaERC20Version(
+    stableCoinFactoryProxy: ContractId,
+    client: Client,
+    index: number,
+    newAddress: string
+) {
+    await contractCall(
+        stableCoinFactoryProxy,
+        'editHederaERC20Address',
+        [index, newAddress],
+        client,
+        Gas1,
+        StableCoinFactory__factory.abi
+    )
+}
+
+export async function changeAdminStablecoinFactory(
+    stableCoinFactoryProxy: ContractId,
+    client: Client,
+    newAdmin: string
+) {
+    await contractCall(
+        stableCoinFactoryProxy,
+        'changeAdmin',
+        [newAdmin],
+        client,
+        Gas1,
+        StableCoinFactory__factory.abi
+    )
+}
+export async function removeHederaERC20Version(
+    stableCoinFactoryProxy: ContractId,
+    client: Client,
+    index: number
+) {
+    await contractCall(
+        stableCoinFactoryProxy,
+        'removeHederaERC20Address',
+        [index],
+        client,
+        Gas1,
+        StableCoinFactory__factory.abi
+    )
+}
+
+export async function getAdminStableCoinFactory(
+    stableCoinFactoryProxy: ContractId,
+    client: Client
+): Promise<string> {
+    const result = await contractCall(
+        stableCoinFactoryProxy,
+        'getAdmin',
+        [],
+        client,
+        Gas1,
+        StableCoinFactory__factory.abi
+    )
+    return result[0]
 }

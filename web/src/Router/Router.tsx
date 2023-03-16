@@ -144,11 +144,11 @@ const Router = () => {
 								<Route path={RoutesMappingUrl.dashboard} element={<Dashboard />} />
 								<Route
 									path={RoutesMappingUrl.editRole}
-									element={<HandleRoles action={actions.edit} />}
+									element={<HandleRoles action='editRole' />}
 								/>
 								<Route
 									path={RoutesMappingUrl.giveRole}
-									element={<HandleRoles action={actions.give} />}
+									element={<HandleRoles action='giveRole' />}
 								/>
 								<Route path={RoutesMappingUrl.operations} element={<Operations />} />
 								<Route path={RoutesMappingUrl.dangerZone} element={<DangerZoneOperations />} />
@@ -157,7 +157,7 @@ const Router = () => {
 								<Route path={RoutesMappingUrl.checkKyc} element={<CheckKycOperation />} />
 								<Route
 									path={RoutesMappingUrl.revokeRole}
-									element={<HandleRoles action={actions.revoke} />}
+									element={<HandleRoles action='revokeRole' />}
 								/>
 								<Route
 									path={RoutesMappingUrl.refreshRoles}

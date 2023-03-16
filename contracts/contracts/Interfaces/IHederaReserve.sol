@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
-import '@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol';
+import {
+    AggregatorV3Interface
+} from '@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol';
 
 interface IHederaReserve is AggregatorV3Interface {
     event ReserveInitialized(int256 initialReserve);

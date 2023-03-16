@@ -162,7 +162,7 @@ const DatePickerController = ({
 								dateFormat={dateFormat}
 								disabled={disabled}
 								dropdownMode='select'
-								formatWeekDay={(nameOfDay) => nameOfDay.substr(0, 1)}
+								formatWeekDay={(nameOfDay) => nameOfDay.toString().substring(0, 1)}
 								isClearable={isClearable}
 								minDate={minimumDate}
 								onChange={(date, e) => onChangeCustom(date, e)}

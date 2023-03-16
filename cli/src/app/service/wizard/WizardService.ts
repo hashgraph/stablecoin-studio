@@ -50,7 +50,7 @@ export default class WizardService extends Service {
         case language.getText('wizard.mainOptions.Create'):
           await utilsService.cleanAndShowBanner();
           utilsService.displayCurrentUserInfo(currentAccount);
-          const configuration = await configurationService.getConfiguration();
+          let configuration = await configurationService.getConfiguration();
           if (
             !configuration.factories.find(
               (item) => item.network === currentAccount.network,
@@ -65,6 +65,13 @@ export default class WizardService extends Service {
             );
             if (configFactories) {
               await this.setConfigurationService.configureFactories();
+              configuration = await configurationService.getConfiguration();
+              const { factories } = configuration;
+              const currentFactory = factories.find(
+                (factory) => currentAccount.network === factory.network,
+              );
+
+              utilsService.setCurrentFactory(currentFactory);
             } else {
               break;
             }
@@ -165,7 +172,7 @@ export default class WizardService extends Service {
 
   public async chooseAccount(mainMenu = true, network?: string): Promise<void> {
     const configuration = configurationService.getConfiguration();
-    const { networks, accounts, factories, hederaERC20s } = configuration;
+    const { networks, accounts, factories } = configuration;
     let options = network
       ? accounts
           .filter((acc) => acc.network === network)
@@ -207,11 +214,6 @@ export default class WizardService extends Service {
 
     utilsService.setCurrentFactory(currentFactory);
 
-    const currentHederaERC20 = hederaERC20s.find(
-      (hederaERC20) => currentAccount.network === hederaERC20.network,
-    );
-
-    utilsService.setCurrentHederaERC20(currentHederaERC20);
     await Network.setNetwork(
       new SetNetworkRequest({
         environment: currentNetwork.name,
