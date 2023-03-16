@@ -37,6 +37,19 @@ const StableCoinDetails = () => {
 			: `${hashScanURL}/account/${key.key}`;
 	};
 
+	const epochTimestampToGMTString = (timestamp: number | undefined): string => {
+		if (!timestamp) return '';
+		const dateTime: any = timestamp.toString().substring(0, 10);
+		const nanoseconds: any = timestamp.toString().substring(10);
+		const myDate: Date = new Date(dateTime * 1000);
+		const gmtDate: string = myDate.toUTCString();
+		const pos: number = gmtDate.lastIndexOf(' ');
+		return `${gmtDate.substring(0, pos)}.${nanoseconds.substring(0, 4)}${gmtDate.substring(
+			pos,
+			gmtDate.length,
+		)}`;
+	};
+
 	let details = [
 		{
 			label: t('tokenId'),
@@ -82,6 +95,14 @@ const StableCoinDetails = () => {
 			value: selectedStableCoin?.autoRenewAccount,
 			copyButton: true,
 			hashScanURL: `${hashScanURL}/account/${selectedStableCoin?.autoRenewAccount}`,
+		},
+		{
+			label: t('autoRenewPeriod'),
+			value: `${selectedStableCoin?.autoRenewPeriod} days`,
+		},
+		{
+			label: t('expirationTime'),
+			value: epochTimestampToGMTString(selectedStableCoin?.expirationTimestamp),
 		},
 		{
 			label: t('proxyAddress'),

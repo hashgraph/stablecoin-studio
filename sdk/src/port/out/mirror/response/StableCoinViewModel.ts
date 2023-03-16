@@ -40,7 +40,8 @@ export default interface StableCoinViewModel extends QueryResponse {
 	expirationTime?: string;
 	freezeDefault?: boolean;
 	autoRenewAccount?: HederaId;
-	autoRenewAccountPeriod?: number;
+	autoRenewPeriod?: number;
+	expirationTimestamp?: number;
 	paused?: boolean;
 	deleted?: boolean;
 	adminKey?: ContractId | PublicKey | undefined;

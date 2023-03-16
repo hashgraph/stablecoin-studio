@@ -187,36 +187,35 @@ const RevokeRoleOperation = () => {
 		});
 	};
 
+	const handleSubmit = () => {
+		const values = getValues().rol;
 
-		const handleSubmit = () => {
-			const values = getValues().rol;
-
-			const valuesDuplicated: { [index: string]: number[] } = {};
-			let sendRequest = true;
-			values.forEach((obj: any, index: number) => {
-				if (!valuesDuplicated[obj.accountId]) {
-					valuesDuplicated[obj.accountId] = [];
-				}
-				valuesDuplicated[obj.accountId].push(index);
-			});
-			for (const accountId in valuesDuplicated) {
-				if (valuesDuplicated[accountId].length > 1) {
-					sendRequest = false;
-					valuesDuplicated[accountId].map((index: number) =>
-						setError(`rol[${index}].accountId`, {
-							type: 'repeatedValue',
-							message: t('roles:giveRole.errorAccountIdDuplicated', {
-								account: accountId,
-							})!,
-						}),
-					);
-				}
+		const valuesDuplicated: { [index: string]: number[] } = {};
+		let sendRequest = true;
+		values.forEach((obj: any, index: number) => {
+			if (!valuesDuplicated[obj.accountId]) {
+				valuesDuplicated[obj.accountId] = [];
 			}
-
-			if (sendRequest) {
-				onOpenModalAction();
+			valuesDuplicated[obj.accountId].push(index);
+		});
+		for (const accountId in valuesDuplicated) {
+			if (valuesDuplicated[accountId].length > 1) {
+				sendRequest = false;
+				valuesDuplicated[accountId].map((index: number) =>
+					setError(`rol[${index}].accountId`, {
+						type: 'repeatedValue',
+						message: t('roles:giveRole.errorAccountIdDuplicated', {
+							account: accountId,
+						})!,
+					}),
+				);
 			}
-		};
+		}
+
+		if (sendRequest) {
+			onOpenModalAction();
+		}
+	};
 
 	return (
 		<>

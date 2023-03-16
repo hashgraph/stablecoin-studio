@@ -10,6 +10,8 @@
 	"maxSupply": "Max supply",
 	"treasury": "Treasury",
 	"autoRenewAccount": "Autorenew account",
+	"autoRenewPeriod": "Autorenew period",
+	"expirationTime": "Expiration time",
 	"proxyAddress": "Proxy address",
 	"paused": "Paused",
 	"deleted": "Deleted",

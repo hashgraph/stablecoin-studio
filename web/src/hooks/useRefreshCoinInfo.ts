@@ -20,7 +20,6 @@ export const useRefreshCoinInfo = (): boolean => {
 		selectedStableCoin?.paused,
 		selectedStableCoin?.tokenId?.toString(),
 	]);
-
 	const getStableCoinDetails = async () => {
 		setIsLoading(true);
 		const resp = await SDKService.getStableCoinDetails(
@@ -41,6 +40,8 @@ export const useRefreshCoinInfo = (): boolean => {
 				id: resp?.tokenId?.toString(),
 				treasury: resp?.treasury?.toString(),
 				autoRenewAccount: resp?.autoRenewAccount?.toString(),
+				autoRenewPeriod: resp?.autoRenewPeriod?.toString(),
+				expirationTimestamp: resp?.expirationTimestamp?.toString(),
 				proxyAddress: resp?.proxyAddress?.toString(),
 				paused: resp?.paused,
 				deleted: resp?.deleted,

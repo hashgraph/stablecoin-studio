@@ -28,7 +28,7 @@ export const mockedSelectedStableCoin = {
 	deleted: false,
 	freezeDefault: false,
 	autoRenewAccount: HederaId.from('0.0.49071854'),
-	autoRenewAccountPeriod: 90,
+	autoRenewPeriod: 90,
 	adminKey: ContractId.from('0.0.49319785'),
 	freezeKey: ContractId.from('0.0.49319785'),
 	kycKey: ContractId.from('0.0.49319785'),
