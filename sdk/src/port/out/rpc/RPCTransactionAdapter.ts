@@ -1330,6 +1330,9 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					});
 				}
 			});
+			ethereum.on('chainChanged', async (chainId) => {
+				window.alert(chainId);
+			});
 		} catch (error) {
 			LogService.logError(error);
 			throw new WalletConnectError('Ethereum is not defined');
