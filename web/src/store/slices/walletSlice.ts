@@ -29,6 +29,7 @@ export interface InitialStateProps {
 	deletedToken?: boolean;
 	pausedToken?: boolean;
 	roles?: string[];
+	network?: string;
 }
 
 export const initialState: InitialStateProps = {
@@ -46,6 +47,7 @@ export const initialState: InitialStateProps = {
 	deletedToken: undefined,
 	pausedToken: undefined,
 	roles: undefined,
+	network: undefined,
 };
 
 export const getStableCoinList = createAsyncThunk(
@@ -130,6 +132,9 @@ export const walletSlice = createSlice({
 		setDeletedToken: (state, action) => {
 			state.deletedToken = action.payload;
 		},
+		setNetwork: (state, action) => {
+			state.network = action.payload;
+		},
 		clearData: (state) => {
 			state.data = initialState.data;
 			state.lastWallet = undefined;
@@ -138,6 +143,7 @@ export const walletSlice = createSlice({
 			state.status = ConnectionState.Disconnected;
 			localStorage?.removeItem(LAST_WALLET_LS);
 			state.roles = undefined;
+			state.network = initialState.network;
 		},
 		setRoles: (state, action) => {
 			state.roles = action.payload;
@@ -161,6 +167,7 @@ export const walletSlice = createSlice({
 	},
 });
 
+export const SELECTED_NETWORK = (state: RootState) => state.wallet.network;
 export const SELECTED_WALLET = (state: RootState) => state.wallet;
 export const STABLE_COIN_LIST = (state: RootState) => state.wallet.stableCoinList;
 export const AVAILABLE_WALLETS = (state: RootState) => state.wallet.foundWallets;

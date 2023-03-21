@@ -13,7 +13,7 @@ import {
 	Text,
 	VStack,
 } from '@chakra-ui/react';
-import { SupportedWallets } from 'hedera-stable-coin-sdk';
+import { Network, SupportedWallets } from 'hedera-stable-coin-sdk';
 import type { FC, ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -60,6 +60,7 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 		if (loading) return;
 		setLoading(wallet);
 		dispatch(walletActions.setLastWallet(wallet));
+		dispatch(walletActions.setNetwork(await Network.getNetwork()));
 		dispatch(walletActions.setSelectedStableCoin(undefined));
 		try {
 			await SDKService.connectWallet(wallet);

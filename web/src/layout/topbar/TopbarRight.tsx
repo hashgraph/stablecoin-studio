@@ -4,6 +4,7 @@ import Icon from '../../components/Icon';
 import {
 	LAST_WALLET_SELECTED,
 	SELECTED_WALLET_PAIRED,
+	SELECTED_NETWORK,
 	walletActions,
 } from '../../store/slices/walletSlice';
 import HEDERA_LOGO from '../../assets/png/hashpackLogo.png';
@@ -18,6 +19,7 @@ const TopbarRight = () => {
 
 	const initData = useSelector(SELECTED_WALLET_PAIRED);
 	const selectedWallet = useSelector(LAST_WALLET_SELECTED);
+	const network = useSelector(SELECTED_NETWORK);
 
 	const handleDisconnect = async () => {
 		await Network.disconnect();
@@ -56,7 +58,7 @@ const TopbarRight = () => {
 						</Text>
 					</TooltipCopy>
 					<Text data-testid='topbar-right-network' fontSize='10px' textTransform='uppercase'>
-						{'testnet'}
+						{network}
 					</Text>
 				</VStack>
 				{getIcon()}

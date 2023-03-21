@@ -22,20 +22,16 @@ import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
 
 export interface SetConfigurationRequestProps {
-	hederaERC20Address: string;
 	factoryAddress: string;
 }
 
 export default class SetConfigurationRequest extends ValidatedRequest<SetConfigurationRequest> {
-	hederaERC20Address: string;
 	factoryAddress: string;
 
 	constructor(props: SetConfigurationRequestProps) {
 		super({
 			factoryAddress: Validation.checkContractId(),
-			hederaERC20Address: Validation.checkContractId(),
 		});
-		this.hederaERC20Address = props.hederaERC20Address;
 		this.factoryAddress = props.factoryAddress;
 	}
 }

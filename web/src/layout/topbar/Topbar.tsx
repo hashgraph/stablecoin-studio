@@ -9,6 +9,7 @@ import {
 	Image,
 	Link,
 } from '@chakra-ui/react';
+import { Network } from 'hedera-stable-coin-sdk';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -24,10 +25,12 @@ const Topbar = () => {
 	const navigate = useNavigate();
 	const [haveFactory, setHaveFactory] = useState<boolean>(true);
 
-	const handleNavigateSC = () => {
+	const handleNavigateSC = async() => {
+		const factoryId = await Network.getFactoryAddress()
+
 		if (
-			process.env.REACT_APP_STABLE_COIN_FACTORY_ADDRESS !== undefined &&
-			process.env.REACT_APP_STABLE_COIN_FACTORY_ADDRESS !== ''
+			factoryId !== undefined &&
+			factoryId !== ''
 		) {
 			RouterManager.to(navigate, NamedRoutes.StableCoinCreation);
 		} else {

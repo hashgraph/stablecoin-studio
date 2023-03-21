@@ -5,14 +5,12 @@ import ContractId from '../../../../../domain/context/contract/ContractId.js';
 export class SetConfigurationCommandResponse implements CommandResponse {
 	constructor(
 		public readonly factoryAddress: string,
-		public readonly hederaERC20Address: string,
 	) {}
 }
 
 export class SetConfigurationCommand extends Command<SetConfigurationCommandResponse> {
 	constructor(
 		public readonly factoryAddress: string,
-		public readonly hederaERC20Address: string,
 	) {
 		super();
 	}

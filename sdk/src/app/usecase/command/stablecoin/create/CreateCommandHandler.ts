@@ -44,28 +44,15 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 	) {}
 
 	async execute(command: CreateCommand): Promise<CreateCommandResponse> {
-		const { coin, reserveAddress, reserveInitialAmount, createReserve } =
+		const { factory, hederaERC20, coin, reserveAddress, reserveInitialAmount, createReserve } =
 			command;
-		let { factory, hederaERC20 } = command;
 
 		if (
-			!factory &&
-			!hederaERC20 &&
-			this.networkService.configuration.factoryAddress === '' &&
-			this.networkService.configuration.hederaERC20Address === ''
+			!factory ||
+			!hederaERC20 
 		) {
 			throw new InvalidRequest(
 				'HederaERC20 and factory not found in request or in configuration',
-			);
-		}
-		if (!hederaERC20) {
-			hederaERC20 = new ContractId(
-				this.networkService.configuration.hederaERC20Address,
-			);
-		}
-		if (!factory) {
-			factory = new ContractId(
-				this.networkService.configuration.factoryAddress,
 			);
 		}
 

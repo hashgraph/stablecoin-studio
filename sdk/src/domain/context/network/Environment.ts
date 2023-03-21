@@ -24,3 +24,28 @@ export type Environment =
 	| 'mainnet'
 	| 'local'
 	| string;
+
+const testnet:Environment = 'testnet';
+const previewnet:Environment = 'previewnet';
+const mainnet:Environment = 'mainnet';
+const local:Environment = 'local';
+
+
+export const HederaNetworks = [
+	{
+		network: testnet,
+		chainId: 296
+	},
+	{
+		network: previewnet,
+		chainId: 297
+	},
+	{
+		network: mainnet,
+		chainId: 295
+	},
+	{
+		network: local,
+		chainId: 298
+	}
+]
