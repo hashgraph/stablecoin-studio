@@ -165,7 +165,7 @@ const SelectCreatableController = ({
 									}),
 									dropdownIndicator: (baseStyles, state) => ({
 										...baseStyles,
-										// padding:'0px',
+										paddingRight: '0px',
 									}),
 
 									// dropdownIndicator: (baseStyles, state) => ({

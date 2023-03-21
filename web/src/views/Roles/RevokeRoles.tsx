@@ -60,7 +60,6 @@ const RevokeRoleOperation = () => {
 	}, [watch()]);
 	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
 	const [revokeRoles, setRevokeRoles] = useState<RevokeRoleRequest[]>([]);
-	
 
 	useEffect(() => {
 		addNewAccount();
@@ -184,8 +183,6 @@ const RevokeRoleOperation = () => {
 		setRevokeRoles(currentRoleRequest);
 		remove(i);
 	};
-
-	
 
 	const handleSubmit = () => {
 		const values = getValues().rol;
