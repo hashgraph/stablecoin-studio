@@ -354,15 +354,10 @@ contract HederaERC20 is
     /**
      * @dev Update token keys
      *
-     * @param keys The new addresses to set for the underlying token
+     * @param updatedToken Values to update the token
      */
     function updateToken(
-        string memory tokenName,
-        string memory tokenSymbol,
-        KeysLib.KeysStruct[] calldata keys,
-        int64 second,
-        address autoRenewAccount,
-        int64 autoRenewPeriod
+        UpdateTokenStruct calldata updatedToken
     ) external override(IHederaERC20) onlyRole(_getRoleId(RoleName.ADMIN)) {
         address currentTokenAddress = _getTokenAddress();
 
@@ -370,15 +365,17 @@ contract HederaERC20 is
 
         // Token Keys
         IHederaTokenService.TokenKey[]
-            memory hederaKeys = new IHederaTokenService.TokenKey[](keys.length);
+            memory hederaKeys = new IHederaTokenService.TokenKey[](
+                updatedToken.keys.length
+            );
 
-        for (uint256 i = 0; i < keys.length; i++) {
+        for (uint256 i = 0; i < updatedToken.keys.length; i++) {
             hederaKeys[i] = IHederaTokenService.TokenKey({
-                keyType: keys[i].keyType,
+                keyType: updatedToken.keys[i].keyType,
                 key: KeysLib.generateKey(
-                    keys[i].publicKey,
+                    updatedToken.keys[i].publicKey,
                     address(this),
-                    keys[i].isED25519
+                    updatedToken.keys[i].isED25519
                 )
             });
             if (KeysLib.containsKey(_SUPPLY_KEY_BIT, hederaKeys[i].keyType)) {
@@ -390,22 +387,21 @@ contract HederaERC20 is
 
         // Hedera Token Expiry
         IHederaTokenService.Expiry memory expiry;
-        if (second >= 0) expiry.second = second;
-        if (autoRenewPeriod >= 0) expiry.autoRenewPeriod = autoRenewPeriod;
-        if (autoRenewAccount != address(0))
-            expiry.autoRenewAccount = autoRenewAccount;
+        if (updatedToken.second >= 0) expiry.second = updatedToken.second;
+        if (updatedToken.autoRenewPeriod >= 0)
+            expiry.autoRenewPeriod = updatedToken.autoRenewPeriod;
+        if (updatedToken.autoRenewAccount != address(0))
+            expiry.autoRenewAccount = updatedToken.autoRenewAccount;
 
         // Hedera Token Info
         IHederaTokenService.HederaToken memory hederaTokenInfo;
-        if (bytes(tokenName).length > 0) hederaTokenInfo.name = tokenName;
-        if (bytes(tokenSymbol).length > 0) hederaTokenInfo.symbol = tokenSymbol;
+        if (bytes(updatedToken.tokenName).length > 0)
+            hederaTokenInfo.name = updatedToken.tokenName;
+        if (bytes(updatedToken.tokenSymbol).length > 0)
+            hederaTokenInfo.symbol = updatedToken.tokenSymbol;
         hederaTokenInfo.tokenKeys = hederaKeys;
         hederaTokenInfo.memo = _getTokenInfo(currentTokenAddress); // this is required because of an Hedera bug.
-        if (
-            second >= 0 ||
-            autoRenewPeriod >= 0 ||
-            autoRenewAccount != address(0)
-        ) hederaTokenInfo.expiry = expiry;
+        hederaTokenInfo.expiry = expiry;
 
         if (newTreasury != address(0)) hederaTokenInfo.treasury = newTreasury;
 
@@ -414,7 +410,7 @@ contract HederaERC20 is
 
         _checkResponse(responseCode);
 
-        emit TokenKeysUpdated(currentTokenAddress, newTreasury, keys);
+        emit TokenUpdated(currentTokenAddress, updatedToken, newTreasury);
     }
 
     // This method is required because of an Hedera's bug, when keys are updated for a token, the memo gets removed.
