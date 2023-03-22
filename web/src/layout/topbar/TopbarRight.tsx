@@ -57,9 +57,11 @@ const TopbarRight = () => {
 							{initData?.account?.id?.toString() ?? ''}
 						</Text>
 					</TooltipCopy>
-					<Text data-testid='topbar-right-network' fontSize='10px' textTransform='uppercase'>
-						{network}
-					</Text>
+					<TooltipCopy valueToCopy={network ?? ''}>
+						<Text data-testid='topbar-right-network' fontSize='10px' textTransform='uppercase'>
+							{network ?? ''}
+						</Text>
+					</TooltipCopy>
 				</VStack>
 				{getIcon()}
 			</HStack>

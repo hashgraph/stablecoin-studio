@@ -76,9 +76,7 @@ class NetworkInPort implements INetworkInPort {
 	@LogError
 	async setConfig(req: SetConfigurationRequest): Promise<ConfigResponse> {
 		const res = await this.commandBus.execute(
-			new SetConfigurationCommand(
-				req.factoryAddress,
-			),
+			new SetConfigurationCommand(req.factoryAddress),
 		);
 		return res;
 	}
@@ -113,9 +111,11 @@ class NetworkInPort implements INetworkInPort {
 		);
 		await this.setConfig(
 			new SetConfigurationRequest({
-				factoryAddress: req.configuration? req.configuration.factoryAddress : '',
+				factoryAddress: req.configuration
+					? req.configuration.factoryAddress
+					: '',
 			}),
-		)
+		);
 		req.events && Event.register(req.events);
 		const wallets: SupportedWallets[] = [];
 		const instances = Injectable.registerTransactionAdapterInstances();

@@ -77,6 +77,7 @@ const Router = () => {
 		onLastWalletEvent(event, () => {
 			dispatch(walletActions.setData(event.data));
 			dispatch(walletActions.setStatus(ConnectionState.Paired));
+			dispatch(walletActions.setNetwork(event.network));
 		});
 	};
 

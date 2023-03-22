@@ -19,6 +19,7 @@ import {
 	walletActions,
 	SELECTED_TOKEN_DELETED,
 	SELECTED_TOKEN_PAUSED,
+	SELECTED_NETWORK,
 } from '../../store/slices/walletSlice';
 import { RouterManager } from '../../Router/RouterManager';
 import { matchPath, useLocation, useNavigate } from 'react-router-dom';
@@ -44,6 +45,8 @@ const CoinDropdown = () => {
 	const externalTokenList = useSelector(EXTERNAL_TOKEN_LIST);
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const accountId = useSelector(SELECTED_WALLET_PAIRED_ACCOUNTID);
+	const network = useSelector(SELECTED_NETWORK);
+
 	const capabilities = useSelector(SELECTED_WALLET_CAPABILITIES);
 	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 	const tokenIsPaused = useSelector(SELECTED_TOKEN_PAUSED);
@@ -80,7 +83,7 @@ const CoinDropdown = () => {
 
 			getAccountInfo(accountId.toString());
 		}
-	}, [accountId]);
+	}, [accountId, network]);
 
 	useEffect(() => {
 		formatOptionsStableCoins();

@@ -25,13 +25,10 @@ const Topbar = () => {
 	const navigate = useNavigate();
 	const [haveFactory, setHaveFactory] = useState<boolean>(true);
 
-	const handleNavigateSC = async() => {
-		const factoryId = await Network.getFactoryAddress()
+	const handleNavigateSC = async () => {
+		const factoryId = await Network.getFactoryAddress();
 
-		if (
-			factoryId !== undefined &&
-			factoryId !== ''
-		) {
+		if (factoryId !== undefined && factoryId !== '') {
 			RouterManager.to(navigate, NamedRoutes.StableCoinCreation);
 		} else {
 			setHaveFactory(false);

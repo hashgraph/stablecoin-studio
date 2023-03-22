@@ -18,34 +18,35 @@
  *
  */
 
+export const testnet = 'testnet';
+export const previewnet = 'previewnet';
+export const mainnet = 'mainnet';
+export const local = 'local';
+export const unrecognized = 'unrecognized';
+
 export type Environment =
 	| 'testnet'
 	| 'previewnet'
 	| 'mainnet'
 	| 'local'
+	| 'unrecognized'
 	| string;
-
-const testnet:Environment = 'testnet';
-const previewnet:Environment = 'previewnet';
-const mainnet:Environment = 'mainnet';
-const local:Environment = 'local';
-
 
 export const HederaNetworks = [
 	{
 		network: testnet,
-		chainId: 296
+		chainId: 296,
 	},
 	{
 		network: previewnet,
-		chainId: 297
+		chainId: 297,
 	},
 	{
 		network: mainnet,
-		chainId: 295
+		chainId: 295,
 	},
 	{
 		network: local,
-		chainId: 298
-	}
-]
+		chainId: 298,
+	},
+];

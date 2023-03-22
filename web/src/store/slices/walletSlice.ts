@@ -96,7 +96,7 @@ export const walletSlice = createSlice({
 	reducers: {
 		setLastWallet: (state, action) => {
 			state.lastWallet = action.payload;
-			localStorage?.setItem('lastWallet', action.payload);
+			localStorage?.setItem(LAST_WALLET_LS, action.payload);
 		},
 		setData: (state, action) => {
 			state.data = action.payload;

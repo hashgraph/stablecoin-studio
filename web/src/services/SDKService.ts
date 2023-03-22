@@ -74,14 +74,17 @@ export class SDKService {
 	public static async init(events: Partial<WalletEvent>, lastWallet?: SupportedWallets) {
 		let factories = [];
 
-		if(process.env.REACT_APP_FACTORIES)factories = JSON.parse(process.env.REACT_APP_FACTORIES);
+		if (process.env.REACT_APP_FACTORIES) factories = JSON.parse(process.env.REACT_APP_FACTORIES);
 
 		const init = await Network.init(
 			new InitializationRequest({
 				network: 'testnet',
 				events,
 				configuration: {
-					factoryAddress: (factories.length !== 0) ? factories.find((i:any) => i.Environment === 'testnet').STABLE_COIN_FACTORY_ADDRESS: '',
+					factoryAddress:
+						factories.length !== 0
+							? factories.find((i: any) => i.Environment === 'testnet').STABLE_COIN_FACTORY_ADDRESS
+							: '',
 				},
 			}),
 		);
