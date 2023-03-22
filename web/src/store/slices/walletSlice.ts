@@ -64,6 +64,7 @@ export const getStableCoinList = createAsyncThunk(
 			return stableCoins;
 		} catch (e) {
 			console.error(e);
+			throw new Error();
 		}
 	},
 );
@@ -85,6 +86,7 @@ export const getExternalTokenList = createAsyncThunk(
 			return [];
 		} catch (e) {
 			console.error(e);
+			throw new Error();
 		}
 	},
 );
@@ -157,12 +159,20 @@ export const walletSlice = createSlice({
 		builder.addCase(getStableCoinList.fulfilled, (state, action) => {
 			if (action.payload) {
 				state.stableCoinList = action.payload;
+				if (state.stableCoinList.coins.length === 0) state.selectedStableCoin = undefined;
 			}
+		});
+		builder.addCase(getStableCoinList.rejected, (state) => {
+			state.stableCoinList = { coins: [] };
+			state.selectedStableCoin = undefined;
 		});
 		builder.addCase(getExternalTokenList.fulfilled, (state, action) => {
 			if (action.payload) {
 				state.externalTokenList = action.payload;
 			}
+		});
+		builder.addCase(getExternalTokenList.rejected, (state) => {
+			state.externalTokenList = undefined;
 		});
 	},
 });

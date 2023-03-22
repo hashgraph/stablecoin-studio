@@ -36,7 +36,7 @@
 			"importToken": "Import stable coin: {{ tokenId }}"
 		},
 		"createSC": "Create coin",
-		"alertNoEnv": "You have not configured your factory and ERC20 address. Without this configuration you can not create a stable coin.",
+		"alertNoEnv": "You have not configured a factory address. Without it you can not create a stable coin.",
 		"alertNoEnvLink": "Go to documentation"
 	},
 	"sidebar": {

@@ -53,10 +53,12 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 			createReserve,
 		} = command;
 
-		if (!factory || !hederaERC20) {
-			throw new InvalidRequest(
-				'HederaERC20 and factory not found in request or in configuration',
-			);
+		if (!factory) {
+			throw new InvalidRequest('Factory not found in request');
+		}
+
+		if (!hederaERC20) {
+			throw new InvalidRequest('HederaERC20 not found in request');
 		}
 
 		const handler = this.transactionService.getHandler();

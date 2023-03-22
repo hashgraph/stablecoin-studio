@@ -37,6 +37,7 @@ import RPCTransactionAdapter from '../out/rpc/RPCTransactionAdapter.js';
 import { HashpackTransactionAdapter } from '../out/hs/hashpack/HashpackTransactionAdapter.js';
 import { LogError } from '../../core/decorator/LogErrorDecorator.js';
 import SetConfigurationRequest from './request/SetConfigurationRequest.js';
+import { handleValidation } from './Common.js';
 
 export { InitializationData, SupportedWallets };
 
@@ -75,6 +76,8 @@ class NetworkInPort implements INetworkInPort {
 
 	@LogError
 	async setConfig(req: SetConfigurationRequest): Promise<ConfigResponse> {
+		handleValidation('SetConfigurationRequest', req);
+
 		const res = await this.commandBus.execute(
 			new SetConfigurationCommand(req.factoryAddress),
 		);
@@ -93,6 +96,8 @@ class NetworkInPort implements INetworkInPort {
 
 	@LogError
 	async setNetwork(req: SetNetworkRequest): Promise<NetworkResponse> {
+		handleValidation('SetNetworkRequest', req);
+
 		const res = await this.commandBus.execute(
 			new SetNetworkCommand(
 				req.environment,
@@ -106,6 +111,8 @@ class NetworkInPort implements INetworkInPort {
 
 	@LogError
 	async init(req: InitializationRequest): Promise<SupportedWallets[]> {
+		handleValidation('InitializationRequest', req);
+
 		await this.setNetwork(
 			new SetNetworkRequest({ environment: req.network }),
 		);
@@ -134,6 +141,8 @@ class NetworkInPort implements INetworkInPort {
 
 	@LogError
 	async connect(req: ConnectRequest): Promise<InitializationData> {
+		handleValidation('ConnectRequest', req);
+
 		const account = RequestMapper.mapAccount(req.account);
 		const res = await this.commandBus.execute(
 			new ConnectCommand(req.network, req.wallet, account),

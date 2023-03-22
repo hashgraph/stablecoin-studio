@@ -76,21 +76,29 @@ export class SDKService {
 
 		if (process.env.REACT_APP_FACTORIES) factories = JSON.parse(process.env.REACT_APP_FACTORIES);
 
-		const init = await Network.init(
-			new InitializationRequest({
-				network: 'testnet',
-				events,
-				configuration: {
-					factoryAddress:
-						factories.length !== 0
-							? factories.find((i: any) => i.Environment === 'testnet').STABLE_COIN_FACTORY_ADDRESS
-							: '',
-				},
-			}),
-		);
-		if (lastWallet) await this.connectWallet(lastWallet);
+		try {
+			const init = await Network.init(
+				new InitializationRequest({
+					network: 'testnet',
+					events,
+					configuration: {
+						factoryAddress:
+							factories.length !== 0
+								? factories.find((i: any) => i.Environment === 'testnet')
+										.STABLE_COIN_FACTORY_ADDRESS
+								: '',
+					},
+				}),
+			);
+			if (lastWallet) await this.connectWallet(lastWallet);
 
-		return init;
+			return init;
+		} catch (e) {
+			console.error('Error initializing the Network : ' + e);
+			window.alert(
+				'There was an error initializing the network, please check your .env file and make sure the configuration is correct',
+			);
+		}
 	}
 
 	public static getWalletData(): InitializationData | undefined {
