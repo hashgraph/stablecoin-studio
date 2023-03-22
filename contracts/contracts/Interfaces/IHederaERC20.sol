@@ -162,5 +162,19 @@ interface IHederaERC20 {
      *
      * @param keys The new addresses to set for the underlying token
      */
-    function updateTokenKeys(KeysLib.KeysStruct[] calldata keys) external;
+    //function updateTokenKeys(KeysLib.KeysStruct[] calldata keys) external;
+
+    /**
+     * @dev Update token keys
+     *
+     * @param keys The new addresses to set for the underlying token
+     */
+    function updateToken(
+        string memory name,
+        string memory symbol,
+        KeysLib.KeysStruct[] calldata keys,
+        int64 second,
+        address autoRenewAccount,
+        int64 autoRenewPeriod
+    ) external;
 }

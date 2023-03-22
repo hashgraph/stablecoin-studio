@@ -309,7 +309,7 @@ contract HederaERC20 is
      *
      * @param keys The new addresses to set for the underlying token
      */
-    function updateTokenKeys(
+    /*function updateTokenKeys(
         KeysLib.KeysStruct[] calldata keys
     ) external override(IHederaERC20) onlyRole(_getRoleId(RoleName.ADMIN)) {
         address currentTokenAddress = _getTokenAddress();
@@ -340,6 +340,72 @@ contract HederaERC20 is
         IHederaTokenService.HederaToken memory hederaTokenInfo;
         hederaTokenInfo.tokenKeys = hederaKeys;
         hederaTokenInfo.memo = _getTokenInfo(currentTokenAddress); // this is required because of an Hedera bug.
+
+        if (newTreasury != address(0)) hederaTokenInfo.treasury = newTreasury;
+
+        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
+            .updateTokenInfo(currentTokenAddress, hederaTokenInfo);
+
+        _checkResponse(responseCode);
+
+        emit TokenKeysUpdated(currentTokenAddress, newTreasury, keys);
+    }*/
+
+    /**
+     * @dev Update token keys
+     *
+     * @param keys The new addresses to set for the underlying token
+     */
+    function updateToken(
+        string memory tokenName,
+        string memory tokenSymbol,
+        KeysLib.KeysStruct[] calldata keys,
+        int64 second,
+        address autoRenewAccount,
+        int64 autoRenewPeriod
+    ) external override(IHederaERC20) onlyRole(_getRoleId(RoleName.ADMIN)) {
+        address currentTokenAddress = _getTokenAddress();
+
+        address newTreasury = address(0);
+
+        // Token Keys
+        IHederaTokenService.TokenKey[]
+            memory hederaKeys = new IHederaTokenService.TokenKey[](keys.length);
+
+        for (uint256 i = 0; i < keys.length; i++) {
+            hederaKeys[i] = IHederaTokenService.TokenKey({
+                keyType: keys[i].keyType,
+                key: KeysLib.generateKey(
+                    keys[i].publicKey,
+                    address(this),
+                    keys[i].isED25519
+                )
+            });
+            if (KeysLib.containsKey(_SUPPLY_KEY_BIT, hederaKeys[i].keyType)) {
+                if (hederaKeys[i].key.delegatableContractId == address(this))
+                    newTreasury = address(this);
+                else newTreasury = msg.sender;
+            }
+        }
+
+        // Hedera Token Expiry
+        IHederaTokenService.Expiry memory expiry;
+        if (second >= 0) expiry.second = second;
+        if (autoRenewPeriod >= 0) expiry.autoRenewPeriod = autoRenewPeriod;
+        if (autoRenewAccount != address(0))
+            expiry.autoRenewAccount = autoRenewAccount;
+
+        // Hedera Token Info
+        IHederaTokenService.HederaToken memory hederaTokenInfo;
+        if (bytes(tokenName).length > 0) hederaTokenInfo.name = tokenName;
+        if (bytes(tokenSymbol).length > 0) hederaTokenInfo.symbol = tokenSymbol;
+        hederaTokenInfo.tokenKeys = hederaKeys;
+        hederaTokenInfo.memo = _getTokenInfo(currentTokenAddress); // this is required because of an Hedera bug.
+        if (
+            second >= 0 ||
+            autoRenewPeriod >= 0 ||
+            autoRenewAccount != address(0)
+        ) hederaTokenInfo.expiry = expiry;
 
         if (newTreasury != address(0)) hederaTokenInfo.treasury = newTreasury;
 
