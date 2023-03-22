@@ -87,6 +87,13 @@ function decodeFunctionResult(
     return jsonParsedArray
 }
 
+export function oneYearLaterInSeconds(): number {
+    const currentDate: Date = new Date()
+    return Math.floor(
+        currentDate.setFullYear(currentDate.getFullYear() + 1) / 1000
+    )
+}
+
 export function getClient(network?: string): Client {
     if (!network) {
         const hre = require('hardhat')

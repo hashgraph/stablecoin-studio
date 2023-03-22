@@ -55,19 +55,6 @@ interface IHederaERC20 {
     );
 
     /**
-     * @dev Emitted when token keys updated
-     *
-     * @param token Token address
-     * @param token Token address
-     * @param newTokenKeys Token keys
-     */
-    event TokenKeysUpdated(
-        address token,
-        address newTreasury,
-        KeysLib.KeysStruct[] newTokenKeys
-    );
-
-    /**
      * @dev Emitted when token updated
      *
      * @param token Token address
@@ -178,13 +165,6 @@ interface IHederaERC20 {
         address owner,
         address spender
     ) external returns (uint256);
-
-    /**
-     * @dev Update token keys
-     *
-     * @param keys The new addresses to set for the underlying token
-     */
-    //function updateTokenKeys(KeysLib.KeysStruct[] calldata keys) external;
 
     /**
      * @dev Update token

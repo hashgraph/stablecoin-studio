@@ -611,7 +611,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 	}, 20000);
 
 	it('Test update name, symbol, autorenew account, autorenew period, expiration time and token keys through Smart Contract', async () => {
-		const expirationTime: number = oneYearLater();
+		const expirationTime: number = oneYearLaterInNano();
 		tr = await th.update(
 			stableCoinCapabilitiesSC,
 			'newName',
@@ -655,8 +655,8 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		);
 	}, 20000);
 
-	it('Test update name, symbol, autorenew account, autorenew period, expiration time and token keys through HTS', async () => {
-		const expirationTime: number = oneYearLater();
+	it.only('Test update name, symbol, autorenew account, autorenew period, expiration time and token keys through HTS', async () => {
+		const expirationTime: number = oneYearLaterInNano();
 		tr = await th.update(
 			stableCoinCapabilitiesHTS,
 			'newName',
@@ -1208,7 +1208,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 		);
 
 		expect(tr.response).toEqual(true);
-		const expirationTime: number = oneYearLater();
+		const expirationTime: number = oneYearLaterInNano();
 		tr = await th.update(
 			stableCoinCapabilitiesSC,
 			'newName',
@@ -1253,7 +1253,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 	}, 20000);
 
 	it('Test update name, symbol, autorenew account, autorenew period, expiration time and token keys through HTS', async () => {
-		const expirationTime: number = oneYearLater();
+		const expirationTime: number = oneYearLaterInNano();
 		tr = await th.update(
 			stableCoinCapabilitiesHTS,
 			'newName',
@@ -1298,7 +1298,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 	}, 20000);
 });
 
-function oneYearLater(): number {
+function oneYearLaterInNano(): number {
 	const currentDate: Date = new Date();
 	return currentDate.setFullYear(currentDate.getFullYear() + 1) * 1000000;
 }

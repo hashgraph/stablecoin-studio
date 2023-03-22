@@ -307,53 +307,6 @@ contract HederaERC20 is
     /**
      * @dev Update token keys
      *
-     * @param keys The new addresses to set for the underlying token
-     */
-    /*function updateTokenKeys(
-        KeysLib.KeysStruct[] calldata keys
-    ) external override(IHederaERC20) onlyRole(_getRoleId(RoleName.ADMIN)) {
-        address currentTokenAddress = _getTokenAddress();
-
-        address newTreasury = address(0);
-
-        // Token Keys
-        IHederaTokenService.TokenKey[]
-            memory hederaKeys = new IHederaTokenService.TokenKey[](keys.length);
-
-        for (uint256 i = 0; i < keys.length; i++) {
-            hederaKeys[i] = IHederaTokenService.TokenKey({
-                keyType: keys[i].keyType,
-                key: KeysLib.generateKey(
-                    keys[i].publicKey,
-                    address(this),
-                    keys[i].isED25519
-                )
-            });
-            if (KeysLib.containsKey(_SUPPLY_KEY_BIT, hederaKeys[i].keyType)) {
-                if (hederaKeys[i].key.delegatableContractId == address(this))
-                    newTreasury = address(this);
-                else newTreasury = msg.sender;
-            }
-        }
-
-        // Hedera Token Info
-        IHederaTokenService.HederaToken memory hederaTokenInfo;
-        hederaTokenInfo.tokenKeys = hederaKeys;
-        hederaTokenInfo.memo = _getTokenInfo(currentTokenAddress); // this is required because of an Hedera bug.
-
-        if (newTreasury != address(0)) hederaTokenInfo.treasury = newTreasury;
-
-        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
-            .updateTokenInfo(currentTokenAddress, hederaTokenInfo);
-
-        _checkResponse(responseCode);
-
-        emit TokenKeysUpdated(currentTokenAddress, newTreasury, keys);
-    }*/
-
-    /**
-     * @dev Update token keys
-     *
      * @param updatedToken Values to update the token
      */
     function updateToken(
