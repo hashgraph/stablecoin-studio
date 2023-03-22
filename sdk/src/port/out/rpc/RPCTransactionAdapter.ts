@@ -1284,7 +1284,6 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				publicKey: mirrorAccount.publicKey,
 			});
 		} else {
-			window.alert('Not an Hedera Account in this network');
 			this.account = Account.NULL;
 		}
 		LogService.logTrace('Paired Metamask Wallet Event:', this.account);
@@ -1313,12 +1312,12 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 						? result.STABLE_COIN_FACTORY_ADDRESS
 						: '';
 				} catch (e) {
-					window.alert('Factories could not be found in .env');
+					console.error('Factories could not be found in .env');
 				}
 			}
 			LogService.logTrace('Metamask Network:', chainId);
 		} else {
-			window.alert(chainId + ' not an hedera network');
+			console.error(chainId + ' not an hedera network');
 		}
 
 		await this.commandBus.execute(new SetNetworkCommand(network));
@@ -1343,7 +1342,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					pairing: '',
 					topic: '',
 				},
-				network: this.networkService.environment,
+				network: {
+					name: this.networkService.environment,
+					recognized: this.networkService.environment != unrecognized,
+				},
 				wallet: SupportedWallets.METAMASK,
 			});
 		} else {
@@ -1372,7 +1374,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 							pairing: '',
 							topic: '',
 						},
-						network: this.networkService.environment,
+						network: {
+							name: this.networkService.environment,
+							recognized:
+								this.networkService.environment != unrecognized,
+						},
 						wallet: SupportedWallets.METAMASK,
 					});
 				} else {
@@ -1401,7 +1407,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					data: {
 						account: this.account,
 					},
-					network: this.networkService.environment,
+					network: {
+						name: this.networkService.environment,
+						recognized:
+							this.networkService.environment != unrecognized,
+					},
 					wallet: SupportedWallets.METAMASK,
 				});
 			});

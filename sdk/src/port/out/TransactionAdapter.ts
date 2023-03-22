@@ -41,6 +41,11 @@ export interface InitializationData {
 	topic?: string;
 }
 
+export interface NetworkData {
+	name?: Environment;
+	recognized?: boolean;
+}
+
 interface ITransactionAdapter {
 	create(
 		coin: StableCoin,

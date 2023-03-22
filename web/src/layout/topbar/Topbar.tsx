@@ -12,18 +12,27 @@ import {
 import { Network } from 'hedera-stable-coin-sdk';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import LOGO_HEDERA from '../../assets/svg/hedera-hbar-logo.svg';
 import { NamedRoutes } from '../../Router/NamedRoutes';
 import { RouterManager } from '../../Router/RouterManager';
+import {
+	SELECTED_NETWORK_RECOGNIZED,
+	SELECTED_WALLET_PAIRED_ACCOUNT_RECOGNIZED,
+	walletActions,
+} from '../../store/slices/walletSlice';
 import CoinDropdown from './CoinDropdown';
 import CollapsibleButton from './components/CollapsibleButton';
 import TopbarRight from './TopbarRight';
 
 const Topbar = () => {
+	const dispatch = useDispatch();
 	const { t } = useTranslation('global');
 	const navigate = useNavigate();
 	const [haveFactory, setHaveFactory] = useState<boolean>(true);
+	const accountRecognized = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT_RECOGNIZED);
+	const networkRecognized = useSelector(SELECTED_NETWORK_RECOGNIZED);
 
 	const handleNavigateSC = async () => {
 		const factoryId = await Network.getFactoryAddress();
@@ -34,10 +43,6 @@ const Topbar = () => {
 			setHaveFactory(false);
 		}
 	};
-
-	// const handleNavigateEC = () => {
-	// 	RouterManager.to(navigate, NamedRoutes.ImportedToken);
-	// };
 
 	return (
 		<>
@@ -65,11 +70,6 @@ const Topbar = () => {
 								text={t('topbar.createSC')}
 								onClick={handleNavigateSC}
 							/>
-							{/* <CollapsibleButton
-							nameIcon='ArrowLineDown'
-							text={t('topbar.addSC')}
-							onClick={handleNavigateEC}
-						/> */}
 						</HStack>
 					</Flex>
 					<TopbarRight />
@@ -80,7 +80,6 @@ const Topbar = () => {
 					<Flex width='container.lg'>
 						<AlertIcon />
 						<Box>
-							{/* <AlertTitle>Success!</AlertTitle> */}
 							<AlertDescription>
 								<p>{t('topbar.alertNoEnv')}</p>
 								<Link
@@ -99,6 +98,44 @@ const Topbar = () => {
 						right={-1}
 						top={-1}
 						onClick={() => setHaveFactory(true)}
+					/>
+				</Alert>
+			)}
+			{!networkRecognized && (
+				<Alert status='warning' justifyContent='center'>
+					<Flex width='container.lg'>
+						<AlertIcon />
+						<Box>
+							<AlertDescription>
+								<p>{t('topbar.alertNotHederaNetwork')}</p>
+							</AlertDescription>
+						</Box>
+					</Flex>
+					<CloseButton
+						alignSelf='flex-start'
+						position='relative'
+						right={-1}
+						top={-1}
+						onClick={() => dispatch(walletActions.setNetworkRecognized(true))}
+					/>
+				</Alert>
+			)}
+			{!accountRecognized && (
+				<Alert status='warning' justifyContent='center'>
+					<Flex width='container.lg'>
+						<AlertIcon />
+						<Box>
+							<AlertDescription>
+								<p>{t('topbar.alertNotHederaAccount')}</p>
+							</AlertDescription>
+						</Box>
+					</Flex>
+					<CloseButton
+						alignSelf='flex-start'
+						position='relative'
+						right={-1}
+						top={-1}
+						onClick={() => dispatch(walletActions.setAccountRecognized(true))}
 					/>
 				</Alert>
 			)}

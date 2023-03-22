@@ -97,7 +97,10 @@ export class HTSTransactionAdapter extends HederaTransactionAdapter {
 				pairing: '',
 				topic: '',
 			},
-			network: this.networkService.environment,
+			network: {
+				name: this.networkService.environment,
+				recognized: true,
+			},
 		};
 		this.eventService.emit(WalletEvents.walletPaired, eventData);
 		LogService.logTrace('Client registered as handler: ', eventData);

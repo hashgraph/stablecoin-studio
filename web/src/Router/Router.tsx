@@ -30,8 +30,14 @@ import {
 } from '../store/slices/walletSlice';
 import ImportedTokenCreation from '../views/ImportedToken/ImportedTokenCreation';
 import DangerZoneOperations from '../views/Operations/DangerZone';
-import type { EventParameter, WalletEvent } from 'hedera-stable-coin-sdk';
-import { LoggerTransports, SDK, ConnectionState } from 'hedera-stable-coin-sdk';
+import {
+	Account,
+	EventParameter,
+	WalletEvent,
+	LoggerTransports,
+	SDK,
+	ConnectionState,
+} from 'hedera-stable-coin-sdk';
 import StableCoinProof from '../views/StableCoinProof';
 import FeesManagement from '../views/FeesManagement';
 import GrantKycOperation from '../views/Operations/GrantKyc';
@@ -77,7 +83,15 @@ const Router = () => {
 		onLastWalletEvent(event, () => {
 			dispatch(walletActions.setData(event.data));
 			dispatch(walletActions.setStatus(ConnectionState.Paired));
-			dispatch(walletActions.setNetwork(event.network));
+			dispatch(walletActions.setNetwork(event.network.name));
+			dispatch(walletActions.setNetworkRecognized(event.network.recognized));
+			if (!event.data.account) dispatch(walletActions.setAccountRecognized(false));
+			else
+				dispatch(
+					walletActions.setAccountRecognized(
+						event.data.account.id !== Account.NullHederaAccount.id,
+					),
+				);
 		});
 	};
 

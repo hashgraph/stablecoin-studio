@@ -30,7 +30,10 @@ import NetworkService from '../../app/service/NetworkService.js';
 import SetNetworkRequest from './request/SetNetworkRequest.js';
 import { SetNetworkCommand } from '../../app/usecase/command/network/setNetwork/SetNetworkCommand.js';
 import { SetConfigurationCommand } from '../../app/usecase/command/network/setConfiguration/SetConfigurationCommand.js';
-import { Environment } from '../../domain/context/network/Environment.js';
+import {
+	Environment,
+	unrecognized,
+} from '../../domain/context/network/Environment.js';
 import InitializationRequest from './request/InitializationRequest.js';
 import Event, { WalletEvents } from './Event.js';
 import RPCTransactionAdapter from '../out/rpc/RPCTransactionAdapter.js';
@@ -59,6 +62,7 @@ interface INetworkInPort {
 	setConfig(req: SetConfigurationRequest): Promise<ConfigResponse>;
 	getFactoryAddress(): string;
 	getNetwork(): string;
+	isNetworkRecognized(): boolean;
 }
 
 class NetworkInPort implements INetworkInPort {
@@ -92,6 +96,11 @@ class NetworkInPort implements INetworkInPort {
 	@LogError
 	public getNetwork(): string {
 		return this.networkService.environment;
+	}
+
+	@LogError
+	public isNetworkRecognized(): boolean {
+		return this.networkService.environment != unrecognized;
 	}
 
 	@LogError

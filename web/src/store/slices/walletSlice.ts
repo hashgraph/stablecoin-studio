@@ -30,6 +30,8 @@ export interface InitialStateProps {
 	pausedToken?: boolean;
 	roles?: string[];
 	network?: string;
+	networkRecognized?: boolean;
+	accountRecognized?: boolean;
 }
 
 export const initialState: InitialStateProps = {
@@ -48,6 +50,8 @@ export const initialState: InitialStateProps = {
 	pausedToken: undefined,
 	roles: undefined,
 	network: undefined,
+	networkRecognized: true,
+	accountRecognized: true,
 };
 
 export const getStableCoinList = createAsyncThunk(
@@ -137,6 +141,12 @@ export const walletSlice = createSlice({
 		setNetwork: (state, action) => {
 			state.network = action.payload;
 		},
+		setNetworkRecognized: (state, action) => {
+			state.networkRecognized = action.payload;
+		},
+		setAccountRecognized: (state, action) => {
+			state.accountRecognized = action.payload;
+		},
 		clearData: (state) => {
 			state.data = initialState.data;
 			state.lastWallet = undefined;
@@ -146,6 +156,8 @@ export const walletSlice = createSlice({
 			localStorage?.removeItem(LAST_WALLET_LS);
 			state.roles = undefined;
 			state.network = initialState.network;
+			state.networkRecognized = initialState.networkRecognized;
+			state.accountRecognized = initialState.accountRecognized;
 		},
 		setRoles: (state, action) => {
 			state.roles = action.payload;
@@ -178,6 +190,7 @@ export const walletSlice = createSlice({
 });
 
 export const SELECTED_NETWORK = (state: RootState) => state.wallet.network;
+export const SELECTED_NETWORK_RECOGNIZED = (state: RootState) => state.wallet.networkRecognized;
 export const SELECTED_WALLET = (state: RootState) => state.wallet;
 export const STABLE_COIN_LIST = (state: RootState) => state.wallet.stableCoinList;
 export const AVAILABLE_WALLETS = (state: RootState) => state.wallet.foundWallets;
@@ -195,6 +208,8 @@ export const SELECTED_WALLET_PAIRED_ACCOUNTID = (state: RootState) =>
 export const SELECTED_WALLET_PAIRED_ACCOUNT = (state: RootState) => ({
 	accountId: state.wallet.data?.account?.id,
 });
+export const SELECTED_WALLET_PAIRED_ACCOUNT_RECOGNIZED = (state: RootState) =>
+	state.wallet.accountRecognized;
 export const SELECTED_TOKEN_PAUSED = (state: RootState) => state.wallet.pausedToken;
 export const SELECTED_TOKEN_DELETED = (state: RootState) => state.wallet.deletedToken;
 export const SELECTED_TOKEN_RESERVE_ADDRESS = (state: RootState) =>
