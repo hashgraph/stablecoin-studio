@@ -37,7 +37,7 @@ import {
 } from '../../../../../src/port/in/StableCoin.js';
 import PublicKey from '../../../../../src/domain/context/account/PublicKey.js';
 import ContractId from '../../../../../src/domain/context/contract/ContractId.js';
-import { AccountId, ContractId as HContractId } from '@hashgraph/sdk';
+import { ContractId as HContractId } from '@hashgraph/sdk';
 import {
 	CLIENT_ACCOUNT_ECDSA,
 	CLIENT_ACCOUNT_ED25519,
@@ -655,7 +655,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		);
 	}, 20000);
 
-	it.only('Test update name, symbol, autorenew account, autorenew period, expiration time and token keys through HTS', async () => {
+	it('Test update name, symbol, autorenew account, autorenew period, expiration time and token keys through HTS', async () => {
 		const expirationTime: number = oneYearLaterInNano();
 		tr = await th.update(
 			stableCoinCapabilitiesHTS,
@@ -1305,10 +1305,6 @@ function oneYearLaterInNano(): number {
 
 function secondsToDays(seconds: number): number {
 	return seconds * 60 * 60 * 24;
-}
-
-function daysToSeconds(days: number): number {
-	return days / 24 / 60 / 60;
 }
 
 async function connectAccount(account: Account): Promise<void> {
