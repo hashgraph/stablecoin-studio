@@ -918,7 +918,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		return this.performOperation(
 			coin,
 			Operation.UPDATE,
-			'updateTokenKeys',
+			'updateToken',
 			15000000,
 			params,
 		);
@@ -1000,7 +1000,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		let filteredContractParams: any[] = [];
 
 		switch (operationName) {
-			case 'updateTokenKeys':
+			case 'updateToken':
 				const providedKeys = [
 					undefined,
 					params?.kycKey,
@@ -1010,8 +1010,16 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					params?.feeScheduleKey,
 					params?.pauseKey,
 				];
-				filteredContractParams[0] =
-					this.setKeysForSmartContract(providedKeys);
+				filteredContractParams[0] = {
+					tokenName: params?.name,
+					tokenSymbol: params?.symbol,
+					keys: this.setKeysForSmartContract(providedKeys),
+					second: params?.expirationTime,
+					autoRenewAccount: await this.getEVMAddress(
+						params?.autoRenewAccount,
+					),
+					autoRenewPeriod: params?.autoRenewPeriod,
+				};
 				break;
 
 			default:

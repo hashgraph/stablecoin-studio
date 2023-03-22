@@ -611,7 +611,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 	}, 20000);
 
 	it('Test update name, symbol, autorenew account, autorenew period, expiration time and token keys through Smart Contract', async () => {
-		const expirationTime: number = oneYearLaterInNano();
+		const expirationTime: number = oneYearLaterInSeconds();
 		tr = await th.update(
 			stableCoinCapabilitiesSC,
 			'newName',
@@ -638,7 +638,9 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 			CLIENT_ACCOUNT_ECDSA.id.value,
 		);
 		expect(stableCoinViewModel.autoRenewPeriod).toEqual(45);
-		expect(stableCoinViewModel.expirationTimestamp).toEqual(expirationTime);
+		expect(stableCoinViewModel.expirationTimestamp).toEqual(
+			secondsToNano(expirationTime),
+		);
 		expect(stableCoinViewModel.kycKey).toBeUndefined();
 		expect(stableCoinViewModel.freezeKey).toEqual(
 			CLIENT_ACCOUNT_ED25519.publicKey,
@@ -1208,7 +1210,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 		);
 
 		expect(tr.response).toEqual(true);
-		const expirationTime: number = oneYearLaterInNano();
+		const expirationTime: number = oneYearLaterInSeconds();
 		tr = await th.update(
 			stableCoinCapabilitiesSC,
 			'newName',
@@ -1235,7 +1237,9 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 			CLIENT_ACCOUNT_ED25519.id.value,
 		);
 		expect(stableCoinViewModel.autoRenewPeriod).toEqual(45);
-		expect(stableCoinViewModel.expirationTimestamp).toEqual(expirationTime);
+		expect(stableCoinViewModel.expirationTimestamp).toEqual(
+			secondsToNano(expirationTime),
+		);
 		expect(stableCoinViewModel.kycKey).toBeUndefined();
 		expect(stableCoinViewModel.freezeKey?.toString).toEqual(
 			CLIENT_ACCOUNT_ECDSA.publicKey?.toString,
@@ -1303,8 +1307,19 @@ function oneYearLaterInNano(): number {
 	return currentDate.setFullYear(currentDate.getFullYear() + 1) * 1000000;
 }
 
+function oneYearLaterInSeconds(): number {
+	const currentDate: Date = new Date();
+	return Math.floor(
+		currentDate.setFullYear(currentDate.getFullYear() + 1) / 1000,
+	);
+}
+
 function secondsToDays(seconds: number): number {
 	return seconds * 60 * 60 * 24;
+}
+
+function secondsToNano(seconds: number): number {
+	return seconds * 1000000000;
 }
 
 async function connectAccount(account: Account): Promise<void> {
