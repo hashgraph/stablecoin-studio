@@ -119,6 +119,11 @@ interface ITransactionAdapter {
 	): Promise<TransactionResponse>;
 	update(
 		coin: StableCoinCapabilities,
+		name: string | undefined,
+		symbol: string | undefined,
+		autoRenewAccount: HederaId | undefined,
+		autoRenewPeriod: number | undefined,
+		expirationTime: number | undefined,
 		kycKey: PublicKey | undefined,
 		freezeKey: PublicKey | undefined,
 		feeScheduleKey: PublicKey | undefined,
@@ -336,6 +341,11 @@ export default abstract class TransactionAdapter
 	}
 	update(
 		coin: StableCoinCapabilities,
+		name: string | undefined,
+		symbol: string | undefined,
+		autoRenewAccount: HederaId | undefined,
+		autoRenewPeriod: number | undefined,
+		expirationTime: number | undefined,
 		kycKey: PublicKey | undefined,
 		freezeKey: PublicKey | undefined,
 		feeScheduleKey: PublicKey | undefined,

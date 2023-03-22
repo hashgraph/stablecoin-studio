@@ -37,7 +37,7 @@ import {
 } from '../../../../../src/port/in/StableCoin.js';
 import PublicKey from '../../../../../src/domain/context/account/PublicKey.js';
 import ContractId from '../../../../../src/domain/context/contract/ContractId.js';
-import { ContractId as HContractId } from '@hashgraph/sdk';
+import { AccountId, ContractId as HContractId } from '@hashgraph/sdk';
 import {
 	CLIENT_ACCOUNT_ECDSA,
 	CLIENT_ACCOUNT_ED25519,
@@ -610,9 +610,15 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		);
 	}, 20000);
 
-	it('Test update token keys through Smart Contract', async () => {
+	it('Test update name, symbol, autorenew account, autorenew period, expiration time and token keys through Smart Contract', async () => {
+		const expirationTime: number = oneYearLater();
 		tr = await th.update(
 			stableCoinCapabilitiesSC,
+			'newName',
+			'newSymbol',
+			new HederaId(CLIENT_ACCOUNT_ECDSA.id.value),
+			secondsToDays(45),
+			expirationTime,
 			undefined,
 			CLIENT_ACCOUNT_ED25519.publicKey,
 			undefined,
@@ -626,6 +632,13 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 			await mirrorNodeAdapter.getStableCoin(
 				stableCoinCapabilitiesSC.coin.tokenId!,
 			);
+		expect(stableCoinViewModel.name).toEqual('newName');
+		expect(stableCoinViewModel.symbol).toEqual('newSymbol');
+		expect(stableCoinViewModel.autoRenewAccount?.value).toEqual(
+			CLIENT_ACCOUNT_ECDSA.id.value,
+		);
+		expect(stableCoinViewModel.autoRenewPeriod).toEqual(45);
+		expect(stableCoinViewModel.expirationTimestamp).toEqual(expirationTime);
 		expect(stableCoinViewModel.kycKey).toBeUndefined();
 		expect(stableCoinViewModel.freezeKey).toEqual(
 			CLIENT_ACCOUNT_ED25519.publicKey,
@@ -642,9 +655,15 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		);
 	}, 20000);
 
-	it('Test update token keys through HTS', async () => {
+	it('Test update name, symbol, autorenew account, autorenew period, expiration time and token keys through HTS', async () => {
+		const expirationTime: number = oneYearLater();
 		tr = await th.update(
 			stableCoinCapabilitiesHTS,
+			'newName',
+			'newSymbol',
+			new HederaId(CLIENT_ACCOUNT_ECDSA.id.value),
+			secondsToDays(45),
+			expirationTime,
 			undefined,
 			CLIENT_ACCOUNT_ED25519.publicKey,
 			undefined,
@@ -658,6 +677,13 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 			await mirrorNodeAdapter.getStableCoin(
 				stableCoinCapabilitiesHTS.coin.tokenId!,
 			);
+		expect(stableCoinViewModel.name).toEqual('newName');
+		expect(stableCoinViewModel.symbol).toEqual('newSymbol');
+		expect(stableCoinViewModel.autoRenewAccount?.value).toEqual(
+			CLIENT_ACCOUNT_ECDSA.id.value,
+		);
+		expect(stableCoinViewModel.autoRenewPeriod).toEqual(45);
+		expect(stableCoinViewModel.expirationTimestamp).toEqual(expirationTime);
 		expect(stableCoinViewModel.kycKey).toBeUndefined();
 		expect(stableCoinViewModel.freezeKey).toEqual(
 			CLIENT_ACCOUNT_ED25519.publicKey,
@@ -1174,7 +1200,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 		);
 	}, 1200000000);
 
-	it('Test update token keys through Smart Contract', async () => {
+	it('Test update name, symbol, autorenew account, autorenew period, expiration time and token keys through Smart Contract', async () => {
 		tr = await th.hasRole(
 			stableCoinCapabilitiesSC,
 			CLIENT_ACCOUNT_ED25519.id,
@@ -1182,9 +1208,14 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 		);
 
 		expect(tr.response).toEqual(true);
-
+		const expirationTime: number = oneYearLater();
 		tr = await th.update(
 			stableCoinCapabilitiesSC,
+			'newName',
+			'newSymbol',
+			new HederaId(CLIENT_ACCOUNT_ED25519.id.value),
+			secondsToDays(45),
+			expirationTime,
 			undefined,
 			CLIENT_ACCOUNT_ECDSA.publicKey,
 			undefined,
@@ -1198,6 +1229,13 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 			await mirrorNodeAdapter.getStableCoin(
 				stableCoinCapabilitiesSC.coin.tokenId!,
 			);
+		expect(stableCoinViewModel.name).toEqual('newName');
+		expect(stableCoinViewModel.symbol).toEqual('newSymbol');
+		expect(stableCoinViewModel.autoRenewAccount?.value).toEqual(
+			CLIENT_ACCOUNT_ED25519.id.value,
+		);
+		expect(stableCoinViewModel.autoRenewPeriod).toEqual(45);
+		expect(stableCoinViewModel.expirationTimestamp).toEqual(expirationTime);
 		expect(stableCoinViewModel.kycKey).toBeUndefined();
 		expect(stableCoinViewModel.freezeKey?.toString).toEqual(
 			CLIENT_ACCOUNT_ECDSA.publicKey?.toString,
@@ -1214,9 +1252,15 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 		);
 	}, 20000);
 
-	it('Test update token keys through HTS', async () => {
+	it('Test update name, symbol, autorenew account, autorenew period, expiration time and token keys through HTS', async () => {
+		const expirationTime: number = oneYearLater();
 		tr = await th.update(
 			stableCoinCapabilitiesHTS,
+			'newName',
+			'newSymbol',
+			new HederaId(CLIENT_ACCOUNT_ED25519.id.value),
+			secondsToDays(45),
+			expirationTime,
 			undefined,
 			CLIENT_ACCOUNT_ECDSA.publicKey,
 			undefined,
@@ -1230,6 +1274,13 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 			await mirrorNodeAdapter.getStableCoin(
 				stableCoinCapabilitiesHTS.coin.tokenId!,
 			);
+		expect(stableCoinViewModel.name).toEqual('newName');
+		expect(stableCoinViewModel.symbol).toEqual('newSymbol');
+		expect(stableCoinViewModel.autoRenewAccount?.value).toEqual(
+			CLIENT_ACCOUNT_ED25519.id.value,
+		);
+		expect(stableCoinViewModel.autoRenewPeriod).toEqual(45);
+		expect(stableCoinViewModel.expirationTimestamp).toEqual(expirationTime);
 		expect(stableCoinViewModel.kycKey).toBeUndefined();
 		expect(stableCoinViewModel.freezeKey?.toString).toEqual(
 			CLIENT_ACCOUNT_ECDSA.publicKey?.toString,
@@ -1246,6 +1297,19 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 		);
 	}, 20000);
 });
+
+function oneYearLater(): number {
+	const currentDate: Date = new Date();
+	return currentDate.setFullYear(currentDate.getFullYear() + 1) * 1000000;
+}
+
+function secondsToDays(seconds: number): number {
+	return seconds * 60 * 60 * 24;
+}
+
+function daysToSeconds(days: number): number {
+	return days / 24 / 60 / 60;
+}
 
 async function connectAccount(account: Account): Promise<void> {
 	await Network.connect(

@@ -576,6 +576,11 @@ class StableCoinInPort implements IStableCoinInPort {
 	async update(request: UpdateRequest): Promise<boolean> {
 		const {
 			tokenId,
+			name,
+			symbol,
+			autoRenewAccount,
+			autoRenewPeriod,
+			expirationTime,
 			kycKey,
 			freezeKey,
 			feeScheduleKey,
@@ -590,6 +595,11 @@ class StableCoinInPort implements IStableCoinInPort {
 			await this.commandBus.execute(
 				new UpdateCommand(
 					HederaId.from(tokenId),
+					name,
+					symbol,
+					HederaId.from(autoRenewAccount),
+					autoRenewPeriod,
+					expirationTime,
 					kycKey
 						? new PublicKey({
 								key: kycKey.key,
