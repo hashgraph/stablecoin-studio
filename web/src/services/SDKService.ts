@@ -72,18 +72,33 @@ export class SDKService {
 	}
 
 	public static async init(events: Partial<WalletEvent>, lastWallet?: SupportedWallets) {
-		const init = await Network.init(
-			new InitializationRequest({
-				network: 'testnet',
-				events,
-				configuration: {
-					factoryAddress: process.env.REACT_APP_STABLE_COIN_FACTORY_ADDRESS ?? '',
-					hederaERC20Address: process.env.REACT_APP_HEDERA_ERC20_ADDRESS ?? '',
-				},
-			}),
-		);
-		if (lastWallet) await this.connectWallet(lastWallet);
-		return init;
+		let factories = [];
+
+		if (process.env.REACT_APP_FACTORIES) factories = JSON.parse(process.env.REACT_APP_FACTORIES);
+
+		try {
+			const init = await Network.init(
+				new InitializationRequest({
+					network: 'testnet',
+					events,
+					configuration: {
+						factoryAddress:
+							factories.length !== 0
+								? factories.find((i: any) => i.Environment === 'testnet')
+										.STABLE_COIN_FACTORY_ADDRESS
+								: '',
+					},
+				}),
+			);
+			if (lastWallet) await this.connectWallet(lastWallet);
+
+			return init;
+		} catch (e) {
+			console.error('Error initializing the Network : ' + e);
+			window.alert(
+				'There was an error initializing the network, please check your .env file and make sure the configuration is correct',
+			);
+		}
 	}
 
 	public static getWalletData(): InitializationData | undefined {

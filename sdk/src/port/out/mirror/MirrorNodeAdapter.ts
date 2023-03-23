@@ -25,7 +25,14 @@ import StableCoinViewModel from '../../out/mirror/response/StableCoinViewModel.j
 import AccountViewModel from '../../out/mirror/response/AccountViewModel.js';
 import StableCoinListViewModel from '../../out/mirror/response/StableCoinListViewModel.js';
 import TransactionResultViewModel from '../../out/mirror/response/TransactionResultViewModel.js';
-import { Environment } from '../../../domain/context/network/Environment.js';
+import {
+	Environment,
+	mainnet,
+	testnet,
+	previewnet,
+	local,
+	unrecognized,
+} from '../../../domain/context/network/Environment.js';
 import LogService from '../../../app/service/LogService.js';
 import { StableCoinNotFound } from './error/StableCoinNotFound.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
@@ -416,16 +423,16 @@ export class MirrorNodeAdapter {
 
 	private getMirrorNodeURL(environment: Environment): string {
 		switch (environment) {
-			case 'mainnet':
+			case mainnet:
 				return 'https://mainnet.mirrornode.hedera.com';
-			case 'previewnet':
+			case previewnet:
 				return 'https://previewnet.mirrornode.hedera.com';
-			case 'testnet':
+			case testnet:
 				return 'https://testnet.mirrornode.hedera.com';
-			case 'local':
+			case local:
 				return 'http://127.0.0.1:5551';
 			default:
-				return 'https://mainnet.mirrornode.hedera.com';
+				return '';
 		}
 	}
 

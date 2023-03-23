@@ -36,6 +36,7 @@ import {
 import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
 import EvmAddress from '../../../domain/context/contract/EvmAddress.js';
+import { unrecognized } from '../../../domain/context/network/Environment.js';
 
 const HederaERC20 = HederaERC20__factory;
 const Reserve = AggregatorV3Interface__factory;
@@ -60,8 +61,9 @@ export default class RPCQueryAdapter {
 
 	async init(customUrl?: string): Promise<string> {
 		const url =
-			customUrl ??
-			`https://${this.networkService.environment.toString()}.hashio.io/api`;
+			customUrl ?? this.networkService.environment !== unrecognized
+				? `https://${this.networkService.environment.toString()}.hashio.io/api`
+				: undefined;
 		this.provider = new ethers.providers.JsonRpcProvider(url);
 		LogService.logTrace('RPC Query Adapter Initialized on: ', url);
 

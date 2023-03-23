@@ -9,12 +9,20 @@ import {
 	Image,
 	Link,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { Network } from 'hedera-stable-coin-sdk';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import LOGO_HEDERA from '../../assets/svg/hedera-hbar-logo.svg';
 import { NamedRoutes } from '../../Router/NamedRoutes';
 import { RouterManager } from '../../Router/RouterManager';
+import {
+	SELECTED_NETWORK_RECOGNIZED,
+	SELECTED_WALLET_PAIRED_ACCOUNT_RECOGNIZED,
+	SELECTED_NETWORK,
+	SELECTED_WALLET_PAIRED_ACCOUNT,
+} from '../../store/slices/walletSlice';
 import CoinDropdown from './CoinDropdown';
 import CollapsibleButton from './components/CollapsibleButton';
 import TopbarRight from './TopbarRight';
@@ -23,21 +31,33 @@ const Topbar = () => {
 	const { t } = useTranslation('global');
 	const navigate = useNavigate();
 	const [haveFactory, setHaveFactory] = useState<boolean>(true);
+	const accountRecognized = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT_RECOGNIZED);
+	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
+	const [isAccountRecognized, setIsAccountRecognized] = useState<boolean>(
+		accountRecognized ?? true,
+	);
+	const networkRecognized = useSelector(SELECTED_NETWORK_RECOGNIZED);
+	const network = useSelector(SELECTED_NETWORK);
+	const [isNetworkRecognized, setIsNetworkRecognized] = useState<boolean>(
+		networkRecognized ?? true,
+	);
 
-	const handleNavigateSC = () => {
-		if (
-			process.env.REACT_APP_STABLE_COIN_FACTORY_ADDRESS !== undefined &&
-			process.env.REACT_APP_STABLE_COIN_FACTORY_ADDRESS !== ''
-		) {
+	useEffect(() => {
+		if (accountRecognized) setIsAccountRecognized(true);
+		else setIsAccountRecognized(false);
+		if (networkRecognized) setIsNetworkRecognized(true);
+		else setIsNetworkRecognized(false);
+	}, [accountRecognized, account, networkRecognized, network]);
+
+	const handleNavigateSC = async () => {
+		const factoryId = await Network.getFactoryAddress();
+
+		if (factoryId !== undefined && factoryId !== '') {
 			RouterManager.to(navigate, NamedRoutes.StableCoinCreation);
 		} else {
 			setHaveFactory(false);
 		}
 	};
-
-	// const handleNavigateEC = () => {
-	// 	RouterManager.to(navigate, NamedRoutes.ImportedToken);
-	// };
 
 	return (
 		<>
@@ -65,11 +85,6 @@ const Topbar = () => {
 								text={t('topbar.createSC')}
 								onClick={handleNavigateSC}
 							/>
-							{/* <CollapsibleButton
-							nameIcon='ArrowLineDown'
-							text={t('topbar.addSC')}
-							onClick={handleNavigateEC}
-						/> */}
 						</HStack>
 					</Flex>
 					<TopbarRight />
@@ -80,7 +95,6 @@ const Topbar = () => {
 					<Flex width='container.lg'>
 						<AlertIcon />
 						<Box>
-							{/* <AlertTitle>Success!</AlertTitle> */}
 							<AlertDescription>
 								<p>{t('topbar.alertNoEnv')}</p>
 								<Link
@@ -99,6 +113,44 @@ const Topbar = () => {
 						right={-1}
 						top={-1}
 						onClick={() => setHaveFactory(true)}
+					/>
+				</Alert>
+			)}
+			{!isNetworkRecognized && (
+				<Alert status='warning' justifyContent='center'>
+					<Flex width='container.lg'>
+						<AlertIcon />
+						<Box>
+							<AlertDescription>
+								<p>{t('topbar.alertNotHederaNetwork')}</p>
+							</AlertDescription>
+						</Box>
+					</Flex>
+					<CloseButton
+						alignSelf='flex-start'
+						position='relative'
+						right={-1}
+						top={-1}
+						onClick={() => setIsNetworkRecognized(true)}
+					/>
+				</Alert>
+			)}
+			{networkRecognized && !isAccountRecognized && (
+				<Alert status='warning' justifyContent='center'>
+					<Flex width='container.lg'>
+						<AlertIcon />
+						<Box>
+							<AlertDescription>
+								<p>{t('topbar.alertNotHederaAccount')}</p>
+							</AlertDescription>
+						</Box>
+					</Flex>
+					<CloseButton
+						alignSelf='flex-start'
+						position='relative'
+						right={-1}
+						top={-1}
+						onClick={() => setIsAccountRecognized(true)}
 					/>
 				</Alert>
 			)}

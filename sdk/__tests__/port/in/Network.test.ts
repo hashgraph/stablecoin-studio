@@ -74,7 +74,6 @@ describe('🧪 Network test', () => {
 				network: 'previewnet',
 				configuration: {
 					factoryAddress: FACTORY_ADDRESS,
-					hederaERC20Address: HEDERA_ERC20_ADDRESS,
 				},
 			}),
 		);

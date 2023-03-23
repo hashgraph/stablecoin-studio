@@ -76,6 +76,13 @@ import { SigningError } from '../hs/error/SigningError.js';
 import { RESERVE_DECIMALS } from '../../../domain/context/reserve/Reserve.js';
 import { FactoryRole } from '../../../domain/context/factory/FactoryRole.js';
 import { FactoryCashinRole } from '../../../domain/context/factory/FactoryCashinRole.js';
+import {
+	HederaNetworks,
+	unrecognized,
+} from '../../../domain/context/network/Environment.js';
+import { CommandBus } from '../../../core/command/CommandBus.js';
+import { SetNetworkCommand } from '../../../app/usecase/command/network/setNetwork/SetNetworkCommand.js';
+import { SetConfigurationCommand } from '../../../app/usecase/command/network/setConfiguration/SetConfigurationCommand.js';
 
 // eslint-disable-next-line no-var
 declare var ethereum: MetaMaskInpageProvider;
@@ -93,6 +100,8 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		private readonly networkService: NetworkService,
 		@lazyInject(EventService)
 		private readonly eventService: EventService,
+		@lazyInject(CommandBus)
+		private readonly commandBus: CommandBus,
 	) {
 		super();
 		this.registerMetamaskEvents();
@@ -1257,33 +1266,89 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		}
 	}
 
+	private async setMetasmaskAccount(evmAddress: string): Promise<void> {
+		let mirrorAccount = undefined;
+		try {
+			mirrorAccount = await this.mirrorNodeAdapter.getAccountInfo(
+				evmAddress,
+			);
+		} catch (e) {
+			LogService.logError(
+				'account could not be retrieved from mirror error : ' + e,
+			);
+		}
+		if (mirrorAccount) {
+			this.account = new Account({
+				id: mirrorAccount.id!,
+				evmAddress: mirrorAccount.accountEvmAddress,
+				publicKey: mirrorAccount.publicKey,
+			});
+		} else {
+			this.account = Account.NULL;
+		}
+		LogService.logTrace('Paired Metamask Wallet Event:', this.account);
+	}
+
+	private async setMetamaskNetwork(chainId: any): Promise<void> {
+		let network = unrecognized;
+		let factoryId = '';
+
+		const metamaskNetwork = HederaNetworks.find(
+			(i: any) => '0x' + i.chainId.toString(16) === chainId.toString(),
+		);
+
+		if (metamaskNetwork) {
+			network = metamaskNetwork.network;
+
+			if (process.env.REACT_APP_FACTORIES) {
+				try {
+					const factories = JSON.parse(
+						process.env.REACT_APP_FACTORIES,
+					);
+					const result = factories.find(
+						(i: any) => i.Environment === metamaskNetwork.network,
+					);
+					factoryId = result
+						? result.STABLE_COIN_FACTORY_ADDRESS
+						: '';
+				} catch (e) {
+					console.error('Factories could not be found in .env');
+				}
+			}
+			LogService.logTrace('Metamask Network:', chainId);
+		} else {
+			console.error(chainId + ' not an hedera network');
+		}
+
+		await this.commandBus.execute(new SetNetworkCommand(network));
+		await this.commandBus.execute(new SetConfigurationCommand(factoryId));
+
+		// await new Promise(f => setTimeout(f, 3000));
+	}
+
 	private async pairWallet(): Promise<void> {
 		const accts = await ethereum.request({
 			method: 'eth_requestAccounts',
 		});
 		if (accts && 'length' in accts) {
 			const evmAddress = (accts as string[])[0];
-			const mirrorAccount = await this.mirrorNodeAdapter.getAccountInfo(
-				evmAddress,
-			);
-			if (!mirrorAccount.id) {
-				throw new WalletConnectError('Invalid account!');
-			}
-			this.account = new Account({
-				id: mirrorAccount.id,
-				evmAddress: mirrorAccount.accountEvmAddress,
-				publicKey: mirrorAccount.publicKey,
-			});
+
+			const chainId = await ethereum.request({ method: 'eth_chainId' });
+			await this.setMetamaskNetwork(chainId);
+			await this.setMetasmaskAccount(evmAddress);
 			this.eventService.emit(WalletEvents.walletPaired, {
 				data: {
 					account: this.account,
 					pairing: '',
 					topic: '',
 				},
-				network: this.networkService.environment,
+				network: {
+					name: this.networkService.environment,
+					recognized: this.networkService.environment != unrecognized,
+					factoryId: this.networkService.configuration.factoryAddress,
+				},
 				wallet: SupportedWallets.METAMASK,
 			});
-			LogService.logTrace('Paired Metamask Wallet Event:', this.account);
 		} else {
 			LogService.logTrace('Paired Metamask failed with no accounts');
 			this.eventService.emit(WalletEvents.walletDisconnect, {
@@ -1303,22 +1368,21 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					this.account &&
 					accounts[0] !== this.account.evmAddress
 				) {
-					const mirrorAccount =
-						await this.mirrorNodeAdapter.getAccountInfo(
-							accounts[0],
-						);
-					if (mirrorAccount.id) {
-						this.account = new Account({
-							id: mirrorAccount.id,
-							evmAddress: mirrorAccount.accountEvmAddress,
-							publicKey: mirrorAccount.publicKey,
-						});
-					}
+					await this.setMetasmaskAccount(accounts[0]);
 					this.eventService.emit(WalletEvents.walletPaired, {
 						data: {
 							account: this.account,
+							pairing: '',
+							topic: '',
 						},
-						network: this.networkService.environment,
+						network: {
+							name: this.networkService.environment,
+							recognized:
+								this.networkService.environment != unrecognized,
+							factoryId:
+								this.networkService.configuration
+									.factoryAddress,
+						},
 						wallet: SupportedWallets.METAMASK,
 					});
 				} else {
@@ -1329,6 +1393,33 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 						wallet: SupportedWallets.METAMASK,
 					});
 				}
+			});
+			ethereum.on('chainChanged', async (chainId) => {
+				await this.setMetamaskNetwork(chainId);
+				let evmAddress = this.account.evmAddress;
+				if (!evmAddress) {
+					const accts = await ethereum.request({
+						method: 'eth_requestAccounts',
+					});
+					evmAddress =
+						accts && 'length' in accts
+							? (accts as string[])[0]
+							: '';
+				}
+				await this.setMetasmaskAccount(evmAddress);
+				this.eventService.emit(WalletEvents.walletPaired, {
+					data: {
+						account: this.account,
+					},
+					network: {
+						name: this.networkService.environment,
+						recognized:
+							this.networkService.environment != unrecognized,
+						factoryId:
+							this.networkService.configuration.factoryAddress,
+					},
+					wallet: SupportedWallets.METAMASK,
+				});
 			});
 		} catch (error) {
 			LogService.logError(error);
