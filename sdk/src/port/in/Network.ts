@@ -125,13 +125,20 @@ class NetworkInPort implements INetworkInPort {
 		await this.setNetwork(
 			new SetNetworkRequest({ environment: req.network }),
 		);
-		await this.setConfig(
-			new SetConfigurationRequest({
-				factoryAddress: req.configuration
-					? req.configuration.factoryAddress
-					: '',
-			}),
-		);
+		try {
+			await this.setConfig(
+				new SetConfigurationRequest({
+					factoryAddress: req.configuration
+						? req.configuration.factoryAddress
+						: '',
+				}),
+			);
+		} catch (e) {
+			console.error(
+				"Error initializing the Network's configuration : " + e,
+			);
+		}
+
 		req.events && Event.register(req.events);
 		const wallets: SupportedWallets[] = [];
 		const instances = Injectable.registerTransactionAdapterInstances();

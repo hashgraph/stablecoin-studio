@@ -1345,6 +1345,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				network: {
 					name: this.networkService.environment,
 					recognized: this.networkService.environment != unrecognized,
+					factoryId: this.networkService.configuration.factoryAddress,
 				},
 				wallet: SupportedWallets.METAMASK,
 			});
@@ -1378,6 +1379,9 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 							name: this.networkService.environment,
 							recognized:
 								this.networkService.environment != unrecognized,
+							factoryId:
+								this.networkService.configuration
+									.factoryAddress,
 						},
 						wallet: SupportedWallets.METAMASK,
 					});
@@ -1411,6 +1415,8 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 						name: this.networkService.environment,
 						recognized:
 							this.networkService.environment != unrecognized,
+						factoryId:
+							this.networkService.configuration.factoryAddress,
 					},
 					wallet: SupportedWallets.METAMASK,
 				});

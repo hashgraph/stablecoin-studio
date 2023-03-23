@@ -85,6 +85,7 @@ const Router = () => {
 			dispatch(walletActions.setStatus(ConnectionState.Paired));
 			dispatch(walletActions.setNetwork(event.network.name));
 			dispatch(walletActions.setNetworkRecognized(event.network.recognized));
+			dispatch(walletActions.setFactoryId(event.network.factoryId));
 			if (!event.data.account) dispatch(walletActions.setAccountRecognized(false));
 			else
 				dispatch(

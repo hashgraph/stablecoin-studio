@@ -32,6 +32,7 @@ export interface InitialStateProps {
 	network?: string;
 	networkRecognized?: boolean;
 	accountRecognized?: boolean;
+	factoryId?: string;
 }
 
 export const initialState: InitialStateProps = {
@@ -52,6 +53,7 @@ export const initialState: InitialStateProps = {
 	network: undefined,
 	networkRecognized: true,
 	accountRecognized: true,
+	factoryId: undefined,
 };
 
 export const getStableCoinList = createAsyncThunk(
@@ -147,6 +149,9 @@ export const walletSlice = createSlice({
 		setAccountRecognized: (state, action) => {
 			state.accountRecognized = action.payload;
 		},
+		setFactoryId: (state, action) => {
+			state.factoryId = action.payload;
+		},
 		clearData: (state) => {
 			state.data = initialState.data;
 			state.lastWallet = undefined;
@@ -158,6 +163,7 @@ export const walletSlice = createSlice({
 			state.network = initialState.network;
 			state.networkRecognized = initialState.networkRecognized;
 			state.accountRecognized = initialState.accountRecognized;
+			state.factoryId = initialState.factoryId;
 		},
 		setRoles: (state, action) => {
 			state.roles = action.payload;
@@ -189,6 +195,7 @@ export const walletSlice = createSlice({
 	},
 });
 
+export const SELECTED_FACTORY_ID = (state: RootState) => state.wallet.factoryId;
 export const SELECTED_NETWORK = (state: RootState) => state.wallet.network;
 export const SELECTED_NETWORK_RECOGNIZED = (state: RootState) => state.wallet.networkRecognized;
 export const SELECTED_WALLET = (state: RootState) => state.wallet;

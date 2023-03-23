@@ -3,7 +3,7 @@
 		"": "Next step",
 		"goBack": "Go back",
 		"createStableCoin": "Create stable coin",
-		"createNewStableCoin": "Create new stable coin",
+		"createNewStableCoin": "Create new stable coin using factory : ",
 		"cancel": "Cancel"
 	},
 	"tabs": {

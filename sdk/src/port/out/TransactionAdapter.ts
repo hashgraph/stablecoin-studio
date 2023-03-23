@@ -44,6 +44,7 @@ export interface InitializationData {
 export interface NetworkData {
 	name?: Environment;
 	recognized?: boolean;
+	factoryId?: string;
 }
 
 interface ITransactionAdapter {

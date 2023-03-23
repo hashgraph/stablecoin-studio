@@ -18,10 +18,11 @@ import {
 	getStableCoinList,
 	SELECTED_WALLET_ACCOUNT_INFO,
 	SELECTED_WALLET_PAIRED_ACCOUNT,
+	SELECTED_FACTORY_ID,
 } from '../../store/slices/walletSlice';
 import SDKService from '../../services/SDKService';
 import ModalNotification from '../../components/ModalNotification';
-import { Account, CreateRequest } from 'hedera-stable-coin-sdk';
+import { Account, CreateRequest, Network } from 'hedera-stable-coin-sdk';
 import type { RequestPublicKey } from 'hedera-stable-coin-sdk';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch } from '../../store/store';
@@ -34,6 +35,7 @@ const StableCoinCreation = () => {
 
 	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
 	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
+	const factoryId = useSelector(SELECTED_FACTORY_ID);
 
 	const form = useForm<FieldValues>({
 		mode: 'onChange',
@@ -371,7 +373,7 @@ const StableCoinCreation = () => {
 
 	return (
 		<Stack h='full'>
-			<BaseContainer title={t('common.createNewStableCoin')}>
+			<BaseContainer title={t('common.createNewStableCoin') + factoryId}>
 				<Stepper {...stepperProps} />
 			</BaseContainer>
 			<ModalNotification
