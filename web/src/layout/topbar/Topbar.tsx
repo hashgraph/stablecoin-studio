@@ -10,7 +10,7 @@ import {
 	Link,
 } from '@chakra-ui/react';
 import { Network } from 'hedera-stable-coin-sdk';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -20,19 +20,34 @@ import { RouterManager } from '../../Router/RouterManager';
 import {
 	SELECTED_NETWORK_RECOGNIZED,
 	SELECTED_WALLET_PAIRED_ACCOUNT_RECOGNIZED,
-	walletActions,
+	SELECTED_NETWORK,
+	SELECTED_WALLET_PAIRED_ACCOUNT,
 } from '../../store/slices/walletSlice';
 import CoinDropdown from './CoinDropdown';
 import CollapsibleButton from './components/CollapsibleButton';
 import TopbarRight from './TopbarRight';
 
 const Topbar = () => {
-	const dispatch = useDispatch();
 	const { t } = useTranslation('global');
 	const navigate = useNavigate();
 	const [haveFactory, setHaveFactory] = useState<boolean>(true);
 	const accountRecognized = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT_RECOGNIZED);
+	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
+	const [isAccountRecognized, setIsAccountRecognized] = useState<boolean>(
+		accountRecognized ?? true,
+	);
 	const networkRecognized = useSelector(SELECTED_NETWORK_RECOGNIZED);
+	const network = useSelector(SELECTED_NETWORK);
+	const [isNetworkRecognized, setIsNetworkRecognized] = useState<boolean>(
+		networkRecognized ?? true,
+	);
+
+	useEffect(() => {
+		if (accountRecognized) setIsAccountRecognized(true);
+		else setIsAccountRecognized(false);
+		if (networkRecognized) setIsNetworkRecognized(true);
+		else setIsNetworkRecognized(false);
+	}, [accountRecognized, account, networkRecognized, network]);
 
 	const handleNavigateSC = async () => {
 		const factoryId = await Network.getFactoryAddress();
@@ -101,7 +116,7 @@ const Topbar = () => {
 					/>
 				</Alert>
 			)}
-			{!networkRecognized && (
+			{!isNetworkRecognized && (
 				<Alert status='warning' justifyContent='center'>
 					<Flex width='container.lg'>
 						<AlertIcon />
@@ -116,11 +131,11 @@ const Topbar = () => {
 						position='relative'
 						right={-1}
 						top={-1}
-						onClick={() => dispatch(walletActions.setNetworkRecognized(true))}
+						onClick={() => setIsNetworkRecognized(true)}
 					/>
 				</Alert>
 			)}
-			{!accountRecognized && (
+			{networkRecognized && !isAccountRecognized && (
 				<Alert status='warning' justifyContent='center'>
 					<Flex width='container.lg'>
 						<AlertIcon />
@@ -135,7 +150,7 @@ const Topbar = () => {
 						position='relative'
 						right={-1}
 						top={-1}
-						onClick={() => dispatch(walletActions.setAccountRecognized(true))}
+						onClick={() => setIsAccountRecognized(true)}
 					/>
 				</Alert>
 			)}
