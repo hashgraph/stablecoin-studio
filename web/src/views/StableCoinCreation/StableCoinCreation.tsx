@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Stack, useDisclosure } from '@chakra-ui/react';
+import { Stack, HStack, useDisclosure, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -373,7 +373,22 @@ const StableCoinCreation = () => {
 
 	return (
 		<Stack h='full'>
-			<BaseContainer title={t('common.createNewStableCoin') + factoryId}>
+			<HStack spacing={6} w='full'>
+				<Text fontSize='28px' color='brand.secondary' fontWeight={500} align='left' w='full'>
+					{t('common.createNewStableCoin')}
+				</Text>
+				<Text
+					fontSize='16px'
+					color='brand.secondary'
+					fontWeight={700}
+					align='right'
+					w='full'
+					as='i'
+				>
+					{t('common.factoryId') + factoryId}
+				</Text>
+			</HStack>
+			<BaseContainer title=''>
 				<Stepper {...stepperProps} />
 			</BaseContainer>
 			<ModalNotification
