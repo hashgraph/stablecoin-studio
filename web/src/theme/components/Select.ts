@@ -73,9 +73,9 @@ const outline = ({ isInvalid, isDisabled }: SelectConfigProps) => {
 			border: '1px solid',
 			borderColor: isInvalid ? 'red.500' : 'gray.600',
 			borderRadius: '8px',
-			_hover: {
-				borderColor: isInvalid ? 'red.500' : isDisabled ? 'gray.200' : 'gray.300',
-			},
+			// _hover: {
+			// 	borderColor: isInvalid ? 'red.500' : isDisabled ? 'gray.200' : 'gray.300',
+			// },
 			_focusWithin: {
 				borderColor: isInvalid ? 'red.500' : 'gray.600',
 			},

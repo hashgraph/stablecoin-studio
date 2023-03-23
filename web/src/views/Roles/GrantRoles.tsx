@@ -58,7 +58,9 @@ const GrantRoleOperation = ({
 	} = useDisclosure();
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const accountId = useSelector(SELECTED_WALLET_PAIRED_ACCOUNTID);
-	const { control, watch, getValues, formState, setError } = useForm({ mode: 'onChange' });
+	const { control, watch, getValues, formState, setError } = useForm({
+		mode: 'onChange',
+	});
 	const {
 		fields: accounts,
 		append,
@@ -68,12 +70,16 @@ const GrantRoleOperation = ({
 		name: 'rol',
 	});
 	const isMaxAccounts = useMemo(() => accounts.length >= 10, [accounts]);
+	const isRoleSelected = useMemo((): boolean => {
+		const values = watch();
+		delete values.rol;
+		if (!values) return false;
+		return Object.values(values).some((item) => {
+			return item === true;
+		});
+	}, [watch()]);
 	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
 	const [grantRoles, setGrantRoles] = useState<GrantRoleRequest[]>([]);
-
-	useEffect(() => {
-		isRoleSelected();
-	}, [watch()]);
 
 	useEffect(() => {
 		addNewAccount();
@@ -236,14 +242,6 @@ const GrantRoleOperation = ({
 		);
 	};
 
-	const isRoleSelected = (): boolean => {
-		const values = getValues();
-		delete values.rol;
-		return Object.values(values).some((item) => {
-			return item === true;
-		});
-	};
-
 	const isNotValidAccount = () => {
 		const values = getValues()?.rol;
 		return values
@@ -370,7 +368,7 @@ const GrantRoleOperation = ({
 				}
 				onConfirm={handleSubmit}
 				confirmBtnProps={{
-					isDisabled: isNotValidAccount() || !isRoleSelected() || !formState.isValid,
+					isDisabled: isNotValidAccount() || !isRoleSelected || !formState.isValid,
 				}}
 			/>
 
