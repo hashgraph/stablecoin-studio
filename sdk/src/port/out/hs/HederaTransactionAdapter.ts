@@ -1011,14 +1011,16 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					params?.pauseKey,
 				];
 				filteredContractParams[0] = {
-					tokenName: params?.name,
-					tokenSymbol: params?.symbol,
+					tokenName: params?.name ? params?.name : '',
+					tokenSymbol: params?.symbol ? params?.symbol : '',
 					keys: this.setKeysForSmartContract(providedKeys),
-					second: params?.expirationTime,
-					autoRenewAccount: await this.getEVMAddress(
-						params?.autoRenewAccount,
-					),
-					autoRenewPeriod: params?.autoRenewPeriod,
+					second: params?.expirationTime ? params.expirationTime : -1,
+					autoRenewAccount: params?.autoRenewAccount
+						? await this.getEVMAddress(params.autoRenewAccount)
+						: '0x0000000000000000000000000000000000000000',
+					autoRenewPeriod: params?.autoRenewPeriod
+						? params.autoRenewPeriod
+						: -1,
 				};
 				break;
 

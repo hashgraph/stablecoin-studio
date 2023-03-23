@@ -1208,7 +1208,6 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 			CLIENT_ACCOUNT_ED25519.id,
 			StableCoinRole.DEFAULT_ADMIN_ROLE,
 		);
-
 		expect(tr.response).toEqual(true);
 		const expirationTime: number = oneYearLaterInSeconds();
 		tr = await th.update(
@@ -1225,6 +1224,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ED25519 accounts', () => {
 			CLIENT_ACCOUNT_ECDSA.publicKey,
 			CLIENT_ACCOUNT_ECDSA.publicKey,
 		);
+
 		const mirrorNodeAdapter: MirrorNodeAdapter = th.getMirrorNodeAdapter();
 		await delay(5);
 		const stableCoinViewModel: StableCoinViewModel =
