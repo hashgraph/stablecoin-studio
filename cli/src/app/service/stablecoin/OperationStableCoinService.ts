@@ -61,7 +61,7 @@ import ListStableCoinsService from './ListStableCoinsService.js';
 import CapabilitiesStableCoinService from './CapabilitiesStableCoinService.js';
 import FeeStableCoinService from './FeeStableCoinService.js';
 import TransfersStableCoinsService from './TransfersStableCoinService.js';
-import { IManagedFeatures } from '../../../domain/configuration/interfaces/IManagedFeatures.js';
+// import { IManagedFeatures } from '../../../domain/configuration/interfaces/IManagedFeatures.js';
 import colors from 'colors';
 import UpdateStableCoinService from './UpdateStableCoinService.js';
 
@@ -91,7 +91,7 @@ export default class OperationStableCoinService extends Service {
   private hasfeeScheduleKey;
   private isFrozen;
 
-  private tokenKeys: IManagedFeatures = undefined;
+  // private tokenUpdate: IManagedFeatures = undefined;
 
   constructor(tokenId?: string, memo?: string, symbol?: string) {
     super('Operation Stable Coin');
@@ -2358,30 +2358,127 @@ export default class OperationStableCoinService extends Service {
   }
 
   private async tokenConfiguration(): Promise<void> {
+    const updateRequest = new UpdateRequest({ tokenId: this.stableCoinId });
+    const stableCoinViewModel: StableCoinViewModel =
+      await new DetailsStableCoinsService().getDetailsStableCoins(
+        this.stableCoinId,
+        false,
+      );
+    await this.tokenConfigurationCollectData(
+      updateRequest,
+      stableCoinViewModel,
+    );
+  }
+
+  private async tokenConfigurationCollectData(
+    updateRequest: UpdateRequest,
+    stableCoinViewModel: StableCoinViewModel,
+  ): Promise<void> {
     const configAccount = utilsService.getCurrentAccount();
     const tokenConfigurationOptions = language.getArrayFromObject(
       'tokenConfiguration.options',
     );
 
+    const discarded: string[] = ['schema', 'tokenId'];
+    const filtered = Object.entries(updateRequest).filter(
+      ([key, value]) => !discarded.includes(key) && value !== undefined,
+    );
+
+    if (filtered.length === 0) {
+      const index = tokenConfigurationOptions.indexOf(
+        language.getText('tokenConfiguration.options.save'),
+      );
+      if (index > -1) {
+        tokenConfigurationOptions.splice(index, 1);
+      }
+    }
+
     switch (
       await utilsService.defaultMultipleAsk(
-        language.getText('stablecoin.askAction'),
+        language.getText('tokenConfiguration.askAction'),
         tokenConfigurationOptions,
         false,
-        configAccount.network,
-        `${configAccount.accountId} - ${configAccount.alias}`,
-        this.stableCoinWithSymbol,
-        this.stableCoinPaused,
-        this.stableCoinDeleted,
       )
     ) {
-      case language.getText('tokenConfiguration.options.keysManagement'):
+      case language.getText('tokenConfiguration.options.name'):
+        await utilsService.handleValidation(
+          () => updateRequest.validate('name'),
+          async () => {
+            updateRequest.name = await utilsService.defaultSingleAsk(
+              language.getText('stablecoin.askName'),
+              updateRequest.name || 'HEDERACOIN',
+            );
+          },
+        );
+        break;
+
+      case language.getText('tokenConfiguration.options.symbol'):
+        await utilsService.handleValidation(
+          () => updateRequest.validate('symbol'),
+          async () => {
+            updateRequest.symbol = await utilsService.defaultSingleAsk(
+              language.getText('stablecoin.askSymbol'),
+              updateRequest.symbol || 'HDC',
+            );
+          },
+        );
+        break;
+
+      case language.getText('tokenConfiguration.options.expirationTime'):
+        await utilsService.handleValidation(
+          () => updateRequest.validate('expirationTimestamp'),
+          async () => {
+            const expirationTimeInDays: string =
+              await utilsService.defaultSingleAsk(
+                language.getText('stablecoin.askExpirationTime'),
+                updateRequest.expirationTimestamp
+                  ? this.timestampInNanoToDays(
+                      Number(updateRequest.expirationTimestamp),
+                    )
+                  : '90',
+              );
+            updateRequest.expirationTimestamp = this.daysToTimestampInNano(
+              Number(expirationTimeInDays),
+            );
+          },
+        );
+        break;
+
+      case language.getText('tokenConfiguration.options.autoRenewAccountId'):
+        await utilsService.handleValidation(
+          () => updateRequest.validate('autoRenewAccount'),
+          async () => {
+            const autoRenewAccountId: string =
+              await utilsService.defaultSingleAsk(
+                language.getText('stablecoin.askAutoRenewAccountId'),
+                updateRequest.autoRenewAccount || configAccount.accountId,
+              );
+            updateRequest.autoRenewAccount = autoRenewAccountId;
+          },
+        );
+        break;
+
+      case language.getText('tokenConfiguration.options.autoRenewPeriod'):
+        await utilsService.handleValidation(
+          () => updateRequest.validate('autoRenewPeriod'),
+          async () => {
+            const autoRenewPeriodInDays: string =
+              (updateRequest.autoRenewPeriod =
+                await utilsService.defaultSingleAsk(
+                  language.getText('stablecoin.askAutoRenewPeriod'),
+                  updateRequest.autoRenewPeriod
+                    ? this.secondsToDays(Number(updateRequest.autoRenewPeriod))
+                    : '92',
+                ));
+            updateRequest.autoRenewPeriod = this.daysToSeconds(
+              Number(autoRenewPeriodInDays),
+            );
+          },
+        );
+        break;
+
+      case language.getText('tokenConfiguration.options.keys'):
         await utilsService.cleanAndShowBanner();
-        const stableCoinViewModel: StableCoinViewModel =
-          await new DetailsStableCoinsService().getDetailsStableCoins(
-            this.stableCoinId,
-            false,
-          );
         const tokenKeys = Object.keys(stableCoinViewModel)
           .filter((key) => key.endsWith('Key') && key !== 'adminKey')
           .reduce((obj, key) => {
@@ -2391,8 +2488,47 @@ export default class OperationStableCoinService extends Service {
         console.log(tokenKeys);
         await this.keysManagement(
           tokenKeys,
-          stableCoinViewModel.proxyAddress.toString(),
+          updateRequest,
+          stableCoinViewModel,
         );
+        break;
+
+      case language.getText('tokenConfiguration.options.save'):
+        await this.resumeChanges(updateRequest, stableCoinViewModel);
+
+        const confirm = await utilsService.defaultConfirmAsk(
+          language.getText('tokenConfiguration.confirm'),
+          true,
+        );
+        if (confirm) {
+          try {
+            await new UpdateStableCoinService().update(updateRequest);
+            updateRequest = new UpdateRequest({ tokenId: this.stableCoinId });
+          } catch (error) {
+            await utilsService.askErrorConfirmation(
+              async () => await this.operationsStableCoin(),
+              error,
+            );
+          }
+        }
+        break;
+
+      case tokenConfigurationOptions[tokenConfigurationOptions.length - 2]:
+        const filtered = Object.entries(updateRequest).filter(
+          ([key, value]) => !discarded.includes(key) && value !== undefined,
+        );
+        if (filtered.length === 0) {
+          await utilsService.cleanAndShowBanner();
+          await this.operationsStableCoin();
+        }
+        const goBack = await utilsService.defaultConfirmAsk(
+          language.getText('tokenConfiguration.goBack'),
+          true,
+        );
+        if (goBack) {
+          await utilsService.cleanAndShowBanner();
+          await this.operationsStableCoin();
+        }
         break;
 
       case tokenConfigurationOptions[tokenConfigurationOptions.length - 1]:
@@ -2400,33 +2536,190 @@ export default class OperationStableCoinService extends Service {
         await utilsService.cleanAndShowBanner();
         await this.operationsStableCoin();
     }
-    await this.tokenConfiguration();
+    await this.tokenConfigurationCollectData(
+      updateRequest,
+      stableCoinViewModel,
+    );
   }
 
-  private async keysManagement(keys, proxyAddress: string): Promise<void> {
+  private async keysManagement(
+    keys,
+    updateRequest: UpdateRequest,
+    stableCoinViewModel: StableCoinViewModel,
+  ): Promise<void> {
+    const filteredKeys: string[] = Object.entries(keys)
+      .filter((key) => key[1] !== undefined)
+      .map(function (x) {
+        return x[0];
+      });
+    switch (
+      await utilsService.defaultMultipleAsk(
+        language.getText('tokenConfiguration.askKeysAction'),
+        filteredKeys,
+        true,
+      )
+    ) {
+      case 'kycKey':
+        updateRequest.kycKey = await this.checkAnswer(
+          await utilsService.defaultMultipleAsk(
+            language.getText('stablecoin.features.kyc'),
+            language.getArrayFromObject('wizard.nonNoneFeatureOptions'),
+          ),
+        );
+        break;
+
+      case 'freezeKey':
+        updateRequest.freezeKey = await this.checkAnswer(
+          await utilsService.defaultMultipleAsk(
+            language.getText('stablecoin.features.freeze'),
+            language.getArrayFromObject('wizard.nonNoneFeatureOptions'),
+          ),
+        );
+        break;
+
+      case 'wipeKey':
+        updateRequest.wipeKey = await this.checkAnswer(
+          await utilsService.defaultMultipleAsk(
+            language.getText('stablecoin.features.wipe'),
+            language.getArrayFromObject('wizard.nonNoneFeatureOptions'),
+          ),
+        );
+        break;
+
+      case 'supplyKey':
+        updateRequest.supplyKey = await this.checkAnswer(
+          await utilsService.defaultMultipleAsk(
+            language.getText('stablecoin.features.supply'),
+            language.getArrayFromObject('wizard.nonNoneFeatureOptions'),
+          ),
+        );
+        break;
+
+      case 'pauseKey':
+        updateRequest.pauseKey = await this.checkAnswer(
+          await utilsService.defaultMultipleAsk(
+            language.getText('stablecoin.features.pause'),
+            language.getArrayFromObject('wizard.nonNoneFeatureOptions'),
+          ),
+        );
+        break;
+
+      case 'feeScheduleKey':
+        updateRequest.feeScheduleKey = await this.checkAnswer(
+          await utilsService.defaultMultipleAsk(
+            language.getText('stablecoin.features.feeSchedule'),
+            language.getArrayFromObject('wizard.nonNoneFeatureOptions'),
+          ),
+        );
+        break;
+
+      case filteredKeys[filteredKeys.length - 1]:
+      default:
+        await this.tokenConfigurationCollectData(
+          updateRequest,
+          stableCoinViewModel,
+        );
+    }
+    await this.keysManagement(keys, updateRequest, stableCoinViewModel);
+  }
+
+  private async resumeChanges(
+    updateRequest: UpdateRequest,
+    stableCoinViewModel: StableCoinViewModel,
+  ): Promise<void> {
+    const discarded: string[] = ['schema', 'tokenId'];
+    const filtered = Object.entries(updateRequest).filter(
+      ([key, value]) => !discarded.includes(key) && value !== undefined,
+    );
+    utilsService.showMessage('\n');
+    filtered.forEach((element) => {
+      switch (element[0]) {
+        case 'expirationTimestamp':
+          console.log(
+            colors.yellow(
+              `${element[0]}: ${this.timestampInNanoToDays(
+                stableCoinViewModel[element[0]],
+              )} days --> ${this.timestampInNanoToDays(
+                Number(element[1]),
+              )} days`,
+            ),
+          );
+          break;
+
+        case 'autoRenewPeriod':
+          console.log(
+            colors.yellow(
+              `${element[0]}: ${this.secondsToDays(
+                stableCoinViewModel[element[0]],
+              )} days --> ${this.secondsToDays(Number(element[1]))} days`,
+            ),
+          );
+          break;
+
+        default:
+          console.log(
+            colors.yellow(
+              `${element[0]}: ${stableCoinViewModel[element[0]]} --> ${
+                element[1]
+              }`,
+            ),
+          );
+      }
+    });
+    utilsService.showMessage('\n');
+  }
+
+  private timestampInNanoToDays(timestamp: number): string {
+    const currentDate: Date = new Date();
+    const currentExpirationTime: Date = new Date(
+      Math.floor(timestamp / 1000000),
+    );
+    const diffInMs = currentExpirationTime.getTime() - currentDate.getTime();
+    return Math.ceil(diffInMs / (1000 * 60 * 60 * 24)).toString();
+  }
+
+  private daysToTimestampInNano(days: number): string {
+    const currentDate: Date = new Date();
+    const currentDatePlusDays: Date = new Date();
+    currentDatePlusDays.setDate(currentDate.getDate() + days);
+    const currentDatePlusDaysInMillis = currentDatePlusDays.getTime();
+    return (currentDatePlusDaysInMillis * 1000000).toString();
+  }
+
+  private secondsToDays(seconds: number): string {
+    return Math.ceil(seconds / 24 / 60 / 60).toString();
+  }
+
+  private daysToSeconds(days: number): string {
+    return (days * 24 * 60 * 60).toString();
+  }
+
+  /*private async keysManagement2(keys, proxyAddress: string, updateRequest: UpdateRequest): Promise<void> {
     const configAccount = utilsService.getCurrentAccount();
     const keysManagmentOptions = language.getArrayFromObject(
       'keysManagement.options',
     );
-    if (!this.tokenKeys || Object.keys(this.tokenKeys).length === 0) {
+    /*if (!this.tokenUpdate || Object.keys(this.tokenUpdate).length === 0) {
       const index = keysManagmentOptions.indexOf(
         language.getText('keysManagement.options.confirmChanges'),
       );
       if (index > -1) {
         keysManagmentOptions.splice(index, 1);
       }
-    }
+    }*/
 
-    if (Object.values(keys).filter((key) => key !== undefined).length === 0) {
+  // ------ Si no hay ninguna clave del token con valor, no se muestra la opción de update keys --------
+  /*if (Object.values(keys).filter((key) => key !== undefined).length === 0) {
       const index = keysManagmentOptions.indexOf(
         language.getText('keysManagement.options.updateKeys'),
       );
       if (index > -1) {
         keysManagmentOptions.splice(index, 1);
       }
-    }
+    }*/
+  // ---------------------------------------------------------------------------------------------------
 
-    switch (
+  /*switch (
       await utilsService.defaultMultipleAsk(
         language.getText('stablecoin.askAction'),
         keysManagmentOptions,
@@ -2440,14 +2733,16 @@ export default class OperationStableCoinService extends Service {
     ) {
       case language.getText('keysManagement.options.updateKeys'):
         await utilsService.cleanAndShowBanner();
+        // --- Se filtran las claves por las que hay que preguntar (las que no sean undefined) -----
         const filteredKeys: string[] = Object.entries(keys)
           .filter((key) => key[1] !== undefined)
           .map(function (x) {
             return x[0];
           });
-        this.tokenKeys = await this.updateKeys(filteredKeys);
+        // -----------------------------------------------------------------------------------------  
+        this.tokenUpdate = await this.updateKeys(filteredKeys);
         await utilsService.cleanAndShowBanner();
-        this.printKeysChanges(keys, this.tokenKeys, proxyAddress);
+        this.printKeysChanges(keys, this.tokenUpdate, proxyAddress);
         utilsService.showMessage('\n');
         break;
 
@@ -2464,15 +2759,12 @@ export default class OperationStableCoinService extends Service {
             this.stableCoinWithSymbol,
           );
 
-          const updateRequest = new UpdateRequest({
-            tokenId: this.stableCoinId,
-            freezeKey: this.tokenKeys.freezeKey,
-            kycKey: this.tokenKeys.kycKey,
-            wipeKey: this.tokenKeys.wipeKey,
-            pauseKey: this.tokenKeys.pauseKey,
-            supplyKey: this.tokenKeys.supplyKey,
-            feeScheduleKey: this.tokenKeys.feeScheduleKey,
-          });
+          updateRequest.freezeKey = this.tokenUpdate.freezeKey;
+          updateRequest.kycKey = this.tokenUpdate.kycKey;
+          updateRequest.wipeKey = this.tokenUpdate.wipeKey;
+          updateRequest.pauseKey = this.tokenUpdate.pauseKey;
+          updateRequest.supplyKey = this.tokenUpdate.supplyKey;
+          updateRequest.feeScheduleKey = this.tokenUpdate.feeScheduleKey;
 
           try {
             await new UpdateStableCoinService().update(updateRequest);
@@ -2482,20 +2774,20 @@ export default class OperationStableCoinService extends Service {
               error,
             );
           }
-          this.tokenKeys = undefined;
+          this.tokenUpdate = undefined;
         }
         break;
 
       case keysManagmentOptions[keysManagmentOptions.length - 1]:
       default:
-        this.tokenKeys = undefined;
+        this.tokenUpdate = undefined;
         await utilsService.cleanAndShowBanner();
         await this.tokenConfiguration();
     }
-    await this.keysManagement(keys, proxyAddress);
-  }
+    await this.keysManagement(keys, proxyAddress, updateRequest);
+  }*/
 
-  private printKeysChanges(originalKeys, newKeys, proxyAddress: string): void {
+  /*private printKeysChanges(originalKeys, newKeys, proxyAddress: string): void {
     for (const [key, value] of Object.entries(newKeys)) {
       const newValue =
         value && value['key'] === 'null'
@@ -2508,45 +2800,45 @@ export default class OperationStableCoinService extends Service {
         console.log(colors.yellow(`${key}: ${JSON.stringify(newValue)}`));
       }
     }
-  }
+  }*/
 
-  private removeKey(key: string): void {
+  /*private removeKey(key: string): void {
     switch (key) {
       case 'supplyKey':
-        delete this.tokenKeys.supplyKey;
+        delete this.tokenUpdate.supplyKey;
         break;
 
       case 'freezeKey':
-        delete this.tokenKeys.freezeKey;
+        delete this.tokenUpdate.freezeKey;
         break;
 
       case 'wipeKey':
-        delete this.tokenKeys.wipeKey;
+        delete this.tokenUpdate.wipeKey;
         break;
 
       case 'pauseKey':
-        delete this.tokenKeys.pauseKey;
+        delete this.tokenUpdate.pauseKey;
         break;
 
       case 'feeScheduleKey':
-        delete this.tokenKeys.feeScheduleKey;
+        delete this.tokenUpdate.feeScheduleKey;
         break;
 
       case 'kycKey':
-        delete this.tokenKeys.kycKey;
+        delete this.tokenUpdate.kycKey;
         break;
     }
-  }
+  }*/
 
-  private keyHaveChanged(originalKey, newKey): boolean {
+  /*private keyHaveChanged(originalKey, newKey): boolean {
     if (!originalKey) return false;
     if (originalKey['value']) return newKey['key'] !== 'null';
     if (originalKey['key'] && originalKey['type'])
       return originalKey['key'] !== newKey['key'];
     return true;
-  }
+  }*/
 
-  private async updateKeys(keys): Promise<IManagedFeatures> {
+  /*private async updateKeys(keys): Promise<IManagedFeatures> {
     const selectedKeys: any = await utilsService.checkBoxMultipleAsk(
       language.getText('keysManagement.askKeys'),
       keys,
@@ -2616,7 +2908,7 @@ export default class OperationStableCoinService extends Service {
       );
     }
     return { kycKey, freezeKey, wipeKey, pauseKey, feeScheduleKey, supplyKey };
-  }
+  }*/
 
   private async checkAnswer(answer: string): Promise<RequestPublicKey> {
     switch (answer) {

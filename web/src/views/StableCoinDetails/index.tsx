@@ -98,11 +98,15 @@ const StableCoinDetails = () => {
 		},
 		{
 			label: t('autoRenewPeriod'),
-			value: `${selectedStableCoin?.autoRenewPeriod} days`,
+			value: selectedStableCoin?.autoRenewPeriod
+				? `${selectedStableCoin.autoRenewPeriod / 24 / 3600} days`
+				: '-',
 		},
 		{
 			label: t('expirationTime'),
-			value: epochTimestampToGMTString(selectedStableCoin?.expirationTimestamp),
+			value: selectedStableCoin?.expirationTimestamp
+				? epochTimestampToGMTString(selectedStableCoin.expirationTimestamp)
+				: '-',
 		},
 		{
 			label: t('proxyAddress'),

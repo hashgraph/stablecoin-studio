@@ -22,6 +22,7 @@ import { OptionalField } from '../../../core/decorator/OptionalDecorator.js';
 import { RequestPublicKey } from './BaseRequest.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
+import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 
 export default class UpdateRequest extends ValidatedRequest<UpdateRequest> {
 	tokenId: string;
@@ -36,10 +37,10 @@ export default class UpdateRequest extends ValidatedRequest<UpdateRequest> {
 	autoRenewAccount?: string;
 
 	@OptionalField()
-	autoRenewPeriod?: number;
+	autoRenewPeriod?: string;
 
 	@OptionalField()
-	expirationTime?: number;
+	expirationTimestamp?: string;
 
 	@OptionalField()
 	freezeKey?: RequestPublicKey;
@@ -65,7 +66,7 @@ export default class UpdateRequest extends ValidatedRequest<UpdateRequest> {
 		symbol,
 		autoRenewAccount,
 		autoRenewPeriod,
-		expirationTime,
+		expirationTimestamp,
 		freezeKey,
 		kycKey,
 		wipeKey,
@@ -77,8 +78,8 @@ export default class UpdateRequest extends ValidatedRequest<UpdateRequest> {
 		name?: string;
 		symbol?: string;
 		autoRenewAccount?: string;
-		autoRenewPeriod?: number;
-		expirationTime?: number;
+		autoRenewPeriod?: string;
+		expirationTimestamp?: string;
 		freezeKey?: RequestPublicKey;
 		kycKey?: RequestPublicKey;
 		wipeKey?: RequestPublicKey;
@@ -87,25 +88,28 @@ export default class UpdateRequest extends ValidatedRequest<UpdateRequest> {
 		feeScheduleKey?: RequestPublicKey;
 	}) {
 		super({
+			name: (val) => {
+				if (val === undefined || val === '') {
+					return;
+				}
+				return StableCoin.checkName(val);
+			},
+			symbol: (val) => {
+				if (val === undefined || val === '') {
+					return;
+				}
+				return StableCoin.checkSymbol(val);
+			},
 			tokenId: Validation.checkHederaIdFormat(),
 			autoRenewAccount: Validation.checkHederaIdFormat(),
-			// validate autoRenewPeriod
-			// The minimum period of time is approximately 30 days (2592000 seconds)
-			// and the maximum period of time is approximately 92 days (8000001 seconds).
-			//Any other value outside of this range will return the following error: AUTORENEW_DURATION_NOT_IN_RANGE.
-			/* autoRenewPeriod: (val) => {
-				if (val) {
-
-				}
-			}, */
-			// validate expirationTime:
-			//If the provided expiry is earlier than the current token expiry,
-			//the transaction will resolve to INVALID_EXPIRATION_TIME
-			/* expirationTime: (val) => {
-				if (val) {
-
-				}
-			}, */
+			autoRenewPeriod: Validation.checkNumber({
+				max: 7498800,
+				min: 2592000,
+			}),
+			expirationTimestamp: Validation.checkNumber({
+				max: 63072000,
+				min: 86400,
+			}),
 			freezeKey: Validation.checkPublicKey(),
 			kycKey: Validation.checkPublicKey(),
 			wipeKey: Validation.checkPublicKey(),
@@ -118,7 +122,7 @@ export default class UpdateRequest extends ValidatedRequest<UpdateRequest> {
 		this.symbol = symbol;
 		this.autoRenewAccount = autoRenewAccount;
 		this.autoRenewPeriod = autoRenewPeriod;
-		this.expirationTime = expirationTime;
+		this.expirationTimestamp = expirationTimestamp;
 		this.freezeKey = freezeKey;
 		this.kycKey = kycKey;
 		this.wipeKey = wipeKey;

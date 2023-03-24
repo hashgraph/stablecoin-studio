@@ -1014,7 +1014,9 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					tokenName: params?.name ? params?.name : '',
 					tokenSymbol: params?.symbol ? params?.symbol : '',
 					keys: this.setKeysForSmartContract(providedKeys),
-					second: params?.expirationTime ? params.expirationTime : -1,
+					second: params?.expirationTime
+						? Math.floor(params.expirationTime / 1000000000)
+						: -1,
 					autoRenewAccount: params?.autoRenewAccount
 						? await this.getEVMAddress(params.autoRenewAccount)
 						: '0x0000000000000000000000000000000000000000',

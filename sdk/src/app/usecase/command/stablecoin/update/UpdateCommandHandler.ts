@@ -75,8 +75,6 @@ export class UpdateCommandHandler implements ICommandHandler<UpdateCommand> {
 			supplyKey,
 		);
 
-		return Promise.resolve(
-			new UpdateCommandResponse(res.error === undefined),
-		);
+		return Promise.resolve(new UpdateCommandResponse(true));
 	}
 }

@@ -267,7 +267,7 @@ export class MirrorNodeAdapter {
 				autoRenewAccount: HederaId.from(
 					response.data.auto_renew_account,
 				),
-				autoRenewPeriod: response.data.auto_renew_period / (3600 * 24),
+				autoRenewPeriod: response.data.auto_renew_period,
 				expirationTimestamp: response.data.expiry_timestamp,
 				adminKey: getKeyOrDefault(response.data.admin_key) as PublicKey,
 				kycKey: getKeyOrDefault(response.data.kyc_key) as PublicKey,
