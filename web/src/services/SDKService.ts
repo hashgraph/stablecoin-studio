@@ -5,10 +5,12 @@ import {
 	Role,
 	CapabilitiesRequest,
 	ConnectRequest,
+	SetConfigurationRequest,
 	InitializationRequest,
 	ReserveDataFeed,
 	Fees,
 	Factory,
+	SetNetworkRequest,
 } from 'hedera-stable-coin-sdk';
 import type {
 	WalletEvent,
@@ -61,36 +63,49 @@ export class SDKService {
 		return !!this.initData;
 	}
 
-	public static async connectWallet(wallet: SupportedWallets) {
-		this.initData = await Network.connect(
-			new ConnectRequest({
-				network: 'testnet',
-				wallet,
+	public static async connectWallet(wallet: SupportedWallets, connectNetwork: string) {
+		await Network.setNetwork(
+			new SetNetworkRequest({
+				environment: connectNetwork,
 			}),
 		);
-		return this.initData;
-	}
 
-	public static async init(events: Partial<WalletEvent>, lastWallet?: SupportedWallets) {
 		let factories = [];
 
 		if (process.env.REACT_APP_FACTORIES) factories = JSON.parse(process.env.REACT_APP_FACTORIES);
 
+		const _lastFactoryId =
+			factories.length !== 0
+				? factories.find((i: any) => i.Environment === connectNetwork)
+					? factories.find((i: any) => i.Environment === connectNetwork).STABLE_COIN_FACTORY_ADDRESS
+					: ''
+				: '';
+
+		if (_lastFactoryId)
+			await Network.setConfig(
+				new SetConfigurationRequest({
+					factoryAddress: _lastFactoryId,
+				}),
+			);
+
+		this.initData = await Network.connect(
+			new ConnectRequest({
+				network: connectNetwork,
+				wallet,
+			}),
+		);
+
+		return this.initData;
+	}
+
+	public static async init(events: Partial<WalletEvent>) {
 		try {
 			const init = await Network.init(
 				new InitializationRequest({
-					network: 'testnet',
+					network: 'mainnet',
 					events,
-					configuration: {
-						factoryAddress:
-							factories.length !== 0
-								? factories.find((i: any) => i.Environment === 'testnet')
-										.STABLE_COIN_FACTORY_ADDRESS
-								: '',
-					},
 				}),
 			);
-			if (lastWallet) await this.connectWallet(lastWallet);
 
 			return init;
 		} catch (e) {

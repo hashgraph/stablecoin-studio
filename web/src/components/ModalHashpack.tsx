@@ -12,7 +12,7 @@ const ModalHashpack = ({ type }: ModalHashpackProps) => {
 	const { t } = useTranslation('global');
 
 	const handleConnectWallet = async () => {
-		SDKService.connectWallet(SupportedWallets.HASHPACK);
+		SDKService.connectWallet(SupportedWallets.HASHPACK, '');
 	};
 
 	return (

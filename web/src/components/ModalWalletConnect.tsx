@@ -13,7 +13,7 @@ import {
 	Text,
 	VStack,
 } from '@chakra-ui/react';
-import { Network, SupportedWallets } from 'hedera-stable-coin-sdk';
+import { SupportedWallets } from 'hedera-stable-coin-sdk';
 import type { FC, ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -75,18 +75,19 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 		isOpen && setLoading(undefined);
 	}, [isOpen]);
 
-	const { control } = useForm({
+	const { control, getValues } = useForm({
 		mode: 'onChange',
 	});
 
-	const handleWalletConnect = async (wallet: SupportedWallets) => {
+	const handleWalletConnect = async (wallet: SupportedWallets, network: string) => {
 		if (loading) return;
+		let result;
 		setLoading(wallet);
 		dispatch(walletActions.setLastWallet(wallet));
-		dispatch(walletActions.setNetwork(await Network.getNetwork()));
+		dispatch(walletActions.setNetwork(network));
 		dispatch(walletActions.setSelectedStableCoin(undefined));
 		try {
-			await SDKService.connectWallet(wallet);
+			result = await SDKService.connectWallet(wallet, network);
 		} catch (error: any) {
 			if ('errorCode' in error && error.errorCode === '40009') {
 				setRejected(true);
@@ -105,16 +106,17 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 	};
 
 	const handleConnectHashpackWalletConfirmed = () => {
-		handleWalletConnect(SupportedWallets.HASHPACK);
+		const values = getValues();
+		handleWalletConnect(SupportedWallets.HASHPACK, values.network.value);
 	};
 
 	const networkOptions = [
-		{ value: 'mainnet', label: 'Mainnet' },
 		{ value: 'testnet', label: 'Testnet' },
+		{ value: 'mainnet', label: 'Mainnet' },
 	];
 
 	const handleConnectMetamaskWallet = () => {
-		handleWalletConnect(SupportedWallets.METAMASK);
+		handleWalletConnect(SupportedWallets.METAMASK, 'testnet');
 	};
 
 	const PairingSpinner: FC<{ wallet: SupportedWallets; children?: ReactNode }> = ({
@@ -212,7 +214,7 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 									<SelectController
 										control={control}
 										isRequired
-										name='actionType'
+										name='network'
 										options={networkOptions}
 										addonLeft={true}
 										placeholder='network'

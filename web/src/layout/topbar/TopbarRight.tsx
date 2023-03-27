@@ -22,10 +22,11 @@ const TopbarRight = () => {
 	const network = useSelector(SELECTED_NETWORK);
 
 	const handleDisconnect = async () => {
-		await Network.disconnect();
-
-		dispatch(walletActions.clearData());
-		dispatch(walletActions.setStableCoinList([]));
+		// await Network.disconnect();
+		window.location.reload();
+		localStorage.clear();
+		/* dispatch(walletActions.clearData());
+		dispatch(walletActions.setStableCoinList([])); */
 	};
 
 	const getIcon = (): ReactElement => {

@@ -60,7 +60,6 @@ const Router = () => {
 
 	const availableWallets = useSelector(AVAILABLE_WALLETS);
 	const selectedWalletCoin = !!useSelector(SELECTED_WALLET_COIN);
-	const lastWallet = useSelector(LAST_WALLET_SELECTED);
 	const status = useSelector(SELECTED_WALLET_STATUS);
 
 	useEffect(() => {
@@ -127,15 +126,12 @@ const Router = () => {
 			level: process.env.REACT_APP_LOG_LEVEL ?? 'ERROR',
 			transports: new LoggerTransports.Console(),
 		};
-		await SDKService.init(
-			{
-				walletFound,
-				walletPaired,
-				walletConnectionStatusChanged,
-				walletDisconnect,
-			},
-			lastWallet,
-		);
+		await SDKService.init({
+			walletFound,
+			walletPaired,
+			walletConnectionStatusChanged,
+			walletDisconnect,
+		});
 	};
 
 	return (
@@ -143,11 +139,7 @@ const Router = () => {
 			{availableWallets.length > 0 ? (
 				<Routes>
 					{/* Private routes */}
-					<Route
-						element={
-							<LoginOverlayRoute show={Boolean(!lastWallet || status !== ConnectionState.Paired)} />
-						}
-					>
+					<Route element={<LoginOverlayRoute show={Boolean(status !== ConnectionState.Paired)} />}>
 						{selectedWalletCoin && (
 							<>
 								<Route path={RoutesMappingUrl.balance} element={<GetBalanceOperation />} />
