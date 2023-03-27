@@ -90,7 +90,9 @@ class NetworkInPort implements INetworkInPort {
 
 	@LogError
 	public getFactoryAddress(): string {
-		return this.networkService.configuration.factoryAddress;
+		return this.networkService.configuration
+			? this.networkService.configuration.factoryAddress
+			: '';
 	}
 
 	@LogError

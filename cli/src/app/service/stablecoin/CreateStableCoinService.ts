@@ -40,16 +40,25 @@ export default class CreateStableCoinService extends Service {
 
     const currentAccount = utilsService.getCurrentAccount();
 
+    const setConfigurationService: SetConfigurationService =
+      new SetConfigurationService();
+
     if (
       currentAccount.privateKey == null ||
       currentAccount.privateKey == undefined ||
       currentAccount.privateKey.key == ''
     ) {
-      const setConfigurationService: SetConfigurationService =
-        new SetConfigurationService();
       await setConfigurationService.initConfiguration(
         configurationService.getDefaultConfigurationPath(),
         currentAccount.network,
+      );
+    }
+    if (
+      utilsService.getCurrentFactory().id !==
+      (await setConfigurationService.getSDKFactory())
+    ) {
+      await setConfigurationService.setSDKFactory(
+        utilsService.getCurrentFactory().id,
       );
     }
     let createdToken;
