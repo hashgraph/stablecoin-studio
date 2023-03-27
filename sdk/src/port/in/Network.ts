@@ -125,19 +125,14 @@ class NetworkInPort implements INetworkInPort {
 		await this.setNetwork(
 			new SetNetworkRequest({ environment: req.network }),
 		);
-		try {
-			await this.setConfig(
-				new SetConfigurationRequest({
-					factoryAddress: req.configuration
-						? req.configuration.factoryAddress
-						: '',
-				}),
-			);
-		} catch (e) {
-			console.error(
-				"Error initializing the Network's configuration : " + e,
-			);
-		}
+
+		if (req.configuration)
+			if (req.configuration.factoryAddress)
+				await this.setConfig(
+					new SetConfigurationRequest({
+						factoryAddress: req.configuration.factoryAddress,
+					}),
+				);
 
 		req.events && Event.register(req.events);
 		const wallets: SupportedWallets[] = [];
@@ -160,6 +155,14 @@ class NetworkInPort implements INetworkInPort {
 		handleValidation('ConnectRequest', req);
 
 		const account = RequestMapper.mapAccount(req.account);
+		if (req.wallet == SupportedWallets.HASHPACK) {
+			const instances = Injectable.registerTransactionAdapterInstances();
+			for (const val of instances) {
+				if (val instanceof HashpackTransactionAdapter) {
+					await val.restart(req.network);
+				}
+			}
+		}
 		const res = await this.commandBus.execute(
 			new ConnectCommand(req.network, req.wallet, account),
 		);

@@ -20,15 +20,12 @@
 
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
-
-export interface SetConfigurationRequestProps {
-	factoryAddress: string;
-}
+import Configuration from '../../../domain/context/network/Configuration.js';
 
 export default class SetConfigurationRequest extends ValidatedRequest<SetConfigurationRequest> {
 	factoryAddress: string;
 
-	constructor(props: SetConfigurationRequestProps) {
+	constructor(props: Configuration) {
 		super({
 			factoryAddress: Validation.checkContractId(),
 		});
