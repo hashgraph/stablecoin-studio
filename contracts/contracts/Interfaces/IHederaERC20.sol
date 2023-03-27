@@ -55,16 +55,16 @@ interface IHederaERC20 {
     );
 
     /**
-     * @dev Emitted when token keys updated
+     * @dev Emitted when token updated
      *
      * @param token Token address
-     * @param token Token address
-     * @param newTokenKeys Token keys
+     * @param updateTokenStruct Struct containing updated token data
+     * @param newTreasury Token treasury account
      */
-    event TokenKeysUpdated(
+    event TokenUpdated(
         address token,
-        address newTreasury,
-        KeysLib.KeysStruct[] newTokenKeys
+        UpdateTokenStruct updateTokenStruct,
+        address newTreasury
     );
 
     struct InitializeStruct {
@@ -87,6 +87,15 @@ interface IHederaERC20 {
     struct CashinRoleStruct {
         address account;
         uint256 allowance;
+    }
+
+    struct UpdateTokenStruct {
+        string tokenName;
+        string tokenSymbol;
+        KeysLib.KeysStruct[] keys;
+        int64 second;
+        address autoRenewAccount;
+        int64 autoRenewPeriod;
     }
 
     /**
@@ -158,9 +167,9 @@ interface IHederaERC20 {
     ) external returns (uint256);
 
     /**
-     * @dev Update token keys
+     * @dev Update token
      *
-     * @param keys The new addresses to set for the underlying token
+     * @param updatedToken Values to update the token
      */
-    function updateTokenKeys(KeysLib.KeysStruct[] calldata keys) external;
+    function updateToken(UpdateTokenStruct calldata updatedToken) external;
 }
