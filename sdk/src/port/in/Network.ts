@@ -26,16 +26,21 @@ import { ConnectCommand } from '../../app/usecase/command/network/connect/Connec
 import ConnectRequest, { SupportedWallets } from './request/ConnectRequest.js';
 import RequestMapper from './request/mapping/RequestMapper.js';
 import TransactionService from '../../app/service/TransactionService.js';
+import NetworkService from '../../app/service/NetworkService.js';
 import SetNetworkRequest from './request/SetNetworkRequest.js';
 import { SetNetworkCommand } from '../../app/usecase/command/network/setNetwork/SetNetworkCommand.js';
 import { SetConfigurationCommand } from '../../app/usecase/command/network/setConfiguration/SetConfigurationCommand.js';
-import { Environment } from '../../domain/context/network/Environment.js';
+import {
+	Environment,
+	unrecognized,
+} from '../../domain/context/network/Environment.js';
 import InitializationRequest from './request/InitializationRequest.js';
 import Event, { WalletEvents } from './Event.js';
 import RPCTransactionAdapter from '../out/rpc/RPCTransactionAdapter.js';
 import { HashpackTransactionAdapter } from '../out/hs/hashpack/HashpackTransactionAdapter.js';
 import { LogError } from '../../core/decorator/LogErrorDecorator.js';
 import SetConfigurationRequest from './request/SetConfigurationRequest.js';
+import { handleValidation } from './Common.js';
 
 export { InitializationData, SupportedWallets };
 
@@ -47,7 +52,6 @@ export type NetworkResponse = {
 };
 
 export type ConfigResponse = {
-	hederaERC20Address: string;
 	factoryAddress: string;
 };
 
@@ -56,6 +60,9 @@ interface INetworkInPort {
 	disconnect(): Promise<boolean>;
 	setNetwork(req: SetNetworkRequest): Promise<NetworkResponse>;
 	setConfig(req: SetConfigurationRequest): Promise<ConfigResponse>;
+	getFactoryAddress(): string;
+	getNetwork(): string;
+	isNetworkRecognized(): boolean;
 }
 
 class NetworkInPort implements INetworkInPort {
@@ -66,21 +73,40 @@ class NetworkInPort implements INetworkInPort {
 		private readonly transactionService: TransactionService = Injectable.resolve(
 			TransactionService,
 		),
+		private readonly networkService: NetworkService = Injectable.resolve(
+			NetworkService,
+		),
 	) {}
 
 	@LogError
 	async setConfig(req: SetConfigurationRequest): Promise<ConfigResponse> {
+		handleValidation('SetConfigurationRequest', req);
+
 		const res = await this.commandBus.execute(
-			new SetConfigurationCommand(
-				req.factoryAddress,
-				req.hederaERC20Address,
-			),
+			new SetConfigurationCommand(req.factoryAddress),
 		);
 		return res;
 	}
 
 	@LogError
+	public getFactoryAddress(): string {
+		return this.networkService.configuration.factoryAddress;
+	}
+
+	@LogError
+	public getNetwork(): string {
+		return this.networkService.environment;
+	}
+
+	@LogError
+	public isNetworkRecognized(): boolean {
+		return this.networkService.environment != unrecognized;
+	}
+
+	@LogError
 	async setNetwork(req: SetNetworkRequest): Promise<NetworkResponse> {
+		handleValidation('SetNetworkRequest', req);
+
 		const res = await this.commandBus.execute(
 			new SetNetworkCommand(
 				req.environment,
@@ -94,16 +120,25 @@ class NetworkInPort implements INetworkInPort {
 
 	@LogError
 	async init(req: InitializationRequest): Promise<SupportedWallets[]> {
+		handleValidation('InitializationRequest', req);
+
 		await this.setNetwork(
 			new SetNetworkRequest({ environment: req.network }),
 		);
-		req.configuration &&
-			(await this.setConfig(
+		try {
+			await this.setConfig(
 				new SetConfigurationRequest({
-					factoryAddress: req.configuration?.factoryAddress,
-					hederaERC20Address: req.configuration?.hederaERC20Address,
+					factoryAddress: req.configuration
+						? req.configuration.factoryAddress
+						: '',
 				}),
-			));
+			);
+		} catch (e) {
+			console.error(
+				"Error initializing the Network's configuration : " + e,
+			);
+		}
+
 		req.events && Event.register(req.events);
 		const wallets: SupportedWallets[] = [];
 		const instances = Injectable.registerTransactionAdapterInstances();
@@ -122,6 +157,8 @@ class NetworkInPort implements INetworkInPort {
 
 	@LogError
 	async connect(req: ConnectRequest): Promise<InitializationData> {
+		handleValidation('ConnectRequest', req);
+
 		const account = RequestMapper.mapAccount(req.account);
 		const res = await this.commandBus.execute(
 			new ConnectCommand(req.network, req.wallet, account),

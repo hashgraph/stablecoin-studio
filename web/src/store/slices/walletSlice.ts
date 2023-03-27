@@ -29,6 +29,10 @@ export interface InitialStateProps {
 	deletedToken?: boolean;
 	pausedToken?: boolean;
 	roles?: string[];
+	network?: string;
+	networkRecognized?: boolean;
+	accountRecognized?: boolean;
+	factoryId?: string;
 }
 
 export const initialState: InitialStateProps = {
@@ -46,6 +50,10 @@ export const initialState: InitialStateProps = {
 	deletedToken: undefined,
 	pausedToken: undefined,
 	roles: undefined,
+	network: undefined,
+	networkRecognized: true,
+	accountRecognized: true,
+	factoryId: undefined,
 };
 
 export const getStableCoinList = createAsyncThunk(
@@ -62,6 +70,7 @@ export const getStableCoinList = createAsyncThunk(
 			return stableCoins;
 		} catch (e) {
 			console.error(e);
+			throw new Error();
 		}
 	},
 );
@@ -83,6 +92,7 @@ export const getExternalTokenList = createAsyncThunk(
 			return [];
 		} catch (e) {
 			console.error(e);
+			throw new Error();
 		}
 	},
 );
@@ -94,7 +104,7 @@ export const walletSlice = createSlice({
 	reducers: {
 		setLastWallet: (state, action) => {
 			state.lastWallet = action.payload;
-			localStorage?.setItem('lastWallet', action.payload);
+			localStorage?.setItem(LAST_WALLET_LS, action.payload);
 		},
 		setData: (state, action) => {
 			state.data = action.payload;
@@ -130,6 +140,18 @@ export const walletSlice = createSlice({
 		setDeletedToken: (state, action) => {
 			state.deletedToken = action.payload;
 		},
+		setNetwork: (state, action) => {
+			state.network = action.payload;
+		},
+		setNetworkRecognized: (state, action) => {
+			state.networkRecognized = action.payload;
+		},
+		setAccountRecognized: (state, action) => {
+			state.accountRecognized = action.payload;
+		},
+		setFactoryId: (state, action) => {
+			state.factoryId = action.payload;
+		},
 		clearData: (state) => {
 			state.data = initialState.data;
 			state.lastWallet = undefined;
@@ -138,6 +160,10 @@ export const walletSlice = createSlice({
 			state.status = ConnectionState.Disconnected;
 			localStorage?.removeItem(LAST_WALLET_LS);
 			state.roles = undefined;
+			state.network = initialState.network;
+			state.networkRecognized = initialState.networkRecognized;
+			state.accountRecognized = initialState.accountRecognized;
+			state.factoryId = initialState.factoryId;
 		},
 		setRoles: (state, action) => {
 			state.roles = action.payload;
@@ -151,16 +177,27 @@ export const walletSlice = createSlice({
 		builder.addCase(getStableCoinList.fulfilled, (state, action) => {
 			if (action.payload) {
 				state.stableCoinList = action.payload;
+				if (state.stableCoinList.coins.length === 0) state.selectedStableCoin = undefined;
 			}
+		});
+		builder.addCase(getStableCoinList.rejected, (state) => {
+			state.stableCoinList = { coins: [] };
+			state.selectedStableCoin = undefined;
 		});
 		builder.addCase(getExternalTokenList.fulfilled, (state, action) => {
 			if (action.payload) {
 				state.externalTokenList = action.payload;
 			}
 		});
+		builder.addCase(getExternalTokenList.rejected, (state) => {
+			state.externalTokenList = undefined;
+		});
 	},
 });
 
+export const SELECTED_FACTORY_ID = (state: RootState) => state.wallet.factoryId;
+export const SELECTED_NETWORK = (state: RootState) => state.wallet.network;
+export const SELECTED_NETWORK_RECOGNIZED = (state: RootState) => state.wallet.networkRecognized;
 export const SELECTED_WALLET = (state: RootState) => state.wallet;
 export const STABLE_COIN_LIST = (state: RootState) => state.wallet.stableCoinList;
 export const AVAILABLE_WALLETS = (state: RootState) => state.wallet.foundWallets;
@@ -178,6 +215,8 @@ export const SELECTED_WALLET_PAIRED_ACCOUNTID = (state: RootState) =>
 export const SELECTED_WALLET_PAIRED_ACCOUNT = (state: RootState) => ({
 	accountId: state.wallet.data?.account?.id,
 });
+export const SELECTED_WALLET_PAIRED_ACCOUNT_RECOGNIZED = (state: RootState) =>
+	state.wallet.accountRecognized;
 export const SELECTED_TOKEN_PAUSED = (state: RootState) => state.wallet.pausedToken;
 export const SELECTED_TOKEN_DELETED = (state: RootState) => state.wallet.deletedToken;
 export const SELECTED_TOKEN_RESERVE_ADDRESS = (state: RootState) =>

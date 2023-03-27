@@ -38,8 +38,7 @@ const FeesManagement = () => {
 	const [error, setError] = useState<any>();
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const variant = awaitingUpdate ? 'loading' : success ? 'success' : 'error';
-
-	const { control, getValues, setValue, watch, handleSubmit } = useForm({
+	const { control, getValues, setValue, watch, handleSubmit, formState } = useForm({
 		mode: 'onChange',
 	});
 	const {
@@ -89,6 +88,7 @@ const FeesManagement = () => {
 	const [FeeTypeValues, setFeeTypeValues] = useState(initialFeeTypeValues);
 	const [fixedFee, setFixedFee] = useState(initialFixedFee);
 	const [fractionalFee, setFractionalFee] = useState(initialFractionalFee);
+	const [isLoading, setIsLoading] = useState<boolean[]>([]);
 
 	const addFixedFee = (fee: AddFixedFeeRequest) => {
 		const currentFixedFee = fixedFee;
@@ -183,6 +183,9 @@ const FeesManagement = () => {
 
 	useEffect(() => {
 		const parsedFees = selectedStableCoin!.customFees!.map((item: FeeTypes) => {
+			const load = isLoading;
+			load.push(false);
+			setIsLoading(load);
 			if ('amount' in item) {
 				addFeeTypeValues(FeeTypeValue.FIXED);
 				addFixedFee(
@@ -298,7 +301,9 @@ const FeesManagement = () => {
 		addFeeTypeValues(FeeTypeValue.FIXED);
 		addFixedFee(emptyFixedFee);
 		addFractionalFee(emptyFractionalFee);
-
+		const newLoader = isLoading;
+		newLoader.push(false);
+		setIsLoading(newLoader);
 		// Default values when add new fee
 		append({
 			feeType: feeTypeOption.FIXED,
@@ -314,6 +319,9 @@ const FeesManagement = () => {
 		removeFeeTypeValues(i);
 		removeFixedFee(i);
 		removeFractionalFee(i);
+		const newLoader = isLoading;
+		newLoader.splice(i, 1);
+		setIsLoading(newLoader);
 		remove(i);
 	}
 
@@ -505,7 +513,6 @@ const FeesManagement = () => {
 										<GridItem>
 											<SelectCreatableController
 												key={field.id}
-												overrideStyles={selectorStyle}
 												addonLeft={true}
 												rules={{
 													required: t('global:validations.required') ?? propertyNotFound,
@@ -518,6 +525,13 @@ const FeesManagement = () => {
 														},
 														checkTokenID: async (option: any) => {
 															if (!option.__isNew__) return true;
+															const load = isLoading;
+															load[i] = true;
+
+															console.log(load);
+
+															setIsLoading(load);
+															console.log('loading', isLoading);
 
 															try {
 																await SDKService.getStableCoinDetails(
@@ -526,20 +540,21 @@ const FeesManagement = () => {
 																	}),
 																);
 															} catch (e) {
-																console.log({ e });
 																return t('global:validations.tokenIdNotExists', {
 																	tokenId: option.value,
 																}) as string;
 															} finally {
-																console.log('Terminado');
+																load[i] = false;
+																setIsLoading(load);
 															}
 														},
 													},
 												}}
 												addonDown={<Icon name='CaretDown' w={4} h={4} />}
-												variant='unstyled'
+												variant='outline'
 												name={`fees.${i}.tokenIdCollected`}
 												control={control}
+												isLoading={isLoading[i]}
 												isRequired={true}
 												options={[...Object.values(collectorIdOption)]}
 												placeholder={t('feesManagement:tokensFeeOption:placeholder')}
@@ -684,7 +699,11 @@ const FeesManagement = () => {
 						<Button variant='primary' onClick={handleAddNewRow} isDisabled={isMaxFees}>
 							{t('updateTokenFees.addRowButtonText')}
 						</Button>
-						<Button variant='primary' onClick={handleSubmit(handleUpdateTokenFees)}>
+						<Button
+							variant='primary'
+							onClick={handleSubmit(handleUpdateTokenFees)}
+							isDisabled={!formState.isValid}
+						>
 							{t('updateTokenFees.saveChangesButtonText')}
 						</Button>
 					</Flex>

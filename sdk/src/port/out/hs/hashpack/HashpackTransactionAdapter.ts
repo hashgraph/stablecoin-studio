@@ -126,7 +126,11 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 			eventData.initData.account = this.account;
 			this.eventService.emit(WalletEvents.walletPaired, {
 				data: eventData.initData,
-				network: this.networkService.environment,
+				network: {
+					name: this.networkService.environment,
+					recognized: true,
+					factoryId: this.networkService.configuration.factoryAddress,
+				},
 				wallet: SupportedWallets.HASHPACK,
 			});
 			this.setSigner();
@@ -179,7 +183,11 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 					pairing: this.initData.pairingString,
 					topic: this.initData.topic,
 				},
-				network: this.networkService.environment,
+				network: {
+					name: this.networkService.environment,
+					recognized: true,
+					factoryId: this.networkService.configuration.factoryAddress,
+				},
 			});
 		}
 		return Promise.resolve({
@@ -337,7 +345,13 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 							pairing: this.initData.pairingString,
 							topic: this.pairingData.topic,
 						},
-						network: this.pairingData.network,
+						network: {
+							name: this.pairingData.network,
+							recognized: true,
+							factoryId:
+								this.networkService.configuration
+									.factoryAddress,
+						},
 					});
 				} else {
 					throw new PairingError(data);

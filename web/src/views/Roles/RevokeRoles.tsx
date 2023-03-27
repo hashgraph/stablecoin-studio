@@ -50,11 +50,16 @@ const RevokeRoleOperation = () => {
 		name: 'rol',
 	});
 	const isMaxAccounts = useMemo(() => accounts.length >= 10, [accounts]);
+	const isRoleSelected = useMemo((): boolean => {
+		const values = watch();
+		delete values.rol;
+		if (!values) return false;
+		return Object.values(values).some((item) => {
+			return item === true;
+		});
+	}, [watch()]);
 	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
 	const [revokeRoles, setRevokeRoles] = useState<RevokeRoleRequest[]>([]);
-	useEffect(() => {
-		isRoleSelected();
-	}, [watch()]);
 
 	useEffect(() => {
 		addNewAccount();
@@ -179,14 +184,6 @@ const RevokeRoleOperation = () => {
 		remove(i);
 	};
 
-	const isRoleSelected = (): boolean => {
-		const values = getValues();
-		delete values.rol;
-		return Object.values(values).some((item) => {
-			return item === true;
-		});
-	};
-
 	const handleSubmit = () => {
 		const values = getValues().rol;
 
@@ -295,7 +292,7 @@ const RevokeRoleOperation = () => {
 				}
 				onConfirm={handleSubmit}
 				confirmBtnProps={{
-					isDisabled: isNotValidAccount() || !isRoleSelected() || !formState.isValid,
+					isDisabled: isNotValidAccount() || !isRoleSelected || !formState.isValid,
 				}}
 			/>
 
