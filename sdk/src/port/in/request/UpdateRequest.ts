@@ -102,14 +102,18 @@ export default class UpdateRequest extends ValidatedRequest<UpdateRequest> {
 			},
 			tokenId: Validation.checkHederaIdFormat(),
 			autoRenewAccount: Validation.checkHederaIdFormat(),
-			autoRenewPeriod: Validation.checkNumber({
-				max: 7498800,
-				min: 2592000,
-			}),
-			expirationTimestamp: Validation.checkNumber({
-				max: 63072000,
-				min: 86400,
-			}),
+			autoRenewPeriod: (val) => {
+				if (val === undefined || val === '') {
+					return;
+				}
+				return StableCoin.checkAutoRenewPeriod(val);
+			},
+			expirationTimestamp: (val) => {
+				if (val === undefined || val === '') {
+					return;
+				}
+				return StableCoin.checkExpirationTimestamp(val);
+			},
 			freezeKey: Validation.checkPublicKey(),
 			kycKey: Validation.checkPublicKey(),
 			wipeKey: Validation.checkPublicKey(),

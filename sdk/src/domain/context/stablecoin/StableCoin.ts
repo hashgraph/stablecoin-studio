@@ -47,6 +47,8 @@ import { TokenType } from './TokenType.js';
 import EvmAddress from '../contract/EvmAddress.js';
 import { CustomFee } from '../fee/CustomFee.js';
 import { CashInAllowanceInvalid } from './error/CashInAllowanceInvalid.js';
+import InvalidAutoRenewPeriod from './error/InvalidAutoRenewPeriod.js';
+import InvalidExpirationTimestamp from './error/InvalidExpirationTimestamp.js';
 
 const MAX_SUPPLY = 9_223_372_036_854_775_807n;
 const TEN = 10;
@@ -401,6 +403,46 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 			return list;
 		}
 		return list;
+	}
+
+	public static checkExpirationTimestamp(value: string): BaseError[] {
+		const errorList: BaseError[] = [];
+
+		const regexp = /^\d{19}$/;
+		if (!value.match(regexp)) {
+			return [new InvalidType(value, 'timestamp')];
+		}
+
+		const epochTimestamp: number = Number(value) / 1000000;
+		const date = new Date(epochTimestamp);
+		const minDate: Date = new Date();
+		minDate.setDate(minDate.getDate() + 1);
+		const maxDate: Date = new Date();
+		maxDate.setDate(maxDate.getDate() + 730);
+
+		if (date < minDate || date > maxDate) {
+			errorList.push(
+				new InvalidExpirationTimestamp(date, minDate, maxDate),
+			);
+		}
+
+		return errorList;
+	}
+
+	public static checkAutoRenewPeriod(value: string): BaseError[] {
+		const errorList: BaseError[] = [];
+
+		const v: number = Number(value) / 60 / 60 / 24;
+		if (!Number.isInteger(v)) {
+			return [new InvalidType(v, 'integer')];
+		}
+
+		const min = 30;
+		const max = 92;
+		if (!CheckNums.isWithinRange(v, min, max)) {
+			errorList.push(new InvalidAutoRenewPeriod(v, min, max));
+		}
+		return errorList;
 	}
 
 	public getDecimalOperator(): number {
