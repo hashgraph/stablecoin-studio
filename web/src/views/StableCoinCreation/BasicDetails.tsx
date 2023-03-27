@@ -93,7 +93,8 @@ const BasicDetails = (props: BasicDetailsProps) => {
 							required: t(`global:validations.required`) ?? propertyNotFound,
 							validate: {
 								validation: (option: any) => {
-									if (!option.__isNew__) return true;
+									if (!option || !option.value) return false;
+									// if (!option.__isNew__) return true;
 									request.hederaERC20 = option.value as string;
 									const res = handleRequestValidation(request.validate('hederaERC20'));
 									return res;

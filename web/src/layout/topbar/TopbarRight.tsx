@@ -1,32 +1,26 @@
 import { Box, Flex, HStack, Image, Text, VStack } from '@chakra-ui/react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Icon from '../../components/Icon';
 import {
 	LAST_WALLET_SELECTED,
 	SELECTED_WALLET_PAIRED,
 	SELECTED_NETWORK,
-	walletActions,
 } from '../../store/slices/walletSlice';
 import HEDERA_LOGO from '../../assets/png/hashpackLogo.png';
 import METAMASK_LOGO from '../../assets/svg/MetaMask_Fox.svg';
 import TooltipCopy from '../../components/TooltipCopy';
-import { Network, SupportedWallets } from 'hedera-stable-coin-sdk';
+import { SupportedWallets } from 'hedera-stable-coin-sdk';
 import { Question } from 'phosphor-react';
-import { type ReactElement } from 'react';
+import { useEffect, type ReactElement } from 'react';
 
 const TopbarRight = () => {
-	const dispatch = useDispatch();
-
 	const initData = useSelector(SELECTED_WALLET_PAIRED);
 	const selectedWallet = useSelector(LAST_WALLET_SELECTED);
 	const network = useSelector(SELECTED_NETWORK);
 
 	const handleDisconnect = async () => {
-		// await Network.disconnect();
 		window.location.reload();
 		localStorage.clear();
-		/* dispatch(walletActions.clearData());
-		dispatch(walletActions.setStableCoinList([])); */
 	};
 
 	const getIcon = (): ReactElement => {
