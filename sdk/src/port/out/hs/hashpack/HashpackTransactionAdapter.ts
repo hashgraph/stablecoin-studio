@@ -102,10 +102,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 		const currentNetwork = network ?? this.networkService.environment;
 		this.initData = await this.hc.init(
 			SDK.appMetadata,
-			currentNetwork as
-				| 'testnet'
-				| 'previewnet'
-				| 'mainnet',
+			currentNetwork as 'testnet' | 'previewnet' | 'mainnet',
 		);
 		const eventData: WalletInitEvent = {
 			wallet: SupportedWallets.HASHPACK,
@@ -148,10 +145,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 	private async setSigner(network: string): Promise<void> {
 		this.hashConnectSigner = await this.hc.getSignerWithAccountKey(
 			this.hc.getProvider(
-				network as
-					| 'testnet'
-					| 'previewnet'
-					| 'mainnet',
+				network as 'testnet' | 'previewnet' | 'mainnet',
 				this.initData.topic,
 				this.account.id.toString(),
 			),
@@ -318,7 +312,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 		);
 	}
 
-	public async restart(network: string): Promise<void>{
+	public async restart(network: string): Promise<void> {
 		await this.stop();
 		this.hc = new HashConnect();
 		this.setUpHashConnectEvents();
@@ -395,7 +389,6 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 				result: !!msg,
 			});
 		});
-		
 	}
 
 	getAvailabilityExtension(): boolean {
