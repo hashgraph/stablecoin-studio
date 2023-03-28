@@ -127,7 +127,9 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 				network: {
 					name: currentNetwork,
 					recognized: true,
-					factoryId: this.networkService.configuration.factoryAddress,
+					factoryId: this.networkService.configuration
+						? this.networkService.configuration.factoryAddress
+						: '',
 				},
 				wallet: SupportedWallets.HASHPACK,
 			});
@@ -181,7 +183,9 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 				network: {
 					name: this.networkService.environment,
 					recognized: true,
-					factoryId: this.networkService.configuration.factoryAddress,
+					factoryId: this.networkService.configuration
+						? this.networkService.configuration.factoryAddress
+						: '',
 				},
 			});
 		}
@@ -351,9 +355,10 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 						network: {
 							name: this.pairingData.network,
 							recognized: true,
-							factoryId:
-								this.networkService.configuration
-									.factoryAddress,
+							factoryId: this.networkService.configuration
+								? this.networkService.configuration
+										.factoryAddress
+								: '',
 						},
 					});
 				} else {
