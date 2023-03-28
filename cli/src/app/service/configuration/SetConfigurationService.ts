@@ -10,6 +10,7 @@ import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccoun
 import { IConsensusNodeConfig } from '../../../domain/configuration/interfaces/IConsensusNodeConfig.js';
 import { INetworkConfig } from '../../../domain/configuration/interfaces/INetworkConfig.js';
 import { IFactoryConfig } from '../../../domain/configuration/interfaces/IFactoryConfig.js';
+import { Network, SetConfigurationRequest } from 'hedera-stable-coin-sdk';
 const colors = require('colors');
 
 /**
@@ -243,6 +244,15 @@ export default class SetConfigurationService extends Service {
     defaultCfgData.factories = factories;
     configurationService.setConfiguration(defaultCfgData);
     return factories;
+  }
+
+  public async setSDKFactory(factoryId: string): Promise<void> {
+    const req = new SetConfigurationRequest({ factoryAddress: factoryId });
+    await Network.setConfig(req);
+  }
+
+  public async getSDKFactory(): Promise<string> {
+    return await Network.getFactoryAddress();
   }
 
   public async manageAccountMenu(): Promise<void> {

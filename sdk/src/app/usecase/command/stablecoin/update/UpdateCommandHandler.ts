@@ -40,6 +40,11 @@ export class UpdateCommandHandler implements ICommandHandler<UpdateCommand> {
 	async execute(command: UpdateCommand): Promise<UpdateCommandResponse> {
 		const {
 			tokenId,
+			name,
+			symbol,
+			autoRenewAccount,
+			autoRenewPeriod,
+			expirationTime,
 			kycKey,
 			freezeKey,
 			feeScheduleKey,
@@ -57,6 +62,11 @@ export class UpdateCommandHandler implements ICommandHandler<UpdateCommand> {
 		const handler = this.transactionService.getHandler();
 		const res = await handler.update(
 			capabilities,
+			name,
+			symbol,
+			autoRenewAccount,
+			autoRenewPeriod,
+			expirationTime,
 			kycKey,
 			freezeKey,
 			feeScheduleKey,
@@ -65,8 +75,6 @@ export class UpdateCommandHandler implements ICommandHandler<UpdateCommand> {
 			supplyKey,
 		);
 
-		return Promise.resolve(
-			new UpdateCommandResponse(res.error === undefined),
-		);
+		return Promise.resolve(new UpdateCommandResponse(true));
 	}
 }

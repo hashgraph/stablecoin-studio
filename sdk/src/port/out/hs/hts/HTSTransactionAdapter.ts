@@ -100,7 +100,9 @@ export class HTSTransactionAdapter extends HederaTransactionAdapter {
 			network: {
 				name: this.networkService.environment,
 				recognized: true,
-				factoryId: this.networkService.configuration.factoryAddress,
+				factoryId: this.networkService.configuration
+					? this.networkService.configuration.factoryAddress
+					: '',
 			},
 		};
 		this.eventService.emit(WalletEvents.walletPaired, eventData);

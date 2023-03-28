@@ -39,6 +39,7 @@ import {
 	PublicKey,
 	TokenUpdateTransaction,
 	DelegateContractId,
+	Timestamp,
 } from '@hashgraph/sdk';
 import { CLIENT_ACCOUNT_ECDSA } from '../../../config.js';
 import Long from 'long';
@@ -55,6 +56,12 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 	const contractId2 = '1110';
 	const accountId2 = '2220';
 	const tokenId2 = '3330';
+
+	const newTokenName = 'NEW_TOKEN_NAME';
+	const newTokenSymbol = 'NEW_TOKEN_SYMBOL';
+	const newAutoRenewAccount = '4444';
+	const newAutoRenewPeriod = 3888000;
+	const newExpirationTime = 1686582131144337000;
 
 	// const accountId3 = '2200';
 	it('Test create contractExecuteTransaction', () => {
@@ -235,10 +242,15 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 		).not.toEqual(Long.ONE.multiply(-1));
 	});
 
-	it('Test create TokenUpdateTransaction with public keys', () => {
+	it('Test create TokenUpdateTransaction with name, symbol, autorenew account, autorenew period, expiration time and public keys', () => {
 		const t: TokenUpdateTransaction =
 			HTSTransactionBuilder.buildUpdateTokenTransaction(
 				tokenId,
+				newTokenName,
+				newTokenSymbol,
+				newAutoRenewAccount,
+				newAutoRenewPeriod,
+				Timestamp.fromDate(newExpirationTime),
 				PublicKey.fromString(CLIENT_ACCOUNT_ECDSA.publicKey?.key!),
 				PublicKey.fromString(CLIENT_ACCOUNT_ECDSA.publicKey?.key!),
 				PublicKey.fromString(CLIENT_ACCOUNT_ECDSA.publicKey?.key!),
@@ -247,6 +259,15 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 				PublicKey.fromString(CLIENT_ACCOUNT_ECDSA.publicKey?.key!),
 			) as TokenUpdateTransaction;
 		expect(t?.tokenId).toEqual(TokenId.fromString(tokenId));
+		expect(t?.tokenName).toEqual(newTokenName);
+		expect(t?.tokenSymbol).toEqual(newTokenSymbol);
+		expect(t?.autoRenewAccountId).toEqual(
+			AccountId.fromString(newAutoRenewAccount),
+		);
+		expect(t?.autoRenewPeriod?.seconds.low).toEqual(newAutoRenewPeriod);
+		expect(t?.expirationTime).toEqual(
+			Timestamp.fromDate(newExpirationTime),
+		);
 		expect(t?.kycKey).toEqual(
 			PublicKey.fromString(CLIENT_ACCOUNT_ECDSA.publicKey?.key!),
 		);
@@ -267,10 +288,15 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 		);
 	});
 
-	it('Test create TokenUpdateTransaction with delegate contract ids', () => {
+	it('Test create TokenUpdateTransaction with name, symbol, autorenew account, autorenew period, expiration time and delegate contract ids as keys', () => {
 		const t: TokenUpdateTransaction =
 			HTSTransactionBuilder.buildUpdateTokenTransaction(
 				tokenId,
+				newTokenName,
+				newTokenSymbol,
+				newAutoRenewAccount,
+				newAutoRenewPeriod,
+				Timestamp.fromDate(newExpirationTime),
 				DelegateContractId.fromString('0.0.1'),
 				DelegateContractId.fromString('0.0.1'),
 				DelegateContractId.fromString('0.0.1'),
@@ -279,6 +305,15 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 				DelegateContractId.fromString('0.0.1'),
 			) as TokenUpdateTransaction;
 		expect(t?.tokenId).toEqual(TokenId.fromString(tokenId));
+		expect(t?.tokenName).toEqual(newTokenName);
+		expect(t?.tokenSymbol).toEqual(newTokenSymbol);
+		expect(t?.autoRenewAccountId).toEqual(
+			AccountId.fromString(newAutoRenewAccount),
+		);
+		expect(t?.autoRenewPeriod?.seconds.low).toEqual(newAutoRenewPeriod);
+		expect(t?.expirationTime).toEqual(
+			Timestamp.fromDate(newExpirationTime),
+		);
 		expect(t?.kycKey).toEqual(DelegateContractId.fromString('0.0.1'));
 		expect(t?.freezeKey).toEqual(DelegateContractId.fromString('0.0.1'));
 		expect(t?.feeScheduleKey).toEqual(
@@ -289,7 +324,7 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 		expect(t?.supplyKey).toEqual(DelegateContractId.fromString('0.0.1'));
 	});
 
-	it('Test create TokenUpdateTransaction with undefined keys', () => {
+	it('Test create TokenUpdateTransaction with undefined name, symbol, autorenew account, autorenew period, expiration time and keys', () => {
 		const t: TokenUpdateTransaction =
 			HTSTransactionBuilder.buildUpdateTokenTransaction(
 				tokenId,
@@ -299,13 +334,23 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 				undefined,
 				undefined,
 				undefined,
+				undefined,
+				undefined,
+				undefined,
+				undefined,
+				undefined,
 			) as TokenUpdateTransaction;
-		expect(t?.tokenId).toBeUndefined();
-		expect(t?.kycKey).toBeUndefined();
-		expect(t?.freezeKey).toBeUndefined();
-		expect(t?.feeScheduleKey).toBeUndefined();
-		expect(t?.pauseKey).toBeUndefined();
-		expect(t?.wipeKey).toBeUndefined();
-		expect(t?.supplyKey).toBeUndefined();
+		expect(t?.tokenId).toEqual(TokenId.fromString(tokenId));
+		expect(t?.tokenName).toBeNull();
+		expect(t?.tokenSymbol).toBeNull();
+		expect(t?.autoRenewAccountId).toBeNull();
+		expect(t?.autoRenewPeriod).toBeNull();
+		expect(t?.expirationTime).toBeNull();
+		expect(t?.kycKey).toBeNull();
+		expect(t?.freezeKey).toBeNull();
+		expect(t?.feeScheduleKey).toBeNull();
+		expect(t?.pauseKey).toBeNull();
+		expect(t?.wipeKey).toBeNull();
+		expect(t?.supplyKey).toBeNull();
 	});
 });

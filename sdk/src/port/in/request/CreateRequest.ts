@@ -18,7 +18,6 @@
  *
  */
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import CheckNums from '../../../core/checks/numbers/CheckNums.js';
 import { OptionalField } from '../../../core/decorator/OptionalDecorator.js';
 import Injectable from '../../../core/Injectable.js';

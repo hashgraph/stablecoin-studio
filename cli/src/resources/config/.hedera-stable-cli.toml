@@ -4,7 +4,7 @@ network = "testnet"
 
 [[networks]]
 name = "mainnet"
-mirrorNodeUrl = "https://mainnet.mirrornode.hedera.com/"
+mirrorNodeUrl = "https://mainnet-public.mirrornode.hedera.com/"
 chainId = 0
 
   [[networks.consensusNodes]]

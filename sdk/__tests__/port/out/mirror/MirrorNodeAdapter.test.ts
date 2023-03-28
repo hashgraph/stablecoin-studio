@@ -153,8 +153,8 @@ describe('🧪 MirrorNodeAdapter', () => {
 		expect(stableCoinDetail.autoRenewAccount).toEqual(
 			CLIENT_ACCOUNT_ECDSA.id,
 		);
-		expect(stableCoinDetail.autoRenewAccountPeriod).toEqual(
-			stableCoinCapabilitiesSC!.coin!.autoRenewAccountPeriod,
+		expect(stableCoinDetail.autoRenewPeriod).toEqual(
+			stableCoinCapabilitiesSC!.coin!.autoRenewPeriod,
 		);
 		// expect(stableCoinDetail.treasury).toEqual(CLIENT_ACCOUNT_ECDSA.id);
 		expect(stableCoinDetail.paused).toEqual(false);

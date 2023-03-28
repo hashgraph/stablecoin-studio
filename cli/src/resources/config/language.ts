@@ -79,6 +79,7 @@ export const english = {
     askName: 'Enter the name',
     askSymbol: 'Enter the symbol',
     askAutoRenewAccountId: 'Enter the autorenew account',
+    askAutoRenewPeriod: 'Enter the token autorenew period in days',
     askDecimals: 'Enter the number of decimal places a token is divisible by',
     askToken:
       'What is the token id of the stable coin you want to operate with?',
@@ -94,7 +95,7 @@ export const english = {
     askInitialSupply: 'Enter the initial supply',
     askSupplyType: 'Do you want the token max supply to be infinite?',
     askTotalSupply: 'Enter the max supply',
-    askExpirationTime: 'Enter the token expiration time',
+    askExpirationTime: 'Enter the token expiration time in days',
     askMemo: 'Enter the token memo',
     askFreezeAccount: 'Should the Hedera account be frozen for this token?',
     askFeaturesManagedBy:
@@ -462,8 +463,18 @@ export const english = {
     },
   },
   tokenConfiguration: {
+    askAction: 'What token property do you want to update?',
+    askKeysAction: 'What token key do you want to update?',
+    confirm: 'Are you sure you want to apply these changes?',
+    goBack: 'If you continue, you will lose your changes',
     options: {
-      keysManagement: 'Keys management',
+      name: 'Name',
+      symbol: 'Symbol',
+      expirationTime: 'Expiration time',
+      autoRenewAccountId: 'Autorenew account',
+      autoRenewPeriod: 'Autorenew period',
+      keys: 'Keys',
+      save: 'Save',
       ...goBack,
     },
   },
@@ -483,10 +494,10 @@ export const english = {
   },
   keysManagement: {
     askKeys: 'Choose the keys',
-    confirm: 'Are you sure you want to apply these changes?',
+    // confirm: 'Are you sure you want to apply these changes?',
     options: {
       updateKeys: 'Update keys',
-      confirmChanges: 'Confirm changes',
+      // confirmChanges: 'Confirm changes',
       ...goBack,
     },
   },

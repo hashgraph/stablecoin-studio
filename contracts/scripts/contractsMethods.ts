@@ -301,15 +301,32 @@ export async function transfer(
     return response[0]
 }
 
-export async function updateTokenKeys(
+export async function updateToken(
     proxyAddress: ContractId,
+    name: string,
+    symbol: string,
     keys: any,
+    second: number,
+    autoRenewAccount: string,
+    autoRenewAccountIsE25519: boolean,
+    autoRenewPeriod: number,
     client: Client
 ): Promise<boolean> {
-    const params = [keys]
+    const updateToken = {
+        tokenName: name,
+        tokenSymbol: symbol,
+        keys: keys,
+        second: second,
+        autoRenewAccount: await toEvmAddress(
+            autoRenewAccount,
+            autoRenewAccountIsE25519
+        ),
+        autoRenewPeriod: autoRenewPeriod,
+    }
+    const params = [updateToken]
     const response = await contractCall(
         proxyAddress,
-        'updateTokenKeys',
+        'updateToken',
         params,
         client,
         Gas1,

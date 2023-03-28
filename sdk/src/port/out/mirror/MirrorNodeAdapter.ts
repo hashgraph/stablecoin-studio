@@ -274,8 +274,8 @@ export class MirrorNodeAdapter {
 				autoRenewAccount: HederaId.from(
 					response.data.auto_renew_account,
 				),
-				autoRenewAccountPeriod:
-					response.data.auto_renew_period / (3600 * 24),
+				autoRenewPeriod: response.data.auto_renew_period,
+				expirationTimestamp: response.data.expiry_timestamp,
 				adminKey: getKeyOrDefault(response.data.admin_key) as PublicKey,
 				kycKey: getKeyOrDefault(response.data.kyc_key) as PublicKey,
 				freezeKey: getKeyOrDefault(
@@ -424,7 +424,7 @@ export class MirrorNodeAdapter {
 	private getMirrorNodeURL(environment: Environment): string {
 		switch (environment) {
 			case mainnet:
-				return 'https://mainnet.mirrornode.hedera.com';
+				return 'https://mainnet-public.mirrornode.hedera.com';
 			case previewnet:
 				return 'https://previewnet.mirrornode.hedera.com';
 			case testnet:

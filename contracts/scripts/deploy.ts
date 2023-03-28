@@ -34,10 +34,10 @@ import {
     toEvmAddress,
 } from './utils'
 
-const hederaERC20Address = '0.0.3805467'
-export const factoryProxyAddress = '0.0.3805474'
-const factoryProxyAdminAddress = '0.0.3805472'
-const factoryAddress = '0.0.3805470'
+const hederaERC20Address = '0.0.3901773'
+export const factoryProxyAddress = '0.0.3901782'
+const factoryProxyAdminAddress = '0.0.3901780'
+const factoryAddress = '0.0.3901778'
 
 export function initializeClients(): [
     Client,

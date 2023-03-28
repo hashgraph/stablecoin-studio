@@ -28,6 +28,7 @@ import {
 	ContractId as HContractId,
 	CustomFee as HCustomFee,
 	DelegateContractId,
+	Timestamp,
 } from '@hashgraph/sdk';
 import TransactionAdapter from '../TransactionAdapter';
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
@@ -885,6 +886,11 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 
 	public async update(
 		coin: StableCoinCapabilities,
+		name: string | undefined,
+		symbol: string | undefined,
+		autoRenewAccount: HederaId | undefined,
+		autoRenewPeriod: number | undefined,
+		expirationTime: number | undefined,
 		kycKey: PublicKey | undefined,
 		freezeKey: PublicKey | undefined,
 		feeScheduleKey: PublicKey | undefined,
@@ -893,6 +899,11 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		supplyKey: PublicKey | undefined,
 	): Promise<TransactionResponse<any, Error>> {
 		const params = new Params({
+			name: name,
+			symbol: symbol,
+			autoRenewAccount: autoRenewAccount,
+			autoRenewPeriod: autoRenewPeriod,
+			expirationTime: expirationTime,
 			kycKey: kycKey,
 			freezeKey: freezeKey,
 			feeScheduleKey: feeScheduleKey,
@@ -907,7 +918,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		return this.performOperation(
 			coin,
 			Operation.UPDATE,
-			'updateTokenKeys',
+			'updateToken',
 			15000000,
 			params,
 		);
@@ -989,7 +1000,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		let filteredContractParams: any[] = [];
 
 		switch (operationName) {
-			case 'updateTokenKeys':
+			case 'updateToken':
 				const providedKeys = [
 					undefined,
 					params?.kycKey,
@@ -999,8 +1010,20 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					params?.feeScheduleKey,
 					params?.pauseKey,
 				];
-				filteredContractParams[0] =
-					this.setKeysForSmartContract(providedKeys);
+				filteredContractParams[0] = {
+					tokenName: params?.name ? params?.name : '',
+					tokenSymbol: params?.symbol ? params?.symbol : '',
+					keys: this.setKeysForSmartContract(providedKeys),
+					second: params?.expirationTime
+						? Math.floor(params.expirationTime / 1000000000)
+						: -1,
+					autoRenewAccount: params?.autoRenewAccount
+						? await this.getEVMAddress(params.autoRenewAccount)
+						: '0x0000000000000000000000000000000000000000',
+					autoRenewPeriod: params?.autoRenewPeriod
+						? params.autoRenewPeriod
+						: -1,
+				};
 				break;
 
 			default:
@@ -1184,6 +1207,13 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			case Operation.UPDATE:
 				t = HTSTransactionBuilder.buildUpdateTokenTransaction(
 					coin.coin.tokenId?.value!,
+					params.name,
+					params.symbol,
+					params.autoRenewAccount?.value,
+					params.autoRenewPeriod,
+					params.expirationTime
+						? Timestamp.fromDate(params.expirationTime)
+						: undefined,
 					params.kycKey
 						? params.kycKey.key == PublicKey.NULL.key
 							? DelegateContractId.fromString(
@@ -1304,6 +1334,11 @@ class Params {
 	roles?: string[];
 	targetsId?: HederaId[];
 	amounts?: BigDecimal[];
+	name?: string;
+	symbol?: string;
+	autoRenewAccount?: HederaId;
+	autoRenewPeriod?: number;
+	expirationTime?: number;
 	kycKey?: PublicKey;
 	freezeKey?: PublicKey;
 	feeScheduleKey?: PublicKey;
@@ -1320,6 +1355,11 @@ class Params {
 		roles,
 		targetsId,
 		amounts,
+		name,
+		symbol,
+		autoRenewAccount,
+		autoRenewPeriod,
+		expirationTime,
 		kycKey,
 		freezeKey,
 		feeScheduleKey,
@@ -1335,6 +1375,11 @@ class Params {
 		roles?: string[];
 		targetsId?: HederaId[];
 		amounts?: BigDecimal[];
+		name?: string;
+		symbol?: string;
+		autoRenewAccount?: HederaId;
+		autoRenewPeriod?: number;
+		expirationTime?: number;
 		kycKey?: PublicKey;
 		freezeKey?: PublicKey;
 		feeScheduleKey?: PublicKey;
@@ -1350,6 +1395,11 @@ class Params {
 		this.roles = roles;
 		this.targetsId = targetsId;
 		this.amounts = amounts;
+		this.name = name;
+		this.symbol = symbol;
+		this.autoRenewAccount = autoRenewAccount;
+		this.autoRenewPeriod = autoRenewPeriod;
+		this.expirationTime = expirationTime;
 		this.kycKey = kycKey;
 		this.freezeKey = freezeKey;
 		this.feeScheduleKey = feeScheduleKey;
