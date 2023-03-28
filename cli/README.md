@@ -99,7 +99,7 @@ networks:
     {
       name: 'mainnet',
       consensusNodes: [],
-      mirrorNodeUrl: 'https://mainnet.mirrornode.hedera.com/',
+      mirrorNodeUrl: 'https://mainnet-public.mirrornode.hedera.com/',
     },
     {
       name: 'previewnet',

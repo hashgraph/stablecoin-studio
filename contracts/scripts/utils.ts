@@ -239,7 +239,7 @@ function getHederaNetworkMirrorNodeURL(network?: string): string {
     }
     switch (network) {
         case 'mainnet':
-            return 'https://mainnet.mirrornode.hedera.com'
+            return 'https://mainnet-public.mirrornode.hedera.com'
         case 'previewnet':
             return 'https://previewnet.mirrornode.hedera.com'
         case 'testnet':

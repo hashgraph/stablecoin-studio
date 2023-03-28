@@ -64,6 +64,7 @@ const Router = () => {
 
 	useEffect(() => {
 		instanceSDK();
+		localStorage.clear();
 	}, []);
 
 	const onLastWalletEvent = <T extends keyof WalletEvent>(

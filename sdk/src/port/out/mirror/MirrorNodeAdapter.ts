@@ -424,7 +424,7 @@ export class MirrorNodeAdapter {
 	private getMirrorNodeURL(environment: Environment): string {
 		switch (environment) {
 			case mainnet:
-				return 'https://mainnet.mirrornode.hedera.com';
+				return 'https://mainnet-public.mirrornode.hedera.com';
 			case previewnet:
 				return 'https://previewnet.mirrornode.hedera.com';
 			case testnet:
