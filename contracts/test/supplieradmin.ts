@@ -521,6 +521,55 @@ describe('Supplier Admin Tests - (Unlimited)', function () {
         )
     })
 
+    it('An account with unlimited supplier role can cash in 100 tokens to the treasury account', async function () {
+        const AmountToMint = BigNumber.from(100).mul(TokenFactor)
+
+        // Get the initial total supply and account's balanceOf
+        const initialTotalSupply = await getTotalSupply(
+            proxyAddress,
+            operatorClient
+        )
+        const initialBalanceOf = await getBalanceOf(
+            proxyAddress,
+            operatorClient,
+            proxyAddress.toSolidityAddress(),
+            false,
+            false
+        )
+
+        // Cashin tokens to previously associated account
+        await Mint(
+            proxyAddress,
+            AmountToMint,
+            nonOperatorClient,
+            proxyAddress.toSolidityAddress(),
+            false,
+            false
+        )
+
+        // Check balance of account and total supply : success
+        const finalTotalSupply = await getTotalSupply(
+            proxyAddress,
+            operatorClient
+        )
+        const finalBalanceOf = await getBalanceOf(
+            proxyAddress,
+            operatorClient,
+            proxyAddress.toSolidityAddress(),
+            false,
+            false
+        )
+        const expectedTotalSupply = initialTotalSupply.add(AmountToMint)
+        const expectedBalanceOf = initialBalanceOf.add(AmountToMint)
+
+        expect(finalTotalSupply.toString()).to.equals(
+            expectedTotalSupply.toString()
+        )
+        expect(finalBalanceOf.toString()).to.equals(
+            expectedBalanceOf.toString()
+        )
+    })
+
     it('An account with unlimited supplier role can cash in 100 tokens', async function () {
         const AmountToMint = BigNumber.from(100).mul(TokenFactor)
 

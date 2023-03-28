@@ -256,14 +256,16 @@ contract HederaERC20 is
         override(TokenOwner)
         valueIsNotGreaterThan(uint256(uint64(amount)), _balanceOf(from), true)
     {
-        address currentTokenAddress = _getTokenAddress();
+        if (to != address(this)) {
+            address currentTokenAddress = _getTokenAddress();
 
-        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
-            .transferToken(currentTokenAddress, from, to, amount);
+            int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
+                .transferToken(currentTokenAddress, from, to, amount);
 
-        _checkResponse(responseCode);
+            _checkResponse(responseCode);
 
-        emit TokenTransfer(currentTokenAddress, from, to, amount);
+            emit TokenTransfer(currentTokenAddress, from, to, amount);
+        }
     }
 
     /**

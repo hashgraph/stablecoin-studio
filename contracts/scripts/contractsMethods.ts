@@ -695,12 +695,14 @@ export async function Mint(
     amountOfTokenToMint: BigNumber,
     clientMintingToken: Client,
     clientToAssignTokensTo: string,
-    isE25519: boolean
+    isE25519: boolean,
+    parse = true
 ) {
-    const params: string[] = [
-        await toEvmAddress(clientToAssignTokensTo, isE25519),
-        amountOfTokenToMint.toString(),
-    ]
+    const param_1: string = parse
+        ? await toEvmAddress(clientToAssignTokensTo, isE25519)
+        : clientToAssignTokensTo
+
+    const params: string[] = [param_1, amountOfTokenToMint.toString()]
     const result = await contractCall(
         proxyAddress,
         'mint',
