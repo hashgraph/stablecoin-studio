@@ -87,7 +87,7 @@ export class MirrorNodeAdapter {
 		try {
 			const url = `${
 				this.URI_BASE
-			}tokens?limit=100&account.id=${accountId.toString()}`;
+			}tokens?limit=100&order=desc&account.id=${accountId.toString()}`;
 
 			LogService.logTrace(
 				'Getting stable coin list from mirror node -> ',
