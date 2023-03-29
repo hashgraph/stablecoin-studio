@@ -30,8 +30,7 @@ import {
 	mainnet,
 	testnet,
 	previewnet,
-	local,
-	unrecognized,
+	local
 } from '../../../domain/context/network/Environment.js';
 import LogService from '../../../app/service/LogService.js';
 import { StableCoinNotFound } from './error/StableCoinNotFound.js';

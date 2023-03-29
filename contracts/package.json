@@ -85,7 +85,7 @@
         "@chainlink/contracts": "^0.5.1",
         "@hashgraph/hardhat-hethers": "1.0.3",
         "@hashgraph/hethers": "1.2.2",
-        "@hashgraph/sdk": "2.18.2",
+        "@hashgraph/sdk": "2.23.0",
         "@nomicfoundation/hardhat-chai-matchers": "^1.0.3",
         "@nomicfoundation/hardhat-network-helpers": "^1.0.6",
         "@nomicfoundation/hardhat-toolbox": "^2.0.0",

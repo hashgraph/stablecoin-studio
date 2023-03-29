@@ -34,9 +34,6 @@ export default class UpdateRequest extends ValidatedRequest<UpdateRequest> {
 	symbol?: string;
 
 	@OptionalField()
-	autoRenewAccount?: string;
-
-	@OptionalField()
 	autoRenewPeriod?: string;
 
 	@OptionalField()
@@ -64,7 +61,6 @@ export default class UpdateRequest extends ValidatedRequest<UpdateRequest> {
 		tokenId,
 		name,
 		symbol,
-		autoRenewAccount,
 		autoRenewPeriod,
 		expirationTimestamp,
 		freezeKey,
@@ -77,7 +73,6 @@ export default class UpdateRequest extends ValidatedRequest<UpdateRequest> {
 		tokenId: string;
 		name?: string;
 		symbol?: string;
-		autoRenewAccount?: string;
 		autoRenewPeriod?: string;
 		expirationTimestamp?: string;
 		freezeKey?: RequestPublicKey;
@@ -101,7 +96,6 @@ export default class UpdateRequest extends ValidatedRequest<UpdateRequest> {
 				return StableCoin.checkSymbol(val);
 			},
 			tokenId: Validation.checkHederaIdFormat(),
-			autoRenewAccount: Validation.checkHederaIdFormat(),
 			autoRenewPeriod: (val) => {
 				if (val === undefined || val === '') {
 					return;
@@ -124,7 +118,6 @@ export default class UpdateRequest extends ValidatedRequest<UpdateRequest> {
 		this.tokenId = tokenId;
 		this.name = name;
 		this.symbol = symbol;
-		this.autoRenewAccount = autoRenewAccount;
 		this.autoRenewPeriod = autoRenewPeriod;
 		this.expirationTimestamp = expirationTimestamp;
 		this.freezeKey = freezeKey;

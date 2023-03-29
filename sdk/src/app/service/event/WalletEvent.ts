@@ -18,7 +18,6 @@
  *
  */
 
-import { Environment } from '../../../domain/context/network/Environment.js';
 import { SupportedWallets } from '../../../domain/context/network/Wallet.js';
 import {
 	InitializationData,

@@ -882,7 +882,6 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		coin: StableCoinCapabilities,
 		name: string | undefined,
 		symbol: string | undefined,
-		autoRenewAccount: HederaId | undefined,
 		autoRenewPeriod: number | undefined,
 		expirationTime: number | undefined,
 		kycKey: PublicKey | undefined,
@@ -895,7 +894,6 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		const params = new Params({
 			name: name,
 			symbol: symbol,
-			autoRenewAccount: autoRenewAccount,
 			autoRenewPeriod: autoRenewPeriod,
 			expirationTime: expirationTime,
 			kycKey: kycKey,
@@ -1012,9 +1010,6 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					second: params?.expirationTime
 						? Math.floor(params.expirationTime / 1000000000)
 						: -1,
-					autoRenewAccount: params?.autoRenewAccount
-						? await this.getEVMAddress(params.autoRenewAccount)
-						: '0x0000000000000000000000000000000000000000',
 					autoRenewPeriod: params?.autoRenewPeriod
 						? params.autoRenewPeriod
 						: -1,
@@ -1195,7 +1190,6 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					coin.coin.tokenId?.value!,
 					params.name,
 					params.symbol,
-					params.autoRenewAccount?.value,
 					params.autoRenewPeriod,
 					params.expirationTime
 						? Timestamp.fromDate(params.expirationTime)
@@ -1322,7 +1316,6 @@ class Params {
 	amounts?: BigDecimal[];
 	name?: string;
 	symbol?: string;
-	autoRenewAccount?: HederaId;
 	autoRenewPeriod?: number;
 	expirationTime?: number;
 	kycKey?: PublicKey;
@@ -1343,7 +1336,6 @@ class Params {
 		amounts,
 		name,
 		symbol,
-		autoRenewAccount,
 		autoRenewPeriod,
 		expirationTime,
 		kycKey,
@@ -1363,7 +1355,6 @@ class Params {
 		amounts?: BigDecimal[];
 		name?: string;
 		symbol?: string;
-		autoRenewAccount?: HederaId;
 		autoRenewPeriod?: number;
 		expirationTime?: number;
 		kycKey?: PublicKey;
@@ -1383,7 +1374,6 @@ class Params {
 		this.amounts = amounts;
 		this.name = name;
 		this.symbol = symbol;
-		this.autoRenewAccount = autoRenewAccount;
 		this.autoRenewPeriod = autoRenewPeriod;
 		this.expirationTime = expirationTime;
 		this.kycKey = kycKey;

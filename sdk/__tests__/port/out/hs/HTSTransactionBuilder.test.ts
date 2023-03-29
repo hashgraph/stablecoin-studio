@@ -59,7 +59,6 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 
 	const newTokenName = 'NEW_TOKEN_NAME';
 	const newTokenSymbol = 'NEW_TOKEN_SYMBOL';
-	const newAutoRenewAccount = '4444';
 	const newAutoRenewPeriod = 3888000;
 	const newExpirationTime = 1686582131144337000;
 
@@ -248,7 +247,6 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 				tokenId,
 				newTokenName,
 				newTokenSymbol,
-				newAutoRenewAccount,
 				newAutoRenewPeriod,
 				Timestamp.fromDate(newExpirationTime),
 				PublicKey.fromString(CLIENT_ACCOUNT_ECDSA.publicKey?.key!),
@@ -261,9 +259,6 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 		expect(t?.tokenId).toEqual(TokenId.fromString(tokenId));
 		expect(t?.tokenName).toEqual(newTokenName);
 		expect(t?.tokenSymbol).toEqual(newTokenSymbol);
-		expect(t?.autoRenewAccountId).toEqual(
-			AccountId.fromString(newAutoRenewAccount),
-		);
 		expect(t?.autoRenewPeriod?.seconds.low).toEqual(newAutoRenewPeriod);
 		expect(t?.expirationTime).toEqual(
 			Timestamp.fromDate(newExpirationTime),
@@ -294,7 +289,6 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 				tokenId,
 				newTokenName,
 				newTokenSymbol,
-				newAutoRenewAccount,
 				newAutoRenewPeriod,
 				Timestamp.fromDate(newExpirationTime),
 				DelegateContractId.fromString('0.0.1'),
@@ -307,9 +301,6 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 		expect(t?.tokenId).toEqual(TokenId.fromString(tokenId));
 		expect(t?.tokenName).toEqual(newTokenName);
 		expect(t?.tokenSymbol).toEqual(newTokenSymbol);
-		expect(t?.autoRenewAccountId).toEqual(
-			AccountId.fromString(newAutoRenewAccount),
-		);
 		expect(t?.autoRenewPeriod?.seconds.low).toEqual(newAutoRenewPeriod);
 		expect(t?.expirationTime).toEqual(
 			Timestamp.fromDate(newExpirationTime),
@@ -328,7 +319,6 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 		const t: TokenUpdateTransaction =
 			HTSTransactionBuilder.buildUpdateTokenTransaction(
 				tokenId,
-				undefined,
 				undefined,
 				undefined,
 				undefined,
