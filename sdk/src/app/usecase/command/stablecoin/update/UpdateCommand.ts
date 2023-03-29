@@ -32,7 +32,6 @@ export class UpdateCommand extends Command<UpdateCommandResponse> {
 		public readonly tokenId: HederaId,
 		public readonly name?: string,
 		public readonly symbol?: string,
-		public readonly autoRenewAccount?: HederaId,
 		public readonly autoRenewPeriod?: number,
 		public readonly expirationTime?: number,
 		public readonly kycKey?: PublicKey,

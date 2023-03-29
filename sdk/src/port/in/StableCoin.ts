@@ -584,7 +584,6 @@ class StableCoinInPort implements IStableCoinInPort {
 			tokenId,
 			name,
 			symbol,
-			autoRenewAccount,
 			autoRenewPeriod,
 			expirationTimestamp,
 			kycKey,
@@ -603,9 +602,6 @@ class StableCoinInPort implements IStableCoinInPort {
 					HederaId.from(tokenId),
 					name,
 					symbol,
-					autoRenewAccount
-						? HederaId.from(autoRenewAccount)
-						: undefined,
 					autoRenewPeriod ? Number(autoRenewPeriod) : undefined,
 					expirationTimestamp
 						? Number(expirationTimestamp)

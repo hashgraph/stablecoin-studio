@@ -471,7 +471,6 @@ export const english = {
       name: 'Name',
       symbol: 'Symbol',
       expirationTime: 'Expiration time',
-      autoRenewAccountId: 'Autorenew account',
       autoRenewPeriod: 'Autorenew period',
       keys: 'Keys',
       save: 'Save',

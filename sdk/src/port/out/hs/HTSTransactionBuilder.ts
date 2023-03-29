@@ -311,7 +311,6 @@ export class HTSTransactionBuilder {
 		tokenId: string,
 		name: string | undefined,
 		symbol: string | undefined,
-		autoRenewAccount: string | undefined,
 		autoRenewPeriod: number | undefined,
 		expirationTime: Timestamp | undefined,
 		kycKey: Key | undefined,
@@ -328,8 +327,6 @@ export class HTSTransactionBuilder {
 				});
 			if (name) tokenUpdateTransaction.setTokenName(name);
 			if (symbol) tokenUpdateTransaction.setTokenSymbol(symbol);
-			if (autoRenewAccount)
-				tokenUpdateTransaction.setAutoRenewAccountId(autoRenewAccount);
 			if (autoRenewPeriod)
 				tokenUpdateTransaction.setAutoRenewPeriod(autoRenewPeriod);
 			if (expirationTime)

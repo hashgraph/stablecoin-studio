@@ -2374,7 +2374,6 @@ export default class OperationStableCoinService extends Service {
     updateRequest: UpdateRequest,
     stableCoinViewModel: StableCoinViewModel,
   ): Promise<void> {
-    const configAccount = utilsService.getCurrentAccount();
     const tokenConfigurationOptions = language.getArrayFromObject(
       'tokenConfiguration.options',
     );
@@ -2440,20 +2439,6 @@ export default class OperationStableCoinService extends Service {
             updateRequest.expirationTimestamp = this.daysToTimestampInNano(
               Number(expirationTimeInDays),
             );
-          },
-        );
-        break;
-
-      case language.getText('tokenConfiguration.options.autoRenewAccountId'):
-        await utilsService.handleValidation(
-          () => updateRequest.validate('autoRenewAccount'),
-          async () => {
-            const autoRenewAccountId: string =
-              await utilsService.defaultSingleAsk(
-                language.getText('stablecoin.askAutoRenewAccountId'),
-                updateRequest.autoRenewAccount || configAccount.accountId,
-              );
-            updateRequest.autoRenewAccount = autoRenewAccountId;
           },
         );
         break;

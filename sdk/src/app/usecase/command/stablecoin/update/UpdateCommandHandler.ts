@@ -42,7 +42,6 @@ export class UpdateCommandHandler implements ICommandHandler<UpdateCommand> {
 			tokenId,
 			name,
 			symbol,
-			autoRenewAccount,
 			autoRenewPeriod,
 			expirationTime,
 			kycKey,
@@ -64,7 +63,6 @@ export class UpdateCommandHandler implements ICommandHandler<UpdateCommand> {
 			capabilities,
 			name,
 			symbol,
-			autoRenewAccount,
 			autoRenewPeriod,
 			expirationTime,
 			kycKey,
@@ -75,6 +73,8 @@ export class UpdateCommandHandler implements ICommandHandler<UpdateCommand> {
 			supplyKey,
 		);
 
-		return Promise.resolve(new UpdateCommandResponse(true));
+		return Promise.resolve(
+			new UpdateCommandResponse(res.error === undefined),
+		);
 	}
 }
