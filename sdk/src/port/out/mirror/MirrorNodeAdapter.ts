@@ -30,7 +30,7 @@ import {
 	mainnet,
 	testnet,
 	previewnet,
-	local
+	local,
 } from '../../../domain/context/network/Environment.js';
 import LogService from '../../../app/service/LogService.js';
 import { StableCoinNotFound } from './error/StableCoinNotFound.js';
@@ -455,7 +455,12 @@ export class MirrorNodeAdapter {
 				return Promise.reject<EvmAddress>('');
 			}
 		} catch (e) {
-			throw new Error('EVM address could not be retrieved');
+			throw new Error(
+				'EVM address could not be retrieved for ' +
+					accountId.toString() +
+					' error : ' +
+					e,
+			);
 		}
 	}
 

@@ -96,18 +96,31 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 			reserveAddress,
 			reserveInitialAmount,
 		);
-		return Promise.resolve(
-			new CreateCommandResponse(
-				ContractId.fromHederaContractId(
-					HContractId.fromSolidityAddress(res.response[0][3]),
+
+		try {
+			return Promise.resolve(
+				new CreateCommandResponse(
+					ContractId.fromHederaContractId(
+						HContractId.fromSolidityAddress(res.response[0][3]),
+					),
+					ContractId.fromHederaContractId(
+						HContractId.fromSolidityAddress(res.response[0][4]),
+					),
+					ContractId.fromHederaContractId(
+						HContractId.fromSolidityAddress(res.response[0][5]),
+					),
 				),
-				ContractId.fromHederaContractId(
-					HContractId.fromSolidityAddress(res.response[0][4]),
-				),
-				ContractId.fromHederaContractId(
-					HContractId.fromSolidityAddress(res.response[0][5]),
-				),
-			),
-		);
+			);
+		} catch (e) {
+			if (res.response == 1)
+				return Promise.resolve(
+					new CreateCommandResponse(
+						new ContractId('0.0.0'),
+						new ContractId('0.0.0'),
+						new ContractId('0.0.0'),
+					),
+				);
+			else throw e;
+		}
 	}
 }

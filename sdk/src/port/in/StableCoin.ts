@@ -258,11 +258,14 @@ class StableCoinInPort implements IStableCoinInPort {
 		);
 
 		return {
-			coin: (
-				await this.queryBus.execute(
-					new GetStableCoinQuery(createResponse.tokenId),
-				)
-			).coin,
+			coin:
+				createResponse.tokenId.toString() !== ContractId.NULL.toString()
+					? (
+							await this.queryBus.execute(
+								new GetStableCoinQuery(createResponse.tokenId),
+							)
+					  ).coin
+					: {},
 			reserve: {
 				proxyAddress: createResponse.reserveProxy,
 				proxyAdminAddress: createResponse.reserveProxyAdmin,
