@@ -314,12 +314,16 @@ export class MirrorNodeAdapter {
 			const account: AccountViewModel = {
 				id: res.data.account.toString(),
 				accountEvmAddress: res.data.evm_address,
-				publicKey: new PublicKey({
-					key: res.data.key.key,
-					type: res.data.key._type as KeyType,
-				}),
 				alias: res.data.alias,
 			};
+
+			if (res.data.key)
+				account.publicKey = new PublicKey({
+					key: res.data.key ? res.data.key.key : undefined,
+					type: res.data.key
+						? (res.data.key._type as KeyType)
+						: undefined,
+				});
 
 			return account;
 		} catch (error) {
@@ -437,18 +441,22 @@ export class MirrorNodeAdapter {
 	}
 
 	async accountToEvmAddress(accountId: HederaId): Promise<EvmAddress> {
-		const accountInfoViewModel: AccountViewModel =
-			await this.getAccountInfo(accountId);
-		if (accountInfoViewModel.accountEvmAddress) {
-			return new EvmAddress(accountInfoViewModel.accountEvmAddress);
-		} else if (accountInfoViewModel.publicKey) {
-			return this.getAccountEvmAddressFromPrivateKeyType(
-				accountInfoViewModel.publicKey.type,
-				accountInfoViewModel.publicKey.key,
-				accountId,
-			);
-		} else {
-			return Promise.reject<EvmAddress>('');
+		try {
+			const accountInfoViewModel: AccountViewModel =
+				await this.getAccountInfo(accountId);
+			if (accountInfoViewModel.accountEvmAddress) {
+				return new EvmAddress(accountInfoViewModel.accountEvmAddress);
+			} else if (accountInfoViewModel.publicKey) {
+				return this.getAccountEvmAddressFromPrivateKeyType(
+					accountInfoViewModel.publicKey.type,
+					accountInfoViewModel.publicKey.key,
+					accountId,
+				);
+			} else {
+				return Promise.reject<EvmAddress>('');
+			}
+		} catch (e) {
+			throw new Error('EVM address could not be retrieved');
 		}
 	}
 
@@ -468,12 +476,6 @@ export class MirrorNodeAdapter {
 					'0x' + accountId.toHederaAddress().toSolidityAddress(),
 				);
 		}
-	}
-
-	async contractToEvmAddress(contractId: ContractId): Promise<EvmAddress> {
-		return new EvmAddress(
-			HContractId.fromString(contractId.toString()).toSolidityAddress(),
-		);
 	}
 }
 

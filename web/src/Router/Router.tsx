@@ -23,7 +23,6 @@ import SDKService from '../services/SDKService';
 import StableCoinDetails from '../views/StableCoinDetails';
 import {
 	AVAILABLE_WALLETS,
-	LAST_WALLET_SELECTED,
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_STATUS,
 	walletActions,

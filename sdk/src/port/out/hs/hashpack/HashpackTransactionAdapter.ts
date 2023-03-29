@@ -93,7 +93,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 		@lazyInject(QueryBus)
 		public readonly queryBus: QueryBus,
 	) {
-		super(mirrorNodeAdapter);
+		super(mirrorNodeAdapter, networkService);
 		this.hc = new HashConnect();
 		this.setUpHashConnectEvents();
 	}
@@ -267,6 +267,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 					JSON.parse(
 						JSON.stringify(hashPackTransactionResponse),
 					).response.transactionId.toString(),
+					this.networkService.environment,
 				);
 			} else {
 				hashPackTransactionResponse = await this.hc.sendTransaction(
@@ -279,9 +280,11 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 								.transactionId ?? ''
 						: (hashPackTransactionResponse.error as any)
 								.transactionId ?? '',
+					this.networkService.environment,
 				);
 			}
 			return HashpackTransactionResponseAdapter.manageResponse(
+				this.networkService.environment,
 				this.signer,
 				hashPackTransactionResponse,
 				transactionType,

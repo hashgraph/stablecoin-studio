@@ -116,7 +116,7 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 	];
 
 	const handleConnectMetamaskWallet = () => {
-		handleWalletConnect(SupportedWallets.METAMASK, 'testnet');
+		handleWalletConnect(SupportedWallets.METAMASK, '-');
 	};
 
 	const PairingSpinner: FC<{ wallet: SupportedWallets; children?: ReactNode }> = ({

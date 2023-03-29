@@ -165,10 +165,11 @@ class NetworkInPort implements INetworkInPort {
 				}
 			}
 		}
+		await this.commandBus.execute(new SetNetworkCommand(req.network));
+
 		const res = await this.commandBus.execute(
 			new ConnectCommand(req.network, req.wallet, account),
 		);
-		await this.commandBus.execute(new SetNetworkCommand(req.network));
 		return res.payload;
 	}
 

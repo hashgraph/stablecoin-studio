@@ -157,6 +157,8 @@ task('deployFactory', 'Deploy new factory').setAction(
         const client1privatekey: string = accounts[0].privateKey
         const client1isED25519: boolean = accounts[0].isED25519Type === 'true'
 
+        console.log(hre.network.name)
+
         client.setOperator(
             client1account,
             toHashgraphKey(client1privatekey, client1isED25519)

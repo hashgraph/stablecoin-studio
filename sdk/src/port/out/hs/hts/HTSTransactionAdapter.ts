@@ -61,7 +61,7 @@ export class HTSTransactionAdapter extends HederaTransactionAdapter {
 		@lazyInject(NetworkService)
 		public readonly networkService: NetworkService,
 	) {
-		super(mirrorNodeAdapter);
+		super(mirrorNodeAdapter, networkService);
 	}
 
 	init(): Promise<string> {
@@ -128,8 +128,12 @@ export class HTSTransactionAdapter extends HederaTransactionAdapter {
 		abi: object[],
 	): Promise<TransactionResponse> {
 		const tr: HTransactionResponse = await t.execute(this.client);
-		this.logTransaction(tr.transactionId.toString());
+		this.logTransaction(
+			tr.transactionId.toString(),
+			this.networkService.environment,
+		);
 		return HTSTransactionResponseAdapter.manageResponse(
+			this.networkService.environment,
 			tr,
 			transactionType,
 			this.client,

@@ -48,6 +48,7 @@ import { TransactionResponseAdapter } from '../TransactionResponseAdapter.js';
 export class RPCTransactionResponseAdapter extends TransactionResponseAdapter {
 	public static async manageResponse(
 		response: ethers.ContractTransaction,
+		network: string,
 		eventName?: string,
 	): Promise<TransactionResponse> {
 		LogService.logTrace('Constructing response from:', response);
@@ -75,6 +76,7 @@ export class RPCTransactionResponseAdapter extends TransactionResponseAdapter {
 			LogService.logError('Uncaught Exception:', JSON.stringify(error));
 			throw new TransactionResponseError({
 				message: '',
+				network: network,
 				name: eventName,
 				status: 'error',
 				transactionId: (error as any)?.transactionHash,

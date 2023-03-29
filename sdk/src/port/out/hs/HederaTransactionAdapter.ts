@@ -62,11 +62,15 @@ import TransactionResultViewModel from '../mirror/response/TransactionResultView
 import { TransactionResponseError } from '../error/TransactionResponseError.js';
 import { FactoryRole } from '../../../domain/context/factory/FactoryRole.js';
 import { FactoryCashinRole } from '../../../domain/context/factory/FactoryCashinRole.js';
+import NetworkService from '../../../app/service/NetworkService.js';
 
 export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	private web3 = new Web3();
 
-	constructor(public readonly mirrorNodeAdapter: MirrorNodeAdapter) {
+	constructor(
+		public readonly mirrorNodeAdapter: MirrorNodeAdapter,
+		public readonly networkService: NetworkService,
+	) {
 		super();
 	}
 
@@ -134,11 +138,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					coin.cashInRoleAccount == undefined ||
 					coin.cashInRoleAccount.toString() == '0.0.0'
 						? '0x0000000000000000000000000000000000000000'
-						: (
-								await this.accountToEvmAddress(
-									coin.cashInRoleAccount,
-								)
-						  ).toString(),
+						: await this.getEVMAddress(coin.cashInRoleAccount),
 				allowance: coin.cashInRoleAllowance
 					? coin.cashInRoleAllowance.toFixedNumber()
 					: BigDecimal.ZERO.toFixedNumber(),
@@ -196,9 +196,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					.map(async (item) => {
 						const role = new FactoryRole();
 						role.role = item.role;
-						role.account = (
-							await this.accountToEvmAddress(item.account!)
-						).toString();
+						role.account = await this.getEVMAddress(item.account!);
 						return role;
 					}),
 			);
@@ -215,15 +213,11 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					? coin.initialSupply.toFixedNumber()
 					: BigDecimal.ZERO.toFixedNumber(),
 				coin.decimals,
-				(
-					await this.accountToEvmAddress(coin.autoRenewAccount!)
-				).toString(),
+				await this.getEVMAddress(coin.autoRenewAccount!),
 				coin.treasury == undefined ||
 				coin.treasury.toString() == '0.0.0'
 					? '0x0000000000000000000000000000000000000000'
-					: (
-							await this.accountToEvmAddress(coin.treasury)
-					  ).toString(),
+					: await this.getEVMAddress(coin.treasury),
 				reserveAddress == undefined ||
 				reserveAddress.toString() == '0.0.0'
 					? '0x0000000000000000000000000000000000000000'
@@ -274,7 +268,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		if (account && account.value !== HederaId.NULL.value) {
 			const role = new FactoryRole();
 			role.role = stableCoinRole;
-			role.account = (await this.accountToEvmAddress(account)).toString();
+			role.account = await this.getEVMAddress(account); // (await this.accountToEvmAddress(account)).toString();
 			roles.push(role);
 		}
 	}
@@ -985,6 +979,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					transactionError,
 				)}`,
 				transactionId: transactionId,
+				network: this.networkService.environment,
 			});
 		}
 	}
@@ -1059,15 +1054,6 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			transactionType,
 			contractAbi,
 		);
-	}
-
-	private async getEVMAddress(parameter: any): Promise<any> {
-		if (parameter instanceof ContractId) {
-			return (await this.contractToEvmAddress(parameter)).toString();
-		} else if (parameter instanceof HederaId) {
-			return (await this.accountToEvmAddress(parameter)).toString();
-		}
-		return parameter;
 	}
 
 	private async performHTSOperation(
