@@ -40,10 +40,6 @@ export default class UtilitiesService extends Service {
     await Network.init(
       new InitializationRequest({
         network: this.getCurrentNetwork().name,
-        configuration: {
-          factoryAddress: this.getCurrentFactory().id,
-          hederaERC20Address: this.getCurrentHederaERC20().id,
-        },
       }),
     );
     await Network.connect(
@@ -251,6 +247,34 @@ export default class UtilitiesService extends Service {
     return variable.response;
   }
 
+  public async checkBoxMultipleAsk(
+    question: string,
+    choices: Array<string>,
+    loop = false,
+    atLeastOne = false,
+  ): Promise<string[]> {
+    let NOK;
+    let variable;
+
+    do {
+      NOK = false;
+      variable = await inquirer.prompt({
+        name: 'response',
+        type: 'checkbox',
+        message: question,
+        choices: choices,
+        loop: loop,
+      });
+
+      if (atLeastOne && variable.response.length == 0) {
+        NOK = true;
+        this.showError('You must choose at least one option');
+      }
+    } while (NOK);
+
+    return variable.response;
+  }
+
   /**
    * Function for multiple ask questions with inquire
    * @param question
@@ -431,8 +455,9 @@ export default class UtilitiesService extends Service {
 
   public async handleValidation(
     val: () => ValidationResponse[],
-    cll?: (res: ValidationResponse[]) => Promise<void>,
+    cll: (res: ValidationResponse[]) => Promise<void>,
     consoleOut = true,
+    checkBefore = false,
   ): Promise<void> {
     const outputError = (res: ValidationResponse[]): void => {
       for (let i = 0; i < res.length; i++) {
@@ -445,15 +470,20 @@ export default class UtilitiesService extends Service {
       }
     };
 
-    let res = val();
-    if (cll) {
-      while (res.length > 0) {
-        consoleOut && outputError(res);
-        await cll(res);
-        res = val();
-      }
-    } else {
-      if (res.length > 0) consoleOut && outputError(res);
+    let res;
+    let askCll = true;
+
+    if (checkBefore) {
+      res = val();
+      if (res.length == 0) askCll = false;
+    }
+
+    while (askCll) {
+      askCll = false;
+      await cll(res ?? '');
+      res = val();
+      consoleOut && outputError(res);
+      if (res.length > 0) askCll = true;
     }
   }
 }

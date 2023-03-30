@@ -9,7 +9,7 @@ import {
     deployHederaERC20,
 } from './deploy'
 
-import { getClient, clientId } from './utils'
+import { getClient, clientId, toEvmAddress } from './utils'
 
 export const deployFactory = async () => {
     const [
@@ -48,7 +48,11 @@ export const deployFactory = async () => {
     )
 
     const resultErc20 = await deployHederaERC20(clientSdk, operatorPriKey)
-    const result = await dp(clientSdk, operatorPriKey)
+    const initializeFactory = {
+        admin: await toEvmAddress(operatorAccount, operatorIsE25519),
+        erc20: resultErc20.toSolidityAddress(),
+    }
+    const result = await dp(initializeFactory, clientSdk, operatorPriKey)
 
     const erc20 = resultErc20
     const proxyAddress = result[0]

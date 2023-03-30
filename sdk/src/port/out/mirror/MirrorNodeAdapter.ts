@@ -37,10 +37,8 @@ import PublicKey from '../../../domain/context/account/PublicKey.js';
 import { StableCoinMemo } from '../../../domain/context/stablecoin/StableCoinMemo.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
 import {
-	CustomFee,
-	FixedFee,
-	FractionalFee,
 	HBAR_DECIMALS,
+	MAX_PERCENTAGE_DECIMALS,
 } from '../../../domain/context/fee/CustomFee.js';
 import { InvalidResponse } from './error/InvalidResponse.js';
 import { HederaId } from '../../../domain/context/shared/HederaId.js';
@@ -52,6 +50,11 @@ import {
 	KycStatus,
 } from './response/AccountTokenRelationViewModel.js';
 import { REGEX_TRANSACTION } from '../error/TransactionResponseError.js';
+import {
+	RequestCustomFee,
+	RequestFixedFee,
+	RequestFractionalFee,
+} from '../../in/request/BaseRequest.js';
 
 @singleton()
 export class MirrorNodeAdapter {
@@ -148,9 +151,9 @@ export class MirrorNodeAdapter {
 
 			const getCustomFeesOrDefault = async (
 				val?: ICustomFees,
-			): Promise<CustomFee[] | undefined> => {
+			): Promise<RequestCustomFee[] | undefined> => {
 				if (!val) return undefined;
-				const customFees: CustomFee[] = [];
+				const customFees: RequestCustomFee[] = [];
 
 				val.fixed_fees.forEach(async (fixedFee) => {
 					const denominatingToken = fixedFee.denominating_token_id
@@ -169,43 +172,55 @@ export class MirrorNodeAdapter {
 						);
 					}
 
-					customFees.push(
-						new FixedFee(
-							HederaId.from(fixedFee.collector_account_id),
-							BigDecimal.fromStringFixed(
-								fixedFee.amount
-									? fixedFee.amount.toString()
-									: '0',
-								feeDecimals,
-							),
-							denominatingToken,
-							fixedFee.all_collectors_are_exempt,
-						),
-					);
+					const requestFixedFee: RequestFixedFee = {
+						tokenIdCollected: fixedFee.denominating_token_id
+							? fixedFee.denominating_token_id
+							: '0.0.0',
+						amount: BigDecimal.fromStringFixed(
+							fixedFee.amount ? fixedFee.amount.toString() : '0',
+							feeDecimals,
+						).toString(),
+						decimals: feeDecimals,
+						collectorId: fixedFee.collector_account_id,
+						collectorsExempt: fixedFee.all_collectors_are_exempt,
+					};
+
+					customFees.push(requestFixedFee);
 				});
 
 				val.fractional_fees.forEach((fractionalFee) => {
-					customFees.push(
-						new FractionalFee(
-							HederaId.from(fractionalFee.collector_account_id),
-							parseInt(fractionalFee.amount.numerator),
-							parseInt(fractionalFee.amount.denominator),
-							BigDecimal.fromStringFixed(
-								fractionalFee.minimum
-									? fractionalFee.minimum.toString()
-									: '0',
-								decimals,
-							),
-							BigDecimal.fromStringFixed(
-								fractionalFee.maximum
-									? fractionalFee.maximum.toString()
-									: '0',
-								decimals,
-							),
-							fractionalFee.net_of_transfers,
+					const requestFractionalFee: RequestFractionalFee = {
+						decimals: decimals,
+						collectorId: fractionalFee.collector_account_id,
+						collectorsExempt:
 							fractionalFee.all_collectors_are_exempt,
-						),
-					);
+						percentage: BigDecimal.fromStringFixed(
+							Math.round(
+								(100 *
+									10 ** MAX_PERCENTAGE_DECIMALS *
+									parseInt(fractionalFee.amount.numerator)) /
+									parseInt(fractionalFee.amount.denominator),
+							).toString(),
+							MAX_PERCENTAGE_DECIMALS,
+						).toString(),
+						amountNumerator: fractionalFee.amount.numerator,
+						amountDenominator: fractionalFee.amount.denominator,
+						min: BigDecimal.fromStringFixed(
+							fractionalFee.minimum
+								? fractionalFee.minimum.toString()
+								: '0',
+							decimals,
+						).toString(),
+						max: BigDecimal.fromStringFixed(
+							fractionalFee.maximum
+								? fractionalFee.maximum.toString()
+								: '0',
+							decimals,
+						).toString(),
+						net: fractionalFee.net_of_transfers,
+					};
+
+					customFees.push(requestFractionalFee);
 				});
 
 				return customFees;

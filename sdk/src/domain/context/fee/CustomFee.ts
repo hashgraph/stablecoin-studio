@@ -51,17 +51,17 @@ export class FractionalFee extends CustomFee {
 		collectorId: HederaId,
 		amountNumerator: number,
 		amountDenominator: number,
-		min: BigDecimal,
-		max: BigDecimal,
-		net: boolean,
-		collectorsExempt: boolean,
+		min?: BigDecimal,
+		max?: BigDecimal,
+		net?: boolean,
+		collectorsExempt = true,
 	) {
 		super(collectorId, collectorsExempt);
 		this.amountNumerator = amountNumerator;
 		this.amountDenominator = amountDenominator;
-		this.min = min;
-		this.max = max;
-		this.net = net;
+		if (min) this.min = min;
+		if (max) this.max = max;
+		if (net) this.net = net;
 	}
 }
 

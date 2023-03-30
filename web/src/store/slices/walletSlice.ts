@@ -28,6 +28,7 @@ export interface InitialStateProps {
 	status: ConnectionState;
 	deletedToken?: boolean;
 	pausedToken?: boolean;
+	roles?: string[];
 }
 
 export const initialState: InitialStateProps = {
@@ -44,6 +45,7 @@ export const initialState: InitialStateProps = {
 	status: ConnectionState.Disconnected,
 	deletedToken: undefined,
 	pausedToken: undefined,
+	roles: undefined,
 };
 
 export const getStableCoinList = createAsyncThunk(
@@ -135,6 +137,10 @@ export const walletSlice = createSlice({
 			state.capabilities = initialState.capabilities;
 			state.status = ConnectionState.Disconnected;
 			localStorage?.removeItem(LAST_WALLET_LS);
+			state.roles = undefined;
+		},
+		setRoles: (state, action) => {
+			state.roles = action.payload;
 		},
 		clearSelectedStableCoin: (state) => {
 			state.selectedStableCoin = initialState.selectedStableCoin;
@@ -179,4 +185,5 @@ export const SELECTED_TOKEN_RESERVE_ADDRESS = (state: RootState) =>
 export const SELECTED_TOKEN_RESERVE_AMOUNT = (state: RootState) =>
 	state.wallet.selectedStableCoin?.reserveAmount;
 
+export const SELECTED_TOKEN_ROLES = (state: RootState) => state.wallet.roles;
 export const walletActions = walletSlice.actions;

@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
-import './TokenOwner.sol';
-import './Roles.sol';
-import './Interfaces/IFreezable.sol';
-import '../hts-precompile/IHederaTokenService.sol';
+import {TokenOwner} from './TokenOwner.sol';
+import {Roles} from './Roles.sol';
+import {IHederaTokenService} from '../hts-precompile/IHederaTokenService.sol';
+import {IFreezable} from './Interfaces/IFreezable.sol';
 
 abstract contract Freezable is IFreezable, TokenOwner, Roles {
     /**
@@ -18,12 +18,12 @@ abstract contract Freezable is IFreezable, TokenOwner, Roles {
         external
         override(IFreezable)
         onlyRole(_getRoleId(RoleName.FREEZE))
-        checkAddressIsNotZero(account)
+        addressIsNotZero(account)
         returns (bool)
     {
         address currentTokenAddress = _getTokenAddress();
 
-        int256 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
+        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
             .freezeToken(currentTokenAddress, account);
 
         bool success = _checkResponse(responseCode);
@@ -44,12 +44,12 @@ abstract contract Freezable is IFreezable, TokenOwner, Roles {
         external
         override(IFreezable)
         onlyRole(_getRoleId(RoleName.FREEZE))
-        checkAddressIsNotZero(account)
+        addressIsNotZero(account)
         returns (bool)
     {
         address currentTokenAddress = _getTokenAddress();
 
-        int256 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
+        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
             .unfreezeToken(currentTokenAddress, account);
 
         bool success = _checkResponse(responseCode);

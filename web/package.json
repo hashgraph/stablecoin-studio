@@ -18,7 +18,7 @@
 		"@types/react-redux": "^7.1.25",
 		"axios": "^1.2.3",
 		"browserify-zlib": "^0.2.0",
-		"chakra-react-select": "^4.4.3",
+		"chakra-react-select": "4.4.3",
 		"framer-motion": "^8.5.2",
 		"@hashgraph-dev/stablecoin-npm-sdk":"^0.0.2",
 		"moment": "^2.29.4",

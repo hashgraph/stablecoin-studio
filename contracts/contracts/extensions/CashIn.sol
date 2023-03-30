@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
-import './Interfaces/ICashIn.sol';
-import './SupplierAdmin.sol';
-import './Reserve.sol';
-import '../hts-precompile/IHederaTokenService.sol';
+import {ICashIn} from './Interfaces/ICashIn.sol';
+import {SupplierAdmin} from './SupplierAdmin.sol';
+import {IHederaTokenService} from '../hts-precompile/IHederaTokenService.sol';
+import {Reserve} from './Reserve.sol';
 
 abstract contract CashIn is ICashIn, SupplierAdmin, Reserve {
     /**
@@ -16,24 +16,30 @@ abstract contract CashIn is ICashIn, SupplierAdmin, Reserve {
      */
     function mint(
         address account,
-        uint256 amount
+        int64 amount
     )
         external
         override(ICashIn)
         onlyRole(_getRoleId(RoleName.CASHIN))
-        checkReserveIncrease(amount)
-        checkAddressIsNotZero(account)
+        checkReserveIncrease(uint256(uint64(amount)))
+        addressIsNotZero(account)
+        amountIsNotNegative(amount, false)
         returns (bool)
     {
         if (!_unlimitedSupplierAllowances[msg.sender])
-            _decreaseSupplierAllowance(msg.sender, amount);
+            _decreaseSupplierAllowance(msg.sender, uint256(uint64(amount)));
 
         address currentTokenAddress = _getTokenAddress();
 
-        (int256 responseCode, , ) = IHederaTokenService(_PRECOMPILED_ADDRESS)
-            .mintToken(currentTokenAddress, uint64(amount), new bytes[](0));
+        uint256 balance = _balanceOf(address(this));
+
+        (int64 responseCode, , ) = IHederaTokenService(_PRECOMPILED_ADDRESS)
+            .mintToken(currentTokenAddress, amount, new bytes[](0));
 
         bool success = _checkResponse(responseCode);
+
+        if (!((_balanceOf(address(this)) - balance) == uint256(uint64(amount))))
+            revert('The smart contract is not the treasury account');
 
         _transfer(address(this), account, amount);
 

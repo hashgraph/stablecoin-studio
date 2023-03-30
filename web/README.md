@@ -58,6 +58,11 @@ Finally, in order to build the project, go to the root of the WEB project worksp
 The ENV file contains the following parameters:
 
 - **REACT_APP_LOG_LEVEL**: defines the log level the application is going to apply to filter the logs been displayed in the browser's console. The default value is "TRACE".
+- **REACT_APP_STABLE_COIN_FACTORY_ADDRESS**: This var is required if you want to create a new stablecoin. The var must be in Hedera format `0.0.XXXXX`.
+If the env var is not setted when you click in "Create a new Stablecoin" will show an alert.
+![Alt text](docs/images/alertNoEnv.png?raw=true 'alert when no env vars have been setted')
+You can use our [factories deployed](https://github.com/hashgraph/hedera-accelerator-stablecoin#deploying-the-stable-coin-factories).
+- **GENERATE_SOURCEMAP**: This is a proprietary Create React App configuration.You can read more information in its documentation.[Create React App documentation](https://create-react-app.dev/docs/advanced-configuration/)
 
 ## Starting the UI
 
@@ -119,7 +124,7 @@ Stable coin supply and accuracy definition (inital supply, max supply, decimals)
 
 **Manage permissions**
 
-Underlying token's keys definition (stable coin smart contract or another account), plus the possibility to grant KYC to the creating account at creation time (this option is only available if the KYC key is assigned to the smart contract and the Supply Key is not assigned to the creating account)
+Underlying token's keys definition (stable coin smart contract, current key, another key or no key at all), plus the possibility to grant KYC to the creating account at creation time (this option is only available if the KYC key is assigned to the smart contract and the Supply Key is not assigned to the creating account)
 
 ![image](https://user-images.githubusercontent.com/114951681/216949188-1a0db0e7-f3bd-41ef-8de2-1fec06cbb36d.png)
 

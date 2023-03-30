@@ -43,12 +43,14 @@ const InputController = ({
 	formStyle,
 	autoComplete = 'off',
 	labelStyle,
+	defaultValue,
 	...props
 }: InputControllerProps) => {
 	return (
 		<Controller
 			control={control}
 			name={name}
+			defaultValue={defaultValue}
 			rules={rules}
 			render={({ field: { onChange, value = '' }, fieldState: { error } }) => {
 				const onChangeCustom = (event: ChangeEvent<HTMLInputElement>) => {

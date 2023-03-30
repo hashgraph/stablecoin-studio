@@ -33,6 +33,7 @@ import DangerZoneOperations from '../views/Operations/DangerZone';
 import type { EventParameter, WalletEvent } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { LoggerTransports, SDK, ConnectionState } from '@hashgraph-dev/stablecoin-npm-sdk';
 import StableCoinProof from '../views/StableCoinProof';
+import FeesManagement from '../views/FeesManagement';
 import GrantKycOperation from '../views/Operations/GrantKyc';
 import RevokeKycOperation from '../views/Operations/RevokeKyc';
 import CheckKycOperation from '../views/Operations/CheckKyc';
@@ -143,11 +144,11 @@ const Router = () => {
 								<Route path={RoutesMappingUrl.dashboard} element={<Dashboard />} />
 								<Route
 									path={RoutesMappingUrl.editRole}
-									element={<HandleRoles action={actions.edit} />}
+									element={<HandleRoles action='editRole' />}
 								/>
 								<Route
 									path={RoutesMappingUrl.giveRole}
-									element={<HandleRoles action={actions.give} />}
+									element={<HandleRoles action='giveRole' />}
 								/>
 								<Route path={RoutesMappingUrl.operations} element={<Operations />} />
 								<Route path={RoutesMappingUrl.dangerZone} element={<DangerZoneOperations />} />
@@ -156,7 +157,7 @@ const Router = () => {
 								<Route path={RoutesMappingUrl.checkKyc} element={<CheckKycOperation />} />
 								<Route
 									path={RoutesMappingUrl.revokeRole}
-									element={<HandleRoles action={actions.revoke} />}
+									element={<HandleRoles action='revokeRole' />}
 								/>
 								<Route
 									path={RoutesMappingUrl.refreshRoles}
@@ -165,6 +166,7 @@ const Router = () => {
 								<Route path={RoutesMappingUrl.roles} element={<Roles />} />
 								<Route path={RoutesMappingUrl.stableCoinDetails} element={<StableCoinDetails />} />
 								<Route path={RoutesMappingUrl.proofOfReserve} element={<StableCoinProof />} />
+								<Route path={RoutesMappingUrl.feesManagement} element={<FeesManagement />} />
 							</>
 						)}
 						<Route path={RoutesMappingUrl.stableCoinCreation} element={<StableCoinCreation />} />

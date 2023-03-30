@@ -19,15 +19,16 @@
  */
 
 import {
+	Key,
+	TokenId,
+	AccountId,
 	Transaction,
+	CustomFee as HCustomFee,
 	ContractExecuteTransaction,
 	TokenWipeTransaction,
 	TokenMintTransaction,
 	TokenBurnTransaction,
-	TokenId,
-	AccountId,
 	TransferTransaction,
-	AccountAllowanceApproveTransaction,
 	TokenPauseTransaction,
 	TokenUnpauseTransaction,
 	TokenDeleteTransaction,
@@ -36,9 +37,10 @@ import {
 	TokenAssociateTransaction,
 	TokenGrantKycTransaction,
 	TokenRevokeKycTransaction,
-	CustomFee as HCustomFee,
 	TokenFeeScheduleUpdateTransaction,
+	TokenUpdateTransaction,
 } from '@hashgraph/sdk';
+import Long from 'long';
 import LogService from '../../../app/service/LogService.js';
 import { TransactionBuildingError } from './error/TransactionBuildingError.js';
 
@@ -78,15 +80,6 @@ export class HTSTransactionBuilder {
 			LogService.logError(error);
 			throw new TransactionBuildingError(error);
 		}
-	}
-
-	public static approveTokenAllowance(): Transaction {
-		return new AccountAllowanceApproveTransaction().approveTokenAllowance(
-			'0.0.48705516',
-			'0.0.47624288',
-			'0.0.47793222',
-			100000000000000,
-		);
 	}
 
 	public static buildTokenMintTransaction(
@@ -135,6 +128,39 @@ export class HTSTransactionBuilder {
 					AccountId.fromString(inAccountId),
 					amount,
 				);
+		} catch (error) {
+			LogService.logError(error);
+			throw new TransactionBuildingError(error);
+		}
+	}
+
+	public static buildTransfersTransaction(
+		tokenId: string,
+		amounts: Long[],
+		outAccountId: string,
+		inAccountsIds: string[],
+	): Transaction {
+		try {
+			const t = new TransferTransaction();
+
+			let totalAmount: Long = new Long(0);
+
+			for (let i = 0; i < inAccountsIds.length; i++) {
+				totalAmount = totalAmount.add(amounts[i]);
+				t.addTokenTransfer(
+					tokenId,
+					AccountId.fromString(inAccountsIds[i]),
+					amounts[i],
+				);
+			}
+
+			t.addTokenTransfer(
+				tokenId,
+				AccountId.fromString(outAccountId),
+				totalAmount.mul(-1),
+			);
+
+			return t;
 		} catch (error) {
 			LogService.logError(error);
 			throw new TransactionBuildingError(error);
@@ -274,6 +300,34 @@ export class HTSTransactionBuilder {
 				tokenId: tokenId,
 				customFees: customFees,
 			});
+		} catch (error) {
+			LogService.logError(error);
+			throw new TransactionBuildingError(error);
+		}
+	}
+
+	public static buildUpdateTokenTransaction(
+		tokenId: string,
+		kycKey: Key | undefined,
+		freezeKey: Key | undefined,
+		feeScheduleKey: Key | undefined,
+		pauseKey: Key | undefined,
+		wipeKey: Key | undefined,
+		supplyKey: Key | undefined,
+	): Transaction {
+		try {
+			const tokenUpdateTransaction: TokenUpdateTransaction =
+				new TokenUpdateTransaction({
+					tokenId: tokenId,
+				});
+			if (kycKey) tokenUpdateTransaction.setKycKey(kycKey);
+			if (freezeKey) tokenUpdateTransaction.setFreezeKey(freezeKey);
+			if (feeScheduleKey)
+				tokenUpdateTransaction.setFeeScheduleKey(feeScheduleKey);
+			if (pauseKey) tokenUpdateTransaction.setPauseKey(pauseKey);
+			if (wipeKey) tokenUpdateTransaction.setWipeKey(wipeKey);
+			if (supplyKey) tokenUpdateTransaction.setSupplyKey(supplyKey);
+			return tokenUpdateTransaction;
 		} catch (error) {
 			LogService.logError(error);
 			throw new TransactionBuildingError(error);

@@ -43,4 +43,4 @@ if (option) {
   npmInstall(webDir, "WEB");
 }
 
-npmLinkProject(cliDir);
+// npmLinkProject(cliDir);

@@ -19,36 +19,36 @@
  */
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import CheckNums from '../../../core/checks/numbers/CheckNums.js';
-import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
-import InvalidDecimalRange from '../../../domain/context/stablecoin/error/InvalidDecimalRange.js';
-import { InvalidRange } from './error/InvalidRange.js';
-import { InvalidType } from './error/InvalidType.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
+import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
+import CheckNums from '../../../core/checks/numbers/CheckNums.js';
+import { InvalidType } from './error/InvalidType.js';
+import InvalidDecimalRange from '../../../domain/context/stablecoin/error/InvalidDecimalRange.js';
+import { InvalidRange } from './error/InvalidRange.js';
 
 export default class AddFixedFeeRequest extends ValidatedRequest<AddFixedFeeRequest> {
 	tokenId: string;
 	collectorId: string;
+	collectorsExempt: boolean;
+	decimals: number;
 	tokenIdCollected: string;
 	amount: string;
-	decimals: number;
-	collectorsExempt: boolean;
 
 	constructor({
 		tokenId,
 		collectorId,
+		collectorsExempt,
+		decimals,
 		tokenIdCollected,
 		amount,
-		decimals,
-		collectorsExempt,
 	}: {
 		tokenId: string;
 		collectorId: string;
+		collectorsExempt: boolean;
+		decimals: number;
 		tokenIdCollected: string;
 		amount: string;
-		decimals: number;
-		collectorsExempt: boolean;
 	}) {
 		super({
 			tokenId: Validation.checkHederaIdFormat(),
@@ -58,6 +58,7 @@ export default class AddFixedFeeRequest extends ValidatedRequest<AddFixedFeeRequ
 				if (!BigDecimal.isBigDecimal(val)) {
 					return [new InvalidType(val, 'BigDecimal')];
 				}
+
 				if (CheckNums.hasMoreDecimals(val, this.decimals)) {
 					return [new InvalidDecimalRange(val, this.decimals)];
 				}
@@ -66,15 +67,15 @@ export default class AddFixedFeeRequest extends ValidatedRequest<AddFixedFeeRequ
 				const value = BigDecimal.fromString(val, this.decimals);
 
 				if (value.isLowerOrEqualThan(zero)) {
-					return [new InvalidRange(val, '0..', undefined)];
+					return [new InvalidRange(value, '0+', undefined)];
 				}
 			},
 		});
 		this.tokenId = tokenId;
 		this.collectorId = collectorId;
+		this.collectorsExempt = collectorsExempt;
+		this.decimals = decimals;
 		this.tokenIdCollected = tokenIdCollected;
 		this.amount = amount;
-		this.decimals = decimals;
-		this.collectorsExempt = collectorsExempt;
 	}
 }

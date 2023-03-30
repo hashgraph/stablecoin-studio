@@ -19,6 +19,7 @@ import type PROOF_OF_RESERVE_EN from './translations/en/proofOfReserve.json';
 import type GRANT_KYC_EN from './translations/en/grantKYC.json';
 import type REVOKE_KYC_EN from './translations/en/revokeKYC.json';
 import CHECK_KYC_EN from './translations/en/checkKyc.json';
+import type FEES_MANAGEMENT_EN from './translations/en/feesManagement.json';
 
 declare module 'react-i18next' {
 	interface Resources {
@@ -40,6 +41,7 @@ declare module 'react-i18next' {
 		grantKYC: typeof GRANT_KYC_EN;
 		revokeKYC: typeof REVOKE_KYC_EN;
 		checkKyc: typeof CHECK_KYC_EN;
+		feesManagement: typeof FEES_MANAGEMENT_EN;
 	}
 }
 

@@ -7,6 +7,8 @@ import {
 	ConnectRequest,
 	InitializationRequest,
 	ReserveDataFeed,
+	Fees,
+	Factory,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 import type {
 	WalletEvent,
@@ -21,12 +23,10 @@ import type {
 	GetListStableCoinRequest,
 	GetRolesRequest,
 	GetStableCoinDetailsRequest,
-	GrantRoleRequest,
 	HasRoleRequest,
 	InitializationData,
 	PauseRequest,
 	RescueRequest,
-	RevokeRoleRequest,
 	StableCoinListViewModel,
 	StableCoinViewModel,
 	StableCoinCapabilities,
@@ -43,6 +43,12 @@ import type {
 	UpdateReserveAddressRequest,
 	UpdateReserveAmountRequest,
 	KYCRequest,
+	AddFixedFeeRequest,
+	AddFractionalFeeRequest,
+	UpdateCustomFeesRequest,
+	GetERC20ListRequest,
+	RevokeMultiRolesRequest,
+	GrantMultiRolesRequest,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 export type StableCoinListRaw = Array<Record<'id' | 'symbol', string>>;
@@ -185,12 +191,12 @@ export class SDKService {
 		return await Role.getAllowance(req);
 	}
 
-	public static async grantRole(req: GrantRoleRequest) {
-		return await Role.grantRole(req);
+	public static async grantMultipleRole(req: GrantMultiRolesRequest) {
+		return await Role.grantMultiRoles(req);
 	}
 
-	public static async revokeRole(req: RevokeRoleRequest) {
-		return await Role.revokeRole(req);
+	public static async revokeMultiRolesRequest(req: RevokeMultiRolesRequest) {
+		return await Role.revokeMultiRoles(req);
 	}
 
 	public static async hasRole(req: HasRoleRequest) {
@@ -231,6 +237,22 @@ export class SDKService {
 
 	public static async isAccountKYCGranted(data: KYCRequest) {
 		return await StableCoin.isAccountKYCGranted(data);
+	}
+
+	public static async addFixedFee(data: AddFixedFeeRequest) {
+		return await Fees.addFixedFee(data);
+	}
+
+	public static async addFractionalFee(data: AddFractionalFeeRequest) {
+		return await Fees.addFractionalFee(data);
+	}
+
+	public static async updateCustomFees(data: UpdateCustomFeesRequest) {
+		return await Fees.updateCustomFees(data);
+	}
+
+	public static async getHederaERC20List(data: GetERC20ListRequest) {
+		return await Factory.getHederaERC20List(data);
 	}
 }
 

@@ -18,6 +18,8 @@
  *
  */
 
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 import {
 	AccountId,
 	ContractExecuteTransaction,
@@ -34,7 +36,11 @@ import {
 	TokenFreezeTransaction,
 	TokenUnfreezeTransaction,
 	ContractId,
+	PublicKey,
+	TokenUpdateTransaction,
+	DelegateContractId,
 } from '@hashgraph/sdk';
+import { CLIENT_ACCOUNT_ECDSA } from '../../../config.js';
 import Long from 'long';
 import { LoggerTransports, SDK } from '../../../../src/index.js';
 import { HTSTransactionBuilder } from '../../../../src/port/out/hs/HTSTransactionBuilder.js';
@@ -227,5 +233,79 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 				.get(TokenId.fromString(tokenId))
 				?.get(AccountId.fromString(accountId2)),
 		).not.toEqual(Long.ONE.multiply(-1));
+	});
+
+	it('Test create TokenUpdateTransaction with public keys', () => {
+		const t: TokenUpdateTransaction =
+			HTSTransactionBuilder.buildUpdateTokenTransaction(
+				tokenId,
+				PublicKey.fromString(CLIENT_ACCOUNT_ECDSA.publicKey?.key!),
+				PublicKey.fromString(CLIENT_ACCOUNT_ECDSA.publicKey?.key!),
+				PublicKey.fromString(CLIENT_ACCOUNT_ECDSA.publicKey?.key!),
+				PublicKey.fromString(CLIENT_ACCOUNT_ECDSA.publicKey?.key!),
+				PublicKey.fromString(CLIENT_ACCOUNT_ECDSA.publicKey?.key!),
+				PublicKey.fromString(CLIENT_ACCOUNT_ECDSA.publicKey?.key!),
+			) as TokenUpdateTransaction;
+		expect(t?.tokenId).toEqual(TokenId.fromString(tokenId));
+		expect(t?.kycKey).toEqual(
+			PublicKey.fromString(CLIENT_ACCOUNT_ECDSA.publicKey?.key!),
+		);
+		expect(t?.freezeKey).toEqual(
+			PublicKey.fromString(CLIENT_ACCOUNT_ECDSA.publicKey?.key!),
+		);
+		expect(t?.feeScheduleKey).toEqual(
+			PublicKey.fromString(CLIENT_ACCOUNT_ECDSA.publicKey?.key!),
+		);
+		expect(t?.pauseKey).toEqual(
+			PublicKey.fromString(CLIENT_ACCOUNT_ECDSA.publicKey?.key!),
+		);
+		expect(t?.wipeKey).toEqual(
+			PublicKey.fromString(CLIENT_ACCOUNT_ECDSA.publicKey?.key!),
+		);
+		expect(t?.supplyKey).toEqual(
+			PublicKey.fromString(CLIENT_ACCOUNT_ECDSA.publicKey?.key!),
+		);
+	});
+
+	it('Test create TokenUpdateTransaction with delegate contract ids', () => {
+		const t: TokenUpdateTransaction =
+			HTSTransactionBuilder.buildUpdateTokenTransaction(
+				tokenId,
+				DelegateContractId.fromString('0.0.1'),
+				DelegateContractId.fromString('0.0.1'),
+				DelegateContractId.fromString('0.0.1'),
+				DelegateContractId.fromString('0.0.1'),
+				DelegateContractId.fromString('0.0.1'),
+				DelegateContractId.fromString('0.0.1'),
+			) as TokenUpdateTransaction;
+		expect(t?.tokenId).toEqual(TokenId.fromString(tokenId));
+		expect(t?.kycKey).toEqual(DelegateContractId.fromString('0.0.1'));
+		expect(t?.freezeKey).toEqual(DelegateContractId.fromString('0.0.1'));
+		expect(t?.feeScheduleKey).toEqual(
+			DelegateContractId.fromString('0.0.1'),
+		);
+		expect(t?.pauseKey).toEqual(DelegateContractId.fromString('0.0.1'));
+		expect(t?.wipeKey).toEqual(DelegateContractId.fromString('0.0.1'));
+		expect(t?.supplyKey).toEqual(DelegateContractId.fromString('0.0.1'));
+	});
+
+	it('Test create TokenUpdateTransaction with undefined keys', () => {
+		const t: TokenUpdateTransaction =
+			HTSTransactionBuilder.buildUpdateTokenTransaction(
+				tokenId,
+				undefined,
+				undefined,
+				undefined,
+				undefined,
+				undefined,
+				undefined,
+			) as TokenUpdateTransaction;
+		expect(t?.tokenId).toBeUndefined();
+		expect(t?.kycKey).toBeUndefined();
+		expect(t?.freezeKey).toBeUndefined();
+		expect(t?.feeScheduleKey).toBeUndefined();
+		expect(t?.pauseKey).toBeUndefined();
+		expect(t?.wipeKey).toBeUndefined();
+		expect(t?.supplyKey).toBeUndefined();
 	});
 });

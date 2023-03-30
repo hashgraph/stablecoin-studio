@@ -26,6 +26,7 @@ export default class WizardService extends Service {
 
   constructor() {
     super('Wizard');
+    this.setConfigurationService = new SetConfigurationService();
   }
 
   /**
@@ -48,6 +49,33 @@ export default class WizardService extends Service {
       ) {
         case language.getText('wizard.mainOptions.Create'):
           await utilsService.cleanAndShowBanner();
+          utilsService.displayCurrentUserInfo(currentAccount);
+          let configuration = await configurationService.getConfiguration();
+          if (
+            !configuration.factories.find(
+              (item) => item.network === currentAccount.network,
+            )
+          ) {
+            utilsService.showWarning(
+              language.getText('stablecoin.noFactories'),
+            );
+            const configFactories = await utilsService.defaultConfirmAsk(
+              language.getText('configuration.askConfigurateFactories'),
+              true,
+            );
+            if (configFactories) {
+              await this.setConfigurationService.configureFactories();
+              configuration = await configurationService.getConfiguration();
+              const { factories } = configuration;
+              const currentFactory = factories.find(
+                (factory) => currentAccount.network === factory.network,
+              );
+
+              utilsService.setCurrentFactory(currentFactory);
+            } else {
+              break;
+            }
+          }
           const stableCoin: StableCoinViewModel =
             await new CreateStableCoinService().createStableCoin(
               undefined,
@@ -82,7 +110,6 @@ export default class WizardService extends Service {
           break;
         case language.getText('wizard.mainOptions.Configuration'):
           await utilsService.cleanAndShowBanner();
-          this.setConfigurationService = new SetConfigurationService();
           await this.configurationMenu();
           break;
         default:
@@ -145,7 +172,7 @@ export default class WizardService extends Service {
 
   public async chooseAccount(mainMenu = true, network?: string): Promise<void> {
     const configuration = configurationService.getConfiguration();
-    const { networks, accounts, factories, hederaERC20s } = configuration;
+    const { networks, accounts, factories } = configuration;
     let options = network
       ? accounts
           .filter((acc) => acc.network === network)
@@ -187,11 +214,6 @@ export default class WizardService extends Service {
 
     utilsService.setCurrentFactory(currentFactory);
 
-    const currentHederaERC20 = hederaERC20s.find(
-      (hederaERC20) => currentAccount.network === hederaERC20.network,
-    );
-
-    utilsService.setCurrentHederaERC20(currentHederaERC20);
     await Network.setNetwork(
       new SetNetworkRequest({
         environment: currentNetwork.name,

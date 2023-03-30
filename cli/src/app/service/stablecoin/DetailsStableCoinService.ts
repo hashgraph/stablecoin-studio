@@ -63,7 +63,7 @@ export default class DetailsStableCoinsService extends Service {
         feeScheduleKey: respDetail.feeScheduleKey
           ? respDetail.feeScheduleKey.toString()
           : '-',
-        customFees: new FeeStableCoinService().getFormatedFees(
+        customFees: new FeeStableCoinService().getSerializedFees(
           respDetail.customFees,
         ),
         ...reserveData,

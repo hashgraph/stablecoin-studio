@@ -110,6 +110,15 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 			supplyKey: PublicKey.NULL,
 			supplyType: TokenSupplyType.INFINITE,
 			// grantKYCToOriginalSender:true
+			burnRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			wipeRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			rescueRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			freezeRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			pauseRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			deleteRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			kycRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			cashInRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			cashInRoleAllowance: BigDecimal.ZERO,
 		});
 
 		const coinHTS = new StableCoin({
@@ -125,6 +134,15 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 			supplyKey: CLIENT_ACCOUNT_ECDSA.publicKey,
 			supplyType: TokenSupplyType.INFINITE,
 			// grantKYCToOriginalSender:true,
+			burnRoleAccount: undefined,
+			wipeRoleAccount: undefined,
+			rescueRoleAccount: undefined,
+			freezeRoleAccount: undefined,
+			pauseRoleAccount: undefined,
+			deleteRoleAccount: undefined,
+			kycRoleAccount: undefined,
+			cashInRoleAccount: undefined,
+			cashInRoleAllowance: undefined,
 		});
 
 		stableCoinCapabilitiesSC = await createToken(
@@ -156,6 +174,15 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 			supplyKey: CLIENT_ACCOUNT_ECDSA.publicKey,
 			autoRenewAccount: CLIENT_ACCOUNT_ECDSA.id,
 			supplyType: TokenSupplyType.FINITE,
+			burnRoleAccount: undefined,
+			wipeRoleAccount: undefined,
+			rescueRoleAccount: undefined,
+			freezeRoleAccount: undefined,
+			pauseRoleAccount: undefined,
+			deleteRoleAccount: undefined,
+			kycRoleAccount: undefined,
+			cashInRoleAccount: undefined,
+			cashInRoleAllowance: undefined,
 		});
 		tr = await th.create(
 			coin,
@@ -474,6 +501,15 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 			pauseKey: PublicKey.NULL,
 			supplyKey: PublicKey.NULL,
 			supplyType: TokenSupplyType.INFINITE,
+			burnRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			wipeRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			rescueRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			freezeRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			pauseRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			deleteRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			kycRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			cashInRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			cashInRoleAllowance: BigDecimal.ZERO,
 		});
 		await expect(
 			createToken(coinSC, CLIENT_ACCOUNT_ECDSA),

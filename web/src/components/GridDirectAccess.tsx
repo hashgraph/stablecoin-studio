@@ -20,16 +20,19 @@ const GridDirectAccess = (props: GridDirectAccessProps) => {
 
 	return (
 		<Grid templateColumns={grids} w='full'>
-			{directAccesses.map((directAccess: DirectAccessProps) => (
-				<GridItem key={directAccess.title} w='full' mb='45px'>
-					<DirectAccess
-						icon={directAccess.icon}
-						route={directAccess.route}
-						title={directAccess.title}
-						isDisabled={directAccess.isDisabled}
-					/>
-				</GridItem>
-			))}
+			{directAccesses.map(
+				({ icon, route, title, isDisabled, customHandleClick }: DirectAccessProps) => (
+					<GridItem key={title} w='full' mb='45px'>
+						<DirectAccess
+							icon={icon}
+							route={route}
+							title={title}
+							isDisabled={isDisabled}
+							customHandleClick={customHandleClick}
+						/>
+					</GridItem>
+				),
+			)}
 		</Grid>
 	);
 };
