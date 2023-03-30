@@ -52,23 +52,16 @@ The remaining smart contracts have been implemented for this specific project:
    - `Pausable.sol`: abstract contract implementing the *pause* and *unpause* operations (if a token is paused, nobody will be able to operate with it until the token is unpaused).  
    - `Rescatable.sol`: abstract contract implementing the *rescue* operation (transfer tokens from the treasury to another account).
    - `Reserve.sol`: abstract contract implementing the reserve for the stable coin (checking against the current reserve before minting, changing the reserve data feed, etc.).
+   - `RoleManagement.sol`: abstract contract implementing the "grantRoles" and "revokeRoles" operations (granting and revoking multiple roles to/from multiple accounts in one single transaction).
    - `Roles.sol`: Contains the definition of the roles that can be assigned for every stable coin.
    - `Supplieradmin.sol`: abstract contract implementing all the cashin role assignment and management (assigning/removing the role as well as setting, increasing and decreasing the cash-in limit).
    - `TokenOwner.sol`: abstract contract that stores the addresses of the *HTS precompiled smart contract* and the *underlying token* related to the stable coin. All the smart contracts mentioned above, inherit from this abstract contract.
    - `Wipeable.sol`: abstract contract implementing the *wipe* operation (burn token from any account, decreases the total supply).
  - `HederaERC20.sol`: Main Stable coin contract. Contains all the stable coin related logic. Inherits all the contracts defined in the "extension" folder as well as the Role.sol contract. **IMPORTANT** : a HederaERC20 contract will be deployed in Testnet for anybody to use. Users are also free to deploy and use their own HederaERC20 contract. Whatever HederaERC20 contract users choose to use, they will need to pass the contract's address as an input argument when calling the factory.
- - `HederaERC20Proxy.sol`: Extends the OpenZeppelin transaparent proxy implemention. This proxy will delegate business method calls to a *HederaERC20* smart contract and will implement the upgradable logic.
- - `HederaERC20ProxyAdmin.sol`: Extends the OpenZeppelin proxy admin implementation. This proxy will be the admin of the HederaERC20Proxy, that way, users will be able to invoke the HederaERC20 functionality through the HederaERC20Proxy and upgrade the HederaERC20Proxy implementation through the HederaERC20ProxyAdmin.
  - `HederaReserve.sol`: Implements the ChainLink AggregatorV3Interface to provide the current data about the stable coin's reserves.
- - `HederaReserveProxy.sol`: Extends the OpenZeppelin transaparent proxy implemention. This proxy will delegate business method calls to a *HederaReserve* smart contract and will implement the upgradable logic.
- - `HederaReserveProxyAdmin.sol`: Extends the OpenZeppelin proxy admin implementation. This proxy will be the admin of the HederaReserveProxy, that way, users will be able to invoke the HederaReserve functionality through the HederaReserveProxy and upgrade the HederaReserveProxy implementation through the HederaReserveProxyAdmin.
  - `StableCoinFactory.sol`: Implements the flow to create a new stable coin. Every time a new stable coin is created, several smart contracts must be deployed and initialized and an underlying token must be created through the `HTS precompiled smart contract`. This multi-transaction process is encapsulated in this contract so that users can create new stable coins in a single transaction. **IMPORTANT** : a Factory contract will be deployed in Tesnet for anybody to use. Users are also free to deploy and use their own Factory contract.
- 
-    Also the contract saves the different versións of HederaERC20 address for enhance its performance and simplify the process of creating stable coins. 
- - `StableCoinFactoryProxy.sol`: Extends the OpenZeppelin transaparent proxy implemention. This proxy will delegate business method calls to a *StableCoinFactory* smart contract and will implement the upgradable logic.
- - `StableCoinFactoryProxyAdmin.sol`: Extends the OpenZeppelin proxy admin implementation. This proxy will be the admin of the StableCoinFactoryProxy, that way, users will be able to invoke the StableCoinFactory functionality through the StableCoinFactoryProxy and upgrade the StableCoinFactoryProxy implementation through the StableCoinFactoryProxyAdmin.
 
- > Every stable coin is made of an **HederaERC20ProxyAdmin** contract, an **HederaERC20Proxy** contract and an **underlying token** managed through the *HTS precompiled smart contract*. The **HederaERC20** contract is meant to be "shared" by multiple users (by using proxies). A stable coin admin may also choose to deploy an **HederaReserve** along with the stable coin at creation, with it's **HederaReserveProxy** and **HederaReserveProxyAdmin** contracts, or to define an existing reserve instead.
+ > Every stable coin is made of a **ProxyAdmin** and a **TransparentUpgradeableProxy** contracts (from Open Zeppelin) plus an **underlying token** managed through the *HTS precompiled smart contract*. The **HederaERC20** contract is meant to be "shared" by multiple users (using proxies). A stable coin admin may also choose to deploy a **HederaReserve** along with the stable coin at creation time, with its own **TransparentUpgradeableProxy** and **ProxyAdmin** contracts, or to define an existing reserve instead.
 
 # Architecture
 
@@ -139,10 +132,12 @@ Typescript test files can be foud in the `test` folder:
 - `deployFactory.ts`: Tests the stable coin factory deployment functionality.
 - `freezable.ts`: Tests the stable coin freeze/unfreeze functionality.
 - `HederaERC20.ts`: Tests the HederaERC20 functionality.
-- `KYC.ts`: Tests the KYC grant/revoke functionality to account for stable coins.
+- `HederaReserve.ts`: Tests the HederaReserve functionality.
+- `kyc.ts`: Tests the KYC grant/revoke functionality to account for stable coins.
 - `pausable.ts`: Tests the stable coin pause functionality.
 - `rescatable.ts`: Tests the stable coin rescue functionality.
 - `reserve.ts`: Tests the stable coin reserve functionality.
+- `roleManagement.ts`: Tests the stable coin roles (granting/revoking multiple roles) functionality.
 - `roles.ts`: Tests the stable coin roles functionality.
 - `StableCoinFactory.ts`: Tests the Factory functionality.
 - `supplieradmin.ts`: Tests the stable coin cashin functionality.
@@ -235,8 +230,8 @@ In order to create stable coins, a Factory and a HederaERC20 contracts must be d
 ## Deploy Factory
 If you want to deploy your own Factory contracts do the following steps:
    1. Deploy the Factory **Logic** smart contract (*StableCoinFactory.sol*).
-   2. Deploy the Factory **Proxy Admin** smart contract (*StableCoinFactoryProxyAdmin.sol*).
-   3. Deploy the Factory **Proxy** smart contract (*StableCoinFactoryProxy.sol*) setting the Factory logic as the implementation and the Factory proxy admin as the admin.
+   2. Deploy the Factory **Proxy Admin** smart contract.
+   3. Deploy the Factory **TransparentUpgradeableProxy** smart contract setting the Factory logic as the implementation and the Factory proxy admin as the admin.
 
 You may also clone this repository, install the dependecies (see [Build](#Build)) and run `npx hardhat deployFactory` in order to deploy all factories (HederaERC20 and StableCoinFactory) and its proxies onto the testnet network. Once completed, an output with the new addresses is provided:
 
@@ -255,10 +250,10 @@ Once the Factory has been deployed (or if you are using the common Factory), cre
 > it can be easily done from the CLI and/or UI of the project, for more information on that check their respective README.md
 
 These are the steps the creation method will perform when creating a new stable coin:
-- Deploy **Stable Coin Proxy Admin smart contract** (*HederaERC20ProxyAdmin.sol*).
+- Deploy **Stable Coin Proxy Admin smart contract** (from the Open Zeppelin library).
 - Transfer the Stable Coin Proxy Admin ownership to the sender account.
-- Deploy **Stable Coin Proxy smart contract** (*HederaERC20Proxy.sol*) setting the implementation contract (*The HederaERC20 contract's address you provided as an input argument) and the admin (*Stable Coin Proxy Admin smart contract*).
-- Initilaizing the Stable Coin Proxy. The initialization will create the underlying token.
+- Deploy **Stable Coin Proxy smart contract** (from the Open Zeppelin library) setting the implementation contract (*The HederaERC20 contract's address you provided as an input argument) and the admin (*Stable Coin Proxy Admin smart contract*).
+- Initializing the Stable Coin Proxy. The initialization will create the underlying token.
 - Associating the Token to the deploying account.
 
 # Upgrade
