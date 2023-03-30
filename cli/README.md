@@ -186,7 +186,8 @@ The request will then be submitted to the SDK and the stable coin will be create
 
 > When the configuration file is first created, the factory and HederaERC20 contracts added to the "testnet" network are the default ones (pre-deployed contracts). However users are free to deploy and use their own contracts, in order to do that, the configuration file must be updated with the new factory and/or HederaERC20 contract' addresses.
 
-Uploading Kazam_screencast_00005.mp4…
+https://user-images.githubusercontent.com/114951681/228852049-7234f6ed-575c-4462-901b-c8d2856c5683.mp4
+
 
 #### Manage imported tokens
 
@@ -226,11 +227,11 @@ https://user-images.githubusercontent.com/102601367/205074235-32145a1b-4ce0-4913
 
 - **Freeze Management**: Freeze/Unfreeze an account or check if an account if frozen/unfrozen. If an account is frozen, it will not be able to transfer any tokens.
 
-https://user-images.githubusercontent.com/102601367/205074293-73156a99-fc65-41ba-9a45-0be08ca5837e.mov
+https://user-images.githubusercontent.com/114951681/228851899-8a63b255-8e97-4705-8765-f59c01fc928b.mp4
 
 - **KYC Management**: Grant/Revoke KYC to/from an account or check an account's kyc status. If an account is granted KYC, it can be involved in any token transfer.
 
-https://user-images.githubusercontent.com/108128685/214292138-c5d44bc6-3fc1-4995-99af-a9a8a2c9dec5.mov
+https://user-images.githubusercontent.com/114951681/228851958-db534d9e-0bc3-41f5-9820-7ce79fcf643b.mp4
 
 - **Role management**: Administrators of a stable coin can manage user roles from this menu, the will have the posibility to grant, revoke, edit and check roles.
 
