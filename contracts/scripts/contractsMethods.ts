@@ -307,8 +307,6 @@ export async function updateToken(
     symbol: string,
     keys: any,
     second: number,
-    autoRenewAccount: string,
-    autoRenewAccountIsE25519: boolean,
     autoRenewPeriod: number,
     client: Client
 ): Promise<boolean> {

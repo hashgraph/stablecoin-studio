@@ -164,8 +164,6 @@ describe('HederaERC20 Tests', function () {
                 'newSymbol',
                 keys,
                 oneYearLaterInSeconds(),
-                operatorAccount,
-                operatorIsE25519,
                 7890000,
                 nonOperatorClient
             )
@@ -184,8 +182,6 @@ describe('HederaERC20 Tests', function () {
             'newSymbol',
             keysToKey,
             oneYearLaterInSeconds(),
-            operatorAccount,
-            operatorIsE25519,
             7890000,
             operatorClient
         )
@@ -196,8 +192,6 @@ describe('HederaERC20 Tests', function () {
             TokenSymbol,
             keysToContract,
             0,
-            operatorAccount,
-            operatorIsE25519,
             7776000,
             operatorClient
         )
