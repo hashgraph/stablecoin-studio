@@ -150,9 +150,9 @@ Learn more about them in their README:
 
 # Technologies
 - **Smart contracts**: Solidity version 0.8.16 (and lower versions for contracts imported from external sources like OpenZeppelin).
-- **SDK, CLI and UI**: Typescript 4.7 or higher is highly reccomended to work with the repositories.
+- **SDK, CLI and UI**: Typescript `>=4.7`
 - **SDK**: Node `>= v18.13`
-- **UI**: React.js 2.2.6 or higher.
+- **UI**: React.js `>=2.2.6`
 
 
 # Installation
