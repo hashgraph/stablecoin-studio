@@ -315,10 +315,6 @@ export async function updateToken(
         tokenSymbol: symbol,
         keys: keys,
         second: second,
-        autoRenewAccount: await toEvmAddress(
-            autoRenewAccount,
-            autoRenewAccountIsE25519
-        ),
         autoRenewPeriod: autoRenewPeriod,
     }
     const params = [updateToken]
