@@ -345,8 +345,6 @@ contract HederaERC20 is
         if (updatedToken.second >= 0) expiry.second = updatedToken.second;
         if (updatedToken.autoRenewPeriod >= 0)
             expiry.autoRenewPeriod = updatedToken.autoRenewPeriod;
-        if (updatedToken.autoRenewAccount != address(0))
-            expiry.autoRenewAccount = updatedToken.autoRenewAccount;
 
         // Hedera Token Info
         IHederaTokenService.HederaToken memory hederaTokenInfo;

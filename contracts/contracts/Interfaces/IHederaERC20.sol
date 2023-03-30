@@ -94,7 +94,6 @@ interface IHederaERC20 {
         string tokenSymbol;
         KeysLib.KeysStruct[] keys;
         int64 second;
-        address autoRenewAccount;
         int64 autoRenewPeriod;
     }
 
