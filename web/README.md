@@ -58,10 +58,13 @@ Finally, in order to build the project, go to the root of the WEB project worksp
 The ENV file contains the following parameters:
 
 - **REACT_APP_LOG_LEVEL**: defines the log level the application is going to apply to filter the logs been displayed in the browser's console. The default value is "TRACE".
-- **REACT_APP_STABLE_COIN_FACTORY_ADDRESS**: This var is required if you want to create a new stablecoin. The var must be in Hedera format `0.0.XXXXX`.
+- **REACT_APP_FACTORIES**: This var is required if you want to create a new stablecoin. The var must be a JSON array with a factory id in Hedera format `0.0.XXXXX` per environment.
+```
+'[{"Environment":"mainnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.1234567"},{"Environment":"testnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.3950554"},{"Environment":"previewnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.239703"}]'
+```
 If the env var is not setted when you click in "Create a new Stablecoin" will show an alert.
-![Alt text](docs/images/alertNoEnv.png?raw=true 'alert when no env vars have been setted')
-You can use our [factories deployed](https://github.com/hashgraph/hedera-accelerator-stablecoin#deploying-the-stable-coin-factories).
+![image](https://user-images.githubusercontent.com/114951681/229088627-369506c3-9c28-435c-9e44-d8908f8a15ab.png)
+You can use our [deployed factories](https://github.com/hashgraph/hedera-accelerator-stablecoin#deploying-the-stable-coin-factories).
 - **GENERATE_SOURCEMAP**: This is a proprietary Create React App configuration.You can read more information in its documentation.[Create React App documentation](https://create-react-app.dev/docs/advanced-configuration/)
 
 ## Starting the UI
@@ -75,6 +78,10 @@ npm run start
 ![Alt text](docs/images/init.png?raw=true 'selecting a wallet')
 
 The front end will automatically detect how many compatible wallets are available and ask you to select one of them to operate with.
+
+![image](https://user-images.githubusercontent.com/114951681/229089031-9f014228-68cf-4d94-b4da-448d16e884b3.png)
+
+If you choose Hashpack, you will be asked to choose a network (testnet or mainnet)
 
 ![Alt text](docs/images/disconnect.png?raw=true 'disconnect')
 
@@ -99,6 +106,16 @@ Add a new network with the following information :
 
 ![image](https://user-images.githubusercontent.com/114951681/210327135-a88604ab-2d9c-4341-87fd-e84c4115364f.png)
 
+you can switch from one network to another, or from one account to another using metamask, however not every account exists in every network and not every network belongs to Hedera, which is why you can potentially see the following warning messages:
+
+![image](https://user-images.githubusercontent.com/114951681/229093620-b93f3ab4-f391-4d5e-a757-f85cbfcc0819.png)
+
+If you select a non-Hedera network
+
+![image](https://user-images.githubusercontent.com/114951681/229093838-a6fc418f-a892-4863-a3c5-d4350eadd77f.png)
+
+If you select an account that does not exist in the Hedera network
+
 
 > In order to use the WEB correctly it is necessary to have at least one of those two wallets already installed in your browser. You can nevertheless have both and switch from one to the other.
 
@@ -114,19 +131,22 @@ In order to create a new stable coin using the WEB, you must click on the "Creat
 
 Basic information about the Stable coin.
 
-![image](https://user-images.githubusercontent.com/110089113/212881844-776a06b8-ba65-4722-992b-ef1b7529e4e6.png)
+![image](https://user-images.githubusercontent.com/114951681/229089526-0aff1e72-3850-4adf-8a8d-0ce604c25752.png)
+
 
 **Optional details**
 
 Stable coin supply and accuracy definition (inital supply, max supply, decimals)
 
-![image](https://user-images.githubusercontent.com/110089113/212881920-45aed35b-4c82-4b01-bbb3-a6699a2dfa8b.png)
+![image](https://user-images.githubusercontent.com/114951681/229089582-eca58c48-3315-4a8d-aa3a-cc71a99aacf1.png)
+
 
 **Manage permissions**
 
 Underlying token's keys definition (stable coin smart contract, current key, another key or no key at all), plus the possibility to grant KYC to the creating account at creation time (this option is only available if the KYC key is assigned to the smart contract and the Supply Key is not assigned to the creating account)
 
-![image](https://user-images.githubusercontent.com/114951681/216949188-1a0db0e7-f3bd-41ef-8de2-1fec06cbb36d.png)
+![image](https://user-images.githubusercontent.com/114951681/229089693-132bd8bd-4c4d-48dd-bae9-e58c13067f8c.png)
+
 
 **Proof Of Reserve**
 
@@ -135,13 +155,15 @@ If so, the user will have two options, either submit the address of an already e
 
 For more information about proof of reserve, see the [docs](https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/feature/sdk/Chainlink_PoR#Proof-of-reserve).
 
-![image](https://user-images.githubusercontent.com/110089113/212882109-7975a305-7bfa-450e-973a-625b5d528e5e.png)
+![image](https://user-images.githubusercontent.com/114951681/229089752-d0326884-7fa3-4126-85b2-2c82a7d4a05a.png)
+
 
 **Review**
 
 Final validation before creating the stable coin.
 
-![image](https://user-images.githubusercontent.com/110089113/212882395-b7cd1366-9c67-4db3-8532-557d4f0ff3a2.png)
+![image](https://user-images.githubusercontent.com/114951681/229089813-893aac1f-2443-4aee-872c-8ba0e7ac8834.png)
+
 
 You will then have to validate the transaction using the wallet you paired to.
 
@@ -161,15 +183,22 @@ then fill-in all the required information. You can import any stable coin you wa
 
 ### Operate stable coins
 
-![Alt text](docs/images/Operations.png?raw=true 'Operations')
+![image](https://user-images.githubusercontent.com/114951681/229090412-715c3afb-35fa-4933-8ca9-71a7af0bd456.png)
+
 
 The operations linked to the capabilities (roles) assigned to your account for the selected stable coin will be available.
 
 ### Manage Roles
 
-![Alt text](docs/images/RoleMgmgt.png?raw=true 'Roles management')
+![image](https://user-images.githubusercontent.com/114951681/229090716-8aa224e6-4f05-42ed-9a74-01f519427b95.png)
 
 If your account has the stable coin admin role, you will also be allowed to manage the stable coin's roles.
+
+### Fees Management
+
+![image](https://user-images.githubusercontent.com/114951681/229092960-dd67ccc7-d340-4bb9-a3ba-0f2e33e61d0f.png)
+
+If your account has the stable coin fee role, you will also be allowed to manage the token's custom fees.
 
 ### Proof Of Reserve
 
