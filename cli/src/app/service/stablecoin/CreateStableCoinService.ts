@@ -522,7 +522,7 @@ export default class CreateStableCoinService extends Service {
   private async askForCustomFees(): Promise<boolean> {
     return await utilsService.defaultConfirmAsk(
       language.getText('stablecoin.askCustomFees'),
-      true,
+      false,
     );
   }
 
