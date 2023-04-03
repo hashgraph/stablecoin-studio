@@ -209,9 +209,9 @@ const ManagementPermissions = ({
 						<Text maxW={'252px'} fontSize='14px' fontWeight='400' lineHeight='17px'>
 							{t('stableCoinCreation:managementPermissions.manageCustomFees')}
 						</Text>
-						<SwitchController control={control} name={'manageCustomFees'} defaultValue={true} />
+						<SwitchController control={control} name={'manageCustomFees'} defaultValue={false} />
 					</HStack>
-					{isManageCustomFees !== false && (
+					{isManageCustomFees === true && (
 						<KeySelector
 							key={feeScheduleKey.name}
 							control={control}
