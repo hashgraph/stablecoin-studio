@@ -3,8 +3,7 @@ import type { Control, FieldValues } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import InputController from '../../components/Form/InputController';
 import { useSelector } from 'react-redux';
-import type { CreateRequest } from 'hedera-stable-coin-sdk';
-import { GetERC20ListRequest } from 'hedera-stable-coin-sdk';
+import { CreateRequest, Network, GetERC20ListRequest } from 'hedera-stable-coin-sdk';
 import { SELECTED_WALLET_PAIRED } from '../../store/slices/walletSlice';
 import { handleRequestValidation } from '../../utils/validationsHelper';
 import { propertyNotFound } from '../../constant';
@@ -30,7 +29,7 @@ const BasicDetails = (props: BasicDetailsProps) => {
 		const optionsHederaERC20 = async () => {
 			const hederaERC20Option = await SDKService.getHederaERC20List(
 				new GetERC20ListRequest({
-					factoryId: process.env.REACT_APP_STABLE_COIN_FACTORY_ADDRESS ?? '',
+					factoryId: await Network.getFactoryAddress(),
 				}),
 			);
 			const AllOptions: any[] = [];
@@ -94,7 +93,8 @@ const BasicDetails = (props: BasicDetailsProps) => {
 							required: t(`global:validations.required`) ?? propertyNotFound,
 							validate: {
 								validation: (option: any) => {
-									if (!option.__isNew__) return true;
+									if (!option || !option.value) return false;
+									// if (!option.__isNew__) return true;
 									request.hederaERC20 = option.value as string;
 									const res = handleRequestValidation(request.validate('hederaERC20'));
 									return res;

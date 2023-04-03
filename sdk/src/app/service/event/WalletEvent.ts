@@ -18,9 +18,11 @@
  *
  */
 
-import { Environment } from '../../../domain/context/network/Environment.js';
 import { SupportedWallets } from '../../../domain/context/network/Wallet.js';
-import { InitializationData } from '../../../port/out/TransactionAdapter.js';
+import {
+	InitializationData,
+	NetworkData,
+} from '../../../port/out/TransactionAdapter.js';
 
 export enum WalletEvents {
 	walletInit = 'walletInit',
@@ -51,7 +53,7 @@ export interface WalletFoundEvent extends WalletBaseEvent {
 }
 export interface WalletPairedEvent extends WalletBaseEvent {
 	data: InitializationData;
-	network: Environment;
+	network: NetworkData;
 }
 export interface WalletConnectionStatusChangedEvent extends WalletBaseEvent {
 	status: ConnectionState;

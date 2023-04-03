@@ -88,6 +88,7 @@ import TransfersRequest from './request/TransfersRequest.js';
 import UpdateRequest from './request/UpdateRequest.js';
 import { TransfersCommand } from '../../app/usecase/command/stablecoin/operations/transfer/TransfersCommand.js';
 import { UpdateCommand } from '../../app/usecase/command/stablecoin/update/UpdateCommand.js';
+import NetworkService from '../../app/service/NetworkService.js';
 
 export {
 	StableCoinViewModel,
@@ -141,6 +142,9 @@ class StableCoinInPort implements IStableCoinInPort {
 		private readonly stableCoinService: StableCoinService = Injectable.resolve(
 			StableCoinService,
 		),
+		private readonly networkService: NetworkService = Injectable.resolve(
+			NetworkService,
+		),
 	) {}
 
 	@LogError
@@ -150,12 +154,14 @@ class StableCoinInPort implements IStableCoinInPort {
 	}> {
 		handleValidation('CreateRequest', req);
 		const {
-			stableCoinFactory,
 			hederaERC20,
 			reserveAddress,
 			reserveInitialAmount,
 			createReserve,
 		} = req;
+
+		const stableCoinFactory =
+			this.networkService.configuration.factoryAddress;
 
 		const coin: StableCoinProps = {
 			name: req.name,
@@ -252,11 +258,14 @@ class StableCoinInPort implements IStableCoinInPort {
 		);
 
 		return {
-			coin: (
-				await this.queryBus.execute(
-					new GetStableCoinQuery(createResponse.tokenId),
-				)
-			).coin,
+			coin:
+				createResponse.tokenId.toString() !== ContractId.NULL.toString()
+					? (
+							await this.queryBus.execute(
+								new GetStableCoinQuery(createResponse.tokenId),
+							)
+					  ).coin
+					: {},
 			reserve: {
 				proxyAddress: createResponse.reserveProxy,
 				proxyAdminAddress: createResponse.reserveProxyAdmin,
@@ -576,6 +585,10 @@ class StableCoinInPort implements IStableCoinInPort {
 	async update(request: UpdateRequest): Promise<boolean> {
 		const {
 			tokenId,
+			name,
+			symbol,
+			autoRenewPeriod,
+			expirationTimestamp,
 			kycKey,
 			freezeKey,
 			feeScheduleKey,
@@ -590,6 +603,12 @@ class StableCoinInPort implements IStableCoinInPort {
 			await this.commandBus.execute(
 				new UpdateCommand(
 					HederaId.from(tokenId),
+					name,
+					symbol,
+					autoRenewPeriod ? Number(autoRenewPeriod) : undefined,
+					expirationTimestamp
+						? Number(expirationTimestamp)
+						: undefined,
 					kycKey
 						? new PublicKey({
 								key: kycKey.key,

@@ -34,14 +34,12 @@ import {
     transferOwnership,
     getProxyAdmin,
     getProxyImplementation,
-    allowance,
-    Burn,
     transfer,
     getRoles,
     isUnlimitedSupplierAllowance,
-    updateTokenKeys,
+    updateToken,
 } from '../scripts/contractsMethods'
-import { clientId, toEvmAddress } from '../scripts/utils'
+import { clientId, toEvmAddress, oneYearLaterInSeconds } from '../scripts/utils'
 import { Client, ContractId } from '@hashgraph/sdk'
 import {
     ProxyAdmin__factory,
@@ -157,23 +155,46 @@ describe('HederaERC20 Tests', function () {
         reserveProxy = result[6]
     })
 
-    it('Cannot Update Keys if not Admin', async function () {
+    it('Cannot Update token if not Admin', async function () {
         const keys = tokenKeystoKey(operatorPubKey, operatorIsE25519)
         await expect(
-            updateTokenKeys(proxyAddress, keys, nonOperatorClient)
+            updateToken(
+                proxyAddress,
+                'newName',
+                'newSymbol',
+                keys,
+                oneYearLaterInSeconds(),
+                7890000,
+                nonOperatorClient
+            )
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('Admin can update keys', async function () {
+    it('Admin can update token', async function () {
         const keysToKey = tokenKeystoKey(
             operatorPubKey,
             operatorIsE25519,
             false
         )
-        await updateTokenKeys(proxyAddress, keysToKey, operatorClient)
-
+        await updateToken(
+            proxyAddress,
+            'newName',
+            'newSymbol',
+            keysToKey,
+            oneYearLaterInSeconds(),
+            7890000,
+            operatorClient
+        )
         const keysToContract = tokenKeystoContract(false)
-        await updateTokenKeys(proxyAddress, keysToContract, operatorClient)
+        await updateToken(
+            proxyAddress,
+            TokenName,
+            TokenSymbol,
+            keysToContract,
+            0,
+            7776000,
+            operatorClient
+        )
     })
 
     it('deploy SC with roles associated to another account', async function () {

@@ -23,15 +23,20 @@ import SDKService from '../services/SDKService';
 import StableCoinDetails from '../views/StableCoinDetails';
 import {
 	AVAILABLE_WALLETS,
-	LAST_WALLET_SELECTED,
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_STATUS,
 	walletActions,
 } from '../store/slices/walletSlice';
 import ImportedTokenCreation from '../views/ImportedToken/ImportedTokenCreation';
 import DangerZoneOperations from '../views/Operations/DangerZone';
-import type { EventParameter, WalletEvent } from 'hedera-stable-coin-sdk';
-import { LoggerTransports, SDK, ConnectionState } from 'hedera-stable-coin-sdk';
+import {
+	Account,
+	EventParameter,
+	WalletEvent,
+	LoggerTransports,
+	SDK,
+	ConnectionState,
+} from 'hedera-stable-coin-sdk';
 import StableCoinProof from '../views/StableCoinProof';
 import FeesManagement from '../views/FeesManagement';
 import GrantKycOperation from '../views/Operations/GrantKyc';
@@ -54,11 +59,11 @@ const Router = () => {
 
 	const availableWallets = useSelector(AVAILABLE_WALLETS);
 	const selectedWalletCoin = !!useSelector(SELECTED_WALLET_COIN);
-	const lastWallet = useSelector(LAST_WALLET_SELECTED);
 	const status = useSelector(SELECTED_WALLET_STATUS);
 
 	useEffect(() => {
 		instanceSDK();
+		localStorage.clear();
 	}, []);
 
 	const onLastWalletEvent = <T extends keyof WalletEvent>(
@@ -77,6 +82,16 @@ const Router = () => {
 		onLastWalletEvent(event, () => {
 			dispatch(walletActions.setData(event.data));
 			dispatch(walletActions.setStatus(ConnectionState.Paired));
+			dispatch(walletActions.setNetwork(event.network.name));
+			dispatch(walletActions.setNetworkRecognized(event.network.recognized));
+			dispatch(walletActions.setFactoryId(event.network.factoryId));
+			if (!event.data.account) dispatch(walletActions.setAccountRecognized(false));
+			else
+				dispatch(
+					walletActions.setAccountRecognized(
+						event.data.account.id !== Account.NullHederaAccount.id,
+					),
+				);
 		});
 	};
 
@@ -111,15 +126,12 @@ const Router = () => {
 			level: process.env.REACT_APP_LOG_LEVEL ?? 'ERROR',
 			transports: new LoggerTransports.Console(),
 		};
-		await SDKService.init(
-			{
-				walletFound,
-				walletPaired,
-				walletConnectionStatusChanged,
-				walletDisconnect,
-			},
-			lastWallet,
-		);
+		await SDKService.init({
+			walletFound,
+			walletPaired,
+			walletConnectionStatusChanged,
+			walletDisconnect,
+		});
 	};
 
 	return (
@@ -127,11 +139,7 @@ const Router = () => {
 			{availableWallets.length > 0 ? (
 				<Routes>
 					{/* Private routes */}
-					<Route
-						element={
-							<LoginOverlayRoute show={Boolean(!lastWallet || status !== ConnectionState.Paired)} />
-						}
-					>
+					<Route element={<LoginOverlayRoute show={Boolean(status !== ConnectionState.Paired)} />}>
 						{selectedWalletCoin && (
 							<>
 								<Route path={RoutesMappingUrl.balance} element={<GetBalanceOperation />} />

@@ -34,6 +34,7 @@ import { TransactionResponseAdapter } from '../../TransactionResponseAdapter.js'
 
 export class HTSTransactionResponseAdapter extends TransactionResponseAdapter {
 	public static async manageResponse(
+		network: string,
 		transactionResponse: HTransactionResponse,
 		responseType: TransactionType,
 		client: Client,
@@ -68,8 +69,14 @@ export class HTSTransactionResponseAdapter extends TransactionResponseAdapter {
 				if (!record)
 					throw new TransactionResponseError({
 						message: 'Invalid response type',
+						network: network,
 					});
-				results = this.decodeFunctionResult(nameFunction, record, abi);
+				results = this.decodeFunctionResult(
+					nameFunction,
+					record,
+					abi,
+					network,
+				);
 			}
 			if (record instanceof Uint32Array) {
 				return this.createTransactionResponse(
@@ -91,6 +98,7 @@ export class HTSTransactionResponseAdapter extends TransactionResponseAdapter {
 
 		throw new TransactionResponseError({
 			message: 'The response type is neither RECORD nor RECEIPT.',
+			network: network,
 		});
 	}
 

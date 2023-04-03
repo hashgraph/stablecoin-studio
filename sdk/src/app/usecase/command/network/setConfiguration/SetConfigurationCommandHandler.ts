@@ -44,12 +44,10 @@ export class SetConfigurationCommandHandler
 	): Promise<SetConfigurationCommandResponse> {
 		this.networkService.configuration = {
 			factoryAddress: command.factoryAddress,
-			hederaERC20Address: command.hederaERC20Address,
 		};
 		return Promise.resolve(
 			new SetConfigurationCommandResponse(
 				this.networkService.configuration.factoryAddress,
-				this.networkService.configuration.hederaERC20Address,
 			),
 		);
 	}

@@ -87,6 +87,13 @@ function decodeFunctionResult(
     return jsonParsedArray
 }
 
+export function oneYearLaterInSeconds(): number {
+    const currentDate: Date = new Date()
+    return Math.floor(
+        currentDate.setFullYear(currentDate.getFullYear() + 1) / 1000
+    )
+}
+
 export function getClient(network?: string): Client {
     if (!network) {
         const hre = require('hardhat')
@@ -232,7 +239,7 @@ function getHederaNetworkMirrorNodeURL(network?: string): string {
     }
     switch (network) {
         case 'mainnet':
-            return 'https://mainnet.mirrornode.hedera.com'
+            return 'https://mainnet-public.mirrornode.hedera.com'
         case 'previewnet':
             return 'https://previewnet.mirrornode.hedera.com'
         case 'testnet':

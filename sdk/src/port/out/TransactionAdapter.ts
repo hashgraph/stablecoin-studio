@@ -41,6 +41,12 @@ export interface InitializationData {
 	topic?: string;
 }
 
+export interface NetworkData {
+	name?: Environment;
+	recognized?: boolean;
+	factoryId?: string;
+}
+
 interface ITransactionAdapter {
 	create(
 		coin: StableCoin,
@@ -119,6 +125,10 @@ interface ITransactionAdapter {
 	): Promise<TransactionResponse>;
 	update(
 		coin: StableCoinCapabilities,
+		name: string | undefined,
+		symbol: string | undefined,
+		autoRenewPeriod: number | undefined,
+		expirationTime: number | undefined,
 		kycKey: PublicKey | undefined,
 		freezeKey: PublicKey | undefined,
 		feeScheduleKey: PublicKey | undefined,
@@ -336,6 +346,10 @@ export default abstract class TransactionAdapter
 	}
 	update(
 		coin: StableCoinCapabilities,
+		name: string | undefined,
+		symbol: string | undefined,
+		autoRenewPeriod: number | undefined,
+		expirationTime: number | undefined,
 		kycKey: PublicKey | undefined,
 		freezeKey: PublicKey | undefined,
 		feeScheduleKey: PublicKey | undefined,
@@ -474,17 +488,18 @@ export default abstract class TransactionAdapter
 		throw new Error('Method not implemented.');
 	}
 
-	async accountToEvmAddress(accountId: HederaId): Promise<EvmAddress> {
-		return this.getMirrorNodeAdapter().accountToEvmAddress(accountId);
+	async getEVMAddress(parameter: any): Promise<any> {
+		if (parameter instanceof HederaId) {
+			return (
+				await this.getMirrorNodeAdapter().accountToEvmAddress(parameter)
+			).toString();
+		}
+		return parameter;
 	}
 
-	async contractToEvmAddress(contractId: ContractId): Promise<EvmAddress> {
-		return this.getMirrorNodeAdapter().contractToEvmAddress(contractId);
-	}
-
-	logTransaction(id: string): void {
-		const HASHSCAN_URL = 'https://hashscan.io/testnet/transactionsById/';
-		const HASHSCAN_TX_URL = 'https://hashscan.io/testnet/tx/';
+	logTransaction(id: string, network: string): void {
+		const HASHSCAN_URL = `https://hashscan.io/${network}/transactionsById/`;
+		const HASHSCAN_TX_URL = `https://hashscan.io/${network}/tx/`;
 		const msg = `\nYou can see your transaction at ${
 			id.startsWith('0x') ? HASHSCAN_TX_URL : HASHSCAN_URL
 		}${id}\n`;

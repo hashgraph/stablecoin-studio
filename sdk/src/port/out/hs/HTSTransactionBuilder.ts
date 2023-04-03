@@ -39,6 +39,7 @@ import {
 	TokenRevokeKycTransaction,
 	TokenFeeScheduleUpdateTransaction,
 	TokenUpdateTransaction,
+	Timestamp,
 } from '@hashgraph/sdk';
 import Long from 'long';
 import LogService from '../../../app/service/LogService.js';
@@ -308,6 +309,10 @@ export class HTSTransactionBuilder {
 
 	public static buildUpdateTokenTransaction(
 		tokenId: string,
+		name: string | undefined,
+		symbol: string | undefined,
+		autoRenewPeriod: number | undefined,
+		expirationTime: Timestamp | undefined,
 		kycKey: Key | undefined,
 		freezeKey: Key | undefined,
 		feeScheduleKey: Key | undefined,
@@ -320,6 +325,12 @@ export class HTSTransactionBuilder {
 				new TokenUpdateTransaction({
 					tokenId: tokenId,
 				});
+			if (name) tokenUpdateTransaction.setTokenName(name);
+			if (symbol) tokenUpdateTransaction.setTokenSymbol(symbol);
+			if (autoRenewPeriod)
+				tokenUpdateTransaction.setAutoRenewPeriod(autoRenewPeriod);
+			if (expirationTime)
+				tokenUpdateTransaction.setExpirationTime(expirationTime);
 			if (kycKey) tokenUpdateTransaction.setKycKey(kycKey);
 			if (freezeKey) tokenUpdateTransaction.setFreezeKey(freezeKey);
 			if (feeScheduleKey)

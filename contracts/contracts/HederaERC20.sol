@@ -256,14 +256,16 @@ contract HederaERC20 is
         override(TokenOwner)
         valueIsNotGreaterThan(uint256(uint64(amount)), _balanceOf(from), true)
     {
-        address currentTokenAddress = _getTokenAddress();
+        if (to != address(this)) {
+            address currentTokenAddress = _getTokenAddress();
 
-        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
-            .transferToken(currentTokenAddress, from, to, amount);
+            int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
+                .transferToken(currentTokenAddress, from, to, amount);
 
-        _checkResponse(responseCode);
+            _checkResponse(responseCode);
 
-        emit TokenTransfer(currentTokenAddress, from, to, amount);
+            emit TokenTransfer(currentTokenAddress, from, to, amount);
+        }
     }
 
     /**
@@ -307,10 +309,10 @@ contract HederaERC20 is
     /**
      * @dev Update token keys
      *
-     * @param keys The new addresses to set for the underlying token
+     * @param updatedToken Values to update the token
      */
-    function updateTokenKeys(
-        KeysLib.KeysStruct[] calldata keys
+    function updateToken(
+        UpdateTokenStruct calldata updatedToken
     ) external override(IHederaERC20) onlyRole(_getRoleId(RoleName.ADMIN)) {
         address currentTokenAddress = _getTokenAddress();
 
@@ -318,15 +320,17 @@ contract HederaERC20 is
 
         // Token Keys
         IHederaTokenService.TokenKey[]
-            memory hederaKeys = new IHederaTokenService.TokenKey[](keys.length);
+            memory hederaKeys = new IHederaTokenService.TokenKey[](
+                updatedToken.keys.length
+            );
 
-        for (uint256 i = 0; i < keys.length; i++) {
+        for (uint256 i = 0; i < updatedToken.keys.length; i++) {
             hederaKeys[i] = IHederaTokenService.TokenKey({
-                keyType: keys[i].keyType,
+                keyType: updatedToken.keys[i].keyType,
                 key: KeysLib.generateKey(
-                    keys[i].publicKey,
+                    updatedToken.keys[i].publicKey,
                     address(this),
-                    keys[i].isED25519
+                    updatedToken.keys[i].isED25519
                 )
             });
             if (KeysLib.containsKey(_SUPPLY_KEY_BIT, hederaKeys[i].keyType)) {
@@ -336,10 +340,21 @@ contract HederaERC20 is
             }
         }
 
+        // Hedera Token Expiry
+        IHederaTokenService.Expiry memory expiry;
+        if (updatedToken.second >= 0) expiry.second = updatedToken.second;
+        if (updatedToken.autoRenewPeriod >= 0)
+            expiry.autoRenewPeriod = updatedToken.autoRenewPeriod;
+
         // Hedera Token Info
         IHederaTokenService.HederaToken memory hederaTokenInfo;
+        if (bytes(updatedToken.tokenName).length > 0)
+            hederaTokenInfo.name = updatedToken.tokenName;
+        if (bytes(updatedToken.tokenSymbol).length > 0)
+            hederaTokenInfo.symbol = updatedToken.tokenSymbol;
         hederaTokenInfo.tokenKeys = hederaKeys;
         hederaTokenInfo.memo = _getTokenInfo(currentTokenAddress); // this is required because of an Hedera bug.
+        hederaTokenInfo.expiry = expiry;
 
         if (newTreasury != address(0)) hederaTokenInfo.treasury = newTreasury;
 
@@ -348,7 +363,7 @@ contract HederaERC20 is
 
         _checkResponse(responseCode);
 
-        emit TokenKeysUpdated(currentTokenAddress, newTreasury, keys);
+        emit TokenUpdated(currentTokenAddress, updatedToken, newTreasury);
     }
 
     // This method is required because of an Hedera's bug, when keys are updated for a token, the memo gets removed.

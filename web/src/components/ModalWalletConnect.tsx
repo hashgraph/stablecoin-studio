@@ -24,6 +24,8 @@ import SDKService from '../services/SDKService';
 import { AVAILABLE_WALLETS, walletActions } from '../store/slices/walletSlice';
 import WARNING_ICON from '../assets/svg/warning.svg';
 import ERROR_ICON from '../assets/svg/error.svg';
+import { SelectController } from './Form/SelectController';
+import { useForm } from 'react-hook-form';
 
 interface ModalWalletConnectProps {
 	isOpen: boolean;
@@ -46,23 +48,46 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 		},
 	};
 
+	const stylesNetworkOptions = {
+		menuList: {
+			maxH: '220px',
+			overflowY: 'auto',
+			bg: 'brand.white',
+			boxShadow: 'down-black',
+			p: 4,
+		},
+		wrapper: {
+			border: '1px',
+			borderColor: 'brand.black',
+			borderRadius: '8px',
+			height: 'initial',
+		},
+	};
+
 	const [loading, setLoading] = useState<SupportedWallets | undefined>(undefined);
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [error, setError] = useState<any>();
 	const [rejected, setRejected] = useState<boolean>(false);
+	const [hashpackSelected, setHashpackSelected] = useState<boolean>(false);
 	const availableWallets = useSelector(AVAILABLE_WALLETS);
 
 	useEffect(() => {
 		isOpen && setLoading(undefined);
 	}, [isOpen]);
 
-	const handleWalletConnect = async (wallet: SupportedWallets) => {
+	const { control, getValues } = useForm({
+		mode: 'onChange',
+	});
+
+	const handleWalletConnect = async (wallet: SupportedWallets, network: string) => {
 		if (loading) return;
+		let result;
 		setLoading(wallet);
 		dispatch(walletActions.setLastWallet(wallet));
+		dispatch(walletActions.setNetwork(network));
 		dispatch(walletActions.setSelectedStableCoin(undefined));
 		try {
-			await SDKService.connectWallet(wallet);
+			result = await SDKService.connectWallet(wallet, network);
 		} catch (error: any) {
 			if ('errorCode' in error && error.errorCode === '40009') {
 				setRejected(true);
@@ -73,11 +98,25 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 	};
 
 	const handleConnectHashpackWallet = () => {
-		handleWalletConnect(SupportedWallets.HASHPACK);
+		setHashpackSelected(true);
 	};
 
+	const unHandleConnectHashpackWallet = () => {
+		setHashpackSelected(false);
+	};
+
+	const handleConnectHashpackWalletConfirmed = () => {
+		const values = getValues();
+		handleWalletConnect(SupportedWallets.HASHPACK, values.network.value);
+	};
+
+	const networkOptions = [
+		{ value: 'testnet', label: 'Testnet' },
+		{ value: 'mainnet', label: 'Mainnet' },
+	];
+
 	const handleConnectMetamaskWallet = () => {
-		handleWalletConnect(SupportedWallets.METAMASK);
+		handleWalletConnect(SupportedWallets.METAMASK, '-');
 	};
 
 	const PairingSpinner: FC<{ wallet: SupportedWallets; children?: ReactNode }> = ({
@@ -115,8 +154,8 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 			>
 				<ModalOverlay />
 				<ModalContent data-testid='modal-action-content' p='50' w='500px'>
-					<ModalCloseButton />
-					{!error && !rejected && (
+					<ModalCloseButton onClick={unHandleConnectHashpackWallet} />
+					{!error && !rejected && !hashpackSelected && (
 						<>
 							<ModalHeader p='0' justifyContent='center'>
 								<Text
@@ -154,6 +193,51 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 										</VStack>
 									)}
 								</HStack>
+							</ModalFooter>
+						</>
+					)}
+					{hashpackSelected && (
+						<>
+							<ModalHeader p='0' justifyContent='center'>
+								<Text
+									fontSize='20px'
+									fontWeight={700}
+									textAlign='center'
+									lineHeight='16px'
+									color='brand.black'
+								>
+									Select a network
+								</Text>
+							</ModalHeader>
+							<ModalFooter alignSelf='center' pt='24px' pb='0'>
+								<VStack>
+									<SelectController
+										control={control}
+										isRequired
+										name='network'
+										options={networkOptions}
+										addonLeft={true}
+										placeholder='network'
+										overrideStyles={stylesNetworkOptions}
+										variant='unstyled'
+									/>
+									<HStack>
+										<Button
+											data-testid='modal-notification-button'
+											onClick={unHandleConnectHashpackWallet}
+											variant='secondary'
+										>
+											{t('common.cancel')}
+										</Button>
+										<Button
+											data-testid='modal-notification-button'
+											onClick={handleConnectHashpackWalletConfirmed}
+											variant='primary'
+										>
+											{t('common.accept')}
+										</Button>
+									</HStack>
+								</VStack>
 							</ModalFooter>
 						</>
 					)}

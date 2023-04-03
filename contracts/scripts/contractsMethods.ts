@@ -301,15 +301,26 @@ export async function transfer(
     return response[0]
 }
 
-export async function updateTokenKeys(
+export async function updateToken(
     proxyAddress: ContractId,
+    name: string,
+    symbol: string,
     keys: any,
+    second: number,
+    autoRenewPeriod: number,
     client: Client
 ): Promise<boolean> {
-    const params = [keys]
+    const updateToken = {
+        tokenName: name,
+        tokenSymbol: symbol,
+        keys: keys,
+        second: second,
+        autoRenewPeriod: autoRenewPeriod,
+    }
+    const params = [updateToken]
     const response = await contractCall(
         proxyAddress,
-        'updateTokenKeys',
+        'updateToken',
         params,
         client,
         Gas1,
@@ -678,12 +689,14 @@ export async function Mint(
     amountOfTokenToMint: BigNumber,
     clientMintingToken: Client,
     clientToAssignTokensTo: string,
-    isE25519: boolean
+    isE25519: boolean,
+    parse = true
 ) {
-    const params: string[] = [
-        await toEvmAddress(clientToAssignTokensTo, isE25519),
-        amountOfTokenToMint.toString(),
-    ]
+    const param_1: string = parse
+        ? await toEvmAddress(clientToAssignTokensTo, isE25519)
+        : clientToAssignTokensTo
+
+    const params: string[] = [param_1, amountOfTokenToMint.toString()]
     const result = await contractCall(
         proxyAddress,
         'mint',

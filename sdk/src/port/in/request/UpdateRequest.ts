@@ -22,9 +22,22 @@ import { OptionalField } from '../../../core/decorator/OptionalDecorator.js';
 import { RequestPublicKey } from './BaseRequest.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
+import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 
 export default class UpdateRequest extends ValidatedRequest<UpdateRequest> {
 	tokenId: string;
+
+	@OptionalField()
+	name?: string;
+
+	@OptionalField()
+	symbol?: string;
+
+	@OptionalField()
+	autoRenewPeriod?: string;
+
+	@OptionalField()
+	expirationTimestamp?: string;
 
 	@OptionalField()
 	freezeKey?: RequestPublicKey;
@@ -46,6 +59,10 @@ export default class UpdateRequest extends ValidatedRequest<UpdateRequest> {
 
 	constructor({
 		tokenId,
+		name,
+		symbol,
+		autoRenewPeriod,
+		expirationTimestamp,
 		freezeKey,
 		kycKey,
 		wipeKey,
@@ -54,6 +71,10 @@ export default class UpdateRequest extends ValidatedRequest<UpdateRequest> {
 		feeScheduleKey,
 	}: {
 		tokenId: string;
+		name?: string;
+		symbol?: string;
+		autoRenewPeriod?: string;
+		expirationTimestamp?: string;
 		freezeKey?: RequestPublicKey;
 		kycKey?: RequestPublicKey;
 		wipeKey?: RequestPublicKey;
@@ -62,7 +83,31 @@ export default class UpdateRequest extends ValidatedRequest<UpdateRequest> {
 		feeScheduleKey?: RequestPublicKey;
 	}) {
 		super({
+			name: (val) => {
+				if (val === undefined || val === '') {
+					return;
+				}
+				return StableCoin.checkName(val);
+			},
+			symbol: (val) => {
+				if (val === undefined || val === '') {
+					return;
+				}
+				return StableCoin.checkSymbol(val);
+			},
 			tokenId: Validation.checkHederaIdFormat(),
+			autoRenewPeriod: (val) => {
+				if (val === undefined || val === '') {
+					return;
+				}
+				return StableCoin.checkAutoRenewPeriod(val);
+			},
+			expirationTimestamp: (val) => {
+				if (val === undefined || val === '') {
+					return;
+				}
+				return StableCoin.checkExpirationTimestamp(val);
+			},
 			freezeKey: Validation.checkPublicKey(),
 			kycKey: Validation.checkPublicKey(),
 			wipeKey: Validation.checkPublicKey(),
@@ -71,6 +116,10 @@ export default class UpdateRequest extends ValidatedRequest<UpdateRequest> {
 			feeScheduleKey: Validation.checkPublicKey(),
 		});
 		this.tokenId = tokenId;
+		this.name = name;
+		this.symbol = symbol;
+		this.autoRenewPeriod = autoRenewPeriod;
+		this.expirationTimestamp = expirationTimestamp;
 		this.freezeKey = freezeKey;
 		this.kycKey = kycKey;
 		this.wipeKey = wipeKey;

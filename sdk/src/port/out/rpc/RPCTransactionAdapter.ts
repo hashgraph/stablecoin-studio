@@ -76,6 +76,13 @@ import { SigningError } from '../hs/error/SigningError.js';
 import { RESERVE_DECIMALS } from '../../../domain/context/reserve/Reserve.js';
 import { FactoryRole } from '../../../domain/context/factory/FactoryRole.js';
 import { FactoryCashinRole } from '../../../domain/context/factory/FactoryCashinRole.js';
+import {
+	HederaNetworks,
+	unrecognized,
+} from '../../../domain/context/network/Environment.js';
+import { CommandBus } from '../../../core/command/CommandBus.js';
+import { SetNetworkCommand } from '../../../app/usecase/command/network/setNetwork/SetNetworkCommand.js';
+import { SetConfigurationCommand } from '../../../app/usecase/command/network/setConfiguration/SetConfigurationCommand.js';
 
 // eslint-disable-next-line no-var
 declare var ethereum: MetaMaskInpageProvider;
@@ -93,6 +100,8 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		private readonly networkService: NetworkService,
 		@lazyInject(EventService)
 		private readonly eventService: EventService,
+		@lazyInject(CommandBus)
+		private readonly commandBus: CommandBus,
 	) {
 		super();
 		this.registerMetamaskEvents();
@@ -112,11 +121,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					coin.cashInRoleAccount == undefined ||
 					coin.cashInRoleAccount.toString() == '0.0.0'
 						? '0x0000000000000000000000000000000000000000'
-						: (
-								await this.accountToEvmAddress(
-									coin.cashInRoleAccount,
-								)
-						  ).toString(),
+						: await this.getEVMAddress(coin.cashInRoleAccount),
 				allowance: coin.cashInRoleAllowance
 					? coin.cashInRoleAllowance.toFixedNumber()
 					: BigDecimal.ZERO.toFixedNumber(),
@@ -211,9 +216,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					.map(async (item) => {
 						const role = new FactoryRole();
 						role.role = item.role;
-						role.account = (
-							await this.accountToEvmAddress(item.account!)
-						).toString();
+						role.account = await this.getEVMAddress(item.account!);
 						return role;
 					}),
 			);
@@ -230,15 +233,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					? coin.initialSupply.toFixedNumber()
 					: BigDecimal.ZERO.toFixedNumber(),
 				coin.decimals,
-				(
-					await this.accountToEvmAddress(coin.autoRenewAccount!)
-				).toString(),
+				await this.getEVMAddress(coin.autoRenewAccount!),
 				coin.treasury == undefined ||
 				coin.treasury.toString() == '0.0.0'
 					? '0x0000000000000000000000000000000000000000'
-					: (
-							await this.accountToEvmAddress(coin.treasury)
-					  ).toString(),
+					: await this.getEVMAddress(coin.treasury),
 				reserveAddress == undefined ||
 				reserveAddress.toString() == '0.0.0'
 					? '0x0000000000000000000000000000000000000000'
@@ -280,12 +279,6 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				},
 			);
 			// Put it into an array since structs change the response from the event and its not a simple array
-			/*const txRes = await RPCTransactionResponseAdapter.manageResponse(
-				res,
-				'Deployed',
-			);
-			txRes.response = [txRes.response]
-			return txRes;*/
 			return RPCTransactionResponseAdapter.manageResponse(
 				res,
 				'Deployed',
@@ -356,9 +349,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		amount: BigDecimal,
 	): Promise<TransactionResponse> {
 		const params = new Params({
-			targetId: await (
-				await this.accountToEvmAddress(targetId)
-			).toString(),
+			targetId: await this.getEVMAddress(targetId),
 			amount: amount,
 		});
 		return this.performOperation(coin, Operation.WIPE, params);
@@ -391,9 +382,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		targetId: HederaId,
 	): Promise<TransactionResponse> {
 		const params = new Params({
-			targetId: await (
-				await this.accountToEvmAddress(targetId)
-			).toString(),
+			targetId: await this.getEVMAddress(targetId),
 		});
 		return this.performOperation(coin, Operation.FREEZE, params);
 	}
@@ -403,9 +392,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		targetId: HederaId,
 	): Promise<TransactionResponse> {
 		const params = new Params({
-			targetId: await (
-				await this.accountToEvmAddress(targetId)
-			).toString(),
+			targetId: await this.getEVMAddress(targetId),
 		});
 		return this.performOperation(coin, Operation.UNFREEZE, params);
 	}
@@ -438,6 +425,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		try {
 			if (!coin.coin.evmProxyAddress?.toString())
 				throw new TransactionResponseError({
+					network: this.networkService.environment,
 					RPC_relay: true,
 					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
 				});
@@ -451,6 +439,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		} catch (error) {
 			LogService.logError(error);
 			throw new TransactionResponseError({
+				network: this.networkService.environment,
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter update reserve operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
@@ -465,6 +454,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		try {
 			if (!coin.coin.evmProxyAddress?.toString())
 				throw new TransactionResponseError({
+					network: this.networkService.environment,
 					RPC_relay: true,
 					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
 				});
@@ -476,10 +466,12 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				).updateReserveAddress(
 					reserveAddress.toHederaAddress().toSolidityAddress(),
 				),
+				this.networkService.environment,
 			);
 		} catch (error) {
 			LogService.logError(error);
 			throw new TransactionResponseError({
+				network: this.networkService.environment,
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter update reserve operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
@@ -493,6 +485,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		try {
 			if (!coin.coin.evmProxyAddress?.toString())
 				throw new TransactionResponseError({
+					network: this.networkService.environment,
 					RPC_relay: true,
 					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
 				});
@@ -509,6 +502,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		} catch (error) {
 			LogService.logError(error);
 			throw new TransactionResponseError({
+				network: this.networkService.environment,
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter update reserve operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
@@ -526,10 +520,12 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					reserveAddress.toHederaAddress().toSolidityAddress(),
 					this.signerOrProvider,
 				).setAmount(amount.toBigNumber()),
+				this.networkService.environment,
 			);
 		} catch (error) {
 			LogService.logError(error);
 			throw new TransactionResponseError({
+				network: this.networkService.environment,
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter updatePorAmount operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
@@ -545,6 +541,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		try {
 			if (!coin.coin.evmProxyAddress?.toString())
 				throw new TransactionResponseError({
+					network: this.networkService.environment,
 					RPC_relay: true,
 					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
 				});
@@ -553,18 +550,13 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				await HederaERC20__factory.connect(
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
-				).grantRole(
-					role,
-					(
-						await (
-							await this.accountToEvmAddress(targetId)
-						).toString()
-					).toString(),
-				),
+				).grantRole(role, await this.getEVMAddress(targetId)),
+				this.networkService.environment,
 			);
 		} catch (error) {
 			LogService.logError(error);
 			throw new TransactionResponseError({
+				network: this.networkService.environment,
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter grantRole operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
@@ -580,6 +572,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		try {
 			if (!coin.coin.evmProxyAddress?.toString())
 				throw new TransactionResponseError({
+					network: this.networkService.environment,
 					RPC_relay: true,
 					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
 				});
@@ -588,18 +581,13 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				await HederaERC20__factory.connect(
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
-				).revokeRole(
-					role,
-					(
-						await (
-							await this.accountToEvmAddress(targetId)
-						).toString()
-					).toString(),
-				),
+				).revokeRole(role, await this.getEVMAddress(targetId)),
+				this.networkService.environment,
 			);
 		} catch (error) {
 			LogService.logError(error);
 			throw new TransactionResponseError({
+				network: this.networkService.environment,
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter revokeRole operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
@@ -616,6 +604,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		try {
 			if (!coin.coin.evmProxyAddress?.toString())
 				throw new TransactionResponseError({
+					network: this.networkService.environment,
 					RPC_relay: true,
 					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
 				});
@@ -628,7 +617,8 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			const accounts: string[] = [];
 			for (let i = 0; i < targetsId.length; i++) {
 				accounts.push(
-					(await this.accountToEvmAddress(targetsId[i])).toString(),
+					// (await this.accountToEvmAddress(targetsId[i])).toString(),
+					await this.getEVMAddress(targetsId[i]),
 				);
 			}
 
@@ -637,10 +627,12 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
 				).grantRoles(roles, accounts, amountsFormatted),
+				this.networkService.environment,
 			);
 		} catch (error) {
 			LogService.logError(error);
 			throw new TransactionResponseError({
+				network: this.networkService.environment,
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter grantRoles operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
@@ -656,6 +648,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		try {
 			if (!coin.coin.evmProxyAddress?.toString())
 				throw new TransactionResponseError({
+					network: this.networkService.environment,
 					RPC_relay: true,
 					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
 				});
@@ -663,7 +656,8 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			const accounts: string[] = [];
 			for (let i = 0; i < targetsId.length; i++) {
 				accounts.push(
-					(await this.accountToEvmAddress(targetsId[i])).toString(),
+					// (await this.accountToEvmAddress(targetsId[i])).toString(),
+					await this.getEVMAddress(targetsId[i]),
 				);
 			}
 
@@ -672,10 +666,12 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
 				).revokeRoles(roles, accounts),
+				this.networkService.environment,
 			);
 		} catch (error) {
 			LogService.logError(error);
 			throw new TransactionResponseError({
+				network: this.networkService.environment,
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter revokeRoles operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
@@ -691,6 +687,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		try {
 			if (!coin.coin.evmProxyAddress?.toString())
 				throw new TransactionResponseError({
+					network: this.networkService.environment,
 					RPC_relay: true,
 					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
 				});
@@ -700,13 +697,16 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
 				).grantSupplierRole(
-					(await this.accountToEvmAddress(targetId)).toString(),
+					// (await this.accountToEvmAddress(targetId)).toString(),
+					await this.getEVMAddress(targetId),
 					amount.toBigNumber(),
 				),
+				this.networkService.environment,
 			);
 		} catch (error) {
 			LogService.logError(error);
 			throw new TransactionResponseError({
+				network: this.networkService.environment,
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter grantSupplierRole operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
@@ -723,6 +723,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				throw new TransactionResponseError({
 					RPC_relay: true,
 					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
+					network: this.networkService.environment,
 				});
 
 			return RPCTransactionResponseAdapter.manageResponse(
@@ -730,14 +731,17 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
 				).grantUnlimitedSupplierRole(
-					(await this.accountToEvmAddress(targetId)).toString(),
+					// (await this.accountToEvmAddress(targetId)).toString(),
+					await this.getEVMAddress(targetId),
 				),
+				this.networkService.environment,
 			);
 		} catch (error) {
 			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter grantUnlimitedSupplierRole operation : ${error}`,
+				network: this.networkService.environment,
 				transactionId: (error as any).error?.transactionId,
 			});
 		}
@@ -752,25 +756,22 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				throw new TransactionResponseError({
 					RPC_relay: true,
 					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
+					network: this.networkService.environment,
 				});
 
 			return RPCTransactionResponseAdapter.manageResponse(
 				await HederaERC20__factory.connect(
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
-				).revokeSupplierRole(
-					(
-						await (
-							await this.accountToEvmAddress(targetId)
-						).toString()
-					).toString(),
-				),
+				).revokeSupplierRole(await this.getEVMAddress(targetId)),
+				this.networkService.environment,
 			);
 		} catch (error) {
 			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter revokeSupplierRole operation : ${error}`,
+				network: this.networkService.environment,
 				transactionId: (error as any).error?.transactionId,
 			});
 		}
@@ -786,17 +787,13 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				throw new TransactionResponseError({
 					RPC_relay: true,
 					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
+					network: this.networkService.environment,
 				});
 
 			const res = await HederaERC20__factory.connect(
 				coin.coin.evmProxyAddress?.toString(),
 				this.signerOrProvider,
-			).hasRole(
-				role,
-				(
-					await (await this.accountToEvmAddress(targetId)).toString()
-				).toString(),
-			);
+			).hasRole(role, await this.getEVMAddress(targetId));
 
 			return new TransactionResponse(undefined, res.valueOf());
 		} catch (error) {
@@ -804,6 +801,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			throw new TransactionResponseError({
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter hasRole operation : ${error}`,
+				network: this.networkService.environment,
 				transactionId: (error as any).error?.transactionId,
 			});
 		}
@@ -818,15 +816,12 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				throw new TransactionResponseError({
 					RPC_relay: true,
 					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
+					network: this.networkService.environment,
 				});
 			const res = await HederaERC20__factory.connect(
 				coin.coin.evmProxyAddress?.toString(),
 				this.signerOrProvider,
-			).balanceOf(
-				(
-					await (await this.accountToEvmAddress(targetId)).toString()
-				).toString(),
-			);
+			).balanceOf(await this.getEVMAddress(targetId));
 
 			return new TransactionResponse(
 				undefined,
@@ -837,6 +832,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			throw new TransactionResponseError({
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter balanceOf operation : ${error}`,
+				network: this.networkService.environment,
 				transactionId: (error as any).error?.transactionId,
 			});
 		}
@@ -851,25 +847,22 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				throw new TransactionResponseError({
 					RPC_relay: true,
 					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
+					network: this.networkService.environment,
 				});
 
 			return RPCTransactionResponseAdapter.manageResponse(
 				await HederaERC20__factory.connect(
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
-				).associateToken(
-					(
-						await (
-							await this.accountToEvmAddress(targetId)
-						).toString()
-					).toString(),
-				),
+				).associateToken(await this.getEVMAddress(targetId)),
+				this.networkService.environment,
 			);
 		} catch (error) {
 			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter associateToken operation : ${error}`,
+				network: this.networkService.environment,
 				transactionId: (error as any).error?.transactionId,
 			});
 		}
@@ -884,25 +877,22 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				throw new TransactionResponseError({
 					RPC_relay: true,
 					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
+					network: this.networkService.environment,
 				});
 
 			return RPCTransactionResponseAdapter.manageResponse(
 				await HederaERC20__factory.connect(
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
-				).dissociateToken(
-					(
-						await (
-							await this.accountToEvmAddress(targetId)
-						).toString()
-					).toString(),
-				),
+				).dissociateToken(await this.getEVMAddress(targetId)),
+				this.networkService.environment,
 			);
 		} catch (error) {
 			LogService.logError(error);
 			throw new TransactionResponseError({
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter dissociateToken operation : ${error}`,
+				network: this.networkService.environment,
 				transactionId: (error as any).error?.transactionId,
 			});
 		}
@@ -917,6 +907,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				throw new TransactionResponseError({
 					RPC_relay: true,
 					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
+					network: this.networkService.environment,
 				});
 
 			return new TransactionResponse(
@@ -925,12 +916,14 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
 				).isUnlimitedSupplierAllowance(
-					(await this.accountToEvmAddress(targetId)).toString(),
+					// (await this.accountToEvmAddress(targetId)).toString(),
+					await this.getEVMAddress(targetId),
 				),
 			);
 		} catch (error) {
 			LogService.logError(error);
 			throw new TransactionResponseError({
+				network: this.networkService.environment,
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter isUnlimitedSupplierAllowance operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
@@ -945,6 +938,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		try {
 			if (!coin.coin.evmProxyAddress?.toString())
 				throw new TransactionResponseError({
+					network: this.networkService.environment,
 					RPC_relay: true,
 					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
 				});
@@ -953,7 +947,8 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				coin.coin.evmProxyAddress?.toString(),
 				this.signerOrProvider,
 			).getSupplierAllowance(
-				(await this.accountToEvmAddress(targetId)).toString(),
+				// (await this.accountToEvmAddress(targetId)).toString(),
+				await this.getEVMAddress(targetId),
 			);
 
 			return new TransactionResponse(
@@ -963,6 +958,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		} catch (error) {
 			LogService.logError(error);
 			throw new TransactionResponseError({
+				network: this.networkService.environment,
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter supplierAllowance operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
@@ -977,6 +973,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		try {
 			if (!coin.coin.evmProxyAddress?.toString())
 				throw new TransactionResponseError({
+					network: this.networkService.environment,
 					RPC_relay: true,
 					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
 				});
@@ -985,17 +982,13 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				await HederaERC20__factory.connect(
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
-				).resetSupplierAllowance(
-					(
-						await (
-							await this.accountToEvmAddress(targetId)
-						).toString()
-					).toString(),
-				),
+				).resetSupplierAllowance(await this.getEVMAddress(targetId)),
+				this.networkService.environment,
 			);
 		} catch (error) {
 			LogService.logError(error);
 			throw new TransactionResponseError({
+				network: this.networkService.environment,
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter resetSupplierAllowance operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
@@ -1011,6 +1004,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		try {
 			if (!coin.coin.evmProxyAddress?.toString())
 				throw new TransactionResponseError({
+					network: this.networkService.environment,
 					RPC_relay: true,
 					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
 				});
@@ -1020,13 +1014,16 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
 				).increaseSupplierAllowance(
-					(await this.accountToEvmAddress(targetId)).toString(),
+					// (await this.accountToEvmAddress(targetId)).toString(),
+					await this.getEVMAddress(targetId),
 					amount.toBigNumber(),
 				),
+				this.networkService.environment,
 			);
 		} catch (error) {
 			LogService.logError(error);
 			throw new TransactionResponseError({
+				network: this.networkService.environment,
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter increaseSupplierAllowance operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
@@ -1042,6 +1039,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		try {
 			if (!coin.coin.evmProxyAddress?.toString())
 				throw new TransactionResponseError({
+					network: this.networkService.environment,
 					RPC_relay: true,
 					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
 				});
@@ -1051,13 +1049,16 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
 				).decreaseSupplierAllowance(
-					(await this.accountToEvmAddress(targetId)).toString(),
+					// (await this.accountToEvmAddress(targetId)).toString(),
+					await this.getEVMAddress(targetId),
 					amount.toBigNumber(),
 				),
+				this.networkService.environment,
 			);
 		} catch (error) {
 			LogService.logError(error);
 			throw new TransactionResponseError({
+				network: this.networkService.environment,
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter decreaseSupplierAllowance operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
@@ -1072,6 +1073,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		try {
 			if (!coin.coin.evmProxyAddress?.toString())
 				throw new TransactionResponseError({
+					network: this.networkService.environment,
 					RPC_relay: true,
 					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
 				});
@@ -1081,17 +1083,12 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				await HederaERC20__factory.connect(
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
-				).getRoles(
-					(
-						await (
-							await this.accountToEvmAddress(targetId)
-						).toString()
-					).toString(),
-				),
+				).getRoles(await this.getEVMAddress(targetId)),
 			);
 		} catch (error) {
 			LogService.logError(error);
 			throw new TransactionResponseError({
+				network: this.networkService.environment,
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter getRoles operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
@@ -1106,6 +1103,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		try {
 			if (!coin.coin.evmProxyAddress?.toString())
 				throw new TransactionResponseError({
+					network: this.networkService.environment,
 					RPC_relay: true,
 					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
 				});
@@ -1115,12 +1113,15 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
 				).grantKyc(
-					(await this.accountToEvmAddress(targetId)).toString(),
+					// (await this.accountToEvmAddress(targetId)).toString(),
+					await this.getEVMAddress(targetId),
 				),
+				this.networkService.environment,
 			);
 		} catch (error) {
 			LogService.logError(error);
 			throw new TransactionResponseError({
+				network: this.networkService.environment,
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter grantKyc operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
@@ -1135,6 +1136,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		try {
 			if (!coin.coin.evmProxyAddress?.toString())
 				throw new TransactionResponseError({
+					network: this.networkService.environment,
 					RPC_relay: true,
 					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
 				});
@@ -1144,12 +1146,15 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
 				).revokeKyc(
-					(await this.accountToEvmAddress(targetId)).toString(),
+					// (await this.accountToEvmAddress(targetId)).toString(),
+					await this.getEVMAddress(targetId),
 				),
+				this.networkService.environment,
 			);
 		} catch (error) {
 			LogService.logError(error);
 			throw new TransactionResponseError({
+				network: this.networkService.environment,
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter revokeKyc operation : ${error}`,
 				transactionId: (error as any).error?.transactionId,
@@ -1177,11 +1182,16 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	): Promise<TransactionResponse> {
 		const transfer = await this.precompiledCall('transferToken', [
 			coin.coin.tokenId?.toHederaAddress().toSolidityAddress(),
-			await this.accountToEvmAddress(sourceId.id),
-			await (await this.accountToEvmAddress(targetId)).toString(),
+			// await this.accountToEvmAddress(sourceId.id),
+			await this.getEVMAddress(sourceId.id),
+			// await (await this.accountToEvmAddress(targetId)).toString(),
+			await this.getEVMAddress(targetId),
 			amount,
 		]);
-		return RPCTransactionResponseAdapter.manageResponse(transfer);
+		return RPCTransactionResponseAdapter.manageResponse(
+			transfer,
+			this.networkService.environment,
+		);
 	}
 
 	async transferFrom(
@@ -1192,11 +1202,16 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	): Promise<TransactionResponse> {
 		const transfer = await this.precompiledCall('transferFrom', [
 			coin.coin.tokenId?.toHederaAddress().toSolidityAddress(),
-			await this.accountToEvmAddress(sourceId),
-			await (await this.accountToEvmAddress(targetId)).toString(),
+			// await this.accountToEvmAddress(sourceId),
+			await this.getEVMAddress(sourceId),
+			// await (await this.accountToEvmAddress(targetId)).toString(),
+			await this.getEVMAddress(targetId),
 			amount,
 		]);
-		return RPCTransactionResponseAdapter.manageResponse(transfer);
+		return RPCTransactionResponseAdapter.manageResponse(
+			transfer,
+			this.networkService.environment,
+		);
 	}
 
 	async signAndSendTransaction(
@@ -1257,33 +1272,100 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		}
 	}
 
+	private async setMetasmaskAccount(evmAddress: string): Promise<void> {
+		let mirrorAccount = undefined;
+		try {
+			mirrorAccount = await this.mirrorNodeAdapter.getAccountInfo(
+				evmAddress,
+			);
+		} catch (e) {
+			LogService.logError(
+				'account could not be retrieved from mirror error : ' + e,
+			);
+		}
+		if (mirrorAccount) {
+			this.account = new Account({
+				id: mirrorAccount.id!,
+				evmAddress: mirrorAccount.accountEvmAddress,
+				publicKey: mirrorAccount.publicKey,
+			});
+			this.signerOrProvider = new ethers.providers.Web3Provider(
+				// @ts-expect-error No TS compatibility
+				ethereum,
+			).getSigner();
+		} else {
+			this.account = Account.NULL;
+		}
+		LogService.logTrace('Paired Metamask Wallet Event:', this.account);
+	}
+
+	private async setMetamaskNetwork(chainId: any): Promise<void> {
+		let network = unrecognized;
+		let factoryId = '';
+
+		const metamaskNetwork = HederaNetworks.find(
+			(i: any) => '0x' + i.chainId.toString(16) === chainId.toString(),
+		);
+
+		if (metamaskNetwork) {
+			network = metamaskNetwork.network;
+
+			if (process.env.REACT_APP_FACTORIES) {
+				try {
+					const factories = JSON.parse(
+						process.env.REACT_APP_FACTORIES,
+					);
+					const result = factories.find(
+						(i: any) => i.Environment === metamaskNetwork.network,
+					);
+					factoryId = result
+						? result.STABLE_COIN_FACTORY_ADDRESS
+						: '';
+				} catch (e) {
+					console.error('Factories could not be found in .env');
+				}
+			}
+			LogService.logTrace('Metamask Network:', chainId);
+		} else {
+			console.error(chainId + ' not an hedera network');
+		}
+
+		await this.commandBus.execute(new SetNetworkCommand(network));
+		await this.commandBus.execute(new SetConfigurationCommand(factoryId));
+
+		this.signerOrProvider = new ethers.providers.Web3Provider(
+			// @ts-expect-error No TS compatibility
+			ethereum,
+		).getSigner();
+
+		// await new Promise(f => setTimeout(f, 3000));
+	}
+
 	private async pairWallet(): Promise<void> {
 		const accts = await ethereum.request({
 			method: 'eth_requestAccounts',
 		});
 		if (accts && 'length' in accts) {
 			const evmAddress = (accts as string[])[0];
-			const mirrorAccount = await this.mirrorNodeAdapter.getAccountInfo(
-				evmAddress,
-			);
-			if (!mirrorAccount.id) {
-				throw new WalletConnectError('Invalid account!');
-			}
-			this.account = new Account({
-				id: mirrorAccount.id,
-				evmAddress: mirrorAccount.accountEvmAddress,
-				publicKey: mirrorAccount.publicKey,
-			});
+
+			const chainId = await ethereum.request({ method: 'eth_chainId' });
+			await this.setMetamaskNetwork(chainId);
+			await this.setMetasmaskAccount(evmAddress);
 			this.eventService.emit(WalletEvents.walletPaired, {
 				data: {
 					account: this.account,
 					pairing: '',
 					topic: '',
 				},
-				network: this.networkService.environment,
+				network: {
+					name: this.networkService.environment,
+					recognized: this.networkService.environment != unrecognized,
+					factoryId: this.networkService.configuration
+						? this.networkService.configuration.factoryAddress
+						: '',
+				},
 				wallet: SupportedWallets.METAMASK,
 			});
-			LogService.logTrace('Paired Metamask Wallet Event:', this.account);
 		} else {
 			LogService.logTrace('Paired Metamask failed with no accounts');
 			this.eventService.emit(WalletEvents.walletDisconnect, {
@@ -1303,22 +1385,21 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					this.account &&
 					accounts[0] !== this.account.evmAddress
 				) {
-					const mirrorAccount =
-						await this.mirrorNodeAdapter.getAccountInfo(
-							accounts[0],
-						);
-					if (mirrorAccount.id) {
-						this.account = new Account({
-							id: mirrorAccount.id,
-							evmAddress: mirrorAccount.accountEvmAddress,
-							publicKey: mirrorAccount.publicKey,
-						});
-					}
+					await this.setMetasmaskAccount(accounts[0]);
 					this.eventService.emit(WalletEvents.walletPaired, {
 						data: {
 							account: this.account,
+							pairing: '',
+							topic: '',
 						},
-						network: this.networkService.environment,
+						network: {
+							name: this.networkService.environment,
+							recognized:
+								this.networkService.environment != unrecognized,
+							factoryId:
+								this.networkService.configuration
+									.factoryAddress,
+						},
 						wallet: SupportedWallets.METAMASK,
 					});
 				} else {
@@ -1329,6 +1410,34 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 						wallet: SupportedWallets.METAMASK,
 					});
 				}
+			});
+			ethereum.on('chainChanged', async (chainId) => {
+				await this.setMetamaskNetwork(chainId);
+				let evmAddress = this.account.evmAddress;
+				if (!evmAddress) {
+					const accts = await ethereum.request({
+						method: 'eth_requestAccounts',
+					});
+					evmAddress =
+						accts && 'length' in accts
+							? (accts as string[])[0]
+							: '';
+				}
+				await this.setMetasmaskAccount(evmAddress);
+				this.eventService.emit(WalletEvents.walletPaired, {
+					data: {
+						account: this.account,
+					},
+					network: {
+						name: this.networkService.environment,
+						recognized:
+							this.networkService.environment != unrecognized,
+						factoryId: this.networkService.configuration
+							? this.networkService.configuration.factoryAddress
+							: '',
+					},
+					wallet: SupportedWallets.METAMASK,
+				});
 			});
 		} catch (error) {
 			LogService.logError(error);
@@ -1354,7 +1463,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 						operation,
 						params,
 					);
-					this.logTransaction(response.id ?? '');
+					this.logTransaction(
+						response.id ?? '',
+						this.networkService.environment,
+					);
 					return response;
 
 				case Decision.HTS:
@@ -1371,7 +1483,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 						operation,
 						params,
 					);
-					this.logTransaction(response.id ?? '');
+					this.logTransaction(
+						response.id ?? '',
+						this.networkService.environment,
+					);
 					return response;
 
 				default:
@@ -1391,8 +1506,12 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			}
 		} catch (error) {
 			LogService.logError(error);
-			this.logTransaction((error as any).error.transactionHash ?? '');
+			this.logTransaction(
+				(error as any).error.transactionHash ?? '',
+				this.networkService.environment,
+			);
 			throw new TransactionResponseError({
+				network: this.networkService.environment,
 				RPC_relay: true,
 				message: `Unexpected error in RPCTransactionAdapter ${operation} operation : ${error}`,
 				transactionId: (error as any).error.transactionHash,
@@ -1408,7 +1527,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		const evmProxy = coin.coin.evmProxyAddress?.toString() ?? '';
 		switch (operation) {
 			case Operation.CASH_IN:
-				const targetEvm = await this.accountToEvmAddress(
+				const targetEvm = await this.getEVMAddress(
 					HederaId.from(params!.targetId!),
 				);
 				return RPCTransactionResponseAdapter.manageResponse(
@@ -1416,6 +1535,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 						evmProxy,
 						this.signerOrProvider,
 					).mint(targetEvm.toString(), params!.amount!.toBigNumber()),
+					this.networkService.environment,
 				);
 
 			case Operation.BURN:
@@ -1424,6 +1544,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 						evmProxy,
 						this.signerOrProvider,
 					).burn(params!.amount!.toBigNumber()),
+					this.networkService.environment,
 				);
 
 			case Operation.WIPE:
@@ -1432,6 +1553,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 						evmProxy,
 						this.signerOrProvider,
 					).wipe(params!.targetId!, params!.amount!.toBigNumber()),
+					this.networkService.environment,
 				);
 
 			case Operation.RESCUE:
@@ -1440,6 +1562,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 						evmProxy,
 						this.signerOrProvider,
 					).rescue(params!.amount!.toBigNumber()),
+					this.networkService.environment,
 				);
 
 			case Operation.FREEZE:
@@ -1448,6 +1571,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 						evmProxy,
 						this.signerOrProvider,
 					).freeze(params!.targetId!),
+					this.networkService.environment,
 				);
 
 			case Operation.UNFREEZE:
@@ -1456,6 +1580,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 						evmProxy,
 						this.signerOrProvider,
 					).unfreeze(params!.targetId!),
+					this.networkService.environment,
 				);
 
 			case Operation.PAUSE:
@@ -1464,6 +1589,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 						evmProxy,
 						this.signerOrProvider,
 					).pause(),
+					this.networkService.environment,
 				);
 
 			case Operation.UNPAUSE:
@@ -1472,6 +1598,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 						evmProxy,
 						this.signerOrProvider,
 					).unpause(),
+					this.networkService.environment,
 				);
 
 			case Operation.DELETE:
@@ -1480,6 +1607,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 						evmProxy,
 						this.signerOrProvider,
 					).deleteToken(),
+					this.networkService.environment,
 				);
 
 			default:
@@ -1508,6 +1636,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 								params?.amount,
 								[],
 							]),
+							this.networkService.environment,
 						),
 					);
 
@@ -1544,6 +1673,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 							params?.amount,
 							[],
 						]),
+						this.networkService.environment,
 					),
 				);
 
@@ -1557,6 +1687,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 							params?.targetId,
 							params?.amount,
 						]),
+						this.networkService.environment,
 					),
 				);
 
@@ -1569,6 +1700,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 							).toSolidityAddress(),
 							params?.targetId,
 						]),
+						this.networkService.environment,
 					),
 				);
 
@@ -1581,6 +1713,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 							).toSolidityAddress(),
 							params?.targetId,
 						]),
+						this.networkService.environment,
 					),
 				);
 
@@ -1592,6 +1725,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 								coin.coin.tokenId?.value ?? '',
 							).toSolidityAddress(),
 						]),
+						this.networkService.environment,
 					),
 				);
 
@@ -1603,6 +1737,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 								coin.coin.tokenId?.value ?? '',
 							).toSolidityAddress(),
 						]),
+						this.networkService.environment,
 					),
 				);
 
@@ -1614,6 +1749,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 								coin.coin.tokenId?.value ?? '',
 							).toSolidityAddress(),
 						]),
+						this.networkService.environment,
 					),
 				);
 
@@ -1635,7 +1771,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			transaction.id,
 		);
 
-		this.logTransaction(transaction.id);
+		this.logTransaction(transaction.id, this.networkService.environment);
 
 		if (
 			!txResponse.result ||
@@ -1651,6 +1787,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		if (responseCodeSuccess === responseCode) return transaction;
 
 		throw new TransactionResponseError({
+			network: this.networkService.environment,
 			message: 'Transaction failed with error code : ' + responseCode,
 			transactionId: transaction.id,
 			RPC_relay: true,

@@ -145,7 +145,7 @@ const Stepper = (props: StepperProps) => {
 										</Button>
 										<Button
 											data-testid={`stepper-step-panel-button-primary-${index + 1}`}
-											disabled={!isValid}
+											isDisabled={!isValid}
 											variant='primary'
 											onClick={
 												isLastStep ? handleLastButtonPrimary : (e) => handleStep(e, index, 'next')
