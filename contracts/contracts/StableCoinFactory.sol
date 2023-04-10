@@ -152,8 +152,6 @@ contract StableCoinFactory is
                 requestedToken.tokenDecimals,
                 msg.sender,
                 reserveAddress,
-                // requestedToken.grantKYCToOriginalSender,
-                // _treasuryIsContract(requestedToken.treasuryAddress),
                 requestedToken.roles,
                 requestedToken.cashinRole
             );
@@ -195,7 +193,6 @@ contract StableCoinFactory is
 
         // Token Expiry
         IHederaTokenService.Expiry memory tokenExpiry;
-        // tokenExpiry.autoRenewAccount = requestedToken.autoRenewAccountAddress;
         tokenExpiry.autoRenewAccount = stableCoinProxyAddress;
         tokenExpiry.autoRenewPeriod = 7776000;
 
@@ -220,9 +217,6 @@ contract StableCoinFactory is
                 requestedToken.tokenName,
                 requestedToken.tokenSymbol,
                 stableCoinProxyAddress,
-                /* _treasuryIsContract(requestedToken.treasuryAddress)
-                    ? stableCoinProxyAddress
-                    : requestedToken.treasuryAddress, */
                 tokenMemo,
                 requestedToken.supplyType,
                 requestedToken.tokenMaxSupply,
@@ -233,12 +227,6 @@ contract StableCoinFactory is
 
         return token;
     }
-
-    /* function _treasuryIsContract(
-        address treasuryAddress
-    ) private pure returns (bool) {
-        return treasuryAddress == address(0);
-    } */
 
     function _validationReserveInitialAmount(
         uint8 reserveDecimals,
