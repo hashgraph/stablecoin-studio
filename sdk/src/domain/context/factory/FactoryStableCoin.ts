@@ -86,7 +86,7 @@ export class FactoryStableCoin {
 	/**
 	 * Grant KYC Original Sender or not
 	 */
-	public grantKYCToOriginalSender: boolean;
+	// public grantKYCToOriginalSender: boolean;
 
 	/**
 	 * Token Keys
@@ -116,7 +116,7 @@ export class FactoryStableCoin {
 		reserveAddress: string,
 		reserveInitialAmount: string,
 		createReserve: boolean,
-		grantKYCToOriginalSender: boolean,
+		// grantKYCToOriginalSender: boolean,
 		keys: FactoryKey[],
 		roles: FactoryRole[],
 		cashinRole: FactoryCashinRole,
@@ -133,7 +133,7 @@ export class FactoryStableCoin {
 		this.reserveAddress = reserveAddress;
 		this.reserveInitialAmount = reserveInitialAmount;
 		this.createReserve = createReserve;
-		this.grantKYCToOriginalSender = grantKYCToOriginalSender;
+		// this.grantKYCToOriginalSender = grantKYCToOriginalSender;
 		this.keys = keys;
 		this.roles = roles;
 		this.cashinRole = cashinRole;

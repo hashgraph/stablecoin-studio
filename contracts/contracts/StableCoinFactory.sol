@@ -152,7 +152,7 @@ contract StableCoinFactory is
                 requestedToken.tokenDecimals,
                 msg.sender,
                 reserveAddress,
-                requestedToken.grantKYCToOriginalSender,
+                // requestedToken.grantKYCToOriginalSender,
                 // _treasuryIsContract(requestedToken.treasuryAddress),
                 requestedToken.roles,
                 requestedToken.cashinRole

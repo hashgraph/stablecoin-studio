@@ -30,7 +30,7 @@ interface IStableCoinFactory {
         address reserveAddress;
         int256 reserveInitialAmount;
         bool createReserve;
-        bool grantKYCToOriginalSender;
+        // bool grantKYCToOriginalSender;
         KeysLib.KeysStruct[] keys;
         IHederaERC20.RolesStruct[] roles;
         IHederaERC20.CashinRoleStruct cashinRole;

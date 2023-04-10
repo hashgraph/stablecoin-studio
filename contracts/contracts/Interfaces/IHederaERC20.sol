@@ -73,7 +73,7 @@ interface IHederaERC20 {
         int32 tokenDecimals;
         address originalSender;
         address reserveAddress;
-        bool grantKYCToOriginalSender;
+        // bool grantKYCToOriginalSender;
         // bool treasuryIsContract;
         RolesStruct[] roles;
         CashinRoleStruct cashinRole;

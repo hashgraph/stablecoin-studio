@@ -94,18 +94,6 @@ contract HederaERC20 is
             }
         } else _associateToken(address(this)); */
 
-        _associateToken(address(this));
-
-        if (init.grantKYCToOriginalSender) {
-            responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
-                .grantTokenKyc(createdTokenAddress, init.originalSender);
-
-            require(
-                responseCode == HederaResponseCodes.SUCCESS,
-                'KYC grant failed'
-            );
-        }
-
         // Sending back the remaining HBARs from msg.value
         uint256 currentBalance = address(this).balance;
         if (currentBalance > 0) {
