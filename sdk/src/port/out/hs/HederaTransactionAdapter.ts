@@ -213,11 +213,11 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					? coin.initialSupply.toFixedNumber()
 					: BigDecimal.ZERO.toFixedNumber(),
 				coin.decimals,
-				await this.getEVMAddress(coin.autoRenewAccount!),
-				coin.treasury == undefined ||
+				// await this.getEVMAddress(coin.autoRenewAccount!),
+				/* coin.treasury == undefined ||
 				coin.treasury.toString() == '0.0.0'
 					? '0x0000000000000000000000000000000000000000'
-					: await this.getEVMAddress(coin.treasury),
+					: await this.getEVMAddress(coin.treasury), */
 				reserveAddress == undefined ||
 				reserveAddress.toString() == '0.0.0'
 					? '0x0000000000000000000000000000000000000000'

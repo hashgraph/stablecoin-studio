@@ -61,12 +61,12 @@ export class FactoryStableCoin {
 	/**
 	 * Token auto-renew account
 	 */
-	public autoRenewAccountAddress: string;
+	// public autoRenewAccountAddress: string;
 
 	/**
 	 * Token treasury account
 	 */
-	public treasuryAddress: string;
+	// public treasuryAddress: string;
 
 	/**
 	 * Reserve contract
@@ -111,8 +111,8 @@ export class FactoryStableCoin {
 		tokenMaxSupply: string,
 		tokenInitialSupply: string,
 		tokenDecimals: number,
-		autoRenewAccountAddress: string,
-		treasuryAddress: string,
+		// autoRenewAccountAddress: string,
+		// treasuryAddress: string,
 		reserveAddress: string,
 		reserveInitialAmount: string,
 		createReserve: boolean,
@@ -128,8 +128,8 @@ export class FactoryStableCoin {
 		this.tokenMaxSupply = tokenMaxSupply;
 		this.tokenInitialSupply = tokenInitialSupply;
 		this.tokenDecimals = tokenDecimals;
-		this.autoRenewAccountAddress = autoRenewAccountAddress;
-		this.treasuryAddress = treasuryAddress;
+		// this.autoRenewAccountAddress = autoRenewAccountAddress;
+		// this.treasuryAddress = treasuryAddress;
 		this.reserveAddress = reserveAddress;
 		this.reserveInitialAmount = reserveInitialAmount;
 		this.createReserve = createReserve;

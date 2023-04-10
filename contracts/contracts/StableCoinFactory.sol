@@ -16,8 +16,7 @@ import {Strings} from '@openzeppelin/contracts/utils/Strings.sol';
 import {
     Initializable
 } from '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
-
-// import {KeysLib} from './library/KeysLib.sol';
+import {KeysLib} from './library/KeysLib.sol';
 
 contract StableCoinFactory is
     IStableCoinFactory,
@@ -201,7 +200,7 @@ contract StableCoinFactory is
         tokenExpiry.autoRenewPeriod = 7776000;
 
         // Token Keys
-        /* IHederaTokenService.TokenKey[]
+        IHederaTokenService.TokenKey[]
             memory keys = new IHederaTokenService.TokenKey[](
                 requestedToken.keys.length
             );
@@ -214,14 +213,7 @@ contract StableCoinFactory is
                     requestedToken.keys[i].isED25519
                 )
             });
-        } */
-
-        IHederaTokenService.KeyValue memory key;
-        key.delegatableContractId = stableCoinProxyAddress;
-
-        IHederaTokenService.TokenKey[] memory keys;
-        keys[0].keyType = 256;
-        keys[0].key = key;
+        }
 
         IHederaTokenService.HederaToken memory token = IHederaTokenService
             .HederaToken(
