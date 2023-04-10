@@ -74,7 +74,7 @@ interface IHederaERC20 {
         address originalSender;
         address reserveAddress;
         bool grantKYCToOriginalSender;
-        bool treasuryIsContract;
+        // bool treasuryIsContract;
         RolesStruct[] roles;
         CashinRoleStruct cashinRole;
     }
@@ -140,7 +140,7 @@ interface IHederaERC20 {
      * @param addr The address of the account to associate
      *
      */
-    function associateToken(address addr) external;
+    // function associateToken(address addr) external;
 
     /**
      * @dev Dissociates an account from the token
@@ -148,14 +148,14 @@ interface IHederaERC20 {
      * @param addr The address of the account to dissociate
      *
      */
-    function dissociateToken(address addr) external;
+    // function dissociateToken(address addr) external;
 
     /**
      * @dev Transfers an amount of tokens to an account
      *
      * @param to The address the tokens are transferred to
      */
-    function transfer(address to, int64 amount) external returns (bool);
+    // function transfer(address to, int64 amount) external returns (bool);
 
     /**
      * @dev Function not already implemented

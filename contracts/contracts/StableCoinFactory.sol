@@ -16,7 +16,8 @@ import {Strings} from '@openzeppelin/contracts/utils/Strings.sol';
 import {
     Initializable
 } from '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
-import {KeysLib} from './library/KeysLib.sol';
+
+// import {KeysLib} from './library/KeysLib.sol';
 
 contract StableCoinFactory is
     IStableCoinFactory,
@@ -153,7 +154,7 @@ contract StableCoinFactory is
                 msg.sender,
                 reserveAddress,
                 requestedToken.grantKYCToOriginalSender,
-                _treasuryIsContract(requestedToken.treasuryAddress),
+                // _treasuryIsContract(requestedToken.treasuryAddress),
                 requestedToken.roles,
                 requestedToken.cashinRole
             );
@@ -195,11 +196,12 @@ contract StableCoinFactory is
 
         // Token Expiry
         IHederaTokenService.Expiry memory tokenExpiry;
-        tokenExpiry.autoRenewAccount = requestedToken.autoRenewAccountAddress;
+        // tokenExpiry.autoRenewAccount = requestedToken.autoRenewAccountAddress;
+        tokenExpiry.autoRenewAccount = stableCoinProxyAddress;
         tokenExpiry.autoRenewPeriod = 7776000;
 
         // Token Keys
-        IHederaTokenService.TokenKey[]
+        /* IHederaTokenService.TokenKey[]
             memory keys = new IHederaTokenService.TokenKey[](
                 requestedToken.keys.length
             );
@@ -212,15 +214,23 @@ contract StableCoinFactory is
                     requestedToken.keys[i].isED25519
                 )
             });
-        }
+        } */
+
+        IHederaTokenService.KeyValue memory key;
+        key.delegatableContractId = stableCoinProxyAddress;
+
+        IHederaTokenService.TokenKey[] memory keys;
+        keys[0].keyType = 256;
+        keys[0].key = key;
 
         IHederaTokenService.HederaToken memory token = IHederaTokenService
             .HederaToken(
                 requestedToken.tokenName,
                 requestedToken.tokenSymbol,
-                _treasuryIsContract(requestedToken.treasuryAddress)
+                stableCoinProxyAddress,
+                /* _treasuryIsContract(requestedToken.treasuryAddress)
                     ? stableCoinProxyAddress
-                    : requestedToken.treasuryAddress,
+                    : requestedToken.treasuryAddress, */
                 tokenMemo,
                 requestedToken.supplyType,
                 requestedToken.tokenMaxSupply,
@@ -232,11 +242,11 @@ contract StableCoinFactory is
         return token;
     }
 
-    function _treasuryIsContract(
+    /* function _treasuryIsContract(
         address treasuryAddress
     ) private pure returns (bool) {
         return treasuryAddress == address(0);
-    }
+    } */
 
     function _validationReserveInitialAmount(
         uint8 reserveDecimals,

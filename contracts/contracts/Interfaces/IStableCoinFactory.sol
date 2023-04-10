@@ -25,13 +25,13 @@ interface IStableCoinFactory {
         int64 tokenMaxSupply;
         int64 tokenInitialSupply;
         int32 tokenDecimals;
-        address autoRenewAccountAddress;
-        address treasuryAddress;
+        // address autoRenewAccountAddress;
+        // address treasuryAddress;
         address reserveAddress;
         int256 reserveInitialAmount;
         bool createReserve;
         bool grantKYCToOriginalSender;
-        KeysLib.KeysStruct[] keys;
+        // KeysLib.KeysStruct[] keys;
         IHederaERC20.RolesStruct[] roles;
         IHederaERC20.CashinRoleStruct cashinRole;
     }

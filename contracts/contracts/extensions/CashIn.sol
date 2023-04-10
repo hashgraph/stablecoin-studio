@@ -41,7 +41,7 @@ abstract contract CashIn is ICashIn, SupplierAdmin, Reserve {
         if (!((_balanceOf(address(this)) - balance) == uint256(uint64(amount))))
             revert('The smart contract is not the treasury account');
 
-        _transfer(address(this), account, amount);
+        _transfer(account, amount);
 
         emit TokensMinted(msg.sender, currentTokenAddress, amount, account);
 
