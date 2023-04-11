@@ -80,7 +80,7 @@ const ManagementPermissions = ({ control, watch, request }: ManagementPermission
 	};
 
 	return (
-		<Box>
+		<Box pt='80px'>
 			<Stack minW={400}>
 				<Heading
 					data-testid='title'
