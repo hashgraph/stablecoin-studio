@@ -72,20 +72,16 @@ describe('🧪 Role test', () => {
 			decimals: '6',
 			initialSupply: '1000',
 			// maxSupply: '',
-			autoRenewAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
-			adminKey: Account.NullPublicKey,
 			freezeKey: Account.NullPublicKey,
 			kycKey: Account.NullPublicKey,
 			wipeKey: Account.NullPublicKey,
 			pauseKey: Account.NullPublicKey,
-			supplyKey: Account.NullPublicKey,
 			// treasury: CLIENT_ACCOUNT_ED25519.id.toString(),
 			supplyType: TokenSupplyType.INFINITE,
 			stableCoinFactory: FACTORY_ADDRESS,
 			hederaERC20: HEDERA_ERC20_ADDRESS,
 			createReserve: true,
 			reserveInitialAmount: '1000',
-			grantKYCToOriginalSender: false,
 		});
 		stableCoinSC = (await StableCoin.create(requestSC)).coin;
 		// console.log(stableCoinSC.tokenId);

@@ -167,12 +167,7 @@ class StableCoinInPort implements IStableCoinInPort {
 			name: req.name,
 			symbol: req.symbol,
 			decimals: req.decimals,
-			adminKey: req.adminKey
-				? new PublicKey({
-						key: req.adminKey.key,
-						type: req.adminKey.type,
-				  })
-				: undefined,
+			adminKey: undefined,
 			initialSupply: BigDecimal.fromString(
 				req.initialSupply ?? '0',
 				req.decimals,
@@ -205,26 +200,16 @@ class StableCoinInPort implements IStableCoinInPort {
 						type: req.pauseKey.type,
 				  })
 				: undefined,
-			supplyKey: req.supplyKey
-				? new PublicKey({
-						key: req.supplyKey.key,
-						type: req.supplyKey.type,
-				  })
-				: undefined,
+			supplyKey: undefined,
 			feeScheduleKey: req.feeScheduleKey
 				? new PublicKey({
 						key: req.feeScheduleKey.key,
 						type: req.feeScheduleKey.type,
 				  })
 				: undefined,
-			treasury: new HederaId(req.treasury ?? '0.0.0'),
+			treasury: undefined,
 			supplyType: req.supplyType,
-			autoRenewAccount: req.autoRenewAccount
-				? new HederaId(req.autoRenewAccount)
-				: undefined,
-			grantKYCToOriginalSender: req.grantKYCToOriginalSender
-				? req.grantKYCToOriginalSender
-				: false,
+			autoRenewAccount: undefined,
 			burnRoleAccount: new HederaId(req.burnRoleAccount ?? '0.0.0'),
 			wipeRoleAccount: new HederaId(req.wipeRoleAccount ?? '0.0.0'),
 			rescueRoleAccount: new HederaId(req.rescueRoleAccount ?? '0.0.0'),
