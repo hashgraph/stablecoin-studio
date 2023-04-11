@@ -111,13 +111,12 @@ describe('Burn Tests', function () {
             initialAmountDataFeed: INIT_SUPPLY.add(
                 BigNumber.from('100000')
             ).toString(),
-            allToContract: false,
         })
 
         proxyAddress = result[0]
     })
 
-    it.only('Admin account can grant and revoke burnable role to an account', async function () {
+    it('Admin account can grant and revoke burnable role to an account', async function () {
         // Admin grants burn role : success
         let result = await hasRole(
             BURN_ROLE,

@@ -135,42 +135,6 @@ export async function getTotalSupply(proxyAddress: ContractId, client: Client) {
     return BigNumber.from(result[0])
 }
 
-export async function associateToken(
-    proxyAddress: ContractId,
-    clientAssociatingToken: Client,
-    accountToAssociateTo: string,
-    isE25519: boolean
-) {
-    const params: string[] = [
-        await toEvmAddress(accountToAssociateTo, isE25519),
-    ]
-    await contractCall(
-        proxyAddress,
-        'associateToken',
-        params,
-        clientAssociatingToken,
-        Gas3,
-        HederaERC20__factory.abi
-    )
-}
-
-export async function dissociateToken(
-    proxyAddress: ContractId,
-    clientDissociatingToken: Client,
-    accountToDissociateFrom: string,
-    isE25519: boolean
-) {
-    const params = [await toEvmAddress(accountToDissociateFrom, isE25519)]
-    await contractCall(
-        proxyAddress,
-        'dissociateToken',
-        params,
-        clientDissociatingToken,
-        Gas3,
-        HederaERC20__factory.abi
-    )
-}
-
 export async function getBalanceOf(
     proxyAddress: ContractId,
     client: Client,
@@ -277,28 +241,6 @@ export async function allowance(
         HederaERC20__factory.abi
     )
     return BigNumber.from(response[0])
-}
-
-export async function transfer(
-    proxyAddress: ContractId,
-    addressSpender: string,
-    spenderIsE25519: boolean,
-    amount: BigNumber,
-    client: Client
-): Promise<boolean> {
-    const params: string[] = [
-        await toEvmAddress(addressSpender, spenderIsE25519),
-        amount.toString(),
-    ]
-    const response = await contractCall(
-        proxyAddress,
-        'transfer',
-        params,
-        client,
-        Gas1,
-        HederaERC20__factory.abi
-    )
-    return response[0]
 }
 
 export async function updateToken(
