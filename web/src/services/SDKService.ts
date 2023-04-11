@@ -51,6 +51,7 @@ import type {
 	GetERC20ListRequest,
 	RevokeMultiRolesRequest,
 	GrantMultiRolesRequest,
+	AssociateTokenRequest,
 } from 'hedera-stable-coin-sdk';
 
 export type StableCoinListRaw = Array<Record<'id' | 'symbol', string>>;
@@ -267,6 +268,10 @@ export class SDKService {
 
 	public static async isAccountKYCGranted(data: KYCRequest) {
 		return await StableCoin.isAccountKYCGranted(data);
+	}
+
+	public static async associate(data: AssociateTokenRequest) {
+		return await StableCoin.associate(data);
 	}
 
 	public static async addFixedFee(data: AddFixedFeeRequest) {

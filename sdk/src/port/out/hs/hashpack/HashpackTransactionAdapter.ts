@@ -36,6 +36,7 @@ import {
 	TokenRevokeKycTransaction,
 	TokenGrantKycTransaction,
 	TokenFeeScheduleUpdateTransaction,
+	TokenAssociateTransaction,
 } from '@hashgraph/sdk';
 import { singleton } from 'tsyringe';
 import { HederaTransactionAdapter } from '../HederaTransactionAdapter.js';
@@ -258,7 +259,8 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 				t instanceof TokenGrantKycTransaction ||
 				t instanceof TokenRevokeKycTransaction ||
 				t instanceof TransferTransaction ||
-				t instanceof TokenFeeScheduleUpdateTransaction
+				t instanceof TokenFeeScheduleUpdateTransaction ||
+				t instanceof TokenAssociateTransaction
 			) {
 				hashPackTransactionResponse = await t.executeWithSigner(
 					this.signer,
