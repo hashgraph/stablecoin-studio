@@ -270,9 +270,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					gasLimit: 15000000,
 				},
 			);
+
 			// Put it into an array since structs change the response from the event and its not a simple array
-			return RPCTransactionResponseAdapter.manageResponse(
+			return await RPCTransactionResponseAdapter.manageResponse(
 				res,
+				this.networkService.environment,
 				'Deployed',
 			);
 		} catch (error) {

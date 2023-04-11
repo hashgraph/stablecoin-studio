@@ -75,6 +75,7 @@ const StableCoinCreation = () => {
 	const [success, setSuccess] = useState<boolean>();
 	const [error, setError] = useState<any>();
 	const { isOpen, onOpen, onClose } = useDisclosure();
+	const [token, setToken] = useState<string | null>();
 
 	useEffect(() => {
 		if (getValues()) {
@@ -233,6 +234,7 @@ const StableCoinCreation = () => {
 		return Account.NullPublicKey;
 	};
 
+	let createResponse: any;
 	const handleFinish = async () => {
 		const {
 			managementPermissions,
@@ -330,11 +332,11 @@ const StableCoinCreation = () => {
 		request.kycRoleAccount = formatKycRoleAccountByKey(kycRequired, kycKey, kycRoleAccount, 'kyc');
 
 		request.hederaERC20 = hederaERC20Id.value;
-		let createResponse;
 		try {
 			onOpen();
 			setLoading(true);
 			createResponse = await SDKService.createStableCoin(request);
+			setToken(createResponse.coin.tokenId.toString());
 			if (wallet.lastWallet === SupportedWallets.HASHPACK && createResponse?.coin.tokenId) {
 				const associateRequest = new AssociateTokenRequest({
 					targetId: accountInfo.id!,
@@ -397,7 +399,9 @@ const StableCoinCreation = () => {
 					loading ? 'Loading' : t('notification.title', { result: success ? 'Success' : 'Error' })
 				}
 				description={
-					loading ? undefined : t(`notification.description${success ? 'Success' : 'Error'}`)
+					loading
+						? undefined
+						: t(`notification.description${success ? 'Success' : 'Error'}`, { token: token })
 				}
 				isOpen={isOpen}
 				onClose={onClose}
