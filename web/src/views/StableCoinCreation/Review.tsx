@@ -179,11 +179,7 @@ const Review = (props: ReviewProps) => {
 							{
 								label: t('stableCoinCreation:basicDetails.symbol'),
 								value: symbol || '',
-							},
-							{
-								label: t('stableCoinCreation:basicDetails.autorenewAccount'),
-								value: autorenewAccount || '',
-							},
+							}
 						]}
 					/>
 					<DetailsReview
