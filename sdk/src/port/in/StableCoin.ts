@@ -89,6 +89,7 @@ import UpdateRequest from './request/UpdateRequest.js';
 import { TransfersCommand } from '../../app/usecase/command/stablecoin/operations/transfer/TransfersCommand.js';
 import { UpdateCommand } from '../../app/usecase/command/stablecoin/update/UpdateCommand.js';
 import NetworkService from '../../app/service/NetworkService.js';
+import { AssociateCommand } from '../../app/usecase/command/account/associate/AssociateCommand.js';
 
 export {
 	StableCoinViewModel,
@@ -167,7 +168,7 @@ class StableCoinInPort implements IStableCoinInPort {
 			name: req.name,
 			symbol: req.symbol,
 			decimals: req.decimals,
-			adminKey: undefined,
+			adminKey: PublicKey.NULL,
 			initialSupply: BigDecimal.fromString(
 				req.initialSupply ?? '0',
 				req.decimals,
@@ -200,7 +201,7 @@ class StableCoinInPort implements IStableCoinInPort {
 						type: req.pauseKey.type,
 				  })
 				: undefined,
-			supplyKey: undefined,
+			supplyKey: PublicKey.NULL,
 			feeScheduleKey: req.feeScheduleKey
 				? new PublicKey({
 						key: req.feeScheduleKey.key,
@@ -330,7 +331,17 @@ class StableCoinInPort implements IStableCoinInPort {
 
 	@LogError
 	async associate(request: AssociateTokenRequest): Promise<boolean> {
-		throw new Error('Method not implemented.');
+		const { tokenId, targetId } = request;
+		handleValidation('AssociateTokenRequest', request);
+
+		return (
+			await this.commandBus.execute(
+				new AssociateCommand(
+					HederaId.from(targetId),
+					HederaId.from(tokenId),
+				),
+			)
+		).payload;
 	}
 
 	@LogError

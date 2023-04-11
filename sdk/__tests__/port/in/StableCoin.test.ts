@@ -243,25 +243,6 @@ describe('🧪 Stablecoin test', () => {
 		expect(result).toBe(true);
 	}, 60_000);
 
-	it('Performs associate SC', async () => {
-		const handler = Injectable.resolveTransactionHandler();
-		expect(handler).not.toBeNull();
-		const eventService = Injectable.resolve(EventService);
-		expect(eventService).not.toBeNull();
-		eventService.on(WalletEvents.walletInit, (data) => {
-			console.log(`Wallet: ${data.wallet} initialized`);
-		});
-		const result = StableCoin.associate(
-			new AssociateTokenRequest({
-				account: {
-					accountId: CLIENT_ACCOUNT_ECDSA.id.toString(),
-					privateKey: CLIENT_ACCOUNT_ECDSA.privateKey,
-				},
-			}),
-		);
-		await expect(result).rejects.toThrow('Method not implemented');
-	}, 60_000);
-
 	it('Performs freeze SC', async () => {
 		const handler = Injectable.resolveTransactionHandler();
 		expect(handler).not.toBeNull();
@@ -427,25 +408,6 @@ describe('🧪 Stablecoin test', () => {
 		);
 		expect(result).not.toBeNull();
 		expect(result).toBe(true);
-	}, 60_000);
-
-	it('Performs associate HTS', async () => {
-		const handler = Injectable.resolveTransactionHandler();
-		expect(handler).not.toBeNull();
-		const eventService = Injectable.resolve(EventService);
-		expect(eventService).not.toBeNull();
-		eventService.on(WalletEvents.walletInit, (data) => {
-			console.log(`Wallet: ${data.wallet} initialized`);
-		});
-		const result = StableCoin.associate(
-			new AssociateTokenRequest({
-				account: {
-					accountId: CLIENT_ACCOUNT_ECDSA.id.toString(),
-					privateKey: CLIENT_ACCOUNT_ECDSA.privateKey,
-				},
-			}),
-		);
-		await expect(result).rejects.toThrow('Method not implemented');
 	}, 60_000);
 
 	it('Performs capabilities HTS', async () => {

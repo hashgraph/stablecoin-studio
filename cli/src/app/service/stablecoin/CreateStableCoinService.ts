@@ -16,6 +16,7 @@ import {
 import { IManagedFeatures } from '../../../domain/configuration/interfaces/IManagedFeatures.js';
 import Service from '../Service.js';
 import SetConfigurationService from '../configuration/SetConfigurationService.js';
+import AssociateStableCoinsService from './AssociateStableCoinService.js';
 
 /**
  * Create Stable Coin Service
@@ -88,6 +89,13 @@ export default class CreateStableCoinService extends Service {
         }),
       },
     );
+
+    const associateService = new AssociateStableCoinsService();
+    await associateService.associateStableCoin(
+      currentAccount.accountId,
+      createdToken.tokenId.toString(),
+    );
+
     return createdToken;
   }
 

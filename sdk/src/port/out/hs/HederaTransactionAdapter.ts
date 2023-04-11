@@ -270,29 +270,16 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	}
 
 	public async associateToken(
-		coin: StableCoinCapabilities | string,
+		tokenId: HederaId,
 		targetId: HederaId,
 	): Promise<TransactionResponse<any, Error>> {
-		if (coin instanceof StableCoinCapabilities) {
-			const params = new Params({
-				targetId: targetId,
-			});
-
-			return this.performSmartContractOperation(
-				coin.coin.proxyAddress!.value,
-				'associateToken',
-				1300000,
-				params,
-			);
-		} else {
-			return await this.signAndSendTransaction(
-				HTSTransactionBuilder.buildAssociateTokenTransaction(
-					coin,
-					targetId.toString(),
-				),
-				TransactionType.RECEIPT,
-			);
-		}
+		return await this.signAndSendTransaction(
+			HTSTransactionBuilder.buildAssociateTokenTransaction(
+				tokenId.toString(),
+				targetId.toString(),
+			),
+			TransactionType.RECEIPT,
+		);
 	}
 
 	public async dissociateToken(
