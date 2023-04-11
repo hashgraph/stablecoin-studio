@@ -228,7 +228,6 @@ const StableCoinCreation = () => {
 
 	const handleFinish = async () => {
 		const {
-			autorenewAccount,
 			managementPermissions,
 			adminKey,
 			freezeKey,
@@ -241,7 +240,6 @@ const StableCoinCreation = () => {
 			feeScheduleKey,
 			reserveInitialAmount,
 			reserveAddress,
-			grantKYCToOriginalSender,
 			cashInRoleAccount,
 			burnRoleAccount,
 			wipeRoleAccount,
@@ -255,8 +253,6 @@ const StableCoinCreation = () => {
 			hederaERC20Id,
 		} = getValues();
 
-		request.autoRenewAccount = autorenewAccount;
-
 		if (!reserveInitialAmount) {
 			request.createReserve = false;
 			request.reserveAddress = reserveAddress;
@@ -267,30 +263,19 @@ const StableCoinCreation = () => {
 		}
 
 		if (managementPermissions) {
-			request.adminKey = Account.NullPublicKey; // accountInfo.publicKey;
 			request.freezeKey = Account.NullPublicKey;
 			request.wipeKey = Account.NullPublicKey;
 			request.pauseKey = Account.NullPublicKey;
-			request.supplyKey = Account.NullPublicKey;
-			request.treasury = undefined;
 		} else {
-			request.adminKey = accountInfo.publicKey;
 			request.freezeKey = formatKey(freezeKey.label, 'freezeKey');
 			request.wipeKey = formatKey(wipeKey.label, 'wipeKey');
 			request.pauseKey = formatKey(pauseKey.label, 'pauseKey');
-			request.supplyKey = formatKey(supplyKey.label, 'supplyKey');
-			request.treasury =
-				formatKey(supplyKey.label, 'supplyKey')?.key !== Account.NullPublicKey.key && accountInfo.id
-					? accountInfo.id
-					: undefined;
 		}
 
 		if (kycRequired) {
 			request.kycKey = formatKey(kycKey.label, 'kycKey');
-			request.grantKYCToOriginalSender = grantKYCToOriginalSender;
 		} else {
 			request.kycKey = undefined;
-			request.grantKYCToOriginalSender = false;
 		}
 
 		request.feeScheduleKey = manageCustomFees
