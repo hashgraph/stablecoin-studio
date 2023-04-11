@@ -12,11 +12,13 @@ import {
   Account,
   Factory,
   GetERC20ListRequest,
+  KYCRequest,
 } from 'hedera-stable-coin-sdk';
 import { IManagedFeatures } from '../../../domain/configuration/interfaces/IManagedFeatures.js';
 import Service from '../Service.js';
 import SetConfigurationService from '../configuration/SetConfigurationService.js';
 import AssociateStableCoinsService from './AssociateStableCoinService.js';
+import KYCStableCoinService from './KYCStableCoinService.js';
 
 /**
  * Create Stable Coin Service
@@ -34,9 +36,11 @@ export default class CreateStableCoinService extends Service {
   public async createStableCoin(
     stableCoin: CreateRequest,
     isWizard = false,
+    grantKYCToOriginalSender = false,
   ): Promise<StableCoinViewModel> {
     if (isWizard) {
-      stableCoin = await this.wizardCreateStableCoin();
+      [stableCoin, grantKYCToOriginalSender] =
+        await this.wizardCreateStableCoin();
     }
 
     const currentAccount = utilsService.getCurrentAccount();
@@ -96,6 +100,15 @@ export default class CreateStableCoinService extends Service {
       createdToken.tokenId.toString(),
     );
 
+    if (grantKYCToOriginalSender) {
+      const kycService = new KYCStableCoinService();
+      const kycRequest = new KYCRequest({
+        targetId: currentAccount.accountId,
+        tokenId: createdToken.tokenId.toString(),
+      });
+      await kycService.grantKYCToAccount(kycRequest);
+    }
+
     return createdToken;
   }
 
@@ -103,10 +116,10 @@ export default class CreateStableCoinService extends Service {
    * Specific function for wizard to create stable coin
    * @returns
    */
-  public async wizardCreateStableCoin(): Promise<CreateRequest> {
+  public async wizardCreateStableCoin(): Promise<[CreateRequest, boolean]> {
     const currentAccount = utilsService.getCurrentAccount();
     // Call to create stable coin sdk function
-    let tokenToCreate = new CreateRequest({
+    const tokenToCreate = new CreateRequest({
       name: '',
       symbol: '',
       decimals: 6,
@@ -204,6 +217,8 @@ export default class CreateStableCoinService extends Service {
 
     // KYC
     const kyc = await this.askForKYC();
+    let grantKYCToOriginalSender = false;
+
     if (kyc) {
       const KYCKey = await this.checkAnswer(
         await utilsService.defaultMultipleAsk(
@@ -212,6 +227,10 @@ export default class CreateStableCoinService extends Service {
         ),
       );
       tokenToCreate.kycKey = KYCKey;
+
+      if (KYCKey == Account.NullPublicKey) {
+        grantKYCToOriginalSender = await this.askForKYCGrantToSender();
+      }
     }
 
     // Custom fees
@@ -356,9 +375,9 @@ export default class CreateStableCoinService extends Service {
     ) {
       await utilsService.cleanAndShowBanner();
 
-      tokenToCreate = await this.wizardCreateStableCoin();
+      return await this.wizardCreateStableCoin();
     }
-    return tokenToCreate;
+    return [tokenToCreate, grantKYCToOriginalSender];
   }
 
   private async askForDecimals(val?: string): Promise<string> {
@@ -456,6 +475,13 @@ export default class CreateStableCoinService extends Service {
   private async askForRolesManagement(): Promise<boolean> {
     return await utilsService.defaultConfirmAsk(
       language.getText('stablecoin.askRolesManagedBy'),
+      true,
+    );
+  }
+
+  private async askForKYCGrantToSender(): Promise<boolean> {
+    return await utilsService.defaultConfirmAsk(
+      language.getText('stablecoin.askGrantKYCToSender'),
       true,
     );
   }
