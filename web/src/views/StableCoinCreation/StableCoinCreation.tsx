@@ -19,10 +19,16 @@ import {
 	SELECTED_WALLET_ACCOUNT_INFO,
 	SELECTED_WALLET_PAIRED_ACCOUNT,
 	SELECTED_FACTORY_ID,
+	SELECTED_WALLET,
 } from '../../store/slices/walletSlice';
 import SDKService from '../../services/SDKService';
 import ModalNotification from '../../components/ModalNotification';
-import { Account, CreateRequest, Network } from 'hedera-stable-coin-sdk';
+import {
+	Account,
+	AssociateTokenRequest,
+	CreateRequest,
+	SupportedWallets,
+} from 'hedera-stable-coin-sdk';
 import type { RequestPublicKey } from 'hedera-stable-coin-sdk';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch } from '../../store/store';
@@ -36,6 +42,7 @@ const StableCoinCreation = () => {
 	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
 	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 	const factoryId = useSelector(SELECTED_FACTORY_ID);
+	const wallet = useSelector(SELECTED_WALLET);
 
 	const form = useForm<FieldValues>({
 		mode: 'onChange',
@@ -68,6 +75,7 @@ const StableCoinCreation = () => {
 	const [success, setSuccess] = useState<boolean>();
 	const [error, setError] = useState<any>();
 	const { isOpen, onOpen, onClose } = useDisclosure();
+	const [token, setToken] = useState<string | null>();
 
 	useEffect(() => {
 		if (getValues()) {
@@ -226,9 +234,9 @@ const StableCoinCreation = () => {
 		return Account.NullPublicKey;
 	};
 
+	let createResponse: any;
 	const handleFinish = async () => {
 		const {
-			autorenewAccount,
 			managementPermissions,
 			adminKey,
 			freezeKey,
@@ -241,7 +249,6 @@ const StableCoinCreation = () => {
 			feeScheduleKey,
 			reserveInitialAmount,
 			reserveAddress,
-			grantKYCToOriginalSender,
 			cashInRoleAccount,
 			burnRoleAccount,
 			wipeRoleAccount,
@@ -255,8 +262,6 @@ const StableCoinCreation = () => {
 			hederaERC20Id,
 		} = getValues();
 
-		request.autoRenewAccount = autorenewAccount;
-
 		if (!reserveInitialAmount) {
 			request.createReserve = false;
 			request.reserveAddress = reserveAddress;
@@ -267,30 +272,19 @@ const StableCoinCreation = () => {
 		}
 
 		if (managementPermissions) {
-			request.adminKey = Account.NullPublicKey; // accountInfo.publicKey;
 			request.freezeKey = Account.NullPublicKey;
 			request.wipeKey = Account.NullPublicKey;
 			request.pauseKey = Account.NullPublicKey;
-			request.supplyKey = Account.NullPublicKey;
-			request.treasury = undefined;
 		} else {
-			request.adminKey = accountInfo.publicKey;
 			request.freezeKey = formatKey(freezeKey.label, 'freezeKey');
 			request.wipeKey = formatKey(wipeKey.label, 'wipeKey');
 			request.pauseKey = formatKey(pauseKey.label, 'pauseKey');
-			request.supplyKey = formatKey(supplyKey.label, 'supplyKey');
-			request.treasury =
-				formatKey(supplyKey.label, 'supplyKey')?.key !== Account.NullPublicKey.key && accountInfo.id
-					? accountInfo.id
-					: undefined;
 		}
 
 		if (kycRequired) {
 			request.kycKey = formatKey(kycKey.label, 'kycKey');
-			request.grantKYCToOriginalSender = grantKYCToOriginalSender;
 		} else {
 			request.kycKey = undefined;
-			request.grantKYCToOriginalSender = false;
 		}
 
 		request.feeScheduleKey = manageCustomFees
@@ -341,7 +335,15 @@ const StableCoinCreation = () => {
 		try {
 			onOpen();
 			setLoading(true);
-			await SDKService.createStableCoin(request);
+			createResponse = await SDKService.createStableCoin(request);
+			setToken(createResponse.coin.tokenId.toString());
+			if (wallet.lastWallet === SupportedWallets.HASHPACK && createResponse?.coin.tokenId) {
+				const associateRequest = new AssociateTokenRequest({
+					targetId: accountInfo.id!,
+					tokenId: createResponse.coin.tokenId.toString(),
+				});
+				await SDKService.associate(associateRequest);
+			}
 			setLoading(false);
 			setSuccess(true);
 		} catch (error: any) {
@@ -397,7 +399,9 @@ const StableCoinCreation = () => {
 					loading ? 'Loading' : t('notification.title', { result: success ? 'Success' : 'Error' })
 				}
 				description={
-					loading ? undefined : t(`notification.description${success ? 'Success' : 'Error'}`)
+					loading
+						? undefined
+						: t(`notification.description${success ? 'Success' : 'Error'}`, { token: token })
 				}
 				isOpen={isOpen}
 				onClose={onClose}

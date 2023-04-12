@@ -60,7 +60,7 @@ interface ITransactionAdapter {
 	register(account?: Account): Promise<InitializationData>;
 	stop(): Promise<boolean>;
 	associateToken(
-		coin: StableCoinCapabilities | string,
+		tokenId: HederaId,
 		targetId: HederaId,
 	): Promise<TransactionResponse>;
 	balanceOf(
@@ -184,7 +184,7 @@ interface RoleTransactionAdapter {
 		targetId: HederaId,
 	): Promise<TransactionResponse<BigDecimal, Error>>;
 	associateToken(
-		coin: StableCoinCapabilities,
+		tokenId: HederaId,
 		targetId: HederaId,
 	): Promise<TransactionResponse>;
 	isUnlimitedSupplierAllowance(
@@ -421,7 +421,7 @@ export default abstract class TransactionAdapter
 		throw new Error('Method not implemented.');
 	}
 	associateToken(
-		coin: StableCoinCapabilities,
+		tokenId: HederaId,
 		targetId: HederaId,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');

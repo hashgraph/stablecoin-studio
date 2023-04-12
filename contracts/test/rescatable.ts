@@ -19,10 +19,9 @@ import {
     hasRole,
     rescue,
     getBalanceOf,
-    associateToken,
 } from '../scripts/contractsMethods'
 import { RESCUE_ROLE } from '../scripts/constants'
-import { clientId } from '../scripts/utils'
+import { clientId, associateToken } from '../scripts/utils'
 import { Client, ContractId } from '@hashgraph/sdk'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
@@ -31,6 +30,7 @@ chai.use(chaiAsPromised)
 const expect = chai.expect
 
 let proxyAddress: ContractId
+let token: ContractId
 
 let operatorClient: Client
 let nonOperatorClient: Client
@@ -308,10 +308,9 @@ describe('Rescue Tests', function () {
 
         // Associate account to token
         await associateToken(
-            proxyAddress,
-            nonOperatorClient,
+            token.toString(),
             nonOperatorAccount,
-            nonOperatorIsE25519
+            nonOperatorClient
         )
 
         // Rescue tokens with newly granted account

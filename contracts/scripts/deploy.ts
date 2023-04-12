@@ -26,18 +26,20 @@ import {
     WIPE_ROLE,
     ADDRESS_0,
 } from './constants'
+import { grantKyc } from './contractsMethods'
 
 import {
     getClient,
     deployContractSDK,
     contractCall,
     toEvmAddress,
+    associateToken,
 } from './utils'
 
-const hederaERC20Address = '0.0.3950556'
-export const factoryProxyAddress = '0.0.3950562'
-const factoryProxyAdminAddress = '0.0.3950560'
-const factoryAddress = '0.0.3950558'
+const hederaERC20Address = '0.0.4049127'
+export const factoryProxyAddress = '0.0.4049140'
+const factoryProxyAdminAddress = '0.0.4049135'
+const factoryAddress = '0.0.4049132'
 
 export function initializeClients(): [
     Client,
@@ -355,12 +357,9 @@ export async function deployContractsWithSDK({
         tokenMaxSupply: maxSupply,
         tokenInitialSupply: initialSupply,
         tokenDecimals: decimals,
-        autoRenewAccountAddress: AccountEvmAddress,
-        treasuryAddress: treasuryAccount,
         reserveAddress,
         reserveInitialAmount: initialAmountDataFeed,
         createReserve,
-        grantKYCToOriginalSender,
         keys: allToContract
             ? tokenKeystoContract(addKyc)
             : tokenKeystoKey(publicKey, isED25519Type),
@@ -402,6 +401,25 @@ export async function deployContractsWithSDK({
             35
         )
     )[0]
+
+    console.log(`Associating token... please wait.`)
+
+    await associateToken(
+        ContractId.fromSolidityAddress(proxyContract[3]).toString(),
+        account,
+        clientSdk
+    )
+
+    if (grantKYCToOriginalSender) {
+        console.log(`Granting KYC to Original Sender... please wait.`)
+
+        await grantKyc(
+            ContractId.fromSolidityAddress(proxyContract[0]),
+            account,
+            isED25519Type,
+            clientSdk
+        )
+    }
 
     console.log(
         `Proxy created: ${proxyContract[0]} , ${ContractId.fromSolidityAddress(
@@ -452,21 +470,36 @@ export async function deployContractsWithSDK({
         f_address,
         ContractId.fromSolidityAddress(proxyContract[4]),
         ContractId.fromSolidityAddress(proxyContract[5]),
+        ContractId.fromSolidityAddress(proxyContract[3]),
     ]
+}
+
+function fixKeys(): any {
+    const keyType = generateKeyType({
+        adminKey: true,
+        supplyKey: true,
+    })
+
+    const fixKeysToReturn = {
+        keyType: keyType,
+        publicKey: '0x',
+        isED25519: false,
+    }
+
+    return fixKeysToReturn
 }
 
 export function tokenKeystoContract(addKyc = false) {
     const keyType = generateKeyType({
-        adminKey: true,
         kycKey: addKyc,
         freezeKey: true,
         wipeKey: true,
-        supplyKey: true,
         feeScheduleKey: false,
         pauseKey: true,
         ignored: false,
     })
     const keys = [
+        fixKeys(),
         {
             keyType: keyType,
             publicKey: '0x',
@@ -484,16 +517,15 @@ export function tokenKeystoKey(
 ) {
     const PK = PublicKey.fromString(publicKey).toBytesRaw()
     const keyType = generateKeyType({
-        adminKey: true,
         kycKey: addKyc,
         freezeKey: true,
         wipeKey: true,
-        supplyKey: true,
         feeScheduleKey: false,
         pauseKey: true,
         ignored: false,
     })
     const keys = [
+        fixKeys(),
         {
             keyType: keyType,
             publicKey: PK,

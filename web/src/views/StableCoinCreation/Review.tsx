@@ -18,7 +18,6 @@ const Review = (props: ReviewProps) => {
 		hederaERC20Id,
 		name,
 		symbol,
-		autorenewAccount,
 		initialSupply,
 		supplyType,
 		maxSupply,
@@ -46,7 +45,6 @@ const Review = (props: ReviewProps) => {
 		feeScheduleKey,
 		reserveAddress,
 		reserveInitialAmount,
-		grantKYCToOriginalSender,
 	} = getValues();
 
 	const getKey = (keySelected: { value: number; label: string }, nameOtherKey: string) => {
@@ -180,10 +178,6 @@ const Review = (props: ReviewProps) => {
 								label: t('stableCoinCreation:basicDetails.symbol'),
 								value: symbol || '',
 							},
-							{
-								label: t('stableCoinCreation:basicDetails.autorenewAccount'),
-								value: autorenewAccount || '',
-							},
 						]}
 					/>
 					<DetailsReview
@@ -264,19 +258,6 @@ const Review = (props: ReviewProps) => {
 							details={roleDetails}
 						/>
 					)}
-
-					<DetailsReview
-						title={t('stableCoinCreation:managementPermissions.CreatorKYCFlag')}
-						titleProps={{ fontWeight: 700, color: 'brand.secondary' }}
-						details={[
-							{
-								label: t('stableCoinCreation:managementPermissions.grantKYCToOriginalSender'),
-								value: grantKYCToOriginalSender
-									? t('stableCoinCreation:managementPermissions.CreatorGrantedKYC')
-									: t('stableCoinCreation:managementPermissions.CreatorNotGrantedKYC'),
-							},
-						]}
-					/>
 
 					<DetailsReview
 						title={t('stableCoinCreation:managementPermissions.treasuryAccountAddress')}

@@ -16,8 +16,6 @@
 		"review": "Review"
 	},
 	"basicDetails": {
-		"autorenewAccount": "Autorenew account",
-		"autorenewAccountPlaceholder": "0.0.0",
 		"name": "Name",
 		"namePlaceholder": "Name",
 		"symbol": "Symbol",
@@ -96,7 +94,7 @@
 	},
 	"notification": {
 		"title": "{{ result }} creating the stable coin",
-		"descriptionSuccess": "The stable coin was created",
+		"descriptionSuccess": "The stable coin was created: {{ token }}",
 		"descriptionError": "Sorry, there was an error creating the stable coin"
 	}
 }

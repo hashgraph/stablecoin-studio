@@ -471,7 +471,7 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 	}, 1500000);
 
 	// eslint-disable-next-line jest/no-disabled-tests
-	it.skip('Test dissociateToken', async () => {
+	/* it.skip('Test dissociateToken', async () => {
 		await delay();
 		tr = await th.dissociateToken(
 			stableCoinCapabilitiesSC,
@@ -486,7 +486,7 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 			stableCoinCapabilitiesSC,
 			CLIENT_ACCOUNT_ECDSA.id,
 		);
-	}, 1500000);
+	}, 1500000); */
 
 	it('Test cannot create coin with an initial supply greater than reserve', async () => {
 		const coinSC = new StableCoin({

@@ -233,11 +233,6 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					? coin.initialSupply.toFixedNumber()
 					: BigDecimal.ZERO.toFixedNumber(),
 				coin.decimals,
-				await this.getEVMAddress(coin.autoRenewAccount!),
-				coin.treasury == undefined ||
-				coin.treasury.toString() == '0.0.0'
-					? '0x0000000000000000000000000000000000000000'
-					: await this.getEVMAddress(coin.treasury),
 				reserveAddress == undefined ||
 				reserveAddress.toString() == '0.0.0'
 					? '0x0000000000000000000000000000000000000000'
@@ -248,9 +243,6 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					? reserveInitialAmount.toFixedNumber()
 					: BigDecimal.ZERO.toFixedNumber(),
 				createReserve,
-				coin.grantKYCToOriginalSender
-					? coin.grantKYCToOriginalSender
-					: false,
 				keys,
 				roles,
 				cashinRole,
@@ -278,9 +270,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					gasLimit: 15000000,
 				},
 			);
+
 			// Put it into an array since structs change the response from the event and its not a simple array
-			return RPCTransactionResponseAdapter.manageResponse(
+			return await RPCTransactionResponseAdapter.manageResponse(
 				res,
+				this.networkService.environment,
 				'Deployed',
 			);
 		} catch (error) {
@@ -838,7 +832,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		}
 	}
 
-	async associateToken(
+	/* async associateToken(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
 	): Promise<TransactionResponse> {
@@ -896,7 +890,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				transactionId: (error as any).error?.transactionId,
 			});
 		}
-	}
+	} */
 
 	async isUnlimitedSupplierAllowance(
 		coin: StableCoinCapabilities,

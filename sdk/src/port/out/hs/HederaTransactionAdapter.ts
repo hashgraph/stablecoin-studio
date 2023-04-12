@@ -213,11 +213,6 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					? coin.initialSupply.toFixedNumber()
 					: BigDecimal.ZERO.toFixedNumber(),
 				coin.decimals,
-				await this.getEVMAddress(coin.autoRenewAccount!),
-				coin.treasury == undefined ||
-				coin.treasury.toString() == '0.0.0'
-					? '0x0000000000000000000000000000000000000000'
-					: await this.getEVMAddress(coin.treasury),
 				reserveAddress == undefined ||
 				reserveAddress.toString() == '0.0.0'
 					? '0x0000000000000000000000000000000000000000'
@@ -228,9 +223,6 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					? reserveInitialAmount.toFixedNumber()
 					: BigDecimal.ZERO.toFixedNumber(),
 				createReserve,
-				coin.grantKYCToOriginalSender
-					? coin.grantKYCToOriginalSender
-					: false,
 				keys,
 				roles,
 				cashinRole,
@@ -278,29 +270,16 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	}
 
 	public async associateToken(
-		coin: StableCoinCapabilities | string,
+		tokenId: HederaId,
 		targetId: HederaId,
 	): Promise<TransactionResponse<any, Error>> {
-		if (coin instanceof StableCoinCapabilities) {
-			const params = new Params({
-				targetId: targetId,
-			});
-
-			return this.performSmartContractOperation(
-				coin.coin.proxyAddress!.value,
-				'associateToken',
-				1300000,
-				params,
-			);
-		} else {
-			return await this.signAndSendTransaction(
-				HTSTransactionBuilder.buildAssociateTokenTransaction(
-					coin,
-					targetId.toString(),
-				),
-				TransactionType.RECEIPT,
-			);
-		}
+		return await this.signAndSendTransaction(
+			HTSTransactionBuilder.buildAssociateTokenTransaction(
+				tokenId.toString(),
+				targetId.toString(),
+			),
+			TransactionType.RECEIPT,
+		);
 	}
 
 	public async dissociateToken(

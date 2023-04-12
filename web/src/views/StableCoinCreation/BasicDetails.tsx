@@ -143,17 +143,6 @@ const BasicDetails = (props: BasicDetailsProps) => {
 						label={t('stableCoinCreation:basicDetails.symbol') ?? propertyNotFound}
 						placeholder={t('stableCoinCreation:basicDetails.symbolPlaceholder') ?? propertyNotFound}
 					/>
-					<InputController
-						isRequired
-						control={control}
-						name={'autorenewAccount'}
-						label={t('stableCoinCreation:basicDetails.autorenewAccount') ?? propertyNotFound}
-						placeholder={
-							t('stableCoinCreation:basicDetails.autorenewAccountPlaceholder') ?? propertyNotFound
-						}
-						value={pairingData ? pairingData.account?.id.toString() : ''}
-						isReadOnly
-					/>
 				</Stack>
 			</Stack>
 		</VStack>

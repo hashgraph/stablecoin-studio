@@ -18,20 +18,19 @@
  *
  */
 
-import { AccountBaseRequest, RequestAccount } from './BaseRequest.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
 
-export default class AssociateTokenRequest
-	extends ValidatedRequest<AssociateTokenRequest>
-	implements AccountBaseRequest
-{
-	account: RequestAccount;
+export default class AssociateTokenRequest extends ValidatedRequest<AssociateTokenRequest> {
+	targetId: string;
+	tokenId: string;
 
-	constructor({ account }: { account: RequestAccount }) {
+	constructor({ targetId, tokenId }: { targetId: string; tokenId: string }) {
 		super({
-			account: Validation.checkAccount(),
+			targetId: Validation.checkHederaIdFormat(),
+			tokenId: Validation.checkHederaIdFormat(),
 		});
-		this.account = account;
+		this.targetId = targetId;
+		this.tokenId = tokenId;
 	}
 }

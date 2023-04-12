@@ -78,22 +78,6 @@ contract HederaERC20 is
 
         __tokenOwnerInit(createdTokenAddress);
 
-        // Associate token if required
-        if (init.treasuryIsContract) {
-            _associateToken(init.originalSender);
-
-            // Grant KYC if required
-            if (init.grantKYCToOriginalSender) {
-                responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
-                    .grantTokenKyc(createdTokenAddress, init.originalSender);
-
-                require(
-                    responseCode == HederaResponseCodes.SUCCESS,
-                    'KYC grant failed'
-                );
-            }
-        } else _associateToken(address(this));
-
         // Sending back the remaining HBARs from msg.value
         uint256 currentBalance = address(this).balance;
         if (currentBalance > 0) {
@@ -197,18 +181,6 @@ contract HederaERC20 is
      * @param addr The address of the account to associate
      *
      */
-    function associateToken(
-        address addr
-    ) external override(IHederaERC20) addressIsNotZero(addr) {
-        _associateToken(addr);
-    }
-
-    /**
-     * @dev Associates a account to the token
-     *
-     * @param addr The address of the account to associate
-     *
-     */
     function _associateToken(address addr) private addressIsNotZero(addr) {
         address currentTokenAddress = _getTokenAddress();
 
@@ -221,71 +193,32 @@ contract HederaERC20 is
     }
 
     /**
-     * @dev Dissociates an account from the token
-     *
-     * @param addr The address of the account to dissociate
-     *
-     */
-    function dissociateToken(
-        address addr
-    ) external override(IHederaERC20) addressIsNotZero(addr) {
-        require(addr != address(this), 'Cannot dissociate the contract');
-
-        address currentTokenAddress = _getTokenAddress();
-
-        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
-            .dissociateToken(addr, currentTokenAddress);
-
-        _checkResponse(responseCode);
-
-        emit TokenDissociated(currentTokenAddress, addr);
-    }
-
-    /**
      * @dev Transfers an amount of tokens from and account to another account
      *
-     * @param from The address the tokens are transferred from
      * @param to The address the tokens are transferred to
      */
     function _transfer(
-        address from,
         address to,
         int64 amount
     )
         internal
         override(TokenOwner)
-        valueIsNotGreaterThan(uint256(uint64(amount)), _balanceOf(from), true)
+        valueIsNotGreaterThan(
+            uint256(uint64(amount)),
+            _balanceOf(address(this)),
+            true
+        )
     {
         if (to != address(this)) {
             address currentTokenAddress = _getTokenAddress();
 
             int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
-                .transferToken(currentTokenAddress, from, to, amount);
+                .transferToken(currentTokenAddress, address(this), to, amount);
 
             _checkResponse(responseCode);
 
-            emit TokenTransfer(currentTokenAddress, from, to, amount);
+            emit TokenTransfer(currentTokenAddress, address(this), to, amount);
         }
-    }
-
-    /**
-     * @dev Transfers an amount of tokens to an account
-     *
-     * @param to The address the tokens are transferred to
-     */
-    function transfer(
-        address to,
-        int64 amount
-    )
-        external
-        override(IHederaERC20)
-        addressIsNotZero(to)
-        amountIsNotNegative(amount, false)
-        returns (bool)
-    {
-        _transfer(msg.sender, to, amount);
-
-        return true;
     }
 
     /**

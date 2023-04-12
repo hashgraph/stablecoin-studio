@@ -80,7 +80,6 @@ export interface StableCoinProps {
 	tokenType?: TokenType;
 	supplyType?: TokenSupplyType;
 	tokenId?: HederaId;
-	grantKYCToOriginalSender?: boolean;
 	autoRenewAccount?: HederaId;
 	autoRenewPeriod?: number;
 	expirationTimestamp?: number;
@@ -165,7 +164,6 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 			paused,
 			evmProxyAddress,
 			proxyAddress,
-			grantKYCToOriginalSender,
 			customFees,
 			burnRoleAccount,
 			wipeRoleAccount,
@@ -208,7 +206,6 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 		this.deleted = deleted ?? false;
 		this.evmProxyAddress = evmProxyAddress;
 		this.proxyAddress = proxyAddress;
-		this.grantKYCToOriginalSender = grantKYCToOriginalSender;
 		this.customFees = customFees;
 		this.burnRoleAccount = burnRoleAccount ?? HederaId.from('0.0.0');
 		this.wipeRoleAccount = wipeRoleAccount ?? HederaId.from('0.0.0');

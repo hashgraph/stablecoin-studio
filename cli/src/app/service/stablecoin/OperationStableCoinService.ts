@@ -2465,7 +2465,10 @@ export default class OperationStableCoinService extends Service {
       case language.getText('tokenConfiguration.options.keys'):
         await utilsService.cleanAndShowBanner();
         const tokenKeys = Object.keys(stableCoinViewModel)
-          .filter((key) => key.endsWith('Key') && key !== 'adminKey')
+          .filter(
+            (key) =>
+              key.endsWith('Key') && key !== 'adminKey' && key !== 'supplyKey',
+          )
           .reduce((obj, key) => {
             obj[key] = stableCoinViewModel[key];
             return obj;

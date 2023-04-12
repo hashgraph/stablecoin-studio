@@ -12,12 +12,9 @@ import {
     getNonOperatorE25519,
 } from '../scripts/deploy'
 import {
-    associateToken,
-    dissociateToken,
     Mint,
     Wipe,
     getBalanceOf,
-    transfer,
     rescue,
     grantKyc,
     revokeKyc,
@@ -26,7 +23,12 @@ import {
     revokeRole,
 } from '../scripts/contractsMethods'
 import { KYC_ROLE } from '../scripts/constants'
-import { clientId } from '../scripts/utils'
+import {
+    clientId,
+    transferToken,
+    associateToken,
+    dissociateToken,
+} from '../scripts/utils'
 import { Client, ContractId } from '@hashgraph/sdk'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
@@ -43,6 +45,7 @@ let operatorPriKey: string
 let operatorPubKey: string
 let operatorIsE25519: boolean
 let nonOperatorIsE25519: boolean
+let token: ContractId
 
 const TokenName = 'MIDAS'
 const TokenSymbol = 'MD'
@@ -119,6 +122,7 @@ describe('KYC Tests', function () {
         })
 
         proxyAddress = result[0]
+        token = result[8]
     })
 
     it('Admin account can grant and revoke kyc role to an account', async function () {
@@ -444,11 +448,11 @@ describe('KYC Tests', function () {
             operatorClient
         )
         await associateToken(
-            proxyAddress,
-            nonOperatorClient,
+            token.toString(),
             nonOperatorAccount,
-            nonOperatorIsE25519
+            nonOperatorClient
         )
+
         await Mint(
             proxyAddress,
             amount,
@@ -457,10 +461,9 @@ describe('KYC Tests', function () {
             operatorIsE25519
         )
         await expect(
-            transfer(
-                proxyAddress,
+            transferToken(
+                token.toString(),
                 nonOperatorAccount,
-                nonOperatorIsE25519,
                 amount,
                 operatorClient
             )
@@ -503,10 +506,9 @@ describe('KYC Tests', function () {
             operatorAccount,
             operatorIsE25519
         )
-        await transfer(
-            proxyAddress,
+        await transferToken(
+            token.toString(),
             nonOperatorAccount,
-            nonOperatorIsE25519,
             amount,
             operatorClient
         )
@@ -539,10 +541,9 @@ describe('KYC Tests', function () {
             operatorClient
         )
         await dissociateToken(
-            proxyAddress,
-            nonOperatorClient,
+            token.toString(),
             nonOperatorAccount,
-            nonOperatorIsE25519
+            nonOperatorClient
         )
     })
 

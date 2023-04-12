@@ -89,6 +89,7 @@ import UpdateRequest from './request/UpdateRequest.js';
 import { TransfersCommand } from '../../app/usecase/command/stablecoin/operations/transfer/TransfersCommand.js';
 import { UpdateCommand } from '../../app/usecase/command/stablecoin/update/UpdateCommand.js';
 import NetworkService from '../../app/service/NetworkService.js';
+import { AssociateCommand } from '../../app/usecase/command/account/associate/AssociateCommand.js';
 
 export {
 	StableCoinViewModel,
@@ -167,12 +168,7 @@ class StableCoinInPort implements IStableCoinInPort {
 			name: req.name,
 			symbol: req.symbol,
 			decimals: req.decimals,
-			adminKey: req.adminKey
-				? new PublicKey({
-						key: req.adminKey.key,
-						type: req.adminKey.type,
-				  })
-				: undefined,
+			adminKey: PublicKey.NULL,
 			initialSupply: BigDecimal.fromString(
 				req.initialSupply ?? '0',
 				req.decimals,
@@ -205,26 +201,16 @@ class StableCoinInPort implements IStableCoinInPort {
 						type: req.pauseKey.type,
 				  })
 				: undefined,
-			supplyKey: req.supplyKey
-				? new PublicKey({
-						key: req.supplyKey.key,
-						type: req.supplyKey.type,
-				  })
-				: undefined,
+			supplyKey: PublicKey.NULL,
 			feeScheduleKey: req.feeScheduleKey
 				? new PublicKey({
 						key: req.feeScheduleKey.key,
 						type: req.feeScheduleKey.type,
 				  })
 				: undefined,
-			treasury: new HederaId(req.treasury ?? '0.0.0'),
+			treasury: undefined,
 			supplyType: req.supplyType,
-			autoRenewAccount: req.autoRenewAccount
-				? new HederaId(req.autoRenewAccount)
-				: undefined,
-			grantKYCToOriginalSender: req.grantKYCToOriginalSender
-				? req.grantKYCToOriginalSender
-				: false,
+			autoRenewAccount: undefined,
 			burnRoleAccount: new HederaId(req.burnRoleAccount ?? '0.0.0'),
 			wipeRoleAccount: new HederaId(req.wipeRoleAccount ?? '0.0.0'),
 			rescueRoleAccount: new HederaId(req.rescueRoleAccount ?? '0.0.0'),
@@ -256,7 +242,6 @@ class StableCoinInPort implements IStableCoinInPort {
 					: undefined,
 			),
 		);
-
 		return {
 			coin:
 				createResponse.tokenId.toString() !== ContractId.NULL.toString()
@@ -345,7 +330,17 @@ class StableCoinInPort implements IStableCoinInPort {
 
 	@LogError
 	async associate(request: AssociateTokenRequest): Promise<boolean> {
-		throw new Error('Method not implemented.');
+		const { tokenId, targetId } = request;
+		handleValidation('AssociateTokenRequest', request);
+
+		return (
+			await this.commandBus.execute(
+				new AssociateCommand(
+					HederaId.from(targetId),
+					HederaId.from(tokenId),
+				),
+			)
+		).payload;
 	}
 
 	@LogError
