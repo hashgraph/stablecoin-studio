@@ -103,8 +103,6 @@ async function checkTxResponse(
     //Get the transaction consensus status
     const transactionStatus = receipt.status
 
-    console.log('The transaction consensus status ' + transactionStatus)
-
     if (transactionStatus._code !== SuccessStatus) {
         throw new Error(transactionStatus._code.toString())
     }

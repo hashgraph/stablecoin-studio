@@ -118,6 +118,7 @@ describe('Rescue Tests', function () {
         })
 
         proxyAddress = result[0]
+        token = result[8]
     })
 
     it('Admin account can grant and revoke rescue role to an account', async function () {

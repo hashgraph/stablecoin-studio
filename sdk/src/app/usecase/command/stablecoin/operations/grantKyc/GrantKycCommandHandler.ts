@@ -69,13 +69,17 @@ export class GrantKycCommandHandler
 			throw new KycNotActive(tokenId.value);
 		}
 
-		if (!tokenRelationship) {
+		/*if (!tokenRelationship) {
 			throw new StableCoinNotAssociated(
 				targetId.toString(),
 				tokenId.toString(),
 			);
-		}
-		if (tokenRelationship.kycStatus !== KycStatus.REVOKED) {
+		}*/
+
+		if (
+			tokenRelationship?.kycStatus !== undefined &&
+			tokenRelationship?.kycStatus !== KycStatus.REVOKED
+		) {
 			throw new OperationNotAllowed(
 				`KYC cannot be granted for account ${targetId} on token ${tokenId}`,
 			);

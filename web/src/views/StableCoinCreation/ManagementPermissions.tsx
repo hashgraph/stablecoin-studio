@@ -10,7 +10,9 @@ import {
 	AccordionIcon,
 	AccordionPanel,
 } from '@chakra-ui/react';
-import type { CreateRequest } from 'hedera-stable-coin-sdk';
+import { CreateRequest, SupportedWallets } from 'hedera-stable-coin-sdk';
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import type { Control, FieldValues, UseFormSetValue, UseFormWatch } from 'react-hook-form';
 import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -20,6 +22,7 @@ import KeySelector from './components/KeySelector';
 import RoleSelector from './components/RoleSelector';
 import { handleRequestValidation, validateDecimalsString } from '../../utils/validationsHelper';
 import { propertyNotFound } from '../../constant';
+import { SELECTED_WALLET } from '../../store/slices/walletSlice';
 
 interface ManagementPermissionsProps {
 	control: Control<FieldValues>;
@@ -28,8 +31,15 @@ interface ManagementPermissionsProps {
 	setValue: UseFormSetValue<FieldValues>;
 }
 
-const ManagementPermissions = ({ control, watch, request }: ManagementPermissionsProps) => {
+const ManagementPermissions = ({
+	control,
+	watch,
+	request,
+	setValue,
+}: ManagementPermissionsProps) => {
 	const { t } = useTranslation(['global', 'stableCoinCreation']);
+
+	const wallet = useSelector(SELECTED_WALLET);
 
 	const decimals = useWatch({
 		control,
@@ -53,6 +63,14 @@ const ManagementPermissions = ({ control, watch, request }: ManagementPermission
 
 	const cashInRoleAccount = watch('cashInRoleAccount');
 	const infinity: boolean = watch('cashInAllowanceType');
+
+	useEffect(() => {
+		if (watch('kycKey')?.value !== 2 || watch('supplyKey')?.value === 1) {
+			setValue('grantKYCToOriginalSender', false);
+		} else {
+			setValue('grantKYCToOriginalSender', true);
+		}
+	}, [watch('kycKey'), watch('supplyKey')]);
 
 	const keys = [
 		{
@@ -165,6 +183,23 @@ const ManagementPermissions = ({ control, watch, request }: ManagementPermission
 							request={request}
 						/>
 					)}
+					{isKycRequired === true &&
+						watch('kycKey')?.value === 2 &&
+						wallet.lastWallet === SupportedWallets.HASHPACK && (
+							<Stack minW={400}>
+								<HStack mb={4} justifyContent='space-between'>
+									<Text maxW={'252px'} fontSize='14px' fontWeight='400' lineHeight='17px'>
+										{t('stableCoinCreation:managementPermissions.grantKYCToOriginalSender')}
+									</Text>
+
+									<SwitchController
+										control={control}
+										name={'grantKYCToOriginalSender'}
+										defaultValue={true}
+									/>
+								</HStack>
+							</Stack>
+						)}
 					<HStack mb={4} justifyContent='space-between'>
 						<Text maxW={'252px'} fontSize='14px' fontWeight='400' lineHeight='17px'>
 							{t('stableCoinCreation:managementPermissions.manageCustomFees')}
