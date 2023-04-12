@@ -139,6 +139,17 @@ export default class RPCQueryAdapter {
 		);
 	}
 
+	async getAccountsWithRole(address: EvmAddress, role: String, init :string, max:string): Promise<string[]> {
+		LogService.logTrace(
+			`Requesting getAccountsWithRole address: ${address.toString()}, target: ${role}`,
+		);
+		return await this.connect(HederaERC20, address.toString()).getAccountsForRole(
+			role,
+			init,
+			max
+		);
+	}
+
 	async hasRole(
 		address: EvmAddress,
 		target: EvmAddress,
