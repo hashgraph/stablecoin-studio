@@ -59,22 +59,37 @@ export class GrantKycCommandHandler
 			tokenId,
 		);
 		const coin = capabilities.coin;
-		const tokenRelationship = (
-			await this.queryBus.execute(
-				new GetAccountTokenRelationshipQuery(targetId, tokenId),
-			)
-		).payload;
 
 		if (!coin.kycKey) {
 			throw new KycNotActive(tokenId.value);
 		}
 
-		/*if (!tokenRelationship) {
+		let tokenRelationship = (
+			await this.queryBus.execute(
+				new GetAccountTokenRelationshipQuery(targetId, tokenId),
+			)
+		).payload;
+
+		let retry = 0;
+
+		while (!tokenRelationship && retry < 3) {
+			await new Promise((f) => setTimeout(f, 1000));
+
+			tokenRelationship = (
+				await this.queryBus.execute(
+					new GetAccountTokenRelationshipQuery(targetId, tokenId),
+				)
+			).payload;
+
+			retry++;
+		}
+
+		if (!tokenRelationship) {
 			throw new StableCoinNotAssociated(
 				targetId.toString(),
 				tokenId.toString(),
 			);
-		}*/
+		}
 
 		if (
 			tokenRelationship?.kycStatus !== undefined &&
