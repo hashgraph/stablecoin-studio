@@ -2,11 +2,35 @@
 pragma solidity 0.8.16;
 
 import {IRoles} from './Interfaces/IRoles.sol';
-import {
-    AccessControlUpgradeable
-} from '@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol';
 
-abstract contract Roles is IRoles, AccessControlUpgradeable {
+
+import {
+    Initializable
+} from '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
+
+
+import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
+
+
+
+abstract contract Roles is IRoles, Initializable {
+    
+    
+    
+    struct MemberData {
+        bool active;
+        uint256 pos;
+    }
+
+
+    struct RoleData {
+        mapping(address => MemberData) members;
+        address[]  accounts  ;
+    }
+
+    mapping(bytes32 => RoleData) private _roles;
+
+    bytes32 public constant DEFAULT_ADMIN_ROLE = 0x00;
     /**
      * @dev Role that allows to mint token
      *
@@ -86,7 +110,6 @@ abstract contract Roles is IRoles, AccessControlUpgradeable {
     bytes32[] private _listOfroles;
 
     function __rolesInit() internal onlyInitializing {
-        __AccessControl_init();
         _listOfroles.push(DEFAULT_ADMIN_ROLE);
         _listOfroles.push(_CASHIN_ROLE);
         _listOfroles.push(_BURN_ROLE);
@@ -97,6 +120,55 @@ abstract contract Roles is IRoles, AccessControlUpgradeable {
         _listOfroles.push(_DELETE_ROLE);
         _listOfroles.push(_KYC_ROLE);
     }
+
+    function hasRole(bytes32 role, address account) external view returns (bool){
+        _hasRole(role, account);
+    }
+    
+    function _hasRole(bytes32 role, address account) internal view returns (bool){
+        return _roles[role].members[account].active;
+    }
+
+    function getAccountsForRole(bytes32 role, uint256 initPos, uint256 max) external view returns (address[] ){
+            return _roles[role].accounts[initPos:max];
+    } 
+
+    function getNumberOfAccountsForRole(bytes32 role) external view returns (uint256){
+        return _roles[role].accounts.length;
+
+    }
+
+    function grantRole(bytes32 role, address account) external{
+    
+         _grantRole(role, account);
+    }
+
+    function _grantRole(bytes32 role, address account) internal{
+    
+         if (!_hasRole(role, account)) {
+            
+           _roles[role].members[account] =  MemberData(true , _roles[role].accounts.length);
+           _roles[role].accounts.push(account);
+
+           emit RoleGranted(role, account, msg.sender);
+        }
+    }
+
+    function revokeRole(bytes32 role, address account) external{
+        _revokeRole(role , account);
+    }
+
+    function _revokeRole(bytes32 role, address account) internal{
+        if (_hasRole(role, account)) {
+  
+          _roles[role].members[account].active = false;
+          _roles[role].accounts[_roles[role].members[account].pos] = _roles[role].accounts[_roles[role].accounts.length -1];
+          _roles[role].accounts.pop();
+  
+          emit RoleRevoked(role, account, msg.sender);
+        }
+    }
+
 
     /**
      * @dev Returns an array of roles the account currently has
@@ -114,7 +186,7 @@ abstract contract Roles is IRoles, AccessControlUpgradeable {
         for (uint i = 0; i < rolesLength; i++) {
             bytes32 role = _listOfroles[i];
 
-            rolesToReturn[i] = hasRole(role, account) ? role : _WITHOUT_ROLE;
+            rolesToReturn[i] = _hasRole(role, account) ? role : _WITHOUT_ROLE;
         }
     }
 
@@ -132,6 +204,79 @@ abstract contract Roles is IRoles, AccessControlUpgradeable {
 
     function _getRoleId(RoleName role) internal view returns (bytes32) {
         return _listOfroles[uint256(role)];
+    }
+
+    /**
+     * @dev Modifier that checks that an account has a specific role. Reverts
+     * with a standardized message including the required role.
+     *
+     * The format of the revert reason is given by the following regular expression:
+     *
+     *  /^AccessControl: account (0x[0-9a-f]{40}) is missing role (0x[0-9a-f]{64})$/
+     *
+     * _Available since v4.1._
+     */
+    modifier onlyRole(bytes32 role) {
+        _checkRole(role);
+        _;
+    }
+
+    /**
+     * @dev Revert with a standard message if `_msgSender()` is missing `role`.
+     * Overriding this function changes the behavior of the {onlyRole} modifier.
+     *
+     * Format of the revert message is described in {_checkRole}.
+     *
+     * _Available since v4.6._
+     */
+    function _checkRole(bytes32 role) internal view virtual {
+        _checkRole(role, msg.sender);
+    }
+
+    /**
+     * @dev Revert with a standard message if `account` is missing `role`.
+     *
+     * The format of the revert reason is given by the following regular expression:
+     *
+     *  /^AccessControl: account (0x[0-9a-f]{40}) is missing role (0x[0-9a-f]{64})$/
+     */
+    function _checkRole(bytes32 role, address account) internal view virtual {
+        if (!_hasRole(role, account)) {
+            revert(
+                string(
+                    abi.encodePacked(
+                        "AccessControl: account ",
+                    //    StringsUpgradeable.toHexString(account),
+                        " is missing role ",
+                        StringsUpgradeable.toHexString(uint256(role), 32)
+                    )
+                )
+            );
+        }
+    }
+
+     /**
+     * @dev Grants `role` to `account`.
+     *
+     * If `account` had not been already granted `role`, emits a {RoleGranted}
+     * event. Note that unlike {grantRole}, this function doesn't perform any
+     * checks on the calling account.
+     *
+     * May emit a {RoleGranted} event.
+     *
+     * [WARNING]
+     * ====
+     * This function should only be called from the constructor when setting
+     * up the initial roles for the system.
+     *
+     * Using this function in any other way is effectively circumventing the admin
+     * system imposed by {AccessControl}.
+     * ====
+     *
+     * NOTE: This function is deprecated in favor of {_grantRole}.
+     */
+    function _setupRole(bytes32 role, address account) internal virtual {
+        _grantRole(role, account);
     }
 
     /**
