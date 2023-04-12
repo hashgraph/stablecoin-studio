@@ -41,10 +41,10 @@ export const factoryProxyAddress = '0.0.4049140'
 const factoryProxyAdminAddress = '0.0.4049135'
 const factoryAddress = '0.0.4049132'
 */
-let hederaERC20Address:any 
-export let factoryProxyAddress :any 
-let factoryProxyAdminAddress :any 
-let factoryAddress:any 
+let hederaERC20Address: any
+export let factoryProxyAddress: any
+let factoryProxyAdminAddress: any
+let factoryAddress: any
 
 export function initializeClients(): [
     Client,

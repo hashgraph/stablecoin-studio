@@ -3,29 +3,21 @@ pragma solidity 0.8.16;
 
 import {IRoles} from './Interfaces/IRoles.sol';
 
-
 import {
     Initializable
 } from '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 
-
-import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
-
-
+import '@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol';
 
 abstract contract Roles is IRoles, Initializable {
-    
-    
-    
     struct MemberData {
         bool active;
         uint256 pos;
     }
 
-
     struct RoleData {
         mapping(address => MemberData) members;
-        address[]  accounts  ;
+        address[] accounts;
     }
 
     mapping(bytes32 => RoleData) private _roles;
@@ -121,54 +113,65 @@ abstract contract Roles is IRoles, Initializable {
         _listOfroles.push(_KYC_ROLE);
     }
 
-    function hasRole(bytes32 role, address account) external view returns (bool){
+    function hasRole(
+        bytes32 role,
+        address account
+    ) external view returns (bool) {
         _hasRole(role, account);
     }
-    
-    function _hasRole(bytes32 role, address account) internal view returns (bool){
+
+    function _hasRole(
+        bytes32 role,
+        address account
+    ) internal view returns (bool) {
         return _roles[role].members[account].active;
     }
 
-    function getAccountsForRole(bytes32 role, uint256 initPos, uint256 max) external view returns (address[] ){
-            return _roles[role].accounts[initPos:max];
-    } 
+    function getAccountsForRole(
+        bytes32 role,
+        uint256 initPos,
+        uint256 max
+    ) external view returns (address[]) {
+        return _roles[role].accounts[initPos:max];
+    }
 
-    function getNumberOfAccountsForRole(bytes32 role) external view returns (uint256){
+    function getNumberOfAccountsForRole(
+        bytes32 role
+    ) external view returns (uint256) {
         return _roles[role].accounts.length;
-
     }
 
-    function grantRole(bytes32 role, address account) external{
-    
-         _grantRole(role, account);
+    function grantRole(bytes32 role, address account) external {
+        _grantRole(role, account);
     }
 
-    function _grantRole(bytes32 role, address account) internal{
-    
-         if (!_hasRole(role, account)) {
-            
-           _roles[role].members[account] =  MemberData(true , _roles[role].accounts.length);
-           _roles[role].accounts.push(account);
+    function _grantRole(bytes32 role, address account) internal {
+        if (!_hasRole(role, account)) {
+            _roles[role].members[account] = MemberData(
+                true,
+                _roles[role].accounts.length
+            );
+            _roles[role].accounts.push(account);
 
-           emit RoleGranted(role, account, msg.sender);
+            emit RoleGranted(role, account, msg.sender);
         }
     }
 
-    function revokeRole(bytes32 role, address account) external{
-        _revokeRole(role , account);
+    function revokeRole(bytes32 role, address account) external {
+        _revokeRole(role, account);
     }
 
-    function _revokeRole(bytes32 role, address account) internal{
+    function _revokeRole(bytes32 role, address account) internal {
         if (_hasRole(role, account)) {
-  
-          _roles[role].members[account].active = false;
-          _roles[role].accounts[_roles[role].members[account].pos] = _roles[role].accounts[_roles[role].accounts.length -1];
-          _roles[role].accounts.pop();
-  
-          emit RoleRevoked(role, account, msg.sender);
+            _roles[role].members[account].active = false;
+            _roles[role].accounts[_roles[role].members[account].pos] = _roles[
+                role
+            ].accounts[_roles[role].accounts.length - 1];
+            _roles[role].accounts.pop();
+
+            emit RoleRevoked(role, account, msg.sender);
         }
     }
-
 
     /**
      * @dev Returns an array of roles the account currently has
@@ -245,9 +248,9 @@ abstract contract Roles is IRoles, Initializable {
             revert(
                 string(
                     abi.encodePacked(
-                        "AccessControl: account ",
-                    //    StringsUpgradeable.toHexString(account),
-                        " is missing role ",
+                        'AccessControl: account ',
+                        //    StringsUpgradeable.toHexString(account),
+                        ' is missing role ',
                         StringsUpgradeable.toHexString(uint256(role), 32)
                     )
                 )
@@ -255,7 +258,7 @@ abstract contract Roles is IRoles, Initializable {
         }
     }
 
-     /**
+    /**
      * @dev Grants `role` to `account`.
      *
      * If `account` had not been already granted `role`, emits a {RoleGranted}

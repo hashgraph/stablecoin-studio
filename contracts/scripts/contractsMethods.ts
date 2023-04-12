@@ -127,14 +127,9 @@ export async function getAccountsForRole(
     ini: string,
     end: string,
     proxyAddress: ContractId,
-    clientCheckingRole: Client,
+    clientCheckingRole: Client
 ): Promise<boolean> {
-    const params: string[] = [
-        ROLE,
-        ini,
-        end
-        
-    ]
+    const params: string[] = [ROLE, ini, end]
     const result = await contractCall(
         proxyAddress,
         'getAccountsForRole',

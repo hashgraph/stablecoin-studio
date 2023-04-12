@@ -131,46 +131,39 @@ describe('Roles Tests', function () {
     })
 
     it('Getting roles', async function () {
-
-        
         const addRole = await grantRole(
             PAUSE_ROLE,
             proxyAddress,
-            operatorClient ,
+            operatorClient,
             '0.0.3562465',
             false
-
         )
 
         let rolePause = await getAccountsForRole(
             PAUSE_ROLE,
-            "1",
-            "10",
+            '1',
+            '10',
             proxyAddress,
-            operatorClient,
-        )       
-        
+            operatorClient
+        )
+
         console.log(rolePause)
 
         const revokRole = await revokeRole(
             PAUSE_ROLE,
             proxyAddress,
-            operatorClient ,
+            operatorClient,
             '0.0.3562465',
             false
-
         )
         rolePause = await getAccountsForRole(
             PAUSE_ROLE,
-            "1",
-            "10",
+            '1',
+            '10',
             proxyAddress,
-            operatorClient,
-        )       
-        
+            operatorClient
+        )
+
         console.log(rolePause)
-
-
     })
-
 })
