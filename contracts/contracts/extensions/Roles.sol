@@ -131,7 +131,7 @@ abstract contract Roles is IRoles, Initializable {
         bytes32 role,
         uint256 initPos,
         uint256 max
-    ) external view returns (address[]) {
+    ) external view returns (address[] memory) {
         return _roles[role].accounts[initPos:max];
     }
 

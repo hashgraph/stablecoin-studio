@@ -22,12 +22,17 @@ import { IQueryHandler } from '../../../../../../core/query/QueryHandler.js';
 import { QueryHandler } from '../../../../../../core/decorator/QueryHandlerDecorator.js';
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
-import { GetAccountsWithRolesQuery,GetAccountsWithRolesQueryResponse } from './GetAccountsWithRolesQuery.js';
+import {
+	GetAccountsWithRolesQuery,
+	GetAccountsWithRolesQueryResponse,
+} from './GetAccountsWithRolesQuery.js';
 import RPCQueryAdapter from '../../../../../../port/out/rpc/RPCQueryAdapter.js';
 import { MirrorNodeAdapter } from '../../../../../../port/out/mirror/MirrorNodeAdapter.js';
 
 @QueryHandler(GetAccountsWithRolesQuery)
-export class GetRolesQueryHandler implements IQueryHandler<GetAccountsWithRolesQuery> {
+export class GetRolesQueryHandler
+	implements IQueryHandler<GetAccountsWithRolesQuery>
+{
 	constructor(
 		@lazyInject(StableCoinService)
 		public readonly stableCoinService: StableCoinService,
@@ -37,16 +42,16 @@ export class GetRolesQueryHandler implements IQueryHandler<GetAccountsWithRolesQ
 		public readonly queryAdapter: RPCQueryAdapter,
 	) {}
 
-	async execute(query: GetAccountsWithRolesQuery): Promise<GetAccountsWithRolesQueryResponse> {
+	async execute(
+		query: GetAccountsWithRolesQuery,
+	): Promise<GetAccountsWithRolesQueryResponse> {
 		const { roleId, tokenId } = query;
 		const coin = await this.stableCoinService.get(tokenId);
 		if (!coin.evmProxyAddress) throw new Error('Invalid token id');
 
 		const res = await this.queryAdapter.getAccountsWithRole(
-
 			coin.evmProxyAddress,
 			roleId,
-			
 		);
 
 		return new GetAccountsWithRolesQueryResponse(res);

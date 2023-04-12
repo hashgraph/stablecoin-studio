@@ -72,7 +72,9 @@ interface IRole {
 	grantMultiRoles(request: GrantMultiRolesRequest): Promise<boolean>;
 	revokeMultiRoles(request: RevokeMultiRolesRequest): Promise<boolean>;
 	getRoles(request: GetRolesRequest): Promise<string[]>;
-	getAccountsWithRole(request: GetAccountsWithRolesRequest): Promise<string[]>;
+	getAccountsWithRole(
+		request: GetAccountsWithRolesRequest,
+	): Promise<string[]>;
 	//Supplier
 	getAllowance(request: GetSupplierAllowanceRequest): Promise<Balance>;
 	resetAllowance(request: ResetSupplierAllowanceRequest): Promise<boolean>;
@@ -233,16 +235,15 @@ class RoleInPort implements IRole {
 		).payload;
 	}
 	@LogError
-	async getAccountsWithRole(request: GetAccountsWithRolesRequest): Promise<string[]> {
-		const { roleId,tokenId } = request;
+	async getAccountsWithRole(
+		request: GetAccountsWithRolesRequest,
+	): Promise<string[]> {
+		const { roleId, tokenId } = request;
 		handleValidation('GetAccountsWithRolesRequest', request);
 
 		return (
 			await this.queryBus.execute(
-				new GetAccountsWithRolesQuery(
-					roleId,
-					tokenId
-				),
+				new GetAccountsWithRolesQuery(roleId, tokenId),
 			)
 		).payload;
 	}
