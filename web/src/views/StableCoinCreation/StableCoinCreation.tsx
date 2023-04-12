@@ -357,7 +357,7 @@ const StableCoinCreation = () => {
 						targetId: accountInfo.id!,
 						tokenId: createResponse.coin.tokenId.toString(),
 					});
-					await SDKService.grantKyc(grantKYCRequest);						
+					await SDKService.grantKyc(grantKYCRequest);
 				}
 			}
 
@@ -369,7 +369,7 @@ const StableCoinCreation = () => {
 				);
 
 				ImportTokenService.importToken(tokenId, details?.symbol!, accountInfo?.id!);
-				dispatch(getExternalTokenList(accountInfo.id!));				
+				dispatch(getExternalTokenList(accountInfo.id!));
 			}
 
 			setLoading(false);

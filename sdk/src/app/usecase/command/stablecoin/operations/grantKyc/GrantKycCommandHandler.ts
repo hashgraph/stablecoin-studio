@@ -76,8 +76,10 @@ export class GrantKycCommandHandler
 			);
 		}*/
 
-		if (tokenRelationship?.kycStatus !== undefined && 
-			tokenRelationship?.kycStatus !== KycStatus.REVOKED) {
+		if (
+			tokenRelationship?.kycStatus !== undefined &&
+			tokenRelationship?.kycStatus !== KycStatus.REVOKED
+		) {
 			throw new OperationNotAllowed(
 				`KYC cannot be granted for account ${targetId} on token ${tokenId}`,
 			);
