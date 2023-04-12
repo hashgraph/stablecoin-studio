@@ -139,7 +139,7 @@ export default class RPCQueryAdapter {
 		);
 	}
 
-	async getAccountsWithRole(address: EvmAddress, role: String, init :string, max:string): Promise<string[]> {
+	async getAccountsWithRole(address: EvmAddress, role: string, init :string, max:string): Promise<string[]> {
 		LogService.logTrace(
 			`Requesting getAccountsWithRole address: ${address.toString()}, target: ${role}`,
 		);
