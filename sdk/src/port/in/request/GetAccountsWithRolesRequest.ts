@@ -25,29 +25,19 @@ import Validation from './validation/Validation.js';
 export default class GetAccountsWithRolesRequest extends ValidatedRequest<GetAccountsWithRolesRequest> {
 	roleId: string;
 	tokenId: HederaId;
-	initial: string;
-	max: string;
-
+	
 	constructor({
 		roleId,
 		tokenId,
-		initial,
-		max,
 	}: {
 		roleId: string;
 		tokenId: HederaId;
-		initial: string;
-		max: string;
 	}) {
 		super({
 			roleId: Validation.checkRole(),
 			tokenId: Validation.checkHederaIdFormat(),
-			initial: Validation.checkNumber(),
-			max: Validation.checkNumber(),
 		});
 		this.roleId = roleId;
 		this.tokenId = tokenId;
-		this.initial = initial;
-		this.max = max;
 	}
 }

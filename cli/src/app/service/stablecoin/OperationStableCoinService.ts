@@ -64,6 +64,7 @@ import TransfersStableCoinsService from './TransfersStableCoinService.js';
 // import { IManagedFeatures } from '../../../domain/configuration/interfaces/IManagedFeatures.js';
 import colors from 'colors';
 import UpdateStableCoinService from './UpdateStableCoinService.js';
+import { GetAccountsWithRolesRequest } from 'hedera-stable-coin-sdk';
 
 enum tokenKeys {
   admin,
@@ -1343,6 +1344,47 @@ export default class OperationStableCoinService extends Service {
         this.stableCoinDeleted,
       )
     ) {
+      case language.getText(
+        'wizard.roleManagementOptions.CheckAccountsWithRole',
+      ):
+        await utilsService.cleanAndShowBanner();
+
+        const checkAccountsWithRoleOptions = language.getArrayFromObject(
+          'wizard.CheckAccountsWithRoleOptions',
+        );
+
+        switch (
+          await utilsService.defaultMultipleAsk(
+            language.getText('roleManagement.askRolesForAccount'),
+            checkAccountsWithRoleOptions,
+            false,
+            configAccount.network,
+            `${configAccount.accountId} - ${configAccount.alias}`,
+            this.stableCoinWithSymbol,
+            this.stableCoinPaused,
+            this.stableCoinDeleted,
+          )
+        ) {
+          case language.getText(
+            'wizard.roleManagementOptions.CheckAccountsWithRoleOptions.Supply',
+          ):
+            await this.getAccountsWithRole(StableCoinRole.FREEZE_ROLE);
+            break;
+
+          case language.getText(
+            'wizard.roleManagementOptions.CheckAccountsWithRoleOptions.Freeze',
+          ):
+            await this.getAccountsWithRole(StableCoinRole.FREEZE_ROLE);
+            break;
+
+          case language.getText(
+            'wizard.roleManagementOptions.CheckAccountsWithRoleOptions.Pause',
+          ):
+            await this.getAccountsWithRole(StableCoinRole.PAUSE_ROLE);
+            break;
+        }
+
+        break;
       case language.getText('wizard.roleManagementOptions.Grant'):
         await utilsService.cleanAndShowBanner();
 
@@ -1807,6 +1849,31 @@ export default class OperationStableCoinService extends Service {
       contractKeys.push(tokenKeys.supply);
 
     return contractKeys;
+  } /*
+  const accounts = await Role.getAccountsWithRole(
+    new GetAccountsWithRolesRequest({
+      roleId: StableCoinRole.PAUSE_ROLE,
+      tokenId: HederaId.from(stableCoinSC?.tokenId?.toString()) ?? HederaId.from('')
+      
+    }),
+  );*/
+  private async getAccountsWithRole(role): Promise<void> {
+    const request = new GetAccountsWithRolesRequest({
+      roleId: role,
+      tokenId: this.stableCoinId,
+    });
+    let respDetail;
+
+    await utilsService.showSpinner(
+      await role
+        .getAccountsWithRole(request)
+        .then((response) => (respDetail = response)),
+      {
+        text: language.getText('state.loading'),
+        successText: language.getText('state.detailsCompleted') + '\n',
+      },
+    );
+    console.log(respDetail);
   }
 
   private async grantRoles(

@@ -45,13 +45,13 @@ export class GetRolesQueryHandler
 	async execute(
 		query: GetAccountsWithRolesQuery,
 	): Promise<GetAccountsWithRolesQueryResponse> {
-		const { roleId, tokenId } = query;
+		const { roleId, tokenId} = query;
 		const coin = await this.stableCoinService.get(tokenId);
 		if (!coin.evmProxyAddress) throw new Error('Invalid token id');
 
 		const res = await this.queryAdapter.getAccountsWithRole(
 			coin.evmProxyAddress,
-			roleId,
+			roleId
 		);
 
 		return new GetAccountsWithRolesQueryResponse(res);

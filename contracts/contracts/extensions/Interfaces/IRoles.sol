@@ -11,7 +11,8 @@ interface IRoles {
         PAUSE,
         FREEZE,
         DELETE,
-        KYC
+        KYC,
+        DEFAULT_ADMIN_ROLE
     }
 
     /**

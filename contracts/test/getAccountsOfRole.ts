@@ -141,8 +141,6 @@ describe('Roles Tests', function () {
 
         let rolePause = await getAccountsForRole(
             PAUSE_ROLE,
-            '1',
-            '10',
             proxyAddress,
             operatorClient
         )
@@ -158,8 +156,6 @@ describe('Roles Tests', function () {
         )
         rolePause = await getAccountsForRole(
             PAUSE_ROLE,
-            '1',
-            '10',
             proxyAddress,
             operatorClient
         )

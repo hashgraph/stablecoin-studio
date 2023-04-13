@@ -51,6 +51,8 @@ import {
 	HEDERA_ERC20_ADDRESS,
 } from '../../config.js';
 import BigDecimal from '../../../src/domain/context/shared/BigDecimal.js';
+import GetAccountsWithRolesRequest from '../../../src/port/in/request/GetAccountsWithRolesRequest.js';
+import { HederaId } from '../../../src/domain/context/shared/HederaId.js';
 
 describe('🧪 Role test', () => {
 	let stableCoinSC: StableCoinViewModel;
@@ -537,4 +539,17 @@ describe('🧪 Role test', () => {
 		expect(isLimited).toBe(false);
 		expect(isUnlimited).toBe(true);
 	}, 60_000);
+	it('Get account for roles', async () => {
+		const accounts = await Role.getAccountsWithRole(
+			new GetAccountsWithRolesRequest({
+				roleId: StableCoinRole.PAUSE_ROLE,
+				tokenId: HederaId.from(stableCoinSC?.tokenId?.toString()) ?? HederaId.from('')
+				
+			}),
+		);
+		 console.log(accounts);
+		//expect(Array.isArray(roles)).toBe(true);
+	}, 60_000);
+
+
 });

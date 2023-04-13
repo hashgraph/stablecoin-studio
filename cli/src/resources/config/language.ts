@@ -288,8 +288,15 @@ export const english = {
       Revoke: 'Revoke roles',
       Edit: 'Edit role',
       GetRole: 'Get roles',
+      CheckAccountsWithRole: 'Check accounts that have a role',
       ...goBack,
     },
+    CheckAccountsWithRoleOptions: {
+      Supply: 'Supply Role',
+      Freeze: 'Freeze',
+      Pause: 'Pause',
+    },
+
     adminFeatureOptions: {
       ...basicFeatureOptions,
     },
@@ -424,6 +431,7 @@ export const english = {
       ...goBack,
     },
     noRoles: 'You do not have any roles.',
+    askRolesForAccount: 'Choose a role to obtain the associated accounts ',
   },
   feeManagement: {
     askFeeType: 'What kind of fee do you want to add?',

@@ -7,6 +7,10 @@ import {
     Initializable
 } from '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 
+import {
+    AccessControlUpgradeable
+} from '@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol';
+
 import '@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol';
 
 abstract contract Roles is IRoles, Initializable {
@@ -22,7 +26,7 @@ abstract contract Roles is IRoles, Initializable {
 
     mapping(bytes32 => RoleData) private _roles;
 
-    bytes32 public constant DEFAULT_ADMIN_ROLE = 0x00;
+    bytes32 public constant ADMIN_ROLE = 0x00;
     /**
      * @dev Role that allows to mint token
      *
@@ -102,7 +106,7 @@ abstract contract Roles is IRoles, Initializable {
     bytes32[] private _listOfroles;
 
     function __rolesInit() internal onlyInitializing {
-        _listOfroles.push(DEFAULT_ADMIN_ROLE);
+        _listOfroles.push(ADMIN_ROLE);
         _listOfroles.push(_CASHIN_ROLE);
         _listOfroles.push(_BURN_ROLE);
         _listOfroles.push(_WIPE_ROLE);
@@ -128,11 +132,9 @@ abstract contract Roles is IRoles, Initializable {
     }
 
     function getAccountsForRole(
-        bytes32 role,
-        uint256 initPos,
-        uint256 max
+        bytes32 role
     ) external view returns (address[] memory) {
-        return _roles[role].accounts[initPos:max];
+        return _roles[role].accounts;
     }
 
     function getNumberOfAccountsForRole(
@@ -163,12 +165,15 @@ abstract contract Roles is IRoles, Initializable {
 
     function _revokeRole(bytes32 role, address account) internal {
         if (_hasRole(role, account)) {
-            _roles[role].members[account].active = false;
-            _roles[role].accounts[_roles[role].members[account].pos] = _roles[
-                role
-            ].accounts[_roles[role].accounts.length - 1];
+            uint256 position = _roles[role].members[account].pos;
+            if (_roles[role].accounts.length > 1) {
+                _roles[role].accounts[position] = _roles[role].accounts[
+                    _roles[role].accounts.length - 1
+                ];
+                _roles[role].members[account].pos = position;
+            }
             _roles[role].accounts.pop();
-
+            delete (_roles[role].members[account]);
             emit RoleRevoked(role, account, msg.sender);
         }
     }
@@ -249,7 +254,7 @@ abstract contract Roles is IRoles, Initializable {
                 string(
                     abi.encodePacked(
                         'AccessControl: account ',
-                        //    StringsUpgradeable.toHexString(account),
+                        StringsUpgradeable.toHexString(account),
                         ' is missing role ',
                         StringsUpgradeable.toHexString(uint256(role), 32)
                     )

@@ -61,7 +61,6 @@ export async function transferHBAR(
     await transaction.execute(client)
 }
 
-// AccessControlUpgradeable ///////////////////////////////////////////////////
 export async function grantRole(
     ROLE: string,
     proxyAddress: ContractId,
@@ -124,12 +123,10 @@ export async function hasRole(
 }
 export async function getAccountsForRole(
     ROLE: string,
-    ini: string,
-    end: string,
     proxyAddress: ContractId,
     clientCheckingRole: Client
 ): Promise<boolean> {
-    const params: string[] = [ROLE, ini, end]
+    const params: string[] = [ROLE]
     const result = await contractCall(
         proxyAddress,
         'getAccountsForRole',
