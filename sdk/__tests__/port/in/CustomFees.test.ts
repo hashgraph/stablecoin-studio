@@ -53,7 +53,7 @@ import Injectable from '../../../src/core/Injectable';
 import { HederaId } from '../../../src/domain/context/shared/HederaId';
 import StableCoinService from '../../../src/app/service/StableCoinService';
 import StableCoinDetail from '../../../src/port/out/mirror/response/StableCoinViewModel';
-// import FeeAssessmentMethod from '@hashgraph/sdk/lib/token/FeeAssessmentMethod.js';
+import FeeAssessmentMethod from '@hashgraph/sdk/lib/token/FeeAssessmentMethod.js';
 import {
 	FixedFee,
 	FractionalFee,
@@ -248,7 +248,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 			new HCustomFractionalFee()
 				.setNumerator(1)
 				.setDenominator(10)
-				// .setAssessmentMethod(new FeeAssessmentMethod(true))
+				.setAssessmentMethod(new FeeAssessmentMethod(true))
 				.setFeeCollectorAccountId(feeCollectorAccountId);
 
 		const customFee: HCustomFee[] = [customFixedFee, customFractionalFee];
