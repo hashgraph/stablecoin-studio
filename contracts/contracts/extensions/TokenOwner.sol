@@ -162,10 +162,9 @@ abstract contract TokenOwner is
     /**
      * @dev Transfers an amount of tokens from and account to another account
      *
-     * @param from The address the tokens are transferred from
      * @param to The address the tokens are transferred to
      */
-    function _transfer(address from, address to, int64 amount) internal virtual;
+    function _transfer(address to, int64 amount) internal virtual;
 
     /**
      * @dev This empty reserved space is put in place to allow future versions to add new

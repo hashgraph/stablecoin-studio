@@ -73,8 +73,6 @@ interface IHederaERC20 {
         int32 tokenDecimals;
         address originalSender;
         address reserveAddress;
-        bool grantKYCToOriginalSender;
-        bool treasuryIsContract;
         RolesStruct[] roles;
         CashinRoleStruct cashinRole;
     }
@@ -133,29 +131,6 @@ interface IHederaERC20 {
      * @return uint8 The number of decimals of the token
      */
     function decimals() external view returns (uint8);
-
-    /**
-     * @dev Associates a account to the token
-     *
-     * @param addr The address of the account to associate
-     *
-     */
-    function associateToken(address addr) external;
-
-    /**
-     * @dev Dissociates an account from the token
-     *
-     * @param addr The address of the account to dissociate
-     *
-     */
-    function dissociateToken(address addr) external;
-
-    /**
-     * @dev Transfers an amount of tokens to an account
-     *
-     * @param to The address the tokens are transferred to
-     */
-    function transfer(address to, int64 amount) external returns (bool);
 
     /**
      * @dev Function not already implemented

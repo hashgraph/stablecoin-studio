@@ -215,9 +215,9 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 										control={control}
 										isRequired
 										name='network'
+										defaultValue='0'
 										options={networkOptions}
 										addonLeft={true}
-										placeholder='network'
 										overrideStyles={stylesNetworkOptions}
 										variant='unstyled'
 									/>

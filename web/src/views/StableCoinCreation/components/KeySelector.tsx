@@ -66,7 +66,6 @@ const KeySelector = ({ control, name, label, request }: KeySelectorProps) => {
 	});
 
 	const availableOptions = () => {
-		if (name === 'adminKey') return optionsKeys.filter((option) => option.value !== 3);
 		if (name === 'feeScheduleKey')
 			return optionsKeys.filter((option) => ![2, 4].includes(option.value));
 		if (name === 'kycKey') return optionsKeys.filter((option) => option.value !== 4);

@@ -81,19 +81,15 @@ describe('🧪 Stablecoin test', () => {
 			decimals: '6',
 			initialSupply: '1000',
 			// maxSupply: '',
-			autoRenewAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
-			adminKey: Account.NullPublicKey,
 			freezeKey: Account.NullPublicKey,
 			kycKey: Account.NullPublicKey,
 			wipeKey: Account.NullPublicKey,
 			pauseKey: Account.NullPublicKey,
-			supplyKey: Account.NullPublicKey,
 			// treasury: CLIENT_ACCOUNT_ED25519.id.toString(),
 			supplyType: TokenSupplyType.INFINITE,
 			stableCoinFactory: FACTORY_ADDRESS,
 			hederaERC20: HEDERA_ERC20_ADDRESS,
 			createReserve: false,
-			grantKYCToOriginalSender: true,
 		});
 		const requestHTS = new CreateRequest({
 			name: 'TEST_ACCELERATOR_HTS',
@@ -101,19 +97,15 @@ describe('🧪 Stablecoin test', () => {
 			decimals: '6',
 			initialSupply: '1000',
 			// maxSupply: '',
-			autoRenewAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
-			adminKey: CLIENT_ACCOUNT_ED25519.publicKey,
 			freezeKey: CLIENT_ACCOUNT_ED25519.publicKey,
 			kycKey: CLIENT_ACCOUNT_ED25519.publicKey,
 			wipeKey: CLIENT_ACCOUNT_ED25519.publicKey,
 			pauseKey: CLIENT_ACCOUNT_ED25519.publicKey,
-			supplyKey: CLIENT_ACCOUNT_ED25519.publicKey,
 			// treasury: CLIENT_ACCOUNT_ED25519.id.toString(),
 			supplyType: TokenSupplyType.INFINITE,
 			stableCoinFactory: FACTORY_ADDRESS,
 			hederaERC20: HEDERA_ERC20_ADDRESS,
 			createReserve: false,
-			grantKYCToOriginalSender: true,
 			// reserveAddress: '0.0.11111111'
 		});
 
@@ -249,25 +241,6 @@ describe('🧪 Stablecoin test', () => {
 		);
 		expect(result).not.toBeNull();
 		expect(result).toBe(true);
-	}, 60_000);
-
-	it('Performs associate SC', async () => {
-		const handler = Injectable.resolveTransactionHandler();
-		expect(handler).not.toBeNull();
-		const eventService = Injectable.resolve(EventService);
-		expect(eventService).not.toBeNull();
-		eventService.on(WalletEvents.walletInit, (data) => {
-			console.log(`Wallet: ${data.wallet} initialized`);
-		});
-		const result = StableCoin.associate(
-			new AssociateTokenRequest({
-				account: {
-					accountId: CLIENT_ACCOUNT_ECDSA.id.toString(),
-					privateKey: CLIENT_ACCOUNT_ECDSA.privateKey,
-				},
-			}),
-		);
-		await expect(result).rejects.toThrow('Method not implemented');
 	}, 60_000);
 
 	it('Performs freeze SC', async () => {
@@ -435,25 +408,6 @@ describe('🧪 Stablecoin test', () => {
 		);
 		expect(result).not.toBeNull();
 		expect(result).toBe(true);
-	}, 60_000);
-
-	it('Performs associate HTS', async () => {
-		const handler = Injectable.resolveTransactionHandler();
-		expect(handler).not.toBeNull();
-		const eventService = Injectable.resolve(EventService);
-		expect(eventService).not.toBeNull();
-		eventService.on(WalletEvents.walletInit, (data) => {
-			console.log(`Wallet: ${data.wallet} initialized`);
-		});
-		const result = StableCoin.associate(
-			new AssociateTokenRequest({
-				account: {
-					accountId: CLIENT_ACCOUNT_ECDSA.id.toString(),
-					privateKey: CLIENT_ACCOUNT_ECDSA.privateKey,
-				},
-			}),
-		);
-		await expect(result).rejects.toThrow('Method not implemented');
 	}, 60_000);
 
 	it('Performs capabilities HTS', async () => {

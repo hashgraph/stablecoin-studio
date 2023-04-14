@@ -31,6 +31,7 @@ import { OperationNotAllowed } from '../error/OperationNotAllowed.js';
 import { CreateCommand, CreateCommandResponse } from './CreateCommand.js';
 import { RESERVE_DECIMALS } from '../../../../../domain/context/reserve/Reserve.js';
 import { InvalidRequest } from '../error/InvalidRequest.js';
+import { EVM_ZERO_ADDRESS } from '../../../../../core/Constants.js';
 
 @CommandHandler(CreateCommand)
 export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
@@ -96,19 +97,26 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 			reserveAddress,
 			reserveInitialAmount,
 		);
-
 		try {
 			return Promise.resolve(
 				new CreateCommandResponse(
 					ContractId.fromHederaContractId(
 						HContractId.fromSolidityAddress(res.response[0][3]),
 					),
-					ContractId.fromHederaContractId(
-						HContractId.fromSolidityAddress(res.response[0][4]),
-					),
-					ContractId.fromHederaContractId(
-						HContractId.fromSolidityAddress(res.response[0][5]),
-					),
+					res.response[0][4] === EVM_ZERO_ADDRESS
+						? new ContractId('0.0.0')
+						: ContractId.fromHederaContractId(
+								HContractId.fromSolidityAddress(
+									res.response[0][4],
+								),
+						  ),
+					res.response[0][5] === EVM_ZERO_ADDRESS
+						? new ContractId('0.0.0')
+						: ContractId.fromHederaContractId(
+								HContractId.fromSolidityAddress(
+									res.response[0][5],
+								),
+						  ),
 				),
 			);
 		} catch (e) {
