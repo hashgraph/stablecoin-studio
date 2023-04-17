@@ -7,7 +7,6 @@ import {
     Initializable
 } from '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 
-
 import '@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol';
 
 abstract contract Roles is IRoles, Initializable {
@@ -112,7 +111,6 @@ abstract contract Roles is IRoles, Initializable {
         _listOfroles.push(_FREEZE_ROLE);
         _listOfroles.push(_DELETE_ROLE);
         _listOfroles.push(_KYC_ROLE);
-        
     }
 
     function hasRole(
@@ -141,13 +139,14 @@ abstract contract Roles is IRoles, Initializable {
         return _roles[role].accounts.length;
     }
 
-    function grantRole(bytes32 role, address account) external
-    onlyRole(ADMIN_ROLE) {
+    function grantRole(
+        bytes32 role,
+        address account
+    ) external onlyRole(ADMIN_ROLE) {
         _grantRole(role, account);
     }
 
-    function _grantRole(bytes32 role, address account) internal
-    {
+    function _grantRole(bytes32 role, address account) internal {
         if (!_hasRole(role, account)) {
             _roles[role].members[account] = MemberData(
                 true,
@@ -159,11 +158,14 @@ abstract contract Roles is IRoles, Initializable {
         }
     }
 
-    function revokeRole(bytes32 role, address account) external onlyRole(ADMIN_ROLE) {
+    function revokeRole(
+        bytes32 role,
+        address account
+    ) external onlyRole(ADMIN_ROLE) {
         _revokeRole(role, account);
     }
 
-    function _revokeRole(bytes32 role, address account) internal  {
+    function _revokeRole(bytes32 role, address account) internal {
         if (_hasRole(role, account)) {
             uint256 position = _roles[role].members[account].pos;
             if (_roles[role].accounts.length > 1) {

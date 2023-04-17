@@ -231,7 +231,9 @@ export default class RoleStableCoinsService extends Service {
 
     return roles;
   }
-  public async getAccountsWithRole(req: GetAccountsWithRolesRequest): Promise<string[]> {
+  public async getAccountsWithRole(
+    req: GetAccountsWithRolesRequest,
+  ): Promise<string[]> {
     let accounts;
     await utilsService.showSpinner(
       Role.getAccountsWithRole(req).then((response) => {
@@ -243,7 +245,7 @@ export default class RoleStableCoinsService extends Service {
       },
     );
     console.log(language.getText('operation.success'));
-    
+
     accounts.length > 0
       ? accounts.forEach((account: string) => {
           console.log(colors.yellow(account));
