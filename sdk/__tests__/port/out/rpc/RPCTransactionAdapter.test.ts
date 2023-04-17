@@ -75,10 +75,16 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 			undefined,
 			BigDecimal.fromString('100000000', RESERVE_DECIMALS),
 		);
-		const tokenIdSC = ContractId.fromHederaContractId(
+		const tokenId = ContractId.fromHederaContractId(
 			HContractId.fromSolidityAddress(tr.response[0][3]),
 		);
-		return await stableCoinService.getCapabilities(account, tokenIdSC);
+		await th.associateToken(tokenId, CLIENT_ACCOUNT_ECDSA.id);
+		const capabilities = await stableCoinService.getCapabilities(
+			account,
+			tokenId,
+		);
+		await th.grantKyc(capabilities, CLIENT_ACCOUNT_ECDSA.id);
+		return capabilities;
 	};
 
 	beforeAll(async () => {
@@ -102,14 +108,11 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 			symbol: 'TEST',
 			decimals: 6,
 			initialSupply: BigDecimal.fromString('1000', 6),
-			autoRenewAccount: CLIENT_ACCOUNT_ECDSA.id,
-			adminKey: PublicKey.NULL,
 			freezeKey: PublicKey.NULL,
 			wipeKey: PublicKey.NULL,
 			pauseKey: PublicKey.NULL,
-			supplyKey: PublicKey.NULL,
+			kycKey: PublicKey.NULL,
 			supplyType: TokenSupplyType.INFINITE,
-			// grantKYCToOriginalSender:true
 			burnRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
 			wipeRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
 			rescueRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
@@ -126,23 +129,20 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 			symbol: 'TEST',
 			decimals: 6,
 			initialSupply: BigDecimal.fromString('1000', 6),
-			autoRenewAccount: CLIENT_ACCOUNT_ECDSA.id,
-			adminKey: CLIENT_ACCOUNT_ECDSA.publicKey,
 			freezeKey: CLIENT_ACCOUNT_ECDSA.publicKey,
 			wipeKey: CLIENT_ACCOUNT_ECDSA.publicKey,
 			pauseKey: CLIENT_ACCOUNT_ECDSA.publicKey,
-			supplyKey: CLIENT_ACCOUNT_ECDSA.publicKey,
+			kycKey: CLIENT_ACCOUNT_ECDSA.publicKey,
 			supplyType: TokenSupplyType.INFINITE,
-			// grantKYCToOriginalSender:true,
-			burnRoleAccount: undefined,
+			burnRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
 			wipeRoleAccount: undefined,
 			rescueRoleAccount: undefined,
 			freezeRoleAccount: undefined,
 			pauseRoleAccount: undefined,
-			deleteRoleAccount: undefined,
+			deleteRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
 			kycRoleAccount: undefined,
-			cashInRoleAccount: undefined,
-			cashInRoleAllowance: undefined,
+			cashInRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			cashInRoleAllowance: BigDecimal.ZERO,
 		});
 
 		stableCoinCapabilitiesSC = await createToken(
@@ -287,6 +287,22 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 		);
 	}, 1500000);
 
+	it('Test revoke KYC SC', async () => {
+		await delay();
+		tr = await th.revokeKyc(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ECDSA.id,
+		);
+	}, 1500000);
+
+	it('Test grant KYC SC', async () => {
+		await delay();
+		tr = await th.grantKyc(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ECDSA.id,
+		);
+	}, 1500000);
+
 	it('Test pause SC', async () => {
 		await delay();
 		tr = await th.pause(stableCoinCapabilitiesSC);
@@ -295,15 +311,6 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 	it('Test unpause SC', async () => {
 		await delay();
 		tr = await th.unpause(stableCoinCapabilitiesSC);
-	}, 1500000);
-
-	it.skip('Test mint HTS', async () => {
-		await delay();
-		tr = await th.cashin(
-			stableCoinCapabilitiesHTS,
-			CLIENT_ACCOUNT_ECDSA.id,
-			BigDecimal.fromString('1', stableCoinCapabilitiesHTS.coin.decimals),
-		);
 	}, 1500000);
 
 	it.skip('Test wipe HTS', async () => {
@@ -321,14 +328,6 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 		);
 	}, 1500000);
 
-	it.skip('Test burn HTS', async () => {
-		await delay();
-		tr = await th.burn(
-			stableCoinCapabilitiesHTS,
-			BigDecimal.fromString('1', stableCoinCapabilitiesHTS.coin.decimals),
-		);
-	}, 1500000);
-
 	it.skip('Test freeze HTS', async () => {
 		await delay();
 		tr = await th.freeze(
@@ -340,6 +339,22 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 	it.skip('Test unfreeze HTS', async () => {
 		await delay();
 		tr = await th.unfreeze(
+			stableCoinCapabilitiesHTS,
+			CLIENT_ACCOUNT_ECDSA.id,
+		);
+	}, 1500000);
+
+	it.skip('Test revoke KYC HTS', async () => {
+		await delay();
+		tr = await th.revokeKyc(
+			stableCoinCapabilitiesHTS,
+			CLIENT_ACCOUNT_ECDSA.id,
+		);
+	}, 1500000);
+
+	it.skip('Test grant KYC HTS', async () => {
+		await delay();
+		tr = await th.grantKyc(
 			stableCoinCapabilitiesHTS,
 			CLIENT_ACCOUNT_ECDSA.id,
 		);

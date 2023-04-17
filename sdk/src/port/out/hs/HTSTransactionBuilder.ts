@@ -318,7 +318,6 @@ export class HTSTransactionBuilder {
 		feeScheduleKey: Key | undefined,
 		pauseKey: Key | undefined,
 		wipeKey: Key | undefined,
-		supplyKey: Key | undefined,
 	): Transaction {
 		try {
 			const tokenUpdateTransaction: TokenUpdateTransaction =
@@ -337,7 +336,6 @@ export class HTSTransactionBuilder {
 				tokenUpdateTransaction.setFeeScheduleKey(feeScheduleKey);
 			if (pauseKey) tokenUpdateTransaction.setPauseKey(pauseKey);
 			if (wipeKey) tokenUpdateTransaction.setWipeKey(wipeKey);
-			if (supplyKey) tokenUpdateTransaction.setSupplyKey(supplyKey);
 			return tokenUpdateTransaction;
 		} catch (error) {
 			LogService.logError(error);

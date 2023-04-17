@@ -105,14 +105,20 @@ describe('🧪 MirrorNodeAdapter', () => {
 			symbol: 'TEST',
 			decimals: 6,
 			initialSupply: BigDecimal.fromString('1000', 6),
-			autoRenewAccount: CLIENT_ACCOUNT_ECDSA.id,
-			adminKey: PublicKey.NULL,
 			freezeKey: PublicKey.NULL,
 			wipeKey: PublicKey.NULL,
 			pauseKey: PublicKey.NULL,
-			supplyKey: PublicKey.NULL,
+			kycKey: PublicKey.NULL,
 			supplyType: TokenSupplyType.INFINITE,
-			// grantKYCToOriginalSender:true
+			burnRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			wipeRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			rescueRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			freezeRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			pauseRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			deleteRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			kycRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			cashInRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			cashInRoleAllowance: BigDecimal.ZERO,
 		});
 
 		stableCoinCapabilitiesSC = await createToken(

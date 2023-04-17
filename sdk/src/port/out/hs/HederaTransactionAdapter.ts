@@ -1208,13 +1208,6 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 							  )
 							: HPublicKey.fromString(params.wipeKey.key)
 						: undefined,
-					params.supplyKey
-						? params.supplyKey.key == PublicKey.NULL.key
-							? DelegateContractId.fromString(
-									coin.coin.proxyAddress!.toString(),
-							  )
-							: HPublicKey.fromString(params.supplyKey.key)
-						: undefined,
 				);
 				break;
 

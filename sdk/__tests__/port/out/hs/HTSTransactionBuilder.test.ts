@@ -35,6 +35,8 @@ import {
 	TokenUnpauseTransaction,
 	TokenFreezeTransaction,
 	TokenUnfreezeTransaction,
+	TokenGrantKycTransaction,
+	TokenRevokeKycTransaction,
 	ContractId,
 	PublicKey,
 	TokenUpdateTransaction,
@@ -210,6 +212,32 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 		expect(t?.accountId).not.toEqual(AccountId.fromString(accountId2));
 	});
 
+	it('Test create buildGrantKYCTransaction', () => {
+		const t: TokenGrantKycTransaction =
+			HTSTransactionBuilder.buildGrantTokenKycTransaction(
+				tokenId,
+				accountId,
+			) as TokenGrantKycTransaction;
+		expect(t?.tokenId).toEqual(TokenId.fromString(tokenId));
+		expect(t?.accountId).toEqual(AccountId.fromString(accountId));
+
+		expect(t?.tokenId).not.toEqual(TokenId.fromString(tokenId2));
+		expect(t?.accountId).not.toEqual(AccountId.fromString(accountId2));
+	});
+
+	it('Test create buildRevokeKYCTransaction', () => {
+		const t: TokenRevokeKycTransaction =
+			HTSTransactionBuilder.buildRevokeTokenKycTransaction(
+				tokenId,
+				accountId,
+			) as TokenRevokeKycTransaction;
+		expect(t?.tokenId).toEqual(TokenId.fromString(tokenId));
+		expect(t?.accountId).toEqual(AccountId.fromString(accountId));
+
+		expect(t?.tokenId).not.toEqual(TokenId.fromString(tokenId2));
+		expect(t?.accountId).not.toEqual(AccountId.fromString(accountId2));
+	});
+
 	it('Test create buildApprovedTransferTransaction', () => {
 		const t: TransferTransaction =
 			HTSTransactionBuilder.buildTransferTransaction(
@@ -254,7 +282,6 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 				PublicKey.fromString(CLIENT_ACCOUNT_ECDSA.publicKey?.key!),
 				PublicKey.fromString(CLIENT_ACCOUNT_ECDSA.publicKey?.key!),
 				PublicKey.fromString(CLIENT_ACCOUNT_ECDSA.publicKey?.key!),
-				PublicKey.fromString(CLIENT_ACCOUNT_ECDSA.publicKey?.key!),
 			) as TokenUpdateTransaction;
 		expect(t?.tokenId).toEqual(TokenId.fromString(tokenId));
 		expect(t?.tokenName).toEqual(newTokenName);
@@ -278,9 +305,6 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 		expect(t?.wipeKey).toEqual(
 			PublicKey.fromString(CLIENT_ACCOUNT_ECDSA.publicKey?.key!),
 		);
-		expect(t?.supplyKey).toEqual(
-			PublicKey.fromString(CLIENT_ACCOUNT_ECDSA.publicKey?.key!),
-		);
 	});
 
 	it('Test create TokenUpdateTransaction with name, symbol, autorenew account, autorenew period, expiration time and delegate contract ids as keys', () => {
@@ -291,7 +315,6 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 				newTokenSymbol,
 				newAutoRenewPeriod,
 				Timestamp.fromDate(newExpirationTime),
-				DelegateContractId.fromString('0.0.1'),
 				DelegateContractId.fromString('0.0.1'),
 				DelegateContractId.fromString('0.0.1'),
 				DelegateContractId.fromString('0.0.1'),
@@ -312,14 +335,12 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 		);
 		expect(t?.pauseKey).toEqual(DelegateContractId.fromString('0.0.1'));
 		expect(t?.wipeKey).toEqual(DelegateContractId.fromString('0.0.1'));
-		expect(t?.supplyKey).toEqual(DelegateContractId.fromString('0.0.1'));
 	});
 
 	it('Test create TokenUpdateTransaction with undefined name, symbol, autorenew account, autorenew period, expiration time and keys', () => {
 		const t: TokenUpdateTransaction =
 			HTSTransactionBuilder.buildUpdateTokenTransaction(
 				tokenId,
-				undefined,
 				undefined,
 				undefined,
 				undefined,
@@ -341,6 +362,5 @@ describe('🧪 [BUILDER] HTSTransactionBuilder', () => {
 		expect(t?.feeScheduleKey).toBeNull();
 		expect(t?.pauseKey).toBeNull();
 		expect(t?.wipeKey).toBeNull();
-		expect(t?.supplyKey).toBeNull();
 	});
 });

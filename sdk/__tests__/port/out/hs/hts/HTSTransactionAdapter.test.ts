@@ -88,15 +88,11 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 			decimals: 6,
 			initialSupply: BigDecimal.fromString('5.60', 6),
 			freezeDefault: false,
-			adminKey: PublicKey.NULL,
 			freezeKey: PublicKey.NULL,
-			// kycKey: PublicKey.NULL,
+			kycKey: PublicKey.NULL,
 			wipeKey: PublicKey.NULL,
 			pauseKey: PublicKey.NULL,
-			supplyKey: PublicKey.NULL,
-			autoRenewAccount: CLIENT_ACCOUNT_ECDSA.id,
 			supplyType: TokenSupplyType.INFINITE,
-			treasury: HederaId.NULL,
 			burnRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
 			wipeRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
 			rescueRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
@@ -119,10 +115,16 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		const tokenIdSC = ContractId.fromHederaContractId(
 			HContractId.fromSolidityAddress(tr.response[0][3]),
 		);
+
+		await th.associateToken(tokenIdSC, CLIENT_ACCOUNT_ECDSA.id);
+
 		stableCoinCapabilitiesSC = await stableCoinService.getCapabilities(
 			CLIENT_ACCOUNT_ECDSA,
 			tokenIdSC,
 		);
+
+		await th.grantKyc(stableCoinCapabilitiesSC, CLIENT_ACCOUNT_ECDSA.id);
+
 		const coinHTS = new StableCoin({
 			name: 'TestCoinAccount',
 			symbol: 'TCA',
@@ -130,22 +132,14 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 			initialSupply: BigDecimal.fromString('5.60', 6),
 			maxSupply: BigDecimal.fromString('1000', 6),
 			freezeDefault: false,
-			adminKey: CLIENT_ACCOUNT_ECDSA.publicKey,
 			freezeKey: CLIENT_ACCOUNT_ECDSA.publicKey,
-			// kycKey: CLIENT_ACCOUNT_ECDSA.publicKey,
+			kycKey: CLIENT_ACCOUNT_ECDSA.publicKey,
 			wipeKey: CLIENT_ACCOUNT_ECDSA.publicKey,
 			pauseKey: CLIENT_ACCOUNT_ECDSA.publicKey,
-			supplyKey: CLIENT_ACCOUNT_ECDSA.publicKey,
-			autoRenewAccount: CLIENT_ACCOUNT_ECDSA.id,
 			supplyType: TokenSupplyType.FINITE,
-			treasury: CLIENT_ACCOUNT_ECDSA.id,
 			burnRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
-			wipeRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
 			rescueRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
-			freezeRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
-			pauseRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
 			deleteRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
-			kycRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
 			cashInRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
 			cashInRoleAllowance: BigDecimal.ZERO,
 		});
@@ -159,68 +153,16 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		const tokenIdHTS = ContractId.fromHederaContractId(
 			HContractId.fromSolidityAddress(tr.response[0][3]),
 		);
+
+		await th.associateToken(tokenIdHTS, CLIENT_ACCOUNT_ECDSA.id);
+
 		stableCoinCapabilitiesHTS = await stableCoinService.getCapabilities(
 			CLIENT_ACCOUNT_ECDSA,
 			tokenIdHTS,
 		);
+
+		await th.grantKyc(stableCoinCapabilitiesHTS, CLIENT_ACCOUNT_ECDSA.id);
 	}, 1500000);
-
-	it('Test cashin HTS', async () => {
-		const accountInitialBalance = await getBalance(
-			CLIENT_ACCOUNT_ECDSA.id,
-			stableCoinCapabilitiesHTS,
-		);
-		tr = await th.cashin(
-			stableCoinCapabilitiesHTS,
-			CLIENT_ACCOUNT_ECDSA.id,
-			BigDecimal.fromString('1', stableCoinCapabilitiesHTS.coin.decimals),
-		);
-		tr = await th.transfer(
-			stableCoinCapabilitiesHTS,
-			BigDecimal.fromString('1', stableCoinCapabilitiesHTS.coin.decimals),
-			CLIENT_ACCOUNT_ECDSA,
-			CLIENT_ACCOUNT_ECDSA.id,
-			true,
-		);
-
-		const accountFinalBalance = await getBalance(
-			CLIENT_ACCOUNT_ECDSA.id,
-			stableCoinCapabilitiesHTS,
-		);
-		expect(accountFinalBalance).toEqual(
-			accountInitialBalance.addUnsafe(
-				BigDecimal.fromString(
-					'1',
-					stableCoinCapabilitiesHTS.coin.decimals,
-				),
-			),
-		);
-	}, 150000);
-
-	it('Test burn HTS', async () => {
-		const accountInitialBalance: BigDecimal = await getBalance(
-			stableCoinCapabilitiesHTS.coin.treasury ?? HederaId.NULL,
-			stableCoinCapabilitiesHTS,
-		);
-		tr = await th.burn(
-			stableCoinCapabilitiesHTS,
-			BigDecimal.fromString('1', stableCoinCapabilitiesHTS.coin.decimals),
-		);
-
-		const accountFinalBalance: BigDecimal = await getBalance(
-			stableCoinCapabilitiesHTS.coin.treasury ?? HederaId.NULL,
-			stableCoinCapabilitiesHTS,
-		);
-		// const expectFinal =;
-		expect(accountFinalBalance).toEqual(
-			accountInitialBalance.subUnsafe(
-				BigDecimal.fromString(
-					'1',
-					stableCoinCapabilitiesHTS.coin.decimals,
-				),
-			),
-		);
-	}, 50000);
 
 	it('Test wipe HTS', async () => {
 		await expect(
@@ -235,7 +177,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		).rejects.toThrow();
 	}, 50000);
 
-	it('Test freeze', async () => {
+	it('Test freeze HTS', async () => {
 		tr = await th.freeze(
 			stableCoinCapabilitiesHTS,
 			CLIENT_ACCOUNT_ECDSA.id,
@@ -243,7 +185,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		expect(tr).not.toBeFalsy();
 	}, 20000);
 
-	it('Test unfreeze', async () => {
+	it('Test unfreeze HTS', async () => {
 		tr = await th.unfreeze(
 			stableCoinCapabilitiesHTS,
 			CLIENT_ACCOUNT_ECDSA.id,
@@ -251,17 +193,33 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		expect(tr).not.toBeFalsy();
 	}, 20000);
 
-	it('Test pause', async () => {
+	it('Test revoke KYC HTS', async () => {
+		tr = await th.revokeKyc(
+			stableCoinCapabilitiesHTS,
+			CLIENT_ACCOUNT_ECDSA.id,
+		);
+		expect(tr).not.toBeFalsy();
+	}, 20000);
+
+	it('Test grant KYC HTS', async () => {
+		tr = await th.grantKyc(
+			stableCoinCapabilitiesHTS,
+			CLIENT_ACCOUNT_ECDSA.id,
+		);
+		expect(tr).not.toBeFalsy();
+	}, 20000);
+
+	it('Test pause HTS', async () => {
 		tr = await th.pause(stableCoinCapabilitiesHTS);
 		expect(tr).not.toBeFalsy();
 	}, 20000);
 
-	it('Test unpause', async () => {
+	it('Test unpause HTS', async () => {
 		tr = await th.unpause(stableCoinCapabilitiesHTS);
 		expect(tr).not.toBeFalsy();
 	}, 20000);
 
-	it('Test cashIn contract function', async () => {
+	it('Test cashIn contract function SC', async () => {
 		const accountInitialBalance: BigDecimal = await getBalance(
 			CLIENT_ACCOUNT_ECDSA.id,
 			stableCoinCapabilitiesSC,
@@ -286,7 +244,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		);
 	}, 20000);
 
-	it('Test cashIn contract function does not succeeded if exceeds reserve', async () => {
+	it('Test cashIn contract function does not succeeded if exceeds reserve SC', async () => {
 		tr = await th.getReserveAddress(stableCoinCapabilitiesSC);
 		const reserveContractId: HContractId = HContractId.fromSolidityAddress(
 			tr.response,
@@ -313,7 +271,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		);
 	}, 20000);
 
-	it('Test burn contract function', async () => {
+	it('Test burn contract function SC', async () => {
 		const accountInitialBalance: BigDecimal = await getBalance(
 			stableCoinCapabilitiesSC.coin.treasury ?? HederaId.NULL,
 			stableCoinCapabilitiesSC,
@@ -338,7 +296,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		);
 	}, 20000);
 
-	it('Test wipe contract function', async () => {
+	it('Test wipe contract function SC', async () => {
 		const accountInitialBalance: BigDecimal = await getBalance(
 			CLIENT_ACCOUNT_ECDSA.id,
 			stableCoinCapabilitiesSC,
@@ -363,7 +321,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		);
 	}, 20000);
 
-	it('Test rescue contract function', async () => {
+	it('Test rescue contract function SC', async () => {
 		tr = await th.rescue(
 			stableCoinCapabilitiesSC,
 			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
@@ -371,12 +329,12 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		expect(tr).not.toBeFalsy();
 	}, 20000);
 
-	it('Test freeze contract function', async () => {
+	it('Test freeze contract function SC', async () => {
 		tr = await th.freeze(stableCoinCapabilitiesSC, CLIENT_ACCOUNT_ECDSA.id);
 		expect(tr).not.toBeFalsy();
 	});
 
-	it('Test unfreeze contract function', async () => {
+	it('Test unfreeze contract function SC', async () => {
 		tr = await th.unfreeze(
 			stableCoinCapabilitiesSC,
 			CLIENT_ACCOUNT_ECDSA.id,
@@ -384,17 +342,33 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		expect(tr).not.toBeFalsy();
 	});
 
-	it('Test pause contract function', async () => {
+	it('Test revoke KYC contract function SC', async () => {
+		tr = await th.revokeKyc(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ECDSA.id,
+		);
+		expect(tr).not.toBeFalsy();
+	});
+
+	it('Test grant KYC contract function SC', async () => {
+		tr = await th.grantKyc(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ECDSA.id,
+		);
+		expect(tr).not.toBeFalsy();
+	});
+
+	it('Test pause contract function SC', async () => {
 		tr = await th.pause(stableCoinCapabilitiesSC);
 		expect(tr).not.toBeFalsy();
 	});
 
-	it('Test unpause contract function', async () => {
+	it('Test unpause contract function SC', async () => {
 		tr = await th.unpause(stableCoinCapabilitiesSC);
 		expect(tr).not.toBeFalsy();
 	});
 
-	it('Test get roles contract function', async () => {
+	it('Test get roles contract function SC', async () => {
 		tr = await th.getRoles(
 			stableCoinCapabilitiesSC,
 			CLIENT_ACCOUNT_ECDSA.id,
@@ -412,7 +386,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		]);
 	}, 10000);
 
-	it('Test revoke role contract function', async () => {
+	it('Test revoke role contract function SC', async () => {
 		tr = await th.revokeRole(
 			stableCoinCapabilitiesSC,
 			CLIENT_ACCOUNT_ECDSA.id,
@@ -426,7 +400,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		expect(tr.response).toEqual(false);
 	}, 10000);
 
-	it('Test grant role contract function', async () => {
+	it('Test grant role contract function SC', async () => {
 		tr = await th.grantRole(
 			stableCoinCapabilitiesSC,
 			CLIENT_ACCOUNT_ECDSA.id,
@@ -440,7 +414,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		expect(tr.response).toEqual(true);
 	}, 10000);
 
-	it('Test supplier allowance contract function', async () => {
+	it('Test supplier allowance contract function SC', async () => {
 		tr = await th.supplierAllowance(
 			stableCoinCapabilitiesSC,
 			CLIENT_ACCOUNT_ECDSA.id,
@@ -450,7 +424,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		);
 	});
 
-	it('Test increase supplier allowance contract function', async () => {
+	it('Test increase supplier allowance contract function SC', async () => {
 		tr = await th.revokeSupplierRole(
 			stableCoinCapabilitiesSC,
 			CLIENT_ACCOUNT_ECDSA.id,
