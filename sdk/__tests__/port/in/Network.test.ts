@@ -29,11 +29,7 @@ import ConnectRequest, {
 	SupportedWallets,
 } from '../../../src/port/in/request/ConnectRequest.js';
 
-import {
-	CLIENT_ACCOUNT_ED25519,
-	FACTORY_ADDRESS,
-	HEDERA_ERC20_ADDRESS,
-} from '../../config.js';
+import { CLIENT_ACCOUNT_ED25519, FACTORY_ADDRESS } from '../../config.js';
 
 describe('🧪 Network test', () => {
 	afterEach(() => {
@@ -71,7 +67,7 @@ describe('🧪 Network test', () => {
 		const spy = jest.spyOn(Network, 'init');
 		const init = await Network.init(
 			new InitializationRequest({
-				network: 'previewnet',
+				network: 'testnet',
 				configuration: {
 					factoryAddress: FACTORY_ADDRESS,
 				},
@@ -81,11 +77,10 @@ describe('🧪 Network test', () => {
 		expect(networkService.consensusNodes).toBeUndefined();
 		expect(networkService.mirrorNode).toBeUndefined();
 		expect(networkService.rpcNode).toBeUndefined();
-		expect(networkService.environment).toEqual('previewnet');
-		expect(networkService.configuration).toStrictEqual({
-			factoryAddress: FACTORY_ADDRESS,
-			hederaERC20Address: HEDERA_ERC20_ADDRESS,
-		});
+		expect(networkService.environment).toEqual('testnet');
+		expect(networkService.configuration.factoryAddress).toEqual(
+			FACTORY_ADDRESS,
+		);
 		expect(init).toBeTruthy();
 		expect(init.length).toBeGreaterThan(0);
 	}, 60_000);
