@@ -120,7 +120,7 @@ export function fromCustomFeesToHCustomFees(
 					)
 					.setMin(customFee.min ? customFee.min.toLong() : 0)
 					.setAssessmentMethod(
-							new FeeAssessmentMethod(customFee.net ?? false),
+						new FeeAssessmentMethod(customFee.net ?? false),
 					)
 					.setFeeCollectorAccountId(
 						customFee.collectorId
