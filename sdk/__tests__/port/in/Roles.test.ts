@@ -543,13 +543,12 @@ describe('🧪 Role test', () => {
 		const accounts = await Role.getAccountsWithRole(
 			new GetAccountsWithRolesRequest({
 				roleId: StableCoinRole.PAUSE_ROLE,
-				tokenId: HederaId.from(stableCoinSC?.tokenId?.toString()) ?? HederaId.from('')
-				
+				tokenId:
+					HederaId.from(stableCoinSC?.tokenId?.toString()) ??
+					HederaId.from(''),
 			}),
 		);
-		 console.log(accounts);
+		console.log(accounts);
 		//expect(Array.isArray(roles)).toBe(true);
 	}, 60_000);
-
-
 });

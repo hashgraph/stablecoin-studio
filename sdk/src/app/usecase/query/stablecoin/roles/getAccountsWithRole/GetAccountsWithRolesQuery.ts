@@ -30,7 +30,6 @@ export class GetAccountsWithRolesQuery extends Query<GetAccountsWithRolesQueryRe
 	constructor(
 		public readonly roleId: string,
 		public readonly tokenId: HederaId,
-		
 	) {
 		super();
 	}

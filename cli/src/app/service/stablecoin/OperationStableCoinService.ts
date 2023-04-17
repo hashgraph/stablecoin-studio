@@ -1344,16 +1344,14 @@ export default class OperationStableCoinService extends Service {
         this.stableCoinDeleted,
       )
     ) {
-      case language.getText(
-        'wizard.roleManagementOptions.CheckAccountsWithRole',
-      ):
+      case language.getText('wizard.roleManagementOptions.CheckAccountsWithRole'):
         await utilsService.cleanAndShowBanner();
 
-        const checkAccountsWithRoleOptions = language.getArrayFromObject(
-          'wizard.CheckAccountsWithRoleOptions',
-        );
 
-        switch (
+        const checkAccountsWithRoleOptions = language
+         .getArrayFromObject('wizard.CheckAccountsWithRoleOptions');
+
+         switch (
           await utilsService.defaultMultipleAsk(
             language.getText('roleManagement.askRolesForAccount'),
             checkAccountsWithRoleOptions,
@@ -1365,23 +1363,17 @@ export default class OperationStableCoinService extends Service {
             this.stableCoinDeleted,
           )
         ) {
-          case language.getText(
-            'wizard.roleManagementOptions.CheckAccountsWithRoleOptions.Supply',
-          ):
-            await this.getAccountsWithRole(StableCoinRole.FREEZE_ROLE);
-            break;
+          case language.getText('wizard.CheckAccountsWithRoleOptions.Supply'):
+            await this.getAccountsWithRole(StableCoinRole.FREEZE_ROLE) ;
+          break;
 
-          case language.getText(
-            'wizard.roleManagementOptions.CheckAccountsWithRoleOptions.Freeze',
-          ):
-            await this.getAccountsWithRole(StableCoinRole.FREEZE_ROLE);
-            break;
+          case language.getText('wizard.CheckAccountsWithRoleOptions.Freeze'):
+            await this.getAccountsWithRole(StableCoinRole.FREEZE_ROLE)  ;
+          break;
 
-          case language.getText(
-            'wizard.roleManagementOptions.CheckAccountsWithRoleOptions.Pause',
-          ):
-            await this.getAccountsWithRole(StableCoinRole.PAUSE_ROLE);
-            break;
+          case language.getText('wizard.CheckAccountsWithRoleOptions.Pause'):
+            await this.getAccountsWithRole(StableCoinRole.PAUSE_ROLE)  ;
+          break;
         }
 
         break;
@@ -1849,7 +1841,7 @@ export default class OperationStableCoinService extends Service {
       contractKeys.push(tokenKeys.supply);
 
     return contractKeys;
-  } /*
+  }/*
   const accounts = await Role.getAccountsWithRole(
     new GetAccountsWithRolesRequest({
       roleId: StableCoinRole.PAUSE_ROLE,
@@ -1857,23 +1849,24 @@ export default class OperationStableCoinService extends Service {
       
     }),
   );*/
-  private async getAccountsWithRole(role): Promise<void> {
-    const request = new GetAccountsWithRolesRequest({
-      roleId: role,
-      tokenId: this.stableCoinId,
-    });
-    let respDetail;
+  private async getAccountsWithRole(
+    role:string
+  ): Promise<void> {
+    
+    
+    const request =  new GetAccountsWithRolesRequest({
+        roleId: role,
+        tokenId: this.stableCoinId
+        
+      });
+     
 
-    await utilsService.showSpinner(
-      await role
-        .getAccountsWithRole(request)
-        .then((response) => (respDetail = response)),
-      {
-        text: language.getText('state.loading'),
-        successText: language.getText('state.detailsCompleted') + '\n',
-      },
-    );
-    console.log(respDetail);
+      await utilsService.showSpinner(
+          new RoleStableCoinsService().getAccountsWithRole(request),
+        {    },
+      )
+      
+  
   }
 
   private async grantRoles(

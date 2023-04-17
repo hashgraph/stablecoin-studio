@@ -238,7 +238,7 @@ class RoleInPort implements IRole {
 	async getAccountsWithRole(
 		request: GetAccountsWithRolesRequest,
 	): Promise<string[]> {
-		const { roleId, tokenId} = request;
+		const { roleId, tokenId } = request;
 		handleValidation('GetAccountsWithRolesRequest', request);
 
 		return (
