@@ -63,7 +63,6 @@ describe('🧪 Stablecoin test', () => {
 		await new Promise((r) => setTimeout(r, seconds));
 	};
 	beforeAll(async () => {
-		await Network.init(new InitializationRequest({ network: 'testnet' }));
 		await Network.connect(
 			new ConnectRequest({
 				account: {
@@ -74,51 +73,68 @@ describe('🧪 Stablecoin test', () => {
 				wallet: SupportedWallets.CLIENT,
 			}),
 		);
+		await Network.init(
+			new InitializationRequest({
+				network: 'testnet',
+				configuration: {
+					factoryAddress: FACTORY_ADDRESS,
+				},
+			}),
+		);
 		Injectable.resolveTransactionHandler();
 		const requestSC = new CreateRequest({
 			name: 'TEST_ACCELERATOR_SC',
 			symbol: 'TEST',
 			decimals: '6',
 			initialSupply: '1000',
-			// maxSupply: '',
 			freezeKey: Account.NullPublicKey,
 			kycKey: Account.NullPublicKey,
 			wipeKey: Account.NullPublicKey,
 			pauseKey: Account.NullPublicKey,
-			// treasury: CLIENT_ACCOUNT_ED25519.id.toString(),
 			supplyType: TokenSupplyType.INFINITE,
 			stableCoinFactory: FACTORY_ADDRESS,
 			hederaERC20: HEDERA_ERC20_ADDRESS,
 			createReserve: false,
+			grantKYCToOriginalSender: true,
+			burnRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
+			freezeRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
+			kycRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
+			wipeRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
+			pauseRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
+			rescueRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
+			deleteRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
+			cashInRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
+			cashInRoleAllowance: '0',
 		});
 		const requestHTS = new CreateRequest({
 			name: 'TEST_ACCELERATOR_HTS',
 			symbol: 'TEST',
 			decimals: '6',
 			initialSupply: '1000',
-			// maxSupply: '',
 			freezeKey: CLIENT_ACCOUNT_ED25519.publicKey,
 			kycKey: CLIENT_ACCOUNT_ED25519.publicKey,
 			wipeKey: CLIENT_ACCOUNT_ED25519.publicKey,
 			pauseKey: CLIENT_ACCOUNT_ED25519.publicKey,
-			// treasury: CLIENT_ACCOUNT_ED25519.id.toString(),
 			supplyType: TokenSupplyType.INFINITE,
 			stableCoinFactory: FACTORY_ADDRESS,
 			hederaERC20: HEDERA_ERC20_ADDRESS,
 			createReserve: false,
-			// reserveAddress: '0.0.11111111'
+			grantKYCToOriginalSender: true,
+			burnRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
+			rescueRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
+			deleteRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
+			cashInRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
+			cashInRoleAllowance: '0',
 		});
 
 		stableCoinSC = (await StableCoin.create(requestSC)).coin;
-		// console.log(stableCoinSC);
 		stableCoinHTS = (await StableCoin.create(requestHTS)).coin;
-		// console.log(stableCoinHTS);
 	}, 60_000);
 
 	it('Gets a coin', async () => {
 		const res = await StableCoin.getInfo(
 			new GetStableCoinDetailsRequest({
-				id: stableCoinSC?.tokenId?.toString() ?? '0.0.49106247',
+				id: stableCoinSC?.tokenId!.toString(),
 			}),
 		);
 		expect(res).not.toBeNull();
@@ -139,7 +155,7 @@ describe('🧪 Stablecoin test', () => {
 		});
 		const result = await StableCoin.getBalanceOf(
 			new GetAccountBalanceRequest({
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49106247',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
 			}),
 		);
@@ -161,7 +177,7 @@ describe('🧪 Stablecoin test', () => {
 					accountId: CLIENT_ACCOUNT_ED25519.id.toString(),
 					privateKey: CLIENT_ACCOUNT_ED25519.privateKey,
 				},
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49106247',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 			}),
 		);
 		expect(result).not.toBeNull();
@@ -179,7 +195,7 @@ describe('🧪 Stablecoin test', () => {
 		const result = await StableCoin.cashIn(
 			new CashInRequest({
 				amount: '1',
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49106247',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
 			}),
 		);
@@ -199,7 +215,7 @@ describe('🧪 Stablecoin test', () => {
 		const result = await StableCoin.burn(
 			new BurnRequest({
 				amount: '1',
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49106247',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 			}),
 		);
 		expect(result).not.toBeNull();
@@ -217,7 +233,7 @@ describe('🧪 Stablecoin test', () => {
 		const result = await StableCoin.rescue(
 			new RescueRequest({
 				amount: '1',
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49106247',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 			}),
 		);
 		expect(result).not.toBeNull();
@@ -235,7 +251,7 @@ describe('🧪 Stablecoin test', () => {
 		const result = await StableCoin.wipe(
 			new WipeRequest({
 				amount: '1',
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49106247',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
 			}),
 		);
@@ -255,7 +271,7 @@ describe('🧪 Stablecoin test', () => {
 		const result = await StableCoin.freeze(
 			new FreezeAccountRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49131205',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 			}),
 		);
 
@@ -275,7 +291,7 @@ describe('🧪 Stablecoin test', () => {
 		const result = await StableCoin.unFreeze(
 			new FreezeAccountRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49131205',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 			}),
 		);
 		expect(result).not.toBeNull();
@@ -292,7 +308,7 @@ describe('🧪 Stablecoin test', () => {
 		});
 		const result = await StableCoin.pause(
 			new PauseRequest({
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49106247',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 			}),
 		);
 		expect(result).not.toBeNull();
@@ -309,7 +325,7 @@ describe('🧪 Stablecoin test', () => {
 		});
 		const result = await StableCoin.unPause(
 			new PauseRequest({
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49106247',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 			}),
 		);
 		expect(result).not.toBeNull();
@@ -327,7 +343,7 @@ describe('🧪 Stablecoin test', () => {
 		});
 		const result = await StableCoin.delete(
 			new DeleteRequest({
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49106247',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 			}),
 		);
 		expect(result).not.toBeNull();
@@ -347,7 +363,7 @@ describe('🧪 Stablecoin test', () => {
 		const result = StableCoin.cashIn(
 			new CashInRequest({
 				amount: '1',
-				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49131205',
+				tokenId: stableCoinHTS?.tokenId!.toString(),
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
 			}),
 		);
@@ -366,7 +382,7 @@ describe('🧪 Stablecoin test', () => {
 		const result = await StableCoin.burn(
 			new BurnRequest({
 				amount: '1',
-				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49106247',
+				tokenId: stableCoinHTS?.tokenId!.toString(),
 			}),
 		);
 		expect(result).not.toBeNull();
@@ -384,7 +400,7 @@ describe('🧪 Stablecoin test', () => {
 		const result = await StableCoin.rescue(
 			new RescueRequest({
 				amount: '1',
-				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49106247',
+				tokenId: stableCoinHTS?.tokenId!.toString(),
 			}),
 		);
 		expect(result).not.toBeNull();
@@ -402,7 +418,7 @@ describe('🧪 Stablecoin test', () => {
 		const result = await StableCoin.wipe(
 			new WipeRequest({
 				amount: '1',
-				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49106247',
+				tokenId: stableCoinHTS?.tokenId!.toString(),
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
 			}),
 		);
@@ -424,7 +440,7 @@ describe('🧪 Stablecoin test', () => {
 					accountId: CLIENT_ACCOUNT_ED25519.id.toString(),
 					privateKey: CLIENT_ACCOUNT_ED25519.privateKey,
 				},
-				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49106247',
+				tokenId: stableCoinHTS?.tokenId!.toString(),
 			}),
 		);
 		expect(result).not.toBeNull();
@@ -443,7 +459,7 @@ describe('🧪 Stablecoin test', () => {
 		const result = await StableCoin.freeze(
 			new FreezeAccountRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49131205',
+				tokenId: stableCoinHTS?.tokenId!.toString(),
 			}),
 		);
 		expect(result).not.toBeNull();
@@ -462,7 +478,7 @@ describe('🧪 Stablecoin test', () => {
 		const result = await StableCoin.unFreeze(
 			new FreezeAccountRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49131205',
+				tokenId: stableCoinHTS?.tokenId!.toString(),
 			}),
 		);
 		expect(result).not.toBeNull();
@@ -479,7 +495,7 @@ describe('🧪 Stablecoin test', () => {
 		});
 		const result = await StableCoin.pause(
 			new PauseRequest({
-				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49106247',
+				tokenId: stableCoinHTS?.tokenId!.toString(),
 			}),
 		);
 		expect(result).not.toBeNull();
@@ -496,7 +512,7 @@ describe('🧪 Stablecoin test', () => {
 		});
 		const result = await StableCoin.unPause(
 			new PauseRequest({
-				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49106247',
+				tokenId: stableCoinHTS?.tokenId!.toString(),
 			}),
 		);
 		expect(result).not.toBeNull();
@@ -514,7 +530,7 @@ describe('🧪 Stablecoin test', () => {
 		});
 		const result = await StableCoin.delete(
 			new DeleteRequest({
-				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49106247',
+				tokenId: stableCoinHTS?.tokenId!.toString(),
 			}),
 		);
 		expect(result).not.toBeNull();
@@ -532,7 +548,7 @@ describe('🧪 Stablecoin test', () => {
 		const result = await StableCoin.isAccountAssociated(
 			new IsAccountAssociatedTokenRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49206466',
+				tokenId: stableCoinHTS?.tokenId!.toString(),
 			}),
 		);
 		expect(result).not.toBeNull();
@@ -547,18 +563,18 @@ describe('🧪 Stablecoin test', () => {
 		eventService.on(WalletEvents.walletInit, (data) => {
 			console.log(`Wallet: ${data.wallet} initialized`);
 		});
-		console.log(`Token HTS: ${stableCoinHTS?.tokenId?.toString()}`);
-		console.log(`Token SC: ${stableCoinSC?.tokenId?.toString()}`);
+		console.log(`Token HTS: ${stableCoinHTS?.tokenId!.toString()}`);
+		console.log(`Token SC: ${stableCoinSC?.tokenId!.toString()}`);
 
 		await delay(10);
 		const resultHTS = await StableCoin.delete(
 			new DeleteRequest({
-				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49106247',
+				tokenId: stableCoinHTS?.tokenId!.toString(),
 			}),
 		);
 		const resultSC = await StableCoin.delete(
 			new DeleteRequest({
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49106247',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 			}),
 		);
 		expect(resultHTS).toBe(true);
