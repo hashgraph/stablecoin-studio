@@ -149,8 +149,7 @@ const StableCoinCreation = () => {
 				const keys = ['adminKey', 'supplyKey', 'wipeKey', 'freezeKey', 'pauseKey', 'kycKey'];
 
 				// @ts-ignore
-				fieldsStep = watch(keys);
-				fieldsStep.forEach((item, index) => {
+				watch(keys).forEach((item, index) => {
 					if (item?.value === OTHER_KEY_VALUE) {
 						// @ts-ignore
 						fieldsStep[index] = watch(keys[index].concat('Other'));
