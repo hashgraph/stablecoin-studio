@@ -46,6 +46,8 @@ import {
 	InitializationRequest,
 	KYCRequest,
 	GetReserveAddressRequest,
+	AssociateTokenRequest,
+	UpdateReserveAddressRequest,
 } from '../../../src/port/in/request/index.js';
 import ConnectRequest, {
 	SupportedWallets,
@@ -134,6 +136,33 @@ describe('🧪 Stablecoin test', () => {
 
 		stableCoinSC = (await StableCoin.create(requestSC)).coin;
 		stableCoinHTS = (await StableCoin.create(requestHTS)).coin;
+
+		await StableCoin.associate(
+			new AssociateTokenRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoinSC.tokenId!.toString(),
+			}),
+		);
+
+		await StableCoin.associate(
+			new AssociateTokenRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoinHTS.tokenId!.toString(),
+			}),
+		);
+
+		await StableCoin.grantKyc(
+			new KYCRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoinSC.tokenId!.toString(),
+			}),
+		);
+		await StableCoin.grantKyc(
+			new KYCRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoinHTS.tokenId!.toString(),
+			}),
+		);
 	}, 60_000);
 
 	it('Gets a coin', async () => {
@@ -168,7 +197,7 @@ describe('🧪 Stablecoin test', () => {
 		expect(result.value.toString()).toEqual('0');
 	}, 60_000);
 
-	it('Performs capabilities', async () => {
+	it('Performs capabilities SC', async () => {
 		const result = await capabilitiesOperation(stableCoinSC);
 		expect(result.capabilities).not.toBeNull();
 	}, 60_000);
@@ -219,13 +248,6 @@ describe('🧪 Stablecoin test', () => {
 		expect(result_2).toBe(true);
 	}, 90_000);
 
-	// eslint-disable-next-line jest/no-disabled-tests
-
-	it('Performs reserve SC', async () => {
-		const result = await getReserve(stableCoinSC);
-		expect(result).not.toBeNull();
-	}, 60_000);
-
 	// ----------------------HTS--------------------------
 
 	it('Performs rescue HTS', async () => {
@@ -269,9 +291,13 @@ describe('🧪 Stablecoin test', () => {
 		expect(result_2).toBe(true);
 	}, 90_000);
 
-	it('Performs reserve HTS', async () => {
-		const result = await getReserve(stableCoinHTS);
-		expect(result).not.toBeNull();
+	it('Performs reserve', async () => {
+		const result_1 = await getReserve(stableCoinHTS);
+		expect(result_1).not.toEqual('0.0.0');
+		const result_2 = await updateReserve(stableCoinHTS, '0.0.0');
+		expect(result_2).toEqual('0.0.0');
+		const result_3 = await updateReserve(stableCoinHTS, result_1);
+		expect(result_3).toEqual(result_1);
 	}, 60_000);
 
 	// eslint-disable-next-line jest/no-disabled-tests
@@ -514,14 +540,21 @@ describe('🧪 Stablecoin test', () => {
 	}
 
 	async function getReserve(stableCoin: StableCoinViewModel) {
-		const handler = Injectable.resolveTransactionHandler();
-		const eventService = Injectable.resolve(EventService);
-		eventService.on(WalletEvents.walletInit, (data) => {
-			console.log(`Wallet: ${data.wallet} initialized`);
-		});
 		return await StableCoin.getReserveAddress(
 			new GetReserveAddressRequest({
 				tokenId: stableCoin?.tokenId!.toString(),
+			}),
+		);
+	}
+
+	async function updateReserve(
+		stableCoin: StableCoinViewModel,
+		newReserveAddress: string,
+	) {
+		return await StableCoin.updateReserveAddress(
+			new UpdateReserveAddressRequest({
+				tokenId: stableCoin?.tokenId!.toString(),
+				reserveAddress: newReserveAddress,
 			}),
 		);
 	}

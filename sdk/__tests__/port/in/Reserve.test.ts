@@ -31,6 +31,8 @@ import {
 	TokenSupplyType,
 	ReserveDataFeed,
 	GetReserveAmountRequest,
+	UpdateReserveAmountRequest,
+	GetReserveAddressRequest,
 } from '../../../src/index.js';
 import ConnectRequest, {
 	SupportedWallets,
@@ -101,6 +103,29 @@ describe('🧪 Reserve test', () => {
 				tokenId: stableCoinSC?.tokenId!.toString(),
 			}),
 		);
-		expect(res.value.toString()).toBe(reserveInitialAmount.toString());
+		expect(res.value.toString()).toEqual(reserveInitialAmount.toString());
+	}, 60_000);
+
+	it('update reserve amount', async () => {
+		const reserveAddress = await StableCoin.getReserveAddress(
+			new GetReserveAddressRequest({
+				tokenId: stableCoinSC?.tokenId!.toString(),
+			}),
+		);
+
+		await ReserveDataFeed.updateReserveAmount(
+			new UpdateReserveAmountRequest({
+				reserveAddress: reserveAddress,
+				reserveAmount: '0',
+			}),
+		);
+
+		const res = await ReserveDataFeed.getReserveAmount(
+			new GetReserveAmountRequest({
+				tokenId: stableCoinSC?.tokenId!.toString(),
+			}),
+		);
+
+		expect(res.value.toString()).toEqual('0');
 	}, 60_000);
 });
