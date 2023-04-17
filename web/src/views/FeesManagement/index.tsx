@@ -345,7 +345,7 @@ const FeesManagement = () => {
 			const collectorAccount: string = fee.collectorAccount;
 			const collectorsExempt: boolean = fee.collectorsExempt.value;
 			const amountOrPercentage = fee.amountOrPercentage;
-
+			const net: boolean = !fee.senderOrReceiver.value;
 			switch (feeType) {
 				case FeeTypeValue.FRACTIONAL: {
 					const min: string = fee.min;
@@ -358,7 +358,7 @@ const FeesManagement = () => {
 						amountDenominator: fractionalFee[index].amountDenominator ?? '',
 						min,
 						max,
-						net: false,
+						net: net,
 						percentage: amountOrPercentage, // TODO
 					};
 					requestCustomFeeArray.push(requestFractionalFee);

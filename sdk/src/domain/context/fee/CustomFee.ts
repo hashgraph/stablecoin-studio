@@ -24,6 +24,7 @@ import {
 	CustomFee as HCustomFee,
 	CustomFixedFee as HCustomFixedFee,
 	CustomFractionalFee as HCustomFractionalFee,
+	FeeAssessmentMethod,
 } from '@hashgraph/sdk';
 
 export const MAX_CUSTOM_FEES = 10;
@@ -118,9 +119,9 @@ export function fromCustomFeesToHCustomFees(
 							: 0,
 					)
 					.setMin(customFee.min ? customFee.min.toLong() : 0)
-					/*.setAssessmentMethod(
+					.setAssessmentMethod(
 							new FeeAssessmentMethod(customFee.net ?? false),
-					)*/
+					)
 					.setFeeCollectorAccountId(
 						customFee.collectorId
 							? customFee.collectorId.toString()
@@ -135,7 +136,6 @@ export function fromCustomFeesToHCustomFees(
 						customFee.max.toLong(),
 					);
 				}
-
 				HcustomFee.push(newFee);
 			}
 		});

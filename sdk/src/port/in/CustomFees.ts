@@ -180,6 +180,7 @@ class CustomFeesInPort implements ICustomFees {
 			}
 		});
 
+console.log("requestedCustomFee: " + JSON.stringify(requestedCustomFee));				
 		return (
 			await this.commandBus.execute(
 				new UpdateCustomFeesCommand(
