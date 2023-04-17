@@ -128,7 +128,7 @@ const StableCoinCreation = () => {
 
 		if (currentStep === 0) {
 			// @ts-ignore
-			fieldsStep = watch(['name', 'symbol', 'autorenewAccount']);
+			fieldsStep = watch(['hederaERC20Id', 'name', 'symbol']);
 		}
 
 		if (currentStep === 1) {
