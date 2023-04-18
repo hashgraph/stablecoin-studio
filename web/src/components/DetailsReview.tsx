@@ -329,7 +329,6 @@ const DetailsReview = ({
 											<KeySelector
 												control={control}
 												name={detail.label.toLowerCase()}
-												defaultValue={undefined}
 												label=''
 												labelPlaceholder={detail.label}
 											/>
