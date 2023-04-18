@@ -52,9 +52,6 @@ export default class UpdateRequest extends ValidatedRequest<UpdateRequest> {
 	pauseKey?: RequestPublicKey;
 
 	@OptionalField()
-	supplyKey?: RequestPublicKey;
-
-	@OptionalField()
 	feeScheduleKey?: RequestPublicKey;
 
 	constructor({
@@ -67,7 +64,6 @@ export default class UpdateRequest extends ValidatedRequest<UpdateRequest> {
 		kycKey,
 		wipeKey,
 		pauseKey,
-		supplyKey,
 		feeScheduleKey,
 	}: {
 		tokenId: string;
@@ -79,7 +75,6 @@ export default class UpdateRequest extends ValidatedRequest<UpdateRequest> {
 		kycKey?: RequestPublicKey;
 		wipeKey?: RequestPublicKey;
 		pauseKey?: RequestPublicKey;
-		supplyKey?: RequestPublicKey;
 		feeScheduleKey?: RequestPublicKey;
 	}) {
 		super({
@@ -112,7 +107,6 @@ export default class UpdateRequest extends ValidatedRequest<UpdateRequest> {
 			kycKey: Validation.checkPublicKey(),
 			wipeKey: Validation.checkPublicKey(),
 			pauseKey: Validation.checkPublicKey(),
-			supplyKey: Validation.checkPublicKey(),
 			feeScheduleKey: Validation.checkPublicKey(),
 		});
 		this.tokenId = tokenId;
@@ -124,7 +118,6 @@ export default class UpdateRequest extends ValidatedRequest<UpdateRequest> {
 		this.kycKey = kycKey;
 		this.wipeKey = wipeKey;
 		this.pauseKey = pauseKey;
-		this.supplyKey = supplyKey;
 		this.feeScheduleKey = feeScheduleKey;
 	}
 }

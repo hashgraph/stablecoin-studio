@@ -589,7 +589,6 @@ class StableCoinInPort implements IStableCoinInPort {
 			feeScheduleKey,
 			pauseKey,
 			wipeKey,
-			supplyKey,
 		} = request;
 
 		handleValidation('UpdateRequest', request);
@@ -632,12 +631,6 @@ class StableCoinInPort implements IStableCoinInPort {
 						? new PublicKey({
 								key: wipeKey.key,
 								type: wipeKey.type,
-						  })
-						: undefined,
-					supplyKey
-						? new PublicKey({
-								key: supplyKey.key,
-								type: supplyKey.type,
 						  })
 						: undefined,
 				),

@@ -2574,15 +2574,6 @@ export default class OperationStableCoinService extends Service {
         );
         break;
 
-      case 'supplyKey':
-        updateRequest.supplyKey = await this.checkAnswer(
-          await utilsService.defaultMultipleAsk(
-            language.getText('stablecoin.features.supply'),
-            language.getArrayFromObject('wizard.nonNoneFeatureOptions'),
-          ),
-        );
-        break;
-
       case 'pauseKey':
         updateRequest.pauseKey = await this.checkAnswer(
           await utilsService.defaultMultipleAsk(
