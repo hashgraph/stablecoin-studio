@@ -1,3 +1,4 @@
+import type { StackProps } from '@chakra-ui/react';
 import {
 	chakra,
 	Flex,
@@ -36,6 +37,7 @@ export interface DatePickerControllerProps {
 	placeholder?: string;
 	rules?: UseControllerProps['rules'];
 	showErrors?: boolean;
+	containerStyle?: StackProps;
 }
 
 const InputStyle = {
@@ -126,6 +128,7 @@ const DatePickerController = ({
 	placeholder,
 	rules,
 	showErrors,
+	containerStyle,
 	...props
 }: DatePickerControllerProps) => {
 	return (
@@ -145,7 +148,7 @@ const DatePickerController = ({
 				};
 
 				return (
-					<Stack w='full'>
+					<Stack w='full' {...containerStyle}>
 						<FormControl data-testid='form-control' isInvalid={invalid}>
 							{label && (
 								<FormLabel {...labelProps}>

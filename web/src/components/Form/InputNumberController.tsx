@@ -4,6 +4,7 @@ import type {
 	InputProps as ChakraInputProps,
 	FormControlProps,
 	FormLabelProps,
+	StackProps,
 } from '@chakra-ui/react';
 import {
 	Button,
@@ -52,6 +53,7 @@ export interface InputNumberControllerProps
 	maxValue?: number;
 	minValue?: number;
 	initialValue?: number;
+	containerStyle?: StackProps;
 }
 
 const InputNumberController = ({
@@ -78,6 +80,7 @@ const InputNumberController = ({
 	formStyle,
 	decimalScale = 2,
 	initialValue,
+	containerStyle,
 	...props
 }: InputNumberControllerProps) => {
 	const [inputFloatValue, setInputFloatValue] = useState<number>();
@@ -160,7 +163,7 @@ const InputNumberController = ({
 				};
 
 				return (
-					<Stack w='full'>
+					<Stack w='full' {...containerStyle}>
 						<FormControl data-testid='formControl' isInvalid={!!error} id={id} {...formStyle}>
 							{label && (
 								<InputLabel isRequired={isRequired} style={labelStyle}>

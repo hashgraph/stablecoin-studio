@@ -4,9 +4,9 @@ import { GetStableCoinDetailsRequest } from 'hedera-stable-coin-sdk';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import SDKService from '../services/SDKService';
-import { walletActions, SELECTED_WALLET_COIN } from '../store/slices/walletSlice';
+import { SELECTED_WALLET_COIN, walletActions } from '../store/slices/walletSlice';
 
-export const useRefreshCoinInfo = (): boolean => {
+export const useRefreshCoinInfo = () => {
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const [lastId, setLastId] = useState<string>();
 	const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -61,5 +61,5 @@ export const useRefreshCoinInfo = (): boolean => {
 		setIsLoading(false);
 	};
 
-	return isLoading;
+	return { getStableCoinDetails, isLoading };
 };
