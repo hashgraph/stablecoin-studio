@@ -8,7 +8,7 @@ const AwaitingWalletSignature = () => {
 	return (
 		<Flex
 			data-testid='no-proof-of-reserve-container'
-			bgColor='white'
+			bgColor='transparent'
 			w='100%'
 			h='100%'
 			justifyContent='center'
