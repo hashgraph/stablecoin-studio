@@ -42,6 +42,7 @@ export interface DetailsReviewProps {
 	titleProps?: ChakraTextProps;
 	contentProps?: ChakraFlexProps;
 	isLoading?: boolean;
+	editable?: boolean;
 	getStableCoinDetails?: () => Promise<void>;
 }
 
@@ -133,6 +134,7 @@ const DetailsReview = ({
 	titleProps,
 	contentProps,
 	isLoading,
+	editable = false,
 	getStableCoinDetails,
 }: DetailsReviewProps) => {
 	const { control, setValue, handleSubmit, reset, getValues } = useForm({
@@ -142,13 +144,14 @@ const DetailsReview = ({
 	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 
 	useEffect(() => {
-		details.forEach((item) => {
-			if (allowedKeys.includes(item.label) && item.value !== 'NONE')
-				fieldsCanEdit.push({
-					id: item.label,
-					type: 'key',
-				});
-		});
+		editable &&
+			details.forEach((item) => {
+				if (allowedKeys.includes(item.label) && item.value !== 'NONE')
+					fieldsCanEdit.push({
+						id: item.label,
+						type: 'key',
+					});
+			});
 	}, [details]);
 
 	const handleEditMode = () => {
@@ -270,10 +273,24 @@ const DetailsReview = ({
 						{title}
 					</Text>
 				)}
-				{editMode ? (
-					<Icon fontSize={16} name='X' onClick={handleEditMode} _hover={{ cursor: 'pointer' }} />
-				) : (
-					<Icon fontSize={16} name='Pen' onClick={handleEditMode} _hover={{ cursor: 'pointer' }} />
+				{editable && (
+					<>
+						{editMode ? (
+							<Icon
+								fontSize={16}
+								name='X'
+								onClick={handleEditMode}
+								_hover={{ cursor: 'pointer' }}
+							/>
+						) : (
+							<Icon
+								fontSize={16}
+								name='Pen'
+								onClick={handleEditMode}
+								_hover={{ cursor: 'pointer' }}
+							/>
+						)}
+					</>
 				)}
 			</Flex>
 			<Box>

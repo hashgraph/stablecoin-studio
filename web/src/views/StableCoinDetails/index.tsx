@@ -217,6 +217,7 @@ const StableCoinDetails = () => {
 							details={details}
 							getStableCoinDetails={getStableCoinDetails}
 							isLoading={isLoading}
+							editable
 						/>
 					</Box>
 				</Flex>
