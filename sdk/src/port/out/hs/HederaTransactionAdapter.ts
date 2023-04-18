@@ -868,7 +868,6 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		feeScheduleKey: PublicKey | undefined,
 		pauseKey: PublicKey | undefined,
 		wipeKey: PublicKey | undefined,
-		supplyKey: PublicKey | undefined,
 	): Promise<TransactionResponse<any, Error>> {
 		const params = new Params({
 			name: name,
@@ -880,7 +879,6 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			feeScheduleKey: feeScheduleKey,
 			pauseKey: pauseKey,
 			wipeKey: wipeKey,
-			supplyKey: supplyKey,
 		});
 		if (!coin.coin.tokenId)
 			throw new Error(

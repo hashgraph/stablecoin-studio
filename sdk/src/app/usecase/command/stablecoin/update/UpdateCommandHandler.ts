@@ -49,7 +49,6 @@ export class UpdateCommandHandler implements ICommandHandler<UpdateCommand> {
 			feeScheduleKey,
 			pauseKey,
 			wipeKey,
-			supplyKey,
 		} = command;
 
 		const account = this.accountService.getCurrentAccount();
@@ -70,7 +69,6 @@ export class UpdateCommandHandler implements ICommandHandler<UpdateCommand> {
 			feeScheduleKey,
 			pauseKey,
 			wipeKey,
-			supplyKey,
 		);
 
 		return Promise.resolve(

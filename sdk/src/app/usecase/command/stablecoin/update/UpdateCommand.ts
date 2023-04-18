@@ -39,7 +39,6 @@ export class UpdateCommand extends Command<UpdateCommandResponse> {
 		public readonly feeScheduleKey?: PublicKey,
 		public readonly pauseKey?: PublicKey,
 		public readonly wipeKey?: PublicKey,
-		public readonly supplyKey?: PublicKey,
 	) {
 		super();
 	}

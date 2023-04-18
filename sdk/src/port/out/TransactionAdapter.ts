@@ -355,7 +355,6 @@ export default abstract class TransactionAdapter
 		feeScheduleKey: PublicKey | undefined,
 		pauseKey: PublicKey | undefined,
 		wipeKey: PublicKey | undefined,
-		supplyKey: PublicKey | undefined,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
