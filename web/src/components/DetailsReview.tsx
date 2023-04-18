@@ -142,7 +142,6 @@ const DetailsReview = ({
 	});
 	const [editMode, setEditMode] = useBoolean(false);
 	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
-
 	useEffect(() => {
 		editable &&
 			details.forEach((item) => {
@@ -221,7 +220,6 @@ const DetailsReview = ({
 			autoRenewPeriod: daysToSeconds(values['autorenew period']),
 			expirationTimestamp: Date.parse(values['expiration time']) * 1000000 + '',
 		};
-
 		if (values['freeze key']) {
 			request.freezeKey = formatKey(
 				values['freeze key'].label,
@@ -238,10 +236,10 @@ const DetailsReview = ({
 			request.pauseKey = formatKey(values['pause key'].label, 'pause key', accountInfo, getValues);
 		}
 		if (values['kyc key']) {
-			request.pauseKey = formatKey(values['kyc key'].label, 'kyc key', accountInfo, getValues);
+			request.kycKey = formatKey(values['kyc key'].label, 'kyc key', accountInfo, getValues);
 		}
 		if (values['fee schedule key']) {
-			request.pauseKey = formatKey(
+			request.feeScheduleKey = formatKey(
 				values['fee schedule key'].label,
 				'fee schedule key',
 				accountInfo,

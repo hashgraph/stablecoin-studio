@@ -29,11 +29,7 @@ const optionsKeys = (t: (key: string) => string) => [
 	{
 		value: 3,
 		label: t('stableCoinCreation:managementPermissions.otherKey'),
-	},
-	{
-		value: 4,
-		label: t('stableCoinCreation:managementPermissions.none'),
-	},
+	}
 ];
 
 const selectorStyle = {
@@ -77,9 +73,8 @@ export const KeySelector = ({ control, name, label, labelPlaceholder }: KeySelec
 	});
 
 	const availableOptions = () => {
-		if (name === 'feeScheduleKey')
-			return optionsKeys(t).filter((option) => ![2, 4].includes(option.value));
-		if (name === 'kycKey') return optionsKeys(t).filter((option) => option.value !== 4);
+		if (name === 'fee schedule key')
+			return optionsKeys(t).filter((option) => ![2].includes(option.value));
 
 		return optionsKeys(t);
 	};

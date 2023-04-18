@@ -158,7 +158,7 @@ const StableCoinDetails = () => {
 			hashScanURL: getKeyUrlHashscan({ key: selectedStableCoin?.wipeKey as any }),
 			copyButton: selectedStableCoin?.wipeKey !== undefined,
 		},
-		{
+		{			
 			label: t('supplyKey'),
 			value: getLabelFromKey({
 				key: selectedStableCoin?.supplyKey as any,
