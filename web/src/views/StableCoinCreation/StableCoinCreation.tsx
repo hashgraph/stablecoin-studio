@@ -91,7 +91,7 @@ const StableCoinCreation = () => {
 		{
 			number: '01',
 			title: t('tabs.basicDetails'),
-			children: <BasicDetails control={control} request={request} />,
+			children: <BasicDetails control={control} request={request} setValue={setValue} />,
 		},
 		{
 			number: '02',

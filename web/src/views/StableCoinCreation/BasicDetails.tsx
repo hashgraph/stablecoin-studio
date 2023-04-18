@@ -1,9 +1,10 @@
 import { Heading, Stack, VStack } from '@chakra-ui/react';
-import type { Control, FieldValues } from 'react-hook-form';
+import type { Control, FieldValues, UseFormSetValue } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import InputController from '../../components/Form/InputController';
 import { useSelector } from 'react-redux';
-import { CreateRequest, Network, GetERC20ListRequest } from 'hedera-stable-coin-sdk';
+import type { CreateRequest } from 'hedera-stable-coin-sdk';
+import { Network, GetERC20ListRequest } from 'hedera-stable-coin-sdk';
 import { SELECTED_WALLET_PAIRED } from '../../store/slices/walletSlice';
 import { handleRequestValidation } from '../../utils/validationsHelper';
 import { propertyNotFound } from '../../constant';
@@ -15,10 +16,11 @@ import SelectCreatableController from '../../components/Form/SelectCreatableCont
 interface BasicDetailsProps {
 	control: Control<FieldValues>;
 	request: CreateRequest;
+	setValue: UseFormSetValue<FieldValues>;
 }
 
 const BasicDetails = (props: BasicDetailsProps) => {
-	const { control } = props;
+	const { control, setValue } = props;
 	const { t } = useTranslation(['global', 'stableCoinCreation']);
 	const pairingData = useSelector(SELECTED_WALLET_PAIRED);
 	const [optionshederaERC20Addresses, setOptionsHederaERC20Addresses] = useState<Option[]>([]);
@@ -48,6 +50,7 @@ const BasicDetails = (props: BasicDetailsProps) => {
 			});
 
 			setOptionsHederaERC20Addresses(AllOptions.reverse());
+			setValue('hederaERC20Id', AllOptions[0]);
 		};
 		optionsHederaERC20().catch(console.error);
 	}, []);
