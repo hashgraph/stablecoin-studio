@@ -153,6 +153,8 @@ const CoinDropdown = () => {
 
 	const handleSelectCoin = async (event: any) => {
 		if (!event?.value) return;
+		dispatch(walletActions.setSelectingStableCoin(true));
+
 		const selectedCoin = event.value;
 		const stableCoinDetails = await SDKService.getStableCoinDetails(
 			new GetStableCoinDetailsRequest({
@@ -169,6 +171,8 @@ const CoinDropdown = () => {
 		dispatch(walletActions.setDeletedToken(undefined));
 		dispatch(walletActions.setPausedToken(undefined));
 		dispatch(walletActions.setRoles(roles));
+
+		dispatch(walletActions.setSelectingStableCoin(false));
 
 		dispatch(
 			walletActions.setSelectedStableCoin({
