@@ -155,57 +155,63 @@ const CoinDropdown = () => {
 		if (!event?.value) return;
 		dispatch(walletActions.setSelectingStableCoin(true));
 
-		const selectedCoin = event.value;
-		const stableCoinDetails = await SDKService.getStableCoinDetails(
-			new GetStableCoinDetailsRequest({
-				id: selectedCoin,
-			}),
-		);
+		try {
+			const selectedCoin = event.value;
+			const stableCoinDetails = await SDKService.getStableCoinDetails(
+				new GetStableCoinDetailsRequest({
+					id: selectedCoin,
+				}),
+			);
 
-		const roles = await SDKService.getRoles(
-			new GetRolesRequest({
-				targetId: accountInfo && accountInfo.id ? accountInfo?.id : '',
-				tokenId: stableCoinDetails.tokenId!.toString(),
-			}),
-		);
-		dispatch(walletActions.setDeletedToken(undefined));
-		dispatch(walletActions.setPausedToken(undefined));
-		dispatch(walletActions.setRoles(roles));
+			const roles = await SDKService.getRoles(
+				new GetRolesRequest({
+					targetId: accountInfo && accountInfo.id ? accountInfo?.id : '',
+					tokenId: stableCoinDetails.tokenId!.toString(),
+				}),
+			);
+			dispatch(walletActions.setDeletedToken(undefined));
+			dispatch(walletActions.setPausedToken(undefined));
+			dispatch(walletActions.setRoles(roles));
 
-		dispatch(walletActions.setSelectingStableCoin(false));
+			dispatch(walletActions.setSelectingStableCoin(false));
 
-		dispatch(
-			walletActions.setSelectedStableCoin({
-				tokenId: stableCoinDetails?.tokenId,
-				initialSupply: stableCoinDetails?.initialSupply,
-				totalSupply: stableCoinDetails?.totalSupply,
-				maxSupply: stableCoinDetails?.maxSupply,
-				name: stableCoinDetails?.name,
-				symbol: stableCoinDetails?.symbol,
-				decimals: stableCoinDetails?.decimals,
-				treasury: stableCoinDetails?.treasury,
-				autoRenewAccount: stableCoinDetails?.autoRenewAccount,
-				proxyAddress: stableCoinDetails?.proxyAddress,
-				paused: stableCoinDetails?.paused,
-				deleted: stableCoinDetails?.deleted,
-				adminKey:
-					stableCoinDetails?.adminKey && JSON.parse(JSON.stringify(stableCoinDetails.adminKey)),
-				kycKey: stableCoinDetails?.kycKey && JSON.parse(JSON.stringify(stableCoinDetails.kycKey)),
-				freezeKey:
-					stableCoinDetails?.freezeKey && JSON.parse(JSON.stringify(stableCoinDetails.freezeKey)),
-				wipeKey:
-					stableCoinDetails?.wipeKey && JSON.parse(JSON.stringify(stableCoinDetails.wipeKey)),
-				supplyKey:
-					stableCoinDetails?.supplyKey && JSON.parse(JSON.stringify(stableCoinDetails.supplyKey)),
-				pauseKey:
-					stableCoinDetails?.pauseKey && JSON.parse(JSON.stringify(stableCoinDetails.pauseKey)),
-				feeScheduleKey:
-					stableCoinDetails?.feeScheduleKey &&
-					JSON.parse(JSON.stringify(stableCoinDetails.feeScheduleKey)),
-				customFees:
-					stableCoinDetails?.customFees && JSON.parse(JSON.stringify(stableCoinDetails.customFees)),
-			}),
-		);
+			dispatch(
+				walletActions.setSelectedStableCoin({
+					tokenId: stableCoinDetails?.tokenId,
+					initialSupply: stableCoinDetails?.initialSupply,
+					totalSupply: stableCoinDetails?.totalSupply,
+					maxSupply: stableCoinDetails?.maxSupply,
+					name: stableCoinDetails?.name,
+					symbol: stableCoinDetails?.symbol,
+					decimals: stableCoinDetails?.decimals,
+					treasury: stableCoinDetails?.treasury,
+					autoRenewAccount: stableCoinDetails?.autoRenewAccount,
+					proxyAddress: stableCoinDetails?.proxyAddress,
+					paused: stableCoinDetails?.paused,
+					deleted: stableCoinDetails?.deleted,
+					adminKey:
+						stableCoinDetails?.adminKey && JSON.parse(JSON.stringify(stableCoinDetails.adminKey)),
+					kycKey: stableCoinDetails?.kycKey && JSON.parse(JSON.stringify(stableCoinDetails.kycKey)),
+					freezeKey:
+						stableCoinDetails?.freezeKey && JSON.parse(JSON.stringify(stableCoinDetails.freezeKey)),
+					wipeKey:
+						stableCoinDetails?.wipeKey && JSON.parse(JSON.stringify(stableCoinDetails.wipeKey)),
+					supplyKey:
+						stableCoinDetails?.supplyKey && JSON.parse(JSON.stringify(stableCoinDetails.supplyKey)),
+					pauseKey:
+						stableCoinDetails?.pauseKey && JSON.parse(JSON.stringify(stableCoinDetails.pauseKey)),
+					feeScheduleKey:
+						stableCoinDetails?.feeScheduleKey &&
+						JSON.parse(JSON.stringify(stableCoinDetails.feeScheduleKey)),
+					customFees:
+						stableCoinDetails?.customFees &&
+						JSON.parse(JSON.stringify(stableCoinDetails.customFees)),
+				}),
+			);
+		} catch (e) {
+			dispatch(walletActions.setSelectingStableCoin(false));
+			throw e;
+		}
 	};
 
 	const handleImportToken = async (inputValue: string) => {
