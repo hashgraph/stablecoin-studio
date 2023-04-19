@@ -1145,10 +1145,6 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					coin.coin.tokenId?.value!,
 					params.customFees!,
 				);
-				console.log(
-					'customFees: ' + JSON.stringify(params.customFees![0]),
-				);
-				console.log('tx: ' + JSON.stringify(t));
 				break;
 
 			case Operation.TRANSFERS:
