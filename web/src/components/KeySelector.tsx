@@ -29,7 +29,7 @@ const optionsKeys = (t: (key: string) => string) => [
 	{
 		value: 3,
 		label: t('stableCoinCreation:managementPermissions.otherKey'),
-	}
+	},
 ];
 
 const selectorStyle = {

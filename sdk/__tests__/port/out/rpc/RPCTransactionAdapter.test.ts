@@ -33,7 +33,10 @@ import Injectable from '../../../../src/core/Injectable.js';
 import { MirrorNodeAdapter } from '../../../../src/port/out/mirror/MirrorNodeAdapter.js';
 import PublicKey from '../../../../src/domain/context/account/PublicKey.js';
 import ContractId from '../../../../src/domain/context/contract/ContractId.js';
-import { TokenSupplyType } from '../../../../src/port/in/StableCoin.js';
+import {
+	StableCoinViewModel,
+	TokenSupplyType,
+} from '../../../../src/port/in/StableCoin.js';
 import {
 	CLIENT_ACCOUNT_ECDSA,
 	FACTORY_ADDRESS,
@@ -556,8 +559,69 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 		);
 	}, 1500000);
 
+	it('Test update name, symbol, autorenew account, autorenew period, expiration time and token keys through Smart Contract', async () => {
+		const expirationTime: number = oneYearLaterInSeconds();
+		tr = await th.update(
+			stableCoinCapabilitiesSC,
+			'newName',
+			'newSymbol',
+			secondsToDays(45),
+			expirationTime,
+			undefined,
+			CLIENT_ACCOUNT_ECDSA.publicKey,
+			undefined,
+			CLIENT_ACCOUNT_ECDSA.publicKey,
+			CLIENT_ACCOUNT_ECDSA.publicKey,
+			CLIENT_ACCOUNT_ECDSA.publicKey,
+		);
+		const mirrorNodeAdapter: MirrorNodeAdapter = th.getMirrorNodeAdapter();
+		await delay(5);
+		const stableCoinViewModel: StableCoinViewModel =
+			await mirrorNodeAdapter.getStableCoin(
+				stableCoinCapabilitiesSC.coin.tokenId!,
+			);
+		expect(stableCoinViewModel.name).toEqual('newName');
+		expect(stableCoinViewModel.symbol).toEqual('newSymbol');
+		expect(stableCoinViewModel.autoRenewAccount?.value).toEqual(
+			CLIENT_ACCOUNT_ECDSA.id.value,
+		);
+		expect(stableCoinViewModel.autoRenewPeriod).toEqual(45);
+		expect(stableCoinViewModel.expirationTimestamp).toEqual(
+			secondsToNano(expirationTime),
+		);
+		expect(stableCoinViewModel.kycKey).toBeUndefined();
+		expect(stableCoinViewModel.freezeKey).toEqual(
+			CLIENT_ACCOUNT_ECDSA.publicKey,
+		);
+		expect(stableCoinViewModel.feeScheduleKey).toBeUndefined();
+		expect(stableCoinViewModel.pauseKey).toEqual(
+			CLIENT_ACCOUNT_ECDSA.publicKey,
+		);
+		expect(stableCoinViewModel.wipeKey).toEqual(
+			CLIENT_ACCOUNT_ECDSA.publicKey,
+		);
+		expect(stableCoinViewModel.supplyKey).toEqual(
+			CLIENT_ACCOUNT_ECDSA.publicKey,
+		);
+	}, 20000);
+
 	afterEach(async () => {
 		expect(tr).not.toBeNull();
 		expect(tr.error).toEqual(undefined);
 	});
 });
+
+function oneYearLaterInSeconds(): number {
+	const currentDate: Date = new Date();
+	return Math.floor(
+		currentDate.setFullYear(currentDate.getFullYear() + 1) / 1000,
+	);
+}
+
+function secondsToDays(seconds: number): number {
+	return seconds * 60 * 60 * 24;
+}
+
+function secondsToNano(seconds: number): number {
+	return seconds * 1000000000;
+}
