@@ -525,13 +525,12 @@ const FeesManagement = () => {
 														},
 														checkTokenID: async (option: any) => {
 															if (!option.__isNew__) return true;
-															const load = isLoading;
-															load[i] = true;
 
-															console.log(load);
-
-															setIsLoading(load);
-															console.log('loading', isLoading);
+															setIsLoading((prevState) => {
+																return prevState.map((loading, index) =>
+																	index === i ? !loading : loading,
+																);
+															});
 
 															try {
 																await SDKService.getStableCoinDetails(
@@ -544,8 +543,11 @@ const FeesManagement = () => {
 																	tokenId: option.value,
 																}) as string;
 															} finally {
-																load[i] = false;
-																setIsLoading(load);
+																setIsLoading((prevState) => {
+																	return prevState.map((loading, index) =>
+																		index === i ? !loading : loading,
+																	);
+																});
 															}
 														},
 													},
