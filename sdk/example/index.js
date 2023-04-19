@@ -1,4 +1,4 @@
-import HederaStableCoinSDK from 'hedera-stable-coin-sdk';
+import HederaStableCoinSDK from '@hashgraph-dev/stablecoin-npm-sdk';
 
 const main = async () => {
 	console.log(JSON.stringify(HederaStableCoinSDK));

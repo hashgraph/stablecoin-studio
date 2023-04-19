@@ -41,7 +41,7 @@ The command below can be used to install the official release from the NPM repos
 
 ```bash
 TO CHECK!!!
-npm install -g @hashgraph/hedera-stable-coin-cli
+npm install -g @hashgraph/@hashgraph-dev/stablecoin-npm-cli
 ```
 
 Once installed globally you can use the `accelerator wizard` command to run the CLI.

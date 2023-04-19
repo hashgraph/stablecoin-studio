@@ -1,10 +1,10 @@
 import { Heading, Text, CheckboxGroup, Grid, useDisclosure, Flex, Button } from '@chakra-ui/react';
-import type { StableCoinRole } from 'hedera-stable-coin-sdk';
+import type { StableCoinRole } from '@hashgraph-dev/stablecoin-npm-sdk';
 import {
 	GetRolesRequest,
 	RevokeMultiRolesRequest,
 	RevokeRoleRequest,
-} from 'hedera-stable-coin-sdk';
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';

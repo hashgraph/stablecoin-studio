@@ -9,7 +9,7 @@ import {
 	Image,
 	Link,
 } from '@chakra-ui/react';
-import { Network } from 'hedera-stable-coin-sdk';
+import { Network } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
