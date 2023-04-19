@@ -34,6 +34,7 @@ import LogService from '../../../../app/service/LogService.js';
 
 export class HashpackTransactionResponseAdapter extends TransactionResponseAdapter {
 	public static async manageResponse(
+		network: string,
 		signer: Signer,
 		transactionResponse:
 			| MessageTypes.TransactionResponse
@@ -50,7 +51,7 @@ export class HashpackTransactionResponseAdapter extends TransactionResponseAdapt
 			nameFunction,
 		);
 		if (responseType === TransactionType.RECEIPT) {
-			await this.getReceipt(signer, transactionResponse);
+			await this.getReceipt(network, signer, transactionResponse);
 			let transId;
 			if (transactionResponse instanceof HTransactionResponse) {
 				transId = JSON.parse(
@@ -70,7 +71,11 @@ export class HashpackTransactionResponseAdapter extends TransactionResponseAdapt
 			const transactionRecord:
 				| TransactionRecord
 				| Uint32Array
-				| undefined = await this.getRecord(signer, transactionResponse);
+				| undefined = await this.getRecord(
+				network,
+				signer,
+				transactionResponse,
+			);
 			let record: Uint8Array | Uint32Array | undefined;
 			if (nameFunction) {
 				if (transactionRecord instanceof TransactionRecord) {
@@ -81,8 +86,14 @@ export class HashpackTransactionResponseAdapter extends TransactionResponseAdapt
 				if (!record)
 					throw new TransactionResponseError({
 						message: 'Invalid response type',
+						network: network,
 					});
-				results = this.decodeFunctionResult(nameFunction, record, abi);
+				results = this.decodeFunctionResult(
+					nameFunction,
+					record,
+					abi,
+					network,
+				);
 			}
 			const transactionId =
 				transactionResponse instanceof HTransactionResponse
@@ -103,9 +114,11 @@ export class HashpackTransactionResponseAdapter extends TransactionResponseAdapt
 
 		throw new TransactionResponseError({
 			message: 'The response type is neither RECORD nor RECEIPT.',
+			network: network,
 		});
 	}
 	private static async getHashconnectTransactionReceipt(
+		network: string,
 		transactionResponse: MessageTypes.TransactionResponse,
 	): Promise<TransactionReceipt> {
 		try {
@@ -126,11 +139,13 @@ export class HashpackTransactionResponseAdapter extends TransactionResponseAdapt
 						name: res.name,
 						status: res.status,
 						transactionId: res.transactionId,
+						network: network,
 					});
 				} else {
 					throw new TransactionResponseError({
 						transactionId: transactionResponse.id,
 						message: transactionResponse.id ?? '',
+						network: network,
 					});
 				}
 			}
@@ -143,6 +158,7 @@ export class HashpackTransactionResponseAdapter extends TransactionResponseAdapt
 					name: res.name,
 					status: res.status,
 					transactionId: res.transactionId,
+					network: network,
 				});
 			}
 		} catch (error) {
@@ -153,11 +169,13 @@ export class HashpackTransactionResponseAdapter extends TransactionResponseAdapt
 				name: res.name,
 				status: res.status,
 				transactionId: res.transactionId,
+				network: network,
 			});
 		}
 	}
 
 	private static async getReceipt(
+		network: string,
 		signer: Signer,
 		transactionResponse:
 			| MessageTypes.TransactionResponse
@@ -170,6 +188,7 @@ export class HashpackTransactionResponseAdapter extends TransactionResponseAdapt
 			);
 		} else {
 			transactionReceipt = await this.getHashconnectTransactionReceipt(
+				network,
 				transactionResponse,
 			);
 		}
@@ -177,6 +196,7 @@ export class HashpackTransactionResponseAdapter extends TransactionResponseAdapt
 	}
 
 	private static async getRecord(
+		network: string,
 		signer: Signer,
 		transactionResponse:
 			| MessageTypes.TransactionResponse
@@ -194,6 +214,7 @@ export class HashpackTransactionResponseAdapter extends TransactionResponseAdapt
 				transactionError = {
 					transactionId: transactionResponse.transactionId.toString(),
 					message: transactionResponse.transactionHash.toString(),
+					network: network,
 				};
 			} else {
 				if (transactionResponse.error) {
@@ -203,14 +224,19 @@ export class HashpackTransactionResponseAdapter extends TransactionResponseAdapt
 						name: res.name,
 						status: res.status,
 						transactionId: res.transactionId,
+						network: network,
 					};
 				} else if (transactionResponse.id) {
 					transactionError = {
 						message: transactionResponse.id,
 						transactionId: transactionResponse.id,
+						network: network,
 					};
 				} else {
-					transactionError = { message: transactionResponse.topic };
+					transactionError = {
+						message: transactionResponse.topic,
+						network: network,
+					};
 				}
 			}
 
@@ -222,6 +248,7 @@ export class HashpackTransactionResponseAdapter extends TransactionResponseAdapt
 				LogService.logError(err);
 				throw new TransactionResponseError({
 					message: `Could not determine response type for: ${record}`,
+					network: network,
 				});
 			}
 		}

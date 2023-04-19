@@ -18,17 +18,15 @@
  *
  */
 
-import ValidatedRequest from './validation/ValidatedRequest.js';
-import Validation from './validation/Validation.js';
-import Configuration from '../../../domain/context/network/Configuration.js';
+import BaseError, { ErrorCode } from '../../../../core/error/BaseError.js';
 
-export default class SetConfigurationRequest extends ValidatedRequest<SetConfigurationRequest> {
-	factoryAddress: string;
-
-	constructor(props: Configuration) {
-		super({
-			factoryAddress: Validation.checkContractId(),
-		});
-		this.factoryAddress = props.factoryAddress;
+export default class InvalidAutoRenewPeriod extends BaseError {
+	constructor(val: number | string, min: number, max?: number) {
+		super(
+			ErrorCode.InvalidRange,
+			`Invalid Auto Renew Period ${val}, outside range ${
+				max !== undefined ? `[${min}, ${max}]` : min
+			}`,
+		);
 	}
 }

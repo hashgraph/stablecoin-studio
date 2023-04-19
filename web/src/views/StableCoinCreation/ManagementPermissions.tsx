@@ -1,4 +1,3 @@
-import type { CreateRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
 import {
 	Box,
 	Heading,
@@ -11,7 +10,9 @@ import {
 	AccordionIcon,
 	AccordionPanel,
 } from '@chakra-ui/react';
+import { CreateRequest, SupportedWallets } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import type { Control, FieldValues, UseFormSetValue, UseFormWatch } from 'react-hook-form';
 import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -21,6 +22,7 @@ import KeySelector from './components/KeySelector';
 import RoleSelector from './components/RoleSelector';
 import { handleRequestValidation, validateDecimalsString } from '../../utils/validationsHelper';
 import { propertyNotFound } from '../../constant';
+import { SELECTED_WALLET } from '../../store/slices/walletSlice';
 
 interface ManagementPermissionsProps {
 	control: Control<FieldValues>;
@@ -36,6 +38,8 @@ const ManagementPermissions = ({
 	setValue,
 }: ManagementPermissionsProps) => {
 	const { t } = useTranslation(['global', 'stableCoinCreation']);
+
+	const wallet = useSelector(SELECTED_WALLET);
 
 	const decimals = useWatch({
 		control,
@@ -70,14 +74,6 @@ const ManagementPermissions = ({
 
 	const keys = [
 		{
-			name: 'adminKey',
-			nameTranslate: t('stableCoinCreation:managementPermissions.admin'),
-		},
-		{
-			name: 'supplyKey',
-			nameTranslate: t('stableCoinCreation:managementPermissions.supply'),
-		},
-		{
 			name: 'wipeKey',
 			nameTranslate: t('stableCoinCreation:managementPermissions.wipe'),
 		},
@@ -102,7 +98,7 @@ const ManagementPermissions = ({
 	};
 
 	return (
-		<Box>
+		<Box pt='80px'>
 			<Stack minW={400}>
 				<Heading
 					data-testid='title'
@@ -189,7 +185,7 @@ const ManagementPermissions = ({
 					)}
 					{isKycRequired === true &&
 						watch('kycKey')?.value === 2 &&
-						watch('supplyKey')?.value !== 1 && (
+						wallet.lastWallet === SupportedWallets.HASHPACK && (
 							<Stack minW={400}>
 								<HStack mb={4} justifyContent='space-between'>
 									<Text maxW={'252px'} fontSize='14px' fontWeight='400' lineHeight='17px'>
@@ -204,14 +200,13 @@ const ManagementPermissions = ({
 								</HStack>
 							</Stack>
 						)}
-
 					<HStack mb={4} justifyContent='space-between'>
 						<Text maxW={'252px'} fontSize='14px' fontWeight='400' lineHeight='17px'>
 							{t('stableCoinCreation:managementPermissions.manageCustomFees')}
 						</Text>
-						<SwitchController control={control} name={'manageCustomFees'} defaultValue={true} />
+						<SwitchController control={control} name={'manageCustomFees'} defaultValue={false} />
 					</HStack>
-					{isManageCustomFees !== false && (
+					{isManageCustomFees === true && (
 						<KeySelector
 							key={feeScheduleKey.name}
 							control={control}
@@ -232,69 +227,66 @@ const ManagementPermissions = ({
 							<AccordionIcon />
 						</AccordionButton>
 						<AccordionPanel pb={4} marginBottom='106px'>
-							{(isManagementPermissions !== false || watch('supplyKey')?.value === 2) && (
-								<Box data-testid='supplier-quantity'>
-									<RoleSelector
-										key={'cashinRole'}
-										control={control}
-										name={'cashInRoleAccount'}
-										label={t('stableCoinCreation:managementPermissions.cashin')}
-										request={request}
-									/>
-									{cashInRoleAccount && cashInRoleAccount.value !== 3 && (
-										<HStack mt='20px'>
-											<Text mr='10px'>
-												{t('stableCoinCreation:managementPermissions.cashInAllowanceType')}
-											</Text>
-											<SwitchController control={control} name={'cashInAllowanceType'} />
-										</HStack>
-									)}
-									{infinity === false && cashInRoleAccount && cashInRoleAccount.value !== 3 && (
-										<Box mt='20px'>
-											<InputController
-												data-testid='input-supplier-quantity'
-												rules={{
-													required: t(`global:validations.required`) ?? propertyNotFound,
-													validate: {
-														validDecimals: (value: string) => {
-															return (
-																validateDecimalsString(value, decimals) ||
-																(t('global:validations.decimalsValidation') ?? propertyNotFound)
-															);
-														},
-														validation: (value: string) => {
-															if (request && 'cashInRoleAllowance' in request) {
-																request.cashInRoleAllowance = value;
-																const res = handleRequestValidation(
-																	request.validate('cashInRoleAllowance'),
-																);
-																return res;
-															}
-														},
-													},
-												}}
-												isRequired
-												control={control}
-												name={'cashInAllowance'}
-												placeholder={
-													t(
-														'stableCoinCreation:managementPermissions.cashInAllowanceInputPlaceholder',
-													) ?? propertyNotFound
-												}
-											/>
-										</Box>
-									)}
-								</Box>
-							)}
-							{(isManagementPermissions !== false || watch('supplyKey')?.value === 2) && (
+							<Box data-testid='supplier-quantity'>
 								<RoleSelector
-									key={'burnRole'}
+									key={'cashinRole'}
 									control={control}
-									name={'burnRoleAccount'}
-									label={t('stableCoinCreation:managementPermissions.burn')}
+									name={'cashInRoleAccount'}
+									label={t('stableCoinCreation:managementPermissions.cashin')}
 									request={request}
 								/>
-							)}
+								{cashInRoleAccount && cashInRoleAccount.value !== 3 && (
+									<HStack mt='20px'>
+										<Text mr='10px'>
+											{t('stableCoinCreation:managementPermissions.cashInAllowanceType')}
+										</Text>
+										<SwitchController control={control} name={'cashInAllowanceType'} />
+									</HStack>
+								)}
+								{infinity === false && cashInRoleAccount && cashInRoleAccount.value !== 3 && (
+									<Box mt='20px'>
+										<InputController
+											data-testid='input-supplier-quantity'
+											rules={{
+												required: t(`global:validations.required`) ?? propertyNotFound,
+												validate: {
+													validDecimals: (value: string) => {
+														return (
+															validateDecimalsString(value, decimals) ||
+															(t('global:validations.decimalsValidation') ?? propertyNotFound)
+														);
+													},
+													validation: (value: string) => {
+														if (request && 'cashInRoleAllowance' in request) {
+															request.cashInRoleAllowance = value;
+															const res = handleRequestValidation(
+																request.validate('cashInRoleAllowance'),
+															);
+															return res;
+														}
+													},
+												},
+											}}
+											isRequired
+											control={control}
+											name={'cashInAllowance'}
+											placeholder={
+												t(
+													'stableCoinCreation:managementPermissions.cashInAllowanceInputPlaceholder',
+												) ?? propertyNotFound
+											}
+										/>
+									</Box>
+								)}
+							</Box>
+
+							<RoleSelector
+								key={'burnRole'}
+								control={control}
+								name={'burnRoleAccount'}
+								label={t('stableCoinCreation:managementPermissions.burn')}
+								request={request}
+							/>
 							{(isManagementPermissions !== false || watch('wipeKey')?.value === 2) && (
 								<RoleSelector
 									key={'wipeRole'}
@@ -329,15 +321,13 @@ const ManagementPermissions = ({
 									request={request}
 								/>
 							)}
-							{(isManagementPermissions !== false || watch('adminKey')?.value === 2) && (
-								<RoleSelector
-									key={'deleteRole'}
-									control={control}
-									name={'deleteRoleAccount'}
-									label={t('stableCoinCreation:managementPermissions.delete')}
-									request={request}
-								/>
-							)}
+							<RoleSelector
+								key={'deleteRole'}
+								control={control}
+								name={'deleteRoleAccount'}
+								label={t('stableCoinCreation:managementPermissions.delete')}
+								request={request}
+							/>
 							{isKycRequired === true && watch('kycKey')?.value === 2 && (
 								<RoleSelector
 									key={'kycRole'}

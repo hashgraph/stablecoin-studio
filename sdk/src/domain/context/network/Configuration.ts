@@ -19,6 +19,5 @@
  */
 
 export default interface Configuration {
-	hederaERC20Address: string;
 	factoryAddress: string;
 }

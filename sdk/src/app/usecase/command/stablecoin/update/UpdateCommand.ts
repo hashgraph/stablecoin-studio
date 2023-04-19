@@ -30,12 +30,15 @@ export class UpdateCommandResponse implements CommandResponse {
 export class UpdateCommand extends Command<UpdateCommandResponse> {
 	constructor(
 		public readonly tokenId: HederaId,
+		public readonly name?: string,
+		public readonly symbol?: string,
+		public readonly autoRenewPeriod?: number,
+		public readonly expirationTime?: number,
 		public readonly kycKey?: PublicKey,
 		public readonly freezeKey?: PublicKey,
 		public readonly feeScheduleKey?: PublicKey,
 		public readonly pauseKey?: PublicKey,
 		public readonly wipeKey?: PublicKey,
-		public readonly supplyKey?: PublicKey,
 	) {
 		super();
 	}

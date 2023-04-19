@@ -91,6 +91,7 @@
   },
   "dependencies": {
     "@hashgraph/sdk": "^2.20.0",
+    "@hashgraph/cryptography": "1.4.3",
     "buffer": "^6.0.3",
     "crypto-es": "^1.2.7",
     "crypto-js": "^4.1.1",

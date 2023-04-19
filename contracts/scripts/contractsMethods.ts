@@ -135,42 +135,6 @@ export async function getTotalSupply(proxyAddress: ContractId, client: Client) {
     return BigNumber.from(result[0])
 }
 
-export async function associateToken(
-    proxyAddress: ContractId,
-    clientAssociatingToken: Client,
-    accountToAssociateTo: string,
-    isE25519: boolean
-) {
-    const params: string[] = [
-        await toEvmAddress(accountToAssociateTo, isE25519),
-    ]
-    await contractCall(
-        proxyAddress,
-        'associateToken',
-        params,
-        clientAssociatingToken,
-        Gas3,
-        HederaERC20__factory.abi
-    )
-}
-
-export async function dissociateToken(
-    proxyAddress: ContractId,
-    clientDissociatingToken: Client,
-    accountToDissociateFrom: string,
-    isE25519: boolean
-) {
-    const params = [await toEvmAddress(accountToDissociateFrom, isE25519)]
-    await contractCall(
-        proxyAddress,
-        'dissociateToken',
-        params,
-        clientDissociatingToken,
-        Gas3,
-        HederaERC20__factory.abi
-    )
-}
-
 export async function getBalanceOf(
     proxyAddress: ContractId,
     client: Client,
@@ -279,37 +243,26 @@ export async function allowance(
     return BigNumber.from(response[0])
 }
 
-export async function transfer(
+export async function updateToken(
     proxyAddress: ContractId,
-    addressSpender: string,
-    spenderIsE25519: boolean,
-    amount: BigNumber,
-    client: Client
-): Promise<boolean> {
-    const params: string[] = [
-        await toEvmAddress(addressSpender, spenderIsE25519),
-        amount.toString(),
-    ]
-    const response = await contractCall(
-        proxyAddress,
-        'transfer',
-        params,
-        client,
-        Gas1,
-        HederaERC20__factory.abi
-    )
-    return response[0]
-}
-
-export async function updateTokenKeys(
-    proxyAddress: ContractId,
+    name: string,
+    symbol: string,
     keys: any,
+    second: number,
+    autoRenewPeriod: number,
     client: Client
 ): Promise<boolean> {
-    const params = [keys]
+    const updateToken = {
+        tokenName: name,
+        tokenSymbol: symbol,
+        keys: keys,
+        second: second,
+        autoRenewPeriod: autoRenewPeriod,
+    }
+    const params = [updateToken]
     const response = await contractCall(
         proxyAddress,
-        'updateTokenKeys',
+        'updateToken',
         params,
         client,
         Gas1,
@@ -678,12 +631,14 @@ export async function Mint(
     amountOfTokenToMint: BigNumber,
     clientMintingToken: Client,
     clientToAssignTokensTo: string,
-    isE25519: boolean
+    isE25519: boolean,
+    parse = true
 ) {
-    const params: string[] = [
-        await toEvmAddress(clientToAssignTokensTo, isE25519),
-        amountOfTokenToMint.toString(),
-    ]
+    const param_1: string = parse
+        ? await toEvmAddress(clientToAssignTokensTo, isE25519)
+        : clientToAssignTokensTo
+
+    const params: string[] = [param_1, amountOfTokenToMint.toString()]
     const result = await contractCall(
         proxyAddress,
         'mint',

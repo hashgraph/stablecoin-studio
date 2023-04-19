@@ -18,7 +18,6 @@
  *
  */
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import CheckNums from '../../../core/checks/numbers/CheckNums.js';
 import { OptionalField } from '../../../core/decorator/OptionalDecorator.js';
 import Injectable from '../../../core/Injectable.js';
@@ -68,12 +67,6 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 	freezeDefault?: boolean;
 
 	@OptionalField()
-	autoRenewAccount?: string;
-
-	@OptionalField()
-	adminKey?: RequestPublicKey;
-
-	@OptionalField()
 	freezeKey?: RequestPublicKey;
 
 	@OptionalField()
@@ -86,13 +79,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 	pauseKey?: RequestPublicKey;
 
 	@OptionalField()
-	supplyKey?: RequestPublicKey;
-
-	@OptionalField()
 	feeScheduleKey?: RequestPublicKey;
-
-	@OptionalField()
-	treasury?: string | undefined;
 
 	@OptionalField()
 	supplyType?: TokenSupplyType;
@@ -134,14 +121,10 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		initialSupply,
 		maxSupply,
 		freezeDefault,
-		autoRenewAccount,
-		adminKey,
 		freezeKey,
 		kycKey,
 		wipeKey,
 		pauseKey,
-		supplyKey,
-		treasury,
 		supplyType,
 		feeScheduleKey,
 		stableCoinFactory,
@@ -166,15 +149,11 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		initialSupply?: string;
 		maxSupply?: string;
 		freezeDefault?: boolean;
-		autoRenewAccount?: string;
-		adminKey?: RequestPublicKey;
 		freezeKey?: RequestPublicKey;
 		kycKey?: RequestPublicKey;
 		wipeKey?: RequestPublicKey;
 		pauseKey?: RequestPublicKey;
-		supplyKey?: RequestPublicKey;
 		feeScheduleKey?: RequestPublicKey;
-		treasury?: string;
 		supplyType?: TokenSupplyType;
 		stableCoinFactory?: string;
 		hederaERC20?: string;
@@ -262,30 +241,11 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 					this.supplyType,
 				);
 			},
-			autoRenewAccount: (val) => {
-				const err = Validation.checkHederaIdFormat()(val);
-				const handler = Injectable.resolveTransactionHandler();
-				const id = handler.getAccount().id.toString();
-				if (err.length > 0) {
-					return err;
-				} else {
-					if (val !== id) {
-						return [
-							new InvalidValue(
-								`The autorenew account (${val}) should be your current account (${id}).`,
-							),
-						];
-					}
-				}
-			},
-			adminKey: Validation.checkPublicKey(),
 			freezeKey: Validation.checkPublicKey(),
 			kycKey: Validation.checkPublicKey(),
 			wipeKey: Validation.checkPublicKey(),
 			pauseKey: Validation.checkPublicKey(),
-			supplyKey: Validation.checkPublicKey(),
 			feeScheduleKey: Validation.checkPublicKey(),
-			treasury: Validation.checkHederaIdFormat(),
 			stableCoinFactory: Validation.checkContractId(),
 			hederaERC20: Validation.checkContractId(),
 			reserveAddress: Validation.checkContractId(),
@@ -364,15 +324,11 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		this.initialSupply = initialSupply;
 		this.maxSupply = maxSupply;
 		this.freezeDefault = freezeDefault;
-		this.autoRenewAccount = autoRenewAccount;
-		this.adminKey = adminKey;
 		this.freezeKey = freezeKey;
 		this.kycKey = kycKey;
 		this.wipeKey = wipeKey;
 		this.pauseKey = pauseKey;
-		this.supplyKey = supplyKey;
 		this.feeScheduleKey = feeScheduleKey;
-		this.treasury = treasury;
 		this.supplyType = supplyType;
 		this.stableCoinFactory = stableCoinFactory;
 		this.hederaERC20 = hederaERC20;

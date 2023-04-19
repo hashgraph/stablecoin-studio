@@ -5,10 +5,12 @@ import {
 	Role,
 	CapabilitiesRequest,
 	ConnectRequest,
+	SetConfigurationRequest,
 	InitializationRequest,
 	ReserveDataFeed,
 	Fees,
 	Factory,
+	SetNetworkRequest,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 import type {
 	WalletEvent,
@@ -49,6 +51,7 @@ import type {
 	GetERC20ListRequest,
 	RevokeMultiRolesRequest,
 	GrantMultiRolesRequest,
+	AssociateTokenRequest,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 export type StableCoinListRaw = Array<Record<'id' | 'symbol', string>>;
@@ -61,29 +64,57 @@ export class SDKService {
 		return !!this.initData;
 	}
 
-	public static async connectWallet(wallet: SupportedWallets) {
+	public static async connectWallet(wallet: SupportedWallets, connectNetwork: string) {
+		await Network.setNetwork(
+			new SetNetworkRequest({
+				environment: connectNetwork,
+			}),
+		);
+
+		let factories = [];
+
+		if (process.env.REACT_APP_FACTORIES) factories = JSON.parse(process.env.REACT_APP_FACTORIES);
+
+		const _lastFactoryId =
+			factories.length !== 0
+				? factories.find((i: any) => i.Environment === connectNetwork)
+					? factories.find((i: any) => i.Environment === connectNetwork).STABLE_COIN_FACTORY_ADDRESS
+					: ''
+				: '';
+
+		if (_lastFactoryId)
+			await Network.setConfig(
+				new SetConfigurationRequest({
+					factoryAddress: _lastFactoryId,
+				}),
+			);
+
 		this.initData = await Network.connect(
 			new ConnectRequest({
-				network: 'testnet',
+				network: connectNetwork,
 				wallet,
 			}),
 		);
+
 		return this.initData;
 	}
 
-	public static async init(events: Partial<WalletEvent>, lastWallet?: SupportedWallets) {
-		const init = await Network.init(
-			new InitializationRequest({
-				network: 'testnet',
-				events,
-				configuration: {
-					factoryAddress: process.env.REACT_APP_STABLE_COIN_FACTORY_ADDRESS ?? '',
-					hederaERC20Address: process.env.REACT_APP_HEDERA_ERC20_ADDRESS ?? '',
-				},
-			}),
-		);
-		if (lastWallet) await this.connectWallet(lastWallet);
-		return init;
+	public static async init(events: Partial<WalletEvent>) {
+		try {
+			const init = await Network.init(
+				new InitializationRequest({
+					network: 'mainnet',
+					events,
+				}),
+			);
+
+			return init;
+		} catch (e) {
+			console.error('Error initializing the Network : ' + e);
+			window.alert(
+				'There was an error initializing the network, please check your .env file and make sure the configuration is correct',
+			);
+		}
 	}
 
 	public static getWalletData(): InitializationData | undefined {
@@ -237,6 +268,10 @@ export class SDKService {
 
 	public static async isAccountKYCGranted(data: KYCRequest) {
 		return await StableCoin.isAccountKYCGranted(data);
+	}
+
+	public static async associate(data: AssociateTokenRequest) {
+		return await StableCoin.associate(data);
 	}
 
 	public static async addFixedFee(data: AddFixedFeeRequest) {

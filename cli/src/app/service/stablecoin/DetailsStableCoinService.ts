@@ -16,6 +16,19 @@ export default class DetailsStableCoinsService extends Service {
     super('Details Stable Coin');
   }
 
+  private epochTimestampToGMTString(timestamp: number | undefined): string {
+    if (!timestamp) return '';
+    const dateTime: any = timestamp.toString().substring(0, 10);
+    const nanoseconds: any = timestamp.toString().substring(10);
+    const myDate: Date = new Date(dateTime * 1000);
+    const gmtDate: string = myDate.toUTCString();
+    const pos: number = gmtDate.lastIndexOf(' ');
+    return `${gmtDate.substring(0, pos)}.${nanoseconds.substring(
+      0,
+      4,
+    )}${gmtDate.substring(pos, gmtDate.length)}`;
+  }
+
   public async getDetailsStableCoins(
     id: string,
     show = true,
@@ -53,7 +66,13 @@ export default class DetailsStableCoinsService extends Service {
         proxyAddress: respDetail.proxyAddress.toString(),
         evmProxyAddress: respDetail.proxyAddress.toString(),
         treasury: respDetail.treasury.toString(),
+        autoRenewPeriod: respDetail?.autoRenewPeriod
+          ? `${respDetail.autoRenewPeriod / 24 / 3600} days`
+          : '-',
         autoRenewAccount: respDetail.autoRenewAccount.toString(),
+        expirationTimestamp: respDetail?.expirationTimestamp
+          ? this.epochTimestampToGMTString(respDetail.expirationTimestamp)
+          : '-',
         adminKey: respDetail.adminKey ? respDetail.adminKey.toString() : '-',
         freezeKey: respDetail.freezeKey ? respDetail.freezeKey.toString() : '-',
         kycKey: respDetail.kycKey ? respDetail.kycKey.toString() : '-',

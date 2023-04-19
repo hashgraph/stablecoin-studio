@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Stack, useDisclosure } from '@chakra-ui/react';
+import { Stack, HStack, useDisclosure, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -18,14 +18,25 @@ import {
 	getStableCoinList,
 	SELECTED_WALLET_ACCOUNT_INFO,
 	SELECTED_WALLET_PAIRED_ACCOUNT,
+	SELECTED_FACTORY_ID,
+	SELECTED_WALLET,
+	getExternalTokenList,
 } from '../../store/slices/walletSlice';
 import SDKService from '../../services/SDKService';
 import ModalNotification from '../../components/ModalNotification';
-import { Account, CreateRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
+import {
+	Account,
+	AssociateTokenRequest,
+	CreateRequest,
+	KYCRequest,
+	GetStableCoinDetailsRequest,
+	SupportedWallets,
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 import type { RequestPublicKey } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch } from '../../store/store';
 import ProofOfReserve from './ProofOfReserve';
+import { ImportTokenService } from '../../services/ImportTokenService';
 
 const StableCoinCreation = () => {
 	const navigate = useNavigate();
@@ -34,6 +45,8 @@ const StableCoinCreation = () => {
 
 	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
 	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
+	const factoryId = useSelector(SELECTED_FACTORY_ID);
+	const wallet = useSelector(SELECTED_WALLET);
 
 	const form = useForm<FieldValues>({
 		mode: 'onChange',
@@ -66,6 +79,7 @@ const StableCoinCreation = () => {
 	const [success, setSuccess] = useState<boolean>();
 	const [error, setError] = useState<any>();
 	const { isOpen, onOpen, onClose } = useDisclosure();
+	const [token, setToken] = useState<string | null>();
 
 	useEffect(() => {
 		if (getValues()) {
@@ -114,7 +128,7 @@ const StableCoinCreation = () => {
 
 		if (currentStep === 0) {
 			// @ts-ignore
-			fieldsStep = watch(['name', 'symbol', 'autorenewAccount']);
+			fieldsStep = watch(['hederaERC20Id', 'name', 'symbol']);
 		}
 
 		if (currentStep === 1) {
@@ -135,8 +149,7 @@ const StableCoinCreation = () => {
 				const keys = ['adminKey', 'supplyKey', 'wipeKey', 'freezeKey', 'pauseKey', 'kycKey'];
 
 				// @ts-ignore
-				fieldsStep = watch(keys);
-				fieldsStep.forEach((item, index) => {
+				watch(keys).forEach((item, index) => {
 					if (item?.value === OTHER_KEY_VALUE) {
 						// @ts-ignore
 						fieldsStep[index] = watch(keys[index].concat('Other'));
@@ -224,9 +237,9 @@ const StableCoinCreation = () => {
 		return Account.NullPublicKey;
 	};
 
+	let createResponse: any;
 	const handleFinish = async () => {
 		const {
-			autorenewAccount,
 			managementPermissions,
 			adminKey,
 			freezeKey,
@@ -253,8 +266,6 @@ const StableCoinCreation = () => {
 			hederaERC20Id,
 		} = getValues();
 
-		request.autoRenewAccount = autorenewAccount;
-
 		if (!reserveInitialAmount) {
 			request.createReserve = false;
 			request.reserveAddress = reserveAddress;
@@ -265,22 +276,13 @@ const StableCoinCreation = () => {
 		}
 
 		if (managementPermissions) {
-			request.adminKey = Account.NullPublicKey; // accountInfo.publicKey;
 			request.freezeKey = Account.NullPublicKey;
 			request.wipeKey = Account.NullPublicKey;
 			request.pauseKey = Account.NullPublicKey;
-			request.supplyKey = Account.NullPublicKey;
-			request.treasury = undefined;
 		} else {
-			request.adminKey = accountInfo.publicKey;
 			request.freezeKey = formatKey(freezeKey.label, 'freezeKey');
 			request.wipeKey = formatKey(wipeKey.label, 'wipeKey');
 			request.pauseKey = formatKey(pauseKey.label, 'pauseKey');
-			request.supplyKey = formatKey(supplyKey.label, 'supplyKey');
-			request.treasury =
-				formatKey(supplyKey.label, 'supplyKey')?.key !== Account.NullPublicKey.key && accountInfo.id
-					? accountInfo.id
-					: undefined;
 		}
 
 		if (kycRequired) {
@@ -339,7 +341,36 @@ const StableCoinCreation = () => {
 		try {
 			onOpen();
 			setLoading(true);
-			await SDKService.createStableCoin(request);
+			createResponse = await SDKService.createStableCoin(request);
+			const tokenId = createResponse.coin.tokenId.toString();
+			setToken(tokenId);
+			if (wallet.lastWallet === SupportedWallets.HASHPACK && createResponse?.coin.tokenId) {
+				const associateRequest = new AssociateTokenRequest({
+					targetId: accountInfo.id!,
+					tokenId: tokenId,
+				});
+				await SDKService.associate(associateRequest);
+
+				if (grantKYCToOriginalSender) {
+					const grantKYCRequest = new KYCRequest({
+						targetId: accountInfo.id!,
+						tokenId: createResponse.coin.tokenId.toString(),
+					});
+					await SDKService.grantKyc(grantKYCRequest);
+				}
+			}
+
+			if (wallet.lastWallet === SupportedWallets.METAMASK) {
+				const details = await SDKService.getStableCoinDetails(
+					new GetStableCoinDetailsRequest({
+						id: tokenId,
+					}),
+				);
+
+				ImportTokenService.importToken(tokenId, details?.symbol!, accountInfo?.id!);
+				dispatch(getExternalTokenList(accountInfo.id!));
+			}
+
 			setLoading(false);
 			setSuccess(true);
 		} catch (error: any) {
@@ -371,7 +402,22 @@ const StableCoinCreation = () => {
 
 	return (
 		<Stack h='full'>
-			<BaseContainer title={t('common.createNewStableCoin')}>
+			<HStack spacing={6} w='full'>
+				<Text fontSize='28px' color='brand.secondary' fontWeight={500} align='left' w='full'>
+					{t('common.createNewStableCoin')}
+				</Text>
+				<Text
+					fontSize='16px'
+					color='brand.secondary'
+					fontWeight={700}
+					align='right'
+					w='full'
+					as='i'
+				>
+					{t('common.factoryId') + factoryId}
+				</Text>
+			</HStack>
+			<BaseContainer title=''>
 				<Stepper {...stepperProps} />
 			</BaseContainer>
 			<ModalNotification
@@ -380,7 +426,9 @@ const StableCoinCreation = () => {
 					loading ? 'Loading' : t('notification.title', { result: success ? 'Success' : 'Error' })
 				}
 				description={
-					loading ? undefined : t(`notification.description${success ? 'Success' : 'Error'}`)
+					loading
+						? undefined
+						: t(`notification.description${success ? 'Success' : 'Error'}`, { token: token })
 				}
 				isOpen={isOpen}
 				onClose={onClose}

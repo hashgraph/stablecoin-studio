@@ -55,7 +55,9 @@
 	- [Role](#role)
 		- [HasRole](#hasrole)
 		- [GrantRole](#grantrole)
+		- [GrantMultiRoles](#grantmultiroles)
 		- [RevokeRole](#revokerole)
+		- [RevokeMultiRole](#revokemultirole)
 		- [GetRoles](#getroles)
 		- [GetAllowance](#getallowance)
 		- [ResetAllowance](#resetallowance)
@@ -1067,7 +1069,7 @@ Grants a role to an account for a certain stable coin.
 **Spec:**
 		
 ```Typescript
-	Role.grantRole(request: HasRoleRequest): Promise<boolean>;
+	Role.grantRole(request: GrantRoleRequest): Promise<boolean>;
 ```
 
 **Example:**
@@ -1078,6 +1080,27 @@ Grants a role to an account for a certain stable coin.
 			targetId: '0.046172343'
 			tokenId: '0.0.49135648',
 			role: StableCoinRole.CASHIN_ROLE,
+		})
+	);
+```
+### GrantMultiRoles
+Grants multiple roles to multiple accounts for a certain stable coin.
+
+**Spec:**
+		
+```Typescript
+	Role.grantMultiRoles(request: GrantMultiRolesRequest): Promise<boolean>;
+```
+
+**Example:**
+
+```Typescript
+	await Role.grantMultiRoles(
+		new GrantMultiRolesRequest({
+			targetsId: ['0.0.46172343', '0.0.45587454']
+			tokenId: '0.0.49135648',
+			roles: [StableCoinRole.CASHIN_ROLE,StableCoinRole.BURN_ROLE],
+			amounts: [12, 35]
 		})
 	);
 ```
@@ -1099,6 +1122,26 @@ Revokes a role of an account for a certain stable coin.
 			targetId: '0.046172343'
 			tokenId: '0.0.49135648',
 			role: StableCoinRole.CASHIN_ROLE,
+		})
+	);
+```
+### RevokeMultiRole
+Revokes multiple roles from multiple accounts for a certain stable coin.
+
+**Spec:**	
+	
+```Typescript
+	Role.revokeMultiRoles(request: RevokeMultiRolesRequest): Promise<boolean>;
+```
+
+**Example:**
+
+```Typescript
+	await Role.revokeMultiRoles(
+		new RevokeMultiRolesRequest({
+			targetsId: ['0.0.46172343', '0.0.45587454']
+			tokenId: '0.0.49135648',
+			roles: [StableCoinRole.CASHIN_ROLE,StableCoinRole.BURN_ROLE],
 		})
 	);
 ```

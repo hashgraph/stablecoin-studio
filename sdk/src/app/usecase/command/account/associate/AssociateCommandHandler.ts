@@ -22,12 +22,18 @@ import { ICommandHandler } from '../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../core/decorator/LazyInjectDecorator.js';
 import AccountService from '../../../../service/AccountService.js';
-import TransactionService from '../../../../service/TransactionService.js';
-import { UpdateCommand, UpdateCommandResponse } from './UpdateCommand.js';
 import StableCoinService from '../../../../service/StableCoinService.js';
+import TransactionService from '../../../../service/TransactionService.js';
+import { GetAccountTokenRelationshipQuery } from '../../../query/account/tokenRelationship/GetAccountTokenRelationshipQuery.js';
+import {
+	AssociateCommand,
+	AssociateCommandResponse,
+} from './AssociateCommand.js';
 
-@CommandHandler(UpdateCommand)
-export class UpdateCommandHandler implements ICommandHandler<UpdateCommand> {
+@CommandHandler(AssociateCommand)
+export class AssociateCommandHandler
+	implements ICommandHandler<AssociateCommand>
+{
 	constructor(
 		@lazyInject(StableCoinService)
 		public readonly stableCoinService: StableCoinService,
@@ -37,42 +43,27 @@ export class UpdateCommandHandler implements ICommandHandler<UpdateCommand> {
 		public readonly transactionService: TransactionService,
 	) {}
 
-	async execute(command: UpdateCommand): Promise<UpdateCommandResponse> {
-		const {
-			tokenId,
-			name,
-			symbol,
-			autoRenewPeriod,
-			expirationTime,
-			kycKey,
-			freezeKey,
-			feeScheduleKey,
-			pauseKey,
-			wipeKey,
-		} = command;
-
-		const account = this.accountService.getCurrentAccount();
-		const capabilities = await this.stableCoinService.getCapabilities(
-			account,
-			tokenId,
-		);
-
+	async execute(
+		command: AssociateCommand,
+	): Promise<AssociateCommandResponse> {
+		const { targetId, tokenId } = command;
 		const handler = this.transactionService.getHandler();
-		const res = await handler.update(
-			capabilities,
-			name,
-			symbol,
-			autoRenewPeriod,
-			expirationTime,
-			kycKey,
-			freezeKey,
-			feeScheduleKey,
-			pauseKey,
-			wipeKey,
-		);
+		const account = this.accountService.getCurrentAccount();
+
+		const tokenRelationship = (
+			await this.stableCoinService.queryBus.execute(
+				new GetAccountTokenRelationshipQuery(targetId, tokenId),
+			)
+		).payload;
+
+		if (tokenRelationship) {
+			Promise.resolve(new AssociateCommandResponse(true));
+		}
+
+		const res = await handler.associateToken(tokenId, targetId);
 
 		return Promise.resolve(
-			new UpdateCommandResponse(res.error === undefined),
+			new AssociateCommandResponse(res.error === undefined),
 		);
 	}
 }

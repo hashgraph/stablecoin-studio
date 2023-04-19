@@ -11,13 +11,20 @@ import {
     ContractExecuteTransaction,
     TokenId,
     ContractId,
+    TokenAssociateTransaction,
+    TokenDissociateTransaction,
+    TransferTransaction,
+    TransactionResponse,
 } from '@hashgraph/sdk'
 
 import Web3 from 'web3'
 import axios from 'axios'
 import { ADDRESS_0 } from './constants'
+import TokenTransfer from '@hashgraph/sdk/lib/token/TokenTransfer.js'
+import { BigNumber } from 'ethers'
 
 const web3 = new Web3()
+const SuccessStatus = 22
 
 export const clientId = 1
 
@@ -85,6 +92,71 @@ function decodeFunctionResult(
     const jsonParsedArray = JSON.parse(JSON.stringify(result))
 
     return jsonParsedArray
+}
+
+async function checkTxResponse(
+    txResponse: TransactionResponse,
+    clientOperator: Client
+) {
+    const receipt = await txResponse.getReceipt(clientOperator)
+
+    //Get the transaction consensus status
+    const transactionStatus = receipt.status
+
+    if (transactionStatus._code !== SuccessStatus) {
+        throw new Error(transactionStatus._code.toString())
+    }
+}
+
+export async function associateToken(
+    tokenId: string,
+    targetId: string,
+    clientOperator: Client
+) {
+    const txResponse = await new TokenAssociateTransaction()
+        .setTokenIds([tokenId])
+        .setAccountId(targetId)
+        .execute(clientOperator)
+
+    await checkTxResponse(txResponse, clientOperator)
+}
+
+export async function dissociateToken(
+    tokenId: string,
+    targetId: string,
+    clientOperator: Client
+) {
+    const txResponse = await new TokenDissociateTransaction()
+        .setTokenIds([tokenId])
+        .setAccountId(targetId)
+        .execute(clientOperator)
+
+    await checkTxResponse(txResponse, clientOperator)
+}
+
+export async function transferToken(
+    tokenId: string,
+    targetId: string,
+    amount: BigNumber,
+    clientOperator: Client
+) {
+    const txResponse = await new TransferTransaction()
+        .addTokenTransfer(tokenId, targetId, amount.toNumber())
+        .addTokenTransfer(
+            tokenId,
+            clientOperator.operatorAccountId!.toString(),
+            -1 * amount.toNumber()
+        )
+        .execute(clientOperator)
+
+    await checkTxResponse(txResponse, clientOperator)
+}
+
+export function oneYearLaterInSeconds(): number {
+    const currentDate: Date = new Date()
+    return Math.floor(
+        currentDate.setFullYear(currentDate.getFullYear() + 1) / 1000
+    )
 }
 
 export function getClient(network?: string): Client {
@@ -232,7 +304,7 @@ function getHederaNetworkMirrorNodeURL(network?: string): string {
     }
     switch (network) {
         case 'mainnet':
-            return 'https://mainnet.mirrornode.hedera.com'
+            return 'https://mainnet-public.mirrornode.hedera.com'
         case 'previewnet':
             return 'https://previewnet.mirrornode.hedera.com'
         case 'testnet':

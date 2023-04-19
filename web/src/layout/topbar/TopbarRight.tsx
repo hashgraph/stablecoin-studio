@@ -1,29 +1,26 @@
 import { Box, Flex, HStack, Image, Text, VStack } from '@chakra-ui/react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Icon from '../../components/Icon';
 import {
 	LAST_WALLET_SELECTED,
 	SELECTED_WALLET_PAIRED,
-	walletActions,
+	SELECTED_NETWORK,
 } from '../../store/slices/walletSlice';
 import HEDERA_LOGO from '../../assets/png/hashpackLogo.png';
 import METAMASK_LOGO from '../../assets/svg/MetaMask_Fox.svg';
 import TooltipCopy from '../../components/TooltipCopy';
-import { Network, SupportedWallets } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { SupportedWallets } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { Question } from 'phosphor-react';
-import { type ReactElement } from 'react';
+import { useEffect, type ReactElement } from 'react';
 
 const TopbarRight = () => {
-	const dispatch = useDispatch();
-
 	const initData = useSelector(SELECTED_WALLET_PAIRED);
 	const selectedWallet = useSelector(LAST_WALLET_SELECTED);
+	const network = useSelector(SELECTED_NETWORK);
 
 	const handleDisconnect = async () => {
-		await Network.disconnect();
-
-		dispatch(walletActions.clearData());
-		dispatch(walletActions.setStableCoinList([]));
+		window.location.reload();
+		localStorage.clear();
 	};
 
 	const getIcon = (): ReactElement => {
@@ -55,9 +52,11 @@ const TopbarRight = () => {
 							{initData?.account?.id?.toString() ?? ''}
 						</Text>
 					</TooltipCopy>
-					<Text data-testid='topbar-right-network' fontSize='10px' textTransform='uppercase'>
-						{'testnet'}
-					</Text>
+					<TooltipCopy valueToCopy={network ?? ''}>
+						<Text data-testid='topbar-right-network' fontSize='10px' textTransform='uppercase'>
+							{network ?? ''}
+						</Text>
+					</TooltipCopy>
 				</VStack>
 				{getIcon()}
 			</HStack>

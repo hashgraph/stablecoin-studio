@@ -5,10 +5,7 @@ import { NamedRoutes } from '../../Router/NamedRoutes';
 import GridDirectAccess from '../../components/GridDirectAccess';
 import { useSelector } from 'react-redux';
 import { roleOptions } from './constants';
-import {
-	SELECTED_WALLET_CAPABILITIES,
-	SELECTED_TOKEN_ROLES
-} from '../../store/slices/walletSlice';
+import { SELECTED_WALLET_CAPABILITIES, SELECTED_TOKEN_ROLES } from '../../store/slices/walletSlice';
 import { Operation, StableCoinRole } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 const Roles = () => {

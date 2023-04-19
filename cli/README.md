@@ -99,7 +99,7 @@ networks:
     {
       name: 'mainnet',
       consensusNodes: [],
-      mirrorNodeUrl: 'https://mainnet.mirrornode.hedera.com/',
+      mirrorNodeUrl: 'https://mainnet-public.mirrornode.hedera.com/',
     },
     {
       name: 'previewnet',
@@ -153,7 +153,7 @@ When your configuration file is set up and at least one account is added and sel
 
 #### Create a new Stable Coin
 
-For use this option is required to have factories setted.
+In order to use this option you must set a factory first.
 You can check our factories deployed in [our documentation](https://github.com/hashgraph/hedera-accelerator-stablecoin#deploying-the-stable-coin-factories).
 
 With this option you are able to create a new stable coin adding the mandatory details like Name, Symbol and Autorenew account.
@@ -176,7 +176,8 @@ _For more information about PoR Feeds, check the official [ChainLink documentati
 
 Another question is prompt asking if you would like the smart contract to be set as the owner of all the underlying token keys (admin, wipe, ...), you could however set any key you wish as the owner of any token key.
 If you set the smart contract as a key owner, you will be able to grant and revoke this capacity to any other account, since it is the smart contract that will be ultimately controlling the underlying token.
-The user that creates the stable coin is granted all the roles if the smart contract is the owner of all the underlying token's keys.
+
+For all the underlying token's keys assigned to the smart contract, you can choose to grant its corresponding role to the current account deploying the SC or any other.
 
 When you add an existing stable coin, you will able to operate with the roles that the stable coin's admin granted you. If after adding a stable coin you are granted other roles, you will have the possibility to refresh the stable coin's roles that you have.
 
@@ -185,7 +186,8 @@ The request will then be submitted to the SDK and the stable coin will be create
 
 > When the configuration file is first created, the factory and HederaERC20 contracts added to the "testnet" network are the default ones (pre-deployed contracts). However users are free to deploy and use their own contracts, in order to do that, the configuration file must be updated with the new factory and/or HederaERC20 contract' addresses.
 
-https://user-images.githubusercontent.com/114951681/212935747-30e21e6a-5f9e-4922-807e-056c6ea9965f.mp4
+https://user-images.githubusercontent.com/114951681/228852049-7234f6ed-575c-4462-901b-c8d2856c5683.mp4
+
 
 #### Manage imported tokens
 
@@ -201,6 +203,7 @@ Once a stable coin is created or added, you can operate it.
 
 The following list contains all the possible operations an user can perform if he/she has the appropriate role.
 
+- **Send tokens**: transfer tokens to another account.
 - **Cash in**: Min tokens and transfer them to an account. If you have linked a PoR Feed to your stable coin, this operation will fail in two cases : 
   - if you try to mint more tokens than the total Reserve (1 to 1 match between the token's total supply and the Reserve)
   - if you try to mint tokens using more decimals than the Reserve has, for instance, minting 1.001 tokens when the Reserve only has 2 decimals.
@@ -222,17 +225,15 @@ https://user-images.githubusercontent.com/102601367/205074204-d7f0def7-ffbd-416a
 
 https://user-images.githubusercontent.com/102601367/205074235-32145a1b-4ce0-4913-bd18-1252ecff52d6.mov
 
-- **Freeze**: Freeze an account. If an account is frozen, it will not be able to transfer any tokens.
-- **Unfreeze**: Unfreeze an account. If an account is unfrozen it will be able to transfer tokens again.
+- **Freeze Management**: Freeze/Unfreeze an account or check if an account if frozen/unfrozen. If an account is frozen, it will not be able to transfer any tokens.
 
-https://user-images.githubusercontent.com/102601367/205074293-73156a99-fc65-41ba-9a45-0be08ca5837e.mov
+https://user-images.githubusercontent.com/114951681/228851899-8a63b255-8e97-4705-8765-f59c01fc928b.mp4
 
-- **Grant KYC**: Grant KYC to an account. If an account is marked as KYC granted, it will be able to be involved in any tokens transfer.
-- **Revoke KYC**: Revoke KYC to an account. If an account is not marked as KYC Granted, it will no be able to be involved in any tokens transfer.
+- **KYC Management**: Grant/Revoke KYC to/from an account or check an account's kyc status. If an account is granted KYC, it can be involved in any token transfer.
 
-https://user-images.githubusercontent.com/108128685/214292138-c5d44bc6-3fc1-4995-99af-a9a8a2c9dec5.mov
+https://user-images.githubusercontent.com/114951681/228851958-db534d9e-0bc3-41f5-9820-7ce79fcf643b.mp4
 
-- **Role management**: Administrators of a stable coin can manage user roles from this menu, the will have the posibility to give, revoke and edit roles.
+- **Role management**: Administrators of a stable coin can manage user roles from this menu, the will have the posibility to grant, revoke, edit and check roles.
 
   - The available roles are:
     - CASHIN_ROLE
@@ -244,6 +245,8 @@ https://user-images.githubusercontent.com/108128685/214292138-c5d44bc6-3fc1-4995
     - KYC_ROLE
     - DELETE_ROLE
 
+- **Refresh roles**: automatically refresh the roles assigned to the current account (account's capacities)
+- **Configuration**: Stable coin administrators can edit the underlying token's properties such as "Name", "Symbol", ...
 - **Danger Zone**: This section contains the stable coin operations deemed as particularily "dangerous" either because they affect every single token owner (PAUSE) or because they can not be rolled-back (DELETE).
   For security reasons these operations are grouped in a "sub-menu" so that users do not run them by mistake.
   - **Un/Pause**: Pause and unpause prevents the token from being involved in any kind of operations.

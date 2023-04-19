@@ -25,7 +25,13 @@ import StableCoinViewModel from '../../out/mirror/response/StableCoinViewModel.j
 import AccountViewModel from '../../out/mirror/response/AccountViewModel.js';
 import StableCoinListViewModel from '../../out/mirror/response/StableCoinListViewModel.js';
 import TransactionResultViewModel from '../../out/mirror/response/TransactionResultViewModel.js';
-import { Environment } from '../../../domain/context/network/Environment.js';
+import {
+	Environment,
+	mainnet,
+	testnet,
+	previewnet,
+	local,
+} from '../../../domain/context/network/Environment.js';
 import LogService from '../../../app/service/LogService.js';
 import { StableCoinNotFound } from './error/StableCoinNotFound.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
@@ -80,7 +86,7 @@ export class MirrorNodeAdapter {
 		try {
 			const url = `${
 				this.URI_BASE
-			}tokens?limit=100&account.id=${accountId.toString()}`;
+			}tokens?limit=100&order=desc&account.id=${accountId.toString()}`;
 
 			LogService.logTrace(
 				'Getting stable coin list from mirror node -> ',
@@ -267,8 +273,8 @@ export class MirrorNodeAdapter {
 				autoRenewAccount: HederaId.from(
 					response.data.auto_renew_account,
 				),
-				autoRenewAccountPeriod:
-					response.data.auto_renew_period / (3600 * 24),
+				autoRenewPeriod: response.data.auto_renew_period,
+				expirationTimestamp: response.data.expiry_timestamp,
 				adminKey: getKeyOrDefault(response.data.admin_key) as PublicKey,
 				kycKey: getKeyOrDefault(response.data.kyc_key) as PublicKey,
 				freezeKey: getKeyOrDefault(
@@ -307,12 +313,16 @@ export class MirrorNodeAdapter {
 			const account: AccountViewModel = {
 				id: res.data.account.toString(),
 				accountEvmAddress: res.data.evm_address,
-				publicKey: new PublicKey({
-					key: res.data.key.key,
-					type: res.data.key._type as KeyType,
-				}),
 				alias: res.data.alias,
 			};
+
+			if (res.data.key)
+				account.publicKey = new PublicKey({
+					key: res.data.key ? res.data.key.key : undefined,
+					type: res.data.key
+						? (res.data.key._type as KeyType)
+						: undefined,
+				});
 
 			return account;
 		} catch (error) {
@@ -416,32 +426,41 @@ export class MirrorNodeAdapter {
 
 	private getMirrorNodeURL(environment: Environment): string {
 		switch (environment) {
-			case 'mainnet':
-				return 'https://mainnet.mirrornode.hedera.com';
-			case 'previewnet':
+			case mainnet:
+				return 'https://mainnet-public.mirrornode.hedera.com';
+			case previewnet:
 				return 'https://previewnet.mirrornode.hedera.com';
-			case 'testnet':
+			case testnet:
 				return 'https://testnet.mirrornode.hedera.com';
-			case 'local':
+			case local:
 				return 'http://127.0.0.1:5551';
 			default:
-				return 'https://mainnet.mirrornode.hedera.com';
+				return '';
 		}
 	}
 
 	async accountToEvmAddress(accountId: HederaId): Promise<EvmAddress> {
-		const accountInfoViewModel: AccountViewModel =
-			await this.getAccountInfo(accountId);
-		if (accountInfoViewModel.accountEvmAddress) {
-			return new EvmAddress(accountInfoViewModel.accountEvmAddress);
-		} else if (accountInfoViewModel.publicKey) {
-			return this.getAccountEvmAddressFromPrivateKeyType(
-				accountInfoViewModel.publicKey.type,
-				accountInfoViewModel.publicKey.key,
-				accountId,
+		try {
+			const accountInfoViewModel: AccountViewModel =
+				await this.getAccountInfo(accountId);
+			if (accountInfoViewModel.accountEvmAddress) {
+				return new EvmAddress(accountInfoViewModel.accountEvmAddress);
+			} else if (accountInfoViewModel.publicKey) {
+				return this.getAccountEvmAddressFromPrivateKeyType(
+					accountInfoViewModel.publicKey.type,
+					accountInfoViewModel.publicKey.key,
+					accountId,
+				);
+			} else {
+				return Promise.reject<EvmAddress>('');
+			}
+		} catch (e) {
+			throw new Error(
+				'EVM address could not be retrieved for ' +
+					accountId.toString() +
+					' error : ' +
+					e,
 			);
-		} else {
-			return Promise.reject<EvmAddress>('');
 		}
 	}
 
@@ -461,12 +480,6 @@ export class MirrorNodeAdapter {
 					'0x' + accountId.toHederaAddress().toSolidityAddress(),
 				);
 		}
-	}
-
-	async contractToEvmAddress(contractId: ContractId): Promise<EvmAddress> {
-		return new EvmAddress(
-			HContractId.fromString(contractId.toString()).toSolidityAddress(),
-		);
 	}
 }
 

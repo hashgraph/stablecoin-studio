@@ -39,6 +39,7 @@ import {
 	TokenRevokeKycTransaction,
 	TokenFeeScheduleUpdateTransaction,
 	TokenUpdateTransaction,
+	Timestamp,
 } from '@hashgraph/sdk';
 import Long from 'long';
 import LogService from '../../../app/service/LogService.js';
@@ -308,25 +309,33 @@ export class HTSTransactionBuilder {
 
 	public static buildUpdateTokenTransaction(
 		tokenId: string,
+		name: string | undefined,
+		symbol: string | undefined,
+		autoRenewPeriod: number | undefined,
+		expirationTime: Timestamp | undefined,
 		kycKey: Key | undefined,
 		freezeKey: Key | undefined,
 		feeScheduleKey: Key | undefined,
 		pauseKey: Key | undefined,
 		wipeKey: Key | undefined,
-		supplyKey: Key | undefined,
 	): Transaction {
 		try {
 			const tokenUpdateTransaction: TokenUpdateTransaction =
 				new TokenUpdateTransaction({
 					tokenId: tokenId,
 				});
+			if (name) tokenUpdateTransaction.setTokenName(name);
+			if (symbol) tokenUpdateTransaction.setTokenSymbol(symbol);
+			if (autoRenewPeriod)
+				tokenUpdateTransaction.setAutoRenewPeriod(autoRenewPeriod);
+			if (expirationTime)
+				tokenUpdateTransaction.setExpirationTime(expirationTime);
 			if (kycKey) tokenUpdateTransaction.setKycKey(kycKey);
 			if (freezeKey) tokenUpdateTransaction.setFreezeKey(freezeKey);
 			if (feeScheduleKey)
 				tokenUpdateTransaction.setFeeScheduleKey(feeScheduleKey);
 			if (pauseKey) tokenUpdateTransaction.setPauseKey(pauseKey);
 			if (wipeKey) tokenUpdateTransaction.setWipeKey(wipeKey);
-			if (supplyKey) tokenUpdateTransaction.setSupplyKey(supplyKey);
 			return tokenUpdateTransaction;
 		} catch (error) {
 			LogService.logError(error);

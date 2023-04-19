@@ -41,6 +41,12 @@ export interface InitializationData {
 	topic?: string;
 }
 
+export interface NetworkData {
+	name?: Environment;
+	recognized?: boolean;
+	factoryId?: string;
+}
+
 interface ITransactionAdapter {
 	create(
 		coin: StableCoin,
@@ -54,7 +60,7 @@ interface ITransactionAdapter {
 	register(account?: Account): Promise<InitializationData>;
 	stop(): Promise<boolean>;
 	associateToken(
-		coin: StableCoinCapabilities | string,
+		tokenId: HederaId,
 		targetId: HederaId,
 	): Promise<TransactionResponse>;
 	balanceOf(
@@ -119,6 +125,10 @@ interface ITransactionAdapter {
 	): Promise<TransactionResponse>;
 	update(
 		coin: StableCoinCapabilities,
+		name: string | undefined,
+		symbol: string | undefined,
+		autoRenewPeriod: number | undefined,
+		expirationTime: number | undefined,
 		kycKey: PublicKey | undefined,
 		freezeKey: PublicKey | undefined,
 		feeScheduleKey: PublicKey | undefined,
@@ -174,7 +184,7 @@ interface RoleTransactionAdapter {
 		targetId: HederaId,
 	): Promise<TransactionResponse<BigDecimal, Error>>;
 	associateToken(
-		coin: StableCoinCapabilities,
+		tokenId: HederaId,
 		targetId: HederaId,
 	): Promise<TransactionResponse>;
 	isUnlimitedSupplierAllowance(
@@ -336,12 +346,15 @@ export default abstract class TransactionAdapter
 	}
 	update(
 		coin: StableCoinCapabilities,
+		name: string | undefined,
+		symbol: string | undefined,
+		autoRenewPeriod: number | undefined,
+		expirationTime: number | undefined,
 		kycKey: PublicKey | undefined,
 		freezeKey: PublicKey | undefined,
 		feeScheduleKey: PublicKey | undefined,
 		pauseKey: PublicKey | undefined,
 		wipeKey: PublicKey | undefined,
-		supplyKey: PublicKey | undefined,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
@@ -407,7 +420,7 @@ export default abstract class TransactionAdapter
 		throw new Error('Method not implemented.');
 	}
 	associateToken(
-		coin: StableCoinCapabilities,
+		tokenId: HederaId,
 		targetId: HederaId,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
@@ -474,17 +487,18 @@ export default abstract class TransactionAdapter
 		throw new Error('Method not implemented.');
 	}
 
-	async accountToEvmAddress(accountId: HederaId): Promise<EvmAddress> {
-		return this.getMirrorNodeAdapter().accountToEvmAddress(accountId);
+	async getEVMAddress(parameter: any): Promise<any> {
+		if (parameter instanceof HederaId) {
+			return (
+				await this.getMirrorNodeAdapter().accountToEvmAddress(parameter)
+			).toString();
+		}
+		return parameter;
 	}
 
-	async contractToEvmAddress(contractId: ContractId): Promise<EvmAddress> {
-		return this.getMirrorNodeAdapter().contractToEvmAddress(contractId);
-	}
-
-	logTransaction(id: string): void {
-		const HASHSCAN_URL = 'https://hashscan.io/testnet/transactionsById/';
-		const HASHSCAN_TX_URL = 'https://hashscan.io/testnet/tx/';
+	logTransaction(id: string, network: string): void {
+		const HASHSCAN_URL = `https://hashscan.io/${network}/transactionsById/`;
+		const HASHSCAN_TX_URL = `https://hashscan.io/${network}/tx/`;
 		const msg = `\nYou can see your transaction at ${
 			id.startsWith('0x') ? HASHSCAN_TX_URL : HASHSCAN_URL
 		}${id}\n`;

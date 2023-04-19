@@ -1,9 +1,12 @@
 import { Heading, Stack, VStack } from '@chakra-ui/react';
 import type { UseFormReturn } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
+import { SupportedWallets } from 'hedera-stable-coin-sdk';
 import DetailsReview from '../../components/DetailsReview';
 import { OTHER_KEY_VALUE } from './components/KeySelector';
 import { OTHER_ACCOUNT_VALUE } from './components/RoleSelector';
+import { SELECTED_WALLET } from '../../store/slices/walletSlice';
 
 interface ReviewProps {
 	form: UseFormReturn;
@@ -13,12 +16,13 @@ const Review = (props: ReviewProps) => {
 	const { form } = props;
 	const { t } = useTranslation(['global', 'stableCoinCreation']);
 
+	const wallet = useSelector(SELECTED_WALLET);
+
 	const { getValues } = form;
 	const {
 		hederaERC20Id,
 		name,
 		symbol,
-		autorenewAccount,
 		initialSupply,
 		supplyType,
 		maxSupply,
@@ -180,10 +184,6 @@ const Review = (props: ReviewProps) => {
 								label: t('stableCoinCreation:basicDetails.symbol'),
 								value: symbol || '',
 							},
-							{
-								label: t('stableCoinCreation:basicDetails.autorenewAccount'),
-								value: autorenewAccount || '',
-							},
 						]}
 					/>
 					<DetailsReview
@@ -265,18 +265,20 @@ const Review = (props: ReviewProps) => {
 						/>
 					)}
 
-					<DetailsReview
-						title={t('stableCoinCreation:managementPermissions.CreatorKYCFlag')}
-						titleProps={{ fontWeight: 700, color: 'brand.secondary' }}
-						details={[
-							{
-								label: t('stableCoinCreation:managementPermissions.grantKYCToOriginalSender'),
-								value: grantKYCToOriginalSender
-									? t('stableCoinCreation:managementPermissions.CreatorGrantedKYC')
-									: t('stableCoinCreation:managementPermissions.CreatorNotGrantedKYC'),
-							},
-						]}
-					/>
+					{wallet.lastWallet === SupportedWallets.HASHPACK && (
+						<DetailsReview
+							title={t('stableCoinCreation:managementPermissions.CreatorKYCFlag')}
+							titleProps={{ fontWeight: 700, color: 'brand.secondary' }}
+							details={[
+								{
+									label: t('stableCoinCreation:managementPermissions.grantKYCToOriginalSender'),
+									value: grantKYCToOriginalSender
+										? t('stableCoinCreation:managementPermissions.CreatorGrantedKYC')
+										: t('stableCoinCreation:managementPermissions.CreatorNotGrantedKYC'),
+								},
+							]}
+						/>
+					)}
 
 					<DetailsReview
 						title={t('stableCoinCreation:managementPermissions.treasuryAccountAddress')}

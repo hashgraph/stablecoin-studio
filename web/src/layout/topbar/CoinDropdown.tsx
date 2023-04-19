@@ -19,6 +19,7 @@ import {
 	walletActions,
 	SELECTED_TOKEN_DELETED,
 	SELECTED_TOKEN_PAUSED,
+	SELECTED_NETWORK,
 } from '../../store/slices/walletSlice';
 import { RouterManager } from '../../Router/RouterManager';
 import { matchPath, useLocation, useNavigate } from 'react-router-dom';
@@ -44,6 +45,8 @@ const CoinDropdown = () => {
 	const externalTokenList = useSelector(EXTERNAL_TOKEN_LIST);
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const accountId = useSelector(SELECTED_WALLET_PAIRED_ACCOUNTID);
+	const network = useSelector(SELECTED_NETWORK);
+
 	const capabilities = useSelector(SELECTED_WALLET_CAPABILITIES);
 	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 	const tokenIsPaused = useSelector(SELECTED_TOKEN_PAUSED);
@@ -80,7 +83,7 @@ const CoinDropdown = () => {
 
 			getAccountInfo(accountId.toString());
 		}
-	}, [accountId]);
+	}, [accountId, network]);
 
 	useEffect(() => {
 		formatOptionsStableCoins();
@@ -150,55 +153,65 @@ const CoinDropdown = () => {
 
 	const handleSelectCoin = async (event: any) => {
 		if (!event?.value) return;
-		const selectedCoin = event.value;
-		const stableCoinDetails = await SDKService.getStableCoinDetails(
-			new GetStableCoinDetailsRequest({
-				id: selectedCoin,
-			}),
-		);
+		dispatch(walletActions.setSelectingStableCoin(true));
 
-		const roles = await SDKService.getRoles(
-			new GetRolesRequest({
-				targetId: accountInfo && accountInfo.id ? accountInfo?.id : '',
-				tokenId: stableCoinDetails.tokenId!.toString(),
-			}),
-		);
-		dispatch(walletActions.setDeletedToken(undefined));
-		dispatch(walletActions.setPausedToken(undefined));
-		dispatch(walletActions.setRoles(roles));
+		try {
+			const selectedCoin = event.value;
+			const stableCoinDetails = await SDKService.getStableCoinDetails(
+				new GetStableCoinDetailsRequest({
+					id: selectedCoin,
+				}),
+			);
 
-		dispatch(
-			walletActions.setSelectedStableCoin({
-				tokenId: stableCoinDetails?.tokenId,
-				initialSupply: stableCoinDetails?.initialSupply,
-				totalSupply: stableCoinDetails?.totalSupply,
-				maxSupply: stableCoinDetails?.maxSupply,
-				name: stableCoinDetails?.name,
-				symbol: stableCoinDetails?.symbol,
-				decimals: stableCoinDetails?.decimals,
-				treasury: stableCoinDetails?.treasury,
-				autoRenewAccount: stableCoinDetails?.autoRenewAccount,
-				proxyAddress: stableCoinDetails?.proxyAddress,
-				paused: stableCoinDetails?.paused,
-				deleted: stableCoinDetails?.deleted,
-				adminKey:
-					stableCoinDetails?.adminKey && JSON.parse(JSON.stringify(stableCoinDetails.adminKey)),
-				kycKey: stableCoinDetails?.kycKey && JSON.parse(JSON.stringify(stableCoinDetails.kycKey)),
-				freezeKey:
-					stableCoinDetails?.freezeKey && JSON.parse(JSON.stringify(stableCoinDetails.freezeKey)),
-				wipeKey:
-					stableCoinDetails?.wipeKey && JSON.parse(JSON.stringify(stableCoinDetails.wipeKey)),
-				supplyKey:
-					stableCoinDetails?.supplyKey && JSON.parse(JSON.stringify(stableCoinDetails.supplyKey)),
-				pauseKey:
-					stableCoinDetails?.pauseKey && JSON.parse(JSON.stringify(stableCoinDetails.pauseKey)),
-				feeScheduleKey:
-					stableCoinDetails?.feeScheduleKey &&
-					JSON.parse(JSON.stringify(stableCoinDetails.feeScheduleKey)),
-				customFees:
-					stableCoinDetails?.customFees && JSON.parse(JSON.stringify(stableCoinDetails.customFees)),
-			}),
-		);
+			const roles = await SDKService.getRoles(
+				new GetRolesRequest({
+					targetId: accountInfo && accountInfo.id ? accountInfo?.id : '',
+					tokenId: stableCoinDetails.tokenId!.toString(),
+				}),
+			);
+			dispatch(walletActions.setDeletedToken(undefined));
+			dispatch(walletActions.setPausedToken(undefined));
+			dispatch(walletActions.setRoles(roles));
+
+			dispatch(walletActions.setSelectingStableCoin(false));
+
+			dispatch(
+				walletActions.setSelectedStableCoin({
+					tokenId: stableCoinDetails?.tokenId,
+					initialSupply: stableCoinDetails?.initialSupply,
+					totalSupply: stableCoinDetails?.totalSupply,
+					maxSupply: stableCoinDetails?.maxSupply,
+					name: stableCoinDetails?.name,
+					symbol: stableCoinDetails?.symbol,
+					decimals: stableCoinDetails?.decimals,
+					treasury: stableCoinDetails?.treasury,
+					autoRenewAccount: stableCoinDetails?.autoRenewAccount,
+					proxyAddress: stableCoinDetails?.proxyAddress,
+					paused: stableCoinDetails?.paused,
+					deleted: stableCoinDetails?.deleted,
+					adminKey:
+						stableCoinDetails?.adminKey && JSON.parse(JSON.stringify(stableCoinDetails.adminKey)),
+					kycKey: stableCoinDetails?.kycKey && JSON.parse(JSON.stringify(stableCoinDetails.kycKey)),
+					freezeKey:
+						stableCoinDetails?.freezeKey && JSON.parse(JSON.stringify(stableCoinDetails.freezeKey)),
+					wipeKey:
+						stableCoinDetails?.wipeKey && JSON.parse(JSON.stringify(stableCoinDetails.wipeKey)),
+					supplyKey:
+						stableCoinDetails?.supplyKey && JSON.parse(JSON.stringify(stableCoinDetails.supplyKey)),
+					pauseKey:
+						stableCoinDetails?.pauseKey && JSON.parse(JSON.stringify(stableCoinDetails.pauseKey)),
+					feeScheduleKey:
+						stableCoinDetails?.feeScheduleKey &&
+						JSON.parse(JSON.stringify(stableCoinDetails.feeScheduleKey)),
+					customFees:
+						stableCoinDetails?.customFees &&
+						JSON.parse(JSON.stringify(stableCoinDetails.customFees)),
+				}),
+			);
+		} catch (e) {
+			dispatch(walletActions.setSelectingStableCoin(false));
+			throw e;
+		}
 	};
 
 	const handleImportToken = async (inputValue: string) => {

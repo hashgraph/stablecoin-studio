@@ -32,10 +32,6 @@ export class ConnectCommandHandler implements ICommandHandler<ConnectCommand> {
 		const handler = TransactionService.getHandlerClass(command.wallet);
 		const registration = await handler.register(command.account);
 
-		// Change mirror node adapter network
-		const adapter = Injectable.resolve(MirrorNodeAdapter);
-		adapter.setEnvironment(command.environment);
-
 		// Init RPC Query Adapter
 		Injectable.resolve(RPCQueryAdapter).init();
 		return Promise.resolve(

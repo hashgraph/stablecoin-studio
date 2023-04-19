@@ -36,6 +36,7 @@ import {
 	TokenRevokeKycTransaction,
 	TokenGrantKycTransaction,
 	TokenFeeScheduleUpdateTransaction,
+	TokenAssociateTransaction,
 } from '@hashgraph/sdk';
 import { singleton } from 'tsyringe';
 import { HederaTransactionAdapter } from '../HederaTransactionAdapter.js';
@@ -93,18 +94,16 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 		@lazyInject(QueryBus)
 		public readonly queryBus: QueryBus,
 	) {
-		super(mirrorNodeAdapter);
+		super(mirrorNodeAdapter, networkService);
 		this.hc = new HashConnect();
 		this.setUpHashConnectEvents();
 	}
 
-	async init(): Promise<string> {
+	async init(network?: string): Promise<string> {
+		const currentNetwork = network ?? this.networkService.environment;
 		this.initData = await this.hc.init(
 			SDK.appMetadata,
-			this.networkService.environment as
-				| 'testnet'
-				| 'previewnet'
-				| 'mainnet',
+			currentNetwork as 'testnet' | 'previewnet' | 'mainnet',
 		);
 		const eventData: WalletInitEvent = {
 			wallet: SupportedWallets.HASHPACK,
@@ -126,10 +125,16 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 			eventData.initData.account = this.account;
 			this.eventService.emit(WalletEvents.walletPaired, {
 				data: eventData.initData,
-				network: this.networkService.environment,
+				network: {
+					name: currentNetwork,
+					recognized: true,
+					factoryId: this.networkService.configuration
+						? this.networkService.configuration.factoryAddress
+						: '',
+				},
 				wallet: SupportedWallets.HASHPACK,
 			});
-			this.setSigner();
+			this.setSigner(currentNetwork);
 			LogService.logTrace(
 				'Previous paring found: ',
 				this.account,
@@ -137,16 +142,13 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 			);
 		}
 		LogService.logTrace('HashPack Initialized ', eventData);
-		return this.networkService.environment;
+		return currentNetwork;
 	}
 
-	private async setSigner(): Promise<void> {
+	private async setSigner(network: string): Promise<void> {
 		this.hashConnectSigner = await this.hc.getSignerWithAccountKey(
 			this.hc.getProvider(
-				this.networkService.environment as
-					| 'testnet'
-					| 'previewnet'
-					| 'mainnet',
+				network as 'testnet' | 'previewnet' | 'mainnet',
 				this.initData.topic,
 				this.account.id.toString(),
 			),
@@ -179,7 +181,13 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 					pairing: this.initData.pairingString,
 					topic: this.initData.topic,
 				},
-				network: this.networkService.environment,
+				network: {
+					name: this.networkService.environment,
+					recognized: true,
+					factoryId: this.networkService.configuration
+						? this.networkService.configuration.factoryAddress
+						: '',
+				},
 			});
 		}
 		return Promise.resolve({
@@ -201,6 +209,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 
 	async stop(): Promise<boolean> {
 		await this.hc.disconnect(this.initData.topic);
+		await this.hc.clearConnectionsAndData();
 		LogService.logTrace('HashPack stopped');
 		this.eventService.emit(WalletEvents.walletDisconnect, {
 			wallet: SupportedWallets.HASHPACK,
@@ -250,7 +259,8 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 				t instanceof TokenGrantKycTransaction ||
 				t instanceof TokenRevokeKycTransaction ||
 				t instanceof TransferTransaction ||
-				t instanceof TokenFeeScheduleUpdateTransaction
+				t instanceof TokenFeeScheduleUpdateTransaction ||
+				t instanceof TokenAssociateTransaction
 			) {
 				hashPackTransactionResponse = await t.executeWithSigner(
 					this.signer,
@@ -259,6 +269,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 					JSON.parse(
 						JSON.stringify(hashPackTransactionResponse),
 					).response.transactionId.toString(),
+					this.networkService.environment,
 				);
 			} else {
 				hashPackTransactionResponse = await this.hc.sendTransaction(
@@ -271,9 +282,11 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 								.transactionId ?? ''
 						: (hashPackTransactionResponse.error as any)
 								.transactionId ?? '',
+					this.networkService.environment,
 				);
 			}
 			return HashpackTransactionResponseAdapter.manageResponse(
+				this.networkService.environment,
 				this.signer,
 				hashPackTransactionResponse,
 				transactionType,
@@ -308,6 +321,13 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 		);
 	}
 
+	public async restart(network: string): Promise<void> {
+		await this.stop();
+		this.hc = new HashConnect();
+		this.setUpHashConnectEvents();
+		await this.init(network);
+	}
+
 	public setUpHashConnectEvents(): void {
 		//This is fired when a extension is found
 		this.hc.foundExtensionEvent.on((data) => {
@@ -329,7 +349,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 					LogService.logInfo('Paired HashPack Wallet Event: ', data);
 					const id = data.pairingData.accountIds[0];
 					this.account = await this.getAccountInfo(id);
-					this.setSigner();
+					this.setSigner(this.networkService.environment);
 					this.eventService.emit(WalletEvents.walletPaired, {
 						wallet: SupportedWallets.HASHPACK,
 						data: {
@@ -337,7 +357,14 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 							pairing: this.initData.pairingString,
 							topic: this.pairingData.topic,
 						},
-						network: this.pairingData.network,
+						network: {
+							name: this.pairingData.network,
+							recognized: true,
+							factoryId: this.networkService.configuration
+								? this.networkService.configuration
+										.factoryAddress
+								: '',
+						},
 					});
 				} else {
 					throw new PairingError(data);
@@ -380,15 +407,6 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 
 	gethashConnectConectionState(): HashConnectConnectionState {
 		return this.hashConnectConectionState;
-	}
-
-	disconectHaspack(): void {
-		if (this.initData?.topic) this.hc.disconnect(this.initData.topic);
-
-		this.pairingData = null;
-		this.eventService.emit(WalletEvents.walletDisconnect, {
-			wallet: SupportedWallets.HASHPACK,
-		});
 	}
 
 	async getAccountInfo(id: string): Promise<Account> {

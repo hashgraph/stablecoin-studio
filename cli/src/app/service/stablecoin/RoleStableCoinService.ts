@@ -195,7 +195,7 @@ export default class RoleStableCoinsService extends Service {
     console.log(
       response
         .replace('${address}', req.targetId)
-        .replace('${amount}', colors.yellow(amount)) + '\n',
+        .replace('${amount}', colors.yellow(amount.value.toString())) + '\n',
     );
   }
 

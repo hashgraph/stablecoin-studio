@@ -20,8 +20,7 @@ import ModalNotification from '../../components/ModalNotification';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch } from '../../store/store';
 import ImportedTokenInfo from './ImportedTokenInfo';
-import type { IAccountToken } from '../../interfaces/IAccountToken.js';
-import type { IExternalToken } from '../../interfaces/IExternalToken';
+import { ImportTokenService } from '../../services/ImportTokenService';
 import { GetStableCoinDetailsRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 const ImportedTokenCreation = () => {
@@ -98,51 +97,7 @@ const ImportedTokenCreation = () => {
 				}),
 			);
 
-			const tokensAccount = localStorage?.tokensAccount;
-			if (tokensAccount) {
-				const tokensAccountParsed = JSON.parse(tokensAccount);
-				const accountToken = tokensAccountParsed.find(
-					(account: IAccountToken) => account.id === accountInfo.id,
-				);
-				if (
-					accountToken &&
-					accountToken.externalTokens.find((coin: IExternalToken) => coin.id === stableCoinId)
-				) {
-					accountToken.externalTokens = accountToken.externalTokens.filter(
-						(coin: IExternalToken) => coin.id !== stableCoinId,
-					);
-				}
-				accountToken
-					? accountToken.externalTokens.push({
-							id: stableCoinId,
-							symbol: details!.symbol,
-					  })
-					: tokensAccountParsed.push({
-							id: accountInfo.id,
-							externalTokens: [
-								{
-									id: stableCoinId,
-									symbol: details!.symbol,
-								},
-							],
-					  });
-				localStorage.setItem('tokensAccount', JSON.stringify(tokensAccountParsed));
-			} else {
-				localStorage.setItem(
-					'tokensAccount',
-					JSON.stringify([
-						{
-							id: accountInfo.id,
-							externalTokens: [
-								{
-									id: stableCoinId,
-									symbol: details!.symbol,
-								},
-							],
-						},
-					]),
-				);
-			}
+			ImportTokenService.importToken(stableCoinId, details?.symbol!, accountInfo?.id!);
 			dispatch(getExternalTokenList(accountInfo.id!));
 			setSuccess(true);
 		} catch (error) {

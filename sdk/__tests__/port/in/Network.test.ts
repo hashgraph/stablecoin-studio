@@ -23,17 +23,19 @@ import Injectable from '../../../src/core/Injectable.js';
 import {
 	InitializationRequest,
 	Network,
+	SetConfigurationRequest,
 	SetNetworkRequest,
 } from '../../../src/index.js';
+import {
+	testnet,
+	previewnet,
+	unrecognized,
+} from '../../../src/domain/context/network/Environment.js';
 import ConnectRequest, {
 	SupportedWallets,
 } from '../../../src/port/in/request/ConnectRequest.js';
 
-import {
-	CLIENT_ACCOUNT_ED25519,
-	FACTORY_ADDRESS,
-	HEDERA_ERC20_ADDRESS,
-} from '../../config.js';
+import { CLIENT_ACCOUNT_ED25519, FACTORY_ADDRESS } from '../../config.js';
 
 describe('🧪 Network test', () => {
 	afterEach(() => {
@@ -43,7 +45,7 @@ describe('🧪 Network test', () => {
 
 	const networkService = Injectable.resolve(NetworkService);
 	it('Starts as testnet network', async () => {
-		expect(networkService.environment).toEqual('testnet');
+		expect(networkService.environment).toEqual(testnet);
 		expect(networkService.consensusNodes).toBeUndefined();
 		expect(networkService.mirrorNode).toBeUndefined();
 		expect(networkService.rpcNode).toBeUndefined();
@@ -52,7 +54,7 @@ describe('🧪 Network test', () => {
 	it('Connects to a client', async () => {
 		const spy = jest.spyOn(Network, 'connect');
 		const params = {
-			network: 'testnet',
+			network: testnet,
 			wallet: SupportedWallets.CLIENT,
 			account: {
 				accountId: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -71,10 +73,9 @@ describe('🧪 Network test', () => {
 		const spy = jest.spyOn(Network, 'init');
 		const init = await Network.init(
 			new InitializationRequest({
-				network: 'previewnet',
+				network: testnet,
 				configuration: {
 					factoryAddress: FACTORY_ADDRESS,
-					hederaERC20Address: HEDERA_ERC20_ADDRESS,
 				},
 			}),
 		);
@@ -82,19 +83,38 @@ describe('🧪 Network test', () => {
 		expect(networkService.consensusNodes).toBeUndefined();
 		expect(networkService.mirrorNode).toBeUndefined();
 		expect(networkService.rpcNode).toBeUndefined();
-		expect(networkService.environment).toEqual('previewnet');
-		expect(networkService.configuration).toStrictEqual({
-			factoryAddress: FACTORY_ADDRESS,
-			hederaERC20Address: HEDERA_ERC20_ADDRESS,
-		});
+		expect(networkService.environment).toEqual(testnet);
+		expect(networkService.configuration.factoryAddress).toEqual(
+			FACTORY_ADDRESS,
+		);
 		expect(init).toBeTruthy();
 		expect(init.length).toBeGreaterThan(0);
+	}, 60_000);
+
+	it('Gets factory and network', async () => {
+		const factoryAddress = await Network.getFactoryAddress();
+		expect(factoryAddress).toEqual(FACTORY_ADDRESS);
+		const network = await Network.getNetwork();
+		expect(network).toEqual(testnet);
+	}, 60_000);
+
+	it('Sets the configuration', async () => {
+		await Network.setConfig(
+			new SetConfigurationRequest({ factoryAddress: '0.0.1' }),
+		);
+		expect(networkService.configuration.factoryAddress).toEqual('0.0.1');
+		await Network.setConfig(
+			new SetConfigurationRequest({ factoryAddress: FACTORY_ADDRESS }),
+		);
+		expect(networkService.configuration.factoryAddress).toEqual(
+			FACTORY_ADDRESS,
+		);
 	}, 60_000);
 
 	it('Sets the network', async () => {
 		const spy = jest.spyOn(Network, 'setNetwork');
 		const params = {
-			environment: 'previewnet',
+			environment: previewnet,
 			consensusNodes: 'nodes',
 			mirrorNode: 'example.com',
 			rpcNode: 'example.com',
@@ -110,5 +130,30 @@ describe('🧪 Network test', () => {
 		expect(init.mirrorNode).toEqual(params.mirrorNode);
 		expect(init.consensusNodes).toEqual(params.consensusNodes);
 		expect(init.rpcNode).toEqual(params.rpcNode);
+
+		const params_2 = {
+			environment: testnet,
+			consensusNodes: '',
+			mirrorNode: '',
+			rpcNode: '',
+		};
+
+		await Network.setNetwork(new SetNetworkRequest(params_2));
+	}, 60_000);
+
+	it('Is the network recognized', async () => {
+		const networkOK = await Network.isNetworkRecognized();
+		expect(networkOK).toEqual(true);
+
+		const params = {
+			environment: unrecognized,
+			consensusNodes: '',
+			mirrorNode: '',
+			rpcNode: '',
+		};
+
+		await Network.setNetwork(new SetNetworkRequest(params));
+		const networkNOK = await Network.isNetworkRecognized();
+		expect(networkNOK).toEqual(false);
 	}, 60_000);
 });

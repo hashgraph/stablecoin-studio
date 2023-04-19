@@ -88,6 +88,8 @@ import TransfersRequest from './request/TransfersRequest.js';
 import UpdateRequest from './request/UpdateRequest.js';
 import { TransfersCommand } from '../../app/usecase/command/stablecoin/operations/transfer/TransfersCommand.js';
 import { UpdateCommand } from '../../app/usecase/command/stablecoin/update/UpdateCommand.js';
+import NetworkService from '../../app/service/NetworkService.js';
+import { AssociateCommand } from '../../app/usecase/command/account/associate/AssociateCommand.js';
 
 export {
 	StableCoinViewModel,
@@ -141,6 +143,9 @@ class StableCoinInPort implements IStableCoinInPort {
 		private readonly stableCoinService: StableCoinService = Injectable.resolve(
 			StableCoinService,
 		),
+		private readonly networkService: NetworkService = Injectable.resolve(
+			NetworkService,
+		),
 	) {}
 
 	@LogError
@@ -150,23 +155,20 @@ class StableCoinInPort implements IStableCoinInPort {
 	}> {
 		handleValidation('CreateRequest', req);
 		const {
-			stableCoinFactory,
 			hederaERC20,
 			reserveAddress,
 			reserveInitialAmount,
 			createReserve,
 		} = req;
 
+		const stableCoinFactory =
+			this.networkService.configuration.factoryAddress;
+
 		const coin: StableCoinProps = {
 			name: req.name,
 			symbol: req.symbol,
 			decimals: req.decimals,
-			adminKey: req.adminKey
-				? new PublicKey({
-						key: req.adminKey.key,
-						type: req.adminKey.type,
-				  })
-				: undefined,
+			adminKey: PublicKey.NULL,
 			initialSupply: BigDecimal.fromString(
 				req.initialSupply ?? '0',
 				req.decimals,
@@ -199,26 +201,16 @@ class StableCoinInPort implements IStableCoinInPort {
 						type: req.pauseKey.type,
 				  })
 				: undefined,
-			supplyKey: req.supplyKey
-				? new PublicKey({
-						key: req.supplyKey.key,
-						type: req.supplyKey.type,
-				  })
-				: undefined,
+			supplyKey: PublicKey.NULL,
 			feeScheduleKey: req.feeScheduleKey
 				? new PublicKey({
 						key: req.feeScheduleKey.key,
 						type: req.feeScheduleKey.type,
 				  })
 				: undefined,
-			treasury: new HederaId(req.treasury ?? '0.0.0'),
+			treasury: undefined,
 			supplyType: req.supplyType,
-			autoRenewAccount: req.autoRenewAccount
-				? new HederaId(req.autoRenewAccount)
-				: undefined,
-			grantKYCToOriginalSender: req.grantKYCToOriginalSender
-				? req.grantKYCToOriginalSender
-				: false,
+			autoRenewAccount: undefined,
 			burnRoleAccount: new HederaId(req.burnRoleAccount ?? '0.0.0'),
 			wipeRoleAccount: new HederaId(req.wipeRoleAccount ?? '0.0.0'),
 			rescueRoleAccount: new HederaId(req.rescueRoleAccount ?? '0.0.0'),
@@ -250,13 +242,15 @@ class StableCoinInPort implements IStableCoinInPort {
 					: undefined,
 			),
 		);
-
 		return {
-			coin: (
-				await this.queryBus.execute(
-					new GetStableCoinQuery(createResponse.tokenId),
-				)
-			).coin,
+			coin:
+				createResponse.tokenId.toString() !== ContractId.NULL.toString()
+					? (
+							await this.queryBus.execute(
+								new GetStableCoinQuery(createResponse.tokenId),
+							)
+					  ).coin
+					: {},
 			reserve: {
 				proxyAddress: createResponse.reserveProxy,
 				proxyAdminAddress: createResponse.reserveProxyAdmin,
@@ -336,7 +330,17 @@ class StableCoinInPort implements IStableCoinInPort {
 
 	@LogError
 	async associate(request: AssociateTokenRequest): Promise<boolean> {
-		throw new Error('Method not implemented.');
+		const { tokenId, targetId } = request;
+		handleValidation('AssociateTokenRequest', request);
+
+		return (
+			await this.commandBus.execute(
+				new AssociateCommand(
+					HederaId.from(targetId),
+					HederaId.from(tokenId),
+				),
+			)
+		).payload;
 	}
 
 	@LogError
@@ -576,12 +580,15 @@ class StableCoinInPort implements IStableCoinInPort {
 	async update(request: UpdateRequest): Promise<boolean> {
 		const {
 			tokenId,
+			name,
+			symbol,
+			autoRenewPeriod,
+			expirationTimestamp,
 			kycKey,
 			freezeKey,
 			feeScheduleKey,
 			pauseKey,
 			wipeKey,
-			supplyKey,
 		} = request;
 
 		handleValidation('UpdateRequest', request);
@@ -590,6 +597,12 @@ class StableCoinInPort implements IStableCoinInPort {
 			await this.commandBus.execute(
 				new UpdateCommand(
 					HederaId.from(tokenId),
+					name,
+					symbol,
+					autoRenewPeriod ? Number(autoRenewPeriod) : undefined,
+					expirationTimestamp
+						? Number(expirationTimestamp)
+						: undefined,
 					kycKey
 						? new PublicKey({
 								key: kycKey.key,
@@ -618,12 +631,6 @@ class StableCoinInPort implements IStableCoinInPort {
 						? new PublicKey({
 								key: wipeKey.key,
 								type: wipeKey.type,
-						  })
-						: undefined,
-					supplyKey
-						? new PublicKey({
-								key: supplyKey.key,
-								type: supplyKey.type,
 						  })
 						: undefined,
 				),

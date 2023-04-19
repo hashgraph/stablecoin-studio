@@ -3,7 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import BaseContainer from '../../components/BaseContainer';
 import DetailsReview from '../../components/DetailsReview';
-import { SELECTED_WALLET_ACCOUNT_INFO, SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
+import {
+	SELECTED_WALLET_ACCOUNT_INFO,
+	SELECTED_WALLET_COIN,
+	SELECTED_NETWORK,
+} from '../../store/slices/walletSlice';
 import { formatShortKey } from '../../utils/inputHelper';
 import { useRefreshCoinInfo } from '../../hooks/useRefreshCoinInfo';
 import AwaitingWalletSignature from '../../components/AwaitingWalletSignature';
@@ -13,10 +17,11 @@ const StableCoinDetails = () => {
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const account = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
+	const network = useSelector(SELECTED_NETWORK);
 
 	const isLoading = useRefreshCoinInfo();
 
-	const hashScanURL = 'https://hashscan.io/testnet';
+	const hashScanURL = `https://hashscan.io/${network}`;
 
 	const getLabelFromKey = ({ key }: { key: any }) => {
 		if (!key) return t('none').toUpperCase();
@@ -35,6 +40,19 @@ const StableCoinDetails = () => {
 		return isSmartContract
 			? `${hashScanURL}/contract/${key.value}`
 			: `${hashScanURL}/account/${key.key}`;
+	};
+
+	const epochTimestampToGMTString = (timestamp: number | undefined): string => {
+		if (!timestamp) return '';
+		const dateTime: any = timestamp.toString().substring(0, 10);
+		const nanoseconds: any = timestamp.toString().substring(10);
+		const myDate: Date = new Date(dateTime * 1000);
+		const gmtDate: string = myDate.toUTCString();
+		const pos: number = gmtDate.lastIndexOf(' ');
+		return `${gmtDate.substring(0, pos)}.${nanoseconds.substring(0, 4)}${gmtDate.substring(
+			pos,
+			gmtDate.length,
+		)}`;
 	};
 
 	let details = [
@@ -82,6 +100,18 @@ const StableCoinDetails = () => {
 			value: selectedStableCoin?.autoRenewAccount,
 			copyButton: true,
 			hashScanURL: `${hashScanURL}/account/${selectedStableCoin?.autoRenewAccount}`,
+		},
+		{
+			label: t('autoRenewPeriod'),
+			value: selectedStableCoin?.autoRenewPeriod
+				? `${selectedStableCoin.autoRenewPeriod / 24 / 3600} days`
+				: '-',
+		},
+		{
+			label: t('expirationTime'),
+			value: selectedStableCoin?.expirationTimestamp
+				? epochTimestampToGMTString(selectedStableCoin.expirationTimestamp)
+				: '-',
 		},
 		{
 			label: t('proxyAddress'),

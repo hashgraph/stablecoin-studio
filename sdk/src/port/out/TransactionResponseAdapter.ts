@@ -32,6 +32,7 @@ export class TransactionResponseAdapter {
 		functionName: string,
 		resultAsBytes: ArrayBuffer,
 		abi: any, // eslint-disable-line
+		network: string,
 	): Uint8Array {
 		try {
 			const web3 = new Web3();
@@ -44,11 +45,13 @@ export class TransactionResponseAdapter {
 			} else {
 				throw new TransactionResponseError({
 					message: `ABI is undefined, so it could not be possible to find contract function`,
+					network: network,
 				});
 			}
 			if (!functionAbi?.outputs)
 				throw new TransactionResponseError({
 					message: `Contract function ${functionName} not found in ABI, are you using the right version?`,
+					network: network,
 				});
 			const functionParameters = functionAbi?.outputs;
 			const resultHex = '0x'.concat(
@@ -65,6 +68,7 @@ export class TransactionResponseAdapter {
 			LogService.logError(error);
 			throw new TransactionResponseError({
 				message: 'Could not decode function result',
+				network: network,
 			});
 		}
 	}

@@ -50,11 +50,16 @@ const RevokeRoleOperation = () => {
 		name: 'rol',
 	});
 	const isMaxAccounts = useMemo(() => accounts.length >= 10, [accounts]);
+	const isRoleSelected = useMemo((): boolean => {
+		const values = watch();
+		delete values.rol;
+		if (!values) return false;
+		return Object.values(values).some((item) => {
+			return item === true;
+		});
+	}, [watch()]);
 	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
 	const [revokeRoles, setRevokeRoles] = useState<RevokeRoleRequest[]>([]);
-	useEffect(() => {
-		isRoleSelected();
-	}, [watch()]);
 
 	useEffect(() => {
 		addNewAccount();
@@ -179,44 +184,35 @@ const RevokeRoleOperation = () => {
 		remove(i);
 	};
 
-	const isRoleSelected = (): boolean => {
-		const values = getValues();
-		delete values.rol;
-		return Object.values(values).some((item) => {
-			return item === true;
+	const handleSubmit = () => {
+		const values = getValues().rol;
+
+		const valuesDuplicated: { [index: string]: number[] } = {};
+		let sendRequest = true;
+		values.forEach((obj: any, index: number) => {
+			if (!valuesDuplicated[obj.accountId]) {
+				valuesDuplicated[obj.accountId] = [];
+			}
+			valuesDuplicated[obj.accountId].push(index);
 		});
+		for (const accountId in valuesDuplicated) {
+			if (valuesDuplicated[accountId].length > 1) {
+				sendRequest = false;
+				valuesDuplicated[accountId].map((index: number) =>
+					setError(`rol[${index}].accountId`, {
+						type: 'repeatedValue',
+						message: t('roles:giveRole.errorAccountIdDuplicated', {
+							account: accountId,
+						})!,
+					}),
+				);
+			}
+		}
+
+		if (sendRequest) {
+			onOpenModalAction();
+		}
 	};
-
-
-		const handleSubmit = () => {
-			const values = getValues().rol;
-
-			const valuesDuplicated: { [index: string]: number[] } = {};
-			let sendRequest = true;
-			values.forEach((obj: any, index: number) => {
-				if (!valuesDuplicated[obj.accountId]) {
-					valuesDuplicated[obj.accountId] = [];
-				}
-				valuesDuplicated[obj.accountId].push(index);
-			});
-			for (const accountId in valuesDuplicated) {
-				if (valuesDuplicated[accountId].length > 1) {
-					sendRequest = false;
-					valuesDuplicated[accountId].map((index: number) =>
-						setError(`rol[${index}].accountId`, {
-							type: 'repeatedValue',
-							message: t('roles:giveRole.errorAccountIdDuplicated', {
-								account: accountId,
-							})!,
-						}),
-					);
-				}
-			}
-
-			if (sendRequest) {
-				onOpenModalAction();
-			}
-		};
 
 	return (
 		<>
@@ -296,7 +292,7 @@ const RevokeRoleOperation = () => {
 				}
 				onConfirm={handleSubmit}
 				confirmBtnProps={{
-					isDisabled: isNotValidAccount() || !isRoleSelected() || !formState.isValid,
+					isDisabled: isNotValidAccount() || !isRoleSelected || !formState.isValid,
 				}}
 			/>
 

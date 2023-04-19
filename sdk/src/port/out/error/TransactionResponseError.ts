@@ -22,11 +22,13 @@ import BaseError, { ErrorCode } from '../../../core/error/BaseError.js';
 
 export const REGEX_TRANSACTION =
 	/^(0|(?:[1-9]\d*))\.(0|(?:[1-9]\d*))\.(0|(?:[1-9]\d*))(?:-([a-z]{5}))?@([1-9]\d*)\.([1-9]\d*)$/;
-const HASHSCAN_URL = 'https://hashscan.io/testnet/transactionsById/';
-const HASHSCAN_URL_RPC_RELAY = 'https://hashscan.io/testnet/tx/';
+const HASHSCAN_BASE = 'https://hashscan.io/';
+const TRANSACTION_PATH = '/transactionsById/';
+const RPC_RELAY_PATH = '/tx/';
 
 type TransactionResponseErrorPayload = {
 	message: string;
+	network: string;
 	name?: string;
 	status?: string;
 	transactionId?: string;
@@ -41,9 +43,9 @@ export class TransactionResponseError extends BaseError {
 		this.error = val;
 		if (val.transactionId) {
 			if (val.RPC_relay) {
-				this.transactionUrl = `${HASHSCAN_URL_RPC_RELAY}${val.transactionId}`;
+				this.transactionUrl = `${HASHSCAN_BASE}${val.network}${RPC_RELAY_PATH}${val.transactionId}`;
 			} else {
-				this.transactionUrl = `${HASHSCAN_URL}${val.transactionId}`;
+				this.transactionUrl = `${HASHSCAN_BASE}${val.network}${TRANSACTION_PATH}${val.transactionId}`;
 			}
 		}
 	}

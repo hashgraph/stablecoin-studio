@@ -10,7 +10,7 @@ networks:
           { url: '35.225.201.195:50211', nodeId: '0.0.5' },
           { url: '35.247.109.135:50211', nodeId: '0.0.6' },
         ],
-      mirrorNodeUrl: 'https://mainnet.mirrornode.hedera.com/',
+      mirrorNodeUrl: 'https://mainnet-public.mirrornode.hedera.com/',
       chainId: 0,
     },
     {

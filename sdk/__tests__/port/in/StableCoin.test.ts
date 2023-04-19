@@ -18,6 +18,8 @@
  *
  */
 
+/* eslint-disable jest/no-standalone-expect */
+
 import EventService from '../../../src/app/service/event/EventService.js';
 import { WalletEvents } from '../../../src/app/service/event/WalletEvent.js';
 import Injectable from '../../../src/core/Injectable.js';
@@ -33,7 +35,6 @@ import {
 	CashInRequest,
 	BurnRequest,
 	WipeRequest,
-	AssociateTokenRequest,
 	GetAccountBalanceRequest,
 	CapabilitiesRequest,
 	PauseRequest,
@@ -43,6 +44,12 @@ import {
 	RescueRequest,
 	IsAccountAssociatedTokenRequest,
 	InitializationRequest,
+	KYCRequest,
+	GetReserveAddressRequest,
+	AssociateTokenRequest,
+	UpdateReserveAddressRequest,
+	UpdateRequest,
+	RequestPublicKey,
 } from '../../../src/port/in/request/index.js';
 import ConnectRequest, {
 	SupportedWallets,
@@ -63,7 +70,6 @@ describe('🧪 Stablecoin test', () => {
 		await new Promise((r) => setTimeout(r, seconds));
 	};
 	beforeAll(async () => {
-		await Network.init(new InitializationRequest({ network: 'testnet' }));
 		await Network.connect(
 			new ConnectRequest({
 				account: {
@@ -74,59 +80,97 @@ describe('🧪 Stablecoin test', () => {
 				wallet: SupportedWallets.CLIENT,
 			}),
 		);
+		await Network.init(
+			new InitializationRequest({
+				network: 'testnet',
+				configuration: {
+					factoryAddress: FACTORY_ADDRESS,
+				},
+			}),
+		);
 		Injectable.resolveTransactionHandler();
 		const requestSC = new CreateRequest({
 			name: 'TEST_ACCELERATOR_SC',
 			symbol: 'TEST',
 			decimals: '6',
 			initialSupply: '1000',
-			// maxSupply: '',
-			autoRenewAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
-			adminKey: Account.NullPublicKey,
 			freezeKey: Account.NullPublicKey,
 			kycKey: Account.NullPublicKey,
 			wipeKey: Account.NullPublicKey,
 			pauseKey: Account.NullPublicKey,
-			supplyKey: Account.NullPublicKey,
-			// treasury: CLIENT_ACCOUNT_ED25519.id.toString(),
 			supplyType: TokenSupplyType.INFINITE,
 			stableCoinFactory: FACTORY_ADDRESS,
 			hederaERC20: HEDERA_ERC20_ADDRESS,
-			createReserve: false,
+			reserveInitialAmount: '1000000',
+			createReserve: true,
 			grantKYCToOriginalSender: true,
+			burnRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
+			freezeRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
+			kycRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
+			wipeRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
+			pauseRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
+			rescueRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
+			deleteRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
+			cashInRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
+			cashInRoleAllowance: '0',
 		});
 		const requestHTS = new CreateRequest({
 			name: 'TEST_ACCELERATOR_HTS',
 			symbol: 'TEST',
 			decimals: '6',
 			initialSupply: '1000',
-			// maxSupply: '',
-			autoRenewAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
-			adminKey: CLIENT_ACCOUNT_ED25519.publicKey,
 			freezeKey: CLIENT_ACCOUNT_ED25519.publicKey,
 			kycKey: CLIENT_ACCOUNT_ED25519.publicKey,
 			wipeKey: CLIENT_ACCOUNT_ED25519.publicKey,
 			pauseKey: CLIENT_ACCOUNT_ED25519.publicKey,
-			supplyKey: CLIENT_ACCOUNT_ED25519.publicKey,
-			// treasury: CLIENT_ACCOUNT_ED25519.id.toString(),
 			supplyType: TokenSupplyType.INFINITE,
 			stableCoinFactory: FACTORY_ADDRESS,
 			hederaERC20: HEDERA_ERC20_ADDRESS,
-			createReserve: false,
+			reserveInitialAmount: '1000000',
+			createReserve: true,
 			grantKYCToOriginalSender: true,
-			// reserveAddress: '0.0.11111111'
+			burnRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
+			rescueRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
+			deleteRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
+			cashInRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
+			cashInRoleAllowance: '0',
 		});
 
 		stableCoinSC = (await StableCoin.create(requestSC)).coin;
-		// console.log(stableCoinSC);
 		stableCoinHTS = (await StableCoin.create(requestHTS)).coin;
-		// console.log(stableCoinHTS);
+
+		await StableCoin.associate(
+			new AssociateTokenRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoinSC.tokenId!.toString(),
+			}),
+		);
+
+		await StableCoin.associate(
+			new AssociateTokenRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoinHTS.tokenId!.toString(),
+			}),
+		);
+
+		await StableCoin.grantKyc(
+			new KYCRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoinSC.tokenId!.toString(),
+			}),
+		);
+		await StableCoin.grantKyc(
+			new KYCRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoinHTS.tokenId!.toString(),
+			}),
+		);
 	}, 60_000);
 
 	it('Gets a coin', async () => {
 		const res = await StableCoin.getInfo(
 			new GetStableCoinDetailsRequest({
-				id: stableCoinSC?.tokenId?.toString() ?? '0.0.49106247',
+				id: stableCoinSC?.tokenId!.toString(),
 			}),
 		);
 		expect(res).not.toBeNull();
@@ -147,425 +191,86 @@ describe('🧪 Stablecoin test', () => {
 		});
 		const result = await StableCoin.getBalanceOf(
 			new GetAccountBalanceRequest({
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49106247',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
 			}),
 		);
 		expect(result instanceof Balance).toBe(true);
-		expect(result.value).not.toBeNull();
+		expect(result.value.toString()).toEqual('0');
 	}, 60_000);
 
-	it('Performs capabilities', async () => {
-		const handler = Injectable.resolveTransactionHandler();
-		expect(handler).not.toBeNull();
-		const eventService = Injectable.resolve(EventService);
-		expect(eventService).not.toBeNull();
-		eventService.on(WalletEvents.walletInit, (data) => {
-			console.log(`Wallet: ${data.wallet} initialized`);
-		});
-		const result = await StableCoin.capabilities(
-			new CapabilitiesRequest({
-				account: {
-					accountId: CLIENT_ACCOUNT_ED25519.id.toString(),
-					privateKey: CLIENT_ACCOUNT_ED25519.privateKey,
-				},
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49106247',
-			}),
-		);
-		expect(result).not.toBeNull();
-		expect(result.capabilities).not.toBeNull();
+	it('Performs capabilities SC', async () => {
+		await capabilitiesOperation(stableCoinSC);
 	}, 60_000);
 
 	it('Performs a cash in SC', async () => {
-		const handler = Injectable.resolveTransactionHandler();
-		expect(handler).not.toBeNull();
-		const eventService = Injectable.resolve(EventService);
-		expect(eventService).not.toBeNull();
-		eventService.on(WalletEvents.walletInit, (data) => {
-			console.log(`Wallet: ${data.wallet} initialized`);
-		});
-		const result = await StableCoin.cashIn(
-			new CashInRequest({
-				amount: '1',
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49106247',
-				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-			}),
-		);
-
-		expect(result).not.toBeNull();
-		await expect(result).toBe(true);
+		await cashInOperation(stableCoinSC);
 	}, 60_000);
 
 	it('Performs burn SC', async () => {
-		const handler = Injectable.resolveTransactionHandler();
-		expect(handler).not.toBeNull();
-		const eventService = Injectable.resolve(EventService);
-		expect(eventService).not.toBeNull();
-		eventService.on(WalletEvents.walletInit, (data) => {
-			console.log(`Wallet: ${data.wallet} initialized`);
-		});
-		const result = await StableCoin.burn(
-			new BurnRequest({
-				amount: '1',
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49106247',
-			}),
-		);
-		expect(result).not.toBeNull();
-		expect(result).toBe(true);
+		await burnOperation(stableCoinSC);
 	}, 60_000);
 
 	it('Performs rescue SC', async () => {
-		const handler = Injectable.resolveTransactionHandler();
-		expect(handler).not.toBeNull();
-		const eventService = Injectable.resolve(EventService);
-		expect(eventService).not.toBeNull();
-		eventService.on(WalletEvents.walletInit, (data) => {
-			console.log(`Wallet: ${data.wallet} initialized`);
-		});
-		const result = await StableCoin.rescue(
-			new RescueRequest({
-				amount: '1',
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49106247',
-			}),
-		);
-		expect(result).not.toBeNull();
-		expect(result).toBe(true);
+		await rescueOperation(stableCoinSC);
 	}, 60_000);
 
 	it('Performs wipe SC', async () => {
-		const handler = Injectable.resolveTransactionHandler();
-		expect(handler).not.toBeNull();
-		const eventService = Injectable.resolve(EventService);
-		expect(eventService).not.toBeNull();
-		eventService.on(WalletEvents.walletInit, (data) => {
-			console.log(`Wallet: ${data.wallet} initialized`);
-		});
-		const result = await StableCoin.wipe(
-			new WipeRequest({
-				amount: '1',
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49106247',
-				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-			}),
-		);
-		expect(result).not.toBeNull();
-		expect(result).toBe(true);
+		await wipeOperation(stableCoinSC);
 	}, 60_000);
 
-	it('Performs associate SC', async () => {
-		const handler = Injectable.resolveTransactionHandler();
-		expect(handler).not.toBeNull();
-		const eventService = Injectable.resolve(EventService);
-		expect(eventService).not.toBeNull();
-		eventService.on(WalletEvents.walletInit, (data) => {
-			console.log(`Wallet: ${data.wallet} initialized`);
-		});
-		const result = StableCoin.associate(
-			new AssociateTokenRequest({
-				account: {
-					accountId: CLIENT_ACCOUNT_ECDSA.id.toString(),
-					privateKey: CLIENT_ACCOUNT_ECDSA.privateKey,
-				},
-			}),
-		);
-		await expect(result).rejects.toThrow('Method not implemented');
+	it('Performs freeze and unfreeze SC', async () => {
+		await freezeUnfreezeOperation(stableCoinSC);
 	}, 60_000);
 
-	it('Performs freeze SC', async () => {
-		const handler = Injectable.resolveTransactionHandler();
-		expect(handler).not.toBeNull();
-		const eventService = Injectable.resolve(EventService);
-		expect(eventService).not.toBeNull();
-		eventService.on(WalletEvents.walletInit, (data) => {
-			console.log(`Wallet: ${data.wallet} initialized`);
-		});
-		await delay();
-		const result = await StableCoin.freeze(
-			new FreezeAccountRequest({
-				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49131205',
-			}),
-		);
-
-		expect(result).not.toBeNull();
-		expect(result).toBe(true);
+	it('Performs grant and revoke kyc SC', async () => {
+		await grantRevokeKYCOperation(stableCoinSC);
 	}, 60_000);
 
-	it('Performs unfreeze SC', async () => {
-		const handler = Injectable.resolveTransactionHandler();
-		expect(handler).not.toBeNull();
-		const eventService = Injectable.resolve(EventService);
-		expect(eventService).not.toBeNull();
-		eventService.on(WalletEvents.walletInit, (data) => {
-			console.log(`Wallet: ${data.wallet} initialized`);
-		});
-		await delay();
-		const result = await StableCoin.unFreeze(
-			new FreezeAccountRequest({
-				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49131205',
-			}),
-		);
-		expect(result).not.toBeNull();
-		expect(result).toBe(true);
-	}, 60_000);
-
-	it('Performs pause SC', async () => {
-		const handler = Injectable.resolveTransactionHandler();
-		expect(handler).not.toBeNull();
-		const eventService = Injectable.resolve(EventService);
-		expect(eventService).not.toBeNull();
-		eventService.on(WalletEvents.walletInit, (data) => {
-			console.log(`Wallet: ${data.wallet} initialized`);
-		});
-		const result = await StableCoin.pause(
-			new PauseRequest({
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49106247',
-			}),
-		);
-		expect(result).not.toBeNull();
-		expect(result).toBe(true);
+	it('Performs pause and unpause SC', async () => {
+		await pauseUnpauseOperation(stableCoinSC);
 	}, 90_000);
 
-	it('Performs unpause SC', async () => {
-		const handler = Injectable.resolveTransactionHandler();
-		expect(handler).not.toBeNull();
-		const eventService = Injectable.resolve(EventService);
-		expect(eventService).not.toBeNull();
-		eventService.on(WalletEvents.walletInit, (data) => {
-			console.log(`Wallet: ${data.wallet} initialized`);
-		});
-		const result = await StableCoin.unPause(
-			new PauseRequest({
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49106247',
-			}),
-		);
-		expect(result).not.toBeNull();
-		expect(result).toBe(true);
-	}, 60_000);
-
-	// eslint-disable-next-line jest/no-disabled-tests
-	it.skip('Performs delete SC', async () => {
-		const handler = Injectable.resolveTransactionHandler();
-		expect(handler).not.toBeNull();
-		const eventService = Injectable.resolve(EventService);
-		expect(eventService).not.toBeNull();
-		eventService.on(WalletEvents.walletInit, (data) => {
-			console.log(`Wallet: ${data.wallet} initialized`);
-		});
-		const result = await StableCoin.delete(
-			new DeleteRequest({
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49106247',
-			}),
-		);
-		expect(result).not.toBeNull();
-		expect(result).toBe(true);
+	it('Performs update token SC', async () => {
+		await updateToken(stableCoinSC);
 	}, 60_000);
 
 	// ----------------------HTS--------------------------
 
-	it('Performs a cash in HTS', async () => {
-		const handler = Injectable.resolveTransactionHandler();
-		expect(handler).not.toBeNull();
-		const eventService = Injectable.resolve(EventService);
-		expect(eventService).not.toBeNull();
-		eventService.on(WalletEvents.walletInit, (data) => {
-			console.log(`Wallet: ${data.wallet} initialized`);
-		});
-		const result = StableCoin.cashIn(
-			new CashInRequest({
-				amount: '1',
-				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49131205',
-				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-			}),
-		);
-
-		await expect(result).rejects.toThrow('SPENDER_DOES_NOT_HAVE_ALLOWANCE');
-	}, 60_000);
-
-	it('Performs burn HTS', async () => {
-		const handler = Injectable.resolveTransactionHandler();
-		expect(handler).not.toBeNull();
-		const eventService = Injectable.resolve(EventService);
-		expect(eventService).not.toBeNull();
-		eventService.on(WalletEvents.walletInit, (data) => {
-			console.log(`Wallet: ${data.wallet} initialized`);
-		});
-		const result = await StableCoin.burn(
-			new BurnRequest({
-				amount: '1',
-				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49106247',
-			}),
-		);
-		expect(result).not.toBeNull();
-		expect(result).toBe(true);
-	}, 60_000);
-
 	it('Performs rescue HTS', async () => {
-		const handler = Injectable.resolveTransactionHandler();
-		expect(handler).not.toBeNull();
-		const eventService = Injectable.resolve(EventService);
-		expect(eventService).not.toBeNull();
-		eventService.on(WalletEvents.walletInit, (data) => {
-			console.log(`Wallet: ${data.wallet} initialized`);
-		});
-		const result = await StableCoin.rescue(
-			new RescueRequest({
-				amount: '1',
-				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49106247',
-			}),
-		);
-		expect(result).not.toBeNull();
-		expect(result).toBe(true);
+		await rescueOperation(stableCoinHTS);
 	}, 60_000);
 
 	it('Performs wipe HTS', async () => {
-		const handler = Injectable.resolveTransactionHandler();
-		expect(handler).not.toBeNull();
-		const eventService = Injectable.resolve(EventService);
-		expect(eventService).not.toBeNull();
-		eventService.on(WalletEvents.walletInit, (data) => {
-			console.log(`Wallet: ${data.wallet} initialized`);
-		});
-		const result = await StableCoin.wipe(
-			new WipeRequest({
-				amount: '1',
-				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49106247',
-				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-			}),
-		);
-		expect(result).not.toBeNull();
-		expect(result).toBe(true);
-	}, 60_000);
-
-	it('Performs associate HTS', async () => {
-		const handler = Injectable.resolveTransactionHandler();
-		expect(handler).not.toBeNull();
-		const eventService = Injectable.resolve(EventService);
-		expect(eventService).not.toBeNull();
-		eventService.on(WalletEvents.walletInit, (data) => {
-			console.log(`Wallet: ${data.wallet} initialized`);
-		});
-		const result = StableCoin.associate(
-			new AssociateTokenRequest({
-				account: {
-					accountId: CLIENT_ACCOUNT_ECDSA.id.toString(),
-					privateKey: CLIENT_ACCOUNT_ECDSA.privateKey,
-				},
-			}),
-		);
-		await expect(result).rejects.toThrow('Method not implemented');
+		await wipeOperation(stableCoinHTS);
 	}, 60_000);
 
 	it('Performs capabilities HTS', async () => {
-		const handler = Injectable.resolveTransactionHandler();
-		expect(handler).not.toBeNull();
-		const eventService = Injectable.resolve(EventService);
-		expect(eventService).not.toBeNull();
-		eventService.on(WalletEvents.walletInit, (data) => {
-			console.log(`Wallet: ${data.wallet} initialized`);
-		});
-		const result = await StableCoin.capabilities(
-			new CapabilitiesRequest({
-				account: {
-					accountId: CLIENT_ACCOUNT_ED25519.id.toString(),
-					privateKey: CLIENT_ACCOUNT_ED25519.privateKey,
-				},
-				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49106247',
-			}),
-		);
-		expect(result).not.toBeNull();
-		expect(result.capabilities).not.toBeNull();
+		await capabilitiesOperation(stableCoinHTS);
 	}, 60_000);
 
-	it('Performs freeze HTS', async () => {
-		const handler = Injectable.resolveTransactionHandler();
-		expect(handler).not.toBeNull();
-		const eventService = Injectable.resolve(EventService);
-		expect(eventService).not.toBeNull();
-		eventService.on(WalletEvents.walletInit, (data) => {
-			console.log(`Wallet: ${data.wallet} initialized`);
-		});
-		await delay();
-		const result = await StableCoin.freeze(
-			new FreezeAccountRequest({
-				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49131205',
-			}),
-		);
-		expect(result).not.toBeNull();
-		expect(result).toBe(true);
+	it('Performs freeze and unfreeze HTS', async () => {
+		await freezeUnfreezeOperation(stableCoinHTS);
 	}, 60_000);
 
-	it('Performs unfreeze HTS', async () => {
-		const handler = Injectable.resolveTransactionHandler();
-		expect(handler).not.toBeNull();
-		const eventService = Injectable.resolve(EventService);
-		expect(eventService).not.toBeNull();
-		eventService.on(WalletEvents.walletInit, (data) => {
-			console.log(`Wallet: ${data.wallet} initialized`);
-		});
-		await delay();
-		const result = await StableCoin.unFreeze(
-			new FreezeAccountRequest({
-				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49131205',
-			}),
-		);
-		expect(result).not.toBeNull();
-		expect(result).toBe(true);
+	it('Performs grant and revoke kyc HTS', async () => {
+		await grantRevokeKYCOperation(stableCoinHTS);
 	}, 60_000);
 
-	it('Performs pause HTS', async () => {
-		const handler = Injectable.resolveTransactionHandler();
-		expect(handler).not.toBeNull();
-		const eventService = Injectable.resolve(EventService);
-		expect(eventService).not.toBeNull();
-		eventService.on(WalletEvents.walletInit, (data) => {
-			console.log(`Wallet: ${data.wallet} initialized`);
-		});
-		const result = await StableCoin.pause(
-			new PauseRequest({
-				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49106247',
-			}),
-		);
-		expect(result).not.toBeNull();
-		expect(result).toBe(true);
-	}, 60_000);
+	it('Performs pause and unpause HTS', async () => {
+		await pauseUnpauseOperation(stableCoinHTS);
+	}, 90_000);
 
-	it('Performs unpause HTS', async () => {
-		const handler = Injectable.resolveTransactionHandler();
-		expect(handler).not.toBeNull();
-		const eventService = Injectable.resolve(EventService);
-		expect(eventService).not.toBeNull();
-		eventService.on(WalletEvents.walletInit, (data) => {
-			console.log(`Wallet: ${data.wallet} initialized`);
-		});
-		const result = await StableCoin.unPause(
-			new PauseRequest({
-				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49106247',
-			}),
-		);
-		expect(result).not.toBeNull();
-		expect(result).toBe(true);
+	it('Performs reserve', async () => {
+		const result_1 = await getReserve(stableCoinHTS);
+		expect(result_1).not.toEqual('0.0.0');
+		const result_2 = await updateReserve(stableCoinHTS, '0.0.0');
+		expect(result_2).toEqual('0.0.0');
+		const result_3 = await updateReserve(stableCoinHTS, result_1);
+		expect(result_3).toEqual(result_1);
 	}, 60_000);
 
 	// eslint-disable-next-line jest/no-disabled-tests
-	it.skip('Performs delete HTS', async () => {
-		const handler = Injectable.resolveTransactionHandler();
-		expect(handler).not.toBeNull();
-		const eventService = Injectable.resolve(EventService);
-		expect(eventService).not.toBeNull();
-		eventService.on(WalletEvents.walletInit, (data) => {
-			console.log(`Wallet: ${data.wallet} initialized`);
-		});
-		const result = await StableCoin.delete(
-			new DeleteRequest({
-				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49106247',
-			}),
-		);
-		expect(result).not.toBeNull();
-		expect(result).toBe(true);
-	}, 60_000);
 
 	it('Get isAccountTokenAssociated', async () => {
 		const handler = Injectable.resolveTransactionHandler();
@@ -578,11 +283,15 @@ describe('🧪 Stablecoin test', () => {
 		const result = await StableCoin.isAccountAssociated(
 			new IsAccountAssociatedTokenRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49206466',
+				tokenId: stableCoinHTS?.tokenId!.toString(),
 			}),
 		);
 		expect(result).not.toBeNull();
 		expect(result).toBe(true);
+	}, 60_000);
+
+	it('Performs update token HTS', async () => {
+		await updateToken(stableCoinHTS);
 	}, 60_000);
 
 	afterAll(async () => {
@@ -593,21 +302,345 @@ describe('🧪 Stablecoin test', () => {
 		eventService.on(WalletEvents.walletInit, (data) => {
 			console.log(`Wallet: ${data.wallet} initialized`);
 		});
-		console.log(`Token HTS: ${stableCoinHTS?.tokenId?.toString()}`);
-		console.log(`Token SC: ${stableCoinSC?.tokenId?.toString()}`);
+		console.log(`Token HTS: ${stableCoinHTS?.tokenId!.toString()}`);
+		console.log(`Token SC: ${stableCoinSC?.tokenId!.toString()}`);
 
 		await delay(10);
 		const resultHTS = await StableCoin.delete(
 			new DeleteRequest({
-				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.49106247',
+				tokenId: stableCoinHTS?.tokenId!.toString(),
 			}),
 		);
 		const resultSC = await StableCoin.delete(
 			new DeleteRequest({
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49106247',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 			}),
 		);
 		expect(resultHTS).toBe(true);
 		expect(resultSC).toBe(true);
 	}, 60_000);
+
+	async function burnOperation(stableCoin: StableCoinViewModel) {
+		const burnAmount = 1;
+
+		const initialAmount = await StableCoin.getBalanceOf(
+			new GetAccountBalanceRequest({
+				tokenId: stableCoin?.tokenId!.toString(),
+				targetId: stableCoin?.treasury!.toString(),
+			}),
+		);
+
+		await StableCoin.burn(
+			new BurnRequest({
+				amount: burnAmount.toString(),
+				tokenId: stableCoin?.tokenId!.toString(),
+			}),
+		);
+
+		await delay(1);
+
+		const finalAmount = await StableCoin.getBalanceOf(
+			new GetAccountBalanceRequest({
+				tokenId: stableCoin?.tokenId!.toString(),
+				targetId: stableCoin?.treasury!.toString(),
+			}),
+		);
+
+		const final = initialAmount.value.toLong().sub(burnAmount);
+
+		expect(finalAmount).toEqual(final);
+	}
+
+	async function cashInOperation(stableCoin: StableCoinViewModel) {
+		const cashInAmount = 1;
+
+		const initialAmount = await StableCoin.getBalanceOf(
+			new GetAccountBalanceRequest({
+				tokenId: stableCoin?.tokenId!.toString(),
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+			}),
+		);
+
+		await StableCoin.cashIn(
+			new CashInRequest({
+				amount: cashInAmount.toString(),
+				tokenId: stableCoin?.tokenId!.toString(),
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+			}),
+		);
+
+		await delay(1);
+
+		const finalAmount = await StableCoin.getBalanceOf(
+			new GetAccountBalanceRequest({
+				tokenId: stableCoin?.tokenId!.toString(),
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+			}),
+		);
+
+		const final = initialAmount.value.toLong().add(cashInAmount);
+
+		expect(finalAmount).toEqual(final);
+	}
+
+	async function rescueOperation(stableCoin: StableCoinViewModel) {
+		const rescueAmount = 1;
+
+		const initialAmount = await StableCoin.getBalanceOf(
+			new GetAccountBalanceRequest({
+				tokenId: stableCoin?.tokenId!.toString(),
+				targetId: stableCoin?.treasury!.toString(),
+			}),
+		);
+
+		await StableCoin.rescue(
+			new RescueRequest({
+				amount: rescueAmount.toString(),
+				tokenId: stableCoin?.tokenId!.toString(),
+			}),
+		);
+
+		await delay(1);
+
+		const finalAmount = await StableCoin.getBalanceOf(
+			new GetAccountBalanceRequest({
+				tokenId: stableCoin?.tokenId!.toString(),
+				targetId: stableCoin?.treasury!.toString(),
+			}),
+		);
+
+		const final = initialAmount.value.toLong().sub(rescueAmount);
+
+		expect(finalAmount).toEqual(final);
+	}
+
+	async function wipeOperation(stableCoin: StableCoinViewModel) {
+		const wipeAmount = 1;
+
+		const initialAmount = await StableCoin.getBalanceOf(
+			new GetAccountBalanceRequest({
+				tokenId: stableCoin?.tokenId!.toString(),
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+			}),
+		);
+
+		await StableCoin.wipe(
+			new WipeRequest({
+				amount: wipeAmount.toString(),
+				tokenId: stableCoin?.tokenId!.toString(),
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+			}),
+		);
+
+		await delay(1);
+
+		const finalAmount = await StableCoin.getBalanceOf(
+			new GetAccountBalanceRequest({
+				tokenId: stableCoin?.tokenId!.toString(),
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+			}),
+		);
+
+		const final = initialAmount.value.toLong().sub(wipeAmount);
+
+		expect(finalAmount).toEqual(final);
+	}
+
+	async function capabilitiesOperation(stableCoin: StableCoinViewModel) {
+		const result = await StableCoin.capabilities(
+			new CapabilitiesRequest({
+				account: {
+					accountId: CLIENT_ACCOUNT_ED25519.id.toString(),
+					privateKey: CLIENT_ACCOUNT_ED25519.privateKey,
+				},
+				tokenId: stableCoin?.tokenId!.toString(),
+			}),
+		);
+
+		expect(result.capabilities).not.toBeNull();
+	}
+
+	async function freezeUnfreezeOperation(stableCoin: StableCoinViewModel) {
+		const notFrozen_1 = await StableCoin.isAccountFrozen(
+			new FreezeAccountRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoin?.tokenId!.toString(),
+			}),
+		);
+
+		const result_1 = await StableCoin.freeze(
+			new FreezeAccountRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoin?.tokenId!.toString(),
+			}),
+		);
+
+		await delay(1);
+
+		const Frozen = await StableCoin.isAccountFrozen(
+			new FreezeAccountRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoin?.tokenId!.toString(),
+			}),
+		);
+
+		const result_2 = await StableCoin.unFreeze(
+			new FreezeAccountRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoin?.tokenId!.toString(),
+			}),
+		);
+
+		await delay(1);
+
+		const notFrozen_2 = await StableCoin.isAccountFrozen(
+			new FreezeAccountRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoin?.tokenId!.toString(),
+			}),
+		);
+
+		expect(result_1).toBe(true);
+		expect(result_2).toBe(true);
+		expect(notFrozen_1).toBe(true);
+		expect(Frozen).toBe(false);
+		expect(notFrozen_2).toBe(true);
+	}
+
+	async function grantRevokeKYCOperation(stableCoin: StableCoinViewModel) {
+		const kycOK_1 = await StableCoin.isAccountKYCGranted(
+			new KYCRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoin?.tokenId!.toString(),
+			}),
+		);
+
+		const result_1 = await StableCoin.revokeKyc(
+			new KYCRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoin?.tokenId!.toString(),
+			}),
+		);
+
+		await delay(1);
+
+		const kycNOK = await StableCoin.isAccountKYCGranted(
+			new KYCRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoin?.tokenId!.toString(),
+			}),
+		);
+
+		const result_2 = await StableCoin.grantKyc(
+			new KYCRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoin?.tokenId!.toString(),
+			}),
+		);
+
+		await delay(1);
+
+		const kycOK_2 = await StableCoin.isAccountKYCGranted(
+			new KYCRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoin?.tokenId!.toString(),
+			}),
+		);
+
+		expect(result_1).toBe(true);
+		expect(result_2).toBe(true);
+		expect(kycOK_1).toBe(true);
+		expect(kycNOK).toBe(false);
+		expect(kycOK_2).toBe(true);
+	}
+
+	async function pauseUnpauseOperation(stableCoin: StableCoinViewModel) {
+		const result_1 = await StableCoin.pause(
+			new PauseRequest({
+				tokenId: stableCoin?.tokenId!.toString(),
+			}),
+		);
+		const result_2 = await StableCoin.unPause(
+			new PauseRequest({
+				tokenId: stableCoin?.tokenId!.toString(),
+			}),
+		);
+
+		expect(result_1).toBe(true);
+		expect(result_2).toBe(true);
+	}
+
+	async function getReserve(stableCoin: StableCoinViewModel) {
+		return await StableCoin.getReserveAddress(
+			new GetReserveAddressRequest({
+				tokenId: stableCoin?.tokenId!.toString(),
+			}),
+		);
+	}
+
+	async function updateReserve(
+		stableCoin: StableCoinViewModel,
+		newReserveAddress: string,
+	) {
+		return await StableCoin.updateReserveAddress(
+			new UpdateReserveAddressRequest({
+				tokenId: stableCoin?.tokenId!.toString(),
+				reserveAddress: newReserveAddress,
+			}),
+		);
+	}
+
+	async function updateToken(stableCoin: StableCoinViewModel) {
+		const name = 'New Token Name';
+		const symbol = 'New Token Symbol';
+		const autoRenewPeriod = 30;
+		const expirationTimestamp = stableCoin.expirationTimestamp! + 1;
+		const freezeKey =
+			stableCoin.freezeKey === Account.NullPublicKey
+				? CLIENT_ACCOUNT_ED25519.publicKey
+				: Account.NullPublicKey;
+		const kycKey =
+			stableCoin.kycKey === Account.NullPublicKey
+				? CLIENT_ACCOUNT_ED25519.publicKey
+				: Account.NullPublicKey;
+		const wipeKey =
+			stableCoin.wipeKey === Account.NullPublicKey
+				? CLIENT_ACCOUNT_ED25519.publicKey
+				: Account.NullPublicKey;
+		const pauseKey =
+			stableCoin.pauseKey === Account.NullPublicKey
+				? CLIENT_ACCOUNT_ED25519.publicKey
+				: Account.NullPublicKey;
+
+		await StableCoin.update(
+			new UpdateRequest({
+				tokenId: stableCoin?.tokenId!.toString(),
+				name: name,
+				symbol: symbol,
+				autoRenewPeriod: autoRenewPeriod.toString(),
+				expirationTimestamp: expirationTimestamp.toString(),
+				freezeKey: freezeKey,
+				kycKey: kycKey,
+				wipeKey: wipeKey,
+				pauseKey: pauseKey,
+			}),
+		);
+
+		await delay(1);
+
+		const res = await StableCoin.getInfo(
+			new GetStableCoinDetailsRequest({
+				id: stableCoinSC?.tokenId!.toString(),
+			}),
+		);
+
+		expect(res.name).toEqual(name);
+		expect(res.symbol).toEqual(symbol);
+		expect(res.autoRenewPeriod).toEqual(autoRenewPeriod);
+		expect(res.expirationTimestamp).toEqual(expirationTimestamp);
+		expect(res.freezeKey).toEqual(freezeKey);
+		expect(res.kycKey).toEqual(kycKey);
+		expect(res.wipeKey).toEqual(wipeKey);
+		expect(res.pauseKey).toEqual(pauseKey);
+	}
 });
