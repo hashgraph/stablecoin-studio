@@ -1,7 +1,7 @@
 import { language } from '../../../index.js';
 import { utilsService } from '../../../index.js';
 import Service from '../Service.js';
-import { RescueRequest, StableCoin } from 'hedera-stable-coin-sdk';
+import { RescueRequest, StableCoin } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 /**
  * Create Stable Coin Service

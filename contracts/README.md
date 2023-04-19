@@ -116,7 +116,7 @@ Then compile and build the contracts, you can choose one of the following option
 The last two commands will generate a `build` folder that contains a `typechain-types` folder. This folder contains the contracts wrappers that allows us to access contracts abi importing the wrappers as shown below:
 
 ```code
-import { HederaERC20__factory } from 'hedera-stable-coin-contracts/typechain-types';
+import { HederaERC20__factory } from '@hashgraph-dev/stablecoin-npm-contracts/typechain-types';
 ```
 
 # Test

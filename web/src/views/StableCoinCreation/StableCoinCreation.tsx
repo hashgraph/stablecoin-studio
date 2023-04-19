@@ -31,8 +31,8 @@ import {
 	KYCRequest,
 	GetStableCoinDetailsRequest,
 	SupportedWallets,
-} from 'hedera-stable-coin-sdk';
-import type { RequestPublicKey } from 'hedera-stable-coin-sdk';
+} from '@hashgraph-dev/stablecoin-npm-sdk';
+import type { RequestPublicKey } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch } from '../../store/store';
 import ProofOfReserve from './ProofOfReserve';

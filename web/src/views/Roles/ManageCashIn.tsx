@@ -10,7 +10,7 @@ import {
 	GetSupplierAllowanceRequest,
 	IncreaseSupplierAllowanceRequest,
 	ResetSupplierAllowanceRequest,
-} from 'hedera-stable-coin-sdk';
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 import { useNavigate } from 'react-router-dom';
 import { SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
 import type { ModalsHandlerActionsProps } from '../../components/ModalsHandler';

@@ -17,7 +17,7 @@ import type { IExternalToken } from '../interfaces/IExternalToken';
 // import type { AppDispatch } from '../../store/store.js';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useRefreshCoinInfo } from '../hooks/useRefreshCoinInfo';
-import { Access, Operation, StableCoinRole } from 'hedera-stable-coin-sdk';
+import { Access, Operation, StableCoinRole } from '@hashgraph-dev/stablecoin-npm-sdk';
 import AwaitingWalletSignature from '../components/AwaitingWalletSignature';
 
 const Operations = () => {

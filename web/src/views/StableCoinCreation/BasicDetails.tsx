@@ -2,7 +2,7 @@ import { Heading, Stack, VStack } from '@chakra-ui/react';
 import type { Control, FieldValues } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import InputController from '../../components/Form/InputController';
-import { CreateRequest, Network, GetERC20ListRequest } from 'hedera-stable-coin-sdk';
+import { CreateRequest, Network, GetERC20ListRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { handleRequestValidation } from '../../utils/validationsHelper';
 import { propertyNotFound } from '../../constant';
 import { useEffect, useState } from 'react';

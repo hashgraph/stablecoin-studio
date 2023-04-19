@@ -10,7 +10,10 @@ import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccoun
 import { IConsensusNodeConfig } from '../../../domain/configuration/interfaces/IConsensusNodeConfig.js';
 import { INetworkConfig } from '../../../domain/configuration/interfaces/INetworkConfig.js';
 import { IFactoryConfig } from '../../../domain/configuration/interfaces/IFactoryConfig.js';
-import { Network, SetConfigurationRequest } from 'hedera-stable-coin-sdk';
+import {
+  Network,
+  SetConfigurationRequest,
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 const colors = require('colors');
 
 /**

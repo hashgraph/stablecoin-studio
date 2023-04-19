@@ -5,7 +5,7 @@ import {
   GetStableCoinDetailsRequest,
   StableCoin,
   StableCoinViewModel,
-} from 'hedera-stable-coin-sdk';
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 import FeeStableCoinService from './FeeStableCoinService.js';
 
 /**

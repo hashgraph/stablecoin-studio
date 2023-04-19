@@ -45,7 +45,8 @@ import {
   RequestPublicKey,
   Account,
   GetPublicKeyRequest,
-} from 'hedera-stable-coin-sdk';
+} from '@hashgraph-dev/stablecoin-npm-sdk';
+
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
 import CashInStableCoinsService from './CashInStableCoinService.js';
 import WipeStableCoinService from './WipeStableCoinService.js';
