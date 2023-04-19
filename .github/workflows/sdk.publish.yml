@@ -2,7 +2,7 @@ name: SDK Publish NPM
 on: 
   workflow_dispatch:
   push:
-    branches: [feature/npm-gitflow]
+    branches: [main]
     paths:
       - 'sdk/**'
 defaults:
@@ -11,6 +11,7 @@ defaults:
 jobs:
   test-node:
     name: Publish SDK package
+    needs: [SDK - Test]
     runs-on: ubuntu-latest
     permissions:
       contents: 'read'

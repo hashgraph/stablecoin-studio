@@ -2,7 +2,7 @@ name: CLI Publish NPM
 on: 
   workflow_dispatch:
   push:
-    branches: [feature/npm-gitflow]
+    branches: [main]
     paths:
       - 'cli/**'
 defaults:
@@ -11,6 +11,7 @@ defaults:
 jobs:
   test-node:
     name: Publish CLI package
+    needs: [CLI - Test]
     runs-on: ubuntu-latest
     permissions:
       contents: 'read'

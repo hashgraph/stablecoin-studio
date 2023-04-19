@@ -2,7 +2,7 @@ name: Contracts Publish NPM
 on: 
   workflow_dispatch:
   push:
-    branches: [feature/npm-gitflow]
+    branches: [main]
     paths:
       - 'contracts/**'
 defaults:
@@ -11,6 +11,7 @@ defaults:
 jobs:
   test-node:
     name: Publish contracts package
+    needs: [Contracts - Test]
     runs-on: ubuntu-latest
     permissions:
       contents: 'read'
