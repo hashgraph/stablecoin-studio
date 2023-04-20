@@ -129,7 +129,7 @@ export async function getAccountsForRole(
     const params: string[] = [ROLE]
     const result = await contractCall(
         proxyAddress,
-        'getAccountsForRole',
+        'getAccountsWithRole',
         params,
         clientCheckingRole,
         Gas2,

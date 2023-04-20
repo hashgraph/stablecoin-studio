@@ -20,7 +20,6 @@
 
 import { Query } from '../../../../../../core/query/Query.js';
 import { QueryResponse } from '../../../../../../core/query/QueryResponse.js';
-import { HederaId } from '../../../../../../domain/context/shared/HederaId.js';
 
 export class GetAccountsWithRolesQueryResponse implements QueryResponse {
 	constructor(public readonly payload: string[]) {}
@@ -29,7 +28,7 @@ export class GetAccountsWithRolesQueryResponse implements QueryResponse {
 export class GetAccountsWithRolesQuery extends Query<GetAccountsWithRolesQueryResponse> {
 	constructor(
 		public readonly roleId: string,
-		public readonly tokenId: HederaId,
+		public readonly tokenId: string,
 	) {
 		super();
 	}

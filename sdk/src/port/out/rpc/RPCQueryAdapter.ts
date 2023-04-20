@@ -146,10 +146,13 @@ export default class RPCQueryAdapter {
 		LogService.logTrace(
 			`Requesting getAccountsWithRole address: ${address.toString()}, target: ${role}`,
 		);
+		console.log(
+			`Requesting getAccountsWithRole address: ${address.toString()}, target: ${role}`,
+		);
 		return await this.connect(
 			HederaERC20,
 			address.toString(),
-		).getAccountsForRole(role);
+		).getAccountsWithRole(role);
 	}
 
 	async hasRole(

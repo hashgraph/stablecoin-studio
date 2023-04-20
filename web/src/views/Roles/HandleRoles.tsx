@@ -6,8 +6,14 @@ import { useRefreshCoinInfo } from '../../hooks/useRefreshCoinInfo';
 import RevokeRoleOperation from './RevokeRoles';
 import GrantRoleOperation from './GrantRoles';
 import ManageCashIn from './ManageCashIn';
+import GetAccountsWithRole from './GetAccountsWithRole';
 
-export type Action = 'editRole' | 'giveRole' | 'revokeRole' | 'refreshRoles';
+export type Action =
+	| 'editRole'
+	| 'giveRole'
+	| 'revokeRole'
+	| 'refreshRoles'
+	| 'getAccountsWithRole';
 
 interface HandleRolesProps {
 	action: Action;
@@ -122,6 +128,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 			{action === 'revokeRole' && <RevokeRoleOperation />}
 			{action === 'giveRole' && <GrantRoleOperation filteredCapabilities={filteredCapabilities} />}
 			{action === 'editRole' && <ManageCashIn />}
+			{action === 'getAccountsWithRole' && <GetAccountsWithRole />}
 		</>
 	);
 };

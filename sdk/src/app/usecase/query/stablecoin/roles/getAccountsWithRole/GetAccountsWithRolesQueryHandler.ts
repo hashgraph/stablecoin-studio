@@ -28,6 +28,7 @@ import {
 } from './GetAccountsWithRolesQuery.js';
 import RPCQueryAdapter from '../../../../../../port/out/rpc/RPCQueryAdapter.js';
 import { MirrorNodeAdapter } from '../../../../../../port/out/mirror/MirrorNodeAdapter.js';
+import { HederaId } from '../../../../../../domain/context/shared/HederaId.js';
 
 @QueryHandler(GetAccountsWithRolesQuery)
 export class GetAccountsWithRolesQueryHandler
@@ -46,7 +47,8 @@ export class GetAccountsWithRolesQueryHandler
 		query: GetAccountsWithRolesQuery,
 	): Promise<GetAccountsWithRolesQueryResponse> {
 		const { roleId, tokenId } = query;
-		const coin = await this.stableCoinService.get(tokenId);
+
+		const coin = await this.stableCoinService.get(HederaId.from(tokenId));
 		if (!coin.evmProxyAddress) throw new Error('Invalid token id');
 
 		const res = await this.queryAdapter.getAccountsWithRole(

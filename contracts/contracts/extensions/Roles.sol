@@ -113,6 +113,9 @@ abstract contract Roles is IRoles, Initializable {
         _listOfroles.push(_KYC_ROLE);
     }
 
+    /**
+     * @dev Returns `true` if `account` has been granted `role`.
+     */
     function hasRole(
         bytes32 role,
         address account
@@ -120,6 +123,9 @@ abstract contract Roles is IRoles, Initializable {
         _hasRole(role, account);
     }
 
+    /**
+     * @dev Returns `true` if `account` has been granted `role`.
+     */
     function _hasRole(
         bytes32 role,
         address account
@@ -127,18 +133,40 @@ abstract contract Roles is IRoles, Initializable {
         return _roles[role].members[account].active;
     }
 
-    function getAccountsForRole(
+    /**
+     * @dev Returns array of address has been granted `role`.
+     */
+    function getAccountsWithRole(
         bytes32 role
     ) external view returns (address[] memory) {
         return _roles[role].accounts;
     }
 
-    function getNumberOfAccountsForRole(
+    /**
+     * @dev Returns array of address has been granted `role`.
+     */
+    function getNumberOfAccountsWithRole(
         bytes32 role
     ) external view returns (uint256) {
         return _roles[role].accounts.length;
     }
 
+    /**
+     * @dev Revokes `role` from the calling account.
+     *
+     * Roles are often managed via {grantRole} and {revokeRole}: this function's
+     * purpose is to provide a mechanism for accounts to lose their privileges
+     * if they are compromised (such as when a trusted device is misplaced).
+     *
+     * If the calling account had been revoked `role`, emits a {RoleRevoked}
+     * event.
+     *
+     * Requirements:
+     *
+     * - the caller must be `account`.
+     *
+     * May emit a {RoleRevoked} event.
+     */
     function grantRole(
         bytes32 role,
         address account
@@ -146,6 +174,13 @@ abstract contract Roles is IRoles, Initializable {
         _grantRole(role, account);
     }
 
+    /**
+     * @dev Grants `role` to `account`.
+     *
+     * Internal function without access restriction.
+     *
+     * May emit a {RoleGranted} event.
+     */
     function _grantRole(bytes32 role, address account) internal {
         if (!_hasRole(role, account)) {
             _roles[role].members[account] = MemberData(
@@ -158,6 +193,17 @@ abstract contract Roles is IRoles, Initializable {
         }
     }
 
+    /**
+     * @dev Revokes `role` from `account`.
+     *
+     * If `account` had been granted `role`, emits a {RoleRevoked} event.
+     *
+     * Requirements:
+     *
+     * - the caller must have ``role``'s admin role.
+     *
+     * May emit a {RoleRevoked} event.
+     */
     function revokeRole(
         bytes32 role,
         address account
@@ -165,6 +211,22 @@ abstract contract Roles is IRoles, Initializable {
         _revokeRole(role, account);
     }
 
+    /**
+     * @dev Revokes `role` from the calling account.
+     *
+     * Roles are often managed via {grantRole} and {revokeRole}: this function's
+     * purpose is to provide a mechanism for accounts to lose their privileges
+     * if they are compromised (such as when a trusted device is misplaced).
+     *
+     * If the calling account had been revoked `role`, emits a {RoleRevoked}
+     * event.
+     *
+     * Requirements:
+     *
+     * - the caller must be `account`.
+     *
+     * May emit a {RoleRevoked} event.
+     */
     function _revokeRole(bytes32 role, address account) internal {
         if (_hasRole(role, account)) {
             uint256 position = _roles[role].members[account].pos;

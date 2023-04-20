@@ -18,15 +18,14 @@
  *
  */
 
-import { HederaId } from '../../../domain/context/shared/HederaId.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
 
 export default class GetAccountsWithRolesRequest extends ValidatedRequest<GetAccountsWithRolesRequest> {
 	roleId: string;
-	tokenId: HederaId;
+	tokenId: string;
 
-	constructor({ roleId, tokenId }: { roleId: string; tokenId: HederaId }) {
+	constructor({ roleId, tokenId }: { roleId: string; tokenId: string }) {
 		super({
 			roleId: Validation.checkRole(),
 			tokenId: Validation.checkHederaIdFormat(),
