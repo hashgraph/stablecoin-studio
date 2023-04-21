@@ -144,12 +144,20 @@ const StableCoinCreation = () => {
 		if (currentStep === 2) {
 			// @ts-ignore
 			const managePermissions = watch('managementPermissions');
+			const kycRequired = watch('kycRequired');
+			let keys: string[] = [];
+
+			if (kycRequired) keys = keys.concat('kycKey');
 
 			if (!managePermissions) {
-				const keys = ['adminKey', 'supplyKey', 'wipeKey', 'freezeKey', 'pauseKey', 'kycKey'];
-
+				keys = keys.concat('wipeKey');
+				keys = keys.concat('freezeKey');
+				keys = keys.concat('pauseKey');
+			}
+			if (keys.length > 0) {
 				// @ts-ignore
-				watch(keys).forEach((item, index) => {
+				fieldsStep = watch(keys);
+				fieldsStep.forEach((item, index) => {
 					if (item?.value === OTHER_KEY_VALUE) {
 						// @ts-ignore
 						fieldsStep[index] = watch(keys[index].concat('Other'));
