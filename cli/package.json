@@ -48,8 +48,7 @@
     "prettier": "^2.8.3",
     "rimraf": "^4.1.1",
     "ts-jest": "^29.0.5",
-    "tsutils": "~3.21",
-    "@hashgraph-dev/stablecoin-npm-sdk": "file:../sdk"
+    "tsutils": "~3.21"
   },
   "dependencies": {
     "@iarna/toml": "^2.2.5",

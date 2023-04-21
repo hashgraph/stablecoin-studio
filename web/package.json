@@ -1,7 +1,12 @@
 {
 	"name": "@hashgraph-dev/stablecoin-dapp",
 	"version": "0.1.0",
-	"private": true,
+	"publishConfig": {
+		"registry": "https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/"
+	  },
+	"files": [
+		"build/"
+	  ],
 	"dependencies": {
 		"@chakra-ui/icons": "^2.0.17",
 		"@chakra-ui/react": "^2.4.9",
@@ -47,7 +52,8 @@
 		"lint": "eslint . --ext .ts --ext .mts",
 		"prettier": "prettier --config .prettierrc --write .",
 		"prettierCheck": "prettier --config .prettierrc --check",
-		"pre-commit": "npm run lint && npm run prettier"
+		"pre-commit": "npm run lint && npm run prettier",
+		"prepack": "npm run build"
 	},
 	"eslintConfig": {
 		"extends": [
@@ -103,8 +109,7 @@
 		"stream-browserify": "^3.0.0",
 		"stream-http": "^3.2.0",
 		"ts-jest": "^29.0.5",
-		"url": "^0.11.0",
-		"@hashgraph-dev/stablecoin-npm-sdk": "file:../sdk"
+		"url": "^0.11.0"
 	},
 	"jest": {
 		"preset": "ts-jest",
