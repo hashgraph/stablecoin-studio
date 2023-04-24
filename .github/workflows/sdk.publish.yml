@@ -2,7 +2,7 @@ name: SDK Publish NPM
 on: 
   workflow_dispatch:
   push:
-    branches: [main]
+    branches: [not-main]
     paths:
       - 'sdk/**'
 defaults:
