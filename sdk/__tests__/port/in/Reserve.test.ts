@@ -102,7 +102,7 @@ describe('🧪 Reserve test', () => {
 
 		stableCoinSC = (await StableCoin.create(requestSC)).coin;
 
-		await delay(3);
+		await delay(1);
 	}, 60_000);
 
 	it('check reserve amount', async () => {
@@ -128,7 +128,7 @@ describe('🧪 Reserve test', () => {
 			}),
 		);
 
-		await delay(3);
+		await delay(1);
 
 		const res = await ReserveDataFeed.getReserveAmount(
 			new GetReserveAmountRequest({

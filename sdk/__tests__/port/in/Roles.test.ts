@@ -57,6 +57,12 @@ import BigDecimal from '../../../src/domain/context/shared/BigDecimal.js';
 
 describe('🧪 Role test', () => {
 	let stableCoinSC: StableCoinViewModel;
+
+	const delay = async (seconds = 2): Promise<void> => {
+		seconds = seconds * 1000;
+		await new Promise((r) => setTimeout(r, seconds));
+	};
+
 	beforeAll(async () => {
 		await Network.connect(
 			new ConnectRequest({
@@ -94,11 +100,11 @@ describe('🧪 Role test', () => {
 			burnRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
 			rescueRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
 			deleteRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
-			cashInRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
-			cashInRoleAllowance: '0',
 			reserveInitialAmount: '1000',
 		});
 		stableCoinSC = (await StableCoin.create(requestSC)).coin;
+
+		await delay(1);
 	}, 60_000);
 
 	it('Has role', async () => {
@@ -106,7 +112,7 @@ describe('🧪 Role test', () => {
 			new HasRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
 				tokenId: stableCoinSC?.tokenId!.toString(),
-				role: StableCoinRole.CASHIN_ROLE,
+				role: StableCoinRole.RESCUE_ROLE,
 			}),
 		);
 		expect(res).toBe(true);
@@ -127,6 +133,9 @@ describe('🧪 Role test', () => {
 				role: StableCoinRole.WIPE_ROLE,
 			}),
 		);
+
+		await delay(1);
+
 		const hasRole = await Role.hasRole(
 			new HasRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -141,6 +150,9 @@ describe('🧪 Role test', () => {
 				role: StableCoinRole.WIPE_ROLE,
 			}),
 		);
+
+		await delay(1);
+
 		expect(revokeRes).toBe(true);
 		expect(noRole).toBe(false);
 		expect(grantRes).toBe(true);
@@ -170,6 +182,9 @@ describe('🧪 Role test', () => {
 				amounts: ['0'],
 			}),
 		);
+
+		await delay(1);
+
 		const hasRole_1 = await Role.hasRole(
 			new HasRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -205,6 +220,8 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
+		await delay(1);
+
 		expect(revokeRes_1).toBe(true);
 		expect(revokeRes_2).toBe(true);
 		expect(noRole_1).toBe(false);
@@ -230,6 +247,9 @@ describe('🧪 Role test', () => {
 				role: StableCoinRole.CASHIN_ROLE,
 			}),
 		);
+
+		await delay(1);
+
 		const hasRole = await Role.hasRole(
 			new HasRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -256,6 +276,8 @@ describe('🧪 Role test', () => {
 				role: StableCoinRole.CASHIN_ROLE,
 			}),
 		);
+
+		await delay(1);
 
 		expect(revokeRes).toBe(true);
 		expect(noRole).toBe(false);
@@ -286,6 +308,9 @@ describe('🧪 Role test', () => {
 				amount: AMOUNT,
 			}),
 		);
+
+		await delay(1);
+
 		const hasRole = await Role.hasRole(
 			new HasRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -313,6 +338,8 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
+		await delay(1);
+
 		expect(revokeRes).toBe(true);
 		expect(noRole).toBe(false);
 		expect(grantRes).toBe(true);
@@ -331,6 +358,9 @@ describe('🧪 Role test', () => {
 				role: StableCoinRole.WIPE_ROLE,
 			}),
 		);
+
+		await delay(1);
+
 		const hasRole = await Role.hasRole(
 			new HasRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -345,6 +375,9 @@ describe('🧪 Role test', () => {
 				role: StableCoinRole.WIPE_ROLE,
 			}),
 		);
+
+		await delay(1);
+
 		const noRole = await Role.hasRole(
 			new HasRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -373,6 +406,9 @@ describe('🧪 Role test', () => {
 				role: StableCoinRole.CASHIN_ROLE,
 			}),
 		);
+
+		await delay(1);
+
 		const hasRole_1 = await Role.hasRole(
 			new HasRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -394,6 +430,9 @@ describe('🧪 Role test', () => {
 				roles: [StableCoinRole.WIPE_ROLE, StableCoinRole.CASHIN_ROLE],
 			}),
 		);
+
+		await delay(1);
+
 		const noRole_1 = await Role.hasRole(
 			new HasRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -425,6 +464,9 @@ describe('🧪 Role test', () => {
 				role: StableCoinRole.CASHIN_ROLE,
 			}),
 		);
+
+		await delay(1);
+
 		const hasRole = await Role.hasRole(
 			new HasRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -439,6 +481,9 @@ describe('🧪 Role test', () => {
 				role: StableCoinRole.CASHIN_ROLE,
 			}),
 		);
+
+		await delay(1);
+
 		const noRole = await Role.hasRole(
 			new HasRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -484,6 +529,8 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
+		await delay(1);
+
 		const allowanceBefore = await Role.getAllowance(
 			new GetSupplierAllowanceRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -496,6 +543,9 @@ describe('🧪 Role test', () => {
 				tokenId: stableCoinSC?.tokenId!.toString(),
 			}),
 		);
+
+		await delay(1);
+
 		const allowanceAfter = await Role.getAllowance(
 			new GetSupplierAllowanceRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -509,6 +559,8 @@ describe('🧪 Role test', () => {
 				role: StableCoinRole.CASHIN_ROLE,
 			}),
 		);
+
+		await delay(1);
 
 		expect(grantRes).toBe(true);
 		expect(allowanceBefore.value).toStrictEqual(
@@ -532,6 +584,8 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
+		await delay(1);
+
 		const allowanceBefore = await Role.getAllowance(
 			new GetSupplierAllowanceRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -545,6 +599,9 @@ describe('🧪 Role test', () => {
 				amount: '10',
 			}),
 		);
+
+		await delay(1);
+
 		const allowanceAfter = await Role.getAllowance(
 			new GetSupplierAllowanceRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -558,6 +615,8 @@ describe('🧪 Role test', () => {
 				role: StableCoinRole.CASHIN_ROLE,
 			}),
 		);
+
+		await delay(1);
 
 		expect(grantRes).toBe(true);
 		expect(allowanceBefore.value).toStrictEqual(
@@ -581,6 +640,8 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
+		await delay(1);
+
 		const allowanceBefore = await Role.getAllowance(
 			new GetSupplierAllowanceRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -594,6 +655,9 @@ describe('🧪 Role test', () => {
 				amount: '5',
 			}),
 		);
+
+		await delay(1);
+
 		const allowanceAfter = await Role.getAllowance(
 			new GetSupplierAllowanceRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -607,6 +671,8 @@ describe('🧪 Role test', () => {
 				role: StableCoinRole.CASHIN_ROLE,
 			}),
 		);
+
+		await delay(1);
 
 		expect(revokeRes).toBe(true);
 		expect(grantRes).toBe(true);
@@ -629,6 +695,9 @@ describe('🧪 Role test', () => {
 				amount: '10',
 			}),
 		);
+
+		await delay(1);
+
 		const isLimited = await Role.isLimited(
 			new CheckSupplierLimitRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -648,6 +717,8 @@ describe('🧪 Role test', () => {
 				role: StableCoinRole.CASHIN_ROLE,
 			}),
 		);
+
+		await delay(1);
 
 		expect(revokeRes).toBe(true);
 		expect(grantRes).toBe(true);
@@ -671,6 +742,9 @@ describe('🧪 Role test', () => {
 				role: StableCoinRole.CASHIN_ROLE,
 			}),
 		);
+
+		await delay(1);
+
 		const isLimited = await Role.isLimited(
 			new CheckSupplierLimitRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -690,6 +764,8 @@ describe('🧪 Role test', () => {
 				role: StableCoinRole.CASHIN_ROLE,
 			}),
 		);
+
+		await delay(1);
 
 		expect(revokeRes).toBe(true);
 		expect(grantRes).toBe(true);
