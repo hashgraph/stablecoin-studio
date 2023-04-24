@@ -337,6 +337,9 @@ const DetailsReview = ({
 												w: '300px',
 											}}
 											minimumDate={new Date()}
+											customHeader={false}
+											showMonthDropdown
+											showYearDropdown
 										/>
 									)}
 									{fieldsCanEdit.find((field) => field.id === detail.label)?.type === 'key' && (

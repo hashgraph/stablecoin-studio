@@ -18,11 +18,11 @@ import type { SyntheticEvent } from 'react';
 import { forwardRef } from 'react';
 import type { Control, UseControllerProps } from 'react-hook-form';
 import { Controller } from 'react-hook-form';
-import DatePicker from 'react-datepicker';
+import DatePicker, { ReactDatePickerProps } from 'react-datepicker';
 import Icon from '../Icon';
 import 'react-datepicker/dist/react-datepicker.css';
 
-export interface DatePickerControllerProps {
+export interface DatePickerControllerProps extends Omit<ReactDatePickerProps, 'onChange'> {
 	control: Control<Record<string, string | number>>;
 	dataTestId?: string;
 	dateFormat?: string;
@@ -38,6 +38,7 @@ export interface DatePickerControllerProps {
 	rules?: UseControllerProps['rules'];
 	showErrors?: boolean;
 	containerStyle?: StackProps;
+	customHeader?: boolean;
 }
 
 const InputStyle = {
@@ -129,6 +130,7 @@ const DatePickerController = ({
 	rules,
 	showErrors,
 	containerStyle,
+	customHeader = true,
 	...props
 }: DatePickerControllerProps) => {
 	return (
@@ -172,7 +174,7 @@ const DatePickerController = ({
 								onBlur={onBlur}
 								onSelect={onBlur}
 								placeholderText={placeholder}
-								renderCustomHeader={CustomHeader}
+								renderCustomHeader={customHeader ? CustomHeader : undefined}
 								selected={value ? new Date(value) : undefined}
 								showPopperArrow={false}
 								{...props}
