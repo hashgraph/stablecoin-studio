@@ -26,6 +26,7 @@ import Injectable from '../../../src/core/Injectable.js';
 import {
 	Account,
 	Balance,
+	BigDecimal,
 	Network,
 	StableCoin,
 	StableCoinViewModel,
@@ -49,23 +50,23 @@ import {
 	AssociateTokenRequest,
 	UpdateReserveAddressRequest,
 	UpdateRequest,
-	RequestPublicKey,
 } from '../../../src/port/in/request/index.js';
 import ConnectRequest, {
 	SupportedWallets,
 } from '../../../src/port/in/request/ConnectRequest.js';
 import GetStableCoinDetailsRequest from '../../../src/port/in/request/GetStableCoinDetailsRequest.js';
 import {
-	CLIENT_ACCOUNT_ECDSA,
 	CLIENT_ACCOUNT_ED25519,
 	FACTORY_ADDRESS,
 	HEDERA_ERC20_ADDRESS,
 } from '../../config.js';
+import { BigNumber } from 'ethers';
+const decimals = 6;
 
 describe('🧪 Stablecoin test', () => {
 	let stableCoinSC: StableCoinViewModel;
 	let stableCoinHTS: StableCoinViewModel;
-	const delay = async (seconds = 2): Promise<void> => {
+	const delay = async (seconds = 5): Promise<void> => {
 		seconds = seconds * 1000;
 		await new Promise((r) => setTimeout(r, seconds));
 	};
@@ -92,7 +93,7 @@ describe('🧪 Stablecoin test', () => {
 		const requestSC = new CreateRequest({
 			name: 'TEST_ACCELERATOR_SC',
 			symbol: 'TEST',
-			decimals: '6',
+			decimals: decimals,
 			initialSupply: '1000',
 			freezeKey: Account.NullPublicKey,
 			kycKey: Account.NullPublicKey,
@@ -117,7 +118,7 @@ describe('🧪 Stablecoin test', () => {
 		const requestHTS = new CreateRequest({
 			name: 'TEST_ACCELERATOR_HTS',
 			symbol: 'TEST',
-			decimals: '6',
+			decimals: decimals,
 			initialSupply: '1000',
 			freezeKey: CLIENT_ACCOUNT_ED25519.publicKey,
 			kycKey: CLIENT_ACCOUNT_ED25519.publicKey,
@@ -139,6 +140,8 @@ describe('🧪 Stablecoin test', () => {
 		stableCoinSC = (await StableCoin.create(requestSC)).coin;
 		stableCoinHTS = (await StableCoin.create(requestHTS)).coin;
 
+		await delay();
+
 		await StableCoin.associate(
 			new AssociateTokenRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -153,6 +156,8 @@ describe('🧪 Stablecoin test', () => {
 			}),
 		);
 
+		await delay();
+
 		await StableCoin.grantKyc(
 			new KYCRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -165,6 +170,8 @@ describe('🧪 Stablecoin test', () => {
 				tokenId: stableCoinHTS.tokenId!.toString(),
 			}),
 		);
+
+		await delay();
 	}, 60_000);
 
 	it('Gets a coin', async () => {
@@ -264,9 +271,18 @@ describe('🧪 Stablecoin test', () => {
 	it('Performs reserve', async () => {
 		const result_1 = await getReserve(stableCoinHTS);
 		expect(result_1).not.toEqual('0.0.0');
-		const result_2 = await updateReserve(stableCoinHTS, '0.0.0');
-		expect(result_2).toEqual('0.0.0');
-		const result_3 = await updateReserve(stableCoinHTS, result_1);
+
+		await updateReserve(
+			stableCoinHTS,
+			stableCoinSC.reserveAddress!.toString(),
+		);
+		await delay();
+		const result_2 = await getReserve(stableCoinHTS);
+		expect(result_2).toEqual(stableCoinSC.reserveAddress!.toString());
+
+		await updateReserve(stableCoinHTS, result_1);
+		await delay();
+		const result_3 = await getReserve(stableCoinHTS);
 		expect(result_3).toEqual(result_1);
 	}, 60_000);
 
@@ -316,6 +332,9 @@ describe('🧪 Stablecoin test', () => {
 				tokenId: stableCoinSC?.tokenId!.toString(),
 			}),
 		);
+
+		await delay();
+
 		expect(resultHTS).toBe(true);
 		expect(resultSC).toBe(true);
 	}, 60_000);
@@ -337,7 +356,7 @@ describe('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		await delay(1);
+		await delay();
 
 		const finalAmount = await StableCoin.getBalanceOf(
 			new GetAccountBalanceRequest({
@@ -346,9 +365,13 @@ describe('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		const final = initialAmount.value.toLong().sub(burnAmount);
+		const final = initialAmount.value
+			.toBigNumber()
+			.sub(new BigDecimal(burnAmount.toString(), decimals).toBigNumber());
 
-		expect(finalAmount).toEqual(final);
+		expect(finalAmount.value.toBigNumber().toString()).toEqual(
+			final.toString(),
+		);
 	}
 
 	async function cashInOperation(stableCoin: StableCoinViewModel) {
@@ -369,7 +392,7 @@ describe('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		await delay(1);
+		await delay();
 
 		const finalAmount = await StableCoin.getBalanceOf(
 			new GetAccountBalanceRequest({
@@ -378,9 +401,15 @@ describe('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		const final = initialAmount.value.toLong().add(cashInAmount);
+		const final = initialAmount.value
+			.toBigNumber()
+			.add(
+				new BigDecimal(cashInAmount.toString(), decimals).toBigNumber(),
+			);
 
-		expect(finalAmount).toEqual(final);
+		expect(finalAmount.value.toBigNumber().toString()).toEqual(
+			final.toString(),
+		);
 	}
 
 	async function rescueOperation(stableCoin: StableCoinViewModel) {
@@ -400,7 +429,7 @@ describe('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		await delay(1);
+		await delay();
 
 		const finalAmount = await StableCoin.getBalanceOf(
 			new GetAccountBalanceRequest({
@@ -409,9 +438,15 @@ describe('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		const final = initialAmount.value.toLong().sub(rescueAmount);
+		const final = initialAmount.value
+			.toBigNumber()
+			.sub(
+				new BigDecimal(rescueAmount.toString(), decimals).toBigNumber(),
+			);
 
-		expect(finalAmount).toEqual(final);
+		expect(finalAmount.value.toBigNumber().toString()).toEqual(
+			final.toString(),
+		);
 	}
 
 	async function wipeOperation(stableCoin: StableCoinViewModel) {
@@ -432,7 +467,7 @@ describe('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		await delay(1);
+		await delay();
 
 		const finalAmount = await StableCoin.getBalanceOf(
 			new GetAccountBalanceRequest({
@@ -441,9 +476,13 @@ describe('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		const final = initialAmount.value.toLong().sub(wipeAmount);
+		const final = initialAmount.value
+			.toBigNumber()
+			.sub(new BigDecimal(wipeAmount.toString(), decimals).toBigNumber());
 
-		expect(finalAmount).toEqual(final);
+		expect(finalAmount.value.toBigNumber().toString()).toEqual(
+			final.toString(),
+		);
 	}
 
 	async function capabilitiesOperation(stableCoin: StableCoinViewModel) {
@@ -475,7 +514,7 @@ describe('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		await delay(1);
+		await delay();
 
 		const Frozen = await StableCoin.isAccountFrozen(
 			new FreezeAccountRequest({
@@ -491,7 +530,7 @@ describe('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		await delay(1);
+		await delay();
 
 		const notFrozen_2 = await StableCoin.isAccountFrozen(
 			new FreezeAccountRequest({
@@ -502,9 +541,9 @@ describe('🧪 Stablecoin test', () => {
 
 		expect(result_1).toBe(true);
 		expect(result_2).toBe(true);
-		expect(notFrozen_1).toBe(true);
-		expect(Frozen).toBe(false);
-		expect(notFrozen_2).toBe(true);
+		expect(notFrozen_1).toBe(false);
+		expect(Frozen).toBe(true);
+		expect(notFrozen_2).toBe(false);
 	}
 
 	async function grantRevokeKYCOperation(stableCoin: StableCoinViewModel) {
@@ -522,7 +561,7 @@ describe('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		await delay(1);
+		await delay();
 
 		const kycNOK = await StableCoin.isAccountKYCGranted(
 			new KYCRequest({
@@ -538,7 +577,7 @@ describe('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		await delay(1);
+		await delay();
 
 		const kycOK_2 = await StableCoin.isAccountKYCGranted(
 			new KYCRequest({
@@ -560,11 +599,16 @@ describe('🧪 Stablecoin test', () => {
 				tokenId: stableCoin?.tokenId!.toString(),
 			}),
 		);
+
+		await delay();
+
 		const result_2 = await StableCoin.unPause(
 			new PauseRequest({
 				tokenId: stableCoin?.tokenId!.toString(),
 			}),
 		);
+
+		await delay();
 
 		expect(result_1).toBe(true);
 		expect(result_2).toBe(true);
@@ -593,8 +637,11 @@ describe('🧪 Stablecoin test', () => {
 	async function updateToken(stableCoin: StableCoinViewModel) {
 		const name = 'New Token Name';
 		const symbol = 'New Token Symbol';
-		const autoRenewPeriod = 30;
-		const expirationTimestamp = stableCoin.expirationTimestamp! + 1;
+		const autoRenewPeriod = 30 * 24 * 3600;
+		const expirationTimestampInDays =
+			parseInt(
+				timestampInNanoToDays(Number(stableCoin.expirationTimestamp!)),
+			) + 1;
 		const freezeKey =
 			stableCoin.freezeKey === Account.NullPublicKey
 				? CLIENT_ACCOUNT_ED25519.publicKey
@@ -618,29 +665,68 @@ describe('🧪 Stablecoin test', () => {
 				name: name,
 				symbol: symbol,
 				autoRenewPeriod: autoRenewPeriod.toString(),
-				expirationTimestamp: expirationTimestamp.toString(),
+				expirationTimestamp: daysToTimestampInNano(
+					Number(expirationTimestampInDays),
+				),
 				freezeKey: freezeKey,
 				kycKey: kycKey,
 				wipeKey: wipeKey,
 				pauseKey: pauseKey,
+				feeScheduleKey: stableCoin.feeScheduleKey,
 			}),
 		);
 
-		await delay(1);
+		await delay();
 
 		const res = await StableCoin.getInfo(
 			new GetStableCoinDetailsRequest({
-				id: stableCoinSC?.tokenId!.toString(),
+				id: stableCoin?.tokenId!.toString(),
 			}),
 		);
 
 		expect(res.name).toEqual(name);
 		expect(res.symbol).toEqual(symbol);
 		expect(res.autoRenewPeriod).toEqual(autoRenewPeriod);
-		expect(res.expirationTimestamp).toEqual(expirationTimestamp);
-		expect(res.freezeKey).toEqual(freezeKey);
-		expect(res.kycKey).toEqual(kycKey);
-		expect(res.wipeKey).toEqual(wipeKey);
-		expect(res.pauseKey).toEqual(pauseKey);
+		expect(timestampInNanoToDays(Number(res.expirationTimestamp))).toEqual(
+			expirationTimestampInDays.toString(),
+		);
+		expect(res.freezeKey!.toString()).toEqual(
+			freezeKey === Account.NullPublicKey
+				? stableCoin.autoRenewAccount?.toString()
+				: freezeKey!.toString(),
+		);
+		expect(res.kycKey!.toString()).toEqual(
+			kycKey === Account.NullPublicKey
+				? stableCoin.autoRenewAccount?.toString()
+				: kycKey!.toString(),
+		);
+		expect(res.wipeKey!.toString()).toEqual(
+			wipeKey === Account.NullPublicKey
+				? stableCoin.autoRenewAccount?.toString()
+				: wipeKey!.toString(),
+		);
+		expect(res.pauseKey!.toString()).toEqual(
+			pauseKey === Account.NullPublicKey
+				? stableCoin.autoRenewAccount?.toString()
+				: pauseKey!.toString(),
+		);
+	}
+
+	function timestampInNanoToDays(timestamp: number): string {
+		const currentDate: Date = new Date();
+		const currentExpirationTime: Date = new Date(
+			Math.floor(timestamp / 1000000),
+		);
+		const diffInMs =
+			currentExpirationTime.getTime() - currentDate.getTime();
+		return Math.ceil(diffInMs / (1000 * 60 * 60 * 24)).toString();
+	}
+
+	function daysToTimestampInNano(days: number): string {
+		const currentDate: Date = new Date();
+		const currentDatePlusDays: Date = new Date();
+		currentDatePlusDays.setDate(currentDate.getDate() + days);
+		const currentDatePlusDaysInMillis = currentDatePlusDays.getTime();
+		return (currentDatePlusDaysInMillis * 1000000).toString();
 	}
 });
