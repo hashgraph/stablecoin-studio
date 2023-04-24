@@ -65,7 +65,7 @@ interface SubmitValues {
 
 const allowedKeys = ['KYC key', 'Freeze key', 'Wipe key', 'Pause key', 'Fee schedule key'];
 
-const fieldsCanEdit = [
+let fieldsCanEdit = [
 	{
 		id: 'Name',
 		type: 'text',
@@ -143,8 +143,10 @@ const DetailsReview = ({
 	const [editMode, setEditMode] = useBoolean(false);
 	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 	useEffect(() => {
+		fieldsCanEdit = fieldsCanEdit.filter((field) => !field.id.includes('key'));
 		editable &&
 			details.forEach((item) => {
+				console.log(fieldsCanEdit);
 				if (allowedKeys.includes(item.label) && item.value !== 'NONE')
 					fieldsCanEdit.push({
 						id: item.label,
