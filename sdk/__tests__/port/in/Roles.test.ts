@@ -58,7 +58,7 @@ import BigDecimal from '../../../src/domain/context/shared/BigDecimal.js';
 describe('🧪 Role test', () => {
 	let stableCoinSC: StableCoinViewModel;
 
-	const delay = async (seconds = 2): Promise<void> => {
+	const delay = async (seconds = 3): Promise<void> => {
 		seconds = seconds * 1000;
 		await new Promise((r) => setTimeout(r, seconds));
 	};
@@ -104,7 +104,7 @@ describe('🧪 Role test', () => {
 		});
 		stableCoinSC = (await StableCoin.create(requestSC)).coin;
 
-		await delay(1);
+		await delay();
 	}, 60_000);
 
 	it('Has role', async () => {
@@ -134,7 +134,7 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
-		await delay(1);
+		await delay();
 
 		const hasRole = await Role.hasRole(
 			new HasRoleRequest({
@@ -151,7 +151,7 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
-		await delay(1);
+		await delay();
 
 		expect(revokeRes).toBe(true);
 		expect(noRole).toBe(false);
@@ -183,7 +183,7 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
-		await delay(1);
+		await delay();
 
 		const hasRole_1 = await Role.hasRole(
 			new HasRoleRequest({
@@ -220,7 +220,7 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
-		await delay(1);
+		await delay();
 
 		expect(revokeRes_1).toBe(true);
 		expect(revokeRes_2).toBe(true);
@@ -248,7 +248,7 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
-		await delay(1);
+		await delay();
 
 		const hasRole = await Role.hasRole(
 			new HasRoleRequest({
@@ -277,7 +277,7 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
-		await delay(1);
+		await delay();
 
 		expect(revokeRes).toBe(true);
 		expect(noRole).toBe(false);
@@ -309,7 +309,7 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
-		await delay(1);
+		await delay();
 
 		const hasRole = await Role.hasRole(
 			new HasRoleRequest({
@@ -338,7 +338,7 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
-		await delay(1);
+		await delay();
 
 		expect(revokeRes).toBe(true);
 		expect(noRole).toBe(false);
@@ -359,7 +359,7 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
-		await delay(1);
+		await delay();
 
 		const hasRole = await Role.hasRole(
 			new HasRoleRequest({
@@ -376,7 +376,7 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
-		await delay(1);
+		await delay();
 
 		const noRole = await Role.hasRole(
 			new HasRoleRequest({
@@ -407,7 +407,7 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
-		await delay(1);
+		await delay();
 
 		const hasRole_1 = await Role.hasRole(
 			new HasRoleRequest({
@@ -431,7 +431,7 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
-		await delay(1);
+		await delay();
 
 		const noRole_1 = await Role.hasRole(
 			new HasRoleRequest({
@@ -465,7 +465,7 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
-		await delay(1);
+		await delay();
 
 		const hasRole = await Role.hasRole(
 			new HasRoleRequest({
@@ -482,7 +482,7 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
-		await delay(1);
+		await delay();
 
 		const noRole = await Role.hasRole(
 			new HasRoleRequest({
@@ -529,7 +529,7 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
-		await delay(1);
+		await delay();
 
 		const allowanceBefore = await Role.getAllowance(
 			new GetSupplierAllowanceRequest({
@@ -544,7 +544,7 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
-		await delay(1);
+		await delay();
 
 		const allowanceAfter = await Role.getAllowance(
 			new GetSupplierAllowanceRequest({
@@ -560,7 +560,7 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
-		await delay(1);
+		await delay();
 
 		expect(grantRes).toBe(true);
 		expect(allowanceBefore.value).toStrictEqual(
@@ -584,7 +584,7 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
-		await delay(1);
+		await delay();
 
 		const allowanceBefore = await Role.getAllowance(
 			new GetSupplierAllowanceRequest({
@@ -600,7 +600,7 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
-		await delay(1);
+		await delay();
 
 		const allowanceAfter = await Role.getAllowance(
 			new GetSupplierAllowanceRequest({
@@ -616,7 +616,7 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
-		await delay(1);
+		await delay();
 
 		expect(grantRes).toBe(true);
 		expect(allowanceBefore.value).toStrictEqual(
@@ -640,7 +640,7 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
-		await delay(1);
+		await delay();
 
 		const allowanceBefore = await Role.getAllowance(
 			new GetSupplierAllowanceRequest({
@@ -656,7 +656,7 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
-		await delay(1);
+		await delay();
 
 		const allowanceAfter = await Role.getAllowance(
 			new GetSupplierAllowanceRequest({
@@ -672,7 +672,7 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
-		await delay(1);
+		await delay();
 
 		expect(revokeRes).toBe(true);
 		expect(grantRes).toBe(true);
@@ -696,7 +696,7 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
-		await delay(1);
+		await delay();
 
 		const isLimited = await Role.isLimited(
 			new CheckSupplierLimitRequest({
@@ -718,7 +718,7 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
-		await delay(1);
+		await delay();
 
 		expect(revokeRes).toBe(true);
 		expect(grantRes).toBe(true);
@@ -743,7 +743,7 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
-		await delay(1);
+		await delay();
 
 		const isLimited = await Role.isLimited(
 			new CheckSupplierLimitRequest({
@@ -765,7 +765,7 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
-		await delay(1);
+		await delay();
 
 		expect(revokeRes).toBe(true);
 		expect(grantRes).toBe(true);

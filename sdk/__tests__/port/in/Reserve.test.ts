@@ -49,7 +49,7 @@ describe('🧪 Reserve test', () => {
 	const initialSupply = 10;
 	const reserveInitialAmount = initialSupply * 2;
 
-	const delay = async (seconds = 2): Promise<void> => {
+	const delay = async (seconds = 3): Promise<void> => {
 		seconds = seconds * 1000;
 		await new Promise((r) => setTimeout(r, seconds));
 	};
@@ -102,7 +102,7 @@ describe('🧪 Reserve test', () => {
 
 		stableCoinSC = (await StableCoin.create(requestSC)).coin;
 
-		await delay(1);
+		await delay();
 	}, 60_000);
 
 	it('check reserve amount', async () => {
@@ -128,7 +128,7 @@ describe('🧪 Reserve test', () => {
 			}),
 		);
 
-		await delay(1);
+		await delay();
 
 		const res = await ReserveDataFeed.getReserveAmount(
 			new GetReserveAmountRequest({

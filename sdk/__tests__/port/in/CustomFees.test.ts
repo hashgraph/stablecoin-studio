@@ -59,7 +59,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 
 	const feeCollectorAccountId = CLIENT_ACCOUNT_ED25519.id;
 
-	const delay = async (seconds = 2): Promise<void> => {
+	const delay = async (seconds = 3): Promise<void> => {
 		seconds = seconds * 1000;
 		await new Promise((r) => setTimeout(r, seconds));
 	};
@@ -94,7 +94,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 
 		const tokenIdHTS = tr.coin.tokenId!;
 
-		await delay(1);
+		await delay();
 
 		stableCoinCapabilitiesHTS = await stableCoinService.getCapabilities(
 			CLIENT_ACCOUNT_ED25519,
@@ -107,7 +107,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 			}),
 		);
 
-		await delay(1);
+		await delay();
 	}, 1500000);
 
 	it('Create a fixed custom fee for an existing stable coin', async () => {
@@ -124,7 +124,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		});
 		await Fees.addFixedFee(fixedFee);
 
-		await delay(1);
+		await delay();
 
 		const tokenCustomFees: RequestCustomFee[] = await getTokenCustomFees(
 			stableCoinCapabilitiesHTS.coin.tokenId!,
@@ -139,7 +139,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 
 		await removeTokenCustomFees(stableCoinCapabilitiesHTS);
 
-		await delay(1);
+		await delay();
 	}, 150000);
 
 	it('Create a fractional custom fee for an existing stable coin', async () => {
@@ -160,7 +160,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 
 		await Fees.addFractionalFee(FractionalFee);
 
-		await delay(1);
+		await delay();
 
 		const tokenCustomFees: RequestCustomFee[] = await getTokenCustomFees(
 			stableCoinCapabilitiesHTS.coin.tokenId!,
@@ -177,7 +177,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 
 		await removeTokenCustomFees(stableCoinCapabilitiesHTS);
 
-		await delay(1);
+		await delay();
 	}, 150000);
 
 	it('Create a fixed and a fractional custom fee, charged to the receiver, for an existing stable coin', async () => {
@@ -214,7 +214,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 
 		await Fees.updateCustomFees(newFees);
 
-		await delay(1);
+		await delay();
 
 		const tokenCustomFees: RequestCustomFee[] = await getTokenCustomFees(
 			stableCoinCapabilitiesHTS.coin.tokenId!,
@@ -245,7 +245,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 
 		await removeTokenCustomFees(stableCoinCapabilitiesHTS);
 
-		await delay(1);
+		await delay();
 	}, 150000);
 });
 
@@ -326,7 +326,7 @@ function checkFractionalFee(
 				parseInt(
 					(tokenCustomFees as RequestFractionalFee).amountDenominator,
 				),
-		).toEqual(percentage);
+		).toEqual(percentage / 100);
 	} else {
 		expect(
 			(tokenCustomFees as RequestFractionalFee).amountNumerator,
