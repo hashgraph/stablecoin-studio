@@ -32,6 +32,7 @@ export interface DatePickerControllerProps extends Omit<ReactDatePickerProps, 'o
 	label?: string;
 	labelProps?: object;
 	minimumDate?: Date;
+	maximumDate?: Date;
 	name: string;
 	onChangeAux?: (date: Date | [Date | null, Date | null] | null) => void;
 	placeholder?: string;
@@ -124,6 +125,7 @@ const DatePickerController = ({
 	label,
 	labelProps,
 	minimumDate,
+	maximumDate,
 	name,
 	onChangeAux,
 	placeholder,
@@ -170,6 +172,7 @@ const DatePickerController = ({
 								formatWeekDay={(nameOfDay) => nameOfDay.toString().substring(0, 1)}
 								isClearable={isClearable}
 								minDate={minimumDate}
+								maxDate={maximumDate}
 								onChange={(date, e) => onChangeCustom(date, e)}
 								onBlur={onBlur}
 								onSelect={onBlur}

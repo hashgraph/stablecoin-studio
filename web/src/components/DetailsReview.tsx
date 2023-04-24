@@ -260,6 +260,13 @@ const DetailsReview = ({
 	if (isLoading && editMode) return <AwaitingWalletSignature />;
 
 	const { t } = useTranslation(['global', 'stableCoinDetails']);
+	const currentExpirationTime: Detail | undefined = details.find(
+		(obj) => obj.label === 'Expiration time',
+	);
+	const maximumExpirationTime: Date = currentExpirationTime
+		? new Date(currentExpirationTime.value)
+		: new Date();
+	maximumExpirationTime.setFullYear(maximumExpirationTime.getFullYear() + 5);
 
 	return (
 		<Box textAlign='left'>
@@ -351,6 +358,7 @@ const DetailsReview = ({
 												w: '300px',
 											}}
 											minimumDate={new Date(detail.value)}
+											maximumDate={maximumExpirationTime}
 											customHeader={false}
 											showMonthDropdown
 											showYearDropdown
