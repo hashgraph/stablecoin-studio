@@ -15,6 +15,7 @@ import { Account } from 'hedera-stable-coin-sdk';
 import { useEffect } from 'react';
 import type { FieldValues, UseFormGetValues } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { SDKService } from '../services/SDKService';
 import { SELECTED_WALLET_ACCOUNT_INFO } from '../store/slices/walletSlice';
@@ -146,7 +147,6 @@ const DetailsReview = ({
 		fieldsCanEdit = fieldsCanEdit.filter((field) => !field.id.includes('key'));
 		editable &&
 			details.forEach((item) => {
-				console.log(fieldsCanEdit);
 				if (allowedKeys.includes(item.label) && item.value !== 'NONE')
 					fieldsCanEdit.push({
 						id: item.label,
@@ -259,6 +259,8 @@ const DetailsReview = ({
 
 	if (isLoading && editMode) return <AwaitingWalletSignature />;
 
+	const { t } = useTranslation(['global', 'stableCoinDetails']);
+
 	return (
 		<Box textAlign='left'>
 			<Flex justify='space-between' mb={6} alignItems='center'>
@@ -321,10 +323,20 @@ const DetailsReview = ({
 									)}
 									{fieldsCanEdit.find((field) => field.id === detail.label)?.type === 'number' && (
 										<InputNumberController
+											rules={{
+												validate: {
+													validation: (value: number) => {
+														const res = t('stableCoinDetails:updatingValidation.autoRenewPeriod');
+														return detail.label === t('stableCoinDetails:autoRenewPeriod') &&
+															(value > 92 || value < 30)
+															? res
+															: true;
+													},
+												},
+											}}
 											control={control}
 											name={detail.label.toLowerCase()}
 											placeholder={detail.label}
-											max={92}
 											containerStyle={{
 												w: '300px',
 											}}
