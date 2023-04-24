@@ -127,7 +127,6 @@ const formatKey = (
 
 	return Account.NullPublicKey;
 };
-
 const DetailsReview = ({
 	details,
 	divider = true,
@@ -141,6 +140,7 @@ const DetailsReview = ({
 	const { control, setValue, handleSubmit, reset, getValues } = useForm({
 		mode: 'onChange',
 	});
+
 	const [editMode, setEditMode] = useBoolean(false);
 	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 	useEffect(() => {
@@ -350,7 +350,7 @@ const DetailsReview = ({
 											containerStyle={{
 												w: '300px',
 											}}
-											minimumDate={new Date()}
+											minimumDate={new Date(detail.value)}
 											customHeader={false}
 											showMonthDropdown
 											showYearDropdown
