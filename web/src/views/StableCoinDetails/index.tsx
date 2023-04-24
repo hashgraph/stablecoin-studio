@@ -1,4 +1,5 @@
 import { Box, Flex } from '@chakra-ui/react';
+import { StableCoinRole } from 'hedera-stable-coin-sdk';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import AwaitingWalletSignature from '../../components/AwaitingWalletSignature';
@@ -9,6 +10,7 @@ import {
 	SELECTED_NETWORK,
 	SELECTED_WALLET_ACCOUNT_INFO,
 	SELECTED_WALLET_COIN,
+	SELECTED_TOKEN_ROLES,
 } from '../../store/slices/walletSlice';
 import { formatShortKey } from '../../utils/inputHelper';
 
@@ -18,6 +20,7 @@ const StableCoinDetails = () => {
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const account = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 	const network = useSelector(SELECTED_NETWORK);
+	const roles = useSelector(SELECTED_TOKEN_ROLES)!;
 
 	const { isLoading, getStableCoinDetails } = useRefreshCoinInfo();
 
@@ -217,7 +220,7 @@ const StableCoinDetails = () => {
 							details={details}
 							getStableCoinDetails={getStableCoinDetails}
 							isLoading={isLoading}
-							editable
+							editable={roles.includes(StableCoinRole.DEFAULT_ADMIN_ROLE)}
 						/>
 					</Box>
 				</Flex>
