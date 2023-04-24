@@ -48,6 +48,12 @@ describe('🧪 Reserve test', () => {
 	let stableCoinSC: StableCoinViewModel;
 	const initialSupply = 10;
 	const reserveInitialAmount = initialSupply * 2;
+
+	const delay = async (seconds = 2): Promise<void> => {
+		seconds = seconds * 1000;
+		await new Promise((r) => setTimeout(r, seconds));
+	};
+
 	beforeAll(async () => {
 		await Network.connect(
 			new ConnectRequest({
@@ -95,6 +101,8 @@ describe('🧪 Reserve test', () => {
 		});
 
 		stableCoinSC = (await StableCoin.create(requestSC)).coin;
+
+		await delay(3);
 	}, 60_000);
 
 	it('check reserve amount', async () => {
@@ -119,6 +127,8 @@ describe('🧪 Reserve test', () => {
 				reserveAmount: '0',
 			}),
 		);
+
+		await delay(3);
 
 		const res = await ReserveDataFeed.getReserveAmount(
 			new GetReserveAmountRequest({
