@@ -120,7 +120,7 @@ abstract contract Roles is IRoles, Initializable {
         bytes32 role,
         address account
     ) external view returns (bool) {
-        _hasRole(role, account);
+        return _hasRole(role, account);
     }
 
     /**
