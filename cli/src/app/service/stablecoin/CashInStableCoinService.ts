@@ -1,7 +1,7 @@
 import { language } from '../../../index.js';
 import { utilsService } from '../../../index.js';
 import Service from '../Service.js';
-import { CashInRequest, StableCoin } from 'hedera-stable-coin-sdk';
+import { CashInRequest, StableCoin } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 export default class CashInStableCoinsService extends Service {
   constructor() {

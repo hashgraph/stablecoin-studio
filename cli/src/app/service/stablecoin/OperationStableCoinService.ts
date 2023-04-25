@@ -45,7 +45,9 @@ import {
   RequestPublicKey,
   Account,
   GetPublicKeyRequest,
-} from 'hedera-stable-coin-sdk';
+  GetAccountsWithRolesRequest
+} from '@hashgraph-dev/stablecoin-npm-sdk';
+
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
 import CashInStableCoinsService from './CashInStableCoinService.js';
 import WipeStableCoinService from './WipeStableCoinService.js';
@@ -64,7 +66,7 @@ import TransfersStableCoinsService from './TransfersStableCoinService.js';
 // import { IManagedFeatures } from '../../../domain/configuration/interfaces/IManagedFeatures.js';
 import colors from 'colors';
 import UpdateStableCoinService from './UpdateStableCoinService.js';
-import { GetAccountsWithRolesRequest } from 'hedera-stable-coin-sdk';
+
 
 enum tokenKeys {
   admin,
@@ -2623,15 +2625,6 @@ export default class OperationStableCoinService extends Service {
         updateRequest.wipeKey = await this.checkAnswer(
           await utilsService.defaultMultipleAsk(
             language.getText('stablecoin.features.wipe'),
-            language.getArrayFromObject('wizard.nonNoneFeatureOptions'),
-          ),
-        );
-        break;
-
-      case 'supplyKey':
-        updateRequest.supplyKey = await this.checkAnswer(
-          await utilsService.defaultMultipleAsk(
-            language.getText('stablecoin.features.supply'),
             language.getArrayFromObject('wizard.nonNoneFeatureOptions'),
           ),
         );

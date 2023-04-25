@@ -80,6 +80,10 @@
 			"Supply": "Supply",
 			"Freeze": "Freeze",
 			"Pause": "Pause"
+		},
+		"modalActionConfirmButton": "Get Accounts",
+		"modal": {
+				"title":"Get Accounts with role"
 		}
 	},
 	"editRole": {

@@ -9,7 +9,7 @@ import {
 import HEDERA_LOGO from '../../assets/png/hashpackLogo.png';
 import METAMASK_LOGO from '../../assets/svg/MetaMask_Fox.svg';
 import TooltipCopy from '../../components/TooltipCopy';
-import { SupportedWallets } from 'hedera-stable-coin-sdk';
+import { SupportedWallets } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { Question } from 'phosphor-react';
 import { useEffect, type ReactElement } from 'react';
 

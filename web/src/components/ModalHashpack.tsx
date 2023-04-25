@@ -1,5 +1,6 @@
 import { Button, Flex, Image, Link, Text } from '@chakra-ui/react';
-import { SupportedWallets } from 'hedera-stable-coin-sdk/build/esm/src/domain/context/network/Wallet.js';
+import { SupportedWallets } from '@hashgraph-dev/stablecoin-npm-sdk';
+
 import { useTranslation } from 'react-i18next';
 import HEDERA_LOGO from '../assets/svg/hedera-hbar-logo.svg';
 import SDKService from '../services/SDKService';

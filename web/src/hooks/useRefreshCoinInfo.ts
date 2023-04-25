@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { GetStableCoinDetailsRequest } from 'hedera-stable-coin-sdk';
+import { GetStableCoinDetailsRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';

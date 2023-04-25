@@ -85,6 +85,9 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 	supplyType?: TokenSupplyType;
 
 	@OptionalField()
+	grantKYCToOriginalSender?: boolean;
+
+	@OptionalField()
 	burnRoleAccount?: string | undefined;
 
 	@OptionalField()
@@ -129,6 +132,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		reserveAddress,
 		reserveInitialAmount,
 		createReserve,
+		grantKYCToOriginalSender,
 		burnRoleAccount,
 		wipeRoleAccount,
 		rescueRoleAccount,
@@ -156,6 +160,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		reserveAddress?: string;
 		reserveInitialAmount?: string;
 		createReserve: boolean;
+		grantKYCToOriginalSender?: boolean;
 		burnRoleAccount?: string;
 		wipeRoleAccount?: string;
 		rescueRoleAccount?: string;
@@ -330,6 +335,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		this.reserveAddress = reserveAddress;
 		this.reserveInitialAmount = reserveInitialAmount;
 		this.createReserve = createReserve;
+		this.grantKYCToOriginalSender = grantKYCToOriginalSender;
 		this.burnRoleAccount = burnRoleAccount;
 		this.wipeRoleAccount = wipeRoleAccount;
 		this.rescueRoleAccount = rescueRoleAccount;

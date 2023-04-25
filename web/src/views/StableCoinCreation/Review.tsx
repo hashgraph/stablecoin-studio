@@ -1,9 +1,12 @@
 import { Heading, Stack, VStack } from '@chakra-ui/react';
 import type { UseFormReturn } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
+import { SupportedWallets } from '@hashgraph-dev/stablecoin-npm-sdk';
 import DetailsReview from '../../components/DetailsReview';
 import { OTHER_KEY_VALUE } from './components/KeySelector';
 import { OTHER_ACCOUNT_VALUE } from './components/RoleSelector';
+import { SELECTED_WALLET } from '../../store/slices/walletSlice';
 
 interface ReviewProps {
 	form: UseFormReturn;
@@ -12,6 +15,8 @@ interface ReviewProps {
 const Review = (props: ReviewProps) => {
 	const { form } = props;
 	const { t } = useTranslation(['global', 'stableCoinCreation']);
+
+	const wallet = useSelector(SELECTED_WALLET);
 
 	const { getValues } = form;
 	const {
@@ -45,6 +50,7 @@ const Review = (props: ReviewProps) => {
 		feeScheduleKey,
 		reserveAddress,
 		reserveInitialAmount,
+		grantKYCToOriginalSender,
 	} = getValues();
 
 	const getKey = (keySelected: { value: number; label: string }, nameOtherKey: string) => {
@@ -256,6 +262,21 @@ const Review = (props: ReviewProps) => {
 							title={t('stableCoinCreation:review.rolesAssignment')}
 							titleProps={{ fontWeight: 700, color: 'brand.secondary' }}
 							details={roleDetails}
+						/>
+					)}
+
+					{wallet.lastWallet === SupportedWallets.HASHPACK && (
+						<DetailsReview
+							title={t('stableCoinCreation:managementPermissions.CreatorKYCFlag')}
+							titleProps={{ fontWeight: 700, color: 'brand.secondary' }}
+							details={[
+								{
+									label: t('stableCoinCreation:managementPermissions.grantKYCToOriginalSender'),
+									value: grantKYCToOriginalSender
+										? t('stableCoinCreation:managementPermissions.CreatorGrantedKYC')
+										: t('stableCoinCreation:managementPermissions.CreatorNotGrantedKYC'),
+								},
+							]}
 						/>
 					)}
 

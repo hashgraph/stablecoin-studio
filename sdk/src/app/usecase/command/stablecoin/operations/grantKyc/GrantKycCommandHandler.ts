@@ -59,14 +59,29 @@ export class GrantKycCommandHandler
 			tokenId,
 		);
 		const coin = capabilities.coin;
-		const tokenRelationship = (
+
+		if (!coin.kycKey) {
+			throw new KycNotActive(tokenId.value);
+		}
+
+		let tokenRelationship = (
 			await this.queryBus.execute(
 				new GetAccountTokenRelationshipQuery(targetId, tokenId),
 			)
 		).payload;
 
-		if (!coin.kycKey) {
-			throw new KycNotActive(tokenId.value);
+		let retry = 0;
+
+		while (!tokenRelationship && retry < 3) {
+			await new Promise((f) => setTimeout(f, 1000));
+
+			tokenRelationship = (
+				await this.queryBus.execute(
+					new GetAccountTokenRelationshipQuery(targetId, tokenId),
+				)
+			).payload;
+
+			retry++;
 		}
 
 		if (!tokenRelationship) {
@@ -75,7 +90,11 @@ export class GrantKycCommandHandler
 				tokenId.toString(),
 			);
 		}
-		if (tokenRelationship.kycStatus !== KycStatus.REVOKED) {
+
+		if (
+			tokenRelationship?.kycStatus !== undefined &&
+			tokenRelationship?.kycStatus !== KycStatus.REVOKED
+		) {
 			throw new OperationNotAllowed(
 				`KYC cannot be granted for account ${targetId} on token ${tokenId}`,
 			);

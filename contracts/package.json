@@ -1,9 +1,15 @@
 {
-    "name": "hedera-stable-coin-contracts",
-    "version": "1.0.0",
+    "name": "@hashgraph-dev/stablecoin-npm-contracts",
+    "version": "0.1.0",
     "description": "",
+    "publishConfig": {
+        "registry": "https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/"
+    },
     "main": "./build/typechain-types/index.js",
     "module": "./build/typechain-types/index.js",
+    "files": [
+        "build/"
+    ],
     "exports": {
         ".": {
             "import": "./build/typechain-types/index.js",
@@ -15,7 +21,6 @@
         }
     },
     "scripts": {
-        "postinstall": "npm run compile:force",
         "compile": "npx hardhat compile",
         "compile:force": "npx hardhat compile --force && npm run build",
         "test": "npx hardhat test",
@@ -77,7 +82,8 @@
         "slither:summary": "docker run -t --rm -v /var/run/docker.sock:/var/run/docker.sock -v \"$(pwd)\":\"/home/ethsec/contracts\" -w \"/home/ethsec/contracts\" -u 0:0 trailofbits/eth-security-toolbox -c \"solc-select install 0.8.16  && solc-select use 0.8.16  && slither ./contracts --print human-summary --solc-remaps @=node_modules/@ &> ./Slither/contract-summary.txt\"",
         "slither": "npm run slither:summary && npm run slither:storageLayout && npm run slither:inheritance && npm run slither:analysis",
         "pre-commit": "npm run prettier && npm run lint",
-        "prettierCheck": "prettier --check"
+        "prettierCheck": "prettier --check",
+        "prepack": "npm run compile:force"
     },
     "author": "",
     "license": "ISC",
@@ -119,6 +125,7 @@
         "dotenv": "^16.0.3",
         "ethers": "5.7.2",
         "solhint": "^3.3.7",
-        "web3": "1.8.0"
+        "web3": "1.8.0",
+        "hardhat": "2.11.2"
     }
 }

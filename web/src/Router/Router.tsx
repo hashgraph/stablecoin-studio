@@ -15,6 +15,7 @@ import Dashboard from '../views/Dashboard';
 import HandleRoles from '../views/Roles/HandleRoles';
 import { actions } from '../views/Roles/constants';
 import Login from '../views/Login';
+import Loading from '../views/Loading';
 import Operations from '.';
 import Roles from '../views/Roles';
 import StableCoinCreation from '../views/StableCoinCreation/StableCoinCreation';
@@ -24,6 +25,7 @@ import StableCoinDetails from '../views/StableCoinDetails';
 import {
 	AVAILABLE_WALLETS,
 	SELECTED_WALLET_COIN,
+	SELECTING_WALLET_COIN,
 	SELECTED_WALLET_STATUS,
 	walletActions,
 } from '../store/slices/walletSlice';
@@ -36,17 +38,18 @@ import {
 	LoggerTransports,
 	SDK,
 	ConnectionState,
-} from 'hedera-stable-coin-sdk';
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 import StableCoinProof from '../views/StableCoinProof';
 import FeesManagement from '../views/FeesManagement';
 import GrantKycOperation from '../views/Operations/GrantKyc';
 import RevokeKycOperation from '../views/Operations/RevokeKyc';
 import CheckKycOperation from '../views/Operations/CheckKyc';
 
-const LoginOverlayRoute = ({ show }: { show: boolean }) => {
+const LoginOverlayRoute = ({ show, loadingSC }: { show: boolean; loadingSC: boolean }) => {
 	return (
 		<>
 			{show && <Login />}
+			{loadingSC && <Loading />}
 			<Layout>
 				<Outlet />
 			</Layout>
@@ -59,6 +62,7 @@ const Router = () => {
 
 	const availableWallets = useSelector(AVAILABLE_WALLETS);
 	const selectedWalletCoin = !!useSelector(SELECTED_WALLET_COIN);
+	const selectingWalletCoin = useSelector(SELECTING_WALLET_COIN);
 	const status = useSelector(SELECTED_WALLET_STATUS);
 
 	useEffect(() => {
@@ -139,7 +143,14 @@ const Router = () => {
 			{availableWallets.length > 0 ? (
 				<Routes>
 					{/* Private routes */}
-					<Route element={<LoginOverlayRoute show={Boolean(status !== ConnectionState.Paired)} />}>
+					<Route
+						element={
+							<LoginOverlayRoute
+								show={Boolean(status !== ConnectionState.Paired)}
+								loadingSC={selectingWalletCoin}
+							/>
+						}
+					>
 						{selectedWalletCoin && (
 							<>
 								<Route path={RoutesMappingUrl.balance} element={<GetBalanceOperation />} />

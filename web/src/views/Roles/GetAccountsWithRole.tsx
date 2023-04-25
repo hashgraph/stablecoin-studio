@@ -3,14 +3,13 @@ import {
 	GetAccountsWithRolesRequest,
 	StableCoinRole,
 	RevokeRoleRequest,
-} from 'hedera-stable-coin-sdk';
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 import { SelectController } from '../../components/Form/SelectController';
-import { useEffect, useMemo, useState } from 'react';
+import {  useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
-import type { Detail } from '../../components/DetailsReview';
-import DetailsReview from '../../components/DetailsReview';
+import { useSelector } from 'react-redux';
+
 
 import type { ModalsHandlerActionsProps } from '../../components/ModalsHandler';
 import ModalsHandler from '../../components/ModalsHandler';
@@ -25,7 +24,7 @@ import type { AppDispatch } from '../../store/store';
 import OperationLayout from '../Operations/OperationLayout';
 
 const GetAccountsWithRole = () => {
-	const dispatch = useDispatch<AppDispatch>();
+	
 	const { t } = useTranslation(['global', 'roles', 'stableCoinCreation', 'externalTokenInfo']);
 	const {
 		isOpen: isOpenModalAction,
@@ -33,7 +32,7 @@ const GetAccountsWithRole = () => {
 		onClose: onCloseModalAction,
 	} = useDisclosure();
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
-	const accountId = useSelector(SELECTED_WALLET_PAIRED_ACCOUNTID);
+	
 	const { control, getValues, watch, formState, setError } = useForm({
 		mode: 'onChange',
 	});
@@ -46,21 +45,10 @@ const GetAccountsWithRole = () => {
 		name: 'rol',
 	});
 
-	const isMaxAccounts = useMemo(() => accounts.length >= 10, [accounts]);
-	const isRoleSelected = useMemo((): boolean => {
-		const values = watch();
-		delete values.rol;
-		if (!values) return false;
-		return Object.values(values).some((item) => {
-			return item === true;
-		});
-	}, [watch()]);
 	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
 	const [revokeRoles, setRevokeRoles] = useState<RevokeRoleRequest[]>([]);
 
-	useEffect(() => {
-		addNewAccount();
-	}, []);
+
 
 	const supplyTypes = [
 		{
@@ -97,7 +85,7 @@ const GetAccountsWithRole = () => {
 		},
 	};
 
-	const handleRevokeRoles: ModalsHandlerActionsProps['onConfirm'] = async ({
+	const handleGetAccountsWithRole: ModalsHandlerActionsProps['onConfirm'] = async ({
 		onSuccess,
 		onError,
 		onLoading,
@@ -127,57 +115,7 @@ const GetAccountsWithRole = () => {
 			onError();
 		}
 	};
-	const getAccountsDetails = () => {
-		const values = getValues();
-
-		if (values.rol) {
-			const details: Detail[] = values.rol.map((item: { accountId: string }) => {
-				return {
-					label: t(`roles:revokeRole.modalActionDetailAccount`),
-					value: item.accountId,
-				};
-			});
-			return details;
-		}
-
-		return [] as Detail[];
-	};
-	const getRolesDetails = () => {
-		const obj = getValues();
-		const asArray = Object.entries(obj);
-
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const filtered = asArray.filter(([key, value]) => value === true);
-
-		return filtered.map((item) => {
-			return {
-				label: t(`roles:revokeRole.modalActionDetailRole`),
-				value: item[0],
-			};
-		});
-	};
-	const addNewAccount = () => {
-		if (accounts.length >= 10) return;
-		const currentRevokeRole = revokeRoles;
-		currentRevokeRole.push(
-			new RevokeRoleRequest({
-				tokenId: selectedStableCoin!.tokenId!.toString(),
-				targetId: '',
-				role: undefined,
-			}),
-		);
-		setRevokeRoles(currentRevokeRole);
-		append({ accountId: '' });
-	};
-
-	const removeAccount = (i: number) => {
-		if (accounts.length === 1) return;
-		const currentRoleRequest = revokeRoles;
-		currentRoleRequest.splice(i, 1);
-		setRevokeRoles(currentRoleRequest);
-		remove(i);
-	};
-
+	
 	const handleSubmit = () => {
 		const values = getValues().rol;
 
@@ -239,7 +177,7 @@ const GetAccountsWithRole = () => {
 			/>
 
 			<ModalsHandler
-				errorNotificationTitle={t(`roles:revokeRole.modalErrorTitle`)}
+				errorNotificationTitle={t(`roles:getAccountsWithRole.modal.title`)}
 				// @ts-ignore-next-line
 				errorNotificationDescription={t(`roles:revokeRole.modalErrorDescription`)}
 				errorTransactionUrl={errorTransactionUrl}
@@ -248,21 +186,13 @@ const GetAccountsWithRole = () => {
 				modalActionProps={{
 					isOpen: isOpenModalAction,
 					onClose: onCloseModalAction,
-					title: t(`roles:revokeRole.modalActionTitle`),
-					confirmButtonLabel: t(`roles:revokeRole.modalActionConfirmButton`),
-					onConfirm: handleRevokeRoles,
+					title: t(`roles:getAccountsWithRole.modal.title`),
+					confirmButtonLabel: t(`roles:getAccountsWithRole.modalActionConfirmButton`),
+					onConfirm: handleGetAccountsWithRole,
 				}}
 				ModalActionChildren={
 					<>
-						<DetailsReview
-							title={t(`roles:revokeRole.modalActionSubtitleAccountSection`)}
-							details={getAccountsDetails()}
-							divider={true}
-						/>
-						<DetailsReview
-							title={t(`roles:revokeRole.modalActionSubtitleRolesSection`)}
-							details={getRolesDetails()}
-						/>
+				
 					</>
 				}
 				successNotificationTitle={t(`roles:revokeRole.modalSuccessTitle`)}

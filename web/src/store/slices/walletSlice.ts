@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { ConnectionState, GetListStableCoinRequest } from 'hedera-stable-coin-sdk';
+import { ConnectionState, GetListStableCoinRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
 import SDKService from '../../services/SDKService';
 import type { RootState } from '../store';
 import type { IExternalToken } from '../../interfaces/IExternalToken';
@@ -11,7 +11,7 @@ import type {
 	StableCoinCapabilities,
 	StableCoinListViewModel,
 	StableCoinViewModel,
-} from 'hedera-stable-coin-sdk';
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 
 export interface InitialStateProps {
 	data?: InitializationData;
@@ -21,6 +21,7 @@ export interface InitialStateProps {
 	loading: boolean;
 	accountInfo: AccountViewModel;
 	selectedStableCoin?: StableCoinViewModel;
+	selectingStableCoin: boolean;
 	stableCoinList?: StableCoinListViewModel;
 	externalTokenList?: IExternalToken[];
 	capabilities?: StableCoinCapabilities | undefined;
@@ -42,6 +43,7 @@ export const initialState: InitialStateProps = {
 	loading: false,
 	accountInfo: {},
 	selectedStableCoin: undefined,
+	selectingStableCoin: false,
 	stableCoinList: undefined,
 	externalTokenList: [],
 	capabilities: undefined,
@@ -115,6 +117,9 @@ export const walletSlice = createSlice({
 		setSelectedStableCoin: (state, action) => {
 			state.selectedStableCoin = action.payload;
 		},
+		setSelectingStableCoin: (state, action) => {
+			state.selectingStableCoin = action.payload;
+		},
 		setStableCoinList: (state, action) => {
 			state.stableCoinList = action.payload;
 		},
@@ -164,6 +169,7 @@ export const walletSlice = createSlice({
 			state.networkRecognized = initialState.networkRecognized;
 			state.accountRecognized = initialState.accountRecognized;
 			state.factoryId = initialState.factoryId;
+			state.selectingStableCoin = initialState.selectingStableCoin;
 		},
 		setRoles: (state, action) => {
 			state.roles = action.payload;
@@ -204,6 +210,7 @@ export const AVAILABLE_WALLETS = (state: RootState) => state.wallet.foundWallets
 export const EXTERNAL_TOKEN_LIST = (state: RootState) => state.wallet.externalTokenList;
 export const SELECTED_WALLET_DATA = (state: RootState) => state.wallet.data;
 export const SELECTED_WALLET_COIN = (state: RootState) => state.wallet.selectedStableCoin;
+export const SELECTING_WALLET_COIN = (state: RootState) => state.wallet.selectingStableCoin;
 export const SELECTED_WALLET_PAIRED = (state: RootState) => state.wallet.data;
 export const SELECTED_WALLET_CAPABILITIES = (state: RootState) => state.wallet.capabilities;
 export const SELECTED_WALLET_ACCOUNT_INFO = (state: RootState) => state.wallet.accountInfo;

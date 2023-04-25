@@ -20,6 +20,7 @@ import {
 	SELECTED_WALLET_PAIRED_ACCOUNT,
 	SELECTED_FACTORY_ID,
 	SELECTED_WALLET,
+	getExternalTokenList,
 } from '../../store/slices/walletSlice';
 import SDKService from '../../services/SDKService';
 import ModalNotification from '../../components/ModalNotification';
@@ -27,12 +28,15 @@ import {
 	Account,
 	AssociateTokenRequest,
 	CreateRequest,
+	KYCRequest,
+	GetStableCoinDetailsRequest,
 	SupportedWallets,
-} from 'hedera-stable-coin-sdk';
-import type { RequestPublicKey } from 'hedera-stable-coin-sdk';
+} from '@hashgraph-dev/stablecoin-npm-sdk';
+import type { RequestPublicKey } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch } from '../../store/store';
 import ProofOfReserve from './ProofOfReserve';
+import { ImportTokenService } from '../../services/ImportTokenService';
 
 const StableCoinCreation = () => {
 	const navigate = useNavigate();
@@ -124,7 +128,7 @@ const StableCoinCreation = () => {
 
 		if (currentStep === 0) {
 			// @ts-ignore
-			fieldsStep = watch(['name', 'symbol', 'autorenewAccount']);
+			fieldsStep = watch(['hederaERC20Id', 'name', 'symbol']);
 		}
 
 		if (currentStep === 1) {
@@ -145,8 +149,7 @@ const StableCoinCreation = () => {
 				const keys = ['adminKey', 'supplyKey', 'wipeKey', 'freezeKey', 'pauseKey', 'kycKey'];
 
 				// @ts-ignore
-				fieldsStep = watch(keys);
-				fieldsStep.forEach((item, index) => {
+				watch(keys).forEach((item, index) => {
 					if (item?.value === OTHER_KEY_VALUE) {
 						// @ts-ignore
 						fieldsStep[index] = watch(keys[index].concat('Other'));
@@ -249,6 +252,7 @@ const StableCoinCreation = () => {
 			feeScheduleKey,
 			reserveInitialAmount,
 			reserveAddress,
+			grantKYCToOriginalSender,
 			cashInRoleAccount,
 			burnRoleAccount,
 			wipeRoleAccount,
@@ -283,8 +287,10 @@ const StableCoinCreation = () => {
 
 		if (kycRequired) {
 			request.kycKey = formatKey(kycKey.label, 'kycKey');
+			request.grantKYCToOriginalSender = grantKYCToOriginalSender;
 		} else {
 			request.kycKey = undefined;
+			request.grantKYCToOriginalSender = false;
 		}
 
 		request.feeScheduleKey = manageCustomFees
@@ -336,14 +342,35 @@ const StableCoinCreation = () => {
 			onOpen();
 			setLoading(true);
 			createResponse = await SDKService.createStableCoin(request);
-			setToken(createResponse.coin.tokenId.toString());
+			const tokenId = createResponse.coin.tokenId.toString();
+			setToken(tokenId);
 			if (wallet.lastWallet === SupportedWallets.HASHPACK && createResponse?.coin.tokenId) {
 				const associateRequest = new AssociateTokenRequest({
 					targetId: accountInfo.id!,
-					tokenId: createResponse.coin.tokenId.toString(),
+					tokenId: tokenId,
 				});
 				await SDKService.associate(associateRequest);
+
+				if (grantKYCToOriginalSender) {
+					const grantKYCRequest = new KYCRequest({
+						targetId: accountInfo.id!,
+						tokenId: createResponse.coin.tokenId.toString(),
+					});
+					await SDKService.grantKyc(grantKYCRequest);
+				}
 			}
+
+			if (wallet.lastWallet === SupportedWallets.METAMASK) {
+				const details = await SDKService.getStableCoinDetails(
+					new GetStableCoinDetailsRequest({
+						id: tokenId,
+					}),
+				);
+
+				ImportTokenService.importToken(tokenId, details?.symbol!, accountInfo?.id!);
+				dispatch(getExternalTokenList(accountInfo.id!));
+			}
+
 			setLoading(false);
 			setSuccess(true);
 		} catch (error: any) {

@@ -32,7 +32,7 @@ import {
 	AggregatorV3Interface__factory,
 	HederaERC20__factory,
 	StableCoinFactory__factory,
-} from 'hedera-stable-coin-contracts';
+} from '@hashgraph-dev/stablecoin-npm-contracts';
 import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
 import EvmAddress from '../../../domain/context/contract/EvmAddress.js';
@@ -60,10 +60,7 @@ export default class RPCQueryAdapter {
 	) {}
 
 	async init(customUrl?: string): Promise<string> {
-		const url =
-			customUrl ?? this.networkService.environment !== unrecognized
-				? `https://${this.networkService.environment.toString()}.hashio.io/api`
-				: undefined;
+		const url ="http://localhost:7546"
 		this.provider = new ethers.providers.JsonRpcProvider(url);
 		LogService.logTrace('RPC Query Adapter Initialized on: ', url);
 

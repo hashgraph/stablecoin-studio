@@ -9,7 +9,7 @@
 	},
 	"keywords": [],
 	"dependencies": {
-		"hedera-stable-coin-sdk": "file:../../"
+		"@hashgraph-dev/stablecoin-npm-sdk": "file:../../"
 	},
 	"author": "",
 	"license": "ISC"

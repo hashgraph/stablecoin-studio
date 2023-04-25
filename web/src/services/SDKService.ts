@@ -12,7 +12,8 @@ import {
 	Factory,
 	SetNetworkRequest,
 	GetAccountsWithRolesRequest,
-} from 'hedera-stable-coin-sdk';
+} from '@hashgraph-dev/stablecoin-npm-sdk';
+
 import type {
 	WalletEvent,
 	SupportedWallets,
@@ -53,7 +54,7 @@ import type {
 	RevokeMultiRolesRequest,
 	GrantMultiRolesRequest,
 	AssociateTokenRequest,
-} from 'hedera-stable-coin-sdk';
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 
 export type StableCoinListRaw = Array<Record<'id' | 'symbol', string>>;
 

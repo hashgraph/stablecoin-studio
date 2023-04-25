@@ -11,20 +11,20 @@ import {
 } from '../../../index.js';
 import SetConfigurationService from './SetConfigurationService.js';
 import MaskData from 'maskdata';
+import { ILogConfig } from '../../../domain/configuration/interfaces/ILogConfig.js';
+import { IFactoryConfig } from '../../../domain/configuration/interfaces/IFactoryConfig.js';
 import {
   DailyRotateFile,
   DefaultLoggerFormat,
   LogOptions,
-} from 'hedera-stable-coin-sdk';
-import { ILogConfig } from '../../../domain/configuration/interfaces/ILogConfig.js';
-import { IFactoryConfig } from '../../../domain/configuration/interfaces/IFactoryConfig.js';
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 
 /**
  * Configuration Service
  */
 export default class ConfigurationService extends Service {
   private configuration: IConfiguration;
-  private configFileName = '.hedera-stable-coin-cli.yaml';
+  private configFileName = '.@hashgraph-dev/stablecoin-npm-cli.yaml';
   private path = this.getDefaultConfigurationPath();
 
   constructor() {

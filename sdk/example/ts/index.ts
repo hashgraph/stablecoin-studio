@@ -8,7 +8,7 @@ import {
 	SDK,
 	StableCoin,
 	SupportedWallets,
-} from 'hedera-stable-coin-sdk';
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 
 async function sleep(ms: number): Promise<void> {
 	return new Promise((resolve) => setTimeout(resolve, ms));

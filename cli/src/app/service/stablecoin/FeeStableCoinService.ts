@@ -9,7 +9,8 @@ import {
   isRequestFractionalFee,
   Fees,
   UpdateCustomFeesRequest,
-} from 'hedera-stable-coin-sdk';
+} from '@hashgraph-dev/stablecoin-npm-sdk';
+
 const fixedTypeLabel = 'Fixed';
 const fractionalTypeLabel = 'Fractional';
 const HBARLabel = 'HBAR';

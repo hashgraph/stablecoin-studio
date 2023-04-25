@@ -14,7 +14,7 @@ import {
 	GrantMultiRolesRequest,
 	StableCoinRole,
 	GetRolesRequest,
-} from 'hedera-stable-coin-sdk';
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
