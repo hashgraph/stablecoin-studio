@@ -60,7 +60,7 @@ export default class RPCQueryAdapter {
 	) {}
 
 	async init(customUrl?: string): Promise<string> {
-		const url ="http://localhost:7546"
+		const url ="http://127.0.0.1:7546/api"
 		this.provider = new ethers.providers.JsonRpcProvider(url);
 		LogService.logTrace('RPC Query Adapter Initialized on: ', url);
 
