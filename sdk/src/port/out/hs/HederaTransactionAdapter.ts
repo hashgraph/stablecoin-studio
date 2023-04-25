@@ -239,7 +239,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				factory.value,
 				'deployStableCoin',
 				params,
-				15000000,
+				2000000,
 				TransactionType.RECORD,
 				StableCoinFactory__factory.abi,
 				TOKEN_CREATION_COST_HBAR,
