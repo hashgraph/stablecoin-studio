@@ -32,7 +32,7 @@ import {
 	HederaReserve__factory,
 	StableCoinFactory__factory,
 	IHederaTokenService__factory,
-} from 'hedera-stable-coin-contracts';
+} from '@hashgraph-dev/stablecoin-npm-contracts';
 import TransactionAdapter, { InitializationData } from '../TransactionAdapter';
 import { BigNumber, ContractTransaction, ethers, Signer } from 'ethers';
 import { singleton } from 'tsyringe';
@@ -349,7 +349,6 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		feeScheduleKey: PublicKey | undefined,
 		pauseKey: PublicKey | undefined,
 		wipeKey: PublicKey | undefined,
-		supplyKey: PublicKey | undefined,
 	): Promise<TransactionResponse<any, Error>> {
 		const params = new Params({
 			name: name,
@@ -361,7 +360,6 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			feeScheduleKey: feeScheduleKey,
 			pauseKey: pauseKey,
 			wipeKey: wipeKey,
-			supplyKey: supplyKey,
 		});
 		return this.performOperation(coin, Operation.UPDATE, params);
 	}

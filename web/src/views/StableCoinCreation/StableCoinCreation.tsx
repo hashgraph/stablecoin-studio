@@ -31,8 +31,8 @@ import {
 	KYCRequest,
 	GetStableCoinDetailsRequest,
 	SupportedWallets,
-} from 'hedera-stable-coin-sdk';
-import type { RequestPublicKey } from 'hedera-stable-coin-sdk';
+} from '@hashgraph-dev/stablecoin-npm-sdk';
+import type { RequestPublicKey } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch } from '../../store/store';
 import ProofOfReserve from './ProofOfReserve';
@@ -128,7 +128,7 @@ const StableCoinCreation = () => {
 
 		if (currentStep === 0) {
 			// @ts-ignore
-			fieldsStep = watch(['name', 'symbol', 'autorenewAccount']);
+			fieldsStep = watch(['hederaERC20Id', 'name', 'symbol']);
 		}
 
 		if (currentStep === 1) {
@@ -144,10 +144,17 @@ const StableCoinCreation = () => {
 		if (currentStep === 2) {
 			// @ts-ignore
 			const managePermissions = watch('managementPermissions');
+			const kycRequired = watch('kycRequired');
+			let keys: string[] = [];
+
+			if (kycRequired) keys = keys.concat('kycKey');
 
 			if (!managePermissions) {
-				const keys = ['adminKey', 'supplyKey', 'wipeKey', 'freezeKey', 'pauseKey', 'kycKey'];
-
+				keys = keys.concat('wipeKey');
+				keys = keys.concat('freezeKey');
+				keys = keys.concat('pauseKey');
+			}
+			if (keys.length > 0) {
 				// @ts-ignore
 				fieldsStep = watch(keys);
 				fieldsStep.forEach((item, index) => {

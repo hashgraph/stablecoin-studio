@@ -45,7 +45,8 @@ import {
   RequestPublicKey,
   Account,
   GetPublicKeyRequest,
-} from 'hedera-stable-coin-sdk';
+} from '@hashgraph-dev/stablecoin-npm-sdk';
+
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
 import CashInStableCoinsService from './CashInStableCoinService.js';
 import WipeStableCoinService from './WipeStableCoinService.js';
@@ -2569,15 +2570,6 @@ export default class OperationStableCoinService extends Service {
         updateRequest.wipeKey = await this.checkAnswer(
           await utilsService.defaultMultipleAsk(
             language.getText('stablecoin.features.wipe'),
-            language.getArrayFromObject('wizard.nonNoneFeatureOptions'),
-          ),
-        );
-        break;
-
-      case 'supplyKey':
-        updateRequest.supplyKey = await this.checkAnswer(
-          await utilsService.defaultMultipleAsk(
-            language.getText('stablecoin.features.supply'),
             language.getArrayFromObject('wizard.nonNoneFeatureOptions'),
           ),
         );

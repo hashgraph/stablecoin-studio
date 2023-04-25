@@ -10,8 +10,12 @@ import {
 	Text,
 	useBoolean,
 } from '@chakra-ui/react';
-import type { AccountViewModel, RequestPublicKey, UpdateRequest } from 'hedera-stable-coin-sdk';
-import { Account } from 'hedera-stable-coin-sdk';
+import type {
+	AccountViewModel,
+	RequestPublicKey,
+	UpdateRequest,
+} from '@hashgraph-dev/stablecoin-npm-sdk';
+import { Account } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { useEffect } from 'react';
 import type { FieldValues, UseFormGetValues } from 'react-hook-form';
 import { useForm } from 'react-hook-form';

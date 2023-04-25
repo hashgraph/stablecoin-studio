@@ -32,7 +32,7 @@ import {
 	AggregatorV3Interface__factory,
 	HederaERC20__factory,
 	StableCoinFactory__factory,
-} from 'hedera-stable-coin-contracts';
+} from '@hashgraph-dev/stablecoin-npm-contracts';
 import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
 import EvmAddress from '../../../domain/context/contract/EvmAddress.js';

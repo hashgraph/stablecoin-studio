@@ -1,5 +1,5 @@
 import { Box, Flex } from '@chakra-ui/react';
-import { StableCoinRole } from 'hedera-stable-coin-sdk';
+import { StableCoinRole } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import AwaitingWalletSignature from '../../components/AwaitingWalletSignature';

@@ -1,7 +1,10 @@
 import { language } from '../../../index.js';
 import { utilsService } from '../../../index.js';
 import Service from '../Service.js';
-import { AssociateTokenRequest, StableCoin } from 'hedera-stable-coin-sdk';
+import {
+  AssociateTokenRequest,
+  StableCoin,
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 
 export default class AssociateStableCoinsService extends Service {
   constructor() {

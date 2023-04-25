@@ -25,7 +25,7 @@ import {
 	TransactionRecord,
 	Signer,
 } from '@hashgraph/sdk';
-import { MessageTypes } from 'hashconnect';
+import { MessageTypes } from '@hashgraph-dev/hashconnect';
 import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
 import { TransactionResponseError } from '../../error/TransactionResponseError.js';
 import { TransactionType } from '../../TransactionResponseEnums.js';

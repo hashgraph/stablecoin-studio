@@ -45,7 +45,7 @@ import {
 	HederaERC20__factory,
 	HederaReserve__factory,
 	StableCoinFactory__factory,
-} from 'hedera-stable-coin-contracts';
+} from '@hashgraph-dev/stablecoin-npm-contracts';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 import { TransactionType } from '../TransactionResponseEnums.js';
 import { HTSTransactionBuilder } from './HTSTransactionBuilder.js';
@@ -189,7 +189,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				factory.value,
 				'deployStableCoin',
 				params,
-				15000000,
+				2000000,
 				TransactionType.RECORD,
 				StableCoinFactory__factory.abi,
 				TOKEN_CREATION_COST_HBAR,
@@ -818,7 +818,6 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		feeScheduleKey: PublicKey | undefined,
 		pauseKey: PublicKey | undefined,
 		wipeKey: PublicKey | undefined,
-		supplyKey: PublicKey | undefined,
 	): Promise<TransactionResponse<any, Error>> {
 		const params = new Params({
 			name: name,
@@ -830,7 +829,6 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			feeScheduleKey: feeScheduleKey,
 			pauseKey: pauseKey,
 			wipeKey: wipeKey,
-			supplyKey: supplyKey,
 		});
 		if (!coin.coin.tokenId)
 			throw new Error(
@@ -1157,13 +1155,6 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 									coin.coin.proxyAddress!.toString(),
 							  )
 							: HPublicKey.fromString(params.wipeKey.key)
-						: undefined,
-					params.supplyKey
-						? params.supplyKey.key == PublicKey.NULL.key
-							? DelegateContractId.fromString(
-									coin.coin.proxyAddress!.toString(),
-							  )
-							: HPublicKey.fromString(params.supplyKey.key)
 						: undefined,
 				);
 				break;

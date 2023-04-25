@@ -1,4 +1,4 @@
-import type { ValidationResponse } from 'hedera-stable-coin-sdk';
+import type { ValidationResponse } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 export const validateAccount = (account: string) => {
 	const regex = /^(0)\.(0)\.(0|(?:[1-9]\d*))$/;

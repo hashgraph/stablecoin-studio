@@ -38,8 +38,11 @@ import {
 	GrantRoleRequest,
 	HasRoleRequest,
 	IncreaseSupplierAllowanceRequest,
+	InitializationRequest,
 	ResetSupplierAllowanceRequest,
 	RevokeRoleRequest,
+	GrantMultiRolesRequest,
+	RevokeMultiRolesRequest,
 } from '../../../src/port/in/request/index.js';
 import ConnectRequest, {
 	SupportedWallets,
@@ -54,6 +57,12 @@ import BigDecimal from '../../../src/domain/context/shared/BigDecimal.js';
 
 describe('🧪 Role test', () => {
 	let stableCoinSC: StableCoinViewModel;
+
+	const delay = async (seconds = 3): Promise<void> => {
+		seconds = seconds * 1000;
+		await new Promise((r) => setTimeout(r, seconds));
+	};
+
 	beforeAll(async () => {
 		await Network.connect(
 			new ConnectRequest({
@@ -65,115 +74,211 @@ describe('🧪 Role test', () => {
 				wallet: SupportedWallets.CLIENT,
 			}),
 		);
+		await Network.init(
+			new InitializationRequest({
+				network: 'testnet',
+				configuration: {
+					factoryAddress: FACTORY_ADDRESS,
+				},
+			}),
+		);
 		Injectable.resolveTransactionHandler();
 		const requestSC = new CreateRequest({
 			name: 'TEST_ACCELERATOR_SC',
 			symbol: 'TEST',
 			decimals: '6',
 			initialSupply: '1000',
-			// maxSupply: '',
 			freezeKey: Account.NullPublicKey,
 			kycKey: Account.NullPublicKey,
 			wipeKey: Account.NullPublicKey,
 			pauseKey: Account.NullPublicKey,
-			// treasury: CLIENT_ACCOUNT_ED25519.id.toString(),
 			supplyType: TokenSupplyType.INFINITE,
 			stableCoinFactory: FACTORY_ADDRESS,
 			hederaERC20: HEDERA_ERC20_ADDRESS,
 			createReserve: true,
+			grantKYCToOriginalSender: true,
+			burnRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
+			rescueRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
+			deleteRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
 			reserveInitialAmount: '1000',
 		});
 		stableCoinSC = (await StableCoin.create(requestSC)).coin;
-		// console.log(stableCoinSC.tokenId);
+
+		await delay();
 	}, 60_000);
 
 	it('Has role', async () => {
 		const res = await Role.hasRole(
 			new HasRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '',
-				role: StableCoinRole.CASHIN_ROLE,
+				tokenId: stableCoinSC?.tokenId!.toString(),
+				role: StableCoinRole.RESCUE_ROLE,
 			}),
 		);
 		expect(res).toBe(true);
 	}, 60_000);
 
 	it('Grant role', async () => {
-		const revokeRes = await Role.revokeRole(
-			new RevokeRoleRequest({
-				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
-				role: StableCoinRole.WIPE_ROLE,
-			}),
-		);
 		const noRole = await Role.hasRole(
 			new HasRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 				role: StableCoinRole.WIPE_ROLE,
 			}),
 		);
 		const grantRes = await Role.grantRole(
 			new GrantRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 				role: StableCoinRole.WIPE_ROLE,
 			}),
 		);
+
+		await delay();
+
 		const hasRole = await Role.hasRole(
 			new HasRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 				role: StableCoinRole.WIPE_ROLE,
 			}),
 		);
+		const revokeRes = await Role.revokeRole(
+			new RevokeRoleRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoinSC?.tokenId!.toString(),
+				role: StableCoinRole.WIPE_ROLE,
+			}),
+		);
+
+		await delay();
+
 		expect(revokeRes).toBe(true);
 		expect(noRole).toBe(false);
 		expect(grantRes).toBe(true);
 		expect(hasRole).toBe(true);
 	}, 60_000);
 
-	it('Grant role Unlimited', async () => {
-		const revokeRes = await Role.revokeRole(
-			new RevokeRoleRequest({
-				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
-				role: StableCoinRole.CASHIN_ROLE,
-			}),
-		);
-		const noRole = await Role.hasRole(
+	it('Grant Multi role', async () => {
+		const noRole_1 = await Role.hasRole(
 			new HasRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
-				role: StableCoinRole.CASHIN_ROLE,
+				tokenId: stableCoinSC?.tokenId!.toString(),
+				role: StableCoinRole.WIPE_ROLE,
 			}),
 		);
-		const grantRes = await Role.grantRole(
-			new GrantRoleRequest({
-				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
-				role: StableCoinRole.CASHIN_ROLE,
-			}),
-		);
-		const hasRole = await Role.hasRole(
+		const noRole_2 = await Role.hasRole(
 			new HasRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
+				tokenId: stableCoinSC?.tokenId!.toString(),
+				role: StableCoinRole.CASHIN_ROLE,
+			}),
+		);
+		const grantRes = await Role.grantMultiRoles(
+			new GrantMultiRolesRequest({
+				tokenId: stableCoinSC?.tokenId!.toString(),
+				targetsId: [CLIENT_ACCOUNT_ED25519.id.toString()],
+				roles: [StableCoinRole.WIPE_ROLE, StableCoinRole.CASHIN_ROLE],
+				amounts: ['0'],
+			}),
+		);
+
+		await delay();
+
+		const hasRole_1 = await Role.hasRole(
+			new HasRoleRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoinSC?.tokenId!.toString(),
+				role: StableCoinRole.WIPE_ROLE,
+			}),
+		);
+		const hasRole_2 = await Role.hasRole(
+			new HasRoleRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoinSC?.tokenId!.toString(),
 				role: StableCoinRole.CASHIN_ROLE,
 			}),
 		);
 		const isUnlimited = await Role.isUnlimited(
 			new CheckSupplierLimitRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
+				tokenId: stableCoinSC?.tokenId!.toString(),
+			}),
+		);
+		const revokeRes_1 = await Role.revokeRole(
+			new RevokeRoleRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoinSC?.tokenId!.toString(),
+				role: StableCoinRole.WIPE_ROLE,
+			}),
+		);
+		const revokeRes_2 = await Role.revokeRole(
+			new RevokeRoleRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoinSC?.tokenId!.toString(),
+				role: StableCoinRole.CASHIN_ROLE,
+			}),
+		);
+
+		await delay();
+
+		expect(revokeRes_1).toBe(true);
+		expect(revokeRes_2).toBe(true);
+		expect(noRole_1).toBe(false);
+		expect(noRole_2).toBe(false);
+		expect(grantRes).toBe(true);
+		expect(hasRole_1).toBe(true);
+		expect(hasRole_2).toBe(true);
+		expect(isUnlimited).toBe(true);
+	}, 60_000);
+
+	it('Grant role Unlimited', async () => {
+		const noRole = await Role.hasRole(
+			new HasRoleRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoinSC?.tokenId!.toString(),
+				role: StableCoinRole.CASHIN_ROLE,
+			}),
+		);
+		const grantRes = await Role.grantRole(
+			new GrantRoleRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoinSC?.tokenId!.toString(),
+				role: StableCoinRole.CASHIN_ROLE,
+			}),
+		);
+
+		await delay();
+
+		const hasRole = await Role.hasRole(
+			new HasRoleRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoinSC?.tokenId!.toString(),
+				role: StableCoinRole.CASHIN_ROLE,
+			}),
+		);
+		const isUnlimited = await Role.isUnlimited(
+			new CheckSupplierLimitRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoinSC?.tokenId!.toString(),
 			}),
 		);
 		const allowance = await Role.getAllowance(
 			new GetSupplierAllowanceRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 			}),
 		);
+		const revokeRes = await Role.revokeRole(
+			new RevokeRoleRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoinSC?.tokenId!.toString(),
+				role: StableCoinRole.CASHIN_ROLE,
+			}),
+		);
+
+		await delay();
+
 		expect(revokeRes).toBe(true);
 		expect(noRole).toBe(false);
 		expect(grantRes).toBe(true);
@@ -186,48 +291,54 @@ describe('🧪 Role test', () => {
 
 	it('Grant role Limited', async () => {
 		const AMOUNT = '100';
-		const revokeRes = await Role.revokeRole(
-			new RevokeRoleRequest({
-				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
-				role: StableCoinRole.CASHIN_ROLE,
-			}),
-		);
+
 		const noRole = await Role.hasRole(
 			new HasRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 				role: StableCoinRole.CASHIN_ROLE,
 			}),
 		);
 		const grantRes = await Role.grantRole(
 			new GrantRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 				role: StableCoinRole.CASHIN_ROLE,
 				supplierType: 'limited',
 				amount: AMOUNT,
 			}),
 		);
+
+		await delay();
+
 		const hasRole = await Role.hasRole(
 			new HasRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 				role: StableCoinRole.CASHIN_ROLE,
 			}),
 		);
 		const isUnlimited = await Role.isUnlimited(
 			new CheckSupplierLimitRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 			}),
 		);
 		const allowance = await Role.getAllowance(
 			new GetSupplierAllowanceRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 			}),
 		);
+		const revokeRes = await Role.revokeRole(
+			new RevokeRoleRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoinSC?.tokenId!.toString(),
+				role: StableCoinRole.CASHIN_ROLE,
+			}),
+		);
+
+		await delay();
 
 		expect(revokeRes).toBe(true);
 		expect(noRole).toBe(false);
@@ -243,28 +354,34 @@ describe('🧪 Role test', () => {
 		const grantRes = await Role.grantRole(
 			new GrantRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 				role: StableCoinRole.WIPE_ROLE,
 			}),
 		);
+
+		await delay();
+
 		const hasRole = await Role.hasRole(
 			new HasRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 				role: StableCoinRole.WIPE_ROLE,
 			}),
 		);
 		const revokeRes = await Role.revokeRole(
 			new RevokeRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 				role: StableCoinRole.WIPE_ROLE,
 			}),
 		);
+
+		await delay();
+
 		const noRole = await Role.hasRole(
 			new HasRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 				role: StableCoinRole.WIPE_ROLE,
 			}),
 		);
@@ -274,32 +391,103 @@ describe('🧪 Role test', () => {
 		expect(noRole).toBe(false);
 	}, 60_000);
 
+	it('Revoke Multi role', async () => {
+		const grantRes_1 = await Role.grantRole(
+			new GrantRoleRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoinSC?.tokenId!.toString(),
+				role: StableCoinRole.WIPE_ROLE,
+			}),
+		);
+		const grantRes_2 = await Role.grantRole(
+			new GrantRoleRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoinSC?.tokenId!.toString(),
+				role: StableCoinRole.CASHIN_ROLE,
+			}),
+		);
+
+		await delay();
+
+		const hasRole_1 = await Role.hasRole(
+			new HasRoleRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoinSC?.tokenId!.toString(),
+				role: StableCoinRole.WIPE_ROLE,
+			}),
+		);
+		const hasRole_2 = await Role.hasRole(
+			new HasRoleRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoinSC?.tokenId!.toString(),
+				role: StableCoinRole.CASHIN_ROLE,
+			}),
+		);
+		const revokeRes = await Role.revokeMultiRoles(
+			new RevokeMultiRolesRequest({
+				targetsId: [CLIENT_ACCOUNT_ED25519.id.toString()],
+				tokenId: stableCoinSC?.tokenId!.toString(),
+				roles: [StableCoinRole.WIPE_ROLE, StableCoinRole.CASHIN_ROLE],
+			}),
+		);
+
+		await delay();
+
+		const noRole_1 = await Role.hasRole(
+			new HasRoleRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoinSC?.tokenId!.toString(),
+				role: StableCoinRole.WIPE_ROLE,
+			}),
+		);
+		const noRole_2 = await Role.hasRole(
+			new HasRoleRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoinSC?.tokenId!.toString(),
+				role: StableCoinRole.CASHIN_ROLE,
+			}),
+		);
+		expect(grantRes_1).toBe(true);
+		expect(grantRes_2).toBe(true);
+		expect(hasRole_1).toBe(true);
+		expect(hasRole_2).toBe(true);
+		expect(revokeRes).toBe(true);
+		expect(noRole_1).toBe(false);
+		expect(noRole_2).toBe(false);
+	}, 60_000);
+
 	it('Revoke cashIn role', async () => {
 		const grantRes = await Role.grantRole(
 			new GrantRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 				role: StableCoinRole.CASHIN_ROLE,
 			}),
 		);
+
+		await delay();
+
 		const hasRole = await Role.hasRole(
 			new HasRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 				role: StableCoinRole.CASHIN_ROLE,
 			}),
 		);
 		const revokeRes = await Role.revokeRole(
 			new RevokeRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 				role: StableCoinRole.CASHIN_ROLE,
 			}),
 		);
+
+		await delay();
+
 		const noRole = await Role.hasRole(
 			new HasRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 				role: StableCoinRole.CASHIN_ROLE,
 			}),
 		);
@@ -313,7 +501,7 @@ describe('🧪 Role test', () => {
 		const roles = await Role.getRoles(
 			new GetRolesRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 			}),
 		);
 		// console.log(roles);
@@ -324,7 +512,7 @@ describe('🧪 Role test', () => {
 		const allowance = await Role.getAllowance(
 			new GetSupplierAllowanceRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 			}),
 		);
 		expect(allowance instanceof Balance).toBe(true);
@@ -334,31 +522,45 @@ describe('🧪 Role test', () => {
 		const grantRes = await Role.grantRole(
 			new GrantRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 				role: StableCoinRole.CASHIN_ROLE,
 				supplierType: 'limited',
 				amount: '10',
 			}),
 		);
 
+		await delay();
+
 		const allowanceBefore = await Role.getAllowance(
 			new GetSupplierAllowanceRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 			}),
 		);
 		const resetAllowance = await Role.resetAllowance(
 			new ResetSupplierAllowanceRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 			}),
 		);
+
+		await delay();
+
 		const allowanceAfter = await Role.getAllowance(
 			new GetSupplierAllowanceRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 			}),
 		);
+		const revokeRes = await Role.revokeRole(
+			new RevokeRoleRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoinSC?.tokenId!.toString(),
+				role: StableCoinRole.CASHIN_ROLE,
+			}),
+		);
+
+		await delay();
 
 		expect(grantRes).toBe(true);
 		expect(allowanceBefore.value).toStrictEqual(
@@ -368,38 +570,53 @@ describe('🧪 Role test', () => {
 		expect(allowanceAfter.value).toStrictEqual(
 			BigDecimal.fromString('0', stableCoinSC?.decimals ?? 6),
 		);
+		expect(revokeRes).toBe(true);
 	}, 60_000);
 
 	it('Increase allowance', async () => {
 		const grantRes = await Role.grantRole(
 			new GrantRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 				role: StableCoinRole.CASHIN_ROLE,
 				supplierType: 'limited',
 				amount: '10',
 			}),
 		);
 
+		await delay();
+
 		const allowanceBefore = await Role.getAllowance(
 			new GetSupplierAllowanceRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 			}),
 		);
 		const increaseAllowance = await Role.increaseAllowance(
 			new IncreaseSupplierAllowanceRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 				amount: '10',
 			}),
 		);
+
+		await delay();
+
 		const allowanceAfter = await Role.getAllowance(
 			new GetSupplierAllowanceRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 			}),
 		);
+		const revokeRes = await Role.revokeRole(
+			new RevokeRoleRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoinSC?.tokenId!.toString(),
+				role: StableCoinRole.CASHIN_ROLE,
+			}),
+		);
+
+		await delay();
 
 		expect(grantRes).toBe(true);
 		expect(allowanceBefore.value).toStrictEqual(
@@ -409,45 +626,53 @@ describe('🧪 Role test', () => {
 		expect(allowanceAfter.value).toStrictEqual(
 			BigDecimal.fromString('20', stableCoinSC?.decimals ?? 6),
 		);
+		expect(revokeRes).toBe(true);
 	}, 80_000);
 
 	it('Decrease allowance', async () => {
-		const revokeRes = await Role.revokeRole(
-			new RevokeRoleRequest({
-				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
-				role: StableCoinRole.CASHIN_ROLE,
-			}),
-		);
 		const grantRes = await Role.grantRole(
 			new GrantRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 				role: StableCoinRole.CASHIN_ROLE,
 				supplierType: 'limited',
 				amount: '10',
 			}),
 		);
 
+		await delay();
+
 		const allowanceBefore = await Role.getAllowance(
 			new GetSupplierAllowanceRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 			}),
 		);
 		const decreaseAllowance = await Role.decreaseAllowance(
 			new DecreaseSupplierAllowanceRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 				amount: '5',
 			}),
 		);
+
+		await delay();
+
 		const allowanceAfter = await Role.getAllowance(
 			new GetSupplierAllowanceRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 			}),
 		);
+		const revokeRes = await Role.revokeRole(
+			new RevokeRoleRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoinSC?.tokenId!.toString(),
+				role: StableCoinRole.CASHIN_ROLE,
+			}),
+		);
+
+		await delay();
 
 		expect(revokeRes).toBe(true);
 		expect(grantRes).toBe(true);
@@ -461,34 +686,39 @@ describe('🧪 Role test', () => {
 	}, 60_000);
 
 	it('isLimited allowance', async () => {
-		const revokeRes = await Role.revokeRole(
-			new RevokeRoleRequest({
-				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
-				role: StableCoinRole.CASHIN_ROLE,
-			}),
-		);
 		const grantRes = await Role.grantRole(
 			new GrantRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 				role: StableCoinRole.CASHIN_ROLE,
 				supplierType: 'limited',
 				amount: '10',
 			}),
 		);
+
+		await delay();
+
 		const isLimited = await Role.isLimited(
 			new CheckSupplierLimitRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 			}),
 		);
 		const isUnlimited = await Role.isUnlimited(
 			new CheckSupplierLimitRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 			}),
 		);
+		const revokeRes = await Role.revokeRole(
+			new RevokeRoleRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoinSC?.tokenId!.toString(),
+				role: StableCoinRole.CASHIN_ROLE,
+			}),
+		);
+
+		await delay();
 
 		expect(revokeRes).toBe(true);
 		expect(grantRes).toBe(true);
@@ -497,17 +727,10 @@ describe('🧪 Role test', () => {
 	}, 60_000);
 
 	it('isUnlimited allowance', async () => {
-		const revokeRes = await Role.revokeRole(
-			new RevokeRoleRequest({
-				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
-				role: StableCoinRole.CASHIN_ROLE,
-			}),
-		);
 		const hasRole = await Role.hasRole(
 			new HasRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 				role: StableCoinRole.CASHIN_ROLE,
 			}),
 		);
@@ -515,22 +738,34 @@ describe('🧪 Role test', () => {
 		const grantRes = await Role.grantRole(
 			new GrantRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 				role: StableCoinRole.CASHIN_ROLE,
 			}),
 		);
+
+		await delay();
+
 		const isLimited = await Role.isLimited(
 			new CheckSupplierLimitRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 			}),
 		);
 		const isUnlimited = await Role.isUnlimited(
 			new CheckSupplierLimitRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.49135648',
+				tokenId: stableCoinSC?.tokenId!.toString(),
 			}),
 		);
+		const revokeRes = await Role.revokeRole(
+			new RevokeRoleRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoinSC?.tokenId!.toString(),
+				role: StableCoinRole.CASHIN_ROLE,
+			}),
+		);
+
+		await delay();
 
 		expect(revokeRes).toBe(true);
 		expect(grantRes).toBe(true);

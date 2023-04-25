@@ -1,6 +1,20 @@
+import {
+	StableCoin,
+	Network,
+	Account,
+	Role,
+	CapabilitiesRequest,
+	ConnectRequest,
+	SetConfigurationRequest,
+	InitializationRequest,
+	ReserveDataFeed,
+	Fees,
+	Factory,
+	SetNetworkRequest,
+	WalletEvent,
+	WipeRequest,
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 import type {
-	AddFixedFeeRequest,
-	AddFractionalFeeRequest,
 	AssociateTokenRequest,
 	BurnRequest,
 	CashInRequest,
@@ -37,23 +51,9 @@ import type {
 	UpdateRequest,
 	UpdateReserveAddressRequest,
 	UpdateReserveAmountRequest,
-	WalletEvent,
-	WipeRequest,
-} from 'hedera-stable-coin-sdk';
-import {
-	Account,
-	CapabilitiesRequest,
-	ConnectRequest,
-	Factory,
-	Fees,
-	InitializationRequest,
-	Network,
-	ReserveDataFeed,
-	Role,
-	SetConfigurationRequest,
-	SetNetworkRequest,
-	StableCoin,
-} from 'hedera-stable-coin-sdk';
+	AddFixedFeeRequest,
+	AddFractionalFeeRequest,
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 
 export type StableCoinListRaw = Array<Record<'id' | 'symbol', string>>;
 
