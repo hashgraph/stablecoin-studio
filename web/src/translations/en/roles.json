@@ -79,19 +79,19 @@
 		"chooseRole": "Select a role to find accounts",
 		"modalSuccessTitle": "Accounts for roles obtain succesfully",
 		"options": {
-			"Supply": "Supply",
+			"Admin": "Admin",
+			"CashIn": "CashIn",
+			"Burn": "Burn",
 			"Freeze": "Freeze",
 			"Pause": "Pause",
 			"Delete": "Delete",
 			"Kyc": "Kyc",
-			"Without": "Without",
 			"Rescue": "Rescue",
-			"Wipe": "Wipe",
-			"Burn": "Burn"
+			"Wipe": "Wipe"
 		},
 		"modalActionConfirmButton": "Get Accounts",
 		"modal": {
-				"title":"Get Accounts with role"
+			"title": "Get Accounts with role"
 		}
 	},
 	"editRole": {

@@ -5,11 +5,10 @@ import {
 	RevokeRoleRequest,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { SelectController } from '../../components/Form/SelectController';
-import {  useState } from 'react';
+import { useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-
 
 import type { ModalsHandlerActionsProps } from '../../components/ModalsHandler';
 import ModalsHandler from '../../components/ModalsHandler';
@@ -26,7 +25,6 @@ import OperationLayout from '../Operations/OperationLayout';
 import DetailsReview, { Detail } from '../../components/DetailsReview';
 
 const GetAccountsWithRole = () => {
-	
 	const { t } = useTranslation(['global', 'roles', 'stableCoinCreation', 'externalTokenInfo']);
 	const {
 		isOpen: isOpenModalAction,
@@ -34,7 +32,7 @@ const GetAccountsWithRole = () => {
 		onClose: onCloseModalAction,
 	} = useDisclosure();
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
-	
+
 	const { control, getValues, watch, formState, setError } = useForm({
 		mode: 'onChange',
 	});
@@ -52,26 +50,27 @@ const GetAccountsWithRole = () => {
 	});
 
 	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
-	
-	
+
 	const [accountsWithRoles, setAccountsWithRoles] = useState<String[]>([]);
-	
-	const details:Detail[] = [];
+
+	const details: Detail[] = [];
 	accountsWithRoles.forEach((accountWithRole) => {
-		details.push(
-			{
-				label: t('account'),
-				value: accountWithRole,
-				copyButton: true,
-				hashScanURL: `${hashScanURL}/account/${accountWithRole}`,
-			}
-		)	
+		details.push({
+			label: t('account'),
+			value: accountWithRole,
+			copyButton: true,
+			hashScanURL: `${hashScanURL}/account/${accountWithRole}`,
+		});
 	});
 
 	const supplyTypes = [
 		{
+			value: StableCoinRole.DEFAULT_ADMIN_ROLE,
+			label: t('roles:getAccountsWithRole.options.Admin'),
+		},
+		{
 			value: StableCoinRole.CASHIN_ROLE,
-			label: t('roles:getAccountsWithRole.options.Supply'),
+			label: t('roles:getAccountsWithRole.options.CashIn'),
 		},
 		{
 			value: StableCoinRole.FREEZE_ROLE,
@@ -94,17 +93,13 @@ const GetAccountsWithRole = () => {
 			label: t('roles:getAccountsWithRole.options.Wipe'),
 		},
 		{
-			value: StableCoinRole.WITHOUT_ROLE,
-			label: t('roles:getAccountsWithRole.options.Without'),
-		},
-		{
 			value: StableCoinRole.DELETE_ROLE,
 			label: t('roles:getAccountsWithRole.options.Delete'),
 		},
 		{
 			value: StableCoinRole.KYC_ROLE,
 			label: t('roles:getAccountsWithRole.options.Kyc'),
-		}
+		},
 	];
 	const selectorStyle = {
 		wrapper: {
@@ -145,8 +140,7 @@ const GetAccountsWithRole = () => {
 		console.log(request);
 		try {
 			const response = await SDKService.getAccountsWithRole(request);
-			
-			
+
 			setAccountsWithRoles(response);
 			onSuccess();
 		} catch (error: any) {
@@ -157,7 +151,7 @@ const GetAccountsWithRole = () => {
 			onError();
 		}
 	};
-	
+
 	const handleSubmit = () => {
 		const values = getValues().rol;
 
@@ -194,7 +188,7 @@ const GetAccountsWithRole = () => {
 				LeftContent={
 					<>
 						<Heading data-testid='title' fontSize='24px' fontWeight='700' mb={10} lineHeight='16px'>
-							{t(`roles:getAccountsWithRole.title`,{role: ''})}
+							{t(`roles:getAccountsWithRole.title`, { role: '' })}
 						</Heading>
 
 						<SelectController
@@ -208,19 +202,15 @@ const GetAccountsWithRole = () => {
 							variant='unstyled'
 							defaultValue={'0'}
 						/>
-					
-							
-								<DetailsReview
-						
-								title= { t(`roles:getAccountsWithRole.subtitle`,{role: getValues()?.supplyType?.label})}
-								titleProps={{ fontWeight: 'bold' }}
-								contentProps={{ justifyContent: 'space-between', gap: 4 }}
-								details={details}	
-							/>
-							
-							
-						
-					
+
+						<DetailsReview
+							title={t(`roles:getAccountsWithRole.subtitle`, {
+								role: getValues()?.supplyType?.label,
+							})}
+							titleProps={{ fontWeight: 'bold' }}
+							contentProps={{ justifyContent: 'space-between', gap: 4 }}
+							details={details}
+						/>
 					</>
 				}
 				onConfirm={handleSubmit}
@@ -239,15 +229,14 @@ const GetAccountsWithRole = () => {
 				modalActionProps={{
 					isOpen: isOpenModalAction,
 					onClose: onCloseModalAction,
-					title: t(`roles:getAccountsWithRole.modal.title`),
+					title: t(`roles:getAccountsWithRole.modal.title`) + ' ' + getValues()?.supplyType?.label,
 					confirmButtonLabel: t(`roles:getAccountsWithRole.modalActionConfirmButton`),
 					onConfirm: handleGetAccountsWithRole,
 				}}
-				ModalActionChildren={
-					<>
-					</>
+				ModalActionChildren={<></>}
+				successNotificationTitle={
+					t(`roles:getAccountsWithRole.modal.title`) + ' ' + getValues()?.supplyType?.label
 				}
-				successNotificationTitle={t(`roles:getAccountsWithRole.modal.title`) }
 			/>
 		</>
 	);
