@@ -47,7 +47,7 @@ jobs:
         run: npm run install:hashconnect
       - name: Create .npmrc hashconnect
         run: |
-          cd hashconnect && cat << EOF > .npmrc
+          cd hashconnect/lib && cat << EOF > .npmrc
             @hashgraph:registry=https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/
             //us-npm.pkg.dev/hedera-registry/stablecoin-npm/:_authToken="${{ steps.auth.outputs.access_token }}"
             //us-npm.pkg.dev/hedera-registry/stablecoin-npm/:always-auth=true
