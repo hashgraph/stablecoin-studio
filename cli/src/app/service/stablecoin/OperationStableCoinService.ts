@@ -1401,6 +1401,9 @@ export default class OperationStableCoinService extends Service {
           case language.getText('wizard.CheckAccountsWithRoleOptions.KYC'):
             await this.getAccountsWithRole(StableCoinRole.KYC_ROLE);
             break;
+
+          default:
+            break;
         }
 
         break;

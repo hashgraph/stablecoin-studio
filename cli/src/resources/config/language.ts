@@ -301,6 +301,7 @@ export const english = {
       Freeze: 'Freeze',
       Delete: 'Delete',
       KYC: 'KYC',
+      ...goBack,
     },
 
     adminFeatureOptions: {
