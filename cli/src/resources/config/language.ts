@@ -292,9 +292,15 @@ export const english = {
       ...goBack,
     },
     CheckAccountsWithRoleOptions: {
-      Supply: 'Supply Role',
-      Freeze: 'Freeze',
+      Admin: 'Admin',
+      CashIn: 'Cash In',
+      Burn: 'Burn',
+      Wipe: 'Wipe',
+      Rescue: 'Rescue',
       Pause: 'Pause',
+      Freeze: 'Freeze',
+      Delete: 'Delete',
+      KYC: 'KYC',
     },
 
     adminFeatureOptions: {

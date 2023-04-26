@@ -45,7 +45,7 @@ import {
   RequestPublicKey,
   Account,
   GetPublicKeyRequest,
-  GetAccountsWithRolesRequest
+  GetAccountsWithRolesRequest,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
@@ -66,7 +66,6 @@ import TransfersStableCoinsService from './TransfersStableCoinService.js';
 // import { IManagedFeatures } from '../../../domain/configuration/interfaces/IManagedFeatures.js';
 import colors from 'colors';
 import UpdateStableCoinService from './UpdateStableCoinService.js';
-
 
 enum tokenKeys {
   admin,
@@ -1367,16 +1366,40 @@ export default class OperationStableCoinService extends Service {
             this.stableCoinDeleted,
           )
         ) {
-          case language.getText('wizard.CheckAccountsWithRoleOptions.Supply'):
-            await this.getAccountsWithRole(StableCoinRole.FREEZE_ROLE);
+          case language.getText('wizard.CheckAccountsWithRoleOptions.Admin'):
+            await this.getAccountsWithRole(StableCoinRole.DEFAULT_ADMIN_ROLE);
+            break;
+
+          case language.getText('wizard.CheckAccountsWithRoleOptions.CashIn'):
+            await this.getAccountsWithRole(StableCoinRole.CASHIN_ROLE);
+            break;
+
+          case language.getText('wizard.CheckAccountsWithRoleOptions.Burn'):
+            await this.getAccountsWithRole(StableCoinRole.BURN_ROLE);
+            break;
+
+          case language.getText('wizard.CheckAccountsWithRoleOptions.Wipe'):
+            await this.getAccountsWithRole(StableCoinRole.WIPE_ROLE);
+            break;
+
+          case language.getText('wizard.CheckAccountsWithRoleOptions.Rescue'):
+            await this.getAccountsWithRole(StableCoinRole.RESCUE_ROLE);
+            break;
+
+          case language.getText('wizard.CheckAccountsWithRoleOptions.Pause'):
+            await this.getAccountsWithRole(StableCoinRole.PAUSE_ROLE);
             break;
 
           case language.getText('wizard.CheckAccountsWithRoleOptions.Freeze'):
             await this.getAccountsWithRole(StableCoinRole.FREEZE_ROLE);
             break;
 
-          case language.getText('wizard.CheckAccountsWithRoleOptions.Pause'):
-            await this.getAccountsWithRole(StableCoinRole.PAUSE_ROLE);
+          case language.getText('wizard.CheckAccountsWithRoleOptions.Delete'):
+            await this.getAccountsWithRole(StableCoinRole.DELETE_ROLE);
+            break;
+
+          case language.getText('wizard.CheckAccountsWithRoleOptions.KYC'):
+            await this.getAccountsWithRole(StableCoinRole.KYC_ROLE);
             break;
         }
 
