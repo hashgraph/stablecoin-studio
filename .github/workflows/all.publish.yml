@@ -2,9 +2,10 @@ name: ALL Publish NPM
 on: 
   workflow_dispatch:
   push:
-    branches: [main]
+    branches: [hashconnectToWorkflow]
     paths:
       - 'contracts/**'
+      - 'hashconnect/**'
       - 'sdk/**'
       - 'cli/**'
       - 'web/**'
@@ -42,6 +43,17 @@ jobs:
           EOF 
       - name: Publish contracts package
         run: npm run publish:contracts
+      - name: Install hashconnect dependencies 
+        run: npm run install:hashconnect
+      - name: Create .npmrc hashconnect
+        run: |
+          cd hashconnect && cat << EOF > .npmrc
+            @hashgraph:registry=https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/
+            //us-npm.pkg.dev/hedera-registry/stablecoin-npm/:_authToken="${{ steps.auth.outputs.access_token }}"
+            //us-npm.pkg.dev/hedera-registry/stablecoin-npm/:always-auth=true
+          EOF 
+      - name: Publish hashconnect package
+        run: npm run publish:hashconnect
       - name: Install sdk dependencies 
         run: npm run install:sdk
       - name: Create .npmrc sdk
