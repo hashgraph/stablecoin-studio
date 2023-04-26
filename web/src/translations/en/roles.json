@@ -72,14 +72,22 @@
 		"errorAccountIdDuplicated": "Account: {{ account }} is duplicated"
 	},
 	"getAccountsWithRole": {
-		"title": "Get Accounts with role",
+		"title": "Get Accounts with role ",
+		"subtitle": "Accounts with role {{ role }}",
 		"accountLabel": "Account",
 		"titleRoleSection": "Select Role to get Accounts",
 		"chooseRole": "Select a role to find accounts",
+		"modalSuccessTitle": "Accounts for roles obtain succesfully",
 		"options": {
 			"Supply": "Supply",
 			"Freeze": "Freeze",
-			"Pause": "Pause"
+			"Pause": "Pause",
+			"Delete": "Delete",
+			"Kyc": "Kyc",
+			"Without": "Without",
+			"Rescue": "Rescue",
+			"Wipe": "Wipe",
+			"Burn": "Burn"
 		},
 		"modalActionConfirmButton": "Get Accounts",
 		"modal": {

@@ -16,12 +16,14 @@ import ModalsHandler from '../../components/ModalsHandler';
 
 import { SDKService } from '../../services/SDKService';
 import {
+	SELECTED_NETWORK,
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_PAIRED_ACCOUNTID,
 } from '../../store/slices/walletSlice';
 import type { AppDispatch } from '../../store/store';
 
 import OperationLayout from '../Operations/OperationLayout';
+import DetailsReview, { Detail } from '../../components/DetailsReview';
 
 const GetAccountsWithRole = () => {
 	
@@ -36,6 +38,10 @@ const GetAccountsWithRole = () => {
 	const { control, getValues, watch, formState, setError } = useForm({
 		mode: 'onChange',
 	});
+
+	const network = useSelector(SELECTED_NETWORK);
+	const hashScanURL = `https://hashscan.io/${network}`;
+
 	const {
 		fields: accounts,
 		append,
@@ -46,9 +52,21 @@ const GetAccountsWithRole = () => {
 	});
 
 	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
-	const [revokeRoles, setRevokeRoles] = useState<RevokeRoleRequest[]>([]);
-
-
+	
+	
+	const [accountsWithRoles, setAccountsWithRoles] = useState<String[]>([]);
+	
+	const details:Detail[] = [];
+	accountsWithRoles.forEach((accountWithRole) => {
+		details.push(
+			{
+				label: t('account'),
+				value: accountWithRole,
+				copyButton: true,
+				hashScanURL: `${hashScanURL}/account/${accountWithRole}`,
+			}
+		)	
+	});
 
 	const supplyTypes = [
 		{
@@ -63,6 +81,30 @@ const GetAccountsWithRole = () => {
 			value: StableCoinRole.PAUSE_ROLE,
 			label: t('roles:getAccountsWithRole.options.Pause'),
 		},
+		{
+			value: StableCoinRole.BURN_ROLE,
+			label: t('roles:getAccountsWithRole.options.Burn'),
+		},
+		{
+			value: StableCoinRole.RESCUE_ROLE,
+			label: t('roles:getAccountsWithRole.options.Rescue'),
+		},
+		{
+			value: StableCoinRole.WIPE_ROLE,
+			label: t('roles:getAccountsWithRole.options.Wipe'),
+		},
+		{
+			value: StableCoinRole.WITHOUT_ROLE,
+			label: t('roles:getAccountsWithRole.options.Without'),
+		},
+		{
+			value: StableCoinRole.DELETE_ROLE,
+			label: t('roles:getAccountsWithRole.options.Delete'),
+		},
+		{
+			value: StableCoinRole.KYC_ROLE,
+			label: t('roles:getAccountsWithRole.options.Kyc'),
+		}
 	];
 	const selectorStyle = {
 		wrapper: {
@@ -103,9 +145,9 @@ const GetAccountsWithRole = () => {
 		console.log(request);
 		try {
 			const response = await SDKService.getAccountsWithRole(request);
-			// Update current account role if is target
-
-			console.log(response);
+			
+			
+			setAccountsWithRoles(response);
 			onSuccess();
 		} catch (error: any) {
 			console.log(error);
@@ -152,7 +194,7 @@ const GetAccountsWithRole = () => {
 				LeftContent={
 					<>
 						<Heading data-testid='title' fontSize='24px' fontWeight='700' mb={10} lineHeight='16px'>
-							{t(`roles:getAccountsWithRole.title`)}
+							{t(`roles:getAccountsWithRole.title`,{role: ''})}
 						</Heading>
 
 						<SelectController
@@ -166,8 +208,19 @@ const GetAccountsWithRole = () => {
 							variant='unstyled'
 							defaultValue={'0'}
 						/>
-
-						<label htmlFor=''></label>
+					
+							
+								<DetailsReview
+						
+								title= { t(`roles:getAccountsWithRole.subtitle`,{role: getValues()?.supplyType?.label})}
+								titleProps={{ fontWeight: 'bold' }}
+								contentProps={{ justifyContent: 'space-between', gap: 4 }}
+								details={details}	
+							/>
+							
+							
+						
+					
 					</>
 				}
 				onConfirm={handleSubmit}
@@ -192,10 +245,9 @@ const GetAccountsWithRole = () => {
 				}}
 				ModalActionChildren={
 					<>
-				
 					</>
 				}
-				successNotificationTitle={t(`roles:revokeRole.modalSuccessTitle`)}
+				successNotificationTitle={t(`roles:getAccountsWithRole.modal.title`) }
 			/>
 		</>
 	);
