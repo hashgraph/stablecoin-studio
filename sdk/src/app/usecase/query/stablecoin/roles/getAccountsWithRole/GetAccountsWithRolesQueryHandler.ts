@@ -46,6 +46,8 @@ export class GetAccountsWithRolesQueryHandler
 	async execute(
 		query: GetAccountsWithRolesQuery,
 	): Promise<GetAccountsWithRolesQueryResponse> {
+		const listOfAccounts: string[] = [];
+
 		const { roleId, tokenId } = query;
 
 		const coin = await this.stableCoinService.get(HederaId.from(tokenId));
@@ -56,6 +58,14 @@ export class GetAccountsWithRolesQueryHandler
 			roleId,
 		);
 
-		return new GetAccountsWithRolesQueryResponse(res);
+		if (res != undefined && res.length > 0) {
+			for (let i = 0; i < res.length; i++) {
+				listOfAccounts.push(
+					(await this.mirrorNode.getAccountInfo(res[i])).id!,
+				);
+			}
+		}
+
+		return new GetAccountsWithRolesQueryResponse(listOfAccounts);
 	}
 }
