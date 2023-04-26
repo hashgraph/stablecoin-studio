@@ -87,3 +87,5 @@ jobs:
           EOF 
       - name: Publish web package
         run: npm run publish:web
+        env:
+          CI: ""
