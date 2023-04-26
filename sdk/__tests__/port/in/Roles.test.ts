@@ -809,11 +809,7 @@ describe('🧪 Role test', () => {
 
 		expect(accounts_Before.length).toEqual(0);
 		expect(accounts_After.length).toEqual(2);
-		expect(accounts_After[0].toUpperCase()).toEqual(
-			CLIENT_ACCOUNT_ED25519.evmAddress!.toUpperCase(),
-		);
-		expect(accounts_After[1].toUpperCase()).toEqual(
-			CLIENT_ACCOUNT_ECDSA.evmAddress!.toUpperCase(),
-		);
+		expect(accounts_After[0]).toEqual(CLIENT_ACCOUNT_ED25519.id.toString());
+		expect(accounts_After[1]).toEqual(CLIENT_ACCOUNT_ECDSA.id.toString());
 	}, 60_000);
 });
