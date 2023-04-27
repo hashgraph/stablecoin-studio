@@ -1,3 +1,4 @@
+import type { StackProps } from '@chakra-ui/react';
 import {
 	chakra,
 	Flex,
@@ -17,11 +18,11 @@ import type { SyntheticEvent } from 'react';
 import { forwardRef } from 'react';
 import type { Control, UseControllerProps } from 'react-hook-form';
 import { Controller } from 'react-hook-form';
-import DatePicker from 'react-datepicker';
+import DatePicker, { ReactDatePickerProps } from 'react-datepicker';
 import Icon from '../Icon';
 import 'react-datepicker/dist/react-datepicker.css';
 
-export interface DatePickerControllerProps {
+export interface DatePickerControllerProps extends Omit<ReactDatePickerProps, 'onChange'> {
 	control: Control<Record<string, string | number>>;
 	dataTestId?: string;
 	dateFormat?: string;
@@ -31,11 +32,14 @@ export interface DatePickerControllerProps {
 	label?: string;
 	labelProps?: object;
 	minimumDate?: Date;
+	maximumDate?: Date;
 	name: string;
 	onChangeAux?: (date: Date | [Date | null, Date | null] | null) => void;
 	placeholder?: string;
 	rules?: UseControllerProps['rules'];
 	showErrors?: boolean;
+	containerStyle?: StackProps;
+	customHeader?: boolean;
 }
 
 const InputStyle = {
@@ -121,11 +125,14 @@ const DatePickerController = ({
 	label,
 	labelProps,
 	minimumDate,
+	maximumDate,
 	name,
 	onChangeAux,
 	placeholder,
 	rules,
 	showErrors,
+	containerStyle,
+	customHeader = true,
 	...props
 }: DatePickerControllerProps) => {
 	return (
@@ -145,7 +152,7 @@ const DatePickerController = ({
 				};
 
 				return (
-					<Stack w='full'>
+					<Stack w='full' {...containerStyle}>
 						<FormControl data-testid='form-control' isInvalid={invalid}>
 							{label && (
 								<FormLabel {...labelProps}>
@@ -165,11 +172,12 @@ const DatePickerController = ({
 								formatWeekDay={(nameOfDay) => nameOfDay.toString().substring(0, 1)}
 								isClearable={isClearable}
 								minDate={minimumDate}
+								maxDate={maximumDate}
 								onChange={(date, e) => onChangeCustom(date, e)}
 								onBlur={onBlur}
 								onSelect={onBlur}
 								placeholderText={placeholder}
-								renderCustomHeader={CustomHeader}
+								renderCustomHeader={customHeader ? CustomHeader : undefined}
 								selected={value ? new Date(value) : undefined}
 								showPopperArrow={false}
 								{...props}

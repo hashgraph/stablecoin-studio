@@ -1,5 +1,5 @@
 import { Heading, Stack, VStack } from '@chakra-ui/react';
-import type { Control, FieldValues } from 'react-hook-form';
+import type { Control, FieldValues, UseFormSetValue } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import InputController from '../../components/Form/InputController';
 import { CreateRequest, Network, GetERC20ListRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
@@ -14,10 +14,11 @@ import AwaitingWalletSignature from '../../components/AwaitingWalletSignature';
 interface BasicDetailsProps {
 	control: Control<FieldValues>;
 	request: CreateRequest;
+	setValue: UseFormSetValue<FieldValues>;
 }
 
 const BasicDetails = (props: BasicDetailsProps) => {
-	const { control } = props;
+	const { control, setValue } = props;
 	const { t } = useTranslation(['global', 'stableCoinCreation']);
 	const [optionshederaERC20Addresses, setOptionsHederaERC20Addresses] = useState<Option[]>([]);
 	const [gettingHederaERC20, setGettingHederaERC20] = useState<boolean>(false);

@@ -345,7 +345,7 @@ const FeesManagement = () => {
 			const collectorAccount: string = fee.collectorAccount;
 			const collectorsExempt: boolean = fee.collectorsExempt.value;
 			const amountOrPercentage = fee.amountOrPercentage;
-
+			const net: boolean = !fee.senderOrReceiver.value;
 			switch (feeType) {
 				case FeeTypeValue.FRACTIONAL: {
 					const min: string = fee.min;
@@ -358,7 +358,7 @@ const FeesManagement = () => {
 						amountDenominator: fractionalFee[index].amountDenominator ?? '',
 						min,
 						max,
-						net: false,
+						net: net,
 						percentage: amountOrPercentage, // TODO
 					};
 					requestCustomFeeArray.push(requestFractionalFee);
@@ -525,13 +525,12 @@ const FeesManagement = () => {
 														},
 														checkTokenID: async (option: any) => {
 															if (!option.__isNew__) return true;
-															const load = isLoading;
-															load[i] = true;
 
-															console.log(load);
-
-															setIsLoading(load);
-															console.log('loading', isLoading);
+															setIsLoading((prevState) => {
+																return prevState.map((loading, index) =>
+																	index === i ? !loading : loading,
+																);
+															});
 
 															try {
 																await SDKService.getStableCoinDetails(
@@ -544,8 +543,11 @@ const FeesManagement = () => {
 																	tokenId: option.value,
 																}) as string;
 															} finally {
-																load[i] = false;
-																setIsLoading(load);
+																setIsLoading((prevState) => {
+																	return prevState.map((loading, index) =>
+																		index === i ? !loading : loading,
+																	);
+																});
 															}
 														},
 													},

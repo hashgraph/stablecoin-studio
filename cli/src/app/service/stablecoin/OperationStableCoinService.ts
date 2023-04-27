@@ -2109,6 +2109,7 @@ export default class OperationStableCoinService extends Service {
             option === language.getText('wizard.stableCoinOptions.Details') ||
             option === language.getText('wizard.stableCoinOptions.Balance') ||
             option === language.getText('wizard.stableCoinOptions.KYCMgmt') ||
+            option === language.getText('wizard.stableCoinOptions.FeesMgmt') ||
             option ===
               language.getText('wizard.stableCoinOptions.FreezeMgmt') ||
             (option === language.getText('wizard.stableCoinOptions.RoleMgmt') &&

@@ -74,56 +74,6 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		super();
 	}
 
-	private setKeysForSmartContract(providedKeys: any[]): FactoryKey[] {
-		const keys: FactoryKey[] = [];
-
-		providedKeys.forEach((providedKey, index) => {
-			if (providedKey) {
-				const key = new FactoryKey();
-				switch (index) {
-					case 0: {
-						key.keyType = 1; // admin
-						break;
-					}
-					case 1: {
-						key.keyType = 2; // kyc
-						break;
-					}
-					case 2: {
-						key.keyType = 4; // freeze
-						break;
-					}
-					case 3: {
-						key.keyType = 8; // wipe
-						break;
-					}
-					case 4: {
-						key.keyType = 16; // supply
-						break;
-					}
-					case 5: {
-						key.keyType = 32; // fee schedule
-						break;
-					}
-					case 6: {
-						key.keyType = 64; // pause
-						break;
-					}
-				}
-				const providedKeyCasted = providedKey as PublicKey;
-				key.publicKey =
-					providedKeyCasted.key == PublicKey.NULL.key
-						? '0x'
-						: HPublicKey.fromString(
-								providedKeyCasted.key,
-						  ).toBytesRaw();
-				key.isED25519 = providedKeyCasted.type === 'ED25519';
-				keys.push(key);
-			}
-		});
-		return keys;
-	}
-
 	public async create(
 		coin: StableCoinProps,
 		factory: ContractId,

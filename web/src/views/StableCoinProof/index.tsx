@@ -1,4 +1,4 @@
-import { VStack, Button, useDisclosure, Heading, Text, SimpleGrid, Flex } from '@chakra-ui/react';
+import { Button, Flex, Heading, SimpleGrid, Text, useDisclosure, VStack } from '@chakra-ui/react';
 
 import {
 	UpdateReserveAddressRequest,
@@ -54,7 +54,7 @@ const StableCoinProof = () => {
 		}),
 	);
 
-	const isLoading = useRefreshCoinInfo();
+	const { isLoading } = useRefreshCoinInfo();
 
 	const form = useForm<FieldValues>({
 		mode: 'onChange',

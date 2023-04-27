@@ -1,16 +1,18 @@
 import { Box, Flex } from '@chakra-ui/react';
+import { StableCoinRole } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import AwaitingWalletSignature from '../../components/AwaitingWalletSignature';
 import BaseContainer from '../../components/BaseContainer';
 import DetailsReview from '../../components/DetailsReview';
+import { useRefreshCoinInfo } from '../../hooks/useRefreshCoinInfo';
 import {
+	SELECTED_NETWORK,
 	SELECTED_WALLET_ACCOUNT_INFO,
 	SELECTED_WALLET_COIN,
-	SELECTED_NETWORK,
+	SELECTED_TOKEN_ROLES,
 } from '../../store/slices/walletSlice';
 import { formatShortKey } from '../../utils/inputHelper';
-import { useRefreshCoinInfo } from '../../hooks/useRefreshCoinInfo';
-import AwaitingWalletSignature from '../../components/AwaitingWalletSignature';
 
 const StableCoinDetails = () => {
 	const { t } = useTranslation('stableCoinDetails');
@@ -18,8 +20,9 @@ const StableCoinDetails = () => {
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const account = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 	const network = useSelector(SELECTED_NETWORK);
+	const roles = useSelector(SELECTED_TOKEN_ROLES)!;
 
-	const isLoading = useRefreshCoinInfo();
+	const { isLoading, getStableCoinDetails } = useRefreshCoinInfo();
 
 	const hashScanURL = `https://hashscan.io/${network}`;
 
@@ -213,8 +216,11 @@ const StableCoinDetails = () => {
 						<DetailsReview
 							title={t('subtitle')}
 							titleProps={{ fontWeight: 'bold' }}
-							contentProps={{ justifyContent: 'space-between', gap: 4 }}
+							contentProps={{ justifyContent: 'space-between', gap: 4, alignItems: 'center' }}
 							details={details}
+							getStableCoinDetails={getStableCoinDetails}
+							isLoading={isLoading}
+							editable={roles.includes(StableCoinRole.DEFAULT_ADMIN_ROLE)}
 						/>
 					</Box>
 				</Flex>
