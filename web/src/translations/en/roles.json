@@ -3,6 +3,7 @@
 	"give": "Give roles",
 	"revoke": "Revoke roles",
 	"refresh": "Refresh roles",
+	"accountsWithRole": "Check accounts that has a role",
 	"revokeModalErrorDesc": "Please try again later.",
 	"revokeModalErrorTitle": "Error revoking the role",
 	"revokeModalSuccessTitle": "Role revoked successfully",
@@ -69,6 +70,29 @@
 		"checkCashinLimitSuccessDesc": "",
 		"errorAccountIdNotExists": "Account: {{ account }} not exists ",
 		"errorAccountIdDuplicated": "Account: {{ account }} is duplicated"
+	},
+	"getAccountsWithRole": {
+		"title": "Get Accounts with role ",
+		"subtitle": "Accounts with role {{ role }}",
+		"accountLabel": "Account",
+		"titleRoleSection": "Select Role to get Accounts",
+		"chooseRole": "Select a role to find accounts",
+		"modalSuccessTitle": "Accounts for roles obtain succesfully",
+		"options": {
+			"Admin": "Admin",
+			"CashIn": "CashIn",
+			"Burn": "Burn",
+			"Freeze": "Freeze",
+			"Pause": "Pause",
+			"Delete": "Delete",
+			"Kyc": "Kyc",
+			"Rescue": "Rescue",
+			"Wipe": "Wipe"
+		},
+		"modalActionConfirmButton": "Get Accounts",
+		"modal": {
+			"title": "Get Accounts with role"
+		}
 	},
 	"editRole": {
 		"title": "Manage cash in limit",

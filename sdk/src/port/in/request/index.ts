@@ -25,6 +25,7 @@ import GetListStableCoinRequest from './GetListStableCoinRequest.js';
 import GetStableCoinDetailsRequest from './GetStableCoinDetailsRequest.js';
 import GrantRoleRequest from './GrantRoleRequest.js';
 import GrantMultiRolesRequest from './GrantMultiRolesRequest.js';
+import GetAccountsWithRolesRequest from './GetAccountsWithRolesRequest.js';
 import RevokeRoleRequest from './RevokeRoleRequest.js';
 import RevokeMultiRolesRequest from './RevokeMultiRolesRequest.js';
 import HasRoleRequest from './HasRoleRequest.js';
@@ -75,6 +76,7 @@ export {
 	RescueRequest,
 	GrantRoleRequest,
 	GrantMultiRolesRequest,
+	GetAccountsWithRolesRequest,
 	RevokeRoleRequest,
 	RevokeMultiRolesRequest,
 	HasRoleRequest,

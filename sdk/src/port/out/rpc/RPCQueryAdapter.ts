@@ -60,10 +60,7 @@ export default class RPCQueryAdapter {
 	) {}
 
 	async init(customUrl?: string): Promise<string> {
-		const url =
-			customUrl ?? this.networkService.environment !== unrecognized
-				? `https://${this.networkService.environment.toString()}.hashio.io/api`
-				: undefined;
+		const url = 'http://127.0.0.1:7546/api';
 		this.provider = new ethers.providers.JsonRpcProvider(url);
 		LogService.logTrace('RPC Query Adapter Initialized on: ', url);
 
@@ -137,6 +134,19 @@ export default class RPCQueryAdapter {
 		return await this.connect(HederaERC20, address.toString()).getRoles(
 			target.toString(),
 		);
+	}
+
+	async getAccountsWithRole(
+		address: EvmAddress,
+		role: string,
+	): Promise<string[]> {
+		LogService.logTrace(
+			`Requesting getAccountsWithRole address: ${address.toString()}, target: ${role}`,
+		);
+		return await this.connect(
+			HederaERC20,
+			address.toString(),
+		).getAccountsWithRole(role);
 	}
 
 	async hasRole(

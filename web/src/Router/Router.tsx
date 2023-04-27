@@ -166,6 +166,10 @@ const Router = () => {
 									element={<HandleRoles action='editRole' />}
 								/>
 								<Route
+									path={RoutesMappingUrl.getAccountsWithRoles}
+									element={<HandleRoles action='getAccountsWithRole' />}
+								/>
+								<Route
 									path={RoutesMappingUrl.giveRole}
 									element={<HandleRoles action='giveRole' />}
 								/>

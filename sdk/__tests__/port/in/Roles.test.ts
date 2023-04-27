@@ -49,11 +49,14 @@ import ConnectRequest, {
 } from '../../../src/port/in/request/ConnectRequest.js';
 
 import {
+	CLIENT_ACCOUNT_ECDSA,
 	CLIENT_ACCOUNT_ED25519,
 	FACTORY_ADDRESS,
 	HEDERA_ERC20_ADDRESS,
 } from '../../config.js';
 import BigDecimal from '../../../src/domain/context/shared/BigDecimal.js';
+import GetAccountsWithRolesRequest from '../../../src/port/in/request/GetAccountsWithRolesRequest.js';
+import { HederaId } from '../../../src/domain/context/shared/HederaId.js';
 
 describe('🧪 Role test', () => {
 	let stableCoinSC: StableCoinViewModel;
@@ -771,5 +774,42 @@ describe('🧪 Role test', () => {
 		expect(grantRes).toBe(true);
 		expect(isLimited).toBe(false);
 		expect(isUnlimited).toBe(true);
+	}, 60_000);
+
+	it('Get account for roles', async () => {
+		const accounts_Before = await Role.getAccountsWithRole(
+			new GetAccountsWithRolesRequest({
+				roleId: StableCoinRole.PAUSE_ROLE,
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '',
+			}),
+		);
+
+		const accountsToHaveRole = [
+			CLIENT_ACCOUNT_ED25519.id.toString(),
+			CLIENT_ACCOUNT_ECDSA.id.toString(),
+		];
+
+		await Role.grantMultiRoles(
+			new GrantMultiRolesRequest({
+				tokenId: stableCoinSC?.tokenId!.toString(),
+				targetsId: accountsToHaveRole,
+				roles: [StableCoinRole.PAUSE_ROLE],
+				amounts: [],
+			}),
+		);
+
+		await delay();
+
+		const accounts_After = await Role.getAccountsWithRole(
+			new GetAccountsWithRolesRequest({
+				roleId: StableCoinRole.PAUSE_ROLE,
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '',
+			}),
+		);
+
+		expect(accounts_Before.length).toEqual(0);
+		expect(accounts_After.length).toEqual(2);
+		expect(accounts_After[0]).toEqual(CLIENT_ACCOUNT_ED25519.id.toString());
+		expect(accounts_After[1]).toEqual(CLIENT_ACCOUNT_ECDSA.id.toString());
 	}, 60_000);
 });

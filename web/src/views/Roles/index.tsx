@@ -63,6 +63,11 @@ const Roles = () => {
 				!roles.includes(StableCoinRole.DEFAULT_ADMIN_ROLE) &&
 				operations?.includes(Operation.CASH_IN),
 		},
+		{
+			icon: 'ArchiveBox',
+			route: NamedRoutes.GetAccountsWithRole,
+			title: t('accountsWithRole'),
+		},
 	];
 
 	return (

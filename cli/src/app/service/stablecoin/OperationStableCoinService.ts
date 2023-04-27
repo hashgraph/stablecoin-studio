@@ -45,6 +45,7 @@ import {
   RequestPublicKey,
   Account,
   GetPublicKeyRequest,
+  GetAccountsWithRolesRequest,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
@@ -1344,6 +1345,68 @@ export default class OperationStableCoinService extends Service {
         this.stableCoinDeleted,
       )
     ) {
+      case language.getText(
+        'wizard.roleManagementOptions.CheckAccountsWithRole',
+      ):
+        await utilsService.cleanAndShowBanner();
+
+        const checkAccountsWithRoleOptions = language.getArrayFromObject(
+          'wizard.CheckAccountsWithRoleOptions',
+        );
+
+        switch (
+          await utilsService.defaultMultipleAsk(
+            language.getText('roleManagement.askRolesForAccount'),
+            checkAccountsWithRoleOptions,
+            false,
+            configAccount.network,
+            `${configAccount.accountId} - ${configAccount.alias}`,
+            this.stableCoinWithSymbol,
+            this.stableCoinPaused,
+            this.stableCoinDeleted,
+          )
+        ) {
+          case language.getText('wizard.CheckAccountsWithRoleOptions.Admin'):
+            await this.getAccountsWithRole(StableCoinRole.DEFAULT_ADMIN_ROLE);
+            break;
+
+          case language.getText('wizard.CheckAccountsWithRoleOptions.CashIn'):
+            await this.getAccountsWithRole(StableCoinRole.CASHIN_ROLE);
+            break;
+
+          case language.getText('wizard.CheckAccountsWithRoleOptions.Burn'):
+            await this.getAccountsWithRole(StableCoinRole.BURN_ROLE);
+            break;
+
+          case language.getText('wizard.CheckAccountsWithRoleOptions.Wipe'):
+            await this.getAccountsWithRole(StableCoinRole.WIPE_ROLE);
+            break;
+
+          case language.getText('wizard.CheckAccountsWithRoleOptions.Rescue'):
+            await this.getAccountsWithRole(StableCoinRole.RESCUE_ROLE);
+            break;
+
+          case language.getText('wizard.CheckAccountsWithRoleOptions.Pause'):
+            await this.getAccountsWithRole(StableCoinRole.PAUSE_ROLE);
+            break;
+
+          case language.getText('wizard.CheckAccountsWithRoleOptions.Freeze'):
+            await this.getAccountsWithRole(StableCoinRole.FREEZE_ROLE);
+            break;
+
+          case language.getText('wizard.CheckAccountsWithRoleOptions.Delete'):
+            await this.getAccountsWithRole(StableCoinRole.DELETE_ROLE);
+            break;
+
+          case language.getText('wizard.CheckAccountsWithRoleOptions.KYC'):
+            await this.getAccountsWithRole(StableCoinRole.KYC_ROLE);
+            break;
+
+          default:
+            break;
+        }
+
+        break;
       case language.getText('wizard.roleManagementOptions.Grant'):
         await utilsService.cleanAndShowBanner();
 
@@ -1808,6 +1871,24 @@ export default class OperationStableCoinService extends Service {
       contractKeys.push(tokenKeys.supply);
 
     return contractKeys;
+  } /*
+  const accounts = await Role.getAccountsWithRole(
+    new GetAccountsWithRolesRequest({
+      roleId: StableCoinRole.PAUSE_ROLE,
+      tokenId: HederaId.from(stableCoinSC?.tokenId?.toString()) ?? HederaId.from('')
+      
+    }),
+  );*/
+  private async getAccountsWithRole(role: string): Promise<void> {
+    const request = new GetAccountsWithRolesRequest({
+      roleId: role,
+      tokenId: this.stableCoinId,
+    });
+
+    await utilsService.showSpinner(
+      new RoleStableCoinsService().getAccountsWithRole(request),
+      {},
+    );
   }
 
   private async grantRoles(

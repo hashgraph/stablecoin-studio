@@ -60,6 +60,8 @@ import GrantMultiRolesRequest from './request/GrantMultiRolesRequest.js';
 import RevokeMultiRolesRequest from './request/RevokeMultiRolesRequest.js';
 import { GrantMultiRolesCommand } from '../../app/usecase/command/stablecoin/roles/grantMultiRoles/GrantMultiRolesCommand.js';
 import { RevokeMultiRolesCommand } from '../../app/usecase/command/stablecoin/roles/revokeMultiRoles/RevokeMultiRolesCommand.js';
+import GetAccountsWithRolesRequest from './request/GetAccountsWithRolesRequest.js';
+import { GetAccountsWithRolesQuery } from '../../app/usecase/query/stablecoin/roles/getAccountsWithRole/GetAccountsWithRolesQuery.js';
 
 export { StableCoinRole, StableCoinRoleLabel, MAX_ACCOUNTS_ROLES };
 
@@ -70,6 +72,9 @@ interface IRole {
 	grantMultiRoles(request: GrantMultiRolesRequest): Promise<boolean>;
 	revokeMultiRoles(request: RevokeMultiRolesRequest): Promise<boolean>;
 	getRoles(request: GetRolesRequest): Promise<string[]>;
+	getAccountsWithRole(
+		request: GetAccountsWithRolesRequest,
+	): Promise<string[]>;
 	//Supplier
 	getAllowance(request: GetSupplierAllowanceRequest): Promise<Balance>;
 	resetAllowance(request: ResetSupplierAllowanceRequest): Promise<boolean>;
@@ -226,6 +231,20 @@ class RoleInPort implements IRole {
 					HederaId.from(targetId),
 					HederaId.from(tokenId),
 				),
+			)
+		).payload;
+	}
+	@LogError
+	async getAccountsWithRole(
+		request: GetAccountsWithRolesRequest,
+	): Promise<string[]> {
+		const { roleId, tokenId } = request;
+		handleValidation('GetAccountsWithRolesRequest', request);
+		console.log(tokenId);
+		console.log(roleId);
+		return (
+			await this.queryBus.execute(
+				new GetAccountsWithRolesQuery(roleId, tokenId),
 			)
 		).payload;
 	}

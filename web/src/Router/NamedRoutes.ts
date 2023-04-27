@@ -5,6 +5,7 @@ export enum NamedRoutes {
 	Dashboard = 'dashboard',
 	EditRole = 'editRole',
 	GiveRole = 'giveRole',
+	GetAccountsWithRole = 'getAccountsWithRoles',
 	RefreshRoles = 'refreshRoles',
 	Login = 'login',
 	Operations = 'operations',
