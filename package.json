@@ -1,14 +1,16 @@
 {
   "name": "hedera-stable-coin",
-  "version": "1.0.0",
+  "version": "1.1.5",
   "description": "",
   "scripts": {
     "install": "node install.js && npm run build:cli:full && npm run prepare",
     "install:contracts": "cd contracts && npm install",
+    "install:hashconnect": "cd hashconnect/lib && npm install",
     "install:sdk": "cd sdk && npm install",
     "install:cli": "cd cli && npm install",
     "install:web": "cd web && npm install",
     "publish:contracts": "cd contracts && npm publish",
+    "publish:hashconnect": "cd hashconnect/lib && npm publish",
     "publish:sdk": "cd sdk && npm publish",
     "publish:cli": "cd cli && npm publish",
     "publish:web": "cd web && npm publish",

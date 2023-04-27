@@ -1,6 +1,6 @@
 {
 	"name": "@hashgraph-dev/stablecoin-dapp",
-	"version": "1.2.0",
+	"version": "1.1.5",
 	"publishConfig": {
 		"registry": "https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/"
 	  },
@@ -25,7 +25,7 @@
 		"browserify-zlib": "^0.2.0",
 		"chakra-react-select": "4.4.3",
 		"framer-motion": "^8.5.2",
-		"@hashgraph-dev/stablecoin-npm-sdk":"file:../sdk",
+		"@hashgraph-dev/stablecoin-npm-sdk":"^1.1.5",
 		"moment": "^2.29.4",
 		"named-urls": "^2.0.1",
 		"path-browserify": "^1.0.1",
