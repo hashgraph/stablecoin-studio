@@ -11,7 +11,9 @@ import {
 	Fees,
 	Factory,
 	SetNetworkRequest,
+	GetAccountsWithRolesRequest,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
+
 import type {
 	WalletEvent,
 	SupportedWallets,
@@ -240,6 +242,10 @@ export class SDKService {
 
 	public static async getRoles(data: GetRolesRequest) {
 		return await Role.getRoles(data);
+	}
+
+	public static async getAccountsWithRole(data: GetAccountsWithRolesRequest) {
+		return await Role.getAccountsWithRole(data);
 	}
 
 	public static async getReserveAddress(data: GetReserveAddressRequest) {

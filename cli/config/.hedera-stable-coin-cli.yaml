@@ -29,8 +29,3 @@ factories:
     network: testnet
   - id: 0.0.11111111
     network: previewnet
-hederaERC20s:
-  - id: 0.0.49217489
-    network: testnet
-  - id: 0.0.11111111
-    network: previewnet

@@ -19,6 +19,7 @@ import { contractCall, toEvmAddress } from './utils'
 import { Gas1, Gas2, Gas3, Gas4, Gas5 } from './constants'
 
 import { BigNumber } from 'ethers'
+import { interfaces } from '../typechain-types/@chainlink/contracts/src/v0.8/index.js'
 
 export async function getHBARBalanceOf(
     Id: string,
@@ -60,7 +61,6 @@ export async function transferHBAR(
     await transaction.execute(client)
 }
 
-// AccessControlUpgradeable ///////////////////////////////////////////////////
 export async function grantRole(
     ROLE: string,
     proxyAddress: ContractId,
@@ -114,6 +114,22 @@ export async function hasRole(
     const result = await contractCall(
         proxyAddress,
         'hasRole',
+        params,
+        clientCheckingRole,
+        Gas2,
+        HederaERC20__factory.abi
+    )
+    return result[0]
+}
+export async function getAccountsForRole(
+    ROLE: string,
+    proxyAddress: ContractId,
+    clientCheckingRole: Client
+): Promise<boolean> {
+    const params: string[] = [ROLE]
+    const result = await contractCall(
+        proxyAddress,
+        'getAccountsWithRole',
         params,
         clientCheckingRole,
         Gas2,

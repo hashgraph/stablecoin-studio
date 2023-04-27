@@ -10,6 +10,7 @@ export const RoutesMappingUrl: Record<NamedRoutes, string> = {
 	[NamedRoutes.Dashboard]: '/dashboard',
 	[NamedRoutes.EditRole]: '/roles/edit-role',
 	[NamedRoutes.GiveRole]: '/roles/give-role',
+	[NamedRoutes.GetAccountsWithRole]: '/roles/get-accounts-with-role',
 	[NamedRoutes.RefreshRoles]: '/roles/refresh-roles',
 	[NamedRoutes.Login]: '/login',
 	[NamedRoutes.Operations]: '/operations',
