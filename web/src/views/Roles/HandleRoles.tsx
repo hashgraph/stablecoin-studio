@@ -1,13 +1,19 @@
 import { roleOptions } from './constants';
 import { useSelector } from 'react-redux';
 import { SELECTED_WALLET_CAPABILITIES } from '../../store/slices/walletSlice';
-import { Operation, Access } from 'hedera-stable-coin-sdk';
+import { Operation, Access } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { useRefreshCoinInfo } from '../../hooks/useRefreshCoinInfo';
 import RevokeRoleOperation from './RevokeRoles';
 import GrantRoleOperation from './GrantRoles';
 import ManageCashIn from './ManageCashIn';
+import GetAccountsWithRole from './GetAccountsWithRole';
 
-export type Action = 'editRole' | 'giveRole' | 'revokeRole' | 'refreshRoles';
+export type Action =
+	| 'editRole'
+	| 'giveRole'
+	| 'revokeRole'
+	| 'refreshRoles'
+	| 'getAccountsWithRole';
 
 interface HandleRolesProps {
 	action: Action;
@@ -122,6 +128,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 			{action === 'revokeRole' && <RevokeRoleOperation />}
 			{action === 'giveRole' && <GrantRoleOperation filteredCapabilities={filteredCapabilities} />}
 			{action === 'editRole' && <ManageCashIn />}
+			{action === 'getAccountsWithRole' && <GetAccountsWithRole />}
 		</>
 	);
 };

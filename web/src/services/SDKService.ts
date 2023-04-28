@@ -11,48 +11,50 @@ import {
 	Fees,
 	Factory,
 	SetNetworkRequest,
-} from 'hedera-stable-coin-sdk';
+	GetAccountsWithRolesRequest,
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 import type {
 	WalletEvent,
-	SupportedWallets,
 	WipeRequest,
+	AssociateTokenRequest,
+	BurnRequest,
 	CashInRequest,
+	CheckSupplierLimitRequest,
 	CreateRequest,
+	DecreaseSupplierAllowanceRequest,
 	DeleteRequest,
 	FreezeAccountRequest,
 	GetAccountBalanceRequest,
 	GetAccountInfoRequest,
+	GetERC20ListRequest,
 	GetListStableCoinRequest,
+	GetReserveAddressRequest,
+	GetReserveAmountRequest,
 	GetRolesRequest,
 	GetStableCoinDetailsRequest,
+	GetSupplierAllowanceRequest,
+	GrantMultiRolesRequest,
 	HasRoleRequest,
+	IncreaseSupplierAllowanceRequest,
 	InitializationData,
+	KYCRequest,
 	PauseRequest,
+	RequestAccount,
 	RescueRequest,
+	ReserveViewModel,
+	ResetSupplierAllowanceRequest,
+	RevokeMultiRolesRequest,
+	StableCoinCapabilities,
 	StableCoinListViewModel,
 	StableCoinViewModel,
-	StableCoinCapabilities,
-	BurnRequest,
-	IncreaseSupplierAllowanceRequest,
-	DecreaseSupplierAllowanceRequest,
-	ResetSupplierAllowanceRequest,
-	GetSupplierAllowanceRequest,
-	CheckSupplierLimitRequest,
-	RequestAccount,
-	ReserveViewModel,
-	GetReserveAmountRequest,
-	GetReserveAddressRequest,
+	SupportedWallets,
+	UpdateCustomFeesRequest,
+	UpdateRequest,
 	UpdateReserveAddressRequest,
 	UpdateReserveAmountRequest,
-	KYCRequest,
 	AddFixedFeeRequest,
 	AddFractionalFeeRequest,
-	UpdateCustomFeesRequest,
-	GetERC20ListRequest,
-	RevokeMultiRolesRequest,
-	GrantMultiRolesRequest,
-	AssociateTokenRequest,
-} from 'hedera-stable-coin-sdk';
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 
 export type StableCoinListRaw = Array<Record<'id' | 'symbol', string>>;
 
@@ -153,6 +155,10 @@ export class SDKService {
 		return await StableCoin.create(createRequest);
 	}
 
+	public static async updateStableCoin(updateRequest: UpdateRequest): Promise<boolean> {
+		return await StableCoin.update(updateRequest);
+	}
+
 	public static async getBalance(req: GetAccountBalanceRequest) {
 		return await StableCoin.getBalanceOf(req);
 	}
@@ -240,6 +246,10 @@ export class SDKService {
 
 	public static async getRoles(data: GetRolesRequest) {
 		return await Role.getRoles(data);
+	}
+
+	public static async getAccountsWithRole(data: GetAccountsWithRolesRequest) {
+		return await Role.getAccountsWithRole(data);
 	}
 
 	public static async getReserveAddress(data: GetReserveAddressRequest) {

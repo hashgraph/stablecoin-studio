@@ -255,32 +255,19 @@ export default class StableCoinService extends Service {
 				}
 			}
 
-			const roleManagement = listCapabilities.some(
-				(capability) => capability.access === Access.CONTRACT,
+			listCapabilities.push(
+				new Capability(Operation.ROLE_MANAGEMENT, Access.CONTRACT),
 			);
-			if (roleManagement) {
-				listCapabilities.push(
-					new Capability(Operation.ROLE_MANAGEMENT, Access.CONTRACT),
-				);
-			}
 
-			if (
-				_coin.autoRenewAccount?.toString() === account.id.toString() &&
-				_coin.memo !== ''
-			) {
-				listCapabilities.push(
-					new Capability(
-						Operation.ROLE_ADMIN_MANAGEMENT,
-						Access.CONTRACT,
-					),
-				);
-				listCapabilities.push(
-					new Capability(
-						Operation.RESERVE_MANAGEMENT,
-						Access.CONTRACT,
-					),
-				);
-			}
+			listCapabilities.push(
+				new Capability(
+					Operation.ROLE_ADMIN_MANAGEMENT,
+					Access.CONTRACT,
+				),
+			);
+			listCapabilities.push(
+				new Capability(Operation.RESERVE_MANAGEMENT, Access.CONTRACT),
+			);
 
 			return new StableCoinCapabilities(_coin, listCapabilities, account);
 		} catch (error) {

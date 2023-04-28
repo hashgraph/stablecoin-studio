@@ -105,7 +105,7 @@ You must have installed
 
 #### **For projects (WIP - when published)**
 
-1. Run `npm install hedera-stable-coin-sdk`. To install the dependency.
+1. Run `npm install @hashgraph-dev/stablecoin-npm-sdk`. To install the dependency.
 2. Import and use the SDK.
 
 #### **For development**
@@ -132,7 +132,7 @@ Before using the SDK we need to execute the `Network.init` function and specifiy
 
 Example
 ```Typescript
-import { LoggerTransports, SDK } from 'hedera-stable-coin-sdk';
+import { LoggerTransports, SDK } from '@hashgraph-dev/stablecoin-npm-sdk';
 SDK.log = {
 	level: process.env.REACT_APP_LOG_LEVEL ?? 'ERROR',
 	transports: new LoggerTransports.Console(),
@@ -281,7 +281,7 @@ This sets the smart contracts as the ones that will manage the features, this en
 		HederaERC20AddressTestnet,
 		Account,
 		CreateRequest,
-	} from 'hedera-stable-coin-sdk';
+	} from '@hashgraph-dev/stablecoin-npm-sdk';
 	const stableCoin: StableCoinViewModel = await StableCoin.create(
 		new CreateRequest({
 			name: "Hedera Stable Coin",
@@ -310,7 +310,7 @@ By requesting the public key of the account, we can set the stable coin's keys t
 		HederaERC20AddressTestnet,
 		Account,
 		CreateRequest,
-	} from 'hedera-stable-coin-sdk';
+	} from '@hashgraph-dev/stablecoin-npm-sdk';
 	const privateKey: RequestPrivateKey = {
 		key: 'someKey',
 		type: 'ED25519',
@@ -351,7 +351,7 @@ By not setting any of the keys, the stable coin will have the corresponding feat
 		HederaERC20AddressTestnet,
 		Account,
 		CreateRequest,
-	} from 'hedera-stable-coin-sdk';
+	} from '@hashgraph-dev/stablecoin-npm-sdk';
 	const stableCoin: StableCoinViewModel = await StableCoin.create(
 		new CreateRequest({
 			name: "Hedera Stable Coin",
@@ -1375,7 +1375,7 @@ The SDK class is exported. This static class allows to set the log level and app
 We use [winston](https://github.com/winstonjs/winston) under the hood for logging, so all transports are exported from the SDK under `LoggerTransports` for you to use. Refer to the [documentation](https://github.com/winstonjs/winston/blob/master/docs/transports.md) for more information on what transports are available.
 
 ```Typescript
-	import { LoggerTransports, SDK } from 'hedera-stable-coin-sdk';
+	import { LoggerTransports, SDK } from '@hashgraph-dev/stablecoin-npm-sdk';
 	
 	const { Console } = LoggerTransports;
 	

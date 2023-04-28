@@ -11,6 +11,6 @@
 	"license": "ISC",
 	"devDependencies": {
 		"typescript": "^4.8.4",
-		"hedera-stable-coin-sdk": "../../"
+		"@hashgraph-dev/stablecoin-npm-sdk": "../../"
 	}
 }

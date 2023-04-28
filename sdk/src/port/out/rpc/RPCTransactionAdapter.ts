@@ -32,7 +32,7 @@ import {
 	HederaReserve__factory,
 	StableCoinFactory__factory,
 	IHederaTokenService__factory,
-} from 'hedera-stable-coin-contracts';
+} from '@hashgraph-dev/stablecoin-npm-contracts';
 import TransactionAdapter, { InitializationData } from '../TransactionAdapter';
 import { BigNumber, ContractTransaction, ethers, Signer } from 'ethers';
 import { singleton } from 'tsyringe';
@@ -106,6 +106,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		super();
 		this.registerMetamaskEvents();
 	}
+
 	public async create(
 		coin: StableCoinProps,
 		factory: ContractId,
@@ -288,6 +289,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	async init(debug = false): Promise<string> {
 		this.provider = new ethers.providers.JsonRpcProvider(
 			`https://${this.networkService.environment.toString()}.hashio.io/api`,
+			// `http://127.0.0.1:7546/api`,
 		);
 		!debug && (await this.connectMetamask(false));
 		const eventData = {
@@ -335,6 +337,32 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 
 	getMirrorNodeAdapter(): MirrorNodeAdapter {
 		return this.mirrorNodeAdapter;
+	}
+
+	public async update(
+		coin: StableCoinCapabilities,
+		name: string | undefined,
+		symbol: string | undefined,
+		autoRenewPeriod: number | undefined,
+		expirationTime: number | undefined,
+		kycKey: PublicKey | undefined,
+		freezeKey: PublicKey | undefined,
+		feeScheduleKey: PublicKey | undefined,
+		pauseKey: PublicKey | undefined,
+		wipeKey: PublicKey | undefined,
+	): Promise<TransactionResponse<any, Error>> {
+		const params = new Params({
+			name: name,
+			symbol: symbol,
+			autoRenewPeriod: autoRenewPeriod,
+			expirationTime: expirationTime,
+			kycKey: kycKey,
+			freezeKey: freezeKey,
+			feeScheduleKey: feeScheduleKey,
+			pauseKey: pauseKey,
+			wipeKey: wipeKey,
+		});
+		return this.performOperation(coin, Operation.UPDATE, params);
 	}
 
 	async wipe(
@@ -1604,6 +1632,35 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					this.networkService.environment,
 				);
 
+			case Operation.UPDATE:
+				const providedKeys = [
+					undefined,
+					params?.kycKey,
+					params?.freezeKey,
+					params?.wipeKey,
+					params?.supplyKey,
+					params?.feeScheduleKey,
+					params?.pauseKey,
+				];
+				const filteredContractParams: any = {
+					tokenName: params?.name ? params?.name : '',
+					tokenSymbol: params?.symbol ? params?.symbol : '',
+					keys: this.setKeysForSmartContract(providedKeys),
+					second: params?.expirationTime
+						? Math.floor(params.expirationTime / 1000000000)
+						: -1,
+					autoRenewPeriod: params?.autoRenewPeriod
+						? params.autoRenewPeriod
+						: -1,
+				};
+				return RPCTransactionResponseAdapter.manageResponse(
+					await HederaERC20__factory.connect(
+						evmProxy,
+						this.signerOrProvider,
+					).updateToken(filteredContractParams),
+					this.networkService.environment,
+				);
+
 			default:
 				throw new Error(
 					`Operation not implemented through Smart Contracts`,
@@ -1793,18 +1850,58 @@ class Params {
 	role?: string;
 	targetId?: string;
 	amount?: BigDecimal;
+	name?: string;
+	symbol?: string;
+	autoRenewPeriod?: number;
+	expirationTime?: number;
+	kycKey?: PublicKey;
+	freezeKey?: PublicKey;
+	feeScheduleKey?: PublicKey;
+	pauseKey?: PublicKey;
+	wipeKey?: PublicKey;
+	supplyKey?: PublicKey;
 
 	constructor({
 		role,
 		targetId,
 		amount,
+		name,
+		symbol,
+		autoRenewPeriod,
+		expirationTime,
+		kycKey,
+		freezeKey,
+		feeScheduleKey,
+		pauseKey,
+		wipeKey,
+		supplyKey,
 	}: {
 		role?: string;
 		targetId?: string;
 		amount?: BigDecimal;
+		name?: string;
+		symbol?: string;
+		autoRenewPeriod?: number;
+		expirationTime?: number;
+		kycKey?: PublicKey;
+		freezeKey?: PublicKey;
+		feeScheduleKey?: PublicKey;
+		pauseKey?: PublicKey;
+		wipeKey?: PublicKey;
+		supplyKey?: PublicKey;
 	}) {
 		this.role = role;
 		this.targetId = targetId;
 		this.amount = amount;
+		this.name = name;
+		this.symbol = symbol;
+		this.autoRenewPeriod = autoRenewPeriod;
+		this.expirationTime = expirationTime;
+		this.kycKey = kycKey;
+		this.freezeKey = freezeKey;
+		this.feeScheduleKey = feeScheduleKey;
+		this.pauseKey = pauseKey;
+		this.wipeKey = wipeKey;
+		this.supplyKey = supplyKey;
 	}
 }

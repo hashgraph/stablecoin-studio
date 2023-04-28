@@ -10,7 +10,7 @@ import {
 	AccordionIcon,
 	AccordionPanel,
 } from '@chakra-ui/react';
-import { CreateRequest, SupportedWallets } from 'hedera-stable-coin-sdk';
+import { CreateRequest, SupportedWallets } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import type { Control, FieldValues, UseFormSetValue, UseFormWatch } from 'react-hook-form';

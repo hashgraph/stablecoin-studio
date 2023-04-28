@@ -22,253 +22,253 @@
 /* eslint-disable jest/expect-expect */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import Account from '../../../src/domain/context/account/Account';
-import TransactionResponse from '../../../src/domain/context/transaction/TransactionResponse';
 import {
 	Network,
 	RequestCustomFee,
 	StableCoinCapabilities,
+	RequestFixedFee,
 	RequestFractionalFee,
+	Fees,
+	StableCoin,
+	AddFixedFeeRequest,
+	AddFractionalFeeRequest,
+	UpdateCustomFeesRequest,
+	AssociateTokenRequest,
+	CreateRequest,
+	InitializationRequest,
+	GetStableCoinDetailsRequest,
 } from '../../../src/index';
 import ConnectRequest, {
 	SupportedWallets,
 } from '../../../src/port/in/request/ConnectRequest';
-import {
-	CustomFee as HCustomFee,
-	CustomFixedFee as HCustomFixedFee,
-	CustomFractionalFee as HCustomFractionalFee,
-	ContractId as HContractId,
-} from '@hashgraph/sdk';
-import ContractId from '../../../src/domain/context/contract/ContractId';
 import { TokenSupplyType } from '../../../src/port/in/StableCoin';
-import { StableCoin } from '../../../src/domain/context/stablecoin/StableCoin';
 import {
 	CLIENT_ACCOUNT_ED25519,
-	ENVIRONMENT,
 	FACTORY_ADDRESS,
 	HEDERA_ERC20_ADDRESS,
 } from '../../config';
-import { HTSTransactionAdapter } from '../../../src/port/out/hs/hts/HTSTransactionAdapter';
-import { MirrorNodeAdapter } from '../../../src/port/out/mirror/MirrorNodeAdapter';
 import Injectable from '../../../src/core/Injectable';
 import { HederaId } from '../../../src/domain/context/shared/HederaId';
 import StableCoinService from '../../../src/app/service/StableCoinService';
-import StableCoinDetail from '../../../src/port/out/mirror/response/StableCoinViewModel';
-// import FeeAssessmentMethod from '@hashgraph/sdk/lib/token/FeeAssessmentMethod.js';
-import {
-	FixedFee,
-	FractionalFee,
-} from '../../../src/domain/context/fee/CustomFee.js';
-import BigDecimal from '../../../src/domain/context/shared/BigDecimal.js';
+const decimals = 6;
 
 describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 	// token to operate through HTS
 	let stableCoinCapabilitiesHTS: StableCoinCapabilities;
 	let stableCoinService: StableCoinService;
 
-	//const denominatingTokenId = '0.0.3397146';
-	const feeCollectorAccountId: string = CLIENT_ACCOUNT_ED25519.id.toString();
+	const feeCollectorAccountId = CLIENT_ACCOUNT_ED25519.id;
 
-	//const tokenId: HederaId = new HederaId('0.0.3397146');
-
-	let th: HTSTransactionAdapter;
-	let tr: TransactionResponse;
-	let mn: MirrorNodeAdapter;
-
-	const delay = async (seconds = 2): Promise<void> => {
+	const delay = async (seconds = 3): Promise<void> => {
 		seconds = seconds * 1000;
 		await new Promise((r) => setTimeout(r, seconds));
 	};
 
 	beforeAll(async () => {
 		await connectAccount(CLIENT_ACCOUNT_ED25519);
-		th = Injectable.resolve(HTSTransactionAdapter);
-		mn = new MirrorNodeAdapter();
-		mn.setEnvironment(ENVIRONMENT);
 
 		stableCoinService = Injectable.resolve(StableCoinService);
 
-		/*stableCoinCapabilitiesHTS = await stableCoinService.getCapabilities(
-			CLIENT_ACCOUNT_ED25519,
-			tokenId,
-		);*/
-
-		const coinHTS = new StableCoin({
+		const req = new CreateRequest({
 			name: 'TestCoinAccount',
 			symbol: 'TCA',
-			decimals: 6,
-			initialSupply: BigDecimal.fromString('5.60', 6),
-			maxSupply: BigDecimal.fromString('1000', 6),
+			decimals: decimals,
+			initialSupply: '5.6',
+			maxSupply: '1000',
 			freezeDefault: false,
-			adminKey: CLIENT_ACCOUNT_ED25519.publicKey,
+			createReserve: false,
 			freezeKey: CLIENT_ACCOUNT_ED25519.publicKey,
 			wipeKey: CLIENT_ACCOUNT_ED25519.publicKey,
 			pauseKey: CLIENT_ACCOUNT_ED25519.publicKey,
-			supplyKey: CLIENT_ACCOUNT_ED25519.publicKey,
 			feeScheduleKey: CLIENT_ACCOUNT_ED25519.publicKey,
-			autoRenewAccount: CLIENT_ACCOUNT_ED25519.id,
 			supplyType: TokenSupplyType.FINITE,
-			treasury: CLIENT_ACCOUNT_ED25519.id,
+			stableCoinFactory: FACTORY_ADDRESS,
+			hederaERC20: HEDERA_ERC20_ADDRESS,
+			burnRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
+			rescueRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
+			deleteRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
+			cashInRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
+			cashInRoleAllowance: '0',
 		});
-		tr = await th.create(
-			coinHTS,
-			new ContractId(FACTORY_ADDRESS),
-			new ContractId(HEDERA_ERC20_ADDRESS),
-			false,
-		);
+		const tr = await StableCoin.create(req);
 
-		const tokenIdHTS = ContractId.fromHederaContractId(
-			HContractId.fromSolidityAddress(tr.response[0][3]),
-		);
+		const tokenIdHTS = tr.coin.tokenId!;
+
+		await delay();
+
 		stableCoinCapabilitiesHTS = await stableCoinService.getCapabilities(
 			CLIENT_ACCOUNT_ED25519,
 			tokenIdHTS,
 		);
+		await StableCoin.associate(
+			new AssociateTokenRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: tokenIdHTS.toString(),
+			}),
+		);
+
+		await delay();
 	}, 1500000);
 
 	it('Create a fixed custom fee for an existing stable coin', async () => {
-		const customFixedFee: HCustomFixedFee = new HCustomFixedFee()
-			.setAmount(1)
-			.setDenominatingTokenId(
-				stableCoinCapabilitiesHTS.coin.tokenId!.toString(),
-			)
-			.setFeeCollectorAccountId(feeCollectorAccountId);
-		const customFee: HCustomFee[] = [customFixedFee];
-		await th.updateCustomFees(stableCoinCapabilitiesHTS, customFee);
+		const amount = 1;
 
-		await delay(5);
+		const fixedFee = new AddFixedFeeRequest({
+			tokenId: stableCoinCapabilitiesHTS.coin.tokenId!.toString(),
+			tokenIdCollected:
+				stableCoinCapabilitiesHTS.coin.tokenId!.toString(),
+			collectorId: feeCollectorAccountId.toString(),
+			collectorsExempt: true,
+			decimals: stableCoinCapabilitiesHTS.coin.decimals,
+			amount: amount.toString(),
+		});
+		await Fees.addFixedFee(fixedFee);
+
+		await delay();
 
 		const tokenCustomFees: RequestCustomFee[] = await getTokenCustomFees(
-			mn,
 			stableCoinCapabilitiesHTS.coin.tokenId!,
 		);
 		expect(tokenCustomFees.length).toEqual(1);
-		expect(tokenCustomFees[0]).toBeInstanceOf(FixedFee);
-		expect(tokenCustomFees[0].collectorId).toEqual(
-			new HederaId(feeCollectorAccountId),
+		checkFixedFee(
+			tokenCustomFees[0],
+			amount * 10 ** decimals,
+			stableCoinCapabilitiesHTS,
+			feeCollectorAccountId,
 		);
 
-		await removeTokenCustomFees(th, stableCoinCapabilitiesHTS);
+		await removeTokenCustomFees(stableCoinCapabilitiesHTS);
+
+		await delay();
 	}, 150000);
 
 	it('Create a fractional custom fee for an existing stable coin', async () => {
-		const customFractionalFee: HCustomFractionalFee =
-			new HCustomFractionalFee()
-				.setNumerator(1)
-				.setDenominator(10)
-				.setFeeCollectorAccountId(feeCollectorAccountId);
+		const numerator = 1;
+		const denominator = 10;
+		const FractionalFee = new AddFractionalFeeRequest({
+			tokenId: stableCoinCapabilitiesHTS.coin.tokenId!.toString(),
+			collectorId: feeCollectorAccountId.toString(),
+			collectorsExempt: true,
+			decimals: stableCoinCapabilitiesHTS.coin.decimals,
+			percentage: undefined,
+			amountNumerator: numerator.toString(),
+			amountDenominator: denominator.toString(),
+			min: '0',
+			max: '0',
+			net: false,
+		});
 
-		const customFee: HCustomFee[] = [customFractionalFee];
-		await th.updateCustomFees(stableCoinCapabilitiesHTS, customFee);
+		await Fees.addFractionalFee(FractionalFee);
 
-		await delay(5);
+		await delay();
 
 		const tokenCustomFees: RequestCustomFee[] = await getTokenCustomFees(
-			mn,
 			stableCoinCapabilitiesHTS.coin.tokenId!,
 		);
 		expect(tokenCustomFees.length).toEqual(1);
-		expect(tokenCustomFees[0]).toBeInstanceOf(FractionalFee);
-		expect(tokenCustomFees[0].collectorId).toEqual(
-			new HederaId(feeCollectorAccountId),
+		checkFractionalFee(
+			tokenCustomFees[0],
+			numerator,
+			denominator,
+			0,
+			feeCollectorAccountId,
+			false,
 		);
-		expect(
-			(tokenCustomFees[0] as RequestFractionalFee).amountNumerator,
-		).toEqual(1);
-		expect(
-			(tokenCustomFees[0] as RequestFractionalFee).amountDenominator,
-		).toEqual(10);
-		expect((tokenCustomFees[0] as RequestFractionalFee).min!).toEqual(
-			new BigDecimal('0'),
-		);
-		expect(
-			(tokenCustomFees[0] as RequestFractionalFee).max,
-		).toBeUndefined();
 
-		await removeTokenCustomFees(th, stableCoinCapabilitiesHTS);
+		await removeTokenCustomFees(stableCoinCapabilitiesHTS);
+
+		await delay();
 	}, 150000);
 
 	it('Create a fixed and a fractional custom fee, charged to the receiver, for an existing stable coin', async () => {
-		const customFixedFee: HCustomFixedFee = new HCustomFixedFee()
-			.setAmount(1)
-			.setDenominatingTokenId(
+		const percentage = 10;
+		const amount = 1;
+
+		const newFixedFee: RequestFixedFee = {
+			collectorId: feeCollectorAccountId.toString(),
+			collectorsExempt: true,
+			decimals: stableCoinCapabilitiesHTS.coin.decimals,
+			tokenIdCollected:
 				stableCoinCapabilitiesHTS.coin.tokenId!.toString(),
-			)
-			.setFeeCollectorAccountId(feeCollectorAccountId);
+			amount: amount.toString(),
+		};
 
-		const customFractionalFee: HCustomFractionalFee =
-			new HCustomFractionalFee()
-				.setNumerator(1)
-				.setDenominator(10)
-				.setFeeCollectorAccountId(feeCollectorAccountId);
+		const newFractionalFee: RequestFractionalFee = {
+			collectorId: feeCollectorAccountId.toString(),
+			collectorsExempt: true,
+			decimals: stableCoinCapabilitiesHTS.coin.decimals,
+			percentage: percentage.toString(),
+			amountNumerator: '',
+			amountDenominator: '',
+			min: '0',
+			max: '0',
+			net: true,
+		};
 
-		const customFee: HCustomFee[] = [customFixedFee, customFractionalFee];
-		await th.updateCustomFees(stableCoinCapabilitiesHTS, customFee);
+		const customFees: RequestCustomFee[] = [newFixedFee, newFractionalFee];
 
-		await delay(5);
+		const newFees = new UpdateCustomFeesRequest({
+			customFees: customFees,
+			tokenId: stableCoinCapabilitiesHTS.coin.tokenId!.toString(),
+		});
+
+		await Fees.updateCustomFees(newFees);
+
+		await delay();
 
 		const tokenCustomFees: RequestCustomFee[] = await getTokenCustomFees(
-			mn,
 			stableCoinCapabilitiesHTS.coin.tokenId!,
 		);
 		expect(tokenCustomFees.length).toEqual(2);
-		//expect(tokenCustomFees[0]).toBeInstanceOf(FractionalFee);
-		expect(tokenCustomFees[0].collectorId).toEqual(
-			new HederaId(feeCollectorAccountId),
+		let FractionalFeeId = 0;
+		let FixedFeeId = 1;
+
+		if (!(tokenCustomFees[0] as RequestFractionalFee).amountNumerator) {
+			FractionalFeeId = 1;
+			FixedFeeId = 0;
+		}
+
+		checkFractionalFee(
+			tokenCustomFees[FractionalFeeId],
+			0,
+			0,
+			percentage,
+			feeCollectorAccountId,
+			false,
 		);
-		expect(
-			(tokenCustomFees[0] as RequestFractionalFee).amountNumerator,
-		).toEqual(1);
-		expect(
-			(tokenCustomFees[0] as RequestFractionalFee).amountDenominator,
-		).toEqual(10);
-		expect((tokenCustomFees[0] as RequestFractionalFee).min!).toEqual(
-			new BigDecimal('0'),
-		);
-		expect(
-			(tokenCustomFees[0] as RequestFractionalFee).max,
-		).toBeUndefined();
-
-		//expect(tokenCustomFees[1]).toBeInstanceOf(FixedFee);
-		expect(tokenCustomFees[1].collectorId).toEqual(
-			new HederaId(feeCollectorAccountId),
+		checkFixedFee(
+			tokenCustomFees[FixedFeeId],
+			amount * 10 ** decimals,
+			stableCoinCapabilitiesHTS,
+			feeCollectorAccountId,
 		);
 
-		await removeTokenCustomFees(th, stableCoinCapabilitiesHTS);
-	}, 150000);
+		await removeTokenCustomFees(stableCoinCapabilitiesHTS);
 
-	it.skip('Create a fixed and a fractional custom fee, charged to the sender, for an existing stable coin', async () => {
-		const customFixedFee: HCustomFixedFee = new HCustomFixedFee()
-			.setAmount(1)
-			.setDenominatingTokenId(
-				stableCoinCapabilitiesHTS.coin.tokenId!.toString(),
-			)
-			.setFeeCollectorAccountId(feeCollectorAccountId);
-
-		const customFractionalFee: HCustomFractionalFee =
-			new HCustomFractionalFee()
-				.setNumerator(1)
-				.setDenominator(10)
-				// .setAssessmentMethod(new FeeAssessmentMethod(true))
-				.setFeeCollectorAccountId(feeCollectorAccountId);
-
-		const customFee: HCustomFee[] = [customFixedFee, customFractionalFee];
-		await th.updateCustomFees(stableCoinCapabilitiesHTS, customFee);
+		await delay();
 	}, 150000);
 });
 
 async function getTokenCustomFees(
-	mn: MirrorNodeAdapter,
 	tokenId: HederaId,
 ): Promise<RequestCustomFee[]> {
-	const stableCoinDetail: StableCoinDetail = await mn.getStableCoin(tokenId);
-	return stableCoinDetail.customFees ?? [];
+	const res = await StableCoin.getInfo(
+		new GetStableCoinDetailsRequest({
+			id: tokenId.toString(),
+		}),
+	);
+
+	return res.customFees ?? [];
 }
 
 async function removeTokenCustomFees(
-	th: HTSTransactionAdapter,
-	stableCoinCapabilitiesHTS: StableCoinCapabilities,
+	stableCoinCapabilities: StableCoinCapabilities,
 ): Promise<void> {
-	await th.updateCustomFees(stableCoinCapabilitiesHTS, []);
+	const empty = new UpdateCustomFeesRequest({
+		customFees: [],
+		tokenId: stableCoinCapabilities.coin.tokenId!.toString(),
+	});
+	await Fees.updateCustomFees(empty);
 }
 
 async function connectAccount(account: Account): Promise<void> {
@@ -283,4 +283,61 @@ async function connectAccount(account: Account): Promise<void> {
 			wallet: SupportedWallets.CLIENT,
 		}),
 	);
+
+	await Network.init(
+		new InitializationRequest({
+			network: 'testnet',
+			configuration: {
+				factoryAddress: FACTORY_ADDRESS,
+			},
+		}),
+	);
+}
+
+function checkFixedFee(
+	tokenCustomFees: RequestCustomFee,
+	amount: number,
+	stableCoinCapabilitiesHTS: StableCoinCapabilities,
+	feeCollectorAccountId: HederaId,
+) {
+	const feeAmount =
+		parseFloat((tokenCustomFees as RequestFixedFee).amount) *
+		10 ** stableCoinCapabilitiesHTS.coin.decimals;
+	expect(feeAmount.toString()).toEqual(amount.toString());
+	expect((tokenCustomFees as RequestFixedFee).tokenIdCollected).toEqual(
+		stableCoinCapabilitiesHTS.coin.tokenId!.toString(),
+	);
+	expect(tokenCustomFees.collectorId).toEqual(feeCollectorAccountId.value);
+}
+
+function checkFractionalFee(
+	tokenCustomFees: RequestCustomFee,
+	numerator: number,
+	denominator: number,
+	percentage: number,
+	feeCollectorAccountId: HederaId,
+	net: boolean,
+) {
+	if (percentage > 0) {
+		expect(
+			parseInt(
+				(tokenCustomFees as RequestFractionalFee).amountNumerator,
+			) /
+				parseInt(
+					(tokenCustomFees as RequestFractionalFee).amountDenominator,
+				),
+		).toEqual(percentage / 100);
+	} else {
+		expect(
+			(tokenCustomFees as RequestFractionalFee).amountNumerator,
+		).toEqual(numerator);
+		expect(
+			(tokenCustomFees as RequestFractionalFee).amountDenominator,
+		).toEqual(denominator);
+	}
+
+	expect(tokenCustomFees.collectorId).toEqual(feeCollectorAccountId.value);
+	expect((tokenCustomFees as RequestFractionalFee).min!).toEqual('0');
+	expect((tokenCustomFees as RequestFractionalFee).max!).toEqual('0');
+	expect((tokenCustomFees as RequestFractionalFee).net).toEqual(net);
 }

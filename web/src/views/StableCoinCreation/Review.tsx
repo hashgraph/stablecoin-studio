@@ -2,7 +2,7 @@ import { Heading, Stack, VStack } from '@chakra-ui/react';
 import type { UseFormReturn } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { SupportedWallets } from 'hedera-stable-coin-sdk';
+import { SupportedWallets } from '@hashgraph-dev/stablecoin-npm-sdk';
 import DetailsReview from '../../components/DetailsReview';
 import { OTHER_KEY_VALUE } from './components/KeySelector';
 import { OTHER_ACCOUNT_VALUE } from './components/RoleSelector';
@@ -214,15 +214,11 @@ const Review = (props: ReviewProps) => {
 						details={[
 							{
 								label: t('stableCoinCreation:managementPermissions.admin'),
-								value: managementPermissions
-									? t('stableCoinCreation:managementPermissions.theSmartContract')
-									: getKey(adminKey, 'adminKeyOther'),
+								value: t('stableCoinCreation:managementPermissions.theSmartContract'),
 							},
 							{
 								label: t('stableCoinCreation:managementPermissions.supply'),
-								value: managementPermissions
-									? t('stableCoinCreation:managementPermissions.theSmartContract')
-									: getKey(supplyKey, 'supplyKeyOther'),
+								value: t('stableCoinCreation:managementPermissions.theSmartContract'),
 							},
 							{
 								label: t('stableCoinCreation:managementPermissions.wipe'),
@@ -286,10 +282,7 @@ const Review = (props: ReviewProps) => {
 						details={[
 							{
 								label: t('stableCoinCreation:managementPermissions.treasuryAccountAddress'),
-								value:
-									!managementPermissions && supplyKey.value === 1
-										? t('stableCoinCreation:managementPermissions.currentUserKey')
-										: t('stableCoinCreation:managementPermissions.theSmartContract'),
+								value: t('stableCoinCreation:managementPermissions.theSmartContract'),
 							},
 						]}
 					/>

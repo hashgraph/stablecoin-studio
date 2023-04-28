@@ -16,7 +16,8 @@ import {
   DecreaseSupplierAllowanceRequest,
   ResetSupplierAllowanceRequest,
   GetSupplierAllowanceRequest,
-} from 'hedera-stable-coin-sdk';
+  GetAccountsWithRolesRequest,
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 import colors from 'colors';
 
 /**
@@ -229,5 +230,29 @@ export default class RoleStableCoinsService extends Service {
     utilsService.breakLine();
 
     return roles;
+  }
+  public async getAccountsWithRole(
+    req: GetAccountsWithRolesRequest,
+  ): Promise<string[]> {
+    let accounts;
+    await utilsService.showSpinner(
+      Role.getAccountsWithRole(req).then((response) => {
+        accounts = response;
+      }),
+      {
+        text: language.getText('state.loading'),
+        successText: language.getText('state.loadCompleted') + '\n',
+      },
+    );
+    console.log(language.getText('operation.success'));
+
+    accounts.length > 0
+      ? accounts.forEach((account: string) => {
+          console.log(colors.yellow(account));
+        })
+      : console.log(colors.red(language.getText('roleManagement.noRoles')));
+    utilsService.breakLine();
+
+    return accounts;
   }
 }

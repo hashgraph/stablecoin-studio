@@ -30,7 +30,7 @@ The web is compatible with Hashpack and Metamask and although both wallets can b
 # Installation
 
 ```shell
-npm install @hashgraph/stablecoin-dapp
+npm install @hashgraph-dev/stablecoin-dapp
 ```
 
 # Build

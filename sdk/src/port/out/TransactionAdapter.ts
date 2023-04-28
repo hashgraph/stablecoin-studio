@@ -28,12 +28,15 @@ import BigDecimal from '../../domain/context/shared/BigDecimal.js';
 import { StableCoinRole } from '../../domain/context/stablecoin/StableCoinRole.js';
 import Account from '../../domain/context/account/Account.js';
 import { HederaId } from '../../domain/context/shared/HederaId.js';
-import { CustomFee as HCustomFee } from '@hashgraph/sdk';
+import {
+	CustomFee as HCustomFee,
+	PublicKey as HPublicKey,
+} from '@hashgraph/sdk';
 import { MirrorNodeAdapter } from './mirror/MirrorNodeAdapter.js';
 import { Environment } from '../../domain/context/network/Environment.js';
-import EvmAddress from '../../domain/context/contract/EvmAddress.js';
 import LogService from '../../app/service/LogService.js';
 import PublicKey from '../../domain/context/account/PublicKey.js';
+import { FactoryKey } from '../../domain/context/factory/FactoryKey.js';
 
 export interface InitializationData {
 	account?: Account;
@@ -355,7 +358,6 @@ export default abstract class TransactionAdapter
 		feeScheduleKey: PublicKey | undefined,
 		pauseKey: PublicKey | undefined,
 		wipeKey: PublicKey | undefined,
-		supplyKey: PublicKey | undefined,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
@@ -495,6 +497,56 @@ export default abstract class TransactionAdapter
 			).toString();
 		}
 		return parameter;
+	}
+
+	setKeysForSmartContract(providedKeys: any[]): FactoryKey[] {
+		const keys: FactoryKey[] = [];
+
+		providedKeys.forEach((providedKey, index) => {
+			if (providedKey) {
+				const key = new FactoryKey();
+				switch (index) {
+					case 0: {
+						key.keyType = 1; // admin
+						break;
+					}
+					case 1: {
+						key.keyType = 2; // kyc
+						break;
+					}
+					case 2: {
+						key.keyType = 4; // freeze
+						break;
+					}
+					case 3: {
+						key.keyType = 8; // wipe
+						break;
+					}
+					case 4: {
+						key.keyType = 16; // supply
+						break;
+					}
+					case 5: {
+						key.keyType = 32; // fee schedule
+						break;
+					}
+					case 6: {
+						key.keyType = 64; // pause
+						break;
+					}
+				}
+				const providedKeyCasted = providedKey as PublicKey;
+				key.publicKey =
+					providedKeyCasted.key == PublicKey.NULL.key
+						? '0x'
+						: HPublicKey.fromString(
+								providedKeyCasted.key,
+						  ).toBytesRaw();
+				key.isED25519 = providedKeyCasted.type === 'ED25519';
+				keys.push(key);
+			}
+		});
+		return keys;
 	}
 
 	logTransaction(id: string, network: string): void {

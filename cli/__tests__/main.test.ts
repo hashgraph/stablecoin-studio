@@ -1,4 +1,4 @@
-import { StableCoin } from 'hedera-stable-coin-sdk';
+import { StableCoin } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 describe('🧪 CLI Unit Test', () => {
   it('StableCoin loaded', () => {

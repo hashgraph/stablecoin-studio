@@ -31,6 +31,7 @@ import {
 import {
 	CustomFee as HCustomFee,
 	CustomFractionalFee as HCustomFractionalFee,
+	FeeAssessmentMethod,
 } from '@hashgraph/sdk';
 import { fromCustomFeesToHCustomFees } from '../../../../../../domain/context/fee/CustomFee.js';
 import { GetAccountTokenRelationshipQuery } from '../../../../query/account/tokenRelationship/GetAccountTokenRelationshipQuery.js';
@@ -41,7 +42,6 @@ import {
 } from '../../../../../../port/out/mirror/response/AccountTokenRelationViewModel.js';
 import { AccountFreeze } from '../../error/AccountFreeze.js';
 import { AccountNotKyc } from '../../error/AccountNotKyc.js';
-//import FeeAssessmentMethod from '@hashgraph/sdk/lib/token/FeeAssessmentMethod.js';
 
 @CommandHandler(addFractionalFeesCommand)
 export class addFractionalFeesCommandHandler
@@ -66,7 +66,6 @@ export class addFractionalFeesCommandHandler
 			amountDenominator,
 			min,
 			max,
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			net,
 			collectorsExempt,
 		} = command;
@@ -108,6 +107,7 @@ export class addFractionalFeesCommandHandler
 			.setDenominator(amountDenominator)
 			.setMin(min.toLong())
 			.setMax(max.toLong())
+			.setAssessmentMethod(new FeeAssessmentMethod(net))
 			.setFeeCollectorAccountId(collectorId.toString())
 			.setAllCollectorsAreExempt(collectorsExempt);
 

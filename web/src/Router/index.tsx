@@ -1,24 +1,24 @@
 import { Box, Heading } from '@chakra-ui/react';
-import { useTranslation } from 'react-i18next';
-import BaseContainer from '../components/BaseContainer';
-import { NamedRoutes } from './NamedRoutes';
-import GridDirectAccess from '../components/GridDirectAccess';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import BaseContainer from '../components/BaseContainer';
+import type { DirectAccessProps } from '../components/DirectAccess';
+import GridDirectAccess from '../components/GridDirectAccess';
+import type { IAccountToken } from '../interfaces/IAccountToken';
+import type { IExternalToken } from '../interfaces/IExternalToken';
 import {
 	SELECTED_TOKEN_ROLES,
 	SELECTED_WALLET_CAPABILITIES,
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_PAIRED_ACCOUNTID,
 } from '../store/slices/walletSlice';
-import type { DirectAccessProps } from '../components/DirectAccess';
-import type { IAccountToken } from '../interfaces/IAccountToken';
-import type { IExternalToken } from '../interfaces/IExternalToken';
+import { NamedRoutes } from './NamedRoutes';
 // import type { AppDispatch } from '../../store/store.js';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { useRefreshCoinInfo } from '../hooks/useRefreshCoinInfo';
-import { Access, Operation, StableCoinRole } from 'hedera-stable-coin-sdk';
+import { Access, Operation, StableCoinRole } from '@hashgraph-dev/stablecoin-npm-sdk';
 import AwaitingWalletSignature from '../components/AwaitingWalletSignature';
+import { useRefreshCoinInfo } from '../hooks/useRefreshCoinInfo';
 
 const Operations = () => {
 	const { t } = useTranslation('operations');
@@ -41,7 +41,7 @@ const Operations = () => {
 		checkKyc: false,
 	});
 
-	const isLoading = useRefreshCoinInfo();
+	const { isLoading } = useRefreshCoinInfo();
 
 	useEffect(() => {
 		if (selectedStableCoin) {

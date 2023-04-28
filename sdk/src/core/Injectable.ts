@@ -88,6 +88,7 @@ import { GetAccountTokenRelationshipQueryHandler } from '../app/usecase/query/ac
 import { SDK } from '../port/in/Common.js';
 import { SetConfigurationCommandHandler } from '../app/usecase/command/network/setConfiguration/SetConfigurationCommandHandler.js';
 import { GetERC20ListQueryHandler } from '../app/usecase/query/factory/getERC20List/GetERC20ListQueryHandler.js';
+import { GetAccountsWithRolesQueryHandler } from '../app/usecase/query/stablecoin/roles/getAccountsWithRole/GetAccountsWithRolesQueryHandler.js';
 
 export const TOKENS = {
 	COMMAND_HANDLER: Symbol('CommandHandler'),
@@ -284,6 +285,10 @@ const QUERY_HANDLERS = [
 	{
 		token: TOKENS.QUERY_HANDLER,
 		useClass: GetAllowanceQueryHandler,
+	},
+	{
+		token: TOKENS.QUERY_HANDLER,
+		useClass: GetAccountsWithRolesQueryHandler,
 	},
 	{
 		token: TOKENS.QUERY_HANDLER,
