@@ -21,6 +21,10 @@ import { Gas1, Gas2, Gas3, Gas4, Gas5 } from './constants'
 import { BigNumber } from 'ethers'
 import { interfaces } from '../typechain-types/@chainlink/contracts/src/v0.8/index.js'
 
+export function delay(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
 export async function getHBARBalanceOf(
     Id: string,
     client: Client,
@@ -786,6 +790,23 @@ export async function rescue(
     const result = await contractCall(
         proxyAddress,
         'rescue',
+        params,
+        clientRescueingToken,
+        Gas4,
+        HederaERC20__factory.abi
+    )
+    if (result[0] != true) throw Error
+}
+
+export async function rescueHBAR(
+    proxyAddress: ContractId,
+    amountOfHBARToRescue: BigNumber,
+    clientRescueingToken: Client
+) {
+    const params = [amountOfHBARToRescue.toString()]
+    const result = await contractCall(
+        proxyAddress,
+        'rescueHBAR',
         params,
         clientRescueingToken,
         Gas4,

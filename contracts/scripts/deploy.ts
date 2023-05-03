@@ -36,15 +36,15 @@ import {
     associateToken,
 } from './utils'
 
-/*const hederaERC20Address = '0.0.4049127'
-export const factoryProxyAddress = '0.0.4049140'
-const factoryProxyAdminAddress = '0.0.4049135'
-const factoryAddress = '0.0.4049132'
-*/
-let hederaERC20Address: any
+const hederaERC20Address = '0.0.4544132'
+export const factoryProxyAddress = '0.0.4041403'
+const factoryProxyAdminAddress = '0.0.4041401'
+const factoryAddress = '0.0.4041399'
+
+/* let hederaERC20Address: any
 export let factoryProxyAddress: any
 let factoryProxyAdminAddress: any
-let factoryAddress: any
+let factoryAddress: any */
 
 export function initializeClients(): [
     Client,
