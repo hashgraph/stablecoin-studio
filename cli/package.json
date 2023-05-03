@@ -59,7 +59,7 @@
     "commander": "^10.0.0",
     "figlet-promised": "^1.0.0",
     "fs-extra": "^11.1.0",
-    "@hashgraph-dev/stablecoin-npm-sdk": "^1.2.0",
+    "@hashgraph-dev/stablecoin-npm-sdk": "file:../sdk",
     "inquirer": "^8.0.0",
     "js-yaml": "^4.1.0",
     "lodash": "^4.17.21",
