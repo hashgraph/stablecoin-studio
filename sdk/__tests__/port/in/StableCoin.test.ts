@@ -43,6 +43,7 @@ import {
 	FreezeAccountRequest,
 	CreateRequest,
 	RescueRequest,
+	RescueHBARRequest,
 	IsAccountAssociatedTokenRequest,
 	InitializationRequest,
 	KYCRequest,
@@ -424,6 +425,43 @@ describe('🧪 Stablecoin test', () => {
 
 		await StableCoin.rescue(
 			new RescueRequest({
+				amount: rescueAmount.toString(),
+				tokenId: stableCoin?.tokenId!.toString(),
+			}),
+		);
+
+		await delay();
+
+		const finalAmount = await StableCoin.getBalanceOf(
+			new GetAccountBalanceRequest({
+				tokenId: stableCoin?.tokenId!.toString(),
+				targetId: stableCoin?.treasury!.toString(),
+			}),
+		);
+
+		const final = initialAmount.value
+			.toBigNumber()
+			.sub(
+				new BigDecimal(rescueAmount.toString(), decimals).toBigNumber(),
+			);
+
+		expect(finalAmount.value.toBigNumber().toString()).toEqual(
+			final.toString(),
+		);
+	}
+
+	async function rescueHBAROperation(stableCoin: StableCoinViewModel) {
+		const rescueAmount = 5;
+
+		const initialAmount = await StableCoin.getBalanceOf(
+			new GetAccountBalanceRequest({
+				tokenId: stableCoin?.tokenId!.toString(),
+				targetId: stableCoin?.treasury!.toString(),
+			}),
+		);
+
+		await StableCoin.rescueHBAR(
+			new RescueHBARRequest({
 				amount: rescueAmount.toString(),
 				tokenId: stableCoin?.tokenId!.toString(),
 			}),

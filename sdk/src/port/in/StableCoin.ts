@@ -25,6 +25,7 @@ import CashInRequest from './request/CashInRequest.js';
 import GetStableCoinDetailsRequest from './request/GetStableCoinDetailsRequest.js';
 import BurnRequest from './request/BurnRequest.js';
 import RescueRequest from './request/RescueRequest.js';
+import RescueHBARRequest from './request/RescueHBARRequest.js';
 import WipeRequest from './request/WipeRequest.js';
 import AssociateTokenRequest from './request/AssociateTokenRequest.js';
 import BigDecimal from '../../domain/context/shared/BigDecimal.js';
@@ -60,6 +61,7 @@ import { TokenSupplyType } from '../../domain/context/stablecoin/TokenSupply.js'
 import Account from '../../domain/context/account/Account.js';
 import { BurnCommand } from '../../app/usecase/command/stablecoin/operations/burn/BurnCommand.js';
 import { RescueCommand } from '../../app/usecase/command/stablecoin/operations/rescue/RescueCommand.js';
+import { RescueHBARCommand } from '../../app/usecase/command/stablecoin/operations/rescueHBAR/RescueHBARCommand.js';
 import { WipeCommand } from '../../app/usecase/command/stablecoin/operations/wipe/WipeCommand.js';
 import { PauseCommand } from '../../app/usecase/command/stablecoin/operations/pause/PauseCommand.js';
 import { UnPauseCommand } from '../../app/usecase/command/stablecoin/operations/unpause/UnPauseCommand.js';
@@ -110,6 +112,7 @@ interface IStableCoinInPort {
 	cashIn(request: CashInRequest): Promise<boolean>;
 	burn(request: BurnRequest): Promise<boolean>;
 	rescue(request: RescueRequest): Promise<boolean>;
+	rescueHBAR(request: RescueHBARRequest): Promise<boolean>;
 	wipe(request: WipeRequest): Promise<boolean>;
 	associate(request: AssociateTokenRequest): Promise<boolean>;
 	getBalanceOf(request: GetAccountBalanceRequest): Promise<Balance>;
@@ -308,6 +311,18 @@ class StableCoinInPort implements IStableCoinInPort {
 		return (
 			await this.commandBus.execute(
 				new RescueCommand(amount, HederaId.from(tokenId)),
+			)
+		).payload;
+	}
+
+	@LogError
+	async rescueHBAR(request: RescueHBARRequest): Promise<boolean> {
+		const { tokenId, amount } = request;
+		handleValidation('RescueHBARRequest', request);
+
+		return (
+			await this.commandBus.execute(
+				new RescueHBARCommand(amount, HederaId.from(tokenId)),
 			)
 		).payload;
 	}

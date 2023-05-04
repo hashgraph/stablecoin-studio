@@ -35,6 +35,7 @@ import ValidationResponse from './validation/ValidationResponse.js';
 import WipeRequest from './WipeRequest.js';
 import TransfersRequest from './TransfersRequest.js';
 import RescueRequest from './RescueRequest.js';
+import RescueHBARRequest from './RescueHBARRequest.js';
 import ResetSupplierAllowanceRequest from './ResetSupplierAllowanceRequest.js';
 import IncreaseSupplierAllowanceRequest from './IncreaseSupplierAllowanceRequest.js';
 import DecreaseSupplierAllowanceRequest from './DecreaseSupplierAllowanceRequest.js';
@@ -74,6 +75,7 @@ export {
 	GetListStableCoinRequest,
 	GetStableCoinDetailsRequest,
 	RescueRequest,
+	RescueHBARRequest,
 	GrantRoleRequest,
 	GrantMultiRolesRequest,
 	GetAccountsWithRolesRequest,
