@@ -36,7 +36,7 @@ import {
     associateToken,
 } from './utils'
 
-const hederaERC20Address = '0.0.4544132'
+const hederaERC20Address = '0.0.4554098'
 export const factoryProxyAddress = '0.0.4041403'
 const factoryProxyAdminAddress = '0.0.4041401'
 const factoryAddress = '0.0.4041399'

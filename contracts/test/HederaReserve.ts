@@ -33,7 +33,7 @@ import { clientId, toEvmAddress } from '../scripts/utils'
 import { Client, ContractId } from '@hashgraph/sdk'
 import {
     ProxyAdmin__factory,
-    TransparentUpgradeableProxy__factory,
+    ITransparentUpgradeableProxy__factory,
 } from '../typechain-types'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
@@ -479,7 +479,7 @@ describe('HederaReserveProxy and HederaReserveProxyAdmin Tests', function () {
 
         // Check that proxy admin has been changed
         const _admin = await admin(
-            TransparentUpgradeableProxy__factory.abi,
+            ITransparentUpgradeableProxy__factory.abi,
             proxyAddress,
             operatorClient
         )
@@ -491,13 +491,13 @@ describe('HederaReserveProxy and HederaReserveProxyAdmin Tests', function () {
 
         // reset
         await changeAdmin(
-            TransparentUpgradeableProxy__factory.abi,
+            ITransparentUpgradeableProxy__factory.abi,
             proxyAddress,
             operatorClient,
             await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)
         )
         await changeAdmin(
-            TransparentUpgradeableProxy__factory.abi,
+            ITransparentUpgradeableProxy__factory.abi,
             proxyAddress,
             nonOperatorClient,
             proxyAdminAddress.toSolidityAddress()
