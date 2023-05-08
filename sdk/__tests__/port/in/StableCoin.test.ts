@@ -61,12 +61,13 @@ import {
 	FACTORY_ADDRESS,
 	HEDERA_ERC20_ADDRESS,
 } from '../../config.js';
-import { BigNumber } from 'ethers';
+import { MirrorNodeAdapter } from '../../../src/port/out/mirror/MirrorNodeAdapter.js';
 const decimals = 6;
 
 describe('🧪 Stablecoin test', () => {
 	let stableCoinSC: StableCoinViewModel;
 	let stableCoinHTS: StableCoinViewModel;
+
 	const delay = async (seconds = 5): Promise<void> => {
 		seconds = seconds * 1000;
 		await new Promise((r) => setTimeout(r, seconds));
@@ -223,6 +224,10 @@ describe('🧪 Stablecoin test', () => {
 		await rescueOperation(stableCoinSC);
 	}, 60_000);
 
+	it('Performs rescue HBAR SC', async () => {
+		await rescueHBAROperation(stableCoinSC);
+	}, 60_000);
+
 	it('Performs wipe SC', async () => {
 		await wipeOperation(stableCoinSC);
 	}, 60_000);
@@ -247,6 +252,10 @@ describe('🧪 Stablecoin test', () => {
 
 	it('Performs rescue HTS', async () => {
 		await rescueOperation(stableCoinHTS);
+	}, 60_000);
+
+	it('Performs rescue HBAR HTS', async () => {
+		await rescueHBAROperation(stableCoinHTS);
 	}, 60_000);
 
 	it('Performs wipe HTS', async () => {
@@ -451,13 +460,13 @@ describe('🧪 Stablecoin test', () => {
 	}
 
 	async function rescueHBAROperation(stableCoin: StableCoinViewModel) {
-		const rescueAmount = 5;
+		const mirrorNodeAdapter: MirrorNodeAdapter =
+			Injectable.resolve(MirrorNodeAdapter);
 
-		const initialAmount = await StableCoin.getBalanceOf(
-			new GetAccountBalanceRequest({
-				tokenId: stableCoin?.tokenId!.toString(),
-				targetId: stableCoin?.treasury!.toString(),
-			}),
+		const rescueAmount = 1;
+
+		const initialAmount = await mirrorNodeAdapter.getHBARBalance(
+			stableCoin?.treasury!.toString(),
 		);
 
 		await StableCoin.rescueHBAR(
@@ -469,22 +478,17 @@ describe('🧪 Stablecoin test', () => {
 
 		await delay();
 
-		const finalAmount = await StableCoin.getBalanceOf(
-			new GetAccountBalanceRequest({
-				tokenId: stableCoin?.tokenId!.toString(),
-				targetId: stableCoin?.treasury!.toString(),
-			}),
+		const finalAmount = await mirrorNodeAdapter.getHBARBalance(
+			stableCoin?.treasury!.toString(),
 		);
 
-		const final = initialAmount.value
+		const final = initialAmount
 			.toBigNumber()
 			.sub(
 				new BigDecimal(rescueAmount.toString(), decimals).toBigNumber(),
 			);
 
-		expect(finalAmount.value.toBigNumber().toString()).toEqual(
-			final.toString(),
-		);
+		expect(finalAmount.toBigNumber().toString()).toEqual(final.toString());
 	}
 
 	async function wipeOperation(stableCoin: StableCoinViewModel) {
