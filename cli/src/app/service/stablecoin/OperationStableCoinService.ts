@@ -23,6 +23,7 @@ import {
   CashInRequest,
   WipeRequest,
   RescueRequest,
+  RescueHBARRequest,
   UpdateRequest,
   IncreaseSupplierAllowanceRequest,
   CheckSupplierLimitRequest,
@@ -53,6 +54,7 @@ import CashInStableCoinsService from './CashInStableCoinService.js';
 import WipeStableCoinService from './WipeStableCoinService.js';
 import RoleStableCoinsService from './RoleStableCoinService.js';
 import RescueStableCoinsService from './RescueStableCoinService.js';
+import RescueHBARStableCoinsService from './RescueHBARStableCoinService.js';
 import BurnStableCoinsService from './BurnStableCoinService.js';
 import DeleteStableCoinService from './DeleteStableCoinService.js';
 import PauseStableCoinService from './PauseStableCoinService.js';
@@ -425,6 +427,41 @@ export default class OperationStableCoinService extends Service {
         // Call to Rescue
         try {
           await new RescueStableCoinsService().rescueStableCoin(rescueRequest);
+        } catch (error) {
+          await utilsService.askErrorConfirmation(
+            async () => await this.operationsStableCoin(),
+            error,
+          );
+        }
+        break;
+      case language.getText('wizard.stableCoinOptions.RescueHBAR'):
+        await utilsService.cleanAndShowBanner();
+
+        utilsService.displayCurrentUserInfo(
+          configAccount,
+          this.stableCoinWithSymbol,
+        );
+
+        const rescueHBARRequest = new RescueHBARRequest({
+          tokenId: this.stableCoinId,
+          amount: '',
+        });
+
+        let rescuedHBARAmount = '';
+        await utilsService.handleValidation(
+          () => rescueHBARRequest.validate('amount'),
+          async () => {
+            rescuedHBARAmount = await utilsService.defaultSingleAsk(
+              language.getText('stablecoin.askRescueHBARAmount'),
+              '1',
+            );
+            rescueHBARRequest.amount = rescuedHBARAmount;
+          },
+        );
+
+        // Call to Rescue HBAR
+        try {
+          await new RescueHBARStableCoinsService().rescueHBARStableCoin(rescueHBARRequest);
         } catch (error) {
           await utilsService.askErrorConfirmation(
             async () => await this.operationsStableCoin(),
@@ -1386,6 +1423,10 @@ export default class OperationStableCoinService extends Service {
             await this.getAccountsWithRole(StableCoinRole.RESCUE_ROLE);
             break;
 
+          case language.getText('wizard.CheckAccountsWithRoleOptions.RescueHBAR'):
+            await this.getAccountsWithRole(StableCoinRole.RESCUE_ROLE);
+            break;
+
           case language.getText('wizard.CheckAccountsWithRoleOptions.Pause'):
             await this.getAccountsWithRole(StableCoinRole.PAUSE_ROLE);
             break;
@@ -1876,7 +1917,7 @@ export default class OperationStableCoinService extends Service {
     new GetAccountsWithRolesRequest({
       roleId: StableCoinRole.PAUSE_ROLE,
       tokenId: HederaId.from(stableCoinSC?.tokenId?.toString()) ?? HederaId.from('')
-      
+
     }),
   );*/
   private async getAccountsWithRole(role: string): Promise<void> {
@@ -2028,6 +2069,8 @@ export default class OperationStableCoinService extends Service {
           capabilities.includes(Operation.WIPE)) ||
         (option === language.getText('wizard.stableCoinOptions.Rescue') &&
           capabilities.includes(Operation.RESCUE)) ||
+        (option === language.getText('wizard.stableCoinOptions.RescueHBAR') &&
+          capabilities.includes(Operation.RESCUE)) ||
         (option === language.getText('wizard.stableCoinOptions.FreezeMgmt') &&
           this.hasFreezeKey) ||
         (option === language.getText('wizard.stableCoinOptions.KYCMgmt') &&
@@ -2103,6 +2146,8 @@ export default class OperationStableCoinService extends Service {
                 Access.HTS,
               )) ||
             (option === language.getText('wizard.stableCoinOptions.Rescue') &&
+              roles.includes(StableCoinRole.RESCUE_ROLE)) ||
+            (option === language.getText('wizard.stableCoinOptions.RescueHBAR') &&
               roles.includes(StableCoinRole.RESCUE_ROLE)) ||
             option ===
               language.getText('wizard.stableCoinOptions.RoleRefresh') ||

@@ -128,6 +128,7 @@ export const english = {
       burn: 'Choose the BURN admin account',
       wipe: 'Choose the WIPE admin account',
       rescue: 'Choose the RESCUE admin account',
+      rescueHBAR: 'Choose the RESCUE HBAR admin account',
       pause: 'Choose the PAUSE admin account',
       freeze: 'Choose the FREEZE admin account',
       delete: 'Choose the DELETE admin account',
@@ -150,6 +151,7 @@ export const english = {
     askBurnAmount: 'How many tokens do you want to burn?',
     askWipeAmount: 'How many tokens do you want to wipe?',
     askRescueAmount: 'How many tokens do you want to rescue?',
+    askRescueHBARAmount: 'How many HBAR do you want to rescue?',
     askGrantKYCToSender: 'Do you want to grant KYC to your current account?',
     askTargetAccount: 'What is the target account?',
     askAccountToBalance:
@@ -244,6 +246,7 @@ export const english = {
       Burn: 'Burn',
       Wipe: 'Wipe',
       Rescue: 'Rescue',
+      RescueHBAR: 'Rescue HBAR',
       FreezeMgmt: 'Freeze Management',
       KYCMgmt: 'KYC Management',
       FeesMgmt: 'Fees management',
@@ -297,6 +300,7 @@ export const english = {
       Burn: 'Burn',
       Wipe: 'Wipe',
       Rescue: 'Rescue',
+      RescueHBAR: 'Rescue HBAR',
       Pause: 'Pause',
       Freeze: 'Freeze',
       Delete: 'Delete',
@@ -363,6 +367,7 @@ export const english = {
     cashInCompleted: 'Cash in completed',
     burnCompleted: 'Burn completed',
     rescueCompleted: 'Rescue completed',
+    rescueHBARCompleted: 'HBAR Rescue completed',
     wipeCompleted: 'Wipe completed',
     detailsCompleted: 'Details loaded',
     balanceCompleted: 'Balance loaded',
@@ -404,6 +409,9 @@ export const english = {
   },
   rescue: {
     success: 'You have rescued ${tokens} tokens',
+  },
+  rescueHBAR: {
+    success: 'You have rescued ${hbars} HBARs',
   },
   account: {
     wrong: colors.red('Incorrect account format. Please try again.'),
