@@ -44,7 +44,6 @@ export interface Detail {
 	valueInBold?: boolean;
 	copyButton?: boolean;
 	hashScanURL?: string;
-	visible?: boolean;
 }
 
 export interface DetailsReviewProps {
@@ -179,7 +178,7 @@ const DetailsReview = ({
 		onClose: onCloseModalAction,
 	} = useDisclosure();
 
-	const { control, setValue, handleSubmit, reset, getValues } = useForm({
+	const { control, setValue, reset, getValues } = useForm({
 		mode: 'onChange',
 	});
 
@@ -265,7 +264,7 @@ const DetailsReview = ({
 		return { value: 3, label: 'Other key' };
 	};
 
-	const onSubmit = async (values: SubmitValues) => {
+	/* const onSubmit = async (values: SubmitValues) => {
 		// @ts-ignore
 		const request: UpdateRequest = {
 			tokenId: details.find((detail) => detail.label === 'Token id')?.value as string,
@@ -307,7 +306,7 @@ const DetailsReview = ({
 			setEditMode.off();
 			getStableCoinDetails && getStableCoinDetails();
 		}, 3000);
-	};
+	}; */
 
 	if (isLoading && editMode) return <AwaitingWalletSignature />;
 
@@ -425,115 +424,109 @@ const DetailsReview = ({
 				)}
 			</Flex>
 			<Box>
-				{details.map(
-					(detail: Detail, index: number, details: Detail[]) =>
-						detail.visible !== false && (
-							<Box key={`details-review-detail-${index}`}>
-								<Flex
-									data-testid={`details-review-detail-${index}`}
-									justifyContent='space-between'
-									{...contentProps}
-								>
-									<Text
-										whiteSpace={'nowrap'}
-										{...(detail.labelInBold ? textInBoldProps : commonTextProps)}
-									>
-										{detail.label}
-									</Text>
-									{editMode && fieldsCanEdit.map((field) => field.id).includes(detail.label) ? (
-										<>
-											{fieldsCanEdit.find((field) => field.id === detail.label)?.type ===
-												'text' && (
-												<InputController
-													control={control}
-													name={detail.label.toLowerCase()}
-													placeholder={detail.label}
-													containerStyle={{
-														w: '300px',
-													}}
-												/>
-											)}
-											{fieldsCanEdit.find((field) => field.id === detail.label)?.type ===
-												'number' && (
-												<InputNumberController
-													rules={{
-														validate: {
-															validation: (value: number) => {
-																const res = t('updateToken:updatingValidation.autoRenewPeriod');
-																return detail.label === t('stableCoinDetails:autoRenewPeriod') &&
-																	(value > 92 || value < 30)
-																	? res
-																	: true;
-															},
-														},
-													}}
-													control={control}
-													name={detail.label.toLowerCase()}
-													placeholder={detail.label}
-													containerStyle={{
-														w: '300px',
-													}}
-												/>
-											)}
-											{fieldsCanEdit.find((field) => field.id === detail.label)?.type ===
-												'date' && (
-												<DatePickerController
-													control={control}
-													name={detail.label.toLowerCase()}
-													placeholder={detail.label}
-													containerStyle={{
-														w: '300px',
-													}}
-													minimumDate={new Date(detail.value)}
-													maximumDate={maximumExpirationTime}
-													customHeader={false}
-													showMonthDropdown
-													showYearDropdown
-												/>
-											)}
-											{fieldsCanEdit.find((field) => field.id === detail.label)?.type === 'key' && (
-												<Stack w='300px'>
-													<KeySelector
-														control={control}
-														name={detail.label.toLowerCase()}
-														label=''
-														labelPlaceholder={detail.label}
-													/>
-												</Stack>
-											)}
-										</>
-									) : (
-										<>
-											{typeof detail.value === 'string' && detail.value.includes('GMT') ? (
-												<Text {...commonTextProps}>{new Date(detail.value).toDateString()}</Text>
-											) : typeof detail.value === 'string' || typeof detail.value === 'number' ? (
-												<HStack {...(detail.valueInBold ? textInBoldProps : commonTextProps)}>
-													<Text>{detail.value.toString()}</Text>
-													{detail.copyButton && (
-														<TooltipCopy valueToCopy={detail.value.toString() ?? ''}>
-															<Icon name='Copy' />
-														</TooltipCopy>
-													)}
-													{detail.hashScanURL && (
-														<Link isExternal={true} href={`${detail.hashScanURL}`}>
-															<Icon name='ArrowSquareOut' />
-														</Link>
-													)}
-												</HStack>
-											) : 'toString' in detail.value && 'value' in detail.value ? (
-												detail.value.toString()
-											) : (
-												detail.value
-											)}
-										</>
+				{details.map((detail: Detail, index: number, details: Detail[]) => (
+					<Box key={`details-review-detail-${index}`}>
+						<Flex
+							data-testid={`details-review-detail-${index}`}
+							justifyContent='space-between'
+							{...contentProps}
+						>
+							<Text
+								whiteSpace={'nowrap'}
+								{...(detail.labelInBold ? textInBoldProps : commonTextProps)}
+							>
+								{detail.label}
+							</Text>
+							{editMode && fieldsCanEdit.map((field) => field.id).includes(detail.label) ? (
+								<>
+									{fieldsCanEdit.find((field) => field.id === detail.label)?.type === 'text' && (
+										<InputController
+											control={control}
+											name={detail.label.toLowerCase()}
+											placeholder={detail.label}
+											containerStyle={{
+												w: '300px',
+											}}
+										/>
 									)}
-								</Flex>
-								{divider && details.length !== index + 1 && (
-									<Divider title='divider' mt='13px' mb='13px' />
-								)}
-							</Box>
-						),
-				)}
+									{fieldsCanEdit.find((field) => field.id === detail.label)?.type === 'number' && (
+										<InputNumberController
+											rules={{
+												validate: {
+													validation: (value: number) => {
+														const res = t('updateToken:updatingValidation.autoRenewPeriod');
+														return detail.label === t('stableCoinDetails:autoRenewPeriod') &&
+															(value > 92 || value < 30)
+															? res
+															: true;
+													},
+												},
+											}}
+											control={control}
+											name={detail.label.toLowerCase()}
+											placeholder={detail.label}
+											containerStyle={{
+												w: '300px',
+											}}
+										/>
+									)}
+									{fieldsCanEdit.find((field) => field.id === detail.label)?.type === 'date' && (
+										<DatePickerController
+											control={control}
+											name={detail.label.toLowerCase()}
+											placeholder={detail.label}
+											containerStyle={{
+												w: '300px',
+											}}
+											minimumDate={new Date(detail.value)}
+											maximumDate={maximumExpirationTime}
+											customHeader={false}
+											showMonthDropdown
+											showYearDropdown
+										/>
+									)}
+									{fieldsCanEdit.find((field) => field.id === detail.label)?.type === 'key' && (
+										<Stack w='300px'>
+											<KeySelector
+												control={control}
+												name={detail.label.toLowerCase()}
+												label=''
+												labelPlaceholder={detail.label}
+											/>
+										</Stack>
+									)}
+								</>
+							) : (
+								<>
+									{typeof detail.value === 'string' && detail.value.includes('GMT') ? (
+										<Text {...commonTextProps}>{new Date(detail.value).toDateString()}</Text>
+									) : typeof detail.value === 'string' || typeof detail.value === 'number' ? (
+										<HStack {...(detail.valueInBold ? textInBoldProps : commonTextProps)}>
+											<Text>{detail.value.toString()}</Text>
+											{detail.copyButton && (
+												<TooltipCopy valueToCopy={detail.value.toString() ?? ''}>
+													<Icon name='Copy' />
+												</TooltipCopy>
+											)}
+											{detail.hashScanURL && (
+												<Link isExternal={true} href={`${detail.hashScanURL}`}>
+													<Icon name='ArrowSquareOut' />
+												</Link>
+											)}
+										</HStack>
+									) : 'toString' in detail.value && 'value' in detail.value ? (
+										detail.value.toString()
+									) : (
+										detail.value
+									)}
+								</>
+							)}
+						</Flex>
+						{divider && details.length !== index + 1 && (
+							<Divider title='divider' mt='13px' mb='13px' />
+						)}
+					</Box>
+				))}
 				{editMode && (
 					<HStack mt={10} justify={'flex-end'}>
 						<Button onClick={handleEditMode} variant='secondary'>
@@ -563,26 +556,22 @@ const DetailsReview = ({
 							{
 								label: t('stableCoinDetails:name'),
 								value: getValues().name,
-								visible: getValues().name !== selectedStableCoin!.name,
+								valueInBold: true,
 							},
 							{
 								label: t('stableCoinDetails:symbol'),
 								value: getValues().symbol,
-								visible: getValues().symbol !== selectedStableCoin!.symbol,
+								valueInBold: true,
 							},
 							{
 								label: t('stableCoinDetails:autoRenewPeriod'),
 								value: getValues()['autorenew period'],
-								visible:
-									daysToSeconds(getValues()['autorenew period']) !==
-									selectedStableCoin!.autoRenewPeriod?.toString(),
+								valueInBold: true,
 							},
 							{
 								label: t('stableCoinDetails:expirationTime'),
 								value: new Date(Date.parse(getValues()['expiration time'])).toString(),
-								visible:
-									Date.parse(getValues()['expiration time']) !==
-									Date.parse(currentExpirationTime!.value),
+								valueInBold: true,
 							},
 							{
 								label: t('stableCoinDetails:kycKey'),

@@ -50,13 +50,11 @@ export class UpdateCommandHandler implements ICommandHandler<UpdateCommand> {
 			pauseKey,
 			wipeKey,
 		} = command;
-
 		const account = this.accountService.getCurrentAccount();
 		const capabilities = await this.stableCoinService.getCapabilities(
 			account,
 			tokenId,
 		);
-
 		const handler = this.transactionService.getHandler();
 		const res = await handler.update(
 			capabilities,

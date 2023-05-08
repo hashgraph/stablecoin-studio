@@ -1186,7 +1186,6 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				gas,
 				value,
 			);
-
 		return await this.signAndSendTransaction(
 			transaction,
 			trxType,

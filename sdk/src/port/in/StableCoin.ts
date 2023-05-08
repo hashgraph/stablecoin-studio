@@ -590,9 +590,7 @@ class StableCoinInPort implements IStableCoinInPort {
 			pauseKey,
 			wipeKey,
 		} = request;
-
 		handleValidation('UpdateRequest', request);
-
 		return (
 			await this.commandBus.execute(
 				new UpdateCommand(
