@@ -264,50 +264,6 @@ const DetailsReview = ({
 		return { value: 3, label: 'Other key' };
 	};
 
-	/* const onSubmit = async (values: SubmitValues) => {
-		// @ts-ignore
-		const request: UpdateRequest = {
-			tokenId: details.find((detail) => detail.label === 'Token id')?.value as string,
-			name: values.name,
-			symbol: values.symbol,
-			autoRenewPeriod: daysToSeconds(values['autorenew period']),
-			expirationTimestamp: Date.parse(values['expiration time']) * 1000000 + '',
-		};
-		if (values['freeze key']) {
-			request.freezeKey = formatKey(
-				values['freeze key'].label,
-				'freeze key',
-				accountInfo,
-				getValues,
-			);
-		}
-
-		if (values['wipe key']) {
-			request.wipeKey = formatKey(values['wipe key'].label, 'wipe key', accountInfo, getValues);
-		}
-		if (values['pause key']) {
-			request.pauseKey = formatKey(values['pause key'].label, 'pause key', accountInfo, getValues);
-		}
-		if (values['kyc key']) {
-			request.kycKey = formatKey(values['kyc key'].label, 'kyc key', accountInfo, getValues);
-		}
-		if (values['fee schedule key']) {
-			request.feeScheduleKey = formatKey(
-				values['fee schedule key'].label,
-				'fee schedule key',
-				accountInfo,
-				getValues,
-			);
-		}
-		request.validate = () => [];
-
-		await SDKService.updateStableCoin(request);
-		setTimeout(() => {
-			setEditMode.off();
-			getStableCoinDetails && getStableCoinDetails();
-		}, 3000);
-	}; */
-
 	if (isLoading && editMode) return <AwaitingWalletSignature />;
 
 	const { t } = useTranslation(['global', 'stableCoinDetails', 'updateToken']);
