@@ -235,7 +235,11 @@ const StableCoinDetails = () => {
 							details={details}
 							getStableCoinDetails={getStableCoinDetails}
 							isLoading={isLoading}
-							editable={roles.includes(StableCoinRole.DEFAULT_ADMIN_ROLE)}
+							editable={
+								roles.includes(StableCoinRole.DEFAULT_ADMIN_ROLE) &&
+								!selectedStableCoin.paused &&
+								!selectedStableCoin.deleted
+							}
 						/>
 					</Box>
 				</Flex>
