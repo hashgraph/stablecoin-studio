@@ -23,11 +23,14 @@
 - **[License](#License)**<br>
 
 # Overview
+
 The Web uses the API exposed by the SDK to create, manage and operate Stable Coins. It is meant as a "demo tool" to showcase the project's functionalities.
 It is a user-friendly Front End application based on React for technical and non-technical people to use (as opposed to the CLI which is meant for more technical people).
-The web is compatible with Hashpack and Metamask and although both wallets can be paired at the same time, only one will actually be "in scope" (used to sign the transactions). Users will be free to switch from one wallet to the other at any time they want.
+The web application is compatible with Hashpack and Metamask and although both wallets can be paired at the same time, only one will actually be "in scope" (used to sign the transactions). Users will be free to switch from one wallet to the other at any time they want.
 
 # Installation
+
+To install from NPM
 
 ```shell
 npm install @hashgraph-dev/stablecoin-dapp
@@ -35,7 +38,7 @@ npm install @hashgraph-dev/stablecoin-dapp
 
 # Build
 
-You must have pre-installed
+You will need the following supporting tools/frameworks installed
 
 - [Node.js](https://nodejs.org/) `>= v16.13` and `< v17`
 - [npm](https://www.npmjs.com/)
@@ -55,14 +58,16 @@ Finally, in order to build the project, go to the root of the WEB project worksp
 
 ## ENV vars
 
+Copy the provided `.env.sample` to `.env` and edit as necessary.
+
 The ENV file contains the following parameters:
 
-- **REACT_APP_LOG_LEVEL**: defines the log level the application is going to apply to filter the logs been displayed in the browser's console. The default value is "TRACE".
-- **REACT_APP_FACTORIES**: This var is required if you want to create a new stablecoin. The var must be a JSON array with a factory id in Hedera format `0.0.XXXXX` per environment.
+- **REACT_APP_LOG_LEVEL**: defines the log level the application is going to apply to filter the logs been displayed in the browser's console. The default value is "ERROR".
+- **REACT_APP_FACTORIES**: This var is required if you want to create a new stable coin. The var must be a JSON array with a factory id in Hedera format `0.0.XXXXX` per environment.
 ```
-'[{"Environment":"mainnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.1234567"},{"Environment":"testnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.3950554"},{"Environment":"previewnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.239703"}]'
+REACT_APP_FACTORIES='[{"Environment":"mainnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.1234567"},{"Environment":"testnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.3950554"},{"Environment":"previewnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.239703"}]'
 ```
-If the env var is not setted when you click in "Create a new Stablecoin" will show an alert.
+If the env var is not set when you click in "Create a new Stable coin" will show an alert.
 ![image](https://user-images.githubusercontent.com/114951681/229088627-369506c3-9c28-435c-9e44-d8908f8a15ab.png)
 You can use our [deployed factories](https://github.com/hashgraph/hedera-accelerator-stablecoin#deploying-the-stable-coin-factories).
 - **GENERATE_SOURCEMAP**: This is a proprietary Create React App configuration.You can read more information in its documentation.[Create React App documentation](https://create-react-app.dev/docs/advanced-configuration/)
@@ -95,7 +100,7 @@ The Wallets currently supported by the project are [Hashpack](https://www.hashpa
 
 ### Metamask configuration
 
-In order to use metamask you must first configure it to interact with an Hedera [JSON-RPC relay node](https://docs.hedera.com/hedera/core-concepts/smart-contracts/json-rpc-relay) because Hedera consensus nodes are not JSON-RPC compatible.
+In order to use metamask you must first configure it to interact with a Hedera relay [JSON-RPC relay node](https://docs.hedera.com/hedera/core-concepts/smart-contracts/json-rpc-relay) because Hedera consensus nodes are not JSON-RPC compatible.
 
 Add a new network with the following information : 
 - **Network Name**: HederaTestNet _(or any other name you wish)_
@@ -117,13 +122,13 @@ If you select a non-Hedera network
 If you select an account that does not exist in the Hedera network
 
 
-> In order to use the WEB correctly it is necessary to have at least one of those two wallets already installed in your browser. You can nevertheless have both and switch from one to the other.
+> In order to use the web application correctly it is necessary to have at least one of those two wallets already installed in your browser. You can nevertheless have both and switch from one to the other.
 
 ## Web Flow
 
 ### Create stable coins
 
-In order to create a new stable coin using the WEB, you must click on the "Create Coin" button at the top of the page then fill-in all the required information :
+In order to create a new stable coin using the web application, you must click on the "Create Coin" button at the top of the page then fill-in all the required information :
 
 ![Alt text](docs/images/create.png?raw=true 'create stable coin')
 
@@ -136,7 +141,7 @@ Basic information about the Stable coin.
 
 **Optional details**
 
-Stable coin supply and accuracy definition (inital supply, max supply, decimals)
+Stable coin supply and accuracy definition (initial supply, max supply, decimals)
 
 ![image](https://user-images.githubusercontent.com/114951681/229089582-eca58c48-3315-4a8d-aa3a-cc71a99aacf1.png)
 
@@ -171,11 +176,11 @@ Once the stable coin is created it will be added to the drop-down list of coins 
 
 ### Import stable coins
 
-In order to import a stable coin using the WEB, you must click on the "Add coin" button at the top of the page (next to the create coin button) 
+In order to import an existing stable coin using the web application, you must click on the "Add coin" button at the top of the page (next to the create coin button) 
 
 ![Alt text](docs/images/import.png?raw=true 'import stable coin')
 
-then fill-in all the required information. You can import any stable coin you want and it will be added to the drop-down list of coins you have access to.
+then fill-in all the required information. You can import any stable coin you want, and it will be added to the drop-down list of coins you have access to.
 
 ![image](https://user-images.githubusercontent.com/114951681/210238673-895d1bbc-fce1-483d-af1d-6f45e522401d.png)
 
@@ -184,7 +189,6 @@ then fill-in all the required information. You can import any stable coin you wa
 ### Operate stable coins
 
 ![image](https://user-images.githubusercontent.com/114951681/229090412-715c3afb-35fa-4933-8ca9-71a7af0bd456.png)
-
 
 The operations linked to the capabilities (roles) assigned to your account for the selected stable coin will be available.
 
@@ -206,11 +210,11 @@ If your account has the stable coin fee role, you will also be allowed to manage
 
 If your stable coin is associated to a proof of reserve (PoR), you can update the PoR contract address at anytime from here.
 
-> Warning: updating the PoR contract address can have a serious impact on your stable coin cash-in functionality since it will start refering to a completely different contract to check the Reserve. If for some reason the new contract's Reserve is less than the previous one, you might not be able to mint any new tokens.
+> Warning: updating the PoR contract address can have a serious impact on your stable coin cash-in functionality since it will start referring to a completely different contract to check the Reserve. If for some reason the new contract's reserve is less than the previous one, you might not be able to mint any new tokens.
 
-If (and only if) the PoR contract attached to your stable coin is the PoR demo implementation included in this project you will also have the possibility to change its Reserve amount from here. You will only need to use the PoR admin account (the account used to deploy the stable coin).
+If (and only if) the PoR contract attached to your stable coin is the PoR demo implementation included in this project you will also have the possibility to change its reserve amount from here. You will only need to use the PoR admin account (the account used to deploy the stable coin).
 
-> This is the main reason why the PoR demo implementation included in this project must be used only for demo purposes, the Reseve amount can be changed at any time without any check or control whatsoever...
+> This is the main reason why the PoR demo implementation included in this project must be used only for demo purposes, the reserve amount can be changed at any time without any check or control whatsoever...
 
 
 # Testing
@@ -235,4 +239,4 @@ participating, you are expected to uphold this code of conduct. Please report un
 to [oss@hedera.com](mailto:oss@hedera.com).
 
 # License
-[Apache License 2.0](LICENSE)
+[Apache License 2.0](../LICENSE)

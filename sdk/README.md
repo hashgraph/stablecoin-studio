@@ -11,7 +11,7 @@
 # Table of contents
 - [Overview](#overview)
 - [Installation](#installation)
-	- [Pre-requirements](#pre-requirements)
+	- [Prerequisites](#Prerequisites)
 	- [Steps](#steps)
 		- [For projects (WIP - when published)](#for-projects-wip---when-published)
 		- [For development](#for-development)
@@ -24,7 +24,7 @@
 - [Usage](#usage)
 	- [StableCoin](#stablecoin)
 		- [Create](#create)
-		- [GetInfo](#getinfo)
+		- [GetInfo](#GetInfo)
 		- [GetBalanceOf](#getbalanceof)
 		- [Associate](#associate)
 		- [isAccountAssociated](#isaccountassociated)
@@ -51,7 +51,7 @@
 	- [Account](#account)
 		- [GetPublicKey](#getpublickey)
 		- [ListStableCoins](#liststablecoins)
-		- [GetInfo](#getinfo-1)
+		- [GetInfo](#getInfo)
 	- [Role](#role)
 		- [HasRole](#hasrole)
 		- [GrantRole](#grantrole)
@@ -84,19 +84,19 @@
 
 This project provides an SDK to manage hedera tokens throughout their lifecycle.
 
-This project based on hybrid tokens, that is, it uses Smart Contracts that communicate with Hedera to interact with them. It provides functionalities for use in server mode, as well as for web integration (currently supporting HashPack and Metamask).
+This project is based on hybrid tokens, that is, it uses Smart Contracts that communicate with Hedera to interact with native tokens. It provides functionalities for use in server mode, as well as for web integration (currently supporting HashPack and Metamask).
 
 For more information about the deployed contracts you can consult them in this project - [Contracts link](../contracts)
 
-If you want to see server side implementation you can see it in this project - [Standalone](../cli)
+If you want to see a server side implementation you can see it in this project - [Standalone](../cli)
 
 If you want to see an example of a React web app you can see it in this project - [Web](../web)
 
 # Installation
 
-### Pre-requirements
+### Prerequisites
 
-You must have installed
+You will need the following supporting tools/frameworks installed
 
 - [node (version >16.17)](https://nodejs.org/en/about/)
 - [npm](https://www.npmjs.com/)
@@ -105,7 +105,7 @@ You must have installed
 
 #### **For projects (WIP - when published)**
 
-1. Run `npm install @hashgraph-dev/stablecoin-npm-sdk`. To install the dependency.
+1. Run `npm install @hashgraph-dev/stablecoin-npm-sdk` to install the dependency from NPM.
 2. Import and use the SDK.
 
 #### **For development**
@@ -123,12 +123,10 @@ To use this project in development mode you must follow the steps indicated in t
 7. Run `npm run build` to build the SDK.
 8. Import and use the SDK. Or use one of the example projects under `/examples`
 
-
-
 # Quick Start
 ## Initialization
 
-Before using the SDK we need to execute the `Network.init` function and specifiy the network:
+Before using the SDK we need to execute the `Network.init` function and specify network details:
 
 Example
 ```Typescript
@@ -144,7 +142,7 @@ await Network.init(
 );
 ```  
 
-In the configuration, you can also specify the addresses that will be invoked when creating a stable coin.
+In the configuration, you can also specify the contract addresses that will be invoked when creating a stable coin.
 ```Typescript
 const init = await Network.init(
 	new InitializationRequest({
@@ -157,7 +155,7 @@ const init = await Network.init(
 );
 ```
 ## Connect SDK
-The next step would be to connect to the network. Currently 3 types of connections are offered: Client (an Hedera account configured in an application configuration file), Metamask and HashPack. These 3 connection types are in the SupportedWallets enum.
+The next step would be to connect to the network. Currently, 3 types of connections are offered: Client (a Hedera account configured in an application configuration file), Metamask and HashPack. These 3 connection types are in the SupportedWallets enum.
 
 ```Typescript
 export enum SupportedWallets {
@@ -166,7 +164,7 @@ export enum SupportedWallets {
 	CLIENT = 'Client',
 }
 ```
-In addition to this we have to specify the account id and private key for the Client, while HashPack and Metamask do not require an account in the request. 
+In addition to this we have to specify the accountId and private key for the Client, while HashPack and Metamask do not require an account in the request. 
 
 Below are examples of each of them.
 
@@ -186,7 +184,7 @@ await Network.connect(
         wallet: SupportedWallets.CLIENT,
       }),
     );
-  }
+}
 ```
 HashPack Example
 
@@ -209,8 +207,9 @@ await Network.connect(
         wallet: SupportedWallets.METAMASK,
       }),
     );
-  }
+}
 ```
+
 ## Wallet Events
 Wallets fire the following events, see [Event.register](#Register) for more info. 
 
@@ -226,17 +225,19 @@ export enum WalletEvents {
 ```
 
 # Usage
-Next, all operations offered by this SDK, grouped by the files of the input ports in which they are located, will be explained.
+
+This section explains all the operations offered by this SDK.
 
 ## About Operations Execution
-Before explaining all operations exposed by the SDK, is important to know something about the way some of this operations are going to be performed.
-When creating a stable coin, a set of keys (supply key, wipe key, pause key, etc) must be provided in order to create the stable coin token. Each of theses keys will control, first of all, if the operation related with the key can be performed or not (if the token wipe key is not set, the wipe operation can not be performed), but, in the case the key is provided, depending on its value the operation could be performed through the stable coin smart contracts or through the Hedera SDK:
+
+Before explaining all operations exposed by the SDK, is important to understand how some of these operations are going to be performed.
+When creating a stable coin, a set of keys (supply key, wipe key, pause key, etc...) must be provided in order to create the stable coin token. Each of these keys will control, first of all, if the operation related with the key can be performed or not (if the token wipe key is not set, the wipe operation can not be performed), but, in the event a key is provided, depending on its value the operation could be performed through the stable coin smart contracts or through the Hedera SDK:
 
 1. If the token key corresponds to a Hedera account public key, the operation can only be performed by the Hedera account owning this public key, and only through the Hedera SDK.
-2. If the token key corresponds to the stable coin smart contract administrator key, the operation can only be performed through the smart contract, so whoever calls the smart contract could perform the operation. To prevent anyone from performing certain operations roles are used. When the needed of a role is indicated in some operations description, this is only when the related key of the stable coin token is configured to be the smart contract admin key.
+2. If the token key corresponds to the stable coin smart contract administrator key, the operation can only be performed through the smart contract, so whoever calls the smart contract can perform the operation. To prevent anyone from performing certain operations roles are used. When the need for a role is indicated in an operation's description, this is only when the related key of the stable coin token is configured to be the smart contract admin key.
 
 ## StableCoin
-The following operations represents most of the operations that can be performed using a stable coin. Some of then can be perfomed through smart contracts or through the Hedera SDK depending on the token configuration explained above.
+The following operations represent most of the operations that can be performed using a stable coin. Some of them can be performed through smart contracts or through the Hedera SDK depending on the token configuration explained above.
 
 ### Create
 Creates a new stable coin. You must use Network.connect first with a SupportedWallet.
@@ -273,7 +274,7 @@ Creates a new stable coin. You must use Network.connect first with a SupportedWa
 **Example:**
 ### Create a simple stable coin, with all keys set to the Smart Contracts
 
-This sets the smart contracts as the ones that will manage the features, this enables the usage of roles so multiple accounts can have the same role.
+This delegates access to features to a smart contract, this enables the usage of roles so multiple accounts can have the same role.
 
 ```Typescript
 	import {
@@ -302,7 +303,7 @@ This sets the smart contracts as the ones that will manage the features, this en
 
 ### Create a simple stable coin, with all keys set to the admin's public key
 
-By requesting the public key of the account, we can set the stable coin's keys to be the admin's enabling all features through the Hedera Token Service. Keep in mind that multiple users per role is not available when using public keys.
+By specifying the public key of an account, we can set the stable coin's keys to be the admin's enabling all features through the Hedera Token Service. Keep in mind that multiple users per role is not available when using public keys.
 
 ```Typescript
 	import {
@@ -453,7 +454,7 @@ Checks if an account is associated with a stable coin.
 
 
 ### CashIn
-Mints tokens and then transfers to to an account. The operating account must have the supplier role.
+Mints tokens and then transfers to an account. The operating account must have the supplier role.
 
 **Spec:**
 
@@ -496,7 +497,7 @@ Burns an amount of tokens existing in the treasury account. The operating accoun
 
 
 ### Rescue
-Transfers an amount of tokens existing in the treasury account to the account that invokes de operation. The operating account must have the rescue role.
+Transfers an amount of tokens existing in the treasury account to the account that invokes the operation. The operating account must have the rescue role.
 
 **Spec:**
 
@@ -577,7 +578,7 @@ Unpauses a stable coin. If the stable coin is not paused it will throw an except
 ```
 
 ### Freeze
-Freezes transfers of a stable coin for an account. The operating account must have the freeze role.
+Prevents transfer of a stable coin to/from an account. The operating account must have the freeze role.
 
 **Spec:**
 
@@ -597,7 +598,7 @@ Freezes transfers of a stable coin for an account. The operating account must ha
 ```
 
 ### Unfreeze
-Unfreezes transfers of a stable coin for an account. The operating account must have the freeze role.
+Enables transfer of a stable coin to/from an account. The operating account must have the freeze role.
 
 **Spec:**
 
@@ -697,7 +698,6 @@ Gets the contract reserve address.
 	);	
 ```
 
-
 ### Update Reserve Address
 Updates the contract reserve address.
 
@@ -726,7 +726,6 @@ Grants KYC status to an account for a specific stable coin.
 
 ```Typescript
 	StableCoin.updateReserveAddress = (request: UpdateReserveAddressRequest,): Promise<boolean>;
-
 ```
 
 **Example:**
@@ -762,9 +761,9 @@ Revokes KYC status to an account for a specific stable coin.
 ```
 
 ### Capabilities
-Get capabilities for an account on a stable coin. Capabilties have a reference of all the details of the stable coin querying to, the list of capabilities and the account the capabilities belong to. Each capability determines the type of operation that can be performed (cash in, burn, wipe, etc) and on wether it should be done onto the smart contract for the stable coin (proxyAddress in the `coin: StableCoin` attribute) or through the Hedera Token Service. 
+Get capabilities for an account for a stable coin. Each capability determines the type of operation that can be performed (cash in, burn, wipe, etc...) and on whether it should be done via the smart contract for the stable coin (proxyAddress in the `coin: StableCoin` attribute) or through the Hedera Token Service. 
 
-See the spec below for all the atributes you can get from the request.
+See the spec below for all the attributes you can get from the request.
 
 **Spec:**
 
@@ -901,7 +900,7 @@ Disconnects the previously established connection.
 ```
 
 ### SetNetwork
-Configures an Hedera network, setting some properties like environment, mirror nodes, consensus nodes and a RPC node.
+Configures a Hedera network, setting some properties like environment, mirror nodes, consensus nodes and an RPC relay.
 
 **Spec:**
 	
@@ -1019,7 +1018,7 @@ Gets a list of stable coins associated with an account.
 	);
 ```
 
-### GetInfo
+### getInfo
 Gets an account information.
 
 **Spec:**
@@ -1040,10 +1039,10 @@ Gets an account information.
 
 
 ## Role
-Roles allow Hedera accounts to perform certain operations on a stable coin through the smart contracts, so operations that can be performed through Hedera SDK, due to the token configuration, do not need any role to be performed . The roles management, to which the following operations belong, can only be performed by a Hedera account having the admin role.
+Roles allow Hedera accounts to perform certain operations on a stable coin through the smart contracts. Operations that can be performed through Hedera SDK, due to the token configuration, do not need any role to be assigned. The management of roles can only be performed by a Hedera account having the admin role.
 
 ### HasRole
-Checks if an account has a certain role for a stable coin.
+Checks if an account has a specific role for a stable coin.
 
 **Spec:**
 		
@@ -1064,7 +1063,7 @@ Checks if an account has a certain role for a stable coin.
 ```
 
 ### GrantRole
-Grants a role to an account for a certain stable coin.
+Grants a role to an account for a stable coin.
 
 **Spec:**
 		
@@ -1084,7 +1083,7 @@ Grants a role to an account for a certain stable coin.
 	);
 ```
 ### GrantMultiRoles
-Grants multiple roles to multiple accounts for a certain stable coin.
+Grants multiple roles to multiple accounts for a stable coin.
 
 **Spec:**
 		
@@ -1106,7 +1105,7 @@ Grants multiple roles to multiple accounts for a certain stable coin.
 ```
 
 ### RevokeRole
-Revokes a role of an account for a certain stable coin.
+Revokes a role of an account for a stable coin.
 
 **Spec:**	
 	
@@ -1126,7 +1125,7 @@ Revokes a role of an account for a certain stable coin.
 	);
 ```
 ### RevokeMultiRole
-Revokes multiple roles from multiple accounts for a certain stable coin.
+Revokes multiple roles from multiple accounts for a stable coin.
 
 **Spec:**	
 	
@@ -1147,7 +1146,7 @@ Revokes multiple roles from multiple accounts for a certain stable coin.
 ```
 
 ### GetRoles
-Gets a list of all roles a Hedera account has for a certain stable coin.
+Gets a list of all roles a Hedera account has for a stable coin.
 
 **Spec:**	
 	
@@ -1167,7 +1166,7 @@ Gets a list of all roles a Hedera account has for a certain stable coin.
 ```
 
 ### GetAllowance
-Gets the supplier allowance (amount of tokens that can be minted by an account) for a certain account and a stable coin.
+Gets the supplier allowance (amount of tokens that can be minted by an account) for an account and a stable coin.
 
 **Spec:**	
 	
@@ -1188,7 +1187,7 @@ Gets the supplier allowance (amount of tokens that can be minted by an account) 
 ```
 
 ### ResetAllowance
-Sets the supplier allowance to 0 for a certain account and a stable coin.
+Sets the supplier allowance to 0 for an account and a stable coin.
 
 **Spec:**
 	
@@ -1209,7 +1208,7 @@ Sets the supplier allowance to 0 for a certain account and a stable coin.
 ```
 
 ### IncreaseAllowance
-Increases the supplier allowance amount for a certain account and a stable coin.
+Increases the supplier allowance amount for an account and a stable coin.
 
 **Spec:**
 	
@@ -1230,7 +1229,7 @@ Increases the supplier allowance amount for a certain account and a stable coin.
 ```
  
 ### DecreaseAllowance
-Decreases the supplier allowance amount for a certain account and a stable coin.
+Decreases the supplier allowance amount for an account and a stable coin.
 
 **Spec:**	
 	
@@ -1251,7 +1250,7 @@ Decreases the supplier allowance amount for a certain account and a stable coin.
 ```
 
 ### IsLimited
-Checks if a certain account has a limited supplier allowance for a stable coin or not.
+Checks if an account has a limited supplier allowance for a stable coin or not.
 
 **Spec:**
 	
@@ -1272,7 +1271,7 @@ Checks if a certain account has a limited supplier allowance for a stable coin o
 ```
 
 ### IsUnlimited
-Checks if a certain account has an unlimited supplier allowance for a stable coin or not.
+Checks if an account has an unlimited supplier allowance for a stable coin or not.
 
 **Spec:**
 		
@@ -1293,11 +1292,11 @@ Checks if a certain account has an unlimited supplier allowance for a stable coi
 ```    
 
 ## Reserve Data Feed
-The following operations are always performed through smart contracts calls, since reserve data feed is a contract which can be deployed alongside the stable coin.
-Getting the reserve amount can be performed by anyone while updating this amount can only be performed by the previously commented smart contract administrator.
+The following operations are always performed through smart contracts calls, since the reserve data feed is a contract which can be deployed alongside the stable coin.
+Getting the reserve amount can be performed by anyone while updating this amount can only be performed by accounts with the appropriate role.
 
 ### Get Reserve Amount
-Gets the reserve amount for certain stable coin.
+Gets the reserve amount for a stable coin.
 
 **Spec:**
 
@@ -1317,7 +1316,7 @@ Gets the reserve amount for certain stable coin.
 ```
 
 ### Update Reserve Amount
-Updates the reserve amount for certain stable coin.
+Updates the reserve amount for a stable coin.
 
 **Spec:**
 
@@ -1339,7 +1338,7 @@ Updates the reserve amount for certain stable coin.
 The following operations are always performed through smart contracts calls.
 
 ### Get HederaERC20 List
-Get a list of hedera ERC20 addressess stored in the factory.
+Get a list of hedera ERC20 addresses stored in the factory.
 
 **Spec:**
 
@@ -1353,8 +1352,8 @@ Get a list of hedera ERC20 addressess stored in the factory.
 		);
 ```
 
-### Get HederaERC20 byindex
-Get a HederaERC20 address stored in the factory finde by index.
+### Get HederaERC20 by index
+Get a HederaERC20 address stored in the factory by index.
 
 **Spec:**
 
@@ -1370,7 +1369,7 @@ Get a HederaERC20 address stored in the factory finde by index.
 ```
 
 ## Common
-The SDK class is exported. This static class allows to set the log level and application metadata at any point in your code, just import it and change the values.
+The SDK class is exported. This static class enables the log level and application metadata to be set at any point in your code, just import it and change the values.
 
 We use [winston](https://github.com/winstonjs/winston) under the hood for logging, so all transports are exported from the SDK under `LoggerTransports` for you to use. Refer to the [documentation](https://github.com/winstonjs/winston/blob/master/docs/transports.md) for more information on what transports are available.
 
@@ -1387,7 +1386,7 @@ We use [winston](https://github.com/winstonjs/winston) under the hood for loggin
 	};
 	
 	SDK.log = {
-		level: 'ERROR', // or 'TRACE' | 'INFO'
+		level: 'ERROR', // or 'WARN', 'INFO', 'HTTP', 'VERBOSE', 'DEBUG', 'SILLY'
 		transports: new Console(),
 	};
 ```
@@ -1400,7 +1399,7 @@ The project uses Jest for testing. To execute the tests, simply run `npm run tes
 
 # Typescript
 
-Typescript 4.7 or higher is highly reccomended to work with the SDK.
+Typescript 4.7 or higher is highly recommended to work with the SDK.
 
 ## Tsconfig
 
