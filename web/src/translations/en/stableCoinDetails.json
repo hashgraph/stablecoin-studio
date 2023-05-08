@@ -29,8 +29,5 @@
 	"htsAccount": "HTS account",
 	"proxyContract": "Proxy contract",
 	"reserveAddress": "Reserve Address",
-	"reserveAmount": "Reserve amount",
-	"updatingValidation": {
-		"autoRenewPeriod": "Value must be greater than 29 and less than 93"
-	}
+	"reserveAmount": "Reserve amount"
 }
