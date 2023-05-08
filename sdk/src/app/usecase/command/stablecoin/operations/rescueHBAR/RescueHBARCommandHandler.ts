@@ -24,7 +24,6 @@ import { ICommandHandler } from '../../../../../../core/command/CommandHandler.j
 import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
 import BigDecimal from '../../../../../../domain/context/shared/BigDecimal.js';
-import { StableCoinNotAssociated } from '../../error/StableCoinNotAssociated.js';
 import AccountService from '../../../../../service/AccountService.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
@@ -33,17 +32,11 @@ import { DecimalsOverRange } from '../../error/DecimalsOverRange.js';
 import { OperationNotAllowed } from '../../error/OperationNotAllowed.js';
 import { RescueHBARCommand, RescueHBARCommandResponse } from './RescueHBARCommand.js';
 import { QueryBus } from '../../../../../../core/query/QueryBus.js';
-import { BalanceOfQuery } from '../../../../query/stablecoin/balanceof/BalanceOfQuery.js';
-import { GetAccountTokenRelationshipQuery } from '../../../../query/account/tokenRelationship/GetAccountTokenRelationshipQuery.js';
-import {
-	FreezeStatus,
-	KycStatus,
-} from '../../../../../../port/out/mirror/response/AccountTokenRelationViewModel.js';
-import { AccountNotKyc } from '../../error/AccountNotKyc.js';
-import { AccountFreeze } from '../../error/AccountFreeze.js';
+import { BalanceOfHBARQuery } from '../../../../query/stablecoin/balanceOfHBAR/BalanceOfHBARQuery.js';
+import { HBAR_DECIMALS } from '../../../../../../core/Constants.js';
 
 @CommandHandler(RescueHBARCommand)
-export class RescueCommandHandler implements ICommandHandler<RescueHBARCommand> {
+export class RescueHBARCommandHandler implements ICommandHandler<RescueHBARCommand> {
 	constructor(
 		@lazyInject(StableCoinService)
 		public readonly stableCoinService: StableCoinService,
@@ -59,45 +52,27 @@ export class RescueCommandHandler implements ICommandHandler<RescueHBARCommand> 
 
 	async execute(command: RescueHBARCommand): Promise<RescueHBARCommandResponse> {
 		const { amount, tokenId } = command;
+		const decimals = HBAR_DECIMALS;
 		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
-		const tokenRelationship = (
-			await this.stableCoinService.queryBus.execute(
-				new GetAccountTokenRelationshipQuery(account.id, tokenId),
-			)
-		).payload;
-
-		if (!tokenRelationship) {
-			throw new StableCoinNotAssociated(
-				account.id.toString(),
-				tokenId.toString(),
-			);
-		}
-
-		if (tokenRelationship.freezeStatus === FreezeStatus.FROZEN) {
-			throw new AccountFreeze(account.id.toString());
-		}
-
-		if (tokenRelationship.kycStatus === KycStatus.REVOKED) {
-			throw new AccountNotKyc(account.id.toString());
-		}
 
 		const capabilities = await this.stableCoinService.getCapabilities(
 			account,
 			tokenId,
 		);
 		const coin = capabilities.coin;
-		const amountBd = BigDecimal.fromString(amount, coin.decimals);
+		const amountBd = BigDecimal.fromString(amount, decimals);
 
-		if (CheckNums.hasMoreDecimals(amount, coin.decimals)) {
-			throw new DecimalsOverRange(coin.decimals);
+		if (CheckNums.hasMoreDecimals(amount, decimals)) {
+			throw new DecimalsOverRange(decimals);
 		}
-		if (!coin.treasury || !coin.tokenId)
+
+		if (!coin.treasury)
 			throw new OperationNotAllowed(`The stable coin is not valid`);
 
 		const treasuryBalance = (
 			await this.queryBus.execute(
-				new BalanceOfQuery(coin.tokenId, coin.treasury),
+				new BalanceOfHBARQuery(coin.treasury),
 			)
 		).payload;
 
@@ -106,7 +81,7 @@ export class RescueCommandHandler implements ICommandHandler<RescueHBARCommand> 
 				'The treasury account balance is bigger than the amount',
 			);
 		}
-		const res = await handler.rescue(capabilities, amountBd);
+		const res = await handler.rescueHBAR(capabilities, treasuryBalance);
 		return Promise.resolve(
 			new RescueHBARCommandResponse(res.error === undefined),
 		);

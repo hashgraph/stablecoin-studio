@@ -93,8 +93,7 @@ export default class StableCoinService extends Service {
 
 			if (operable)
 				listCapabilities.push(
-					new Capability(Operation.RESCUE, Access.CONTRACT),
-					new Capability(Operation.RESCUE_HBAR, Access.CONTRACT),
+					new Capability(Operation.RESCUE, Access.CONTRACT),					
 				);
 
 			if (
@@ -266,8 +265,13 @@ export default class StableCoinService extends Service {
 					Access.CONTRACT,
 				),
 			);
+
 			listCapabilities.push(
 				new Capability(Operation.RESERVE_MANAGEMENT, Access.CONTRACT),
+			);
+
+			listCapabilities.push(
+				new Capability(Operation.RESCUE_HBAR, Access.CONTRACT),
 			);
 
 			return new StableCoinCapabilities(_coin, listCapabilities, account);

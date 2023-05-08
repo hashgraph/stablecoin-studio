@@ -481,6 +481,27 @@ export class MirrorNodeAdapter {
 				);
 		}
 	}
+
+	public async getHBARBalance(
+		accountId: HederaId | string,
+	): Promise<BigDecimal> {
+		try {
+			const url = `${this.URI_BASE}balances?account.id=${accountId.toString()}`;
+			LogService.logTrace(url);
+			const res = await axios.get<IBalances>(url);
+			if (!res.data.balances)
+				throw new Error(
+					'Response does not contain a balances result',
+				);
+
+			return BigDecimal.fromString(res.data.balances[res.data.balances.length - 1].balance.toString());
+		} catch (error) {
+			LogService.logError(error);
+			return Promise.reject<BigDecimal>(
+				new InvalidResponse(error),
+			);
+		}
+	}
 }
 
 interface IToken {
@@ -584,4 +605,19 @@ interface ITransaction {
 interface IKey {
 	_type: string;
 	key: string;
+}
+
+interface IBalances {
+	balances: IAccountBalance[];
+}
+
+interface IAccountBalance {
+	account: string;
+	balance: number;
+	tokens: ITokenBalance[];
+}
+
+interface ITokenBalance {
+	token_id: string;
+	balance: number;
 }
