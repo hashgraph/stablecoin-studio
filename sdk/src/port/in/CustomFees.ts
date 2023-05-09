@@ -33,7 +33,6 @@ import {
 	CustomFee,
 	FixedFee,
 	FractionalFee,
-	HBAR_DECIMALS,
 	MAX_PERCENTAGE_DECIMALS,
 	MAX_CUSTOM_FEES,
 } from '../../domain/context/fee/CustomFee.js';
@@ -45,7 +44,7 @@ import {
 	isRequestFixedFee,
 } from './request/BaseRequest.js';
 
-export { HBAR_DECIMALS, MAX_PERCENTAGE_DECIMALS, MAX_CUSTOM_FEES };
+export { MAX_PERCENTAGE_DECIMALS, MAX_CUSTOM_FEES };
 
 interface ICustomFees {
 	addFixedFee(request: AddFixedFeeRequest): Promise<boolean>;

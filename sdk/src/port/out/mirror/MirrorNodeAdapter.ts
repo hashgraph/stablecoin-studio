@@ -42,10 +42,8 @@ import {
 import PublicKey from '../../../domain/context/account/PublicKey.js';
 import { StableCoinMemo } from '../../../domain/context/stablecoin/StableCoinMemo.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
-import {
-	HBAR_DECIMALS,
-	MAX_PERCENTAGE_DECIMALS,
-} from '../../../domain/context/fee/CustomFee.js';
+import { MAX_PERCENTAGE_DECIMALS } from '../../../domain/context/fee/CustomFee.js';
+import { HBAR_DECIMALS } from '../../../core/Constants.js';
 import { InvalidResponse } from './error/InvalidResponse.js';
 import { HederaId } from '../../../domain/context/shared/HederaId.js';
 import { KeyType } from '../../../domain/context/account/KeyProps.js';
