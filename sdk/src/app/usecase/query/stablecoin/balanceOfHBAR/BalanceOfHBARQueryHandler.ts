@@ -18,7 +18,10 @@
  *
  */
 
-import { BalanceOfHBARQuery, BalanceOfHBARQueryResponse } from './BalanceOfHBARQuery.js';
+import {
+	BalanceOfHBARQuery,
+	BalanceOfHBARQueryResponse,
+} from './BalanceOfHBARQuery.js';
 import { QueryHandler } from '../../../../../core/decorator/QueryHandlerDecorator.js';
 import { IQueryHandler } from '../../../../../core/query/QueryHandler.js';
 import { lazyInject } from '../../../../../core/decorator/LazyInjectDecorator.js';
@@ -27,15 +30,19 @@ import { MirrorNodeAdapter } from '../../../../../port/out/mirror/MirrorNodeAdap
 import { HBAR_DECIMALS } from '../../../../../core/Constants.js';
 
 @QueryHandler(BalanceOfHBARQuery)
-export class BalanceOfHBARQueryHandler implements IQueryHandler<BalanceOfHBARQuery> {
+export class BalanceOfHBARQueryHandler
+	implements IQueryHandler<BalanceOfHBARQuery>
+{
 	constructor(
 		@lazyInject(MirrorNodeAdapter)
 		public readonly mirrorNode: MirrorNodeAdapter,
 	) {}
 
-	async execute(query: BalanceOfHBARQuery): Promise<BalanceOfHBARQueryResponse> {
+	async execute(
+		query: BalanceOfHBARQuery,
+	): Promise<BalanceOfHBARQueryResponse> {
 		const { treasuryAccountId } = query;
-		
+
 		const res = await this.mirrorNode.getHBARBalance(treasuryAccountId);
 
 		const treasuryAmount = BigDecimal.fromStringFixed(

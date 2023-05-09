@@ -28,9 +28,7 @@ export class BalanceOfHBARQueryResponse implements QueryResponse {
 }
 
 export class BalanceOfHBARQuery extends Query<BalanceOfHBARQueryResponse> {
-	constructor(
-		public readonly treasuryAccountId: HederaId,
-	) {
+	constructor(public readonly treasuryAccountId: HederaId) {
 		super();
 	}
 }

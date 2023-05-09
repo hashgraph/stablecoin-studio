@@ -376,13 +376,13 @@ class StableCoinInPort implements IStableCoinInPort {
 	}
 
 	@LogError
-	async getBalanceOfHBAR(request: GetAccountBalanceHBARRequest): Promise<Balance> {
+	async getBalanceOfHBAR(
+		request: GetAccountBalanceHBARRequest,
+	): Promise<Balance> {
 		handleValidation('GetAccountBalanceHBARRequest', request);
 
 		const res = await this.queryBus.execute(
-			new BalanceOfHBARQuery(
-				HederaId.from(request.treasuryAccountId),
-			),
+			new BalanceOfHBARQuery(HederaId.from(request.treasuryAccountId)),
 		);
 
 		return new Balance(res.payload);

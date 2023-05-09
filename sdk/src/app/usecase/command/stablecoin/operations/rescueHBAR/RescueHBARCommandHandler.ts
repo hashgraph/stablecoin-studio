@@ -30,13 +30,18 @@ import TransactionService from '../../../../../service/TransactionService.js';
 
 import { DecimalsOverRange } from '../../error/DecimalsOverRange.js';
 import { OperationNotAllowed } from '../../error/OperationNotAllowed.js';
-import { RescueHBARCommand, RescueHBARCommandResponse } from './RescueHBARCommand.js';
+import {
+	RescueHBARCommand,
+	RescueHBARCommandResponse,
+} from './RescueHBARCommand.js';
 import { QueryBus } from '../../../../../../core/query/QueryBus.js';
 import { BalanceOfHBARQuery } from '../../../../query/stablecoin/balanceOfHBAR/BalanceOfHBARQuery.js';
 import { HBAR_DECIMALS } from '../../../../../../core/Constants.js';
 
 @CommandHandler(RescueHBARCommand)
-export class RescueHBARCommandHandler implements ICommandHandler<RescueHBARCommand> {
+export class RescueHBARCommandHandler
+	implements ICommandHandler<RescueHBARCommand>
+{
 	constructor(
 		@lazyInject(StableCoinService)
 		public readonly stableCoinService: StableCoinService,
@@ -50,7 +55,9 @@ export class RescueHBARCommandHandler implements ICommandHandler<RescueHBARComma
 		public readonly transactionService: TransactionService,
 	) {}
 
-	async execute(command: RescueHBARCommand): Promise<RescueHBARCommandResponse> {
+	async execute(
+		command: RescueHBARCommand,
+	): Promise<RescueHBARCommandResponse> {
 		const { amount, tokenId } = command;
 		const decimals = HBAR_DECIMALS;
 		const handler = this.transactionService.getHandler();
@@ -68,12 +75,12 @@ export class RescueHBARCommandHandler implements ICommandHandler<RescueHBARComma
 		}
 
 		if (!coin.treasury)
-			throw new OperationNotAllowed(`The HBAR treasury account is not valid`);
+			throw new OperationNotAllowed(
+				`The HBAR treasury account is not valid`,
+			);
 
 		const treasuryBalance = (
-			await this.queryBus.execute(
-				new BalanceOfHBARQuery(coin.treasury),
-			)
+			await this.queryBus.execute(new BalanceOfHBARQuery(coin.treasury))
 		).payload;
 
 		if (amountBd.isGreaterThan(treasuryBalance)) {

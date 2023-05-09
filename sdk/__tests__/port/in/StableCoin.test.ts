@@ -62,13 +62,15 @@ import {
 	HEDERA_ERC20_ADDRESS,
 } from '../../config.js';
 import { MirrorNodeAdapter } from '../../../src/port/out/mirror/MirrorNodeAdapter.js';
+import { Client, Hbar, TransferTransaction } from '@hashgraph/sdk';
+import { BigNumber } from 'ethers';
 const decimals = 6;
 
 describe('🧪 Stablecoin test', () => {
 	let stableCoinSC: StableCoinViewModel;
 	let stableCoinHTS: StableCoinViewModel;
 
-	const delay = async (seconds = 5): Promise<void> => {
+	const delay = async (seconds = 1): Promise<void> => {
 		seconds = seconds * 1000;
 		await new Promise((r) => setTimeout(r, seconds));
 	};
@@ -460,6 +462,29 @@ describe('🧪 Stablecoin test', () => {
 	}
 
 	async function rescueHBAROperation(stableCoin: StableCoinViewModel) {
+		const initalHBARAmount = BigNumber.from(10);
+
+		const client = Client.forTestnet();
+
+		client.setOperator(
+			CLIENT_ACCOUNT_ED25519.id.toString(),
+			CLIENT_ACCOUNT_ED25519.privateKey!.key,
+		);
+
+		const transaction = new TransferTransaction()
+			.addHbarTransfer(
+				CLIENT_ACCOUNT_ED25519.id.toString(),
+				Hbar.fromTinybars(initalHBARAmount.mul(-1).toString()),
+			)
+			.addHbarTransfer(
+				stableCoin?.treasury!.toString(),
+				Hbar.fromTinybars(initalHBARAmount.toString()),
+			);
+
+		await transaction.execute(client);
+
+		await delay();
+
 		const mirrorNodeAdapter: MirrorNodeAdapter =
 			Injectable.resolve(MirrorNodeAdapter);
 

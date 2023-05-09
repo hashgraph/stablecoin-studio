@@ -93,7 +93,7 @@ export default class StableCoinService extends Service {
 
 			if (operable)
 				listCapabilities.push(
-					new Capability(Operation.RESCUE, Access.CONTRACT),					
+					new Capability(Operation.RESCUE, Access.CONTRACT),
 				);
 
 			if (
