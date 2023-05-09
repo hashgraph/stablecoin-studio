@@ -70,10 +70,11 @@ describe('🧪 Stablecoin test', () => {
 	let stableCoinSC: StableCoinViewModel;
 	let stableCoinHTS: StableCoinViewModel;
 
-	const delay = async (seconds = 1): Promise<void> => {
+	const delay = async (seconds = 3): Promise<void> => {
 		seconds = seconds * 1000;
 		await new Promise((r) => setTimeout(r, seconds));
 	};
+
 	beforeAll(async () => {
 		await Network.connect(
 			new ConnectRequest({
