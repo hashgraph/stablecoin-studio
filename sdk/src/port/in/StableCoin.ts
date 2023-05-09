@@ -48,6 +48,7 @@ import DeleteRequest from './request/DeleteRequest.js';
 import FreezeAccountRequest from './request/FreezeAccountRequest.js';
 import PauseRequest from './request/PauseRequest.js';
 import GetAccountBalanceRequest from './request/GetAccountBalanceRequest.js';
+import GetAccountBalanceHBARRequest from './request/GetAccountBalanceHBARRequest.js';
 import CapabilitiesRequest from './request/CapabilitiesRequest.js';
 import IsAccountAssociatedTokenRequest from './request/IsAccountAssociatedTokenRequest.js';
 import { Balance } from '../../domain/context/stablecoin/Balance.js';
@@ -76,6 +77,7 @@ import { UpdateReserveAddressCommand } from '../../app/usecase/command/stablecoi
 import { RESERVE_DECIMALS } from '../../domain/context/reserve/Reserve.js';
 import ReserveViewModel from '../out/mirror/response/ReserveViewModel.js';
 import { BalanceOfQuery } from '../../app/usecase/query/stablecoin/balanceof/BalanceOfQuery.js';
+import { BalanceOfHBARQuery } from '../../app/usecase/query/stablecoin/balanceOfHBAR/BalanceOfHBARQuery.js';
 import { GetReserveAddressQuery } from '../../app/usecase/query/stablecoin/getReserveAddress/GetReserveAddressQuey.js';
 import KYCRequest from './request/KYCRequest.js';
 import { GrantKycCommand } from '../../app/usecase/command/stablecoin/operations/grantKyc/GrantKycCommand.js';
@@ -116,6 +118,7 @@ interface IStableCoinInPort {
 	wipe(request: WipeRequest): Promise<boolean>;
 	associate(request: AssociateTokenRequest): Promise<boolean>;
 	getBalanceOf(request: GetAccountBalanceRequest): Promise<Balance>;
+	getBalanceOfHBAR(request: GetAccountBalanceHBARRequest): Promise<Balance>;
 	capabilities(request: CapabilitiesRequest): Promise<StableCoinCapabilities>;
 	pause(request: PauseRequest): Promise<boolean>;
 	unPause(request: PauseRequest): Promise<boolean>;
@@ -366,6 +369,19 @@ class StableCoinInPort implements IStableCoinInPort {
 			new BalanceOfQuery(
 				HederaId.from(request.tokenId),
 				HederaId.from(request.targetId),
+			),
+		);
+
+		return new Balance(res.payload);
+	}
+
+	@LogError
+	async getBalanceOfHBAR(request: GetAccountBalanceHBARRequest): Promise<Balance> {
+		handleValidation('GetAccountBalanceHBARRequest', request);
+
+		const res = await this.queryBus.execute(
+			new BalanceOfHBARQuery(
+				HederaId.from(request.treasuryAccountId),
 			),
 		);
 

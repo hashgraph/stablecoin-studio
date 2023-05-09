@@ -40,6 +40,7 @@ import ResetSupplierAllowanceRequest from './ResetSupplierAllowanceRequest.js';
 import IncreaseSupplierAllowanceRequest from './IncreaseSupplierAllowanceRequest.js';
 import DecreaseSupplierAllowanceRequest from './DecreaseSupplierAllowanceRequest.js';
 import GetAccountBalanceRequest from './GetAccountBalanceRequest.js';
+import GetAccountBalanceHBARRequest from './GetAccountBalanceHBARRequest.js';
 import AssociateTokenRequest from './AssociateTokenRequest.js';
 import GetRolesRequest from './GetRolesRequest.js';
 import GetAccountInfoRequest from './GetAccountInfoRequest.js';
@@ -88,6 +89,7 @@ export {
 	IncreaseSupplierAllowanceRequest,
 	DecreaseSupplierAllowanceRequest,
 	GetAccountBalanceRequest,
+	GetAccountBalanceHBARRequest,
 	AssociateTokenRequest,
 	GetRolesRequest,
 	GetAccountInfoRequest,

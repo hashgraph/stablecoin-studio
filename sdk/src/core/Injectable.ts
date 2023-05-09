@@ -81,6 +81,7 @@ import { GetReserveAmountQueryHandler } from '../app/usecase/query/stablecoin/ge
 import { UpdateReserveAddressCommandHandler } from '../app/usecase/command/stablecoin/operations/updateReserveAddress/UpdateReserveAddressCommandHandler.js';
 import { UpdateReserveAmountCommandHandler } from '../app/usecase/command/reserve/operations/updateReserveAmount/UpdateReserveAmountCommandHandler.js';
 import { BalanceOfQueryHandler } from '../app/usecase/query/stablecoin/balanceof/BalanceOfQueryHandler.js';
+import { BalanceOfHBARQueryHandler } from '../app/usecase/query/stablecoin/balanceOfHBAR/BalanceOfHBARQueryHandler.js';
 import { GetReserveAddressQueryHandler } from '../app/usecase/query/stablecoin/getReserveAddress/GetReserveAddressQueryHandler.js';
 import { IsUnlimitedQueryHandler } from '../app/usecase/query/stablecoin/isUnlimited/IsUnlimitedQueryHandler.js';
 import { RevokeKycCommandHandler } from '../app/usecase/command/stablecoin/operations/revokeKyc/RevokeKycCommandHandler.js';
@@ -270,6 +271,10 @@ const QUERY_HANDLERS = [
 	{
 		token: TOKENS.QUERY_HANDLER,
 		useClass: BalanceOfQueryHandler,
+	},
+	{
+		token: TOKENS.QUERY_HANDLER,
+		useClass: BalanceOfHBARQueryHandler,
 	},
 	{
 		token: TOKENS.QUERY_HANDLER,

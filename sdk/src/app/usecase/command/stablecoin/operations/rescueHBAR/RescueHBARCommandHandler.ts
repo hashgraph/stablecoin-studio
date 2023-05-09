@@ -68,7 +68,7 @@ export class RescueHBARCommandHandler implements ICommandHandler<RescueHBARComma
 		}
 
 		if (!coin.treasury)
-			throw new OperationNotAllowed(`The stable coin is not valid`);
+			throw new OperationNotAllowed(`The HBAR treasury account is not valid`);
 
 		const treasuryBalance = (
 			await this.queryBus.execute(
@@ -78,10 +78,11 @@ export class RescueHBARCommandHandler implements ICommandHandler<RescueHBARComma
 
 		if (amountBd.isGreaterThan(treasuryBalance)) {
 			throw new OperationNotAllowed(
-				'The treasury account balance is bigger than the amount',
+				'The amount to rescue is bigger than the treasury account balance ',
 			);
 		}
-		const res = await handler.rescueHBAR(capabilities, treasuryBalance);
+
+		const res = await handler.rescueHBAR(capabilities, amountBd);
 		return Promise.resolve(
 			new RescueHBARCommandResponse(res.error === undefined),
 		);
