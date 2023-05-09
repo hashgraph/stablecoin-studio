@@ -64,7 +64,6 @@ import AddFractionalFeeRequest from './AddFractionalFeeRequest.js';
 import SetConfigurationRequest from './SetConfigurationRequest.js';
 import GetERC20ListRequest from './GetERC20ListRequest.js';
 import UpdateRequest from './UpdateRequest.js';
-import { HBAR_DECIMALS } from 'core/Constants.js';
 
 export * from './BaseRequest.js';
 export {
@@ -114,5 +113,4 @@ export {
 	AddFractionalFeeRequest,
 	GetERC20ListRequest,
 	UpdateRequest,
-	HBAR_DECIMALS,
 };
