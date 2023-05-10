@@ -4,7 +4,7 @@ pragma solidity 0.8.16;
 import {IHederaTokenService} from '../hts-precompile/IHederaTokenService.sol';
 import {KeysLib} from '../library/KeysLib.sol';
 
-interface IHederaERC20 {
+interface IHederaTokenManager {
     /**
      * @dev Emitted when the token has been associated to the account
      *
@@ -35,23 +35,6 @@ interface IHederaERC20 {
         address sender,
         address receiver,
         int64 amount
-    );
-
-    /**
-    * @dev Emitted when tokens have been transfered from sender to receiver
-    *
-    * @param token Token address
-    * @param sender Sender address
-    * @param receiver Receiver address
-    * @param amount Transfered amount
-
-    */
-    event TokenTransferFrom(
-        address token,
-        address sender,
-        address from,
-        address receiver,
-        uint256 amount
     );
 
     /**
@@ -131,14 +114,6 @@ interface IHederaERC20 {
      * @return uint8 The number of decimals of the token
      */
     function decimals() external view returns (uint8);
-
-    /**
-     * @dev Function not already implemented
-     */
-    function allowance(
-        address owner,
-        address spender
-    ) external returns (uint256);
 
     /**
      * @dev Update token

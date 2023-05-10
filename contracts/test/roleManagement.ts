@@ -253,10 +253,11 @@ describe('Role Management Tests', function () {
         ]
         const amounts: BigNumber[] = []
         const areE25519: boolean[] = []
-        AllAccounts.forEach((accountToGrantRolesTo, index) => {
-            amounts.push(BigNumber.from(index))
+
+        for (let i = 0; i < AllAccounts.length; i++) {
+            amounts.push(BigNumber.from(i))
             areE25519.push(true)
-        })
+        }
 
         await grantRoles(
             Roles,

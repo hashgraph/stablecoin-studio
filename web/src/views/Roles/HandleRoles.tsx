@@ -71,6 +71,15 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 			}
 			if (
 				!(
+					operations?.includes(Operation.RESCUE_HBAR) &&
+					getAccessByOperation(Operation.RESCUE_HBAR) === Access.CONTRACT
+				) &&
+				option.label === 'RescueHBAR'
+			) {
+				return false;
+			}
+			if (
+				!(
 					operations?.includes(Operation.FREEZE) &&
 					getAccessByOperation(Operation.FREEZE) === Access.CONTRACT
 				) &&

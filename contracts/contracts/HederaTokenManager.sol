@@ -2,12 +2,12 @@
 pragma solidity 0.8.16;
 
 import {
-    IHederaERC20Upgradeable
-} from './Interfaces/IHederaERC20Upgradeable.sol';
+    IERC20Upgradeable
+} from '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
 import {
     IERC20MetadataUpgradeable
 } from '@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol';
-import {IHederaERC20} from './Interfaces/IHederaERC20.sol';
+import {IHederaTokenManager} from './Interfaces/IHederaTokenManager.sol';
 import {CashIn} from './extensions/CashIn.sol';
 import {Burnable} from './extensions/Burnable.sol';
 import {Wipeable} from './extensions/Wipeable.sol';
@@ -26,8 +26,8 @@ import {KYC} from './extensions/KYC.sol';
 import {RoleManagement} from './extensions/RoleManagement.sol';
 import {KeysLib} from './library/KeysLib.sol';
 
-contract HederaERC20 is
-    IHederaERC20,
+contract HederaTokenManager is
+    IHederaTokenManager,
     CashIn,
     Burnable,
     Wipeable,
@@ -39,8 +39,6 @@ contract HederaERC20 is
     RoleManagement
 {
     uint256 private constant _SUPPLY_KEY_BIT = 4;
-
-    // using SafeERC20Upgradeable for IHederaERC20Upgradeable;
 
     // Constructor required to avoid Initializer attack on logic contract
     constructor() {
@@ -157,7 +155,7 @@ contract HederaERC20 is
      */
     function balanceOf(
         address account
-    ) external view override(IHederaERC20) returns (uint256) {
+    ) external view override(IHederaTokenManager) returns (uint256) {
         return _balanceOf(account);
     }
 
@@ -172,7 +170,7 @@ contract HederaERC20 is
     function _balanceOf(
         address account
     ) internal view override(TokenOwner) returns (uint256) {
-        return IHederaERC20Upgradeable(_getTokenAddress()).balanceOf(account);
+        return IERC20Upgradeable(_getTokenAddress()).balanceOf(account);
     }
 
     /**
@@ -222,31 +220,17 @@ contract HederaERC20 is
     }
 
     /**
-     * @dev Function not already implemented
-     */
-    function allowance(
-        address owner,
-        address spender
-    )
-        external
-        override(IHederaERC20)
-        addressIsNotZero(owner)
-        addressIsNotZero(spender)
-        returns (uint256)
-    {
-        (, uint256 amount) = IHederaTokenService(_PRECOMPILED_ADDRESS)
-            .allowance(_getTokenAddress(), owner, spender);
-        return amount;
-    }
-
-    /**
      * @dev Update token keys
      *
      * @param updatedToken Values to update the token
      */
     function updateToken(
         UpdateTokenStruct calldata updatedToken
-    ) external override(IHederaERC20) onlyRole(_getRoleId(RoleName.ADMIN)) {
+    )
+        external
+        override(IHederaTokenManager)
+        onlyRole(_getRoleId(RoleName.ADMIN))
+    {
         address currentTokenAddress = _getTokenAddress();
 
         address newTreasury = address(0);

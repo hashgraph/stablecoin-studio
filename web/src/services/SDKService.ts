@@ -26,7 +26,7 @@ import type {
 	FreezeAccountRequest,
 	GetAccountBalanceRequest,
 	GetAccountInfoRequest,
-	GetERC20ListRequest,
+	GetTokenManagerListRequest,
 	GetListStableCoinRequest,
 	GetReserveAddressRequest,
 	GetReserveAmountRequest,
@@ -41,6 +41,7 @@ import type {
 	PauseRequest,
 	RequestAccount,
 	RescueRequest,
+	RescueHBARRequest,
 	ReserveViewModel,
 	ResetSupplierAllowanceRequest,
 	RevokeMultiRolesRequest,
@@ -165,6 +166,10 @@ export class SDKService {
 
 	public static async rescue(req: RescueRequest) {
 		return await StableCoin.rescue(req);
+	}
+
+	public static async rescueHBAR(req: RescueHBARRequest) {
+		return await StableCoin.rescueHBAR(req);
 	}
 
 	public static async wipe(req: WipeRequest) {
@@ -296,8 +301,8 @@ export class SDKService {
 		return await Fees.updateCustomFees(data);
 	}
 
-	public static async getHederaERC20List(data: GetERC20ListRequest) {
-		return await Factory.getHederaERC20List(data);
+	public static async getHederaTokenManagerList(data: GetTokenManagerListRequest) {
+		return await Factory.getHederaTokenManagerList(data);
 	}
 }
 

@@ -3,7 +3,10 @@ pragma solidity 0.8.16;
 
 import {IHederaTokenService} from './hts-precompile/IHederaTokenService.sol';
 import {HederaResponseCodes} from './hts-precompile/HederaResponseCodes.sol';
-import {HederaERC20, IHederaERC20} from './HederaERC20.sol';
+import {
+    HederaTokenManager,
+    IHederaTokenManager
+} from './HederaTokenManager.sol';
 import {
     TransparentUpgradeableProxy
 } from '@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol';
@@ -29,7 +32,7 @@ contract StableCoinFactory is
     string private constant _MEMO_2 = '","a":"';
     string private constant _MEMO_3 = '"}';
     address private _admin;
-    address[] private _hederaERC20Address;
+    address[] private _hederaTokenManagerAddress;
 
     modifier isAdmin() {
         require(
@@ -50,15 +53,15 @@ contract StableCoinFactory is
 
     function initialize(
         address admin,
-        address hederaERC20
+        address hederaTokenManager
     )
         external
         initializer
         checkAddressIsNotZero(admin)
-        checkAddressIsNotZero(hederaERC20)
+        checkAddressIsNotZero(hederaTokenManager)
     {
         _admin = admin;
-        _hederaERC20Address.push(hederaERC20);
+        _hederaTokenManagerAddress.push(hederaTokenManager);
         emit StableCoinFactoryInitialized();
     }
 
@@ -145,8 +148,8 @@ contract StableCoinFactory is
         );
 
         // Initialize Proxy
-        IHederaERC20.InitializeStruct memory initInfo = IHederaERC20
-            .InitializeStruct(
+        IHederaTokenManager.InitializeStruct
+            memory initInfo = IHederaTokenManager.InitializeStruct(
                 token,
                 requestedToken.tokenInitialSupply,
                 requestedToken.tokenDecimals,
@@ -156,9 +159,8 @@ contract StableCoinFactory is
                 requestedToken.cashinRole
             );
 
-        address tokenAddress = HederaERC20(address(stableCoinProxy)).initialize{
-            value: msg.value
-        }(initInfo);
+        address tokenAddress = HederaTokenManager(address(stableCoinProxy))
+            .initialize{value: msg.value}(initInfo);
 
         // Return event
         DeployedStableCoin memory deployedStableCoin = DeployedStableCoin(
@@ -258,7 +260,7 @@ contract StableCoinFactory is
         );
     }
 
-    function addHederaERC20Version(
+    function addHederaTokenManagerVersion(
         address newAddress
     )
         external
@@ -266,15 +268,19 @@ contract StableCoinFactory is
         isAdmin
         checkAddressIsNotZero(newAddress)
     {
-        _hederaERC20Address.push(newAddress);
-        emit HederaERC20AddressAdded(newAddress);
+        _hederaTokenManagerAddress.push(newAddress);
+        emit HederaTokenManagerAddressAdded(newAddress);
     }
 
-    function getHederaERC20Address() external view returns (address[] memory) {
-        return _hederaERC20Address;
+    function getHederaTokenManagerAddress()
+        external
+        view
+        returns (address[] memory)
+    {
+        return _hederaTokenManagerAddress;
     }
 
-    function editHederaERC20Address(
+    function editHederaTokenManagerAddress(
         uint256 index,
         address newAddress
     )
@@ -283,21 +289,21 @@ contract StableCoinFactory is
         isAdmin
         checkAddressIsNotZero(newAddress)
     {
-        address oldAddress = _hederaERC20Address[index];
+        address oldAddress = _hederaTokenManagerAddress[index];
         _edit(index, newAddress);
-        emit HederaERC20AddressEdited(oldAddress, newAddress);
+        emit HederaTokenManagerAddressEdited(oldAddress, newAddress);
     }
 
     function _edit(uint256 index, address newAddress) private {
-        _hederaERC20Address[index] = newAddress;
+        _hederaTokenManagerAddress[index] = newAddress;
     }
 
-    function removeHederaERC20Address(
+    function removeHederaTokenManagerAddress(
         uint256 index
     ) external override(IStableCoinFactory) isAdmin {
-        address addressRemoved = _hederaERC20Address[index];
+        address addressRemoved = _hederaTokenManagerAddress[index];
         _edit(index, address(0));
-        emit HederaERC20AddressRemoved(index, addressRemoved);
+        emit HederaTokenManagerAddressRemoved(index, addressRemoved);
     }
 
     function changeAdmin(

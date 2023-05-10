@@ -41,7 +41,7 @@ import ConnectRequest, {
 import {
 	CLIENT_ACCOUNT_ED25519,
 	FACTORY_ADDRESS,
-	HEDERA_ERC20_ADDRESS,
+	HEDERA_TOKEN_MANAGER_ADDRESS,
 } from '../../config.js';
 
 describe('🧪 Reserve test', () => {
@@ -85,7 +85,7 @@ describe('🧪 Reserve test', () => {
 			pauseKey: Account.NullPublicKey,
 			supplyType: TokenSupplyType.INFINITE,
 			stableCoinFactory: FACTORY_ADDRESS,
-			hederaERC20: HEDERA_ERC20_ADDRESS,
+			hederaTokenManager: HEDERA_TOKEN_MANAGER_ADDRESS,
 			reserveInitialAmount: reserveInitialAmount.toString(),
 			createReserve: true,
 			grantKYCToOriginalSender: true,

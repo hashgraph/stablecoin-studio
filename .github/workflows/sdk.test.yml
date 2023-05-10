@@ -7,7 +7,7 @@ defaults:
   run:
     working-directory: sdk
 env:
-  HEDERA_ERC20_ADDRESS: '0.0.3121145'
+  HEDERA_TOKEN_MANAGER_ADDRESS: '0.0.3121145'
   FACTORY_ADDRESS: '0.0.3121759'
 jobs:
   test-node:
@@ -38,7 +38,7 @@ jobs:
         #   working-directory: sdk
         #   test-script: npm run test:ci
         env:
-          HEDERA_ERC20_ADDRESS: ${{ env.HEDERA_ERC20_ADDRESS }}
+          HEDERA_TOKEN_MANAGER_ADDRESS: ${{ env.HEDERA_TOKEN_MANAGER_ADDRESS }}
           FACTORY_ADDRESS: ${{ env.FACTORY_ADDRESS }}
           CLIENT_PRIVATE_KEY_ECDSA: ${{ secrets.CLIENT_PRIVATE_KEY_ECDSA }}
           CLIENT_PUBLIC_KEY_ECDSA: ${{ secrets.CLIENT_PUBLIC_KEY_ECDSA }}

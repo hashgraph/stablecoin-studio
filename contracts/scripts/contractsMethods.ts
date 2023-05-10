@@ -8,18 +8,21 @@ import {
 } from '@hashgraph/sdk'
 
 import {
-    HederaERC20__factory,
-    TransparentUpgradeableProxy__factory,
+    HederaTokenManager__factory,
+    ITransparentUpgradeableProxy__factory,
     ProxyAdmin__factory,
     HederaReserve__factory,
     StableCoinFactory__factory,
 } from '../typechain-types'
 
 import { contractCall, toEvmAddress } from './utils'
-import { Gas1, Gas2, Gas3, Gas4, Gas5 } from './constants'
+import { Gas0, Gas1, Gas2, Gas3, Gas4, Gas5 } from './constants'
 
 import { BigNumber } from 'ethers'
-import { interfaces } from '../typechain-types/@chainlink/contracts/src/v0.8/index.js'
+
+export function delay(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms))
+}
 
 export async function getHBARBalanceOf(
     Id: string,
@@ -75,7 +78,7 @@ export async function grantRole(
         params,
         clientGrantingRole,
         Gas1,
-        HederaERC20__factory.abi
+        HederaTokenManager__factory.abi
     )
 }
 
@@ -96,7 +99,7 @@ export async function revokeRole(
         params,
         clientRevokingRole,
         Gas1,
-        HederaERC20__factory.abi
+        HederaTokenManager__factory.abi
     )
 }
 
@@ -117,7 +120,7 @@ export async function hasRole(
         params,
         clientCheckingRole,
         Gas2,
-        HederaERC20__factory.abi
+        HederaTokenManager__factory.abi
     )
     return result[0]
 }
@@ -133,12 +136,12 @@ export async function getAccountsForRole(
         params,
         clientCheckingRole,
         Gas2,
-        HederaERC20__factory.abi
+        HederaTokenManager__factory.abi
     )
     return result[0]
 }
 
-// HederaERC20 ///////////////////////////////////////////////////
+// HederaTokenManager ///////////////////////////////////////////////////
 export async function getTotalSupply(proxyAddress: ContractId, client: Client) {
     const result = await contractCall(
         proxyAddress,
@@ -146,7 +149,7 @@ export async function getTotalSupply(proxyAddress: ContractId, client: Client) {
         [],
         client,
         Gas2,
-        HederaERC20__factory.abi
+        HederaTokenManager__factory.abi
     )
     return BigNumber.from(result[0])
 }
@@ -167,7 +170,7 @@ export async function getBalanceOf(
         params,
         client,
         Gas2,
-        HederaERC20__factory.abi
+        HederaTokenManager__factory.abi
     )
     return BigNumber.from(result[0])
 }
@@ -183,7 +186,7 @@ export async function name(
         params,
         client,
         Gas2,
-        HederaERC20__factory.abi
+        HederaTokenManager__factory.abi
     )
     return result[0]
 }
@@ -199,7 +202,7 @@ export async function symbol(
         params,
         client,
         Gas2,
-        HederaERC20__factory.abi
+        HederaTokenManager__factory.abi
     )
     return result[0]
 }
@@ -215,7 +218,7 @@ export async function decimals(
         params,
         client,
         Gas2,
-        HederaERC20__factory.abi
+        HederaTokenManager__factory.abi
     )
     return Number(result[0])
 }
@@ -232,31 +235,8 @@ export async function initialize(
         params,
         client,
         Gas2,
-        HederaERC20__factory.abi
+        HederaTokenManager__factory.abi
     )
-}
-
-export async function allowance(
-    proxyAddress: ContractId,
-    addressOwner: string,
-    ownerIsE25519: boolean,
-    addressSpender: string,
-    spenderIsE25519: boolean,
-    client: Client
-): Promise<BigNumber> {
-    const params = [
-        await toEvmAddress(addressOwner, ownerIsE25519),
-        await toEvmAddress(addressSpender, spenderIsE25519),
-    ]
-    const response = await contractCall(
-        proxyAddress!,
-        'allowance',
-        params,
-        client,
-        Gas1,
-        HederaERC20__factory.abi
-    )
-    return BigNumber.from(response[0])
 }
 
 export async function updateToken(
@@ -282,12 +262,12 @@ export async function updateToken(
         params,
         client,
         Gas1,
-        HederaERC20__factory.abi
+        HederaTokenManager__factory.abi
     )
     return response[0]
 }
 
-// HederaERC20Proxy ///////////////////////////////////////////////////
+// HederaTokenManagerProxy ///////////////////////////////////////////////////
 export async function upgradeTo(
     proxyAbi: any,
     proxyAddress: ContractId,
@@ -339,7 +319,7 @@ export async function admin(
     return result[0]
 }
 
-// HederaERC20ProxyAdmin ///////////////////////////////////////////////////
+// HederaTokenManagerProxyAdmin ///////////////////////////////////////////////////
 export async function owner(
     proxyAdminAbi: any,
     proxyAdminAddress: ContractId,
@@ -464,7 +444,7 @@ export async function upgradeTo_SCF(
         params,
         client,
         Gas3,
-        TransparentUpgradeableProxy__factory.abi
+        ITransparentUpgradeableProxy__factory.abi
     )
 }
 
@@ -480,7 +460,7 @@ export async function changeAdmin_SCF(
         params,
         client,
         Gas3,
-        TransparentUpgradeableProxy__factory.abi
+        ITransparentUpgradeableProxy__factory.abi
     )
 }
 
@@ -495,7 +475,7 @@ export async function admin_SCF(
         params,
         client,
         Gas2,
-        TransparentUpgradeableProxy__factory.abi
+        ITransparentUpgradeableProxy__factory.abi
     )
     return result[0]
 }
@@ -618,7 +598,7 @@ export async function getTokenAddress(
         params,
         client,
         Gas5,
-        HederaERC20__factory.abi
+        HederaTokenManager__factory.abi
     )
     return response[0]
 }
@@ -636,7 +616,7 @@ export async function Burn(
         params,
         clientBurningToken,
         Gas4,
-        HederaERC20__factory.abi
+        HederaTokenManager__factory.abi
     )
     if (result[0] != true) throw Error
 }
@@ -661,7 +641,7 @@ export async function Mint(
         params,
         clientMintingToken,
         Gas1,
-        HederaERC20__factory.abi
+        HederaTokenManager__factory.abi
     )
     if (result[0] != true) throw Error
 }
@@ -684,7 +664,7 @@ export async function Wipe(
         params,
         clientWipingToken,
         Gas1,
-        HederaERC20__factory.abi
+        HederaTokenManager__factory.abi
     )
     if (result[0] != true) throw Error
 }
@@ -701,7 +681,7 @@ export async function pause(
         params,
         clientPausingToken,
         Gas1,
-        HederaERC20__factory.abi
+        HederaTokenManager__factory.abi
     )
     if (result[0] != true) throw Error
 }
@@ -717,7 +697,7 @@ export async function unpause(
         params,
         clientPausingToken,
         Gas1,
-        HederaERC20__factory.abi
+        HederaTokenManager__factory.abi
     )
     if (result[0] != true) throw Error
 }
@@ -736,7 +716,7 @@ export async function freeze(
         params,
         clientFreezingToken,
         Gas1,
-        HederaERC20__factory.abi
+        HederaTokenManager__factory.abi
     )
     if (result[0] != true) throw Error
 }
@@ -754,7 +734,7 @@ export async function unfreeze(
         params,
         clientUnFreezingToken,
         Gas1,
-        HederaERC20__factory.abi
+        HederaTokenManager__factory.abi
     )
     if (result[0] != true) throw Error
 }
@@ -771,7 +751,7 @@ export async function deleteToken(
         params,
         clientDeletingToken,
         Gas1,
-        HederaERC20__factory.abi
+        HederaTokenManager__factory.abi
     )
     if (result[0] != true) throw Error
 }
@@ -789,7 +769,24 @@ export async function rescue(
         params,
         clientRescueingToken,
         Gas4,
-        HederaERC20__factory.abi
+        HederaTokenManager__factory.abi
+    )
+    if (result[0] != true) throw Error
+}
+
+export async function rescueHBAR(
+    proxyAddress: ContractId,
+    amountOfHBARToRescue: BigNumber,
+    clientRescueingToken: Client
+) {
+    const params = [amountOfHBARToRescue.toString()]
+    const result = await contractCall(
+        proxyAddress,
+        'rescueHBAR',
+        params,
+        clientRescueingToken,
+        Gas4,
+        HederaTokenManager__factory.abi
     )
     if (result[0] != true) throw Error
 }
@@ -808,7 +805,7 @@ export async function getRoles(
         params,
         client,
         Gas3,
-        HederaERC20__factory.abi
+        HederaTokenManager__factory.abi
     )
     return result[0]
 }
@@ -825,7 +822,7 @@ export async function getRoleId(
         params,
         client,
         Gas3,
-        HederaERC20__factory.abi
+        HederaTokenManager__factory.abi
     )
     return result[0]
 }
@@ -858,8 +855,8 @@ export async function grantRoles(
         'grantRoles',
         params,
         clientGrantingRoles,
-        Gas1,
-        HederaERC20__factory.abi
+        Gas0,
+        HederaTokenManager__factory.abi
     )
 }
 
@@ -884,8 +881,8 @@ export async function revokeRoles(
         'revokeRoles',
         params,
         clientRevokingRoles,
-        Gas1,
-        HederaERC20__factory.abi
+        Gas0,
+        HederaTokenManager__factory.abi
     )
 }
 
@@ -907,7 +904,7 @@ export async function decreaseSupplierAllowance(
         params,
         clientDecreasingAllowance,
         Gas5,
-        HederaERC20__factory.abi
+        HederaTokenManager__factory.abi
     )
 }
 
@@ -927,8 +924,8 @@ export async function grantSupplierRole(
         'grantSupplierRole',
         params,
         clientGrantingRole,
-        Gas5,
-        HederaERC20__factory.abi
+        Gas1,
+        HederaTokenManager__factory.abi
     )
 }
 
@@ -944,8 +941,8 @@ export async function grantUnlimitedSupplierRole(
         'grantUnlimitedSupplierRole',
         params,
         clientGrantingRole,
-        Gas5,
-        HederaERC20__factory.abi
+        Gas1,
+        HederaTokenManager__factory.abi
     )
 }
 
@@ -966,7 +963,7 @@ export async function increaseSupplierAllowance(
         params,
         clientIncreasingAllowance,
         Gas5,
-        HederaERC20__factory.abi
+        HederaTokenManager__factory.abi
     )
 }
 
@@ -983,7 +980,7 @@ export async function isUnlimitedSupplierAllowance(
         params,
         clientChecking,
         Gas2,
-        HederaERC20__factory.abi
+        HederaTokenManager__factory.abi
     )
     return result[0]
 }
@@ -1001,7 +998,7 @@ export async function resetSupplierAllowance(
         params,
         clientResetingAllowance,
         Gas5,
-        HederaERC20__factory.abi
+        HederaTokenManager__factory.abi
     )
 }
 
@@ -1017,8 +1014,8 @@ export async function revokeSupplierRole(
         'revokeSupplierRole',
         params,
         clientRevokingRole,
-        Gas5,
-        HederaERC20__factory.abi
+        Gas1,
+        HederaTokenManager__factory.abi
     )
 }
 
@@ -1035,7 +1032,7 @@ export async function getSupplierAllowance(
         params,
         clientCheckingAllowance,
         Gas2,
-        HederaERC20__factory.abi
+        HederaTokenManager__factory.abi
     )
     return BigNumber.from(result[0])
 }
@@ -1052,7 +1049,7 @@ export async function getReserveAmount(
         params,
         operatorClient,
         Gas2,
-        HederaERC20__factory.abi
+        HederaTokenManager__factory.abi
     )
     return BigNumber.from(result[0])
 }
@@ -1068,7 +1065,7 @@ export async function getReserveAddress(
         params,
         operatorClient,
         Gas2,
-        HederaERC20__factory.abi
+        HederaTokenManager__factory.abi
     )
     return result[0]
 }
@@ -1085,7 +1082,7 @@ export async function updateDataFeed(
         params,
         operatorClient,
         Gas2,
-        HederaERC20__factory.abi
+        HederaTokenManager__factory.abi
     )
 }
 
@@ -1213,7 +1210,7 @@ export async function grantKyc(
         params,
         client,
         Gas1,
-        HederaERC20__factory.abi
+        HederaTokenManager__factory.abi
     )
     if (result[0] != true) throw Error
 }
@@ -1232,19 +1229,19 @@ export async function revokeKyc(
         params,
         client,
         Gas1,
-        HederaERC20__factory.abi
+        HederaTokenManager__factory.abi
     )
     if (result[0] != true) throw Error
 }
 
 // StableCoinFactory ///////////////////////////////////////////////////
-export async function getHederaERC20Addresses(
+export async function getHederaTokenManagerAddresses(
     stableCoinFactoryProxy: ContractId,
     client: Client
 ) {
     const result = await contractCall(
         stableCoinFactoryProxy,
-        'getHederaERC20Address',
+        'getHederaTokenManagerAddress',
         [],
         client,
         Gas1,
@@ -1253,14 +1250,14 @@ export async function getHederaERC20Addresses(
     return result[0]
 }
 
-export async function addHederaERC20Version(
+export async function addHederaTokenManagerVersion(
     stableCoinFactoryProxy: ContractId,
     client: Client,
     newAddress: string
 ) {
     await contractCall(
         stableCoinFactoryProxy,
-        'addHederaERC20Version',
+        'addHederaTokenManagerVersion',
         [newAddress],
         client,
         Gas1,
@@ -1268,7 +1265,7 @@ export async function addHederaERC20Version(
     )
 }
 
-export async function editHederaERC20Version(
+export async function editHederaTokenManagerVersion(
     stableCoinFactoryProxy: ContractId,
     client: Client,
     index: number,
@@ -1276,7 +1273,7 @@ export async function editHederaERC20Version(
 ) {
     await contractCall(
         stableCoinFactoryProxy,
-        'editHederaERC20Address',
+        'editHederaTokenManagerAddress',
         [index, newAddress],
         client,
         Gas1,
@@ -1298,14 +1295,14 @@ export async function changeAdminStablecoinFactory(
         StableCoinFactory__factory.abi
     )
 }
-export async function removeHederaERC20Version(
+export async function removeHederaTokenManagerVersion(
     stableCoinFactoryProxy: ContractId,
     client: Client,
     index: number
 ) {
     await contractCall(
         stableCoinFactoryProxy,
-        'removeHederaERC20Address',
+        'removeHederaTokenManagerAddress',
         [index],
         client,
         Gas1,

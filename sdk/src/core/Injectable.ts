@@ -38,6 +38,7 @@ import { DeleteCommandHandler } from '../app/usecase/command/stablecoin/operatio
 import { FreezeCommandHandler } from '../app/usecase/command/stablecoin/operations/freeze/FreezeCommandHandler.js';
 import { PauseCommandHandler } from '../app/usecase/command/stablecoin/operations/pause/PauseCommandHandler.js';
 import { RescueCommandHandler } from '../app/usecase/command/stablecoin/operations/rescue/RescueCommandHandler.js';
+import { RescueHBARCommandHandler } from '../app/usecase/command/stablecoin/operations/rescueHBAR/RescueHBARCommandHandler.js';
 import { UnFreezeCommandHandler } from '../app/usecase/command/stablecoin/operations/unfreeze/UnFreezeCommandHandler.js';
 import { UnPauseCommandHandler } from '../app/usecase/command/stablecoin/operations/unpause/UnPauseCommandHandler.js';
 import { WipeCommandHandler } from '../app/usecase/command/stablecoin/operations/wipe/WipeCommandHandler.js';
@@ -80,6 +81,7 @@ import { GetReserveAmountQueryHandler } from '../app/usecase/query/stablecoin/ge
 import { UpdateReserveAddressCommandHandler } from '../app/usecase/command/stablecoin/operations/updateReserveAddress/UpdateReserveAddressCommandHandler.js';
 import { UpdateReserveAmountCommandHandler } from '../app/usecase/command/reserve/operations/updateReserveAmount/UpdateReserveAmountCommandHandler.js';
 import { BalanceOfQueryHandler } from '../app/usecase/query/stablecoin/balanceof/BalanceOfQueryHandler.js';
+import { BalanceOfHBARQueryHandler } from '../app/usecase/query/stablecoin/balanceOfHBAR/BalanceOfHBARQueryHandler.js';
 import { GetReserveAddressQueryHandler } from '../app/usecase/query/stablecoin/getReserveAddress/GetReserveAddressQueryHandler.js';
 import { IsUnlimitedQueryHandler } from '../app/usecase/query/stablecoin/isUnlimited/IsUnlimitedQueryHandler.js';
 import { RevokeKycCommandHandler } from '../app/usecase/command/stablecoin/operations/revokeKyc/RevokeKycCommandHandler.js';
@@ -87,7 +89,7 @@ import { GrantKycCommandHandler } from '../app/usecase/command/stablecoin/operat
 import { GetAccountTokenRelationshipQueryHandler } from '../app/usecase/query/account/tokenRelationship/GetAccountTokenRelationshipQueryHandler.js';
 import { SDK } from '../port/in/Common.js';
 import { SetConfigurationCommandHandler } from '../app/usecase/command/network/setConfiguration/SetConfigurationCommandHandler.js';
-import { GetERC20ListQueryHandler } from '../app/usecase/query/factory/getERC20List/GetERC20ListQueryHandler.js';
+import { GetTokenManagerListQueryHandler } from '../app/usecase/query/factory/getTokenManagerList/GetTokenManagerListQueryHandler.js';
 import { GetAccountsWithRolesQueryHandler } from '../app/usecase/query/stablecoin/roles/getAccountsWithRole/GetAccountsWithRolesQueryHandler.js';
 
 export const TOKENS = {
@@ -152,6 +154,10 @@ const COMMAND_HANDLERS = [
 	{
 		token: TOKENS.COMMAND_HANDLER,
 		useClass: RescueCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: RescueHBARCommandHandler,
 	},
 	{
 		token: TOKENS.COMMAND_HANDLER,
@@ -268,6 +274,10 @@ const QUERY_HANDLERS = [
 	},
 	{
 		token: TOKENS.QUERY_HANDLER,
+		useClass: BalanceOfHBARQueryHandler,
+	},
+	{
+		token: TOKENS.QUERY_HANDLER,
 		useClass: GetReserveAmountQueryHandler,
 	},
 	{
@@ -300,7 +310,7 @@ const QUERY_HANDLERS = [
 	},
 	{
 		token: TOKENS.QUERY_HANDLER,
-		useClass: GetERC20ListQueryHandler,
+		useClass: GetTokenManagerListQueryHandler,
 	},
 ];
 

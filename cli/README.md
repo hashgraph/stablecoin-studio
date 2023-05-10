@@ -181,10 +181,10 @@ For all the underlying token's keys assigned to the smart contract, you can choo
 
 When you add an existing stable coin, you will able to operate with the roles that the stable coin's admin granted you. If after adding a stable coin you are granted other roles, you will have the possibility to refresh the stable coin's roles that you have.
 
-Once the request is ready, the CLI will extract from the configuration file the factory and HederaERC20 contracts addresses for the network you are working on.
+Once the request is ready, the CLI will extract from the configuration file the factory and HederaTokenManager contracts addresses for the network you are working on.
 The request will then be submitted to the SDK and the stable coin will be created.
 
-> When the configuration file is first created, the factory and HederaERC20 contracts added to the "testnet" network are the default ones (pre-deployed contracts). However users are free to deploy and use their own contracts, in order to do that, the configuration file must be updated with the new factory and/or HederaERC20 contract' addresses.
+> When the configuration file is first created, the factory and HederaTokenManager contracts added to the "testnet" network are the default ones (pre-deployed contracts). However users are free to deploy and use their own contracts, in order to do that, the configuration file must be updated with the new factory and/or HederaTokenManager contract' addresses.
 
 https://user-images.githubusercontent.com/114951681/228852049-7234f6ed-575c-4462-901b-c8d2856c5683.mp4
 

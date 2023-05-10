@@ -2,7 +2,11 @@ import { Heading, Stack, VStack } from '@chakra-ui/react';
 import type { Control, FieldValues, UseFormSetValue } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import InputController from '../../components/Form/InputController';
-import { CreateRequest, Network, GetERC20ListRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
+import {
+	CreateRequest,
+	Network,
+	GetTokenManagerListRequest,
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 import { handleRequestValidation } from '../../utils/validationsHelper';
 import { propertyNotFound } from '../../constant';
 import { useEffect, useState } from 'react';
@@ -20,29 +24,31 @@ interface BasicDetailsProps {
 const BasicDetails = (props: BasicDetailsProps) => {
 	const { control, setValue } = props;
 	const { t } = useTranslation(['global', 'stableCoinCreation']);
-	const [optionshederaERC20Addresses, setOptionsHederaERC20Addresses] = useState<Option[]>([]);
-	const [gettingHederaERC20, setGettingHederaERC20] = useState<boolean>(false);
+	const [optionshederaTokenManagerAddresses, setOptionsHederaTokenManagerAddresses] = useState<
+		Option[]
+	>([]);
+	const [gettingHederaTokenManager, setGettingHederaTokenManager] = useState<boolean>(false);
 
 	const { request } = props;
 
 	useEffect(() => {
-		const optionsHederaERC20 = async () => {
-			setGettingHederaERC20(true);
+		const optionsHederaTokenManager = async () => {
+			setGettingHederaTokenManager(true);
 
 			try {
-				const hederaERC20Option = await SDKService.getHederaERC20List(
-					new GetERC20ListRequest({
+				const hederaTokenManagerOption = await SDKService.getHederaTokenManagerList(
+					new GetTokenManagerListRequest({
 						factoryId: await Network.getFactoryAddress(),
 					}),
 				);
 				const AllOptions: any[] = [];
 				AllOptions.push({
 					value: '',
-					label: 'Enter your own HederaERC20 implementation',
+					label: 'Enter your own HederaTokenManager implementation',
 					isDisabled: true,
 				});
 
-				const options = hederaERC20Option.map((item) => {
+				const options = hederaTokenManagerOption.map((item) => {
 					return { label: item.value, value: item.value };
 				});
 
@@ -50,22 +56,22 @@ const BasicDetails = (props: BasicDetailsProps) => {
 					AllOptions.push(option);
 				});
 
-				setOptionsHederaERC20Addresses(AllOptions.reverse());
+				setOptionsHederaTokenManagerAddresses(AllOptions.reverse());
 
-				setGettingHederaERC20(false);
+				setGettingHederaTokenManager(false);
 			} catch (e) {
-				setGettingHederaERC20(false);
+				setGettingHederaTokenManager(false);
 
 				throw e;
 			}
 		};
-		optionsHederaERC20().catch(console.error);
+		optionsHederaTokenManager().catch(console.error);
 	}, []);
 
 	return (
 		<VStack h='full' justify={'space-between'} pt='80px'>
-			{gettingHederaERC20 && <AwaitingWalletSignature />}
-			{!gettingHederaERC20 && (
+			{gettingHederaTokenManager && <AwaitingWalletSignature />}
+			{!gettingHederaTokenManager && (
 				<Stack minW={400}>
 					<Heading
 						data-testid='title'
@@ -79,7 +85,7 @@ const BasicDetails = (props: BasicDetailsProps) => {
 					</Heading>
 					<Stack as='form' spacing={6}>
 						<SelectCreatableController
-							label={t('stableCoinCreation:basicDetails.hederaERC20')}
+							label={t('stableCoinCreation:basicDetails.hederaTokenManager')}
 							overrideStyles={{
 								wrapper: {
 									border: '1px',
@@ -107,19 +113,19 @@ const BasicDetails = (props: BasicDetailsProps) => {
 									validation: (option: any) => {
 										if (!option || !option.value) return false;
 										// if (!option.__isNew__) return true;
-										request.hederaERC20 = option.value as string;
-										const res = handleRequestValidation(request.validate('hederaERC20'));
+										request.hederaTokenManager = option.value as string;
+										const res = handleRequestValidation(request.validate('hederaTokenManager'));
 										return res;
 									},
 								},
 							}}
 							variant='unstyled'
-							name={`hederaERC20Id`}
+							name={`hederaTokenManagerId`}
 							control={control}
 							isRequired={true}
 							defaultValue={'0'}
-							options={[...Object.values(optionshederaERC20Addresses)]}
-							placeholder={t('stableCoinCreation:basicDetails:hederaERC20Placeholder')}
+							options={[...Object.values(optionshederaTokenManagerAddresses)]}
+							placeholder={t('stableCoinCreation:basicDetails:hederaTokenManagerPlaceholder')}
 						/>
 
 						<InputController

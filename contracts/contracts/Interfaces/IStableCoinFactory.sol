@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
-import {IHederaERC20} from './IHederaERC20.sol';
+import {IHederaTokenManager} from './IHederaTokenManager.sol';
 import {KeysLib} from '../library/KeysLib.sol';
 
 interface IStableCoinFactory {
@@ -9,13 +9,19 @@ interface IStableCoinFactory {
 
     event StableCoinFactoryInitialized();
 
-    event HederaERC20AddressEdited(address oldAddress, address newAddress);
+    event HederaTokenManagerAddressEdited(
+        address oldAddress,
+        address newAddress
+    );
 
-    event HederaERC20AddressRemoved(uint256 index, address addressRemoved);
+    event HederaTokenManagerAddressRemoved(
+        uint256 index,
+        address addressRemoved
+    );
 
     event AdminChanged(address oldAdmin, address newAdmin);
 
-    event HederaERC20AddressAdded(address newHederaERC20);
+    event HederaTokenManagerAddressAdded(address newHederaTokenManager);
 
     struct TokenStruct {
         string tokenName;
@@ -29,8 +35,8 @@ interface IStableCoinFactory {
         int256 reserveInitialAmount;
         bool createReserve;
         KeysLib.KeysStruct[] keys;
-        IHederaERC20.RolesStruct[] roles;
-        IHederaERC20.CashinRoleStruct cashinRole;
+        IHederaTokenManager.RolesStruct[] roles;
+        IHederaTokenManager.CashinRoleStruct cashinRole;
     }
 
     struct DeployedStableCoin {
@@ -47,15 +53,21 @@ interface IStableCoinFactory {
         address stableCoinContractAddress
     ) external payable returns (DeployedStableCoin memory);
 
-    function getHederaERC20Address() external view returns (address[] memory);
+    function getHederaTokenManagerAddress()
+        external
+        view
+        returns (address[] memory);
 
-    function addHederaERC20Version(address newAddress) external;
+    function addHederaTokenManagerVersion(address newAddress) external;
 
-    function editHederaERC20Address(uint256 index, address newAddress) external;
+    function editHederaTokenManagerAddress(
+        uint256 index,
+        address newAddress
+    ) external;
 
     function changeAdmin(address newAddress) external;
 
-    function removeHederaERC20Address(uint256 index) external;
+    function removeHederaTokenManagerAddress(uint256 index) external;
 
     function getAdmin() external view returns (address);
 }
