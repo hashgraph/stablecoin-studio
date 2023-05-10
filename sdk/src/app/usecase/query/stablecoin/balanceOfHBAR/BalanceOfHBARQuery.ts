@@ -18,10 +18,17 @@
  *
  */
 
-export const COMMAND_METADATA = '__command__';
-export const COMMAND_HANDLER_METADATA = '__commandHandler__';
-export const QUERY_METADATA = '__query__';
-export const QUERY_HANDLER_METADATA = '__queryHandler__';
-export const TOKEN_CREATION_COST_HBAR = 40;
-export const EVM_ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
-export const HBAR_DECIMALS = 8;
+import { Query } from '../../../../../core/query/Query.js';
+import { QueryResponse } from '../../../../../core/query/QueryResponse.js';
+import BigDecimal from '../../../../../domain/context/shared/BigDecimal.js';
+import { HederaId } from '../../../../../domain/context/shared/HederaId.js';
+
+export class BalanceOfHBARQueryResponse implements QueryResponse {
+	constructor(public readonly payload: BigDecimal) {}
+}
+
+export class BalanceOfHBARQuery extends Query<BalanceOfHBARQueryResponse> {
+	constructor(public readonly treasuryAccountId: HederaId) {
+		super();
+	}
+}

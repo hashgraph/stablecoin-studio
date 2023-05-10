@@ -28,6 +28,7 @@ export enum Operation {
 	UNPAUSE = 'Unpause',
 	DELETE = 'Delete',
 	RESCUE = 'Rescue',
+	RESCUE_HBAR = 'Rescue_Hbar',
 	ROLE_MANAGEMENT = 'Role_Management',
 	ROLE_ADMIN_MANAGEMENT = 'Admin_Role',
 	RESERVE_MANAGEMENT = 'Reserve_Management',

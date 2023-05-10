@@ -40,6 +40,7 @@ export const mockedStableCoinCapabilities = {
 	coin: mockedSelectedStableCoin,
 	capabilities: [
 		{ operation: 'Rescue', access: 1 },
+		{ operation: 'RescueHBAR', access: 1 },
 		{ operation: 'Cash_in', access: 1 },
 		{ operation: 'Burn', access: 1 },
 		{ operation: 'Wipe', access: 1 },

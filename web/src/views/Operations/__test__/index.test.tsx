@@ -43,6 +43,14 @@ describe(`<${Operations.name} />`, () => {
 		);
 	});
 
+	test('should render rescue HBAR button', () => {
+		const component = render(<Operations />);
+
+		expect(component.getByTestId('direct-access-rescueHBAR')).toHaveTextContent(
+			translations.rescueHBAROperation,
+		);
+	});
+
 	test('should render burn button', () => {
 		const component = render(<Operations />);
 

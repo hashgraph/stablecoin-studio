@@ -31,6 +31,7 @@ import {
 	StableCoin,
 	StableCoinViewModel,
 	TokenSupplyType,
+	HBAR_DECIMALS,
 } from '../../../src/index.js';
 import {
 	CashInRequest,
@@ -43,6 +44,7 @@ import {
 	FreezeAccountRequest,
 	CreateRequest,
 	RescueRequest,
+	RescueHBARRequest,
 	IsAccountAssociatedTokenRequest,
 	InitializationRequest,
 	KYCRequest,
@@ -60,16 +62,19 @@ import {
 	FACTORY_ADDRESS,
 	HEDERA_TOKEN_MANAGER_ADDRESS,
 } from '../../config.js';
-import { BigNumber } from 'ethers';
+import { MirrorNodeAdapter } from '../../../src/port/out/mirror/MirrorNodeAdapter.js';
+import { Client, Hbar, TransferTransaction } from '@hashgraph/sdk';
 const decimals = 6;
 
 describe('🧪 Stablecoin test', () => {
 	let stableCoinSC: StableCoinViewModel;
 	let stableCoinHTS: StableCoinViewModel;
+
 	const delay = async (seconds = 5): Promise<void> => {
 		seconds = seconds * 1000;
 		await new Promise((r) => setTimeout(r, seconds));
 	};
+
 	beforeAll(async () => {
 		await Network.connect(
 			new ConnectRequest({
@@ -222,6 +227,10 @@ describe('🧪 Stablecoin test', () => {
 		await rescueOperation(stableCoinSC);
 	}, 60_000);
 
+	it('Performs rescue HBAR SC', async () => {
+		await rescueHBAROperation(stableCoinSC);
+	}, 60_000);
+
 	it('Performs wipe SC', async () => {
 		await wipeOperation(stableCoinSC);
 	}, 60_000);
@@ -246,6 +255,10 @@ describe('🧪 Stablecoin test', () => {
 
 	it('Performs rescue HTS', async () => {
 		await rescueOperation(stableCoinHTS);
+	}, 60_000);
+
+	it('Performs rescue HBAR HTS', async () => {
+		await rescueHBAROperation(stableCoinHTS);
 	}, 60_000);
 
 	it('Performs wipe HTS', async () => {
@@ -447,6 +460,60 @@ describe('🧪 Stablecoin test', () => {
 		expect(finalAmount.value.toBigNumber().toString()).toEqual(
 			final.toString(),
 		);
+	}
+
+	async function rescueHBAROperation(stableCoin: StableCoinViewModel) {
+		const initalHBARAmount = BigDecimal.fromString('2.5', HBAR_DECIMALS);
+		const rescueAmount = BigDecimal.fromString('1.5', HBAR_DECIMALS);
+
+		const client = Client.forTestnet();
+
+		client.setOperator(
+			CLIENT_ACCOUNT_ED25519.id.toString(),
+			CLIENT_ACCOUNT_ED25519.privateKey!.key,
+		);
+
+		const transaction = new TransferTransaction()
+			.addHbarTransfer(
+				CLIENT_ACCOUNT_ED25519.id.toString(),
+				Hbar.fromTinybars(
+					'-' + initalHBARAmount.toBigNumber().toString(),
+				),
+			)
+			.addHbarTransfer(
+				stableCoin?.treasury!.toString(),
+				Hbar.fromTinybars(initalHBARAmount.toBigNumber().toString()),
+			);
+
+		await transaction.execute(client);
+
+		await delay();
+
+		const mirrorNodeAdapter: MirrorNodeAdapter =
+			Injectable.resolve(MirrorNodeAdapter);
+
+		const initialAmount = await mirrorNodeAdapter.getHBARBalance(
+			stableCoin?.treasury!.toString(),
+		);
+
+		await StableCoin.rescueHBAR(
+			new RescueHBARRequest({
+				amount: rescueAmount.toString(),
+				tokenId: stableCoin?.tokenId!.toString(),
+			}),
+		);
+
+		await delay();
+
+		const finalAmount = await mirrorNodeAdapter.getHBARBalance(
+			stableCoin?.treasury!.toString(),
+		);
+
+		const final = initialAmount
+			.toBigNumber()
+			.sub(rescueAmount.toBigNumber());
+
+		expect(finalAmount.toBigNumber().toString()).toEqual(final.toString());
 	}
 
 	async function wipeOperation(stableCoin: StableCoinViewModel) {

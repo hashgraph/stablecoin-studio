@@ -98,6 +98,10 @@ interface ITransactionAdapter {
 		coin: StableCoinCapabilities,
 		amount: BigDecimal,
 	): Promise<TransactionResponse>;
+	rescueHBAR(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+	): Promise<TransactionResponse>;
 	delete(coin: StableCoinCapabilities): Promise<TransactionResponse>;
 	transfer(
 		coin: StableCoinCapabilities,
@@ -306,6 +310,12 @@ export default abstract class TransactionAdapter
 		throw new Error('Method not implemented.');
 	}
 	rescue(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+	): Promise<TransactionResponse<any, Error>> {
+		throw new Error('Method not implemented.');
+	}
+	rescueHBAR(
 		coin: StableCoinCapabilities,
 		amount: BigDecimal,
 	): Promise<TransactionResponse<any, Error>> {

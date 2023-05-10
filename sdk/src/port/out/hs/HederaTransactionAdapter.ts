@@ -406,6 +406,22 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		);
 	}
 
+	public async rescueHBAR(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+	): Promise<TransactionResponse> {
+		const params = new Params({
+			amount: amount,
+		});
+		return this.performOperation(
+			coin,
+			Operation.RESCUE_HBAR,
+			'rescueHBAR',
+			120000,
+			params,
+		);
+	}
+
 	public async delete(
 		coin: StableCoinCapabilities,
 	): Promise<TransactionResponse> {

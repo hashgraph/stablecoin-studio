@@ -9,17 +9,20 @@ import {
 
 import {
     HederaTokenManager__factory,
-    TransparentUpgradeableProxy__factory,
+    ITransparentUpgradeableProxy__factory,
     ProxyAdmin__factory,
     HederaReserve__factory,
     StableCoinFactory__factory,
 } from '../typechain-types'
 
 import { contractCall, toEvmAddress } from './utils'
-import { Gas1, Gas2, Gas3, Gas4, Gas5 } from './constants'
+import { Gas0, Gas1, Gas2, Gas3, Gas4, Gas5 } from './constants'
 
 import { BigNumber } from 'ethers'
-import { interfaces } from '../typechain-types/@chainlink/contracts/src/v0.8/index.js'
+
+export function delay(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms))
+}
 
 export async function getHBARBalanceOf(
     Id: string,
@@ -441,7 +444,7 @@ export async function upgradeTo_SCF(
         params,
         client,
         Gas3,
-        TransparentUpgradeableProxy__factory.abi
+        ITransparentUpgradeableProxy__factory.abi
     )
 }
 
@@ -457,7 +460,7 @@ export async function changeAdmin_SCF(
         params,
         client,
         Gas3,
-        TransparentUpgradeableProxy__factory.abi
+        ITransparentUpgradeableProxy__factory.abi
     )
 }
 
@@ -472,7 +475,7 @@ export async function admin_SCF(
         params,
         client,
         Gas2,
-        TransparentUpgradeableProxy__factory.abi
+        ITransparentUpgradeableProxy__factory.abi
     )
     return result[0]
 }
@@ -771,6 +774,23 @@ export async function rescue(
     if (result[0] != true) throw Error
 }
 
+export async function rescueHBAR(
+    proxyAddress: ContractId,
+    amountOfHBARToRescue: BigNumber,
+    clientRescueingToken: Client
+) {
+    const params = [amountOfHBARToRescue.toString()]
+    const result = await contractCall(
+        proxyAddress,
+        'rescueHBAR',
+        params,
+        clientRescueingToken,
+        Gas4,
+        HederaTokenManager__factory.abi
+    )
+    if (result[0] != true) throw Error
+}
+
 // Roles ///////////////////////////////////////////////////
 export async function getRoles(
     proxyAddress: ContractId,
@@ -835,7 +855,7 @@ export async function grantRoles(
         'grantRoles',
         params,
         clientGrantingRoles,
-        Gas1,
+        Gas0,
         HederaTokenManager__factory.abi
     )
 }
@@ -861,7 +881,7 @@ export async function revokeRoles(
         'revokeRoles',
         params,
         clientRevokingRoles,
-        Gas1,
+        Gas0,
         HederaTokenManager__factory.abi
     )
 }
@@ -904,7 +924,7 @@ export async function grantSupplierRole(
         'grantSupplierRole',
         params,
         clientGrantingRole,
-        Gas5,
+        Gas1,
         HederaTokenManager__factory.abi
     )
 }
@@ -921,7 +941,7 @@ export async function grantUnlimitedSupplierRole(
         'grantUnlimitedSupplierRole',
         params,
         clientGrantingRole,
-        Gas5,
+        Gas1,
         HederaTokenManager__factory.abi
     )
 }
@@ -994,7 +1014,7 @@ export async function revokeSupplierRole(
         'revokeSupplierRole',
         params,
         clientRevokingRole,
-        Gas5,
+        Gas1,
         HederaTokenManager__factory.abi
     )
 }

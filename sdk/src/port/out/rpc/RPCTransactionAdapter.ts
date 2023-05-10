@@ -437,6 +437,16 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		return this.performOperation(coin, Operation.RESCUE, params);
 	}
 
+	async rescueHBAR(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+	): Promise<TransactionResponse> {
+		const params = new Params({
+			amount: amount,
+		});
+		return this.performOperation(coin, Operation.RESCUE_HBAR, params);
+	}
+
 	async delete(coin: StableCoinCapabilities): Promise<TransactionResponse> {
 		return this.performOperation(coin, Operation.DELETE);
 	}
@@ -1585,6 +1595,15 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 						evmProxy,
 						this.signerOrProvider,
 					).rescue(params!.amount!.toBigNumber()),
+					this.networkService.environment,
+				);
+
+			case Operation.RESCUE_HBAR:
+				return RPCTransactionResponseAdapter.manageResponse(
+					await HederaERC20__factory.connect(
+						evmProxy,
+						this.signerOrProvider,
+					).rescueHBAR(params!.amount!.toBigNumber()),
 					this.networkService.environment,
 				);
 

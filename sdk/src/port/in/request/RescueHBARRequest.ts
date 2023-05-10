@@ -18,10 +18,19 @@
  *
  */
 
-export const COMMAND_METADATA = '__command__';
-export const COMMAND_HANDLER_METADATA = '__commandHandler__';
-export const QUERY_METADATA = '__query__';
-export const QUERY_HANDLER_METADATA = '__queryHandler__';
-export const TOKEN_CREATION_COST_HBAR = 40;
-export const EVM_ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
-export const HBAR_DECIMALS = 8;
+import ValidatedRequest from './validation/ValidatedRequest.js';
+import Validation from './validation/Validation.js';
+
+export default class RescueHBARRequest extends ValidatedRequest<RescueHBARRequest> {
+	tokenId: string;
+	amount: string;
+
+	constructor({ tokenId, amount }: { tokenId: string; amount: string }) {
+		super({
+			tokenId: Validation.checkHederaIdFormat(),
+			amount: Validation.checkAmount(),
+		});
+		this.tokenId = tokenId;
+		this.amount = amount;
+	}
+}
