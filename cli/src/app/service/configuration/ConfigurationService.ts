@@ -24,7 +24,7 @@ import {
  */
 export default class ConfigurationService extends Service {
   private configuration: IConfiguration;
-  private configFileName = '.@hashgraph-dev/stablecoin-npm-cli.yaml';
+  private configFileName = '.hedera-stable-coin-cli.yaml';
   private path = this.getDefaultConfigurationPath();
 
   constructor() {

@@ -28,7 +28,7 @@ import {
 	ContractId as HContractId,
 } from '@hashgraph/sdk';
 import {
-	HederaERC20__factory,
+	HederaTokenManager__factory,
 	HederaReserve__factory,
 	StableCoinFactory__factory,
 	IHederaTokenService__factory,
@@ -110,7 +110,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	public async create(
 		coin: StableCoinProps,
 		factory: ContractId,
-		hederaERC20: ContractId,
+		hederaTokenManager: ContractId,
 		createReserve: boolean,
 		reserveAddress?: ContractId,
 		reserveInitialAmount?: BigDecimal,
@@ -255,14 +255,14 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				this.signerOrProvider,
 			);
 			LogService.logTrace('Deploying factory: ', {
-				erc20: hederaERC20.value,
+				tokenManager: hederaTokenManager.value,
 				stableCoin: stableCoinToCreate,
 			});
 			const res = await factoryInstance.deployStableCoin(
 				stableCoinToCreate,
 				'0x' +
 					HContractId.fromString(
-						hederaERC20.value,
+						hederaTokenManager.value,
 					).toSolidityAddress(),
 				{
 					value: ethers.utils.parseEther(
@@ -288,8 +288,8 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 
 	async init(debug = false): Promise<string> {
 		this.provider = new ethers.providers.JsonRpcProvider(
-			`https://${this.networkService.environment.toString()}.hashio.io/api`,
-			// `http://127.0.0.1:7546/api`,
+			// `https://${this.networkService.environment.toString()}.hashio.io/api`,
+			`http://127.0.0.1:7546/api`,
 		);
 		!debug && (await this.connectMetamask(false));
 		const eventData = {
@@ -437,6 +437,16 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		return this.performOperation(coin, Operation.RESCUE, params);
 	}
 
+	async rescueHBAR(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+	): Promise<TransactionResponse> {
+		const params = new Params({
+			amount: amount,
+		});
+		return this.performOperation(coin, Operation.RESCUE_HBAR, params);
+	}
+
 	async delete(coin: StableCoinCapabilities): Promise<TransactionResponse> {
 		return this.performOperation(coin, Operation.DELETE);
 	}
@@ -452,7 +462,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
 				});
 
-			const res = await HederaERC20__factory.connect(
+			const res = await HederaTokenManager__factory.connect(
 				coin.coin.evmProxyAddress?.toString(),
 				this.signerOrProvider,
 			).getReserveAddress();
@@ -482,7 +492,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				});
 
 			return RPCTransactionResponseAdapter.manageResponse(
-				await HederaERC20__factory.connect(
+				await HederaTokenManager__factory.connect(
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
 				).updateReserveAddress(
@@ -512,7 +522,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
 				});
 
-			const res = await HederaERC20__factory.connect(
+			const res = await HederaTokenManager__factory.connect(
 				coin.coin.evmProxyAddress?.toString(),
 				this.signerOrProvider,
 			).getReserveAmount();
@@ -569,7 +579,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				});
 
 			return RPCTransactionResponseAdapter.manageResponse(
-				await HederaERC20__factory.connect(
+				await HederaTokenManager__factory.connect(
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
 				).grantRole(role, await this.getEVMAddress(targetId)),
@@ -600,7 +610,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				});
 
 			return RPCTransactionResponseAdapter.manageResponse(
-				await HederaERC20__factory.connect(
+				await HederaTokenManager__factory.connect(
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
 				).revokeRole(role, await this.getEVMAddress(targetId)),
@@ -645,7 +655,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			}
 
 			return RPCTransactionResponseAdapter.manageResponse(
-				await HederaERC20__factory.connect(
+				await HederaTokenManager__factory.connect(
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
 				).grantRoles(roles, accounts, amountsFormatted),
@@ -684,7 +694,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			}
 
 			return RPCTransactionResponseAdapter.manageResponse(
-				await HederaERC20__factory.connect(
+				await HederaTokenManager__factory.connect(
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
 				).revokeRoles(roles, accounts),
@@ -715,7 +725,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				});
 
 			return RPCTransactionResponseAdapter.manageResponse(
-				await HederaERC20__factory.connect(
+				await HederaTokenManager__factory.connect(
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
 				).grantSupplierRole(
@@ -749,7 +759,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				});
 
 			return RPCTransactionResponseAdapter.manageResponse(
-				await HederaERC20__factory.connect(
+				await HederaTokenManager__factory.connect(
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
 				).grantUnlimitedSupplierRole(
@@ -782,7 +792,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				});
 
 			return RPCTransactionResponseAdapter.manageResponse(
-				await HederaERC20__factory.connect(
+				await HederaTokenManager__factory.connect(
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
 				).revokeSupplierRole(await this.getEVMAddress(targetId)),
@@ -812,7 +822,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					network: this.networkService.environment,
 				});
 
-			const res = await HederaERC20__factory.connect(
+			const res = await HederaTokenManager__factory.connect(
 				coin.coin.evmProxyAddress?.toString(),
 				this.signerOrProvider,
 			).hasRole(role, await this.getEVMAddress(targetId));
@@ -840,7 +850,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
 					network: this.networkService.environment,
 				});
-			const res = await HederaERC20__factory.connect(
+			const res = await HederaTokenManager__factory.connect(
 				coin.coin.evmProxyAddress?.toString(),
 				this.signerOrProvider,
 			).balanceOf(await this.getEVMAddress(targetId));
@@ -873,7 +883,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				});
 
 			return RPCTransactionResponseAdapter.manageResponse(
-				await HederaERC20__factory.connect(
+				await HederaTokenManager__factory.connect(
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
 				).associateToken(await this.getEVMAddress(targetId)),
@@ -903,7 +913,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				});
 
 			return RPCTransactionResponseAdapter.manageResponse(
-				await HederaERC20__factory.connect(
+				await HederaTokenManager__factory.connect(
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
 				).dissociateToken(await this.getEVMAddress(targetId)),
@@ -934,7 +944,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 
 			return new TransactionResponse(
 				undefined,
-				await HederaERC20__factory.connect(
+				await HederaTokenManager__factory.connect(
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
 				).isUnlimitedSupplierAllowance(
@@ -965,7 +975,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
 				});
 
-			const res = await HederaERC20__factory.connect(
+			const res = await HederaTokenManager__factory.connect(
 				coin.coin.evmProxyAddress?.toString(),
 				this.signerOrProvider,
 			).getSupplierAllowance(
@@ -1001,7 +1011,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				});
 
 			return RPCTransactionResponseAdapter.manageResponse(
-				await HederaERC20__factory.connect(
+				await HederaTokenManager__factory.connect(
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
 				).resetSupplierAllowance(await this.getEVMAddress(targetId)),
@@ -1032,7 +1042,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				});
 
 			return RPCTransactionResponseAdapter.manageResponse(
-				await HederaERC20__factory.connect(
+				await HederaTokenManager__factory.connect(
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
 				).increaseSupplierAllowance(
@@ -1067,7 +1077,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				});
 
 			return RPCTransactionResponseAdapter.manageResponse(
-				await HederaERC20__factory.connect(
+				await HederaTokenManager__factory.connect(
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
 				).decreaseSupplierAllowance(
@@ -1102,7 +1112,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 
 			return new TransactionResponse(
 				undefined,
-				await HederaERC20__factory.connect(
+				await HederaTokenManager__factory.connect(
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
 				).getRoles(await this.getEVMAddress(targetId)),
@@ -1131,7 +1141,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				});
 
 			return RPCTransactionResponseAdapter.manageResponse(
-				await HederaERC20__factory.connect(
+				await HederaTokenManager__factory.connect(
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
 				).grantKyc(
@@ -1164,7 +1174,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				});
 
 			return RPCTransactionResponseAdapter.manageResponse(
-				await HederaERC20__factory.connect(
+				await HederaTokenManager__factory.connect(
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
 				).revokeKyc(
@@ -1189,11 +1199,12 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		functionName: string,
 		param: unknown[],
 	): Promise<ContractTransaction> {
-		const erc20: CallableContract = IHederaTokenService__factory.connect(
-			contractAddress,
-			this.signerOrProvider,
-		).functions;
-		return erc20[functionName](...param);
+		const tokenManager: CallableContract =
+			IHederaTokenService__factory.connect(
+				contractAddress,
+				this.signerOrProvider,
+			).functions;
+		return tokenManager[functionName](...param);
 	}
 
 	async transfer(
@@ -1553,7 +1564,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					HederaId.from(params!.targetId!),
 				);
 				return RPCTransactionResponseAdapter.manageResponse(
-					await HederaERC20__factory.connect(
+					await HederaTokenManager__factory.connect(
 						evmProxy,
 						this.signerOrProvider,
 					).mint(targetEvm.toString(), params!.amount!.toBigNumber()),
@@ -1562,7 +1573,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 
 			case Operation.BURN:
 				return RPCTransactionResponseAdapter.manageResponse(
-					await HederaERC20__factory.connect(
+					await HederaTokenManager__factory.connect(
 						evmProxy,
 						this.signerOrProvider,
 					).burn(params!.amount!.toBigNumber()),
@@ -1571,7 +1582,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 
 			case Operation.WIPE:
 				return RPCTransactionResponseAdapter.manageResponse(
-					await HederaERC20__factory.connect(
+					await HederaTokenManager__factory.connect(
 						evmProxy,
 						this.signerOrProvider,
 					).wipe(params!.targetId!, params!.amount!.toBigNumber()),
@@ -1580,16 +1591,25 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 
 			case Operation.RESCUE:
 				return RPCTransactionResponseAdapter.manageResponse(
-					await HederaERC20__factory.connect(
+					await HederaTokenManager__factory.connect(
 						evmProxy,
 						this.signerOrProvider,
 					).rescue(params!.amount!.toBigNumber()),
 					this.networkService.environment,
 				);
 
+			case Operation.RESCUE_HBAR:
+				return RPCTransactionResponseAdapter.manageResponse(
+					await HederaTokenManager__factory.connect(
+						evmProxy,
+						this.signerOrProvider,
+					).rescueHBAR(params!.amount!.toBigNumber()),
+					this.networkService.environment,
+				);
+
 			case Operation.FREEZE:
 				return RPCTransactionResponseAdapter.manageResponse(
-					await HederaERC20__factory.connect(
+					await HederaTokenManager__factory.connect(
 						evmProxy,
 						this.signerOrProvider,
 					).freeze(params!.targetId!),
@@ -1598,7 +1618,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 
 			case Operation.UNFREEZE:
 				return RPCTransactionResponseAdapter.manageResponse(
-					await HederaERC20__factory.connect(
+					await HederaTokenManager__factory.connect(
 						evmProxy,
 						this.signerOrProvider,
 					).unfreeze(params!.targetId!),
@@ -1607,7 +1627,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 
 			case Operation.PAUSE:
 				return RPCTransactionResponseAdapter.manageResponse(
-					await HederaERC20__factory.connect(
+					await HederaTokenManager__factory.connect(
 						evmProxy,
 						this.signerOrProvider,
 					).pause(),
@@ -1616,7 +1636,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 
 			case Operation.UNPAUSE:
 				return RPCTransactionResponseAdapter.manageResponse(
-					await HederaERC20__factory.connect(
+					await HederaTokenManager__factory.connect(
 						evmProxy,
 						this.signerOrProvider,
 					).unpause(),
@@ -1625,7 +1645,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 
 			case Operation.DELETE:
 				return RPCTransactionResponseAdapter.manageResponse(
-					await HederaERC20__factory.connect(
+					await HederaTokenManager__factory.connect(
 						evmProxy,
 						this.signerOrProvider,
 					).deleteToken(),
@@ -1654,7 +1674,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 						: -1,
 				};
 				return RPCTransactionResponseAdapter.manageResponse(
-					await HederaERC20__factory.connect(
+					await HederaTokenManager__factory.connect(
 						evmProxy,
 						this.signerOrProvider,
 					).updateToken(filteredContractParams),

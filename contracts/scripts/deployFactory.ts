@@ -6,7 +6,7 @@ import {
     getOperatorE25519,
     toHashgraphKey,
     deployFactory as dp,
-    deployHederaERC20,
+    deployHederaTokenManager,
 } from './deploy'
 
 import { getClient, clientId, toEvmAddress } from './utils'
@@ -47,14 +47,17 @@ export const deployFactory = async () => {
         toHashgraphKey(operatorPriKey, operatorIsE25519)
     )
 
-    const resultErc20 = await deployHederaERC20(clientSdk, operatorPriKey)
+    const resulttokenManager = await deployHederaTokenManager(
+        clientSdk,
+        operatorPriKey
+    )
     const initializeFactory = {
         admin: await toEvmAddress(operatorAccount, operatorIsE25519),
-        erc20: resultErc20.toSolidityAddress(),
+        tokenManager: resulttokenManager.toSolidityAddress(),
     }
     const result = await dp(initializeFactory, clientSdk, operatorPriKey)
 
-    const erc20 = resultErc20
+    const tokenManager = resulttokenManager
     const proxyAddress = result[0]
     const proxyAdminAddress = result[1]
     const factoryAddress = result[2]
@@ -65,7 +68,7 @@ export const deployFactory = async () => {
         proxyAdminAddress.toString(),
         '\nFactory Address: \t',
         factoryAddress.toString(),
-        '\nHederaERC20 Address: \t',
-        erc20.toString()
+        '\nHederaTokenManager Address: \t',
+        tokenManager.toString()
     )
 }

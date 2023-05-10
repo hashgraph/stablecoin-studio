@@ -72,7 +72,7 @@ export const english = {
   },
   stablecoin: {
     noFactories:
-      "You don't have configured your factory and HederaERC20 address. Without this configuration you cannot create an stable coin. Check the following link for more information. https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/cli#creating-a-config-file",
+      "You don't have configured your factory and HederaTokenManager address. Without this configuration you cannot create an stable coin. Check the following link for more information. https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/cli#creating-a-config-file",
     askConfirmCreation:
       'Are you sure you want to create the stable coin with these parameters?',
     description: 'Creating Stable Coin',
@@ -104,11 +104,11 @@ export const english = {
       'You will be the admin for the keys that you have assigned to the Smart Contract, do you want to change the admin for one of these features?',
     askKYC: 'Do you want to enable KYC?',
     askCustomFees: 'Do you want to add custom fees?',
-    askHederaERC20Other: 'Other',
-    askHederaERC20Version:
-      'Choose the HederaERC20 implementation you want to use',
-    askHederaERC20Implementation:
-      'Enter the address of the HederaERC20 implementation you want to use',
+    askHederaTokenManagerOther: 'Other',
+    askHederaTokenManagerVersion:
+      'Choose the HederaTokenManager implementation you want to use',
+    askHederaTokenManagerImplementation:
+      'Enter the address of the HederaTokenManager implementation you want to use',
     features: {
       admin: 'Enter the admin key',
       supply: 'Enter the supply key',
@@ -128,6 +128,7 @@ export const english = {
       burn: 'Choose the BURN admin account',
       wipe: 'Choose the WIPE admin account',
       rescue: 'Choose the RESCUE admin account',
+      rescueHBAR: 'Choose the RESCUE HBAR admin account',
       pause: 'Choose the PAUSE admin account',
       freeze: 'Choose the FREEZE admin account',
       delete: 'Choose the DELETE admin account',
@@ -150,6 +151,7 @@ export const english = {
     askBurnAmount: 'How many tokens do you want to burn?',
     askWipeAmount: 'How many tokens do you want to wipe?',
     askRescueAmount: 'How many tokens do you want to rescue?',
+    askRescueHBARAmount: 'How many HBAR do you want to rescue?',
     askGrantKYCToSender: 'Do you want to grant KYC to your current account?',
     askTargetAccount: 'What is the target account?',
     askAccountToBalance:
@@ -244,6 +246,7 @@ export const english = {
       Burn: 'Burn',
       Wipe: 'Wipe',
       Rescue: 'Rescue',
+      RescueHBAR: 'Rescue HBAR',
       FreezeMgmt: 'Freeze Management',
       KYCMgmt: 'KYC Management',
       FeesMgmt: 'Fees management',
@@ -297,6 +300,7 @@ export const english = {
       Burn: 'Burn',
       Wipe: 'Wipe',
       Rescue: 'Rescue',
+      RescueHBAR: 'Rescue HBAR',
       Pause: 'Pause',
       Freeze: 'Freeze',
       Delete: 'Delete',
@@ -363,6 +367,7 @@ export const english = {
     cashInCompleted: 'Cash in completed',
     burnCompleted: 'Burn completed',
     rescueCompleted: 'Rescue completed',
+    rescueHBARCompleted: 'HBAR Rescue completed',
     wipeCompleted: 'Wipe completed',
     detailsCompleted: 'Details loaded',
     balanceCompleted: 'Balance loaded',
@@ -404,6 +409,9 @@ export const english = {
   },
   rescue: {
     success: 'You have rescued ${tokens} tokens',
+  },
+  rescueHBAR: {
+    success: 'You have rescued ${hbars} HBARs',
   },
   account: {
     wrong: colors.red('Incorrect account format. Please try again.'),

@@ -149,7 +149,7 @@ const init = await Network.init(
 		network: 'testnet',
 		configuration: {
 			factoryAddress: '0.0.0',
-			hederaERC20Address: '0.0.0',
+			hederaTokenManagerAddress: '0.0.0',
 		},
 	}),
 );
@@ -262,7 +262,7 @@ Creates a new stable coin. You must use Network.connect first with a SupportedWa
 		treasury?: string;
 		supplyType?: TokenSupplyType;
 		stableCoinFactory: string;
-		hederaERC20: string;
+		hederaTokenManager: string;
 		reserveAddress?: string;
 		reserveInitialAmount?: string;
 		createReserve: boolean;
@@ -279,7 +279,7 @@ This delegates access to features to a smart contract, this enables the usage of
 ```Typescript
 	import {
 		FactoryAddressTestnet,
-		HederaERC20AddressTestnet,
+		HederaTokenManagerAddressTestnet,
 		Account,
 		CreateRequest,
 	} from '@hashgraph-dev/stablecoin-npm-sdk';
@@ -294,7 +294,7 @@ This delegates access to features to a smart contract, this enables the usage of
 			adminKey: Account.NullPublicKey,
 			supplyKey: Account.NullPublicKey,
 			freezeKey: Account.NullPublicKey,
-			hederaERC20: HederaERC20AddressTestnet,
+			hederaTokenManager: HederaTokenManagerAddressTestnet,
 			stableCoinFactory: FactoryAddressTestnet,
 			createReserve: false,
 		})
@@ -308,7 +308,7 @@ By specifying the public key of an account, we can set the stable coin's keys to
 ```Typescript
 	import {
 		FactoryAddressTestnet,
-		HederaERC20AddressTestnet,
+		HederaTokenManagerAddressTestnet,
 		Account,
 		CreateRequest,
 	} from '@hashgraph-dev/stablecoin-npm-sdk';
@@ -335,7 +335,7 @@ By specifying the public key of an account, we can set the stable coin's keys to
 			adminKey: publicKey,
 			supplyKey: publicKey,
 			freezeKey: publicKey,
-			hederaERC20: HederaERC20AddressTestnet,
+			hederaTokenManager: HederaTokenManagerAddressTestnet,
 			stableCoinFactory: FactoryAddressTestnet,
 			createReserve: false,
 		})
@@ -349,7 +349,7 @@ By not setting any of the keys, the stable coin will have the corresponding feat
 ```Typescript
 	import {
 		FactoryAddressTestnet,
-		HederaERC20AddressTestnet,
+		HederaTokenManagerAddressTestnet,
 		Account,
 		CreateRequest,
 	} from '@hashgraph-dev/stablecoin-npm-sdk';
@@ -358,7 +358,7 @@ By not setting any of the keys, the stable coin will have the corresponding feat
 			name: "Hedera Stable Coin",
 			symbol: "HSC",
 			decimals: 6,
-			hederaERC20: HederaERC20AddressTestnet,
+			hederaTokenManager: HederaTokenManagerAddressTestnet,
 			stableCoinFactory: FactoryAddressTestnet,
 			createReserve: false,
 		})
@@ -1337,33 +1337,33 @@ Updates the reserve amount for a stable coin.
 ## Factory
 The following operations are always performed through smart contracts calls.
 
-### Get HederaERC20 List
-Get a list of hedera ERC20 addresses stored in the factory.
+### Get HederaTokenManager List
+Get a list of hedera TokenManager addresses stored in the factory.
 
 **Spec:**
 
 ```Typescript
-	Factory.getHederaERC20List = (request: GetERC20ListRequest): Promise<ContractId[]>;
+	Factory.getHederaTokenManagerList = (request: GetTokenManagerListRequest): Promise<ContractId[]>;
 ```
 **Example**
 ```Typescript
-	const list = await Factory.getHederaERC20List(
-			new GetERC20ListRequest({ factoryId: FACTORY_ADDRESS }),
+	const list = await Factory.getHederaTokenManagerList(
+			new GetTokenManagerListRequest({ factoryId: FACTORY_ADDRESS }),
 		);
 ```
 
-### Get HederaERC20 by index
-Get a HederaERC20 address stored in the factory by index.
+### Get HederaTokenManager by index
+Get a HederaTokenManager address stored in the factory by index.
 
 **Spec:**
 
 ```Typescript
-	Factory.getHederaERC20ByIndex = (request: GetERC20ByIndexRequest): Promise<ContractId>;
+	Factory.getHederaTokenManagerByIndex = (request: GetTokenManagerByIndexRequest): Promise<ContractId>;
 ```
 **Example**
 ```Typescript
-	const hederaERC20 = await Factory.getHederaERC20ByIndex(
-			new GetERC20ByIndexRequest({ factoryId: FACTORY_ADDRESS ,
+	const hederaTokenManager = await Factory.getHederaTokenManagerByIndex(
+			new GetTokenManagerByIndexRequest({ factoryId: FACTORY_ADDRESS ,
 			index: 0}),
 		);
 ```
