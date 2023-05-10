@@ -281,7 +281,7 @@ export default class Validation {
 		};
 	};
 
-	public static checkAmount = (zeroIsValid = false) => {
+	public static checkAmount = (zeroIsValid = false, decimals = 18) => {
 		return (val: any): BaseError[] => {
 			const err: BaseError[] = [];
 			const isBigDecimal: boolean = CheckNums.isBigDecimal(val);
@@ -298,8 +298,8 @@ export default class Validation {
 			else if (!zeroIsValid && value.isLowerOrEqualThan(zero))
 				err.push(new InvalidRange(val, '0', undefined));
 
-			if (valueDecimals > 18) {
-				err.push(new InvalidDecimalRange(val, 0, 18));
+			if (valueDecimals > decimals) {
+				err.push(new InvalidDecimalRange(val, 0, decimals));
 			}
 			return err;
 		};

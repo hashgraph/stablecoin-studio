@@ -20,6 +20,7 @@
 
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
+import { HBAR_DECIMALS } from '../../../core/Constants.js';
 
 export default class RescueHBARRequest extends ValidatedRequest<RescueHBARRequest> {
 	tokenId: string;
@@ -28,7 +29,7 @@ export default class RescueHBARRequest extends ValidatedRequest<RescueHBARReques
 	constructor({ tokenId, amount }: { tokenId: string; amount: string }) {
 		super({
 			tokenId: Validation.checkHederaIdFormat(),
-			amount: Validation.checkAmount(),
+			amount: Validation.checkAmount(false, HBAR_DECIMALS),
 		});
 		this.tokenId = tokenId;
 		this.amount = amount;
