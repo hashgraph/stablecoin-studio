@@ -59,7 +59,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 
 	const feeCollectorAccountId = CLIENT_ACCOUNT_ED25519.id;
 
-	const delay = async (seconds = 3): Promise<void> => {
+	const delay = async (seconds = 5): Promise<void> => {
 		seconds = seconds * 1000;
 		await new Promise((r) => setTimeout(r, seconds));
 	};
@@ -145,6 +145,8 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 	it('Create a fractional custom fee for an existing stable coin', async () => {
 		const numerator = 1;
 		const denominator = 10;
+		const net = true;
+
 		const FractionalFee = new AddFractionalFeeRequest({
 			tokenId: stableCoinCapabilitiesHTS.coin.tokenId!.toString(),
 			collectorId: feeCollectorAccountId.toString(),
@@ -155,7 +157,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 			amountDenominator: denominator.toString(),
 			min: '0',
 			max: '0',
-			net: false,
+			net: net,
 		});
 
 		await Fees.addFractionalFee(FractionalFee);
@@ -172,7 +174,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 			denominator,
 			0,
 			feeCollectorAccountId,
-			false,
+			net,
 		);
 
 		await removeTokenCustomFees(stableCoinCapabilitiesHTS);
@@ -183,6 +185,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 	it('Create a fixed and a fractional custom fee, charged to the receiver, for an existing stable coin', async () => {
 		const percentage = 10;
 		const amount = 1;
+		const net = false;
 
 		const newFixedFee: RequestFixedFee = {
 			collectorId: feeCollectorAccountId.toString(),
@@ -202,7 +205,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 			amountDenominator: '',
 			min: '0',
 			max: '0',
-			net: true,
+			net: net,
 		};
 
 		const customFees: RequestCustomFee[] = [newFixedFee, newFractionalFee];
@@ -234,7 +237,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 			0,
 			percentage,
 			feeCollectorAccountId,
-			false,
+			net,
 		);
 		checkFixedFee(
 			tokenCustomFees[FixedFeeId],
