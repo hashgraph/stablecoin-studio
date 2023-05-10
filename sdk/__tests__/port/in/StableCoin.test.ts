@@ -64,14 +64,13 @@ import {
 } from '../../config.js';
 import { MirrorNodeAdapter } from '../../../src/port/out/mirror/MirrorNodeAdapter.js';
 import { Client, Hbar, TransferTransaction } from '@hashgraph/sdk';
-import { BigNumber } from 'ethers';
 const decimals = 6;
 
 describe('🧪 Stablecoin test', () => {
 	let stableCoinSC: StableCoinViewModel;
 	let stableCoinHTS: StableCoinViewModel;
 
-	const delay = async (seconds = 3): Promise<void> => {
+	const delay = async (seconds = 5): Promise<void> => {
 		seconds = seconds * 1000;
 		await new Promise((r) => setTimeout(r, seconds));
 	};
@@ -488,7 +487,7 @@ describe('🧪 Stablecoin test', () => {
 
 		await transaction.execute(client);
 
-		await delay(5);
+		await delay();
 
 		const mirrorNodeAdapter: MirrorNodeAdapter =
 			Injectable.resolve(MirrorNodeAdapter);
@@ -504,7 +503,7 @@ describe('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		await delay(5);
+		await delay();
 
 		const finalAmount = await mirrorNodeAdapter.getHBARBalance(
 			stableCoin?.treasury!.toString(),
