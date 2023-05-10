@@ -1600,7 +1600,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 
 			case Operation.RESCUE_HBAR:
 				return RPCTransactionResponseAdapter.manageResponse(
-					await HederaERC20__factory.connect(
+					await HederaTokenManager__factory.connect(
 						evmProxy,
 						this.signerOrProvider,
 					).rescueHBAR(params!.amount!.toBigNumber()),
