@@ -41,6 +41,7 @@ import type {
 	PauseRequest,
 	RequestAccount,
 	RescueRequest,
+	RescueHBARRequest,
 	ReserveViewModel,
 	ResetSupplierAllowanceRequest,
 	RevokeMultiRolesRequest,
@@ -165,6 +166,10 @@ export class SDKService {
 
 	public static async rescue(req: RescueRequest) {
 		return await StableCoin.rescue(req);
+	}
+
+	public static async rescueHBAR(req: RescueHBARRequest) {
+		return await StableCoin.rescueHBAR(req);
 	}
 
 	public static async wipe(req: WipeRequest) {
