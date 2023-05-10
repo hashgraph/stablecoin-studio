@@ -31,6 +31,7 @@ import {
 	StableCoin,
 	StableCoinViewModel,
 	TokenSupplyType,
+	HBAR_DECIMALS,
 } from '../../../src/index.js';
 import {
 	CashInRequest,
@@ -463,7 +464,8 @@ describe('🧪 Stablecoin test', () => {
 	}
 
 	async function rescueHBAROperation(stableCoin: StableCoinViewModel) {
-		const initalHBARAmount = BigNumber.from(10);
+		const initalHBARAmount = BigDecimal.fromString('2.5', HBAR_DECIMALS);
+		const rescueAmount = BigDecimal.fromString('1.5', HBAR_DECIMALS);
 
 		const client = Client.forTestnet();
 
@@ -475,21 +477,21 @@ describe('🧪 Stablecoin test', () => {
 		const transaction = new TransferTransaction()
 			.addHbarTransfer(
 				CLIENT_ACCOUNT_ED25519.id.toString(),
-				Hbar.fromTinybars(initalHBARAmount.mul(-1).toString()),
+				Hbar.fromTinybars(
+					'-' + initalHBARAmount.toBigNumber().toString(),
+				),
 			)
 			.addHbarTransfer(
 				stableCoin?.treasury!.toString(),
-				Hbar.fromTinybars(initalHBARAmount.toString()),
+				Hbar.fromTinybars(initalHBARAmount.toBigNumber().toString()),
 			);
 
 		await transaction.execute(client);
 
-		await delay();
+		await delay(5);
 
 		const mirrorNodeAdapter: MirrorNodeAdapter =
 			Injectable.resolve(MirrorNodeAdapter);
-
-		const rescueAmount = 1;
 
 		const initialAmount = await mirrorNodeAdapter.getHBARBalance(
 			stableCoin?.treasury!.toString(),
@@ -502,7 +504,7 @@ describe('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		await delay();
+		await delay(5);
 
 		const finalAmount = await mirrorNodeAdapter.getHBARBalance(
 			stableCoin?.treasury!.toString(),
@@ -510,9 +512,7 @@ describe('🧪 Stablecoin test', () => {
 
 		const final = initialAmount
 			.toBigNumber()
-			.sub(
-				new BigDecimal(rescueAmount.toString(), decimals).toBigNumber(),
-			);
+			.sub(rescueAmount.toBigNumber());
 
 		expect(finalAmount.toBigNumber().toString()).toEqual(final.toString());
 	}
