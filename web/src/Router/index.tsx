@@ -33,6 +33,7 @@ const Operations = () => {
 		burn: false,
 		balance: false,
 		rescue: false,
+		rescueHBAR: false,
 		wipe: false,
 		freeze: false,
 		kyc: false,
@@ -97,6 +98,13 @@ const Operations = () => {
 				  (operations?.includes(Operation.RESCUE) &&
 						getAccessByOperation(Operation.RESCUE) !== Access.HTS &&
 						!roles.includes(StableCoinRole.RESCUE_ROLE)),
+			rescueHBAR: !isExternalToken
+				? !operations?.includes(Operation.RESCUE_HBAR) ||
+				  !roles.includes(StableCoinRole.RESCUE_ROLE)
+				: !operations?.includes(Operation.RESCUE_HBAR) ||
+				  (operations?.includes(Operation.RESCUE_HBAR) &&
+						getAccessByOperation(Operation.RESCUE_HBAR) !== Access.HTS &&
+						!roles.includes(StableCoinRole.RESCUE_ROLE)),
 			wipe: !isExternalToken
 				? !operations?.includes(Operation.WIPE) || !roles.includes(StableCoinRole.WIPE_ROLE)
 				: !operations?.includes(Operation.WIPE) ||
@@ -156,6 +164,12 @@ const Operations = () => {
 			route: NamedRoutes.RescueTokens,
 			title: t('rescueOperation'),
 			isDisabled: disabledFeatures?.rescue,
+		},
+		{
+			icon: 'ArrowsDownUp',
+			route: NamedRoutes.RescueHBAR,
+			title: t('rescueHBAROperation'),
+			isDisabled: disabledFeatures?.rescueHBAR,
 		},
 		{
 			icon: 'MinusCircle',

@@ -47,7 +47,7 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 	async execute(command: CreateCommand): Promise<CreateCommandResponse> {
 		const {
 			factory,
-			hederaERC20,
+			hederaTokenManager,
 			coin,
 			reserveAddress,
 			reserveInitialAmount,
@@ -58,8 +58,8 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 			throw new InvalidRequest('Factory not found in request');
 		}
 
-		if (!hederaERC20) {
-			throw new InvalidRequest('HederaERC20 not found in request');
+		if (!hederaTokenManager) {
+			throw new InvalidRequest('HederaTokenManager not found in request');
 		}
 
 		const handler = this.transactionService.getHandler();
@@ -92,7 +92,7 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 		const res = await handler.create(
 			new StableCoin(coin),
 			factory,
-			hederaERC20,
+			hederaTokenManager,
 			createReserve,
 			reserveAddress,
 			reserveInitialAmount,

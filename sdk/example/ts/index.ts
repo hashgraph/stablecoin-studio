@@ -2,7 +2,7 @@ import {
 	ConnectRequest,
 	CreateRequest,
 	FactoryAddressTestnet,
-	HederaERC20AddressTestnet,
+	HederaTokenManagerAddressTestnet,
 	InitializationRequest,
 	Network,
 	SDK,
@@ -67,7 +67,7 @@ const main = async (): Promise<void> => {
 	// Create a stable coin
 	const createRequest = new CreateRequest({
 		stableCoinFactory: FactoryAddressTestnet,
-		hederaERC20: HederaERC20AddressTestnet,
+		hederaTokenManager: HederaTokenManagerAddressTestnet,
 		decimals: 6,
 		name: 'Test Coin',
 		symbol: 'TC',

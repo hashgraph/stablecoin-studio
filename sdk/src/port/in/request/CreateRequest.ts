@@ -20,7 +20,6 @@
 
 import CheckNums from '../../../core/checks/numbers/CheckNums.js';
 import { OptionalField } from '../../../core/decorator/OptionalDecorator.js';
-import Injectable from '../../../core/Injectable.js';
 import { RESERVE_DECIMALS } from '../../../domain/context/reserve/Reserve.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 import InvalidDecimalRange from '../../../domain/context/stablecoin/error/InvalidDecimalRange.js';
@@ -28,7 +27,6 @@ import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply.js';
 import { RequestPublicKey } from './BaseRequest.js';
 import { InvalidType } from './error/InvalidType.js';
-import { InvalidValue } from './error/InvalidValue.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
 
@@ -47,7 +45,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 	stableCoinFactory?: string;
 
 	@OptionalField()
-	hederaERC20?: string;
+	hederaTokenManager?: string;
 
 	createReserve: boolean;
 
@@ -128,7 +126,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		supplyType,
 		feeScheduleKey,
 		stableCoinFactory,
-		hederaERC20,
+		hederaTokenManager,
 		reserveAddress,
 		reserveInitialAmount,
 		createReserve,
@@ -156,7 +154,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		feeScheduleKey?: RequestPublicKey;
 		supplyType?: TokenSupplyType;
 		stableCoinFactory?: string;
-		hederaERC20?: string;
+		hederaTokenManager?: string;
 		reserveAddress?: string;
 		reserveInitialAmount?: string;
 		createReserve: boolean;
@@ -247,7 +245,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 			pauseKey: Validation.checkPublicKey(),
 			feeScheduleKey: Validation.checkPublicKey(),
 			stableCoinFactory: Validation.checkContractId(),
-			hederaERC20: Validation.checkContractId(),
+			hederaTokenManager: Validation.checkContractId(),
 			reserveAddress: Validation.checkContractId(),
 			reserveInitialAmount: (val) => {
 				if (
@@ -331,7 +329,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		this.feeScheduleKey = feeScheduleKey;
 		this.supplyType = supplyType;
 		this.stableCoinFactory = stableCoinFactory;
-		this.hederaERC20 = hederaERC20;
+		this.hederaTokenManager = hederaTokenManager;
 		this.reserveAddress = reserveAddress;
 		this.reserveInitialAmount = reserveInitialAmount;
 		this.createReserve = createReserve;

@@ -129,7 +129,7 @@ const StableCoinCreation = () => {
 
 		if (currentStep === 0) {
 			// @ts-ignore
-			fieldsStep = watch(['hederaERC20Id', 'name', 'symbol']);
+			fieldsStep = watch(['hederaTokenManagerId', 'name', 'symbol']);
 		}
 
 		if (currentStep === 1) {
@@ -272,7 +272,7 @@ const StableCoinCreation = () => {
 			kycRoleAccount,
 			cashInAllowanceType,
 			cashInAllowance,
-			hederaERC20Id,
+			hederaTokenManagerId,
 		} = getValues();
 
 		if (!reserveInitialAmount) {
@@ -346,7 +346,7 @@ const StableCoinCreation = () => {
 		);
 		request.kycRoleAccount = formatKycRoleAccountByKey(kycRequired, kycKey, kycRoleAccount, 'kyc');
 
-		request.hederaERC20 = hederaERC20Id.value;
+		request.hederaTokenManager = hederaTokenManagerId.value;
 		try {
 			onOpen();
 			setLoading(true);

@@ -52,7 +52,7 @@ import {
 	CLIENT_ACCOUNT_ECDSA,
 	CLIENT_ACCOUNT_ED25519,
 	FACTORY_ADDRESS,
-	HEDERA_ERC20_ADDRESS,
+	HEDERA_TOKEN_MANAGER_ADDRESS,
 } from '../../config.js';
 import BigDecimal from '../../../src/domain/context/shared/BigDecimal.js';
 import GetAccountsWithRolesRequest from '../../../src/port/in/request/GetAccountsWithRolesRequest.js';
@@ -97,7 +97,7 @@ describe('🧪 Role test', () => {
 			pauseKey: Account.NullPublicKey,
 			supplyType: TokenSupplyType.INFINITE,
 			stableCoinFactory: FACTORY_ADDRESS,
-			hederaERC20: HEDERA_ERC20_ADDRESS,
+			hederaTokenManager: HEDERA_TOKEN_MANAGER_ADDRESS,
 			createReserve: true,
 			grantKYCToOriginalSender: true,
 			burnRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),

@@ -24,3 +24,4 @@ export const QUERY_METADATA = '__query__';
 export const QUERY_HANDLER_METADATA = '__queryHandler__';
 export const TOKEN_CREATION_COST_HBAR = 40;
 export const EVM_ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
+export const HBAR_DECIMALS = 8;

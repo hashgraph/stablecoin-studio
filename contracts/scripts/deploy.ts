@@ -11,7 +11,7 @@ import {
     ProxyAdmin__factory,
     TransparentUpgradeableProxy__factory,
     StableCoinFactory__factory,
-    HederaERC20__factory,
+    HederaTokenManager__factory,
     HederaReserve__factory,
 } from '../typechain-types'
 
@@ -36,15 +36,15 @@ import {
     associateToken,
 } from './utils'
 
-/*const hederaERC20Address = '0.0.4049127'
-export const factoryProxyAddress = '0.0.4049140'
-const factoryProxyAdminAddress = '0.0.4049135'
-const factoryAddress = '0.0.4049132'
-*/
-let hederaERC20Address: any
+const hederaTokenManagerAddress = '0.0.4618764'
+export const factoryProxyAddress = '0.0.4618300'
+const factoryProxyAdminAddress = '0.0.4618298'
+const factoryAddress = '0.0.4618296'
+
+/* let hederaTokenManagerAddress: any
 export let factoryProxyAddress: any
 let factoryProxyAdminAddress: any
-let factoryAddress: any
+let factoryAddress: any */
 
 export function initializeClients(): [
     Client,
@@ -181,26 +181,28 @@ export function getNonOperatorPublicKey(
     return clientId == 2 ? client1publickey : client2publickey
 }
 
-export async function deployHederaERC20(
+export async function deployHederaTokenManager(
     clientOperator: Client,
     privateKey: string
 ) {
     // Deploying Factory logic
-    console.log(`Deploying HederaERC20 logic. please wait...`)
+    console.log(`Deploying HederaTokenManager logic. please wait...`)
 
-    const hederaERC20 = await deployContractSDK(
-        HederaERC20__factory,
+    const hederaTokenManager = await deployContractSDK(
+        HederaTokenManager__factory,
         privateKey,
         clientOperator
     )
 
-    console.log(`HederaERC20 logic deployed ${hederaERC20.toSolidityAddress()}`)
+    console.log(
+        `HederaTokenManager logic deployed ${hederaTokenManager.toSolidityAddress()}`
+    )
 
-    return hederaERC20
+    return hederaTokenManager
 }
 
 export async function deployFactory(
-    initializeParams: { admin: string; erc20: string },
+    initializeParams: { admin: string; tokenManager: string },
     clientOperator: Client,
     privateKey: string
 ) {
@@ -246,7 +248,7 @@ export async function deployFactory(
     await contractCall(
         factoryProxy,
         'initialize',
-        [initializeParams.admin, initializeParams.erc20],
+        [initializeParams.admin, initializeParams.tokenManager],
         clientOperator,
         130000,
         StableCoinFactory__factory.abi
@@ -315,25 +317,30 @@ export async function deployContractsWithSDK({
     const clientSdk = getClient()
     clientSdk.setOperator(account, toHashgraphKey(privateKey, isED25519Type))
 
-    let hederaERC20: ContractId
+    let hederaTokenManager: ContractId
     let f_address: ContractId
     let f_proxyAdminAddress: ContractId
     let f_proxyAddress: ContractId
 
-    // Deploying HederaERC20 or using an already deployed one
-    if (!hederaERC20Address) {
-        hederaERC20 = await deployHederaERC20(clientSdk, privateKey)
+    // Deploying HederaTokenManager or using an already deployed one
+    if (!hederaTokenManagerAddress) {
+        hederaTokenManager = await deployHederaTokenManager(
+            clientSdk,
+            privateKey
+        )
     } else {
-        hederaERC20 = ContractId.fromString(hederaERC20Address)
+        hederaTokenManager = ContractId.fromString(hederaTokenManagerAddress)
     }
 
-    console.log(`Using the HederaERC20 logic contract at ${hederaERC20}.`)
+    console.log(
+        `Using the HederaTokenManager logic contract at ${hederaTokenManager}.`
+    )
 
     // Deploying a Factory or using an already deployed one
     if (!factoryAddress) {
         const initializeFactory = {
             admin: AccountEvmAddress,
-            erc20: hederaERC20.toSolidityAddress(),
+            tokenManager: hederaTokenManager.toSolidityAddress(),
         }
         const result = await deployFactory(
             initializeFactory,
@@ -390,7 +397,7 @@ export async function deployContractsWithSDK({
 
     const parametersContractCall = [
         tokenObject,
-        hederaERC20.toSolidityAddress(),
+        hederaTokenManager.toSolidityAddress(),
     ]
 
     console.log(`Deploying stableCoin... please wait.`)

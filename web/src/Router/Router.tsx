@@ -8,6 +8,7 @@ import CashInOperation from '../views/Operations/CashIn';
 import BurnOperation from '../views/Operations/Burn';
 import GetBalanceOperation from '../views/Operations/GetBalance';
 import RescueTokenOperation from '../views/Operations/RescueTokens';
+import RescueHBAROperation from '../views/Operations/RescueHBAR';
 import WipeOperation from '../views/Operations/Wipe';
 import FreezeOperation from '../views/Operations/Freeze';
 import UnfreezeOperation from '../views/Operations/Unfreeze';
@@ -157,6 +158,7 @@ const Router = () => {
 								<Route path={RoutesMappingUrl.cashIn} element={<CashInOperation />} />
 								<Route path={RoutesMappingUrl.burn} element={<BurnOperation />} />
 								<Route path={RoutesMappingUrl.rescueTokens} element={<RescueTokenOperation />} />
+								<Route path={RoutesMappingUrl.rescueHBAR} element={<RescueHBAROperation />} />
 								<Route path={RoutesMappingUrl.wipe} element={<WipeOperation />} />
 								<Route path={RoutesMappingUrl.freeze} element={<FreezeOperation />} />
 								<Route path={RoutesMappingUrl.unfreeze} element={<UnfreezeOperation />} />

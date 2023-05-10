@@ -54,7 +54,7 @@ interface ITransactionAdapter {
 	create(
 		coin: StableCoin,
 		factory: ContractId,
-		hederaERC20: ContractId,
+		hederaTokenManager: ContractId,
 		createReserve: boolean,
 		reserveAddress?: ContractId,
 		reserveInitialAmount?: BigDecimal,
@@ -95,6 +95,10 @@ interface ITransactionAdapter {
 	pause(coin: StableCoinCapabilities): Promise<TransactionResponse>;
 	unpause(coin: StableCoinCapabilities): Promise<TransactionResponse>;
 	rescue(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+	): Promise<TransactionResponse>;
+	rescueHBAR(
 		coin: StableCoinCapabilities,
 		amount: BigDecimal,
 	): Promise<TransactionResponse>;
@@ -247,7 +251,7 @@ export default abstract class TransactionAdapter
 	create(
 		coin: StableCoin,
 		factory: ContractId,
-		hederaERC20: ContractId,
+		hederaTokenManager: ContractId,
 		createReserve: boolean,
 		reserveAddress?: ContractId,
 		reserveInitialAmount?: BigDecimal,
@@ -306,6 +310,12 @@ export default abstract class TransactionAdapter
 		throw new Error('Method not implemented.');
 	}
 	rescue(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+	): Promise<TransactionResponse<any, Error>> {
+		throw new Error('Method not implemented.');
+	}
+	rescueHBAR(
 		coin: StableCoinCapabilities,
 		amount: BigDecimal,
 	): Promise<TransactionResponse<any, Error>> {
