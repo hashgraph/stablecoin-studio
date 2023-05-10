@@ -21,14 +21,14 @@ interface AccountHedera {
 }
 
 task('addNewVersionTokenManager', 'Add a new version TokenManager in factory')
-    .addParam('tokenManager', 'The tokenManager address')
+    .addParam('tokenmanager', 'The token manager address')
     .addParam('proxyfactory', 'The proxy factory address')
     .setAction(
         async (
             {
-                tokenManager,
+                tokenmanager,
                 proxyfactory,
-            }: { tokenManager: string; proxyfactory: string },
+            }: { tokenmanager: string; proxyfactory: string },
             hre
         ) => {
             const accounts = hre.network.config
@@ -48,7 +48,7 @@ task('addNewVersionTokenManager', 'Add a new version TokenManager in factory')
             await addHederaTokenManagerVersion(
                 ContractId.fromString(proxyfactory),
                 client,
-                ContractId.fromString(tokenManager).toSolidityAddress()
+                ContractId.fromString(tokenmanager).toSolidityAddress()
             )
 
             console.log('TokenManager successfully added to proxy.')
@@ -86,16 +86,16 @@ task('getTokenManager', 'Get TokenManager list in factory')
     })
 
 task('updateTokenManager', 'Update TokenManager in factory')
-    .addParam('tokenManager', 'The tokenManager address')
+    .addParam('tokenmanager', 'The token manager address')
     .addParam('proxyfactory', 'The proxy factory address')
     .addParam('index', 'Index you want to update')
     .setAction(
         async (
             {
-                tokenManager,
+                tokenmanager,
                 proxyfactory,
                 index,
-            }: { tokenManager: string; proxyfactory: string; index: number },
+            }: { tokenmanager: string; proxyfactory: string; index: number },
             hre
         ) => {
             const accounts = hre.network.config
@@ -116,7 +116,7 @@ task('updateTokenManager', 'Update TokenManager in factory')
                 ContractId.fromString(proxyfactory),
                 client,
                 index,
-                ContractId.fromString(tokenManager).toSolidityAddress()
+                ContractId.fromString(tokenmanager).toSolidityAddress()
             )
 
             console.log('TokenManager selected updated successfully')

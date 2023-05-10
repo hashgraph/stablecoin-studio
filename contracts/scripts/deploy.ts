@@ -36,7 +36,7 @@ import {
     associateToken,
 } from './utils'
 
-const hederaTokenManagerAddress = '0.0.4618293'
+const hederaTokenManagerAddress = '0.0.4618764'
 export const factoryProxyAddress = '0.0.4618300'
 const factoryProxyAdminAddress = '0.0.4618298'
 const factoryAddress = '0.0.4618293'
