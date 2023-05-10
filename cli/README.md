@@ -1,6 +1,6 @@
 <div align="center">
 
-# Hedera Accelerator Stablecoin - Command Line Interface (CLI)
+# Hedera Stable Coin Accelerator - Command Line Interface (CLI)
 
 [![CLI - Test](https://github.com/hashgraph/hedera-accelerator-stablecoin/actions/workflows/cli.test.yml/badge.svg)](https://github.com/hashgraph/hedera-accelerator-stablecoin/actions/workflows/cli.test.yml)
 
@@ -77,7 +77,7 @@ From the root of the CLI project workspace:
 
 ## Starting the CLI
 
-The first time you execute the `accelerator wizard` command in your terminal, if you haven't added your default configuration path the interface will ask you wether you want to create a new configuration file in the default path. When the configuration file is created you must configure the default network and add a default account. In order to create the default account you can use [HashPack](https://www.hashpack.app/download) or the [Hedera Developer Portal](https://portal.hedera.com/register).
+The first time you execute the `accelerator wizard` command in your terminal, if you haven't added your default configuration path the interface will ask you whether you want to create a new configuration file in the default path. When the configuration file is created you must configure the default network and add a default account. In order to create the default account you can use [HashPack](https://www.hashpack.app/download) or the [Hedera Developer Portal](https://portal.hedera.com/register).
 
 https://user-images.githubusercontent.com/102601367/205074337-a1f09813-9434-42e9-972b-1c40655bb1d1.mov
 
@@ -149,20 +149,20 @@ When an account is selected, the main menu (shown in the previous image) is disp
 
 ### Main menu
 
-When your configuration file is set up and at least one account is added and selected, you are able to see the differents options that are available.
+When your configuration file is set up and at least one account is added and selected, you are able to see the different options that are available.
 
 #### Create a new Stable Coin
 
 In order to use this option you must set a factory first.
 You can check our factories deployed in [our documentation](https://github.com/hashgraph/hedera-accelerator-stablecoin#deploying-the-stable-coin-factories).
 
-With this option you are able to create a new stable coin adding the mandatory details like Name, Symbol and Autorenew account.
+With this option you are able to create a new stable coin adding the mandatory details like Name, Symbol and auto-renew account.
 
-> The autorenew account must be the user's current account otherwise the stable coin creation will not work, this is due to the fact that the autorenew account must sign the underlying token's creation transaction and currently we do not support multi-signatures transactions.
+> The auto-renew account must be the user's current account otherwise the stable coin creation will not work, this is due to the fact that the auto-renew account must sign the underlying token's creation transaction, and currently we do not support multi-signatures transactions.
 
 After the minimum details have been added, you will be asked if you want to add optional details like the number of decimals, the initial supply or the max supply. If you reply "no", the default values will be set.
 
-Then you will have the possibility to set a **Proof of Reserve Feed (PoR)** for your stable coin. A PoR is a smart contract that connects your on-chain stable coin to your off-chain fiat currency supply. The idea is to have an on-chain reprensentation of the amount of fiat currency currently collateralizing your stable coin, this amount is called the **"Reserve"**.
+Then you will have the possibility to set a **Proof of Reserve Feed (PoR)** for your stable coin. A PoR is a smart contract that connects your on-chain stable coin to your off-chain fiat currency supply. The idea is to have an on-chain representation of the amount of fiat currency currently collateralizing your stable coin, this amount is called the **"Reserve"**.
 The PoR smart contract will store at all time the current Reserve so that the stable coin can check it before minting new tokens.
 The Wizard will give you the possibility to link your stable coin to an already existing PoR smart contract or, if you do not have any, deploy a new one setting an initial Reserve. 
 
@@ -179,12 +179,12 @@ If you set the smart contract as a key owner, you will be able to grant and revo
 
 For all the underlying token's keys assigned to the smart contract, you can choose to grant its corresponding role to the current account deploying the SC or any other.
 
-When you add an existing stable coin, you will able to operate with the roles that the stable coin's admin granted you. If after adding a stable coin you are granted other roles, you will have the possibility to refresh the stable coin's roles that you have.
+When you add an existing stable coin, you will be able to operate with the roles that the stable coin's admin granted you. If after adding a stable coin you are granted other roles, you will have the possibility to refresh the stable coin's roles that you have.
 
 Once the request is ready, the CLI will extract from the configuration file the factory and HederaTokenManager contracts addresses for the network you are working on.
 The request will then be submitted to the SDK and the stable coin will be created.
 
-> When the configuration file is first created, the factory and HederaTokenManager contracts added to the "testnet" network are the default ones (pre-deployed contracts). However users are free to deploy and use their own contracts, in order to do that, the configuration file must be updated with the new factory and/or HederaTokenManager contract' addresses.
+> When the configuration file is first created, the factory and HederaTokenManager contracts added to the "testnet" network are the default ones (pre-deployed contracts). However, users are free to deploy and use their own contracts, in order to do that, the configuration file must be updated with the new factory and/or HederaTokenManager contract's addresses.
 
 https://user-images.githubusercontent.com/114951681/228852049-7234f6ed-575c-4462-901b-c8d2856c5683.mp4
 
@@ -201,7 +201,7 @@ Stable coins that we have not created with our account but for which we have bee
 
 Once a stable coin is created or added, you can operate it.
 
-The following list contains all the possible operations an user can perform if he/she has the appropriate role.
+The following list contains all the possible operations a user can perform if he/she has the appropriate role.
 
 - **Send tokens**: transfer tokens to another account.
 - **Cash in**: Min tokens and transfer them to an account. If you have linked a PoR Feed to your stable coin, this operation will fail in two cases : 
@@ -225,7 +225,7 @@ https://user-images.githubusercontent.com/102601367/205074204-d7f0def7-ffbd-416a
 
 https://user-images.githubusercontent.com/102601367/205074235-32145a1b-4ce0-4913-bd18-1252ecff52d6.mov
 
-- **Freeze Management**: Freeze/Unfreeze an account or check if an account if frozen/unfrozen. If an account is frozen, it will not be able to transfer any tokens.
+- **Freeze Management**: Freeze/Unfreeze an account or check if an account is frozen/unfrozen. If an account is frozen, it will not be able to transfer any tokens.
 
 https://user-images.githubusercontent.com/114951681/228851899-8a63b255-8e97-4705-8765-f59c01fc928b.mp4
 
@@ -233,7 +233,7 @@ https://user-images.githubusercontent.com/114951681/228851899-8a63b255-8e97-4705
 
 https://user-images.githubusercontent.com/114951681/228851958-db534d9e-0bc3-41f5-9820-7ce79fcf643b.mp4
 
-- **Role management**: Administrators of a stable coin can manage user roles from this menu, the will have the posibility to grant, revoke, edit and check roles.
+- **Role management**: Administrators of a stable coin can manage user roles from this menu, they will have the possibility to grant, revoke, edit and check roles.
 
   - The available roles are:
     - CASHIN_ROLE
@@ -247,7 +247,7 @@ https://user-images.githubusercontent.com/114951681/228851958-db534d9e-0bc3-41f5
 
 - **Refresh roles**: automatically refresh the roles assigned to the current account (account's capacities)
 - **Configuration**: Stable coin administrators can edit the underlying token's properties such as "Name", "Symbol", ...
-- **Danger Zone**: This section contains the stable coin operations deemed as particularily "dangerous" either because they affect every single token owner (PAUSE) or because they can not be rolled-back (DELETE).
+- **Danger Zone**: This section contains the stable coin operations deemed as particularly "dangerous" either because they affect every single token owner (PAUSE) or because they can not be rolled-back (DELETE).
   For security reasons these operations are grouped in a "sub-menu" so that users do not run them by mistake.
   - **Un/Pause**: Pause and unpause prevents the token from being involved in any kind of operations.
   - **Delete**: Marks a token as deleted. This actions cannot be undone.
@@ -289,4 +289,4 @@ to [oss@hedera.com](mailto:oss@hedera.com).
 
 # License
 
-[Apache License 2.0](LICENSE)
+[Apache License 2.0](../LICENSE.md)
