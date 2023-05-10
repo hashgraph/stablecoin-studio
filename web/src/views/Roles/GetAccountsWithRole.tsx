@@ -2,7 +2,6 @@ import { Heading, useDisclosure } from '@chakra-ui/react';
 import {
 	GetAccountsWithRolesRequest,
 	StableCoinRole,
-	RevokeRoleRequest,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { SelectController } from '../../components/Form/SelectController';
 import { useState } from 'react';
@@ -17,12 +16,11 @@ import { SDKService } from '../../services/SDKService';
 import {
 	SELECTED_NETWORK,
 	SELECTED_WALLET_COIN,
-	SELECTED_WALLET_PAIRED_ACCOUNTID,
 } from '../../store/slices/walletSlice';
-import type { AppDispatch } from '../../store/store';
 
 import OperationLayout from '../Operations/OperationLayout';
 import DetailsReview, { Detail } from '../../components/DetailsReview';
+import { timeoutPromise } from '../../utils/timeoutHelper';
 
 const GetAccountsWithRole = () => {
 	const { t } = useTranslation(['global', 'roles', 'stableCoinCreation', 'externalTokenInfo']);
@@ -139,8 +137,14 @@ const GetAccountsWithRole = () => {
 
 		console.log(request);
 		try {
-			const response = await SDKService.getAccountsWithRole(request);
-
+			const response: any = await Promise.race([
+				SDKService.getAccountsWithRole(request),
+				timeoutPromise,
+			]).catch((e) => {
+				console.log(e.message);
+				onOpenModalAction();
+				throw e;
+			});
 			setAccountsWithRoles(response);
 			onSuccess();
 		} catch (error: any) {

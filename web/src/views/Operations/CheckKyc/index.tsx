@@ -17,6 +17,7 @@ import { RouterManager } from '../../../Router/RouterManager';
 import { KYCRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 import { propertyNotFound } from '../../../constant';
+import { timeoutPromise } from '../../../utils/timeoutHelper';
 
 const CheckKycOperation = () => {
 	const {
@@ -62,7 +63,15 @@ const CheckKycOperation = () => {
 				onError();
 				return;
 			}
-			setHasKyc(await SDKService.isAccountKYCGranted(request));
+			const hasKyc: any = await Promise.race([
+				SDKService.isAccountKYCGranted(request),
+				timeoutPromise,
+			]).catch((e) => {
+				console.log(e.message);
+				onOpenModalAction();
+				throw e;
+			});
+			setHasKyc(hasKyc);
 			onSuccess();
 		} catch (error: any) {
 			setErrorTransactionUrl(error.transactionUrl);

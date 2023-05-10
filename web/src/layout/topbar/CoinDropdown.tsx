@@ -33,6 +33,7 @@ import type { IExternalToken } from '../../interfaces/IExternalToken';
 import type { GroupBase, SelectInstance } from 'chakra-react-select';
 import type { IAccountToken } from '../../interfaces/IAccountToken';
 import ModalNotification from '../../components/ModalNotification';
+import { timeoutPromise } from '../../utils/timeoutHelper';
 
 const CoinDropdown = () => {
 	const dispatch = useDispatch<AppDispatch>();
@@ -56,6 +57,8 @@ const CoinDropdown = () => {
 	const [success, setSuccess] = useState<boolean>();
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const [isLoadingImportToken, setLoadingImportToken] = useState(false);
+	const [isSelecting, setIsSelecting] = useState(false);
+	const [stableCoinListLoad, setStableCoinListLoad] = useState(false);
 
 	const isInStableCoinNotSelected = !!matchPath(
 		location.pathname,
@@ -78,9 +81,11 @@ const CoinDropdown = () => {
 
 	useEffect(() => {
 		if (accountId) {
-			dispatch(getStableCoinList(accountId.toString()));
+			dispatch(getStableCoinList(accountId.toString()))
+				.unwrap()
+				.then(() => setStableCoinListLoad(true))
+				.catch(() => onOpen());
 			dispatch(getExternalTokenList(accountId.toString()));
-
 			getAccountInfo(accountId.toString());
 		}
 	}, [accountId, network]);
@@ -157,18 +162,36 @@ const CoinDropdown = () => {
 
 		try {
 			const selectedCoin = event.value;
-			const stableCoinDetails = await SDKService.getStableCoinDetails(
-				new GetStableCoinDetailsRequest({
-					id: selectedCoin,
-				}),
-			);
 
-			const roles = await SDKService.getRoles(
-				new GetRolesRequest({
-					targetId: accountInfo && accountInfo.id ? accountInfo?.id : '',
-					tokenId: stableCoinDetails.tokenId!.toString(),
-				}),
-			);
+			const stableCoinDetails: any = await Promise.race([
+				SDKService.getStableCoinDetails(
+					new GetStableCoinDetailsRequest({
+						id: selectedCoin,
+					}),
+				),
+				timeoutPromise,
+			]).catch((e) => {
+				console.log(e.message);
+				setIsSelecting(true);
+				onOpen();
+				throw e;
+			});
+
+			const roles = await Promise.race([
+				SDKService.getRoles(
+					new GetRolesRequest({
+						targetId: accountInfo && accountInfo.id ? accountInfo?.id : '',
+						tokenId: stableCoinDetails!.tokenId!.toString(),
+					}),
+				),
+				timeoutPromise,
+			]).catch((e) => {
+				console.log(e.message);
+				setIsSelecting(true);
+				onOpen();
+				throw e;
+			});
+
 			dispatch(walletActions.setDeletedToken(undefined));
 			dispatch(walletActions.setPausedToken(undefined));
 			dispatch(walletActions.setRoles(roles));
@@ -209,6 +232,7 @@ const CoinDropdown = () => {
 				}),
 			);
 		} catch (e) {
+			setSuccess(false);
 			dispatch(walletActions.setSelectingStableCoin(false));
 			throw e;
 		}
@@ -217,11 +241,19 @@ const CoinDropdown = () => {
 	const handleImportToken = async (inputValue: string) => {
 		setLoadingImportToken(true);
 		try {
-			const details = await SDKService.getStableCoinDetails(
-				new GetStableCoinDetailsRequest({
-					id: inputValue,
-				}),
-			);
+			const details: any = await Promise.race([
+				SDKService.getStableCoinDetails(
+					new GetStableCoinDetailsRequest({
+						id: inputValue,
+					}),
+				),
+				timeoutPromise,
+			]).catch((e) => {
+				console.log(e.message);
+				setIsSelecting(true);
+				onOpen();
+				throw e;
+			});
 
 			const tokensAccount = localStorage?.tokensAccount;
 			if (tokensAccount) {
@@ -275,6 +307,7 @@ const CoinDropdown = () => {
 			console.log(error);
 			setSuccess(false);
 			setLoadingImportToken(false);
+			setIsSelecting(false);
 			onOpen();
 		}
 	};
@@ -321,10 +354,30 @@ const CoinDropdown = () => {
 			/>
 			<ModalNotification
 				variant={success ? 'success' : 'error'}
-				title={t('externalTokenInfo:notification.title', { result: success ? 'Success' : 'Error' })}
-				description={t(
-					`externalTokenInfo:notification.description${success ? 'Success' : 'Error'}`,
-				)}
+				title={
+					!stableCoinListLoad
+						? t('externalTokenInfo:notification.titleLoading', {
+								result: success ? 'Success' : 'Error',
+						  })
+						: isSelecting
+						? t('externalTokenInfo:notification.titleSelecting', {
+								result: success ? 'Success' : 'Error',
+						  })
+						: t('externalTokenInfo:notification.titleAdding', {
+								result: success ? 'Success' : 'Error',
+						  })
+				}
+				description={
+					!stableCoinListLoad
+						? t(`externalTokenInfo:notification.descriptionLoading${success ? 'Success' : 'Error'}`)
+						: isSelecting
+						? t(
+								`externalTokenInfo:notification.descriptionSelecting${
+									success ? 'Success' : 'Error'
+								}`,
+						  )
+						: t(`externalTokenInfo:notification.descriptionAdding${success ? 'Success' : 'Error'}`)
+				}
 				isOpen={isOpen}
 				onClose={onClose}
 				closeOnOverlayClick={false}

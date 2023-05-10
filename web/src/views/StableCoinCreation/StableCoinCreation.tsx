@@ -37,6 +37,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch } from '../../store/store';
 import ProofOfReserve from './ProofOfReserve';
 import { ImportTokenService } from '../../services/ImportTokenService';
+import { timeoutPromise } from '../../utils/timeoutHelper';
 
 const StableCoinCreation = () => {
 	const navigate = useNavigate();
@@ -368,12 +369,19 @@ const StableCoinCreation = () => {
 				}
 			}
 
-			if (wallet.lastWallet === SupportedWallets.METAMASK) {
-				const details = await SDKService.getStableCoinDetails(
-					new GetStableCoinDetailsRequest({
-						id: tokenId,
-					}),
-				);
+			if (wallet.lastWallet === SupportedWallets.METAMASK) {				
+				const details: any = await Promise.race([
+					SDKService.getStableCoinDetails(
+						new GetStableCoinDetailsRequest({
+							id: tokenId,
+						}),
+					),
+					timeoutPromise,
+				]).catch((e) => {
+					console.log(e.message);
+					onOpen();
+					throw e;
+				});
 
 				ImportTokenService.importToken(tokenId, details?.symbol!, accountInfo?.id!);
 				dispatch(getExternalTokenList(accountInfo.id!));

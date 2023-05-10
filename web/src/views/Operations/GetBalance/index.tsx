@@ -16,6 +16,7 @@ import { RouterManager } from '../../../Router/RouterManager';
 import { GetAccountBalanceRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 import { propertyNotFound } from '../../../constant';
+import { timeoutPromise } from '../../../utils/timeoutHelper';
 
 const GetBalanceOperation = () => {
 	const {
@@ -61,7 +62,14 @@ const GetBalanceOperation = () => {
 				return;
 			}
 
-			const balance = await SDKService.getBalance(request);
+			const balance: any = await Promise.race([
+				SDKService.getBalance(request),
+				timeoutPromise,
+			]).catch((e) => {
+				console.log(e.message);
+				onOpenModalAction();
+				throw e;
+			});
 			setBalance(balance.value.toString());
 			onSuccess();
 		} catch (error: any) {

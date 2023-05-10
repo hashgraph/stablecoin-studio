@@ -1,4 +1,4 @@
-import { Heading, Stack, VStack } from '@chakra-ui/react';
+import { Heading, Stack, VStack, useDisclosure } from '@chakra-ui/react';
 import type { Control, FieldValues, UseFormSetValue } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import InputController from '../../components/Form/InputController';
@@ -10,6 +10,8 @@ import SDKService from '../../services/SDKService';
 import type { Option } from '../../components/Form/SelectCreatableController';
 import SelectCreatableController from '../../components/Form/SelectCreatableController';
 import AwaitingWalletSignature from '../../components/AwaitingWalletSignature';
+import ModalNotification from '../../components/ModalNotification';
+import { timeoutPromise } from '../../utils/timeoutHelper';
 
 interface BasicDetailsProps {
 	control: Control<FieldValues>;
@@ -20,6 +22,7 @@ interface BasicDetailsProps {
 const BasicDetails = (props: BasicDetailsProps) => {
 	const { control, setValue } = props;
 	const { t } = useTranslation(['global', 'stableCoinCreation']);
+	const { isOpen, onOpen, onClose } = useDisclosure();
 	const [optionshederaERC20Addresses, setOptionsHederaERC20Addresses] = useState<Option[]>([]);
 	const [gettingHederaERC20, setGettingHederaERC20] = useState<boolean>(false);
 
@@ -30,11 +33,19 @@ const BasicDetails = (props: BasicDetailsProps) => {
 			setGettingHederaERC20(true);
 
 			try {
-				const hederaERC20Option = await SDKService.getHederaERC20List(
-					new GetERC20ListRequest({
-						factoryId: await Network.getFactoryAddress(),
-					}),
-				);
+				const hederaERC20Option: any = await Promise.race([
+					SDKService.getHederaERC20List(
+						new GetERC20ListRequest({
+							factoryId: await Network.getFactoryAddress(),
+						}),
+					),
+					timeoutPromise,
+				]).catch((e) => {
+					console.log(e.message);
+					onOpen();
+					throw e;
+				});
+
 				const AllOptions: any[] = [];
 				AllOptions.push({
 					value: '',
@@ -42,11 +53,11 @@ const BasicDetails = (props: BasicDetailsProps) => {
 					isDisabled: true,
 				});
 
-				const options = hederaERC20Option.map((item) => {
+				const options = hederaERC20Option.map((item: any) => {
 					return { label: item.value, value: item.value };
 				});
 
-				options.forEach((option) => {
+				options.forEach((option: any) => {
 					AllOptions.push(option);
 				});
 
@@ -161,6 +172,15 @@ const BasicDetails = (props: BasicDetailsProps) => {
 					</Stack>
 				</Stack>
 			)}
+			<ModalNotification
+				variant={'error'}
+				title={t('stableCoinCreation:basicDetails.modalErrorTitle')}
+				description={t('stableCoinCreation:basicDetails.modalErrorDescription')}
+				isOpen={isOpen}
+				onClose={onClose}
+				closeOnOverlayClick={false}
+				closeButton={true}
+			/>
 		</VStack>
 	);
 };

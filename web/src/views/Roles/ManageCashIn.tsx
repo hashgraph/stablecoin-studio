@@ -25,6 +25,7 @@ import DetailsReview from '../../components/DetailsReview';
 import { RouterManager } from '../../Router/RouterManager';
 import { SelectController } from '../../components/Form/SelectController';
 import { cashinLimitOptions } from './constants';
+import { timeoutPromise } from '../../utils/timeoutHelper';
 
 const styles = {
 	menuList: {
@@ -153,19 +154,33 @@ const ManageCashIn = () => {
 					break;
 				case 'CHECK':
 					// eslint-disable-next-line no-case-declarations
-					const isUnlimitedAllowance = await SDKService.isUnlimitedSupplierAllowance(
-						new CheckSupplierLimitRequest({
-							tokenId: selectedStableCoin.tokenId.toString(),
-							targetId: values.account,
-						}),
-					);
-					if (!isUnlimitedAllowance) {
-						const response = await SDKService.checkSupplierAllowance(
-							new GetSupplierAllowanceRequest({
+					const isUnlimitedAllowance = await Promise.race([
+						SDKService.isUnlimitedSupplierAllowance(
+							new CheckSupplierLimitRequest({
 								tokenId: selectedStableCoin.tokenId.toString(),
 								targetId: values.account,
 							}),
-						);
+						),
+						timeoutPromise,
+					]).catch((e) => {
+						console.log(e.message);
+						onOpenModalAction();
+						throw e;
+					});
+					if (!isUnlimitedAllowance) {
+						const response: any = await Promise.race([
+							SDKService.checkSupplierAllowance(
+								new GetSupplierAllowanceRequest({
+									tokenId: selectedStableCoin.tokenId.toString(),
+									targetId: values.account,
+								}),
+							),
+							timeoutPromise,
+						]).catch((e) => {
+							console.log(e.message);
+							onOpenModalAction();
+							throw e;
+						});
 						setLimit(response.value.toString());
 					}
 					break;

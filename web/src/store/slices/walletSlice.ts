@@ -12,6 +12,7 @@ import type {
 	StableCoinListViewModel,
 	StableCoinViewModel,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { timeoutPromise } from '../../utils/timeoutHelper';
 
 export interface InitialStateProps {
 	data?: InitializationData;
@@ -62,13 +63,20 @@ export const getStableCoinList = createAsyncThunk(
 	'wallet/getStableCoinList',
 	async (id: string) => {
 		try {
-			const stableCoins = await SDKService.getStableCoins(
-				new GetListStableCoinRequest({
-					account: {
-						accountId: id,
-					},
-				}),
-			);
+			const stableCoins: any = await Promise.race([
+				SDKService.getStableCoins(
+					new GetListStableCoinRequest({
+						account: {
+							accountId: id,
+						},
+					}),
+				),
+				timeoutPromise,
+			]).catch((e) => {
+				console.log(e.message);
+				throw e;
+			}); 
+
 			return stableCoins;
 		} catch (e) {
 			console.error(e);
@@ -183,7 +191,7 @@ export const walletSlice = createSlice({
 		builder.addCase(getStableCoinList.fulfilled, (state, action) => {
 			if (action.payload) {
 				state.stableCoinList = action.payload;
-				if (state.stableCoinList.coins.length === 0) state.selectedStableCoin = undefined;
+				if (state.stableCoinList!.coins.length === 0) state.selectedStableCoin = undefined;
 			}
 		});
 		builder.addCase(getStableCoinList.rejected, (state) => {
