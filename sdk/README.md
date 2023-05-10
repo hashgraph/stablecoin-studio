@@ -26,11 +26,13 @@
 		- [Create](#create)
 		- [GetInfo](#GetInfo)
 		- [GetBalanceOf](#getbalanceof)
+		- [GetBalanceOfHBAR](#getbalanceofHBAR)
 		- [Associate](#associate)
 		- [isAccountAssociated](#isaccountassociated)
 		- [CashIn](#cashin)
 		- [Burn](#burn)
 		- [Rescue](#rescue)
+		- [Rescue HBAR](#rescue-HBAR)
 		- [Wipe](#wipe)
 		- [Pause](#pause)
 		- [Unpause](#unpause)
@@ -411,6 +413,31 @@ Gets the balance of tokens for an account.
 	result.decimals // 2
 ```
 
+### GetBalanceOfHBAR
+Gets the balance of HBARs for an account.
+
+**Spec:**
+
+```Typescript
+	StableCoin.getBalanceOfHBAR = (request: GetAccountBalanceHBARRequest): Promise<Balance>
+	
+	type Balance = {
+		value: BigDecimal
+	}
+```
+
+**Example:**
+
+```Typescript
+	const result: Balance = await StableCoin.getBalanceOfHBAR(
+		new GetAccountBalanceHBARRequest({
+			treasuryAccountId: "0.0.1",
+		})
+	);
+	result.toString() // "1234"
+	result.decimals // 8
+```
+
 
 ### Associate
 Associates a stable coin with an account.
@@ -516,6 +543,25 @@ Transfers an amount of tokens existing in the treasury account to the account th
 	);
 ```
 
+### Rescue HBAR
+Transfers an amount of HBARs existing in the treasury account to the account that invokes the operation. The operating account must have the rescue role.
+
+**Spec:**
+
+```Typescript
+	StableCoin.rescueHBAR = (request: RescueHBARRequest): Promise<boolean>
+```
+
+**Example:**
+
+```Typescript
+	const result: boolean = await StableCoin.rescueHBAR(
+		new RescueHBARRequest({
+			tokenId: "0.0.1",
+			amount: "1234",
+		})
+	);
+```
 
 ### Wipe
 Wipes an amount of tokens from an account. The operating account must have the wipe role.
@@ -788,6 +834,7 @@ See the spec below for all the attributes you can get from the request.
 		UNPAUSE = 'Unpause',
 		DELETE = 'Delete',
 		RESCUE = 'Rescue',
+		RESCUE_HBAR = 'Rescue_HBAR'
 		ROLE_MANAGEMENT = 'Role_Management',
 		ROLE_ADMIN_MANAGEMENT = 'Admin_Role',
 		RESERVE_MANAGEMENT = 'Admin_Role',
