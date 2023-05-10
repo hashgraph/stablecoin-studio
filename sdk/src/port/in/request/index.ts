@@ -114,5 +114,4 @@ export {
 	AddFractionalFeeRequest,
 	GetERC20ListRequest,
 	UpdateRequest,
-	HBAR_DECIMALS,
 };
