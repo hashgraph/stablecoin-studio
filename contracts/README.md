@@ -57,11 +57,11 @@ The remaining smart contracts have been implemented for this specific project:
    - `Supplieradmin.sol`: abstract contract implementing all the cashin role assignment and management (assigning/removing the role as well as setting, increasing and decreasing the cash-in limit).
    - `TokenOwner.sol`: abstract contract that stores the addresses of the *HTS precompiled smart contract* and the *underlying token* related to the stable coin. All the smart contracts mentioned above, inherit from this abstract contract.
    - `Wipeable.sol`: abstract contract implementing the *wipe* operation (burn token from any account, decreases the total supply).
- - `HederaERC20.sol`: Main Stable coin contract. Contains all the stable coin related logic. Inherits all the contracts defined in the "extension" folder as well as the Role.sol contract. **IMPORTANT** : a HederaERC20 contract will be deployed in Testnet for anybody to use. Users are also free to deploy and use their own HederaERC20 contract. Whatever HederaERC20 contract users choose to use, they will need to pass the contract's address as an input argument when calling the factory.
+ - `hederaTokenManager.sol`: Main Stable coin contract. Contains all the stable coin related logic. Inherits all the contracts defined in the "extension" folder as well as the Role.sol contract. **IMPORTANT** : a hederaTokenManager contract will be deployed in Testnet for anybody to use. Users are also free to deploy and use their own hederaTokenManager contract. Whatever hederaTokenManager contract users choose to use, they will need to pass the contract's address as an input argument when calling the factory.
  - `HederaReserve.sol`: Implements the ChainLink AggregatorV3Interface to provide the current data about the stable coin's reserves.
  - `StableCoinFactory.sol`: Implements the flow to create a new stable coin. Every time a new stable coin is created, several smart contracts must be deployed and initialized and an underlying token must be created through the `HTS precompiled smart contract`. This multi-transaction process is encapsulated in this contract so that users can create new stable coins in a single transaction. **IMPORTANT** : a Factory contract will be deployed in Tesnet for anybody to use. Users are also free to deploy and use their own Factory contract.
 
- > Every stable coin is made of a **ProxyAdmin** and a **TransparentUpgradeableProxy** contracts (from Open Zeppelin) plus an **underlying token** managed through the *HTS precompiled smart contract*. The **HederaERC20** contract is meant to be "shared" by multiple users (using proxies). A stable coin admin may also choose to deploy a **HederaReserve** along with the stable coin at creation time, with its own **TransparentUpgradeableProxy** and **ProxyAdmin** contracts, or to define an existing reserve instead.
+ > Every stable coin is made of a **ProxyAdmin** and a **TransparentUpgradeableProxy** contracts (from Open Zeppelin) plus an **underlying token** managed through the *HTS precompiled smart contract*. The **hederaTokenManager** contract is meant to be "shared" by multiple users (using proxies). A stable coin admin may also choose to deploy a **HederaReserve** along with the stable coin at creation time, with its own **TransparentUpgradeableProxy** and **ProxyAdmin** contracts, or to define an existing reserve instead.
 
 # Architecture
 
@@ -116,7 +116,7 @@ Then compile and build the contracts, you can choose one of the following option
 The last two commands will generate a `build` folder that contains a `typechain-types` folder. This folder contains the contracts wrappers that allows us to access contracts abi importing the wrappers as shown below:
 
 ```code
-import { HederaERC20__factory } from '@hashgraph-dev/stablecoin-npm-contracts/typechain-types';
+import { hederaTokenManager__factory } from '@hashgraph-dev/stablecoin-npm-contracts/typechain-types';
 ```
 
 # Test
@@ -131,7 +131,7 @@ Typescript test files can be foud in the `test` folder:
 - `deletable.ts`: Tests the stable coin delete functionality.
 - `deployFactory.ts`: Tests the stable coin factory deployment functionality.
 - `freezable.ts`: Tests the stable coin freeze/unfreeze functionality.
-- `HederaERC20.ts`: Tests the HederaERC20 functionality.
+- `hederaTokenManager.ts`: Tests the hederaTokenManager functionality.
 - `HederaReserve.ts`: Tests the HederaReserve functionality.
 - `kyc.ts`: Tests the KYC grant/revoke functionality to account for stable coins.
 - `pausable.ts`: Tests the stable coin pause functionality.
@@ -182,10 +182,10 @@ All tests will use the two above mentionned accounts.
 You can change which account is the *operator* and the *non-operator* account by changing the **clientId** value at : 
 scripts -> utils.ts -> const clientId
 
-### Predeployed Factory & HederaERC20 contracts
-Tests use a factory and an HederaERC20 contract to create the stable coins.
-- If you want to deploy a new Factory and HederaERC20 every time : scripts -> deploy.ts -> hederaERC20Address = "" / factoryProxyAddress = "" / factoryProxyAdminAddress = "" / factoryAddress = "" 
-- If you want to re-use a Factory and HederaERC20 : Set the Hedera contracts Id in scripts -> deploy.ts -> hederaERC20Address /factoryProxyAddress / factoryProxyAdminAddress / factoryAddress
+### Predeployed Factory & hederaTokenManager contracts
+Tests use a factory and an hederaTokenManager contract to create the stable coins.
+- If you want to deploy a new Factory and hederaTokenManager every time : scripts -> deploy.ts -> hederaTokenManagerAddress = "" / factoryProxyAddress = "" / factoryProxyAdminAddress = "" / factoryAddress = "" 
+- If you want to re-use a Factory and hederaTokenManager : Set the Hedera contracts Id in scripts -> deploy.ts -> hederaTokenManagerAddress /factoryProxyAddress / factoryProxyAdminAddress / factoryAddress
 
 > If you set the factory contracts addresses as described above, the tests included in the "StableCoinFactory.ts" file might not work because they will try to upgrade the factory implementation and the accounts used for that (those defined in the "hardhat.config.ts") might not have the right to do it.
 
@@ -223,9 +223,9 @@ The stable coin solution is made of two major components.
 - **The Factory** : Smart contracts encapsulating the complexity of the creation of new stable coins.
 - **The Stable Coin** : Smart contracts that are deployed by the factory, exposing the functionalities and services of the stable coin solution and interacting with an underlying token.
 
-In order to create stable coins, a Factory and a HederaERC20 contracts must be deployed first. Once deployed, creating stable coins will be as simple as invoking the "deployStableCoin" method of the Factory passing the token basic information and the HederaERC20 contract address as input arguments.
+In order to create stable coins, a Factory and a hederaTokenManager contracts must be deployed first. Once deployed, creating stable coins will be as simple as invoking the "deployStableCoin" method of the Factory passing the token basic information and the hederaTokenManager contract address as input arguments.
 
-> A factory and hederaerc20 contracts will be provided for everybody to use in the Testnet network. The addresses of the Factory Proxy and the HederaERC20 contracts are hardcoded in the SDK module.
+> A factory and hederaTokenManager contracts will be provided for everybody to use in the Testnet network. The addresses of the Factory Proxy and the hederaTokenManager contracts are hardcoded in the SDK module.
 
 ## Deploy Factory
 If you want to deploy your own Factory contracts do the following steps:
@@ -233,13 +233,13 @@ If you want to deploy your own Factory contracts do the following steps:
    2. Deploy the Factory **Proxy Admin** smart contract.
    3. Deploy the Factory **TransparentUpgradeableProxy** smart contract setting the Factory logic as the implementation and the Factory proxy admin as the admin.
 
-You may also clone this repository, install the dependecies (see [Build](#Build)) and run `npx hardhat deployFactory` in order to deploy all factories (HederaERC20 and StableCoinFactory) and its proxies onto the testnet network. Once completed, an output with the new addresses is provided:
+You may also clone this repository, install the dependecies (see [Build](#Build)) and run `npx hardhat deployFactory` in order to deploy all factories (hederaTokenManager and StableCoinFactory) and its proxies onto the testnet network. Once completed, an output with the new addresses is provided:
 
 `````
 Proxy Address:           0.0.7110 
 Proxy Admin Address:     0.0.7108 
 Factory Address:         0.0.7106 
-HederaERC20 Address:     0.0.7102
+hederaTokenManager Address:     0.0.7102
 `````
 
 > The account used to deploy will be determined by the values in the `.env` file, that must contain the `HEDERA_OPERATOR_` entries for the account id, public / private key and evm address. See the `.env.sample` file to see all the attributes. See [Test accounts](#Tests-accounts) to learn more.
@@ -252,7 +252,7 @@ Once the Factory has been deployed (or if you are using the common Factory), cre
 These are the steps the creation method will perform when creating a new stable coin:
 - Deploy **Stable Coin Proxy Admin smart contract** (from the Open Zeppelin library).
 - Transfer the Stable Coin Proxy Admin ownership to the sender account.
-- Deploy **Stable Coin Proxy smart contract** (from the Open Zeppelin library) setting the implementation contract (*The HederaERC20 contract's address you provided as an input argument) and the admin (*Stable Coin Proxy Admin smart contract*).
+- Deploy **Stable Coin Proxy smart contract** (from the Open Zeppelin library) setting the implementation contract (*The hederaTokenManager contract's address you provided as an input argument) and the admin (*Stable Coin Proxy Admin smart contract*).
 - Initializing the Stable Coin Proxy. The initialization will create the underlying token.
 - Associating the Token to the deploying account.
 
@@ -273,7 +273,7 @@ The Factory's and the Stable Coins's logic can be upgraded at any time using the
 
 > These steps must be performed individually for every single stable coin you wish to upgrade, it is not possible to upgrade all stable coins at once since the are completely independent from each other
 
--   Deploy the new Stable Coin Logic contract (*HederaERC20*)
+-   Deploy the new Stable Coin Logic contract (*hederaTokenManager*)
 -   Invoke the `upgradeAndCall` method of the Stable Coin Proxy Admin passing the previously deployed Stable Coin Logic contract's address and any data required to initialize it. If you do not need to pass any initialization data, you can simply invoke the `upgrade` method passing the previously deployed Stable coin Logic contract's address. **=> USE THE STABLE COIN PROXY ADMIN'S ADMIN ACCOUNT TO PERFORM THIS TASK. BY DEFAULT THAT ACCOUNT WILL BE THE ONE ORIGINALLY USED TO CREATE THE STBALE COIN.**
 
 # Generate Documentation
@@ -288,26 +288,26 @@ Generated files will be stored in the `docs` folder.
 
 # Manage factory
 Some scripts have been developed to manage the stablecoin factory.
-- Add a new ERC20 address to stablecoin factory:
+- Add a new TokenManager address to stablecoin factory:
 ```shell
-npx hardhat addNewVersionERC20 --erc20 <HederaId> --proxyfactory <HederaId>
+npx hardhat addNewVersionTokenManager --tokenManager <HederaId> --proxyfactory <HederaId>
 ```
-- Update an ERC20 address:
+- Update an TokenManager address:
 ```shell
-npx hardhat addNewVersionERC20 --erc20 <HederaId> --proxyfactory <HederaId> --index <number>
+npx hardhat addNewVersionTokenManager --tokenManager <HederaId> --proxyfactory <HederaId> --index <number>
 ```
-- Remove an ERC20 address:
+- Remove an TokenManager address:
 ```shell
-npx hardhat addNewVersionERC20 --proxyfactory <HederaId> --index <number>
+npx hardhat addNewVersionTokenManager --proxyfactory <HederaId> --index <number>
 ```
-- Get ERC20 address saved in factory:
+- Get TokenManager address saved in factory:
 ```shell
-npx hardhat getERC20 --proxyfactory <HederaId>
+npx hardhat getTokenManager --proxyfactory <HederaId>
 ```
 
-- Deploy a new ERC20 implementation:
+- Deploy a new TokenManager implementation:
 ```shell
-npx hardhat deployERC20
+npx hardhat deployTokenManager
 ```
 
 

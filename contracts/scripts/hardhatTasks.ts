@@ -1,12 +1,16 @@
 import { ContractId } from '@hashgraph/sdk'
 import { task } from 'hardhat/config'
-import { deployFactory, deployHederaERC20, toHashgraphKey } from './deploy'
+import {
+    deployFactory,
+    deployHederaTokenManager,
+    toHashgraphKey,
+} from './deploy'
 import { evmToHederaFormat, getClient, toEvmAddress } from './utils'
 import {
-    addHederaERC20Version,
-    editHederaERC20Version,
-    getHederaERC20Addresses,
-    removeHederaERC20Version,
+    addHederaTokenManagerVersion,
+    editHederaTokenManagerVersion,
+    getHederaTokenManagerAddresses,
+    removeHederaTokenManagerVersion,
 } from './contractsMethods'
 
 interface AccountHedera {
@@ -16,12 +20,15 @@ interface AccountHedera {
     isED25519Type: string
 }
 
-task('addNewVersionERC20', 'Add a new version ERC20 in factory')
-    .addParam('erc20', 'The erc20 address')
+task('addNewVersionTokenManager', 'Add a new version TokenManager in factory')
+    .addParam('tokenManager', 'The tokenManager address')
     .addParam('proxyfactory', 'The proxy factory address')
     .setAction(
         async (
-            { erc20, proxyfactory }: { erc20: string; proxyfactory: string },
+            {
+                tokenManager,
+                proxyfactory,
+            }: { tokenManager: string; proxyfactory: string },
             hre
         ) => {
             const accounts = hre.network.config
@@ -38,17 +45,17 @@ task('addNewVersionERC20', 'Add a new version ERC20 in factory')
                 toHashgraphKey(client1privatekey, client1isED25519)
             )
 
-            await addHederaERC20Version(
+            await addHederaTokenManagerVersion(
                 ContractId.fromString(proxyfactory),
                 client,
-                ContractId.fromString(erc20).toSolidityAddress()
+                ContractId.fromString(tokenManager).toSolidityAddress()
             )
 
-            console.log('ERC20 successfully added to proxy.')
+            console.log('TokenManager successfully added to proxy.')
         }
     )
 
-task('getERC20', 'Get ERC20 list in factory')
+task('getTokenManager', 'Get TokenManager list in factory')
     .addParam('proxyfactory', 'The proxy factory address')
     .setAction(async ({ proxyfactory }: { proxyfactory: string }, hre) => {
         const accounts = hre.network.config
@@ -64,30 +71,31 @@ task('getERC20', 'Get ERC20 list in factory')
             toHashgraphKey(client1privatekey, client1isED25519)
         )
 
-        const erc20Address: string[] = await getHederaERC20Addresses(
-            ContractId.fromString(proxyfactory),
-            client
-        )
+        const tokenManagerAddress: string[] =
+            await getHederaTokenManagerAddresses(
+                ContractId.fromString(proxyfactory),
+                client
+            )
         console.log(
             await Promise.all(
-                erc20Address.map(async (item) => {
+                tokenManagerAddress.map(async (item) => {
                     return await evmToHederaFormat(item)
                 })
             )
         )
     })
 
-task('updateERC20', 'Update ERC20 in factory')
-    .addParam('erc20', 'The erc20 address')
+task('updateTokenManager', 'Update TokenManager in factory')
+    .addParam('tokenManager', 'The tokenManager address')
     .addParam('proxyfactory', 'The proxy factory address')
     .addParam('index', 'Index you want to update')
     .setAction(
         async (
             {
-                erc20,
+                tokenManager,
                 proxyfactory,
                 index,
-            }: { erc20: string; proxyfactory: string; index: number },
+            }: { tokenManager: string; proxyfactory: string; index: number },
             hre
         ) => {
             const accounts = hre.network.config
@@ -104,18 +112,18 @@ task('updateERC20', 'Update ERC20 in factory')
                 toHashgraphKey(client1privatekey, client1isED25519)
             )
 
-            await editHederaERC20Version(
+            await editHederaTokenManagerVersion(
                 ContractId.fromString(proxyfactory),
                 client,
                 index,
-                ContractId.fromString(erc20).toSolidityAddress()
+                ContractId.fromString(tokenManager).toSolidityAddress()
             )
 
-            console.log('ERC20 selected updated successfully')
+            console.log('TokenManager selected updated successfully')
         }
     )
 
-task('removeERC20', 'Remove ERC20 in factory')
+task('removeTokenManager', 'Remove TokenManager in factory')
     .addParam('proxyfactory', 'The proxy factory address')
     .addParam('index', 'Index you want to update')
     .setAction(
@@ -137,13 +145,13 @@ task('removeERC20', 'Remove ERC20 in factory')
                 toHashgraphKey(client1privatekey, client1isED25519)
             )
 
-            await removeHederaERC20Version(
+            await removeHederaTokenManagerVersion(
                 ContractId.fromString(proxyfactory),
                 client,
                 index
             )
 
-            console.log('ERC20 selected removed successfully')
+            console.log('TokenManager selected removed successfully')
         }
     )
 
@@ -163,10 +171,13 @@ task('deployFactory', 'Deploy new factory').setAction(
             client1account,
             toHashgraphKey(client1privatekey, client1isED25519)
         )
-        const erc20 = await deployHederaERC20(client, client1privatekey)
+        const tokenManager = await deployHederaTokenManager(
+            client,
+            client1privatekey
+        )
         const initializeFactory = {
             admin: await toEvmAddress(client1account, client1isED25519),
-            erc20: erc20.toSolidityAddress(),
+            tokenManager: tokenManager.toSolidityAddress(),
         }
         const result = await deployFactory(
             initializeFactory,
@@ -183,13 +194,13 @@ task('deployFactory', 'Deploy new factory').setAction(
             proxyAdminAddress.toString(),
             '\nFactory Address: \t',
             factoryAddress.toString(),
-            '\nHederaERC20 Address: \t',
-            erc20.toString()
+            '\nHederaTokenManager Address: \t',
+            tokenManager.toString()
         )
     }
 )
 
-task('deployERC20', 'Deploy new ERC20').setAction(
+task('deployTokenManager', 'Deploy new TokenManager').setAction(
     async (arguements: any, hre) => {
         const accounts = hre.network.config
             .accounts as unknown as Array<AccountHedera>
@@ -203,8 +214,11 @@ task('deployERC20', 'Deploy new ERC20').setAction(
             client1account,
             toHashgraphKey(client1privatekey, client1isED25519)
         )
-        const erc20 = await deployHederaERC20(client, client1privatekey)
+        const tokenManager = await deployHederaTokenManager(
+            client,
+            client1privatekey
+        )
 
-        console.log('\nHederaERC20 Address: \t', erc20.toString())
+        console.log('\nHederaTokenManager Address: \t', tokenManager.toString())
     }
 )

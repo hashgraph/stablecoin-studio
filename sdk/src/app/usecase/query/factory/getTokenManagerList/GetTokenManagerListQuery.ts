@@ -22,11 +22,11 @@ import { Query } from '../../../../../core/query/Query.js';
 import { QueryResponse } from '../../../../../core/query/QueryResponse.js';
 import ContractId from '../../../../../domain/context/contract/ContractId.js';
 
-export class GetERC20ListQueryResponse implements QueryResponse {
+export class GetTokenManagerListQueryResponse implements QueryResponse {
 	constructor(public readonly payload: ContractId[]) {}
 }
 
-export class GetERC20ListQuery extends Query<GetERC20ListQueryResponse> {
+export class GetTokenManagerListQuery extends Query<GetTokenManagerListQueryResponse> {
 	constructor(public readonly factoryId: ContractId) {
 		super();
 	}

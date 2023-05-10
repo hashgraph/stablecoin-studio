@@ -25,13 +25,13 @@ import { IQueryHandler } from '../../../../../core/query/QueryHandler.js';
 import ContractId from '../../../../../domain/context/contract/ContractId.js';
 import RPCQueryAdapter from '../../../../../port/out/rpc/RPCQueryAdapter.js';
 import {
-	GetERC20ListQuery,
-	GetERC20ListQueryResponse,
-} from './GetERC20ListQuery.js';
+	GetTokenManagerListQuery,
+	GetTokenManagerListQueryResponse,
+} from './GetTokenManagerListQuery.js';
 
-@QueryHandler(GetERC20ListQuery)
-export class GetERC20ListQueryHandler
-	implements IQueryHandler<GetERC20ListQuery>
+@QueryHandler(GetTokenManagerListQuery)
+export class GetTokenManagerListQueryHandler
+	implements IQueryHandler<GetTokenManagerListQuery>
 {
 	constructor(
 		@lazyInject(RPCQueryAdapter)
@@ -39,10 +39,10 @@ export class GetERC20ListQueryHandler
 	) {}
 
 	async execute(
-		command: GetERC20ListQuery,
-	): Promise<GetERC20ListQueryResponse> {
+		command: GetTokenManagerListQuery,
+	): Promise<GetTokenManagerListQueryResponse> {
 		const { factoryId } = command;
-		const res = await this.queryAdapter.getERC20List(
+		const res = await this.queryAdapter.getTokenManagerList(
 			factoryId.toEvmAddress(),
 		);
 
@@ -50,7 +50,7 @@ export class GetERC20ListQueryHandler
 			(item) => item !== EVM_ZERO_ADDRESS,
 		);
 		return Promise.resolve(
-			new GetERC20ListQueryResponse(
+			new GetTokenManagerListQueryResponse(
 				removeDeletedAddress.map((item) =>
 					ContractId.fromHederaEthereumAddress(item),
 				),

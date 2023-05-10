@@ -26,7 +26,7 @@ import type {
 	FreezeAccountRequest,
 	GetAccountBalanceRequest,
 	GetAccountInfoRequest,
-	GetERC20ListRequest,
+	GetTokenManagerListRequest,
 	GetListStableCoinRequest,
 	GetReserveAddressRequest,
 	GetReserveAmountRequest,
@@ -296,8 +296,8 @@ export class SDKService {
 		return await Fees.updateCustomFees(data);
 	}
 
-	public static async getHederaERC20List(data: GetERC20ListRequest) {
-		return await Factory.getHederaERC20List(data);
+	public static async getHederaTokenManagerList(data: GetTokenManagerListRequest) {
+		return await Factory.getHederaTokenManagerList(data);
 	}
 }
 

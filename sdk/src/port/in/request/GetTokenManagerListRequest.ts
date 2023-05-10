@@ -21,7 +21,7 @@
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
 
-export default class GetERC20ListRequest extends ValidatedRequest<GetERC20ListRequest> {
+export default class GetTokenManagerListRequest extends ValidatedRequest<GetTokenManagerListRequest> {
 	factoryId: string;
 
 	constructor({ factoryId }: { factoryId: string }) {

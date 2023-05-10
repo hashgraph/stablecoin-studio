@@ -60,7 +60,7 @@ import UpdateCustomFeesRequest from './UpdateCustomFeesRequest.js';
 import AddFixedFeeRequest from './AddFixedFeeRequest.js';
 import AddFractionalFeeRequest from './AddFractionalFeeRequest.js';
 import SetConfigurationRequest from './SetConfigurationRequest.js';
-import GetERC20ListRequest from './GetERC20ListRequest.js';
+import GetTokenManagerListRequest from './GetTokenManagerListRequest.js';
 import UpdateRequest from './UpdateRequest.js';
 
 export * from './BaseRequest.js';
@@ -107,6 +107,6 @@ export {
 	UpdateCustomFeesRequest,
 	AddFixedFeeRequest,
 	AddFractionalFeeRequest,
-	GetERC20ListRequest,
+	GetTokenManagerListRequest,
 	UpdateRequest,
 };

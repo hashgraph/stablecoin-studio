@@ -54,7 +54,7 @@ interface ITransactionAdapter {
 	create(
 		coin: StableCoin,
 		factory: ContractId,
-		hederaERC20: ContractId,
+		hederaTokenManager: ContractId,
 		createReserve: boolean,
 		reserveAddress?: ContractId,
 		reserveInitialAmount?: BigDecimal,
@@ -247,7 +247,7 @@ export default abstract class TransactionAdapter
 	create(
 		coin: StableCoin,
 		factory: ContractId,
-		hederaERC20: ContractId,
+		hederaTokenManager: ContractId,
 		createReserve: boolean,
 		reserveAddress?: ContractId,
 		reserveInitialAmount?: BigDecimal,

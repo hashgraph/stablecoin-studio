@@ -58,7 +58,7 @@ import GetStableCoinDetailsRequest from '../../../src/port/in/request/GetStableC
 import {
 	CLIENT_ACCOUNT_ED25519,
 	FACTORY_ADDRESS,
-	HEDERA_ERC20_ADDRESS,
+	HEDERA_TOKEN_MANAGER_ADDRESS,
 } from '../../config.js';
 import { BigNumber } from 'ethers';
 const decimals = 6;
@@ -101,7 +101,7 @@ describe('🧪 Stablecoin test', () => {
 			pauseKey: Account.NullPublicKey,
 			supplyType: TokenSupplyType.INFINITE,
 			stableCoinFactory: FACTORY_ADDRESS,
-			hederaERC20: HEDERA_ERC20_ADDRESS,
+			hederaTokenManager: HEDERA_TOKEN_MANAGER_ADDRESS,
 			reserveInitialAmount: '1000000',
 			createReserve: true,
 			grantKYCToOriginalSender: true,
@@ -126,7 +126,7 @@ describe('🧪 Stablecoin test', () => {
 			pauseKey: CLIENT_ACCOUNT_ED25519.publicKey,
 			supplyType: TokenSupplyType.INFINITE,
 			stableCoinFactory: FACTORY_ADDRESS,
-			hederaERC20: HEDERA_ERC20_ADDRESS,
+			hederaTokenManager: HEDERA_TOKEN_MANAGER_ADDRESS,
 			reserveInitialAmount: '1000000',
 			createReserve: true,
 			grantKYCToOriginalSender: true,

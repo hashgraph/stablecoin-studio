@@ -155,7 +155,7 @@ class StableCoinInPort implements IStableCoinInPort {
 	}> {
 		handleValidation('CreateRequest', req);
 		const {
-			hederaERC20,
+			hederaTokenManager,
 			reserveAddress,
 			reserveInitialAmount,
 			createReserve,
@@ -232,7 +232,9 @@ class StableCoinInPort implements IStableCoinInPort {
 				stableCoinFactory
 					? new ContractId(stableCoinFactory)
 					: undefined,
-				hederaERC20 ? new ContractId(hederaERC20) : undefined,
+				hederaTokenManager
+					? new ContractId(hederaTokenManager)
+					: undefined,
 				reserveAddress ? new ContractId(reserveAddress) : undefined,
 				reserveInitialAmount
 					? BigDecimal.fromString(

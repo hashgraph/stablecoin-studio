@@ -82,10 +82,10 @@ Each stable coin maps to an *underlying* Hedera Token and adds the following fun
 
 ## Creating Stable Coins
 Every time a stable coin is created, a new Hedera Token is created (the underlying token) and the following smart contracts are deployed:
-- The Stable Coin proxy smart contract: pointing to the HederaERC20 logic smart contract that was passed as an input argument(*). Proxies are used to make stable coins upgradable.
+- The Stable Coin proxy smart contract: pointing to the HederaTokenManager logic smart contract that was passed as an input argument(*). Proxies are used to make stable coins upgradable.
 - The Stable Coin proxy admin smart contract: this contract will act as an intermediary to upgrade the Stable Coin proxy implementation. For more information on this check the contract module's README.
 
-(*)By default the HederaERC20 smart contract that will be used will be the pre-deployed one, but users can use any other contract they want, for more information on this check the contract module's README.
+(*)By default the HederaTokenManager smart contract that will be used will be the pre-deployed one, but users can use any other contract they want, for more information on this check the contract module's README.
 
 Users interact with the Stable Coin proxy smart contract because its address will never change. Stable Coin logic smart contract addresses change if a new version is deployed. 
 
@@ -191,7 +191,7 @@ Whenever a testnet reset occures, the factories must be re-deployed and the addr
 3. Create a PR to be validated and merged for the new version.
 
 # Deploying the stable coin factories
-In order to be able to deploy any stable coins, the HederaERC20 and StablecoinFactory contracts must be deployed on the network. Whenever a new version of the contracts is published or when the testnet is reset, new contracts need to be deployed and well as the addresses that the SDK provides by default.
+In order to be able to deploy any stable coins, the HederaTokenManager and StablecoinFactory contracts must be deployed on the network. Whenever a new version of the contracts is published or when the testnet is reset, new contracts need to be deployed and well as the addresses that the SDK provides by default.
 
 We provide default addresses for the factories that we have deployed for anyone to use that are updated whenever a new version is released.
 

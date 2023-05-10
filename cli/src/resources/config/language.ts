@@ -72,7 +72,7 @@ export const english = {
   },
   stablecoin: {
     noFactories:
-      "You don't have configured your factory and HederaERC20 address. Without this configuration you cannot create an stable coin. Check the following link for more information. https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/cli#creating-a-config-file",
+      "You don't have configured your factory and HederaTokenManager address. Without this configuration you cannot create an stable coin. Check the following link for more information. https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/cli#creating-a-config-file",
     askConfirmCreation:
       'Are you sure you want to create the stable coin with these parameters?',
     description: 'Creating Stable Coin',
@@ -104,11 +104,11 @@ export const english = {
       'You will be the admin for the keys that you have assigned to the Smart Contract, do you want to change the admin for one of these features?',
     askKYC: 'Do you want to enable KYC?',
     askCustomFees: 'Do you want to add custom fees?',
-    askHederaERC20Other: 'Other',
-    askHederaERC20Version:
-      'Choose the HederaERC20 implementation you want to use',
-    askHederaERC20Implementation:
-      'Enter the address of the HederaERC20 implementation you want to use',
+    askHederaTokenManagerOther: 'Other',
+    askHederaTokenManagerVersion:
+      'Choose the HederaTokenManager implementation you want to use',
+    askHederaTokenManagerImplementation:
+      'Enter the address of the HederaTokenManager implementation you want to use',
     features: {
       admin: 'Enter the admin key',
       supply: 'Enter the supply key',

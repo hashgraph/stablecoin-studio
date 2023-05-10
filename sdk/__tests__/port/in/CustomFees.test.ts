@@ -45,7 +45,7 @@ import { TokenSupplyType } from '../../../src/port/in/StableCoin';
 import {
 	CLIENT_ACCOUNT_ED25519,
 	FACTORY_ADDRESS,
-	HEDERA_ERC20_ADDRESS,
+	HEDERA_TOKEN_MANAGER_ADDRESS,
 } from '../../config';
 import Injectable from '../../../src/core/Injectable';
 import { HederaId } from '../../../src/domain/context/shared/HederaId';
@@ -83,7 +83,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 			feeScheduleKey: CLIENT_ACCOUNT_ED25519.publicKey,
 			supplyType: TokenSupplyType.FINITE,
 			stableCoinFactory: FACTORY_ADDRESS,
-			hederaERC20: HEDERA_ERC20_ADDRESS,
+			hederaTokenManager: HEDERA_TOKEN_MANAGER_ADDRESS,
 			burnRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
 			rescueRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
 			deleteRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),

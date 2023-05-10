@@ -11,7 +11,7 @@ import {
   RequestAccount,
   Account,
   Factory,
-  GetERC20ListRequest,
+  GetTokenManagerListRequest,
   KYCRequest,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 
@@ -300,16 +300,16 @@ export default class CreateStableCoinService extends Service {
       }
     }
 
-    // ASK HederaERC20 version
+    // ASK HederaTokenManager version
     tokenToCreate.stableCoinFactory = utilsService.getCurrentFactory().id;
 
-    await this.askHederaERC20Version(
+    await this.askHederaTokenManagerVersion(
       tokenToCreate.stableCoinFactory,
       tokenToCreate,
     );
 
     console.log({
-      hederaERC20: tokenToCreate.hederaERC20,
+      hederaTokenManager: tokenToCreate.hederaTokenManager,
       name: tokenToCreate.name,
       symbol: tokenToCreate.symbol,
       decimals: tokenToCreate.decimals,
@@ -388,33 +388,33 @@ export default class CreateStableCoinService extends Service {
     );
   }
 
-  private async askHederaERC20Version(
+  private async askHederaTokenManagerVersion(
     factory: string,
     request: any,
   ): Promise<void> {
-    const factoryListEvm = await Factory.getHederaERC20List(
-      new GetERC20ListRequest({ factoryId: factory }),
+    const factoryListEvm = await Factory.getHederaTokenManagerList(
+      new GetTokenManagerListRequest({ factoryId: factory }),
     ).then((value) => value.reverse());
 
     const choices = factoryListEvm.map((item) => item.toString());
-    choices.push(language.getText('stablecoin.askHederaERC20Other'));
+    choices.push(language.getText('stablecoin.askHederaTokenManagerOther'));
 
     const versionSelection = await utilsService.defaultMultipleAsk(
-      language.getText('stablecoin.askHederaERC20Version'),
+      language.getText('stablecoin.askHederaTokenManagerVersion'),
       choices,
     );
 
     if (versionSelection === choices[choices.length - 1]) {
       await utilsService.handleValidation(
-        () => request.validate('hederaERC20'),
+        () => request.validate('hederaTokenManager'),
         async () => {
-          request.hederaERC20 = await utilsService.defaultSingleAsk(
-            language.getText('stablecoin.askHederaERC20Implementation'),
+          request.hederaTokenManager = await utilsService.defaultSingleAsk(
+            language.getText('stablecoin.askHederaTokenManagerImplementation'),
             '0.0.0',
           );
         },
       );
-    } else request.hederaERC20 = versionSelection;
+    } else request.hederaTokenManager = versionSelection;
   }
 
   private async askForOptionalProps(): Promise<boolean> {

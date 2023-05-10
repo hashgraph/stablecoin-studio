@@ -42,7 +42,7 @@ import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply.
 import PublicKey from '../../../domain/context/account/PublicKey.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
 import {
-	HederaERC20__factory,
+	HederaTokenManager__factory,
 	HederaReserve__factory,
 	StableCoinFactory__factory,
 } from '@hashgraph-dev/stablecoin-npm-contracts';
@@ -77,7 +77,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	public async create(
 		coin: StableCoinProps,
 		factory: ContractId,
-		hederaERC20: ContractId,
+		hederaTokenManager: ContractId,
 		createReserve: boolean,
 		reserveAddress?: ContractId,
 		reserveInitialAmount?: BigDecimal,
@@ -182,7 +182,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				stableCoinToCreate,
 				'0x' +
 					HContractId.fromString(
-						hederaERC20.value,
+						hederaTokenManager.value,
 					).toSolidityAddress(),
 			];
 			return await this.contractCall(
@@ -850,7 +850,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		gas: number,
 		params?: Params,
 		transactionType: TransactionType = TransactionType.RECEIPT,
-		contractAbi: any = HederaERC20__factory.abi,
+		contractAbi: any = HederaTokenManager__factory.abi,
 	): Promise<TransactionResponse> {
 		try {
 			switch (CapabilityDecider.decide(coin, operation)) {
@@ -915,7 +915,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		gas: number,
 		params?: Params,
 		transactionType: TransactionType = TransactionType.RECEIPT,
-		contractAbi: any = HederaERC20__factory.abi,
+		contractAbi: any = HederaTokenManager__factory.abi,
 	): Promise<TransactionResponse> {
 		let filteredContractParams: any[] = [];
 

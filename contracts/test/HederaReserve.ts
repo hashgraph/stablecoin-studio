@@ -303,7 +303,7 @@ describe('HederaReserveProxy and HederaReserveProxyAdmin Tests', function () {
     })
 
     it('Retrieve admin and implementation addresses for the Proxy', async function () {
-        // We retreive the HederaERC20Proxy admin and implementation
+        // We retreive the HederaReserveProxy admin and implementation
         const implementation = await getProxyImplementation(
             proxyAdminAbi,
             proxyAdminAddress,
@@ -327,7 +327,7 @@ describe('HederaReserveProxy and HederaReserveProxyAdmin Tests', function () {
     })
 
     it('Retrieve proxy admin owner', async function () {
-        // We retreive the HederaERC20Proxy admin and implementation
+        // We retreive the HederaReserveProxy admin and implementation
         const ownerAccount = await owner(
             proxyAdminAbi,
             proxyAdminAddress,
