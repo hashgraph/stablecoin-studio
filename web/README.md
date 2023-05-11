@@ -188,7 +188,7 @@ then fill-in all the required information. You can import any stable coin you wa
 
 ### Operate stable coins
 
-![image](https://user-images.githubusercontent.com/114951681/229090412-715c3afb-35fa-4933-8ca9-71a7af0bd456.png)
+![Operations](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/126861852/79322087-bee5-4de2-8491-6c411a9119eb)
 
 The operations linked to the capabilities (roles) assigned to your account for the selected stable coin will be available.
 
