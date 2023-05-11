@@ -230,12 +230,16 @@ abstract contract Roles is IRoles, Initializable {
     function _revokeRole(bytes32 role, address account) internal {
         if (_hasRole(role, account)) {
             uint256 position = _roles[role].members[account].pos;
-            if (_roles[role].accounts.length > 1) {
-                _roles[role].accounts[position] = _roles[role].accounts[
-                    _roles[role].accounts.length - 1
-                ];
-                _roles[role].members[account].pos = position;
+            uint256 lastIndex = _roles[role].accounts.length - 1;
+
+            if (position < lastIndex) {
+                address accountToMove = _roles[role].accounts[lastIndex];
+
+                _roles[role].accounts[position] = accountToMove;
+
+                _roles[role].members[accountToMove].pos = position;
             }
+
             _roles[role].accounts.pop();
             delete (_roles[role].members[account]);
             emit RoleRevoked(role, account, msg.sender);

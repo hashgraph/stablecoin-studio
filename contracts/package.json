@@ -1,6 +1,6 @@
 {
     "name": "@hashgraph-dev/stablecoin-npm-contracts",
-    "version": "1.2.0",
+    "version": "1.3.0",
     "description": "",
     "publishConfig": {
         "registry": "https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/"
@@ -35,7 +35,7 @@
         "test:rescatable": "npx hardhat test test/rescatable.ts",
         "test:supplieradmin": "npx hardhat test test/supplieradmin.ts",
         "test:wipeable": "npx hardhat test test/wipeable.ts",
-        "test:HederaERC20": "npx hardhat test test/HederaERC20.ts",
+        "test:hederaTokenManager": "npx hardhat test test/hederaTokenManager.ts",
         "test:StableCoinFactory": "npx hardhat test test/StableCoinFactory.ts",
         "test:reserve": "npx hardhat test test/reserve.ts",
         "test:kyc": "npx hardhat test test/kyc.ts",
@@ -50,7 +50,7 @@
         "test:testnet:rescatable": "npx hardhat test --network testnet test/rescatable.ts",
         "test:testnet:supplieradmin": "npx hardhat test --network testnet test/supplieradmin.ts",
         "test:testnet:wipeable": "npx hardhat test --network testnet test/wipeable.ts",
-        "test:testnet:HederaERC20": "npx hardhat test --network testnet test/HederaERC20.ts",
+        "test:testnet:hederaTokenManager": "npx hardhat test --network testnet test/hederaTokenManager.ts",
         "test:testnet:StableCoinFactory": "npx hardhat test --network testnet test/StableCoinFactory.ts",
         "test:testnet:reserve": "npx hardhat test --network testnet test/reserve.ts",
         "test:testnet:kyc": "npx hardhat test --network testnet test/kyc.ts",
@@ -64,7 +64,7 @@
         "test:previewnet:rescatable": "npx hardhat test --network previewnet test/rescatable.ts",
         "test:previewnet:supplieradmin": "npx hardhat test --network previewnet test/supplieradmin.ts",
         "test:previewnet:wipeable": "npx hardhat test --network previewnet test/wipeable.ts",
-        "test:previewnet:HederaERC20": "npx hardhat test --network previewnet test/HederaERC20.ts",
+        "test:previewnet:hederaTokenManager": "npx hardhat test --network previewnet test/hederaTokenManager.ts",
         "test:previewnet:StableCoinFactory": "npx hardhat test --network previewnet test/StableCoinFactory.ts",
         "test:previewnet:reserve": "npx hardhat test --network previewnet test/reserve.ts",
         "test:previewnet:kyc": "npx hardhat test --network previewnet test/kyc.ts",

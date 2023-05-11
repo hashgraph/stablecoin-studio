@@ -5,8 +5,8 @@ import {ITokenOwner} from './Interfaces/ITokenOwner.sol';
 import {HederaResponseCodes} from '../hts-precompile/HederaResponseCodes.sol';
 import {IHederaTokenService} from '../hts-precompile/IHederaTokenService.sol';
 import {
-    IHederaERC20Upgradeable
-} from '../Interfaces/IHederaERC20Upgradeable.sol';
+    IERC20Upgradeable
+} from '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
 import {
     Initializable
 } from '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
@@ -135,7 +135,7 @@ abstract contract TokenOwner is
      * @return int64 The total number of tokens that exists
      */
     function _totalSupply() internal view returns (uint256) {
-        return IHederaERC20Upgradeable(_tokenAddress).totalSupply();
+        return IERC20Upgradeable(_tokenAddress).totalSupply();
     }
 
     /**

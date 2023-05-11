@@ -28,7 +28,6 @@ import {
 } from '@hashgraph/sdk';
 
 export const MAX_CUSTOM_FEES = 10;
-export const HBAR_DECIMALS = 8;
 export const MAX_PERCENTAGE_DECIMALS = 2;
 
 export class CustomFee {

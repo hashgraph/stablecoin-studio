@@ -37,6 +37,15 @@ const StableCoinDetails = () => {
 		return text;
 	};
 
+	const getLabelFromAccount = ({ account, proxyAddress }: { account: any; proxyAddress: any }) => {
+		if (!account) return t('none').toUpperCase();
+		const text =
+			proxyAddress && proxyAddress === account
+				? `${t('smartContract').toUpperCase()} - ${account}`
+				: account;
+		return text;
+	};
+
 	const getKeyUrlHashscan = ({ key }: { key: any }): string | undefined => {
 		if (!key) return undefined;
 		const isSmartContract = 'value' in key;
@@ -94,13 +103,19 @@ const StableCoinDetails = () => {
 		},
 		{
 			label: t('treasury'),
-			value: selectedStableCoin?.treasury,
+			value: getLabelFromAccount({
+				account: selectedStableCoin?.treasury as any,
+				proxyAddress: selectedStableCoin?.proxyAddress as any,
+			}),
 			copyButton: true,
 			hashScanURL: `${hashScanURL}/contract/${selectedStableCoin?.treasury}`,
 		},
 		{
 			label: t('autoRenewAccount'),
-			value: selectedStableCoin?.autoRenewAccount,
+			value: getLabelFromAccount({
+				account: selectedStableCoin?.autoRenewAccount as any,
+				proxyAddress: selectedStableCoin?.proxyAddress as any,
+			}),
 			copyButton: true,
 			hashScanURL: `${hashScanURL}/account/${selectedStableCoin?.autoRenewAccount}`,
 		},
@@ -220,7 +235,11 @@ const StableCoinDetails = () => {
 							details={details}
 							getStableCoinDetails={getStableCoinDetails}
 							isLoading={isLoading}
-							editable={roles.includes(StableCoinRole.DEFAULT_ADMIN_ROLE)}
+							editable={
+								roles.includes(StableCoinRole.DEFAULT_ADMIN_ROLE) &&
+								!selectedStableCoin.paused &&
+								!selectedStableCoin.deleted
+							}
 						/>
 					</Box>
 				</Flex>

@@ -27,7 +27,8 @@ import { config } from 'dotenv';
 config();
 
 export const ENVIRONMENT = 'testnet';
-export const HEDERA_ERC20_ADDRESS = process.env.HEDERA_ERC20_ADDRESS ?? '';
+export const HEDERA_TOKEN_MANAGER_ADDRESS =
+	process.env.HEDERA_TOKEN_MANAGER_ADDRESS ?? '';
 export const FACTORY_ADDRESS = process.env.FACTORY_ADDRESS ?? '';
 export const CLIENT_PRIVATE_KEY_ECDSA = new PrivateKey({
 	key: process.env.CLIENT_PRIVATE_KEY_ECDSA ?? '',

@@ -55,6 +55,10 @@ const TEN = 10;
 const ONE_HUNDRED = 100;
 const EIGHTEEN = 18;
 const ZERO = 0;
+const AUTO_RENEW_PERIOD_MIN = 30;
+const AUTO_RENEW_PERIOD_MAX = 92;
+const EXPIRATION_TIME_MIN = 1;
+const EXPIRATION_TIME_MAX = 730;
 export const TRANSFER_LIST_SIZE = 10;
 
 export interface StableCoinProps {
@@ -413,9 +417,9 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 		const epochTimestamp: number = Number(value) / 1000000;
 		const date = new Date(epochTimestamp);
 		const minDate: Date = new Date();
-		minDate.setDate(minDate.getDate() + 1);
+		minDate.setDate(minDate.getDate() + EXPIRATION_TIME_MIN);
 		const maxDate: Date = new Date();
-		maxDate.setDate(maxDate.getDate() + 730);
+		maxDate.setDate(maxDate.getDate() + EXPIRATION_TIME_MAX);
 
 		if (date < minDate || date > maxDate) {
 			errorList.push(
@@ -434,10 +438,20 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 			return [new InvalidType(v, 'integer')];
 		}
 
-		const min = 30;
-		const max = 92;
-		if (!CheckNums.isWithinRange(v, min, max)) {
-			errorList.push(new InvalidAutoRenewPeriod(v, min, max));
+		if (
+			!CheckNums.isWithinRange(
+				v,
+				AUTO_RENEW_PERIOD_MIN,
+				AUTO_RENEW_PERIOD_MAX,
+			)
+		) {
+			errorList.push(
+				new InvalidAutoRenewPeriod(
+					v,
+					AUTO_RENEW_PERIOD_MIN,
+					AUTO_RENEW_PERIOD_MAX,
+				),
+			);
 		}
 		return errorList;
 	}

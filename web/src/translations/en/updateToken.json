@@ -1,0 +1,9 @@
+{
+	"modalAction": {
+		"subtitle": "Operation details review",
+		"accept": "Update token"
+	},
+	"updatingValidation": {
+		"autoRenewPeriod": "Value must be greater than 29 and less than 93"
+	}
+}

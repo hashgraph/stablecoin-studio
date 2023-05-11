@@ -35,10 +35,12 @@ import ValidationResponse from './validation/ValidationResponse.js';
 import WipeRequest from './WipeRequest.js';
 import TransfersRequest from './TransfersRequest.js';
 import RescueRequest from './RescueRequest.js';
+import RescueHBARRequest from './RescueHBARRequest.js';
 import ResetSupplierAllowanceRequest from './ResetSupplierAllowanceRequest.js';
 import IncreaseSupplierAllowanceRequest from './IncreaseSupplierAllowanceRequest.js';
 import DecreaseSupplierAllowanceRequest from './DecreaseSupplierAllowanceRequest.js';
 import GetAccountBalanceRequest from './GetAccountBalanceRequest.js';
+import GetAccountBalanceHBARRequest from './GetAccountBalanceHBARRequest.js';
 import AssociateTokenRequest from './AssociateTokenRequest.js';
 import GetRolesRequest from './GetRolesRequest.js';
 import GetAccountInfoRequest from './GetAccountInfoRequest.js';
@@ -60,8 +62,9 @@ import UpdateCustomFeesRequest from './UpdateCustomFeesRequest.js';
 import AddFixedFeeRequest from './AddFixedFeeRequest.js';
 import AddFractionalFeeRequest from './AddFractionalFeeRequest.js';
 import SetConfigurationRequest from './SetConfigurationRequest.js';
-import GetERC20ListRequest from './GetERC20ListRequest.js';
+import GetTokenManagerListRequest from './GetTokenManagerListRequest.js';
 import UpdateRequest from './UpdateRequest.js';
+import { HBAR_DECIMALS } from '../../../core/Constants.js';
 
 export * from './BaseRequest.js';
 export {
@@ -74,6 +77,7 @@ export {
 	GetListStableCoinRequest,
 	GetStableCoinDetailsRequest,
 	RescueRequest,
+	RescueHBARRequest,
 	GrantRoleRequest,
 	GrantMultiRolesRequest,
 	GetAccountsWithRolesRequest,
@@ -86,6 +90,7 @@ export {
 	IncreaseSupplierAllowanceRequest,
 	DecreaseSupplierAllowanceRequest,
 	GetAccountBalanceRequest,
+	GetAccountBalanceHBARRequest,
 	AssociateTokenRequest,
 	GetRolesRequest,
 	GetAccountInfoRequest,
@@ -107,6 +112,6 @@ export {
 	UpdateCustomFeesRequest,
 	AddFixedFeeRequest,
 	AddFractionalFeeRequest,
-	GetERC20ListRequest,
+	GetTokenManagerListRequest,
 	UpdateRequest,
 };

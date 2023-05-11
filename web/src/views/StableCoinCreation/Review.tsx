@@ -20,7 +20,7 @@ const Review = (props: ReviewProps) => {
 
 	const { getValues } = form;
 	const {
-		hederaERC20Id,
+		hederaTokenManagerId,
 		name,
 		symbol,
 		initialSupply,
@@ -173,8 +173,8 @@ const Review = (props: ReviewProps) => {
 						titleProps={{ fontWeight: 700, color: 'brand.secondary' }}
 						details={[
 							{
-								label: t('stableCoinCreation:basicDetails.hederaERC20'),
-								value: hederaERC20Id.value || '',
+								label: t('stableCoinCreation:basicDetails.hederaTokenManager'),
+								value: hederaTokenManagerId.value || '',
 							},
 							{
 								label: t('stableCoinCreation:basicDetails.name'),

@@ -15,6 +15,7 @@ export const RoutesMappingUrl: Record<NamedRoutes, string> = {
 	[NamedRoutes.Login]: '/login',
 	[NamedRoutes.Operations]: '/operations',
 	[NamedRoutes.RescueTokens]: '/operations/rescue-tokens',
+	[NamedRoutes.RescueHBAR]: '/operations/rescue-HBAR',
 	[NamedRoutes.RevokeRole]: '/roles/revoke-role',
 	[NamedRoutes.Roles]: '/roles',
 	[NamedRoutes.StableCoinCreation]: '/stable-coin/creation',

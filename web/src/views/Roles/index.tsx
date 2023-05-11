@@ -28,6 +28,9 @@ const Roles = () => {
 		if (!operations?.includes(Operation.RESCUE) && option.label === 'Rescue') {
 			return false;
 		}
+		if (!operations?.includes(Operation.RESCUE_HBAR) && option.label === 'RescueHBAR') {
+			return false;
+		}
 		if (!operations?.includes(Operation.FREEZE) && option.label === 'Freeze') {
 			return false;
 		}

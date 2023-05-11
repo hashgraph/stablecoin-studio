@@ -18,16 +18,20 @@
  *
  */
 
-import { Query } from '../../../../../core/query/Query.js';
-import { QueryResponse } from '../../../../../core/query/QueryResponse.js';
-import ContractId from '../../../../../domain/context/contract/ContractId.js';
+import ValidatedRequest from './validation/ValidatedRequest.js';
+import Validation from './validation/Validation.js';
+import { HBAR_DECIMALS } from '../../../core/Constants.js';
 
-export class GetERC20ListQueryResponse implements QueryResponse {
-	constructor(public readonly payload: ContractId[]) {}
-}
+export default class RescueHBARRequest extends ValidatedRequest<RescueHBARRequest> {
+	tokenId: string;
+	amount: string;
 
-export class GetERC20ListQuery extends Query<GetERC20ListQueryResponse> {
-	constructor(public readonly factoryId: ContractId) {
-		super();
+	constructor({ tokenId, amount }: { tokenId: string; amount: string }) {
+		super({
+			tokenId: Validation.checkHederaIdFormat(),
+			amount: Validation.checkAmount(false, HBAR_DECIMALS),
+		});
+		this.tokenId = tokenId;
+		this.amount = amount;
 	}
 }

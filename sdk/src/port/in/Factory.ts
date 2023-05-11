@@ -24,11 +24,13 @@ import { CommandBus } from '../../core/command/CommandBus.js';
 import { handleValidation } from './Common.js';
 import { QueryBus } from '../../core/query/QueryBus.js';
 import { LogError } from '../../core/decorator/LogErrorDecorator.js';
-import GetERC20ListRequest from './request/GetERC20ListRequest.js';
-import { GetERC20ListQuery } from '../../app/usecase/query/factory/getERC20List/GetERC20ListQuery.js';
+import GetTokenManagerListRequest from './request/GetTokenManagerListRequest.js';
+import { GetTokenManagerListQuery } from '../../app/usecase/query/factory/getTokenManagerList/GetTokenManagerListQuery.js';
 
 interface IFactoryInPort {
-	getHederaERC20List(request: GetERC20ListRequest): Promise<ContractId[]>;
+	getHederaTokenManagerList(
+		request: GetTokenManagerListRequest,
+	): Promise<ContractId[]>;
 }
 
 class FactoryInPort implements IFactoryInPort {
@@ -40,12 +42,12 @@ class FactoryInPort implements IFactoryInPort {
 	) {}
 
 	@LogError
-	async getHederaERC20List(
-		request: GetERC20ListRequest,
+	async getHederaTokenManagerList(
+		request: GetTokenManagerListRequest,
 	): Promise<ContractId[]> {
-		handleValidation('GetERC20ListRequest', request);
+		handleValidation('GetTokenManagerListRequest', request);
 		const res = await this.queryBus.execute(
-			new GetERC20ListQuery(new ContractId(request.factoryId)),
+			new GetTokenManagerListQuery(new ContractId(request.factoryId)),
 		);
 		return res.payload;
 	}

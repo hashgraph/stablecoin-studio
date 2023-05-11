@@ -18,16 +18,17 @@
  *
  */
 
-import ValidatedRequest from './validation/ValidatedRequest.js';
-import Validation from './validation/Validation.js';
+import { Query } from '../../../../../core/query/Query.js';
+import { QueryResponse } from '../../../../../core/query/QueryResponse.js';
+import BigDecimal from '../../../../../domain/context/shared/BigDecimal.js';
+import { HederaId } from '../../../../../domain/context/shared/HederaId.js';
 
-export default class GetERC20ListRequest extends ValidatedRequest<GetERC20ListRequest> {
-	factoryId: string;
+export class BalanceOfHBARQueryResponse implements QueryResponse {
+	constructor(public readonly payload: BigDecimal) {}
+}
 
-	constructor({ factoryId }: { factoryId: string }) {
-		super({
-			factoryId: Validation.checkHederaIdFormat(),
-		});
-		this.factoryId = factoryId;
+export class BalanceOfHBARQuery extends Query<BalanceOfHBARQueryResponse> {
+	constructor(public readonly treasuryAccountId: HederaId) {
+		super();
 	}
 }

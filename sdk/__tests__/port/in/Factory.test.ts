@@ -24,7 +24,7 @@ import ConnectRequest, {
 } from '../../../src/port/in/request/ConnectRequest.js';
 import { CLIENT_ACCOUNT_ED25519, FACTORY_ADDRESS } from '../../config.js';
 import Factory from '../../../src/port/in/Factory.js';
-import GetERC20ListRequest from '../../../src/port/in/request/GetERC20ListRequest.js';
+import GetTokenManagerListRequest from '../../../src/port/in/request/GetTokenManagerListRequest.js';
 
 SDK.log = { level: 'ERROR', transports: new LoggerTransports.Console() };
 describe('🧪 Factory test', () => {
@@ -41,9 +41,9 @@ describe('🧪 Factory test', () => {
 		);
 	}, 60_000);
 
-	it('Get ERC20 list', async () => {
-		const res = await Factory.getHederaERC20List(
-			new GetERC20ListRequest({ factoryId: FACTORY_ADDRESS }),
+	it('Get TokenManager list', async () => {
+		const res = await Factory.getHederaTokenManagerList(
+			new GetTokenManagerListRequest({ factoryId: FACTORY_ADDRESS }),
 		);
 		expect(res.length).toBeGreaterThan(0);
 	}, 60_000);
