@@ -69,6 +69,7 @@ import {
 	GRANT_KYC_GAS,
 	GRANT_ROLES_GAS,
 	INCREASE_SUPPLY_GAS,
+	MAX_ROLES_GAS,
 	PAUSE_GAS,
 	RESCUE_GAS,
 	RESCUE_HBAR_GAS,
@@ -684,12 +685,15 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				);
 			}
 
+			let gas = targetsId.length * roles.length * GRANT_ROLES_GAS;
+			gas = gas > MAX_ROLES_GAS ? MAX_ROLES_GAS : gas;
+
 			return RPCTransactionResponseAdapter.manageResponse(
 				await HederaTokenManager__factory.connect(
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
 				).grantRoles(roles, accounts, amountsFormatted, {
-					gasLimit: targetsId.length * roles.length * GRANT_ROLES_GAS,
+					gasLimit: gas,
 				}),
 				this.networkService.environment,
 			);
@@ -725,13 +729,15 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				);
 			}
 
+			let gas = targetsId.length * roles.length * REVOKE_ROLES_GAS;
+			gas = gas > MAX_ROLES_GAS ? MAX_ROLES_GAS : gas;
+
 			return RPCTransactionResponseAdapter.manageResponse(
 				await HederaTokenManager__factory.connect(
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
 				).revokeRoles(roles, accounts, {
-					gasLimit:
-						targetsId.length * roles.length * REVOKE_ROLES_GAS,
+					gasLimit: gas,
 				}),
 				this.networkService.environment,
 			);

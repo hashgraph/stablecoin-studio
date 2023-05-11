@@ -85,6 +85,7 @@ import {
 	UPDATE_RESERVE_AMOUNT_GAS,
 	UPDATE_TOKEN_GAS,
 	WIPE_GAS,
+	MAX_ROLES_GAS,
 } from '../../../core/Constants.js';
 import LogService from '../../../app/service/LogService.js';
 import { RESERVE_DECIMALS } from '../../../domain/context/reserve/Reserve.js';
@@ -565,11 +566,15 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			targetsId: targetsId,
 			amounts: amounts,
 		});
+
+		let gas = targetsId.length * roles.length * GRANT_ROLES_GAS;
+		gas = gas > MAX_ROLES_GAS ? MAX_ROLES_GAS : gas;
+
 		return this.performOperation(
 			coin,
 			Operation.ROLE_MANAGEMENT,
 			'grantRoles',
-			targetsId.length * roles.length * GRANT_ROLES_GAS,
+			gas,
 			params,
 		);
 	}
@@ -635,11 +640,15 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			roles: roles,
 			targetsId: targetsId,
 		});
+
+		let gas = targetsId.length * roles.length * REVOKE_ROLES_GAS;
+		gas = gas > MAX_ROLES_GAS ? MAX_ROLES_GAS : gas;
+
 		return this.performOperation(
 			coin,
 			Operation.ROLE_MANAGEMENT,
 			'revokeRoles',
-			targetsId.length * roles.length * REVOKE_ROLES_GAS,
+			gas,
 			params,
 		);
 	}
