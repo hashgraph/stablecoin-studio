@@ -154,6 +154,7 @@ Learn more about them in their README:
 - **SDK, CLI and UI**: Typescript `>=4.7`
 - **SDK**: Node `>= v18.13`
 - **UI**: React.js `>=2.2.6`
+- **CONTRACTS**: Hardhat `^2.14.0`
 
 
 # Installation
