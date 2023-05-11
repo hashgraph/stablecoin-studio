@@ -59,7 +59,29 @@ import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply.
 import { FactoryStableCoin } from '../../../domain/context/factory/FactoryStableCoin.js';
 import { FactoryKey } from '../../../domain/context/factory/FactoryKey.js';
 import PublicKey from '../../../domain/context/account/PublicKey.js';
-import { TOKEN_CREATION_COST_HBAR } from '../../../core/Constants.js';
+import {
+	BURN_GAS,
+	CASHIN_GAS,
+	CREATE_SC_GAS,
+	DECREASE_SUPPLY_GAS,
+	DELETE_GAS,
+	FREEZE_GAS,
+	GRANT_KYC_GAS,
+	GRANT_ROLES_GAS,
+	INCREASE_SUPPLY_GAS,
+	PAUSE_GAS,
+	RESCUE_GAS,
+	RESCUE_HBAR_GAS,
+	RESET_SUPPLY_GAS,
+	REVOKE_KYC_GAS,
+	REVOKE_ROLES_GAS,
+	TOKEN_CREATION_COST_HBAR,
+	UNFREEZE_GAS,
+	UNPAUSE_GAS,
+	UPDATE_RESERVE_ADDRESS_GAS,
+	UPDATE_TOKEN_GAS,
+	WIPE_GAS,
+} from '../../../core/Constants.js';
 import { MetaMaskInpageProvider } from '@metamask/providers';
 import { WalletConnectError } from '../../../domain/context/network/error/WalletConnectError.js';
 import EventService from '../../../app/service/event/EventService.js';
@@ -268,7 +290,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					value: ethers.utils.parseEther(
 						TOKEN_CREATION_COST_HBAR.toString(),
 					),
-					gasLimit: 15000000,
+					gasLimit: CREATE_SC_GAS,
 				},
 			);
 
@@ -497,6 +519,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					this.signerOrProvider,
 				).updateReserveAddress(
 					reserveAddress.toHederaAddress().toSolidityAddress(),
+					{ gasLimit: UPDATE_RESERVE_ADDRESS_GAS },
 				),
 				this.networkService.environment,
 			);
@@ -582,7 +605,9 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				await HederaTokenManager__factory.connect(
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
-				).grantRole(role, await this.getEVMAddress(targetId)),
+				).grantRole(role, await this.getEVMAddress(targetId), {
+					gasLimit: GRANT_ROLES_GAS,
+				}),
 				this.networkService.environment,
 			);
 		} catch (error) {
@@ -613,7 +638,9 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				await HederaTokenManager__factory.connect(
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
-				).revokeRole(role, await this.getEVMAddress(targetId)),
+				).revokeRole(role, await this.getEVMAddress(targetId), {
+					gasLimit: REVOKE_ROLES_GAS,
+				}),
 				this.networkService.environment,
 			);
 		} catch (error) {
@@ -658,7 +685,9 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				await HederaTokenManager__factory.connect(
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
-				).grantRoles(roles, accounts, amountsFormatted),
+				).grantRoles(roles, accounts, amountsFormatted, {
+					gasLimit: targetsId.length * roles.length * GRANT_ROLES_GAS,
+				}),
 				this.networkService.environment,
 			);
 		} catch (error) {
@@ -697,7 +726,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				await HederaTokenManager__factory.connect(
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
-				).revokeRoles(roles, accounts),
+				).revokeRoles(roles, accounts, {
+					gasLimit:
+						targetsId.length * roles.length * REVOKE_ROLES_GAS,
+				}),
 				this.networkService.environment,
 			);
 		} catch (error) {
@@ -732,6 +764,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					// (await this.accountToEvmAddress(targetId)).toString(),
 					await this.getEVMAddress(targetId),
 					amount.toBigNumber(),
+					{ gasLimit: GRANT_ROLES_GAS },
 				),
 				this.networkService.environment,
 			);
@@ -765,6 +798,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				).grantUnlimitedSupplierRole(
 					// (await this.accountToEvmAddress(targetId)).toString(),
 					await this.getEVMAddress(targetId),
+					{ gasLimit: GRANT_ROLES_GAS },
 				),
 				this.networkService.environment,
 			);
@@ -795,7 +829,9 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				await HederaTokenManager__factory.connect(
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
-				).revokeSupplierRole(await this.getEVMAddress(targetId)),
+				).revokeSupplierRole(await this.getEVMAddress(targetId), {
+					gasLimit: REVOKE_ROLES_GAS,
+				}),
 				this.networkService.environment,
 			);
 		} catch (error) {
@@ -1014,7 +1050,9 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				await HederaTokenManager__factory.connect(
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
-				).resetSupplierAllowance(await this.getEVMAddress(targetId)),
+				).resetSupplierAllowance(await this.getEVMAddress(targetId), {
+					gasLimit: RESET_SUPPLY_GAS,
+				}),
 				this.networkService.environment,
 			);
 		} catch (error) {
@@ -1049,6 +1087,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					// (await this.accountToEvmAddress(targetId)).toString(),
 					await this.getEVMAddress(targetId),
 					amount.toBigNumber(),
+					{ gasLimit: INCREASE_SUPPLY_GAS },
 				),
 				this.networkService.environment,
 			);
@@ -1084,6 +1123,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					// (await this.accountToEvmAddress(targetId)).toString(),
 					await this.getEVMAddress(targetId),
 					amount.toBigNumber(),
+					{ gasLimit: DECREASE_SUPPLY_GAS },
 				),
 				this.networkService.environment,
 			);
@@ -1132,66 +1172,20 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
 	): Promise<TransactionResponse<boolean, Error>> {
-		try {
-			if (!coin.coin.evmProxyAddress?.toString())
-				throw new TransactionResponseError({
-					network: this.networkService.environment,
-					RPC_relay: true,
-					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
-				});
-
-			return RPCTransactionResponseAdapter.manageResponse(
-				await HederaTokenManager__factory.connect(
-					coin.coin.evmProxyAddress?.toString(),
-					this.signerOrProvider,
-				).grantKyc(
-					// (await this.accountToEvmAddress(targetId)).toString(),
-					await this.getEVMAddress(targetId),
-				),
-				this.networkService.environment,
-			);
-		} catch (error) {
-			LogService.logError(error);
-			throw new TransactionResponseError({
-				network: this.networkService.environment,
-				RPC_relay: true,
-				message: `Unexpected error in RPCTransactionAdapter grantKyc operation : ${error}`,
-				transactionId: (error as any).error?.transactionId,
-			});
-		}
+		const params = new Params({
+			targetId: await this.getEVMAddress(targetId),
+		});
+		return this.performOperation(coin, Operation.GRANT_KYC, params);
 	}
 
 	async revokeKyc(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
 	): Promise<TransactionResponse<boolean, Error>> {
-		try {
-			if (!coin.coin.evmProxyAddress?.toString())
-				throw new TransactionResponseError({
-					network: this.networkService.environment,
-					RPC_relay: true,
-					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
-				});
-
-			return RPCTransactionResponseAdapter.manageResponse(
-				await HederaTokenManager__factory.connect(
-					coin.coin.evmProxyAddress?.toString(),
-					this.signerOrProvider,
-				).revokeKyc(
-					// (await this.accountToEvmAddress(targetId)).toString(),
-					await this.getEVMAddress(targetId),
-				),
-				this.networkService.environment,
-			);
-		} catch (error) {
-			LogService.logError(error);
-			throw new TransactionResponseError({
-				network: this.networkService.environment,
-				RPC_relay: true,
-				message: `Unexpected error in RPCTransactionAdapter revokeKyc operation : ${error}`,
-				transactionId: (error as any).error?.transactionId,
-			});
-		}
+		const params = new Params({
+			targetId: await this.getEVMAddress(targetId),
+		});
+		return this.performOperation(coin, Operation.REVOKE_KYC, params);
 	}
 
 	async contractCall(
@@ -1567,7 +1561,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					await HederaTokenManager__factory.connect(
 						evmProxy,
 						this.signerOrProvider,
-					).mint(targetEvm.toString(), params!.amount!.toBigNumber()),
+					).mint(
+						targetEvm.toString(),
+						params!.amount!.toBigNumber(),
+						{ gasLimit: CASHIN_GAS },
+					),
 					this.networkService.environment,
 				);
 
@@ -1576,7 +1574,9 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					await HederaTokenManager__factory.connect(
 						evmProxy,
 						this.signerOrProvider,
-					).burn(params!.amount!.toBigNumber()),
+					).burn(params!.amount!.toBigNumber(), {
+						gasLimit: BURN_GAS,
+					}),
 					this.networkService.environment,
 				);
 
@@ -1585,7 +1585,9 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					await HederaTokenManager__factory.connect(
 						evmProxy,
 						this.signerOrProvider,
-					).wipe(params!.targetId!, params!.amount!.toBigNumber()),
+					).wipe(params!.targetId!, params!.amount!.toBigNumber(), {
+						gasLimit: WIPE_GAS,
+					}),
 					this.networkService.environment,
 				);
 
@@ -1594,7 +1596,9 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					await HederaTokenManager__factory.connect(
 						evmProxy,
 						this.signerOrProvider,
-					).rescue(params!.amount!.toBigNumber()),
+					).rescue(params!.amount!.toBigNumber(), {
+						gasLimit: RESCUE_GAS,
+					}),
 					this.networkService.environment,
 				);
 
@@ -1603,7 +1607,9 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					await HederaTokenManager__factory.connect(
 						evmProxy,
 						this.signerOrProvider,
-					).rescueHBAR(params!.amount!.toBigNumber()),
+					).rescueHBAR(params!.amount!.toBigNumber(), {
+						gasLimit: RESCUE_HBAR_GAS,
+					}),
 					this.networkService.environment,
 				);
 
@@ -1612,7 +1618,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					await HederaTokenManager__factory.connect(
 						evmProxy,
 						this.signerOrProvider,
-					).freeze(params!.targetId!),
+					).freeze(params!.targetId!, { gasLimit: FREEZE_GAS }),
 					this.networkService.environment,
 				);
 
@@ -1621,7 +1627,25 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					await HederaTokenManager__factory.connect(
 						evmProxy,
 						this.signerOrProvider,
-					).unfreeze(params!.targetId!),
+					).unfreeze(params!.targetId!, { gasLimit: UNFREEZE_GAS }),
+					this.networkService.environment,
+				);
+
+			case Operation.GRANT_KYC:
+				return RPCTransactionResponseAdapter.manageResponse(
+					await HederaTokenManager__factory.connect(
+						evmProxy,
+						this.signerOrProvider,
+					).freeze(params!.targetId!, { gasLimit: GRANT_KYC_GAS }),
+					this.networkService.environment,
+				);
+
+			case Operation.REVOKE_KYC:
+				return RPCTransactionResponseAdapter.manageResponse(
+					await HederaTokenManager__factory.connect(
+						evmProxy,
+						this.signerOrProvider,
+					).unfreeze(params!.targetId!, { gasLimit: REVOKE_KYC_GAS }),
 					this.networkService.environment,
 				);
 
@@ -1630,7 +1654,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					await HederaTokenManager__factory.connect(
 						evmProxy,
 						this.signerOrProvider,
-					).pause(),
+					).pause({ gasLimit: PAUSE_GAS }),
 					this.networkService.environment,
 				);
 
@@ -1639,7 +1663,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					await HederaTokenManager__factory.connect(
 						evmProxy,
 						this.signerOrProvider,
-					).unpause(),
+					).unpause({ gasLimit: UNPAUSE_GAS }),
 					this.networkService.environment,
 				);
 
@@ -1648,7 +1672,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					await HederaTokenManager__factory.connect(
 						evmProxy,
 						this.signerOrProvider,
-					).deleteToken(),
+					).deleteToken({ gasLimit: DELETE_GAS }),
 					this.networkService.environment,
 				);
 
@@ -1677,7 +1701,9 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					await HederaTokenManager__factory.connect(
 						evmProxy,
 						this.signerOrProvider,
-					).updateToken(filteredContractParams),
+					).updateToken(filteredContractParams, {
+						gasLimit: UPDATE_TOKEN_GAS,
+					}),
 					this.networkService.environment,
 				);
 
