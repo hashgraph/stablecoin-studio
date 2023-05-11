@@ -79,6 +79,7 @@ import {
 	UNFREEZE_GAS,
 	UNPAUSE_GAS,
 	UPDATE_RESERVE_ADDRESS_GAS,
+	UPDATE_RESERVE_AMOUNT_GAS,
 	UPDATE_TOKEN_GAS,
 	WIPE_GAS,
 } from '../../../core/Constants.js';
@@ -574,7 +575,9 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				await HederaReserve__factory.connect(
 					reserveAddress.toHederaAddress().toSolidityAddress(),
 					this.signerOrProvider,
-				).setAmount(amount.toBigNumber()),
+				).setAmount(amount.toBigNumber(), {
+					gasLimit: UPDATE_RESERVE_AMOUNT_GAS,
+				}),
 				this.networkService.environment,
 			);
 		} catch (error) {

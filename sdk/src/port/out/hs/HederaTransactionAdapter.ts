@@ -55,7 +55,37 @@ import { MirrorNodeAdapter } from '../mirror/MirrorNodeAdapter.js';
 import { HederaId } from '../../../domain/context/shared/HederaId.js';
 import { FactoryKey } from '../../../domain/context/factory/FactoryKey.js';
 import { FactoryStableCoin } from '../../../domain/context/factory/FactoryStableCoin.js';
-import { TOKEN_CREATION_COST_HBAR } from '../../../core/Constants.js';
+import {
+	CREATE_SC_GAS,
+	BALANCE_OF_GAS,
+	BURN_GAS,
+	CASHIN_GAS,
+	DECREASE_SUPPLY_GAS,
+	DELETE_GAS,
+	FREEZE_GAS,
+	GET_RESERVE_ADDRESS_GAS,
+	GET_RESERVE_AMOUNT_GAS,
+	GET_ROLES_GAS,
+	GET_SUPPLY_ALLOWANCE_GAS,
+	GRANT_KYC_GAS,
+	GRANT_ROLES_GAS,
+	HAS_ROLE_GAS,
+	INCREASE_SUPPLY_GAS,
+	IS_UNLIMITED_ALLOWANCE_GAS,
+	PAUSE_GAS,
+	RESCUE_GAS,
+	RESCUE_HBAR_GAS,
+	RESET_SUPPLY_GAS,
+	REVOKE_KYC_GAS,
+	REVOKE_ROLES_GAS,
+	TOKEN_CREATION_COST_HBAR,
+	UNFREEZE_GAS,
+	UNPAUSE_GAS,
+	UPDATE_RESERVE_ADDRESS_GAS,
+	UPDATE_RESERVE_AMOUNT_GAS,
+	UPDATE_TOKEN_GAS,
+	WIPE_GAS,
+} from '../../../core/Constants.js';
 import LogService from '../../../app/service/LogService.js';
 import { RESERVE_DECIMALS } from '../../../domain/context/reserve/Reserve.js';
 import TransactionResultViewModel from '../mirror/response/TransactionResultViewModel.js';
@@ -189,7 +219,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				factory.value,
 				'deployStableCoin',
 				params,
-				2000000,
+				CREATE_SC_GAS,
 				TransactionType.RECORD,
 				StableCoinFactory__factory.abi,
 				TOKEN_CREATION_COST_HBAR,
@@ -232,7 +262,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		);
 	}
 
-	public async dissociateToken(
+	/* public async dissociateToken(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
 	): Promise<TransactionResponse<any, Error>> {
@@ -246,7 +276,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			1300000,
 			params,
 		);
-	}
+	} */
 
 	public async cashin(
 		coin: StableCoinCapabilities,
@@ -261,7 +291,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			coin,
 			Operation.CASH_IN,
 			'mint',
-			400000,
+			CASHIN_GAS,
 			params,
 		);
 	}
@@ -279,7 +309,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			coin,
 			Operation.WIPE,
 			'wipe',
-			400000,
+			WIPE_GAS,
 			params,
 		);
 	}
@@ -295,7 +325,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			coin,
 			Operation.BURN,
 			'burn',
-			400000,
+			BURN_GAS,
 			params,
 		);
 	}
@@ -311,7 +341,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		const transactionResponse = await this.performSmartContractOperation(
 			coin.coin.proxyAddress!.value,
 			'balanceOf',
-			40000,
+			BALANCE_OF_GAS,
 			params,
 			TransactionType.RECORD,
 		);
@@ -334,7 +364,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			coin,
 			Operation.FREEZE,
 			'freeze',
-			60000,
+			FREEZE_GAS,
 			params,
 		);
 	}
@@ -350,7 +380,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			coin,
 			Operation.UNFREEZE,
 			'unfreeze',
-			60000,
+			UNFREEZE_GAS,
 			params,
 		);
 	}
@@ -358,13 +388,18 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	public async pause(
 		coin: StableCoinCapabilities,
 	): Promise<TransactionResponse> {
-		return this.performOperation(coin, Operation.PAUSE, 'pause', 60000);
+		return this.performOperation(coin, Operation.PAUSE, 'pause', PAUSE_GAS);
 	}
 
 	public async unpause(
 		coin: StableCoinCapabilities,
 	): Promise<TransactionResponse> {
-		return this.performOperation(coin, Operation.UNPAUSE, 'unpause', 60000);
+		return this.performOperation(
+			coin,
+			Operation.UNPAUSE,
+			'unpause',
+			UNPAUSE_GAS,
+		);
 	}
 
 	public async transfer(
@@ -401,7 +436,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			coin,
 			Operation.RESCUE,
 			'rescue',
-			120000,
+			RESCUE_GAS,
 			params,
 		);
 	}
@@ -417,7 +452,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			coin,
 			Operation.RESCUE_HBAR,
 			'rescueHBAR',
-			120000,
+			RESCUE_HBAR_GAS,
 			params,
 		);
 	}
@@ -429,7 +464,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			coin,
 			Operation.DELETE,
 			'deleteToken',
-			400000,
+			DELETE_GAS,
 		);
 	}
 
@@ -439,7 +474,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		const transactionResponse = await this.performSmartContractOperation(
 			coin.coin.proxyAddress!.value,
 			'getReserveAddress',
-			60000,
+			GET_RESERVE_ADDRESS_GAS,
 			undefined,
 			TransactionType.RECORD,
 		);
@@ -460,7 +495,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			coin,
 			Operation.RESERVE_MANAGEMENT,
 			'updateReserveAddress',
-			400000,
+			UPDATE_RESERVE_ADDRESS_GAS,
 			params,
 		);
 	}
@@ -471,7 +506,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		const transactionResponse = await this.performSmartContractOperation(
 			coin.coin.proxyAddress!.value,
 			'getReserveAmount',
-			60000,
+			GET_RESERVE_AMOUNT_GAS,
 			undefined,
 			TransactionType.RECORD,
 		);
@@ -494,7 +529,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		return this.performSmartContractOperation(
 			reserveAddress.toHederaAddress().toString(),
 			'setAmount',
-			400000,
+			UPDATE_RESERVE_AMOUNT_GAS,
 			params,
 			TransactionType.RECEIPT,
 			HederaReserve__factory.abi,
@@ -514,7 +549,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			coin,
 			Operation.ROLE_MANAGEMENT,
 			'grantRole',
-			400000,
+			GRANT_ROLES_GAS,
 			params,
 		);
 	}
@@ -534,7 +569,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			coin,
 			Operation.ROLE_MANAGEMENT,
 			'grantRoles',
-			4000000,
+			targetsId.length * roles.length * GRANT_ROLES_GAS,
 			params,
 		);
 	}
@@ -550,7 +585,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			coin,
 			Operation.ROLE_MANAGEMENT,
 			'grantUnlimitedSupplierRole',
-			250000,
+			GRANT_ROLES_GAS,
 			params,
 		);
 	}
@@ -568,7 +603,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			coin,
 			Operation.ROLE_MANAGEMENT,
 			'grantSupplierRole',
-			250000,
+			GRANT_ROLES_GAS,
 			params,
 		);
 	}
@@ -586,7 +621,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			coin,
 			Operation.ROLE_MANAGEMENT,
 			'revokeRole',
-			400000,
+			REVOKE_ROLES_GAS,
 			params,
 		);
 	}
@@ -604,7 +639,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			coin,
 			Operation.ROLE_MANAGEMENT,
 			'revokeRoles',
-			4000000,
+			targetsId.length * roles.length * REVOKE_ROLES_GAS,
 			params,
 		);
 	}
@@ -620,7 +655,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			coin,
 			Operation.ROLE_MANAGEMENT,
 			'revokeSupplierRole',
-			130000,
+			REVOKE_ROLES_GAS,
 			params,
 		);
 	}
@@ -638,7 +673,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			coin,
 			Operation.ROLE_MANAGEMENT,
 			'hasRole',
-			400000,
+			HAS_ROLE_GAS,
 			params,
 			TransactionType.RECORD,
 		);
@@ -656,7 +691,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		const transactionResponse = await this.performSmartContractOperation(
 			coin.coin.proxyAddress!.value,
 			'getRoles',
-			80000,
+			GET_ROLES_GAS,
 			params,
 			TransactionType.RECORD,
 		);
@@ -677,7 +712,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			coin,
 			Operation.ROLE_MANAGEMENT,
 			'getSupplierAllowance',
-			60000,
+			GET_SUPPLY_ALLOWANCE_GAS,
 			params,
 			TransactionType.RECORD,
 		);
@@ -699,7 +734,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			coin,
 			Operation.ROLE_MANAGEMENT,
 			'isUnlimitedSupplierAllowance',
-			60000,
+			IS_UNLIMITED_ALLOWANCE_GAS,
 			params,
 			TransactionType.RECORD,
 		);
@@ -720,7 +755,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			coin,
 			Operation.ROLE_MANAGEMENT,
 			'increaseSupplierAllowance',
-			130000,
+			INCREASE_SUPPLY_GAS,
 			params,
 		);
 	}
@@ -738,7 +773,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			coin,
 			Operation.ROLE_MANAGEMENT,
 			'decreaseSupplierAllowance',
-			130000,
+			DECREASE_SUPPLY_GAS,
 			params,
 		);
 	}
@@ -754,7 +789,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			coin,
 			Operation.ROLE_MANAGEMENT,
 			'resetSupplierAllowance',
-			120000,
+			RESET_SUPPLY_GAS,
 			params,
 		);
 	}
@@ -770,7 +805,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			coin,
 			Operation.GRANT_KYC,
 			'grantKyc',
-			120000,
+			GRANT_KYC_GAS,
 			params,
 		);
 	}
@@ -786,7 +821,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			coin,
 			Operation.REVOKE_KYC,
 			'revokeKyc',
-			120000,
+			REVOKE_KYC_GAS,
 			params,
 		);
 	}
@@ -854,7 +889,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			coin,
 			Operation.UPDATE,
 			'updateToken',
-			15000000,
+			UPDATE_TOKEN_GAS,
 			params,
 		);
 	}
