@@ -21,6 +21,7 @@
 - **[Technologies](#Technologies)**<br>
 - **[Installation](#Installation)**<br>
 - **[Build](#Build)**<br>
+- **[Recommendations](#Recommendations)**<br>
 - **[Testnet reset procedure](#Testnet-reset-procedure)**<br>
 - **[Deploying the stable coin factories](#Deploying-the-stable-coin-factories)**<br>
 - **[Development Manifesto](#Development-Manifesto)**<br>
@@ -165,6 +166,8 @@ This will install the dependencies in all projects and sets up the links between
 
 You can now start developing on any of the modules.
 
+> To individual installation or running SDK/CLI/UI you can find all the information in their respective readme cited above.
+
 # Build
 When making modifications to any of the modules, you have to re-compile the dependencies, in this order, depending on which ones the modifications where made:
 ````bash
@@ -183,6 +186,12 @@ Or within any of the modules:
   $ cd [module] // sdk, web, contracts, etc
   $ npm run build
 ````
+
+# Recommendations
+If you are using VSCode we recommend the use of the solidity extension from nomicFoundation, it will facilitate the use of hardhat.
+[hardhat-vscode](https://github.com/NomicFoundation/hardhat-vscode)
+
+> This may not be compatible with others solidity extensions, such as this one. [vscode-solidity](https://github.com/juanfranblanco/vscode-solidity)
 
 # Testnet reset procedure
 Whenever a testnet reset occurs, the factories must be re-deployed and the addresses on the SDK must be updated.
