@@ -174,23 +174,6 @@ contract HederaTokenManager is
     }
 
     /**
-     * @dev Associates a account to the token
-     *
-     * @param addr The address of the account to associate
-     *
-     */
-    function _associateToken(address addr) private addressIsNotZero(addr) {
-        address currentTokenAddress = _getTokenAddress();
-
-        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
-            .associateToken(addr, currentTokenAddress);
-
-        _checkResponse(responseCode);
-
-        emit TokenAssociated(currentTokenAddress, addr);
-    }
-
-    /**
      * @dev Transfers an amount of tokens from and account to another account
      *
      * @param to The address the tokens are transferred to
