@@ -12,7 +12,6 @@ import type {
 	StableCoinListViewModel,
 	StableCoinViewModel,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
-import { timeoutPromise } from '../../utils/timeoutHelper';
 
 export interface InitialStateProps {
 	data?: InitializationData;
@@ -71,11 +70,15 @@ export const getStableCoinList = createAsyncThunk(
 						},
 					}),
 				),
-				timeoutPromise,
+				new Promise((resolve, reject) => {
+					setTimeout(() => {
+						reject(new Error("Stable coins list couldn't be obtained in a reasonable time."));
+					}, 10000);
+				}),
 			]).catch((e) => {
 				console.log(e.message);
 				throw e;
-			}); 
+			});
 
 			return stableCoins;
 		} catch (e) {

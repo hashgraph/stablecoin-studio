@@ -33,7 +33,6 @@ import type { IExternalToken } from '../../interfaces/IExternalToken';
 import type { GroupBase, SelectInstance } from 'chakra-react-select';
 import type { IAccountToken } from '../../interfaces/IAccountToken';
 import ModalNotification from '../../components/ModalNotification';
-import { timeoutPromise } from '../../utils/timeoutHelper';
 
 const CoinDropdown = () => {
 	const dispatch = useDispatch<AppDispatch>();
@@ -169,7 +168,11 @@ const CoinDropdown = () => {
 						id: selectedCoin,
 					}),
 				),
-				timeoutPromise,
+				new Promise((resolve, reject) => {
+					setTimeout(() => {
+						reject(new Error("Stable coin details couldn't be obtained in a reasonable time."));
+					}, 10000);
+				}),
 			]).catch((e) => {
 				console.log(e.message);
 				setIsSelecting(true);
@@ -184,7 +187,13 @@ const CoinDropdown = () => {
 						tokenId: stableCoinDetails!.tokenId!.toString(),
 					}),
 				),
-				timeoutPromise,
+				new Promise((resolve, reject) => {
+					setTimeout(() => {
+						reject(
+							new Error("Account's roles for the coin couldn't be obtained in a reasonable time."),
+						);
+					}, 10000);
+				}),
 			]).catch((e) => {
 				console.log(e.message);
 				setIsSelecting(true);
@@ -247,7 +256,11 @@ const CoinDropdown = () => {
 						id: inputValue,
 					}),
 				),
-				timeoutPromise,
+				new Promise((resolve, reject) => {
+					setTimeout(() => {
+						reject(new Error("Stable coin details couldn't be obtained in a reasonable time."));
+					}, 10000);
+				}),
 			]).catch((e) => {
 				console.log(e.message);
 				setIsSelecting(true);

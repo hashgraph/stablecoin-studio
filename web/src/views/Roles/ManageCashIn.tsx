@@ -25,7 +25,6 @@ import DetailsReview from '../../components/DetailsReview';
 import { RouterManager } from '../../Router/RouterManager';
 import { SelectController } from '../../components/Form/SelectController';
 import { cashinLimitOptions } from './constants';
-import { timeoutPromise } from '../../utils/timeoutHelper';
 
 const styles = {
 	menuList: {
@@ -161,7 +160,15 @@ const ManageCashIn = () => {
 								targetId: values.account,
 							}),
 						),
-						timeoutPromise,
+						new Promise((resolve, reject) => {
+							setTimeout(() => {
+								reject(
+									new Error(
+										"Account's supplier allowance information couldn't be obtained in a reasonable time.",
+									),
+								);
+							}, 10000);
+						}),
 					]).catch((e) => {
 						console.log(e.message);
 						onOpenModalAction();
@@ -175,7 +182,15 @@ const ManageCashIn = () => {
 									targetId: values.account,
 								}),
 							),
-							timeoutPromise,
+							new Promise((resolve, reject) => {
+								setTimeout(() => {
+									reject(
+										new Error(
+											"Account's supplier allowance information couldn't be obtained in a reasonable time.",
+										),
+									);
+								}, 10000);
+							}),
 						]).catch((e) => {
 							console.log(e.message);
 							onOpenModalAction();

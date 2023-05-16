@@ -24,7 +24,6 @@ import {
 	walletActions,
 } from '../../store/slices/walletSlice';
 import type { AppDispatch } from '../../store/store';
-import { timeoutPromise } from '../../utils/timeoutHelper';
 import { handleRequestValidation } from '../../utils/validationsHelper';
 import OperationLayout from '../Operations/OperationLayout';
 import { roleOptions } from './constants';
@@ -111,7 +110,11 @@ const RevokeRoleOperation = () => {
 							targetId: accountId!.toString(),
 						}),
 					),
-					timeoutPromise,
+					new Promise((resolve, reject) => {
+						setTimeout(() => {
+							reject(new Error("Account's roles couldn't be obtained in a reasonable time."));
+						}, 10000);
+					}),
 				]).catch((e) => {
 					console.log(e.message);
 					onOpenModalAction();

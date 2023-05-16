@@ -15,7 +15,6 @@ import type { Option } from '../../components/Form/SelectCreatableController';
 import SelectCreatableController from '../../components/Form/SelectCreatableController';
 import AwaitingWalletSignature from '../../components/AwaitingWalletSignature';
 import ModalNotification from '../../components/ModalNotification';
-import { timeoutPromise } from '../../utils/timeoutHelper';
 
 interface BasicDetailsProps {
 	control: Control<FieldValues>;
@@ -45,7 +44,13 @@ const BasicDetails = (props: BasicDetailsProps) => {
 							factoryId: await Network.getFactoryAddress(),
 						}),
 					),
-					timeoutPromise,
+					new Promise((resolve, reject) => {
+						setTimeout(() => {
+							reject(
+								new Error("TokenManager contracts list couldn't be obtained in a reasonable time."),
+							);
+						}, 10000);
+					}),
 				]).catch((e) => {
 					console.log(e.message);
 					onOpen();

@@ -17,7 +17,6 @@ import { RouterManager } from '../../../Router/RouterManager';
 import { KYCRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 import { propertyNotFound } from '../../../constant';
-import { timeoutPromise } from '../../../utils/timeoutHelper';
 
 const CheckKycOperation = () => {
 	const {
@@ -65,7 +64,11 @@ const CheckKycOperation = () => {
 			}
 			const hasKyc: any = await Promise.race([
 				SDKService.isAccountKYCGranted(request),
-				timeoutPromise,
+				new Promise((resolve, reject) => {
+					setTimeout(() => {
+						reject(new Error("Account KYC information couldn't be obtained in a reasonable time."));
+					}, 10000);
+				}),
 			]).catch((e) => {
 				console.log(e.message);
 				onOpenModalAction();

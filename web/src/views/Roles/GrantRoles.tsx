@@ -35,7 +35,6 @@ import {
 	walletActions,
 } from '../../store/slices/walletSlice';
 import type { AppDispatch } from '../../store/store';
-import { timeoutPromise } from '../../utils/timeoutHelper';
 import { handleRequestValidation, validateDecimalsString } from '../../utils/validationsHelper';
 import OperationLayout from '../Operations/OperationLayout';
 
@@ -126,7 +125,11 @@ const GrantRoleOperation = ({
 							targetId: accountId!.toString(),
 						}),
 					),
-					timeoutPromise,
+					new Promise((resolve, reject) => {
+						setTimeout(() => {
+							reject(new Error("Account's roles couldn't be obtained in a reasonable time."));
+						}, 10000);
+					}),
 				]).catch((e) => {
 					console.log(e.message);
 					onOpenModalAction();
