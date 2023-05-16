@@ -48,21 +48,23 @@ export class GetProxyConfigQueryHandler
 
 		const coin = await this.stableCoinService.get(tokenId);
 
-		if(!coin.proxyAddress || !coin.evmProxyAddress)
+		if (!coin.proxyAddress || !coin.evmProxyAddress)
 			throw new Error('No proxy Address found');
 
-		if(!coin.proxyAdminAddress || !coin.evmProxyAdminAddress)
+		if (!coin.proxyAdminAddress || !coin.evmProxyAdminAddress)
 			throw new Error('No proxy Admin Address found');
 
 		const res = await this.queryAdapter.getProxyImplementation(
 			coin.evmProxyAdminAddress!,
-			coin.evmProxyAddress!
+			coin.evmProxyAddress!,
 		);
 
-		return Promise.resolve(new GetProxyConfigQueryResponse({
-			implementationAddress: ContractId.fromHederaEthereumAddress(res),
-			admin: coin.proxyAdminAddress
-		}));
-
+		return Promise.resolve(
+			new GetProxyConfigQueryResponse({
+				implementationAddress:
+					ContractId.fromHederaEthereumAddress(res),
+				admin: coin.proxyAdminAddress,
+			}),
+		);
 	}
 }

@@ -25,7 +25,13 @@ export default class UpgradeImplementationRequest extends ValidatedRequest<Upgra
 	tokenId: string;
 	implementationAddress: string;
 
-	constructor({ tokenId, implementationAddress }: { tokenId: string, implementationAddress: string }) {
+	constructor({
+		tokenId,
+		implementationAddress,
+	}: {
+		tokenId: string;
+		implementationAddress: string;
+	}) {
 		super({
 			tokenId: Validation.checkHederaIdFormat(),
 			implementationAddress: Validation.checkContractId(),

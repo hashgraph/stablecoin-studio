@@ -23,5 +23,5 @@ import { HederaId } from '../shared/HederaId.js';
 
 export default interface ProxyConfiguration {
 	implementationAddress: ContractId;
-    admin: HederaId;
+	admin: HederaId;
 }

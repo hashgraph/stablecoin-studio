@@ -27,25 +27,20 @@ import { LogError } from '../../core/decorator/LogErrorDecorator.js';
 import GetProxyConfigRequest from './request/GetProxyConfigRequest.js';
 import ChangeProxyAdminRequest from './request/ChangeProxyAdminRequest.js';
 import UpgradeImplementationRequest from './request/UpgradeImplementationRequest.js';
-import { GetTokenManagerListQuery } from '../../app/usecase/query/factory/getTokenManagerList/GetTokenManagerListQuery.js';
 import { GetProxyConfigQuery } from '../../app/usecase/query/proxy/GetProxyConfigQuery.js';
 import { HederaId } from '../../domain/context/shared/HederaId.js';
+import { UpgradeImplementationCommand } from '../../app/usecase/command/proxy/upgrade/UpgradeImplementationCommand.js';
+import ContractId from '../../domain/context/contract/ContractId.js';
+import { ChangeAdminCommand } from '../../app/usecase/command/proxy/changeAdmin/ChangeAdminCommand.js';
 
-export {
-	ProxyConfiguration,
-};
+export { ProxyConfiguration };
 
 interface IProxyInPort {
-	getProxyConfig(
-		request: GetProxyConfigRequest,
-	): Promise<ProxyConfiguration>;
-   /* changeProxyAdmin(
-        request: ChangeProxyAdminRequest,
-    ):Promise<boolean>;
-    upgradeImplementation(
-        request: UpgradeImplementationRequest,
-    ):Promise<boolean>; */
-
+	getProxyConfig(request: GetProxyConfigRequest): Promise<ProxyConfiguration>;
+	changeProxyAdmin(request: ChangeProxyAdminRequest): Promise<boolean>;
+	upgradeImplementation(
+		request: UpgradeImplementationRequest,
+	): Promise<boolean>;
 }
 
 class ProxyInPort implements IProxyInPort {
@@ -67,13 +62,14 @@ class ProxyInPort implements IProxyInPort {
 		return res.payload;
 	}
 
-	/* @LogError
-	async changeProxyAdmin(
-		request: ChangeProxyAdminRequest,
-	): Promise<boolean> {
+	@LogError
+	async changeProxyAdmin(request: ChangeProxyAdminRequest): Promise<boolean> {
 		handleValidation('ChangeProxyAdminRequest', request);
 		const res = await this.commandBus.execute(
-			new GetTokenManagerListQuery(new ContractId(request.factoryId)),
+			new ChangeAdminCommand(
+				HederaId.from(request.tokenId),
+				HederaId.from(request.targetId),
+			),
 		);
 		return res.payload;
 	}
@@ -84,10 +80,13 @@ class ProxyInPort implements IProxyInPort {
 	): Promise<boolean> {
 		handleValidation('UpgradeImplementationRequest', request);
 		const res = await this.commandBus.execute(
-			new GetTokenManagerListQuery(new ContractId(request.factoryId)),
+			new UpgradeImplementationCommand(
+				HederaId.from(request.tokenId),
+				new ContractId(request.implementationAddress),
+			),
 		);
 		return res.payload;
-	} */
+	}
 }
 
 const Proxy = new ProxyInPort();

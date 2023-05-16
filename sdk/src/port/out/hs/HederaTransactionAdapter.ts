@@ -45,6 +45,7 @@ import {
 	HederaTokenManager__factory,
 	HederaReserve__factory,
 	StableCoinFactory__factory,
+	ProxyAdmin__factory,
 } from '@hashgraph-dev/stablecoin-npm-contracts';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 import { TransactionType } from '../TransactionResponseEnums.js';
@@ -534,6 +535,46 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			params,
 			TransactionType.RECEIPT,
 			HederaReserve__factory.abi,
+		);
+	}
+
+	public async upgradeImplementation(
+		proxy: HederaId,
+		proxyAdminId: HederaId,
+		implementationId: ContractId,
+	): Promise<TransactionResponse> {
+		const params = new Params({
+			proxy: proxy,
+			targetId: implementationId,
+		});
+
+		return this.performSmartContractOperation(
+			proxyAdminId.toHederaAddress().toString(),
+			'upgrade',
+			UPDATE_RESERVE_AMOUNT_GAS,
+			params,
+			TransactionType.RECEIPT,
+			ProxyAdmin__factory.abi,
+		);
+	}
+
+	public async changeAdmin(
+		proxy: HederaId,
+		proxyAdminId: HederaId,
+		targetId: HederaId,
+	): Promise<TransactionResponse> {
+		const params = new Params({
+			proxy: proxy,
+			targetId: targetId,
+		});
+
+		return this.performSmartContractOperation(
+			proxyAdminId.toHederaAddress().toString(),
+			'changeProxyAdmin',
+			UPDATE_RESERVE_AMOUNT_GAS,
+			params,
+			TransactionType.RECEIPT,
+			ProxyAdmin__factory.abi,
 		);
 	}
 
@@ -1285,6 +1326,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 }
 
 class Params {
+	proxy?: HederaId;
 	role?: string;
 	targetId?: HederaId;
 	amount?: BigDecimal;
@@ -1305,6 +1347,7 @@ class Params {
 	supplyKey?: PublicKey;
 
 	constructor({
+		proxy,
 		role,
 		targetId,
 		amount,
@@ -1324,6 +1367,7 @@ class Params {
 		wipeKey,
 		supplyKey,
 	}: {
+		proxy?: HederaId;
 		role?: string;
 		targetId?: HederaId;
 		amount?: BigDecimal;
@@ -1343,6 +1387,7 @@ class Params {
 		wipeKey?: PublicKey;
 		supplyKey?: PublicKey;
 	}) {
+		this.proxy = proxy;
 		this.role = role;
 		this.targetId = targetId;
 		this.amount = amount;

@@ -143,6 +143,16 @@ interface ITransactionAdapter {
 		wipeKey: PublicKey | undefined,
 		supplyKey: PublicKey | undefined,
 	): Promise<TransactionResponse>;
+	upgradeImplementation(
+		proxy: HederaId,
+		proxyAdminId: HederaId,
+		implementationId: ContractId,
+	): Promise<TransactionResponse>;
+	changeAdmin(
+		proxy: HederaId,
+		proxyAdminId: HederaId,
+		targetId: HederaId,
+	): Promise<TransactionResponse>;
 	getMirrorNodeAdapter(): MirrorNodeAdapter;
 }
 
@@ -497,6 +507,21 @@ export default abstract class TransactionAdapter
 	}
 
 	getMirrorNodeAdapter(): MirrorNodeAdapter {
+		throw new Error('Method not implemented.');
+	}
+
+	upgradeImplementation(
+		proxy: HederaId,
+		proxyAdminId: HederaId,
+		implementationId: ContractId,
+	): Promise<TransactionResponse<any, Error>> {
+		throw new Error('Method not implemented.');
+	}
+	changeAdmin(
+		proxy: HederaId,
+		proxyAdminId: HederaId,
+		targetId: HederaId,
+	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
 
