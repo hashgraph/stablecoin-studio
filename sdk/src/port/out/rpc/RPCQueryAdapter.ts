@@ -32,6 +32,7 @@ import {
 	AggregatorV3Interface__factory,
 	HederaTokenManager__factory,
 	StableCoinFactory__factory,
+	ProxyAdmin__factory
 } from '@hashgraph-dev/stablecoin-npm-contracts';
 import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
@@ -41,6 +42,8 @@ import { unrecognized } from '../../../domain/context/network/Environment.js';
 const HederaTokenManager = HederaTokenManager__factory;
 const Reserve = AggregatorV3Interface__factory;
 const Factory = StableCoinFactory__factory;
+const ProxyAdmin = ProxyAdmin__factory;
+
 
 type StaticConnect = { connect: (...args: any[]) => any };
 
@@ -136,6 +139,16 @@ export default class RPCQueryAdapter {
 			HederaTokenManager,
 			address.toString(),
 		).getRoles(target.toString());
+	}
+
+	async getProxyImplementation(proxyAdmin: EvmAddress, proxy: EvmAddress): Promise<string> {
+		LogService.logTrace(
+			`Requesting proxy config for proxy: ${proxy.toString()}`,
+		);
+		return await this.connect(
+			ProxyAdmin,
+			proxyAdmin.toString(),
+		).getProxyImplementation(proxy.toString());
 	}
 
 	async getAccountsWithRole(

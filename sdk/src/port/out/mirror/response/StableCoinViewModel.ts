@@ -36,7 +36,9 @@ export default interface StableCoinViewModel extends QueryResponse {
 	initialSupply?: BigDecimal;
 	treasury?: HederaId;
 	proxyAddress?: ContractId;
+	proxyAdminAddress?: ContractId;
 	evmProxyAddress?: EvmAddress;
+	evmProxyAdminAddress?: EvmAddress;
 	expirationTime?: string;
 	freezeDefault?: boolean;
 	autoRenewAccount?: HederaId;

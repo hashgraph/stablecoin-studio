@@ -370,6 +370,7 @@ export const english = {
     rescueHBARCompleted: 'HBAR Rescue completed',
     wipeCompleted: 'Wipe completed',
     detailsCompleted: 'Details loaded',
+    proxyConfigCompleted: 'Proxy Config loaded',
     balanceCompleted: 'Balance loaded',
     associateCompleted: 'Stable coin associated',
     deleteCompleted: 'Stable coin deleted',

@@ -91,6 +91,7 @@ import { SDK } from '../port/in/Common.js';
 import { SetConfigurationCommandHandler } from '../app/usecase/command/network/setConfiguration/SetConfigurationCommandHandler.js';
 import { GetTokenManagerListQueryHandler } from '../app/usecase/query/factory/getTokenManagerList/GetTokenManagerListQueryHandler.js';
 import { GetAccountsWithRolesQueryHandler } from '../app/usecase/query/stablecoin/roles/getAccountsWithRole/GetAccountsWithRolesQueryHandler.js';
+import { GetProxyConfigQueryHandler } from '../app/usecase/query/proxy/GetProxyConfigQueryHandler.js';
 
 export const TOKENS = {
 	COMMAND_HANDLER: Symbol('CommandHandler'),
@@ -311,6 +312,10 @@ const QUERY_HANDLERS = [
 	{
 		token: TOKENS.QUERY_HANDLER,
 		useClass: GetTokenManagerListQueryHandler,
+	},
+	{
+		token: TOKENS.QUERY_HANDLER,
+		useClass: GetProxyConfigQueryHandler,
 	},
 ];
 
