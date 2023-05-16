@@ -21,6 +21,10 @@
 		"symbol": "Symbol",
 		"symbolPlaceholder": "Symbol",
 		"title": "Stable coin basic details",
+		"hederaERC20": "HederaERC20 impl.",
+		"hederaERC20Placeholder": "Choose ERC20 address ID",
+		"modalErrorTitle": "Recovering ERC20 implementations",
+		"modalErrorDescription": "ERC20 contracts implementations couldn't be obtained.",
 		"hederaTokenManager": "HederaTokenManager impl.",
 		"hederaTokenManagerPlaceholder": "Choose TokenManager address ID"
 	},

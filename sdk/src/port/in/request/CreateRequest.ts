@@ -20,7 +20,6 @@
 
 import CheckNums from '../../../core/checks/numbers/CheckNums.js';
 import { OptionalField } from '../../../core/decorator/OptionalDecorator.js';
-import Injectable from '../../../core/Injectable.js';
 import { RESERVE_DECIMALS } from '../../../domain/context/reserve/Reserve.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 import InvalidDecimalRange from '../../../domain/context/stablecoin/error/InvalidDecimalRange.js';
@@ -28,7 +27,6 @@ import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply.js';
 import { RequestPublicKey } from './BaseRequest.js';
 import { InvalidType } from './error/InvalidType.js';
-import { InvalidValue } from './error/InvalidValue.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
 

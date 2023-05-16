@@ -62,13 +62,24 @@ export const getStableCoinList = createAsyncThunk(
 	'wallet/getStableCoinList',
 	async (id: string) => {
 		try {
-			const stableCoins = await SDKService.getStableCoins(
-				new GetListStableCoinRequest({
-					account: {
-						accountId: id,
-					},
+			const stableCoins: any = await Promise.race([
+				SDKService.getStableCoins(
+					new GetListStableCoinRequest({
+						account: {
+							accountId: id,
+						},
+					}),
+				),
+				new Promise((resolve, reject) => {
+					setTimeout(() => {
+						reject(new Error("Stable coins list couldn't be obtained in a reasonable time."));
+					}, 10000);
 				}),
-			);
+			]).catch((e) => {
+				console.log(e.message);
+				throw e;
+			});
+
 			return stableCoins;
 		} catch (e) {
 			console.error(e);
@@ -183,7 +194,7 @@ export const walletSlice = createSlice({
 		builder.addCase(getStableCoinList.fulfilled, (state, action) => {
 			if (action.payload) {
 				state.stableCoinList = action.payload;
-				if (state.stableCoinList.coins.length === 0) state.selectedStableCoin = undefined;
+				if (state.stableCoinList!.coins.length === 0) state.selectedStableCoin = undefined;
 			}
 		});
 		builder.addCase(getStableCoinList.rejected, (state) => {

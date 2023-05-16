@@ -1,4 +1,4 @@
-import { Heading, Stack, VStack } from '@chakra-ui/react';
+import { Heading, Stack, VStack, useDisclosure } from '@chakra-ui/react';
 import type { Control, FieldValues, UseFormSetValue } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import InputController from '../../components/Form/InputController';
@@ -14,6 +14,7 @@ import SDKService from '../../services/SDKService';
 import type { Option } from '../../components/Form/SelectCreatableController';
 import SelectCreatableController from '../../components/Form/SelectCreatableController';
 import AwaitingWalletSignature from '../../components/AwaitingWalletSignature';
+import ModalNotification from '../../components/ModalNotification';
 
 interface BasicDetailsProps {
 	control: Control<FieldValues>;
@@ -24,6 +25,7 @@ interface BasicDetailsProps {
 const BasicDetails = (props: BasicDetailsProps) => {
 	const { control, setValue } = props;
 	const { t } = useTranslation(['global', 'stableCoinCreation']);
+	const { isOpen, onOpen, onClose } = useDisclosure();
 	const [optionshederaTokenManagerAddresses, setOptionsHederaTokenManagerAddresses] = useState<
 		Option[]
 	>([]);
@@ -36,11 +38,25 @@ const BasicDetails = (props: BasicDetailsProps) => {
 			setGettingHederaTokenManager(true);
 
 			try {
-				const hederaTokenManagerOption = await SDKService.getHederaTokenManagerList(
-					new GetTokenManagerListRequest({
-						factoryId: await Network.getFactoryAddress(),
+				const hederaTokenManagerOption: any = await Promise.race([
+					SDKService.getHederaTokenManagerList(
+						new GetTokenManagerListRequest({
+							factoryId: await Network.getFactoryAddress(),
+						}),
+					),
+					new Promise((resolve, reject) => {
+						setTimeout(() => {
+							reject(
+								new Error("TokenManager contracts list couldn't be obtained in a reasonable time."),
+							);
+						}, 10000);
 					}),
-				);
+				]).catch((e) => {
+					console.log(e.message);
+					onOpen();
+					throw e;
+				});
+
 				const AllOptions: any[] = [];
 				AllOptions.push({
 					value: '',
@@ -48,11 +64,11 @@ const BasicDetails = (props: BasicDetailsProps) => {
 					isDisabled: true,
 				});
 
-				const options = hederaTokenManagerOption.map((item) => {
+				const options = hederaTokenManagerOption.map((item: any) => {
 					return { label: item.value, value: item.value };
 				});
 
-				options.forEach((option) => {
+				options.forEach((option: any) => {
 					AllOptions.push(option);
 				});
 
@@ -167,6 +183,15 @@ const BasicDetails = (props: BasicDetailsProps) => {
 					</Stack>
 				</Stack>
 			)}
+			<ModalNotification
+				variant={'error'}
+				title={t('stableCoinCreation:basicDetails.modalErrorTitle')}
+				description={t('stableCoinCreation:basicDetails.modalErrorDescription')}
+				isOpen={isOpen}
+				onClose={onClose}
+				closeOnOverlayClick={false}
+				closeButton={true}
+			/>
 		</VStack>
 	);
 };

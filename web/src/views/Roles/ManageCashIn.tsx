@@ -153,19 +153,49 @@ const ManageCashIn = () => {
 					break;
 				case 'CHECK':
 					// eslint-disable-next-line no-case-declarations
-					const isUnlimitedAllowance = await SDKService.isUnlimitedSupplierAllowance(
-						new CheckSupplierLimitRequest({
-							tokenId: selectedStableCoin.tokenId.toString(),
-							targetId: values.account,
-						}),
-					);
-					if (!isUnlimitedAllowance) {
-						const response = await SDKService.checkSupplierAllowance(
-							new GetSupplierAllowanceRequest({
+					const isUnlimitedAllowance = await Promise.race([
+						SDKService.isUnlimitedSupplierAllowance(
+							new CheckSupplierLimitRequest({
 								tokenId: selectedStableCoin.tokenId.toString(),
 								targetId: values.account,
 							}),
-						);
+						),
+						new Promise((resolve, reject) => {
+							setTimeout(() => {
+								reject(
+									new Error(
+										"Account's supplier allowance information couldn't be obtained in a reasonable time.",
+									),
+								);
+							}, 10000);
+						}),
+					]).catch((e) => {
+						console.log(e.message);
+						onOpenModalAction();
+						throw e;
+					});
+					if (!isUnlimitedAllowance) {
+						const response: any = await Promise.race([
+							SDKService.checkSupplierAllowance(
+								new GetSupplierAllowanceRequest({
+									tokenId: selectedStableCoin.tokenId.toString(),
+									targetId: values.account,
+								}),
+							),
+							new Promise((resolve, reject) => {
+								setTimeout(() => {
+									reject(
+										new Error(
+											"Account's supplier allowance information couldn't be obtained in a reasonable time.",
+										),
+									);
+								}, 10000);
+							}),
+						]).catch((e) => {
+							console.log(e.message);
+							onOpenModalAction();
+							throw e;
+						});
 						setLimit(response.value.toString());
 					}
 					break;

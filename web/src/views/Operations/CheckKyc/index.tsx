@@ -62,7 +62,19 @@ const CheckKycOperation = () => {
 				onError();
 				return;
 			}
-			setHasKyc(await SDKService.isAccountKYCGranted(request));
+			const hasKyc: any = await Promise.race([
+				SDKService.isAccountKYCGranted(request),
+				new Promise((resolve, reject) => {
+					setTimeout(() => {
+						reject(new Error("Account KYC information couldn't be obtained in a reasonable time."));
+					}, 10000);
+				}),
+			]).catch((e) => {
+				console.log(e.message);
+				onOpenModalAction();
+				throw e;
+			});
+			setHasKyc(hasKyc);
 			onSuccess();
 		} catch (error: any) {
 			setErrorTransactionUrl(error.transactionUrl);

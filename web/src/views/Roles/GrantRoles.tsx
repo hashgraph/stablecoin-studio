@@ -118,12 +118,23 @@ const GrantRoleOperation = ({
 				(item: any) => item?.toString() === accountId?.toString(),
 			);
 			if (isAccountTarget) {
-				const roles = await SDKService.getRoles(
-					new GetRolesRequest({
-						tokenId: selectedStableCoin!.tokenId!.toString(),
-						targetId: accountId!.toString(),
+				const roles = await Promise.race([
+					SDKService.getRoles(
+						new GetRolesRequest({
+							tokenId: selectedStableCoin!.tokenId!.toString(),
+							targetId: accountId!.toString(),
+						}),
+					),
+					new Promise((resolve, reject) => {
+						setTimeout(() => {
+							reject(new Error("Account's roles couldn't be obtained in a reasonable time."));
+						}, 10000);
 					}),
-				);
+				]).catch((e) => {
+					console.log(e.message);
+					onOpenModalAction();
+					throw e;
+				});
 				dispatch(walletActions.setRoles(roles));
 			}
 			onSuccess();
@@ -373,12 +384,24 @@ const GrantRoleOperation = ({
 			/>
 
 			<ModalsHandler
-				errorNotificationTitle={t(`roles:giveRole.modalErrorTitle`)}
+				errorNotificationTitle={
+					errorTransactionUrl
+						? t(`roles:giveRole.modalErrorTitle`)
+						: t(`roles:getRole.modalErrorTitle`)
+				}
 				// @ts-ignore-next-line
-				errorNotificationDescription={t(`roles:giveRole.modalErrorDescription`)}
+				errorNotificationDescription={
+					errorTransactionUrl
+						? t(`roles:giveRole.modalErrorDescription`)
+						: t(`roles:getRole.modalErrorDescription`)
+				}
 				errorTransactionUrl={errorTransactionUrl}
 				// @ts-ignore-next-line
-				warningNotificationDescription={t(`roles:giveRole.modalErrorDescription`)}
+				warningNotificationDescription={
+					errorTransactionUrl
+						? t(`roles:giveRole.modalErrorDescription`)
+						: t(`roles:getRole.modalErrorDescription`)
+				}
 				modalActionProps={{
 					isOpen: isOpenModalAction,
 					onClose: onCloseModalAction,
