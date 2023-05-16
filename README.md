@@ -16,17 +16,17 @@
   - [Managing stable coins](#Managing-Stable-Coins)<br>
   - [Operating stable coins](#Operating-Stable-Coins)<br>
   - [Stable coin categories](#Stable-Coins-categories)<br>
-  - [Proof of Reserve](#Proof-of-reserve)<br>
+  - [Proof of reserve](#Proof-of-reserve)<br>
 - **[Architecture](#Architecture)**<br>
 - **[Technologies](#Technologies)**<br>
 - **[Installation](#Installation)**<br>
 - **[Build](#Build)**<br>
 - **[Testnet reset procedure](#Testnet-reset-procedure)**<br>
 - **[Deploying the stable coin factories](#Deploying-the-stable-coin-factories)**<br>
-- **[Development Manifesto](#Development-Manifesto)**<br>
+- **[Development manifesto](#Development-Manifesto)**<br>
 - **[Support](#Support)**<br>
 - **[Contributing](#Contributing)**<br>
-- **[Code of Conduct](#Code-of-Conduct)**<br>
+- **[Code of conduct](#Code-of-Conduct)**<br>
 - **[License](#License)**<br>
 
 # Abstract
@@ -87,7 +87,7 @@ Every time a stable coin is created, a new Hedera Token is created (the underlyi
 - The stable coin proxy smart contract: pointing to the `HederaTokenManager` logic smart contract that was passed as an input argument(*). Proxies are used to make stable coins upgradable.
 - The stable coin proxy admin smart contract: this contract will act as an intermediary to upgrade the stable coin proxy implementation. For more information on this check the contract module's README.
 
-An smart contract, named `StablecoinFactory`, must be previously deployed since this contract will be in charge, among other things, of creating the token. A default `StablecoinFactory` is deployed, but any user will be able to [deploy their own factory](#Deploying-the-stable-coin-factories).
+An smart contract, named `StablecoinFactory`, must be previously deployed since implements the flow to create a new stable coin in a single transaction. A default `StablecoinFactory` is deployed, but any user will be able to [deploy their own factory](#Deploying-the-stable-coin-factories).
 
 (*)By default, the HederaTokenManager smart contract that will be used will be the pre-deployed one, but users can use any other contract they want. For more information on this check the contract module's README.
 
