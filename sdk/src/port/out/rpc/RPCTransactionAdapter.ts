@@ -288,8 +288,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 
 	async init(debug = false): Promise<string> {
 		this.provider = new ethers.providers.JsonRpcProvider(
-			// `https://${this.networkService.environment.toString()}.hashio.io/api`,
-			`http://127.0.0.1:7546/api`,
+			`https://${this.networkService.environment.toString()}.hashio.io/api`,
 		);
 		!debug && (await this.connectMetamask(false));
 		const eventData = {
