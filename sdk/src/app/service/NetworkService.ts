@@ -21,11 +21,12 @@
 import { singleton, inject } from 'tsyringe';
 import Configuration from '../../domain/context/network/Configuration.js';
 import { Environment } from '../../domain/context/network/Environment.js';
+import { MirrorNode } from 'domain/context/network/MirrorNode.js';
 import Service from './Service.js';
 
 export interface NetworkProps {
 	environment: Environment;
-	mirrorNode?: string;
+	mirrorNode?: MirrorNode;
 	rpcNode?: string;
 	consensusNodes?: string;
 	configuration?: Configuration;
@@ -34,7 +35,7 @@ export interface NetworkProps {
 @singleton()
 export default class NetworkService extends Service implements NetworkProps {
 	private _environment: Environment;
-	private _mirrorNode?: string | undefined;
+	private _mirrorNode: MirrorNode;
 	private _rpcNode?: string | undefined;
 	private _consensusNodes?: string | undefined;
 	private _configuration: Configuration;
@@ -55,11 +56,11 @@ export default class NetworkService extends Service implements NetworkProps {
 		return this._configuration;
 	}
 
-	public get mirrorNode(): string | undefined {
+	public get mirrorNode(): MirrorNode {
 		return this._mirrorNode;
 	}
 
-	public set mirrorNode(value: string | undefined) {
+	public set mirrorNode(value: MirrorNode) {
 		this._mirrorNode = value;
 	}
 

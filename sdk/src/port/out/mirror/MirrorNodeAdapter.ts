@@ -65,12 +65,8 @@ export class MirrorNodeAdapter {
 	private instance: AxiosInstance;
 	private URI_BASE: string;
 
-	constructor() {
-		this.setEnvironment('testnet');
-	}
-
-	public setEnvironment(environment: Environment): void {
-		this.URI_BASE = `${this.getMirrorNodeURL(environment)}/api/v1/`;
+	public setEnvironment(baseUrl: string): void {
+		this.URI_BASE = baseUrl;
 		this.instance = axios.create({
 			validateStatus: function (status: number) {
 				return (status >= 200 && status < 300) || status == 404;
@@ -419,21 +415,6 @@ export class MirrorNodeAdapter {
 			return Promise.reject<TransactionResultViewModel>(
 				new InvalidResponse(error),
 			);
-		}
-	}
-
-	private getMirrorNodeURL(environment: Environment): string {
-		switch (environment) {
-			case mainnet:
-				return 'https://mainnet-public.mirrornode.hedera.com';
-			case previewnet:
-				return 'https://previewnet.mirrornode.hedera.com';
-			case testnet:
-				return 'https://testnet.mirrornode.hedera.com';
-			case local:
-				return 'http://127.0.0.1:5551';
-			default:
-				return '';
 		}
 	}
 

@@ -172,7 +172,7 @@ export default class WizardService extends Service {
 
   public async chooseAccount(mainMenu = true, network?: string): Promise<void> {
     const configuration = configurationService.getConfiguration();
-    const { networks, accounts, factories } = configuration;
+    const { networks, accounts, mirrors, factories } = configuration;
     let options = network
       ? accounts
           .filter((acc) => acc.network === network)
@@ -208,6 +208,11 @@ export default class WizardService extends Service {
     );
     utilsService.setCurrentNetwotk(currentNetwork);
 
+    const currentMirror = mirrors.find(
+      (mirror) => currentAccount.network === mirror.network && mirror.selected,
+    );
+    utilsService.setCurrentMirror(currentMirror);
+
     const currentFactory = factories.find(
       (factory) => currentAccount.network === factory.network,
     );
@@ -221,10 +226,7 @@ export default class WizardService extends Service {
           currentNetwork.consensusNodes.length > 0
             ? currentNetwork.name
             : undefined,
-        mirrorNode:
-          currentNetwork.mirrorNodeUrl.length > 0
-            ? currentNetwork.mirrorNodeUrl
-            : undefined,
+        mirrorNode: currentMirror ? currentMirror : undefined,
       }),
     );
 

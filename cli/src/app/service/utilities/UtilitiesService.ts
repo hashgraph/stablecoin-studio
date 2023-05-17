@@ -20,6 +20,7 @@ import MaskData from 'maskdata';
 import { clear } from 'console';
 import { IFactoryConfig } from '../../../domain/configuration/interfaces/IFactoryConfig.js';
 import { IHederaTokenManagerConfig } from '../../../domain/configuration/interfaces/IHederaTokenManagerConfig.js';
+import { IMirrorsConfig } from 'domain/configuration/interfaces/IMirrorsConfig.js';
 
 /**
  * Utilities Service
@@ -27,6 +28,7 @@ import { IHederaTokenManagerConfig } from '../../../domain/configuration/interfa
 export default class UtilitiesService extends Service {
   private currentAccount: IAccountConfig;
   private currentNetwork: INetworkConfig;
+  private currentMirror: IMirrorsConfig;
   private currentFactory: IFactoryConfig;
   private currentHederaTokenManager: IHederaTokenManagerConfig;
 
@@ -78,6 +80,18 @@ export default class UtilitiesService extends Service {
       throw new Error('Network not initialized');
     } else {
       return this.currentNetwork;
+    }
+  }
+
+  public setCurrentMirror(mirror: IMirrorsConfig): void {
+    this.currentMirror = mirror;
+  }
+
+  public getCurrentMirror(): IMirrorsConfig {
+    if (!this.currentMirror) {
+      throw new Error('Mirror not initialized');
+    } else {
+      return this.currentMirror;
     }
   }
 

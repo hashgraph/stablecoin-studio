@@ -41,12 +41,13 @@ import { HashpackTransactionAdapter } from '../out/hs/hashpack/HashpackTransacti
 import { LogError } from '../../core/decorator/LogErrorDecorator.js';
 import SetConfigurationRequest from './request/SetConfigurationRequest.js';
 import { handleValidation } from './Common.js';
+import { MirrorNode } from 'domain/context/network/MirrorNode.js';
 
 export { InitializationData, SupportedWallets };
 
 export type NetworkResponse = {
 	environment: Environment;
-	mirrorNode: string;
+	mirrorNode: MirrorNode;
 	rpcNode: string;
 	consensusNodes: string;
 };

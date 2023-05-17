@@ -4,6 +4,7 @@ import fs from 'fs-extra';
 import { IConfiguration } from '../../../domain/configuration/interfaces/IConfiguration.js';
 import { INetworkConfig } from '../../../domain/configuration/interfaces/INetworkConfig.js';
 import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
+import { IMirrorsConfig } from '../../../domain/configuration/interfaces/IMirrorsConfig.js';
 import {
   configurationService,
   packagePath,
@@ -150,6 +151,7 @@ export default class ConfigurationService extends Service {
       defaultNetwork: defaultConfigRaw['defaultNetwork'],
       networks: defaultConfigRaw['networks'] as unknown as INetworkConfig[],
       accounts: defaultConfigRaw['accounts'] as unknown as IAccountConfig[],
+      mirrors: defaultConfigRaw['mirrors'] as unknown as IMirrorsConfig[],
       logs: defaultConfigRaw['logs'] as unknown as ILogConfig,
       factories: defaultConfigRaw['factories'] as unknown as IFactoryConfig[],
     };

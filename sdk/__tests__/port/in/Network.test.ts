@@ -36,6 +36,7 @@ import ConnectRequest, {
 } from '../../../src/port/in/request/ConnectRequest.js';
 
 import { CLIENT_ACCOUNT_ED25519, FACTORY_ADDRESS } from '../../config.js';
+import { MirrorNode } from 'domain/context/network/MirrorNode.js';
 
 describe('🧪 Network test', () => {
 	afterEach(() => {
@@ -116,7 +117,7 @@ describe('🧪 Network test', () => {
 		const params = {
 			environment: previewnet,
 			consensusNodes: 'nodes',
-			mirrorNode: 'example.com',
+			mirrorNode: networkService.mirrorNode,
 			rpcNode: 'example.com',
 		};
 		const init = await Network.setNetwork(new SetNetworkRequest(params));
@@ -134,7 +135,7 @@ describe('🧪 Network test', () => {
 		const params_2 = {
 			environment: testnet,
 			consensusNodes: '',
-			mirrorNode: '',
+			mirrorNode: networkService.mirrorNode,
 			rpcNode: '',
 		};
 
@@ -148,7 +149,7 @@ describe('🧪 Network test', () => {
 		const params = {
 			environment: unrecognized,
 			consensusNodes: '',
-			mirrorNode: '',
+			mirrorNode: networkService.mirrorNode,
 			rpcNode: '',
 		};
 
