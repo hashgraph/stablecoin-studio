@@ -20,14 +20,19 @@
 
 export class MirrorNode {
 	name: string;
-	network: string;
 	baseUrl: string;
-	selected: boolean;
+	apiKey: string;
+	headerName: string;
 
-	constructor(name: string, network: string, baseUrl: string, selected: boolean) {
+	constructor(
+		name: string,
+		baseUrl: string,
+		apiKey: string,
+		headerName: string,
+	) {
 		this.name = name;
-		this.network = network;
 		this.baseUrl = baseUrl;
-		this.selected = selected;
+		this.apiKey = apiKey;
+		this.headerName = headerName;
 	}
 }
