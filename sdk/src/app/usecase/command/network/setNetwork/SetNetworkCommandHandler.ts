@@ -49,7 +49,9 @@ export class SetNetworkCommandHandler
 			this.networkService.consensusNodes = command.consensusNodes;
 		if (command.mirrorNode) {
 			// Init Mirror Node Adapter
-			this.mirrorNodeAdapter.setEnvironment(command.mirrorNode?.baseUrl ?? '');
+			this.mirrorNodeAdapter.setEnvironment(
+				command.mirrorNode?.baseUrl ?? '',
+			);
 			this.networkService.mirrorNode = command.mirrorNode;
 		}
 		if (command.rpcNode) this.networkService.rpcNode = command.rpcNode;
