@@ -66,7 +66,7 @@
 	- [Account](#account)
 		- [GetPublicKey](#getpublickey)
 		- [ListStableCoins](#liststablecoins)
-		- [getInfo](#getinfo-1)
+		- [GetInfo](#getinfo-1)
 	- [Role](#role)
 		- [HasRole](#hasrole)
 		- [GrantRole](#grantrole)
@@ -1224,7 +1224,7 @@ Gets a list of stable coins associated with an account.
 	);
 ```
 
-### getInfo
+### GetInfo
 Gets an account information.
 
 **Spec:**
