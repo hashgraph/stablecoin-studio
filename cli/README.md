@@ -230,12 +230,15 @@ https://user-images.githubusercontent.com/102601367/205074235-32145a1b-4ce0-4913
 
 - **Rescue HBAR**: transfers HBAR from the treasury account to a rescue account. This option is only available through the smart contract.
 
+https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/05c4faef-67b8-467a-9e42-d0f251de0662
 
 - **Freeze Management**: freezes/unfreezes an account for a token or checks if an account is frozen/unfrozen. If an account is frozen, it will not be able to transfer any tokens.
 
+https://user-images.githubusercontent.com/114951681/228851899-8a63b255-8e97-4705-8765-f59c01fc928b.mp4
+
 - **FeeS Management**: creats/removes custom fees for a token or lists existing ones. Fees are applied when the token is transferred.
 
-https://user-images.githubusercontent.com/114951681/228851899-8a63b255-8e97-4705-8765-f59c01fc928b.mp4
+https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/a18f8723-d161-4283-a867-81d0d204e015
 
 - **KYC Management**: grants/revokes KYC to/from an account or checks an account's kyc status. If an account is granted KYC, it can be involved in any token transfer.
 
