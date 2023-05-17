@@ -62,7 +62,7 @@ import { addFixedFeesCommandHandler } from '../app/usecase/command/stablecoin/fe
 import { addFractionalFeesCommandHandler } from '../app/usecase/command/stablecoin/fees/addCustomFees/addFractionalFeesCommandHandler.js';
 import { UpdateCustomFeesCommandHandler } from '../app/usecase/command/stablecoin/fees/updateCustomFees/UpdateCustomFeesCommandHandler.js';
 import { UpgradeImplementationCommandHandler } from '../app/usecase/command/proxy/upgrade/UpgradeImplementationCommandHandler.js';
-import { ChangeAdminCommandHandler } from '../app/usecase/command/proxy/changeAdmin/ChangeAdminCommandHandler.js';
+import { ChangeOwnerCommandHandler } from '../app/usecase/command/proxy/changeOwner/ChangeOwnerCommandHandler.js';
 
 import { WalletEvents } from '../app/service/event/WalletEvent.js';
 import { CommandHandlerType } from './command/CommandBus.js';
@@ -258,9 +258,8 @@ const COMMAND_HANDLERS = [
 	},
 	{
 		token: TOKENS.COMMAND_HANDLER,
-		useClass: ChangeAdminCommandHandler,
+		useClass: ChangeOwnerCommandHandler,
 	},
-
 ];
 
 const QUERY_HANDLERS = [

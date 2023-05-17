@@ -7,7 +7,7 @@ import {
   StableCoinViewModel,
   Proxy,
   GetProxyConfigRequest,
-  ProxyConfiguration,
+  ProxyConfigurationViewModel,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 import FeeStableCoinService from './FeeStableCoinService.js';
 
@@ -39,7 +39,7 @@ export default class DetailsStableCoinsService extends Service {
     // Call to list stable coins
 
     let respDetail: StableCoinViewModel;
-    let proxyConfig: ProxyConfiguration;
+    let proxyConfig: ProxyConfigurationViewModel;
 
     await utilsService.showSpinner(
       StableCoin.getInfo(
@@ -83,7 +83,9 @@ export default class DetailsStableCoinsService extends Service {
         proxyAdminAddress: respDetail.proxyAdminAddress.toString(),
         evmProxyAddress: respDetail.evmProxyAddress.toString(),
         evmProxyAdminAddress: respDetail.evmProxyAdminAddress.toString(),
-        implementationAddress: proxyConfig.implementationAddress.toString(),
+        proxyImplementationAddress:
+          proxyConfig.implementationAddress.toString(),
+        proxyOwner: proxyConfig.owner.toString(),
         treasury: respDetail.treasury.toString(),
         autoRenewPeriod: respDetail?.autoRenewPeriod
           ? `${respDetail.autoRenewPeriod / 24 / 3600} days`

@@ -19,25 +19,27 @@
  */
 
 import Injectable from '../../core/Injectable.js';
-import ProxyConfiguration from '../../domain/context/proxy/ProxyConfiguration.js';
 import { CommandBus } from '../../core/command/CommandBus.js';
 import { handleValidation } from './Common.js';
 import { QueryBus } from '../../core/query/QueryBus.js';
 import { LogError } from '../../core/decorator/LogErrorDecorator.js';
 import GetProxyConfigRequest from './request/GetProxyConfigRequest.js';
-import ChangeProxyAdminRequest from './request/ChangeProxyAdminRequest.js';
 import UpgradeImplementationRequest from './request/UpgradeImplementationRequest.js';
 import { GetProxyConfigQuery } from '../../app/usecase/query/proxy/GetProxyConfigQuery.js';
 import { HederaId } from '../../domain/context/shared/HederaId.js';
 import { UpgradeImplementationCommand } from '../../app/usecase/command/proxy/upgrade/UpgradeImplementationCommand.js';
 import ContractId from '../../domain/context/contract/ContractId.js';
-import { ChangeAdminCommand } from '../../app/usecase/command/proxy/changeAdmin/ChangeAdminCommand.js';
+import { ChangeOwnerCommand } from '../../app/usecase/command/proxy/changeOwner/ChangeOwnerCommand.js';
+import ProxyConfigurationViewModel from '../out/rpc/response/ProxyConfigurationViewModel.js';
+import ChangeProxyOwnerRequest from './request/ChangeProxyOwnerRequest.js';
 
-export { ProxyConfiguration };
+export { ProxyConfigurationViewModel };
 
 interface IProxyInPort {
-	getProxyConfig(request: GetProxyConfigRequest): Promise<ProxyConfiguration>;
-	changeProxyAdmin(request: ChangeProxyAdminRequest): Promise<boolean>;
+	getProxyConfig(
+		request: GetProxyConfigRequest,
+	): Promise<ProxyConfigurationViewModel>;
+	changeProxyOwner(request: ChangeProxyOwnerRequest): Promise<boolean>;
 	upgradeImplementation(
 		request: UpgradeImplementationRequest,
 	): Promise<boolean>;
@@ -54,7 +56,7 @@ class ProxyInPort implements IProxyInPort {
 	@LogError
 	async getProxyConfig(
 		request: GetProxyConfigRequest,
-	): Promise<ProxyConfiguration> {
+	): Promise<ProxyConfigurationViewModel> {
 		handleValidation('GetProxyConfigRequest', request);
 		const res = await this.queryBus.execute(
 			new GetProxyConfigQuery(HederaId.from(request.tokenId)),
@@ -63,10 +65,10 @@ class ProxyInPort implements IProxyInPort {
 	}
 
 	@LogError
-	async changeProxyAdmin(request: ChangeProxyAdminRequest): Promise<boolean> {
-		handleValidation('ChangeProxyAdminRequest', request);
+	async changeProxyOwner(request: ChangeProxyOwnerRequest): Promise<boolean> {
+		handleValidation('ChangeProxyOwnerRequest', request);
 		const res = await this.commandBus.execute(
-			new ChangeAdminCommand(
+			new ChangeOwnerCommand(
 				HederaId.from(request.tokenId),
 				HederaId.from(request.targetId),
 			),

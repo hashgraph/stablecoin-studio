@@ -18,10 +18,11 @@
  *
  */
 
-import ContractId from '../contract/ContractId.js';
-import { HederaId } from '../shared/HederaId.js';
+import { QueryResponse } from '../../../../core/query/QueryResponse.js';
+import ContractId from '../../../../domain/context/contract/ContractId.js';
+import { HederaId } from '../../../../domain/context/shared/HederaId.js';
 
-export default interface ProxyConfiguration {
+export default interface ProxyConfigurationViewModel extends QueryResponse {
 	implementationAddress: ContractId;
-	admin: HederaId;
+	owner: HederaId;
 }

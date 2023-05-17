@@ -62,7 +62,9 @@ export default class RPCQueryAdapter {
 	) {}
 
 	async init(customUrl?: string): Promise<string> {
-		const url = `https://${this.networkService.environment.toString()}.hashio.io/api`;
+		// const url = `https://${this.networkService.environment.toString()}.hashio.io/api`;
+		const url = `http://127.0.0.1:7546/api`;
+
 		this.provider = new ethers.providers.JsonRpcProvider(url);
 		LogService.logTrace('RPC Query Adapter Initialized on: ', url);
 
@@ -145,12 +147,19 @@ export default class RPCQueryAdapter {
 		proxy: EvmAddress,
 	): Promise<string> {
 		LogService.logTrace(
-			`Requesting proxy config for proxy: ${proxy.toString()}`,
+			`Requesting implementation for proxy Admin: ${proxyAdmin.toString()} and proxy: ${proxy.toString()}`,
 		);
 		return await this.connect(
 			ProxyAdmin,
 			proxyAdmin.toString(),
 		).getProxyImplementation(proxy.toString());
+	}
+
+	async getProxyOwner(proxyAdmin: EvmAddress): Promise<string> {
+		LogService.logTrace(
+			`Requesting owner for proxy Admin: ${proxyAdmin.toString()}`,
+		);
+		return await this.connect(ProxyAdmin, proxyAdmin.toString()).owner();
 	}
 
 	async getAccountsWithRole(

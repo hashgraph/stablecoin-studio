@@ -148,8 +148,7 @@ interface ITransactionAdapter {
 		proxyAdminId: HederaId,
 		implementationId: ContractId,
 	): Promise<TransactionResponse>;
-	changeAdmin(
-		proxy: HederaId,
+	changeOwner(
 		proxyAdminId: HederaId,
 		targetId: HederaId,
 	): Promise<TransactionResponse>;
@@ -517,8 +516,7 @@ export default abstract class TransactionAdapter
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
-	changeAdmin(
-		proxy: HederaId,
+	changeOwner(
 		proxyAdminId: HederaId,
 		targetId: HederaId,
 	): Promise<TransactionResponse<any, Error>> {

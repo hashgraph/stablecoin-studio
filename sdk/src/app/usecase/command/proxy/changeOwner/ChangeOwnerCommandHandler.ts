@@ -24,13 +24,13 @@ import { lazyInject } from '../../../../../core/decorator/LazyInjectDecorator.js
 import StableCoinService from '../../../../service/StableCoinService.js';
 import TransactionService from '../../../../service/TransactionService.js';
 import {
-	ChangeAdminCommand,
-	ChangeAdminCommandResponse,
-} from './ChangeAdminCommand.js';
+	ChangeOwnerCommand,
+	ChangeOwnerCommandResponse,
+} from './ChangeOwnerCommand.js';
 
-@CommandHandler(ChangeAdminCommand)
-export class ChangeAdminCommandHandler
-	implements ICommandHandler<ChangeAdminCommand>
+@CommandHandler(ChangeOwnerCommand)
+export class ChangeOwnerCommandHandler
+	implements ICommandHandler<ChangeOwnerCommand>
 {
 	constructor(
 		@lazyInject(StableCoinService)
@@ -40,8 +40,8 @@ export class ChangeAdminCommandHandler
 	) {}
 
 	async execute(
-		command: ChangeAdminCommand,
-	): Promise<ChangeAdminCommandResponse> {
+		command: ChangeOwnerCommand,
+	): Promise<ChangeOwnerCommandResponse> {
 		const { tokenId, targetId } = command;
 		const handler = this.transactionService.getHandler();
 
@@ -50,16 +50,12 @@ export class ChangeAdminCommandHandler
 		if (!coin.proxyAddress) throw new Error('No proxy Address found');
 
 		if (!coin.proxyAdminAddress)
-			throw new Error('No proxy Admin Address found');
+			throw new Error('No proxy Owner Address found');
 
-		const res = await handler.changeAdmin(
-			coin.proxyAddress,
-			coin.proxyAdminAddress,
-			targetId,
-		);
+		const res = await handler.changeOwner(coin.proxyAdminAddress, targetId);
 
 		return Promise.resolve(
-			new ChangeAdminCommandResponse(res.error === undefined),
+			new ChangeOwnerCommandResponse(res.error === undefined),
 		);
 	}
 }

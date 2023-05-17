@@ -18,19 +18,19 @@
  *
  */
 
-import ValidatedRequest from './validation/ValidatedRequest.js';
-import Validation from './validation/Validation.js';
+import { Command } from '../../../../../core/command/Command.js';
+import { CommandResponse } from '../../../../../core/command/CommandResponse.js';
+import { HederaId } from '../../../../../domain/context/shared/HederaId.js';
 
-export default class ChangeProxyAdminRequest extends ValidatedRequest<ChangeProxyAdminRequest> {
-	tokenId: string;
-	targetId: string;
+export class ChangeOwnerCommandResponse implements CommandResponse {
+	constructor(public readonly payload: boolean) {}
+}
 
-	constructor({ tokenId, targetId }: { tokenId: string; targetId: string }) {
-		super({
-			tokenId: Validation.checkHederaIdFormat(),
-			targetId: Validation.checkHederaIdFormat(),
-		});
-		this.tokenId = tokenId;
-		this.targetId = targetId;
+export class ChangeOwnerCommand extends Command<ChangeOwnerCommandResponse> {
+	constructor(
+		public readonly tokenId: HederaId,
+		public readonly targetId: HederaId,
+	) {
+		super();
 	}
 }

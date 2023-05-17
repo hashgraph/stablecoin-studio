@@ -29,6 +29,7 @@ import {
 	GetProxyConfigQuery,
 	GetProxyConfigQueryResponse,
 } from './GetProxyConfigQuery.js';
+import { MirrorNodeAdapter } from '../../../../port/out/mirror/MirrorNodeAdapter.js';
 
 @QueryHandler(GetProxyConfigQuery)
 export class GetProxyConfigQueryHandler
@@ -39,6 +40,8 @@ export class GetProxyConfigQueryHandler
 		public readonly stableCoinService: StableCoinService,
 		@lazyInject(RPCQueryAdapter)
 		public readonly queryAdapter: RPCQueryAdapter,
+		@lazyInject(MirrorNodeAdapter)
+		public readonly mirrorNode: MirrorNodeAdapter,
 	) {}
 
 	async execute(
@@ -54,16 +57,24 @@ export class GetProxyConfigQueryHandler
 		if (!coin.proxyAdminAddress || !coin.evmProxyAdminAddress)
 			throw new Error('No proxy Admin Address found');
 
-		const res = await this.queryAdapter.getProxyImplementation(
+		const proxyImpl = await this.queryAdapter.getProxyImplementation(
 			coin.evmProxyAdminAddress!,
 			coin.evmProxyAddress!,
+		);
+		const proxyOwner = await this.queryAdapter.getProxyOwner(
+			coin.evmProxyAdminAddress!,
+		);
+
+		const proxyOwnerHederaId = await this.mirrorNode.getAccountInfo(
+			proxyOwner,
 		);
 
 		return Promise.resolve(
 			new GetProxyConfigQueryResponse({
-				implementationAddress:
-					ContractId.fromHederaEthereumAddress(res),
-				admin: coin.proxyAdminAddress,
+				implementationAddress: ContractId.fromHederaEthereumAddress(
+					proxyImpl ?? '0.0.0',
+				),
+				owner: HederaId.from(proxyOwnerHederaId.id),
 			}),
 		);
 	}

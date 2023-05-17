@@ -87,6 +87,8 @@ import {
 	UPDATE_TOKEN_GAS,
 	WIPE_GAS,
 	MAX_ROLES_GAS,
+	CHANGE_PROXY_OWNER,
+	UPDATE_PROXY_IMPLEMENTATION,
 } from '../../../core/Constants.js';
 import LogService from '../../../app/service/LogService.js';
 import { RESERVE_DECIMALS } from '../../../domain/context/reserve/Reserve.js';
@@ -551,27 +553,25 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		return this.performSmartContractOperation(
 			proxyAdminId.toHederaAddress().toString(),
 			'upgrade',
-			UPDATE_RESERVE_AMOUNT_GAS,
+			UPDATE_PROXY_IMPLEMENTATION,
 			params,
 			TransactionType.RECEIPT,
 			ProxyAdmin__factory.abi,
 		);
 	}
 
-	public async changeAdmin(
-		proxy: HederaId,
+	public async changeOwner(
 		proxyAdminId: HederaId,
 		targetId: HederaId,
 	): Promise<TransactionResponse> {
 		const params = new Params({
-			proxy: proxy,
 			targetId: targetId,
 		});
 
 		return this.performSmartContractOperation(
 			proxyAdminId.toHederaAddress().toString(),
-			'changeProxyAdmin',
-			UPDATE_RESERVE_AMOUNT_GAS,
+			'transferOwnership',
+			CHANGE_PROXY_OWNER,
 			params,
 			TransactionType.RECEIPT,
 			ProxyAdmin__factory.abi,
