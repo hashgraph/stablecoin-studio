@@ -230,7 +230,7 @@ https://user-images.githubusercontent.com/102601367/205074235-32145a1b-4ce0-4913
 
 - **Rescue HBAR**: transfers HBAR from the treasury account to a rescue account. This option is only available through the smart contract.
 
-https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/05c4faef-67b8-467a-9e42-d0f251de0662
+https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/e09a9389-8f29-4869-a696-58b25d99a6f3
 
 - **Freeze Management**: freezes/unfreezes an account for a token or checks if an account is frozen/unfrozen. If an account is frozen, it will not be able to transfer any tokens.
 
