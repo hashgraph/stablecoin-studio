@@ -391,6 +391,8 @@ export const english = {
     customFeesRemoved: 'Custom fees removed',
     transferCompleted: 'Transfer completed',
     updateCompleted: 'Update completed',
+    changeOwnerCompleted: 'owner change completed',
+    upgradeImplementationCompleted: 'implementation upgrade completed',
   },
   operation: {
     success: colors.green('Operation has been completed successfully.'),
@@ -485,6 +487,25 @@ export const english = {
       List: 'Fees list',
       ...goBack,
     },
+  },
+  stableCoinConfiguration: {
+    options: {
+      proxyConfiguration: 'Stable Coin Configuration',
+      tokenConfiguration: 'Token Configuration',
+      ...goBack,
+    },
+    askConfiguration: 'What do you want to configure?',
+  },
+  proxyConfiguration: {
+    options: {
+      implementation: 'Upgrade stable coin implementation',
+      owner: 'Change stable coin owner',
+      ...goBack,
+    },
+    askNewImplementation:
+      'Choose the HederaTokenManager implementation you want to use',
+    askNewOwner: 'Enter the new owner account id',
+    askProxyConfiguration: 'What do you want to do',
   },
   tokenConfiguration: {
     askAction: 'What token property do you want to update?',

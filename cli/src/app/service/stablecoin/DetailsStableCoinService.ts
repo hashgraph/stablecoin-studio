@@ -39,7 +39,6 @@ export default class DetailsStableCoinsService extends Service {
     // Call to list stable coins
 
     let respDetail: StableCoinViewModel;
-    let proxyConfig: ProxyConfigurationViewModel;
 
     await utilsService.showSpinner(
       StableCoin.getInfo(
@@ -53,19 +52,21 @@ export default class DetailsStableCoinsService extends Service {
       },
     );
 
-    await utilsService.showSpinner(
-      Proxy.getProxyConfig(
-        new GetProxyConfigRequest({
-          tokenId: id,
-        }),
-      ).then((response) => (proxyConfig = response)),
-      {
-        text: language.getText('state.loading'),
-        successText: language.getText('state.proxyConfigCompleted') + '\n',
-      },
-    );
-
     if (show) {
+      let proxyConfig: ProxyConfigurationViewModel;
+
+      await utilsService.showSpinner(
+        Proxy.getProxyConfig(
+          new GetProxyConfigRequest({
+            tokenId: id,
+          }),
+        ).then((response) => (proxyConfig = response)),
+        {
+          text: language.getText('state.loading'),
+          successText: language.getText('state.proxyConfigCompleted') + '\n',
+        },
+      );
+
       const reserveData = respDetail.reserveAddress
         ? {
             reserveAddress: respDetail?.reserveAddress.toString(),
