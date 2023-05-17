@@ -107,7 +107,7 @@ Add a new network with the following information :
 - **RPC URL**: https://testnet.hashio.io/api _(or the url of any other Hedera JSON-RPC relay node)_
 - **Chain ID**: 296
 - **Currency symbol**: HBAR
-- **Block explorer URL**: https://hashscan.io/testnet/ _(or any other hedera compatible block explorer you want)_
+- **Block explorer URL**: https://hashscan.io/testnet/ _(or any other Hedera compatible block explorer you want)_
 
 ![image](https://user-images.githubusercontent.com/114951681/210327135-a88604ab-2d9c-4341-87fd-e84c4115364f.png)
 

@@ -240,8 +240,6 @@ class RoleInPort implements IRole {
 	): Promise<string[]> {
 		const { roleId, tokenId } = request;
 		handleValidation('GetAccountsWithRolesRequest', request);
-		console.log(tokenId);
-		console.log(roleId);
 		return (
 			await this.queryBus.execute(
 				new GetAccountsWithRolesQuery(roleId, tokenId),

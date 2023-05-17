@@ -248,9 +248,9 @@ Once the factory has been deployed (or if you are using the common factory), cre
 > it can be easily done from the CLI and/or UI of the project, for more information on that check their respective README.md
 
 These are the steps the creation method will perform when creating a new stable coin:
-- Deploy **Stable Coin Proxy Admin smart contract** (from the Open Zeppelin library).
+- Deploy **stable coin proxy admin smart contract** (from the Open Zeppelin library).
 - Transfer the Stable Coin Proxy Admin ownership to the sender account.
-- Deploy **Stable Coin Proxy smart contract** (from the Open Zeppelin library) setting the implementation contract (*the hederaTokenManager contract's address you provided as an input argument) and the admin (*stable coin proxy admin smart contract*).
+- Deploy **stable coin proxy smart contract** (from the Open Zeppelin library) setting the implementation contract (*the hederaTokenManager contract's address you provided as an input argument) and the admin (*stable coin proxy admin smart contract*).
 - Initializing the stable coin proxy. The initialization will create the underlying token.
 - Associating the token to the deploying account.
 
