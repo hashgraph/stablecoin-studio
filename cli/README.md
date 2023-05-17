@@ -226,9 +226,10 @@ https://user-images.githubusercontent.com/102601367/205074204-d7f0def7-ffbd-416a
 
 - **Rescue**: transfers tokens from the treasury account to a rescue account. This option is only available through the smart contract.
 
+https://user-images.githubusercontent.com/102601367/205074235-32145a1b-4ce0-4913-bd18-1252ecff52d6.mov
+
 - **Rescue HBAR**: transfers HBAR from the treasury account to a rescue account. This option is only available through the smart contract.
 
-https://user-images.githubusercontent.com/102601367/205074235-32145a1b-4ce0-4913-bd18-1252ecff52d6.mov
 
 - **Freeze Management**: freezes/unfreezes an account for a token or checks if an account is frozen/unfrozen. If an account is frozen, it will not be able to transfer any tokens.
 
