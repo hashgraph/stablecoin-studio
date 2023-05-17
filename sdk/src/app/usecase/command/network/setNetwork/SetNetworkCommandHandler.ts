@@ -47,12 +47,11 @@ export class SetNetworkCommandHandler
 		this.networkService.environment = command.environment;
 		if (command.consensusNodes)
 			this.networkService.consensusNodes = command.consensusNodes;
-		if (command.mirrorNode) {
-			// Init Mirror Node Adapter
-			this.mirrorNodeAdapter.setEnvironment(command.mirrorNode?.baseUrl ?? '');
-			this.networkService.mirrorNode = command.mirrorNode;
-		}
 		if (command.rpcNode) this.networkService.rpcNode = command.rpcNode;
+
+		// Init Mirror Node Adapter
+		this.mirrorNodeAdapter.setURL(command.mirrorNode.baseUrl);
+		this.networkService.mirrorNode = command.mirrorNode;
 
 		// Init RPC Query Adapter
 		Injectable.resolve(RPCQueryAdapter).init();

@@ -126,7 +126,7 @@ class NetworkInPort implements INetworkInPort {
 		handleValidation('InitializationRequest', req);
 
 		await this.setNetwork(
-			new SetNetworkRequest({ environment: req.network }),
+			new SetNetworkRequest({ environment: req.network, mirrorNode: req.mirrorNode }),
 		);
 
 		if (req.configuration)
@@ -166,7 +166,7 @@ class NetworkInPort implements INetworkInPort {
 				}
 			}
 		}
-		await this.commandBus.execute(new SetNetworkCommand(req.network));
+		await this.commandBus.execute(new SetNetworkCommand(req.network, req.mirrorNode));
 
 		const res = await this.commandBus.execute(
 			new ConnectCommand(req.network, req.wallet, account),

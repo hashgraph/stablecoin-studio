@@ -21,6 +21,7 @@
 import WalletEvent from '../../../app/service/event/WalletEvent.js';
 import Configuration from '../../../domain/context/network/Configuration.js';
 import { Environment } from '../../../domain/context/network/Environment.js';
+import { MirrorNode } from '../../../domain/context/network/MirrorNode.js';
 import { SupportedWallets } from '../../../domain/context/network/Wallet.js';
 import { BaseRequest } from './BaseRequest.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
@@ -32,20 +33,24 @@ export default class InitializationRequest
 	implements BaseRequest
 {
 	network: Environment;
+	mirrorNode: MirrorNode;
 	events?: Partial<WalletEvent>;
 	configuration?: Configuration;
 
 	constructor({
 		network,
+		mirrorNode,
 		events,
 		configuration,
 	}: {
 		network: Environment;
+		mirrorNode: MirrorNode;
 		events?: Partial<WalletEvent>;
 		configuration?: Configuration;
 	}) {
 		super({});
 		this.network = network;
+		this.mirrorNode = mirrorNode;
 		this.events = events;
 		this.configuration = configuration;
 	}

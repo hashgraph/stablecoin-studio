@@ -107,6 +107,7 @@ import {
 import { CommandBus } from '../../../core/command/CommandBus.js';
 import { SetNetworkCommand } from '../../../app/usecase/command/network/setNetwork/SetNetworkCommand.js';
 import { SetConfigurationCommand } from '../../../app/usecase/command/network/setConfiguration/SetConfigurationCommand.js';
+import { MirrorNode } from '../../../domain/context/network/MirrorNode.js';
 
 // eslint-disable-next-line no-var
 declare var ethereum: MetaMaskInpageProvider;
@@ -312,7 +313,8 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 
 	async init(debug = false): Promise<string> {
 		this.provider = new ethers.providers.JsonRpcProvider(
-			`https://${this.networkService.environment.toString()}.hashio.io/api`,
+			// `https://${this.networkService.environment.toString()}.hashio.io/api`,
+			`http://127.0.0.1:7546/api`,
 		);
 		!debug && (await this.connectMetamask(false));
 		const eventData = {
@@ -1365,7 +1367,13 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			console.error(chainId + ' not an hedera network');
 		}
 
-		await this.commandBus.execute(new SetNetworkCommand(network));
+		const mirrorNode: MirrorNode = {
+			name: '',
+			network: '',
+			baseUrl: '',
+			selected: false
+		}
+		await this.commandBus.execute(new SetNetworkCommand(network, mirrorNode));
 		await this.commandBus.execute(new SetConfigurationCommand(factoryId));
 
 		this.signerOrProvider = new ethers.providers.Web3Provider(

@@ -65,7 +65,7 @@ export class MirrorNodeAdapter {
 	private instance: AxiosInstance;
 	private URI_BASE: string;
 
-	public setEnvironment(baseUrl: string): void {
+	public setURL(baseUrl: string): void {
 		this.URI_BASE = baseUrl;
 		this.instance = axios.create({
 			validateStatus: function (status: number) {

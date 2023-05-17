@@ -18,21 +18,21 @@
  *
  */
 
-import { MirrorNode } from 'domain/context/network/MirrorNode.js';
 import { Environment } from '../../../domain/context/network/Environment.js';
+import { MirrorNode } from '../../../domain/context/network/MirrorNode.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
 
 export interface SetNetworkRequestProps {
 	environment: Environment;
-	mirrorNode?: MirrorNode;
+	mirrorNode: MirrorNode;
 	rpcNode?: string;
 	consensusNodes?: string;
 }
 
 export default class SetNetworkRequest extends ValidatedRequest<SetNetworkRequest> {
 	environment: Environment;
-	mirrorNode?: MirrorNode;
+	mirrorNode: MirrorNode;
 	rpcNode?: string;
 	consensusNodes?: string;
 	constructor(props: SetNetworkRequestProps) {
