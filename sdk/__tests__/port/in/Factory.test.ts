@@ -25,10 +25,18 @@ import ConnectRequest, {
 import { CLIENT_ACCOUNT_ED25519, FACTORY_ADDRESS } from '../../config.js';
 import Factory from '../../../src/port/in/Factory.js';
 import GetTokenManagerListRequest from '../../../src/port/in/request/GetTokenManagerListRequest.js';
+import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
 
 SDK.log = { level: 'ERROR', transports: new LoggerTransports.Console() };
 describe('🧪 Factory test', () => {
 	beforeAll(async () => {
+		const mirrorNode: MirrorNode = {
+			name: 'testmirrorNode',
+			baseUrl: 'https://testnet.mirrornode.hedera.com/api/v1/',
+			apiKey: '',
+			headerName: '',
+		};
+
 		await Network.connect(
 			new ConnectRequest({
 				account: {
@@ -37,6 +45,7 @@ describe('🧪 Factory test', () => {
 				},
 				network: 'testnet',
 				wallet: SupportedWallets.CLIENT,
+				mirrorNode: mirrorNode,
 			}),
 		);
 	}, 60_000);

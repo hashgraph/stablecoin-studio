@@ -20,6 +20,7 @@
 
 import NetworkService from '../../../src/app/service/NetworkService.js';
 import Injectable from '../../../src/core/Injectable.js';
+import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
 import {
 	Account,
 	CreateRequest,
@@ -55,6 +56,13 @@ describe('🧪 Reserve test', () => {
 	};
 
 	beforeAll(async () => {
+		const mirrorNode: MirrorNode = {
+			name: 'testmirrorNode',
+			baseUrl: 'https://testnet.mirrornode.hedera.com/api/v1/',
+			apiKey: '',
+			headerName: '',
+		};
+
 		await Network.connect(
 			new ConnectRequest({
 				account: {
@@ -63,6 +71,7 @@ describe('🧪 Reserve test', () => {
 				},
 				network: 'testnet',
 				wallet: SupportedWallets.CLIENT,
+				mirrorNode: mirrorNode,
 			}),
 		);
 		await Network.init(
@@ -71,6 +80,7 @@ describe('🧪 Reserve test', () => {
 				configuration: {
 					factoryAddress: FACTORY_ADDRESS,
 				},
+				mirrorNode: mirrorNode,
 			}),
 		);
 		Injectable.resolveTransactionHandler();

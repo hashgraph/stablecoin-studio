@@ -38,6 +38,13 @@ import ConnectRequest, {
 import { CLIENT_ACCOUNT_ED25519, FACTORY_ADDRESS } from '../../config.js';
 import { MirrorNode } from 'domain/context/network/MirrorNode.js';
 
+const mirrorNode: MirrorNode = {
+	name: 'testmirrorNode',
+	baseUrl: 'https://testnet.mirrornode.hedera.com/api/v1/',
+	apiKey: '',
+	headerName: '',
+};
+
 describe('🧪 Network test', () => {
 	afterEach(() => {
 		// restore the spy created with spyOn
@@ -61,6 +68,7 @@ describe('🧪 Network test', () => {
 				accountId: CLIENT_ACCOUNT_ED25519.id.toString(),
 				privateKey: CLIENT_ACCOUNT_ED25519.privateKey,
 			},
+			mirrorNode: mirrorNode,
 		};
 		const init = await Network.connect(new ConnectRequest(params));
 		expect(spy).toHaveBeenCalled();
@@ -78,13 +86,19 @@ describe('🧪 Network test', () => {
 				configuration: {
 					factoryAddress: FACTORY_ADDRESS,
 				},
+				mirrorNode: mirrorNode,
 			}),
 		);
 		expect(spy).toHaveBeenCalled();
 		expect(networkService.consensusNodes).toBeUndefined();
-		expect(networkService.mirrorNode).toBeUndefined();
 		expect(networkService.rpcNode).toBeUndefined();
 		expect(networkService.environment).toEqual(testnet);
+		expect(networkService.mirrorNode.name).toEqual(mirrorNode.name);
+		expect(networkService.mirrorNode.baseUrl).toEqual(mirrorNode.baseUrl);
+		expect(networkService.mirrorNode.apiKey).toEqual(mirrorNode.apiKey);
+		expect(networkService.mirrorNode.headerName).toEqual(
+			mirrorNode.headerName,
+		);
 		expect(networkService.configuration.factoryAddress).toEqual(
 			FACTORY_ADDRESS,
 		);
@@ -113,29 +127,49 @@ describe('🧪 Network test', () => {
 	}, 60_000);
 
 	it('Sets the network', async () => {
+		const newMirrorNode: MirrorNode = {
+			name: 'testmirrorNode',
+			baseUrl: 'https://testnet.mirrornode.hedera.com/api/v1/',
+			apiKey: '',
+			headerName: '',
+		};
 		const spy = jest.spyOn(Network, 'setNetwork');
 		const params = {
 			environment: previewnet,
 			consensusNodes: 'nodes',
-			mirrorNode: networkService.mirrorNode,
+			mirrorNode: newMirrorNode,
 			rpcNode: 'example.com',
 		};
 		const init = await Network.setNetwork(new SetNetworkRequest(params));
 		expect(spy).toHaveBeenCalled();
 		expect(networkService.consensusNodes).toEqual(params.consensusNodes);
-		expect(networkService.mirrorNode).toEqual(params.mirrorNode);
+		expect(networkService.mirrorNode.name).toEqual(params.mirrorNode.name);
+		expect(networkService.mirrorNode.baseUrl).toEqual(
+			params.mirrorNode.baseUrl,
+		);
+		expect(networkService.mirrorNode.apiKey).toEqual(
+			params.mirrorNode.apiKey,
+		);
+		expect(networkService.mirrorNode.headerName).toEqual(
+			params.mirrorNode.headerName,
+		);
 		expect(networkService.rpcNode).toEqual(params.rpcNode);
 		expect(networkService.environment).toEqual(params.environment);
 		expect(init).toBeTruthy();
 		expect(init.environment).toEqual(params.environment);
-		expect(init.mirrorNode).toEqual(params.mirrorNode);
+		expect(init.mirrorNode.name).toEqual(params.mirrorNode.name);
+		expect(init.mirrorNode.baseUrl).toEqual(params.mirrorNode.baseUrl);
+		expect(init.mirrorNode.apiKey).toEqual(params.mirrorNode.apiKey);
+		expect(init.mirrorNode.headerName).toEqual(
+			params.mirrorNode.headerName,
+		);
 		expect(init.consensusNodes).toEqual(params.consensusNodes);
 		expect(init.rpcNode).toEqual(params.rpcNode);
 
 		const params_2 = {
 			environment: testnet,
 			consensusNodes: '',
-			mirrorNode: networkService.mirrorNode,
+			mirrorNode: mirrorNode,
 			rpcNode: '',
 		};
 

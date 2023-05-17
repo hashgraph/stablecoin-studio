@@ -64,6 +64,7 @@ import {
 } from '../../config.js';
 import { MirrorNodeAdapter } from '../../../src/port/out/mirror/MirrorNodeAdapter.js';
 import { Client, Hbar, TransferTransaction } from '@hashgraph/sdk';
+import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
 const decimals = 6;
 
 describe('🧪 Stablecoin test', () => {
@@ -76,6 +77,13 @@ describe('🧪 Stablecoin test', () => {
 	};
 
 	beforeAll(async () => {
+		const mirrorNode: MirrorNode = {
+			name: 'testmirrorNode',
+			baseUrl: 'https://testnet.mirrornode.hedera.com/api/v1/',
+			apiKey: '',
+			headerName: '',
+		};
+
 		await Network.connect(
 			new ConnectRequest({
 				account: {
@@ -84,6 +92,7 @@ describe('🧪 Stablecoin test', () => {
 				},
 				network: 'testnet',
 				wallet: SupportedWallets.CLIENT,
+				mirrorNode: mirrorNode,
 			}),
 		);
 		await Network.init(
@@ -92,6 +101,7 @@ describe('🧪 Stablecoin test', () => {
 				configuration: {
 					factoryAddress: FACTORY_ADDRESS,
 				},
+				mirrorNode: mirrorNode,
 			}),
 		);
 		Injectable.resolveTransactionHandler();

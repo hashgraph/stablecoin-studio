@@ -32,9 +32,17 @@ import {
 	CLIENT_ACCOUNT_ED25519,
 	CLIENT_PUBLIC_KEY_ED25519,
 } from '../../config.js';
+import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
 
 describe('🧪 Account test', () => {
 	beforeAll(async () => {
+		const mirrorNode: MirrorNode = {
+			name: 'testmirrorNode',
+			baseUrl: 'https://testnet.mirrornode.hedera.com/api/v1/',
+			apiKey: '',
+			headerName: '',
+		};
+
 		await Network.connect(
 			new ConnectRequest({
 				account: {
@@ -43,6 +51,7 @@ describe('🧪 Account test', () => {
 				},
 				network: 'testnet',
 				wallet: SupportedWallets.CLIENT,
+				mirrorNode: mirrorNode,
 			}),
 		);
 	}, 60_000);

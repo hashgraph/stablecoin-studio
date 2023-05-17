@@ -1367,13 +1367,18 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			console.error(chainId + ' not an hedera network');
 		}
 
+		// --------------- Get Mirror Node from .env
 		const mirrorNode: MirrorNode = {
 			name: '',
-			network: '',
 			baseUrl: '',
-			selected: false
-		}
-		await this.commandBus.execute(new SetNetworkCommand(network, mirrorNode));
+			apiKey: '',
+			headerName: '',
+		};
+		// --------------- Get Mirror Node from .env
+
+		await this.commandBus.execute(
+			new SetNetworkCommand(network, mirrorNode),
+		);
 		await this.commandBus.execute(new SetConfigurationCommand(factoryId));
 
 		this.signerOrProvider = new ethers.providers.Web3Provider(
