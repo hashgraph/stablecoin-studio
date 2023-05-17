@@ -173,7 +173,7 @@ const init = await Network.init(
 );
 ```
 ## Connect SDK
-The next step would be to connect to the network. Currently, 3 types of connections are offered: Client (a Hedera account configured in an application configuration file), Metamask and HashPack. These 3 connection types are in the SupportedWallets enum.
+The next step would be to connect to the network. Currently, 3 types of connections are offered: Client (a Hedera account configured in an application configuration file), MetaMask and HashPack. These 3 connection types are in the SupportedWallets enum.
 
 ```Typescript
 export enum SupportedWallets {
@@ -182,7 +182,7 @@ export enum SupportedWallets {
 	CLIENT = 'Client',
 }
 ```
-In addition to this we have to specify the accountId and private key for the Client, while HashPack and Metamask do not require an account in the request. 
+In addition to this we have to specify the accountId and private key for the Client, while HashPack and MetaMask do not require an account in the request. 
 
 Below are examples of each of them.
 
@@ -216,7 +216,7 @@ await Network.connect(
   }
 ```
 
-Metamask Example
+MetaMask Example
 
 ```Typescript
 await Network.connect(

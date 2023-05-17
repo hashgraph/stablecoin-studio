@@ -24,9 +24,9 @@
 
 # Overview
 
-The Web uses the API exposed by the SDK to create, manage and operate Stable Coins. It is meant as a "demo tool" to showcase the project's functionalities.
+The Web uses the API exposed by the SDK to create, manage and operate stable coins. It is meant as a "demo tool" to showcase the project's functionalities.
 It is a user-friendly Front End application based on React for technical and non-technical people to use (as opposed to the CLI which is meant for more technical people).
-The web application is compatible with Hashpack and Metamask and although both wallets can be paired at the same time, only one will actually be "in scope" (used to sign the transactions). Users will be free to switch from one wallet to the other at any time they want.
+The web application is compatible with HashPack and MetaMask and although both wallets can be paired at the same time, only one will actually be "in scope" (used to sign the transactions). Users will be free to switch from one wallet to the other at any time they want.
 
 # Installation
 
@@ -67,10 +67,10 @@ The ENV file contains the following parameters:
 ```
 REACT_APP_FACTORIES='[{"Environment":"mainnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.1234567"},{"Environment":"testnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.3950554"},{"Environment":"previewnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.239703"}]'
 ```
-If the env var is not set when you click in "Create a new Stable coin" will show an alert.
+If the env files does not exist or the factory var is not set when you click in "Create a new Stable coin" an alert will be shown.
 ![image](https://user-images.githubusercontent.com/114951681/229088627-369506c3-9c28-435c-9e44-d8908f8a15ab.png)
 You can use our [deployed factories](https://github.com/hashgraph/hedera-accelerator-stablecoin#deploying-the-stable-coin-factories).
-- **GENERATE_SOURCEMAP**: This is a proprietary Create React App configuration.You can read more information in its documentation.[Create React App documentation](https://create-react-app.dev/docs/advanced-configuration/)
+- **GENERATE_SOURCEMAP**: This is a proprietary Create React App configuration. You can read more information in its documentation.[Create React App documentation](https://create-react-app.dev/docs/advanced-configuration/)
 
 ## Starting the UI
 
@@ -86,7 +86,7 @@ The front end will automatically detect how many compatible wallets are availabl
 
 ![image](https://user-images.githubusercontent.com/114951681/229089031-9f014228-68cf-4d94-b4da-448d16e884b3.png)
 
-If you choose Hashpack, you will be asked to choose a network (testnet or mainnet)
+If you choose HashPack, you will be asked to choose a network (testnet or mainnet)
 
 ![Alt text](docs/images/disconnect.png?raw=true 'disconnect')
 
@@ -96,11 +96,11 @@ If you want to switch to another compatible wallet, you can do it at any time by
 
 ## Supported Wallets
 
-The Wallets currently supported by the project are [Hashpack](https://www.hashpack.app/)(for [ED25519](https://docs.hedera.com/hedera/docs/sdks/keys/generate-a-new-key-pair#ed25519) accounts) and [Metamask](https://metamask.io/)(for [ECDSA](https://docs.hedera.com/hedera/docs/sdks/keys/generate-a-new-key-pair#ecdsa-secp256k1_) accounts)
+The Wallets currently supported by the project are [HashPack](https://www.hashpack.app/)(for [ED25519](https://docs.hedera.com/hedera/docs/sdks/keys/generate-a-new-key-pair#ed25519) accounts) and [MetaMask](https://metamask.io/)(for [ECDSA](https://docs.hedera.com/hedera/docs/sdks/keys/generate-a-new-key-pair#ecdsa-secp256k1_) accounts)
 
-### Metamask configuration
+### MetaMask configuration
 
-In order to use metamask you must first configure it to interact with a Hedera relay [JSON-RPC relay node](https://docs.hedera.com/hedera/core-concepts/smart-contracts/json-rpc-relay) because Hedera consensus nodes are not JSON-RPC compatible.
+In order to use MetaMask you must first configure it to interact with a Hedera relay [JSON-RPC relay node](https://docs.hedera.com/hedera/core-concepts/smart-contracts/json-rpc-relay) because Hedera consensus nodes are not JSON-RPC compatible.
 
 Add a new network with the following information : 
 - **Network Name**: HederaTestNet _(or any other name you wish)_
@@ -111,15 +111,15 @@ Add a new network with the following information :
 
 ![image](https://user-images.githubusercontent.com/114951681/210327135-a88604ab-2d9c-4341-87fd-e84c4115364f.png)
 
-you can switch from one network to another, or from one account to another using metamask, however not every account exists in every network and not every network belongs to Hedera, which is why you can potentially see the following warning messages:
+You can switch from one network to another, or from one account to another using MetaMask, however not every account exists in every network and not every network belongs to Hedera, which is why you can potentially see the following warning messages:
 
 ![image](https://user-images.githubusercontent.com/114951681/229093620-b93f3ab4-f391-4d5e-a757-f85cbfcc0819.png)
 
-If you select a non-Hedera network
+If you select a non-Hedera network.
 
 ![image](https://user-images.githubusercontent.com/114951681/229093838-a6fc418f-a892-4863-a3c5-d4350eadd77f.png)
 
-If you select an account that does not exist in the Hedera network
+If you select an account that does not exist in the Hedera network.
 
 
 > In order to use the web application correctly it is necessary to have at least one of those two wallets already installed in your browser. You can nevertheless have both and switch from one to the other.
@@ -158,8 +158,6 @@ Underlying token's keys definition (stable coin smart contract, current key, ano
 Choose if the stable coin will have a proof of reserve (PoR) associated to it or not.
 If so, the user will have two options, either submit the address of an already existing PoR contract or generate a completely new one (using the demo implementation of a PoR contract included in the project) specifying an initial Reserve amount.
 
-For more information about proof of reserve, see the [docs](https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/feature/sdk/Chainlink_PoR#Proof-of-reserve).
-
 ![image](https://user-images.githubusercontent.com/114951681/229089752-d0326884-7fa3-4126-85b2-2c82a7d4a05a.png)
 
 
@@ -176,11 +174,9 @@ Once the stable coin is created it will be added to the drop-down list of coins 
 
 ### Import stable coins
 
-In order to import an existing stable coin using the web application, you must click on the "Add coin" button at the top of the page (next to the create coin button) 
+In order to import an existing stable coin using the web application, you must use the component to select the stable coin, introducing the token id, instead of selecting an existing one, and pushing into the "import stable coin" modal emerged when introducing the token id.
 
-![Alt text](docs/images/import.png?raw=true 'import stable coin')
-
-then fill-in all the required information. You can import any stable coin you want, and it will be added to the drop-down list of coins you have access to.
+You can import any stable coin you want, and it will be added to the drop-down list of coins you have access to.
 
 ![image](https://user-images.githubusercontent.com/114951681/210238673-895d1bbc-fce1-483d-af1d-6f45e522401d.png)
 
