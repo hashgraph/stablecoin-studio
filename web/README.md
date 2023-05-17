@@ -178,8 +178,6 @@ In order to import an existing stable coin using the web application, you must u
 
 You can import any stable coin you want, and it will be added to the drop-down list of coins you have access to.
 
-![image](https://user-images.githubusercontent.com/114951681/210238673-895d1bbc-fce1-483d-af1d-6f45e522401d.png)
-
 > You will only be allowed to operate the imported stable coins based on the roles that your account has been granted. If you import a stable coin that your account does not have any role over, you will not be able to do anything with it.
 
 ### Operate stable coins
