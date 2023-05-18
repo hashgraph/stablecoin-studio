@@ -1339,6 +1339,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	private async setMetamaskNetwork(chainId: any): Promise<void> {
 		let network = unrecognized;
 		let factoryId = '';
+		const mirrorNode: MirrorNode = {
+			baseUrl: '',
+			apiKey: '',
+			headerName: '',
+		};
 
 		const metamaskNetwork = HederaNetworks.find(
 			(i: any) => '0x' + i.chainId.toString(16) === chainId.toString(),
@@ -1362,19 +1367,27 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					console.error('Factories could not be found in .env');
 				}
 			}
+			if (process.env.MIRROR_NODE_SERVICES) {
+				try {
+					const mirrorNodes = JSON.parse(
+						process.env.MIRROR_NODE_SERVICES,
+					);
+					const result = mirrorNodes.find(
+						(i: any) => i.Environment === metamaskNetwork.network,
+					);
+					if (result) {
+						mirrorNode.baseUrl = result.BASE_URL;
+						mirrorNode.apiKey = result.API_KEY;
+						mirrorNode.headerName = result.HEADER;
+					}
+				} catch (e) {
+					console.error('Mirror Nodes could not be found in .env');
+				}
+			}
 			LogService.logTrace('Metamask Network:', chainId);
 		} else {
 			console.error(chainId + ' not an hedera network');
 		}
-
-		// --------------- Get Mirror Node from .env
-		const mirrorNode: MirrorNode = {
-			name: '',
-			baseUrl: '',
-			apiKey: '',
-			headerName: '',
-		};
-		// --------------- Get Mirror Node from .env
 
 		await this.commandBus.execute(
 			new SetNetworkCommand(network, mirrorNode),
