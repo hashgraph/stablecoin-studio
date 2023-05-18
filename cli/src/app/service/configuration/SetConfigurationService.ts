@@ -14,6 +14,7 @@ import {
   Network,
   SetConfigurationRequest,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { IMirrorsConfig } from 'domain/configuration/interfaces/IMirrorsConfig.js';
 const colors = require('colors');
 
 /**
@@ -24,6 +25,11 @@ export default class SetConfigurationService extends Service {
     super('Set Configuration');
   }
   private ZERO_ADDRESS = '0.0.0';
+  private HEDERA_MIRROR_NODE_TESTNET = 'https://testnet.mirrornode.hedera.com';
+  private HEDERA_MIRROR_NODE_PREVIEWNET =
+    'https://previewnet.mirrornode.hedera.com';
+  private HEDERA_MIRROR_NODE_MAINNET =
+    'https://mainnet-public.mirrornode.hedera.com';
 
   /**
    * Initialise the configuration for first time or with "init" command
@@ -42,6 +48,13 @@ export default class SetConfigurationService extends Service {
     );
     if (configFactories) {
       await this.configureFactories();
+    }
+    const configMirrors = await utilsService.defaultConfirmAsk(
+      language.getText('configuration.askConfigurateMirrors'),
+      true,
+    );
+    if (configMirrors) {
+      await this.configureMirrors();
     }
   }
 
@@ -247,6 +260,141 @@ export default class SetConfigurationService extends Service {
     defaultCfgData.factories = factories;
     configurationService.setConfiguration(defaultCfgData);
     return factories;
+  }
+
+  public async configureMirrors(): Promise<IMirrorsConfig[]> {
+    const configuration = configurationService.getConfiguration();
+    const mirrors: IMirrorsConfig[] = [];
+
+    let moreMirrors = true;
+
+    while (moreMirrors) {
+      const network = await utilsService.defaultMultipleAsk(
+        language.getText('configuration.askMirrorNetwork'),
+        configuration.networks.map((acc) => acc.name),
+      );
+
+      let name = await utilsService.defaultSingleAsk(
+        language.getText('configuration.askMirrorName'),
+        'HEDERA',
+      );
+      while (
+        mirrors.filter(
+          (element) => element.network === network && element.name === name,
+        ).length > 0
+      ) {
+        console.log(language.getText('validations.duplicatedMirrorName'));
+        name = await utilsService.defaultSingleAsk(
+          language.getText('configuration.askMirrorName'),
+          'HEDERA',
+        );
+      }
+
+      let base_url = await utilsService.defaultSingleAsk(
+        language.getText('configuration.askMirrorUrl'),
+        network === 'testnet'
+          ? this.HEDERA_MIRROR_NODE_TESTNET
+          : network === 'previewnet'
+          ? this.HEDERA_MIRROR_NODE_PREVIEWNET
+          : network === 'mainnet'
+          ? this.HEDERA_MIRROR_NODE_MAINNET
+          : this.HEDERA_MIRROR_NODE_TESTNET,
+      );
+      while (
+        !/^(http(s):\/\/.)[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)$/.test(
+          base_url,
+        )
+      ) {
+        console.log(language.getText('validations.wrongFormatUrl'));
+        base_url = await utilsService.defaultSingleAsk(
+          language.getText('configuration.askMirrorUrl'),
+          network === 'testnet'
+            ? this.HEDERA_MIRROR_NODE_TESTNET
+            : network === 'previewnet'
+            ? this.HEDERA_MIRROR_NODE_PREVIEWNET
+            : network === 'mainnet'
+            ? this.HEDERA_MIRROR_NODE_MAINNET
+            : this.HEDERA_MIRROR_NODE_TESTNET,
+        );
+      }
+      while (
+        mirrors.filter(
+          (element) =>
+            element.network === network && element.baseUrl === base_url,
+        ).length > 0
+      ) {
+        console.log(language.getText('validations.duplicatedMirrorUrl'));
+        base_url = await utilsService.defaultSingleAsk(
+          language.getText('configuration.askMirrorUrl'),
+          network === 'testnet'
+            ? this.HEDERA_MIRROR_NODE_TESTNET
+            : network === 'previewnet'
+            ? this.HEDERA_MIRROR_NODE_PREVIEWNET
+            : network === 'mainnet'
+            ? this.HEDERA_MIRROR_NODE_MAINNET
+            : this.HEDERA_MIRROR_NODE_TESTNET,
+        );
+      }
+
+      const mirror = {
+        name: name,
+        network: network,
+        baseUrl: base_url,
+        apiKey: undefined,
+        headerName: undefined,
+        selected: false,
+      };
+
+      if (
+        await utilsService.defaultConfirmAsk(
+          language.getText('configuration.askMirrorHasApiKey'),
+          true,
+        )
+      ) {
+        mirror.apiKey = await utilsService.defaultSingleAsk(
+          language.getText('configuration.askMirrorApiKey'),
+          undefined,
+        );
+
+        mirror.headerName = await utilsService.defaultSingleAsk(
+          language.getText('configuration.askMirrorHeaderName'),
+          undefined,
+        );
+      }
+
+      if (
+        await utilsService.defaultConfirmAsk(
+          language.getText('configuration.askMirrorSelected'),
+          true,
+        )
+      ) {
+        mirror.selected = true;
+        mirrors
+          .filter(
+            (element) =>
+              element.network === mirror.network && element.selected === true,
+          )
+          .forEach((found) => {
+            found.selected = false;
+          });
+      }
+
+      mirrors.push(mirror);
+
+      const response = await utilsService.defaultConfirmAsk(
+        language.getText('configuration.askMoreMirrors'),
+        true,
+      );
+      if (!response) {
+        moreMirrors = false;
+      }
+    }
+
+    // Set a default factories
+    const defaultCfgData = configurationService.getConfiguration();
+    defaultCfgData.mirrors = mirrors;
+    configurationService.setConfiguration(defaultCfgData);
+    return mirrors;
   }
 
   public async setSDKFactory(factoryId: string): Promise<void> {

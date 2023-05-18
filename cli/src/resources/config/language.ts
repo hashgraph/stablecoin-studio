@@ -53,6 +53,10 @@ export const english = {
     askAccountId: 'Enter the account id',
     askConfigurateFactories:
       'Do you want to config your factories? Check the documentation for more information : https://github.com/hashgraph/hedera-accelerator-stablecoin#deploying-the-stable-coin-factories',
+    askConfigurateMirrors:
+      'Do you want to config your mirror node services? (y/n)',
+    askConfigurateRPCs:
+      'Do you want to config your JSON-RPC-Relay services? (y/n)',
     askNetworkAccount: 'Which network does this account belong to?',
     askPrivateKeyType: 'Which type of private key will the account use?',
     askAlias: 'Enter an alias for this account',
@@ -69,6 +73,16 @@ export const english = {
     askOperateWithNewAccount:
       'Would you like to operate with the account you have just created?',
     askFactoryAddress: 'Enter your factory address',
+    askMirrorName: 'Enter the mirror node service name',
+    askMirrorNetwork: 'Which network does this service belong to?',
+    askMirrorUrl: 'Which is the base URL of the service?',
+    askMirrorApiKey: 'Enter the mirror node service API Key',
+    askMirrorHeaderName: 'Enter the HTTP header name to send the API Key',
+    askMirrorHasApiKey:
+      'Does this service need an API Key to authenticate? (y/n)',
+    askMirrorSelected:
+      'Do you want this service to be used in the selected network? (y/n)',
+    askMoreMirrors: 'Do you want to enter more mirror node services? (y/n)',
   },
   stablecoin: {
     noFactories:
@@ -422,6 +436,12 @@ export const english = {
   validations: {
     wrongFormatAddress:
       'The address format is not correct. Please check the format and try again.',
+    duplicatedMirrorName:
+      'The mirror node service name already exists for the selected network.',
+    duplicatedMirrorUrl:
+      'The mirror node service url already exists for the selected network.',
+    wrongFormatUrl:
+      'The url format is not correct. Please check the format and try again.',
     lessZero: 'The number is 0 or less. Please use a number greater than 0.',
   },
   roleManagement: {
