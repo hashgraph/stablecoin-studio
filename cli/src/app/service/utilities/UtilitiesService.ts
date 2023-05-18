@@ -42,6 +42,7 @@ export default class UtilitiesService extends Service {
     await Network.init(
       new InitializationRequest({
         network: this.getCurrentNetwork().name,
+        mirrorNode: this.getCurrentMirror(),
       }),
     );
     await Network.connect(
@@ -54,6 +55,7 @@ export default class UtilitiesService extends Service {
           },
         },
         network: this.getCurrentNetwork().name,
+        mirrorNode: this.getCurrentMirror(),
         wallet: SupportedWallets.CLIENT,
       }),
     );
