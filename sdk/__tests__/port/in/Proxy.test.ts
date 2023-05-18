@@ -48,6 +48,12 @@ import {
 	HEDERA_TOKEN_MANAGER_ADDRESS,
 } from '../../config.js';
 import ContractId from 'domain/context/contract/ContractId.js';
+import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
+
+const mirrorNode: MirrorNode = {
+	name: 'testmirrorNode',
+	baseUrl: 'https://testnet.mirrornode.hedera.com/api/v1/',
+};
 
 describe('🧪 Proxy test', () => {
 	let stableCoinSC: StableCoinViewModel;
@@ -66,6 +72,7 @@ describe('🧪 Proxy test', () => {
 				},
 				network: 'testnet',
 				wallet: SupportedWallets.CLIENT,
+				mirrorNode: mirrorNode,
 			}),
 		);
 		await Network.init(
@@ -74,6 +81,7 @@ describe('🧪 Proxy test', () => {
 				configuration: {
 					factoryAddress: FACTORY_ADDRESS,
 				},
+				mirrorNode: mirrorNode,
 			}),
 		);
 		Injectable.resolveTransactionHandler();
@@ -179,6 +187,7 @@ describe('🧪 Proxy test', () => {
 				},
 				network: 'testnet',
 				wallet: SupportedWallets.CLIENT,
+				mirrorNode: mirrorNode,
 			}),
 		);
 
@@ -197,6 +206,7 @@ describe('🧪 Proxy test', () => {
 				},
 				network: 'testnet',
 				wallet: SupportedWallets.CLIENT,
+				mirrorNode: mirrorNode,
 			}),
 		);
 	}, 60_000);
