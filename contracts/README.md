@@ -93,6 +93,7 @@ These are the folders and files you can find in this project:
 
 The IDE we use in this project is **Hardhat**, in order to use it you must have:
 
+-   [Hardhat](https://hardhat.org/docs)
 -   [node (version 16)](https://nodejs.org/en/about/)
 -   [npm](https://www.npmjs.com/)
 
