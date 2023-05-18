@@ -26,7 +26,7 @@ import Service from './Service.js';
 
 export interface NetworkProps {
 	environment: Environment;
-	mirrorNode?: MirrorNode;
+	mirrorNode: MirrorNode;
 	rpcNode?: string;
 	consensusNodes?: string;
 	configuration?: Configuration;

@@ -41,8 +41,6 @@ import { MirrorNode } from 'domain/context/network/MirrorNode.js';
 const mirrorNode: MirrorNode = {
 	name: 'testmirrorNode',
 	baseUrl: 'https://testnet.mirrornode.hedera.com/api/v1/',
-	apiKey: '',
-	headerName: '',
 };
 
 describe('🧪 Network test', () => {
@@ -55,7 +53,12 @@ describe('🧪 Network test', () => {
 	it('Starts as testnet network', async () => {
 		expect(networkService.environment).toEqual(testnet);
 		expect(networkService.consensusNodes).toBeUndefined();
-		expect(networkService.mirrorNode).toBeUndefined();
+		expect(networkService.mirrorNode.baseUrl).toEqual(
+			'https://testnet.mirrornode.hedera.com',
+		);
+		expect(networkService.mirrorNode.name).toEqual('default');
+		expect(networkService.mirrorNode.apiKey).toBeUndefined();
+		expect(networkService.mirrorNode.headerName).toBeUndefined();
 		expect(networkService.rpcNode).toBeUndefined();
 	}, 60_000);
 
@@ -128,10 +131,10 @@ describe('🧪 Network test', () => {
 
 	it('Sets the network', async () => {
 		const newMirrorNode: MirrorNode = {
-			name: 'testmirrorNode',
+			name: 'newMirrorNode',
 			baseUrl: 'https://testnet.mirrornode.hedera.com/api/v1/',
-			apiKey: '',
-			headerName: '',
+			apiKey: 'apiKeyValue',
+			headerName: 'httpHeaderName',
 		};
 		const spy = jest.spyOn(Network, 'setNetwork');
 		const params = {

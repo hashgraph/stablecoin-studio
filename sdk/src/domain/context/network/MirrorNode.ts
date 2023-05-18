@@ -19,16 +19,16 @@
  */
 
 export class MirrorNode {
-	name: string;
+	name?: string;
 	baseUrl: string;
-	apiKey: string;
-	headerName: string;
+	apiKey?: string;
+	headerName?: string;
 
 	constructor(
-		name: string,
 		baseUrl: string,
-		apiKey: string,
-		headerName: string,
+		name?: string,
+		apiKey?: string,
+		headerName?: string,
 	) {
 		this.name = name;
 		this.baseUrl = baseUrl;

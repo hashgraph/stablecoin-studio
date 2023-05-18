@@ -59,8 +59,6 @@ describe('🧪 Reserve test', () => {
 		const mirrorNode: MirrorNode = {
 			name: 'testmirrorNode',
 			baseUrl: 'https://testnet.mirrornode.hedera.com/api/v1/',
-			apiKey: '',
-			headerName: '',
 		};
 
 		await Network.connect(

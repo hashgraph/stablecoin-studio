@@ -56,8 +56,6 @@ const decimals = 6;
 const mirrorNode: MirrorNode = {
 	name: 'testmirrorNode',
 	baseUrl: 'https://testnet.mirrornode.hedera.com/api/v1/',
-	apiKey: '',
-	headerName: '',
 };
 
 describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {

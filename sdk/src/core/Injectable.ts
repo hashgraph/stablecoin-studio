@@ -331,6 +331,10 @@ const TRANSACTION_HANDLER = [
 
 const defaultNetworkProps: NetworkProps = {
 	environment: 'testnet',
+	mirrorNode: {
+		name: 'default',
+		baseUrl: 'https://testnet.mirrornode.hedera.com',
+	},
 };
 
 // Network default props

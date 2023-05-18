@@ -25,13 +25,6 @@ import StableCoinViewModel from '../../out/mirror/response/StableCoinViewModel.j
 import AccountViewModel from '../../out/mirror/response/AccountViewModel.js';
 import StableCoinListViewModel from '../../out/mirror/response/StableCoinListViewModel.js';
 import TransactionResultViewModel from '../../out/mirror/response/TransactionResultViewModel.js';
-import {
-	Environment,
-	mainnet,
-	testnet,
-	previewnet,
-	local,
-} from '../../../domain/context/network/Environment.js';
 import LogService from '../../../app/service/LogService.js';
 import { StableCoinNotFound } from './error/StableCoinNotFound.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
@@ -59,19 +52,36 @@ import {
 	RequestFixedFee,
 	RequestFractionalFee,
 } from '../../in/request/BaseRequest.js';
+import { MirrorNode } from '../../../domain/context/network/MirrorNode.js';
 
 @singleton()
 export class MirrorNodeAdapter {
 	private instance: AxiosInstance;
-	private URI_BASE: string;
+	private mirrorNodeConfig: MirrorNode;
+	// private URI_BASE: string;
 
-	public setURL(baseUrl: string): void {
+	/* public setURL(baseUrl: string): void {
 		this.URI_BASE = baseUrl;
 		this.instance = axios.create({
 			validateStatus: function (status: number) {
 				return (status >= 200 && status < 300) || status == 404;
 			},
 		});
+	} */
+
+	public set(mnConfig: MirrorNode): void {
+		this.mirrorNodeConfig = mnConfig;
+
+		this.instance = axios.create({
+			validateStatus: function (status: number) {
+				return (status >= 200 && status < 300) || status == 404;
+			},
+		});
+
+		if (this.mirrorNodeConfig.headerName && this.mirrorNodeConfig.apiKey)
+			this.instance.defaults.headers.common[
+				this.mirrorNodeConfig.headerName
+			] = this.mirrorNodeConfig.apiKey;
 	}
 
 	public async getStableCoinsList(
@@ -79,7 +89,7 @@ export class MirrorNodeAdapter {
 	): Promise<StableCoinListViewModel> {
 		try {
 			const url = `${
-				this.URI_BASE
+				this.mirrorNodeConfig.baseUrl
 			}tokens?limit=100&order=desc&account.id=${accountId.toString()}`;
 
 			LogService.logTrace(
@@ -108,7 +118,9 @@ export class MirrorNodeAdapter {
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	private async getTokenInfo(tokenId: HederaId): Promise<any> {
-		const url = `${this.URI_BASE}tokens/${tokenId.toString()}`;
+		const url = `${
+			this.mirrorNodeConfig.baseUrl
+		}tokens/${tokenId.toString()}`;
 
 		LogService.logTrace('Getting stable coin from mirror node -> ', url);
 
@@ -299,9 +311,13 @@ export class MirrorNodeAdapter {
 		accountId: HederaId | string,
 	): Promise<AccountViewModel> {
 		try {
-			LogService.logTrace(this.URI_BASE + 'accounts/' + accountId);
+			LogService.logTrace(
+				this.mirrorNodeConfig.baseUrl + 'accounts/' + accountId,
+			);
 			const res = await axios.get<IAccount>(
-				this.URI_BASE + 'accounts/' + accountId.toString(),
+				this.mirrorNodeConfig.baseUrl +
+					'accounts/' +
+					accountId.toString(),
 			);
 
 			const account: AccountViewModel = {
@@ -331,7 +347,7 @@ export class MirrorNodeAdapter {
 	): Promise<AccountTokenRelationViewModel | undefined> {
 		try {
 			const url = `${
-				this.URI_BASE
+				this.mirrorNodeConfig.baseUrl
 			}accounts/${targetId.toString()}/tokens?token.id=${tokenId.toString()}`;
 			LogService.logTrace(url);
 			const res = await axios.get<AccountTokenRelationList>(url);
@@ -360,7 +376,10 @@ export class MirrorNodeAdapter {
 		transactionId: string,
 	): Promise<TransactionResultViewModel> {
 		try {
-			const url = this.URI_BASE + 'contracts/results/' + transactionId;
+			const url =
+				this.mirrorNodeConfig.baseUrl +
+				'contracts/results/' +
+				transactionId;
 			LogService.logTrace(url);
 			const res = await axios.get<ITransactionResult>(url);
 			if (!res.data.call_result)
@@ -390,7 +409,8 @@ export class MirrorNodeAdapter {
 					.replace('@', '-')
 					.replace(/.([^.]*)$/, '-$1');
 
-			const url = this.URI_BASE + 'transactions/' + transactionId;
+			const url =
+				this.mirrorNodeConfig.baseUrl + 'transactions/' + transactionId;
 			LogService.logTrace(url);
 
 			await new Promise((resolve) => setTimeout(resolve, 5000));
@@ -466,7 +486,7 @@ export class MirrorNodeAdapter {
 	): Promise<BigDecimal> {
 		try {
 			const url = `${
-				this.URI_BASE
+				this.mirrorNodeConfig.baseUrl
 			}balances?account.id=${accountId.toString()}`;
 			LogService.logTrace(url);
 			const res = await axios.get<IBalances>(url);
