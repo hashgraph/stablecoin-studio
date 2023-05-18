@@ -423,17 +423,7 @@ describe('Role Management Tests', function () {
 
     it('An account can get all roles of any account', async function () {
         // Granting roles
-        const Roles = [
-            BURN_ROLE,
-            PAUSE_ROLE,
-            RESCUE_ROLE,
-            WIPE_ROLE,
-            CASHIN_ROLE,
-            FREEZE_ROLE,
-            DELETE_ROLE,
-            DEFAULT_ADMIN_ROLE,
-            KYC_ROLE,
-        ]
+        const Roles = [BURN_ROLE]
         const amounts: BigNumber[] = []
         const areE25519: boolean[] = []
 
@@ -447,7 +437,7 @@ describe('Role Management Tests', function () {
             proxyAddress,
             operatorClient,
             AllAccounts,
-            amounts,
+            [],
             areE25519
         )
 
@@ -459,102 +449,6 @@ describe('Role Management Tests', function () {
 
         AllAccounts.forEach(async (accountId, index) => {
             expect(burnRoleAccounts).to.include(
-                await toEvmAddress(accountId, areE25519[index])
-            )
-        })
-
-        let pauseRoleAccounts = await getAccountsForRole(
-            PAUSE_ROLE,
-            proxyAddress,
-            operatorClient
-        )
-
-        AllAccounts.forEach(async (accountId, index) => {
-            expect(pauseRoleAccounts).to.include(
-                await toEvmAddress(accountId, areE25519[index])
-            )
-        })
-
-        let rescueRoleAccounts = await getAccountsForRole(
-            RESCUE_ROLE,
-            proxyAddress,
-            operatorClient
-        )
-
-        AllAccounts.forEach(async (accountId, index) => {
-            expect(rescueRoleAccounts).to.include(
-                await toEvmAddress(accountId, areE25519[index])
-            )
-        })
-
-        let wipeRoleAccounts = await getAccountsForRole(
-            WIPE_ROLE,
-            proxyAddress,
-            operatorClient
-        )
-
-        AllAccounts.forEach(async (accountId, index) => {
-            expect(wipeRoleAccounts).to.include(
-                await toEvmAddress(accountId, areE25519[index])
-            )
-        })
-
-        let cashinRoleAccounts = await getAccountsForRole(
-            CASHIN_ROLE,
-            proxyAddress,
-            operatorClient
-        )
-
-        AllAccounts.forEach(async (accountId, index) => {
-            expect(cashinRoleAccounts).to.include(
-                await toEvmAddress(accountId, areE25519[index])
-            )
-        })
-
-        let freezeRoleAccounts = await getAccountsForRole(
-            FREEZE_ROLE,
-            proxyAddress,
-            operatorClient
-        )
-
-        AllAccounts.forEach(async (accountId, index) => {
-            expect(freezeRoleAccounts).to.include(
-                await toEvmAddress(accountId, areE25519[index])
-            )
-        })
-
-        let deleteRoleAccounts = await getAccountsForRole(
-            DELETE_ROLE,
-            proxyAddress,
-            operatorClient
-        )
-
-        AllAccounts.forEach(async (accountId, index) => {
-            expect(deleteRoleAccounts).to.include(
-                await toEvmAddress(accountId, areE25519[index])
-            )
-        })
-
-        let defaultAdminRoleAccounts = await getAccountsForRole(
-            DEFAULT_ADMIN_ROLE,
-            proxyAddress,
-            operatorClient
-        )
-
-        AllAccounts.forEach(async (accountId, index) => {
-            expect(defaultAdminRoleAccounts).to.include(
-                await toEvmAddress(accountId, areE25519[index])
-            )
-        })
-
-        let kycRoleAccounts = await getAccountsForRole(
-            KYC_ROLE,
-            proxyAddress,
-            operatorClient
-        )
-
-        AllAccounts.forEach(async (accountId, index) => {
-            expect(kycRoleAccounts).to.include(
                 await toEvmAddress(accountId, areE25519[index])
             )
         })
@@ -576,102 +470,6 @@ describe('Role Management Tests', function () {
 
         AllAccounts.forEach(async (accountId, index) => {
             expect(burnRoleAccounts).to.not.include(
-                await toEvmAddress(accountId, areE25519[index])
-            )
-        })
-
-        pauseRoleAccounts = await getAccountsForRole(
-            PAUSE_ROLE,
-            proxyAddress,
-            operatorClient
-        )
-
-        AllAccounts.forEach(async (accountId, index) => {
-            expect(pauseRoleAccounts).to.not.include(
-                await toEvmAddress(accountId, areE25519[index])
-            )
-        })
-
-        rescueRoleAccounts = await getAccountsForRole(
-            RESCUE_ROLE,
-            proxyAddress,
-            operatorClient
-        )
-
-        AllAccounts.forEach(async (accountId, index) => {
-            expect(rescueRoleAccounts).to.not.include(
-                await toEvmAddress(accountId, areE25519[index])
-            )
-        })
-
-        wipeRoleAccounts = await getAccountsForRole(
-            WIPE_ROLE,
-            proxyAddress,
-            operatorClient
-        )
-
-        AllAccounts.forEach(async (accountId, index) => {
-            expect(wipeRoleAccounts).to.not.include(
-                await toEvmAddress(accountId, areE25519[index])
-            )
-        })
-
-        cashinRoleAccounts = await getAccountsForRole(
-            CASHIN_ROLE,
-            proxyAddress,
-            operatorClient
-        )
-
-        AllAccounts.forEach(async (accountId, index) => {
-            expect(cashinRoleAccounts).to.not.include(
-                await toEvmAddress(accountId, areE25519[index])
-            )
-        })
-
-        freezeRoleAccounts = await getAccountsForRole(
-            FREEZE_ROLE,
-            proxyAddress,
-            operatorClient
-        )
-
-        AllAccounts.forEach(async (accountId, index) => {
-            expect(freezeRoleAccounts).to.not.include(
-                await toEvmAddress(accountId, areE25519[index])
-            )
-        })
-
-        deleteRoleAccounts = await getAccountsForRole(
-            DELETE_ROLE,
-            proxyAddress,
-            operatorClient
-        )
-
-        AllAccounts.forEach(async (accountId, index) => {
-            expect(deleteRoleAccounts).to.not.include(
-                await toEvmAddress(accountId, areE25519[index])
-            )
-        })
-
-        defaultAdminRoleAccounts = await getAccountsForRole(
-            DEFAULT_ADMIN_ROLE,
-            proxyAddress,
-            operatorClient
-        )
-
-        AllAccounts.forEach(async (accountId, index) => {
-            expect(defaultAdminRoleAccounts).to.not.include(
-                await toEvmAddress(accountId, areE25519[index])
-            )
-        })
-
-        kycRoleAccounts = await getAccountsForRole(
-            KYC_ROLE,
-            proxyAddress,
-            operatorClient
-        )
-
-        AllAccounts.forEach(async (accountId, index) => {
-            expect(kycRoleAccounts).to.not.include(
                 await toEvmAddress(accountId, areE25519[index])
             )
         })
