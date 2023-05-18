@@ -47,6 +47,8 @@ import {
   Account,
   GetPublicKeyRequest,
   GetAccountsWithRolesRequest,
+  ChangeProxyOwnerRequest,
+  UpgradeImplementationRequest,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
@@ -68,6 +70,9 @@ import TransfersStableCoinsService from './TransfersStableCoinService.js';
 // import { IManagedFeatures } from '../../../domain/configuration/interfaces/IManagedFeatures.js';
 import colors from 'colors';
 import UpdateStableCoinService from './UpdateStableCoinService.js';
+import OwnerProxyService from '../proxy/OwnerProxyService.js';
+import ConfigurationProxyService from '../proxy/ConfigurationProxyService.js';
+import ImplementationProxyService from '../proxy/ImplementationProxyService.js';
 
 enum tokenKeys {
   admin,
@@ -523,7 +528,7 @@ export default class OperationStableCoinService extends Service {
         break;
       case language.getText('wizard.stableCoinOptions.Configuration'):
         await utilsService.cleanAndShowBanner();
-        await this.tokenConfiguration();
+        await this.configuration();
         break;
       case language.getText('wizard.stableCoinOptions.DangerZone'):
         await utilsService.cleanAndShowBanner();
@@ -1916,14 +1921,8 @@ export default class OperationStableCoinService extends Service {
       contractKeys.push(tokenKeys.supply);
 
     return contractKeys;
-  } /*
-  const accounts = await Role.getAccountsWithRole(
-    new GetAccountsWithRolesRequest({
-      roleId: StableCoinRole.PAUSE_ROLE,
-      tokenId: HederaId.from(stableCoinSC?.tokenId?.toString()) ?? HederaId.from('')
+  }
 
-    }),
-  );*/
   private async getAccountsWithRole(role: string): Promise<void> {
     const request = new GetAccountsWithRolesRequest({
       roleId: role,
@@ -2182,6 +2181,33 @@ export default class OperationStableCoinService extends Service {
       : capabilitiesFilter;
 
     return result.concat(language.getArrayFromObject('wizard.returnOption'));
+  }
+
+  private async filterConfigurationOptions(
+    options: string[],
+  ): Promise<string[]> {
+    const proxyConfig =
+      await new ConfigurationProxyService().getProxyconfiguration(
+        this.stableCoinId,
+      );
+
+    const configAccount = utilsService.getCurrentAccount();
+
+    if (proxyConfig.owner.toString() === configAccount.accountId)
+      return options;
+
+    let filteredOptions: string[] = [];
+
+    filteredOptions = options.filter((option) => {
+      if (
+        option ===
+        language.getText('stableCoinConfiguration.options.proxyConfiguration')
+      )
+        return false;
+      return true;
+    });
+
+    return filteredOptions;
   }
 
   private filterKYCMenuOptions(
@@ -2490,6 +2516,128 @@ export default class OperationStableCoinService extends Service {
     return await this.roleStableCoinService.checkCashInRoleStableCoin(req);
   }
 
+  private async configuration(): Promise<void> {
+    const configurationOptions = language.getArrayFromObject(
+      'stableCoinConfiguration.options',
+    );
+
+    const configurationOptionsFiltered = await this.filterConfigurationOptions(
+      configurationOptions,
+    );
+
+    switch (
+      await utilsService.defaultMultipleAsk(
+        language.getText('stableCoinConfiguration.askConfiguration'),
+        configurationOptionsFiltered,
+        false,
+      )
+    ) {
+      case language.getText(
+        'stableCoinConfiguration.options.proxyConfiguration',
+      ):
+        await this.stableCoinConfiguration();
+        break;
+
+      case language.getText(
+        'stableCoinConfiguration.options.tokenConfiguration',
+      ):
+        await this.tokenConfiguration();
+        break;
+
+      case configurationOptions[configurationOptions.length - 1]:
+      default:
+        await utilsService.cleanAndShowBanner();
+        await this.operationsStableCoin();
+    }
+  }
+
+  private async stableCoinConfiguration(): Promise<void> {
+    const proxyConfigurationOptions = language.getArrayFromObject(
+      'proxyConfiguration.options',
+    );
+
+    switch (
+      await utilsService.defaultMultipleAsk(
+        language.getText('proxyConfiguration.askProxyConfiguration'),
+        proxyConfigurationOptions,
+        false,
+      )
+    ) {
+      case language.getText('proxyConfiguration.options.implementation'):
+        await this.upgradeImplementationFlow();
+        break;
+
+      case language.getText('proxyConfiguration.options.owner'):
+        await this.changeOwnerFlow();
+        break;
+
+      case proxyConfigurationOptions[proxyConfigurationOptions.length - 1]:
+      default:
+        await utilsService.cleanAndShowBanner();
+        await this.configuration();
+    }
+  }
+
+  private async upgradeImplementationFlow(): Promise<void> {
+    const configAccount = utilsService.getCurrentAccount();
+
+    await utilsService.cleanAndShowBanner();
+    utilsService.displayCurrentUserInfo(
+      configAccount,
+      this.stableCoinWithSymbol,
+    );
+
+    const upgradeImplementationRequest = new UpgradeImplementationRequest({
+      tokenId: this.stableCoinId,
+      implementationAddress: '',
+    });
+
+    try {
+      await new ImplementationProxyService().upgradeImplementationOwner(
+        upgradeImplementationRequest,
+      );
+    } catch (error) {
+      await utilsService.askErrorConfirmation(
+        async () => await this.stableCoinConfiguration(),
+        error,
+      );
+    }
+  }
+
+  private async changeOwnerFlow(): Promise<void> {
+    const configAccount = utilsService.getCurrentAccount();
+
+    await utilsService.cleanAndShowBanner();
+    utilsService.displayCurrentUserInfo(
+      configAccount,
+      this.stableCoinWithSymbol,
+    );
+
+    const changeProxyOwnerRequest = new ChangeProxyOwnerRequest({
+      tokenId: this.stableCoinId,
+      targetId: '',
+    });
+
+    await utilsService.handleValidation(
+      () => changeProxyOwnerRequest.validate('targetId'),
+      async () => {
+        changeProxyOwnerRequest.targetId = await utilsService.defaultSingleAsk(
+          language.getText('proxyConfiguration.askNewOwner'),
+          '0.0.0',
+        );
+      },
+    );
+
+    try {
+      await new OwnerProxyService().changeProxyOwner(changeProxyOwnerRequest);
+    } catch (error) {
+      await utilsService.askErrorConfirmation(
+        async () => await this.stableCoinConfiguration(),
+        error,
+      );
+    }
+  }
+
   private async tokenConfiguration(): Promise<void> {
     const updateRequest = new UpdateRequest({ tokenId: this.stableCoinId });
     const stableCoinViewModel: StableCoinViewModel =
@@ -2640,7 +2788,7 @@ export default class OperationStableCoinService extends Service {
         );
         if (filtered.length === 0) {
           await utilsService.cleanAndShowBanner();
-          await this.operationsStableCoin();
+          await this.configuration();
         }
         const goBack = await utilsService.defaultConfirmAsk(
           language.getText('tokenConfiguration.goBack'),
@@ -2648,14 +2796,14 @@ export default class OperationStableCoinService extends Service {
         );
         if (goBack) {
           await utilsService.cleanAndShowBanner();
-          await this.operationsStableCoin();
+          await this.configuration();
         }
         break;
 
       case tokenConfigurationOptions[tokenConfigurationOptions.length - 1]:
       default:
         await utilsService.cleanAndShowBanner();
-        await this.operationsStableCoin();
+        await this.configuration();
     }
     await this.tokenConfigurationCollectData(
       updateRequest,

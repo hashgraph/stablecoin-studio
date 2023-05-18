@@ -61,6 +61,8 @@ import { SetNetworkCommandHandler } from '../app/usecase/command/network/setNetw
 import { addFixedFeesCommandHandler } from '../app/usecase/command/stablecoin/fees/addCustomFees/addFixedFeesCommandHandler.js';
 import { addFractionalFeesCommandHandler } from '../app/usecase/command/stablecoin/fees/addCustomFees/addFractionalFeesCommandHandler.js';
 import { UpdateCustomFeesCommandHandler } from '../app/usecase/command/stablecoin/fees/updateCustomFees/UpdateCustomFeesCommandHandler.js';
+import { UpgradeImplementationCommandHandler } from '../app/usecase/command/proxy/upgrade/UpgradeImplementationCommandHandler.js';
+import { ChangeOwnerCommandHandler } from '../app/usecase/command/proxy/changeOwner/ChangeOwnerCommandHandler.js';
 
 import { WalletEvents } from '../app/service/event/WalletEvent.js';
 import { CommandHandlerType } from './command/CommandBus.js';
@@ -91,6 +93,7 @@ import { SDK } from '../port/in/Common.js';
 import { SetConfigurationCommandHandler } from '../app/usecase/command/network/setConfiguration/SetConfigurationCommandHandler.js';
 import { GetTokenManagerListQueryHandler } from '../app/usecase/query/factory/getTokenManagerList/GetTokenManagerListQueryHandler.js';
 import { GetAccountsWithRolesQueryHandler } from '../app/usecase/query/stablecoin/roles/getAccountsWithRole/GetAccountsWithRolesQueryHandler.js';
+import { GetProxyConfigQueryHandler } from '../app/usecase/query/proxy/GetProxyConfigQueryHandler.js';
 
 export const TOKENS = {
 	COMMAND_HANDLER: Symbol('CommandHandler'),
@@ -249,6 +252,14 @@ const COMMAND_HANDLERS = [
 		token: TOKENS.COMMAND_HANDLER,
 		useClass: UpdateReserveAmountCommandHandler,
 	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: UpgradeImplementationCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: ChangeOwnerCommandHandler,
+	},
 ];
 
 const QUERY_HANDLERS = [
@@ -311,6 +322,10 @@ const QUERY_HANDLERS = [
 	{
 		token: TOKENS.QUERY_HANDLER,
 		useClass: GetTokenManagerListQueryHandler,
+	},
+	{
+		token: TOKENS.QUERY_HANDLER,
+		useClass: GetProxyConfigQueryHandler,
 	},
 ];
 

@@ -245,6 +245,9 @@ export class MirrorNodeAdapter {
 			const proxyAddress = response.data.memo
 				? StableCoinMemo.fromJson(response.data.memo).proxyContract
 				: '0.0.0';
+			const proxyAdminAddress = response.data.memo
+				? StableCoinMemo.fromJson(response.data.memo).proxyAdminContract
+				: '0.0.0';
 			const stableCoinDetail: StableCoinViewModel = {
 				tokenId: HederaId.from(response.data.token_id),
 				name: response.data.name ?? '',
@@ -269,8 +272,12 @@ export class MirrorNodeAdapter {
 					  )
 					: undefined,
 				proxyAddress: new ContractId(proxyAddress),
+				proxyAdminAddress: new ContractId(proxyAdminAddress),
 				evmProxyAddress: EvmAddress.fromContractId(
 					new ContractId(proxyAddress),
+				),
+				evmProxyAdminAddress: EvmAddress.fromContractId(
+					new ContractId(proxyAdminAddress),
 				),
 				treasury: HederaId.from(response.data.treasury_account_id),
 				paused: response.data.pause_status === 'PAUSED',

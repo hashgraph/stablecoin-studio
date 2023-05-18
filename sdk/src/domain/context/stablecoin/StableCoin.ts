@@ -71,7 +71,9 @@ export interface StableCoinProps {
 	maxSupply?: BigDecimal;
 	memo?: string;
 	proxyAddress?: HederaId;
+	proxyAdminAddress?: HederaId;
 	evmProxyAddress?: EvmAddress;
+	evmProxyAdminAddress?: EvmAddress;
 	freezeKey?: PublicKey | ContractId;
 	freezeDefault?: boolean;
 	kycKey?: PublicKey | ContractId;
@@ -111,7 +113,9 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 	maxSupply?: BigDecimal;
 	memo?: string;
 	proxyAddress?: HederaId;
+	proxyAdminAddress?: HederaId;
 	evmProxyAddress?: EvmAddress;
+	evmProxyAdminAddress?: EvmAddress;
 	freezeKey?: PublicKey | ContractId;
 	freezeDefault?: boolean;
 	kycKey?: PublicKey | ContractId;
@@ -167,7 +171,9 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 			deleted,
 			paused,
 			evmProxyAddress,
+			evmProxyAdminAddress,
 			proxyAddress,
+			proxyAdminAddress,
 			customFees,
 			burnRoleAccount,
 			wipeRoleAccount,
@@ -209,7 +215,9 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 		this.paused = paused ?? false;
 		this.deleted = deleted ?? false;
 		this.evmProxyAddress = evmProxyAddress;
+		this.evmProxyAdminAddress = evmProxyAdminAddress;
 		this.proxyAddress = proxyAddress;
+		this.proxyAdminAddress = proxyAdminAddress;
 		this.customFees = customFees;
 		this.burnRoleAccount = burnRoleAccount ?? HederaId.from('0.0.0');
 		this.wipeRoleAccount = wipeRoleAccount ?? HederaId.from('0.0.0');
