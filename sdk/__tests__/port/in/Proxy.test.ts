@@ -133,6 +133,13 @@ describe('🧪 Proxy test', () => {
 		expect(proxyConfig.implementationAddress.toString()).toBe(
 			contracts[0].toString(),
 		);
+
+		await Proxy.upgradeImplementation(
+			new UpgradeImplementationRequest({
+				tokenId: stableCoinSC?.tokenId!.toString(),
+				implementationAddress: HEDERA_TOKEN_MANAGER_ADDRESS,
+			}),
+		);
 	}, 60_000);
 
 	it('Changes proxy owner', async () => {
@@ -162,6 +169,35 @@ describe('🧪 Proxy test', () => {
 
 		expect(proxyConfig.owner.toString()).toBe(
 			CLIENT_ACCOUNT_ECDSA.id.toString(),
+		);
+
+		await Network.connect(
+			new ConnectRequest({
+				account: {
+					accountId: CLIENT_ACCOUNT_ECDSA.id.toString(),
+					privateKey: CLIENT_ACCOUNT_ECDSA.privateKey,
+				},
+				network: 'testnet',
+				wallet: SupportedWallets.CLIENT,
+			}),
+		);
+
+		await Proxy.changeProxyOwner(
+			new ChangeProxyOwnerRequest({
+				tokenId: stableCoinSC?.tokenId!.toString(),
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+			}),
+		);
+
+		await Network.connect(
+			new ConnectRequest({
+				account: {
+					accountId: CLIENT_ACCOUNT_ED25519.id.toString(),
+					privateKey: CLIENT_ACCOUNT_ED25519.privateKey,
+				},
+				network: 'testnet',
+				wallet: SupportedWallets.CLIENT,
+			}),
 		);
 	}, 60_000);
 });
