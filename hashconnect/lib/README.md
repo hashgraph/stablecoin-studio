@@ -109,8 +109,8 @@ You need to define some metadata so wallets can display what app is requesting a
 
 ```js
 let appMetadata: HashConnectTypes.AppMetadata = {
-    name: "dApp Example",
-    description: "An example hedera dApp",
+    name: "DApp Example",
+    description: "An example Hedera DApp",
     icon: "https://absolute.url/to/icon.png"
 }
 ```

@@ -38,7 +38,7 @@
 		"createSC": "Create coin",
 		"alertNoEnv": "You have not configured a factory address. Without it you can not create a stable coin.",
 		"alertNoEnvLink": "Go to documentation",
-		"alertNotHederaAccount": "Not an Hedera Account in this network",
+		"alertNotHederaAccount": "Not a Hedera Account in this network",
 		"alertNotHederaNetwork": "Current network is not an hedera network"
 	},
 	"sidebar": {
