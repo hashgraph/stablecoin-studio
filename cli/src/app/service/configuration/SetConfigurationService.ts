@@ -25,11 +25,12 @@ export default class SetConfigurationService extends Service {
     super('Set Configuration');
   }
   private ZERO_ADDRESS = '0.0.0';
-  private HEDERA_MIRROR_NODE_TESTNET = 'https://testnet.mirrornode.hedera.com';
+  private HEDERA_MIRROR_NODE_TESTNET =
+    'https://testnet.mirrornode.hedera.com/api/v1/';
   private HEDERA_MIRROR_NODE_PREVIEWNET =
-    'https://previewnet.mirrornode.hedera.com';
+    'https://previewnet.mirrornode.hedera.com/api/v1/';
   private HEDERA_MIRROR_NODE_MAINNET =
-    'https://mainnet-public.mirrornode.hedera.com';
+    'https://mainnet-public.mirrornode.hedera.com/api/v1/';
 
   /**
    * Initialise the configuration for first time or with "init" command
@@ -339,7 +340,7 @@ export default class SetConfigurationService extends Service {
       const mirror = {
         name: name,
         network: network,
-        baseUrl: base_url,
+        baseUrl: base_url.slice(-1) === '/' ? base_url : base_url + '/',
         apiKey: undefined,
         headerName: undefined,
         selected: false,
