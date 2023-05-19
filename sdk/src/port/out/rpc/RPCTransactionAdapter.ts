@@ -1367,10 +1367,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					console.error('Factories could not be found in .env');
 				}
 			}
-			if (process.env.MIRROR_NODE_SERVICES) {
+			if (process.env.REACT_APP_MIRROR_NODE) {
 				try {
 					const mirrorNodes = JSON.parse(
-						process.env.MIRROR_NODE_SERVICES,
+						process.env.REACT_APP_MIRROR_NODE,
 					);
 					const result = mirrorNodes.find(
 						(i: any) => i.Environment === metamaskNetwork.network,

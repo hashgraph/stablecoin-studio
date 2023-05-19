@@ -50,7 +50,6 @@ export class SetNetworkCommandHandler
 		if (command.rpcNode) this.networkService.rpcNode = command.rpcNode;
 
 		// Init Mirror Node Adapter
-		// this.mirrorNodeAdapter.setURL(command.mirrorNode.baseUrl);
 		this.mirrorNodeAdapter.set(command.mirrorNode);
 		this.networkService.mirrorNode = command.mirrorNode;
 

@@ -58,16 +58,6 @@ import { MirrorNode } from '../../../domain/context/network/MirrorNode.js';
 export class MirrorNodeAdapter {
 	private instance: AxiosInstance;
 	private mirrorNodeConfig: MirrorNode;
-	// private URI_BASE: string;
-
-	/* public setURL(baseUrl: string): void {
-		this.URI_BASE = baseUrl;
-		this.instance = axios.create({
-			validateStatus: function (status: number) {
-				return (status >= 200 && status < 300) || status == 404;
-			},
-		});
-	} */
 
 	public set(mnConfig: MirrorNode): void {
 		this.mirrorNodeConfig = mnConfig;
