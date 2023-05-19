@@ -65,7 +65,7 @@ export default class ImplementationProxyService extends Service {
     if (versionSelection === language.getText('wizard.backOption.goBack')) {
       return false;
     } else if (
-      versionSelection === filteredChoices[filteredChoices.length - 2]
+      versionSelection === filteredChoices[filteredChoices.length - 1]
     ) {
       await utilsService.handleValidation(
         () => request.validate('implementationAddress'),
