@@ -131,16 +131,16 @@ export default class OperationStableCoinService extends Service {
             }),
           ),
           true,
-          configurationService.getConfiguration()?.defaultNetwork,
-          `${configAccount.accountId} - ${configAccount.alias}`,
-          this.stableCoinPaused,
-          this.stableCoinDeleted,
+          {
+            network: configurationService.getConfiguration()?.defaultNetwork,
+            account: `${configAccount.accountId} - ${configAccount.alias}`,
+            tokenPaused: this.stableCoinPaused,
+            tokenDeleted: this.stableCoinDeleted,
+          }
         );
         this.stableCoinWithSymbol =
           this.stableCoinId.split(' - ').length === 3
-            ? `${this.stableCoinId.split(' - ')[0]} - ${
-                this.stableCoinId.split(' - ')[1]
-              }`
+            ? `${this.stableCoinId.split(' - ')[0]} - ${this.stableCoinId.split(' - ')[1]}`
             : this.stableCoinId;
         this.stableCoinId = this.stableCoinId.split(' - ')[0];
         this.stableCoinSymbol = this.stableCoinWithSymbol.split('-')[1];
@@ -207,20 +207,22 @@ export default class OperationStableCoinService extends Service {
     );
 
     switch (
-      await utilsService.defaultMultipleAsk(
-        language.getText('stablecoin.askDoSomething'),
-        this.filterMenuOptions(
-          wizardOperationsStableCoinOptions,
-          capabilitiesStableCoin,
-          await this.getRolesAccount(),
-        ),
-        false,
-        configAccount.network,
-        `${currentAccount.accountId} - ${configAccount.alias}`,
-        this.stableCoinWithSymbol,
-        this.stableCoinPaused,
-        this.stableCoinDeleted,
-      )
+    await utilsService.defaultMultipleAsk(
+      language.getText('stablecoin.askDoSomething'),
+      this.filterMenuOptions(
+        wizardOperationsStableCoinOptions,
+        capabilitiesStableCoin,
+        await this.getRolesAccount(),
+      ),
+      false,
+      {
+        network: configAccount.network,
+        account: `${currentAccount.accountId} - ${configAccount.alias}`,
+        token: this.stableCoinWithSymbol,
+        tokenPaused: this.stableCoinPaused,
+        tokenDeleted: this.stableCoinDeleted,
+      }
+    )
     ) {
       case language.getText('wizard.stableCoinOptions.Send'):
         await utilsService.cleanAndShowBanner();
@@ -696,16 +698,18 @@ export default class OperationStableCoinService extends Service {
     );
 
     switch (
-      await utilsService.defaultMultipleAsk(
-        language.getText('stablecoin.askAction'),
-        kycOptionsFiltered,
-        true,
-        configAccount.network,
-        `${configAccount.accountId} - ${configAccount.alias}`,
-        this.stableCoinWithSymbol,
-        this.stableCoinPaused,
-        this.stableCoinDeleted,
-      )
+    await utilsService.defaultMultipleAsk(
+      language.getText('stablecoin.askAction'),
+      kycOptionsFiltered,
+      true,
+      {
+        network: configAccount.network,
+        account: `${configAccount.accountId} - ${configAccount.alias}`,
+        token: this.stableCoinWithSymbol,
+        tokenPaused: this.stableCoinPaused,
+        tokenDeleted: this.stableCoinDeleted,
+      }
+    )
     ) {
       case language.getText('kycManagement.options.GrantKYC'):
         await utilsService.cleanAndShowBanner();
@@ -835,16 +839,18 @@ export default class OperationStableCoinService extends Service {
     );
 
     switch (
-      await utilsService.defaultMultipleAsk(
-        language.getText('stablecoin.askAction'),
-        freezeOptionsFiltered,
-        true,
-        configAccount.network,
-        `${configAccount.accountId} - ${configAccount.alias}`,
-        this.stableCoinWithSymbol,
-        this.stableCoinPaused,
-        this.stableCoinDeleted,
-      )
+    await utilsService.defaultMultipleAsk(
+      language.getText('stablecoin.askAction'),
+      freezeOptionsFiltered,
+      true,
+      {
+        network: configAccount.network,
+        account: `${configAccount.accountId} - ${configAccount.alias}`,
+        token: this.stableCoinWithSymbol,
+        tokenPaused: this.stableCoinPaused,
+        tokenDeleted: this.stableCoinDeleted,
+      }
+    )
     ) {
       case language.getText('freezeManagement.options.Freeze'):
         await utilsService.cleanAndShowBanner();
@@ -998,16 +1004,18 @@ export default class OperationStableCoinService extends Service {
 
     // const accountTarget = '0.0.0';
     switch (
-      await utilsService.defaultMultipleAsk(
-        language.getText('stablecoin.askAction'),
-        feeManagementOptionsFiltered,
-        false,
-        configAccount.network,
-        `${configAccount.accountId} - ${configAccount.alias}`,
-        this.stableCoinWithSymbol,
-        this.stableCoinPaused,
-        this.stableCoinDeleted,
-      )
+    await utilsService.defaultMultipleAsk(
+      language.getText('stablecoin.askAction'),
+      feeManagementOptionsFiltered,
+      false,
+      {
+        network: configAccount.network,
+        account: `${configAccount.accountId} - ${configAccount.alias}`,
+        token: this.stableCoinWithSymbol,
+        tokenPaused: this.stableCoinPaused,
+        tokenDeleted: this.stableCoinDeleted,
+      }
+    )
     ) {
       case language.getText('feeManagement.options.Create'):
         await utilsService.cleanAndShowBanner();
@@ -1378,16 +1386,18 @@ export default class OperationStableCoinService extends Service {
 
     const accountTarget = '0.0.0';
     switch (
-      await utilsService.defaultMultipleAsk(
-        language.getText('stablecoin.askAction'),
-        roleManagementOptionsFiltered,
-        false,
-        configAccount.network,
-        `${configAccount.accountId} - ${configAccount.alias}`,
-        this.stableCoinWithSymbol,
-        this.stableCoinPaused,
-        this.stableCoinDeleted,
-      )
+    await utilsService.defaultMultipleAsk(
+      language.getText('stablecoin.askAction'),
+      roleManagementOptionsFiltered,
+      false,
+      {
+        network: configAccount.network,
+        account: `${configAccount.accountId} - ${configAccount.alias}`,
+        token: this.stableCoinWithSymbol,
+        tokenPaused: this.stableCoinPaused,
+        tokenDeleted: this.stableCoinDeleted,
+      }
+    )
     ) {
       case language.getText(
         'wizard.roleManagementOptions.CheckAccountsWithRole',
@@ -1399,16 +1409,18 @@ export default class OperationStableCoinService extends Service {
         );
 
         switch (
-          await utilsService.defaultMultipleAsk(
-            language.getText('roleManagement.askRolesForAccount'),
-            checkAccountsWithRoleOptions,
-            false,
-            configAccount.network,
-            `${configAccount.accountId} - ${configAccount.alias}`,
-            this.stableCoinWithSymbol,
-            this.stableCoinPaused,
-            this.stableCoinDeleted,
-          )
+        await utilsService.defaultMultipleAsk(
+          language.getText('roleManagement.askRolesForAccount'),
+          checkAccountsWithRoleOptions,
+          false,
+          {
+            network: configAccount.network,
+            account: `${configAccount.accountId} - ${configAccount.alias}`,
+            token: this.stableCoinWithSymbol,
+            tokenPaused: this.stableCoinPaused,
+            tokenDeleted: this.stableCoinDeleted,
+          }
+        )
         ) {
           case language.getText('wizard.CheckAccountsWithRoleOptions.Admin'):
             await this.getAccountsWithRole(StableCoinRole.DEFAULT_ADMIN_ROLE);
@@ -1487,16 +1499,18 @@ export default class OperationStableCoinService extends Service {
           'roleManagement.editAction',
         );
         switch (
-          await utilsService.defaultMultipleAsk(
-            language.getText('roleManagement.askRole'),
-            editOptions,
-            false,
-            configAccount.network,
-            `${currentAccount.accountId} - ${configAccount.alias}`,
-            this.stableCoinWithSymbol,
-            this.stableCoinPaused,
-            this.stableCoinDeleted,
-          )
+        await utilsService.defaultMultipleAsk(
+          language.getText('roleManagement.askRole'),
+          editOptions,
+          false,
+          {
+            network: configAccount.network,
+            account: `${currentAccount.accountId} - ${configAccount.alias}`,
+            token: this.stableCoinWithSymbol,
+            tokenPaused: this.stableCoinPaused,
+            tokenDeleted: this.stableCoinDeleted,
+          }
+        )
         ) {
           case editOptions[0]:
             await utilsService.cleanAndShowBanner();
@@ -2919,9 +2933,7 @@ export default class OperationStableCoinService extends Service {
         default:
           console.log(
             colors.yellow(
-              `${element[0]}: ${stableCoinViewModel[element[0]]} --> ${
-                element[1]
-              }`,
+              `${element[0]}: ${stableCoinViewModel[element[0]]} --> ${element[1]}`,
             ),
           );
       }
@@ -3047,16 +3059,18 @@ export default class OperationStableCoinService extends Service {
 
     // const accountTarget = '0.0.0';
     switch (
-      await utilsService.defaultMultipleAsk(
-        language.getText('stablecoin.askAction'),
-        dangerZoneOptionsFiltered,
-        false,
-        configAccount.network,
-        `${configAccount.accountId} - ${configAccount.alias}`,
-        this.stableCoinWithSymbol,
-        this.stableCoinPaused,
-        this.stableCoinDeleted,
-      )
+    await utilsService.defaultMultipleAsk(
+      language.getText('stablecoin.askAction'),
+      dangerZoneOptionsFiltered,
+      false,
+      {
+        network: configAccount.network,
+        account: `${configAccount.accountId} - ${configAccount.alias}`,
+        token: this.stableCoinWithSymbol,
+        tokenPaused: this.stableCoinPaused,
+        tokenDeleted: this.stableCoinDeleted,
+      }
+    )
     ) {
       case language.getText('dangerZone.options.Pause'):
         const confirmPause = await utilsService.defaultConfirmAsk(

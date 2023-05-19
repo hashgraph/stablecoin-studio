@@ -26,13 +26,15 @@ export default class ManageImportedTokenService extends Service {
     const currentAccount = utilsService.getCurrentAccount();
     let symbol = '';
     switch (
-      await utilsService.defaultMultipleAsk(
-        language.getText('wizard.importedTokenMenu'),
-        manageOptions,
-        false,
-        currentAccount.network,
-        `${currentAccount.accountId} - ${currentAccount.alias}`,
-      )
+    await utilsService.defaultMultipleAsk(
+      language.getText('wizard.importedTokenMenu'),
+      manageOptions,
+      false,
+      {
+        network: currentAccount.network,
+        account: `${currentAccount.accountId} - ${currentAccount.alias}`
+      }
+    )
     ) {
       case language.getText('wizard.manageImportedTokens.Add'):
         await utilsService.cleanAndShowBanner();

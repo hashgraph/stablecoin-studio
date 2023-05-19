@@ -66,15 +66,15 @@ export default class SetConfigurationService extends Service {
     );
     if (configDefaultMirrorsAndRPCs) {
       await this.configureDefaultMirrorsAndRPCs();
-    } else {  
+    } else {
         utilsService.showMessage(
           language.getText('configuration.MirrorsConfigurationMessage'),
         );
         await this.configureMirrors();
-        
+
         utilsService.showMessage(
           language.getText('configuration.RPCsConfigurationMessage'),
-        );          
+        );
         await this.configureRPCs();
     }
   }
@@ -241,6 +241,144 @@ export default class SetConfigurationService extends Service {
     defaultCfgData.accounts = accounts;
     configurationService.setConfiguration(defaultCfgData);
     return accounts;
+  }
+
+  /**
+   * Function to configure a new mirror node
+   */
+  public async configureMirrorNode(_network?: string): Promise<IMirrorsConfig[]> {
+    const configuration = configurationService.getConfiguration();
+    const mirrors: IMirrorsConfig[] = configuration?.mirrors || [];
+    let moreAccounts = true;
+
+    while (moreAccounts) {
+      utilsService.showMessage(
+        language.getText('configuration.mirrorNodeConfigurationMessage'),
+      );
+
+      let name = await utilsService.defaultSingleAsk(
+        language.getText('configuration.askName'),
+        'Mirror Node',
+      );
+      while (mirrors.some((mirror) => mirror.name === name && mirror.network === _network)) {
+        utilsService.showError(
+          language.getText('configuration.nameAlreadyInUse', {
+            name,
+          }),
+        );
+        name = await utilsService.defaultSingleAsk(
+          language.getText('configuration.askName'),
+          'Mirror Node',
+        );
+      }
+
+      let baseUrl = await utilsService.defaultSingleAsk(
+        language.getText('configuration.askBaseUrl'),
+        'Base Url',
+      );
+      while (mirrors.some((mirror) => mirror.baseUrl === baseUrl)) {
+        utilsService.showError(
+          language.getText('configuration.baseUrlAlreadyInUse', {
+            baseUrl,
+          }),
+        );
+        baseUrl = await utilsService.defaultSingleAsk(
+          language.getText('configuration.askBaseUrl'),
+          'Base Url',
+        );
+      }
+
+      let apiKey = '';
+      let headerName = '';
+      const addKey = await utilsService.defaultConfirmAsk(
+        language.getText('configuration.askNeedApiKey'),
+        false,
+      );
+      if (addKey) {
+        apiKey = await utilsService.defaultSingleAsk(
+          language.getText('configuration.askApiKey'),
+          '12345',
+        );
+        headerName = await utilsService.defaultSingleAsk(
+          language.getText('configuration.askHeaderName'),
+          'x-api-key',
+        );
+      }
+
+      const newMirror = {
+        name: name,
+        network: _network,
+        baseUrl: baseUrl,
+        selected: false,
+        apiKey: apiKey,
+        headerName: headerName
+      }
+      mirrors.push(newMirror);
+
+      utilsService.showMessage(language.getText('configuration.mirrorNodeAdded'));
+      console.dir(newMirror), {
+        depth: null,
+      };
+
+      moreAccounts = await utilsService.defaultConfirmAsk(
+        language.getText('configuration.askMoreMirrorNodes'),
+        false,
+      );
+    }
+
+    // Set mirrors
+    configuration.mirrors = mirrors;
+    configurationService.setConfiguration(configuration);
+    return mirrors;
+  }
+
+  /**
+   * Function to remove a mirror node
+   */
+  public async removeMirrorNode(_network: string): Promise<void> {
+    const configuration = configurationService.getConfiguration();
+    const currentMirrorNode = utilsService.getCurrentMirror();
+    const mirrors: IMirrorsConfig[] = configuration?.mirrors || [];
+
+    const options = mirrors
+      .filter((mirror) => mirror.name !== currentMirrorNode.name ||
+        mirror.network !== currentMirrorNode.network ||
+        mirror.network !== _network)
+      .map(
+        (mirror) =>
+          `${mirror.name}` + colors.magenta(' (' + mirror.network + ')'),
+      );
+    const optionsWithoutColors = mirrors
+      .filter(
+        (mirror) => mirror.name !== currentMirrorNode.name ||
+          mirror.network !== currentMirrorNode.network ||
+          mirror.network !== _network)
+      .map(
+        (mirror) =>
+          `${mirror.name}` + ' (' + mirror.network + ')',
+      );
+    let mirrorNode = await utilsService.defaultMultipleAsk(
+      language.getText('configuration.mirrorNodeDelete'),
+      options,
+      true,
+    );
+    if (mirrorNode === language.getText('wizard.backOption.goBack')) {
+      await this.manageMirrorNodeMenu(_network);
+    }
+    const AskSureRemove = await utilsService.defaultConfirmAsk(
+      language.getText('configuration.askSureRemove', { mirrorNode }),
+      true,
+    );
+    if (AskSureRemove) {
+      mirrorNode = optionsWithoutColors[options.indexOf(mirrorNode)];
+      const name = mirrorNode.split(' (')[0];
+      const network = mirrorNode.split(' (')[1].split(')')[0];
+      configuration.mirrors = mirrors.filter(
+        (mirror) => mirror.name !== name || mirror.network !== network);
+      configurationService.setConfiguration(configuration);
+      utilsService.showMessage(language.getText('configuration.mirrorNodeDeleted'));
+    }
+    await this.removeMirrorNode(_network);
   }
 
   public async configureFactories(): Promise<IFactoryConfig[]> {
@@ -619,8 +757,10 @@ export default class SetConfigurationService extends Service {
       language.getText('wizard.accountOptions'),
       manageOptions,
       false,
-      currentAccount.network,
-      `${currentAccount.accountId} - ${currentAccount.alias}`,
+      {
+        network: currentAccount.network,
+        account: `${currentAccount.accountId} - ${currentAccount.alias}`
+      }
     );
     switch (accountAction) {
       case language.getText('wizard.manageAccountOptions.Change'):
@@ -699,6 +839,86 @@ export default class SetConfigurationService extends Service {
         await wizardService.configurationMenu();
     }
     await this.manageAccountMenu();
+  }
+
+  /**
+   * Function to configure the default network
+   */
+  public async configureMirrorNodeNetwork(): Promise<void> {
+    const networks = configurationService
+      .getConfiguration()
+      .networks.map((network) => network.name);
+    const network = await utilsService.defaultMultipleAsk(
+      language.getText('wizard.networkManage'),
+      networks,
+    );
+
+    utilsService.showMessage(language.getText('wizard.networkSelected', { network }));
+    await this.manageMirrorNodeMenu(network);
+  }
+
+  public async manageMirrorNodeMenu(_network: string): Promise<void> {
+    const currentAccount = utilsService.getCurrentAccount();
+    const currentMirror = utilsService.getCurrentMirror();
+    const manageOptions = language.getArrayFromObject(
+      'wizard.manageMirrorNodeOptions',
+    );
+    const defaultCfgData = configurationService.getConfiguration();
+    const mirrors = defaultCfgData.mirrors;
+    const mirrorNodeAction = await utilsService.defaultMultipleAsk(
+      language.getText('wizard.mirrorNodeOptions'),
+      manageOptions,
+      false,
+      {
+        network: currentAccount.network,
+        account: `${currentAccount.accountId} - ${currentAccount.alias}`,
+        mirrorNode: currentMirror.name
+      }
+    );
+    switch (mirrorNodeAction) {
+      case language.getText('wizard.manageMirrorNodeOptions.Change'):
+        await utilsService.cleanAndShowBanner();
+
+        await wizardService.chooseMirrorNodeNetwork(false, _network);
+        await utilsService.initSDK();
+        await utilsService.cleanAndShowBanner();
+        await wizardService.mainMenu();
+        break;
+      case language.getText('wizard.manageMirrorNodeOptions.List'):
+        await utilsService.cleanAndShowBanner();
+
+        utilsService.showMessage(language.getText('configuration.mirrorNodeList'));
+        console.dir(utilsService.maskMirrorNodes(mirrors)
+          .filter((mirror) => mirror.network === _network)), {
+          depth: null,
+        };
+        break;
+      case language.getText('wizard.manageMirrorNodeOptions.Add'):
+        await utilsService.cleanAndShowBanner();
+
+        await this.configureMirrorNode(_network);
+        const operateWithNewAccount = await utilsService.defaultConfirmAsk(
+          language.getText('configuration.askOperateWithNewMirrorNode'),
+          true,
+        );
+        if (operateWithNewAccount) {
+          await wizardService.chooseLastMirrorNode();
+          await utilsService.initSDK();
+          await utilsService.cleanAndShowBanner();
+          await wizardService.mainMenu();
+        }
+        break;
+      case language.getText('wizard.manageMirrorNodeOptions.Delete'):
+        await utilsService.cleanAndShowBanner();
+
+        await this.removeMirrorNode(_network);
+        break;
+      default:
+        await utilsService.cleanAndShowBanner();
+
+        await wizardService.configurationMenu();
+    }
+    await this.manageMirrorNodeMenu(_network);
   }
 
   /**

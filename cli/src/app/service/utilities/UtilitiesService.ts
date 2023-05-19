@@ -217,40 +217,51 @@ export default class UtilitiesService extends Service {
     question: string,
     choices: Array<string>,
     goBack?: boolean,
-    network?: string,
-    account?: string,
-    token?: string,
-    tokenPaused?: boolean,
-    tokenDeleted?: boolean,
+    options?: {
+      network?: string,
+      account?: string,
+      token?: string,
+      tokenPaused?: boolean,
+      tokenDeleted?: boolean,
+      mirrorNode?: string
+    }
   ): Promise<string> {
-    if (network) {
+    if (options?.network) {
       question =
         question +
         ' ' +
         colors.underline(colors.bold('Network:')) +
         ' ' +
-        colors.cyan('(' + network + ')');
+        colors.cyan('(' + options.network + ')');
     }
-    if (account) {
+    if (options?.account) {
       question =
         question +
         ' ' +
         colors.underline(colors.bold('Account:')) +
         ' ' +
-        colors.magenta('(' + account + ')');
+        colors.magenta('(' + options.account + ')');
     }
-    if (token) {
+    if (options?.token) {
       question =
         question +
         ' ' +
         colors.underline(colors.bold('Stablecoin:')) +
         ' ' +
-        colors.yellow('(' + token + ')');
+        colors.yellow('(' + options.token + ')');
     }
-    if (tokenPaused) {
+    if (options?.mirrorNode) {
+      question =
+        question +
+        ' ' +
+        colors.underline(colors.bold('Mirror Node:')) +
+        ' ' +
+        colors.blue('(' + options.mirrorNode + ')');
+    }
+    if (options?.tokenPaused) {
       question = question + ' | ' + colors.red('PAUSED');
     }
-    if (tokenDeleted) {
+    if (options?.tokenDeleted) {
       question = question + ' | ' + colors.red('DELETED');
     }
     question = question + '\n';
@@ -435,6 +446,26 @@ export default class UtilitiesService extends Service {
         accountId: acc.accountId,
         network: acc.network,
         alias: acc.alias,
+      };
+    });
+    return result;
+  }
+
+  public maskMirrorNodes(mirrors: IMirrorsConfig[]): IMirrorsConfig[] {
+    const maskJSONOptions = {
+      maskWith: '.',
+      unmaskedStartCharacters: 4,
+      unmaskedEndCharacters: 4,
+    };
+    const result = mirrors.map((mirror) => {
+      if (!mirror.apiKey) {
+        delete mirror.apiKey;
+        delete mirror.headerName;
+        return mirror;
+      }
+      return {
+        ...mirror,
+        apikey: MaskData.maskPassword(mirror.apiKey, maskJSONOptions)
       };
     });
     return result;

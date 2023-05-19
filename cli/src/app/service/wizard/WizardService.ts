@@ -17,6 +17,7 @@ import {
   SetNetworkRequest,
   StableCoinViewModel,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { IMirrorsConfig } from 'domain/configuration/interfaces/IMirrorsConfig.js';
 
 /**
  * Wizard Service
@@ -39,13 +40,15 @@ export default class WizardService extends Service {
       const currentAccount = utilsService.getCurrentAccount();
 
       switch (
-        await utilsService.defaultMultipleAsk(
-          language.getText('wizard.mainMenuTitle'),
-          wizardMainOptions,
-          false,
-          currentAccount.network,
-          `${currentAccount.accountId} - ${currentAccount.alias}`,
-        )
+      await utilsService.defaultMultipleAsk(
+        language.getText('wizard.mainMenuTitle'),
+        wizardMainOptions,
+        false,
+        {
+          network: currentAccount.network,
+          account: `${currentAccount.accountId} - ${currentAccount.alias}`,
+        }
+      )
       ) {
         case language.getText('wizard.mainOptions.Create'):
           await utilsService.cleanAndShowBanner();
@@ -160,7 +163,11 @@ export default class WizardService extends Service {
         await utilsService.cleanAndShowBanner();
 
         await this.setConfigurationService.manageAccountMenu();
-        //utilsService.showMessage(language.getText('wizard.accountsChanged'));
+        break;
+      case language.getText('wizard.changeOptions.ManageMirrorNode'):
+        await utilsService.cleanAndShowBanner();
+
+        await this.setConfigurationService.configureMirrorNodeNetwork();
         break;
       default:
         await utilsService.cleanAndShowBanner();
@@ -233,6 +240,30 @@ export default class WizardService extends Service {
     if (mainMenu) await this.mainMenu();
   }
 
+  public async chooseMirrorNodeNetwork(mainMenu = true, _network: string): Promise<void> {
+    const configuration = configurationService.getConfiguration();
+    const { mirrors } = configuration;
+
+    let selectedMirror: IMirrorsConfig;
+    const selectedMirrors = mirrors.filter((mirror) => _network === mirror.network);
+    if (selectedMirrors.length > 1) {
+      const name = await utilsService.defaultMultipleAsk(
+        language.getText('configuration.selectMirrorNode'),
+        selectedMirrors.map((mirror) => mirror.name),
+        false,
+      );
+      selectedMirror = selectedMirrors.find((mirror) => name === mirror.name)
+    } else {
+      selectedMirror = selectedMirrors[0];
+    }
+    selectedMirror.selected = true;
+    utilsService.setCurrentMirror(selectedMirror);
+
+    configuration.mirrors = mirrors;
+    configurationService.setConfiguration(configuration);
+    if (mainMenu) await this.mainMenu();
+  }
+
   public async chooseLastAccount(): Promise<void> {
     const configuration = configurationService.getConfiguration();
     const { networks, accounts } = configuration;
@@ -242,5 +273,12 @@ export default class WizardService extends Service {
       (network) => currentAccount.network === network.name,
     );
     utilsService.setCurrentNetwotk(currentNetwork);
+  }
+
+  public async chooseLastMirrorNode(): Promise<void> {
+    const configuration = configurationService.getConfiguration();
+    const { mirrors } = configuration;
+    const currentMirror = mirrors[mirrors.length - 1];
+    utilsService.setCurrentMirror(currentMirror);
   }
 }
