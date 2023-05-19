@@ -15,6 +15,7 @@ import {
   SetConfigurationRequest,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { IMirrorsConfig } from 'domain/configuration/interfaces/IMirrorsConfig.js';
+import { IRPCsConfig } from 'domain/configuration/interfaces/IRPCsConfig.js';
 const colors = require('colors');
 
 /**
@@ -25,12 +26,21 @@ export default class SetConfigurationService extends Service {
     super('Set Configuration');
   }
   private ZERO_ADDRESS = '0.0.0';
-  private HEDERA_MIRROR_NODE_TESTNET =
+  private HEDERA_MIRROR_NODE_NAME = 'HEDERA';
+  private HEDERA_MIRROR_NODE_TESTNET_URL =
     'https://testnet.mirrornode.hedera.com/api/v1/';
-  private HEDERA_MIRROR_NODE_PREVIEWNET =
+  private HEDERA_MIRROR_NODE_PREVIEWNET_URL =
     'https://previewnet.mirrornode.hedera.com/api/v1/';
-  private HEDERA_MIRROR_NODE_MAINNET =
+  private HEDERA_MIRROR_NODE_MAINNET_URL =
     'https://mainnet-public.mirrornode.hedera.com/api/v1/';
+  private HEDERA_RPC_NAME = 'HASHIO';
+  private HASHIO_RPC_TESTNET_URL =
+    'https://testnet.hashio.io/api';
+  private HASHIO_RPC_PREVIEWNET_URL =
+    'https://previewnet.hashio.io/api';
+  private HASHIO_RPC_MAINNET_URL =
+    'https://mainnet.hashio.io/api';
+
 
   /**
    * Initialise the configuration for first time or with "init" command
@@ -50,12 +60,22 @@ export default class SetConfigurationService extends Service {
     if (configFactories) {
       await this.configureFactories();
     }
-    const configMirrors = await utilsService.defaultConfirmAsk(
-      language.getText('configuration.askConfigurateMirrors'),
+    const configDefaultMirrorsAndRPCs = await utilsService.defaultConfirmAsk(
+      language.getText('configuration.askConfigurateDefaultMirrorsAndRPCs'),
       true,
     );
-    if (configMirrors) {
-      await this.configureMirrors();
+    if (configDefaultMirrorsAndRPCs) {
+      await this.configureDefaultMirrorsAndRPCs();
+    } else {  
+        utilsService.showMessage(
+          language.getText('configuration.MirrorsConfigurationMessage'),
+        );
+        await this.configureMirrors();
+        
+        utilsService.showMessage(
+          language.getText('configuration.RPCsConfigurationMessage'),
+        );          
+        await this.configureRPCs();
     }
   }
 
@@ -262,6 +282,54 @@ export default class SetConfigurationService extends Service {
     configurationService.setConfiguration(defaultCfgData);
     return factories;
   }
+  public async configureDefaultMirrorsAndRPCs(): Promise<void> {
+    const mirrors: IMirrorsConfig[] = [];
+    mirrors.push(this.getDefaultMirrorByNetwork('testnet'));
+    mirrors.push(this.getDefaultMirrorByNetwork('previewnet'));
+    mirrors.push(this.getDefaultMirrorByNetwork('mainnet'));
+    const rpcs: IMirrorsConfig[] = [];
+    rpcs.push(this.getDefaultRPCByNetwork('testnet'));
+    rpcs.push(this.getDefaultRPCByNetwork('previewnet'));
+    rpcs.push(this.getDefaultRPCByNetwork('mainnet'));
+    const defaultCfgData = configurationService.getConfiguration();
+    defaultCfgData.mirrors = mirrors;
+    defaultCfgData.rpcs = rpcs;
+    configurationService.setConfiguration(defaultCfgData);
+  }
+
+  private getDefaultMirrorByNetwork(network: string): IMirrorsConfig {
+    return {
+      name: this.HEDERA_MIRROR_NODE_NAME,
+      network: network,
+      baseUrl: network === 'testnet'
+        ? this.HEDERA_MIRROR_NODE_TESTNET_URL
+        : network === 'previewnet'
+        ? this.HEDERA_MIRROR_NODE_PREVIEWNET_URL
+        : network === 'mainnet'
+        ? this.HEDERA_MIRROR_NODE_MAINNET_URL
+        : this.HEDERA_MIRROR_NODE_TESTNET_URL,
+      apiKey: undefined,
+      headerName: undefined,
+      selected: true,
+    };
+  }
+
+  private getDefaultRPCByNetwork(network: string): IRPCsConfig {
+    return {
+      name: this.HEDERA_RPC_NAME,
+      network: network,
+      baseUrl: network === 'testnet'
+        ? this.HASHIO_RPC_TESTNET_URL
+        : network === 'previewnet'
+        ? this.HASHIO_RPC_PREVIEWNET_URL
+        : network === 'mainnet'
+        ? this.HASHIO_RPC_MAINNET_URL
+        : this.HASHIO_RPC_TESTNET_URL,
+      apiKey: undefined,
+      headerName: undefined,
+      selected: true,
+    };
+  }
 
   public async configureMirrors(): Promise<IMirrorsConfig[]> {
     const configuration = configurationService.getConfiguration();
@@ -277,7 +345,7 @@ export default class SetConfigurationService extends Service {
 
       let name = await utilsService.defaultSingleAsk(
         language.getText('configuration.askMirrorName'),
-        'HEDERA',
+        this.HEDERA_MIRROR_NODE_NAME,
       );
       while (
         mirrors.filter(
@@ -287,19 +355,19 @@ export default class SetConfigurationService extends Service {
         console.log(language.getText('validations.duplicatedMirrorName'));
         name = await utilsService.defaultSingleAsk(
           language.getText('configuration.askMirrorName'),
-          'HEDERA',
+          this.HEDERA_MIRROR_NODE_NAME,
         );
       }
 
       let base_url = await utilsService.defaultSingleAsk(
         language.getText('configuration.askMirrorUrl'),
         network === 'testnet'
-          ? this.HEDERA_MIRROR_NODE_TESTNET
+          ? this.HEDERA_MIRROR_NODE_TESTNET_URL
           : network === 'previewnet'
-          ? this.HEDERA_MIRROR_NODE_PREVIEWNET
+          ? this.HEDERA_MIRROR_NODE_PREVIEWNET_URL
           : network === 'mainnet'
-          ? this.HEDERA_MIRROR_NODE_MAINNET
-          : this.HEDERA_MIRROR_NODE_TESTNET,
+          ? this.HEDERA_MIRROR_NODE_MAINNET_URL
+          : this.HEDERA_MIRROR_NODE_TESTNET_URL,
       );
       while (
         !/^(http(s):\/\/.)[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)$/.test(
@@ -310,12 +378,12 @@ export default class SetConfigurationService extends Service {
         base_url = await utilsService.defaultSingleAsk(
           language.getText('configuration.askMirrorUrl'),
           network === 'testnet'
-            ? this.HEDERA_MIRROR_NODE_TESTNET
+            ? this.HEDERA_MIRROR_NODE_TESTNET_URL
             : network === 'previewnet'
-            ? this.HEDERA_MIRROR_NODE_PREVIEWNET
+            ? this.HEDERA_MIRROR_NODE_PREVIEWNET_URL
             : network === 'mainnet'
-            ? this.HEDERA_MIRROR_NODE_MAINNET
-            : this.HEDERA_MIRROR_NODE_TESTNET,
+            ? this.HEDERA_MIRROR_NODE_MAINNET_URL
+            : this.HEDERA_MIRROR_NODE_TESTNET_URL,
         );
       }
       while (
@@ -328,12 +396,12 @@ export default class SetConfigurationService extends Service {
         base_url = await utilsService.defaultSingleAsk(
           language.getText('configuration.askMirrorUrl'),
           network === 'testnet'
-            ? this.HEDERA_MIRROR_NODE_TESTNET
+            ? this.HEDERA_MIRROR_NODE_TESTNET_URL
             : network === 'previewnet'
-            ? this.HEDERA_MIRROR_NODE_PREVIEWNET
+            ? this.HEDERA_MIRROR_NODE_PREVIEWNET_URL
             : network === 'mainnet'
-            ? this.HEDERA_MIRROR_NODE_MAINNET
-            : this.HEDERA_MIRROR_NODE_TESTNET,
+            ? this.HEDERA_MIRROR_NODE_MAINNET_URL
+            : this.HEDERA_MIRROR_NODE_TESTNET_URL,
         );
       }
 
@@ -391,11 +459,144 @@ export default class SetConfigurationService extends Service {
       }
     }
 
-    // Set a default factories
     const defaultCfgData = configurationService.getConfiguration();
     defaultCfgData.mirrors = mirrors;
     configurationService.setConfiguration(defaultCfgData);
     return mirrors;
+  }
+
+  public async configureRPCs(): Promise<IRPCsConfig[]> {
+    const configuration = configurationService.getConfiguration();
+    const rpcs: IRPCsConfig[] = [];
+
+    let moreRPCs = true;
+
+    while (moreRPCs) {
+      const network = await utilsService.defaultMultipleAsk(
+        language.getText('configuration.askRPCNetwork'),
+        configuration.networks.map((acc) => acc.name),
+      );
+
+      let name = await utilsService.defaultSingleAsk(
+        language.getText('configuration.askRPCName'),
+        this.HEDERA_RPC_NAME,
+      );
+      while (
+        rpcs.filter(
+          (element) => element.network === network && element.name === name,
+        ).length > 0
+      ) {
+        console.log(language.getText('validations.duplicatedRPCName'));
+        name = await utilsService.defaultSingleAsk(
+          language.getText('configuration.askRPCName'),
+          this.HEDERA_RPC_NAME,
+        );
+      }
+
+      let base_url = await utilsService.defaultSingleAsk(
+        language.getText('configuration.askRPCUrl'),
+        network === 'testnet'
+        ? this.HASHIO_RPC_TESTNET_URL
+        : network === 'previewnet'
+        ? this.HASHIO_RPC_PREVIEWNET_URL
+        : network === 'mainnet'
+        ? this.HASHIO_RPC_MAINNET_URL
+        : this.HASHIO_RPC_TESTNET_URL
+      );
+      while (
+        !/^(http(s):\/\/.)[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)$/.test(
+          base_url,
+        )
+      ) {
+        console.log(language.getText('validations.wrongFormatUrl'));
+        base_url = await utilsService.defaultSingleAsk(
+          language.getText('configuration.askRPCUrl'),
+          network === 'testnet'
+            ? this.HASHIO_RPC_TESTNET_URL
+            : network === 'previewnet'
+            ? this.HASHIO_RPC_PREVIEWNET_URL
+            : network === 'mainnet'
+            ? this.HASHIO_RPC_MAINNET_URL
+            : this.HASHIO_RPC_TESTNET_URL
+        );
+      }
+      while (
+        rpcs.filter(
+          (element) =>
+            element.network === network && element.baseUrl === base_url,
+        ).length > 0
+      ) {
+        console.log(language.getText('validations.duplicatedRPCUrl'));
+        base_url = await utilsService.defaultSingleAsk(
+          language.getText('configuration.askRPCUrl'),
+          network === 'testnet'
+          ? this.HASHIO_RPC_TESTNET_URL
+          : network === 'previewnet'
+          ? this.HASHIO_RPC_PREVIEWNET_URL
+          : network === 'mainnet'
+          ? this.HASHIO_RPC_MAINNET_URL
+          : this.HASHIO_RPC_TESTNET_URL
+        );
+      }
+
+      const rpc = {
+        name: name,
+        network: network,
+        baseUrl: base_url.slice(-1) === '/' ? base_url : base_url + '/',
+        apiKey: undefined,
+        headerName: undefined,
+        selected: false,
+      };
+
+      if (
+        await utilsService.defaultConfirmAsk(
+          language.getText('configuration.askRPCHasApiKey'),
+          true,
+        )
+      ) {
+        rpc.apiKey = await utilsService.defaultSingleAsk(
+          language.getText('configuration.askRPCApiKey'),
+          undefined,
+        );
+
+        rpc.headerName = await utilsService.defaultSingleAsk(
+          language.getText('configuration.askRPCHeaderName'),
+          undefined,
+        );
+      }
+
+      if (
+        await utilsService.defaultConfirmAsk(
+          language.getText('configuration.askRPCSelected'),
+          true,
+        )
+      ) {
+        rpc.selected = true;
+        rpcs
+          .filter(
+            (element) =>
+              element.network === rpc.network && element.selected === true,
+          )
+          .forEach((found) => {
+            found.selected = false;
+          });
+      }
+
+      rpcs.push(rpc);
+
+      const response = await utilsService.defaultConfirmAsk(
+        language.getText('configuration.askMoreRPCs'),
+        true,
+      );
+      if (!response) {
+        moreRPCs = false;
+      }
+    }
+
+    const defaultCfgData = configurationService.getConfiguration();
+    defaultCfgData.rpcs = rpcs;
+    configurationService.setConfiguration(defaultCfgData);
+    return rpcs;
   }
 
   public async setSDKFactory(factoryId: string): Promise<void> {
@@ -603,7 +804,6 @@ export default class SetConfigurationService extends Service {
       consensusNodes: consensusNodes,
     };
     defaultCfgData.networks.push(network);
-
     configurationService.setConfiguration(defaultCfgData);
     utilsService.showMessage('\n');
     return network;

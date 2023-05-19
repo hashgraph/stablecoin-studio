@@ -152,6 +152,7 @@ export default class ConfigurationService extends Service {
       networks: defaultConfigRaw['networks'] as unknown as INetworkConfig[],
       accounts: defaultConfigRaw['accounts'] as unknown as IAccountConfig[],
       mirrors: defaultConfigRaw['mirrors'] as unknown as IMirrorsConfig[],
+      rpcs: defaultConfigRaw['rpcs'] as unknown as IMirrorsConfig[],
       logs: defaultConfigRaw['logs'] as unknown as ILogConfig,
       factories: defaultConfigRaw['factories'] as unknown as IFactoryConfig[],
     };
