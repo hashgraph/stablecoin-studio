@@ -23,6 +23,11 @@ export default class ImplementationProxyService extends Service {
     req: UpgradeImplementationRequest,
     currentImpl: string,
   ): Promise<void> {
+    console.log(
+      language.getText('proxyConfiguration.currentImplementation') +
+        currentImpl,
+    );
+
     const result = await this.askHederaTokenManagerVersion(req, currentImpl);
 
     if (!result) return;

@@ -506,6 +506,7 @@ export const english = {
       'Choose the HederaTokenManager implementation you want to use',
     askNewOwner: 'Enter the new owner account id',
     askProxyConfiguration: 'What do you want to do',
+    currentImplementation: 'Your current implementation is : ',
   },
   tokenConfiguration: {
     askAction: 'What token property do you want to update?',
