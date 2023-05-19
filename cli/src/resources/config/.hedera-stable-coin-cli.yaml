@@ -1,18 +1,9 @@
 defaultNetwork: 'testnet'
 networks:
   [
-    {
-      name: 'mainnet',
-      consensusNodes: [],
-    },
-    {
-      name: 'previewnet',
-      consensusNodes: [],
-    },
-    {
-      name: 'testnet',
-      consensusNodes: [],
-    },
+    { name: 'mainnet', consensusNodes: [] },
+    { name: 'previewnet', consensusNodes: [] },
+    { name: 'testnet', consensusNodes: [] },
   ]
 accounts:
   [

@@ -37,13 +37,19 @@ export default class WizardService extends Service {
       const wizardMainOptions: Array<string> =
         language.getArrayFromObject('wizard.mainOptions');
       const currentAccount = utilsService.getCurrentAccount();
+      const currentMirror = utilsService.getCurrentMirror();
+      const currentRPC = utilsService.getCurrentRPC();
 
       switch (
         await utilsService.defaultMultipleAsk(
           language.getText('wizard.mainMenuTitle'),
           wizardMainOptions,
           false,
-          currentAccount.network,
+          currentAccount.network +
+            ' - mirror: ' +
+            currentMirror.name +
+            ', RPC: ' +
+            currentRPC.name,
           `${currentAccount.accountId} - ${currentAccount.alias}`,
         )
       ) {
@@ -172,7 +178,7 @@ export default class WizardService extends Service {
 
   public async chooseAccount(mainMenu = true, network?: string): Promise<void> {
     const configuration = configurationService.getConfiguration();
-    const { networks, accounts, mirrors, factories } = configuration;
+    const { networks, accounts, mirrors, rpcs, factories } = configuration;
     let options = network
       ? accounts
           .filter((acc) => acc.network === network)
@@ -212,6 +218,11 @@ export default class WizardService extends Service {
       (mirror) => currentAccount.network === mirror.network && mirror.selected,
     );
     utilsService.setCurrentMirror(currentMirror);
+
+    const currentRPC = rpcs.find(
+      (rpc) => currentAccount.network === rpc.network && rpc.selected,
+    );
+    utilsService.setCurrentRPC(currentRPC);
 
     const currentFactory = factories.find(
       (factory) => currentAccount.network === factory.network,

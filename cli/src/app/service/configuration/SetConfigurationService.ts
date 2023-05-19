@@ -34,13 +34,9 @@ export default class SetConfigurationService extends Service {
   private HEDERA_MIRROR_NODE_MAINNET_URL =
     'https://mainnet-public.mirrornode.hedera.com/api/v1/';
   private HEDERA_RPC_NAME = 'HASHIO';
-  private HASHIO_RPC_TESTNET_URL =
-    'https://testnet.hashio.io/api';
-  private HASHIO_RPC_PREVIEWNET_URL =
-    'https://previewnet.hashio.io/api';
-  private HASHIO_RPC_MAINNET_URL =
-    'https://mainnet.hashio.io/api';
-
+  private HASHIO_RPC_TESTNET_URL = 'https://testnet.hashio.io/api';
+  private HASHIO_RPC_PREVIEWNET_URL = 'https://previewnet.hashio.io/api';
+  private HASHIO_RPC_MAINNET_URL = 'https://mainnet.hashio.io/api';
 
   /**
    * Initialise the configuration for first time or with "init" command
@@ -66,16 +62,16 @@ export default class SetConfigurationService extends Service {
     );
     if (configDefaultMirrorsAndRPCs) {
       await this.configureDefaultMirrorsAndRPCs();
-    } else {  
-        utilsService.showMessage(
-          language.getText('configuration.MirrorsConfigurationMessage'),
-        );
-        await this.configureMirrors();
-        
-        utilsService.showMessage(
-          language.getText('configuration.RPCsConfigurationMessage'),
-        );          
-        await this.configureRPCs();
+    } else {
+      utilsService.showMessage(
+        language.getText('configuration.MirrorsConfigurationMessage'),
+      );
+      await this.configureMirrors();
+
+      utilsService.showMessage(
+        language.getText('configuration.RPCsConfigurationMessage'),
+      );
+      await this.configureRPCs();
     }
   }
 
@@ -301,13 +297,14 @@ export default class SetConfigurationService extends Service {
     return {
       name: this.HEDERA_MIRROR_NODE_NAME,
       network: network,
-      baseUrl: network === 'testnet'
-        ? this.HEDERA_MIRROR_NODE_TESTNET_URL
-        : network === 'previewnet'
-        ? this.HEDERA_MIRROR_NODE_PREVIEWNET_URL
-        : network === 'mainnet'
-        ? this.HEDERA_MIRROR_NODE_MAINNET_URL
-        : this.HEDERA_MIRROR_NODE_TESTNET_URL,
+      baseUrl:
+        network === 'testnet'
+          ? this.HEDERA_MIRROR_NODE_TESTNET_URL
+          : network === 'previewnet'
+          ? this.HEDERA_MIRROR_NODE_PREVIEWNET_URL
+          : network === 'mainnet'
+          ? this.HEDERA_MIRROR_NODE_MAINNET_URL
+          : this.HEDERA_MIRROR_NODE_TESTNET_URL,
       apiKey: undefined,
       headerName: undefined,
       selected: true,
@@ -318,13 +315,14 @@ export default class SetConfigurationService extends Service {
     return {
       name: this.HEDERA_RPC_NAME,
       network: network,
-      baseUrl: network === 'testnet'
-        ? this.HASHIO_RPC_TESTNET_URL
-        : network === 'previewnet'
-        ? this.HASHIO_RPC_PREVIEWNET_URL
-        : network === 'mainnet'
-        ? this.HASHIO_RPC_MAINNET_URL
-        : this.HASHIO_RPC_TESTNET_URL,
+      baseUrl:
+        network === 'testnet'
+          ? this.HASHIO_RPC_TESTNET_URL
+          : network === 'previewnet'
+          ? this.HASHIO_RPC_PREVIEWNET_URL
+          : network === 'mainnet'
+          ? this.HASHIO_RPC_MAINNET_URL
+          : this.HASHIO_RPC_TESTNET_URL,
       apiKey: undefined,
       headerName: undefined,
       selected: true,
@@ -496,12 +494,12 @@ export default class SetConfigurationService extends Service {
       let base_url = await utilsService.defaultSingleAsk(
         language.getText('configuration.askRPCUrl'),
         network === 'testnet'
-        ? this.HASHIO_RPC_TESTNET_URL
-        : network === 'previewnet'
-        ? this.HASHIO_RPC_PREVIEWNET_URL
-        : network === 'mainnet'
-        ? this.HASHIO_RPC_MAINNET_URL
-        : this.HASHIO_RPC_TESTNET_URL
+          ? this.HASHIO_RPC_TESTNET_URL
+          : network === 'previewnet'
+          ? this.HASHIO_RPC_PREVIEWNET_URL
+          : network === 'mainnet'
+          ? this.HASHIO_RPC_MAINNET_URL
+          : this.HASHIO_RPC_TESTNET_URL,
       );
       while (
         !/^(http(s):\/\/.)[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)$/.test(
@@ -517,7 +515,7 @@ export default class SetConfigurationService extends Service {
             ? this.HASHIO_RPC_PREVIEWNET_URL
             : network === 'mainnet'
             ? this.HASHIO_RPC_MAINNET_URL
-            : this.HASHIO_RPC_TESTNET_URL
+            : this.HASHIO_RPC_TESTNET_URL,
         );
       }
       while (
@@ -530,12 +528,12 @@ export default class SetConfigurationService extends Service {
         base_url = await utilsService.defaultSingleAsk(
           language.getText('configuration.askRPCUrl'),
           network === 'testnet'
-          ? this.HASHIO_RPC_TESTNET_URL
-          : network === 'previewnet'
-          ? this.HASHIO_RPC_PREVIEWNET_URL
-          : network === 'mainnet'
-          ? this.HASHIO_RPC_MAINNET_URL
-          : this.HASHIO_RPC_TESTNET_URL
+            ? this.HASHIO_RPC_TESTNET_URL
+            : network === 'previewnet'
+            ? this.HASHIO_RPC_PREVIEWNET_URL
+            : network === 'mainnet'
+            ? this.HASHIO_RPC_MAINNET_URL
+            : this.HASHIO_RPC_TESTNET_URL,
         );
       }
 

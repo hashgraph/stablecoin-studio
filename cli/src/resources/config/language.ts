@@ -54,7 +54,7 @@ export const english = {
     askConfigurateFactories:
       'Do you want to config your factories? Check the documentation for more information : https://github.com/hashgraph/hedera-accelerator-stablecoin#deploying-the-stable-coin-factories',
     askConfigurateDefaultMirrorsAndRPCs:
-      'Do you want to use default mirror node/JSON-RPC-Relay services? (y/n)',      
+      'Do you want to use default mirror node/JSON-RPC-Relay services? (y/n)',
     askNetworkAccount: 'Which network does this account belong to?',
     askPrivateKeyType: 'Which type of private key will the account use?',
     askAlias: 'Enter an alias for this account',
@@ -70,7 +70,8 @@ export const english = {
     askOperateWithNewAccount:
       'Would you like to operate with the account you have just created?',
     askFactoryAddress: 'Enter your factory address',
-    MirrorsConfigurationMessage: 'You will now configure your mirror node services:',
+    MirrorsConfigurationMessage:
+      'You will now configure your mirror node services:',
     askMirrorName: 'Enter the mirror node service name',
     askMirrorNode: 'Enter the mirror url',
     askMirrorNetwork: 'Which network does the mirror service belong to?',
@@ -82,14 +83,14 @@ export const english = {
     askMirrorSelected:
       'Do you want this service to be used in the selected network? (y/n)',
     askMoreMirrors: 'Do you want to enter more mirror node services? (y/n)',
-    RPCsConfigurationMessage: 'You will now configure your JSON-RPC-Relay services:',
+    RPCsConfigurationMessage:
+      'You will now configure your JSON-RPC-Relay services:',
     askRPCName: 'Enter the JSON-RPC-Relay service name',
     askRPCNetwork: 'Which network does the JSON-RPC-Relay service belong to?',
     askRPCUrl: 'Which is the base URL of the service?',
     askRPCApiKey: 'Enter the JSON-RPC-Relay service API Key',
     askRPCHeaderName: 'Enter the HTTP header name to send the API Key',
-    askRPCHasApiKey:
-      'Does this service need an API Key to authenticate? (y/n)',
+    askRPCHasApiKey: 'Does this service need an API Key to authenticate? (y/n)',
     askRPCSelected:
       'Do you want this service to be used in the selected network? (y/n)',
     askMoreRPCs: 'Do you want to enter more JSON-RPC-Relay services? (y/n)',

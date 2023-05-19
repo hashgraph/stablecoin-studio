@@ -21,6 +21,7 @@ import { clear } from 'console';
 import { IFactoryConfig } from '../../../domain/configuration/interfaces/IFactoryConfig.js';
 import { IHederaTokenManagerConfig } from '../../../domain/configuration/interfaces/IHederaTokenManagerConfig.js';
 import { IMirrorsConfig } from 'domain/configuration/interfaces/IMirrorsConfig.js';
+import { IRPCsConfig } from 'domain/configuration/interfaces/IRPCsConfig.js';
 
 /**
  * Utilities Service
@@ -29,6 +30,7 @@ export default class UtilitiesService extends Service {
   private currentAccount: IAccountConfig;
   private currentNetwork: INetworkConfig;
   private currentMirror: IMirrorsConfig;
+  private currentRPC: IRPCsConfig;
   private currentFactory: IFactoryConfig;
   private currentHederaTokenManager: IHederaTokenManagerConfig;
 
@@ -94,6 +96,18 @@ export default class UtilitiesService extends Service {
       throw new Error('Mirror not initialized');
     } else {
       return this.currentMirror;
+    }
+  }
+
+  public setCurrentRPC(rpc: IRPCsConfig): void {
+    this.currentRPC = rpc;
+  }
+
+  public getCurrentRPC(): IMirrorsConfig {
+    if (!this.currentRPC) {
+      throw new Error('JSON-RPC-Relay not initialized');
+    } else {
+      return this.currentRPC;
     }
   }
 
@@ -453,7 +467,12 @@ export default class UtilitiesService extends Service {
 
     let result = '';
     if (network) {
-      result = result + ' ' + colors.cyan(`( ${network} )`);
+      result =
+        result +
+        ' ' +
+        colors.cyan(
+          `( ${network} - mirror: ${this.currentMirror.name}, RPC: ${this.currentRPC.name} )`,
+        );
     }
 
     if (accountId) {

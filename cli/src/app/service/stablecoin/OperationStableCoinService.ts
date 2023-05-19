@@ -1,11 +1,6 @@
 import { StableCoinList } from '../../../domain/stablecoin/StableCoinList.js';
 import Big from 'big.js';
-import {
-  language,
-  utilsService,
-  wizardService,
-  configurationService,
-} from '../../../index.js';
+import { language, utilsService, wizardService } from '../../../index.js';
 import Service from '../Service.js';
 import DetailsStableCoinsService from './DetailsStableCoinService.js';
 import {
@@ -131,7 +126,7 @@ export default class OperationStableCoinService extends Service {
             }),
           ),
           true,
-          configurationService.getConfiguration()?.defaultNetwork,
+          this.networkInfoToPrint(),
           `${configAccount.accountId} - ${configAccount.alias}`,
           this.stableCoinPaused,
           this.stableCoinDeleted,
@@ -151,12 +146,10 @@ export default class OperationStableCoinService extends Service {
           await utilsService.cleanAndShowBanner();
           await wizardService.mainMenu();
         } else {
-          // Get details to obtain treasury
           await new DetailsStableCoinsService().getDetailsStableCoins(
             this.stableCoinId,
             false,
           );
-
           await utilsService.cleanAndShowBanner();
           await this.operationsStableCoin();
         }
@@ -215,7 +208,7 @@ export default class OperationStableCoinService extends Service {
           await this.getRolesAccount(),
         ),
         false,
-        configAccount.network,
+        this.networkInfoToPrint(),
         `${currentAccount.accountId} - ${configAccount.alias}`,
         this.stableCoinWithSymbol,
         this.stableCoinPaused,
@@ -700,7 +693,7 @@ export default class OperationStableCoinService extends Service {
         language.getText('stablecoin.askAction'),
         kycOptionsFiltered,
         true,
-        configAccount.network,
+        this.networkInfoToPrint(),
         `${configAccount.accountId} - ${configAccount.alias}`,
         this.stableCoinWithSymbol,
         this.stableCoinPaused,
@@ -839,7 +832,7 @@ export default class OperationStableCoinService extends Service {
         language.getText('stablecoin.askAction'),
         freezeOptionsFiltered,
         true,
-        configAccount.network,
+        this.networkInfoToPrint(),
         `${configAccount.accountId} - ${configAccount.alias}`,
         this.stableCoinWithSymbol,
         this.stableCoinPaused,
@@ -1382,7 +1375,7 @@ export default class OperationStableCoinService extends Service {
         language.getText('stablecoin.askAction'),
         roleManagementOptionsFiltered,
         false,
-        configAccount.network,
+        this.networkInfoToPrint(),
         `${configAccount.accountId} - ${configAccount.alias}`,
         this.stableCoinWithSymbol,
         this.stableCoinPaused,
@@ -3056,7 +3049,7 @@ export default class OperationStableCoinService extends Service {
         language.getText('stablecoin.askAction'),
         dangerZoneOptionsFiltered,
         false,
-        configAccount.network,
+        this.networkInfoToPrint(),
         `${configAccount.accountId} - ${configAccount.alias}`,
         this.stableCoinWithSymbol,
         this.stableCoinPaused,
@@ -3133,5 +3126,19 @@ export default class OperationStableCoinService extends Service {
         await this.operationsStableCoin();
     }
     await this.dangerZone();
+  }
+
+  private networkInfoToPrint(): string {
+    const configAccount = utilsService.getCurrentAccount();
+    const currentMirror = utilsService.getCurrentMirror();
+    const currentRPC = utilsService.getCurrentRPC();
+
+    return (
+      configAccount.network +
+      ' - mirror: ' +
+      currentMirror.name +
+      ', RPC: ' +
+      currentRPC.name
+    );
   }
 }
