@@ -68,9 +68,27 @@ export class SDKService {
 	}
 
 	public static async connectWallet(wallet: SupportedWallets, connectNetwork: string) {
+		let mirrorNode = [];
+
+		if (process.env.REACT_APP_MIRROR_NODE)
+			mirrorNode = JSON.parse(process.env.REACT_APP_MIRROR_NODE);
+
+		const _mirrorNode =
+			mirrorNode.length !== 0
+				? mirrorNode.find((i: any) => i.Environment === connectNetwork)
+					? {
+							baseUrl: mirrorNode.find((i: any) => i.Environment === connectNetwork).BASE_URL ?? '',
+							apiKey: mirrorNode.find((i: any) => i.Environment === connectNetwork).API_KEY ?? '',
+							headerName:
+								mirrorNode.find((i: any) => i.Environment === connectNetwork).HEADER ?? '',
+					  }
+					: { baseUrl: '', apiKey: '', headerName: '' }
+				: { baseUrl: '', apiKey: '', headerName: '' };
+
 		await Network.setNetwork(
 			new SetNetworkRequest({
 				environment: connectNetwork,
+				mirrorNode: _mirrorNode,
 			}),
 		);
 
@@ -95,6 +113,7 @@ export class SDKService {
 		this.initData = await Network.connect(
 			new ConnectRequest({
 				network: connectNetwork,
+				mirrorNode: _mirrorNode,
 				wallet,
 			}),
 		);
@@ -102,11 +121,17 @@ export class SDKService {
 		return this.initData;
 	}
 
+	// dummy init
 	public static async init(events: Partial<WalletEvent>) {
 		try {
 			const init = await Network.init(
 				new InitializationRequest({
 					network: 'mainnet',
+					mirrorNode: {
+						baseUrl: 'https://mainnet-public.mirrornode.hedera.com/api/v1/',
+						apiKey: '',
+						headerName: '',
+					},
 					events,
 				}),
 			);
