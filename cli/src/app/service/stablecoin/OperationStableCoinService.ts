@@ -2191,6 +2191,8 @@ export default class OperationStableCoinService extends Service {
         this.stableCoinId,
       );
 
+    options.push(proxyConfig.implementationAddress.toString());
+
     const configAccount = utilsService.getCurrentAccount();
 
     if (proxyConfig.owner.toString() === configAccount.accountId)
@@ -2521,9 +2523,11 @@ export default class OperationStableCoinService extends Service {
       'stableCoinConfiguration.options',
     );
 
-    const configurationOptionsFiltered = await this.filterConfigurationOptions(
-      configurationOptions,
-    );
+    const result = await this.filterConfigurationOptions(configurationOptions);
+
+    const currentImplementation = result[result.length - 1];
+    result.pop();
+    const configurationOptionsFiltered = result;
 
     switch (
       await utilsService.defaultMultipleAsk(
@@ -2535,7 +2539,7 @@ export default class OperationStableCoinService extends Service {
       case language.getText(
         'stableCoinConfiguration.options.proxyConfiguration',
       ):
-        await this.stableCoinConfiguration();
+        await this.stableCoinConfiguration(currentImplementation);
         break;
 
       case language.getText(
@@ -2551,7 +2555,7 @@ export default class OperationStableCoinService extends Service {
     }
   }
 
-  private async stableCoinConfiguration(): Promise<void> {
+  private async stableCoinConfiguration(currentImpl: string): Promise<void> {
     const proxyConfigurationOptions = language.getArrayFromObject(
       'proxyConfiguration.options',
     );
@@ -2564,11 +2568,11 @@ export default class OperationStableCoinService extends Service {
       )
     ) {
       case language.getText('proxyConfiguration.options.implementation'):
-        await this.upgradeImplementationFlow();
+        await this.upgradeImplementationFlow(currentImpl);
         break;
 
       case language.getText('proxyConfiguration.options.owner'):
-        await this.changeOwnerFlow();
+        await this.changeOwnerFlow(currentImpl);
         break;
 
       case proxyConfigurationOptions[proxyConfigurationOptions.length - 1]:
@@ -2578,7 +2582,7 @@ export default class OperationStableCoinService extends Service {
     }
   }
 
-  private async upgradeImplementationFlow(): Promise<void> {
+  private async upgradeImplementationFlow(currentImpl: string): Promise<void> {
     const configAccount = utilsService.getCurrentAccount();
 
     await utilsService.cleanAndShowBanner();
@@ -2595,16 +2599,17 @@ export default class OperationStableCoinService extends Service {
     try {
       await new ImplementationProxyService().upgradeImplementationOwner(
         upgradeImplementationRequest,
+        currentImpl,
       );
     } catch (error) {
       await utilsService.askErrorConfirmation(
-        async () => await this.stableCoinConfiguration(),
+        async () => await this.stableCoinConfiguration(currentImpl),
         error,
       );
     }
   }
 
-  private async changeOwnerFlow(): Promise<void> {
+  private async changeOwnerFlow(currentImpl: string): Promise<void> {
     const configAccount = utilsService.getCurrentAccount();
 
     await utilsService.cleanAndShowBanner();
@@ -2632,7 +2637,7 @@ export default class OperationStableCoinService extends Service {
       await new OwnerProxyService().changeProxyOwner(changeProxyOwnerRequest);
     } catch (error) {
       await utilsService.askErrorConfirmation(
-        async () => await this.stableCoinConfiguration(),
+        async () => await this.stableCoinConfiguration(currentImpl),
         error,
       );
     }
