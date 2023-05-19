@@ -784,10 +784,6 @@ export default class SetConfigurationService extends Service {
       }
     }
 
-    const mirrorUrl = await utilsService.defaultSingleAsk(
-      language.getText('configuration.askMirrorNode'),
-      'https://tesnet.com',
-    );
     const chainId = await utilsService.defaultSingleAsk(
       language.getText('configuration.askChain'),
       '0',
@@ -799,7 +795,6 @@ export default class SetConfigurationService extends Service {
     );
     const network: INetworkConfig = {
       name: networkName,
-      mirrorNodeUrl: mirrorUrl,
       chainId: Number(chainId),
       consensusNodes: consensusNodes,
     };
