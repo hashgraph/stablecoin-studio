@@ -1041,11 +1041,12 @@ export default class SetConfigurationService extends Service {
       case language.getText('wizard.manageMirrorNodeOptions.Change'):
         await utilsService.cleanAndShowBanner();
 
-        await wizardService.chooseMirrorNodeNetwork(_network);
-        if (utilsService.getCurrentMirror().network === _network)
-          await utilsService.initSDK();
-        await utilsService.cleanAndShowBanner();
-        await wizardService.mainMenu();
+        if (await wizardService.chooseMirrorNodeNetwork(_network)) {
+          if (utilsService.getCurrentMirror().network === _network)
+            await utilsService.initSDK();
+          await utilsService.cleanAndShowBanner();
+          await wizardService.mainMenu();
+        }
         break;
       case language.getText('wizard.manageMirrorNodeOptions.List'):
         await utilsService.cleanAndShowBanner();

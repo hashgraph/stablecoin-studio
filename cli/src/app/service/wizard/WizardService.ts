@@ -265,34 +265,24 @@ export default class WizardService extends Service {
     if (mainMenu) await this.mainMenu();
   }
 
-  public async chooseMirrorNodeNetwork(_network: string): Promise<void> {
+  public async chooseMirrorNodeNetwork(_network: string): Promise<boolean> {
     const configuration = configurationService.getConfiguration();
     const { mirrors } = configuration;
     const currentMirror = utilsService.getCurrentMirror();
 
     const selectedMirrors = mirrors.filter(
-      (mirror) =>
-        _network === mirror.network &&
-        (currentMirror.network != mirror.network ||
-          mirror.name != currentMirror.name),
+      (mirror) => _network === mirror.network && !mirror.selected,
     );
 
-    if (selectedMirrors.length === 0) {
-      utilsService.showMessage(
-        language.getText('configuration.mirrorNodeNotToChange'),
+    if (selectedMirrors.length > 0) {
+      const name = await utilsService.defaultMultipleAsk(
+        language.getText('configuration.selectMirrorNode'),
+        selectedMirrors.map((mirror) => mirror.name),
+        true,
       );
-    } else {
-      let selectedMirror: IMirrorsConfig;
-      if (selectedMirrors.length > 1) {
-        const name = await utilsService.defaultMultipleAsk(
-          language.getText('configuration.selectMirrorNode'),
-          selectedMirrors.map((mirror) => mirror.name),
-          false,
-        );
-        selectedMirror = selectedMirrors.find((mirror) => name === mirror.name);
-      } else {
-        selectedMirror = selectedMirrors[0];
-      }
+      const selectedMirror = selectedMirrors.find(
+        (mirror) => name === mirror.name,
+      );
       selectedMirror.selected = true;
 
       mirrors
@@ -307,6 +297,13 @@ export default class WizardService extends Service {
 
       if (currentMirror.network === _network)
         utilsService.setCurrentMirror(selectedMirror);
+
+      return true;
+    } else {
+      utilsService.showMessage(
+        language.getText('configuration.mirrorNodeNotToChange'),
+      );
+      return false;
     }
   }
 
@@ -322,7 +319,7 @@ export default class WizardService extends Service {
       const name = await utilsService.defaultMultipleAsk(
         language.getText('configuration.selectRPC'),
         selectedRPCs.map((rpc) => rpc.name),
-        false,
+        true,
       );
       const selectedRPC = selectedRPCs.find((rpc) => name === rpc.name);
       selectedRPC.selected = true;
