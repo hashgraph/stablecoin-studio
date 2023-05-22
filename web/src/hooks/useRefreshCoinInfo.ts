@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { GetStableCoinDetailsRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
+import {
+	GetProxyConfigRequest,
+	GetStableCoinDetailsRequest,
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -27,6 +30,11 @@ export const useRefreshCoinInfo = () => {
 				id: selectedStableCoin?.tokenId?.toString() ?? '',
 			}),
 		);
+		const proxyConfig = await SDKService.getProxyConfig(
+			new GetProxyConfigRequest({
+				tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
+			}),
+		);
 		setLastId(resp?.tokenId?.toString());
 		dispatch(
 			walletActions.setSelectedStableCoin({
@@ -43,6 +51,7 @@ export const useRefreshCoinInfo = () => {
 				autoRenewPeriod: resp?.autoRenewPeriod?.toString(),
 				expirationTimestamp: resp?.expirationTimestamp?.toString(),
 				proxyAddress: resp?.proxyAddress?.toString(),
+				proxyAdminAddress: resp?.proxyAdminAddress?.toString(),
 				paused: resp?.paused,
 				deleted: resp?.deleted,
 				adminKey: resp?.adminKey?.toString() && JSON.parse(JSON.stringify(resp.adminKey)),
@@ -56,6 +65,12 @@ export const useRefreshCoinInfo = () => {
 				reserveAmount: resp?.reserveAmount?.toString(),
 				reserveAddress: resp?.reserveAddress?.toString(),
 				customFees: resp.customFees && JSON.parse(JSON.stringify(resp.customFees)),
+			}),
+		);
+		dispatch(
+			walletActions.setSelectedStableCoinProxyConfig({
+				owner: proxyConfig?.owner?.toString(),
+				implementationAddress: proxyConfig?.implementationAddress?.toString(),
 			}),
 		);
 		setIsLoading(false);

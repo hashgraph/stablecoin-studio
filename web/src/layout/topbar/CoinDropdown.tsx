@@ -28,6 +28,7 @@ import {
 	GetStableCoinDetailsRequest,
 	GetAccountInfoRequest,
 	GetRolesRequest,
+	GetProxyConfigRequest,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 import type { IExternalToken } from '../../interfaces/IExternalToken';
 import type { GroupBase, SelectInstance } from 'chakra-react-select';
@@ -180,6 +181,24 @@ const CoinDropdown = () => {
 				throw e;
 			});
 
+			const proxyConfig: any = await Promise.race([
+				SDKService.getProxyConfig(
+					new GetProxyConfigRequest({
+						tokenId: selectedCoin,
+					}),
+				),
+				new Promise((resolve, reject) => {
+					setTimeout(() => {
+						reject(new Error("Stable coin details couldn't be obtained in a reasonable time."));
+					}, 10000);
+				}),
+			]).catch((e) => {
+				console.log(e.message);
+				setIsSelecting(true);
+				onOpen();
+				throw e;
+			});
+
 			const roles = await Promise.race([
 				SDKService.getRoles(
 					new GetRolesRequest({
@@ -219,6 +238,7 @@ const CoinDropdown = () => {
 					treasury: stableCoinDetails?.treasury,
 					autoRenewAccount: stableCoinDetails?.autoRenewAccount,
 					proxyAddress: stableCoinDetails?.proxyAddress,
+					proxyAdminAddress: stableCoinDetails?.proxyAdminAddress,
 					paused: stableCoinDetails?.paused,
 					deleted: stableCoinDetails?.deleted,
 					adminKey:
@@ -238,6 +258,12 @@ const CoinDropdown = () => {
 					customFees:
 						stableCoinDetails?.customFees &&
 						JSON.parse(JSON.stringify(stableCoinDetails.customFees)),
+				}),
+			);
+			dispatch(
+				walletActions.setSelectedStableCoinProxyConfig({
+					owner: proxyConfig?.owner,
+					implementationAddress: proxyConfig?.implementationAddress,
 				}),
 			);
 		} catch (e) {
