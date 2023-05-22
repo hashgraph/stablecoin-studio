@@ -32,6 +32,7 @@ import {
 	HederaReserve__factory,
 	StableCoinFactory__factory,
 	IHederaTokenService__factory,
+	ProxyAdmin__factory,
 } from '@hashgraph-dev/stablecoin-npm-contracts';
 import TransactionAdapter, { InitializationData } from '../TransactionAdapter';
 import { BigNumber, ContractTransaction, ethers, Signer } from 'ethers';
@@ -62,6 +63,7 @@ import PublicKey from '../../../domain/context/account/PublicKey.js';
 import {
 	BURN_GAS,
 	CASHIN_GAS,
+	CHANGE_PROXY_OWNER,
 	CREATE_SC_GAS,
 	DECREASE_SUPPLY_GAS,
 	DELETE_GAS,
@@ -79,6 +81,7 @@ import {
 	TOKEN_CREATION_COST_HBAR,
 	UNFREEZE_GAS,
 	UNPAUSE_GAS,
+	UPDATE_PROXY_IMPLEMENTATION,
 	UPDATE_RESERVE_ADDRESS_GAS,
 	UPDATE_RESERVE_AMOUNT_GAS,
 	UPDATE_TOKEN_GAS,
@@ -579,6 +582,61 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					this.signerOrProvider,
 				).setAmount(amount.toBigNumber(), {
 					gasLimit: UPDATE_RESERVE_AMOUNT_GAS,
+				}),
+				this.networkService.environment,
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new TransactionResponseError({
+				network: this.networkService.environment,
+				RPC_relay: true,
+				message: `Unexpected error in RPCTransactionAdapter updatePorAmount operation : ${error}`,
+				transactionId: (error as any).error?.transactionId,
+			});
+		}
+	}
+
+	public async upgradeImplementation(
+		proxy: HederaId,
+		proxyAdminId: HederaId,
+		implementationId: ContractId,
+	): Promise<TransactionResponse> {
+		try {
+			return RPCTransactionResponseAdapter.manageResponse(
+				await ProxyAdmin__factory.connect(
+					proxyAdminId.toHederaAddress().toSolidityAddress(),
+					this.signerOrProvider,
+				).upgrade(
+					proxy.toHederaAddress().toSolidityAddress(),
+					implementationId.toHederaAddress().toSolidityAddress(),
+					{
+						gasLimit: UPDATE_PROXY_IMPLEMENTATION,
+					},
+				),
+				this.networkService.environment,
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new TransactionResponseError({
+				network: this.networkService.environment,
+				RPC_relay: true,
+				message: `Unexpected error in RPCTransactionAdapter updatePorAmount operation : ${error}`,
+				transactionId: (error as any).error?.transactionId,
+			});
+		}
+	}
+
+	public async changeOwner(
+		proxyAdminId: HederaId,
+		targetId: HederaId,
+	): Promise<TransactionResponse> {
+		try {
+			return RPCTransactionResponseAdapter.manageResponse(
+				await ProxyAdmin__factory.connect(
+					proxyAdminId.toHederaAddress().toSolidityAddress(),
+					this.signerOrProvider,
+				).transferOwnership(await this.getEVMAddress(targetId), {
+					gasLimit: CHANGE_PROXY_OWNER,
 				}),
 				this.networkService.environment,
 			);

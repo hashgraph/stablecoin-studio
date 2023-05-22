@@ -7,10 +7,15 @@ import {
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import SDKService from '../services/SDKService';
-import { SELECTED_WALLET_COIN, walletActions } from '../store/slices/walletSlice';
+import {
+	SELECTED_WALLET_ACCOUNT_INFO,
+	SELECTED_WALLET_COIN,
+	walletActions,
+} from '../store/slices/walletSlice';
 
 export const useRefreshCoinInfo = () => {
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
+	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 	const [lastId, setLastId] = useState<string>();
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const dispatch = useDispatch();
@@ -72,6 +77,9 @@ export const useRefreshCoinInfo = () => {
 				owner: proxyConfig?.owner?.toString(),
 				implementationAddress: proxyConfig?.implementationAddress?.toString(),
 			}),
+		);
+		dispatch(
+			walletActions.setIsProxyOwner(proxyConfig?.owner?.toString() === accountInfo?.id?.toString()),
 		);
 		setIsLoading(false);
 	};

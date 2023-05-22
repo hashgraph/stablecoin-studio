@@ -26,6 +26,7 @@ export interface InitialStateProps {
 	accountInfo: AccountViewModel;
 	selectedStableCoin?: StableCoinViewModel;
 	selectedStableCoinProxyConfig?: ProxyConfigurationViewModel;
+	isProxyOwner?: boolean;
 	selectingStableCoin: boolean;
 	stableCoinList?: StableCoinListViewModel;
 	externalTokenList?: IExternalToken[];
@@ -60,6 +61,7 @@ export const initialState: InitialStateProps = {
 	roles: undefined,
 	network: undefined,
 	networkRecognized: true,
+	isProxyOwner: false,
 	accountRecognized: true,
 	factoryId: undefined,
 };
@@ -171,6 +173,9 @@ export const walletSlice = createSlice({
 		setNetworkRecognized: (state, action) => {
 			state.networkRecognized = action.payload;
 		},
+		setIsProxyOwner: (state, action) => {
+			state.isProxyOwner = action.payload;
+		},
 		setAccountRecognized: (state, action) => {
 			state.accountRecognized = action.payload;
 		},
@@ -196,9 +201,11 @@ export const walletSlice = createSlice({
 		},
 		clearSelectedStableCoin: (state) => {
 			state.selectedStableCoin = initialState.selectedStableCoin;
+			state.isProxyOwner = initialState.isProxyOwner;
 		},
 		clearSelectedStableCoinProxyConfig: (state) => {
 			state.selectedStableCoinProxyConfig = initialState.selectedStableCoinProxyConfig;
+			state.isProxyOwner = initialState.isProxyOwner;
 		},
 		reset: () => initialState,
 	},
@@ -239,6 +246,7 @@ export const SELECTED_WALLET_DATA = (state: RootState) => state.wallet.data;
 export const SELECTED_WALLET_COIN = (state: RootState) => state.wallet.selectedStableCoin;
 export const SELECTED_WALLET_COIN_PROXY_CONFIG = (state: RootState) =>
 	state.wallet.selectedStableCoinProxyConfig;
+export const IS_PROXY_OWNER = (state: RootState) => state.wallet.isProxyOwner;
 export const SELECTING_WALLET_COIN = (state: RootState) => state.wallet.selectingStableCoin;
 export const SELECTED_WALLET_PAIRED = (state: RootState) => state.wallet.data;
 export const SELECTED_WALLET_CAPABILITIES = (state: RootState) => state.wallet.capabilities;
