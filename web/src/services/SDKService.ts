@@ -55,6 +55,7 @@ import type {
 	UpdateReserveAmountRequest,
 	AddFixedFeeRequest,
 	AddFractionalFeeRequest,
+	AccountViewModel,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 export type StableCoinListRaw = Array<Record<'id' | 'symbol', string>>;
@@ -156,15 +157,29 @@ export class SDKService {
 	public static async getStableCoins(
 		req: GetListStableCoinRequest,
 	): Promise<StableCoinListViewModel | null> {
-		return await Account.listStableCoins(req);
+		try {
+			return await Account.listStableCoins(req);
+		} catch (e) {
+			console.error('list of stable coin could not be retrieved : ' + e);
+			return null;
+		}
 	}
 
 	public static async getStableCoinDetails(req: GetStableCoinDetailsRequest) {
 		return await StableCoin.getInfo(req);
 	}
 
-	public static async getAccountInfo(req: GetAccountInfoRequest) {
-		return await Account.getInfo(req);
+	public static async getAccountInfo(req: GetAccountInfoRequest): Promise<AccountViewModel> {
+		try {
+			return await Account.getInfo(req);
+		} catch (e) {
+			console.error('account could not be retrieved : ' + e);
+			const NullAcount: AccountViewModel = {
+				id: Account.NullHederaAccount.id.toString(),
+			};
+
+			return NullAcount;
+		}
 	}
 
 	public static async cashIn(req: CashInRequest) {
