@@ -108,7 +108,7 @@ export const english = {
     askOperateWithNewRPCNode:
       'Would you like to operate with the JSON-RPC-Relay you have just created?',
     mirrorNodeDelete: 'Which mirror node would you like to delete?',
-    noMirrorNodeToDelete:
+    noMoreMirrorNodes:
       'There is no mirror node in the selected network not currently being used',
     networkSelected: '\nNetwork selected: ${network}',
     mirrorNodeList: '\nMirror nodes list:',
@@ -118,7 +118,7 @@ export const english = {
     RPCList: '\nJSON-RPC-Relay list:',
     RPCAdded: '\nJSON-RPC-Relay added:',
     RPCDelete: 'Which JSON-RPC-Relay would you like to delete?',
-    noRPCToDelete:
+    noMoreRPCs:
       'There is no JSON-RPC-Relay service in the selected network not currently being used',
     RPCDeleted: '\nJSON-RPC-Relay deleted successfully',
     askNeedApiKey: 'Do you need an API key?',

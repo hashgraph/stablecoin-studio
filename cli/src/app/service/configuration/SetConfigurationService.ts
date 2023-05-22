@@ -389,7 +389,7 @@ export default class SetConfigurationService extends Service {
       }
     } else {
       utilsService.showMessage(
-        colors.yellow(language.getText('configuration.noMirrorNodeToDelete')),
+        colors.yellow(language.getText('configuration.noMoreMirrorNodes')),
       );
     }
   }
@@ -522,7 +522,7 @@ export default class SetConfigurationService extends Service {
       }
     } else {
       utilsService.showMessage(
-        colors.yellow(language.getText('configuration.noRPCToDelete')),
+        colors.yellow(language.getText('configuration.noMoreRPCs')),
       );
     }
   }
@@ -1141,11 +1141,13 @@ export default class SetConfigurationService extends Service {
     switch (rpcAction) {
       case language.getText('wizard.manageRPCOptions.Change'):
         await utilsService.cleanAndShowBanner();
-        await wizardService.chooseRPCNetwork(_network);
-        if (utilsService.getCurrentRPC().network === _network)
-          await utilsService.initSDK();
-        await utilsService.cleanAndShowBanner();
-        await wizardService.mainMenu();
+        if (await wizardService.chooseRPCNetwork(_network)) {
+          if (currentRPC.network === _network) {
+            await utilsService.initSDK();
+          }
+          await utilsService.cleanAndShowBanner();
+          await wizardService.mainMenu();
+        }
         break;
 
       case language.getText('wizard.manageRPCOptions.List'):

@@ -311,35 +311,26 @@ export default class WizardService extends Service {
 
   public async chooseRPCNetwork(
     _network: string,
-  ): Promise<void> {
+  ): Promise<boolean> {
     const configuration = configurationService.getConfiguration();
     const { rpcs } = configuration;
     const currentRPC = utilsService.getCurrentRPC();
-
-    const selectedRPCs = rpcs.filter((rpc) => _network === rpc.network
-      && (currentRPC.network != rpc.network || rpc.name != currentRPC.name));
-
-    if (selectedRPCs.length === 0) {
-      utilsService.showMessage(language.getText('configuration.RPCNotToChange'));
-    } else {
-      let selectedRPC: IRPCsConfig;
-      if (selectedRPCs.length > 1) {
-        const name = await utilsService.defaultMultipleAsk(
-          language.getText('configuration.selectRPC'),
-          selectedRPCs.map((rpc) => rpc.name),
-          false,
-        );
-        selectedRPC = selectedRPCs.find((rpc) => name === rpc.name);
-      } else {
-        selectedRPC = selectedRPCs[0];
-      }
+    const selectedRPCs = rpcs.filter((rpc) => _network === rpc.network && !rpc.selected);
+    
+    if (selectedRPCs.length > 0) {
+      const name = await utilsService.defaultMultipleAsk(
+        language.getText('configuration.selectRPC'),
+        selectedRPCs.map((rpc) => rpc.name),
+        false,
+      );
+      const selectedRPC = selectedRPCs.find((rpc) => name === rpc.name);
       selectedRPC.selected = true;
 
       rpcs
         .filter(
           (rpc) =>
             _network === rpc.network &&
-            rpc.name !== currentRPC.name,
+            rpc.name !== name,
         )
         .forEach((found) => {
           found.selected = false;
@@ -348,8 +339,13 @@ export default class WizardService extends Service {
       configuration.rpcs = rpcs;
       configurationService.setConfiguration(configuration);
 
-      if (currentRPC.network === _network)
+      if (currentRPC.network === _network) 
         utilsService.setCurrentRPC(selectedRPC);
+
+      return true;
+    } else {
+      utilsService.showMessage(colors.yellow(language.getText('configuration.RPCNotToChange')));
+      return false;
     }
   }
 
