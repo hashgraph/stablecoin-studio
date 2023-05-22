@@ -17,6 +17,8 @@ import {
   SetNetworkRequest,
   StableCoinViewModel,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { IMirrorsConfig } from 'domain/configuration/interfaces/IMirrorsConfig.js';
+import { IRPCsConfig } from 'domain/configuration/interfaces/IRPCsConfig.js';
 
 /**
  * Wizard Service
@@ -45,12 +47,12 @@ export default class WizardService extends Service {
           language.getText('wizard.mainMenuTitle'),
           wizardMainOptions,
           false,
-          currentAccount.network +
-            ' - mirror: ' +
-            currentMirror.name +
-            ', RPC: ' +
-            currentRPC.name,
-          `${currentAccount.accountId} - ${currentAccount.alias}`,
+          {
+            network: currentAccount.network,
+            mirrorNode: currentMirror.name,
+            rpc: currentRPC.name,
+            account: `${currentAccount.accountId} - ${currentAccount.alias}`,
+          },
         )
       ) {
         case language.getText('wizard.mainOptions.Create'):
@@ -166,7 +168,16 @@ export default class WizardService extends Service {
         await utilsService.cleanAndShowBanner();
 
         await this.setConfigurationService.manageAccountMenu();
-        //utilsService.showMessage(language.getText('wizard.accountsChanged'));
+        break;
+      case language.getText('wizard.changeOptions.ManageMirrorNode'):
+        await utilsService.cleanAndShowBanner();
+
+        await this.setConfigurationService.configureMirrorNodeNetwork();
+        break;
+      case language.getText('wizard.changeOptions.ManageRPC'):
+        await utilsService.cleanAndShowBanner();
+
+        await this.setConfigurationService.configureRPCNetwork();
         break;
       default:
         await utilsService.cleanAndShowBanner();
@@ -244,6 +255,72 @@ export default class WizardService extends Service {
     if (mainMenu) await this.mainMenu();
   }
 
+  public async chooseMirrorNodeNetwork(
+    mainMenu = true,
+    _network: string,
+  ): Promise<void> {
+    const configuration = configurationService.getConfiguration();
+    const { mirrors } = configuration;
+
+    let selectedMirror: IMirrorsConfig;
+    const selectedMirrors = mirrors.filter(
+      (mirror) => _network === mirror.network,
+    );
+    if (selectedMirrors.length > 1) {
+      const name = await utilsService.defaultMultipleAsk(
+        language.getText('configuration.selectMirrorNode'),
+        selectedMirrors.map((mirror) => mirror.name),
+        false,
+      );
+      selectedMirror = selectedMirrors.find((mirror) => name === mirror.name);
+    } else {
+      selectedMirror = selectedMirrors[0];
+    }
+    selectedMirror.selected = true;
+    utilsService.setCurrentMirror(selectedMirror);
+
+    configuration.mirrors = mirrors;
+    configurationService.setConfiguration(configuration);
+    if (mainMenu) await this.mainMenu();
+  }
+
+  public async chooseRPCNetwork(
+    mainMenu = true,
+    _network: string,
+  ): Promise<void> {
+    const configuration = configurationService.getConfiguration();
+    const { rpcs } = configuration;
+
+    let selectedRPC: IRPCsConfig;
+    const selectedRPCs = rpcs.filter((rpc) => _network === rpc.network);
+    if (selectedRPCs.length > 1) {
+      const name = await utilsService.defaultMultipleAsk(
+        language.getText('configuration.selectRPC'),
+        selectedRPCs.map((rpc) => rpc.name),
+        false,
+      );
+      selectedRPC = selectedRPCs.find((rpc) => name === rpc.name);
+    } else {
+      selectedRPC = selectedRPCs[0];
+    }
+    selectedRPC.selected = true;
+    utilsService.setCurrentRPC(selectedRPC);
+
+    rpcs
+      .filter(
+        (rpc) =>
+          _network === rpc.network &&
+          rpc.name !== utilsService.getCurrentRPC().name,
+      )
+      .forEach((found) => {
+        found.selected = false;
+      });
+
+    configuration.rpcs = rpcs;
+    configurationService.setConfiguration(configuration);
+    if (mainMenu) await this.mainMenu();
+  }
+
   public async chooseLastAccount(): Promise<void> {
     const configuration = configurationService.getConfiguration();
     const { networks, accounts } = configuration;
@@ -253,5 +330,19 @@ export default class WizardService extends Service {
       (network) => currentAccount.network === network.name,
     );
     utilsService.setCurrentNetwotk(currentNetwork);
+  }
+
+  public async chooseLastMirrorNode(): Promise<void> {
+    const configuration = configurationService.getConfiguration();
+    const { mirrors } = configuration;
+    const currentMirror = mirrors[mirrors.length - 1];
+    utilsService.setCurrentMirror(currentMirror);
+  }
+
+  public async chooseLastRPC(): Promise<void> {
+    const configuration = configurationService.getConfiguration();
+    const { rpcs } = configuration;
+    const currentRPC = rpcs[rpcs.length - 1];
+    utilsService.setCurrentRPC(currentRPC);
   }
 }

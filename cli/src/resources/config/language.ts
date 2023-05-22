@@ -94,6 +94,34 @@ export const english = {
     askRPCSelected:
       'Do you want this service to be used in the selected network? (y/n)',
     askMoreRPCs: 'Do you want to enter more JSON-RPC-Relay services? (y/n)',
+    rpcConfigurationMessage: 'You will now configure your JSON-RPC-Relay:',
+    mirrorNodeConfigurationMessage: 'You will now configure your mirror nodes:',
+    askNetworkMirrorNode: 'Which network does this mirror node belong to?',
+    askName: 'Introduce the name',
+    nameAlreadyInUse: 'Name ${name} already in use. Please use another name.',
+    askBaseUrl: 'Introduce the base url',
+    baseUrlAlreadyInUse:
+      'Base url ${baseUrl} already in use. Please use another base url.',
+    askMoreMirrorNodes: 'Do you want to add another mirror node?',
+    askOperateWithNewMirrorNode:
+      'Would you like to operate with the mirror node you have just created?',
+    askOperateWithNewRPCNode:
+      'Would you like to operate with the JSON-RPC-Relay you have just created?',
+    mirrorNodeDelete: 'Which mirror node would you like to delete?',
+    networkSelected: '\nNetwork selected: ${network}',
+    mirrorNodeList: '\nMirror nodes list:',
+    mirrorNodeAdded: '\nMirror nodes added:',
+    mirrorNodeDeleted: '\nMirror nodes deleted successfully',
+    RPCList: '\nJSON-RPC-Relay list:',
+    RPCAdded: '\nJSON-RPC-Relay added:',
+    RPCDelete: 'Which JSON-RPC-Relay would you like to delete?',
+    RPCDeleted: '\nJSON-RPC-Relay deleted successfully',
+    askNeedApiKey: 'Do you need an API key?',
+    askHeaderName: 'Introduce your http header name',
+    askApiKey: 'Introduce your api key',
+    askSureRemove: 'Are you sure do you want to delete ${mirrorNode}?',
+    selectMirrorNode: 'Select the mirror node: ',
+    selectRPC: 'Select the JSON-RPC-Relay: ',
   },
   stablecoin: {
     noFactories:
@@ -241,9 +269,12 @@ export const english = {
   wizard: {
     name: 'Wizard',
     accountLogin: 'Which account do you want to operate with?',
+    networkManage: 'Which network do you want to operate with?',
     accountsNotFound:
       'There is no account for the indicated parameters, here is a list of the configured accounts:',
     accountOptions: 'Manage account menu:',
+    mirrorNodeOptions: 'Manage mirror node menu:',
+    rpcOptions: 'Manage JSON-RPC-Relay menu:',
     importedTokenMenu: 'Manage imported tokens:',
     accountDelete: 'Which account would you like to delete?',
     noAccountToDelete: 'You cannot delete your current account.',
@@ -251,6 +282,7 @@ export const english = {
     configurationMenuTitle: 'What do you want to do?',
     pathChanged: '\nPath changed successfully',
     networkChanged: '\nNetwork changed successfully',
+    networkSelected: '\nNetwork selected successfully',
     accountsChanged: '\nAccounts changed successfully',
     freezeAccount: 'Which account do you want to freeze?',
     unfreezeAccount: 'Which account do you want to unfreeze?',
@@ -296,6 +328,8 @@ export const english = {
       EditPath: 'Edit config path',
       EditNetwork: 'Edit default network',
       Manage: 'Manage accounts',
+      ManageMirrorNode: 'Manage mirror node',
+      ManageRPC: 'Manage JSON-RPC-Relay',
       ...returnToMainMenu,
     },
     manageAccountOptions: {
@@ -303,6 +337,20 @@ export const english = {
       List: 'List accounts',
       Add: 'Add new account',
       Delete: 'Delete account',
+      ...goBack,
+    },
+    manageMirrorNodeOptions: {
+      Change: 'Change current node',
+      List: 'Display configured nodes',
+      Add: 'Set up mirror node',
+      Delete: 'Remove mirror node',
+      ...goBack,
+    },
+    manageRPCOptions: {
+      Change: 'Change current JSON-RPC-Relay',
+      List: 'Display configured JSON-RPC-Relay',
+      Add: 'Set up JSON-RPC-Relay',
+      Delete: 'Remove JSON-RPC-Relay',
       ...goBack,
     },
     manageImportedTokens: {
