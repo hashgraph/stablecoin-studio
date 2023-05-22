@@ -993,12 +993,22 @@ export default class SetConfigurationService extends Service {
    * Function to configure the default network
    */
   public async configureMirrorNodeNetwork(): Promise<void> {
+    const currentAccount = utilsService.getCurrentAccount();
+    const currentMirror = utilsService.getCurrentMirror();
+    const currentRPC = utilsService.getCurrentRPC();
     const networks = configurationService
       .getConfiguration()
       .networks.map((network) => network.name);
     const network = await utilsService.defaultMultipleAsk(
       language.getText('wizard.networkManage'),
       networks,
+      false,
+      {
+        network: currentAccount.network,
+        mirrorNode: currentMirror.name,
+        rpc: currentRPC.name,
+        account: `${currentAccount.accountId} - ${currentAccount.alias}`,
+      },
     );
 
     utilsService.showMessage(
@@ -1010,6 +1020,7 @@ export default class SetConfigurationService extends Service {
   public async manageMirrorNodeMenu(_network: string): Promise<void> {
     const currentAccount = utilsService.getCurrentAccount();
     const currentMirror = utilsService.getCurrentMirror();
+    const currentRPC = utilsService.getCurrentRPC();
     const manageOptions = language.getArrayFromObject(
       'wizard.manageMirrorNodeOptions',
     );
@@ -1023,6 +1034,7 @@ export default class SetConfigurationService extends Service {
         network: currentAccount.network,
         account: `${currentAccount.accountId} - ${currentAccount.alias}`,
         mirrorNode: currentMirror.name,
+        rpc: currentRPC.name,
       },
     );
     switch (mirrorNodeAction) {
@@ -1081,12 +1093,22 @@ export default class SetConfigurationService extends Service {
    * Function to configure the default network
    */
   public async configureRPCNetwork(): Promise<void> {
+    const currentAccount = utilsService.getCurrentAccount();
+    const currentMirror = utilsService.getCurrentMirror();
+    const currentRPC = utilsService.getCurrentRPC();
     const networks = configurationService
       .getConfiguration()
       .networks.map((network) => network.name);
     const network = await utilsService.defaultMultipleAsk(
       language.getText('wizard.networkManage'),
       networks,
+      false,
+      {
+        network: currentAccount.network,
+        mirrorNode: currentMirror.name,
+        rpc: currentRPC.name,
+        account: `${currentAccount.accountId} - ${currentAccount.alias}`,
+      },
     );
 
     utilsService.showMessage(
@@ -1097,6 +1119,7 @@ export default class SetConfigurationService extends Service {
 
   public async manageRPCMenu(_network: string): Promise<void> {
     const currentAccount = utilsService.getCurrentAccount();
+    const currentMirror = utilsService.getCurrentMirror();
     const currentRPC = utilsService.getCurrentRPC();
     const manageOptions = language.getArrayFromObject(
       'wizard.manageRPCOptions',
@@ -1110,6 +1133,7 @@ export default class SetConfigurationService extends Service {
       {
         network: currentAccount.network,
         account: `${currentAccount.accountId} - ${currentAccount.alias}`,
+        mirrorNode: currentMirror.name,
         rpc: currentRPC.name,
       },
     );

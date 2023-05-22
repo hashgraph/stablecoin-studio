@@ -138,6 +138,9 @@ export default class WizardService extends Service {
    * Show configuration menu
    */
   public async configurationMenu(): Promise<void> {
+    const configAccount = utilsService.getCurrentAccount();
+    const currentMirror = utilsService.getCurrentMirror();
+    const currentRPC = utilsService.getCurrentRPC();
     const wizardChangeConfigOptions: Array<string> =
       language.getArrayFromObject('wizard.changeOptions');
 
@@ -145,6 +148,13 @@ export default class WizardService extends Service {
       await utilsService.defaultMultipleAsk(
         language.getText('wizard.configurationMenuTitle'),
         wizardChangeConfigOptions,
+        false,
+        {
+          network: configAccount.network,
+          mirrorNode: currentMirror.name,
+          rpc: currentRPC.name,
+          account: `${configAccount.accountId} - ${configAccount.alias}`,
+        },
       )
     ) {
       case language.getText('wizard.changeOptions.Show'):
@@ -214,6 +224,7 @@ export default class WizardService extends Service {
     const account = await utilsService.defaultMultipleAsk(
       language.getText('wizard.accountLogin'),
       options,
+      false,
     );
     const currentAccount = accounts.find(
       (acc) => acc.accountId === account.split(' - ')[0],

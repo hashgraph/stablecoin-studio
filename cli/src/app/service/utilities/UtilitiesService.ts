@@ -241,23 +241,25 @@ export default class UtilitiesService extends Service {
       rpc?: string;
     },
   ): Promise<string> {
-    let networkInfo,
-      mirrorInfo = '',
-      rpcInfo = '';
+    let networkInfo = '';
+    let mirrorInfo = '';
+    let rpcInfo = '';
 
-    if (options?.network) {
+    if (options?.network)
       networkInfo =
         ' ' +
         colors.underline(colors.bold('Network:')) +
         ' ' +
         colors.cyan('(' + options.network);
-      if (options?.mirrorNode)
-        mirrorInfo = colors.cyan(' - mirror: ' + options.mirrorNode);
-      if (options?.rpc)
-        rpcInfo = colors.cyan(', rpc: ' + options.rpc);
+    if (options?.mirrorNode)
+      mirrorInfo = colors.cyan(' - mirror: ' + options.mirrorNode);
+    if (options?.rpc) rpcInfo = colors.cyan(', rpc: ' + options.rpc);
 
-      question = question + networkInfo + mirrorInfo + rpcInfo + colors.cyan(')');
+    if (networkInfo || mirrorInfo || rpcInfo) {
+      question =
+        question + networkInfo + mirrorInfo + rpcInfo + colors.cyan(')');
     }
+
     if (options?.account) {
       question =
         question +
@@ -518,17 +520,25 @@ export default class UtilitiesService extends Service {
   ): void {
     const { network, accountId, alias } = userInfo;
 
-    let networkInfo,
-      mirrorInfo,
-      rpcInfo = '';
+    let result = '';
+    let networkInfo = '';
+    let mirrorInfo = '';
+    let rpcInfo = '';
 
-    if (network) networkInfo = colors.cyan('(' + network);
+    if (network)
+      networkInfo =
+        ' ' +
+        colors.underline(colors.bold('Network:')) +
+        ' ' +
+        colors.cyan('(' + network);
     if (this.currentMirror)
       mirrorInfo = colors.cyan(' - mirror: ' + this.currentMirror.name);
-    if (this.currentRPC)
-      rpcInfo = colors.cyan(', rpc: ' + this.currentRPC.name);
+    if (this.currentRPC) rpcInfo = colors.cyan(', rpc: ' + this.currentRPC.name);
 
-    let result = networkInfo + mirrorInfo + rpcInfo + colors.cyan(')');
+    if (networkInfo || mirrorInfo || rpcInfo) {
+      result =
+        result + networkInfo + mirrorInfo + rpcInfo + colors.cyan(')');
+    }
 
     if (accountId) {
       result = result + ' ' + colors.magenta(`(${accountId} - ${alias})`);
