@@ -384,7 +384,7 @@ export default class UtilitiesService extends Service {
   public async defaultPublicKeyAsk(): Promise<{ key: string }> {
     let publicKey: string = await this.defaultSingleAsk(
       language.getText('configuration.askPublicKey') +
-      ` '96|64|66|68 characters'`,
+        ` '96|64|66|68 characters'`,
       undefined,
     );
 
@@ -533,11 +533,11 @@ export default class UtilitiesService extends Service {
         colors.cyan('(' + network);
     if (this.currentMirror)
       mirrorInfo = colors.cyan(' - mirror: ' + this.currentMirror.name);
-    if (this.currentRPC) rpcInfo = colors.cyan(', rpc: ' + this.currentRPC.name);
+    if (this.currentRPC)
+      rpcInfo = colors.cyan(', rpc: ' + this.currentRPC.name);
 
     if (networkInfo || mirrorInfo || rpcInfo) {
-      result =
-        result + networkInfo + mirrorInfo + rpcInfo + colors.cyan(')');
+      result = result + networkInfo + mirrorInfo + rpcInfo + colors.cyan(')');
     }
 
     if (accountId) {

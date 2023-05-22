@@ -18,7 +18,6 @@ import {
   StableCoinViewModel,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { IMirrorsConfig } from 'domain/configuration/interfaces/IMirrorsConfig.js';
-import { IRPCsConfig } from 'domain/configuration/interfaces/IRPCsConfig.js';
 
 /**
  * Wizard Service
@@ -266,19 +265,22 @@ export default class WizardService extends Service {
     if (mainMenu) await this.mainMenu();
   }
 
-  public async chooseMirrorNodeNetwork(
-    _network: string,
-  ): Promise<void> {
+  public async chooseMirrorNodeNetwork(_network: string): Promise<void> {
     const configuration = configurationService.getConfiguration();
     const { mirrors } = configuration;
     const currentMirror = utilsService.getCurrentMirror();
 
     const selectedMirrors = mirrors.filter(
-      (mirror) => _network === mirror.network
-        && (currentMirror.network != mirror.network || mirror.name != currentMirror.name));
+      (mirror) =>
+        _network === mirror.network &&
+        (currentMirror.network != mirror.network ||
+          mirror.name != currentMirror.name),
+    );
 
     if (selectedMirrors.length === 0) {
-      utilsService.showMessage(language.getText('configuration.mirrorNodeNotToChange'));
+      utilsService.showMessage(
+        language.getText('configuration.mirrorNodeNotToChange'),
+      );
     } else {
       let selectedMirror: IMirrorsConfig;
       if (selectedMirrors.length > 1) {
@@ -296,10 +298,9 @@ export default class WizardService extends Service {
       mirrors
         .filter(
           (mirror) =>
-            _network === mirror.network &&
-            mirror.name !== selectedMirror.name,
+            _network === mirror.network && mirror.name !== selectedMirror.name,
         )
-        .forEach((found) => found.selected = false);
+        .forEach((found) => (found.selected = false));
 
       configuration.mirrors = mirrors;
       configurationService.setConfiguration(configuration);
@@ -309,14 +310,14 @@ export default class WizardService extends Service {
     }
   }
 
-  public async chooseRPCNetwork(
-    _network: string,
-  ): Promise<boolean> {
+  public async chooseRPCNetwork(_network: string): Promise<boolean> {
     const configuration = configurationService.getConfiguration();
     const { rpcs } = configuration;
     const currentRPC = utilsService.getCurrentRPC();
-    const selectedRPCs = rpcs.filter((rpc) => _network === rpc.network && !rpc.selected);
-    
+    const selectedRPCs = rpcs.filter(
+      (rpc) => _network === rpc.network && !rpc.selected,
+    );
+
     if (selectedRPCs.length > 0) {
       const name = await utilsService.defaultMultipleAsk(
         language.getText('configuration.selectRPC'),
@@ -327,11 +328,7 @@ export default class WizardService extends Service {
       selectedRPC.selected = true;
 
       rpcs
-        .filter(
-          (rpc) =>
-            _network === rpc.network &&
-            rpc.name !== name,
-        )
+        .filter((rpc) => _network === rpc.network && rpc.name !== name)
         .forEach((found) => {
           found.selected = false;
         });
@@ -339,12 +336,14 @@ export default class WizardService extends Service {
       configuration.rpcs = rpcs;
       configurationService.setConfiguration(configuration);
 
-      if (currentRPC.network === _network) 
+      if (currentRPC.network === _network)
         utilsService.setCurrentRPC(selectedRPC);
 
       return true;
     } else {
-      utilsService.showMessage(colors.yellow(language.getText('configuration.RPCNotToChange')));
+      utilsService.showMessage(
+        colors.yellow(language.getText('configuration.RPCNotToChange')),
+      );
       return false;
     }
   }
