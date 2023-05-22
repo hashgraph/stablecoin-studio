@@ -242,19 +242,22 @@ export default class UtilitiesService extends Service {
     },
   ): Promise<string> {
     let networkInfo,
-      mirrorInfo,
+      mirrorInfo = '',
       rpcInfo = '';
 
-    if (options?.network)
+    if (options?.network) {
       networkInfo =
+        ' ' +
         colors.underline(colors.bold('Network:')) +
         ' ' +
         colors.cyan('(' + options.network);
-    if (options?.mirrorNode)
-      mirrorInfo = colors.cyan(' - mirror: ' + options.mirrorNode);
-    if (options?.rpc) rpcInfo = colors.cyan(', rpc: ' + options.rpc);
+      if (options?.mirrorNode)
+        mirrorInfo = colors.cyan(' - mirror: ' + options.mirrorNode);
+      if (options?.rpc)
+        rpcInfo = colors.cyan(', rpc: ' + options.rpc);
 
-    question = question + networkInfo + mirrorInfo + rpcInfo + colors.cyan(')');
+      question = question + networkInfo + mirrorInfo + rpcInfo + colors.cyan(')');
+    }
     if (options?.account) {
       question =
         question +
@@ -379,7 +382,7 @@ export default class UtilitiesService extends Service {
   public async defaultPublicKeyAsk(): Promise<{ key: string }> {
     let publicKey: string = await this.defaultSingleAsk(
       language.getText('configuration.askPublicKey') +
-        ` '96|64|66|68 characters'`,
+      ` '96|64|66|68 characters'`,
       undefined,
     );
 

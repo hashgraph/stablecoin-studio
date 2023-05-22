@@ -279,6 +279,14 @@ export default class WizardService extends Service {
     selectedMirror.selected = true;
     utilsService.setCurrentMirror(selectedMirror);
 
+    mirrors
+      .filter(
+        (mirror) =>
+          _network === mirror.network &&
+          mirror.name !== selectedMirror.name,
+      )
+      .forEach((found) => found.selected = false);
+
     configuration.mirrors = mirrors;
     configurationService.setConfiguration(configuration);
     if (mainMenu) await this.mainMenu();
