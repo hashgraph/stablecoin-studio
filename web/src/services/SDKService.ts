@@ -12,6 +12,8 @@ import {
 	Factory,
 	SetNetworkRequest,
 	GetAccountsWithRolesRequest,
+	Proxy,
+	GetProxyConfigRequest,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 import type {
 	WalletEvent,
@@ -167,6 +169,10 @@ export class SDKService {
 
 	public static async getStableCoinDetails(req: GetStableCoinDetailsRequest) {
 		return await StableCoin.getInfo(req);
+	}
+
+	public static async getProxyConfig(req: GetProxyConfigRequest) {
+		return await Proxy.getProxyConfig(req);
 	}
 
 	public static async getAccountInfo(req: GetAccountInfoRequest): Promise<AccountViewModel> {

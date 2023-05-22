@@ -11,6 +11,7 @@ import {
 	SELECTED_WALLET_ACCOUNT_INFO,
 	SELECTED_WALLET_COIN,
 	SELECTED_TOKEN_ROLES,
+	SELECTED_WALLET_COIN_PROXY_CONFIG,
 } from '../../store/slices/walletSlice';
 import { formatShortKey } from '../../utils/inputHelper';
 
@@ -18,6 +19,7 @@ const StableCoinDetails = () => {
 	const { t } = useTranslation('stableCoinDetails');
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
+	const selectedStableCoinConfigProxy = useSelector(SELECTED_WALLET_COIN_PROXY_CONFIG);
 	const account = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 	const network = useSelector(SELECTED_NETWORK);
 	const roles = useSelector(SELECTED_TOKEN_ROLES)!;
@@ -135,6 +137,21 @@ const StableCoinDetails = () => {
 			label: t('proxyAddress'),
 			value: selectedStableCoin?.proxyAddress,
 			hashScanURL: `${hashScanURL}/contract/${selectedStableCoin?.proxyAddress}`,
+		},
+		{
+			label: t('proxyAdminAddress'),
+			value: selectedStableCoin?.proxyAdminAddress,
+			hashScanURL: `${hashScanURL}/contract/${selectedStableCoin?.proxyAdminAddress}`,
+		},
+		{
+			label: t('proxyOwner'),
+			value: selectedStableCoinConfigProxy?.owner,
+			hashScanURL: `${hashScanURL}/account/${selectedStableCoinConfigProxy?.owner}`,
+		},
+		{
+			label: t('proxyImplementation'),
+			value: selectedStableCoinConfigProxy?.implementationAddress,
+			hashScanURL: `${hashScanURL}/contract/${selectedStableCoinConfigProxy?.implementationAddress}`,
 		},
 		{
 			label: t('paused'),
