@@ -17,7 +17,6 @@ import {
   SetNetworkRequest,
   StableCoinViewModel,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
-import { IMirrorsConfig } from 'domain/configuration/interfaces/IMirrorsConfig.js';
 
 /**
  * Wizard Service
