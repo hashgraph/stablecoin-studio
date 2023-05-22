@@ -114,6 +114,7 @@ export const english = {
     mirrorNodeList: '\nMirror nodes list:',
     mirrorNodeAdded: '\nMirror nodes added:',
     mirrorNodeDeleted: '\nMirror nodes deleted successfully',
+    mirrorNodeNotToChange: '\nThere is no mirror node to change',
     RPCList: '\nJSON-RPC-Relay list:',
     RPCAdded: '\nJSON-RPC-Relay added:',
     RPCDelete: 'Which JSON-RPC-Relay would you like to delete?',
@@ -126,6 +127,7 @@ export const english = {
     askSureRemove: 'Are you sure do you want to delete ${mirrorNode}?',
     selectMirrorNode: 'Select the mirror node: ',
     selectRPC: 'Select the JSON-RPC-Relay: ',
+    RPCNotToChange: '\nThere is no nJSON-RPC-Relay to change',
   },
   stablecoin: {
     noFactories:

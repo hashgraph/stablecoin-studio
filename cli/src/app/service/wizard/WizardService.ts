@@ -267,77 +267,90 @@ export default class WizardService extends Service {
   }
 
   public async chooseMirrorNodeNetwork(
-    mainMenu = true,
     _network: string,
   ): Promise<void> {
     const configuration = configurationService.getConfiguration();
     const { mirrors } = configuration;
+    const currentMirror = utilsService.getCurrentMirror();
 
-    let selectedMirror: IMirrorsConfig;
     const selectedMirrors = mirrors.filter(
-      (mirror) => _network === mirror.network,
-    );
-    if (selectedMirrors.length > 1) {
-      const name = await utilsService.defaultMultipleAsk(
-        language.getText('configuration.selectMirrorNode'),
-        selectedMirrors.map((mirror) => mirror.name),
-        false,
-      );
-      selectedMirror = selectedMirrors.find((mirror) => name === mirror.name);
+      (mirror) => _network === mirror.network
+        && (currentMirror.network != mirror.network || mirror.name != currentMirror.name));
+
+    if (selectedMirrors.length === 0) {
+      utilsService.showMessage(language.getText('configuration.mirrorNodeNotToChange'));
     } else {
-      selectedMirror = selectedMirrors[0];
+      let selectedMirror: IMirrorsConfig;
+      if (selectedMirrors.length > 1) {
+        const name = await utilsService.defaultMultipleAsk(
+          language.getText('configuration.selectMirrorNode'),
+          selectedMirrors.map((mirror) => mirror.name),
+          false,
+        );
+        selectedMirror = selectedMirrors.find((mirror) => name === mirror.name);
+      } else {
+        selectedMirror = selectedMirrors[0];
+      }
+      selectedMirror.selected = true;
+
+      mirrors
+        .filter(
+          (mirror) =>
+            _network === mirror.network &&
+            mirror.name !== selectedMirror.name,
+        )
+        .forEach((found) => found.selected = false);
+
+      configuration.mirrors = mirrors;
+      configurationService.setConfiguration(configuration);
+
+      if (currentMirror.network === _network)
+        utilsService.setCurrentMirror(selectedMirror);
     }
-    selectedMirror.selected = true;
-    utilsService.setCurrentMirror(selectedMirror);
-
-    mirrors
-      .filter(
-        (mirror) =>
-          _network === mirror.network &&
-          mirror.name !== selectedMirror.name,
-      )
-      .forEach((found) => found.selected = false);
-
-    configuration.mirrors = mirrors;
-    configurationService.setConfiguration(configuration);
-    if (mainMenu) await this.mainMenu();
   }
 
   public async chooseRPCNetwork(
-    mainMenu = true,
     _network: string,
   ): Promise<void> {
     const configuration = configurationService.getConfiguration();
     const { rpcs } = configuration;
+    const currentRPC = utilsService.getCurrentRPC();
 
-    let selectedRPC: IRPCsConfig;
-    const selectedRPCs = rpcs.filter((rpc) => _network === rpc.network);
-    if (selectedRPCs.length > 1) {
-      const name = await utilsService.defaultMultipleAsk(
-        language.getText('configuration.selectRPC'),
-        selectedRPCs.map((rpc) => rpc.name),
-        false,
-      );
-      selectedRPC = selectedRPCs.find((rpc) => name === rpc.name);
+    const selectedRPCs = rpcs.filter((rpc) => _network === rpc.network
+      && (currentRPC.network != rpc.network || rpc.name != currentRPC.name));
+
+    if (selectedRPCs.length === 0) {
+      utilsService.showMessage(language.getText('configuration.RPCNotToChange'));
     } else {
-      selectedRPC = selectedRPCs[0];
+      let selectedRPC: IRPCsConfig;
+      if (selectedRPCs.length > 1) {
+        const name = await utilsService.defaultMultipleAsk(
+          language.getText('configuration.selectRPC'),
+          selectedRPCs.map((rpc) => rpc.name),
+          false,
+        );
+        selectedRPC = selectedRPCs.find((rpc) => name === rpc.name);
+      } else {
+        selectedRPC = selectedRPCs[0];
+      }
+      selectedRPC.selected = true;
+
+      rpcs
+        .filter(
+          (rpc) =>
+            _network === rpc.network &&
+            rpc.name !== currentRPC.name,
+        )
+        .forEach((found) => {
+          found.selected = false;
+        });
+
+      configuration.rpcs = rpcs;
+      configurationService.setConfiguration(configuration);
+
+      if (currentRPC.network === _network)
+        utilsService.setCurrentRPC(selectedRPC);
     }
-    selectedRPC.selected = true;
-    utilsService.setCurrentRPC(selectedRPC);
-
-    rpcs
-      .filter(
-        (rpc) =>
-          _network === rpc.network &&
-          rpc.name !== utilsService.getCurrentRPC().name,
-      )
-      .forEach((found) => {
-        found.selected = false;
-      });
-
-    configuration.rpcs = rpcs;
-    configurationService.setConfiguration(configuration);
-    if (mainMenu) await this.mainMenu();
   }
 
   public async chooseLastAccount(): Promise<void> {

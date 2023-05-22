@@ -1041,8 +1041,9 @@ export default class SetConfigurationService extends Service {
       case language.getText('wizard.manageMirrorNodeOptions.Change'):
         await utilsService.cleanAndShowBanner();
 
-        await wizardService.chooseMirrorNodeNetwork(false, _network);
-        await utilsService.initSDK();
+        await wizardService.chooseMirrorNodeNetwork(_network);
+        if (utilsService.getCurrentMirror().network === _network)
+          await utilsService.initSDK();
         await utilsService.cleanAndShowBanner();
         await wizardService.mainMenu();
         break;
@@ -1140,8 +1141,9 @@ export default class SetConfigurationService extends Service {
     switch (rpcAction) {
       case language.getText('wizard.manageRPCOptions.Change'):
         await utilsService.cleanAndShowBanner();
-        await wizardService.chooseRPCNetwork(false, _network);
-        await utilsService.initSDK();
+        await wizardService.chooseRPCNetwork(_network);
+        if (utilsService.getCurrentRPC().network === _network)
+          await utilsService.initSDK();
         await utilsService.cleanAndShowBanner();
         await wizardService.mainMenu();
         break;
