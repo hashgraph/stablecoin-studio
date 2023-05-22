@@ -241,15 +241,20 @@ export default class UtilitiesService extends Service {
       rpc?: string;
     },
   ): Promise<string> {
-    if (options?.network) {
-      const networkInfo = `${options.network}`;
-      question =
-        question +
-        ' ' +
+    let networkInfo,
+      mirrorInfo,
+      rpcInfo = '';
+
+    if (options?.network)
+      networkInfo =
         colors.underline(colors.bold('Network:')) +
         ' ' +
-        colors.cyan('(' + networkInfo + ')');
-    }
+        colors.cyan('(' + options.network);
+    if (options?.mirrorNode)
+      mirrorInfo = colors.cyan(' - mirror: ' + options.mirrorNode);
+    if (options?.rpc) rpcInfo = colors.cyan(', rpc: ' + options.rpc);
+
+    question = question + networkInfo + mirrorInfo + rpcInfo + colors.cyan(')');
     if (options?.account) {
       question =
         question +
@@ -265,14 +270,6 @@ export default class UtilitiesService extends Service {
         colors.underline(colors.bold('Stablecoin:')) +
         ' ' +
         colors.yellow('(' + options.token + ')');
-    }
-    if (options?.mirrorNode) {
-      question =
-        question +
-        ' ' +
-        colors.underline(colors.bold('Mirror Node:')) +
-        ' ' +
-        colors.blue('(' + options.mirrorNode + ')');
     }
     if (options?.tokenPaused) {
       question = question + ' | ' + colors.red('PAUSED');
@@ -518,21 +515,24 @@ export default class UtilitiesService extends Service {
   ): void {
     const { network, accountId, alias } = userInfo;
 
-    let result = '';
-    if (network) {
-      result = result + ' ' + colors.cyan(`( ${network} )`);
-    }
+    let networkInfo,
+      mirrorInfo,
+      rpcInfo = '';
+
+    if (network) networkInfo = colors.cyan('(' + network);
+    if (this.currentMirror)
+      mirrorInfo = colors.cyan(' - mirror: ' + this.currentMirror.name);
+    if (this.currentRPC)
+      rpcInfo = colors.cyan(', rpc: ' + this.currentRPC.name);
+
+    let result = networkInfo + mirrorInfo + rpcInfo + colors.cyan(')');
 
     if (accountId) {
       result = result + ' ' + colors.magenta(`(${accountId} - ${alias})`);
     }
 
     if (token) {
-      result = result + ' ' + colors.yellow(`( ${token} )`);
-    }
-
-    if (this.currentMirror) {
-      result = result + ' ' + colors.blue(`( ${this.currentMirror.name} )`);
+      result = result + ' ' + colors.yellow(`(${token})`);
     }
 
     this.showMessage(result);
