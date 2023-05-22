@@ -348,47 +348,50 @@ export default class SetConfigurationService extends Service {
     const options = mirrors
       .filter(
         (mirror) =>
-          mirror.name !== currentMirrorNode.name ||
-          mirror.network !== currentMirrorNode.network ||
-          mirror.network !== _network,
+          mirror.name !== currentMirrorNode.name && mirror.network === _network,
       )
       .map(
         (mirror) =>
           `${mirror.name}` + colors.magenta(' (' + mirror.network + ')'),
       );
-    const optionsWithoutColors = mirrors
-      .filter(
-        (mirror) =>
-          mirror.name !== currentMirrorNode.name ||
-          mirror.network !== currentMirrorNode.network ||
-          mirror.network !== _network,
-      )
-      .map((mirror) => `${mirror.name}` + ' (' + mirror.network + ')');
-    let mirrorNode = await utilsService.defaultMultipleAsk(
-      language.getText('configuration.mirrorNodeDelete'),
-      options,
-      true,
-    );
-    if (mirrorNode === language.getText('wizard.backOption.goBack')) {
-      await this.manageMirrorNodeMenu(_network);
-    }
-    const AskSureRemove = await utilsService.defaultConfirmAsk(
-      language.getText('configuration.askSureRemove', { mirrorNode }),
-      true,
-    );
-    if (AskSureRemove) {
-      mirrorNode = optionsWithoutColors[options.indexOf(mirrorNode)];
-      const name = mirrorNode.split(' (')[0];
-      const network = mirrorNode.split(' (')[1].split(')')[0];
-      configuration.mirrors = mirrors.filter(
-        (mirror) => mirror.name !== name || mirror.network !== network,
+
+    if (options.length > 0) {
+      const optionsWithoutColors = mirrors
+        .filter(
+          (mirror) =>
+            mirror.name !== currentMirrorNode.name &&
+            mirror.network === _network,
+        )
+        .map((mirror) => `${mirror.name}` + ' (' + mirror.network + ')');
+      let mirrorNode = await utilsService.defaultMultipleAsk(
+        language.getText('configuration.mirrorNodeDelete'),
+        options,
+        true,
       );
-      configurationService.setConfiguration(configuration);
+      if (mirrorNode === language.getText('wizard.backOption.goBack')) {
+        await this.manageMirrorNodeMenu(_network);
+      }
+      const AskSureRemove = await utilsService.defaultConfirmAsk(
+        language.getText('configuration.askSureRemove', { mirrorNode }),
+        true,
+      );
+      if (AskSureRemove) {
+        mirrorNode = optionsWithoutColors[options.indexOf(mirrorNode)];
+        const name = mirrorNode.split(' (')[0];
+        const network = mirrorNode.split(' (')[1].split(')')[0];
+        configuration.mirrors = mirrors.filter(
+          (mirror) => mirror.name !== name || mirror.network !== network,
+        );
+        configurationService.setConfiguration(configuration);
+        utilsService.showMessage(
+          language.getText('configuration.mirrorNodeDeleted'),
+        );
+      }
+    } else {
       utilsService.showMessage(
-        language.getText('configuration.mirrorNodeDeleted'),
+        colors.yellow(language.getText('configuration.noMirrorNodeToDelete')),
       );
     }
-    await this.removeMirrorNode(_network);
   }
 
   public async configureRPC(_network?: string): Promise<IRPCsConfig[]> {
@@ -486,44 +489,42 @@ export default class SetConfigurationService extends Service {
     const rpcs: IRPCsConfig[] = configuration?.rpcs || [];
 
     const options = rpcs
-      .filter(
-        (rpc) =>
-          rpc.name !== currentRPC.name ||
-          rpc.network !== currentRPC.network ||
-          rpc.network !== _network,
-      )
+      .filter((rpc) => rpc.name !== currentRPC.name && rpc.network === _network)
       .map((rpc) => `${rpc.name}` + colors.magenta(' (' + rpc.network + ')'));
-    const optionsWithoutColors = rpcs
-      .filter(
-        (rpc) =>
-          rpc.name !== currentRPC.name ||
-          rpc.network !== currentRPC.network ||
-          rpc.network !== _network,
-      )
-      .map((rpc) => `${rpc.name}` + ' (' + rpc.network + ')');
-    let rpc = await utilsService.defaultMultipleAsk(
-      language.getText('configuration.RPCDelete'),
-      options,
-      true,
-    );
-    if (rpc === language.getText('wizard.backOption.goBack')) {
-      await this.manageRPCMenu(_network);
-    }
-    const AskSureRemove = await utilsService.defaultConfirmAsk(
-      language.getText('configuration.askSureRemove', { rpc }),
-      true,
-    );
-    if (AskSureRemove) {
-      rpc = optionsWithoutColors[options.indexOf(rpc)];
-      const name = rpc.split(' (')[0];
-      const network = rpc.split(' (')[1].split(')')[0];
-      configuration.rpcs = rpcs.filter(
-        (rpc) => rpc.name !== name || rpc.network !== network,
+
+    if (options.length > 0) {
+      const optionsWithoutColors = rpcs
+        .filter(
+          (rpc) => rpc.name !== currentRPC.name && rpc.network === _network,
+        )
+        .map((rpc) => `${rpc.name}` + ' (' + rpc.network + ')');
+      let rpc = await utilsService.defaultMultipleAsk(
+        language.getText('configuration.RPCDelete'),
+        options,
+        true,
       );
-      configurationService.setConfiguration(configuration);
-      utilsService.showMessage(language.getText('configuration.RPCDeleted'));
+      if (rpc === language.getText('wizard.backOption.goBack')) {
+        await this.manageRPCMenu(_network);
+      }
+      const AskSureRemove = await utilsService.defaultConfirmAsk(
+        language.getText('configuration.askSureRemove', { rpc }),
+        true,
+      );
+      if (AskSureRemove) {
+        rpc = optionsWithoutColors[options.indexOf(rpc)];
+        const name = rpc.split(' (')[0];
+        const network = rpc.split(' (')[1].split(')')[0];
+        configuration.rpcs = rpcs.filter(
+          (rpc) => rpc.name !== name || rpc.network !== network,
+        );
+        configurationService.setConfiguration(configuration);
+        utilsService.showMessage(language.getText('configuration.RPCDeleted'));
+      }
+    } else {
+      utilsService.showMessage(
+        colors.yellow(language.getText('configuration.noRPCToDelete')),
+      );
     }
-    await this.removeRPC(_network);
   }
 
   public async configureFactories(): Promise<IFactoryConfig[]> {
