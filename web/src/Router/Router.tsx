@@ -45,6 +45,7 @@ import FeesManagement from '../views/FeesManagement';
 import GrantKycOperation from '../views/Operations/GrantKyc';
 import RevokeKycOperation from '../views/Operations/RevokeKyc';
 import CheckKycOperation from '../views/Operations/CheckKyc';
+import Settings from '../views/Settings';
 
 const LoginOverlayRoute = ({ show, loadingSC }: { show: boolean; loadingSC: boolean }) => {
 	return (
@@ -192,6 +193,7 @@ const Router = () => {
 								<Route path={RoutesMappingUrl.stableCoinDetails} element={<StableCoinDetails />} />
 								<Route path={RoutesMappingUrl.proofOfReserve} element={<StableCoinProof />} />
 								<Route path={RoutesMappingUrl.feesManagement} element={<FeesManagement />} />
+								<Route path={RoutesMappingUrl.settings} element={<Settings />} />
 							</>
 						)}
 						<Route path={RoutesMappingUrl.stableCoinCreation} element={<StableCoinCreation />} />

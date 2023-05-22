@@ -14,6 +14,8 @@ import {
 	GetAccountsWithRolesRequest,
 	Proxy,
 	GetProxyConfigRequest,
+	ChangeProxyOwnerRequest,
+	UpgradeImplementationRequest,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 import type {
 	WalletEvent,
@@ -317,6 +319,14 @@ export class SDKService {
 
 	public static async updateReserveAmount(data: UpdateReserveAmountRequest) {
 		return await ReserveDataFeed.updateReserveAmount(data);
+	}
+
+	public static async changeOwner(req: ChangeProxyOwnerRequest) {
+		return await Proxy.changeProxyOwner(req);
+	}
+
+	public static async upgradeImplementation(req: UpgradeImplementationRequest) {
+		return await Proxy.upgradeImplementation(req);
 	}
 
 	public static async grantKyc(data: KYCRequest) {

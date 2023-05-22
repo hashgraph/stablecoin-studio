@@ -46,7 +46,8 @@
 		"role": "Role management",
 		"details": "Stable coin details",
 		"proofOfReserve": "Proof of reserve",
-		"feesManagement": "Fees management"
+		"feesManagement": "Fees management",
+		"settings": "Settings"
 	},
 	"validations": {
 		"required": "This field is required",

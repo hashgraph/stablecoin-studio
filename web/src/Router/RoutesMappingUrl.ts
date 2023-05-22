@@ -31,4 +31,5 @@ export const RoutesMappingUrl: Record<NamedRoutes, string> = {
 	[NamedRoutes.RevokeKyc]: '/operations/revoke-kyc',
 	[NamedRoutes.CheckKyc]: '/operations/check-kyc',
 	[NamedRoutes.FeesManagement]: '/feesManagement',
+	[NamedRoutes.Settings]: '/settings',
 };
