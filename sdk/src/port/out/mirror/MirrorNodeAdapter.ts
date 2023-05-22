@@ -18,7 +18,7 @@
  *
  */
 
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import { AxiosInstance } from 'axios';
 import { singleton } from 'tsyringe';
 import StableCoinViewModel from '../../out/mirror/response/StableCoinViewModel.js';
@@ -57,6 +57,7 @@ import { MirrorNode } from '../../../domain/context/network/MirrorNode.js';
 @singleton()
 export class MirrorNodeAdapter {
 	private instance: AxiosInstance;
+	private config: AxiosRequestConfig;
 	private mirrorNodeConfig: MirrorNode;
 
 	public set(mnConfig: MirrorNode): void {
@@ -311,7 +312,7 @@ export class MirrorNodeAdapter {
 			LogService.logTrace(
 				this.mirrorNodeConfig.baseUrl + 'accounts/' + accountId,
 			);
-			const res = await axios.get<IAccount>(
+			const res = await this.instance.get<IAccount>(
 				this.mirrorNodeConfig.baseUrl +
 					'accounts/' +
 					accountId.toString(),
@@ -347,7 +348,7 @@ export class MirrorNodeAdapter {
 				this.mirrorNodeConfig.baseUrl
 			}accounts/${targetId.toString()}/tokens?token.id=${tokenId.toString()}`;
 			LogService.logTrace(url);
-			const res = await axios.get<AccountTokenRelationList>(url);
+			const res = await this.instance.get<AccountTokenRelationList>(url);
 			if (res.data.tokens && res.data.tokens.length > 0) {
 				const obj = res.data.tokens[0];
 				return {
@@ -378,7 +379,7 @@ export class MirrorNodeAdapter {
 				'contracts/results/' +
 				transactionId;
 			LogService.logTrace(url);
-			const res = await axios.get<ITransactionResult>(url);
+			const res = await this.instance.get<ITransactionResult>(url);
 			if (!res.data.call_result)
 				throw new Error(
 					'Response does not contain a transaction result',
@@ -411,7 +412,7 @@ export class MirrorNodeAdapter {
 			LogService.logTrace(url);
 
 			await new Promise((resolve) => setTimeout(resolve, 5000));
-			const res = await axios.get<ITransactionList>(url);
+			const res = await this.instance.get<ITransactionList>(url);
 
 			let lastChildtransaction: ITransaction;
 			if (res.data.transactions) {
@@ -486,7 +487,7 @@ export class MirrorNodeAdapter {
 				this.mirrorNodeConfig.baseUrl
 			}balances?account.id=${accountId.toString()}`;
 			LogService.logTrace(url);
-			const res = await axios.get<IBalances>(url);
+			const res = await this.instance.get<IBalances>(url);
 			if (!res.data.balances)
 				throw new Error('Response does not contain a balances result');
 
