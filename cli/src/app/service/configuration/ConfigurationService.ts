@@ -5,6 +5,7 @@ import { IConfiguration } from '../../../domain/configuration/interfaces/IConfig
 import { INetworkConfig } from '../../../domain/configuration/interfaces/INetworkConfig.js';
 import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
 import { IMirrorsConfig } from '../../../domain/configuration/interfaces/IMirrorsConfig.js';
+import { IRPCsConfig } from '../../../domain/configuration/interfaces/IRPCsConfig.js';
 import {
   configurationService,
   packagePath,
@@ -152,7 +153,7 @@ export default class ConfigurationService extends Service {
       networks: defaultConfigRaw['networks'] as unknown as INetworkConfig[],
       accounts: defaultConfigRaw['accounts'] as unknown as IAccountConfig[],
       mirrors: defaultConfigRaw['mirrors'] as unknown as IMirrorsConfig[],
-      rpcs: defaultConfigRaw['rpcs'] as unknown as IMirrorsConfig[],
+      rpcs: defaultConfigRaw['rpcs'] as unknown as IRPCsConfig[],
       logs: defaultConfigRaw['logs'] as unknown as ILogConfig,
       factories: defaultConfigRaw['factories'] as unknown as IFactoryConfig[],
     };
