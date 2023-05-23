@@ -73,7 +73,7 @@ export class SDKService {
 	}
 
 	public static async connectWallet(wallet: SupportedWallets, connectNetwork: string) {
-		let mirrorNode = [];
+		let mirrorNode = []; // REACT_APP_MIRROR_NODE load from .env
 
 		if (process.env.REACT_APP_MIRROR_NODE)
 			mirrorNode = JSON.parse(process.env.REACT_APP_MIRROR_NODE);
@@ -90,14 +90,30 @@ export class SDKService {
 					: { baseUrl: '', apiKey: '', headerName: '' }
 				: { baseUrl: '', apiKey: '', headerName: '' };
 
+		let rpcNode = []; // REACT_APP_RPC_NODE load from .env
+
+		if (process.env.REACT_APP_RPC_NODE) rpcNode = JSON.parse(process.env.REACT_APP_RPC_NODE);
+
+		const _rpcNode =
+			rpcNode.length !== 0
+				? rpcNode.find((i: any) => i.Environment === connectNetwork)
+					? {
+							baseUrl: rpcNode.find((i: any) => i.Environment === connectNetwork).BASE_URL ?? '',
+							apiKey: rpcNode.find((i: any) => i.Environment === connectNetwork).API_KEY ?? '',
+							headerName: rpcNode.find((i: any) => i.Environment === connectNetwork).HEADER ?? '',
+					  }
+					: { baseUrl: '', apiKey: '', headerName: '' }
+				: { baseUrl: '', apiKey: '', headerName: '' };
+
 		await Network.setNetwork(
 			new SetNetworkRequest({
 				environment: connectNetwork,
 				mirrorNode: _mirrorNode,
+				rpcNode: _rpcNode,
 			}),
 		);
 
-		let factories = [];
+		let factories = []; // REACT_APP_FACTORIES load from .env
 
 		if (process.env.REACT_APP_FACTORIES) factories = JSON.parse(process.env.REACT_APP_FACTORIES);
 
@@ -119,6 +135,7 @@ export class SDKService {
 			new ConnectRequest({
 				network: connectNetwork,
 				mirrorNode: _mirrorNode,
+				rpcNode: _rpcNode,
 				wallet,
 			}),
 		);
@@ -134,6 +151,11 @@ export class SDKService {
 					network: 'mainnet',
 					mirrorNode: {
 						baseUrl: 'https://mainnet-public.mirrornode.hedera.com/api/v1/',
+						apiKey: '',
+						headerName: '',
+					},
+					rpcNode: {
+						baseUrl: 'https://mainnet.hashio.io/api',
 						apiKey: '',
 						headerName: '',
 					},

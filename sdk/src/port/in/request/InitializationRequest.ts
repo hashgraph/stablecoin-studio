@@ -22,6 +22,7 @@ import WalletEvent from '../../../app/service/event/WalletEvent.js';
 import Configuration from '../../../domain/context/network/Configuration.js';
 import { Environment } from '../../../domain/context/network/Environment.js';
 import { MirrorNode } from '../../../domain/context/network/MirrorNode.js';
+import { JsonRpcRelay } from '../../../domain/context/network/JsonRpcRelay.js';
 import { SupportedWallets } from '../../../domain/context/network/Wallet.js';
 import { BaseRequest } from './BaseRequest.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
@@ -34,23 +35,27 @@ export default class InitializationRequest
 {
 	network: Environment;
 	mirrorNode: MirrorNode;
+	rpcNode: JsonRpcRelay;
 	events?: Partial<WalletEvent>;
 	configuration?: Configuration;
 
 	constructor({
 		network,
 		mirrorNode,
+		rpcNode,
 		events,
 		configuration,
 	}: {
 		network: Environment;
 		mirrorNode: MirrorNode;
+		rpcNode: JsonRpcRelay;
 		events?: Partial<WalletEvent>;
 		configuration?: Configuration;
 	}) {
 		super({});
 		this.network = network;
 		this.mirrorNode = mirrorNode;
+		this.rpcNode = rpcNode;
 		this.events = events;
 		this.configuration = configuration;
 	}

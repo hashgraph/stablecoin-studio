@@ -37,10 +37,16 @@ import ConnectRequest, {
 
 import { CLIENT_ACCOUNT_ED25519, FACTORY_ADDRESS } from '../../config.js';
 import { MirrorNode } from 'domain/context/network/MirrorNode.js';
+import { JsonRpcRelay } from 'domain/context/network/JsonRpcRelay.js';
 
 const mirrorNode: MirrorNode = {
 	name: 'testmirrorNode',
 	baseUrl: 'https://testnet.mirrornode.hedera.com/api/v1/',
+};
+
+const rpcNode: JsonRpcRelay = {
+	name: 'testrpcNode',
+	baseUrl: 'https://testnet.hashio.io/api',
 };
 
 describe('🧪 Network test', () => {
@@ -59,7 +65,12 @@ describe('🧪 Network test', () => {
 		expect(networkService.mirrorNode.name).toEqual('default');
 		expect(networkService.mirrorNode.apiKey).toBeUndefined();
 		expect(networkService.mirrorNode.headerName).toBeUndefined();
-		expect(networkService.rpcNode).toBeUndefined();
+		expect(networkService.rpcNode.baseUrl).toEqual(
+			'https://testnet.hashio.io/api',
+		);
+		expect(networkService.rpcNode.name).toEqual('default');
+		expect(networkService.rpcNode.apiKey).toBeUndefined();
+		expect(networkService.rpcNode.headerName).toBeUndefined();
 	}, 60_000);
 
 	it('Connects to a client', async () => {
@@ -72,6 +83,7 @@ describe('🧪 Network test', () => {
 				privateKey: CLIENT_ACCOUNT_ED25519.privateKey,
 			},
 			mirrorNode: mirrorNode,
+			rpcNode: rpcNode,
 		};
 		const init = await Network.connect(new ConnectRequest(params));
 		expect(spy).toHaveBeenCalled();
@@ -90,6 +102,7 @@ describe('🧪 Network test', () => {
 					factoryAddress: FACTORY_ADDRESS,
 				},
 				mirrorNode: mirrorNode,
+				rpcNode: rpcNode,
 			}),
 		);
 		expect(spy).toHaveBeenCalled();
@@ -136,12 +149,18 @@ describe('🧪 Network test', () => {
 			apiKey: 'apiKeyValue',
 			headerName: 'httpHeaderName',
 		};
+		const newRpcNode: JsonRpcRelay = {
+			name: 'newRpcNode',
+			baseUrl: 'https://testnet.hashio.io/api',
+			apiKey: 'apiKeyValue',
+			headerName: 'httpHeaderName',
+		};
 		const spy = jest.spyOn(Network, 'setNetwork');
 		const params = {
 			environment: previewnet,
 			consensusNodes: 'nodes',
 			mirrorNode: newMirrorNode,
-			rpcNode: 'example.com',
+			rpcNode: newRpcNode,
 		};
 		const init = await Network.setNetwork(new SetNetworkRequest(params));
 		expect(spy).toHaveBeenCalled();
@@ -156,7 +175,12 @@ describe('🧪 Network test', () => {
 		expect(networkService.mirrorNode.headerName).toEqual(
 			params.mirrorNode.headerName,
 		);
-		expect(networkService.rpcNode).toEqual(params.rpcNode);
+		expect(networkService.rpcNode.name).toEqual(params.rpcNode.name);
+		expect(networkService.rpcNode.baseUrl).toEqual(params.rpcNode.baseUrl);
+		expect(networkService.rpcNode.apiKey).toEqual(params.rpcNode.apiKey);
+		expect(networkService.rpcNode.headerName).toEqual(
+			params.rpcNode.headerName,
+		);
 		expect(networkService.environment).toEqual(params.environment);
 		expect(init).toBeTruthy();
 		expect(init.environment).toEqual(params.environment);
@@ -166,14 +190,17 @@ describe('🧪 Network test', () => {
 		expect(init.mirrorNode.headerName).toEqual(
 			params.mirrorNode.headerName,
 		);
+		expect(init.rpcNode.name).toEqual(params.rpcNode.name);
+		expect(init.rpcNode.baseUrl).toEqual(params.rpcNode.baseUrl);
+		expect(init.rpcNode.apiKey).toEqual(params.rpcNode.apiKey);
+		expect(init.rpcNode.headerName).toEqual(params.rpcNode.headerName);
 		expect(init.consensusNodes).toEqual(params.consensusNodes);
-		expect(init.rpcNode).toEqual(params.rpcNode);
 
 		const params_2 = {
 			environment: testnet,
 			consensusNodes: '',
 			mirrorNode: mirrorNode,
-			rpcNode: '',
+			rpcNode: rpcNode,
 		};
 
 		await Network.setNetwork(new SetNetworkRequest(params_2));
@@ -187,7 +214,7 @@ describe('🧪 Network test', () => {
 			environment: unrecognized,
 			consensusNodes: '',
 			mirrorNode: networkService.mirrorNode,
-			rpcNode: '',
+			rpcNode: networkService.rpcNode,
 		};
 
 		await Network.setNetwork(new SetNetworkRequest(params));

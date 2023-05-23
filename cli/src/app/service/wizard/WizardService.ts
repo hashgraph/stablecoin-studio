@@ -258,6 +258,7 @@ export default class WizardService extends Service {
             ? currentNetwork.name
             : undefined,
         mirrorNode: currentMirror ? currentMirror : undefined,
+        rpcNode: currentRPC ? currentRPC : undefined,
       }),
     );
 

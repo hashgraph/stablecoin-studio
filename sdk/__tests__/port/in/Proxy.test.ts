@@ -49,10 +49,16 @@ import {
 } from '../../config.js';
 import ContractId from 'domain/context/contract/ContractId.js';
 import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
+import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
 
 const mirrorNode: MirrorNode = {
 	name: 'testmirrorNode',
 	baseUrl: 'https://testnet.mirrornode.hedera.com/api/v1/',
+};
+
+const rpcNode: JsonRpcRelay = {
+	name: 'testrpcNode',
+	baseUrl: 'https://testnet.hashio.io/api',
 };
 
 describe('🧪 Proxy test', () => {
@@ -73,6 +79,7 @@ describe('🧪 Proxy test', () => {
 				network: 'testnet',
 				wallet: SupportedWallets.CLIENT,
 				mirrorNode: mirrorNode,
+				rpcNode: rpcNode,
 			}),
 		);
 		await Network.init(
@@ -82,6 +89,7 @@ describe('🧪 Proxy test', () => {
 					factoryAddress: FACTORY_ADDRESS,
 				},
 				mirrorNode: mirrorNode,
+				rpcNode: rpcNode,
 			}),
 		);
 		Injectable.resolveTransactionHandler();
@@ -188,6 +196,7 @@ describe('🧪 Proxy test', () => {
 				network: 'testnet',
 				wallet: SupportedWallets.CLIENT,
 				mirrorNode: mirrorNode,
+				rpcNode: rpcNode,
 			}),
 		);
 
@@ -207,6 +216,7 @@ describe('🧪 Proxy test', () => {
 				network: 'testnet',
 				wallet: SupportedWallets.CLIENT,
 				mirrorNode: mirrorNode,
+				rpcNode: rpcNode,
 			}),
 		);
 	}, 60_000);

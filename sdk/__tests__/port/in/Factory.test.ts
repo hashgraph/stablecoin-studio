@@ -26,6 +26,7 @@ import { CLIENT_ACCOUNT_ED25519, FACTORY_ADDRESS } from '../../config.js';
 import Factory from '../../../src/port/in/Factory.js';
 import GetTokenManagerListRequest from '../../../src/port/in/request/GetTokenManagerListRequest.js';
 import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
+import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
 
 SDK.log = { level: 'ERROR', transports: new LoggerTransports.Console() };
 describe('🧪 Factory test', () => {
@@ -33,6 +34,11 @@ describe('🧪 Factory test', () => {
 		const mirrorNode: MirrorNode = {
 			name: 'testmirrorNode',
 			baseUrl: 'https://testnet.mirrornode.hedera.com/api/v1/',
+		};
+
+		const rpcNode: JsonRpcRelay = {
+			name: 'testrpcNode',
+			baseUrl: 'https://testnet.hashio.io/api',
 		};
 
 		await Network.connect(
@@ -44,6 +50,7 @@ describe('🧪 Factory test', () => {
 				network: 'testnet',
 				wallet: SupportedWallets.CLIENT,
 				mirrorNode: mirrorNode,
+				rpcNode: rpcNode,
 			}),
 		);
 	}, 60_000);

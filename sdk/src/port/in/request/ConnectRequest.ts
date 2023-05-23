@@ -21,6 +21,7 @@
 import { OptionalField } from '../../../core/decorator/OptionalDecorator.js';
 import { Environment } from '../../../domain/context/network/Environment.js';
 import { MirrorNode } from '../../../domain/context/network/MirrorNode.js';
+import { JsonRpcRelay } from '../../../domain/context/network/JsonRpcRelay.js';
 import { SupportedWallets } from '../../../domain/context/network/Wallet.js';
 import { BaseRequest, RequestAccount } from './BaseRequest.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
@@ -36,17 +37,20 @@ export default class ConnectRequest
 	account?: RequestAccount;
 	network: Environment;
 	mirrorNode: MirrorNode;
+	rpcNode: JsonRpcRelay;
 	wallet: SupportedWallets;
 
 	constructor({
 		account,
 		network,
 		mirrorNode,
+		rpcNode,
 		wallet,
 	}: {
 		account?: RequestAccount;
 		network: Environment;
 		mirrorNode: MirrorNode;
+		rpcNode: JsonRpcRelay;
 		wallet: SupportedWallets;
 	}) {
 		super({
@@ -56,6 +60,7 @@ export default class ConnectRequest
 		this.account = account;
 		this.network = network;
 		this.mirrorNode = mirrorNode;
+		this.rpcNode = rpcNode;
 		this.wallet = wallet;
 	}
 }

@@ -57,6 +57,7 @@ import {
 import BigDecimal from '../../../src/domain/context/shared/BigDecimal.js';
 import GetAccountsWithRolesRequest from '../../../src/port/in/request/GetAccountsWithRolesRequest.js';
 import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
+import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
 
 describe('🧪 Role test', () => {
 	let stableCoinSC: StableCoinViewModel;
@@ -72,6 +73,11 @@ describe('🧪 Role test', () => {
 			baseUrl: 'https://testnet.mirrornode.hedera.com/api/v1/',
 		};
 
+		const rpcNode: JsonRpcRelay = {
+			name: 'testrpcNode',
+			baseUrl: 'https://testnet.hashio.io/api',
+		};
+
 		await Network.connect(
 			new ConnectRequest({
 				account: {
@@ -81,6 +87,7 @@ describe('🧪 Role test', () => {
 				network: 'testnet',
 				wallet: SupportedWallets.CLIENT,
 				mirrorNode: mirrorNode,
+				rpcNode: rpcNode,
 			}),
 		);
 		await Network.init(
@@ -90,6 +97,7 @@ describe('🧪 Role test', () => {
 					factoryAddress: FACTORY_ADDRESS,
 				},
 				mirrorNode: mirrorNode,
+				rpcNode: rpcNode,
 			}),
 		);
 		Injectable.resolveTransactionHandler();

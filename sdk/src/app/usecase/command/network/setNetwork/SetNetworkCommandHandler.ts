@@ -54,7 +54,9 @@ export class SetNetworkCommandHandler
 		this.networkService.mirrorNode = command.mirrorNode;
 
 		// Init RPC Query Adapter
-		Injectable.resolve(RPCQueryAdapter).init();
+		Injectable.resolve(RPCQueryAdapter).init(
+			this.networkService.rpcNode.baseUrl,
+		);
 
 		return Promise.resolve(
 			new SetNetworkCommandResponse(

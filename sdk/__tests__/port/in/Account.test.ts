@@ -33,12 +33,18 @@ import {
 	CLIENT_PUBLIC_KEY_ED25519,
 } from '../../config.js';
 import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
+import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
 
 describe('🧪 Account test', () => {
 	beforeAll(async () => {
 		const mirrorNode: MirrorNode = {
 			name: 'testmirrorNode',
 			baseUrl: 'https://testnet.mirrornode.hedera.com/api/v1/',
+		};
+
+		const rpcNode: JsonRpcRelay = {
+			name: 'testrpcNode',
+			baseUrl: 'https://testnet.hashio.io/api',
 		};
 
 		await Network.connect(
@@ -50,6 +56,7 @@ describe('🧪 Account test', () => {
 				network: 'testnet',
 				wallet: SupportedWallets.CLIENT,
 				mirrorNode: mirrorNode,
+				rpcNode: rpcNode,
 			}),
 		);
 	}, 60_000);

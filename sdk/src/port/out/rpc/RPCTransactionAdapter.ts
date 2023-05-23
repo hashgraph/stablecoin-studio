@@ -111,6 +111,7 @@ import { CommandBus } from '../../../core/command/CommandBus.js';
 import { SetNetworkCommand } from '../../../app/usecase/command/network/setNetwork/SetNetworkCommand.js';
 import { SetConfigurationCommand } from '../../../app/usecase/command/network/setConfiguration/SetConfigurationCommand.js';
 import { MirrorNode } from '../../../domain/context/network/MirrorNode.js';
+import { JsonRpcRelay } from '../../../domain/context/network/JsonRpcRelay.js';
 
 // eslint-disable-next-line no-var
 declare var ethereum: MetaMaskInpageProvider;
@@ -1402,6 +1403,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			apiKey: '',
 			headerName: '',
 		};
+		const rpcNode: JsonRpcRelay = {
+			baseUrl: '',
+			apiKey: '',
+			headerName: '',
+		};
 
 		const metamaskNetwork = HederaNetworks.find(
 			(i: any) => '0x' + i.chainId.toString(16) === chainId.toString(),
@@ -1442,13 +1448,29 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					console.error('Mirror Nodes could not be found in .env');
 				}
 			}
+
+			if (process.env.REACT_APP_RPC_NODE) {
+				try {
+					const rpcNodes = JSON.parse(process.env.REACT_APP_RPC_NODE);
+					const result = rpcNodes.find(
+						(i: any) => i.Environment === metamaskNetwork.network,
+					);
+					if (result) {
+						rpcNode.baseUrl = result.BASE_URL;
+						rpcNode.apiKey = result.API_KEY;
+						rpcNode.headerName = result.HEADER;
+					}
+				} catch (e) {
+					console.error('RPC Nodes could not be found in .env');
+				}
+			}
 			LogService.logTrace('Metamask Network:', chainId);
 		} else {
 			console.error(chainId + ' not an hedera network');
 		}
 
 		await this.commandBus.execute(
-			new SetNetworkCommand(network, mirrorNode),
+			new SetNetworkCommand(network, mirrorNode, rpcNode),
 		);
 		await this.commandBus.execute(new SetConfigurationCommand(factoryId));
 

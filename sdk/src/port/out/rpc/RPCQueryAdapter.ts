@@ -61,9 +61,8 @@ export default class RPCQueryAdapter {
 		private readonly networkService: NetworkService,
 	) {}
 
-	async init(customUrl?: string): Promise<string> {
-		// const url = `https://${this.networkService.environment.toString()}.hashio.io/api`;
-		const url = `http://127.0.0.1:7546/api`;
+	async init(urlRpcProvider?: string): Promise<string> {
+		const url = urlRpcProvider ?? 'http://127.0.0.1:7546/api';
 
 		this.provider = new ethers.providers.JsonRpcProvider(url);
 		LogService.logTrace('RPC Query Adapter Initialized on: ', url);

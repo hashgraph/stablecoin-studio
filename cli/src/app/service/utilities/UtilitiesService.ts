@@ -45,6 +45,7 @@ export default class UtilitiesService extends Service {
       new InitializationRequest({
         network: this.getCurrentNetwork().name,
         mirrorNode: this.getCurrentMirror(),
+        rpcNode: this.getCurrentRPC(),
       }),
     );
     await Network.connect(
@@ -58,6 +59,7 @@ export default class UtilitiesService extends Service {
         },
         network: this.getCurrentNetwork().name,
         mirrorNode: this.getCurrentMirror(),
+        rpcNode: this.getCurrentRPC(),
         wallet: SupportedWallets.CLIENT,
       }),
     );

@@ -350,6 +350,10 @@ const defaultNetworkProps: NetworkProps = {
 		name: 'default',
 		baseUrl: 'https://testnet.mirrornode.hedera.com',
 	},
+	rpcNode: {
+		name: 'default',
+		baseUrl: 'https://testnet.hashio.io/api',
+	},
 };
 
 // Network default props
