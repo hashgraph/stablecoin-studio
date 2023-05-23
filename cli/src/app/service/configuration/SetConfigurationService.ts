@@ -1067,15 +1067,25 @@ export default class SetConfigurationService extends Service {
         await utilsService.cleanAndShowBanner();
 
         await this.configureMirrorNode(_network);
-        const operateWithNewAccount = await utilsService.defaultConfirmAsk(
-          language.getText('configuration.askOperateWithNewMirrorNode'),
-          true,
-        );
-        if (operateWithNewAccount) {
-          await wizardService.chooseLastMirrorNode();
-          await utilsService.initSDK();
-          await utilsService.cleanAndShowBanner();
-          await wizardService.mainMenu();
+        if (_network === currentAccount.network) {
+          const operateWithNewAccount = await utilsService.defaultConfirmAsk(
+            language.getText('configuration.askOperateWithNewMirrorNode'),
+            true,
+          );
+          if (operateWithNewAccount) {
+            await wizardService.chooseLastMirrorNode(_network);
+            await utilsService.initSDK();
+            await utilsService.cleanAndShowBanner();
+            await wizardService.mainMenu();
+          }
+        } else {
+          const mirrorSelected = await utilsService.defaultConfirmAsk(
+            language.getText('configuration.askMirrorSelected'),
+            true,
+          );
+          if (mirrorSelected) {
+            wizardService.setLastMirrorNodeAsSelected(_network);
+          }
         }
         break;
       case language.getText('wizard.manageMirrorNodeOptions.Delete'):
@@ -1165,15 +1175,25 @@ export default class SetConfigurationService extends Service {
       case language.getText('wizard.manageRPCOptions.Add'):
         await utilsService.cleanAndShowBanner();
         await this.configureRPC(_network);
-        const operateWithNewAccount = await utilsService.defaultConfirmAsk(
-          language.getText('configuration.askOperateWithNewRPCNode'),
-          true,
-        );
-        if (operateWithNewAccount) {
-          await wizardService.chooseLastRPC();
-          await utilsService.initSDK();
-          await utilsService.cleanAndShowBanner();
-          await wizardService.mainMenu();
+        if (_network === currentAccount.network) {
+          const operateWithNewAccount = await utilsService.defaultConfirmAsk(
+            language.getText('configuration.askOperateWithNewRPCNode'),
+            true,
+          );
+          if (operateWithNewAccount) {
+            await wizardService.chooseLastRPC(_network);
+            await utilsService.initSDK();
+            await utilsService.cleanAndShowBanner();
+            await wizardService.mainMenu();
+          }
+        } else {
+          const rpcSelected = await utilsService.defaultConfirmAsk(
+            language.getText('configuration.askRPCSelected'),
+            true,
+          );
+          if (rpcSelected) {
+            wizardService.setLastRPCAsSelected(_network);
+          }
         }
         break;
 

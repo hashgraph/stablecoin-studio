@@ -355,17 +355,53 @@ export default class WizardService extends Service {
     utilsService.setCurrentNetwotk(currentNetwork);
   }
 
-  public async chooseLastMirrorNode(): Promise<void> {
+  public async chooseLastMirrorNode(_network): Promise<void> {
     const configuration = configurationService.getConfiguration();
     const { mirrors } = configuration;
-    const currentMirror = mirrors[mirrors.length - 1];
-    utilsService.setCurrentMirror(currentMirror);
+    const lastMirror = mirrors[mirrors.length - 1];
+    utilsService.setCurrentMirror(lastMirror);
+    this.setLastMirrorNodeAsSelected(_network);
   }
 
-  public async chooseLastRPC(): Promise<void> {
+  public async setLastMirrorNodeAsSelected(_network: string): Promise<void> {
+    const configuration = configurationService.getConfiguration();
+    const { mirrors } = configuration;
+    const lastMirror = mirrors[mirrors.length - 1];
+    mirrors
+      .filter(
+        (mirror) => mirror.network === _network && mirror.selected === true,
+      )
+      .forEach((found) => {
+        found.selected = false;
+      });
+    lastMirror.selected = true;
+
+    const defaultCfgData = configurationService.getConfiguration();
+    defaultCfgData.mirrors = mirrors;
+    configurationService.setConfiguration(defaultCfgData);
+  }
+
+  public async chooseLastRPC(_network: string): Promise<void> {
     const configuration = configurationService.getConfiguration();
     const { rpcs } = configuration;
-    const currentRPC = rpcs[rpcs.length - 1];
-    utilsService.setCurrentRPC(currentRPC);
+    const lastRPC = rpcs[rpcs.length - 1];
+    utilsService.setCurrentRPC(lastRPC);
+    this.setLastRPCAsSelected(_network);
+  }
+
+  public async setLastRPCAsSelected(_network: string): Promise<void> {
+    const configuration = configurationService.getConfiguration();
+    const { rpcs } = configuration;
+    const lastRPC = rpcs[rpcs.length - 1];
+    rpcs
+      .filter((rpc) => rpc.network === _network && rpc.selected === true)
+      .forEach((found) => {
+        found.selected = false;
+      });
+    lastRPC.selected = true;
+
+    const defaultCfgData = configurationService.getConfiguration();
+    defaultCfgData.rpcs = rpcs;
+    configurationService.setConfiguration(defaultCfgData);
   }
 }
