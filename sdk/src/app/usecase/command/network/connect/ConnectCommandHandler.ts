@@ -32,7 +32,7 @@ export class ConnectCommandHandler implements ICommandHandler<ConnectCommand> {
 		const registration = await handler.register(command.account);
 
 		// Init RPC Query Adapter
-		Injectable.resolve(RPCQueryAdapter).init(); // TODO - check if this instance is needed and if rpcNode.baseUrl needs to be passed
+		// Injectable.resolve(RPCQueryAdapter).init(); // TODO - check if this instance is needed and if rpcNode.baseUrl needs to be passed
 		return Promise.resolve(
 			new ConnectCommandResponse(registration, command.wallet),
 		);

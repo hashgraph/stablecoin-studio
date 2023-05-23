@@ -56,6 +56,7 @@ export class SetNetworkCommandHandler
 		// Init RPC Query Adapter
 		Injectable.resolve(RPCQueryAdapter).init(
 			this.networkService.rpcNode.baseUrl,
+			this.networkService.rpcNode.apiKey,
 		);
 
 		return Promise.resolve(
