@@ -69,7 +69,11 @@ const Router = () => {
 
 	useEffect(() => {
 		instanceSDK();
-		localStorage.clear();
+		const items = { ...localStorage };
+		delete items.tokensAccount;
+		for (var item in items) {
+			localStorage.removeItem(item);
+		}
 	}, []);
 
 	const onLastWalletEvent = <T extends keyof WalletEvent>(
