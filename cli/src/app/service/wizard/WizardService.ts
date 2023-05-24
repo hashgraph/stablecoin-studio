@@ -17,6 +17,7 @@ import {
   SetNetworkRequest,
   StableCoinViewModel,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { IAccountConfig } from 'domain/configuration/interfaces/IAccountConfig.js';
 
 /**
  * Wizard Service
@@ -197,7 +198,7 @@ export default class WizardService extends Service {
 
   public async chooseAccount(mainMenu = true, network?: string): Promise<void> {
     const configuration = configurationService.getConfiguration();
-    const { networks, accounts, mirrors, rpcs, factories } = configuration;
+    const { accounts } = configuration;
     let options = network
       ? accounts
           .filter((acc) => acc.network === network)
@@ -224,9 +225,30 @@ export default class WizardService extends Service {
       options,
       false,
     );
-    const currentAccount = accounts.find(
-      (acc) => acc.accountId === account.split(' - ')[0],
-    );
+
+    await this.setSelectedAccount(account);
+
+    if (mainMenu) await this.mainMenu();
+  }
+
+  public async chooseLastAccount(): Promise<void> {
+    const configuration = configurationService.getConfiguration();
+    const { accounts } = configuration;
+    const currentAccount = accounts[accounts.length - 1];
+
+    await this.setSelectedAccount(currentAccount);
+  }
+
+  public async setSelectedAccount(
+    account: string | IAccountConfig,
+  ): Promise<void> {
+    const configuration = configurationService.getConfiguration();
+    const { networks, accounts, mirrors, rpcs, factories } = configuration;
+
+    const currentAccount =
+      typeof account === 'string'
+        ? accounts.find((acc) => acc.accountId === account.split(' - ')[0])
+        : account;
     utilsService.setCurrentAccount(currentAccount);
 
     const currentNetwork = networks.find(
@@ -261,8 +283,6 @@ export default class WizardService extends Service {
         rpcNode: currentRPC ? currentRPC : undefined,
       }),
     );
-
-    if (mainMenu) await this.mainMenu();
   }
 
   public async chooseMirrorNodeNetwork(_network: string): Promise<boolean> {
@@ -343,17 +363,6 @@ export default class WizardService extends Service {
       );
       return false;
     }
-  }
-
-  public async chooseLastAccount(): Promise<void> {
-    const configuration = configurationService.getConfiguration();
-    const { networks, accounts } = configuration;
-    const currentAccount = accounts[accounts.length - 1];
-    utilsService.setCurrentAccount(currentAccount);
-    const currentNetwork = networks.find(
-      (network) => currentAccount.network === network.name,
-    );
-    utilsService.setCurrentNetwotk(currentNetwork);
   }
 
   public async chooseLastMirrorNode(_network): Promise<void> {
