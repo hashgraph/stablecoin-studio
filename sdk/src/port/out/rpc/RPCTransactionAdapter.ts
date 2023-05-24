@@ -118,7 +118,6 @@ declare var ethereum: MetaMaskInpageProvider;
 
 @singleton()
 export default class RPCTransactionAdapter extends TransactionAdapter {
-	provider: ethers.providers.JsonRpcProvider;
 	account: Account;
 	signerOrProvider: Signer | Provider;
 
@@ -315,11 +314,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		}
 	}
 
-	async init(debug = false): Promise<string> {
-		this.provider = new ethers.providers.JsonRpcProvider(
-			// `https://${this.networkService.environment.toString()}.hashio.io/api`,
-			`http://127.0.0.1:7546/api`,
-		);
+	async init(debug = false): Promise<string> {	
 		!debug && (await this.connectMetamask(false));
 		const eventData = {
 			initData: {

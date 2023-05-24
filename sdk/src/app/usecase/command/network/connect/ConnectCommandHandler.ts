@@ -20,8 +20,6 @@
 
 import { ICommandHandler } from '../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../core/decorator/CommandHandlerDecorator.js';
-import Injectable from '../../../../../core/Injectable.js';
-import RPCQueryAdapter from '../../../../../port/out/rpc/RPCQueryAdapter.js';
 import TransactionService from '../../../../service/TransactionService.js';
 import { ConnectCommand, ConnectCommandResponse } from './ConnectCommand.js';
 
@@ -31,8 +29,6 @@ export class ConnectCommandHandler implements ICommandHandler<ConnectCommand> {
 		const handler = TransactionService.getHandlerClass(command.wallet);
 		const registration = await handler.register(command.account);
 
-		// Init RPC Query Adapter
-		// Injectable.resolve(RPCQueryAdapter).init(); // TODO - check if this instance is needed and if rpcNode.baseUrl needs to be passed
 		return Promise.resolve(
 			new ConnectCommandResponse(registration, command.wallet),
 		);
