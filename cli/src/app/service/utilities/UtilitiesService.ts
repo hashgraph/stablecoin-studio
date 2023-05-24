@@ -485,7 +485,7 @@ export default class UtilitiesService extends Service {
       }
       return {
         ...mirror,
-        apikey: MaskData.maskPassword(mirror.apiKey, maskJSONOptions),
+        apiKey: MaskData.maskPassword(mirror.apiKey, maskJSONOptions),
       };
     });
     return result;
@@ -505,7 +505,7 @@ export default class UtilitiesService extends Service {
       }
       return {
         ...rpc,
-        apikey: MaskData.maskPassword(rpc.apiKey, maskJSONOptions),
+        apiKey: MaskData.maskPassword(rpc.apiKey, maskJSONOptions),
       };
     });
     return result;
