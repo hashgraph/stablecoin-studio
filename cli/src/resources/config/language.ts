@@ -278,8 +278,8 @@ export const english = {
     networkManage: 'Which network do you want to operate with?',
     accountsNotFound:
       'There is no account for the indicated parameters, here is a list of the configured accounts:',
-    accountsNotFoundInMirror:
-      'The selected account was not found in the current mirror node',
+    mirrorNodeNotRespondedAsExpected:
+      'Mirror node has not responded as expected',
     accountOptions: 'Manage account menu:',
     mirrorNodeOptions: 'Manage mirror node menu:',
     rpcOptions: 'Manage JSON-RPC-Relay menu:',

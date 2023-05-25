@@ -80,7 +80,7 @@ export default class CommanderService extends Service {
             await utilsService.cleanAndShowBanner();
             console.log(
               colors.yellow(
-                language.getText('wizard.accountsNotFoundInMirror'),
+                language.getText('wizard.mirrorNodeNotRespondedAsExpected'),
               ),
             );
           }
