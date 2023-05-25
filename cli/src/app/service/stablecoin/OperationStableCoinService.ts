@@ -68,6 +68,7 @@ import UpdateStableCoinService from './UpdateStableCoinService.js';
 import OwnerProxyService from '../proxy/OwnerProxyService.js';
 import ConfigurationProxyService from '../proxy/ConfigurationProxyService.js';
 import ImplementationProxyService from '../proxy/ImplementationProxyService.js';
+import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
 
 enum tokenKeys {
   admin,
@@ -210,9 +211,10 @@ export default class OperationStableCoinService extends Service {
     switch (
       await utilsService.defaultMultipleAsk(
         language.getText('stablecoin.askDoSomething'),
-        this.filterMenuOptions(
+        await this.filterMenuOptions(
           wizardOperationsStableCoinOptions,
           capabilitiesStableCoin,
+          configAccount,
           await this.getRolesAccount(),
         ),
         false,
@@ -2084,11 +2086,16 @@ export default class OperationStableCoinService extends Service {
     }
   }
 
-  private filterMenuOptions(
+  private async filterMenuOptions(
     options: string[],
     stableCoinCapabilities: StableCoinCapabilities,
+    configAccount: IAccountConfig,
     roles?: string[],
-  ): string[] {
+  ): Promise<string[]> {
+    const proxyConfig =
+      await new ConfigurationProxyService().getProxyconfiguration(
+        this.stableCoinId,
+      );
     let result = [];
     let capabilitiesFilter = [];
     // if (stableCoinCapabilities.capabilities.length === 0) return options;
@@ -2128,9 +2135,7 @@ export default class OperationStableCoinService extends Service {
           !this.stableCoinDeleted) ||
         (option === language.getText('wizard.stableCoinOptions.Balance') &&
           !this.stableCoinDeleted) ||
-        (option ===
-          language.getText('wizard.stableCoinOptions.Configuration') &&
-          capabilities.includes(Operation.UPDATE))
+        option === language.getText('wizard.stableCoinOptions.Configuration')
       ) {
         return true;
       }
@@ -2202,14 +2207,14 @@ export default class OperationStableCoinService extends Service {
               roles.includes(StableCoinRole.DEFAULT_ADMIN_ROLE)) ||
             (option ===
               language.getText('wizard.stableCoinOptions.Configuration') &&
-              roles.includes(StableCoinRole.DEFAULT_ADMIN_ROLE)) ||
-            (option ===
-              language.getText('wizard.stableCoinOptions.Configuration') &&
-              this.isOperationAccess(
-                stableCoinCapabilities,
-                Operation.UPDATE,
-                Access.HTS,
-              ))
+              ((capabilities.includes(Operation.UPDATE) &&
+                roles.includes(StableCoinRole.DEFAULT_ADMIN_ROLE)) ||
+                this.isOperationAccess(
+                  stableCoinCapabilities,
+                  Operation.UPDATE,
+                  Access.HTS,
+                ) ||
+                proxyConfig.owner.toString() === configAccount.accountId))
           ) {
             return true;
           }
@@ -2222,31 +2227,72 @@ export default class OperationStableCoinService extends Service {
 
   private async filterConfigurationOptions(
     options: string[],
+    stableCoinCapabilities: StableCoinCapabilities,
+    configAccount: IAccountConfig,
+    roles: string[],
   ): Promise<string[]> {
     const proxyConfig =
       await new ConfigurationProxyService().getProxyconfiguration(
         this.stableCoinId,
       );
 
+    const capabilities: Operation[] = stableCoinCapabilities.capabilities.map(
+      (a) => a.operation,
+    );
+
     options.push(proxyConfig.implementationAddress.toString());
 
-    const configAccount = utilsService.getCurrentAccount();
-
-    if (proxyConfig.owner.toString() === configAccount.accountId)
-      return options;
-
     let filteredOptions: string[] = [];
+    let result = [];
 
     filteredOptions = options.filter((option) => {
       if (
-        option ===
-        language.getText('stableCoinConfiguration.options.proxyConfiguration')
+        (option ===
+          language.getText(
+            'stableCoinConfiguration.options.proxyConfiguration',
+          ) &&
+          proxyConfig.owner.toString() === configAccount.accountId) ||
+        (option ===
+          language.getText(
+            'stableCoinConfiguration.options.tokenConfiguration',
+          ) &&
+          capabilities.includes(Operation.UPDATE)) ||
+        (option !==
+          language.getText(
+            'stableCoinConfiguration.options.proxyConfiguration',
+          ) &&
+          option !==
+            language.getText(
+              'stableCoinConfiguration.options.tokenConfiguration',
+            ))
       )
-        return false;
-      return true;
+        return true;
+      return false;
     });
 
-    return filteredOptions;
+    result = filteredOptions.filter((option) => {
+      if (
+        option !==
+        language.getText('stableCoinConfiguration.options.tokenConfiguration')
+      )
+        return true;
+      if (
+        (option ===
+          language.getText(
+            'stableCoinConfiguration.options.tokenConfiguration',
+          ) &&
+          roles.includes(StableCoinRole.DEFAULT_ADMIN_ROLE)) ||
+        this.isOperationAccess(
+          stableCoinCapabilities,
+          Operation.UPDATE,
+          Access.HTS,
+        )
+      )
+        return true;
+      return false;
+    });
+
+    return result;
   }
 
   private filterKYCMenuOptions(
@@ -2556,11 +2602,29 @@ export default class OperationStableCoinService extends Service {
   }
 
   private async configuration(): Promise<void> {
+    const configAccount = utilsService.getCurrentAccount();
+    const privateKey: RequestPrivateKey = {
+      key: configAccount.privateKey.key,
+      type: configAccount.privateKey.type,
+    };
+    const currentAccount: RequestAccount = {
+      accountId: configAccount.accountId,
+      privateKey: privateKey,
+    };
+
+    const capabilitiesStableCoin: StableCoinCapabilities =
+      await this.getCapabilities(currentAccount);
+
     const configurationOptions = language.getArrayFromObject(
       'stableCoinConfiguration.options',
     );
 
-    const result = await this.filterConfigurationOptions(configurationOptions);
+    const result = await this.filterConfigurationOptions(
+      configurationOptions,
+      capabilitiesStableCoin,
+      configAccount,
+      await this.getRolesAccount(),
+    );
 
     const currentImplementation = result[result.length - 1];
     result.pop();
