@@ -32,6 +32,7 @@ import {
 	HederaReserve__factory,
 	StableCoinFactory__factory,
 	IHederaTokenService__factory,
+	ProxyAdmin__factory,
 } from '@hashgraph-dev/stablecoin-npm-contracts';
 import TransactionAdapter, { InitializationData } from '../TransactionAdapter';
 import { BigNumber, ContractTransaction, ethers, Signer } from 'ethers';
@@ -62,6 +63,7 @@ import PublicKey from '../../../domain/context/account/PublicKey.js';
 import {
 	BURN_GAS,
 	CASHIN_GAS,
+	CHANGE_PROXY_OWNER,
 	CREATE_SC_GAS,
 	DECREASE_SUPPLY_GAS,
 	DELETE_GAS,
@@ -79,6 +81,7 @@ import {
 	TOKEN_CREATION_COST_HBAR,
 	UNFREEZE_GAS,
 	UNPAUSE_GAS,
+	UPDATE_PROXY_IMPLEMENTATION,
 	UPDATE_RESERVE_ADDRESS_GAS,
 	UPDATE_RESERVE_AMOUNT_GAS,
 	UPDATE_TOKEN_GAS,
@@ -107,13 +110,14 @@ import {
 import { CommandBus } from '../../../core/command/CommandBus.js';
 import { SetNetworkCommand } from '../../../app/usecase/command/network/setNetwork/SetNetworkCommand.js';
 import { SetConfigurationCommand } from '../../../app/usecase/command/network/setConfiguration/SetConfigurationCommand.js';
+import { MirrorNode } from '../../../domain/context/network/MirrorNode.js';
+import { JsonRpcRelay } from '../../../domain/context/network/JsonRpcRelay.js';
 
 // eslint-disable-next-line no-var
 declare var ethereum: MetaMaskInpageProvider;
 
 @singleton()
 export default class RPCTransactionAdapter extends TransactionAdapter {
-	provider: ethers.providers.JsonRpcProvider;
 	account: Account;
 	signerOrProvider: Signer | Provider;
 
@@ -311,10 +315,6 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	}
 
 	async init(debug = false): Promise<string> {
-		this.provider = new ethers.providers.JsonRpcProvider(
-			// `https://${this.networkService.environment.toString()}.hashio.io/api`,
-			'http://127.0.0.1:7546/api',
-		);
 		!debug && (await this.connectMetamask(false));
 		const eventData = {
 			initData: {
@@ -578,6 +578,61 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					this.signerOrProvider,
 				).setAmount(amount.toBigNumber(), {
 					gasLimit: UPDATE_RESERVE_AMOUNT_GAS,
+				}),
+				this.networkService.environment,
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new TransactionResponseError({
+				network: this.networkService.environment,
+				RPC_relay: true,
+				message: `Unexpected error in RPCTransactionAdapter updatePorAmount operation : ${error}`,
+				transactionId: (error as any).error?.transactionId,
+			});
+		}
+	}
+
+	public async upgradeImplementation(
+		proxy: HederaId,
+		proxyAdminId: HederaId,
+		implementationId: ContractId,
+	): Promise<TransactionResponse> {
+		try {
+			return RPCTransactionResponseAdapter.manageResponse(
+				await ProxyAdmin__factory.connect(
+					proxyAdminId.toHederaAddress().toSolidityAddress(),
+					this.signerOrProvider,
+				).upgrade(
+					proxy.toHederaAddress().toSolidityAddress(),
+					implementationId.toHederaAddress().toSolidityAddress(),
+					{
+						gasLimit: UPDATE_PROXY_IMPLEMENTATION,
+					},
+				),
+				this.networkService.environment,
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new TransactionResponseError({
+				network: this.networkService.environment,
+				RPC_relay: true,
+				message: `Unexpected error in RPCTransactionAdapter updatePorAmount operation : ${error}`,
+				transactionId: (error as any).error?.transactionId,
+			});
+		}
+	}
+
+	public async changeOwner(
+		proxyAdminId: HederaId,
+		targetId: HederaId,
+	): Promise<TransactionResponse> {
+		try {
+			return RPCTransactionResponseAdapter.manageResponse(
+				await ProxyAdmin__factory.connect(
+					proxyAdminId.toHederaAddress().toSolidityAddress(),
+					this.signerOrProvider,
+				).transferOwnership(await this.getEVMAddress(targetId), {
+					gasLimit: CHANGE_PROXY_OWNER,
 				}),
 				this.networkService.environment,
 			);
@@ -1338,6 +1393,16 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	private async setMetamaskNetwork(chainId: any): Promise<void> {
 		let network = unrecognized;
 		let factoryId = '';
+		const mirrorNode: MirrorNode = {
+			baseUrl: '',
+			apiKey: '',
+			headerName: '',
+		};
+		const rpcNode: JsonRpcRelay = {
+			baseUrl: '',
+			apiKey: '',
+			headerName: '',
+		};
 
 		const metamaskNetwork = HederaNetworks.find(
 			(i: any) => '0x' + i.chainId.toString(16) === chainId.toString(),
@@ -1361,12 +1426,47 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					console.error('Factories could not be found in .env');
 				}
 			}
+			if (process.env.REACT_APP_MIRROR_NODE) {
+				try {
+					const mirrorNodes = JSON.parse(
+						process.env.REACT_APP_MIRROR_NODE,
+					);
+					const result = mirrorNodes.find(
+						(i: any) => i.Environment === metamaskNetwork.network,
+					);
+					if (result) {
+						mirrorNode.baseUrl = result.BASE_URL;
+						mirrorNode.apiKey = result.API_KEY;
+						mirrorNode.headerName = result.HEADER;
+					}
+				} catch (e) {
+					console.error('Mirror Nodes could not be found in .env');
+				}
+			}
+
+			if (process.env.REACT_APP_RPC_NODE) {
+				try {
+					const rpcNodes = JSON.parse(process.env.REACT_APP_RPC_NODE);
+					const result = rpcNodes.find(
+						(i: any) => i.Environment === metamaskNetwork.network,
+					);
+					if (result) {
+						rpcNode.baseUrl = result.BASE_URL;
+						rpcNode.apiKey = result.API_KEY;
+						rpcNode.headerName = result.HEADER;
+					}
+				} catch (e) {
+					console.error('RPC Nodes could not be found in .env');
+				}
+			}
 			LogService.logTrace('Metamask Network:', chainId);
 		} else {
 			console.error(chainId + ' not an hedera network');
 		}
 
-		await this.commandBus.execute(new SetNetworkCommand(network));
+		await this.commandBus.execute(
+			new SetNetworkCommand(network, mirrorNode, rpcNode),
+		);
 		await this.commandBus.execute(new SetConfigurationCommand(factoryId));
 
 		this.signerOrProvider = new ethers.providers.Web3Provider(

@@ -20,6 +20,7 @@ import {
 	SELECTED_TOKEN_DELETED,
 	SELECTED_TOKEN_PAUSED,
 	SELECTED_NETWORK,
+	SELECTED_WALLET_COIN_PROXY_CONFIG,
 } from '../../store/slices/walletSlice';
 import { RouterManager } from '../../Router/RouterManager';
 import { matchPath, useLocation, useNavigate } from 'react-router-dom';
@@ -28,6 +29,7 @@ import {
 	GetStableCoinDetailsRequest,
 	GetAccountInfoRequest,
 	GetRolesRequest,
+	GetProxyConfigRequest,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 import type { IExternalToken } from '../../interfaces/IExternalToken';
 import type { GroupBase, SelectInstance } from 'chakra-react-select';
@@ -46,6 +48,7 @@ const CoinDropdown = () => {
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const accountId = useSelector(SELECTED_WALLET_PAIRED_ACCOUNTID);
 	const network = useSelector(SELECTED_NETWORK);
+	const proxyConfig = useSelector(SELECTED_WALLET_COIN_PROXY_CONFIG);
 
 	const capabilities = useSelector(SELECTED_WALLET_CAPABILITIES);
 	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
@@ -103,6 +106,9 @@ const CoinDropdown = () => {
 		);
 
 		dispatch(walletActions.setAccountInfo(accountInfo));
+		dispatch(
+			walletActions.setIsProxyOwner(proxyConfig?.owner?.toString() === accountInfo?.id?.toString()),
+		);
 	};
 
 	const getCapabilities = async () => {
@@ -180,6 +186,24 @@ const CoinDropdown = () => {
 				throw e;
 			});
 
+			const proxyConfig: any = await Promise.race([
+				SDKService.getProxyConfig(
+					new GetProxyConfigRequest({
+						tokenId: selectedCoin,
+					}),
+				),
+				new Promise((resolve, reject) => {
+					setTimeout(() => {
+						reject(new Error("Stable coin details couldn't be obtained in a reasonable time."));
+					}, 10000);
+				}),
+			]).catch((e) => {
+				console.log(e.message);
+				setIsSelecting(true);
+				onOpen();
+				throw e;
+			});
+
 			const roles = await Promise.race([
 				SDKService.getRoles(
 					new GetRolesRequest({
@@ -219,6 +243,7 @@ const CoinDropdown = () => {
 					treasury: stableCoinDetails?.treasury,
 					autoRenewAccount: stableCoinDetails?.autoRenewAccount,
 					proxyAddress: stableCoinDetails?.proxyAddress,
+					proxyAdminAddress: stableCoinDetails?.proxyAdminAddress,
 					paused: stableCoinDetails?.paused,
 					deleted: stableCoinDetails?.deleted,
 					adminKey:
@@ -239,6 +264,17 @@ const CoinDropdown = () => {
 						stableCoinDetails?.customFees &&
 						JSON.parse(JSON.stringify(stableCoinDetails.customFees)),
 				}),
+			);
+			dispatch(
+				walletActions.setSelectedStableCoinProxyConfig({
+					owner: proxyConfig?.owner,
+					implementationAddress: proxyConfig?.implementationAddress,
+				}),
+			);
+			dispatch(
+				walletActions.setIsProxyOwner(
+					proxyConfig?.owner?.toString() === accountInfo?.id?.toString(),
+				),
 			);
 		} catch (e) {
 			setSuccess(false);

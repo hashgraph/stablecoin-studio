@@ -21,12 +21,14 @@
 import { singleton, inject } from 'tsyringe';
 import Configuration from '../../domain/context/network/Configuration.js';
 import { Environment } from '../../domain/context/network/Environment.js';
+import { MirrorNode } from '../../domain/context/network/MirrorNode.js';
+import { JsonRpcRelay } from '../../domain/context/network/JsonRpcRelay.js';
 import Service from './Service.js';
 
 export interface NetworkProps {
 	environment: Environment;
-	mirrorNode?: string;
-	rpcNode?: string;
+	mirrorNode: MirrorNode;
+	rpcNode: JsonRpcRelay;
 	consensusNodes?: string;
 	configuration?: Configuration;
 }
@@ -34,8 +36,8 @@ export interface NetworkProps {
 @singleton()
 export default class NetworkService extends Service implements NetworkProps {
 	private _environment: Environment;
-	private _mirrorNode?: string | undefined;
-	private _rpcNode?: string | undefined;
+	private _mirrorNode: MirrorNode;
+	private _rpcNode: JsonRpcRelay;
 	private _consensusNodes?: string | undefined;
 	private _configuration: Configuration;
 
@@ -55,19 +57,19 @@ export default class NetworkService extends Service implements NetworkProps {
 		return this._configuration;
 	}
 
-	public get mirrorNode(): string | undefined {
+	public get mirrorNode(): MirrorNode {
 		return this._mirrorNode;
 	}
 
-	public set mirrorNode(value: string | undefined) {
+	public set mirrorNode(value: MirrorNode) {
 		this._mirrorNode = value;
 	}
 
-	public get rpcNode(): string | undefined {
+	public get rpcNode(): JsonRpcRelay {
 		return this._rpcNode;
 	}
 
-	public set rpcNode(value: string | undefined) {
+	public set rpcNode(value: JsonRpcRelay) {
 		this._rpcNode = value;
 	}
 

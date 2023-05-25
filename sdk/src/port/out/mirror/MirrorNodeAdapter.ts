@@ -18,27 +18,17 @@
  *
  */
 
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import { AxiosInstance } from 'axios';
 import { singleton } from 'tsyringe';
 import StableCoinViewModel from '../../out/mirror/response/StableCoinViewModel.js';
 import AccountViewModel from '../../out/mirror/response/AccountViewModel.js';
 import StableCoinListViewModel from '../../out/mirror/response/StableCoinListViewModel.js';
 import TransactionResultViewModel from '../../out/mirror/response/TransactionResultViewModel.js';
-import {
-	Environment,
-	mainnet,
-	testnet,
-	previewnet,
-	local,
-} from '../../../domain/context/network/Environment.js';
 import LogService from '../../../app/service/LogService.js';
 import { StableCoinNotFound } from './error/StableCoinNotFound.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
-import {
-	ContractId as HContractId,
-	PublicKey as HPublicKey,
-} from '@hashgraph/sdk';
+import { PublicKey as HPublicKey } from '@hashgraph/sdk';
 import PublicKey from '../../../domain/context/account/PublicKey.js';
 import { StableCoinMemo } from '../../../domain/context/stablecoin/StableCoinMemo.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
@@ -59,23 +49,27 @@ import {
 	RequestFixedFee,
 	RequestFractionalFee,
 } from '../../in/request/BaseRequest.js';
+import { MirrorNode } from '../../../domain/context/network/MirrorNode.js';
 
 @singleton()
 export class MirrorNodeAdapter {
 	private instance: AxiosInstance;
-	private URI_BASE: string;
+	private config: AxiosRequestConfig;
+	private mirrorNodeConfig: MirrorNode;
 
-	constructor() {
-		this.setEnvironment('testnet');
-	}
+	public set(mnConfig: MirrorNode): void {
+		this.mirrorNodeConfig = mnConfig;
 
-	public setEnvironment(environment: Environment): void {
-		this.URI_BASE = `${this.getMirrorNodeURL(environment)}/api/v1/`;
 		this.instance = axios.create({
 			validateStatus: function (status: number) {
 				return (status >= 200 && status < 300) || status == 404;
 			},
 		});
+
+		if (this.mirrorNodeConfig.headerName && this.mirrorNodeConfig.apiKey)
+			this.instance.defaults.headers.common[
+				this.mirrorNodeConfig.headerName
+			] = this.mirrorNodeConfig.apiKey;
 	}
 
 	public async getStableCoinsList(
@@ -83,7 +77,7 @@ export class MirrorNodeAdapter {
 	): Promise<StableCoinListViewModel> {
 		try {
 			const url = `${
-				this.URI_BASE
+				this.mirrorNodeConfig.baseUrl
 			}tokens?limit=100&order=desc&account.id=${accountId.toString()}`;
 
 			LogService.logTrace(
@@ -112,7 +106,9 @@ export class MirrorNodeAdapter {
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	private async getTokenInfo(tokenId: HederaId): Promise<any> {
-		const url = `${this.URI_BASE}tokens/${tokenId.toString()}`;
+		const url = `${
+			this.mirrorNodeConfig.baseUrl
+		}tokens/${tokenId.toString()}`;
 
 		LogService.logTrace('Getting stable coin from mirror node -> ', url);
 
@@ -310,9 +306,13 @@ export class MirrorNodeAdapter {
 		accountId: HederaId | string,
 	): Promise<AccountViewModel> {
 		try {
-			LogService.logTrace(this.URI_BASE + 'accounts/' + accountId);
-			const res = await axios.get<IAccount>(
-				this.URI_BASE + 'accounts/' + accountId.toString(),
+			LogService.logTrace(
+				this.mirrorNodeConfig.baseUrl + 'accounts/' + accountId,
+			);
+			const res = await this.instance.get<IAccount>(
+				this.mirrorNodeConfig.baseUrl +
+					'accounts/' +
+					accountId.toString(),
 			);
 
 			const account: AccountViewModel = {
@@ -342,10 +342,10 @@ export class MirrorNodeAdapter {
 	): Promise<AccountTokenRelationViewModel | undefined> {
 		try {
 			const url = `${
-				this.URI_BASE
+				this.mirrorNodeConfig.baseUrl
 			}accounts/${targetId.toString()}/tokens?token.id=${tokenId.toString()}`;
 			LogService.logTrace(url);
-			const res = await axios.get<AccountTokenRelationList>(url);
+			const res = await this.instance.get<AccountTokenRelationList>(url);
 			if (res.data.tokens && res.data.tokens.length > 0) {
 				const obj = res.data.tokens[0];
 				return {
@@ -371,9 +371,12 @@ export class MirrorNodeAdapter {
 		transactionId: string,
 	): Promise<TransactionResultViewModel> {
 		try {
-			const url = this.URI_BASE + 'contracts/results/' + transactionId;
+			const url =
+				this.mirrorNodeConfig.baseUrl +
+				'contracts/results/' +
+				transactionId;
 			LogService.logTrace(url);
-			const res = await axios.get<ITransactionResult>(url);
+			const res = await this.instance.get<ITransactionResult>(url);
 			if (!res.data.call_result)
 				throw new Error(
 					'Response does not contain a transaction result',
@@ -401,11 +404,12 @@ export class MirrorNodeAdapter {
 					.replace('@', '-')
 					.replace(/.([^.]*)$/, '-$1');
 
-			const url = this.URI_BASE + 'transactions/' + transactionId;
+			const url =
+				this.mirrorNodeConfig.baseUrl + 'transactions/' + transactionId;
 			LogService.logTrace(url);
 
 			await new Promise((resolve) => setTimeout(resolve, 5000));
-			const res = await axios.get<ITransactionList>(url);
+			const res = await this.instance.get<ITransactionList>(url);
 
 			let lastChildtransaction: ITransaction;
 			if (res.data.transactions) {
@@ -426,21 +430,6 @@ export class MirrorNodeAdapter {
 			return Promise.reject<TransactionResultViewModel>(
 				new InvalidResponse(error),
 			);
-		}
-	}
-
-	private getMirrorNodeURL(environment: Environment): string {
-		switch (environment) {
-			case mainnet:
-				return 'https://mainnet-public.mirrornode.hedera.com';
-			case previewnet:
-				return 'https://previewnet.mirrornode.hedera.com';
-			case testnet:
-				return 'https://testnet.mirrornode.hedera.com';
-			case local:
-				return 'http://127.0.0.1:5551';
-			default:
-				return '';
 		}
 	}
 
@@ -492,10 +481,10 @@ export class MirrorNodeAdapter {
 	): Promise<BigDecimal> {
 		try {
 			const url = `${
-				this.URI_BASE
+				this.mirrorNodeConfig.baseUrl
 			}balances?account.id=${accountId.toString()}`;
 			LogService.logTrace(url);
-			const res = await axios.get<IBalances>(url);
+			const res = await this.instance.get<IBalances>(url);
 			if (!res.data.balances)
 				throw new Error('Response does not contain a balances result');
 

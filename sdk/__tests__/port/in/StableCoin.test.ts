@@ -64,6 +64,8 @@ import {
 } from '../../config.js';
 import { MirrorNodeAdapter } from '../../../src/port/out/mirror/MirrorNodeAdapter.js';
 import { Client, Hbar, TransferTransaction } from '@hashgraph/sdk';
+import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
+import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
 const decimals = 6;
 
 describe('🧪 Stablecoin test', () => {
@@ -76,6 +78,16 @@ describe('🧪 Stablecoin test', () => {
 	};
 
 	beforeAll(async () => {
+		const mirrorNode: MirrorNode = {
+			name: 'testmirrorNode',
+			baseUrl: 'https://testnet.mirrornode.hedera.com/api/v1/',
+		};
+
+		const rpcNode: JsonRpcRelay = {
+			name: 'testrpcNode',
+			baseUrl: 'https://testnet.hashio.io/api',
+		};
+
 		await Network.connect(
 			new ConnectRequest({
 				account: {
@@ -84,6 +96,8 @@ describe('🧪 Stablecoin test', () => {
 				},
 				network: 'testnet',
 				wallet: SupportedWallets.CLIENT,
+				mirrorNode: mirrorNode,
+				rpcNode: rpcNode,
 			}),
 		);
 		await Network.init(
@@ -92,6 +106,8 @@ describe('🧪 Stablecoin test', () => {
 				configuration: {
 					factoryAddress: FACTORY_ADDRESS,
 				},
+				mirrorNode: mirrorNode,
+				rpcNode: rpcNode,
 			}),
 		);
 		Injectable.resolveTransactionHandler();

@@ -39,7 +39,6 @@ export default class DetailsStableCoinsService extends Service {
     // Call to list stable coins
 
     let respDetail: StableCoinViewModel;
-
     await utilsService.showSpinner(
       StableCoin.getInfo(
         new GetStableCoinDetailsRequest({
@@ -51,7 +50,6 @@ export default class DetailsStableCoinsService extends Service {
         successText: language.getText('state.detailsCompleted') + '\n',
       },
     );
-
     if (show) {
       let proxyConfig: ProxyConfigurationViewModel;
 

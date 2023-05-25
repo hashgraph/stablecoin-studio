@@ -12,6 +12,10 @@ import {
 	Factory,
 	SetNetworkRequest,
 	GetAccountsWithRolesRequest,
+	Proxy,
+	GetProxyConfigRequest,
+	ChangeProxyOwnerRequest,
+	UpgradeImplementationRequest,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 import type {
 	WalletEvent,
@@ -55,6 +59,7 @@ import type {
 	UpdateReserveAmountRequest,
 	AddFixedFeeRequest,
 	AddFractionalFeeRequest,
+	AccountViewModel,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 export type StableCoinListRaw = Array<Record<'id' | 'symbol', string>>;
@@ -68,13 +73,47 @@ export class SDKService {
 	}
 
 	public static async connectWallet(wallet: SupportedWallets, connectNetwork: string) {
+		let mirrorNode = []; // REACT_APP_MIRROR_NODE load from .env
+
+		if (process.env.REACT_APP_MIRROR_NODE)
+			mirrorNode = JSON.parse(process.env.REACT_APP_MIRROR_NODE);
+
+		const _mirrorNode =
+			mirrorNode.length !== 0
+				? mirrorNode.find((i: any) => i.Environment === connectNetwork)
+					? {
+							baseUrl: mirrorNode.find((i: any) => i.Environment === connectNetwork).BASE_URL ?? '',
+							apiKey: mirrorNode.find((i: any) => i.Environment === connectNetwork).API_KEY ?? '',
+							headerName:
+								mirrorNode.find((i: any) => i.Environment === connectNetwork).HEADER ?? '',
+					  }
+					: { baseUrl: '', apiKey: '', headerName: '' }
+				: { baseUrl: '', apiKey: '', headerName: '' };
+
+		let rpcNode = []; // REACT_APP_RPC_NODE load from .env
+
+		if (process.env.REACT_APP_RPC_NODE) rpcNode = JSON.parse(process.env.REACT_APP_RPC_NODE);
+
+		const _rpcNode =
+			rpcNode.length !== 0
+				? rpcNode.find((i: any) => i.Environment === connectNetwork)
+					? {
+							baseUrl: rpcNode.find((i: any) => i.Environment === connectNetwork).BASE_URL ?? '',
+							apiKey: rpcNode.find((i: any) => i.Environment === connectNetwork).API_KEY ?? '',
+							headerName: rpcNode.find((i: any) => i.Environment === connectNetwork).HEADER ?? '',
+					  }
+					: { baseUrl: '', apiKey: '', headerName: '' }
+				: { baseUrl: '', apiKey: '', headerName: '' };
+
 		await Network.setNetwork(
 			new SetNetworkRequest({
 				environment: connectNetwork,
+				mirrorNode: _mirrorNode,
+				rpcNode: _rpcNode,
 			}),
 		);
 
-		let factories = [];
+		let factories = []; // REACT_APP_FACTORIES load from .env
 
 		if (process.env.REACT_APP_FACTORIES) factories = JSON.parse(process.env.REACT_APP_FACTORIES);
 
@@ -95,6 +134,8 @@ export class SDKService {
 		this.initData = await Network.connect(
 			new ConnectRequest({
 				network: connectNetwork,
+				mirrorNode: _mirrorNode,
+				rpcNode: _rpcNode,
 				wallet,
 			}),
 		);
@@ -102,11 +143,22 @@ export class SDKService {
 		return this.initData;
 	}
 
+	// dummy init
 	public static async init(events: Partial<WalletEvent>) {
 		try {
 			const init = await Network.init(
 				new InitializationRequest({
 					network: 'mainnet',
+					mirrorNode: {
+						baseUrl: 'https://mainnet-public.mirrornode.hedera.com/api/v1/',
+						apiKey: '',
+						headerName: '',
+					},
+					rpcNode: {
+						baseUrl: 'https://mainnet.hashio.io/api',
+						apiKey: '',
+						headerName: '',
+					},
 					events,
 				}),
 			);
@@ -131,15 +183,33 @@ export class SDKService {
 	public static async getStableCoins(
 		req: GetListStableCoinRequest,
 	): Promise<StableCoinListViewModel | null> {
-		return await Account.listStableCoins(req);
+		try {
+			return await Account.listStableCoins(req);
+		} catch (e) {
+			console.error('list of stable coin could not be retrieved : ' + e);
+			return null;
+		}
 	}
 
 	public static async getStableCoinDetails(req: GetStableCoinDetailsRequest) {
 		return await StableCoin.getInfo(req);
 	}
 
-	public static async getAccountInfo(req: GetAccountInfoRequest) {
-		return await Account.getInfo(req);
+	public static async getProxyConfig(req: GetProxyConfigRequest) {
+		return await Proxy.getProxyConfig(req);
+	}
+
+	public static async getAccountInfo(req: GetAccountInfoRequest): Promise<AccountViewModel> {
+		try {
+			return await Account.getInfo(req);
+		} catch (e) {
+			console.error('account could not be retrieved : ' + e);
+			const NullAcount: AccountViewModel = {
+				id: Account.NullHederaAccount.id.toString(),
+			};
+
+			return NullAcount;
+		}
 	}
 
 	public static async cashIn(req: CashInRequest) {
@@ -271,6 +341,14 @@ export class SDKService {
 
 	public static async updateReserveAmount(data: UpdateReserveAmountRequest) {
 		return await ReserveDataFeed.updateReserveAmount(data);
+	}
+
+	public static async changeOwner(req: ChangeProxyOwnerRequest) {
+		return await Proxy.changeProxyOwner(req);
+	}
+
+	public static async upgradeImplementation(req: UpgradeImplementationRequest) {
+		return await Proxy.upgradeImplementation(req);
 	}
 
 	public static async grantKyc(data: KYCRequest) {

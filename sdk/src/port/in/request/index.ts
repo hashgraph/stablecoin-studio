@@ -68,8 +68,6 @@ import GetProxyConfigRequest from './GetProxyConfigRequest.js';
 import ChangeProxyOwnerRequest from './ChangeProxyOwnerRequest.js';
 import UpgradeImplementationRequest from './UpgradeImplementationRequest.js';
 
-import { HBAR_DECIMALS } from '../../../core/Constants.js';
-
 export * from './BaseRequest.js';
 export {
 	CreateRequest,

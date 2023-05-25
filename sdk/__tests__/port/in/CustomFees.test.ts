@@ -50,7 +50,18 @@ import {
 import Injectable from '../../../src/core/Injectable';
 import { HederaId } from '../../../src/domain/context/shared/HederaId';
 import StableCoinService from '../../../src/app/service/StableCoinService';
+import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
+import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
+
 const decimals = 6;
+const mirrorNode: MirrorNode = {
+	name: 'testmirrorNode',
+	baseUrl: 'https://testnet.mirrornode.hedera.com/api/v1/',
+};
+const rpcNode: JsonRpcRelay = {
+	name: 'testrpcNode',
+	baseUrl: 'https://testnet.hashio.io/api',
+};
 
 describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 	// token to operate through HTS
@@ -284,6 +295,8 @@ async function connectAccount(account: Account): Promise<void> {
 			},
 			network: 'testnet',
 			wallet: SupportedWallets.CLIENT,
+			mirrorNode: mirrorNode,
+			rpcNode: rpcNode,
 		}),
 	);
 
@@ -293,6 +306,8 @@ async function connectAccount(account: Account): Promise<void> {
 			configuration: {
 				factoryAddress: FACTORY_ADDRESS,
 			},
+			mirrorNode: mirrorNode,
+			rpcNode: rpcNode,
 		}),
 	);
 }

@@ -64,8 +64,12 @@ The ENV file contains the following parameters:
 
 - **REACT_APP_LOG_LEVEL**: defines the log level the application is going to apply to filter the logs been displayed in the browser's console. The default value is "ERROR".
 - **REACT_APP_FACTORIES**: This var is required if you want to create a new stable coin. The var must be a JSON array with a factory id in Hedera format `0.0.XXXXX` per environment.
+- **REACT_APP_MIRROR_NODE**: This var is required if you want to create a new stable coin. The var must be a unique mirror node service for Hedera network, and this is the service which would be used when the UI starts.
+- **REACT_APP_RPC_NODE**: This var is required if you want to create a new stable coin. The var must be a unique rpc node service for Hedera network, and this is the service which would be used when the UI starts.
 ```
 REACT_APP_FACTORIES='[{"Environment":"mainnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.1234567"},{"Environment":"testnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.3950554"},{"Environment":"previewnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.239703"}]'
+REACT_APP_MIRROR_NODE='[{"Environment":"testnet","BASE_URL":"https://testnet.mirrornode.hedera.com/api/v1/", "API_KEY": "132456", "HEADER": "x-api-key"}]'
+REACT_APP_RPC_NODE='[{"Environment":"testnet","BASE_URL":"https://testnet.hashio.io/api", "API_KEY": "132456", "HEADER": "x-api-key"}]'
 ```
 If the env files does not exist or the factory var is not set when you click in "Create a new Stable coin" an alert will be shown.
 ![image](https://user-images.githubusercontent.com/114951681/229088627-369506c3-9c28-435c-9e44-d8908f8a15ab.png)
