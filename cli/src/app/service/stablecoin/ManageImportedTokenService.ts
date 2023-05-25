@@ -30,8 +30,10 @@ export default class ManageImportedTokenService extends Service {
         language.getText('wizard.importedTokenMenu'),
         manageOptions,
         false,
-        currentAccount.network,
-        `${currentAccount.accountId} - ${currentAccount.alias}`,
+        {
+          network: currentAccount.network,
+          account: `${currentAccount.accountId} - ${currentAccount.alias}`,
+        },
       )
     ) {
       case language.getText('wizard.manageImportedTokens.Add'):

@@ -993,6 +993,14 @@ Establishes the connection to work with an existing Hedera account in a wallet i
 	await Network.connect(
 		new ConnectRequest({
         	network: 'testnet',
+			mirrorNode: {
+				name: 'mirrorNode', 
+				baseUrl: 'https://testnet.mirrornode.hedera.com/'
+			},
+			rpcNode: {
+				name: 'rpcNode', 
+				baseUrl: 'https://testnet.hashio.io/api'
+			},
         	wallet: SupportedWallets.HASHPACK
       	})
 	);
@@ -1029,7 +1037,15 @@ Sets the network and could also set the factory smart contract address and regis
 ```Typescript
 	await Network.init(
 		new InitializationRequest({
-			network: 'testnet',			
+			network: 'testnet',
+			mirrorNode: {
+				name: 'mirrorNode', 
+				baseUrl: 'https://testnet.mirrornode.hedera.com/'
+			},
+			rpcNode: {
+				name: 'rpcNode', 
+				baseUrl: 'https://testnet.hashio.io/api'
+			},			
 			configuration: {
 				factoryAddress: '0.0.1'
 			}
@@ -1054,6 +1070,7 @@ Configures a Hedera network, setting some properties like environment, mirror no
 		new SetNetworkRequest({
 			enviroment: 'testnet',
 			mirrorNode: 'https://testnet.mirrornode.hedera.com/',
+			rpcNode: 'https://testnet.hashio.io/api',
 			consensusNodes: []
 		})
 	);

@@ -346,6 +346,14 @@ const TRANSACTION_HANDLER = [
 
 const defaultNetworkProps: NetworkProps = {
 	environment: 'testnet',
+	mirrorNode: {
+		name: 'default',
+		baseUrl: 'https://testnet.mirrornode.hedera.com',
+	},
+	rpcNode: {
+		name: 'default',
+		baseUrl: 'https://testnet.hashio.io/api',
+	},
 };
 
 // Network default props

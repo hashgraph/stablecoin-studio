@@ -282,7 +282,11 @@ const DetailsReview = ({
 	}) => {
 		try {
 			onLoading();
-			if (!selectedStableCoin?.proxyAddress || !selectedStableCoin?.tokenId) {
+			if (
+				!selectedStableCoin?.proxyAddress ||
+				!selectedStableCoin?.proxyAdminAddress ||
+				!selectedStableCoin?.tokenId
+			) {
 				onError();
 				return;
 			}

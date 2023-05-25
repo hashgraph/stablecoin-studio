@@ -41,13 +41,15 @@ import { HashpackTransactionAdapter } from '../out/hs/hashpack/HashpackTransacti
 import { LogError } from '../../core/decorator/LogErrorDecorator.js';
 import SetConfigurationRequest from './request/SetConfigurationRequest.js';
 import { handleValidation } from './Common.js';
+import { MirrorNode } from '../../domain/context/network/MirrorNode.js';
+import { JsonRpcRelay } from '../../domain/context/network/JsonRpcRelay.js';
 
 export { InitializationData, SupportedWallets };
 
 export type NetworkResponse = {
 	environment: Environment;
-	mirrorNode: string;
-	rpcNode: string;
+	mirrorNode: MirrorNode;
+	rpcNode: JsonRpcRelay;
 	consensusNodes: string;
 };
 
@@ -125,7 +127,11 @@ class NetworkInPort implements INetworkInPort {
 		handleValidation('InitializationRequest', req);
 
 		await this.setNetwork(
-			new SetNetworkRequest({ environment: req.network }),
+			new SetNetworkRequest({
+				environment: req.network,
+				mirrorNode: req.mirrorNode,
+				rpcNode: req.rpcNode,
+			}),
 		);
 
 		if (req.configuration)
@@ -165,7 +171,9 @@ class NetworkInPort implements INetworkInPort {
 				}
 			}
 		}
-		await this.commandBus.execute(new SetNetworkCommand(req.network));
+		await this.commandBus.execute(
+			new SetNetworkCommand(req.network, req.mirrorNode, req.rpcNode),
+		);
 
 		const res = await this.commandBus.execute(
 			new ConnectCommand(req.network, req.wallet, account),

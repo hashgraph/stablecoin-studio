@@ -1,11 +1,6 @@
 import { StableCoinList } from '../../../domain/stablecoin/StableCoinList.js';
 import Big from 'big.js';
-import {
-  language,
-  utilsService,
-  wizardService,
-  configurationService,
-} from '../../../index.js';
+import { language, utilsService, wizardService } from '../../../index.js';
 import Service from '../Service.js';
 import DetailsStableCoinsService from './DetailsStableCoinService.js';
 import {
@@ -117,6 +112,8 @@ export default class OperationStableCoinService extends Service {
    */
   public async start(): Promise<void> {
     const configAccount = utilsService.getCurrentAccount();
+    const currentMirror = utilsService.getCurrentMirror();
+    const currentRPC = utilsService.getCurrentRPC();
     let coins: StableCoinList[];
     try {
       if (this.stableCoinId === undefined) {
@@ -132,10 +129,14 @@ export default class OperationStableCoinService extends Service {
             }),
           ),
           true,
-          configurationService.getConfiguration()?.defaultNetwork,
-          `${configAccount.accountId} - ${configAccount.alias}`,
-          this.stableCoinPaused,
-          this.stableCoinDeleted,
+          {
+            network: configAccount.network,
+            mirrorNode: currentMirror.name,
+            rpc: currentRPC.name,
+            account: `${configAccount.accountId} - ${configAccount.alias}`,
+            tokenPaused: this.stableCoinPaused,
+            tokenDeleted: this.stableCoinDeleted,
+          },
         );
         this.stableCoinWithSymbol =
           this.stableCoinId.split(' - ').length === 3
@@ -152,12 +153,10 @@ export default class OperationStableCoinService extends Service {
           await utilsService.cleanAndShowBanner();
           await wizardService.mainMenu();
         } else {
-          // Get details to obtain treasury
           await new DetailsStableCoinsService().getDetailsStableCoins(
             this.stableCoinId,
             false,
           );
-
           await utilsService.cleanAndShowBanner();
           await this.operationsStableCoin();
         }
@@ -175,6 +174,8 @@ export default class OperationStableCoinService extends Service {
 
   private async operationsStableCoin(): Promise<void> {
     const configAccount = utilsService.getCurrentAccount();
+    const currentMirror = utilsService.getCurrentMirror();
+    const currentRPC = utilsService.getCurrentRPC();
     const privateKey: RequestPrivateKey = {
       key: configAccount.privateKey.key,
       type: configAccount.privateKey.type,
@@ -217,11 +218,15 @@ export default class OperationStableCoinService extends Service {
           await this.getRolesAccount(),
         ),
         false,
-        configAccount.network,
-        `${currentAccount.accountId} - ${configAccount.alias}`,
-        this.stableCoinWithSymbol,
-        this.stableCoinPaused,
-        this.stableCoinDeleted,
+        {
+          network: configAccount.network,
+          mirrorNode: currentMirror.name,
+          rpc: currentRPC.name,
+          account: `${currentAccount.accountId} - ${configAccount.alias}`,
+          token: this.stableCoinWithSymbol,
+          tokenPaused: this.stableCoinPaused,
+          tokenDeleted: this.stableCoinDeleted,
+        },
       )
     ) {
       case language.getText('wizard.stableCoinOptions.Send'):
@@ -678,6 +683,8 @@ export default class OperationStableCoinService extends Service {
 
   private async kycManagementFlow(): Promise<void> {
     const configAccount = utilsService.getCurrentAccount();
+    const currentMirror = utilsService.getCurrentMirror();
+    const currentRPC = utilsService.getCurrentRPC();
     const privateKey: RequestPrivateKey = {
       key: configAccount.privateKey.key,
       type: configAccount.privateKey.type,
@@ -702,11 +709,15 @@ export default class OperationStableCoinService extends Service {
         language.getText('stablecoin.askAction'),
         kycOptionsFiltered,
         true,
-        configAccount.network,
-        `${configAccount.accountId} - ${configAccount.alias}`,
-        this.stableCoinWithSymbol,
-        this.stableCoinPaused,
-        this.stableCoinDeleted,
+        {
+          network: configAccount.network,
+          mirrorNode: currentMirror.name,
+          rpc: currentRPC.name,
+          account: `${configAccount.accountId} - ${configAccount.alias}`,
+          token: this.stableCoinWithSymbol,
+          tokenPaused: this.stableCoinPaused,
+          tokenDeleted: this.stableCoinDeleted,
+        },
       )
     ) {
       case language.getText('kycManagement.options.GrantKYC'):
@@ -815,6 +826,8 @@ export default class OperationStableCoinService extends Service {
 
   private async freezeManagementFlow(): Promise<void> {
     const configAccount = utilsService.getCurrentAccount();
+    const currentMirror = utilsService.getCurrentMirror();
+    const currentRPC = utilsService.getCurrentRPC();
     const privateKey: RequestPrivateKey = {
       key: configAccount.privateKey.key,
       type: configAccount.privateKey.type,
@@ -841,11 +854,15 @@ export default class OperationStableCoinService extends Service {
         language.getText('stablecoin.askAction'),
         freezeOptionsFiltered,
         true,
-        configAccount.network,
-        `${configAccount.accountId} - ${configAccount.alias}`,
-        this.stableCoinWithSymbol,
-        this.stableCoinPaused,
-        this.stableCoinDeleted,
+        {
+          network: configAccount.network,
+          mirrorNode: currentMirror.name,
+          rpc: currentRPC.name,
+          account: `${configAccount.accountId} - ${configAccount.alias}`,
+          token: this.stableCoinWithSymbol,
+          tokenPaused: this.stableCoinPaused,
+          tokenDeleted: this.stableCoinDeleted,
+        },
       )
     ) {
       case language.getText('freezeManagement.options.Freeze'):
@@ -957,6 +974,8 @@ export default class OperationStableCoinService extends Service {
 
   private async feesManagementFlow(): Promise<void> {
     const configAccount = utilsService.getCurrentAccount();
+    const currentMirror = utilsService.getCurrentMirror();
+    const currentRPC = utilsService.getCurrentRPC();
     const privateKey: RequestPrivateKey = {
       key: configAccount.privateKey.key,
       type: configAccount.privateKey.type,
@@ -1004,11 +1023,15 @@ export default class OperationStableCoinService extends Service {
         language.getText('stablecoin.askAction'),
         feeManagementOptionsFiltered,
         false,
-        configAccount.network,
-        `${configAccount.accountId} - ${configAccount.alias}`,
-        this.stableCoinWithSymbol,
-        this.stableCoinPaused,
-        this.stableCoinDeleted,
+        {
+          network: configAccount.network,
+          mirrorNode: currentMirror.name,
+          rpc: currentRPC.name,
+          account: `${configAccount.accountId} - ${configAccount.alias}`,
+          token: this.stableCoinWithSymbol,
+          tokenPaused: this.stableCoinPaused,
+          tokenDeleted: this.stableCoinDeleted,
+        },
       )
     ) {
       case language.getText('feeManagement.options.Create'):
@@ -1349,6 +1372,8 @@ export default class OperationStableCoinService extends Service {
 
   private async roleManagementFlow(): Promise<void> {
     const configAccount = utilsService.getCurrentAccount();
+    const currentMirror = utilsService.getCurrentMirror();
+    const currentRPC = utilsService.getCurrentRPC();
     const privateKey: RequestPrivateKey = {
       key: configAccount.privateKey.key,
       type: configAccount.privateKey.type,
@@ -1384,11 +1409,15 @@ export default class OperationStableCoinService extends Service {
         language.getText('stablecoin.askAction'),
         roleManagementOptionsFiltered,
         false,
-        configAccount.network,
-        `${configAccount.accountId} - ${configAccount.alias}`,
-        this.stableCoinWithSymbol,
-        this.stableCoinPaused,
-        this.stableCoinDeleted,
+        {
+          network: configAccount.network,
+          mirrorNode: currentMirror.name,
+          rpc: currentRPC.name,
+          account: `${configAccount.accountId} - ${configAccount.alias}`,
+          token: this.stableCoinWithSymbol,
+          tokenPaused: this.stableCoinPaused,
+          tokenDeleted: this.stableCoinDeleted,
+        },
       )
     ) {
       case language.getText(
@@ -1405,11 +1434,15 @@ export default class OperationStableCoinService extends Service {
             language.getText('roleManagement.askRolesForAccount'),
             checkAccountsWithRoleOptions,
             false,
-            configAccount.network,
-            `${configAccount.accountId} - ${configAccount.alias}`,
-            this.stableCoinWithSymbol,
-            this.stableCoinPaused,
-            this.stableCoinDeleted,
+            {
+              network: configAccount.network,
+              mirrorNode: currentMirror.name,
+              rpc: currentRPC.name,
+              account: `${configAccount.accountId} - ${configAccount.alias}`,
+              token: this.stableCoinWithSymbol,
+              tokenPaused: this.stableCoinPaused,
+              tokenDeleted: this.stableCoinDeleted,
+            },
           )
         ) {
           case language.getText('wizard.CheckAccountsWithRoleOptions.Admin'):
@@ -1493,11 +1526,15 @@ export default class OperationStableCoinService extends Service {
             language.getText('roleManagement.askRole'),
             editOptions,
             false,
-            configAccount.network,
-            `${currentAccount.accountId} - ${configAccount.alias}`,
-            this.stableCoinWithSymbol,
-            this.stableCoinPaused,
-            this.stableCoinDeleted,
+            {
+              network: configAccount.network,
+              mirrorNode: currentMirror.name,
+              rpc: currentRPC.name,
+              account: `${currentAccount.accountId} - ${configAccount.alias}`,
+              token: this.stableCoinWithSymbol,
+              tokenPaused: this.stableCoinPaused,
+              tokenDeleted: this.stableCoinDeleted,
+            },
           )
         ) {
           case editOptions[0]:
@@ -3061,6 +3098,8 @@ export default class OperationStableCoinService extends Service {
 
   private async dangerZone(): Promise<void> {
     const configAccount = utilsService.getCurrentAccount();
+    const currentMirror = utilsService.getCurrentMirror();
+    const currentRPC = utilsService.getCurrentRPC();
     const privateKey: RequestPrivateKey = {
       key: configAccount.privateKey.key,
       type: configAccount.privateKey.type,
@@ -3120,11 +3159,15 @@ export default class OperationStableCoinService extends Service {
         language.getText('stablecoin.askAction'),
         dangerZoneOptionsFiltered,
         false,
-        configAccount.network,
-        `${configAccount.accountId} - ${configAccount.alias}`,
-        this.stableCoinWithSymbol,
-        this.stableCoinPaused,
-        this.stableCoinDeleted,
+        {
+          network: configAccount.network,
+          mirrorNode: currentMirror.name,
+          rpc: currentRPC.name,
+          account: `${configAccount.accountId} - ${configAccount.alias}`,
+          token: this.stableCoinWithSymbol,
+          tokenPaused: this.stableCoinPaused,
+          tokenDeleted: this.stableCoinDeleted,
+        },
       )
     ) {
       case language.getText('dangerZone.options.Pause'):

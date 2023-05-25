@@ -16,6 +16,7 @@ import type EXTERNAL_TOKEN_INFO_EN from './translations/en/externalTokenInfo.jso
 import type FREEZE_EN from './translations/en/freeze.json';
 import type UNFREEZE_EN from './translations/en/unfreeze.json';
 import type PROOF_OF_RESERVE_EN from './translations/en/proofOfReserve.json';
+import type SETTINGS_EN from './translations/en/settings.json';
 import type GRANT_KYC_EN from './translations/en/grantKYC.json';
 import type REVOKE_KYC_EN from './translations/en/revokeKYC.json';
 import CHECK_KYC_EN from './translations/en/checkKyc.json';
@@ -38,6 +39,7 @@ declare module 'react-i18next' {
 		freeze: typeof FREEZE_EN;
 		unfreeze: typeof UNFREEZE_EN;
 		proofOfReserve: typeof PROOF_OF_RESERVE_EN;
+		settings: typeof SETTINGS_EN;
 		grantKYC: typeof GRANT_KYC_EN;
 		revokeKYC: typeof REVOKE_KYC_EN;
 		checkKyc: typeof CHECK_KYC_EN;
@@ -66,6 +68,7 @@ declare module 'react-i18next' {
 			freeze: typeof FREEZE_EN;
 			unfreeze: typeof UNFREEZE_EN;
 			proofOfReserve: typeof PROOF_OF_RESERVE_EN;
+			settings: typeof SETTINGS_EN;
 			grantKYC: typeof GRANT_KYC_EN;
 			revokeKYC: typeof REVOKE_KYC_EN;
 			checkKyc: typeof CHECK_KYC_EN;
