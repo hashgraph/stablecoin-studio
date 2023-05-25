@@ -40,7 +40,9 @@ contract HederaTokenManager is
 {
     uint256 private constant _SUPPLY_KEY_BIT = 4;
 
-    // Constructor required to avoid Initializer attack on logic contract
+    /**
+     * @dev Constructor required to avoid Initializer attack on logic contract
+     */
     constructor() {
         _disableInitializers();
     }
@@ -50,6 +52,7 @@ contract HederaTokenManager is
      *
      * @param init the underlying token to create
      *
+     * @return createdTokenAddress the address of the created token
      */
     function initialize(
         InitializeStruct calldata init
@@ -76,19 +79,18 @@ contract HederaTokenManager is
 
         __tokenOwnerInit(createdTokenAddress);
 
-        // Sending back the remaining HBARs from msg.value
-        uint256 currentBalance = address(this).balance;
-        if (currentBalance > 0) {
-            (bool s, ) = init.originalSender.call{value: currentBalance}('');
-            require(
-                s,
-                'Transfering funds back to Original sender did not work'
-            );
-        }
+        _transferFundsBackToOriginalSender(init.originalSender);
 
         return createdTokenAddress;
     }
 
+    /**
+     * @dev Grants initial roles to the SC creator
+     *
+     * @param originalSender address of the original sender
+     * @param roles array of roles to grant
+     * @param cashinRole cashin role to grant
+     */
     function _grantInitialRoles(
         address originalSender,
         RolesStruct[] memory roles,
@@ -108,6 +110,24 @@ contract HederaTokenManager is
 
         // granting admin role, always to the SC creator
         _setupRole(_getRoleId(RoleName.ADMIN), originalSender);
+    }
+
+    /**
+     * @dev Transfers the remaining HBARs from msg.value back to the original sender
+     *
+     * @param originalSender address of the original sender
+     */
+    function _transferFundsBackToOriginalSender(
+        address originalSender
+    ) private onlyInitializing {
+        uint256 currentBalance = address(this).balance;
+        if (currentBalance > 0) {
+            (bool s, ) = originalSender.call{value: currentBalance}('');
+            require(
+                s,
+                'Transfering funds back to Original sender did not work'
+            );
+        }
     }
 
     /**
@@ -166,7 +186,6 @@ contract HederaTokenManager is
      *
      * @return uint256 The number number tokens that an account has
      */
-
     function _balanceOf(
         address account
     ) internal view override(TokenOwner) returns (uint256) {
@@ -203,7 +222,7 @@ contract HederaTokenManager is
     }
 
     /**
-     * @dev Update token keys
+     * @dev Update token
      *
      * @param updatedToken Values to update the token
      */
@@ -217,6 +236,8 @@ contract HederaTokenManager is
         address currentTokenAddress = _getTokenAddress();
 
         address newTreasury;
+
+        IHederaTokenService.HederaToken memory hederaToken;
 
         // Token Keys
         IHederaTokenService.TokenKey[]
@@ -233,40 +254,70 @@ contract HederaTokenManager is
                     updatedToken.keys[i].isED25519
                 )
             });
-            if (KeysLib.containsKey(_SUPPLY_KEY_BIT, hederaKeys[i].keyType)) {
-                if (hederaKeys[i].key.delegatableContractId == address(this))
-                    newTreasury = address(this);
-                else newTreasury = msg.sender;
-            }
+            if (KeysLib.containsKey(_SUPPLY_KEY_BIT, hederaKeys[i].keyType))
+                newTreasury = hederaKeys[i].key.delegatableContractId ==
+                    address(this)
+                    ? address(this)
+                    : msg.sender;
         }
 
-        // Hedera Token Expiry
-        IHederaTokenService.Expiry memory expiry;
-        if (updatedToken.second >= 0) expiry.second = updatedToken.second;
-        if (updatedToken.autoRenewPeriod >= 0)
-            expiry.autoRenewPeriod = updatedToken.autoRenewPeriod;
+        hederaToken = _updateHederaTokenInfo(
+            updatedToken,
+            hederaKeys,
+            currentTokenAddress
+        );
 
-        // Hedera Token Info
-        IHederaTokenService.HederaToken memory hederaTokenInfo;
-        if (bytes(updatedToken.tokenName).length > 0)
-            hederaTokenInfo.name = updatedToken.tokenName;
-        if (bytes(updatedToken.tokenSymbol).length > 0)
-            hederaTokenInfo.symbol = updatedToken.tokenSymbol;
-        hederaTokenInfo.tokenKeys = hederaKeys;
-        hederaTokenInfo.memo = _getTokenInfo(currentTokenAddress); // this is required because of an Hedera bug.
-        hederaTokenInfo.expiry = expiry;
-
-        if (newTreasury != address(0)) hederaTokenInfo.treasury = newTreasury;
+        if (newTreasury != address(0)) hederaToken.treasury = newTreasury;
 
         int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
-            .updateTokenInfo(currentTokenAddress, hederaTokenInfo);
+            .updateTokenInfo(currentTokenAddress, hederaToken);
 
         _checkResponse(responseCode);
 
         emit TokenUpdated(currentTokenAddress, updatedToken, newTreasury);
     }
 
-    // This method is required because of an Hedera's bug, when keys are updated for a token, the memo gets removed.
+    /**
+     * @dev Update Hedera token info
+     *
+     * @param updatedToken Values to update the token
+     * @param hederaKeys Hedera token keys
+     * @param currentTokenAddress Current token address
+     *
+     * @return hederaTokenUpdated Hedera token info updated
+     */
+    function _updateHederaTokenInfo(
+        UpdateTokenStruct calldata updatedToken,
+        IHederaTokenService.TokenKey[] memory hederaKeys,
+        address currentTokenAddress
+    )
+        private
+        returns (IHederaTokenService.HederaToken memory hederaTokenUpdated)
+    {
+        IHederaTokenService.Expiry memory expiry;
+        if (updatedToken.second >= 0) expiry.second = updatedToken.second;
+        if (updatedToken.autoRenewPeriod >= 0)
+            expiry.autoRenewPeriod = updatedToken.autoRenewPeriod;
+
+        IHederaTokenService.HederaToken memory hederaTokenInfo;
+        if (bytes(updatedToken.tokenName).length > 0)
+            hederaTokenInfo.name = updatedToken.tokenName;
+        if (bytes(updatedToken.tokenSymbol).length > 0)
+            hederaTokenInfo.symbol = updatedToken.tokenSymbol;
+        hederaTokenInfo.tokenKeys = hederaKeys;
+        hederaTokenInfo.memo = _getTokenInfo(currentTokenAddress);
+        hederaTokenInfo.expiry = expiry;
+
+        return hederaTokenInfo;
+    }
+
+    /**
+     * @dev Is required because of an Hedera's bug, when keys are updated for a token, the memo gets removed.
+     *
+     * @param tokenAddress The address of the token
+     *
+     * @return string The memo of the token
+     */
     function _getTokenInfo(
         address tokenAddress
     ) private returns (string memory) {
