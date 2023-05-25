@@ -16,18 +16,14 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
      * @dev
      */
     modifier checkReserveIncrease(uint256 amount) {
-        require(
-            _checkReserveAmount(amount, false),
-            'Amount is bigger than current reserve'
-        );
+        if (!_checkReserveAmount(amount, false))
+            revert AmountBiggerThanReserve(amount);
         _;
     }
 
     modifier checkReserveDecrease(uint256 amount) {
-        require(
-            _checkReserveAmount(amount, true),
-            'Amount is bigger than current reserve'
-        );
+        if (!_checkReserveAmount(amount, true))
+            revert AmountBiggerThanReserve(amount);
         _;
     }
 
@@ -47,10 +43,8 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
             .decimals();
         uint8 tokenDecimals = _decimals();
         if (tokenDecimals > reserveDecimals) {
-            require(
-                amount % (10 ** (tokenDecimals - reserveDecimals)) == 0,
-                'Format number incorrect'
-            );
+            if (amount % (10 ** (tokenDecimals - reserveDecimals)) != 0)
+                revert FormatNumberIncorrect(amount);
             currentReserve =
                 currentReserve *
                 (10 ** (tokenDecimals - reserveDecimals));

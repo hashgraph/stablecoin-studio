@@ -75,8 +75,7 @@ abstract contract Rescatable is
         returns (bool)
     {
         (bool sent, ) = msg.sender.call{value: amount}('');
-
-        require(sent, 'HBAR rescue failed');
+        if (!sent) revert HBARRescueError(amount);
 
         emit HBARRescued(msg.sender, amount);
 

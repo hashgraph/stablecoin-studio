@@ -15,6 +15,18 @@ interface IRoles {
         DEFAULT_ADMIN_ROLE
     }
 
+    event RoleGranted(
+        bytes32 indexed role,
+        address indexed account,
+        address indexed sender
+    );
+
+    event RoleRevoked(
+        bytes32 indexed role,
+        address indexed account,
+        address indexed sender
+    );
+
     /**
      * @dev Returns an array of roles the account currently has
      *
@@ -30,16 +42,4 @@ interface IRoles {
      * @return bytes32 The bytes32 of the role
      */
     function getRoleId(RoleName role) external view returns (bytes32);
-
-    event RoleGranted(
-        bytes32 indexed role,
-        address indexed account,
-        address indexed sender
-    );
-
-    event RoleRevoked(
-        bytes32 indexed role,
-        address indexed account,
-        address indexed sender
-    );
 }

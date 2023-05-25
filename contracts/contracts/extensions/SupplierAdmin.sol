@@ -67,10 +67,8 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
      *
      */
     function _grantSupplierRole(address supplier, uint256 amount) internal {
-        require(
-            !_unlimitedSupplierAllowances[supplier],
-            'Account already has unlimited supplier allowance'
-        );
+        if (_unlimitedSupplierAllowances[supplier])
+            revert AccountHasUnlimitedSupplierAllowance(supplier);
         _supplierAllowances[supplier] = amount;
         _grantRole(_getRoleId(RoleName.CASHIN), supplier);
     }
@@ -230,10 +228,8 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
         uint256 amount
     ) internal {
         uint256 oldAllowance = _supplierAllowances[supplier];
-        require(
-            oldAllowance >= amount,
-            'Amount must not exceed the supplier allowance'
-        );
+        if (amount > oldAllowance) revert GreaterThan(amount, oldAllowance);
+
         uint256 newAllowance = oldAllowance - amount;
         _supplierAllowances[supplier] = newAllowance;
 

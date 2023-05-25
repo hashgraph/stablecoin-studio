@@ -123,10 +123,7 @@ contract HederaTokenManager is
         uint256 currentBalance = address(this).balance;
         if (currentBalance > 0) {
             (bool s, ) = originalSender.call{value: currentBalance}('');
-            require(
-                s,
-                'Transfering funds back to Original sender did not work'
-            );
+            if (!s) revert RefundingError(currentBalance);
         }
     }
 

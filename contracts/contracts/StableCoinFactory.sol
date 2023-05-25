@@ -37,10 +37,7 @@ contract StableCoinFactory is
     address[] private _hederaTokenManagerAddress;
 
     modifier isAdmin() {
-        require(
-            _admin == msg.sender,
-            'Only administrator can call this function'
-        );
+        if (_admin != msg.sender) revert OnlyAdministratorFunction(msg.sender);
         _;
     }
 
@@ -50,7 +47,7 @@ contract StableCoinFactory is
     }
 
     function _checkAddressIsNotZero(address addr) private pure {
-        require(addr != address(0), 'Provided address is 0');
+        if (addr == address(0)) revert AddressZero(addr);
     }
 
     function initialize(
@@ -79,14 +76,9 @@ contract StableCoinFactory is
         external
         payable
         override(IStableCoinFactory)
+        checkAddressIsNotZero(stableCoinContractAddress)
         returns (DeployedStableCoin memory)
     {
-        // Check that the provided Stable Coin implementacion address is not 0
-        require(
-            stableCoinContractAddress != address(0),
-            'Provided Stable Coin Contract Address is 0'
-        );
-
         // Reserve
         address reserveAddress = requestedToken.reserveAddress;
         address reserveProxy;
@@ -238,10 +230,8 @@ contract StableCoinFactory is
         int32 tokenDecimals,
         int64 tokenInitialSupply
     ) private pure {
-        require(
-            reserveInitialAmount >= 0,
-            'Reserve Initial supply must be at least 0'
-        );
+        if (reserveInitialAmount < 0)
+            revert LessThan(uint256(reserveInitialAmount), 0);
 
         uint256 initialReserve = uint256(reserveInitialAmount);
         uint32 _tokenDecimals = uint32(tokenDecimals);
@@ -256,10 +246,8 @@ contract StableCoinFactory is
                 _tokenInitialSupply *
                 (10 ** (reserveDecimals - _tokenDecimals));
         }
-        require(
-            _tokenInitialSupply <= initialReserve,
-            'Initial supply is lower than initial reserve'
-        );
+        if (initialReserve < _tokenInitialSupply)
+            revert LessThan(initialReserve, _tokenInitialSupply);
     }
 
     function addHederaTokenManagerVersion(

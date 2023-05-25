@@ -34,6 +34,14 @@ interface IHederaTokenManager {
         address newTreasury
     );
 
+    /**
+     * @dev Emitted when transfering funds back to original sender after creating the token did not work
+     *
+     * @param amount The value to check
+     *
+     */
+    error RefundingError(uint256 amount);
+
     struct InitializeStruct {
         IHederaTokenService.HederaToken token;
         int64 initialTotalSupply;

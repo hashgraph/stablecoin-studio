@@ -30,6 +30,14 @@ interface IRescatable {
     event HBARRescued(address indexed rescuer, uint256 amount);
 
     /**
+     * @dev Emitted when rescuing HBAR did not work
+     *
+     * @param amount The amount of HBAR to rescue
+     *
+     */
+    error HBARRescueError(uint256 amount);
+
+    /**
      * @dev Rescue `value` tokens from contractTokenOwner to rescuer
      *
      * @param amount The number of tokens to rescuer

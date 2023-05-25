@@ -33,7 +33,7 @@ contract HederaReserve is IHederaReserve, Initializable {
     }
 
     function _checkAddressIsNotZero(address addr) private pure {
-        require(addr != address(0), 'Provided address is 0');
+        if (addr == address(0)) revert AddressZero(addr);
     }
 
     /**

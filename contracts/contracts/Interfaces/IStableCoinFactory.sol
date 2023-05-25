@@ -23,6 +23,28 @@ interface IStableCoinFactory {
 
     event HederaTokenManagerAddressAdded(address indexed newHederaTokenManager);
 
+    /**
+     * @dev Emitted when the provided `addr` is 0
+     *
+     * @param addr The address to check
+     */
+    error AddressZero(address addr);
+
+    /**
+     * @dev Emitted when a function is called by the Factory non administrator account
+     *
+     * @param addr The account trying to execute the function
+     */
+    error OnlyAdministratorFunction(address addr);
+
+    /**
+     * @dev Emitted when the provided `value` is not less than `ref`
+     *
+     * @param value The value to check
+     * @param ref The reference value
+     */
+    error LessThan(uint256 value, uint256 ref);
+
     struct TokenStruct {
         string tokenName;
         string tokenSymbol;

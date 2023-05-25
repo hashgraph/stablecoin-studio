@@ -14,6 +14,20 @@ interface IReserve {
     );
 
     /**
+     * @dev Emitted when the provided `amount` is bigger than the current reserve
+     *
+     * @param amount The value to check
+     */
+    error AmountBiggerThanReserve(uint256 amount);
+
+    /**
+     * @dev Emitted when the provided `amount` has an invalid format
+     *
+     * @param amount The value to check
+     */
+    error FormatNumberIncorrect(uint256 amount);
+
+    /**
      * @dev Changes the current reserve address
      *
      * @param newAddress The new reserve address

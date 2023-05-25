@@ -13,6 +13,13 @@ interface IHederaReserve is AggregatorV3Interface {
     event AmountChanged(int256 previousAmount, int256 newAmount);
 
     /**
+     * @dev Emitted when the provided `addr` is 0
+     *
+     * @param addr The address to check
+     */
+    error AddressZero(address addr);
+
+    /**
      *  @dev Sets a new reserve amount
      *
      *  @param newValue The new value of the reserve
