@@ -39,8 +39,8 @@ abstract contract TokenOwner is
         uint256 ref,
         bool equalAccepted
     ) private pure {
-        if (equalAccepted && value < ref) revert LessThan(value, ref);
-        if (!equalAccepted && value <= ref) revert LessThan(value, ref);
+        if (equalAccepted ? value < ref : value <= ref)
+            revert LessThan(value, ref);
     }
 
     // modifier to check that value is not greater than ref
@@ -58,8 +58,8 @@ abstract contract TokenOwner is
         uint256 ref,
         bool equalAccepted
     ) private pure {
-        if (equalAccepted && value > ref) revert GreaterThan(value, ref);
-        if (!equalAccepted && value >= ref) revert GreaterThan(value, ref);
+        if (equalAccepted ? value > ref : value >= ref)
+            revert GreaterThan(value, ref);
     }
 
     // modifier to check that amount is not negative
@@ -72,8 +72,8 @@ abstract contract TokenOwner is
         int256 amount,
         bool zeroAccepted
     ) private pure {
-        if (zeroAccepted && amount < 0) revert NegativeAmount(amount);
-        if (!zeroAccepted && amount <= 0) revert NegativeAmount(amount);
+        if (zeroAccepted ? amount < 0 : amount <= 0)
+            revert NegativeAmount(amount);
     }
 
     // modifier to check that an address is not 0
