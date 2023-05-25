@@ -11,10 +11,10 @@ interface ICashIn {
      * @param account Account address
      */
     event TokensMinted(
-        address minter,
-        address token,
+        address indexed minter,
+        address indexed token,
         int64 amount,
-        address account
+        address indexed account
     );
 
     /**

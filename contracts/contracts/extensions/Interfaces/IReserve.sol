@@ -8,7 +8,10 @@ interface IReserve {
      * @param previousAddress The previous reserve address
      * @param newAddress The new reserve address
      */
-    event ReserveAddressChanged(address previousAddress, address newAddress);
+    event ReserveAddressChanged(
+        address indexed previousAddress,
+        address indexed newAddress
+    );
 
     /**
      * @dev Changes the current reserve address

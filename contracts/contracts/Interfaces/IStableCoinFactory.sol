@@ -10,18 +10,18 @@ interface IStableCoinFactory {
     event StableCoinFactoryInitialized();
 
     event HederaTokenManagerAddressEdited(
-        address oldAddress,
-        address newAddress
+        address indexed oldAddress,
+        address indexed newAddress
     );
 
     event HederaTokenManagerAddressRemoved(
         uint256 index,
-        address addressRemoved
+        address indexed addressRemoved
     );
 
-    event AdminChanged(address oldAdmin, address newAdmin);
+    event AdminChanged(address indexed oldAdmin, address indexed newAdmin);
 
-    event HederaTokenManagerAddressAdded(address newHederaTokenManager);
+    event HederaTokenManagerAddressAdded(address indexed newHederaTokenManager);
 
     struct TokenStruct {
         string tokenName;

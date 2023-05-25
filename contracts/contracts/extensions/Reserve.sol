@@ -9,8 +9,8 @@ import {Roles} from './Roles.sol';
 import {TokenOwner} from './TokenOwner.sol';
 
 abstract contract Reserve is IReserve, TokenOwner, Roles {
-    // The address of the internal reserve
-    address internal _reserveAddress;
+    // The address of the reserve
+    address private _reserveAddress;
 
     /**
      * @dev
@@ -38,7 +38,7 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
     function _checkReserveAmount(
         uint256 amount,
         bool less
-    ) internal view returns (bool) {
+    ) private view returns (bool) {
         if (_reserveAddress == address(0)) return true;
         int256 reserveAmount = _getReserveAmount();
         assert(reserveAmount >= 0);
@@ -74,7 +74,7 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
         return _getReserveAmount();
     }
 
-    function _getReserveAmount() internal view returns (int256) {
+    function _getReserveAmount() private view returns (int256) {
         if (_reserveAddress != address(0)) {
             (, int256 answer, , , ) = AggregatorV3Interface(_reserveAddress)
                 .latestRoundData();

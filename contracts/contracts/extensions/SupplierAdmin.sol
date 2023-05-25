@@ -6,7 +6,7 @@ import {TokenOwner} from './TokenOwner.sol';
 import {Roles} from './Roles.sol';
 
 abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
-    mapping(address => uint256) internal _supplierAllowances;
+    mapping(address => uint256) private _supplierAllowances;
     mapping(address => bool) internal _unlimitedSupplierAllowances;
 
     /**

@@ -8,7 +8,7 @@ import {
 interface IHederaReserve is AggregatorV3Interface {
     event ReserveInitialized(int256 initialReserve);
 
-    event AdminChanged(address previousAdmin, address newAdmin);
+    event AdminChanged(address indexed previousAdmin, address indexed newAdmin);
 
     event AmountChanged(int256 previousAmount, int256 newAmount);
 

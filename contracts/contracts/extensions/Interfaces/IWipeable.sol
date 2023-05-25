@@ -10,9 +10,9 @@ interface IWipeable {
      * @param amount The number of tokens to wipe
      */
     event TokensWiped(
-        address wiper,
-        address token,
-        address account,
+        address indexed wiper,
+        address indexed token,
+        address indexed account,
         int64 amount
     );
 

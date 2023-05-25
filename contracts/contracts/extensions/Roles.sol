@@ -129,7 +129,7 @@ abstract contract Roles is IRoles, Initializable {
     function _hasRole(
         bytes32 role,
         address account
-    ) internal view returns (bool) {
+    ) private view returns (bool) {
         return _roles[role].members[account].active;
     }
 
@@ -182,15 +182,14 @@ abstract contract Roles is IRoles, Initializable {
      * May emit a {RoleGranted} event.
      */
     function _grantRole(bytes32 role, address account) internal {
-        if (!_hasRole(role, account)) {
-            _roles[role].members[account] = MemberData(
-                true,
-                _roles[role].accounts.length
-            );
-            _roles[role].accounts.push(account);
+        if (_hasRole(role, account)) return;
+        _roles[role].members[account] = MemberData(
+            true,
+            _roles[role].accounts.length
+        );
+        _roles[role].accounts.push(account);
 
-            emit RoleGranted(role, account, msg.sender);
-        }
+        emit RoleGranted(role, account, msg.sender);
     }
 
     /**
@@ -305,7 +304,7 @@ abstract contract Roles is IRoles, Initializable {
      *
      * _Available since v4.6._
      */
-    function _checkRole(bytes32 role) internal view virtual {
+    function _checkRole(bytes32 role) private view {
         _checkRole(role, msg.sender);
     }
 
@@ -316,19 +315,18 @@ abstract contract Roles is IRoles, Initializable {
      *
      *  /^AccessControl: account (0x[0-9a-f]{40}) is missing role (0x[0-9a-f]{64})$/
      */
-    function _checkRole(bytes32 role, address account) internal view virtual {
-        if (!_hasRole(role, account)) {
-            revert(
-                string(
-                    abi.encodePacked(
-                        'AccessControl: account ',
-                        StringsUpgradeable.toHexString(account),
-                        ' is missing role ',
-                        StringsUpgradeable.toHexString(uint256(role), 32)
-                    )
+    function _checkRole(bytes32 role, address account) private view {
+        if (_hasRole(role, account)) return;
+        revert(
+            string(
+                abi.encodePacked(
+                    'AccessControl: account ',
+                    StringsUpgradeable.toHexString(account),
+                    ' is missing role ',
+                    StringsUpgradeable.toHexString(uint256(role), 32)
                 )
-            );
-        }
+            )
+        );
     }
 
     /**

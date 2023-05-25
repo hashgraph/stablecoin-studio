@@ -31,6 +31,8 @@ contract StableCoinFactory is
     string private constant _MEMO_1 = '{"p":"';
     string private constant _MEMO_2 = '","a":"';
     string private constant _MEMO_3 = '"}';
+    int64 private constant _DFAULT_AUTO_RENEW_PERIOD = 90 days;
+
     address private _admin;
     address[] private _hederaTokenManagerAddress;
 
@@ -87,8 +89,8 @@ contract StableCoinFactory is
 
         // Reserve
         address reserveAddress = requestedToken.reserveAddress;
-        address reserveProxy = address(0);
-        address reserveProxyAdmin = address(0);
+        address reserveProxy;
+        address reserveProxyAdmin;
 
         if (requestedToken.createReserve) {
             HederaReserve reserveContract = new HederaReserve();
@@ -196,7 +198,7 @@ contract StableCoinFactory is
         // Token Expiry
         IHederaTokenService.Expiry memory tokenExpiry;
         tokenExpiry.autoRenewAccount = stableCoinProxyAddress;
-        tokenExpiry.autoRenewPeriod = 7776000;
+        tokenExpiry.autoRenewPeriod = _DFAULT_AUTO_RENEW_PERIOD;
 
         // Token Keys
         IHederaTokenService.TokenKey[]

@@ -7,7 +7,7 @@ interface IDeletable {
      *
      * @param token Token address
      */
-    event TokenDeleted(address token);
+    event TokenDeleted(address indexed token);
 
     /**
      * @dev Deletes the token

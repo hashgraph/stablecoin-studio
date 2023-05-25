@@ -26,7 +26,7 @@ import { BigNumber } from 'ethers'
 const web3 = new Web3()
 const SuccessStatus = 22
 
-export const clientId = 1
+export const clientId = 2
 
 export async function contractCall(
     contractId: ContractId,

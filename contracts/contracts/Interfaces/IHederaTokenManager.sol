@@ -6,22 +6,6 @@ import {KeysLib} from '../library/KeysLib.sol';
 
 interface IHederaTokenManager {
     /**
-     * @dev Emitted when the token has been associated to the account
-     *
-     * @param token Token address
-     * @param account Account address
-     */
-    event TokenAssociated(address token, address account);
-
-    /**
-     * @dev Emitted when the token has been dissociated from the account
-     *
-     * @param token Token address
-     * @param account Account address
-     */
-    event TokenDissociated(address token, address account);
-
-    /**
     * @dev Emitted when tokens have been transfered from sender to receiver
     *
     * @param token Token address
@@ -31,9 +15,9 @@ interface IHederaTokenManager {
 
     */
     event TokenTransfer(
-        address token,
-        address sender,
-        address receiver,
+        address indexed token,
+        address indexed sender,
+        address indexed receiver,
         int64 amount
     );
 
@@ -45,7 +29,7 @@ interface IHederaTokenManager {
      * @param newTreasury Token treasury account
      */
     event TokenUpdated(
-        address token,
+        address indexed token,
         UpdateTokenStruct updateTokenStruct,
         address newTreasury
     );

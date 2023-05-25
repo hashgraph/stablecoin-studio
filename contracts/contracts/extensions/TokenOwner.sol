@@ -38,9 +38,9 @@ abstract contract TokenOwner is
         uint256 value,
         uint256 ref,
         bool equalAccepted
-    ) internal pure {
+    ) private pure {
         if (equalAccepted && value < ref) revert LessThan(value, ref);
-        else if (!equalAccepted && value <= ref) revert LessThan(value, ref);
+        if (!equalAccepted && value <= ref) revert LessThan(value, ref);
     }
 
     // modifier to check that value is not greater than ref
@@ -57,9 +57,9 @@ abstract contract TokenOwner is
         uint256 value,
         uint256 ref,
         bool equalAccepted
-    ) internal pure {
+    ) private pure {
         if (equalAccepted && value > ref) revert GreaterThan(value, ref);
-        else if (!equalAccepted && value >= ref) revert GreaterThan(value, ref);
+        if (!equalAccepted && value >= ref) revert GreaterThan(value, ref);
     }
 
     // modifier to check that amount is not negative
@@ -71,9 +71,9 @@ abstract contract TokenOwner is
     function _amountIsNotNegative(
         int256 amount,
         bool zeroAccepted
-    ) internal pure {
+    ) private pure {
         if (zeroAccepted && amount < 0) revert NegativeAmount(amount);
-        else if (!zeroAccepted && amount <= 0) revert NegativeAmount(amount);
+        if (!zeroAccepted && amount <= 0) revert NegativeAmount(amount);
     }
 
     // modifier to check that an address is not 0
@@ -82,8 +82,7 @@ abstract contract TokenOwner is
         _;
     }
 
-    function _addressIsNotZero(address addr) internal pure {
-        //require(addr != address(0), 'Provided address is 0');
+    function _addressIsNotZero(address addr) private pure {
         if (addr == address(0)) revert AddressZero(addr);
     }
 
@@ -123,7 +122,6 @@ abstract contract TokenOwner is
      * @param responseCode The Hedera response code to transform
      */
     function _checkResponse(int64 responseCode) internal pure returns (bool) {
-        //require(responseCode == HederaResponseCodes.SUCCESS, 'Error');
         if (responseCode != HederaResponseCodes.SUCCESS)
             revert ResponseCodeInvalid(responseCode);
         return true;

@@ -9,6 +9,7 @@ import {
 contract HederaReserve is IHederaReserve, Initializable {
     uint8 private constant _DECIMALS = 2;
     uint80 private constant _ROUND_ID = 0;
+    uint256 private constant _VERSION_ID = 1;
     int256 private _reserveAmount;
     address private _admin;
 
@@ -31,7 +32,7 @@ contract HederaReserve is IHederaReserve, Initializable {
         _disableInitializers();
     }
 
-    function _checkAddressIsNotZero(address addr) internal pure {
+    function _checkAddressIsNotZero(address addr) private pure {
         require(addr != address(0), 'Provided address is 0');
     }
 
@@ -95,7 +96,7 @@ contract HederaReserve is IHederaReserve, Initializable {
      *  @return The current version
      */
     function version() external pure returns (uint256) {
-        return 1;
+        return _VERSION_ID;
     }
 
     /**

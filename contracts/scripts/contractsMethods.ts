@@ -16,7 +16,41 @@ import {
 } from '../typechain-types'
 
 import { contractCall, toEvmAddress } from './utils'
-import { Gas0, Gas1, Gas2, Gas3, Gas4, Gas5 } from './constants'
+import { CREATE_SC_GAS,
+	BALANCE_OF_GAS,
+	BURN_GAS,
+	CASHIN_GAS,
+	DECREASE_SUPPLY_GAS,
+	DELETE_GAS,
+	FREEZE_GAS,
+	GET_RESERVE_ADDRESS_GAS,
+	GET_RESERVE_AMOUNT_GAS,
+	GET_ROLES_GAS,
+	GET_SUPPLY_ALLOWANCE_GAS,
+	GRANT_KYC_GAS,
+	GRANT_ROLES_GAS,
+	HAS_ROLE_GAS,
+	INCREASE_SUPPLY_GAS,
+	IS_UNLIMITED_ALLOWANCE_GAS,
+	PAUSE_GAS,
+	RESCUE_GAS,
+	RESCUE_HBAR_GAS,
+	RESET_SUPPLY_GAS,
+	REVOKE_KYC_GAS,
+	REVOKE_ROLES_GAS,
+	UNFREEZE_GAS,
+	UNPAUSE_GAS,
+	UPDATE_RESERVE_ADDRESS_GAS,
+	UPDATE_RESERVE_AMOUNT_GAS,
+	UPDATE_TOKEN_GAS,
+	WIPE_GAS,
+	MAX_ROLES_GAS,
+	CHANGE_PROXY_OWNER,
+	UPDATE_PROXY_IMPLEMENTATION,
+    Gas2,
+    Gas1,
+    Gas3
+} from './constants'
 
 import { BigNumber } from 'ethers'
 
@@ -77,7 +111,7 @@ export async function grantRole(
         'grantRole',
         params,
         clientGrantingRole,
-        Gas1,
+        GRANT_ROLES_GAS,
         HederaTokenManager__factory.abi
     )
 }
@@ -98,7 +132,7 @@ export async function revokeRole(
         'revokeRole',
         params,
         clientRevokingRole,
-        Gas1,
+        REVOKE_ROLES_GAS,
         HederaTokenManager__factory.abi
     )
 }
@@ -119,7 +153,7 @@ export async function hasRole(
         'hasRole',
         params,
         clientCheckingRole,
-        Gas2,
+        HAS_ROLE_GAS,
         HederaTokenManager__factory.abi
     )
     return result[0]
@@ -135,7 +169,7 @@ export async function getAccountsForRole(
         'getAccountsWithRole',
         params,
         clientCheckingRole,
-        Gas2,
+        GET_ROLES_GAS,
         HederaTokenManager__factory.abi
     )
     return result[0]
@@ -169,7 +203,7 @@ export async function getBalanceOf(
         'balanceOf',
         params,
         client,
-        Gas2,
+        BALANCE_OF_GAS,
         HederaTokenManager__factory.abi
     )
     return BigNumber.from(result[0])
@@ -261,7 +295,7 @@ export async function updateToken(
         'updateToken',
         params,
         client,
-        Gas1,
+        UPDATE_TOKEN_GAS,
         HederaTokenManager__factory.abi
     )
     return response[0]
@@ -280,7 +314,7 @@ export async function upgradeTo(
         'upgradeTo',
         params,
         client,
-        Gas3,
+        UPDATE_TOKEN_GAS,
         proxyAbi
     )
 }
@@ -297,7 +331,7 @@ export async function changeAdmin(
         'changeAdmin',
         params,
         client,
-        Gas3,
+        CHANGE_PROXY_OWNER,
         proxyAbi
     )
 }
@@ -372,7 +406,7 @@ export async function changeProxyAdmin(
         'changeProxyAdmin',
         params,
         client,
-        Gas3,
+        CHANGE_PROXY_OWNER,
         proxyAdminAbi
     )
 }
@@ -390,7 +424,7 @@ export async function transferOwnership(
         'transferOwnership',
         params,
         client,
-        Gas3,
+        CHANGE_PROXY_OWNER,
         proxyAdminAbi
     )
 }
@@ -597,7 +631,7 @@ export async function getTokenAddress(
         'getTokenAddress',
         params,
         client,
-        Gas5,
+        Gas3,
         HederaTokenManager__factory.abi
     )
     return response[0]
@@ -615,7 +649,7 @@ export async function Burn(
         'burn',
         params,
         clientBurningToken,
-        Gas4,
+        BURN_GAS,
         HederaTokenManager__factory.abi
     )
     if (result[0] != true) throw Error
@@ -640,7 +674,7 @@ export async function Mint(
         'mint',
         params,
         clientMintingToken,
-        Gas1,
+        CASHIN_GAS,
         HederaTokenManager__factory.abi
     )
     if (result[0] != true) throw Error
@@ -663,7 +697,7 @@ export async function Wipe(
         'wipe',
         params,
         clientWipingToken,
-        Gas1,
+        WIPE_GAS,
         HederaTokenManager__factory.abi
     )
     if (result[0] != true) throw Error
@@ -680,7 +714,7 @@ export async function pause(
         'pause',
         params,
         clientPausingToken,
-        Gas1,
+        PAUSE_GAS,
         HederaTokenManager__factory.abi
     )
     if (result[0] != true) throw Error
@@ -696,7 +730,7 @@ export async function unpause(
         'unpause',
         params,
         clientPausingToken,
-        Gas1,
+        UNPAUSE_GAS,
         HederaTokenManager__factory.abi
     )
     if (result[0] != true) throw Error
@@ -715,7 +749,7 @@ export async function freeze(
         'freeze',
         params,
         clientFreezingToken,
-        Gas1,
+        FREEZE_GAS,
         HederaTokenManager__factory.abi
     )
     if (result[0] != true) throw Error
@@ -733,7 +767,7 @@ export async function unfreeze(
         'unfreeze',
         params,
         clientUnFreezingToken,
-        Gas1,
+        UNFREEZE_GAS,
         HederaTokenManager__factory.abi
     )
     if (result[0] != true) throw Error
@@ -750,7 +784,7 @@ export async function deleteToken(
         'deleteToken',
         params,
         clientDeletingToken,
-        Gas1,
+        DELETE_GAS,
         HederaTokenManager__factory.abi
     )
     if (result[0] != true) throw Error
@@ -768,7 +802,7 @@ export async function rescue(
         'rescue',
         params,
         clientRescueingToken,
-        Gas4,
+        RESCUE_GAS,
         HederaTokenManager__factory.abi
     )
     if (result[0] != true) throw Error
@@ -785,7 +819,7 @@ export async function rescueHBAR(
         'rescueHBAR',
         params,
         clientRescueingToken,
-        Gas4,
+        RESCUE_HBAR_GAS,
         HederaTokenManager__factory.abi
     )
     if (result[0] != true) throw Error
@@ -804,7 +838,7 @@ export async function getRoles(
         'getRoles',
         params,
         client,
-        Gas3,
+        GET_ROLES_GAS,
         HederaTokenManager__factory.abi
     )
     return result[0]
@@ -821,7 +855,7 @@ export async function getRoleId(
         'getRoleId',
         params,
         client,
-        Gas3,
+        GET_ROLES_GAS,
         HederaTokenManager__factory.abi
     )
     return result[0]
@@ -855,7 +889,7 @@ export async function grantRoles(
         'grantRoles',
         params,
         clientGrantingRoles,
-        Gas0,
+        GRANT_ROLES_GAS,
         HederaTokenManager__factory.abi
     )
 }
@@ -881,7 +915,7 @@ export async function revokeRoles(
         'revokeRoles',
         params,
         clientRevokingRoles,
-        Gas0,
+        REVOKE_ROLES_GAS,
         HederaTokenManager__factory.abi
     )
 }
@@ -903,7 +937,7 @@ export async function decreaseSupplierAllowance(
         'decreaseSupplierAllowance',
         params,
         clientDecreasingAllowance,
-        Gas5,
+        DECREASE_SUPPLY_GAS,
         HederaTokenManager__factory.abi
     )
 }
@@ -924,7 +958,7 @@ export async function grantSupplierRole(
         'grantSupplierRole',
         params,
         clientGrantingRole,
-        Gas1,
+        GRANT_ROLES_GAS,
         HederaTokenManager__factory.abi
     )
 }
@@ -941,7 +975,7 @@ export async function grantUnlimitedSupplierRole(
         'grantUnlimitedSupplierRole',
         params,
         clientGrantingRole,
-        Gas1,
+        GRANT_ROLES_GAS,
         HederaTokenManager__factory.abi
     )
 }
@@ -962,7 +996,7 @@ export async function increaseSupplierAllowance(
         'increaseSupplierAllowance',
         params,
         clientIncreasingAllowance,
-        Gas5,
+        INCREASE_SUPPLY_GAS,
         HederaTokenManager__factory.abi
     )
 }
@@ -997,7 +1031,7 @@ export async function resetSupplierAllowance(
         'resetSupplierAllowance',
         params,
         clientResetingAllowance,
-        Gas5,
+        RESET_SUPPLY_GAS,
         HederaTokenManager__factory.abi
     )
 }
@@ -1014,7 +1048,7 @@ export async function revokeSupplierRole(
         'revokeSupplierRole',
         params,
         clientRevokingRole,
-        Gas1,
+        REVOKE_ROLES_GAS,
         HederaTokenManager__factory.abi
     )
 }
@@ -1209,7 +1243,7 @@ export async function grantKyc(
         'grantKyc',
         params,
         client,
-        Gas1,
+        GRANT_KYC_GAS,
         HederaTokenManager__factory.abi
     )
     if (result[0] != true) throw Error
@@ -1228,7 +1262,7 @@ export async function revokeKyc(
         'revokeKyc',
         params,
         client,
-        Gas1,
+        REVOKE_KYC_GAS,
         HederaTokenManager__factory.abi
     )
     if (result[0] != true) throw Error
