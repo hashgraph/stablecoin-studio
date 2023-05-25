@@ -3,6 +3,7 @@ import { Command } from 'commander';
 import Service from '../Service.js';
 import pkg from '../../../../package.json';
 import { utilsService, wizardService } from '../../../index.js';
+import colors from 'colors';
 
 /**
  * Commander Service
@@ -65,12 +66,26 @@ export default class CommanderService extends Service {
           },
           options.config,
         );
-        await wizardService.chooseAccount(
-          false,
-          configurationService.getConfiguration().defaultNetwork,
-        );
-        // Initialize SDK
-        await utilsService.initSDK();
+
+        let sdkInitializeError = true;
+        do {
+          await wizardService.chooseAccount(
+            false,
+            configurationService.getConfiguration().defaultNetwork,
+          );
+          try {
+            await utilsService.initSDK();
+            sdkInitializeError = false;
+          } catch (error) {
+            await utilsService.cleanAndShowBanner();
+            console.log(
+              colors.yellow(
+                language.getText('wizard.accountsNotFoundInMirror'),
+              ),
+            );
+          }
+        } while (sdkInitializeError);
+
         await utilsService.cleanAndShowBanner();
         await wizardService.mainMenu();
       });
@@ -223,7 +238,5 @@ export default class CommanderService extends Service {
       });
 
     program.parse(process.argv);
-
-    //const options = program.opts();*/
   }
 }

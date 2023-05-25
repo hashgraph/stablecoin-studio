@@ -914,8 +914,21 @@ export default class SetConfigurationService extends Service {
       case language.getText('wizard.manageAccountOptions.Change'):
         await utilsService.cleanAndShowBanner();
 
-        await wizardService.chooseAccount(false);
-        await utilsService.initSDK();
+        let sdkInitializeError = true;
+        do {
+          await wizardService.chooseAccount(false);
+          try {
+            await utilsService.initSDK();
+            sdkInitializeError = false;
+          } catch (error) {
+            await utilsService.cleanAndShowBanner();
+            console.log(
+              colors.yellow(
+                language.getText('wizard.accountsNotFoundInMirror'),
+              ),
+            );
+          }
+        } while (sdkInitializeError);
         await utilsService.cleanAndShowBanner();
         await wizardService.mainMenu();
         break;

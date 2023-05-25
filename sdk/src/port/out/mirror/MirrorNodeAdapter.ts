@@ -28,9 +28,7 @@ import TransactionResultViewModel from '../../out/mirror/response/TransactionRes
 import LogService from '../../../app/service/LogService.js';
 import { StableCoinNotFound } from './error/StableCoinNotFound.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
-import {
-	PublicKey as HPublicKey,
-} from '@hashgraph/sdk';
+import { PublicKey as HPublicKey } from '@hashgraph/sdk';
 import PublicKey from '../../../domain/context/account/PublicKey.js';
 import { StableCoinMemo } from '../../../domain/context/stablecoin/StableCoinMemo.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';

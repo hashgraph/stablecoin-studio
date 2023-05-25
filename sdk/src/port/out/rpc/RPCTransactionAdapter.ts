@@ -314,7 +314,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		}
 	}
 
-	async init(debug = false): Promise<string> {	
+	async init(debug = false): Promise<string> {
 		!debug && (await this.connectMetamask(false));
 		const eventData = {
 			initData: {
