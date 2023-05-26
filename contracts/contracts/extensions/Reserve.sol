@@ -27,6 +27,32 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
         _;
     }
 
+    function getReserveAmount()
+        external
+        view
+        override(IReserve)
+        returns (int256)
+    {
+        return _getReserveAmount();
+    }
+
+    function updateReserveAddress(
+        address newAddress
+    ) external override(IReserve) onlyRole(_getRoleId(RoleName.ADMIN)) {
+        address previous = _reserveAddress;
+        _reserveAddress = newAddress;
+        emit ReserveAddressChanged(previous, newAddress);
+    }
+
+    function getReserveAddress()
+        external
+        view
+        override(IReserve)
+        returns (address)
+    {
+        return _reserveAddress;
+    }
+
     function __reserveInit(address dataFeed) internal onlyInitializing {
         _reserveAddress = dataFeed;
     }
@@ -59,15 +85,6 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
         }
     }
 
-    function getReserveAmount()
-        external
-        view
-        override(IReserve)
-        returns (int256)
-    {
-        return _getReserveAmount();
-    }
-
     function _getReserveAmount() private view returns (int256) {
         if (_reserveAddress != address(0)) {
             (, int256 answer, , , ) = AggregatorV3Interface(_reserveAddress)
@@ -75,23 +92,6 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
             return answer;
         }
         return 0;
-    }
-
-    function updateReserveAddress(
-        address newAddress
-    ) external override(IReserve) onlyRole(_getRoleId(RoleName.ADMIN)) {
-        address previous = _reserveAddress;
-        _reserveAddress = newAddress;
-        emit ReserveAddressChanged(previous, newAddress);
-    }
-
-    function getReserveAddress()
-        external
-        view
-        override(IReserve)
-        returns (address)
-    {
-        return _reserveAddress;
     }
 
     /**

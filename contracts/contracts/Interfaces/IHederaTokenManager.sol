@@ -5,6 +5,34 @@ import {IHederaTokenService} from '../hts-precompile/IHederaTokenService.sol';
 import {KeysLib} from '../library/KeysLib.sol';
 
 interface IHederaTokenManager {
+    struct InitializeStruct {
+        IHederaTokenService.HederaToken token;
+        int64 initialTotalSupply;
+        int32 tokenDecimals;
+        address originalSender;
+        address reserveAddress;
+        RolesStruct[] roles;
+        CashinRoleStruct cashinRole;
+    }
+
+    struct RolesStruct {
+        bytes32 role;
+        address account;
+    }
+
+    struct CashinRoleStruct {
+        address account;
+        uint256 allowance;
+    }
+
+    struct UpdateTokenStruct {
+        string tokenName;
+        string tokenSymbol;
+        KeysLib.KeysStruct[] keys;
+        int64 second;
+        int64 autoRenewPeriod;
+    }
+
     /**
     * @dev Emitted when tokens have been transfered from sender to receiver
     *
@@ -41,34 +69,6 @@ interface IHederaTokenManager {
      *
      */
     error RefundingError(uint256 amount);
-
-    struct InitializeStruct {
-        IHederaTokenService.HederaToken token;
-        int64 initialTotalSupply;
-        int32 tokenDecimals;
-        address originalSender;
-        address reserveAddress;
-        RolesStruct[] roles;
-        CashinRoleStruct cashinRole;
-    }
-
-    struct RolesStruct {
-        bytes32 role;
-        address account;
-    }
-
-    struct CashinRoleStruct {
-        address account;
-        uint256 allowance;
-    }
-
-    struct UpdateTokenStruct {
-        string tokenName;
-        string tokenSymbol;
-        KeysLib.KeysStruct[] keys;
-        int64 second;
-        int64 autoRenewPeriod;
-    }
 
     /**
      * @dev Returns the name of the token

@@ -54,15 +54,6 @@ contract StableCoinFactory is
     }
 
     /**
-     * @dev Throws if the address is zero
-     *
-     * @param addr The address to validate
-     */
-    function _checkAddressIsNotZero(address addr) private pure {
-        if (addr == address(0)) revert AddressZero(addr);
-    }
-
-    /**
      * @dev Initialize the contract
      *
      * @param admin The address of the admin
@@ -193,6 +184,105 @@ contract StableCoinFactory is
     }
 
     /**
+     * @dev Add a new stable coin to contract addresses
+     *
+     * @param newAddress The new address
+     */
+    function addHederaTokenManagerVersion(
+        address newAddress
+    )
+        external
+        override(IStableCoinFactory)
+        isAdmin
+        checkAddressIsNotZero(newAddress)
+    {
+        _hederaTokenManagerAddress.push(newAddress);
+        emit HederaTokenManagerAddressAdded(newAddress);
+    }
+
+    /**
+     * @dev Get the stable coin contract addresses
+     *
+     * @return The stable coin contract addresses
+     */
+    function getHederaTokenManagerAddress()
+        external
+        view
+        returns (address[] memory)
+    {
+        return _hederaTokenManagerAddress;
+    }
+
+    /**
+     * @dev Edit a stable coin contract address
+     *
+     * @param index The index of the address
+     * @param newAddress The new address
+     */
+    function editHederaTokenManagerAddress(
+        uint256 index,
+        address newAddress
+    )
+        external
+        override(IStableCoinFactory)
+        isAdmin
+        checkAddressIsNotZero(newAddress)
+    {
+        address oldAddress = _hederaTokenManagerAddress[index];
+        _edit(index, newAddress);
+        emit HederaTokenManagerAddressEdited(oldAddress, newAddress);
+    }
+
+    /**
+     * @dev Remove a stable coin contract address
+     *
+     * @param index The index of the address
+     */
+    function removeHederaTokenManagerAddress(
+        uint256 index
+    ) external override(IStableCoinFactory) isAdmin {
+        address addressRemoved = _hederaTokenManagerAddress[index];
+        _edit(index, address(0));
+        emit HederaTokenManagerAddressRemoved(index, addressRemoved);
+    }
+
+    /**
+     * @dev Change the admin address
+     *
+     * @param newAddress The new address
+     */
+    function changeAdmin(
+        address newAddress
+    )
+        external
+        override(IStableCoinFactory)
+        isAdmin
+        checkAddressIsNotZero(newAddress)
+    {
+        address oldAdmin = _admin;
+        _admin = newAddress;
+        emit AdminChanged(oldAdmin, newAddress);
+    }
+
+    /**
+     * @dev Get the admin address
+     *
+     * @return The admin address
+     */
+    function getAdmin() external view returns (address) {
+        return _admin;
+    }
+
+    /**
+     * @dev Throws if the address is zero
+     *
+     * @param addr The address to validate
+     */
+    function _checkAddressIsNotZero(address addr) private pure {
+        if (addr == address(0)) revert AddressZero(addr);
+    }
+
+    /**
      * @dev Create a token with the given request
      *
      * @param requestedToken The token struct
@@ -289,56 +379,6 @@ contract StableCoinFactory is
     }
 
     /**
-     * @dev Add a new stable coin to contract addresses
-     *
-     * @param newAddress The new address
-     */
-    function addHederaTokenManagerVersion(
-        address newAddress
-    )
-        external
-        override(IStableCoinFactory)
-        isAdmin
-        checkAddressIsNotZero(newAddress)
-    {
-        _hederaTokenManagerAddress.push(newAddress);
-        emit HederaTokenManagerAddressAdded(newAddress);
-    }
-
-    /**
-     * @dev Get the stable coin contract addresses
-     *
-     * @return The stable coin contract addresses
-     */
-    function getHederaTokenManagerAddress()
-        external
-        view
-        returns (address[] memory)
-    {
-        return _hederaTokenManagerAddress;
-    }
-
-    /**
-     * @dev Edit a stable coin contract address
-     *
-     * @param index The index of the address
-     * @param newAddress The new address
-     */
-    function editHederaTokenManagerAddress(
-        uint256 index,
-        address newAddress
-    )
-        external
-        override(IStableCoinFactory)
-        isAdmin
-        checkAddressIsNotZero(newAddress)
-    {
-        address oldAddress = _hederaTokenManagerAddress[index];
-        _edit(index, newAddress);
-        emit HederaTokenManagerAddressEdited(oldAddress, newAddress);
-    }
-
-    /**
      * @dev Edit _hederaTokenManagerAddress array at the given index
      *
      * @param index The new index
@@ -346,45 +386,5 @@ contract StableCoinFactory is
      */
     function _edit(uint256 index, address newAddress) private {
         _hederaTokenManagerAddress[index] = newAddress;
-    }
-
-    /**
-     * @dev Remove a stable coin contract address
-     *
-     * @param index The index of the address
-     */
-    function removeHederaTokenManagerAddress(
-        uint256 index
-    ) external override(IStableCoinFactory) isAdmin {
-        address addressRemoved = _hederaTokenManagerAddress[index];
-        _edit(index, address(0));
-        emit HederaTokenManagerAddressRemoved(index, addressRemoved);
-    }
-
-    /**
-     * @dev Change the admin address
-     *
-     * @param newAddress The new address
-     */
-    function changeAdmin(
-        address newAddress
-    )
-        external
-        override(IStableCoinFactory)
-        isAdmin
-        checkAddressIsNotZero(newAddress)
-    {
-        address oldAdmin = _admin;
-        _admin = newAddress;
-        emit AdminChanged(oldAdmin, newAddress);
-    }
-
-    /**
-     * @dev Get the admin address
-     *
-     * @return The admin address
-     */
-    function getAdmin() external view returns (address) {
-        return _admin;
     }
 }

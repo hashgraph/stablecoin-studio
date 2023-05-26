@@ -32,10 +32,6 @@ contract HederaReserve is IHederaReserve, Initializable {
         _disableInitializers();
     }
 
-    function _checkAddressIsNotZero(address addr) private pure {
-        if (addr == address(0)) revert AddressZero(addr);
-    }
-
     /**
      *  @dev Initializes the reserve with the initial amount
      *
@@ -140,5 +136,9 @@ contract HederaReserve is IHederaReserve, Initializable {
             block.timestamp,
             _ROUND_ID
         );
+    }
+
+    function _checkAddressIsNotZero(address addr) private pure {
+        if (addr == address(0)) revert AddressZero(addr);
     }
 }

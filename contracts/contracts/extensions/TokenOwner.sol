@@ -34,15 +34,6 @@ abstract contract TokenOwner is
         _;
     }
 
-    function _valueIsNotLessThan(
-        uint256 value,
-        uint256 ref,
-        bool equalAccepted
-    ) private pure {
-        if (equalAccepted ? value < ref : value <= ref)
-            revert LessThan(value, ref);
-    }
-
     // modifier to check that value is not greater than ref
     modifier valueIsNotGreaterThan(
         uint256 value,
@@ -51,6 +42,27 @@ abstract contract TokenOwner is
     ) {
         _valueIsNotGreaterThan(value, ref, equalAccepted);
         _;
+    }
+
+    // modifier to check that amount is not negative
+    modifier amountIsNotNegative(int256 amount, bool zeroAccepted) {
+        _amountIsNotNegative(amount, zeroAccepted);
+        _;
+    }
+
+    // modifier to check that an address is not 0
+    modifier addressIsNotZero(address addr) {
+        _addressIsNotZero(addr);
+        _;
+    }
+
+    function _valueIsNotLessThan(
+        uint256 value,
+        uint256 ref,
+        bool equalAccepted
+    ) private pure {
+        if (equalAccepted ? value < ref : value <= ref)
+            revert LessThan(value, ref);
     }
 
     function _valueIsNotGreaterThan(
@@ -62,24 +74,12 @@ abstract contract TokenOwner is
             revert GreaterThan(value, ref);
     }
 
-    // modifier to check that amount is not negative
-    modifier amountIsNotNegative(int256 amount, bool zeroAccepted) {
-        _amountIsNotNegative(amount, zeroAccepted);
-        _;
-    }
-
     function _amountIsNotNegative(
         int256 amount,
         bool zeroAccepted
     ) private pure {
         if (zeroAccepted ? amount < 0 : amount <= 0)
             revert NegativeAmount(amount);
-    }
-
-    // modifier to check that an address is not 0
-    modifier addressIsNotZero(address addr) {
-        _addressIsNotZero(addr);
-        _;
     }
 
     function _addressIsNotZero(address addr) private pure {
@@ -91,20 +91,6 @@ abstract contract TokenOwner is
         address initTokenAddress
     ) internal onlyInitializing {
         _tokenAddress = initTokenAddress;
-    }
-
-    /**
-     * @dev Returns the token address
-     *
-     * @return address of The token address
-     */
-    function getTokenAddress()
-        external
-        view
-        override(ITokenOwner)
-        returns (address)
-    {
-        return _getTokenAddress();
     }
 
     /**
@@ -152,7 +138,6 @@ abstract contract TokenOwner is
      *
      * @return int64 The number number tokens that an account has
      */
-
     function _balanceOf(
         address account
     ) internal view virtual returns (uint256);
@@ -163,6 +148,20 @@ abstract contract TokenOwner is
      * @param to The address the tokens are transferred to
      */
     function _transfer(address to, int64 amount) internal virtual;
+
+    /**
+     * @dev Returns the token address
+     *
+     * @return address of The token address
+     */
+    function getTokenAddress()
+        external
+        view
+        override(ITokenOwner)
+        returns (address)
+    {
+        return _getTokenAddress();
+    }
 
     /**
      * @dev This empty reserved space is put in place to allow future versions to add new

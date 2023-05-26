@@ -101,16 +101,19 @@ abstract contract Roles is IRoles, Initializable {
      */
     bytes32[] private _listOfroles;
 
-    function __rolesInit() internal onlyInitializing {
-        _listOfroles.push(ADMIN_ROLE);
-        _listOfroles.push(_CASHIN_ROLE);
-        _listOfroles.push(_BURN_ROLE);
-        _listOfroles.push(_WIPE_ROLE);
-        _listOfroles.push(_RESCUE_ROLE);
-        _listOfroles.push(_PAUSE_ROLE);
-        _listOfroles.push(_FREEZE_ROLE);
-        _listOfroles.push(_DELETE_ROLE);
-        _listOfroles.push(_KYC_ROLE);
+    /**
+     * @dev Modifier that checks that an account has a specific role. Reverts
+     * with a standardized message including the required role.
+     *
+     * The format of the revert reason is given by the following regular expression:
+     *
+     *  /^AccessControl: account (0x[0-9a-f]{40}) is missing role (0x[0-9a-f]{64})$/
+     *
+     * _Available since v4.1._
+     */
+    modifier onlyRole(bytes32 role) {
+        _checkRole(role);
+        _;
     }
 
     /**
@@ -121,16 +124,6 @@ abstract contract Roles is IRoles, Initializable {
         address account
     ) external view returns (bool) {
         return _hasRole(role, account);
-    }
-
-    /**
-     * @dev Returns `true` if `account` has been granted `role`.
-     */
-    function _hasRole(
-        bytes32 role,
-        address account
-    ) private view returns (bool) {
-        return _roles[role].members[account].active;
     }
 
     /**
@@ -175,24 +168,6 @@ abstract contract Roles is IRoles, Initializable {
     }
 
     /**
-     * @dev Grants `role` to `account`.
-     *
-     * Internal function without access restriction.
-     *
-     * May emit a {RoleGranted} event.
-     */
-    function _grantRole(bytes32 role, address account) internal {
-        if (_hasRole(role, account)) return;
-        _roles[role].members[account] = MemberData(
-            true,
-            _roles[role].accounts.length
-        );
-        _roles[role].accounts.push(account);
-
-        emit RoleGranted(role, account, msg.sender);
-    }
-
-    /**
      * @dev Revokes `role` from `account`.
      *
      * If `account` had been granted `role`, emits a {RoleRevoked} event.
@@ -208,41 +183,6 @@ abstract contract Roles is IRoles, Initializable {
         address account
     ) external onlyRole(ADMIN_ROLE) {
         _revokeRole(role, account);
-    }
-
-    /**
-     * @dev Revokes `role` from the calling account.
-     *
-     * Roles are often managed via {grantRole} and {revokeRole}: this function's
-     * purpose is to provide a mechanism for accounts to lose their privileges
-     * if they are compromised (such as when a trusted device is misplaced).
-     *
-     * If the calling account had been revoked `role`, emits a {RoleRevoked}
-     * event.
-     *
-     * Requirements:
-     *
-     * - the caller must be `account`.
-     *
-     * May emit a {RoleRevoked} event.
-     */
-    function _revokeRole(bytes32 role, address account) internal {
-        if (_hasRole(role, account)) {
-            uint256 position = _roles[role].members[account].pos;
-            uint256 lastIndex = _roles[role].accounts.length - 1;
-
-            if (position < lastIndex) {
-                address accountToMove = _roles[role].accounts[lastIndex];
-
-                _roles[role].accounts[position] = accountToMove;
-
-                _roles[role].members[accountToMove].pos = position;
-            }
-
-            _roles[role].accounts.pop();
-            delete (_roles[role].members[account]);
-            emit RoleRevoked(role, account, msg.sender);
-        }
     }
 
     /**
@@ -281,19 +221,79 @@ abstract contract Roles is IRoles, Initializable {
         return _listOfroles[uint256(role)];
     }
 
+    function __rolesInit() internal onlyInitializing {
+        _listOfroles.push(ADMIN_ROLE);
+        _listOfroles.push(_CASHIN_ROLE);
+        _listOfroles.push(_BURN_ROLE);
+        _listOfroles.push(_WIPE_ROLE);
+        _listOfroles.push(_RESCUE_ROLE);
+        _listOfroles.push(_PAUSE_ROLE);
+        _listOfroles.push(_FREEZE_ROLE);
+        _listOfroles.push(_DELETE_ROLE);
+        _listOfroles.push(_KYC_ROLE);
+    }
+
     /**
-     * @dev Modifier that checks that an account has a specific role. Reverts
-     * with a standardized message including the required role.
-     *
-     * The format of the revert reason is given by the following regular expression:
-     *
-     *  /^AccessControl: account (0x[0-9a-f]{40}) is missing role (0x[0-9a-f]{64})$/
-     *
-     * _Available since v4.1._
+     * @dev Returns `true` if `account` has been granted `role`.
      */
-    modifier onlyRole(bytes32 role) {
-        _checkRole(role);
-        _;
+    function _hasRole(
+        bytes32 role,
+        address account
+    ) private view returns (bool) {
+        return _roles[role].members[account].active;
+    }
+
+    /**
+     * @dev Grants `role` to `account`.
+     *
+     * Internal function without access restriction.
+     *
+     * May emit a {RoleGranted} event.
+     */
+    function _grantRole(bytes32 role, address account) internal {
+        if (_hasRole(role, account)) return;
+        _roles[role].members[account] = MemberData(
+            true,
+            _roles[role].accounts.length
+        );
+        _roles[role].accounts.push(account);
+
+        emit RoleGranted(role, account, msg.sender);
+    }
+
+    /**
+     * @dev Revokes `role` from the calling account.
+     *
+     * Roles are often managed via {grantRole} and {revokeRole}: this function's
+     * purpose is to provide a mechanism for accounts to lose their privileges
+     * if they are compromised (such as when a trusted device is misplaced).
+     *
+     * If the calling account had been revoked `role`, emits a {RoleRevoked}
+     * event.
+     *
+     * Requirements:
+     *
+     * - the caller must be `account`.
+     *
+     * May emit a {RoleRevoked} event.
+     */
+    function _revokeRole(bytes32 role, address account) internal {
+        if (_hasRole(role, account)) {
+            uint256 position = _roles[role].members[account].pos;
+            uint256 lastIndex = _roles[role].accounts.length - 1;
+
+            if (position < lastIndex) {
+                address accountToMove = _roles[role].accounts[lastIndex];
+
+                _roles[role].accounts[position] = accountToMove;
+
+                _roles[role].members[accountToMove].pos = position;
+            }
+
+            _roles[role].accounts.pop();
+            delete (_roles[role].members[account]);
+            emit RoleRevoked(role, account, msg.sender);
+        }
     }
 
     /**

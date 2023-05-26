@@ -58,22 +58,6 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
     }
 
     /**
-     * @dev  Gives `SUPPLIER ROLE' permissions to perform supplier's allowance and sets the `amount`
-     * the supplier can mint, if you don't already have unlimited supplier's allowance permission.
-     * Only the 'ADMIN SUPPLIER ROLE` can execute.
-     *
-     * @param supplier The address of the supplier
-     * @param amount The amount to add to the supplier's current minting allowance
-     *
-     */
-    function _grantSupplierRole(address supplier, uint256 amount) internal {
-        if (_unlimitedSupplierAllowances[supplier])
-            revert AccountHasUnlimitedSupplierAllowance(supplier);
-        _supplierAllowances[supplier] = amount;
-        _grantRole(_getRoleId(RoleName.CASHIN), supplier);
-    }
-
-    /**
      * @dev Gives `SUPPLIER ROLE' permissions to perform supplier's allowance, sets unlimited
      * supplier's allowance permission, and sets the `amount` the supplier can mint to 0.
      * Only the 'ADMIN SUPPLIER ROLE` can execute.
@@ -92,19 +76,6 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
     }
 
     /**
-     * @dev Gives `SUPPLIER ROLE' permissions to perform supplier's allowance, sets unlimited
-     * supplier's allowance permission, and sets the `amount` the supplier can mint to 0.
-     * Only the 'ADMIN SUPPLIER ROLE` can execute.
-     *
-     * @param supplier The address of the supplier
-     */
-    function _grantUnlimitedSupplierRole(address supplier) internal {
-        _unlimitedSupplierAllowances[supplier] = true;
-        _supplierAllowances[supplier] = 0;
-        _grantRole(_getRoleId(RoleName.CASHIN), supplier);
-    }
-
-    /**
      * @dev Revoke `SUPPLIER ROLE' permissions to perform supplier's allowance and revoke unlimited
      * supplier's allowance permission.
      * Only the 'ADMIN SUPPLIER ROLE` can execute.
@@ -120,19 +91,6 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
         addressIsNotZero(supplier)
     {
         _revokeSupplierRole(supplier);
-    }
-
-    /**
-     * @dev Revoke `SUPPLIER ROLE' permissions to perform supplier's allowance and revoke unlimited
-     * supplier's allowance permission.
-     * Only the 'ADMIN SUPPLIER ROLE` can execute.
-     *
-     * @param supplier The address of the supplier
-     */
-    function _revokeSupplierRole(address supplier) internal {
-        _supplierAllowances[supplier] = 0;
-        _unlimitedSupplierAllowances[supplier] = false;
-        _revokeRole(_getRoleId(RoleName.CASHIN), supplier);
     }
 
     /**
@@ -240,6 +198,48 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
             oldAllowance,
             newAllowance
         );
+    }
+
+    /**
+     * @dev Revoke `SUPPLIER ROLE' permissions to perform supplier's allowance and revoke unlimited
+     * supplier's allowance permission.
+     * Only the 'ADMIN SUPPLIER ROLE` can execute.
+     *
+     * @param supplier The address of the supplier
+     */
+    function _revokeSupplierRole(address supplier) internal {
+        _supplierAllowances[supplier] = 0;
+        _unlimitedSupplierAllowances[supplier] = false;
+        _revokeRole(_getRoleId(RoleName.CASHIN), supplier);
+    }
+
+    /**
+     * @dev Gives `SUPPLIER ROLE' permissions to perform supplier's allowance, sets unlimited
+     * supplier's allowance permission, and sets the `amount` the supplier can mint to 0.
+     * Only the 'ADMIN SUPPLIER ROLE` can execute.
+     *
+     * @param supplier The address of the supplier
+     */
+    function _grantUnlimitedSupplierRole(address supplier) internal {
+        _unlimitedSupplierAllowances[supplier] = true;
+        _supplierAllowances[supplier] = 0;
+        _grantRole(_getRoleId(RoleName.CASHIN), supplier);
+    }
+
+    /**
+     * @dev  Gives `SUPPLIER ROLE' permissions to perform supplier's allowance and sets the `amount`
+     * the supplier can mint, if you don't already have unlimited supplier's allowance permission.
+     * Only the 'ADMIN SUPPLIER ROLE` can execute.
+     *
+     * @param supplier The address of the supplier
+     * @param amount The amount to add to the supplier's current minting allowance
+     *
+     */
+    function _grantSupplierRole(address supplier, uint256 amount) internal {
+        if (_unlimitedSupplierAllowances[supplier])
+            revert AccountHasUnlimitedSupplierAllowance(supplier);
+        _supplierAllowances[supplier] = amount;
+        _grantRole(_getRoleId(RoleName.CASHIN), supplier);
     }
 
     /**

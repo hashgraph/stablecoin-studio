@@ -5,6 +5,31 @@ import {IHederaTokenManager} from './IHederaTokenManager.sol';
 import {KeysLib} from '../library/KeysLib.sol';
 
 interface IStableCoinFactory {
+    struct TokenStruct {
+        string tokenName;
+        string tokenSymbol;
+        bool freeze;
+        bool supplyType;
+        int64 tokenMaxSupply;
+        int64 tokenInitialSupply;
+        int32 tokenDecimals;
+        address reserveAddress;
+        int256 reserveInitialAmount;
+        bool createReserve;
+        KeysLib.KeysStruct[] keys;
+        IHederaTokenManager.RolesStruct[] roles;
+        IHederaTokenManager.CashinRoleStruct cashinRole;
+    }
+
+    struct DeployedStableCoin {
+        address stableCoinProxy;
+        address stableCoinProxyAdmin;
+        address stableCoinContractAddress;
+        address tokenAddress;
+        address reserveProxy;
+        address reserveProxyAdmin;
+    }
+
     event Deployed(DeployedStableCoin);
 
     event StableCoinFactoryInitialized();
@@ -44,31 +69,6 @@ interface IStableCoinFactory {
      * @param ref The reference value
      */
     error LessThan(uint256 value, uint256 ref);
-
-    struct TokenStruct {
-        string tokenName;
-        string tokenSymbol;
-        bool freeze;
-        bool supplyType;
-        int64 tokenMaxSupply;
-        int64 tokenInitialSupply;
-        int32 tokenDecimals;
-        address reserveAddress;
-        int256 reserveInitialAmount;
-        bool createReserve;
-        KeysLib.KeysStruct[] keys;
-        IHederaTokenManager.RolesStruct[] roles;
-        IHederaTokenManager.CashinRoleStruct cashinRole;
-    }
-
-    struct DeployedStableCoin {
-        address stableCoinProxy;
-        address stableCoinProxyAdmin;
-        address stableCoinContractAddress;
-        address tokenAddress;
-        address reserveProxy;
-        address reserveProxyAdmin;
-    }
 
     function deployStableCoin(
         TokenStruct calldata requestedToken,

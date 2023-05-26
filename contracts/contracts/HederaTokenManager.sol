@@ -85,48 +85,6 @@ contract HederaTokenManager is
     }
 
     /**
-     * @dev Grants initial roles to the SC creator
-     *
-     * @param originalSender address of the original sender
-     * @param roles array of roles to grant
-     * @param cashinRole cashin role to grant
-     */
-    function _grantInitialRoles(
-        address originalSender,
-        RolesStruct[] memory roles,
-        CashinRoleStruct memory cashinRole
-    ) private onlyInitializing {
-        // granting all roles except cashin role
-        for (uint256 i = 0; i < roles.length; i++) {
-            _grantRole(roles[i].role, roles[i].account);
-        }
-
-        // granting cashin role
-        if (cashinRole.account != address(0)) {
-            if (cashinRole.allowance > 0)
-                _grantSupplierRole(cashinRole.account, cashinRole.allowance);
-            else _grantUnlimitedSupplierRole(cashinRole.account);
-        }
-
-        // granting admin role, always to the SC creator
-        _setupRole(_getRoleId(RoleName.ADMIN), originalSender);
-    }
-
-    /**
-     * @dev Transfers the remaining HBARs from msg.value back to the original sender
-     *
-     * @param originalSender address of the original sender
-     */
-    function _transferFundsBackToOriginalSender(
-        address originalSender
-    ) private onlyInitializing {
-        uint256 currentBalance = address(this).balance;
-        if (currentBalance == 0) return;
-        (bool s, ) = originalSender.call{value: currentBalance}('');
-        if (!s) revert RefundingError(currentBalance);
-    }
-
-    /**
      * @dev Returns the name of the token
      *
      * @return string The the name of the token
@@ -173,48 +131,6 @@ contract HederaTokenManager is
         address account
     ) external view override(IHederaTokenManager) returns (uint256) {
         return _balanceOf(account);
-    }
-
-    /**
-     * @dev Returns the number tokens that an account has
-     *
-     * @param account The address of the account to be consulted
-     *
-     * @return uint256 The number number tokens that an account has
-     */
-    function _balanceOf(
-        address account
-    ) internal view override(TokenOwner) returns (uint256) {
-        return IERC20Upgradeable(_getTokenAddress()).balanceOf(account);
-    }
-
-    /**
-     * @dev Transfers an amount of tokens from and account to another account
-     *
-     * @param to The address the tokens are transferred to
-     */
-    function _transfer(
-        address to,
-        int64 amount
-    )
-        internal
-        override(TokenOwner)
-        valueIsNotGreaterThan(
-            uint256(uint64(amount)),
-            _balanceOf(address(this)),
-            true
-        )
-    {
-        if (to != address(this)) {
-            address currentTokenAddress = _getTokenAddress();
-
-            int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
-                .transferToken(currentTokenAddress, address(this), to, amount);
-
-            _checkResponse(responseCode);
-
-            emit TokenTransfer(currentTokenAddress, address(this), to, amount);
-        }
     }
 
     /**
@@ -271,6 +187,90 @@ contract HederaTokenManager is
         _checkResponse(responseCode);
 
         emit TokenUpdated(currentTokenAddress, updatedToken, newTreasury);
+    }
+
+    /**
+     * @dev Grants initial roles to the SC creator
+     *
+     * @param originalSender address of the original sender
+     * @param roles array of roles to grant
+     * @param cashinRole cashin role to grant
+     */
+    function _grantInitialRoles(
+        address originalSender,
+        RolesStruct[] memory roles,
+        CashinRoleStruct memory cashinRole
+    ) private onlyInitializing {
+        // granting all roles except cashin role
+        for (uint256 i = 0; i < roles.length; i++) {
+            _grantRole(roles[i].role, roles[i].account);
+        }
+
+        // granting cashin role
+        if (cashinRole.account != address(0)) {
+            if (cashinRole.allowance > 0)
+                _grantSupplierRole(cashinRole.account, cashinRole.allowance);
+            else _grantUnlimitedSupplierRole(cashinRole.account);
+        }
+
+        // granting admin role, always to the SC creator
+        _setupRole(_getRoleId(RoleName.ADMIN), originalSender);
+    }
+
+    /**
+     * @dev Transfers the remaining HBARs from msg.value back to the original sender
+     *
+     * @param originalSender address of the original sender
+     */
+    function _transferFundsBackToOriginalSender(
+        address originalSender
+    ) private onlyInitializing {
+        uint256 currentBalance = address(this).balance;
+        if (currentBalance == 0) return;
+        (bool s, ) = originalSender.call{value: currentBalance}('');
+        if (!s) revert RefundingError(currentBalance);
+    }
+
+    /**
+     * @dev Returns the number tokens that an account has
+     *
+     * @param account The address of the account to be consulted
+     *
+     * @return uint256 The number number tokens that an account has
+     */
+    function _balanceOf(
+        address account
+    ) internal view override(TokenOwner) returns (uint256) {
+        return IERC20Upgradeable(_getTokenAddress()).balanceOf(account);
+    }
+
+    /**
+     * @dev Transfers an amount of tokens from and account to another account
+     *
+     * @param to The address the tokens are transferred to
+     */
+    function _transfer(
+        address to,
+        int64 amount
+    )
+        internal
+        override(TokenOwner)
+        valueIsNotGreaterThan(
+            uint256(uint64(amount)),
+            _balanceOf(address(this)),
+            true
+        )
+    {
+        if (to != address(this)) {
+            address currentTokenAddress = _getTokenAddress();
+
+            int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
+                .transferToken(currentTokenAddress, address(this), to, amount);
+
+            _checkResponse(responseCode);
+
+            emit TokenTransfer(currentTokenAddress, address(this), to, amount);
+        }
     }
 
     /**
