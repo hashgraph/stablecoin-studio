@@ -36,6 +36,13 @@ contract StableCoinFactory is
     address private _admin;
     address[] private _hederaTokenManagerAddress;
 
+    /**
+     * @dev Constructor required to avoid Initializer attack on logic contract
+     */
+    constructor() {
+        _disableInitializers();
+    }
+
     modifier isAdmin() {
         if (_admin != msg.sender) revert OnlyAdministratorFunction(msg.sender);
         _;
@@ -46,10 +53,21 @@ contract StableCoinFactory is
         _;
     }
 
+    /**
+     * @dev Throws if the address is zero
+     *
+     * @param addr The address to validate
+     */
     function _checkAddressIsNotZero(address addr) private pure {
         if (addr == address(0)) revert AddressZero(addr);
     }
 
+    /**
+     * @dev Initialize the contract
+     *
+     * @param admin The address of the admin
+     * @param hederaTokenManager The address of the hedera token manager
+     */
     function initialize(
         address admin,
         address hederaTokenManager
@@ -64,11 +82,14 @@ contract StableCoinFactory is
         emit StableCoinFactoryInitialized();
     }
 
-    // Constructor required to avoid Initializer attack on logic contract
-    constructor() {
-        _disableInitializers();
-    }
-
+    /**
+     * @dev Deploy a stable coin with the given request
+     *
+     * @param requestedToken The token struct
+     * @param stableCoinContractAddress The address of the stable coin contract
+     *
+     * @return deployedStableCoin The deployed stable coin
+     */
     function deployStableCoin(
         TokenStruct calldata requestedToken,
         address stableCoinContractAddress
@@ -171,6 +192,15 @@ contract StableCoinFactory is
         return deployedStableCoin;
     }
 
+    /**
+     * @dev Create a token with the given request
+     *
+     * @param requestedToken The token struct
+     * @param stableCoinProxyAddress The address of the stable coin proxy
+     * @param stableCoinProxyAdminAddress The address of the stable coin proxy admin
+     *
+     * @return token The deployed token
+     */
     function _createToken(
         TokenStruct memory requestedToken,
         address stableCoinProxyAddress,
@@ -224,6 +254,14 @@ contract StableCoinFactory is
         return token;
     }
 
+    /**
+     * @dev Validate the reserve initial amount
+     *
+     * @param reserveDecimals The reserve decimals
+     * @param reserveInitialAmount The reserve initial amount
+     * @param tokenDecimals The token decimals
+     * @param tokenInitialSupply The token initial supply
+     */
     function _validationReserveInitialAmount(
         uint8 reserveDecimals,
         int256 reserveInitialAmount,
@@ -250,6 +288,11 @@ contract StableCoinFactory is
             revert LessThan(initialReserve, _tokenInitialSupply);
     }
 
+    /**
+     * @dev Add a new stable coin to contract addresses
+     *
+     * @param newAddress The new address
+     */
     function addHederaTokenManagerVersion(
         address newAddress
     )
@@ -262,6 +305,11 @@ contract StableCoinFactory is
         emit HederaTokenManagerAddressAdded(newAddress);
     }
 
+    /**
+     * @dev Get the stable coin contract addresses
+     *
+     * @return The stable coin contract addresses
+     */
     function getHederaTokenManagerAddress()
         external
         view
@@ -270,6 +318,12 @@ contract StableCoinFactory is
         return _hederaTokenManagerAddress;
     }
 
+    /**
+     * @dev Edit a stable coin contract address
+     *
+     * @param index The index of the address
+     * @param newAddress The new address
+     */
     function editHederaTokenManagerAddress(
         uint256 index,
         address newAddress
@@ -284,10 +338,21 @@ contract StableCoinFactory is
         emit HederaTokenManagerAddressEdited(oldAddress, newAddress);
     }
 
+    /**
+     * @dev Edit _hederaTokenManagerAddress array at the given index
+     *
+     * @param index The new index
+     * @param newAddress The new address
+     */
     function _edit(uint256 index, address newAddress) private {
         _hederaTokenManagerAddress[index] = newAddress;
     }
 
+    /**
+     * @dev Remove a stable coin contract address
+     *
+     * @param index The index of the address
+     */
     function removeHederaTokenManagerAddress(
         uint256 index
     ) external override(IStableCoinFactory) isAdmin {
@@ -296,6 +361,11 @@ contract StableCoinFactory is
         emit HederaTokenManagerAddressRemoved(index, addressRemoved);
     }
 
+    /**
+     * @dev Change the admin address
+     *
+     * @param newAddress The new address
+     */
     function changeAdmin(
         address newAddress
     )
@@ -309,6 +379,11 @@ contract StableCoinFactory is
         emit AdminChanged(oldAdmin, newAddress);
     }
 
+    /**
+     * @dev Get the admin address
+     *
+     * @return The admin address
+     */
     function getAdmin() external view returns (address) {
         return _admin;
     }
