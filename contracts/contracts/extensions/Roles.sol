@@ -317,16 +317,7 @@ abstract contract Roles is IRoles, Initializable {
      */
     function _checkRole(bytes32 role, address account) private view {
         if (_hasRole(role, account)) return;
-        revert(
-            string(
-                abi.encodePacked(
-                    'AccessControl: account ',
-                    StringsUpgradeable.toHexString(account),
-                    ' is missing role ',
-                    StringsUpgradeable.toHexString(uint256(role), 32)
-                )
-            )
-        );
+        revert AccountHasNoRole(account, role);
     }
 
     /**

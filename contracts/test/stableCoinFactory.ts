@@ -76,6 +76,8 @@ const INIT_SUPPLY = BigNumber.from(10).mul(TokenFactor)
 const MAX_SUPPLY = BigNumber.from(1000).mul(TokenFactor)
 const TokenMemo = 'Hedera Accelerator Stable Coin'
 
+let newFactoryProxyAddress = factoryProxyAddress
+
 describe('StableCoinFactory Tests', function () {
     before(async function () {
         // Generate Client 1 and Client 2
@@ -124,6 +126,24 @@ describe('StableCoinFactory Tests', function () {
             client2isED25519Type,
             clientId
         )
+        const resulttokenManager = await deployHederaTokenManager(
+            operatorClient,
+            operatorPriKey
+        )
+        const initializeFactory = {
+            admin: await toEvmAddress(operatorAccount, operatorIsE25519),
+            tokenManager: resulttokenManager.toSolidityAddress(),
+        }
+        const result = await deployFactory(
+            initializeFactory,
+            operatorClient,
+            operatorPriKey
+        )
+
+        const tokenManager = resulttokenManager
+        newFactoryProxyAddress = result[0].toString()
+        const proxyAdminAddress = result[1]
+        const factoryAddress = result[2]
     })
 
     it('Create StableCoin setting all token keys to the Proxy', async function () {
@@ -334,7 +354,7 @@ describe('StableCoinFactory Tests', function () {
     it('Get hederaTokenManager addresses', async function () {
         const addressArray: Array<string> =
             await getHederaTokenManagerAddresses(
-                ContractId.fromString(factoryProxyAddress),
+                ContractId.fromString(newFactoryProxyAddress),
                 operatorClient
             )
         expect(addressArray.length).to.greaterThan(0)
@@ -342,13 +362,14 @@ describe('StableCoinFactory Tests', function () {
 
     it('Get admin addresses', async function () {
         const addressArray = await getAdminStableCoinFactory(
-            ContractId.fromString(factoryProxyAddress),
+            ContractId.fromString(newFactoryProxyAddress),
             operatorClient
         )
         const operatorEvmAddress = await toEvmAddress(
             operatorAccount,
             operatorIsE25519
         )
+
         expect(addressArray.toUpperCase()).to.equals(
             operatorEvmAddress.toUpperCase()
         )
@@ -360,13 +381,13 @@ describe('StableCoinFactory Tests', function () {
             operatorPriKey
         )
         await addHederaTokenManagerVersion(
-            ContractId.fromString(factoryProxyAddress),
+            ContractId.fromString(newFactoryProxyAddress),
             operatorClient,
             newAddress.toSolidityAddress()
         )
         const addressArray: Array<string> =
             await getHederaTokenManagerAddresses(
-                ContractId.fromString(factoryProxyAddress),
+                ContractId.fromString(newFactoryProxyAddress),
                 operatorClient
             )
 
@@ -379,7 +400,7 @@ describe('StableCoinFactory Tests', function () {
         const newAddress = ADDRESS_0
         expect(
             addHederaTokenManagerVersion(
-                ContractId.fromString(factoryProxyAddress),
+                ContractId.fromString(newFactoryProxyAddress),
                 operatorClient,
                 newAddress
             )
@@ -393,7 +414,7 @@ describe('StableCoinFactory Tests', function () {
         )
         expect(
             addHederaTokenManagerVersion(
-                ContractId.fromString(factoryProxyAddress),
+                ContractId.fromString(newFactoryProxyAddress),
                 nonOperatorClient,
                 newAddress.toSolidityAddress()
             )
@@ -409,14 +430,14 @@ describe('StableCoinFactory Tests', function () {
         const index = 0
 
         await editHederaTokenManagerVersion(
-            ContractId.fromString(factoryProxyAddress),
+            ContractId.fromString(newFactoryProxyAddress),
             operatorClient,
             index,
             newAddress
         )
         const addressArray: Array<string> =
             await getHederaTokenManagerAddresses(
-                ContractId.fromString(factoryProxyAddress),
+                ContractId.fromString(newFactoryProxyAddress),
                 operatorClient
             )
 
@@ -429,7 +450,7 @@ describe('StableCoinFactory Tests', function () {
         const newAddress = ADDRESS_0
         expect(
             editHederaTokenManagerVersion(
-                ContractId.fromString(factoryProxyAddress),
+                ContractId.fromString(newFactoryProxyAddress),
                 operatorClient,
                 0,
                 newAddress
@@ -444,7 +465,7 @@ describe('StableCoinFactory Tests', function () {
         ).then((value) => '0x' + value.toSolidityAddress())
         expect(
             editHederaTokenManagerVersion(
-                ContractId.fromString(factoryProxyAddress),
+                ContractId.fromString(newFactoryProxyAddress),
                 nonOperatorClient,
                 0,
                 newAddress
@@ -458,13 +479,13 @@ describe('StableCoinFactory Tests', function () {
             nonOperatorIsE25519
         )
         await changeAdminStablecoinFactory(
-            ContractId.fromString(factoryProxyAddress),
+            ContractId.fromString(newFactoryProxyAddress),
             operatorClient,
             newAdmin
         )
 
         const checkNewAdmin = await getAdminStableCoinFactory(
-            ContractId.fromString(factoryProxyAddress),
+            ContractId.fromString(newFactoryProxyAddress),
             operatorClient
         )
 
@@ -473,13 +494,13 @@ describe('StableCoinFactory Tests', function () {
         const realAdmin = await toEvmAddress(operatorAccount, operatorIsE25519)
 
         await changeAdminStablecoinFactory(
-            ContractId.fromString(factoryProxyAddress),
+            ContractId.fromString(newFactoryProxyAddress),
             nonOperatorClient,
             realAdmin
         )
 
         const checkRealAdmin = await getAdminStableCoinFactory(
-            ContractId.fromString(factoryProxyAddress),
+            ContractId.fromString(newFactoryProxyAddress),
             operatorClient
         )
 
@@ -490,7 +511,7 @@ describe('StableCoinFactory Tests', function () {
         const newAddress = ADDRESS_0
         expect(
             changeAdminStablecoinFactory(
-                ContractId.fromString(factoryProxyAddress),
+                ContractId.fromString(newFactoryProxyAddress),
                 operatorClient,
                 newAddress
             )
@@ -504,7 +525,7 @@ describe('StableCoinFactory Tests', function () {
         )
         expect(
             changeAdminStablecoinFactory(
-                ContractId.fromString(factoryProxyAddress),
+                ContractId.fromString(newFactoryProxyAddress),
                 nonOperatorClient,
                 newAdmin
             )
@@ -515,13 +536,13 @@ describe('StableCoinFactory Tests', function () {
         const index = 0
 
         await removeHederaTokenManagerVersion(
-            ContractId.fromString(factoryProxyAddress),
+            ContractId.fromString(newFactoryProxyAddress),
             operatorClient,
             index
         )
         const addressArray: Array<string> =
             await getHederaTokenManagerAddresses(
-                ContractId.fromString(factoryProxyAddress),
+                ContractId.fromString(newFactoryProxyAddress),
                 operatorClient
             )
 
@@ -533,7 +554,7 @@ describe('StableCoinFactory Tests', function () {
     it('Remove hederaTokenManager address, throw error index no exists', async function () {
         expect(
             removeHederaTokenManagerVersion(
-                ContractId.fromString(factoryProxyAddress),
+                ContractId.fromString(newFactoryProxyAddress),
                 operatorClient,
                 10
             )
@@ -543,7 +564,7 @@ describe('StableCoinFactory Tests', function () {
     it('Remove hederaTokenManager address throw error client no isAdmin', async function () {
         expect(
             removeHederaTokenManagerVersion(
-                ContractId.fromString(factoryProxyAddress),
+                ContractId.fromString(newFactoryProxyAddress),
                 nonOperatorClient,
                 0
             )

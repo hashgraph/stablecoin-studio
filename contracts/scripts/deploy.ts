@@ -41,11 +41,6 @@ export const factoryProxyAddress = '0.0.4618300'
 const factoryProxyAdminAddress = '0.0.4618298'
 const factoryAddress = '0.0.4618296'
 
-/* let hederaTokenManagerAddress: any
-export let factoryProxyAddress: any
-let factoryProxyAdminAddress: any
-let factoryAddress: any */
-
 export function initializeClients(): [
     Client,
     string,
@@ -281,7 +276,6 @@ export type DeployParameters = {
     allRolesToCreator?: boolean
     RolesToAccount?: string
     isRolesToAccountE25519?: boolean
-    treasuryAccount?: string
 }
 export async function deployContractsWithSDK({
     name,
@@ -304,7 +298,6 @@ export async function deployContractsWithSDK({
     allRolesToCreator = true,
     RolesToAccount = '',
     isRolesToAccountE25519 = false,
-    treasuryAccount = ADDRESS_0,
 }: DeployParameters): Promise<ContractId[]> {
     const AccountEvmAddress = await toEvmAddress(account, isED25519Type)
 
