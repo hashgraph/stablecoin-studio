@@ -77,7 +77,7 @@ export const english = {
     askMirrorNetwork: 'Which network does the mirror service belong to?',
     askMirrorUrl: 'Which is the base URL of the service?',
     askMirrorApiKey: 'Enter the mirror node service API Key',
-    askMirrorHeaderName: 'Enter the HTTP header name to send the API Key',
+    askMirrorHeaderName: 'Enter the HTTP auth header name to send the API Key',
     askMirrorHasApiKey:
       'Does this service need an API Key to authenticate? (y/n)',
     askMirrorSelected:
@@ -89,7 +89,7 @@ export const english = {
     askRPCNetwork: 'Which network does the JSON-RPC-Relay service belong to?',
     askRPCUrl: 'Which is the base URL of the service?',
     askRPCApiKey: 'Enter the JSON-RPC-Relay service API Key',
-    askRPCHeaderName: 'Enter the HTTP header name to send the API Key',
+    askRPCHeaderName: 'Enter the HTTP auth header name to send the API Key',
     askRPCHasApiKey: 'Does this service need an API Key to authenticate? (y/n)',
     askRPCSelected:
       'Do you want this service to be used in the selected network? (y/n)',
@@ -122,7 +122,7 @@ export const english = {
       'There is no JSON-RPC-Relay service in the selected network not currently being used',
     RPCDeleted: '\nJSON-RPC-Relay deleted successfully',
     askNeedApiKey: 'Do you need an API key?',
-    askHeaderName: 'Enter your http header name',
+    askHeaderName: 'Enter your HTTP auth header name',
     askApiKey: 'Enter your api key',
     askSureRemove: 'Are you sure do you want to delete ${mirrorNode}?',
     selectMirrorNode: 'Select the mirror node: ',
