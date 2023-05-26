@@ -121,10 +121,9 @@ contract HederaTokenManager is
         address originalSender
     ) private onlyInitializing {
         uint256 currentBalance = address(this).balance;
-        if (currentBalance > 0) {
-            (bool s, ) = originalSender.call{value: currentBalance}('');
-            if (!s) revert RefundingError(currentBalance);
-        }
+        if (currentBalance == 0) return;
+        (bool s, ) = originalSender.call{value: currentBalance}('');
+        if (!s) revert RefundingError(currentBalance);
     }
 
     /**
