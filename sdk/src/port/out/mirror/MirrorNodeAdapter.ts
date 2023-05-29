@@ -59,12 +59,15 @@ export class MirrorNodeAdapter {
 
 	public set(mnConfig: MirrorNode): void {
 		this.mirrorNodeConfig = mnConfig;
-
 		this.instance = axios.create({
 			validateStatus: function (status: number) {
 				return (status >= 200 && status < 300) || status == 404;
 			},
 		});
+
+		this.mirrorNodeConfig.baseUrl = mnConfig.baseUrl.endsWith('/')
+			? mnConfig.baseUrl
+			: `${mnConfig.baseUrl}/`;
 
 		if (this.mirrorNodeConfig.headerName && this.mirrorNodeConfig.apiKey)
 			this.instance.defaults.headers.common[
