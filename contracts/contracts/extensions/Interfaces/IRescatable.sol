@@ -38,14 +38,14 @@ interface IRescatable {
     error HBARRescueError(uint256 amount);
 
     /**
-     * @dev Rescue `value` tokens from contractTokenOwner to rescuer
+     * @dev Rescues `value` tokens from contractTokenOwner to rescuer
      *
      * @param amount The number of tokens to rescuer
      */
     function rescue(int64 amount) external returns (bool);
 
     /**
-     * @dev Rescue `value` HBAR from contractTokenOwner to rescuer
+     * @dev Rescues `value` HBAR from contractTokenOwner to rescuer
      *
      * @param amount The number of tokens to rescuer
      */

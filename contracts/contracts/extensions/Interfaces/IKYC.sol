@@ -19,14 +19,16 @@ interface IKYC {
     event RevokeTokenKyc(address indexed token, address indexed account);
 
     /**
-     * @dev Grants KYC to an account for the token
+     * @dev Grants KYC to account for the token
      *
+     * @param account The account to which the KYC will be granted
      */
     function grantKyc(address account) external returns (bool);
 
     /**
-     * @dev Revokes KYC to an account for the token
+     * @dev Revokes KYC to account for the token
      *
+     * @param account The account to which the KYC will be revoked
      */
     function revokeKyc(address account) external returns (bool);
 }

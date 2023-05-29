@@ -13,7 +13,10 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
     address private _reserveAddress;
 
     /**
-     * @dev
+     * @dev Checks if the current reserve is enough for a certain amount of tokens
+     *      comparing with the sum of amount plus total supply
+     *
+     * @param amount The amount to check
      */
     modifier checkReserveIncrease(uint256 amount) {
         if (!_checkReserveAmount(amount, false))
@@ -21,12 +24,22 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
         _;
     }
 
+    /**
+     * @dev Checks if the current reserve is enough for a certain amount of tokens
+     *      comparing with the amount
+     *
+     * @param amount The amount to check
+     */
     modifier checkReserveDecrease(uint256 amount) {
         if (!_checkReserveAmount(amount, true))
             revert AmountBiggerThanReserve(amount);
         _;
     }
 
+    /**
+     * @dev Gets the current reserve amount
+     *
+     */
     function getReserveAmount()
         external
         view
@@ -36,6 +49,11 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
         return _getReserveAmount();
     }
 
+    /**
+     * @dev Updates de reserve address
+     *
+     * @param newAddress The new reserve address
+     */
     function updateReserveAddress(
         address newAddress
     ) external override(IReserve) onlyRole(_getRoleId(RoleName.ADMIN)) {
@@ -44,6 +62,10 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
         emit ReserveAddressChanged(previous, newAddress);
     }
 
+    /**
+     * @dev Gets the current reserve address
+     *
+     */
     function getReserveAddress()
         external
         view
@@ -57,6 +79,13 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
         _reserveAddress = dataFeed;
     }
 
+    /**
+     * @dev Checks if the current reserve is enough for a certain amount of tokens
+     *
+     * @param amount The amount to check
+     * @param less Flag that indicates if current reserve is not less than the amount or
+     *             than the sum of amount plus total supply
+     */
     function _checkReserveAmount(
         uint256 amount,
         bool less
@@ -85,6 +114,10 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
         }
     }
 
+    /**
+     * @dev Gets the current reserve amount
+     *
+     */
     function _getReserveAmount() private view returns (int256) {
         if (_reserveAddress != address(0)) {
             (, int256 answer, , , ) = AggregatorV3Interface(_reserveAddress)

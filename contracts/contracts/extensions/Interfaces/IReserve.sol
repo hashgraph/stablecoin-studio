@@ -35,13 +35,13 @@ interface IReserve {
     function updateReserveAddress(address newAddress) external;
 
     /**
-     * @dev Get the current amount of reserve
+     * @dev Get the current reserve amount
      *
      */
     function getReserveAmount() external view returns (int256);
 
     /**
-     * @dev Get the current address of reserve
+     * @dev Gets the current reserve address
      *
      */
     function getReserveAddress() external view returns (address);

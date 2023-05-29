@@ -43,11 +43,20 @@ contract StableCoinFactory is
         _disableInitializers();
     }
 
+    /**
+     * @dev Checks if the calling account is the admin of the stable coin
+     *
+     */
     modifier isAdmin() {
         if (_admin != msg.sender) revert OnlyAdministratorFunction(msg.sender);
         _;
     }
 
+    /**
+     * @dev Checks if an addres does not equals to the zero address
+     *
+     * @param address The address to compare with the zero address
+     */
     modifier checkAddressIsNotZero(address addr) {
         _checkAddressIsNotZero(addr);
         _;
@@ -74,12 +83,10 @@ contract StableCoinFactory is
     }
 
     /**
-     * @dev Deploy a stable coin with the given request
+     * @dev Deploys a stable coin
      *
-     * @param requestedToken The token struct
-     * @param stableCoinContractAddress The address of the stable coin contract
-     *
-     * @return deployedStableCoin The deployed stable coin
+     * @param requestedToken The information provided to create the stable coin's token
+     * @param stableCoinContractAddress The address of the HederaTokenManager contract to create the stable coin
      */
     function deployStableCoin(
         TokenStruct calldata requestedToken,
@@ -234,7 +241,7 @@ contract StableCoinFactory is
     }
 
     /**
-     * @dev Remove a stable coin contract address
+     * @dev Removes a stable coin contract address
      *
      * @param index The index of the address
      */
@@ -247,7 +254,7 @@ contract StableCoinFactory is
     }
 
     /**
-     * @dev Change the admin address
+     * @dev Changes the admin address
      *
      * @param newAddress The new address
      */
@@ -265,7 +272,7 @@ contract StableCoinFactory is
     }
 
     /**
-     * @dev Get the admin address
+     * @dev Gets the admin address
      *
      * @return The admin address
      */
