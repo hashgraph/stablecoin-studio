@@ -24,7 +24,12 @@ abstract contract TokenOwner is
     // HTS Token this contract owns
     address private _tokenAddress;
 
-    // modifier to check that value is not less than ref
+    /**
+     * @dev Checks that value is not less than ref
+     *
+     * @param value The value to check
+     * @param ref The ref to compare with
+     */
     modifier valueIsNotLessThan(
         uint256 value,
         uint256 ref,
@@ -34,16 +39,12 @@ abstract contract TokenOwner is
         _;
     }
 
-    function _valueIsNotLessThan(
-        uint256 value,
-        uint256 ref,
-        bool equalAccepted
-    ) internal pure {
-        if (equalAccepted && value < ref) revert LessThan(value, ref);
-        else if (!equalAccepted && value <= ref) revert LessThan(value, ref);
-    }
-
-    // modifier to check that value is not greater than ref
+    /**
+     * @dev Checks that value is not greater than ref
+     *
+     * @param value The value to check
+     * @param ref The ref to compare with
+     */
     modifier valueIsNotGreaterThan(
         uint256 value,
         uint256 ref,
@@ -53,41 +54,85 @@ abstract contract TokenOwner is
         _;
     }
 
-    function _valueIsNotGreaterThan(
-        uint256 value,
-        uint256 ref,
-        bool equalAccepted
-    ) internal pure {
-        if (equalAccepted && value > ref) revert GreaterThan(value, ref);
-        else if (!equalAccepted && value >= ref) revert GreaterThan(value, ref);
-    }
-
-    // modifier to check that amount is not negative
+    /**
+     * @dev Checks if an amount is a negative number
+     *
+     * @param amount The value to check
+     * @param zeroAccepted A flag that indicates if zero value is accepted or not
+     */
     modifier amountIsNotNegative(int256 amount, bool zeroAccepted) {
         _amountIsNotNegative(amount, zeroAccepted);
         _;
     }
 
-    function _amountIsNotNegative(
-        int256 amount,
-        bool zeroAccepted
-    ) internal pure {
-        if (zeroAccepted && amount < 0) revert NegativeAmount(amount);
-        else if (!zeroAccepted && amount <= 0) revert NegativeAmount(amount);
-    }
-
-    // modifier to check that an address is not 0
+    /**
+     * @dev Checks if an address equals to zero address
+     *
+     * @param addr The address to check
+     */
     modifier addressIsNotZero(address addr) {
         _addressIsNotZero(addr);
         _;
     }
 
-    function _addressIsNotZero(address addr) internal pure {
-        //require(addr != address(0), 'Provided address is 0');
+    /**
+     * @dev Checks that value is not less than ref
+     *
+     * @param value The value to check
+     * @param ref The ref to compare with
+     */
+    function _valueIsNotLessThan(
+        uint256 value,
+        uint256 ref,
+        bool equalAccepted
+    ) private pure {
+        if (equalAccepted ? value < ref : value <= ref)
+            revert LessThan(value, ref);
+    }
+
+    /**
+     * @dev Checks that value is not greater than ref
+     *
+     * @param value The value to check
+     * @param ref The ref to compare with
+     */
+    function _valueIsNotGreaterThan(
+        uint256 value,
+        uint256 ref,
+        bool equalAccepted
+    ) private pure {
+        if (equalAccepted ? value > ref : value >= ref)
+            revert GreaterThan(value, ref);
+    }
+
+    /**
+     * @dev Checks if an amount is a negative number
+     *
+     * @param amount The value to check
+     * @param zeroAccepted A flag that indicates if zero value is accepted or not
+     */
+    function _amountIsNotNegative(
+        int256 amount,
+        bool zeroAccepted
+    ) private pure {
+        if (zeroAccepted ? amount < 0 : amount <= 0)
+            revert NegativeAmount(amount);
+    }
+
+    /**
+     * @dev Checks if an address equals to zero address
+     *
+     * @param addr The address to check
+     */
+    function _addressIsNotZero(address addr) private pure {
         if (addr == address(0)) revert AddressZero(addr);
     }
 
-    // Initiliazes the token address
+    /**
+     * @dev Initializes the value of token address
+     *
+     * @param initTokenAddress The token address value
+     */
     function __tokenOwnerInit(
         address initTokenAddress
     ) internal onlyInitializing {
@@ -97,21 +142,6 @@ abstract contract TokenOwner is
     /**
      * @dev Returns the token address
      *
-     * @return address of The token address
-     */
-    function getTokenAddress()
-        external
-        view
-        override(ITokenOwner)
-        returns (address)
-    {
-        return _getTokenAddress();
-    }
-
-    /**
-     * @dev Returns the token address
-     *
-     * @return address of The token address
      */
     function _getTokenAddress() internal view returns (address) {
         return _tokenAddress;
@@ -123,7 +153,6 @@ abstract contract TokenOwner is
      * @param responseCode The Hedera response code to transform
      */
     function _checkResponse(int64 responseCode) internal pure returns (bool) {
-        //require(responseCode == HederaResponseCodes.SUCCESS, 'Error');
         if (responseCode != HederaResponseCodes.SUCCESS)
             revert ResponseCodeInvalid(responseCode);
         return true;
@@ -132,7 +161,6 @@ abstract contract TokenOwner is
     /**
      * @dev Returns the total number of tokens that exits
      *
-     * @return int64 The total number of tokens that exists
      */
     function _totalSupply() internal view returns (uint256) {
         return IERC20Upgradeable(_tokenAddress).totalSupply();
@@ -141,7 +169,6 @@ abstract contract TokenOwner is
     /**
      * @dev Returns the number of decimals of the token
      *
-     * @return int32 The number of decimals of the token
      */
     function _decimals() internal view returns (uint8) {
         return IERC20MetadataUpgradeable(_tokenAddress).decimals();
@@ -151,10 +178,7 @@ abstract contract TokenOwner is
      * @dev Returns the number tokens that an account has
      *
      * @param account The address of the account to be consulted
-     *
-     * @return int64 The number number tokens that an account has
      */
-
     function _balanceOf(
         address account
     ) internal view virtual returns (uint256);
@@ -163,8 +187,22 @@ abstract contract TokenOwner is
      * @dev Transfers an amount of tokens from and account to another account
      *
      * @param to The address the tokens are transferred to
+     * @param amount The amount of tokens to be transferred
      */
     function _transfer(address to, int64 amount) internal virtual;
+
+    /**
+     * @dev Returns the token address
+     *
+     */
+    function getTokenAddress()
+        external
+        view
+        override(ITokenOwner)
+        returns (address)
+    {
+        return _getTokenAddress();
+    }
 
     /**
      * @dev This empty reserved space is put in place to allow future versions to add new

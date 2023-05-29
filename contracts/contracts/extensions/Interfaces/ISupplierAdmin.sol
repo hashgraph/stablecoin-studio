@@ -52,6 +52,13 @@ interface ISupplierAdmin {
     );
 
     /**
+     * @dev Emitted when the supplier account already has unlimited supplier allowance
+     *
+     * @param account The account to grant supplier role to
+     */
+    error AccountHasUnlimitedSupplierAllowance(address account);
+
+    /**
      * @dev Return number of tokens allowed to be minted of the address account `supplier`
      *
      * @param supplier The address of the supplier

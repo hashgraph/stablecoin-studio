@@ -8,8 +8,9 @@ import {IKYC} from './Interfaces/IKYC.sol';
 
 abstract contract KYC is IKYC, TokenOwner, Roles {
     /**
-     * @dev Grant KYC to account for the token
+     * @dev Grants KYC to account for the token
      *
+     * @param account The account to which the KYC will be granted
      */
     function grantKyc(
         address account
@@ -33,8 +34,9 @@ abstract contract KYC is IKYC, TokenOwner, Roles {
     }
 
     /**
-     * @dev Revoke KYC to account for the token
+     * @dev Revokes KYC to account for the token
      *
+     * @param account The account to which the KYC will be revoked
      */
     function revokeKyc(
         address account

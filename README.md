@@ -211,10 +211,10 @@ In order to be able to deploy any stable coin, the `HederaTokenManager` and `Sta
 
 We provide default addresses for the factories that we have deployed for anyone to use that are updated whenever a new version is released.
 
-| Contract name  | Address     | Network    | 
-|----------------|-------------|------------|
-| FactoryAddress | 0.0.4618300 | Testnet    |
-| FactoryAddress | 0.0.XXXXXX  | Previewnet |
+| Contract name  | Address      | Network    | 
+|----------------|--------------|------------|
+| FactoryAddress | 0.0.13705256 | Testnet    |
+| FactoryAddress | 0.0.XXXXXX   | Previewnet |
 
 
 Follow the steps in the [contracts docs](https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/contracts#deploy-factory) to learn how to deploy the factories.

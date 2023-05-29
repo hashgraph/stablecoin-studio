@@ -12,7 +12,11 @@ interface IRescatable {
      * @param tokenId The token that was rescued
      * @param amount The amount of the token that was rescued
      */
-    event TokenRescued(address rescuer, address tokenId, int64 amount);
+    event TokenRescued(
+        address indexed rescuer,
+        address indexed tokenId,
+        int64 amount
+    );
 
     /**
      * @dev Emitted when `value` HBARs are moved from contract account (`from`) to
@@ -23,17 +27,25 @@ interface IRescatable {
      * @param rescuer The caller of the function that emitted the event
      * @param amount The amount of the token that was rescued
      */
-    event HBARRescued(address rescuer, uint256 amount);
+    event HBARRescued(address indexed rescuer, uint256 amount);
 
     /**
-     * @dev Rescue `value` tokens from contractTokenOwner to rescuer
+     * @dev Emitted when rescuing HBAR did not work
+     *
+     * @param amount The amount of HBAR to rescue
+     *
+     */
+    error HBARRescueError(uint256 amount);
+
+    /**
+     * @dev Rescues `value` tokens from contractTokenOwner to rescuer
      *
      * @param amount The number of tokens to rescuer
      */
     function rescue(int64 amount) external returns (bool);
 
     /**
-     * @dev Rescue `value` HBAR from contractTokenOwner to rescuer
+     * @dev Rescues `value` HBAR from contractTokenOwner to rescuer
      *
      * @param amount The number of tokens to rescuer
      */

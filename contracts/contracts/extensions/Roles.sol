@@ -23,6 +23,7 @@ abstract contract Roles is IRoles, Initializable {
     mapping(bytes32 => RoleData) private _roles;
 
     bytes32 public constant ADMIN_ROLE = 0x00;
+
     /**
      * @dev Role that allows to mint token
      *
@@ -101,6 +102,126 @@ abstract contract Roles is IRoles, Initializable {
      */
     bytes32[] private _listOfroles;
 
+    /**
+     * @dev Checks if a roles is granted for the calling account
+     *
+     * @param role The role to check if is granted for the calling account
+     */
+    modifier onlyRole(bytes32 role) {
+        _checkRole(role);
+        _;
+    }
+
+    /**
+     * @dev Checks if the account has been granted a role
+     *
+     * @param role The role the check if was granted
+     * @param account The account to check if it has the role granted
+     */
+    function hasRole(
+        bytes32 role,
+        address account
+    ) external view returns (bool) {
+        return _hasRole(role, account);
+    }
+
+    /**
+     * @dev Gets the list of accounts that have been granted a role
+     *
+     * @param role The role that the accounts have to be granted
+     */
+    function getAccountsWithRole(
+        bytes32 role
+    ) external view returns (address[] memory) {
+        return _roles[role].accounts;
+    }
+
+    /**
+     * @dev Gets the number of accounts that have been granted a role
+     *
+     * @param role The role that the accounts have to be granted
+     */
+    function getNumberOfAccountsWithRole(
+        bytes32 role
+    ) external view returns (uint256) {
+        return _roles[role].accounts.length;
+    }
+
+    /**
+     * @dev Grants a role to an account
+     *
+     * Only the 'ADMIN ROLE` can execute
+     * Emits a RoleGranted event
+     *
+     * @param role The role to be granted
+     * @param account The account to wich the role is granted
+     */
+    function grantRole(
+        bytes32 role,
+        address account
+    ) external onlyRole(ADMIN_ROLE) {
+        _grantRole(role, account);
+    }
+
+    /**
+     * @dev Revokes a role from an account
+     *
+     * Only the 'ADMIN ROLE` can execute
+     * Emits a RoleRevoked event
+     *
+     * @param role The role to be revoked
+     * @param account The account to wich the role is revoked
+     */
+    function revokeRole(
+        bytes32 role,
+        address account
+    ) external onlyRole(ADMIN_ROLE) {
+        _revokeRole(role, account);
+    }
+
+    /**
+     * @dev Returns an array of roles the account currently has
+     *
+     * @param account The account address
+     */
+    function getRoles(
+        address account
+    ) external view override(IRoles) returns (bytes32[] memory rolesToReturn) {
+        uint256 rolesLength = _listOfroles.length;
+
+        rolesToReturn = new bytes32[](rolesLength);
+
+        for (uint i = 0; i < rolesLength; i++) {
+            bytes32 role = _listOfroles[i];
+
+            rolesToReturn[i] = _hasRole(role, account) ? role : _WITHOUT_ROLE;
+        }
+    }
+
+    /**
+     * @dev Returns a role bytes32 representation
+     *
+     * @param role The role we want to retrieve the bytes32 for
+     */
+    function getRoleId(
+        RoleName role
+    ) external view override(IRoles) returns (bytes32) {
+        return _getRoleId(role);
+    }
+
+    /**
+     * @dev Returns a role bytes32 representation
+     *
+     * @param role The role we want to retrieve the bytes32 for
+     */
+    function _getRoleId(RoleName role) internal view returns (bytes32) {
+        return _listOfroles[uint256(role)];
+    }
+
+    /**
+     * @dev Populates the array of existing roles
+     *
+     */
     function __rolesInit() internal onlyInitializing {
         _listOfroles.push(ADMIN_ROLE);
         _listOfroles.push(_CASHIN_ROLE);
@@ -114,118 +235,40 @@ abstract contract Roles is IRoles, Initializable {
     }
 
     /**
-     * @dev Returns `true` if `account` has been granted `role`.
-     */
-    function hasRole(
-        bytes32 role,
-        address account
-    ) external view returns (bool) {
-        return _hasRole(role, account);
-    }
-
-    /**
-     * @dev Returns `true` if `account` has been granted `role`.
+     * @dev Checks if a role is granted to an account
+     *
+     * @param role The role to check if is granted
+     * @param account The account for which the role is checked for
      */
     function _hasRole(
         bytes32 role,
         address account
-    ) internal view returns (bool) {
+    ) private view returns (bool) {
         return _roles[role].members[account].active;
     }
 
     /**
-     * @dev Returns array of address has been granted `role`.
-     */
-    function getAccountsWithRole(
-        bytes32 role
-    ) external view returns (address[] memory) {
-        return _roles[role].accounts;
-    }
-
-    /**
-     * @dev Returns array of address has been granted `role`.
-     */
-    function getNumberOfAccountsWithRole(
-        bytes32 role
-    ) external view returns (uint256) {
-        return _roles[role].accounts.length;
-    }
-
-    /**
-     * @dev Revokes `role` from the calling account.
+     * @dev Grants a role to an account
      *
-     * Roles are often managed via {grantRole} and {revokeRole}: this function's
-     * purpose is to provide a mechanism for accounts to lose their privileges
-     * if they are compromised (such as when a trusted device is misplaced).
-     *
-     * If the calling account had been revoked `role`, emits a {RoleRevoked}
-     * event.
-     *
-     * Requirements:
-     *
-     * - the caller must be `account`.
-     *
-     * May emit a {RoleRevoked} event.
-     */
-    function grantRole(
-        bytes32 role,
-        address account
-    ) external onlyRole(ADMIN_ROLE) {
-        _grantRole(role, account);
-    }
-
-    /**
-     * @dev Grants `role` to `account`.
-     *
-     * Internal function without access restriction.
-     *
-     * May emit a {RoleGranted} event.
+     * @param role The role to be granted
+     * @param account The account for which the role will be granted
      */
     function _grantRole(bytes32 role, address account) internal {
-        if (!_hasRole(role, account)) {
-            _roles[role].members[account] = MemberData(
-                true,
-                _roles[role].accounts.length
-            );
-            _roles[role].accounts.push(account);
+        if (_hasRole(role, account)) return;
+        _roles[role].members[account] = MemberData(
+            true,
+            _roles[role].accounts.length
+        );
+        _roles[role].accounts.push(account);
 
-            emit RoleGranted(role, account, msg.sender);
-        }
+        emit RoleGranted(role, account, msg.sender);
     }
 
     /**
-     * @dev Revokes `role` from `account`.
+     * @dev Revokes a role from an account
      *
-     * If `account` had been granted `role`, emits a {RoleRevoked} event.
-     *
-     * Requirements:
-     *
-     * - the caller must have ``role``'s admin role.
-     *
-     * May emit a {RoleRevoked} event.
-     */
-    function revokeRole(
-        bytes32 role,
-        address account
-    ) external onlyRole(ADMIN_ROLE) {
-        _revokeRole(role, account);
-    }
-
-    /**
-     * @dev Revokes `role` from the calling account.
-     *
-     * Roles are often managed via {grantRole} and {revokeRole}: this function's
-     * purpose is to provide a mechanism for accounts to lose their privileges
-     * if they are compromised (such as when a trusted device is misplaced).
-     *
-     * If the calling account had been revoked `role`, emits a {RoleRevoked}
-     * event.
-     *
-     * Requirements:
-     *
-     * - the caller must be `account`.
-     *
-     * May emit a {RoleRevoked} event.
+     * @param role The role to be revoked
+     * @param account The account for which the role will be revoked
      */
     function _revokeRole(bytes32 role, address account) internal {
         if (_hasRole(role, account)) {
@@ -247,109 +290,30 @@ abstract contract Roles is IRoles, Initializable {
     }
 
     /**
-     * @dev Returns an array of roles the account currently has
+     * @dev Checks if a role is granted to the calling account
      *
-     * @param account The account address
-     * @return rolesToReturn The array containing the roles
+     * @param role The role to check if is granted
      */
-    function getRoles(
-        address account
-    ) external view override(IRoles) returns (bytes32[] memory rolesToReturn) {
-        uint256 rolesLength = _listOfroles.length;
-
-        rolesToReturn = new bytes32[](rolesLength);
-
-        for (uint i = 0; i < rolesLength; i++) {
-            bytes32 role = _listOfroles[i];
-
-            rolesToReturn[i] = _hasRole(role, account) ? role : _WITHOUT_ROLE;
-        }
-    }
-
-    /**
-     * @dev Returns a role bytes32 representation
-     *
-     * @param role The role we want to retrieve the bytes32 for
-     * @return bytes32 The bytes32 of the role
-     */
-    function getRoleId(
-        RoleName role
-    ) external view override(IRoles) returns (bytes32) {
-        return _getRoleId(role);
-    }
-
-    function _getRoleId(RoleName role) internal view returns (bytes32) {
-        return _listOfroles[uint256(role)];
-    }
-
-    /**
-     * @dev Modifier that checks that an account has a specific role. Reverts
-     * with a standardized message including the required role.
-     *
-     * The format of the revert reason is given by the following regular expression:
-     *
-     *  /^AccessControl: account (0x[0-9a-f]{40}) is missing role (0x[0-9a-f]{64})$/
-     *
-     * _Available since v4.1._
-     */
-    modifier onlyRole(bytes32 role) {
-        _checkRole(role);
-        _;
-    }
-
-    /**
-     * @dev Revert with a standard message if `_msgSender()` is missing `role`.
-     * Overriding this function changes the behavior of the {onlyRole} modifier.
-     *
-     * Format of the revert message is described in {_checkRole}.
-     *
-     * _Available since v4.6._
-     */
-    function _checkRole(bytes32 role) internal view virtual {
+    function _checkRole(bytes32 role) private view {
         _checkRole(role, msg.sender);
     }
 
     /**
-     * @dev Revert with a standard message if `account` is missing `role`.
+     * @dev Checks if a role is granted to an account
      *
-     * The format of the revert reason is given by the following regular expression:
-     *
-     *  /^AccessControl: account (0x[0-9a-f]{40}) is missing role (0x[0-9a-f]{64})$/
+     * @param role The role to check if is granted
+     * @param account The account for which the role is checked for
      */
-    function _checkRole(bytes32 role, address account) internal view virtual {
-        if (!_hasRole(role, account)) {
-            revert(
-                string(
-                    abi.encodePacked(
-                        'AccessControl: account ',
-                        StringsUpgradeable.toHexString(account),
-                        ' is missing role ',
-                        StringsUpgradeable.toHexString(uint256(role), 32)
-                    )
-                )
-            );
-        }
+    function _checkRole(bytes32 role, address account) private view {
+        if (_hasRole(role, account)) return;
+        revert AccountHasNoRole(account, role);
     }
 
     /**
-     * @dev Grants `role` to `account`.
+     * @dev Grants a role to an account
      *
-     * If `account` had not been already granted `role`, emits a {RoleGranted}
-     * event. Note that unlike {grantRole}, this function doesn't perform any
-     * checks on the calling account.
-     *
-     * May emit a {RoleGranted} event.
-     *
-     * [WARNING]
-     * ====
-     * This function should only be called from the constructor when setting
-     * up the initial roles for the system.
-     *
-     * Using this function in any other way is effectively circumventing the admin
-     * system imposed by {AccessControl}.
-     * ====
-     *
-     * NOTE: This function is deprecated in favor of {_grantRole}.
+     * @param role The role to be granted
+     * @param account The account for which the role will be granted
      */
     function _setupRole(bytes32 role, address account) internal virtual {
         _grantRole(role, account);

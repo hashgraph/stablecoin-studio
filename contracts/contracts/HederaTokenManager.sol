@@ -40,7 +40,9 @@ contract HederaTokenManager is
 {
     uint256 private constant _SUPPLY_KEY_BIT = 4;
 
-    // Constructor required to avoid Initializer attack on logic contract
+    /**
+     * @dev Constructor required to avoid Initializer attack on logic contract
+     */
     constructor() {
         _disableInitializers();
     }
@@ -50,6 +52,7 @@ contract HederaTokenManager is
      *
      * @param init the underlying token to create
      *
+     * @return createdTokenAddress the address of the created token
      */
     function initialize(
         InitializeStruct calldata init
@@ -76,38 +79,9 @@ contract HederaTokenManager is
 
         __tokenOwnerInit(createdTokenAddress);
 
-        // Sending back the remaining HBARs from msg.value
-        uint256 currentBalance = address(this).balance;
-        if (currentBalance > 0) {
-            (bool s, ) = init.originalSender.call{value: currentBalance}('');
-            require(
-                s,
-                'Transfering funds back to Original sender did not work'
-            );
-        }
+        _transferFundsBackToOriginalSender(init.originalSender);
 
         return createdTokenAddress;
-    }
-
-    function _grantInitialRoles(
-        address originalSender,
-        RolesStruct[] memory roles,
-        CashinRoleStruct memory cashinRole
-    ) private onlyInitializing {
-        // granting all roles except cashin role
-        for (uint256 i = 0; i < roles.length; i++) {
-            _grantRole(roles[i].role, roles[i].account);
-        }
-
-        // granting cashin role
-        if (cashinRole.account != address(0)) {
-            if (cashinRole.allowance > 0)
-                _grantSupplierRole(cashinRole.account, cashinRole.allowance);
-            else _grantUnlimitedSupplierRole(cashinRole.account);
-        }
-
-        // granting admin role, always to the SC creator
-        _setupRole(_getRoleId(RoleName.ADMIN), originalSender);
     }
 
     /**
@@ -160,13 +134,110 @@ contract HederaTokenManager is
     }
 
     /**
+     * @dev Update token
+     *
+     * @param updatedToken Values to update the token
+     */
+    function updateToken(
+        UpdateTokenStruct calldata updatedToken
+    )
+        external
+        override(IHederaTokenManager)
+        onlyRole(_getRoleId(RoleName.ADMIN))
+    {
+        address currentTokenAddress = _getTokenAddress();
+
+        address newTreasury;
+
+        IHederaTokenService.HederaToken memory hederaToken;
+
+        // Token Keys
+        IHederaTokenService.TokenKey[]
+            memory hederaKeys = new IHederaTokenService.TokenKey[](
+                updatedToken.keys.length
+            );
+
+        for (uint256 i = 0; i < updatedToken.keys.length; i++) {
+            hederaKeys[i] = IHederaTokenService.TokenKey({
+                keyType: updatedToken.keys[i].keyType,
+                key: KeysLib.generateKey(
+                    updatedToken.keys[i].publicKey,
+                    address(this),
+                    updatedToken.keys[i].isED25519
+                )
+            });
+            if (KeysLib.containsKey(_SUPPLY_KEY_BIT, hederaKeys[i].keyType))
+                newTreasury = hederaKeys[i].key.delegatableContractId ==
+                    address(this)
+                    ? address(this)
+                    : msg.sender;
+        }
+
+        hederaToken = _updateHederaTokenInfo(
+            updatedToken,
+            hederaKeys,
+            currentTokenAddress
+        );
+
+        if (newTreasury != address(0)) hederaToken.treasury = newTreasury;
+
+        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
+            .updateTokenInfo(currentTokenAddress, hederaToken);
+
+        _checkResponse(responseCode);
+
+        emit TokenUpdated(currentTokenAddress, updatedToken, newTreasury);
+    }
+
+    /**
+     * @dev Grants initial roles to the SC creator
+     *
+     * @param originalSender address of the original sender
+     * @param roles array of roles to grant
+     * @param cashinRole cashin role to grant
+     */
+    function _grantInitialRoles(
+        address originalSender,
+        RolesStruct[] memory roles,
+        CashinRoleStruct memory cashinRole
+    ) private onlyInitializing {
+        // granting all roles except cashin role
+        for (uint256 i = 0; i < roles.length; i++) {
+            _grantRole(roles[i].role, roles[i].account);
+        }
+
+        // granting cashin role
+        if (cashinRole.account != address(0)) {
+            if (cashinRole.allowance > 0)
+                _grantSupplierRole(cashinRole.account, cashinRole.allowance);
+            else _grantUnlimitedSupplierRole(cashinRole.account);
+        }
+
+        // granting admin role, always to the SC creator
+        _setupRole(_getRoleId(RoleName.ADMIN), originalSender);
+    }
+
+    /**
+     * @dev Transfers the remaining HBARs from msg.value back to the original sender
+     *
+     * @param originalSender address of the original sender
+     */
+    function _transferFundsBackToOriginalSender(
+        address originalSender
+    ) private onlyInitializing {
+        uint256 currentBalance = address(this).balance;
+        if (currentBalance == 0) return;
+        (bool s, ) = originalSender.call{value: currentBalance}('');
+        if (!s) revert RefundingError(currentBalance);
+    }
+
+    /**
      * @dev Returns the number tokens that an account has
      *
      * @param account The address of the account to be consulted
      *
      * @return uint256 The number number tokens that an account has
      */
-
     function _balanceOf(
         address account
     ) internal view override(TokenOwner) returns (uint256) {
@@ -203,70 +274,46 @@ contract HederaTokenManager is
     }
 
     /**
-     * @dev Update token keys
+     * @dev Update Hedera token info
      *
      * @param updatedToken Values to update the token
+     * @param hederaKeys Hedera token keys
+     * @param currentTokenAddress Current token address
+     *
+     * @return hederaTokenUpdated Hedera token info updated
      */
-    function updateToken(
-        UpdateTokenStruct calldata updatedToken
+    function _updateHederaTokenInfo(
+        UpdateTokenStruct calldata updatedToken,
+        IHederaTokenService.TokenKey[] memory hederaKeys,
+        address currentTokenAddress
     )
-        external
-        override(IHederaTokenManager)
-        onlyRole(_getRoleId(RoleName.ADMIN))
+        private
+        returns (IHederaTokenService.HederaToken memory hederaTokenUpdated)
     {
-        address currentTokenAddress = _getTokenAddress();
-
-        address newTreasury = address(0);
-
-        // Token Keys
-        IHederaTokenService.TokenKey[]
-            memory hederaKeys = new IHederaTokenService.TokenKey[](
-                updatedToken.keys.length
-            );
-
-        for (uint256 i = 0; i < updatedToken.keys.length; i++) {
-            hederaKeys[i] = IHederaTokenService.TokenKey({
-                keyType: updatedToken.keys[i].keyType,
-                key: KeysLib.generateKey(
-                    updatedToken.keys[i].publicKey,
-                    address(this),
-                    updatedToken.keys[i].isED25519
-                )
-            });
-            if (KeysLib.containsKey(_SUPPLY_KEY_BIT, hederaKeys[i].keyType)) {
-                if (hederaKeys[i].key.delegatableContractId == address(this))
-                    newTreasury = address(this);
-                else newTreasury = msg.sender;
-            }
-        }
-
-        // Hedera Token Expiry
         IHederaTokenService.Expiry memory expiry;
         if (updatedToken.second >= 0) expiry.second = updatedToken.second;
         if (updatedToken.autoRenewPeriod >= 0)
             expiry.autoRenewPeriod = updatedToken.autoRenewPeriod;
 
-        // Hedera Token Info
         IHederaTokenService.HederaToken memory hederaTokenInfo;
         if (bytes(updatedToken.tokenName).length > 0)
             hederaTokenInfo.name = updatedToken.tokenName;
         if (bytes(updatedToken.tokenSymbol).length > 0)
             hederaTokenInfo.symbol = updatedToken.tokenSymbol;
         hederaTokenInfo.tokenKeys = hederaKeys;
-        hederaTokenInfo.memo = _getTokenInfo(currentTokenAddress); // this is required because of an Hedera bug.
+        hederaTokenInfo.memo = _getTokenInfo(currentTokenAddress);
         hederaTokenInfo.expiry = expiry;
 
-        if (newTreasury != address(0)) hederaTokenInfo.treasury = newTreasury;
-
-        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
-            .updateTokenInfo(currentTokenAddress, hederaTokenInfo);
-
-        _checkResponse(responseCode);
-
-        emit TokenUpdated(currentTokenAddress, updatedToken, newTreasury);
+        return hederaTokenInfo;
     }
 
-    // This method is required because of an Hedera's bug, when keys are updated for a token, the memo gets removed.
+    /**
+     * @dev Is required because of an Hedera's bug, when keys are updated for a token, the memo gets removed.
+     *
+     * @param tokenAddress The address of the token
+     *
+     * @return string The memo of the token
+     */
     function _getTokenInfo(
         address tokenAddress
     ) private returns (string memory) {
