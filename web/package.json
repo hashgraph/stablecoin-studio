@@ -1,6 +1,6 @@
 {
 	"name": "@hashgraph-dev/stablecoin-dapp",
-	"version": "1.4.0",
+	"version": "1.4.1",
 	"publishConfig": {
 		"registry": "https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/"
 	  },

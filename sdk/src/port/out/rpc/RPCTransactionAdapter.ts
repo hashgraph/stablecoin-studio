@@ -1745,7 +1745,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					await HederaTokenManager__factory.connect(
 						evmProxy,
 						this.signerOrProvider,
-					).freeze(params!.targetId!, { gasLimit: GRANT_KYC_GAS }),
+					).grantKyc(params!.targetId!, { gasLimit: GRANT_KYC_GAS }),
 					this.networkService.environment,
 				);
 
@@ -1754,7 +1754,9 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					await HederaTokenManager__factory.connect(
 						evmProxy,
 						this.signerOrProvider,
-					).unfreeze(params!.targetId!, { gasLimit: REVOKE_KYC_GAS }),
+					).revokeKyc(params!.targetId!, {
+						gasLimit: REVOKE_KYC_GAS,
+					}),
 					this.networkService.environment,
 				);
 
