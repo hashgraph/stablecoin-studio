@@ -460,7 +460,7 @@ export const english = {
     freezeCompleted: 'Account frozen',
     unfreezeCompleted: 'Account unfrozen',
     accountNotFrozen:
-      'The account ${address} is not frozen for the ${token} token',
+      'The account ${address} is unfrozen for the ${token} token',
     accountFrozen: 'The account ${address} is frozen for the ${token} token',
     KYCGranted: 'Account KYC granted',
     KYCRevoked: 'Account KYC revoked',

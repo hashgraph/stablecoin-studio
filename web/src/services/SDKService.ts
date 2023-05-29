@@ -262,6 +262,10 @@ export class SDKService {
 		return await StableCoin.unFreeze(req);
 	}
 
+	public static async isAccountFrozen(req: FreezeAccountRequest) {
+		return await StableCoin.isAccountFrozen(req);
+	}
+
 	public static async delete(req: DeleteRequest) {
 		return await StableCoin.delete(req);
 	}

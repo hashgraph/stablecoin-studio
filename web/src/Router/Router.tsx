@@ -12,6 +12,7 @@ import RescueHBAROperation from '../views/Operations/RescueHBAR';
 import WipeOperation from '../views/Operations/Wipe';
 import FreezeOperation from '../views/Operations/Freeze';
 import UnfreezeOperation from '../views/Operations/Unfreeze';
+import CheckFrozenOperation from '../views/Operations/CheckFrozen';
 import Dashboard from '../views/Dashboard';
 import HandleRoles from '../views/Roles/HandleRoles';
 import { actions } from '../views/Roles/constants';
@@ -167,6 +168,7 @@ const Router = () => {
 								<Route path={RoutesMappingUrl.wipe} element={<WipeOperation />} />
 								<Route path={RoutesMappingUrl.freeze} element={<FreezeOperation />} />
 								<Route path={RoutesMappingUrl.unfreeze} element={<UnfreezeOperation />} />
+								<Route path={RoutesMappingUrl.checkFrozen} element={<CheckFrozenOperation />} />
 								<Route path={RoutesMappingUrl.dashboard} element={<Dashboard />} />
 								<Route
 									path={RoutesMappingUrl.editRole}

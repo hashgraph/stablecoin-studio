@@ -24,6 +24,7 @@ export enum NamedRoutes {
 	CheckKyc = 'checkKyc',
 	Freeze = 'freeze',
 	Unfreeze = 'unfreeze',
+	CheckFrozen = 'checkFrozen',
 	ProofOfReserve = 'proofOfReserve',
 	FeesManagement = 'feesManagement',
 	Settings = 'settings',
