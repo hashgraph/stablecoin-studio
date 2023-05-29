@@ -131,7 +131,7 @@ abstract contract TokenOwner is
     /**
      * @dev Initializes the value of token address
      *
-     * @param addr The token address value
+     * @param initTokenAddress The token address value
      */
     function __tokenOwnerInit(
         address initTokenAddress

@@ -33,9 +33,9 @@ interface IStableCoinFactory {
     /**
      * @dev Emitted when a new stable coin is deployed
      *
-     * @param DeployedStableCoin The new deployed stable coin
+     * @param deployedStableCoin The new deployed stable coin
      */
-    event Deployed(DeployedStableCoin);
+    event Deployed(DeployedStableCoin deployedStableCoin);
 
     /**
      * @dev Emitted when a stable coin factory is initialized
@@ -68,8 +68,8 @@ interface IStableCoinFactory {
     /**
      * @dev Emitted when the address of a HederaTokenManager contract is removed from the array
      *
-     * @param index The index of the array for which the HederaTokenManager contract address to be removed
-     * @param addressRemoved The HederaTokenManager contract address to be removed
+     * @param oldAdmin The index of the array for which the HederaTokenManager contract address to be removed
+     * @param newAdmin The HederaTokenManager contract address to be removed
      */
     event AdminChanged(address indexed oldAdmin, address indexed newAdmin);
 
@@ -114,10 +114,8 @@ interface IStableCoinFactory {
     ) external payable returns (DeployedStableCoin memory);
 
     /**
-     * @dev Deploys a stable coin
+     * @dev Gets the HederaTokenManager contract address
      *
-     * @param requestedToken The information provided to create the stable coin's token
-     * @param stableCoinContractAddress The address of the HederaTokenManager contract to create the stable coin
      */
     function getHederaTokenManagerAddress()
         external

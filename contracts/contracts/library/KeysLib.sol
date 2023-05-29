@@ -18,7 +18,7 @@ library KeysLib {
      * @dev Generates a IHederaTokenService.KeyValue depending on a public key
      *
      * @param publicKey The public key
-     * @param stableCoinProxyAdress The stable coin proxy address
+     * @param stableCoinProxyAddress The stable coin proxy address
      * @param isED25519 A flag that indicates if the public key is an Ed25519 key
      */
     function generateKey(

@@ -28,7 +28,7 @@ contract HederaReserve is IHederaReserve, Initializable {
     /**
      * @dev Checks if an addres does not equals to the zero address
      *
-     * @param address The address to compare with the zero address
+     * @param addr The address to compare with the zero address
      */
     modifier checkAddressIsNotZero(address addr) {
         _checkAddressIsNotZero(addr);
