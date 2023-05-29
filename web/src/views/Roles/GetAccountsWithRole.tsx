@@ -1,9 +1,5 @@
 import { Heading, useDisclosure } from '@chakra-ui/react';
-import {
-	GetAccountsWithRolesRequest,
-	StableCoinRole,
-	RevokeRoleRequest,
-} from '@hashgraph-dev/stablecoin-npm-sdk';
+import { GetAccountsWithRolesRequest, StableCoinRole } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { SelectController } from '../../components/Form/SelectController';
 import { useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
@@ -14,12 +10,7 @@ import type { ModalsHandlerActionsProps } from '../../components/ModalsHandler';
 import ModalsHandler from '../../components/ModalsHandler';
 
 import { SDKService } from '../../services/SDKService';
-import {
-	SELECTED_NETWORK,
-	SELECTED_WALLET_COIN,
-	SELECTED_WALLET_PAIRED_ACCOUNTID,
-} from '../../store/slices/walletSlice';
-import type { AppDispatch } from '../../store/store';
+import { SELECTED_NETWORK, SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
 
 import OperationLayout from '../Operations/OperationLayout';
 import DetailsReview, { Detail } from '../../components/DetailsReview';
@@ -139,8 +130,18 @@ const GetAccountsWithRole = () => {
 
 		console.log(request);
 		try {
-			const response = await SDKService.getAccountsWithRole(request);
-
+			const response: any = await Promise.race([
+				SDKService.getAccountsWithRole(request),
+				new Promise((resolve, reject) => {
+					setTimeout(() => {
+						reject(new Error("Account's roles couldn't be obtained in a reasonable time."));
+					}, 10000);
+				}),
+			]).catch((e) => {
+				console.log(e.message);
+				onOpenModalAction();
+				throw e;
+			});
 			setAccountsWithRoles(response);
 			onSuccess();
 		} catch (error: any) {

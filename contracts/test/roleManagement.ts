@@ -17,6 +17,7 @@ import {
     grantRoles,
     revokeRoles,
     getRoles,
+    getAccountsForRole,
     getSupplierAllowance,
     isUnlimitedSupplierAllowance,
 } from '../scripts/contractsMethods'
@@ -44,7 +45,7 @@ import {
     ADDRESS_10,
 } from '../scripts/constants'
 
-import { clientId } from '../scripts/utils'
+import { clientId, toEvmAddress } from '../scripts/utils'
 import { Client, ContractId } from '@hashgraph/sdk'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
@@ -418,5 +419,59 @@ describe('Role Management Tests', function () {
 
             expect(isUnlimited).to.eq(false)
         }
+    })
+
+    it('An account can get all roles of any account', async function () {
+        // Granting roles
+        const Roles = [BURN_ROLE]
+        const amounts: BigNumber[] = []
+        const areE25519: boolean[] = []
+
+        for (let i = 0; i < AllAccounts.length; i++) {
+            amounts.push(BigNumber.from(i))
+            areE25519.push(true)
+        }
+
+        await grantRoles(
+            Roles,
+            proxyAddress,
+            operatorClient,
+            AllAccounts,
+            [],
+            areE25519
+        )
+
+        let burnRoleAccounts = await getAccountsForRole(
+            BURN_ROLE,
+            proxyAddress,
+            operatorClient
+        )
+
+        AllAccounts.forEach(async (accountId, index) => {
+            expect(burnRoleAccounts).to.include(
+                await toEvmAddress(accountId, areE25519[index])
+            )
+        })
+
+        // Revoking roles
+        await revokeRoles(
+            Roles,
+            proxyAddress,
+            operatorClient,
+            AllAccounts,
+            areE25519
+        )
+
+        burnRoleAccounts = await getAccountsForRole(
+            BURN_ROLE,
+            proxyAddress,
+            operatorClient
+        )
+
+        AllAccounts.forEach(async (accountId, index) => {
+            expect(burnRoleAccounts).to.not.include(
+                await toEvmAddress(accountId, areE25519[index])
+            )
+        })
     })
 })

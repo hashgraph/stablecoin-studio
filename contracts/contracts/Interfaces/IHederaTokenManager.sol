@@ -5,51 +5,6 @@ import {IHederaTokenService} from '../hts-precompile/IHederaTokenService.sol';
 import {KeysLib} from '../library/KeysLib.sol';
 
 interface IHederaTokenManager {
-    /**
-     * @dev Emitted when the token has been associated to the account
-     *
-     * @param token Token address
-     * @param account Account address
-     */
-    event TokenAssociated(address token, address account);
-
-    /**
-     * @dev Emitted when the token has been dissociated from the account
-     *
-     * @param token Token address
-     * @param account Account address
-     */
-    event TokenDissociated(address token, address account);
-
-    /**
-    * @dev Emitted when tokens have been transfered from sender to receiver
-    *
-    * @param token Token address
-    * @param sender Sender address
-    * @param receiver Receiver address
-    * @param amount Transfered amount
-
-    */
-    event TokenTransfer(
-        address token,
-        address sender,
-        address receiver,
-        int64 amount
-    );
-
-    /**
-     * @dev Emitted when token updated
-     *
-     * @param token Token address
-     * @param updateTokenStruct Struct containing updated token data
-     * @param newTreasury Token treasury account
-     */
-    event TokenUpdated(
-        address token,
-        UpdateTokenStruct updateTokenStruct,
-        address newTreasury
-    );
-
     struct InitializeStruct {
         IHederaTokenService.HederaToken token;
         int64 initialTotalSupply;
@@ -77,6 +32,43 @@ interface IHederaTokenManager {
         int64 second;
         int64 autoRenewPeriod;
     }
+
+    /**
+    * @dev Emitted when tokens have been transfered from sender to receiver
+    *
+    * @param token Token address
+    * @param sender Sender address
+    * @param receiver Receiver address
+    * @param amount Transfered amount
+
+    */
+    event TokenTransfer(
+        address indexed token,
+        address indexed sender,
+        address indexed receiver,
+        int64 amount
+    );
+
+    /**
+     * @dev Emitted when token updated
+     *
+     * @param token Token address
+     * @param updateTokenStruct Struct containing updated token data
+     * @param newTreasury Token treasury account
+     */
+    event TokenUpdated(
+        address indexed token,
+        UpdateTokenStruct updateTokenStruct,
+        address newTreasury
+    );
+
+    /**
+     * @dev Emitted when transfering funds back to original sender after creating the token did not work
+     *
+     * @param amount The value to check
+     *
+     */
+    error RefundingError(uint256 amount);
 
     /**
      * @dev Returns the name of the token

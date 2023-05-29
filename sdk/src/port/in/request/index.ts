@@ -64,7 +64,9 @@ import AddFractionalFeeRequest from './AddFractionalFeeRequest.js';
 import SetConfigurationRequest from './SetConfigurationRequest.js';
 import GetTokenManagerListRequest from './GetTokenManagerListRequest.js';
 import UpdateRequest from './UpdateRequest.js';
-import { HBAR_DECIMALS } from '../../../core/Constants.js';
+import GetProxyConfigRequest from './GetProxyConfigRequest.js';
+import ChangeProxyOwnerRequest from './ChangeProxyOwnerRequest.js';
+import UpgradeImplementationRequest from './UpgradeImplementationRequest.js';
 
 export * from './BaseRequest.js';
 export {
@@ -114,4 +116,7 @@ export {
 	AddFractionalFeeRequest,
 	GetTokenManagerListRequest,
 	UpdateRequest,
+	GetProxyConfigRequest,
+	ChangeProxyOwnerRequest,
+	UpgradeImplementationRequest,
 };

@@ -19,6 +19,7 @@ import EXTERNAL_TOKEN_INFO_EN from './translations/en/externalTokenInfo.json';
 import FREEZE_EN from './translations/en/freeze.json';
 import UNFREEZE_EN from './translations/en/unfreeze.json';
 import PROOF_OF_RESERVE_EN from './translations/en/proofOfReserve.json';
+import SETTINGS_EN from './translations/en/settings.json';
 import GRANT_KYC_EN from './translations/en/grantKYC.json';
 import REVOKE_KYC_EN from './translations/en/revokeKYC.json';
 import CHECK_KYC_EN from './translations/en/checkKyc.json';
@@ -55,6 +56,7 @@ i18n
 				freeze: FREEZE_EN,
 				unfreeze: UNFREEZE_EN,
 				proofOfReserve: PROOF_OF_RESERVE_EN,
+				settings: SETTINGS_EN,
 				grantKYC: GRANT_KYC_EN,
 				revokeKYC: REVOKE_KYC_EN,
 				checkKyc: CHECK_KYC_EN,

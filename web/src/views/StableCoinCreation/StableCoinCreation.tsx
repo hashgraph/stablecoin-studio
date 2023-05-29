@@ -369,11 +369,22 @@ const StableCoinCreation = () => {
 			}
 
 			if (wallet.lastWallet === SupportedWallets.METAMASK) {
-				const details = await SDKService.getStableCoinDetails(
-					new GetStableCoinDetailsRequest({
-						id: tokenId,
+				const details: any = await Promise.race([
+					SDKService.getStableCoinDetails(
+						new GetStableCoinDetailsRequest({
+							id: tokenId,
+						}),
+					),
+					new Promise((resolve, reject) => {
+						setTimeout(() => {
+							reject(new Error("Stable coin details couldn't be obtained in a reasonable time."));
+						}, 10000);
 					}),
-				);
+				]).catch((e) => {
+					console.log(e.message);
+					onOpen();
+					throw e;
+				});
 
 				ImportTokenService.importToken(tokenId, details?.symbol!, accountInfo?.id!);
 				dispatch(getExternalTokenList(accountInfo.id!));

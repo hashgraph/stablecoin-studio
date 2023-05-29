@@ -32,15 +32,18 @@ import {
 	AggregatorV3Interface__factory,
 	HederaTokenManager__factory,
 	StableCoinFactory__factory,
+	ProxyAdmin__factory,
 } from '@hashgraph-dev/stablecoin-npm-contracts';
 import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
 import EvmAddress from '../../../domain/context/contract/EvmAddress.js';
-import { unrecognized } from '../../../domain/context/network/Environment.js';
+
+const LOCAL_JSON_RPC_RELAY_URL = 'http://127.0.0.1:7546/api';
 
 const HederaTokenManager = HederaTokenManager__factory;
 const Reserve = AggregatorV3Interface__factory;
 const Factory = StableCoinFactory__factory;
+const ProxyAdmin = ProxyAdmin__factory;
 
 type StaticConnect = { connect: (...args: any[]) => any };
 
@@ -59,9 +62,12 @@ export default class RPCQueryAdapter {
 		private readonly networkService: NetworkService,
 	) {}
 
-	async init(customUrl?: string): Promise<string> {
-		const url = `https://${this.networkService.environment.toString()}.hashio.io/api`;
-		// const url = 'http://127.0.0.1:7546/api';
+	async init(urlRpcProvider?: string, apiKey?: string): Promise<string> {
+		const url = urlRpcProvider
+			? apiKey
+				? urlRpcProvider + apiKey
+				: urlRpcProvider
+			: LOCAL_JSON_RPC_RELAY_URL;
 		this.provider = new ethers.providers.JsonRpcProvider(url);
 		LogService.logTrace('RPC Query Adapter Initialized on: ', url);
 
@@ -137,6 +143,26 @@ export default class RPCQueryAdapter {
 			HederaTokenManager,
 			address.toString(),
 		).getRoles(target.toString());
+	}
+
+	async getProxyImplementation(
+		proxyAdmin: EvmAddress,
+		proxy: EvmAddress,
+	): Promise<string> {
+		LogService.logTrace(
+			`Requesting implementation for proxy Admin: ${proxyAdmin.toString()} and proxy: ${proxy.toString()}`,
+		);
+		return await this.connect(
+			ProxyAdmin,
+			proxyAdmin.toString(),
+		).getProxyImplementation(proxy.toString());
+	}
+
+	async getProxyOwner(proxyAdmin: EvmAddress): Promise<string> {
+		LogService.logTrace(
+			`Requesting owner for proxy Admin: ${proxyAdmin.toString()}`,
+		);
+		return await this.connect(ProxyAdmin, proxyAdmin.toString()).owner();
 	}
 
 	async getAccountsWithRole(

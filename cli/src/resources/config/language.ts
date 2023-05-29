@@ -53,6 +53,8 @@ export const english = {
     askAccountId: 'Enter the account id',
     askConfigurateFactories:
       'Do you want to config your factories? Check the documentation for more information : https://github.com/hashgraph/hedera-accelerator-stablecoin#deploying-the-stable-coin-factories',
+    askConfigurateDefaultMirrorsAndRPCs:
+      'Do you want to use default mirror node/JSON-RPC-Relay services? (y/n)',
     askNetworkAccount: 'Which network does this account belong to?',
     askPrivateKeyType: 'Which type of private key will the account use?',
     askAlias: 'Enter an alias for this account',
@@ -63,12 +65,69 @@ export const english = {
     askPublicKey: 'Enter the public key',
     askConsensusUrl: 'Enter the url',
     askMoreConsensusNodes: 'Do you want to enter more consensus nodes? (y/n)',
-    askMirrorNode: 'Enter the mirror url',
     askChain: 'Enter the chain id',
     askNode: 'Enter the node id',
     askOperateWithNewAccount:
       'Would you like to operate with the account you have just created?',
     askFactoryAddress: 'Enter your factory address',
+    MirrorsConfigurationMessage:
+      'You will now configure your mirror node services:',
+    askMirrorName: 'Enter the mirror node service name',
+    askMirrorNode: 'Enter the mirror url',
+    askMirrorNetwork: 'Which network does the mirror service belong to?',
+    askMirrorUrl: 'Which is the base URL of the service?',
+    askMirrorApiKey: 'Enter the mirror node service API Key',
+    askMirrorHeaderName: 'Enter the HTTP auth header name to send the API Key',
+    askMirrorHasApiKey:
+      'Does this service need an API Key to authenticate? (y/n)',
+    askMirrorSelected:
+      'Do you want this service to be used in the selected network? (y/n)',
+    askMoreMirrors: 'Do you want to enter more mirror node services? (y/n)',
+    RPCsConfigurationMessage:
+      'You will now configure your JSON-RPC-Relay services:',
+    askRPCName: 'Enter the JSON-RPC-Relay service name',
+    askRPCNetwork: 'Which network does the JSON-RPC-Relay service belong to?',
+    askRPCUrl: 'Which is the base URL of the service?',
+    askRPCApiKey: 'Enter the JSON-RPC-Relay service API Key',
+    askRPCHeaderName: 'Enter the HTTP auth header name to send the API Key',
+    askRPCHasApiKey: 'Does this service need an API Key to authenticate? (y/n)',
+    askRPCSelected:
+      'Do you want this service to be used in the selected network? (y/n)',
+    askMoreRPCs: 'Do you want to enter more JSON-RPC-Relay services? (y/n)',
+    rpcConfigurationMessage: 'You will now configure your JSON-RPC-Relay:',
+    mirrorNodeConfigurationMessage: 'You will now configure your mirror nodes:',
+    askNetworkMirrorNode: 'Which network does this mirror node belong to?',
+    askName: 'Enter the name',
+    nameAlreadyInUse: 'Name ${name} already in use. Please use another name.',
+    askBaseUrl: 'Enter the base url',
+    baseUrlAlreadyInUse:
+      'Base url ${baseUrl} already in use. Please use another base url.',
+    askMoreMirrorNodes: 'Do you want to add another mirror node?',
+    askOperateWithNewMirrorNode:
+      'Would you like to operate with the mirror node you have just created?',
+    askOperateWithNewRPCNode:
+      'Would you like to operate with the JSON-RPC-Relay you have just created?',
+    mirrorNodeDelete: 'Which mirror node would you like to delete?',
+    noMoreMirrorNodes:
+      'There is no mirror node in the selected network not currently being used',
+    networkSelected: '\nNetwork selected: ${network}',
+    mirrorNodeList: '\nMirror nodes list:',
+    mirrorNodeAdded: '\nMirror nodes added:',
+    mirrorNodeDeleted: '\nMirror nodes deleted successfully',
+    mirrorNodeNotToChange: '\nThere is no mirror node to change',
+    RPCList: '\nJSON-RPC-Relay list:',
+    RPCAdded: '\nJSON-RPC-Relay added:',
+    RPCDelete: 'Which JSON-RPC-Relay would you like to delete?',
+    noMoreRPCs:
+      'There is no JSON-RPC-Relay service in the selected network not currently being used',
+    RPCDeleted: '\nJSON-RPC-Relay deleted successfully',
+    askNeedApiKey: 'Do you need an API key?',
+    askHeaderName: 'Enter your HTTP auth header name',
+    askApiKey: 'Enter your api key',
+    askSureRemove: 'Are you sure do you want to delete ${mirrorNode}?',
+    selectMirrorNode: 'Select the mirror node: ',
+    selectRPC: 'Select the JSON-RPC-Relay: ',
+    RPCNotToChange: '\nThere is no nJSON-RPC-Relay to change',
   },
   stablecoin: {
     noFactories:
@@ -216,9 +275,14 @@ export const english = {
   wizard: {
     name: 'Wizard',
     accountLogin: 'Which account do you want to operate with?',
+    networkManage: 'Which network do you want to operate with?',
     accountsNotFound:
       'There is no account for the indicated parameters, here is a list of the configured accounts:',
+    mirrorNodeNotRespondedAsExpected:
+      'Mirror node has not responded as expected',
     accountOptions: 'Manage account menu:',
+    mirrorNodeOptions: 'Manage mirror node menu:',
+    rpcOptions: 'Manage JSON-RPC-Relay menu:',
     importedTokenMenu: 'Manage imported tokens:',
     accountDelete: 'Which account would you like to delete?',
     noAccountToDelete: 'You cannot delete your current account.',
@@ -226,6 +290,7 @@ export const english = {
     configurationMenuTitle: 'What do you want to do?',
     pathChanged: '\nPath changed successfully',
     networkChanged: '\nNetwork changed successfully',
+    networkSelected: '\nNetwork selected successfully',
     accountsChanged: '\nAccounts changed successfully',
     freezeAccount: 'Which account do you want to freeze?',
     unfreezeAccount: 'Which account do you want to unfreeze?',
@@ -271,6 +336,8 @@ export const english = {
       EditPath: 'Edit config path',
       EditNetwork: 'Edit default network',
       Manage: 'Manage accounts',
+      ManageMirrorNode: 'Manage mirror node',
+      ManageRPC: 'Manage JSON-RPC-Relay',
       ...returnToMainMenu,
     },
     manageAccountOptions: {
@@ -278,6 +345,20 @@ export const english = {
       List: 'List accounts',
       Add: 'Add new account',
       Delete: 'Delete account',
+      ...goBack,
+    },
+    manageMirrorNodeOptions: {
+      Change: 'Change current node',
+      List: 'Display configured nodes',
+      Add: 'Set up mirror node',
+      Delete: 'Remove mirror node',
+      ...goBack,
+    },
+    manageRPCOptions: {
+      Change: 'Change current JSON-RPC-Relay',
+      List: 'Display configured JSON-RPC-Relay',
+      Add: 'Set up JSON-RPC-Relay',
+      Delete: 'Remove JSON-RPC-Relay',
       ...goBack,
     },
     manageImportedTokens: {
@@ -370,6 +451,7 @@ export const english = {
     rescueHBARCompleted: 'HBAR Rescue completed',
     wipeCompleted: 'Wipe completed',
     detailsCompleted: 'Details loaded',
+    proxyConfigCompleted: 'Proxy Config loaded',
     balanceCompleted: 'Balance loaded',
     associateCompleted: 'Stable coin associated',
     deleteCompleted: 'Stable coin deleted',
@@ -390,6 +472,8 @@ export const english = {
     customFeesRemoved: 'Custom fees removed',
     transferCompleted: 'Transfer completed',
     updateCompleted: 'Update completed',
+    changeOwnerCompleted: 'owner change completed',
+    upgradeImplementationCompleted: 'implementation upgrade completed',
   },
   operation: {
     success: colors.green('Operation has been completed successfully.'),
@@ -419,6 +503,16 @@ export const english = {
   validations: {
     wrongFormatAddress:
       'The address format is not correct. Please check the format and try again.',
+    duplicatedMirrorName:
+      'The mirror node service name already exists for the selected network.',
+    duplicatedMirrorUrl:
+      'The mirror node service url already exists for the selected network.',
+    duplicatedRPCName:
+      'The JSON-RPC-Relay service name already exists for the selected network.',
+    duplicatedRPCUrl:
+      'The JSON-RPC-Relay service url already exists for the selected network.',
+    wrongFormatUrl:
+      'The url format is not correct. Please check the format and try again.',
     lessZero: 'The number is 0 or less. Please use a number greater than 0.',
   },
   roleManagement: {
@@ -484,6 +578,26 @@ export const english = {
       List: 'Fees list',
       ...goBack,
     },
+  },
+  stableCoinConfiguration: {
+    options: {
+      proxyConfiguration: 'Stable Coin Configuration',
+      tokenConfiguration: 'Token Configuration',
+      ...goBack,
+    },
+    askConfiguration: 'What do you want to configure?',
+  },
+  proxyConfiguration: {
+    options: {
+      implementation: 'Upgrade stable coin implementation',
+      owner: 'Change stable coin owner',
+      ...goBack,
+    },
+    askNewImplementation:
+      'Choose the HederaTokenManager implementation you want to use',
+    askNewOwner: 'Enter the new owner account id',
+    askProxyConfiguration: 'What do you want to do',
+    currentImplementation: 'Your current implementation is : ',
   },
   tokenConfiguration: {
     askAction: 'What token property do you want to update?',

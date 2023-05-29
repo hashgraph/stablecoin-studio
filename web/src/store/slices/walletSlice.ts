@@ -1,5 +1,9 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { ConnectionState, GetListStableCoinRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
+import {
+	ConnectionState,
+	GetListStableCoinRequest,
+	ProxyConfigurationViewModel,
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 import SDKService from '../../services/SDKService';
 import type { RootState } from '../store';
 import type { IExternalToken } from '../../interfaces/IExternalToken';
@@ -21,6 +25,8 @@ export interface InitialStateProps {
 	loading: boolean;
 	accountInfo: AccountViewModel;
 	selectedStableCoin?: StableCoinViewModel;
+	selectedStableCoinProxyConfig?: ProxyConfigurationViewModel;
+	isProxyOwner?: boolean;
 	selectingStableCoin: boolean;
 	stableCoinList?: StableCoinListViewModel;
 	externalTokenList?: IExternalToken[];
@@ -43,6 +49,7 @@ export const initialState: InitialStateProps = {
 	loading: false,
 	accountInfo: {},
 	selectedStableCoin: undefined,
+	selectedStableCoinProxyConfig: undefined,
 	selectingStableCoin: false,
 	stableCoinList: undefined,
 	externalTokenList: [],
@@ -54,6 +61,7 @@ export const initialState: InitialStateProps = {
 	roles: undefined,
 	network: undefined,
 	networkRecognized: true,
+	isProxyOwner: false,
 	accountRecognized: true,
 	factoryId: undefined,
 };
@@ -62,13 +70,24 @@ export const getStableCoinList = createAsyncThunk(
 	'wallet/getStableCoinList',
 	async (id: string) => {
 		try {
-			const stableCoins = await SDKService.getStableCoins(
-				new GetListStableCoinRequest({
-					account: {
-						accountId: id,
-					},
+			const stableCoins: any = await Promise.race([
+				SDKService.getStableCoins(
+					new GetListStableCoinRequest({
+						account: {
+							accountId: id,
+						},
+					}),
+				),
+				new Promise((resolve, reject) => {
+					setTimeout(() => {
+						reject(new Error("Stable coins list couldn't be obtained in a reasonable time."));
+					}, 10000);
 				}),
-			);
+			]).catch((e) => {
+				console.log(e.message);
+				throw e;
+			});
+
 			return stableCoins;
 		} catch (e) {
 			console.error(e);
@@ -117,6 +136,9 @@ export const walletSlice = createSlice({
 		setSelectedStableCoin: (state, action) => {
 			state.selectedStableCoin = action.payload;
 		},
+		setSelectedStableCoinProxyConfig: (state, action) => {
+			state.selectedStableCoinProxyConfig = action.payload;
+		},
 		setSelectingStableCoin: (state, action) => {
 			state.selectingStableCoin = action.payload;
 		},
@@ -151,6 +173,9 @@ export const walletSlice = createSlice({
 		setNetworkRecognized: (state, action) => {
 			state.networkRecognized = action.payload;
 		},
+		setIsProxyOwner: (state, action) => {
+			state.isProxyOwner = action.payload;
+		},
 		setAccountRecognized: (state, action) => {
 			state.accountRecognized = action.payload;
 		},
@@ -176,6 +201,11 @@ export const walletSlice = createSlice({
 		},
 		clearSelectedStableCoin: (state) => {
 			state.selectedStableCoin = initialState.selectedStableCoin;
+			state.isProxyOwner = initialState.isProxyOwner;
+		},
+		clearSelectedStableCoinProxyConfig: (state) => {
+			state.selectedStableCoinProxyConfig = initialState.selectedStableCoinProxyConfig;
+			state.isProxyOwner = initialState.isProxyOwner;
 		},
 		reset: () => initialState,
 	},
@@ -183,12 +213,16 @@ export const walletSlice = createSlice({
 		builder.addCase(getStableCoinList.fulfilled, (state, action) => {
 			if (action.payload) {
 				state.stableCoinList = action.payload;
-				if (state.stableCoinList.coins.length === 0) state.selectedStableCoin = undefined;
+				if (state.stableCoinList!.coins.length === 0) {
+					state.selectedStableCoin = undefined;
+					state.selectedStableCoinProxyConfig = undefined;
+				}
 			}
 		});
 		builder.addCase(getStableCoinList.rejected, (state) => {
 			state.stableCoinList = { coins: [] };
 			state.selectedStableCoin = undefined;
+			state.selectedStableCoinProxyConfig = undefined;
 		});
 		builder.addCase(getExternalTokenList.fulfilled, (state, action) => {
 			if (action.payload) {
@@ -210,6 +244,9 @@ export const AVAILABLE_WALLETS = (state: RootState) => state.wallet.foundWallets
 export const EXTERNAL_TOKEN_LIST = (state: RootState) => state.wallet.externalTokenList;
 export const SELECTED_WALLET_DATA = (state: RootState) => state.wallet.data;
 export const SELECTED_WALLET_COIN = (state: RootState) => state.wallet.selectedStableCoin;
+export const SELECTED_WALLET_COIN_PROXY_CONFIG = (state: RootState) =>
+	state.wallet.selectedStableCoinProxyConfig;
+export const IS_PROXY_OWNER = (state: RootState) => state.wallet.isProxyOwner;
 export const SELECTING_WALLET_COIN = (state: RootState) => state.wallet.selectingStableCoin;
 export const SELECTED_WALLET_PAIRED = (state: RootState) => state.wallet.data;
 export const SELECTED_WALLET_CAPABILITIES = (state: RootState) => state.wallet.capabilities;

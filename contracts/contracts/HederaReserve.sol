@@ -9,9 +9,14 @@ import {
 contract HederaReserve is IHederaReserve, Initializable {
     uint8 private constant _DECIMALS = 2;
     uint80 private constant _ROUND_ID = 0;
+    uint256 private constant _VERSION_ID = 1;
     int256 private _reserveAmount;
     address private _admin;
 
+    /**
+     * @dev Checks if the calling account is the HederaReserve contract admin
+     *
+     */
     modifier isAdmin() {
         require(
             _admin == msg.sender,
@@ -20,19 +25,22 @@ contract HederaReserve is IHederaReserve, Initializable {
         _;
     }
 
-    // modifier to check that an address is not 0
+    /**
+     * @dev Checks if an addres does not equals to the zero address
+     *
+     * @param addr The address to compare with the zero address
+     */
     modifier checkAddressIsNotZero(address addr) {
         _checkAddressIsNotZero(addr);
         _;
     }
 
-    // Constructor required to avoid Initializer attack on logic contract
+    /**
+     * @dev Constructor required to avoid Initializer attack on logic contract
+     *
+     */
     constructor() {
         _disableInitializers();
-    }
-
-    function _checkAddressIsNotZero(address addr) internal pure {
-        require(addr != address(0), 'Provided address is 0');
     }
 
     /**
@@ -95,11 +103,11 @@ contract HederaReserve is IHederaReserve, Initializable {
      *  @return The current version
      */
     function version() external pure returns (uint256) {
-        return 1;
+        return _VERSION_ID;
     }
 
     /**
-     *  @dev Gets a value from a specific round
+     * @dev Gets a value from a specific round
      *
      */
     function getRoundData(
@@ -119,7 +127,7 @@ contract HederaReserve is IHederaReserve, Initializable {
     }
 
     /**
-     *  @dev Returns the latest round data
+     *  @dev Gets the latest round data
      */
     function latestRoundData()
         external
@@ -139,5 +147,14 @@ contract HederaReserve is IHederaReserve, Initializable {
             block.timestamp,
             _ROUND_ID
         );
+    }
+
+    /**
+     * @dev Checks if an address does not equal to the zero address
+     *
+     * @param addr The address to be compared with the zero address
+     */
+    function _checkAddressIsNotZero(address addr) private pure {
+        if (addr == address(0)) revert AddressZero(addr);
     }
 }

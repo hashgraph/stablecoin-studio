@@ -14,6 +14,13 @@ library KeysLib {
         bool isED25519;
     }
 
+    /**
+     * @dev Generates a IHederaTokenService.KeyValue depending on a public key
+     *
+     * @param publicKey The public key
+     * @param stableCoinProxyAddress The stable coin proxy address
+     * @param isED25519 A flag that indicates if the public key is an Ed25519 key
+     */
     function generateKey(
         bytes memory publicKey,
         address stableCoinProxyAddress,
@@ -29,6 +36,12 @@ library KeysLib {
         return key;
     }
 
+    /**
+     * @dev Checks if a token key existis depending on the key bit index and the key type
+     *
+     * @param keyBitIndex The key bit index
+     * @param keyType The key type
+     */
     function containsKey(
         uint256 keyBitIndex,
         uint256 keyType

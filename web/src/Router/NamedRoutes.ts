@@ -26,4 +26,5 @@ export enum NamedRoutes {
 	Unfreeze = 'unfreeze',
 	ProofOfReserve = 'proofOfReserve',
 	FeesManagement = 'feesManagement',
+	Settings = 'settings',
 }

@@ -10,7 +10,6 @@ networks:
           { url: '35.225.201.195:50211', nodeId: '0.0.5' },
           { url: '35.247.109.135:50211', nodeId: '0.0.6' },
         ],
-      mirrorNodeUrl: 'https://mainnet-public.mirrornode.hedera.com/',
       chainId: 0,
     },
     {
@@ -22,7 +21,6 @@ networks:
           { url: '35.225.201.195:50211', nodeId: '0.0.5' },
           { url: '35.247.109.135:50211', nodeId: '0.0.6' },
         ],
-      mirrorNodeUrl: 'https://previewnet.mirrornode.hedera.com/',
       chainId: 0,
     },
     {
@@ -34,7 +32,6 @@ networks:
           { url: '2.testnet.hedera.com:50211', nodeId: '0.0.5' },
           { url: '3.testnet.hedera.com:50211', nodeId: '0.0.6' },
         ],
-      mirrorNodeUrl: 'https://testnet.mirrornode.hedera.com',
       chainId: 0,
     },
   ]

@@ -29,7 +29,7 @@ const Sidebar = () => {
 			isDisabled: selectedStableCoin?.deleted ?? false,
 		},
 		{
-			icon: 'Gear',
+			icon: 'Fingerprint',
 			title: t('sidebar.details'),
 			route: NamedRoutes.StableCoinDetails,
 		},
@@ -42,6 +42,11 @@ const Sidebar = () => {
 			icon: 'File',
 			title: t('sidebar.proofOfReserve'),
 			route: NamedRoutes.ProofOfReserve,
+		},
+		{
+			icon: 'GearSix',
+			title: t('sidebar.settings'),
+			route: NamedRoutes.Settings,
 		},
 	];
 

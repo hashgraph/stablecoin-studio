@@ -20,6 +20,7 @@ import {
 	SELECTED_TOKEN_DELETED,
 	SELECTED_TOKEN_PAUSED,
 	SELECTED_NETWORK,
+	SELECTED_WALLET_COIN_PROXY_CONFIG,
 } from '../../store/slices/walletSlice';
 import { RouterManager } from '../../Router/RouterManager';
 import { matchPath, useLocation, useNavigate } from 'react-router-dom';
@@ -28,6 +29,7 @@ import {
 	GetStableCoinDetailsRequest,
 	GetAccountInfoRequest,
 	GetRolesRequest,
+	GetProxyConfigRequest,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 import type { IExternalToken } from '../../interfaces/IExternalToken';
 import type { GroupBase, SelectInstance } from 'chakra-react-select';
@@ -46,6 +48,7 @@ const CoinDropdown = () => {
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const accountId = useSelector(SELECTED_WALLET_PAIRED_ACCOUNTID);
 	const network = useSelector(SELECTED_NETWORK);
+	const proxyConfig = useSelector(SELECTED_WALLET_COIN_PROXY_CONFIG);
 
 	const capabilities = useSelector(SELECTED_WALLET_CAPABILITIES);
 	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
@@ -56,6 +59,8 @@ const CoinDropdown = () => {
 	const [success, setSuccess] = useState<boolean>();
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const [isLoadingImportToken, setLoadingImportToken] = useState(false);
+	const [isSelecting, setIsSelecting] = useState(false);
+	const [stableCoinListLoad, setStableCoinListLoad] = useState(false);
 
 	const isInStableCoinNotSelected = !!matchPath(
 		location.pathname,
@@ -78,9 +83,11 @@ const CoinDropdown = () => {
 
 	useEffect(() => {
 		if (accountId) {
-			dispatch(getStableCoinList(accountId.toString()));
+			dispatch(getStableCoinList(accountId.toString()))
+				.unwrap()
+				.then(() => setStableCoinListLoad(true))
+				.catch(() => onOpen());
 			dispatch(getExternalTokenList(accountId.toString()));
-
 			getAccountInfo(accountId.toString());
 		}
 	}, [accountId, network]);
@@ -99,6 +106,9 @@ const CoinDropdown = () => {
 		);
 
 		dispatch(walletActions.setAccountInfo(accountInfo));
+		dispatch(
+			walletActions.setIsProxyOwner(proxyConfig?.owner?.toString() === accountInfo?.id?.toString()),
+		);
 	};
 
 	const getCapabilities = async () => {
@@ -157,18 +167,64 @@ const CoinDropdown = () => {
 
 		try {
 			const selectedCoin = event.value;
-			const stableCoinDetails = await SDKService.getStableCoinDetails(
-				new GetStableCoinDetailsRequest({
-					id: selectedCoin,
-				}),
-			);
 
-			const roles = await SDKService.getRoles(
-				new GetRolesRequest({
-					targetId: accountInfo && accountInfo.id ? accountInfo?.id : '',
-					tokenId: stableCoinDetails.tokenId!.toString(),
+			const stableCoinDetails: any = await Promise.race([
+				SDKService.getStableCoinDetails(
+					new GetStableCoinDetailsRequest({
+						id: selectedCoin,
+					}),
+				),
+				new Promise((resolve, reject) => {
+					setTimeout(() => {
+						reject(new Error("Stable coin details couldn't be obtained in a reasonable time."));
+					}, 10000);
 				}),
-			);
+			]).catch((e) => {
+				console.log(e.message);
+				setIsSelecting(true);
+				onOpen();
+				throw e;
+			});
+
+			const proxyConfig: any = await Promise.race([
+				SDKService.getProxyConfig(
+					new GetProxyConfigRequest({
+						tokenId: selectedCoin,
+					}),
+				),
+				new Promise((resolve, reject) => {
+					setTimeout(() => {
+						reject(new Error("Stable coin details couldn't be obtained in a reasonable time."));
+					}, 10000);
+				}),
+			]).catch((e) => {
+				console.log(e.message);
+				setIsSelecting(true);
+				onOpen();
+				throw e;
+			});
+
+			const roles = await Promise.race([
+				SDKService.getRoles(
+					new GetRolesRequest({
+						targetId: accountInfo && accountInfo.id ? accountInfo?.id : '',
+						tokenId: stableCoinDetails!.tokenId!.toString(),
+					}),
+				),
+				new Promise((resolve, reject) => {
+					setTimeout(() => {
+						reject(
+							new Error("Account's roles for the coin couldn't be obtained in a reasonable time."),
+						);
+					}, 10000);
+				}),
+			]).catch((e) => {
+				console.log(e.message);
+				setIsSelecting(true);
+				onOpen();
+				throw e;
+			});
+
 			dispatch(walletActions.setDeletedToken(undefined));
 			dispatch(walletActions.setPausedToken(undefined));
 			dispatch(walletActions.setRoles(roles));
@@ -187,6 +243,7 @@ const CoinDropdown = () => {
 					treasury: stableCoinDetails?.treasury,
 					autoRenewAccount: stableCoinDetails?.autoRenewAccount,
 					proxyAddress: stableCoinDetails?.proxyAddress,
+					proxyAdminAddress: stableCoinDetails?.proxyAdminAddress,
 					paused: stableCoinDetails?.paused,
 					deleted: stableCoinDetails?.deleted,
 					adminKey:
@@ -208,7 +265,19 @@ const CoinDropdown = () => {
 						JSON.parse(JSON.stringify(stableCoinDetails.customFees)),
 				}),
 			);
+			dispatch(
+				walletActions.setSelectedStableCoinProxyConfig({
+					owner: proxyConfig?.owner,
+					implementationAddress: proxyConfig?.implementationAddress,
+				}),
+			);
+			dispatch(
+				walletActions.setIsProxyOwner(
+					proxyConfig?.owner?.toString() === accountInfo?.id?.toString(),
+				),
+			);
 		} catch (e) {
+			setSuccess(false);
 			dispatch(walletActions.setSelectingStableCoin(false));
 			throw e;
 		}
@@ -217,11 +286,23 @@ const CoinDropdown = () => {
 	const handleImportToken = async (inputValue: string) => {
 		setLoadingImportToken(true);
 		try {
-			const details = await SDKService.getStableCoinDetails(
-				new GetStableCoinDetailsRequest({
-					id: inputValue,
+			const details: any = await Promise.race([
+				SDKService.getStableCoinDetails(
+					new GetStableCoinDetailsRequest({
+						id: inputValue,
+					}),
+				),
+				new Promise((resolve, reject) => {
+					setTimeout(() => {
+						reject(new Error("Stable coin details couldn't be obtained in a reasonable time."));
+					}, 10000);
 				}),
-			);
+			]).catch((e) => {
+				console.log(e.message);
+				setIsSelecting(true);
+				onOpen();
+				throw e;
+			});
 
 			const tokensAccount = localStorage?.tokensAccount;
 			if (tokensAccount) {
@@ -275,6 +356,7 @@ const CoinDropdown = () => {
 			console.log(error);
 			setSuccess(false);
 			setLoadingImportToken(false);
+			setIsSelecting(false);
 			onOpen();
 		}
 	};
@@ -321,10 +403,30 @@ const CoinDropdown = () => {
 			/>
 			<ModalNotification
 				variant={success ? 'success' : 'error'}
-				title={t('externalTokenInfo:notification.title', { result: success ? 'Success' : 'Error' })}
-				description={t(
-					`externalTokenInfo:notification.description${success ? 'Success' : 'Error'}`,
-				)}
+				title={
+					!stableCoinListLoad
+						? t('externalTokenInfo:notification.titleLoading', {
+								result: success ? 'Success' : 'Error',
+						  })
+						: isSelecting
+						? t('externalTokenInfo:notification.titleSelecting', {
+								result: success ? 'Success' : 'Error',
+						  })
+						: t('externalTokenInfo:notification.titleAdding', {
+								result: success ? 'Success' : 'Error',
+						  })
+				}
+				description={
+					!stableCoinListLoad
+						? t(`externalTokenInfo:notification.descriptionLoading${success ? 'Success' : 'Error'}`)
+						: isSelecting
+						? t(
+								`externalTokenInfo:notification.descriptionSelecting${
+									success ? 'Success' : 'Error'
+								}`,
+						  )
+						: t(`externalTokenInfo:notification.descriptionAdding${success ? 'Success' : 'Error'}`)
+				}
 				isOpen={isOpen}
 				onClose={onClose}
 				closeOnOverlayClick={false}

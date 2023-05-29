@@ -9,7 +9,11 @@ interface IBurnable {
      * @param token Token address
      * @param amount The number of tokens to burn
      */
-    event TokensBurned(address burner, address token, int64 amount);
+    event TokensBurned(
+        address indexed burner,
+        address indexed token,
+        int64 amount
+    );
 
     /**
      * @dev Burns an `amount` of tokens owned by the treasury account

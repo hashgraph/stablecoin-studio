@@ -1,0 +1,22 @@
+{
+	"title": "Settings",
+	"operationTitle": "Settings",
+	"subtitle": "Manage Settings",
+	"updateOwner": {
+		"title": "Update Proxy Owner",
+		"label": "Current Owner",
+		"inputPlaceholder": "Enter Owner",
+		"buttonText": "Update Owner"
+	},
+	"updateImplementation": {
+		"title": "Update Proxy Implementation",
+		"label": "Current Implementation",
+		"inputPlaceholder": "Enter Address",
+		"buttonText": "Update Implementation"
+	},
+	"notification": {
+		"title": "{{ result }} updating settings",
+		"descriptionSuccess": "Proxy settings was updated",
+		"descriptionError": "Sorry, there was an error updating the proxy settings"
+	}
+}

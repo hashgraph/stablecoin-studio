@@ -40,6 +40,10 @@
 		"errorAccountIdDuplicated": "Account: {{ account }} is duplicated",
 		"errorAccountIdNotExists": "Account: {{ account }} not exists "
 	},
+	"getRole": {
+		"modalErrorTitle": "Error getting account roles",
+		"modalErrorDescription": "Operation was successfully executed, but account roles were not able to be obtained."
+	},
 	"revokeRole": {
 		"title": "Revoke roles",
 		"accountLabel": "Account",

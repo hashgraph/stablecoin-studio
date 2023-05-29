@@ -16,7 +16,7 @@ abstract contract Rescatable is
     Roles
 {
     /**
-     * @dev Rescue `value` `tokenId` from contractTokenOwner to rescuer
+     * @dev Rescues `value` `tokenId` from contractTokenOwner to rescuer
      *
      * Must be protected with isRescuer()
      *
@@ -54,7 +54,7 @@ abstract contract Rescatable is
     }
 
     /**
-     * @dev Rescue `value` HBAR from contractTokenOwner to rescuer
+     * @dev Rescues `value` HBAR from contractTokenOwner to rescuer
      *
      * Must be protected with isRescuer()
      *
@@ -75,8 +75,7 @@ abstract contract Rescatable is
         returns (bool)
     {
         (bool sent, ) = msg.sender.call{value: amount}('');
-
-        require(sent, 'HBAR rescue failed');
+        if (!sent) revert HBARRescueError(amount);
 
         emit HBARRescued(msg.sender, amount);
 

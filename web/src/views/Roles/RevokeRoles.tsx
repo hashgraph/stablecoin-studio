@@ -103,12 +103,23 @@ const RevokeRoleOperation = () => {
 				(item: any) => item?.toString() === accountId?.toString(),
 			);
 			if (isAccountTarget) {
-				const roles = await SDKService.getRoles(
-					new GetRolesRequest({
-						tokenId: selectedStableCoin!.tokenId!.toString(),
-						targetId: accountId!.toString(),
+				const roles = await Promise.race([
+					SDKService.getRoles(
+						new GetRolesRequest({
+							tokenId: selectedStableCoin!.tokenId!.toString(),
+							targetId: accountId!.toString(),
+						}),
+					),
+					new Promise((resolve, reject) => {
+						setTimeout(() => {
+							reject(new Error("Account's roles couldn't be obtained in a reasonable time."));
+						}, 10000);
 					}),
-				);
+				]).catch((e) => {
+					console.log(e.message);
+					onOpenModalAction();
+					throw e;
+				});
 				dispatch(walletActions.setRoles(roles));
 			}
 			onSuccess();
@@ -297,12 +308,24 @@ const RevokeRoleOperation = () => {
 			/>
 
 			<ModalsHandler
-				errorNotificationTitle={t(`roles:revokeRole.modalErrorTitle`)}
+				errorNotificationTitle={
+					errorTransactionUrl
+						? t(`roles:revokeRole.modalErrorTitle`)
+						: t(`roles:getRole.modalErrorTitle`)
+				}
 				// @ts-ignore-next-line
-				errorNotificationDescription={t(`roles:revokeRole.modalErrorDescription`)}
+				errorNotificationDescription={
+					errorTransactionUrl
+						? t(`roles:revokeRole.modalErrorDescription`)
+						: t(`roles:getRole.modalErrorDescription`)
+				}
 				errorTransactionUrl={errorTransactionUrl}
 				// @ts-ignore-next-line
-				warningNotificationDescription={t(`roles:revokeRole.modalErrorDescription`)}
+				warningNotificationDescription={
+					errorTransactionUrl
+						? t(`roles:revokeRole.modalErrorDescription`)
+						: t(`roles:getRole.modalErrorDescription`)
+				}
 				modalActionProps={{
 					isOpen: isOpenModalAction,
 					onClose: onCloseModalAction,
