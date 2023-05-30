@@ -216,7 +216,7 @@ If (and only if) the PoR contract attached to your stable coin is the PoR demo i
 
 ### Settings
 
-
+![Selection_014](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/abb0b89f-6ec5-449f-a035-f7f9fcea08e1)
 
 This option allows the user to change the **HederaTokenManager** contract proxy admin owner and also to upgrade the stable coin implementation. So, as the **HederaTokenManager** uses a **TransparentUpgradeableProxy**, the owner of the proxy admin contract will be the only one who can change the implementation. This way, through this option the user could change the account who is able to upgrade the implementation and also could upgrade the implementation.
 
