@@ -1048,7 +1048,7 @@ Updates the **HederaTokenManager** contract implementation address.
 ## Network
 
 ### Connect
-Establishes the connection to work with an existing Hedera account in a wallet in a certain Hedera network.
+Establishes the connection to work with an existing Hedera account in a wallet in a certain Hedera network, also setting the mirror node and JSON-RPC-Relay services to use in the connection.
 
 **Spec:**
 	
@@ -1093,7 +1093,7 @@ Disconnects the previously established connection.
 ```
 
 ### Init
-Sets the network and could also set the factory smart contract address and register the events, returning supported wallets depending on wheter the SDK was started through a DApp or not.
+Sets the network and could also set the mirror node and the JSON-RPC-Relay services, the factory smart contract address and register the events, returning supported wallets depending on wheter the SDK was started through a DApp or not.
 
 **Spec:**
 	
@@ -1124,7 +1124,7 @@ Sets the network and could also set the factory smart contract address and regis
 ```
 
 ### SetNetwork
-Configures a Hedera network, setting some properties like environment, mirror nodes, consensus nodes and an RPC relay.
+Configures a Hedera network, setting some properties like environment and the mirror node and JSON-RPC-Relay services, and also, and optionally, the list of consensus nodes.
 
 **Spec:**
 	
