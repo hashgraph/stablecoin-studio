@@ -206,10 +206,12 @@ export default class ManageImportedTokenService extends Service {
       return true;
     });
 
-    return filterTokens.concat(
-      currentAccount.importedTokens.map(
-        (token) => `${token.id} - ${token.symbol}`,
-      ),
-    );
+    return filterTokens
+      .concat(
+        currentAccount.importedTokens.map(
+          (token) => `${token.id} - ${token.symbol}`,
+        ),
+      )
+      .sort((token1, token2) => (token1 > token2 ? -1 : 1));
   }
 }
