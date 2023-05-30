@@ -156,7 +156,7 @@ const CoinDropdown = () => {
 							};
 						}),
 					)
-					.sort((token1, token2) => (token1.value > token2.value ? -1 : 1));
+					.sort((token1, token2) => (+token1.value > +token2.value ? -1 : 1));
 			}
 			setOptions(options);
 		}
