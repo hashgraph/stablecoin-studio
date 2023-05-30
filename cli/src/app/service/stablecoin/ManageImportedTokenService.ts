@@ -213,7 +213,8 @@ export default class ManageImportedTokenService extends Service {
         ),
       )
       .sort((token1, token2) =>
-        +token1.split('.').slice(-1)[0] > +token2.split('.').slice(-1)[0]
+        +token1.split(' - ')[0].split('.').slice(-1)[0] >
+        +token2.split(' - ')[0].split('.').slice(-1)[0]
           ? -1
           : 1,
       );

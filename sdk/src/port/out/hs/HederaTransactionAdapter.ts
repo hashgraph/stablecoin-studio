@@ -266,22 +266,6 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		);
 	}
 
-	/* public async dissociateToken(
-		coin: StableCoinCapabilities,
-		targetId: HederaId,
-	): Promise<TransactionResponse<any, Error>> {
-		const params = new Params({
-			targetId: targetId,
-		});
-
-		return this.performSmartContractOperation(
-			coin.coin.proxyAddress!.value,
-			'dissociateToken',
-			1300000,
-			params,
-		);
-	} */
-
 	public async cashin(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
