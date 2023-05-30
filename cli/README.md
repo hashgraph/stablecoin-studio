@@ -99,18 +99,15 @@ networks:
   [
     {
       name: 'mainnet',
-      consensusNodes: [],
-      mirrorNodeUrl: 'https://mainnet-public.mirrornode.hedera.com/',
+      consensusNodes: []
     },
     {
       name: 'previewnet',
-      consensusNodes: [],
-      mirrorNodeUrl: 'https://previewnet.mirrornode.hedera.com/',
+      consensusNodes: []
     },
     {
       name: 'testnet',
-      consensusNodes: [],
-      mirrorNodeUrl: 'https://testnet.mirrornode.hedera.com',
+      consensusNodes: []
     },
   ]
 accounts:
@@ -123,6 +120,48 @@ accounts:
       importedTokens: [],
     },
   ]
+mirrors:
+  [
+    {
+      name: HEDERA,
+      network: testnet,
+      baseUrl: https://testnet.mirrornode.hedera.com/api/v1/,
+      selected: true
+    },
+    {
+      name: HEDERA,
+      network: previewnet,
+      baseUrl: https://previewnet.mirrornode.hedera.com/api/v1/,
+      selected: true
+    },
+    {
+      name: HEDERA,
+      network: mainnet,
+      baseUrl: https://mainnet-public.mirrornode.hedera.com/api/v1/,
+      selected: true
+    }
+  ]
+rpcs:
+  [
+    {
+      name: HASHIO,
+      network: testnet,
+      baseUrl: https://testnet.hashio.io/api,
+      selected: true
+    },
+    {
+      name: HASHIO,
+      network: previewnet,
+      baseUrl: https://previewnet.hashio.io/api,
+      selected: true
+    },
+    {
+      name: HASHIO,
+      network: mainnet,
+      baseUrl: https://mainnet.hashio.io/api,
+      selected: true
+    }
+  ]
 logs:
   path: './logs'
   level: 'ERROR'
@@ -132,7 +171,7 @@ factories: [
     network: 'testnet'
   },
   {
-    id: '0.0.123456',
+    id: '0.0.765432',
     network: 'previewnet'
   }
 ]
@@ -270,7 +309,10 @@ This option displays all the stable coins the user has created or added.
 
 #### Configuration
 
-This last option allows the user to display the current configuration file, modify the configuration path, change the default network and manage the accounts (change the current account, add new ones or remove them from the configuration file).
+This last option allows the user to display the current configuration file, modify the configuration path, change the default network and manage: 
+- **Accounts**: Allows the user to change the current account, see all configured accounts and also add new accounts and remove existing ones.
+- **Mirror nodes**: Allows the user to change the current mirror node, see all configured mirror nodes for the selected Hedera network, add new mirror nodes and remove existing ones except for the one that is being used.
+- **JSON-RPC-Relay services**: Allows the user to change the current JSON-RPC-Relay service, see all configured services for the selected Hedera network, add new JSON-RPC-Relay servies and remove existing ones except for the one that is being used.
 
 # Testing
 
