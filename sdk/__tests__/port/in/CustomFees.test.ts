@@ -317,7 +317,7 @@ function checkFixedFee(
 	amount: number,
 	stableCoinCapabilitiesHTS: StableCoinCapabilities,
 	feeCollectorAccountId: HederaId,
-) {
+): void {
 	const feeAmount =
 		parseFloat((tokenCustomFees as RequestFixedFee).amount) *
 		10 ** stableCoinCapabilitiesHTS.coin.decimals;
@@ -335,7 +335,7 @@ function checkFractionalFee(
 	percentage: number,
 	feeCollectorAccountId: HederaId,
 	net: boolean,
-) {
+): void {
 	if (percentage > 0) {
 		expect(
 			parseInt(

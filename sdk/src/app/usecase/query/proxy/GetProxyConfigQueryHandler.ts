@@ -58,11 +58,11 @@ export class GetProxyConfigQueryHandler
 			throw new Error('No proxy Admin Address found');
 
 		const proxyImpl = await this.queryAdapter.getProxyImplementation(
-			coin.evmProxyAdminAddress!,
-			coin.evmProxyAddress!,
+			coin.evmProxyAdminAddress,
+			coin.evmProxyAddress,
 		);
 		const proxyOwner = await this.queryAdapter.getProxyOwner(
-			coin.evmProxyAdminAddress!,
+			coin.evmProxyAdminAddress,
 		);
 
 		const proxyOwnerHederaId = await this.mirrorNode.getAccountInfo(

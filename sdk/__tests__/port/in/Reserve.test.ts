@@ -18,7 +18,6 @@
  *
  */
 
-import NetworkService from '../../../src/app/service/NetworkService.js';
 import Injectable from '../../../src/core/Injectable.js';
 import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
@@ -27,7 +26,6 @@ import {
 	CreateRequest,
 	InitializationRequest,
 	Network,
-	SetNetworkRequest,
 	StableCoin,
 	StableCoinViewModel,
 	TokenSupplyType,
@@ -124,7 +122,7 @@ describe('🧪 Reserve test', () => {
 	it('check reserve amount', async () => {
 		const res = await ReserveDataFeed.getReserveAmount(
 			new GetReserveAmountRequest({
-				tokenId: stableCoinSC?.tokenId!.toString(),
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
 			}),
 		);
 		expect(res.value.toString()).toEqual(reserveInitialAmount.toString());
@@ -133,7 +131,7 @@ describe('🧪 Reserve test', () => {
 	it('update reserve amount', async () => {
 		const reserveAddress = await StableCoin.getReserveAddress(
 			new GetReserveAddressRequest({
-				tokenId: stableCoinSC?.tokenId!.toString(),
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
 			}),
 		);
 
@@ -148,7 +146,7 @@ describe('🧪 Reserve test', () => {
 
 		const res = await ReserveDataFeed.getReserveAmount(
 			new GetReserveAmountRequest({
-				tokenId: stableCoinSC?.tokenId!.toString(),
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
 			}),
 		);
 
