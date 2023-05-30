@@ -52,6 +52,10 @@
 		- [GetReserveAddress](#getreserveaddress)
 		- [UpdateReserveAddress](#updatereserveaddress)
 		- [Capabilities](#capabilities)
+	- [Proxy](#proxy)
+		- [GetProxyConfig](#getproxyconfig)
+		- [ChangeProxyOwner](#changeproxyowner)
+		- [UpgradeImplementation](#upgradeimplementation)
 	- [Network](#network)
 		- [Connect](#connect)
 		- [Disconnect](#disconnect)
@@ -972,6 +976,72 @@ See the spec below for all the attributes you can get from the request.
 			tokenId: "0.0.2"
 		})
 	);
+```
+
+
+## Proxy
+The following functions allow the user to both get information and execute operations regarding the stable coin proxy contract.
+
+### GetProxyConfig
+Gets the configuration about the stable coin proxy: the **HederaTokenManager** contract implementation address and the proxy admin account that allows to change the previous implementation.
+
+**Spec:**
+
+```Typescript
+	Proxy.getProxyConfig(request: GetProxyConfigRequest): Promise<ProxyConfigurationViewModel>;
+
+```
+
+**Example:**
+
+```Typescript
+	const result: ProxyConfigurationViewModel = await Proxy.getProxyConfig(
+		new GetProxyConfigRequest({
+			tokenId: '0.0.1',
+		})
+	);	
+```
+
+### ChangeProxyOwner
+Changes the **HederaTokenManager** contract proxy admin owner.
+
+**Spec:**
+
+```Typescript
+	Proxy.changeProxyOwner(request: ChangeProxyOwnerRequest): Promise<boolean>;
+
+```
+
+**Example:**
+
+```Typescript
+	const result: boolean = await Proxy.changeProxyOwner(
+		new ChangeProxyOwnerRequest({
+			tokenId: '0.0.1',
+			targetId: '0.0.2'
+		})
+	);	
+```
+
+### UpgradeImplementation
+Updates the **HederaTokenManager** contract implementation address.
+
+**Spec:**
+
+```Typescript
+	Proxy.upgradeImplementation(request: UpgradeImplementationRequest): Promise<boolean>;
+
+```
+
+**Example:**
+
+```Typescript
+	const result: boolean = await Proxy.upgradeImplementation(
+		new UpgradeImplementationRequest({
+			tokenId: '0.0.1',
+			implementationAddress: '0.0.2'
+		})
+	);	
 ```
 
 
