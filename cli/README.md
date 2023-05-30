@@ -257,7 +257,11 @@ https://user-images.githubusercontent.com/114951681/228851958-db534d9e-0bc3-41f5
     - DELETE_ROLE
 
 - **Refresh roles**: automatically refreshes the roles assigned to the current account (account's capacities).
-- **Configuration**: stable coin administrators can edit the underlying token's properties such as "name", "symbol", "keys" ...
+- **Configuration**: This last option allows the user to manage both the stable coin configuration and the token configuration. 
+Firstly, the stable coin configuration allows the user to:
+- Upgrade the stable coin contract implementation, so the ***HederaTokenManager*** proxy contract would "point" to a different implementation of this contract.
+- Change the stable coin proxy admin contract owner, so it would change the account that will be able to upgrade the aforementioned stable coin implementation.
+In the case of the token configuration, stable coin administrators can edit the underlying token's properties such as "name", "symbol", "keys" ...
 - **Danger Zone**: this section contains the stable coin operations deemed as particularly "dangerous" either because they affect every single token owner (PAUSE) or because they can not be rolled-back (DELETE).
   For security reasons these operations are grouped in a "sub-menu" so that users do not run them by mistake.
   - **Un/Pause**: pauses and unpauses the token preventing it from being involved in any kind of operation.
