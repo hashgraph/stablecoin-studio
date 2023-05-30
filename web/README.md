@@ -214,6 +214,12 @@ If (and only if) the PoR contract attached to your stable coin is the PoR demo i
 
 > This is the main reason why the PoR demo implementation included in this project must be used only for demo purposes, the reserve amount can be changed at any time without any check or control whatsoever...
 
+### Settings
+
+
+
+This option allows the user to change the **HederaTokenManager** contract proxy admin owner and also to upgrade the stable coin implementation. So, as the **HederaTokenManager** uses a **TransparentUpgradeableProxy**, the owner of the proxy admin contract will be the only one who can change the implementation. This way, through this option the user could change the account who is able to upgrade the implementation and also could upgrade the implementation.
+
 
 # Testing
 
