@@ -17,7 +17,6 @@ import {
 
 import {
     BURN_ROLE,
-    CASHIN_ROLE,
     DELETE_ROLE,
     FREEZE_ROLE,
     KYC_ROLE,
