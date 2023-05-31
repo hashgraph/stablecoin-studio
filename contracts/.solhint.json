@@ -37,6 +37,7 @@
         "multiple-sends": "error",
         "reentrancy": "error",
         "state-visibility": "error",
-        "quotes": ["error", "single"]
+        "quotes": ["error", "single"],
+        "not-rely-on-time": "off"
     }
 }
