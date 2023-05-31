@@ -65,7 +65,7 @@ const baseStyle = ({ isDisabled, isInvalid, hasValue }: SelectConfigProps) => {
 	};
 };
 
-const outline = ({ isInvalid, isDisabled }: SelectConfigProps) => {
+const outline = ({ isInvalid }: SelectConfigProps) => {
 	return {
 		wrapper: {
 			height: 'min',

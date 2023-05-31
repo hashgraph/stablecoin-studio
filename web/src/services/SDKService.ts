@@ -11,11 +11,7 @@ import {
 	Fees,
 	Factory,
 	SetNetworkRequest,
-	GetAccountsWithRolesRequest,
 	Proxy,
-	GetProxyConfigRequest,
-	ChangeProxyOwnerRequest,
-	UpgradeImplementationRequest,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 import type {
 	WalletEvent,
@@ -60,6 +56,10 @@ import type {
 	AddFixedFeeRequest,
 	AddFractionalFeeRequest,
 	AccountViewModel,
+	GetAccountsWithRolesRequest,
+	GetProxyConfigRequest,
+	ChangeProxyOwnerRequest,
+	UpgradeImplementationRequest,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 export type StableCoinListRaw = Array<Record<'id' | 'symbol', string>>;
