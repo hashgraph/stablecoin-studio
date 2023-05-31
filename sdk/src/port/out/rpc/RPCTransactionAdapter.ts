@@ -110,8 +110,20 @@ import {
 import { CommandBus } from '../../../core/command/CommandBus.js';
 import { SetNetworkCommand } from '../../../app/usecase/command/network/setNetwork/SetNetworkCommand.js';
 import { SetConfigurationCommand } from '../../../app/usecase/command/network/setConfiguration/SetConfigurationCommand.js';
-import { MirrorNode } from '../../../domain/context/network/MirrorNode.js';
-import { JsonRpcRelay } from '../../../domain/context/network/JsonRpcRelay.js';
+import {
+	EnvironmentMirrorNode,
+	MirrorNode,
+	MirrorNodes,
+} from '../../../domain/context/network/MirrorNode.js';
+import {
+	EnvironmentJsonRpcRelay,
+	JsonRpcRelay,
+	JsonRpcRelays,
+} from '../../../domain/context/network/JsonRpcRelay.js';
+import {
+	EnvironmentFactory,
+	Factories,
+} from '../../../domain/context/factory/Factories.js';
 
 // eslint-disable-next-line no-var
 declare var ethereum: MetaMaskInpageProvider;
@@ -120,6 +132,9 @@ declare var ethereum: MetaMaskInpageProvider;
 export default class RPCTransactionAdapter extends TransactionAdapter {
 	account: Account;
 	signerOrProvider: Signer | Provider;
+	mirrorNodes: MirrorNodes;
+	jsonRpcRelays: JsonRpcRelays;
+	factories: Factories;
 
 	constructor(
 		@lazyInject(MirrorNodeAdapter)
@@ -328,6 +343,18 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		LogService.logTrace('Metamask Initialized ', eventData);
 
 		return this.networkService.environment;
+	}
+
+	public setMirrorNodes(mirrorNodes?: MirrorNodes) {
+		if (mirrorNodes) this.mirrorNodes = mirrorNodes;
+	}
+
+	public setJsonRpcRelays(jsonRpcRelays?: JsonRpcRelays) {
+		if (jsonRpcRelays) this.jsonRpcRelays = jsonRpcRelays;
+	}
+
+	public setFactories(factories?: Factories) {
+		if (factories) this.factories = factories;
 	}
 
 	async register(
@@ -1393,12 +1420,12 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	private async setMetamaskNetwork(chainId: any): Promise<void> {
 		let network = unrecognized;
 		let factoryId = '';
-		const mirrorNode: MirrorNode = {
+		let mirrorNode: MirrorNode = {
 			baseUrl: '',
 			apiKey: '',
 			headerName: '',
 		};
-		const rpcNode: JsonRpcRelay = {
+		let rpcNode: JsonRpcRelay = {
 			baseUrl: '',
 			apiKey: '',
 			headerName: '',
@@ -1411,52 +1438,49 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		if (metamaskNetwork) {
 			network = metamaskNetwork.network;
 
-			if (process.env.REACT_APP_FACTORIES) {
+			if (this.factories) {
 				try {
-					const factories = JSON.parse(
-						process.env.REACT_APP_FACTORIES,
-					);
-					const result = factories.find(
-						(i: any) => i.Environment === metamaskNetwork.network,
-					);
-					factoryId = result
-						? result.STABLE_COIN_FACTORY_ADDRESS
-						: '';
-				} catch (e) {
-					console.error('Factories could not be found in .env');
-				}
-			}
-			if (process.env.REACT_APP_MIRROR_NODE) {
-				try {
-					const mirrorNodes = JSON.parse(
-						process.env.REACT_APP_MIRROR_NODE,
-					);
-					const result = mirrorNodes.find(
-						(i: any) => i.Environment === metamaskNetwork.network,
+					const result = this.factories.factories.find(
+						(i: EnvironmentFactory) =>
+							i.environment === metamaskNetwork.network,
 					);
 					if (result) {
-						mirrorNode.baseUrl = result.BASE_URL;
-						mirrorNode.apiKey = result.API_KEY;
-						mirrorNode.headerName = result.HEADER;
+						factoryId = result.factory.toString();
 					}
 				} catch (e) {
-					console.error('Mirror Nodes could not be found in .env');
+					console.error(
+						`Factories could not be found for environment ${metamaskNetwork.network} in  the initially provided list`,
+					);
 				}
 			}
-
-			if (process.env.REACT_APP_RPC_NODE) {
+			if (this.mirrorNodes) {
 				try {
-					const rpcNodes = JSON.parse(process.env.REACT_APP_RPC_NODE);
-					const result = rpcNodes.find(
-						(i: any) => i.Environment === metamaskNetwork.network,
+					const result = this.mirrorNodes.nodes.find(
+						(i: EnvironmentMirrorNode) =>
+							i.environment === metamaskNetwork.network,
 					);
 					if (result) {
-						rpcNode.baseUrl = result.BASE_URL;
-						rpcNode.apiKey = result.API_KEY;
-						rpcNode.headerName = result.HEADER;
+						mirrorNode = result.mirrorNode;
 					}
 				} catch (e) {
-					console.error('RPC Nodes could not be found in .env');
+					console.error(
+						`Mirror Nodes could not be found for environment ${metamaskNetwork.network} in  the initially provided list`,
+					);
+				}
+			}
+			if ((this, this.jsonRpcRelays)) {
+				try {
+					const result = this.jsonRpcRelays.nodes.find(
+						(i: EnvironmentJsonRpcRelay) =>
+							i.environment === metamaskNetwork.network,
+					);
+					if (result) {
+						rpcNode = result.jsonRpcRelay;
+					}
+				} catch (e) {
+					console.error(
+						`RPC Nodes could not be found for environment ${metamaskNetwork.network} in  the initially provided list`,
+					);
 				}
 			}
 			LogService.logTrace('Metamask Network:', chainId);

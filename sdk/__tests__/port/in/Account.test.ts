@@ -44,7 +44,7 @@ describe('🧪 Account test', () => {
 
 		const rpcNode: JsonRpcRelay = {
 			name: 'testrpcNode',
-			baseUrl: 'https://testnet.hashio.io/api',
+			baseUrl: 'http://127.0.0.1:7546/api',
 		};
 
 		await Network.connect(

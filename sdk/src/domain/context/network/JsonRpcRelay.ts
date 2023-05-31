@@ -18,6 +18,8 @@
  *
  */
 
+import { Environment } from './Environment.js';
+
 export class JsonRpcRelay {
 	name?: string;
 	baseUrl: string;
@@ -34,5 +36,23 @@ export class JsonRpcRelay {
 		this.baseUrl = baseUrl;
 		this.apiKey = apiKey;
 		this.headerName = headerName;
+	}
+}
+
+export class EnvironmentJsonRpcRelay {
+	jsonRpcRelay: JsonRpcRelay;
+	environment: Environment;
+
+	constructor(jsonRpcRelay: JsonRpcRelay, environment: Environment) {
+		this.jsonRpcRelay = jsonRpcRelay;
+		this.environment = environment;
+	}
+}
+
+export class JsonRpcRelays {
+	nodes: EnvironmentJsonRpcRelay[];
+
+	constructor(nodes: EnvironmentJsonRpcRelay[]) {
+		this.nodes = nodes;
 	}
 }

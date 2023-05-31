@@ -46,7 +46,7 @@ const mirrorNode: MirrorNode = {
 
 const rpcNode: JsonRpcRelay = {
 	name: 'testrpcNode',
-	baseUrl: 'https://testnet.hashio.io/api',
+	baseUrl: 'http://127.0.0.1:7546/api',
 };
 
 describe('🧪 Network test', () => {
@@ -107,7 +107,10 @@ describe('🧪 Network test', () => {
 		);
 		expect(spy).toHaveBeenCalled();
 		expect(networkService.consensusNodes).toBeUndefined();
-		expect(networkService.rpcNode).toBeUndefined();
+		expect(networkService.rpcNode.name).toEqual(rpcNode.name);
+		expect(networkService.rpcNode.baseUrl).toEqual(rpcNode.baseUrl);
+		expect(networkService.rpcNode.apiKey).toEqual(rpcNode.apiKey);
+		expect(networkService.rpcNode.headerName).toEqual(rpcNode.headerName);
 		expect(networkService.environment).toEqual(testnet);
 		expect(networkService.mirrorNode.name).toEqual(mirrorNode.name);
 		expect(networkService.mirrorNode.baseUrl).toEqual(mirrorNode.baseUrl);

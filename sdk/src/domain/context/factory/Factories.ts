@@ -18,41 +18,23 @@
  *
  */
 
-import { Environment } from './Environment.js';
+import { Environment } from '../network/Environment.js';
+import { HederaId } from '../shared/HederaId.js';
 
-export class MirrorNode {
-	name?: string;
-	baseUrl: string;
-	apiKey?: string;
-	headerName?: string;
-
-	constructor(
-		baseUrl: string,
-		name?: string,
-		apiKey?: string,
-		headerName?: string,
-	) {
-		this.name = name;
-		this.baseUrl = baseUrl;
-		this.apiKey = apiKey;
-		this.headerName = headerName;
-	}
-}
-
-export class EnvironmentMirrorNode {
-	mirrorNode: MirrorNode;
+export class EnvironmentFactory {
+	factory: HederaId;
 	environment: Environment;
 
-	constructor(mirrorNode: MirrorNode, environment: Environment) {
-		this.mirrorNode = mirrorNode;
+	constructor(factory: HederaId, environment: Environment) {
+		this.factory = factory;
 		this.environment = environment;
 	}
 }
 
-export class MirrorNodes {
-	nodes: EnvironmentMirrorNode[];
+export class Factories {
+	factories: EnvironmentFactory[];
 
-	constructor(nodes: EnvironmentMirrorNode[]) {
-		this.nodes = nodes;
+	constructor(factories: EnvironmentFactory[]) {
+		this.factories = factories;
 	}
 }
