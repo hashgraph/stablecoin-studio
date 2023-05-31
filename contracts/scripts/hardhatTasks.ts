@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ContractId } from '@hashgraph/sdk'
 import { task } from 'hardhat/config'
 import {

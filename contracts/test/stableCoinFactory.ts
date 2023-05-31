@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import '@hashgraph/hardhat-hethers'
 import '@hashgraph/sdk'
 import { BigNumber } from 'ethers'
@@ -68,6 +69,9 @@ const TokenDecimals = 3
 const toReserve = (amount: BigNumber) => {
     return amount.div(10)
 }
+const fromReserve = (amount: BigNumber) => {
+    return amount.mul(10)
+}
 const TokenFactor = BigNumber.from(10).pow(TokenDecimals)
 const INIT_SUPPLY = BigNumber.from(10).mul(TokenFactor)
 const MAX_SUPPLY = BigNumber.from(1000).mul(TokenFactor)
@@ -137,7 +141,10 @@ describe('StableCoinFactory Tests', function () {
             operatorPriKey
         )
 
+        const tokenManager = resulttokenManager
         newFactoryProxyAddress = result[0].toString()
+        const proxyAdminAddress = result[1]
+        const factoryAddress = result[2]
     })
 
     it('Create StableCoin setting all token keys to the Proxy', async function () {
