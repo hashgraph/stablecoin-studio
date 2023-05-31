@@ -69,16 +69,7 @@ export default class InitializationRequest
 		jsonRpcRelays?: JsonRpcRelays;
 		factories?: Factories;
 	}) {
-		super({
-			factories: (val) => {
-				if (val === undefined) {
-					return;
-				}
-				for (let i = 0; i < val.factories.length; i++) {
-					Validation.checkContractId();
-				}
-			},
-		});
+		super({});
 		this.network = network;
 		this.mirrorNode = mirrorNode;
 		this.rpcNode = rpcNode;
