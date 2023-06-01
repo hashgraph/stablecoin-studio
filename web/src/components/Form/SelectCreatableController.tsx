@@ -158,12 +158,12 @@ const SelectCreatableController = ({
 								onBlur={onBlurCustom as ReactSelectProps['onBlur']}
 								ref={ref}
 								chakraStyles={{
-									control: (baseStyles, state) => ({
+									control: (baseStyles) => ({
 										...baseStyles,
 										borderWidth: '0px',
 										boxShadow: 'none !important',
 									}),
-									dropdownIndicator: (baseStyles, state) => ({
+									dropdownIndicator: (baseStyles) => ({
 										...baseStyles,
 										paddingRight: '0px',
 									}),

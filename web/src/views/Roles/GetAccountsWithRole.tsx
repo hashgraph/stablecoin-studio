@@ -13,7 +13,8 @@ import { SDKService } from '../../services/SDKService';
 import { SELECTED_NETWORK, SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
 
 import OperationLayout from '../Operations/OperationLayout';
-import DetailsReview, { Detail } from '../../components/DetailsReview';
+import DetailsReview from '../../components/DetailsReview';
+import type { Detail } from '../../components/DetailsReview';
 
 const GetAccountsWithRole = () => {
 	const { t } = useTranslation(['global', 'roles', 'stableCoinCreation', 'externalTokenInfo']);
@@ -24,7 +25,7 @@ const GetAccountsWithRole = () => {
 	} = useDisclosure();
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 
-	const { control, getValues, watch, formState, setError } = useForm({
+	const { control, getValues, setError } = useForm({
 		mode: 'onChange',
 	});
 
@@ -117,7 +118,6 @@ const GetAccountsWithRole = () => {
 		onSuccess,
 		onError,
 		onLoading,
-		onCloseModalLoading,
 	}) => {
 		onLoading();
 		const values = getValues();
