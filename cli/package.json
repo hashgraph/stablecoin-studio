@@ -20,6 +20,7 @@
     "start:wizard": "clear && npx tsc && node ./build/src/index.js wizard -cp './hsca-config.yaml' -n 'testnet'",
     "clean": "rimraf coverage build tmp",
     "prebuild": "npm run lint",
+    "postbuild": "cp src/resources/config/.hedera-stable-coin-cli.yaml build/src/resources/config/.hedera-stable-coin-cli.yaml",
     "build": "tsc -p tsconfig.json",
     "build:watch": "tsc -w -p tsconfig.json",
     "build:release": "npm run clean && tsc -p tsconfig.release.json",
