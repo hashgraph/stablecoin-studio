@@ -2,7 +2,7 @@ import { Flex } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { NamedRoutes } from '../../Router/NamedRoutes';
 import SidebarOption from './SidebarOption';
-import { SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
+import { SELECTED_WALLET_COIN, IS_PROXY_OWNER } from '../../store/slices/walletSlice';
 import { useSelector } from 'react-redux';
 
 interface optionsProps {
@@ -10,11 +10,13 @@ interface optionsProps {
 	title: string;
 	route: NamedRoutes;
 	isDisabled?: boolean;
+	isHidden?: boolean;
 }
 
 const Sidebar = () => {
 	const { t } = useTranslation('global');
-	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
+	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);	
+	const isProxyOwner = useSelector(IS_PROXY_OWNER);
 
 	const options: optionsProps[] = [
 		{
@@ -37,16 +39,19 @@ const Sidebar = () => {
 			icon: 'Receipt',
 			title: t('sidebar.feesManagement'),
 			route: NamedRoutes.FeesManagement,
+			isHidden: selectedStableCoin && !selectedStableCoin.feeScheduleKey
 		},
 		{
 			icon: 'File',
 			title: t('sidebar.proofOfReserve'),
 			route: NamedRoutes.ProofOfReserve,
+			isHidden: selectedStableCoin && !selectedStableCoin.reserveAddress
 		},
 		{
 			icon: 'GearSix',
 			title: t('sidebar.settings'),
 			route: NamedRoutes.Settings,
+			isHidden: selectedStableCoin && !isProxyOwner
 		},
 	];
 
@@ -61,9 +66,7 @@ const Sidebar = () => {
 		>
 			<Flex flexDirection='column' alignItems='center' gap={3}>
 				{options.map((option) => {
-					const { title } = option;
-
-					return <SidebarOption key={title} {...option} />;
+					return <SidebarOption key={option.title} {...option} />;
 				})}
 			</Flex>
 		</Flex>
