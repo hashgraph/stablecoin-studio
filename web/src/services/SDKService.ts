@@ -170,13 +170,13 @@ export class SDKService {
 						const factory = extractedFactories[i].STABLE_COIN_FACTORY_ADDRESS;
 
 						factories.push({
-							factory: factory,
+							factory,
 							environment: extractedFactories[i].Environment,
 						});
 					}
 
 					initReq.factories = {
-						factories: factories,
+						factories,
 					};
 				} catch (e) {
 					console.error('Factories could not be found in .env');
@@ -196,13 +196,13 @@ export class SDKService {
 						};
 
 						nodes.push({
-							mirrorNode: mirrorNode,
+							mirrorNode,
 							environment: extractedMirrorNodes[i].Environment,
 						});
 					}
 
 					initReq.mirrorNodes = {
-						nodes: nodes,
+						nodes,
 					};
 				} catch (e) {
 					console.error('Mirror Nodes could not be found in .env');
@@ -228,7 +228,7 @@ export class SDKService {
 					}
 
 					initReq.jsonRpcRelays = {
-						nodes: nodes,
+						nodes,
 					};
 				} catch (e) {
 					console.error('RPC Nodes could not be found in .env');

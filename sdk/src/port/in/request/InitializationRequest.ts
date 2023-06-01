@@ -33,7 +33,6 @@ import { SupportedWallets } from '../../../domain/context/network/Wallet.js';
 import { BaseRequest } from './BaseRequest.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import { Factories } from '../../../domain/context/factory/Factories.js';
-import Validation from './validation/Validation.js';
 
 export { SupportedWallets };
 
