@@ -506,33 +506,6 @@ export default class OperationStableCoinService extends Service {
         // Call to Supplier Role
         await this.roleManagementFlow();
         break;
-      case language.getText('wizard.stableCoinOptions.RoleRefresh'):
-        await utilsService.cleanAndShowBanner();
-
-        const getRolesRequest = new GetRolesRequest({
-          targetId: currentAccount.accountId,
-          tokenId: this.stableCoinId,
-        });
-
-        // Call to Supplier Role
-        const rolesToRefresh = await new RoleStableCoinsService().getRoles(
-          getRolesRequest,
-        );
-        const importedTokensRefreshed = configAccount.importedTokens.map(
-          (token) => {
-            if (token.id === this.stableCoinId) {
-              return {
-                id: token.id,
-                symbol: token.symbol,
-                roles: rolesToRefresh,
-              };
-            }
-            return token;
-          },
-        );
-        new ManageImportedTokenService().updateAccount(importedTokensRefreshed);
-        configAccount.importedTokens = importedTokensRefreshed;
-        break;
       case language.getText('wizard.stableCoinOptions.Configuration'):
         await utilsService.cleanAndShowBanner();
         await this.configuration();
@@ -2129,8 +2102,6 @@ export default class OperationStableCoinService extends Service {
           capabilities.includes(Operation.ROLE_MANAGEMENT)) ||
         (option === language.getText('wizard.stableCoinOptions.FeesMgmt') &&
           this.hasfeeScheduleKey) ||
-        (option === language.getText('wizard.stableCoinOptions.RoleRefresh') &&
-          !this.stableCoinDeleted) ||
         (option === language.getText('wizard.stableCoinOptions.Details') &&
           !this.stableCoinDeleted) ||
         (option === language.getText('wizard.stableCoinOptions.Balance') &&
@@ -2195,8 +2166,6 @@ export default class OperationStableCoinService extends Service {
             (option ===
               language.getText('wizard.stableCoinOptions.RescueHBAR') &&
               roles.includes(StableCoinRole.RESCUE_ROLE)) ||
-            option ===
-              language.getText('wizard.stableCoinOptions.RoleRefresh') ||
             option === language.getText('wizard.stableCoinOptions.Details') ||
             option === language.getText('wizard.stableCoinOptions.Balance') ||
             option === language.getText('wizard.stableCoinOptions.KYCMgmt') ||
