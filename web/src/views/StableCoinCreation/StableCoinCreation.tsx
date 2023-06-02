@@ -355,7 +355,7 @@ const StableCoinCreation = () => {
 			if (wallet.lastWallet === SupportedWallets.HASHPACK && createResponse?.coin.tokenId) {
 				const associateRequest = new AssociateTokenRequest({
 					targetId: accountInfo.id!,
-					tokenId: tokenId,
+					tokenId,
 				});
 				await SDKService.associate(associateRequest);
 
@@ -447,7 +447,7 @@ const StableCoinCreation = () => {
 				description={
 					loading
 						? undefined
-						: t(`notification.description${success ? 'Success' : 'Error'}`, { token: token })
+						: t(`notification.description${success ? 'Success' : 'Error'}`, { token })
 				}
 				isOpen={isOpen}
 				onClose={onClose}

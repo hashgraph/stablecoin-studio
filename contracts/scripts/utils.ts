@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
     Client,
     TokenCreateTransaction,
@@ -20,7 +22,6 @@ import {
 import Web3 from 'web3'
 import axios from 'axios'
 import { ADDRESS_0 } from './constants'
-import TokenTransfer from '@hashgraph/sdk/lib/token/TokenTransfer.js'
 import { BigNumber } from 'ethers'
 
 const web3 = new Web3()

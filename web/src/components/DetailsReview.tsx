@@ -57,23 +57,6 @@ export interface DetailsReviewProps {
 	getStableCoinDetails?: () => Promise<void>;
 }
 
-interface SubmitValues {
-	name: string;
-	symbol: string;
-	'autorenew period': number;
-	'expiration time': string;
-	'kyc key'?: { value: number; label: string };
-	'kyc keyOther'?: string;
-	'freeze key'?: { value: number; label: string };
-	'freeze keyOther'?: string;
-	'wipe key'?: { value: number; label: string };
-	'wipe keyOther'?: string;
-	'pause key'?: { value: number; label: string };
-	'pause keyOther'?: string;
-	'fee schedule key'?: { value: number; label: string };
-	'fee schedule keyOther'?: string;
-}
-
 const allowedKeys = ['KYC key', 'Freeze key', 'Wipe key', 'Pause key', 'Fee schedule key'];
 
 let fieldsCanEdit = [

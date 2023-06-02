@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
     ContractId,
     PublicKey,
@@ -17,7 +18,6 @@ import {
 
 import {
     BURN_ROLE,
-    CASHIN_ROLE,
     DELETE_ROLE,
     FREEZE_ROLE,
     KYC_ROLE,

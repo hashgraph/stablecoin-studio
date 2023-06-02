@@ -7,7 +7,8 @@ import {
 	UpgradeImplementationRequest,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 
-import { ReactNode, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import type { ReactNode } from 'react';
 import type { FieldValues } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
