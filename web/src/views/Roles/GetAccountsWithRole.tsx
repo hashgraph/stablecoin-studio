@@ -32,11 +32,7 @@ const GetAccountsWithRole = () => {
 	const network = useSelector(SELECTED_NETWORK);
 	const hashScanURL = `https://hashscan.io/${network}`;
 
-	const {
-		fields: accounts,
-		append,
-		remove,
-	} = useFieldArray({
+	useFieldArray({
 		control,
 		name: 'rol',
 	});
