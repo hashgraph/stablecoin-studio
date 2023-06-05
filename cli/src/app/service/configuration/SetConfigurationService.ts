@@ -1223,6 +1223,46 @@ export default class SetConfigurationService extends Service {
   }
 
   /**
+   * Function to change the configured factory
+   */
+  public async changeFactory(): Promise<IFactoryConfig[]> {
+    const configuration = configurationService.getConfiguration();
+    const currentAccount = utilsService.getCurrentAccount();
+    const currentMirror = utilsService.getCurrentMirror();
+    const currentRPC = utilsService.getCurrentRPC();
+
+    const factories: IFactoryConfig[] = configuration?.factories || [];
+
+    const networks = configurationService
+      .getConfiguration()
+      .networks.map((network) => network.name);
+    const network = await utilsService.defaultMultipleAsk(
+      language.getText('wizard.networkManage'),
+      networks,
+      false,
+      {
+        network: currentAccount.network,
+        mirrorNode: currentMirror.name,
+        rpc: currentRPC.name,
+        account: `${currentAccount.accountId} - ${currentAccount.alias}`,
+      },
+    );
+
+    const factoryId = await utilsService.defaultSingleAsk(
+      language.getText('configuration.askFactoryId'),
+      this.ZERO_ADDRESS,
+    );
+
+    factories[factories.map((val) => val.network).indexOf(network)].id =
+      factoryId;
+
+    // Set factories
+    configuration.factories = factories;
+    configurationService.setConfiguration(configuration);
+    return factories;
+  }
+
+  /**
    * Function to configure the private key, fail if length doesn't 96 or 64 or 66
    */
   public async askForPrivateKeyOfAccount(

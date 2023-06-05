@@ -158,36 +158,42 @@ export default class WizardService extends Service {
     ) {
       case language.getText('wizard.changeOptions.Show'):
         await utilsService.cleanAndShowBanner();
-
         await configurationService.showFullConfiguration();
         break;
+
       case language.getText('wizard.changeOptions.EditPath'):
         await utilsService.cleanAndShowBanner();
-
         await this.setConfigurationService.configurePath();
         utilsService.showMessage(language.getText('wizard.pathChanged'));
         break;
+
       case language.getText('wizard.changeOptions.EditNetwork'):
         await utilsService.cleanAndShowBanner();
-
         await this.setConfigurationService.configureDefaultNetwork();
         utilsService.showMessage(language.getText('wizard.networkChanged'));
         break;
+
       case language.getText('wizard.changeOptions.Manage'):
         await utilsService.cleanAndShowBanner();
-
         await this.setConfigurationService.manageAccountMenu();
         break;
+
       case language.getText('wizard.changeOptions.ManageMirrorNode'):
         await utilsService.cleanAndShowBanner();
-
         await this.setConfigurationService.configureMirrorNodeNetwork();
         break;
+
       case language.getText('wizard.changeOptions.ManageRPC'):
         await utilsService.cleanAndShowBanner();
-
         await this.setConfigurationService.configureRPCNetwork();
         break;
+
+      case language.getText('wizard.changeOptions.ChangeFactory'):
+        await utilsService.cleanAndShowBanner();
+        await this.setConfigurationService.changeFactory();
+        utilsService.showMessage(language.getText('wizard.factoryChanged'));
+        break;
+
       default:
         await utilsService.cleanAndShowBanner();
         await this.mainMenu();

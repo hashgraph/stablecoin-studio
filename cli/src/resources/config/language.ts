@@ -128,6 +128,7 @@ export const english = {
     selectMirrorNode: 'Select the mirror node: ',
     selectRPC: 'Select the JSON-RPC-Relay: ',
     RPCNotToChange: '\nThere is no nJSON-RPC-Relay to change',
+    askFactoryId: 'Enter your new factory id',
   },
   stablecoin: {
     noFactories:
@@ -292,6 +293,7 @@ export const english = {
     networkChanged: '\nNetwork changed successfully',
     networkSelected: '\nNetwork selected successfully',
     accountsChanged: '\nAccounts changed successfully',
+    factoryChanged: '\nFactory changed successfully',
     freezeAccount: 'Which account do you want to freeze?',
     unfreezeAccount: 'Which account do you want to unfreeze?',
     checkAccountFrozen:
@@ -337,6 +339,7 @@ export const english = {
       Manage: 'Manage accounts',
       ManageMirrorNode: 'Manage mirror node',
       ManageRPC: 'Manage JSON-RPC-Relay',
+      ChangeFactory: 'Change factory',
       ...returnToMainMenu,
     },
     manageAccountOptions: {
