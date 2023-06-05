@@ -224,4 +224,23 @@ describe('🧪 Network test', () => {
 		const networkNOK = await Network.isNetworkRecognized();
 		expect(networkNOK).toEqual(false);
 	}, 60_000);
+
+	it('disconnect Network', async () => {
+		jest.spyOn(Network, 'connect');
+		const params = {
+			network: testnet,
+			wallet: SupportedWallets.CLIENT,
+			account: {
+				accountId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				privateKey: CLIENT_ACCOUNT_ED25519.privateKey,
+			},
+			mirrorNode: mirrorNode,
+			rpcNode: rpcNode,
+		};
+		await Network.connect(new ConnectRequest(params));
+
+		const networkDisconnect = await Network.disconnect();
+
+		expect(networkDisconnect).toEqual(true);
+	}, 60_000);
 });

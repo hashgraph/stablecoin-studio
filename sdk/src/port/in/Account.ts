@@ -97,13 +97,6 @@ class AccountInPort implements IAccountInPort {
 			)
 		).account;
 	}
-
-	isPublicKeyNull(val?: { key: string; type?: string }): boolean {
-		if (!val || !val.type) return false;
-		return (
-			val.key === PublicKey.NULL.key && val.type === PublicKey.NULL.type
-		);
-	}
 }
 
 const Account = new AccountInPort();

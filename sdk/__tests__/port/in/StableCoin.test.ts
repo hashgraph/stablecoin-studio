@@ -52,6 +52,8 @@ import {
 	AssociateTokenRequest,
 	UpdateReserveAddressRequest,
 	UpdateRequest,
+	GetAccountBalanceHBARRequest,
+	TransfersRequest,
 } from '../../../src/port/in/request/index.js';
 import ConnectRequest, {
 	SupportedWallets,
@@ -59,6 +61,7 @@ import ConnectRequest, {
 import GetStableCoinDetailsRequest from '../../../src/port/in/request/GetStableCoinDetailsRequest.js';
 import {
 	CLIENT_ACCOUNT_ED25519,
+	CLIENT_ACCOUNT_ECDSA,
 	FACTORY_ADDRESS,
 	HEDERA_TOKEN_MANAGER_ADDRESS,
 } from '../../config.js';
@@ -77,17 +80,17 @@ describe('🧪 Stablecoin test', () => {
 		await new Promise((r) => setTimeout(r, seconds));
 	};
 
+	const mirrorNode: MirrorNode = {
+		name: 'testmirrorNode',
+		baseUrl: 'https://testnet.mirrornode.hedera.com/api/v1/',
+	};
+
+	const rpcNode: JsonRpcRelay = {
+		name: 'testrpcNode',
+		baseUrl: 'http://127.0.0.1:7546/api',
+	};
+
 	beforeAll(async () => {
-		const mirrorNode: MirrorNode = {
-			name: 'testmirrorNode',
-			baseUrl: 'https://testnet.mirrornode.hedera.com/api/v1/',
-		};
-
-		const rpcNode: JsonRpcRelay = {
-			name: 'testrpcNode',
-			baseUrl: 'http://127.0.0.1:7546/api',
-		};
-
 		await Network.connect(
 			new ConnectRequest({
 				account: {
@@ -217,6 +220,7 @@ describe('🧪 Stablecoin test', () => {
 		eventService.on(WalletEvents.walletInit, (data) => {
 			console.log(`Wallet: ${data.wallet} initialized`);
 		});
+
 		const result = await StableCoin.getBalanceOf(
 			new GetAccountBalanceRequest({
 				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
@@ -227,91 +231,160 @@ describe('🧪 Stablecoin test', () => {
 		expect(result.value.toString()).toEqual('0');
 	}, 60_000);
 
+	it('Performs transfer', async () => {
+		const cashInAmount = 1;
+
+		const result_before = await StableCoin.getBalanceOf(
+			new GetAccountBalanceRequest({
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
+				targetId: CLIENT_ACCOUNT_ECDSA.id.toString(),
+			}),
+		);
+
+		await StableCoin.cashIn(
+			new CashInRequest({
+				amount: cashInAmount.toString(),
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+			}),
+		);
+
+		// Switching account to associate before transfering
+		await Network.connect(
+			new ConnectRequest({
+				account: {
+					accountId: CLIENT_ACCOUNT_ECDSA.id.toString(),
+					privateKey: CLIENT_ACCOUNT_ECDSA.privateKey,
+				},
+				network: 'testnet',
+				wallet: SupportedWallets.CLIENT,
+				mirrorNode: mirrorNode,
+				rpcNode: rpcNode,
+			}),
+		);
+
+		await StableCoin.associate(
+			new AssociateTokenRequest({
+				targetId: CLIENT_ACCOUNT_ECDSA.id.toString(),
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
+			}),
+		);
+
+		await delay();
+
+		// Switching back account to grant kyc and transfer
+		await Network.connect(
+			new ConnectRequest({
+				account: {
+					accountId: CLIENT_ACCOUNT_ED25519.id.toString(),
+					privateKey: CLIENT_ACCOUNT_ED25519.privateKey,
+				},
+				network: 'testnet',
+				wallet: SupportedWallets.CLIENT,
+				mirrorNode: mirrorNode,
+				rpcNode: rpcNode,
+			}),
+		);
+
+		await StableCoin.grantKyc(
+			new KYCRequest({
+				targetId: CLIENT_ACCOUNT_ECDSA.id.toString(),
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
+			}),
+		);
+
+		await delay();
+
+		await StableCoin.transfers(
+			new TransfersRequest({
+				targetsId: [CLIENT_ACCOUNT_ECDSA.id.toString()],
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				amounts: ['1'],
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
+			}),
+		);
+
+		await delay();
+
+		const result_after = await StableCoin.getBalanceOf(
+			new GetAccountBalanceRequest({
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
+				targetId: CLIENT_ACCOUNT_ECDSA.id.toString(),
+			}),
+		);
+
+		expect(result_before.value.toString()).toEqual('0');
+		expect(result_after.value.toString()).toEqual(cashInAmount.toString());
+	}, 90_000);
+
 	it('Performs capabilities SC', async () => {
 		const result = await capabilitiesOperation(stableCoinSC);
-		expect(result).toBeDefined();
 	}, 60_000);
 
 	it('Performs a cash in SC', async () => {
 		const result = await cashInOperation(stableCoinSC);
-		expect(result).toBeDefined();
 	}, 60_000);
 
 	it('Performs burn SC', async () => {
 		const result = await burnOperation(stableCoinSC);
-		expect(result).toBeDefined();
 	}, 60_000);
 
 	it('Performs rescue SC', async () => {
 		const result = await rescueOperation(stableCoinSC);
-		expect(result).toBeDefined();
 	}, 60_000);
 
 	it('Performs rescue HBAR SC', async () => {
 		const result = await rescueHBAROperation(stableCoinSC);
-		expect(result).toBeDefined();
 	}, 60_000);
 
 	it('Performs wipe SC', async () => {
 		const result = await wipeOperation(stableCoinSC);
-		expect(result).toBeDefined();
 	}, 60_000);
 
 	it('Performs freeze and unfreeze SC', async () => {
 		const result = await freezeUnfreezeOperation(stableCoinSC);
-		expect(result).toBeDefined();
 	}, 60_000);
 
 	it('Performs grant and revoke kyc SC', async () => {
 		const result = await grantRevokeKYCOperation(stableCoinSC);
-		expect(result).toBeDefined();
 	}, 60_000);
 
 	it('Performs pause and unpause SC', async () => {
 		const result = await pauseUnpauseOperation(stableCoinSC);
-		expect(result).toBeDefined();
 	}, 90_000);
 
 	it('Performs update token SC', async () => {
 		const result = await updateToken(stableCoinSC);
-		expect(result).toBeDefined();
 	}, 60_000);
 
 	// ----------------------HTS--------------------------
 
 	it('Performs rescue HTS', async () => {
 		const result = await rescueOperation(stableCoinHTS);
-		expect(result).toBeDefined();
 	}, 60_000);
 
 	it('Performs rescue HBAR HTS', async () => {
 		const result = await rescueHBAROperation(stableCoinHTS);
-		expect(result).toBeDefined();
 	}, 60_000);
 
 	it('Performs wipe HTS', async () => {
 		const result = await wipeOperation(stableCoinHTS);
-		expect(result).toBeDefined();
 	}, 60_000);
 
 	it('Performs capabilities HTS', async () => {
 		const result = await capabilitiesOperation(stableCoinHTS);
-		expect(result).toBeDefined();
 	}, 60_000);
 
 	it('Performs freeze and unfreeze HTS', async () => {
 		const result = await freezeUnfreezeOperation(stableCoinHTS);
-		expect(result).toBeDefined();
 	}, 60_000);
 
 	it('Performs grant and revoke kyc HTS', async () => {
 		const result = await grantRevokeKYCOperation(stableCoinHTS);
-		expect(result).toBeDefined();
 	}, 60_000);
 
 	it('Performs pause and unpause HTS', async () => {
 		const result = await pauseUnpauseOperation(stableCoinHTS);
-		expect(result).toBeDefined();
 	}, 90_000);
 
 	it('Performs reserve', async () => {
@@ -356,7 +429,6 @@ describe('🧪 Stablecoin test', () => {
 
 	it('Performs update token HTS', async () => {
 		const result = await updateToken(stableCoinHTS);
-		expect(result).toBeDefined();
 	}, 60_000);
 
 	afterAll(async () => {
@@ -536,8 +608,14 @@ describe('🧪 Stablecoin test', () => {
 		const mirrorNodeAdapter: MirrorNodeAdapter =
 			Injectable.resolve(MirrorNodeAdapter);
 
-		const initialAmount = await mirrorNodeAdapter.getHBARBalance(
+		/* const initialAmount = await mirrorNodeAdapter.getHBARBalance(
 			stableCoin?.treasury?.toString() ?? '0.0.0',
+		); */
+
+		const initialAmount = await StableCoin.getBalanceOfHBAR(
+			new GetAccountBalanceHBARRequest({
+				treasuryAccountId: stableCoin?.treasury?.toString() ?? '0.0.0',
+			}),
 		);
 
 		await StableCoin.rescueHBAR(
@@ -549,15 +627,23 @@ describe('🧪 Stablecoin test', () => {
 
 		await delay();
 
-		const finalAmount = await mirrorNodeAdapter.getHBARBalance(
+		/* const finalAmount = await mirrorNodeAdapter.getHBARBalance(
 			stableCoin?.treasury?.toString() ?? '0.0.0',
+		); */
+
+		const finalAmount = await StableCoin.getBalanceOfHBAR(
+			new GetAccountBalanceHBARRequest({
+				treasuryAccountId: stableCoin?.treasury?.toString() ?? '0.0.0',
+			}),
 		);
 
-		const final = initialAmount
+		const final = initialAmount.value
 			.toBigNumber()
 			.sub(rescueAmount.toBigNumber());
 
-		expect(finalAmount.toBigNumber().toString()).toEqual(final.toString());
+		expect(finalAmount.value.toBigNumber().toString()).toEqual(
+			final.toString(),
+		);
 	}
 
 	async function wipeOperation(
