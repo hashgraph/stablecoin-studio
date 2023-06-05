@@ -316,7 +316,6 @@ export const english = {
       KYCMgmt: 'KYC Management',
       FeesMgmt: 'Fees management',
       RoleMgmt: 'Role management',
-      RoleRefresh: 'Refresh roles',
       Configuration: 'Configuration',
       DangerZone: colors.red('Danger zone'),
       ...returnToMainMenu,

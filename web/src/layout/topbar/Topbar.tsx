@@ -12,7 +12,7 @@ import {
 import { Network } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import LOGO_HEDERA from '../../assets/svg/hedera-hbar-logo.svg';
 import { NamedRoutes } from '../../Router/NamedRoutes';

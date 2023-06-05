@@ -22,7 +22,7 @@ const TopbarRight = () => {
 		window.location.reload();
 		const items = { ...localStorage };
 		delete items.tokensAccount;
-		for (var item in items) {
+		for (const item in items) {
 			localStorage.removeItem(item);
 		}
 	};

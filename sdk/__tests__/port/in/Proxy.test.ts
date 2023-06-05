@@ -121,7 +121,7 @@ describe('🧪 Proxy test', () => {
 		let proxyConfig: ProxyConfigurationViewModel =
 			await Proxy.getProxyConfig(
 				new GetProxyConfigRequest({
-					tokenId: stableCoinSC?.tokenId!.toString(),
+					tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
 				}),
 			);
 
@@ -135,14 +135,14 @@ describe('🧪 Proxy test', () => {
 
 		await Proxy.upgradeImplementation(
 			new UpgradeImplementationRequest({
-				tokenId: stableCoinSC?.tokenId!.toString(),
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
 				implementationAddress: contracts[0].toString(),
 			}),
 		);
 
 		proxyConfig = await Proxy.getProxyConfig(
 			new GetProxyConfigRequest({
-				tokenId: stableCoinSC?.tokenId!.toString(),
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
 			}),
 		);
 
@@ -152,7 +152,7 @@ describe('🧪 Proxy test', () => {
 
 		await Proxy.upgradeImplementation(
 			new UpgradeImplementationRequest({
-				tokenId: stableCoinSC?.tokenId!.toString(),
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
 				implementationAddress: HEDERA_TOKEN_MANAGER_ADDRESS,
 			}),
 		);
@@ -162,7 +162,7 @@ describe('🧪 Proxy test', () => {
 		let proxyConfig: ProxyConfigurationViewModel =
 			await Proxy.getProxyConfig(
 				new GetProxyConfigRequest({
-					tokenId: stableCoinSC?.tokenId!.toString(),
+					tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
 				}),
 			);
 
@@ -172,14 +172,14 @@ describe('🧪 Proxy test', () => {
 
 		await Proxy.changeProxyOwner(
 			new ChangeProxyOwnerRequest({
-				tokenId: stableCoinSC?.tokenId!.toString(),
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
 				targetId: CLIENT_ACCOUNT_ECDSA.id.toString(),
 			}),
 		);
 
 		proxyConfig = await Proxy.getProxyConfig(
 			new GetProxyConfigRequest({
-				tokenId: stableCoinSC?.tokenId!.toString(),
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
 			}),
 		);
 
@@ -202,7 +202,7 @@ describe('🧪 Proxy test', () => {
 
 		await Proxy.changeProxyOwner(
 			new ChangeProxyOwnerRequest({
-				tokenId: stableCoinSC?.tokenId!.toString(),
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
 			}),
 		);

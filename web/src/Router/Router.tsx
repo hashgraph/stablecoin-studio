@@ -33,14 +33,8 @@ import {
 } from '../store/slices/walletSlice';
 import ImportedTokenCreation from '../views/ImportedToken/ImportedTokenCreation';
 import DangerZoneOperations from '../views/Operations/DangerZone';
-import {
-	Account,
-	EventParameter,
-	WalletEvent,
-	LoggerTransports,
-	SDK,
-	ConnectionState,
-} from '@hashgraph-dev/stablecoin-npm-sdk';
+import { Account, LoggerTransports, SDK, ConnectionState } from '@hashgraph-dev/stablecoin-npm-sdk';
+import type { EventParameter, WalletEvent } from '@hashgraph-dev/stablecoin-npm-sdk';
 import StableCoinProof from '../views/StableCoinProof';
 import FeesManagement from '../views/FeesManagement';
 import GrantKycOperation from '../views/Operations/GrantKyc';
@@ -72,7 +66,7 @@ const Router = () => {
 		instanceSDK();
 		const items = { ...localStorage };
 		delete items.tokensAccount;
-		for (var item in items) {
+		for (const item in items) {
 			localStorage.removeItem(item);
 		}
 	}, []);

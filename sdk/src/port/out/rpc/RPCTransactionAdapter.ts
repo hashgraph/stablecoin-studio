@@ -345,15 +345,15 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		return this.networkService.environment;
 	}
 
-	public setMirrorNodes(mirrorNodes?: MirrorNodes) {
+	public setMirrorNodes(mirrorNodes?: MirrorNodes): void {
 		if (mirrorNodes) this.mirrorNodes = mirrorNodes;
 	}
 
-	public setJsonRpcRelays(jsonRpcRelays?: JsonRpcRelays) {
+	public setJsonRpcRelays(jsonRpcRelays?: JsonRpcRelays): void {
 		if (jsonRpcRelays) this.jsonRpcRelays = jsonRpcRelays;
 	}
 
-	public setFactories(factories?: Factories) {
+	public setFactories(factories?: Factories): void {
 		if (factories) this.factories = factories;
 	}
 

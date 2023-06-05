@@ -504,7 +504,7 @@ export default class CreateStableCoinService extends Service {
   private async initialRoleAssignments(
     tokenToCreate: any,
     currentAccountId: string,
-  ) {
+  ): Promise<void> {
     await this.askForAccount(
       language.getText('stablecoin.initialRoles.burn'),
       currentAccountId,

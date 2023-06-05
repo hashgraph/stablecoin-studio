@@ -128,7 +128,7 @@ describe('Reserve Tests', function () {
         const newReserve = beforeReserve.add(
             BigNumber.from('100').mul(TokenFactor)
         )
-        const [newDataFeed, ...others] = await deployHederaReserve(
+        const [newDataFeed] = await deployHederaReserve(
             newReserve,
             operatorAccount,
             operatorIsE25519,
