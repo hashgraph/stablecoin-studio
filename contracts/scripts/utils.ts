@@ -61,6 +61,7 @@ export async function contractCall(
         )
     }
 
+
     return results
 }
 

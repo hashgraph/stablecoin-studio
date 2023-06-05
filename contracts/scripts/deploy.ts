@@ -14,6 +14,8 @@ import {
     StableCoinFactory__factory,
     HederaTokenManager__factory,
     HederaReserve__factory,
+    ITransparentUpgradeableProxy__factory,
+    ERC1967Proxy__factory,
 } from '../typechain-types'
 
 import {
@@ -194,6 +196,46 @@ export async function deployHederaTokenManager(
     )
 
     return hederaTokenManager
+}
+
+export async function updateProxy(
+    clientOperator: Client,
+    proxy: string,
+    transparentproxy: string,
+    newImplementation:string,
+) {
+    // Deploying Factory logic
+    console.log(`Upgrading proxy logic. please wait...`)
+    console.log("Admin proxy :" + proxy)
+    console.log("Transparent proxy :" +transparentproxy)
+    console.log("New Implementation :" +newImplementation)
+    console.log(ContractId.fromString(newImplementation).toSolidityAddress())
+    await contractCall(
+        ContractId.fromString(proxy),
+        'upgrade',
+        [ContractId.fromString(transparentproxy).toSolidityAddress(),ContractId.fromString(newImplementation).toSolidityAddress()],
+        clientOperator,
+        150000,
+        ProxyAdmin__factory.abi
+    )
+}
+export async function getProxyImpl(
+    clientOperator: Client,
+    proxyadmin: string,
+    transparent:string
+) {
+    // Deploying Factory logic
+    console.log(`Getting implementation from proxy please wait...`)
+    console.log("ProxyAdmin :" +  proxyadmin)
+    const address = await contractCall(
+        ContractId.fromString(proxyadmin),
+        'getProxyImplementation',
+        [ContractId.fromString(transparent).toSolidityAddress()],
+        clientOperator,
+        150000,
+        ProxyAdmin__factory.abi
+    )
+    console.log("New Implementation" + address[0])
 }
 
 export async function deployFactory(
@@ -654,7 +696,7 @@ export async function deployHederaReserve(
         .addAddress(hederaReserve.toSolidityAddress())
         .addAddress(hederaReserveProxyAdmin.toSolidityAddress())
         .addBytes(new Uint8Array([]))
-
+ 
     const hederaReserveProxy = await deployContractSDK(
         TransparentUpgradeableProxy__factory,
         privateKeyOperatorEd25519,
@@ -675,3 +717,4 @@ export async function deployHederaReserve(
 
     return [hederaReserveProxy, hederaReserveProxyAdmin, hederaReserve]
 }
+

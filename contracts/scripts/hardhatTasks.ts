@@ -5,6 +5,8 @@ import {
     deployFactory,
     deployHederaTokenManager,
     toHashgraphKey,
+    updateProxy,
+    getProxyImpl
 } from './deploy'
 import { evmToHederaFormat, getClient, toEvmAddress } from './utils'
 import {
@@ -223,3 +225,41 @@ task('deployTokenManager', 'Deploy new TokenManager').setAction(
         console.log('\nHederaTokenManager Address: \t', tokenManager.toString())
     }
 )
+task('updateFactoryVersion', 'Update factory version')
+    .addParam('proxyadmin', 'The proxy admin address')
+    .addParam('transparentproxy', 'The transparent proxy address')
+    .addParam('implementation', 'The new implementation')
+    .setAction(
+        async (
+            {
+                proxyadmin,
+                transparentproxy,
+                implementation,
+                
+            }: { proxyadmin: string;transparentproxy:string , implementation: string },
+            hre
+        ) => {
+            const accounts = hre.network.config
+                .accounts as unknown as Array<AccountHedera>
+            const client = getClient(hre.network.name)
+            const client1account: string = accounts[0].account
+            const client1privatekey: string = accounts[0].privateKey
+            const client1isED25519: boolean =
+                accounts[0].isED25519Type === 'true'
+
+            client.setOperator(
+                client1account,
+                toHashgraphKey(client1privatekey, client1isED25519)
+            )
+            console.log(hre.network.name)
+
+            await updateProxy(client,  proxyadmin, transparentproxy, implementation)
+
+            await getProxyImpl(client, proxyadmin, transparentproxy)
+            
+        }
+    )
+
+//deployFactoryProxy
+//deployFactoryProxy
+//upgradeFactoryVersion
