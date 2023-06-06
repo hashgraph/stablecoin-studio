@@ -1,9 +1,10 @@
 import StableCoinDetails from '../';
 import { render } from '../../../test/index';
 import translations from '../../../translations/en/stableCoinDetails.json';
+import { waitFor } from '@testing-library/react';
 
 describe(`<${StableCoinDetails.name} />`, () => {
-	beforeEach(() => {});
+	beforeEach(() => { });
 
 	test('should render correctly', () => {
 		const component = render(<StableCoinDetails />);
@@ -20,8 +21,10 @@ describe(`<${StableCoinDetails.name} />`, () => {
 
 	test('should has subtitle', async () => {
 		const component = render(<StableCoinDetails />);
-		const subtitle = component.getByTestId('details-review-title');
 
-		expect(subtitle).toHaveTextContent(translations.subtitle);
+		await waitFor(() => {
+			const subtitle = component.getByTestId('details-review-title');
+			expect(subtitle).toHaveTextContent(translations.subtitle);
+		});
 	});
 });

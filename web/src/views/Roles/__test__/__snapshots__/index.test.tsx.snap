@@ -31,8 +31,9 @@ exports[`<Roles /> should render correctly 1`] = `
             class="css-180e663"
           >
             <button
-              class="css-3aphhy"
+              class="css-1wr8k95"
               data-testid="direct-access-giveRole"
+              disabled=""
             >
               <div
                 class="css-1i763ui"
@@ -87,9 +88,9 @@ exports[`<Roles /> should render correctly 1`] = `
               </div>
               <p
                 class="chakra-text css-o5z2l9"
-                data-testid="direct-access-Give role"
+                data-testid="direct-access-Give roles"
               >
-                Give role
+                Give roles
               </p>
             </button>
           </div>
@@ -97,8 +98,9 @@ exports[`<Roles /> should render correctly 1`] = `
             class="css-180e663"
           >
             <button
-              class="css-3aphhy"
+              class="css-1wr8k95"
               data-testid="direct-access-revokeRole"
+              disabled=""
             >
               <div
                 class="css-1i763ui"
@@ -142,9 +144,9 @@ exports[`<Roles /> should render correctly 1`] = `
               </div>
               <p
                 class="chakra-text css-o5z2l9"
-                data-testid="direct-access-Revoke role"
+                data-testid="direct-access-Revoke roles"
               >
-                Revoke role
+                Revoke roles
               </p>
             </button>
           </div>
@@ -152,9 +154,8 @@ exports[`<Roles /> should render correctly 1`] = `
             class="css-180e663"
           >
             <button
-              class="css-1wr8k95"
+              class="css-3aphhy"
               data-testid="direct-access-editRole"
-              disabled=""
             >
               <div
                 class="css-1i763ui"
@@ -207,16 +208,15 @@ exports[`<Roles /> should render correctly 1`] = `
             class="css-180e663"
           >
             <button
-              class="css-1wr8k95"
-              data-testid="direct-access-refreshRoles"
-              disabled=""
+              class="css-3aphhy"
+              data-testid="direct-access-getAccountsWithRoles"
             >
               <div
                 class="css-1i763ui"
               >
                 <svg
                   class="chakra-icon css-1f9qa95"
-                  data-testid="direct-access-ArrowsClockwise"
+                  data-testid="direct-access-ArchiveBox"
                   fill="currentColor"
                   focusable="false"
                   height="1em"
@@ -229,16 +229,8 @@ exports[`<Roles /> should render correctly 1`] = `
                     height="256"
                     width="256"
                   />
-                  <polyline
-                    fill="none"
-                    points="176.2 99.7 224.2 99.7 224.2 51.7"
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="16"
-                  />
                   <path
-                    d="M65.8,65.8a87.9,87.9,0,0,1,124.4,0l34,33.9"
+                    d="M208,216H48a8,8,0,0,1-8-8V72L56,40H200l16,32V208A8,8,0,0,1,208,216Z"
                     fill="none"
                     stroke="currentColor"
                     stroke-linecap="round"
@@ -247,27 +239,41 @@ exports[`<Roles /> should render correctly 1`] = `
                   />
                   <polyline
                     fill="none"
-                    points="79.8 156.3 31.8 156.3 31.8 204.3"
+                    points="94.1 150.1 128 184 161.9 150.1"
                     stroke="currentColor"
                     stroke-linecap="round"
                     stroke-linejoin="round"
                     stroke-width="16"
                   />
-                  <path
-                    d="M190.2,190.2a87.9,87.9,0,0,1-124.4,0l-34-33.9"
+                  <line
                     fill="none"
                     stroke="currentColor"
                     stroke-linecap="round"
                     stroke-linejoin="round"
                     stroke-width="16"
+                    x1="128"
+                    x2="128"
+                    y1="104"
+                    y2="184"
+                  />
+                  <line
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                    x1="40"
+                    x2="216"
+                    y1="72"
+                    y2="72"
                   />
                 </svg>
               </div>
               <p
                 class="chakra-text css-o5z2l9"
-                data-testid="direct-access-Refresh roles"
+                data-testid="direct-access-Check accounts that has a role"
               >
-                Refresh roles
+                Check accounts that has a role
               </p>
             </button>
           </div>

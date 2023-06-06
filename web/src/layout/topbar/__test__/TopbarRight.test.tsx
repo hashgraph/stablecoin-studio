@@ -12,6 +12,7 @@ const store = mockStore({
 			pairingString: '',
 			encryptionKey: '',
 		},
+		network: networkName
 	},
 });
 describe(`<${TopbarRight.name} />`, () => {

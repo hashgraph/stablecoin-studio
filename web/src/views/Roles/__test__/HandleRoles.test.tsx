@@ -11,6 +11,7 @@ import { mockedStableCoinCapabilities } from '../../../mocks/sdk.js';
 jest.mock('../../../Router/RouterManager', () => ({
 	RouterManager: {
 		to: jest.fn(),
+		goBack: jest.fn(),
 	},
 }));
 
@@ -38,8 +39,10 @@ describe(`<${HandleRoles.name} />`, () => {
 	test('should enable confirm button after fill form correctly', async () => {
 		const store = mockStore({
 			wallet: {
+				selectedStableCoin: { tokenId: validAccount },
 				capabilities: mockedStableCoinCapabilities,
 				data: {
+					account: { id: validAccount },
 					savedPairings: [
 						{
 							accountIds: ['0.0.123456'],
@@ -51,16 +54,11 @@ describe(`<${HandleRoles.name} />`, () => {
 
 		const component = render(<HandleRoles action='giveRole' />, store);
 
-		const account = component.getByTestId(fields.account);
+		const account = component.getByTestId('rol.0.accountId');
 		await userEvent.type(account, validAccount);
-
-		const roles = component.getByTestId('select-placeholder');
-		await userEvent.click(roles);
 
 		const option = component.getByText(roleOptions[0].label);
 		await userEvent.click(option);
-
-		expect(roles).not.toBeInTheDocument();
 
 		const confirmButton = component.getByTestId('confirm-btn');
 
@@ -77,6 +75,6 @@ describe(`<${HandleRoles.name} />`, () => {
 
 		const cancelButton = component.getByTestId('cancel-btn');
 		await userEvent.click(cancelButton);
-		expect(RouterManager.to).toHaveBeenCalledWith(anything, 'roles');
+		expect(RouterManager.goBack).toHaveBeenCalledWith(anything);
 	});
 });

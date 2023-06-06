@@ -457,7 +457,7 @@ const DetailsReview = ({
 												</Link>
 											)}
 										</HStack>
-									) : 'toString' in detail.value && 'value' in detail.value ? (
+									) : detail.value && 'toString' in detail.value && 'value' in detail.value ? (
 										detail.value.toString()
 									) : (
 										detail.value

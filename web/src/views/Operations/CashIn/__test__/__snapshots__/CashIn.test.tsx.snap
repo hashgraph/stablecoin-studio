@@ -69,6 +69,7 @@ exports[`<CashInOperation /> should render correctly 1`] = `
                   </label>
                   <div
                     class="chakra-input__group css-bx0blc"
+                    data-group="true"
                   >
                     <input
                       autocomplete="off"
@@ -112,6 +113,7 @@ exports[`<CashInOperation /> should render correctly 1`] = `
                   </label>
                   <div
                     class="chakra-input__group css-bx0blc"
+                    data-group="true"
                   >
                     <input
                       autocomplete="off"
@@ -142,12 +144,16 @@ exports[`<CashInOperation /> should render correctly 1`] = `
               <div
                 class="css-13brihr"
               >
-                <p
-                  class="chakra-text css-1osh15g"
-                  data-testid="details-review-title"
+                <div
+                  class="css-1i64jsd"
                 >
-                  Basic details
-                </p>
+                  <p
+                    class="chakra-text css-ol2bzi"
+                    data-testid="details-review-title"
+                  >
+                    Basic details
+                  </p>
+                </div>
                 <div
                   class="css-0"
                 >
@@ -235,12 +241,16 @@ exports[`<CashInOperation /> should render correctly 1`] = `
               <div
                 class="css-13brihr"
               >
-                <p
-                  class="chakra-text css-1osh15g"
-                  data-testid="details-review-title"
+                <div
+                  class="css-1i64jsd"
                 >
-                  Optional details
-                </p>
+                  <p
+                    class="chakra-text css-ol2bzi"
+                    data-testid="details-review-title"
+                  >
+                    Optional details
+                  </p>
+                </div>
                 <div
                   class="css-0"
                 >

@@ -14,40 +14,91 @@ exports[`<CoinDropdown /> should render correctly 1`] = `
         data-testid="form_control"
         role="group"
       >
-        <span
-          data-testid="select-placeholder"
+        <div
+          class="css-frrdvf"
         >
-          0.0.49319786 - TEST 
-        </span>
-        <select
-          data-testid="select-coin-dropdown"
-        >
-          <option
-            value="0.0.123"
+          <span
+            class="css-1f43avz-a11yText-A11yText"
+            id="react-select-2-live-region"
+          />
+          <span
+            aria-atomic="false"
+            aria-live="polite"
+            aria-relevant="additions text"
+            class="css-1f43avz-a11yText-A11yText"
+          />
+          <div
+            class=" css-lub9qs"
           >
-            0.0.123 - HBAR
-          </option>
-          <option
-            value="0.0.13234"
-          >
-            0.0.13234 - EXP
-          </option>
-          <option
-            value="0.0.48451290"
-          >
-            0.0.48451290 - MCC
-          </option>
-          <option
-            value="0.0.48471242"
-          >
-            0.0.48471242 - MCC2
-          </option>
-          <option
-            value="0.0.48478857"
-          >
-            0.0.48478857 - MCC3
-          </option>
-        </select>
+            <div
+              class="css-3y2vuh"
+            >
+              <span
+                class="chakra-text css-4pvr19"
+                data-testid="select-placeholder"
+              >
+                0.0.49319786 - TEST
+              </span>
+              <div
+                class=" css-svnjlw"
+                data-value=""
+              >
+                <input
+                  aria-autocomplete="list"
+                  aria-describedby="react-select-2-placeholder"
+                  aria-expanded="false"
+                  aria-haspopup="true"
+                  autocapitalize="none"
+                  autocomplete="off"
+                  autocorrect="off"
+                  class=" css-146k1ar-input"
+                  id="field-:r1:"
+                  role="combobox"
+                  spellcheck="false"
+                  tabindex="0"
+                  type="text"
+                  value=""
+                />
+              </div>
+            </div>
+            <div
+              class=" css-hfbj6y"
+            >
+              <div
+                class="css-1aabyhj"
+              >
+                <svg
+                  class="chakra-icon css-1r5bg7h"
+                  fill="currentColor"
+                  focusable="false"
+                  height="1em"
+                  viewBox="0 0 256 256"
+                  width="1em"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect
+                    fill="none"
+                    height="256"
+                    width="256"
+                  />
+                  <polyline
+                    fill="none"
+                    points="208 96 128 176 48 96"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <input
+            name="coin-dropdown"
+            type="hidden"
+            value=""
+          />
+        </div>
       </div>
     </div>
   </div>

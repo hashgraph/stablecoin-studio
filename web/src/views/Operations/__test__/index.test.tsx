@@ -1,9 +1,7 @@
 import { render } from '../../../test/index';
 import Operations from '../../../Router/index';
 import translations from '../../../translations/en/operations.json';
-// import configureMockStore from 'redux-mock-store';
-
-// const mockStore = configureMockStore();
+import { waitFor } from '@testing-library/react';
 
 describe(`<${Operations.name} />`, () => {
 	test('should render correctly', () => {
@@ -12,98 +10,57 @@ describe(`<${Operations.name} />`, () => {
 		expect(component.asFragment()).toMatchSnapshot();
 	});
 
-	test('should render titles', () => {
+	test('should render titles', async () => {
 		const component = render(<Operations />);
 
-		expect(component.getByTestId('base-container-heading')).toHaveTextContent(translations.title);
-		expect(component.getByTestId('subtitle')).toHaveTextContent(translations.subtitle);
+		await waitFor(() => {
+			expect(component.getByTestId('base-container-heading')).toHaveTextContent(translations.title);
+			expect(component.getByTestId('subtitle')).toHaveTextContent(translations.subtitle);
+		});
 	});
 
-	test('should render cashin button', () => {
+	test('should render cashin button', async () => {
 		const component = render(<Operations />);
 
-		expect(component.getByTestId('direct-access-cashIn')).toHaveTextContent(
-			translations.cashInOperation,
-		);
+		await waitFor(() => {
+			expect(component.getByTestId('direct-access-cashIn')).toHaveTextContent(
+				translations.cashInOperation);
+		});
 	});
 
-	test('should render wipe button', () => {
+	test('should render wipe button', async () => {
 		const component = render(<Operations />);
 
-		expect(component.getByTestId('direct-access-wipe')).toHaveTextContent(
-			translations.wipeOperation,
-		);
+		await waitFor(() => {
+			expect(component.getByTestId('direct-access-wipe')).toHaveTextContent(
+				translations.wipeOperation);
+		});
 	});
 
-	test('should render rescue button', () => {
+	test('should render rescue button', async () => {
 		const component = render(<Operations />);
 
-		expect(component.getByTestId('direct-access-rescueTokens')).toHaveTextContent(
-			translations.rescueOperation,
-		);
+		await waitFor(() => {
+			expect(component.getByTestId('direct-access-rescueTokens')).toHaveTextContent(
+				translations.rescueOperation);
+		});
 	});
 
-	test('should render rescue HBAR button', () => {
+	test('should render rescue HBAR button', async () => {
 		const component = render(<Operations />);
 
-		expect(component.getByTestId('direct-access-rescueHBAR')).toHaveTextContent(
-			translations.rescueHBAROperation,
-		);
+		await waitFor(() => {
+			expect(component.getByTestId('direct-access-rescueHBAR')).toHaveTextContent(
+				translations.rescueHBAROperation);
+		});
 	});
 
-	test('should render burn button', () => {
+	test('should render burn button', async () => {
 		const component = render(<Operations />);
 
-		expect(component.getByTestId('direct-access-burn')).toHaveTextContent(
-			translations.burnOperation,
-		);
+		await waitFor(() => {
+			expect(component.getByTestId('direct-access-burn')).toHaveTextContent(
+				translations.burnOperation);
+		});
 	});
-
-	// describe('should enable/disable operations depending on selected coin keys', () => {
-	// 	const selectedStableCoin = {
-	// 		initialSupply: 0,
-	// 		tokenId: '0.0.48162226',
-	// 		totalSupply: 0,
-	// 		name: 'MIDAS',
-	// 		symbol: 'MD',
-	// 		decimals: 3,
-	// 		id: '0.0.48132286',
-	// 		maxSupply: '100000',
-	// 		treasuryId: '0.0.48160285',
-	// 		memo: 'Hedera Accelerator Stable Coin',
-	// 		adminKey: {
-	// 			key: 'key',
-	// 			type: 'ED25519',
-	// 		},
-	// 		freezeKey: {
-	// 			key: 'key',
-	// 			type: 'ED25519',
-	// 		},
-	// 		wipeKey: {
-	// 			id: '0.0.48160285',
-	// 		},
-	// 		supplyKey: {
-	// 			id: '0.0.48160285',
-	// 		},
-	// 	};
-	// 	test('should enable cash in', async () => {
-	// 		const store = mockStore({
-	// 			wallet: {
-	// 				data: {
-	// 					selectedStableCoin,
-	// 					savedPairings: [
-	// 						{
-	// 							accountIds: ['0.0.48160285'],
-	// 						},
-	// 					],
-	// 				},
-	// 			},
-	// 		});
-
-	// 		const component = render(<Operations />, store);
-
-	// 		expect(component.getByTestId('direct-access-cashIn')).toBeEnabled();
-	// 	});
-	// 	test.todo('rest of the tests');
-	// });
 });
