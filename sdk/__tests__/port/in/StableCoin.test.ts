@@ -65,7 +65,6 @@ import {
 	FACTORY_ADDRESS,
 	HEDERA_TOKEN_MANAGER_ADDRESS,
 } from '../../config.js';
-import { MirrorNodeAdapter } from '../../../src/port/out/mirror/MirrorNodeAdapter.js';
 import { Client, Hbar, TransferTransaction } from '@hashgraph/sdk';
 import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
@@ -319,72 +318,89 @@ describe('🧪 Stablecoin test', () => {
 
 	it('Performs capabilities SC', async () => {
 		const result = await capabilitiesOperation(stableCoinSC);
+		expect(result).not.toBeNull();
 	}, 60_000);
 
 	it('Performs a cash in SC', async () => {
 		const result = await cashInOperation(stableCoinSC);
+		expect(result).not.toBeNull();
 	}, 60_000);
 
 	it('Performs burn SC', async () => {
 		const result = await burnOperation(stableCoinSC);
+		expect(result).not.toBeNull();
 	}, 60_000);
 
 	it('Performs rescue SC', async () => {
 		const result = await rescueOperation(stableCoinSC);
+		expect(result).not.toBeNull();
 	}, 60_000);
 
 	it('Performs rescue HBAR SC', async () => {
 		const result = await rescueHBAROperation(stableCoinSC);
+		expect(result).not.toBeNull();
 	}, 60_000);
 
 	it('Performs wipe SC', async () => {
 		const result = await wipeOperation(stableCoinSC);
+		expect(result).not.toBeNull();
 	}, 60_000);
 
 	it('Performs freeze and unfreeze SC', async () => {
 		const result = await freezeUnfreezeOperation(stableCoinSC);
+		expect(result).not.toBeNull();
 	}, 60_000);
 
 	it('Performs grant and revoke kyc SC', async () => {
 		const result = await grantRevokeKYCOperation(stableCoinSC);
+		expect(result).not.toBeNull();
 	}, 60_000);
 
 	it('Performs pause and unpause SC', async () => {
 		const result = await pauseUnpauseOperation(stableCoinSC);
+		expect(result).not.toBeNull();
 	}, 90_000);
 
 	it('Performs update token SC', async () => {
 		const result = await updateToken(stableCoinSC);
+		expect(result).not.toBeNull();
 	}, 60_000);
 
 	// ----------------------HTS--------------------------
 
 	it('Performs rescue HTS', async () => {
 		const result = await rescueOperation(stableCoinHTS);
+		expect(result).not.toBeNull();
 	}, 60_000);
 
 	it('Performs rescue HBAR HTS', async () => {
 		const result = await rescueHBAROperation(stableCoinHTS);
+		expect(result).not.toBeNull();
 	}, 60_000);
 
 	it('Performs wipe HTS', async () => {
 		const result = await wipeOperation(stableCoinHTS);
+		expect(result).not.toBeNull();
 	}, 60_000);
 
 	it('Performs capabilities HTS', async () => {
 		const result = await capabilitiesOperation(stableCoinHTS);
+		expect(result).not.toBeNull();
 	}, 60_000);
 
 	it('Performs freeze and unfreeze HTS', async () => {
 		const result = await freezeUnfreezeOperation(stableCoinHTS);
+		expect(result).not.toBeNull();
 	}, 60_000);
 
 	it('Performs grant and revoke kyc HTS', async () => {
 		const result = await grantRevokeKYCOperation(stableCoinHTS);
+		expect(result).not.toBeNull();
 	}, 60_000);
 
 	it('Performs pause and unpause HTS', async () => {
 		const result = await pauseUnpauseOperation(stableCoinHTS);
+		expect(result).not.toBeNull();
 	}, 90_000);
 
 	it('Performs reserve', async () => {
@@ -429,6 +445,7 @@ describe('🧪 Stablecoin test', () => {
 
 	it('Performs update token HTS', async () => {
 		const result = await updateToken(stableCoinHTS);
+		expect(result).not.toBeNull();
 	}, 60_000);
 
 	afterAll(async () => {
@@ -605,10 +622,10 @@ describe('🧪 Stablecoin test', () => {
 
 		await delay();
 
-		const mirrorNodeAdapter: MirrorNodeAdapter =
+		/* const mirrorNodeAdapter: MirrorNodeAdapter =
 			Injectable.resolve(MirrorNodeAdapter);
 
-		/* const initialAmount = await mirrorNodeAdapter.getHBARBalance(
+		const initialAmount = await mirrorNodeAdapter.getHBARBalance(
 			stableCoin?.treasury?.toString() ?? '0.0.0',
 		); */
 
