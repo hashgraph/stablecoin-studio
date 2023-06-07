@@ -181,7 +181,7 @@ factories: [
 
 ![CLI-flow](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/f7735707-33e3-4f11-b4f0-6d249582694d)
 
-When the CLI is started with the configuration file properly configured, the first action will be to select the account you want to operate with. By default, the list of configured accounts belonging to the default network indicated in the configuration file is displayed.
+When the CLI is started with the configuration file properly configured, the first action will be to select the account you want to operate with. By default, the list of configured accounts belonging to the default network indicated in the configuration file, is displayed.
 
 If there are no accounts in the file for the default network, a warning message will be displayed and a list of all the accounts in the file will be displayed.
 
@@ -313,6 +313,7 @@ This last option allows the user to display the current configuration file, modi
 - **Accounts**: Allows the user to change the current account, see all configured accounts and also add new accounts and remove existing ones.
 - **Mirror nodes**: Allows the user to change the current mirror node, see all configured mirror nodes for the selected Hedera network, add new mirror nodes and remove existing ones except for the one that is being used.
 - **JSON-RPC-Relay services**: Allows the user to change the current JSON-RPC-Relay service, see all configured services for the selected Hedera network, add new JSON-RPC-Relay servies and remove existing ones except for the one that is being used.
+- **Factory**: Allows the user to change the factory id of the selected Hedera network in the configuration file, to upgrade the factory's proxy, to change the factory's proxy admin owner account and, finally, to view de current factory implementation contract address as well as the factory owner account previously commented.
 
 # Testing
 
