@@ -29,8 +29,10 @@ import {
 	AssociateTokenRequest,
 	ConnectRequest,
 	FreezeAccountRequest,
+	GetAccountBalanceHBARRequest,
 	GetAccountBalanceRequest,
 	GetStableCoinDetailsRequest,
+	HBAR_DECIMALS,
 	KYCRequest,
 	Network,
 	StableCoin as StableCoinInPort,
@@ -53,7 +55,12 @@ import {
 } from '../../config.js';
 import Account from '../../../src/domain/context/account/Account.js';
 import NetworkService from '../../../src/app/service/NetworkService.js';
-import { ContractId as HContractId } from '@hashgraph/sdk';
+import {
+	Client,
+	ContractId as HContractId,
+	Hbar,
+	TransferTransaction,
+} from '@hashgraph/sdk';
 import StableCoinService from '../../../src/app/service/StableCoinService.js';
 import { RESERVE_DECIMALS } from '../../../src/domain/context/reserve/Reserve.js';
 import RPCTransactionAdapter from '../../../src/port/out/rpc/RPCTransactionAdapter.js';
@@ -367,6 +374,62 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 
 		expect(diff_treasury.toString()).toEqual(AmountWithDecimals.toString());
 		expect(diff_account.toString()).toEqual(AmountWithDecimals.toString());
+	}, 1500000);
+
+	it('RescueHBAR', async () => {
+		const initalHBARAmount = BigDecimal.fromString('2.5', HBAR_DECIMALS);
+		const rescueAmount = BigDecimal.fromString('1.5', HBAR_DECIMALS);
+
+		const client = Client.forTestnet();
+
+		client.setOperator(
+			CLIENT_ACCOUNT_ED25519.id.toString(),
+			CLIENT_ACCOUNT_ED25519.privateKey?.key ?? '0',
+		);
+
+		const transaction = new TransferTransaction()
+			.addHbarTransfer(
+				CLIENT_ACCOUNT_ED25519.id.toString(),
+				Hbar.fromTinybars(
+					'-' + initalHBARAmount.toBigNumber().toString(),
+				),
+			)
+			.addHbarTransfer(
+				stableCoinCapabilitiesSC?.coin.treasury?.toString() ?? '0.0.0',
+				Hbar.fromTinybars(initalHBARAmount.toBigNumber().toString()),
+			);
+
+		await transaction.execute(client);
+
+		await delay();
+
+		const initialAmount = await StableCoinInPort.getBalanceOfHBAR(
+			new GetAccountBalanceHBARRequest({
+				treasuryAccountId:
+					stableCoinCapabilitiesSC?.coin.treasury?.toString() ??
+					'0.0.0',
+			}),
+		);
+
+		await th.rescueHBAR(stableCoinCapabilitiesSC, rescueAmount);
+
+		await delay();
+
+		const finalAmount = await StableCoinInPort.getBalanceOfHBAR(
+			new GetAccountBalanceHBARRequest({
+				treasuryAccountId:
+					stableCoinCapabilitiesSC?.coin.treasury?.toString() ??
+					'0.0.0',
+			}),
+		);
+
+		const final = initialAmount.value
+			.toBigNumber()
+			.sub(rescueAmount.toBigNumber());
+
+		expect(finalAmount.value.toBigNumber().toString()).toEqual(
+			final.toString(),
+		);
 	}, 1500000);
 
 	it('Freeze & UnFreeze', async () => {
