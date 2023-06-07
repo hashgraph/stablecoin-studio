@@ -179,7 +179,7 @@ factories: [
 
 ## CLI flow
 
-![Alt text](docs/images/CLI-flow.png?raw=true 'CLI flow')
+![CLI-flow](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/f7735707-33e3-4f11-b4f0-6d249582694d)
 
 When the CLI is started with the configuration file properly configured, the first action will be to select the account you want to operate with. By default, the list of configured accounts belonging to the default network indicated in the configuration file is displayed.
 
