@@ -1629,7 +1629,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					);
 					return response;
 
-				case Decision.HTS:
+				/* case Decision.HTS:
 					if (!coin.coin.evmProxyAddress?.toString())
 						throw new Error(
 							`StableCoin ${coin.coin.name} does not have a proxy address`,
@@ -1647,7 +1647,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 						response.id ?? '',
 						this.networkService.environment,
 					);
-					return response;
+					return response; */
 
 				default:
 					const tokenId = coin.coin.tokenId
@@ -1849,7 +1849,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		}
 	}
 
-	private async performHTSOperation(
+	/* private async performHTSOperation(
 		coin: StableCoinCapabilities,
 		operation: Operation,
 		params?: Params,
@@ -1988,9 +1988,9 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			default:
 				throw new Error(`Operation not implemented through HTS`);
 		}
-	}
+	} */
 
-	private async checkTransactionResponse(
+	/* private async checkTransactionResponse(
 		transaction: TransactionResponse,
 	): Promise<TransactionResponse> {
 		const responseCodeLength = 66;
@@ -2024,7 +2024,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			transactionId: transaction.id,
 			RPC_relay: true,
 		});
-	}
+	} */
 }
 
 class Params {
