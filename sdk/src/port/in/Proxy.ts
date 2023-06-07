@@ -32,6 +32,12 @@ import ContractId from '../../domain/context/contract/ContractId.js';
 import { ChangeOwnerCommand } from '../../app/usecase/command/proxy/changeOwner/ChangeOwnerCommand.js';
 import ProxyConfigurationViewModel from '../out/rpc/response/ProxyConfigurationViewModel.js';
 import ChangeProxyOwnerRequest from './request/ChangeProxyOwnerRequest.js';
+import GetFactoryProxyConfigRequest from './request/GetFactoryProxyConfigRequest.js';
+import { GetFactoryProxyConfigQuery } from '../../app/usecase/query/factoryProxy/GetFactoryProxyConfigQuery.js';
+import UpgradeFactoryImplementationRequest from './request/UpgradeFactoryImplementationRequest.js';
+import { UpgradeFactoryImplementationCommand } from '../../app/usecase/command/factoryProxy/upgrade/UpgradeFactoryImplementationCommand.js';
+import ChangeFactoryProxyOwnerRequest from './request/ChangeFactoryProxyOwnerRequest.js';
+import { ChangeFactoryOwnerCommand } from '../../app/usecase/command/factoryProxy/changeOwner/ChangeFactoryOwnerCommand.js';
 
 export { ProxyConfigurationViewModel };
 
@@ -65,6 +71,17 @@ class ProxyInPort implements IProxyInPort {
 	}
 
 	@LogError
+	async getFactoryProxyConfig(
+		request: GetFactoryProxyConfigRequest,
+	): Promise<ProxyConfigurationViewModel> {
+		handleValidation('GetFactoryProxyConfigRequest', request);
+		const res = await this.queryBus.execute(
+			new GetFactoryProxyConfigQuery(HederaId.from(request.factoryId)),
+		);
+		return res.payload;
+	}
+
+	@LogError
 	async changeProxyOwner(request: ChangeProxyOwnerRequest): Promise<boolean> {
 		handleValidation('ChangeProxyOwnerRequest', request);
 		const res = await this.commandBus.execute(
@@ -85,6 +102,34 @@ class ProxyInPort implements IProxyInPort {
 			new UpgradeImplementationCommand(
 				HederaId.from(request.tokenId),
 				new ContractId(request.implementationAddress),
+			),
+		);
+		return res.payload;
+	}
+
+	@LogError
+	async upgradeFactoryImplementation(
+		request: UpgradeFactoryImplementationRequest,
+	): Promise<boolean> {
+		handleValidation('UpgradeFactoryImplementationRequest', request);
+		const res = await this.commandBus.execute(
+			new UpgradeFactoryImplementationCommand(
+				HederaId.from(request.factoryId),
+				new ContractId(request.implementationAddress),
+			),
+		);
+		return res.payload;
+	}
+
+	@LogError
+	async changeFactoryProxyOwner(
+		request: ChangeFactoryProxyOwnerRequest,
+	): Promise<boolean> {
+		handleValidation('ChangeProxyOwnerRequest', request);
+		const res = await this.commandBus.execute(
+			new ChangeFactoryOwnerCommand(
+				HederaId.from(request.factoryId),
+				HederaId.from(request.targetId),
 			),
 		);
 		return res.payload;

@@ -15,7 +15,7 @@ interface optionsProps {
 
 const Sidebar = () => {
 	const { t } = useTranslation('global');
-	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);	
+	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const isProxyOwner = useSelector(IS_PROXY_OWNER);
 
 	const options: optionsProps[] = [
@@ -39,19 +39,19 @@ const Sidebar = () => {
 			icon: 'Receipt',
 			title: t('sidebar.feesManagement'),
 			route: NamedRoutes.FeesManagement,
-			isHidden: selectedStableCoin && !selectedStableCoin.feeScheduleKey
+			isHidden: selectedStableCoin && !selectedStableCoin.feeScheduleKey,
 		},
 		{
 			icon: 'File',
 			title: t('sidebar.proofOfReserve'),
 			route: NamedRoutes.ProofOfReserve,
-			isHidden: selectedStableCoin && !selectedStableCoin.reserveAddress
+			isHidden: selectedStableCoin && !selectedStableCoin.reserveAddress,
 		},
 		{
 			icon: 'GearSix',
 			title: t('sidebar.settings'),
 			route: NamedRoutes.Settings,
-			isHidden: selectedStableCoin && !isProxyOwner
+			isHidden: selectedStableCoin && !isProxyOwner,
 		},
 	];
 
