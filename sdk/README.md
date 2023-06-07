@@ -56,6 +56,9 @@
 		- [GetProxyConfig](#getproxyconfig)
 		- [ChangeProxyOwner](#changeproxyowner)
 		- [UpgradeImplementation](#upgradeimplementation)
+		- [GetFactoryProxyConfig](#getfactoryproxyconfig)
+		- [UpgradeFactoryImplementation](#upgradefactoryimplementation)
+		- [ChangeFactoryProxyOwner](#changefactoryproxyowner)
 	- [Network](#network)
 		- [Connect](#connect)
 		- [Disconnect](#disconnect)
@@ -1044,6 +1047,67 @@ Updates the **HederaTokenManager** contract implementation address.
 	);	
 ```
 
+### GetFactoryProxyConfig
+Gets the factory implementation contract address and the factory proxy owner account.
+
+**Spec:**
+
+```Typescript
+	Proxy.getFactoryProxyConfig(request: GetFactoryProxyConfigRequest): Promise<ProxyConfigurationViewModel>;
+
+```
+
+**Example:**
+
+```Typescript
+	const result: ProxyConfigurationViewModel = await Proxy.getFactoryProxyConfig(
+		new GetFactoryProxyConfigRequest({
+			factoryId: '0.0.1'
+		})
+	);	
+```
+
+### UpgradeFactoryImplementation
+Upgrades the factory with a new factory implementation contract. Only the owner of the factory proxy can perform this action.
+
+**Spec:**
+
+```Typescript
+	Proxy.upgradeFactoryImplementation(request: UpgradeFactoryImplementationRequest): Promise<boolean>;
+
+```
+
+**Example:**
+
+```Typescript
+	const result: boolean = await Proxy.upgradeFactoryImplementation(
+		new UpgradeFactoryImplementationRequest({
+			factoryId: '0.0.1',
+			implementationAddress: '0.0.2'
+		})
+	);	
+```
+
+### ChangeFactoryProxyOwner
+Changes the owner of the factory proxy. Only the owner of the factory proxy can perform this action.
+
+**Spec:**
+
+```Typescript
+	Proxy.changeFactoryProxyOwner(request: ChangeFactoryProxyOwnerRequest): Promise<boolean>;
+
+```
+
+**Example:**
+
+```Typescript
+	const result: boolean = await Proxy.changeFactoryProxyOwner(
+		new ChangeFactoryProxyOwnerRequest({
+			factoryId: '0.0.1',
+			targetId: '0.0.2'
+		})
+	);	
+```
 
 ## Network
 
