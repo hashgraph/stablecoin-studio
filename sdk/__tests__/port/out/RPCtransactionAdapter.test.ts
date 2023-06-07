@@ -36,7 +36,14 @@ import {
 	KYCRequest,
 	Network,
 	StableCoin as StableCoinInPort,
+	Proxy as ProxyInPort,
+	Factory as FactoryInPort,
 	SupportedWallets,
+	ChangeProxyOwnerRequest,
+	ProxyConfigurationViewModel,
+	GetProxyConfigRequest,
+	GetTokenManagerListRequest,
+	UpgradeImplementationRequest,
 } from '../../../src/index.js';
 import StableCoinCapabilities from '../../../src/domain/context/stablecoin/StableCoinCapabilities.js';
 import BigDecimal from '../../../src/domain/context/shared/BigDecimal.js';
@@ -90,6 +97,9 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 	let ns: NetworkService;
 	let rpcQueryAdapter: RPCQueryAdapter;
 	let stableCoinService: StableCoinService;
+	let proxyAdmin: string;
+	let proxy: string;
+
 	const delay = async (seconds = 3): Promise<void> => {
 		seconds = seconds * 1000;
 		await new Promise((r) => setTimeout(r, seconds));
@@ -107,6 +117,10 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 			undefined,
 			BigDecimal.fromString(reserve.toString(), RESERVE_DECIMALS),
 		);
+
+		proxyAdmin = tr.response[0][1];
+		proxy = tr.response[0][0];
+
 		const tokenIdSC = ContractId.fromHederaContractId(
 			HContractId.fromSolidityAddress(tr.response[0][3]),
 		);
@@ -801,5 +815,83 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 			NewReserveAddress,
 		);
 		expect(ReserveAddress_3.response).toEqual(ReserveAddress_1.response);
+	}, 1500000);
+
+	it('Proxy change Owner and implementation', async () => {
+		const proxyConfig_before: ProxyConfigurationViewModel =
+			await ProxyInPort.getProxyConfig(
+				new GetProxyConfigRequest({
+					tokenId:
+						stableCoinCapabilitiesSC?.coin.tokenId?.toString() ??
+						'0.0.0',
+				}),
+			);
+
+		const proxyAdminID = new EvmAddress(proxyAdmin).toContractId();
+
+		const proxyID = new EvmAddress(proxy).toContractId();
+
+		const contracts: ContractId[] =
+			await FactoryInPort.getHederaTokenManagerList(
+				new GetTokenManagerListRequest({ factoryId: FACTORY_ADDRESS }),
+			);
+
+		await th.upgradeImplementation(proxyID, proxyAdminID, contracts[0]);
+
+		await th.changeOwner(proxyAdminID, CLIENT_ACCOUNT_ED25519.id);
+
+		await delay();
+
+		const proxyConfig_after: ProxyConfigurationViewModel =
+			await ProxyInPort.getProxyConfig(
+				new GetProxyConfigRequest({
+					tokenId:
+						stableCoinCapabilitiesSC?.coin.tokenId?.toString() ??
+						'0.0.0',
+				}),
+			);
+
+		// switching to client account and resetting owner and implementation
+		await Network.connect(
+			new ConnectRequest({
+				account: {
+					accountId: CLIENT_ACCOUNT_ED25519.id.toString(),
+					privateKey: CLIENT_ACCOUNT_ED25519.privateKey,
+				},
+				network: 'testnet',
+				wallet: SupportedWallets.CLIENT,
+				mirrorNode: mirrorNode,
+				rpcNode: rpcNode,
+			}),
+		);
+
+		await ProxyInPort.upgradeImplementation(
+			new UpgradeImplementationRequest({
+				tokenId:
+					stableCoinCapabilitiesSC?.coin.tokenId?.toString() ??
+					'0.0.0',
+				implementationAddress:
+					proxyConfig_before.implementationAddress.toString(),
+			}),
+		);
+
+		await ProxyInPort.changeProxyOwner(
+			new ChangeProxyOwnerRequest({
+				tokenId:
+					stableCoinCapabilitiesSC?.coin.tokenId?.toString() ??
+					'0.0.0',
+				targetId: CLIENT_ACCOUNT_ECDSA.id.toString(),
+			}),
+		);
+
+		// switching back to the metamask handler
+		await th.register(CLIENT_ACCOUNT_ECDSA, true);
+
+		expect(proxyConfig_after.implementationAddress.toString()).toEqual(
+			contracts[0].toString(),
+		);
+		expect(proxyConfig_after.owner.toString()).toEqual(
+			CLIENT_ACCOUNT_ED25519.id.toString(),
+		);
 	}, 1500000);
 });
