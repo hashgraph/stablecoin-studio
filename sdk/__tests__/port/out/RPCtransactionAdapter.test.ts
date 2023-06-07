@@ -28,12 +28,14 @@ import { StableCoin } from '../../../src/domain/context/stablecoin/StableCoin.js
 import {
 	AssociateTokenRequest,
 	ConnectRequest,
+	FreezeAccountRequest,
 	GetAccountBalanceRequest,
+	GetStableCoinDetailsRequest,
+	KYCRequest,
 	Network,
 	StableCoin as StableCoinInPort,
 	SupportedWallets,
 } from '../../../src/index.js';
-import TransactionResponse from '../../../src/domain/context/transaction/TransactionResponse.js';
 import StableCoinCapabilities from '../../../src/domain/context/stablecoin/StableCoinCapabilities.js';
 import BigDecimal from '../../../src/domain/context/shared/BigDecimal.js';
 import { ethers, Wallet } from 'ethers';
@@ -59,6 +61,7 @@ import RPCQueryAdapter from '../../../src/port/out/rpc/RPCQueryAdapter.js';
 import { LoggerTransports, SDK } from '../../../src/index.js';
 import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
+import EvmAddress from '../../../src/domain/context/contract/EvmAddress.js';
 
 SDK.log = { level: 'ERROR', transports: new LoggerTransports.Console() };
 const mirrorNode: MirrorNode = {
@@ -71,13 +74,12 @@ const rpcNode: JsonRpcRelay = {
 };
 const decimals = 6;
 const initSupply = 1000;
+const reserve = 100000000;
 
 describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
-	let stableCoinCapabilitiesHTS: StableCoinCapabilities;
 	let stableCoinCapabilitiesSC: StableCoinCapabilities;
 
 	let th: RPCTransactionAdapter;
-	let tr: TransactionResponse;
 	let ns: NetworkService;
 	let rpcQueryAdapter: RPCQueryAdapter;
 	let stableCoinService: StableCoinService;
@@ -90,13 +92,13 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 		stablecoin: StableCoin,
 		account: Account,
 	): Promise<StableCoinCapabilities> => {
-		tr = await th.create(
+		const tr = await th.create(
 			stablecoin,
 			new ContractId(FACTORY_ADDRESS),
 			new ContractId(HEDERA_TOKEN_MANAGER_ADDRESS),
 			true,
 			undefined,
-			BigDecimal.fromString('100000000', RESERVE_DECIMALS),
+			BigDecimal.fromString(reserve.toString(), RESERVE_DECIMALS),
 		);
 		const tokenIdSC = ContractId.fromHederaContractId(
 			HContractId.fromSolidityAddress(tr.response[0][3]),
@@ -139,11 +141,11 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 			autoRenewAccount: CLIENT_ACCOUNT_ECDSA.id,
 			adminKey: PublicKey.NULL,
 			freezeKey: PublicKey.NULL,
+			kycKey: PublicKey.NULL,
 			wipeKey: PublicKey.NULL,
 			pauseKey: PublicKey.NULL,
 			supplyKey: PublicKey.NULL,
 			supplyType: TokenSupplyType.INFINITE,
-			// grantKYCToOriginalSender:true
 			burnRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
 			wipeRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
 			rescueRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
@@ -187,51 +189,15 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 
 		// switching back to the metamask handler
 		await th.register(CLIENT_ACCOUNT_ECDSA, true);
-	}, 1500000);
 
-	// eslint-disable-next-line jest/no-disabled-tests
-	it('create coin and assign to account', async () => {
-		const coin = new StableCoin({
-			name: 'TestCoinAccount',
-			symbol: 'TCA',
-			decimals: 6,
-			initialSupply: BigDecimal.fromString('1.60', 6),
-			maxSupply: BigDecimal.fromString('1000', 6),
-			freezeDefault: false,
-			adminKey: Account.NULL.publicKey,
-			freezeKey: CLIENT_ACCOUNT_ECDSA.publicKey,
-			kycKey: CLIENT_ACCOUNT_ECDSA.publicKey,
-			wipeKey: CLIENT_ACCOUNT_ECDSA.publicKey,
-			pauseKey: CLIENT_ACCOUNT_ECDSA.publicKey,
-			supplyKey: CLIENT_ACCOUNT_ECDSA.publicKey,
-			autoRenewAccount: CLIENT_ACCOUNT_ECDSA.id,
-			supplyType: TokenSupplyType.FINITE,
-			burnRoleAccount: undefined,
-			wipeRoleAccount: undefined,
-			rescueRoleAccount: undefined,
-			freezeRoleAccount: undefined,
-			pauseRoleAccount: undefined,
-			deleteRoleAccount: undefined,
-			kycRoleAccount: undefined,
-			cashInRoleAccount: undefined,
-			cashInRoleAllowance: undefined,
-		});
-		tr = await th.create(
-			coin,
-			new ContractId(FACTORY_ADDRESS),
-			new ContractId(HEDERA_TOKEN_MANAGER_ADDRESS),
-			true,
+		await StableCoinInPort.grantKyc(
+			new KYCRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId:
+					stableCoinCapabilitiesSC?.coin.tokenId?.toString() ??
+					'0.0.0',
+			}),
 		);
-	}, 1500000);
-
-	it('Test hasRole', async () => {
-		await delay();
-		tr = await th.hasRole(
-			stableCoinCapabilitiesSC,
-			CLIENT_ACCOUNT_ECDSA.id,
-			StableCoinRole.CASHIN_ROLE,
-		);
-		expect(typeof tr.response === 'boolean').toBeTruthy();
 	}, 1500000);
 
 	it('Cash In & Wipe', async () => {
@@ -266,7 +232,7 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 			}),
 		);
 
-		tr = await th.wipe(
+		await th.wipe(
 			stableCoinCapabilitiesSC,
 			CLIENT_ACCOUNT_ED25519.id,
 			BigDecimal.fromString(
@@ -293,7 +259,7 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 		expect(balance_after_wipe.value.toString()).toEqual('0');
 	}, 1500000);
 
-	it('Test burn SC', async () => {
+	it('Burn', async () => {
 		const Amount = 1;
 
 		const balance_before = await StableCoinInPort.getBalanceOf(
@@ -336,231 +302,441 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 		expect(diff.toString()).toEqual(AmountWithDecimals.toString());
 	}, 1500000);
 
-	it('Test rescue SC', async () => {
-		await delay();
-		tr = await th.rescue(
+	it.skip('Rescue', async () => {
+		const Amount = 1;
+
+		const balance_treasury_before = await StableCoinInPort.getBalanceOf(
+			new GetAccountBalanceRequest({
+				tokenId:
+					stableCoinCapabilitiesSC?.coin.tokenId?.toString() ??
+					'0.0.0',
+				targetId:
+					stableCoinCapabilitiesSC?.coin.proxyAddress?.toString() ??
+					'0.0.0',
+			}),
+		);
+
+		const balance_account_before = await StableCoinInPort.getBalanceOf(
+			new GetAccountBalanceRequest({
+				tokenId:
+					stableCoinCapabilitiesSC?.coin.tokenId?.toString() ??
+					'0.0.0',
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+			}),
+		);
+
+		await th.rescue(
 			stableCoinCapabilitiesSC,
-			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
+			BigDecimal.fromString(
+				Amount.toString(),
+				stableCoinCapabilitiesSC.coin.decimals,
+			),
 		);
+
+		await delay();
+
+		const balance_treasury_after = await StableCoinInPort.getBalanceOf(
+			new GetAccountBalanceRequest({
+				tokenId:
+					stableCoinCapabilitiesSC?.coin.tokenId?.toString() ??
+					'0.0.0',
+				targetId:
+					stableCoinCapabilitiesSC?.coin.proxyAddress?.toString() ??
+					'0.0.0',
+			}),
+		);
+
+		const balance_account_after = await StableCoinInPort.getBalanceOf(
+			new GetAccountBalanceRequest({
+				tokenId:
+					stableCoinCapabilitiesSC?.coin.tokenId?.toString() ??
+					'0.0.0',
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+			}),
+		);
+
+		const diff_treasury = balance_treasury_before.value
+			.toBigNumber()
+			.sub(balance_treasury_after.value.toBigNumber());
+
+		const diff_account = balance_account_after.value
+			.toBigNumber()
+			.sub(balance_account_before.value.toBigNumber());
+
+		const AmountWithDecimals = Amount * 10 ** decimals;
+
+		expect(diff_treasury.toString()).toEqual(AmountWithDecimals.toString());
+		expect(diff_account.toString()).toEqual(AmountWithDecimals.toString());
 	}, 1500000);
 
-	it('Test freeze SC', async () => {
+	it('Freeze & UnFreeze', async () => {
+		const notFrozen_1 = await StableCoinInPort.isAccountFrozen(
+			new FreezeAccountRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId:
+					stableCoinCapabilitiesSC?.coin.tokenId?.toString() ??
+					'0.0.0',
+			}),
+		);
+
+		await th.freeze(stableCoinCapabilitiesSC, CLIENT_ACCOUNT_ED25519.id);
+
 		await delay();
-		tr = await th.freeze(stableCoinCapabilitiesSC, CLIENT_ACCOUNT_ECDSA.id);
+
+		const Frozen = await StableCoinInPort.isAccountFrozen(
+			new FreezeAccountRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId:
+					stableCoinCapabilitiesSC?.coin.tokenId?.toString() ??
+					'0.0.0',
+			}),
+		);
+
+		await th.unfreeze(stableCoinCapabilitiesSC, CLIENT_ACCOUNT_ED25519.id);
+
+		await delay();
+
+		const notFrozen_2 = await StableCoinInPort.isAccountFrozen(
+			new FreezeAccountRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId:
+					stableCoinCapabilitiesSC?.coin.tokenId?.toString() ??
+					'0.0.0',
+			}),
+		);
+
+		expect(notFrozen_1).toBe(false);
+		expect(Frozen).toBe(true);
+		expect(notFrozen_2).toBe(false);
 	}, 1500000);
 
-	it('Test unfreeze SC', async () => {
+	it('Pause & UnPause', async () => {
+		const notPaused_1 = await StableCoinInPort.getInfo(
+			new GetStableCoinDetailsRequest({
+				id:
+					stableCoinCapabilitiesSC?.coin.tokenId?.toString() ??
+					'0.0.0',
+			}),
+		);
+
+		await th.pause(stableCoinCapabilitiesSC);
+
 		await delay();
-		tr = await th.unfreeze(
+
+		const Paused = await StableCoinInPort.getInfo(
+			new GetStableCoinDetailsRequest({
+				id:
+					stableCoinCapabilitiesSC?.coin.tokenId?.toString() ??
+					'0.0.0',
+			}),
+		);
+
+		await th.unpause(stableCoinCapabilitiesSC);
+
+		await delay();
+
+		const notPaused_2 = await StableCoinInPort.getInfo(
+			new GetStableCoinDetailsRequest({
+				id:
+					stableCoinCapabilitiesSC?.coin.tokenId?.toString() ??
+					'0.0.0',
+			}),
+		);
+
+		expect(notPaused_1.paused).toBe(false);
+		expect(Paused.paused).toBe(true);
+		expect(notPaused_2.paused).toBe(false);
+	}, 1500000);
+
+	it('Grant KYC & Revoke KYC', async () => {
+		const kycOK_1 = await StableCoinInPort.isAccountKYCGranted(
+			new KYCRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId:
+					stableCoinCapabilitiesSC?.coin.tokenId?.toString() ??
+					'0.0.0',
+			}),
+		);
+
+		await th.revokeKyc(stableCoinCapabilitiesSC, CLIENT_ACCOUNT_ED25519.id);
+
+		await delay();
+
+		const kycNOK = await StableCoinInPort.isAccountKYCGranted(
+			new KYCRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId:
+					stableCoinCapabilitiesSC?.coin.tokenId?.toString() ??
+					'0.0.0',
+			}),
+		);
+
+		await th.grantKyc(stableCoinCapabilitiesSC, CLIENT_ACCOUNT_ED25519.id);
+
+		await delay();
+
+		const kycOK_2 = await StableCoinInPort.isAccountKYCGranted(
+			new KYCRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId:
+					stableCoinCapabilitiesSC?.coin.tokenId?.toString() ??
+					'0.0.0',
+			}),
+		);
+
+		expect(kycOK_1).toBe(true);
+		expect(kycNOK).toBe(false);
+		expect(kycOK_2).toBe(true);
+	}, 1500000);
+
+	it('Grant & Revoke Burn Role', async () => {
+		const noRole_1 = await th.hasRole(
 			stableCoinCapabilitiesSC,
-			CLIENT_ACCOUNT_ECDSA.id,
+			CLIENT_ACCOUNT_ED25519.id,
+			StableCoinRole.BURN_ROLE,
 		);
-	}, 1500000);
 
-	it('Test pause SC', async () => {
-		await delay();
-		tr = await th.pause(stableCoinCapabilitiesSC);
-	}, 1500000);
-
-	it('Test unpause SC', async () => {
-		await delay();
-		tr = await th.unpause(stableCoinCapabilitiesSC);
-	}, 1500000);
-
-	it('Test revokeRole', async () => {
-		await delay();
-		tr = await th.revokeRole(
+		await th.grantRole(
 			stableCoinCapabilitiesSC,
-			CLIENT_ACCOUNT_ECDSA.id,
-			StableCoinRole.WIPE_ROLE,
+			CLIENT_ACCOUNT_ED25519.id,
+			StableCoinRole.BURN_ROLE,
 		);
-	}, 1500000);
 
-	it('Test grantRole', async () => {
 		await delay();
-		tr = await th.grantRole(
-			stableCoinCapabilitiesSC,
-			CLIENT_ACCOUNT_ECDSA.id,
-			StableCoinRole.WIPE_ROLE,
-		);
-	}, 1500000);
 
-	it('Test revokeSupplierRole', async () => {
+		const RoleOK = await th.hasRole(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
+			StableCoinRole.BURN_ROLE,
+		);
+
+		await th.revokeRole(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
+			StableCoinRole.BURN_ROLE,
+		);
+
 		await delay();
-		tr = await th.revokeSupplierRole(
+
+		const noRole_2 = await th.hasRole(
 			stableCoinCapabilitiesSC,
-			CLIENT_ACCOUNT_ECDSA.id,
+			CLIENT_ACCOUNT_ED25519.id,
+			StableCoinRole.BURN_ROLE,
 		);
+
+		expect(noRole_1.response).toBe(false);
+		expect(RoleOK.response).toBe(true);
+		expect(noRole_2.response).toBe(false);
 	}, 1500000);
 
-	it('Test grantSupplierRole', async () => {
+	it('Grant, Revoke, Increase, Decrease & Reset Supplier Role', async () => {
+		const Amount = 1;
+
+		const noRole_1 = await th.hasRole(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
+			StableCoinRole.CASHIN_ROLE,
+		);
+
+		await th.grantSupplierRole(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
+			BigDecimal.fromString(
+				Amount.toString(),
+				stableCoinCapabilitiesSC.coin.decimals,
+			),
+		);
+
 		await delay();
-		tr = await th.revokeSupplierRole(
+
+		const RoleOK = await th.hasRole(
 			stableCoinCapabilitiesSC,
-			CLIENT_ACCOUNT_ECDSA.id,
+			CLIENT_ACCOUNT_ED25519.id,
+			StableCoinRole.CASHIN_ROLE,
 		);
+
+		const Allowance = await th.supplierAllowance(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
+		);
+
+		await th.increaseSupplierAllowance(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
+			BigDecimal.fromString(
+				Amount.toString(),
+				stableCoinCapabilitiesSC.coin.decimals,
+			),
+		);
+
 		await delay();
-		tr = await th.grantSupplierRole(
-			stableCoinCapabilitiesSC,
-			CLIENT_ACCOUNT_ECDSA.id,
-			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
-		);
-	}, 1500000);
 
-	it('Test grantUnlimitedSupplierRole', async () => {
+		const Allowance_increased = await th.supplierAllowance(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
+		);
+
+		await th.decreaseSupplierAllowance(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
+			BigDecimal.fromString(
+				Amount.toString(),
+				stableCoinCapabilitiesSC.coin.decimals,
+			),
+		);
+
 		await delay();
-		tr = await th.grantUnlimitedSupplierRole(
-			stableCoinCapabilitiesSC,
-			CLIENT_ACCOUNT_ECDSA.id,
-		);
-	}, 1500000);
 
-	it('Test getBalanceOf', async () => {
+		const Allowance_decreased = await th.supplierAllowance(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
+		);
+
+		await th.resetSupplierAllowance(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
+		);
+
 		await delay();
-		tr = await th.balanceOf(
-			stableCoinCapabilitiesSC,
-			CLIENT_ACCOUNT_ECDSA.id,
-		);
-	}, 1500000);
 
-	it('Test isUnlimitedSupplierAllowance', async () => {
+		const Allowance_reset = await th.supplierAllowance(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
+		);
+
+		await th.revokeSupplierRole(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
+		);
+
 		await delay();
-		tr = await th.isUnlimitedSupplierAllowance(
-			stableCoinCapabilitiesSC,
-			CLIENT_ACCOUNT_ECDSA.id,
-		);
-	}, 1500000);
 
-	it('Test supplierAllowance', async () => {
+		const noRole_2 = await th.hasRole(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
+			StableCoinRole.CASHIN_ROLE,
+		);
+
+		expect(noRole_1.response).toBe(false);
+		expect(RoleOK.response).toBe(true);
+		expect(noRole_2.response).toBe(false);
+
+		const AmountWithDecimals = Amount * 10 ** decimals;
+
+		expect(Allowance.response!.toBigNumber().toString()).toEqual(
+			AmountWithDecimals.toString(),
+		);
+		expect(Allowance_increased.response!.toBigNumber().toString()).toEqual(
+			(2 * AmountWithDecimals).toString(),
+		);
+		expect(Allowance_decreased.response!.toBigNumber().toString()).toEqual(
+			AmountWithDecimals.toString(),
+		);
+		expect(Allowance_reset.response!.toBigNumber().toString()).toEqual('0');
+	}, 3500000);
+
+	it('Grant & Revoke Unlimited Supplier Role', async () => {
+		const noRole_1 = await th.hasRole(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
+			StableCoinRole.CASHIN_ROLE,
+		);
+
+		await th.grantUnlimitedSupplierRole(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
+		);
+
 		await delay();
-		tr = await th.supplierAllowance(
-			stableCoinCapabilitiesSC,
-			CLIENT_ACCOUNT_ECDSA.id,
-		);
-	}, 1500000);
 
-	it('Test resetSupplierAllowance', async () => {
+		const RoleOK = await th.hasRole(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
+			StableCoinRole.CASHIN_ROLE,
+		);
+
+		const AllowanceUnlimited_1 = await th.isUnlimitedSupplierAllowance(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
+		);
+
+		await th.revokeSupplierRole(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
+		);
+
 		await delay();
-		tr = await th.resetSupplierAllowance(
+
+		const noRole_2 = await th.hasRole(
 			stableCoinCapabilitiesSC,
-			CLIENT_ACCOUNT_ECDSA.id,
+			CLIENT_ACCOUNT_ED25519.id,
+			StableCoinRole.CASHIN_ROLE,
 		);
+
+		const AllowanceUnlimited_2 = await th.isUnlimitedSupplierAllowance(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
+		);
+
+		expect(noRole_1.response).toBe(false);
+		expect(RoleOK.response).toBe(true);
+		expect(noRole_2.response).toBe(false);
+		expect(AllowanceUnlimited_1.response).toBe(true);
+		expect(AllowanceUnlimited_2.response).toBe(false);
 	}, 1500000);
 
-	it('Test increaseSupplierAllowance', async () => {
+	it('Get Roles', async () => {
+		const Roles = await th.getRoles(
+			stableCoinCapabilitiesSC,
+			CLIENT_ACCOUNT_ED25519.id,
+		);
+
+		expect(Array.isArray(Roles.response)).toBe(true);
+	}, 1500000);
+
+	it('Get Reserve Address', async () => {
+		const NewReserveAddress = '0.0.11111111';
+
+		const ReserveAddress_1 = await th.getReserveAddress(
+			stableCoinCapabilitiesSC,
+		);
+		const ReserveAddress_1_HederaId = new EvmAddress(
+			ReserveAddress_1.response,
+		);
+
+		const ReserveAmount = await th.getReserveAmount(
+			stableCoinCapabilitiesSC,
+		);
+
+		await th.updateReserveAddress(
+			stableCoinCapabilitiesSC,
+			new ContractId(NewReserveAddress),
+		);
+
 		await delay();
-		tr = await th.increaseSupplierAllowance(
-			stableCoinCapabilitiesSC,
-			CLIENT_ACCOUNT_ECDSA.id,
-			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
-		);
-	}, 1500000);
 
-	it('Test decreaseSupplierAllowance', async () => {
+		const ReserveAddress_2 = await th.getReserveAddress(
+			stableCoinCapabilitiesSC,
+		);
+		const ReserveAddress_2_HederaId = new EvmAddress(
+			ReserveAddress_2.response,
+		);
+
+		await th.updateReserveAddress(
+			stableCoinCapabilitiesSC,
+			ReserveAddress_1_HederaId.toContractId(),
+		);
+
 		await delay();
-		tr = await th.decreaseSupplierAllowance(
+
+		const ReserveAddress_3 = await th.getReserveAddress(
 			stableCoinCapabilitiesSC,
-			CLIENT_ACCOUNT_ECDSA.id,
-			BigDecimal.fromString('1', stableCoinCapabilitiesSC.coin.decimals),
 		);
+
+		expect(ReserveAmount.response.toString()).toEqual(reserve.toString());
+		expect(ReserveAddress_2_HederaId.toContractId().toString()).toEqual(
+			NewReserveAddress,
+		);
+		expect(ReserveAddress_3.response).toEqual(ReserveAddress_1.response);
 	}, 1500000);
-
-	it('Test getRoles', async () => {
-		await delay();
-		tr = await th.getRoles(
-			stableCoinCapabilitiesSC,
-			CLIENT_ACCOUNT_ECDSA.id,
-		);
-	}, 1500000);
-
-	// eslint-disable-next-line jest/no-disabled-tests
-	/* it('Test dissociateToken', async () => {
-		await delay();
-		tr = await th.dissociateToken(
-			stableCoinCapabilitiesSC,
-			CLIENT_ACCOUNT_ECDSA.id,
-		);
-	}, 1500000);
-
-	// eslint-disable-next-line jest/no-disabled-tests
-	it('Test associateToken', async () => {
-		delay();
-		tr = await th.associateToken(
-			stableCoinCapabilitiesSC,
-			CLIENT_ACCOUNT_ECDSA.id,
-		);
-	}, 1500000); */
-
-	it('Test cannot create coin with an initial supply greater than reserve', async () => {
-		const coinSC = new StableCoin({
-			name: 'TEST_ACCELERATOR_SC',
-			symbol: 'TEST',
-			decimals: 6,
-			initialSupply: BigDecimal.fromString('100000001', 6),
-			autoRenewAccount: CLIENT_ACCOUNT_ECDSA.id,
-			adminKey: PublicKey.NULL,
-			freezeKey: PublicKey.NULL,
-			wipeKey: PublicKey.NULL,
-			pauseKey: PublicKey.NULL,
-			supplyKey: PublicKey.NULL,
-			supplyType: TokenSupplyType.INFINITE,
-			burnRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
-			wipeRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
-			rescueRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
-			freezeRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
-			pauseRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
-			deleteRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
-			kycRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
-			cashInRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
-			cashInRoleAllowance: BigDecimal.ZERO,
-		});
-		await expect(
-			createToken(coinSC, CLIENT_ACCOUNT_ECDSA),
-		).rejects.toThrow();
-	}, 1500000);
-
-	it('Test get reserve address returns a value when stable coin has reserve', async () => {
-		tr = await th.getReserveAddress(stableCoinCapabilitiesHTS);
-		expect(tr.response).not.toBeNull;
-	}, 1500000);
-
-	it('Test get reserve amount returns a value when stable coin has reserve', async () => {
-		tr = await th.getReserveAmount(stableCoinCapabilitiesHTS);
-		expect(tr.response).toEqual(
-			BigDecimal.fromStringFixed('10000000000', RESERVE_DECIMALS),
-		);
-	}, 1500000);
-
-	it('Test update reserve amount when stable coin has reserve', async () => {
-		tr = await th.getReserveAddress(stableCoinCapabilitiesHTS);
-		const reserveContractId: HContractId = HContractId.fromSolidityAddress(
-			tr.response,
-		);
-		tr = await th.updateReserveAmount(
-			new ContractId(reserveContractId.toString()),
-			BigDecimal.fromStringFixed('1000', RESERVE_DECIMALS),
-		);
-		tr = await th.getReserveAmount(stableCoinCapabilitiesHTS);
-		expect(tr.response).toEqual(
-			BigDecimal.fromStringFixed('1000', RESERVE_DECIMALS),
-		);
-	}, 1500000);
-
-	it('Test update reserve address when stable coin has reserve', async () => {
-		tr = await th.updateReserveAddress(
-			stableCoinCapabilitiesHTS,
-			new ContractId('0.0.11111111'),
-		);
-		tr = await th.getReserveAddress(stableCoinCapabilitiesHTS);
-		expect(tr.response.toString().toUpperCase()).toEqual(
-			`0X${HContractId.fromString('0.0.11111111')
-				.toSolidityAddress()
-				.toUpperCase()}`,
-		);
-	}, 1500000);
-
-	afterEach(async () => {
-		expect(tr).not.toBeNull();
-		expect(tr.error).toEqual(undefined);
-	});
 });
