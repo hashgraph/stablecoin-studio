@@ -213,7 +213,7 @@ We provide default addresses for the factories that we have deployed for anyone 
 
 | Contract name  | Address      | Network    | 
 |----------------|--------------|------------|
-| FactoryAddress | 0.0.13705256 | Testnet    |
+| FactoryAddress | 0.0.13923715 | Testnet    |
 | FactoryAddress | 0.0.XXXXXX   | Previewnet |
 
 

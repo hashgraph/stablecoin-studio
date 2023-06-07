@@ -6,7 +6,7 @@ import {
     deployHederaTokenManager,
     toHashgraphKey,
     updateProxy,
-    getProxyImpl
+    getProxyImpl,
 } from './deploy'
 import { evmToHederaFormat, getClient, toEvmAddress } from './utils'
 import {
@@ -235,8 +235,11 @@ task('updateFactoryVersion', 'Update factory version')
                 proxyadmin,
                 transparentproxy,
                 implementation,
-                
-            }: { proxyadmin: string;transparentproxy:string , implementation: string },
+            }: {
+                proxyadmin: string
+                transparentproxy: string
+                implementation: string
+            },
             hre
         ) => {
             const accounts = hre.network.config
@@ -253,10 +256,14 @@ task('updateFactoryVersion', 'Update factory version')
             )
             console.log(hre.network.name)
 
-            await updateProxy(client,  proxyadmin, transparentproxy, implementation)
+            await updateProxy(
+                client,
+                proxyadmin,
+                transparentproxy,
+                implementation
+            )
 
             await getProxyImpl(client, proxyadmin, transparentproxy)
-            
         }
     )
 

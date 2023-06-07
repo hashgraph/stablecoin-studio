@@ -61,7 +61,6 @@ export async function contractCall(
         )
     }
 
-
     return results
 }
 
@@ -232,7 +231,8 @@ export async function deployContractSDK(
     privateKey: string,
     clientOperator: Client,
     constructorParameters?: any,
-    adminKey?: PrivateKey
+    adminKey?: PrivateKey,
+    contractMemo?: string
 ): Promise<ContractId> {
     const Key = adminKey ? adminKey : PrivateKey.fromStringED25519(privateKey)
 
@@ -240,6 +240,9 @@ export async function deployContractSDK(
         .setBytecode(factory.bytecode)
         .setGas(250_000)
     //.setAdminKey(Key)
+    if (contractMemo) {
+        transaction.setContractMemo(contractMemo)
+    }
     if (constructorParameters) {
         transaction.setConstructorParameters(constructorParameters)
     }
