@@ -1167,11 +1167,11 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				);
 				break;
 
-			case Operation.DELETE:
+			/* case Operation.DELETE:
 				t = HTSTransactionBuilder.buildDeleteTransaction(
 					coin.coin.tokenId?.value!,
 				);
-				break;
+				break; */
 
 			case Operation.CREATE_CUSTOM_FEE:
 				t = HTSTransactionBuilder.buildUpdateCustomFeesTransaction(
@@ -1197,7 +1197,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				);
 				break;
 
-			case Operation.UPDATE:
+			/* case Operation.UPDATE:
 				t = HTSTransactionBuilder.buildUpdateTokenTransaction(
 					coin.coin.tokenId?.value!,
 					params.name,
@@ -1242,7 +1242,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 							: HPublicKey.fromString(params.wipeKey.key)
 						: undefined,
 				);
-				break;
+				break; */
 
 			default:
 				throw new Error(`Operation does not exist through HTS`);

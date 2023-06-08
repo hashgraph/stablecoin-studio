@@ -622,13 +622,6 @@ describe('🧪 Stablecoin test', () => {
 
 		await delay();
 
-		/* const mirrorNodeAdapter: MirrorNodeAdapter =
-			Injectable.resolve(MirrorNodeAdapter);
-
-		const initialAmount = await mirrorNodeAdapter.getHBARBalance(
-			stableCoin?.treasury?.toString() ?? '0.0.0',
-		); */
-
 		const initialAmount = await StableCoin.getBalanceOfHBAR(
 			new GetAccountBalanceHBARRequest({
 				treasuryAccountId: stableCoin?.treasury?.toString() ?? '0.0.0',
@@ -643,10 +636,6 @@ describe('🧪 Stablecoin test', () => {
 		);
 
 		await delay();
-
-		/* const finalAmount = await mirrorNodeAdapter.getHBARBalance(
-			stableCoin?.treasury?.toString() ?? '0.0.0',
-		); */
 
 		const finalAmount = await StableCoin.getBalanceOfHBAR(
 			new GetAccountBalanceHBARRequest({

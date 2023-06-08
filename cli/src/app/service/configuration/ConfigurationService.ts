@@ -8,10 +8,7 @@ import { INetworkConfig } from '../../../domain/configuration/interfaces/INetwor
 import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
 import { IMirrorsConfig } from '../../../domain/configuration/interfaces/IMirrorsConfig.js';
 import { IRPCsConfig } from '../../../domain/configuration/interfaces/IRPCsConfig.js';
-import {
-  configurationService,
-  utilsService,
-} from '../../../index.js';
+import { configurationService, utilsService } from '../../../index.js';
 import SetConfigurationService from './SetConfigurationService.js';
 import MaskData from 'maskdata';
 import { ILogConfig } from '../../../domain/configuration/interfaces/ILogConfig.js';

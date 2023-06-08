@@ -231,6 +231,13 @@ export const english = {
       'The autorenew account must be your current account.',
     ),
   },
+  factory: {
+    askFactoryImplementation:
+      'Enter the address of the factory implementation you want to use',
+    askNewOwner: 'Enter the new owner account id',
+    implementation: 'Current factory implementation',
+    owner: 'Factory owner',
+  },
   commander: {
     appDescription: 'Hedera Stable Coin is a CLI for managing stable coins',
     version: 'Output the current version',
@@ -294,6 +301,8 @@ export const english = {
     networkSelected: '\nNetwork selected successfully',
     accountsChanged: '\nAccounts changed successfully',
     factoryChanged: '\nFactory changed successfully',
+    factoryUpgraded: '\nFactory upgraded successfully',
+    factoryOwnerChanged: '\nFactory owner changed successfully',
     freezeAccount: 'Which account do you want to freeze?',
     unfreezeAccount: 'Which account do you want to unfreeze?',
     checkAccountFrozen:
@@ -339,7 +348,7 @@ export const english = {
       Manage: 'Manage accounts',
       ManageMirrorNode: 'Manage mirror node',
       ManageRPC: 'Manage JSON-RPC-Relay',
-      ChangeFactory: 'Change factory',
+      ManageFactory: 'Manage factory',
       ...returnToMainMenu,
     },
     manageAccountOptions: {
@@ -418,6 +427,13 @@ export const english = {
       Reset: 'Reset limit',
       ...goBack,
     },
+    manageFactoryOptions: {
+      ChangeFactory: 'Change factory',
+      UpgradeFactory: 'Upgrade factory',
+      ChangeOwner: 'Change owner',
+      FactoryDetails: 'Factory details',
+      ...goBack,
+    },
     backOption: {
       ...goBack,
     },
@@ -453,7 +469,8 @@ export const english = {
     rescueHBARCompleted: 'HBAR Rescue completed',
     wipeCompleted: 'Wipe completed',
     detailsCompleted: 'Details loaded',
-    proxyConfigCompleted: 'Proxy Config loaded',
+    proxyConfigCompleted: 'Proxy config loaded',
+    factoryProxyConfigCompleted: 'Factory proxy config loaded',
     balanceCompleted: 'Balance loaded',
     associateCompleted: 'Stable coin associated',
     deleteCompleted: 'Stable coin deleted',
@@ -474,8 +491,8 @@ export const english = {
     customFeesRemoved: 'Custom fees removed',
     transferCompleted: 'Transfer completed',
     updateCompleted: 'Update completed',
-    changeOwnerCompleted: 'owner change completed',
-    upgradeImplementationCompleted: 'implementation upgrade completed',
+    changeOwnerCompleted: 'Owner change completed',
+    upgradeImplementationCompleted: 'Implementation upgrade completed',
   },
   operation: {
     success: colors.green('Operation has been completed successfully.'),

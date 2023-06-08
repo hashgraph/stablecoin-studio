@@ -80,7 +80,7 @@ From the root of the CLI project workspace:
 
 The first time you execute the `accelerator wizard` command in your terminal, if you haven't added your default configuration path the interface will ask you whether you want to create a new configuration file in the default path. When the configuration file is created you must configure the default network, operating accounts and the factory contract id. In order to create the default account you can use [HashPack](https://www.hashpack.app/download) or the [Hedera Developer Portal](https://portal.hedera.com/register).
 
-https://user-images.githubusercontent.com/102601367/205074337-a1f09813-9434-42e9-972b-1c40655bb1d1.mov
+https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/c7daede9-1f84-4dec-9283-1b262334385e
 
 _Note that for testing purpose you should create a **Testnet** account instead of Mainnet account. Everything executed on Mainnet will incur a cost with real money._
 
@@ -179,9 +179,9 @@ factories: [
 
 ## CLI flow
 
-![Alt text](docs/images/CLI-flow.png?raw=true 'CLI flow')
+![CLI-flow](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/f7735707-33e3-4f11-b4f0-6d249582694d)
 
-When the CLI is started with the configuration file properly configured, the first action will be to select the account you want to operate with. By default, the list of configured accounts belonging to the default network indicated in the configuration file is displayed.
+When the CLI is started with the configuration file properly configured, the first action will be to select the account you want to operate with. By default, the list of configured accounts belonging to the default network indicated in the configuration file, is displayed.
 
 If there are no accounts in the file for the default network, a warning message will be displayed and a list of all the accounts in the file will be displayed.
 
@@ -313,6 +313,7 @@ This last option allows the user to display the current configuration file, modi
 - **Accounts**: Allows the user to change the current account, see all configured accounts and also add new accounts and remove existing ones.
 - **Mirror nodes**: Allows the user to change the current mirror node, see all configured mirror nodes for the selected Hedera network, add new mirror nodes and remove existing ones except for the one that is being used.
 - **JSON-RPC-Relay services**: Allows the user to change the current JSON-RPC-Relay service, see all configured services for the selected Hedera network, add new JSON-RPC-Relay servies and remove existing ones except for the one that is being used.
+- **Factory**: Allows the user to change the factory id of the selected Hedera network in the configuration file, to upgrade the factory's proxy, to change the factory's proxy admin owner account and, finally, to view de current factory implementation contract address as well as the factory owner account previously commented.
 
 # Testing
 

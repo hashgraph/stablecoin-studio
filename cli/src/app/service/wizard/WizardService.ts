@@ -188,10 +188,9 @@ export default class WizardService extends Service {
         await this.setConfigurationService.configureRPCNetwork();
         break;
 
-      case language.getText('wizard.changeOptions.ChangeFactory'):
+      case language.getText('wizard.changeOptions.ManageFactory'):
         await utilsService.cleanAndShowBanner();
-        await this.setConfigurationService.changeFactory();
-        utilsService.showMessage(language.getText('wizard.factoryChanged'));
+        await this.setConfigurationService.manageFactoryMenu();
         break;
 
       default:

@@ -38,10 +38,10 @@ import {
     associateToken,
 } from './utils'
 
-const hederaTokenManagerAddress = '0.0.13705245'
-export const factoryProxyAddress = '0.0.13705256'
-const factoryProxyAdminAddress = '0.0.13705254'
-const factoryAddress = '0.0.13705249'
+const hederaTokenManagerAddress = '0.0.13923660'
+export const factoryProxyAddress = '0.0.13923715'
+const factoryProxyAdminAddress = '0.0.13923699'
+const factoryAddress = '0.0.13923689'
 
 export function initializeClients(): [
     Client,
@@ -202,18 +202,21 @@ export async function updateProxy(
     clientOperator: Client,
     proxy: string,
     transparentproxy: string,
-    newImplementation:string,
+    newImplementation: string
 ) {
     // Deploying Factory logic
     console.log(`Upgrading proxy logic. please wait...`)
-    console.log("Admin proxy :" + proxy)
-    console.log("Transparent proxy :" +transparentproxy)
-    console.log("New Implementation :" +newImplementation)
+    console.log('Admin proxy :' + proxy)
+    console.log('Transparent proxy :' + transparentproxy)
+    console.log('New Implementation :' + newImplementation)
     console.log(ContractId.fromString(newImplementation).toSolidityAddress())
     await contractCall(
         ContractId.fromString(proxy),
         'upgrade',
-        [ContractId.fromString(transparentproxy).toSolidityAddress(),ContractId.fromString(newImplementation).toSolidityAddress()],
+        [
+            ContractId.fromString(transparentproxy).toSolidityAddress(),
+            ContractId.fromString(newImplementation).toSolidityAddress(),
+        ],
         clientOperator,
         150000,
         ProxyAdmin__factory.abi
@@ -222,11 +225,11 @@ export async function updateProxy(
 export async function getProxyImpl(
     clientOperator: Client,
     proxyadmin: string,
-    transparent:string
+    transparent: string
 ) {
     // Deploying Factory logic
     console.log(`Getting implementation from proxy please wait...`)
-    console.log("ProxyAdmin :" +  proxyadmin)
+    console.log('ProxyAdmin :' + proxyadmin)
     const address = await contractCall(
         ContractId.fromString(proxyadmin),
         'getProxyImplementation',
@@ -235,7 +238,7 @@ export async function getProxyImpl(
         150000,
         ProxyAdmin__factory.abi
     )
-    console.log("New Implementation" + address[0])
+    console.log('New Implementation' + address[0])
 }
 
 export async function deployFactory(
@@ -279,7 +282,9 @@ export async function deployFactory(
         TransparentUpgradeableProxy__factory,
         privateKey,
         clientOperator,
-        params
+        params,
+        undefined,
+        '0x' + factoryProxyAdmin.toSolidityAddress()
     )
 
     await contractCall(
@@ -696,7 +701,7 @@ export async function deployHederaReserve(
         .addAddress(hederaReserve.toSolidityAddress())
         .addAddress(hederaReserveProxyAdmin.toSolidityAddress())
         .addBytes(new Uint8Array([]))
- 
+
     const hederaReserveProxy = await deployContractSDK(
         TransparentUpgradeableProxy__factory,
         privateKeyOperatorEd25519,
@@ -717,4 +722,3 @@ export async function deployHederaReserve(
 
     return [hederaReserveProxy, hederaReserveProxyAdmin, hederaReserve]
 }
-

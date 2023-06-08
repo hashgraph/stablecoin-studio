@@ -13,9 +13,15 @@ import { IFactoryConfig } from '../../../domain/configuration/interfaces/IFactor
 import {
   Network,
   SetConfigurationRequest,
+  UpgradeFactoryImplementationRequest,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { IMirrorsConfig } from 'domain/configuration/interfaces/IMirrorsConfig.js';
 import { IRPCsConfig } from 'domain/configuration/interfaces/IRPCsConfig.js';
+import ConfigurationFactoryProxyService from '../factoryProxy/ConfigurationFactoryProxyService.js';
+import ImplementationFactoryProxyService from '../factoryProxy/ImplementationFactoryProxyService.js';
+import { ProxyConfigurationViewModel } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { ChangeFactoryProxyOwnerRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
+import OwnerFactoryProxyService from '../factoryProxy/OwnerFactoryProxyService.js';
 const colors = require('colors');
 
 /**
@@ -1222,6 +1228,111 @@ export default class SetConfigurationService extends Service {
     await this.manageRPCMenu(_network);
   }
 
+  public async manageFactoryMenu(): Promise<void> {
+    const currentAccount = utilsService.getCurrentAccount();
+    const currentMirror = utilsService.getCurrentMirror();
+    const currentRPC = utilsService.getCurrentRPC();
+    const currentFactory = utilsService.getCurrentFactory();
+
+    let factoryProxyConfig;
+    try {
+      factoryProxyConfig =
+        await new ConfigurationFactoryProxyService().getFactoryProxyconfiguration(
+          currentFactory.id,
+        );
+    } catch (Error) {
+      factoryProxyConfig = { owner: '0.0.0' };
+    }
+
+    const currentImplementation: string =
+      factoryProxyConfig.implementationAddress.toString();
+    const owner: string = factoryProxyConfig.owner.toString();
+
+    const filteredOptions: string[] = await this.filterManageFactoryOptions(
+      language.getArrayFromObject('wizard.manageFactoryOptions'),
+      owner,
+    );
+
+    const factoryAction = await utilsService.defaultMultipleAsk(
+      language.getText('wizard.configurationMenuTitle'),
+      filteredOptions,
+      false,
+      {
+        network: currentAccount.network,
+        account: `${currentAccount.accountId} - ${currentAccount.alias}`,
+        mirrorNode: currentMirror.name,
+        rpc: currentRPC.name,
+      },
+    );
+    switch (factoryAction) {
+      case language.getText('wizard.manageFactoryOptions.ChangeFactory'):
+        await utilsService.cleanAndShowBanner();
+        await this.changeFactory();
+        utilsService.showMessage(language.getText('wizard.factoryChanged'));
+        break;
+
+      case language.getText('wizard.manageFactoryOptions.UpgradeFactory'):
+        await utilsService.cleanAndShowBanner();
+        await this.upgradeFactory(currentFactory, currentImplementation);
+        break;
+
+      case language.getText('wizard.manageFactoryOptions.ChangeOwner'):
+        await utilsService.cleanAndShowBanner();
+        await this.changeFactoryOwner(currentFactory);
+        break;
+
+      case language.getText('wizard.manageFactoryOptions.FactoryDetails'):
+        await utilsService.cleanAndShowBanner();
+        this.showFactoryDetails(factoryProxyConfig);
+        break;
+
+      default:
+        await utilsService.cleanAndShowBanner();
+        await wizardService.configurationMenu();
+    }
+    await this.manageFactoryMenu();
+  }
+
+  private showFactoryDetails(factoryProxyConfig: ProxyConfigurationViewModel) {
+    utilsService.showMessage(
+      colors.yellow(
+        `${language.getText('factory.implementation')}: ${
+          factoryProxyConfig.implementationAddress.value
+        }`,
+      ),
+    );
+    utilsService.showMessage(
+      colors.yellow(
+        `${language.getText('factory.owner')}: ${
+          factoryProxyConfig.owner.value
+        }`,
+      ),
+    );
+  }
+
+  private async filterManageFactoryOptions(
+    options: string[],
+    factoryOwner: string,
+  ): Promise<string[]> {
+    const configAccount = utilsService.getCurrentAccount();
+
+    let filteredOptions: string[] = [];
+    filteredOptions = options.filter((option) => {
+      if (
+        (option ===
+          language.getText('wizard.manageFactoryOptions.UpgradeFactory') &&
+          factoryOwner !== configAccount.accountId) ||
+        (option ===
+          language.getText('wizard.manageFactoryOptions.ChangeOwner') &&
+          factoryOwner !== configAccount.accountId)
+      )
+        return false;
+      return true;
+    });
+
+    return filteredOptions;
+  }
+
   /**
    * Function to change the configured factory
    */
@@ -1253,13 +1364,68 @@ export default class SetConfigurationService extends Service {
       this.ZERO_ADDRESS,
     );
 
-    factories[factories.map((val) => val.network).indexOf(network)].id =
-      factoryId;
+    if (factories && factories.map((val) => val.network)) {
+      factories[factories.map((val) => val.network).indexOf(network)].id =
+        factoryId;
+    } else {
+      factories.push({ id: factoryId, network: network });
+    }
 
     // Set factories
     configuration.factories = factories;
     configurationService.setConfiguration(configuration);
     return factories;
+  }
+
+  /**
+   * Function to upgrade the configured factory
+   */
+  public async upgradeFactory(
+    factory: IFactoryConfig,
+    currentImpl: string,
+  ): Promise<void> {
+    await utilsService.cleanAndShowBanner();
+
+    const upgradeImplementationRequest =
+      new UpgradeFactoryImplementationRequest({
+        factoryId: factory.id,
+        implementationAddress: '',
+      });
+
+    try {
+      await new ImplementationFactoryProxyService().upgradeImplementation(
+        upgradeImplementationRequest,
+        currentImpl,
+      );
+    } catch (error) {
+      await utilsService.askErrorConfirmation(
+        async () => await this.manageFactoryMenu(),
+        error,
+      );
+    }
+  }
+
+  /**
+   * Function to change the owner of the configured factory
+   */
+  public async changeFactoryOwner(factory: IFactoryConfig): Promise<void> {
+    await utilsService.cleanAndShowBanner();
+
+    const changeFactoryProxyOwnerRequest = new ChangeFactoryProxyOwnerRequest({
+      factoryId: factory.id,
+      targetId: '',
+    });
+
+    try {
+      await new OwnerFactoryProxyService().changeFactoryProxyOwner(
+        changeFactoryProxyOwnerRequest,
+      );
+    } catch (error) {
+      await utilsService.askErrorConfirmation(
+        async () => await this.manageFactoryMenu(),
+        error,
+      );
+    }
   }
 
   /**
