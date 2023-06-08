@@ -100,7 +100,7 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 	let proxyAdmin: string;
 	let proxy: string;
 
-	const delay = async (seconds = 3): Promise<void> => {
+	const delay = async (seconds = 4): Promise<void> => {
 		seconds = seconds * 1000;
 		await new Promise((r) => setTimeout(r, seconds));
 	};
@@ -166,6 +166,7 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 			wipeKey: PublicKey.NULL,
 			pauseKey: PublicKey.NULL,
 			supplyKey: PublicKey.NULL,
+			feeScheduleKey: PublicKey.NULL,
 			supplyType: TokenSupplyType.INFINITE,
 			burnRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
 			wipeRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
@@ -817,6 +818,69 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 		expect(ReserveAddress_3.response).toEqual(ReserveAddress_1.response);
 	}, 1500000);
 
+	it('Update Token', async () => {
+		const init = await StableCoinInPort.getInfo(
+			new GetStableCoinDetailsRequest({
+				id:
+					stableCoinCapabilitiesSC?.coin.tokenId?.toString() ??
+					'0.0.0',
+			}),
+		);
+
+		const name = 'New Token Name';
+		const symbol = 'New Token Symbol';
+		const autoRenewPeriod = 30 * 24 * 3600;
+		const freezeKey = CLIENT_ACCOUNT_ECDSA.publicKey;
+		const kycKey = CLIENT_ACCOUNT_ECDSA.publicKey;
+		const wipeKey = CLIENT_ACCOUNT_ECDSA.publicKey;
+		const pauseKey = CLIENT_ACCOUNT_ECDSA.publicKey;
+		const feeScheduleKey = CLIENT_ACCOUNT_ECDSA.publicKey;
+
+		await th.update(
+			stableCoinCapabilitiesSC,
+			name,
+			symbol,
+			autoRenewPeriod,
+			undefined,
+			kycKey,
+			freezeKey,
+			feeScheduleKey,
+			pauseKey,
+			wipeKey,
+		);
+
+		await delay();
+
+		const res = await StableCoinInPort.getInfo(
+			new GetStableCoinDetailsRequest({
+				id:
+					stableCoinCapabilitiesSC?.coin.tokenId?.toString() ??
+					'0.0.0',
+			}),
+		);
+
+		expect(res.name).toEqual(name);
+		expect(res.symbol).toEqual(symbol);
+		expect(res.autoRenewPeriod).toEqual(autoRenewPeriod);
+		expect(res.freezeKey?.toString()).toEqual(freezeKey?.toString());
+		expect(res.kycKey?.toString()).toEqual(kycKey?.toString());
+		expect(res.wipeKey?.toString()).toEqual(wipeKey?.toString());
+		expect(res.pauseKey?.toString()).toEqual(pauseKey?.toString());
+
+		await th.update(
+			stableCoinCapabilitiesSC,
+			init.name,
+			init.symbol,
+			init.autoRenewPeriod,
+			undefined,
+			PublicKey.NULL,
+			PublicKey.NULL,
+			PublicKey.NULL,
+			PublicKey.NULL,
+			PublicKey.NULL,
+		);
+	}, 1500000);
+
 	it('Proxy change Owner and implementation', async () => {
 		const proxyConfig_before: ProxyConfigurationViewModel =
 			await ProxyInPort.getProxyConfig(
@@ -893,5 +957,9 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 		expect(proxyConfig_after.owner.toString()).toEqual(
 			CLIENT_ACCOUNT_ED25519.id.toString(),
 		);
+	}, 1500000);
+
+	it('Delete Token', async () => {
+		await th.delete(stableCoinCapabilitiesSC);
 	}, 1500000);
 });

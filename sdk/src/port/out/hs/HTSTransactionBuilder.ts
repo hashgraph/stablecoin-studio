@@ -62,8 +62,7 @@ export class HTSTransactionBuilder {
 
 			return transaction;
 		} catch (error) {
-			LogService.logError(error);
-			throw new TransactionBuildingError(error);
+			throw this.ThrowError(error);
 		}
 	}
 
@@ -78,8 +77,7 @@ export class HTSTransactionBuilder {
 				.setTokenId(TokenId.fromString(tokenId))
 				.setAmount(amount);
 		} catch (error) {
-			LogService.logError(error);
-			throw new TransactionBuildingError(error);
+			throw this.ThrowError(error);
 		}
 	}
 
@@ -92,8 +90,7 @@ export class HTSTransactionBuilder {
 				.setTokenId(TokenId.fromString(tokenId))
 				.setAmount(amount);
 		} catch (error) {
-			LogService.logError(error);
-			throw new TransactionBuildingError(error);
+			throw this.ThrowError(error);
 		}
 	}
 
@@ -106,8 +103,7 @@ export class HTSTransactionBuilder {
 				.setTokenId(TokenId.fromString(tokenId))
 				.setAmount(amount);
 		} catch (error) {
-			LogService.logError(error);
-			throw new TransactionBuildingError(error);
+			throw this.ThrowError(error);
 		}
 	}
 
@@ -130,8 +126,7 @@ export class HTSTransactionBuilder {
 					amount,
 				);
 		} catch (error) {
-			LogService.logError(error);
-			throw new TransactionBuildingError(error);
+			throw this.ThrowError(error);
 		}
 	}
 
@@ -163,8 +158,7 @@ export class HTSTransactionBuilder {
 
 			return t;
 		} catch (error) {
-			LogService.logError(error);
-			throw new TransactionBuildingError(error);
+			throw this.ThrowError(error);
 		}
 	}
 
@@ -172,8 +166,7 @@ export class HTSTransactionBuilder {
 		try {
 			return new TokenDeleteTransaction().setTokenId(tokenId);
 		} catch (error) {
-			LogService.logError(error);
-			throw new TransactionBuildingError(error);
+			throw this.ThrowError(error);
 		}
 	}
 
@@ -181,8 +174,7 @@ export class HTSTransactionBuilder {
 		try {
 			return new TokenPauseTransaction().setTokenId(tokenId);
 		} catch (error) {
-			LogService.logError(error);
-			throw new TransactionBuildingError(error);
+			throw this.ThrowError(error);
 		}
 	}
 
@@ -190,8 +182,7 @@ export class HTSTransactionBuilder {
 		try {
 			return new TokenUnpauseTransaction().setTokenId(tokenId);
 		} catch (error) {
-			LogService.logError(error);
-			throw new TransactionBuildingError(error);
+			throw this.ThrowError(error);
 		}
 	}
 
@@ -204,8 +195,7 @@ export class HTSTransactionBuilder {
 				.setTokenId(tokenId)
 				.setAccountId(targetId);
 		} catch (error) {
-			LogService.logError(error);
-			throw new TransactionBuildingError(error);
+			throw this.ThrowError(error);
 		}
 	}
 
@@ -218,8 +208,7 @@ export class HTSTransactionBuilder {
 				.setTokenId(tokenId)
 				.setAccountId(targetId);
 		} catch (error) {
-			LogService.logError(error);
-			throw new TransactionBuildingError(error);
+			throw this.ThrowError(error);
 		}
 	}
 
@@ -242,8 +231,7 @@ export class HTSTransactionBuilder {
 					amount,
 				);
 		} catch (error) {
-			LogService.logError(error);
-			throw new TransactionBuildingError(error);
+			throw this.ThrowError(error);
 		}
 	}
 
@@ -257,8 +245,7 @@ export class HTSTransactionBuilder {
 				tokenIds: [tokenId],
 			});
 		} catch (error) {
-			LogService.logError(error);
-			throw new TransactionBuildingError(error);
+			throw this.ThrowError(error);
 		}
 	}
 
@@ -272,8 +259,7 @@ export class HTSTransactionBuilder {
 				accountId: targetId,
 			});
 		} catch (error) {
-			LogService.logError(error);
-			throw new TransactionBuildingError(error);
+			throw this.ThrowError(error);
 		}
 	}
 
@@ -287,8 +273,7 @@ export class HTSTransactionBuilder {
 				accountId: targetId,
 			});
 		} catch (error) {
-			LogService.logError(error);
-			throw new TransactionBuildingError(error);
+			throw this.ThrowError(error);
 		}
 	}
 
@@ -302,8 +287,7 @@ export class HTSTransactionBuilder {
 				customFees: customFees,
 			});
 		} catch (error) {
-			LogService.logError(error);
-			throw new TransactionBuildingError(error);
+			throw this.ThrowError(error);
 		}
 	}
 
@@ -338,8 +322,12 @@ export class HTSTransactionBuilder {
 			if (wipeKey) tokenUpdateTransaction.setWipeKey(wipeKey);
 			return tokenUpdateTransaction;
 		} catch (error) {
-			LogService.logError(error);
-			throw new TransactionBuildingError(error);
+			throw this.ThrowError(error);
 		}
+	}
+
+	private static ThrowError(error: any): TransactionBuildingError {
+		LogService.logError(error);
+		return new TransactionBuildingError(error);
 	}
 }

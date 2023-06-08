@@ -159,7 +159,6 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		reserveInitialAmount?: BigDecimal,
 	): Promise<TransactionResponse<any, Error>> {
 		try {
-			const keys: FactoryKey[] = [];
 			const cashinRole: FactoryCashinRole = {
 				account:
 					coin.cashInRoleAccount == undefined ||
@@ -177,49 +176,12 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				coin.freezeKey,
 				coin.wipeKey,
 				coin.supplyKey,
+				coin.feeScheduleKey,
 				coin.pauseKey,
 			];
 
-			providedKeys.forEach((providedKey, index) => {
-				if (providedKey) {
-					const key = new FactoryKey();
-					switch (index) {
-						case 0: {
-							key.keyType = 1; // admin
-							break;
-						}
-						case 1: {
-							key.keyType = 2; // kyc
-							break;
-						}
-						case 2: {
-							key.keyType = 4; // freeze
-							break;
-						}
-						case 3: {
-							key.keyType = 8; // wipe
-							break;
-						}
-						case 4: {
-							key.keyType = 16; // supply
-							break;
-						}
-						case 5: {
-							key.keyType = 64; // pause
-							break;
-						}
-					}
-					const providedKeyCasted = providedKey as PublicKey;
-					key.publicKey =
-						providedKeyCasted.key == PublicKey.NULL.key
-							? '0x'
-							: HPublicKey.fromString(
-									providedKeyCasted.key,
-							  ).toBytesRaw();
-					key.isED25519 = providedKeyCasted.type == 'ED25519';
-					keys.push(key);
-				}
-			});
+			const keys: FactoryKey[] =
+				this.setKeysForSmartContract(providedKeys);
 
 			const providedRoles = [
 				{
@@ -1292,7 +1254,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		return tokenManager[functionName](...param);
 	}
 
-	async transfer(
+	/* async transfer(
 		coin: StableCoinCapabilities,
 		amount: BigDecimal,
 		sourceId: Account,
@@ -1310,9 +1272,9 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			transfer,
 			this.networkService.environment,
 		);
-	}
+	} */
 
-	async transferFrom(
+	/* async transferFrom(
 		coin: StableCoinCapabilities,
 		amount: BigDecimal,
 		sourceId: HederaId,
@@ -1330,7 +1292,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			transfer,
 			this.networkService.environment,
 		);
-	}
+	} */
 
 	async signAndSendTransaction(
 		t: RPCTransactionAdapter,
@@ -1342,13 +1304,13 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		return this.account;
 	}
 
-	async precompiledCall(
+	/* async precompiledCall(
 		functionName: string,
 		param: unknown[],
 	): Promise<ContractTransaction> {
 		const precompiledAddress = '0000000000000000000000000000000000000167';
 		return await this.contractCall(precompiledAddress, functionName, param);
-	}
+	} */
 
 	/**
 	 * TODO consider leaving this as a service and putting two implementations on top for rpc and web wallet.
