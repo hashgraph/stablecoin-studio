@@ -18,6 +18,7 @@ import {
   StableCoinViewModel,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { IAccountConfig } from 'domain/configuration/interfaces/IAccountConfig.js';
+// import { MIRROR_NODE, RPC } from 'core/Constants.js';
 
 /**
  * Wizard Service
@@ -180,12 +181,14 @@ export default class WizardService extends Service {
 
       case language.getText('wizard.changeOptions.ManageMirrorNode'):
         await utilsService.cleanAndShowBanner();
-        await this.setConfigurationService.configureMirrorNodeNetwork();
+        await this.setConfigurationService.configureMirrorNodeNetwork(); // TODO delete and use configureNetwork
+        // await utilsService.configureNetwork(MIRROR_NODE);
         break;
 
       case language.getText('wizard.changeOptions.ManageRPC'):
         await utilsService.cleanAndShowBanner();
-        await this.setConfigurationService.configureRPCNetwork();
+        await this.setConfigurationService.configureRPCNetwork(); // TODO delete and use configureNetwork
+        // await utilsService.configureNetwork(RPC);
         break;
 
       case language.getText('wizard.changeOptions.ManageFactory'):

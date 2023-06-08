@@ -22,6 +22,9 @@ import { IFactoryConfig } from '../../../domain/configuration/interfaces/IFactor
 import { IHederaTokenManagerConfig } from '../../../domain/configuration/interfaces/IHederaTokenManagerConfig.js';
 import { IMirrorsConfig } from 'domain/configuration/interfaces/IMirrorsConfig.js';
 import { IRPCsConfig } from 'domain/configuration/interfaces/IRPCsConfig.js';
+import SetMirrorNodeService from '../configuration/SetMirrorNodeService.js';
+import SetRPCService from '../configuration/SetRPCService.js';
+import { MIRROR_NODE, RPC } from 'core/Constants.js';
 
 /**
  * Utilities Service
@@ -33,6 +36,8 @@ export default class UtilitiesService extends Service {
   private currentRPC: IRPCsConfig;
   private currentFactory: IFactoryConfig;
   private currentHederaTokenManager: IHederaTokenManagerConfig;
+  private mirrorNodeService: SetMirrorNodeService;
+  private rpcNodeService: SetRPCService;
 
   constructor() {
     super('Utilities');
@@ -590,4 +595,44 @@ export default class UtilitiesService extends Service {
       if (res.length > 0) askCll = true;
     }
   }
+
+  /**
+   * Function to configure the network for mirror node or rpc
+   */
+  public async configureNetwork(type: string): Promise<void> {
+    const currentAccount = this.getCurrentAccount();
+    const currentMirror = this.getCurrentMirror();
+    const currentRPC = this.getCurrentRPC();
+    const networks = configurationService
+      .getConfiguration()
+      .networks.map((network) => network.name);
+    const network = await this.defaultMultipleAsk(
+      language.getText('wizard.networkManage'),
+      networks,
+      false,
+      {
+        network: currentAccount.network,
+        mirrorNode: currentMirror.name,
+        rpc: currentRPC.name,
+        account: `${currentAccount.accountId} - ${currentAccount.alias}`,
+      },
+    );
+
+    this.showMessage(
+      language.getText('wizard.networkSelected', { network }),
+    );
+
+    switch (type) {
+      case MIRROR_NODE:
+        await this.mirrorNodeService.manageMirrorNodeMenu(network);
+        break;
+      case RPC:
+        await this.rpcNodeService.manageRPCMenu(network);
+        break;
+      default:
+        this.showError(`Not valid param: ${type}\n`);
+        break;
+    }
+  }
+
 }
