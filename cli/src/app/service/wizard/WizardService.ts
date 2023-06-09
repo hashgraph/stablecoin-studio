@@ -19,12 +19,15 @@ import {
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { IAccountConfig } from 'domain/configuration/interfaces/IAccountConfig.js';
 import { MIRROR_NODE, RPC } from 'core/Constants.js';
+import SetFactoryService from '../configuration/SetFactoryService.js';
 
 /**
  * Wizard Service
  */
 export default class WizardService extends Service {
+
   private setConfigurationService: SetConfigurationService;
+  private factoryService: SetFactoryService;
 
   constructor() {
     super('Wizard');
@@ -72,7 +75,7 @@ export default class WizardService extends Service {
               true,
             );
             if (configFactories) {
-              await this.setConfigurationService.configureFactories();
+              await this.factoryService.configureFactories();
               configuration = await configurationService.getConfiguration();
               const { factories } = configuration;
               const currentFactory = factories.find(
@@ -191,7 +194,7 @@ export default class WizardService extends Service {
 
       case language.getText('wizard.changeOptions.ManageFactory'):
         await utilsService.cleanAndShowBanner();
-        await this.setConfigurationService.manageFactoryMenu();
+        await this.factoryService.manageFactoryMenu();
         break;
 
       default:

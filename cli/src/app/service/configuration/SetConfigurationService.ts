@@ -9,21 +9,12 @@ import fs from 'fs-extra';
 import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
 import { IConsensusNodeConfig } from '../../../domain/configuration/interfaces/IConsensusNodeConfig.js';
 import { INetworkConfig } from '../../../domain/configuration/interfaces/INetworkConfig.js';
-import { IFactoryConfig } from '../../../domain/configuration/interfaces/IFactoryConfig.js';
-import {
-  Network,
-  SetConfigurationRequest,
-  UpgradeFactoryImplementationRequest,
-} from '@hashgraph-dev/stablecoin-npm-sdk';
 import { IMirrorsConfig } from 'domain/configuration/interfaces/IMirrorsConfig.js';
 import { IRPCsConfig } from 'domain/configuration/interfaces/IRPCsConfig.js';
-import ConfigurationFactoryProxyService from '../factoryProxy/ConfigurationFactoryProxyService.js';
-import ImplementationFactoryProxyService from '../factoryProxy/ImplementationFactoryProxyService.js';
-import { ProxyConfigurationViewModel } from '@hashgraph-dev/stablecoin-npm-sdk';
-import { ChangeFactoryProxyOwnerRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
-import OwnerFactoryProxyService from '../factoryProxy/OwnerFactoryProxyService.js';
 import SetMirrorNodeService from './SetMirrorNodeService.js';
 import SetRPCService from './SetRPCService.js';
+import SetFactoryService from './SetFactoryService.js';
+import { ZERO_ADDRESS } from 'core/Constants.js';
 const colors = require('colors');
 
 /**
@@ -33,12 +24,11 @@ export default class SetConfigurationService extends Service {
 
   private mirrorNodeService: SetMirrorNodeService;
   private rpcNodeService: SetRPCService;
+  private factoryService: SetFactoryService;
 
   constructor() {
     super('Set Configuration');
   }
-
-  private ZERO_ADDRESS = '0.0.0';
 
   /**
    * Initialise the configuration for first time or with "init" command
@@ -56,7 +46,7 @@ export default class SetConfigurationService extends Service {
       true,
     );
     if (configFactories) {
-      await this.configureFactories();
+      await this.factoryService.configureFactories();
     }
     const configDefaultMirrorsAndRPCs = await utilsService.defaultConfirmAsk(
       language.getText('configuration.askConfigurateDefaultMirrorsAndRPCs'),
@@ -184,13 +174,13 @@ export default class SetConfigurationService extends Service {
 
       let accountId = await utilsService.defaultSingleAsk(
         language.getText('configuration.askAccountId'),
-        this.ZERO_ADDRESS,
+        ZERO_ADDRESS,
       );
       while (!/\d\.\d\.\d/.test(accountId)) {
         console.log(language.getText('validations.wrongFormatAddress'));
         accountId = await utilsService.defaultSingleAsk(
           language.getText('configuration.askAccountId'),
-          this.ZERO_ADDRESS,
+          ZERO_ADDRESS,
         );
       }
 
@@ -241,46 +231,6 @@ export default class SetConfigurationService extends Service {
     return accounts;
   }
 
-  public async configureFactories(): Promise<IFactoryConfig[]> {
-    const factories: IFactoryConfig[] = [];
-    let factory_testnet = await utilsService.defaultSingleAsk(
-      language.getText('configuration.askFactoryAddress') + ' | TESTNET',
-      this.ZERO_ADDRESS,
-    );
-    while (!/\d\.\d\.\d/.test(factory_testnet)) {
-      console.log(language.getText('validations.wrongFormatAddress'));
-      factory_testnet = await utilsService.defaultSingleAsk(
-        language.getText('configuration.askFactoryAddress') + ' | TESTNET',
-        this.ZERO_ADDRESS,
-      );
-    }
-    let factory_previewnet = await utilsService.defaultSingleAsk(
-      language.getText('configuration.askFactoryAddress') + ' | PREVIEWNET',
-      this.ZERO_ADDRESS,
-    );
-    while (!/\d\.\d\.\d/.test(factory_previewnet)) {
-      console.log(language.getText('validations.wrongFormatAddress'));
-      factory_previewnet = await utilsService.defaultSingleAsk(
-        language.getText('configuration.askFactoryAddress') + ' | PREVIEWNET',
-        this.ZERO_ADDRESS,
-      );
-    }
-    factories.push({
-      id: factory_testnet,
-      network: 'testnet',
-    });
-    factories.push({
-      id: factory_previewnet,
-      network: 'previewnet',
-    });
-
-    // Set a default factories
-    const defaultCfgData = configurationService.getConfiguration();
-    defaultCfgData.factories = factories;
-    configurationService.setConfiguration(defaultCfgData);
-    return factories;
-  }
-
   public async configureDefaultMirrorsAndRPCs(): Promise<void> {
     const mirrors: IMirrorsConfig[] = [];
     mirrors.push(this.mirrorNodeService.getDefaultMirrorByNetwork('testnet'));
@@ -294,15 +244,6 @@ export default class SetConfigurationService extends Service {
     defaultCfgData.mirrors = mirrors;
     defaultCfgData.rpcs = rpcs;
     configurationService.setConfiguration(defaultCfgData);
-  }
-
-  public async setSDKFactory(factoryId: string): Promise<void> {
-    const req = new SetConfigurationRequest({ factoryAddress: factoryId });
-    await Network.setConfig(req);
-  }
-
-  public async getSDKFactory(): Promise<string> {
-    return await Network.getFactoryAddress();
   }
 
   public async manageAccountMenu(): Promise<void> {
@@ -411,206 +352,6 @@ export default class SetConfigurationService extends Service {
         await wizardService.configurationMenu();
     }
     await this.manageAccountMenu();
-  }
-
-  public async manageFactoryMenu(): Promise<void> {
-    const currentAccount = utilsService.getCurrentAccount();
-    const currentMirror = utilsService.getCurrentMirror();
-    const currentRPC = utilsService.getCurrentRPC();
-    const currentFactory = utilsService.getCurrentFactory();
-
-    let factoryProxyConfig;
-    try {
-      factoryProxyConfig =
-        await new ConfigurationFactoryProxyService().getFactoryProxyconfiguration(
-          currentFactory.id,
-        );
-    } catch (Error) {
-      factoryProxyConfig = { owner: '0.0.0' };
-    }
-
-    const currentImplementation: string =
-      factoryProxyConfig.implementationAddress.toString();
-    const owner: string = factoryProxyConfig.owner.toString();
-
-    const filteredOptions: string[] = await this.filterManageFactoryOptions(
-      language.getArrayFromObject('wizard.manageFactoryOptions'),
-      owner,
-    );
-
-    const factoryAction = await utilsService.defaultMultipleAsk(
-      language.getText('wizard.configurationMenuTitle'),
-      filteredOptions,
-      false,
-      {
-        network: currentAccount.network,
-        account: `${currentAccount.accountId} - ${currentAccount.alias}`,
-        mirrorNode: currentMirror.name,
-        rpc: currentRPC.name,
-      },
-    );
-    switch (factoryAction) {
-      case language.getText('wizard.manageFactoryOptions.ChangeFactory'):
-        await utilsService.cleanAndShowBanner();
-        await this.changeFactory();
-        utilsService.showMessage(language.getText('wizard.factoryChanged'));
-        break;
-
-      case language.getText('wizard.manageFactoryOptions.UpgradeFactory'):
-        await utilsService.cleanAndShowBanner();
-        await this.upgradeFactory(currentFactory, currentImplementation);
-        break;
-
-      case language.getText('wizard.manageFactoryOptions.ChangeOwner'):
-        await utilsService.cleanAndShowBanner();
-        await this.changeFactoryOwner(currentFactory);
-        break;
-
-      case language.getText('wizard.manageFactoryOptions.FactoryDetails'):
-        await utilsService.cleanAndShowBanner();
-        this.showFactoryDetails(factoryProxyConfig);
-        break;
-
-      default:
-        await utilsService.cleanAndShowBanner();
-        await wizardService.configurationMenu();
-    }
-    await this.manageFactoryMenu();
-  }
-
-  private showFactoryDetails(factoryProxyConfig: ProxyConfigurationViewModel) {
-    utilsService.showMessage(
-      colors.yellow(
-        `${language.getText('factory.implementation')}: ${
-          factoryProxyConfig.implementationAddress.value
-        }`,
-      ),
-    );
-    utilsService.showMessage(
-      colors.yellow(
-        `${language.getText('factory.owner')}: ${
-          factoryProxyConfig.owner.value
-        }`,
-      ),
-    );
-  }
-
-  private async filterManageFactoryOptions(
-    options: string[],
-    factoryOwner: string,
-  ): Promise<string[]> {
-    const configAccount = utilsService.getCurrentAccount();
-
-    let filteredOptions: string[] = [];
-    filteredOptions = options.filter((option) => {
-      if (
-        (option ===
-          language.getText('wizard.manageFactoryOptions.UpgradeFactory') &&
-          factoryOwner !== configAccount.accountId) ||
-        (option ===
-          language.getText('wizard.manageFactoryOptions.ChangeOwner') &&
-          factoryOwner !== configAccount.accountId)
-      )
-        return false;
-      return true;
-    });
-
-    return filteredOptions;
-  }
-
-  /**
-   * Function to change the configured factory
-   */
-  public async changeFactory(): Promise<IFactoryConfig[]> {
-    const configuration = configurationService.getConfiguration();
-    const currentAccount = utilsService.getCurrentAccount();
-    const currentMirror = utilsService.getCurrentMirror();
-    const currentRPC = utilsService.getCurrentRPC();
-
-    const factories: IFactoryConfig[] = configuration?.factories || [];
-
-    const networks = configurationService
-      .getConfiguration()
-      .networks.map((network) => network.name);
-    const network = await utilsService.defaultMultipleAsk(
-      language.getText('wizard.networkManage'),
-      networks,
-      false,
-      {
-        network: currentAccount.network,
-        mirrorNode: currentMirror.name,
-        rpc: currentRPC.name,
-        account: `${currentAccount.accountId} - ${currentAccount.alias}`,
-      },
-    );
-
-    const factoryId = await utilsService.defaultSingleAsk(
-      language.getText('configuration.askFactoryId'),
-      this.ZERO_ADDRESS,
-    );
-
-    if (factories && factories.map((val) => val.network)) {
-      factories[factories.map((val) => val.network).indexOf(network)].id =
-        factoryId;
-    } else {
-      factories.push({ id: factoryId, network: network });
-    }
-
-    // Set factories
-    configuration.factories = factories;
-    configurationService.setConfiguration(configuration);
-    return factories;
-  }
-
-  /**
-   * Function to upgrade the configured factory
-   */
-  public async upgradeFactory(
-    factory: IFactoryConfig,
-    currentImpl: string,
-  ): Promise<void> {
-    await utilsService.cleanAndShowBanner();
-
-    const upgradeImplementationRequest =
-      new UpgradeFactoryImplementationRequest({
-        factoryId: factory.id,
-        implementationAddress: '',
-      });
-
-    try {
-      await new ImplementationFactoryProxyService().upgradeImplementation(
-        upgradeImplementationRequest,
-        currentImpl,
-      );
-    } catch (error) {
-      await utilsService.askErrorConfirmation(
-        async () => await this.manageFactoryMenu(),
-        error,
-      );
-    }
-  }
-
-  /**
-   * Function to change the owner of the configured factory
-   */
-  public async changeFactoryOwner(factory: IFactoryConfig): Promise<void> {
-    await utilsService.cleanAndShowBanner();
-
-    const changeFactoryProxyOwnerRequest = new ChangeFactoryProxyOwnerRequest({
-      factoryId: factory.id,
-      targetId: '',
-    });
-
-    try {
-      await new OwnerFactoryProxyService().changeFactoryProxyOwner(
-        changeFactoryProxyOwnerRequest,
-      );
-    } catch (error) {
-      await utilsService.askErrorConfirmation(
-        async () => await this.manageFactoryMenu(),
-        error,
-      );
-    }
   }
 
   /**

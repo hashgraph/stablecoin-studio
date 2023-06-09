@@ -18,6 +18,7 @@ import {
 import { IManagedFeatures } from '../../../domain/configuration/interfaces/IManagedFeatures.js';
 import Service from '../Service.js';
 import SetConfigurationService from '../configuration/SetConfigurationService.js';
+import SetFactoryService from '../configuration/SetFactoryService.js';
 import AssociateStableCoinsService from './AssociateStableCoinService.js';
 import KYCStableCoinService from './KYCStableCoinService.js';
 
@@ -49,6 +50,9 @@ export default class CreateStableCoinService extends Service {
     const setConfigurationService: SetConfigurationService =
       new SetConfigurationService();
 
+    const factoryService: SetFactoryService =
+      new SetFactoryService();      
+
     if (
       currentAccount.privateKey == null ||
       currentAccount.privateKey == undefined ||
@@ -61,9 +65,9 @@ export default class CreateStableCoinService extends Service {
     }
     if (
       utilsService.getCurrentFactory().id !==
-      (await setConfigurationService.getSDKFactory())
+      (await factoryService.getSDKFactory())
     ) {
-      await setConfigurationService.setSDKFactory(
+      await factoryService.setSDKFactory(
         utilsService.getCurrentFactory().id,
       );
     }
