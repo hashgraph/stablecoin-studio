@@ -76,7 +76,7 @@ import BaseError, {
 } from '../../../src/core/error/BaseError.js';
 const decimals = 6;
 const initialSupply = 1000;
-const maxSupply = 10000;
+const maxSupply = 1000000;
 
 SDK.log = { level: 'ERROR', transports: new LoggerTransports.Console() };
 
@@ -343,6 +343,13 @@ describe('🧪 Stablecoin test', () => {
 			ErrorCode.OperationNotAllowed,
 			ErrorCategory.Logic,
 		);
+
+		await StableCoin.revokeKyc(
+			new KYCRequest({
+				targetId: CLIENT_ACCOUNT_ECDSA.id.toString(),
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
+			}),
+		);
 	}, 60_000);
 
 	it('Gets a coin', async () => {
@@ -397,41 +404,51 @@ describe('🧪 Stablecoin test', () => {
 		);
 
 		// Switching account to associate before transfering
-		await Network.connect(
-			new ConnectRequest({
-				account: {
-					accountId: CLIENT_ACCOUNT_ECDSA.id.toString(),
-					privateKey: CLIENT_ACCOUNT_ECDSA.privateKey,
-				},
-				network: 'testnet',
-				wallet: SupportedWallets.CLIENT,
-				mirrorNode: mirrorNode,
-				rpcNode: rpcNode,
-			}),
-		);
-
-		await StableCoin.associate(
-			new AssociateTokenRequest({
+		const result = await StableCoin.isAccountAssociated(
+			new IsAccountAssociatedTokenRequest({
 				targetId: CLIENT_ACCOUNT_ECDSA.id.toString(),
 				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
 			}),
 		);
 
-		await delay();
+		if (!result) {
+			await Network.connect(
+				new ConnectRequest({
+					account: {
+						accountId: CLIENT_ACCOUNT_ECDSA.id.toString(),
+						privateKey: CLIENT_ACCOUNT_ECDSA.privateKey,
+					},
+					network: 'testnet',
+					wallet: SupportedWallets.CLIENT,
+					mirrorNode: mirrorNode,
+					rpcNode: rpcNode,
+				}),
+			);
+
+			await StableCoin.associate(
+				new AssociateTokenRequest({
+					targetId: CLIENT_ACCOUNT_ECDSA.id.toString(),
+					tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
+				}),
+			);
+
+			await Network.connect(
+				new ConnectRequest({
+					account: {
+						accountId: CLIENT_ACCOUNT_ED25519.id.toString(),
+						privateKey: CLIENT_ACCOUNT_ED25519.privateKey,
+					},
+					network: 'testnet',
+					wallet: SupportedWallets.CLIENT,
+					mirrorNode: mirrorNode,
+					rpcNode: rpcNode,
+				}),
+			);
+
+			await delay();
+		}
 
 		// Switching back account to grant kyc and transfer
-		await Network.connect(
-			new ConnectRequest({
-				account: {
-					accountId: CLIENT_ACCOUNT_ED25519.id.toString(),
-					privateKey: CLIENT_ACCOUNT_ED25519.privateKey,
-				},
-				network: 'testnet',
-				wallet: SupportedWallets.CLIENT,
-				mirrorNode: mirrorNode,
-				rpcNode: rpcNode,
-			}),
-		);
 
 		await StableCoin.grantKyc(
 			new KYCRequest({
