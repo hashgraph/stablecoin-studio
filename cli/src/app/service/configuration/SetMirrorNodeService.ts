@@ -4,6 +4,7 @@ import {
   language,
   utilsService,
   wizardService,
+  networkWizardService,
 } from '../../../index.js';
 import Service from '../Service.js';
 import { IMirrorsConfig } from 'domain/configuration/interfaces/IMirrorsConfig.js';
@@ -369,7 +370,7 @@ export default class SetMirrorNodeService extends Service {
       case language.getText('wizard.manageMirrorNodeOptions.Change'):
         await utilsService.cleanAndShowBanner();
 
-        if (await wizardService.chooseMirrorNodeNetwork(_network)) {
+        if (await networkWizardService.chooseMirrorNodeNetwork(_network)) {
           if (utilsService.getCurrentMirror().network === _network)
             await utilsService.initSDK();
           await utilsService.cleanAndShowBanner();
@@ -401,7 +402,7 @@ export default class SetMirrorNodeService extends Service {
             true,
           );
           if (operateWithNewAccount) {
-            await wizardService.chooseLastMirrorNode(_network);
+            await networkWizardService.chooseLastMirrorNode(_network);
             await utilsService.initSDK();
             await utilsService.cleanAndShowBanner();
             await wizardService.mainMenu();
@@ -412,7 +413,7 @@ export default class SetMirrorNodeService extends Service {
             true,
           );
           if (mirrorSelected) {
-            wizardService.setLastMirrorNodeAsSelected(_network);
+            networkWizardService.setLastMirrorNodeAsSelected(_network);
           }
         }
         break;

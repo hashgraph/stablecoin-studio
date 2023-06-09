@@ -4,6 +4,7 @@ import {
   language,
   utilsService,
   wizardService,
+  networkWizardService,
 } from '../../../index.js';
 import Service from '../Service.js';
 import { IRPCsConfig } from 'domain/configuration/interfaces/IRPCsConfig.js';
@@ -352,7 +353,7 @@ export default class SetRPCService extends Service {
     switch (rpcAction) {
       case language.getText('wizard.manageRPCOptions.Change'):
         await utilsService.cleanAndShowBanner();
-        if (await wizardService.chooseRPCNetwork(_network)) {
+        if (await networkWizardService.chooseRPCNetwork(_network)) {
           if (currentRPC.network === _network) {
             await utilsService.initSDK();
           }
@@ -381,7 +382,7 @@ export default class SetRPCService extends Service {
             true,
           );
           if (operateWithNewAccount) {
-            await wizardService.chooseLastRPC(_network);
+            await networkWizardService.chooseLastRPC(_network);
             await utilsService.initSDK();
             await utilsService.cleanAndShowBanner();
             await wizardService.mainMenu();
@@ -392,7 +393,7 @@ export default class SetRPCService extends Service {
             true,
           );
           if (rpcSelected) {
-            wizardService.setLastRPCAsSelected(_network);
+            networkWizardService.setLastRPCAsSelected(_network);
           }
         }
         break;
