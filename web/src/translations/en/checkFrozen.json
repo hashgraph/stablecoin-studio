@@ -4,7 +4,7 @@
 	"accountLabel": "Enter the account",
 	"accountPlaceholder": "0.0.0",
 	"modalIsFrozen": "The account {{ account }} is frozen for the token.",
-	"modalIsNotFrozen": "The account {{ account }} is unfronzen for the token.",
+	"modalIsNotFrozen": "The account {{ account }} is unfrozen for the token.",
 	"modalAction": {
 		"subtitle": "Operation details review",
 		"account": "Account",

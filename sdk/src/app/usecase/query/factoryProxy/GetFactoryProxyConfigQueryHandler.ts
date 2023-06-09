@@ -54,7 +54,9 @@ export class GetFactoryProxyConfigQueryHandler
 			await this.mirrorNode.getContractMemo(factoryProxyId);
 
 		if (!evmFactoryProxyAdminAddress)
-			throw new Error('No factory proxy admin address found');
+			throw new Error(
+				"No admin address found for the current factory's proxy",
+			);
 
 		const factoryProxyImpl = await this.queryAdapter.getProxyImplementation(
 			new EvmAddress(evmFactoryProxyAdminAddress),

@@ -26,9 +26,14 @@ export default class ImplementationFactoryProxyService extends Service {
         currentImpl,
     );
 
-    req.implementationAddress = await utilsService.defaultSingleAsk(
-      language.getText('factory.askFactoryImplementation'),
-      '0.0.0',
+    await utilsService.handleValidation(
+      () => req.validate('implementationAddress'),
+      async () => {
+        req.implementationAddress = await utilsService.defaultSingleAsk(
+          language.getText('wizard.askFactoryImplementation'),
+          '0.0.0',
+        );
+      },
     );
 
     await utilsService.showSpinner(Proxy.upgradeFactoryImplementation(req), {
