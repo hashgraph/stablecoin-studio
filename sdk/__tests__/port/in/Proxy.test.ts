@@ -259,6 +259,8 @@ describe('🧪 Proxy test', () => {
 			}),
 		);
 
+		await delay();
+
 		factoryProxyConfig = await Proxy.getFactoryProxyConfig(
 			new GetFactoryProxyConfigRequest({
 				factoryId: FACTORY_ADDRESS,
@@ -321,6 +323,8 @@ describe('🧪 Proxy test', () => {
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
 			}),
 		);
+
+		await delay();
 
 		factoryProxyConfig = await Proxy.getFactoryProxyConfig(
 			new GetFactoryProxyConfigRequest({
