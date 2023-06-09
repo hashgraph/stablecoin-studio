@@ -2,7 +2,7 @@ import userEvent from '@testing-library/user-event';
 import HandleRoles from '../HandleRoles';
 import type { Action } from '../HandleRoles';
 import { render } from '../../../test';
-import { roleOptions, fields, actions } from '../constants';
+import { roleOptions, actions } from '../constants';
 import { waitFor } from '@testing-library/react';
 import { RouterManager } from '../../../Router/RouterManager';
 import configureMockStore from 'redux-mock-store';

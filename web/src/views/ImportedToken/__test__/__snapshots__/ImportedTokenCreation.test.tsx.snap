@@ -1,0 +1,347 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<ImportedTokenCreation /> should render correctly 1`] = `
+<DocumentFragment>
+  <div
+    class="chakra-stack css-16oka5y"
+  >
+    <div
+      class="chakra-stack css-16oka5y"
+    >
+      <h2
+        class="chakra-heading css-bqsusc"
+        data-testid="base-container-heading"
+      >
+        Add token
+      </h2>
+      <div
+        class="css-1b6lda7"
+        data-testid="base-container-children"
+      >
+        <div
+          class="chakra-tabs css-1x6vjw3"
+        >
+          <div
+            aria-orientation="horizontal"
+            class="chakra-tabs__tablist css-9jay18"
+            role="tablist"
+          >
+            <button
+              aria-controls="tabs-:r1:--tabpanel-0"
+              aria-disabled="false"
+              aria-selected="true"
+              class="chakra-tabs__tab css-h9y905"
+              data-index="0"
+              id="tabs-:r1:--tab-0"
+              role="tab"
+              tabindex="0"
+              type="button"
+            >
+              <p
+                class="chakra-text css-1ikrtdg"
+                data-testid="stepper-step-number-1"
+              >
+                01
+              </p>
+              <p
+                class="chakra-text css-1i91963"
+                data-testid="stepper-step-title-1"
+              >
+                Token info
+              </p>
+            </button>
+          </div>
+          <div
+            class="chakra-tabs__tab-panels css-27a8z"
+          >
+            <div
+              aria-labelledby="tabs-:r1:--tab-0"
+              class="chakra-tabs__tab-panel css-1iyuyap"
+              data-testid="stepper-step-panel-container-1"
+              id="tabs-:r1:--tabpanel-0"
+              role="tabpanel"
+              tabindex="0"
+            >
+              <div
+                class="chakra-stack css-1eot3nj"
+              >
+                <div
+                  class="css-1c3xk1u"
+                >
+                  <div
+                    class="chakra-stack css-1f6llri"
+                  >
+                    <div
+                      class="chakra-stack css-a55xzq"
+                    >
+                      <h2
+                        class="chakra-heading css-p7jgmy"
+                        data-testid="title"
+                      >
+                        Add token
+                      </h2>
+                      <form
+                        class="chakra-stack css-b5leqj"
+                      >
+                        <div
+                          class="chakra-stack css-1h0sumw"
+                        >
+                          <div
+                            class="chakra-form-control css-1kxonj9"
+                            role="group"
+                          >
+                            <label
+                              class="chakra-form__label css-1hfoxt1"
+                              for="field-:r2:"
+                              id="field-:r2:-label"
+                            >
+                              <div
+                                class="chakra-stack css-84zodg"
+                              >
+                                <p
+                                  class="chakra-text css-mgupmj"
+                                >
+                                  Stable coin id
+                                </p>
+                                <p
+                                  class="chakra-text css-ftb7fv"
+                                  data-testid="required"
+                                >
+                                  *
+                                </p>
+                              </div>
+                            </label>
+                            <div
+                              class="chakra-input__group css-bx0blc"
+                              data-group="true"
+                            >
+                              <input
+                                autocomplete="off"
+                                class="chakra-input css-l1kxkf"
+                                data-testid="stableCoinId"
+                                id="field-:r2:"
+                                name="stableCoinId"
+                                placeholder="0.0.0"
+                                value=""
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        <div
+                          class="chakra-stack css-173lc29"
+                        >
+                          <p
+                            class="chakra-text css-16srhgc"
+                          >
+                            Do you want to get the roles automatically? This operation will incur a cost
+                          </p>
+                          <div
+                            style="position: relative; display: inline-block; text-align: left; opacity: 1; direction: ltr; border-radius: 17.5px; transition: opacity 0.25s; user-select: none;"
+                          >
+                            <div
+                              class="react-switch-bg"
+                              style="height: 35px; width: 64px; margin: 0px; position: relative; background: rgb(255, 255, 255); border-radius: 17.5px; cursor: pointer; transition: background 0.25s;"
+                            />
+                            <div
+                              class="react-switch-handle"
+                              style="height: 29px; width: 29px; background: rgb(251, 206, 198); display: inline-block; cursor: pointer; border-radius: 50%; position: absolute; transform: translateX(3px); top: 3px; outline: 0; border: 0px; transition: background-color 0.25s, transform 0.25s, box-shadow 0.15s;"
+                            >
+                              <div
+                                style="height: 29px; width: 29px; opacity: 1; position: absolute; left: 0px; top: 0px; pointer-events: none; transition: opacity 0.25s;"
+                              >
+                                <div
+                                  class="chakra-stack css-191yzw1"
+                                >
+                                  <p
+                                    class="chakra-text css-1f7y1le"
+                                    data-testid="switch-handler-no"
+                                  >
+                                    NO
+                                  </p>
+                                </div>
+                              </div>
+                              <div
+                                style="height: 29px; width: 29px; opacity: 0; position: absolute; left: 0px; top: 0px; pointer-events: none; transition: opacity 0.25s;"
+                              >
+                                <div
+                                  class="chakra-stack css-191yzw1"
+                                >
+                                  <p
+                                    class="chakra-text css-1f7y1le"
+                                    data-testid="switch-handler-yes"
+                                  >
+                                    YES
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                            <input
+                              aria-checked="false"
+                              data-testid="switch"
+                              id="switch-component"
+                              role="switch"
+                              style="border: 0px; height: 1px; margin: -1px; overflow: hidden; padding: 0px; position: absolute; width: 1px;"
+                              type="checkbox"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="chakra-stack css-1h0sumw"
+                        >
+                          <div
+                            class="chakra-form-control css-1kxonj9"
+                            data-testid="form_control"
+                            role="group"
+                          >
+                            <label
+                              class="chakra-form__label css-1hfoxt1"
+                              for="field-:r3:"
+                              id="field-:r3:-label"
+                            >
+                              <div
+                                class="chakra-stack css-84zodg"
+                              >
+                                <p
+                                  class="chakra-text css-mgupmj"
+                                  data-testid="selector-label"
+                                >
+                                  Roles
+                                </p>
+                              </div>
+                            </label>
+                            <div
+                              class="css-svkhat"
+                            >
+                              <div
+                                class="css-3qrqo0"
+                              />
+                              <span
+                                class="css-1f43avz-a11yText-A11yText"
+                                id="react-select-2-live-region"
+                              />
+                              <span
+                                aria-atomic="false"
+                                aria-live="polite"
+                                aria-relevant="additions text"
+                                class="css-1f43avz-a11yText-A11yText"
+                              />
+                              <div
+                                class=" css-17n5zh"
+                              >
+                                <div
+                                  class="css-3y2vuh"
+                                >
+                                  <span
+                                    class="chakra-text css-4pvr19"
+                                    data-testid="select-placeholder"
+                                  >
+                                    Select the roles
+                                  </span>
+                                  <div
+                                    class=" css-svnjlw"
+                                    data-value=""
+                                  >
+                                    <input
+                                      aria-autocomplete="list"
+                                      aria-describedby="react-select-2-placeholder"
+                                      aria-expanded="false"
+                                      aria-haspopup="true"
+                                      autocapitalize="none"
+                                      autocomplete="off"
+                                      autocorrect="off"
+                                      class=" css-146k1ar-input"
+                                      id="field-:r3:"
+                                      role="combobox"
+                                      spellcheck="false"
+                                      tabindex="0"
+                                      type="text"
+                                      value=""
+                                    />
+                                  </div>
+                                </div>
+                                <div
+                                  class=" css-hfbj6y"
+                                >
+                                  <div
+                                    class="css-1aabyhj"
+                                  >
+                                    <svg
+                                      class="chakra-icon css-13otjrl"
+                                      fill="currentColor"
+                                      focusable="false"
+                                      height="1em"
+                                      viewBox="0 0 256 256"
+                                      width="1em"
+                                      xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                      <rect
+                                        fill="none"
+                                        height="256"
+                                        width="256"
+                                      />
+                                      <polyline
+                                        fill="none"
+                                        points="208 96 128 176 48 96"
+                                        stroke="currentColor"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="16"
+                                      />
+                                    </svg>
+                                  </div>
+                                </div>
+                              </div>
+                              <div>
+                                <input
+                                  name="roles"
+                                  type="hidden"
+                                  value=""
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="css-1q6t3f6"
+                >
+                  <hr
+                    aria-orientation="horizontal"
+                    class="chakra-divider css-12thghs"
+                  />
+                  <div
+                    class="css-1e334ws"
+                  >
+                    <button
+                      class="chakra-button css-hi7zxp"
+                      data-testid="stepper-step-panel-button-secondary-1"
+                      type="button"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      class="chakra-button css-qvkb6r"
+                      data-testid="stepper-step-panel-button-primary-1"
+                      disabled=""
+                      type="button"
+                    >
+                      Add token
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;

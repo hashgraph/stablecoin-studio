@@ -333,7 +333,7 @@ const DetailsReview = ({
 	};
 
 	return (
-		<Box textAlign='left'>
+		<Box textAlign='left' data-testid='button-box'>
 			<Flex justify='space-between' mb={6} alignItems='center'>
 				{title && (
 					<Text

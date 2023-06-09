@@ -1,5 +1,6 @@
 import DetailsReview from '../DetailsReview';
 import { render } from '../../test/index';
+import userEvent from '@testing-library/user-event';
 
 const details = [
 	{
@@ -65,6 +66,34 @@ describe(`<${DetailsReview.name} />`, () => {
 
 		const dividers = component.getAllByTitle('divider');
 		expect(dividers).toHaveLength(details.length - 1);
+	});
+
+	test('should has details', async () => {
+		const details = [
+			{
+				label: 'Name',
+				value: 'GMT'
+			},
+			{
+				label: 'Name',
+				value: 123,
+				copyButton: true,
+				hashScanURL: 'url'
+			},
+			{
+				label: 'KYC key',
+				value: 123
+			}
+		];
+		const props = {
+			details,
+			title: 'list for testing',
+			editable: true
+		};
+		const component = render(<DetailsReview {...props} />);
+
+		const button = component.getByTestId('button-box');
+		await userEvent.click(button);
 	});
 
 	test('should not has dividers is divider prop is false', () => {

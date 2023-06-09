@@ -1,0 +1,48 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<FeesManagement /> should render correctly 1`] = `
+<DocumentFragment>
+  <div
+    class="chakra-stack css-16oka5y"
+  >
+    <h2
+      class="chakra-heading css-bqsusc"
+      data-testid="base-container-heading"
+    >
+      Fees management
+    </h2>
+    <div
+      class="css-1b6lda7"
+      data-testid="base-container-children"
+    >
+      <div
+        class="css-1jib1v"
+        data-testid="no-fees-management-container"
+      >
+        <img
+          alt="Safe box"
+          class="chakra-image css-1faqnpj"
+          data-testid="no-fees-management-logo"
+          src="safe-box.svg"
+        />
+        <p
+          class="chakra-text css-1xvinut"
+          data-testid="no-fees-management-title"
+        >
+          Missing Fees Management
+        </p>
+        <p
+          class="chakra-text css-exh7zu"
+          data-testid="no-fees-management-description"
+        >
+          The stable coin you have chosen does not allow fees management, please, select a different stable coin.
+        </p>
+      </div>
+    </div>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;

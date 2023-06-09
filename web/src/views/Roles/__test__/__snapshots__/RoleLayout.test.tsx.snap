@@ -212,6 +212,7 @@ exports[`<RoleLayout /> should render correctly 1`] = `
               </h2>
               <div
                 class="css-13brihr"
+                data-testid="button-box"
               >
                 <div
                   class="css-1i64jsd"
@@ -309,6 +310,7 @@ exports[`<RoleLayout /> should render correctly 1`] = `
               </div>
               <div
                 class="css-13brihr"
+                data-testid="button-box"
               >
                 <div
                   class="css-1i64jsd"

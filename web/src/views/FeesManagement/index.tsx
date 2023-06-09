@@ -182,7 +182,7 @@ const FeesManagement = () => {
 	};
 
 	useEffect(() => {
-		const parsedFees = selectedStableCoin!.customFees!.map((item: FeeTypes) => {
+		const parsedFees = selectedStableCoin?.customFees?.map((item: FeeTypes) => {
 			const load = isLoading;
 			load.push(false);
 			setIsLoading(load);
@@ -680,6 +680,7 @@ const FeesManagement = () => {
 										</GridItem>
 										<GridItem textAlign='center' marginTop={{ base: 2 }}>
 											<Icon
+												data-testid='trash-icon'
 												name='Trash'
 												color='brand.primary'
 												cursor='pointer'

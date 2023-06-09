@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`<OperationLayout /> should render correctly 1`] = `
+exports[`<BurnOperation /> should render correctly 1`] = `
 <DocumentFragment>
   <div
     class="chakra-stack css-16oka5y"
@@ -24,9 +24,66 @@ exports[`<OperationLayout /> should render correctly 1`] = `
           <div
             class="chakra-stack css-n21gh5"
           >
-            <span
-              data-testid="left-content"
-            />
+            <h2
+              class="chakra-heading css-utvjhb"
+              data-testid="title"
+            >
+              Burn tokens operation
+            </h2>
+            <p
+              class="chakra-text css-1lyqlf8"
+              data-testid="operation-title"
+            >
+              Operation details
+            </p>
+            <form
+              class="chakra-stack css-b5leqj"
+            >
+              <div
+                class="chakra-stack css-1h0sumw"
+              >
+                <div
+                  class="chakra-form-control css-1kxonj9"
+                  role="group"
+                >
+                  <label
+                    class="chakra-form__label css-1hfoxt1"
+                    for="field-:r1:"
+                    id="field-:r1:-label"
+                  >
+                    <div
+                      class="chakra-stack css-84zodg"
+                    >
+                      <p
+                        class="chakra-text css-mgupmj"
+                      >
+                        Enter the amount
+                      </p>
+                      <p
+                        class="chakra-text css-ftb7fv"
+                        data-testid="required"
+                      >
+                        *
+                      </p>
+                    </div>
+                  </label>
+                  <div
+                    class="chakra-input__group css-bx0blc"
+                    data-group="true"
+                  >
+                    <input
+                      autocomplete="off"
+                      class="chakra-input css-l1kxkf"
+                      data-testid="amount"
+                      id="field-:r1:"
+                      name="amount"
+                      placeholder="0"
+                      value=""
+                    />
+                  </div>
+                </div>
+              </div>
+            </form>
           </div>
           <div
             class="chakra-stack css-eunu1i"
@@ -259,6 +316,7 @@ exports[`<OperationLayout /> should render correctly 1`] = `
             <button
               class="chakra-button css-qvkb6r"
               data-testid="confirm-btn"
+              disabled=""
               type="button"
             >
               Accept

@@ -9,6 +9,7 @@ Object {
     <div>
       <div
         class="css-13brihr"
+        data-testid="button-box"
       >
         <div
           class="css-1i64jsd"
@@ -125,6 +126,7 @@ Object {
   "container": <div>
     <div
       class="css-13brihr"
+      data-testid="button-box"
     >
       <div
         class="css-1i64jsd"

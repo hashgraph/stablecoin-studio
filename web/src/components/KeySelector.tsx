@@ -9,7 +9,7 @@ import { SelectController } from './Form/SelectController';
 
 const OTHER_KEY_VALUE = 3;
 
-interface KeySelectorProps {
+export interface KeySelectorProps {
 	control: Control<FieldValues>;
 	name: string;
 	label?: string;
@@ -126,3 +126,5 @@ export const KeySelector = ({ control, name, label, labelPlaceholder }: KeySelec
 		</VStack>
 	);
 };
+
+export default KeySelector;
