@@ -86,7 +86,7 @@ Each stable coin maps to an *underlying* Hedera Token and adds the following fun
 ## Creating Stable Coins
 Every time a stable coin is created, a new Hedera Token is created (the underlying token) and the following smart contracts are deployed:
 - The stable coin proxy smart contract: pointing to the `HederaTokenManager` logic smart contract that was passed as an input argument(*). Proxies are used to make stable coins upgradable.
-- The stable coin proxy admin smart contract: this contract will act as an intermediary to upgrade the stable coin proxy implementation. For more information on this check the contract module's README.
+- The stable coin proxy admin smart contract: this contract will act as an intermediary to upgrade the stable coin proxy implementation. For more information on this, check the contract module's README.
 
 An smart contract, named `StablecoinFactory`, must be previously deployed since implements the flow to create a new stable coin in a single transaction. A default `StablecoinFactory` is deployed, but any user will be able to [deploy their own factory](#Deploying-the-stable-coin-factories).
 
@@ -213,7 +213,7 @@ We provide default addresses for the factories that we have deployed for anyone 
 
 | Contract name  | Address      | Network    | 
 |----------------|--------------|------------|
-| FactoryAddress | 0.0.13705256 | Testnet    |
+| FactoryAddress | 0.0.13923715 | Testnet    |
 | FactoryAddress | 0.0.XXXXXX   | Previewnet |
 
 

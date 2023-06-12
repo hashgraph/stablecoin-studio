@@ -93,7 +93,6 @@ export default class OperationStableCoinService extends Service {
   private stableCoinDeleted;
   private hasKycKey;
   private hasFreezeKey;
-  private hasfeeScheduleKey;
   private isFrozen;
 
   // private tokenUpdate: IManagedFeatures = undefined;
@@ -196,8 +195,6 @@ export default class OperationStableCoinService extends Service {
     this.stableCoinPaused = capabilitiesStableCoin.coin.paused;
     this.hasKycKey = capabilitiesStableCoin.coin.kycKey !== undefined;
     this.hasFreezeKey = capabilitiesStableCoin.coin.freezeKey !== undefined;
-    this.hasfeeScheduleKey =
-      capabilitiesStableCoin.coin.feeScheduleKey !== undefined;
 
     const freezeAccountRequest = new FreezeAccountRequest({
       tokenId: capabilitiesStableCoin.coin.tokenId.toString(),
@@ -505,33 +502,6 @@ export default class OperationStableCoinService extends Service {
 
         // Call to Supplier Role
         await this.roleManagementFlow();
-        break;
-      case language.getText('wizard.stableCoinOptions.RoleRefresh'):
-        await utilsService.cleanAndShowBanner();
-
-        const getRolesRequest = new GetRolesRequest({
-          targetId: currentAccount.accountId,
-          tokenId: this.stableCoinId,
-        });
-
-        // Call to Supplier Role
-        const rolesToRefresh = await new RoleStableCoinsService().getRoles(
-          getRolesRequest,
-        );
-        const importedTokensRefreshed = configAccount.importedTokens.map(
-          (token) => {
-            if (token.id === this.stableCoinId) {
-              return {
-                id: token.id,
-                symbol: token.symbol,
-                roles: rolesToRefresh,
-              };
-            }
-            return token;
-          },
-        );
-        new ManageImportedTokenService().updateAccount(importedTokensRefreshed);
-        configAccount.importedTokens = importedTokensRefreshed;
         break;
       case language.getText('wizard.stableCoinOptions.Configuration'):
         await utilsService.cleanAndShowBanner();
@@ -1388,16 +1358,26 @@ export default class OperationStableCoinService extends Service {
       (a) => a.operation,
     );
 
-    const contractKeys = this.KeysAssignedToContract(stableCoinCapabilities);
+    const roles: string[] = await this.getRolesAccount();
 
+    const contractKeys = this.KeysAssignedToContract(stableCoinCapabilities);
     const roleManagementOptionsFiltered = language
       .getArrayFromObject('wizard.roleManagementOptions')
       .filter((option) => {
         if (option == language.getText('wizard.roleManagementOptions.Grant')) {
-          return contractKeys.length > 0;
+          return (
+            contractKeys.length > 0 &&
+            roles.includes(StableCoinRole.DEFAULT_ADMIN_ROLE)
+          );
+        }
+        if (option == language.getText('wizard.roleManagementOptions.Revoke')) {
+          return roles.includes(StableCoinRole.DEFAULT_ADMIN_ROLE);
         }
         if (option == language.getText('wizard.roleManagementOptions.Edit')) {
-          return capabilities.includes(Operation.CASH_IN);
+          return (
+            capabilities.includes(Operation.CASH_IN) &&
+            roles.includes(StableCoinRole.DEFAULT_ADMIN_ROLE)
+          );
         }
 
         return true;
@@ -2098,10 +2078,10 @@ export default class OperationStableCoinService extends Service {
       );
     let result = [];
     let capabilitiesFilter = [];
-    // if (stableCoinCapabilities.capabilities.length === 0) return options;
     const capabilities: Operation[] = stableCoinCapabilities.capabilities.map(
       (a) => a.operation,
     );
+
     capabilitiesFilter = options.filter((option) => {
       if (
         (option === language.getText('wizard.stableCoinOptions.Send') &&
@@ -2125,12 +2105,10 @@ export default class OperationStableCoinService extends Service {
         (option === language.getText('wizard.stableCoinOptions.DangerZone') &&
           (capabilities.includes(Operation.PAUSE) ||
             capabilities.includes(Operation.DELETE))) ||
-        (option === language.getText('wizard.stableCoinOptions.RoleMgmt') &&
-          capabilities.includes(Operation.ROLE_MANAGEMENT)) ||
+        option === language.getText('wizard.stableCoinOptions.RoleMgmt') ||
         (option === language.getText('wizard.stableCoinOptions.FeesMgmt') &&
-          this.hasfeeScheduleKey) ||
-        (option === language.getText('wizard.stableCoinOptions.RoleRefresh') &&
-          !this.stableCoinDeleted) ||
+          (capabilities.includes(Operation.CREATE_CUSTOM_FEE) ||
+            capabilities.includes(Operation.REMOVE_CUSTOM_FEE))) ||
         (option === language.getText('wizard.stableCoinOptions.Details') &&
           !this.stableCoinDeleted) ||
         (option === language.getText('wizard.stableCoinOptions.Balance') &&
@@ -2195,16 +2173,13 @@ export default class OperationStableCoinService extends Service {
             (option ===
               language.getText('wizard.stableCoinOptions.RescueHBAR') &&
               roles.includes(StableCoinRole.RESCUE_ROLE)) ||
-            option ===
-              language.getText('wizard.stableCoinOptions.RoleRefresh') ||
             option === language.getText('wizard.stableCoinOptions.Details') ||
             option === language.getText('wizard.stableCoinOptions.Balance') ||
             option === language.getText('wizard.stableCoinOptions.KYCMgmt') ||
             option === language.getText('wizard.stableCoinOptions.FeesMgmt') ||
             option ===
               language.getText('wizard.stableCoinOptions.FreezeMgmt') ||
-            (option === language.getText('wizard.stableCoinOptions.RoleMgmt') &&
-              roles.includes(StableCoinRole.DEFAULT_ADMIN_ROLE)) ||
+            option === language.getText('wizard.stableCoinOptions.RoleMgmt') ||
             (option ===
               language.getText('wizard.stableCoinOptions.Configuration') &&
               ((capabilities.includes(Operation.UPDATE) &&

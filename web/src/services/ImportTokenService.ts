@@ -1,5 +1,5 @@
-import { IAccountToken } from '../interfaces/IAccountToken';
-import { IExternalToken } from '../interfaces/IExternalToken';
+import type { IAccountToken } from '../interfaces/IAccountToken';
+import type { IExternalToken } from '../interfaces/IExternalToken';
 
 export class ImportTokenService {
 	public static async importToken(tokenId: string, tokenSymbol: string, accountId: string) {

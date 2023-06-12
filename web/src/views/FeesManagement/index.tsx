@@ -358,7 +358,7 @@ const FeesManagement = () => {
 						amountDenominator: fractionalFee[index].amountDenominator ?? '',
 						min,
 						max,
-						net: net,
+						net,
 						percentage: amountOrPercentage, // TODO
 					};
 					requestCustomFeeArray.push(requestFractionalFee);

@@ -11,11 +11,7 @@ import {
 	Fees,
 	Factory,
 	SetNetworkRequest,
-	GetAccountsWithRolesRequest,
 	Proxy,
-	GetProxyConfigRequest,
-	ChangeProxyOwnerRequest,
-	UpgradeImplementationRequest,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 import type {
 	WalletEvent,
@@ -60,6 +56,10 @@ import type {
 	AddFixedFeeRequest,
 	AddFractionalFeeRequest,
 	AccountViewModel,
+	GetAccountsWithRolesRequest,
+	GetProxyConfigRequest,
+	ChangeProxyOwnerRequest,
+	UpgradeImplementationRequest,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 export type StableCoinListRaw = Array<Record<'id' | 'symbol', string>>;
@@ -146,22 +146,95 @@ export class SDKService {
 	// dummy init
 	public static async init(events: Partial<WalletEvent>) {
 		try {
-			const init = await Network.init(
-				new InitializationRequest({
-					network: 'mainnet',
-					mirrorNode: {
-						baseUrl: 'https://mainnet-public.mirrornode.hedera.com/api/v1/',
-						apiKey: '',
-						headerName: '',
-					},
-					rpcNode: {
-						baseUrl: 'https://mainnet.hashio.io/api',
-						apiKey: '',
-						headerName: '',
-					},
-					events,
-				}),
-			);
+			const initReq: InitializationRequest = new InitializationRequest({
+				network: 'mainnet',
+				mirrorNode: {
+					baseUrl: 'https://mainnet-public.mirrornode.hedera.com/api/v1/',
+					apiKey: '',
+					headerName: '',
+				},
+				rpcNode: {
+					baseUrl: 'https://mainnet.hashio.io/api',
+					apiKey: '',
+					headerName: '',
+				},
+				events,
+			});
+			if (process.env.REACT_APP_FACTORIES) {
+				try {
+					const factories = [];
+
+					const extractedFactories = JSON.parse(process.env.REACT_APP_FACTORIES);
+
+					for (let i = 0; i < extractedFactories.length; i++) {
+						const factory = extractedFactories[i].STABLE_COIN_FACTORY_ADDRESS;
+
+						factories.push({
+							factory,
+							environment: extractedFactories[i].Environment,
+						});
+					}
+
+					initReq.factories = {
+						factories,
+					};
+				} catch (e) {
+					console.error('Factories could not be found in .env');
+				}
+			}
+			if (process.env.REACT_APP_MIRROR_NODE) {
+				try {
+					const nodes = [];
+
+					const extractedMirrorNodes = JSON.parse(process.env.REACT_APP_MIRROR_NODE);
+
+					for (let i = 0; i < extractedMirrorNodes.length; i++) {
+						const mirrorNode = {
+							baseUrl: extractedMirrorNodes[i].BASE_URL,
+							apiKey: extractedMirrorNodes[i].API_KEY,
+							headerName: extractedMirrorNodes[i].HEADER,
+						};
+
+						nodes.push({
+							mirrorNode,
+							environment: extractedMirrorNodes[i].Environment,
+						});
+					}
+
+					initReq.mirrorNodes = {
+						nodes,
+					};
+				} catch (e) {
+					console.error('Mirror Nodes could not be found in .env');
+				}
+			}
+			if (process.env.REACT_APP_RPC_NODE) {
+				try {
+					const nodes = [];
+
+					const extractedJsonRpcRelays = JSON.parse(process.env.REACT_APP_RPC_NODE);
+
+					for (let i = 0; i < extractedJsonRpcRelays.length; i++) {
+						const rpcNode = {
+							baseUrl: extractedJsonRpcRelays[i].BASE_URL,
+							apiKey: extractedJsonRpcRelays[i].API_KEY,
+							headerName: extractedJsonRpcRelays[i].HEADER,
+						};
+
+						nodes.push({
+							jsonRpcRelay: rpcNode,
+							environment: extractedJsonRpcRelays[i].Environment,
+						});
+					}
+
+					initReq.jsonRpcRelays = {
+						nodes,
+					};
+				} catch (e) {
+					console.error('RPC Nodes could not be found in .env');
+				}
+			}
+			const init = await Network.init(initReq);
 
 			return init;
 		} catch (e) {
@@ -260,6 +333,10 @@ export class SDKService {
 
 	public static async unfreeze(req: FreezeAccountRequest) {
 		return await StableCoin.unFreeze(req);
+	}
+
+	public static async isAccountFrozen(req: FreezeAccountRequest) {
+		return await StableCoin.isAccountFrozen(req);
 	}
 
 	public static async delete(req: DeleteRequest) {

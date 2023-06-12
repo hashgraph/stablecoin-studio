@@ -1,4 +1,6 @@
 import Service from '../Service.js';
+import shell from 'shelljs';
+import pkg from '../../../../package.json';
 import yaml from 'js-yaml';
 import fs from 'fs-extra';
 import { IConfiguration } from '../../../domain/configuration/interfaces/IConfiguration.js';
@@ -6,11 +8,7 @@ import { INetworkConfig } from '../../../domain/configuration/interfaces/INetwor
 import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
 import { IMirrorsConfig } from '../../../domain/configuration/interfaces/IMirrorsConfig.js';
 import { IRPCsConfig } from '../../../domain/configuration/interfaces/IRPCsConfig.js';
-import {
-  configurationService,
-  packagePath,
-  utilsService,
-} from '../../../index.js';
+import { configurationService, utilsService } from '../../../index.js';
 import SetConfigurationService from './SetConfigurationService.js';
 import MaskData from 'maskdata';
 import { ILogConfig } from '../../../domain/configuration/interfaces/ILogConfig.js';
@@ -126,7 +124,7 @@ export default class ConfigurationService extends Service {
     try {
       const defaultConfig = yaml.load(
         fs.readFileSync(
-          `${this.getPackagePath()}/src/resources/config/${
+          `${this.getGlobalPath()}/build/src/resources/config/${
             this.configFileName
           }`,
         ),
@@ -167,11 +165,13 @@ export default class ConfigurationService extends Service {
    */
   public getDefaultConfigurationPath(): string {
     if (this.path) return this.path;
-    return `${this.getPackagePath()}/config/${this.configFileName}`;
+    return `${this.getGlobalPath()}/config/${this.configFileName}`;
   }
 
-  private getPackagePath(): string {
-    return packagePath;
+  private getGlobalPath(): string {
+    shell.config.silent = true;
+    const { stdout } = shell.exec('npm root -g');
+    return `${stdout}/${pkg.name}`.replace(/(\r\n|\n|\r)/gm, '');
   }
 
   public validateConfigurationFile(): boolean {

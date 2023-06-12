@@ -2,11 +2,8 @@ import { Heading, Stack, VStack, useDisclosure } from '@chakra-ui/react';
 import type { Control, FieldValues, UseFormSetValue } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import InputController from '../../components/Form/InputController';
-import {
-	CreateRequest,
-	Network,
-	GetTokenManagerListRequest,
-} from '@hashgraph-dev/stablecoin-npm-sdk';
+import { Network, GetTokenManagerListRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
+import type { CreateRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { handleRequestValidation } from '../../utils/validationsHelper';
 import { propertyNotFound } from '../../constant';
 import { useEffect, useState } from 'react';
@@ -23,7 +20,7 @@ interface BasicDetailsProps {
 }
 
 const BasicDetails = (props: BasicDetailsProps) => {
-	const { control, setValue } = props;
+	const { control } = props;
 	const { t } = useTranslation(['global', 'stableCoinCreation']);
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const [optionshederaTokenManagerAddresses, setOptionsHederaTokenManagerAddresses] = useState<

@@ -60,7 +60,7 @@ const mirrorNode: MirrorNode = {
 };
 const rpcNode: JsonRpcRelay = {
 	name: 'testrpcNode',
-	baseUrl: 'https://testnet.hashio.io/api',
+	baseUrl: 'http://127.0.0.1:7546/api',
 };
 
 describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
@@ -122,6 +122,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 	}, 1500000);
 
 	it('Create a fixed custom fee for an existing stable coin', async () => {
+		const CustomFeesNumber = 1;
 		const amount = 1;
 
 		const fixedFee = new AddFixedFeeRequest({
@@ -140,7 +141,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		const tokenCustomFees: RequestCustomFee[] = await getTokenCustomFees(
 			stableCoinCapabilitiesHTS.coin.tokenId!,
 		);
-		expect(tokenCustomFees.length).toEqual(1);
+		expect(tokenCustomFees.length).toEqual(CustomFeesNumber);
 		checkFixedFee(
 			tokenCustomFees[0],
 			amount * 10 ** decimals,
@@ -153,7 +154,8 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		await delay();
 	}, 150000);
 
-	it('Create a fractional custom fee for an existing stable coin', async () => {
+	it('Create a fractional custom fees for an existing stable coin (num+den)', async () => {
+		const CustomFeesNumber = 1;
 		const numerator = 1;
 		const denominator = 10;
 		const net = true;
@@ -178,7 +180,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		const tokenCustomFees: RequestCustomFee[] = await getTokenCustomFees(
 			stableCoinCapabilitiesHTS.coin.tokenId!,
 		);
-		expect(tokenCustomFees.length).toEqual(1);
+		expect(tokenCustomFees.length).toEqual(CustomFeesNumber);
 		checkFractionalFee(
 			tokenCustomFees[0],
 			numerator,
@@ -186,6 +188,8 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 			0,
 			feeCollectorAccountId,
 			net,
+			0,
+			0,
 		);
 
 		await removeTokenCustomFees(stableCoinCapabilitiesHTS);
@@ -193,9 +197,58 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		await delay();
 	}, 150000);
 
-	it('Create a fixed and a fractional custom fee, charged to the receiver, for an existing stable coin', async () => {
-		const percentage = 10;
+	it('Create a fractional custom fees for an existing stable coin (perc.)', async () => {
+		const CustomFeesNumber = 1;
+		const percentage = 22;
+		const net = true;
+		const min = 1;
+		const max = 2;
+
+		const FractionalFee = new AddFractionalFeeRequest({
+			tokenId: stableCoinCapabilitiesHTS.coin.tokenId!.toString(),
+			collectorId: feeCollectorAccountId.toString(),
+			collectorsExempt: true,
+			decimals: stableCoinCapabilitiesHTS.coin.decimals,
+			percentage: percentage.toString(),
+			amountNumerator: undefined,
+			amountDenominator: undefined,
+			min: min.toString(),
+			max: max.toString(),
+			net: net,
+		});
+
+		await Fees.addFractionalFee(FractionalFee);
+
+		await delay();
+
+		const tokenCustomFees: RequestCustomFee[] = await getTokenCustomFees(
+			stableCoinCapabilitiesHTS.coin.tokenId!,
+		);
+		expect(tokenCustomFees.length).toEqual(CustomFeesNumber);
+		checkFractionalFee(
+			tokenCustomFees[0],
+			0,
+			0,
+			percentage,
+			feeCollectorAccountId,
+			net,
+			min,
+			max,
+		);
+
+		await removeTokenCustomFees(stableCoinCapabilitiesHTS);
+
+		await delay();
+	}, 150000);
+
+	it('Create a fixed and two fractional custom fees, charged to the receiver, for an existing stable coin', async () => {
+		const CustomFeesNumber = 3;
+		const percentage = 7;
+		const numerator = 1;
+		const denominator = 10;
 		const amount = 1;
+		const min = 1;
+		const max = 3;
 		const net = false;
 
 		const newFixedFee: RequestFixedFee = {
@@ -207,7 +260,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 			amount: amount.toString(),
 		};
 
-		const newFractionalFee: RequestFractionalFee = {
+		const newFractionalFee_1: RequestFractionalFee = {
 			collectorId: feeCollectorAccountId.toString(),
 			collectorsExempt: true,
 			decimals: stableCoinCapabilitiesHTS.coin.decimals,
@@ -219,7 +272,23 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 			net: net,
 		};
 
-		const customFees: RequestCustomFee[] = [newFixedFee, newFractionalFee];
+		const newFractionalFee_2: RequestFractionalFee = {
+			collectorId: feeCollectorAccountId.toString(),
+			collectorsExempt: true,
+			decimals: stableCoinCapabilitiesHTS.coin.decimals,
+			percentage: '',
+			amountNumerator: numerator.toString(),
+			amountDenominator: denominator.toString(),
+			min: min.toString(),
+			max: max.toString(),
+			net: net,
+		};
+
+		const customFees: RequestCustomFee[] = [
+			newFixedFee,
+			newFractionalFee_1,
+			newFractionalFee_2,
+		];
 
 		const newFees = new UpdateCustomFeesRequest({
 			customFees: customFees,
@@ -233,22 +302,62 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		const tokenCustomFees: RequestCustomFee[] = await getTokenCustomFees(
 			stableCoinCapabilitiesHTS.coin.tokenId!,
 		);
-		expect(tokenCustomFees.length).toEqual(2);
-		let FractionalFeeId = 0;
-		let FixedFeeId = 1;
+		expect(tokenCustomFees.length).toEqual(CustomFeesNumber);
+		let FixedFeeId = 0;
+		let FractionalFeeId_1 = 1;
+		let FractionalFeeId_2 = 2;
 
-		if (!(tokenCustomFees[0] as RequestFractionalFee).amountNumerator) {
-			FractionalFeeId = 1;
-			FixedFeeId = 0;
+		if ((tokenCustomFees[0] as RequestFractionalFee).amountNumerator) {
+			FixedFeeId = 1;
+			if ((tokenCustomFees[1] as RequestFractionalFee).amountNumerator) {
+				FixedFeeId = 2;
+				FractionalFeeId_1 = 1;
+				FractionalFeeId_2 = 0;
+				if (
+					(tokenCustomFees[1] as RequestFractionalFee)
+						.amountNumerator == numerator.toString()
+				) {
+					FractionalFeeId_1 = 0;
+					FractionalFeeId_2 = 1;
+				}
+			}
+			FractionalFeeId_1 = 0;
+			FractionalFeeId_2 = 2;
+			if (
+				(tokenCustomFees[0] as RequestFractionalFee).amountNumerator ==
+				numerator.toString()
+			) {
+				FractionalFeeId_1 = 2;
+				FractionalFeeId_2 = 0;
+			}
+		}
+		if (
+			(tokenCustomFees[1] as RequestFractionalFee).amountNumerator ==
+			numerator.toString()
+		) {
+			FractionalFeeId_1 = 2;
+			FractionalFeeId_2 = 1;
 		}
 
 		checkFractionalFee(
-			tokenCustomFees[FractionalFeeId],
+			tokenCustomFees[FractionalFeeId_1],
 			0,
 			0,
 			percentage,
 			feeCollectorAccountId,
 			net,
+			0,
+			0,
+		);
+		checkFractionalFee(
+			tokenCustomFees[FractionalFeeId_2],
+			numerator,
+			denominator,
+			0,
+			feeCollectorAccountId,
+			net,
+			min,
+			max,
 		);
 		checkFixedFee(
 			tokenCustomFees[FixedFeeId],
@@ -317,7 +426,7 @@ function checkFixedFee(
 	amount: number,
 	stableCoinCapabilitiesHTS: StableCoinCapabilities,
 	feeCollectorAccountId: HederaId,
-) {
+): void {
 	const feeAmount =
 		parseFloat((tokenCustomFees as RequestFixedFee).amount) *
 		10 ** stableCoinCapabilitiesHTS.coin.decimals;
@@ -335,7 +444,9 @@ function checkFractionalFee(
 	percentage: number,
 	feeCollectorAccountId: HederaId,
 	net: boolean,
-) {
+	min: number,
+	max: number,
+): void {
 	if (percentage > 0) {
 		expect(
 			parseInt(
@@ -355,7 +466,11 @@ function checkFractionalFee(
 	}
 
 	expect(tokenCustomFees.collectorId).toEqual(feeCollectorAccountId.value);
-	expect((tokenCustomFees as RequestFractionalFee).min!).toEqual('0');
-	expect((tokenCustomFees as RequestFractionalFee).max!).toEqual('0');
+	expect((tokenCustomFees as RequestFractionalFee).min!).toEqual(
+		min.toString(),
+	);
+	expect((tokenCustomFees as RequestFractionalFee).max!).toEqual(
+		max.toString(),
+	);
 	expect((tokenCustomFees as RequestFractionalFee).net).toEqual(net);
 }

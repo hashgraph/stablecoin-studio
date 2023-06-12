@@ -36,6 +36,7 @@ const Operations = () => {
 		rescueHBAR: false,
 		wipe: false,
 		freeze: false,
+		checkFrozen: false,
 		kyc: false,
 		pause: false,
 		delete: false,
@@ -117,6 +118,7 @@ const Operations = () => {
 				  (operations?.includes(Operation.FREEZE) &&
 						getAccessByOperation(Operation.FREEZE) !== Access.HTS &&
 						!roles.includes(StableCoinRole.FREEZE_ROLE)),
+			checkFrozen: false,
 			pause: !isExternalToken
 				? !operations?.includes(Operation.PAUSE) || !roles.includes(StableCoinRole.PAUSE_ROLE)
 				: !operations?.includes(Operation.PAUSE) ||
@@ -188,6 +190,12 @@ const Operations = () => {
 			route: NamedRoutes.Unfreeze,
 			title: t('unfreezeOperation'),
 			isDisabled: disabledFeatures?.freeze,
+		},
+		{
+			icon: 'ThermometerCold',
+			route: NamedRoutes.CheckFrozen,
+			title: t('checkFrozenOperation'),
+			isDisabled: disabledFeatures?.checkFrozen,
 		},
 		{
 			icon: 'UserPlus',

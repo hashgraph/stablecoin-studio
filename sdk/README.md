@@ -52,6 +52,13 @@
 		- [GetReserveAddress](#getreserveaddress)
 		- [UpdateReserveAddress](#updatereserveaddress)
 		- [Capabilities](#capabilities)
+	- [Proxy](#proxy)
+		- [GetProxyConfig](#getproxyconfig)
+		- [ChangeProxyOwner](#changeproxyowner)
+		- [UpgradeImplementation](#upgradeimplementation)
+		- [GetFactoryProxyConfig](#getfactoryproxyconfig)
+		- [UpgradeFactoryImplementation](#upgradefactoryimplementation)
+		- [ChangeFactoryProxyOwner](#changefactoryproxyowner)
 	- [Network](#network)
 		- [Connect](#connect)
 		- [Disconnect](#disconnect)
@@ -975,10 +982,137 @@ See the spec below for all the attributes you can get from the request.
 ```
 
 
+## Proxy
+The following functions allow the user to both get information and execute operations regarding the stable coin proxy contract.
+
+### GetProxyConfig
+Gets the configuration about the stable coin proxy: the **HederaTokenManager** contract implementation address and the proxy admin account that allows to change the previous implementation.
+
+**Spec:**
+
+```Typescript
+	Proxy.getProxyConfig(request: GetProxyConfigRequest): Promise<ProxyConfigurationViewModel>;
+
+```
+
+**Example:**
+
+```Typescript
+	const result: ProxyConfigurationViewModel = await Proxy.getProxyConfig(
+		new GetProxyConfigRequest({
+			tokenId: '0.0.1',
+		})
+	);	
+```
+
+### ChangeProxyOwner
+Changes the **HederaTokenManager** contract proxy admin owner.
+
+**Spec:**
+
+```Typescript
+	Proxy.changeProxyOwner(request: ChangeProxyOwnerRequest): Promise<boolean>;
+
+```
+
+**Example:**
+
+```Typescript
+	const result: boolean = await Proxy.changeProxyOwner(
+		new ChangeProxyOwnerRequest({
+			tokenId: '0.0.1',
+			targetId: '0.0.2'
+		})
+	);	
+```
+
+### UpgradeImplementation
+Updates the **HederaTokenManager** contract implementation address.
+
+**Spec:**
+
+```Typescript
+	Proxy.upgradeImplementation(request: UpgradeImplementationRequest): Promise<boolean>;
+
+```
+
+**Example:**
+
+```Typescript
+	const result: boolean = await Proxy.upgradeImplementation(
+		new UpgradeImplementationRequest({
+			tokenId: '0.0.1',
+			implementationAddress: '0.0.2'
+		})
+	);	
+```
+
+### GetFactoryProxyConfig
+Gets the factory implementation contract address and the factory proxy owner account.
+
+**Spec:**
+
+```Typescript
+	Proxy.getFactoryProxyConfig(request: GetFactoryProxyConfigRequest): Promise<ProxyConfigurationViewModel>;
+
+```
+
+**Example:**
+
+```Typescript
+	const result: ProxyConfigurationViewModel = await Proxy.getFactoryProxyConfig(
+		new GetFactoryProxyConfigRequest({
+			factoryId: '0.0.1'
+		})
+	);	
+```
+
+### UpgradeFactoryImplementation
+Upgrades the factory with a new factory implementation contract. Only the owner of the factory proxy can perform this action.
+
+**Spec:**
+
+```Typescript
+	Proxy.upgradeFactoryImplementation(request: UpgradeFactoryImplementationRequest): Promise<boolean>;
+
+```
+
+**Example:**
+
+```Typescript
+	const result: boolean = await Proxy.upgradeFactoryImplementation(
+		new UpgradeFactoryImplementationRequest({
+			factoryId: '0.0.1',
+			implementationAddress: '0.0.2'
+		})
+	);	
+```
+
+### ChangeFactoryProxyOwner
+Changes the owner of the factory proxy. Only the owner of the factory proxy can perform this action.
+
+**Spec:**
+
+```Typescript
+	Proxy.changeFactoryProxyOwner(request: ChangeFactoryProxyOwnerRequest): Promise<boolean>;
+
+```
+
+**Example:**
+
+```Typescript
+	const result: boolean = await Proxy.changeFactoryProxyOwner(
+		new ChangeFactoryProxyOwnerRequest({
+			factoryId: '0.0.1',
+			targetId: '0.0.2'
+		})
+	);	
+```
+
 ## Network
 
 ### Connect
-Establishes the connection to work with an existing Hedera account in a wallet in a certain Hedera network.
+Establishes the connection to work with an existing Hedera account in a wallet in a certain Hedera network, also setting the mirror node and JSON-RPC-Relay services to use in the connection.
 
 **Spec:**
 	
@@ -1023,7 +1157,7 @@ Disconnects the previously established connection.
 ```
 
 ### Init
-Sets the network and could also set the factory smart contract address and register the events, returning supported wallets depending on wheter the SDK was started through a DApp or not.
+Sets the network and could also set the mirror node and the JSON-RPC-Relay services, the factory smart contract address and register the events, returning supported wallets depending on wheter the SDK was started through a DApp or not.
 
 **Spec:**
 	
@@ -1054,7 +1188,7 @@ Sets the network and could also set the factory smart contract address and regis
 ```
 
 ### SetNetwork
-Configures a Hedera network, setting some properties like environment, mirror nodes, consensus nodes and an RPC relay.
+Configures a Hedera network, setting some properties like environment and the mirror node and JSON-RPC-Relay services, and also, and optionally, the list of consensus nodes.
 
 **Spec:**
 	

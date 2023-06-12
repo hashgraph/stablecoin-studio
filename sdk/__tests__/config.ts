@@ -71,3 +71,25 @@ export const CLIENT_ACCOUNT_ED25519: Account = new Account({
 export const HEDERA_ID_ACCOUNT_ED25519 = HederaId.from(
 	CLIENT_ACCOUNT_ID_ED25519,
 );
+
+export const CLIENT_PRIVATE_KEY_ED25519_2 = new PrivateKey({
+	key: process.env.CLIENT_PRIVATE_KEY_ED25519_2 ?? '',
+	type: 'ED25519',
+});
+export const CLIENT_PUBLIC_KEY_ED25519_2 = new PublicKey({
+	key: process.env.CLIENT_PUBLIC_KEY_ED25519_2 ?? '',
+	type: 'ED25519',
+});
+export const CLIENT_EVM_ADDRESS_ED25519_2 =
+	process.env.CLIENT_EVM_ADDRESS_ED25519_2 ?? '';
+export const CLIENT_ACCOUNT_ID_ED25519_2 =
+	process.env.CLIENT_ACCOUNT_ID_ED25519_2 ?? '';
+export const CLIENT_ACCOUNT_ED25519_2: Account = new Account({
+	id: CLIENT_ACCOUNT_ID_ED25519_2,
+	evmAddress: CLIENT_EVM_ADDRESS_ED25519_2,
+	privateKey: CLIENT_PRIVATE_KEY_ED25519_2,
+	publicKey: CLIENT_PUBLIC_KEY_ED25519_2,
+});
+export const HEDERA_ID_ACCOUNT_ED25519_2 = HederaId.from(
+	CLIENT_ACCOUNT_ID_ED25519_2,
+);

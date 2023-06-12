@@ -64,8 +64,8 @@ The ENV file contains the following parameters:
 
 - **REACT_APP_LOG_LEVEL**: defines the log level the application is going to apply to filter the logs been displayed in the browser's console. The default value is "ERROR".
 - **REACT_APP_FACTORIES**: This var is required if you want to create a new stable coin. The var must be a JSON array with a factory id in Hedera format `0.0.XXXXX` per environment.
-- **REACT_APP_MIRROR_NODE**: This var is required if you want to create a new stable coin. The var must be a unique mirror node service for Hedera network, and this is the service which would be used when the UI starts.
-- **REACT_APP_RPC_NODE**: This var is required if you want to create a new stable coin. The var must be a unique rpc node service for Hedera network, and this is the service which would be used when the UI starts.
+- **REACT_APP_MIRROR_NODE**: This var is required if you want to create a new stable coin. The var must be a unique mirror node service for each Hedera network, and this is the service which would be used when the UI starts. The service is configured by the environment and the base url properties, and, optionally, can also have an api key and a http header through which the api key is provided.
+- **REACT_APP_RPC_NODE**: This var is required if you want to create a new stable coin. The var must be a unique rpc node service for Hedera network, and this is the service which would be used when the UI starts. The service is configured using the same properties than the mirror node.
 ```
 REACT_APP_FACTORIES='[{"Environment":"mainnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.1234567"},{"Environment":"testnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.3950554"},{"Environment":"previewnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.239703"}]'
 REACT_APP_MIRROR_NODE='[{"Environment":"testnet","BASE_URL":"https://testnet.mirrornode.hedera.com/api/v1/", "API_KEY": "132456", "HEADER": "x-api-key"}]'
@@ -186,7 +186,7 @@ You can import any stable coin you want, and it will be added to the drop-down l
 
 ### Operate stable coins
 
-![image](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/dc35e85a-5ae6-4bfc-ab77-d81c661be43a)
+![Selection_015](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/b9a74668-03bd-4d59-b8f1-3d1234a1e065)
 
 The operations linked to the capabilities (roles) assigned to your account for the selected stable coin will be available.
 
@@ -213,6 +213,12 @@ If your stable coin is associated to a proof of reserve (PoR), you can update th
 If (and only if) the PoR contract attached to your stable coin is the PoR demo implementation included in this project you will also have the possibility to change its reserve amount from here. You will only need to use the PoR admin account (the account used to deploy the stable coin).
 
 > This is the main reason why the PoR demo implementation included in this project must be used only for demo purposes, the reserve amount can be changed at any time without any check or control whatsoever...
+
+### Settings
+
+![Selection_014](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/abb0b89f-6ec5-449f-a035-f7f9fcea08e1)
+
+This option allows the user to change the **HederaTokenManager** contract proxy admin owner and also to upgrade the stable coin implementation. So, as the **HederaTokenManager** uses a **TransparentUpgradeableProxy**, the owner of the proxy admin contract will be the only one who can change the implementation. This way, through this option the user could change the account who is able to upgrade the implementation and also could upgrade the implementation.
 
 
 # Testing

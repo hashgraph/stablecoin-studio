@@ -59,12 +59,15 @@ export class MirrorNodeAdapter {
 
 	public set(mnConfig: MirrorNode): void {
 		this.mirrorNodeConfig = mnConfig;
-
 		this.instance = axios.create({
 			validateStatus: function (status: number) {
 				return (status >= 200 && status < 300) || status == 404;
 			},
 		});
+
+		this.mirrorNodeConfig.baseUrl = mnConfig.baseUrl.endsWith('/')
+			? mnConfig.baseUrl
+			: `${mnConfig.baseUrl}/`;
 
 		if (this.mirrorNodeConfig.headerName && this.mirrorNodeConfig.apiKey)
 			this.instance.defaults.headers.common[
@@ -110,7 +113,7 @@ export class MirrorNodeAdapter {
 			this.mirrorNodeConfig.baseUrl
 		}tokens/${tokenId.toString()}`;
 
-		LogService.logTrace('Getting stable coin from mirror node -> ', url);
+		LogService.logTrace('Getting token from mirror node -> ', url);
 
 		const retry = 10;
 		let i = 0;
@@ -336,6 +339,24 @@ export class MirrorNodeAdapter {
 		}
 	}
 
+	public async getContractMemo(contractId: HederaId): Promise<string> {
+		try {
+			LogService.logTrace(
+				this.mirrorNodeConfig.baseUrl + 'contracts/' + contractId,
+			);
+			const res = await this.instance.get<IContract>(
+				this.mirrorNodeConfig.baseUrl +
+					'contracts/' +
+					contractId.toString(),
+			);
+
+			return res.data.memo;
+		} catch (error) {
+			LogService.logError(error);
+			return Promise.reject<string>(new InvalidResponse(error));
+		}
+	}
+
 	public async getAccountToken(
 		targetId: HederaId,
 		tokenId: HederaId,
@@ -520,6 +541,10 @@ interface AccountTokenRelation {
 	kyc_status: 'GRANTED' | 'REVOKED' | 'NOT_APPLICABLE';
 	token_id: string;
 }
+interface IContract {
+	memo: string;
+}
+
 interface IHederaStableCoinDetail {
 	token_id?: string;
 	name?: string;

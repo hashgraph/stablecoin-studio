@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
     Client,
     TokenCreateTransaction,
@@ -20,7 +22,6 @@ import {
 import Web3 from 'web3'
 import axios from 'axios'
 import { ADDRESS_0 } from './constants'
-import TokenTransfer from '@hashgraph/sdk/lib/token/TokenTransfer.js'
 import { BigNumber } from 'ethers'
 
 const web3 = new Web3()
@@ -230,7 +231,8 @@ export async function deployContractSDK(
     privateKey: string,
     clientOperator: Client,
     constructorParameters?: any,
-    adminKey?: PrivateKey
+    adminKey?: PrivateKey,
+    contractMemo?: string
 ): Promise<ContractId> {
     const Key = adminKey ? adminKey : PrivateKey.fromStringED25519(privateKey)
 
@@ -238,6 +240,9 @@ export async function deployContractSDK(
         .setBytecode(factory.bytecode)
         .setGas(250_000)
     //.setAdminKey(Key)
+    if (contractMemo) {
+        transaction.setContractMemo(contractMemo)
+    }
     if (constructorParameters) {
         transaction.setConstructorParameters(constructorParameters)
     }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
     ContractId,
     PublicKey,
@@ -13,11 +14,12 @@ import {
     StableCoinFactory__factory,
     HederaTokenManager__factory,
     HederaReserve__factory,
+    ITransparentUpgradeableProxy__factory,
+    ERC1967Proxy__factory,
 } from '../typechain-types'
 
 import {
     BURN_ROLE,
-    CASHIN_ROLE,
     DELETE_ROLE,
     FREEZE_ROLE,
     KYC_ROLE,
@@ -36,10 +38,10 @@ import {
     associateToken,
 } from './utils'
 
-const hederaTokenManagerAddress = '0.0.13705245'
-export const factoryProxyAddress = '0.0.13705256'
-const factoryProxyAdminAddress = '0.0.13705254'
-const factoryAddress = '0.0.13705249'
+const hederaTokenManagerAddress = '0.0.13923660'
+export const factoryProxyAddress = '0.0.13923715'
+const factoryProxyAdminAddress = '0.0.13923699'
+const factoryAddress = '0.0.13923689'
 
 export function initializeClients(): [
     Client,
@@ -196,6 +198,49 @@ export async function deployHederaTokenManager(
     return hederaTokenManager
 }
 
+export async function updateProxy(
+    clientOperator: Client,
+    proxy: string,
+    transparentproxy: string,
+    newImplementation: string
+) {
+    // Deploying Factory logic
+    console.log(`Upgrading proxy logic. please wait...`)
+    console.log('Admin proxy :' + proxy)
+    console.log('Transparent proxy :' + transparentproxy)
+    console.log('New Implementation :' + newImplementation)
+    console.log(ContractId.fromString(newImplementation).toSolidityAddress())
+    await contractCall(
+        ContractId.fromString(proxy),
+        'upgrade',
+        [
+            ContractId.fromString(transparentproxy).toSolidityAddress(),
+            ContractId.fromString(newImplementation).toSolidityAddress(),
+        ],
+        clientOperator,
+        150000,
+        ProxyAdmin__factory.abi
+    )
+}
+export async function getProxyImpl(
+    clientOperator: Client,
+    proxyadmin: string,
+    transparent: string
+) {
+    // Deploying Factory logic
+    console.log(`Getting implementation from proxy please wait...`)
+    console.log('ProxyAdmin :' + proxyadmin)
+    const address = await contractCall(
+        ContractId.fromString(proxyadmin),
+        'getProxyImplementation',
+        [ContractId.fromString(transparent).toSolidityAddress()],
+        clientOperator,
+        150000,
+        ProxyAdmin__factory.abi
+    )
+    console.log('New Implementation' + address[0])
+}
+
 export async function deployFactory(
     initializeParams: { admin: string; tokenManager: string },
     clientOperator: Client,
@@ -237,7 +282,9 @@ export async function deployFactory(
         TransparentUpgradeableProxy__factory,
         privateKey,
         clientOperator,
-        params
+        params,
+        undefined,
+        '0x' + factoryProxyAdmin.toSolidityAddress()
     )
 
     await contractCall(

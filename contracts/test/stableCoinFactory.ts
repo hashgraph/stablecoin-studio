@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import '@hashgraph/hardhat-hethers'
 import '@hashgraph/sdk'
 import { BigNumber } from 'ethers'

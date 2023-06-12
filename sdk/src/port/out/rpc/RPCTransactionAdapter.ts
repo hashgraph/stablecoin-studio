@@ -110,8 +110,20 @@ import {
 import { CommandBus } from '../../../core/command/CommandBus.js';
 import { SetNetworkCommand } from '../../../app/usecase/command/network/setNetwork/SetNetworkCommand.js';
 import { SetConfigurationCommand } from '../../../app/usecase/command/network/setConfiguration/SetConfigurationCommand.js';
-import { MirrorNode } from '../../../domain/context/network/MirrorNode.js';
-import { JsonRpcRelay } from '../../../domain/context/network/JsonRpcRelay.js';
+import {
+	EnvironmentMirrorNode,
+	MirrorNode,
+	MirrorNodes,
+} from '../../../domain/context/network/MirrorNode.js';
+import {
+	EnvironmentJsonRpcRelay,
+	JsonRpcRelay,
+	JsonRpcRelays,
+} from '../../../domain/context/network/JsonRpcRelay.js';
+import {
+	EnvironmentFactory,
+	Factories,
+} from '../../../domain/context/factory/Factories.js';
 
 // eslint-disable-next-line no-var
 declare var ethereum: MetaMaskInpageProvider;
@@ -120,6 +132,9 @@ declare var ethereum: MetaMaskInpageProvider;
 export default class RPCTransactionAdapter extends TransactionAdapter {
 	account: Account;
 	signerOrProvider: Signer | Provider;
+	mirrorNodes: MirrorNodes;
+	jsonRpcRelays: JsonRpcRelays;
+	factories: Factories;
 
 	constructor(
 		@lazyInject(MirrorNodeAdapter)
@@ -144,7 +159,6 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		reserveInitialAmount?: BigDecimal,
 	): Promise<TransactionResponse<any, Error>> {
 		try {
-			const keys: FactoryKey[] = [];
 			const cashinRole: FactoryCashinRole = {
 				account:
 					coin.cashInRoleAccount == undefined ||
@@ -162,49 +176,12 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				coin.freezeKey,
 				coin.wipeKey,
 				coin.supplyKey,
+				coin.feeScheduleKey,
 				coin.pauseKey,
 			];
 
-			providedKeys.forEach((providedKey, index) => {
-				if (providedKey) {
-					const key = new FactoryKey();
-					switch (index) {
-						case 0: {
-							key.keyType = 1; // admin
-							break;
-						}
-						case 1: {
-							key.keyType = 2; // kyc
-							break;
-						}
-						case 2: {
-							key.keyType = 4; // freeze
-							break;
-						}
-						case 3: {
-							key.keyType = 8; // wipe
-							break;
-						}
-						case 4: {
-							key.keyType = 16; // supply
-							break;
-						}
-						case 5: {
-							key.keyType = 64; // pause
-							break;
-						}
-					}
-					const providedKeyCasted = providedKey as PublicKey;
-					key.publicKey =
-						providedKeyCasted.key == PublicKey.NULL.key
-							? '0x'
-							: HPublicKey.fromString(
-									providedKeyCasted.key,
-							  ).toBytesRaw();
-					key.isED25519 = providedKeyCasted.type == 'ED25519';
-					keys.push(key);
-				}
-			});
+			const keys: FactoryKey[] =
+				this.setKeysForSmartContract(providedKeys);
 
 			const providedRoles = [
 				{
@@ -328,6 +305,18 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		LogService.logTrace('Metamask Initialized ', eventData);
 
 		return this.networkService.environment;
+	}
+
+	public setMirrorNodes(mirrorNodes?: MirrorNodes): void {
+		if (mirrorNodes) this.mirrorNodes = mirrorNodes;
+	}
+
+	public setJsonRpcRelays(jsonRpcRelays?: JsonRpcRelays): void {
+		if (jsonRpcRelays) this.jsonRpcRelays = jsonRpcRelays;
+	}
+
+	public setFactories(factories?: Factories): void {
+		if (factories) this.factories = factories;
 	}
 
 	async register(
@@ -1265,7 +1254,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		return tokenManager[functionName](...param);
 	}
 
-	async transfer(
+	/* async transfer(
 		coin: StableCoinCapabilities,
 		amount: BigDecimal,
 		sourceId: Account,
@@ -1283,9 +1272,9 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			transfer,
 			this.networkService.environment,
 		);
-	}
+	} */
 
-	async transferFrom(
+	/* async transferFrom(
 		coin: StableCoinCapabilities,
 		amount: BigDecimal,
 		sourceId: HederaId,
@@ -1303,7 +1292,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			transfer,
 			this.networkService.environment,
 		);
-	}
+	} */
 
 	async signAndSendTransaction(
 		t: RPCTransactionAdapter,
@@ -1315,13 +1304,13 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		return this.account;
 	}
 
-	async precompiledCall(
+	/* async precompiledCall(
 		functionName: string,
 		param: unknown[],
 	): Promise<ContractTransaction> {
 		const precompiledAddress = '0000000000000000000000000000000000000167';
 		return await this.contractCall(precompiledAddress, functionName, param);
-	}
+	} */
 
 	/**
 	 * TODO consider leaving this as a service and putting two implementations on top for rpc and web wallet.
@@ -1393,12 +1382,12 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	private async setMetamaskNetwork(chainId: any): Promise<void> {
 		let network = unrecognized;
 		let factoryId = '';
-		const mirrorNode: MirrorNode = {
+		let mirrorNode: MirrorNode = {
 			baseUrl: '',
 			apiKey: '',
 			headerName: '',
 		};
-		const rpcNode: JsonRpcRelay = {
+		let rpcNode: JsonRpcRelay = {
 			baseUrl: '',
 			apiKey: '',
 			headerName: '',
@@ -1411,52 +1400,49 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		if (metamaskNetwork) {
 			network = metamaskNetwork.network;
 
-			if (process.env.REACT_APP_FACTORIES) {
+			if (this.factories) {
 				try {
-					const factories = JSON.parse(
-						process.env.REACT_APP_FACTORIES,
-					);
-					const result = factories.find(
-						(i: any) => i.Environment === metamaskNetwork.network,
-					);
-					factoryId = result
-						? result.STABLE_COIN_FACTORY_ADDRESS
-						: '';
-				} catch (e) {
-					console.error('Factories could not be found in .env');
-				}
-			}
-			if (process.env.REACT_APP_MIRROR_NODE) {
-				try {
-					const mirrorNodes = JSON.parse(
-						process.env.REACT_APP_MIRROR_NODE,
-					);
-					const result = mirrorNodes.find(
-						(i: any) => i.Environment === metamaskNetwork.network,
+					const result = this.factories.factories.find(
+						(i: EnvironmentFactory) =>
+							i.environment === metamaskNetwork.network,
 					);
 					if (result) {
-						mirrorNode.baseUrl = result.BASE_URL;
-						mirrorNode.apiKey = result.API_KEY;
-						mirrorNode.headerName = result.HEADER;
+						factoryId = result.factory.toString();
 					}
 				} catch (e) {
-					console.error('Mirror Nodes could not be found in .env');
+					console.error(
+						`Factories could not be found for environment ${metamaskNetwork.network} in  the initially provided list`,
+					);
 				}
 			}
-
-			if (process.env.REACT_APP_RPC_NODE) {
+			if (this.mirrorNodes) {
 				try {
-					const rpcNodes = JSON.parse(process.env.REACT_APP_RPC_NODE);
-					const result = rpcNodes.find(
-						(i: any) => i.Environment === metamaskNetwork.network,
+					const result = this.mirrorNodes.nodes.find(
+						(i: EnvironmentMirrorNode) =>
+							i.environment === metamaskNetwork.network,
 					);
 					if (result) {
-						rpcNode.baseUrl = result.BASE_URL;
-						rpcNode.apiKey = result.API_KEY;
-						rpcNode.headerName = result.HEADER;
+						mirrorNode = result.mirrorNode;
 					}
 				} catch (e) {
-					console.error('RPC Nodes could not be found in .env');
+					console.error(
+						`Mirror Nodes could not be found for environment ${metamaskNetwork.network} in  the initially provided list`,
+					);
+				}
+			}
+			if ((this, this.jsonRpcRelays)) {
+				try {
+					const result = this.jsonRpcRelays.nodes.find(
+						(i: EnvironmentJsonRpcRelay) =>
+							i.environment === metamaskNetwork.network,
+					);
+					if (result) {
+						rpcNode = result.jsonRpcRelay;
+					}
+				} catch (e) {
+					console.error(
+						`RPC Nodes could not be found for environment ${metamaskNetwork.network} in  the initially provided list`,
+					);
 				}
 			}
 			LogService.logTrace('Metamask Network:', chainId);
@@ -1605,7 +1591,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					);
 					return response;
 
-				case Decision.HTS:
+				/* case Decision.HTS:
 					if (!coin.coin.evmProxyAddress?.toString())
 						throw new Error(
 							`StableCoin ${coin.coin.name} does not have a proxy address`,
@@ -1623,7 +1609,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 						response.id ?? '',
 						this.networkService.environment,
 					);
-					return response;
+					return response; */
 
 				default:
 					const tokenId = coin.coin.tokenId
@@ -1825,7 +1811,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		}
 	}
 
-	private async performHTSOperation(
+	/* private async performHTSOperation(
 		coin: StableCoinCapabilities,
 		operation: Operation,
 		params?: Params,
@@ -1964,9 +1950,9 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			default:
 				throw new Error(`Operation not implemented through HTS`);
 		}
-	}
+	} */
 
-	private async checkTransactionResponse(
+	/* private async checkTransactionResponse(
 		transaction: TransactionResponse,
 	): Promise<TransactionResponse> {
 		const responseCodeLength = 66;
@@ -2000,7 +1986,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			transactionId: transaction.id,
 			RPC_relay: true,
 		});
-	}
+	} */
 }
 
 class Params {

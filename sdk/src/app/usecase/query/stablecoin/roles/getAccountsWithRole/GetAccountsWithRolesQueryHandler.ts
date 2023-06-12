@@ -60,9 +60,12 @@ export class GetAccountsWithRolesQueryHandler
 
 		if (res != undefined && res.length > 0) {
 			for (let i = 0; i < res.length; i++) {
-				listOfAccounts.push(
-					(await this.mirrorNode.getAccountInfo(res[i])).id!,
+				const accountInfo = await this.mirrorNode.getAccountInfo(
+					res[i],
 				);
+				if (accountInfo?.id) {
+					listOfAccounts.push(accountInfo.id);
+				}
 			}
 		}
 

@@ -33,6 +33,7 @@ import {
 	HederaTokenManager__factory,
 	StableCoinFactory__factory,
 	ProxyAdmin__factory,
+	ITransparentUpgradeableProxy__factory,
 } from '@hashgraph-dev/stablecoin-npm-contracts';
 import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
@@ -44,6 +45,7 @@ const HederaTokenManager = HederaTokenManager__factory;
 const Reserve = AggregatorV3Interface__factory;
 const Factory = StableCoinFactory__factory;
 const ProxyAdmin = ProxyAdmin__factory;
+const ITransparentUpgradeableProxy = ITransparentUpgradeableProxy__factory;
 
 type StaticConnect = { connect: (...args: any[]) => any };
 
@@ -104,6 +106,7 @@ export default class RPCQueryAdapter {
 		).getReserveAddress();
 		return ContractId.fromHederaEthereumAddress(val);
 	}
+
 	async getReserveAmount(address: EvmAddress): Promise<BigNumber> {
 		LogService.logTrace(`Requesting getReserveAmount address: ${address}`);
 		return await this.connect(
@@ -156,6 +159,14 @@ export default class RPCQueryAdapter {
 			ProxyAdmin,
 			proxyAdmin.toString(),
 		).getProxyImplementation(proxy.toString());
+	}
+
+	async getProxyAdmin(proxy: EvmAddress): Promise<string> {
+		LogService.logTrace(`Requesting admin for proxy: ${proxy.toString()}`);
+		return await this.connect(
+			ITransparentUpgradeableProxy,
+			proxy.toString(),
+		).implementation();
 	}
 
 	async getProxyOwner(proxyAdmin: EvmAddress): Promise<string> {

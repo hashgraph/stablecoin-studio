@@ -3,16 +3,16 @@
 	"operationTitle": "Settings",
 	"subtitle": "Manage Settings",
 	"updateOwner": {
-		"title": "Update Proxy Owner",
-		"label": "Current Owner",
-		"inputPlaceholder": "Enter Owner",
-		"buttonText": "Update Owner"
+		"title": "Update proxy owner",
+		"label": "Current owner",
+		"inputPlaceholder": "Enter owner",
+		"buttonText": "Update owner"
 	},
 	"updateImplementation": {
-		"title": "Update Proxy Implementation",
-		"label": "Current Implementation",
-		"inputPlaceholder": "Enter Address",
-		"buttonText": "Update Implementation"
+		"title": "Update proxy implementation",
+		"label": "Current implementation",
+		"inputPlaceholder": "Enter address",
+		"buttonText": "Update implementation"
 	},
 	"notification": {
 		"title": "{{ result }} updating settings",

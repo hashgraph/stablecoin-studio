@@ -12,6 +12,7 @@ import RescueHBAROperation from '../views/Operations/RescueHBAR';
 import WipeOperation from '../views/Operations/Wipe';
 import FreezeOperation from '../views/Operations/Freeze';
 import UnfreezeOperation from '../views/Operations/Unfreeze';
+import CheckFrozenOperation from '../views/Operations/CheckFrozen';
 import Dashboard from '../views/Dashboard';
 import HandleRoles from '../views/Roles/HandleRoles';
 import { actions } from '../views/Roles/constants';
@@ -32,14 +33,8 @@ import {
 } from '../store/slices/walletSlice';
 import ImportedTokenCreation from '../views/ImportedToken/ImportedTokenCreation';
 import DangerZoneOperations from '../views/Operations/DangerZone';
-import {
-	Account,
-	EventParameter,
-	WalletEvent,
-	LoggerTransports,
-	SDK,
-	ConnectionState,
-} from '@hashgraph-dev/stablecoin-npm-sdk';
+import { Account, LoggerTransports, SDK, ConnectionState } from '@hashgraph-dev/stablecoin-npm-sdk';
+import type { EventParameter, WalletEvent } from '@hashgraph-dev/stablecoin-npm-sdk';
 import StableCoinProof from '../views/StableCoinProof';
 import FeesManagement from '../views/FeesManagement';
 import GrantKycOperation from '../views/Operations/GrantKyc';
@@ -71,7 +66,7 @@ const Router = () => {
 		instanceSDK();
 		const items = { ...localStorage };
 		delete items.tokensAccount;
-		for (var item in items) {
+		for (const item in items) {
 			localStorage.removeItem(item);
 		}
 	}, []);
@@ -167,6 +162,7 @@ const Router = () => {
 								<Route path={RoutesMappingUrl.wipe} element={<WipeOperation />} />
 								<Route path={RoutesMappingUrl.freeze} element={<FreezeOperation />} />
 								<Route path={RoutesMappingUrl.unfreeze} element={<UnfreezeOperation />} />
+								<Route path={RoutesMappingUrl.checkFrozen} element={<CheckFrozenOperation />} />
 								<Route path={RoutesMappingUrl.dashboard} element={<Dashboard />} />
 								<Route
 									path={RoutesMappingUrl.editRole}

@@ -18,7 +18,8 @@ import type { SyntheticEvent } from 'react';
 import { forwardRef } from 'react';
 import type { Control, UseControllerProps } from 'react-hook-form';
 import { Controller } from 'react-hook-form';
-import DatePicker, { ReactDatePickerProps } from 'react-datepicker';
+import type { ReactDatePickerProps } from 'react-datepicker';
+import DatePicker from 'react-datepicker';
 import Icon from '../Icon';
 import 'react-datepicker/dist/react-datepicker.css';
 

@@ -12,6 +12,7 @@ interface SidebarOptionProps {
 	bgColor?: string;
 	color?: string;
 	isDisabled?: boolean;
+	isHidden?: boolean;
 }
 
 const SidebarOption = ({
@@ -21,6 +22,7 @@ const SidebarOption = ({
 	bgColor,
 	color,
 	isDisabled = false,
+	isHidden = false,
 }: SidebarOptionProps) => {
 	const navigate = useNavigate();
 	const { pathname } = useLocation();
@@ -32,31 +34,35 @@ const SidebarOption = ({
 	};
 
 	return (
-		<Flex
-			data-testid={`sidebar-option-${icon}`}
-			h='48px'
-			w='100%'
-			gap='10px'
-			alignItems='center'
-			borderRadius='12px'
-			color={color || 'gray.600'}
-			bgColor={bgColor || (isActive ? 'light.purple' : '')}
-			pl='15px'
-			_hover={{
-				cursor: 'pointer',
-				bgColor: bgColor ? 'light.red' : 'light.purple',
-			}}
-			onClick={handleNavigate}
-			isDisabled={isDisabled}
-			as={Button}
-			variant='unstyled'
-			justify='flex-start'
-		>
-			<Icon name={icon} fontSize='22px' />
-			<Text data-testid='sidebar-option-title' fontSize='14px' fontWeight='700'>
-				{title}
-			</Text>
-		</Flex>
+		<>
+			{!isHidden && (
+				<Flex
+					data-testid={`sidebar-option-${icon}`}
+					h='48px'
+					w='100%'
+					gap='10px'
+					alignItems='center'
+					borderRadius='12px'
+					color={color || 'gray.600'}
+					bgColor={bgColor || (isActive ? 'light.purple' : '')}
+					pl='15px'
+					_hover={{
+						cursor: 'pointer',
+						bgColor: bgColor ? 'light.red' : 'light.purple',
+					}}
+					onClick={handleNavigate}
+					isDisabled={isDisabled}
+					as={Button}
+					variant='unstyled'
+					justify='flex-start'
+				>
+					<Icon name={icon} fontSize='22px' />
+					<Text data-testid='sidebar-option-title' fontSize='14px' fontWeight='700'>
+						{title}
+					</Text>
+				</Flex>
+			)}
+		</>
 	);
 };
 

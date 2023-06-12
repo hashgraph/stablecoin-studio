@@ -21,5 +21,6 @@ module.exports = function override(config) {
 			Buffer: ['buffer', 'Buffer'],
 		}),
 	]);
+	config.ignoreWarnings = [/Failed to parse source map/]; // this is a temporary solution until the source map issue in react-scripts is fixed
 	return config;
 };

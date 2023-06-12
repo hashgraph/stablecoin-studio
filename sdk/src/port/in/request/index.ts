@@ -65,8 +65,11 @@ import SetConfigurationRequest from './SetConfigurationRequest.js';
 import GetTokenManagerListRequest from './GetTokenManagerListRequest.js';
 import UpdateRequest from './UpdateRequest.js';
 import GetProxyConfigRequest from './GetProxyConfigRequest.js';
+import GetFactoryProxyConfigRequest from './GetFactoryProxyConfigRequest.js';
 import ChangeProxyOwnerRequest from './ChangeProxyOwnerRequest.js';
+import ChangeFactoryProxyOwnerRequest from './ChangeFactoryProxyOwnerRequest.js';
 import UpgradeImplementationRequest from './UpgradeImplementationRequest.js';
+import UpgradeFactoryImplementationRequest from './UpgradeFactoryImplementationRequest.js';
 
 export * from './BaseRequest.js';
 export {
@@ -117,6 +120,9 @@ export {
 	GetTokenManagerListRequest,
 	UpdateRequest,
 	GetProxyConfigRequest,
+	GetFactoryProxyConfigRequest,
 	ChangeProxyOwnerRequest,
+	ChangeFactoryProxyOwnerRequest,
 	UpgradeImplementationRequest,
+	UpgradeFactoryImplementationRequest,
 };

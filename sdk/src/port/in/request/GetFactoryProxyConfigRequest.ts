@@ -18,16 +18,16 @@
  *
  */
 
-import { Query } from '../../../../../core/query/Query.js';
-import { QueryResponse } from '../../../../../core/query/QueryResponse.js';
-import ContractId from '../../../../../domain/context/contract/ContractId.js';
+import ValidatedRequest from './validation/ValidatedRequest.js';
+import Validation from './validation/Validation.js';
 
-export class ReserveDecimalsQueryResponse implements QueryResponse {
-	constructor(public readonly payload: number) {}
-}
+export default class GetFactoryProxyConfigRequest extends ValidatedRequest<GetFactoryProxyConfigRequest> {
+	factoryId: string;
 
-export class ReserveDecimalsQuery extends Query<ReserveDecimalsQueryResponse> {
-	constructor(public readonly address: ContractId) {
-		super();
+	constructor({ factoryId }: { factoryId: string }) {
+		super({
+			factoryId: Validation.checkHederaIdFormat(),
+		});
+		this.factoryId = factoryId;
 	}
 }
