@@ -19,6 +19,9 @@ import OwnerFactoryProxyService from '../factoryProxy/OwnerFactoryProxyService.j
 import { ZERO_ADDRESS } from 'core/Constants.js';
 const colors = require('colors');
 
+/**
+ * Set Factory Service
+ */
 export default class SetFactoryService extends Service {
   
   constructor() {

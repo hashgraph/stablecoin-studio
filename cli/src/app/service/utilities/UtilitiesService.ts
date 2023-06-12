@@ -598,8 +598,10 @@ export default class UtilitiesService extends Service {
 
   /**
    * Function to configure the network for mirror node or rpc
+   * 
+   * @param networkType type of network to configure
    */
-  public async configureNetwork(type: string): Promise<void> {
+  public async configureNetwork(networkType: string): Promise<void> {
     const currentAccount = this.getCurrentAccount();
     const currentMirror = this.getCurrentMirror();
     const currentRPC = this.getCurrentRPC();
@@ -622,7 +624,7 @@ export default class UtilitiesService extends Service {
       language.getText('wizard.networkSelected', { network }),
     );
 
-    switch (type) {
+    switch (networkType) {
       case MIRROR_NODE:
         await this.mirrorNodeService.manageMirrorNodeMenu(network);
         break;
@@ -630,7 +632,7 @@ export default class UtilitiesService extends Service {
         await this.rpcNodeService.manageRPCMenu(network);
         break;
       default:
-        this.showError(`Not valid param: ${type}\n`);
+        this.showError(`Not valid network type for configuration: ${networkType}\n`);
         break;
     }
   }

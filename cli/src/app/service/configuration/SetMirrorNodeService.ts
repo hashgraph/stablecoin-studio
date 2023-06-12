@@ -10,6 +10,9 @@ import Service from '../Service.js';
 import { IMirrorsConfig } from 'domain/configuration/interfaces/IMirrorsConfig.js';
 const colors = require('colors');
 
+/**
+ * Set Mirror Node Service
+ */
 export default class SetMirrorNodeService extends Service {
   
   constructor() {

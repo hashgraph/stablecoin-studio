@@ -10,6 +10,9 @@ import Service from '../Service.js';
 import { IRPCsConfig } from 'domain/configuration/interfaces/IRPCsConfig.js';
 const colors = require('colors');
 
+/**
+ * Set RPC Service
+ */
 export default class SetRPCService extends Service {
   
   constructor() {
