@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as inquirer from 'inquirer';
 import figlet from 'figlet-promised';
+import { setMirrorNodeService, setRPCService } from '../../../index.js';
 import Service from '../Service.js';
 import { configurationService, language } from '../../../index.js';
 import Table from 'cli-table3';
@@ -22,8 +23,6 @@ import { IFactoryConfig } from '../../../domain/configuration/interfaces/IFactor
 import { IHederaTokenManagerConfig } from '../../../domain/configuration/interfaces/IHederaTokenManagerConfig.js';
 import { IMirrorsConfig } from 'domain/configuration/interfaces/IMirrorsConfig.js';
 import { IRPCsConfig } from 'domain/configuration/interfaces/IRPCsConfig.js';
-import SetMirrorNodeService from '../configuration/SetMirrorNodeService.js';
-import SetRPCService from '../configuration/SetRPCService.js';
 import { MIRROR_NODE, RPC } from '../../../core/Constants.js';
 
 /**
@@ -36,8 +35,6 @@ export default class UtilitiesService extends Service {
   private currentRPC: IRPCsConfig;
   private currentFactory: IFactoryConfig;
   private currentHederaTokenManager: IHederaTokenManagerConfig;
-  private mirrorNodeService: SetMirrorNodeService;
-  private rpcNodeService: SetRPCService;
 
   constructor() {
     super('Utilities');
@@ -624,10 +621,10 @@ export default class UtilitiesService extends Service {
 
     switch (networkType) {
       case MIRROR_NODE:
-        await this.mirrorNodeService.manageMirrorNodeMenu(network);
+        await setMirrorNodeService.manageMirrorNodeMenu(network);
         break;
       case RPC:
-        await this.rpcNodeService.manageRPCMenu(network);
+        await setRPCService.manageRPCMenu(network);
         break;
       default:
         this.showError(

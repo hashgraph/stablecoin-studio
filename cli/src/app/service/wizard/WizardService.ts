@@ -5,6 +5,7 @@ import {
   utilsService,
 } from '../../../index.js';
 import SetConfigurationService from '../configuration/SetConfigurationService.js';
+import SetFactoryService from '../configuration/SetFactoryService.js';
 import Service from '../Service.js';
 import CreateStableCoinService from '../stablecoin/CreateStableCoinService.js';
 import OperationStableCoinService from '../stablecoin/OperationStableCoinService.js';
@@ -19,18 +20,18 @@ import {
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { IAccountConfig } from 'domain/configuration/interfaces/IAccountConfig.js';
 import { MIRROR_NODE, RPC } from '../../../core/Constants.js';
-import SetFactoryService from '../configuration/SetFactoryService.js';
 
 /**
  * Wizard Service
  */
 export default class WizardService extends Service {
   private setConfigurationService: SetConfigurationService;
-  private factoryService: SetFactoryService;
+  private setFactoryService: SetFactoryService;
 
   constructor() {
     super('Wizard');
     this.setConfigurationService = new SetConfigurationService();
+    this.setFactoryService = new SetFactoryService();
   }
 
   /**
@@ -74,7 +75,7 @@ export default class WizardService extends Service {
               true,
             );
             if (configFactories) {
-              await this.factoryService.configureFactories();
+              await this.setFactoryService.configureFactories();
               configuration = await configurationService.getConfiguration();
               const { factories } = configuration;
               const currentFactory = factories.find(
@@ -193,7 +194,7 @@ export default class WizardService extends Service {
 
       case language.getText('wizard.changeOptions.ManageFactory'):
         await utilsService.cleanAndShowBanner();
-        await this.factoryService.manageFactoryMenu();
+        await this.setFactoryService.manageFactoryMenu();
         break;
 
       default:

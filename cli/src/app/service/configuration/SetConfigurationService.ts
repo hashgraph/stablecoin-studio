@@ -3,6 +3,9 @@ import {
   language,
   utilsService,
   wizardService,
+  setMirrorNodeService,
+  setRPCService,
+  setFactoryService,
 } from '../../../index.js';
 import Service from '../Service.js';
 import fs from 'fs-extra';
@@ -11,9 +14,6 @@ import { IConsensusNodeConfig } from '../../../domain/configuration/interfaces/I
 import { INetworkConfig } from '../../../domain/configuration/interfaces/INetworkConfig.js';
 import { IMirrorsConfig } from 'domain/configuration/interfaces/IMirrorsConfig.js';
 import { IRPCsConfig } from 'domain/configuration/interfaces/IRPCsConfig.js';
-import SetMirrorNodeService from './SetMirrorNodeService.js';
-import SetRPCService from './SetRPCService.js';
-import SetFactoryService from './SetFactoryService.js';
 import { ZERO_ADDRESS } from '../../../core/Constants.js';
 const colors = require('colors');
 
@@ -21,10 +21,6 @@ const colors = require('colors');
  * Set Configuration Service
  */
 export default class SetConfigurationService extends Service {
-  private mirrorNodeService: SetMirrorNodeService;
-  private rpcNodeService: SetRPCService;
-  private factoryService: SetFactoryService;
-
   constructor() {
     super('Set Configuration');
   }
@@ -48,7 +44,7 @@ export default class SetConfigurationService extends Service {
       true,
     );
     if (configFactories) {
-      await this.factoryService.configureFactories();
+      await setFactoryService.configureFactories();
     }
     const configDefaultMirrorsAndRPCs = await utilsService.defaultConfirmAsk(
       language.getText('configuration.askConfigurateDefaultMirrorsAndRPCs'),
@@ -60,12 +56,12 @@ export default class SetConfigurationService extends Service {
       utilsService.showMessage(
         language.getText('configuration.MirrorsConfigurationMessage'),
       );
-      await this.mirrorNodeService.configureMirrors();
+      await setMirrorNodeService.configureMirrors();
 
       utilsService.showMessage(
         language.getText('configuration.RPCsConfigurationMessage'),
       );
-      await this.rpcNodeService.configureRPCs();
+      await setRPCService.configureRPCs();
     }
   }
 
@@ -248,15 +244,13 @@ export default class SetConfigurationService extends Service {
    */
   public async configureDefaultMirrorsAndRPCs(): Promise<void> {
     const mirrors: IMirrorsConfig[] = [];
-    mirrors.push(this.mirrorNodeService.getDefaultMirrorByNetwork('testnet'));
-    mirrors.push(
-      this.mirrorNodeService.getDefaultMirrorByNetwork('previewnet'),
-    );
-    mirrors.push(this.mirrorNodeService.getDefaultMirrorByNetwork('mainnet'));
+    mirrors.push(setMirrorNodeService.getDefaultMirrorByNetwork('testnet'));
+    mirrors.push(setMirrorNodeService.getDefaultMirrorByNetwork('previewnet'));
+    mirrors.push(setMirrorNodeService.getDefaultMirrorByNetwork('mainnet'));
     const rpcs: IRPCsConfig[] = [];
-    rpcs.push(this.rpcNodeService.getDefaultRPCByNetwork('testnet'));
-    rpcs.push(this.rpcNodeService.getDefaultRPCByNetwork('previewnet'));
-    rpcs.push(this.rpcNodeService.getDefaultRPCByNetwork('mainnet'));
+    rpcs.push(setRPCService.getDefaultRPCByNetwork('testnet'));
+    rpcs.push(setRPCService.getDefaultRPCByNetwork('previewnet'));
+    rpcs.push(setRPCService.getDefaultRPCByNetwork('mainnet'));
     const defaultCfgData = configurationService.getConfiguration();
     defaultCfgData.mirrors = mirrors;
     defaultCfgData.rpcs = rpcs;
