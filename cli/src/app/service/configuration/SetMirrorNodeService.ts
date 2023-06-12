@@ -1,4 +1,9 @@
-import { HEDERA_MIRROR_NODE_MAINNET_URL, HEDERA_MIRROR_NODE_NAME, HEDERA_MIRROR_NODE_PREVIEWNET_URL, HEDERA_MIRROR_NODE_TESTNET_URL } from 'core/Constants.js';
+import {
+  HEDERA_MIRROR_NODE_MAINNET_URL,
+  HEDERA_MIRROR_NODE_NAME,
+  HEDERA_MIRROR_NODE_PREVIEWNET_URL,
+  HEDERA_MIRROR_NODE_TESTNET_URL,
+} from '../../../core/Constants.js';
 import {
   configurationService,
   language,
@@ -14,16 +19,15 @@ const colors = require('colors');
  * Set Mirror Node Service
  */
 export default class SetMirrorNodeService extends Service {
-  
   constructor() {
     super('Set Mirror Node Configuration');
   }
 
   /**
    * Function to configure a new mirror node
-   * 
+   *
    * @param _network Network to configure the mirror node
-   * 
+   *
    * @return Mirrors configuration
    */
   public async configureMirrorNode(
@@ -123,7 +127,7 @@ export default class SetMirrorNodeService extends Service {
 
   /**
    * Function to remove a mirror node
-   * 
+   *
    * @param _network Network to remove the mirror node
    */
   public async removeMirrorNode(_network: string): Promise<void> {
@@ -182,9 +186,9 @@ export default class SetMirrorNodeService extends Service {
 
   /**
    * Function to get the default mirror node by network
-   * 
+   *
    * @param _network Network to configure the mirror node
-   * 
+   *
    * @return Mirrors configuration
    */
   public getDefaultMirrorByNetwork(_network: string): IMirrorsConfig {
@@ -192,7 +196,7 @@ export default class SetMirrorNodeService extends Service {
       name: HEDERA_MIRROR_NODE_NAME,
       network: _network,
       baseUrl:
-      _network === 'testnet'
+        _network === 'testnet'
           ? HEDERA_MIRROR_NODE_TESTNET_URL
           : _network === 'previewnet'
           ? HEDERA_MIRROR_NODE_PREVIEWNET_URL
@@ -207,7 +211,7 @@ export default class SetMirrorNodeService extends Service {
 
   /**
    * Function to configure mirror nodes
-   * 
+   *
    * @return Mirrors configuration
    */
   public async configureMirrors(): Promise<IMirrorsConfig[]> {
@@ -346,7 +350,7 @@ export default class SetMirrorNodeService extends Service {
 
   /**
    * Function to manage the mirror node menu
-   * 
+   *
    * @param _network Network to configure the mirror node
    */
   public async manageMirrorNodeMenu(_network: string): Promise<void> {
@@ -432,5 +436,4 @@ export default class SetMirrorNodeService extends Service {
     }
     await this.manageMirrorNodeMenu(_network);
   }
-
 }

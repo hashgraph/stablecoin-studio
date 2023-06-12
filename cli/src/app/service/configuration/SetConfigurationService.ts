@@ -14,14 +14,13 @@ import { IRPCsConfig } from 'domain/configuration/interfaces/IRPCsConfig.js';
 import SetMirrorNodeService from './SetMirrorNodeService.js';
 import SetRPCService from './SetRPCService.js';
 import SetFactoryService from './SetFactoryService.js';
-import { ZERO_ADDRESS } from 'core/Constants.js';
+import { ZERO_ADDRESS } from '../../../core/Constants.js';
 const colors = require('colors');
 
 /**
  * Set Configuration Service
  */
 export default class SetConfigurationService extends Service {
-
   private mirrorNodeService: SetMirrorNodeService;
   private rpcNodeService: SetRPCService;
   private factoryService: SetFactoryService;
@@ -32,7 +31,7 @@ export default class SetConfigurationService extends Service {
 
   /**
    * Initialise the configuration for first time or with "init" command
-   * 
+   *
    * @param path Path to the configuration file
    * @param network Network to use
    */
@@ -72,9 +71,9 @@ export default class SetConfigurationService extends Service {
 
   /**
    * Function to configure the default path, fails if the path doesn't exist
-   * 
+   *
    * @param path Path to the configuration file
-   * 
+   *
    * @returns The new path
    */
   public async configurePath(path?: string): Promise<string> {
@@ -113,9 +112,9 @@ export default class SetConfigurationService extends Service {
 
   /**
    * Function to configure the default network
-   * 
+   *
    * @param _network Network to use
-   * 
+   *
    * @returns The new default network
    */
   public async configureDefaultNetwork(_network?: string): Promise<string> {
@@ -169,7 +168,7 @@ export default class SetConfigurationService extends Service {
 
   /**
    * Function to configure the account id
-   * 
+   *
    * @returns Accounts
    */
   public async configureAccounts(): Promise<IAccountConfig[]> {
@@ -250,7 +249,9 @@ export default class SetConfigurationService extends Service {
   public async configureDefaultMirrorsAndRPCs(): Promise<void> {
     const mirrors: IMirrorsConfig[] = [];
     mirrors.push(this.mirrorNodeService.getDefaultMirrorByNetwork('testnet'));
-    mirrors.push(this.mirrorNodeService.getDefaultMirrorByNetwork('previewnet'));
+    mirrors.push(
+      this.mirrorNodeService.getDefaultMirrorByNetwork('previewnet'),
+    );
     mirrors.push(this.mirrorNodeService.getDefaultMirrorByNetwork('mainnet'));
     const rpcs: IRPCsConfig[] = [];
     rpcs.push(this.rpcNodeService.getDefaultRPCByNetwork('testnet'));
@@ -264,7 +265,7 @@ export default class SetConfigurationService extends Service {
 
   /**
    * Function to manage the account menu
-   */ 
+   */
   public async manageAccountMenu(): Promise<void> {
     const currentAccount = utilsService.getCurrentAccount();
     const manageOptions = language.getArrayFromObject(
@@ -423,9 +424,9 @@ export default class SetConfigurationService extends Service {
 
   /**
    * Function to configure network
-   * 
+   *
    * @param networkName network name
-   * 
+   *
    * @returns network configuration
    */
   public async configureCustomNetwork(

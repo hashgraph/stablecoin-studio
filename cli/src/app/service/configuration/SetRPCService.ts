@@ -1,4 +1,9 @@
-import { HASHIO_RPC_MAINNET_URL, HASHIO_RPC_PREVIEWNET_URL, HASHIO_RPC_TESTNET_URL, HEDERA_RPC_NAME } from 'core/Constants.js';
+import {
+  HASHIO_RPC_MAINNET_URL,
+  HASHIO_RPC_PREVIEWNET_URL,
+  HASHIO_RPC_TESTNET_URL,
+  HEDERA_RPC_NAME,
+} from '../../../core/Constants.js';
 import {
   configurationService,
   language,
@@ -14,16 +19,15 @@ const colors = require('colors');
  * Set RPC Service
  */
 export default class SetRPCService extends Service {
-  
   constructor() {
     super('Set RPC Configuration');
   }
 
   /**
    * Function to configure a new rpc
-   * 
+   *
    * @param _network Network to configure the rpc
-   * 
+   *
    * @return RPCs configuration
    */
   public async configureRPC(_network?: string): Promise<IRPCsConfig[]> {
@@ -117,7 +121,7 @@ export default class SetRPCService extends Service {
 
   /**
    * Function to remove a rpc
-   * 
+   *
    * @param _network Network to remove the rpc
    */
   public async removeRPC(_network: string): Promise<void> {
@@ -166,9 +170,9 @@ export default class SetRPCService extends Service {
 
   /**
    * Function to get the default rpc by network
-   * 
+   *
    * @param _network Network to configure the rpc
-   * 
+   *
    * @return RPCs configuration
    */
   public getDefaultRPCByNetwork(_network: string): IRPCsConfig {
@@ -176,7 +180,7 @@ export default class SetRPCService extends Service {
       name: HEDERA_RPC_NAME,
       network: _network,
       baseUrl:
-      _network === 'testnet'
+        _network === 'testnet'
           ? HASHIO_RPC_TESTNET_URL
           : _network === 'previewnet'
           ? HASHIO_RPC_PREVIEWNET_URL
@@ -191,7 +195,7 @@ export default class SetRPCService extends Service {
 
   /**
    * Function to configure RPCs
-   * 
+   *
    * @return RPCs configuration
    */
   public async configureRPCs(): Promise<IRPCsConfig[]> {
@@ -330,7 +334,7 @@ export default class SetRPCService extends Service {
 
   /**
    * Function to manage the rpc menu
-   * 
+   *
    * @param _network Network to configure the rpc
    */
   public async manageRPCMenu(_network: string): Promise<void> {
@@ -412,5 +416,4 @@ export default class SetRPCService extends Service {
     }
     await this.manageRPCMenu(_network);
   }
-
 }

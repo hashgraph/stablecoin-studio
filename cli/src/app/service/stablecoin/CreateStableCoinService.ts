@@ -50,8 +50,7 @@ export default class CreateStableCoinService extends Service {
     const setConfigurationService: SetConfigurationService =
       new SetConfigurationService();
 
-    const factoryService: SetFactoryService =
-      new SetFactoryService();      
+    const factoryService: SetFactoryService = new SetFactoryService();
 
     if (
       currentAccount.privateKey == null ||
@@ -67,9 +66,7 @@ export default class CreateStableCoinService extends Service {
       utilsService.getCurrentFactory().id !==
       (await factoryService.getSDKFactory())
     ) {
-      await factoryService.setSDKFactory(
-        utilsService.getCurrentFactory().id,
-      );
+      await factoryService.setSDKFactory(utilsService.getCurrentFactory().id);
     }
     let createdToken;
 

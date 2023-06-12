@@ -24,7 +24,7 @@ import { IMirrorsConfig } from 'domain/configuration/interfaces/IMirrorsConfig.j
 import { IRPCsConfig } from 'domain/configuration/interfaces/IRPCsConfig.js';
 import SetMirrorNodeService from '../configuration/SetMirrorNodeService.js';
 import SetRPCService from '../configuration/SetRPCService.js';
-import { MIRROR_NODE, RPC } from 'core/Constants.js';
+import { MIRROR_NODE, RPC } from '../../../core/Constants.js';
 
 /**
  * Utilities Service
@@ -598,7 +598,7 @@ export default class UtilitiesService extends Service {
 
   /**
    * Function to configure the network for mirror node or rpc
-   * 
+   *
    * @param networkType type of network to configure
    */
   public async configureNetwork(networkType: string): Promise<void> {
@@ -620,9 +620,7 @@ export default class UtilitiesService extends Service {
       },
     );
 
-    this.showMessage(
-      language.getText('wizard.networkSelected', { network }),
-    );
+    this.showMessage(language.getText('wizard.networkSelected', { network }));
 
     switch (networkType) {
       case MIRROR_NODE:
@@ -632,9 +630,10 @@ export default class UtilitiesService extends Service {
         await this.rpcNodeService.manageRPCMenu(network);
         break;
       default:
-        this.showError(`Not valid network type for configuration: ${networkType}\n`);
+        this.showError(
+          `Not valid network type for configuration: ${networkType}\n`,
+        );
         break;
     }
   }
-
 }

@@ -7,15 +7,14 @@ import Service from '../Service.js';
 import colors from 'colors';
 
 export default class NetworkWizardService extends Service {
-
   constructor() {
     super('Network Wizard Service');
   }
 
   /**
    * Function to choose a mirror node network
-   * 
-   * @param _network 
+   *
+   * @param _network
    */
   public async chooseMirrorNodeNetwork(_network: string): Promise<boolean> {
     const configuration = configurationService.getConfiguration();
@@ -61,8 +60,8 @@ export default class NetworkWizardService extends Service {
 
   /**
    * Function to choose a rpc network
-   * 
-   * @param _network 
+   *
+   * @param _network
    */
   public async chooseRPCNetwork(_network: string): Promise<boolean> {
     const configuration = configurationService.getConfiguration();
@@ -104,8 +103,8 @@ export default class NetworkWizardService extends Service {
 
   /**
    * Function to choose last mirror node network
-   * 
-   * @param _network 
+   *
+   * @param _network
    */
   public async chooseLastMirrorNode(_network: string): Promise<void> {
     const configuration = configurationService.getConfiguration();
@@ -117,8 +116,8 @@ export default class NetworkWizardService extends Service {
 
   /**
    * Function to choose last mirror node network as selected
-   * 
-   * @param _network 
+   *
+   * @param _network
    */
   public async setLastMirrorNodeAsSelected(_network: string): Promise<void> {
     const configuration = configurationService.getConfiguration();
@@ -140,8 +139,8 @@ export default class NetworkWizardService extends Service {
 
   /**
    * Function to choose last rpc network
-   * 
-   * @param _network 
+   *
+   * @param _network
    */
   public async chooseLastRPC(_network: string): Promise<void> {
     const configuration = configurationService.getConfiguration();
@@ -153,8 +152,8 @@ export default class NetworkWizardService extends Service {
 
   /**
    * Function to choose last rpc network as selected
-   * 
-   * @param _network 
+   *
+   * @param _network
    */
   public async setLastRPCAsSelected(_network: string): Promise<void> {
     const configuration = configurationService.getConfiguration();
@@ -171,5 +170,4 @@ export default class NetworkWizardService extends Service {
     defaultCfgData.rpcs = rpcs;
     configurationService.setConfiguration(defaultCfgData);
   }
-  
 }

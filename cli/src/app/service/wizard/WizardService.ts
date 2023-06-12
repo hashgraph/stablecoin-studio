@@ -18,14 +18,13 @@ import {
   StableCoinViewModel,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { IAccountConfig } from 'domain/configuration/interfaces/IAccountConfig.js';
-import { MIRROR_NODE, RPC } from 'core/Constants.js';
+import { MIRROR_NODE, RPC } from '../../../core/Constants.js';
 import SetFactoryService from '../configuration/SetFactoryService.js';
 
 /**
  * Wizard Service
  */
 export default class WizardService extends Service {
-
   private setConfigurationService: SetConfigurationService;
   private factoryService: SetFactoryService;
 
@@ -293,5 +292,4 @@ export default class WizardService extends Service {
       }),
     );
   }
-  
 }

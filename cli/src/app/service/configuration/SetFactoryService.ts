@@ -16,14 +16,13 @@ import ImplementationFactoryProxyService from '../factoryProxy/ImplementationFac
 import { ProxyConfigurationViewModel } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { ChangeFactoryProxyOwnerRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
 import OwnerFactoryProxyService from '../factoryProxy/OwnerFactoryProxyService.js';
-import { ZERO_ADDRESS } from 'core/Constants.js';
+import { ZERO_ADDRESS } from '../../../core/Constants.js';
 const colors = require('colors');
 
 /**
  * Set Factory Service
  */
 export default class SetFactoryService extends Service {
-  
   constructor() {
     super('Set Factory Configuration');
   }
@@ -73,7 +72,7 @@ export default class SetFactoryService extends Service {
 
   /**
    * Function to set the sdk factory address
-   * 
+   *
    * @param factoryId
    */
   public async setSDKFactory(factoryId: string): Promise<void> {
@@ -158,10 +157,12 @@ export default class SetFactoryService extends Service {
 
   /**
    * Function to show the factory details
-   * 
+   *
    * @param factoryProxyConfig The factory proxy configuration
    */
-  private showFactoryDetails(factoryProxyConfig: ProxyConfigurationViewModel) {
+  private showFactoryDetails(
+    factoryProxyConfig: ProxyConfigurationViewModel,
+  ): void {
     utilsService.showMessage(
       colors.yellow(
         `${language.getText('factory.implementation')}: ${
@@ -180,7 +181,7 @@ export default class SetFactoryService extends Service {
 
   /**
    * Function to filter the options to manage the factory
-   * 
+   *
    * @param options The options to filter
    * @param factoryOwner The owner of the factory
    * @returns The filtered options
@@ -210,7 +211,7 @@ export default class SetFactoryService extends Service {
 
   /**
    * Function to change the configured factory
-   * 
+   *
    * @returns The new factory configuration
    */
   public async changeFactory(): Promise<IFactoryConfig[]> {
@@ -256,7 +257,7 @@ export default class SetFactoryService extends Service {
 
   /**
    * Function to upgrade the configured factory
-   * 
+   *
    * @param factory Factory to upgrade
    * @param currentImpl Current implementation of the factory
    */
@@ -287,7 +288,7 @@ export default class SetFactoryService extends Service {
 
   /**
    * Function to change the owner of the configured factory
-   * 
+   *
    * @param factory Factory to change the owner
    */
   public async changeFactoryOwner(factory: IFactoryConfig): Promise<void> {
@@ -309,5 +310,4 @@ export default class SetFactoryService extends Service {
       );
     }
   }
-
 }

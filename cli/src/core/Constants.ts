@@ -25,11 +25,11 @@ export const RPC = 'RPC';
 
 export const HEDERA_MIRROR_NODE_NAME = 'HEDERA';
 export const HEDERA_MIRROR_NODE_TESTNET_URL =
-'https://testnet.mirrornode.hedera.com/api/v1/';
+  'https://testnet.mirrornode.hedera.com/api/v1/';
 export const HEDERA_MIRROR_NODE_PREVIEWNET_URL =
-'https://previewnet.mirrornode.hedera.com/api/v1/';
+  'https://previewnet.mirrornode.hedera.com/api/v1/';
 export const HEDERA_MIRROR_NODE_MAINNET_URL =
-'https://mainnet-public.mirrornode.hedera.com/api/v1/';
+  'https://mainnet-public.mirrornode.hedera.com/api/v1/';
 
 export const HEDERA_RPC_NAME = 'HASHIO';
 export const HASHIO_RPC_TESTNET_URL = 'https://testnet.hashio.io/api';
