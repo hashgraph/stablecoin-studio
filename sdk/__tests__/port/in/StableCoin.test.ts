@@ -24,6 +24,7 @@ import EventService from '../../../src/app/service/event/EventService.js';
 import { WalletEvents } from '../../../src/app/service/event/WalletEvent.js';
 import Injectable from '../../../src/core/Injectable.js';
 import {
+	SDK,
 	Account,
 	Balance,
 	BigDecimal,
@@ -32,6 +33,7 @@ import {
 	StableCoinViewModel,
 	TokenSupplyType,
 	HBAR_DECIMALS,
+	LoggerTransports,
 } from '../../../src/index.js';
 import {
 	CashInRequest,
@@ -68,7 +70,15 @@ import {
 import { Client, Hbar, TransferTransaction } from '@hashgraph/sdk';
 import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
+import BaseError, {
+	ErrorCategory,
+	ErrorCode,
+} from '../../../src/core/error/BaseError.js';
 const decimals = 6;
+const initialSupply = 1000;
+const maxSupply = 1000000;
+
+SDK.log = { level: 'ERROR', transports: new LoggerTransports.Console() };
 
 describe('🧪 Stablecoin test', () => {
 	let stableCoinSC: StableCoinViewModel;
@@ -117,12 +127,13 @@ describe('🧪 Stablecoin test', () => {
 			name: 'TEST_ACCELERATOR_SC',
 			symbol: 'TEST',
 			decimals: decimals,
-			initialSupply: '1000',
+			initialSupply: initialSupply.toString(),
+			maxSupply: maxSupply.toString(),
 			freezeKey: Account.NullPublicKey,
 			kycKey: Account.NullPublicKey,
 			wipeKey: Account.NullPublicKey,
 			pauseKey: Account.NullPublicKey,
-			supplyType: TokenSupplyType.INFINITE,
+			supplyType: TokenSupplyType.FINITE,
 			stableCoinFactory: FACTORY_ADDRESS,
 			hederaTokenManager: HEDERA_TOKEN_MANAGER_ADDRESS,
 			reserveInitialAmount: '1000000',
@@ -142,7 +153,7 @@ describe('🧪 Stablecoin test', () => {
 			name: 'TEST_ACCELERATOR_HTS',
 			symbol: 'TEST',
 			decimals: decimals,
-			initialSupply: '1000',
+			initialSupply: initialSupply.toString(),
 			freezeKey: CLIENT_ACCOUNT_ED25519.publicKey,
 			kycKey: CLIENT_ACCOUNT_ED25519.publicKey,
 			wipeKey: CLIENT_ACCOUNT_ED25519.publicKey,
@@ -197,6 +208,150 @@ describe('🧪 Stablecoin test', () => {
 		await delay();
 	}, 60_000);
 
+	async function checkFail(op: any, erroCode: string, errorCategory: string) {
+		try {
+			await op();
+			expect(false).toBe(true);
+		} catch (e) {
+			const error = e as BaseError;
+			expect(error.errorCode).toEqual(erroCode);
+			expect(error.errorCategory).toEqual(errorCategory);
+		}
+	}
+
+	it('Triggers errors', async () => {
+		// Test Not Associated error
+
+		let cashInOperation = async () => {
+			await StableCoin.cashIn(
+				new CashInRequest({
+					amount: '1.111111111111111111',
+					tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
+					targetId: CLIENT_ACCOUNT_ECDSA.id.toString(),
+				}),
+			);
+		};
+
+		await checkFail(
+			cashInOperation,
+			ErrorCode.AccountNotAssociatedToToken,
+			ErrorCategory.Logic,
+		);
+
+		// Associate account
+
+		await Network.connect(
+			new ConnectRequest({
+				account: {
+					accountId: CLIENT_ACCOUNT_ECDSA.id.toString(),
+					privateKey: CLIENT_ACCOUNT_ECDSA.privateKey,
+				},
+				network: 'testnet',
+				wallet: SupportedWallets.CLIENT,
+				mirrorNode: mirrorNode,
+				rpcNode: rpcNode,
+			}),
+		);
+
+		await StableCoin.associate(
+			new AssociateTokenRequest({
+				targetId: CLIENT_ACCOUNT_ECDSA.id.toString(),
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
+			}),
+		);
+
+		await Network.connect(
+			new ConnectRequest({
+				account: {
+					accountId: CLIENT_ACCOUNT_ED25519.id.toString(),
+					privateKey: CLIENT_ACCOUNT_ED25519.privateKey,
+				},
+				network: 'testnet',
+				wallet: SupportedWallets.CLIENT,
+				mirrorNode: mirrorNode,
+				rpcNode: rpcNode,
+			}),
+		);
+
+		await delay();
+
+		// Test KYC not Granted
+
+		await checkFail(
+			cashInOperation,
+			ErrorCode.AccountNotKyc,
+			ErrorCategory.Logic,
+		);
+
+		// Test Frozen
+
+		await StableCoin.freeze(
+			new FreezeAccountRequest({
+				targetId: CLIENT_ACCOUNT_ECDSA.id.toString(),
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
+			}),
+		);
+
+		await delay();
+
+		await checkFail(
+			cashInOperation,
+			ErrorCode.AccountFreeze,
+			ErrorCategory.Logic,
+		);
+
+		await StableCoin.unFreeze(
+			new FreezeAccountRequest({
+				targetId: CLIENT_ACCOUNT_ECDSA.id.toString(),
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
+			}),
+		);
+
+		await delay();
+
+		// Decimals Over Range
+
+		await StableCoin.grantKyc(
+			new KYCRequest({
+				targetId: CLIENT_ACCOUNT_ECDSA.id.toString(),
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
+			}),
+		);
+
+		await delay();
+
+		await checkFail(
+			cashInOperation,
+			ErrorCode.InvalidRange,
+			ErrorCategory.InputData,
+		);
+
+		// Max supply reached
+
+		cashInOperation = async () => {
+			await StableCoin.cashIn(
+				new CashInRequest({
+					amount: (maxSupply + 1).toString(),
+					tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
+					targetId: CLIENT_ACCOUNT_ECDSA.id.toString(),
+				}),
+			);
+		};
+
+		await checkFail(
+			cashInOperation,
+			ErrorCode.OperationNotAllowed,
+			ErrorCategory.Logic,
+		);
+
+		await StableCoin.revokeKyc(
+			new KYCRequest({
+				targetId: CLIENT_ACCOUNT_ECDSA.id.toString(),
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
+			}),
+		);
+	}, 60_000);
+
 	it('Gets a coin', async () => {
 		const res = await StableCoin.getInfo(
 			new GetStableCoinDetailsRequest({
@@ -249,41 +404,51 @@ describe('🧪 Stablecoin test', () => {
 		);
 
 		// Switching account to associate before transfering
-		await Network.connect(
-			new ConnectRequest({
-				account: {
-					accountId: CLIENT_ACCOUNT_ECDSA.id.toString(),
-					privateKey: CLIENT_ACCOUNT_ECDSA.privateKey,
-				},
-				network: 'testnet',
-				wallet: SupportedWallets.CLIENT,
-				mirrorNode: mirrorNode,
-				rpcNode: rpcNode,
-			}),
-		);
-
-		await StableCoin.associate(
-			new AssociateTokenRequest({
+		const result = await StableCoin.isAccountAssociated(
+			new IsAccountAssociatedTokenRequest({
 				targetId: CLIENT_ACCOUNT_ECDSA.id.toString(),
 				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
 			}),
 		);
 
-		await delay();
+		if (!result) {
+			await Network.connect(
+				new ConnectRequest({
+					account: {
+						accountId: CLIENT_ACCOUNT_ECDSA.id.toString(),
+						privateKey: CLIENT_ACCOUNT_ECDSA.privateKey,
+					},
+					network: 'testnet',
+					wallet: SupportedWallets.CLIENT,
+					mirrorNode: mirrorNode,
+					rpcNode: rpcNode,
+				}),
+			);
+
+			await StableCoin.associate(
+				new AssociateTokenRequest({
+					targetId: CLIENT_ACCOUNT_ECDSA.id.toString(),
+					tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
+				}),
+			);
+
+			await Network.connect(
+				new ConnectRequest({
+					account: {
+						accountId: CLIENT_ACCOUNT_ED25519.id.toString(),
+						privateKey: CLIENT_ACCOUNT_ED25519.privateKey,
+					},
+					network: 'testnet',
+					wallet: SupportedWallets.CLIENT,
+					mirrorNode: mirrorNode,
+					rpcNode: rpcNode,
+				}),
+			);
+
+			await delay();
+		}
 
 		// Switching back account to grant kyc and transfer
-		await Network.connect(
-			new ConnectRequest({
-				account: {
-					accountId: CLIENT_ACCOUNT_ED25519.id.toString(),
-					privateKey: CLIENT_ACCOUNT_ED25519.privateKey,
-				},
-				network: 'testnet',
-				wallet: SupportedWallets.CLIENT,
-				mirrorNode: mirrorNode,
-				rpcNode: rpcNode,
-			}),
-		);
 
 		await StableCoin.grantKyc(
 			new KYCRequest({

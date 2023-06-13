@@ -70,6 +70,7 @@ export const english = {
     askOperateWithNewAccount:
       'Would you like to operate with the account you have just created?',
     askFactoryAddress: 'Enter your factory address',
+    askNewFactoryAddress: 'Enter your new factory address',
     MirrorsConfigurationMessage:
       'You will now configure your mirror node services:',
     askMirrorName: 'Enter the mirror node service name',
@@ -533,6 +534,8 @@ export const english = {
     wrongFormatUrl:
       'The url format is not correct. Please check the format and try again.',
     lessZero: 'The number is 0 or less. Please use a number greater than 0.',
+    wrongFactoryAddress:
+      'The address does not correspond to a valid factory contract.',
   },
   roleManagement: {
     askRoles: 'Choose the roles',
