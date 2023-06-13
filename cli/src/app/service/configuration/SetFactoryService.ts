@@ -96,63 +96,81 @@ export default class SetFactoryService extends Service {
     const currentRPC = utilsService.getCurrentRPC();
     const currentFactory = utilsService.getCurrentFactory();
 
-    let factoryProxyConfig;
     try {
-      factoryProxyConfig =
+      const factoryProxyConfig: ProxyConfigurationViewModel =
         await new ConfigurationFactoryProxyService().getFactoryProxyconfiguration(
           currentFactory.id,
         );
-    } catch (Error) {
-      factoryProxyConfig = { owner: '0.0.0' };
+
+      const currentImplementation: string =
+        factoryProxyConfig.implementationAddress.toString();
+      const owner: string = factoryProxyConfig.owner.toString();
+
+      const filteredOptions: string[] = await this.filterManageFactoryOptions(
+        language.getArrayFromObject('wizard.manageFactoryOptions'),
+        owner,
+      );
+
+      const factoryAction = await utilsService.defaultMultipleAsk(
+        language.getText('wizard.configurationMenuTitle'),
+        filteredOptions,
+        false,
+        {
+          network: currentAccount.network,
+          account: `${currentAccount.accountId} - ${currentAccount.alias}`,
+          mirrorNode: currentMirror.name,
+          rpc: currentRPC.name,
+        },
+      );
+      switch (factoryAction) {
+        case language.getText('wizard.manageFactoryOptions.ChangeFactory'):
+          await utilsService.cleanAndShowBanner();
+          await this.changeFactory();
+          utilsService.showMessage(language.getText('wizard.factoryChanged'));
+          break;
+
+        case language.getText('wizard.manageFactoryOptions.UpgradeFactory'):
+          await utilsService.cleanAndShowBanner();
+          await this.upgradeFactory(currentFactory, currentImplementation);
+          break;
+
+        case language.getText('wizard.manageFactoryOptions.ChangeOwner'):
+          await utilsService.cleanAndShowBanner();
+          await this.changeFactoryOwner(currentFactory);
+          break;
+
+        case language.getText('wizard.manageFactoryOptions.FactoryDetails'):
+          await utilsService.cleanAndShowBanner();
+          this.showFactoryDetails(factoryProxyConfig);
+          break;
+
+        default:
+          await utilsService.cleanAndShowBanner();
+          await wizardService.configurationMenu();
+      }
+      await this.manageFactoryMenu();
+    } catch (error) {
+      await utilsService.askErrorConfirmation(undefined, error);
     }
+  }
 
-    const currentImplementation: string =
-      factoryProxyConfig.implementationAddress.toString();
-    const owner: string = factoryProxyConfig.owner.toString();
-
-    const filteredOptions: string[] = await this.filterManageFactoryOptions(
-      language.getArrayFromObject('wizard.manageFactoryOptions'),
-      owner,
-    );
-
-    const factoryAction = await utilsService.defaultMultipleAsk(
-      language.getText('wizard.configurationMenuTitle'),
-      filteredOptions,
-      false,
-      {
-        network: currentAccount.network,
-        account: `${currentAccount.accountId} - ${currentAccount.alias}`,
-        mirrorNode: currentMirror.name,
-        rpc: currentRPC.name,
-      },
-    );
-    switch (factoryAction) {
-      case language.getText('wizard.manageFactoryOptions.ChangeFactory'):
-        await utilsService.cleanAndShowBanner();
-        await this.changeFactory();
-        utilsService.showMessage(language.getText('wizard.factoryChanged'));
-        break;
-
-      case language.getText('wizard.manageFactoryOptions.UpgradeFactory'):
-        await utilsService.cleanAndShowBanner();
-        await this.upgradeFactory(currentFactory, currentImplementation);
-        break;
-
-      case language.getText('wizard.manageFactoryOptions.ChangeOwner'):
-        await utilsService.cleanAndShowBanner();
-        await this.changeFactoryOwner(currentFactory);
-        break;
-
-      case language.getText('wizard.manageFactoryOptions.FactoryDetails'):
-        await utilsService.cleanAndShowBanner();
-        this.showFactoryDetails(factoryProxyConfig);
-        break;
-
-      default:
-        await utilsService.cleanAndShowBanner();
-        await wizardService.configurationMenu();
+  /**
+   * Function to check if the factory is valid
+   *
+   * @param factory The factory address id
+   *
+   * @returns Is the factory valid
+   */
+  private async isValidFactory(factory: string): Promise<boolean> {
+    try {
+      const factoryProxyConfig: ProxyConfigurationViewModel =
+        await new ConfigurationFactoryProxyService().getFactoryProxyconfiguration(
+          factory,
+        );
+      return Object.keys(factoryProxyConfig).length === 2 ? true : false;
+    } catch (error) {
+      return false;
     }
-    await this.manageFactoryMenu();
   }
 
   /**
@@ -215,6 +233,8 @@ export default class SetFactoryService extends Service {
    * @returns The new factory configuration
    */
   public async changeFactory(): Promise<IFactoryConfig[]> {
+    const HederaAccountFormat = /\d\.\d\.\d/;
+
     const configuration = configurationService.getConfiguration();
     const currentAccount = utilsService.getCurrentAccount();
     const currentMirror = utilsService.getCurrentMirror();
@@ -237,16 +257,30 @@ export default class SetFactoryService extends Service {
       },
     );
 
-    const factoryId = await utilsService.defaultSingleAsk(
-      language.getText('configuration.askFactoryId'),
+    let factory = await utilsService.defaultSingleAsk(
+      language.getText('configuration.askNewFactoryAddress'),
       ZERO_ADDRESS,
     );
+    while (
+      !HederaAccountFormat.test(factory) ||
+      !(await this.isValidFactory(factory))
+    ) {
+      if (!HederaAccountFormat.test(factory)) {
+        console.log(language.getText('validations.wrongFormatAddress'));
+      } else {
+        console.log(language.getText('validations.wrongFactoryAddress'));
+      }
+      factory = await utilsService.defaultSingleAsk(
+        language.getText('configuration.askNewFactoryAddress'),
+        ZERO_ADDRESS,
+      );
+    }
 
     if (factories && factories.map((val) => val.network)) {
       factories[factories.map((val) => val.network).indexOf(network)].id =
-        factoryId;
+        factory;
     } else {
-      factories.push({ id: factoryId, network: network });
+      factories.push({ id: factory, network: network });
     }
 
     // Set factories
