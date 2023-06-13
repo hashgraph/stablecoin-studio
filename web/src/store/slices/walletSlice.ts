@@ -217,7 +217,7 @@ export const walletSlice = createSlice({
 		clearSelectedNetworkFactoryProxyConfig: (state) => {
 			state.selectedNetworkFactoryProxyConfig = initialState.selectedNetworkFactoryProxyConfig;
 			state.isProxyOwner = initialState.isProxyOwner;
-		},		
+		},
 		reset: () => initialState,
 	},
 	extraReducers: (builder) => {

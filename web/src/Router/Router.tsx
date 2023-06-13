@@ -195,7 +195,10 @@ const Router = () => {
 								<Route path={RoutesMappingUrl.stableCoinDetails} element={<StableCoinDetails />} />
 								<Route path={RoutesMappingUrl.proofOfReserve} element={<StableCoinProof />} />
 								<Route path={RoutesMappingUrl.feesManagement} element={<FeesManagement />} />
-								<Route path={RoutesMappingUrl.stableCoinSettings} element={<StableCoinSettings />} />
+								<Route
+									path={RoutesMappingUrl.stableCoinSettings}
+									element={<StableCoinSettings />}
+								/>
 							</>
 						)}
 						<Route path={RoutesMappingUrl.settings} element={<Settings />} />

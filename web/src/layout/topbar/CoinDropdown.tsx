@@ -21,7 +21,7 @@ import {
 	SELECTED_TOKEN_PAUSED,
 	SELECTED_NETWORK,
 	SELECTED_WALLET_COIN_PROXY_CONFIG,
-	SELECTED_NETWORK_FACTORY_PROXY_CONFIG
+	SELECTED_NETWORK_FACTORY_PROXY_CONFIG,
 } from '../../store/slices/walletSlice';
 import { RouterManager } from '../../Router/RouterManager';
 import { matchPath, useLocation, useNavigate } from 'react-router-dom';
@@ -98,7 +98,7 @@ const CoinDropdown = () => {
 		formatOptionsStableCoins();
 	}, [stableCoinList, externalTokenList, selectedStableCoin]);
 
-	const getAccountInfo = async (id: string) => {		
+	const getAccountInfo = async (id: string) => {
 		const accountInfo = await SDKService.getAccountInfo(
 			new GetAccountInfoRequest({
 				account: {
@@ -112,7 +112,9 @@ const CoinDropdown = () => {
 			walletActions.setIsProxyOwner(proxyConfig?.owner?.toString() === accountInfo?.id?.toString()),
 		);
 		dispatch(
-			walletActions.setIsFactoryProxyOwner(factoryProxyConfig?.owner?.toString() === accountInfo?.id?.toString()),
+			walletActions.setIsFactoryProxyOwner(
+				factoryProxyConfig?.owner?.toString() === accountInfo?.id?.toString(),
+			),
 		);
 	};
 

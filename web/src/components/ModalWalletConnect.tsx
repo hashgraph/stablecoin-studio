@@ -13,7 +13,12 @@ import {
 	Text,
 	VStack,
 } from '@chakra-ui/react';
-import { GetFactoryProxyConfigRequest, SupportedWallets, StableCoinListViewModel, Network } from '@hashgraph-dev/stablecoin-npm-sdk';
+import {
+	GetFactoryProxyConfigRequest,
+	SupportedWallets,
+	StableCoinListViewModel,
+	Network,
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 import type { FC, ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -87,14 +92,15 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 		dispatch(walletActions.setSelectedStableCoin(undefined));
 		dispatch(walletActions.setSelectedStableCoinProxyConfig(undefined));
 		dispatch(walletActions.setIsProxyOwner(false));
-		
+
 		try {
 			await SDKService.connectWallet(wallet, network);
-			
-			const factoryProxyConfig: StableCoinListViewModel = await getFactoryProxyConfig(await Network.getFactoryAddress());
-			dispatch(walletActions.setSelectedNetworkFactoryProxyConfig(factoryProxyConfig));	
-			dispatch(walletActions.setIsFactoryProxyOwner(false));
 
+			const factoryProxyConfig: StableCoinListViewModel = await getFactoryProxyConfig(
+				await Network.getFactoryAddress(),
+			);
+			dispatch(walletActions.setSelectedNetworkFactoryProxyConfig(factoryProxyConfig));
+			dispatch(walletActions.setIsFactoryProxyOwner(false));
 		} catch (error: any) {
 			if ('errorCode' in error && error.errorCode === '40009') {
 				setRejected(true);
@@ -121,7 +127,7 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 			throw e;
 		});
 		return factoryProxyConfig;
-	} 
+	};
 
 	const handleConnectHashpackWallet = () => {
 		setHashpackSelected(true);

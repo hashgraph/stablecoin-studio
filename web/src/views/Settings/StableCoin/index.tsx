@@ -281,7 +281,9 @@ const StableCoinSettings = () => {
 											},
 										}}
 										name={'updateOwner'}
-										placeholder={t('settings:stableCoin.updateOwner.inputPlaceholder') ?? propertyNotFound}
+										placeholder={
+											t('settings:stableCoin.updateOwner.inputPlaceholder') ?? propertyNotFound
+										}
 										isReadOnly={false}
 									/>
 								),
@@ -344,7 +346,8 @@ const StableCoinSettings = () => {
 										defaultValue={'0'}
 										options={[...Object.values(optionshederaTokenManagerAddresses)]}
 										placeholder={
-											t('settings:stableCoin.updateImplementation.inputPlaceholder') ?? propertyNotFound
+											t('settings:stableCoin.updateImplementation.inputPlaceholder') ??
+											propertyNotFound
 										}
 									/>
 								),

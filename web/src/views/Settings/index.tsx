@@ -11,7 +11,7 @@ import {
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_PAIRED_ACCOUNTID,
 	IS_PROXY_OWNER,
-	IS_FACTORY_PROXY_OWNER
+	IS_FACTORY_PROXY_OWNER,
 } from '../../store/slices/walletSlice';
 import { NamedRoutes } from './../../Router/NamedRoutes';
 
@@ -25,7 +25,7 @@ const Settings = () => {
 
 	const [disabledFeatures, setDisabledFeatures] = useState({
 		stableCoin: false,
-		factory: false
+		factory: false,
 	});
 
 	useEffect(() => {
@@ -55,7 +55,7 @@ const Settings = () => {
 
 		const areDisabled = {
 			stableCoin: !selectedStableCoin || (selectedStableCoin && (isExternalToken || !isProxyOwner)),
-			factory: !isFactoryProxyOwner
+			factory: !isFactoryProxyOwner,
 		};
 		setDisabledFeatures(areDisabled);
 	};
@@ -72,7 +72,7 @@ const Settings = () => {
 			route: NamedRoutes.FactorySettings,
 			title: t('factorySettings'),
 			isDisabled: disabledFeatures?.factory,
-		}
+		},
 	];
 
 	return (

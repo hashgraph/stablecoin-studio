@@ -11,7 +11,7 @@ import {
 	Fees,
 	Factory,
 	SetNetworkRequest,
-	Proxy
+	Proxy,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 import type {
 	WalletEvent,
@@ -62,7 +62,7 @@ import type {
 	ChangeProxyOwnerRequest,
 	UpgradeImplementationRequest,
 	ChangeFactoryProxyOwnerRequest,
-	UpgradeFactoryImplementationRequest
+	UpgradeFactoryImplementationRequest,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 export type StableCoinListRaw = Array<Record<'id' | 'symbol', string>>;

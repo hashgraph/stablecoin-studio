@@ -3,7 +3,7 @@ import { Button, Flex, Heading, SimpleGrid, Text, useDisclosure, VStack } from '
 import {
 	Network,
 	ChangeFactoryProxyOwnerRequest,
-	UpgradeFactoryImplementationRequest
+	UpgradeFactoryImplementationRequest,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 import { useState } from 'react';
@@ -110,7 +110,9 @@ const FactorySettings = () => {
 				setAwaitingUpdate(false);
 				setSuccess(true);
 				dispatch(
-					walletActions.setIsFactoryProxyOwner(updateOwner.toString() === accountInfo?.id?.toString()),
+					walletActions.setIsFactoryProxyOwner(
+						updateOwner.toString() === accountInfo?.id?.toString(),
+					),
 				);
 				dispatch(
 					walletActions.setSelectedNetworkFactoryProxyConfig({
@@ -176,7 +178,7 @@ const FactorySettings = () => {
 
 	return (
 		<BaseContainer title={t('settings:title')}>
-			{ isFactoryProxyOwner && (
+			{isFactoryProxyOwner && (
 				<Flex
 					direction='column'
 					bg='brand.gray100'
@@ -184,11 +186,7 @@ const FactorySettings = () => {
 					pt={{ base: 4, lg: 14 }}
 					pb={6}
 				>
-					<SimpleGrid
-						columns={{ base: 2 }}
-						gap={{ base: 10, lg: 20, md: 40 }}
-						alignItems='center'
-					>
+					<SimpleGrid columns={{ base: 2 }} gap={{ base: 10, lg: 20, md: 40 }} alignItems='center'>
 						{GridItem({
 							name: 'owner',
 							title: t('settings:factory.updateOwner.title'),
@@ -210,7 +208,9 @@ const FactorySettings = () => {
 										},
 									}}
 									name={'updateOwner'}
-									placeholder={t('settings:factory.updateOwner.inputPlaceholder') ?? propertyNotFound}
+									placeholder={
+										t('settings:factory.updateOwner.inputPlaceholder') ?? propertyNotFound
+									}
 									isReadOnly={false}
 								/>
 							),
@@ -245,7 +245,9 @@ const FactorySettings = () => {
 										},
 									}}
 									name={'updateImplementation'}
-									placeholder={t('settings:factory.updateImplementation.inputPlaceholder') ?? propertyNotFound}
+									placeholder={
+										t('settings:factory.updateImplementation.inputPlaceholder') ?? propertyNotFound
+									}
 									isReadOnly={false}
 								/>
 							),

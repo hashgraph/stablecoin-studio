@@ -48,7 +48,7 @@ const Sidebar = () => {
 		{
 			icon: 'GearSix',
 			title: t('sidebar.settings'),
-			route: NamedRoutes.Settings
+			route: NamedRoutes.Settings,
 		},
 	];
 
