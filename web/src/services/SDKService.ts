@@ -11,7 +11,7 @@ import {
 	Fees,
 	Factory,
 	SetNetworkRequest,
-	Proxy,
+	Proxy
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 import type {
 	WalletEvent,
@@ -58,8 +58,11 @@ import type {
 	AccountViewModel,
 	GetAccountsWithRolesRequest,
 	GetProxyConfigRequest,
+	GetFactoryProxyConfigRequest,
 	ChangeProxyOwnerRequest,
 	UpgradeImplementationRequest,
+	ChangeFactoryProxyOwnerRequest,
+	UpgradeFactoryImplementationRequest
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 export type StableCoinListRaw = Array<Record<'id' | 'symbol', string>>;
@@ -272,6 +275,10 @@ export class SDKService {
 		return await Proxy.getProxyConfig(req);
 	}
 
+	public static async getFactoryProxyConfig(req: GetFactoryProxyConfigRequest) {
+		return await Proxy.getFactoryProxyConfig(req);
+	}
+
 	public static async getAccountInfo(req: GetAccountInfoRequest): Promise<AccountViewModel> {
 		try {
 			return await Account.getInfo(req);
@@ -426,6 +433,14 @@ export class SDKService {
 
 	public static async upgradeImplementation(req: UpgradeImplementationRequest) {
 		return await Proxy.upgradeImplementation(req);
+	}
+
+	public static async changeFactoryOwner(req: ChangeFactoryProxyOwnerRequest) {
+		return await Proxy.changeFactoryProxyOwner(req);
+	}
+
+	public static async upgradeFactoryImplementation(req: UpgradeFactoryImplementationRequest) {
+		return await Proxy.upgradeFactoryImplementation(req);
 	}
 
 	public static async grantKyc(data: KYCRequest) {

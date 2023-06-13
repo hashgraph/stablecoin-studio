@@ -41,6 +41,8 @@ import GrantKycOperation from '../views/Operations/GrantKyc';
 import RevokeKycOperation from '../views/Operations/RevokeKyc';
 import CheckKycOperation from '../views/Operations/CheckKyc';
 import Settings from '../views/Settings';
+import StableCoinSettings from '../views/Settings/StableCoin';
+import FactorySettings from '../views/Settings/Factory';
 
 const LoginOverlayRoute = ({ show, loadingSC }: { show: boolean; loadingSC: boolean }) => {
 	return (
@@ -193,9 +195,11 @@ const Router = () => {
 								<Route path={RoutesMappingUrl.stableCoinDetails} element={<StableCoinDetails />} />
 								<Route path={RoutesMappingUrl.proofOfReserve} element={<StableCoinProof />} />
 								<Route path={RoutesMappingUrl.feesManagement} element={<FeesManagement />} />
-								<Route path={RoutesMappingUrl.settings} element={<Settings />} />
+								<Route path={RoutesMappingUrl.stableCoinSettings} element={<StableCoinSettings />} />
 							</>
 						)}
+						<Route path={RoutesMappingUrl.settings} element={<Settings />} />
+						<Route path={RoutesMappingUrl.factorySettings} element={<FactorySettings />} />
 						<Route path={RoutesMappingUrl.stableCoinCreation} element={<StableCoinCreation />} />
 						<Route path={RoutesMappingUrl.importedToken} element={<ImportedTokenCreation />} />
 						<Route

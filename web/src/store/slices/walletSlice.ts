@@ -23,7 +23,9 @@ export interface InitialStateProps {
 	accountInfo: AccountViewModel;
 	selectedStableCoin?: StableCoinViewModel;
 	selectedStableCoinProxyConfig?: ProxyConfigurationViewModel;
+	selectedNetworkFactoryProxyConfig?: ProxyConfigurationViewModel;
 	isProxyOwner?: boolean;
+	isFactoryProxyOwner?: boolean;
 	selectingStableCoin: boolean;
 	stableCoinList?: StableCoinListViewModel;
 	externalTokenList?: IExternalToken[];
@@ -47,6 +49,7 @@ export const initialState: InitialStateProps = {
 	accountInfo: {},
 	selectedStableCoin: undefined,
 	selectedStableCoinProxyConfig: undefined,
+	selectedNetworkFactoryProxyConfig: undefined,
 	selectingStableCoin: false,
 	stableCoinList: undefined,
 	externalTokenList: [],
@@ -59,6 +62,7 @@ export const initialState: InitialStateProps = {
 	network: undefined,
 	networkRecognized: true,
 	isProxyOwner: false,
+	isFactoryProxyOwner: false,
 	accountRecognized: true,
 	factoryId: undefined,
 };
@@ -136,6 +140,9 @@ export const walletSlice = createSlice({
 		setSelectedStableCoinProxyConfig: (state, action) => {
 			state.selectedStableCoinProxyConfig = action.payload;
 		},
+		setSelectedNetworkFactoryProxyConfig: (state, action) => {
+			state.selectedNetworkFactoryProxyConfig = action.payload;
+		},
 		setSelectingStableCoin: (state, action) => {
 			state.selectingStableCoin = action.payload;
 		},
@@ -173,6 +180,9 @@ export const walletSlice = createSlice({
 		setIsProxyOwner: (state, action) => {
 			state.isProxyOwner = action.payload;
 		},
+		setIsFactoryProxyOwner: (state, action) => {
+			state.isFactoryProxyOwner = action.payload;
+		},
 		setAccountRecognized: (state, action) => {
 			state.accountRecognized = action.payload;
 		},
@@ -204,6 +214,10 @@ export const walletSlice = createSlice({
 			state.selectedStableCoinProxyConfig = initialState.selectedStableCoinProxyConfig;
 			state.isProxyOwner = initialState.isProxyOwner;
 		},
+		clearSelectedNetworkFactoryProxyConfig: (state) => {
+			state.selectedNetworkFactoryProxyConfig = initialState.selectedNetworkFactoryProxyConfig;
+			state.isProxyOwner = initialState.isProxyOwner;
+		},		
 		reset: () => initialState,
 	},
 	extraReducers: (builder) => {
@@ -243,7 +257,10 @@ export const SELECTED_WALLET_DATA = (state: RootState) => state.wallet.data;
 export const SELECTED_WALLET_COIN = (state: RootState) => state.wallet.selectedStableCoin;
 export const SELECTED_WALLET_COIN_PROXY_CONFIG = (state: RootState) =>
 	state.wallet.selectedStableCoinProxyConfig;
+export const SELECTED_NETWORK_FACTORY_PROXY_CONFIG = (state: RootState) =>
+	state.wallet.selectedNetworkFactoryProxyConfig;
 export const IS_PROXY_OWNER = (state: RootState) => state.wallet.isProxyOwner;
+export const IS_FACTORY_PROXY_OWNER = (state: RootState) => state.wallet.isFactoryProxyOwner;
 export const SELECTING_WALLET_COIN = (state: RootState) => state.wallet.selectingStableCoin;
 export const SELECTED_WALLET_PAIRED = (state: RootState) => state.wallet.data;
 export const SELECTED_WALLET_CAPABILITIES = (state: RootState) => state.wallet.capabilities;

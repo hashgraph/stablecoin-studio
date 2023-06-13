@@ -33,4 +33,6 @@ export const RoutesMappingUrl: Record<NamedRoutes, string> = {
 	[NamedRoutes.CheckKyc]: '/operations/check-kyc',
 	[NamedRoutes.FeesManagement]: '/feesManagement',
 	[NamedRoutes.Settings]: '/settings',
+	[NamedRoutes.StableCoinSettings]: '/settings/stableCoin',
+	[NamedRoutes.FactorySettings]: '/settings/factory',
 };
