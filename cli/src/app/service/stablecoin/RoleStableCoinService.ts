@@ -4,6 +4,8 @@ import Service from '../Service.js';
 import {
   GrantRoleRequest,
   RevokeRoleRequest,
+  GrantMultiRolesRequest,
+  RevokeMultiRolesRequest,
   HasRoleRequest,
   GetRolesRequest,
   Role,
@@ -14,7 +16,8 @@ import {
   DecreaseSupplierAllowanceRequest,
   ResetSupplierAllowanceRequest,
   GetSupplierAllowanceRequest,
-} from 'hedera-stable-coin-sdk';
+  GetAccountsWithRolesRequest,
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 import colors from 'colors';
 
 /**
@@ -123,6 +126,30 @@ export default class RoleStableCoinsService extends Service {
     utilsService.breakLine();
   }
 
+  public async grantMultiRolesStableCoin(
+    req: GrantMultiRolesRequest,
+  ): Promise<void> {
+    await utilsService.showSpinner(Role.grantMultiRoles(req), {
+      text: language.getText('state.loading'),
+      successText: language.getText('state.loadCompleted') + '\n',
+    });
+
+    console.log(language.getText('operation.success'));
+    utilsService.breakLine();
+  }
+
+  public async revokeMultiRolesStableCoin(
+    req: RevokeMultiRolesRequest,
+  ): Promise<void> {
+    await utilsService.showSpinner(Role.revokeMultiRoles(req), {
+      text: language.getText('state.loading'),
+      successText: language.getText('state.loadCompleted') + '\n',
+    });
+
+    console.log(language.getText('operation.success'));
+    utilsService.breakLine();
+  }
+
   public async hasRole(req: HasRoleRequest): Promise<boolean> {
     let hasRole;
     await utilsService.showSpinner(
@@ -169,8 +196,15 @@ export default class RoleStableCoinsService extends Service {
     console.log(
       response
         .replace('${address}', req.targetId)
-        .replace('${amount}', colors.yellow(amount)) + '\n',
+        .replace('${amount}', colors.yellow(amount.value.toString())) + '\n',
     );
+  }
+
+  public async getRolesWithoutPrinting(
+    req: GetRolesRequest,
+  ): Promise<string[]> {
+    const roles: string[] = await Role.getRoles(req);
+    return roles.filter((role) => role !== StableCoinRole.WITHOUT_ROLE);
   }
 
   public async getRoles(req: GetRolesRequest): Promise<string[]> {
@@ -185,13 +219,40 @@ export default class RoleStableCoinsService extends Service {
       },
     );
     console.log(language.getText('operation.success'));
-    roles.length > 0
-      ? roles.forEach((role: StableCoinRole) => {
+    const filteredRoles = roles.filter(
+      (role) => role !== StableCoinRole.WITHOUT_ROLE,
+    );
+    filteredRoles.length > 0
+      ? filteredRoles.forEach((role: StableCoinRole) => {
           console.log(colors.yellow(StableCoinRoleLabel.get(role)));
         })
       : console.log(colors.red(language.getText('roleManagement.noRoles')));
     utilsService.breakLine();
 
     return roles;
+  }
+  public async getAccountsWithRole(
+    req: GetAccountsWithRolesRequest,
+  ): Promise<string[]> {
+    let accounts;
+    await utilsService.showSpinner(
+      Role.getAccountsWithRole(req).then((response) => {
+        accounts = response;
+      }),
+      {
+        text: language.getText('state.loading'),
+        successText: language.getText('state.loadCompleted') + '\n',
+      },
+    );
+    console.log(language.getText('operation.success'));
+
+    accounts.length > 0
+      ? accounts.forEach((account: string) => {
+          console.log(colors.yellow(account));
+        })
+      : console.log(colors.red(language.getText('roleManagement.noRoles')));
+    utilsService.breakLine();
+
+    return accounts;
   }
 }

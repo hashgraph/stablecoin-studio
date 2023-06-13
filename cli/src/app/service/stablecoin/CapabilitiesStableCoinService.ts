@@ -4,7 +4,7 @@ import {
   RequestAccount,
   StableCoin,
   StableCoinCapabilities,
-} from 'hedera-stable-coin-sdk';
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 
 export default class CapabilitiesStableCoinsService extends Service {
   constructor() {

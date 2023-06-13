@@ -18,30 +18,22 @@
  *
  */
 
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import { AxiosInstance } from 'axios';
 import { singleton } from 'tsyringe';
 import StableCoinViewModel from '../../out/mirror/response/StableCoinViewModel.js';
 import AccountViewModel from '../../out/mirror/response/AccountViewModel.js';
 import StableCoinListViewModel from '../../out/mirror/response/StableCoinListViewModel.js';
 import TransactionResultViewModel from '../../out/mirror/response/TransactionResultViewModel.js';
-import { Environment } from '../../../domain/context/network/Environment.js';
 import LogService from '../../../app/service/LogService.js';
 import { StableCoinNotFound } from './error/StableCoinNotFound.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
-import {
-	ContractId as HContractId,
-	PublicKey as HPublicKey,
-} from '@hashgraph/sdk';
+import { PublicKey as HPublicKey } from '@hashgraph/sdk';
 import PublicKey from '../../../domain/context/account/PublicKey.js';
 import { StableCoinMemo } from '../../../domain/context/stablecoin/StableCoinMemo.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
-import {
-	CustomFee,
-	FixedFee,
-	FractionalFee,
-	HBAR_DECIMALS,
-} from '../../../domain/context/fee/CustomFee.js';
+import { MAX_PERCENTAGE_DECIMALS } from '../../../domain/context/fee/CustomFee.js';
+import { HBAR_DECIMALS } from '../../../core/Constants.js';
 import { InvalidResponse } from './error/InvalidResponse.js';
 import { HederaId } from '../../../domain/context/shared/HederaId.js';
 import { KeyType } from '../../../domain/context/account/KeyProps.js';
@@ -52,23 +44,35 @@ import {
 	KycStatus,
 } from './response/AccountTokenRelationViewModel.js';
 import { REGEX_TRANSACTION } from '../error/TransactionResponseError.js';
+import {
+	RequestCustomFee,
+	RequestFixedFee,
+	RequestFractionalFee,
+} from '../../in/request/BaseRequest.js';
+import { MirrorNode } from '../../../domain/context/network/MirrorNode.js';
 
 @singleton()
 export class MirrorNodeAdapter {
 	private instance: AxiosInstance;
-	private URI_BASE: string;
+	private config: AxiosRequestConfig;
+	private mirrorNodeConfig: MirrorNode;
 
-	constructor() {
-		this.setEnvironment('testnet');
-	}
-
-	public setEnvironment(environment: Environment): void {
-		this.URI_BASE = `${this.getMirrorNodeURL(environment)}/api/v1/`;
+	public set(mnConfig: MirrorNode): void {
+		this.mirrorNodeConfig = mnConfig;
 		this.instance = axios.create({
 			validateStatus: function (status: number) {
 				return (status >= 200 && status < 300) || status == 404;
 			},
 		});
+
+		this.mirrorNodeConfig.baseUrl = mnConfig.baseUrl.endsWith('/')
+			? mnConfig.baseUrl
+			: `${mnConfig.baseUrl}/`;
+
+		if (this.mirrorNodeConfig.headerName && this.mirrorNodeConfig.apiKey)
+			this.instance.defaults.headers.common[
+				this.mirrorNodeConfig.headerName
+			] = this.mirrorNodeConfig.apiKey;
 	}
 
 	public async getStableCoinsList(
@@ -76,8 +80,8 @@ export class MirrorNodeAdapter {
 	): Promise<StableCoinListViewModel> {
 		try {
 			const url = `${
-				this.URI_BASE
-			}tokens?limit=100&account.id=${accountId.toString()}`;
+				this.mirrorNodeConfig.baseUrl
+			}tokens?limit=100&order=desc&account.id=${accountId.toString()}`;
 
 			LogService.logTrace(
 				'Getting stable coin list from mirror node -> ',
@@ -105,9 +109,11 @@ export class MirrorNodeAdapter {
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	private async getTokenInfo(tokenId: HederaId): Promise<any> {
-		const url = `${this.URI_BASE}tokens/${tokenId.toString()}`;
+		const url = `${
+			this.mirrorNodeConfig.baseUrl
+		}tokens/${tokenId.toString()}`;
 
-		LogService.logTrace('Getting stable coin from mirror node -> ', url);
+		LogService.logTrace('Getting token from mirror node -> ', url);
 
 		const retry = 10;
 		let i = 0;
@@ -148,9 +154,9 @@ export class MirrorNodeAdapter {
 
 			const getCustomFeesOrDefault = async (
 				val?: ICustomFees,
-			): Promise<CustomFee[] | undefined> => {
+			): Promise<RequestCustomFee[] | undefined> => {
 				if (!val) return undefined;
-				const customFees: CustomFee[] = [];
+				const customFees: RequestCustomFee[] = [];
 
 				val.fixed_fees.forEach(async (fixedFee) => {
 					const denominatingToken = fixedFee.denominating_token_id
@@ -169,43 +175,55 @@ export class MirrorNodeAdapter {
 						);
 					}
 
-					customFees.push(
-						new FixedFee(
-							HederaId.from(fixedFee.collector_account_id),
-							BigDecimal.fromStringFixed(
-								fixedFee.amount
-									? fixedFee.amount.toString()
-									: '0',
-								feeDecimals,
-							),
-							denominatingToken,
-							fixedFee.all_collectors_are_exempt,
-						),
-					);
+					const requestFixedFee: RequestFixedFee = {
+						tokenIdCollected: fixedFee.denominating_token_id
+							? fixedFee.denominating_token_id
+							: '0.0.0',
+						amount: BigDecimal.fromStringFixed(
+							fixedFee.amount ? fixedFee.amount.toString() : '0',
+							feeDecimals,
+						).toString(),
+						decimals: feeDecimals,
+						collectorId: fixedFee.collector_account_id,
+						collectorsExempt: fixedFee.all_collectors_are_exempt,
+					};
+
+					customFees.push(requestFixedFee);
 				});
 
 				val.fractional_fees.forEach((fractionalFee) => {
-					customFees.push(
-						new FractionalFee(
-							HederaId.from(fractionalFee.collector_account_id),
-							parseInt(fractionalFee.amount.numerator),
-							parseInt(fractionalFee.amount.denominator),
-							BigDecimal.fromStringFixed(
-								fractionalFee.minimum
-									? fractionalFee.minimum.toString()
-									: '0',
-								decimals,
-							),
-							BigDecimal.fromStringFixed(
-								fractionalFee.maximum
-									? fractionalFee.maximum.toString()
-									: '0',
-								decimals,
-							),
-							fractionalFee.net_of_transfers,
+					const requestFractionalFee: RequestFractionalFee = {
+						decimals: decimals,
+						collectorId: fractionalFee.collector_account_id,
+						collectorsExempt:
 							fractionalFee.all_collectors_are_exempt,
-						),
-					);
+						percentage: BigDecimal.fromStringFixed(
+							Math.round(
+								(100 *
+									10 ** MAX_PERCENTAGE_DECIMALS *
+									parseInt(fractionalFee.amount.numerator)) /
+									parseInt(fractionalFee.amount.denominator),
+							).toString(),
+							MAX_PERCENTAGE_DECIMALS,
+						).toString(),
+						amountNumerator: fractionalFee.amount.numerator,
+						amountDenominator: fractionalFee.amount.denominator,
+						min: BigDecimal.fromStringFixed(
+							fractionalFee.minimum
+								? fractionalFee.minimum.toString()
+								: '0',
+							decimals,
+						).toString(),
+						max: BigDecimal.fromStringFixed(
+							fractionalFee.maximum
+								? fractionalFee.maximum.toString()
+								: '0',
+							decimals,
+						).toString(),
+						net: fractionalFee.net_of_transfers,
+					};
+
+					customFees.push(requestFractionalFee);
 				});
 
 				return customFees;
@@ -217,6 +235,9 @@ export class MirrorNodeAdapter {
 			const decimals = parseInt(response.data.decimals ?? '0');
 			const proxyAddress = response.data.memo
 				? StableCoinMemo.fromJson(response.data.memo).proxyContract
+				: '0.0.0';
+			const proxyAdminAddress = response.data.memo
+				? StableCoinMemo.fromJson(response.data.memo).proxyAdminContract
 				: '0.0.0';
 			const stableCoinDetail: StableCoinViewModel = {
 				tokenId: HederaId.from(response.data.token_id),
@@ -242,8 +263,12 @@ export class MirrorNodeAdapter {
 					  )
 					: undefined,
 				proxyAddress: new ContractId(proxyAddress),
+				proxyAdminAddress: new ContractId(proxyAdminAddress),
 				evmProxyAddress: EvmAddress.fromContractId(
 					new ContractId(proxyAddress),
+				),
+				evmProxyAdminAddress: EvmAddress.fromContractId(
+					new ContractId(proxyAdminAddress),
 				),
 				treasury: HederaId.from(response.data.treasury_account_id),
 				paused: response.data.pause_status === 'PAUSED',
@@ -252,8 +277,8 @@ export class MirrorNodeAdapter {
 				autoRenewAccount: HederaId.from(
 					response.data.auto_renew_account,
 				),
-				autoRenewAccountPeriod:
-					response.data.auto_renew_period / (3600 * 24),
+				autoRenewPeriod: response.data.auto_renew_period,
+				expirationTimestamp: response.data.expiry_timestamp,
 				adminKey: getKeyOrDefault(response.data.admin_key) as PublicKey,
 				kycKey: getKeyOrDefault(response.data.kyc_key) as PublicKey,
 				freezeKey: getKeyOrDefault(
@@ -284,25 +309,51 @@ export class MirrorNodeAdapter {
 		accountId: HederaId | string,
 	): Promise<AccountViewModel> {
 		try {
-			LogService.logTrace(this.URI_BASE + 'accounts/' + accountId);
-			const res = await axios.get<IAccount>(
-				this.URI_BASE + 'accounts/' + accountId.toString(),
+			LogService.logTrace(
+				this.mirrorNodeConfig.baseUrl + 'accounts/' + accountId,
+			);
+			const res = await this.instance.get<IAccount>(
+				this.mirrorNodeConfig.baseUrl +
+					'accounts/' +
+					accountId.toString(),
 			);
 
 			const account: AccountViewModel = {
 				id: res.data.account.toString(),
 				accountEvmAddress: res.data.evm_address,
-				publicKey: new PublicKey({
-					key: res.data.key.key,
-					type: res.data.key._type as KeyType,
-				}),
 				alias: res.data.alias,
 			};
+
+			if (res.data.key)
+				account.publicKey = new PublicKey({
+					key: res.data.key ? res.data.key.key : undefined,
+					type: res.data.key
+						? (res.data.key._type as KeyType)
+						: undefined,
+				});
 
 			return account;
 		} catch (error) {
 			LogService.logError(error);
 			return Promise.reject<AccountViewModel>(new InvalidResponse(error));
+		}
+	}
+
+	public async getContractMemo(contractId: HederaId): Promise<string> {
+		try {
+			LogService.logTrace(
+				this.mirrorNodeConfig.baseUrl + 'contracts/' + contractId,
+			);
+			const res = await this.instance.get<IContract>(
+				this.mirrorNodeConfig.baseUrl +
+					'contracts/' +
+					contractId.toString(),
+			);
+
+			return res.data.memo;
+		} catch (error) {
+			LogService.logError(error);
+			return Promise.reject<string>(new InvalidResponse(error));
 		}
 	}
 
@@ -312,10 +363,10 @@ export class MirrorNodeAdapter {
 	): Promise<AccountTokenRelationViewModel | undefined> {
 		try {
 			const url = `${
-				this.URI_BASE
+				this.mirrorNodeConfig.baseUrl
 			}accounts/${targetId.toString()}/tokens?token.id=${tokenId.toString()}`;
 			LogService.logTrace(url);
-			const res = await axios.get<AccountTokenRelationList>(url);
+			const res = await this.instance.get<AccountTokenRelationList>(url);
 			if (res.data.tokens && res.data.tokens.length > 0) {
 				const obj = res.data.tokens[0];
 				return {
@@ -341,9 +392,12 @@ export class MirrorNodeAdapter {
 		transactionId: string,
 	): Promise<TransactionResultViewModel> {
 		try {
-			const url = this.URI_BASE + 'contracts/results/' + transactionId;
+			const url =
+				this.mirrorNodeConfig.baseUrl +
+				'contracts/results/' +
+				transactionId;
 			LogService.logTrace(url);
-			const res = await axios.get<ITransactionResult>(url);
+			const res = await this.instance.get<ITransactionResult>(url);
 			if (!res.data.call_result)
 				throw new Error(
 					'Response does not contain a transaction result',
@@ -371,11 +425,12 @@ export class MirrorNodeAdapter {
 					.replace('@', '-')
 					.replace(/.([^.]*)$/, '-$1');
 
-			const url = this.URI_BASE + 'transactions/' + transactionId;
+			const url =
+				this.mirrorNodeConfig.baseUrl + 'transactions/' + transactionId;
 			LogService.logTrace(url);
 
 			await new Promise((resolve) => setTimeout(resolve, 5000));
-			const res = await axios.get<ITransactionList>(url);
+			const res = await this.instance.get<ITransactionList>(url);
 
 			let lastChildtransaction: ITransaction;
 			if (res.data.transactions) {
@@ -399,34 +454,28 @@ export class MirrorNodeAdapter {
 		}
 	}
 
-	private getMirrorNodeURL(environment: Environment): string {
-		switch (environment) {
-			case 'mainnet':
-				return 'https://mainnet.mirrornode.hedera.com';
-			case 'previewnet':
-				return 'https://previewnet.mirrornode.hedera.com';
-			case 'testnet':
-				return 'https://testnet.mirrornode.hedera.com';
-			case 'local':
-				return 'http://127.0.0.1:5551';
-			default:
-				return 'https://mainnet.mirrornode.hedera.com';
-		}
-	}
-
 	async accountToEvmAddress(accountId: HederaId): Promise<EvmAddress> {
-		const accountInfoViewModel: AccountViewModel =
-			await this.getAccountInfo(accountId);
-		if (accountInfoViewModel.accountEvmAddress) {
-			return new EvmAddress(accountInfoViewModel.accountEvmAddress);
-		} else if (accountInfoViewModel.publicKey) {
-			return this.getAccountEvmAddressFromPrivateKeyType(
-				accountInfoViewModel.publicKey.type,
-				accountInfoViewModel.publicKey.key,
-				accountId,
+		try {
+			const accountInfoViewModel: AccountViewModel =
+				await this.getAccountInfo(accountId);
+			if (accountInfoViewModel.accountEvmAddress) {
+				return new EvmAddress(accountInfoViewModel.accountEvmAddress);
+			} else if (accountInfoViewModel.publicKey) {
+				return this.getAccountEvmAddressFromPrivateKeyType(
+					accountInfoViewModel.publicKey.type,
+					accountInfoViewModel.publicKey.key,
+					accountId,
+				);
+			} else {
+				return Promise.reject<EvmAddress>('');
+			}
+		} catch (e) {
+			throw new Error(
+				'EVM address could not be retrieved for ' +
+					accountId.toString() +
+					' error : ' +
+					e,
 			);
-		} else {
-			return Promise.reject<EvmAddress>('');
 		}
 	}
 
@@ -448,10 +497,27 @@ export class MirrorNodeAdapter {
 		}
 	}
 
-	async contractToEvmAddress(contractId: ContractId): Promise<EvmAddress> {
-		return new EvmAddress(
-			HContractId.fromString(contractId.toString()).toSolidityAddress(),
-		);
+	public async getHBARBalance(
+		accountId: HederaId | string,
+	): Promise<BigDecimal> {
+		try {
+			const url = `${
+				this.mirrorNodeConfig.baseUrl
+			}balances?account.id=${accountId.toString()}`;
+			LogService.logTrace(url);
+			const res = await this.instance.get<IBalances>(url);
+			if (!res.data.balances)
+				throw new Error('Response does not contain a balances result');
+
+			return BigDecimal.fromString(
+				res.data.balances[
+					res.data.balances.length - 1
+				].balance.toString(),
+			);
+		} catch (error) {
+			LogService.logError(error);
+			return Promise.reject<BigDecimal>(new InvalidResponse(error));
+		}
 	}
 }
 
@@ -475,6 +541,10 @@ interface AccountTokenRelation {
 	kyc_status: 'GRANTED' | 'REVOKED' | 'NOT_APPLICABLE';
 	token_id: string;
 }
+interface IContract {
+	memo: string;
+}
+
 interface IHederaStableCoinDetail {
 	token_id?: string;
 	name?: string;
@@ -556,4 +626,19 @@ interface ITransaction {
 interface IKey {
 	_type: string;
 	key: string;
+}
+
+interface IBalances {
+	balances: IAccountBalance[];
+}
+
+interface IAccountBalance {
+	account: string;
+	balance: number;
+	tokens: ITokenBalance[];
+}
+
+interface ITokenBalance {
+	token_id: string;
+	balance: number;
 }

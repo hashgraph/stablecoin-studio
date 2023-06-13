@@ -11,8 +11,44 @@ interface IRoles {
         PAUSE,
         FREEZE,
         DELETE,
-        KYC
+        KYC,
+        DEFAULT_ADMIN_ROLE
     }
+
+    /**
+     * @dev Emitted when a role is granted to an account
+     *
+     * @param role The role to be granted
+     * @param account The account for which the role is to be granted
+     * @param sender The caller of the function that emitted the event
+     */
+    event RoleGranted(
+        bytes32 indexed role,
+        address indexed account,
+        address indexed sender
+    );
+
+    /**
+     * @dev Emitted when a role is revoked from an account
+     *
+     * @param role The role to be revoked
+     * @param account The account for which the role is to be revoked
+     * @param sender The caller of the function that emitted the event
+     */
+    event RoleRevoked(
+        bytes32 indexed role,
+        address indexed account,
+        address indexed sender
+    );
+
+    /**
+     * @dev Emitted when the provided account is not granted the role
+     *
+     * @param account The account for which the role is checked for granted
+     * @param role The role that is checked to see if the account has been granted
+     *
+     */
+    error AccountHasNoRole(address account, bytes32 role);
 
     /**
      * @dev Returns an array of roles the account currently has

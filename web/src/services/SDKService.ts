@@ -5,45 +5,65 @@ import {
 	Role,
 	CapabilitiesRequest,
 	ConnectRequest,
+	SetConfigurationRequest,
 	InitializationRequest,
 	ReserveDataFeed,
-} from 'hedera-stable-coin-sdk';
+	Fees,
+	Factory,
+	SetNetworkRequest,
+	Proxy,
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 import type {
 	WalletEvent,
-	SupportedWallets,
 	WipeRequest,
+	AssociateTokenRequest,
+	BurnRequest,
 	CashInRequest,
+	CheckSupplierLimitRequest,
 	CreateRequest,
+	DecreaseSupplierAllowanceRequest,
 	DeleteRequest,
 	FreezeAccountRequest,
 	GetAccountBalanceRequest,
 	GetAccountInfoRequest,
+	GetTokenManagerListRequest,
 	GetListStableCoinRequest,
+	GetReserveAddressRequest,
+	GetReserveAmountRequest,
 	GetRolesRequest,
 	GetStableCoinDetailsRequest,
-	GrantRoleRequest,
+	GetSupplierAllowanceRequest,
+	GrantMultiRolesRequest,
 	HasRoleRequest,
+	IncreaseSupplierAllowanceRequest,
 	InitializationData,
+	KYCRequest,
 	PauseRequest,
+	RequestAccount,
 	RescueRequest,
-	RevokeRoleRequest,
+	RescueHBARRequest,
+	ReserveViewModel,
+	ResetSupplierAllowanceRequest,
+	RevokeMultiRolesRequest,
+	StableCoinCapabilities,
 	StableCoinListViewModel,
 	StableCoinViewModel,
-	StableCoinCapabilities,
-	BurnRequest,
-	IncreaseSupplierAllowanceRequest,
-	DecreaseSupplierAllowanceRequest,
-	ResetSupplierAllowanceRequest,
-	GetSupplierAllowanceRequest,
-	CheckSupplierLimitRequest,
-	RequestAccount,
-	ReserveViewModel,
-	GetReserveAmountRequest,
-	GetReserveAddressRequest,
+	SupportedWallets,
+	UpdateCustomFeesRequest,
+	UpdateRequest,
 	UpdateReserveAddressRequest,
 	UpdateReserveAmountRequest,
-	KYCRequest,
-} from 'hedera-stable-coin-sdk';
+	AddFixedFeeRequest,
+	AddFractionalFeeRequest,
+	AccountViewModel,
+	GetAccountsWithRolesRequest,
+	GetProxyConfigRequest,
+	GetFactoryProxyConfigRequest,
+	ChangeProxyOwnerRequest,
+	UpgradeImplementationRequest,
+	ChangeFactoryProxyOwnerRequest,
+	UpgradeFactoryImplementationRequest,
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 
 export type StableCoinListRaw = Array<Record<'id' | 'symbol', string>>;
 
@@ -55,29 +75,177 @@ export class SDKService {
 		return !!this.initData;
 	}
 
-	public static async connectWallet(wallet: SupportedWallets) {
+	public static async connectWallet(wallet: SupportedWallets, connectNetwork: string) {
+		let mirrorNode = []; // REACT_APP_MIRROR_NODE load from .env
+
+		if (process.env.REACT_APP_MIRROR_NODE)
+			mirrorNode = JSON.parse(process.env.REACT_APP_MIRROR_NODE);
+
+		const _mirrorNode =
+			mirrorNode.length !== 0
+				? mirrorNode.find((i: any) => i.Environment === connectNetwork)
+					? {
+							baseUrl: mirrorNode.find((i: any) => i.Environment === connectNetwork).BASE_URL ?? '',
+							apiKey: mirrorNode.find((i: any) => i.Environment === connectNetwork).API_KEY ?? '',
+							headerName:
+								mirrorNode.find((i: any) => i.Environment === connectNetwork).HEADER ?? '',
+					  }
+					: { baseUrl: '', apiKey: '', headerName: '' }
+				: { baseUrl: '', apiKey: '', headerName: '' };
+
+		let rpcNode = []; // REACT_APP_RPC_NODE load from .env
+
+		if (process.env.REACT_APP_RPC_NODE) rpcNode = JSON.parse(process.env.REACT_APP_RPC_NODE);
+
+		const _rpcNode =
+			rpcNode.length !== 0
+				? rpcNode.find((i: any) => i.Environment === connectNetwork)
+					? {
+							baseUrl: rpcNode.find((i: any) => i.Environment === connectNetwork).BASE_URL ?? '',
+							apiKey: rpcNode.find((i: any) => i.Environment === connectNetwork).API_KEY ?? '',
+							headerName: rpcNode.find((i: any) => i.Environment === connectNetwork).HEADER ?? '',
+					  }
+					: { baseUrl: '', apiKey: '', headerName: '' }
+				: { baseUrl: '', apiKey: '', headerName: '' };
+
+		await Network.setNetwork(
+			new SetNetworkRequest({
+				environment: connectNetwork,
+				mirrorNode: _mirrorNode,
+				rpcNode: _rpcNode,
+			}),
+		);
+
+		let factories = []; // REACT_APP_FACTORIES load from .env
+
+		if (process.env.REACT_APP_FACTORIES) factories = JSON.parse(process.env.REACT_APP_FACTORIES);
+
+		const _lastFactoryId =
+			factories.length !== 0
+				? factories.find((i: any) => i.Environment === connectNetwork)
+					? factories.find((i: any) => i.Environment === connectNetwork).STABLE_COIN_FACTORY_ADDRESS
+					: ''
+				: '';
+
+		if (_lastFactoryId)
+			await Network.setConfig(
+				new SetConfigurationRequest({
+					factoryAddress: _lastFactoryId,
+				}),
+			);
+
 		this.initData = await Network.connect(
 			new ConnectRequest({
-				network: 'testnet',
+				network: connectNetwork,
+				mirrorNode: _mirrorNode,
+				rpcNode: _rpcNode,
 				wallet,
 			}),
 		);
+
 		return this.initData;
 	}
 
-	public static async init(events: Partial<WalletEvent>, lastWallet?: SupportedWallets) {
-		const init = await Network.init(
-			new InitializationRequest({
-				network: 'testnet',
-				events,
-				configuration: {
-					factoryAddress: process.env.REACT_APP_STABLE_COIN_FACTORY_ADDRESS ?? '',
-					hederaERC20Address: process.env.REACT_APP_HEDERA_ERC20_ADDRESS ?? '',
+	// dummy init
+	public static async init(events: Partial<WalletEvent>) {
+		try {
+			const initReq: InitializationRequest = new InitializationRequest({
+				network: 'mainnet',
+				mirrorNode: {
+					baseUrl: 'https://mainnet-public.mirrornode.hedera.com/api/v1/',
+					apiKey: '',
+					headerName: '',
 				},
-			}),
-		);
-		if (lastWallet) await this.connectWallet(lastWallet);
-		return init;
+				rpcNode: {
+					baseUrl: 'https://mainnet.hashio.io/api',
+					apiKey: '',
+					headerName: '',
+				},
+				events,
+			});
+			if (process.env.REACT_APP_FACTORIES) {
+				try {
+					const factories = [];
+
+					const extractedFactories = JSON.parse(process.env.REACT_APP_FACTORIES);
+
+					for (let i = 0; i < extractedFactories.length; i++) {
+						const factory = extractedFactories[i].STABLE_COIN_FACTORY_ADDRESS;
+
+						factories.push({
+							factory,
+							environment: extractedFactories[i].Environment,
+						});
+					}
+
+					initReq.factories = {
+						factories,
+					};
+				} catch (e) {
+					console.error('Factories could not be found in .env');
+				}
+			}
+			if (process.env.REACT_APP_MIRROR_NODE) {
+				try {
+					const nodes = [];
+
+					const extractedMirrorNodes = JSON.parse(process.env.REACT_APP_MIRROR_NODE);
+
+					for (let i = 0; i < extractedMirrorNodes.length; i++) {
+						const mirrorNode = {
+							baseUrl: extractedMirrorNodes[i].BASE_URL,
+							apiKey: extractedMirrorNodes[i].API_KEY,
+							headerName: extractedMirrorNodes[i].HEADER,
+						};
+
+						nodes.push({
+							mirrorNode,
+							environment: extractedMirrorNodes[i].Environment,
+						});
+					}
+
+					initReq.mirrorNodes = {
+						nodes,
+					};
+				} catch (e) {
+					console.error('Mirror Nodes could not be found in .env');
+				}
+			}
+			if (process.env.REACT_APP_RPC_NODE) {
+				try {
+					const nodes = [];
+
+					const extractedJsonRpcRelays = JSON.parse(process.env.REACT_APP_RPC_NODE);
+
+					for (let i = 0; i < extractedJsonRpcRelays.length; i++) {
+						const rpcNode = {
+							baseUrl: extractedJsonRpcRelays[i].BASE_URL,
+							apiKey: extractedJsonRpcRelays[i].API_KEY,
+							headerName: extractedJsonRpcRelays[i].HEADER,
+						};
+
+						nodes.push({
+							jsonRpcRelay: rpcNode,
+							environment: extractedJsonRpcRelays[i].Environment,
+						});
+					}
+
+					initReq.jsonRpcRelays = {
+						nodes,
+					};
+				} catch (e) {
+					console.error('RPC Nodes could not be found in .env');
+				}
+			}
+			const init = await Network.init(initReq);
+
+			return init;
+		} catch (e) {
+			console.error('Error initializing the Network : ' + e);
+			window.alert(
+				'There was an error initializing the network, please check your .env file and make sure the configuration is correct',
+			);
+		}
 	}
 
 	public static getWalletData(): InitializationData | undefined {
@@ -91,15 +259,37 @@ export class SDKService {
 	public static async getStableCoins(
 		req: GetListStableCoinRequest,
 	): Promise<StableCoinListViewModel | null> {
-		return await Account.listStableCoins(req);
+		try {
+			return await Account.listStableCoins(req);
+		} catch (e) {
+			console.error('list of stable coin could not be retrieved : ' + e);
+			return null;
+		}
 	}
 
 	public static async getStableCoinDetails(req: GetStableCoinDetailsRequest) {
 		return await StableCoin.getInfo(req);
 	}
 
-	public static async getAccountInfo(req: GetAccountInfoRequest) {
-		return await Account.getInfo(req);
+	public static async getProxyConfig(req: GetProxyConfigRequest) {
+		return await Proxy.getProxyConfig(req);
+	}
+
+	public static async getFactoryProxyConfig(req: GetFactoryProxyConfigRequest) {
+		return await Proxy.getFactoryProxyConfig(req);
+	}
+
+	public static async getAccountInfo(req: GetAccountInfoRequest): Promise<AccountViewModel> {
+		try {
+			return await Account.getInfo(req);
+		} catch (e) {
+			console.error('account could not be retrieved : ' + e);
+			const NullAcount: AccountViewModel = {
+				id: Account.NullHederaAccount.id.toString(),
+			};
+
+			return NullAcount;
+		}
 	}
 
 	public static async cashIn(req: CashInRequest) {
@@ -116,12 +306,20 @@ export class SDKService {
 		return await StableCoin.create(createRequest);
 	}
 
+	public static async updateStableCoin(updateRequest: UpdateRequest): Promise<boolean> {
+		return await StableCoin.update(updateRequest);
+	}
+
 	public static async getBalance(req: GetAccountBalanceRequest) {
 		return await StableCoin.getBalanceOf(req);
 	}
 
 	public static async rescue(req: RescueRequest) {
 		return await StableCoin.rescue(req);
+	}
+
+	public static async rescueHBAR(req: RescueHBARRequest) {
+		return await StableCoin.rescueHBAR(req);
 	}
 
 	public static async wipe(req: WipeRequest) {
@@ -142,6 +340,10 @@ export class SDKService {
 
 	public static async unfreeze(req: FreezeAccountRequest) {
 		return await StableCoin.unFreeze(req);
+	}
+
+	public static async isAccountFrozen(req: FreezeAccountRequest) {
+		return await StableCoin.isAccountFrozen(req);
 	}
 
 	public static async delete(req: DeleteRequest) {
@@ -185,12 +387,12 @@ export class SDKService {
 		return await Role.getAllowance(req);
 	}
 
-	public static async grantRole(req: GrantRoleRequest) {
-		return await Role.grantRole(req);
+	public static async grantMultipleRole(req: GrantMultiRolesRequest) {
+		return await Role.grantMultiRoles(req);
 	}
 
-	public static async revokeRole(req: RevokeRoleRequest) {
-		return await Role.revokeRole(req);
+	public static async revokeMultiRolesRequest(req: RevokeMultiRolesRequest) {
+		return await Role.revokeMultiRoles(req);
 	}
 
 	public static async hasRole(req: HasRoleRequest) {
@@ -203,6 +405,10 @@ export class SDKService {
 
 	public static async getRoles(data: GetRolesRequest) {
 		return await Role.getRoles(data);
+	}
+
+	public static async getAccountsWithRole(data: GetAccountsWithRolesRequest) {
+		return await Role.getAccountsWithRole(data);
 	}
 
 	public static async getReserveAddress(data: GetReserveAddressRequest) {
@@ -221,6 +427,22 @@ export class SDKService {
 		return await ReserveDataFeed.updateReserveAmount(data);
 	}
 
+	public static async changeOwner(req: ChangeProxyOwnerRequest) {
+		return await Proxy.changeProxyOwner(req);
+	}
+
+	public static async upgradeImplementation(req: UpgradeImplementationRequest) {
+		return await Proxy.upgradeImplementation(req);
+	}
+
+	public static async changeFactoryOwner(req: ChangeFactoryProxyOwnerRequest) {
+		return await Proxy.changeFactoryProxyOwner(req);
+	}
+
+	public static async upgradeFactoryImplementation(req: UpgradeFactoryImplementationRequest) {
+		return await Proxy.upgradeFactoryImplementation(req);
+	}
+
 	public static async grantKyc(data: KYCRequest) {
 		return await StableCoin.grantKyc(data);
 	}
@@ -231,6 +453,26 @@ export class SDKService {
 
 	public static async isAccountKYCGranted(data: KYCRequest) {
 		return await StableCoin.isAccountKYCGranted(data);
+	}
+
+	public static async associate(data: AssociateTokenRequest) {
+		return await StableCoin.associate(data);
+	}
+
+	public static async addFixedFee(data: AddFixedFeeRequest) {
+		return await Fees.addFixedFee(data);
+	}
+
+	public static async addFractionalFee(data: AddFractionalFeeRequest) {
+		return await Fees.addFractionalFee(data);
+	}
+
+	public static async updateCustomFees(data: UpdateCustomFeesRequest) {
+		return await Fees.updateCustomFees(data);
+	}
+
+	public static async getHederaTokenManagerList(data: GetTokenManagerListRequest) {
+		return await Factory.getHederaTokenManagerList(data);
 	}
 }
 

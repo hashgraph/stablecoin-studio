@@ -55,8 +55,12 @@
 		"title": "Stable coin review"
 	},
 	"notification": {
-		"title": "{{ result }} adding the stable coin",
+		"titleLoading": "{{ result }} loading stable coin list",
+		"titleAdding": "{{ result }} adding the stable coin",
+		"titleSelecting": "{{ result }} selecting the stable coin",
 		"descriptionSuccess": "",
-		"descriptionError": "Sorry, there was an error creating the stable coin"
+		"descriptionLoadingError": "Sorry, there was an error loading the stable coin list",
+		"descriptionAddingError": "Sorry, there was an error adding the stable coin",
+		"descriptionSelectingError": "Sorry, there was an error selecting the stable coin"
 	}
 }

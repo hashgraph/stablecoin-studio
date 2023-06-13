@@ -20,9 +20,6 @@
 
 import { ICommandHandler } from '../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../core/decorator/CommandHandlerDecorator.js';
-import Injectable from '../../../../../core/Injectable.js';
-import { MirrorNodeAdapter } from '../../../../../port/out/mirror/MirrorNodeAdapter.js';
-import RPCQueryAdapter from '../../../../../port/out/rpc/RPCQueryAdapter.js';
 import TransactionService from '../../../../service/TransactionService.js';
 import { ConnectCommand, ConnectCommandResponse } from './ConnectCommand.js';
 
@@ -32,12 +29,6 @@ export class ConnectCommandHandler implements ICommandHandler<ConnectCommand> {
 		const handler = TransactionService.getHandlerClass(command.wallet);
 		const registration = await handler.register(command.account);
 
-		// Change mirror node adapter network
-		const adapter = Injectable.resolve(MirrorNodeAdapter);
-		adapter.setEnvironment(command.environment);
-
-		// Init RPC Query Adapter
-		Injectable.resolve(RPCQueryAdapter).init();
 		return Promise.resolve(
 			new ConnectCommandResponse(registration, command.wallet),
 		);

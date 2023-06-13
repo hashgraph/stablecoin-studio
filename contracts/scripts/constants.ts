@@ -31,9 +31,55 @@ export const RolesId = {
     Kyc: 8,
 }
 
-export const Gas1 = 4000000
+export const Gas0 = 7800000
+export const Gas1 = 4800000
 export const Gas2 = 60000
 export const Gas3 = 1800000
 export const Gas4 = 500000
 export const Gas5 = 130000
 export const Gas6 = 140000
+
+export const CREATE_SC_GAS = 1900000
+export const CASHIN_GAS = 120000
+export const BURN_GAS = 70000
+export const WIPE_GAS = 70000
+export const RESCUE_GAS = 70000
+export const RESCUE_HBAR_GAS = 70000
+export const FREEZE_GAS = 65000
+export const UNFREEZE_GAS = 65000
+export const GRANT_KYC_GAS = 65000
+export const REVOKE_KYC_GAS = 65000
+export const PAUSE_GAS = 65000
+export const UNPAUSE_GAS = 65000
+export const DELETE_GAS = 65000
+export const GRANT_ROLES_GAS = 150000
+export const REVOKE_ROLES_GAS = 75000
+export const MAX_ROLES_GAS = 7000000
+export const INCREASE_SUPPLY_GAS = 50000
+export const DECREASE_SUPPLY_GAS = 50000
+export const RESET_SUPPLY_GAS = 45000
+export const UPDATE_RESERVE_ADDRESS_GAS = 45000
+export const UPDATE_TOKEN_GAS = 120000
+export const UPDATE_RESERVE_AMOUNT_GAS = 40000
+export const CHANGE_PROXY_OWNER = 40000
+export const UPDATE_PROXY_IMPLEMENTATION = 40000
+
+export const BALANCE_OF_GAS = 120000
+export const GET_RESERVE_ADDRESS_GAS = 120000
+export const GET_RESERVE_AMOUNT_GAS = 120000
+export const GET_ROLES_GAS = 120000
+export const HAS_ROLE_GAS = 120000
+export const GET_SUPPLY_ALLOWANCE_GAS = 120000
+export const IS_UNLIMITED_ALLOWANCE_GAS = 120000
+
+export const ADDRESS_0 = '0x0000000000000000000000000000000000000000'
+export const ADDRESS_1 = '0.0.1'
+export const ADDRESS_2 = '0.0.2'
+export const ADDRESS_3 = '0.0.3'
+export const ADDRESS_4 = '0.0.4'
+export const ADDRESS_5 = '0.0.5'
+export const ADDRESS_6 = '0.0.6'
+export const ADDRESS_7 = '0.0.7'
+export const ADDRESS_8 = '0.0.8'
+export const ADDRESS_9 = '0.0.9'
+export const ADDRESS_10 = '0.0.a'

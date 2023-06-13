@@ -61,7 +61,7 @@ export class HTSTransactionAdapter extends HederaTransactionAdapter {
 		@lazyInject(NetworkService)
 		public readonly networkService: NetworkService,
 	) {
-		super(mirrorNodeAdapter);
+		super(mirrorNodeAdapter, networkService);
 	}
 
 	init(): Promise<string> {
@@ -97,7 +97,13 @@ export class HTSTransactionAdapter extends HederaTransactionAdapter {
 				pairing: '',
 				topic: '',
 			},
-			network: this.networkService.environment,
+			network: {
+				name: this.networkService.environment,
+				recognized: true,
+				factoryId: this.networkService.configuration
+					? this.networkService.configuration.factoryAddress
+					: '',
+			},
 		};
 		this.eventService.emit(WalletEvents.walletPaired, eventData);
 		LogService.logTrace('Client registered as handler: ', eventData);
@@ -107,7 +113,7 @@ export class HTSTransactionAdapter extends HederaTransactionAdapter {
 	}
 
 	stop(): Promise<boolean> {
-		this.client.close();
+		this.client?.close();
 		LogService.logTrace('Client stopped');
 		this.eventService.emit(WalletEvents.walletDisconnect, {
 			wallet: SupportedWallets.CLIENT,
@@ -122,8 +128,12 @@ export class HTSTransactionAdapter extends HederaTransactionAdapter {
 		abi: object[],
 	): Promise<TransactionResponse> {
 		const tr: HTransactionResponse = await t.execute(this.client);
-		this.logTransaction(tr.transactionId.toString());
+		this.logTransaction(
+			tr.transactionId.toString(),
+			this.networkService.environment,
+		);
 		return HTSTransactionResponseAdapter.manageResponse(
+			this.networkService.environment,
 			tr,
 			transactionType,
 			this.client,

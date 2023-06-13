@@ -48,7 +48,6 @@ export class GetStableCoinQueryHandler
 		const coin = await this.mirrorNode.getStableCoin(tokenId);
 
 		if (!coin.evmProxyAddress) throw new Error('Invalid proxy address');
-		if (!coin.decimals) throw new Error('Invalid decimal');
 
 		const reserveAddress = await this.queryAdapter.getReserveAddress(
 			coin.evmProxyAddress,

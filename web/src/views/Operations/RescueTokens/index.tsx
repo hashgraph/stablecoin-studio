@@ -15,7 +15,7 @@ import { formatAmount } from '../../../utils/inputHelper';
 
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
-import { RescueRequest } from 'hedera-stable-coin-sdk';
+import { RescueRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 import { propertyNotFound } from '../../../constant';
 

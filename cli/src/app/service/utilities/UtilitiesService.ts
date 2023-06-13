@@ -12,14 +12,16 @@ import {
   StableCoinListViewModel,
   InitializationRequest,
   SDK,
-} from 'hedera-stable-coin-sdk';
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
 import { INetworkConfig } from '../../../domain/configuration/interfaces/INetworkConfig.js';
 import colors from 'colors';
 import MaskData from 'maskdata';
 import { clear } from 'console';
 import { IFactoryConfig } from '../../../domain/configuration/interfaces/IFactoryConfig.js';
-import { IHederaERC20Config } from '../../../domain/configuration/interfaces/IHederaERC20Config.js';
+import { IHederaTokenManagerConfig } from '../../../domain/configuration/interfaces/IHederaTokenManagerConfig.js';
+import { IMirrorsConfig } from 'domain/configuration/interfaces/IMirrorsConfig.js';
+import { IRPCsConfig } from 'domain/configuration/interfaces/IRPCsConfig.js';
 
 /**
  * Utilities Service
@@ -27,8 +29,10 @@ import { IHederaERC20Config } from '../../../domain/configuration/interfaces/IHe
 export default class UtilitiesService extends Service {
   private currentAccount: IAccountConfig;
   private currentNetwork: INetworkConfig;
+  private currentMirror: IMirrorsConfig;
+  private currentRPC: IRPCsConfig;
   private currentFactory: IFactoryConfig;
-  private currentHederaERC20: IHederaERC20Config;
+  private currentHederaTokenManager: IHederaTokenManagerConfig;
 
   constructor() {
     super('Utilities');
@@ -40,10 +44,8 @@ export default class UtilitiesService extends Service {
     await Network.init(
       new InitializationRequest({
         network: this.getCurrentNetwork().name,
-        configuration: {
-          factoryAddress: this.getCurrentFactory().id,
-          hederaERC20Address: this.getCurrentHederaERC20().id,
-        },
+        mirrorNode: this.getCurrentMirror(),
+        rpcNode: this.getCurrentRPC(),
       }),
     );
     await Network.connect(
@@ -56,6 +58,8 @@ export default class UtilitiesService extends Service {
           },
         },
         network: this.getCurrentNetwork().name,
+        mirrorNode: this.getCurrentMirror(),
+        rpcNode: this.getCurrentRPC(),
         wallet: SupportedWallets.CLIENT,
       }),
     );
@@ -85,12 +89,38 @@ export default class UtilitiesService extends Service {
     }
   }
 
+  public setCurrentMirror(mirror: IMirrorsConfig): void {
+    this.currentMirror = mirror;
+  }
+
+  public getCurrentMirror(): IMirrorsConfig {
+    if (!this.currentMirror) {
+      throw new Error('Mirror not initialized');
+    } else {
+      return this.currentMirror;
+    }
+  }
+
+  public setCurrentRPC(rpc: IRPCsConfig): void {
+    this.currentRPC = rpc;
+  }
+
+  public getCurrentRPC(): IMirrorsConfig {
+    if (!this.currentRPC) {
+      throw new Error('JSON-RPC-Relay not initialized');
+    } else {
+      return this.currentRPC;
+    }
+  }
+
   public setCurrentFactory(factory: IFactoryConfig): void {
     this.currentFactory = factory;
   }
 
-  public setCurrentHederaERC20(hederaERC20: IHederaERC20Config): void {
-    this.currentHederaERC20 = hederaERC20;
+  public setCurrentHederaTokenManager(
+    hederaTokenManager: IHederaTokenManagerConfig,
+  ): void {
+    this.currentHederaTokenManager = hederaTokenManager;
   }
 
   public getCurrentFactory(): IFactoryConfig {
@@ -101,11 +131,11 @@ export default class UtilitiesService extends Service {
     }
   }
 
-  public getCurrentHederaERC20(): IHederaERC20Config {
-    if (!this.currentHederaERC20) {
-      throw new Error('HederaERC20 not initialized');
+  public getCurrentHederaTokenManager(): IHederaTokenManagerConfig {
+    if (!this.currentHederaTokenManager) {
+      throw new Error('HederaTokenManager not initialized');
     } else {
-      return this.currentHederaERC20;
+      return this.currentHederaTokenManager;
     }
   }
 
@@ -203,40 +233,55 @@ export default class UtilitiesService extends Service {
     question: string,
     choices: Array<string>,
     goBack?: boolean,
-    network?: string,
-    account?: string,
-    token?: string,
-    tokenPaused?: boolean,
-    tokenDeleted?: boolean,
+    options?: {
+      network?: string;
+      account?: string;
+      token?: string;
+      tokenPaused?: boolean;
+      tokenDeleted?: boolean;
+      mirrorNode?: string;
+      rpc?: string;
+    },
   ): Promise<string> {
-    if (network) {
-      question =
-        question +
+    let networkInfo = '';
+    let mirrorInfo = '';
+    let rpcInfo = '';
+
+    if (options?.network)
+      networkInfo =
         ' ' +
         colors.underline(colors.bold('Network:')) +
         ' ' +
-        colors.cyan('(' + network + ')');
+        colors.cyan('(' + options.network);
+    if (options?.mirrorNode)
+      mirrorInfo = colors.cyan(' - mirror: ' + options.mirrorNode);
+    if (options?.rpc) rpcInfo = colors.cyan(', rpc: ' + options.rpc);
+
+    if (networkInfo || mirrorInfo || rpcInfo) {
+      question =
+        question + networkInfo + mirrorInfo + rpcInfo + colors.cyan(')');
     }
-    if (account) {
+
+    if (options?.account) {
       question =
         question +
         ' ' +
         colors.underline(colors.bold('Account:')) +
         ' ' +
-        colors.magenta('(' + account + ')');
+        colors.magenta('(' + options.account + ')');
     }
-    if (token) {
+    if (options?.token) {
       question =
         question +
         ' ' +
         colors.underline(colors.bold('Stablecoin:')) +
         ' ' +
-        colors.yellow('(' + token + ')');
+        colors.yellow('(' + options.token + ')');
     }
-    if (tokenPaused) {
+    if (options?.tokenPaused) {
       question = question + ' | ' + colors.red('PAUSED');
     }
-    if (tokenDeleted) {
+    if (options?.tokenDeleted) {
       question = question + ' | ' + colors.red('DELETED');
     }
     question = question + '\n';
@@ -248,6 +293,34 @@ export default class UtilitiesService extends Service {
         ? choices.concat(language.getArrayFromObject('wizard.backOption'))
         : choices,
     });
+    return variable.response;
+  }
+
+  public async checkBoxMultipleAsk(
+    question: string,
+    choices: Array<string>,
+    loop = false,
+    atLeastOne = false,
+  ): Promise<string[]> {
+    let NOK;
+    let variable;
+
+    do {
+      NOK = false;
+      variable = await inquirer.prompt({
+        name: 'response',
+        type: 'checkbox',
+        message: question,
+        choices: choices,
+        loop: loop,
+      });
+
+      if (atLeastOne && variable.response.length == 0) {
+        NOK = true;
+        this.showError('You must choose at least one option');
+      }
+    } while (NOK);
+
     return variable.response;
   }
 
@@ -398,6 +471,46 @@ export default class UtilitiesService extends Service {
     return result;
   }
 
+  public maskMirrorNodes(mirrors: IMirrorsConfig[]): IMirrorsConfig[] {
+    const maskJSONOptions = {
+      maskWith: '.',
+      unmaskedStartCharacters: 4,
+      unmaskedEndCharacters: 4,
+    };
+    const result = mirrors.map((mirror) => {
+      if (!mirror.apiKey) {
+        delete mirror.apiKey;
+        delete mirror.headerName;
+        return mirror;
+      }
+      return {
+        ...mirror,
+        apiKey: MaskData.maskPassword(mirror.apiKey, maskJSONOptions),
+      };
+    });
+    return result;
+  }
+
+  public maskRPCs(rpcs: IRPCsConfig[]): IMirrorsConfig[] {
+    const maskJSONOptions = {
+      maskWith: '.',
+      unmaskedStartCharacters: 4,
+      unmaskedEndCharacters: 4,
+    };
+    const result = rpcs.map((rpc) => {
+      if (!rpc.apiKey) {
+        delete rpc.apiKey;
+        delete rpc.headerName;
+        return rpc;
+      }
+      return {
+        ...rpc,
+        apiKey: MaskData.maskPassword(rpc.apiKey, maskJSONOptions),
+      };
+    });
+    return result;
+  }
+
   public async cleanAndShowBanner(): Promise<void> {
     clear();
     await this.showBanner();
@@ -410,8 +523,23 @@ export default class UtilitiesService extends Service {
     const { network, accountId, alias } = userInfo;
 
     let result = '';
-    if (network) {
-      result = result + ' ' + colors.cyan(`( ${network} )`);
+    let networkInfo = '';
+    let mirrorInfo = '';
+    let rpcInfo = '';
+
+    if (network)
+      networkInfo =
+        ' ' +
+        colors.underline(colors.bold('Network:')) +
+        ' ' +
+        colors.cyan('(' + network);
+    if (this.currentMirror)
+      mirrorInfo = colors.cyan(' - mirror: ' + this.currentMirror.name);
+    if (this.currentRPC)
+      rpcInfo = colors.cyan(', rpc: ' + this.currentRPC.name);
+
+    if (networkInfo || mirrorInfo || rpcInfo) {
+      result = result + networkInfo + mirrorInfo + rpcInfo + colors.cyan(')');
     }
 
     if (accountId) {
@@ -419,7 +547,7 @@ export default class UtilitiesService extends Service {
     }
 
     if (token) {
-      result = result + ' ' + colors.yellow(`( ${token} )`);
+      result = result + ' ' + colors.yellow(`(${token})`);
     }
 
     this.showMessage(result);
@@ -431,8 +559,9 @@ export default class UtilitiesService extends Service {
 
   public async handleValidation(
     val: () => ValidationResponse[],
-    cll?: (res: ValidationResponse[]) => Promise<void>,
+    cll: (res: ValidationResponse[]) => Promise<void>,
     consoleOut = true,
+    checkBefore = false,
   ): Promise<void> {
     const outputError = (res: ValidationResponse[]): void => {
       for (let i = 0; i < res.length; i++) {
@@ -445,15 +574,20 @@ export default class UtilitiesService extends Service {
       }
     };
 
-    let res = val();
-    if (cll) {
-      while (res.length > 0) {
-        consoleOut && outputError(res);
-        await cll(res);
-        res = val();
-      }
-    } else {
-      if (res.length > 0) consoleOut && outputError(res);
+    let res;
+    let askCll = true;
+
+    if (checkBefore) {
+      res = val();
+      if (res.length == 0) askCll = false;
+    }
+
+    while (askCll) {
+      askCll = false;
+      await cll(res ?? '');
+      res = val();
+      consoleOut && outputError(res);
+      if (res.length > 0) askCll = true;
     }
   }
 }

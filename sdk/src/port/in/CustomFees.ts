@@ -33,20 +33,19 @@ import {
 	CustomFee,
 	FixedFee,
 	FractionalFee,
-	HBAR_DECIMALS,
 	MAX_PERCENTAGE_DECIMALS,
+	MAX_CUSTOM_FEES,
 } from '../../domain/context/fee/CustomFee.js';
+import { HBAR_DECIMALS } from '../../core/Constants.js';
 import BigDecimal from '../../domain/context/shared/BigDecimal.js';
 import { addFractionalFeesCommand } from '../../app/usecase/command/stablecoin/fees/addCustomFees/addFractionalFeesCommand.js';
 import { UpdateCustomFeesCommand } from '../../app/usecase/command/stablecoin/fees/updateCustomFees/UpdateCustomFeesCommand.js';
+import {
+	isRequestFractionalFee,
+	isRequestFixedFee,
+} from './request/BaseRequest.js';
 
-export {
-	CustomFee,
-	FixedFee,
-	FractionalFee,
-	HBAR_DECIMALS,
-	MAX_PERCENTAGE_DECIMALS,
-};
+export { HBAR_DECIMALS, MAX_PERCENTAGE_DECIMALS, MAX_CUSTOM_FEES };
 
 interface ICustomFees {
 	addFixedFee(request: AddFixedFeeRequest): Promise<boolean>;
@@ -91,25 +90,36 @@ class CustomFeesInPort implements ICustomFees {
 		const {
 			tokenId,
 			collectorId,
+			percentage,
 			amountNumerator,
 			amountDenominator,
 			min,
 			max,
 			decimals,
-			net,
 			collectorsExempt,
+			net,
 		} = request;
 		handleValidation('AddFractionalFeeRequest', request);
+
+		let _amountNumerator = amountNumerator ?? '';
+		let _amountDenominator = amountDenominator ?? '';
+		const _min = min ?? '0';
+		const _max = max ?? '0';
+
+		if (_amountNumerator === '') {
+			[_amountNumerator, _amountDenominator] =
+				this.getFractionFromPercentage(percentage ?? '');
+		}
 
 		return (
 			await this.commandBus.execute(
 				new addFractionalFeesCommand(
 					HederaId.from(tokenId),
 					HederaId.from(collectorId),
-					parseInt(amountNumerator),
-					parseInt(amountDenominator),
-					BigDecimal.fromString(min, decimals),
-					BigDecimal.fromString(max, decimals),
+					parseInt(_amountNumerator),
+					parseInt(_amountDenominator),
+					BigDecimal.fromString(_min, decimals),
+					BigDecimal.fromString(_max, decimals),
 					net,
 					collectorsExempt,
 				),
@@ -122,11 +132,83 @@ class CustomFeesInPort implements ICustomFees {
 		const { tokenId, customFees } = request;
 		handleValidation('UpdateCustomFeesRequest', request);
 
+		const requestedCustomFee: CustomFee[] = [];
+
+		customFees.forEach((customFee) => {
+			if (isRequestFixedFee(customFee)) {
+				requestedCustomFee.push(
+					new FixedFee(
+						HederaId.from(customFee.collectorId),
+						BigDecimal.fromString(
+							customFee.amount,
+							customFee.decimals,
+						),
+						HederaId.from(customFee.tokenIdCollected),
+						customFee.collectorsExempt,
+					),
+				);
+			} else if (isRequestFractionalFee(customFee)) {
+				let _amountNumerator = customFee.amountNumerator ?? '';
+				let _amountDenominator = customFee.amountDenominator ?? '';
+
+				if (_amountNumerator === '') {
+					[_amountNumerator, _amountDenominator] =
+						this.getFractionFromPercentage(customFee.percentage);
+				}
+
+				requestedCustomFee.push(
+					new FractionalFee(
+						HederaId.from(customFee.collectorId),
+						parseInt(_amountNumerator),
+						parseInt(_amountDenominator),
+						customFee.min
+							? BigDecimal.fromString(
+									customFee.min,
+									customFee.decimals,
+							  )
+							: undefined,
+						customFee.max
+							? BigDecimal.fromString(
+									customFee.max,
+									customFee.decimals,
+							  )
+							: undefined,
+						customFee.net,
+						customFee.collectorsExempt,
+					),
+				);
+			}
+		});
+
 		return (
 			await this.commandBus.execute(
-				new UpdateCustomFeesCommand(HederaId.from(tokenId), customFees),
+				new UpdateCustomFeesCommand(
+					HederaId.from(tokenId),
+					requestedCustomFee,
+				),
 			)
 		).payload;
+	}
+
+	getFractionFromPercentage(percentage: string): string[] {
+		const fraction: string[] = [];
+
+		const exponential = 10 ** MAX_PERCENTAGE_DECIMALS;
+
+		const amountDenominator = (100 * exponential).toString();
+
+		const numerator = BigDecimal.fromString(
+			percentage,
+			MAX_PERCENTAGE_DECIMALS,
+		);
+		const amountNumerator = Math.round(
+			numerator.toUnsafeFloat() * exponential,
+		).toString();
+
+		fraction.push(amountNumerator);
+		fraction.push(amountDenominator);
+
+		return fraction;
 	}
 }
 

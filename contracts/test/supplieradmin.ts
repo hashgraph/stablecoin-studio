@@ -21,14 +21,13 @@ import {
     resetSupplierAllowance,
     revokeSupplierRole,
     getSupplierAllowance,
-    associateToken,
     getTotalSupply,
     getBalanceOf,
     Mint,
     hasRole,
 } from '../scripts/contractsMethods'
 import { CASHIN_ROLE } from '../scripts/constants'
-import { clientId } from '../scripts/utils'
+import { clientId, associateToken } from '../scripts/utils'
 import { Client, ContractId } from '@hashgraph/sdk'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
@@ -37,6 +36,7 @@ chai.use(chaiAsPromised)
 const expect = chai.expect
 
 let proxyAddress: ContractId
+let token: ContractId
 
 let operatorClient: Client
 let nonOperatorClient: Client
@@ -503,6 +503,7 @@ describe('Supplier Admin Tests - (Unlimited)', function () {
         })
 
         proxyAddress = result[0]
+        token = result[8]
 
         // Grant unlimited supplier role
         await grantUnlimitedSupplierRole(
@@ -514,10 +515,58 @@ describe('Supplier Admin Tests - (Unlimited)', function () {
 
         // Associate account to token
         await associateToken(
-            proxyAddress,
-            nonOperatorClient,
+            token.toString(),
             nonOperatorAccount,
-            nonOperatorIsE25519
+            nonOperatorClient
+        )
+    })
+
+    it('An account with unlimited supplier role can cash in 100 tokens to the treasury account', async function () {
+        const AmountToMint = BigNumber.from(100).mul(TokenFactor)
+
+        // Get the initial total supply and account's balanceOf
+        const initialTotalSupply = await getTotalSupply(
+            proxyAddress,
+            operatorClient
+        )
+        const initialBalanceOf = await getBalanceOf(
+            proxyAddress,
+            operatorClient,
+            proxyAddress.toSolidityAddress(),
+            false,
+            false
+        )
+
+        // Cashin tokens to previously associated account
+        await Mint(
+            proxyAddress,
+            AmountToMint,
+            nonOperatorClient,
+            proxyAddress.toSolidityAddress(),
+            false,
+            false
+        )
+
+        // Check balance of account and total supply : success
+        const finalTotalSupply = await getTotalSupply(
+            proxyAddress,
+            operatorClient
+        )
+        const finalBalanceOf = await getBalanceOf(
+            proxyAddress,
+            operatorClient,
+            proxyAddress.toSolidityAddress(),
+            false,
+            false
+        )
+        const expectedTotalSupply = initialTotalSupply.add(AmountToMint)
+        const expectedBalanceOf = initialBalanceOf.add(AmountToMint)
+
+        expect(finalTotalSupply.toString()).to.equals(
+            expectedTotalSupply.toString()
+        )
+        expect(finalBalanceOf.toString()).to.equals(
+            expectedBalanceOf.toString()
         )
     })
 
@@ -687,13 +736,13 @@ describe('Supplier Admin Tests - (Limited)', function () {
         })
 
         proxyAddress = result[0]
+        token = result[8]
 
         // Associate account to token
         await associateToken(
-            proxyAddress,
-            nonOperatorClient,
+            token.toString(),
             nonOperatorAccount,
-            nonOperatorIsE25519
+            nonOperatorClient
         )
     })
 

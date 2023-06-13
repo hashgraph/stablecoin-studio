@@ -1,10 +1,31 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
-import './Interfaces/IRoles.sol';
-import '@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol';
+import {IRoles} from './Interfaces/IRoles.sol';
 
-abstract contract Roles is IRoles, AccessControlUpgradeable {
+import {
+    Initializable
+} from '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
+
+import {
+    StringsUpgradeable
+} from '@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol';
+
+abstract contract Roles is IRoles, Initializable {
+    struct MemberData {
+        bool active;
+        uint256 pos;
+    }
+
+    struct RoleData {
+        mapping(address => MemberData) members;
+        address[] accounts;
+    }
+
+    mapping(bytes32 => RoleData) private _roles;
+
+    bytes32 public constant ADMIN_ROLE = 0x00;
+
     /**
      * @dev Role that allows to mint token
      *
@@ -81,38 +102,101 @@ abstract contract Roles is IRoles, AccessControlUpgradeable {
      * @dev Array containing all roles
      *
      */
-    bytes32[] private _roles;
+    bytes32[] private _listOfroles;
 
-    function __rolesInit() internal onlyInitializing {
-        __AccessControl_init();
-        _roles.push(DEFAULT_ADMIN_ROLE);
-        _roles.push(_CASHIN_ROLE);
-        _roles.push(_BURN_ROLE);
-        _roles.push(_WIPE_ROLE);
-        _roles.push(_RESCUE_ROLE);
-        _roles.push(_PAUSE_ROLE);
-        _roles.push(_FREEZE_ROLE);
-        _roles.push(_DELETE_ROLE);
-        _roles.push(_KYC_ROLE);
+    /**
+     * @dev Checks if a roles is granted for the calling account
+     *
+     * @param role The role to check if is granted for the calling account
+     */
+    modifier onlyRole(bytes32 role) {
+        _checkRole(role);
+        _;
+    }
+
+    /**
+     * @dev Checks if the account has been granted a role
+     *
+     * @param role The role the check if was granted
+     * @param account The account to check if it has the role granted
+     */
+    function hasRole(
+        bytes32 role,
+        address account
+    ) external view returns (bool) {
+        return _hasRole(role, account);
+    }
+
+    /**
+     * @dev Gets the list of accounts that have been granted a role
+     *
+     * @param role The role that the accounts have to be granted
+     */
+    function getAccountsWithRole(
+        bytes32 role
+    ) external view returns (address[] memory) {
+        return _roles[role].accounts;
+    }
+
+    /**
+     * @dev Gets the number of accounts that have been granted a role
+     *
+     * @param role The role that the accounts have to be granted
+     */
+    function getNumberOfAccountsWithRole(
+        bytes32 role
+    ) external view returns (uint256) {
+        return _roles[role].accounts.length;
+    }
+
+    /**
+     * @dev Grants a role to an account
+     *
+     * Only the 'ADMIN ROLE` can execute
+     * Emits a RoleGranted event
+     *
+     * @param role The role to be granted
+     * @param account The account to wich the role is granted
+     */
+    function grantRole(
+        bytes32 role,
+        address account
+    ) external onlyRole(ADMIN_ROLE) {
+        _grantRole(role, account);
+    }
+
+    /**
+     * @dev Revokes a role from an account
+     *
+     * Only the 'ADMIN ROLE` can execute
+     * Emits a RoleRevoked event
+     *
+     * @param role The role to be revoked
+     * @param account The account to wich the role is revoked
+     */
+    function revokeRole(
+        bytes32 role,
+        address account
+    ) external onlyRole(ADMIN_ROLE) {
+        _revokeRole(role, account);
     }
 
     /**
      * @dev Returns an array of roles the account currently has
      *
      * @param account The account address
-     * @return rolesToReturn The array containing the roles
      */
     function getRoles(
         address account
     ) external view override(IRoles) returns (bytes32[] memory rolesToReturn) {
-        uint256 rolesLength = _roles.length;
+        uint256 rolesLength = _listOfroles.length;
 
         rolesToReturn = new bytes32[](rolesLength);
 
         for (uint i = 0; i < rolesLength; i++) {
-            bytes32 role = _roles[i];
+            bytes32 role = _listOfroles[i];
 
-            rolesToReturn[i] = hasRole(role, account) ? role : _WITHOUT_ROLE;
+            rolesToReturn[i] = _hasRole(role, account) ? role : _WITHOUT_ROLE;
         }
     }
 
@@ -120,7 +204,6 @@ abstract contract Roles is IRoles, AccessControlUpgradeable {
      * @dev Returns a role bytes32 representation
      *
      * @param role The role we want to retrieve the bytes32 for
-     * @return bytes32 The bytes32 of the role
      */
     function getRoleId(
         RoleName role
@@ -128,8 +211,114 @@ abstract contract Roles is IRoles, AccessControlUpgradeable {
         return _getRoleId(role);
     }
 
+    /**
+     * @dev Returns a role bytes32 representation
+     *
+     * @param role The role we want to retrieve the bytes32 for
+     */
     function _getRoleId(RoleName role) internal view returns (bytes32) {
-        return _roles[uint256(role)];
+        return _listOfroles[uint256(role)];
+    }
+
+    /**
+     * @dev Populates the array of existing roles
+     *
+     */
+    function __rolesInit() internal onlyInitializing {
+        _listOfroles.push(ADMIN_ROLE);
+        _listOfroles.push(_CASHIN_ROLE);
+        _listOfroles.push(_BURN_ROLE);
+        _listOfroles.push(_WIPE_ROLE);
+        _listOfroles.push(_RESCUE_ROLE);
+        _listOfroles.push(_PAUSE_ROLE);
+        _listOfroles.push(_FREEZE_ROLE);
+        _listOfroles.push(_DELETE_ROLE);
+        _listOfroles.push(_KYC_ROLE);
+    }
+
+    /**
+     * @dev Checks if a role is granted to an account
+     *
+     * @param role The role to check if is granted
+     * @param account The account for which the role is checked for
+     */
+    function _hasRole(
+        bytes32 role,
+        address account
+    ) private view returns (bool) {
+        return _roles[role].members[account].active;
+    }
+
+    /**
+     * @dev Grants a role to an account
+     *
+     * @param role The role to be granted
+     * @param account The account for which the role will be granted
+     */
+    function _grantRole(bytes32 role, address account) internal {
+        if (_hasRole(role, account)) return;
+        _roles[role].members[account] = MemberData(
+            true,
+            _roles[role].accounts.length
+        );
+        _roles[role].accounts.push(account);
+
+        emit RoleGranted(role, account, msg.sender);
+    }
+
+    /**
+     * @dev Revokes a role from an account
+     *
+     * @param role The role to be revoked
+     * @param account The account for which the role will be revoked
+     */
+    function _revokeRole(bytes32 role, address account) internal {
+        if (_hasRole(role, account)) {
+            uint256 position = _roles[role].members[account].pos;
+            uint256 lastIndex = _roles[role].accounts.length - 1;
+
+            if (position < lastIndex) {
+                address accountToMove = _roles[role].accounts[lastIndex];
+
+                _roles[role].accounts[position] = accountToMove;
+
+                _roles[role].members[accountToMove].pos = position;
+            }
+
+            _roles[role].accounts.pop();
+            delete (_roles[role].members[account]);
+            emit RoleRevoked(role, account, msg.sender);
+        }
+    }
+
+    /**
+     * @dev Checks if a role is granted to the calling account
+     *
+     * @param role The role to check if is granted
+     */
+    function _checkRole(bytes32 role) private view {
+        _checkRole(role, msg.sender);
+    }
+
+    /**
+     * @dev Checks if a role is granted to an account
+     *
+     * @param role The role to check if is granted
+     * @param account The account for which the role is checked for
+     */
+    function _checkRole(bytes32 role, address account) private view {
+        if (_hasRole(role, account)) return;
+        revert AccountHasNoRole(account, role);
+    }
+
+    /**
+     * @dev Grants a role to an account
+     *
+     * @param role The role to be granted
+     * @param account The account for which the role will be granted
+     */
+    function _setupRole(bytes32 role, address account) internal virtual {
+        _grantRole(role, account);
     }
 
     /**
@@ -137,5 +326,5 @@ abstract contract Roles is IRoles, AccessControlUpgradeable {
      * variables without shifting down storage in the inheritance chain.
      * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
      */
-    uint256[49] private __gap;
+    uint256[48] private __gap;
 }

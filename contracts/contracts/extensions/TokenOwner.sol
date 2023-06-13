@@ -1,12 +1,18 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
-import './Interfaces/ITokenOwner.sol';
-import '../hts-precompile/HederaResponseCodes.sol';
-import '../hts-precompile/IHederaTokenService.sol';
-import '../Interfaces/IHederaERC20Upgradeable.sol';
-import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
-import '@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol';
+import {ITokenOwner} from './Interfaces/ITokenOwner.sol';
+import {HederaResponseCodes} from '../hts-precompile/HederaResponseCodes.sol';
+import {IHederaTokenService} from '../hts-precompile/IHederaTokenService.sol';
+import {
+    IERC20Upgradeable
+} from '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
+import {
+    Initializable
+} from '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
+import {
+    IERC20MetadataUpgradeable
+} from '@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol';
 
 abstract contract TokenOwner is
     ITokenOwner,
@@ -18,17 +24,115 @@ abstract contract TokenOwner is
     // HTS Token this contract owns
     address private _tokenAddress;
 
-    // modifier to check that an address is not 0
-    modifier checkAddressIsNotZero(address addr) {
-        _checkAddressIsNotZero(addr);
+    /**
+     * @dev Checks that value is not less than ref
+     *
+     * @param value The value to check
+     * @param ref The ref to compare with
+     */
+    modifier valueIsNotLessThan(
+        uint256 value,
+        uint256 ref,
+        bool equalAccepted
+    ) {
+        _valueIsNotLessThan(value, ref, equalAccepted);
         _;
     }
 
-    function _checkAddressIsNotZero(address addr) internal pure {
-        require(addr != address(0), 'Provided address is 0');
+    /**
+     * @dev Checks that value is not greater than ref
+     *
+     * @param value The value to check
+     * @param ref The ref to compare with
+     */
+    modifier valueIsNotGreaterThan(
+        uint256 value,
+        uint256 ref,
+        bool equalAccepted
+    ) {
+        _valueIsNotGreaterThan(value, ref, equalAccepted);
+        _;
     }
 
-    // Initiliazes the token address
+    /**
+     * @dev Checks if an amount is a negative number
+     *
+     * @param amount The value to check
+     * @param zeroAccepted A flag that indicates if zero value is accepted or not
+     */
+    modifier amountIsNotNegative(int256 amount, bool zeroAccepted) {
+        _amountIsNotNegative(amount, zeroAccepted);
+        _;
+    }
+
+    /**
+     * @dev Checks if an address equals to zero address
+     *
+     * @param addr The address to check
+     */
+    modifier addressIsNotZero(address addr) {
+        _addressIsNotZero(addr);
+        _;
+    }
+
+    /**
+     * @dev Checks that value is not less than ref
+     *
+     * @param value The value to check
+     * @param ref The ref to compare with
+     */
+    function _valueIsNotLessThan(
+        uint256 value,
+        uint256 ref,
+        bool equalAccepted
+    ) private pure {
+        if (equalAccepted ? value < ref : value <= ref)
+            revert LessThan(value, ref);
+    }
+
+    /**
+     * @dev Checks that value is not greater than ref
+     *
+     * @param value The value to check
+     * @param ref The ref to compare with
+     */
+    function _valueIsNotGreaterThan(
+        uint256 value,
+        uint256 ref,
+        bool equalAccepted
+    ) private pure {
+        if (equalAccepted ? value > ref : value >= ref)
+            revert GreaterThan(value, ref);
+    }
+
+    /**
+     * @dev Checks if an amount is a negative number
+     *
+     * @param amount The value to check
+     * @param zeroAccepted A flag that indicates if zero value is accepted or not
+     */
+    function _amountIsNotNegative(
+        int256 amount,
+        bool zeroAccepted
+    ) private pure {
+        if (zeroAccepted ? amount < 0 : amount <= 0)
+            revert NegativeAmount(amount);
+    }
+
+    /**
+     * @dev Checks if an address equals to zero address
+     *
+     * @param addr The address to check
+     */
+    function _addressIsNotZero(address addr) private pure {
+        if (addr == address(0)) revert AddressZero(addr);
+    }
+
+    /**
+     * @dev Initializes the value of token address
+     *
+     * @param initTokenAddress The token address value
+     */
     function __tokenOwnerInit(
         address initTokenAddress
     ) internal onlyInitializing {
@@ -38,21 +142,6 @@ abstract contract TokenOwner is
     /**
      * @dev Returns the token address
      *
-     * @return address of The token address
-     */
-    function getTokenAddress()
-        external
-        view
-        override(ITokenOwner)
-        returns (address)
-    {
-        return _getTokenAddress();
-    }
-
-    /**
-     * @dev Returns the token address
-     *
-     * @return address of The token address
      */
     function _getTokenAddress() internal view returns (address) {
         return _tokenAddress;
@@ -63,24 +152,23 @@ abstract contract TokenOwner is
      *
      * @param responseCode The Hedera response code to transform
      */
-    function _checkResponse(int256 responseCode) internal pure returns (bool) {
-        require(responseCode == HederaResponseCodes.SUCCESS, 'Error');
+    function _checkResponse(int64 responseCode) internal pure returns (bool) {
+        if (responseCode != HederaResponseCodes.SUCCESS)
+            revert ResponseCodeInvalid(responseCode);
         return true;
     }
 
     /**
      * @dev Returns the total number of tokens that exits
      *
-     * @return uint256 The total number of tokens that exists
      */
     function _totalSupply() internal view returns (uint256) {
-        return IHederaERC20Upgradeable(_tokenAddress).totalSupply();
+        return IERC20Upgradeable(_tokenAddress).totalSupply();
     }
 
     /**
      * @dev Returns the number of decimals of the token
      *
-     * @return uint8 The number of decimals of the token
      */
     function _decimals() internal view returns (uint8) {
         return IERC20MetadataUpgradeable(_tokenAddress).decimals();
@@ -90,10 +178,7 @@ abstract contract TokenOwner is
      * @dev Returns the number tokens that an account has
      *
      * @param account The address of the account to be consulted
-     *
-     * @return uint256 The number number tokens that an account has
      */
-
     function _balanceOf(
         address account
     ) internal view virtual returns (uint256);
@@ -101,14 +186,23 @@ abstract contract TokenOwner is
     /**
      * @dev Transfers an amount of tokens from and account to another account
      *
-     * @param from The address the tokens are transferred from
      * @param to The address the tokens are transferred to
+     * @param amount The amount of tokens to be transferred
      */
-    function _transfer(
-        address from,
-        address to,
-        uint256 amount
-    ) internal virtual;
+    function _transfer(address to, int64 amount) internal virtual;
+
+    /**
+     * @dev Returns the token address
+     *
+     */
+    function getTokenAddress()
+        external
+        view
+        override(ITokenOwner)
+        returns (address)
+    {
+        return _getTokenAddress();
+    }
 
     /**
      * @dev This empty reserved space is put in place to allow future versions to add new

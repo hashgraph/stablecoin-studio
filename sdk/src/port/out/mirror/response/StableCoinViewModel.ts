@@ -21,10 +21,10 @@
 import { QueryResponse } from '../../../../core/query/QueryResponse.js';
 import PublicKey from '../../../../domain/context/account/PublicKey.js';
 import ContractId from '../../../../domain/context/contract/ContractId.js';
-import { CustomFee } from '../../../../domain/context/fee/CustomFee.js';
 import EvmAddress from '../../../../domain/context/contract/EvmAddress.js';
 import BigDecimal from '../../../../domain/context/shared/BigDecimal.js';
 import { HederaId } from '../../../../domain/context/shared/HederaId.js';
+import { RequestCustomFee } from '../../../in/request/BaseRequest.js';
 
 export default interface StableCoinViewModel extends QueryResponse {
 	tokenId?: HederaId;
@@ -36,11 +36,14 @@ export default interface StableCoinViewModel extends QueryResponse {
 	initialSupply?: BigDecimal;
 	treasury?: HederaId;
 	proxyAddress?: ContractId;
+	proxyAdminAddress?: ContractId;
 	evmProxyAddress?: EvmAddress;
+	evmProxyAdminAddress?: EvmAddress;
 	expirationTime?: string;
 	freezeDefault?: boolean;
 	autoRenewAccount?: HederaId;
-	autoRenewAccountPeriod?: number;
+	autoRenewPeriod?: number;
+	expirationTimestamp?: number;
 	paused?: boolean;
 	deleted?: boolean;
 	adminKey?: ContractId | PublicKey | undefined;
@@ -52,5 +55,5 @@ export default interface StableCoinViewModel extends QueryResponse {
 	feeScheduleKey?: PublicKey | undefined;
 	reserveAddress?: ContractId;
 	reserveAmount?: BigDecimal;
-	customFees?: CustomFee[];
+	customFees?: RequestCustomFee[];
 }

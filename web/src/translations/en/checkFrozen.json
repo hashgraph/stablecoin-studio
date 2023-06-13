@@ -1,0 +1,13 @@
+{
+	"title": "Check account frozen status",
+	"operationTitle": "Operation details",
+	"accountLabel": "Enter the account",
+	"accountPlaceholder": "0.0.0",
+	"modalIsFrozen": "The account {{ account }} is frozen for the token.",
+	"modalIsNotFrozen": "The account {{ account }} is unfrozen for the token.",
+	"modalAction": {
+		"subtitle": "Operation details review",
+		"account": "Account",
+		"accept": "Get account frozen status"
+	}
+}

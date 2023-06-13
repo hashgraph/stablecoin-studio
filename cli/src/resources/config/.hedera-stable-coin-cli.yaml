@@ -1,21 +1,9 @@
 defaultNetwork: 'testnet'
 networks:
   [
-    {
-      name: 'mainnet',
-      consensusNodes: [],
-      mirrorNodeUrl: 'https://mainnet.mirrornode.hedera.com/',
-    },
-    {
-      name: 'previewnet',
-      consensusNodes: [],
-      mirrorNodeUrl: 'https://previewnet.mirrornode.hedera.com/',
-    },
-    {
-      name: 'testnet',
-      consensusNodes: [],
-      mirrorNodeUrl: 'https://testnet.mirrornode.hedera.com',
-    },
+    { name: 'mainnet', consensusNodes: [] },
+    { name: 'previewnet', consensusNodes: [] },
+    { name: 'testnet', consensusNodes: [] },
   ]
 accounts:
   [
@@ -31,4 +19,3 @@ logs:
   path: './logs'
   level: 'ERROR'
 factories: [{ id: '', network: '' }]
-hederaERC20s: [{ id: '', network: '' }]

@@ -19,15 +19,16 @@
  */
 
 import {
+	Key,
+	TokenId,
+	AccountId,
 	Transaction,
+	CustomFee as HCustomFee,
 	ContractExecuteTransaction,
 	TokenWipeTransaction,
 	TokenMintTransaction,
 	TokenBurnTransaction,
-	TokenId,
-	AccountId,
 	TransferTransaction,
-	AccountAllowanceApproveTransaction,
 	TokenPauseTransaction,
 	TokenUnpauseTransaction,
 	TokenDeleteTransaction,
@@ -36,9 +37,11 @@ import {
 	TokenAssociateTransaction,
 	TokenGrantKycTransaction,
 	TokenRevokeKycTransaction,
-	CustomFee as HCustomFee,
 	TokenFeeScheduleUpdateTransaction,
+	TokenUpdateTransaction,
+	Timestamp,
 } from '@hashgraph/sdk';
+import Long from 'long';
 import LogService from '../../../app/service/LogService.js';
 import { TransactionBuildingError } from './error/TransactionBuildingError.js';
 
@@ -59,8 +62,7 @@ export class HTSTransactionBuilder {
 
 			return transaction;
 		} catch (error) {
-			LogService.logError(error);
-			throw new TransactionBuildingError(error);
+			throw this.ThrowError(error);
 		}
 	}
 
@@ -75,18 +77,8 @@ export class HTSTransactionBuilder {
 				.setTokenId(TokenId.fromString(tokenId))
 				.setAmount(amount);
 		} catch (error) {
-			LogService.logError(error);
-			throw new TransactionBuildingError(error);
+			throw this.ThrowError(error);
 		}
-	}
-
-	public static approveTokenAllowance(): Transaction {
-		return new AccountAllowanceApproveTransaction().approveTokenAllowance(
-			'0.0.48705516',
-			'0.0.47624288',
-			'0.0.47793222',
-			100000000000000,
-		);
 	}
 
 	public static buildTokenMintTransaction(
@@ -98,8 +90,7 @@ export class HTSTransactionBuilder {
 				.setTokenId(TokenId.fromString(tokenId))
 				.setAmount(amount);
 		} catch (error) {
-			LogService.logError(error);
-			throw new TransactionBuildingError(error);
+			throw this.ThrowError(error);
 		}
 	}
 
@@ -112,8 +103,7 @@ export class HTSTransactionBuilder {
 				.setTokenId(TokenId.fromString(tokenId))
 				.setAmount(amount);
 		} catch (error) {
-			LogService.logError(error);
-			throw new TransactionBuildingError(error);
+			throw this.ThrowError(error);
 		}
 	}
 
@@ -136,8 +126,39 @@ export class HTSTransactionBuilder {
 					amount,
 				);
 		} catch (error) {
-			LogService.logError(error);
-			throw new TransactionBuildingError(error);
+			throw this.ThrowError(error);
+		}
+	}
+
+	public static buildTransfersTransaction(
+		tokenId: string,
+		amounts: Long[],
+		outAccountId: string,
+		inAccountsIds: string[],
+	): Transaction {
+		try {
+			const t = new TransferTransaction();
+
+			let totalAmount: Long = new Long(0);
+
+			for (let i = 0; i < inAccountsIds.length; i++) {
+				totalAmount = totalAmount.add(amounts[i]);
+				t.addTokenTransfer(
+					tokenId,
+					AccountId.fromString(inAccountsIds[i]),
+					amounts[i],
+				);
+			}
+
+			t.addTokenTransfer(
+				tokenId,
+				AccountId.fromString(outAccountId),
+				totalAmount.mul(-1),
+			);
+
+			return t;
+		} catch (error) {
+			throw this.ThrowError(error);
 		}
 	}
 
@@ -145,8 +166,7 @@ export class HTSTransactionBuilder {
 		try {
 			return new TokenDeleteTransaction().setTokenId(tokenId);
 		} catch (error) {
-			LogService.logError(error);
-			throw new TransactionBuildingError(error);
+			throw this.ThrowError(error);
 		}
 	}
 
@@ -154,8 +174,7 @@ export class HTSTransactionBuilder {
 		try {
 			return new TokenPauseTransaction().setTokenId(tokenId);
 		} catch (error) {
-			LogService.logError(error);
-			throw new TransactionBuildingError(error);
+			throw this.ThrowError(error);
 		}
 	}
 
@@ -163,8 +182,7 @@ export class HTSTransactionBuilder {
 		try {
 			return new TokenUnpauseTransaction().setTokenId(tokenId);
 		} catch (error) {
-			LogService.logError(error);
-			throw new TransactionBuildingError(error);
+			throw this.ThrowError(error);
 		}
 	}
 
@@ -177,8 +195,7 @@ export class HTSTransactionBuilder {
 				.setTokenId(tokenId)
 				.setAccountId(targetId);
 		} catch (error) {
-			LogService.logError(error);
-			throw new TransactionBuildingError(error);
+			throw this.ThrowError(error);
 		}
 	}
 
@@ -191,8 +208,7 @@ export class HTSTransactionBuilder {
 				.setTokenId(tokenId)
 				.setAccountId(targetId);
 		} catch (error) {
-			LogService.logError(error);
-			throw new TransactionBuildingError(error);
+			throw this.ThrowError(error);
 		}
 	}
 
@@ -215,8 +231,7 @@ export class HTSTransactionBuilder {
 					amount,
 				);
 		} catch (error) {
-			LogService.logError(error);
-			throw new TransactionBuildingError(error);
+			throw this.ThrowError(error);
 		}
 	}
 
@@ -230,8 +245,7 @@ export class HTSTransactionBuilder {
 				tokenIds: [tokenId],
 			});
 		} catch (error) {
-			LogService.logError(error);
-			throw new TransactionBuildingError(error);
+			throw this.ThrowError(error);
 		}
 	}
 
@@ -245,8 +259,7 @@ export class HTSTransactionBuilder {
 				accountId: targetId,
 			});
 		} catch (error) {
-			LogService.logError(error);
-			throw new TransactionBuildingError(error);
+			throw this.ThrowError(error);
 		}
 	}
 
@@ -260,8 +273,7 @@ export class HTSTransactionBuilder {
 				accountId: targetId,
 			});
 		} catch (error) {
-			LogService.logError(error);
-			throw new TransactionBuildingError(error);
+			throw this.ThrowError(error);
 		}
 	}
 
@@ -275,8 +287,47 @@ export class HTSTransactionBuilder {
 				customFees: customFees,
 			});
 		} catch (error) {
-			LogService.logError(error);
-			throw new TransactionBuildingError(error);
+			throw this.ThrowError(error);
 		}
+	}
+
+	public static buildUpdateTokenTransaction(
+		tokenId: string,
+		name: string | undefined,
+		symbol: string | undefined,
+		autoRenewPeriod: number | undefined,
+		expirationTime: Timestamp | undefined,
+		kycKey: Key | undefined,
+		freezeKey: Key | undefined,
+		feeScheduleKey: Key | undefined,
+		pauseKey: Key | undefined,
+		wipeKey: Key | undefined,
+	): Transaction {
+		try {
+			const tokenUpdateTransaction: TokenUpdateTransaction =
+				new TokenUpdateTransaction({
+					tokenId: tokenId,
+				});
+			if (name) tokenUpdateTransaction.setTokenName(name);
+			if (symbol) tokenUpdateTransaction.setTokenSymbol(symbol);
+			if (autoRenewPeriod)
+				tokenUpdateTransaction.setAutoRenewPeriod(autoRenewPeriod);
+			if (expirationTime)
+				tokenUpdateTransaction.setExpirationTime(expirationTime);
+			if (kycKey) tokenUpdateTransaction.setKycKey(kycKey);
+			if (freezeKey) tokenUpdateTransaction.setFreezeKey(freezeKey);
+			if (feeScheduleKey)
+				tokenUpdateTransaction.setFeeScheduleKey(feeScheduleKey);
+			if (pauseKey) tokenUpdateTransaction.setPauseKey(pauseKey);
+			if (wipeKey) tokenUpdateTransaction.setWipeKey(wipeKey);
+			return tokenUpdateTransaction;
+		} catch (error) {
+			throw this.ThrowError(error);
+		}
+	}
+
+	private static ThrowError(error: any): TransactionBuildingError {
+		LogService.logError(error);
+		return new TransactionBuildingError(error);
 	}
 }

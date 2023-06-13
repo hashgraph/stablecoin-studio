@@ -6,8 +6,11 @@ import {
   utilsService,
   configurationService,
 } from '../../../index.js';
-import { GetRolesRequest, StableCoinViewModel } from 'hedera-stable-coin-sdk';
-import RoleStableCoinsService from './RoleStableCoinService';
+import {
+  GetRolesRequest,
+  StableCoinViewModel,
+} from '@hashgraph-dev/stablecoin-npm-sdk';
+// import RoleStableCoinsService from './RoleStableCoinService';
 import DetailsStableCoinsService from './DetailsStableCoinService.js';
 
 export default class ManageImportedTokenService extends Service {
@@ -27,8 +30,10 @@ export default class ManageImportedTokenService extends Service {
         language.getText('wizard.importedTokenMenu'),
         manageOptions,
         false,
-        currentAccount.network,
-        `${currentAccount.accountId} - ${currentAccount.alias}`,
+        {
+          network: currentAccount.network,
+          account: `${currentAccount.accountId} - ${currentAccount.alias}`,
+        },
       )
     ) {
       case language.getText('wizard.manageImportedTokens.Add'):
@@ -40,16 +45,12 @@ export default class ManageImportedTokenService extends Service {
           tokenId: '',
         });
 
-        getRolesRequestForAdding.tokenId = await utilsService.defaultSingleAsk(
-          language.getText('manageImportedToken.tokenId'),
-          '0.0.1234567',
-        );
         await utilsService.handleValidation(
           () => getRolesRequestForAdding.validate('tokenId'),
           async () => {
             tokenId = await utilsService.defaultSingleAsk(
               language.getText('manageImportedToken.tokenId'),
-              '',
+              '0.0.1234567',
             );
             getRolesRequestForAdding.tokenId = tokenId;
           },
@@ -76,14 +77,9 @@ export default class ManageImportedTokenService extends Service {
           .getDetailsStableCoins(getRolesRequestForAdding.tokenId, false)
           .then((response: StableCoinViewModel) => {
             symbol = response.symbol;
-            getRolesRequestForAdding.tokenId = response.tokenId.toString();
           });
-        const roles = await new RoleStableCoinsService().getRoles(
-          getRolesRequestForAdding,
-        );
         importedTokens.push({
           id: getRolesRequestForAdding.tokenId,
-          roles,
           symbol,
         });
         this.updateAccount(importedTokens);
@@ -109,23 +105,12 @@ export default class ManageImportedTokenService extends Service {
           await this.start();
         }
 
-        const getRolesRequestForRefreshing: GetRolesRequest =
-          new GetRolesRequest({
-            targetId: currentAccount.accountId,
-            tokenId: tokenToRefresh.split(' - ')[0],
-          });
-
-        const rolesToRefresh = await new RoleStableCoinsService().getRoles(
-          getRolesRequestForRefreshing,
-        );
-
         const importedTokensRefreshed = currentAccount.importedTokens.map(
           (token) => {
             if (token.id === tokenToRefresh.split(' - ')[0]) {
               return {
                 id: token.id,
                 symbol: token.symbol,
-                roles: rolesToRefresh,
               };
             }
             return token;
@@ -205,10 +190,17 @@ export default class ManageImportedTokenService extends Service {
       return true;
     });
 
-    return filterTokens.concat(
-      currentAccount.importedTokens.map(
-        (token) => `${token.id} - ${token.symbol}`,
-      ),
-    );
+    return filterTokens
+      .concat(
+        currentAccount.importedTokens.map(
+          (token) => `${token.id} - ${token.symbol}`,
+        ),
+      )
+      .sort((token1, token2) =>
+        +token1.split(' - ')[0].split('.').slice(-1)[0] >
+        +token2.split(' - ')[0].split('.').slice(-1)[0]
+          ? -1
+          : 1,
+      );
   }
 }

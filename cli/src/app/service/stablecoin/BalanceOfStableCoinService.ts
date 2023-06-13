@@ -5,7 +5,7 @@ import {
   GetAccountBalanceRequest,
   StableCoin,
   Balance,
-} from 'hedera-stable-coin-sdk';
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 
 export default class BalanceOfStableCoinsService extends Service {
   constructor() {
@@ -30,5 +30,23 @@ export default class BalanceOfStableCoinsService extends Service {
     console.log('Balance of Stable Coin: ', respDetail.value.toString());
 
     utilsService.breakLine();
+  }
+
+  public async getBalanceOfStableCoin_2(
+    req: GetAccountBalanceRequest,
+  ): Promise<string> {
+    let respDetail: Balance;
+
+    await utilsService.showSpinner(
+      StableCoin.getBalanceOf(req).then((response) => {
+        respDetail = response;
+      }),
+      {
+        text: '',
+        successText: '',
+      },
+    );
+
+    return respDetail.value.toString();
   }
 }

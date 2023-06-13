@@ -4,12 +4,22 @@ import Service from '../Service.js';
 import {
   AddFixedFeeRequest,
   AddFractionalFeeRequest,
-  CustomFee,
-  FixedFee,
-  FractionalFee,
+  RequestCustomFee,
+  isRequestFixedFee,
+  isRequestFractionalFee,
   Fees,
   UpdateCustomFeesRequest,
-} from 'hedera-stable-coin-sdk';
+} from '@hashgraph-dev/stablecoin-npm-sdk';
+
+const fixedTypeLabel = 'Fixed';
+const fractionalTypeLabel = 'Fractional';
+const HBARLabel = 'HBAR';
+const separator = ' | ';
+const unlimitedLabel = 'unlimited';
+const senderLabel = 'Sender';
+const receiverLabel = 'Receiver';
+const minLabel = 'Min: ';
+const maxLabel = 'Max: ';
 
 /**
  * Create Role Stable Coin Service
@@ -52,57 +62,62 @@ export default class FeeStableCoinService extends Service {
     utilsService.breakLine();
   }
 
-  public getFormatedFees(listOfFees: CustomFee[]): any[] {
-    const FormatedFees = [];
+  public getSerializedFees(listOfFees: RequestCustomFee[]): string[] {
+    const SerializedFees: string[] = [];
 
     listOfFees.forEach((fee) => {
-      if (fee instanceof FixedFee) {
-        FormatedFees.push({
-          Fee_Type: 'Fixed',
-          Collector_Id: fee.collectorId.toString(),
-          All_Collectors_Exempt: fee.collectorsExempt,
-          Amount: fee.amount.toString(),
-          Token: fee.tokenId.isNull() ? 'HBAR' : fee.tokenId.toString(),
-        });
-      } else if (fee instanceof FractionalFee) {
-        FormatedFees.push({
-          Fee_Type: 'Fractional',
-          Collector_Id: fee.collectorId.toString(),
-          All_Collectors_Exempt: fee.collectorsExempt,
-          Numerator: fee.amountNumerator.toString(),
-          Denominator: fee.amountDenominator.toString(),
-          Min: fee.min.toString(),
-          Max: fee.max.isZero() ? 'Unlimited' : fee.max.toString(),
-          Fees_Paid_By: fee.net ? 'Sender' : 'Receiver',
-        });
-      }
+      let feeMessage = separator;
+
+      if (isRequestFixedFee(fee))
+        feeMessage = feeMessage.concat(
+          fixedTypeLabel,
+          separator,
+          fee.tokenIdCollected == '0.0.0' ? HBARLabel : fee.tokenIdCollected,
+          separator,
+          fee.amount,
+          separator,
+          fee.collectorId,
+          separator,
+          fee.collectorsExempt.toString(),
+        );
+      else if (isRequestFractionalFee(fee))
+        feeMessage = feeMessage.concat(
+          fractionalTypeLabel,
+          separator,
+          fee.percentage,
+          separator,
+          minLabel,
+          fee.min,
+          separator,
+          maxLabel,
+          fee.max == '0' ? unlimitedLabel : fee.max,
+          separator,
+          fee.collectorId,
+          separator,
+          fee.collectorsExempt.toString(),
+          separator,
+          fee.net ? senderLabel : receiverLabel,
+        );
+
+      SerializedFees.push(feeMessage);
     });
 
-    return FormatedFees;
+    return SerializedFees;
   }
 
-  /*public displayFees(listOfFees: CustomFee[]) {
-    listOfFees.forEach((fee) => {
-      if (fee instanceof FixedFee) {
-        console.log({
-          Fee_Type: 'Fixed',
-          Collector_Id: fee.collectorId.toString(),
-          All_Collectors_Exempt: fee.collectorsExempt,
-          Amount: fee.amount.toString(),
-          Token: fee.tokenId.isNull() ? 'HBAR' : fee.tokenId.toString(),
-        });
-      } else if (fee instanceof FractionalFee) {
-        console.log({
-          Fee_Type: 'Fractional',
-          Collector_Id: fee.collectorId.toString(),
-          All_Collectors_Exempt: fee.collectorsExempt,
-          Numerator: fee.amountNumerator.toString(),
-          Denominator: fee.amountDenominator.toString(),
-          Min: fee.min.toString(),
-          Max: fee.max.toString(),
-          Fees_Paid_By: fee.net ? 'Sender' : 'Receiver',
-        });
-      }
+  public getRemainingFees(
+    originalFees: RequestCustomFee[],
+    serializedOriginalFees: string[],
+    serializedRemovedFees: string[],
+  ): RequestCustomFee[] {
+    const remainingFees = originalFees;
+
+    serializedRemovedFees.forEach((feeToRemove) => {
+      const index = serializedOriginalFees.indexOf(feeToRemove);
+      serializedOriginalFees.splice(index, 1);
+      remainingFees.splice(index, 1);
     });
-  }*/
+
+    return remainingFees;
+  }
 }

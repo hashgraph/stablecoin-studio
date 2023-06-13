@@ -2,13 +2,13 @@ import {
 	ConnectRequest,
 	CreateRequest,
 	FactoryAddressTestnet,
-	HederaERC20AddressTestnet,
+	HederaTokenManagerAddressTestnet,
 	InitializationRequest,
 	Network,
 	SDK,
 	StableCoin,
 	SupportedWallets,
-} from 'hedera-stable-coin-sdk';
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 
 async function sleep(ms: number): Promise<void> {
 	return new Promise((resolve) => setTimeout(resolve, ms));
@@ -67,7 +67,7 @@ const main = async (): Promise<void> => {
 	// Create a stable coin
 	const createRequest = new CreateRequest({
 		stableCoinFactory: FactoryAddressTestnet,
-		hederaERC20: HederaERC20AddressTestnet,
+		hederaTokenManager: HederaTokenManagerAddressTestnet,
 		decimals: 6,
 		name: 'Test Coin',
 		symbol: 'TC',

@@ -11,7 +11,7 @@ import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandle
 import { useSelector } from 'react-redux';
 import { SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
 import { useState } from 'react';
-import { CashInRequest } from 'hedera-stable-coin-sdk';
+import { CashInRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';

@@ -108,7 +108,7 @@ const IconContainer = ({ children, sx }: { children: ReactNode; sx?: SystemStyle
 	</Flex>
 );
 
-const useStyles = ({
+export const useStyles = ({
 	variant,
 	size,
 	isInvalid,
@@ -146,7 +146,7 @@ const useStyles = ({
 	return styles as SelectThemeStyle;
 };
 
-const useComponents = ({
+export const useComponents = ({
 	variant,
 	addonLeft,
 	addonRight,
@@ -199,7 +199,7 @@ const useComponents = ({
 					<Text as='span' data-testid='select-placeholder' sx={_styles.label}>
 						{placeholder}
 					</Text>
-					{!isDisabled && children}
+					{children}
 				</Box>
 			);
 		},
@@ -304,6 +304,7 @@ const SelectController = forwardRef(
 									value={value}
 									components={components}
 									ref={ref}
+									isDisabled={isDisabled}
 									chakraStyles={{
 										option: (_, state) => ({
 											// option needs to be styled like this, otherwise it doesn't let user select the options

@@ -30,23 +30,29 @@ import { GetStableCoinQueryHandler } from '../app/usecase/query/stablecoin/get/G
 import RPCTransactionAdapter from '../port/out/rpc/RPCTransactionAdapter.js';
 import { Constructor } from './Type.js';
 import { CreateCommandHandler } from '../app/usecase/command/stablecoin/create/CreateCommandHandler.js';
+import { UpdateCommandHandler } from '../app/usecase/command/stablecoin/update/UpdateCommandHandler.js';
 import { CashInCommandHandler } from '../app/usecase/command/stablecoin/operations/cashin/CashInCommandHandler.js';
 import { BurnCommandHandler } from '../app/usecase/command/stablecoin/operations/burn/BurnCommandHandler.js';
+import { TransfersCommandHandler } from '../app/usecase/command/stablecoin/operations/transfer/TransfersCommandHandler.js';
 import { DeleteCommandHandler } from '../app/usecase/command/stablecoin/operations/delete/DeleteCommandHandler.js';
 import { FreezeCommandHandler } from '../app/usecase/command/stablecoin/operations/freeze/FreezeCommandHandler.js';
 import { PauseCommandHandler } from '../app/usecase/command/stablecoin/operations/pause/PauseCommandHandler.js';
 import { RescueCommandHandler } from '../app/usecase/command/stablecoin/operations/rescue/RescueCommandHandler.js';
+import { RescueHBARCommandHandler } from '../app/usecase/command/stablecoin/operations/rescueHBAR/RescueHBARCommandHandler.js';
 import { UnFreezeCommandHandler } from '../app/usecase/command/stablecoin/operations/unfreeze/UnFreezeCommandHandler.js';
 import { UnPauseCommandHandler } from '../app/usecase/command/stablecoin/operations/unpause/UnPauseCommandHandler.js';
 import { WipeCommandHandler } from '../app/usecase/command/stablecoin/operations/wipe/WipeCommandHandler.js';
+import { AssociateCommandHandler } from '../app/usecase/command/account/associate/AssociateCommandHandler.js';
 import { DecreaseAllowanceCommandHandler } from '../app/usecase/command/stablecoin/roles/decreaseAllowance/DecreaseAllowanceCommandHandler.js';
 import { GetAllowanceQueryHandler } from '../app/usecase/query/stablecoin/roles/getAllowance/GetAllowanceQueryHandler.js';
 import { GetRolesQueryHandler } from '../app/usecase/query/stablecoin/roles/getRoles/GetRolesQueryHandler.js';
 import { GrantRoleCommandHandler } from '../app/usecase/command/stablecoin/roles/grantRole/GrantRoleCommandHandler.js';
+import { GrantMultiRolesCommandHandler } from '../app/usecase/command/stablecoin/roles/grantMultiRoles/GrantMultiRolesCommandHandler.js';
 import { HasRoleQueryHandler } from '../app/usecase/query/stablecoin/roles/hasRole/HasRoleQueryHandler.js';
 import { IncreaseAllowanceCommandHandler } from '../app/usecase/command/stablecoin/roles/increaseAllowance/IncreaseAllowanceCommandHandler.js';
 import { ResetAllowanceCommandHandler } from '../app/usecase/command/stablecoin/roles/resetAllowance/ResetAllowanceCommandHandler.js';
 import { RevokeRoleCommandHandler } from '../app/usecase/command/stablecoin/roles/revokeRole/RevokeRoleCommandHandler.js';
+import { RevokeMultiRolesCommandHandler } from '../app/usecase/command/stablecoin/roles/revokeMultiRoles/RevokeMultiRolesCommandHandler.js';
 import { ConnectCommandHandler } from '../app/usecase/command/network/connect/ConnectCommandHandler.js';
 import { DisconnectCommandHandler } from '../app/usecase/command/network/disconnect/DisconnectCommandHandler.js';
 import { GetListStableCoinQueryHandler } from '../app/usecase/query/stablecoin/list/GetListStableCoinQueryHandler.js';
@@ -55,6 +61,10 @@ import { SetNetworkCommandHandler } from '../app/usecase/command/network/setNetw
 import { addFixedFeesCommandHandler } from '../app/usecase/command/stablecoin/fees/addCustomFees/addFixedFeesCommandHandler.js';
 import { addFractionalFeesCommandHandler } from '../app/usecase/command/stablecoin/fees/addCustomFees/addFractionalFeesCommandHandler.js';
 import { UpdateCustomFeesCommandHandler } from '../app/usecase/command/stablecoin/fees/updateCustomFees/UpdateCustomFeesCommandHandler.js';
+import { UpgradeImplementationCommandHandler } from '../app/usecase/command/proxy/upgrade/UpgradeImplementationCommandHandler.js';
+import { UpgradeFactoryImplementationCommandHandler } from '../app/usecase/command/factoryProxy/upgrade/UpgradeFactoryImplementationCommandHandler.js';
+import { ChangeOwnerCommandHandler } from '../app/usecase/command/proxy/changeOwner/ChangeOwnerCommandHandler.js';
+import { ChangeFactoryOwnerCommandHandler } from '../app/usecase/command/factoryProxy/changeOwner/ChangeFactoryOwnerCommandHandler.js';
 
 import { WalletEvents } from '../app/service/event/WalletEvent.js';
 import { CommandHandlerType } from './command/CommandBus.js';
@@ -75,6 +85,7 @@ import { GetReserveAmountQueryHandler } from '../app/usecase/query/stablecoin/ge
 import { UpdateReserveAddressCommandHandler } from '../app/usecase/command/stablecoin/operations/updateReserveAddress/UpdateReserveAddressCommandHandler.js';
 import { UpdateReserveAmountCommandHandler } from '../app/usecase/command/reserve/operations/updateReserveAmount/UpdateReserveAmountCommandHandler.js';
 import { BalanceOfQueryHandler } from '../app/usecase/query/stablecoin/balanceof/BalanceOfQueryHandler.js';
+import { BalanceOfHBARQueryHandler } from '../app/usecase/query/stablecoin/balanceOfHBAR/BalanceOfHBARQueryHandler.js';
 import { GetReserveAddressQueryHandler } from '../app/usecase/query/stablecoin/getReserveAddress/GetReserveAddressQueryHandler.js';
 import { IsUnlimitedQueryHandler } from '../app/usecase/query/stablecoin/isUnlimited/IsUnlimitedQueryHandler.js';
 import { RevokeKycCommandHandler } from '../app/usecase/command/stablecoin/operations/revokeKyc/RevokeKycCommandHandler.js';
@@ -82,6 +93,10 @@ import { GrantKycCommandHandler } from '../app/usecase/command/stablecoin/operat
 import { GetAccountTokenRelationshipQueryHandler } from '../app/usecase/query/account/tokenRelationship/GetAccountTokenRelationshipQueryHandler.js';
 import { SDK } from '../port/in/Common.js';
 import { SetConfigurationCommandHandler } from '../app/usecase/command/network/setConfiguration/SetConfigurationCommandHandler.js';
+import { GetTokenManagerListQueryHandler } from '../app/usecase/query/factory/getTokenManagerList/GetTokenManagerListQueryHandler.js';
+import { GetAccountsWithRolesQueryHandler } from '../app/usecase/query/stablecoin/roles/getAccountsWithRole/GetAccountsWithRolesQueryHandler.js';
+import { GetProxyConfigQueryHandler } from '../app/usecase/query/proxy/GetProxyConfigQueryHandler.js';
+import { GetFactoryProxyConfigQueryHandler } from '../app/usecase/query/factoryProxy/GetFactoryProxyConfigQueryHandler.js';
 
 export const TOKENS = {
 	COMMAND_HANDLER: Symbol('CommandHandler'),
@@ -100,6 +115,11 @@ const COMMAND_HANDLERS = [
 		token: TOKENS.COMMAND_HANDLER,
 		useClass: CreateCommandHandler,
 	},
+	// Stable Coin Update
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: UpdateCommandHandler,
+	},
 	// Stable Coin Operations
 	{
 		token: TOKENS.COMMAND_HANDLER,
@@ -108,6 +128,10 @@ const COMMAND_HANDLERS = [
 	{
 		token: TOKENS.COMMAND_HANDLER,
 		useClass: BurnCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: TransfersCommandHandler,
 	},
 	{
 		token: TOKENS.COMMAND_HANDLER,
@@ -139,6 +163,10 @@ const COMMAND_HANDLERS = [
 	},
 	{
 		token: TOKENS.COMMAND_HANDLER,
+		useClass: RescueHBARCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
 		useClass: UnFreezeCommandHandler,
 	},
 	{
@@ -148,6 +176,10 @@ const COMMAND_HANDLERS = [
 	{
 		token: TOKENS.COMMAND_HANDLER,
 		useClass: WipeCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: AssociateCommandHandler,
 	},
 	// Stable Coin Role Operations
 	{
@@ -160,6 +192,10 @@ const COMMAND_HANDLERS = [
 	},
 	{
 		token: TOKENS.COMMAND_HANDLER,
+		useClass: GrantMultiRolesCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
 		useClass: IncreaseAllowanceCommandHandler,
 	},
 	{
@@ -169,6 +205,10 @@ const COMMAND_HANDLERS = [
 	{
 		token: TOKENS.COMMAND_HANDLER,
 		useClass: RevokeRoleCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: RevokeMultiRolesCommandHandler,
 	},
 	{
 		token: TOKENS.COMMAND_HANDLER,
@@ -215,6 +255,22 @@ const COMMAND_HANDLERS = [
 		token: TOKENS.COMMAND_HANDLER,
 		useClass: UpdateReserveAmountCommandHandler,
 	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: UpgradeImplementationCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: UpgradeFactoryImplementationCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: ChangeOwnerCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: ChangeFactoryOwnerCommandHandler,
+	},
 ];
 
 const QUERY_HANDLERS = [
@@ -240,6 +296,10 @@ const QUERY_HANDLERS = [
 	},
 	{
 		token: TOKENS.QUERY_HANDLER,
+		useClass: BalanceOfHBARQueryHandler,
+	},
+	{
+		token: TOKENS.QUERY_HANDLER,
 		useClass: GetReserveAmountQueryHandler,
 	},
 	{
@@ -260,11 +320,27 @@ const QUERY_HANDLERS = [
 	},
 	{
 		token: TOKENS.QUERY_HANDLER,
+		useClass: GetAccountsWithRolesQueryHandler,
+	},
+	{
+		token: TOKENS.QUERY_HANDLER,
 		useClass: IsUnlimitedQueryHandler,
 	},
 	{
 		token: TOKENS.QUERY_HANDLER,
 		useClass: GetAccountTokenRelationshipQueryHandler,
+	},
+	{
+		token: TOKENS.QUERY_HANDLER,
+		useClass: GetTokenManagerListQueryHandler,
+	},
+	{
+		token: TOKENS.QUERY_HANDLER,
+		useClass: GetProxyConfigQueryHandler,
+	},
+	{
+		token: TOKENS.QUERY_HANDLER,
+		useClass: GetFactoryProxyConfigQueryHandler,
 	},
 ];
 
@@ -285,6 +361,14 @@ const TRANSACTION_HANDLER = [
 
 const defaultNetworkProps: NetworkProps = {
 	environment: 'testnet',
+	mirrorNode: {
+		name: 'default',
+		baseUrl: 'https://testnet.mirrornode.hedera.com',
+	},
+	rpcNode: {
+		name: 'default',
+		baseUrl: 'https://testnet.hashio.io/api',
+	},
 };
 
 // Network default props

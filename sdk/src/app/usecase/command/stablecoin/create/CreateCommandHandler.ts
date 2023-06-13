@@ -31,6 +31,7 @@ import { OperationNotAllowed } from '../error/OperationNotAllowed.js';
 import { CreateCommand, CreateCommandResponse } from './CreateCommand.js';
 import { RESERVE_DECIMALS } from '../../../../../domain/context/reserve/Reserve.js';
 import { InvalidRequest } from '../error/InvalidRequest.js';
+import { EVM_ZERO_ADDRESS } from '../../../../../core/Constants.js';
 
 @CommandHandler(CreateCommand)
 export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
@@ -44,29 +45,21 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 	) {}
 
 	async execute(command: CreateCommand): Promise<CreateCommandResponse> {
-		const { coin, reserveAddress, reserveInitialAmount, createReserve } =
-			command;
-		let { factory, hederaERC20 } = command;
+		const {
+			factory,
+			hederaTokenManager,
+			coin,
+			reserveAddress,
+			reserveInitialAmount,
+			createReserve,
+		} = command;
 
-		if (
-			!factory &&
-			!hederaERC20 &&
-			this.networkService.configuration.factoryAddress === '' &&
-			this.networkService.configuration.hederaERC20Address === ''
-		) {
-			throw new InvalidRequest(
-				'HederaERC20 and factory not found in request or in configuration',
-			);
-		}
-		if (!hederaERC20) {
-			hederaERC20 = new ContractId(
-				this.networkService.configuration.hederaERC20Address,
-			);
-		}
 		if (!factory) {
-			factory = new ContractId(
-				this.networkService.configuration.factoryAddress,
-			);
+			throw new InvalidRequest('Factory not found in request');
+		}
+
+		if (!hederaTokenManager) {
+			throw new InvalidRequest('HederaTokenManager not found in request');
 		}
 
 		const handler = this.transactionService.getHandler();
@@ -99,23 +92,43 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 		const res = await handler.create(
 			new StableCoin(coin),
 			factory,
-			hederaERC20,
+			hederaTokenManager,
 			createReserve,
 			reserveAddress,
 			reserveInitialAmount,
 		);
-		return Promise.resolve(
-			new CreateCommandResponse(
-				ContractId.fromHederaContractId(
-					HContractId.fromSolidityAddress(res.response[0][3]),
+		try {
+			return Promise.resolve(
+				new CreateCommandResponse(
+					ContractId.fromHederaContractId(
+						HContractId.fromSolidityAddress(res.response[0][3]),
+					),
+					res.response[0][4] === EVM_ZERO_ADDRESS
+						? new ContractId('0.0.0')
+						: ContractId.fromHederaContractId(
+								HContractId.fromSolidityAddress(
+									res.response[0][4],
+								),
+						  ),
+					res.response[0][5] === EVM_ZERO_ADDRESS
+						? new ContractId('0.0.0')
+						: ContractId.fromHederaContractId(
+								HContractId.fromSolidityAddress(
+									res.response[0][5],
+								),
+						  ),
 				),
-				ContractId.fromHederaContractId(
-					HContractId.fromSolidityAddress(res.response[0][4]),
-				),
-				ContractId.fromHederaContractId(
-					HContractId.fromSolidityAddress(res.response[0][5]),
-				),
-			),
-		);
+			);
+		} catch (e) {
+			if (res.response == 1)
+				return Promise.resolve(
+					new CreateCommandResponse(
+						new ContractId('0.0.0'),
+						new ContractId('0.0.0'),
+						new ContractId('0.0.0'),
+					),
+				);
+			else throw e;
+		}
 	}
 }

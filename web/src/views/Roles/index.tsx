@@ -5,49 +5,13 @@ import { NamedRoutes } from '../../Router/NamedRoutes';
 import GridDirectAccess from '../../components/GridDirectAccess';
 import { useSelector } from 'react-redux';
 import { roleOptions } from './constants';
-
-import {
-	SELECTED_WALLET_CAPABILITIES,
-	SELECTED_WALLET_PAIRED_ACCOUNTID,
-	SELECTED_WALLET_COIN,
-} from '../../store/slices/walletSlice';
-import { useEffect, useState } from 'react';
-import type { IAccountToken } from '../../interfaces/IAccountToken.js';
-import type { IExternalToken } from '../../interfaces/IExternalToken.js';
-import { Operation, StableCoinRole } from 'hedera-stable-coin-sdk';
+import { SELECTED_WALLET_CAPABILITIES, SELECTED_TOKEN_ROLES } from '../../store/slices/walletSlice';
+import { Operation, StableCoinRole } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 const Roles = () => {
 	const capabilities = useSelector(SELECTED_WALLET_CAPABILITIES);
-	const accountId = useSelector(SELECTED_WALLET_PAIRED_ACCOUNTID);
-	const coinSelected = useSelector(SELECTED_WALLET_COIN);
-
-	const [isExternal, setIsExternal] = useState<boolean>(false);
-
-	useEffect(() => {
-		const tokensAccount = localStorage?.tokensAccount;
-		if (tokensAccount) {
-			const tokensAccountParsed = JSON.parse(tokensAccount);
-			if (tokensAccountParsed) {
-				const myAccount = tokensAccountParsed.find(
-					(acc: IAccountToken) => accountId?.toString() === acc.id,
-				);
-				if (myAccount) {
-					if (
-						myAccount.externalTokens.find(
-							(coin: IExternalToken) => coin.id === coinSelected?.tokenId?.toString(),
-						)
-					) {
-						setIsExternal(true);
-					} else {
-						setIsExternal(false);
-					}
-				}
-			}
-		}
-	}, [coinSelected]);
-
+	const roles = useSelector(SELECTED_TOKEN_ROLES)!;
 	const operations = capabilities?.capabilities.map((x) => x.operation);
-
 	const filteredCapabilities = roleOptions.filter((option) => {
 		if (!operations?.includes(Operation.CASH_IN) && option.label === 'Cash in') {
 			return false;
@@ -62,6 +26,9 @@ const Roles = () => {
 			return false;
 		}
 		if (!operations?.includes(Operation.RESCUE) && option.label === 'Rescue') {
+			return false;
+		}
+		if (!operations?.includes(Operation.RESCUE_HBAR) && option.label === 'RescueHBAR') {
 			return false;
 		}
 		if (!operations?.includes(Operation.FREEZE) && option.label === 'Freeze') {
@@ -82,42 +49,27 @@ const Roles = () => {
 			route: NamedRoutes.GiveRole,
 			title: t('give'),
 			isDisabled:
-				filteredCapabilities.length === 0 ||
-				(isExternal &&
-					!JSON.parse(localStorage.tokensAccount)
-						.find((t: any) => t.id === accountId?.toString())
-						.externalTokens.find((t: any) => t.id === coinSelected?.tokenId)
-						.roles?.includes(StableCoinRole.DEFAULT_ADMIN_ROLE)),
+				filteredCapabilities.length === 0 || !roles.includes(StableCoinRole.DEFAULT_ADMIN_ROLE),
 		},
 		{
 			icon: 'MinusCircle',
 			route: NamedRoutes.RevokeRole,
 			title: t('revoke'),
 			isDisabled:
-				filteredCapabilities.length === 0 ||
-				(isExternal &&
-					!JSON.parse(localStorage.tokensAccount)
-						.find((t: any) => t.id === accountId?.toString())
-						.externalTokens.find((t: any) => t.id === coinSelected?.tokenId)
-						.roles?.includes(StableCoinRole.DEFAULT_ADMIN_ROLE)),
+				filteredCapabilities.length === 0 || !roles.includes(StableCoinRole.DEFAULT_ADMIN_ROLE),
 		},
 		{
 			icon: 'PencilSimple',
 			route: NamedRoutes.EditRole,
 			title: t('edit'),
 			isDisabled:
-				!operations?.includes(Operation.CASH_IN) ||
-				(isExternal &&
-					!JSON.parse(localStorage.tokensAccount)
-						.find((t: any) => t.id === accountId?.toString())
-						.externalTokens.find((t: any) => t.id === coinSelected?.tokenId)
-						.roles?.includes(StableCoinRole.DEFAULT_ADMIN_ROLE)),
+				!roles.includes(StableCoinRole.DEFAULT_ADMIN_ROLE) &&
+				operations?.includes(Operation.CASH_IN),
 		},
 		{
-			icon: 'ArrowsClockwise',
-			route: NamedRoutes.RefreshRoles,
-			title: t('refresh'),
-			isDisabled: !isExternal,
+			icon: 'ArchiveBox',
+			route: NamedRoutes.GetAccountsWithRole,
+			title: t('accountsWithRole'),
 		},
 	];
 

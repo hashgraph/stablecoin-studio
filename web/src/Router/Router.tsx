@@ -8,13 +8,16 @@ import CashInOperation from '../views/Operations/CashIn';
 import BurnOperation from '../views/Operations/Burn';
 import GetBalanceOperation from '../views/Operations/GetBalance';
 import RescueTokenOperation from '../views/Operations/RescueTokens';
+import RescueHBAROperation from '../views/Operations/RescueHBAR';
 import WipeOperation from '../views/Operations/Wipe';
 import FreezeOperation from '../views/Operations/Freeze';
 import UnfreezeOperation from '../views/Operations/Unfreeze';
+import CheckFrozenOperation from '../views/Operations/CheckFrozen';
 import Dashboard from '../views/Dashboard';
 import HandleRoles from '../views/Roles/HandleRoles';
 import { actions } from '../views/Roles/constants';
 import Login from '../views/Login';
+import Loading from '../views/Loading';
 import Operations from '.';
 import Roles from '../views/Roles';
 import StableCoinCreation from '../views/StableCoinCreation/StableCoinCreation';
@@ -23,24 +26,29 @@ import SDKService from '../services/SDKService';
 import StableCoinDetails from '../views/StableCoinDetails';
 import {
 	AVAILABLE_WALLETS,
-	LAST_WALLET_SELECTED,
 	SELECTED_WALLET_COIN,
+	SELECTING_WALLET_COIN,
 	SELECTED_WALLET_STATUS,
 	walletActions,
 } from '../store/slices/walletSlice';
 import ImportedTokenCreation from '../views/ImportedToken/ImportedTokenCreation';
 import DangerZoneOperations from '../views/Operations/DangerZone';
-import type { EventParameter, WalletEvent } from 'hedera-stable-coin-sdk';
-import { LoggerTransports, SDK, ConnectionState } from 'hedera-stable-coin-sdk';
+import { Account, LoggerTransports, SDK, ConnectionState } from '@hashgraph-dev/stablecoin-npm-sdk';
+import type { EventParameter, WalletEvent } from '@hashgraph-dev/stablecoin-npm-sdk';
 import StableCoinProof from '../views/StableCoinProof';
+import FeesManagement from '../views/FeesManagement';
 import GrantKycOperation from '../views/Operations/GrantKyc';
 import RevokeKycOperation from '../views/Operations/RevokeKyc';
 import CheckKycOperation from '../views/Operations/CheckKyc';
+import Settings from '../views/Settings';
+import StableCoinSettings from '../views/Settings/StableCoin';
+import FactorySettings from '../views/Settings/Factory';
 
-const LoginOverlayRoute = ({ show }: { show: boolean }) => {
+const LoginOverlayRoute = ({ show, loadingSC }: { show: boolean; loadingSC: boolean }) => {
 	return (
 		<>
 			{show && <Login />}
+			{loadingSC && <Loading />}
 			<Layout>
 				<Outlet />
 			</Layout>
@@ -53,11 +61,16 @@ const Router = () => {
 
 	const availableWallets = useSelector(AVAILABLE_WALLETS);
 	const selectedWalletCoin = !!useSelector(SELECTED_WALLET_COIN);
-	const lastWallet = useSelector(LAST_WALLET_SELECTED);
+	const selectingWalletCoin = useSelector(SELECTING_WALLET_COIN);
 	const status = useSelector(SELECTED_WALLET_STATUS);
 
 	useEffect(() => {
 		instanceSDK();
+		const items = { ...localStorage };
+		delete items.tokensAccount;
+		for (const item in items) {
+			localStorage.removeItem(item);
+		}
 	}, []);
 
 	const onLastWalletEvent = <T extends keyof WalletEvent>(
@@ -76,6 +89,16 @@ const Router = () => {
 		onLastWalletEvent(event, () => {
 			dispatch(walletActions.setData(event.data));
 			dispatch(walletActions.setStatus(ConnectionState.Paired));
+			dispatch(walletActions.setNetwork(event.network.name));
+			dispatch(walletActions.setNetworkRecognized(event.network.recognized));
+			dispatch(walletActions.setFactoryId(event.network.factoryId));
+			if (!event.data.account) dispatch(walletActions.setAccountRecognized(false));
+			else
+				dispatch(
+					walletActions.setAccountRecognized(
+						event.data.account.id !== Account.NullHederaAccount.id,
+					),
+				);
 		});
 	};
 
@@ -110,15 +133,12 @@ const Router = () => {
 			level: process.env.REACT_APP_LOG_LEVEL ?? 'ERROR',
 			transports: new LoggerTransports.Console(),
 		};
-		await SDKService.init(
-			{
-				walletFound,
-				walletPaired,
-				walletConnectionStatusChanged,
-				walletDisconnect,
-			},
-			lastWallet,
-		);
+		await SDKService.init({
+			walletFound,
+			walletPaired,
+			walletConnectionStatusChanged,
+			walletDisconnect,
+		});
 	};
 
 	return (
@@ -128,7 +148,10 @@ const Router = () => {
 					{/* Private routes */}
 					<Route
 						element={
-							<LoginOverlayRoute show={Boolean(!lastWallet || status !== ConnectionState.Paired)} />
+							<LoginOverlayRoute
+								show={Boolean(status !== ConnectionState.Paired)}
+								loadingSC={selectingWalletCoin}
+							/>
 						}
 					>
 						{selectedWalletCoin && (
@@ -137,17 +160,23 @@ const Router = () => {
 								<Route path={RoutesMappingUrl.cashIn} element={<CashInOperation />} />
 								<Route path={RoutesMappingUrl.burn} element={<BurnOperation />} />
 								<Route path={RoutesMappingUrl.rescueTokens} element={<RescueTokenOperation />} />
+								<Route path={RoutesMappingUrl.rescueHBAR} element={<RescueHBAROperation />} />
 								<Route path={RoutesMappingUrl.wipe} element={<WipeOperation />} />
 								<Route path={RoutesMappingUrl.freeze} element={<FreezeOperation />} />
 								<Route path={RoutesMappingUrl.unfreeze} element={<UnfreezeOperation />} />
+								<Route path={RoutesMappingUrl.checkFrozen} element={<CheckFrozenOperation />} />
 								<Route path={RoutesMappingUrl.dashboard} element={<Dashboard />} />
 								<Route
 									path={RoutesMappingUrl.editRole}
-									element={<HandleRoles action={actions.edit} />}
+									element={<HandleRoles action='editRole' />}
+								/>
+								<Route
+									path={RoutesMappingUrl.getAccountsWithRoles}
+									element={<HandleRoles action='getAccountsWithRole' />}
 								/>
 								<Route
 									path={RoutesMappingUrl.giveRole}
-									element={<HandleRoles action={actions.give} />}
+									element={<HandleRoles action='giveRole' />}
 								/>
 								<Route path={RoutesMappingUrl.operations} element={<Operations />} />
 								<Route path={RoutesMappingUrl.dangerZone} element={<DangerZoneOperations />} />
@@ -156,7 +185,7 @@ const Router = () => {
 								<Route path={RoutesMappingUrl.checkKyc} element={<CheckKycOperation />} />
 								<Route
 									path={RoutesMappingUrl.revokeRole}
-									element={<HandleRoles action={actions.revoke} />}
+									element={<HandleRoles action='revokeRole' />}
 								/>
 								<Route
 									path={RoutesMappingUrl.refreshRoles}
@@ -165,8 +194,15 @@ const Router = () => {
 								<Route path={RoutesMappingUrl.roles} element={<Roles />} />
 								<Route path={RoutesMappingUrl.stableCoinDetails} element={<StableCoinDetails />} />
 								<Route path={RoutesMappingUrl.proofOfReserve} element={<StableCoinProof />} />
+								<Route path={RoutesMappingUrl.feesManagement} element={<FeesManagement />} />
+								<Route
+									path={RoutesMappingUrl.stableCoinSettings}
+									element={<StableCoinSettings />}
+								/>
 							</>
 						)}
+						<Route path={RoutesMappingUrl.settings} element={<Settings />} />
+						<Route path={RoutesMappingUrl.factorySettings} element={<FactorySettings />} />
 						<Route path={RoutesMappingUrl.stableCoinCreation} element={<StableCoinCreation />} />
 						<Route path={RoutesMappingUrl.importedToken} element={<ImportedTokenCreation />} />
 						<Route

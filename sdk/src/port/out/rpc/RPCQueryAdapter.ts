@@ -30,14 +30,22 @@ import NetworkService from '../../../app/service/NetworkService.js';
 import LogService from '../../../app/service/LogService.js';
 import {
 	AggregatorV3Interface__factory,
-	HederaERC20__factory,
-} from 'hedera-stable-coin-contracts';
+	HederaTokenManager__factory,
+	StableCoinFactory__factory,
+	ProxyAdmin__factory,
+	ITransparentUpgradeableProxy__factory,
+} from '@hashgraph-dev/stablecoin-npm-contracts';
 import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
 import EvmAddress from '../../../domain/context/contract/EvmAddress.js';
 
-const HederaERC20 = HederaERC20__factory;
+const LOCAL_JSON_RPC_RELAY_URL = 'http://127.0.0.1:7546/api';
+
+const HederaTokenManager = HederaTokenManager__factory;
 const Reserve = AggregatorV3Interface__factory;
+const Factory = StableCoinFactory__factory;
+const ProxyAdmin = ProxyAdmin__factory;
+const ITransparentUpgradeableProxy = ITransparentUpgradeableProxy__factory;
 
 type StaticConnect = { connect: (...args: any[]) => any };
 
@@ -56,10 +64,12 @@ export default class RPCQueryAdapter {
 		private readonly networkService: NetworkService,
 	) {}
 
-	async init(customUrl?: string): Promise<string> {
-		const url =
-			customUrl ??
-			`https://${this.networkService.environment.toString()}.hashio.io/api`;
+	async init(urlRpcProvider?: string, apiKey?: string): Promise<string> {
+		const url = urlRpcProvider
+			? apiKey
+				? urlRpcProvider + apiKey
+				: urlRpcProvider
+			: LOCAL_JSON_RPC_RELAY_URL;
 		this.provider = new ethers.providers.JsonRpcProvider(url);
 		LogService.logTrace('RPC Query Adapter Initialized on: ', url);
 
@@ -80,9 +90,10 @@ export default class RPCQueryAdapter {
 		LogService.logTrace(
 			`Requesting balanceOf address: ${address.toString()}, target: ${target.toString()}`,
 		);
-		return await this.connect(HederaERC20, address.toString()).balanceOf(
-			target.toString(),
-		);
+		return await this.connect(
+			HederaTokenManager,
+			address.toString(),
+		).balanceOf(target.toString());
 	}
 
 	async getReserveAddress(address: EvmAddress): Promise<ContractId> {
@@ -90,15 +101,16 @@ export default class RPCQueryAdapter {
 			`Requesting getReserveAddress address: ${address.toString()}`,
 		);
 		const val = await this.connect(
-			HederaERC20,
+			HederaTokenManager,
 			address.toString(),
 		).getReserveAddress();
 		return ContractId.fromHederaEthereumAddress(val);
 	}
+
 	async getReserveAmount(address: EvmAddress): Promise<BigNumber> {
 		LogService.logTrace(`Requesting getReserveAmount address: ${address}`);
 		return await this.connect(
-			HederaERC20,
+			HederaTokenManager,
 			address.toString(),
 		).getReserveAmount();
 	}
@@ -108,7 +120,7 @@ export default class RPCQueryAdapter {
 			`Requesting isLimited address: ${address.toString()}, target: ${target.toString()}`,
 		);
 		return await this.connect(
-			HederaERC20,
+			HederaTokenManager,
 			address.toString(),
 		).isUnlimitedSupplierAllowance(target.toString());
 	}
@@ -121,7 +133,7 @@ export default class RPCQueryAdapter {
 			`Requesting isUnlimited address: ${address.toString()}, target: ${target.toString()}`,
 		);
 		return await this.connect(
-			HederaERC20,
+			HederaTokenManager,
 			address.toString(),
 		).isUnlimitedSupplierAllowance(target.toString());
 	}
@@ -130,9 +142,51 @@ export default class RPCQueryAdapter {
 		LogService.logTrace(
 			`Requesting getRoles address: ${address.toString()}, target: ${target.toString()}`,
 		);
-		return await this.connect(HederaERC20, address.toString()).getRoles(
-			target.toString(),
+		return await this.connect(
+			HederaTokenManager,
+			address.toString(),
+		).getRoles(target.toString());
+	}
+
+	async getProxyImplementation(
+		proxyAdmin: EvmAddress,
+		proxy: EvmAddress,
+	): Promise<string> {
+		LogService.logTrace(
+			`Requesting implementation for proxy Admin: ${proxyAdmin.toString()} and proxy: ${proxy.toString()}`,
 		);
+		return await this.connect(
+			ProxyAdmin,
+			proxyAdmin.toString(),
+		).getProxyImplementation(proxy.toString());
+	}
+
+	async getProxyAdmin(proxy: EvmAddress): Promise<string> {
+		LogService.logTrace(`Requesting admin for proxy: ${proxy.toString()}`);
+		return await this.connect(
+			ITransparentUpgradeableProxy,
+			proxy.toString(),
+		).implementation();
+	}
+
+	async getProxyOwner(proxyAdmin: EvmAddress): Promise<string> {
+		LogService.logTrace(
+			`Requesting owner for proxy Admin: ${proxyAdmin.toString()}`,
+		);
+		return await this.connect(ProxyAdmin, proxyAdmin.toString()).owner();
+	}
+
+	async getAccountsWithRole(
+		address: EvmAddress,
+		role: string,
+	): Promise<string[]> {
+		LogService.logTrace(
+			`Requesting getAccountsWithRole address: ${address.toString()}, target: ${role}`,
+		);
+		return await this.connect(
+			HederaTokenManager,
+			address.toString(),
+		).getAccountsWithRole(role);
 	}
 
 	async hasRole(
@@ -143,10 +197,10 @@ export default class RPCQueryAdapter {
 		LogService.logTrace(
 			`Requesting balanceOf address: ${address.toString()}, target: ${target.toString()}`,
 		);
-		return await this.connect(HederaERC20, address.toString()).hasRole(
-			role,
-			target.toString(),
-		);
+		return await this.connect(
+			HederaTokenManager,
+			address.toString(),
+		).hasRole(role, target.toString());
 	}
 
 	async supplierAllowance(
@@ -157,7 +211,7 @@ export default class RPCQueryAdapter {
 			`Requesting balanceOf address: ${address.toString()}, target: ${target.toString()}`,
 		);
 		return await this.connect(
-			HederaERC20,
+			HederaTokenManager,
 			address.toString(),
 		).getSupplierAllowance(target.toString());
 	}
@@ -167,5 +221,15 @@ export default class RPCQueryAdapter {
 			`Requesting balanceOf address: ${address.toString()}`,
 		);
 		return await this.connect(Reserve, address.toString()).decimals();
+	}
+
+	async getTokenManagerList(factoryAddress: EvmAddress): Promise<string[]> {
+		LogService.logTrace(
+			`Requesting getTokenManagerList factoryAddress: ${factoryAddress.toString()}`,
+		);
+		return await this.connect(
+			Factory,
+			factoryAddress.toString(),
+		).getHederaTokenManagerAddress();
 	}
 }

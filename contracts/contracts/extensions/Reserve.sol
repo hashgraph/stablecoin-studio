@@ -1,42 +1,95 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
-import './Interfaces/IReserve.sol';
-import '@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol';
-import './Roles.sol';
-import './TokenOwner.sol';
+import {IReserve} from './Interfaces/IReserve.sol';
+import {
+    AggregatorV3Interface
+} from '@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol';
+import {Roles} from './Roles.sol';
+import {TokenOwner} from './TokenOwner.sol';
 
 abstract contract Reserve is IReserve, TokenOwner, Roles {
-    // The address of the internal reserve
-    address internal _reserveAddress;
+    // The address of the reserve
+    address private _reserveAddress;
 
     /**
-     * @dev
+     * @dev Checks if the current reserve is enough for a certain amount of tokens
+     *      comparing with the sum of amount plus total supply
+     *
+     * @param amount The amount to check
      */
     modifier checkReserveIncrease(uint256 amount) {
-        require(
-            _checkReserveAmount(amount, false),
-            'Amount is bigger than current reserve'
-        );
+        if (!_checkReserveAmount(amount, false))
+            revert AmountBiggerThanReserve(amount);
         _;
     }
 
+    /**
+     * @dev Checks if the current reserve is enough for a certain amount of tokens
+     *      comparing with the amount
+     *
+     * @param amount The amount to check
+     */
     modifier checkReserveDecrease(uint256 amount) {
-        require(
-            _checkReserveAmount(amount, true),
-            'Amount is bigger than current reserve'
-        );
+        if (!_checkReserveAmount(amount, true))
+            revert AmountBiggerThanReserve(amount);
         _;
+    }
+
+    /**
+     * @dev Gets the current reserve amount
+     *
+     */
+    function getReserveAmount()
+        external
+        view
+        override(IReserve)
+        returns (int256)
+    {
+        return _getReserveAmount();
+    }
+
+    /**
+     * @dev Updates de reserve address
+     *
+     * @param newAddress The new reserve address
+     */
+    function updateReserveAddress(
+        address newAddress
+    ) external override(IReserve) onlyRole(_getRoleId(RoleName.ADMIN)) {
+        address previous = _reserveAddress;
+        _reserveAddress = newAddress;
+        emit ReserveAddressChanged(previous, newAddress);
+    }
+
+    /**
+     * @dev Gets the current reserve address
+     *
+     */
+    function getReserveAddress()
+        external
+        view
+        override(IReserve)
+        returns (address)
+    {
+        return _reserveAddress;
     }
 
     function __reserveInit(address dataFeed) internal onlyInitializing {
         _reserveAddress = dataFeed;
     }
 
+    /**
+     * @dev Checks if the current reserve is enough for a certain amount of tokens
+     *
+     * @param amount The amount to check
+     * @param less Flag that indicates if current reserve is not less than the amount or
+     *             than the sum of amount plus total supply
+     */
     function _checkReserveAmount(
         uint256 amount,
         bool less
-    ) internal view returns (bool) {
+    ) private view returns (bool) {
         if (_reserveAddress == address(0)) return true;
         int256 reserveAmount = _getReserveAmount();
         assert(reserveAmount >= 0);
@@ -45,10 +98,8 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
             .decimals();
         uint8 tokenDecimals = _decimals();
         if (tokenDecimals > reserveDecimals) {
-            require(
-                amount % (10 ** (tokenDecimals - reserveDecimals)) == 0,
-                'Format number incorrect'
-            );
+            if (amount % (10 ** (tokenDecimals - reserveDecimals)) != 0)
+                revert FormatNumberIncorrect(amount);
             currentReserve =
                 currentReserve *
                 (10 ** (tokenDecimals - reserveDecimals));
@@ -63,39 +114,17 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
         }
     }
 
-    function getReserveAmount()
-        external
-        view
-        override(IReserve)
-        returns (int256)
-    {
-        return _getReserveAmount();
-    }
-
-    function _getReserveAmount() internal view returns (int256) {
+    /**
+     * @dev Gets the current reserve amount
+     *
+     */
+    function _getReserveAmount() private view returns (int256) {
         if (_reserveAddress != address(0)) {
             (, int256 answer, , , ) = AggregatorV3Interface(_reserveAddress)
                 .latestRoundData();
             return answer;
         }
         return 0;
-    }
-
-    function updateReserveAddress(
-        address newAddress
-    ) external override(IReserve) onlyRole(_getRoleId(RoleName.ADMIN)) {
-        address previous = _reserveAddress;
-        _reserveAddress = newAddress;
-        emit ReserveAddressChanged(previous, newAddress);
-    }
-
-    function getReserveAddress()
-        external
-        view
-        override(IReserve)
-        returns (address)
-    {
-        return _reserveAddress;
     }
 
     /**

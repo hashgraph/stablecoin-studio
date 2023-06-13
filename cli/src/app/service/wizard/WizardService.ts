@@ -16,7 +16,8 @@ import {
   Network,
   SetNetworkRequest,
   StableCoinViewModel,
-} from 'hedera-stable-coin-sdk';
+} from '@hashgraph-dev/stablecoin-npm-sdk';
+import { IAccountConfig } from 'domain/configuration/interfaces/IAccountConfig.js';
 
 /**
  * Wizard Service
@@ -26,6 +27,7 @@ export default class WizardService extends Service {
 
   constructor() {
     super('Wizard');
+    this.setConfigurationService = new SetConfigurationService();
   }
 
   /**
@@ -36,18 +38,51 @@ export default class WizardService extends Service {
       const wizardMainOptions: Array<string> =
         language.getArrayFromObject('wizard.mainOptions');
       const currentAccount = utilsService.getCurrentAccount();
+      const currentMirror = utilsService.getCurrentMirror();
+      const currentRPC = utilsService.getCurrentRPC();
 
       switch (
         await utilsService.defaultMultipleAsk(
           language.getText('wizard.mainMenuTitle'),
           wizardMainOptions,
           false,
-          currentAccount.network,
-          `${currentAccount.accountId} - ${currentAccount.alias}`,
+          {
+            network: currentAccount.network,
+            mirrorNode: currentMirror.name,
+            rpc: currentRPC.name,
+            account: `${currentAccount.accountId} - ${currentAccount.alias}`,
+          },
         )
       ) {
         case language.getText('wizard.mainOptions.Create'):
           await utilsService.cleanAndShowBanner();
+          utilsService.displayCurrentUserInfo(currentAccount);
+          let configuration = await configurationService.getConfiguration();
+          if (
+            !configuration.factories.find(
+              (item) => item.network === currentAccount.network,
+            )
+          ) {
+            utilsService.showWarning(
+              language.getText('stablecoin.noFactories'),
+            );
+            const configFactories = await utilsService.defaultConfirmAsk(
+              language.getText('configuration.askConfigurateFactories'),
+              true,
+            );
+            if (configFactories) {
+              await this.setConfigurationService.configureFactories();
+              configuration = await configurationService.getConfiguration();
+              const { factories } = configuration;
+              const currentFactory = factories.find(
+                (factory) => currentAccount.network === factory.network,
+              );
+
+              utilsService.setCurrentFactory(currentFactory);
+            } else {
+              break;
+            }
+          }
           const stableCoin: StableCoinViewModel =
             await new CreateStableCoinService().createStableCoin(
               undefined,
@@ -82,7 +117,6 @@ export default class WizardService extends Service {
           break;
         case language.getText('wizard.mainOptions.Configuration'):
           await utilsService.cleanAndShowBanner();
-          this.setConfigurationService = new SetConfigurationService();
           await this.configurationMenu();
           break;
         default:
@@ -103,6 +137,9 @@ export default class WizardService extends Service {
    * Show configuration menu
    */
   public async configurationMenu(): Promise<void> {
+    const configAccount = utilsService.getCurrentAccount();
+    const currentMirror = utilsService.getCurrentMirror();
+    const currentRPC = utilsService.getCurrentRPC();
     const wizardChangeConfigOptions: Array<string> =
       language.getArrayFromObject('wizard.changeOptions');
 
@@ -110,31 +147,52 @@ export default class WizardService extends Service {
       await utilsService.defaultMultipleAsk(
         language.getText('wizard.configurationMenuTitle'),
         wizardChangeConfigOptions,
+        false,
+        {
+          network: configAccount.network,
+          mirrorNode: currentMirror.name,
+          rpc: currentRPC.name,
+          account: `${configAccount.accountId} - ${configAccount.alias}`,
+        },
       )
     ) {
       case language.getText('wizard.changeOptions.Show'):
         await utilsService.cleanAndShowBanner();
-
         await configurationService.showFullConfiguration();
         break;
+
       case language.getText('wizard.changeOptions.EditPath'):
         await utilsService.cleanAndShowBanner();
-
         await this.setConfigurationService.configurePath();
         utilsService.showMessage(language.getText('wizard.pathChanged'));
         break;
+
       case language.getText('wizard.changeOptions.EditNetwork'):
         await utilsService.cleanAndShowBanner();
-
         await this.setConfigurationService.configureDefaultNetwork();
         utilsService.showMessage(language.getText('wizard.networkChanged'));
         break;
+
       case language.getText('wizard.changeOptions.Manage'):
         await utilsService.cleanAndShowBanner();
-
         await this.setConfigurationService.manageAccountMenu();
-        //utilsService.showMessage(language.getText('wizard.accountsChanged'));
         break;
+
+      case language.getText('wizard.changeOptions.ManageMirrorNode'):
+        await utilsService.cleanAndShowBanner();
+        await this.setConfigurationService.configureMirrorNodeNetwork();
+        break;
+
+      case language.getText('wizard.changeOptions.ManageRPC'):
+        await utilsService.cleanAndShowBanner();
+        await this.setConfigurationService.configureRPCNetwork();
+        break;
+
+      case language.getText('wizard.changeOptions.ManageFactory'):
+        await utilsService.cleanAndShowBanner();
+        await this.setConfigurationService.manageFactoryMenu();
+        break;
+
       default:
         await utilsService.cleanAndShowBanner();
         await this.mainMenu();
@@ -145,7 +203,7 @@ export default class WizardService extends Service {
 
   public async chooseAccount(mainMenu = true, network?: string): Promise<void> {
     const configuration = configurationService.getConfiguration();
-    const { networks, accounts, factories, hederaERC20s } = configuration;
+    const { accounts } = configuration;
     let options = network
       ? accounts
           .filter((acc) => acc.network === network)
@@ -170,16 +228,48 @@ export default class WizardService extends Service {
     const account = await utilsService.defaultMultipleAsk(
       language.getText('wizard.accountLogin'),
       options,
+      false,
     );
-    const currentAccount = accounts.find(
-      (acc) => acc.accountId === account.split(' - ')[0],
-    );
+
+    await this.setSelectedAccount(account);
+
+    if (mainMenu) await this.mainMenu();
+  }
+
+  public async chooseLastAccount(): Promise<void> {
+    const configuration = configurationService.getConfiguration();
+    const { accounts } = configuration;
+    const currentAccount = accounts[accounts.length - 1];
+
+    await this.setSelectedAccount(currentAccount);
+  }
+
+  public async setSelectedAccount(
+    account: string | IAccountConfig,
+  ): Promise<void> {
+    const configuration = configurationService.getConfiguration();
+    const { networks, accounts, mirrors, rpcs, factories } = configuration;
+
+    const currentAccount =
+      typeof account === 'string'
+        ? accounts.find((acc) => acc.accountId === account.split(' - ')[0])
+        : account;
     utilsService.setCurrentAccount(currentAccount);
 
     const currentNetwork = networks.find(
       (network) => currentAccount.network === network.name,
     );
     utilsService.setCurrentNetwotk(currentNetwork);
+
+    const currentMirror = mirrors.find(
+      (mirror) => currentAccount.network === mirror.network && mirror.selected,
+    );
+    utilsService.setCurrentMirror(currentMirror);
+
+    const currentRPC = rpcs.find(
+      (rpc) => currentAccount.network === rpc.network && rpc.selected,
+    );
+    utilsService.setCurrentRPC(currentRPC);
 
     const currentFactory = factories.find(
       (factory) => currentAccount.network === factory.network,
@@ -187,11 +277,6 @@ export default class WizardService extends Service {
 
     utilsService.setCurrentFactory(currentFactory);
 
-    const currentHederaERC20 = hederaERC20s.find(
-      (hederaERC20) => currentAccount.network === hederaERC20.network,
-    );
-
-    utilsService.setCurrentHederaERC20(currentHederaERC20);
     await Network.setNetwork(
       new SetNetworkRequest({
         environment: currentNetwork.name,
@@ -199,24 +284,139 @@ export default class WizardService extends Service {
           currentNetwork.consensusNodes.length > 0
             ? currentNetwork.name
             : undefined,
-        mirrorNode:
-          currentNetwork.mirrorNodeUrl.length > 0
-            ? currentNetwork.mirrorNodeUrl
-            : undefined,
+        mirrorNode: currentMirror ? currentMirror : undefined,
+        rpcNode: currentRPC ? currentRPC : undefined,
       }),
     );
-
-    if (mainMenu) await this.mainMenu();
   }
 
-  public async chooseLastAccount(): Promise<void> {
+  public async chooseMirrorNodeNetwork(_network: string): Promise<boolean> {
     const configuration = configurationService.getConfiguration();
-    const { networks, accounts } = configuration;
-    const currentAccount = accounts[accounts.length - 1];
-    utilsService.setCurrentAccount(currentAccount);
-    const currentNetwork = networks.find(
-      (network) => currentAccount.network === network.name,
+    const { mirrors } = configuration;
+    const currentMirror = utilsService.getCurrentMirror();
+
+    const selectedMirrors = mirrors.filter(
+      (mirror) => _network === mirror.network && !mirror.selected,
     );
-    utilsService.setCurrentNetwotk(currentNetwork);
+
+    if (selectedMirrors.length > 0) {
+      const name = await utilsService.defaultMultipleAsk(
+        language.getText('configuration.selectMirrorNode'),
+        selectedMirrors.map((mirror) => mirror.name),
+        true,
+      );
+      const selectedMirror = selectedMirrors.find(
+        (mirror) => name === mirror.name,
+      );
+      selectedMirror.selected = true;
+
+      mirrors
+        .filter(
+          (mirror) =>
+            _network === mirror.network && mirror.name !== selectedMirror.name,
+        )
+        .forEach((found) => (found.selected = false));
+
+      configuration.mirrors = mirrors;
+      configurationService.setConfiguration(configuration);
+
+      if (currentMirror.network === _network)
+        utilsService.setCurrentMirror(selectedMirror);
+
+      return true;
+    } else {
+      utilsService.showMessage(
+        language.getText('configuration.mirrorNodeNotToChange'),
+      );
+      return false;
+    }
+  }
+
+  public async chooseRPCNetwork(_network: string): Promise<boolean> {
+    const configuration = configurationService.getConfiguration();
+    const { rpcs } = configuration;
+    const currentRPC = utilsService.getCurrentRPC();
+    const selectedRPCs = rpcs.filter(
+      (rpc) => _network === rpc.network && !rpc.selected,
+    );
+
+    if (selectedRPCs.length > 0) {
+      const name = await utilsService.defaultMultipleAsk(
+        language.getText('configuration.selectRPC'),
+        selectedRPCs.map((rpc) => rpc.name),
+        true,
+      );
+      const selectedRPC = selectedRPCs.find((rpc) => name === rpc.name);
+      selectedRPC.selected = true;
+
+      rpcs
+        .filter((rpc) => _network === rpc.network && rpc.name !== name)
+        .forEach((found) => {
+          found.selected = false;
+        });
+
+      configuration.rpcs = rpcs;
+      configurationService.setConfiguration(configuration);
+
+      if (currentRPC.network === _network)
+        utilsService.setCurrentRPC(selectedRPC);
+
+      return true;
+    } else {
+      utilsService.showMessage(
+        colors.yellow(language.getText('configuration.RPCNotToChange')),
+      );
+      return false;
+    }
+  }
+
+  public async chooseLastMirrorNode(_network): Promise<void> {
+    const configuration = configurationService.getConfiguration();
+    const { mirrors } = configuration;
+    const lastMirror = mirrors[mirrors.length - 1];
+    utilsService.setCurrentMirror(lastMirror);
+    this.setLastMirrorNodeAsSelected(_network);
+  }
+
+  public async setLastMirrorNodeAsSelected(_network: string): Promise<void> {
+    const configuration = configurationService.getConfiguration();
+    const { mirrors } = configuration;
+    const lastMirror = mirrors[mirrors.length - 1];
+    mirrors
+      .filter(
+        (mirror) => mirror.network === _network && mirror.selected === true,
+      )
+      .forEach((found) => {
+        found.selected = false;
+      });
+    lastMirror.selected = true;
+
+    const defaultCfgData = configurationService.getConfiguration();
+    defaultCfgData.mirrors = mirrors;
+    configurationService.setConfiguration(defaultCfgData);
+  }
+
+  public async chooseLastRPC(_network: string): Promise<void> {
+    const configuration = configurationService.getConfiguration();
+    const { rpcs } = configuration;
+    const lastRPC = rpcs[rpcs.length - 1];
+    utilsService.setCurrentRPC(lastRPC);
+    this.setLastRPCAsSelected(_network);
+  }
+
+  public async setLastRPCAsSelected(_network: string): Promise<void> {
+    const configuration = configurationService.getConfiguration();
+    const { rpcs } = configuration;
+    const lastRPC = rpcs[rpcs.length - 1];
+    rpcs
+      .filter((rpc) => rpc.network === _network && rpc.selected === true)
+      .forEach((found) => {
+        found.selected = false;
+      });
+    lastRPC.selected = true;
+
+    const defaultCfgData = configurationService.getConfiguration();
+    defaultCfgData.rpcs = rpcs;
+    configurationService.setConfiguration(defaultCfgData);
   }
 }

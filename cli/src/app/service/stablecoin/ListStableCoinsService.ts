@@ -5,7 +5,7 @@ import {
   Account,
   GetListStableCoinRequest,
   StableCoinListViewModel,
-} from 'hedera-stable-coin-sdk';
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 
 /**
  * Create Stable Coin Service

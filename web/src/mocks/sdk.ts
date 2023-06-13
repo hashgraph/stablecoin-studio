@@ -1,7 +1,7 @@
-import PublicKey from 'hedera-stable-coin-sdk/build/esm/src/domain/context/account/PublicKey.js';
-import ContractId from 'hedera-stable-coin-sdk/build/esm/src/domain/context/contract/ContractId.js';
-import BigDecimal from 'hedera-stable-coin-sdk/build/esm/src/domain/context/shared/BigDecimal.js';
-import { HederaId } from 'hedera-stable-coin-sdk/build/esm/src/domain/context/shared/HederaId.js';
+import { BigDecimal } from '@hashgraph-dev/stablecoin-npm-sdk';
+import PublicKey from '@hashgraph-dev/stablecoin-npm-sdk/build/esm/src/domain/context/account/PublicKey.js';
+import ContractId from '@hashgraph-dev/stablecoin-npm-sdk/build/esm/src/domain/context/contract/ContractId.js';
+import { HederaId } from '@hashgraph-dev/stablecoin-npm-sdk/build/esm/src/domain/context/shared/HederaId.js';
 
 export const mockedStableCoinsList = {
 	coins: [
@@ -28,7 +28,7 @@ export const mockedSelectedStableCoin = {
 	deleted: false,
 	freezeDefault: false,
 	autoRenewAccount: HederaId.from('0.0.49071854'),
-	autoRenewAccountPeriod: 90,
+	autoRenewPeriod: 90,
 	adminKey: ContractId.from('0.0.49319785'),
 	freezeKey: ContractId.from('0.0.49319785'),
 	kycKey: ContractId.from('0.0.49319785'),
@@ -40,6 +40,7 @@ export const mockedStableCoinCapabilities = {
 	coin: mockedSelectedStableCoin,
 	capabilities: [
 		{ operation: 'Rescue', access: 1 },
+		{ operation: 'RescueHBAR', access: 1 },
 		{ operation: 'Cash_in', access: 1 },
 		{ operation: 'Burn', access: 1 },
 		{ operation: 'Wipe', access: 1 },

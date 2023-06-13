@@ -10,6 +10,7 @@ import GLOBAL_EN from './translations/en/global.json';
 import GLOBAL_ES from './translations/es/global.json';
 import OPERATIONS_EN from './translations/en/operations.json';
 import RESCUE_TOKENS_EN from './translations/en/rescueTokens.json';
+import RESCUE_HBAR_EN from './translations/en/rescueHBAR.json';
 import ROLES_EN from './translations/en/roles.json';
 import STABLE_COIN_CREATION_EN from './translations/en/stableCoinCreation.json';
 import STABLE_COIN_DETAILS_EN from './translations/en/stableCoinDetails.json';
@@ -17,10 +18,14 @@ import WIPE_EN from './translations/en/wipe.json';
 import EXTERNAL_TOKEN_INFO_EN from './translations/en/externalTokenInfo.json';
 import FREEZE_EN from './translations/en/freeze.json';
 import UNFREEZE_EN from './translations/en/unfreeze.json';
+import CHECK_FROZEN_STATUS_EN from './translations/en/checkFrozen.json';
 import PROOF_OF_RESERVE_EN from './translations/en/proofOfReserve.json';
+import SETTINGS_EN from './translations/en/settings.json';
 import GRANT_KYC_EN from './translations/en/grantKYC.json';
 import REVOKE_KYC_EN from './translations/en/revokeKYC.json';
 import CHECK_KYC_EN from './translations/en/checkKyc.json';
+import FEES_MANAGEMENT_EN from './translations/en/feesManagement.json';
+import UPDATE_TOKEN_EN from './translations/en/updateToken.json';
 
 const options = {
 	order: ['localStorage', 'navigator'],
@@ -43,6 +48,7 @@ i18n
 				global: GLOBAL_EN,
 				operations: OPERATIONS_EN,
 				rescueTokens: RESCUE_TOKENS_EN,
+				rescueHBAR: RESCUE_HBAR_EN,
 				roles: ROLES_EN,
 				stableCoinCreation: STABLE_COIN_CREATION_EN,
 				stableCoinDetails: STABLE_COIN_DETAILS_EN,
@@ -50,10 +56,14 @@ i18n
 				externalTokenInfo: EXTERNAL_TOKEN_INFO_EN,
 				freeze: FREEZE_EN,
 				unfreeze: UNFREEZE_EN,
+				checkFrozen: CHECK_FROZEN_STATUS_EN,
 				proofOfReserve: PROOF_OF_RESERVE_EN,
+				settings: SETTINGS_EN,
 				grantKYC: GRANT_KYC_EN,
 				revokeKYC: REVOKE_KYC_EN,
 				checkKyc: CHECK_KYC_EN,
+				feesManagement: FEES_MANAGEMENT_EN,
+				updateToken: UPDATE_TOKEN_EN,
 			},
 			es: {
 				global: GLOBAL_ES,

@@ -126,6 +126,127 @@ export default class Validation {
 		};
 	};
 
+	/*public static checkFractionalFee = () => {
+		return (val: any): BaseError[] => {
+			const {
+				collectorId,
+				collectorsExempt,
+				amountNumerator,
+				amountDenominator,
+				min,
+				max,
+				decimals,
+				net,
+			} = val as RequestFractionalFee;
+
+			let err: BaseError[] = [];
+
+			err = err.concat(Validation.checkHederaIdFormat()(collectorId));
+
+			const numerator = parseInt(amountNumerator);
+
+			if (isNaN(numerator))
+				err.push(new InvalidType(amountNumerator, 'integer'));
+
+			if (CheckNums.hasMoreDecimals(amountNumerator, 0)) {
+				err.push(new InvalidDecimalRange(amountNumerator, 0));
+			}
+
+			if (numerator < 1)
+				err.push(new InvalidRange(amountNumerator, '1', undefined));
+
+			const denominator = parseInt(amountDenominator);
+
+			if (isNaN(denominator))
+				err.push(new InvalidType(amountDenominator, 'integer'));
+
+			if (CheckNums.hasMoreDecimals(amountDenominator, 0)) {
+				err.push(new InvalidDecimalRange(amountDenominator, 0));
+			}
+
+			if (numerator >= denominator)
+				err.push(
+					new InvalidValue(
+						`The denominator (${denominator}) should be greater than the numerator (${numerator}).`,
+					),
+				);
+
+			if (!BigDecimal.isBigDecimal(min)) {
+				err.push(new InvalidType(min, 'BigDecimal'));
+			}
+			if (CheckNums.hasMoreDecimals(min, decimals)) {
+				err.push(new InvalidDecimalRange(min, decimals));
+			}
+
+			const zero = BigDecimal.fromString('0', decimals);
+			const minimum = BigDecimal.fromString(min, decimals);
+
+			if (minimum.isLowerThan(zero)) {
+				err.push(new InvalidRange(min, '0', undefined));
+			}
+
+			if (max === undefined || max === '') {
+				err.push(
+					new InvalidValue(
+						`The maximum (${max}) should not be empty.`,
+					),
+				);
+			}
+			if (!BigDecimal.isBigDecimal(max)) {
+				err.push(new InvalidType(max, 'BigDecimal'));
+			}
+			if (CheckNums.hasMoreDecimals(max, decimals)) {
+				err.push(new InvalidDecimalRange(max, decimals));
+			}
+			const maximum = BigDecimal.fromString(max, decimals);
+
+			if (minimum.isGreaterThan(maximum))
+				err.push(
+					new InvalidValue(
+						`The maximum (${max}) should be greater than or equal to the minimum (${min}).`,
+					),
+				);
+
+			return err;
+		};
+	};*/
+
+	/*public static checkFixedFee = () => {
+		return (val: any): BaseError[] => {
+			const {
+				collectorId,
+				collectorsExempt,
+				tokenIdCollected,
+				amount,
+				decimals,
+			} = val as RequestFixedFee;
+
+			let err: BaseError[] = [];
+
+			err = err.concat(Validation.checkHederaIdFormat()(collectorId));
+			err = err.concat(
+				Validation.checkHederaIdFormat(true)(tokenIdCollected),
+			);
+
+			if (!BigDecimal.isBigDecimal(amount)) {
+				err.push(new InvalidType(amount, 'BigDecimal'));
+			}
+
+			if (CheckNums.hasMoreDecimals(amount, decimals)) {
+				err.push(new InvalidDecimalRange(amount, decimals));
+			}
+
+			const zero = BigDecimal.fromString('0', decimals);
+			const value = BigDecimal.fromString(amount, decimals);
+
+			if (value.isLowerOrEqualThan(zero)) {
+				err.push(new InvalidRange(value, '0..', undefined));
+			}
+
+			return err;
+		};
+	};*/
+
 	public static checkAccount = () => {
 		return (val: any): void => {
 			const { accountId, privateKey, evmAddress } = val as RequestAccount;
@@ -160,7 +281,7 @@ export default class Validation {
 		};
 	};
 
-	public static checkAmount = (zeroIsValid = false) => {
+	public static checkAmount = (zeroIsValid = false, decimals = 18) => {
 		return (val: any): BaseError[] => {
 			const err: BaseError[] = [];
 			const isBigDecimal: boolean = CheckNums.isBigDecimal(val);
@@ -175,10 +296,10 @@ export default class Validation {
 			if (zeroIsValid && value.isLowerThan(zero))
 				err.push(new InvalidRange(val, '0', undefined));
 			else if (!zeroIsValid && value.isLowerOrEqualThan(zero))
-				err.push(new InvalidRange(val, '0..', undefined));
+				err.push(new InvalidRange(val, '0', undefined));
 
-			if (valueDecimals > 18) {
-				err.push(new InvalidDecimalRange(val, 0, 18));
+			if (valueDecimals > decimals) {
+				err.push(new InvalidDecimalRange(val, 0, decimals));
 			}
 			return err;
 		};

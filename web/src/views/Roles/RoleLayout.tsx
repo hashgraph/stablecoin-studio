@@ -21,7 +21,7 @@ import type {
 	IncreaseSupplierAllowanceRequest,
 	ResetSupplierAllowanceRequest,
 	RevokeRoleRequest,
-} from 'hedera-stable-coin-sdk';
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 import { propertyNotFound } from '../../constant';
 
 const styles = {

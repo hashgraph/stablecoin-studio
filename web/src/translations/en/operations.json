@@ -4,6 +4,7 @@
 	"cashInOperation": "Cash in",
 	"wipeOperation": "Wipe",
 	"rescueOperation": "Rescue",
+	"rescueHBAROperation": "Rescue HBARs",
 	"burnOperation": "Burn",
 	"dangerZoneOperation": "Danger Zone",
 	"getBalanceOperation": "Get balance",
@@ -36,6 +37,7 @@
 	},
 	"freezeOperation": "Freeze account",
 	"unfreezeOperation": "Unfreeze account",
+	"checkFrozenOperation": "Check account frozen status",
 	"pause": {
 		"title": "Pause",
 		"modalSuccessTitle": "Operation successfully completed",

@@ -28,17 +28,15 @@ import BigDecimal from '../../domain/context/shared/BigDecimal.js';
 import { StableCoinRole } from '../../domain/context/stablecoin/StableCoinRole.js';
 import Account from '../../domain/context/account/Account.js';
 import { HederaId } from '../../domain/context/shared/HederaId.js';
-import { KeyType } from '../../domain/context/account/KeyProps.js';
-import AccountViewModel from './mirror/response/AccountViewModel.js';
 import {
-	PublicKey as HPublicKey,
-	ContractId as HContractId,
 	CustomFee as HCustomFee,
+	PublicKey as HPublicKey,
 } from '@hashgraph/sdk';
 import { MirrorNodeAdapter } from './mirror/MirrorNodeAdapter.js';
 import { Environment } from '../../domain/context/network/Environment.js';
-import EvmAddress from '../../domain/context/contract/EvmAddress.js';
 import LogService from '../../app/service/LogService.js';
+import PublicKey from '../../domain/context/account/PublicKey.js';
+import { FactoryKey } from '../../domain/context/factory/FactoryKey.js';
 
 export interface InitializationData {
 	account?: Account;
@@ -46,11 +44,17 @@ export interface InitializationData {
 	topic?: string;
 }
 
+export interface NetworkData {
+	name?: Environment;
+	recognized?: boolean;
+	factoryId?: string;
+}
+
 interface ITransactionAdapter {
 	create(
 		coin: StableCoin,
 		factory: ContractId,
-		hederaERC20: ContractId,
+		hederaTokenManager: ContractId,
 		createReserve: boolean,
 		reserveAddress?: ContractId,
 		reserveInitialAmount?: BigDecimal,
@@ -59,7 +63,7 @@ interface ITransactionAdapter {
 	register(account?: Account): Promise<InitializationData>;
 	stop(): Promise<boolean>;
 	associateToken(
-		coin: StableCoinCapabilities | string,
+		tokenId: HederaId,
 		targetId: HederaId,
 	): Promise<TransactionResponse>;
 	balanceOf(
@@ -94,11 +98,21 @@ interface ITransactionAdapter {
 		coin: StableCoinCapabilities,
 		amount: BigDecimal,
 	): Promise<TransactionResponse>;
+	rescueHBAR(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+	): Promise<TransactionResponse>;
 	delete(coin: StableCoinCapabilities): Promise<TransactionResponse>;
 	transfer(
 		coin: StableCoinCapabilities,
 		amount: BigDecimal,
 		sourceId: Account,
+		targetId: HederaId,
+	): Promise<TransactionResponse>;
+	transfers(
+		coin: StableCoinCapabilities,
+		amounts: BigDecimal[],
+		targetsId: HederaId[],
 		targetId: HederaId,
 	): Promise<TransactionResponse>;
 	getAccount(): Account;
@@ -116,6 +130,28 @@ interface ITransactionAdapter {
 		reserveAddress: ContractId,
 		amount: BigDecimal,
 	): Promise<TransactionResponse>;
+	update(
+		coin: StableCoinCapabilities,
+		name: string | undefined,
+		symbol: string | undefined,
+		autoRenewPeriod: number | undefined,
+		expirationTime: number | undefined,
+		kycKey: PublicKey | undefined,
+		freezeKey: PublicKey | undefined,
+		feeScheduleKey: PublicKey | undefined,
+		pauseKey: PublicKey | undefined,
+		wipeKey: PublicKey | undefined,
+		supplyKey: PublicKey | undefined,
+	): Promise<TransactionResponse>;
+	upgradeImplementation(
+		proxy: HederaId,
+		proxyAdminId: HederaId,
+		implementationId: ContractId,
+	): Promise<TransactionResponse>;
+	changeOwner(
+		proxyAdminId: HederaId,
+		targetId: HederaId,
+	): Promise<TransactionResponse>;
 	getMirrorNodeAdapter(): MirrorNodeAdapter;
 }
 
@@ -129,6 +165,17 @@ interface RoleTransactionAdapter {
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
 		role: StableCoinRole,
+	): Promise<TransactionResponse>;
+	grantRoles(
+		coin: StableCoinCapabilities,
+		targetsId: HederaId[],
+		roles: StableCoinRole[],
+		amounts: BigDecimal[],
+	): Promise<TransactionResponse>;
+	revokeRoles(
+		coin: StableCoinCapabilities,
+		targetsId: HederaId[],
+		roles: StableCoinRole[],
 	): Promise<TransactionResponse>;
 	hasRole(
 		coin: StableCoinCapabilities,
@@ -153,7 +200,7 @@ interface RoleTransactionAdapter {
 		targetId: HederaId,
 	): Promise<TransactionResponse<BigDecimal, Error>>;
 	associateToken(
-		coin: StableCoinCapabilities,
+		tokenId: HederaId,
 		targetId: HederaId,
 	): Promise<TransactionResponse>;
 	isUnlimitedSupplierAllowance(
@@ -199,13 +246,21 @@ interface RoleTransactionAdapter {
 export default abstract class TransactionAdapter
 	implements ITransactionAdapter, RoleTransactionAdapter
 {
+	transfers(
+		coin: StableCoinCapabilities,
+		amounts: BigDecimal[],
+		targetsId: HederaId[],
+		targetId: HederaId,
+	): Promise<TransactionResponse<any, Error>> {
+		throw new Error('Method not implemented.');
+	}
 	init(): Promise<Environment> {
 		throw new Error('Method not implemented.');
 	}
 	create(
 		coin: StableCoin,
 		factory: ContractId,
-		hederaERC20: ContractId,
+		hederaTokenManager: ContractId,
 		createReserve: boolean,
 		reserveAddress?: ContractId,
 		reserveInitialAmount?: BigDecimal,
@@ -269,6 +324,12 @@ export default abstract class TransactionAdapter
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
+	rescueHBAR(
+		coin: StableCoinCapabilities,
+		amount: BigDecimal,
+	): Promise<TransactionResponse<any, Error>> {
+		throw new Error('Method not implemented.');
+	}
 	delete(
 		coin: StableCoinCapabilities,
 	): Promise<TransactionResponse<any, Error>> {
@@ -305,6 +366,20 @@ export default abstract class TransactionAdapter
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
+	update(
+		coin: StableCoinCapabilities,
+		name: string | undefined,
+		symbol: string | undefined,
+		autoRenewPeriod: number | undefined,
+		expirationTime: number | undefined,
+		kycKey: PublicKey | undefined,
+		freezeKey: PublicKey | undefined,
+		feeScheduleKey: PublicKey | undefined,
+		pauseKey: PublicKey | undefined,
+		wipeKey: PublicKey | undefined,
+	): Promise<TransactionResponse<any, Error>> {
+		throw new Error('Method not implemented.');
+	}
 	grantRole(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
@@ -317,6 +392,21 @@ export default abstract class TransactionAdapter
 		targetId: HederaId,
 		role: StableCoinRole,
 	): Promise<TransactionResponse<any, Error>> {
+		throw new Error('Method not implemented.');
+	}
+	grantRoles(
+		coin: StableCoinCapabilities,
+		targetsId: HederaId[],
+		roles: StableCoinRole[],
+		amounts: BigDecimal[],
+	): Promise<TransactionResponse> {
+		throw new Error('Method not implemented.');
+	}
+	revokeRoles(
+		coin: StableCoinCapabilities,
+		targetsId: HederaId[],
+		roles: StableCoinRole[],
+	): Promise<TransactionResponse> {
 		throw new Error('Method not implemented.');
 	}
 	hasRole(
@@ -352,7 +442,7 @@ export default abstract class TransactionAdapter
 		throw new Error('Method not implemented.');
 	}
 	associateToken(
-		coin: StableCoinCapabilities,
+		tokenId: HederaId,
 		targetId: HederaId,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
@@ -419,17 +509,82 @@ export default abstract class TransactionAdapter
 		throw new Error('Method not implemented.');
 	}
 
-	async accountToEvmAddress(accountId: HederaId): Promise<EvmAddress> {
-		return this.getMirrorNodeAdapter().accountToEvmAddress(accountId);
+	upgradeImplementation(
+		proxy: HederaId,
+		proxyAdminId: HederaId,
+		implementationId: ContractId,
+	): Promise<TransactionResponse<any, Error>> {
+		throw new Error('Method not implemented.');
+	}
+	changeOwner(
+		proxyAdminId: HederaId,
+		targetId: HederaId,
+	): Promise<TransactionResponse<any, Error>> {
+		throw new Error('Method not implemented.');
 	}
 
-	async contractToEvmAddress(contractId: ContractId): Promise<EvmAddress> {
-		return this.getMirrorNodeAdapter().contractToEvmAddress(contractId);
+	async getEVMAddress(parameter: any): Promise<any> {
+		if (parameter instanceof HederaId) {
+			return (
+				await this.getMirrorNodeAdapter().accountToEvmAddress(parameter)
+			).toString();
+		}
+		return parameter;
 	}
 
-	logTransaction(id: string): void {
-		const HASHSCAN_URL = 'https://hashscan.io/testnet/transactionsById/';
-		const HASHSCAN_TX_URL = 'https://hashscan.io/testnet/tx/';
+	setKeysForSmartContract(providedKeys: any[]): FactoryKey[] {
+		const keys: FactoryKey[] = [];
+
+		providedKeys.forEach((providedKey, index) => {
+			if (providedKey) {
+				const key = new FactoryKey();
+				switch (index) {
+					case 0: {
+						key.keyType = 1; // admin
+						break;
+					}
+					case 1: {
+						key.keyType = 2; // kyc
+						break;
+					}
+					case 2: {
+						key.keyType = 4; // freeze
+						break;
+					}
+					case 3: {
+						key.keyType = 8; // wipe
+						break;
+					}
+					case 4: {
+						key.keyType = 16; // supply
+						break;
+					}
+					case 5: {
+						key.keyType = 32; // fee schedule
+						break;
+					}
+					case 6: {
+						key.keyType = 64; // pause
+						break;
+					}
+				}
+				const providedKeyCasted = providedKey as PublicKey;
+				key.publicKey =
+					providedKeyCasted.key == PublicKey.NULL.key
+						? '0x'
+						: HPublicKey.fromString(
+								providedKeyCasted.key,
+						  ).toBytesRaw();
+				key.isED25519 = providedKeyCasted.type === 'ED25519';
+				keys.push(key);
+			}
+		});
+		return keys;
+	}
+
+	logTransaction(id: string, network: string): void {
+		const HASHSCAN_URL = `https://hashscan.io/${network}/transactionsById/`;
+		const HASHSCAN_TX_URL = `https://hashscan.io/${network}/tx/`;
 		const msg = `\nYou can see your transaction at ${
 			id.startsWith('0x') ? HASHSCAN_TX_URL : HASHSCAN_URL
 		}${id}\n`;

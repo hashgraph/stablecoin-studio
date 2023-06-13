@@ -10,12 +10,12 @@ interface optionsProps {
 	title: string;
 	route: NamedRoutes;
 	isDisabled?: boolean;
+	isHidden?: boolean;
 }
 
 const Sidebar = () => {
 	const { t } = useTranslation('global');
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
-
 	const options: optionsProps[] = [
 		{
 			icon: 'Coin',
@@ -29,14 +29,26 @@ const Sidebar = () => {
 			isDisabled: selectedStableCoin?.deleted ?? false,
 		},
 		{
-			icon: 'Gear',
+			icon: 'Fingerprint',
 			title: t('sidebar.details'),
 			route: NamedRoutes.StableCoinDetails,
+		},
+		{
+			icon: 'Receipt',
+			title: t('sidebar.feesManagement'),
+			route: NamedRoutes.FeesManagement,
+			isHidden: selectedStableCoin && !selectedStableCoin.feeScheduleKey,
 		},
 		{
 			icon: 'File',
 			title: t('sidebar.proofOfReserve'),
 			route: NamedRoutes.ProofOfReserve,
+			isHidden: selectedStableCoin && !selectedStableCoin.reserveAddress,
+		},
+		{
+			icon: 'GearSix',
+			title: t('sidebar.settings'),
+			route: NamedRoutes.Settings,
 		},
 	];
 
@@ -51,9 +63,7 @@ const Sidebar = () => {
 		>
 			<Flex flexDirection='column' alignItems='center' gap={3}>
 				{options.map((option) => {
-					const { title } = option;
-
-					return <SidebarOption key={title} {...option} />;
+					return <SidebarOption key={option.title} {...option} />;
 				})}
 			</Flex>
 		</Flex>

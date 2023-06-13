@@ -1,13 +1,21 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { GetStableCoinDetailsRequest } from 'hedera-stable-coin-sdk';
+import {
+	GetProxyConfigRequest,
+	GetStableCoinDetailsRequest,
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import SDKService from '../services/SDKService';
-import { walletActions, SELECTED_WALLET_COIN } from '../store/slices/walletSlice';
+import {
+	SELECTED_WALLET_ACCOUNT_INFO,
+	SELECTED_WALLET_COIN,
+	walletActions,
+} from '../store/slices/walletSlice';
 
-export const useRefreshCoinInfo = (): boolean => {
+export const useRefreshCoinInfo = () => {
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
+	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 	const [lastId, setLastId] = useState<string>();
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const dispatch = useDispatch();
@@ -20,12 +28,16 @@ export const useRefreshCoinInfo = (): boolean => {
 		selectedStableCoin?.paused,
 		selectedStableCoin?.tokenId?.toString(),
 	]);
-
 	const getStableCoinDetails = async () => {
 		setIsLoading(true);
 		const resp = await SDKService.getStableCoinDetails(
 			new GetStableCoinDetailsRequest({
 				id: selectedStableCoin?.tokenId?.toString() ?? '',
+			}),
+		);
+		const proxyConfig = await SDKService.getProxyConfig(
+			new GetProxyConfigRequest({
+				tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
 			}),
 		);
 		setLastId(resp?.tokenId?.toString());
@@ -41,7 +53,10 @@ export const useRefreshCoinInfo = (): boolean => {
 				id: resp?.tokenId?.toString(),
 				treasury: resp?.treasury?.toString(),
 				autoRenewAccount: resp?.autoRenewAccount?.toString(),
+				autoRenewPeriod: resp?.autoRenewPeriod?.toString(),
+				expirationTimestamp: resp?.expirationTimestamp?.toString(),
 				proxyAddress: resp?.proxyAddress?.toString(),
+				proxyAdminAddress: resp?.proxyAdminAddress?.toString(),
 				paused: resp?.paused,
 				deleted: resp?.deleted,
 				adminKey: resp?.adminKey?.toString() && JSON.parse(JSON.stringify(resp.adminKey)),
@@ -54,10 +69,20 @@ export const useRefreshCoinInfo = (): boolean => {
 				pauseKey: resp?.pauseKey?.toString() && JSON.parse(JSON.stringify(resp.pauseKey)),
 				reserveAmount: resp?.reserveAmount?.toString(),
 				reserveAddress: resp?.reserveAddress?.toString(),
+				customFees: resp.customFees && JSON.parse(JSON.stringify(resp.customFees)),
 			}),
+		);
+		dispatch(
+			walletActions.setSelectedStableCoinProxyConfig({
+				owner: proxyConfig?.owner?.toString(),
+				implementationAddress: proxyConfig?.implementationAddress?.toString(),
+			}),
+		);
+		dispatch(
+			walletActions.setIsProxyOwner(proxyConfig?.owner?.toString() === accountInfo?.id?.toString()),
 		);
 		setIsLoading(false);
 	};
 
-	return isLoading;
+	return { getStableCoinDetails, isLoading };
 };

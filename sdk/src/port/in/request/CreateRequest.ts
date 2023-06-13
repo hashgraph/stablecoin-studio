@@ -18,10 +18,8 @@
  *
  */
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import CheckNums from '../../../core/checks/numbers/CheckNums.js';
 import { OptionalField } from '../../../core/decorator/OptionalDecorator.js';
-import Injectable from '../../../core/Injectable.js';
 import { RESERVE_DECIMALS } from '../../../domain/context/reserve/Reserve.js';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 import InvalidDecimalRange from '../../../domain/context/stablecoin/error/InvalidDecimalRange.js';
@@ -29,7 +27,6 @@ import { StableCoin } from '../../../domain/context/stablecoin/StableCoin.js';
 import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply.js';
 import { RequestPublicKey } from './BaseRequest.js';
 import { InvalidType } from './error/InvalidType.js';
-import { InvalidValue } from './error/InvalidValue.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
 
@@ -48,7 +45,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 	stableCoinFactory?: string;
 
 	@OptionalField()
-	hederaERC20?: string;
+	hederaTokenManager?: string;
 
 	createReserve: boolean;
 
@@ -68,12 +65,6 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 	freezeDefault?: boolean;
 
 	@OptionalField()
-	autoRenewAccount?: string;
-
-	@OptionalField()
-	adminKey?: RequestPublicKey;
-
-	@OptionalField()
 	freezeKey?: RequestPublicKey;
 
 	@OptionalField()
@@ -86,19 +77,40 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 	pauseKey?: RequestPublicKey;
 
 	@OptionalField()
-	supplyKey?: RequestPublicKey;
-
-	@OptionalField()
 	feeScheduleKey?: RequestPublicKey;
-
-	@OptionalField()
-	treasury?: string | undefined;
 
 	@OptionalField()
 	supplyType?: TokenSupplyType;
 
 	@OptionalField()
 	grantKYCToOriginalSender?: boolean;
+
+	@OptionalField()
+	burnRoleAccount?: string | undefined;
+
+	@OptionalField()
+	wipeRoleAccount?: string | undefined;
+
+	@OptionalField()
+	rescueRoleAccount?: string | undefined;
+
+	@OptionalField()
+	pauseRoleAccount?: string | undefined;
+
+	@OptionalField()
+	freezeRoleAccount?: string | undefined;
+
+	@OptionalField()
+	deleteRoleAccount?: string | undefined;
+
+	@OptionalField()
+	kycRoleAccount?: string | undefined;
+
+	@OptionalField()
+	cashInRoleAccount?: string | undefined;
+
+	@OptionalField()
+	cashInRoleAllowance?: string | undefined;
 
 	constructor({
 		name,
@@ -107,22 +119,27 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		initialSupply,
 		maxSupply,
 		freezeDefault,
-		autoRenewAccount,
-		adminKey,
 		freezeKey,
 		kycKey,
 		wipeKey,
 		pauseKey,
-		supplyKey,
-		treasury,
 		supplyType,
 		feeScheduleKey,
 		stableCoinFactory,
-		hederaERC20,
+		hederaTokenManager,
 		reserveAddress,
 		reserveInitialAmount,
 		createReserve,
 		grantKYCToOriginalSender,
+		burnRoleAccount,
+		wipeRoleAccount,
+		rescueRoleAccount,
+		pauseRoleAccount,
+		freezeRoleAccount,
+		deleteRoleAccount,
+		kycRoleAccount,
+		cashInRoleAccount,
+		cashInRoleAllowance,
 	}: {
 		name: string;
 		symbol: string;
@@ -130,22 +147,27 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		initialSupply?: string;
 		maxSupply?: string;
 		freezeDefault?: boolean;
-		autoRenewAccount?: string;
-		adminKey?: RequestPublicKey;
 		freezeKey?: RequestPublicKey;
 		kycKey?: RequestPublicKey;
 		wipeKey?: RequestPublicKey;
 		pauseKey?: RequestPublicKey;
-		supplyKey?: RequestPublicKey;
 		feeScheduleKey?: RequestPublicKey;
-		treasury?: string;
 		supplyType?: TokenSupplyType;
 		stableCoinFactory?: string;
-		hederaERC20?: string;
+		hederaTokenManager?: string;
 		reserveAddress?: string;
 		reserveInitialAmount?: string;
 		createReserve: boolean;
 		grantKYCToOriginalSender?: boolean;
+		burnRoleAccount?: string;
+		wipeRoleAccount?: string;
+		rescueRoleAccount?: string;
+		pauseRoleAccount?: string;
+		freezeRoleAccount?: string;
+		deleteRoleAccount?: string;
+		kycRoleAccount?: string;
+		cashInRoleAccount?: string;
+		cashInRoleAllowance?: string;
 	}) {
 		super({
 			name: (val) => {
@@ -217,32 +239,13 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 					this.supplyType,
 				);
 			},
-			autoRenewAccount: (val) => {
-				const err = Validation.checkHederaIdFormat()(val);
-				const handler = Injectable.resolveTransactionHandler();
-				const id = handler.getAccount().id.toString();
-				if (err.length > 0) {
-					return err;
-				} else {
-					if (val !== id) {
-						return [
-							new InvalidValue(
-								`The autorenew account (${val}) should be your current account (${id}).`,
-							),
-						];
-					}
-				}
-			},
-			adminKey: Validation.checkPublicKey(),
 			freezeKey: Validation.checkPublicKey(),
 			kycKey: Validation.checkPublicKey(),
 			wipeKey: Validation.checkPublicKey(),
 			pauseKey: Validation.checkPublicKey(),
-			supplyKey: Validation.checkPublicKey(),
 			feeScheduleKey: Validation.checkPublicKey(),
-			treasury: Validation.checkHederaIdFormat(),
 			stableCoinFactory: Validation.checkContractId(),
-			hederaERC20: Validation.checkContractId(),
+			hederaTokenManager: Validation.checkContractId(),
 			reserveAddress: Validation.checkContractId(),
 			reserveInitialAmount: (val) => {
 				if (
@@ -288,6 +291,29 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 					bInitialSupply,
 				);
 			},
+			burnRoleAccount: Validation.checkHederaIdFormat(true),
+			wipeRoleAccount: Validation.checkHederaIdFormat(true),
+			rescueRoleAccount: Validation.checkHederaIdFormat(true),
+			pauseRoleAccount: Validation.checkHederaIdFormat(true),
+			freezeRoleAccount: Validation.checkHederaIdFormat(true),
+			deleteRoleAccount: Validation.checkHederaIdFormat(true),
+			kycRoleAccount: Validation.checkHederaIdFormat(true),
+			cashInRoleAccount: Validation.checkHederaIdFormat(true),
+			cashInRoleAllowance: (val) => {
+				if (val === undefined || val === '') {
+					return;
+				}
+				if (!BigDecimal.isBigDecimal(val)) {
+					return [new InvalidType(val, 'BigDecimal')];
+				}
+				if (CheckNums.hasMoreDecimals(val, this.decimals)) {
+					return [new InvalidDecimalRange(val, this.decimals)];
+				}
+				return StableCoin.checkCashInAllowance(
+					BigDecimal.fromString(val, this.decimals),
+					this.decimals,
+				);
+			},
 		});
 		this.name = name;
 		this.symbol = symbol;
@@ -296,21 +322,26 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		this.initialSupply = initialSupply;
 		this.maxSupply = maxSupply;
 		this.freezeDefault = freezeDefault;
-		this.autoRenewAccount = autoRenewAccount;
-		this.adminKey = adminKey;
 		this.freezeKey = freezeKey;
 		this.kycKey = kycKey;
 		this.wipeKey = wipeKey;
 		this.pauseKey = pauseKey;
-		this.supplyKey = supplyKey;
 		this.feeScheduleKey = feeScheduleKey;
-		this.treasury = treasury;
 		this.supplyType = supplyType;
 		this.stableCoinFactory = stableCoinFactory;
-		this.hederaERC20 = hederaERC20;
+		this.hederaTokenManager = hederaTokenManager;
 		this.reserveAddress = reserveAddress;
 		this.reserveInitialAmount = reserveInitialAmount;
 		this.createReserve = createReserve;
 		this.grantKYCToOriginalSender = grantKYCToOriginalSender;
+		this.burnRoleAccount = burnRoleAccount;
+		this.wipeRoleAccount = wipeRoleAccount;
+		this.rescueRoleAccount = rescueRoleAccount;
+		this.pauseRoleAccount = pauseRoleAccount;
+		this.freezeRoleAccount = freezeRoleAccount;
+		this.deleteRoleAccount = deleteRoleAccount;
+		this.kycRoleAccount = kycRoleAccount;
+		this.cashInRoleAccount = cashInRoleAccount;
+		this.cashInRoleAllowance = cashInRoleAllowance;
 	}
 }

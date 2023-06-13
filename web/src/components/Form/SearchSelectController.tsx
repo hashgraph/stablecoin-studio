@@ -1,10 +1,10 @@
 import type { SystemStyleObject, IconProps as ChakraIconProps } from '@chakra-ui/react';
 import { forwardRef, useMemo, useState } from 'react';
-import type { Ref } from 'react';
+import type { Ref, ReactNode } from 'react';
 import type { Control } from 'react-hook-form';
 import Icon from '../Icon';
 import type { SelectControllerProps, SelectOption, SelectThemeStyle } from './SelectController';
-import { SelectController } from './SelectController';
+import SelectCreatableController from './SelectCreatableController';
 import type { GroupBase, SelectInstance } from 'chakra-react-select';
 
 export interface SearchSelectControllerProps
@@ -15,6 +15,9 @@ export interface SearchSelectControllerProps
 		wrapperClosed?: SystemStyleObject;
 	};
 	iconStyles?: Omit<ChakraIconProps, 'as'>;
+	formatCreateLabel?: (inputValue: string) => ReactNode;
+	isLoading: boolean;
+	onCreateOption?: (inputValue: string) => void;
 }
 const SearchSelectController = forwardRef(
 	(
@@ -24,6 +27,8 @@ const SearchSelectController = forwardRef(
 			iconStyles,
 			name,
 			'data-testid': dataTestId,
+			formatCreateLabel,
+			onCreateOption,
 			...props
 		}: SearchSelectControllerProps,
 		ref: Ref<SelectInstance<unknown, boolean, GroupBase<unknown>>>,
@@ -40,7 +45,7 @@ const SearchSelectController = forwardRef(
 		);
 
 		return (
-			<SelectController
+			<SelectCreatableController
 				control={control}
 				name={name}
 				isSearchable
@@ -55,6 +60,8 @@ const SearchSelectController = forwardRef(
 				onMenuOpen={() => setIsMenuOpened(true)}
 				onMenuClose={() => setIsMenuOpened(false)}
 				overrideStyles={overrideStyles}
+				formatCreateLabel={formatCreateLabel}
+				onCreateOption={onCreateOption}
 				{...props}
 				variant='unstyled'
 				ref={ref}

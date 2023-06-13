@@ -8,7 +8,7 @@ interface IFreezable {
      * @param account Token address
      * @param account Account address
      */
-    event TransfersFrozen(address token, address account);
+    event TransfersFrozen(address indexed token, address indexed account);
 
     /**
      * @dev Emitted when unfreezing transfers of the token for the `account`
@@ -16,7 +16,7 @@ interface IFreezable {
      * @param account Token address
      * @param account Account address
      */
-    event TransfersUnfrozen(address token, address account);
+    event TransfersUnfrozen(address indexed token, address indexed account);
 
     /**
      * @dev Freezes transfers of the token for the `account`

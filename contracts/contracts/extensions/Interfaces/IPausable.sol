@@ -7,14 +7,14 @@ interface IPausable {
      *
      * @param token Token address
      */
-    event TokenPaused(address token);
+    event TokenPaused(address indexed token);
 
     /**
      * @dev Emitted when the token is unpaused
      *
      * @param token Token address
      */
-    event TokenUnpaused(address token);
+    event TokenUnpaused(address indexed token);
 
     /**
      * @dev Pauses the token in order to prevent it from being involved in any kind of operation

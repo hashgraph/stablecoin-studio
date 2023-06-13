@@ -1,9 +1,11 @@
 {
-  "name": "hashconnect",
-  "version": "0.2.3",
+  "name": "@hashgraph-dev/hashconnect",
+  "version": "1.5.0",
   "description": "hashconnect interoperability library",
   "author": "Tyler Coté <tyler@hashpack.app>, Nick Hanna <nick@hashpack.app>",
-  "repository": "https://github.com/Hashpack/hashconnect",
+  "publishConfig": {
+    "registry": "https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/"
+  },
   "license": "MIT",
   "keywords": [
     "hashgraph",
@@ -68,7 +70,7 @@
     "build-all": "yarn clean && yarn build",
     "copy-readme": "cp ../README.md README.md",
     "copy-changelog": "cp ../CHANGELOG.md CHANGELOG.md",
-    "prepack": "npm run build && npm run copy-readme && npm run copy-changelog"
+    "prepack": "npm run build"
   },
   "devDependencies": {
     "@types/jest": "^27.1.4",
@@ -88,7 +90,8 @@
     "yarn": "^1.22.17"
   },
   "dependencies": {
-    "@hashgraph/sdk": "^2.19.2",
+    "@hashgraph/sdk": "^2.23.0",
+    "@hashgraph/cryptography": "1.4.3",
     "buffer": "^6.0.3",
     "crypto-es": "^1.2.7",
     "crypto-js": "^4.1.1",

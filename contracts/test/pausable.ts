@@ -19,10 +19,9 @@ import {
     hasRole,
     pause,
     unpause,
-    associateToken,
 } from '../scripts/contractsMethods'
 import { PAUSE_ROLE } from '../scripts/constants'
-import { clientId } from '../scripts/utils'
+import { clientId, associateToken } from '../scripts/utils'
 import { Client, ContractId } from '@hashgraph/sdk'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
@@ -40,6 +39,7 @@ let operatorPriKey: string
 let operatorPubKey: string
 let operatorIsE25519: boolean
 let nonOperatorIsE25519: boolean
+let token: ContractId
 
 const TokenName = 'MIDAS'
 const TokenSymbol = 'MD'
@@ -116,6 +116,7 @@ describe('Pause Tests', function () {
         })
 
         proxyAddress = result[0]
+        token = result[8]
     })
 
     it('Admin account can grant and revoke pause role to an account', async function () {
@@ -277,10 +278,9 @@ describe('Pause Tests', function () {
         await pause(proxyAddress, nonOperatorClient)
         await expect(
             associateToken(
-                proxyAddress,
-                nonOperatorClient,
+                token.toString(),
                 nonOperatorAccount,
-                nonOperatorIsE25519
+                nonOperatorClient
             )
         ).to.eventually.be.rejectedWith(Error)
 
@@ -308,10 +308,9 @@ describe('Pause Tests', function () {
         await unpause(proxyAddress, nonOperatorClient)
         await expect(
             associateToken(
-                proxyAddress,
-                nonOperatorClient,
+                token.toString(),
                 nonOperatorAccount,
-                nonOperatorIsE25519
+                nonOperatorClient
             )
         ).not.to.eventually.be.rejectedWith(Error)
 

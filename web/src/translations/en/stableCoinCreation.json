@@ -4,6 +4,7 @@
 		"goBack": "Go back",
 		"createStableCoin": "Create stable coin",
 		"createNewStableCoin": "Create new stable coin",
+		"factoryId": "Factory Id : ",
 		"cancel": "Cancel"
 	},
 	"tabs": {
@@ -15,13 +16,17 @@
 		"review": "Review"
 	},
 	"basicDetails": {
-		"autorenewAccount": "Autorenew account",
-		"autorenewAccountPlaceholder": "0.0.0",
 		"name": "Name",
 		"namePlaceholder": "Name",
 		"symbol": "Symbol",
 		"symbolPlaceholder": "Symbol",
-		"title": "Stable coin basic details"
+		"title": "Stable coin basic details",
+		"hederaERC20": "HederaERC20 impl.",
+		"hederaERC20Placeholder": "Choose ERC20 address ID",
+		"modalErrorTitle": "Recovering ERC20 implementations",
+		"modalErrorDescription": "ERC20 contracts implementations couldn't be obtained.",
+		"hederaTokenManager": "HederaTokenManager impl.",
+		"hederaTokenManagerPlaceholder": "Choose TokenManager address ID"
 	},
 	"optionalDetails": {
 		"decimals": "Decimals",
@@ -36,27 +41,38 @@
 	},
 	"managementPermissions": {
 		"currentUserKey": "Current user key",
+		"currentUserAccount": "Current user account",
 		"description": "Assign default values",
+		"burn": "Burn",
+		"cashin": "Cash in",
 		"pause": "Pause",
 		"freeze": "Freeze",
 		"kyc": "KYC",
+		"delete": "Delete",
+		"cashInAllowanceType": "Unlimited?",
+		"cashInAllowanceInputPlaceholder": "0",
 		"grantKYCToOriginalSender": "Grant KYC flag to the token creator",
 		"introduce": "Enter the {{name}}",
 		"none": "None",
 		"otherKey": "Other key",
+		"otherAccount": "Other account",
 		"placeholder": "Enter the {{placeholder}}",
 		"rescue": "Rescue",
 		"admin": "Admin",
 		"supply": "Supply",
 		"feeSchedule": "Fee Schedule",
 		"theSmartContract": "The smart contract",
-		"title": "Permission management",
+		"keysTitle": "Permission management",
+		"rolesTitle": "Roles assignment",
 		"totalSupply": "Total supply",
 		"treasuryAccountAddress": "Treasury account address",
 		"wipe": "Wipe",
 		"CreatorKYCFlag": "Creator account KYC",
 		"CreatorGrantedKYC": "TRUE",
-		"CreatorNotGrantedKYC": "FALSE"
+		"CreatorNotGrantedKYC": "FALSE",
+		"wantKyc": "Do you want to enable KYC?",
+		"manageCustomFees": "Do you want to add custom fees?",
+		"accountPlaceholder": "0.0.0"
 	},
 	"proofOfReserve": {
 		"title": "Proof of Reserve",
@@ -70,18 +86,19 @@
 		"createDataFeed": "Create data feed",
 		"initialSupply": "Initial supply",
 		"addressPor": "Adrress proof of reserve  ",
-		"initialSupplyPor": "Initial supply POR",
-		"initialSupplyPorExternal": "External POR"
+		"initialSupplyPor": "Initial supply PoR",
+		"initialSupplyPorExternal": "External PoR"
 	},
 	"review": {
 		"basicDetails": "Basic details",
 		"managementPermissions": "Manage permissions",
+		"rolesAssignment": "Roles assignment",
 		"optionalDetails": "Optional details",
 		"title": "Stable coin review"
 	},
 	"notification": {
 		"title": "{{ result }} creating the stable coin",
-		"descriptionSuccess": "The stable coin was created",
+		"descriptionSuccess": "The stable coin was created: {{ token }}",
 		"descriptionError": "Sorry, there was an error creating the stable coin"
 	}
 }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Stack, useDisclosure } from '@chakra-ui/react';
+import { Stack, HStack, useDisclosure, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -18,14 +18,25 @@ import {
 	getStableCoinList,
 	SELECTED_WALLET_ACCOUNT_INFO,
 	SELECTED_WALLET_PAIRED_ACCOUNT,
+	SELECTED_FACTORY_ID,
+	SELECTED_WALLET,
+	getExternalTokenList,
 } from '../../store/slices/walletSlice';
 import SDKService from '../../services/SDKService';
 import ModalNotification from '../../components/ModalNotification';
-import { Account, CreateRequest } from 'hedera-stable-coin-sdk';
-import type { RequestPublicKey } from 'hedera-stable-coin-sdk';
+import {
+	Account,
+	AssociateTokenRequest,
+	CreateRequest,
+	KYCRequest,
+	GetStableCoinDetailsRequest,
+	SupportedWallets,
+} from '@hashgraph-dev/stablecoin-npm-sdk';
+import type { RequestPublicKey } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch } from '../../store/store';
 import ProofOfReserve from './ProofOfReserve';
+import { ImportTokenService } from '../../services/ImportTokenService';
 
 const StableCoinCreation = () => {
 	const navigate = useNavigate();
@@ -34,6 +45,8 @@ const StableCoinCreation = () => {
 
 	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
 	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
+	const factoryId = useSelector(SELECTED_FACTORY_ID);
+	const wallet = useSelector(SELECTED_WALLET);
 
 	const form = useForm<FieldValues>({
 		mode: 'onChange',
@@ -66,6 +79,7 @@ const StableCoinCreation = () => {
 	const [success, setSuccess] = useState<boolean>();
 	const [error, setError] = useState<any>();
 	const { isOpen, onOpen, onClose } = useDisclosure();
+	const [token, setToken] = useState<string | null>();
 
 	useEffect(() => {
 		if (getValues()) {
@@ -77,7 +91,7 @@ const StableCoinCreation = () => {
 		{
 			number: '01',
 			title: t('tabs.basicDetails'),
-			children: <BasicDetails control={control} request={request} />,
+			children: <BasicDetails control={control} request={request} setValue={setValue} />,
 		},
 		{
 			number: '02',
@@ -114,7 +128,7 @@ const StableCoinCreation = () => {
 
 		if (currentStep === 0) {
 			// @ts-ignore
-			fieldsStep = watch(['name', 'symbol', 'autorenewAccount']);
+			fieldsStep = watch(['hederaTokenManagerId', 'name', 'symbol']);
 		}
 
 		if (currentStep === 1) {
@@ -130,10 +144,17 @@ const StableCoinCreation = () => {
 		if (currentStep === 2) {
 			// @ts-ignore
 			const managePermissions = watch('managementPermissions');
+			const kycRequired = watch('kycRequired');
+			let keys: string[] = [];
+
+			if (kycRequired) keys = keys.concat('kycKey');
 
 			if (!managePermissions) {
-				const keys = ['adminKey', 'supplyKey', 'wipeKey', 'freezeKey', 'pauseKey', 'kycKey'];
-
+				keys = keys.concat('wipeKey');
+				keys = keys.concat('freezeKey');
+				keys = keys.concat('pauseKey');
+			}
+			if (keys.length > 0) {
 				// @ts-ignore
 				fieldsStep = watch(keys);
 				fieldsStep.forEach((item, index) => {
@@ -168,6 +189,42 @@ const StableCoinCreation = () => {
 		);
 	};
 
+	const formatRoleAccountByKey = (
+		managementPermissions: boolean,
+		key: { value: number; label: string },
+		role: { value: number; label: string },
+		roleName: string,
+	): string => {
+		if ((managementPermissions || (key && key.value === 2)) && role.value !== 3) {
+			return formatRoleAccount(role, roleName);
+		} else {
+			return '0.0.0';
+		}
+	};
+
+	const formatKycRoleAccountByKey = (
+		isKycRequired: boolean,
+		key: { value: number; label: string },
+		role: { value: number; label: string },
+		roleName: string,
+	): string => {
+		if ((isKycRequired || (key && key.value === 2)) && role.value !== 3) {
+			return formatRoleAccount(role, roleName);
+		} else {
+			return '0.0.0';
+		}
+	};
+
+	const formatRoleAccount = (role: { value: number; label: string }, roleName: string): string => {
+		const values = getValues();
+		if (role.label === 'Other account') {
+			const param = Object.keys(values).find((key) => key.includes(roleName + 'RoleAccountOther'));
+			return param ? values[param] : '';
+		} else {
+			return accountInfo.id!;
+		}
+	};
+
 	const formatKey = (keySelection: string, keyName: string): RequestPublicKey | undefined => {
 		const values = getValues();
 
@@ -188,22 +245,34 @@ const StableCoinCreation = () => {
 		return Account.NullPublicKey;
 	};
 
+	let createResponse: any;
 	const handleFinish = async () => {
 		const {
-			autorenewAccount,
 			managementPermissions,
+			adminKey,
 			freezeKey,
+			kycRequired,
 			kycKey,
 			wipeKey,
 			pauseKey,
 			supplyKey,
+			manageCustomFees,
 			feeScheduleKey,
 			reserveInitialAmount,
 			reserveAddress,
 			grantKYCToOriginalSender,
+			cashInRoleAccount,
+			burnRoleAccount,
+			wipeRoleAccount,
+			rescueRoleAccount,
+			pauseRoleAccount,
+			freezeRoleAccount,
+			deleteRoleAccount,
+			kycRoleAccount,
+			cashInAllowanceType,
+			cashInAllowance,
+			hederaTokenManagerId,
 		} = getValues();
-
-		request.autoRenewAccount = autorenewAccount;
 
 		if (!reserveInitialAmount) {
 			request.createReserve = false;
@@ -215,34 +284,112 @@ const StableCoinCreation = () => {
 		}
 
 		if (managementPermissions) {
-			request.adminKey = Account.NullPublicKey; // accountInfo.publicKey;
 			request.freezeKey = Account.NullPublicKey;
-			request.kycKey = undefined;
 			request.wipeKey = Account.NullPublicKey;
 			request.pauseKey = Account.NullPublicKey;
-			request.supplyKey = Account.NullPublicKey;
-			request.feeScheduleKey = accountInfo.publicKey;
-			request.treasury = undefined;
-			request.grantKYCToOriginalSender = false;
 		} else {
-			request.adminKey = accountInfo.publicKey;
 			request.freezeKey = formatKey(freezeKey.label, 'freezeKey');
-			request.kycKey = formatKey(kycKey.label, 'kycKey');
-			request.grantKYCToOriginalSender = grantKYCToOriginalSender;
 			request.wipeKey = formatKey(wipeKey.label, 'wipeKey');
 			request.pauseKey = formatKey(pauseKey.label, 'pauseKey');
-			request.supplyKey = formatKey(supplyKey.label, 'supplyKey');
-			request.feeScheduleKey = formatKey(feeScheduleKey.label, 'feeScheduleKey');
-			request.treasury =
-				formatKey(supplyKey.label, 'supplyKey')?.key !== Account.NullPublicKey.key && accountInfo.id
-					? accountInfo.id
-					: undefined;
 		}
-		// alert(request.dataFeedAddress)
+
+		if (kycRequired) {
+			request.kycKey = formatKey(kycKey.label, 'kycKey');
+			request.grantKYCToOriginalSender = grantKYCToOriginalSender;
+		} else {
+			request.kycKey = undefined;
+			request.grantKYCToOriginalSender = false;
+		}
+
+		request.feeScheduleKey = manageCustomFees
+			? formatKey(feeScheduleKey.label, 'feeScheduleKey')
+			: undefined;
+
+		request.cashInRoleAccount = formatRoleAccountByKey(
+			managementPermissions,
+			supplyKey,
+			cashInRoleAccount,
+			'cashIn',
+		);
+		request.cashInRoleAllowance = cashInAllowanceType ? '0' : cashInAllowance;
+		request.burnRoleAccount = formatRoleAccountByKey(
+			managementPermissions,
+			supplyKey,
+			burnRoleAccount,
+			'burn',
+		);
+		request.wipeRoleAccount = formatRoleAccountByKey(
+			managementPermissions,
+			wipeKey,
+			wipeRoleAccount,
+			'wipe',
+		);
+		request.rescueRoleAccount = formatRoleAccount(rescueRoleAccount, 'rescue');
+		request.pauseRoleAccount = formatRoleAccountByKey(
+			managementPermissions,
+			pauseKey,
+			pauseRoleAccount,
+			'pause',
+		);
+		request.freezeRoleAccount = formatRoleAccountByKey(
+			managementPermissions,
+			freezeKey,
+			freezeRoleAccount,
+			'freeze',
+		);
+		request.deleteRoleAccount = formatRoleAccountByKey(
+			managementPermissions,
+			adminKey,
+			deleteRoleAccount,
+			'delete',
+		);
+		request.kycRoleAccount = formatKycRoleAccountByKey(kycRequired, kycKey, kycRoleAccount, 'kyc');
+
+		request.hederaTokenManager = hederaTokenManagerId.value;
 		try {
 			onOpen();
 			setLoading(true);
-			await SDKService.createStableCoin(request);
+			createResponse = await SDKService.createStableCoin(request);
+			const tokenId = createResponse.coin.tokenId.toString();
+			setToken(tokenId);
+			if (wallet.lastWallet === SupportedWallets.HASHPACK && createResponse?.coin.tokenId) {
+				const associateRequest = new AssociateTokenRequest({
+					targetId: accountInfo.id!,
+					tokenId,
+				});
+				await SDKService.associate(associateRequest);
+
+				if (grantKYCToOriginalSender) {
+					const grantKYCRequest = new KYCRequest({
+						targetId: accountInfo.id!,
+						tokenId: createResponse.coin.tokenId.toString(),
+					});
+					await SDKService.grantKyc(grantKYCRequest);
+				}
+			}
+
+			if (wallet.lastWallet === SupportedWallets.METAMASK) {
+				const details: any = await Promise.race([
+					SDKService.getStableCoinDetails(
+						new GetStableCoinDetailsRequest({
+							id: tokenId,
+						}),
+					),
+					new Promise((resolve, reject) => {
+						setTimeout(() => {
+							reject(new Error("Stable coin details couldn't be obtained in a reasonable time."));
+						}, 10000);
+					}),
+				]).catch((e) => {
+					console.log(e.message);
+					onOpen();
+					throw e;
+				});
+
+				ImportTokenService.importToken(tokenId, details?.symbol!, accountInfo?.id!);
+				dispatch(getExternalTokenList(accountInfo.id!));
+			}
+
 			setLoading(false);
 			setSuccess(true);
 		} catch (error: any) {
@@ -274,7 +421,22 @@ const StableCoinCreation = () => {
 
 	return (
 		<Stack h='full'>
-			<BaseContainer title={t('common.createNewStableCoin')}>
+			<HStack spacing={6} w='full'>
+				<Text fontSize='28px' color='brand.secondary' fontWeight={500} align='left' w='full'>
+					{t('common.createNewStableCoin')}
+				</Text>
+				<Text
+					fontSize='16px'
+					color='brand.secondary'
+					fontWeight={700}
+					align='right'
+					w='full'
+					as='i'
+				>
+					{t('common.factoryId') + factoryId}
+				</Text>
+			</HStack>
+			<BaseContainer title=''>
 				<Stepper {...stepperProps} />
 			</BaseContainer>
 			<ModalNotification
@@ -283,7 +445,9 @@ const StableCoinCreation = () => {
 					loading ? 'Loading' : t('notification.title', { result: success ? 'Success' : 'Error' })
 				}
 				description={
-					loading ? undefined : t(`notification.description${success ? 'Success' : 'Error'}`)
+					loading
+						? undefined
+						: t(`notification.description${success ? 'Success' : 'Error'}`, { token })
 				}
 				isOpen={isOpen}
 				onClose={onClose}

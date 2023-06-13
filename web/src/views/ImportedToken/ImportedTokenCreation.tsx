@@ -20,10 +20,8 @@ import ModalNotification from '../../components/ModalNotification';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch } from '../../store/store';
 import ImportedTokenInfo from './ImportedTokenInfo';
-import type { IAccountToken } from '../../interfaces/IAccountToken.js';
-import type { IRole } from '../../interfaces/IRole.js';
-import type { IExternalToken } from '../../interfaces/IExternalToken';
-import { GetRolesRequest, GetStableCoinDetailsRequest } from 'hedera-stable-coin-sdk';
+import { ImportTokenService } from '../../services/ImportTokenService';
+import { GetStableCoinDetailsRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 const ImportedTokenCreation = () => {
 	const navigate = useNavigate();
@@ -90,82 +88,16 @@ const ImportedTokenCreation = () => {
 	};
 
 	const handleFinish = async () => {
-		const { stableCoinId, autoCheckRoles, roles } = getValues();
-		let checkRoles: string[] | null = [];
+		const { stableCoinId } = getValues();
+
 		try {
 			const details = await SDKService.getStableCoinDetails(
 				new GetStableCoinDetailsRequest({
 					id: stableCoinId,
 				}),
 			);
-			if (autoCheckRoles) {
-				checkRoles = await SDKService.getRoles(
-					new GetRolesRequest({
-						targetId: accountInfo && accountInfo.id ? accountInfo?.id : '',
-						tokenId: details?.tokenId?.toString() ?? '',
-					}),
-				);
-			}
-			const tokensAccount = localStorage?.tokensAccount;
-			if (tokensAccount) {
-				const tokensAccountParsed = JSON.parse(tokensAccount);
-				const accountToken = tokensAccountParsed.find(
-					(account: IAccountToken) => account.id === accountInfo.id,
-				);
-				if (
-					accountToken &&
-					accountToken.externalTokens.find((coin: IExternalToken) => coin.id === stableCoinId)
-				) {
-					accountToken.externalTokens = accountToken.externalTokens.filter(
-						(coin: IExternalToken) => coin.id !== stableCoinId,
-					);
-				}
-				accountToken
-					? accountToken.externalTokens.push({
-							id: stableCoinId,
-							symbol: details!.symbol,
-							roles: autoCheckRoles
-								? checkRoles
-								: roles
-								? roles.map((role: IRole) => role.value)
-								: [],
-					  })
-					: tokensAccountParsed.push({
-							id: accountInfo.id,
-							externalTokens: [
-								{
-									id: stableCoinId,
-									symbol: details!.symbol,
-									roles: autoCheckRoles
-										? checkRoles
-										: roles
-										? roles.map((role: IRole) => role.value)
-										: [],
-								},
-							],
-					  });
-				localStorage.setItem('tokensAccount', JSON.stringify(tokensAccountParsed));
-			} else {
-				localStorage.setItem(
-					'tokensAccount',
-					JSON.stringify([
-						{
-							id: accountInfo.id,
-							externalTokens: [
-								{
-									id: stableCoinId,
-									symbol: details!.symbol,
-									roles: autoCheckRoles
-										? checkRoles
-										: roles
-										? roles.map((role: IRole) => role.value)
-										: [],
-								},
-							],
-						},
-					]),
-				);
-			}
+
+			ImportTokenService.importToken(stableCoinId, details?.symbol!, accountInfo?.id!);
 			dispatch(getExternalTokenList(accountInfo.id!));
 			setSuccess(true);
 		} catch (error) {

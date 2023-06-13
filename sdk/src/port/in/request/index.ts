@@ -24,17 +24,23 @@ import CreateRequest from './CreateRequest.js';
 import GetListStableCoinRequest from './GetListStableCoinRequest.js';
 import GetStableCoinDetailsRequest from './GetStableCoinDetailsRequest.js';
 import GrantRoleRequest from './GrantRoleRequest.js';
+import GrantMultiRolesRequest from './GrantMultiRolesRequest.js';
+import GetAccountsWithRolesRequest from './GetAccountsWithRolesRequest.js';
 import RevokeRoleRequest from './RevokeRoleRequest.js';
+import RevokeMultiRolesRequest from './RevokeMultiRolesRequest.js';
 import HasRoleRequest from './HasRoleRequest.js';
 import CheckSupplierLimitRequest from './CheckSupplierLimitRequest.js';
 import GetSupplierAllowanceRequest from './GetSupplierAllowanceRequest.js';
 import ValidationResponse from './validation/ValidationResponse.js';
 import WipeRequest from './WipeRequest.js';
+import TransfersRequest from './TransfersRequest.js';
 import RescueRequest from './RescueRequest.js';
+import RescueHBARRequest from './RescueHBARRequest.js';
 import ResetSupplierAllowanceRequest from './ResetSupplierAllowanceRequest.js';
 import IncreaseSupplierAllowanceRequest from './IncreaseSupplierAllowanceRequest.js';
 import DecreaseSupplierAllowanceRequest from './DecreaseSupplierAllowanceRequest.js';
 import GetAccountBalanceRequest from './GetAccountBalanceRequest.js';
+import GetAccountBalanceHBARRequest from './GetAccountBalanceHBARRequest.js';
 import AssociateTokenRequest from './AssociateTokenRequest.js';
 import GetRolesRequest from './GetRolesRequest.js';
 import GetAccountInfoRequest from './GetAccountInfoRequest.js';
@@ -56,6 +62,14 @@ import UpdateCustomFeesRequest from './UpdateCustomFeesRequest.js';
 import AddFixedFeeRequest from './AddFixedFeeRequest.js';
 import AddFractionalFeeRequest from './AddFractionalFeeRequest.js';
 import SetConfigurationRequest from './SetConfigurationRequest.js';
+import GetTokenManagerListRequest from './GetTokenManagerListRequest.js';
+import UpdateRequest from './UpdateRequest.js';
+import GetProxyConfigRequest from './GetProxyConfigRequest.js';
+import GetFactoryProxyConfigRequest from './GetFactoryProxyConfigRequest.js';
+import ChangeProxyOwnerRequest from './ChangeProxyOwnerRequest.js';
+import ChangeFactoryProxyOwnerRequest from './ChangeFactoryProxyOwnerRequest.js';
+import UpgradeImplementationRequest from './UpgradeImplementationRequest.js';
+import UpgradeFactoryImplementationRequest from './UpgradeFactoryImplementationRequest.js';
 
 export * from './BaseRequest.js';
 export {
@@ -64,11 +78,16 @@ export {
 	CashInRequest,
 	BurnRequest,
 	WipeRequest,
+	TransfersRequest,
 	GetListStableCoinRequest,
 	GetStableCoinDetailsRequest,
 	RescueRequest,
+	RescueHBARRequest,
 	GrantRoleRequest,
+	GrantMultiRolesRequest,
+	GetAccountsWithRolesRequest,
 	RevokeRoleRequest,
+	RevokeMultiRolesRequest,
 	HasRoleRequest,
 	CheckSupplierLimitRequest,
 	GetSupplierAllowanceRequest,
@@ -76,6 +95,7 @@ export {
 	IncreaseSupplierAllowanceRequest,
 	DecreaseSupplierAllowanceRequest,
 	GetAccountBalanceRequest,
+	GetAccountBalanceHBARRequest,
 	AssociateTokenRequest,
 	GetRolesRequest,
 	GetAccountInfoRequest,
@@ -97,4 +117,12 @@ export {
 	UpdateCustomFeesRequest,
 	AddFixedFeeRequest,
 	AddFractionalFeeRequest,
+	GetTokenManagerListRequest,
+	UpdateRequest,
+	GetProxyConfigRequest,
+	GetFactoryProxyConfigRequest,
+	ChangeProxyOwnerRequest,
+	ChangeFactoryProxyOwnerRequest,
+	UpgradeImplementationRequest,
+	UpgradeFactoryImplementationRequest,
 };

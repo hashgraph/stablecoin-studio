@@ -49,7 +49,12 @@ export const english = {
     askNetwork: 'Select the default network',
     askNotDefaultNetwork:
       'Your option is not one of the default networks, do you want to create a new network? (y/n)',
+    AccountsConfigurationMessage: 'You will now configure your accounts:',
     askAccountId: 'Enter the account id',
+    askConfigurateFactories:
+      'Do you want to config your factories? Check the documentation for more information : https://github.com/hashgraph/hedera-accelerator-stablecoin#deploying-the-stable-coin-factories',
+    askConfigurateDefaultMirrorsAndRPCs:
+      'Do you want to use default mirror node/JSON-RPC-Relay services? (y/n)',
     askNetworkAccount: 'Which network does this account belong to?',
     askPrivateKeyType: 'Which type of private key will the account use?',
     askAlias: 'Enter an alias for this account',
@@ -60,21 +65,81 @@ export const english = {
     askPublicKey: 'Enter the public key',
     askConsensusUrl: 'Enter the url',
     askMoreConsensusNodes: 'Do you want to enter more consensus nodes? (y/n)',
-    askMirrorNode: 'Enter the mirror url',
     askChain: 'Enter the chain id',
     askNode: 'Enter the node id',
     askOperateWithNewAccount:
       'Would you like to operate with the account you have just created?',
     askFactoryAddress: 'Enter your factory address',
-    askHederaERC20Address: 'Enter your Hedera ERC20 address',
+    askNewFactoryAddress: 'Enter your new factory address',
+    MirrorsConfigurationMessage:
+      'You will now configure your mirror node services:',
+    askMirrorName: 'Enter the mirror node service name',
+    askMirrorNode: 'Enter the mirror url',
+    askMirrorNetwork: 'Which network does the mirror service belong to?',
+    askMirrorUrl: 'Which is the base URL of the service?',
+    askMirrorApiKey: 'Enter the mirror node service API Key',
+    askMirrorHeaderName: 'Enter the HTTP auth header name to send the API Key',
+    askMirrorHasApiKey:
+      'Does this service need an API Key to authenticate? (y/n)',
+    askMirrorSelected:
+      'Do you want this service to be used in the selected network? (y/n)',
+    askMoreMirrors: 'Do you want to enter more mirror node services? (y/n)',
+    RPCsConfigurationMessage:
+      'You will now configure your JSON-RPC-Relay services:',
+    askRPCName: 'Enter the JSON-RPC-Relay service name',
+    askRPCNetwork: 'Which network does the JSON-RPC-Relay service belong to?',
+    askRPCUrl: 'Which is the base URL of the service?',
+    askRPCApiKey: 'Enter the JSON-RPC-Relay service API Key',
+    askRPCHeaderName: 'Enter the HTTP auth header name to send the API Key',
+    askRPCHasApiKey: 'Does this service need an API Key to authenticate? (y/n)',
+    askRPCSelected:
+      'Do you want this service to be used in the selected network? (y/n)',
+    askMoreRPCs: 'Do you want to enter more JSON-RPC-Relay services? (y/n)',
+    rpcConfigurationMessage: 'You will now configure your JSON-RPC-Relay:',
+    mirrorNodeConfigurationMessage: 'You will now configure your mirror nodes:',
+    askNetworkMirrorNode: 'Which network does this mirror node belong to?',
+    askName: 'Enter the name',
+    nameAlreadyInUse: 'Name ${name} already in use. Please use another name.',
+    askBaseUrl: 'Enter the base url',
+    baseUrlAlreadyInUse:
+      'Base url ${baseUrl} already in use. Please use another base url.',
+    askMoreMirrorNodes: 'Do you want to add another mirror node?',
+    askOperateWithNewMirrorNode:
+      'Would you like to operate with the mirror node you have just created?',
+    askOperateWithNewRPCNode:
+      'Would you like to operate with the JSON-RPC-Relay you have just created?',
+    mirrorNodeDelete: 'Which mirror node would you like to delete?',
+    noMoreMirrorNodes:
+      'There is no mirror node in the selected network not currently being used',
+    networkSelected: '\nNetwork selected: ${network}',
+    mirrorNodeList: '\nMirror nodes list:',
+    mirrorNodeAdded: '\nMirror nodes added:',
+    mirrorNodeDeleted: '\nMirror nodes deleted successfully',
+    mirrorNodeNotToChange: '\nThere is no mirror node to change',
+    RPCList: '\nJSON-RPC-Relay list:',
+    RPCAdded: '\nJSON-RPC-Relay added:',
+    RPCDelete: 'Which JSON-RPC-Relay would you like to delete?',
+    noMoreRPCs:
+      'There is no JSON-RPC-Relay service in the selected network not currently being used',
+    RPCDeleted: '\nJSON-RPC-Relay deleted successfully',
+    askNeedApiKey: 'Do you need an API key?',
+    askHeaderName: 'Enter your HTTP auth header name',
+    askApiKey: 'Enter your api key',
+    askSureRemove: 'Are you sure do you want to delete ${mirrorNode}?',
+    selectMirrorNode: 'Select the mirror node: ',
+    selectRPC: 'Select the JSON-RPC-Relay: ',
+    RPCNotToChange: '\nThere is no nJSON-RPC-Relay to change',
   },
   stablecoin: {
+    noFactories:
+      "You don't have configured your factory and HederaTokenManager address. Without this configuration you cannot create an stable coin. Check the following link for more information. https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/cli#creating-a-config-file",
     askConfirmCreation:
       'Are you sure you want to create the stable coin with these parameters?',
     description: 'Creating Stable Coin',
     askName: 'Enter the name',
     askSymbol: 'Enter the symbol',
     askAutoRenewAccountId: 'Enter the autorenew account',
+    askAutoRenewPeriod: 'Enter the token autorenew period in days',
     askDecimals: 'Enter the number of decimal places a token is divisible by',
     askToken:
       'What is the token id of the stable coin you want to operate with?',
@@ -84,18 +149,26 @@ export const english = {
     askReserve: 'Do you want to link the stable coin to a Proof of Reserve?',
     askExistingReserve:
       'Do you want to link it to an already existing Proof of Reserve?',
-
     askReserveAddress:
       'Enter the Proof of Reserve Feed you wish to link your stable coin to',
     askReserveInitialAmount: 'Enter the Proof of Reserve Feed initial amount',
     askInitialSupply: 'Enter the initial supply',
     askSupplyType: 'Do you want the token max supply to be infinite?',
     askTotalSupply: 'Enter the max supply',
-    askExpirationTime: 'Enter the token expiration time',
+    askExpirationTime: 'Enter the token expiration time in days',
     askMemo: 'Enter the token memo',
     askFreezeAccount: 'Should the Hedera account be frozen for this token?',
     askFeaturesManagedBy:
-      'Assign all token keys to the Smart Contract except for the Fee Schedule key (assigned to the current user) and the KYC key (unassigned)?',
+      'Should the smart contract be used for all roles management?',
+    askRolesManagedBy:
+      'You will be the admin for the keys that you have assigned to the Smart Contract, do you want to change the admin for one of these features?',
+    askKYC: 'Do you want to enable KYC?',
+    askCustomFees: 'Do you want to add custom fees?',
+    askHederaTokenManagerOther: 'Other',
+    askHederaTokenManagerVersion:
+      'Choose the HederaTokenManager implementation you want to use',
+    askHederaTokenManagerImplementation:
+      'Enter the address of the HederaTokenManager implementation you want to use',
     features: {
       admin: 'Enter the admin key',
       supply: 'Enter the supply key',
@@ -110,6 +183,25 @@ export const english = {
       publicKey: 'Enter the public key',
       keyType: 'Key type',
     },
+    initialRoles: {
+      askAccount: 'Enter an account',
+      burn: 'Choose the BURN admin account',
+      wipe: 'Choose the WIPE admin account',
+      rescue: 'Choose the RESCUE admin account',
+      rescueHBAR: 'Choose the RESCUE HBAR admin account',
+      pause: 'Choose the PAUSE admin account',
+      freeze: 'Choose the FREEZE admin account',
+      delete: 'Choose the DELETE admin account',
+      kyc: 'Choose the KYC admin account',
+      cashin: 'Choose the CASHIN admin account',
+      options: {
+        currentAccount: 'Current User Account',
+        otherAccount: 'Other Account',
+        noAccount: 'None',
+      },
+      cashinAllowance:
+        "Enter the cashin allowance for the account ('0' if Unlimited)",
+    },
     askTreasuryAccountAddress: 'Enter the treasury account id?',
     askOperateStableCoin:
       'Do you want to operate with the stable coin you just created?',
@@ -119,14 +211,16 @@ export const english = {
     askBurnAmount: 'How many tokens do you want to burn?',
     askWipeAmount: 'How many tokens do you want to wipe?',
     askRescueAmount: 'How many tokens do you want to rescue?',
+    askRescueHBARAmount: 'How many HBAR do you want to rescue?',
     askGrantKYCToSender: 'Do you want to grant KYC to your current account?',
     askTargetAccount: 'What is the target account?',
     askAccountToBalance:
-      'Which account would you like to obtain the balance from?',
+      'For which account would you like to get the balance of?',
     askCashInRoleType: 'What type of permission do you want to grant?',
     askCashInRoleRevokeType: 'What type of permission do you want to revoke?',
-    askEditCashInRole: 'What action do you want to perform?',
+    askAction: 'What action do you want to perform?',
     accountTarget: 'Enter the target account id',
+    sendAmount: 'Enter the amount you want to send to the account',
     supplierRoleLimit: 'What will the limit be?',
     amountIncrease: 'Amount to increase',
     amountDecrease: 'Amount to decrease',
@@ -136,6 +230,13 @@ export const english = {
     autoRenewAccountError: colors.red(
       'The autorenew account must be your current account.',
     ),
+  },
+  factory: {
+    askFactoryImplementation:
+      'Enter the address of the factory implementation you want to use',
+    askNewOwner: 'Enter the new owner account id',
+    implementation: 'Current factory implementation',
+    owner: 'Factory owner',
   },
   commander: {
     appDescription: 'Hedera Stable Coin is a CLI for managing stable coins',
@@ -182,9 +283,14 @@ export const english = {
   wizard: {
     name: 'Wizard',
     accountLogin: 'Which account do you want to operate with?',
+    networkManage: 'Which network do you want to operate with?',
     accountsNotFound:
       'There is no account for the indicated parameters, here is a list of the configured accounts:',
+    mirrorNodeNotRespondedAsExpected:
+      'Mirror node has not responded as expected',
     accountOptions: 'Manage account menu:',
+    mirrorNodeOptions: 'Manage mirror node menu:',
+    rpcOptions: 'Manage JSON-RPC-Relay menu:',
     importedTokenMenu: 'Manage imported tokens:',
     accountDelete: 'Which account would you like to delete?',
     noAccountToDelete: 'You cannot delete your current account.',
@@ -192,9 +298,15 @@ export const english = {
     configurationMenuTitle: 'What do you want to do?',
     pathChanged: '\nPath changed successfully',
     networkChanged: '\nNetwork changed successfully',
+    networkSelected: '\nNetwork selected successfully',
     accountsChanged: '\nAccounts changed successfully',
+    factoryChanged: '\nFactory changed successfully',
+    factoryUpgraded: '\nFactory upgraded successfully',
+    factoryOwnerChanged: '\nFactory owner changed successfully',
     freezeAccount: 'Which account do you want to freeze?',
     unfreezeAccount: 'Which account do you want to unfreeze?',
+    checkAccountFrozen:
+      'which account do you want to know if it is frozen for the token?',
     grantKYCToAccount: 'Which account do you want to grant KYC to?',
     revokeKYCFromAccount: 'Which account do you want to revoke KYC from?',
     checkAccountKYCGranted:
@@ -203,20 +315,19 @@ export const english = {
       ...returnToMainMenu,
     },
     stableCoinOptions: {
+      Send: 'Send tokens',
       CashIn: 'Cash in',
       Details: 'Details',
       Balance: 'Balance',
       Burn: 'Burn',
       Wipe: 'Wipe',
       Rescue: 'Rescue',
-      Freeze: 'Freeze an account',
-      UnFreeze: 'Unfreeze an account',
-      GrantKYC: 'Grant KYC to an account',
-      RevokeKYC: 'Revoke KYC from an account',
-      AccountKYCGranted: 'Check KYC status from an account',
+      RescueHBAR: 'Rescue HBAR',
+      FreezeMgmt: 'Freeze Management',
+      KYCMgmt: 'KYC Management',
       FeesMgmt: 'Fees management',
       RoleMgmt: 'Role management',
-      RoleRefresh: 'Refresh roles',
+      Configuration: 'Configuration',
       DangerZone: colors.red('Danger zone'),
       ...returnToMainMenu,
     },
@@ -235,6 +346,9 @@ export const english = {
       EditPath: 'Edit config path',
       EditNetwork: 'Edit default network',
       Manage: 'Manage accounts',
+      ManageMirrorNode: 'Manage mirror node',
+      ManageRPC: 'Manage JSON-RPC-Relay',
+      ManageFactory: 'Manage factory',
       ...returnToMainMenu,
     },
     manageAccountOptions: {
@@ -244,6 +358,20 @@ export const english = {
       Delete: 'Delete account',
       ...goBack,
     },
+    manageMirrorNodeOptions: {
+      Change: 'Change current node',
+      List: 'Display configured nodes',
+      Add: 'Set up mirror node',
+      Delete: 'Remove mirror node',
+      ...goBack,
+    },
+    manageRPCOptions: {
+      Change: 'Change current JSON-RPC-Relay',
+      List: 'Display configured JSON-RPC-Relay',
+      Add: 'Set up JSON-RPC-Relay',
+      Delete: 'Remove JSON-RPC-Relay',
+      ...goBack,
+    },
     manageImportedTokens: {
       Add: 'Add token',
       Refresh: 'Refresh token',
@@ -251,18 +379,37 @@ export const english = {
       ...goBack,
     },
     roleManagementOptions: {
-      Grant: 'Grant role',
-      Revoke: 'Revoke role',
+      Grant: 'Grant roles',
+      Revoke: 'Revoke roles',
       Edit: 'Edit role',
-      HasRole: 'Has role',
+      GetRole: 'Get roles',
+      CheckAccountsWithRole: 'Check accounts that have a role',
       ...goBack,
     },
+    CheckAccountsWithRoleOptions: {
+      Admin: 'Admin',
+      CashIn: 'Cash In',
+      Burn: 'Burn',
+      Wipe: 'Wipe',
+      Rescue: 'Rescue',
+      RescueHBAR: 'Rescue HBAR',
+      Pause: 'Pause',
+      Freeze: 'Freeze',
+      Delete: 'Delete',
+      KYC: 'KYC',
+      ...goBack,
+    },
+
     adminFeatureOptions: {
       ...basicFeatureOptions,
     },
-    nonSmartContractFeatureOptions: {
+    nonNoneFeatureOptions: {
+      SmartContract: 'The Smart Contract',
       CurrentUser: 'Current user key',
-      None: 'None',
+      OtherKey: 'Other public key',
+    },
+    nonSmartContractAndNoneFeatureOptions: {
+      CurrentUser: 'Current user key',
       OtherKey: 'Other public key',
     },
     featureOptions: {
@@ -270,14 +417,21 @@ export const english = {
       OtherKey: 'Other public key',
     },
     supplierRoleType: {
-      Unlimited: 'Unlimited',
-      Limited: 'Limited',
+      Unlimited: 'unlimited',
+      Limited: 'limited',
       ...goBack,
     },
     editSupplierRoleOptions: {
       Increase: 'Increase limit',
       Decrease: 'Decrease limit',
       Reset: 'Reset limit',
+      ...goBack,
+    },
+    manageFactoryOptions: {
+      ChangeFactory: 'Change factory',
+      UpgradeFactory: 'Upgrade factory',
+      ChangeOwner: 'Change owner',
+      FactoryDetails: 'Factory details',
       ...goBack,
     },
     backOption: {
@@ -312,8 +466,11 @@ export const english = {
     cashInCompleted: 'Cash in completed',
     burnCompleted: 'Burn completed',
     rescueCompleted: 'Rescue completed',
+    rescueHBARCompleted: 'HBAR Rescue completed',
     wipeCompleted: 'Wipe completed',
     detailsCompleted: 'Details loaded',
+    proxyConfigCompleted: 'Proxy config loaded',
+    factoryProxyConfigCompleted: 'Factory proxy config loaded',
     balanceCompleted: 'Balance loaded',
     associateCompleted: 'Stable coin associated',
     deleteCompleted: 'Stable coin deleted',
@@ -321,6 +478,9 @@ export const english = {
     unpauseCompleted: 'Stable coin unpaused',
     freezeCompleted: 'Account frozen',
     unfreezeCompleted: 'Account unfrozen',
+    accountNotFrozen:
+      'The account ${address} is unfrozen for the ${token} token',
+    accountFrozen: 'The account ${address} is frozen for the ${token} token',
     KYCGranted: 'Account KYC granted',
     KYCRevoked: 'Account KYC revoked',
     accountKYCGranted:
@@ -329,10 +489,19 @@ export const english = {
       'The account ${address} has not KYC granted for the ${token} token',
     customFeeCreated: 'Custom fee created',
     customFeesRemoved: 'Custom fees removed',
+    transferCompleted: 'Transfer completed',
+    updateCompleted: 'Update completed',
+    changeOwnerCompleted: 'Owner change completed',
+    upgradeImplementationCompleted: 'Implementation upgrade completed',
   },
   operation: {
     success: colors.green('Operation has been completed successfully.'),
     reject: colors.red('Operation has not been completed. Please, try again.'),
+  },
+  send: {
+    noTokens: 'You have no tokens',
+    anotherAccount: 'Do you want to send more tokens?',
+    confirmation: 'Do you want to proceed sending these amounts?',
   },
   cashin: {
     unlimitedRole: 'This account has unlimited cash in role',
@@ -344,15 +513,37 @@ export const english = {
   rescue: {
     success: 'You have rescued ${tokens} tokens',
   },
+  rescueHBAR: {
+    success: 'You have rescued ${hbars} HBARs',
+  },
   account: {
     wrong: colors.red('Incorrect account format. Please try again.'),
   },
   validations: {
     wrongFormatAddress:
       'The address format is not correct. Please check the format and try again.',
+    duplicatedMirrorName:
+      'The mirror node service name already exists for the selected network.',
+    duplicatedMirrorUrl:
+      'The mirror node service url already exists for the selected network.',
+    duplicatedRPCName:
+      'The JSON-RPC-Relay service name already exists for the selected network.',
+    duplicatedRPCUrl:
+      'The JSON-RPC-Relay service url already exists for the selected network.',
+    wrongFormatUrl:
+      'The url format is not correct. Please check the format and try again.',
     lessZero: 'The number is 0 or less. Please use a number greater than 0.',
+    wrongFactoryAddress:
+      'The address does not correspond to a valid factory contract.',
   },
   roleManagement: {
+    askRoles: 'Choose the roles',
+    askAccount: 'Enter an account',
+    askMoreAccounts: 'Do you want to add another account?',
+    askUnlimited:
+      'Do you want the account to have an unlimited cashin allowance?',
+    askAllowance: 'Enter the cashin allowance for the account ',
+    askConfirmation: 'Do you want to proceed?',
     askRole: 'Select a role',
     accountHasRoleCashInUnlimited:
       'The account ${address} has the unlimited cash in role',
@@ -370,6 +561,7 @@ export const english = {
       ...goBack,
     },
     noRoles: 'You do not have any roles.',
+    askRolesForAccount: 'Choose a role to obtain the associated accounts ',
   },
   feeManagement: {
     askFeeType: 'What kind of fee do you want to add?',
@@ -405,6 +597,64 @@ export const english = {
       Create: 'Create fee',
       Remove: 'Remove fee',
       List: 'Fees list',
+      ...goBack,
+    },
+  },
+  stableCoinConfiguration: {
+    options: {
+      proxyConfiguration: 'Stable Coin Configuration',
+      tokenConfiguration: 'Token Configuration',
+      ...goBack,
+    },
+    askConfiguration: 'What do you want to configure?',
+  },
+  proxyConfiguration: {
+    options: {
+      implementation: 'Upgrade stable coin implementation',
+      owner: 'Change stable coin owner',
+      ...goBack,
+    },
+    askNewImplementation:
+      'Choose the HederaTokenManager implementation you want to use',
+    askNewOwner: 'Enter the new owner account id',
+    askProxyConfiguration: 'What do you want to do',
+    currentImplementation: 'Your current implementation is : ',
+  },
+  tokenConfiguration: {
+    askAction: 'What token property do you want to update?',
+    askKeysAction: 'What token key do you want to update?',
+    confirm: 'Are you sure you want to apply these changes?',
+    goBack: 'If you continue, you will lose your changes',
+    options: {
+      name: 'Name',
+      symbol: 'Symbol',
+      expirationTime: 'Expiration time',
+      autoRenewPeriod: 'Autorenew period',
+      keys: 'Keys',
+      save: 'Save',
+      ...goBack,
+    },
+  },
+  kycManagement: {
+    options: {
+      GrantKYC: 'Grant KYC to an account',
+      RevokeKYC: 'Revoke KYC from an account',
+      AccountKYCGranted: 'Check KYC status from an account',
+    },
+  },
+  freezeManagement: {
+    options: {
+      Freeze: 'Freeze an account',
+      UnFreeze: 'Unfreeze an account',
+      AccountFrozen: 'Check if account is frozen',
+    },
+  },
+  keysManagement: {
+    askKeys: 'Choose the keys',
+    // confirm: 'Are you sure you want to apply these changes?',
+    options: {
+      updateKeys: 'Update keys',
+      // confirmChanges: 'Confirm changes',
       ...goBack,
     },
   },

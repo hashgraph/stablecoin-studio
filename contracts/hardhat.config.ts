@@ -7,6 +7,7 @@ import '@primitivefi/hardhat-dodoc'
 import 'hardhat-gas-reporter'
 import '@openzeppelin/hardhat-upgrades'
 import * as dotenv from 'dotenv'
+//import './scripts/hardhatTasks'
 dotenv.config()
 
 module.exports = {
@@ -32,23 +33,74 @@ module.exports = {
             testnet: {
                 accounts: [
                     {
-                        account: process.env['HEDERA_OPERATOR_ACCOUNT'] ?? '',
+                        account:
+                            process.env['TESTNET_HEDERA_OPERATOR_ACCOUNT'] ??
+                            '',
                         publicKey:
-                            process.env['HEDERA_OPERATOR_PUBLICKEY'] ?? '',
+                            process.env['TESTNET_HEDERA_OPERATOR_PUBLICKEY'] ??
+                            '',
                         privateKey:
-                            process.env['HEDERA_OPERATOR_PRIVATEKEY'] ?? '',
+                            process.env['TESTNET_HEDERA_OPERATOR_PRIVATEKEY'] ??
+                            '',
                         isED25519Type:
-                            process.env['HEDERA_OPERATOR_ED25519'] ?? true,
+                            process.env['TESTNET_HEDERA_OPERATOR_ED25519'] ??
+                            true,
                     },
                     {
                         account:
-                            process.env['HEDERA_NON_OPERATOR_ACCOUNT'] ?? '',
+                            process.env[
+                                'TESTNET_HEDERA_NON_OPERATOR_ACCOUNT'
+                            ] ?? '',
                         publicKey:
-                            process.env['HEDERA_NON_OPERATOR_PUBLICKEY'] ?? '',
+                            process.env[
+                                'TESTNET_HEDERA_NON_OPERATOR_PUBLICKEY'
+                            ] ?? '',
                         privateKey:
-                            process.env['HEDERA_NON_OPERATOR_PRIVATEKEY'] ?? '',
+                            process.env[
+                                'TESTNET_HEDERA_NON_OPERATOR_PRIVATEKEY'
+                            ] ?? '',
                         isED25519Type:
-                            process.env['HEDERA_NON_OPERATOR_ED25519'] ?? true,
+                            process.env[
+                                'TESTNET_HEDERA_NON_OPERATOR_ED25519'
+                            ] ?? true,
+                    },
+                ],
+            },
+            previewnet: {
+                accounts: [
+                    {
+                        account:
+                            process.env['PREVIEWNET_HEDERA_OPERATOR_ACCOUNT'] ??
+                            '',
+                        publicKey:
+                            process.env[
+                                'PREVIEWNET_HEDERA_OPERATOR_PUBLICKEY'
+                            ] ?? '',
+                        privateKey:
+                            process.env[
+                                'PREVIEWNET_HEDERA_OPERATOR_PRIVATEKEY'
+                            ] ?? '',
+                        isED25519Type:
+                            process.env['PREVIEWNET_HEDERA_OPERATOR_ED25519'] ??
+                            true,
+                    },
+                    {
+                        account:
+                            process.env[
+                                'PREVIEWNET_HEDERA_NON_OPERATOR_ACCOUNT'
+                            ] ?? '',
+                        publicKey:
+                            process.env[
+                                'PREVIEWNET_HEDERA_NON_OPERATOR_PUBLICKEY'
+                            ] ?? '',
+                        privateKey:
+                            process.env[
+                                'PREVIEWNET_HEDERA_NON_OPERATOR_PRIVATEKEY'
+                            ] ?? '',
+                        isED25519Type:
+                            process.env[
+                                'PREVIEWNET_HEDERA_NON_OPERATOR_ED25519'
+                            ] ?? true,
                     },
                 ],
             },

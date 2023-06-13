@@ -3,34 +3,30 @@ import { utilsService } from '../../../index.js';
 import Service from '../Service.js';
 import {
   AssociateTokenRequest,
-  RequestAccount,
   StableCoin,
-} from 'hedera-stable-coin-sdk';
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 
 export default class AssociateStableCoinsService extends Service {
   constructor() {
     super('Associate Stable Coin');
   }
 
-  public async associateStableCoin(account: RequestAccount): Promise<void> {
-    let respDetail;
-
+  public async associateStableCoin(
+    account: string,
+    token: string,
+  ): Promise<void> {
     await utilsService.showSpinner(
       StableCoin.associate(
         new AssociateTokenRequest({
-          account,
+          targetId: account,
+          tokenId: token,
         }),
-      ).then((response) => (respDetail = response)),
+      ).then((response) => console.log(response)),
       {
         text: language.getText('state.loading'),
         successText: language.getText('state.associateCompleted') + '\n',
+        failText: 'Error associating token to account',
       },
-    );
-
-    console.log(
-      respDetail[0]
-        ? language.getText('operation.success')
-        : language.getText('operation.reject'),
     );
 
     utilsService.breakLine();

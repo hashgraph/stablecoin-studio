@@ -13,7 +13,7 @@ import { handleRequestValidation, validateDecimalsString } from '../../../utils/
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
-import { BurnRequest } from 'hedera-stable-coin-sdk';
+import { BurnRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 import { propertyNotFound } from '../../../constant';
 

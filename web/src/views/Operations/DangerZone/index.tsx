@@ -5,20 +5,21 @@ import GridDirectAction from '../../../components/GridDirectAction';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+	SELECTED_TOKEN_ROLES,
 	SELECTED_WALLET_CAPABILITIES,
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_PAIRED_ACCOUNTID,
 	walletActions,
 } from '../../../store/slices/walletSlice';
 import type { DirectActionProps } from '../../../components/DirectAction';
-import type { StableCoinCapabilities } from 'hedera-stable-coin-sdk';
+import type { StableCoinCapabilities } from '@hashgraph-dev/stablecoin-npm-sdk';
 import {
 	PauseRequest,
 	DeleteRequest,
 	Operation,
 	Access,
 	StableCoinRole,
-} from 'hedera-stable-coin-sdk';
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 import type { IAccountToken } from '../../../interfaces/IAccountToken';
 import type { IExternalToken } from '../../../interfaces/IExternalToken';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
@@ -38,6 +39,7 @@ const DangerZoneOperations = () => {
 	const capabilities: StableCoinCapabilities | undefined = useSelector(
 		SELECTED_WALLET_CAPABILITIES,
 	);
+	const roles = useSelector(SELECTED_TOKEN_ROLES)!;
 
 	const [disabledFeatures, setDisabledFeatures] = useState({
 		pause: false,
@@ -67,7 +69,6 @@ const DangerZoneOperations = () => {
 
 	const getAvailableFeatures = () => {
 		let isExternalToken = false;
-		let roles = [];
 		const tokensAccount = localStorage?.tokensAccount;
 		if (tokensAccount) {
 			const tokensAccountParsed = JSON.parse(tokensAccount);
@@ -81,7 +82,6 @@ const DangerZoneOperations = () => {
 					);
 					if (externalToken) {
 						isExternalToken = true;
-						roles = externalToken.roles.map((role: string) => role);
 					}
 				}
 			}

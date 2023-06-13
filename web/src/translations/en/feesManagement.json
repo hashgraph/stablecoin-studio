@@ -1,0 +1,45 @@
+{
+	"title": "Fees management",
+	"operationTitle": "Fees Management",
+	"subtitle": "Manage Custom Fees",
+	"noFeesManagement": {
+		"title": "Missing Fees Management",
+		"description": "The stable coin you have chosen does not allow fees management, please, select a different stable coin."
+	},
+	"columns": {
+		"feeType": "Fee type",
+		"collectorsExempt": "Collectors exempt",
+		"amountOrPercentage": "Amount or percentage",
+		"percentage": "Percentage",
+		"maximumAmount": "Max",
+		"minimumAmount": "Min",
+		"collectorAccount": "Accounts receiving",
+		"assessmentMethod": "Payer",
+		"feeToken": "Currency",
+		"actions": ""
+	},
+	"feeType": {
+		"fixed": "Fixed",
+		"fractional": "Fractional"
+	},
+	"tokensFeeOption": {
+		"currentToken": "Current token",
+		"customToken": "Another token",
+		"placeholder": "Introduce token or select"
+	},
+
+	"amountPlaceholder": "0",
+	"percentagePlaceholder": "0",
+	"minPlaceholder": "0",
+	"maxPlaceholder": "0",
+	"collectorAccountPlaceholder": "0.0.0",
+	"updateTokenFees": {
+		"saveChangesButtonText": "Save changes",
+		"addRowButtonText": "Add new fee"
+	},
+	"notification": {
+		"title": "{{ result }} updating token custom fees",
+		"descriptionSuccess": "Token custom fees were updated",
+		"descriptionError": "Sorry, there was an error updating token custom fees"
+	}
+}

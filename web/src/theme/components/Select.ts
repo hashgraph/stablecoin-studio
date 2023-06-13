@@ -24,7 +24,7 @@ const baseStyle = ({ isDisabled, isInvalid, hasValue }: SelectConfigProps) => {
 		label: {
 			position: 'absolute',
 			display: hasValue ? 'none' : 'block',
-			color: isInvalid ? 'red.500' : hasValue ? 'blackAlpha.500' : 'brand.primary200',
+			color: isInvalid ? 'red.500' : 'blackAlpha.500',
 			fontSize: hasValue ? 'sm' : 'md',
 			transitionDuration: '300ms',
 		},
@@ -65,18 +65,31 @@ const baseStyle = ({ isDisabled, isInvalid, hasValue }: SelectConfigProps) => {
 	};
 };
 
-const outline = ({ isInvalid, isDisabled }: SelectConfigProps) => {
+const outline = ({ isInvalid }: SelectConfigProps) => {
 	return {
 		wrapper: {
+			height: 'min',
+			width: 'full',
 			border: '1px solid',
 			borderColor: isInvalid ? 'red.500' : 'gray.600',
-			borderRadius: '4px',
-			_hover: {
-				borderColor: isInvalid ? 'red.500' : isDisabled ? 'gray.200' : 'gray.300',
-			},
+			borderRadius: '8px',
+			// _hover: {
+			// 	borderColor: isInvalid ? 'red.500' : isDisabled ? 'gray.200' : 'gray.300',
+			// },
 			_focusWithin: {
 				borderColor: isInvalid ? 'red.500' : 'gray.600',
 			},
+		},
+		menuList: {
+			overflowY: 'auto',
+			bg: 'brand.white',
+			boxShadow: 'down-black',
+			p: 2,
+			zIndex: 99,
+		},
+		valueSelected: {
+			fontSize: '14px',
+			fontWeight: '500',
 		},
 	};
 };

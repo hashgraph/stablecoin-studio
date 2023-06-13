@@ -14,7 +14,7 @@ import { SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
 
-import { KYCRequest } from 'hedera-stable-coin-sdk';
+import { KYCRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 import { propertyNotFound } from '../../../constant';
 
@@ -62,7 +62,19 @@ const CheckKycOperation = () => {
 				onError();
 				return;
 			}
-			setHasKyc(await SDKService.isAccountKYCGranted(request));
+			const hasKyc: any = await Promise.race([
+				SDKService.isAccountKYCGranted(request),
+				new Promise((resolve, reject) => {
+					setTimeout(() => {
+						reject(new Error("Account KYC information couldn't be obtained in a reasonable time."));
+					}, 10000);
+				}),
+			]).catch((e) => {
+				console.log(e.message);
+				onOpenModalAction();
+				throw e;
+			});
+			setHasKyc(hasKyc);
 			onSuccess();
 		} catch (error: any) {
 			setErrorTransactionUrl(error.transactionUrl);

@@ -18,7 +18,9 @@
  *
  */
 
+import { FactoryCashinRole } from './FactoryCashinRole.js';
 import { FactoryKey } from './FactoryKey.js';
+import { FactoryRole } from './FactoryRole.js';
 
 export class FactoryStableCoin {
 	/**
@@ -59,12 +61,12 @@ export class FactoryStableCoin {
 	/**
 	 * Token auto-renew account
 	 */
-	public autoRenewAccountAddress: string;
+	// public autoRenewAccountAddress: string;
 
 	/**
 	 * Token treasury account
 	 */
-	public treasuryAddress: string;
+	// public treasuryAddress: string;
 
 	/**
 	 * Reserve contract
@@ -84,12 +86,22 @@ export class FactoryStableCoin {
 	/**
 	 * Grant KYC Original Sender or not
 	 */
-	public grantKYCToOriginalSender: boolean;
+	// public grantKYCToOriginalSender: boolean;
 
 	/**
 	 * Token Keys
 	 */
 	public keys: FactoryKey[];
+
+	/**
+	 * Roles
+	 */
+	public roles: FactoryRole[];
+
+	/**
+	 * Cash In role
+	 */
+	public cashinRole: FactoryCashinRole;
 
 	constructor(
 		tokenName: string,
@@ -99,13 +111,15 @@ export class FactoryStableCoin {
 		tokenMaxSupply: string,
 		tokenInitialSupply: string,
 		tokenDecimals: number,
-		autoRenewAccountAddress: string,
-		treasuryAddress: string,
+		// autoRenewAccountAddress: string,
+		// treasuryAddress: string,
 		reserveAddress: string,
 		reserveInitialAmount: string,
 		createReserve: boolean,
-		grantKYCToOriginalSender: boolean,
+		// grantKYCToOriginalSender: boolean,
 		keys: FactoryKey[],
+		roles: FactoryRole[],
+		cashinRole: FactoryCashinRole,
 	) {
 		this.tokenName = tokenName;
 		this.tokenSymbol = tokenSymbol;
@@ -114,12 +128,14 @@ export class FactoryStableCoin {
 		this.tokenMaxSupply = tokenMaxSupply;
 		this.tokenInitialSupply = tokenInitialSupply;
 		this.tokenDecimals = tokenDecimals;
-		this.autoRenewAccountAddress = autoRenewAccountAddress;
-		this.treasuryAddress = treasuryAddress;
+		// this.autoRenewAccountAddress = autoRenewAccountAddress;
+		// this.treasuryAddress = treasuryAddress;
 		this.reserveAddress = reserveAddress;
 		this.reserveInitialAmount = reserveInitialAmount;
 		this.createReserve = createReserve;
-		this.grantKYCToOriginalSender = grantKYCToOriginalSender;
+		// this.grantKYCToOriginalSender = grantKYCToOriginalSender;
 		this.keys = keys;
+		this.roles = roles;
+		this.cashinRole = cashinRole;
 	}
 }

@@ -13,7 +13,12 @@ import {
 	Text,
 	VStack,
 } from '@chakra-ui/react';
-import { SupportedWallets } from 'hedera-stable-coin-sdk';
+import {
+	GetFactoryProxyConfigRequest,
+	SupportedWallets,
+	StableCoinListViewModel,
+	Network,
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 import type { FC, ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -24,6 +29,8 @@ import SDKService from '../services/SDKService';
 import { AVAILABLE_WALLETS, walletActions } from '../store/slices/walletSlice';
 import WARNING_ICON from '../assets/svg/warning.svg';
 import ERROR_ICON from '../assets/svg/error.svg';
+import { SelectController } from './Form/SelectController';
+import { useForm } from 'react-hook-form';
 
 interface ModalWalletConnectProps {
 	isOpen: boolean;
@@ -46,23 +53,54 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 		},
 	};
 
+	const stylesNetworkOptions = {
+		menuList: {
+			maxH: '220px',
+			overflowY: 'auto',
+			bg: 'brand.white',
+			boxShadow: 'down-black',
+			p: 4,
+		},
+		wrapper: {
+			border: '1px',
+			borderColor: 'brand.black',
+			borderRadius: '8px',
+			height: 'initial',
+		},
+	};
+
 	const [loading, setLoading] = useState<SupportedWallets | undefined>(undefined);
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [error, setError] = useState<any>();
 	const [rejected, setRejected] = useState<boolean>(false);
+	const [hashpackSelected, setHashpackSelected] = useState<boolean>(false);
 	const availableWallets = useSelector(AVAILABLE_WALLETS);
 
 	useEffect(() => {
 		isOpen && setLoading(undefined);
 	}, [isOpen]);
 
-	const handleWalletConnect = async (wallet: SupportedWallets) => {
+	const { control, getValues } = useForm({
+		mode: 'onChange',
+	});
+
+	const handleWalletConnect = async (wallet: SupportedWallets, network: string) => {
 		if (loading) return;
 		setLoading(wallet);
 		dispatch(walletActions.setLastWallet(wallet));
+		dispatch(walletActions.setNetwork(network));
 		dispatch(walletActions.setSelectedStableCoin(undefined));
+		dispatch(walletActions.setSelectedStableCoinProxyConfig(undefined));
+		dispatch(walletActions.setIsProxyOwner(false));
+
 		try {
-			await SDKService.connectWallet(wallet);
+			await SDKService.connectWallet(wallet, network);
+
+			const factoryProxyConfig: StableCoinListViewModel = await getFactoryProxyConfig(
+				await Network.getFactoryAddress(),
+			);
+			dispatch(walletActions.setSelectedNetworkFactoryProxyConfig(factoryProxyConfig));
+			dispatch(walletActions.setIsFactoryProxyOwner(false));
 		} catch (error: any) {
 			if ('errorCode' in error && error.errorCode === '40009') {
 				setRejected(true);
@@ -72,12 +110,45 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 		}
 	};
 
-	const handleConnectHashpackWallet = () => {
-		handleWalletConnect(SupportedWallets.HASHPACK);
+	const getFactoryProxyConfig = async (factoryId: string): Promise<StableCoinListViewModel> => {
+		const factoryProxyConfig: any = await Promise.race([
+			SDKService.getFactoryProxyConfig(
+				new GetFactoryProxyConfigRequest({
+					factoryId: factoryId,
+				}),
+			),
+			new Promise((resolve, reject) => {
+				setTimeout(() => {
+					reject(new Error("Stable coin details couldn't be obtained in a reasonable time."));
+				}, 10000);
+			}),
+		]).catch((e) => {
+			console.log(e.message);
+			throw e;
+		});
+		return factoryProxyConfig;
 	};
 
+	const handleConnectHashpackWallet = () => {
+		setHashpackSelected(true);
+	};
+
+	const unHandleConnectHashpackWallet = () => {
+		setHashpackSelected(false);
+	};
+
+	const handleConnectHashpackWalletConfirmed = () => {
+		const values = getValues();
+		handleWalletConnect(SupportedWallets.HASHPACK, values.network.value);
+	};
+
+	const networkOptions = [
+		{ value: 'testnet', label: 'Testnet' },
+		{ value: 'mainnet', label: 'Mainnet' },
+	];
+
 	const handleConnectMetamaskWallet = () => {
-		handleWalletConnect(SupportedWallets.METAMASK);
+		handleWalletConnect(SupportedWallets.METAMASK, '-');
 	};
 
 	const PairingSpinner: FC<{ wallet: SupportedWallets; children?: ReactNode }> = ({
@@ -115,8 +186,8 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 			>
 				<ModalOverlay />
 				<ModalContent data-testid='modal-action-content' p='50' w='500px'>
-					<ModalCloseButton />
-					{!error && !rejected && (
+					<ModalCloseButton onClick={unHandleConnectHashpackWallet} />
+					{!error && !rejected && !hashpackSelected && (
 						<>
 							<ModalHeader p='0' justifyContent='center'>
 								<Text
@@ -154,6 +225,51 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 										</VStack>
 									)}
 								</HStack>
+							</ModalFooter>
+						</>
+					)}
+					{hashpackSelected && (
+						<>
+							<ModalHeader p='0' justifyContent='center'>
+								<Text
+									fontSize='20px'
+									fontWeight={700}
+									textAlign='center'
+									lineHeight='16px'
+									color='brand.black'
+								>
+									Select a network
+								</Text>
+							</ModalHeader>
+							<ModalFooter alignSelf='center' pt='24px' pb='0'>
+								<VStack>
+									<SelectController
+										control={control}
+										isRequired
+										name='network'
+										defaultValue='0'
+										options={networkOptions}
+										addonLeft={true}
+										overrideStyles={stylesNetworkOptions}
+										variant='unstyled'
+									/>
+									<HStack>
+										<Button
+											data-testid='modal-notification-button'
+											onClick={unHandleConnectHashpackWallet}
+											variant='secondary'
+										>
+											{t('common.cancel')}
+										</Button>
+										<Button
+											data-testid='modal-notification-button'
+											onClick={handleConnectHashpackWalletConfirmed}
+											variant='primary'
+										>
+											{t('common.accept')}
+										</Button>
+									</HStack>
+								</VStack>
 							</ModalFooter>
 						</>
 					)}

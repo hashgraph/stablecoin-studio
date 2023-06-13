@@ -32,23 +32,30 @@
 		"coinDropdown": {
 			"placeholder": "Choose stable coin",
 			"noStableCoin": "No stable coins found with that id, would you like to import it?",
-			"invalidStableCoinId": "Enter a valid token id"
+			"invalidStableCoinId": "Enter a valid token id",
+			"importToken": "Import stable coin: {{ tokenId }}"
 		},
 		"createSC": "Create coin",
-		"addSC": "Add token"
+		"alertNoEnv": "You have not configured a factory address. Without it you can not create a stable coin.",
+		"alertNoEnvLink": "Go to documentation",
+		"alertNotHederaAccount": "Not a Hedera Account in this network",
+		"alertNotHederaNetwork": "Current network is not an hedera network"
 	},
 	"sidebar": {
 		"operations": "Operations",
 		"role": "Role management",
 		"details": "Stable coin details",
-		"proofOfReserve": "Proof of reserve"
+		"proofOfReserve": "Proof of reserve",
+		"feesManagement": "Fees management",
+		"settings": "Settings"
 	},
 	"validations": {
 		"required": "This field is required",
 		"invalidAccount": "Incorrect account",
 		"invalidAmount": "Invalid amount",
 		"invalidCoinId": "Invalid stable coin id",
-		"decimalsValidation": "The amount has an invalid number of decimals"
+		"decimalsValidation": "The amount has an invalid number of decimals",
+		"tokenIdNotExists": "Token {{ tokenId }} not exists"
 	},
 	"operations": {
 		"title": "Operations"

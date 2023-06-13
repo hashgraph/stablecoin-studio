@@ -21,26 +21,26 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
-import {
-	CustomFee,
-	FixedFee,
-	FractionalFee,
-	MAX_CUSTOM_FEES,
-} from '../../../domain/context/fee/CustomFee.js';
+import { MAX_CUSTOM_FEES } from '../../../domain/context/fee/CustomFee.js';
 import { InvalidLength } from './error/InvalidLength.js';
 import AddFixedFeeRequest from './AddFixedFeeRequest.js';
 import AddFractionalFeeRequest from './AddFractionalFeeRequest.js';
 import { InvalidType } from './error/InvalidType.js';
+import {
+	RequestCustomFee,
+	isRequestFractionalFee,
+	isRequestFixedFee,
+} from './BaseRequest.js';
 
 export default class UpdateCustomFeesRequest extends ValidatedRequest<UpdateCustomFeesRequest> {
-	customFees: CustomFee[];
+	customFees: RequestCustomFee[];
 	tokenId: string;
 
 	constructor({
 		customFees,
 		tokenId,
 	}: {
-		customFees: CustomFee[];
+		customFees: RequestCustomFee[];
 		tokenId: string;
 	}) {
 		super({
@@ -57,40 +57,27 @@ export default class UpdateCustomFeesRequest extends ValidatedRequest<UpdateCust
 					];
 
 				val.forEach((customFee) => {
-					if (customFee instanceof FixedFee)
+					if (isRequestFixedFee(customFee))
 						return new AddFixedFeeRequest({
 							tokenId: this.tokenId,
-							collectorId: customFee.collectorId
-								? customFee.collectorId.toString()
-								: '',
-							tokenIdCollected: customFee.tokenId
-								? customFee.tokenId.toString()
-								: '',
-							amount: customFee.amount
-								? customFee.amount.toString()
-								: '',
-							decimals: 0, // just for checking we do not need the actual decimals
-							collectorsExempt:
-								customFee.collectorsExempt ?? false,
+							collectorId: customFee.collectorId,
+							collectorsExempt: customFee.collectorsExempt,
+							decimals: customFee.decimals,
+							tokenIdCollected: customFee.tokenIdCollected,
+							amount: customFee.amount,
 						});
-					else if (customFee instanceof FractionalFee)
+					else if (isRequestFractionalFee(customFee))
 						return new AddFractionalFeeRequest({
 							tokenId: this.tokenId,
-							collectorId: customFee.collectorId
-								? customFee.collectorId.toString()
-								: '',
-							amountNumerator: customFee.amountNumerator
-								? customFee.amountNumerator.toString()
-								: '',
-							amountDenominator: customFee.amountDenominator
-								? customFee.amountDenominator.toString()
-								: '',
-							min: customFee.min ? customFee.min.toString() : '',
-							max: customFee.max ? customFee.max.toString() : '',
-							decimals: 0, // just for checking we do not need the actual decimals
-							net: customFee.net ?? false,
-							collectorsExempt:
-								customFee.collectorsExempt ?? false,
+							collectorId: customFee.collectorId,
+							collectorsExempt: customFee.collectorsExempt,
+							decimals: customFee.decimals,
+							percentage: customFee.percentage,
+							amountNumerator: customFee.amountNumerator,
+							amountDenominator: customFee.amountDenominator,
+							min: customFee.min,
+							max: customFee.max,
+							net: customFee.net,
 						});
 					else
 						return [

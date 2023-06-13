@@ -46,12 +46,20 @@ import { TokenSupplyType } from './TokenSupply.js';
 import { TokenType } from './TokenType.js';
 import EvmAddress from '../contract/EvmAddress.js';
 import { CustomFee } from '../fee/CustomFee.js';
+import { CashInAllowanceInvalid } from './error/CashInAllowanceInvalid.js';
+import InvalidAutoRenewPeriod from './error/InvalidAutoRenewPeriod.js';
+import InvalidExpirationTimestamp from './error/InvalidExpirationTimestamp.js';
 
 const MAX_SUPPLY = 9_223_372_036_854_775_807n;
 const TEN = 10;
 const ONE_HUNDRED = 100;
 const EIGHTEEN = 18;
 const ZERO = 0;
+const AUTO_RENEW_PERIOD_MIN = 30;
+const AUTO_RENEW_PERIOD_MAX = 92;
+const EXPIRATION_TIME_MIN = 1;
+const EXPIRATION_TIME_MAX = 730;
+export const TRANSFER_LIST_SIZE = 10;
 
 export interface StableCoinProps {
 	name: string;
@@ -63,7 +71,9 @@ export interface StableCoinProps {
 	maxSupply?: BigDecimal;
 	memo?: string;
 	proxyAddress?: HederaId;
+	proxyAdminAddress?: HederaId;
 	evmProxyAddress?: EvmAddress;
+	evmProxyAdminAddress?: EvmAddress;
 	freezeKey?: PublicKey | ContractId;
 	freezeDefault?: boolean;
 	kycKey?: PublicKey | ContractId;
@@ -76,11 +86,20 @@ export interface StableCoinProps {
 	tokenType?: TokenType;
 	supplyType?: TokenSupplyType;
 	tokenId?: HederaId;
-	grantKYCToOriginalSender?: boolean;
 	autoRenewAccount?: HederaId;
-	autoRenewAccountPeriod?: number;
+	autoRenewPeriod?: number;
+	expirationTimestamp?: number;
 	deleted?: boolean;
 	customFees?: CustomFee[];
+	burnRoleAccount?: HederaId;
+	wipeRoleAccount?: HederaId;
+	rescueRoleAccount?: HederaId;
+	pauseRoleAccount?: HederaId;
+	freezeRoleAccount?: HederaId;
+	deleteRoleAccount?: HederaId;
+	kycRoleAccount?: HederaId;
+	cashInRoleAccount?: HederaId;
+	cashInRoleAllowance?: BigDecimal;
 }
 
 export class StableCoin extends BaseEntity implements StableCoinProps {
@@ -94,7 +113,9 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 	maxSupply?: BigDecimal;
 	memo?: string;
 	proxyAddress?: HederaId;
+	proxyAdminAddress?: HederaId;
 	evmProxyAddress?: EvmAddress;
+	evmProxyAdminAddress?: EvmAddress;
 	freezeKey?: PublicKey | ContractId;
 	freezeDefault?: boolean;
 	kycKey?: PublicKey | ContractId;
@@ -109,9 +130,19 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 	tokenId?: HederaId;
 	grantKYCToOriginalSender?: boolean;
 	autoRenewAccount?: HederaId;
-	autoRenewAccountPeriod?: number;
+	autoRenewPeriod?: number;
+	expirationTimestamp?: number;
 	deleted?: boolean;
 	customFees?: CustomFee[];
+	burnRoleAccount?: HederaId;
+	wipeRoleAccount?: HederaId;
+	rescueRoleAccount?: HederaId;
+	pauseRoleAccount?: HederaId;
+	freezeRoleAccount?: HederaId;
+	deleteRoleAccount?: HederaId;
+	kycRoleAccount?: HederaId;
+	cashInRoleAccount?: HederaId;
+	cashInRoleAllowance?: BigDecimal;
 
 	constructor(params: StableCoinProps) {
 		const {
@@ -135,13 +166,24 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 			supplyType,
 			tokenId,
 			autoRenewAccount,
-			autoRenewAccountPeriod,
+			autoRenewPeriod,
+			expirationTimestamp,
 			deleted,
 			paused,
 			evmProxyAddress,
+			evmProxyAdminAddress,
 			proxyAddress,
-			grantKYCToOriginalSender,
+			proxyAdminAddress,
 			customFees,
+			burnRoleAccount,
+			wipeRoleAccount,
+			rescueRoleAccount,
+			freezeRoleAccount,
+			pauseRoleAccount,
+			deleteRoleAccount,
+			kycRoleAccount,
+			cashInRoleAccount,
+			cashInRoleAllowance,
 		} = params;
 		super();
 		this.adminKey = adminKey;
@@ -168,13 +210,24 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 			: TokenSupplyType.INFINITE;
 		this.tokenId = tokenId ?? HederaId.from('0.0.0');
 		this.autoRenewAccount = autoRenewAccount ?? HederaId.from('0.0.0');
-		this.autoRenewAccountPeriod = autoRenewAccountPeriod ?? 0;
+		this.autoRenewPeriod = autoRenewPeriod ?? 0;
+		this.expirationTimestamp = expirationTimestamp ?? 0;
 		this.paused = paused ?? false;
 		this.deleted = deleted ?? false;
 		this.evmProxyAddress = evmProxyAddress;
+		this.evmProxyAdminAddress = evmProxyAdminAddress;
 		this.proxyAddress = proxyAddress;
-		this.grantKYCToOriginalSender = grantKYCToOriginalSender;
+		this.proxyAdminAddress = proxyAdminAddress;
 		this.customFees = customFees;
+		this.burnRoleAccount = burnRoleAccount ?? HederaId.from('0.0.0');
+		this.wipeRoleAccount = wipeRoleAccount ?? HederaId.from('0.0.0');
+		this.rescueRoleAccount = rescueRoleAccount ?? HederaId.from('0.0.0');
+		this.freezeRoleAccount = freezeRoleAccount ?? HederaId.from('0.0.0');
+		this.pauseRoleAccount = pauseRoleAccount ?? HederaId.from('0.0.0');
+		this.deleteRoleAccount = deleteRoleAccount ?? HederaId.from('0.0.0');
+		this.kycRoleAccount = kycRoleAccount ?? HederaId.from('0.0.0');
+		this.cashInRoleAccount = cashInRoleAccount ?? HederaId.from('0.0.0');
+		this.cashInRoleAllowance = cashInRoleAllowance;
 	}
 
 	public static checkName(value: string): BaseError[] {
@@ -235,6 +288,18 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 			BigDecimal.fromValue(BigNumber.from(MAX_SUPPLY), decimals);
 		if (!CheckNums.isWithinRange(initialSupply, min, max)) {
 			list.push(new InitSupplyInvalid(initialSupply.toString()));
+		}
+		return list;
+	}
+
+	public static checkCashInAllowance(
+		cashInAllowance: BigDecimal,
+		decimals: number,
+	): BaseError[] {
+		const list: BaseError[] = [];
+		const max = BigDecimal.fromValue(BigNumber.from(MAX_SUPPLY), decimals);
+		if (!CheckNums.isWithinRange(cashInAllowance, BigDecimal.ZERO, max)) {
+			list.push(new CashInAllowanceInvalid(cashInAllowance.toString()));
 		}
 		return list;
 	}
@@ -347,6 +412,56 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 			return list;
 		}
 		return list;
+	}
+
+	public static checkExpirationTimestamp(value: string): BaseError[] {
+		const errorList: BaseError[] = [];
+
+		const regexp = /^\d{19}$/;
+		if (!value.match(regexp)) {
+			return [new InvalidType(value, 'timestamp')];
+		}
+
+		const epochTimestamp: number = Number(value) / 1000000;
+		const date = new Date(epochTimestamp);
+		const minDate: Date = new Date();
+		minDate.setDate(minDate.getDate() + EXPIRATION_TIME_MIN);
+		const maxDate: Date = new Date();
+		maxDate.setDate(maxDate.getDate() + EXPIRATION_TIME_MAX);
+
+		if (date < minDate || date > maxDate) {
+			errorList.push(
+				new InvalidExpirationTimestamp(date, minDate, maxDate),
+			);
+		}
+
+		return errorList;
+	}
+
+	public static checkAutoRenewPeriod(value: string): BaseError[] {
+		const errorList: BaseError[] = [];
+
+		const v: number = Number(value) / 60 / 60 / 24;
+		if (!Number.isInteger(v)) {
+			return [new InvalidType(v, 'integer')];
+		}
+
+		if (
+			!CheckNums.isWithinRange(
+				v,
+				AUTO_RENEW_PERIOD_MIN,
+				AUTO_RENEW_PERIOD_MAX,
+			)
+		) {
+			errorList.push(
+				new InvalidAutoRenewPeriod(
+					v,
+					AUTO_RENEW_PERIOD_MIN,
+					AUTO_RENEW_PERIOD_MAX,
+				),
+			);
+		}
+		return errorList;
 	}
 
 	public getDecimalOperator(): number {

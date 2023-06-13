@@ -1,9 +1,9 @@
 import { language } from '../../../index.js';
 import { utilsService } from '../../../index.js';
 import Service from '../Service.js';
-import { WipeRequest, StableCoin } from 'hedera-stable-coin-sdk';
+import { WipeRequest, StableCoin } from '@hashgraph-dev/stablecoin-npm-sdk';
 
-export default class WipeStableCoinsService extends Service {
+export default class WipeStableCoinService extends Service {
   constructor() {
     super('Wipe Stable Coin');
   }

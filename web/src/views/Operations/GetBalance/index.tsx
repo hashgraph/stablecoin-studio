@@ -13,7 +13,7 @@ import SDKService from '../../../services/SDKService';
 import { SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
 import { useNavigate } from 'react-router-dom';
 import { RouterManager } from '../../../Router/RouterManager';
-import { GetAccountBalanceRequest } from 'hedera-stable-coin-sdk';
+import { GetAccountBalanceRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 import { propertyNotFound } from '../../../constant';
 
@@ -61,7 +61,18 @@ const GetBalanceOperation = () => {
 				return;
 			}
 
-			const balance = await SDKService.getBalance(request);
+			const balance: any = await Promise.race([
+				SDKService.getBalance(request),
+				new Promise((resolve, reject) => {
+					setTimeout(() => {
+						reject(new Error("Account balance couldn't be obtained in a reasonable time."));
+					}, 10000);
+				}),
+			]).catch((e) => {
+				console.log(e.message);
+				onOpenModalAction();
+				throw e;
+			});
 			setBalance(balance.value.toString());
 			onSuccess();
 		} catch (error: any) {

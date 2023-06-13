@@ -2,6 +2,7 @@ import type {
 	InputProps as ChakraInputProps,
 	FormControlProps,
 	FormLabelProps,
+	StackProps,
 } from '@chakra-ui/react';
 import { FormControl, FormErrorMessage, Input, InputGroup, Stack } from '@chakra-ui/react';
 import type { Control, FieldValues, UseControllerProps } from 'react-hook-form';
@@ -24,6 +25,7 @@ export interface InputControllerProps extends Omit<ChakraInputProps, 'name'> {
 	formStyle?: FormControlProps;
 	labelStyle?: FormLabelProps;
 	name: string;
+	containerStyle?: StackProps;
 }
 
 const InputController = ({
@@ -43,12 +45,15 @@ const InputController = ({
 	formStyle,
 	autoComplete = 'off',
 	labelStyle,
+	defaultValue,
+	containerStyle,
 	...props
 }: InputControllerProps) => {
 	return (
 		<Controller
 			control={control}
 			name={name}
+			defaultValue={defaultValue}
 			rules={rules}
 			render={({ field: { onChange, value = '' }, fieldState: { error } }) => {
 				const onChangeCustom = (event: ChangeEvent<HTMLInputElement>) => {
@@ -61,7 +66,7 @@ const InputController = ({
 				};
 
 				return (
-					<Stack w='full'>
+					<Stack w='full' {...containerStyle}>
 						<FormControl isInvalid={!!error} {...formStyle}>
 							{label && (
 								<InputLabel isRequired={isRequired} style={labelStyle}>
