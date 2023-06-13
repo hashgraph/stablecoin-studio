@@ -19,15 +19,15 @@ export async function deployContract(
     privateKey: string,
     clientOperator: Client,
     constructorParameters?: any,
-    adminKey?: PrivateKey
+    contractMemo?: string
 ): Promise<ContractId> {
-    const Key = adminKey ? adminKey : PrivateKey.fromStringED25519(privateKey)
-
     const transaction = new ContractCreateFlow()
         .setBytecode(factory.bytecode)
-        .setGas(GasDeploy)
-        .setAdminKey(Key)
-
+        .setGas(250_000)
+    //.setAdminKey(Key)
+    if (contractMemo) {
+        transaction.setContractMemo(contractMemo)
+    }
     if (constructorParameters) {
         transaction.setConstructorParameters(constructorParameters)
     }

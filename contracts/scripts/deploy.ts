@@ -5,6 +5,7 @@ import {
     TokenSupplyType,
     PrivateKey,
     Client,
+    ContractFunctionParameters,
 } from '@hashgraph/sdk'
 import { BigNumber } from 'ethers'
 import {
@@ -17,7 +18,12 @@ import {
     ERC1967Proxy__factory,
 } from '../typechain-types'
 
-import { getClient, toEvmAddress } from './utils'
+import {
+    getClient,
+    toEvmAddress,
+    associateToken,
+    deployContractSDK,
+} from './utils'
 
 import {
     BURN_ROLE,
@@ -36,8 +42,7 @@ import {
     deployUpgradableContract,
 } from './contractsLifeCycle/deploy'
 
-import { contractCall     associateToken,
-} from './contractsLifeCycle/utils'
+import { contractCall } from './contractsLifeCycle/utils'
 
 const hederaTokenManagerAddress = '0.0.13923660'
 export const factoryProxyAddress = '0.0.13923715'

@@ -14,6 +14,8 @@ import {
     TokenDissociateTransaction,
     TransferTransaction,
     TransactionResponse,
+    ContractId,
+    ContractCreateFlow,
 } from '@hashgraph/sdk'
 
 import Web3 from 'web3'
