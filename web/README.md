@@ -224,7 +224,7 @@ If the user selects the option to manage the stable coin, it could change the **
 
 ![Selection_014](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/abb0b89f-6ec5-449f-a035-f7f9fcea08e1)
 
-While if the user select the option to manage the factory, it could change the **factory** contract proxy admin owner and upgrade the factory contract implementation.
+While if the user select the option to manage the factory, it could change the **Factory** contract proxy admin owner and upgrade the factory contract implementation.
 
 ![Selection_019](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/3ebb3243-e12a-470b-91cc-de9086af9a9e)
 
