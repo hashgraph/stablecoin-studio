@@ -39,6 +39,18 @@ contract HederaTokenManager is
     RoleManagement
 {
     uint256 private constant _SUPPLY_KEY_BIT = 4;
+    // HTS token metadata
+    string private _metadata;
+
+    /**
+     * @dev Checks that an string is not longer than 100 characters
+     *
+     * @param str The string whose length is going to be checked
+     */
+    modifier lessThan100(string calldata str) {
+        if (bytes(str).length > 100) revert MoreThan100Error(str);
+        _;
+    }
 
     /**
      * @dev Constructor required to avoid Initializer attack on logic contract
@@ -61,8 +73,10 @@ contract HederaTokenManager is
         payable
         initializer
         addressIsNotZero(init.originalSender)
+        lessThan100(init.tokenMetadataURI)
         returns (address)
     {
+        _setMetadata(init.tokenMetadataURI);
         __reserveInit(init.reserveAddress); // Initialize reserve
         __rolesInit();
         _grantInitialRoles(init.originalSender, init.roles, init.cashinRole);
@@ -143,8 +157,11 @@ contract HederaTokenManager is
     )
         external
         override(IHederaTokenManager)
+        lessThan100(updatedToken.tokenMetadataURI)
         onlyRole(_getRoleId(RoleName.ADMIN))
     {
+        _setMetadata(updatedToken.tokenMetadataURI);
+
         address currentTokenAddress = _getTokenAddress();
 
         address newTreasury;
@@ -327,5 +344,24 @@ contract HederaTokenManager is
         _checkResponse(responseCode);
 
         return info.token.memo;
+    }
+
+    /**
+     * @dev Gets the metadata
+     *
+     */
+    function getMetadata() external view returns (string memory) {
+        return _metadata;
+    }
+
+    /**
+     * @dev Sets the metadata
+     *
+     * @param metadata The metadata to set
+     */
+    function _setMetadata(string calldata metadata) private {
+        _metadata = metadata;
+
+        emit MetadataSet(msg.sender, metadata);
     }
 }

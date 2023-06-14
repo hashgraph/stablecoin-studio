@@ -274,6 +274,7 @@ export async function updateToken(
     keys: any,
     second: number,
     autoRenewPeriod: number,
+    tokenMetadataURI: string,
     client: Client
 ): Promise<boolean> {
     const updateToken = {
@@ -282,6 +283,7 @@ export async function updateToken(
         keys: keys,
         second: second,
         autoRenewPeriod: autoRenewPeriod,
+        tokenMetadataURI: tokenMetadataURI,
     }
     const params = [updateToken]
     const response = await contractCall(
@@ -293,6 +295,22 @@ export async function updateToken(
         HederaTokenManager__factory.abi
     )
     return response[0]
+}
+
+export async function getMetadata(
+    proxyAddress: ContractId,
+    client: Client
+): Promise<string> {
+    const params: string[] = []
+    const result = await contractCall(
+        proxyAddress,
+        'getMetadata',
+        params,
+        client,
+        Gas2,
+        HederaTokenManager__factory.abi
+    )
+    return result[0]
 }
 
 // HederaTokenManagerProxy ///////////////////////////////////////////////////

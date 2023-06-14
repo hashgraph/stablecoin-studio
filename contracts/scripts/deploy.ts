@@ -38,10 +38,10 @@ import {
     associateToken,
 } from './utils'
 
-const hederaTokenManagerAddress = '0.0.13923660'
-export const factoryProxyAddress = '0.0.13923715'
-const factoryProxyAdminAddress = '0.0.13923699'
-const factoryAddress = '0.0.13923689'
+const hederaTokenManagerAddress = '0.0.14422854'
+export const factoryProxyAddress = '0.0.14422874'
+const factoryProxyAdminAddress = '0.0.14422867'
+const factoryAddress = '0.0.14422862'
 
 export function initializeClients(): [
     Client,
@@ -323,6 +323,7 @@ export type DeployParameters = {
     allRolesToCreator?: boolean
     RolesToAccount?: string
     isRolesToAccountE25519?: boolean
+    initialMetadata?: string
 }
 export async function deployContractsWithSDK({
     name,
@@ -345,6 +346,7 @@ export async function deployContractsWithSDK({
     allRolesToCreator = true,
     RolesToAccount = '',
     isRolesToAccountE25519 = false,
+    initialMetadata = 'test',
 }: DeployParameters): Promise<ContractId[]> {
     const AccountEvmAddress = await toEvmAddress(account, isED25519Type)
 
@@ -431,6 +433,7 @@ export async function deployContractsWithSDK({
             RolesToAccount,
             isRolesToAccountE25519
         ),
+        metadata: initialMetadata,
     }
 
     console.log(`Token Object: ${JSON.stringify(tokenObject)}`)

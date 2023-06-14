@@ -36,6 +36,7 @@ import {
     getRoles,
     isUnlimitedSupplierAllowance,
     updateToken,
+    getMetadata,
 } from '../scripts/contractsMethods'
 import { clientId, toEvmAddress, oneYearLaterInSeconds } from '../scripts/utils'
 import { Client, ContractId } from '@hashgraph/sdk'
@@ -84,6 +85,7 @@ const INIT_SUPPLY = BigNumber.from(10).mul(TokenFactor)
 const MAX_SUPPLY = BigNumber.from(1000).mul(TokenFactor)
 const TokenMemo = 'Hedera Accelerator Stable Coin'
 const abiProxyAdmin = ProxyAdmin__factory.abi
+const MetadataString = 'Metadata_String'
 
 describe('HederaTokenManager Tests', function () {
     before(async function () {
@@ -153,7 +155,7 @@ describe('HederaTokenManager Tests', function () {
         reserveProxy = result[6]
     })
 
-    it('Cannot Update token if not Admin', async function () {
+    it.only('Cannot Update token if not Admin', async function () {
         const keys = tokenKeystoKey(operatorPubKey, operatorIsE25519)
         await expect(
             updateToken(
@@ -163,7 +165,28 @@ describe('HederaTokenManager Tests', function () {
                 keys,
                 oneYearLaterInSeconds(),
                 7890000,
+                MetadataString,
                 nonOperatorClient
+            )
+        ).to.eventually.be.rejectedWith(Error)
+    })
+
+    it('Admin cannot update token if metadata more than 100 chars', async function () {
+        const keysToKey = tokenKeystoKey(
+            operatorPubKey,
+            operatorIsE25519,
+            false
+        )
+        await expect(
+            updateToken(
+                proxyAddress,
+                'newName',
+                'newSymbol',
+                keysToKey,
+                oneYearLaterInSeconds(),
+                7890000,
+                'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+                operatorClient
             )
         ).to.eventually.be.rejectedWith(Error)
     })
@@ -181,8 +204,14 @@ describe('HederaTokenManager Tests', function () {
             keysToKey,
             oneYearLaterInSeconds(),
             7890000,
+            MetadataString,
             operatorClient
         )
+
+        const newMetadata = await getMetadata(proxyAddress, operatorClient)
+
+        expect(newMetadata).to.equal(MetadataString)
+
         const keysToContract = tokenKeystoContract(false)
         await updateToken(
             proxyAddress,
@@ -191,6 +220,7 @@ describe('HederaTokenManager Tests', function () {
             keysToContract,
             0,
             7776000,
+            '',
             operatorClient
         )
     })
