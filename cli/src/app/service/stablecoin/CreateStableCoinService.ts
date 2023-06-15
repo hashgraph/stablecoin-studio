@@ -189,6 +189,16 @@ export default class CreateStableCoinService extends Service {
           tokenToCreate.initialSupply = initialSupply;
         },
       );
+
+      await utilsService.handleValidation(
+        () => tokenToCreate.validate('metadata'),
+        async () => {
+          tokenToCreate.metadata = await utilsService.defaultSingleAsk(
+            language.getText('stablecoin.askMetadata'),
+            tokenToCreate.metadata || '',
+          );
+        },
+      );
     }
 
     const managedBySC = await this.askForManagedFeatures();
@@ -367,6 +377,7 @@ export default class CreateStableCoinService extends Service {
       kycRole: tokenToCreate.kycRoleAccount,
       cashinRole: tokenToCreate.cashInRoleAccount,
       cashinAllowance: tokenToCreate.cashInRoleAllowance,
+      metadata: tokenToCreate.metadata,
     });
     if (
       !(await utilsService.defaultConfirmAsk(

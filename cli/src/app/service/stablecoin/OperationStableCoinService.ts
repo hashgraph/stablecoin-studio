@@ -2843,6 +2843,18 @@ export default class OperationStableCoinService extends Service {
         );
         break;
 
+      case language.getText('tokenConfiguration.options.metadata'):
+        await utilsService.handleValidation(
+          () => updateRequest.validate('metadata'),
+          async () => {
+            updateRequest.metadata = await utilsService.defaultSingleAsk(
+              language.getText('stablecoin.askMetadata'),
+              updateRequest.metadata || stableCoinViewModel.metadata,
+            );
+          },
+        );
+        break;
+
       case language.getText('tokenConfiguration.options.save'):
         await this.resumeChanges(updateRequest, stableCoinViewModel);
 
