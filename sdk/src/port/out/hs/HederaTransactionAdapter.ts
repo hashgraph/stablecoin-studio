@@ -1025,7 +1025,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					autoRenewPeriod: params?.autoRenewPeriod
 						? params.autoRenewPeriod
 						: -1,
-					metadata: params?.metadata ?? '',
+					tokenMetadataURI: params?.metadata ?? '',
 				};
 				break;
 

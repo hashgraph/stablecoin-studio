@@ -1792,7 +1792,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					autoRenewPeriod: params?.autoRenewPeriod
 						? params.autoRenewPeriod
 						: -1,
-					metadata: params?.metadata ?? '',
+					tokenMetadataURI: params?.metadata ?? '',
 				};
 				return RPCTransactionResponseAdapter.manageResponse(
 					await HederaTokenManager__factory.connect(
