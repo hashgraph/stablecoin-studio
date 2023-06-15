@@ -54,6 +54,9 @@ export default class UpdateRequest extends ValidatedRequest<UpdateRequest> {
 	@OptionalField()
 	feeScheduleKey?: RequestPublicKey;
 
+	@OptionalField()
+	metadata?: string | undefined;
+
 	constructor({
 		tokenId,
 		name,
@@ -65,6 +68,7 @@ export default class UpdateRequest extends ValidatedRequest<UpdateRequest> {
 		wipeKey,
 		pauseKey,
 		feeScheduleKey,
+		metadata,
 	}: {
 		tokenId: string;
 		name?: string;
@@ -76,6 +80,7 @@ export default class UpdateRequest extends ValidatedRequest<UpdateRequest> {
 		wipeKey?: RequestPublicKey;
 		pauseKey?: RequestPublicKey;
 		feeScheduleKey?: RequestPublicKey;
+		metadata?: string;
 	}) {
 		super({
 			name: (val) => {
@@ -119,5 +124,6 @@ export default class UpdateRequest extends ValidatedRequest<UpdateRequest> {
 		this.wipeKey = wipeKey;
 		this.pauseKey = pauseKey;
 		this.feeScheduleKey = feeScheduleKey;
+		this.metadata = metadata;
 	}
 }

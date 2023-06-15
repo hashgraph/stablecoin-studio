@@ -252,6 +252,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				keys,
 				roles,
 				cashinRole,
+				coin.metadata ?? '',
 			);
 
 			const factoryInstance = StableCoinFactory__factory.connect(
@@ -363,6 +364,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		feeScheduleKey: PublicKey | undefined,
 		pauseKey: PublicKey | undefined,
 		wipeKey: PublicKey | undefined,
+		metadata: string | undefined,
 	): Promise<TransactionResponse<any, Error>> {
 		const params = new Params({
 			name: name,
@@ -374,6 +376,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			feeScheduleKey: feeScheduleKey,
 			pauseKey: pauseKey,
 			wipeKey: wipeKey,
+			metadata: metadata,
 		});
 		return this.performOperation(coin, Operation.UPDATE, params);
 	}
@@ -1784,8 +1787,8 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					params?.pauseKey,
 				];
 				const filteredContractParams: any = {
-					tokenName: params?.name ? params?.name : '',
-					tokenSymbol: params?.symbol ? params?.symbol : '',
+					tokenName: params?.name ?? '',
+					tokenSymbol: params?.symbol ?? '',
 					keys: this.setKeysForSmartContract(providedKeys),
 					second: params?.expirationTime
 						? Math.floor(params.expirationTime / 1000000000)
@@ -1793,6 +1796,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					autoRenewPeriod: params?.autoRenewPeriod
 						? params.autoRenewPeriod
 						: -1,
+					metadata: params?.metadata ?? '',
 				};
 				return RPCTransactionResponseAdapter.manageResponse(
 					await HederaTokenManager__factory.connect(
@@ -2003,6 +2007,7 @@ class Params {
 	pauseKey?: PublicKey;
 	wipeKey?: PublicKey;
 	supplyKey?: PublicKey;
+	metadata?: string;
 
 	constructor({
 		role,
@@ -2018,6 +2023,7 @@ class Params {
 		pauseKey,
 		wipeKey,
 		supplyKey,
+		metadata,
 	}: {
 		role?: string;
 		targetId?: string;
@@ -2032,6 +2038,7 @@ class Params {
 		pauseKey?: PublicKey;
 		wipeKey?: PublicKey;
 		supplyKey?: PublicKey;
+		metadata?: string;
 	}) {
 		this.role = role;
 		this.targetId = targetId;
@@ -2046,5 +2053,6 @@ class Params {
 		this.pauseKey = pauseKey;
 		this.wipeKey = wipeKey;
 		this.supplyKey = supplyKey;
+		this.metadata = metadata;
 	}
 }

@@ -207,6 +207,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				keys,
 				roles,
 				cashinRole,
+				coin.metadata ?? '',
 			);
 
 			const params = [
@@ -900,6 +901,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		feeScheduleKey: PublicKey | undefined,
 		pauseKey: PublicKey | undefined,
 		wipeKey: PublicKey | undefined,
+		metadata: string | undefined,
 	): Promise<TransactionResponse<any, Error>> {
 		const params = new Params({
 			name: name,
@@ -911,6 +913,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			feeScheduleKey: feeScheduleKey,
 			pauseKey: pauseKey,
 			wipeKey: wipeKey,
+			metadata: metadata,
 		});
 		if (!coin.coin.tokenId)
 			throw new Error(
@@ -1013,8 +1016,8 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					params?.pauseKey,
 				];
 				filteredContractParams[0] = {
-					tokenName: params?.name ? params?.name : '',
-					tokenSymbol: params?.symbol ? params?.symbol : '',
+					tokenName: params?.name ?? '',
+					tokenSymbol: params?.symbol ?? '',
 					keys: this.setKeysForSmartContract(providedKeys),
 					second: params?.expirationTime
 						? Math.floor(params.expirationTime / 1000000000)
@@ -1022,6 +1025,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					autoRenewPeriod: params?.autoRenewPeriod
 						? params.autoRenewPeriod
 						: -1,
+					metadata: params?.metadata ?? '',
 				};
 				break;
 
@@ -1326,6 +1330,7 @@ class Params {
 	pauseKey?: PublicKey;
 	wipeKey?: PublicKey;
 	supplyKey?: PublicKey;
+	metadata?: string;
 
 	constructor({
 		proxy,
@@ -1347,6 +1352,7 @@ class Params {
 		pauseKey,
 		wipeKey,
 		supplyKey,
+		metadata,
 	}: {
 		proxy?: HederaId;
 		role?: string;
@@ -1367,6 +1373,7 @@ class Params {
 		pauseKey?: PublicKey;
 		wipeKey?: PublicKey;
 		supplyKey?: PublicKey;
+		metadata?: string;
 	}) {
 		this.proxy = proxy;
 		this.role = role;
@@ -1387,5 +1394,6 @@ class Params {
 		this.pauseKey = pauseKey;
 		this.wipeKey = wipeKey;
 		this.supplyKey = supplyKey;
+		this.metadata = metadata;
 	}
 }

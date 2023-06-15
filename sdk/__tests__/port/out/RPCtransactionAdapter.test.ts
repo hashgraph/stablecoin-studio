@@ -847,6 +847,7 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 			feeScheduleKey,
 			pauseKey,
 			wipeKey,
+			'',
 		);
 
 		await delay();
@@ -878,6 +879,7 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 			PublicKey.NULL,
 			PublicKey.NULL,
 			PublicKey.NULL,
+			'',
 		);
 	}, 1500000);
 
