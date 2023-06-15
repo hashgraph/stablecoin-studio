@@ -23,10 +23,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
-import {
-	PublicKey as HPublicKey,
-	ContractId as HContractId,
-} from '@hashgraph/sdk';
+import { ContractId as HContractId } from '@hashgraph/sdk';
 import {
 	HederaTokenManager__factory,
 	HederaReserve__factory,
@@ -45,7 +42,6 @@ import { CapabilityDecider, Decision } from '../CapabilityDecider.js';
 import { Operation } from '../../../domain/context/stablecoin/Capability.js';
 import { CapabilityError } from '../hs/error/CapabilityError.js';
 import { CallableContract } from '../../../core/Cast.js';
-import { TokenId } from '@hashgraph/sdk';
 import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
 import detectEthereumProvider from '@metamask/detect-provider';
 import { RuntimeError } from '../../../core/error/RuntimeError.js';

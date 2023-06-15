@@ -177,6 +177,7 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 			kycRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
 			cashInRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
 			cashInRoleAllowance: BigDecimal.ZERO,
+			metadata: '',
 		});
 
 		stableCoinCapabilitiesSC = await createToken(

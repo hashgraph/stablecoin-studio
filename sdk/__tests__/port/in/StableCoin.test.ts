@@ -148,6 +148,7 @@ describe('🧪 Stablecoin test', () => {
 			deleteRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
 			cashInRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
 			cashInRoleAllowance: '0',
+			metadata: '',
 		});
 		const requestHTS = new CreateRequest({
 			name: 'TEST_ACCELERATOR_HTS',
@@ -169,6 +170,7 @@ describe('🧪 Stablecoin test', () => {
 			deleteRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
 			cashInRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
 			cashInRoleAllowance: '0',
+			metadata: '',
 		});
 
 		stableCoinSC = (await StableCoin.create(requestSC)).coin;
