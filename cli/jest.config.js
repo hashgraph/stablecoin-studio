@@ -6,19 +6,12 @@ module.exports = {
     // },
   },
   preset: 'ts-jest',
-  globals: {
-    'ts-jest': {
-      useESM: true,
-      useCJS: true,
-    },
-  },
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.(m)?js$': '$1',
   },
-  // testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.(m)?ts$',
   testMatch: ['**/__tests__/**/*.(test|spec).[jt]s?(x)'],
+  testPathIgnorePatterns: ['/build/', '/src_old/'],
   coverageDirectory: 'coverage',
-  testPathIgnorePatterns: ['/build/'],
   collectCoverageFrom: [
     'src/**/*.ts',
     'src/**/*.mts',
@@ -27,6 +20,7 @@ module.exports = {
   ],
   transform: {
     '^.+\\.ts?$': 'ts-jest',
+    '^.+\\.[t|j]sx?$': 'babel-jest',
   },
   transformIgnorePatterns: ['node_modules/(?!@ngrx|(?!deck.gl)|ng-dynamic)'],
 };

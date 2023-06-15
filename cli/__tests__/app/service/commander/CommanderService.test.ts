@@ -15,4 +15,10 @@ describe(`Testing ${CommanderService.name} class`, () => {
 
     expect(commander).not.toBeNull();
   });
+
+  it('should start the commander options', () => {
+    const startSpy = jest.spyOn(commander, 'start');
+    commander.start();
+    expect(startSpy).toHaveBeenCalled();
+  });
 });
