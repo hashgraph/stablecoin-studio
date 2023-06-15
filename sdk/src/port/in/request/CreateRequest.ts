@@ -319,6 +319,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 					this.decimals,
 				);
 			},
+			metadata: Validation.checkString({ max: 100 }),
 		});
 		this.name = name;
 		this.symbol = symbol;

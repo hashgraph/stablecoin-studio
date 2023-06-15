@@ -113,6 +113,7 @@ export default class UpdateRequest extends ValidatedRequest<UpdateRequest> {
 			wipeKey: Validation.checkPublicKey(),
 			pauseKey: Validation.checkPublicKey(),
 			feeScheduleKey: Validation.checkPublicKey(),
+			metadata: Validation.checkString({ max: 100 }),
 		});
 		this.tokenId = tokenId;
 		this.name = name;
