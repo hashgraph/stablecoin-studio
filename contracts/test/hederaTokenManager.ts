@@ -155,7 +155,7 @@ describe('HederaTokenManager Tests', function () {
         reserveProxy = result[6]
     })
 
-    it.only('Cannot Update token if not Admin', async function () {
+    it('Cannot Update token if not Admin', async function () {
         const keys = tokenKeystoKey(operatorPubKey, operatorIsE25519)
         await expect(
             updateToken(

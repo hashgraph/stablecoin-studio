@@ -38,10 +38,10 @@ import {
     associateToken,
 } from './utils'
 
-const hederaTokenManagerAddress = '0.0.14422854'
-export const factoryProxyAddress = '0.0.14422874'
-const factoryProxyAdminAddress = '0.0.14422867'
-const factoryAddress = '0.0.14422862'
+const hederaTokenManagerAddress = '0.0.14459443'
+export const factoryProxyAddress = '0.0.14459505'
+const factoryProxyAdminAddress = '0.0.14459488'
+const factoryAddress = '0.0.14459475'
 
 export function initializeClients(): [
     Client,
