@@ -1043,6 +1043,7 @@ describe('🧪 Stablecoin test', () => {
 			stableCoin.pauseKey === Account.NullPublicKey
 				? CLIENT_ACCOUNT_ED25519.publicKey
 				: Account.NullPublicKey;
+		const metadata = 'New Metadata';
 
 		await StableCoin.update(
 			new UpdateRequest({
@@ -1058,6 +1059,7 @@ describe('🧪 Stablecoin test', () => {
 				wipeKey: wipeKey,
 				pauseKey: pauseKey,
 				feeScheduleKey: stableCoin.feeScheduleKey,
+				metadata: metadata,
 			}),
 		);
 
@@ -1095,6 +1097,7 @@ describe('🧪 Stablecoin test', () => {
 				? stableCoin.autoRenewAccount?.toString()
 				: pauseKey?.toString(),
 		);
+		expect(res.metadata).toEqual(metadata);
 	}
 
 	function timestampInNanoToDays(timestamp: number): string {
