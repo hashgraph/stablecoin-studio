@@ -216,17 +216,17 @@ If (and only if) the PoR contract attached to your stable coin is the PoR demo i
 
 ### Settings
 
-
-
 This option allows the user to manage the stable coin and the factory contracts. These contracts are both upgradeable, so they use an implementation of the OpenZeppelin **TransparentUpgradeableProxy** contract. This proxy can be only managed by an administrator contract. Therefore, only the account which is the owner of the proxy's administrator contract will be able to manage the proxy, and this management allows the user to change the owner of the proxy's administrator contract and also to change the implementation contract.
+
+![Selection_021](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/e0724fbe-e8c0-478e-8cbb-66394250d64b)
 
 If the user selects the option to manage the stable coin, it could change the **HederaTokenManager** contract proxy admin owner and upgrade the stable coin contract implementation. 
 
 ![Selection_014](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/abb0b89f-6ec5-449f-a035-f7f9fcea08e1)
 
-While if the user select the option to manage the factory, it could change the **factory** contract proxy admin owner and upgrade the factory contract implementation.
+While if the user select the option to manage the factory, it could change the **Factory** contract proxy admin owner and upgrade the factory contract implementation.
 
-
+![Selection_019](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/3ebb3243-e12a-470b-91cc-de9086af9a9e)
 
 # Testing
 
