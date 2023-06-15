@@ -366,6 +366,7 @@ describe('🧪 Stablecoin test', () => {
 		expect(res.symbol).not.toBeNull();
 		expect(res.treasury).not.toBeNull();
 		expect(res.tokenId).not.toBeNull();
+		expect(res.metadata).not.toBeNull();
 	}, 60_000);
 
 	it('Performs getBalanceOf', async () => {

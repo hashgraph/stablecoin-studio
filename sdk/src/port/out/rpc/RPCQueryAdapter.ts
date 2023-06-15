@@ -232,4 +232,12 @@ export default class RPCQueryAdapter {
 			factoryAddress.toString(),
 		).getHederaTokenManagerAddress();
 	}
+
+	async getMetadata(address: EvmAddress): Promise<string> {
+		LogService.logTrace(`Requesting metadata: ${address.toString()}`);
+		return await this.connect(
+			HederaTokenManager,
+			address.toString(),
+		).getMetadata();
+	}
 }

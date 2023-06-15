@@ -56,4 +56,5 @@ export default interface StableCoinViewModel extends QueryResponse {
 	reserveAddress?: ContractId;
 	reserveAmount?: BigDecimal;
 	customFees?: RequestCustomFee[];
+	metadata?: string;
 }

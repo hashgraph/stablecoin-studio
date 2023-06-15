@@ -68,6 +68,10 @@ export class GetStableCoinQueryHandler
 				).toString(),
 				reserveDecimals,
 			);
+
+			coin.metadata = await this.queryAdapter.getMetadata(
+				coin.evmProxyAddress,
+			);
 		}
 
 		return Promise.resolve(new GetStableCoinQueryResponse(coin));
