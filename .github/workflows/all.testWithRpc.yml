@@ -3,7 +3,6 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-defaults:
 jobs:
   test-node:
     name: docker
