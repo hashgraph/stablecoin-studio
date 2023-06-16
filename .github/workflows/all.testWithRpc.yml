@@ -4,8 +4,6 @@ on:
   push:
     branches: [main]
 defaults:
-  run:
-    working-directory: cli
 jobs:
   test-node:
     name: docker
