@@ -295,7 +295,6 @@ const DetailsReview = ({
 					getValues,
 				);
 			}
-
 			if (getValues()['wipe key']) {
 				request.wipeKey = formatKey(
 					getValues()['wipe key'].label,
