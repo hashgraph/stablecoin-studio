@@ -3,6 +3,9 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
+defaults:
+  run:
+    working-directory: cli
 jobs:
   test-node:
     name: docker
@@ -10,7 +13,7 @@ jobs:
     
     steps:
       - name: Build the Docker image
-        run: docker build -t rpc ../../dockerfile/Dokerfile
+        run: docker build -t rpc ../dockerfile/Dokerfile
       - name: Run the Docker image
         run: docker run rpc
       - name: Use Node.js TLS 16.x
