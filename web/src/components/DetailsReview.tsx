@@ -76,6 +76,10 @@ let fieldsCanEdit = [
 		id: 'Autorenew period',
 		type: 'number',
 	},
+	{
+		id: 'Metadata',
+		type: 'text',
+	},
 ];
 
 const commonTextProps: ChakraTextProps = {
@@ -198,6 +202,7 @@ const DetailsReview = ({
 				details.find((item) => item.label === 'Autorenew period')?.value,
 			);
 			setValue('expiration time', details.find((item) => item.label === 'Expiration time')?.value);
+			setValue('metadata', details.find((item) => item.label === 'Metadata')?.value);
 
 			fieldsCanEdit.find((fields) => fields.id === 'Freeze key') &&
 				setValue(
@@ -278,6 +283,7 @@ const DetailsReview = ({
 				tokenId: details.find((detail) => detail.label === 'Token id')?.value as string,
 				name: getValues().name,
 				symbol: getValues().symbol,
+				metadata: getValues().metadata,
 				autoRenewPeriod: daysToSeconds(getValues()['autorenew period']),
 				expirationTimestamp: Date.parse(getValues()['expiration time']) * 1000000 + '',
 			};
@@ -504,6 +510,11 @@ const DetailsReview = ({
 							{
 								label: t('stableCoinDetails:symbol'),
 								value: getValues().symbol,
+								valueInBold: true,
+							},
+							{
+								label: t('stableCoinDetails:metadata'),
+								value: getValues().metadata,
 								valueInBold: true,
 							},
 							{

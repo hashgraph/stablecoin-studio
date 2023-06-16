@@ -27,6 +27,7 @@ const Review = (props: ReviewProps) => {
 		supplyType,
 		maxSupply,
 		decimals,
+		metadata,
 		managementPermissions,
 		isKycRequired,
 		adminKey,
@@ -205,6 +206,10 @@ const Review = (props: ReviewProps) => {
 							{
 								label: t('stableCoinCreation:optionalDetails.decimals'),
 								value: decimals || '',
+							},
+							{
+								label: t('stableCoinCreation:optionalDetails.metadata'),
+								value: metadata || '',
 							},
 						]}
 					/>

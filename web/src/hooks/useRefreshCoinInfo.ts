@@ -50,6 +50,7 @@ export const useRefreshCoinInfo = () => {
 				name: resp?.name,
 				symbol: resp?.symbol,
 				decimals: resp?.decimals,
+				metadata: resp?.metadata,
 				id: resp?.tokenId?.toString(),
 				treasury: resp?.treasury?.toString(),
 				autoRenewAccount: resp?.autoRenewAccount?.toString(),
