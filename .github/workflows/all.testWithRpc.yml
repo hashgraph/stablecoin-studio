@@ -3,15 +3,14 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-defaults:
-  run:
-    working-directory: cli
 jobs:
   test-node:
     name: docker
     runs-on: ubuntu-latest
     
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
       - name: Build the Docker image
         run: docker build -t rpc ../dockerfile/Dokerfile
       - name: Run the Docker image
@@ -20,8 +19,6 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 16.x
-      - name: Checkout repository
-        uses: actions/checkout@v3
       - name: Install dependencies Hashconnect
         run: npm install
         working-directory: hashconnect/lib
