@@ -14,8 +14,6 @@ import {
     StableCoinFactory__factory,
     HederaTokenManager__factory,
     HederaReserve__factory,
-    ITransparentUpgradeableProxy__factory,
-    ERC1967Proxy__factory,
 } from '../typechain-types'
 
 import {
