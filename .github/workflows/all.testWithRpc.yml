@@ -1,4 +1,4 @@
-name: CLI - Test
+name: LocalRPC
 on: 
   workflow_dispatch:
   push:
