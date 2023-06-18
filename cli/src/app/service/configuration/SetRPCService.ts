@@ -15,10 +15,18 @@ import Service from '../Service.js';
 import { IRPCsConfig } from 'domain/configuration/interfaces/IRPCsConfig.js';
 const colors = require('colors');
 
+interface RPCValidation {
+  result: boolean;
+  errorMsg?: string;
+}
+
 /**
  * Set RPC Service
  */
 export default class SetRPCService extends Service {
+  readonly URL_REG_EXP =
+    /^(http(s):\/\/.)[-a-zA-Z0-9@:%._+~#=]{2,256}((\.[a-z]{2,6})?)\b([-a-zA-Z0-9@:%_+.~#?&//=]*)$/;
+
   constructor() {
     super('Set RPC Configuration');
   }
@@ -62,12 +70,13 @@ export default class SetRPCService extends Service {
         language.getText('configuration.askBaseUrl'),
         'Base Url',
       );
-      while (rpcs.some((mirror) => mirror.baseUrl === baseUrl)) {
-        utilsService.showError(
-          language.getText('validations.duplicatedRPCUrl', {
-            baseUrl,
-          }),
-        );
+      let rpcValidation: RPCValidation;
+      while (
+        (rpcValidation = this.isValidRPC(baseUrl, rpcs, _network)) &&
+        rpcValidation.result == false
+      ) {
+        console.log(rpcValidation.errorMsg);
+
         baseUrl = await utilsService.defaultSingleAsk(
           language.getText('configuration.askBaseUrl'),
           'Base Url',
@@ -226,7 +235,7 @@ export default class SetRPCService extends Service {
         );
       }
 
-      let base_url = await utilsService.defaultSingleAsk(
+      let baseUrl = await utilsService.defaultSingleAsk(
         language.getText('configuration.askRPCUrl'),
         network === 'testnet'
           ? HASHIO_RPC_TESTNET_URL
@@ -236,31 +245,15 @@ export default class SetRPCService extends Service {
           ? HASHIO_RPC_MAINNET_URL
           : HASHIO_RPC_TESTNET_URL,
       );
+
+      let rpcValidation: RPCValidation;
       while (
-        !/^(http(s):\/\/.)[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)$/.test(
-          base_url,
-        )
+        (rpcValidation = this.isValidRPC(baseUrl, rpcs, network)) &&
+        rpcValidation.result == false
       ) {
-        console.log(language.getText('validations.wrongFormatUrl'));
-        base_url = await utilsService.defaultSingleAsk(
-          language.getText('configuration.askRPCUrl'),
-          network === 'testnet'
-            ? HASHIO_RPC_TESTNET_URL
-            : network === 'previewnet'
-            ? HASHIO_RPC_PREVIEWNET_URL
-            : network === 'mainnet'
-            ? HASHIO_RPC_MAINNET_URL
-            : HASHIO_RPC_TESTNET_URL,
-        );
-      }
-      while (
-        rpcs.filter(
-          (element) =>
-            element.network === network && element.baseUrl === base_url,
-        ).length > 0
-      ) {
-        console.log(language.getText('validations.duplicatedRPCUrl'));
-        base_url = await utilsService.defaultSingleAsk(
+        console.log(rpcValidation.errorMsg);
+
+        baseUrl = await utilsService.defaultSingleAsk(
           language.getText('configuration.askRPCUrl'),
           network === 'testnet'
             ? HASHIO_RPC_TESTNET_URL
@@ -275,7 +268,7 @@ export default class SetRPCService extends Service {
       const rpc = {
         name: name,
         network: network,
-        baseUrl: base_url.slice(-1) === '/' ? base_url : base_url + '/',
+        baseUrl: baseUrl.slice(-1) === '/' ? baseUrl : baseUrl + '/',
         apiKey: undefined,
         headerName: undefined,
         selected: false,
@@ -330,6 +323,35 @@ export default class SetRPCService extends Service {
     defaultCfgData.rpcs = rpcs;
     configurationService.setConfiguration(defaultCfgData);
     return rpcs;
+  }
+
+  /**
+   * Function to check if a JSON-RPC-Relay service is valid to be included in the config file
+   *
+   * @param baseUrl JSON-RPC-Relay service url
+   * @param rpcs Already existing JSON-RPC-Relay services in config file
+   * @param network Network to configure the JSON-RPC-Relay service
+   */
+  private isValidRPC(
+    baseUrl: string,
+    rpcs: IRPCsConfig[],
+    network: string,
+  ): RPCValidation {
+    if (!this.URL_REG_EXP.test(baseUrl))
+      return {
+        result: false,
+        errorMsg: language.getText('validations.wrongFormatUrl'),
+      };
+    const urlNotRepeated =
+      rpcs.filter(
+        (element) => element.network === network && element.baseUrl === baseUrl,
+      ).length == 0;
+    if (!urlNotRepeated)
+      return {
+        result: false,
+        errorMsg: language.getText('validations.duplicatedRPCUrl'),
+      };
+    return { result: true };
   }
 
   /**
