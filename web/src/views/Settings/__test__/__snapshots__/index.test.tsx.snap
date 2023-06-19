@@ -16,40 +16,191 @@ exports[`<Settings /> should render correctly 1`] = `
       data-testid="base-container-children"
     >
       <div
-        class="css-10opskl"
-        data-testid="no-proof-of-reserve-container"
+        class="css-src872"
       >
+        <h2
+          class="chakra-heading css-qltjox"
+          data-testid="subtitle"
+        >
+          Choose a settings option
+        </h2>
         <div
-          class="css-mnqf94"
+          class="css-nxcc5s"
         >
-          <svg
-            viewBox="0 0 2500 2500"
-            width="48px"
-            xmlns="http://www.w3.org/2000/svg"
+          <div
+            class="css-180e663"
           >
-            <g
-              data-name="Layer 2"
+            <button
+              class="css-1wr8k95"
+              data-testid="direct-access-stableCoinSettings"
+              disabled=""
             >
-              <g
-                data-name="Layer 1"
+              <div
+                class="css-1i763ui"
               >
-                <path
-                  d="M1250 0C559.64 0 0 559.64 0 1250s559.64 1250 1250 1250 1250-559.64 1250-1250S1940.36 0 1250 0"
-                />
-                <path
-                  d="M1758.12 1790.62h-158.74v-337.49H900.62v337.49H741.87V696.25h158.75v329.37h698.76V696.25h158.75zm-850-463.75h698.75V1152.5H908.12z"
-                  fill="#fff"
-                />
-              </g>
-            </g>
-          </svg>
+                <svg
+                  class="chakra-icon css-1f9qa95"
+                  data-testid="direct-access-CoinVertical"
+                  fill="currentColor"
+                  focusable="false"
+                  height="1em"
+                  viewBox="0 0 256 256"
+                  width="1em"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect
+                    fill="none"
+                    height="256"
+                    width="256"
+                  />
+                  <ellipse
+                    cx="104"
+                    cy="128"
+                    fill="none"
+                    rx="56"
+                    ry="96"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                  />
+                  <path
+                    d="M104,32h48c30.9,0,56,43,56,96s-25.1,96-56,96H104"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                  />
+                  <line
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                    x1="145.7"
+                    x2="193.7"
+                    y1="64"
+                    y2="64"
+                  />
+                  <line
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                    x1="160"
+                    x2="208"
+                    y1="128"
+                    y2="128"
+                  />
+                  <line
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                    x1="145.7"
+                    x2="193.7"
+                    y1="192"
+                    y2="192"
+                  />
+                </svg>
+              </div>
+              <p
+                class="chakra-text css-o5z2l9"
+                data-testid="direct-access-Stable Coin"
+              >
+                Stable Coin
+              </p>
+            </button>
+          </div>
+          <div
+            class="css-180e663"
+          >
+            <button
+              class="css-1wr8k95"
+              data-testid="direct-access-factorySettings"
+              disabled=""
+            >
+              <div
+                class="css-1i763ui"
+              >
+                <svg
+                  class="chakra-icon css-1f9qa95"
+                  data-testid="direct-access-Factory"
+                  fill="currentColor"
+                  focusable="false"
+                  height="1em"
+                  viewBox="0 0 256 256"
+                  width="1em"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect
+                    fill="none"
+                    height="256"
+                    width="256"
+                  />
+                  <line
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                    x1="80"
+                    x2="108"
+                    y1="176"
+                    y2="176"
+                  />
+                  <line
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                    x1="148"
+                    x2="176"
+                    y1="176"
+                    y2="176"
+                  />
+                  <polyline
+                    fill="none"
+                    points="216 216 216 136 168 136 104 88 104 136 40 88 40 216"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                  />
+                  <line
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                    x1="16"
+                    x2="240"
+                    y1="216"
+                    y2="216"
+                  />
+                  <path
+                    d="M216,136,201,30.9a8,8,0,0,0-7.9-6.9H174.9a8,8,0,0,0-7.9,6.9l-13.5,94.3"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="16"
+                  />
+                </svg>
+              </div>
+              <p
+                class="chakra-text css-o5z2l9"
+                data-testid="direct-access-Factory"
+              >
+                Factory
+              </p>
+            </button>
+          </div>
         </div>
-        <p
-          class="chakra-text css-e8j0ix"
-          data-testid="no-proof-of-reserve-title"
-        >
-          Loading data
-        </p>
       </div>
     </div>
   </div>

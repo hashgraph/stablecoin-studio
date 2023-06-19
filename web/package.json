@@ -48,7 +48,8 @@
 	"scripts": {
 		"start": "react-app-rewired start",
 		"build": "react-app-rewired build",
-		"test": "react-app-rewired test",
+		"test": "react-app-rewired test --maxWorkers 2",
+		"test:c": "react-app-rewired test --watchAll --coverage --maxWorkers 2",
 		"eject": "react-app-rewired eject",
 		"lint": "eslint . --ext .ts --ext .mts",
 		"prettier": "prettier --config .prettierrc --write .",
