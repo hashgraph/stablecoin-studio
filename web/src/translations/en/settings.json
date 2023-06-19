@@ -1,22 +1,46 @@
 {
 	"title": "Settings",
 	"operationTitle": "Settings",
-	"subtitle": "Manage Settings",
-	"updateOwner": {
-		"title": "Update proxy owner",
-		"label": "Current owner",
-		"inputPlaceholder": "Enter owner",
-		"buttonText": "Update owner"
+	"subtitle": "Choose a settings option",
+	"stableCoinSettings": "Stable Coin",
+	"factorySettings": "Factory",
+	"notOwner": "The current account is not the owner of the factory's proxy",
+	"stableCoin": {
+		"updateOwner": {
+			"title": "Update proxy owner",
+			"label": "Current owner",
+			"inputPlaceholder": "Enter owner",
+			"buttonText": "Update owner"
+		},
+		"updateImplementation": {
+			"title": "Update proxy implementation",
+			"label": "Current implementation",
+			"inputPlaceholder": "Enter address",
+			"buttonText": "Update implementation"
+		},
+		"notification": {
+			"title": "{{ result }} updating settings",
+			"descriptionSuccess": "Proxy settings was updated",
+			"descriptionError": "Sorry, there was an error updating the proxy settings"
+		}
 	},
-	"updateImplementation": {
-		"title": "Update proxy implementation",
-		"label": "Current implementation",
-		"inputPlaceholder": "Enter address",
-		"buttonText": "Update implementation"
-	},
-	"notification": {
-		"title": "{{ result }} updating settings",
-		"descriptionSuccess": "Proxy settings was updated",
-		"descriptionError": "Sorry, there was an error updating the proxy settings"
+	"factory": {
+		"updateOwner": {
+			"title": "Update factory proxy owner",
+			"label": "Current factory owner",
+			"inputPlaceholder": "Enter owner",
+			"buttonText": "Update owner"
+		},
+		"updateImplementation": {
+			"title": "Update factory proxy implementation",
+			"label": "Current factory implementation",
+			"inputPlaceholder": "Enter address",
+			"buttonText": "Update implementation"
+		},
+		"notification": {
+			"title": "{{ result }} updating settings",
+			"descriptionSuccess": "Factory proxy settings was updated",
+			"descriptionError": "Sorry, there was an error updating the factory proxy settings"
+		}
 	}
 }

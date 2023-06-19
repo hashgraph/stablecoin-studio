@@ -13,7 +13,12 @@ import {
 	Text,
 	VStack,
 } from '@chakra-ui/react';
-import { SupportedWallets } from '@hashgraph-dev/stablecoin-npm-sdk';
+import {
+	GetFactoryProxyConfigRequest,
+	SupportedWallets,
+	StableCoinListViewModel,
+	Network,
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 import type { FC, ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -87,8 +92,15 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 		dispatch(walletActions.setSelectedStableCoin(undefined));
 		dispatch(walletActions.setSelectedStableCoinProxyConfig(undefined));
 		dispatch(walletActions.setIsProxyOwner(false));
+
 		try {
 			await SDKService.connectWallet(wallet, network);
+
+			const factoryProxyConfig: StableCoinListViewModel = await getFactoryProxyConfig(
+				await Network.getFactoryAddress(),
+			);
+			dispatch(walletActions.setSelectedNetworkFactoryProxyConfig(factoryProxyConfig));
+			dispatch(walletActions.setIsFactoryProxyOwner(false));
 		} catch (error: any) {
 			if ('errorCode' in error && error.errorCode === '40009') {
 				setRejected(true);
@@ -96,6 +108,25 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 				setError(error.message);
 			}
 		}
+	};
+
+	const getFactoryProxyConfig = async (factoryId: string): Promise<StableCoinListViewModel> => {
+		const factoryProxyConfig: any = await Promise.race([
+			SDKService.getFactoryProxyConfig(
+				new GetFactoryProxyConfigRequest({
+					factoryId: factoryId,
+				}),
+			),
+			new Promise((resolve, reject) => {
+				setTimeout(() => {
+					reject(new Error("Stable coin details couldn't be obtained in a reasonable time."));
+				}, 10000);
+			}),
+		]).catch((e) => {
+			console.log(e.message);
+			throw e;
+		});
+		return factoryProxyConfig;
 	};
 
 	const handleConnectHashpackWallet = () => {

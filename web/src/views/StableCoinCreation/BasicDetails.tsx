@@ -55,12 +55,6 @@ const BasicDetails = (props: BasicDetailsProps) => {
 				});
 
 				const AllOptions: any[] = [];
-				AllOptions.push({
-					value: '',
-					label: 'Enter your own HederaTokenManager implementation',
-					isDisabled: true,
-				});
-
 				const options = hederaTokenManagerOption.map((item: any) => {
 					return { label: item.value, value: item.value };
 				});
@@ -69,7 +63,16 @@ const BasicDetails = (props: BasicDetailsProps) => {
 					AllOptions.push(option);
 				});
 
-				setOptionsHederaTokenManagerAddresses(AllOptions.reverse());
+				AllOptions.sort((token1, token2) =>
+					+token1.value.split('.').slice(-1)[0] > +token2.value.split('.').slice(-1)[0] ? -1 : 1,
+				);
+				AllOptions.push({
+					value: '',
+					label: 'Enter your own HederaTokenManager implementation',
+					isDisabled: true,
+				});
+
+				setOptionsHederaTokenManagerAddresses(AllOptions);
 
 				setGettingHederaTokenManager(false);
 			} catch (e) {

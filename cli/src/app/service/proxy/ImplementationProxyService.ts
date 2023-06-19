@@ -53,7 +53,13 @@ export default class ImplementationProxyService extends Service {
       new GetTokenManagerListRequest({ factoryId: factory }),
     ).then((value) => value.reverse());
 
-    const choices = factoryListEvm.map((item) => item.toString());
+    const choices = factoryListEvm
+      .map((item) => item.toString())
+      .sort((token1, token2) =>
+        +token1.split('.').slice(-1)[0] > +token2.split('.').slice(-1)[0]
+          ? -1
+          : 1,
+      );
     choices.push(language.getText('stablecoin.askHederaTokenManagerOther'));
 
     const filteredChoices = choices.filter((choice) => {
