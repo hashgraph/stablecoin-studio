@@ -107,7 +107,7 @@ export default class UtilitiesService extends Service {
     this.currentRPC = rpc;
   }
 
-  public getCurrentRPC(): IMirrorsConfig {
+  public getCurrentRPC(): IRPCsConfig {
     if (!this.currentRPC) {
       throw new Error('JSON-RPC-Relay not initialized');
     } else {
