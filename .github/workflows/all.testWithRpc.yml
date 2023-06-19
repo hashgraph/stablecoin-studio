@@ -12,7 +12,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Build the Docker image
-        run: docker build -t rpc .
+        run: docker build -t rpc . &
         working-directory: dockerfile
       - name: Run the Docker image
         run: docker run rpc
