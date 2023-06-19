@@ -3,6 +3,7 @@ import translations from '../../../translations/en/proofOfReserve.json';
 import configureMockStore from 'redux-mock-store';
 import StableCoinProof from '../';
 import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 const mockStore = configureMockStore();
 
@@ -58,6 +59,16 @@ describe(`<${StableCoinProof.name} />`, () => {
 			reserveAmount: '0',
 		};
 
+		jest.mock('react-hook-form', () => ({
+			...jest.requireActual('react-hook-form'),
+			Controller: () => <></>,
+			useForm: () => ({
+				getValues: () => ({
+					reserveAddress: '0.0.444',
+					reserveAmount: '0',
+				}),
+			}),
+		}))
 		const store = mockStore({
 			wallet: {
 				selectedStableCoin,
@@ -74,8 +85,11 @@ describe(`<${StableCoinProof.name} />`, () => {
 		const amountButton = await screen.findByTestId('update-reserve-amount-button');
 		expect(amountButton).toBeInTheDocument();
 		expect(amountButton).toBeEnabled();
+		await userEvent.click(amountButton);
+
 		const addressButton = await screen.findByTestId('update-reserve-address-button');
 		expect(addressButton).toBeInTheDocument();
 		expect(addressButton).toBeEnabled();
+		await userEvent.click(addressButton);
 	});
 });

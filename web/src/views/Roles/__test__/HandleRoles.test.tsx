@@ -1,9 +1,8 @@
 import userEvent from '@testing-library/user-event';
 import HandleRoles from '../HandleRoles';
-import type { Action } from '../HandleRoles';
 import { render } from '../../../test';
-import { roleOptions, actions } from '../constants';
-import { waitFor } from '@testing-library/react';
+import { cashinLimitOptions, roleOptions } from '../constants';
+import { act, waitFor } from '@testing-library/react';
 import { RouterManager } from '../../../Router/RouterManager';
 import configureMockStore from 'redux-mock-store';
 import { mockedStableCoinCapabilities } from '../../../mocks/sdk.js';
@@ -20,12 +19,28 @@ const mockStore = configureMockStore();
 const validAccount = '0.0.123456';
 
 describe(`<${HandleRoles.name} />`, () => {
-	test('should render correctly on all actions', () => {
-		Object.keys(actions).forEach((action) => {
-			const component = render(<HandleRoles action={action as Action} />);
+	test('should render correctly on giveRole action', () => {
+		const component = render(<HandleRoles action='giveRole' />);
 
-			expect(component.asFragment()).toMatchSnapshot(action);
-		});
+		expect(component.asFragment()).toMatchSnapshot();
+	});
+
+	test('should render correctly on editRole action', () => {
+		const component = render(<HandleRoles action='editRole' />);
+
+		expect(component.asFragment()).toMatchSnapshot();
+	});
+
+	test('should render correctly on revokeRole action', () => {
+		const component = render(<HandleRoles action='revokeRole' />);
+
+		expect(component.asFragment()).toMatchSnapshot();
+	});
+
+	test('should render correctly on getAccountsWithRole action', () => {
+		const component = render(<HandleRoles action='getAccountsWithRole' />);
+
+		expect(component.asFragment()).toMatchSnapshot();
 	});
 
 	test('should has disabled confirm button as default', async () => {
@@ -76,5 +91,40 @@ describe(`<${HandleRoles.name} />`, () => {
 		const cancelButton = component.getByTestId('cancel-btn');
 		await userEvent.click(cancelButton);
 		expect(RouterManager.goBack).toHaveBeenCalledWith(anything);
+	});
+
+	test('should render correctly on editRole', async () => {
+		const component = render(<HandleRoles action='editRole' />);
+
+		const selector = component.getByRole('combobox');
+		expect(selector).toBeInTheDocument();
+		await act(async () => userEvent.click(selector));
+
+		const selectedItem = component.getByText(cashinLimitOptions[0].label);
+		await act(async () => userEvent.click(selectedItem));
+
+		const account = component.getByTestId('account');
+		userEvent.type(account, '0.0.12345');
+
+		const amount = component.getByTestId('amount');
+		userEvent.type(amount, '1');
+
+		const confirmButton = component.getByTestId('confirm-btn');
+		userEvent.click(confirmButton);
+	});
+
+	test('should render correctly on getAccountsWithRole', async () => {
+		const component = render(<HandleRoles action='getAccountsWithRole' />);
+
+		const selector = component.getByRole('combobox');
+		expect(selector).toBeInTheDocument();
+
+		const confirmButton = component.getByTestId('confirm-btn');
+		userEvent.click(confirmButton);
+
+		await waitFor(() => {
+			const confirmModalButton = component.getByTestId('modal-action-confirm-button');
+			userEvent.click(confirmModalButton);
+		});
 	});
 });
