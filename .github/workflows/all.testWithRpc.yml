@@ -11,6 +11,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+      
       - name: Build the Docker image
         run: docker build -t rpc . 
         working-directory: dockerfile
@@ -19,10 +20,12 @@ jobs:
       - name: Sleep for 30 seconds
         run: sleep 30s
         shell: bash  
+      
       - name: Use Node.js TLS 16.x
         uses: actions/setup-node@v1
         with:
           node-version: 16.x
+      
       - name: Install dependencies Hashconnect
         run: npm install
         working-directory: hashconnect/lib
@@ -35,10 +38,21 @@ jobs:
       - name: Install dependencies SDK
         run: npm install
         working-directory: sdk
+      - name: Install dependencies Cli
+        run: npm install
+        working-directory: cli
+      - name: Install dependencies web
+        run: npm install
+        working-directory: web
+
+      - name: Test sdk
+        uses: ArtiomTr/jest-coverage-report-action@v2.0.9
+        with:
+          working-directory: sdk
+          test-script: npm run test
       - name: Test
         uses: ArtiomTr/jest-coverage-report-action@v2.0.9
         with:
           working-directory: cli
           test-script: npm run test
-        # run: npm run test
-        # working-directory: sdk
+        
