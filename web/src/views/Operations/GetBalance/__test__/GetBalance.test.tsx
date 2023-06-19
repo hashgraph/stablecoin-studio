@@ -36,5 +36,12 @@ describe(`<${GetBalanceOperation.name} />`, () => {
 		await waitFor(() => {
 			expect(button).toBeEnabled();
 		});
+
+		const confirmButton = component.getByTestId('confirm-btn');
+		await userEvent.click(confirmButton);
+
+		const confirmModalButton = component.getByTestId('modal-action-confirm-button');
+		await userEvent.click(confirmModalButton);
+
 	});
 });
