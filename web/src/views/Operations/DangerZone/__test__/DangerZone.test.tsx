@@ -22,14 +22,13 @@ describe(`<${DangerZone.name} />`, () => {
 	});
 
 	test('should have options', async () => {
-
 		const mockStore = configureMockStore();
 		const selectedStableCoin = {
 			initialSupply: 10,
 			tokenId: '0.0.12345',
 			proxyAddress: '0.0.12345',
 			reserveAmount: '10',
-			paused: false
+			paused: false,
 		};
 
 		const store = mockStore({
@@ -39,9 +38,9 @@ describe(`<${DangerZone.name} />`, () => {
 				data: {
 					account: {
 						id: 'id',
-					}
+					},
 				},
-				roles: [StableCoinRole.PAUSE_ROLE, StableCoinRole.DELETE_ROLE]
+				roles: [StableCoinRole.PAUSE_ROLE, StableCoinRole.DELETE_ROLE],
 			},
 		});
 		localStorage.setItem(

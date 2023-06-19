@@ -39,4 +39,21 @@ describe(`<${RescueHBAROperation.name} />`, () => {
 			expect(button).toBeEnabled();
 		});
 	});
+
+	test('should handle rescue hbars', async () => {
+		const component = render(<RescueHBAROperation />);
+
+		const confirmButton = component.getByTestId('confirm-btn');
+		const amount = component.getByTestId('amount');
+		userEvent.type(amount, '10000');
+
+		await waitFor(() => {
+			expect(confirmButton).toBeEnabled();
+		});
+
+		await userEvent.click(confirmButton);
+
+		const confirmModalButton = component.getByTestId('modal-action-confirm-button');
+		await userEvent.click(confirmModalButton);
+	});
 });

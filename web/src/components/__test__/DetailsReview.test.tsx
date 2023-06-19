@@ -72,23 +72,23 @@ describe(`<${DetailsReview.name} />`, () => {
 		const details = [
 			{
 				label: 'Name',
-				value: 'GMT'
+				value: 'GMT',
 			},
 			{
 				label: 'Name',
 				value: 123,
 				copyButton: true,
-				hashScanURL: 'url'
+				hashScanURL: 'url',
 			},
 			{
 				label: 'KYC key',
-				value: 123
-			}
+				value: 123,
+			},
 		];
 		const props = {
 			details,
 			title: 'list for testing',
-			editable: true
+			editable: true,
 		};
 		const component = render(<DetailsReview {...props} />);
 

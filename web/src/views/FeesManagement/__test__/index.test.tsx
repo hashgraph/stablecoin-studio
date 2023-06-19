@@ -8,7 +8,6 @@ import { RequestFractionalFee } from '@hashgraph-dev/stablecoin-npm-sdk';
 const mockStore = configureMockStore();
 
 describe(`<${FeesManagement.name} />`, () => {
-
 	test('should render correctly', () => {
 		const component = render(<FeesManagement />);
 
@@ -27,13 +26,15 @@ describe(`<${FeesManagement.name} />`, () => {
 			wallet: {
 				selectedStableCoin: {
 					tokenId: '0.0.0',
-					customFees: [{
-						collectorId: 'collectorId',
-						collectorsExempt: true,
-						decimals: 'decimals',
-						tokenIdCollected: 'tokenIdCollected',
-						amount: '10',
-					}]
+					customFees: [
+						{
+							collectorId: 'collectorId',
+							collectorsExempt: true,
+							decimals: 'decimals',
+							tokenIdCollected: 'tokenIdCollected',
+							amount: '10',
+						},
+					],
 				},
 			},
 		});
@@ -42,7 +43,6 @@ describe(`<${FeesManagement.name} />`, () => {
 
 		expect(header).toHaveTextContent(translations.title);
 	});
-	
 
 	test('trash button should be clicked', async () => {
 		const store = mockStore({
@@ -50,14 +50,16 @@ describe(`<${FeesManagement.name} />`, () => {
 				selectedStableCoin: {
 					tokenId: '0.0.0',
 					feeScheduleKey: 'feeScheduleKey',
-					customFees: [{
-						percentage: '1',
-						amountNumerator: '1',
-						amountDenominator: '1',
-						min: '1',
-						max: '2',
-						net: true
-					}as RequestFractionalFee]
+					customFees: [
+						{
+							percentage: '1',
+							amountNumerator: '1',
+							amountDenominator: '1',
+							min: '1',
+							max: '2',
+							net: true,
+						} as RequestFractionalFee,
+					],
 				},
 			},
 		});

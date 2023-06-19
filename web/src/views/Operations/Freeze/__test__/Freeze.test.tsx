@@ -27,11 +27,9 @@ describe(`<${Freeze.name} />`, () => {
 		await userEvent.type(account, '0.0.123456');
 
 		const confirmButton = component.getByTestId('confirm-btn');
-		userEvent.click(confirmButton);
+		await userEvent.click(confirmButton);
 
-		await waitFor(() => {
-			const confirmModalButton = component.getByTestId('modal-action-confirm-button');
-			userEvent.click(confirmModalButton);
-		});
+		const confirmModalButton = component.getByTestId('modal-action-confirm-button');
+		await userEvent.click(confirmModalButton);
 	});
 });

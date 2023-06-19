@@ -7,18 +7,17 @@ import userEvent from '@testing-library/user-event';
 jest.mock('react-hook-form', () => ({
 	...jest.requireActual('react-hook-form'),
 	Controller: () => <></>,
-	useWatch: () => (true),
+	useWatch: () => true,
 	useForm: () => ({
-		control: () => ({})
+		control: () => ({}),
 	}),
-}))
+}));
 
 const { control } = useForm({
 	mode: 'onChange',
 });
 
 describe(`<${KeySelector.name} />`, () => {
-
 	test('should render correctly', () => {
 		const props: KeySelectorProps = {
 			control: control,

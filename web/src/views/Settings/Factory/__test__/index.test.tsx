@@ -9,7 +9,7 @@ import { Network } from '@hashgraph-dev/stablecoin-npm-sdk';
 const mockStore = configureMockStore();
 
 describe(`<${FactorySettings.name} />`, () => {
-	beforeEach(() => { });
+	beforeEach(() => {});
 
 	test('should render correctly', () => {
 		const component = render(<FactorySettings />);
@@ -28,7 +28,7 @@ describe(`<${FactorySettings.name} />`, () => {
 		const store = mockStore({
 			wallet: {
 				isProxyOwner: true,
-				isFactoryProxyOwner: true
+				isFactoryProxyOwner: true,
 			},
 		});
 
@@ -41,8 +41,8 @@ describe(`<${FactorySettings.name} />`, () => {
 					updateOwner: '0.0.12345',
 				}),
 			}),
-		}))
-		
+		}));
+
 		jest.spyOn(Network, 'getFactoryAddress').mockReturnValue('0.0.12345');
 
 		const component = render(<FactorySettings />, store);

@@ -68,7 +68,7 @@ describe(`<${StableCoinProof.name} />`, () => {
 					reserveAmount: '0',
 				}),
 			}),
-		}))
+		}));
 		const store = mockStore({
 			wallet: {
 				selectedStableCoin,

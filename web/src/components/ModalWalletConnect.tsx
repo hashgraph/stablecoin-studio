@@ -210,7 +210,11 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 									alignItems={'stretch'}
 								>
 									{availableWallets.includes(SupportedWallets.HASHPACK) && (
-										<VStack data-testid='Hashpack' {...styles.providerStyle} onClick={handleConnectHashpackWallet}>
+										<VStack
+											data-testid='Hashpack'
+											{...styles.providerStyle}
+											onClick={handleConnectHashpackWallet}
+										>
 											<PairingSpinner wallet={SupportedWallets.HASHPACK}>
 												<Image src={HEDERA_LOGO} w={20} />
 												<Text>Hashpack</Text>
@@ -218,7 +222,11 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 										</VStack>
 									)}
 									{availableWallets.includes(SupportedWallets.METAMASK) && (
-										<VStack data-testid='Metamask' {...styles.providerStyle} onClick={handleConnectMetamaskWallet}>
+										<VStack
+											data-testid='Metamask'
+											{...styles.providerStyle}
+											onClick={handleConnectMetamaskWallet}
+										>
 											<PairingSpinner wallet={SupportedWallets.METAMASK}>
 												<Image src={METAMASK_LOGO} w={20} />
 												<Text>Metamask</Text>

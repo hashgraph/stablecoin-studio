@@ -8,7 +8,7 @@ import configureMockStore from 'redux-mock-store';
 const mockStore = configureMockStore();
 
 describe(`<${Settings.name} />`, () => {
-	beforeEach(() => { });
+	beforeEach(() => {});
 
 	test('should render correctly', () => {
 		const component = render(<Settings />);
@@ -22,5 +22,4 @@ describe(`<${Settings.name} />`, () => {
 
 		expect(header).toHaveTextContent(translations.title);
 	});
-
 });

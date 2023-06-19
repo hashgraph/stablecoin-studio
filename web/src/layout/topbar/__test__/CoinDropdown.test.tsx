@@ -69,11 +69,10 @@ describe(`<${CoinDropdown.name} />`, () => {
 		await waitFor(() => {
 			const option = component.getByText(coinLabel);
 			userEvent.click(option);
-			
-		 	waitFor(() => {
-			expect((select as HTMLInputElement).value).toEqual(mockedStableCoinsList.coins[0].id);
-		});
-		});
 
+			waitFor(() => {
+				expect((select as HTMLInputElement).value).toEqual(mockedStableCoinsList.coins[0].id);
+			});
+		});
 	});
 });

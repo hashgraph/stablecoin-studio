@@ -13,7 +13,7 @@ describe(`<${ModalWalletConnect.name} />`, () => {
 	const props: ModalWalletConnectProps = {
 		isOpen: true,
 		onClose: jest.fn(),
-	}
+	};
 
 	test('should render correctly', () => {
 		const component = render(<ModalWalletConnect {...props} />);
@@ -32,10 +32,7 @@ describe(`<${ModalWalletConnect.name} />`, () => {
 	test('should has wallets and is clicked', async () => {
 		const store = mockStore({
 			wallet: {
-				foundWallets: [
-					SupportedWallets.HASHPACK,
-					SupportedWallets.METAMASK
-				]
+				foundWallets: [SupportedWallets.HASHPACK, SupportedWallets.METAMASK],
 			},
 		});
 		const component = render(<ModalWalletConnect {...props} />, store);

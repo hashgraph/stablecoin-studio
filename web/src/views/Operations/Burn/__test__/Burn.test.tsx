@@ -33,10 +33,26 @@ describe(`<${BurnOperation.name} />`, () => {
 		expect(button).toBeDisabled();
 
 		const amount = component.getByTestId('amount');
-		userEvent.type(amount, '10000');
+		await userEvent.type(amount, '10000');
 
 		await waitFor(() => {
 			expect(button).toBeEnabled();
 		});
+	});
+
+	test('should handle burn', async () => {
+		const component = render(<BurnOperation />);
+
+		const button = component.getByTestId('confirm-btn');
+		expect(button).toBeDisabled();
+
+		const amount = component.getByTestId('amount');
+		await userEvent.type(amount, '10000');
+
+		const confirmButton = component.getByTestId('confirm-btn');
+		await userEvent.click(confirmButton);
+
+		const confirmModalButton = component.getByTestId('modal-action-confirm-button');
+		await userEvent.click(confirmModalButton);
 	});
 });

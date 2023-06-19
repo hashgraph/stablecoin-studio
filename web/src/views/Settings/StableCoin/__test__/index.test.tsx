@@ -8,7 +8,7 @@ import configureMockStore from 'redux-mock-store';
 const mockStore = configureMockStore();
 
 describe(`<${StableCoinSettings.name} />`, () => {
-	beforeEach(() => { });
+	beforeEach(() => {});
 
 	test('should render correctly', () => {
 		const component = render(<StableCoinSettings />);
@@ -35,7 +35,7 @@ describe(`<${StableCoinSettings.name} />`, () => {
 			wallet: {
 				selectedStableCoin,
 				isProxyOwner: true,
-				isFactoryProxyOwner: false
+				isFactoryProxyOwner: false,
 			},
 		});
 

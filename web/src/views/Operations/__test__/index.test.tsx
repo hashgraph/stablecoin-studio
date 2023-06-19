@@ -24,7 +24,8 @@ describe(`<${Operations.name} />`, () => {
 
 		await waitFor(() => {
 			expect(component.getByTestId('direct-access-cashIn')).toHaveTextContent(
-				translations.cashInOperation);
+				translations.cashInOperation,
+			);
 		});
 	});
 
@@ -33,7 +34,8 @@ describe(`<${Operations.name} />`, () => {
 
 		await waitFor(() => {
 			expect(component.getByTestId('direct-access-wipe')).toHaveTextContent(
-				translations.wipeOperation);
+				translations.wipeOperation,
+			);
 		});
 	});
 
@@ -42,7 +44,8 @@ describe(`<${Operations.name} />`, () => {
 
 		await waitFor(() => {
 			expect(component.getByTestId('direct-access-rescueTokens')).toHaveTextContent(
-				translations.rescueOperation);
+				translations.rescueOperation,
+			);
 		});
 	});
 
@@ -51,7 +54,8 @@ describe(`<${Operations.name} />`, () => {
 
 		await waitFor(() => {
 			expect(component.getByTestId('direct-access-rescueHBAR')).toHaveTextContent(
-				translations.rescueHBAROperation);
+				translations.rescueHBAROperation,
+			);
 		});
 	});
 
@@ -60,7 +64,8 @@ describe(`<${Operations.name} />`, () => {
 
 		await waitFor(() => {
 			expect(component.getByTestId('direct-access-burn')).toHaveTextContent(
-				translations.burnOperation);
+				translations.burnOperation,
+			);
 		});
 	});
 });

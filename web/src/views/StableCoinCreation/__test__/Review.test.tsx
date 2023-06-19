@@ -9,23 +9,23 @@ jest.mock('react-hook-form', () => ({
 	useForm: () => ({
 		getValues: () => ({
 			rescueRoleAccount: { value: 1, label: '0.0.123' },
-			hederaTokenManagerId:  { value: 2 },
+			hederaTokenManagerId: { value: 2 },
 			initialSupply: 0,
 			wipeKey: { value: 1, label: '0.0.123' },
 			freezeKey: { value: 1, label: '0.0.123' },
 			kycKey: { value: 1, label: '0.0.123' },
 			pauseKey: { value: 1, label: '0.0.123' },
-			feeScheduleKey: { value: 1, label: '0.0.123' }
+			feeScheduleKey: { value: 1, label: '0.0.123' },
 		}),
 		handleSubmit: () => jest.fn(),
 	}),
-}))
+}));
 const form = useForm<FieldValues>({
-	mode: 'onChange'
+	mode: 'onChange',
 });
 
 describe(`<${Review.name} />`, () => {
-	beforeEach(() => { });
+	beforeEach(() => {});
 
 	test('should render correctly', () => {
 		const component = render(<Review form={form} />);

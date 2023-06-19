@@ -37,8 +37,8 @@ describe(`<${StableCoinCreation.name} />`, () => {
 				data: {
 					account: {
 						id: '0.0.12345',
-					}
-				}
+					},
+				},
 			},
 		});
 

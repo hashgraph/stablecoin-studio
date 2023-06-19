@@ -3,7 +3,7 @@ import { render } from '../../../test/index';
 import translations from '../../../translations/en/externalTokenInfo.json';
 
 describe(`<${ImportedTokenCreation.name} />`, () => {
-	beforeEach(() => { });
+	beforeEach(() => {});
 
 	test('should render correctly', () => {
 		const component = render(<ImportedTokenCreation />);

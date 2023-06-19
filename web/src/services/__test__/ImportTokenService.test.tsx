@@ -1,11 +1,10 @@
 import ImportTokenService from '../ImportTokenService';
 
 describe(`<${ImportTokenService.name} />`, () => {
-	
 	test('should save the tokensAccount', async () => {
 		jest.spyOn(Storage.prototype, 'setItem');
 		Storage.prototype.setItem = jest.fn();
-		
+
 		await ImportTokenService.importToken('tokenId', 'tokenSymbol', 'accountId');
 
 		expect(localStorage.setItem).toHaveBeenCalled();

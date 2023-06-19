@@ -4,7 +4,7 @@ import translations from '../../../translations/en/stableCoinDetails.json';
 import { waitFor } from '@testing-library/react';
 
 describe(`<${StableCoinDetails.name} />`, () => {
-	beforeEach(() => { });
+	beforeEach(() => {});
 
 	test('should render correctly', () => {
 		const component = render(<StableCoinDetails />);

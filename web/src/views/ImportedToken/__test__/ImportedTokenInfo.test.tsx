@@ -8,10 +8,10 @@ jest.mock('react-hook-form', () => ({
 	Controller: () => <></>,
 	useWatch: () => jest.fn(),
 	useForm: () => ({
-	  control: () => ({}),
-	  handleSubmit: () => jest.fn(),
+		control: () => ({}),
+		handleSubmit: () => jest.fn(),
 	}),
-  }))
+}));
 const { control } = useForm();
 
 describe(`<${ImportedTokenInfo.name} />`, () => {

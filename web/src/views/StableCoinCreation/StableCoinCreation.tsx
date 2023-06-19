@@ -185,7 +185,7 @@ const StableCoinCreation = () => {
 
 		return setIsValidForm(
 			fieldsStep?.filter((item) => !item && item !== 0).length === 0 &&
-			Object.keys(errors).length === 0,
+				Object.keys(errors).length === 0,
 		);
 	};
 
@@ -422,7 +422,8 @@ const StableCoinCreation = () => {
 	return (
 		<Stack h='full'>
 			<HStack spacing={6} w='full'>
-				<Text fontSize='28px'
+				<Text
+					fontSize='28px'
 					color='brand.secondary'
 					fontWeight={500}
 					align='left'

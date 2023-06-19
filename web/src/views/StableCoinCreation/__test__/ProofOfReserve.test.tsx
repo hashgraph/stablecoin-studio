@@ -9,23 +9,23 @@ jest.mock('react-hook-form', () => ({
 	Controller: () => <></>,
 	useWatch: () => jest.fn(),
 	useForm: () => ({
-		control: () => ({ }),
+		control: () => ({}),
 		handleSubmit: () => jest.fn(),
 		resetField: () => jest.fn(),
 	}),
-}))
+}));
 
 const form = useForm<FieldValues>({
-	mode: 'onChange'
+	mode: 'onChange',
 });
 
 const { control } = form;
 const request = new CreateRequest({
-		name: '',
-		symbol: '',
-		decimals: 6,
-		createReserve: false,
-	});
+	name: '',
+	symbol: '',
+	decimals: 6,
+	createReserve: false,
+});
 
 describe(`<${ProofOfReserve.name} />`, () => {
 	test('should render correctly', () => {
