@@ -273,22 +273,22 @@ abstract contract Roles is IRoles, Initializable {
      * @param account The account for which the role will be revoked
      */
     function _revokeRole(bytes32 role, address account) internal {
-        if (_hasRole(role, account)) {
-            uint256 position = _roles[role].members[account].pos;
-            uint256 lastIndex = _roles[role].accounts.length - 1;
+        if (!_hasRole(role, account)) return;
 
-            if (position < lastIndex) {
-                address accountToMove = _roles[role].accounts[lastIndex];
+        uint256 position = _roles[role].members[account].pos;
+        uint256 lastIndex = _roles[role].accounts.length - 1;
 
-                _roles[role].accounts[position] = accountToMove;
+        if (position < lastIndex) {
+            address accountToMove = _roles[role].accounts[lastIndex];
 
-                _roles[role].members[accountToMove].pos = position;
-            }
+            _roles[role].accounts[position] = accountToMove;
 
-            _roles[role].accounts.pop();
-            delete (_roles[role].members[account]);
-            emit RoleRevoked(role, account, msg.sender);
+            _roles[role].members[accountToMove].pos = position;
         }
+
+        _roles[role].accounts.pop();
+        delete (_roles[role].members[account]);
+        emit RoleRevoked(role, account, msg.sender);
     }
 
     /**
@@ -297,28 +297,8 @@ abstract contract Roles is IRoles, Initializable {
      * @param role The role to check if is granted
      */
     function _checkRole(bytes32 role) private view {
-        _checkRole(role, msg.sender);
-    }
-
-    /**
-     * @dev Checks if a role is granted to an account
-     *
-     * @param role The role to check if is granted
-     * @param account The account for which the role is checked for
-     */
-    function _checkRole(bytes32 role, address account) private view {
-        if (_hasRole(role, account)) return;
-        revert AccountHasNoRole(account, role);
-    }
-
-    /**
-     * @dev Grants a role to an account
-     *
-     * @param role The role to be granted
-     * @param account The account for which the role will be granted
-     */
-    function _setupRole(bytes32 role, address account) internal virtual {
-        _grantRole(role, account);
+        if (_hasRole(role, msg.sender)) return;
+        revert AccountHasNoRole(msg.sender, role);
     }
 
     /**

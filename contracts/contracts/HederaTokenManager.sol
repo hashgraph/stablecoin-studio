@@ -231,7 +231,7 @@ contract HederaTokenManager is
         }
 
         // granting admin role, always to the SC creator
-        _setupRole(_getRoleId(RoleName.ADMIN), originalSender);
+        _grantRole(_getRoleId(RoleName.ADMIN), originalSender);
     }
 
     /**
