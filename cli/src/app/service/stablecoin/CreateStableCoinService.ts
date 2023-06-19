@@ -18,6 +18,7 @@ import {
 import { IManagedFeatures } from '../../../domain/configuration/interfaces/IManagedFeatures.js';
 import Service from '../Service.js';
 import SetConfigurationService from '../configuration/SetConfigurationService.js';
+import SetFactoryService from '../configuration/SetFactoryService.js';
 import AssociateStableCoinsService from './AssociateStableCoinService.js';
 import KYCStableCoinService from './KYCStableCoinService.js';
 
@@ -49,6 +50,8 @@ export default class CreateStableCoinService extends Service {
     const setConfigurationService: SetConfigurationService =
       new SetConfigurationService();
 
+    const factoryService: SetFactoryService = new SetFactoryService();
+
     if (
       currentAccount.privateKey == null ||
       currentAccount.privateKey == undefined ||
@@ -61,11 +64,9 @@ export default class CreateStableCoinService extends Service {
     }
     if (
       utilsService.getCurrentFactory().id !==
-      (await setConfigurationService.getSDKFactory())
+      (await factoryService.getSDKFactory())
     ) {
-      await setConfigurationService.setSDKFactory(
-        utilsService.getCurrentFactory().id,
-      );
+      await factoryService.setSDKFactory(utilsService.getCurrentFactory().id);
     }
     let createdToken;
 
@@ -407,7 +408,13 @@ export default class CreateStableCoinService extends Service {
       new GetTokenManagerListRequest({ factoryId: factory }),
     ).then((value) => value.reverse());
 
-    const choices = factoryListEvm.map((item) => item.toString());
+    const choices = factoryListEvm
+      .map((item) => item.toString())
+      .sort((token1, token2) =>
+        +token1.split('.').slice(-1)[0] > +token2.split('.').slice(-1)[0]
+          ? -1
+          : 1,
+      );
     choices.push(language.getText('stablecoin.askHederaTokenManagerOther'));
 
     const versionSelection = await utilsService.defaultMultipleAsk(
