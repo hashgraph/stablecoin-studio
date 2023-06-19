@@ -25,7 +25,7 @@ interface RPCValidation {
  */
 export default class SetRPCService extends Service {
   readonly URL_REG_EXP =
-    /^(http(s):\/\/.)[-a-zA-Z0-9@:%._+~#=]{2,256}((\.[a-z]{2,6})?)\b([-a-zA-Z0-9@:%_+.~#?&//=]*)$/;
+    /^(http(s)?:\/\/.)[-a-zA-Z0-9@:%._+~#=]{2,256}((\.[a-z]{2,6})?)\b([-a-zA-Z0-9@:%_+.~#?&//=]*)$/;
 
   constructor() {
     super('Set RPC Configuration');
