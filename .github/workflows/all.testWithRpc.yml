@@ -12,10 +12,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Build the Docker image
-        run: docker build -t rpc . &
+        run: docker build -t rpc . 
         working-directory: dockerfile
       - name: Run the Docker image
-        run: docker run rpc
+        run: docker run rpc &
+      - name: Sleep for 30 seconds
+        run: sleep 30s
+        shell: bash  
       - name: Use Node.js TLS 16.x
         uses: actions/setup-node@v1
         with:
