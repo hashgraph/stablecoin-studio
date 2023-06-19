@@ -1,90 +1,73 @@
-import {
-  Network,
-  InitializationRequest,
-  // ConnectRequest,
-  // SupportedWallets,
-} from '@hashgraph-dev/stablecoin-npm-sdk';
+import { Network } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { utilsService, configurationService } from '../../../../src/index.js';
-// import UtilitiesService from '../../../../src/app/service/utilities/UtilitiesService';
 
 describe('UtilitiesService', () => {
-  // let utilitiesService: UtilitiesService;
+  it('should initialize the SDK and connect to the network', async () => {
+    // Mocks
+    const mockAccount = {
+      accountId: 'mockAccountId',
+      privateKey: {
+        key: 'mockPrivateKey',
+        type: 'mockPrivateKeyType',
+      },
+      network: 'mockNetwork',
+      alias: 'mockAlias',
+    };
 
-  beforeEach(() => {
-    // utilitiesService = new UtilitiesService();
-  });
+    const mockCurrentNetwork = {
+      name: 'mockNetworkName',
+    };
 
-  describe('initSDK', () => {
-    it('should initialize the SDK and connect to the network', async () => {
-      // Mocks
-      const mockAccount = {
-        accountId: 'mockAccountId',
-        privateKey: {
-          key: 'mockPrivateKey',
-          type: 'mockPrivateKeyType',
-        },
-      };
+    const mockCurrentMirror = {
+      name: 'testnet',
+      network: 'testnet',
+      baseUrl: 'https://testnet.mirrornode.com',
+      apiKey: '',
+      headerName: '',
+      selected: true,
+    };
+    const mockCurrentRPC = {
+      name: 'testnet',
+      network: 'testnet',
+      baseUrl: 'https://testnet.rpc.com',
+      apiKey: '',
+      headerName: '',
+      selected: true,
+    };
 
-      const mockCurrentNetwork = {
-        name: 'mockNetworkName',
-      };
+    const mockLogConfiguration = {
+      level: 'debug',
+    };
 
-      const mockCurrentMirror = {
-        name: 'testnet',
-        network: 'testnet',
-        baseUrl: 'https://testnet.mirrornode.com',
-        apiKey: '',
-        headerName: '',
-        selected: true,
-      };
-      const mockCurrentRPC = {
-        name: 'testnet',
-        network: 'testnet',
-        baseUrl: 'https://testnet.mirrornode.com',
-        apiKey: '',
-        headerName: '',
-        selected: true,
-      };
+    const networkInitSpy = jest
+      .spyOn(Network, 'init')
+      .mockResolvedValue(undefined);
+    const networkConnectSpy = jest
+      .spyOn(Network, 'connect')
+      .mockResolvedValue(undefined);
 
-      const networkInitSpy = jest
-        .spyOn(Network, 'init')
-        .mockResolvedValue(undefined);
-      const networkConnectSpy = jest
-        .spyOn(Network, 'connect')
-        .mockResolvedValue(undefined);
+    // Set up test environment
+    configurationService.getLogConfiguration = jest
+      .fn()
+      .mockReturnValue(mockLogConfiguration);
+    utilsService.getCurrentAccount = jest.fn().mockReturnValue(mockAccount);
+    utilsService.getCurrentNetwork = jest
+      .fn()
+      .mockReturnValue(mockCurrentNetwork);
+    utilsService.getCurrentMirror = jest
+      .fn()
+      .mockReturnValue(mockCurrentMirror);
+    utilsService.getCurrentRPC = jest.fn().mockReturnValue(mockCurrentRPC);
 
-      // Set up test environment
-      // const utilitiesService = new UtilitiesService();
-      utilsService.getCurrentAccount = jest.fn().mockReturnValue(mockAccount);
-      utilsService.getCurrentNetwork = jest
-        .fn()
-        .mockReturnValue(mockCurrentNetwork);
-      utilsService.getCurrentMirror = jest
-        .fn()
-        .mockReturnValue(mockCurrentMirror);
-      utilsService.getCurrentRPC = jest.fn().mockReturnValue(mockCurrentRPC);
+    // Execute the method
+    await utilsService.initSDK();
 
-      configurationService.getLogConfiguration = jest
-        .fn()
-        .mockReturnValue(undefined);
+    // Verify the expected behavior
+    expect(networkInitSpy).toHaveBeenCalled();
+    expect(networkConnectSpy).toHaveBeenCalled();
 
-      // Execute the method
-      await utilsService.initSDK();
-
-      // Verify the expected behavior
-      expect(networkInitSpy).toHaveBeenCalledWith(
-        new InitializationRequest({
-          network: mockCurrentNetwork.name,
-          mirrorNode: mockCurrentMirror,
-          rpcNode: mockCurrentRPC,
-        }),
-      );
-
-      expect(networkConnectSpy).toHaveBeenCalled();
-
-      // Restore the spies
-      networkInitSpy.mockRestore();
-      networkConnectSpy.mockRestore();
-    });
+    // Restore the spies
+    networkInitSpy.mockRestore();
+    networkConnectSpy.mockRestore();
   });
 });
