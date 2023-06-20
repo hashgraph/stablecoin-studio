@@ -1,5 +1,211 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`<StableCoinSettings /> should have buttons 1`] = `
+<DocumentFragment>
+  <div
+    class="chakra-stack css-16oka5y"
+  >
+    <h2
+      class="chakra-heading css-bqsusc"
+      data-testid="base-container-heading"
+    >
+      Settings
+    </h2>
+    <div
+      class="css-1b6lda7"
+      data-testid="base-container-children"
+    >
+      <div
+        class="css-1us6gcn"
+      >
+        <div
+          class="css-1oe4jiu"
+        >
+          <div
+            class="css-dvxtzn"
+          >
+            <div
+              class="chakra-stack css-ppfwq0"
+            >
+              <h2
+                class="chakra-heading css-17peuyg"
+                data-testid="owner-title"
+              >
+                Update proxy owner
+              </h2>
+              <p
+                class="chakra-text css-mgupmj"
+                data-testid="owner-label"
+                style="font-weight: 600;"
+              >
+                Current owner
+              </p>
+              <p
+                class="chakra-text css-mi3pzk"
+                data-testid="owner-value"
+              />
+              <div
+                class="chakra-stack css-1h0sumw"
+              >
+                <div
+                  class="chakra-form-control css-1kxonj9"
+                  role="group"
+                >
+                  <div
+                    class="chakra-input__group css-bx0blc"
+                    data-group="true"
+                  >
+                    <input
+                      autocomplete="off"
+                      class="chakra-input css-l1kxkf"
+                      data-testid="updateOwner"
+                      id="field-:r8:"
+                      name="updateOwner"
+                      placeholder="Enter owner"
+                      value=""
+                    />
+                  </div>
+                </div>
+              </div>
+              <button
+                class="chakra-button css-qvkb6r"
+                data-testid="update-owner-button"
+                type="button"
+              >
+                Update owner
+              </button>
+            </div>
+          </div>
+          <div
+            class="css-dvxtzn"
+          >
+            <div
+              class="chakra-stack css-ppfwq0"
+            >
+              <h2
+                class="chakra-heading css-17peuyg"
+                data-testid="address-title"
+              >
+                Update proxy implementation
+              </h2>
+              <p
+                class="chakra-text css-mgupmj"
+                data-testid="address-label"
+                style="font-weight: 600;"
+              >
+                Current implementation
+              </p>
+              <p
+                class="chakra-text css-mi3pzk"
+                data-testid="address-value"
+              />
+              <div
+                class="chakra-stack css-1h0sumw"
+              >
+                <div
+                  class="chakra-form-control css-1kxonj9"
+                  data-testid="form_control"
+                  role="group"
+                >
+                  <div
+                    class="css-vyr5r8"
+                  >
+                    <div
+                      class="css-3qrqo0"
+                    />
+                    <span
+                      class="css-1f43avz-a11yText-A11yText"
+                      id="react-select-3-live-region"
+                    />
+                    <span
+                      aria-atomic="false"
+                      aria-live="polite"
+                      aria-relevant="additions text"
+                      class="css-1f43avz-a11yText-A11yText"
+                    />
+                    <div
+                      class=" css-lub9qs"
+                      data-invalid="true"
+                    >
+                      <div
+                        class="css-3y2vuh"
+                      >
+                        <span
+                          class="chakra-text css-4pvr19"
+                          data-testid="select-placeholder"
+                        >
+                          Enter address
+                        </span>
+                        <div
+                          class=" css-svnjlw"
+                          data-value=""
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            aria-describedby="react-select-3-placeholder"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            aria-invalid="true"
+                            autocapitalize="none"
+                            autocomplete="off"
+                            autocorrect="off"
+                            class=" css-146k1ar-input"
+                            id="field-:r9:"
+                            role="combobox"
+                            spellcheck="false"
+                            tabindex="0"
+                            type="text"
+                            value=""
+                          />
+                        </div>
+                      </div>
+                      <div
+                        class=" css-hfbj6y"
+                      >
+                        <div
+                          class="css-1aabyhj"
+                        />
+                      </div>
+                    </div>
+                    <input
+                      name="updateImplementation"
+                      type="hidden"
+                      value=""
+                    />
+                    <div
+                      class="css-v4gg2a"
+                    />
+                  </div>
+                  <div
+                    aria-live="polite"
+                    class="chakra-form__error-message css-10ckq1i"
+                    data-testid="form-error-msg"
+                    id="field-:r9:-feedback"
+                  >
+                    This field is required
+                  </div>
+                </div>
+              </div>
+              <button
+                class="chakra-button css-qvkb6r"
+                data-testid="update-implementation-address-button"
+                type="button"
+              >
+                Update implementation
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;
+
 exports[`<StableCoinSettings /> should render correctly 1`] = `
 <DocumentFragment>
   <div

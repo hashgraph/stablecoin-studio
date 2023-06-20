@@ -1,4 +1,3 @@
-import { waitFor } from '@testing-library/dom';
 import FactorySettings from '../';
 import { render } from '../../../../test/index';
 import translations from '../../../../translations/en/settings.json';
@@ -56,7 +55,7 @@ describe(`<${FactorySettings.name} />`, () => {
 		expect(addressButton).toBeEnabled();
 		await userEvent.click(addressButton);
 
-		const ownerButton = await component.findByTestId('update-update-owner-button');
+		const ownerButton = await component.findByTestId('update-owner-button');
 		expect(ownerButton).toBeInTheDocument();
 		expect(ownerButton).toBeEnabled();
 		await userEvent.click(ownerButton);
