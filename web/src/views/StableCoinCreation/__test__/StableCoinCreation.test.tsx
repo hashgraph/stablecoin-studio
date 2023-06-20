@@ -4,6 +4,10 @@ import StableCoinCreation from '../StableCoinCreation';
 import configureMockStore from 'redux-mock-store';
 import userEvent from '@testing-library/user-event';
 import { waitFor } from '@testing-library/react';
+import SDKService from '../../../services/SDKService';
+import ContractId from '@hashgraph-dev/stablecoin-npm-sdk/build/esm/src/domain/context/contract/ContractId';
+import { StableCoinViewModel, SupportedWallets } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { HederaId } from '@hashgraph-dev/stablecoin-npm-sdk/build/esm/src/domain/context/shared/HederaId';
 
 describe(`<${StableCoinCreation.name} />`, () => {
 	test('should render correctly', () => {
@@ -30,7 +34,8 @@ describe(`<${StableCoinCreation.name} />`, () => {
 		const mockStore = configureMockStore();
 		const store = mockStore({
 			wallet: {
-				factoryId: 'factoryId',
+				lastWallet : SupportedWallets.HASHPACK,
+				factoryId: '0.0.12345',
 				accountInfo: {
 					id: '0.0.12345',
 				},
@@ -42,6 +47,27 @@ describe(`<${StableCoinCreation.name} />`, () => {
 			},
 		});
 
+		jest.mock('react-hook-form', () => ({
+			...jest.requireActual('react-hook-form'),
+			Controller: () => <></>,
+			useForm: () => ({
+				getValues: () => ({
+					hederaTokenManagerId: '0.0.12345'
+				}),
+				watch: () => jest.fn(),
+			}),
+		}));
+
+		const contractId: ContractId = new ContractId('0.0.1234');
+		jest.spyOn(SDKService, 'getHederaTokenManagerList').mockResolvedValue([contractId]);
+
+		const createResponse= {
+			coin: {tokenId: new HederaId('0.0.12345')},
+			reserve: {proxyAddress: new ContractId('0.0.1234')}
+		};
+		const createResponse2= {};
+		jest.spyOn(SDKService, 'createStableCoin').mockResolvedValue(createResponse);
+
 		const component = render(<StableCoinCreation />, store);
 
 		const noProof = component.getByTestId('no-proof-of-reserve-title');
@@ -49,7 +75,49 @@ describe(`<${StableCoinCreation.name} />`, () => {
 			expect(noProof).not.toBeInTheDocument();
 		});
 
-		const next = component.getByTestId('stepper-step-panel-button-primary-15');
+		//step 1
+		const name = component.getByTestId('name');
+		await userEvent.type(name, 'name');
+
+		const symbol = component.getByTestId('symbol');
+		await userEvent.type(symbol, 'symbol');
+
+		const next1 = component.getByTestId('stepper-step-panel-button-primary-1');
+		await userEvent.click(next1);
+
+
+		//step 2
+		await waitFor(() => {
+			const initialSupply = component.getByTestId('initialSupply');
+			userEvent.type(initialSupply, '1000');
+		});
+
+		const select = component.getByTestId('select-placeholder');
+		await userEvent.click(select);
+
+		const next = component.getByTestId('stepper-step-panel-button-primary-2');
 		await userEvent.click(next);
+
+		//step 3 
+		await waitFor(() => {
+			const next = component.getByTestId('stepper-step-panel-button-primary-3');
+			userEvent.click(next);
+		});
+
+		//step 4
+		await waitFor(() => {
+			const next = component.getByTestId('stepper-step-panel-button-primary-4');
+			userEvent.click(next);
+		});
+
+		//step 5
+		await waitFor(() => {
+			const title = component.getByText('Stable coin review');
+			userEvent.click(title);
+		});
+
+		const nextLast = component.getByTestId('stepper-step-panel-button-primary-5');
+		await userEvent.click(nextLast);
+
 	});
 });
