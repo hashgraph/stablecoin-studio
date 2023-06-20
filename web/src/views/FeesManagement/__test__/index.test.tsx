@@ -32,7 +32,7 @@ describe(`<${FeesManagement.name} />`, () => {
 							amount: '1',
 							collectorId: '0.0.123456',
 							collectorsExempt: false,
-							tokenIdCollected: '0.0.0' 
+							tokenIdCollected: '0.0.0',
 						} as RequestFixedFee,
 					],
 				},
@@ -54,7 +54,7 @@ describe(`<${FeesManagement.name} />`, () => {
 							amount: '1',
 							collectorId: '0.0.123456',
 							collectorsExempt: true,
-							tokenIdCollected: '0.0.1' 
+							tokenIdCollected: '0.0.1',
 						} as RequestFixedFee,
 					],
 				},
@@ -76,7 +76,7 @@ describe(`<${FeesManagement.name} />`, () => {
 							amount: '1',
 							collectorId: '0.0.123456',
 							collectorsExempt: true,
-							tokenIdCollected: '0.0.2' 
+							tokenIdCollected: '0.0.2',
 						} as RequestFixedFee,
 					],
 				},
@@ -102,7 +102,7 @@ describe(`<${FeesManagement.name} />`, () => {
 							max: '2',
 							net: true,
 							collectorId: '0.0.123456',
-							collectorsExempt: false
+							collectorsExempt: false,
 						} as RequestFractionalFee,
 					],
 				},
@@ -128,7 +128,7 @@ describe(`<${FeesManagement.name} />`, () => {
 							max: '2',
 							net: false,
 							collectorId: '0.0.123456',
-							collectorsExempt: true
+							collectorsExempt: true,
 						} as RequestFractionalFee,
 					],
 				},
@@ -151,7 +151,7 @@ describe(`<${FeesManagement.name} />`, () => {
 							amount: '1',
 							collectorId: '0.0.123456',
 							collectorsExempt: true,
-							tokenIdCollected: '0.0.0' 
+							tokenIdCollected: '0.0.0',
 						} as RequestFixedFee,
 					],
 				},
@@ -178,7 +178,7 @@ describe(`<${FeesManagement.name} />`, () => {
 							max: '2',
 							net: true,
 							collectorId: '0.0.123456',
-							collectorsExempt: true
+							collectorsExempt: true,
 						} as RequestFractionalFee,
 					],
 				},
@@ -196,10 +196,10 @@ describe(`<${FeesManagement.name} />`, () => {
 				selectedStableCoin: {
 					tokenId: '0.0.0',
 					feeScheduleKey: 'feeScheduleKey',
-				}
-			}
+				},
+			},
 		});
-		
+
 		const component = render(<FeesManagement />, store);
 
 		const addButton = component.getByTestId('add-btn');
@@ -211,19 +211,19 @@ describe(`<${FeesManagement.name} />`, () => {
 
 		const amount = component.getByTestId('fees.0.amountOrPercentage');
 		await userEvent.type(amount, '1');
-		
+
 		const feeTypeSelector = component.getAllByRole('combobox')[1];
 		await act(async () => userEvent.click(feeTypeSelector));
-       	const option = component.getByText('HBAR');
-       	userEvent.click(option);
-        
+		const option = component.getByText('HBAR');
+		userEvent.click(option);
+
 		const collectorAccount = component.getByTestId('fees.0.collectorAccount');
 		userEvent.type(collectorAccount, '0.0.123456');
 
 		const saveButton = component.getByTestId('save-btn');
 		await waitFor(() => {
 			expect(saveButton).toBeEnabled();
-        });
+		});
 
 		await act(async () => userEvent.click(saveButton));
 	});
@@ -233,11 +233,11 @@ describe(`<${FeesManagement.name} />`, () => {
 			wallet: {
 				selectedStableCoin: {
 					tokenId: '0.0.0',
-					feeScheduleKey: 'feeScheduleKey'
-				}
-			}
+					feeScheduleKey: 'feeScheduleKey',
+				},
+			},
 		});
-		
+
 		const component = render(<FeesManagement />, store);
 
 		const addButton = component.getByTestId('add-btn');
@@ -256,7 +256,7 @@ describe(`<${FeesManagement.name} />`, () => {
 		await userEvent.type(min, '0');
 
 		const max = component.getByTestId('fees.0.max');
-		await userEvent.type(max, '0'); 
+		await userEvent.type(max, '0');
 
 		const collectorAccount = component.getByTestId('fees.0.collectorAccount');
 		await userEvent.type(collectorAccount, '0.0.123456');
@@ -267,7 +267,7 @@ describe(`<${FeesManagement.name} />`, () => {
 		const collectorsExemptSelector = component.getAllByRole('combobox')[6];
 		await act(async () => userEvent.click(collectorsExemptSelector));
 
-		const payerSelectedItem = component.getAllByText('Sender')[0];		
+		const payerSelectedItem = component.getAllByText('Sender')[0];
 		await act(async () => userEvent.click(payerSelectedItem));
 
 		const saveButton = component.getByTestId('save-btn');

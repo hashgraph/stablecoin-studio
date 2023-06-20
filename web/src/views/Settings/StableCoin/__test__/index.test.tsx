@@ -30,8 +30,8 @@ describe(`<${StableCoinSettings.name} />`, () => {
 				isFactoryProxyOwner: true,
 				selectedStableCoin: {
 					tokenId: '0.0.1',
-					proxyAdminAddress: '0.0.2'
-				}
+					proxyAdminAddress: '0.0.2',
+				},
 			},
 		});
 
@@ -53,10 +53,10 @@ describe(`<${StableCoinSettings.name} />`, () => {
 		expect(stableCoin).toBeEnabled();
 
 		const selector = await component.getByRole('combobox');
-  		await act(async () => {
-    		userEvent.click(selector);
-    		await userEvent.type(selector, '0.0.13579');
-  		});
+		await act(async () => {
+			userEvent.click(selector);
+			await userEvent.type(selector, '0.0.13579');
+		});
 
 		// const createNewOption = component.getByText("Create '0.0.13579'");
 		// userEvent.click(createNewOption);
