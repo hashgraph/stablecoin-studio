@@ -699,10 +699,11 @@ const FeesManagement = () => {
 						justifyContent='space-between'
 						px={{ base: 4, lg: 14 }}
 					>
-						<Button variant='primary' onClick={handleAddNewRow} isDisabled={isMaxFees}>
+						<Button id='add-btn' variant='primary' onClick={handleAddNewRow} isDisabled={isMaxFees}>
 							{t('updateTokenFees.addRowButtonText')}
 						</Button>
 						<Button
+							id='save-btn'
 							variant='primary'
 							onClick={handleSubmit(handleUpdateTokenFees)}
 							isDisabled={!formState.isValid}

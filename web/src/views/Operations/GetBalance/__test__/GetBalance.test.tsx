@@ -42,7 +42,6 @@ describe(`<${GetBalanceOperation.name} />`, () => {
 
 		const confirmModalButton = component.getByTestId('modal-action-confirm-button');
 		await userEvent.click(confirmModalButton);
-
 	});
 
 	test('should handle GetBalance', async () => {

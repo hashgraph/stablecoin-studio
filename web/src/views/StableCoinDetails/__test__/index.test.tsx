@@ -27,4 +27,17 @@ describe(`<${StableCoinDetails.name} />`, () => {
 			expect(subtitle).toHaveTextContent(translations.subtitle);
 		});
 	});
+
+	test('details contains expiration timestamp', async () => {
+		const component = render(<StableCoinDetails />);
+
+		await waitFor(() => {
+			const subtitle = component.getByTestId('details-review-title');
+			expect(subtitle).toHaveTextContent(translations.subtitle);
+			const expirationTimestamp = component.getByTestId('details-review-detail-10');
+			expect(expirationTimestamp.getElementsByTagName('p').item(1)?.textContent).toBe(
+				'Mon Jun 19 2023',
+			);
+		});
+	});
 });
