@@ -81,8 +81,7 @@ export const english = {
     askMirrorHeaderName: 'Enter the HTTP auth header name to send the API Key',
     askMirrorHasApiKey:
       'Does this service need an API Key to authenticate? (y/n)',
-    askMirrorSelected:
-      'Do you want this service to be used in the selected network? (y/n)',
+    askMirrorSelected: 'Do you want to use this service? (y/n)',
     askMoreMirrors: 'Do you want to enter more mirror node services? (y/n)',
     RPCsConfigurationMessage:
       'You will now configure your JSON-RPC-Relay services:',
@@ -92,8 +91,7 @@ export const english = {
     askRPCApiKey: 'Enter the JSON-RPC-Relay service API Key',
     askRPCHeaderName: 'Enter the HTTP auth header name to send the API Key',
     askRPCHasApiKey: 'Does this service need an API Key to authenticate? (y/n)',
-    askRPCSelected:
-      'Do you want this service to be used in the selected network? (y/n)',
+    askRPCSelected: 'Do you want to use this service? (y/n)',
     askMoreRPCs: 'Do you want to enter more JSON-RPC-Relay services? (y/n)',
     rpcConfigurationMessage: 'You will now configure your JSON-RPC-Relay:',
     mirrorNodeConfigurationMessage: 'You will now configure your mirror nodes:',

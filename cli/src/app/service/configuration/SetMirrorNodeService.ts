@@ -15,10 +15,18 @@ import Service from '../Service.js';
 import { IMirrorsConfig } from 'domain/configuration/interfaces/IMirrorsConfig.js';
 const colors = require('colors');
 
+interface MirrorValidation {
+  result: boolean;
+  errorMsg?: string;
+}
+
 /**
  * Set Mirror Node Service
  */
 export default class SetMirrorNodeService extends Service {
+  readonly URL_REG_EXP =
+    /^(http(s)?:\/\/.)[-a-zA-Z0-9@:%._+~#=]{2,256}((\.[a-z]{2,6})?)\b([-a-zA-Z0-9@:%_+.~#?&//=]*)$/;
+
   constructor() {
     super('Set Mirror Node Configuration');
   }
@@ -66,6 +74,24 @@ export default class SetMirrorNodeService extends Service {
         language.getText('configuration.askBaseUrl'),
         'Base Url',
       );
+
+      let mirrorValidation: MirrorValidation;
+      while (
+        (mirrorValidation = this.isValidMirrorNode(
+          baseUrl,
+          mirrors,
+          _network,
+        )) &&
+        mirrorValidation.result == false
+      ) {
+        console.log(mirrorValidation.errorMsg);
+
+        baseUrl = await utilsService.defaultSingleAsk(
+          language.getText('configuration.askBaseUrl'),
+          'Base Url',
+        );
+      }
+
       while (mirrors.some((mirror) => mirror.baseUrl === baseUrl)) {
         utilsService.showError(
           language.getText('configuration.baseUrlAlreadyInUse', {
@@ -242,7 +268,7 @@ export default class SetMirrorNodeService extends Service {
         );
       }
 
-      let base_url = await utilsService.defaultSingleAsk(
+      let baseUrl = await utilsService.defaultSingleAsk(
         language.getText('configuration.askMirrorUrl'),
         network === 'testnet'
           ? HEDERA_MIRROR_NODE_TESTNET_URL
@@ -252,31 +278,19 @@ export default class SetMirrorNodeService extends Service {
           ? HEDERA_MIRROR_NODE_MAINNET_URL
           : HEDERA_MIRROR_NODE_TESTNET_URL,
       );
+
+      let mirrorValidation: MirrorValidation;
       while (
-        !/^(http(s):\/\/.)[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)$/.test(
-          base_url,
-        )
+        (mirrorValidation = this.isValidMirrorNode(
+          baseUrl,
+          mirrors,
+          network,
+        )) &&
+        mirrorValidation.result == false
       ) {
-        console.log(language.getText('validations.wrongFormatUrl'));
-        base_url = await utilsService.defaultSingleAsk(
-          language.getText('configuration.askMirrorUrl'),
-          network === 'testnet'
-            ? HEDERA_MIRROR_NODE_TESTNET_URL
-            : network === 'previewnet'
-            ? HEDERA_MIRROR_NODE_PREVIEWNET_URL
-            : network === 'mainnet'
-            ? HEDERA_MIRROR_NODE_MAINNET_URL
-            : HEDERA_MIRROR_NODE_TESTNET_URL,
-        );
-      }
-      while (
-        mirrors.filter(
-          (element) =>
-            element.network === network && element.baseUrl === base_url,
-        ).length > 0
-      ) {
-        console.log(language.getText('validations.duplicatedMirrorUrl'));
-        base_url = await utilsService.defaultSingleAsk(
+        console.log(mirrorValidation.errorMsg);
+
+        baseUrl = await utilsService.defaultSingleAsk(
           language.getText('configuration.askMirrorUrl'),
           network === 'testnet'
             ? HEDERA_MIRROR_NODE_TESTNET_URL
@@ -291,7 +305,7 @@ export default class SetMirrorNodeService extends Service {
       const mirror = {
         name: name,
         network: network,
-        baseUrl: base_url.slice(-1) === '/' ? base_url : base_url + '/',
+        baseUrl: baseUrl.slice(-1) === '/' ? baseUrl : baseUrl + '/',
         apiKey: undefined,
         headerName: undefined,
         selected: false,
@@ -346,6 +360,35 @@ export default class SetMirrorNodeService extends Service {
     defaultCfgData.mirrors = mirrors;
     configurationService.setConfiguration(defaultCfgData);
     return mirrors;
+  }
+
+  /**
+   * Function to check if a mirror node is valid to be included in the config file
+   *
+   * @param baseUrl Mirror node url
+   * @param mirrors Already existing mirror nodes in config file
+   * @param network Network to configure the mirror node
+   */
+  private isValidMirrorNode(
+    baseUrl: string,
+    mirrors: IMirrorsConfig[],
+    network: string,
+  ): MirrorValidation {
+    if (!this.URL_REG_EXP.test(baseUrl))
+      return {
+        result: false,
+        errorMsg: language.getText('validations.wrongFormatUrl'),
+      };
+    const urlNotRepeated =
+      mirrors.filter(
+        (element) => element.network === network && element.baseUrl === baseUrl,
+      ).length == 0;
+    if (!urlNotRepeated)
+      return {
+        result: false,
+        errorMsg: language.getText('validations.duplicatedMirrorUrl'),
+      };
+    return { result: true };
   }
 
   /**
