@@ -34,7 +34,7 @@ describe(`<${StableCoinDetails.name} />`, () => {
 		await waitFor(() => {
 			const subtitle = component.getByTestId('details-review-title');
 			expect(subtitle).toHaveTextContent(translations.subtitle);
-			const expirationTimestamp = component.getByTestId('details-review-detail-10');
+			const expirationTimestamp = component.getByTestId('details-review-detail-11');
 			expect(expirationTimestamp.getElementsByTagName('p').item(1)?.textContent).toBe(
 				'Mon Jun 19 2023',
 			);

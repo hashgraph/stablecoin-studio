@@ -16,9 +16,9 @@ import {
 import {
 	GetFactoryProxyConfigRequest,
 	SupportedWallets,
-	StableCoinListViewModel,
 	Network,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
+import type { StableCoinListViewModel } from '@hashgraph-dev/stablecoin-npm-sdk';
 import type { FC, ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
