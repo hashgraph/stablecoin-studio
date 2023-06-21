@@ -338,7 +338,7 @@ const DetailsReview = ({
 	};
 
 	return (
-		<Box textAlign='left'>
+		<Box textAlign='left' data-testid='button-box'>
 			<Flex justify='space-between' mb={6} alignItems='center'>
 				{title && (
 					<Text
@@ -462,7 +462,7 @@ const DetailsReview = ({
 												</Link>
 											)}
 										</HStack>
-									) : 'toString' in detail.value && 'value' in detail.value ? (
+									) : detail.value && 'toString' in detail.value && 'value' in detail.value ? (
 										detail.value.toString()
 									) : (
 										detail.value

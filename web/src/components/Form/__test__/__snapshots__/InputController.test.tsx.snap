@@ -11,6 +11,7 @@ exports[`<InputController /> .render should be disabled if disabled=true: Disabl
     >
       <div
         class="chakra-input__group css-bx0blc"
+        data-group="true"
       >
         <input
           autocomplete="off"
@@ -57,6 +58,7 @@ exports[`<InputController /> .render should render the component: WithLabel 1`] 
       </label>
       <div
         class="chakra-input__group css-bx0blc"
+        data-group="true"
       >
         <input
           autocomplete="off"
@@ -87,6 +89,7 @@ exports[`<InputController /> .render should render the left element: WithLeftEle
     >
       <div
         class="chakra-input__group css-bx0blc"
+        data-group="true"
       >
         <span
           data-testid="left-element"
@@ -120,6 +123,7 @@ exports[`<InputController /> .render should render the right element: WithRightE
     >
       <div
         class="chakra-input__group css-bx0blc"
+        data-group="true"
       >
         <input
           autocomplete="off"
@@ -153,6 +157,7 @@ exports[`<InputController /> .render should show placeholder: WithPlaceholder 1`
     >
       <div
         class="chakra-input__group css-bx0blc"
+        data-group="true"
       >
         <input
           autocomplete="off"
@@ -184,6 +189,7 @@ exports[`<InputController /> .render should show the error message: WithError 1`
     >
       <div
         class="chakra-input__group css-bx0blc"
+        data-group="true"
       >
         <input
           aria-describedby="field-:r2:-feedback"

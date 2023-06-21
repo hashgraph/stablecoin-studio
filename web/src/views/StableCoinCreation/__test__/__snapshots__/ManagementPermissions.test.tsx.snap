@@ -1,0 +1,164 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<ManagementPermissions /> should render correctly 1`] = `
+<DocumentFragment>
+  <div
+    class="css-130jr3z"
+  >
+    <div
+      class="chakra-stack css-135a0es"
+    >
+      <h2
+        class="chakra-heading css-p7jgmy"
+        data-testid="title"
+      >
+        Permission management
+      </h2>
+      <form
+        class="chakra-stack css-1tjpxl5"
+      >
+        <div
+          class="chakra-stack css-1tchtwa"
+        >
+          <p
+            class="chakra-text css-3crm2z"
+          >
+            Assign default values
+          </p>
+        </div>
+        <div
+          class="chakra-stack css-oat9fj"
+        >
+          <p
+            class="chakra-text css-mgupmj"
+          >
+            Wipe - The smart contract
+          </p>
+          <p
+            class="chakra-text css-mgupmj"
+          >
+            Freeze - The smart contract
+          </p>
+          <p
+            class="chakra-text css-mgupmj"
+          >
+            Pause - The smart contract
+          </p>
+        </div>
+        <div
+          class="chakra-stack css-1tchtwa"
+        >
+          <p
+            class="chakra-text css-3crm2z"
+          >
+            Do you want to enable KYC?
+          </p>
+        </div>
+        <div
+          class="chakra-stack css-owjkmg"
+        />
+        <div
+          class="chakra-stack css-1tchtwa"
+        >
+          <p
+            class="chakra-text css-3crm2z"
+          >
+            Do you want to add custom fees?
+          </p>
+        </div>
+        <div
+          class="chakra-stack css-owjkmg"
+        />
+      </form>
+    </div>
+    <div
+      class="chakra-stack css-135a0es"
+    >
+      <div
+        class="chakra-accordion css-0"
+      >
+        <div
+          class="chakra-accordion__item css-17mg6aq"
+        >
+          <button
+            aria-controls="accordion-panel-:r0:"
+            aria-expanded="false"
+            class="chakra-accordion__button css-uttm9k"
+            data-index="0"
+            id="accordion-button-:r0:"
+            type="button"
+          >
+            <span
+              class="css-1irdfqk"
+            >
+              Roles assignment
+            </span>
+            <svg
+              aria-hidden="true"
+              class="chakra-icon chakra-accordion__icon css-186l2rg"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"
+                fill="currentColor"
+              />
+            </svg>
+          </button>
+          <div
+            class="chakra-collapse"
+            style="overflow: hidden; display: none; opacity: 0; height: 0px;"
+          >
+            <div
+              aria-labelledby="accordion-button-:r0:"
+              class="chakra-accordion__panel css-1wt3bp2"
+              id="accordion-panel-:r0:"
+              role="region"
+            >
+              <div
+                class="css-0"
+                data-testid="supplier-quantity"
+              >
+                <div
+                  class="chakra-stack css-owjkmg"
+                />
+                <div
+                  class="chakra-stack css-1wytzre"
+                >
+                  <p
+                    class="chakra-text css-4dzt3e"
+                  >
+                    Unlimited?
+                  </p>
+                </div>
+              </div>
+              <div
+                class="chakra-stack css-owjkmg"
+              />
+              <div
+                class="chakra-stack css-owjkmg"
+              />
+              <div
+                class="chakra-stack css-owjkmg"
+              />
+              <div
+                class="chakra-stack css-owjkmg"
+              />
+              <div
+                class="chakra-stack css-owjkmg"
+              />
+              <div
+                class="chakra-stack css-owjkmg"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;
