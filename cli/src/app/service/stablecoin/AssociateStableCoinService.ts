@@ -21,7 +21,7 @@ export default class AssociateStableCoinsService extends Service {
           targetId: account,
           tokenId: token,
         }),
-      ).then((response) => console.log(response)),
+      ),
       {
         text: language.getText('state.loading'),
         successText: language.getText('state.associateCompleted') + '\n',

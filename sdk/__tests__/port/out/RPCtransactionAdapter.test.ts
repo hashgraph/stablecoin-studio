@@ -177,6 +177,7 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 			kycRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
 			cashInRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
 			cashInRoleAllowance: BigDecimal.ZERO,
+			metadata: '',
 		});
 
 		stableCoinCapabilitiesSC = await createToken(
@@ -847,6 +848,7 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 			feeScheduleKey,
 			pauseKey,
 			wipeKey,
+			'',
 		);
 
 		await delay();
@@ -878,6 +880,7 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 			PublicKey.NULL,
 			PublicKey.NULL,
 			PublicKey.NULL,
+			'',
 		);
 	}, 1500000);
 

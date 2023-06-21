@@ -37,7 +37,8 @@
 		"maxSupply": "Max supply",
 		"title": "Stable coin optional details",
 		"typeSupply": "Supply type",
-		"typeSupplyPlaceholder": "Choose supply type"
+		"typeSupplyPlaceholder": "Choose supply type",
+		"metadata": "Metadata"
 	},
 	"managementPermissions": {
 		"currentUserKey": "Current user key",

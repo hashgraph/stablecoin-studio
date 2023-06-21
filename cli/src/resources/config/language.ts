@@ -144,7 +144,7 @@ export const english = {
       'What is the token id of the stable coin you want to operate with?',
     askDoSomething: 'What do you want to do?',
     askOptionalProps:
-      'Do you want to configure the initial supply, max supply or decimals?',
+      'Do you want to configure the initial supply, max supply, decimals or add some metadata?',
     askReserve: 'Do you want to link the stable coin to a Proof of Reserve?',
     askExistingReserve:
       'Do you want to link it to an already existing Proof of Reserve?',
@@ -154,6 +154,7 @@ export const english = {
     askInitialSupply: 'Enter the initial supply',
     askSupplyType: 'Do you want the token max supply to be infinite?',
     askTotalSupply: 'Enter the max supply',
+    askMetadata: 'Enter the metadata',
     askExpirationTime: 'Enter the token expiration time in days',
     askMemo: 'Enter the token memo',
     askFreezeAccount: 'Should the Hedera account be frozen for this token?',
@@ -630,6 +631,7 @@ export const english = {
       expirationTime: 'Expiration time',
       autoRenewPeriod: 'Autorenew period',
       keys: 'Keys',
+      metadata: 'Metadata',
       save: 'Save',
       ...goBack,
     },

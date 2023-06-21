@@ -13,6 +13,7 @@ interface IHederaTokenManager {
         address reserveAddress;
         RolesStruct[] roles;
         CashinRoleStruct cashinRole;
+        string tokenMetadataURI;
     }
 
     struct RolesStruct {
@@ -31,6 +32,7 @@ interface IHederaTokenManager {
         KeysLib.KeysStruct[] keys;
         int64 second;
         int64 autoRenewPeriod;
+        string tokenMetadataURI;
     }
 
     /**
@@ -63,12 +65,27 @@ interface IHederaTokenManager {
     );
 
     /**
+     * @dev Emitted when a new metadata was set
+     *
+     * @param admin The account that set the metadata
+     * @param metadata The metadata that was set
+     */
+    event MetadataSet(address indexed admin, string metadata);
+
+    /**
      * @dev Emitted when transfering funds back to original sender after creating the token did not work
      *
      * @param amount The value to check
      *
      */
     error RefundingError(uint256 amount);
+
+    /**
+     * @dev Emitted when the provided `s` is less than 100 characters long
+     *
+     * @param s The string to check
+     */
+    error MoreThan100Error(string s);
 
     /**
      * @dev Returns the name of the token
@@ -113,4 +130,10 @@ interface IHederaTokenManager {
      * @param updatedToken Values to update the token
      */
     function updateToken(UpdateTokenStruct calldata updatedToken) external;
+
+    /**
+     * @dev Gets the metadata
+     *
+     */
+    function getMetadata() external view returns (string memory);
 }

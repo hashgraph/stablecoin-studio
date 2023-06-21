@@ -53,6 +53,10 @@ export class GetStableCoinQueryHandler
 			coin.evmProxyAddress,
 		);
 
+		coin.metadata = await this.queryAdapter.getMetadata(
+			coin.evmProxyAddress,
+		);
+
 		if (!reserveAddress.isNull()) {
 			coin.reserveAddress = reserveAddress;
 
