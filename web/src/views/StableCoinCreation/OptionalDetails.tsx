@@ -152,6 +152,27 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 						maxValue={18}
 						initialValue={6}
 					/>
+					<InputController
+						rules={{
+							required: t(`global:validations.required`) ?? propertyNotFound,
+							validate: {
+								validation: (value: string) => {
+									request.metadata = value;
+									const res = handleRequestValidation(request.validate('metadata'));
+									return res;
+								},
+							},
+						}}
+						isRequired
+						control={control}
+						name={'metadata'}
+						label={t('stableCoinCreation:optionalDetails.metadata') ?? propertyNotFound}
+						placeholder={
+							t('stableCoinCreation:optionalDetails.placeholder', {
+								placeholder: t('stableCoinCreation:optionalDetails.metadata'),
+							}) ?? propertyNotFound
+						}
+					/>
 				</Stack>
 			</Stack>
 		</VStack>

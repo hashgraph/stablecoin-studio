@@ -12,7 +12,10 @@ import { evmToHederaFormat, getClient, toEvmAddress } from './utils'
 import {
     addHederaTokenManagerVersion,
     editHederaTokenManagerVersion,
+    getAdminStableCoinFactory,
     getHederaTokenManagerAddresses,
+    getProxyImplementation_SCF,
+    owner_SCF,
     removeHederaTokenManagerVersion,
 } from './contractsMethods'
 
@@ -87,6 +90,51 @@ task('getTokenManager', 'Get TokenManager list in factory')
             )
         )
     })
+
+task('getProxyAdminconfig', 'Get Proxy Admin owner and implementation')
+    .addParam('proxyadmin', 'The proxy admin address')
+    .addParam('proxy', 'The proxy address')
+    .setAction(
+        async (
+            {
+                proxyadmin,
+                proxy,
+            }: {
+                proxyadmin: string
+                proxy: string
+            },
+            hre
+        ) => {
+            const accounts = hre.network.config
+                .accounts as unknown as Array<AccountHedera>
+            const client = getClient(hre.network.name)
+            const client1account: string = accounts[0].account
+            const client1privatekey: string = accounts[0].privateKey
+            const client1isED25519: boolean =
+                accounts[0].isED25519Type === 'true'
+
+            client.setOperator(
+                client1account,
+                toHashgraphKey(client1privatekey, client1isED25519)
+            )
+            console.log(hre.network.name)
+            const owner = await evmToHederaFormat(
+                await owner_SCF(ContractId.fromString(proxyadmin), client)
+            )
+
+            const implementation = await evmToHederaFormat(
+                await getProxyImplementation_SCF(
+                    ContractId.fromString(proxyadmin),
+                    client,
+                    ContractId.fromString(proxy).toSolidityAddress()
+                )
+            )
+
+            console.log(
+                'Owner : ' + owner + '. Implementation : ' + implementation
+            )
+        }
+    )
 
 task('updateTokenManager', 'Update TokenManager in factory')
     .addParam('tokenmanager', 'The token manager address')
@@ -202,6 +250,44 @@ task('deployFactory', 'Deploy new factory').setAction(
         )
     }
 )
+
+task(
+    'getFactoryAdmin',
+    'Get the Factory admin account, the one with the right to add and remove tokenManagers'
+)
+    .addParam('proxyfactory', 'The proxy admin address')
+    .setAction(
+        async (
+            {
+                proxyfactory,
+            }: {
+                proxyfactory: string
+            },
+            hre
+        ) => {
+            const accounts = hre.network.config
+                .accounts as unknown as Array<AccountHedera>
+            const client = getClient(hre.network.name)
+            const client1account: string = accounts[0].account
+            const client1privatekey: string = accounts[0].privateKey
+            const client1isED25519: boolean =
+                accounts[0].isED25519Type === 'true'
+
+            client.setOperator(
+                client1account,
+                toHashgraphKey(client1privatekey, client1isED25519)
+            )
+            console.log(hre.network.name)
+            const admin = await evmToHederaFormat(
+                await getAdminStableCoinFactory(
+                    ContractId.fromString(proxyfactory),
+                    client
+                )
+            )
+
+            console.log('Admin : ' + admin)
+        }
+    )
 
 task('deployTokenManager', 'Deploy new TokenManager').setAction(
     async (arguements: any, hre) => {

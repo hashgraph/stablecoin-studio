@@ -103,6 +103,11 @@ export class FactoryStableCoin {
 	 */
 	public cashinRole: FactoryCashinRole;
 
+	/**
+	 * Metadata
+	 */
+	public metadata: string;
+
 	constructor(
 		tokenName: string,
 		tokenSymbol: string,
@@ -120,6 +125,7 @@ export class FactoryStableCoin {
 		keys: FactoryKey[],
 		roles: FactoryRole[],
 		cashinRole: FactoryCashinRole,
+		metadata: string,
 	) {
 		this.tokenName = tokenName;
 		this.tokenSymbol = tokenSymbol;
@@ -137,5 +143,6 @@ export class FactoryStableCoin {
 		this.keys = keys;
 		this.roles = roles;
 		this.cashinRole = cashinRole;
+		this.metadata = metadata;
 	}
 }

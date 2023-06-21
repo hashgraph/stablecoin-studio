@@ -141,7 +141,7 @@ interface ITransactionAdapter {
 		feeScheduleKey: PublicKey | undefined,
 		pauseKey: PublicKey | undefined,
 		wipeKey: PublicKey | undefined,
-		supplyKey: PublicKey | undefined,
+		metadata: string | undefined,
 	): Promise<TransactionResponse>;
 	upgradeImplementation(
 		proxy: HederaId,
@@ -377,6 +377,7 @@ export default abstract class TransactionAdapter
 		feeScheduleKey: PublicKey | undefined,
 		pauseKey: PublicKey | undefined,
 		wipeKey: PublicKey | undefined,
+		metadata: string | undefined,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}

@@ -80,7 +80,7 @@ From the root of the CLI project workspace:
 
 The first time you execute the `accelerator wizard` command in your terminal, if you haven't added your default configuration path the interface will ask you whether you want to create a new configuration file in the default path. When the configuration file is created you must configure the default network, operating accounts and the factory contract id. In order to create the default account you can use [HashPack](https://www.hashpack.app/download) or the [Hedera Developer Portal](https://portal.hedera.com/register).
 
-https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/c7daede9-1f84-4dec-9283-1b262334385e
+https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/73c2ed6c-ebc4-4717-b837-c4595c007ba0
 
 _Note that for testing purpose you should create a **Testnet** account instead of Mainnet account. Everything executed on Mainnet will incur a cost with real money._
 
@@ -228,7 +228,7 @@ The request will then be submitted to the SDK and the stable coin will be create
 
 > When the configuration file is first created, the factory contract added to the "testnet" network are the default one (pre-deployed contract). However, users are free to deploy and use their own contracts, in order to do that, the configuration file must be updated with the new factory contract id.
 
-https://user-images.githubusercontent.com/114951681/228852049-7234f6ed-575c-4462-901b-c8d2856c5683.mp4
+https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/dde74619-8c48-40b7-a0ff-3553214fa819
 
 
 #### Manage imported tokens
