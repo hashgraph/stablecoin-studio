@@ -169,7 +169,8 @@ contract StableCoinFactory is
                 msg.sender,
                 reserveAddress,
                 requestedToken.roles,
-                requestedToken.cashinRole
+                requestedToken.cashinRole,
+                requestedToken.metadata
             );
 
         address tokenAddress = HederaTokenManager(address(stableCoinProxy))

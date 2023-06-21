@@ -229,6 +229,7 @@ class StableCoinInPort implements IStableCoinInPort {
 				req.cashInRoleAllowance ?? '0',
 				req.decimals,
 			),
+			metadata: req.metadata,
 		};
 
 		const createResponse = await this.commandBus.execute(
@@ -622,6 +623,7 @@ class StableCoinInPort implements IStableCoinInPort {
 			feeScheduleKey,
 			pauseKey,
 			wipeKey,
+			metadata,
 		} = request;
 		handleValidation('UpdateRequest', request);
 		return (
@@ -664,6 +666,7 @@ class StableCoinInPort implements IStableCoinInPort {
 								type: wipeKey.type,
 						  })
 						: undefined,
+					metadata,
 				),
 			)
 		).payload;

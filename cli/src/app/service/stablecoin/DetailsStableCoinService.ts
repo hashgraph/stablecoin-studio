@@ -105,6 +105,7 @@ export default class DetailsStableCoinsService extends Service {
         customFees: new FeeStableCoinService().getSerializedFees(
           respDetail.customFees,
         ),
+        metadata: respDetail.metadata ? respDetail.metadata.toString() : '',
         ...reserveData,
       };
       console.log(out);

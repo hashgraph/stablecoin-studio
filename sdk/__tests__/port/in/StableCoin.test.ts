@@ -148,6 +148,7 @@ describe('🧪 Stablecoin test', () => {
 			deleteRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
 			cashInRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
 			cashInRoleAllowance: '0',
+			metadata: '',
 		});
 		const requestHTS = new CreateRequest({
 			name: 'TEST_ACCELERATOR_HTS',
@@ -169,6 +170,7 @@ describe('🧪 Stablecoin test', () => {
 			deleteRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
 			cashInRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
 			cashInRoleAllowance: '0',
+			metadata: '',
 		});
 
 		stableCoinSC = (await StableCoin.create(requestSC)).coin;
@@ -364,6 +366,7 @@ describe('🧪 Stablecoin test', () => {
 		expect(res.symbol).not.toBeNull();
 		expect(res.treasury).not.toBeNull();
 		expect(res.tokenId).not.toBeNull();
+		expect(res.metadata).not.toBeNull();
 	}, 60_000);
 
 	it('Performs getBalanceOf', async () => {
@@ -1040,6 +1043,7 @@ describe('🧪 Stablecoin test', () => {
 			stableCoin.pauseKey === Account.NullPublicKey
 				? CLIENT_ACCOUNT_ED25519.publicKey
 				: Account.NullPublicKey;
+		const metadata = 'New Metadata';
 
 		await StableCoin.update(
 			new UpdateRequest({
@@ -1055,6 +1059,7 @@ describe('🧪 Stablecoin test', () => {
 				wipeKey: wipeKey,
 				pauseKey: pauseKey,
 				feeScheduleKey: stableCoin.feeScheduleKey,
+				metadata: metadata,
 			}),
 		);
 
@@ -1092,6 +1097,7 @@ describe('🧪 Stablecoin test', () => {
 				? stableCoin.autoRenewAccount?.toString()
 				: pauseKey?.toString(),
 		);
+		expect(res.metadata).toEqual(metadata);
 	}
 
 	function timestampInNanoToDays(timestamp: number): string {

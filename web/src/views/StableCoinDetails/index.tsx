@@ -104,6 +104,10 @@ const StableCoinDetails = () => {
 					: 'INFINITE',
 		},
 		{
+			label: t('metadata'),
+			value: selectedStableCoin?.metadata ?? '',
+		},
+		{
 			label: t('treasury'),
 			value: getLabelFromAccount({
 				account: selectedStableCoin?.treasury as any,

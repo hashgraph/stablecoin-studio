@@ -49,6 +49,7 @@ export class UpdateCommandHandler implements ICommandHandler<UpdateCommand> {
 			feeScheduleKey,
 			pauseKey,
 			wipeKey,
+			metadata,
 		} = command;
 		const account = this.accountService.getCurrentAccount();
 		const capabilities = await this.stableCoinService.getCapabilities(
@@ -67,6 +68,7 @@ export class UpdateCommandHandler implements ICommandHandler<UpdateCommand> {
 			feeScheduleKey,
 			pauseKey,
 			wipeKey,
+			metadata,
 		);
 
 		return Promise.resolve(

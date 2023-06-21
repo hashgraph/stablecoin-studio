@@ -28,7 +28,8 @@
 		"maxSupply": "Max supply",
 		"supplyType": "Supply type",
 		"infinite": "Infinite",
-		"finite": "Finite"
+		"finite": "Finite",
+		"metadata": "Metadata"
 	},
 	"dangerZone": {
 		"pauseOperation": "Pause",
