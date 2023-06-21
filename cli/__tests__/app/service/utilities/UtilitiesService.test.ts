@@ -3,7 +3,7 @@ import { utilsService, configurationService } from '../../../../src/index.js';
 
 describe('UtilitiesService', () => {
   it('should initialize the SDK and connect to the network', async () => {
-    // Mocks
+    // mocks
     const mockAccount = {
       accountId: 'mockAccountId',
       privateKey: {
@@ -46,7 +46,6 @@ describe('UtilitiesService', () => {
       .spyOn(Network, 'connect')
       .mockResolvedValue(undefined);
 
-    // Set up test environment
     configurationService.getLogConfiguration = jest
       .fn()
       .mockReturnValue(mockLogConfiguration);
@@ -59,14 +58,14 @@ describe('UtilitiesService', () => {
       .mockReturnValue(mockCurrentMirror);
     utilsService.getCurrentRPC = jest.fn().mockReturnValue(mockCurrentRPC);
 
-    // Execute the method
+    // method call
     await utilsService.initSDK();
 
-    // Verify the expected behavior
+    // verify
     expect(networkInitSpy).toHaveBeenCalled();
     expect(networkConnectSpy).toHaveBeenCalled();
 
-    // Restore the spies
+    // restore mocks
     networkInitSpy.mockRestore();
     networkConnectSpy.mockRestore();
   });
