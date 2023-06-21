@@ -196,6 +196,12 @@ The operations linked to the capabilities (roles) assigned to your account for t
 
 If your account has the stable coin admin role, you will also be allowed to manage the stable coin's roles.
 
+### Stable coin details
+
+![Selection_031](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/bbc2deb4-aaa1-4294-a811-e9f2ec785759)
+
+This menú option displays stable coin details and also allows the user to update some of the token properties, like the name, the symbol, the keys..., clicking on the the pencil icon located at the top right side of the screen, which transforms the information page into a form where this properties can be modified by the user. 
+
 ### Fees Management
 
 ![image](https://user-images.githubusercontent.com/114951681/229092960-dd67ccc7-d340-4bb9-a3ba-0f2e33e61d0f.png)
