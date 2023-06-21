@@ -84,7 +84,7 @@ describe(`<${CoinDropdown.name} />`, () => {
 				accountInfo: { id: '0.0.12345' },
 				selectedStableCoin: {
 					tokenId: mockedStableCoinsList.coins[0].id,
-					symbol: mockedStableCoinsList.coins[0].symbol
+					symbol: mockedStableCoinsList.coins[0].symbol,
 				},
 				capabilities: mockedStableCoinCapabilities,
 				data: {

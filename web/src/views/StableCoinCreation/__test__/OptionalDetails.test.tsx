@@ -3,8 +3,6 @@ import { render } from '../../../test/index';
 import translations from '../../../translations/en/stableCoinCreation.json';
 import OptionalDetails from '../OptionalDetails';
 import { CreateRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
-import userEvent from '@testing-library/user-event';
-import { waitFor } from '@testing-library/react';
 
 jest.mock('react-hook-form', () => ({
 	...jest.requireActual('react-hook-form'),
@@ -13,7 +11,7 @@ jest.mock('react-hook-form', () => ({
 		getValues: () => ({
 			maxSupply: 1000,
 			initialSupply: 1000,
-			supplyType: 1
+			supplyType: 1,
 		}),
 	}),
 }));

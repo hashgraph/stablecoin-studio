@@ -6,7 +6,7 @@ import userEvent from '@testing-library/user-event';
 import { waitFor } from '@testing-library/react';
 import SDKService from '../../../services/SDKService';
 import ContractId from '@hashgraph-dev/stablecoin-npm-sdk/build/esm/src/domain/context/contract/ContractId';
-import { StableCoinViewModel, SupportedWallets } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { SupportedWallets } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { HederaId } from '@hashgraph-dev/stablecoin-npm-sdk/build/esm/src/domain/context/shared/HederaId';
 
 describe(`<${StableCoinCreation.name} />`, () => {
@@ -34,7 +34,7 @@ describe(`<${StableCoinCreation.name} />`, () => {
 		const mockStore = configureMockStore();
 		const store = mockStore({
 			wallet: {
-				lastWallet : SupportedWallets.HASHPACK,
+				lastWallet: SupportedWallets.HASHPACK,
 				factoryId: '0.0.12345',
 				accountInfo: {
 					id: '0.0.12345',
@@ -52,7 +52,7 @@ describe(`<${StableCoinCreation.name} />`, () => {
 			Controller: () => <></>,
 			useForm: () => ({
 				getValues: () => ({
-					hederaTokenManagerId: '0.0.12345'
+					hederaTokenManagerId: '0.0.12345',
 				}),
 				watch: () => jest.fn(),
 			}),
@@ -61,11 +61,11 @@ describe(`<${StableCoinCreation.name} />`, () => {
 		const contractId: ContractId = new ContractId('0.0.1234');
 		jest.spyOn(SDKService, 'getHederaTokenManagerList').mockResolvedValue([contractId]);
 
-		const createResponse= {
-			coin: {tokenId: new HederaId('0.0.12345')},
-			reserve: {proxyAddress: new ContractId('0.0.1234')}
+		const createResponse = {
+			coin: { tokenId: new HederaId('0.0.12345') },
+			reserve: { proxyAddress: new ContractId('0.0.1234') },
 		};
-		const createResponse2= {};
+		const createResponse2 = {};
 		jest.spyOn(SDKService, 'createStableCoin').mockResolvedValue(createResponse);
 
 		const component = render(<StableCoinCreation />, store);
@@ -85,7 +85,6 @@ describe(`<${StableCoinCreation.name} />`, () => {
 		const next1 = component.getByTestId('stepper-step-panel-button-primary-1');
 		await userEvent.click(next1);
 
-
 		//step 2
 		await waitFor(() => {
 			const initialSupply = component.getByTestId('initialSupply');
@@ -98,7 +97,7 @@ describe(`<${StableCoinCreation.name} />`, () => {
 		const next = component.getByTestId('stepper-step-panel-button-primary-2');
 		await userEvent.click(next);
 
-		//step 3 
+		//step 3
 		await waitFor(() => {
 			const next = component.getByTestId('stepper-step-panel-button-primary-3');
 			userEvent.click(next);
@@ -118,6 +117,5 @@ describe(`<${StableCoinCreation.name} />`, () => {
 
 		const nextLast = component.getByTestId('stepper-step-panel-button-primary-5');
 		await userEvent.click(nextLast);
-
 	});
 });

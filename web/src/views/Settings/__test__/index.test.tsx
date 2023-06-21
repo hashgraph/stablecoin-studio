@@ -1,16 +1,25 @@
-import { waitFor } from '@testing-library/dom';
 import Settings from '../';
 import { render } from '../../../test/index';
 import translations from '../../../translations/en/settings.json';
-import userEvent from '@testing-library/user-event';
-import configureMockStore from 'redux-mock-store';
-
-const mockStore = configureMockStore();
 
 describe(`<${Settings.name} />`, () => {
 	beforeEach(() => {});
 
 	test('should render correctly', () => {
+		localStorage.setItem(
+			'tokensAccount',
+			JSON.stringify([
+				{
+					id: 'id',
+					externalTokens: [
+						{
+							id: '0.0.12345',
+							symbol: 'symbol',
+						},
+					],
+				},
+			]),
+		);
 		const component = render(<Settings />);
 
 		expect(component.asFragment()).toMatchSnapshot();

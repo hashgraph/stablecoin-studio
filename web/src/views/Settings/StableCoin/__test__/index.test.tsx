@@ -4,6 +4,8 @@ import translations from '../../../../translations/en/settings.json';
 import userEvent from '@testing-library/user-event';
 import configureMockStore from 'redux-mock-store';
 import { act } from '@testing-library/react';
+import SDKService from '../../../../services/SDKService';
+import ContractId from '@hashgraph-dev/stablecoin-npm-sdk/build/esm/src/domain/context/contract/ContractId';
 
 const mockStore = configureMockStore();
 
@@ -27,7 +29,6 @@ describe(`<${StableCoinSettings.name} />`, () => {
 		const store = mockStore({
 			wallet: {
 				isProxyOwner: true,
-				isFactoryProxyOwner: true,
 				selectedStableCoin: {
 					tokenId: '0.0.1',
 					proxyAdminAddress: '0.0.2',
@@ -46,25 +47,24 @@ describe(`<${StableCoinSettings.name} />`, () => {
 			}),
 		}));
 
-		const component = render(<StableCoinSettings />, store);
+		jest
+			.spyOn(SDKService, 'getHederaTokenManagerList')
+			.mockImplementation(() => Promise.resolve([new ContractId('0.0.3')]));
 
+		const component = render(<StableCoinSettings />, store);
 		const stableCoin = await component.findByTestId('address-label');
 		expect(stableCoin).toBeInTheDocument();
 		expect(stableCoin).toBeEnabled();
 
-		const selector = await component.getByRole('combobox');
-		await act(async () => {
-			userEvent.click(selector);
-			await userEvent.type(selector, '0.0.13579');
-		});
-
-		// const createNewOption = component.getByText("Create '0.0.13579'");
-		// userEvent.click(createNewOption);
+		const selector = component.getByRole('combobox');
+		await act(async () => userEvent.click(selector));
+		const option = component.getByText('0.0.3');
+		userEvent.click(option);
 
 		const addressButton = await component.findByTestId('update-implementation-address-button');
 		expect(addressButton).toBeInTheDocument();
 		expect(addressButton).toBeEnabled();
-		// await userEvent.click(addressButton);
+		await userEvent.click(addressButton);
 
 		const newOwner = component.getByTestId('updateOwner');
 		await userEvent.type(newOwner, '0.0.02468');
