@@ -228,7 +228,7 @@ The request will then be submitted to the SDK and the stable coin will be create
 
 > When the configuration file is first created, the factory contract added to the "testnet" network are the default one (pre-deployed contract). However, users are free to deploy and use their own contracts, in order to do that, the configuration file must be updated with the new factory contract id.
 
-https://user-images.githubusercontent.com/114951681/228852049-7234f6ed-575c-4462-901b-c8d2856c5683.mp4
+https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/dde74619-8c48-40b7-a0ff-3553214fa819
 
 
 #### Manage imported tokens
