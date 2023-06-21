@@ -1,24 +1,13 @@
-import CommanderService from '../../../../src/app/service/commander/CommanderService';
+import { commanderService } from '../../../../src/index.js';
 
-jest.mock('../../../../src/app/service/commander/CommanderService', () => {
-  return jest.fn().mockImplementation(() => ({
-    start: jest.fn(),
-  }));
-});
+describe(`Testing CommanderService class`, () => {
+  const mockExit = jest.spyOn(process, 'exit').mockImplementation();
+  jest.useFakeTimers();
+  it('Should instance', async () => {
+    commanderService.start();
 
-describe(`Testing ${CommanderService.name} class`, () => {
-  let commander: CommanderService;
-
-  it('Should instance', () => {
-    commander = new CommanderService();
-    commander.start();
-
-    expect(commander).not.toBeNull();
+    expect(commanderService).not.toBeNull();
+    expect(mockExit).toHaveBeenCalledWith(1);
   });
 
-  it('should start the commander options', () => {
-    const startSpy = jest.spyOn(commander, 'start');
-    commander.start();
-    expect(startSpy).toHaveBeenCalled();
-  });
 });

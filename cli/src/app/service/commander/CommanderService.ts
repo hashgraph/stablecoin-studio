@@ -59,9 +59,9 @@ export default class CommanderService extends Service {
             logs:
               options.logLevel || options.logPath
                 ? {
-                    level: options.logLevel,
-                    path: options.logPath,
-                  }
+                  level: options.logLevel,
+                  path: options.logPath,
+                }
                 : undefined,
           },
           options.config,
@@ -127,19 +127,6 @@ export default class CommanderService extends Service {
           utilsService.showError(language.getText('general.incorrectNumber'));
           process.exit();
         }
-
-        // const createStableCoinService: CreateStableCoinService =
-        //   new CreateStableCoinService();
-        // await createStableCoinService.createStableCoin(
-        //   new CreateRequest({
-        //     account: options.
-        //     name: options.name,
-        //     symbol: options.symbol,
-        //     decimals: options.decimals,
-        //     autoRenewAccount: options.autoRenewAccount,
-        //   }),
-        //   false,
-        // );
       });
 
     token
