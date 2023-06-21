@@ -298,6 +298,7 @@ Creates a new stable coin. You must use `Network.connect` first with a `Supporte
 		kycRoleAccount?: string | undefined;
 		cashInRoleAccount?: string | undefined;
 		cashInRoleAllowance?: string | undefined;
+		metadata?: string | undefined;
 	}
 
 	StableCoin.create = (request: CreateRequest): Promise<StableCoinViewModel>
@@ -327,7 +328,8 @@ This delegates access to features to the smart contract, and enables the usage o
 			freezeKey: Account.NullPublicKey,
 			hederaTokenManager: HederaTokenManagerAddressTestnet,
 			stableCoinFactory: FactoryAddressTestnet,
-			createReserve: false
+			createReserve: false,
+			metadata: 'metadata'
 		})
 	);
 ```
@@ -367,7 +369,8 @@ By specifying the public key of an account, we can set the stable coin's keys to
 			freezeKey: publicKey,
 			hederaTokenManager: HederaTokenManagerAddressTestnet,
 			stableCoinFactory: FactoryAddressTestnet,
-			createReserve: false
+			createReserve: false,
+			metadata: 'metadata'
 		})
 	);
 ```
@@ -779,6 +782,20 @@ Updates certain properties of a token. The operating account must have the admin
 **Spec:**
 
 ```Typescript
+	interface UpdateRequest {
+		tokenId: string;
+		name?: string;
+		symbol?: string;
+		autoRenewPeriod?: string;
+		expirationTimestamp?: string;
+		freezeKey?: RequestPublicKey;
+		kycKey?: RequestPublicKey;
+		wipeKey?: RequestPublicKey;
+		pauseKey?: RequestPublicKey;
+		feeScheduleKey?: RequestPublicKey;
+		metadata?: string | undefined;
+	}
+
 	StableCoin.update(request: UpdateRequest): Promise<boolean> 
 ```
 
@@ -814,7 +831,8 @@ import {
 			kycKey: publicKey,
 			wipeKey: publicKey,
 			pauseKey: publicKey,
-			feeScheduleKey: publicKey
+			feeScheduleKey: publicKey,
+			metadata: 'new metadata'
 		})
 	);
 ```
