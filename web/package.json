@@ -127,8 +127,8 @@
 		],
 		"moduleNameMapper": {
 			"^(\\.{1,2}/.*)\\.(m)?js$": "$1",
-			"hashconnect/dist/esm(.*)": "<rootDir>/../sdk/node_modules/hashconnect/dist/cjs$1",
-			"hashconnect": "<rootDir>/../sdk/node_modules/hashconnect/dist/cjs/hashconnect.js",
+			"hashconnect/dist/esm(.*)": "<rootDir>/../sdk/node_modules/@hashgraph-dev/hashconnect/dist/cjs$1",
+			"hashconnect": "<rootDir>/../sdk/node_modules/@hashgraph-dev/hashconnect/dist/cjs/hashconnect.js",
 			"axios": "axios/dist/node/axios.cjs"
 		},
 		"transform": {
