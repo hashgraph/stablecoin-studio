@@ -44,6 +44,7 @@ import {
   GetAccountsWithRolesRequest,
   ChangeProxyOwnerRequest,
   UpgradeImplementationRequest,
+  AcceptProxyOwnerRequest,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
@@ -2185,7 +2186,9 @@ export default class OperationStableCoinService extends Service {
                   Operation.UPDATE,
                   Access.HTS,
                 ) ||
-                proxyConfig.owner.toString() === configAccount.accountId))
+                proxyConfig.owner.toString() === configAccount.accountId ||
+                proxyConfig.pendingOwner.toString() ===
+                  configAccount.accountId))
           ) {
             return true;
           }
@@ -2222,7 +2225,8 @@ export default class OperationStableCoinService extends Service {
           language.getText(
             'stableCoinConfiguration.options.proxyConfiguration',
           ) &&
-          proxyConfig.owner.toString() === configAccount.accountId) ||
+          (proxyConfig.owner.toString() === configAccount.accountId ||
+            proxyConfig.pendingOwner.toString() === configAccount.accountId)) ||
         (option ===
           language.getText(
             'stableCoinConfiguration.options.tokenConfiguration',
@@ -2375,6 +2379,44 @@ export default class OperationStableCoinService extends Service {
           return false;
         })
       : capabilitiesFilter;
+
+    return result;
+  }
+
+  private async filterProxyConfigurationMenuOptions(
+    options: string[],
+  ): Promise<string[]> {
+    const configAccount = utilsService.getCurrentAccount();
+
+    const proxyConfig =
+      await new ConfigurationProxyService().getProxyconfiguration(
+        this.stableCoinId,
+      );
+
+    console.log(
+      language.getText('proxyConfiguration.pendingOwner') +
+        proxyConfig.pendingOwner.toString(),
+    );
+
+    let result: string[] = [];
+
+    result = options.filter((option) => {
+      if (
+        (option ===
+          language.getText('proxyConfiguration.options.implementation') &&
+          proxyConfig.owner.toString() === configAccount.accountId) ||
+        (option === language.getText('proxyConfiguration.options.owner') &&
+          proxyConfig.owner.toString() === configAccount.accountId) ||
+        (option === language.getText('proxyConfiguration.options.accept') &&
+          proxyConfig.pendingOwner.toString() === configAccount.accountId) ||
+        (option !==
+          language.getText('proxyConfiguration.options.implementation') &&
+          option !== language.getText('proxyConfiguration.options.owner') &&
+          option !== language.getText('proxyConfiguration.options.accept'))
+      )
+        return true;
+      return false;
+    });
 
     return result;
   }
@@ -2635,10 +2677,13 @@ export default class OperationStableCoinService extends Service {
       'proxyConfiguration.options',
     );
 
+    const proxyConfigurationOptionsFiltered =
+      await this.filterProxyConfigurationMenuOptions(proxyConfigurationOptions);
+
     switch (
       await utilsService.defaultMultipleAsk(
         language.getText('proxyConfiguration.askProxyConfiguration'),
-        proxyConfigurationOptions,
+        proxyConfigurationOptionsFiltered,
         false,
       )
     ) {
@@ -2648,6 +2693,9 @@ export default class OperationStableCoinService extends Service {
 
       case language.getText('proxyConfiguration.options.owner'):
         await this.changeOwnerFlow(currentImpl);
+        break;
+      case language.getText('proxyConfiguration.options.accept'):
+        await this.acceptOwnerFlow(currentImpl);
         break;
 
       case proxyConfigurationOptions[proxyConfigurationOptions.length - 1]:
@@ -2710,6 +2758,29 @@ export default class OperationStableCoinService extends Service {
 
     try {
       await new OwnerProxyService().changeProxyOwner(changeProxyOwnerRequest);
+    } catch (error) {
+      await utilsService.askErrorConfirmation(
+        async () => await this.stableCoinConfiguration(currentImpl),
+        error,
+      );
+    }
+  }
+
+  private async acceptOwnerFlow(currentImpl: string): Promise<void> {
+    const configAccount = utilsService.getCurrentAccount();
+
+    await utilsService.cleanAndShowBanner();
+    utilsService.displayCurrentUserInfo(
+      configAccount,
+      this.stableCoinWithSymbol,
+    );
+
+    const acceptProxyOwnerRequest = new AcceptProxyOwnerRequest({
+      tokenId: this.stableCoinId,
+    });
+
+    try {
+      await new OwnerProxyService().acceptProxyOwner(acceptProxyOwnerRequest);
     } catch (error) {
       await utilsService.askErrorConfirmation(
         async () => await this.stableCoinConfiguration(currentImpl),

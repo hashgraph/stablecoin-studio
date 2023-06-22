@@ -490,7 +490,8 @@ export const english = {
     customFeesRemoved: 'Custom fees removed',
     transferCompleted: 'Transfer completed',
     updateCompleted: 'Update completed',
-    changeOwnerCompleted: 'Owner change completed',
+    changeOwnerCompleted: 'Owner change requested',
+    acceptOwnerCompleted: 'Owner change completed',
     upgradeImplementationCompleted: 'Implementation upgrade completed',
   },
   operation: {
@@ -611,6 +612,7 @@ export const english = {
     options: {
       implementation: 'Upgrade stable coin implementation',
       owner: 'Change stable coin owner',
+      accept: 'Accept stable coin owner',
       ...goBack,
     },
     askNewImplementation:
@@ -618,6 +620,7 @@ export const english = {
     askNewOwner: 'Enter the new owner account id',
     askProxyConfiguration: 'What do you want to do',
     currentImplementation: 'Your current implementation is : ',
+    pendingOwner: 'pending owner : ',
   },
   tokenConfiguration: {
     askAction: 'What token property do you want to update?',
