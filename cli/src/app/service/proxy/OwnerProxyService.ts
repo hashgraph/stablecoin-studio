@@ -42,4 +42,24 @@ export default class OwnerProxyService extends Service {
 
     utilsService.breakLine();
   }
+
+  /**
+   * cancel the proxy's owner
+   */
+  public async cancelProxyOwner(currentTokenId: string): Promise<void> {
+    const configAccount = utilsService.getCurrentAccount();
+
+    const changeProxyOwnerRequest = new ChangeProxyOwnerRequest({
+      tokenId: currentTokenId,
+      targetId: configAccount.accountId,
+    });
+
+    await this.changeProxyOwner(changeProxyOwnerRequest);
+
+    const acceptProxyOwnerRequest = new AcceptProxyOwnerRequest({
+      tokenId: currentTokenId,
+    });
+
+    await this.acceptProxyOwner(acceptProxyOwnerRequest);
+  }
 }

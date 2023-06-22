@@ -491,7 +491,7 @@ export const english = {
     transferCompleted: 'Transfer completed',
     updateCompleted: 'Update completed',
     changeOwnerCompleted: 'Owner change requested',
-    acceptOwnerCompleted: 'Owner change completed',
+    acceptOwnerCompleted: 'Owner change accepted',
     upgradeImplementationCompleted: 'Implementation upgrade completed',
   },
   operation: {
@@ -613,6 +613,7 @@ export const english = {
       implementation: 'Upgrade stable coin implementation',
       owner: 'Change stable coin owner',
       accept: 'Accept stable coin owner',
+      cancel: 'Cancel stable coin owner change',
       ...goBack,
     },
     askNewImplementation:
@@ -621,6 +622,8 @@ export const english = {
     askProxyConfiguration: 'What do you want to do',
     currentImplementation: 'Your current implementation is : ',
     pendingOwner: 'pending owner : ',
+    askAcceptOwner: 'Are you sure you want to accept the ownership?',
+    askCancelOwner: 'Are you sure you want to cancel the ownership transfer?',
   },
   tokenConfiguration: {
     askAction: 'What token property do you want to update?',
