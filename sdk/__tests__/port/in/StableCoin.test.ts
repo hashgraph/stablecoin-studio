@@ -66,7 +66,6 @@ import {
 	CLIENT_ACCOUNT_ECDSA,
 	FACTORY_ADDRESS,
 	HEDERA_TOKEN_MANAGER_ADDRESS,
-	CLIENT_ACCOUNT_ID_ED25519,
 } from '../../config.js';
 import { Client, Hbar, TransferTransaction } from '@hashgraph/sdk';
 import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
