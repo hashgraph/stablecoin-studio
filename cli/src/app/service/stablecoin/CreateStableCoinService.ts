@@ -402,7 +402,7 @@ export default class CreateStableCoinService extends Service {
 
   private async askHederaTokenManagerVersion(
     factory: string,
-    request: any,
+    request: CreateRequest,
   ): Promise<void> {
     const factoryListEvm = await Factory.getHederaTokenManagerList(
       new GetTokenManagerListRequest({ factoryId: factory }),
@@ -520,7 +520,7 @@ export default class CreateStableCoinService extends Service {
   }
 
   private async initialRoleAssignments(
-    tokenToCreate: any,
+    tokenToCreate: CreateRequest,
     currentAccountId: string,
   ): Promise<void> {
     await this.askForAccount(
@@ -601,8 +601,16 @@ export default class CreateStableCoinService extends Service {
   private async askForAccount(
     text: string,
     currentAccountId: string,
-    tokenToCreate: any,
-    fieldToValidate: string,
+    tokenToCreate: CreateRequest,
+    fieldToValidate:
+      | 'burnRoleAccount'
+      | 'wipeRoleAccount'
+      | 'rescueRoleAccount'
+      | 'pauseRoleAccount'
+      | 'freezeRoleAccount'
+      | 'deleteRoleAccount'
+      | 'kycRoleAccount'
+      | 'cashInRoleAccount',
   ): Promise<string> {
     const options = [
       language.getText('stablecoin.initialRoles.options.currentAccount'),
