@@ -67,7 +67,9 @@ import UpdateRequest from './UpdateRequest.js';
 import GetProxyConfigRequest from './GetProxyConfigRequest.js';
 import GetFactoryProxyConfigRequest from './GetFactoryProxyConfigRequest.js';
 import ChangeProxyOwnerRequest from './ChangeProxyOwnerRequest.js';
+import AcceptProxyOwnerRequest from './AcceptProxyOwnerRequest.js';
 import ChangeFactoryProxyOwnerRequest from './ChangeFactoryProxyOwnerRequest.js';
+import AcceptFactoryProxyOwnerRequest from './AcceptFactoryProxyOwnerRequest.js';
 import UpgradeImplementationRequest from './UpgradeImplementationRequest.js';
 import UpgradeFactoryImplementationRequest from './UpgradeFactoryImplementationRequest.js';
 
@@ -122,7 +124,9 @@ export {
 	GetProxyConfigRequest,
 	GetFactoryProxyConfigRequest,
 	ChangeProxyOwnerRequest,
+	AcceptProxyOwnerRequest,
 	ChangeFactoryProxyOwnerRequest,
+	AcceptFactoryProxyOwnerRequest,
 	UpgradeImplementationRequest,
 	UpgradeFactoryImplementationRequest,
 };

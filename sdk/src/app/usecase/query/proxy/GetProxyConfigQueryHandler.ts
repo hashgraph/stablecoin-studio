@@ -30,6 +30,7 @@ import {
 	GetProxyConfigQueryResponse,
 } from './GetProxyConfigQuery.js';
 import { MirrorNodeAdapter } from '../../../../port/out/mirror/MirrorNodeAdapter.js';
+import { EVM_ZERO_ADDRESS } from '../../../../core/Constants.js';
 
 @QueryHandler(GetProxyConfigQuery)
 export class GetProxyConfigQueryHandler
@@ -64,17 +65,32 @@ export class GetProxyConfigQueryHandler
 		const proxyOwner = await this.queryAdapter.getProxyOwner(
 			coin.evmProxyAdminAddress,
 		);
-
-		const proxyOwnerHederaId = await this.mirrorNode.getAccountInfo(
-			proxyOwner,
+		const proxyPendingOwner = await this.queryAdapter.getProxyPendingOwner(
+			coin.evmProxyAdminAddress,
 		);
+
+		const proxyOwnerHederaId = HederaId.from(
+			(await this.mirrorNode.getAccountInfo(proxyOwner)).id,
+		);
+
+		const proxyPendingOwnerHederaId =
+			EVM_ZERO_ADDRESS == proxyPendingOwner
+				? HederaId.NULL
+				: HederaId.from(
+						(
+							await this.mirrorNode.getAccountInfo(
+								proxyPendingOwner,
+							)
+						).id,
+				  );
 
 		return Promise.resolve(
 			new GetProxyConfigQueryResponse({
 				implementationAddress: ContractId.fromHederaEthereumAddress(
 					proxyImpl ?? '0.0.0',
 				),
-				owner: HederaId.from(proxyOwnerHederaId.id),
+				owner: proxyOwnerHederaId,
+				pendingOwner: proxyPendingOwnerHederaId,
 			}),
 		);
 	}

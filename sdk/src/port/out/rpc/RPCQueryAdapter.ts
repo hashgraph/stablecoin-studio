@@ -32,7 +32,7 @@ import {
 	AggregatorV3Interface__factory,
 	HederaTokenManager__factory,
 	StableCoinFactory__factory,
-	ProxyAdmin__factory,
+	StableCoinProxyAdmin__factory,
 	ITransparentUpgradeableProxy__factory,
 } from '@hashgraph-dev/stablecoin-npm-contracts';
 import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
@@ -44,7 +44,7 @@ const LOCAL_JSON_RPC_RELAY_URL = 'http://127.0.0.1:7546/api';
 const HederaTokenManager = HederaTokenManager__factory;
 const Reserve = AggregatorV3Interface__factory;
 const Factory = StableCoinFactory__factory;
-const ProxyAdmin = ProxyAdmin__factory;
+const StableCoinProxyAdmin = StableCoinProxyAdmin__factory;
 const ITransparentUpgradeableProxy = ITransparentUpgradeableProxy__factory;
 
 type StaticConnect = { connect: (...args: any[]) => any };
@@ -156,7 +156,7 @@ export default class RPCQueryAdapter {
 			`Requesting implementation for proxy Admin: ${proxyAdmin.toString()} and proxy: ${proxy.toString()}`,
 		);
 		return await this.connect(
-			ProxyAdmin,
+			StableCoinProxyAdmin,
 			proxyAdmin.toString(),
 		).getProxyImplementation(proxy.toString());
 	}
@@ -173,7 +173,20 @@ export default class RPCQueryAdapter {
 		LogService.logTrace(
 			`Requesting owner for proxy Admin: ${proxyAdmin.toString()}`,
 		);
-		return await this.connect(ProxyAdmin, proxyAdmin.toString()).owner();
+		return await this.connect(
+			StableCoinProxyAdmin,
+			proxyAdmin.toString(),
+		).owner();
+	}
+
+	async getProxyPendingOwner(proxyAdmin: EvmAddress): Promise<string> {
+		LogService.logTrace(
+			`Requesting owner for proxy Admin: ${proxyAdmin.toString()}`,
+		);
+		return await this.connect(
+			StableCoinProxyAdmin,
+			proxyAdmin.toString(),
+		).pendingOwner();
 	}
 
 	async getAccountsWithRole(

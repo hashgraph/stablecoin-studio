@@ -152,6 +152,7 @@ interface ITransactionAdapter {
 		proxyAdminId: HederaId,
 		targetId: HederaId,
 	): Promise<TransactionResponse>;
+	acceptOwner(proxyAdminId: HederaId): Promise<TransactionResponse>;
 	getMirrorNodeAdapter(): MirrorNodeAdapter;
 }
 
@@ -520,6 +521,12 @@ export default abstract class TransactionAdapter
 	changeOwner(
 		proxyAdminId: HederaId,
 		targetId: HederaId,
+	): Promise<TransactionResponse<any, Error>> {
+		throw new Error('Method not implemented.');
+	}
+
+	acceptOwner(
+		proxyAdminId: HederaId,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}

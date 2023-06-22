@@ -64,7 +64,9 @@ import { UpdateCustomFeesCommandHandler } from '../app/usecase/command/stablecoi
 import { UpgradeImplementationCommandHandler } from '../app/usecase/command/proxy/upgrade/UpgradeImplementationCommandHandler.js';
 import { UpgradeFactoryImplementationCommandHandler } from '../app/usecase/command/factoryProxy/upgrade/UpgradeFactoryImplementationCommandHandler.js';
 import { ChangeOwnerCommandHandler } from '../app/usecase/command/proxy/changeOwner/ChangeOwnerCommandHandler.js';
+import { AcceptOwnerCommandHandler } from '../app/usecase/command/proxy/acceptOwner/AcceptOwnerCommandHandler.js';
 import { ChangeFactoryOwnerCommandHandler } from '../app/usecase/command/factoryProxy/changeOwner/ChangeFactoryOwnerCommandHandler.js';
+import { AcceptFactoryOwnerCommandHandler } from '../app/usecase/command/factoryProxy/acceptOwner/AcceptFactoryOwnerCommandHandler.js';
 
 import { WalletEvents } from '../app/service/event/WalletEvent.js';
 import { CommandHandlerType } from './command/CommandBus.js';
@@ -269,7 +271,15 @@ const COMMAND_HANDLERS = [
 	},
 	{
 		token: TOKENS.COMMAND_HANDLER,
+		useClass: AcceptOwnerCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
 		useClass: ChangeFactoryOwnerCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: AcceptFactoryOwnerCommandHandler,
 	},
 ];
 
