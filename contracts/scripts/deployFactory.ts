@@ -55,7 +55,12 @@ export const deployFactory = async () => {
         admin: await toEvmAddress(operatorAccount, operatorIsE25519),
         tokenManager: resulttokenManager.toSolidityAddress(),
     }
-    const result = await dp(initializeFactory, clientSdk, operatorPriKey)
+    const result = await dp(
+        initializeFactory,
+        clientSdk,
+        operatorPriKey,
+        operatorIsE25519
+    )
 
     const tokenManager = resulttokenManager
     const proxyAddress = result[0]

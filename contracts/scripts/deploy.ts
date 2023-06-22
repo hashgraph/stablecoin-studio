@@ -9,6 +9,7 @@ import {
 } from '@hashgraph/sdk'
 import { BigNumber } from 'ethers'
 import {
+    StableCoinProxyAdmin__factory,
     ProxyAdmin__factory,
     TransparentUpgradeableProxy__factory,
     StableCoinFactory__factory,
@@ -36,10 +37,10 @@ import {
     associateToken,
 } from './utils'
 
-const hederaTokenManagerAddress = '0.0.14459443'
-export const factoryProxyAddress = '0.0.14459505'
-const factoryProxyAdminAddress = '0.0.14459488'
-const factoryAddress = '0.0.14459475'
+export const factoryProxyAddress = '0.0.14957196'
+const factoryProxyAdminAddress = '0.0.14957194'
+const factoryAddress = '0.0.14957192'
+const hederaTokenManagerAddress = '0.0.14957190'
 
 export function initializeClients(): [
     Client,
@@ -242,7 +243,8 @@ export async function getProxyImpl(
 export async function deployFactory(
     initializeParams: { admin: string; tokenManager: string },
     clientOperator: Client,
-    privateKey: string
+    privateKey: string,
+    isED25519Type: boolean
 ) {
     // Deploying Factory logic
     console.log(`Deploying Contract Factory. please wait...`)
@@ -258,10 +260,20 @@ export async function deployFactory(
     // Deploying Factory Proxy Admin
     console.log(`Deploying Contract Factory Proxy Admin. please wait...`)
 
+    const AccountEvmAddress = await toEvmAddress(
+        clientOperator.operatorAccountId!.toString(),
+        isED25519Type
+    )
+
+    const paramsProxyAdmin = new ContractFunctionParameters().addAddress(
+        AccountEvmAddress
+    )
+
     const factoryProxyAdmin = await deployContractSDK(
-        ProxyAdmin__factory,
+        StableCoinProxyAdmin__factory,
         privateKey,
-        clientOperator
+        clientOperator,
+        paramsProxyAdmin
     )
 
     console.log(
@@ -385,7 +397,8 @@ export async function deployContractsWithSDK({
         const result = await deployFactory(
             initializeFactory,
             clientSdk,
-            privateKey
+            privateKey,
+            isED25519Type
         )
         f_proxyAddress = result[0]
         f_proxyAdminAddress = result[1]
