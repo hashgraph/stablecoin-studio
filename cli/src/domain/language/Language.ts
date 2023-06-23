@@ -6,6 +6,7 @@ import BaseEntity from '../BaseEntity.js';
  * Language
  */
 export default class Language extends BaseEntity {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private lang: any;
 
   constructor() {

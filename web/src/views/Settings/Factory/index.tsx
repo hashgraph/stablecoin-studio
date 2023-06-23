@@ -216,7 +216,7 @@ const FactorySettings = () => {
 							),
 							button: (
 								<Button
-									data-testid={`update-update-owner-button`}
+									data-testid={`update-owner-button`}
 									variant='primary'
 									onClick={handleChangeOwner}
 								>

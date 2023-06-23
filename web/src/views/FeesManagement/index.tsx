@@ -182,7 +182,7 @@ const FeesManagement = () => {
 	};
 
 	useEffect(() => {
-		const parsedFees = selectedStableCoin!.customFees!.map((item: FeeTypes) => {
+		const parsedFees = selectedStableCoin?.customFees?.map((item: FeeTypes) => {
 			const load = isLoading;
 			load.push(false);
 			setIsLoading(load);
@@ -680,6 +680,7 @@ const FeesManagement = () => {
 										</GridItem>
 										<GridItem textAlign='center' marginTop={{ base: 2 }}>
 											<Icon
+												data-testid='trash-icon'
 												name='Trash'
 												color='brand.primary'
 												cursor='pointer'
@@ -698,10 +699,16 @@ const FeesManagement = () => {
 						justifyContent='space-between'
 						px={{ base: 4, lg: 14 }}
 					>
-						<Button variant='primary' onClick={handleAddNewRow} isDisabled={isMaxFees}>
+						<Button
+							data-testid='add-btn'
+							variant='primary'
+							onClick={handleAddNewRow}
+							isDisabled={isMaxFees}
+						>
 							{t('updateTokenFees.addRowButtonText')}
 						</Button>
 						<Button
+							data-testid='save-btn'
 							variant='primary'
 							onClick={handleSubmit(handleUpdateTokenFees)}
 							isDisabled={!formState.isValid}

@@ -44,7 +44,7 @@ export default class ImplementationProxyService extends Service {
   }
 
   private async askHederaTokenManagerVersion(
-    request: any,
+    request: UpgradeImplementationRequest,
     currentImpl: string,
   ): Promise<boolean> {
     const factory = utilsService.getCurrentFactory().id;

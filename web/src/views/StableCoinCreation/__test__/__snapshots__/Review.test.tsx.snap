@@ -1,0 +1,597 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Review /> should render correctly 1`] = `
+<DocumentFragment>
+  <div
+    class="chakra-stack css-1f6llri"
+  >
+    <div
+      class="chakra-stack css-135a0es"
+    >
+      <h2
+        class="chakra-heading css-p7jgmy"
+        data-testid="title"
+      >
+        Stable coin review
+      </h2>
+      <form
+        class="chakra-stack css-1wpa917"
+      >
+        <div
+          class="css-13brihr"
+          data-testid="button-box"
+        >
+          <div
+            class="css-1i64jsd"
+          >
+            <p
+              class="chakra-text css-ol2bzi"
+              data-testid="details-review-title"
+            >
+              Basic details
+            </p>
+          </div>
+          <div
+            class="css-0"
+          >
+            <div
+              class="css-0"
+            >
+              <div
+                class="css-gg4vpm"
+                data-testid="details-review-detail-0"
+              >
+                <p
+                  class="chakra-text css-9s6br4"
+                >
+                  HederaTokenManager impl.
+                </p>
+                <div
+                  class="chakra-stack css-1c8ysgd"
+                >
+                  <p
+                    class="chakra-text css-mgupmj"
+                  >
+                    2
+                  </p>
+                </div>
+              </div>
+              <hr
+                aria-orientation="horizontal"
+                class="chakra-divider css-zaaihy"
+                title="divider"
+              />
+            </div>
+            <div
+              class="css-0"
+            >
+              <div
+                class="css-gg4vpm"
+                data-testid="details-review-detail-1"
+              >
+                <p
+                  class="chakra-text css-9s6br4"
+                >
+                  Name
+                </p>
+                <div
+                  class="chakra-stack css-1c8ysgd"
+                >
+                  <p
+                    class="chakra-text css-mgupmj"
+                  />
+                </div>
+              </div>
+              <hr
+                aria-orientation="horizontal"
+                class="chakra-divider css-zaaihy"
+                title="divider"
+              />
+            </div>
+            <div
+              class="css-0"
+            >
+              <div
+                class="css-gg4vpm"
+                data-testid="details-review-detail-2"
+              >
+                <p
+                  class="chakra-text css-9s6br4"
+                >
+                  Symbol
+                </p>
+                <div
+                  class="chakra-stack css-1c8ysgd"
+                >
+                  <p
+                    class="chakra-text css-mgupmj"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="css-13brihr"
+          data-testid="button-box"
+        >
+          <div
+            class="css-1i64jsd"
+          >
+            <p
+              class="chakra-text css-ol2bzi"
+              data-testid="details-review-title"
+            >
+              Optional details
+            </p>
+          </div>
+          <div
+            class="css-0"
+          >
+            <div
+              class="css-0"
+            >
+              <div
+                class="css-gg4vpm"
+                data-testid="details-review-detail-0"
+              >
+                <p
+                  class="chakra-text css-9s6br4"
+                >
+                  Initial supply
+                </p>
+                <div
+                  class="chakra-stack css-1c8ysgd"
+                >
+                  <p
+                    class="chakra-text css-mgupmj"
+                  >
+                    0
+                  </p>
+                </div>
+              </div>
+              <hr
+                aria-orientation="horizontal"
+                class="chakra-divider css-zaaihy"
+                title="divider"
+              />
+            </div>
+            <div
+              class="css-0"
+            >
+              <div
+                class="css-gg4vpm"
+                data-testid="details-review-detail-1"
+              >
+                <p
+                  class="chakra-text css-9s6br4"
+                >
+                  Supply type
+                </p>
+                <div
+                  class="chakra-stack css-1c8ysgd"
+                >
+                  <p
+                    class="chakra-text css-mgupmj"
+                  />
+                </div>
+              </div>
+              <hr
+                aria-orientation="horizontal"
+                class="chakra-divider css-zaaihy"
+                title="divider"
+              />
+            </div>
+            <div
+              class="css-0"
+            >
+              <div
+                class="css-gg4vpm"
+                data-testid="details-review-detail-2"
+              >
+                <p
+                  class="chakra-text css-9s6br4"
+                >
+                  Max supply
+                </p>
+              </div>
+              <hr
+                aria-orientation="horizontal"
+                class="chakra-divider css-zaaihy"
+                title="divider"
+              />
+            </div>
+            <div
+              class="css-0"
+            >
+              <div
+                class="css-gg4vpm"
+                data-testid="details-review-detail-3"
+              >
+                <p
+                  class="chakra-text css-9s6br4"
+                >
+                  Decimals
+                </p>
+                <div
+                  class="chakra-stack css-1c8ysgd"
+                >
+                  <p
+                    class="chakra-text css-mgupmj"
+                  />
+                </div>
+              </div>
+              <hr
+                aria-orientation="horizontal"
+                class="chakra-divider css-zaaihy"
+                title="divider"
+              />
+            </div>
+            <div
+              class="css-0"
+            >
+              <div
+                class="css-gg4vpm"
+                data-testid="details-review-detail-4"
+              >
+                <p
+                  class="chakra-text css-9s6br4"
+                >
+                  Metadata
+                </p>
+                <div
+                  class="chakra-stack css-1c8ysgd"
+                >
+                  <p
+                    class="chakra-text css-mgupmj"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="css-13brihr"
+          data-testid="button-box"
+        >
+          <div
+            class="css-1i64jsd"
+          >
+            <p
+              class="chakra-text css-ol2bzi"
+              data-testid="details-review-title"
+            >
+              Manage permissions
+            </p>
+          </div>
+          <div
+            class="css-0"
+          >
+            <div
+              class="css-0"
+            >
+              <div
+                class="css-gg4vpm"
+                data-testid="details-review-detail-0"
+              >
+                <p
+                  class="chakra-text css-9s6br4"
+                >
+                  Admin
+                </p>
+                <div
+                  class="chakra-stack css-1c8ysgd"
+                >
+                  <p
+                    class="chakra-text css-mgupmj"
+                  >
+                    The smart contract
+                  </p>
+                </div>
+              </div>
+              <hr
+                aria-orientation="horizontal"
+                class="chakra-divider css-zaaihy"
+                title="divider"
+              />
+            </div>
+            <div
+              class="css-0"
+            >
+              <div
+                class="css-gg4vpm"
+                data-testid="details-review-detail-1"
+              >
+                <p
+                  class="chakra-text css-9s6br4"
+                >
+                  Supply
+                </p>
+                <div
+                  class="chakra-stack css-1c8ysgd"
+                >
+                  <p
+                    class="chakra-text css-mgupmj"
+                  >
+                    The smart contract
+                  </p>
+                </div>
+              </div>
+              <hr
+                aria-orientation="horizontal"
+                class="chakra-divider css-zaaihy"
+                title="divider"
+              />
+            </div>
+            <div
+              class="css-0"
+            >
+              <div
+                class="css-gg4vpm"
+                data-testid="details-review-detail-2"
+              >
+                <p
+                  class="chakra-text css-9s6br4"
+                >
+                  Wipe
+                </p>
+                <div
+                  class="chakra-stack css-1c8ysgd"
+                >
+                  <p
+                    class="chakra-text css-mgupmj"
+                  >
+                    0.0.123
+                  </p>
+                </div>
+              </div>
+              <hr
+                aria-orientation="horizontal"
+                class="chakra-divider css-zaaihy"
+                title="divider"
+              />
+            </div>
+            <div
+              class="css-0"
+            >
+              <div
+                class="css-gg4vpm"
+                data-testid="details-review-detail-3"
+              >
+                <p
+                  class="chakra-text css-9s6br4"
+                >
+                  Freeze
+                </p>
+                <div
+                  class="chakra-stack css-1c8ysgd"
+                >
+                  <p
+                    class="chakra-text css-mgupmj"
+                  >
+                    0.0.123
+                  </p>
+                </div>
+              </div>
+              <hr
+                aria-orientation="horizontal"
+                class="chakra-divider css-zaaihy"
+                title="divider"
+              />
+            </div>
+            <div
+              class="css-0"
+            >
+              <div
+                class="css-gg4vpm"
+                data-testid="details-review-detail-4"
+              >
+                <p
+                  class="chakra-text css-9s6br4"
+                >
+                  KYC
+                </p>
+                <div
+                  class="chakra-stack css-1c8ysgd"
+                >
+                  <p
+                    class="chakra-text css-mgupmj"
+                  >
+                    None
+                  </p>
+                </div>
+              </div>
+              <hr
+                aria-orientation="horizontal"
+                class="chakra-divider css-zaaihy"
+                title="divider"
+              />
+            </div>
+            <div
+              class="css-0"
+            >
+              <div
+                class="css-gg4vpm"
+                data-testid="details-review-detail-5"
+              >
+                <p
+                  class="chakra-text css-9s6br4"
+                >
+                  Pause
+                </p>
+                <div
+                  class="chakra-stack css-1c8ysgd"
+                >
+                  <p
+                    class="chakra-text css-mgupmj"
+                  >
+                    0.0.123
+                  </p>
+                </div>
+              </div>
+              <hr
+                aria-orientation="horizontal"
+                class="chakra-divider css-zaaihy"
+                title="divider"
+              />
+            </div>
+            <div
+              class="css-0"
+            >
+              <div
+                class="css-gg4vpm"
+                data-testid="details-review-detail-6"
+              >
+                <p
+                  class="chakra-text css-9s6br4"
+                >
+                  Fee Schedule
+                </p>
+                <div
+                  class="chakra-stack css-1c8ysgd"
+                >
+                  <p
+                    class="chakra-text css-mgupmj"
+                  >
+                    None
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="css-13brihr"
+          data-testid="button-box"
+        >
+          <div
+            class="css-1i64jsd"
+          >
+            <p
+              class="chakra-text css-ol2bzi"
+              data-testid="details-review-title"
+            >
+              Roles assignment
+            </p>
+          </div>
+          <div
+            class="css-0"
+          >
+            <div
+              class="css-0"
+            >
+              <div
+                class="css-gg4vpm"
+                data-testid="details-review-detail-0"
+              >
+                <p
+                  class="chakra-text css-9s6br4"
+                >
+                  Rescue
+                </p>
+                <div
+                  class="chakra-stack css-1c8ysgd"
+                >
+                  <p
+                    class="chakra-text css-mgupmj"
+                  >
+                    Current user account
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="css-13brihr"
+          data-testid="button-box"
+        >
+          <div
+            class="css-1i64jsd"
+          >
+            <p
+              class="chakra-text css-ol2bzi"
+              data-testid="details-review-title"
+            >
+              Treasury account address
+            </p>
+          </div>
+          <div
+            class="css-0"
+          >
+            <div
+              class="css-0"
+            >
+              <div
+                class="css-gg4vpm"
+                data-testid="details-review-detail-0"
+              >
+                <p
+                  class="chakra-text css-9s6br4"
+                >
+                  Treasury account address
+                </p>
+                <div
+                  class="chakra-stack css-1c8ysgd"
+                >
+                  <p
+                    class="chakra-text css-mgupmj"
+                  >
+                    The smart contract
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="css-13brihr"
+          data-testid="button-box"
+        >
+          <div
+            class="css-1i64jsd"
+          >
+            <p
+              class="chakra-text css-ol2bzi"
+              data-testid="details-review-title"
+            >
+              Proof of Reserve
+            </p>
+          </div>
+          <div
+            class="css-0"
+          >
+            <div
+              class="css-0"
+            >
+              <div
+                class="css-gg4vpm"
+                data-testid="details-review-detail-0"
+              >
+                <p
+                  class="chakra-text css-9s6br4"
+                >
+                  Has proof of reserve
+                </p>
+                <div
+                  class="chakra-stack css-1c8ysgd"
+                >
+                  <p
+                    class="chakra-text css-mgupmj"
+                  >
+                    FALSE
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;

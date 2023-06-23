@@ -1,0 +1,334 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<CheckFrozenOperation /> should render correctly 1`] = `
+<DocumentFragment>
+  <div
+    class="chakra-stack css-16oka5y"
+  >
+    <h2
+      class="chakra-heading css-bqsusc"
+      data-testid="base-container-heading"
+    >
+      Operations
+    </h2>
+    <div
+      class="css-1b6lda7"
+      data-testid="base-container-children"
+    >
+      <div
+        class="css-1us6gcn"
+      >
+        <div
+          class="css-1r9sqqd"
+        >
+          <div
+            class="chakra-stack css-n21gh5"
+          >
+            <h2
+              class="chakra-heading css-utvjhb"
+              data-testid="title"
+            >
+              Check account frozen status
+            </h2>
+            <p
+              class="chakra-text css-1lyqlf8"
+              data-testid="operation-title"
+            >
+              Operation details
+            </p>
+            <form
+              class="chakra-stack css-hdflcv"
+            >
+              <div
+                class="chakra-stack css-1h0sumw"
+              >
+                <div
+                  class="chakra-form-control css-1kxonj9"
+                  role="group"
+                >
+                  <label
+                    class="chakra-form__label css-1hfoxt1"
+                    for="field-:r1:"
+                    id="field-:r1:-label"
+                  >
+                    <div
+                      class="chakra-stack css-84zodg"
+                    >
+                      <p
+                        class="chakra-text css-mgupmj"
+                      >
+                        Enter the account
+                      </p>
+                      <p
+                        class="chakra-text css-ftb7fv"
+                        data-testid="required"
+                      >
+                        *
+                      </p>
+                    </div>
+                  </label>
+                  <div
+                    class="chakra-input__group css-bx0blc"
+                    data-group="true"
+                  >
+                    <input
+                      autocomplete="off"
+                      class="chakra-input css-l1kxkf"
+                      data-testid="targetAccount"
+                      id="field-:r1:"
+                      name="targetAccount"
+                      placeholder="0.0.0"
+                      value=""
+                    />
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div
+            class="chakra-stack css-eunu1i"
+          >
+            <div
+              class="chakra-stack css-wqnj46"
+            >
+              <h2
+                class="chakra-heading css-1udj1g5"
+                data-testid="details-title"
+              >
+                Stable coin details
+              </h2>
+              <div
+                class="css-13brihr"
+                data-testid="button-box"
+              >
+                <div
+                  class="css-1i64jsd"
+                >
+                  <p
+                    class="chakra-text css-ol2bzi"
+                    data-testid="details-review-title"
+                  >
+                    Basic details
+                  </p>
+                </div>
+                <div
+                  class="css-0"
+                >
+                  <div
+                    class="css-0"
+                  >
+                    <div
+                      class="css-gg4vpm"
+                      data-testid="details-review-detail-0"
+                    >
+                      <p
+                        class="chakra-text css-9s6br4"
+                      >
+                        Name
+                      </p>
+                      <div
+                        class="chakra-stack css-1c8ysgd"
+                      >
+                        <p
+                          class="chakra-text css-mgupmj"
+                        >
+                          TEST_ACCELERATOR_SC
+                        </p>
+                      </div>
+                    </div>
+                    <hr
+                      aria-orientation="horizontal"
+                      class="chakra-divider css-zaaihy"
+                      title="divider"
+                    />
+                  </div>
+                  <div
+                    class="css-0"
+                  >
+                    <div
+                      class="css-gg4vpm"
+                      data-testid="details-review-detail-1"
+                    >
+                      <p
+                        class="chakra-text css-9s6br4"
+                      >
+                        Symbol
+                      </p>
+                      <div
+                        class="chakra-stack css-1c8ysgd"
+                      >
+                        <p
+                          class="chakra-text css-mgupmj"
+                        >
+                          TEST
+                        </p>
+                      </div>
+                    </div>
+                    <hr
+                      aria-orientation="horizontal"
+                      class="chakra-divider css-zaaihy"
+                      title="divider"
+                    />
+                  </div>
+                  <div
+                    class="css-0"
+                  >
+                    <div
+                      class="css-gg4vpm"
+                      data-testid="details-review-detail-2"
+                    >
+                      <p
+                        class="chakra-text css-9s6br4"
+                      >
+                        Decimals
+                      </p>
+                      <div
+                        class="chakra-stack css-1c8ysgd"
+                      >
+                        <p
+                          class="chakra-text css-mgupmj"
+                        >
+                          6
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="css-13brihr"
+                data-testid="button-box"
+              >
+                <div
+                  class="css-1i64jsd"
+                >
+                  <p
+                    class="chakra-text css-ol2bzi"
+                    data-testid="details-review-title"
+                  >
+                    Optional details
+                  </p>
+                </div>
+                <div
+                  class="css-0"
+                >
+                  <div
+                    class="css-0"
+                  >
+                    <div
+                      class="css-gg4vpm"
+                      data-testid="details-review-detail-0"
+                    >
+                      <p
+                        class="chakra-text css-9s6br4"
+                      >
+                        Initial supply
+                      </p>
+                      1000
+                    </div>
+                    <hr
+                      aria-orientation="horizontal"
+                      class="chakra-divider css-zaaihy"
+                      title="divider"
+                    />
+                  </div>
+                  <div
+                    class="css-0"
+                  >
+                    <div
+                      class="css-gg4vpm"
+                      data-testid="details-review-detail-1"
+                    >
+                      <p
+                        class="chakra-text css-9s6br4"
+                      >
+                        Total supply
+                      </p>
+                      1000
+                    </div>
+                    <hr
+                      aria-orientation="horizontal"
+                      class="chakra-divider css-zaaihy"
+                      title="divider"
+                    />
+                  </div>
+                  <div
+                    class="css-0"
+                  >
+                    <div
+                      class="css-gg4vpm"
+                      data-testid="details-review-detail-2"
+                    >
+                      <p
+                        class="chakra-text css-9s6br4"
+                      >
+                        Max supply
+                      </p>
+                      1000
+                    </div>
+                    <hr
+                      aria-orientation="horizontal"
+                      class="chakra-divider css-zaaihy"
+                      title="divider"
+                    />
+                  </div>
+                  <div
+                    class="css-0"
+                  >
+                    <div
+                      class="css-gg4vpm"
+                      data-testid="details-review-detail-3"
+                    >
+                      <p
+                        class="chakra-text css-9s6br4"
+                      >
+                        Supply type
+                      </p>
+                      <div
+                        class="chakra-stack css-1c8ysgd"
+                      >
+                        <p
+                          class="chakra-text css-mgupmj"
+                        >
+                          Finite
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="css-3gu2fl"
+        >
+          <div
+            class="chakra-stack css-1amf41o"
+          >
+            <button
+              class="chakra-button css-1urzhdw"
+              data-testid="cancel-btn"
+              type="button"
+            >
+              Go back
+            </button>
+            <button
+              class="chakra-button css-qvkb6r"
+              data-testid="confirm-btn"
+              disabled=""
+              type="button"
+            >
+              Accept
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;

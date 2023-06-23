@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<OptionalDetails /> should render correctly 1`] = `
+<DocumentFragment>
+  <div
+    class="chakra-stack css-1f6llri"
+  >
+    <div
+      class="chakra-stack css-135a0es"
+    >
+      <h2
+        class="chakra-heading css-p7jgmy"
+        data-testid="title"
+      >
+        Stable coin optional details
+      </h2>
+      <form
+        class="chakra-stack css-b5leqj"
+      />
+    </div>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;

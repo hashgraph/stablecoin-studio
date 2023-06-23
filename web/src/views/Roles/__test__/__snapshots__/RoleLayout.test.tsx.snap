@@ -28,7 +28,7 @@ exports[`<RoleLayout /> should render correctly 1`] = `
               class="chakra-heading css-1ouevxk"
               data-testid="title"
             >
-              Give role
+              Give roles
             </h2>
             <form
               class="chakra-stack css-b5leqj"
@@ -63,6 +63,7 @@ exports[`<RoleLayout /> should render correctly 1`] = `
                   </label>
                   <div
                     class="chakra-input__group css-bx0blc"
+                    data-group="true"
                   >
                     <input
                       autocomplete="off"
@@ -211,13 +212,18 @@ exports[`<RoleLayout /> should render correctly 1`] = `
               </h2>
               <div
                 class="css-13brihr"
+                data-testid="button-box"
               >
-                <p
-                  class="chakra-text css-1osh15g"
-                  data-testid="details-review-title"
+                <div
+                  class="css-1i64jsd"
                 >
-                  Basic details
-                </p>
+                  <p
+                    class="chakra-text css-ol2bzi"
+                    data-testid="details-review-title"
+                  >
+                    Basic details
+                  </p>
+                </div>
                 <div
                   class="css-0"
                 >
@@ -304,13 +310,18 @@ exports[`<RoleLayout /> should render correctly 1`] = `
               </div>
               <div
                 class="css-13brihr"
+                data-testid="button-box"
               >
-                <p
-                  class="chakra-text css-1osh15g"
-                  data-testid="details-review-title"
+                <div
+                  class="css-1i64jsd"
                 >
-                  Optional details
-                </p>
+                  <p
+                    class="chakra-text css-ol2bzi"
+                    data-testid="details-review-title"
+                  >
+                    Optional details
+                  </p>
+                </div>
                 <div
                   class="css-0"
                 >

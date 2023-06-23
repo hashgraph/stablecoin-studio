@@ -218,7 +218,7 @@ const CoinDropdown = () => {
 				SDKService.getRoles(
 					new GetRolesRequest({
 						targetId: accountInfo && accountInfo.id ? accountInfo?.id : '',
-						tokenId: stableCoinDetails!.tokenId!.toString(),
+						tokenId: stableCoinDetails?.tokenId?.toString(),
 					}),
 				),
 				new Promise((resolve, reject) => {

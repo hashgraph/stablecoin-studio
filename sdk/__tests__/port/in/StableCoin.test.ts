@@ -210,7 +210,11 @@ describe('🧪 Stablecoin test', () => {
 		await delay();
 	}, 60_000);
 
-	async function checkFail(op: any, erroCode: string, errorCategory: string) {
+	async function checkFail(
+		op: () => Promise<void>,
+		erroCode: string,
+		errorCategory: string,
+	): Promise<void> {
 		try {
 			await op();
 			expect(false).toBe(true);
@@ -221,10 +225,11 @@ describe('🧪 Stablecoin test', () => {
 		}
 	}
 
+	// eslint-disable-next-line jest/expect-expect
 	it('Triggers errors', async () => {
 		// Test Not Associated error
 
-		let cashInOperation = async () => {
+		let cashInOperation = async (): Promise<void> => {
 			await StableCoin.cashIn(
 				new CashInRequest({
 					amount: '1.111111111111111111',
@@ -330,7 +335,7 @@ describe('🧪 Stablecoin test', () => {
 
 		// Max supply reached
 
-		cashInOperation = async () => {
+		cashInOperation = async (): Promise<void> => {
 			await StableCoin.cashIn(
 				new CashInRequest({
 					amount: (maxSupply + 1).toString(),
@@ -656,6 +661,7 @@ describe('🧪 Stablecoin test', () => {
 				targetId: stableCoin?.treasury?.toString() ?? '0.0.0',
 			}),
 		);
+		stableCoinHTS;
 
 		await StableCoin.burn(
 			new BurnRequest({

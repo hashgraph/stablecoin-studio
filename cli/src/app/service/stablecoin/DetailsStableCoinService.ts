@@ -21,9 +21,9 @@ export default class DetailsStableCoinsService extends Service {
 
   private epochTimestampToGMTString(timestamp: number | undefined): string {
     if (!timestamp) return '';
-    const dateTime: any = timestamp.toString().substring(0, 10);
-    const nanoseconds: any = timestamp.toString().substring(10);
-    const myDate: Date = new Date(dateTime * 1000);
+    const dateTime: string = timestamp.toString().substring(0, 10);
+    const nanoseconds: string = timestamp.toString().substring(10);
+    const myDate: Date = new Date(+dateTime * 1000);
     const gmtDate: string = myDate.toUTCString();
     const pos: number = gmtDate.lastIndexOf(' ');
     return `${gmtDate.substring(0, pos)}.${nanoseconds.substring(

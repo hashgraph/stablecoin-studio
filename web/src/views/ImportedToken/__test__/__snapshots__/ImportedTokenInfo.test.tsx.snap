@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<ImportedTokenInfo /> should render correctly 1`] = `
+<DocumentFragment>
+  <div
+    class="chakra-stack css-1f6llri"
+  >
+    <div
+      class="chakra-stack css-a55xzq"
+    >
+      <h2
+        class="chakra-heading css-p7jgmy"
+        data-testid="title"
+      >
+        Add token
+      </h2>
+      <form
+        class="chakra-stack css-b5leqj"
+      >
+        <div
+          class="chakra-stack css-173lc29"
+        >
+          <p
+            class="chakra-text css-16srhgc"
+          >
+            Do you want to get the roles automatically? This operation will incur a cost
+          </p>
+        </div>
+      </form>
+    </div>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;

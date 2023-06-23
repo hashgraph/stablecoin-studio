@@ -127,7 +127,6 @@ export const english = {
     selectMirrorNode: 'Select the mirror node: ',
     selectRPC: 'Select the JSON-RPC-Relay: ',
     RPCNotToChange: '\nThere is no nJSON-RPC-Relay to change',
-    askFactoryId: 'Enter your new factory id',
   },
   stablecoin: {
     noFactories:
