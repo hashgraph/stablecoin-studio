@@ -22,7 +22,6 @@ import ContractId from '../../../../domain/context/contract/ContractId.js';
 import { lazyInject } from '../../../../core/decorator/LazyInjectDecorator.js';
 import { QueryHandler } from '../../../../core/decorator/QueryHandlerDecorator.js';
 import { IQueryHandler } from '../../../../core/query/QueryHandler.js';
-import { HederaId } from '../../../../domain/context/shared/HederaId.js';
 import RPCQueryAdapter from '../../../../port/out/rpc/RPCQueryAdapter.js';
 import StableCoinService from '../../../service/StableCoinService.js';
 import {
@@ -73,8 +72,8 @@ export class GetProxyConfigQueryHandler
 			new GetProxyConfigQueryResponse({
 				implementationAddress: ContractId.fromHederaEthereumAddress(
 					proxyImpl ?? '0.0.0',
-				),
-				owner: HederaId.from(proxyOwnerHederaId.id),
+				).toString(),
+				owner: proxyOwnerHederaId.id ?? '0.0.0',
 			}),
 		);
 	}
