@@ -162,8 +162,7 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 									return res;
 								},
 							},
-						}}
-						isRequired
+						}}						
 						control={control}
 						name={'metadata'}
 						label={t('stableCoinCreation:optionalDetails.metadata') ?? propertyNotFound}
