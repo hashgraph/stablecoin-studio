@@ -59,9 +59,9 @@ export default class CommanderService extends Service {
             logs:
               options.logLevel || options.logPath
                 ? {
-                  level: options.logLevel,
-                  path: options.logPath,
-                }
+                    level: options.logLevel,
+                    path: options.logPath,
+                  }
                 : undefined,
           },
           options.config,

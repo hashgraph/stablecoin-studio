@@ -1,5 +1,5 @@
-import { PauseRequest, StableCoin } from "@hashgraph-dev/stablecoin-npm-sdk";
-import PauseStableCoinService from "../../../../src/app/service/stablecoin/PauseStableCoinService";
+import { PauseRequest, StableCoin } from '@hashgraph-dev/stablecoin-npm-sdk';
+import PauseStableCoinService from '../../../../src/app/service/stablecoin/PauseStableCoinService';
 import { utilsService } from '../../../../src/index.js';
 import Language from '../../../../src/domain/language/Language.js';
 
@@ -23,7 +23,9 @@ describe(`Testing PauseStableCoinService class`, () => {
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
     expect(StableCoin.pause).toHaveBeenCalledTimes(1);
-    expect(console.log).toHaveBeenCalledWith(language.getText('operation.success'));
+    expect(console.log).toHaveBeenCalledWith(
+      language.getText('operation.success'),
+    );
   });
 
   it('Should instance unpauseStableCoin when granted', async () => {
@@ -33,6 +35,8 @@ describe(`Testing PauseStableCoinService class`, () => {
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
     expect(StableCoin.unPause).toHaveBeenCalledTimes(1);
-    expect(console.log).toHaveBeenCalledWith(language.getText('operation.success'));
+    expect(console.log).toHaveBeenCalledWith(
+      language.getText('operation.success'),
+    );
   });
 });

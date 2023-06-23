@@ -1,5 +1,5 @@
-import { Account } from "@hashgraph-dev/stablecoin-npm-sdk";
-import ListStableCoinService from "../../../../src/app/service/stablecoin/ListStableCoinService";
+import { Account } from '@hashgraph-dev/stablecoin-npm-sdk';
+import ListStableCoinService from '../../../../src/app/service/stablecoin/ListStableCoinService';
 import { utilsService } from '../../../../src/index.js';
 
 const service = new ListStableCoinService();
@@ -7,22 +7,26 @@ const currentAccount = {
   accountId: 'id',
   privateKey: {
     key: 'key',
-    type: 'type'
+    type: 'type',
   },
   network: 'network',
-  alias: 'aliasts'
-}
+  alias: 'aliasts',
+};
 const listStableCoins = {
-  coins: [{
-    symbol: 'TEST',
-    id: 'id'
-  }]
-}
+  coins: [
+    {
+      symbol: 'TEST',
+      id: 'id',
+    },
+  ],
+};
 
 describe(`Testing ListStableCoinService class`, () => {
   beforeEach(() => {
     jest.spyOn(utilsService, 'showSpinner').mockImplementation();
-    jest.spyOn(utilsService, 'getCurrentAccount').mockReturnValue(currentAccount);
+    jest
+      .spyOn(utilsService, 'getCurrentAccount')
+      .mockReturnValue(currentAccount);
     jest.spyOn(Account, 'listStableCoins').mockResolvedValue(listStableCoins);
     jest.spyOn(utilsService, 'drawTableListStableCoin').mockImplementation();
   });

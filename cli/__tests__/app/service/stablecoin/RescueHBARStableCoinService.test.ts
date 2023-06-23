@@ -1,5 +1,8 @@
-import { RescueHBARRequest, StableCoin } from "@hashgraph-dev/stablecoin-npm-sdk";
-import RescueHBARStableCoinService from "../../../../src/app/service/stablecoin/RescueHBARStableCoinService";
+import {
+  RescueHBARRequest,
+  StableCoin,
+} from '@hashgraph-dev/stablecoin-npm-sdk';
+import RescueHBARStableCoinService from '../../../../src/app/service/stablecoin/RescueHBARStableCoinService';
 import { utilsService } from '../../../../src/index.js';
 import Language from '../../../../src/domain/language/Language.js';
 
@@ -7,7 +10,7 @@ const service = new RescueHBARStableCoinService();
 const language: Language = new Language();
 const request = new RescueHBARRequest({
   tokenId: '0.0.012345',
-  amount: '10'
+  amount: '10',
 });
 
 describe(`Testing RescueHBARStableCoinService class`, () => {
@@ -26,6 +29,8 @@ describe(`Testing RescueHBARStableCoinService class`, () => {
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
     expect(StableCoin.rescueHBAR).toHaveBeenCalledTimes(1);
-    expect(console.log).toHaveBeenCalledWith(language.getText('operation.success'));
+    expect(console.log).toHaveBeenCalledWith(
+      language.getText('operation.success'),
+    );
   });
 });

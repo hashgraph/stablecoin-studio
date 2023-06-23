@@ -1,5 +1,5 @@
-import { StableCoin, WipeRequest } from "@hashgraph-dev/stablecoin-npm-sdk";
-import WipeStableCoinService from "../../../../src/app/service/stablecoin/WipeStableCoinService";
+import { StableCoin, WipeRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
+import WipeStableCoinService from '../../../../src/app/service/stablecoin/WipeStableCoinService';
 import { utilsService } from '../../../../src/index.js';
 import Language from '../../../../src/domain/language/Language.js';
 
@@ -8,7 +8,7 @@ const language: Language = new Language();
 const request = new WipeRequest({
   tokenId: '0.0.012345',
   amount: '10',
-  targetId: ''
+  targetId: '',
 });
 
 describe(`Testing WipeStableCoinService class`, () => {
@@ -27,6 +27,8 @@ describe(`Testing WipeStableCoinService class`, () => {
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
     expect(StableCoin.wipe).toHaveBeenCalledTimes(1);
-    expect(console.log).toHaveBeenCalledWith(language.getText('operation.success'));
+    expect(console.log).toHaveBeenCalledWith(
+      language.getText('operation.success'),
+    );
   });
 });

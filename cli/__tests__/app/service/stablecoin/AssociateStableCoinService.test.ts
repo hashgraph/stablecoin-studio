@@ -1,5 +1,5 @@
-import { StableCoin } from "@hashgraph-dev/stablecoin-npm-sdk";
-import AssociateStableCoinService from "../../../../src/app/service/stablecoin/AssociateStableCoinService";
+import { StableCoin } from '@hashgraph-dev/stablecoin-npm-sdk';
+import AssociateStableCoinService from '../../../../src/app/service/stablecoin/AssociateStableCoinService';
 import { utilsService } from '../../../../src/index.js';
 
 const service = new AssociateStableCoinService();

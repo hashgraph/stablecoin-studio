@@ -9,5 +9,4 @@ describe(`Testing CommanderService class`, () => {
     expect(commanderService).not.toBeNull();
     expect(mockExit).toHaveBeenCalledWith(1);
   });
-
 });

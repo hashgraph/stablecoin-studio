@@ -1,5 +1,5 @@
-import { DeleteRequest, StableCoin } from "@hashgraph-dev/stablecoin-npm-sdk";
-import DeleteStableCoinService from "../../../../src/app/service/stablecoin/DeleteStableCoinService";
+import { DeleteRequest, StableCoin } from '@hashgraph-dev/stablecoin-npm-sdk';
+import DeleteStableCoinService from '../../../../src/app/service/stablecoin/DeleteStableCoinService';
 import { utilsService } from '../../../../src/index.js';
 import Language from '../../../../src/domain/language/Language.js';
 
@@ -11,7 +11,7 @@ describe(`Testing DeleteStableCoinService class`, () => {
   beforeEach(() => {
     jest.spyOn(utilsService, 'showSpinner').mockImplementation();
     jest.spyOn(StableCoin, 'delete').mockImplementation();
-    jest.spyOn(console, "log")
+    jest.spyOn(console, 'log');
   });
   afterEach(() => {
     jest.restoreAllMocks();
@@ -23,6 +23,8 @@ describe(`Testing DeleteStableCoinService class`, () => {
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
     expect(StableCoin.delete).toHaveBeenCalledTimes(1);
-    expect(console.log).toHaveBeenCalledWith(language.getText('operation.success'));
+    expect(console.log).toHaveBeenCalledWith(
+      language.getText('operation.success'),
+    );
   });
 });

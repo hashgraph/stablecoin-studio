@@ -1,5 +1,10 @@
-import { Balance, BigDecimal, GetAccountBalanceRequest, StableCoin } from "@hashgraph-dev/stablecoin-npm-sdk";
-import BalanceOfStableCoinService from "../../../../src/app/service/stablecoin/BalanceOfStableCoinService";
+import {
+  Balance,
+  BigDecimal,
+  GetAccountBalanceRequest,
+  StableCoin,
+} from '@hashgraph-dev/stablecoin-npm-sdk';
+import BalanceOfStableCoinService from '../../../../src/app/service/stablecoin/BalanceOfStableCoinService';
 import { utilsService } from '../../../../src/index.js';
 
 const service = new BalanceOfStableCoinService();
@@ -11,7 +16,9 @@ const request = new GetAccountBalanceRequest({
 describe(`Testing BalanceOfStableCoinService class`, () => {
   beforeEach(() => {
     jest.spyOn(utilsService, 'showSpinner').mockImplementation();
-    jest.spyOn(StableCoin, 'getBalanceOf').mockResolvedValue(new Balance(new BigDecimal('10')));
+    jest
+      .spyOn(StableCoin, 'getBalanceOf')
+      .mockResolvedValue(new Balance(new BigDecimal('10')));
   });
   afterEach(() => {
     jest.restoreAllMocks();
