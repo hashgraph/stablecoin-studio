@@ -7,6 +7,7 @@ import {
 import Service from '../Service.js';
 import { IFactoryConfig } from '../../../domain/configuration/interfaces/IFactoryConfig.js';
 import {
+  AcceptFactoryProxyOwnerRequest,
   Network,
   SetConfigurationRequest,
   UpgradeFactoryImplementationRequest,
@@ -105,10 +106,12 @@ export default class SetFactoryService extends Service {
       const currentImplementation: string =
         factoryProxyConfig.implementationAddress.toString();
       const owner: string = factoryProxyConfig.owner.toString();
+      const pendingOwner: string = factoryProxyConfig.pendingOwner.toString();
 
       const filteredOptions: string[] = await this.filterManageFactoryOptions(
         language.getArrayFromObject('wizard.manageFactoryOptions'),
         owner,
+        pendingOwner,
       );
 
       const factoryAction = await utilsService.defaultMultipleAsk(
@@ -137,6 +140,16 @@ export default class SetFactoryService extends Service {
         case language.getText('wizard.manageFactoryOptions.ChangeOwner'):
           await utilsService.cleanAndShowBanner();
           await this.changeFactoryOwner(currentFactory);
+          break;
+
+        case language.getText('wizard.manageFactoryOptions.AcceptOwner'):
+          await utilsService.cleanAndShowBanner();
+          await this.acceptFactoryOwner(currentFactory);
+          break;
+
+        case language.getText('wizard.manageFactoryOptions.CancelOwner'):
+          await utilsService.cleanAndShowBanner();
+          await this.cancelFactoryOwner(currentFactory);
           break;
 
         case language.getText('wizard.manageFactoryOptions.FactoryDetails'):
@@ -202,13 +215,19 @@ export default class SetFactoryService extends Service {
    *
    * @param options The options to filter
    * @param factoryOwner The owner of the factory
+   * @param factoryPendingOwner The owner of the factory
    * @returns The filtered options
    */
   private async filterManageFactoryOptions(
     options: string[],
     factoryOwner: string,
+    factoryPendingOwner: string,
   ): Promise<string[]> {
     const configAccount = utilsService.getCurrentAccount();
+
+    console.log(
+      language.getText('proxyConfiguration.pendingOwner') + factoryPendingOwner,
+    );
 
     let filteredOptions: string[] = [];
     filteredOptions = options.filter((option) => {
@@ -218,6 +237,12 @@ export default class SetFactoryService extends Service {
           factoryOwner !== configAccount.accountId) ||
         (option ===
           language.getText('wizard.manageFactoryOptions.ChangeOwner') &&
+          factoryOwner !== configAccount.accountId) ||
+        (option ===
+          language.getText('wizard.manageFactoryOptions.AcceptOwner') &&
+          factoryPendingOwner !== configAccount.accountId) ||
+        (option ===
+          language.getText('wizard.manageFactoryOptions.CancelOwner') &&
           factoryOwner !== configAccount.accountId)
       )
         return false;
@@ -333,10 +358,77 @@ export default class SetFactoryService extends Service {
       targetId: '',
     });
 
+    await utilsService.handleValidation(
+      () => changeFactoryProxyOwnerRequest.validate('targetId'),
+      async () => {
+        changeFactoryProxyOwnerRequest.targetId =
+          await utilsService.defaultSingleAsk(
+            language.getText('factory.askNewOwner'),
+            '0.0.0',
+          );
+      },
+    );
+
     try {
       await new OwnerFactoryProxyService().changeFactoryProxyOwner(
         changeFactoryProxyOwnerRequest,
       );
+    } catch (error) {
+      await utilsService.askErrorConfirmation(
+        async () => await this.manageFactoryMenu(),
+        error,
+      );
+    }
+  }
+
+  /**
+   * Function to accept the owner of the configured factory
+   *
+   * @param factory Factory to change the owner
+   */
+  public async acceptFactoryOwner(factory: IFactoryConfig): Promise<void> {
+    await utilsService.cleanAndShowBanner();
+
+    const confirm = await utilsService.defaultConfirmAsk(
+      language.getText('proxyConfiguration.askAcceptOwner'),
+      true,
+    );
+
+    if (!confirm) return;
+
+    const acceptFactoryProxyOwnerRequest = new AcceptFactoryProxyOwnerRequest({
+      factoryId: factory.id,
+    });
+
+    try {
+      await new OwnerFactoryProxyService().acceptFactoryProxyOwner(
+        acceptFactoryProxyOwnerRequest,
+      );
+    } catch (error) {
+      await utilsService.askErrorConfirmation(
+        async () => await this.manageFactoryMenu(),
+        error,
+      );
+    }
+  }
+
+  /**
+   * Function to cancel the owner of the configured factory
+   *
+   * @param factory Factory to change the owner
+   */
+  public async cancelFactoryOwner(factory: IFactoryConfig): Promise<void> {
+    await utilsService.cleanAndShowBanner();
+
+    const confirm = await utilsService.defaultConfirmAsk(
+      language.getText('proxyConfiguration.askCancelOwner'),
+      true,
+    );
+
+    if (!confirm) return;
+
+    try {
+      await new OwnerFactoryProxyService().cancelFactoryProxyOwner(factory.id);
     } catch (error) {
       await utilsService.askErrorConfirmation(
         async () => await this.manageFactoryMenu(),

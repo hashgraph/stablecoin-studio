@@ -430,6 +430,8 @@ export const english = {
       ChangeFactory: 'Change factory',
       UpgradeFactory: 'Upgrade factory',
       ChangeOwner: 'Change owner',
+      AcceptOwner: 'Accept owner',
+      CancelOwner: 'Cancel owner change',
       FactoryDetails: 'Factory details',
       ...goBack,
     },
