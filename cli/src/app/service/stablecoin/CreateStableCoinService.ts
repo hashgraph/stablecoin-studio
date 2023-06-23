@@ -19,7 +19,7 @@ import { IManagedFeatures } from '../../../domain/configuration/interfaces/IMana
 import Service from '../Service.js';
 import SetConfigurationService from '../configuration/SetConfigurationService.js';
 import SetFactoryService from '../configuration/SetFactoryService.js';
-import AssociateStableCoinsService from './AssociateStableCoinService.js';
+import AssociateStableCoinService from './AssociateStableCoinService.js';
 import KYCStableCoinService from './KYCStableCoinService.js';
 
 /**
@@ -96,7 +96,7 @@ export default class CreateStableCoinService extends Service {
       },
     );
 
-    const associateService = new AssociateStableCoinsService();
+    const associateService = new AssociateStableCoinService();
     await associateService.associateStableCoin(
       currentAccount.accountId,
       createdToken.tokenId.toString(),

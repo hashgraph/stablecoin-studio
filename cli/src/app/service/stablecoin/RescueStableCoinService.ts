@@ -6,7 +6,7 @@ import { RescueRequest, StableCoin } from '@hashgraph-dev/stablecoin-npm-sdk';
 /**
  * Create Stable Coin Service
  */
-export default class RescueStableCoinsService extends Service {
+export default class RescueStableCoinService extends Service {
   constructor() {
     super('Rescue Stable Coin');
   }

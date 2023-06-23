@@ -1,4 +1,4 @@
-import { language } from './../../../index.js';
+import { language } from '../../../index.js';
 import { utilsService } from '../../../index.js';
 import Service from '../Service.js';
 import {
@@ -10,7 +10,7 @@ import {
 /**
  * Create Stable Coin Service
  */
-export default class ListStableCoinsService extends Service {
+export default class ListStableCoinService extends Service {
   constructor() {
     super('List Stable Coins');
   }

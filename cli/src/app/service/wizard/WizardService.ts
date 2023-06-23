@@ -10,7 +10,7 @@ import Service from '../Service.js';
 import CreateStableCoinService from '../stablecoin/CreateStableCoinService.js';
 import OperationStableCoinService from '../stablecoin/OperationStableCoinService.js';
 import ManageImportedTokenService from '../stablecoin/ManageImportedTokenService.js';
-import ListStableCoinsService from '../stablecoin/ListStableCoinsService.js';
+import ListStableCoinsService from '../stablecoin/ListStableCoinService.js';
 import colors from 'colors';
 import { clear } from 'console';
 import {

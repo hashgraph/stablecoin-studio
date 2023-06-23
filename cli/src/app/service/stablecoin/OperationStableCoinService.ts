@@ -47,7 +47,7 @@ import {
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
-import CashInStableCoinsService from './CashInStableCoinService.js';
+import CashInStableCoinService from './CashInStableCoinService.js';
 import WipeStableCoinService from './WipeStableCoinService.js';
 import RoleStableCoinsService from './RoleStableCoinService.js';
 import RescueStableCoinsService from './RescueStableCoinService.js';
@@ -58,7 +58,7 @@ import PauseStableCoinService from './PauseStableCoinService.js';
 import ManageImportedTokenService from './ManageImportedTokenService';
 import FreezeStableCoinService from './FreezeStableCoinService.js';
 import KYCStableCoinService from './KYCStableCoinService.js';
-import ListStableCoinsService from './ListStableCoinsService.js';
+import ListStableCoinsService from './ListStableCoinService.js';
 import CapabilitiesStableCoinService from './CapabilitiesStableCoinService.js';
 import FeeStableCoinService from './FeeStableCoinService.js';
 import TransfersStableCoinsService from './TransfersStableCoinService.js';
@@ -274,7 +274,7 @@ export default class OperationStableCoinService extends Service {
           },
         );
         try {
-          await new CashInStableCoinsService().cashInStableCoin(cashInRequest);
+          await new CashInStableCoinService().cashInStableCoin(cashInRequest);
         } catch (error) {
           await utilsService.askErrorConfirmation(
             async () => await this.operationsStableCoin(),

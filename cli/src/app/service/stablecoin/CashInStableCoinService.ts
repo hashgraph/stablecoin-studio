@@ -3,7 +3,7 @@ import { utilsService } from '../../../index.js';
 import Service from '../Service.js';
 import { CashInRequest, StableCoin } from '@hashgraph-dev/stablecoin-npm-sdk';
 
-export default class CashInStableCoinsService extends Service {
+export default class CashInStableCoinService extends Service {
   constructor() {
     super('Cash In Stable Coin');
   }
