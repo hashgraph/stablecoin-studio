@@ -167,7 +167,7 @@ logs:
   level: 'ERROR'
 factories: [
   {
-    id: '0.0.123456',
+    id: '0.0.14455068',
     network: 'testnet'
   },
   {
