@@ -40,6 +40,7 @@ describe('ownerFactoryProxyService', () => {
     // verify
     expect(defaultSingleAskMock).toHaveBeenCalled();
     expect(changeFactoryProxyOwnerMock).toHaveBeenCalled();
+    expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
     expect(console.log).toHaveBeenCalledWith(
       language.getText('operation.success'),
     );

@@ -41,8 +41,9 @@ describe('implementationFactoryProxyService', () => {
     );
 
     // verify
-    expect(upgradeFactoryImplementationMock).toHaveBeenCalled();
     expect(defaultSingleAskMock).toHaveBeenCalled();
+    expect(upgradeFactoryImplementationMock).toHaveBeenCalled();
+    expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
     expect(console.log).toHaveBeenCalledWith(
       language.getText('operation.success'),
     );

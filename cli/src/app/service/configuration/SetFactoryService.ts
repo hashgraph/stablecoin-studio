@@ -239,10 +239,8 @@ export default class SetFactoryService extends Service {
     const currentRPC = utilsService.getCurrentRPC();
 
     const factories: IFactoryConfig[] = configuration?.factories || [];
+    const networks = configuration?.networks.map((network) => network.name);
 
-    const networks = configurationService
-      .getConfiguration()
-      .networks.map((network) => network.name);
     const network = await utilsService.defaultMultipleAsk(
       language.getText('wizard.networkManage'),
       networks,
