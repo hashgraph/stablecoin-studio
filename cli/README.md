@@ -177,6 +177,15 @@ factories: [
 ]
 ```
 
+## Factories 
+
+We provide default addresses for the factories that we have deployed for anyone to use that are updated whenever a new version is released.
+
+| Contract name  | Address      | Network    | 
+|----------------|--------------|------------|
+| FactoryAddress | 0.0.13923715 | Testnet    |
+| FactoryAddress | 0.0.XXXXXX   | Previewnet |
+
 ## CLI flow
 
 ![CLI-flow](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/f7735707-33e3-4f11-b4f0-6d249582694d)
