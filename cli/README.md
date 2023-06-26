@@ -200,7 +200,7 @@ When an account is selected, the main menu is displayed. The network the account
 
 When your configuration file is set up and at least one account is added and selected, you are able to see the different options that are available.
 
-#### Create a new Stable Coin
+#### Create a new stable coin
 
 In order to use this option you must set a factory first.
 You can check our factories deployed in [our documentation](https://github.com/hashgraph/hedera-accelerator-stablecoin#deploying-the-stable-coin-factories).
@@ -248,7 +248,7 @@ Stable coins that we have not created with our account but for which we have bee
 2. Refresh token
 3. Remove token
 
-#### Operate with Stable Coin
+#### Operate with stable soin
 
 Once a stable coin is created or added, you can operate with it.
 
@@ -312,7 +312,7 @@ Firstly, the stable coin configuration allows the user to upgrade the stable coi
   - **Un/Pause**: pauses and unpauses the token preventing it from being involved in any kind of operation.
   - **Delete**: marks a token as deleted. This actions cannot be undone.
 
-#### List Stable Coins
+#### List stable coins
 
 This option displays all the stable coins the user has created or added.
 
@@ -344,7 +344,7 @@ Contributions are welcome. Please see the
 [contributing guide](https://github.com/hashgraph/.github/blob/main/CONTRIBUTING.md)
 to see how you can get involved.
 
-# Code of Conduct
+# Code of conduct
 
 This project is governed by the
 [Contributor Covenant Code of Conduct](https://github.com/hashgraph/.github/blob/main/CODE_OF_CONDUCT.md). By
