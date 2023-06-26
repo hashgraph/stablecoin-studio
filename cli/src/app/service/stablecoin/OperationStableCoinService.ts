@@ -62,7 +62,6 @@ import ListStableCoinsService from './ListStableCoinsService.js';
 import CapabilitiesStableCoinService from './CapabilitiesStableCoinService.js';
 import FeeStableCoinService from './FeeStableCoinService.js';
 import TransfersStableCoinsService from './TransfersStableCoinService.js';
-// import { IManagedFeatures } from '../../../domain/configuration/interfaces/IManagedFeatures.js';
 import colors from 'colors';
 import UpdateStableCoinService from './UpdateStableCoinService.js';
 import OwnerProxyService from '../proxy/OwnerProxyService.js';
@@ -79,6 +78,7 @@ enum tokenKeys {
   feeSchedule,
   supply,
 }
+
 /**
  * Operation Stable Coin Service
  */
@@ -1534,9 +1534,7 @@ export default class OperationStableCoinService extends Service {
                   amount: '',
                 });
 
-              await this.validateNotRequestedData(increaseCashInLimitRequest, [
-                'tokenId',
-              ]);
+              await this.validateTokenId(increaseCashInLimitRequest);
 
               let increaseCashInLimitTargetId = accountTarget;
 
@@ -1629,9 +1627,7 @@ export default class OperationStableCoinService extends Service {
                 amount: '',
               });
 
-            await this.validateNotRequestedData(decreaseCashInLimitRequest, [
-              'tokenId',
-            ]);
+            await this.validateTokenId(decreaseCashInLimitRequest);
 
             let decreaseCashInLimitTargetId = accountTarget;
 
@@ -1789,9 +1785,7 @@ export default class OperationStableCoinService extends Service {
               targetId: '',
             });
 
-            await this.validateNotRequestedData(checkCashInLimitRequest, [
-              'tokenId',
-            ]);
+            await this.validateTokenId(checkCashInLimitRequest);
 
             let cashInLimitTargetId = accountTarget;
 
@@ -1965,7 +1959,7 @@ export default class OperationStableCoinService extends Service {
       amounts: [],
     });
 
-    await this.validateNotRequestedData(grantMultiRolesRequest, ['tokenId']);
+    await this.validateTokenId(grantMultiRolesRequest);
 
     // choosing the roles to grant
     const listOfRoles = await this.getRoles(
@@ -2015,7 +2009,7 @@ export default class OperationStableCoinService extends Service {
       targetsId: [],
     });
 
-    await this.validateNotRequestedData(revokeMultiRolesRequest, ['tokenId']);
+    await this.validateTokenId(revokeMultiRolesRequest);
 
     // choosing the roles to grant
     const listOfRoles = await this.getRoles(
@@ -2050,20 +2044,22 @@ export default class OperationStableCoinService extends Service {
     }
   }
 
-  private async validateNotRequestedData(
-    request: any,
-    params: string[],
+  private async validateTokenId(
+    request:
+      | IncreaseSupplierAllowanceRequest
+      | DecreaseSupplierAllowanceRequest
+      | GrantMultiRolesRequest
+      | RevokeMultiRolesRequest
+      | CheckSupplierLimitRequest,
   ): Promise<void> {
-    for (let i = 0; i < params.length; i++) {
-      await utilsService.handleValidation(
-        () => request.validate(params[i]),
-        async () => {
-          await this.operationsStableCoin();
-        },
-        true,
-        true,
-      );
-    }
+    await utilsService.handleValidation(
+      () => request.validate('tokenId'),
+      async () => {
+        await this.operationsStableCoin();
+      },
+      true,
+      true,
+    );
   }
 
   private async filterMenuOptions(
@@ -2395,9 +2391,9 @@ export default class OperationStableCoinService extends Service {
 
   private async getRoles(
     stableCoinCapabilities: StableCoinCapabilities,
-    request: any,
+    request: GrantMultiRolesRequest | RevokeMultiRolesRequest,
     contractKeys: number[] = undefined,
-  ): Promise<any> {
+  ): Promise<string[]> {
     const capabilities: Operation[] = stableCoinCapabilities.capabilities.map(
       (a) => a.operation,
     );
@@ -2509,7 +2505,10 @@ export default class OperationStableCoinService extends Service {
     return rolesSelected;
   }
 
-  private async getAccounts(request: any, grant: boolean): Promise<any> {
+  private async getAccounts(
+    request: GrantMultiRolesRequest | RevokeMultiRolesRequest,
+    grant: boolean,
+  ): Promise<void> {
     let moreAccounts = true;
     let index = 0;
 
@@ -2528,7 +2527,7 @@ export default class OperationStableCoinService extends Service {
         },
       );
 
-      if (grant && cashIn) {
+      if (request instanceof GrantMultiRolesRequest && grant && cashIn) {
         request.amounts.push('0');
 
         const unlimited = await utilsService.defaultConfirmAsk(
@@ -2840,6 +2839,18 @@ export default class OperationStableCoinService extends Service {
           tokenKeys,
           updateRequest,
           stableCoinViewModel,
+        );
+        break;
+
+      case language.getText('tokenConfiguration.options.metadata'):
+        await utilsService.handleValidation(
+          () => updateRequest.validate('metadata'),
+          async () => {
+            updateRequest.metadata = await utilsService.defaultSingleAsk(
+              language.getText('stablecoin.askMetadata'),
+              updateRequest.metadata || stableCoinViewModel.metadata,
+            );
+          },
         );
         break;
 

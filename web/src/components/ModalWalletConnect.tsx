@@ -13,7 +13,12 @@ import {
 	Text,
 	VStack,
 } from '@chakra-ui/react';
-import { SupportedWallets } from '@hashgraph-dev/stablecoin-npm-sdk';
+import {
+	GetFactoryProxyConfigRequest,
+	SupportedWallets,
+	Network,
+} from '@hashgraph-dev/stablecoin-npm-sdk';
+import type { StableCoinListViewModel } from '@hashgraph-dev/stablecoin-npm-sdk';
 import type { FC, ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -27,7 +32,7 @@ import ERROR_ICON from '../assets/svg/error.svg';
 import { SelectController } from './Form/SelectController';
 import { useForm } from 'react-hook-form';
 
-interface ModalWalletConnectProps {
+export interface ModalWalletConnectProps {
 	isOpen: boolean;
 	onClose: () => void;
 }
@@ -87,8 +92,15 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 		dispatch(walletActions.setSelectedStableCoin(undefined));
 		dispatch(walletActions.setSelectedStableCoinProxyConfig(undefined));
 		dispatch(walletActions.setIsProxyOwner(false));
+
 		try {
 			await SDKService.connectWallet(wallet, network);
+
+			const factoryProxyConfig: StableCoinListViewModel = await getFactoryProxyConfig(
+				await Network.getFactoryAddress(),
+			);
+			dispatch(walletActions.setSelectedNetworkFactoryProxyConfig(factoryProxyConfig));
+			dispatch(walletActions.setIsFactoryProxyOwner(false));
 		} catch (error: any) {
 			if ('errorCode' in error && error.errorCode === '40009') {
 				setRejected(true);
@@ -96,6 +108,25 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 				setError(error.message);
 			}
 		}
+	};
+
+	const getFactoryProxyConfig = async (factoryId: string): Promise<StableCoinListViewModel> => {
+		const factoryProxyConfig: any = await Promise.race([
+			SDKService.getFactoryProxyConfig(
+				new GetFactoryProxyConfigRequest({
+					factoryId: factoryId,
+				}),
+			),
+			new Promise((resolve, reject) => {
+				setTimeout(() => {
+					reject(new Error("Stable coin details couldn't be obtained in a reasonable time."));
+				}, 10000);
+			}),
+		]).catch((e) => {
+			console.log(e.message);
+			throw e;
+		});
+		return factoryProxyConfig;
 	};
 
 	const handleConnectHashpackWallet = () => {
@@ -160,13 +191,14 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 						<>
 							<ModalHeader p='0' justifyContent='center'>
 								<Text
+									data-testid='title'
 									fontSize='20px'
 									fontWeight={700}
 									textAlign='center'
 									lineHeight='16px'
 									color='brand.black'
 								>
-									Select a wallet
+									{t('walletActions.selectWallet')}
 								</Text>
 							</ModalHeader>
 							<ModalFooter p='0' justifyContent='center'>
@@ -178,7 +210,11 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 									alignItems={'stretch'}
 								>
 									{availableWallets.includes(SupportedWallets.HASHPACK) && (
-										<VStack {...styles.providerStyle} onClick={handleConnectHashpackWallet}>
+										<VStack
+											data-testid='Hashpack'
+											{...styles.providerStyle}
+											onClick={handleConnectHashpackWallet}
+										>
 											<PairingSpinner wallet={SupportedWallets.HASHPACK}>
 												<Image src={HEDERA_LOGO} w={20} />
 												<Text>Hashpack</Text>
@@ -186,7 +222,11 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 										</VStack>
 									)}
 									{availableWallets.includes(SupportedWallets.METAMASK) && (
-										<VStack {...styles.providerStyle} onClick={handleConnectMetamaskWallet}>
+										<VStack
+											data-testid='Metamask'
+											{...styles.providerStyle}
+											onClick={handleConnectMetamaskWallet}
+										>
 											<PairingSpinner wallet={SupportedWallets.METAMASK}>
 												<Image src={METAMASK_LOGO} w={20} />
 												<Text>Metamask</Text>
@@ -207,7 +247,7 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 									lineHeight='16px'
 									color='brand.black'
 								>
-									Select a network
+									{t('walletActions.selectWallet')}
 								</Text>
 							</ModalHeader>
 							<ModalFooter alignSelf='center' pt='24px' pb='0'>

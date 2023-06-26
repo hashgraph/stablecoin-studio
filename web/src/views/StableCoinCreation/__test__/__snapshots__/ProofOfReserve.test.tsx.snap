@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<ProofOfReserve /> should render correctly 1`] = `
+<DocumentFragment>
+  <div
+    class="chakra-stack css-1f6llri"
+  >
+    <div
+      class="chakra-stack css-135a0es"
+    >
+      <h2
+        class="chakra-heading css-p7jgmy"
+        data-testid="title"
+      >
+        Proof of Reserve
+      </h2>
+      <div
+        class="chakra-stack css-84zodg"
+      >
+        <p
+          class="chakra-text css-3crm2z"
+        >
+          Would you like that your stable coin collateralization with any on-chain asset?
+        </p>
+      </div>
+    </div>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;

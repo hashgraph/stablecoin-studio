@@ -21,10 +21,10 @@
 		"symbol": "Symbol",
 		"symbolPlaceholder": "Symbol",
 		"title": "Stable coin basic details",
-		"hederaERC20": "HederaERC20 impl.",
-		"hederaERC20Placeholder": "Choose ERC20 address ID",
-		"modalErrorTitle": "Recovering ERC20 implementations",
-		"modalErrorDescription": "ERC20 contracts implementations couldn't be obtained.",
+		"hederaERC20": "HederaTokenManager impl.",
+		"hederaERC20Placeholder": "Choose HederaTokenManager address ID",
+		"modalErrorTitle": "Recovering HederaTokenManager implementations",
+		"modalErrorDescription": "HederaTokenManager contracts implementations couldn't be obtained.",
 		"hederaTokenManager": "HederaTokenManager impl.",
 		"hederaTokenManagerPlaceholder": "Choose TokenManager address ID"
 	},
@@ -37,7 +37,8 @@
 		"maxSupply": "Max supply",
 		"title": "Stable coin optional details",
 		"typeSupply": "Supply type",
-		"typeSupplyPlaceholder": "Choose supply type"
+		"typeSupplyPlaceholder": "Choose supply type",
+		"metadata": "Metadata"
 	},
 	"managementPermissions": {
 		"currentUserKey": "Current user key",

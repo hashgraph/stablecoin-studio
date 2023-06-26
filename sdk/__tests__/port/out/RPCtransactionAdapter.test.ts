@@ -177,6 +177,7 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 			kycRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
 			cashInRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
 			cashInRoleAllowance: BigDecimal.ZERO,
+			metadata: '',
 		});
 
 		stableCoinCapabilitiesSC = await createToken(
@@ -701,16 +702,21 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 
 		const AmountWithDecimals = Amount * 10 ** decimals;
 
-		expect(Allowance.response!.toBigNumber().toString()).toEqual(
-			AmountWithDecimals.toString(),
-		);
-		expect(Allowance_increased.response!.toBigNumber().toString()).toEqual(
-			(2 * AmountWithDecimals).toString(),
-		);
-		expect(Allowance_decreased.response!.toBigNumber().toString()).toEqual(
-			AmountWithDecimals.toString(),
-		);
-		expect(Allowance_reset.response!.toBigNumber().toString()).toEqual('0');
+		expect(
+			Allowance.response && Allowance.response.toBigNumber().toString(),
+		).toEqual(AmountWithDecimals.toString());
+		expect(
+			Allowance_increased.response &&
+				Allowance_increased.response.toBigNumber().toString(),
+		).toEqual((2 * AmountWithDecimals).toString());
+		expect(
+			Allowance_decreased.response &&
+				Allowance_decreased.response.toBigNumber().toString(),
+		).toEqual(AmountWithDecimals.toString());
+		expect(
+			Allowance_reset.response &&
+				Allowance_reset.response.toBigNumber().toString(),
+		).toEqual('0');
 	}, 3500000);
 
 	it('Grant & Revoke Unlimited Supplier Role', async () => {
@@ -847,6 +853,7 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 			feeScheduleKey,
 			pauseKey,
 			wipeKey,
+			'',
 		);
 
 		await delay();
@@ -878,6 +885,7 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 			PublicKey.NULL,
 			PublicKey.NULL,
 			PublicKey.NULL,
+			'',
 		);
 	}, 1500000);
 

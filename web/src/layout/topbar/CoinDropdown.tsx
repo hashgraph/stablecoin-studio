@@ -21,6 +21,7 @@ import {
 	SELECTED_TOKEN_PAUSED,
 	SELECTED_NETWORK,
 	SELECTED_WALLET_COIN_PROXY_CONFIG,
+	SELECTED_NETWORK_FACTORY_PROXY_CONFIG,
 } from '../../store/slices/walletSlice';
 import { RouterManager } from '../../Router/RouterManager';
 import { matchPath, useLocation, useNavigate } from 'react-router-dom';
@@ -49,6 +50,7 @@ const CoinDropdown = () => {
 	const accountId = useSelector(SELECTED_WALLET_PAIRED_ACCOUNTID);
 	const network = useSelector(SELECTED_NETWORK);
 	const proxyConfig = useSelector(SELECTED_WALLET_COIN_PROXY_CONFIG);
+	const factoryProxyConfig = useSelector(SELECTED_NETWORK_FACTORY_PROXY_CONFIG);
 
 	const capabilities = useSelector(SELECTED_WALLET_CAPABILITIES);
 	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
@@ -108,6 +110,11 @@ const CoinDropdown = () => {
 		dispatch(walletActions.setAccountInfo(accountInfo));
 		dispatch(
 			walletActions.setIsProxyOwner(proxyConfig?.owner?.toString() === accountInfo?.id?.toString()),
+		);
+		dispatch(
+			walletActions.setIsFactoryProxyOwner(
+				factoryProxyConfig?.owner?.toString() === accountInfo?.id?.toString(),
+			),
 		);
 	};
 
@@ -211,7 +218,7 @@ const CoinDropdown = () => {
 				SDKService.getRoles(
 					new GetRolesRequest({
 						targetId: accountInfo && accountInfo.id ? accountInfo?.id : '',
-						tokenId: stableCoinDetails!.tokenId!.toString(),
+						tokenId: stableCoinDetails?.tokenId?.toString(),
 					}),
 				),
 				new Promise((resolve, reject) => {

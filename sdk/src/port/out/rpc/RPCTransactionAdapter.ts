@@ -23,10 +23,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
-import {
-	PublicKey as HPublicKey,
-	ContractId as HContractId,
-} from '@hashgraph/sdk';
+import { ContractId as HContractId } from '@hashgraph/sdk';
 import {
 	HederaTokenManager__factory,
 	HederaReserve__factory,
@@ -45,7 +42,6 @@ import { CapabilityDecider, Decision } from '../CapabilityDecider.js';
 import { Operation } from '../../../domain/context/stablecoin/Capability.js';
 import { CapabilityError } from '../hs/error/CapabilityError.js';
 import { CallableContract } from '../../../core/Cast.js';
-import { TokenId } from '@hashgraph/sdk';
 import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
 import detectEthereumProvider from '@metamask/detect-provider';
 import { RuntimeError } from '../../../core/error/RuntimeError.js';
@@ -252,6 +248,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				keys,
 				roles,
 				cashinRole,
+				coin.metadata ?? '',
 			);
 
 			const factoryInstance = StableCoinFactory__factory.connect(
@@ -363,6 +360,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		feeScheduleKey: PublicKey | undefined,
 		pauseKey: PublicKey | undefined,
 		wipeKey: PublicKey | undefined,
+		metadata: string | undefined,
 	): Promise<TransactionResponse<any, Error>> {
 		const params = new Params({
 			name: name,
@@ -374,6 +372,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			feeScheduleKey: feeScheduleKey,
 			pauseKey: pauseKey,
 			wipeKey: wipeKey,
+			metadata: metadata,
 		});
 		return this.performOperation(coin, Operation.UPDATE, params);
 	}
@@ -1784,8 +1783,8 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					params?.pauseKey,
 				];
 				const filteredContractParams: any = {
-					tokenName: params?.name ? params?.name : '',
-					tokenSymbol: params?.symbol ? params?.symbol : '',
+					tokenName: params?.name ?? '',
+					tokenSymbol: params?.symbol ?? '',
 					keys: this.setKeysForSmartContract(providedKeys),
 					second: params?.expirationTime
 						? Math.floor(params.expirationTime / 1000000000)
@@ -1793,6 +1792,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					autoRenewPeriod: params?.autoRenewPeriod
 						? params.autoRenewPeriod
 						: -1,
+					tokenMetadataURI: params?.metadata ?? '',
 				};
 				return RPCTransactionResponseAdapter.manageResponse(
 					await HederaTokenManager__factory.connect(
@@ -2003,6 +2003,7 @@ class Params {
 	pauseKey?: PublicKey;
 	wipeKey?: PublicKey;
 	supplyKey?: PublicKey;
+	metadata?: string;
 
 	constructor({
 		role,
@@ -2018,6 +2019,7 @@ class Params {
 		pauseKey,
 		wipeKey,
 		supplyKey,
+		metadata,
 	}: {
 		role?: string;
 		targetId?: string;
@@ -2032,6 +2034,7 @@ class Params {
 		pauseKey?: PublicKey;
 		wipeKey?: PublicKey;
 		supplyKey?: PublicKey;
+		metadata?: string;
 	}) {
 		this.role = role;
 		this.targetId = targetId;
@@ -2046,5 +2049,6 @@ class Params {
 		this.pauseKey = pauseKey;
 		this.wipeKey = wipeKey;
 		this.supplyKey = supplyKey;
+		this.metadata = metadata;
 	}
 }

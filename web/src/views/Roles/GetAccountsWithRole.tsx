@@ -42,14 +42,15 @@ const GetAccountsWithRole = () => {
 	const [accountsWithRoles, setAccountsWithRoles] = useState<String[]>([]);
 
 	const details: Detail[] = [];
-	accountsWithRoles.forEach((accountWithRole) => {
-		details.push({
-			label: t('account'),
-			value: accountWithRole,
-			copyButton: true,
-			hashScanURL: `${hashScanURL}/account/${accountWithRole}`,
+	accountsWithRoles &&
+		accountsWithRoles.forEach((accountWithRole) => {
+			details.push({
+				label: t('account'),
+				value: accountWithRole,
+				copyButton: true,
+				hashScanURL: `${hashScanURL}/account/${accountWithRole}`,
+			});
 		});
-	});
 
 	const supplyTypes = [
 		{

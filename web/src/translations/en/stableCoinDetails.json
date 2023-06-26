@@ -8,6 +8,7 @@
 	"decimals": "Decimals",
 	"totalSupply": "Total supply",
 	"maxSupply": "Max supply",
+	"metadata": "Metadata",
 	"treasury": "Treasury",
 	"autoRenewAccount": "Autorenew account",
 	"autoRenewPeriod": "Autorenew period",

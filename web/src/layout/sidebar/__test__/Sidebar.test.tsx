@@ -10,7 +10,7 @@ describe(`<${Sidebar.name} />`, () => {
 
 	test('should render options', () => {
 		const component = render(<Sidebar />);
-		const options = ['Coin', 'Users', 'Gear'];
+		const options = ['Coin', 'Users', 'Fingerprint'];
 
 		options.forEach((option) => {
 			const element = component.getByTestId(`sidebar-option-${option}`);

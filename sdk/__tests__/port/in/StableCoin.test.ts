@@ -148,6 +148,7 @@ describe('🧪 Stablecoin test', () => {
 			deleteRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
 			cashInRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
 			cashInRoleAllowance: '0',
+			metadata: '',
 		});
 		const requestHTS = new CreateRequest({
 			name: 'TEST_ACCELERATOR_HTS',
@@ -169,6 +170,7 @@ describe('🧪 Stablecoin test', () => {
 			deleteRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
 			cashInRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
 			cashInRoleAllowance: '0',
+			metadata: '',
 		});
 
 		stableCoinSC = (await StableCoin.create(requestSC)).coin;
@@ -208,7 +210,11 @@ describe('🧪 Stablecoin test', () => {
 		await delay();
 	}, 60_000);
 
-	async function checkFail(op: any, erroCode: string, errorCategory: string) {
+	async function checkFail(
+		op: () => Promise<void>,
+		erroCode: string,
+		errorCategory: string,
+	): Promise<void> {
 		try {
 			await op();
 			expect(false).toBe(true);
@@ -219,10 +225,11 @@ describe('🧪 Stablecoin test', () => {
 		}
 	}
 
+	// eslint-disable-next-line jest/expect-expect
 	it('Triggers errors', async () => {
 		// Test Not Associated error
 
-		let cashInOperation = async () => {
+		let cashInOperation = async (): Promise<void> => {
 			await StableCoin.cashIn(
 				new CashInRequest({
 					amount: '1.111111111111111111',
@@ -328,7 +335,7 @@ describe('🧪 Stablecoin test', () => {
 
 		// Max supply reached
 
-		cashInOperation = async () => {
+		cashInOperation = async (): Promise<void> => {
 			await StableCoin.cashIn(
 				new CashInRequest({
 					amount: (maxSupply + 1).toString(),
@@ -364,6 +371,7 @@ describe('🧪 Stablecoin test', () => {
 		expect(res.symbol).not.toBeNull();
 		expect(res.treasury).not.toBeNull();
 		expect(res.tokenId).not.toBeNull();
+		expect(res.metadata).not.toBeNull();
 	}, 60_000);
 
 	it('Performs getBalanceOf', async () => {
@@ -653,6 +661,7 @@ describe('🧪 Stablecoin test', () => {
 				targetId: stableCoin?.treasury?.toString() ?? '0.0.0',
 			}),
 		);
+		stableCoinHTS;
 
 		await StableCoin.burn(
 			new BurnRequest({
@@ -1040,6 +1049,7 @@ describe('🧪 Stablecoin test', () => {
 			stableCoin.pauseKey === Account.NullPublicKey
 				? CLIENT_ACCOUNT_ED25519.publicKey
 				: Account.NullPublicKey;
+		const metadata = 'New Metadata';
 
 		await StableCoin.update(
 			new UpdateRequest({
@@ -1055,6 +1065,7 @@ describe('🧪 Stablecoin test', () => {
 				wipeKey: wipeKey,
 				pauseKey: pauseKey,
 				feeScheduleKey: stableCoin.feeScheduleKey,
+				metadata: metadata,
 			}),
 		);
 
@@ -1092,6 +1103,7 @@ describe('🧪 Stablecoin test', () => {
 				? stableCoin.autoRenewAccount?.toString()
 				: pauseKey?.toString(),
 		);
+		expect(res.metadata).toEqual(metadata);
 	}
 
 	function timestampInNanoToDays(timestamp: number): string {

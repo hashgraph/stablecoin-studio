@@ -100,6 +100,7 @@ export interface StableCoinProps {
 	kycRoleAccount?: HederaId;
 	cashInRoleAccount?: HederaId;
 	cashInRoleAllowance?: BigDecimal;
+	metadata?: string;
 }
 
 export class StableCoin extends BaseEntity implements StableCoinProps {
@@ -143,6 +144,7 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 	kycRoleAccount?: HederaId;
 	cashInRoleAccount?: HederaId;
 	cashInRoleAllowance?: BigDecimal;
+	metadata?: string;
 
 	constructor(params: StableCoinProps) {
 		const {
@@ -184,6 +186,7 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 			kycRoleAccount,
 			cashInRoleAccount,
 			cashInRoleAllowance,
+			metadata,
 		} = params;
 		super();
 		this.adminKey = adminKey;
@@ -228,6 +231,7 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 		this.kycRoleAccount = kycRoleAccount ?? HederaId.from('0.0.0');
 		this.cashInRoleAccount = cashInRoleAccount ?? HederaId.from('0.0.0');
 		this.cashInRoleAllowance = cashInRoleAllowance;
+		this.metadata = metadata;
 	}
 
 	public static checkName(value: string): BaseError[] {

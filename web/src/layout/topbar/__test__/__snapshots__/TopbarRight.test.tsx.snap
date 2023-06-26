@@ -20,12 +20,16 @@ exports[`<TopbarRight /> should render correctly 1`] = `
             data-testid="topbar-right-account"
           />
         </div>
-        <p
-          class="chakra-text css-gegx7f"
-          data-testid="topbar-right-network"
+        <div
+          class="css-1m8iww1"
         >
-          testnet
-        </p>
+          <p
+            class="chakra-text css-gegx7f"
+            data-testid="topbar-right-network"
+          >
+            testnet
+          </p>
+        </div>
       </div>
       <svg
         fill="#fdfdfc"

@@ -19,6 +19,7 @@ interface IStableCoinFactory {
         KeysLib.KeysStruct[] keys;
         IHederaTokenManager.RolesStruct[] roles;
         IHederaTokenManager.CashinRoleStruct cashinRole;
+        string metadata;
     }
 
     struct DeployedStableCoin {

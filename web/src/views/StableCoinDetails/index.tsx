@@ -22,7 +22,7 @@ const StableCoinDetails = () => {
 	const selectedStableCoinConfigProxy = useSelector(SELECTED_WALLET_COIN_PROXY_CONFIG);
 	const account = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 	const network = useSelector(SELECTED_NETWORK);
-	const roles = useSelector(SELECTED_TOKEN_ROLES)!;
+	const roles = useSelector(SELECTED_TOKEN_ROLES)! || [];
 
 	const { isLoading, getStableCoinDetails } = useRefreshCoinInfo();
 
@@ -102,6 +102,10 @@ const StableCoinDetails = () => {
 				selectedStableCoin?.maxSupply && !selectedStableCoin?.maxSupply.isZero
 					? selectedStableCoin?.maxSupply
 					: 'INFINITE',
+		},
+		{
+			label: t('metadata'),
+			value: selectedStableCoin?.metadata ?? '',
 		},
 		{
 			label: t('treasury'),

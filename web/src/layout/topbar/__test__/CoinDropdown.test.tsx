@@ -2,7 +2,8 @@ import CoinDropdown from '../CoinDropdown';
 import { render } from '../../../test/';
 import { waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { mockedStableCoinsList } from '../../../mocks/sdk';
+import { mockedStableCoinCapabilities, mockedStableCoinsList } from '../../../mocks/sdk';
+import configureMockStore from 'redux-mock-store';
 
 jest.mock('react-select', () =>
 	// eslint-disable-next-line react/display-name
@@ -50,7 +51,7 @@ describe(`<${CoinDropdown.name} />`, () => {
 	test('should show all stable coins', async () => {
 		const component = render(<CoinDropdown />);
 
-		const select = component.getByTestId('select-coin-dropdown');
+		const select = component.getByTestId('select-placeholder');
 		userEvent.click(select);
 		const coinLabel = `${mockedStableCoinsList.coins[0].id} - ${mockedStableCoinsList.coins[0].symbol}`;
 
@@ -59,17 +60,56 @@ describe(`<${CoinDropdown.name} />`, () => {
 		});
 	});
 
-	test('should be able to choose one coin', async () => {
+	test('should be able to choose click', async () => {
 		const component = render(<CoinDropdown />);
 
-		const select = component.getByTestId('select-coin-dropdown');
+		let select = component.getByTestId('select-placeholder');
 		userEvent.click(select);
 		const coinLabel = `${mockedStableCoinsList.coins[0].id} - ${mockedStableCoinsList.coins[0].symbol}`;
-		const option = component.getByText(coinLabel);
-		userEvent.click(option);
 
-		await waitFor(() => {
-			expect((select as HTMLInputElement).value).toEqual(mockedStableCoinsList.coins[0].id);
+		await waitFor(async () => {
+			const option = component.getByText(coinLabel);
+			await userEvent.click(option);
+
+			waitFor(() => {
+				expect((select as HTMLInputElement).value).toEqual(mockedStableCoinsList.coins[0].id);
+			});
+		});
+	});
+
+	test('should be able to choose one coin', async () => {
+		const mockStore = configureMockStore();
+		const store = mockStore({
+			wallet: {
+				accountInfo: { id: '0.0.12345' },
+				selectedStableCoin: {
+					tokenId: mockedStableCoinsList.coins[0].id,
+					symbol: mockedStableCoinsList.coins[0].symbol,
+				},
+				capabilities: mockedStableCoinCapabilities,
+				data: {
+					savedPairings: [
+						{
+							accountIds: ['0.0.123456'],
+						},
+					],
+				},
+			},
+		});
+
+		const component = render(<CoinDropdown />, store);
+
+		let select = component.getByTestId('select-placeholder');
+		userEvent.click(select);
+		const coinLabel = `${mockedStableCoinsList.coins[0].id} - ${mockedStableCoinsList.coins[0].symbol}`;
+
+		await waitFor(async () => {
+			const option = component.getByText(coinLabel);
+			await userEvent.click(option);
+
+			waitFor(() => {
+				expect((select as HTMLInputElement).value).toEqual(mockedStableCoinsList.coins[0].id);
+			});
 		});
 	});
 });

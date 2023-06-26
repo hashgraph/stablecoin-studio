@@ -112,6 +112,9 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 	@OptionalField()
 	cashInRoleAllowance?: string | undefined;
 
+	@OptionalField()
+	metadata?: string | undefined;
+
 	constructor({
 		name,
 		symbol,
@@ -140,6 +143,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		kycRoleAccount,
 		cashInRoleAccount,
 		cashInRoleAllowance,
+		metadata,
 	}: {
 		name: string;
 		symbol: string;
@@ -168,6 +172,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		kycRoleAccount?: string;
 		cashInRoleAccount?: string;
 		cashInRoleAllowance?: string;
+		metadata?: string;
 	}) {
 		super({
 			name: (val) => {
@@ -314,6 +319,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 					this.decimals,
 				);
 			},
+			metadata: Validation.checkString({ max: 100, emptyCheck: false }),
 		});
 		this.name = name;
 		this.symbol = symbol;
@@ -343,5 +349,6 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		this.kycRoleAccount = kycRoleAccount;
 		this.cashInRoleAccount = cashInRoleAccount;
 		this.cashInRoleAllowance = cashInRoleAllowance;
+		this.metadata = metadata;
 	}
 }
