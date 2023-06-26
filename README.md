@@ -219,20 +219,20 @@ Whenever a testnet reset occurs, the factories must be re-deployed and the addre
 4. Update the addresses in the web's `.env` file in order to use the new factories in the DApp.
 5. Create a PR to be validated and merged for the new version.
 
-# Development Manifesto
+# Development manifesto
 The development of the project follows enterprise-grade practices for software development. Using DDD, hexagonal architecture, and the CQS pattern, all within an agile methodology.
 
-## Domain Driven Design
+## Domain driven design
 By using DDD (Domain-Driven Design), we aim to create a shared language among all members of the project team, which allows us to focus our development efforts on thoroughly understanding the processes and rules of the domain. This helps to bring benefits such as increased efficiency and improved communication.
 
-## Hexagonal Architecture
+## Hexagonal architecture
 We employ this architectural pattern to differentiate between the internal and external parts of our software. By encapsulating logic in different layers of the application, we are able to separate concerns and promote a higher level of isolation, testability, and control over business-specific code. This structure allows each layer of the application to have clear responsibilities and requirements, which helps to improve the overall quality and maintainability of the software.
 
-## CQS and Command Handlers
+## CQS and command handlers
 We use a separation of queries/commands, query handlers/command handlers to divide state changes from state reads, with the goal of decoupling functional workflows and separating view models from the domain. By using command handlers and an internal command bus, we are able to completely decouple the use cases within the system, improving flexibility and maintainability. This has been achieved by developing a fully typed TS Command / Query Handler module.
 
-## Code Standards
-The SDK has over 70% code coverage in unit and integration tests. The Smart Contracts have a 100% code coverage(*).
+## Code standards
+The SDK,CLI and UI have over 70% code coverage in unit and integration tests. The Smart Contracts have a 100% code coverage(*).
 
 _(*) we could not find any tool to automatically measure the Smart Contracts coverage, but we included tests for all external and public methods implemented by this project (external and public methods imported from trusted external sources were not considered)._
 
@@ -245,7 +245,7 @@ Contributions are welcome. Please see the
 [contributing guide](https://github.com/hashgraph/.github/blob/main/CONTRIBUTING.md)
 to see how you can get involved.
 
-# Code of Conduct
+# Code of conduct
 This project is governed by the
 [Contributor Covenant Code of Conduct](https://github.com/hashgraph/.github/blob/main/CODE_OF_CONDUCT.md). By
 participating, you are expected to uphold this code of conduct. Please report unacceptable behavior
