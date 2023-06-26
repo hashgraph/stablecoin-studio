@@ -2,7 +2,7 @@ import { StableCoinList } from '../../../domain/stablecoin/StableCoinList.js';
 import Big from 'big.js';
 import { language, utilsService, wizardService } from '../../../index.js';
 import Service from '../Service.js';
-import DetailsStableCoinsService from './DetailsStableCoinService.js';
+import DetailsStableCoinService from './DetailsStableCoinService.js';
 import {
   RequestAccount,
   StableCoinRole,
@@ -152,7 +152,7 @@ export default class OperationStableCoinService extends Service {
           await utilsService.cleanAndShowBanner();
           await wizardService.mainMenu();
         } else {
-          await new DetailsStableCoinsService().getDetailsStableCoins(
+          await new DetailsStableCoinService().getDetailsStableCoins(
             this.stableCoinId,
             false,
           );
@@ -287,7 +287,7 @@ export default class OperationStableCoinService extends Service {
         await utilsService.cleanAndShowBanner();
 
         // Call to details
-        await new DetailsStableCoinsService().getDetailsStableCoins(
+        await new DetailsStableCoinService().getDetailsStableCoins(
           this.stableCoinId,
         );
         break;
@@ -964,7 +964,7 @@ export default class OperationStableCoinService extends Service {
       (a) => a.operation,
     );
     const detailsStableCoin =
-      await new DetailsStableCoinsService().getDetailsStableCoins(
+      await new DetailsStableCoinService().getDetailsStableCoins(
         this.stableCoinId,
         false,
       );
@@ -1269,7 +1269,7 @@ export default class OperationStableCoinService extends Service {
         } else if (addFixedFeeRequest.tokenIdCollected !== this.stableCoinId) {
           try {
             const detailsExternalStableCoin =
-              await new DetailsStableCoinsService().getDetailsStableCoins(
+              await new DetailsStableCoinService().getDetailsStableCoins(
                 addFixedFeeRequest.tokenIdCollected,
                 false,
               );
@@ -2721,7 +2721,7 @@ export default class OperationStableCoinService extends Service {
   private async tokenConfiguration(): Promise<void> {
     const updateRequest = new UpdateRequest({ tokenId: this.stableCoinId });
     const stableCoinViewModel: StableCoinViewModel =
-      await new DetailsStableCoinsService().getDetailsStableCoins(
+      await new DetailsStableCoinService().getDetailsStableCoins(
         this.stableCoinId,
         false,
       );

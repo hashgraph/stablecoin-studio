@@ -10,8 +10,7 @@ import {
   GetRolesRequest,
   StableCoinViewModel,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
-// import RoleStableCoinsService from './RoleStableCoinService';
-import DetailsStableCoinsService from './DetailsStableCoinService.js';
+import DetailsStableCoinService from './DetailsStableCoinService.js';
 
 export default class ManageImportedTokenService extends Service {
   constructor() {
@@ -56,7 +55,6 @@ export default class ManageImportedTokenService extends Service {
           },
         );
 
-        //call to roles
         const importedTokens = currentAccount.importedTokens;
         while (
           importedTokens.length > 0 &&
@@ -73,7 +71,7 @@ export default class ManageImportedTokenService extends Service {
           );
           getRolesRequestForAdding.tokenId = tokenId;
         }
-        await new DetailsStableCoinsService()
+        await new DetailsStableCoinService()
           .getDetailsStableCoins(getRolesRequestForAdding.tokenId, false)
           .then((response: StableCoinViewModel) => {
             symbol = response.symbol;

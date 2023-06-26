@@ -14,13 +14,12 @@ import FeeStableCoinService from './FeeStableCoinService.js';
 /**
  * Create Stable Coin Service
  */
-export default class DetailsStableCoinsService extends Service {
+export default class DetailsStableCoinService extends Service {
   constructor() {
     super('Details Stable Coin');
   }
 
   private epochTimestampToGMTString(timestamp: number | undefined): string {
-    if (!timestamp) return '';
     const dateTime: string = timestamp.toString().substring(0, 10);
     const nanoseconds: string = timestamp.toString().substring(10);
     const myDate: Date = new Date(+dateTime * 1000);
@@ -36,8 +35,6 @@ export default class DetailsStableCoinsService extends Service {
     id: string,
     show = true,
   ): Promise<StableCoinViewModel> {
-    // Call to list stable coins
-
     let respDetail: StableCoinViewModel;
     await utilsService.showSpinner(
       StableCoin.getInfo(

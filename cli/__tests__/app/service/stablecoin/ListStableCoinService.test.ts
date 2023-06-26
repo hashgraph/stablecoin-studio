@@ -35,7 +35,7 @@ describe(`Testing ListStableCoinService class`, () => {
   });
 
   it('Should instance listStableCoins when true', async () => {
-    await service.listStableCoins(true);
+    await service.listStableCoins();
 
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);

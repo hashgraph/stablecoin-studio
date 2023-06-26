@@ -26,8 +26,6 @@ describe(`Testing BurnStableCoinService class`, () => {
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
     expect(StableCoin.burn).toHaveBeenCalledTimes(1);
-    expect(console.log).toHaveBeenCalledWith(
-      language.getText('operation.success'),
-    );
+    expect(console.log).toHaveBeenCalledWith(language.getText('operation.success'));
   });
 });

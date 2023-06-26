@@ -31,6 +31,7 @@ import AssociateTokenRequest from './request/AssociateTokenRequest.js';
 import BigDecimal from '../../domain/context/shared/BigDecimal.js';
 import { HederaId } from '../../domain/context/shared/HederaId.js';
 import ContractId from '../../domain/context/contract/ContractId.js';
+import EvmAddress from '../../domain/context/contract/EvmAddress.js';
 import {
 	StableCoinProps,
 	TRANSFER_LIST_SIZE,
@@ -103,7 +104,7 @@ export {
 };
 export { StableCoinCapabilities, Capability, Access, Operation, Balance };
 export { TokenSupplyType };
-export { BigDecimal };
+export { BigDecimal, HederaId, ContractId, EvmAddress, PublicKey };
 
 interface IStableCoinInPort {
 	create(request: CreateRequest): Promise<{
@@ -152,7 +153,7 @@ class StableCoinInPort implements IStableCoinInPort {
 		private readonly networkService: NetworkService = Injectable.resolve(
 			NetworkService,
 		),
-	) {}
+	) { }
 
 	@LogError
 	async create(req: CreateRequest): Promise<{
@@ -184,35 +185,35 @@ class StableCoinInPort implements IStableCoinInPort {
 				: undefined,
 			freezeKey: req.freezeKey
 				? new PublicKey({
-						key: req.freezeKey.key,
-						type: req.freezeKey.type,
-				  })
+					key: req.freezeKey.key,
+					type: req.freezeKey.type,
+				})
 				: undefined,
 			freezeDefault: req.freezeDefault,
 			wipeKey: req.wipeKey
 				? new PublicKey({
-						key: req.wipeKey.key,
-						type: req.wipeKey.type,
-				  })
+					key: req.wipeKey.key,
+					type: req.wipeKey.type,
+				})
 				: undefined,
 			kycKey: req.kycKey
 				? new PublicKey({
-						key: req.kycKey.key,
-						type: req.kycKey.type,
-				  })
+					key: req.kycKey.key,
+					type: req.kycKey.type,
+				})
 				: undefined,
 			pauseKey: req.pauseKey
 				? new PublicKey({
-						key: req.pauseKey.key,
-						type: req.pauseKey.type,
-				  })
+					key: req.pauseKey.key,
+					type: req.pauseKey.type,
+				})
 				: undefined,
 			supplyKey: PublicKey.NULL,
 			feeScheduleKey: req.feeScheduleKey
 				? new PublicKey({
-						key: req.feeScheduleKey.key,
-						type: req.feeScheduleKey.type,
-				  })
+					key: req.feeScheduleKey.key,
+					type: req.feeScheduleKey.type,
+				})
 				: undefined,
 			treasury: undefined,
 			supplyType: req.supplyType,
@@ -245,9 +246,9 @@ class StableCoinInPort implements IStableCoinInPort {
 				reserveAddress ? new ContractId(reserveAddress) : undefined,
 				reserveInitialAmount
 					? BigDecimal.fromString(
-							reserveInitialAmount,
-							RESERVE_DECIMALS,
-					  )
+						reserveInitialAmount,
+						RESERVE_DECIMALS,
+					)
 					: undefined,
 			),
 		);
@@ -255,10 +256,10 @@ class StableCoinInPort implements IStableCoinInPort {
 			coin:
 				createResponse.tokenId.toString() !== ContractId.NULL.toString()
 					? (
-							await this.queryBus.execute(
-								new GetStableCoinQuery(createResponse.tokenId),
-							)
-					  ).coin
+						await this.queryBus.execute(
+							new GetStableCoinQuery(createResponse.tokenId),
+						)
+					).coin
 					: {},
 			reserve: {
 				proxyAddress: createResponse.reserveProxy,
@@ -638,33 +639,33 @@ class StableCoinInPort implements IStableCoinInPort {
 						: undefined,
 					kycKey
 						? new PublicKey({
-								key: kycKey.key,
-								type: kycKey.type,
-						  })
+							key: kycKey.key,
+							type: kycKey.type,
+						})
 						: undefined,
 					freezeKey
 						? new PublicKey({
-								key: freezeKey.key,
-								type: freezeKey.type,
-						  })
+							key: freezeKey.key,
+							type: freezeKey.type,
+						})
 						: undefined,
 					feeScheduleKey
 						? new PublicKey({
-								key: feeScheduleKey.key,
-								type: feeScheduleKey.type,
-						  })
+							key: feeScheduleKey.key,
+							type: feeScheduleKey.type,
+						})
 						: undefined,
 					pauseKey
 						? new PublicKey({
-								key: pauseKey.key,
-								type: pauseKey.type,
-						  })
+							key: pauseKey.key,
+							type: pauseKey.type,
+						})
 						: undefined,
 					wipeKey
 						? new PublicKey({
-								key: wipeKey.key,
-								type: wipeKey.type,
-						  })
+							key: wipeKey.key,
+							type: wipeKey.type,
+						})
 						: undefined,
 					metadata,
 				),
