@@ -1,11 +1,23 @@
 import {
-  Balance, BigDecimal, CheckSupplierLimitRequest,
-  DecreaseSupplierAllowanceRequest, GetAccountsWithRolesRequest, GetRolesRequest,
-  GetSupplierAllowanceRequest, GrantMultiRolesRequest, GrantRoleRequest, HasRoleRequest,
-  IncreaseSupplierAllowanceRequest, ResetSupplierAllowanceRequest, RevokeMultiRolesRequest,
-  RevokeRoleRequest, Role, StableCoinRole, StableCoinRoleLabel
-} from "@hashgraph-dev/stablecoin-npm-sdk";
-import RoleStableCoinService from "../../../../src/app/service/stablecoin/RoleStableCoinService";
+  Balance,
+  BigDecimal,
+  CheckSupplierLimitRequest,
+  DecreaseSupplierAllowanceRequest,
+  GetAccountsWithRolesRequest,
+  GetRolesRequest,
+  GetSupplierAllowanceRequest,
+  GrantMultiRolesRequest,
+  GrantRoleRequest,
+  HasRoleRequest,
+  IncreaseSupplierAllowanceRequest,
+  ResetSupplierAllowanceRequest,
+  RevokeMultiRolesRequest,
+  RevokeRoleRequest,
+  Role,
+  StableCoinRole,
+  StableCoinRoleLabel,
+} from '@hashgraph-dev/stablecoin-npm-sdk';
+import RoleStableCoinService from '../../../../src/app/service/stablecoin/RoleStableCoinService';
 import { utilsService } from '../../../../src/index.js';
 import Language from '../../../../src/domain/language/Language.js';
 import colors from 'colors';
@@ -16,7 +28,7 @@ const language: Language = new Language();
 describe(`Testing RoleStableCoinService class`, () => {
   beforeEach(() => {
     jest.spyOn(utilsService, 'showSpinner').mockImplementation();
-    jest.spyOn(console, "log")
+    jest.spyOn(console, 'log');
   });
   afterEach(() => {
     jest.restoreAllMocks();
@@ -27,7 +39,7 @@ describe(`Testing RoleStableCoinService class`, () => {
     const grantRoleRequest = new GrantRoleRequest({
       tokenId: 'tokenId',
       targetId: 'targetId',
-      role: StableCoinRole.KYC_ROLE
+      role: StableCoinRole.KYC_ROLE,
     });
 
     await service.giveSupplierRoleStableCoin(grantRoleRequest);
@@ -35,7 +47,9 @@ describe(`Testing RoleStableCoinService class`, () => {
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
     expect(Role.grantRole).toHaveBeenCalledTimes(1);
-    expect(console.log).toHaveBeenCalledWith(language.getText('operation.success'));
+    expect(console.log).toHaveBeenCalledWith(
+      language.getText('operation.success'),
+    );
   });
 
   it('Should instance checkCashInRoleStableCoin as unlimited', async () => {
@@ -44,7 +58,7 @@ describe(`Testing RoleStableCoinService class`, () => {
     const request = new CheckSupplierLimitRequest({
       tokenId: 'tokenId',
       targetId: 'targetId',
-      supplierType: 'unlimited'
+      supplierType: 'unlimited',
     });
     await service.checkCashInRoleStableCoin(request);
 
@@ -60,7 +74,7 @@ describe(`Testing RoleStableCoinService class`, () => {
     const request = new CheckSupplierLimitRequest({
       tokenId: 'tokenId',
       targetId: 'targetId',
-      supplierType: 'limited'
+      supplierType: 'limited',
     });
     await service.checkCashInRoleStableCoin(request);
 
@@ -75,14 +89,16 @@ describe(`Testing RoleStableCoinService class`, () => {
     const request = new IncreaseSupplierAllowanceRequest({
       tokenId: 'tokenId',
       targetId: 'targetId',
-      amount: 'amount'
+      amount: 'amount',
     });
     await service.increaseLimitSupplierRoleStableCoin(request);
 
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
     expect(Role.increaseAllowance).toHaveBeenCalledTimes(1);
-    expect(console.log).toHaveBeenCalledWith(language.getText('operation.success'));
+    expect(console.log).toHaveBeenCalledWith(
+      language.getText('operation.success'),
+    );
   });
 
   it('Should instance decreaseLimitSupplierRoleStableCoin', async () => {
@@ -90,28 +106,32 @@ describe(`Testing RoleStableCoinService class`, () => {
     const request = new DecreaseSupplierAllowanceRequest({
       tokenId: 'tokenId',
       targetId: 'targetId',
-      amount: 'amount'
+      amount: 'amount',
     });
     await service.decreaseLimitSupplierRoleStableCoin(request);
 
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
     expect(Role.decreaseAllowance).toHaveBeenCalledTimes(1);
-    expect(console.log).toHaveBeenCalledWith(language.getText('operation.success'));
+    expect(console.log).toHaveBeenCalledWith(
+      language.getText('operation.success'),
+    );
   });
 
   it('Should instance resetLimitSupplierRoleStableCoin', async () => {
     jest.spyOn(Role, 'resetAllowance').mockImplementation();
     const request = new ResetSupplierAllowanceRequest({
       tokenId: 'tokenId',
-      targetId: 'targetId'
+      targetId: 'targetId',
     });
     await service.resetLimitSupplierRoleStableCoin(request);
 
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
     expect(Role.resetAllowance).toHaveBeenCalledTimes(1);
-    expect(console.log).toHaveBeenCalledWith(language.getText('operation.success'));
+    expect(console.log).toHaveBeenCalledWith(
+      language.getText('operation.success'),
+    );
   });
 
   it('Should instance grantRoleStableCoin', async () => {
@@ -119,14 +139,16 @@ describe(`Testing RoleStableCoinService class`, () => {
     const request = new GrantRoleRequest({
       tokenId: 'tokenId',
       targetId: 'targetId',
-      role: StableCoinRole.KYC_ROLE
+      role: StableCoinRole.KYC_ROLE,
     });
     await service.grantRoleStableCoin(request);
 
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
     expect(Role.grantRole).toHaveBeenCalledTimes(1);
-    expect(console.log).toHaveBeenCalledWith(language.getText('operation.success'));
+    expect(console.log).toHaveBeenCalledWith(
+      language.getText('operation.success'),
+    );
   });
 
   it('Should instance revokeRoleStableCoin', async () => {
@@ -134,14 +156,16 @@ describe(`Testing RoleStableCoinService class`, () => {
     const request = new RevokeRoleRequest({
       tokenId: 'tokenId',
       targetId: 'targetId',
-      role: StableCoinRole.KYC_ROLE
+      role: StableCoinRole.KYC_ROLE,
     });
     await service.revokeRoleStableCoin(request);
 
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
     expect(Role.revokeRole).toHaveBeenCalledTimes(1);
-    expect(console.log).toHaveBeenCalledWith(language.getText('operation.success'));
+    expect(console.log).toHaveBeenCalledWith(
+      language.getText('operation.success'),
+    );
   });
 
   it('Should instance grantMultiRolesStableCoin', async () => {
@@ -149,14 +173,16 @@ describe(`Testing RoleStableCoinService class`, () => {
     const request = new GrantMultiRolesRequest({
       tokenId: 'tokenId',
       targetsId: ['targetId'],
-      roles: [StableCoinRole.KYC_ROLE]
+      roles: [StableCoinRole.KYC_ROLE],
     });
     await service.grantMultiRolesStableCoin(request);
 
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
     expect(Role.grantMultiRoles).toHaveBeenCalledTimes(1);
-    expect(console.log).toHaveBeenCalledWith(language.getText('operation.success'));
+    expect(console.log).toHaveBeenCalledWith(
+      language.getText('operation.success'),
+    );
   });
 
   it('Should instance revokeMultiRolesStableCoin', async () => {
@@ -164,14 +190,16 @@ describe(`Testing RoleStableCoinService class`, () => {
     const request = new RevokeMultiRolesRequest({
       tokenId: 'tokenId',
       targetsId: ['targetId'],
-      roles: [StableCoinRole.KYC_ROLE]
+      roles: [StableCoinRole.KYC_ROLE],
     });
     await service.revokeMultiRolesStableCoin(request);
 
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
     expect(Role.revokeMultiRoles).toHaveBeenCalledTimes(1);
-    expect(console.log).toHaveBeenCalledWith(language.getText('operation.success'));
+    expect(console.log).toHaveBeenCalledWith(
+      language.getText('operation.success'),
+    );
   });
 
   it('Should instance hasRole', async () => {
@@ -179,7 +207,7 @@ describe(`Testing RoleStableCoinService class`, () => {
     const request = new HasRoleRequest({
       tokenId: 'tokenId',
       targetId: 'targetId',
-      role: StableCoinRole.KYC_ROLE
+      role: StableCoinRole.KYC_ROLE,
     });
     const hasRole = await service.hasRole(request);
 
@@ -194,17 +222,22 @@ describe(`Testing RoleStableCoinService class`, () => {
     const request = new HasRoleRequest({
       tokenId: 'tokenId',
       targetId: 'targetId',
-      role: StableCoinRole.KYC_ROLE
+      role: StableCoinRole.KYC_ROLE,
     });
     await service.hasRoleStableCoin(request);
 
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
     expect(Role.hasRole).toHaveBeenCalledTimes(1);
-    expect(console.log).toHaveBeenCalledWith(language.getText('roleManagement.accountHasRole')
-      .replace('${address}', request.targetId)
-      .replace('${role}', colors.yellow(StableCoinRoleLabel.get(request.role))) +
-      '\n',);
+    expect(console.log).toHaveBeenCalledWith(
+      language
+        .getText('roleManagement.accountHasRole')
+        .replace('${address}', request.targetId)
+        .replace(
+          '${role}',
+          colors.yellow(StableCoinRoleLabel.get(request.role)),
+        ) + '\n',
+    );
   });
 
   it('Should instance hasRoleStableCoin as false', async () => {
@@ -212,40 +245,55 @@ describe(`Testing RoleStableCoinService class`, () => {
     const request = new HasRoleRequest({
       tokenId: 'tokenId',
       targetId: 'targetId',
-      role: StableCoinRole.KYC_ROLE
+      role: StableCoinRole.KYC_ROLE,
     });
     await service.hasRoleStableCoin(request);
 
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
     expect(Role.hasRole).toHaveBeenCalledTimes(1);
-    expect(console.log).toHaveBeenCalledWith(language.getText('roleManagement.accountNotHasRole')
-      .replace('${address}', request.targetId)
-      .replace('${role}', colors.yellow(StableCoinRoleLabel.get(request.role))) +
-      '\n');
+    expect(console.log).toHaveBeenCalledWith(
+      language
+        .getText('roleManagement.accountNotHasRole')
+        .replace('${address}', request.targetId)
+        .replace(
+          '${role}',
+          colors.yellow(StableCoinRoleLabel.get(request.role)),
+        ) + '\n',
+    );
   });
 
   it('Should instance getSupplierAllowance', async () => {
-    jest.spyOn(Role, 'getAllowance').mockResolvedValue(new Balance(new BigDecimal('10')));
+    jest
+      .spyOn(Role, 'getAllowance')
+      .mockResolvedValue(new Balance(new BigDecimal('10')));
     const request = new GetSupplierAllowanceRequest({
       tokenId: 'tokenId',
-      targetId: 'targetId'
+      targetId: 'targetId',
     });
     await service.getSupplierAllowance(request);
 
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
     expect(Role.getAllowance).toHaveBeenCalledTimes(1);
-    expect(console.log).toHaveBeenCalledWith(language.getText('roleManagement.getAmountAllowance')
-      .replace('${address}', request.targetId)
-      .replace('${amount}', colors.yellow('10')) + '\n');
+    expect(console.log).toHaveBeenCalledWith(
+      language
+        .getText('roleManagement.getAmountAllowance')
+        .replace('${address}', request.targetId)
+        .replace('${amount}', colors.yellow('10')) + '\n',
+    );
   });
 
   it('Should instance getRolesWithoutPrinting', async () => {
-    jest.spyOn(Role, 'getRoles').mockResolvedValue([StableCoinRole.DEFAULT_ADMIN_ROLE, StableCoinRole.WITHOUT_ROLE]);
+    jest
+      .spyOn(Role, 'getRoles')
+      .mockResolvedValue([
+        StableCoinRole.DEFAULT_ADMIN_ROLE,
+        StableCoinRole.WITHOUT_ROLE,
+      ]);
     const request = new GetRolesRequest({
       tokenId: 'tokenId',
-      targetId: 'targetId'
+      targetId: 'targetId',
     });
     const roles = await service.getRolesWithoutPrinting(request);
 
@@ -255,49 +303,71 @@ describe(`Testing RoleStableCoinService class`, () => {
   });
 
   it('Should instance getRoles with roles', async () => {
-    jest.spyOn(Role, 'getRoles').mockResolvedValue([StableCoinRole.DEFAULT_ADMIN_ROLE, StableCoinRole.WITHOUT_ROLE]);
+    jest
+      .spyOn(Role, 'getRoles')
+      .mockResolvedValue([
+        StableCoinRole.DEFAULT_ADMIN_ROLE,
+        StableCoinRole.WITHOUT_ROLE,
+      ]);
     const request = new GetSupplierAllowanceRequest({
       tokenId: 'tokenId',
-      targetId: 'targetId'
+      targetId: 'targetId',
     });
     const roles = await service.getRoles(request);
 
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
     expect(Role.getRoles).toHaveBeenCalledTimes(1);
-    expect(console.log).toHaveBeenCalledWith(language.getText('operation.success'));
-    expect(console.log).toHaveBeenCalledWith(colors.yellow(StableCoinRoleLabel.get(StableCoinRole.DEFAULT_ADMIN_ROLE)));
-    expect(roles).toEqual([StableCoinRole.DEFAULT_ADMIN_ROLE, StableCoinRole.WITHOUT_ROLE]);
+    expect(console.log).toHaveBeenCalledWith(
+      language.getText('operation.success'),
+    );
+    expect(console.log).toHaveBeenCalledWith(
+      colors.yellow(StableCoinRoleLabel.get(StableCoinRole.DEFAULT_ADMIN_ROLE)),
+    );
+    expect(roles).toEqual([
+      StableCoinRole.DEFAULT_ADMIN_ROLE,
+      StableCoinRole.WITHOUT_ROLE,
+    ]);
   });
 
   it('Should instance getRoles without roles', async () => {
-    jest.spyOn(Role, 'getRoles').mockResolvedValue([StableCoinRole.WITHOUT_ROLE]);
+    jest
+      .spyOn(Role, 'getRoles')
+      .mockResolvedValue([StableCoinRole.WITHOUT_ROLE]);
     const request = new GetSupplierAllowanceRequest({
       tokenId: 'tokenId',
-      targetId: 'targetId'
+      targetId: 'targetId',
     });
     const roles = await service.getRoles(request);
 
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
     expect(Role.getRoles).toHaveBeenCalledTimes(1);
-    expect(console.log).toHaveBeenCalledWith(language.getText('operation.success'));
-    expect(console.log).toHaveBeenCalledWith(colors.red(language.getText('roleManagement.noRoles')));
+    expect(console.log).toHaveBeenCalledWith(
+      language.getText('operation.success'),
+    );
+    expect(console.log).toHaveBeenCalledWith(
+      colors.red(language.getText('roleManagement.noRoles')),
+    );
     expect(roles).toEqual([StableCoinRole.WITHOUT_ROLE]);
   });
 
   it('Should instance getAccountsWithRole with roles', async () => {
-    jest.spyOn(Role, 'getAccountsWithRole').mockResolvedValue(['account_1', 'account_2']);
+    jest
+      .spyOn(Role, 'getAccountsWithRole')
+      .mockResolvedValue(['account_1', 'account_2']);
     const request = new GetAccountsWithRolesRequest({
       tokenId: 'tokenId',
-      roleId: 'roleId'
+      roleId: 'roleId',
     });
     const accounts = await service.getAccountsWithRole(request);
 
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
     expect(Role.getAccountsWithRole).toHaveBeenCalledTimes(1);
-    expect(console.log).toHaveBeenCalledWith(language.getText('operation.success'));
+    expect(console.log).toHaveBeenCalledWith(
+      language.getText('operation.success'),
+    );
     expect(console.log).toHaveBeenCalledWith(colors.yellow('account_1'));
     expect(accounts).toEqual(['account_1', 'account_2']);
   });
@@ -306,17 +376,19 @@ describe(`Testing RoleStableCoinService class`, () => {
     jest.spyOn(Role, 'getAccountsWithRole').mockResolvedValue([]);
     const request = new GetAccountsWithRolesRequest({
       tokenId: 'tokenId',
-      roleId: 'roleId'
+      roleId: 'roleId',
     });
     const accounts = await service.getAccountsWithRole(request);
 
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
     expect(Role.getAccountsWithRole).toHaveBeenCalledTimes(1);
-    expect(console.log).toHaveBeenCalledWith(language.getText('operation.success'));
-    expect(console.log).toHaveBeenCalledWith(colors.red(language.getText('roleManagement.noRoles')));
+    expect(console.log).toHaveBeenCalledWith(
+      language.getText('operation.success'),
+    );
+    expect(console.log).toHaveBeenCalledWith(
+      colors.red(language.getText('roleManagement.noRoles')),
+    );
     expect(accounts).toEqual([]);
   });
-
-
 });

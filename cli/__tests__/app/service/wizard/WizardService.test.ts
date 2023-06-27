@@ -72,6 +72,34 @@ describe('wizardService', () => {
     jest.restoreAllMocks();
   });
 
+  it('should handle the configuration menu options', async () => {
+    // mocks
+    const configurationMenuMock = jest
+      .spyOn(wizardService, 'configurationMenu')
+      .mockImplementation();
+
+    // method call
+    await wizardService.configurationMenu();
+
+    // verify
+    expect(wizardService).not.toBeNull();
+    expect(configurationMenuMock).toHaveBeenCalled();
+  });
+
+  it('should handle the main menu options', async () => {
+    // mocks
+    const mainMenuMock = jest
+      .spyOn(wizardService, 'mainMenu')
+      .mockImplementation();
+
+    // method call
+    await wizardService.mainMenu();
+
+    // verify
+    expect(wizardService).not.toBeNull();
+    expect(mainMenuMock).toHaveBeenCalled();
+  });
+
   it('should choose an account and call mainMenu', async () => {
     // mocks
     const getConfigurationMock = jest

@@ -1,10 +1,18 @@
-import { BigDecimal, Proxy, StableCoin, HederaId, ContractId, EvmAddress, PublicKey } from '@hashgraph-dev/stablecoin-npm-sdk';
+import {
+  BigDecimal,
+  Proxy,
+  StableCoin,
+  HederaId,
+  ContractId,
+  EvmAddress,
+  PublicKey,
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 import DetailsStableCoinService from '../../../../src/app/service/stablecoin/DetailsStableCoinService';
 import { utilsService } from '../../../../src/index.js';
 import { RequestFixedFee } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 const service = new DetailsStableCoinService();
-const id = 'id;'
+const id = 'id;';
 const mockedSelectedStableCoin = {
   tokenId: HederaId.from('0.0.49319786'),
   name: 'TEST_ACCELERATOR_SC',
@@ -16,7 +24,9 @@ const mockedSelectedStableCoin = {
   proxyAddress: new ContractId('0.0.49319785'),
   proxyAdminAddress: new ContractId('0.0.49319785'),
   evmProxyAddress: new EvmAddress('0000000000000000000000000000000002f08f69'),
-  evmProxyAdminAddress: new EvmAddress('0000000000000000000000000000000002f08f69'),
+  evmProxyAdminAddress: new EvmAddress(
+    '0000000000000000000000000000000002f08f69',
+  ),
   treasury: HederaId.from('0.0.49319785'),
   paused: false,
   deleted: false,
@@ -29,22 +39,26 @@ const mockedSelectedStableCoin = {
   wipeKey: new ContractId('0.0.49319785'),
   supplyKey: new ContractId('0.0.49319785'),
   pauseKey: new ContractId('0.0.49319785'),
-  customFees: [{
-    collectorId: 'collectorId',
-    tokenIdCollected: '0.0.0',
-    collectorsExempt: true,
-    decimals: 10,
-    amount: '10'
-  } as RequestFixedFee],
+  customFees: [
+    {
+      collectorId: 'collectorId',
+      tokenIdCollected: '0.0.0',
+      collectorsExempt: true,
+      decimals: 10,
+      amount: '10',
+    } as RequestFixedFee,
+  ],
   expirationTimestamp: 1687791349,
   metadata: 'metadata',
-  feeScheduleKey: new PublicKey('publicKey')
+  feeScheduleKey: new PublicKey('publicKey'),
 };
 
 describe(`Testing DetailsStableCoinService class`, () => {
   beforeEach(() => {
     jest.spyOn(utilsService, 'showSpinner').mockImplementation();
-    jest.spyOn(StableCoin, 'getInfo').mockResolvedValue(mockedSelectedStableCoin);
+    jest
+      .spyOn(StableCoin, 'getInfo')
+      .mockResolvedValue(mockedSelectedStableCoin);
   });
   afterEach(() => {
     jest.restoreAllMocks();
@@ -63,7 +77,9 @@ describe(`Testing DetailsStableCoinService class`, () => {
     const implementationAddress = 'implementationAddress';
     const owner = 'owner';
     jest.spyOn(console, 'log');
-    jest.spyOn(Proxy, 'getProxyConfig').mockResolvedValue({ implementationAddress, owner });
+    jest
+      .spyOn(Proxy, 'getProxyConfig')
+      .mockResolvedValue({ implementationAddress, owner });
     const respDetail = await service.getDetailsStableCoins(id);
 
     expect(service).not.toBeNull();
@@ -87,27 +103,35 @@ describe(`Testing DetailsStableCoinService class`, () => {
       proxyAdminAddress: new ContractId('0.0.49319785'),
       reserveAddress: new ContractId('0.0.49319785'),
       reserveAmount: BigDecimal.fromString('1000.', 6),
-      evmProxyAddress: new EvmAddress('0000000000000000000000000000000002f08f69'),
-      evmProxyAdminAddress: new EvmAddress('0000000000000000000000000000000002f08f69'),
+      evmProxyAddress: new EvmAddress(
+        '0000000000000000000000000000000002f08f69',
+      ),
+      evmProxyAdminAddress: new EvmAddress(
+        '0000000000000000000000000000000002f08f69',
+      ),
       treasury: HederaId.from('0.0.49319785'),
       paused: false,
       deleted: false,
       freezeDefault: false,
       autoRenewAccount: HederaId.from('0.0.49071854'),
-      customFees: [{
-        collectorId: 'collectorId',
-        tokenIdCollected: '0.0.0',
-        collectorsExempt: true,
-        decimals: 10,
-        amount: '10'
-      } as RequestFixedFee],
-      expirationTimestamp: undefined
+      customFees: [
+        {
+          collectorId: 'collectorId',
+          tokenIdCollected: '0.0.0',
+          collectorsExempt: true,
+          decimals: 10,
+          amount: '10',
+        } as RequestFixedFee,
+      ],
+      expirationTimestamp: undefined,
     };
     jest.spyOn(StableCoin, 'getInfo').mockResolvedValue(mockedStableCoin);
     const implementationAddress = 'implementationAddress';
     const owner = 'owner';
     jest.spyOn(console, 'log');
-    jest.spyOn(Proxy, 'getProxyConfig').mockResolvedValue({ implementationAddress, owner });
+    jest
+      .spyOn(Proxy, 'getProxyConfig')
+      .mockResolvedValue({ implementationAddress, owner });
     const respDetail = await service.getDetailsStableCoins(id);
 
     expect(service).not.toBeNull();

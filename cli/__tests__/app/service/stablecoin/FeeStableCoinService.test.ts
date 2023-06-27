@@ -1,5 +1,12 @@
-import { AddFixedFeeRequest, AddFractionalFeeRequest, Fees, RequestFixedFee, RequestFractionalFee, UpdateCustomFeesRequest } from "@hashgraph-dev/stablecoin-npm-sdk";
-import FeeStableCoinService from "../../../../src/app/service/stablecoin/FeeStableCoinService";
+import {
+  AddFixedFeeRequest,
+  AddFractionalFeeRequest,
+  Fees,
+  RequestFixedFee,
+  RequestFractionalFee,
+  UpdateCustomFeesRequest,
+} from '@hashgraph-dev/stablecoin-npm-sdk';
+import FeeStableCoinService from '../../../../src/app/service/stablecoin/FeeStableCoinService';
 import { utilsService } from '../../../../src/index.js';
 import Language from '../../../../src/domain/language/Language.js';
 
@@ -9,7 +16,7 @@ const language: Language = new Language();
 describe(`Testing FeeStableCoinService class`, () => {
   beforeEach(() => {
     jest.spyOn(utilsService, 'showSpinner').mockImplementation();
-    jest.spyOn(console, "log")
+    jest.spyOn(console, 'log');
   });
   afterEach(() => {
     jest.restoreAllMocks();
@@ -31,7 +38,9 @@ describe(`Testing FeeStableCoinService class`, () => {
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
     expect(Fees.addFixedFee).toHaveBeenCalledTimes(1);
-    expect(console.log).toHaveBeenCalledWith(language.getText('operation.success'));
+    expect(console.log).toHaveBeenCalledWith(
+      language.getText('operation.success'),
+    );
   });
 
   it('Should instance addFractionalFee', async () => {
@@ -41,112 +50,142 @@ describe(`Testing FeeStableCoinService class`, () => {
       collectorId: 'collectorId',
       collectorsExempt: true,
       decimals: 10,
-      net: true
+      net: true,
     });
     await service.addFractionalFee(request);
 
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
     expect(Fees.addFractionalFee).toHaveBeenCalledTimes(1);
-    expect(console.log).toHaveBeenCalledWith(language.getText('operation.success'));
+    expect(console.log).toHaveBeenCalledWith(
+      language.getText('operation.success'),
+    );
   });
 
   it('Should instance updateFees', async () => {
     jest.spyOn(Fees, 'updateCustomFees').mockImplementation();
     const request = new UpdateCustomFeesRequest({
-      customFees: [{
-        collectorId: 'collectorId',
-        collectorsExempt: true,
-        decimals: 10
-      }],
-      tokenId: 'tokenId'
+      customFees: [
+        {
+          collectorId: 'collectorId',
+          collectorsExempt: true,
+          decimals: 10,
+        },
+      ],
+      tokenId: 'tokenId',
     });
     await service.updateFees(request);
 
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
     expect(Fees.updateCustomFees).toHaveBeenCalledTimes(1);
-    expect(console.log).toHaveBeenCalledWith(language.getText('operation.success'));
+    expect(console.log).toHaveBeenCalledWith(
+      language.getText('operation.success'),
+    );
   });
 
   it('Should instance getSerializedFees as RequestFixedFee', () => {
-    const listOfFees = [{
-      collectorId: 'collectorId',
-      tokenIdCollected: 'tokenIdCollected',
-      collectorsExempt: true,
-      decimals: 10,
-      amount: '10'
-    } as RequestFixedFee]
+    const listOfFees = [
+      {
+        collectorId: 'collectorId',
+        tokenIdCollected: 'tokenIdCollected',
+        collectorsExempt: true,
+        decimals: 10,
+        amount: '10',
+      } as RequestFixedFee,
+    ];
     const serializedFees = service.getSerializedFees(listOfFees);
 
     expect(service).not.toBeNull();
-    expect(serializedFees).toEqual([" | Fixed | tokenIdCollected | 10 | collectorId | true"]);
+    expect(serializedFees).toEqual([
+      ' | Fixed | tokenIdCollected | 10 | collectorId | true',
+    ]);
   });
-  
+
   it('Should instance getSerializedFees as RequestFixedFee and HBAR', () => {
-    const listOfFees = [{
-      collectorId: 'collectorId',
-      tokenIdCollected: '0.0.0',
-      collectorsExempt: true,
-      decimals: 10,
-      amount: '10'
-    } as RequestFixedFee]
+    const listOfFees = [
+      {
+        collectorId: 'collectorId',
+        tokenIdCollected: '0.0.0',
+        collectorsExempt: true,
+        decimals: 10,
+        amount: '10',
+      } as RequestFixedFee,
+    ];
     const serializedFees = service.getSerializedFees(listOfFees);
 
     expect(service).not.toBeNull();
-    expect(serializedFees).toEqual([" | Fixed | HBAR | 10 | collectorId | true"]);
+    expect(serializedFees).toEqual([
+      ' | Fixed | HBAR | 10 | collectorId | true',
+    ]);
   });
 
   it('Should instance getSerializedFees as RequestFractionalFee', () => {
-    const listOfFees = [{
-      collectorId: 'collectorId',
-      tokenIdCollected: 'tokenIdCollected',
-      collectorsExempt: true,
-      decimals: 10,
-      percentage: 'percentage',
-      amountNumerator: 'amountNumerator',
-      amountDenominator: 'amountDenominator',
-      min: 'min',
-      max: 'max',
-      net: true
-    } as RequestFractionalFee]
+    const listOfFees = [
+      {
+        collectorId: 'collectorId',
+        tokenIdCollected: 'tokenIdCollected',
+        collectorsExempt: true,
+        decimals: 10,
+        percentage: 'percentage',
+        amountNumerator: 'amountNumerator',
+        amountDenominator: 'amountDenominator',
+        min: 'min',
+        max: 'max',
+        net: true,
+      } as RequestFractionalFee,
+    ];
     const serializedFees = service.getSerializedFees(listOfFees);
 
     expect(service).not.toBeNull();
-    expect(serializedFees).toEqual([" | Fractional | percentage | Min: min | Max: max | collectorId | true | Sender"]);
+    expect(serializedFees).toEqual([
+      ' | Fractional | percentage | Min: min | Max: max | collectorId | true | Sender',
+    ]);
   });
 
   it('Should instance getSerializedFees as RequestFractionalFee and max unlimited and Receiver', () => {
-    const listOfFees = [{
-      collectorId: 'collectorId',
-      tokenIdCollected: 'tokenIdCollected',
-      collectorsExempt: true,
-      decimals: 10,
-      percentage: 'percentage',
-      amountNumerator: 'amountNumerator',
-      amountDenominator: 'amountDenominator',
-      min: 'min',
-      max: '0',
-      net: false
-    } as RequestFractionalFee]
+    const listOfFees = [
+      {
+        collectorId: 'collectorId',
+        tokenIdCollected: 'tokenIdCollected',
+        collectorsExempt: true,
+        decimals: 10,
+        percentage: 'percentage',
+        amountNumerator: 'amountNumerator',
+        amountDenominator: 'amountDenominator',
+        min: 'min',
+        max: '0',
+        net: false,
+      } as RequestFractionalFee,
+    ];
     const serializedFees = service.getSerializedFees(listOfFees);
 
     expect(service).not.toBeNull();
-    expect(serializedFees).toEqual([" | Fractional | percentage | Min: min | Max: unlimited | collectorId | true | Receiver"]);
+    expect(serializedFees).toEqual([
+      ' | Fractional | percentage | Min: min | Max: unlimited | collectorId | true | Receiver',
+    ]);
   });
 
   it('Should instance getRemainingFees', () => {
-    const remainingFees = service.getRemainingFees([{
-      collectorId: 'collectorId',
-      collectorsExempt: true,
-      decimals: 6
-    }], ["1", "2", "3"], ["2"]);
+    const remainingFees = service.getRemainingFees(
+      [
+        {
+          collectorId: 'collectorId',
+          collectorsExempt: true,
+          decimals: 6,
+        },
+      ],
+      ['1', '2', '3'],
+      ['2'],
+    );
 
     expect(service).not.toBeNull();
-    expect(remainingFees).toEqual([{
-      "collectorId": "collectorId",
-      "collectorsExempt": true,
-      "decimals": 6,
-    }]);
+    expect(remainingFees).toEqual([
+      {
+        collectorId: 'collectorId',
+        collectorsExempt: true,
+        decimals: 6,
+      },
+    ]);
   });
 });
