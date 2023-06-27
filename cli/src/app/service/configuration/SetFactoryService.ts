@@ -122,6 +122,7 @@ export default class SetFactoryService extends Service {
           rpc: currentRPC.name,
         },
       );
+
       switch (factoryAction) {
         case language.getText('wizard.manageFactoryOptions.ChangeFactory'):
           await utilsService.cleanAndShowBanner();

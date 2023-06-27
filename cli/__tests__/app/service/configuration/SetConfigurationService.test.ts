@@ -4,6 +4,6 @@
 
 describe('setConfigurationService', () => {
   it('should init configuration with no initial configuration or a file path', async () => {
-    // setConfigurationService.manageAccountMenu();
+    // setConfigurationService.initConfiguration();
   });
 });

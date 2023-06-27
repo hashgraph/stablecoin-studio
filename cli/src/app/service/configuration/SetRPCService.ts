@@ -140,7 +140,7 @@ export default class SetRPCService extends Service {
 
     const options = rpcs
       .filter((rpc) => rpc.name !== currentRPC.name && rpc.network === _network)
-      .map((rpc) => `${rpc.name}` + colors.magenta(' (' + rpc.network + ')'));
+      .map((rpc) => `${rpc.name} (${rpc.network})`);
 
     if (options.length > 0) {
       const optionsWithoutColors = rpcs

@@ -12,6 +12,7 @@ import Language from '../../../../src/domain/language/Language.js';
 import {
   ProxyConfigurationViewModel,
   Proxy,
+  Network,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 const language: Language = new Language();
@@ -19,9 +20,29 @@ const language: Language = new Language();
 describe('setFactoryService', () => {
   beforeEach(() => {
     jest.spyOn(utilsService, 'showSpinner').mockImplementation();
-  });
-  afterEach(() => {
-    jest.restoreAllMocks();
+
+    // mocks
+    jest.spyOn(console, 'log');
+
+    jest.spyOn(utilsService, 'getCurrentAccount').mockReturnValue(account);
+
+    jest.spyOn(utilsService, 'getCurrentMirror').mockReturnValue(mirror);
+
+    jest.spyOn(utilsService, 'getCurrentRPC').mockReturnValue(rpc);
+
+    jest.spyOn(utilsService, 'getCurrentFactory').mockReturnValue(factory);
+
+    jest
+      .spyOn(Proxy, 'getFactoryProxyConfig')
+      .mockImplementation(() => Promise.resolve(factoryProxy));
+
+    jest
+      .spyOn(utilsService, 'cleanAndShowBanner')
+      .mockImplementation(() => Promise.resolve());
+
+    jest
+      .spyOn(configurationService, 'getConfiguration')
+      .mockReturnValue(configurationMock);
   });
 
   const configurationMock: IConfiguration = {
@@ -152,84 +173,115 @@ describe('setFactoryService', () => {
     owner: '0.0.123456',
   };
 
-  it('should manage factory menu', async () => {
-    // mocks
-    jest.spyOn(console, 'log');
-
-    const accountConfigMock = jest
-      .spyOn(utilsService, 'getCurrentAccount')
-      .mockReturnValue(account);
-
-    const mirrorConfigMock = jest
-      .spyOn(utilsService, 'getCurrentMirror')
-      .mockReturnValue(mirror);
-
-    const rpcConfigMock = jest
-      .spyOn(utilsService, 'getCurrentRPC')
-      .mockReturnValue(rpc);
-
-    const factoryConfigMock = jest
-      .spyOn(utilsService, 'getCurrentFactory')
-      .mockReturnValue(factory);
-
-    const factoryProxyConfigMock = jest
-      .spyOn(Proxy, 'getFactoryProxyConfig')
-      .mockImplementation(() => Promise.resolve(factoryProxy));
-
+  it('should change the factory', async () => {
     const defaultMultipleAskMock = jest
       .spyOn(utilsService, 'defaultMultipleAsk')
-      .mockImplementationOnce(() => Promise.resolve('Factory details'))
-      .mockImplementationOnce(() => Promise.resolve('Change factory'))
-      .mockImplementationOnce(() => Promise.resolve('Upgrade factory'))
-      .mockImplementation((question: string) => {
-        switch (question) {
-          case language.getText('wizard.networkManage'):
-            return Promise.resolve('testnet');
-
-          default:
-            return Promise.resolve('');
-        }
-      });
-
-    const cleanAndShowBannerMock = jest
-      .spyOn(utilsService, 'cleanAndShowBanner')
-      .mockImplementation(() => Promise.resolve());
-
-    const getConfigurationMock = jest
-      .spyOn(configurationService, 'getConfiguration')
-      .mockReturnValue(configurationMock);
+      .mockImplementationOnce(() =>
+        Promise.resolve(
+          language.getText('wizard.manageFactoryOptions.ChangeFactory'),
+        ),
+      )
+      .mockImplementationOnce(() => Promise.resolve('testnet'));
 
     const defaultSingleAskMock = jest
       .spyOn(utilsService, 'defaultSingleAsk')
-      .mockImplementation((question: string) => {
-        switch (question) {
-          case language.getText('configuration.askNewFactoryAddress'):
-            return Promise.resolve('0.0.98765');
-
-          case language.getText('wizard.askFactoryImplementation'):
-            return Promise.resolve('0.0.87654');
-
-          default:
-            return Promise.resolve('');
-        }
-      });
-
-    /* const defaultSingleAskMock = jest
-        .spyOn(utilsService, 'defaultSingleAsk')
-        .mockImplementation(() => Promise.resolve('0.0.98765')); */
+      .mockImplementation(() => Promise.resolve('0.0.23456'));
 
     setFactoryService.manageFactoryMenu();
 
     expect(setFactoryService).not.toBeNull();
-    expect(accountConfigMock).toHaveBeenCalledTimes(1);
-    expect(mirrorConfigMock).toHaveBeenCalledTimes(1);
-    expect(rpcConfigMock).toHaveBeenCalledTimes(1);
-    expect(factoryConfigMock).toHaveBeenCalledTimes(1);
-    expect(factoryProxyConfigMock).toHaveBeenCalledTimes(1);
     expect(defaultMultipleAskMock).toHaveBeenCalledTimes(0);
-    // expect(cleanAndShowBannerMock).toBeCalledTimes(0);
-    expect(getConfigurationMock).toHaveBeenCalledTimes(0);
     expect(defaultSingleAskMock).toHaveBeenCalledTimes(0);
+  });
+
+  it('should display factory details', async () => {
+    const defaultMultipleAskMock = jest
+      .spyOn(utilsService, 'defaultMultipleAsk')
+      .mockImplementationOnce(() =>
+        Promise.resolve(
+          language.getText('wizard.manageFactoryOptions.FactoryDetails'),
+        ),
+      );
+
+    setFactoryService.manageFactoryMenu();
+
+    expect(setFactoryService).not.toBeNull();
+    expect(defaultMultipleAskMock).toHaveBeenCalledTimes(0);
+  });
+
+  it('should upgrade the factory', async () => {
+    const changeFactoryProxyOwnerMock = jest
+      .spyOn(Proxy, 'upgradeFactoryImplementation')
+      .mockImplementation(() => Promise.resolve(true));
+
+    const defaultMultipleAskMock = jest
+      .spyOn(utilsService, 'defaultMultipleAsk')
+      .mockImplementationOnce(() =>
+        Promise.resolve(
+          language.getText('wizard.manageFactoryOptions.UpgradeFactory'),
+        ),
+      )
+      .mockImplementationOnce(() => Promise.resolve(''));
+
+    const defaultSingleAskMock = jest
+      .spyOn(utilsService, 'defaultSingleAsk')
+      .mockImplementation(() => Promise.resolve('0.0.87654'));
+
+    setFactoryService.manageFactoryMenu();
+
+    expect(setFactoryService).not.toBeNull();
+    expect(defaultMultipleAskMock).toHaveBeenCalledTimes(0);
+    expect(defaultSingleAskMock).toHaveBeenCalledTimes(0);
+    expect(changeFactoryProxyOwnerMock).toHaveBeenCalledTimes(0);
+  });
+
+  it('should change the proxy factory owner', async () => {
+    const changeFactoryProxyOwnerMock = jest
+      .spyOn(Proxy, 'changeFactoryProxyOwner')
+      .mockImplementation(() => Promise.resolve(true));
+
+    const defaultMultipleAskMock = jest
+      .spyOn(utilsService, 'defaultMultipleAsk')
+      .mockImplementationOnce(() =>
+        Promise.resolve(
+          language.getText('wizard.manageFactoryOptions.ChangeOwner'),
+        ),
+      );
+
+    const defaultSingleAskMock = jest
+      .spyOn(utilsService, 'defaultSingleAsk')
+      .mockImplementation(() => Promise.resolve('0.0.87654'));
+
+    setFactoryService.manageFactoryMenu();
+
+    expect(setFactoryService).not.toBeNull();
+    expect(defaultMultipleAskMock).toHaveBeenCalledTimes(0);
+    expect(defaultSingleAskMock).toHaveBeenCalledTimes(0);
+    expect(changeFactoryProxyOwnerMock).toHaveBeenCalledTimes(0);
+  });
+
+  it('should set SDK factory', async () => {
+    const setConfigMock = jest
+      .spyOn(Network, 'setConfig')
+      .mockImplementation(() =>
+        Promise.resolve({ factoryAddress: '0.0.12345' }),
+      );
+
+    setFactoryService.setSDKFactory('0.0.12345');
+
+    expect(setFactoryService).not.toBeNull();
+    expect(setConfigMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('should get SDK factory', async () => {
+    const getFactoryAddressMock = jest
+      .spyOn(Network, 'getFactoryAddress')
+      .mockReturnValue('0.0.12345');
+
+    setFactoryService.getSDKFactory();
+
+    expect(setFactoryService).not.toBeNull();
+    expect(getFactoryAddressMock).toHaveBeenCalledTimes(1);
   });
 
   afterEach(() => {

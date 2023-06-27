@@ -24,7 +24,7 @@ describe('configurationFactoryProxyService', () => {
     // method call
     const result =
       await new ConfigurationFactoryProxyService().getFactoryProxyconfiguration(
-        '0.0.987654',
+        '0.0.98765',
       );
 
     // verify

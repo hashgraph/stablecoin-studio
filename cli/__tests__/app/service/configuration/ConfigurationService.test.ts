@@ -5,7 +5,7 @@ import { LogOptions } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 const language: Language = new Language();
 const accountId = '0.0.123456';
-const path = 'hsca-config.yaml';
+const path = 'test/hsca-config.yaml';
 
 describe('configurationService', () => {
   const configurationMock: IConfiguration = {
@@ -180,126 +180,6 @@ describe('configurationService', () => {
     expect(defaultPasswordAskMock).toHaveBeenCalledTimes(0);
   }, 10000);
 
-  /* it('should init configuration defining mirror and rpcs services with no initial configuration or a file path', async () => {
-        const defaultSingleAskMock = jest
-        .spyOn(utilsService, 'defaultSingleAsk')
-        .mockImplementation((question: string) => {
-            switch(question) {
-                case language.getText('configuration.askPath'):               
-                    return Promise.resolve(path);
-
-                case language.getText('configuration.askAccountId'):               
-                    return Promise.resolve(accountId);
-
-                case language.getText('configuration.askAlias'):               
-                    return Promise.resolve('test');
-
-                case language.getText('configuration.askFactoryAddress') + ' | TESTNET':               
-                    return Promise.resolve('0.0.13579');
-
-                case language.getText('configuration.askFactoryAddress') + ' | PREVIEWNET':               
-                    return Promise.resolve('0.0.02468');
-
-                case language.getText('configuration.askMirrorName'):               
-                    return Promise.resolve('HEDERA');
-
-                case language.getText('configuration.askMirrorUrl'):               
-                    return Promise.resolve('https://testnet.mirrornode.hedera.com/api/v1/');
-
-                case language.getText('configuration.askRPCName'):               
-                    return Promise.resolve('HASHIO');
-
-                case language.getText('configuration.askRPCUrl'):               
-                    return Promise.resolve('https://testnet.hashio.io/api');
-
-                default:
-                    return Promise.resolve('');
-            }
-        }); 
-
-        const defaultConfirmAskMock = jest
-        .spyOn(utilsService, 'defaultConfirmAsk')
-        .mockImplementation((question: string) => {
-            switch(question) {
-                case language.getText('configuration.askCreateConfig'):               
-                    return Promise.resolve(true);
-
-                case language.getText('configuration.askMoreAccounts'):               
-                    return Promise.resolve(false);
-
-                case language.getText('configuration.askConfigurateFactories'):               
-                    return Promise.resolve(true);
-
-                case language.getText('configuration.askConfigurateDefaultMirrorsAndRPCs'):               
-                    return Promise.resolve(false);
-
-                case language.getText('configuration.askMirrorHasApiKey'):               
-                    return Promise.resolve(false);
-
-                case language.getText('configuration.askMirrorSelected'):               
-                    return Promise.resolve(true);
-
-                case language.getText('configuration.askMoreMirrors'):               
-                    return Promise.resolve(false);
-
-                case language.getText('configuration.askRPCasApiKey'):               
-                    return Promise.resolve(false);
-
-                case language.getText('configuration.askRPCSelected'):               
-                    return Promise.resolve(true);
-
-                case language.getText('configuration.askMoreRPCs'):               
-                    return Promise.resolve(false);
-
-                default:
-                    return Promise.resolve(false);
-            }
-        }); 
-
-        const defaultMultipleAskMock = jest
-        .spyOn(utilsService, 'defaultMultipleAsk')
-        .mockImplementation((question: string) => {
-            switch(question) {
-                case language.getText('configuration.askNetwork'):               
-                    return Promise.resolve('testnet');
-
-                case language.getText('configuration.askPrivateKeyType'):               
-                    return Promise.resolve('ED25519');
-
-                case language.getText('configuration.askMirrorNetwork'):               
-                    return Promise.resolve('testnet');
-
-                case language.getText('configuration.askRPCNetwork'):               
-                    return Promise.resolve('testnet');
-
-                default:
-                    return Promise.resolve('');
-            }
-        });         
-
-        const defaultPasswordAskMock = jest
-        .spyOn(utilsService, 'defaultPasswordAsk')
-        .mockImplementation((question: string) => {
-            switch(question) {
-                case language.getText('configuration.askPrivateKey') +
-                    ` '96|64|66|68 characters' (${accountId})`:           
-                    return Promise.resolve('01234567890abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcde');
-
-                default:
-                    return Promise.resolve('');
-            }
-        });        
-
-        await configurationService.init();
-
-        expect(configurationService).not.toBeNull();
-        expect(defaultSingleAskMock).toHaveBeenCalledTimes(5);
-        expect(defaultConfirmAskMock).toHaveBeenCalledTimes(4);
-        expect(defaultMultipleAskMock).toHaveBeenCalledTimes(3);
-        expect(defaultPasswordAskMock).toHaveBeenCalledTimes(1);
-
-    }, 10000); */
-
   it('should init configuration with a path', async () => {
     await configurationService.init(configurationMock, path);
 
@@ -332,7 +212,7 @@ describe('configurationService', () => {
     // expect(console.dir).toHaveBeenCalledWith(configurationMock);
   });
 
-  afterEach(() => {
+  afterAll(() => {
     jest.restoreAllMocks();
   });
 });
