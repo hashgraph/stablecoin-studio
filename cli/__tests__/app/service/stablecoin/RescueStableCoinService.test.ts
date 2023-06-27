@@ -26,6 +26,8 @@ describe(`Testing RescueStableCoinService class`, () => {
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
     expect(StableCoin.rescue).toHaveBeenCalledTimes(1);
-    expect(console.log).toHaveBeenCalledWith(language.getText('operation.success'));
+    expect(console.log).toHaveBeenCalledWith(
+      language.getText('operation.success'),
+    );
   });
 });
