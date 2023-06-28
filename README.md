@@ -52,13 +52,13 @@ This solution consists of a set of tools, including Smart Contracts, SDK, CLI an
 A stable coin is a **decorator** to a standard Hedera Token.
 Each stable coin maps to an *underlying* Hedera Token and adds the following functionality:
 
-- **Multiple Roles**
+- **Multiple roles**
 
   Hedera Tokens' operations (Wipe, Pause, ...) can only be performed by the accounts to which they are assigned (WipeKey, PauseKey, ...). 
 
   Stable coins allow for multiple accounts to share the same operation rights, we can wipe/pause/... tokens using any of the accounts with the wipe/pause/... role respectively.
 
-- **Supply Role split into Cash-in and Burn roles**
+- **Supply role split into Cash-in and Burn roles**
 
   The Hedera Tokens' supply account has the right to change the supply of the token, it can be used to mint and burn tokens.
 
@@ -83,10 +83,10 @@ Each stable coin maps to an *underlying* Hedera Token and adds the following fun
 
 > The account deploying the stable coin can be set as the administrator of the underlying token (instead of the smart contract itself), in which case, that account could completely bypass the stable coin and interact with the underlying token directly in order to change the keys associated to the roles. This would completely decouple the stable coin from the underlying token making the above-mentioned functionalities impossible.
 
-## Creating Stable Coins
+## Creating stable coins
 Every time a stable coin is created, a new Hedera Token is created (the underlying token) and the following smart contracts are deployed:
 - The stable coin proxy smart contract: pointing to the `HederaTokenManager` logic smart contract that was passed as an input argument(*). Proxies are used to make stable coins upgradable.
-- The stable coin proxy admin smart contract: this contract will act as an intermediary to upgrade the stable coin proxy implementation. For more information on this, check the contract module's README.
+- The stable coin proxy admin smart contract: this contract will act as an intermediary to upgrade the stable coin proxy implementation. For more information on this, check the [contract module's README](https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/contracts/README.md).
 
 An smart contract, named `StablecoinFactory`, must be previously deployed since implements the flow to create a new stable coin in a single transaction. A default `StablecoinFactory` is deployed, but any user will be able to [deploy their own factory](#Deploying-the-stable-coin-factories).
 
@@ -96,10 +96,10 @@ Users interact with the stable coin proxy smart contract, instead of doing with 
 
 > It is important to note that when creating a new stable coin, the user will have the possibility to specify the underlying token's keys (those that will have the wipe, supply, ... roles attached). By default, those keys will be assigned to the *stable coin proxy smart contract* because, by doing that, the user will be able to enjoy the whole functionality implemented in this project through the stable coin logic smart contract methods. **NEVERTHELESS**, the user is free to assign any key to the public key of any account (not only during the creation process but also later, if the user's account was set as the underlying key admin), except the admin key and the supply key, that will always be automatically assigned to the stable coin proxy smart contract. If the user assigns a key to the public key of a different account, the stable coin proxy smart contract will not be able to fully manage the underlying token, limiting the functionality it exposes to the user. These keys could be even not assigned, so the related functionalities couldn't be performed. It is also worth noting that just like the user will have the possibility to assign any key to the public key of any account other than the stable coin smart contract proxy, he/she will be able to assign it back too.
 
-## Managing Stable Coins
+## Managing stable coins
 Every time a stable coin is deployed, the deploying account will be defined as the stable coin administrator and will be granted all roles (wipe, rescue, ...). That account will have the possibility to assign and remove any role to any account, increase and decrease cash-in limits, etc...
 
-## Operating Stable Coins
+## Operating stable coins
 Any account having any role granted for a stable coin can operate with it accordingly. For instance, if an account has the burn role granted, it will be allowed to burn tokens. Accounts do not need to be associate with the underlying token in order to operate with it, they only need to be granted roles. On the other hand, if they want to own tokens, they will have to associate the token as for any other Hedera token.
 
 ## Stable Coins categories
@@ -198,6 +198,19 @@ If you are using VSCode we recommend the use of the solidity extension from nomi
 
 > This may not be compatible with others solidity extensions, such as this one. [vscode-solidity](https://github.com/juanfranblanco/vscode-solidity)
 
+# Deploying the stable coin factories
+In order to be able to deploy any stable coin, the `HederaTokenManager` and `StablecoinFactory` smart contracts must be deployed on the network. Whenever a new version of these contracts is needed or when the testnet is reset, new contracts must be deployed. Moreover, the address of the `StablecoinFactory` smart contract must be updated in the SDK, CLI and web modules as explained above.
+
+We provide default addresses for the factories that we have deployed for anyone to use that are updated whenever a new version is released.
+
+| Contract name  | Address      | Network    | 
+|----------------|--------------|------------|
+| FactoryAddress | 0.0.14455068 | Testnet    |
+| FactoryAddress | 0.0.XXXXXX   | Previewnet |
+
+
+Follow the steps in the [contracts docs](https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/contracts#deploy-factory) to learn how to deploy the factories.
+
 # Testnet reset procedure
 Whenever a testnet reset occurs, the factories must be re-deployed and the addresses on the SDK must be updated.
 1. Follow the steps in  [Deploying the stable coin factories](#Deploying-the-stable-coin-factories) to deploy the factories.
@@ -206,33 +219,20 @@ Whenever a testnet reset occurs, the factories must be re-deployed and the addre
 4. Update the addresses in the web's `.env` file in order to use the new factories in the DApp.
 5. Create a PR to be validated and merged for the new version.
 
-# Deploying the stable coin factories
-In order to be able to deploy any stable coin, the `HederaTokenManager` and `StablecoinFactory` smart contracts must be deployed on the network. Whenever a new version of these contracts is needed or when the testnet is reset, new contracts must be deployed. Moreover, the address of the `StablecoinFactory` smart contract must be updated in the SDK, CLI and web modules as explained above.
-
-We provide default addresses for the factories that we have deployed for anyone to use that are updated whenever a new version is released.
-
-| Contract name  | Address      | Network    | 
-|----------------|--------------|------------|
-| FactoryAddress | 0.0.13923715 | Testnet    |
-| FactoryAddress | 0.0.XXXXXX   | Previewnet |
-
-
-Follow the steps in the [contracts docs](https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/contracts#deploy-factory) to learn how to deploy the factories.
-
-# Development Manifesto
+# Development manifesto
 The development of the project follows enterprise-grade practices for software development. Using DDD, hexagonal architecture, and the CQS pattern, all within an agile methodology.
 
-## Domain Driven Design
+## Domain driven design
 By using DDD (Domain-Driven Design), we aim to create a shared language among all members of the project team, which allows us to focus our development efforts on thoroughly understanding the processes and rules of the domain. This helps to bring benefits such as increased efficiency and improved communication.
 
-## Hexagonal Architecture
+## Hexagonal architecture
 We employ this architectural pattern to differentiate between the internal and external parts of our software. By encapsulating logic in different layers of the application, we are able to separate concerns and promote a higher level of isolation, testability, and control over business-specific code. This structure allows each layer of the application to have clear responsibilities and requirements, which helps to improve the overall quality and maintainability of the software.
 
-## CQS and Command Handlers
+## CQS and command handlers
 We use a separation of queries/commands, query handlers/command handlers to divide state changes from state reads, with the goal of decoupling functional workflows and separating view models from the domain. By using command handlers and an internal command bus, we are able to completely decouple the use cases within the system, improving flexibility and maintainability. This has been achieved by developing a fully typed TS Command / Query Handler module.
 
-## Code Standards
-The SDK has over 70% code coverage in unit and integration tests. The Smart Contracts have a 100% code coverage(*).
+## Code standards
+The SDK,CLI and UI have over 70% code coverage in unit and integration tests. The Smart Contracts have a 100% code coverage(*).
 
 _(*) we could not find any tool to automatically measure the Smart Contracts coverage, but we included tests for all external and public methods implemented by this project (external and public methods imported from trusted external sources were not considered)._
 
@@ -245,7 +245,7 @@ Contributions are welcome. Please see the
 [contributing guide](https://github.com/hashgraph/.github/blob/main/CONTRIBUTING.md)
 to see how you can get involved.
 
-# Code of Conduct
+# Code of conduct
 This project is governed by the
 [Contributor Covenant Code of Conduct](https://github.com/hashgraph/.github/blob/main/CODE_OF_CONDUCT.md). By
 participating, you are expected to uphold this code of conduct. Please report unacceptable behavior
