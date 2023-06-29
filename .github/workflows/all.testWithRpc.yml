@@ -44,7 +44,36 @@ jobs:
       - name: Install dependencies web
         run: npm install
         working-directory: web
-
+   
+      - name: Create file
+        run: |
+          touch .env
+          echo "CLIENT_PRIVATE_KEY_ECDSA=${{ secrets.PRIVATE_KEY_ECDSA }}" >> .env
+          echo "CLIENT_PUBLIC_KEY_ECDSA=${{ secretsPUBLIC_KEY_ECDSA. }}"  >> .env
+          echo "CLIENT_EVM_ADDRESS_ECDSA=${{ secrets.EVM_ADDRESS_ECDSA }}"" >> .env
+          echo "CLIENT_ACCOUNT_ID_ECDSA=${{ secrets.ACCOUNT_ID_ECDSA }}"" >> .env
+          echo "CLIENT_PRIVATE_KEY_ED25519=${{ secrets.PRIVATE_KEY_ED25519 }}""  >> .env
+          echo "CLIENT_PUBLIC_KEY_ED25519=${{ secrets.PUBLIC_KEY_ED25519 }}""  >> .env
+          echo "CLIENT_EVM_ADDRESS_ED25519=${{ secrets.EVM_ADDRESS_ED25519 }}""  >> .env
+          echo "CLIENT_ACCOUNT_ID_ED25519=${{ secrets.ACCOUNT_ID_ED25519 }}""  >> .env
+          echo "CLIENT_PRIVATE_KEY_ED25519_2=${{ secrets.PRIVATE_KEY_ED25519_2 }}""  >> .env          
+          echo "CLIENT_PUBLIC_KEY_ED25519_2=${{ secrets.PUBLIC_KEY_ED25519_2 }}""  >> .env
+          echo "CLIENT_EVM_ADDRESS_ED25519_2=${{ secrets.EVM_ADDRESS_ED25519_2 }}""  >> .env
+          echo "CLIENT_ACCOUNT_ID_ED25519_2=${{ secrets.ACCOUNT_ID_ED25519_2 }}""  >> .env
+        working-directory: sdk
+      - name: Update pass usr1
+        run: sed -i 's/PASS/${{ secrets.PASS }}/g' .env
+        working-directory: sdk
+      - name: Update pass usr1
+        run: sed -i 's/PASS/${{ secrets.PASS }}/g' .env
+        working-directory: sdk
+      - name: Update pass usr1
+        run: sed -i 's/PASS/${{ secrets.PASS }}/g' .env
+        working-directory: sdk
+        
+      - name: View File
+        run: cat test.txt
+        
       - name: Test sdk
         uses: ArtiomTr/jest-coverage-report-action@v2.0.9
         with:
