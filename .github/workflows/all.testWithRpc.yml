@@ -60,6 +60,8 @@ jobs:
           echo "CLIENT_PUBLIC_KEY_ED25519_2=${{ secrets.PUBLIC_KEY_ED25519_2 }}"  >> .env
           echo "CLIENT_EVM_ADDRESS_ED25519_2=${{ secrets.EVM_ADDRESS_ED25519_2 }}"  >> .env
           echo "CLIENT_ACCOUNT_ID_ED25519_2=${{ secrets.ACCOUNT_ID_ED25519_2 }}"  >> .env
+          echo "HEDERA_TOKEN_MANAGER_ADDRESS=0.0.14455016"  >> .env
+          echo "FACTORY_ADDRESS=0.0.14455068"  >> .env
         working-directory: sdk
 
       - name: View File
