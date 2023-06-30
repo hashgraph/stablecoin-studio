@@ -15,12 +15,7 @@ jobs:
       - name: Build the Docker image
         run: docker build -t rpc . 
         working-directory: dockerfile
-      - name: Run the Docker image
-        run: nohup docker run rpc 
-      - name: Sleep for 30 seconds
-        run: sleep 30s
-        shell: bash  
-      
+        
       - name: Use Node.js TLS 16.x
         uses: actions/setup-node@v1
         with:
@@ -67,6 +62,15 @@ jobs:
       - name: View File
         run: cat .env
         working-directory: sdk
+      
+      - name: Run the Docker image
+        run: nohup docker run rpc 
+      - name: Sleep for 30 seconds
+        run: sleep 30s
+        shell: bash
+      - name: DockerStatus
+        run: docker ps
+        
         
       - name: Test sdk
         uses: ArtiomTr/jest-coverage-report-action@v2.0.9
