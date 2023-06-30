@@ -64,7 +64,7 @@ jobs:
         working-directory: sdk
       
       - name: Run the Docker image
-        run: nohup docker run rpc --network="host" &
+        run:  nohup docker run --network="host" rpc &
       - name: Sleep for 30 seconds
         run: sleep 35s
         shell: bash
