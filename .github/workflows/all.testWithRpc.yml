@@ -71,7 +71,7 @@ jobs:
       - name: DockerStatus
         run: docker ps
       - name: DockerStatus
-        run:  curl http://127.0.0.1:7546/api
+        run:  curl --location --request POST 'http://localhost:7546/api' --data ""
         
         
       - name: Test sdk
