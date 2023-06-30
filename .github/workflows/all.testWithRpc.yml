@@ -70,6 +70,8 @@ jobs:
         shell: bash
       - name: DockerStatus
         run: docker ps
+      - name: DockerStatus
+        run:  curl http://127.0.0.1:7546/api
         
         
       - name: Test sdk
