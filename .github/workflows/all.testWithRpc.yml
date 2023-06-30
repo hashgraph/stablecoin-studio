@@ -16,7 +16,7 @@ jobs:
         run: docker build -t rpc . 
         working-directory: dockerfile
       - name: Run the Docker image
-        run: docker run rpc &
+        run: nohup docker run rpc 
       - name: Sleep for 30 seconds
         run: sleep 30s
         shell: bash  
