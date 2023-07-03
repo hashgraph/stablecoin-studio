@@ -77,6 +77,7 @@ export const useRefreshCoinInfo = () => {
 			walletActions.setSelectedStableCoinProxyConfig({
 				owner: proxyConfig?.owner?.toString(),
 				implementationAddress: proxyConfig?.implementationAddress?.toString(),
+				pendingOwner: proxyConfig?.pendingOwner?.toString(),
 			}),
 		);
 		dispatch(

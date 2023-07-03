@@ -196,6 +196,14 @@ const StableCoinSettings = () => {
 		}
 	};
 
+	const handleAcceptOwner = async () => {
+		alert('accept owner');
+	};
+
+	const handleCancelOwner = async () => {
+		alert('cancel owner');
+	};
+
 	const GridItem = ({
 		name,
 		title,
@@ -207,8 +215,8 @@ const StableCoinSettings = () => {
 		name: string;
 		title: string;
 		label: string;
-		current: string;
-		input: ReactNode;
+		current?: string;
+		input?: ReactNode;
 		button: ReactNode;
 	}) => (
 		<Flex direction='column' alignItems={'center'}>
@@ -261,9 +269,10 @@ const StableCoinSettings = () => {
 							alignItems='center'
 						>
 							{GridItem({
+								// GridItem 1 - Update proxy owner
 								name: 'owner',
-								title: t('settings:stableCoin.updateOwner.title'),
-								label: t('settings:stableCoin.updateOwner.label'),
+								title: t('settings:stableCoin.transferOwner.title'),
+								label: t('settings:stableCoin.transferOwner.label'),
 								current: proxyConfig?.owner?.toString() ?? '',
 								input: (
 									<InputController
@@ -282,7 +291,7 @@ const StableCoinSettings = () => {
 										}}
 										name={'updateOwner'}
 										placeholder={
-											t('settings:stableCoin.updateOwner.inputPlaceholder') ?? propertyNotFound
+											t('settings:stableCoin.transferOwner.inputPlaceholder') ?? propertyNotFound
 										}
 										isReadOnly={false}
 									/>
@@ -293,11 +302,43 @@ const StableCoinSettings = () => {
 										variant='primary'
 										onClick={handleChangeOwner}
 									>
-										{t('settings:stableCoin.updateOwner.buttonText')}
+										{t('settings:stableCoin.transferOwner.buttonText')}
 									</Button>
 								),
 							})}
 							{GridItem({
+								// GridItem 2 - Accept proxy owner
+								name: 'accept',
+								title: t('settings:stableCoin.acceptOwner.title'),
+								label: t('settings:stableCoin.acceptOwner.label'),
+								button: (
+									<Button
+										data-testid={`accept-owner-button`}
+										variant='primary'
+										onClick={handleAcceptOwner}
+									>
+										{t('settings:stableCoin.acceptOwner.buttonText')}
+									</Button>
+								),
+							})}
+							{GridItem({
+								// GridItem 3 - Pending proxy owner
+								name: 'accept',
+								title: t('settings:stableCoin.pendingOwner.title'),
+								label: t('settings:stableCoin.pendingOwner.label'),
+								current: proxyConfig?.pendingOwner?.toString() ?? '',
+								button: (
+									<Button
+										data-testid={`pending-owner-button`}
+										variant='primary'
+										onClick={handleCancelOwner}
+									>
+										{t('settings:stableCoin.pendingOwner.buttonText')}
+									</Button>
+								),
+							})}
+							{GridItem({
+								// GridItem 4 - Update proxy implementation
 								name: 'address',
 								title: t('settings:stableCoin.updateImplementation.title'),
 								label: t('settings:stableCoin.updateImplementation.label'),

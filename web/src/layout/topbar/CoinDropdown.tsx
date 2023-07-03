@@ -279,6 +279,7 @@ const CoinDropdown = () => {
 				walletActions.setSelectedStableCoinProxyConfig({
 					owner: proxyConfig?.owner,
 					implementationAddress: proxyConfig?.implementationAddress,
+					pendingOwner: proxyConfig?.pendingOwner,
 				}),
 			);
 			dispatch(
