@@ -51,10 +51,10 @@ const BasicDetails = (props: BasicDetailsProps) => {
 					}),
 				]).catch((e) => {
 					console.log(e.message);
-					if (e.message.startsWith('could not detect network')) {
+					if (e.code === 'NETWORK_ERROR') {
 						setModalErrorDescription(t('stableCoinCreation:basicDetails.hederaTokenManagerErrorRPC'));
-					} else if (e.message === (t('stableCoinCreation:basicDetails.hederaTokenManagerErrorTime'))) {
-						setModalErrorDescription(t('stableCoinCreation:basicDetails.hederaTokenManagerErrorTime'));
+					} else {
+						setModalErrorDescription(e.message);
 					}
 					onOpen();
 					throw e;

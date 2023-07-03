@@ -124,6 +124,9 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 			}),
 		]).catch((e) => {
 			console.log(e.message);
+			if (e.code === 'NETWORK_ERROR') {
+				throw new Error("The RPC connection is not working as expected");
+			}
 			throw e;
 		});
 		return factoryProxyConfig;
