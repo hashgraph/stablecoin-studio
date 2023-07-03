@@ -24,6 +24,7 @@
         "compile": "npx hardhat compile",
         "compile:force": "npx hardhat compile --force && npm run build",
         "test": "npx hardhat test",
+        "test:upgradable": "npx hardhat test test/upgradable.ts",
         "test:testnet": "npx hardhat test --network testnet",
         "test:previewnet": "npx hardhat test --network previewnet",
         "test:roles": "npx hardhat test test/roles.ts",
