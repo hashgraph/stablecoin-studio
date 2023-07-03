@@ -5,6 +5,7 @@ import {
   utilsService,
 } from '../../../index.js';
 import SetConfigurationService from '../configuration/SetConfigurationService.js';
+import SetFactoryService from '../configuration/SetFactoryService.js';
 import Service from '../Service.js';
 import CreateStableCoinService from '../stablecoin/CreateStableCoinService.js';
 import OperationStableCoinService from '../stablecoin/OperationStableCoinService.js';
@@ -18,16 +19,19 @@ import {
   StableCoinViewModel,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { IAccountConfig } from 'domain/configuration/interfaces/IAccountConfig.js';
+import { MIRROR_NODE, RPC } from '../../../core/Constants.js';
 
 /**
  * Wizard Service
  */
 export default class WizardService extends Service {
   private setConfigurationService: SetConfigurationService;
+  private setFactoryService: SetFactoryService;
 
   constructor() {
     super('Wizard');
     this.setConfigurationService = new SetConfigurationService();
+    this.setFactoryService = new SetFactoryService();
   }
 
   /**
@@ -71,7 +75,7 @@ export default class WizardService extends Service {
               true,
             );
             if (configFactories) {
-              await this.setConfigurationService.configureFactories();
+              await this.setFactoryService.configureFactories();
               configuration = await configurationService.getConfiguration();
               const { factories } = configuration;
               const currentFactory = factories.find(
@@ -180,17 +184,17 @@ export default class WizardService extends Service {
 
       case language.getText('wizard.changeOptions.ManageMirrorNode'):
         await utilsService.cleanAndShowBanner();
-        await this.setConfigurationService.configureMirrorNodeNetwork();
+        await utilsService.configureNetwork(MIRROR_NODE);
         break;
 
       case language.getText('wizard.changeOptions.ManageRPC'):
         await utilsService.cleanAndShowBanner();
-        await this.setConfigurationService.configureRPCNetwork();
+        await utilsService.configureNetwork(RPC);
         break;
 
       case language.getText('wizard.changeOptions.ManageFactory'):
         await utilsService.cleanAndShowBanner();
-        await this.setConfigurationService.manageFactoryMenu();
+        await this.setFactoryService.manageFactoryMenu();
         break;
 
       default:
@@ -288,135 +292,5 @@ export default class WizardService extends Service {
         rpcNode: currentRPC ? currentRPC : undefined,
       }),
     );
-  }
-
-  public async chooseMirrorNodeNetwork(_network: string): Promise<boolean> {
-    const configuration = configurationService.getConfiguration();
-    const { mirrors } = configuration;
-    const currentMirror = utilsService.getCurrentMirror();
-
-    const selectedMirrors = mirrors.filter(
-      (mirror) => _network === mirror.network && !mirror.selected,
-    );
-
-    if (selectedMirrors.length > 0) {
-      const name = await utilsService.defaultMultipleAsk(
-        language.getText('configuration.selectMirrorNode'),
-        selectedMirrors.map((mirror) => mirror.name),
-        true,
-      );
-      const selectedMirror = selectedMirrors.find(
-        (mirror) => name === mirror.name,
-      );
-      selectedMirror.selected = true;
-
-      mirrors
-        .filter(
-          (mirror) =>
-            _network === mirror.network && mirror.name !== selectedMirror.name,
-        )
-        .forEach((found) => (found.selected = false));
-
-      configuration.mirrors = mirrors;
-      configurationService.setConfiguration(configuration);
-
-      if (currentMirror.network === _network)
-        utilsService.setCurrentMirror(selectedMirror);
-
-      return true;
-    } else {
-      utilsService.showMessage(
-        language.getText('configuration.mirrorNodeNotToChange'),
-      );
-      return false;
-    }
-  }
-
-  public async chooseRPCNetwork(_network: string): Promise<boolean> {
-    const configuration = configurationService.getConfiguration();
-    const { rpcs } = configuration;
-    const currentRPC = utilsService.getCurrentRPC();
-    const selectedRPCs = rpcs.filter(
-      (rpc) => _network === rpc.network && !rpc.selected,
-    );
-
-    if (selectedRPCs.length > 0) {
-      const name = await utilsService.defaultMultipleAsk(
-        language.getText('configuration.selectRPC'),
-        selectedRPCs.map((rpc) => rpc.name),
-        true,
-      );
-      const selectedRPC = selectedRPCs.find((rpc) => name === rpc.name);
-      selectedRPC.selected = true;
-
-      rpcs
-        .filter((rpc) => _network === rpc.network && rpc.name !== name)
-        .forEach((found) => {
-          found.selected = false;
-        });
-
-      configuration.rpcs = rpcs;
-      configurationService.setConfiguration(configuration);
-
-      if (currentRPC.network === _network)
-        utilsService.setCurrentRPC(selectedRPC);
-
-      return true;
-    } else {
-      utilsService.showMessage(
-        colors.yellow(language.getText('configuration.RPCNotToChange')),
-      );
-      return false;
-    }
-  }
-
-  public async chooseLastMirrorNode(_network): Promise<void> {
-    const configuration = configurationService.getConfiguration();
-    const { mirrors } = configuration;
-    const lastMirror = mirrors[mirrors.length - 1];
-    utilsService.setCurrentMirror(lastMirror);
-    this.setLastMirrorNodeAsSelected(_network);
-  }
-
-  public async setLastMirrorNodeAsSelected(_network: string): Promise<void> {
-    const configuration = configurationService.getConfiguration();
-    const { mirrors } = configuration;
-    const lastMirror = mirrors[mirrors.length - 1];
-    mirrors
-      .filter(
-        (mirror) => mirror.network === _network && mirror.selected === true,
-      )
-      .forEach((found) => {
-        found.selected = false;
-      });
-    lastMirror.selected = true;
-
-    const defaultCfgData = configurationService.getConfiguration();
-    defaultCfgData.mirrors = mirrors;
-    configurationService.setConfiguration(defaultCfgData);
-  }
-
-  public async chooseLastRPC(_network: string): Promise<void> {
-    const configuration = configurationService.getConfiguration();
-    const { rpcs } = configuration;
-    const lastRPC = rpcs[rpcs.length - 1];
-    utilsService.setCurrentRPC(lastRPC);
-    this.setLastRPCAsSelected(_network);
-  }
-
-  public async setLastRPCAsSelected(_network: string): Promise<void> {
-    const configuration = configurationService.getConfiguration();
-    const { rpcs } = configuration;
-    const lastRPC = rpcs[rpcs.length - 1];
-    rpcs
-      .filter((rpc) => rpc.network === _network && rpc.selected === true)
-      .forEach((found) => {
-        found.selected = false;
-      });
-    lastRPC.selected = true;
-
-    const defaultCfgData = configurationService.getConfiguration();
-    defaultCfgData.rpcs = rpcs;
-    configurationService.setConfiguration(defaultCfgData);
   }
 }

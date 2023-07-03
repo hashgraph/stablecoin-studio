@@ -72,6 +72,8 @@
 	},
 	"walletActions": {
 		"awaitingSignatureTitle": "Awaiting wallet action",
-		"loading": "Loading data"
+		"loading": "Loading data",
+		"selectWallet": "Select a wallet",
+		"selectNetwork": "Select a network"
 	}
 }

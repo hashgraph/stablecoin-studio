@@ -39,4 +39,21 @@ describe(`<${RescueTokensOperation.name} />`, () => {
 			expect(button).toBeEnabled();
 		});
 	});
+
+	test('should handle rescue tokens', async () => {
+		const component = render(<RescueTokensOperation />);
+
+		const confirmButton = component.getByTestId('confirm-btn');
+		const amount = component.getByTestId('amount');
+		userEvent.type(amount, '10000');
+
+		await waitFor(() => {
+			expect(confirmButton).toBeEnabled();
+		});
+
+		await userEvent.click(confirmButton);
+
+		const confirmModalButton = component.getByTestId('modal-action-confirm-button');
+		await userEvent.click(confirmModalButton);
+	});
 });

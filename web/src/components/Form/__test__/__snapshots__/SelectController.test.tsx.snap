@@ -28,7 +28,7 @@ exports[`<undefined /> doesn't show error with showError=false: NotShowingError 
         </div>
       </label>
       <div
-        class="css-hfeh7c"
+        class="css-g2rfke"
       >
         <span
           class="css-1f43avz-a11yText-A11yText"
@@ -48,7 +48,7 @@ exports[`<undefined /> doesn't show error with showError=false: NotShowingError 
             class="css-3y2vuh"
           >
             <span
-              class="chakra-text css-19fpr04"
+              class="chakra-text css-1todh3z"
               data-testid="select-placeholder"
             />
             <div
@@ -149,7 +149,7 @@ exports[`<undefined /> shows error with showErrors=true: ShowingError 1`] = `
         </div>
       </label>
       <div
-        class="css-hfeh7c"
+        class="css-g2rfke"
       >
         <span
           class="css-1f43avz-a11yText-A11yText"
@@ -169,7 +169,7 @@ exports[`<undefined /> shows error with showErrors=true: ShowingError 1`] = `
             class="css-3y2vuh"
           >
             <span
-              class="chakra-text css-19fpr04"
+              class="chakra-text css-1todh3z"
               data-testid="select-placeholder"
             />
             <div
@@ -275,7 +275,7 @@ exports[`<undefined /> shows placeholder with default value: DefaultPlaceholder 
         </div>
       </label>
       <div
-        class="css-hfeh7c"
+        class="css-g2rfke"
       >
         <span
           class="css-1f43avz-a11yText-A11yText"
@@ -294,7 +294,7 @@ exports[`<undefined /> shows placeholder with default value: DefaultPlaceholder 
             class="css-3y2vuh"
           >
             <span
-              class="chakra-text css-19fpr04"
+              class="chakra-text css-1todh3z"
               data-testid="select-placeholder"
             />
             <div
@@ -393,7 +393,7 @@ exports[`<undefined /> shows placeholder with the provided value: CustomPlacehol
         </div>
       </label>
       <div
-        class="css-hfeh7c"
+        class="css-g2rfke"
       >
         <span
           class="css-1f43avz-a11yText-A11yText"
@@ -412,7 +412,7 @@ exports[`<undefined /> shows placeholder with the provided value: CustomPlacehol
             class="css-3y2vuh"
           >
             <span
-              class="chakra-text css-19fpr04"
+              class="chakra-text css-1todh3z"
               data-testid="select-placeholder"
             >
               Value of placeholder

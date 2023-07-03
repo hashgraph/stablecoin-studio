@@ -14,8 +14,6 @@ import {
     StableCoinFactory__factory,
     HederaTokenManager__factory,
     HederaReserve__factory,
-    ITransparentUpgradeableProxy__factory,
-    ERC1967Proxy__factory,
 } from '../typechain-types'
 
 import {
@@ -44,10 +42,10 @@ import {
 
 import { contractCall } from './contractsLifeCycle/utils'
 
-const hederaTokenManagerAddress = '0.0.13923660'
-export const factoryProxyAddress = '0.0.13923715'
-const factoryProxyAdminAddress = '0.0.13923699'
-const factoryAddress = '0.0.13923689'
+const hederaTokenManagerAddress = '0.0.14459443'
+export const factoryProxyAddress = '0.0.14459505'
+const factoryProxyAdminAddress = '0.0.14459488'
+const factoryAddress = '0.0.14459475'
 
 export function initializeClients(): [
     Client,
@@ -331,6 +329,7 @@ export type DeployParameters = {
     allRolesToCreator?: boolean
     RolesToAccount?: string
     isRolesToAccountE25519?: boolean
+    initialMetadata?: string
 }
 export async function deployContractsWithSDK({
     name,
@@ -353,6 +352,7 @@ export async function deployContractsWithSDK({
     allRolesToCreator = true,
     RolesToAccount = '',
     isRolesToAccountE25519 = false,
+    initialMetadata = 'test',
 }: DeployParameters): Promise<ContractId[]> {
     const AccountEvmAddress = await toEvmAddress(account, isED25519Type)
 
@@ -439,6 +439,7 @@ export async function deployContractsWithSDK({
             RolesToAccount,
             isRolesToAccountE25519
         ),
+        metadata: initialMetadata,
     }
 
     console.log(`Token Object: ${JSON.stringify(tokenObject)}`)

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as inquirer from 'inquirer';
 import figlet from 'figlet-promised';
+import { setMirrorNodeService, setRPCService } from '../../../index.js';
 import Service from '../Service.js';
 import { configurationService, language } from '../../../index.js';
 import Table from 'cli-table3';
@@ -22,6 +23,7 @@ import { IFactoryConfig } from '../../../domain/configuration/interfaces/IFactor
 import { IHederaTokenManagerConfig } from '../../../domain/configuration/interfaces/IHederaTokenManagerConfig.js';
 import { IMirrorsConfig } from 'domain/configuration/interfaces/IMirrorsConfig.js';
 import { IRPCsConfig } from 'domain/configuration/interfaces/IRPCsConfig.js';
+import { MIRROR_NODE, RPC } from '../../../core/Constants.js';
 
 /**
  * Utilities Service
@@ -105,7 +107,7 @@ export default class UtilitiesService extends Service {
     this.currentRPC = rpc;
   }
 
-  public getCurrentRPC(): IMirrorsConfig {
+  public getCurrentRPC(): IRPCsConfig {
     if (!this.currentRPC) {
       throw new Error('JSON-RPC-Relay not initialized');
     } else {
@@ -588,6 +590,47 @@ export default class UtilitiesService extends Service {
       res = val();
       consoleOut && outputError(res);
       if (res.length > 0) askCll = true;
+    }
+  }
+
+  /**
+   * Function to configure the network for mirror node or rpc
+   *
+   * @param networkType type of network to configure
+   */
+  public async configureNetwork(networkType: string): Promise<void> {
+    const currentAccount = this.getCurrentAccount();
+    const currentMirror = this.getCurrentMirror();
+    const currentRPC = this.getCurrentRPC();
+    const networks = configurationService
+      .getConfiguration()
+      .networks.map((network) => network.name);
+    const network = await this.defaultMultipleAsk(
+      language.getText('wizard.networkManage'),
+      networks,
+      false,
+      {
+        network: currentAccount.network,
+        mirrorNode: currentMirror.name,
+        rpc: currentRPC.name,
+        account: `${currentAccount.accountId} - ${currentAccount.alias}`,
+      },
+    );
+
+    this.showMessage(language.getText('wizard.networkSelected', { network }));
+
+    switch (networkType) {
+      case MIRROR_NODE:
+        await setMirrorNodeService.manageMirrorNodeMenu(network);
+        break;
+      case RPC:
+        await setRPCService.manageRPCMenu(network);
+        break;
+      default:
+        this.showError(
+          `Not valid network type for configuration: ${networkType}\n`,
+        );
+        break;
     }
   }
 }

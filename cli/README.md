@@ -80,7 +80,7 @@ From the root of the CLI project workspace:
 
 The first time you execute the `accelerator wizard` command in your terminal, if you haven't added your default configuration path the interface will ask you whether you want to create a new configuration file in the default path. When the configuration file is created you must configure the default network, operating accounts and the factory contract id. In order to create the default account you can use [HashPack](https://www.hashpack.app/download) or the [Hedera Developer Portal](https://portal.hedera.com/register).
 
-https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/c7daede9-1f84-4dec-9283-1b262334385e
+https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/73c2ed6c-ebc4-4717-b837-c4595c007ba0
 
 _Note that for testing purpose you should create a **Testnet** account instead of Mainnet account. Everything executed on Mainnet will incur a cost with real money._
 
@@ -167,7 +167,7 @@ logs:
   level: 'ERROR'
 factories: [
   {
-    id: '0.0.123456',
+    id: '0.0.14455068',
     network: 'testnet'
   },
   {
@@ -176,6 +176,15 @@ factories: [
   }
 ]
 ```
+
+## Factories 
+
+We provide default addresses for the factories that we have deployed for anyone to use that are updated whenever a new version is released.
+
+| Contract name  | Address      | Network    | 
+|----------------|--------------|------------|
+| FactoryAddress | 0.0.14455068 | Testnet    |
+| FactoryAddress | 0.0.XXXXXX   | Previewnet |
 
 ## CLI flow
 
@@ -191,7 +200,7 @@ When an account is selected, the main menu is displayed. The network the account
 
 When your configuration file is set up and at least one account is added and selected, you are able to see the different options that are available.
 
-#### Create a new Stable Coin
+#### Create a new stable coin
 
 In order to use this option you must set a factory first.
 You can check our factories deployed in [our documentation](https://github.com/hashgraph/hedera-accelerator-stablecoin#deploying-the-stable-coin-factories).
@@ -228,7 +237,7 @@ The request will then be submitted to the SDK and the stable coin will be create
 
 > When the configuration file is first created, the factory contract added to the "testnet" network are the default one (pre-deployed contract). However, users are free to deploy and use their own contracts, in order to do that, the configuration file must be updated with the new factory contract id.
 
-https://user-images.githubusercontent.com/114951681/228852049-7234f6ed-575c-4462-901b-c8d2856c5683.mp4
+https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/dde74619-8c48-40b7-a0ff-3553214fa819
 
 
 #### Manage imported tokens
@@ -239,7 +248,7 @@ Stable coins that we have not created with our account but for which we have bee
 2. Refresh token
 3. Remove token
 
-#### Operate with Stable Coin
+#### Operate with stable soin
 
 Once a stable coin is created or added, you can operate with it.
 
@@ -303,7 +312,7 @@ Firstly, the stable coin configuration allows the user to upgrade the stable coi
   - **Un/Pause**: pauses and unpauses the token preventing it from being involved in any kind of operation.
   - **Delete**: marks a token as deleted. This actions cannot be undone.
 
-#### List Stable Coins
+#### List stable coins
 
 This option displays all the stable coins the user has created or added.
 
@@ -335,7 +344,7 @@ Contributions are welcome. Please see the
 [contributing guide](https://github.com/hashgraph/.github/blob/main/CONTRIBUTING.md)
 to see how you can get involved.
 
-# Code of Conduct
+# Code of conduct
 
 This project is governed by the
 [Contributor Covenant Code of Conduct](https://github.com/hashgraph/.github/blob/main/CODE_OF_CONDUCT.md). By

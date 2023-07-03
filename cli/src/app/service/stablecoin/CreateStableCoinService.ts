@@ -18,6 +18,7 @@ import {
 import { IManagedFeatures } from '../../../domain/configuration/interfaces/IManagedFeatures.js';
 import Service from '../Service.js';
 import SetConfigurationService from '../configuration/SetConfigurationService.js';
+import SetFactoryService from '../configuration/SetFactoryService.js';
 import AssociateStableCoinsService from './AssociateStableCoinService.js';
 import KYCStableCoinService from './KYCStableCoinService.js';
 
@@ -49,6 +50,8 @@ export default class CreateStableCoinService extends Service {
     const setConfigurationService: SetConfigurationService =
       new SetConfigurationService();
 
+    const factoryService: SetFactoryService = new SetFactoryService();
+
     if (
       currentAccount.privateKey == null ||
       currentAccount.privateKey == undefined ||
@@ -61,11 +64,9 @@ export default class CreateStableCoinService extends Service {
     }
     if (
       utilsService.getCurrentFactory().id !==
-      (await setConfigurationService.getSDKFactory())
+      (await factoryService.getSDKFactory())
     ) {
-      await setConfigurationService.setSDKFactory(
-        utilsService.getCurrentFactory().id,
-      );
+      await factoryService.setSDKFactory(utilsService.getCurrentFactory().id);
     }
     let createdToken;
 
@@ -187,6 +188,16 @@ export default class CreateStableCoinService extends Service {
             tokenToCreate.initialSupply?.toString(),
           );
           tokenToCreate.initialSupply = initialSupply;
+        },
+      );
+
+      await utilsService.handleValidation(
+        () => tokenToCreate.validate('metadata'),
+        async () => {
+          tokenToCreate.metadata = await utilsService.defaultSingleAsk(
+            language.getText('stablecoin.askMetadata'),
+            tokenToCreate.metadata || '',
+          );
         },
       );
     }
@@ -367,6 +378,7 @@ export default class CreateStableCoinService extends Service {
       kycRole: tokenToCreate.kycRoleAccount,
       cashinRole: tokenToCreate.cashInRoleAccount,
       cashinAllowance: tokenToCreate.cashInRoleAllowance,
+      metadata: tokenToCreate.metadata,
     });
     if (
       !(await utilsService.defaultConfirmAsk(
@@ -390,13 +402,19 @@ export default class CreateStableCoinService extends Service {
 
   private async askHederaTokenManagerVersion(
     factory: string,
-    request: any,
+    request: CreateRequest,
   ): Promise<void> {
     const factoryListEvm = await Factory.getHederaTokenManagerList(
       new GetTokenManagerListRequest({ factoryId: factory }),
     ).then((value) => value.reverse());
 
-    const choices = factoryListEvm.map((item) => item.toString());
+    const choices = factoryListEvm
+      .map((item) => item.toString())
+      .sort((token1, token2) =>
+        +token1.split('.').slice(-1)[0] > +token2.split('.').slice(-1)[0]
+          ? -1
+          : 1,
+      );
     choices.push(language.getText('stablecoin.askHederaTokenManagerOther'));
 
     const versionSelection = await utilsService.defaultMultipleAsk(
@@ -502,7 +520,7 @@ export default class CreateStableCoinService extends Service {
   }
 
   private async initialRoleAssignments(
-    tokenToCreate: any,
+    tokenToCreate: CreateRequest,
     currentAccountId: string,
   ): Promise<void> {
     await this.askForAccount(
@@ -583,8 +601,16 @@ export default class CreateStableCoinService extends Service {
   private async askForAccount(
     text: string,
     currentAccountId: string,
-    tokenToCreate: any,
-    fieldToValidate: string,
+    tokenToCreate: CreateRequest,
+    fieldToValidate:
+      | 'burnRoleAccount'
+      | 'wipeRoleAccount'
+      | 'rescueRoleAccount'
+      | 'pauseRoleAccount'
+      | 'freezeRoleAccount'
+      | 'deleteRoleAccount'
+      | 'kycRoleAccount'
+      | 'cashInRoleAccount',
   ): Promise<string> {
     const options = [
       language.getText('stablecoin.initialRoles.options.currentAccount'),

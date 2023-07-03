@@ -1,0 +1,297 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<StableCoinCreation /> should render correctly 1`] = `
+<DocumentFragment>
+  <div
+    class="chakra-stack css-16oka5y"
+  >
+    <div
+      class="chakra-stack css-5vgp34"
+    >
+      <p
+        class="chakra-text css-ai2tcq"
+        data-testid="creation-title"
+      >
+        Create new stable coin
+      </p>
+      <i
+        class="chakra-text css-zcexcl"
+        data-testid="creation-subtitle"
+      >
+        Factory Id : undefined
+      </i>
+    </div>
+    <div
+      class="chakra-stack css-16oka5y"
+    >
+      <h2
+        class="chakra-heading css-bqsusc"
+        data-testid="base-container-heading"
+      />
+      <div
+        class="css-1b6lda7"
+        data-testid="base-container-children"
+      >
+        <div
+          class="chakra-tabs css-1x6vjw3"
+        >
+          <div
+            aria-orientation="horizontal"
+            class="chakra-tabs__tablist css-9jay18"
+            role="tablist"
+          >
+            <button
+              aria-controls="tabs-:r1:--tabpanel-0"
+              aria-disabled="false"
+              aria-selected="true"
+              class="chakra-tabs__tab css-h9y905"
+              data-index="0"
+              id="tabs-:r1:--tab-0"
+              role="tab"
+              tabindex="0"
+              type="button"
+            >
+              <p
+                class="chakra-text css-1ikrtdg"
+                data-testid="stepper-step-number-1"
+              >
+                01
+              </p>
+              <p
+                class="chakra-text css-1i91963"
+                data-testid="stepper-step-title-1"
+              >
+                Basic details
+              </p>
+            </button>
+            <button
+              aria-controls="tabs-:r1:--tabpanel-1"
+              aria-selected="false"
+              class="chakra-tabs__tab css-h9y905"
+              data-index="1"
+              disabled=""
+              id="tabs-:r1:--tab-1"
+              role="tab"
+              tabindex="-1"
+              type="button"
+            >
+              <p
+                class="chakra-text css-1wzl1bo"
+                data-testid="stepper-step-number-2"
+              >
+                02
+              </p>
+              <p
+                class="chakra-text css-1i91963"
+                data-testid="stepper-step-title-2"
+              >
+                Optional details
+              </p>
+            </button>
+            <button
+              aria-controls="tabs-:r1:--tabpanel-2"
+              aria-selected="false"
+              class="chakra-tabs__tab css-h9y905"
+              data-index="2"
+              disabled=""
+              id="tabs-:r1:--tab-2"
+              role="tab"
+              tabindex="-1"
+              type="button"
+            >
+              <p
+                class="chakra-text css-1wzl1bo"
+                data-testid="stepper-step-number-3"
+              >
+                03
+              </p>
+              <p
+                class="chakra-text css-1i91963"
+                data-testid="stepper-step-title-3"
+              >
+                Manage permissions
+              </p>
+            </button>
+            <button
+              aria-controls="tabs-:r1:--tabpanel-3"
+              aria-selected="false"
+              class="chakra-tabs__tab css-h9y905"
+              data-index="3"
+              disabled=""
+              id="tabs-:r1:--tab-3"
+              role="tab"
+              tabindex="-1"
+              type="button"
+            >
+              <p
+                class="chakra-text css-1wzl1bo"
+                data-testid="stepper-step-number-4"
+              >
+                04
+              </p>
+              <p
+                class="chakra-text css-1i91963"
+                data-testid="stepper-step-title-4"
+              >
+                Proof Of Reserve
+              </p>
+            </button>
+            <button
+              aria-controls="tabs-:r1:--tabpanel-4"
+              aria-selected="false"
+              class="chakra-tabs__tab css-h9y905"
+              data-index="4"
+              disabled=""
+              id="tabs-:r1:--tab-4"
+              role="tab"
+              tabindex="-1"
+              type="button"
+            >
+              <p
+                class="chakra-text css-1wzl1bo"
+                data-testid="stepper-step-number-5"
+              >
+                05
+              </p>
+              <p
+                class="chakra-text css-1i91963"
+                data-testid="stepper-step-title-5"
+              >
+                Review
+              </p>
+            </button>
+          </div>
+          <div
+            class="chakra-tabs__tab-panels css-27a8z"
+          >
+            <div
+              aria-labelledby="tabs-:r1:--tab-0"
+              class="chakra-tabs__tab-panel css-1iyuyap"
+              data-testid="stepper-step-panel-container-1"
+              id="tabs-:r1:--tabpanel-0"
+              role="tabpanel"
+              tabindex="0"
+            >
+              <div
+                class="chakra-stack css-1eot3nj"
+              >
+                <div
+                  class="css-1c3xk1u"
+                >
+                  <div
+                    class="chakra-stack css-1f6llri"
+                  >
+                    <div
+                      class="css-10opskl"
+                      data-testid="no-proof-of-reserve-container"
+                    >
+                      <div
+                        class="css-mnqf94"
+                      >
+                        <svg
+                          viewBox="0 0 2500 2500"
+                          width="48px"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <g
+                            data-name="Layer 2"
+                          >
+                            <g
+                              data-name="Layer 1"
+                            >
+                              <path
+                                d="M1250 0C559.64 0 0 559.64 0 1250s559.64 1250 1250 1250 1250-559.64 1250-1250S1940.36 0 1250 0"
+                              />
+                              <path
+                                d="M1758.12 1790.62h-158.74v-337.49H900.62v337.49H741.87V696.25h158.75v329.37h698.76V696.25h158.75zm-850-463.75h698.75V1152.5H908.12z"
+                                fill="#fff"
+                              />
+                            </g>
+                          </g>
+                        </svg>
+                      </div>
+                      <p
+                        class="chakra-text css-e8j0ix"
+                        data-testid="no-proof-of-reserve-title"
+                      >
+                        Loading data
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="css-1q6t3f6"
+                >
+                  <hr
+                    aria-orientation="horizontal"
+                    class="chakra-divider css-12thghs"
+                  />
+                  <div
+                    class="css-1e334ws"
+                  >
+                    <button
+                      class="chakra-button css-hi7zxp"
+                      data-testid="stepper-step-panel-button-secondary-1"
+                      type="button"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      class="chakra-button css-qvkb6r"
+                      data-testid="stepper-step-panel-button-primary-1"
+                      disabled=""
+                      type="button"
+                    >
+                      Next step
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              aria-labelledby="tabs-:r1:--tab-1"
+              class="chakra-tabs__tab-panel css-1iyuyap"
+              data-testid="stepper-step-panel-container-2"
+              hidden=""
+              id="tabs-:r1:--tabpanel-1"
+              role="tabpanel"
+              tabindex="0"
+            />
+            <div
+              aria-labelledby="tabs-:r1:--tab-2"
+              class="chakra-tabs__tab-panel css-1iyuyap"
+              data-testid="stepper-step-panel-container-3"
+              hidden=""
+              id="tabs-:r1:--tabpanel-2"
+              role="tabpanel"
+              tabindex="0"
+            />
+            <div
+              aria-labelledby="tabs-:r1:--tab-3"
+              class="chakra-tabs__tab-panel css-1iyuyap"
+              data-testid="stepper-step-panel-container-4"
+              hidden=""
+              id="tabs-:r1:--tabpanel-3"
+              role="tabpanel"
+              tabindex="0"
+            />
+            <div
+              aria-labelledby="tabs-:r1:--tab-4"
+              class="chakra-tabs__tab-panel css-1iyuyap"
+              data-testid="stepper-step-panel-container-5"
+              hidden=""
+              id="tabs-:r1:--tabpanel-4"
+              role="tabpanel"
+              tabindex="0"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;

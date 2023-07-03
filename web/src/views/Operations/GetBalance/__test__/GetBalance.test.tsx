@@ -31,10 +31,29 @@ describe(`<${GetBalanceOperation.name} />`, () => {
 		expect(button).toBeDisabled();
 
 		const account = component.getByTestId('targetAccount');
-		userEvent.type(account, '0.0.12345');
+		await userEvent.type(account, '0.0.12345');
 
 		await waitFor(() => {
 			expect(button).toBeEnabled();
 		});
+
+		const confirmButton = component.getByTestId('confirm-btn');
+		await userEvent.click(confirmButton);
+
+		const confirmModalButton = component.getByTestId('modal-action-confirm-button');
+		await userEvent.click(confirmModalButton);
+	});
+
+	test('should handle GetBalance', async () => {
+		const component = render(<GetBalanceOperation />);
+
+		const account = component.getByTestId('targetAccount');
+		await userEvent.type(account, '0.0.12345');
+
+		const confirmButton = component.getByTestId('confirm-btn');
+		await userEvent.click(confirmButton);
+
+		const confirmModalButton = component.getByTestId('modal-action-confirm-button');
+		await userEvent.click(confirmModalButton);
 	});
 });

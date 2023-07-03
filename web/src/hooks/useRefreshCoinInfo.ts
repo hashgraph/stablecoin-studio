@@ -50,6 +50,7 @@ export const useRefreshCoinInfo = () => {
 				name: resp?.name,
 				symbol: resp?.symbol,
 				decimals: resp?.decimals,
+				metadata: resp?.metadata,
 				id: resp?.tokenId?.toString(),
 				treasury: resp?.treasury?.toString(),
 				autoRenewAccount: resp?.autoRenewAccount?.toString(),
@@ -69,7 +70,7 @@ export const useRefreshCoinInfo = () => {
 				pauseKey: resp?.pauseKey?.toString() && JSON.parse(JSON.stringify(resp.pauseKey)),
 				reserveAmount: resp?.reserveAmount?.toString(),
 				reserveAddress: resp?.reserveAddress?.toString(),
-				customFees: resp.customFees && JSON.parse(JSON.stringify(resp.customFees)),
+				customFees: resp?.customFees && JSON.parse(JSON.stringify(resp.customFees)),
 			}),
 		);
 		dispatch(

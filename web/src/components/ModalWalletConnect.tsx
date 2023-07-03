@@ -16,9 +16,9 @@ import {
 import {
 	GetFactoryProxyConfigRequest,
 	SupportedWallets,
-	StableCoinListViewModel,
 	Network,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
+import type { StableCoinListViewModel } from '@hashgraph-dev/stablecoin-npm-sdk';
 import type { FC, ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -32,7 +32,7 @@ import ERROR_ICON from '../assets/svg/error.svg';
 import { SelectController } from './Form/SelectController';
 import { useForm } from 'react-hook-form';
 
-interface ModalWalletConnectProps {
+export interface ModalWalletConnectProps {
 	isOpen: boolean;
 	onClose: () => void;
 }
@@ -191,13 +191,14 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 						<>
 							<ModalHeader p='0' justifyContent='center'>
 								<Text
+									data-testid='title'
 									fontSize='20px'
 									fontWeight={700}
 									textAlign='center'
 									lineHeight='16px'
 									color='brand.black'
 								>
-									Select a wallet
+									{t('walletActions.selectWallet')}
 								</Text>
 							</ModalHeader>
 							<ModalFooter p='0' justifyContent='center'>
@@ -209,7 +210,11 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 									alignItems={'stretch'}
 								>
 									{availableWallets.includes(SupportedWallets.HASHPACK) && (
-										<VStack {...styles.providerStyle} onClick={handleConnectHashpackWallet}>
+										<VStack
+											data-testid='Hashpack'
+											{...styles.providerStyle}
+											onClick={handleConnectHashpackWallet}
+										>
 											<PairingSpinner wallet={SupportedWallets.HASHPACK}>
 												<Image src={HEDERA_LOGO} w={20} />
 												<Text>Hashpack</Text>
@@ -217,7 +222,11 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 										</VStack>
 									)}
 									{availableWallets.includes(SupportedWallets.METAMASK) && (
-										<VStack {...styles.providerStyle} onClick={handleConnectMetamaskWallet}>
+										<VStack
+											data-testid='Metamask'
+											{...styles.providerStyle}
+											onClick={handleConnectMetamaskWallet}
+										>
 											<PairingSpinner wallet={SupportedWallets.METAMASK}>
 												<Image src={METAMASK_LOGO} w={20} />
 												<Text>Metamask</Text>
@@ -238,7 +247,7 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 									lineHeight='16px'
 									color='brand.black'
 								>
-									Select a network
+									{t('walletActions.selectWallet')}
 								</Text>
 							</ModalHeader>
 							<ModalFooter alignSelf='center' pt='24px' pb='0'>

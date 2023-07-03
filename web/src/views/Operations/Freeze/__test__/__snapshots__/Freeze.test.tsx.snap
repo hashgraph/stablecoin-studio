@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`<BurnOperation /> should render correctly 1`] = `
+exports[`<FreezeOperation /> should render correctly 1`] = `
 <DocumentFragment>
   <div
     class="chakra-stack css-16oka5y"
@@ -28,7 +28,7 @@ exports[`<BurnOperation /> should render correctly 1`] = `
               class="chakra-heading css-utvjhb"
               data-testid="title"
             >
-              Burn tokens operation
+              Freeze operation
             </h2>
             <p
               class="chakra-text css-1lyqlf8"
@@ -37,7 +37,7 @@ exports[`<BurnOperation /> should render correctly 1`] = `
               Operation details
             </p>
             <form
-              class="chakra-stack css-b5leqj"
+              class="chakra-stack css-hdflcv"
             >
               <div
                 class="chakra-stack css-1h0sumw"
@@ -57,7 +57,7 @@ exports[`<BurnOperation /> should render correctly 1`] = `
                       <p
                         class="chakra-text css-mgupmj"
                       >
-                        Enter the amount
+                        Enter the account
                       </p>
                       <p
                         class="chakra-text css-ftb7fv"
@@ -69,14 +69,15 @@ exports[`<BurnOperation /> should render correctly 1`] = `
                   </label>
                   <div
                     class="chakra-input__group css-bx0blc"
+                    data-group="true"
                   >
                     <input
                       autocomplete="off"
                       class="chakra-input css-l1kxkf"
-                      data-testid="amount"
+                      data-testid="targetAccount"
                       id="field-:r1:"
-                      name="amount"
-                      placeholder="0"
+                      name="targetAccount"
+                      placeholder="0.0.0"
                       value=""
                     />
                   </div>
@@ -98,13 +99,18 @@ exports[`<BurnOperation /> should render correctly 1`] = `
               </h2>
               <div
                 class="css-13brihr"
+                data-testid="button-box"
               >
-                <p
-                  class="chakra-text css-1osh15g"
-                  data-testid="details-review-title"
+                <div
+                  class="css-1i64jsd"
                 >
-                  Basic details
-                </p>
+                  <p
+                    class="chakra-text css-ol2bzi"
+                    data-testid="details-review-title"
+                  >
+                    Basic details
+                  </p>
+                </div>
                 <div
                   class="css-0"
                 >
@@ -191,13 +197,18 @@ exports[`<BurnOperation /> should render correctly 1`] = `
               </div>
               <div
                 class="css-13brihr"
+                data-testid="button-box"
               >
-                <p
-                  class="chakra-text css-1osh15g"
-                  data-testid="details-review-title"
+                <div
+                  class="css-1i64jsd"
                 >
-                  Optional details
-                </p>
+                  <p
+                    class="chakra-text css-ol2bzi"
+                    data-testid="details-review-title"
+                  >
+                    Optional details
+                  </p>
+                </div>
                 <div
                   class="css-0"
                 >

@@ -9,13 +9,18 @@ Object {
     <div>
       <div
         class="css-13brihr"
+        data-testid="button-box"
       >
-        <p
-          class="chakra-text css-xbo6oz"
-          data-testid="details-review-title"
+        <div
+          class="css-1i64jsd"
         >
-          Datails Review
-        </p>
+          <p
+            class="chakra-text css-psqrpk"
+            data-testid="details-review-title"
+          >
+            Datails Review
+          </p>
+        </div>
         <div
           class="css-0"
         >
@@ -80,54 +85,59 @@ Object {
     <div
       class="chakra-portal"
     >
-      <ul
+      <div
         aria-live="polite"
         id="chakra-toast-manager-top"
         role="region"
-        style="position: fixed; z-index: 5500; pointer-events: none; display: flex; flex-direction: column; margin: 0px auto;"
+        style="position: fixed; z-index: var(--toast-z-index, 5500); pointer-events: none; display: flex; flex-direction: column; margin: 0px auto;"
       />
-      <ul
+      <div
         aria-live="polite"
         id="chakra-toast-manager-top-left"
         role="region"
-        style="position: fixed; z-index: 5500; pointer-events: none; display: flex; flex-direction: column;"
+        style="position: fixed; z-index: var(--toast-z-index, 5500); pointer-events: none; display: flex; flex-direction: column;"
       />
-      <ul
+      <div
         aria-live="polite"
         id="chakra-toast-manager-top-right"
         role="region"
-        style="position: fixed; z-index: 5500; pointer-events: none; display: flex; flex-direction: column;"
+        style="position: fixed; z-index: var(--toast-z-index, 5500); pointer-events: none; display: flex; flex-direction: column;"
       />
-      <ul
+      <div
         aria-live="polite"
         id="chakra-toast-manager-bottom-left"
         role="region"
-        style="position: fixed; z-index: 5500; pointer-events: none; display: flex; flex-direction: column;"
+        style="position: fixed; z-index: var(--toast-z-index, 5500); pointer-events: none; display: flex; flex-direction: column;"
       />
-      <ul
+      <div
         aria-live="polite"
         id="chakra-toast-manager-bottom"
         role="region"
-        style="position: fixed; z-index: 5500; pointer-events: none; display: flex; flex-direction: column; margin: 0px auto;"
+        style="position: fixed; z-index: var(--toast-z-index, 5500); pointer-events: none; display: flex; flex-direction: column; margin: 0px auto;"
       />
-      <ul
+      <div
         aria-live="polite"
         id="chakra-toast-manager-bottom-right"
         role="region"
-        style="position: fixed; z-index: 5500; pointer-events: none; display: flex; flex-direction: column;"
+        style="position: fixed; z-index: var(--toast-z-index, 5500); pointer-events: none; display: flex; flex-direction: column;"
       />
     </div>
   </body>,
   "container": <div>
     <div
       class="css-13brihr"
+      data-testid="button-box"
     >
-      <p
-        class="chakra-text css-xbo6oz"
-        data-testid="details-review-title"
+      <div
+        class="css-1i64jsd"
       >
-        Datails Review
-      </p>
+        <p
+          class="chakra-text css-psqrpk"
+          data-testid="details-review-title"
+        >
+          Datails Review
+        </p>
+      </div>
       <div
         class="css-0"
       >

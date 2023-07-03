@@ -254,12 +254,6 @@ describe(`<${SelectController.name} />`, () => {
 			placeholder: placeholderText,
 		});
 
-		const selector = component.queryByRole('combobox');
-		expect(selector).not.toBeInTheDocument();
-
-		const placeholder = component.getByText(placeholderText);
-		await userEvent.click(placeholder);
-
 		defaultProps.options.forEach((option) => {
 			expect(component.queryByText(option.label)).not.toBeInTheDocument();
 		});

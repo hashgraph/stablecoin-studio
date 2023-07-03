@@ -81,8 +81,7 @@ export const english = {
     askMirrorHeaderName: 'Enter the HTTP auth header name to send the API Key',
     askMirrorHasApiKey:
       'Does this service need an API Key to authenticate? (y/n)',
-    askMirrorSelected:
-      'Do you want this service to be used in the selected network? (y/n)',
+    askMirrorSelected: 'Do you want to use this service? (y/n)',
     askMoreMirrors: 'Do you want to enter more mirror node services? (y/n)',
     RPCsConfigurationMessage:
       'You will now configure your JSON-RPC-Relay services:',
@@ -92,8 +91,7 @@ export const english = {
     askRPCApiKey: 'Enter the JSON-RPC-Relay service API Key',
     askRPCHeaderName: 'Enter the HTTP auth header name to send the API Key',
     askRPCHasApiKey: 'Does this service need an API Key to authenticate? (y/n)',
-    askRPCSelected:
-      'Do you want this service to be used in the selected network? (y/n)',
+    askRPCSelected: 'Do you want to use this service? (y/n)',
     askMoreRPCs: 'Do you want to enter more JSON-RPC-Relay services? (y/n)',
     rpcConfigurationMessage: 'You will now configure your JSON-RPC-Relay:',
     mirrorNodeConfigurationMessage: 'You will now configure your mirror nodes:',
@@ -145,7 +143,7 @@ export const english = {
       'What is the token id of the stable coin you want to operate with?',
     askDoSomething: 'What do you want to do?',
     askOptionalProps:
-      'Do you want to configure the initial supply, max supply or decimals?',
+      'Do you want to configure the initial supply, max supply, decimals or add some metadata?',
     askReserve: 'Do you want to link the stable coin to a Proof of Reserve?',
     askExistingReserve:
       'Do you want to link it to an already existing Proof of Reserve?',
@@ -155,6 +153,7 @@ export const english = {
     askInitialSupply: 'Enter the initial supply',
     askSupplyType: 'Do you want the token max supply to be infinite?',
     askTotalSupply: 'Enter the max supply',
+    askMetadata: 'Enter the metadata',
     askExpirationTime: 'Enter the token expiration time in days',
     askMemo: 'Enter the token memo',
     askFreezeAccount: 'Should the Hedera account be frozen for this token?',
@@ -631,6 +630,7 @@ export const english = {
       expirationTime: 'Expiration time',
       autoRenewPeriod: 'Autorenew period',
       keys: 'Keys',
+      metadata: 'Metadata',
       save: 'Save',
       ...goBack,
     },

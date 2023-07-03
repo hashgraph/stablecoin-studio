@@ -422,7 +422,14 @@ const StableCoinCreation = () => {
 	return (
 		<Stack h='full'>
 			<HStack spacing={6} w='full'>
-				<Text fontSize='28px' color='brand.secondary' fontWeight={500} align='left' w='full'>
+				<Text
+					fontSize='28px'
+					color='brand.secondary'
+					fontWeight={500}
+					align='left'
+					w='full'
+					data-testid='creation-title'
+				>
 					{t('common.createNewStableCoin')}
 				</Text>
 				<Text
@@ -432,6 +439,7 @@ const StableCoinCreation = () => {
 					align='right'
 					w='full'
 					as='i'
+					data-testid='creation-subtitle'
 				>
 					{t('common.factoryId') + factoryId}
 				</Text>

@@ -326,7 +326,7 @@ export class HTSTransactionBuilder {
 		}
 	}
 
-	private static ThrowError(error: any): TransactionBuildingError {
+	private static ThrowError(error: unknown): TransactionBuildingError {
 		LogService.logError(error);
 		return new TransactionBuildingError(error);
 	}

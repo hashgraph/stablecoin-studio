@@ -222,6 +222,7 @@ const SelectController = forwardRef(
 			onChangeAux,
 			onBlurAux,
 			showErrors = true,
+			'data-testid': dataTestId = name,
 			size,
 			variant = 'outline',
 			addonLeft,

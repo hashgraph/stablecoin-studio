@@ -10,7 +10,7 @@ import { Operation, StableCoinRole } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 const Roles = () => {
 	const capabilities = useSelector(SELECTED_WALLET_CAPABILITIES);
-	const roles = useSelector(SELECTED_TOKEN_ROLES)!;
+	const roles = useSelector(SELECTED_TOKEN_ROLES)! || [];
 	const operations = capabilities?.capabilities.map((x) => x.operation);
 	const filteredCapabilities = roleOptions.filter((option) => {
 		if (!operations?.includes(Operation.CASH_IN) && option.label === 'Cash in') {
