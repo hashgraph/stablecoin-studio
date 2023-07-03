@@ -116,6 +116,20 @@ const CoinDropdown = () => {
 				factoryProxyConfig?.owner?.toString() === accountInfo?.id?.toString(),
 			),
 		);
+		dispatch(
+			walletActions.setIsPendingOwner(
+				proxyConfig?.pendingOwner?.toString() !== proxyConfig?.owner?.toString() &&
+					proxyConfig?.pendingOwner?.toString() !== accountInfo?.id?.toString() &&
+					proxyConfig?.pendingOwner?.toString() !== '0.0.0' &&
+					proxyConfig?.pendingOwner?.toString() !== '' &&
+					proxyConfig?.pendingOwner?.toString() !== undefined,
+			),
+		);
+		dispatch(
+			walletActions.setIsAcceptOwner(
+				proxyConfig?.pendingOwner?.toString() === accountInfo?.id?.toString(),
+			),
+		);
 	};
 
 	const getCapabilities = async () => {
@@ -285,6 +299,20 @@ const CoinDropdown = () => {
 			dispatch(
 				walletActions.setIsProxyOwner(
 					proxyConfig?.owner?.toString() === accountInfo?.id?.toString(),
+				),
+			);
+			dispatch(
+				walletActions.setIsPendingOwner(
+					proxyConfig?.pendingOwner?.toString() !== proxyConfig?.owner?.toString() &&
+						proxyConfig?.pendingOwner?.toString() !== accountInfo?.id?.toString() &&
+						proxyConfig?.pendingOwner?.toString() !== '0.0.0' &&
+						proxyConfig?.pendingOwner?.toString() !== '' &&
+						proxyConfig?.pendingOwner?.toString() !== undefined,
+				),
+			);
+			dispatch(
+				walletActions.setIsAcceptOwner(
+					proxyConfig?.pendingOwner?.toString() === accountInfo?.id?.toString(),
 				),
 			);
 		} catch (e) {
