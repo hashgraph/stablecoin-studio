@@ -311,6 +311,23 @@ export default class CreateStableCoinService extends Service {
       }
     }
 
+    // ProxyAdminOwner
+    let proxyAdminOwnerAccount = false;
+    proxyAdminOwnerAccount = await this.askProxyAdminOwner();
+
+    if (!proxyAdminOwnerAccount) {
+      await utilsService.handleValidation(
+        () => tokenToCreate.validate('proxyAdminOwnerAccount'),
+        async () => {
+          tokenToCreate.proxyAdminOwnerAccount =
+            await utilsService.defaultSingleAsk(
+              language.getText('stablecoin.askProxyAdminOwnerAccount'),
+              tokenToCreate.proxyAdminOwnerAccount || '0.0.0',
+            );
+        },
+      );
+    }
+
     // ASK HederaTokenManager version
     tokenToCreate.stableCoinFactory = utilsService.getCurrentFactory().id;
 
@@ -379,6 +396,10 @@ export default class CreateStableCoinService extends Service {
       cashinRole: tokenToCreate.cashInRoleAccount,
       cashinAllowance: tokenToCreate.cashInRoleAllowance,
       metadata: tokenToCreate.metadata,
+      proxyAdminOwnerAccount:
+        tokenToCreate.proxyAdminOwnerAccount === undefined
+          ? currentAccount.accountId
+          : tokenToCreate.proxyAdminOwnerAccount,
     });
     if (
       !(await utilsService.defaultConfirmAsk(
@@ -452,6 +473,13 @@ export default class CreateStableCoinService extends Service {
   private async askForExistingReserve(): Promise<boolean> {
     return await utilsService.defaultConfirmAsk(
       language.getText('stablecoin.askExistingReserve'),
+      true,
+    );
+  }
+
+  private async askProxyAdminOwner(): Promise<boolean> {
+    return await utilsService.defaultConfirmAsk(
+      language.getText('stablecoin.askProxyAdminOwner'),
       true,
     );
   }

@@ -20,6 +20,7 @@ interface IStableCoinFactory {
         IHederaTokenManager.RolesStruct[] roles;
         IHederaTokenManager.CashinRoleStruct cashinRole;
         string metadata;
+        address proxyAdminOwnerAccount;
     }
 
     struct DeployedStableCoin {

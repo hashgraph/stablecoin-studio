@@ -108,6 +108,11 @@ export class FactoryStableCoin {
 	 */
 	public metadata: string;
 
+	/**
+	 * Timelock Address
+	 */
+	public proxyAdminOwnerAccount: string;
+
 	constructor(
 		tokenName: string,
 		tokenSymbol: string,
@@ -126,6 +131,7 @@ export class FactoryStableCoin {
 		roles: FactoryRole[],
 		cashinRole: FactoryCashinRole,
 		metadata: string,
+		proxyAdminOwnerAccount: string,
 	) {
 		this.tokenName = tokenName;
 		this.tokenSymbol = tokenSymbol;
@@ -144,5 +150,6 @@ export class FactoryStableCoin {
 		this.roles = roles;
 		this.cashinRole = cashinRole;
 		this.metadata = metadata;
+		this.proxyAdminOwnerAccount = proxyAdminOwnerAccount;
 	}
 }
