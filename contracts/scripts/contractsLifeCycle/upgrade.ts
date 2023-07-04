@@ -7,8 +7,7 @@ import { contractCall } from './utils'
 import { ContractFactory, utils } from 'ethers'
 import { Gas2 } from '../constants'
 import axios from 'axios'
-
-const GasUpgrade = 1800000
+import { upgrade } from '../contractsMethods'
 
 export async function validateUpgrade(
     oldImpl__bytecode: string,
@@ -94,98 +93,24 @@ export async function upgradeContract(
     // Upgrading transparent proxy contract
     if (call)
         await upgradeAndCallTransparentProxy(
+            ProxyAdmin__factory.abi,
             proxyAdminAddress,
             clientOperator,
             newImpl.toSolidityAddress().toString(),
             proxyAddress,
-            GasUpgrade,
             data
         )
     else
         await upgradeTransparentProxy(
+            ProxyAdmin__factory.abi,
             proxyAdminAddress,
             clientOperator,
             newImpl.toSolidityAddress().toString(),
-            proxyAddress,
-            GasUpgrade
+            proxyAddress
         )
 
     return newImpl
 }
-
-/* export async function validateUpgrade(
-    oldImpl__factory: any,
-    newImpl__factory: any,
-    opts: ValidationOptions = {}
-) {
-    console.log(
-        `Checking upgrade compatibility between ${oldImpl__factory.name} and ${newImpl__factory.name}. please wait...`
-    )
-
-    await upgrades.validateUpgrade(
-        createContractFactory(oldImpl__factory),
-        createContractFactory(newImpl__factory),
-        opts
-    )
-
-    console.log('Validation OK')
-} */
-
-/* export async function upgradeContract(
-    oldImpl__factory: any,
-    newImpl__factory: any,
-    opts: ValidationOptions = {},
-    clientOperator: Client,
-    privateKey: string,
-    proxyAdminAddress: ContractId,
-    proxyAddress: string,
-    data?: any,
-    call = false,
-    checkUpgradeValidity = true
-) {
-    if (checkUpgradeValidity) {
-        // checking new implementation compatibility
-        await validateUpgrade(oldImpl__factory, newImpl__factory, opts)
-    }
-
-    // Deploying new implementation
-    console.log(
-        `Deploying New ${newImpl__factory.name} Implementation. please wait...`
-    )
-
-    const newImpl = await deployContract(
-        newImpl__factory,
-        privateKey,
-        clientOperator
-    )
-
-    console.log(
-        `New ${
-            newImpl__factory.name
-        } Implementation deployed ${newImpl.toSolidityAddress()}`
-    )
-
-    // Upgrading transparent proxy contract
-    if (call)
-        await upgradeAndCallTransparentProxy(
-            proxyAdminAddress,
-            clientOperator,
-            newImpl.toSolidityAddress().toString(),
-            proxyAddress,
-            GasUpgrade,
-            data
-        )
-    else
-        await upgradeTransparentProxy(
-            proxyAdminAddress,
-            clientOperator,
-            newImpl.toSolidityAddress().toString(),
-            proxyAddress,
-            GasUpgrade
-        )
-
-    return newImpl
-} */
 
 export async function rollBackContract(
     oldImpl__address: string,
@@ -200,48 +125,45 @@ export async function rollBackContract(
          please wait...`)
 
     await upgradeTransparentProxy(
+        ProxyAdmin__factory.abi,
         proxyAdminAddress,
         clientOperator,
         oldImpl__address,
-        proxyAddress,
-        GasUpgrade
+        proxyAddress
     )
 
     console.log('Roll-back completed')
 }
 
 async function upgradeTransparentProxy(
+    proxyAdminAbi: any,
     proxyAdminAddress: ContractId,
     client: Client,
     newImplementationContract: string,
-    proxyAddress: string,
-    gas: number
+    proxyAddress: string
 ) {
     console.log(`Upgrading Transparent Proxy ${proxyAddress}
         implementation to ${newImplementationContract} 
         using proxy Admin ${proxyAdminAddress.toSolidityAddress()}. 
         please wait...`)
 
-    const params = [proxyAddress, newImplementationContract]
-
-    await contractCall(
+    await upgrade(
+        proxyAdminAbi,
         proxyAdminAddress,
-        'upgrade',
-        params,
         client,
-        gas,
-        ProxyAdmin__factory.abi
+        newImplementationContract,
+        proxyAddress
     )
 
     console.log('Upgrade OK')
 }
 
 async function upgradeAndCallTransparentProxy(
+    proxyAdminAbi: any,
     proxyAdminAddress: ContractId,
     client: Client,
     newImplementationContract: string,
     proxyAddress: string,
-    gas: number,
     data: any
 ) {
     console.log(`Upgrading and Calling Transparent Proxy ${proxyAddress}
@@ -257,8 +179,8 @@ async function upgradeAndCallTransparentProxy(
         'upgradeAndCall',
         params,
         client,
-        gas,
-        ProxyAdmin__factory.abi
+        1800000,
+        proxyAdminAbi
     )
 
     console.log('Upgrade and call OK')
