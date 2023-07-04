@@ -1,17 +1,12 @@
 import { upgrades } from 'hardhat'
-import {
-    Client,
-    ContractByteCodeQuery,
-    ContractId,
-    AccountId,
-} from '@hashgraph/sdk'
+import { Client, ContractId, AccountId } from '@hashgraph/sdk'
 import { deployContract } from './deploy'
 import { ValidationOptions } from '@openzeppelin/upgrades-core'
 import { ProxyAdmin__factory } from '../../typechain-types'
 import { contractCall } from './utils'
 import { ContractFactory, utils } from 'ethers'
 import { Gas2 } from '../constants'
-import axios, { AxiosRequestConfig } from 'axios'
+import axios from 'axios'
 
 const GasUpgrade = 1800000
 
@@ -24,16 +19,11 @@ export async function validateUpgrade(
 ) {
     console.log(`Checking upgrade compatibility. please wait...`)
 
-    const OLD = new ContractFactory(
-        new utils.Interface(oldImpl__abi),
-        oldImpl__bytecode
+    await upgrades.validateUpgrade(
+        createContractFactory(oldImpl__abi, oldImpl__bytecode),
+        createContractFactory(newImpl__abi, newImpl__bytecode),
+        opts
     )
-    const NEW = new ContractFactory(
-        new utils.Interface(newImpl__abi),
-        newImpl__bytecode
-    )
-
-    await upgrades.validateUpgrade(OLD, NEW, opts)
 
     console.log('Validation OK')
 }
@@ -272,4 +262,8 @@ async function upgradeAndCallTransparentProxy(
     )
 
     console.log('Upgrade and call OK')
+}
+
+function createContractFactory(abi: string, byteCode: string) {
+    return new ContractFactory(new utils.Interface(abi), byteCode)
 }
