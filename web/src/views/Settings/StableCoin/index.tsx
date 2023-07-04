@@ -247,7 +247,65 @@ const StableCoinSettings = () => {
 	};
 
 	const handleCancelOwner = async () => {
-		alert('cancel owner');
+		if (selectedStableCoin?.tokenId && accountInfo?.id) {
+			changeProxyOwnerRequest.tokenId = selectedStableCoin.tokenId.toString();
+			changeProxyOwnerRequest.targetId = accountInfo?.id?.toString();
+			acceptProxyOwnerRequest.tokenId = selectedStableCoin.tokenId.toString();
+
+			// call changeOwner service to change pendingOwner to account logged owner
+			try {
+				onOpen();
+				setAwaitingUpdate(true);
+				await SDKService.changeOwner(changeProxyOwnerRequest);
+				setError('');
+				setAwaitingUpdate(false);
+				setSuccess(true);
+
+				dispatch(
+					walletActions.setSelectedStableCoinProxyConfig({
+						owner: accountInfo?.id?.toString(),
+						implementationAddress: proxyConfig?.implementationAddress?.toString(),
+						pendingOwner: accountInfo?.id?.toString(),
+					}),
+				);
+				dispatch(walletActions.setIsAcceptOwner(true));
+				dispatch(walletActions.setIsPendingOwner(false));
+				RouterManager.to(navigate, NamedRoutes.Settings);
+			} catch (error: any) {
+				setAwaitingUpdate(false);
+				console.log(error);
+				setError(error?.transactionError?.transactionUrl);
+				setSuccess(false);
+				setAwaitingUpdate(false);
+			}
+
+			// call acceptOwner service to accept the previous step and set pendingOwner to 0.0.0
+			try {
+				onOpen();
+				setAwaitingUpdate(true);
+				await SDKService.acceptOwner(acceptProxyOwnerRequest);
+				setError('');
+				setAwaitingUpdate(false);
+				setSuccess(true);
+
+				dispatch(
+					walletActions.setSelectedStableCoinProxyConfig({
+						owner: accountInfo?.id?.toString(),
+						implementationAddress: proxyConfig?.implementationAddress?.toString(),
+						pendingOwner: '0.0.0',
+					}),
+				);
+				dispatch(walletActions.setIsAcceptOwner(false));
+				dispatch(walletActions.setIsPendingOwner(false));
+				RouterManager.to(navigate, NamedRoutes.Settings);
+			} catch (error: any) {
+				setAwaitingUpdate(false);
+				console.log(error);
+				setError(error?.transactionError?.transactionUrl);
+				setSuccess(false);
+				setAwaitingUpdate(false);
+			}
+		}
 	};
 
 	const GridItem = ({
@@ -373,13 +431,13 @@ const StableCoinSettings = () => {
 							{isPendingOwner &&
 								GridItem({
 									// GridItem 3 - Pending proxy owner
-									name: 'accept',
+									name: 'pending',
 									title: t('settings:stableCoin.pendingOwner.title'),
 									label: t('settings:stableCoin.pendingOwner.label'),
 									current: proxyConfig?.pendingOwner?.toString() ?? '',
 									button: (
 										<Button
-											data-testid={`pending-owner-button`}
+											data-testid={`cancel-owner-button`}
 											variant='primary'
 											onClick={handleCancelOwner}
 										>
