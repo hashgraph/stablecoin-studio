@@ -20,6 +20,8 @@ import {
 } from '../scripts/deploy'
 import { clientId } from '../scripts/utils'
 import { BigNumber } from 'ethers'
+import { delay } from '../scripts/contractsMethods'
+import { expect } from 'chai'
 
 let proxyAddress: ContractId
 let proxyAdminAddress: ContractId
@@ -40,8 +42,6 @@ const TokenFactor = BigNumber.from(10).pow(TokenDecimals)
 const INIT_SUPPLY = BigNumber.from(10).mul(TokenFactor)
 const MAX_SUPPLY = BigNumber.from(1000).mul(TokenFactor)
 const TokenMemo = 'Hedera Accelerator Stable Coin'
-const abiProxyAdmin = ProxyAdmin__factory.abi
-const MetadataString = 'Metadata_String'
 
 describe('Upgradable Tests', function () {
     const validationOptions: ValidationOptions = {
@@ -113,18 +113,11 @@ describe('Upgradable Tests', function () {
 
         proxyAddress = result[0]
         proxyAdminAddress = result[1]
+
+        await delay(3000)
     })
 
-    /* it('Check contract', async () => {
-        
-        await validateUpgrade(
-            HederaTokenManager__factory,
-            HederaTokenManager__factory,
-            validationOptions
-        );
-    }) */
-
-    it.only('check contract bytecode', async () => {
+    it('Same contract', async () => {
         await upgradeContract(
             HederaTokenManager__factory.abi,
             HederaTokenManager__factory,
@@ -137,18 +130,22 @@ describe('Upgradable Tests', function () {
             false,
             true
         )
+    })
 
-        await upgradeContract(
-            HederaTokenManager__factory.abi,
-            HederaTokenManager2__factory,
-            validationOptions,
-            operatorClient,
-            operatorPriKey,
-            proxyAdminAddress,
-            proxyAddress.toSolidityAddress(),
-            undefined,
-            false,
-            true
-        )
+    it('Contract not compatible', async () => {
+        await expect(
+            upgradeContract(
+                HederaTokenManager__factory.abi,
+                HederaTokenManager2__factory,
+                validationOptions,
+                operatorClient,
+                operatorPriKey,
+                proxyAdminAddress,
+                proxyAddress.toSolidityAddress(),
+                undefined,
+                false,
+                true
+            )
+        ).to.eventually.be.rejectedWith(Error)
     })
 })

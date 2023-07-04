@@ -42,10 +42,10 @@ import {
 
 import { contractCall } from './contractsLifeCycle/utils'
 
-const hederaTokenManagerAddress = '0.0.14459443'
-export const factoryProxyAddress = '0.0.14459505'
-const factoryProxyAdminAddress = '0.0.14459488'
-const factoryAddress = '0.0.14459475'
+const hederaTokenManagerAddress = '0.0.15043733' //'0.0.15043706'
+export const factoryProxyAddress = '0.0.15043739' //'0.0.14459505'
+const factoryProxyAdminAddress = '0.0.15043737' //'0.0.14459488'
+const factoryAddress = '0.0.15043735' //'0.0.14459475'
 
 export function initializeClients(): [
     Client,

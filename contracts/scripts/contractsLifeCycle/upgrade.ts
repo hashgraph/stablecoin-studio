@@ -76,7 +76,7 @@ export async function upgradeContract(
         const response = await instance.get<any>(url)
 
         await validateUpgrade(
-            response.data.runtime_bytecode,
+            response.data.bytecode,
             oldImpl__abi,
             newImpl__factory.bytecode,
             newImpl__factory.abi,
