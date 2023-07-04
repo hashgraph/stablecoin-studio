@@ -3,7 +3,7 @@ import { upgradeContract } from '../scripts/contractsLifeCycle/upgrade'
 import {
     HederaTokenManager__factory,
     HederaTokenManager2__factory,
-    ProxyAdmin__factory,
+    HederaTokenManager3__factory,
 } from '../typechain-types'
 import { Client, ContractId } from '@hashgraph/sdk'
 import {
@@ -132,7 +132,7 @@ describe('Upgradable Tests', function () {
         )
     })
 
-    it('Contract not compatible', async () => {
+    it('Not compatible Contract', async () => {
         await expect(
             upgradeContract(
                 HederaTokenManager__factory.abi,
@@ -147,5 +147,20 @@ describe('Upgradable Tests', function () {
                 true
             )
         ).to.eventually.be.rejectedWith(Error)
+    })
+
+    it('compatible Contract', async () => {
+        await upgradeContract(
+            HederaTokenManager__factory.abi,
+            HederaTokenManager3__factory,
+            validationOptions,
+            operatorClient,
+            operatorPriKey,
+            proxyAdminAddress,
+            proxyAddress.toSolidityAddress(),
+            undefined,
+            false,
+            true
+        )
     })
 })
