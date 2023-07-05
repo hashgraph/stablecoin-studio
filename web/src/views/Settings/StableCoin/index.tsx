@@ -373,7 +373,6 @@ const StableCoinSettings = () => {
 						>
 							{isProxyOwner &&
 								!isAcceptOwner &&
-								!isPendingOwner &&
 								GridItem({
 									// GridItem 1 - Update proxy owner
 									name: 'owner',

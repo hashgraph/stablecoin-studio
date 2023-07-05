@@ -60,8 +60,7 @@ const Settings = () => {
 		const areDisabled = {
 			stableCoin:
 				!selectedStableCoin ||
-				(selectedStableCoin &&
-					(isExternalToken || (!isProxyOwner && !isAcceptOwner && !isPendingOwner))),
+				(selectedStableCoin && (isExternalToken || (!isProxyOwner && !isAcceptOwner))),
 			factory: !isFactoryProxyOwner,
 		};
 		setDisabledFeatures(areDisabled);
