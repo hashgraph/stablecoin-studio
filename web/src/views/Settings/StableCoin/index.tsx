@@ -258,8 +258,6 @@ const StableCoinSettings = () => {
 				setAwaitingUpdate(true);
 				await SDKService.changeOwner(changeProxyOwnerRequest);
 				setError('');
-				setAwaitingUpdate(false);
-				setSuccess(true);
 
 				dispatch(
 					walletActions.setSelectedStableCoinProxyConfig({
@@ -270,7 +268,6 @@ const StableCoinSettings = () => {
 				);
 				dispatch(walletActions.setIsAcceptOwner(true));
 				dispatch(walletActions.setIsPendingOwner(false));
-				RouterManager.to(navigate, NamedRoutes.Settings);
 			} catch (error: any) {
 				setAwaitingUpdate(false);
 				console.log(error);
@@ -282,7 +279,6 @@ const StableCoinSettings = () => {
 			// call acceptOwner service to accept the previous step and set pendingOwner to 0.0.0
 			try {
 				onOpen();
-				setAwaitingUpdate(true);
 				await SDKService.acceptOwner(acceptProxyOwnerRequest);
 				setError('');
 				setAwaitingUpdate(false);
@@ -297,7 +293,6 @@ const StableCoinSettings = () => {
 				);
 				dispatch(walletActions.setIsAcceptOwner(false));
 				dispatch(walletActions.setIsPendingOwner(false));
-				RouterManager.to(navigate, NamedRoutes.Settings);
 			} catch (error: any) {
 				setAwaitingUpdate(false);
 				console.log(error);
@@ -305,6 +300,8 @@ const StableCoinSettings = () => {
 				setSuccess(false);
 				setAwaitingUpdate(false);
 			}
+
+			RouterManager.to(navigate, NamedRoutes.Settings);
 		}
 	};
 
