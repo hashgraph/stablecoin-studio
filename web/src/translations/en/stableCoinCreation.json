@@ -27,7 +27,7 @@
 		"modalErrorDescription": "HederaTokenManager contracts implementations couldn't be obtained.",
 		"hederaTokenManager": "HederaTokenManager impl.",
 		"hederaTokenManagerPlaceholder": "Choose TokenManager address ID",
-		"hederaTokenManagerErrorRPC": "The RPC connection is not working as expected",
+		"hederaTokenManagerErrorRPC": "The RPC service is not working as expected",
 		"hederaTokenManagerErrorTime": "The TokenManager contracts list couldn't be obtained in a reasonable time."
 	},
 	"optionalDetails": {
