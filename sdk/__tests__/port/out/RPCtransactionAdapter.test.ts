@@ -76,7 +76,6 @@ import { LoggerTransports, SDK } from '../../../src/index.js';
 import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
 import EvmAddress from '../../../src/domain/context/contract/EvmAddress.js';
-import { EVM_ZERO_ADDRESS } from '../../../src/core/Constants.js';
 
 SDK.log = { level: 'ERROR', transports: new LoggerTransports.Console() };
 const mirrorNode: MirrorNode = {
