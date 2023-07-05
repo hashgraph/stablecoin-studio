@@ -47,6 +47,8 @@ import {
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import {
+    ADDRESS_0,
+    ADDRESS_1,
     BURN_ROLE,
     CASHIN_ROLE,
     DEFAULT_ADMIN_ROLE,
@@ -502,6 +504,71 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
         proxyAddress = result[0]
         proxyAdminAddress = result[1]
         stableCoinAddress = result[2]
+    })
+
+    it('Can deploy a stable coin where proxy admin owner is the deploying account', async function () {
+        const result = await deployContractsWithSDK({
+            name: TokenName,
+            symbol: TokenSymbol,
+            decimals: TokenDecimals,
+            initialSupply: INIT_SUPPLY.toString(),
+            maxSupply: MAX_SUPPLY.toString(),
+            memo: TokenMemo,
+            account: operatorAccount,
+            privateKey: operatorPriKey,
+            publicKey: operatorPubKey,
+            isED25519Type: operatorIsE25519,
+            initialAmountDataFeed: INIT_SUPPLY.toString(),
+            proxyAdminOwnerAccount: ADDRESS_0,
+        })
+
+        // We retreive the HederaTokenManagerProxy admin and implementation
+        const ownerAccount = await owner(
+            abiProxyAdmin,
+            result[1],
+            operatorClient
+        )
+
+        // We check their values : success
+        expect(ownerAccount.toUpperCase()).to.equals(
+            (
+                await toEvmAddress(operatorAccount, operatorIsE25519)
+            ).toUpperCase()
+        )
+    })
+
+    it('Can deploy a stable coin where proxy admin owner is not the deploying account', async function () {
+        const result = await deployContractsWithSDK({
+            name: TokenName,
+            symbol: TokenSymbol,
+            decimals: TokenDecimals,
+            initialSupply: INIT_SUPPLY.toString(),
+            maxSupply: MAX_SUPPLY.toString(),
+            memo: TokenMemo,
+            account: operatorAccount,
+            privateKey: operatorPriKey,
+            publicKey: operatorPubKey,
+            isED25519Type: operatorIsE25519,
+            initialAmountDataFeed: INIT_SUPPLY.toString(),
+            proxyAdminOwnerAccount: await toEvmAddress(
+                nonOperatorAccount,
+                nonOperatorIsE25519
+            ),
+        })
+
+        // We retreive the HederaTokenManagerProxy admin and implementation
+        const ownerAccount = await owner(
+            abiProxyAdmin,
+            result[1],
+            operatorClient
+        )
+
+        // We check their values : success
+        expect(ownerAccount.toUpperCase()).to.equals(
+            (
+                await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)
+            ).toUpperCase()
+        )
     })
 
     it('Retrieve admin and implementation addresses for the Proxy', async function () {

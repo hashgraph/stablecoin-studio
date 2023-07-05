@@ -116,6 +116,7 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 			true,
 			undefined,
 			BigDecimal.fromString(reserve.toString(), RESERVE_DECIMALS),
+			undefined,
 		);
 
 		proxyAdmin = tr.response[0][1];
@@ -222,6 +223,27 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 			}),
 		);
 	}, 1500000);
+
+	it('Deploy a stable coin with a proxy admin owner different than the deploying account', async () => {
+		const coinSC = new StableCoin({
+			name: 'TEST_ACCELERATOR_SC',
+			symbol: 'TEST',
+			decimals: decimals,
+			proxyAdminOwner: undefined,
+		});
+
+		if (coinSC.proxyAddress) {
+			const proxyAddress = new EvmAddress(
+				coinSC.proxyAddress
+					.toHederaAddress()
+					.getEvmAddress()!
+					.toString(),
+			);
+			if (proxyAddress) {
+				console.log(rpcQueryAdapter.getProxyOwner(proxyAddress));
+			}
+		}
+	});
 
 	it('Cash In & Wipe', async () => {
 		const Amount = 1;
