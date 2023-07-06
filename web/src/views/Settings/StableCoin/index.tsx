@@ -50,6 +50,7 @@ const StableCoinSettings = () => {
 		Option[]
 	>([]);
 	const [gettingHederaTokenManager, setGettingHederaTokenManager] = useState<boolean>(false);
+	const [isSameOwner, setIsSameOwner] = useState<boolean>(false);
 
 	const { t } = useTranslation(['settings', 'global']);
 
@@ -384,7 +385,10 @@ const StableCoinSettings = () => {
 												validate: {
 													validationOwner: (value: string) => {
 														if (proxyConfig?.owner?.toString() === value.toString()) {
+															setIsSameOwner(true);
 															return t('global:validations.invalidOwner') as string;
+														} else {
+															setIsSameOwner(false);
 														}
 													},
 													validation: (value: string) => {
@@ -408,6 +412,7 @@ const StableCoinSettings = () => {
 											data-testid={`update-owner-button`}
 											variant='primary'
 											onClick={handleChangeOwner}
+											isDisabled={isSameOwner}
 										>
 											{t('settings:stableCoin.transferOwner.buttonText')}
 										</Button>
