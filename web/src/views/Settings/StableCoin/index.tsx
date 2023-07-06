@@ -382,6 +382,11 @@ const StableCoinSettings = () => {
 											rules={{
 												required: t('global:validations.required') ?? propertyNotFound,
 												validate: {
+													validationOwner: (value: string) => {
+														if (proxyConfig?.owner?.toString() === value.toString()) {
+															return t('global:validations.invalidOwner') as string;
+														}
+													},
 													validation: (value: string) => {
 														changeProxyOwnerRequest.targetId = value;
 														const res = handleRequestValidation(
