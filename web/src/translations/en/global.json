@@ -56,7 +56,8 @@
 		"invalidCoinId": "Invalid stable coin id",
 		"decimalsValidation": "The amount has an invalid number of decimals",
 		"tokenIdNotExists": "Token {{ tokenId }} not exists",
-		"invalidOwner": "Invalid owner, is the current account owner"
+		"invalidOwner": "Invalid owner, is the current account owner",
+		"invalidFactoryOwner": "Invalid factory owner, is the current account factory owner"
 	},
 	"operations": {
 		"title": "Operations"

@@ -103,6 +103,8 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 			);
 			dispatch(walletActions.setSelectedNetworkFactoryProxyConfig(factoryProxyConfig));
 			dispatch(walletActions.setIsFactoryProxyOwner(false));
+			dispatch(walletActions.setIsFactoryPendingOwner(false));
+			dispatch(walletActions.setIsFactoryAcceptOwner(false));
 		} catch (error: any) {
 			if ('errorCode' in error && error.errorCode === '40009') {
 				setRejected(true);

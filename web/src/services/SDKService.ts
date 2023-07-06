@@ -65,6 +65,7 @@ import type {
 	ChangeFactoryProxyOwnerRequest,
 	UpgradeFactoryImplementationRequest,
 	AcceptProxyOwnerRequest,
+	AcceptFactoryProxyOwnerRequest,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 export type StableCoinListRaw = Array<Record<'id' | 'symbol', string>>;
@@ -435,6 +436,10 @@ export class SDKService {
 
 	public static async acceptOwner(req: AcceptProxyOwnerRequest) {
 		return await Proxy.acceptProxyOwner(req);
+	}
+
+	public static async acceptFactoryOwner(req: AcceptFactoryProxyOwnerRequest) {
+		return await Proxy.acceptFactoryProxyOwner(req);
 	}
 
 	public static async upgradeImplementation(req: UpgradeImplementationRequest) {

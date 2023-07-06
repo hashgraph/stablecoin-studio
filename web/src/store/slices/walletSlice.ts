@@ -28,6 +28,8 @@ export interface InitialStateProps {
 	isPendingOwner?: boolean;
 	isAcceptOwner?: boolean;
 	isFactoryProxyOwner?: boolean;
+	isFactoryPendingOwner?: boolean;
+	isFactoryAcceptOwner?: boolean;
 	selectingStableCoin: boolean;
 	stableCoinList?: StableCoinListViewModel;
 	externalTokenList?: IExternalToken[];
@@ -67,6 +69,8 @@ export const initialState: InitialStateProps = {
 	isPendingOwner: false,
 	isAcceptOwner: false,
 	isFactoryProxyOwner: false,
+	isFactoryPendingOwner: false,
+	isFactoryAcceptOwner: false,
 	accountRecognized: true,
 	factoryId: undefined,
 };
@@ -193,6 +197,12 @@ export const walletSlice = createSlice({
 		setIsFactoryProxyOwner: (state, action) => {
 			state.isFactoryProxyOwner = action.payload;
 		},
+		setIsFactoryPendingOwner: (state, action) => {
+			state.isFactoryPendingOwner = action.payload;
+		},
+		setIsFactoryAcceptOwner: (state, action) => {
+			state.isFactoryAcceptOwner = action.payload;
+		},
 		setAccountRecognized: (state, action) => {
 			state.accountRecognized = action.payload;
 		},
@@ -273,6 +283,8 @@ export const IS_PROXY_OWNER = (state: RootState) => state.wallet.isProxyOwner;
 export const IS_PENDING_OWNER = (state: RootState) => state.wallet.isPendingOwner;
 export const IS_ACCEPT_OWNER = (state: RootState) => state.wallet.isAcceptOwner;
 export const IS_FACTORY_PROXY_OWNER = (state: RootState) => state.wallet.isFactoryProxyOwner;
+export const IS_FACTORY_PENDING_OWNER = (state: RootState) => state.wallet.isPendingOwner;
+export const IS_FACTORY_ACCEPT_OWNER = (state: RootState) => state.wallet.isAcceptOwner;
 export const SELECTING_WALLET_COIN = (state: RootState) => state.wallet.selectingStableCoin;
 export const SELECTED_WALLET_PAIRED = (state: RootState) => state.wallet.data;
 export const SELECTED_WALLET_CAPABILITIES = (state: RootState) => state.wallet.capabilities;
