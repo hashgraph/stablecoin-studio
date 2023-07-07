@@ -23,13 +23,11 @@ describe('changeProxyOwner', () => {
       .spyOn(Proxy, 'changeProxyOwner')
       .mockImplementation(() => Promise.resolve(true));
 
-    
     // create method request
-    const req: ChangeProxyOwnerRequest =
-      new ChangeProxyOwnerRequest({
-        tokenId: '0.0.123456',
-        targetId: '0.0.234567',
-      });
+    const req: ChangeProxyOwnerRequest = new ChangeProxyOwnerRequest({
+      tokenId: '0.0.123456',
+      targetId: '0.0.234567',
+    });
 
     // method call
     await new OwnerProxyService().changeProxyOwner(req);

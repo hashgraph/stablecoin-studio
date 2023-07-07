@@ -22,10 +22,9 @@ describe('configurationProxyService', () => {
       .mockImplementation(() => Promise.resolve(proxyConfigurationMock));
 
     // method call
-    const result =
-      await new ConfigurationProxyService().getProxyconfiguration(
-        '0.0.98765',
-      );
+    const result = await new ConfigurationProxyService().getProxyconfiguration(
+      '0.0.98765',
+    );
 
     // verify
     expect(getProxyConfigMock).toHaveBeenCalled();
