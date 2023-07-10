@@ -438,14 +438,14 @@ export default class CreateStableCoinService extends Service {
   private async askForOptionalProps(): Promise<boolean> {
     return await utilsService.defaultConfirmAsk(
       language.getText('stablecoin.askOptionalProps'),
-      true,
+      false,
     );
   }
 
   private async askForReserve(): Promise<boolean> {
     return await utilsService.defaultConfirmAsk(
       language.getText('stablecoin.askReserve'),
-      true,
+      false,
     );
   }
 
@@ -494,7 +494,7 @@ export default class CreateStableCoinService extends Service {
   private async askForRolesManagement(): Promise<boolean> {
     return await utilsService.defaultConfirmAsk(
       language.getText('stablecoin.askRolesManagedBy'),
-      true,
+      false,
     );
   }
 

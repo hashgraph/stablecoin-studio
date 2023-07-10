@@ -16,7 +16,8 @@ import {
     StableCoinFactory__factory,
 } from '../typechain-types'
 
-import { contractCall, toEvmAddress } from './utils'
+import { toEvmAddress } from './utils'
+import { contractCall } from './contractsLifeCycle/utils'
 import {
     BALANCE_OF_GAS,
     BURN_GAS,
