@@ -173,32 +173,4 @@ export default class ManageImportedTokenService extends Service {
 
     configurationService.setConfiguration(defaultCfgData);
   }
-
-  public mixImportedTokens(tokens: string[]): string[] {
-    const currentAccount = utilsService.getCurrentAccount();
-    const filterTokens = tokens.filter((token) => {
-      if (
-        currentAccount.importedTokens &&
-        currentAccount.importedTokens.find(
-          (tok) => tok.id === token.split(' - ')[0],
-        )
-      ) {
-        return false;
-      }
-      return true;
-    });
-
-    return filterTokens
-      .concat(
-        currentAccount.importedTokens.map(
-          (token) => `${token.id} - ${token.symbol}`,
-        ),
-      )
-      .sort((token1, token2) =>
-        +token1.split(' - ')[0].split('.').slice(-1)[0] >
-        +token2.split(' - ')[0].split('.').slice(-1)[0]
-          ? -1
-          : 1,
-      );
-  }
 }

@@ -55,7 +55,6 @@ import RescueHBARStableCoinsService from './RescueHBARStableCoinService.js';
 import BurnStableCoinsService from './BurnStableCoinService.js';
 import DeleteStableCoinService from './DeleteStableCoinService.js';
 import PauseStableCoinService from './PauseStableCoinService.js';
-import ManageImportedTokenService from './ManageImportedTokenService';
 import FreezeStableCoinService from './FreezeStableCoinService.js';
 import KYCStableCoinService from './KYCStableCoinService.js';
 import ListStableCoinsService from './ListStableCoinService.js';
@@ -122,7 +121,7 @@ export default class OperationStableCoinService extends Service {
 
         this.stableCoinId = await utilsService.defaultMultipleAsk(
           language.getText('stablecoin.askToken'),
-          new ManageImportedTokenService().mixImportedTokens(
+          this.mixImportedTokens(
             coins.map((item) => {
               return `${item.id} - ${item.symbol}`;
             }),
@@ -3226,5 +3225,33 @@ export default class OperationStableCoinService extends Service {
         await this.operationsStableCoin();
     }
     await this.dangerZone();
+  }
+
+  public mixImportedTokens(tokens: string[]): string[] {
+    const currentAccount = utilsService.getCurrentAccount();
+    const filterTokens = tokens.filter((token) => {
+      if (
+        currentAccount.importedTokens &&
+        currentAccount.importedTokens.find(
+          (tok) => tok.id === token.split(' - ')[0],
+        )
+      ) {
+        return false;
+      }
+      return true;
+    });
+
+    return filterTokens
+      .concat(
+        currentAccount.importedTokens.map(
+          (token) => `${token.id} - ${token.symbol}`,
+        ),
+      )
+      .sort((token1, token2) =>
+        +token1.split(' - ')[0].split('.').slice(-1)[0] >
+        +token2.split(' - ')[0].split('.').slice(-1)[0]
+          ? -1
+          : 1,
+      );
   }
 }
