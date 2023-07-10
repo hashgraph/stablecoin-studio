@@ -12,7 +12,6 @@ import {
     StableCoinProxyAdmin__factory,
     HederaTokenManager__factory,
     ITransparentUpgradeableProxy__factory,
-    ProxyAdmin__factory,
     HederaReserve__factory,
     StableCoinFactory__factory,
 } from '../typechain-types'
