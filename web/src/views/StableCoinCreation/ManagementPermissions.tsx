@@ -363,7 +363,7 @@ const ManagementPermissions = ({
 								{currentAccountAsProxyAdminOwner === false && (
 									<Box mt='20px'>
 										<Text maxW={'252px'} fontSize='14px' fontWeight='400' lineHeight='17px'>
-											{t('stableCoinCreation:managementPermissions.grantKYCToOriginalSender')}
+											{t('stableCoinCreation:managementPermissions.proxyAdminOwnerAccount')}
 										</Text>
 										<InputController
 											data-testid='input-supplier-quantity'
