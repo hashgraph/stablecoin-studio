@@ -70,7 +70,7 @@ The remaining smart contracts have been implemented for this project:
 
 ## Detailed Architecture
 
-![](./img/StableCoinArchitecture_2.jpg)
+![StableCoinOverallArchitecture](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/a9a99a7c-32f8-4356-8e86-61d3abb2aed5)
 
 # Content
 
