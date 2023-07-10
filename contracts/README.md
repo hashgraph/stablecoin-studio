@@ -279,6 +279,11 @@ The factory's and the stable coins's logic can be upgraded at any time using the
 -   Deploy the new stable coin logic contract (*hederaTokenManager*).
 -   Invoke the `upgradeAndCall` method of the stable coin proxy admin passing the previously deployed stable coin logic contract's address and any data required to initialize it. If you do not need to pass any initialization data, you can simply invoke the `upgrade` method passing the previously deployed stable coin logic contract's address. **=> USE THE STABLE COIN PROXY'S ADMIN ACCOUNT TO PERFORM THIS TASK. BY DEFAULT THAT ACCOUNT WILL BE THE ONE ORIGINALLY USED TO CREATE THE STABLE COIN.**
 
+# Change ProxyAdmin Owner
+
+The _Transparent Proxy admin_ also allows to change the owner who can manage the proxy, like upgrading it, as explained above.
+Initially, the account deploying the factory contract and the account deploying the stable coin are the owners of the respective proxy admin contracts, but these accounts, as owners, can change the ownership of the proxy admin.
+
 # Generate Documentation
 
 Documentation files of all contracts, in Markdown format, can be generated using the following command:
