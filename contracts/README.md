@@ -53,9 +53,12 @@ The remaining smart contracts have been implemented for this project:
    - `Supplieradmin.sol`: abstract contract implementing all the *cash-in* role assignment and management (assigning/removing the role as well as setting, increasing and decreasing the cash-in limit).
    - `TokenOwner.sol`: abstract contract that stores the addresses of the *HTS precompiled smart contract* and the *underlying token* related to the stable coin. All the smart contracts mentioned above, inherit from this abstract contract.
    - `Wipeable.sol`: abstract contract implementing the *wipe* operation (burn token from any account. Decreases the total supply).
+- Contracts within the `proxies` folder:
+  - `StableCoinProxyAdmin.sol`: This contract implements the OpenZeppelin's `transparent ProxyAdmin` but also inherits from the OpenZeppelin's `Ownable2Step` to prevent the ownership to be accidentally transferred.     
  - `HederaReserve.sol`: implements the ChainLink AggregatorV3Interface to provide the current data about the stable coin's reserve.
  - `HederaTokenManager.sol`: main stable coin contract. Contains all the stable coin related logic. Inherits all the contracts defined in the "extension" folder as well as the Role.sol contract. **IMPORTANT** : a HederaTokenManager contract will be deployed in testnet for anybody to use. Users are also free to deploy and use their own HederaTokenManager contract. Whatever HederaTokenManager contract users choose to use, they will need to pass the contract's address as an input argument when calling the factory.
  - `StableCoinFactory.sol`: implements the flow to create a new stable coin. Every time a new stable coin is created, several smart contracts must be deployed and initialized and an underlying token must be created through the `HTS precompiled smart contract`. this multi-transaction process is encapsulated in this contract so that users can create new stable coins in a single transaction. **IMPORTANT** : a factory contract will be deployed in tesnet for anybody to use. Users are also free to deploy and use their own factory contract.
+ - These last three contracts have their own interfaces in the `Interfaces` folder.
 
  > Every stable coin is made of a **ProxyAdmin** and a **TransparentUpgradeableProxy** contracts (from OpenZeppelin) plus an **underlying token** managed through the *HTS precompiled smart contract*. The **hederaTokenManager** contract is meant to be "shared" by multiple users (using proxies). A stable coin admin may also choose to deploy a **HederaReserve** along with the stable coin at creation time, with its own **TransparentUpgradeableProxy** and **ProxyAdmin** contracts, or to define an existing reserve instead.
 
@@ -254,6 +257,7 @@ These are the steps the creation method will perform when creating a new stable 
 - Deploy **stable coin proxy smart contract** (from the Open Zeppelin library) setting the implementation contract (*the hederaTokenManager contract's address you provided as an input argument) and the admin (*stable coin proxy admin smart contract*).
 - Initializing the stable coin proxy. The initialization will create the underlying token.
 - Associating the token to the deploying account.
+- Granting the KYC to the account for the token, only if the user configured a KYC key in the token when created.
 
 # Upgrade
 
