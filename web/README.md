@@ -192,7 +192,7 @@ The operations linked to the capabilities (roles) assigned to your account for t
 
 ### Manage Roles
 
-![image](https://user-images.githubusercontent.com/114951681/229090716-8aa224e6-4f05-42ed-9a74-01f519427b95.png)
+![Selection_035](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/4f48bb78-110d-426e-935f-e520ab506208)
 
 If your account has the stable coin admin role, you will also be allowed to manage the stable coin's roles.
 
