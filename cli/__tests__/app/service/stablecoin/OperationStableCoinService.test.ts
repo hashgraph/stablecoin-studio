@@ -2,7 +2,12 @@ import { utilsService } from '../../../../src/index.js';
 import Language from '../../../../src/domain/language/Language.js';
 import OperationStableCoinService from '../../../../src/app/service/stablecoin/OperationStableCoinService';
 import CapabilitiesStableCoinsService from '../../../../src/app/service/stablecoin/CapabilitiesStableCoinService.js';
-import {/* BigDecimal, ContractId, EvmAddress,*/ CreateRequest, HederaId, PublicKey, StableCoin } from '@hashgraph-dev/stablecoin-npm-sdk';
+import {
+  /* BigDecimal, ContractId, EvmAddress,*/ CreateRequest,
+  HederaId,
+  PublicKey,
+  StableCoin,
+} from '@hashgraph-dev/stablecoin-npm-sdk';
 
 const language: Language = new Language();
 const currentAccount = {
@@ -13,10 +18,12 @@ const currentAccount = {
   },
   network: 'testnet',
   alias: 'alias',
-  importedTokens: [{
-    id: '0.0.12345',
-    symbol: 'TEST'
-  }]
+  importedTokens: [
+    {
+      id: '0.0.12345',
+      symbol: 'TEST',
+    },
+  ],
 };
 const currentMirror = {
   name: 'name',
@@ -24,7 +31,7 @@ const currentMirror = {
   baseUrl: 'baseUrl',
   apiKey: 'apiKey',
   headerName: 'headerName',
-  selected: true
+  selected: true,
 };
 const currentRPC = {
   name: 'name',
@@ -32,7 +39,7 @@ const currentRPC = {
   baseUrl: 'baseUrl',
   apiKey: 'apiKey',
   headerName: 'headerName',
-  selected: true
+  selected: true,
 };
 const tokenToCreate = new CreateRequest({
   name: 'name',
@@ -67,7 +74,9 @@ const account = {
 
 describe(`Testing OperationStableCoinService class`, () => {
   beforeEach(() => {
-    jest.spyOn(utilsService, 'getCurrentAccount').mockReturnValue(currentAccount);
+    jest
+      .spyOn(utilsService, 'getCurrentAccount')
+      .mockReturnValue(currentAccount);
     jest.spyOn(utilsService, 'getCurrentMirror').mockReturnValue(currentMirror);
     jest.spyOn(utilsService, 'getCurrentRPC').mockReturnValue(currentRPC);
     jest.spyOn(console, 'log').mockImplementation();
@@ -77,10 +86,22 @@ describe(`Testing OperationStableCoinService class`, () => {
   });
 
   it('Should instance start with Add', async () => {
-    const {coin, reserve} = await StableCoin.create(tokenToCreate);
-    jest.spyOn(CapabilitiesStableCoinsService.prototype, 'getCapabilitiesStableCoins').mockResolvedValue({ coin, capabilities, account });
-    jest.spyOn(utilsService, 'defaultMultipleAsk').mockResolvedValueOnce(language.getText('wizard.manageImportedTokens.Add'));
-    jest.spyOn(utilsService, 'defaultSingleAsk').mockResolvedValueOnce('0.0.12345').mockResolvedValueOnce('0.0.123456');
+    const { coin, reserve } = await StableCoin.create(tokenToCreate);
+    jest
+      .spyOn(
+        CapabilitiesStableCoinsService.prototype,
+        'getCapabilitiesStableCoins',
+      )
+      .mockResolvedValue({ coin, capabilities, account });
+    jest
+      .spyOn(utilsService, 'defaultMultipleAsk')
+      .mockResolvedValueOnce(
+        language.getText('wizard.manageImportedTokens.Add'),
+      );
+    jest
+      .spyOn(utilsService, 'defaultSingleAsk')
+      .mockResolvedValueOnce('0.0.12345')
+      .mockResolvedValueOnce('0.0.123456');
 
     const service = new OperationStableCoinService('tokenId', 'memo', 'symbol');
     await service.start();
@@ -88,5 +109,4 @@ describe(`Testing OperationStableCoinService class`, () => {
     expect(service).not.toBeNull();
     expect(utilsService.cleanAndShowBanner).toHaveBeenCalled();
   });
-
 });

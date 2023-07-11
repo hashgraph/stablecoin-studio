@@ -2,10 +2,12 @@ import { configurationService, utilsService } from '../../../../src/index.js';
 import Language from '../../../../src/domain/language/Language.js';
 import { IConfiguration } from 'domain/configuration/interfaces/IConfiguration.js';
 import { LogOptions } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { rimraf } from 'rimraf';
 
 const language: Language = new Language();
 const accountId = '0.0.123456';
-const path = 'test/hsca-config.yaml';
+const testDir = 'test';
+const path = `${testDir}/hsca-config.yaml`;
 
 describe('configurationService', () => {
   const configurationMock: IConfiguration = {
@@ -32,24 +34,18 @@ describe('configurationService', () => {
         name: 'HASHIO',
         network: 'testnet',
         baseUrl: 'https://testnet.hashio.io/api',
-        apiKey: '',
-        headerName: '',
         selected: true,
       },
       {
         name: 'HASHIO',
         network: 'previewnet',
         baseUrl: 'https://previewnet.hashio.io/api',
-        apiKey: '',
-        headerName: '',
         selected: true,
       },
       {
         name: 'HASHIO',
         network: 'mainnet',
         baseUrl: 'https://mainnet.hashio.io/api',
-        apiKey: '',
-        headerName: '',
         selected: true,
       },
     ],
@@ -68,24 +64,18 @@ describe('configurationService', () => {
         name: 'HEDERA',
         network: 'testnet',
         baseUrl: 'https://testnet.mirrornode.hedera.com/api/v1/',
-        apiKey: '',
-        headerName: '',
         selected: true,
       },
       {
         name: 'HEDERA',
         network: 'previewnet',
         baseUrl: 'https://previewnet.mirrornode.hedera.com/api/v1/',
-        apiKey: '',
-        headerName: '',
         selected: true,
       },
       {
         name: 'HEDERA',
         network: 'mainnet',
         baseUrl: 'https://mainnet-public.mirrornode.hedera.com/api/v1/',
-        apiKey: '',
-        headerName: '',
         selected: true,
       },
     ],
@@ -145,11 +135,11 @@ describe('configurationService', () => {
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockImplementation((question: string) => {
         switch (question) {
-          case language.getText('configuration.askNetwork'):
-            return Promise.resolve('testnet');
-
           case language.getText('configuration.askPrivateKeyType'):
             return Promise.resolve('ED25519');
+
+          case language.getText('configuration.askNetworkAccount'):
+            return Promise.resolve('testnet');
 
           default:
             return Promise.resolve('');
@@ -189,11 +179,12 @@ describe('configurationService', () => {
   it('should get configuration and log configuration', async () => {
     const conf: IConfiguration = configurationService.getConfiguration();
 
+    expect(configurationService).not.toBeNull();
     expect(conf.defaultNetwork).toStrictEqual(configurationMock.defaultNetwork);
-    // expect(conf.accounts).toStrictEqual(configurationMock.accounts);
+    expect(conf.accounts).toStrictEqual(configurationMock.accounts);
     expect(conf.factories).toStrictEqual(configurationMock.factories);
-    // expect(conf.mirrors).toStrictEqual(configurationMock.mirrors);
-    // expect(conf.rpcs).toStrictEqual(configurationMock.rpcs);
+    expect(conf.mirrors).toStrictEqual(configurationMock.mirrors);
+    expect(conf.rpcs).toStrictEqual(configurationMock.rpcs);
     expect(conf.logs).toStrictEqual(configurationMock.logs);
     expect(configurationService).not.toBeNull();
 
@@ -209,10 +200,29 @@ describe('configurationService', () => {
 
     expect(configurationService).not.toBeNull();
     expect(console.dir).toHaveBeenCalledTimes(1);
-    // expect(console.dir).toHaveBeenCalledWith(configurationMock);
+  });
+
+  it('should check the configurated factory id', async () => {
+    jest.spyOn(utilsService, 'showWarning');
+
+    configurationService.logFactoryIdWarning(
+      '0.0.13570',
+      'factory',
+      'testnet',
+      [
+        {
+          id: '0.0.13579',
+          network: 'testnet',
+        },
+      ],
+    );
+
+    expect(configurationService).not.toBeNull();
+    expect(utilsService.showWarning).toHaveBeenCalledTimes(1);
   });
 
   afterAll(() => {
     jest.restoreAllMocks();
+    rimraf(testDir);
   });
 });
