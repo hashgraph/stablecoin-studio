@@ -152,7 +152,11 @@ Stable coin supply and accuracy definition (initial supply, max supply, decimals
 
 **Manage permissions**
 
-Underlying token's keys definition (stable coin smart contract, current key, another key or no key at all), plus the possibility to grant KYC to the creating account at creation time (this option is only available if the KYC key is assigned to the smart contract and the Supply Key is not assigned to the creating account)
+Underlying token's keys definition (stable coin smart contract, current key, another key or no key at all), plus the possibility to grant KYC to the creating account at creation time (this option is only available if the KYC key is assigned to the smart contract and the Supply Key is not assigned to the creating account).
+
+
+
+
 
 ![Selection_038](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/99d76040-8ac6-4bb9-b6d1-18c433b0bc43)
 
