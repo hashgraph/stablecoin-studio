@@ -75,24 +75,18 @@ describe('setFactoryService', () => {
         name: 'HASHIO',
         network: 'testnet',
         baseUrl: 'https://testnet.hashio.io/api',
-        apiKey: '',
-        headerName: '',
         selected: true,
       },
       {
         name: 'HASHIO',
         network: 'previewnet',
         baseUrl: 'https://previewnet.hashio.io/api',
-        apiKey: '',
-        headerName: '',
         selected: true,
       },
       {
         name: 'HASHIO',
         network: 'mainnet',
         baseUrl: 'https://mainnet.hashio.io/api',
-        apiKey: '',
-        headerName: '',
         selected: true,
       },
     ],
@@ -111,24 +105,18 @@ describe('setFactoryService', () => {
         name: 'HEDERA',
         network: 'testnet',
         baseUrl: 'https://testnet.mirrornode.hedera.com/api/v1/',
-        apiKey: '',
-        headerName: '',
         selected: true,
       },
       {
         name: 'HEDERA',
         network: 'previewnet',
         baseUrl: 'https://previewnet.mirrornode.hedera.com/api/v1/',
-        apiKey: '',
-        headerName: '',
         selected: true,
       },
       {
         name: 'HEDERA',
         network: 'mainnet',
         baseUrl: 'https://mainnet-public.mirrornode.hedera.com/api/v1/',
-        apiKey: '',
-        headerName: '',
         selected: true,
       },
     ],
@@ -173,6 +161,20 @@ describe('setFactoryService', () => {
     owner: '0.0.123456',
   };
 
+  it('should configure factories', async () => {
+    const defaultSingleAskMock = jest
+      .spyOn(utilsService, 'defaultSingleAsk')
+      .mockImplementationOnce(() => Promise.resolve('test'))
+      .mockImplementationOnce(() => Promise.resolve('0.0.12345'))
+      .mockImplementationOnce(() => Promise.resolve('test'))
+      .mockImplementationOnce(() => Promise.resolve('0.0.67890'));
+
+    setFactoryService.configureFactories();
+
+    expect(setFactoryService).not.toBeNull();
+    expect(defaultSingleAskMock).toHaveBeenCalledTimes(1);
+  });
+
   it('should change the factory', async () => {
     const defaultMultipleAskMock = jest
       .spyOn(utilsService, 'defaultMultipleAsk')
@@ -186,6 +188,27 @@ describe('setFactoryService', () => {
     const defaultSingleAskMock = jest
       .spyOn(utilsService, 'defaultSingleAsk')
       .mockImplementation(() => Promise.resolve('0.0.23456'));
+
+    setFactoryService.manageFactoryMenu();
+
+    expect(setFactoryService).not.toBeNull();
+    expect(defaultMultipleAskMock).toHaveBeenCalledTimes(0);
+    expect(defaultSingleAskMock).toHaveBeenCalledTimes(0);
+  });
+
+  it('should not change the factory when the new one has an invalid format', async () => {
+    const defaultMultipleAskMock = jest
+      .spyOn(utilsService, 'defaultMultipleAsk')
+      .mockImplementationOnce(() =>
+        Promise.resolve(
+          language.getText('wizard.manageFactoryOptions.ChangeFactory'),
+        ),
+      )
+      .mockImplementationOnce(() => Promise.resolve('testnet'));
+
+    const defaultSingleAskMock = jest
+      .spyOn(utilsService, 'defaultSingleAsk')
+      .mockImplementation(() => Promise.resolve('test'));
 
     setFactoryService.manageFactoryMenu();
 
