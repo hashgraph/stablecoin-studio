@@ -8,10 +8,10 @@ import {
 import { Client, ContractId } from '@hashgraph/sdk'
 import {
     deployContractsWithSDK,
-    getNonOperatorAccount,
-    getNonOperatorClient,
-    getNonOperatorE25519,
-    getOperatorAccount,
+    // getNonOperatorAccount,
+    // getNonOperatorClient,
+    // getNonOperatorE25519,
+    // getOperatorAccount,
     getOperatorClient,
     getOperatorE25519,
     getOperatorPrivateKey,
@@ -27,9 +27,9 @@ let proxyAddress: ContractId
 let proxyAdminAddress: ContractId
 
 let operatorClient: Client
-let nonOperatorClient: Client
+// let nonOperatorClient: Client
 let operatorAccount: string
-let nonOperatorAccount: string
+// let nonOperatorAccount: string
 let operatorPriKey: string
 let operatorPubKey: string
 let operatorIsE25519: boolean
@@ -64,17 +64,17 @@ describe('Upgradable Tests', function () {
         ] = initializeClients()
 
         operatorClient = getOperatorClient(client1, client2, clientId)
-        nonOperatorClient = getNonOperatorClient(client1, client2, clientId)
+        /* nonOperatorClient = getNonOperatorClient(client1, client2, clientId)
         operatorAccount = getOperatorAccount(
             client1account,
             client2account,
             clientId
-        )
+        ) 
         nonOperatorAccount = getNonOperatorAccount(
             client1account,
             client2account,
             clientId
-        )
+        )*/
         operatorPriKey = getOperatorPrivateKey(
             client1privatekey,
             client2privatekey,
@@ -90,11 +90,11 @@ describe('Upgradable Tests', function () {
             client2isED25519Type,
             clientId
         )
-        nonOperatorIsE25519 = getNonOperatorE25519(
+        /* nonOperatorIsE25519 = getNonOperatorE25519(
             client1isED25519Type,
             client2isED25519Type,
             clientId
-        )
+        ) */
 
         // Deploy Token using Client
         const result = await deployContractsWithSDK({
