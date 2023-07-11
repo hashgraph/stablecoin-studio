@@ -140,21 +140,21 @@ In order to create a new stable coin using the web application, you must click o
 
 Basic information about the Stable coin.
 
-![Selection_026](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/8c583d35-d086-48ae-a403-5f91ad323b5c)
+![Selection_036](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/d6baa730-349a-4df7-abe2-b3bf2182e584)
 
 
 **Optional details**
 
 Stable coin supply and accuracy definition (initial supply, max supply, decimals)
 
-![Selection_027](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/8efa03e7-a089-42cd-b8fd-fa08f35602b4)
+![Selection_037](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/8bc0fa3b-86ce-4956-9660-64be44c4f826)
 
 
 **Manage permissions**
 
 Underlying token's keys definition (stable coin smart contract, current key, another key or no key at all), plus the possibility to grant KYC to the creating account at creation time (this option is only available if the KYC key is assigned to the smart contract and the Supply Key is not assigned to the creating account)
 
-![Selection_028](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/e6ceb6f8-4ab0-4e44-ad15-59f0f2bc66c0)
+![Selection_038](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/99d76040-8ac6-4bb9-b6d1-18c433b0bc43)
 
 
 **Proof of reserve**
@@ -162,14 +162,14 @@ Underlying token's keys definition (stable coin smart contract, current key, ano
 Choose if the stable coin will have a proof of reserve (PoR) associated to it or not.
 If so, the user will have two options, either submit the address of an already existing PoR contract or generate a completely new one (using the demo implementation of a PoR contract included in the project) specifying an initial Reserve amount.
 
-![Selection_029](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/23c81e07-6f48-4e59-9a8a-8f2c3e550a6e)
+![Selection_039](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/a566a494-9855-4ef7-96e1-210a7ce38c58)
 
 
 **Review**
 
 Final validation before creating the stable coin.
 
-![Selection_030](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/d0cee0fc-ef94-4290-8066-abebb9d747aa)
+![Selection_040](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/44bd4928-6b12-44bc-a3f3-9881df779fef)
 
 
 You will then have to validate the transaction using the wallet you paired to.
