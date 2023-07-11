@@ -299,6 +299,7 @@ Creates a new stable coin. You must use `Network.connect` first with a `Supporte
 		cashInRoleAccount?: string | undefined;
 		cashInRoleAllowance?: string | undefined;
 		metadata?: string | undefined;
+		proxyAdminOwnerAccount?: string;
 	}
 
 	StableCoin.create = (request: CreateRequest): Promise<StableCoinViewModel>
@@ -370,7 +371,8 @@ By specifying the public key of an account, we can set the stable coin's keys to
 			hederaTokenManager: HederaTokenManagerAddressTestnet,
 			stableCoinFactory: FactoryAddressTestnet,
 			createReserve: false,
-			metadata: 'metadata'
+			metadata: 'metadata',
+			proxyAdminOwnerAccount: '0.0.13579'
 		})
 	);
 ```
