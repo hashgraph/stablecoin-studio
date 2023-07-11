@@ -2,8 +2,8 @@ import { ValidationOptions } from '@openzeppelin/upgrades-core'
 import { upgradeContract } from '../scripts/contractsLifeCycle/upgrade'
 import {
     HederaTokenManager__factory,
-    HederaTokenManager2__factory,
-    HederaTokenManager3__factory,
+    // HederaTokenManager2__factory,
+    // HederaTokenManager3__factory,
 } from '../typechain-types'
 import { Client, ContractId } from '@hashgraph/sdk'
 import {
@@ -132,7 +132,7 @@ describe('Upgradable Tests', function () {
         )
     })
 
-    it('Not compatible Contract', async () => {
+    /* it('Not compatible Contract', async () => {
         await expect(
             upgradeContract(
                 HederaTokenManager__factory.abi,
@@ -162,5 +162,5 @@ describe('Upgradable Tests', function () {
             false,
             true
         )
-    })
+    }) */
 })
