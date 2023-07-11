@@ -11,7 +11,6 @@ import {
 } from '../../typechain-types'
 import { contractCall } from './utils'
 
-const GasDeploy = 250000
 const GasContractInitialize = 130000
 
 export async function deployContract(

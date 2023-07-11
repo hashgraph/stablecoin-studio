@@ -21,7 +21,7 @@ import {
 import { clientId } from '../scripts/utils'
 import { BigNumber } from 'ethers'
 import { delay } from '../scripts/contractsMethods'
-import { expect } from 'chai'
+// import { expect } from 'chai'
 
 let proxyAddress: ContractId
 let proxyAdminAddress: ContractId
@@ -33,7 +33,7 @@ let nonOperatorAccount: string
 let operatorPriKey: string
 let operatorPubKey: string
 let operatorIsE25519: boolean
-let nonOperatorIsE25519: boolean
+// let nonOperatorIsE25519: boolean
 
 const TokenName = 'MIDAS'
 const TokenSymbol = 'MD'

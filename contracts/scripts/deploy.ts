@@ -36,8 +36,7 @@ import {
 import { grantKyc } from './contractsMethods'
 
 import {
-    deployContract,
-    deployUpgradableContract,
+    deployContract
 } from './contractsLifeCycle/deploy'
 
 import { contractCall } from './contractsLifeCycle/utils'
