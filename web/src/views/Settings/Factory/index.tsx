@@ -122,16 +122,18 @@ const FactorySettings = () => {
 				setSuccess(true);
 				dispatch(
 					walletActions.setIsFactoryProxyOwner(
-						updateOwner.toString() === accountInfo?.id?.toString(),
+						factoryProxyConfig?.owner?.toString() === accountInfo?.id?.toString(),
 					),
 				);
 				dispatch(
 					walletActions.setSelectedNetworkFactoryProxyConfig({
-						owner: updateOwner.toString(),
+						owner: factoryProxyConfig?.owner?.toString(),
 						implementationAddress: factoryProxyConfig?.implementationAddress?.toString(),
+						pendingOwner: updateOwner.toString(),
 					}),
 				);
-
+				dispatch(walletActions.setIsFactoryAcceptOwner(false));
+				dispatch(walletActions.setIsFactoryPendingOwner(true));
 				RouterManager.to(navigate, NamedRoutes.Settings);
 			} catch (error: any) {
 				setAwaitingUpdate(false);
