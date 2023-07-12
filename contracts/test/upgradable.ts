@@ -1,17 +1,9 @@
 import { ValidationOptions } from '@openzeppelin/upgrades-core'
 import { upgradeContract } from '../scripts/contractsLifeCycle/upgrade'
-import {
-    HederaTokenManager__factory,
-    HederaTokenManager2__factory,
-    HederaTokenManager3__factory,
-} from '../typechain-types'
+import { HederaTokenManager__factory } from '../typechain-types'
 import { Client, ContractId } from '@hashgraph/sdk'
 import {
     deployContractsWithSDK,
-    getNonOperatorAccount,
-    getNonOperatorClient,
-    getNonOperatorE25519,
-    getOperatorAccount,
     getOperatorClient,
     getOperatorE25519,
     getOperatorPrivateKey,
@@ -21,19 +13,15 @@ import {
 import { clientId } from '../scripts/utils'
 import { BigNumber } from 'ethers'
 import { delay } from '../scripts/contractsMethods'
-import { expect } from 'chai'
 
 let proxyAddress: ContractId
 let proxyAdminAddress: ContractId
 
 let operatorClient: Client
-let nonOperatorClient: Client
 let operatorAccount: string
-let nonOperatorAccount: string
 let operatorPriKey: string
 let operatorPubKey: string
 let operatorIsE25519: boolean
-let nonOperatorIsE25519: boolean
 
 const TokenName = 'MIDAS'
 const TokenSymbol = 'MD'
@@ -64,17 +52,7 @@ describe('Upgradable Tests', function () {
         ] = initializeClients()
 
         operatorClient = getOperatorClient(client1, client2, clientId)
-        nonOperatorClient = getNonOperatorClient(client1, client2, clientId)
-        operatorAccount = getOperatorAccount(
-            client1account,
-            client2account,
-            clientId
-        )
-        nonOperatorAccount = getNonOperatorAccount(
-            client1account,
-            client2account,
-            clientId
-        )
+
         operatorPriKey = getOperatorPrivateKey(
             client1privatekey,
             client2privatekey,
@@ -86,11 +64,6 @@ describe('Upgradable Tests', function () {
             clientId
         )
         operatorIsE25519 = getOperatorE25519(
-            client1isED25519Type,
-            client2isED25519Type,
-            clientId
-        )
-        nonOperatorIsE25519 = getNonOperatorE25519(
             client1isED25519Type,
             client2isED25519Type,
             clientId
@@ -121,38 +94,6 @@ describe('Upgradable Tests', function () {
         await upgradeContract(
             HederaTokenManager__factory.abi,
             HederaTokenManager__factory,
-            validationOptions,
-            operatorClient,
-            operatorPriKey,
-            proxyAdminAddress,
-            proxyAddress.toSolidityAddress(),
-            undefined,
-            false,
-            true
-        )
-    })
-
-    it('Not compatible Contract', async () => {
-        await expect(
-            upgradeContract(
-                HederaTokenManager__factory.abi,
-                HederaTokenManager2__factory,
-                validationOptions,
-                operatorClient,
-                operatorPriKey,
-                proxyAdminAddress,
-                proxyAddress.toSolidityAddress(),
-                undefined,
-                false,
-                true
-            )
-        ).to.eventually.be.rejectedWith(Error)
-    })
-
-    it('compatible Contract', async () => {
-        await upgradeContract(
-            HederaTokenManager__factory.abi,
-            HederaTokenManager3__factory,
             validationOptions,
             operatorClient,
             operatorPriKey,

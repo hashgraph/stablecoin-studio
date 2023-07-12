@@ -27,7 +27,9 @@ const BasicDetails = (props: BasicDetailsProps) => {
 		Option[]
 	>([]);
 	const [gettingHederaTokenManager, setGettingHederaTokenManager] = useState<boolean>(false);
-	const [modalErrorDescription, setModalErrorDescription] = useState<string | null>(t('stableCoinCreation:basicDetails.modalErrorDescription'));
+	const [modalErrorDescription, setModalErrorDescription] = useState<string | null>(
+		t('stableCoinCreation:basicDetails.modalErrorDescription'),
+	);
 
 	const { request } = props;
 
@@ -45,14 +47,18 @@ const BasicDetails = (props: BasicDetailsProps) => {
 					new Promise((resolve, reject) => {
 						setTimeout(() => {
 							reject(
-								new Error(t('stableCoinCreation:basicDetails.hederaTokenManagerErrorTime') || undefined),
+								new Error(
+									t('stableCoinCreation:basicDetails.hederaTokenManagerErrorTime') || undefined,
+								),
 							);
 						}, 10000);
 					}),
 				]).catch((e) => {
 					console.log(e.message);
 					if (e.code === 'NETWORK_ERROR') {
-						setModalErrorDescription(t('stableCoinCreation:basicDetails.hederaTokenManagerErrorRPC'));
+						setModalErrorDescription(
+							t('stableCoinCreation:basicDetails.hederaTokenManagerErrorRPC'),
+						);
 					} else {
 						setModalErrorDescription(e.message);
 					}
