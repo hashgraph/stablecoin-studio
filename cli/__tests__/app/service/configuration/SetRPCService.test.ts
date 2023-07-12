@@ -78,11 +78,11 @@ describe('setRPCNodeService', () => {
       .mockImplementationOnce(() => Promise.resolve('HASHIO'))
       .mockImplementationOnce(() => Promise.resolve('LOCAL'))
       .mockImplementationOnce(() => Promise.resolve('test'))
-      .mockImplementationOnce(() => 
-        Promise.resolve('https://testnet.hashio.io/api')
+      .mockImplementationOnce(() =>
+        Promise.resolve('https://testnet.hashio.io/api'),
       )
-      .mockImplementationOnce(() => 
-        Promise.resolve('https://127.0.0.1:2746/api')
+      .mockImplementationOnce(() =>
+        Promise.resolve('https://127.0.0.1:2746/api'),
       )
       .mockImplementationOnce(() => Promise.resolve(''))
       .mockImplementationOnce(() => Promise.resolve(''));
@@ -126,9 +126,7 @@ describe('setRPCNodeService', () => {
     expect(setRPCService).not.toBeNull();
     expect(rpcsConfig.network).toBe('testnet');
     expect(rpcsConfig.name).toBe('HASHIO');
-    expect(rpcsConfig.baseUrl).toBe(
-      'https://testnet.hashio.io/api',
-    );
+    expect(rpcsConfig.baseUrl).toBe('https://testnet.hashio.io/api');
     expect(rpcsConfig.apiKey).toBeUndefined();
     expect(rpcsConfig.headerName).toBeUndefined();
     expect(rpcsConfig.selected).toBe(true);
