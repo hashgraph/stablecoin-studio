@@ -184,14 +184,14 @@ const FactorySettings = () => {
 	};
 
 	const handleCancelFactoryOwner = async () => {
-		const { updateOwner } = getValues();
 		const factoryId: string = await Network.getFactoryAddress();
 
-		if (factoryId) {
+		if (factoryId && accountInfo?.id) {
 			changeFactoryProxyOwnerRequest.factoryId = factoryId;
-			changeFactoryProxyOwnerRequest.targetId = updateOwner;
+			changeFactoryProxyOwnerRequest.targetId = accountInfo?.id?.toString();
 			acceptFactoryProxyOwnerRequest.factoryId = factoryId;
 
+			// call changeFactoryOwner service to change pendingOwner to account logged owner
 			try {
 				onOpen();
 				setAwaitingUpdate(true);
@@ -215,6 +215,7 @@ const FactorySettings = () => {
 				setAwaitingUpdate(false);
 			}
 
+			// call acceptFactoryOwner service to accept the previous step and set pendingOwner to 0.0.0
 			try {
 				onOpen();
 				await SDKService.acceptFactoryOwner(acceptFactoryProxyOwnerRequest);
