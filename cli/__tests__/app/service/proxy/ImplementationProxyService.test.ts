@@ -28,7 +28,7 @@ describe('implementationProxyService', () => {
 
     const defaultMultipleAskMock = jest
       .spyOn(utilsService, 'defaultMultipleAsk')
-      .mockResolvedValue('0.0.345678');
+      .mockResolvedValue('0.0.1');
 
     const iFactoryConfig: IFactoryConfig = {
       id: '0.0.345678',
