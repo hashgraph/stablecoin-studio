@@ -99,7 +99,7 @@ export default class CreateStableCoinService extends Service {
     const associateService = new AssociateStableCoinService();
     await associateService.associateStableCoin(
       currentAccount.accountId,
-      createdToken.tokenId.toString(),
+      createdToken?.tokenId?.toString(),
     );
 
     if (grantKYCToOriginalSender) {
@@ -333,41 +333,41 @@ export default class CreateStableCoinService extends Service {
         tokenToCreate.freezeKey === undefined
           ? language.getText('wizard.featureOptions.None')
           : tokenToCreate.freezeKey.key !== 'null'
-          ? tokenToCreate.freezeKey
-          : language.getText('wizard.featureOptions.SmartContract'),
+            ? tokenToCreate.freezeKey
+            : language.getText('wizard.featureOptions.SmartContract'),
       KYCKey:
         tokenToCreate.kycKey === undefined
           ? language.getText('wizard.featureOptions.None')
           : tokenToCreate.kycKey.key !== 'null'
-          ? tokenToCreate.kycKey
-          : language.getText('wizard.featureOptions.SmartContract'),
+            ? tokenToCreate.kycKey
+            : language.getText('wizard.featureOptions.SmartContract'),
       wipeKey:
         tokenToCreate.wipeKey === undefined
           ? language.getText('wizard.featureOptions.None')
           : tokenToCreate.wipeKey.key !== 'null'
-          ? tokenToCreate.wipeKey
-          : language.getText('wizard.featureOptions.SmartContract'),
+            ? tokenToCreate.wipeKey
+            : language.getText('wizard.featureOptions.SmartContract'),
       adminKey: language.getText('wizard.adminFeatureOptions.SmartContract'),
       supplyKey: language.getText('wizard.featureOptions.SmartContract'),
       pauseKey:
         tokenToCreate.pauseKey === undefined
           ? language.getText('wizard.featureOptions.None')
           : tokenToCreate.pauseKey.key !== 'null'
-          ? tokenToCreate.pauseKey
-          : language.getText('wizard.featureOptions.SmartContract'),
+            ? tokenToCreate.pauseKey
+            : language.getText('wizard.featureOptions.SmartContract'),
       feeScheduleKey:
         tokenToCreate.feeScheduleKey === undefined
           ? language.getText('wizard.featureOptions.None')
           : tokenToCreate.feeScheduleKey.key !== 'null'
-          ? tokenToCreate.feeScheduleKey
-          : language.getText('wizard.featureOptions.SmartContract'),
+            ? tokenToCreate.feeScheduleKey
+            : language.getText('wizard.featureOptions.SmartContract'),
       treasury: language.getText('wizard.featureOptions.SmartContract'),
       reserve:
         reserve == false
           ? '-'
           : existingReserve
-          ? tokenToCreate.reserveAddress
-          : 'Proof of Reserve Feed initial amount : ' +
+            ? tokenToCreate.reserveAddress
+            : 'Proof of Reserve Feed initial amount : ' +
             tokenToCreate.reserveInitialAmount,
       burnRole: tokenToCreate.burnRoleAccount,
       wipeRole: tokenToCreate.wipeRoleAccount,

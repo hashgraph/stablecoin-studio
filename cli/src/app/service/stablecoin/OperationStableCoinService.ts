@@ -46,21 +46,21 @@ import {
   UpgradeImplementationRequest,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 
-import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
+import BalanceOfStableCoinService from './BalanceOfStableCoinService.js';
 import CashInStableCoinService from './CashInStableCoinService.js';
 import WipeStableCoinService from './WipeStableCoinService.js';
-import RoleStableCoinsService from './RoleStableCoinService.js';
-import RescueStableCoinsService from './RescueStableCoinService.js';
-import RescueHBARStableCoinsService from './RescueHBARStableCoinService.js';
-import BurnStableCoinsService from './BurnStableCoinService.js';
+import RoleStableCoinService from './RoleStableCoinService.js';
+import RescueStableCoinService from './RescueStableCoinService.js';
+import RescueHBARStableCoinService from './RescueHBARStableCoinService.js';
+import BurnStableCoinService from './BurnStableCoinService.js';
 import DeleteStableCoinService from './DeleteStableCoinService.js';
 import PauseStableCoinService from './PauseStableCoinService.js';
 import FreezeStableCoinService from './FreezeStableCoinService.js';
 import KYCStableCoinService from './KYCStableCoinService.js';
-import ListStableCoinsService from './ListStableCoinService.js';
+import ListStableCoinService from './ListStableCoinService.js';
 import CapabilitiesStableCoinService from './CapabilitiesStableCoinService.js';
 import FeeStableCoinService from './FeeStableCoinService.js';
-import TransfersStableCoinsService from './TransfersStableCoinService.js';
+import TransfersStableCoinService from './TransfersStableCoinService.js';
 import colors from 'colors';
 import UpdateStableCoinService from './UpdateStableCoinService.js';
 import OwnerProxyService from '../proxy/OwnerProxyService.js';
@@ -85,9 +85,9 @@ export default class OperationStableCoinService extends Service {
   private stableCoinId;
   private stableCoinWithSymbol;
   private stableCoinSymbol;
-  private roleStableCoinService = new RoleStableCoinsService();
+  private roleStableCoinService = new RoleStableCoinService();
   private capabilitiesStableCoinService = new CapabilitiesStableCoinService();
-  private listStableCoinService = new ListStableCoinsService();
+  private listStableCoinService = new ListStableCoinService();
   private stableCoinPaused;
   private stableCoinDeleted;
   private hasKycKey;
@@ -316,7 +316,7 @@ export default class OperationStableCoinService extends Service {
         );
 
         try {
-          await new BalanceOfStableCoinsService().getBalanceOfStableCoin(
+          await new BalanceOfStableCoinService().getBalanceOfStableCoin(
             getAccountBalanceRequest,
           );
         } catch (error) {
@@ -352,7 +352,7 @@ export default class OperationStableCoinService extends Service {
         );
 
         try {
-          await new BurnStableCoinsService().burnStableCoin(cashOutRequest);
+          await new BurnStableCoinService().burnStableCoin(cashOutRequest);
         } catch (error) {
           await utilsService.askErrorConfirmation(
             async () => await this.operationsStableCoin(),
@@ -434,7 +434,7 @@ export default class OperationStableCoinService extends Service {
 
         // Call to Rescue
         try {
-          await new RescueStableCoinsService().rescueStableCoin(rescueRequest);
+          await new RescueStableCoinService().rescueStableCoin(rescueRequest);
         } catch (error) {
           await utilsService.askErrorConfirmation(
             async () => await this.operationsStableCoin(),
@@ -469,7 +469,7 @@ export default class OperationStableCoinService extends Service {
 
         // Call to Rescue HBAR
         try {
-          await new RescueHBARStableCoinsService().rescueHBARStableCoin(
+          await new RescueHBARStableCoinService().rescueHBARStableCoin(
             rescueHBARRequest,
           );
         } catch (error) {
@@ -493,21 +493,21 @@ export default class OperationStableCoinService extends Service {
       case language.getText('wizard.stableCoinOptions.FeesMgmt'):
         await utilsService.cleanAndShowBanner();
 
-        // Call to Supplier Role
         await this.feesManagementFlow();
         break;
       case language.getText('wizard.stableCoinOptions.RoleMgmt'):
         await utilsService.cleanAndShowBanner();
 
-        // Call to Supplier Role
         await this.roleManagementFlow();
         break;
       case language.getText('wizard.stableCoinOptions.Configuration'):
         await utilsService.cleanAndShowBanner();
+
         await this.configuration();
         break;
       case language.getText('wizard.stableCoinOptions.DangerZone'):
         await utilsService.cleanAndShowBanner();
+
         await this.dangerZone();
         break;
       case wizardOperationsStableCoinOptions[
@@ -540,7 +540,7 @@ export default class OperationStableCoinService extends Service {
     });
 
     const balance = new Big(
-      await new BalanceOfStableCoinsService().getBalanceOfStableCoin_2(
+      await new BalanceOfStableCoinService().getBalanceOfStableCoin_2(
         getAccountBalanceRequest,
       ),
     );
@@ -636,7 +636,7 @@ export default class OperationStableCoinService extends Service {
 
     if (confirmation) {
       try {
-        await new TransfersStableCoinsService().transfersStableCoin(
+        await new TransfersStableCoinService().transfersStableCoin(
           transfersRequest,
         );
       } catch (error) {
@@ -986,7 +986,6 @@ export default class OperationStableCoinService extends Service {
         return true;
       });
 
-    // const accountTarget = '0.0.0';
     switch (
       await utilsService.defaultMultipleAsk(
         language.getText('stablecoin.askAction'),
@@ -1444,9 +1443,7 @@ export default class OperationStableCoinService extends Service {
             await this.getAccountsWithRole(StableCoinRole.RESCUE_ROLE);
             break;
 
-          case language.getText(
-            'wizard.CheckAccountsWithRoleOptions.RescueHBAR',
-          ):
+          case language.getText('wizard.CheckAccountsWithRoleOptions.RescueHBAR'):
             await this.getAccountsWithRole(StableCoinRole.RESCUE_ROLE);
             break;
 
@@ -1866,7 +1863,7 @@ export default class OperationStableCoinService extends Service {
           },
         );
 
-        await new RoleStableCoinsService().getRoles(getRolesRequest);
+        await new RoleStableCoinService().getRoles(getRolesRequest);
 
         break;
       case roleManagementOptionsFiltered[
@@ -1942,7 +1939,7 @@ export default class OperationStableCoinService extends Service {
     });
 
     await utilsService.showSpinner(
-      new RoleStableCoinsService().getAccountsWithRole(request),
+      new RoleStableCoinService().getAccountsWithRole(request),
       {},
     );
   }
@@ -1990,7 +1987,7 @@ export default class OperationStableCoinService extends Service {
     if (!confirm) return;
 
     try {
-      await new RoleStableCoinsService().grantMultiRolesStableCoin(
+      await new RoleStableCoinService().grantMultiRolesStableCoin(
         grantMultiRolesRequest,
       );
     } catch (error) {
@@ -2032,7 +2029,7 @@ export default class OperationStableCoinService extends Service {
     if (!confirm) return;
 
     try {
-      await new RoleStableCoinsService().revokeMultiRolesStableCoin(
+      await new RoleStableCoinService().revokeMultiRolesStableCoin(
         revokeMultiRolesRequest,
       );
     } catch (error) {
@@ -2330,7 +2327,6 @@ export default class OperationStableCoinService extends Service {
   ): string[] {
     let result = [];
     let capabilitiesFilter = [];
-    // if (stableCoinCapabilities.capabilities.length === 0) return options;
     const capabilities: Operation[] = stableCoinCapabilities.capabilities.map(
       (a) => a.operation,
     );
@@ -2563,7 +2559,7 @@ export default class OperationStableCoinService extends Service {
       targetId: configAccount.accountId,
       tokenId: this.stableCoinId,
     });
-    return await new RoleStableCoinsService().getRolesWithoutPrinting(
+    return await new RoleStableCoinService().getRolesWithoutPrinting(
       getRolesRequest,
     );
   }
@@ -3138,7 +3134,6 @@ export default class OperationStableCoinService extends Service {
         return true;
       });
 
-    // const accountTarget = '0.0.0';
     switch (
       await utilsService.defaultMultipleAsk(
         language.getText('stablecoin.askAction'),
