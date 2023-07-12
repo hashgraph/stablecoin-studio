@@ -1443,7 +1443,9 @@ export default class OperationStableCoinService extends Service {
             await this.getAccountsWithRole(StableCoinRole.RESCUE_ROLE);
             break;
 
-          case language.getText('wizard.CheckAccountsWithRoleOptions.RescueHBAR'):
+          case language.getText(
+            'wizard.CheckAccountsWithRoleOptions.RescueHBAR',
+          ):
             await this.getAccountsWithRole(StableCoinRole.RESCUE_ROLE);
             break;
 

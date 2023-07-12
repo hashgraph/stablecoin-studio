@@ -383,9 +383,7 @@ export default class SetRPCService extends Service {
       case language.getText('wizard.manageRPCOptions.Change'):
         await utilsService.cleanAndShowBanner();
         if (await networkWizardService.chooseRPCNetwork(_network)) {
-          if (currentRPC.network === _network) {
-            await utilsService.initSDK();
-          }
+          if (currentRPC.network === _network) await utilsService.initSDK();
           await utilsService.cleanAndShowBanner();
           await wizardService.mainMenu();
         }

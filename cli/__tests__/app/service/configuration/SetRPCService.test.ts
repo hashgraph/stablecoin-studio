@@ -2,10 +2,12 @@ import {
   configurationService,
   setRPCService,
   utilsService,
+  wizardService,
 } from '../../../../src/index.js';
 import Language from '../../../../src/domain/language/Language.js';
 import { IRPCsConfig } from '../../../../src/domain/configuration/interfaces/IRPCsConfig.js';
 import { IConfiguration } from '../../../../src/domain/configuration/interfaces/IConfiguration.js';
+import { Network } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 const language: Language = new Language();
 
@@ -206,6 +208,83 @@ describe('setRPCNodeService', () => {
     expect(defaultMultipleAskMock).toHaveBeenCalledTimes(2);
     expect(defaultSingleAskMock).toHaveBeenCalledTimes(9);
     expect(defaultConfirmAskMock).toHaveBeenCalledTimes(6);
+  });
+
+  it('should manage the rpc node menu', async () => {
+    const currentNetworkMock = jest
+      .spyOn(utilsService, 'getCurrentNetwork')
+      .mockReturnValue(configurationMock.networks[0]);
+
+    const currentAccountMock = jest
+      .spyOn(utilsService, 'getCurrentAccount')
+      .mockReturnValue(configurationMock.accounts[0]);
+
+    const currentMirrorMock = jest
+      .spyOn(utilsService, 'getCurrentMirror')
+      .mockReturnValue(configurationMock.mirrors[0]);
+
+    const currentRPCMock = jest
+      .spyOn(utilsService, 'getCurrentRPC')
+      .mockReturnValue(configurationMock.rpcs[0]);
+
+    const networkConnectMock = jest
+      .spyOn(Network, 'connect')
+      .mockImplementation(() => Promise.resolve({}));
+
+    const getConfigurationMock = jest
+      .spyOn(configurationService, 'getConfiguration')
+      .mockReturnValue(configurationMock);
+
+    const keep = (setRPCService as any).manageRPCMenu;
+    jest
+      .spyOn(setRPCService as any, 'manageRPCMenu')
+      .mockImplementationOnce(keep)
+      .mockImplementationOnce(keep)
+      .mockImplementationOnce(keep)
+      .mockImplementationOnce(keep)
+      .mockImplementation(jest.fn());
+
+    jest.spyOn(wizardService as any, 'mainMenu').mockImplementation(jest.fn());
+
+    const defaultMultipleAskMock = jest
+      .spyOn(utilsService, 'defaultMultipleAsk')
+      .mockImplementationOnce(() =>
+        Promise.resolve(language.getText('wizard.manageRPCOptions.List')),
+      )
+      .mockImplementationOnce(() =>
+        Promise.resolve(language.getText('wizard.manageRPCOptions.Add')),
+      )
+      .mockImplementationOnce(() =>
+        Promise.resolve(language.getText('wizard.manageRPCOptions.Change')),
+      )
+      .mockImplementationOnce(() => Promise.resolve('ARKHIA'))
+      .mockImplementationOnce(() =>
+        Promise.resolve(language.getText('wizard.manageRPCOptions.Delete')),
+      );
+
+    const defaultSingleAskMock = jest
+      .spyOn(utilsService, 'defaultSingleAsk')
+      .mockImplementation(() => Promise.resolve('TEST'))
+      .mockImplementation(() =>
+        Promise.resolve('https://test2.io/hedera/testnet/api/v1'),
+      );
+
+    const defaultConfirmAskMock = jest
+      .spyOn(utilsService, 'defaultConfirmAsk')
+      .mockImplementationOnce(() => Promise.resolve(true));
+
+    await setRPCService.manageRPCMenu('testnet');
+
+    expect(setRPCService).not.toBeNull();
+    expect(currentNetworkMock).toHaveBeenCalledTimes(2);
+    expect(currentAccountMock).toHaveBeenCalledTimes(5);
+    expect(currentMirrorMock).toHaveBeenCalledTimes(6);
+    expect(currentRPCMock).toHaveBeenCalledTimes(9);
+    expect(getConfigurationMock).toHaveBeenCalledTimes(11);
+    expect(defaultMultipleAskMock).toHaveBeenCalledTimes(8);
+    expect(defaultSingleAskMock).toHaveBeenCalledTimes(13);
+    expect(defaultConfirmAskMock).toHaveBeenCalledTimes(10);
+    expect(networkConnectMock).toHaveBeenCalledTimes(1);
   });
 
   afterAll(() => {
