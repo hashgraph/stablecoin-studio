@@ -98,7 +98,7 @@ If you want to switch to another compatible wallet, you can do it at any time by
 
 # Usage
 
-## Supported Wallets
+## Supported wallets
 
 The Wallets currently supported by the project are [HashPack](https://www.hashpack.app/)(for [ED25519](https://docs.hedera.com/hedera/docs/sdks/keys/generate-a-new-key-pair#ed25519) accounts) and [MetaMask](https://metamask.io/)(for [ECDSA](https://docs.hedera.com/hedera/docs/sdks/keys/generate-a-new-key-pair#ecdsa-secp256k1_) accounts)
 
@@ -128,7 +128,7 @@ If you select an account that does not exist in the Hedera network.
 
 > In order to use the web application correctly it is necessary to have at least one of those two wallets already installed in your browser. You can nevertheless have both and switch from one to the other.
 
-## Web Flow
+## Web flow
 
 ### Create stable coins
 
@@ -157,7 +157,7 @@ Underlying token's keys definition (stable coin smart contract, current key, ano
 ![Selection_028](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/e6ceb6f8-4ab0-4e44-ad15-59f0f2bc66c0)
 
 
-**Proof Of Reserve**
+**Proof of reserve**
 
 Choose if the stable coin will have a proof of reserve (PoR) associated to it or not.
 If so, the user will have two options, either submit the address of an already existing PoR contract or generate a completely new one (using the demo implementation of a PoR contract included in the project) specifying an initial Reserve amount.
@@ -190,7 +190,7 @@ You can import any stable coin you want, and it will be added to the drop-down l
 
 The operations linked to the capabilities (roles) assigned to your account for the selected stable coin will be available.
 
-### Manage Roles
+### Manage roles
 
 ![image](https://user-images.githubusercontent.com/114951681/229090716-8aa224e6-4f05-42ed-9a74-01f519427b95.png)
 
@@ -202,13 +202,13 @@ If your account has the stable coin admin role, you will also be allowed to mana
 
 This menú option displays stable coin details and also allows the user to update some of the token properties, like the name, the symbol, the keys..., clicking on the the pencil icon located at the top right side of the screen, which transforms the information page into a form where this properties can be modified by the user. 
 
-### Fees Management
+### Fees management
 
 ![image](https://user-images.githubusercontent.com/114951681/229092960-dd67ccc7-d340-4bb9-a3ba-0f2e33e61d0f.png)
 
 If your account has the stable coin fee role, you will also be allowed to manage the token's custom fees.
 
-### Proof Of Reserve
+### Proof of reserve
 
 ![image](https://user-images.githubusercontent.com/110887433/213154467-70663bd0-2116-4121-9b3a-3028e4309fff.png)
 
@@ -249,7 +249,7 @@ Contributions are welcome. Please see the
 [contributing guide](https://github.com/hashgraph/.github/blob/main/CONTRIBUTING.md)
 to see how you can get involved.
 
-# Code of Conduct
+# Code of conduct
 This project is governed by the
 [Contributor Covenant Code of Conduct](https://github.com/hashgraph/.github/blob/main/CODE_OF_CONDUCT.md). By
 participating, you are expected to uphold this code of conduct. Please report unacceptable behavior

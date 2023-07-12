@@ -184,15 +184,13 @@ export default class SetFactoryService extends Service {
     utilsService.showMessage(
       colors.yellow(
         `${language.getText('factory.implementation')}: ${
-          factoryProxyConfig.implementationAddress.value
+          factoryProxyConfig.implementationAddress
         }`,
       ),
     );
     utilsService.showMessage(
       colors.yellow(
-        `${language.getText('factory.owner')}: ${
-          factoryProxyConfig.owner.value
-        }`,
+        `${language.getText('factory.owner')}: ${factoryProxyConfig.owner}`,
       ),
     );
   }

@@ -27,6 +27,9 @@ const BasicDetails = (props: BasicDetailsProps) => {
 		Option[]
 	>([]);
 	const [gettingHederaTokenManager, setGettingHederaTokenManager] = useState<boolean>(false);
+	const [modalErrorDescription, setModalErrorDescription] = useState<string | null>(
+		t('stableCoinCreation:basicDetails.modalErrorDescription'),
+	);
 
 	const { request } = props;
 
@@ -44,12 +47,21 @@ const BasicDetails = (props: BasicDetailsProps) => {
 					new Promise((resolve, reject) => {
 						setTimeout(() => {
 							reject(
-								new Error("TokenManager contracts list couldn't be obtained in a reasonable time."),
+								new Error(
+									t('stableCoinCreation:basicDetails.hederaTokenManagerErrorTime') || undefined,
+								),
 							);
 						}, 10000);
 					}),
 				]).catch((e) => {
 					console.log(e.message);
+					if (e.code === 'NETWORK_ERROR') {
+						setModalErrorDescription(
+							t('stableCoinCreation:basicDetails.hederaTokenManagerErrorRPC'),
+						);
+					} else {
+						setModalErrorDescription(e.message);
+					}
 					onOpen();
 					throw e;
 				});
@@ -186,7 +198,7 @@ const BasicDetails = (props: BasicDetailsProps) => {
 			<ModalNotification
 				variant={'error'}
 				title={t('stableCoinCreation:basicDetails.modalErrorTitle')}
-				description={t('stableCoinCreation:basicDetails.modalErrorDescription')}
+				description={modalErrorDescription}
 				isOpen={isOpen}
 				onClose={onClose}
 				closeOnOverlayClick={false}
