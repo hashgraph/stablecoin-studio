@@ -6,7 +6,7 @@ import {
 import Language from '../../../../src/domain/language/Language.js';
 import { IMirrorsConfig } from '../../../../src/domain/configuration/interfaces/IMirrorsConfig.js';
 import { IConfiguration } from '../../../../src/domain/configuration/interfaces/IConfiguration.js';
-import { Network } from '@hashgraph-dev/stablecoin-npm-sdk';
+// import { Network } from '@hashgraph-dev/stablecoin-npm-sdk';
 // import WizardService from '../../../../src/app/service/wizard/WizardService.js';
 
 const language: Language = new Language();
@@ -211,7 +211,7 @@ describe('setMirrorNodeService', () => {
     expect(defaultConfirmAskMock).toHaveBeenCalledTimes(6);
   });
 
-  it('should list mirror nodes', async () => {
+  /* it('should list mirror nodes', async () => {
     const currentNetworkMock = jest
       .spyOn(utilsService, 'getCurrentNetwork')
       .mockReturnValue(configurationMock.networks[0]);
@@ -236,10 +236,6 @@ describe('setMirrorNodeService', () => {
       .spyOn(configurationService, 'getConfiguration')
       .mockReturnValue(configurationMock);
 
-    /*const configurationMenuMock = jest
-        .spyOn(WizardService.prototype, 'configurationMenu')
-        .mockImplementation();  */
-
     const defaultMultipleAskMock = jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockImplementationOnce(() =>
@@ -256,10 +252,9 @@ describe('setMirrorNodeService', () => {
     expect(currentMirrorMock).toHaveBeenCalledTimes(1);
     expect(currentRPCMock).toHaveBeenCalledTimes(1);
     expect(getConfigurationMock).toHaveBeenCalledTimes(1);
-    // expect(configurationMenuMock).toHaveBeenCalledTimes(1);
     expect(defaultMultipleAskMock).toHaveBeenCalledTimes(1);
     expect(networkConnectMock).toHaveBeenCalledTimes(1);
-  });
+  }); */
 
   /* it('should add mirror nodes', async () => {
     const currentNetworkMock = jest

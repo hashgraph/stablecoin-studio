@@ -67,32 +67,33 @@ describe('setRPCNodeService', () => {
     ],
   };
 
+  beforeAll(() => {
+    jest.spyOn(utilsService, 'showSpinner').mockImplementation();
+    jest.spyOn(console, 'log');
+  });
+
   it('should configure rpc service', async () => {
     const defaultSingleAskMock = jest
       .spyOn(utilsService, 'defaultSingleAsk')
-      .mockImplementation((question: string) => {
-        switch (question) {
-          case language.getText('configuration.askName'):
-            return Promise.resolve('LOCAL');
-
-          case language.getText('configuration.askBaseUrl'):
-            return Promise.resolve('https://127.0.0.1:2746/api');
-
-          case language.getText('configuration.askApiKey'):
-            return Promise.resolve('');
-
-          case language.getText('configuration.askHeaderName'):
-            return Promise.resolve('');
-
-          default:
-            return Promise.resolve('');
-        }
-      });
+      .mockImplementationOnce(() => Promise.resolve('HASHIO'))
+      .mockImplementationOnce(() => Promise.resolve('LOCAL'))
+      .mockImplementationOnce(() => Promise.resolve('test'))
+      .mockImplementationOnce(() => 
+        Promise.resolve('https://testnet.hashio.io/api')
+      )
+      .mockImplementationOnce(() => 
+        Promise.resolve('https://127.0.0.1:2746/api')
+      )
+      .mockImplementationOnce(() => Promise.resolve(''))
+      .mockImplementationOnce(() => Promise.resolve(''));
 
     const defaultConfirmAskMock = jest
       .spyOn(utilsService, 'defaultConfirmAsk')
       .mockImplementation((question: string) => {
         switch (question) {
+          case language.getText('configuration.askNeedApiKey'):
+            return Promise.resolve(true);
+
           case language.getText('configuration.askCreateConfig'):
             return Promise.resolve(false);
 
@@ -113,9 +114,24 @@ describe('setRPCNodeService', () => {
     );
 
     expect(setRPCService).not.toBeNull();
-    expect(defaultSingleAskMock).toHaveBeenCalledTimes(2);
+    expect(defaultSingleAskMock).toHaveBeenCalledTimes(7);
     expect(defaultConfirmAskMock).toHaveBeenCalledTimes(2);
     expect(rpcsConfig).not.toBeNull();
+  });
+
+  it('should get default RPC by network', async () => {
+    const rpcsConfig: IRPCsConfig =
+      setRPCService.getDefaultRPCByNetwork('testnet');
+
+    expect(setRPCService).not.toBeNull();
+    expect(rpcsConfig.network).toBe('testnet');
+    expect(rpcsConfig.name).toBe('HASHIO');
+    expect(rpcsConfig.baseUrl).toBe(
+      'https://testnet.hashio.io/api',
+    );
+    expect(rpcsConfig.apiKey).toBeUndefined();
+    expect(rpcsConfig.headerName).toBeUndefined();
+    expect(rpcsConfig.selected).toBe(true);
   });
 
   it('should remove rpc service', async () => {
@@ -190,7 +206,7 @@ describe('setRPCNodeService', () => {
 
     expect(setRPCService).not.toBeNull();
     expect(defaultMultipleAskMock).toHaveBeenCalledTimes(2);
-    expect(defaultSingleAskMock).toHaveBeenCalledTimes(4);
+    expect(defaultSingleAskMock).toHaveBeenCalledTimes(9);
     expect(defaultConfirmAskMock).toHaveBeenCalledTimes(6);
   });
 
