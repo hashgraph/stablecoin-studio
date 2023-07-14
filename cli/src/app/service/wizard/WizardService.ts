@@ -229,6 +229,7 @@ export default class WizardService extends Service {
       );
       console.log(colors.yellow(language.getText('wizard.accountsNotFound')));
     }
+
     const account = await utilsService.defaultMultipleAsk(
       language.getText('wizard.accountLogin'),
       options,
@@ -244,7 +245,6 @@ export default class WizardService extends Service {
     const configuration = configurationService.getConfiguration();
     const { accounts } = configuration;
     const currentAccount = accounts[accounts.length - 1];
-
     await this.setSelectedAccount(currentAccount);
   }
 

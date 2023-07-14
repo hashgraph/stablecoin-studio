@@ -179,7 +179,6 @@ export default class SetConfigurationService extends Service {
       utilsService.showMessage(
         language.getText('configuration.AccountsConfigurationMessage'),
       );
-
       let accountId = await utilsService.defaultSingleAsk(
         language.getText('configuration.askAccountId'),
         ZERO_ADDRESS,
@@ -300,7 +299,6 @@ export default class SetConfigurationService extends Service {
         break;
       case language.getText('wizard.manageAccountOptions.List'):
         await utilsService.cleanAndShowBanner();
-
         console.dir(utilsService.maskPrivateAccounts(accounts), {
           depth: null,
         });
@@ -349,10 +347,22 @@ export default class SetConfigurationService extends Service {
           options,
           true,
         );
+
         if (account === language.getText('wizard.backOption.goBack')) {
           await this.manageAccountMenu();
         }
-        account = optionsWithoutColors[options.indexOf(account)];
+
+        account =
+          optionsWithoutColors[
+            options.indexOf(
+              options.filter(
+                (filteredAccount) =>
+                  filteredAccount.split('-')[0].trim() ===
+                  account.split('-')[0].trim(),
+              )[0],
+            )
+          ];
+
         const accId = account.split(' - ')[0];
         const accAlias = account.split(' - ')[1].split(' ')[0];
         defaultCfgData.accounts = accounts.filter(
