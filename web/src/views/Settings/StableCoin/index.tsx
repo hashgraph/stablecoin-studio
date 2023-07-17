@@ -37,6 +37,7 @@ import type { Option } from '../../../components/Form/SelectCreatableController'
 import SelectCreatableController from '../../../components/Form/SelectCreatableController';
 import { RouterManager } from '../../../Router/RouterManager';
 import { NamedRoutes } from '../../../Router/NamedRoutes';
+import Icon from '../../../components/Icon';
 
 const StableCoinSettings = () => {
 	const navigate = useNavigate();
@@ -481,6 +482,11 @@ const StableCoinSettings = () => {
 												},
 											}}
 											addonLeft={true}
+											addonDown={
+												optionshederaTokenManagerAddresses.length > 1 && (
+													<Icon name='CaretDown' w={4} h={4} color={'brand.primary200'} />
+												)
+											}
 											rules={{
 												required: t(`global:validations.required`) ?? propertyNotFound,
 												validate: {
