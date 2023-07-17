@@ -3,7 +3,7 @@
 exports[`<FactorySettings /> should render correctly 1`] = `
 <DocumentFragment>
   <div
-    class="chakra-stack css-16oka5y"
+    class="chakra-stack css-19t9j1"
   >
     <h2
       class="chakra-heading css-bqsusc"
@@ -14,7 +14,15 @@ exports[`<FactorySettings /> should render correctly 1`] = `
     <div
       class="css-1b6lda7"
       data-testid="base-container-children"
-    />
+    >
+      <div
+        class="css-1us6gcn"
+      >
+        <div
+          class="css-1oe4jiu"
+        />
+      </div>
+    </div>
   </div>
   <span
     hidden=""

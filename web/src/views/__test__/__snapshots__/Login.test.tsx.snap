@@ -28,7 +28,7 @@ exports[`<Login /> should render correctly 1`] = `
         Click on the button bellow to download the extension
       </p>
       <div
-        class="chakra-stack css-1lm32qo"
+        class="chakra-stack css-1gp646z"
       >
         <a
           class="chakra-link css-1bxx0l9"

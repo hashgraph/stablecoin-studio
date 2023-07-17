@@ -6,7 +6,7 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
     class="css-130jr3z"
   >
     <div
-      class="chakra-stack css-135a0es"
+      class="chakra-stack css-8csoc2"
     >
       <h2
         class="chakra-heading css-p7jgmy"
@@ -15,10 +15,10 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
         Permission management
       </h2>
       <form
-        class="chakra-stack css-1tjpxl5"
+        class="chakra-stack css-1se0447"
       >
         <div
-          class="chakra-stack css-1tchtwa"
+          class="chakra-stack css-801656"
         >
           <p
             class="chakra-text css-3crm2z"
@@ -27,7 +27,7 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
           </p>
         </div>
         <div
-          class="chakra-stack css-oat9fj"
+          class="chakra-stack css-oswb0z"
         >
           <p
             class="chakra-text css-mgupmj"
@@ -46,7 +46,7 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
           </p>
         </div>
         <div
-          class="chakra-stack css-1tchtwa"
+          class="chakra-stack css-801656"
         >
           <p
             class="chakra-text css-3crm2z"
@@ -55,10 +55,10 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
           </p>
         </div>
         <div
-          class="chakra-stack css-owjkmg"
+          class="chakra-stack css-tl3ftk"
         />
         <div
-          class="chakra-stack css-1tchtwa"
+          class="chakra-stack css-801656"
         >
           <p
             class="chakra-text css-3crm2z"
@@ -67,12 +67,12 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
           </p>
         </div>
         <div
-          class="chakra-stack css-owjkmg"
+          class="chakra-stack css-tl3ftk"
         />
       </form>
     </div>
     <div
-      class="chakra-stack css-135a0es"
+      class="chakra-stack css-8csoc2"
     >
       <div
         class="chakra-accordion css-0"
@@ -120,10 +120,10 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
                 data-testid="supplier-quantity"
               >
                 <div
-                  class="chakra-stack css-owjkmg"
+                  class="chakra-stack css-tl3ftk"
                 />
                 <div
-                  class="chakra-stack css-1wytzre"
+                  class="chakra-stack css-14w8hkr"
                 >
                   <p
                     class="chakra-text css-4dzt3e"
@@ -133,22 +133,22 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
                 </div>
               </div>
               <div
-                class="chakra-stack css-owjkmg"
+                class="chakra-stack css-tl3ftk"
               />
               <div
-                class="chakra-stack css-owjkmg"
+                class="chakra-stack css-tl3ftk"
               />
               <div
-                class="chakra-stack css-owjkmg"
+                class="chakra-stack css-tl3ftk"
               />
               <div
-                class="chakra-stack css-owjkmg"
+                class="chakra-stack css-tl3ftk"
               />
               <div
-                class="chakra-stack css-owjkmg"
+                class="chakra-stack css-tl3ftk"
               />
               <div
-                class="chakra-stack css-owjkmg"
+                class="chakra-stack css-tl3ftk"
               />
             </div>
           </div>
