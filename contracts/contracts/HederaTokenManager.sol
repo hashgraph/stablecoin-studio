@@ -286,10 +286,7 @@ contract HederaTokenManager is
         UpdateTokenStruct calldata updatedToken,
         IHederaTokenService.TokenKey[] memory hederaKeys,
         address currentTokenAddress
-    )
-        private
-        returns (IHederaTokenService.HederaToken memory hederaTokenUpdated)
-    {
+    ) private returns (IHederaTokenService.HederaToken memory) {
         IHederaTokenService.Expiry memory expiry;
         if (updatedToken.second >= 0) expiry.second = updatedToken.second;
         if (updatedToken.autoRenewPeriod >= 0)
