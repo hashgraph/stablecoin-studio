@@ -97,6 +97,7 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
         uint8 reserveDecimals = AggregatorV3Interface(_reserveAddress)
             .decimals();
         uint8 tokenDecimals = _decimals();
+        uint256 totalSupply = _totalSupply();
         if (tokenDecimals > reserveDecimals) {
             if (amount % (10 ** (tokenDecimals - reserveDecimals)) != 0)
                 revert FormatNumberIncorrect(amount);
@@ -105,12 +106,13 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
                 (10 ** (tokenDecimals - reserveDecimals));
         } else if (tokenDecimals < reserveDecimals) {
             amount = amount * (10 ** (reserveDecimals - tokenDecimals));
+            totalSupply = totalSupply * (10 ** (reserveDecimals - tokenDecimals));
         }
 
         if (less) {
             return currentReserve >= amount;
         } else {
-            return currentReserve >= _totalSupply() + amount;
+            return currentReserve >= totalSupply + amount;
         }
     }
 
