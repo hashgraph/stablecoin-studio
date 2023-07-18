@@ -32,10 +32,11 @@ import { grantKyc } from './contractsMethods'
 import {
     getClient,
     deployContractSDK,
-    contractCall,
     toEvmAddress,
     associateToken,
 } from './utils'
+
+import { contractCall } from './contractsLifeCycle/utils'
 
 export const factoryProxyAddress = '0.0.14957196'
 const factoryProxyAdminAddress = '0.0.14957194'
