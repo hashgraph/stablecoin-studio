@@ -1,0 +1,87 @@
+name: LocalRPC
+on: 
+  workflow_dispatch:
+  push:
+    branches: [main]
+jobs:
+  test-node:
+    name: docker
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Build the Docker image
+        run: docker build -t rpc . 
+        working-directory: dockerfile
+        
+      - name: Use Node.js TLS 16.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.x
+      
+      - name: Install dependencies Hashconnect
+        run: npm install
+        working-directory: hashconnect/lib
+      - name: Build Hashconnect
+        run: npm run build
+        working-directory: hashconnect/lib
+      - name: Install dependencies Contracts
+        run: npm install
+        working-directory: contracts
+      - name: Install dependencies SDK
+        run: npm install
+        working-directory: sdk
+      - name: Install dependencies Cli
+        run: npm install
+        working-directory: cli
+      - name: Install dependencies web
+        run: npm install
+        working-directory: web
+   
+      - name: Create file
+        run: |
+          touch .env
+          echo "CLIENT_PRIVATE_KEY_ECDSA=${{ secrets.PRIVATE_KEY_ECDSA }}" >> .env
+          echo "CLIENT_PUBLIC_KEY_ECDSA=${{ secrets.PUBLIC_KEY_ECDSA }}"  >> .env
+          echo "CLIENT_EVM_ADDRESS_ECDSA=${{ secrets.EVM_ADDRESS_ECDSA }}" >> .env
+          echo "CLIENT_ACCOUNT_ID_ECDSA=${{ secrets.ACCOUNT_ID_ECDSA }}" >> .env
+          echo "CLIENT_PRIVATE_KEY_ED25519=${{ secrets.PRIVATE_KEY_ED25519 }}"  >> .env
+          echo "CLIENT_PUBLIC_KEY_ED25519=${{ secrets.PUBLIC_KEY_ED25519 }}"  >> .env
+          echo "CLIENT_EVM_ADDRESS_ED25519=${{ secrets.EVM_ADDRESS_ED25519 }}"  >> .env
+          echo "CLIENT_ACCOUNT_ID_ED25519=${{ secrets.ACCOUNT_ID_ED25519 }}"  >> .env
+          echo "CLIENT_PRIVATE_KEY_ED25519_2=${{ secrets.PRIVATE_KEY_ED25519_2 }}"  >> .env          
+          echo "CLIENT_PUBLIC_KEY_ED25519_2=${{ secrets.PUBLIC_KEY_ED25519_2 }}"  >> .env
+          echo "CLIENT_EVM_ADDRESS_ED25519_2=${{ secrets.EVM_ADDRESS_ED25519_2 }}"  >> .env
+          echo "CLIENT_ACCOUNT_ID_ED25519_2=${{ secrets.ACCOUNT_ID_ED25519_2 }}"  >> .env
+          echo "HEDERA_TOKEN_MANAGER_ADDRESS=0.0.14455016"  >> .env
+          echo "FACTORY_ADDRESS=0.0.14455068"  >> .env
+        working-directory: sdk
+
+      - name: View File
+        run: cat .env
+        working-directory: sdk
+      
+      - name: Run the Docker image
+        run:  nohup docker run --network="host" rpc &
+      - name: Sleep for 30 seconds
+        run: sleep 35s
+        shell: bash
+      - name: DockerStatus
+        run: docker ps
+      - name: DockerStatus
+        run:  curl --location --request POST 'http://localhost:7546/api' --data ""
+        
+        
+      - name: Test sdk
+        uses: ArtiomTr/jest-coverage-report-action@v2.0.9
+        with:
+          working-directory: sdk
+          test-script: npm run test
+      - name: Test
+        uses: ArtiomTr/jest-coverage-report-action@v2.0.9
+        with:
+          working-directory: cli
+          test-script: npm run test
+        

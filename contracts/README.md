@@ -64,11 +64,11 @@ The remaining smart contracts have been implemented for this project:
 
 # Architecture
 
-## Overall Architecture
+## Overall architecture
 
 ![StableCoinOverallArchitecture](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/a9a99a7c-32f8-4356-8e86-61d3abb2aed5)
 
-## Detailed Architecture
+## Detailed architecture
 
 ![](./img/StableCoinArchitecture_2.jpg)
 
@@ -185,7 +185,7 @@ All tests will use the two above mentioned accounts.
 You can change which account is the *operator* and the *non-operator* account by changing the **clientId** value at: 
 scripts -> utils.ts -> const clientId
 
-### Pre-deployed Factory & hederaTokenManager contracts
+### Pre-deployed factory & hederaTokenManager contracts
 Tests use a factory and a HederaTokenManager contract to create the stable coins.
 - If you want to deploy a new factory and HederaTokenManager every time: scripts -> deploy.ts -> hederaTokenManagerAddress = "" / factoryProxyAddress = "" / factoryProxyAdminAddress = "" / factoryAddress = "" 
 - If you want to re-use a factory and hederaTokenManager : Set the Hedera ContractIds in scripts -> deploy.ts -> hederaTokenManagerAddress /factoryProxyAddress / factoryProxyAdminAddress / factoryAddress
@@ -229,7 +229,7 @@ In order to create stable coins, a Factory and a hederaTokenManager contracts mu
 
 > A factory and hederaTokenManager contracts will be provided for everybody to use in the testnet network. The address of the factory proxy is configured both in the CLI configuration file and in the web environment file. On the contrary, hederaTokenManager implementations depends on the factory, so the factory smart contract has functions to manage hederaTokenmanager smart contracts versions.
 
-## Deploy Factory
+## Deploy factory
 If you want to deploy your own Factory contracts do the following steps:
    1. Deploy the Factory **Logic** smart contract (*StableCoinFactory.sol*).
    2. Deploy the Factory **Proxy Admin** smart contract.
@@ -238,16 +238,16 @@ If you want to deploy your own Factory contracts do the following steps:
 You may also clone this repository, install the dependencies (see [Build](#Build)) and run `npx hardhat deployFactory` in order to deploy all factories (hederaTokenManager and stableCoinFactory) and its proxies onto the testnet network. Once completed, an output with the new addresses is provided:
 
 `````
-Proxy Address:           0.0.7110 
-Proxy Admin Address:     0.0.7108 
-Factory Address:         0.0.7106 
-hederaTokenManager Address:     0.0.7102
+Proxy address:           0.0.7110 
+Proxy admin address:     0.0.7108 
+Factory address:         0.0.7106 
+hederaTokenManager address:     0.0.7102
 `````
 
 > The account used to deploy will be determined by the values in the `.env` file, that must contain the `HEDERA_OPERATOR_` entries for the account id, public / private key and evm address. See the `.env.sample` file to see all the attributes. See [Test accounts](#Test-accounts) to learn more.
 
 
-## Create Stable Coins
+## Create stable coins
 Once the factory has been deployed (or if you are using the common factory), creating stable coins is very simple, just invoke one single method of the Factory's Logic (through the Factory's Proxy): `deployStableCoin(...)`
 > it can be easily done from the CLI and/or UI of the project, for more information on that check their respective README.md
 
@@ -267,12 +267,12 @@ It is also important to note that, in order to avoid future overlapping of state
 
 The factory's and the stable coins's logic can be upgraded at any time using the account that was used to either deploy it the first time (for the factory) or create it (for the stable coins).
 
-## Upgrade Factory
+## Upgrade factory
 
 -   Deploy the new factory logic contract.
 -   Invoke the `upgradeAndCall` method of the factory proxy admin passing the previously deployed factory logic contract's address and any data required to initialize it. If you do not need to pass any initialization data, you can simply invoke the `upgrade` method passing the previously deployed factory logic contract's address. **=> USE THE FACTORY PROXY'S ADMIN OWNER ACCOUNT TO PERFORM THIS TASK. BY DEFAULT THAT ACCOUNT WILL BE THE ONE ORIGINALLY USED TO DEPLOY THE FACTORY.**
 
-## Upgrade Stable Coins
+## Upgrade stable coins
 
 > These steps must be performed individually for every single stable coin you wish to upgrade. It is not possible to upgrade all stable coins at once since they are completely independent of each other:
 
@@ -284,7 +284,7 @@ The factory's and the stable coins's logic can be upgraded at any time using the
 The _Transparent Proxy admin_ also allows to change the owner who can manage the proxy, like upgrading it, as explained above.
 Initially, the account deploying the factory contract and the account deploying the stable coin are the owners of the respective proxy admin contracts, but these accounts, as owners, can change the ownership of the proxy admin.
 
-# Generate Documentation
+# Generate documentation
 
 Documentation files of all contracts, in Markdown format, can be generated using the following command:
 
@@ -319,7 +319,7 @@ npx hardhat deployTokenManager
 ```
 
 
-# Other Scripts
+# Other scripts
 
 In addition to the compilation, build, test and documentation scripts we have already covered, there are other scripts configured in `package.json` file:
 
@@ -370,7 +370,7 @@ Contributions are welcome. Please see the
 [contributing guide](https://github.com/hashgraph/.github/blob/main/CONTRIBUTING.md)
 to see how you can get involved.
 
-# Code of Conduct
+# Code of conduct
 This project is governed by the
 [Contributor Covenant Code of Conduct](https://github.com/hashgraph/.github/blob/main/CODE_OF_CONDUCT.md). By
 participating, you are expected to uphold this code of conduct. Please report unacceptable behavior

@@ -1,6 +1,6 @@
 {
 	"name": "@hashgraph-dev/stablecoin-npm-sdk",
-	"version": "1.4.1",
+	"version": "1.7.2",
 	"description": "",
 	"main": "./build/cjs/src/index.js",
 	"module": "./build/esm/src/index.js",
@@ -89,7 +89,7 @@
 		"web3": "^1.8.1",
 		"winston": "^3.8.2",
 		"winston-daily-rotate-file": "^4.7.1",
-		"@hashgraph-dev/stablecoin-npm-contracts": "file:../contracts"
+		"@hashgraph-dev/stablecoin-npm-contracts": "./../contracts"
 	},
 	"volta": {
 		"node": "16.13.0"
