@@ -25,7 +25,7 @@ import {
 import {KYC} from './extensions/KYC.sol';
 import {RoleManagement} from './extensions/RoleManagement.sol';
 import {KeysLib} from './library/KeysLib.sol';
-
+import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 contract HederaTokenManager is
     IHederaTokenManager,
     CashIn,
@@ -256,7 +256,7 @@ contract HederaTokenManager is
         internal
         override(TokenOwner)
         valueIsNotGreaterThan(
-            uint256(uint64(amount)),
+            uint256(SafeCast.toUint256(amount)),
             _balanceOf(address(this)),
             true
         )

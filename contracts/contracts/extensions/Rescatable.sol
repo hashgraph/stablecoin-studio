@@ -8,6 +8,7 @@ import {IHederaTokenService} from '../hts-precompile/IHederaTokenService.sol';
 import {
     ReentrancyGuard
 } from '@openzeppelin/contracts/security/ReentrancyGuard.sol';
+import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 
 abstract contract Rescatable is
     ReentrancyGuard,
@@ -30,7 +31,7 @@ abstract contract Rescatable is
         onlyRole(_getRoleId(RoleName.RESCUE))
         amountIsNotNegative(amount, false)
         valueIsNotGreaterThan(
-            uint256(uint64(amount)),
+            SafeCast.toUint256(amount),
             _balanceOf(address(this)),
             true
         )

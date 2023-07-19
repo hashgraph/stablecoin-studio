@@ -20,6 +20,7 @@ import {
     Initializable
 } from '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import {KeysLib} from './library/KeysLib.sol';
+import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 
 contract StableCoinFactory is
     IStableCoinFactory,
@@ -365,12 +366,10 @@ contract StableCoinFactory is
         int32 tokenDecimals,
         int64 tokenInitialSupply
     ) private pure {
-        if (reserveInitialAmount < 0)
-            revert LessThan(uint256(reserveInitialAmount), 0);
-
-        uint256 initialReserve = uint256(reserveInitialAmount);
-        uint32 _tokenDecimals = uint32(tokenDecimals);
-        uint256 _tokenInitialSupply = uint256(uint64(tokenInitialSupply));
+        
+        uint256 initialReserve = SafeCast.toUint256(reserveInitialAmount);
+        uint32 _tokenDecimals = SafeCast.toUint32(SafeCast.toUint256(tokenDecimals));
+        uint256 _tokenInitialSupply = SafeCast.toUint256(tokenInitialSupply);
 
         if (_tokenDecimals > reserveDecimals) {
             initialReserve =
