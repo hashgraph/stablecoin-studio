@@ -54,12 +54,10 @@ interface IHederaTokenManager {
      *
      * @param token Token address
      * @param updateTokenStruct Struct containing updated token data
-     * @param newTreasury Token treasury account
      */
     event TokenUpdated(
         address indexed token,
-        UpdateTokenStruct updateTokenStruct,
-        address newTreasury
+        UpdateTokenStruct updateTokenStruct
     );
 
     /**
@@ -69,6 +67,18 @@ interface IHederaTokenManager {
      *
      */
     error RefundingError(uint256 amount);
+
+    /**
+     * @dev Emitted when updating the token admin key
+     *
+     */
+    error AdminKeyUpdateError();
+
+    /**
+     * @dev Emitted when updating the token supply key
+     *
+     */
+    error SupplyKeyUpdateError();
 
     /**
      * @dev Returns the name of the token

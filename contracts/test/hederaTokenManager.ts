@@ -11,6 +11,7 @@ import {
     getNonOperatorAccount,
     getNonOperatorE25519,
     tokenKeystoKey,
+    allTokenKeystoKey,
     tokenKeystoContract,
 } from '../scripts/deploy'
 import {
@@ -192,6 +193,25 @@ describe('HederaTokenManager Tests', function () {
             7776000,
             operatorClient
         )
+    })
+
+    it('Admin and supply token keys cannot be updated', async function () {
+        const keysToKey = allTokenKeystoKey(
+            operatorPubKey,
+            operatorIsE25519,
+            false
+        )
+        await expect(
+            updateToken(
+                proxyAddress,
+                'newName',
+                'newSymbol',
+                keysToKey,
+                oneYearLaterInSeconds(),
+                7890000,
+                operatorClient
+            )
+        ).to.eventually.be.rejectedWith(Error)
     })
 
     it('deploy SC with roles associated to another account', async function () {

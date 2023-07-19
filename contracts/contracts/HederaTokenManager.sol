@@ -38,6 +38,7 @@ contract HederaTokenManager is
     KYC,
     RoleManagement
 {
+    uint256 private constant _ADMIN_KEY_BIT = 0;
     uint256 private constant _SUPPLY_KEY_BIT = 4;
 
     /**
@@ -145,12 +146,6 @@ contract HederaTokenManager is
         override(IHederaTokenManager)
         onlyRole(_getRoleId(RoleName.ADMIN))
     {
-        address currentTokenAddress = _getTokenAddress();
-
-        address newTreasury;
-
-        IHederaTokenService.HederaToken memory hederaToken;
-
         // Token Keys
         IHederaTokenService.TokenKey[]
             memory hederaKeys = new IHederaTokenService.TokenKey[](
@@ -158,20 +153,40 @@ contract HederaTokenManager is
             );
 
         for (uint256 i = 0; i < updatedToken.keys.length; i++) {
+            uint256 keyType = updatedToken.keys[i].keyType;
+            // we avoid the admin key to be updated
+            if (
+                KeysLib.containsKey(
+                    _ADMIN_KEY_BIT,
+                    updatedToken.keys[i].keyType
+                ) && updatedToken.keys[i].publicKey.length != 0
+            ) {
+                revert AdminKeyUpdateError();
+            }
+
+            // we avoid the supply key to be updated
+            if (
+                KeysLib.containsKey(
+                    _SUPPLY_KEY_BIT,
+                    updatedToken.keys[i].keyType
+                ) && updatedToken.keys[i].publicKey.length != 0
+            ) {
+                revert SupplyKeyUpdateError();
+            }
+
             hederaKeys[i] = IHederaTokenService.TokenKey({
-                keyType: updatedToken.keys[i].keyType,
+                keyType: keyType,
                 key: KeysLib.generateKey(
                     updatedToken.keys[i].publicKey,
                     address(this),
                     updatedToken.keys[i].isED25519
                 )
             });
-            if (KeysLib.containsKey(_SUPPLY_KEY_BIT, hederaKeys[i].keyType))
-                newTreasury = hederaKeys[i].key.delegatableContractId ==
-                    address(this)
-                    ? address(this)
-                    : msg.sender;
         }
+
+        IHederaTokenService.HederaToken memory hederaToken;
+
+        address currentTokenAddress = _getTokenAddress();
 
         hederaToken = _updateHederaTokenInfo(
             updatedToken,
@@ -179,14 +194,12 @@ contract HederaTokenManager is
             currentTokenAddress
         );
 
-        if (newTreasury != address(0)) hederaToken.treasury = newTreasury;
-
         int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
             .updateTokenInfo(currentTokenAddress, hederaToken);
 
         _checkResponse(responseCode);
 
-        emit TokenUpdated(currentTokenAddress, updatedToken, newTreasury);
+        emit TokenUpdated(currentTokenAddress, updatedToken);
     }
 
     /**

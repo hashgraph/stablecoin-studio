@@ -36,10 +36,10 @@ import {
     associateToken,
 } from './utils'
 
-const hederaTokenManagerAddress = '0.0.13705245'
-export const factoryProxyAddress = '0.0.13705256'
-const factoryProxyAdminAddress = '0.0.13705254'
-const factoryAddress = '0.0.13705249'
+const hederaTokenManagerAddress = '0.0.15442351'
+export const factoryProxyAddress = '0.0.15442358'
+const factoryProxyAdminAddress = '0.0.15442356'
+const factoryAddress = '0.0.15442354'
 
 export function initializeClients(): [
     Client,
@@ -531,6 +531,33 @@ export function tokenKeystoKey(
     })
     const keys = [
         fixKeys(),
+        {
+            keyType: keyType,
+            publicKey: PK,
+            isED25519: isED25519,
+        },
+    ]
+
+    return keys
+}
+
+export function allTokenKeystoKey(
+    publicKey: string,
+    isED25519: boolean,
+    addKyc = true
+) {
+    const PK = PublicKey.fromString(publicKey).toBytesRaw()
+    const keyType = generateKeyType({
+        adminKey: true,
+        kycKey: addKyc,
+        freezeKey: true,
+        wipeKey: true,
+        supplyKey: true,
+        feeScheduleKey: false,
+        pauseKey: true,
+        ignored: false,
+    })
+    const keys = [
         {
             keyType: keyType,
             publicKey: PK,
