@@ -25,18 +25,6 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
     }
 
     /**
-     * @dev Checks if the current reserve is enough for a certain amount of tokens
-     *      comparing with the amount
-     *
-     * @param amount The amount to check
-     */
-    modifier checkReserveDecrease(uint256 amount) {
-        if (!_checkReserveAmount(amount, true))
-            revert AmountBiggerThanReserve(amount);
-        _;
-    }
-
-    /**
      * @dev Gets the current reserve amount
      *
      */
