@@ -139,6 +139,8 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
         addressIsNotZero(supplier)
         valueIsNotLessThan(amount, 0, false)
     {
+        if (_unlimitedSupplierAllowances[supplier])
+            revert AccountHasUnlimitedSupplierAllowance(supplier);
         uint256 oldAllowance = _supplierAllowances[supplier];
         uint256 newAllowance = oldAllowance + amount;
         _supplierAllowances[supplier] = newAllowance;
@@ -171,6 +173,8 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
         addressIsNotZero(supplier)
         valueIsNotLessThan(amount, 0, false)
     {
+        if (_unlimitedSupplierAllowances[supplier])
+            revert AccountHasUnlimitedSupplierAllowance(supplier);
         _decreaseSupplierAllowance(supplier, amount);
     }
 
