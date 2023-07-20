@@ -5,7 +5,7 @@ import {TokenOwner} from './TokenOwner.sol';
 import {Roles} from './Roles.sol';
 import {IWipeable} from './Interfaces/IWipeable.sol';
 import {IHederaTokenService} from '../hts-precompile/IHederaTokenService.sol';
-import "@openzeppelin/contracts/utils/math/SafeCast.sol";
+import '@openzeppelin/contracts/utils/math/SafeCast.sol';
 
 abstract contract Wipeable is IWipeable, TokenOwner, Roles {
     /**

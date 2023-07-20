@@ -20,7 +20,10 @@ import {
     Initializable
 } from '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import {KeysLib} from './library/KeysLib.sol';
-import "@openzeppelin/contracts/utils/math/SafeCast.sol";
+import '@openzeppelin/contracts/utils/math/SafeCast.sol';
+import {
+    AggregatorV3Interface
+} from '@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol';
 
 contract StableCoinFactory is
     IStableCoinFactory,
@@ -129,12 +132,12 @@ contract StableCoinFactory is
             );
             reserveAddress = reserveProxy;
         } else if (reserveAddress != address(0)) {
-            (, int256 reserveInitialAmount, , , ) = HederaReserve(
+            (, int256 reserveInitialAmount, , , ) = AggregatorV3Interface(
                 reserveAddress
             ).latestRoundData();
 
             _validationReserveInitialAmount(
-                HederaReserve(reserveAddress).decimals(),
+                AggregatorV3Interface(reserveAddress).decimals(),
                 reserveInitialAmount,
                 requestedToken.tokenDecimals,
                 requestedToken.tokenInitialSupply
@@ -366,9 +369,10 @@ contract StableCoinFactory is
         int32 tokenDecimals,
         int64 tokenInitialSupply
     ) private pure {
-        
         uint256 initialReserve = SafeCast.toUint256(reserveInitialAmount);
-        uint32 _tokenDecimals = SafeCast.toUint32(SafeCast.toUint256(tokenDecimals));
+        uint32 _tokenDecimals = SafeCast.toUint32(
+            SafeCast.toUint256(tokenDecimals)
+        );
         uint256 _tokenInitialSupply = SafeCast.toUint256(tokenInitialSupply);
 
         if (_tokenDecimals > reserveDecimals) {

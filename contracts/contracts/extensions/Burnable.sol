@@ -5,7 +5,7 @@ import {TokenOwner} from './TokenOwner.sol';
 import {Roles} from './Roles.sol';
 import {IHederaTokenService} from '../hts-precompile/IHederaTokenService.sol';
 import {IBurnable} from './Interfaces/IBurnable.sol';
-import "@openzeppelin/contracts/utils/math/SafeCast.sol";
+import '@openzeppelin/contracts/utils/math/SafeCast.sol';
 
 abstract contract Burnable is IBurnable, TokenOwner, Roles {
     /**
