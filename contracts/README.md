@@ -47,7 +47,7 @@ The remaining smart contracts have been implemented for this project:
    - `KYC.sol`: abstract contract implementing the *grantKyc* and *revokeKyc* operations to grant or revoke KYC flag to a Hedera account for the stable coin.
    - `Pausable.sol`: abstract contract implementing the *pause* and *unpause* operations (if a token is paused, nobody will be able to operate with it until the token is unpaused).  
    - `Rescatable.sol`: abstract contract implementing the *rescue* and *rescueHBAR* operation (transfers tokens and HBAR, respectively, from the treasury account being the stable coin's smart contract to another account).
-   - `Reserve.sol`: abstract contract implementing the reserve for the stable coin (checking against the current reserve before minting, changing the reserve data feed, etc...).
+   - `Reserve.sol`: abstract contract implementing the reserve for the stable coin (checking against the current reserve before minting, changing the reserve data feed, etc...). The Reserve contract allows the option to update the reserve address to 0.0.0 (zero address) to disable the actual address.
    - `RoleManagement.sol`: abstract contract implementing the *grantRoles* and *revokeRoles* operations (granting and revoking multiple roles to/from multiple accounts in one single transaction).
    - `Roles.sol`: contains the definition of the roles that can be assigned for every stable coin.
    - `Supplieradmin.sol`: abstract contract implementing all the *cash-in* role assignment and management (assigning/removing the role as well as setting, increasing and decreasing the cash-in limit).

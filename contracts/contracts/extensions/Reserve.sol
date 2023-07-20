@@ -52,7 +52,7 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
     /**
      * @dev Updates de reserve address
      *
-     * @param newAddress The new reserve address
+     * @param newAddress The new reserve address. Can be set to 0.0.0 (zero address) to disable the reserve.
      */
     function updateReserveAddress(
         address newAddress
