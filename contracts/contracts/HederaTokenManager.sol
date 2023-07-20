@@ -154,7 +154,6 @@ contract HederaTokenManager is
             );
 
         for (uint256 i = 0; i < updatedToken.keys.length; i++) {
-            uint256 keyType = updatedToken.keys[i].keyType;
             // we avoid the admin key to be updated
             if (
                 KeysLib.containsKey(
@@ -176,7 +175,7 @@ contract HederaTokenManager is
             }
 
             hederaKeys[i] = IHederaTokenService.TokenKey({
-                keyType: keyType,
+                keyType: updatedToken.keys[i].keyType,
                 key: KeysLib.generateKey(
                     updatedToken.keys[i].publicKey,
                     address(this),
