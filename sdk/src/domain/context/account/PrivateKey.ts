@@ -61,13 +61,13 @@ export default class PrivateKey implements KeyProps {
 	}
 
 	public toHashgraphKey(): HPrivateKey {
-		try {
+		//try {
 			return this.type === KeyType.ED25519
 				? HPrivateKey.fromStringED25519(this.key)
 				: HPrivateKey.fromStringECDSA(this.key);
-		} catch (error) {
-			console.log(error);
-			throw new PrivateKeyNotValid(this.key);
-		}
+		//} catch (error) {
+		//	console.log(error);
+		//	throw new PrivateKeyNotValid(this.key);
+		//}
 	}
 }
