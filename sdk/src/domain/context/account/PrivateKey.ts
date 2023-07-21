@@ -66,6 +66,7 @@ export default class PrivateKey implements KeyProps {
 				? HPrivateKey.fromStringED25519(this.key)
 				: HPrivateKey.fromStringECDSA(this.key);
 		} catch (error) {
+			console.log(error);
 			throw new PrivateKeyNotValid(this.key);
 		}
 	}
