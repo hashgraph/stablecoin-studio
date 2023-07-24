@@ -20,7 +20,6 @@ import {
 import Web3 from 'web3'
 import axios from 'axios'
 import { ADDRESS_0 } from './constants'
-import TokenTransfer from '@hashgraph/sdk/lib/token/TokenTransfer.js'
 import { BigNumber } from 'ethers'
 
 const web3 = new Web3()
@@ -232,8 +231,6 @@ export async function deployContractSDK(
     constructorParameters?: any,
     adminKey?: PrivateKey
 ): Promise<ContractId> {
-    const Key = adminKey ? adminKey : PrivateKey.fromStringED25519(privateKey)
-
     const transaction = new ContractCreateFlow()
         .setBytecode(factory.bytecode)
         .setGas(250_000)

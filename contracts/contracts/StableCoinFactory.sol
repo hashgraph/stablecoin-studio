@@ -20,7 +20,7 @@ import {
     Initializable
 } from '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import {KeysLib} from './library/KeysLib.sol';
-import '@openzeppelin/contracts/utils/math/SafeCast.sol';
+import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
 import {
     AggregatorV3Interface
 } from '@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol';

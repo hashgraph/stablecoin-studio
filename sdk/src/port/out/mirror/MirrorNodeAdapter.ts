@@ -50,6 +50,7 @@ import {
 	RequestFractionalFee,
 } from '../../in/request/BaseRequest.js';
 import { MirrorNode } from '../../../domain/context/network/MirrorNode.js';
+import ContractViewModel from '../../out/mirror/response/ContractViewModel.js';
 
 @singleton()
 export class MirrorNodeAdapter {
@@ -132,7 +133,6 @@ export class MirrorNodeAdapter {
 	): Promise<StableCoinViewModel> {
 		try {
 			const response = await this.getTokenInfo(tokenId);
-
 			const getKeyOrDefault = (
 				val?: IPublicKey,
 			): ContractId | PublicKey | undefined => {
@@ -148,7 +148,6 @@ export class MirrorNodeAdapter {
 					return undefined;
 				}
 			};
-
 			const getCustomFeesOrDefault = async (
 				val?: ICustomFees,
 			): Promise<RequestCustomFee[] | undefined> => {
@@ -225,7 +224,6 @@ export class MirrorNodeAdapter {
 
 				return customFees;
 			};
-
 			if (response.status !== 200) {
 				throw new StableCoinNotFound(tokenId.toString());
 			}
@@ -335,6 +333,37 @@ export class MirrorNodeAdapter {
 			return Promise.reject<AccountViewModel>(new InvalidResponse(error));
 		}
 	}
+
+	public async getContractInfo(
+		contractEvmAddress: string,
+	): Promise<ContractViewModel> {
+		try {
+			const url = `${this.mirrorNodeConfig.baseUrl}contracts/${contractEvmAddress}`;
+
+			LogService.logTrace(url);
+
+			const retry = 10;
+			let i = 0;
+
+			let response;
+			do {
+				if (i > 0)
+					await new Promise((resolve) => setTimeout(resolve, 2000));
+
+				response = await this.instance.get<IContract>(url);
+				i++;	
+			} while (response.status !== 200 && i < retry);
+
+			const contract: ContractViewModel = {
+				id: response.data.contract_id
+			};
+
+			return contract;
+		} catch (error) {
+			LogService.logError(error);
+			return Promise.reject<ContractViewModel>(new InvalidResponse(error));
+		}
+	}	
 
 	public async getAccountToken(
 		targetId: HederaId,
@@ -584,6 +613,10 @@ interface IAccount {
 	key: IKey;
 	alias: string;
 	account: string;
+}
+
+interface IContract {
+	contract_id: string;
 }
 
 interface ITransactionResult {

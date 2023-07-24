@@ -25,7 +25,7 @@ import {
 import {KYC} from './extensions/KYC.sol';
 import {RoleManagement} from './extensions/RoleManagement.sol';
 import {KeysLib} from './library/KeysLib.sol';
-import '@openzeppelin/contracts/utils/math/SafeCast.sol';
+import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
 
 contract HederaTokenManager is
     IHederaTokenManager,

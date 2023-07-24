@@ -48,7 +48,6 @@ export class AssociateCommandHandler
 	): Promise<AssociateCommandResponse> {
 		const { targetId, tokenId } = command;
 		const handler = this.transactionService.getHandler();
-		const account = this.accountService.getCurrentAccount();
 
 		const tokenRelationship = (
 			await this.stableCoinService.queryBus.execute(

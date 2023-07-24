@@ -8,7 +8,7 @@ import {IHederaTokenService} from '../hts-precompile/IHederaTokenService.sol';
 import {
     ReentrancyGuard
 } from '@openzeppelin/contracts/security/ReentrancyGuard.sol';
-import '@openzeppelin/contracts/utils/math/SafeCast.sol';
+import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
 
 abstract contract Rescatable is
     ReentrancyGuard,

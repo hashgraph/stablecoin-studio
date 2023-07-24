@@ -17,7 +17,6 @@ import {
 
 import {
     BURN_ROLE,
-    CASHIN_ROLE,
     DELETE_ROLE,
     FREEZE_ROLE,
     KYC_ROLE,
@@ -425,9 +424,12 @@ export async function deployContractsWithSDK({
             clientSdk
         )
     }
-
+console.log(proxyContract[0]);
     console.log(
-        `Proxy created: ${proxyContract[0]} , ${ContractId.fromSolidityAddress(
+        /* `Proxy created: ${proxyContract[0]} , ${ContractId.fromSolidityAddress(
+            proxyContract[0]
+        ).toString()}` */
+        `Proxy created: ${proxyContract[0]} , ${ContractId.fromEvmAddress(0, 0,
             proxyContract[0]
         ).toString()}`
     )

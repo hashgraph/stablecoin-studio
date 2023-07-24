@@ -20,9 +20,7 @@ import {
     decimals,
     initialize,
     Mint,
-    Wipe,
     getTotalSupply,
-    getBalanceOf,
     getTokenAddress,
     upgradeTo,
     admin,
@@ -65,7 +63,6 @@ const expect = chai.expect
 let proxyAddress: ContractId
 let proxyAdminAddress: ContractId
 let stableCoinAddress: ContractId
-let reserveProxy: ContractId
 
 let operatorClient: Client
 let nonOperatorClient: Client

@@ -7,8 +7,6 @@ import {
     Initializable
 } from '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 
-import '@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol';
-
 abstract contract Roles is IRoles, Initializable {
     struct MemberData {
         bool active;
