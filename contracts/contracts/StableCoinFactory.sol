@@ -35,7 +35,7 @@ contract StableCoinFactory is
     string private constant _MEMO_1 = '{"p":"';
     string private constant _MEMO_2 = '","a":"';
     string private constant _MEMO_3 = '"}';
-    int64 private constant _DFAULT_AUTO_RENEW_PERIOD = 90 days;
+    int64 private constant _DEFAULT_AUTO_RENEW_PERIOD = 90 days;
 
     address private _admin;
     address[] private _hederaTokenManagerAddress;
@@ -321,7 +321,7 @@ contract StableCoinFactory is
         // Token Expiry
         IHederaTokenService.Expiry memory tokenExpiry;
         tokenExpiry.autoRenewAccount = stableCoinProxyAddress;
-        tokenExpiry.autoRenewPeriod = _DFAULT_AUTO_RENEW_PERIOD;
+        tokenExpiry.autoRenewPeriod = _DEFAULT_AUTO_RENEW_PERIOD;
 
         // Token Keys
         IHederaTokenService.TokenKey[]
