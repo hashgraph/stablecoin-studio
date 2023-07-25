@@ -25,7 +25,7 @@
 		"updateImplementation": {
 			"title": "Update proxy implementation",
 			"label": "Current implementation",
-			"inputPlaceholder": "Enter address",
+			"inputPlaceholder": "Enter your own HederaTokenManager implementation",
 			"buttonText": "Update implementation"
 		},
 		"notification": {
@@ -54,7 +54,7 @@
 		"updateImplementation": {
 			"title": "Update factory proxy implementation",
 			"label": "Current factory implementation",
-			"inputPlaceholder": "Enter address",
+			"inputPlaceholder": "Enter your own factory HederaTokenManager implementation",
 			"buttonText": "Update implementation"
 		},
 		"notification": {

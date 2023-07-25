@@ -110,11 +110,6 @@ const StableCoinSettings = () => {
 			});
 
 			const AllOptions: any[] = [];
-			AllOptions.push({
-				value: '',
-				label: 'Enter your own HederaTokenManager implementation',
-				isDisabled: true,
-			});
 
 			const options = hederaTokenManagerOption.map((item: any) => {
 				return { label: item.value, value: item.value };
