@@ -356,6 +356,7 @@ export class MirrorNodeAdapter {
 
 			const contract: ContractViewModel = {
 				id: response.data.contract_id,
+				evmAddress: response.data.evm_address,
 			};
 
 			return contract;
@@ -618,7 +619,22 @@ interface IAccount {
 }
 
 interface IContract {
+	admin_key: IKey;
+	nullable: boolean;
+	auto_renew_account: string;
+	auto_renew_period: string;
 	contract_id: string;
+	created_timestamp: string;
+	deleted: string;
+	evm_address: string;
+	expiration_timestamp: string;
+	file_id: string;
+	max_automatic_token_associations: string;
+	memo: string;
+	obtainer_id: string;
+	permanent_removal: string;
+	proxy_account_id: string;
+	timestamp: string;
 }
 
 interface ITransactionResult {
