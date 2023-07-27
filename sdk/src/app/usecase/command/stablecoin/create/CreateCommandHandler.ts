@@ -104,27 +104,35 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 			return Promise.resolve(
 				new CreateCommandResponse(
 					ContractId.fromHederaContractId(
-						HContractId.fromSolidityAddress(
-							res.response[0][3]
-						)
+						HContractId.fromString(
+							(
+								await this.mirrorNodeAdapter.getContractInfo(
+									res.response[0][3],
+								)
+							).id,
+						),
 					),
 					res.response[0][4] === EVM_ZERO_ADDRESS
 						? new ContractId('0.0.0')
 						: ContractId.fromHederaContractId(
-								HContractId.fromString((
-									await this.mirrorNodeAdapter.
-										getContractInfo(res.response[0][4])
-									).id
-								)
+								HContractId.fromString(
+									(
+										await this.mirrorNodeAdapter.getContractInfo(
+											res.response[0][4],
+										)
+									).id,
+								),
 						  ),
 					res.response[0][5] === EVM_ZERO_ADDRESS
 						? new ContractId('0.0.0')
 						: ContractId.fromHederaContractId(
-								HContractId.fromString((
-									await this.mirrorNodeAdapter.
-										getContractInfo(res.response[0][5])
-									).id
-								)								
+								HContractId.fromString(
+									(
+										await this.mirrorNodeAdapter.getContractInfo(
+											res.response[0][5],
+										)
+									).id,
+								),
 						  ),
 				),
 			);

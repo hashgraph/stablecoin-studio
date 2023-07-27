@@ -44,6 +44,7 @@ const expect = chai.expect
 let proxyAddress: ContractId
 
 let operatorClient: Client
+let nonOperatorClient: Client
 let operatorAccount: string
 let nonOperatorAccount: string
 let operatorPriKey: string

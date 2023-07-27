@@ -351,19 +351,21 @@ export class MirrorNodeAdapter {
 					await new Promise((resolve) => setTimeout(resolve, 2000));
 
 				response = await this.instance.get<IContract>(url);
-				i++;	
+				i++;
 			} while (response.status !== 200 && i < retry);
 
 			const contract: ContractViewModel = {
-				id: response.data.contract_id
+				id: response.data.contract_id,
 			};
 
 			return contract;
 		} catch (error) {
 			LogService.logError(error);
-			return Promise.reject<ContractViewModel>(new InvalidResponse(error));
+			return Promise.reject<ContractViewModel>(
+				new InvalidResponse(error),
+			);
 		}
-	}	
+	}
 
 	public async getAccountToken(
 		targetId: HederaId,

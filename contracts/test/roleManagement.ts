@@ -58,9 +58,11 @@ let proxyAddress: ContractId
 let operatorClient: Client
 let nonOperatorClient: Client
 let operatorAccount: string
+let nonOperatorAccount: string
 let operatorPriKey: string
 let operatorPubKey: string
 let operatorIsE25519: boolean
+let nonOperatorIsE25519: boolean
 
 const TokenName = 'MIDAS'
 const TokenSymbol = 'MD'
