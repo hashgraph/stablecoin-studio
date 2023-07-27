@@ -18,7 +18,7 @@
  *
  */
 
-import { ContractId as HContractId } from '@hashgraph/sdk';
+import { ContractId as HContractId, TokenId } from '@hashgraph/sdk';
 import { ICommandHandler } from '../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../core/decorator/LazyInjectDecorator.js';
@@ -104,13 +104,7 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 			return Promise.resolve(
 				new CreateCommandResponse(
 					ContractId.fromHederaContractId(
-						HContractId.fromString(
-							(
-								await this.mirrorNodeAdapter.getContractInfo(
-									res.response[0][3],
-								)
-							).id,
-						),
+						HContractId.fromSolidityAddress(res.response[0][3]),
 					),
 					res.response[0][4] === EVM_ZERO_ADDRESS
 						? new ContractId('0.0.0')

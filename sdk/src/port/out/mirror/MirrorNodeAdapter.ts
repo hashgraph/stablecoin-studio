@@ -228,11 +228,17 @@ export class MirrorNodeAdapter {
 				throw new StableCoinNotFound(tokenId.toString());
 			}
 			const decimals = parseInt(response.data.decimals ?? '0');
+
+			const transformedMemo: string = await this.transformTokenMemo(
+				response.data.memo,
+			);
 			const proxyAddress = response.data.memo
-				? StableCoinMemo.fromJson(response.data.memo).proxyContract
+				? StableCoinMemo.fromJson(JSON.stringify(transformedMemo))
+						.proxyContract
 				: '0.0.0';
 			const proxyAdminAddress = response.data.memo
-				? StableCoinMemo.fromJson(response.data.memo).proxyAdminContract
+				? StableCoinMemo.fromJson(JSON.stringify(transformedMemo))
+						.proxyAdminContract
 				: '0.0.0';
 			const stableCoinDetail: StableCoinViewModel = {
 				tokenId: HederaId.from(response.data.token_id),
@@ -298,6 +304,26 @@ export class MirrorNodeAdapter {
 				new InvalidResponse(error),
 			);
 		}
+	}
+
+	private async transformTokenMemo(memo: string): Promise<string> {
+		const transformedMemo = JSON.parse(memo);
+		transformedMemo.p = await this.getHederaIdfromContractAddress(
+			transformedMemo.p,
+		);
+		transformedMemo.a = await this.getHederaIdfromContractAddress(
+			transformedMemo.a,
+		);
+		return transformedMemo;
+	}
+
+	private async getHederaIdfromContractAddress(
+		contractAddress: string,
+	): Promise<string> {
+		if (!contractAddress) return '';
+		if (contractAddress.length >= 40)
+			return (await this.getContractInfo(contractAddress)).id;
+		return contractAddress;
 	}
 
 	public async getAccountInfo(
