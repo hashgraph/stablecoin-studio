@@ -201,8 +201,12 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				reserveAddress.toString() == '0.0.0'
 					? '0x0000000000000000000000000000000000000000'
 					: HContractId.fromString(
-							reserveAddress.value,
-					  ).toSolidityAddress(),
+							(
+								await this.mirrorNodeAdapter.getContractInfo(
+									reserveAddress.value,
+								)
+							).evmAddress,
+					  ).toString(),
 				reserveInitialAmount
 					? reserveInitialAmount.toFixedNumber()
 					: BigDecimal.ZERO.toFixedNumber(),
@@ -216,8 +220,12 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				stableCoinToCreate,
 				'0x' +
 					HContractId.fromString(
-						hederaTokenManager.value,
-					).toSolidityAddress(),
+						(
+							await this.mirrorNodeAdapter.getContractInfo(
+								hederaTokenManager.value,
+							)
+						).evmAddress,
+					),
 			];
 			return await this.contractCall(
 				factory.value,

@@ -529,7 +529,12 @@ export class MirrorNodeAdapter {
 
 			default:
 				return new EvmAddress(
-					'0x' + accountId.toHederaAddress().toSolidityAddress(),
+					'0x' +
+						(
+							await this.getContractInfo(
+								accountId.toHederaAddress().toString(),
+							)
+						).evmAddress,
 				);
 		}
 	}
