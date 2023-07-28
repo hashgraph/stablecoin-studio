@@ -18,8 +18,6 @@
  *
  */
 
-import { AccountId as HAccountId } from '@hashgraph/sdk';
-
 export class StableCoinMemo {
 	proxyContract: string;
 	proxyAdminContract: string;
