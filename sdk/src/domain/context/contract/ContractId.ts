@@ -75,8 +75,4 @@ export default class ContractId extends HederaId {
 	public toString(): string {
 		return this.value;
 	}
-
-	public toEvmAddress(): EvmAddress {
-		return EvmAddress.fromContractId(this);
-	}
 }

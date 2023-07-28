@@ -28,6 +28,7 @@ import RPCQueryAdapter from '../../../../../port/out/rpc/RPCQueryAdapter.js';
 import { lazyInject } from '../../../../../core/decorator/LazyInjectDecorator.js';
 import StableCoinService from '../../../../service/StableCoinService.js';
 import { MirrorNodeAdapter } from '../../../../../port/out/mirror/MirrorNodeAdapter.js';
+import EvmAddress from '../../../../../domain/context/contract/EvmAddress.js';
 
 @QueryHandler(ReserveDecimalsQuery)
 export class ReserveDecimalsQueryHandler
@@ -46,8 +47,11 @@ export class ReserveDecimalsQueryHandler
 		query: ReserveDecimalsQuery,
 	): Promise<ReserveDecimalsQueryResponse> {
 		const { address } = query;
+		const addressInfo = await this.mirrorNode.getContractInfo(
+			address.toString(),
+		);
 		const res = await this.queryAdapter.getReserveDecimals(
-			address.toEvmAddress(),
+			new EvmAddress(addressInfo.evmAddress),
 		);
 		return new ReserveDecimalsQueryResponse(res);
 	}

@@ -24,6 +24,8 @@ import { QueryHandler } from '../../../../../core/decorator/QueryHandlerDecorato
 import { IQueryHandler } from '../../../../../core/query/QueryHandler.js';
 import ContractId from '../../../../../domain/context/contract/ContractId.js';
 import RPCQueryAdapter from '../../../../../port/out/rpc/RPCQueryAdapter.js';
+import { MirrorNodeAdapter } from '../../../../../port/out/mirror/MirrorNodeAdapter.js';
+import EvmAddress from '../../../../../domain/context/contract/EvmAddress.js';
 import {
 	GetTokenManagerListQuery,
 	GetTokenManagerListQueryResponse,
@@ -36,14 +38,19 @@ export class GetTokenManagerListQueryHandler
 	constructor(
 		@lazyInject(RPCQueryAdapter)
 		public readonly queryAdapter: RPCQueryAdapter,
+		@lazyInject(MirrorNodeAdapter)
+		public readonly mirrorNode: MirrorNodeAdapter,
 	) {}
 
 	async execute(
 		command: GetTokenManagerListQuery,
 	): Promise<GetTokenManagerListQueryResponse> {
 		const { factoryId } = command;
+		const factoryIdInfo = await this.mirrorNode.getContractInfo(
+			factoryId.toString(),
+		);
 		const res = await this.queryAdapter.getTokenManagerList(
-			factoryId.toEvmAddress(),
+			new EvmAddress(factoryIdInfo.evmAddress),
 		);
 
 		const removeDeletedAddress = res.filter(
