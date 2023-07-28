@@ -46,11 +46,11 @@ export class GetTokenManagerListQueryHandler
 		command: GetTokenManagerListQuery,
 	): Promise<GetTokenManagerListQueryResponse> {
 		const { factoryId } = command;
-		const factoryIdInfo = await this.mirrorNode.getContractInfo(
+		const contractInfo = await this.mirrorNode.getContractInfo(
 			factoryId.toString(),
 		);
 		const res = await this.queryAdapter.getTokenManagerList(
-			new EvmAddress(factoryIdInfo.evmAddress),
+			new EvmAddress(contractInfo.evmAddress),
 		);
 
 		const removeDeletedAddress = res.filter(

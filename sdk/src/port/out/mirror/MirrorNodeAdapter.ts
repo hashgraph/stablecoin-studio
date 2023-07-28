@@ -241,8 +241,10 @@ export class MirrorNodeAdapter {
 						.proxyAdminContract
 				: '0.0.0';
 
-			const proxyAddressInfo = await this.getContractInfo(proxyAddress);
-			const proxyAdminAddressInfo = await this.getContractInfo(
+			const proxyAddressContractInfo = await this.getContractInfo(
+				proxyAddress,
+			);
+			const proxyAdminAddressContractInfo = await this.getContractInfo(
 				proxyAdminAddress,
 			);
 
@@ -271,9 +273,11 @@ export class MirrorNodeAdapter {
 					: undefined,
 				proxyAddress: new ContractId(proxyAddress),
 				proxyAdminAddress: new ContractId(proxyAdminAddress),
-				evmProxyAddress: new EvmAddress(proxyAddressInfo.evmAddress),
+				evmProxyAddress: new EvmAddress(
+					proxyAddressContractInfo.evmAddress,
+				),
 				evmProxyAdminAddress: new EvmAddress(
-					proxyAdminAddressInfo.evmAddress,
+					proxyAdminAddressContractInfo.evmAddress,
 				),
 				treasury: HederaId.from(response.data.treasury_account_id),
 				paused: response.data.pause_status === 'PAUSED',

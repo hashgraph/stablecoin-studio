@@ -47,11 +47,11 @@ export class ReserveDecimalsQueryHandler
 		query: ReserveDecimalsQuery,
 	): Promise<ReserveDecimalsQueryResponse> {
 		const { address } = query;
-		const addressInfo = await this.mirrorNode.getContractInfo(
+		const contractInfo = await this.mirrorNode.getContractInfo(
 			address.toString(),
 		);
 		const res = await this.queryAdapter.getReserveDecimals(
-			new EvmAddress(addressInfo.evmAddress),
+			new EvmAddress(contractInfo.evmAddress),
 		);
 		return new ReserveDecimalsQueryResponse(res);
 	}
