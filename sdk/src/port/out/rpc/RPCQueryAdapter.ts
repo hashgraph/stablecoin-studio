@@ -106,11 +106,19 @@ export default class RPCQueryAdapter {
 			HederaTokenManager,
 			address.toString(),
 		).getReserveAddress();
-		return ContractId.fromHederaContractId(
-			HContractId.fromString(
-				(await this.mirrorNode.getContractInfo(val)).id,
-			),
-		);
+
+		if (
+			val == undefined ||
+			val.toString() == '0x0000000000000000000000000000000000000000'
+		) {
+			return new ContractId('0.0.0');
+		} else {
+			return ContractId.fromHederaContractId(
+				HContractId.fromString(
+					(await this.mirrorNode.getContractInfo(val)).id.toString(),
+				),
+			);
+		}
 	}
 
 	async getReserveAmount(address: EvmAddress): Promise<BigNumber> {
