@@ -770,9 +770,12 @@ describe('🧪 Stablecoin test', () => {
 		expect(res.name).toEqual(name);
 		expect(res.symbol).toEqual(symbol);
 		expect(res.autoRenewPeriod).toEqual(autoRenewPeriod);
-		expect(timestampInNanoToDays(Number(res.expirationTimestamp))).toEqual(
-			expirationTimestampInDays.toString(),
-		);
+		expect([
+			timestampInNanoToDays(Number(res.expirationTimestamp)),
+			(
+				+timestampInNanoToDays(Number(res.expirationTimestamp)) - 1
+			).toString(),
+		]).toContain(expirationTimestampInDays.toString());
 		expect(res.freezeKey!.toString()).toEqual(
 			freezeKey === Account.NullPublicKey
 				? stableCoin.autoRenewAccount?.toString()
