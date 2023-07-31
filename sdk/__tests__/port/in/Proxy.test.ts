@@ -61,8 +61,6 @@ const rpcNode: JsonRpcRelay = {
 	baseUrl: 'https://testnet.hashio.io/api',
 };
 
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-
 describe('🧪 Proxy test', () => {
 	let stableCoinSC: StableCoinViewModel;
 
@@ -177,7 +175,7 @@ describe('🧪 Proxy test', () => {
 			}),
 		);
 
-		await sleep(5000);
+		await delay();
 
 		proxyConfig = await Proxy.getProxyConfig(
 			new GetProxyConfigRequest({
