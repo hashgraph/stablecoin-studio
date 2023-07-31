@@ -12,11 +12,12 @@ export default class ContractId extends HederaId {
 	public readonly value: string;
 
 	constructor(value: string) {
-		let contract: string = value;
+		// let contract: string = value;
 		if (value.length == 42 && value.startsWith('0x')) {
-			contract = ContractId.fromHederaEthereumAddress(value).toString();
+			// contract = ContractId.fromHederaEthereumAddress(value).toString();
+			throw new InvalidContractId(value);
 		}
-		super(contract);
+		super(value);
 	}
 
 	public static fromProtoBufKey(
@@ -43,11 +44,11 @@ export default class ContractId extends HederaId {
 	public static fromHederaContractId(con: HContractId | DelegateContractId) {
 		return new ContractId(String(con));
 	}
-	public static fromHederaEthereumAddress(evmAddress: string) {
+	/* public static fromHederaEthereumAddress(evmAddress: string) {
 		return new ContractId(
 			HContractId.fromSolidityAddress(evmAddress).toString(),
 		);
-	}
+	} */
 
 	public static validate(id: string): BaseError[] {
 		const err: BaseError[] = [];
@@ -55,11 +56,13 @@ export default class ContractId extends HederaId {
 			err.push(new InvalidContractId(id));
 		} else {
 			try {
-				if (id.length == 42 && id.startsWith('0x')) {
+				/* if (id.length == 42 && id.startsWith('0x')) {
 					HContractId.fromSolidityAddress(id);
 				} else {
 					HContractId.fromString(id);
-				}
+				} */
+				if (!(id.length == 42 && id.startsWith('0x')))
+					HContractId.fromString(id);
 			} catch (error) {
 				console.error(error);
 				err.push(new InvalidContractId(id));
