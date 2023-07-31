@@ -57,21 +57,16 @@ export class GetProxyConfigQueryHandler
 
 		if (!coin.proxyAdminAddress || !coin.evmProxyAdminAddress)
 			throw new Error('No proxy Admin Address found');
-		console.log('evmProxyAdminAddress: ' + coin.evmProxyAdminAddress);
-		console.log('evmProxyAddress: ' + coin.evmProxyAddress);
 		const proxyImpl = await this.queryAdapter.getProxyImplementation(
 			coin.evmProxyAdminAddress!,
 			coin.evmProxyAddress!,
 		);
-		console.log('1');
 		const proxyOwner = await this.queryAdapter.getProxyOwner(
 			coin.evmProxyAdminAddress!,
 		);
-		console.log('proxyOwner: ' + proxyOwner);
 		const proxyOwnerHederaId = await this.mirrorNode.getAccountInfo(
 			proxyOwner,
 		);
-		console.log('proxyOwnerHederaId: ' + proxyOwnerHederaId);
 
 		return Promise.resolve(
 			new GetProxyConfigQueryResponse({

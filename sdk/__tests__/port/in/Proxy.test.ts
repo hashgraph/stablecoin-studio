@@ -118,14 +118,12 @@ describe('🧪 Proxy test', () => {
 	}, 60_000);
 
 	it('Upgrade proxy implementation', async () => {
-		console.log('xxx tokenId: ' + stableCoinSC.tokenId);
 		let proxyConfig: ProxyConfigurationViewModel =
 			await Proxy.getProxyConfig(
 				new GetProxyConfigRequest({
 					tokenId: stableCoinSC?.tokenId!.toString(),
 				}),
 			);
-		console.log('xxx proxyConfig: ' + proxyConfig);
 		expect(proxyConfig.implementationAddress.toString()).toBe(
 			HEDERA_TOKEN_MANAGER_ADDRESS,
 		);
@@ -133,7 +131,6 @@ describe('🧪 Proxy test', () => {
 		const contracts: ContractId[] = await Factory.getHederaTokenManagerList(
 			new GetTokenManagerListRequest({ factoryId: FACTORY_ADDRESS }),
 		);
-		console.log('xxx contracts: ' + contracts);
 		await Proxy.upgradeImplementation(
 			new UpgradeImplementationRequest({
 				tokenId: stableCoinSC?.tokenId!.toString(),

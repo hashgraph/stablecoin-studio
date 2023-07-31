@@ -127,7 +127,6 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					? coin.cashInRoleAllowance.toFixedNumber()
 					: BigDecimal.ZERO.toFixedNumber(),
 			};
-
 			const providedKeys = [
 				coin.adminKey,
 				coin.kycKey,
@@ -215,18 +214,15 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				roles,
 				cashinRole,
 			);
-
 			const params = [
 				stableCoinToCreate,
-				'0x' +
-					HContractId.fromString(
-						(
-							await this.mirrorNodeAdapter.getContractInfo(
-								hederaTokenManager.value,
-							)
-						).evmAddress,
-					),
+				(
+					await this.mirrorNodeAdapter.getContractInfo(
+						hederaTokenManager.value,
+					)
+				).evmAddress,
 			];
+
 			return await this.contractCall(
 				factory.value,
 				'deployStableCoin',
