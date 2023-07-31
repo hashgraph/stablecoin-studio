@@ -248,6 +248,12 @@ export class MirrorNodeAdapter {
 				proxyAdminAddress,
 			);
 
+			const proxyId: string = (await this.getContractInfo(proxyAddress))
+				.id;
+			const proxyAdminId: string = (
+				await this.getContractInfo(proxyAdminAddress)
+			).id;
+
 			const stableCoinDetail: StableCoinViewModel = {
 				tokenId: HederaId.from(response.data.token_id),
 				name: response.data.name ?? '',
@@ -271,8 +277,8 @@ export class MirrorNodeAdapter {
 							decimals,
 					  )
 					: undefined,
-				proxyAddress: new ContractId(proxyAddress),
-				proxyAdminAddress: new ContractId(proxyAdminAddress),
+				proxyAddress: new ContractId(proxyId),
+				proxyAdminAddress: new ContractId(proxyAdminId),
 				evmProxyAddress: new EvmAddress(
 					proxyAddressContractInfo.evmAddress,
 				),

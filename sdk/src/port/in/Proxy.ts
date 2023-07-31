@@ -89,8 +89,6 @@ class ProxyInPort implements IProxyInPort {
 			await this.mirrorNode.getContractInfo(request.implementationAddress)
 		).id;
 
-		console.log('xxx: ' + request.implementationAddress + ' - ' + proxyId);
-
 		const res = await this.commandBus.execute(
 			new UpgradeImplementationCommand(
 				HederaId.from(request.tokenId),
