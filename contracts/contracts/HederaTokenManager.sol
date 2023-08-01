@@ -17,14 +17,11 @@ import {Rescatable} from './extensions/Rescatable.sol';
 import {Deletable} from './extensions/Deletable.sol';
 import {Reserve} from './extensions/Reserve.sol';
 
-import {
-    TokenOwner,
-    IHederaTokenService
-} from './extensions/TokenOwner.sol';
+import {TokenOwner, IHederaTokenService} from './extensions/TokenOwner.sol';
 import {KYC} from './extensions/KYC.sol';
 import {RoleManagement} from './extensions/RoleManagement.sol';
 import {KeysLib} from './library/KeysLib.sol';
-import '@openzeppelin/contracts/utils/math/SafeCast.sol';
+import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
 
 contract HederaTokenManager is
     IHederaTokenManager,

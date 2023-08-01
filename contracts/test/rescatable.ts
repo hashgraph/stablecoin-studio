@@ -25,7 +25,7 @@ import {
     delay,
 } from '../scripts/contractsMethods'
 import { RESCUE_ROLE } from '../scripts/constants'
-import { clientId, associateToken,getContractInfo } from '../scripts/utils'
+import { clientId, associateToken, getContractInfo } from '../scripts/utils'
 import { Client, ContractId } from '@hashgraph/sdk'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
@@ -233,7 +233,9 @@ describe('Rescue Tests', function () {
         const initialTokenOwnerBalance = await getBalanceOf(
             proxyAddress,
             operatorClient,
-            (await getContractInfo(proxyAddress.toString())).evm_address,
+            (
+                await getContractInfo(proxyAddress.toString())
+            ).evm_address,
             false,
             false
         )
@@ -251,7 +253,9 @@ describe('Rescue Tests', function () {
         const finalTokenOwnerBalance = await getBalanceOf(
             proxyAddress,
             operatorClient,
-            (await getContractInfo(proxyAddress.toString())).evm_address,
+            (
+                await getContractInfo(proxyAddress.toString())
+            ).evm_address,
             false,
             false
         )
@@ -279,7 +283,9 @@ describe('Rescue Tests', function () {
         const TokenOwnerBalance = await getBalanceOf(
             proxyAddress,
             operatorClient,
-            (await getContractInfo(proxyAddress.toString())).evm_address,
+            (
+                await getContractInfo(proxyAddress.toString())
+            ).evm_address,
             false,
             false
         )
@@ -304,7 +310,9 @@ describe('Rescue Tests', function () {
         const initialTokenOwnerBalance = await getBalanceOf(
             proxyAddress,
             operatorClient,
-            (await getContractInfo(proxyAddress.toString())).evm_address,
+            (
+                await getContractInfo(proxyAddress.toString())
+            ).evm_address,
             false,
             false
         )
@@ -338,7 +346,9 @@ describe('Rescue Tests', function () {
         const finalTokenOwnerBalance = await getBalanceOf(
             proxyAddress,
             operatorClient,
-            (await getContractInfo(proxyAddress.toString())).evm_address,
+            (
+                await getContractInfo(proxyAddress.toString())
+            ).evm_address,
             false,
             false
         )

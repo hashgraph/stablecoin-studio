@@ -15,24 +15,19 @@ import {
     StableCoinFactory__factory,
 } from '../typechain-types'
 
-import { contractCall, toEvmAddress,getContractInfo } from './utils'
+import { contractCall, toEvmAddress, getContractInfo } from './utils'
 import {
-    CREATE_SC_GAS,
     BALANCE_OF_GAS,
     BURN_GAS,
     CASHIN_GAS,
     DECREASE_SUPPLY_GAS,
     DELETE_GAS,
     FREEZE_GAS,
-    GET_RESERVE_ADDRESS_GAS,
-    GET_RESERVE_AMOUNT_GAS,
     GET_ROLES_GAS,
-    GET_SUPPLY_ALLOWANCE_GAS,
     GRANT_KYC_GAS,
     GRANT_ROLES_GAS,
     HAS_ROLE_GAS,
     INCREASE_SUPPLY_GAS,
-    IS_UNLIMITED_ALLOWANCE_GAS,
     PAUSE_GAS,
     RESCUE_GAS,
     RESCUE_HBAR_GAS,
@@ -41,13 +36,9 @@ import {
     REVOKE_ROLES_GAS,
     UNFREEZE_GAS,
     UNPAUSE_GAS,
-    UPDATE_RESERVE_ADDRESS_GAS,
-    UPDATE_RESERVE_AMOUNT_GAS,
     UPDATE_TOKEN_GAS,
     WIPE_GAS,
-    MAX_ROLES_GAS,
     CHANGE_PROXY_OWNER,
-    UPDATE_PROXY_IMPLEMENTATION,
     Gas2,
     Gas1,
     Gas3,
@@ -1111,7 +1102,9 @@ export async function updateDataFeed(
     proxyAddress: ContractId,
     operatorClient: Client
 ) {
-    const params: string[] = [(await getContractInfo(dataFeed.toString())).evm_address]
+    const params: string[] = [
+        (await getContractInfo(dataFeed.toString())).evm_address,
+    ]
     await contractCall(
         proxyAddress,
         'updateReserveAddress',

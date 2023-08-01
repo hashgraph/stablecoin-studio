@@ -16,7 +16,7 @@ import {
     updateDataFeed,
     getReserveAmount,
 } from '../scripts/contractsMethods'
-import { clientId , getContractInfo} from '../scripts/utils'
+import { clientId, getContractInfo } from '../scripts/utils'
 import { Client, ContractId } from '@hashgraph/sdk'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
@@ -112,7 +112,10 @@ describe('Reserve Tests', function () {
     it('Get datafeed', async () => {
         const datafeed = await getReserveAddress(proxyAddress, operatorClient)
         expect(datafeed.toUpperCase()).not.to.equals(
-            '0x' + (await getContractInfo(hederaReserveProxy.toString())).evm_address.toUpperCase()
+            '0x' +
+                (
+                    await getContractInfo(hederaReserveProxy.toString())
+                ).evm_address.toUpperCase()
         )
     })
 

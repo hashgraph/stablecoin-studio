@@ -33,6 +33,7 @@ import { RESERVE_DECIMALS } from '../../domain/context/reserve/Reserve.js';
 import { GetReserveAmountQuery } from '../../app/usecase/query/stablecoin/getReserveAmount/GetReserveAmountQuery.js';
 import { QueryBus } from '../../core/query/QueryBus.js';
 import { LogError } from '../../core/decorator/LogErrorDecorator.js';
+import { MirrorNodeAdapter } from '../../port/out/mirror/MirrorNodeAdapter.js';
 
 interface IReserveDataFeedInPort {
 	getReserveAmount(request: GetReserveAmountRequest): Promise<Balance>;
@@ -45,6 +46,9 @@ class ReserveDataFeedInPort implements IReserveDataFeedInPort {
 			CommandBus,
 		),
 		private readonly queryBus: QueryBus = Injectable.resolve(QueryBus),
+		private readonly mirrorNode: MirrorNodeAdapter = Injectable.resolve(
+			MirrorNodeAdapter,
+		),
 	) {}
 
 	@LogError
@@ -64,10 +68,13 @@ class ReserveDataFeedInPort implements IReserveDataFeedInPort {
 	): Promise<boolean> {
 		handleValidation('UpdateReserveAmountRequest', request);
 
+		const reserveId: string = (
+			await this.mirrorNode.getContractInfo(request.reserveAddress)
+		).id;
 		return (
 			await this.commandBus.execute(
 				new UpdateReserveAmountCommand(
-					new ContractId(request.reserveAddress),
+					new ContractId(reserveId),
 					BigDecimal.fromString(
 						request.reserveAmount,
 						RESERVE_DECIMALS,

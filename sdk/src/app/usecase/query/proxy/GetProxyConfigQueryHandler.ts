@@ -25,6 +25,7 @@ import { IQueryHandler } from '../../../../core/query/QueryHandler.js';
 import { HederaId } from '../../../../domain/context/shared/HederaId.js';
 import RPCQueryAdapter from '../../../../port/out/rpc/RPCQueryAdapter.js';
 import StableCoinService from '../../../service/StableCoinService.js';
+import { ContractId as HContractId } from '@hashgraph/sdk';
 import {
 	GetProxyConfigQuery,
 	GetProxyConfigQueryResponse,
@@ -56,7 +57,6 @@ export class GetProxyConfigQueryHandler
 
 		if (!coin.proxyAdminAddress || !coin.evmProxyAdminAddress)
 			throw new Error('No proxy Admin Address found');
-
 		const proxyImpl = await this.queryAdapter.getProxyImplementation(
 			coin.evmProxyAdminAddress!,
 			coin.evmProxyAddress!,
@@ -64,15 +64,16 @@ export class GetProxyConfigQueryHandler
 		const proxyOwner = await this.queryAdapter.getProxyOwner(
 			coin.evmProxyAdminAddress!,
 		);
-
 		const proxyOwnerHederaId = await this.mirrorNode.getAccountInfo(
 			proxyOwner,
 		);
 
 		return Promise.resolve(
 			new GetProxyConfigQueryResponse({
-				implementationAddress: ContractId.fromHederaEthereumAddress(
-					proxyImpl ?? '0.0.0',
+				implementationAddress: ContractId.fromHederaContractId(
+					HContractId.fromString(
+						(await this.mirrorNode.getContractInfo(proxyImpl)).id,
+					),
 				),
 				owner: HederaId.from(proxyOwnerHederaId.id),
 			}),

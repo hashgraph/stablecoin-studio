@@ -5,7 +5,12 @@ import {
     deployHederaTokenManager,
     toHashgraphKey,
 } from './deploy'
-import { evmToHederaFormat, getClient, toEvmAddress,getContractInfo } from './utils'
+import {
+    evmToHederaFormat,
+    getClient,
+    toEvmAddress,
+    getContractInfo,
+} from './utils'
 import {
     addHederaTokenManagerVersion,
     editHederaTokenManagerVersion,
@@ -48,7 +53,9 @@ task('addNewVersionTokenManager', 'Add a new version TokenManager in factory')
             await addHederaTokenManagerVersion(
                 ContractId.fromString(proxyfactory),
                 client,
-                (await getContractInfo(tokenmanager)).evm_address
+                (
+                    await getContractInfo(tokenmanager)
+                ).evm_address
             )
 
             console.log('TokenManager successfully added to proxy.')
@@ -116,7 +123,9 @@ task('updateTokenManager', 'Update TokenManager in factory')
                 ContractId.fromString(proxyfactory),
                 client,
                 index,
-                (await getContractInfo(tokenmanager)).evm_address
+                (
+                    await getContractInfo(tokenmanager)
+                ).evm_address
             )
 
             console.log('TokenManager selected updated successfully')
@@ -177,7 +186,8 @@ task('deployFactory', 'Deploy new factory').setAction(
         )
         const initializeFactory = {
             admin: await toEvmAddress(client1account, client1isED25519),
-            tokenManager: (await getContractInfo(tokenManager.toString())).evm_address,
+            tokenManager: (await getContractInfo(tokenManager.toString()))
+                .evm_address,
         }
         const result = await deployFactory(
             initializeFactory,

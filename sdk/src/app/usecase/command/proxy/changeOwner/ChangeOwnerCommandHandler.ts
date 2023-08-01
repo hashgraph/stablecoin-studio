@@ -51,7 +51,6 @@ export class ChangeOwnerCommandHandler
 
 		if (!coin.proxyAdminAddress)
 			throw new Error('No proxy Owner Address found');
-
 		const res = await handler.changeOwner(coin.proxyAdminAddress, targetId);
 
 		return Promise.resolve(

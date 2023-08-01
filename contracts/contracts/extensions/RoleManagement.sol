@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
-import './Interfaces/IRoleManagement.sol';
-import './SupplierAdmin.sol';
+import {IRoleManagement} from './Interfaces/IRoleManagement.sol';
+import {SupplierAdmin} from './SupplierAdmin.sol';
 
 abstract contract RoleManagement is IRoleManagement, SupplierAdmin {
     /**

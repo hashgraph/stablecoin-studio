@@ -20,9 +20,7 @@ import {
     decimals,
     initialize,
     Mint,
-    Wipe,
     getTotalSupply,
-    getBalanceOf,
     getTokenAddress,
     upgradeTo,
     admin,
@@ -37,7 +35,12 @@ import {
     isUnlimitedSupplierAllowance,
     updateToken,
 } from '../scripts/contractsMethods'
-import { clientId, toEvmAddress, oneYearLaterInSeconds, getContractInfo } from '../scripts/utils'
+import {
+    clientId,
+    toEvmAddress,
+    oneYearLaterInSeconds,
+    getContractInfo,
+} from '../scripts/utils'
 import { Client, ContractId } from '@hashgraph/sdk'
 import {
     ProxyAdmin__factory,
@@ -499,21 +502,29 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
             abiProxyAdmin,
             proxyAdminAddress,
             operatorClient,
-            (await getContractInfo(proxyAddress.toString())).evm_address,
+            (
+                await getContractInfo(proxyAddress.toString())
+            ).evm_address
         )
         const admin = await getProxyAdmin(
             abiProxyAdmin,
             proxyAdminAddress,
             operatorClient,
-            (await getContractInfo(proxyAddress.toString())).evm_address,
+            (
+                await getContractInfo(proxyAddress.toString())
+            ).evm_address
         )
 
         // We check their values : success
         expect(implementation.toUpperCase()).to.equals(
-             (await getContractInfo(stableCoinAddress.toString())).evm_address.toUpperCase()
+            (
+                await getContractInfo(stableCoinAddress.toString())
+            ).evm_address.toUpperCase()
         )
         expect(admin.toUpperCase()).to.equals(
-             (await getContractInfo(proxyAdminAddress.toString())).evm_address.toUpperCase()
+            (
+                await getContractInfo(proxyAdminAddress.toString())
+            ).evm_address.toUpperCase()
         )
     })
 
@@ -557,7 +568,9 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
                 abiProxyAdmin,
                 proxyAddress,
                 operatorClient,
-                (await getContractInfo(newImplementationContract.toString())).evm_address,
+                (
+                    await getContractInfo(newImplementationContract.toString())
+                ).evm_address
             )
         ).to.eventually.be.rejectedWith(Error)
     })
@@ -598,8 +611,12 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
                 abiProxyAdmin,
                 proxyAdminAddress,
                 nonOperatorClient,
-                (await getContractInfo(newImplementationContract.toString())).evm_address,
-                (await getContractInfo(proxyAddress.toString())).evm_address
+                (
+                    await getContractInfo(newImplementationContract.toString())
+                ).evm_address,
+                (
+                    await getContractInfo(proxyAddress.toString())
+                ).evm_address
             )
         ).to.eventually.be.rejectedWith(Error)
     })
@@ -641,8 +658,12 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
             abiProxyAdmin,
             proxyAdminAddress,
             operatorClient,
-            (await getContractInfo(newImplementationContract.toString())).evm_address,
-            (await getContractInfo(proxyAddress.toString())).evm_address
+            (
+                await getContractInfo(newImplementationContract.toString())
+            ).evm_address,
+            (
+                await getContractInfo(proxyAddress.toString())
+            ).evm_address
         )
 
         // Check new implementation address
@@ -650,10 +671,14 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
             abiProxyAdmin,
             proxyAdminAddress,
             operatorClient,
-            (await getContractInfo(proxyAddress.toString())).evm_address
+            (
+                await getContractInfo(proxyAddress.toString())
+            ).evm_address
         )
         expect(implementation.toUpperCase()).to.equals(
-              (await getContractInfo(newImplementationContract.toString())).evm_address.toUpperCase(),
+            (
+                await getContractInfo(newImplementationContract.toString())
+            ).evm_address.toUpperCase()
         )
 
         // reset
@@ -661,8 +686,12 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
             abiProxyAdmin,
             proxyAdminAddress,
             operatorClient,
-            (await getContractInfo(stableCoinAddress.toString())).evm_address,
-            (await getContractInfo(proxyAddress.toString())).evm_address
+            (
+                await getContractInfo(stableCoinAddress.toString())
+            ).evm_address,
+            (
+                await getContractInfo(proxyAddress.toString())
+            ).evm_address
         )
     })
 
@@ -683,7 +712,9 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
                 abiProxyAdmin,
                 proxyAdminAddress,
                 operatorClient,
-                (await getContractInfo(proxyAddress.toString())).evm_address
+                (
+                    await getContractInfo(proxyAddress.toString())
+                ).evm_address
             )
         ).to.eventually.be.rejectedWith(Error)
 
@@ -710,7 +741,9 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
             ITransparentUpgradeableProxy__factory.abi,
             proxyAddress,
             nonOperatorClient,
-            (await getContractInfo(proxyAddress.toString())).evm_address
+            (
+                await getContractInfo(proxyAddress.toString())
+            ).evm_address
         )
     })
 

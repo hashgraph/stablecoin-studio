@@ -1,8 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
-import {IHederaTokenService} from "hedera-smart-contracts/contracts/hts-precompile/IHederaTokenService.sol";
-import {HederaResponseCodes} from "hedera-smart-contracts/contracts/hts-precompile/HederaResponseCodes.sol";
+import {
+    IHederaTokenService
+} from 'hedera-smart-contracts/contracts/hts-precompile/IHederaTokenService.sol';
+import {
+    HederaResponseCodes
+} from 'hedera-smart-contracts/contracts/hts-precompile/HederaResponseCodes.sol';
 import {
     HederaTokenManager,
     IHederaTokenManager
@@ -20,15 +24,12 @@ import {
     Initializable
 } from '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import {KeysLib} from './library/KeysLib.sol';
-import '@openzeppelin/contracts/utils/math/SafeCast.sol';
+import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
 import {
     AggregatorV3Interface
 } from '@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol';
 
-contract StableCoinFactory is
-    IStableCoinFactory,
-    Initializable
-{
+contract StableCoinFactory is IStableCoinFactory, Initializable {
     // Hedera HTS precompiled contract
     address private constant _PRECOMPILED_ADDRESS = address(0x167);
     string private constant _MEMO_1 = '{"p":"';

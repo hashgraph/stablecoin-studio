@@ -20,14 +20,13 @@ import {
 import Web3 from 'web3'
 import axios from 'axios'
 import { ADDRESS_0 } from './constants'
-import TokenTransfer from '@hashgraph/sdk/lib/token/TokenTransfer.js'
 import { BigNumber } from 'ethers'
 import { string } from 'hardhat/internal/core/params/argumentTypes.js'
 
 const web3 = new Web3()
 const SuccessStatus = 22
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 export const clientId = 1
 
@@ -235,8 +234,6 @@ export async function deployContractSDK(
     constructorParameters?: any,
     adminKey?: PrivateKey
 ): Promise<ContractId> {
-    const Key = adminKey ? adminKey : PrivateKey.fromStringED25519(privateKey)
-
     const transaction = new ContractCreateFlow()
         .setBytecode(factory.bytecode)
         .setGas(250_000)
@@ -244,7 +241,7 @@ export async function deployContractSDK(
     if (constructorParameters) {
         transaction.setConstructorParameters(constructorParameters)
     }
-   
+
     const contractCreateSign = await transaction.sign(
         PrivateKey.fromStringED25519(privateKey)
     )
@@ -252,15 +249,15 @@ export async function deployContractSDK(
     const txResponse = await contractCreateSign.execute(clientOperator)
     await sleep(2000)
     const receipt = await txResponse.getReceipt(clientOperator)
-    await sleep(2000)    
+    await sleep(2000)
     const contractId = receipt.contractId
     if (!contractId) {
         throw Error('Error deploying contractSDK')
     }
     console.log(
-        ` ${
-            factory.name
-        } - contractId ${contractId} -contractId ${(await getContractInfo(contractId.toString())).evm_address}   `
+        ` ${factory.name} - contractId ${contractId} -contractId ${
+            (await getContractInfo(contractId.toString())).evm_address
+        }   `
     )
     return contractId
 }
@@ -282,24 +279,21 @@ export async function toEvmAddress(
     }
 }
 
-export async function getContractInfo(
-    contractId: string,
-    
-): Promise<IContract> {
+export async function getContractInfo(contractId: string): Promise<IContract> {
     try {
         const URI_BASE = `${getHederaNetworkMirrorNodeURL()}/api/v1/`
         const url = URI_BASE + 'contracts/' + contractId
 
-		console.log(url);
-		const retry = 10;
-		let i = 0;
-		let res = null;
-		do {
+        console.log(url)
+        const retry = 10
+        let i = 0
+        let res = null
+        do {
             res = await axios.get<IContract>(url)
-			i++;	
-            await sleep(1000);
-		} while (res.status !== 200 && i < retry);
-        
+            i++
+            await sleep(1000)
+        } while (res.status !== 200 && i < retry)
+
         return res.data
     } catch (error) {
         throw new Error('Error retrieving the Evm Address : ' + error)
@@ -326,18 +320,18 @@ interface IContract {
     auto_renew_account: string
     auto_renew_period: string
     contract_id: string
-    created_timestamp:string
-    deleted:string
-    evm_address:string
+    created_timestamp: string
+    deleted: string
+    evm_address: string
     expiration_timestamp: string
     file_id: string
     max_automatic_token_associations: string
-    memo:string
-    obtainer_id:string
-    permanent_removal:string
-    proxy_account_id:string
-    timestamp:string
-    }
+    memo: string
+    obtainer_id: string
+    permanent_removal: string
+    proxy_account_id: string
+    timestamp: string
+}
 
 interface IKey {
     _type: string

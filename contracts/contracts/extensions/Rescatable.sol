@@ -4,11 +4,13 @@ pragma solidity 0.8.16;
 import {TokenOwner} from './TokenOwner.sol';
 import {Roles} from './Roles.sol';
 import {IRescatable} from './Interfaces/IRescatable.sol';
-import {IHederaTokenService} from "hedera-smart-contracts/contracts/hts-precompile/IHederaTokenService.sol";
+import {
+    IHederaTokenService
+} from 'hedera-smart-contracts/contracts/hts-precompile/IHederaTokenService.sol';
 import {
     ReentrancyGuard
 } from '@openzeppelin/contracts/security/ReentrancyGuard.sol';
-import '@openzeppelin/contracts/utils/math/SafeCast.sol';
+import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
 
 abstract contract Rescatable is
     ReentrancyGuard,

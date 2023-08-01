@@ -38,9 +38,9 @@ export default class EvmAddress {
 		return new EvmAddress(value.toHederaAddress().toSolidityAddress());
 	}
 
-	toContractId(): ContractId {
+	/* toContractId(): ContractId {
 		return ContractId.fromHederaEthereumAddress(this.value);
-	}
+	} */
 
 	toString(): string {
 		return this.value;

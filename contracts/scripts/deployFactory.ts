@@ -9,7 +9,7 @@ import {
     deployHederaTokenManager,
 } from './deploy'
 
-import { getClient, clientId, toEvmAddress ,getContractInfo} from './utils'
+import { getClient, clientId, toEvmAddress, getContractInfo } from './utils'
 
 export const deployFactory = async () => {
     const [
@@ -53,7 +53,8 @@ export const deployFactory = async () => {
     )
     const initializeFactory = {
         admin: await toEvmAddress(operatorAccount, operatorIsE25519),
-        tokenManager: (await getContractInfo(resulttokenManager.toString())).evm_address,
+        tokenManager: (await getContractInfo(resulttokenManager.toString()))
+            .evm_address,
     }
     const result = await dp(initializeFactory, clientSdk, operatorPriKey)
 

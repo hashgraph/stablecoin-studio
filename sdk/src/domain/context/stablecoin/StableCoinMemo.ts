@@ -18,23 +18,13 @@
  *
  */
 
-import { AccountId as HAccountId } from '@hashgraph/sdk';
-
 export class StableCoinMemo {
 	proxyContract: string;
 	proxyAdminContract: string;
 
 	constructor(proxyContract: string, proxyAdminContract: string) {
-		this.proxyContract = this.getHederaIdfromContractAddress(proxyContract);
-		this.proxyAdminContract =
-			this.getHederaIdfromContractAddress(proxyAdminContract);
-	}
-
-	getHederaIdfromContractAddress(contractAddress: string): string {
-		if (!contractAddress) return '';
-		if (contractAddress.length >= 40)
-			return HAccountId.fromSolidityAddress(contractAddress).toString();
-		return contractAddress;
+		this.proxyContract = proxyContract;
+		this.proxyAdminContract = proxyAdminContract;
 	}
 
 	public static fromJson(json: string): StableCoinMemo {

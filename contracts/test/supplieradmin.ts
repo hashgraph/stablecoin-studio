@@ -532,7 +532,9 @@ describe('Supplier Admin Tests - (Unlimited)', function () {
         const initialBalanceOf = await getBalanceOf(
             proxyAddress,
             operatorClient,
-            (await getContractInfo(proxyAddress.toString())).evm_address,
+            (
+                await getContractInfo(proxyAddress.toString())
+            ).evm_address,
             false,
             false
         )
@@ -542,7 +544,9 @@ describe('Supplier Admin Tests - (Unlimited)', function () {
             proxyAddress,
             AmountToMint,
             nonOperatorClient,
-            (await getContractInfo(proxyAddress.toString())).evm_address,
+            (
+                await getContractInfo(proxyAddress.toString())
+            ).evm_address,
             false,
             false
         )
@@ -555,7 +559,9 @@ describe('Supplier Admin Tests - (Unlimited)', function () {
         const finalBalanceOf = await getBalanceOf(
             proxyAddress,
             operatorClient,
-            (await getContractInfo(proxyAddress.toString())).evm_address,
+            (
+                await getContractInfo(proxyAddress.toString())
+            ).evm_address,
             false,
             false
         )

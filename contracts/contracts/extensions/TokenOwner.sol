@@ -2,8 +2,12 @@
 pragma solidity 0.8.16;
 
 import {ITokenOwner} from './Interfaces/ITokenOwner.sol';
-import {HederaResponseCodes} from "hedera-smart-contracts/contracts/hts-precompile/HederaResponseCodes.sol";
-import {IHederaTokenService} from "hedera-smart-contracts/contracts/hts-precompile/IHederaTokenService.sol";
+import {
+    HederaResponseCodes
+} from 'hedera-smart-contracts/contracts/hts-precompile/HederaResponseCodes.sol';
+import {
+    IHederaTokenService
+} from 'hedera-smart-contracts/contracts/hts-precompile/IHederaTokenService.sol';
 import {
     IERC20Upgradeable
 } from '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
@@ -14,10 +18,7 @@ import {
     IERC20MetadataUpgradeable
 } from '@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol';
 
-abstract contract TokenOwner is
-    ITokenOwner,
-    Initializable
-{
+abstract contract TokenOwner is ITokenOwner, Initializable {
     // Hedera HTS precompiled contract
     address internal constant _PRECOMPILED_ADDRESS = address(0x167);
     // HTS Token this contract owns

@@ -32,6 +32,7 @@ import ContractId from '../../domain/context/contract/ContractId.js';
 import { ChangeOwnerCommand } from '../../app/usecase/command/proxy/changeOwner/ChangeOwnerCommand.js';
 import ProxyConfigurationViewModel from '../out/rpc/response/ProxyConfigurationViewModel.js';
 import ChangeProxyOwnerRequest from './request/ChangeProxyOwnerRequest.js';
+import { MirrorNodeAdapter } from '../../port/out/mirror/MirrorNodeAdapter.js';
 
 export { ProxyConfigurationViewModel };
 
@@ -51,6 +52,9 @@ class ProxyInPort implements IProxyInPort {
 			CommandBus,
 		),
 		private readonly queryBus: QueryBus = Injectable.resolve(QueryBus),
+		private readonly mirrorNode: MirrorNodeAdapter = Injectable.resolve(
+			MirrorNodeAdapter,
+		),
 	) {}
 
 	@LogError
@@ -81,10 +85,14 @@ class ProxyInPort implements IProxyInPort {
 		request: UpgradeImplementationRequest,
 	): Promise<boolean> {
 		handleValidation('UpgradeImplementationRequest', request);
+		const proxyId: string = (
+			await this.mirrorNode.getContractInfo(request.implementationAddress)
+		).id;
+
 		const res = await this.commandBus.execute(
 			new UpgradeImplementationCommand(
 				HederaId.from(request.tokenId),
-				new ContractId(request.implementationAddress),
+				new ContractId(proxyId),
 			),
 		);
 		return res.payload;
