@@ -34,12 +34,15 @@ import {
     contractCall,
     toEvmAddress,
     associateToken,
+    getContractInfo
 } from './utils'
 
-const hederaTokenManagerAddress = '0.0.15442351'
-export const factoryProxyAddress = '0.0.15442358'
-const factoryProxyAdminAddress = '0.0.15442356'
-const factoryAddress = '0.0.15442354'
+
+
+const hederaTokenManagerAddress = '0.0.19401'
+export const factoryProxyAddress = '0.0.19509'
+const factoryProxyAdminAddress = '0.0.19482'
+const factoryAddress = '0.0.19459'
 
 export function initializeClients(): [
     Client,
@@ -190,7 +193,7 @@ export async function deployHederaTokenManager(
     )
 
     console.log(
-        `HederaTokenManager logic deployed ${hederaTokenManager.toSolidityAddress()}`
+        `HederaTokenManager logic deployed ${(await getContractInfo(hederaTokenManager.toString())).evm_address}`
     )
 
     return hederaTokenManager
@@ -210,7 +213,7 @@ export async function deployFactory(
         clientOperator
     )
 
-    console.log(`Contract Factory deployed ${factory.toSolidityAddress()}`)
+    console.log(`Contract Factory deployed ${(await getContractInfo(factory.toString())).evm_address}`)
 
     // Deploying Factory Proxy Admin
     console.log(`Deploying Contract Factory Proxy Admin. please wait...`)
@@ -222,15 +225,15 @@ export async function deployFactory(
     )
 
     console.log(
-        `Contract Factory Proxy Admin deployed ${factoryProxyAdmin.toSolidityAddress()}`
+        `Contract Factory Proxy Admin deployed ${(await getContractInfo(factoryProxyAdmin.toString())).evm_address}`
     )
 
     // Deploying Factory Proxy
     console.log(`Deploying Contract Factory Proxy. please wait...`)
 
     const params = new ContractFunctionParameters()
-        .addAddress(factory.toSolidityAddress())
-        .addAddress(factoryProxyAdmin.toSolidityAddress())
+        .addAddress((await getContractInfo(factory.toString())).evm_address)
+        .addAddress((await getContractInfo(factoryProxyAdmin.toString())).evm_address)
         .addBytes(new Uint8Array([]))
 
     const factoryProxy = await deployContractSDK(
@@ -250,7 +253,7 @@ export async function deployFactory(
     )
 
     console.log(
-        `Contract Factory Proxy deployed ${factoryProxy.toSolidityAddress()}`
+        `Contract Factory Proxy deployed ${(await getContractInfo(factoryProxyAdmin.toString())).evm_address}`
     )
 
     return [factoryProxy, factoryProxyAdmin, factory]
@@ -333,7 +336,7 @@ export async function deployContractsWithSDK({
     if (!factoryAddress) {
         const initializeFactory = {
             admin: AccountEvmAddress,
-            tokenManager: hederaTokenManager.toSolidityAddress(),
+            tokenManager: (await getContractInfo(hederaTokenManager.toString())).evm_address,
         }
         const result = await deployFactory(
             initializeFactory,
@@ -390,7 +393,7 @@ export async function deployContractsWithSDK({
 
     const parametersContractCall = [
         tokenObject,
-        hederaTokenManager.toSolidityAddress(),
+        (await getContractInfo(hederaTokenManager.toString())).evm_address,
     ]
 
     console.log(`Deploying stableCoin... please wait.`)
@@ -417,64 +420,93 @@ export async function deployContractsWithSDK({
 
     if (grantKYCToOriginalSender) {
         console.log(`Granting KYC to Original Sender... please wait.`)
-
+        
         await grantKyc(
-            ContractId.fromSolidityAddress(proxyContract[0]),
+            ContractId.fromString( (await getContractInfo(proxyContract[0])).contract_id),
             account,
             isED25519Type,
             clientSdk
         )
     }
+    try {
+        console.log(
+            `Proxy created: ${proxyContract[0]} 
+            , ${(await getContractInfo(proxyContract[0])).contract_id}`
+        )
+    } catch (error) {
+        console.log(error)
+    }
+    
+    try {
+        console.log(
+            `Proxy Admin created: ${
+                proxyContract[1]
+            } , ${ (await getContractInfo(proxyContract[1])).contract_id}`
+        )       
+    } catch (error) {
+        console.log(error)
+    }
 
+    try {
+        console.log(
+            `Implementation created: ${
+                proxyContract[2]
+            } , ${ (await getContractInfo(proxyContract[2])).contract_id}`
+        )     
+    } catch (error) {
+        console.log(error)
+    }
+
+    try {
+        console.log(
+            `Underlying token created: ${
+                proxyContract[3]
+            } , ${ ContractId.fromSolidityAddress(proxyContract[3]).toString()}`
+        )     
+    } catch (error) {
+        console.log(error)
+    }
+   
     console.log(
-        `Proxy created: ${proxyContract[0]} , ${ContractId.fromSolidityAddress(
-            proxyContract[0]
-        ).toString()}`
+        `Factory Proxy: ${(await getContractInfo(f_proxyAddress.toString())).evm_address}, ${f_proxyAddress}`
     )
     console.log(
-        `Proxy Admin created: ${
-            proxyContract[1]
-        } , ${ContractId.fromSolidityAddress(proxyContract[1]).toString()}`
+        `Factory Proxy Admin: ${(await getContractInfo(f_proxyAdminAddress.toString())).evm_address}, ${f_proxyAdminAddress}`
     )
     console.log(
-        `Implementation created: ${
-            proxyContract[2]
-        } , ${ContractId.fromSolidityAddress(proxyContract[2]).toString()}`
-    )
-    console.log(
-        `Underlying token created: ${
-            proxyContract[3]
-        }, ${ContractId.fromSolidityAddress(proxyContract[3]).toString()}`
-    )
-    console.log(
-        `Factory Proxy: ${f_proxyAddress.toSolidityAddress()}, ${f_proxyAddress}`
-    )
-    console.log(
-        `Factory Proxy Admin: ${f_proxyAdminAddress.toSolidityAddress()}, ${f_proxyAdminAddress}`
-    )
-    console.log(
-        `Factory Implementation: ${f_address.toSolidityAddress()}, ${f_address}`
-    )
-    console.log(
-        `HederaReserveProxy created: ${
-            proxyContract[4]
-        }, ${ContractId.fromSolidityAddress(proxyContract[4]).toString()}`
+        `Factory Implementation: ${(await getContractInfo(f_address.toString())).evm_address}, ${f_address}`
     )
 
-    console.log(
-        `HederaReserveProxyAdmin created: ${
-            proxyContract[5]
-        }, ${ContractId.fromSolidityAddress(proxyContract[5]).toString()}`
-    )
+    try {
+        console.log(
+            `HederaReserveProxy created: ${
+                proxyContract[4]
+            } , ${ (await getContractInfo(proxyContract[4])).contract_id}`
+        )
+    } catch (error) {
+        console.log(error)
+    }
+    
+    try {
+        console.log(
+            `HederaReserveProxyAdmin created: ${
+                proxyContract[5]
+            } , ${ (await getContractInfo(proxyContract[5])).contract_id}`
+        )
+    } catch (error) {
+        console.log(error)
+    }
+    
+   
     return [
-        ContractId.fromSolidityAddress(proxyContract[0]),
-        ContractId.fromSolidityAddress(proxyContract[1]),
-        ContractId.fromSolidityAddress(proxyContract[2]),
+        ContractId.fromString((await getContractInfo(proxyContract[0])).contract_id),
+        ContractId.fromString((await getContractInfo(proxyContract[1])).contract_id),
+        ContractId.fromString((await getContractInfo(proxyContract[2])).contract_id),
         f_proxyAddress,
         f_proxyAdminAddress,
         f_address,
-        ContractId.fromSolidityAddress(proxyContract[4]),
-        ContractId.fromSolidityAddress(proxyContract[5]),
+        ContractId.fromString((await getContractInfo(proxyContract[4])).contract_id),
+        ContractId.fromString((await getContractInfo(proxyContract[5])).contract_id),
         ContractId.fromSolidityAddress(proxyContract[3]),
     ]
 }
@@ -678,8 +710,8 @@ export async function deployHederaReserve(
     )
 
     const params = new ContractFunctionParameters()
-        .addAddress(hederaReserve.toSolidityAddress())
-        .addAddress(hederaReserveProxyAdmin.toSolidityAddress())
+        .addAddress((await getContractInfo(hederaReserve.toString())).evm_address)
+        .addAddress((await getContractInfo(hederaReserveProxyAdmin.toString())).evm_address)
         .addBytes(new Uint8Array([]))
 
     const hederaReserveProxy = await deployContractSDK(

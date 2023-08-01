@@ -39,7 +39,7 @@ import {
 } from '../scripts/contractsMethods'
 import { ADDRESS_0 } from '../scripts/constants'
 
-import { clientId, toEvmAddress, getClient } from '../scripts/utils'
+import { clientId, toEvmAddress, getClient,getContractInfo } from '../scripts/utils'
 import { Client, ContractId } from '@hashgraph/sdk'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
@@ -132,7 +132,7 @@ describe('StableCoinFactory Tests', function () {
         )
         const initializeFactory = {
             admin: await toEvmAddress(operatorAccount, operatorIsE25519),
-            tokenManager: resulttokenManager.toSolidityAddress(),
+            tokenManager:  (await getContractInfo(resulttokenManager.toString())).evm_address,
         }
         const result = await deployFactory(
             initializeFactory,
@@ -383,7 +383,7 @@ describe('StableCoinFactory Tests', function () {
         await addHederaTokenManagerVersion(
             ContractId.fromString(newFactoryProxyAddress),
             operatorClient,
-            newAddress.toSolidityAddress()
+            (await getContractInfo(newAddress.toString())).evm_address,
         )
         const addressArray: Array<string> =
             await getHederaTokenManagerAddresses(
@@ -416,7 +416,7 @@ describe('StableCoinFactory Tests', function () {
             addHederaTokenManagerVersion(
                 ContractId.fromString(newFactoryProxyAddress),
                 nonOperatorClient,
-                newAddress.toSolidityAddress()
+                (await getContractInfo(newAddress.toString())).evm_address,
             )
         ).to.eventually.be.rejectedWith(Error)
     })
@@ -633,7 +633,7 @@ describe('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', functio
         )
         const initializeFactory = {
             admin: await toEvmAddress(operatorAccount, operatorIsE25519),
-            tokenManager: hederaTokenManager.toSolidityAddress(),
+            tokenManager: (await getContractInfo(hederaTokenManager.toString())).evm_address,
         }
         const result = await deployFactory(
             initializeFactory,
@@ -651,20 +651,20 @@ describe('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', functio
         const implementation = await getProxyImplementation_SCF(
             proxyAdminAddress,
             operatorClient,
-            proxyAddress.toSolidityAddress()
+            (await getContractInfo(proxyAddress.toString())).evm_address,
         )
         const admin = await getProxyAdmin_SCF(
             proxyAdminAddress,
             operatorClient,
-            proxyAddress.toSolidityAddress()
+            (await getContractInfo(proxyAddress.toString())).evm_address
         )
 
         // We check their values : success
         expect(implementation.toUpperCase()).to.equals(
-            '0X' + factoryAddress.toSolidityAddress().toUpperCase()
+            (await getContractInfo(factoryAddress.toString())).evm_address.toUpperCase()
         )
         expect(admin.toUpperCase()).to.equals(
-            '0X' + proxyAdminAddress.toSolidityAddress().toUpperCase()
+             (await getContractInfo(proxyAdminAddress.toString())).evm_address.toUpperCase()
         )
     })
 
@@ -688,7 +688,7 @@ describe('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', functio
         )
         const initializeFactory = {
             admin: await toEvmAddress(operatorAccount, operatorIsE25519),
-            tokenManager: hederaTokenManager.toSolidityAddress(),
+            tokenManager: (await getContractInfo(hederaTokenManager.toString())).evm_address,
         }
         const result = await deployFactory(
             initializeFactory,
@@ -703,7 +703,7 @@ describe('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', functio
             upgradeTo_SCF(
                 proxyAddress,
                 operatorClient,
-                newImplementationContract.toSolidityAddress()
+                (await getContractInfo(newImplementationContract.toString())).evm_address,
             )
         ).to.eventually.be.rejectedWith(Error)
     })
@@ -726,7 +726,7 @@ describe('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', functio
         )
         const initializeFactory = {
             admin: await toEvmAddress(operatorAccount, operatorIsE25519),
-            tokenManager: hederaTokenManager.toSolidityAddress(),
+            tokenManager: (await getContractInfo(hederaTokenManager.toString())).evm_address,
         }
         // Deploy a new contract
         const result = await deployFactory(
@@ -742,8 +742,8 @@ describe('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', functio
             upgrade_SCF(
                 proxyAdminAddress,
                 nonOperatorClient,
-                newImplementationContract.toSolidityAddress(),
-                proxyAddress.toSolidityAddress()
+                (await getContractInfo(newImplementationContract.toString())).evm_address,
+                (await getContractInfo(proxyAddress.toString())).evm_address,
             )
         ).to.eventually.be.rejectedWith(Error)
     })
@@ -768,7 +768,7 @@ describe('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', functio
         )
         const initializeFactory = {
             admin: await toEvmAddress(operatorAccount, operatorIsE25519),
-            tokenManager: hederaTokenManager.toSolidityAddress(),
+            tokenManager: (await getContractInfo(hederaTokenManager.toString())).evm_address,
         }
         // Deploy a new contract
         const result = await deployFactory(
@@ -783,26 +783,26 @@ describe('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', functio
         await upgrade_SCF(
             proxyAdminAddress,
             operatorClient,
-            newImplementationContract.toSolidityAddress(),
-            proxyAddress.toSolidityAddress()
+            (await getContractInfo(newImplementationContract.toString())).evm_address,
+            (await getContractInfo(proxyAddress.toString())).evm_address,
         )
 
         // Check new implementation address
         const implementation = await getProxyImplementation_SCF(
             proxyAdminAddress,
             operatorClient,
-            proxyAddress.toSolidityAddress()
+            (await getContractInfo(proxyAddress.toString())).evm_address,
         )
         expect(implementation.toUpperCase()).to.equals(
-            '0X' + newImplementationContract.toSolidityAddress().toUpperCase()
+             (await getContractInfo(newImplementationContract.toString())).evm_address.toUpperCase(),
         )
 
         // reset
         await upgrade_SCF(
             proxyAdminAddress,
             operatorClient,
-            factoryAddress.toSolidityAddress(),
-            proxyAddress.toSolidityAddress()
+            (await getContractInfo(factoryAddress.toString())).evm_address,
+            (await getContractInfo(proxyAddress.toString())).evm_address,
         )
     })
 
@@ -821,7 +821,7 @@ describe('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', functio
             getProxyAdmin_SCF(
                 proxyAdminAddress,
                 operatorClient,
-                proxyAddress.toSolidityAddress()
+                (await getContractInfo(proxyAddress.toString())).evm_address,
             )
         ).to.eventually.be.rejectedWith(Error)
 
@@ -842,7 +842,7 @@ describe('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', functio
         await changeAdmin_SCF(
             proxyAddress,
             nonOperatorClient,
-            proxyAdminAddress.toSolidityAddress()
+            (await getContractInfo(proxyAdminAddress.toString())).evm_address
         )
     })
 

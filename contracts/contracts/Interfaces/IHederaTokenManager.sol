@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
-import {IHederaTokenService} from '../hts-precompile/IHederaTokenService.sol';
+import {IHederaTokenService} from "hedera-smart-contracts/contracts/hts-precompile/IHederaTokenService.sol";
 import {KeysLib} from '../library/KeysLib.sol';
 
 interface IHederaTokenManager {

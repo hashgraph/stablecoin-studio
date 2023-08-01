@@ -25,7 +25,7 @@ import {
     delay,
 } from '../scripts/contractsMethods'
 import { RESCUE_ROLE } from '../scripts/constants'
-import { clientId, associateToken } from '../scripts/utils'
+import { clientId, associateToken,getContractInfo } from '../scripts/utils'
 import { Client, ContractId } from '@hashgraph/sdk'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
@@ -129,10 +129,10 @@ describe('Rescue Tests', function () {
 
         await transferHBAR(
             operatorAccount,
-            proxyAddress.toSolidityAddress(),
+            proxyAddress.toString(),
             HBARInitialAmount,
             operatorClient,
-            true
+            false
         )
 
         await delay(3000)
@@ -233,7 +233,7 @@ describe('Rescue Tests', function () {
         const initialTokenOwnerBalance = await getBalanceOf(
             proxyAddress,
             operatorClient,
-            proxyAddress.toSolidityAddress(),
+            (await getContractInfo(proxyAddress.toString())).evm_address,
             false,
             false
         )
@@ -251,7 +251,7 @@ describe('Rescue Tests', function () {
         const finalTokenOwnerBalance = await getBalanceOf(
             proxyAddress,
             operatorClient,
-            proxyAddress.toSolidityAddress(),
+            (await getContractInfo(proxyAddress.toString())).evm_address,
             false,
             false
         )
@@ -279,7 +279,7 @@ describe('Rescue Tests', function () {
         const TokenOwnerBalance = await getBalanceOf(
             proxyAddress,
             operatorClient,
-            proxyAddress.toSolidityAddress(),
+            (await getContractInfo(proxyAddress.toString())).evm_address,
             false,
             false
         )
@@ -304,7 +304,7 @@ describe('Rescue Tests', function () {
         const initialTokenOwnerBalance = await getBalanceOf(
             proxyAddress,
             operatorClient,
-            proxyAddress.toSolidityAddress(),
+            (await getContractInfo(proxyAddress.toString())).evm_address,
             false,
             false
         )
@@ -338,7 +338,7 @@ describe('Rescue Tests', function () {
         const finalTokenOwnerBalance = await getBalanceOf(
             proxyAddress,
             operatorClient,
-            proxyAddress.toSolidityAddress(),
+            (await getContractInfo(proxyAddress.toString())).evm_address,
             false,
             false
         )
@@ -375,10 +375,10 @@ describe('Rescue Tests', function () {
 
         // Get the initial balance of the token owner and client
         const initialTokenOwnerBalance = await getHBARBalanceOf(
-            proxyAddress.toSolidityAddress(),
+            proxyAddress.toString(),
             operatorClient,
             false,
-            true
+            false
         )
         const initialClientBalance = await getHBARBalanceOf(
             operatorAccount,
@@ -393,10 +393,10 @@ describe('Rescue Tests', function () {
 
         // check new balances : success
         const finalTokenOwnerBalance = await getHBARBalanceOf(
-            proxyAddress.toSolidityAddress(),
+            proxyAddress.toString(),
             operatorClient,
             false,
-            true
+            false
         )
         const finalClientBalance = await getHBARBalanceOf(
             operatorAccount,
@@ -418,10 +418,10 @@ describe('Rescue Tests', function () {
     it('we cannot rescue more HBAR than the owner balance', async function () {
         // Get the initial balance of the token owner
         const TokenOwnerBalance = await getHBARBalanceOf(
-            proxyAddress.toSolidityAddress(),
+            proxyAddress.toString(),
             operatorClient,
             false,
-            true
+            false
         )
 
         // Rescue TokenOwnerBalance + 1 : fail
@@ -442,10 +442,10 @@ describe('Rescue Tests', function () {
 
         // Retrieve original balances
         const initialTokenOwnerBalance = await getHBARBalanceOf(
-            proxyAddress.toSolidityAddress(),
+            proxyAddress.toString(),
             operatorClient,
             false,
-            true
+            false
         )
         const initialClientBalance = await getHBARBalanceOf(
             nonOperatorAccount,
@@ -469,10 +469,10 @@ describe('Rescue Tests', function () {
 
         // Check final balances : success
         const finalTokenOwnerBalance = await getHBARBalanceOf(
-            proxyAddress.toSolidityAddress(),
+            proxyAddress.toString(),
             operatorClient,
             false,
-            true
+            false
         )
         const finalClientBalance = await getHBARBalanceOf(
             nonOperatorAccount,

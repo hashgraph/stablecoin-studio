@@ -19,7 +19,6 @@ import {Reserve} from './extensions/Reserve.sol';
 
 import {
     TokenOwner,
-    HederaResponseCodes,
     IHederaTokenService
 } from './extensions/TokenOwner.sol';
 import {KYC} from './extensions/KYC.sol';

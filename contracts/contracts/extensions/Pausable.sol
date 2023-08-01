@@ -4,7 +4,7 @@ pragma solidity 0.8.16;
 import {TokenOwner} from './TokenOwner.sol';
 import {Roles} from './Roles.sol';
 import {IPausable} from './Interfaces/IPausable.sol';
-import {IHederaTokenService} from '../hts-precompile/IHederaTokenService.sol';
+import {IHederaTokenService} from "hedera-smart-contracts/contracts/hts-precompile/IHederaTokenService.sol";
 
 abstract contract Pausable is IPausable, TokenOwner, Roles {
     /**

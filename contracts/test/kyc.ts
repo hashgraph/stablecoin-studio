@@ -28,6 +28,7 @@ import {
     transferToken,
     associateToken,
     dissociateToken,
+    getContractInfo
 } from '../scripts/utils'
 import { Client, ContractId } from '@hashgraph/sdk'
 import chai from 'chai'
@@ -563,7 +564,7 @@ describe('KYC Tests', function () {
         const initialTokenOwnerBalance = await getBalanceOf(
             proxyAddress,
             operatorClient,
-            proxyAddress.toSolidityAddress(),
+            (await getContractInfo(proxyAddress.toString())).evm_address,
             false,
             false
         )
@@ -590,7 +591,7 @@ describe('KYC Tests', function () {
         const finalTokenOwnerBalance = await getBalanceOf(
             proxyAddress,
             operatorClient,
-            proxyAddress.toSolidityAddress(),
+            (await getContractInfo(proxyAddress.toString())).evm_address,
             false,
             false
         )

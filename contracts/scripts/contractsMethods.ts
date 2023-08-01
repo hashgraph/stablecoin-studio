@@ -15,7 +15,7 @@ import {
     StableCoinFactory__factory,
 } from '../typechain-types'
 
-import { contractCall, toEvmAddress } from './utils'
+import { contractCall, toEvmAddress,getContractInfo } from './utils'
 import {
     CREATE_SC_GAS,
     BALANCE_OF_GAS,
@@ -400,7 +400,7 @@ export async function changeProxyAdmin(
     isE25519: boolean
 ) {
     const params = [
-        proxyAddress.toSolidityAddress(),
+        (await getContractInfo(proxyAddress.toString())).evm_address,
         await toEvmAddress(newAdminAccount, isE25519),
     ]
     await contractCall(
@@ -558,7 +558,7 @@ export async function changeProxyAdmin_SCF(
     isE25519: boolean
 ) {
     const params = [
-        proxyAddress.toSolidityAddress(),
+        (await getContractInfo(proxyAddress.toString())).evm_address,
         await toEvmAddress(newAdminAccount, isE25519),
     ]
     await contractCall(
@@ -1111,7 +1111,7 @@ export async function updateDataFeed(
     proxyAddress: ContractId,
     operatorClient: Client
 ) {
-    const params: string[] = [dataFeed.toSolidityAddress()]
+    const params: string[] = [(await getContractInfo(dataFeed.toString())).evm_address]
     await contractCall(
         proxyAddress,
         'updateReserveAddress',
