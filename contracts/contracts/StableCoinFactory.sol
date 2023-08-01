@@ -20,6 +20,7 @@ import {
     Initializable
 } from '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import {KeysLib} from './library/KeysLib.sol';
+import {StableCoinProxyAdmin} from './proxies/StableCoinProxyAdmin.sol';
 
 contract StableCoinFactory is
     IStableCoinFactory,
@@ -141,10 +142,9 @@ contract StableCoinFactory is
         }
 
         // Deploy Proxy Admin
-        ProxyAdmin stableCoinProxyAdmin = new ProxyAdmin();
-
-        // Transfer Proxy Admin ownership
-        stableCoinProxyAdmin.transferOwnership(msg.sender);
+        StableCoinProxyAdmin stableCoinProxyAdmin = new StableCoinProxyAdmin(
+            msg.sender
+        );
 
         // Deploy Proxy
         TransparentUpgradeableProxy stableCoinProxy = new TransparentUpgradeableProxy(

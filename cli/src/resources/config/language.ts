@@ -430,6 +430,8 @@ export const english = {
       ChangeFactory: 'Change factory',
       UpgradeFactory: 'Upgrade factory',
       ChangeOwner: 'Change owner',
+      AcceptOwner: 'Accept owner',
+      CancelOwner: 'Cancel owner change',
       FactoryDetails: 'Factory details',
       ...goBack,
     },
@@ -490,7 +492,8 @@ export const english = {
     customFeesRemoved: 'Custom fees removed',
     transferCompleted: 'Transfer completed',
     updateCompleted: 'Update completed',
-    changeOwnerCompleted: 'Owner change completed',
+    changeOwnerCompleted: 'Owner change requested',
+    acceptOwnerCompleted: 'Owner change accepted',
     upgradeImplementationCompleted: 'Implementation upgrade completed',
   },
   operation: {
@@ -611,6 +614,8 @@ export const english = {
     options: {
       implementation: 'Upgrade stable coin implementation',
       owner: 'Change stable coin owner',
+      accept: 'Accept stable coin owner',
+      cancel: 'Cancel stable coin owner change',
       ...goBack,
     },
     askNewImplementation:
@@ -618,6 +623,9 @@ export const english = {
     askNewOwner: 'Enter the new owner account id',
     askProxyConfiguration: 'What do you want to do',
     currentImplementation: 'Your current implementation is : ',
+    pendingOwner: 'pending owner : ',
+    askAcceptOwner: 'Are you sure you want to accept the ownership?',
+    askCancelOwner: 'Are you sure you want to cancel the ownership transfer?',
   },
   tokenConfiguration: {
     askAction: 'What token property do you want to update?',

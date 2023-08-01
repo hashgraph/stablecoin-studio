@@ -85,6 +85,7 @@ export default class DetailsStableCoinsService extends Service {
         proxyImplementationAddress:
           proxyConfig.implementationAddress.toString(),
         proxyOwner: proxyConfig.owner.toString(),
+        proxyPendingOwner: proxyConfig.pendingOwner.toString(),
         treasury: respDetail.treasury.toString(),
         autoRenewPeriod: respDetail?.autoRenewPeriod
           ? `${respDetail.autoRenewPeriod / 24 / 3600} days`

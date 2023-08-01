@@ -39,6 +39,8 @@ import {
 	GetFactoryProxyConfigRequest,
 	UpgradeFactoryImplementationRequest,
 	ChangeFactoryProxyOwnerRequest,
+	AcceptProxyOwnerRequest,
+	AcceptFactoryProxyOwnerRequest,
 } from '../../../src/port/in/request/index.js';
 import ConnectRequest, {
 	SupportedWallets,
@@ -181,13 +183,15 @@ describe('🧪 Proxy test', () => {
 			}),
 		);
 
+		await delay();
+
 		proxyConfig = await Proxy.getProxyConfig(
 			new GetProxyConfigRequest({
 				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
 			}),
 		);
 
-		expect(proxyConfig.owner.toString()).toBe(
+		expect(proxyConfig.pendingOwner.toString()).toBe(
 			CLIENT_ACCOUNT_ECDSA.id.toString(),
 		);
 
@@ -204,12 +208,32 @@ describe('🧪 Proxy test', () => {
 			}),
 		);
 
+		await Proxy.acceptProxyOwner(
+			new AcceptProxyOwnerRequest({
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
+			}),
+		);
+
+		await delay();
+
+		proxyConfig = await Proxy.getProxyConfig(
+			new GetProxyConfigRequest({
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
+			}),
+		);
+
+		expect(proxyConfig.owner.toString()).toBe(
+			CLIENT_ACCOUNT_ECDSA.id.toString(),
+		);
+
 		await Proxy.changeProxyOwner(
 			new ChangeProxyOwnerRequest({
 				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
 			}),
 		);
+
+		await delay();
 
 		await Network.connect(
 			new ConnectRequest({
@@ -223,7 +247,13 @@ describe('🧪 Proxy test', () => {
 				rpcNode: rpcNode,
 			}),
 		);
-	}, 60_000);
+
+		await Proxy.acceptProxyOwner(
+			new AcceptProxyOwnerRequest({
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
+			}),
+		);
+	}, 80_000);
 
 	it('Upgrade Factory proxy implementation', async () => {
 		await Network.connect(
@@ -332,7 +362,7 @@ describe('🧪 Proxy test', () => {
 			}),
 		);
 
-		expect(factoryProxyConfig.owner.toString()).toBe(
+		expect(factoryProxyConfig.pendingOwner.toString()).toBe(
 			CLIENT_ACCOUNT_ED25519.id.toString(),
 		);
 
@@ -349,11 +379,48 @@ describe('🧪 Proxy test', () => {
 			}),
 		);
 
+		await Proxy.acceptFactoryProxyOwner(
+			new AcceptFactoryProxyOwnerRequest({
+				factoryId: FACTORY_ADDRESS,
+			}),
+		);
+
+		await delay();
+
+		factoryProxyConfig = await Proxy.getFactoryProxyConfig(
+			new GetFactoryProxyConfigRequest({
+				factoryId: FACTORY_ADDRESS,
+			}),
+		);
+
+		expect(factoryProxyConfig.owner.toString()).toBe(
+			CLIENT_ACCOUNT_ED25519.id.toString(),
+		);
+
 		await Proxy.changeFactoryProxyOwner(
 			new ChangeFactoryProxyOwnerRequest({
 				factoryId: FACTORY_ADDRESS,
 				targetId: CLIENT_ACCOUNT_ED25519_2.id.toString(),
 			}),
 		);
-	}, 60_000);
+
+		await Network.connect(
+			new ConnectRequest({
+				account: {
+					accountId: CLIENT_ACCOUNT_ED25519_2.id.toString(),
+					privateKey: CLIENT_ACCOUNT_ED25519_2.privateKey,
+				},
+				network: 'testnet',
+				wallet: SupportedWallets.CLIENT,
+				mirrorNode: mirrorNode,
+				rpcNode: rpcNode,
+			}),
+		);
+
+		await Proxy.acceptFactoryProxyOwner(
+			new AcceptFactoryProxyOwnerRequest({
+				factoryId: FACTORY_ADDRESS,
+			}),
+		);
+	}, 80_000);
 });

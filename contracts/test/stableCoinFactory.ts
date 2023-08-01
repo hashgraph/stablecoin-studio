@@ -37,6 +37,8 @@ import {
     changeAdminStablecoinFactory,
     removeHederaTokenManagerVersion,
     getAdminStableCoinFactory,
+    pendingOwner_SCF,
+    acceptOwnership_SCF,
 } from '../scripts/contractsMethods'
 import { ADDRESS_0 } from '../scripts/constants'
 
@@ -138,7 +140,8 @@ describe('StableCoinFactory Tests', function () {
         const result = await deployFactory(
             initializeFactory,
             operatorClient,
-            operatorPriKey
+            operatorPriKey,
+            operatorIsE25519
         )
 
         const tokenManager = resulttokenManager
@@ -639,7 +642,8 @@ describe('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', functio
         const result = await deployFactory(
             initializeFactory,
             clientSdk,
-            operatorPriKey
+            operatorPriKey,
+            operatorIsE25519
         )
 
         proxyAddress = result[0]
@@ -694,7 +698,8 @@ describe('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', functio
         const result = await deployFactory(
             initializeFactory,
             clientSdk,
-            operatorPriKey
+            operatorPriKey,
+            operatorIsE25519
         )
 
         const newImplementationContract = result[2]
@@ -733,7 +738,8 @@ describe('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', functio
         const result = await deployFactory(
             initializeFactory,
             clientSdk,
-            operatorPriKey
+            operatorPriKey,
+            operatorIsE25519
         )
 
         const newImplementationContract = result[2]
@@ -775,7 +781,8 @@ describe('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', functio
         const result = await deployFactory(
             initializeFactory,
             clientSdk,
-            operatorPriKey
+            operatorPriKey,
+            operatorIsE25519
         )
 
         const newImplementationContract = result[2]
@@ -869,6 +876,20 @@ describe('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', functio
         )
 
         // Check
+        const pendingOwnerAccount = await pendingOwner_SCF(
+            proxyAdminAddress,
+            operatorClient
+        )
+        expect(pendingOwnerAccount.toUpperCase()).to.equals(
+            (
+                await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)
+            ).toUpperCase()
+        )
+
+        // Accept owner change
+        await acceptOwnership_SCF(proxyAdminAddress, nonOperatorClient)
+
+        // Check
         const ownerAccount = await owner_SCF(proxyAdminAddress, operatorClient)
         expect(ownerAccount.toUpperCase()).to.equals(
             (
@@ -883,5 +904,7 @@ describe('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', functio
             operatorAccount,
             operatorIsE25519
         )
+
+        await acceptOwnership_SCF(proxyAdminAddress, operatorClient)
     })
 })

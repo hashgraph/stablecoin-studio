@@ -16,6 +16,7 @@ import {
     getHederaTokenManagerAddresses,
     getProxyImplementation_SCF,
     owner_SCF,
+    pendingOwner_SCF,
     removeHederaTokenManagerVersion,
 } from './contractsMethods'
 
@@ -122,6 +123,13 @@ task('getProxyAdminconfig', 'Get Proxy Admin owner and implementation')
                 await owner_SCF(ContractId.fromString(proxyadmin), client)
             )
 
+            const pendingQwner = await evmToHederaFormat(
+                await pendingOwner_SCF(
+                    ContractId.fromString(proxyadmin),
+                    client
+                )
+            )
+
             const implementation = await evmToHederaFormat(
                 await getProxyImplementation_SCF(
                     ContractId.fromString(proxyadmin),
@@ -131,7 +139,12 @@ task('getProxyAdminconfig', 'Get Proxy Admin owner and implementation')
             )
 
             console.log(
-                'Owner : ' + owner + '. Implementation : ' + implementation
+                'Owner : ' +
+                    owner +
+                    '. Pending owner : ' +
+                    pendingQwner +
+                    '. Implementation : ' +
+                    implementation
             )
         }
     )
@@ -233,7 +246,8 @@ task('deployFactory', 'Deploy new factory').setAction(
         const result = await deployFactory(
             initializeFactory,
             client,
-            client1privatekey
+            client1privatekey,
+            client1isED25519
         )
         const proxyAddress = result[0]
         const proxyAdminAddress = result[1]

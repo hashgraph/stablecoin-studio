@@ -55,6 +55,7 @@
 	- [Proxy](#proxy)
 		- [GetProxyConfig](#getproxyconfig)
 		- [ChangeProxyOwner](#changeproxyowner)
+		- [AcceptProxyOwner](#acceptproxyowner)
 		- [UpgradeImplementation](#upgradeimplementation)
 		- [GetFactoryProxyConfig](#getfactoryproxyconfig)
 		- [UpgradeFactoryImplementation](#upgradefactoryimplementation)
@@ -1024,7 +1025,7 @@ Gets the configuration about the stable coin proxy: the **HederaTokenManager** c
 ```
 
 ### ChangeProxyOwner
-Changes the **HederaTokenManager** contract proxy admin owner.
+Proposes the change of the **HederaTokenManager** contract proxy admin owner.
 
 **Spec:**
 
@@ -1038,6 +1039,27 @@ Changes the **HederaTokenManager** contract proxy admin owner.
 ```Typescript
 	const result: boolean = await Proxy.changeProxyOwner(
 		new ChangeProxyOwnerRequest({
+			tokenId: '0.0.1',
+			targetId: '0.0.2'
+		})
+	);	
+```
+
+### AcceptProxyOwner
+A proposed account accepts the change to be the new **HederaTokenManager** contract proxy admin owner.
+
+**Spec:**
+
+```Typescript
+	Proxy.acceptProxyOwner(request: AcceptProxyOwnerRequest): Promise<boolean>;
+
+```
+
+**Example:**
+
+```Typescript
+	const result: boolean = await Proxy.acceptProxyOwner(
+		new AcceptProxyOwnerRequest({
 			tokenId: '0.0.1',
 			targetId: '0.0.2'
 		})

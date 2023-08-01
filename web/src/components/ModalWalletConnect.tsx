@@ -92,6 +92,8 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 		dispatch(walletActions.setSelectedStableCoin(undefined));
 		dispatch(walletActions.setSelectedStableCoinProxyConfig(undefined));
 		dispatch(walletActions.setIsProxyOwner(false));
+		dispatch(walletActions.setIsPendingOwner(false));
+		dispatch(walletActions.setIsAcceptOwner(false));
 
 		try {
 			await SDKService.connectWallet(wallet, network);
@@ -101,6 +103,8 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 			);
 			dispatch(walletActions.setSelectedNetworkFactoryProxyConfig(factoryProxyConfig));
 			dispatch(walletActions.setIsFactoryProxyOwner(false));
+			dispatch(walletActions.setIsFactoryPendingOwner(false));
+			dispatch(walletActions.setIsFactoryAcceptOwner(false));
 		} catch (error: any) {
 			if ('errorCode' in error && error.errorCode === '40009') {
 				setRejected(true);

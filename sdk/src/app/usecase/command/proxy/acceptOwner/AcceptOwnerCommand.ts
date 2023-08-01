@@ -18,12 +18,16 @@
  *
  */
 
-import { QueryResponse } from '../../../../core/query/QueryResponse.js';
-import ContractId from '../../../../domain/context/contract/ContractId.js';
-import { HederaId } from '../../../../domain/context/shared/HederaId.js';
+import { Command } from '../../../../../core/command/Command.js';
+import { CommandResponse } from '../../../../../core/command/CommandResponse.js';
+import { HederaId } from '../../../../../domain/context/shared/HederaId.js';
 
-export default interface ProxyConfigurationViewModel extends QueryResponse {
-	implementationAddress: ContractId;
-	owner: HederaId;
-	pendingOwner: HederaId;
+export class AcceptOwnerCommandResponse implements CommandResponse {
+	constructor(public readonly payload: boolean) {}
+}
+
+export class AcceptOwnerCommand extends Command<AcceptOwnerCommandResponse> {
+	constructor(public readonly tokenId: HederaId) {
+		super();
+	}
 }

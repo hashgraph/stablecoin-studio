@@ -9,9 +9,9 @@ import {
 } from '@hashgraph/sdk'
 
 import {
+    StableCoinProxyAdmin__factory,
     HederaTokenManager__factory,
     ITransparentUpgradeableProxy__factory,
-    ProxyAdmin__factory,
     HederaReserve__factory,
     StableCoinFactory__factory,
 } from '../typechain-types'
@@ -45,6 +45,7 @@ import {
     Gas1,
     Gas3,
     Gas0,
+    ACCEPT_PROXY_OWNER,
 } from './constants'
 
 import { BigNumber } from 'ethers'
@@ -384,6 +385,23 @@ export async function owner(
     return result[0]
 }
 
+export async function pendingOwner(
+    proxyAdminAbi: any,
+    proxyAdminAddress: ContractId,
+    client: Client
+): Promise<string> {
+    const params: string[] = []
+    const result = await contractCall(
+        proxyAdminAddress,
+        'pendingOwner',
+        params,
+        client,
+        Gas2,
+        proxyAdminAbi
+    )
+    return result[0]
+}
+
 export async function upgrade(
     proxyAdminAbi: any,
     proxyAdminAddress: ContractId,
@@ -438,6 +456,22 @@ export async function transferOwnership(
         params,
         client,
         CHANGE_PROXY_OWNER,
+        proxyAdminAbi
+    )
+}
+
+export async function acceptOwnership(
+    proxyAdminAbi: any,
+    proxyAdminAddress: ContractId,
+    client: Client
+) {
+    const params: string[] = []
+    await contractCall(
+        proxyAdminAddress,
+        'acceptOwnership',
+        params,
+        client,
+        ACCEPT_PROXY_OWNER,
         proxyAdminAbi
     )
 }
@@ -539,7 +573,23 @@ export async function owner_SCF(
         params,
         client,
         Gas2,
-        ProxyAdmin__factory.abi
+        StableCoinProxyAdmin__factory.abi
+    )
+    return result[0]
+}
+
+export async function pendingOwner_SCF(
+    proxyAdminAddress: ContractId,
+    client: Client
+): Promise<string> {
+    const params: string[] = []
+    const result = await contractCall(
+        proxyAdminAddress,
+        'pendingOwner',
+        params,
+        client,
+        Gas2,
+        StableCoinProxyAdmin__factory.abi
     )
     return result[0]
 }
@@ -557,7 +607,7 @@ export async function upgrade_SCF(
         params,
         client,
         Gas3,
-        ProxyAdmin__factory.abi
+        StableCoinProxyAdmin__factory.abi
     )
 }
 
@@ -578,7 +628,7 @@ export async function changeProxyAdmin_SCF(
         params,
         client,
         Gas3,
-        ProxyAdmin__factory.abi
+        StableCoinProxyAdmin__factory.abi
     )
 }
 
@@ -595,7 +645,22 @@ export async function transferOwnership_SCF(
         params,
         client,
         Gas3,
-        ProxyAdmin__factory.abi
+        StableCoinProxyAdmin__factory.abi
+    )
+}
+
+export async function acceptOwnership_SCF(
+    proxyAdminAddress: ContractId,
+    client: Client
+) {
+    const params: string[] = []
+    await contractCall(
+        proxyAdminAddress,
+        'acceptOwnership',
+        params,
+        client,
+        ACCEPT_PROXY_OWNER,
+        StableCoinProxyAdmin__factory.abi
     )
 }
 
@@ -611,7 +676,7 @@ export async function getProxyImplementation_SCF(
         params,
         client,
         Gas2,
-        ProxyAdmin__factory.abi
+        StableCoinProxyAdmin__factory.abi
     )
     return result[0]
 }
@@ -628,7 +693,7 @@ export async function getProxyAdmin_SCF(
         params,
         client,
         Gas2,
-        ProxyAdmin__factory.abi
+        StableCoinProxyAdmin__factory.abi
     )
     return result[0]
 }

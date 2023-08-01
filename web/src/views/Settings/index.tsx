@@ -12,6 +12,10 @@ import {
 	SELECTED_WALLET_PAIRED_ACCOUNTID,
 	IS_PROXY_OWNER,
 	IS_FACTORY_PROXY_OWNER,
+	IS_PENDING_OWNER,
+	IS_ACCEPT_OWNER,
+	IS_FACTORY_ACCEPT_OWNER,
+	IS_FACTORY_PENDING_OWNER,
 } from '../../store/slices/walletSlice';
 import { NamedRoutes } from './../../Router/NamedRoutes';
 
@@ -21,7 +25,11 @@ const Settings = () => {
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const accountId = useSelector(SELECTED_WALLET_PAIRED_ACCOUNTID);
 	const isProxyOwner = useSelector(IS_PROXY_OWNER);
+	const isPendingOwner = useSelector(IS_PENDING_OWNER);
+	const isAcceptOwner = useSelector(IS_ACCEPT_OWNER);
 	const isFactoryProxyOwner = useSelector(IS_FACTORY_PROXY_OWNER);
+	const isFactoryPendingOwner = useSelector(IS_FACTORY_PENDING_OWNER);
+	const isFactoryAcceptOwner = useSelector(IS_FACTORY_ACCEPT_OWNER);
 
 	const [disabledFeatures, setDisabledFeatures] = useState({
 		stableCoin: false,
@@ -30,7 +38,15 @@ const Settings = () => {
 
 	useEffect(() => {
 		getAvailableFeatures();
-	}, [selectedStableCoin, isProxyOwner, isFactoryProxyOwner]);
+	}, [
+		selectedStableCoin,
+		isProxyOwner,
+		isPendingOwner,
+		isAcceptOwner,
+		isFactoryProxyOwner,
+		isFactoryPendingOwner,
+		isFactoryAcceptOwner,
+	]);
 
 	const getAvailableFeatures = async () => {
 		let isExternalToken = false;
@@ -54,8 +70,12 @@ const Settings = () => {
 		}
 
 		const areDisabled = {
-			stableCoin: !selectedStableCoin || (selectedStableCoin && (isExternalToken || !isProxyOwner)),
-			factory: !isFactoryProxyOwner,
+			stableCoin:
+				!selectedStableCoin ||
+				(selectedStableCoin &&
+					((isExternalToken && !isProxyOwner && !isAcceptOwner) ||
+						(!isProxyOwner && !isAcceptOwner))),
+			factory: !isFactoryProxyOwner && !isFactoryAcceptOwner,
 		};
 		setDisabledFeatures(areDisabled);
 	};

@@ -3,7 +3,7 @@
 exports[`<HandleRoles /> should render correctly on editRole action 1`] = `
 <DocumentFragment>
   <div
-    class="chakra-stack css-16oka5y"
+    class="chakra-stack css-19t9j1"
   >
     <h2
       class="chakra-heading css-bqsusc"
@@ -22,7 +22,7 @@ exports[`<HandleRoles /> should render correctly on editRole action 1`] = `
           class="css-1r9sqqd"
         >
           <div
-            class="chakra-stack css-n21gh5"
+            class="chakra-stack css-8g8ihq"
           >
             <h2
               class="chakra-heading css-utvjhb"
@@ -31,10 +31,10 @@ exports[`<HandleRoles /> should render correctly on editRole action 1`] = `
               Manage cash in limit
             </h2>
             <form
-              class="chakra-stack css-hdflcv"
+              class="chakra-stack css-ciro4a"
             >
               <div
-                class="chakra-stack css-1h0sumw"
+                class="chakra-stack css-ppmla1"
               >
                 <div
                   class="chakra-form-control css-1kxonj9"
@@ -47,7 +47,7 @@ exports[`<HandleRoles /> should render correctly on editRole action 1`] = `
                     id="field-:r10:-label"
                   >
                     <div
-                      class="chakra-stack css-84zodg"
+                      class="chakra-stack css-1igwmid"
                     >
                       <p
                         class="chakra-text css-mgupmj"
@@ -153,7 +153,7 @@ exports[`<HandleRoles /> should render correctly on editRole action 1`] = `
                 </div>
               </div>
               <div
-                class="chakra-stack css-1h0sumw"
+                class="chakra-stack css-ppmla1"
               >
                 <div
                   class="chakra-form-control css-1kxonj9"
@@ -165,7 +165,7 @@ exports[`<HandleRoles /> should render correctly on editRole action 1`] = `
                     id="field-:r11:-label"
                   >
                     <div
-                      class="chakra-stack css-84zodg"
+                      class="chakra-stack css-1igwmid"
                     >
                       <p
                         class="chakra-text css-mgupmj"
@@ -186,7 +186,7 @@ exports[`<HandleRoles /> should render correctly on editRole action 1`] = `
                   >
                     <input
                       autocomplete="off"
-                      class="chakra-input css-l1kxkf"
+                      class="chakra-input css-1tcppn8"
                       data-testid="account"
                       id="field-:r11:"
                       name="account"
@@ -199,10 +199,10 @@ exports[`<HandleRoles /> should render correctly on editRole action 1`] = `
             </form>
           </div>
           <div
-            class="chakra-stack css-eunu1i"
+            class="chakra-stack css-1tzva4g"
           >
             <div
-              class="chakra-stack css-wqnj46"
+              class="chakra-stack css-rgkoyu"
             >
               <h2
                 class="chakra-heading css-1udj1g5"
@@ -240,7 +240,7 @@ exports[`<HandleRoles /> should render correctly on editRole action 1`] = `
                         Name
                       </p>
                       <div
-                        class="chakra-stack css-1c8ysgd"
+                        class="chakra-stack css-w0g0w4"
                       >
                         <p
                           class="chakra-text css-mgupmj"
@@ -268,7 +268,7 @@ exports[`<HandleRoles /> should render correctly on editRole action 1`] = `
                         Symbol
                       </p>
                       <div
-                        class="chakra-stack css-1c8ysgd"
+                        class="chakra-stack css-w0g0w4"
                       >
                         <p
                           class="chakra-text css-mgupmj"
@@ -296,7 +296,7 @@ exports[`<HandleRoles /> should render correctly on editRole action 1`] = `
                         Decimals
                       </p>
                       <div
-                        class="chakra-stack css-1c8ysgd"
+                        class="chakra-stack css-w0g0w4"
                       >
                         <p
                           class="chakra-text css-mgupmj"
@@ -398,7 +398,7 @@ exports[`<HandleRoles /> should render correctly on editRole action 1`] = `
                         Supply type
                       </p>
                       <div
-                        class="chakra-stack css-1c8ysgd"
+                        class="chakra-stack css-w0g0w4"
                       >
                         <p
                           class="chakra-text css-mgupmj"
@@ -417,7 +417,7 @@ exports[`<HandleRoles /> should render correctly on editRole action 1`] = `
           class="css-3gu2fl"
         >
           <div
-            class="chakra-stack css-1amf41o"
+            class="chakra-stack css-1f6hfsa"
           >
             <button
               class="chakra-button css-1urzhdw"
@@ -449,7 +449,7 @@ exports[`<HandleRoles /> should render correctly on editRole action 1`] = `
 exports[`<HandleRoles /> should render correctly on getAccountsWithRole action 1`] = `
 <DocumentFragment>
   <div
-    class="chakra-stack css-16oka5y"
+    class="chakra-stack css-19t9j1"
   >
     <h2
       class="chakra-heading css-bqsusc"
@@ -468,7 +468,7 @@ exports[`<HandleRoles /> should render correctly on getAccountsWithRole action 1
           class="css-1r9sqqd"
         >
           <div
-            class="chakra-stack css-n21gh5"
+            class="chakra-stack css-8g8ihq"
           >
             <h2
               class="chakra-heading css-utvjhb"
@@ -477,7 +477,7 @@ exports[`<HandleRoles /> should render correctly on getAccountsWithRole action 1
               Get Accounts with role 
             </h2>
             <div
-              class="chakra-stack css-1h0sumw"
+              class="chakra-stack css-ppmla1"
             >
               <div
                 class="chakra-form-control css-1kxonj9"
@@ -490,7 +490,7 @@ exports[`<HandleRoles /> should render correctly on getAccountsWithRole action 1
                   id="field-:r2v:-label"
                 >
                   <div
-                    class="chakra-stack css-84zodg"
+                    class="chakra-stack css-1igwmid"
                   >
                     <p
                       class="chakra-text css-mgupmj"
@@ -614,10 +614,10 @@ exports[`<HandleRoles /> should render correctly on getAccountsWithRole action 1
             </div>
           </div>
           <div
-            class="chakra-stack css-eunu1i"
+            class="chakra-stack css-1tzva4g"
           >
             <div
-              class="chakra-stack css-wqnj46"
+              class="chakra-stack css-rgkoyu"
             >
               <h2
                 class="chakra-heading css-1udj1g5"
@@ -655,7 +655,7 @@ exports[`<HandleRoles /> should render correctly on getAccountsWithRole action 1
                         Name
                       </p>
                       <div
-                        class="chakra-stack css-1c8ysgd"
+                        class="chakra-stack css-w0g0w4"
                       >
                         <p
                           class="chakra-text css-mgupmj"
@@ -683,7 +683,7 @@ exports[`<HandleRoles /> should render correctly on getAccountsWithRole action 1
                         Symbol
                       </p>
                       <div
-                        class="chakra-stack css-1c8ysgd"
+                        class="chakra-stack css-w0g0w4"
                       >
                         <p
                           class="chakra-text css-mgupmj"
@@ -711,7 +711,7 @@ exports[`<HandleRoles /> should render correctly on getAccountsWithRole action 1
                         Decimals
                       </p>
                       <div
-                        class="chakra-stack css-1c8ysgd"
+                        class="chakra-stack css-w0g0w4"
                       >
                         <p
                           class="chakra-text css-mgupmj"
@@ -813,7 +813,7 @@ exports[`<HandleRoles /> should render correctly on getAccountsWithRole action 1
                         Supply type
                       </p>
                       <div
-                        class="chakra-stack css-1c8ysgd"
+                        class="chakra-stack css-w0g0w4"
                       >
                         <p
                           class="chakra-text css-mgupmj"
@@ -832,7 +832,7 @@ exports[`<HandleRoles /> should render correctly on getAccountsWithRole action 1
           class="css-3gu2fl"
         >
           <div
-            class="chakra-stack css-1amf41o"
+            class="chakra-stack css-1f6hfsa"
           >
             <button
               class="chakra-button css-1urzhdw"
@@ -863,7 +863,7 @@ exports[`<HandleRoles /> should render correctly on getAccountsWithRole action 1
 exports[`<HandleRoles /> should render correctly on giveRole action 1`] = `
 <DocumentFragment>
   <div
-    class="chakra-stack css-16oka5y"
+    class="chakra-stack css-19t9j1"
   >
     <h2
       class="chakra-heading css-bqsusc"
@@ -882,7 +882,7 @@ exports[`<HandleRoles /> should render correctly on giveRole action 1`] = `
           class="css-1r9sqqd"
         >
           <div
-            class="chakra-stack css-n21gh5"
+            class="chakra-stack css-8g8ihq"
           >
             <h2
               class="chakra-heading css-utvjhb"
@@ -910,7 +910,7 @@ exports[`<HandleRoles /> should render correctly on giveRole action 1`] = `
                 class="css-k008qs"
               >
                 <div
-                  class="chakra-stack css-1h0sumw"
+                  class="chakra-stack css-ppmla1"
                 >
                   <div
                     class="chakra-form-control css-foqkix"
@@ -922,7 +922,7 @@ exports[`<HandleRoles /> should render correctly on giveRole action 1`] = `
                       id="field-:ru:-label"
                     >
                       <div
-                        class="chakra-stack css-84zodg"
+                        class="chakra-stack css-1igwmid"
                       >
                         <p
                           class="chakra-text css-mgupmj"
@@ -943,7 +943,7 @@ exports[`<HandleRoles /> should render correctly on giveRole action 1`] = `
                     >
                       <input
                         autocomplete="off"
-                        class="chakra-input css-l1kxkf"
+                        class="chakra-input css-1tcppn8"
                         data-testid="rol.0.accountId"
                         id="field-:ru:"
                         name="rol.0.accountId"
@@ -1031,10 +1031,10 @@ exports[`<HandleRoles /> should render correctly on giveRole action 1`] = `
             </div>
           </div>
           <div
-            class="chakra-stack css-eunu1i"
+            class="chakra-stack css-1tzva4g"
           >
             <div
-              class="chakra-stack css-wqnj46"
+              class="chakra-stack css-rgkoyu"
             >
               <h2
                 class="chakra-heading css-1udj1g5"
@@ -1072,7 +1072,7 @@ exports[`<HandleRoles /> should render correctly on giveRole action 1`] = `
                         Name
                       </p>
                       <div
-                        class="chakra-stack css-1c8ysgd"
+                        class="chakra-stack css-w0g0w4"
                       >
                         <p
                           class="chakra-text css-mgupmj"
@@ -1100,7 +1100,7 @@ exports[`<HandleRoles /> should render correctly on giveRole action 1`] = `
                         Symbol
                       </p>
                       <div
-                        class="chakra-stack css-1c8ysgd"
+                        class="chakra-stack css-w0g0w4"
                       >
                         <p
                           class="chakra-text css-mgupmj"
@@ -1128,7 +1128,7 @@ exports[`<HandleRoles /> should render correctly on giveRole action 1`] = `
                         Decimals
                       </p>
                       <div
-                        class="chakra-stack css-1c8ysgd"
+                        class="chakra-stack css-w0g0w4"
                       >
                         <p
                           class="chakra-text css-mgupmj"
@@ -1230,7 +1230,7 @@ exports[`<HandleRoles /> should render correctly on giveRole action 1`] = `
                         Supply type
                       </p>
                       <div
-                        class="chakra-stack css-1c8ysgd"
+                        class="chakra-stack css-w0g0w4"
                       >
                         <p
                           class="chakra-text css-mgupmj"
@@ -1249,7 +1249,7 @@ exports[`<HandleRoles /> should render correctly on giveRole action 1`] = `
           class="css-3gu2fl"
         >
           <div
-            class="chakra-stack css-1amf41o"
+            class="chakra-stack css-1f6hfsa"
           >
             <button
               class="chakra-button css-1urzhdw"
@@ -1281,7 +1281,7 @@ exports[`<HandleRoles /> should render correctly on giveRole action 1`] = `
 exports[`<HandleRoles /> should render correctly on revokeRole action 1`] = `
 <DocumentFragment>
   <div
-    class="chakra-stack css-16oka5y"
+    class="chakra-stack css-19t9j1"
   >
     <h2
       class="chakra-heading css-bqsusc"
@@ -1300,7 +1300,7 @@ exports[`<HandleRoles /> should render correctly on revokeRole action 1`] = `
           class="css-1r9sqqd"
         >
           <div
-            class="chakra-stack css-n21gh5"
+            class="chakra-stack css-8g8ihq"
           >
             <h2
               class="chakra-heading css-utvjhb"
@@ -1524,7 +1524,7 @@ exports[`<HandleRoles /> should render correctly on revokeRole action 1`] = `
               class="css-3vjk35"
             >
               <div
-                class="chakra-stack css-1h0sumw"
+                class="chakra-stack css-ppmla1"
               >
                 <div
                   class="chakra-form-control css-1kxonj9"
@@ -1536,7 +1536,7 @@ exports[`<HandleRoles /> should render correctly on revokeRole action 1`] = `
                     id="field-:r2t:-label"
                   >
                     <div
-                      class="chakra-stack css-84zodg"
+                      class="chakra-stack css-1igwmid"
                     >
                       <p
                         class="chakra-text css-mgupmj"
@@ -1557,7 +1557,7 @@ exports[`<HandleRoles /> should render correctly on revokeRole action 1`] = `
                   >
                     <input
                       autocomplete="off"
-                      class="chakra-input css-l1kxkf"
+                      class="chakra-input css-1tcppn8"
                       data-testid="rol.0.accountId"
                       id="field-:r2t:"
                       name="rol.0.accountId"
@@ -1644,10 +1644,10 @@ exports[`<HandleRoles /> should render correctly on revokeRole action 1`] = `
             </div>
           </div>
           <div
-            class="chakra-stack css-eunu1i"
+            class="chakra-stack css-1tzva4g"
           >
             <div
-              class="chakra-stack css-wqnj46"
+              class="chakra-stack css-rgkoyu"
             >
               <h2
                 class="chakra-heading css-1udj1g5"
@@ -1685,7 +1685,7 @@ exports[`<HandleRoles /> should render correctly on revokeRole action 1`] = `
                         Name
                       </p>
                       <div
-                        class="chakra-stack css-1c8ysgd"
+                        class="chakra-stack css-w0g0w4"
                       >
                         <p
                           class="chakra-text css-mgupmj"
@@ -1713,7 +1713,7 @@ exports[`<HandleRoles /> should render correctly on revokeRole action 1`] = `
                         Symbol
                       </p>
                       <div
-                        class="chakra-stack css-1c8ysgd"
+                        class="chakra-stack css-w0g0w4"
                       >
                         <p
                           class="chakra-text css-mgupmj"
@@ -1741,7 +1741,7 @@ exports[`<HandleRoles /> should render correctly on revokeRole action 1`] = `
                         Decimals
                       </p>
                       <div
-                        class="chakra-stack css-1c8ysgd"
+                        class="chakra-stack css-w0g0w4"
                       >
                         <p
                           class="chakra-text css-mgupmj"
@@ -1843,7 +1843,7 @@ exports[`<HandleRoles /> should render correctly on revokeRole action 1`] = `
                         Supply type
                       </p>
                       <div
-                        class="chakra-stack css-1c8ysgd"
+                        class="chakra-stack css-w0g0w4"
                       >
                         <p
                           class="chakra-text css-mgupmj"
@@ -1862,7 +1862,7 @@ exports[`<HandleRoles /> should render correctly on revokeRole action 1`] = `
           class="css-3gu2fl"
         >
           <div
-            class="chakra-stack css-1amf41o"
+            class="chakra-stack css-1f6hfsa"
           >
             <button
               class="chakra-button css-1urzhdw"

@@ -30,14 +30,18 @@ import { HederaId } from '../../domain/context/shared/HederaId.js';
 import { UpgradeImplementationCommand } from '../../app/usecase/command/proxy/upgrade/UpgradeImplementationCommand.js';
 import ContractId from '../../domain/context/contract/ContractId.js';
 import { ChangeOwnerCommand } from '../../app/usecase/command/proxy/changeOwner/ChangeOwnerCommand.js';
+import { AcceptOwnerCommand } from '../../app/usecase/command/proxy/acceptOwner/AcceptOwnerCommand.js';
 import ProxyConfigurationViewModel from '../out/rpc/response/ProxyConfigurationViewModel.js';
 import ChangeProxyOwnerRequest from './request/ChangeProxyOwnerRequest.js';
+import AcceptProxyOwnerRequest from './request/AcceptProxyOwnerRequest.js';
 import GetFactoryProxyConfigRequest from './request/GetFactoryProxyConfigRequest.js';
 import { GetFactoryProxyConfigQuery } from '../../app/usecase/query/factoryProxy/GetFactoryProxyConfigQuery.js';
 import UpgradeFactoryImplementationRequest from './request/UpgradeFactoryImplementationRequest.js';
 import { UpgradeFactoryImplementationCommand } from '../../app/usecase/command/factoryProxy/upgrade/UpgradeFactoryImplementationCommand.js';
 import ChangeFactoryProxyOwnerRequest from './request/ChangeFactoryProxyOwnerRequest.js';
+import AcceptFactoryProxyOwnerRequest from './request/AcceptFactoryProxyOwnerRequest.js';
 import { ChangeFactoryOwnerCommand } from '../../app/usecase/command/factoryProxy/changeOwner/ChangeFactoryOwnerCommand.js';
+import { AcceptFactoryOwnerCommand } from '../../app/usecase/command/factoryProxy/acceptOwner/AcceptFactoryOwnerCommand.js';
 
 export { ProxyConfigurationViewModel };
 
@@ -46,8 +50,18 @@ interface IProxyInPort {
 		request: GetProxyConfigRequest,
 	): Promise<ProxyConfigurationViewModel>;
 	changeProxyOwner(request: ChangeProxyOwnerRequest): Promise<boolean>;
+	acceptProxyOwner(request: AcceptProxyOwnerRequest): Promise<boolean>;
 	upgradeImplementation(
 		request: UpgradeImplementationRequest,
+	): Promise<boolean>;
+	changeFactoryProxyOwner(
+		request: ChangeFactoryProxyOwnerRequest,
+	): Promise<boolean>;
+	acceptFactoryProxyOwner(
+		request: AcceptFactoryProxyOwnerRequest,
+	): Promise<boolean>;
+	upgradeFactoryImplementation(
+		request: UpgradeFactoryImplementationRequest,
 	): Promise<boolean>;
 }
 
@@ -94,6 +108,15 @@ class ProxyInPort implements IProxyInPort {
 	}
 
 	@LogError
+	async acceptProxyOwner(request: AcceptProxyOwnerRequest): Promise<boolean> {
+		handleValidation('AcceptProxyOwnerRequest', request);
+		const res = await this.commandBus.execute(
+			new AcceptOwnerCommand(HederaId.from(request.tokenId)),
+		);
+		return res.payload;
+	}
+
+	@LogError
 	async upgradeImplementation(
 		request: UpgradeImplementationRequest,
 	): Promise<boolean> {
@@ -125,12 +148,23 @@ class ProxyInPort implements IProxyInPort {
 	async changeFactoryProxyOwner(
 		request: ChangeFactoryProxyOwnerRequest,
 	): Promise<boolean> {
-		handleValidation('ChangeProxyOwnerRequest', request);
+		handleValidation('ChangeFactoryProxyOwnerRequest', request);
 		const res = await this.commandBus.execute(
 			new ChangeFactoryOwnerCommand(
 				HederaId.from(request.factoryId),
 				HederaId.from(request.targetId),
 			),
+		);
+		return res.payload;
+	}
+
+	@LogError
+	async acceptFactoryProxyOwner(
+		request: AcceptFactoryProxyOwnerRequest,
+	): Promise<boolean> {
+		handleValidation('AcceptFactoryProxyOwnerRequest', request);
+		const res = await this.commandBus.execute(
+			new AcceptFactoryOwnerCommand(HederaId.from(request.factoryId)),
 		);
 		return res.payload;
 	}

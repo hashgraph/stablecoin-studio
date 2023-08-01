@@ -18,12 +18,16 @@
  *
  */
 
-import { QueryResponse } from '../../../../core/query/QueryResponse.js';
-import ContractId from '../../../../domain/context/contract/ContractId.js';
-import { HederaId } from '../../../../domain/context/shared/HederaId.js';
+import ValidatedRequest from './validation/ValidatedRequest.js';
+import Validation from './validation/Validation.js';
 
-export default interface ProxyConfigurationViewModel extends QueryResponse {
-	implementationAddress: ContractId;
-	owner: HederaId;
-	pendingOwner: HederaId;
+export default class AcceptFactoryProxyOwnerRequest extends ValidatedRequest<AcceptFactoryProxyOwnerRequest> {
+	factoryId: string;
+
+	constructor({ factoryId }: { factoryId: string }) {
+		super({
+			factoryId: Validation.checkHederaIdFormat(),
+		});
+		this.factoryId = factoryId;
+	}
 }

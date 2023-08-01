@@ -1,6 +1,7 @@
 import { Button, Flex, Heading, SimpleGrid, Text, useDisclosure, VStack } from '@chakra-ui/react';
 
 import {
+	AcceptProxyOwnerRequest,
 	ChangeProxyOwnerRequest,
 	GetTokenManagerListRequest,
 	Network,
@@ -28,6 +29,8 @@ import {
 	IS_PROXY_OWNER,
 	walletActions,
 	SELECTED_WALLET_ACCOUNT_INFO,
+	IS_PENDING_OWNER,
+	IS_ACCEPT_OWNER,
 } from '../../../store/slices/walletSlice';
 import { handleRequestValidation } from '../../../utils/validationsHelper';
 import type { Option } from '../../../components/Form/SelectCreatableController';
@@ -48,12 +51,15 @@ const StableCoinSettings = () => {
 		Option[]
 	>([]);
 	const [gettingHederaTokenManager, setGettingHederaTokenManager] = useState<boolean>(false);
+	const [isSameOwner, setIsSameOwner] = useState<boolean>(false);
 
 	const { t } = useTranslation(['settings', 'global']);
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const proxyConfig = useSelector(SELECTED_WALLET_COIN_PROXY_CONFIG);
 	const isProxyOwner = useSelector(IS_PROXY_OWNER);
+	const isPendingOwner = useSelector(IS_PENDING_OWNER);
+	const isAcceptOwner = useSelector(IS_ACCEPT_OWNER);
 	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 
 	const [upgradeImplementationRequest] = useState<UpgradeImplementationRequest>(
@@ -66,6 +72,11 @@ const StableCoinSettings = () => {
 		new ChangeProxyOwnerRequest({
 			tokenId: '',
 			targetId: '',
+		}),
+	);
+	const [acceptProxyOwnerRequest] = useState<AcceptProxyOwnerRequest>(
+		new AcceptProxyOwnerRequest({
+			tokenId: '',
 		}),
 	);
 
@@ -172,15 +183,19 @@ const StableCoinSettings = () => {
 				setAwaitingUpdate(false);
 				setSuccess(true);
 				dispatch(
-					walletActions.setIsProxyOwner(updateOwner.toString() === accountInfo?.id?.toString()),
+					walletActions.setIsProxyOwner(
+						proxyConfig?.owner?.toString() === accountInfo?.id?.toString(),
+					),
 				);
 				dispatch(
 					walletActions.setSelectedStableCoinProxyConfig({
-						owner: updateOwner.toString(),
+						owner: proxyConfig?.owner?.toString(),
 						implementationAddress: proxyConfig?.implementationAddress?.toString(),
+						pendingOwner: updateOwner.toString(),
 					}),
 				);
-
+				dispatch(walletActions.setIsAcceptOwner(false));
+				dispatch(walletActions.setIsPendingOwner(true));
 				RouterManager.to(navigate, NamedRoutes.Settings);
 			} catch (error: any) {
 				setAwaitingUpdate(false);
@@ -189,6 +204,101 @@ const StableCoinSettings = () => {
 				setSuccess(false);
 				setAwaitingUpdate(false);
 			}
+		}
+	};
+
+	const handleAcceptOwner = async () => {
+		if (selectedStableCoin?.tokenId) {
+			acceptProxyOwnerRequest.tokenId = selectedStableCoin.tokenId.toString();
+
+			try {
+				onOpen();
+				setAwaitingUpdate(true);
+				await SDKService.acceptOwner(acceptProxyOwnerRequest);
+				setError('');
+				setAwaitingUpdate(false);
+				setSuccess(true);
+				dispatch(
+					walletActions.setIsProxyOwner(
+						proxyConfig?.pendingOwner?.toString() === accountInfo?.id?.toString(),
+					),
+				);
+				dispatch(
+					walletActions.setSelectedStableCoinProxyConfig({
+						owner: proxyConfig?.pendingOwner?.toString(),
+						implementationAddress: proxyConfig?.implementationAddress?.toString(),
+						pendingOwner: '0.0.0',
+					}),
+				);
+				dispatch(walletActions.setIsAcceptOwner(false));
+				dispatch(walletActions.setIsPendingOwner(false));
+				RouterManager.to(navigate, NamedRoutes.Settings);
+			} catch (error: any) {
+				setAwaitingUpdate(false);
+				console.log(error);
+				setError(error?.transactionError?.transactionUrl);
+				setSuccess(false);
+				setAwaitingUpdate(false);
+			}
+		}
+	};
+
+	const handleCancelOwner = async () => {
+		if (selectedStableCoin?.tokenId && accountInfo?.id) {
+			changeProxyOwnerRequest.tokenId = selectedStableCoin.tokenId.toString();
+			changeProxyOwnerRequest.targetId = accountInfo?.id?.toString();
+			acceptProxyOwnerRequest.tokenId = selectedStableCoin.tokenId.toString();
+
+			// call changeOwner service to change pendingOwner to account logged owner
+			try {
+				onOpen();
+				setAwaitingUpdate(true);
+				await SDKService.changeOwner(changeProxyOwnerRequest);
+				setError('');
+
+				dispatch(
+					walletActions.setSelectedStableCoinProxyConfig({
+						owner: accountInfo?.id?.toString(),
+						implementationAddress: proxyConfig?.implementationAddress?.toString(),
+						pendingOwner: accountInfo?.id?.toString(),
+					}),
+				);
+				dispatch(walletActions.setIsAcceptOwner(true));
+				dispatch(walletActions.setIsPendingOwner(false));
+			} catch (error: any) {
+				setAwaitingUpdate(false);
+				console.log(error);
+				setError(error?.transactionError?.transactionUrl);
+				setSuccess(false);
+				setAwaitingUpdate(false);
+			}
+
+			// call acceptOwner service to accept the previous step and set pendingOwner to 0.0.0
+			try {
+				onOpen();
+				await SDKService.acceptOwner(acceptProxyOwnerRequest);
+				setError('');
+				setAwaitingUpdate(false);
+				setSuccess(true);
+
+				dispatch(
+					walletActions.setSelectedStableCoinProxyConfig({
+						owner: accountInfo?.id?.toString(),
+						implementationAddress: proxyConfig?.implementationAddress?.toString(),
+						pendingOwner: '0.0.0',
+					}),
+				);
+				dispatch(walletActions.setIsAcceptOwner(false));
+				dispatch(walletActions.setIsPendingOwner(false));
+			} catch (error: any) {
+				setAwaitingUpdate(false);
+				console.log(error);
+				setError(error?.transactionError?.transactionUrl);
+				setSuccess(false);
+				setAwaitingUpdate(false);
+			}
+
+			RouterManager.to(navigate, NamedRoutes.Settings);
 		}
 	};
 
@@ -203,8 +313,8 @@ const StableCoinSettings = () => {
 		name: string;
 		title: string;
 		label: string;
-		current: string;
-		input: ReactNode;
+		current?: string;
+		input?: ReactNode;
 		button: ReactNode;
 	}) => (
 		<Flex direction='column' alignItems={'center'}>
@@ -242,8 +352,7 @@ const StableCoinSettings = () => {
 			{selectedStableCoin &&
 				!isLoading &&
 				!gettingHederaTokenManager &&
-				selectedStableCoin.proxyAdminAddress &&
-				isProxyOwner && (
+				selectedStableCoin.proxyAdminAddress && (
 					<Flex
 						direction='column'
 						bg='brand.gray100'
@@ -256,108 +365,159 @@ const StableCoinSettings = () => {
 							gap={{ base: 10, lg: 20, md: 40 }}
 							alignItems='center'
 						>
-							{GridItem({
-								name: 'owner',
-								title: t('settings:stableCoin.updateOwner.title'),
-								label: t('settings:stableCoin.updateOwner.label'),
-								current: proxyConfig?.owner?.toString() ?? '',
-								input: (
-									<InputController
-										control={control}
-										rules={{
-											required: t('global:validations.required') ?? propertyNotFound,
-											validate: {
-												validation: (value: string) => {
-													changeProxyOwnerRequest.targetId = value;
-													const res = handleRequestValidation(
-														changeProxyOwnerRequest.validate('targetId'),
-													);
-													return res;
+							{isProxyOwner &&
+								!isAcceptOwner &&
+								GridItem({
+									// GridItem 1 - Update proxy owner
+									name: 'owner',
+									title: t('settings:stableCoin.transferOwner.title'),
+									label: t('settings:stableCoin.transferOwner.label'),
+									current: proxyConfig?.owner?.toString() ?? '',
+									input: (
+										<InputController
+											control={control}
+											rules={{
+												required: t('global:validations.required') ?? propertyNotFound,
+												validate: {
+													validationOwner: (value: string) => {
+														if (proxyConfig?.owner?.toString() === value.toString()) {
+															setIsSameOwner(true);
+															return t('global:validations.invalidOwner') as string;
+														} else {
+															setIsSameOwner(false);
+														}
+													},
+													validation: (value: string) => {
+														changeProxyOwnerRequest.targetId = value;
+														const res = handleRequestValidation(
+															changeProxyOwnerRequest.validate('targetId'),
+														);
+														return res;
+													},
 												},
-											},
-										}}
-										name={'updateOwner'}
-										placeholder={
-											t('settings:stableCoin.updateOwner.inputPlaceholder') ?? propertyNotFound
-										}
-										isReadOnly={false}
-									/>
-								),
-								button: (
-									<Button
-										data-testid={`update-owner-button`}
-										variant='primary'
-										onClick={handleChangeOwner}
-									>
-										{t('settings:stableCoin.updateOwner.buttonText')}
-									</Button>
-								),
-							})}
-							{GridItem({
-								name: 'address',
-								title: t('settings:stableCoin.updateImplementation.title'),
-								label: t('settings:stableCoin.updateImplementation.label'),
-								current: proxyConfig?.implementationAddress?.toString() ?? '',
-								input: (
-									<SelectCreatableController
-										overrideStyles={{
-											wrapper: {
-												border: '1px',
-												borderColor: 'brand.black',
-												borderRadius: '8px',
-												height: 'min',
-											},
-											menuList: {
-												maxH: '220px',
-												overflowY: 'auto',
-												bg: 'brand.white',
-												boxShadow: 'down-black',
-												p: 2,
-												zIndex: 99,
-											},
-											valueSelected: {
-												fontSize: '14px',
-												fontWeight: '500',
-											},
-										}}
-										addonLeft={true}
-										addonDown={optionshederaTokenManagerAddresses.length > 1 && <Icon name='CaretDown' w={4} h={4}  color={'brand.primary200' } />}
-										rules={{
-											required: t(`global:validations.required`) ?? propertyNotFound,
-											validate: {
-												validation: (option: any) => {
-													if (!option || !option.value) return false;
-													upgradeImplementationRequest.implementationAddress =
-														option.value as string;
-													const res = handleRequestValidation(
-														upgradeImplementationRequest.validate('implementationAddress'),
-													);
-													return res;
+											}}
+											name={'updateOwner'}
+											placeholder={
+												t('settings:stableCoin.transferOwner.inputPlaceholder') ?? propertyNotFound
+											}
+											isReadOnly={false}
+										/>
+									),
+									button: (
+										<Button
+											data-testid={`update-owner-button`}
+											variant='primary'
+											onClick={handleChangeOwner}
+											isDisabled={isSameOwner}
+										>
+											{t('settings:stableCoin.transferOwner.buttonText')}
+										</Button>
+									),
+								})}
+							{isAcceptOwner &&
+								GridItem({
+									// GridItem 2 - Accept proxy owner
+									name: 'accept',
+									title: t('settings:stableCoin.acceptOwner.title'),
+									label: t('settings:stableCoin.acceptOwner.label'),
+									button: (
+										<Button
+											data-testid={`accept-owner-button`}
+											variant='primary'
+											onClick={handleAcceptOwner}
+										>
+											{t('settings:stableCoin.acceptOwner.buttonText')}
+										</Button>
+									),
+								})}
+							{isPendingOwner &&
+								GridItem({
+									// GridItem 3 - Pending proxy owner
+									name: 'pending',
+									title: t('settings:stableCoin.pendingOwner.title'),
+									label: t('settings:stableCoin.pendingOwner.label'),
+									current: proxyConfig?.pendingOwner?.toString() ?? '',
+									button: (
+										<Button
+											data-testid={`cancel-owner-button`}
+											variant='primary'
+											onClick={handleCancelOwner}
+										>
+											{t('settings:stableCoin.pendingOwner.buttonText')}
+										</Button>
+									),
+								})}
+							{isProxyOwner &&
+								GridItem({
+									// GridItem 4 - Update proxy implementation
+									name: 'address',
+									title: t('settings:stableCoin.updateImplementation.title'),
+									label: t('settings:stableCoin.updateImplementation.label'),
+									current: proxyConfig?.implementationAddress?.toString() ?? '',
+									input: (
+										<SelectCreatableController
+											overrideStyles={{
+												wrapper: {
+													border: '1px',
+													borderColor: 'brand.black',
+													borderRadius: '8px',
+													height: 'min',
 												},
-											},
-										}}
-										variant='unstyled'
-										name={`updateImplementation`}
-										control={control}
-										isRequired={true}
-										defaultValue={'0'}
-										options={[...Object.values(optionshederaTokenManagerAddresses)]}
-										placeholder={
-											t('settings:stableCoin.updateImplementation.inputPlaceholder') ??
-											propertyNotFound
-										}
-									/>
-								),
-								button: (
-									<Button
-										data-testid={`update-implementation-address-button`}
-										variant='primary'
-										onClick={handleUpgradeImplementation}
-									>
-										{t('settings:stableCoin.updateImplementation.buttonText')}
-									</Button>
-								),
-							})}
+												menuList: {
+													maxH: '220px',
+													overflowY: 'auto',
+													bg: 'brand.white',
+													boxShadow: 'down-black',
+													p: 2,
+													zIndex: 99,
+												},
+												valueSelected: {
+													fontSize: '14px',
+													fontWeight: '500',
+												},
+											}}
+											addonLeft={true}
+											addonDown={
+												optionshederaTokenManagerAddresses.length > 1 && (
+													<Icon name='CaretDown' w={4} h={4} color={'brand.primary200'} />
+												)
+											}
+											rules={{
+												required: t(`global:validations.required`) ?? propertyNotFound,
+												validate: {
+													validation: (option: any) => {
+														if (!option || !option.value) return false;
+														upgradeImplementationRequest.implementationAddress =
+															option.value as string;
+														const res = handleRequestValidation(
+															upgradeImplementationRequest.validate('implementationAddress'),
+														);
+														return res;
+													},
+												},
+											}}
+											variant='unstyled'
+											name={`updateImplementation`}
+											control={control}
+											isRequired={true}
+											defaultValue={'0'}
+											options={[...Object.values(optionshederaTokenManagerAddresses)]}
+											placeholder={
+												t('settings:stableCoin.updateImplementation.inputPlaceholder') ??
+												propertyNotFound
+											}
+										/>
+									),
+									button: (
+										<Button
+											data-testid={`update-implementation-address-button`}
+											variant='primary'
+											onClick={handleUpgradeImplementation}
+										>
+											{t('settings:stableCoin.updateImplementation.buttonText')}
+										</Button>
+									),
+								})}
 						</SimpleGrid>
 					</Flex>
 				)}

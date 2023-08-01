@@ -4,25 +4,24 @@ import {
     PublicKey,
     TokenSupplyType,
     PrivateKey,
-    Client,
     ContractFunctionParameters,
+    Client,
 } from '@hashgraph/sdk'
 import { BigNumber } from 'ethers'
 import {
+    StableCoinProxyAdmin__factory,
     ProxyAdmin__factory,
     TransparentUpgradeableProxy__factory,
     StableCoinFactory__factory,
     HederaTokenManager__factory,
     HederaReserve__factory,
 } from '../typechain-types'
-
 import {
     getClient,
     toEvmAddress,
     associateToken,
     deployContractSDK,
 } from './utils'
-
 import {
     BURN_ROLE,
     DELETE_ROLE,
@@ -34,9 +33,10 @@ import {
     ADDRESS_0,
 } from './constants'
 import { grantKyc } from './contractsMethods'
-
-import { deployContract } from './contractsLifeCycle/deploy'
-
+import {
+    deployContract,
+    deployUpgradableContract,
+} from './contractsLifeCycle/deploy'
 import { contractCall } from './contractsLifeCycle/utils'
 
 const hederaTokenManagerAddress = '0.0.15043733' //'0.0.15043706'
@@ -245,7 +245,8 @@ export async function getProxyImpl(
 export async function deployFactory(
     initializeParams: { admin: string; tokenManager: string },
     clientOperator: Client,
-    privateKey: string
+    privateKey: string,
+    isED25519Type: boolean
 ) {
     // Deploying Factory logic
     console.log(`Deploying Contract Factory. please wait...`)
@@ -261,10 +262,20 @@ export async function deployFactory(
     // Deploying Factory Proxy Admin
     console.log(`Deploying Contract Factory Proxy Admin. please wait...`)
 
+    const AccountEvmAddress = await toEvmAddress(
+        clientOperator.operatorAccountId!.toString(),
+        isED25519Type
+    )
+
+    const paramsProxyAdmin = new ContractFunctionParameters().addAddress(
+        AccountEvmAddress
+    )
+
     const factoryProxyAdmin = await deployContractSDK(
-        ProxyAdmin__factory,
+        StableCoinProxyAdmin__factory,
         privateKey,
-        clientOperator
+        clientOperator,
+        paramsProxyAdmin
     )
 
     console.log(
@@ -390,7 +401,8 @@ export async function deployContractsWithSDK({
         const result = await deployFactory(
             initializeFactory,
             clientSdk,
-            privateKey
+            privateKey,
+            isED25519Type
         )
         f_proxyAddress = result[0]
         f_proxyAdminAddress = result[1]

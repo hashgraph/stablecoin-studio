@@ -28,6 +28,7 @@ import {
     admin,
     changeAdmin,
     owner,
+    pendingOwner,
     upgrade,
     changeProxyAdmin,
     transferOwnership,
@@ -37,11 +38,12 @@ import {
     isUnlimitedSupplierAllowance,
     updateToken,
     getMetadata,
+    acceptOwnership,
 } from '../scripts/contractsMethods'
 import { clientId, toEvmAddress, oneYearLaterInSeconds } from '../scripts/utils'
 import { Client, ContractId } from '@hashgraph/sdk'
 import {
-    ProxyAdmin__factory,
+    StableCoinProxyAdmin__factory,
     ITransparentUpgradeableProxy__factory,
 } from '../typechain-types'
 import chai from 'chai'
@@ -84,7 +86,8 @@ const TokenFactor = BigNumber.from(10).pow(TokenDecimals)
 const INIT_SUPPLY = BigNumber.from(10).mul(TokenFactor)
 const MAX_SUPPLY = BigNumber.from(1000).mul(TokenFactor)
 const TokenMemo = 'Hedera Accelerator Stable Coin'
-const abiProxyAdmin = ProxyAdmin__factory.abi
+const abiStableCoinProxyAdmin = StableCoinProxyAdmin__factory.abi
+
 const MetadataString = 'Metadata_String'
 
 describe('HederaTokenManager Tests', function () {
@@ -507,13 +510,13 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
     it('Retrieve admin and implementation addresses for the Proxy', async function () {
         // We retreive the HederaTokenManagerProxy admin and implementation
         const implementation = await getProxyImplementation(
-            abiProxyAdmin,
+            abiStableCoinProxyAdmin,
             proxyAdminAddress,
             operatorClient,
             proxyAddress.toSolidityAddress()
         )
         const admin = await getProxyAdmin(
-            abiProxyAdmin,
+            abiStableCoinProxyAdmin,
             proxyAdminAddress,
             operatorClient,
             proxyAddress.toSolidityAddress()
@@ -531,7 +534,7 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
     it('Retrieve proxy admin owner', async function () {
         // We retreive the HederaTokenManagerProxy admin and implementation
         const ownerAccount = await owner(
-            abiProxyAdmin,
+            abiStableCoinProxyAdmin,
             proxyAdminAddress,
             operatorClient
         )
@@ -565,7 +568,7 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
         // Non Admin upgrades implementation : fail
         await expect(
             upgradeTo(
-                abiProxyAdmin,
+                abiStableCoinProxyAdmin,
                 proxyAddress,
                 operatorClient,
                 newImplementationContract.toSolidityAddress()
@@ -577,7 +580,7 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
         // Non Admin changes admin : fail
         await expect(
             changeAdmin(
-                abiProxyAdmin,
+                abiStableCoinProxyAdmin,
                 proxyAddress,
                 operatorClient,
                 await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)
@@ -606,7 +609,7 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
         // Upgrading the proxy implementation using the Proxy Admin with an account that is not the owner : fails
         await expect(
             upgrade(
-                abiProxyAdmin,
+                abiStableCoinProxyAdmin,
                 proxyAdminAddress,
                 nonOperatorClient,
                 newImplementationContract.toSolidityAddress(),
@@ -619,7 +622,7 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
         // Non Owner changes admin : fail
         await expect(
             changeProxyAdmin(
-                abiProxyAdmin,
+                abiStableCoinProxyAdmin,
                 proxyAdminAddress,
                 nonOperatorClient,
                 nonOperatorAccount,
@@ -649,7 +652,7 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
 
         // Upgrading the proxy implementation using the Proxy Admin with an account that is the owner : success
         await upgrade(
-            abiProxyAdmin,
+            abiStableCoinProxyAdmin,
             proxyAdminAddress,
             operatorClient,
             newImplementationContract.toSolidityAddress(),
@@ -658,7 +661,7 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
 
         // Check new implementation address
         const implementation = await getProxyImplementation(
-            abiProxyAdmin,
+            abiStableCoinProxyAdmin,
             proxyAdminAddress,
             operatorClient,
             proxyAddress.toSolidityAddress()
@@ -669,7 +672,7 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
 
         // reset
         await upgrade(
-            abiProxyAdmin,
+            abiStableCoinProxyAdmin,
             proxyAdminAddress,
             operatorClient,
             stableCoinAddress.toSolidityAddress(),
@@ -680,7 +683,7 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
     it('Change Proxy admin with the proxy admin and the owner account', async function () {
         // Owner changes admin : success
         await changeProxyAdmin(
-            abiProxyAdmin,
+            abiStableCoinProxyAdmin,
             proxyAdminAddress,
             operatorClient,
             operatorAccount,
@@ -691,7 +694,7 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
         // Now we cannot get the admin using the Proxy admin contract.
         await expect(
             getProxyAdmin(
-                abiProxyAdmin,
+                abiStableCoinProxyAdmin,
                 proxyAdminAddress,
                 operatorClient,
                 proxyAddress.toSolidityAddress()
@@ -729,7 +732,7 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
         // Non Owner transfers owner : fail
         await expect(
             transferOwnership(
-                abiProxyAdmin,
+                abiStableCoinProxyAdmin,
                 proxyAdminAddress,
                 nonOperatorClient,
                 nonOperatorAccount,
@@ -738,10 +741,10 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('Transfers Proxy admin owner with the owner account', async function () {
+    it('Transfers Proxy admin owner with the owner account and accept with new owner', async function () {
         // Owner transfers owner : success
         await transferOwnership(
-            abiProxyAdmin,
+            abiStableCoinProxyAdmin,
             proxyAdminAddress,
             operatorClient,
             nonOperatorAccount,
@@ -749,8 +752,27 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
         )
 
         // Check
+        const pendingOwnerAccount = await pendingOwner(
+            abiStableCoinProxyAdmin,
+            proxyAdminAddress,
+            operatorClient
+        )
+        expect(pendingOwnerAccount.toUpperCase()).to.equals(
+            (
+                await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)
+            ).toUpperCase()
+        )
+
+        // Accept owner change
+        await acceptOwnership(
+            abiStableCoinProxyAdmin,
+            proxyAdminAddress,
+            nonOperatorClient
+        )
+
+        // Check
         const ownerAccount = await owner(
-            abiProxyAdmin,
+            abiStableCoinProxyAdmin,
             proxyAdminAddress,
             operatorClient
         )
@@ -762,11 +784,16 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
 
         // reset
         await transferOwnership(
-            abiProxyAdmin,
+            abiStableCoinProxyAdmin,
             proxyAdminAddress,
             nonOperatorClient,
             operatorAccount,
             operatorIsE25519
+        )
+        await acceptOwnership(
+            abiStableCoinProxyAdmin,
+            proxyAdminAddress,
+            operatorClient
         )
     })
 })

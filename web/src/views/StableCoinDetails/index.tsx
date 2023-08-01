@@ -158,6 +158,11 @@ const StableCoinDetails = () => {
 			hashScanURL: `${hashScanURL}/contract/${selectedStableCoinConfigProxy?.implementationAddress}`,
 		},
 		{
+			label: t('pendingOwner'),
+			value: selectedStableCoinConfigProxy?.pendingOwner,
+			hashScanURL: `${hashScanURL}/contract/${selectedStableCoinConfigProxy?.pendingOwner}`,
+		},
+		{
 			label: t('paused'),
 			value: selectedStableCoin?.paused?.toString().toUpperCase(),
 		},
