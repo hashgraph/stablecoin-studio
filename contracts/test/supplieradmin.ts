@@ -671,6 +671,32 @@ describe('Supplier Admin Tests - (Unlimited)', function () {
             )
         ).to.eventually.be.rejectedWith(Error)
     })
+    
+    it('An account with unlimited supplier role can not increase supplier allowance', async function () {
+        // Increase supplier allowance an account with unlimited supplier role : fail
+        await expect(
+            increaseSupplierAllowance(
+                proxyAddress,
+                BigNumber.from(1),
+                operatorClient,
+                nonOperatorAccount,
+                nonOperatorIsE25519
+            )
+        ).to.eventually.be.rejectedWith(Error)
+    })
+    
+    it('An account with unlimited supplier role can not decrease supplier allowance', async function () {
+        // Decrease supplier allowance an account with unlimited supplier role : fail
+        await expect(
+            decreaseSupplierAllowance(
+                proxyAddress,
+                BigNumber.from(1),
+                operatorClient,
+                nonOperatorAccount,
+                nonOperatorIsE25519
+            )
+        ).to.eventually.be.rejectedWith(Error)
+    })
 })
 
 describe('Supplier Admin Tests - (Limited)', function () {
