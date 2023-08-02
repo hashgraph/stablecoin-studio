@@ -36,10 +36,10 @@ import {
     getContractInfo,
 } from './utils'
 
-const hederaTokenManagerAddress = '0.0.438181'
-export const factoryProxyAddress = '0.0.438187'
-const factoryProxyAdminAddress = '0.0.438185'
-const factoryAddress = '0.0.438183'
+const hederaTokenManagerAddress = '0.0.442311'
+export const factoryProxyAddress = '0.0.442325'
+const factoryProxyAdminAddress = '0.0.442318'
+const factoryAddress = '0.0.442313'
 
 export function initializeClients(): [
     Client,
