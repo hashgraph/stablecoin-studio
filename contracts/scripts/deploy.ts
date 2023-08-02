@@ -430,7 +430,6 @@ export async function deployContractsWithSDK({
 
     if (grantKYCToOriginalSender) {
         console.log(`Granting KYC to Original Sender... please wait.`)
-
         await grantKyc(
             ContractId.fromString(
                 (
