@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
-import {IHederaTokenService} from '../hts-precompile/IHederaTokenService.sol';
+import {
+    IHederaTokenService
+} from '@hashgraph/smart-contracts/contracts/hts-precompile/IHederaTokenService.sol';
 import {KeysLib} from '../library/KeysLib.sol';
 
 interface IHederaTokenManager {
@@ -56,12 +58,10 @@ interface IHederaTokenManager {
      *
      * @param token Token address
      * @param updateTokenStruct Struct containing updated token data
-     * @param newTreasury Token treasury account
      */
     event TokenUpdated(
         address indexed token,
-        UpdateTokenStruct updateTokenStruct,
-        address newTreasury
+        UpdateTokenStruct updateTokenStruct
     );
 
     /**
@@ -79,6 +79,18 @@ interface IHederaTokenManager {
      *
      */
     error RefundingError(uint256 amount);
+
+    /**
+     * @dev Emitted when updating the token admin key
+     *
+     */
+    error AdminKeyUpdateError();
+
+    /**
+     * @dev Emitted when updating the token supply key
+     *
+     */
+    error SupplyKeyUpdateError();
 
     /**
      * @dev Emitted when the provided `s` is less than 100 characters long

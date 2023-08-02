@@ -26,6 +26,7 @@ import { QueryBus } from '../../core/query/QueryBus.js';
 import { LogError } from '../../core/decorator/LogErrorDecorator.js';
 import GetTokenManagerListRequest from './request/GetTokenManagerListRequest.js';
 import { GetTokenManagerListQuery } from '../../app/usecase/query/factory/getTokenManagerList/GetTokenManagerListQuery.js';
+import { MirrorNodeAdapter } from '../../port/out/mirror/MirrorNodeAdapter.js';
 
 interface IFactoryInPort {
 	getHederaTokenManagerList(
@@ -39,6 +40,9 @@ class FactoryInPort implements IFactoryInPort {
 			CommandBus,
 		),
 		private readonly queryBus: QueryBus = Injectable.resolve(QueryBus),
+		private readonly mirrorNode: MirrorNodeAdapter = Injectable.resolve(
+			MirrorNodeAdapter,
+		),
 	) {}
 
 	@LogError
@@ -46,8 +50,11 @@ class FactoryInPort implements IFactoryInPort {
 		request: GetTokenManagerListRequest,
 	): Promise<ContractId[]> {
 		handleValidation('GetTokenManagerListRequest', request);
+		const factoryId: string = (
+			await this.mirrorNode.getContractInfo(request.factoryId)
+		).id;
 		const res = await this.queryBus.execute(
-			new GetTokenManagerListQuery(new ContractId(request.factoryId)),
+			new GetTokenManagerListQuery(new ContractId(factoryId)),
 		);
 		return res.payload;
 	}

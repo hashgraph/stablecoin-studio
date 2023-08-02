@@ -30,6 +30,7 @@ import {
 	StableCoinFactory__factory,
 	IHederaTokenService__factory,
 	StableCoinProxyAdmin__factory,
+	ProxyAdmin__factory,
 } from '@hashgraph-dev/stablecoin-npm-contracts';
 import TransactionAdapter, { InitializationData } from '../TransactionAdapter';
 import { BigNumber, ContractTransaction, ethers, Signer } from 'ethers';
@@ -241,8 +242,12 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				reserveAddress.toString() == '0.0.0'
 					? '0x0000000000000000000000000000000000000000'
 					: HContractId.fromString(
-							reserveAddress.value,
-					  ).toSolidityAddress(),
+							(
+								await this.mirrorNodeAdapter.getContractInfo(
+									reserveAddress.value,
+								)
+							).evmAddress,
+					  ).toString(),
 				reserveInitialAmount
 					? reserveInitialAmount.toFixedNumber()
 					: BigDecimal.ZERO.toFixedNumber(),
@@ -261,7 +266,13 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 
 			const factoryInstance = StableCoinFactory__factory.connect(
 				'0x' +
-					HContractId.fromString(factory.value).toSolidityAddress(),
+					HContractId.fromString(
+						(
+							await this.mirrorNodeAdapter.getContractInfo(
+								factory.value,
+							)
+						).evmAddress,
+					),
 				this.signerOrProvider,
 			);
 			LogService.logTrace('Deploying factory: ', {
@@ -272,8 +283,12 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				stableCoinToCreate,
 				'0x' +
 					HContractId.fromString(
-						hederaTokenManager.value,
-					).toSolidityAddress(),
+						(
+							await this.mirrorNodeAdapter.getContractInfo(
+								hederaTokenManager.value,
+							)
+						).evmAddress,
+					),
 				{
 					value: ethers.utils.parseEther(
 						TOKEN_CREATION_COST_HBAR.toString(),
@@ -516,7 +531,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
 				).updateReserveAddress(
-					reserveAddress.toHederaAddress().toSolidityAddress(),
+					(
+						await this.mirrorNodeAdapter.getContractInfo(
+							reserveAddress.toHederaAddress().toString(),
+						)
+					).evmAddress,
 					{ gasLimit: UPDATE_RESERVE_ADDRESS_GAS },
 				),
 				this.networkService.environment,
@@ -570,7 +589,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		try {
 			return RPCTransactionResponseAdapter.manageResponse(
 				await HederaReserve__factory.connect(
-					reserveAddress.toHederaAddress().toSolidityAddress(),
+					(
+						await this.mirrorNodeAdapter.getContractInfo(
+							reserveAddress.toHederaAddress().toString(),
+						)
+					).evmAddress,
 					this.signerOrProvider,
 				).setAmount(amount.toBigNumber(), {
 					gasLimit: UPDATE_RESERVE_AMOUNT_GAS,
@@ -595,12 +618,24 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	): Promise<TransactionResponse> {
 		try {
 			return RPCTransactionResponseAdapter.manageResponse(
-				await StableCoinProxyAdmin__factory.connect(
-					proxyAdminId.toHederaAddress().toSolidityAddress(),
+				await ProxyAdmin__factory.connect(
+					(
+						await this.mirrorNodeAdapter.getContractInfo(
+							proxyAdminId.toHederaAddress().toString(),
+						)
+					).evmAddress,
 					this.signerOrProvider,
 				).upgrade(
-					proxy.toHederaAddress().toSolidityAddress(),
-					implementationId.toHederaAddress().toSolidityAddress(),
+					(
+						await this.mirrorNodeAdapter.getContractInfo(
+							proxy.toHederaAddress().toString(),
+						)
+					).evmAddress,
+					(
+						await this.mirrorNodeAdapter.getContractInfo(
+							implementationId.toHederaAddress().toString(),
+						)
+					).evmAddress,
 					{
 						gasLimit: UPDATE_PROXY_IMPLEMENTATION_GAS,
 					},
@@ -624,7 +659,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	): Promise<TransactionResponse> {
 		try {
 			return RPCTransactionResponseAdapter.manageResponse(
-				await StableCoinProxyAdmin__factory.connect(
+				await ProxyAdmin__factory.connect(
 					proxyAdminId.toHederaAddress().toSolidityAddress(),
 					this.signerOrProvider,
 				).transferOwnership(await this.getEVMAddress(targetId), {

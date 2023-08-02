@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
-import {IHederaTokenService} from '../hts-precompile/IHederaTokenService.sol';
+import {
+    IHederaTokenService
+} from '@hashgraph/smart-contracts/contracts/hts-precompile/IHederaTokenService.sol';
 
 library KeysLib {
     struct KeysStruct {

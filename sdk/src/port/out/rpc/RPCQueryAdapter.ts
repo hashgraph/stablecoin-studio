@@ -38,6 +38,8 @@ import {
 import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
 import EvmAddress from '../../../domain/context/contract/EvmAddress.js';
+import { MirrorNodeAdapter } from '../mirror/MirrorNodeAdapter.js';
+import { ContractId as HContractId } from '@hashgraph/sdk';
 
 const LOCAL_JSON_RPC_RELAY_URL = 'http://127.0.0.1:7546/api';
 
@@ -62,6 +64,8 @@ export default class RPCQueryAdapter {
 	constructor(
 		@lazyInject(NetworkService)
 		private readonly networkService: NetworkService,
+		@lazyInject(MirrorNodeAdapter)
+		public readonly mirrorNode: MirrorNodeAdapter,
 	) {}
 
 	async init(urlRpcProvider?: string, apiKey?: string): Promise<string> {
@@ -104,7 +108,19 @@ export default class RPCQueryAdapter {
 			HederaTokenManager,
 			address.toString(),
 		).getReserveAddress();
-		return ContractId.fromHederaEthereumAddress(val);
+
+		if (
+			val == undefined ||
+			val.toString() == '0x0000000000000000000000000000000000000000'
+		) {
+			return new ContractId('0.0.0');
+		} else {
+			return ContractId.fromHederaContractId(
+				HContractId.fromString(
+					(await this.mirrorNode.getContractInfo(val)).id.toString(),
+				),
+			);
+		}
 	}
 
 	async getReserveAmount(address: EvmAddress): Promise<BigNumber> {

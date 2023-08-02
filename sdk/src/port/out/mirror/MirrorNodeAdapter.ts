@@ -50,6 +50,7 @@ import {
 	RequestFractionalFee,
 } from '../../in/request/BaseRequest.js';
 import { MirrorNode } from '../../../domain/context/network/MirrorNode.js';
+import ContractViewModel from '../../out/mirror/response/ContractViewModel.js';
 
 @singleton()
 export class MirrorNodeAdapter {
@@ -135,7 +136,6 @@ export class MirrorNodeAdapter {
 	): Promise<StableCoinViewModel> {
 		try {
 			const response = await this.getTokenInfo(tokenId);
-
 			const getKeyOrDefault = (
 				val?: IPublicKey,
 			): ContractId | PublicKey | undefined => {
@@ -151,7 +151,6 @@ export class MirrorNodeAdapter {
 					return undefined;
 				}
 			};
-
 			const getCustomFeesOrDefault = async (
 				val?: ICustomFees,
 			): Promise<RequestCustomFee[] | undefined> => {
@@ -228,17 +227,36 @@ export class MirrorNodeAdapter {
 
 				return customFees;
 			};
-
 			if (response.status !== 200) {
 				throw new StableCoinNotFound(tokenId.toString());
 			}
 			const decimals = parseInt(response.data.decimals ?? '0');
+
+			const transformedMemo: string = await this.transformTokenMemo(
+				response.data.memo,
+			);
 			const proxyAddress = response.data.memo
-				? StableCoinMemo.fromJson(response.data.memo).proxyContract
+				? StableCoinMemo.fromJson(JSON.stringify(transformedMemo))
+						.proxyContract
 				: '0.0.0';
 			const proxyAdminAddress = response.data.memo
-				? StableCoinMemo.fromJson(response.data.memo).proxyAdminContract
+				? StableCoinMemo.fromJson(JSON.stringify(transformedMemo))
+						.proxyAdminContract
 				: '0.0.0';
+
+			const proxyAddressContractInfo = await this.getContractInfo(
+				proxyAddress,
+			);
+			const proxyAdminAddressContractInfo = await this.getContractInfo(
+				proxyAdminAddress,
+			);
+
+			const proxyId: string = (await this.getContractInfo(proxyAddress))
+				.id;
+			const proxyAdminId: string = (
+				await this.getContractInfo(proxyAdminAddress)
+			).id;
+
 			const stableCoinDetail: StableCoinViewModel = {
 				tokenId: HederaId.from(response.data.token_id),
 				name: response.data.name ?? '',
@@ -262,13 +280,13 @@ export class MirrorNodeAdapter {
 							decimals,
 					  )
 					: undefined,
-				proxyAddress: new ContractId(proxyAddress),
-				proxyAdminAddress: new ContractId(proxyAdminAddress),
-				evmProxyAddress: EvmAddress.fromContractId(
-					new ContractId(proxyAddress),
+				proxyAddress: new ContractId(proxyId),
+				proxyAdminAddress: new ContractId(proxyAdminId),
+				evmProxyAddress: new EvmAddress(
+					proxyAddressContractInfo.evmAddress,
 				),
-				evmProxyAdminAddress: EvmAddress.fromContractId(
-					new ContractId(proxyAdminAddress),
+				evmProxyAdminAddress: new EvmAddress(
+					proxyAdminAddressContractInfo.evmAddress,
 				),
 				treasury: HederaId.from(response.data.treasury_account_id),
 				paused: response.data.pause_status === 'PAUSED',
@@ -303,6 +321,26 @@ export class MirrorNodeAdapter {
 				new InvalidResponse(error),
 			);
 		}
+	}
+
+	private async transformTokenMemo(memo: string): Promise<string> {
+		const transformedMemo = JSON.parse(memo);
+		transformedMemo.p = await this.getHederaIdfromContractAddress(
+			transformedMemo.p,
+		);
+		transformedMemo.a = await this.getHederaIdfromContractAddress(
+			transformedMemo.a,
+		);
+		return transformedMemo;
+	}
+
+	private async getHederaIdfromContractAddress(
+		contractAddress: string,
+	): Promise<string> {
+		if (!contractAddress) return '';
+		if (contractAddress.length >= 40)
+			return (await this.getContractInfo(contractAddress)).id;
+		return contractAddress;
 	}
 
 	public async getAccountInfo(
@@ -354,6 +392,40 @@ export class MirrorNodeAdapter {
 		} catch (error) {
 			LogService.logError(error);
 			return Promise.reject<string>(new InvalidResponse(error));
+		}
+	}
+
+	public async getContractInfo(
+		contractEvmAddress: string,
+	): Promise<ContractViewModel> {
+		try {
+			const url = `${this.mirrorNodeConfig.baseUrl}contracts/${contractEvmAddress}`;
+
+			LogService.logTrace(url);
+
+			const retry = 10;
+			let i = 0;
+
+			let response;
+			do {
+				if (i > 0)
+					await new Promise((resolve) => setTimeout(resolve, 2000));
+
+				response = await this.instance.get<IContract>(url);
+				i++;
+			} while (response.status !== 200 && i < retry);
+
+			const contract: ContractViewModel = {
+				id: response.data.contract_id,
+				evmAddress: response.data.evm_address,
+			};
+
+			return contract;
+		} catch (error) {
+			LogService.logError(error);
+			return Promise.reject<ContractViewModel>(
+				new InvalidResponse(error),
+			);
 		}
 	}
 
@@ -492,7 +564,12 @@ export class MirrorNodeAdapter {
 
 			default:
 				return new EvmAddress(
-					'0x' + accountId.toHederaAddress().toSolidityAddress(),
+					'0x' +
+						(
+							await this.getContractInfo(
+								accountId.toHederaAddress().toString(),
+							)
+						).evmAddress,
 				);
 		}
 	}
@@ -609,6 +686,25 @@ interface IAccount {
 	key: IKey;
 	alias: string;
 	account: string;
+}
+
+interface IContract {
+	admin_key: IKey;
+	nullable: boolean;
+	auto_renew_account: string;
+	auto_renew_period: string;
+	contract_id: string;
+	created_timestamp: string;
+	deleted: string;
+	evm_address: string;
+	expiration_timestamp: string;
+	file_id: string;
+	max_automatic_token_associations: string;
+	memo: string;
+	obtainer_id: string;
+	permanent_removal: string;
+	proxy_account_id: string;
+	timestamp: string;
 }
 
 interface ITransactionResult {

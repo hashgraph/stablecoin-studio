@@ -123,7 +123,7 @@
         "@chainlink/contracts": "^0.5.1",
         "@openzeppelin/contracts": "^4.8.2",
         "@openzeppelin/contracts-upgradeable": "^4.8.2",
-        "@openzeppelin/upgrades-core": "^1.20.0",
+        "@hashgraph/smart-contracts": "github:hashgraph/hedera-smart-contracts#v0.4.0",
         "chai-as-promised": "^7.1.1",
         "dotenv": "^16.0.3",
         "ethers": "5.7.2",
