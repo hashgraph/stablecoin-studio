@@ -6,7 +6,7 @@ import {Roles} from './Roles.sol';
 import {IPausable} from './Interfaces/IPausable.sol';
 import {
     IHederaTokenService
-} from 'hedera-smart-contracts/contracts/hts-precompile/IHederaTokenService.sol';
+} from '@hashgraph/smart-contracts/contracts/hts-precompile/IHederaTokenService.sol';
 
 abstract contract Pausable is IPausable, TokenOwner, Roles {
     /**

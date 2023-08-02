@@ -4,10 +4,10 @@ pragma solidity 0.8.16;
 import {ITokenOwner} from './Interfaces/ITokenOwner.sol';
 import {
     HederaResponseCodes
-} from 'hedera-smart-contracts/contracts/hts-precompile/HederaResponseCodes.sol';
+} from '@hashgraph/smart-contracts/contracts/hts-precompile/HederaResponseCodes.sol';
 import {
     IHederaTokenService
-} from 'hedera-smart-contracts/contracts/hts-precompile/IHederaTokenService.sol';
+} from '@hashgraph/smart-contracts/contracts/hts-precompile/IHederaTokenService.sol';
 import {
     IERC20Upgradeable
 } from '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';

@@ -5,7 +5,7 @@ import {TokenOwner} from './TokenOwner.sol';
 import {Roles} from './Roles.sol';
 import {
     IHederaTokenService
-} from 'hedera-smart-contracts/contracts/hts-precompile/IHederaTokenService.sol';
+} from '@hashgraph/smart-contracts/contracts/hts-precompile/IHederaTokenService.sol';
 import {IBurnable} from './Interfaces/IBurnable.sol';
 import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
 

@@ -5,7 +5,7 @@ import {ICashIn} from './Interfaces/ICashIn.sol';
 import {SupplierAdmin} from './SupplierAdmin.sol';
 import {
     IHederaTokenService
-} from 'hedera-smart-contracts/contracts/hts-precompile/IHederaTokenService.sol';
+} from '@hashgraph/smart-contracts/contracts/hts-precompile/IHederaTokenService.sol';
 import {Reserve} from './Reserve.sol';
 
 abstract contract CashIn is ICashIn, SupplierAdmin, Reserve {

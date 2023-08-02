@@ -3,10 +3,10 @@ pragma solidity 0.8.16;
 
 import {
     IHederaTokenService
-} from 'hedera-smart-contracts/contracts/hts-precompile/IHederaTokenService.sol';
+} from '@hashgraph/smart-contracts/contracts/hts-precompile/IHederaTokenService.sol';
 import {
     HederaResponseCodes
-} from 'hedera-smart-contracts/contracts/hts-precompile/HederaResponseCodes.sol';
+} from '@hashgraph/smart-contracts/contracts/hts-precompile/HederaResponseCodes.sol';
 import {
     HederaTokenManager,
     IHederaTokenManager
