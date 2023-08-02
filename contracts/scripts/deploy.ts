@@ -36,10 +36,10 @@ import {
     getContractInfo,
 } from './utils'
 
-const hederaTokenManagerAddress = '0.0.19401'
-export const factoryProxyAddress = '0.0.19509'
-const factoryProxyAdminAddress = '0.0.19482'
-const factoryAddress = '0.0.19459'
+const hederaTokenManagerAddress = '0.0.438181'
+export const factoryProxyAddress = '0.0.438187'
+const factoryProxyAdminAddress = '0.0.438185'
+const factoryAddress = '0.0.438183'
 
 export function initializeClients(): [
     Client,
@@ -499,9 +499,9 @@ export async function deployContractsWithSDK({
 
     try {
         console.log(
-            `HederaReserveProxy created: ${proxyContract[4]} , ${
-                (await getContractInfo(proxyContract[4])).contract_id
-            }`
+            `HederaReserveProxy created: ${
+                proxyContract[4]
+            } , ${await getHederaIdFromSolidityAddress(proxyContract[4])}`
         )
     } catch (error) {
         console.log(error)
@@ -509,35 +509,42 @@ export async function deployContractsWithSDK({
 
     try {
         console.log(
-            `HederaReserveProxyAdmin created: ${proxyContract[5]} , ${
-                (await getContractInfo(proxyContract[5])).contract_id
-            }`
+            `HederaReserveProxyAdmin created: ${
+                proxyContract[5]
+            } , ${await getHederaIdFromSolidityAddress(proxyContract[5])}`
         )
     } catch (error) {
         console.log(error)
     }
-
     return [
         ContractId.fromString(
-            (await getContractInfo(proxyContract[0])).contract_id
+            await getHederaIdFromSolidityAddress(proxyContract[0])
         ),
         ContractId.fromString(
-            (await getContractInfo(proxyContract[1])).contract_id
+            await getHederaIdFromSolidityAddress(proxyContract[1])
         ),
         ContractId.fromString(
-            (await getContractInfo(proxyContract[2])).contract_id
+            await getHederaIdFromSolidityAddress(proxyContract[2])
         ),
         f_proxyAddress,
         f_proxyAdminAddress,
         f_address,
         ContractId.fromString(
-            (await getContractInfo(proxyContract[4])).contract_id
+            await getHederaIdFromSolidityAddress(proxyContract[4])
         ),
         ContractId.fromString(
-            (await getContractInfo(proxyContract[5])).contract_id
+            await getHederaIdFromSolidityAddress(proxyContract[5])
         ),
         ContractId.fromSolidityAddress(proxyContract[3]),
     ]
+}
+
+async function getHederaIdFromSolidityAddress(
+    solidityAddress: string
+): Promise<string> {
+    return solidityAddress != ADDRESS_0
+        ? (await getContractInfo(solidityAddress)).contract_id
+        : '0.0.0'
 }
 
 function fixKeys(): any {
