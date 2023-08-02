@@ -94,7 +94,9 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
                 (10 ** (tokenDecimals - reserveDecimals));
         } else if (tokenDecimals < reserveDecimals) {
             amount = amount * (10 ** (reserveDecimals - tokenDecimals));
-            totalSupply = totalSupply * (10 ** (reserveDecimals - tokenDecimals));
+            totalSupply =
+                totalSupply *
+                (10 ** (reserveDecimals - tokenDecimals));
         }
 
         if (less) {

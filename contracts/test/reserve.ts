@@ -11,9 +11,7 @@ import {
     getOperatorPublicKey,
     deployHederaReserve,
 } from '../scripts/deploy'
-import {
-    Mint,
-} from '../scripts/contractsMethods'
+import { Mint } from '../scripts/contractsMethods'
 import {
     getReserveAddress,
     updateDataFeed,
@@ -37,14 +35,31 @@ let operatorIsE25519: boolean
 
 const TokenName = 'MIDAS'
 const TokenSymbol = 'MD'
-const TokenDecimals = 3
+const OneTokenDecimals = 1
+const TwoTokenDecimals = 2
+const ThreeTokenDecimals = 3
 const ReserveDecimal = 2
-const INIT_AMOUNT = 100
-const TokenFactor = BigNumber.from(10).pow(TokenDecimals)
-const INIT_SUPPLY = BigNumber.from(INIT_AMOUNT).mul(TokenFactor)
-const MAX_SUPPLY = BigNumber.from(1000).mul(TokenFactor)
+const INIT_AMOUNT_100 = 100
+const INIT_AMOUNT_1000 = 1000
+const OneTokenFactor = BigNumber.from(10).pow(OneTokenDecimals)
+const TwoTokenFactor = BigNumber.from(10).pow(TwoTokenDecimals)
+const ThreeTokenFactor = BigNumber.from(10).pow(ThreeTokenDecimals)
+const INIT_SUPPLY_ONE_DECIMALS =
+    BigNumber.from(INIT_AMOUNT_100).mul(OneTokenFactor)
+const MAX_SUPPLY_ONE_DECIMALS = BigNumber.from(1000).mul(OneTokenFactor)
+const INIT_SUPPLY_TWO_DECIMALS =
+    BigNumber.from(INIT_AMOUNT_100).mul(TwoTokenFactor)
+const MAX_SUPPLY_TWO_DECIMALS = BigNumber.from(1000).mul(TwoTokenFactor)
+const INIT_SUPPLY_THREE_DECIMALS =
+    BigNumber.from(INIT_AMOUNT_100).mul(ThreeTokenFactor)
+const MAX_SUPPLY_THREE_DECIMALS = BigNumber.from(1000).mul(ThreeTokenFactor)
 const TokenMemo = 'Hedera Accelerator Stable Coin'
-const INIT_RESERVE = BigNumber.from(INIT_AMOUNT).pow(ReserveDecimal)
+const INIT_RESERVE_100 = BigNumber.from(10)
+    .pow(ReserveDecimal)
+    .mul(BigNumber.from(INIT_AMOUNT_100))
+const INIT_RESERVE_1000 = BigNumber.from(10)
+    .pow(ReserveDecimal)
+    .mul(BigNumber.from(INIT_AMOUNT_1000))
 let hederaReserveProxy: ContractId
 
 describe('Reserve Tests', function () {
@@ -90,15 +105,15 @@ describe('Reserve Tests', function () {
         const result = await deployContractsWithSDK({
             name: TokenName,
             symbol: TokenSymbol,
-            decimals: TokenDecimals,
-            initialSupply: INIT_SUPPLY.toString(),
-            maxSupply: MAX_SUPPLY.toString(),
+            decimals: ThreeTokenDecimals,
+            initialSupply: INIT_SUPPLY_THREE_DECIMALS.toString(),
+            maxSupply: MAX_SUPPLY_THREE_DECIMALS.toString(),
             memo: TokenMemo,
             account: operatorAccount,
             privateKey: operatorPriKey,
             publicKey: operatorPubKey,
             isED25519Type: operatorIsE25519,
-            initialAmountDataFeed: INIT_RESERVE.toString(),
+            initialAmountDataFeed: INIT_RESERVE_100.toString(),
         })
 
         proxyAddress = result[0]
@@ -107,7 +122,7 @@ describe('Reserve Tests', function () {
 
     it('Get getReserveAmount', async () => {
         const reserve = await getReserveAmount(proxyAddress, operatorClient)
-        expect(reserve).to.equals(INIT_RESERVE.toString())
+        expect(reserve).to.equals(INIT_RESERVE_100.toString())
     })
 
     it('Get datafeed', async () => {
@@ -130,7 +145,7 @@ describe('Reserve Tests', function () {
             operatorClient
         )
         const newReserve = beforeReserve.add(
-            BigNumber.from('100').mul(TokenFactor)
+            BigNumber.from('100').mul(ThreeTokenFactor)
         )
         const [newDataFeed, ...others] = await deployHederaReserve(
             newReserve,
@@ -198,23 +213,23 @@ describe('Reserve Tests with reserve and token with same Decimals', function () 
         const result = await deployContractsWithSDK({
             name: TokenName,
             symbol: TokenSymbol,
-            decimals: 2,
-            initialSupply: INIT_SUPPLY.toString(),
-            maxSupply: MAX_SUPPLY.toString(),
+            decimals: TwoTokenDecimals,
+            initialSupply: INIT_SUPPLY_TWO_DECIMALS.toString(),
+            maxSupply: MAX_SUPPLY_TWO_DECIMALS.toString(),
             memo: TokenMemo,
             account: operatorAccount,
             privateKey: operatorPriKey,
             publicKey: operatorPubKey,
             isED25519Type: operatorIsE25519,
-            initialAmountDataFeed: INIT_RESERVE.toString(),
+            initialAmountDataFeed: INIT_RESERVE_1000.toString(),
         })
 
         proxyAddress = result[0]
         hederaReserveProxy = result[7]
     })
-    
+
     it('Can Mint less tokens than reserve', async function () {
-        const AmountToMint = BigNumber.from(10).mul(TokenFactor);
+        const AmountToMint = BigNumber.from(10).mul(TwoTokenFactor)
 
         // Get the initial reserve amount
         const initialReserve = await getReserveAmount(
@@ -230,15 +245,16 @@ describe('Reserve Tests with reserve and token with same Decimals', function () 
             operatorAccount,
             operatorIsE25519
         )
-        
+
         // Check the reserve account : success
-        const finalReserve = await getReserveAmount(
-            proxyAddress,
-            operatorClient
-        )
+        const finalReserve = (
+            await getReserveAmount(proxyAddress, operatorClient)
+        ).sub(AmountToMint)
 
         const expectedTotalReserve = initialReserve.sub(AmountToMint)
-        expect(finalReserve.toString()).to.equals(expectedTotalReserve.toString())
+        expect(finalReserve.toString()).to.equals(
+            expectedTotalReserve.toString()
+        )
     })
 
     it('Can not mint more tokens than reserve', async function () {
@@ -303,23 +319,23 @@ describe('Reserve Tests with reserve decimals higher than token decimals', funct
         const result = await deployContractsWithSDK({
             name: TokenName,
             symbol: TokenSymbol,
-            decimals: 1,
-            initialSupply: INIT_SUPPLY.toString(),
-            maxSupply: MAX_SUPPLY.toString(),
+            decimals: OneTokenDecimals,
+            initialSupply: INIT_SUPPLY_ONE_DECIMALS.toString(),
+            maxSupply: MAX_SUPPLY_ONE_DECIMALS.toString(),
             memo: TokenMemo,
             account: operatorAccount,
             privateKey: operatorPriKey,
             publicKey: operatorPubKey,
             isED25519Type: operatorIsE25519,
-            initialAmountDataFeed: INIT_RESERVE.toString(),
+            initialAmountDataFeed: INIT_RESERVE_100.toString(),
         })
 
         proxyAddress = result[0]
         hederaReserveProxy = result[7]
     })
-    
+
     it('Can Mint less tokens than reserve', async function () {
-        const AmountToMint = BigNumber.from(10).mul(TokenFactor);
+        const AmountToMint = BigNumber.from(10).mul(OneTokenFactor)
 
         // Get the initial reserve amount
         const initialReserve = await getReserveAmount(
@@ -335,15 +351,16 @@ describe('Reserve Tests with reserve decimals higher than token decimals', funct
             operatorAccount,
             operatorIsE25519
         )
-        
+
         // Check the reserve account : success
-        const finalReserve = await getReserveAmount(
-            proxyAddress,
-            operatorClient
-        )
+        const finalReserve = (
+            await getReserveAmount(proxyAddress, operatorClient)
+        ).sub(AmountToMint)
 
         const expectedTotalReserve = initialReserve.sub(AmountToMint)
-        expect(finalReserve.toString()).to.equals(expectedTotalReserve.toString())
+        expect(finalReserve.toString()).to.equals(
+            expectedTotalReserve.toString()
+        )
     })
 
     it('Can not mint more tokens than reserve', async function () {
@@ -408,23 +425,23 @@ describe('Reserve Tests with reserve decimals lower than token decimals', functi
         const result = await deployContractsWithSDK({
             name: TokenName,
             symbol: TokenSymbol,
-            decimals: 3,
-            initialSupply: INIT_SUPPLY.toString(),
-            maxSupply: MAX_SUPPLY.toString(),
+            decimals: ThreeTokenDecimals,
+            initialSupply: INIT_SUPPLY_THREE_DECIMALS.toString(),
+            maxSupply: MAX_SUPPLY_THREE_DECIMALS.toString(),
             memo: TokenMemo,
             account: operatorAccount,
             privateKey: operatorPriKey,
             publicKey: operatorPubKey,
             isED25519Type: operatorIsE25519,
-            initialAmountDataFeed: INIT_RESERVE.toString(),
+            initialAmountDataFeed: INIT_RESERVE_1000.toString(),
         })
 
         proxyAddress = result[0]
         hederaReserveProxy = result[7]
     })
-    
+
     it('Can Mint less tokens than reserve', async function () {
-        const AmountToMint = BigNumber.from(10).mul(TokenFactor);
+        const AmountToMint = BigNumber.from(10).mul(ThreeTokenFactor)
 
         // Get the initial reserve amount
         const initialReserve = await getReserveAmount(
@@ -440,15 +457,16 @@ describe('Reserve Tests with reserve decimals lower than token decimals', functi
             operatorAccount,
             operatorIsE25519
         )
-        
+
         // Check the reserve account : success
-        const finalReserve = await getReserveAmount(
-            proxyAddress,
-            operatorClient
-        )
+        const finalReserve = (
+            await getReserveAmount(proxyAddress, operatorClient)
+        ).sub(AmountToMint)
 
         const expectedTotalReserve = initialReserve.sub(AmountToMint)
-        expect(finalReserve.toString()).to.equals(expectedTotalReserve.toString())
+        expect(finalReserve.toString()).to.equals(
+            expectedTotalReserve.toString()
+        )
     })
 
     it('Can not mint more tokens than reserve', async function () {
