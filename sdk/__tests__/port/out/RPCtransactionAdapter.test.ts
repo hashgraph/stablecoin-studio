@@ -108,6 +108,7 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 	const createToken = async (
 		stablecoin: StableCoin,
 		account: Account,
+		proxyAdminOwner: ContractId | undefined = undefined,
 	): Promise<StableCoinCapabilities> => {
 		const tr = await th.create(
 			stablecoin,
@@ -116,6 +117,7 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 			true,
 			undefined,
 			BigDecimal.fromString(reserve.toString(), RESERVE_DECIMALS),
+			proxyAdminOwner,
 		);
 
 		proxyAdmin = tr.response[0][1];
@@ -222,6 +224,53 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 			}),
 		);
 	}, 1500000);
+
+	it('Deploy a stable coin with the deploying account as the proxy admin owner', async () => {
+		const coinSC = new StableCoin({
+			name: 'TEST_ACCELERATOR_SC',
+			symbol: 'TEST',
+			decimals: decimals,
+		});
+
+		const stableCoinCapabilitiesSC: StableCoinCapabilities =
+			await createToken(coinSC, CLIENT_ACCOUNT_ECDSA, undefined);
+
+		const proxyConfigurationViewModel: ProxyConfigurationViewModel =
+			await ProxyInPort.getProxyConfig(
+				new GetProxyConfigRequest({
+					tokenId:
+						stableCoinCapabilitiesSC?.coin.tokenId?.toString() ??
+						'0.0.0',
+				}),
+			);
+		expect(proxyConfigurationViewModel.owner.value).toEqual(
+			CLIENT_ACCOUNT_ECDSA.id.value,
+		);
+	}, 30000);
+
+	it('Deploy a stable coin with a proxy admin owner different than the deploying account', async () => {
+		const coinSC = new StableCoin({
+			name: 'TEST_ACCELERATOR_SC',
+			symbol: 'TEST',
+			decimals: decimals,
+		});
+
+		const stableCoinCapabilitiesSC: StableCoinCapabilities =
+			await createToken(
+				coinSC,
+				CLIENT_ACCOUNT_ECDSA,
+				new ContractId('0.0.12345'),
+			);
+		const proxyConfigurationViewModel: ProxyConfigurationViewModel =
+			await ProxyInPort.getProxyConfig(
+				new GetProxyConfigRequest({
+					tokenId:
+						stableCoinCapabilitiesSC?.coin.tokenId?.toString() ??
+						'0.0.0',
+				}),
+			);
+		expect(proxyConfigurationViewModel.owner.value).toEqual('0.0.12345');
+	}, 30000);
 
 	it('Cash In & Wipe', async () => {
 		const Amount = 1;

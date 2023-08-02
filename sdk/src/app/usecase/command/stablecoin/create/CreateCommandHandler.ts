@@ -52,6 +52,7 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 			reserveAddress,
 			reserveInitialAmount,
 			createReserve,
+			proxyAdminOwnerAccount,
 		} = command;
 
 		if (!factory) {
@@ -96,6 +97,7 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 			createReserve,
 			reserveAddress,
 			reserveInitialAmount,
+			proxyAdminOwnerAccount,
 		);
 		try {
 			return Promise.resolve(

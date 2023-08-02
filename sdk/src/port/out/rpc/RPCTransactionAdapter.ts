@@ -154,6 +154,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		createReserve: boolean,
 		reserveAddress?: ContractId,
 		reserveInitialAmount?: BigDecimal,
+		proxyAdminOwnerAccount?: ContractId,
 	): Promise<TransactionResponse<any, Error>> {
 		try {
 			const cashinRole: FactoryCashinRole = {
@@ -250,6 +251,12 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				roles,
 				cashinRole,
 				coin.metadata ?? '',
+				proxyAdminOwnerAccount == undefined ||
+				proxyAdminOwnerAccount.toString() == '0.0.0'
+					? '0x0000000000000000000000000000000000000000'
+					: HContractId.fromString(
+							proxyAdminOwnerAccount.value,
+					  ).toSolidityAddress(),
 			);
 
 			const factoryInstance = StableCoinFactory__factory.connect(

@@ -165,6 +165,7 @@ class StableCoinInPort implements IStableCoinInPort {
 			reserveAddress,
 			reserveInitialAmount,
 			createReserve,
+			proxyAdminOwnerAccount,
 		} = req;
 
 		const stableCoinFactory =
@@ -248,6 +249,9 @@ class StableCoinInPort implements IStableCoinInPort {
 							reserveInitialAmount,
 							RESERVE_DECIMALS,
 					  )
+					: undefined,
+				proxyAdminOwnerAccount
+					? new ContractId(proxyAdminOwnerAccount)
 					: undefined,
 			),
 		);

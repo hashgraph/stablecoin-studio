@@ -75,7 +75,10 @@
 		"CreatorNotGrantedKYC": "FALSE",
 		"wantKyc": "Do you want to enable KYC?",
 		"manageCustomFees": "Do you want to add custom fees?",
-		"accountPlaceholder": "0.0.0"
+		"accountPlaceholder": "0.0.0",
+		"proxyAdminTitle": "Proxy admin",
+		"proxyAdminOwner": "Do you want to use your current account as the proxy admin owner?",
+		"proxyAdminOwnerAccount": "Proxy admin owner account"
 	},
 	"proofOfReserve": {
 		"title": "Proof of Reserve",
@@ -91,6 +94,10 @@
 		"addressPor": "Adrress proof of reserve  ",
 		"initialSupplyPor": "Initial supply PoR",
 		"initialSupplyPorExternal": "External PoR"
+	},
+	"proxyAdmin": {
+		"title": "Proxy Admin",
+		"ownerAccount": "Owner account"
 	},
 	"review": {
 		"basicDetails": "Basic details",

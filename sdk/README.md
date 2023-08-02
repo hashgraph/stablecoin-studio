@@ -262,6 +262,7 @@ When creating a stable coin, a set of keys (wipe key, pause key, freeze key, etc
 1. If the token key corresponds to a Hedera account public key, the operation can only be performed by the Hedera account owning this public key, and only through the Hedera SDK.
 2. If the token key corresponds to the stable coin smart contract administrator key, the operation can only be performed through the smart contract, so whoever calls the smart contract can perform the operation. To prevent anyone from performing certain operations roles are used. When the need for a role is indicated in an operation's description, this is only when the related key of the stable coin token is configured to be the smart contract admin key.
 
+
 ## StableCoin
 The following operations represent most of the operations that can be performed using a stable coin. Some of them can be performed through the stable coin smart contract or through the Hedera SDK depending on the token configuration explained above.
 
@@ -300,6 +301,7 @@ Creates a new stable coin. You must use `Network.connect` first with a `Supporte
 		cashInRoleAccount?: string | undefined;
 		cashInRoleAllowance?: string | undefined;
 		metadata?: string | undefined;
+		proxyAdminOwnerAccount?: string;
 	}
 
 	StableCoin.create = (request: CreateRequest): Promise<StableCoinViewModel>
@@ -371,10 +373,13 @@ By specifying the public key of an account, we can set the stable coin's keys to
 			hederaTokenManager: HederaTokenManagerAddressTestnet,
 			stableCoinFactory: FactoryAddressTestnet,
 			createReserve: false,
-			metadata: 'metadata'
+			metadata: 'metadata',
+			proxyAdminOwnerAccount: '0.0.13579'
 		})
 	);
 ```
+
+In the above exmaple, it is also important to notice that, when creating a stable coin, the `proxyAdminOwnerAccount` parameter in the `CreateRequest` class, allows the user to configure an account id, which may be a contract like a timelock controller, a cold wallet, etc, to be the stable coin proxy admin owner rather than the account id that is creating the stable coin, which is the default option if the user doesn't populate this optional parameter.
 
 ### Creates a simple stable coin, with all keys set to none
  

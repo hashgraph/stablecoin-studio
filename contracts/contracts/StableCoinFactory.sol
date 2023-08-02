@@ -115,6 +115,7 @@ contract StableCoinFactory is
 
             reserveProxyAdmin = address(new ProxyAdmin());
             ProxyAdmin(reserveProxyAdmin).transferOwnership(msg.sender);
+
             reserveProxy = address(
                 new TransparentUpgradeableProxy(
                     address(reserveContract),
@@ -142,9 +143,16 @@ contract StableCoinFactory is
         }
 
         // Deploy Proxy Admin
-        StableCoinProxyAdmin stableCoinProxyAdmin = new StableCoinProxyAdmin(
-            msg.sender
-        );
+        ProxyAdmin stableCoinProxyAdmin = new ProxyAdmin();
+
+        // Transfer Proxy Admin ownership
+        if (requestedToken.proxyAdminOwnerAccount != address(0)) {
+            stableCoinProxyAdmin.transferOwnership(
+                requestedToken.proxyAdminOwnerAccount
+            );
+        } else {
+            stableCoinProxyAdmin.transferOwnership(msg.sender);
+        }
 
         // Deploy Proxy
         TransparentUpgradeableProxy stableCoinProxy = new TransparentUpgradeableProxy(

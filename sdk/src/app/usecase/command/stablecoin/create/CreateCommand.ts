@@ -48,6 +48,7 @@ export class CreateCommand extends Command<CreateCommandResponse> {
 		public readonly hederaTokenManager?: ContractId,
 		public readonly reserveAddress?: ContractId,
 		public readonly reserveInitialAmount?: BigDecimal,
+		public readonly proxyAdminOwnerAccount?: ContractId,
 	) {
 		super();
 	}

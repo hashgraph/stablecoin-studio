@@ -19,18 +19,19 @@
   - [Starting the CLI](#starting-the-cli)
 - [Usage](#usage)
   - [Creating a config file](#creating-a-config-file)
+  - [Factories ](#factories)
   - [CLI flow](#cli-flow)
     - [Main menu](#main-menu)
-      - [Create a new Stable Coin](#create-a-new-stable-coin)
+      - [Create a new stable coin](#create-a-new-stable-coin)
       - [Manage imported tokens](#manage-imported-tokens)
-      - [Operate with Stable Coin](#operate-with-stable-coin)
-      - [List Stable Coins](#list-stable-coins)
+      - [Operate with stable soin](#operate-with-stable-soin)
+      - [List stable coins](#list-stable-coins)
       - [Configuration](#configuration)
 - [Testing](#testing)
   - [Jest](#jest)
   - [Run](#run)
 - [Contributing](#contributing)
-- [Code of Conduct](#code-of-conduct)
+- [Code of conduct](#code-of-conduct)
 - [License](#license)
 
 # Overview
@@ -231,6 +232,8 @@ The Wizard will give you the possibility to link your stable coin to an already 
 
 
 _For more information about PoR Feeds, check the official [ChainLink documentation](https://docs.chain.link/data-feeds/proof-of-reserve/)._
+
+Last question about the stable coin it is going to be created is about the proxy admin owner. By default, this ownership belongs to the account creating the stable coin, but the user has the chance to change this default behaviour by configuring another account id, which can belongs to a contract, like a timelock controller, a cold wallet, or whatever account.
 
 Once the request is ready, the CLI will extract from the configuration file the factory and HederaTokenManager contracts addresses for the network you are working on.
 The request will then be submitted to the SDK and the stable coin will be created.

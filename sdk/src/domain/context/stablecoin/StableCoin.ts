@@ -101,6 +101,7 @@ export interface StableCoinProps {
 	cashInRoleAccount?: HederaId;
 	cashInRoleAllowance?: BigDecimal;
 	metadata?: string;
+	proxyAdminOwner?: string;
 }
 
 export class StableCoin extends BaseEntity implements StableCoinProps {

@@ -52,6 +52,8 @@ const Review = (props: ReviewProps) => {
 		reserveAddress,
 		reserveInitialAmount,
 		grantKYCToOriginalSender,
+		currentAccountAsProxyAdminOwner,
+		proxyAdminOwnerAccount,
 	} = getValues();
 
 	const getKey = (keySelected: { value: number; label: string }, nameOtherKey: string) => {
@@ -323,6 +325,19 @@ const Review = (props: ReviewProps) => {
 							]}
 						/>
 					)}
+
+					<DetailsReview
+						title={t('stableCoinCreation:proxyAdmin.title')}
+						titleProps={{ fontWeight: 700, color: 'brand.secondary' }}
+						details={[
+							{
+								label: t('stableCoinCreation:proxyAdmin.ownerAccount'),
+								value: currentAccountAsProxyAdminOwner
+									? t('stableCoinCreation:managementPermissions.currentUserAccount')
+									: proxyAdminOwnerAccount,
+							},
+						]}
+					/>
 				</Stack>
 			</Stack>
 		</VStack>

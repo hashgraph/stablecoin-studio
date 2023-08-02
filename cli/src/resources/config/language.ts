@@ -150,6 +150,9 @@ export const english = {
     askReserveAddress:
       'Enter the Proof of Reserve Feed you wish to link your stable coin to',
     askReserveInitialAmount: 'Enter the Proof of Reserve Feed initial amount',
+    askProxyAdminOwner:
+      'Do you want to use your current account as the proxy admin owner?',
+    askProxyAdminOwnerAccount: 'Enter the proxy admin owner account',
     askInitialSupply: 'Enter the initial supply',
     askSupplyType: 'Do you want the token max supply to be infinite?',
     askTotalSupply: 'Enter the max supply',

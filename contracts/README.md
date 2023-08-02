@@ -66,7 +66,7 @@ The remaining smart contracts have been implemented for this project:
 
 ## Overall architecture
 
-![StableCoinOverallArchitecture](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/a9a99a7c-32f8-4356-8e86-61d3abb2aed5)
+![StableCoinOverallArchitecture](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/218702f9-a0af-4e9a-901a-ffdd97a28b12)
 
 ## Detailed architecture
 
@@ -282,7 +282,7 @@ The factory's and the stable coins's logic can be upgraded at any time using the
 # Change ProxyAdmin Owner
 
 The _Transparent Proxy admin_ also allows to change the owner who can manage the proxy, like upgrading it, as explained above.
-Initially, the account deploying the factory contract and the account deploying the stable coin are the owners of the respective proxy admin contracts, but these accounts, as owners, can change the ownership of the proxy admin.
+Initially, the account deploying the factory contract will be the proxy admin owner of this contract, while the user creating the stable coin will be able to select the account id (can be a contract id) during the stable coin creation process, which will be the owner of the stable coin proxy admin contract.
 
 # Generate documentation
 

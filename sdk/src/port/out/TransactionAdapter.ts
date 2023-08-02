@@ -58,6 +58,7 @@ interface ITransactionAdapter {
 		createReserve: boolean,
 		reserveAddress?: ContractId,
 		reserveInitialAmount?: BigDecimal,
+		proxyAdminOwnerAccount?: ContractId,
 	): Promise<TransactionResponse>;
 	init(): Promise<Environment>;
 	register(account?: Account): Promise<InitializationData>;
@@ -265,6 +266,7 @@ export default abstract class TransactionAdapter
 		createReserve: boolean,
 		reserveAddress?: ContractId,
 		reserveInitialAmount?: BigDecimal,
+		proxyAdminOwnerAccount?: ContractId,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
