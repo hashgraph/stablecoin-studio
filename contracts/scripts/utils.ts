@@ -27,7 +27,8 @@ import { string } from 'hardhat/internal/core/params/argumentTypes.js'
 const web3 = new Web3()
 const SuccessStatus = 22
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+export const sleep = (ms: number) =>
+    new Promise((resolve) => setTimeout(resolve, ms))
 
 export const clientId = 1
 

@@ -162,8 +162,6 @@ contract HederaTokenManager is
 
         address currentTokenAddress = _getTokenAddress();
 
-        address newTreasury;
-
         IHederaTokenService.HederaToken memory hederaToken;
 
         // Token Keys

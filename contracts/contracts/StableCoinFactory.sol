@@ -147,15 +147,15 @@ contract StableCoinFactory is IStableCoinFactory, Initializable {
         }
 
         // Deploy Proxy Admin
-        ProxyAdmin stableCoinProxyAdmin = new ProxyAdmin();
+        StableCoinProxyAdmin stableCoinProxyAdmin = new StableCoinProxyAdmin(
+            msg.sender
+        );
 
         // Transfer Proxy Admin ownership
         if (requestedToken.proxyAdminOwnerAccount != address(0)) {
             stableCoinProxyAdmin.transferOwnership(
                 requestedToken.proxyAdminOwnerAccount
             );
-        } else {
-            stableCoinProxyAdmin.transferOwnership(msg.sender);
         }
 
         // Deploy Proxy

@@ -22,6 +22,7 @@ import {
     toEvmAddress,
     associateToken,
     getContractInfo,
+    sleep,
 } from './utils'
 import {
     BURN_ROLE,
@@ -192,6 +193,8 @@ export async function deployHederaTokenManager(
         privateKey,
         clientOperator
     )
+
+    await sleep(5000)
 
     console.log(
         `HederaTokenManager logic deployed ${
