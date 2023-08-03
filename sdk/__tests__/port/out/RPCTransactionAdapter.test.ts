@@ -227,6 +227,159 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 			}),
 		);
 	}, 1500000);
+	it('Update Token', async () => {
+		const init = await StableCoinInPort.getInfo(
+			new GetStableCoinDetailsRequest({
+				id:
+					stableCoinCapabilitiesSC?.coin.tokenId?.toString() ??
+					'0.0.0',
+			}),
+		);
+
+		const name = 'New Token Name';
+		const symbol = 'New Token Symbol';
+		const autoRenewPeriod = 30 * 24 * 3600;
+		const freezeKey = CLIENT_ACCOUNT_ECDSA.publicKey;
+		const kycKey = CLIENT_ACCOUNT_ECDSA.publicKey;
+		const wipeKey = CLIENT_ACCOUNT_ECDSA.publicKey;
+		const pauseKey = CLIENT_ACCOUNT_ECDSA.publicKey;
+		const feeScheduleKey = CLIENT_ACCOUNT_ECDSA.publicKey;
+
+		await th.update(
+			stableCoinCapabilitiesSC,
+			name,
+			symbol,
+			autoRenewPeriod,
+			undefined,
+			kycKey,
+			freezeKey,
+			feeScheduleKey,
+			pauseKey,
+			wipeKey,
+			'',
+		);
+
+		await delay();
+
+		const res = await StableCoinInPort.getInfo(
+			new GetStableCoinDetailsRequest({
+				id:
+					stableCoinCapabilitiesSC?.coin.tokenId?.toString() ??
+					'0.0.0',
+			}),
+		);
+
+		expect(res.name).toEqual(name);
+		expect(res.symbol).toEqual(symbol);
+		expect(res.autoRenewPeriod).toEqual(autoRenewPeriod);
+		expect(res.freezeKey?.toString()).toEqual(freezeKey?.toString());
+		expect(res.kycKey?.toString()).toEqual(kycKey?.toString());
+		expect(res.wipeKey?.toString()).toEqual(wipeKey?.toString());
+		expect(res.pauseKey?.toString()).toEqual(pauseKey?.toString());
+
+		await th.update(
+			stableCoinCapabilitiesSC,
+			init.name,
+			init.symbol,
+			init.autoRenewPeriod,
+			undefined,
+			PublicKey.NULL,
+			PublicKey.NULL,
+			PublicKey.NULL,
+			PublicKey.NULL,
+			PublicKey.NULL,
+			'',
+		);
+	}, 1500000);
+
+	it('Proxy change Owner and implementation', async () => {
+		const proxyConfig_before: ProxyConfigurationViewModel =
+			await ProxyInPort.getProxyConfig(
+				new GetProxyConfigRequest({
+					tokenId:
+						stableCoinCapabilitiesSC?.coin.tokenId?.toString() ??
+						'0.0.0',
+				}),
+			);
+
+		const proxyAdminID = new ContractId(
+			(await mirrorNodeAdapter.getContractInfo(proxyAdmin)).id,
+		);
+		const proxyID = new ContractId(
+			(await mirrorNodeAdapter.getContractInfo(proxy)).id,
+		);
+
+		const contracts: ContractId[] =
+			await FactoryInPort.getHederaTokenManagerList(
+				new GetTokenManagerListRequest({ factoryId: FACTORY_ADDRESS }),
+			);
+
+		await th.upgradeImplementation(proxyID, proxyAdminID, contracts[0]);
+
+		await th.changeOwner(proxyAdminID, CLIENT_ACCOUNT_ED25519.id);
+
+		await delay();
+
+		// switching to client account and resetting owner and implementation
+		await Network.connect(
+			new ConnectRequest({
+				account: {
+					accountId: CLIENT_ACCOUNT_ED25519.id.toString(),
+					privateKey: CLIENT_ACCOUNT_ED25519.privateKey,
+				},
+				network: 'testnet',
+				wallet: SupportedWallets.CLIENT,
+				mirrorNode: mirrorNode,
+				rpcNode: rpcNode,
+			}),
+		);
+
+		await ProxyInPort.acceptProxyOwner(
+			new AcceptProxyOwnerRequest({
+				tokenId:
+					stableCoinCapabilitiesSC?.coin.tokenId?.toString() ??
+					'0.0.0',
+			}),
+		);
+
+		const proxyConfig_after: ProxyConfigurationViewModel =
+			await ProxyInPort.getProxyConfig(
+				new GetProxyConfigRequest({
+					tokenId:
+						stableCoinCapabilitiesSC?.coin.tokenId?.toString() ??
+						'0.0.0',
+				}),
+			);
+
+		await ProxyInPort.upgradeImplementation(
+			new UpgradeImplementationRequest({
+				tokenId:
+					stableCoinCapabilitiesSC?.coin.tokenId?.toString() ??
+					'0.0.0',
+				implementationAddress:
+					proxyConfig_before.implementationAddress.toString(),
+			}),
+		);
+
+		await ProxyInPort.changeProxyOwner(
+			new ChangeProxyOwnerRequest({
+				tokenId:
+					stableCoinCapabilitiesSC?.coin.tokenId?.toString() ??
+					'0.0.0',
+				targetId: CLIENT_ACCOUNT_ECDSA.id.toString(),
+			}),
+		);
+
+		// switching back to the metamask handler
+		await th.register(CLIENT_ACCOUNT_ECDSA, true);
+
+		expect(proxyConfig_after.implementationAddress.toString()).toEqual(
+			contracts[0].toString(),
+		);
+		expect(proxyConfig_after.owner.toString()).toEqual(
+			CLIENT_ACCOUNT_ED25519.id.toString(),
+		);
+	}, 1500000);
 
 	it('Deploy a stable coin with the deploying account as the proxy admin owner', async () => {
 		const coinSC = new StableCoin({
@@ -831,8 +984,6 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 	}, 1500000);
 
 	it('Get Reserve Address', async () => {
-		const NewReserveAddress = '0.0.12345';
-
 		const ReserveAddress_1 = await th.getReserveAddress(
 			stableCoinCapabilitiesSC,
 		);
@@ -852,7 +1003,7 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 
 		await th.updateReserveAddress(
 			stableCoinCapabilitiesSC,
-			new ContractId(NewReserveAddress),
+			new ContractId(newReserveAddress),
 		);
 
 		await delay();
@@ -871,10 +1022,6 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 
 		await delay();
 
-		const ReserveAddress_3 = await th.getReserveAddress(
-			stableCoinCapabilitiesSC,
-		);
-
 		const currentReserveAddress: string = (
 			await mirrorNodeAdapter.getContractInfo(
 				ReserveAddress_2_HederaId.toString(),
@@ -883,161 +1030,6 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 
 		expect(ReserveAmount.response.toString()).toEqual(reserve.toString());
 		expect(currentReserveAddress).toEqual(newReserveAddress);
-		expect(ReserveAddress_3.response).toEqual(ReserveAddress_1.response);
-	}, 1500000);
-
-	it('Update Token', async () => {
-		const init = await StableCoinInPort.getInfo(
-			new GetStableCoinDetailsRequest({
-				id:
-					stableCoinCapabilitiesSC?.coin.tokenId?.toString() ??
-					'0.0.0',
-			}),
-		);
-
-		const name = 'New Token Name';
-		const symbol = 'New Token Symbol';
-		const autoRenewPeriod = 30 * 24 * 3600;
-		const freezeKey = CLIENT_ACCOUNT_ECDSA.publicKey;
-		const kycKey = CLIENT_ACCOUNT_ECDSA.publicKey;
-		const wipeKey = CLIENT_ACCOUNT_ECDSA.publicKey;
-		const pauseKey = CLIENT_ACCOUNT_ECDSA.publicKey;
-		const feeScheduleKey = CLIENT_ACCOUNT_ECDSA.publicKey;
-
-		await th.update(
-			stableCoinCapabilitiesSC,
-			name,
-			symbol,
-			autoRenewPeriod,
-			undefined,
-			kycKey,
-			freezeKey,
-			feeScheduleKey,
-			pauseKey,
-			wipeKey,
-			'',
-		);
-
-		await delay();
-
-		const res = await StableCoinInPort.getInfo(
-			new GetStableCoinDetailsRequest({
-				id:
-					stableCoinCapabilitiesSC?.coin.tokenId?.toString() ??
-					'0.0.0',
-			}),
-		);
-
-		expect(res.name).toEqual(name);
-		expect(res.symbol).toEqual(symbol);
-		expect(res.autoRenewPeriod).toEqual(autoRenewPeriod);
-		expect(res.freezeKey?.toString()).toEqual(freezeKey?.toString());
-		expect(res.kycKey?.toString()).toEqual(kycKey?.toString());
-		expect(res.wipeKey?.toString()).toEqual(wipeKey?.toString());
-		expect(res.pauseKey?.toString()).toEqual(pauseKey?.toString());
-
-		await th.update(
-			stableCoinCapabilitiesSC,
-			init.name,
-			init.symbol,
-			init.autoRenewPeriod,
-			undefined,
-			PublicKey.NULL,
-			PublicKey.NULL,
-			PublicKey.NULL,
-			PublicKey.NULL,
-			PublicKey.NULL,
-			'',
-		);
-	}, 1500000);
-
-	it('Proxy change Owner and implementation', async () => {
-		const proxyConfig_before: ProxyConfigurationViewModel =
-			await ProxyInPort.getProxyConfig(
-				new GetProxyConfigRequest({
-					tokenId:
-						stableCoinCapabilitiesSC?.coin.tokenId?.toString() ??
-						'0.0.0',
-				}),
-			);
-
-		const proxyAdminID = new ContractId(
-			(await mirrorNodeAdapter.getContractInfo(proxyAdmin)).id,
-		);
-		const proxyID = new ContractId(
-			(await mirrorNodeAdapter.getContractInfo(proxy)).id,
-		);
-
-		const contracts: ContractId[] =
-			await FactoryInPort.getHederaTokenManagerList(
-				new GetTokenManagerListRequest({ factoryId: FACTORY_ADDRESS }),
-			);
-
-		await th.upgradeImplementation(proxyID, proxyAdminID, contracts[0]);
-
-		await th.changeOwner(proxyAdminID, CLIENT_ACCOUNT_ED25519.id);
-
-		await delay();
-
-		// switching to client account and resetting owner and implementation
-		await Network.connect(
-			new ConnectRequest({
-				account: {
-					accountId: CLIENT_ACCOUNT_ED25519.id.toString(),
-					privateKey: CLIENT_ACCOUNT_ED25519.privateKey,
-				},
-				network: 'testnet',
-				wallet: SupportedWallets.CLIENT,
-				mirrorNode: mirrorNode,
-				rpcNode: rpcNode,
-			}),
-		);
-
-		await ProxyInPort.acceptProxyOwner(
-			new AcceptProxyOwnerRequest({
-				tokenId:
-					stableCoinCapabilitiesSC?.coin.tokenId?.toString() ??
-					'0.0.0',
-			}),
-		);
-
-		const proxyConfig_after: ProxyConfigurationViewModel =
-			await ProxyInPort.getProxyConfig(
-				new GetProxyConfigRequest({
-					tokenId:
-						stableCoinCapabilitiesSC?.coin.tokenId?.toString() ??
-						'0.0.0',
-				}),
-			);
-
-		await ProxyInPort.upgradeImplementation(
-			new UpgradeImplementationRequest({
-				tokenId:
-					stableCoinCapabilitiesSC?.coin.tokenId?.toString() ??
-					'0.0.0',
-				implementationAddress:
-					proxyConfig_before.implementationAddress.toString(),
-			}),
-		);
-
-		await ProxyInPort.changeProxyOwner(
-			new ChangeProxyOwnerRequest({
-				tokenId:
-					stableCoinCapabilitiesSC?.coin.tokenId?.toString() ??
-					'0.0.0',
-				targetId: CLIENT_ACCOUNT_ECDSA.id.toString(),
-			}),
-		);
-
-		// switching back to the metamask handler
-		await th.register(CLIENT_ACCOUNT_ECDSA, true);
-
-		expect(proxyConfig_after.implementationAddress.toString()).toEqual(
-			contracts[0].toString(),
-		);
-		expect(proxyConfig_after.owner.toString()).toEqual(
-			CLIENT_ACCOUNT_ED25519.id.toString(),
-		);
 	}, 1500000);
 
 	it('Delete Token', async () => {

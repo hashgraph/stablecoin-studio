@@ -157,147 +157,149 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		reserveInitialAmount?: BigDecimal,
 		proxyAdminOwnerAccount?: ContractId,
 	): Promise<TransactionResponse<any, Error>> {
-		//try {
-		const cashinRole: FactoryCashinRole = {
-			account:
-				coin.cashInRoleAccount == undefined ||
-				coin.cashInRoleAccount.toString() == '0.0.0'
+		try {
+			const cashinRole: FactoryCashinRole = {
+				account:
+					coin.cashInRoleAccount == undefined ||
+					coin.cashInRoleAccount.toString() == '0.0.0'
+						? '0x0000000000000000000000000000000000000000'
+						: await this.getEVMAddress(coin.cashInRoleAccount),
+				allowance: coin.cashInRoleAllowance
+					? coin.cashInRoleAllowance.toFixedNumber()
+					: BigDecimal.ZERO.toFixedNumber(),
+			};
+
+			const providedKeys = [
+				coin.adminKey,
+				coin.kycKey,
+				coin.freezeKey,
+				coin.wipeKey,
+				coin.supplyKey,
+				coin.feeScheduleKey,
+				coin.pauseKey,
+			];
+
+			const keys: FactoryKey[] =
+				this.setKeysForSmartContract(providedKeys);
+
+			const providedRoles = [
+				{
+					account: coin.burnRoleAccount,
+					role: StableCoinRole.BURN_ROLE,
+				},
+				{
+					account: coin.wipeRoleAccount,
+					role: StableCoinRole.WIPE_ROLE,
+				},
+				{
+					account: coin.rescueRoleAccount,
+					role: StableCoinRole.RESCUE_ROLE,
+				},
+				{
+					account: coin.pauseRoleAccount,
+					role: StableCoinRole.PAUSE_ROLE,
+				},
+				{
+					account: coin.freezeRoleAccount,
+					role: StableCoinRole.FREEZE_ROLE,
+				},
+				{
+					account: coin.deleteRoleAccount,
+					role: StableCoinRole.DELETE_ROLE,
+				},
+				{ account: coin.kycRoleAccount, role: StableCoinRole.KYC_ROLE },
+			];
+
+			const roles = await Promise.all(
+				providedRoles
+					.filter((item) => {
+						return (
+							item.account &&
+							item.account.value !== HederaId.NULL.value
+						);
+					})
+					.map(async (item) => {
+						const role = new FactoryRole();
+						role.role = item.role;
+						role.account = await this.getEVMAddress(item.account!);
+						return role;
+					}),
+			);
+
+			const stableCoinToCreate = new FactoryStableCoin(
+				coin.name,
+				coin.symbol,
+				coin.freezeDefault ?? false,
+				coin.supplyType == TokenSupplyType.FINITE,
+				coin.maxSupply
+					? coin.maxSupply.toFixedNumber()
+					: BigDecimal.ZERO.toFixedNumber(),
+				coin.initialSupply
+					? coin.initialSupply.toFixedNumber()
+					: BigDecimal.ZERO.toFixedNumber(),
+				coin.decimals,
+				reserveAddress == undefined ||
+				reserveAddress.toString() == '0.0.0'
 					? '0x0000000000000000000000000000000000000000'
-					: await this.getEVMAddress(coin.cashInRoleAccount),
-			allowance: coin.cashInRoleAllowance
-				? coin.cashInRoleAllowance.toFixedNumber()
-				: BigDecimal.ZERO.toFixedNumber(),
-		};
+					: HContractId.fromString(
+							(
+								await this.mirrorNodeAdapter.getContractInfo(
+									reserveAddress.value,
+								)
+							).evmAddress,
+					  ).toString(),
+				reserveInitialAmount
+					? reserveInitialAmount.toFixedNumber()
+					: BigDecimal.ZERO.toFixedNumber(),
+				createReserve,
+				keys,
+				roles,
+				cashinRole,
+				coin.metadata ?? '',
+				proxyAdminOwnerAccount == undefined ||
+				proxyAdminOwnerAccount.toString() == '0.0.0'
+					? '0x0000000000000000000000000000000000000000'
+					: HContractId.fromString(
+							proxyAdminOwnerAccount.value,
+					  ).toSolidityAddress(),
+			);
 
-		const providedKeys = [
-			coin.adminKey,
-			coin.kycKey,
-			coin.freezeKey,
-			coin.wipeKey,
-			coin.supplyKey,
-			coin.feeScheduleKey,
-			coin.pauseKey,
-		];
+			const factoryInstance = StableCoinFactory__factory.connect(
+				(await this.mirrorNodeAdapter.getContractInfo(factory.value))
+					.evmAddress,
+				this.signerOrProvider,
+			);
+			LogService.logTrace('Deploying factory: ', {
+				tokenManager: hederaTokenManager.value,
+				stableCoin: stableCoinToCreate,
+			});
+			const res = await factoryInstance.deployStableCoin(
+				stableCoinToCreate,
+				(
+					await this.mirrorNodeAdapter.getContractInfo(
+						hederaTokenManager.value,
+					)
+				).evmAddress,
+				{
+					value: ethers.utils.parseEther(
+						TOKEN_CREATION_COST_HBAR.toString(),
+					),
+					gasLimit: CREATE_SC_GAS,
+				},
+			);
 
-		const keys: FactoryKey[] = this.setKeysForSmartContract(providedKeys);
-
-		const providedRoles = [
-			{
-				account: coin.burnRoleAccount,
-				role: StableCoinRole.BURN_ROLE,
-			},
-			{
-				account: coin.wipeRoleAccount,
-				role: StableCoinRole.WIPE_ROLE,
-			},
-			{
-				account: coin.rescueRoleAccount,
-				role: StableCoinRole.RESCUE_ROLE,
-			},
-			{
-				account: coin.pauseRoleAccount,
-				role: StableCoinRole.PAUSE_ROLE,
-			},
-			{
-				account: coin.freezeRoleAccount,
-				role: StableCoinRole.FREEZE_ROLE,
-			},
-			{
-				account: coin.deleteRoleAccount,
-				role: StableCoinRole.DELETE_ROLE,
-			},
-			{ account: coin.kycRoleAccount, role: StableCoinRole.KYC_ROLE },
-		];
-
-		const roles = await Promise.all(
-			providedRoles
-				.filter((item) => {
-					return (
-						item.account &&
-						item.account.value !== HederaId.NULL.value
-					);
-				})
-				.map(async (item) => {
-					const role = new FactoryRole();
-					role.role = item.role;
-					role.account = await this.getEVMAddress(item.account!);
-					return role;
-				}),
-		);
-
-		const stableCoinToCreate = new FactoryStableCoin(
-			coin.name,
-			coin.symbol,
-			coin.freezeDefault ?? false,
-			coin.supplyType == TokenSupplyType.FINITE,
-			coin.maxSupply
-				? coin.maxSupply.toFixedNumber()
-				: BigDecimal.ZERO.toFixedNumber(),
-			coin.initialSupply
-				? coin.initialSupply.toFixedNumber()
-				: BigDecimal.ZERO.toFixedNumber(),
-			coin.decimals,
-			reserveAddress == undefined || reserveAddress.toString() == '0.0.0'
-				? '0x0000000000000000000000000000000000000000'
-				: HContractId.fromString(
-						(
-							await this.mirrorNodeAdapter.getContractInfo(
-								reserveAddress.value,
-							)
-						).evmAddress,
-				  ).toString(),
-			reserveInitialAmount
-				? reserveInitialAmount.toFixedNumber()
-				: BigDecimal.ZERO.toFixedNumber(),
-			createReserve,
-			keys,
-			roles,
-			cashinRole,
-			coin.metadata ?? '',
-			proxyAdminOwnerAccount == undefined ||
-			proxyAdminOwnerAccount.toString() == '0.0.0'
-				? '0x0000000000000000000000000000000000000000'
-				: HContractId.fromString(
-						proxyAdminOwnerAccount.value,
-				  ).toSolidityAddress(),
-		);
-
-		const factoryInstance = StableCoinFactory__factory.connect(
-			(await this.mirrorNodeAdapter.getContractInfo(factory.value))
-				.evmAddress,
-			this.signerOrProvider,
-		);
-		LogService.logTrace('Deploying factory: ', {
-			tokenManager: hederaTokenManager.value,
-			stableCoin: stableCoinToCreate,
-		});
-		const res = await factoryInstance.deployStableCoin(
-			stableCoinToCreate,
-			(
-				await this.mirrorNodeAdapter.getContractInfo(
-					hederaTokenManager.value,
-				)
-			).evmAddress,
-			{
-				value: ethers.utils.parseEther(
-					TOKEN_CREATION_COST_HBAR.toString(),
-				),
-				gasLimit: CREATE_SC_GAS,
-			},
-		);
-
-		// Put it into an array since structs change the response from the event and its not a simple array
-		return await RPCTransactionResponseAdapter.manageResponse(
-			res,
-			this.networkService.environment,
-			'Deployed',
-		);
-		/*} catch (error) {
+			// Put it into an array since structs change the response from the event and its not a simple array
+			return await RPCTransactionResponseAdapter.manageResponse(
+				res,
+				this.networkService.environment,
+				'Deployed',
+			);
+		} catch (error) {
 			LogService.logError(error);
 			throw new SigningError(
 				`Unexpected error in RPCTransactionAdapter create operation : ${error}`,
 			);
-		}*/
+		}
 	}
 
 	async init(debug = false): Promise<string> {
@@ -1014,66 +1016,6 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		}
 	}
 
-	/* async associateToken(
-		coin: StableCoinCapabilities,
-		targetId: HederaId,
-	): Promise<TransactionResponse> {
-		try {
-			if (!coin.coin.evmProxyAddress?.toString())
-				throw new TransactionResponseError({
-					RPC_relay: true,
-					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
-					network: this.networkService.environment,
-				});
-
-			return RPCTransactionResponseAdapter.manageResponse(
-				await HederaTokenManager__factory.connect(
-					coin.coin.evmProxyAddress?.toString(),
-					this.signerOrProvider,
-				).associateToken(await this.getEVMAddress(targetId)),
-				this.networkService.environment,
-			);
-		} catch (error) {
-			LogService.logError(error);
-			throw new TransactionResponseError({
-				RPC_relay: true,
-				message: `Unexpected error in RPCTransactionAdapter associateToken operation : ${error}`,
-				network: this.networkService.environment,
-				transactionId: (error as any).error?.transactionId,
-			});
-		}
-	}
-
-	async dissociateToken(
-		coin: StableCoinCapabilities,
-		targetId: HederaId,
-	): Promise<TransactionResponse> {
-		try {
-			if (!coin.coin.evmProxyAddress?.toString())
-				throw new TransactionResponseError({
-					RPC_relay: true,
-					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
-					network: this.networkService.environment,
-				});
-
-			return RPCTransactionResponseAdapter.manageResponse(
-				await HederaTokenManager__factory.connect(
-					coin.coin.evmProxyAddress?.toString(),
-					this.signerOrProvider,
-				).dissociateToken(await this.getEVMAddress(targetId)),
-				this.networkService.environment,
-			);
-		} catch (error) {
-			LogService.logError(error);
-			throw new TransactionResponseError({
-				RPC_relay: true,
-				message: `Unexpected error in RPCTransactionAdapter dissociateToken operation : ${error}`,
-				network: this.networkService.environment,
-				transactionId: (error as any).error?.transactionId,
-			});
-		}
-	} */
-
 	async isUnlimitedSupplierAllowance(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
@@ -1309,46 +1251,6 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		return tokenManager[functionName](...param);
 	}
 
-	/* async transfer(
-		coin: StableCoinCapabilities,
-		amount: BigDecimal,
-		sourceId: Account,
-		targetId: HederaId,
-	): Promise<TransactionResponse> {
-		const transfer = await this.precompiledCall('transferToken', [
-			coin.coin.tokenId?.toHederaAddress().toSolidityAddress(),
-			// await this.accountToEvmAddress(sourceId.id),
-			await this.getEVMAddress(sourceId.id),
-			// await (await this.accountToEvmAddress(targetId)).toString(),
-			await this.getEVMAddress(targetId),
-			amount,
-		]);
-		return RPCTransactionResponseAdapter.manageResponse(
-			transfer,
-			this.networkService.environment,
-		);
-	} */
-
-	/* async transferFrom(
-		coin: StableCoinCapabilities,
-		amount: BigDecimal,
-		sourceId: HederaId,
-		targetId: HederaId,
-	): Promise<TransactionResponse> {
-		const transfer = await this.precompiledCall('transferFrom', [
-			coin.coin.tokenId?.toHederaAddress().toSolidityAddress(),
-			// await this.accountToEvmAddress(sourceId),
-			await this.getEVMAddress(sourceId),
-			// await (await this.accountToEvmAddress(targetId)).toString(),
-			await this.getEVMAddress(targetId),
-			amount,
-		]);
-		return RPCTransactionResponseAdapter.manageResponse(
-			transfer,
-			this.networkService.environment,
-		);
-	} */
-
 	async signAndSendTransaction(
 		t: RPCTransactionAdapter,
 	): Promise<TransactionResponse> {
@@ -1358,14 +1260,6 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	getAccount(): Account {
 		return this.account;
 	}
-
-	/* async precompiledCall(
-		functionName: string,
-		param: unknown[],
-	): Promise<ContractTransaction> {
-		const precompiledAddress = '0000000000000000000000000000000000000167';
-		return await this.contractCall(precompiledAddress, functionName, param);
-	} */
 
 	/**
 	 * TODO consider leaving this as a service and putting two implementations on top for rpc and web wallet.
