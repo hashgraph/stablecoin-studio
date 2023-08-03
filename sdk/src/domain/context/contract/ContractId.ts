@@ -12,9 +12,7 @@ export default class ContractId extends HederaId {
 	public readonly value: string;
 
 	constructor(value: string) {
-		// let contract: string = value;
 		if (value.length == 42 && value.startsWith('0x')) {
-			// contract = ContractId.fromHederaEthereumAddress(value).toString();
 			throw new InvalidContractId(value);
 		}
 		super(value);
@@ -57,11 +55,6 @@ export default class ContractId extends HederaId {
 			err.push(new InvalidContractId(id));
 		} else {
 			try {
-				/* if (id.length == 42 && id.startsWith('0x')) {
-					HContractId.fromSolidityAddress(id);
-				} else {
-					HContractId.fromString(id);
-				} */
 				if (!(id.length == 42 && id.startsWith('0x')))
 					HContractId.fromString(id);
 			} catch (error) {
