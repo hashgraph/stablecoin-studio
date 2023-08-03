@@ -167,6 +167,6 @@ describe(`<${StableCoinSettings.name} />`, () => {
 		const cancelOwnerButton = await component.findByTestId('cancel-owner-button');
 		expect(cancelOwnerButton).toBeInTheDocument();
 		expect(cancelOwnerButton).toBeEnabled();
-		await userEvent.click(cancelOwnerButton);		
+		await userEvent.click(cancelOwnerButton);
 	});
 });

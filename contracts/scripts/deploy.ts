@@ -35,10 +35,7 @@ import {
     ADDRESS_0,
 } from './constants'
 import { grantKyc } from './contractsMethods'
-import {
-    deployContract,
-    deployUpgradableContract,
-} from './contractsLifeCycle/deploy'
+import { deployContract } from './contractsLifeCycle/deploy'
 import { contractCall } from './contractsLifeCycle/utils'
 
 const hederaTokenManagerAddress = '0.0.444596'

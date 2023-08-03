@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { upgrades } from 'hardhat'
 import { Client, ContractId, AccountId } from '@hashgraph/sdk'
 import { deployContract } from './deploy'

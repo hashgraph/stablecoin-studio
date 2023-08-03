@@ -4,6 +4,7 @@ import { HederaTokenManager__factory } from '../typechain-types'
 import { Client, ContractId } from '@hashgraph/sdk'
 import {
     deployContractsWithSDK,
+    getOperatorAccount,
     getOperatorClient,
     getOperatorE25519,
     getOperatorPrivateKey,
@@ -50,6 +51,12 @@ describe('Upgradable Tests', function () {
             client2publickey,
             client2isED25519Type,
         ] = initializeClients()
+
+        operatorAccount = getOperatorAccount(
+            client1account,
+            client2account,
+            clientId
+        )
 
         operatorClient = getOperatorClient(client1, client2, clientId)
 

@@ -118,7 +118,7 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 		const factoryProxyConfig: any = await Promise.race([
 			SDKService.getFactoryProxyConfig(
 				new GetFactoryProxyConfigRequest({
-					factoryId: factoryId,
+					factoryId,
 				}),
 			),
 			new Promise((resolve, reject) => {
