@@ -44,10 +44,11 @@ import {
 	GetProxyConfigRequest,
 	GetTokenManagerListRequest,
 	UpgradeImplementationRequest,
+	AcceptProxyOwnerRequest,
 } from '../../../src/index.js';
 import StableCoinCapabilities from '../../../src/domain/context/stablecoin/StableCoinCapabilities.js';
 import BigDecimal from '../../../src/domain/context/shared/BigDecimal.js';
-import { ethers, Wallet } from 'ethers';
+import { Contract, ethers, Wallet } from 'ethers';
 import { StableCoinRole } from '../../../src/domain/context/stablecoin/StableCoinRole.js';
 import Injectable from '../../../src/core/Injectable.js';
 import { MirrorNodeAdapter } from '../../../src/port/out/mirror/MirrorNodeAdapter.js';
@@ -129,8 +130,10 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 		return await stableCoinService.getCapabilities(account, tokenIdSC);
 	};
 
+	let mirrorNodeAdapter: MirrorNodeAdapter;
+
 	beforeAll(async () => {
-		const mirrorNodeAdapter = Injectable.resolve(MirrorNodeAdapter);
+		mirrorNodeAdapter = Injectable.resolve(MirrorNodeAdapter);
 		mirrorNodeAdapter.set(mirrorNode);
 
 		th = Injectable.resolve(RPCTransactionAdapter);
@@ -828,7 +831,7 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 	}, 1500000);
 
 	it('Get Reserve Address', async () => {
-		const NewReserveAddress = '0.0.11111111';
+		const NewReserveAddress = '0.0.12345';
 
 		const ReserveAddress_1 = await th.getReserveAddress(
 			stableCoinCapabilitiesSC,
@@ -840,6 +843,12 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 		const ReserveAmount = await th.getReserveAmount(
 			stableCoinCapabilitiesSC,
 		);
+
+		const newReserveAddress: string = (
+			await mirrorNodeAdapter.getContractInfo(
+				ReserveAddress_1_HederaId.toString(),
+			)
+		).id;
 
 		await th.updateReserveAddress(
 			stableCoinCapabilitiesSC,
@@ -857,7 +866,7 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 
 		await th.updateReserveAddress(
 			stableCoinCapabilitiesSC,
-			ReserveAddress_1_HederaId.toContractId(),
+			new ContractId(newReserveAddress),
 		);
 
 		await delay();
@@ -866,10 +875,14 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 			stableCoinCapabilitiesSC,
 		);
 
+		const currentReserveAddress: string = (
+			await mirrorNodeAdapter.getContractInfo(
+				ReserveAddress_2_HederaId.toString(),
+			)
+		).id;
+
 		expect(ReserveAmount.response.toString()).toEqual(reserve.toString());
-		expect(ReserveAddress_2_HederaId.toContractId().toString()).toEqual(
-			NewReserveAddress,
-		);
+		expect(currentReserveAddress).toEqual(newReserveAddress);
 		expect(ReserveAddress_3.response).toEqual(ReserveAddress_1.response);
 	}, 1500000);
 
@@ -948,9 +961,12 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 				}),
 			);
 
-		const proxyAdminID = new EvmAddress(proxyAdmin).toContractId();
-
-		const proxyID = new EvmAddress(proxy).toContractId();
+		const proxyAdminID = new ContractId(
+			(await mirrorNodeAdapter.getContractInfo(proxyAdmin)).id,
+		);
+		const proxyID = new ContractId(
+			(await mirrorNodeAdapter.getContractInfo(proxy)).id,
+		);
 
 		const contracts: ContractId[] =
 			await FactoryInPort.getHederaTokenManagerList(
@@ -962,15 +978,6 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 		await th.changeOwner(proxyAdminID, CLIENT_ACCOUNT_ED25519.id);
 
 		await delay();
-
-		const proxyConfig_after: ProxyConfigurationViewModel =
-			await ProxyInPort.getProxyConfig(
-				new GetProxyConfigRequest({
-					tokenId:
-						stableCoinCapabilitiesSC?.coin.tokenId?.toString() ??
-						'0.0.0',
-				}),
-			);
 
 		// switching to client account and resetting owner and implementation
 		await Network.connect(
@@ -985,6 +992,23 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 				rpcNode: rpcNode,
 			}),
 		);
+
+		await ProxyInPort.acceptProxyOwner(
+			new AcceptProxyOwnerRequest({
+				tokenId:
+					stableCoinCapabilitiesSC?.coin.tokenId?.toString() ??
+					'0.0.0',
+			}),
+		);
+
+		const proxyConfig_after: ProxyConfigurationViewModel =
+			await ProxyInPort.getProxyConfig(
+				new GetProxyConfigRequest({
+					tokenId:
+						stableCoinCapabilitiesSC?.coin.tokenId?.toString() ??
+						'0.0.0',
+				}),
+			);
 
 		await ProxyInPort.upgradeImplementation(
 			new UpgradeImplementationRequest({
