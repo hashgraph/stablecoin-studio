@@ -48,7 +48,7 @@ import {
 } from '../../../src/index.js';
 import StableCoinCapabilities from '../../../src/domain/context/stablecoin/StableCoinCapabilities.js';
 import BigDecimal from '../../../src/domain/context/shared/BigDecimal.js';
-import { Contract, ethers, Wallet } from 'ethers';
+import { ethers, Wallet } from 'ethers';
 import { StableCoinRole } from '../../../src/domain/context/stablecoin/StableCoinRole.js';
 import Injectable from '../../../src/core/Injectable.js';
 import { MirrorNodeAdapter } from '../../../src/port/out/mirror/MirrorNodeAdapter.js';

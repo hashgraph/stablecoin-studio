@@ -6,7 +6,6 @@ import BaseError from '../../../core/error/BaseError.js';
 import CheckStrings from '../../../core/checks/strings/CheckStrings.js';
 import { InvalidContractId } from './error/InvalidContractId.js';
 import { HederaId } from '../shared/HederaId.js';
-import EvmAddress from './EvmAddress.js';
 
 export default class ContractId extends HederaId {
 	public readonly value: string;
@@ -71,10 +70,5 @@ export default class ContractId extends HederaId {
 
 	public toString(): string {
 		return this.value;
-	}
-
-	// TODO: delete
-	public toEvmAddress(): EvmAddress {
-		return EvmAddress.fromContractId(this);
 	}
 }
