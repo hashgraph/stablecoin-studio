@@ -29,6 +29,7 @@ import {
 	HederaReserve__factory,
 	StableCoinFactory__factory,
 	IHederaTokenService__factory,
+	StableCoinProxyAdmin__factory,
 	ProxyAdmin__factory,
 } from '@hashgraph-dev/stablecoin-npm-contracts';
 import TransactionAdapter, { InitializationData } from '../TransactionAdapter';
@@ -59,7 +60,8 @@ import PublicKey from '../../../domain/context/account/PublicKey.js';
 import {
 	BURN_GAS,
 	CASHIN_GAS,
-	CHANGE_PROXY_OWNER,
+	CHANGE_PROXY_OWNER_GAS,
+	ACCEPT_PROXY_OWNER_GAS,
 	CREATE_SC_GAS,
 	DECREASE_SUPPLY_GAS,
 	DELETE_GAS,
@@ -77,7 +79,7 @@ import {
 	TOKEN_CREATION_COST_HBAR,
 	UNFREEZE_GAS,
 	UNPAUSE_GAS,
-	UPDATE_PROXY_IMPLEMENTATION,
+	UPDATE_PROXY_IMPLEMENTATION_GAS,
 	UPDATE_RESERVE_ADDRESS_GAS,
 	UPDATE_RESERVE_AMOUNT_GAS,
 	UPDATE_TOKEN_GAS,
@@ -153,6 +155,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		createReserve: boolean,
 		reserveAddress?: ContractId,
 		reserveInitialAmount?: BigDecimal,
+		proxyAdminOwnerAccount?: ContractId,
 	): Promise<TransactionResponse<any, Error>> {
 		try {
 			const cashinRole: FactoryCashinRole = {
@@ -239,8 +242,12 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				reserveAddress.toString() == '0.0.0'
 					? '0x0000000000000000000000000000000000000000'
 					: HContractId.fromString(
-							reserveAddress.value,
-					  ).toSolidityAddress(),
+							(
+								await this.mirrorNodeAdapter.getContractInfo(
+									reserveAddress.value,
+								)
+							).evmAddress,
+					  ).toString(),
 				reserveInitialAmount
 					? reserveInitialAmount.toFixedNumber()
 					: BigDecimal.ZERO.toFixedNumber(),
@@ -249,11 +256,17 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				roles,
 				cashinRole,
 				coin.metadata ?? '',
+				proxyAdminOwnerAccount == undefined ||
+				proxyAdminOwnerAccount.toString() == '0.0.0'
+					? '0x0000000000000000000000000000000000000000'
+					: HContractId.fromString(
+							proxyAdminOwnerAccount.value,
+					  ).toSolidityAddress(),
 			);
 
 			const factoryInstance = StableCoinFactory__factory.connect(
-				'0x' +
-					HContractId.fromString(factory.value).toSolidityAddress(),
+				(await this.mirrorNodeAdapter.getContractInfo(factory.value))
+					.evmAddress,
 				this.signerOrProvider,
 			);
 			LogService.logTrace('Deploying factory: ', {
@@ -262,10 +275,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			});
 			const res = await factoryInstance.deployStableCoin(
 				stableCoinToCreate,
-				'0x' +
-					HContractId.fromString(
+				(
+					await this.mirrorNodeAdapter.getContractInfo(
 						hederaTokenManager.value,
-					).toSolidityAddress(),
+					)
+				).evmAddress,
 				{
 					value: ethers.utils.parseEther(
 						TOKEN_CREATION_COST_HBAR.toString(),
@@ -508,7 +522,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					coin.coin.evmProxyAddress?.toString(),
 					this.signerOrProvider,
 				).updateReserveAddress(
-					reserveAddress.toHederaAddress().toSolidityAddress(),
+					(
+						await this.mirrorNodeAdapter.getContractInfo(
+							reserveAddress.toHederaAddress().toString(),
+						)
+					).evmAddress,
 					{ gasLimit: UPDATE_RESERVE_ADDRESS_GAS },
 				),
 				this.networkService.environment,
@@ -562,7 +580,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		try {
 			return RPCTransactionResponseAdapter.manageResponse(
 				await HederaReserve__factory.connect(
-					reserveAddress.toHederaAddress().toSolidityAddress(),
+					(
+						await this.mirrorNodeAdapter.getContractInfo(
+							reserveAddress.toHederaAddress().toString(),
+						)
+					).evmAddress,
 					this.signerOrProvider,
 				).setAmount(amount.toBigNumber(), {
 					gasLimit: UPDATE_RESERVE_AMOUNT_GAS,
@@ -588,13 +610,25 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		try {
 			return RPCTransactionResponseAdapter.manageResponse(
 				await ProxyAdmin__factory.connect(
-					proxyAdminId.toHederaAddress().toSolidityAddress(),
+					(
+						await this.mirrorNodeAdapter.getContractInfo(
+							proxyAdminId.toHederaAddress().toString(),
+						)
+					).evmAddress,
 					this.signerOrProvider,
 				).upgrade(
-					proxy.toHederaAddress().toSolidityAddress(),
-					implementationId.toHederaAddress().toSolidityAddress(),
+					(
+						await this.mirrorNodeAdapter.getContractInfo(
+							proxy.toHederaAddress().toString(),
+						)
+					).evmAddress,
+					(
+						await this.mirrorNodeAdapter.getContractInfo(
+							implementationId.toHederaAddress().toString(),
+						)
+					).evmAddress,
 					{
-						gasLimit: UPDATE_PROXY_IMPLEMENTATION,
+						gasLimit: UPDATE_PROXY_IMPLEMENTATION_GAS,
 					},
 				),
 				this.networkService.environment,
@@ -620,7 +654,31 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					proxyAdminId.toHederaAddress().toSolidityAddress(),
 					this.signerOrProvider,
 				).transferOwnership(await this.getEVMAddress(targetId), {
-					gasLimit: CHANGE_PROXY_OWNER,
+					gasLimit: CHANGE_PROXY_OWNER_GAS,
+				}),
+				this.networkService.environment,
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new TransactionResponseError({
+				network: this.networkService.environment,
+				RPC_relay: true,
+				message: `Unexpected error in RPCTransactionAdapter updatePorAmount operation : ${error}`,
+				transactionId: (error as any).error?.transactionId,
+			});
+		}
+	}
+
+	public async acceptOwner(
+		proxyAdminId: HederaId,
+	): Promise<TransactionResponse> {
+		try {
+			return RPCTransactionResponseAdapter.manageResponse(
+				await StableCoinProxyAdmin__factory.connect(
+					proxyAdminId.toHederaAddress().toSolidityAddress(),
+					this.signerOrProvider,
+				).acceptOwnership({
+					gasLimit: ACCEPT_PROXY_OWNER_GAS,
 				}),
 				this.networkService.environment,
 			);
@@ -958,66 +1016,6 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		}
 	}
 
-	/* async associateToken(
-		coin: StableCoinCapabilities,
-		targetId: HederaId,
-	): Promise<TransactionResponse> {
-		try {
-			if (!coin.coin.evmProxyAddress?.toString())
-				throw new TransactionResponseError({
-					RPC_relay: true,
-					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
-					network: this.networkService.environment,
-				});
-
-			return RPCTransactionResponseAdapter.manageResponse(
-				await HederaTokenManager__factory.connect(
-					coin.coin.evmProxyAddress?.toString(),
-					this.signerOrProvider,
-				).associateToken(await this.getEVMAddress(targetId)),
-				this.networkService.environment,
-			);
-		} catch (error) {
-			LogService.logError(error);
-			throw new TransactionResponseError({
-				RPC_relay: true,
-				message: `Unexpected error in RPCTransactionAdapter associateToken operation : ${error}`,
-				network: this.networkService.environment,
-				transactionId: (error as any).error?.transactionId,
-			});
-		}
-	}
-
-	async dissociateToken(
-		coin: StableCoinCapabilities,
-		targetId: HederaId,
-	): Promise<TransactionResponse> {
-		try {
-			if (!coin.coin.evmProxyAddress?.toString())
-				throw new TransactionResponseError({
-					RPC_relay: true,
-					message: `StableCoin ${coin.coin.name} does not have a proxy address`,
-					network: this.networkService.environment,
-				});
-
-			return RPCTransactionResponseAdapter.manageResponse(
-				await HederaTokenManager__factory.connect(
-					coin.coin.evmProxyAddress?.toString(),
-					this.signerOrProvider,
-				).dissociateToken(await this.getEVMAddress(targetId)),
-				this.networkService.environment,
-			);
-		} catch (error) {
-			LogService.logError(error);
-			throw new TransactionResponseError({
-				RPC_relay: true,
-				message: `Unexpected error in RPCTransactionAdapter dissociateToken operation : ${error}`,
-				network: this.networkService.environment,
-				transactionId: (error as any).error?.transactionId,
-			});
-		}
-	} */
-
 	async isUnlimitedSupplierAllowance(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
@@ -1253,46 +1251,6 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		return tokenManager[functionName](...param);
 	}
 
-	/* async transfer(
-		coin: StableCoinCapabilities,
-		amount: BigDecimal,
-		sourceId: Account,
-		targetId: HederaId,
-	): Promise<TransactionResponse> {
-		const transfer = await this.precompiledCall('transferToken', [
-			coin.coin.tokenId?.toHederaAddress().toSolidityAddress(),
-			// await this.accountToEvmAddress(sourceId.id),
-			await this.getEVMAddress(sourceId.id),
-			// await (await this.accountToEvmAddress(targetId)).toString(),
-			await this.getEVMAddress(targetId),
-			amount,
-		]);
-		return RPCTransactionResponseAdapter.manageResponse(
-			transfer,
-			this.networkService.environment,
-		);
-	} */
-
-	/* async transferFrom(
-		coin: StableCoinCapabilities,
-		amount: BigDecimal,
-		sourceId: HederaId,
-		targetId: HederaId,
-	): Promise<TransactionResponse> {
-		const transfer = await this.precompiledCall('transferFrom', [
-			coin.coin.tokenId?.toHederaAddress().toSolidityAddress(),
-			// await this.accountToEvmAddress(sourceId),
-			await this.getEVMAddress(sourceId),
-			// await (await this.accountToEvmAddress(targetId)).toString(),
-			await this.getEVMAddress(targetId),
-			amount,
-		]);
-		return RPCTransactionResponseAdapter.manageResponse(
-			transfer,
-			this.networkService.environment,
-		);
-	} */
-
 	async signAndSendTransaction(
 		t: RPCTransactionAdapter,
 	): Promise<TransactionResponse> {
@@ -1302,14 +1260,6 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	getAccount(): Account {
 		return this.account;
 	}
-
-	/* async precompiledCall(
-		functionName: string,
-		param: unknown[],
-	): Promise<ContractTransaction> {
-		const precompiledAddress = '0000000000000000000000000000000000000167';
-		return await this.contractCall(precompiledAddress, functionName, param);
-	} */
 
 	/**
 	 * TODO consider leaving this as a service and putting two implementations on top for rpc and web wallet.

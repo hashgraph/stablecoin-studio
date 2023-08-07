@@ -42,7 +42,7 @@ import {
 	HederaTokenManager__factory,
 	HederaReserve__factory,
 	StableCoinFactory__factory,
-	ProxyAdmin__factory,
+	StableCoinProxyAdmin__factory,
 } from '@hashgraph-dev/stablecoin-npm-contracts';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 import { TransactionType } from '../TransactionResponseEnums.js';
@@ -84,8 +84,9 @@ import {
 	UPDATE_TOKEN_GAS,
 	WIPE_GAS,
 	MAX_ROLES_GAS,
-	CHANGE_PROXY_OWNER,
-	UPDATE_PROXY_IMPLEMENTATION,
+	CHANGE_PROXY_OWNER_GAS,
+	ACCEPT_PROXY_OWNER_GAS,
+	UPDATE_PROXY_IMPLEMENTATION_GAS,
 } from '../../../core/Constants.js';
 import LogService from '../../../app/service/LogService.js';
 import { RESERVE_DECIMALS } from '../../../domain/context/reserve/Reserve.js';
@@ -112,6 +113,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		createReserve: boolean,
 		reserveAddress?: ContractId,
 		reserveInitialAmount?: BigDecimal,
+		proxyAdminOwnerAccount?: ContractId,
 	): Promise<TransactionResponse<any, Error>> {
 		try {
 			const cashinRole: FactoryCashinRole = {
@@ -124,7 +126,6 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					? coin.cashInRoleAllowance.toFixedNumber()
 					: BigDecimal.ZERO.toFixedNumber(),
 			};
-
 			const providedKeys = [
 				coin.adminKey,
 				coin.kycKey,
@@ -198,8 +199,12 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				reserveAddress.toString() == '0.0.0'
 					? '0x0000000000000000000000000000000000000000'
 					: HContractId.fromString(
-							reserveAddress.value,
-					  ).toSolidityAddress(),
+							(
+								await this.mirrorNodeAdapter.getContractInfo(
+									reserveAddress.value,
+								)
+							).evmAddress,
+					  ).toString(),
 				reserveInitialAmount
 					? reserveInitialAmount.toFixedNumber()
 					: BigDecimal.ZERO.toFixedNumber(),
@@ -208,15 +213,22 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				roles,
 				cashinRole,
 				coin.metadata ?? '',
+				proxyAdminOwnerAccount == undefined ||
+				proxyAdminOwnerAccount.toString() == '0.0.0'
+					? '0x0000000000000000000000000000000000000000'
+					: HContractId.fromString(
+							proxyAdminOwnerAccount.value,
+					  ).toSolidityAddress(),
 			);
-
 			const params = [
 				stableCoinToCreate,
-				'0x' +
-					HContractId.fromString(
+				(
+					await this.mirrorNodeAdapter.getContractInfo(
 						hederaTokenManager.value,
-					).toSolidityAddress(),
+					)
+				).evmAddress,
 			];
+
 			return await this.contractCall(
 				factory.value,
 				'deployStableCoin',
@@ -535,10 +547,10 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		return this.performSmartContractOperation(
 			proxyAdminId.toHederaAddress().toString(),
 			'upgrade',
-			UPDATE_PROXY_IMPLEMENTATION,
+			UPDATE_PROXY_IMPLEMENTATION_GAS,
 			params,
 			TransactionType.RECEIPT,
-			ProxyAdmin__factory.abi,
+			StableCoinProxyAdmin__factory.abi,
 		);
 	}
 
@@ -553,10 +565,23 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		return this.performSmartContractOperation(
 			proxyAdminId.toHederaAddress().toString(),
 			'transferOwnership',
-			CHANGE_PROXY_OWNER,
+			CHANGE_PROXY_OWNER_GAS,
 			params,
 			TransactionType.RECEIPT,
-			ProxyAdmin__factory.abi,
+			StableCoinProxyAdmin__factory.abi,
+		);
+	}
+
+	public async acceptOwner(
+		proxyAdminId: HederaId,
+	): Promise<TransactionResponse> {
+		return this.performSmartContractOperation(
+			proxyAdminId.toHederaAddress().toString(),
+			'acceptOwnership',
+			ACCEPT_PROXY_OWNER_GAS,
+			undefined,
+			TransactionType.RECEIPT,
+			StableCoinProxyAdmin__factory.abi,
 		);
 	}
 

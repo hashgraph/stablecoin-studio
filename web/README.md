@@ -140,21 +140,23 @@ In order to create a new stable coin using the web application, you must click o
 
 Basic information about the Stable coin.
 
-![Selection_026](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/8c583d35-d086-48ae-a403-5f91ad323b5c)
+![Selection_036](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/d6baa730-349a-4df7-abe2-b3bf2182e584)
 
 
 **Optional details**
 
 Stable coin supply and accuracy definition (initial supply, max supply, decimals)
 
-![Selection_027](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/8efa03e7-a089-42cd-b8fd-fa08f35602b4)
+![Selection_037](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/8bc0fa3b-86ce-4956-9660-64be44c4f826)
 
 
 **Manage permissions**
 
-Underlying token's keys definition (stable coin smart contract, current key, another key or no key at all), plus the possibility to grant KYC to the creating account at creation time (this option is only available if the KYC key is assigned to the smart contract and the Supply Key is not assigned to the creating account)
+Underlying token's keys definition (stable coin smart contract, current key, another key or no key at all), plus the possibility to grant KYC to the creating account at creation time (this option is only available if the KYC key is assigned to the smart contract and the Supply Key is not assigned to the creating account).
 
-![Selection_028](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/e6ceb6f8-4ab0-4e44-ad15-59f0f2bc66c0)
+In this step, the user can also configure the stable coin proxy admin owner. By default, this ownership belongs to the account creating the stable coin, but the user has the chance to change this default behaviour by configuring another account id, which can belongs to a contract, like a timelock controller, a cold wallet, or whatever account.
+
+![Selection_038](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/99d76040-8ac6-4bb9-b6d1-18c433b0bc43)
 
 
 **Proof of reserve**
@@ -162,14 +164,14 @@ Underlying token's keys definition (stable coin smart contract, current key, ano
 Choose if the stable coin will have a proof of reserve (PoR) associated to it or not.
 If so, the user will have two options, either submit the address of an already existing PoR contract or generate a completely new one (using the demo implementation of a PoR contract included in the project) specifying an initial Reserve amount.
 
-![Selection_029](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/23c81e07-6f48-4e59-9a8a-8f2c3e550a6e)
+![Selection_039](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/a566a494-9855-4ef7-96e1-210a7ce38c58)
 
 
 **Review**
 
 Final validation before creating the stable coin.
 
-![Selection_030](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/d0cee0fc-ef94-4290-8066-abebb9d747aa)
+![Selection_040](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/44bd4928-6b12-44bc-a3f3-9881df779fef)
 
 
 You will then have to validate the transaction using the wallet you paired to.
@@ -192,7 +194,7 @@ The operations linked to the capabilities (roles) assigned to your account for t
 
 ### Manage roles
 
-![image](https://user-images.githubusercontent.com/114951681/229090716-8aa224e6-4f05-42ed-9a74-01f519427b95.png)
+![Selection_035](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/4f48bb78-110d-426e-935f-e520ab506208)
 
 If your account has the stable coin admin role, you will also be allowed to manage the stable coin's roles.
 
@@ -222,7 +224,7 @@ If (and only if) the PoR contract attached to your stable coin is the PoR demo i
 
 ### Settings
 
-This option allows the user to manage the stable coin and the factory contracts. These contracts are both upgradeable, so they use an implementation of the OpenZeppelin **TransparentUpgradeableProxy** contract. This proxy can be only managed by an administrator contract. Therefore, only the account which is the owner of the proxy's administrator contract will be able to manage the proxy, and this management allows the user to change the owner of the proxy's administrator contract and also to change the implementation contract.
+This option allows the user to manage the stable coin and the factory contracts. These contracts are both upgradeable, using an implementation of the OpenZeppelin **TransparentUpgradeableProxy** contract. This proxy can only be managed by an administrator contract. Therefore, only the account which is the owner of the proxy's administrator contract will be able to manage the proxy, and this management allows the user to change the owner of the proxy's administrator contract and also to change the implementation contract. To change the owner, a two step flow was implemented, so the current owner has to invite another account, which has to accept the invitation before the change is finally performed. Since the invitation is sent until is accepted by the new owner, the invitation can be cancelled by the current owner.
 
 ![Selection_021](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/e0724fbe-e8c0-478e-8cbb-66394250d64b)
 

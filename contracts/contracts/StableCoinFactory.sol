@@ -1,8 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
-import {IHederaTokenService} from './hts-precompile/IHederaTokenService.sol';
-import {HederaResponseCodes} from './hts-precompile/HederaResponseCodes.sol';
+import {
+    IHederaTokenService
+} from '@hashgraph/smart-contracts/contracts/hts-precompile/IHederaTokenService.sol';
+import {
+    HederaResponseCodes
+} from '@hashgraph/smart-contracts/contracts/hts-precompile/HederaResponseCodes.sol';
 import {
     HederaTokenManager,
     IHederaTokenManager
@@ -20,18 +24,19 @@ import {
     Initializable
 } from '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import {KeysLib} from './library/KeysLib.sol';
+import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
+import {
+    AggregatorV3Interface
+} from '@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol';
+import {StableCoinProxyAdmin} from './proxies/StableCoinProxyAdmin.sol';
 
-contract StableCoinFactory is
-    IStableCoinFactory,
-    HederaResponseCodes,
-    Initializable
-{
+contract StableCoinFactory is IStableCoinFactory, Initializable {
     // Hedera HTS precompiled contract
     address private constant _PRECOMPILED_ADDRESS = address(0x167);
     string private constant _MEMO_1 = '{"p":"';
     string private constant _MEMO_2 = '","a":"';
     string private constant _MEMO_3 = '"}';
-    int64 private constant _DFAULT_AUTO_RENEW_PERIOD = 90 days;
+    int64 private constant _DEFAULT_AUTO_RENEW_PERIOD = 90 days;
 
     address private _admin;
     address[] private _hederaTokenManagerAddress;
@@ -114,6 +119,7 @@ contract StableCoinFactory is
 
             reserveProxyAdmin = address(new ProxyAdmin());
             ProxyAdmin(reserveProxyAdmin).transferOwnership(msg.sender);
+
             reserveProxy = address(
                 new TransparentUpgradeableProxy(
                     address(reserveContract),
@@ -128,12 +134,12 @@ contract StableCoinFactory is
             );
             reserveAddress = reserveProxy;
         } else if (reserveAddress != address(0)) {
-            (, int256 reserveInitialAmount, , , ) = HederaReserve(
+            (, int256 reserveInitialAmount, , , ) = AggregatorV3Interface(
                 reserveAddress
             ).latestRoundData();
 
             _validationReserveInitialAmount(
-                HederaReserve(reserveAddress).decimals(),
+                AggregatorV3Interface(reserveAddress).decimals(),
                 reserveInitialAmount,
                 requestedToken.tokenDecimals,
                 requestedToken.tokenInitialSupply
@@ -141,10 +147,14 @@ contract StableCoinFactory is
         }
 
         // Deploy Proxy Admin
-        ProxyAdmin stableCoinProxyAdmin = new ProxyAdmin();
-
-        // Transfer Proxy Admin ownership
-        stableCoinProxyAdmin.transferOwnership(msg.sender);
+        StableCoinProxyAdmin stableCoinProxyAdmin;
+        if (requestedToken.proxyAdminOwnerAccount != address(0)) {
+            stableCoinProxyAdmin = new StableCoinProxyAdmin(
+                requestedToken.proxyAdminOwnerAccount
+            );
+        } else {
+            stableCoinProxyAdmin = new StableCoinProxyAdmin(msg.sender);
+        }
 
         // Deploy Proxy
         TransparentUpgradeableProxy stableCoinProxy = new TransparentUpgradeableProxy(
@@ -318,7 +328,7 @@ contract StableCoinFactory is
         // Token Expiry
         IHederaTokenService.Expiry memory tokenExpiry;
         tokenExpiry.autoRenewAccount = stableCoinProxyAddress;
-        tokenExpiry.autoRenewPeriod = _DFAULT_AUTO_RENEW_PERIOD;
+        tokenExpiry.autoRenewPeriod = _DEFAULT_AUTO_RENEW_PERIOD;
 
         // Token Keys
         IHederaTokenService.TokenKey[]
@@ -366,12 +376,11 @@ contract StableCoinFactory is
         int32 tokenDecimals,
         int64 tokenInitialSupply
     ) private pure {
-        if (reserveInitialAmount < 0)
-            revert LessThan(uint256(reserveInitialAmount), 0);
-
-        uint256 initialReserve = uint256(reserveInitialAmount);
-        uint32 _tokenDecimals = uint32(tokenDecimals);
-        uint256 _tokenInitialSupply = uint256(uint64(tokenInitialSupply));
+        uint256 initialReserve = SafeCast.toUint256(reserveInitialAmount);
+        uint32 _tokenDecimals = SafeCast.toUint32(
+            SafeCast.toUint256(tokenDecimals)
+        );
+        uint256 _tokenInitialSupply = SafeCast.toUint256(tokenInitialSupply);
 
         if (_tokenDecimals > reserveDecimals) {
             initialReserve =

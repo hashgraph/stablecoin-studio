@@ -25,18 +25,6 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
     }
 
     /**
-     * @dev Checks if the current reserve is enough for a certain amount of tokens
-     *      comparing with the amount
-     *
-     * @param amount The amount to check
-     */
-    modifier checkReserveDecrease(uint256 amount) {
-        if (!_checkReserveAmount(amount, true))
-            revert AmountBiggerThanReserve(amount);
-        _;
-    }
-
-    /**
      * @dev Gets the current reserve amount
      *
      */
@@ -52,7 +40,7 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
     /**
      * @dev Updates de reserve address
      *
-     * @param newAddress The new reserve address
+     * @param newAddress The new reserve address. Can be set to 0.0.0 (zero address) to disable the reserve.
      */
     function updateReserveAddress(
         address newAddress
@@ -97,6 +85,7 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
         uint8 reserveDecimals = AggregatorV3Interface(_reserveAddress)
             .decimals();
         uint8 tokenDecimals = _decimals();
+        uint256 totalSupply = _totalSupply();
         if (tokenDecimals > reserveDecimals) {
             if (amount % (10 ** (tokenDecimals - reserveDecimals)) != 0)
                 revert FormatNumberIncorrect(amount);
@@ -105,12 +94,15 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
                 (10 ** (tokenDecimals - reserveDecimals));
         } else if (tokenDecimals < reserveDecimals) {
             amount = amount * (10 ** (reserveDecimals - tokenDecimals));
+            totalSupply =
+                totalSupply *
+                (10 ** (reserveDecimals - tokenDecimals));
         }
 
         if (less) {
             return currentReserve >= amount;
         } else {
-            return currentReserve >= _totalSupply() + amount;
+            return currentReserve >= totalSupply + amount;
         }
     }
 

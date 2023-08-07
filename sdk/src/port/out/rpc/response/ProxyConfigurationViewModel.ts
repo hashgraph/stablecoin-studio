@@ -25,4 +25,5 @@ import { HederaId } from '../../../../domain/context/shared/HederaId.js';
 export default interface ProxyConfigurationViewModel extends QueryResponse {
 	implementationAddress: ContractId;
 	owner: HederaId;
+	pendingOwner: HederaId;
 }

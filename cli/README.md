@@ -19,18 +19,19 @@
   - [Starting the CLI](#starting-the-cli)
 - [Usage](#usage)
   - [Creating a config file](#creating-a-config-file)
+  - [Factories ](#factories)
   - [CLI flow](#cli-flow)
     - [Main menu](#main-menu)
-      - [Create a new Stable Coin](#create-a-new-stable-coin)
+      - [Create a new stable coin](#create-a-new-stable-coin)
       - [Manage imported tokens](#manage-imported-tokens)
-      - [Operate with Stable Coin](#operate-with-stable-coin)
-      - [List Stable Coins](#list-stable-coins)
+      - [Operate with stable soin](#operate-with-stable-soin)
+      - [List stable coins](#list-stable-coins)
       - [Configuration](#configuration)
 - [Testing](#testing)
   - [Jest](#jest)
   - [Run](#run)
 - [Contributing](#contributing)
-- [Code of Conduct](#code-of-conduct)
+- [Code of conduct](#code-of-conduct)
 - [License](#license)
 
 # Overview
@@ -232,6 +233,8 @@ The Wizard will give you the possibility to link your stable coin to an already 
 
 _For more information about PoR Feeds, check the official [ChainLink documentation](https://docs.chain.link/data-feeds/proof-of-reserve/)._
 
+Last question about the stable coin it is going to be created is about the proxy admin owner. By default, this ownership belongs to the account creating the stable coin, but the user has the chance to change this default behaviour by configuring another account id, which can belongs to a contract, like a timelock controller, a cold wallet, or whatever account.
+
 Once the request is ready, the CLI will extract from the configuration file the factory and HederaTokenManager contracts addresses for the network you are working on.
 The request will then be submitted to the SDK and the stable coin will be created.
 
@@ -307,6 +310,7 @@ https://user-images.githubusercontent.com/114951681/228851958-db534d9e-0bc3-41f5
 - **Refresh roles**: automatically refreshes the roles assigned to the current account (account's capacities).
 - **Configuration**: This last option allows the user to manage both the stable coin configuration and the token configuration. 
 Firstly, the stable coin configuration allows the user to upgrade the stable coin contract implementation and to change the stable coin proxy admin contract owner. In the case of the token configuration, stable coin administrators can edit the underlying token's properties such as "name", "symbol", "keys" ...
+To change the onwership of the proxy amdmin contract, the current owner will have to invite another account id to be the next owner. In this moment, this current owner could cancel the change before the proposed owner can accept the invitation. Once the invited account accepts the invitation, the change is completed.
 - **Danger Zone**: this section contains the stable coin operations deemed as particularly "dangerous" either because they affect every single token owner (PAUSE) or because they can not be rolled-back (DELETE).
   For security reasons these operations are grouped in a "sub-menu" so that users do not run them by mistake.
   - **Un/Pause**: pauses and unpauses the token preventing it from being involved in any kind of operation.

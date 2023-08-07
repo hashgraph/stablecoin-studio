@@ -6,7 +6,7 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
     class="css-130jr3z"
   >
     <div
-      class="chakra-stack css-135a0es"
+      class="chakra-stack css-8csoc2"
     >
       <h2
         class="chakra-heading css-p7jgmy"
@@ -15,10 +15,10 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
         Permission management
       </h2>
       <form
-        class="chakra-stack css-1tjpxl5"
+        class="chakra-stack css-1se0447"
       >
         <div
-          class="chakra-stack css-1tchtwa"
+          class="chakra-stack css-801656"
         >
           <p
             class="chakra-text css-3crm2z"
@@ -27,7 +27,7 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
           </p>
         </div>
         <div
-          class="chakra-stack css-oat9fj"
+          class="chakra-stack css-oswb0z"
         >
           <p
             class="chakra-text css-mgupmj"
@@ -46,7 +46,7 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
           </p>
         </div>
         <div
-          class="chakra-stack css-1tchtwa"
+          class="chakra-stack css-801656"
         >
           <p
             class="chakra-text css-3crm2z"
@@ -55,10 +55,10 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
           </p>
         </div>
         <div
-          class="chakra-stack css-owjkmg"
+          class="chakra-stack css-tl3ftk"
         />
         <div
-          class="chakra-stack css-1tchtwa"
+          class="chakra-stack css-801656"
         >
           <p
             class="chakra-text css-3crm2z"
@@ -67,12 +67,12 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
           </p>
         </div>
         <div
-          class="chakra-stack css-owjkmg"
+          class="chakra-stack css-tl3ftk"
         />
       </form>
     </div>
     <div
-      class="chakra-stack css-135a0es"
+      class="chakra-stack css-8csoc2"
     >
       <div
         class="chakra-accordion css-0"
@@ -120,10 +120,10 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
                 data-testid="supplier-quantity"
               >
                 <div
-                  class="chakra-stack css-owjkmg"
+                  class="chakra-stack css-tl3ftk"
                 />
                 <div
-                  class="chakra-stack css-1wytzre"
+                  class="chakra-stack css-14w8hkr"
                 >
                   <p
                     class="chakra-text css-4dzt3e"
@@ -133,23 +133,86 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
                 </div>
               </div>
               <div
-                class="chakra-stack css-owjkmg"
+                class="chakra-stack css-tl3ftk"
               />
               <div
-                class="chakra-stack css-owjkmg"
+                class="chakra-stack css-tl3ftk"
               />
               <div
-                class="chakra-stack css-owjkmg"
+                class="chakra-stack css-tl3ftk"
               />
               <div
-                class="chakra-stack css-owjkmg"
+                class="chakra-stack css-tl3ftk"
               />
               <div
-                class="chakra-stack css-owjkmg"
+                class="chakra-stack css-tl3ftk"
               />
               <div
-                class="chakra-stack css-owjkmg"
+                class="chakra-stack css-tl3ftk"
               />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="chakra-stack css-8csoc2"
+    >
+      <div
+        class="chakra-accordion css-0"
+      >
+        <div
+          class="chakra-accordion__item css-17mg6aq"
+        >
+          <button
+            aria-controls="accordion-panel-:r3:"
+            aria-expanded="false"
+            class="chakra-accordion__button css-uttm9k"
+            data-index="0"
+            id="accordion-button-:r3:"
+            type="button"
+          >
+            <span
+              class="css-1irdfqk"
+            >
+              Proxy admin
+            </span>
+            <svg
+              aria-hidden="true"
+              class="chakra-icon chakra-accordion__icon css-186l2rg"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"
+                fill="currentColor"
+              />
+            </svg>
+          </button>
+          <div
+            class="chakra-collapse"
+            style="overflow: hidden; display: none; opacity: 0; height: 0px;"
+          >
+            <div
+              aria-labelledby="accordion-button-:r3:"
+              class="chakra-accordion__panel css-1wt3bp2"
+              id="accordion-panel-:r3:"
+              role="region"
+            >
+              <div
+                class="css-0"
+                data-testid="supplier-quantity"
+              >
+                <div
+                  class="chakra-stack css-14w8hkr"
+                >
+                  <p
+                    class="chakra-text css-4dzt3e"
+                  >
+                    Do you want to use your current account as the proxy admin owner?
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>

@@ -27,7 +27,7 @@ import {
     hasRole,
 } from '../scripts/contractsMethods'
 import { CASHIN_ROLE } from '../scripts/constants'
-import { clientId, associateToken } from '../scripts/utils'
+import { clientId, associateToken, getContractInfo } from '../scripts/utils'
 import { Client, ContractId } from '@hashgraph/sdk'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
@@ -532,7 +532,9 @@ describe('Supplier Admin Tests - (Unlimited)', function () {
         const initialBalanceOf = await getBalanceOf(
             proxyAddress,
             operatorClient,
-            proxyAddress.toSolidityAddress(),
+            (
+                await getContractInfo(proxyAddress.toString())
+            ).evm_address,
             false,
             false
         )
@@ -542,7 +544,9 @@ describe('Supplier Admin Tests - (Unlimited)', function () {
             proxyAddress,
             AmountToMint,
             nonOperatorClient,
-            proxyAddress.toSolidityAddress(),
+            (
+                await getContractInfo(proxyAddress.toString())
+            ).evm_address,
             false,
             false
         )
@@ -555,7 +559,9 @@ describe('Supplier Admin Tests - (Unlimited)', function () {
         const finalBalanceOf = await getBalanceOf(
             proxyAddress,
             operatorClient,
-            proxyAddress.toSolidityAddress(),
+            (
+                await getContractInfo(proxyAddress.toString())
+            ).evm_address,
             false,
             false
         )
@@ -660,6 +666,32 @@ describe('Supplier Admin Tests - (Unlimited)', function () {
                 proxyAddress,
                 BigNumber.from(1).mul(TokenFactor),
                 nonOperatorClient,
+                nonOperatorAccount,
+                nonOperatorIsE25519
+            )
+        ).to.eventually.be.rejectedWith(Error)
+    })
+
+    it('An account with unlimited supplier role can not increase supplier allowance', async function () {
+        // Increase supplier allowance an account with unlimited supplier role : fail
+        await expect(
+            increaseSupplierAllowance(
+                proxyAddress,
+                BigNumber.from(1),
+                operatorClient,
+                nonOperatorAccount,
+                nonOperatorIsE25519
+            )
+        ).to.eventually.be.rejectedWith(Error)
+    })
+
+    it('An account with unlimited supplier role can not decrease supplier allowance', async function () {
+        // Decrease supplier allowance an account with unlimited supplier role : fail
+        await expect(
+            decreaseSupplierAllowance(
+                proxyAddress,
+                BigNumber.from(1),
+                operatorClient,
                 nonOperatorAccount,
                 nonOperatorIsE25519
             )

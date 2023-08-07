@@ -8,7 +8,12 @@ import {
     updateProxy,
     getProxyImpl,
 } from './deploy'
-import { evmToHederaFormat, getClient, toEvmAddress } from './utils'
+import {
+    evmToHederaFormat,
+    getClient,
+    toEvmAddress,
+    getContractInfo,
+} from './utils'
 import {
     addHederaTokenManagerVersion,
     editHederaTokenManagerVersion,
@@ -16,6 +21,7 @@ import {
     getHederaTokenManagerAddresses,
     getProxyImplementation_SCF,
     owner_SCF,
+    pendingOwner_SCF,
     removeHederaTokenManagerVersion,
 } from './contractsMethods'
 
@@ -54,7 +60,9 @@ task('addNewVersionTokenManager', 'Add a new version TokenManager in factory')
             await addHederaTokenManagerVersion(
                 ContractId.fromString(proxyfactory),
                 client,
-                ContractId.fromString(tokenmanager).toSolidityAddress()
+                (
+                    await getContractInfo(tokenmanager)
+                ).evm_address
             )
 
             console.log('TokenManager successfully added to proxy.')
@@ -122,6 +130,13 @@ task('getProxyAdminconfig', 'Get Proxy Admin owner and implementation')
                 await owner_SCF(ContractId.fromString(proxyadmin), client)
             )
 
+            const pendingQwner = await evmToHederaFormat(
+                await pendingOwner_SCF(
+                    ContractId.fromString(proxyadmin),
+                    client
+                )
+            )
+
             const implementation = await evmToHederaFormat(
                 await getProxyImplementation_SCF(
                     ContractId.fromString(proxyadmin),
@@ -131,7 +146,12 @@ task('getProxyAdminconfig', 'Get Proxy Admin owner and implementation')
             )
 
             console.log(
-                'Owner : ' + owner + '. Implementation : ' + implementation
+                'Owner : ' +
+                    owner +
+                    '. Pending owner : ' +
+                    pendingQwner +
+                    '. Implementation : ' +
+                    implementation
             )
         }
     )
@@ -167,7 +187,9 @@ task('updateTokenManager', 'Update TokenManager in factory')
                 ContractId.fromString(proxyfactory),
                 client,
                 index,
-                ContractId.fromString(tokenmanager).toSolidityAddress()
+                (
+                    await getContractInfo(tokenmanager)
+                ).evm_address
             )
 
             console.log('TokenManager selected updated successfully')
@@ -228,12 +250,14 @@ task('deployFactory', 'Deploy new factory').setAction(
         )
         const initializeFactory = {
             admin: await toEvmAddress(client1account, client1isED25519),
-            tokenManager: tokenManager.toSolidityAddress(),
+            tokenManager: (await getContractInfo(tokenManager.toString()))
+                .evm_address,
         }
         const result = await deployFactory(
             initializeFactory,
             client,
-            client1privatekey
+            client1privatekey,
+            client1isED25519
         )
         const proxyAddress = result[0]
         const proxyAdminAddress = result[1]

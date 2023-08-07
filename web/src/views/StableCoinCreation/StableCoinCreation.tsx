@@ -272,6 +272,8 @@ const StableCoinCreation = () => {
 			cashInAllowanceType,
 			cashInAllowance,
 			hederaTokenManagerId,
+			proxyAdminOwner,
+			proxyAdminOwnerAccount,
 		} = getValues();
 
 		if (!reserveInitialAmount) {
@@ -300,6 +302,8 @@ const StableCoinCreation = () => {
 			request.kycKey = undefined;
 			request.grantKYCToOriginalSender = false;
 		}
+
+		request.proxyAdminOwnerAccount = proxyAdminOwner ? undefined : proxyAdminOwnerAccount;
 
 		request.feeScheduleKey = manageCustomFees
 			? formatKey(feeScheduleKey.label, 'feeScheduleKey')

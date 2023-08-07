@@ -21,7 +21,6 @@ import {
 	SELECTED_TOKEN_PAUSED,
 	SELECTED_NETWORK,
 	SELECTED_WALLET_COIN_PROXY_CONFIG,
-	SELECTED_NETWORK_FACTORY_PROXY_CONFIG,
 } from '../../store/slices/walletSlice';
 import { RouterManager } from '../../Router/RouterManager';
 import { matchPath, useLocation, useNavigate } from 'react-router-dom';
@@ -31,6 +30,8 @@ import {
 	GetAccountInfoRequest,
 	GetRolesRequest,
 	GetProxyConfigRequest,
+	GetFactoryProxyConfigRequest,
+	Network,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 import type { IExternalToken } from '../../interfaces/IExternalToken';
 import type { GroupBase, SelectInstance } from 'chakra-react-select';
@@ -50,7 +51,6 @@ const CoinDropdown = () => {
 	const accountId = useSelector(SELECTED_WALLET_PAIRED_ACCOUNTID);
 	const network = useSelector(SELECTED_NETWORK);
 	const proxyConfig = useSelector(SELECTED_WALLET_COIN_PROXY_CONFIG);
-	const factoryProxyConfig = useSelector(SELECTED_NETWORK_FACTORY_PROXY_CONFIG);
 
 	const capabilities = useSelector(SELECTED_WALLET_CAPABILITIES);
 	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
@@ -107,13 +107,47 @@ const CoinDropdown = () => {
 			}),
 		);
 
+		const factoryProxyConfig = await SDKService.getFactoryProxyConfig(
+			new GetFactoryProxyConfigRequest({
+				factoryId: await Network.getFactoryAddress(),
+			}),
+		);
+
 		dispatch(walletActions.setAccountInfo(accountInfo));
 		dispatch(
 			walletActions.setIsProxyOwner(proxyConfig?.owner?.toString() === accountInfo?.id?.toString()),
 		);
 		dispatch(
+			walletActions.setIsPendingOwner(
+				proxyConfig?.pendingOwner?.toString() !== proxyConfig?.owner?.toString() &&
+					proxyConfig?.pendingOwner?.toString() !== accountInfo?.id?.toString() &&
+					proxyConfig?.pendingOwner?.toString() !== '0.0.0' &&
+					proxyConfig?.pendingOwner?.toString() !== '' &&
+					proxyConfig?.pendingOwner?.toString() !== undefined,
+			),
+		);
+		dispatch(
+			walletActions.setIsAcceptOwner(
+				proxyConfig?.pendingOwner?.toString() === accountInfo?.id?.toString(),
+			),
+		);
+		dispatch(
 			walletActions.setIsFactoryProxyOwner(
 				factoryProxyConfig?.owner?.toString() === accountInfo?.id?.toString(),
+			),
+		);
+		dispatch(
+			walletActions.setIsFactoryPendingOwner(
+				factoryProxyConfig?.pendingOwner?.toString() !== factoryProxyConfig?.owner?.toString() &&
+					factoryProxyConfig?.pendingOwner?.toString() !== accountInfo?.id?.toString() &&
+					factoryProxyConfig?.pendingOwner?.toString() !== '0.0.0' &&
+					factoryProxyConfig?.pendingOwner?.toString() !== '' &&
+					factoryProxyConfig?.pendingOwner?.toString() !== undefined,
+			),
+		);
+		dispatch(
+			walletActions.setIsFactoryAcceptOwner(
+				factoryProxyConfig?.pendingOwner?.toString() === accountInfo?.id?.toString(),
 			),
 		);
 	};
@@ -279,11 +313,26 @@ const CoinDropdown = () => {
 				walletActions.setSelectedStableCoinProxyConfig({
 					owner: proxyConfig?.owner,
 					implementationAddress: proxyConfig?.implementationAddress,
+					pendingOwner: proxyConfig?.pendingOwner,
 				}),
 			);
 			dispatch(
 				walletActions.setIsProxyOwner(
 					proxyConfig?.owner?.toString() === accountInfo?.id?.toString(),
+				),
+			);
+			dispatch(
+				walletActions.setIsPendingOwner(
+					proxyConfig?.pendingOwner?.toString() !== proxyConfig?.owner?.toString() &&
+						proxyConfig?.pendingOwner?.toString() !== accountInfo?.id?.toString() &&
+						proxyConfig?.pendingOwner?.toString() !== '0.0.0' &&
+						proxyConfig?.pendingOwner?.toString() !== '' &&
+						proxyConfig?.pendingOwner?.toString() !== undefined,
+				),
+			);
+			dispatch(
+				walletActions.setIsAcceptOwner(
+					proxyConfig?.pendingOwner?.toString() === accountInfo?.id?.toString(),
 				),
 			);
 		} catch (e) {

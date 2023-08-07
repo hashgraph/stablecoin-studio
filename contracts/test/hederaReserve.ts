@@ -31,8 +31,8 @@ import {
     descriptionHederaReserve,
     versionHederaReserve,
 } from '../scripts/contractsMethods'
-import { clientId, toEvmAddress } from '../scripts/utils'
-import { Client, ContractId } from '@hashgraph/sdk'
+import { clientId, toEvmAddress, getContractInfo } from '../scripts/utils'
+import { AccountId, Client, ContractId } from '@hashgraph/sdk'
 import {
     ProxyAdmin__factory,
     ITransparentUpgradeableProxy__factory,
@@ -121,14 +121,23 @@ describe('HederaReserve Tests', function () {
         proxyAddress = result[0]
         proxyAdminAddress = result[1]
         hederaReserveAddress = result[2]
+        
+        await initializeHederaReserve(
+            BigNumber.from(1000),
+            proxyAddress,
+            operatorClient,
+            AccountId.fromString(operatorAccount).toSolidityAddress()
+        )
+        
     })
 
     it('Check initialize can only be run once', async function () {
         expect(
-            initializeHederaReserve(
+             initializeHederaReserve(
                 BigNumber.from(1000),
                 proxyAddress,
-                operatorClient
+                operatorClient,
+                AccountId.fromString(operatorAccount).toSolidityAddress()
             )
         ).to.eventually.be.rejectedWith(Error)
     })
@@ -310,21 +319,29 @@ describe('HederaReserveProxy and HederaReserveProxyAdmin Tests', function () {
             proxyAdminAbi,
             proxyAdminAddress,
             operatorClient,
-            proxyAddress.toSolidityAddress()
+            (
+                await getContractInfo(proxyAddress.toString())
+            ).evm_address
         )
         const admin = await getProxyAdmin(
             proxyAdminAbi,
             proxyAdminAddress,
             operatorClient,
-            proxyAddress.toSolidityAddress()
+            (
+                await getContractInfo(proxyAddress.toString())
+            ).evm_address
         )
 
         // We check their values : success
         expect(implementation.toUpperCase()).to.equals(
-            '0X' + hederaReserveAddress.toSolidityAddress().toUpperCase()
+            (
+                await getContractInfo(hederaReserveAddress.toString())
+            ).evm_address.toUpperCase()
         )
         expect(admin.toUpperCase()).to.equals(
-            '0X' + proxyAdminAddress.toSolidityAddress().toUpperCase()
+            (
+                await getContractInfo(proxyAdminAddress.toString())
+            ).evm_address.toUpperCase()
         )
     })
 
@@ -362,7 +379,9 @@ describe('HederaReserveProxy and HederaReserveProxyAdmin Tests', function () {
                 proxyAdminAbi,
                 proxyAddress,
                 operatorClient,
-                newImplementationContract.toSolidityAddress()
+                (
+                    await getContractInfo(newImplementationContract.toString())
+                ).evm_address
             )
         ).to.eventually.be.rejectedWith(Error)
     })
@@ -396,8 +415,12 @@ describe('HederaReserveProxy and HederaReserveProxyAdmin Tests', function () {
                 proxyAdminAbi,
                 proxyAdminAddress,
                 nonOperatorClient,
-                newImplementationContract.toSolidityAddress(),
-                proxyAddress.toSolidityAddress()
+                (
+                    await getContractInfo(newImplementationContract.toString())
+                ).evm_address,
+                (
+                    await getContractInfo(proxyAddress.toString())
+                ).evm_address
             )
         ).to.eventually.be.rejectedWith(Error)
     })
@@ -433,8 +456,12 @@ describe('HederaReserveProxy and HederaReserveProxyAdmin Tests', function () {
             proxyAdminAbi,
             proxyAdminAddress,
             operatorClient,
-            newImplementationContract.toSolidityAddress(),
-            proxyAddress.toSolidityAddress()
+            (
+                await getContractInfo(newImplementationContract.toString())
+            ).evm_address,
+            (
+                await getContractInfo(proxyAddress.toString())
+            ).evm_address
         )
 
         // Check new implementation address
@@ -442,10 +469,14 @@ describe('HederaReserveProxy and HederaReserveProxyAdmin Tests', function () {
             proxyAdminAbi,
             proxyAdminAddress,
             operatorClient,
-            proxyAddress.toSolidityAddress()
+            (
+                await getContractInfo(proxyAddress.toString())
+            ).evm_address
         )
         expect(implementation.toUpperCase()).to.equals(
-            '0X' + newImplementationContract.toSolidityAddress().toUpperCase()
+            (
+                await getContractInfo(newImplementationContract.toString())
+            ).evm_address.toUpperCase()
         )
 
         // reset
@@ -453,8 +484,12 @@ describe('HederaReserveProxy and HederaReserveProxyAdmin Tests', function () {
             proxyAdminAbi,
             proxyAdminAddress,
             operatorClient,
-            hederaReserveAddress.toSolidityAddress(),
-            proxyAddress.toSolidityAddress()
+            (
+                await getContractInfo(hederaReserveAddress.toString())
+            ).evm_address,
+            (
+                await getContractInfo(proxyAddress.toString())
+            ).evm_address
         )
     })
 
@@ -475,7 +510,9 @@ describe('HederaReserveProxy and HederaReserveProxyAdmin Tests', function () {
                 proxyAdminAbi,
                 proxyAdminAddress,
                 operatorClient,
-                proxyAddress.toSolidityAddress()
+                (
+                    await getContractInfo(proxyAddress.toString())
+                ).evm_address
             )
         ).to.eventually.be.rejectedWith(Error)
 
@@ -502,7 +539,9 @@ describe('HederaReserveProxy and HederaReserveProxyAdmin Tests', function () {
             ITransparentUpgradeableProxy__factory.abi,
             proxyAddress,
             nonOperatorClient,
-            proxyAdminAddress.toSolidityAddress()
+            (
+                await getContractInfo(proxyAdminAddress.toString())
+            ).evm_address
         )
     })
 

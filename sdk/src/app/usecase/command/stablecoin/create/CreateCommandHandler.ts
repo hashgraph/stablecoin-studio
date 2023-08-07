@@ -32,6 +32,7 @@ import { CreateCommand, CreateCommandResponse } from './CreateCommand.js';
 import { RESERVE_DECIMALS } from '../../../../../domain/context/reserve/Reserve.js';
 import { InvalidRequest } from '../error/InvalidRequest.js';
 import { EVM_ZERO_ADDRESS } from '../../../../../core/Constants.js';
+import { MirrorNodeAdapter } from '../../../../../port/out/mirror/MirrorNodeAdapter.js';
 
 @CommandHandler(CreateCommand)
 export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
@@ -42,6 +43,8 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 		public readonly transactionService: TransactionService,
 		@lazyInject(NetworkService)
 		public readonly networkService: NetworkService,
+		@lazyInject(MirrorNodeAdapter)
+		public readonly mirrorNodeAdapter: MirrorNodeAdapter,
 	) {}
 
 	async execute(command: CreateCommand): Promise<CreateCommandResponse> {
@@ -52,6 +55,7 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 			reserveAddress,
 			reserveInitialAmount,
 			createReserve,
+			proxyAdminOwnerAccount,
 		} = command;
 
 		if (!factory) {
@@ -96,6 +100,7 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 			createReserve,
 			reserveAddress,
 			reserveInitialAmount,
+			proxyAdminOwnerAccount,
 		);
 		try {
 			return Promise.resolve(
@@ -106,15 +111,23 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 					res.response[0][4] === EVM_ZERO_ADDRESS
 						? new ContractId('0.0.0')
 						: ContractId.fromHederaContractId(
-								HContractId.fromSolidityAddress(
-									res.response[0][4],
+								HContractId.fromString(
+									(
+										await this.mirrorNodeAdapter.getContractInfo(
+											res.response[0][4],
+										)
+									).id,
 								),
 						  ),
 					res.response[0][5] === EVM_ZERO_ADDRESS
 						? new ContractId('0.0.0')
 						: ContractId.fromHederaContractId(
-								HContractId.fromSolidityAddress(
-									res.response[0][5],
+								HContractId.fromString(
+									(
+										await this.mirrorNodeAdapter.getContractInfo(
+											res.response[0][5],
+										)
+									).id,
 								),
 						  ),
 				),

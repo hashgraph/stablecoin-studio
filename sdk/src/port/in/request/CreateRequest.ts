@@ -115,6 +115,9 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 	@OptionalField()
 	metadata?: string | undefined;
 
+	@OptionalField()
+	proxyAdminOwnerAccount?: string;
+
 	constructor({
 		name,
 		symbol,
@@ -144,6 +147,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		cashInRoleAccount,
 		cashInRoleAllowance,
 		metadata,
+		proxyAdminOwnerAccount,
 	}: {
 		name: string;
 		symbol: string;
@@ -173,6 +177,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		cashInRoleAccount?: string;
 		cashInRoleAllowance?: string;
 		metadata?: string;
+		proxyAdminOwnerAccount?: string;
 	}) {
 		super({
 			name: (val) => {
@@ -320,6 +325,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 				);
 			},
 			metadata: Validation.checkString({ max: 100, emptyCheck: false }),
+			proxyAdminOwnerAccount: Validation.checkContractId(),
 		});
 		this.name = name;
 		this.symbol = symbol;
@@ -350,5 +356,6 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		this.cashInRoleAccount = cashInRoleAccount;
 		this.cashInRoleAllowance = cashInRoleAllowance;
 		this.metadata = metadata;
+		this.proxyAdminOwnerAccount = proxyAdminOwnerAccount;
 	}
 }

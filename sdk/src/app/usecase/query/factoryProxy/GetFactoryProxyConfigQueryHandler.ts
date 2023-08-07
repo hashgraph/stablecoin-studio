@@ -31,6 +31,7 @@ import {
 } from './GetFactoryProxyConfigQuery.js';
 import { MirrorNodeAdapter } from '../../../../port/out/mirror/MirrorNodeAdapter.js';
 import EvmAddress from '../../../../domain/context/contract/EvmAddress.js';
+import { EVM_ZERO_ADDRESS } from '../../../../core/Constants.js';
 
 @QueryHandler(GetFactoryProxyConfigQuery)
 export class GetFactoryProxyConfigQueryHandler
@@ -58,24 +59,46 @@ export class GetFactoryProxyConfigQueryHandler
 				"No admin address found for the current factory's proxy",
 			);
 
+		const factoryProxyIdContractInfo =
+			await this.mirrorNode.getContractInfo(factoryProxyId.toString());
+
+		if (!factoryProxyIdContractInfo)
+			throw new Error("No address found for the current factory's proxy");
+
 		const factoryProxyImpl = await this.queryAdapter.getProxyImplementation(
 			new EvmAddress(evmFactoryProxyAdminAddress),
-			new ContractId(factoryProxyId.toString()).toEvmAddress(),
+			new EvmAddress(factoryProxyIdContractInfo.evmAddress),
 		);
 		const factoryProxyOwner = await this.queryAdapter.getProxyOwner(
 			new EvmAddress(evmFactoryProxyAdminAddress),
 		);
+		const factoryProxyPendingOwner =
+			await this.queryAdapter.getProxyPendingOwner(
+				new EvmAddress(evmFactoryProxyAdminAddress),
+			);
 
-		const factoryProxyOwnerHederaId = await this.mirrorNode.getAccountInfo(
-			factoryProxyOwner,
+		const factoryProxyOwnerHederaId = HederaId.from(
+			(await this.mirrorNode.getAccountInfo(factoryProxyOwner)).id,
 		);
+
+		const factoryProxyPendingOwnerHederaId =
+			EVM_ZERO_ADDRESS == factoryProxyPendingOwner
+				? HederaId.NULL
+				: HederaId.from(
+						(
+							await this.mirrorNode.getAccountInfo(
+								factoryProxyPendingOwner,
+							)
+						).id,
+				  );
 
 		return Promise.resolve(
 			new GetFactoryProxyConfigQueryResponse({
 				implementationAddress: ContractId.fromHederaEthereumAddress(
 					factoryProxyImpl ?? '0.0.0',
 				),
-				owner: HederaId.from(factoryProxyOwnerHederaId.id),
+				owner: factoryProxyOwnerHederaId,
+				pendingOwner: factoryProxyPendingOwnerHederaId,
 			}),
 		);
 	}

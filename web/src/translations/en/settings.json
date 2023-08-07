@@ -6,16 +6,26 @@
 	"factorySettings": "Factory",
 	"notOwner": "The current account is not the owner of the factory's proxy",
 	"stableCoin": {
-		"updateOwner": {
-			"title": "Update proxy owner",
+		"transferOwner": {
+			"title": "Transfer proxy owner",
 			"label": "Current owner",
-			"inputPlaceholder": "Enter owner",
-			"buttonText": "Update owner"
+			"inputPlaceholder": "Enter new owner",
+			"buttonText": "Transfer"
+		},
+		"acceptOwner": {
+			"title": "Transfer proxy owner",
+			"label": "Do you want to accept the proxy ownership?",
+			"buttonText": "Accept"
+		},
+		"pendingOwner": {
+			"title": "Transfer proxy owner",
+			"label": "Pending to accept by",
+			"buttonText": "Cancel"
 		},
 		"updateImplementation": {
 			"title": "Update proxy implementation",
 			"label": "Current implementation",
-			"inputPlaceholder": "Enter address",
+			"inputPlaceholder": "Enter your own HederaTokenManager implementation",
 			"buttonText": "Update implementation"
 		},
 		"notification": {
@@ -25,16 +35,26 @@
 		}
 	},
 	"factory": {
-		"updateOwner": {
-			"title": "Update factory proxy owner",
+		"transferOwner": {
+			"title": "Transfer factory proxy owner",
 			"label": "Current factory owner",
-			"inputPlaceholder": "Enter owner",
-			"buttonText": "Update owner"
+			"inputPlaceholder": "Enter new factory owner",
+			"buttonText": "Transfer"
+		},
+		"acceptOwner": {
+			"title": "Transfer factory proxy owner",
+			"label": "Do you want to accept the factory proxy ownership?",
+			"buttonText": "Accept"
+		},
+		"pendingOwner": {
+			"title": "Transfer factory proxy owner",
+			"label": "Pending to accept by",
+			"buttonText": "Cancel"
 		},
 		"updateImplementation": {
 			"title": "Update factory proxy implementation",
 			"label": "Current factory implementation",
-			"inputPlaceholder": "Enter address",
+			"inputPlaceholder": "Enter your own factory HederaTokenManager implementation",
 			"buttonText": "Update implementation"
 		},
 		"notification": {

@@ -105,6 +105,7 @@ describe('🧪 Network test', () => {
 				rpcNode: rpcNode,
 			}),
 		);
+
 		expect(spy).toHaveBeenCalled();
 		expect(networkService.consensusNodes).toBeUndefined();
 		expect(networkService.rpcNode.name).toEqual(rpcNode.name);

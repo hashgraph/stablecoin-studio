@@ -143,8 +143,8 @@ contract HederaReserve is IHederaReserve, Initializable {
         return (
             _ROUND_ID,
             _reserveAmount,
-            block.timestamp,
-            block.timestamp,
+            block.timestamp, // solhint-disable-line not-rely-on-time
+            block.timestamp, // solhint-disable-line not-rely-on-time
             _ROUND_ID
         );
     }

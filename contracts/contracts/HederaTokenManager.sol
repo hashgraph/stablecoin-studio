@@ -17,14 +17,11 @@ import {Rescatable} from './extensions/Rescatable.sol';
 import {Deletable} from './extensions/Deletable.sol';
 import {Reserve} from './extensions/Reserve.sol';
 
-import {
-    TokenOwner,
-    HederaResponseCodes,
-    IHederaTokenService
-} from './extensions/TokenOwner.sol';
+import {TokenOwner, IHederaTokenService} from './extensions/TokenOwner.sol';
 import {KYC} from './extensions/KYC.sol';
 import {RoleManagement} from './extensions/RoleManagement.sol';
 import {KeysLib} from './library/KeysLib.sol';
+import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
 
 contract HederaTokenManager is
     IHederaTokenManager,
@@ -38,6 +35,7 @@ contract HederaTokenManager is
     KYC,
     RoleManagement
 {
+    uint256 private constant _ADMIN_KEY_BIT = 0;
     uint256 private constant _SUPPLY_KEY_BIT = 4;
     // HTS token metadata
     string private _metadata;
@@ -164,8 +162,6 @@ contract HederaTokenManager is
 
         address currentTokenAddress = _getTokenAddress();
 
-        address newTreasury;
-
         IHederaTokenService.HederaToken memory hederaToken;
 
         // Token Keys
@@ -175,6 +171,26 @@ contract HederaTokenManager is
             );
 
         for (uint256 i = 0; i < updatedToken.keys.length; i++) {
+            // we avoid the admin key to be updated
+            if (
+                KeysLib.containsKey(
+                    _ADMIN_KEY_BIT,
+                    updatedToken.keys[i].keyType
+                ) && updatedToken.keys[i].publicKey.length != 0
+            ) {
+                revert AdminKeyUpdateError();
+            }
+
+            // we avoid the supply key to be updated
+            if (
+                KeysLib.containsKey(
+                    _SUPPLY_KEY_BIT,
+                    updatedToken.keys[i].keyType
+                ) && updatedToken.keys[i].publicKey.length != 0
+            ) {
+                revert SupplyKeyUpdateError();
+            }
+
             hederaKeys[i] = IHederaTokenService.TokenKey({
                 keyType: updatedToken.keys[i].keyType,
                 key: KeysLib.generateKey(
@@ -183,11 +199,6 @@ contract HederaTokenManager is
                     updatedToken.keys[i].isED25519
                 )
             });
-            if (KeysLib.containsKey(_SUPPLY_KEY_BIT, hederaKeys[i].keyType))
-                newTreasury = hederaKeys[i].key.delegatableContractId ==
-                    address(this)
-                    ? address(this)
-                    : msg.sender;
         }
 
         hederaToken = _updateHederaTokenInfo(
@@ -196,14 +207,12 @@ contract HederaTokenManager is
             currentTokenAddress
         );
 
-        if (newTreasury != address(0)) hederaToken.treasury = newTreasury;
-
         int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
             .updateTokenInfo(currentTokenAddress, hederaToken);
 
         _checkResponse(responseCode);
 
-        emit TokenUpdated(currentTokenAddress, updatedToken, newTreasury);
+        emit TokenUpdated(currentTokenAddress, updatedToken);
     }
 
     /**
@@ -273,7 +282,7 @@ contract HederaTokenManager is
         internal
         override(TokenOwner)
         valueIsNotGreaterThan(
-            uint256(uint64(amount)),
+            uint256(SafeCast.toUint256(amount)),
             _balanceOf(address(this)),
             true
         )
@@ -303,10 +312,7 @@ contract HederaTokenManager is
         UpdateTokenStruct calldata updatedToken,
         IHederaTokenService.TokenKey[] memory hederaKeys,
         address currentTokenAddress
-    )
-        private
-        returns (IHederaTokenService.HederaToken memory hederaTokenUpdated)
-    {
+    ) private returns (IHederaTokenService.HederaToken memory) {
         IHederaTokenService.Expiry memory expiry;
         if (updatedToken.second >= 0) expiry.second = updatedToken.second;
         if (updatedToken.autoRenewPeriod >= 0)

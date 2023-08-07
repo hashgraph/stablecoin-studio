@@ -60,8 +60,12 @@ export class GetStableCoinQueryHandler
 		if (!reserveAddress.isNull()) {
 			coin.reserveAddress = reserveAddress;
 
+			const contractInfo = await this.mirrorNode.getContractInfo(
+				reserveAddress.toString(),
+			);
+
 			const reserveDecimals = await this.queryAdapter.getReserveDecimals(
-				EvmAddress.fromContractId(reserveAddress),
+				new EvmAddress(contractInfo.evmAddress),
 			);
 
 			coin.reserveAmount = BigDecimal.fromStringFixed(

@@ -3,10 +3,10 @@
 exports[`<Review /> should render correctly 1`] = `
 <DocumentFragment>
   <div
-    class="chakra-stack css-1f6llri"
+    class="chakra-stack css-1wbej9n"
   >
     <div
-      class="chakra-stack css-135a0es"
+      class="chakra-stack css-8csoc2"
     >
       <h2
         class="chakra-heading css-p7jgmy"
@@ -15,7 +15,7 @@ exports[`<Review /> should render correctly 1`] = `
         Stable coin review
       </h2>
       <form
-        class="chakra-stack css-1wpa917"
+        class="chakra-stack css-zr8z21"
       >
         <div
           class="css-13brihr"
@@ -47,7 +47,7 @@ exports[`<Review /> should render correctly 1`] = `
                   HederaTokenManager impl.
                 </p>
                 <div
-                  class="chakra-stack css-1c8ysgd"
+                  class="chakra-stack css-w0g0w4"
                 >
                   <p
                     class="chakra-text css-mgupmj"
@@ -75,7 +75,7 @@ exports[`<Review /> should render correctly 1`] = `
                   Name
                 </p>
                 <div
-                  class="chakra-stack css-1c8ysgd"
+                  class="chakra-stack css-w0g0w4"
                 >
                   <p
                     class="chakra-text css-mgupmj"
@@ -101,7 +101,7 @@ exports[`<Review /> should render correctly 1`] = `
                   Symbol
                 </p>
                 <div
-                  class="chakra-stack css-1c8ysgd"
+                  class="chakra-stack css-w0g0w4"
                 >
                   <p
                     class="chakra-text css-mgupmj"
@@ -141,7 +141,7 @@ exports[`<Review /> should render correctly 1`] = `
                   Initial supply
                 </p>
                 <div
-                  class="chakra-stack css-1c8ysgd"
+                  class="chakra-stack css-w0g0w4"
                 >
                   <p
                     class="chakra-text css-mgupmj"
@@ -169,7 +169,7 @@ exports[`<Review /> should render correctly 1`] = `
                   Supply type
                 </p>
                 <div
-                  class="chakra-stack css-1c8ysgd"
+                  class="chakra-stack css-w0g0w4"
                 >
                   <p
                     class="chakra-text css-mgupmj"
@@ -214,7 +214,7 @@ exports[`<Review /> should render correctly 1`] = `
                   Decimals
                 </p>
                 <div
-                  class="chakra-stack css-1c8ysgd"
+                  class="chakra-stack css-w0g0w4"
                 >
                   <p
                     class="chakra-text css-mgupmj"
@@ -240,7 +240,7 @@ exports[`<Review /> should render correctly 1`] = `
                   Metadata
                 </p>
                 <div
-                  class="chakra-stack css-1c8ysgd"
+                  class="chakra-stack css-w0g0w4"
                 >
                   <p
                     class="chakra-text css-mgupmj"
@@ -280,7 +280,7 @@ exports[`<Review /> should render correctly 1`] = `
                   Admin
                 </p>
                 <div
-                  class="chakra-stack css-1c8ysgd"
+                  class="chakra-stack css-w0g0w4"
                 >
                   <p
                     class="chakra-text css-mgupmj"
@@ -308,7 +308,7 @@ exports[`<Review /> should render correctly 1`] = `
                   Supply
                 </p>
                 <div
-                  class="chakra-stack css-1c8ysgd"
+                  class="chakra-stack css-w0g0w4"
                 >
                   <p
                     class="chakra-text css-mgupmj"
@@ -336,7 +336,7 @@ exports[`<Review /> should render correctly 1`] = `
                   Wipe
                 </p>
                 <div
-                  class="chakra-stack css-1c8ysgd"
+                  class="chakra-stack css-w0g0w4"
                 >
                   <p
                     class="chakra-text css-mgupmj"
@@ -364,7 +364,7 @@ exports[`<Review /> should render correctly 1`] = `
                   Freeze
                 </p>
                 <div
-                  class="chakra-stack css-1c8ysgd"
+                  class="chakra-stack css-w0g0w4"
                 >
                   <p
                     class="chakra-text css-mgupmj"
@@ -392,7 +392,7 @@ exports[`<Review /> should render correctly 1`] = `
                   KYC
                 </p>
                 <div
-                  class="chakra-stack css-1c8ysgd"
+                  class="chakra-stack css-w0g0w4"
                 >
                   <p
                     class="chakra-text css-mgupmj"
@@ -420,7 +420,7 @@ exports[`<Review /> should render correctly 1`] = `
                   Pause
                 </p>
                 <div
-                  class="chakra-stack css-1c8ysgd"
+                  class="chakra-stack css-w0g0w4"
                 >
                   <p
                     class="chakra-text css-mgupmj"
@@ -448,7 +448,7 @@ exports[`<Review /> should render correctly 1`] = `
                   Fee Schedule
                 </p>
                 <div
-                  class="chakra-stack css-1c8ysgd"
+                  class="chakra-stack css-w0g0w4"
                 >
                   <p
                     class="chakra-text css-mgupmj"
@@ -490,7 +490,7 @@ exports[`<Review /> should render correctly 1`] = `
                   Rescue
                 </p>
                 <div
-                  class="chakra-stack css-1c8ysgd"
+                  class="chakra-stack css-w0g0w4"
                 >
                   <p
                     class="chakra-text css-mgupmj"
@@ -532,7 +532,7 @@ exports[`<Review /> should render correctly 1`] = `
                   Treasury account address
                 </p>
                 <div
-                  class="chakra-stack css-1c8ysgd"
+                  class="chakra-stack css-w0g0w4"
                 >
                   <p
                     class="chakra-text css-mgupmj"
@@ -574,7 +574,7 @@ exports[`<Review /> should render correctly 1`] = `
                   Has proof of reserve
                 </p>
                 <div
-                  class="chakra-stack css-1c8ysgd"
+                  class="chakra-stack css-w0g0w4"
                 >
                   <p
                     class="chakra-text css-mgupmj"
@@ -582,6 +582,39 @@ exports[`<Review /> should render correctly 1`] = `
                     FALSE
                   </p>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="css-13brihr"
+          data-testid="button-box"
+        >
+          <div
+            class="css-1i64jsd"
+          >
+            <p
+              class="chakra-text css-ol2bzi"
+              data-testid="details-review-title"
+            >
+              Proxy Admin
+            </p>
+          </div>
+          <div
+            class="css-0"
+          >
+            <div
+              class="css-0"
+            >
+              <div
+                class="css-gg4vpm"
+                data-testid="details-review-detail-0"
+              >
+                <p
+                  class="chakra-text css-9s6br4"
+                >
+                  Owner account
+                </p>
               </div>
             </div>
           </div>
