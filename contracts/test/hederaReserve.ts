@@ -32,7 +32,7 @@ import {
     versionHederaReserve,
 } from '../scripts/contractsMethods'
 import { clientId, toEvmAddress, getContractInfo } from '../scripts/utils'
-import { Client, ContractId } from '@hashgraph/sdk'
+import { AccountId, Client, ContractId } from '@hashgraph/sdk'
 import {
     ProxyAdmin__factory,
     ITransparentUpgradeableProxy__factory,
@@ -121,14 +121,23 @@ describe('HederaReserve Tests', function () {
         proxyAddress = result[0]
         proxyAdminAddress = result[1]
         hederaReserveAddress = result[2]
+        
+        await initializeHederaReserve(
+            BigNumber.from(1000),
+            proxyAddress,
+            operatorClient,
+            AccountId.fromString(operatorAccount).toSolidityAddress()
+        )
+        
     })
 
     it('Check initialize can only be run once', async function () {
         expect(
-            initializeHederaReserve(
+             initializeHederaReserve(
                 BigNumber.from(1000),
                 proxyAddress,
-                operatorClient
+                operatorClient,
+                AccountId.fromString(operatorAccount).toSolidityAddress()
             )
         ).to.eventually.be.rejectedWith(Error)
     })

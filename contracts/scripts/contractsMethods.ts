@@ -46,6 +46,7 @@ import {
     Gas3,
     Gas0,
     ACCEPT_PROXY_OWNER,
+    Gas5,
 } from './constants'
 
 import { BigNumber } from 'ethers'
@@ -1204,15 +1205,16 @@ export async function updateDataFeed(
 export async function initializeHederaReserve(
     initailAmount: BigNumber,
     hederaReserveProxy: ContractId,
-    operatorClient: Client
+    operatorClient: Client,
+    admin: string
 ) {
-    const params: string[] = [initailAmount.toString()]
+    const params: string[] = [initailAmount.toString(),admin]
     await contractCall(
         hederaReserveProxy,
         'initialize',
         params,
         operatorClient,
-        Gas2,
+        Gas5,
         HederaReserve__factory.abi
     )
 }
@@ -1242,7 +1244,7 @@ export async function setAdminHederaReserve(
         'setAdmin',
         params,
         operatorClient,
-        Gas2,
+        Gas3,
         HederaReserve__factory.abi
     )
 }
