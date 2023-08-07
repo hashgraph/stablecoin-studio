@@ -50,6 +50,9 @@ interface IProxyInPort {
 	getProxyConfig(
 		request: GetProxyConfigRequest,
 	): Promise<ProxyConfigurationViewModel>;
+	getFactoryProxyConfig(
+		request: GetFactoryProxyConfigRequest,
+	): Promise<ProxyConfigurationViewModel>;
 	changeProxyOwner(request: ChangeProxyOwnerRequest): Promise<boolean>;
 	acceptProxyOwner(request: AcceptProxyOwnerRequest): Promise<boolean>;
 	upgradeImplementation(
