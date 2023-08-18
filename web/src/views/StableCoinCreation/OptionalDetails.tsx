@@ -171,6 +171,7 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 								placeholder: t('stableCoinCreation:optionalDetails.metadata'),
 							}) ?? propertyNotFound
 						}
+						link={t('stableCoinCreation:optionalDetails.link')}
 					/>
 				</Stack>
 			</Stack>

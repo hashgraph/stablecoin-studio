@@ -6,10 +6,11 @@ import { Controller } from 'react-hook-form';
 import type { SelectOption, SelectThemeStyle } from './SelectController';
 import { useComponents, useStyles } from './SelectController';
 import type { Props as ReactSelectProps } from 'react-select';
-import { FormControl, FormErrorMessage, FormLabel, HStack, Stack, Text } from '@chakra-ui/react';
+import { Flex, FormControl, FormErrorMessage, FormLabel, HStack, Link, Stack, Text } from '@chakra-ui/react';
 import type { GroupBase, SelectInstance } from 'chakra-react-select';
 import { CreatableSelect } from 'chakra-react-select';
 import type { Variant } from 'chakra-react-select/dist/types/types';
+import { InfoIcon } from '@chakra-ui/icons';
 
 export type Option = { label: string | ReactNode; value: number | string };
 interface SelectCreatableControllerProps {
@@ -44,6 +45,7 @@ interface SelectCreatableControllerProps {
 	onCreateOption?: (inputValue: string) => void;
 	isLoading?: boolean;
 	ref?: Ref<SelectInstance<unknown, boolean, GroupBase<unknown>>>;
+	link?: string | null;
 }
 
 const SelectCreatableController = ({
@@ -72,6 +74,7 @@ const SelectCreatableController = ({
 	size,
 	isLoading = false,
 	ref,
+	link,
 	...props
 }: SelectCreatableControllerProps) => {
 	const [isInvalid, setIsInvalid] = useState(false);
@@ -133,10 +136,13 @@ const SelectCreatableController = ({
 						<FormControl data-testid='form_control' isInvalid={invalid}>
 							{label && (
 								<FormLabel {...labelProps}>
-									<HStack>
-										<Text data-testid='selector-label'>{label}</Text>
-										{isRequired && <Text color='red'>*</Text>}
-									</HStack>
+									<Flex justifyContent='space-between'>
+										<HStack>
+											<Text data-testid='selector-label'>{label}</Text>
+											{isRequired && <Text color='red'>*</Text>}
+										</HStack>
+										{link && <Link href={link} isExternal><InfoIcon /></Link>} 
+									</Flex>
 								</FormLabel>
 							)}
 

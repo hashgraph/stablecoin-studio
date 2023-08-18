@@ -1,4 +1,4 @@
-import { Button, Flex, Heading, SimpleGrid, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Button, Flex, Heading, Link, SimpleGrid, Text, useDisclosure, VStack } from '@chakra-ui/react';
 
 import {
 	AcceptProxyOwnerRequest,
@@ -38,6 +38,7 @@ import SelectCreatableController from '../../../components/Form/SelectCreatableC
 import { RouterManager } from '../../../Router/RouterManager';
 import { NamedRoutes } from '../../../Router/NamedRoutes';
 import Icon from '../../../components/Icon';
+import { InfoIcon } from '@chakra-ui/icons';
 
 const StableCoinSettings = () => {
 	const navigate = useNavigate();
@@ -327,7 +328,7 @@ const StableCoinSettings = () => {
 					lineHeight='15.2px'
 					textAlign={'left'}
 				>
-					{title}
+					{title} {<Link href={t('settings:stableCoin.link') || undefined} isExternal><InfoIcon w={3} h={3}/></Link>}
 				</Heading>
 				<Text data-testid={name + '-label'} style={{ fontWeight: '600' }}>
 					{label}

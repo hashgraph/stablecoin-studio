@@ -154,6 +154,7 @@ const BasicDetails = (props: BasicDetailsProps) => {
 							defaultValue={'0'}
 							options={[...Object.values(optionshederaTokenManagerAddresses)]}
 							placeholder={t('stableCoinCreation:basicDetails:hederaTokenManagerPlaceholder')}
+							link={t('stableCoinCreation:basicDetails.hederaTokenManagerLink')}
 						/>
 
 						<InputController
