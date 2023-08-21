@@ -1,6 +1,0 @@
-{
-    "API_KEY":"your defender TEAM API KEY",
-    "API_SECRET":"your defender TEAM API SECRET",
-    "EMAIL": "the email address tht will receive all the notifications",
-    "FACTORY_ID":"the factory Id (0x000....1234)"
-}
