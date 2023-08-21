@@ -1,0 +1,27 @@
+{
+  "name": "accelerator-service",
+  "version": "1.0.0",
+  "description": "Template for the defender-serverless plugin",
+  "main": "handler.js",
+  "engines": {
+    "node": ">14.16"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "contributors": [
+    {
+      "name": "Santiago Palladino",
+      "email": "santiago@openzeppelin.com"
+    },
+    {
+      "name": "Nami Shah",
+      "email": "nami@openzeppelin.com"
+    }
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@openzeppelin/defender-serverless": "^1.2.3",
+    "serverless": "^3.20.0"
+  }
+}

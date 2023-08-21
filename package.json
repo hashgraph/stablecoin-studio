@@ -9,6 +9,7 @@
     "install:sdk": "cd sdk && npm install",
     "install:cli": "cd cli && npm install",
     "install:web": "cd web && npm install",
+    "install:defenders": "cd defenders && npm install",
     "publish:contracts": "cd contracts && npm publish",
     "publish:hashconnect": "cd hashconnect/lib && npm publish",
     "publish:sdk": "cd sdk && npm publish",
@@ -46,9 +47,12 @@
     "@chainlink/contracts": "^0.5.1",
     "concurrently": "^7.6.0",
     "ethers": "^5.7.2",
-    "rimraf": "^4.1.1"
+    "rimraf": "^4.1.1",
+    "serverless": "^3.34.0"
   },
   "devDependencies": {
+    "dotenv": "^16.3.1",
+    "fs": "^0.0.1-security",
     "husky": "^8.0.3"
   }
 }
