@@ -46,7 +46,7 @@ abstract contract Rescatable is
                 currentTokenAddress,
                 address(this),
                 msg.sender,
-                int64(int256(amount))
+                amount
             );
 
         bool success = _checkResponse(responseCode);
