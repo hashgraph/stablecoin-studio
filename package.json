@@ -9,7 +9,6 @@
     "install:sdk": "cd sdk && npm install",
     "install:cli": "cd cli && npm install",
     "install:web": "cd web && npm install",
-    "install:defenders": "cd defenders && npm install",
     "publish:contracts": "cd contracts && npm publish",
     "publish:hashconnect": "cd hashconnect/lib && npm publish",
     "publish:sdk": "cd sdk && npm publish",

@@ -1,3 +1,10 @@
+/**
+ * This Open Zeppelin Defenders Autotask adds contract's Id to a sentinel defined by "SUBSCRIBER_ID"
+ * It is meant to be triggered by another Sentinel monitoring the "Deployed((address,address,address,address,address,address))" event of a Factory.
+ * The contracts Id added by the autotask correspond to the Stable Coins deployed by the factory.
+ * The Sentinel this autotask is adding contracts Id to is supposed to monitor Stable Coin events.
+  */ 
+
 const { SentinelClient } = require('defender-sentinel-client')  
 
 exports.handler = async function (payload) {  

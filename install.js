@@ -6,8 +6,6 @@ const webDir = `${dir}/web`;
 const sdkDir = `${dir}/sdk`;
 const conDir = `${dir}/contracts`;
 const hashDir = `${dir}/hashconnect/lib`;
-const defDir = `${dir}/defenders`;
-
 
 const handleError = (error, stdout, stderr) => {
   if (error) {
@@ -43,7 +41,6 @@ if (option) {
   npmInstall(sdkDir, "SDK");
   npmInstall(cliDir, "CLI");
   npmInstall(webDir, "WEB");
-  npmInstall(defDir, "DEFENDERS");
 }
 
 // npmLinkProject(cliDir);
