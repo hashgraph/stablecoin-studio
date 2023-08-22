@@ -69,11 +69,7 @@ abstract contract Rescatable is
         external
         override(IRescatable)
         onlyRole(_getRoleId(RoleName.RESCUE))
-        valueIsNotGreaterThan(
-            uint256(uint64(amount)),
-            address(this).balance,
-            true
-        )
+        valueIsNotGreaterThan(amount, address(this).balance, true)
         nonReentrant
         returns (bool)
     {
