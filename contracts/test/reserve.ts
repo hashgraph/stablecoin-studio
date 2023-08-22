@@ -11,14 +11,14 @@ import {
     getOperatorPublicKey,
     deployHederaReserve,
 } from '../scripts/deploy'
-import { Mint, initialize } from '../scripts/contractsMethods'
+import { Mint } from '../scripts/contractsMethods'
 import {
     getReserveAddress,
     updateDataFeed,
     getReserveAmount,
-    initializeHederaReserve
+    initializeHederaReserve,
 } from '../scripts/contractsMethods'
-import { clientId, getContractInfo, sleep } from '../scripts/utils'
+import { clientId, getContractInfo } from '../scripts/utils'
 import { AccountId, Client, ContractId } from '@hashgraph/sdk'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
@@ -40,13 +40,14 @@ const OneTokenDecimals = 1
 const TwoTokenDecimals = 2
 const ThreeTokenDecimals = 3
 const ReserveDecimal = 2
+const INIT_AMOUNT_10 = 10
 const INIT_AMOUNT_100 = 100
 const INIT_AMOUNT_1000 = 1000
 const OneTokenFactor = BigNumber.from(10).pow(OneTokenDecimals)
 const TwoTokenFactor = BigNumber.from(10).pow(TwoTokenDecimals)
 const ThreeTokenFactor = BigNumber.from(10).pow(ThreeTokenDecimals)
 const INIT_SUPPLY_ONE_DECIMALS =
-    BigNumber.from(INIT_AMOUNT_100).mul(OneTokenFactor)
+    BigNumber.from(INIT_AMOUNT_10).mul(OneTokenFactor)
 const MAX_SUPPLY_ONE_DECIMALS = BigNumber.from(1000).mul(OneTokenFactor)
 const INIT_SUPPLY_TWO_DECIMALS =
     BigNumber.from(INIT_AMOUNT_100).mul(TwoTokenFactor)
@@ -156,7 +157,6 @@ describe('Reserve Tests', function () {
             operatorPriKey
         )
         await updateDataFeed(newDataFeed, proxyAddress, operatorClient)
-        
 
         await initializeHederaReserve(
             BigNumber.from(newReserve),
@@ -351,7 +351,7 @@ describe('Reserve Tests with reserve decimals higher than token decimals', funct
             proxyAddress,
             operatorClient
         )
-        
+
         // Cashin tokens to previously associated account
         await Mint(
             proxyAddress,

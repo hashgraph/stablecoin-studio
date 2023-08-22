@@ -11,7 +11,7 @@ import {
     getOperatorPublicKey,
     initializeClients,
 } from '../scripts/deploy'
-import { clientId, getContractInfo} from '../scripts/utils'
+import { clientId, getContractInfo } from '../scripts/utils'
 import { BigNumber } from 'ethers'
 import { delay } from '../scripts/contractsMethods'
 
@@ -105,7 +105,9 @@ describe('Upgradable Tests', function () {
             operatorClient,
             operatorPriKey,
             proxyAdminAddress,
-            (await getContractInfo(proxyAddress.toString())).evm_address,
+            (
+                await getContractInfo(proxyAddress.toString())
+            ).evm_address,
             undefined,
             false,
             true
