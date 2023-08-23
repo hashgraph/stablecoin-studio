@@ -11,14 +11,14 @@ import {
     getOperatorPublicKey,
     deployHederaReserve,
 } from '../scripts/deploy'
-import { Mint, initialize } from '../scripts/contractsMethods'
+import { Mint } from '../scripts/contractsMethods'
 import {
     getReserveAddress,
     updateDataFeed,
     getReserveAmount,
     initializeHederaReserve,
 } from '../scripts/contractsMethods'
-import { clientId, getContractInfo, sleep } from '../scripts/utils'
+import { clientId, getContractInfo } from '../scripts/utils'
 import { AccountId, Client, ContractId } from '@hashgraph/sdk'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
