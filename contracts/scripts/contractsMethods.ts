@@ -1208,7 +1208,7 @@ export async function initializeHederaReserve(
     operatorClient: Client,
     admin: string
 ) {
-    const params: string[] = [initailAmount.toString(),admin]
+    const params: string[] = [initailAmount.toString(), admin]
     await contractCall(
         hederaReserveProxy,
         'initialize',

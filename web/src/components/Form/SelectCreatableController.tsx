@@ -6,7 +6,16 @@ import { Controller } from 'react-hook-form';
 import type { SelectOption, SelectThemeStyle } from './SelectController';
 import { useComponents, useStyles } from './SelectController';
 import type { Props as ReactSelectProps } from 'react-select';
-import { Flex, FormControl, FormErrorMessage, FormLabel, HStack, Link, Stack, Text } from '@chakra-ui/react';
+import {
+	Flex,
+	FormControl,
+	FormErrorMessage,
+	FormLabel,
+	HStack,
+	Link,
+	Stack,
+	Text,
+} from '@chakra-ui/react';
 import type { GroupBase, SelectInstance } from 'chakra-react-select';
 import { CreatableSelect } from 'chakra-react-select';
 import type { Variant } from 'chakra-react-select/dist/types/types';
@@ -141,7 +150,11 @@ const SelectCreatableController = ({
 											<Text data-testid='selector-label'>{label}</Text>
 											{isRequired && <Text color='red'>*</Text>}
 										</HStack>
-										{link && <Link href={link} isExternal><InfoIcon /></Link>} 
+										{link && (
+											<Link href={link} isExternal>
+												<InfoIcon />
+											</Link>
+										)}
 									</Flex>
 								</FormLabel>
 							)}

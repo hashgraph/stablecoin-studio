@@ -43,7 +43,6 @@
 		"typeSupplyPlaceholder": "Choose supply type",
 		"metadata": "Metadata",
 		"link": "https://github.com/hashgraph/hedera-improvement-proposal/blob/main/HIP/hip-10.md"
-
 	},
 	"managementPermissions": {
 		"currentUserKey": "Current user key",

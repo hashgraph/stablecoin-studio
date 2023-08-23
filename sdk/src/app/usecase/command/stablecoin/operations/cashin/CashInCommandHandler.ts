@@ -37,6 +37,7 @@ import {
 } from '../../../../../../port/out/mirror/response/AccountTokenRelationViewModel.js';
 import { AccountFreeze } from '../../error/AccountFreeze.js';
 import { AccountNotKyc } from '../../error/AccountNotKyc.js';
+import { GetReserveAmountQuery } from '../../../../query/stablecoin/getReserveAmount/GetReserveAmountQuery.js';
 
 @CommandHandler(CashInCommand)
 export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
@@ -56,6 +57,11 @@ export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
 		const tokenRelationship = (
 			await this.stableCoinService.queryBus.execute(
 				new GetAccountTokenRelationshipQuery(targetId, tokenId),
+			)
+		).payload;
+		const reserveAmountBd = (
+			await this.stableCoinService.queryBus.execute(
+				new GetReserveAmountQuery(tokenId),
 			)
 		).payload;
 
@@ -97,9 +103,50 @@ export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
 			);
 		}
 
+		if (
+			this.amountIsGreaterThanReserve(
+				amountBd,
+				coin.totalSupply,
+				reserveAmountBd,
+			)
+		) {
+			throw new OperationNotAllowed(
+				`The reserve is less than the amount to cash in (${amount})`,
+			);
+		}
+
 		const res = await handler.cashin(capabilities, targetId, amountBd);
 		return Promise.resolve(
 			new CashInCommandResponse(res.error === undefined),
 		);
+	}
+
+	private amountIsGreaterThanReserve(
+		amount: BigDecimal,
+		totalSupply: BigDecimal,
+		reserve: BigDecimal,
+	): boolean {
+		const totalAmountBd = amount.addUnsafe(totalSupply);
+		if (totalAmountBd.decimals === reserve.decimals)
+			return totalAmountBd.isGreaterThan(reserve);
+		if (totalAmountBd.decimals < reserve.decimals) {
+			const multiplier: number = Math.pow(10, reserve.decimals);
+			const modTotalAmount: BigDecimal = totalAmountBd.mulUnsafe(
+				BigDecimal.fromStringFixed(
+					multiplier.toString(),
+					totalAmountBd.decimals,
+				),
+			);
+			return modTotalAmount.isGreaterThan(reserve);
+		} else {
+			const multiplier: number = Math.pow(10, totalAmountBd.decimals);
+			const modReserve: BigDecimal = reserve.mulUnsafe(
+				BigDecimal.fromStringFixed(
+					multiplier.toString(),
+					reserve.decimals,
+				),
+			);
+			return totalAmountBd.isGreaterThan(modReserve);
+		}
 	}
 }

@@ -36,7 +36,7 @@ import {
     isUnlimitedSupplierAllowance,
     updateToken,
     getMetadata,
-    acceptOwnership_SCF
+    acceptOwnership_SCF,
 } from '../scripts/contractsMethods'
 import {
     clientId,
@@ -871,10 +871,9 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
             nonOperatorIsE25519
         )
 
-        
         await sleep(5000)
         await acceptOwnership_SCF(proxyAdminAddress, nonOperatorClient)
-        
+
         // Check
         const ownerAccount = await owner(
             abiProxyAdmin,

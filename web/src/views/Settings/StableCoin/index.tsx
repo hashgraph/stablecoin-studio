@@ -1,4 +1,13 @@
-import { Button, Flex, Heading, Link, SimpleGrid, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import {
+	Button,
+	Flex,
+	Heading,
+	Link,
+	SimpleGrid,
+	Text,
+	useDisclosure,
+	VStack,
+} from '@chakra-ui/react';
 
 import {
 	AcceptProxyOwnerRequest,
@@ -328,7 +337,12 @@ const StableCoinSettings = () => {
 					lineHeight='15.2px'
 					textAlign={'left'}
 				>
-					{title} {<Link href={t('settings:stableCoin.link') || undefined} isExternal><InfoIcon w={3} h={3}/></Link>}
+					{title}{' '}
+					{
+						<Link href={t('settings:stableCoin.link') || undefined} isExternal>
+							<InfoIcon w={3} h={3} />
+						</Link>
+					}
 				</Heading>
 				<Text data-testid={name + '-label'} style={{ fontWeight: '600' }}>
 					{label}

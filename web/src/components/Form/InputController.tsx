@@ -4,7 +4,15 @@ import type {
 	FormLabelProps,
 	StackProps,
 } from '@chakra-ui/react';
-import { Flex, FormControl, FormErrorMessage, Input, InputGroup, Link, Stack } from '@chakra-ui/react';
+import {
+	Flex,
+	FormControl,
+	FormErrorMessage,
+	Input,
+	InputGroup,
+	Link,
+	Stack,
+} from '@chakra-ui/react';
 import type { Control, FieldValues, UseControllerProps } from 'react-hook-form';
 import { Controller } from 'react-hook-form';
 import type { ChangeEventHandler, ChangeEvent, FocusEvent, ReactNode } from 'react';
@@ -77,7 +85,11 @@ const InputController = ({
 										{label}
 									</InputLabel>
 								)}
-								{link && <Link href={link} isExternal><InfoIcon /></Link>} 
+								{link && (
+									<Link href={link} isExternal>
+										<InfoIcon />
+									</Link>
+								)}
 							</Flex>
 							<InputGroup>
 								{leftElement}
