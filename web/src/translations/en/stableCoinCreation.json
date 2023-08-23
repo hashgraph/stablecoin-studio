@@ -99,7 +99,8 @@
 		"initialSupply": "Initial supply",
 		"addressPor": "Adrress proof of reserve  ",
 		"initialSupplyPor": "Initial supply PoR",
-		"initialSupplyPorExternal": "External PoR"
+		"initialSupplyPorExternal": "External PoR",
+		"link": "https://github.com/hashgraph/hedera-accelerator-stablecoin/blob/main/README.md#Proof-of-reserve"
 	},
 	"proxyAdmin": {
 		"title": "Proxy Admin",
