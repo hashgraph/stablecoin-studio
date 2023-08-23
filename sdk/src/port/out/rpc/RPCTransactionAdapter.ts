@@ -1264,9 +1264,9 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	/**
 	 * TODO consider leaving this as a service and putting two implementations on top for rpc and web wallet.
 	 */
-	async connectMetamask(pair = true): Promise<Account> {
+	async connectMetamask(pair = true): Promise<void> {
 		try {
-			const ethProvider = await detectEthereumProvider();
+			const ethProvider = await detectEthereumProvider({silent: true});
 			if (ethProvider) {
 				this.eventService.emit(WalletEvents.walletFound, {
 					wallet: SupportedWallets.METAMASK,
@@ -1283,12 +1283,9 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 						// @ts-expect-error No TS compatibility
 						ethereum,
 					).getSigner();
-					return this.account;
 				} else {
 					throw new WalletConnectError('Metamask was not found!');
 				}
-			} else {
-				throw new WalletConnectError('Metamask was not found!');
 			}
 		} catch (error: any) {
 			if ('code' in error && error.code === 4001) {
