@@ -38,6 +38,7 @@ import {
 import { AccountFreeze } from '../../error/AccountFreeze.js';
 import { AccountNotKyc } from '../../error/AccountNotKyc.js';
 import { GetReserveAmountQuery } from '../../../../query/stablecoin/getReserveAmount/GetReserveAmountQuery.js';
+import { RESERVE_DECIMALS } from '../../../../../../domain/context/reserve/Reserve.js';
 
 @CommandHandler(CashInCommand)
 export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
@@ -103,7 +104,21 @@ export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
 			);
 		}
 
+		const commonDecimals =
+			RESERVE_DECIMALS > coin.decimals ? RESERVE_DECIMALS : coin.decimals;
+
+		const totalAmount = amountBd.addUnsafe(coin.totalSupply);
 		if (
+			totalAmount
+				.setDecimals(commonDecimals)
+				.isGreaterThan(reserveAmountBd.setDecimals(commonDecimals))
+		) {
+			throw new OperationNotAllowed(
+				`The reserve is less than the amount to cash in (${amount})`,
+			);
+		}
+
+		/*if (
 			this.amountIsGreaterThanReserve(
 				amountBd,
 				coin.totalSupply,
@@ -113,7 +128,7 @@ export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
 			throw new OperationNotAllowed(
 				`The reserve is less than the amount to cash in (${amount})`,
 			);
-		}
+		}*/
 
 		const res = await handler.cashin(capabilities, targetId, amountBd);
 		return Promise.resolve(
@@ -121,7 +136,7 @@ export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
 		);
 	}
 
-	private amountIsGreaterThanReserve(
+	/*private amountIsGreaterThanReserve(
 		amount: BigDecimal,
 		totalSupply: BigDecimal,
 		reserve: BigDecimal,
@@ -148,5 +163,5 @@ export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
 			);
 			return totalAmountBd.isGreaterThan(modReserve);
 		}
-	}
+	}*/
 }
