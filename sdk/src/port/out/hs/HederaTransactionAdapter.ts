@@ -198,13 +198,11 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				reserveAddress == undefined ||
 				reserveAddress.toString() == '0.0.0'
 					? '0x0000000000000000000000000000000000000000'
-					: HContractId.fromString(
-							(
-								await this.mirrorNodeAdapter.getContractInfo(
-									reserveAddress.value,
-								)
-							).evmAddress,
-					  ).toString(),
+					: (
+							await this.mirrorNodeAdapter.getContractInfo(
+								reserveAddress.value,
+							)
+					  ).evmAddress,
 				reserveInitialAmount
 					? reserveInitialAmount.toFixedNumber()
 					: BigDecimal.ZERO.toFixedNumber(),
