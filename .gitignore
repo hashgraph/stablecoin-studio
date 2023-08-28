@@ -45,3 +45,4 @@ contracts/docs/
 contracts/cache/*
 contracts/typechain-types/
 
+.env
