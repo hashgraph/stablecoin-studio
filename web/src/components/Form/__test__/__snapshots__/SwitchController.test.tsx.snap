@@ -3,54 +3,66 @@
 exports[`<SwitchController /> should render correctly 1`] = `
 <DocumentFragment>
   <div
-    style="position: relative; display: inline-block; text-align: left; opacity: 1; direction: ltr; border-radius: 17.5px; transition: opacity 0.25s; user-select: none;"
+    class="chakra-stack css-ppmla1"
   >
     <div
-      class="react-switch-bg"
-      style="height: 35px; width: 64px; margin: 0px; position: relative; background: rgb(255, 255, 255); border-radius: 17.5px; cursor: pointer; transition: background 0.25s;"
-    />
-    <div
-      class="react-switch-handle"
-      style="height: 29px; width: 29px; background: rgb(173, 244, 222); display: inline-block; cursor: pointer; border-radius: 50%; position: absolute; transform: translateX(32px); top: 3px; outline: 0; border: 0px; transition: background-color 0.25s, transform 0.25s, box-shadow 0.15s;"
+      class="chakra-form-control css-1kxonj9"
+      role="group"
     >
       <div
-        style="height: 29px; width: 29px; opacity: 0; position: absolute; left: 0px; top: 0px; pointer-events: none; transition: opacity 0.25s;"
-      >
-        <div
-          class="chakra-stack css-oe35x4"
-        >
-          <p
-            class="chakra-text css-1f7y1le"
-            data-testid="switch-handler-no"
-          >
-            NO
-          </p>
-        </div>
-      </div>
+        class="css-8owaep"
+      />
       <div
-        style="height: 29px; width: 29px; opacity: 1; position: absolute; left: 0px; top: 0px; pointer-events: none; transition: opacity 0.25s;"
+        style="position: relative; display: inline-block; text-align: left; opacity: 1; direction: ltr; border-radius: 17.5px; transition: opacity 0.25s; user-select: none;"
       >
         <div
-          class="chakra-stack css-oe35x4"
+          class="react-switch-bg"
+          style="height: 35px; width: 64px; margin: 0px; position: relative; background: rgb(255, 255, 255); border-radius: 17.5px; cursor: pointer; transition: background 0.25s;"
+        />
+        <div
+          class="react-switch-handle"
+          style="height: 29px; width: 29px; background: rgb(173, 244, 222); display: inline-block; cursor: pointer; border-radius: 50%; position: absolute; transform: translateX(32px); top: 3px; outline: 0; border: 0px; transition: background-color 0.25s, transform 0.25s, box-shadow 0.15s;"
         >
-          <p
-            class="chakra-text css-1f7y1le"
-            data-testid="switch-handler-yes"
+          <div
+            style="height: 29px; width: 29px; opacity: 0; position: absolute; left: 0px; top: 0px; pointer-events: none; transition: opacity 0.25s;"
           >
-            YES
-          </p>
+            <div
+              class="chakra-stack css-oe35x4"
+            >
+              <p
+                class="chakra-text css-1f7y1le"
+                data-testid="switch-handler-no"
+              >
+                NO
+              </p>
+            </div>
+          </div>
+          <div
+            style="height: 29px; width: 29px; opacity: 1; position: absolute; left: 0px; top: 0px; pointer-events: none; transition: opacity 0.25s;"
+          >
+            <div
+              class="chakra-stack css-oe35x4"
+            >
+              <p
+                class="chakra-text css-1f7y1le"
+                data-testid="switch-handler-yes"
+              >
+                YES
+              </p>
+            </div>
+          </div>
         </div>
+        <input
+          aria-checked="true"
+          checked=""
+          data-testid="switch"
+          id="switch-component"
+          role="switch"
+          style="border: 0px; height: 1px; margin: -1px; overflow: hidden; padding: 0px; position: absolute; width: 1px;"
+          type="checkbox"
+        />
       </div>
     </div>
-    <input
-      aria-checked="true"
-      checked=""
-      data-testid="switch"
-      id="switch-component"
-      role="switch"
-      style="border: 0px; height: 1px; margin: -1px; overflow: hidden; padding: 0px; position: absolute; width: 1px;"
-      type="checkbox"
-    />
   </div>
   <span
     hidden=""

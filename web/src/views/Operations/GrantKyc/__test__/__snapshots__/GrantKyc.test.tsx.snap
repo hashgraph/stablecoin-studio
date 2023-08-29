@@ -46,27 +46,31 @@ exports[`<GrantKycOperation /> should render correctly 1`] = `
                   class="chakra-form-control css-1kxonj9"
                   role="group"
                 >
-                  <label
-                    class="chakra-form__label css-1hfoxt1"
-                    for="field-:r1:"
-                    id="field-:r1:-label"
+                  <div
+                    class="css-gg4vpm"
                   >
-                    <div
-                      class="chakra-stack css-1igwmid"
+                    <label
+                      class="chakra-form__label css-1hfoxt1"
+                      for="field-:r1:"
+                      id="field-:r1:-label"
                     >
-                      <p
-                        class="chakra-text css-mgupmj"
+                      <div
+                        class="chakra-stack css-1igwmid"
                       >
-                        Enter the account
-                      </p>
-                      <p
-                        class="chakra-text css-ftb7fv"
-                        data-testid="required"
-                      >
-                        *
-                      </p>
-                    </div>
-                  </label>
+                        <p
+                          class="chakra-text css-mgupmj"
+                        >
+                          Enter the account
+                        </p>
+                        <p
+                          class="chakra-text css-ftb7fv"
+                          data-testid="required"
+                        >
+                          *
+                        </p>
+                      </div>
+                    </label>
+                  </div>
                   <div
                     class="chakra-input__group css-bx0blc"
                     data-group="true"
