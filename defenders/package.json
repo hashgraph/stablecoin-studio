@@ -1,0 +1,10 @@
+{
+  "name": "accelerator-service",
+  "version": "1.0.0",
+  "description": "Accelerator integration with OZ Defenders",
+  "license": "MIT",
+  "devDependencies": {
+    "@openzeppelin/defender-serverless": "^1.2.3",
+    "serverless": "^3.20.0"
+  }
+}
