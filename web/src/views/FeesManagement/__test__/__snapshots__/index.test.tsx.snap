@@ -1,9 +1,723 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`<FeesManagement /> should allow adding a new fractional fee 1`] = `
+<DocumentFragment>
+  <div
+    class="chakra-stack css-16oka5y"
+  >
+    <h2
+      class="chakra-heading css-bqsusc"
+      data-testid="base-container-heading"
+    >
+      Fees management
+    </h2>
+    <div
+      class="css-1b6lda7"
+      data-testid="base-container-children"
+    >
+      <div
+        class="css-12qwwkk"
+      >
+        <div
+          class="css-12mwb04"
+        >
+          <div
+            class="css-xjfnk3"
+          >
+            Fee type
+          </div>
+          <div
+            class="css-xjfnk3"
+          >
+            Amount or percentage
+          </div>
+          <div
+            class="css-xjfnk3"
+          >
+            Currency
+          </div>
+          <div
+            class="css-xjfnk3"
+          >
+            Min
+          </div>
+          <div
+            class="css-xjfnk3"
+          >
+            Max
+          </div>
+          <div
+            class="css-xjfnk3"
+          >
+            Accounts receiving
+          </div>
+          <div
+            class="css-xjfnk3"
+          >
+            Collectors exempt
+          </div>
+          <div
+            class="css-xjfnk3"
+          >
+            Payer
+          </div>
+          <div
+            class="css-xjfnk3"
+          />
+        </div>
+        <div
+          class="css-1n51wvt"
+        >
+          <div
+            class="css-0"
+          >
+            <div
+              class="chakra-stack css-1h0sumw"
+            >
+              <div
+                class="chakra-form-control css-1kxonj9"
+                data-testid="form_control"
+                role="group"
+              >
+                <div
+                  class="css-vyr5r8"
+                >
+                  <div
+                    class="css-3qrqo0"
+                  />
+                  <span
+                    class="css-1f43avz-a11yText-A11yText"
+                    id="react-select-14-live-region"
+                  />
+                  <span
+                    aria-atomic="false"
+                    aria-live="polite"
+                    aria-relevant="additions text"
+                    class="css-1f43avz-a11yText-A11yText"
+                  >
+                    <span
+                      id="aria-selection"
+                    />
+                    <span
+                      id="aria-context"
+                    >
+                      option Fixed focused, 1 of 2. 2 results available. Use Up and Down to choose options, press Enter to select the currently focused option, press Escape to exit the menu, press Tab to select the option and exit the menu.
+                    </span>
+                  </span>
+                  <div
+                    class=" css-17n5zh"
+                    data-focus="true"
+                    data-focus-visible="true"
+                  >
+                    <div
+                      class="css-3y2vuh"
+                    >
+                      <span
+                        class="chakra-text css-fe5bdd"
+                        data-testid="select-placeholder"
+                      />
+                      <div
+                        class="css-vm4o8v"
+                      >
+                        Fixed
+                      </div>
+                      <input
+                        aria-autocomplete="list"
+                        aria-controls="react-select-14-listbox"
+                        aria-expanded="true"
+                        aria-haspopup="true"
+                        aria-owns="react-select-14-listbox"
+                        aria-readonly="true"
+                        class="css-mohuvp-dummyInput-DummyInput"
+                        id="field-:r1i:"
+                        inputmode="none"
+                        role="combobox"
+                        tabindex="0"
+                        value=""
+                      />
+                    </div>
+                    <div
+                      class=" css-hfbj6y"
+                    >
+                      <div
+                        class="css-1aabyhj"
+                      >
+                        <svg
+                          class="chakra-icon css-13otjrl"
+                          fill="currentColor"
+                          focusable="false"
+                          height="1em"
+                          viewBox="0 0 256 256"
+                          width="1em"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <rect
+                            fill="none"
+                            height="256"
+                            width="256"
+                          />
+                          <polyline
+                            fill="none"
+                            points="208 96 128 176 48 96"
+                            stroke="currentColor"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="16"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class=" css-ky7590"
+                    id="react-select-14-listbox"
+                  >
+                    <div
+                      class="css-1v44468"
+                    >
+                      <div
+                        class=" css-1utv6i2"
+                        id="react-select-14-option-0"
+                        role="button"
+                        tabindex="-1"
+                      >
+                        Fixed
+                      </div>
+                      <div
+                        class=" css-1ruytte"
+                        id="react-select-14-option-1"
+                        role="button"
+                        tabindex="-1"
+                      >
+                        Fractional
+                      </div>
+                    </div>
+                  </div>
+                  <input
+                    name="fees.0.feeType"
+                    type="hidden"
+                    value="0"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="css-0"
+          >
+            <div
+              class="chakra-stack css-1h0sumw"
+            >
+              <div
+                class="chakra-form-control css-1kxonj9"
+                role="group"
+              >
+                <div
+                  class="css-gg4vpm"
+                />
+                <div
+                  class="chakra-input__group css-bx0blc"
+                  data-group="true"
+                >
+                  <input
+                    autocomplete="off"
+                    class="chakra-input css-l1kxkf"
+                    data-testid="fees.0.amountOrPercentage"
+                    id="field-:r1j:"
+                    name="fees.0.amountOrPercentage"
+                    placeholder="0"
+                    value=""
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="css-0"
+          >
+            <div
+              class="chakra-stack css-1h0sumw"
+            >
+              <div
+                class="chakra-form-control css-1kxonj9"
+                data-testid="form_control"
+                role="group"
+              >
+                <div
+                  class="css-g2rfke"
+                >
+                  <div
+                    class="css-3qrqo0"
+                  />
+                  <span
+                    class="css-1f43avz-a11yText-A11yText"
+                    id="react-select-15-live-region"
+                  />
+                  <span
+                    aria-atomic="false"
+                    aria-live="polite"
+                    aria-relevant="additions text"
+                    class="css-1f43avz-a11yText-A11yText"
+                  />
+                  <div
+                    class=" css-bb9i9j"
+                  >
+                    <div
+                      class="css-3y2vuh"
+                    >
+                      <span
+                        class="chakra-text css-1todh3z"
+                        data-testid="select-placeholder"
+                      >
+                        Introduce token or select
+                      </span>
+                      <div
+                        class=" css-svnjlw"
+                        data-value=""
+                      >
+                        <input
+                          aria-autocomplete="list"
+                          aria-describedby="react-select-15-placeholder"
+                          aria-expanded="false"
+                          aria-haspopup="true"
+                          autocapitalize="none"
+                          autocomplete="off"
+                          autocorrect="off"
+                          class=" css-146k1ar-input"
+                          id="field-:r1k:"
+                          role="combobox"
+                          spellcheck="false"
+                          tabindex="0"
+                          type="text"
+                          value=""
+                        />
+                      </div>
+                    </div>
+                    <div
+                      class=" css-hfbj6y"
+                    >
+                      <div
+                        class="css-1aabyhj"
+                      >
+                        <svg
+                          class="chakra-icon css-1kxx4bz"
+                          fill="currentColor"
+                          focusable="false"
+                          height="1em"
+                          viewBox="0 0 256 256"
+                          width="1em"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <rect
+                            fill="none"
+                            height="256"
+                            width="256"
+                          />
+                          <polyline
+                            fill="none"
+                            points="208 96 128 176 48 96"
+                            stroke="currentColor"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="16"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                  <input
+                    name="fees.0.tokenIdCollected"
+                    type="hidden"
+                    value=""
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="css-0"
+          >
+            <div
+              class="chakra-stack css-1h0sumw"
+            >
+              <div
+                class="chakra-form-control css-1kxonj9"
+                role="group"
+              >
+                <div
+                  class="css-gg4vpm"
+                />
+                <div
+                  class="chakra-input__group css-bx0blc"
+                  data-group="true"
+                >
+                  <input
+                    autocomplete="off"
+                    class="chakra-input css-l1kxkf"
+                    data-testid="fees.0.min"
+                    disabled=""
+                    id="field-:r1l:"
+                    name="fees.0.min"
+                    placeholder="0"
+                    value=""
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="css-0"
+          >
+            <div
+              class="chakra-stack css-1h0sumw"
+            >
+              <div
+                class="chakra-form-control css-1kxonj9"
+                role="group"
+              >
+                <div
+                  class="css-gg4vpm"
+                />
+                <div
+                  class="chakra-input__group css-bx0blc"
+                  data-group="true"
+                >
+                  <input
+                    autocomplete="off"
+                    class="chakra-input css-l1kxkf"
+                    data-testid="fees.0.max"
+                    disabled=""
+                    id="field-:r1m:"
+                    name="fees.0.max"
+                    placeholder="0"
+                    value=""
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="css-0"
+          >
+            <div
+              class="chakra-stack css-1h0sumw"
+            >
+              <div
+                class="chakra-form-control css-1kxonj9"
+                role="group"
+              >
+                <div
+                  class="css-gg4vpm"
+                />
+                <div
+                  class="chakra-input__group css-bx0blc"
+                  data-group="true"
+                >
+                  <input
+                    autocomplete="off"
+                    class="chakra-input css-l1kxkf"
+                    data-testid="fees.0.collectorAccount"
+                    id="field-:r1n:"
+                    name="fees.0.collectorAccount"
+                    placeholder="0.0.0"
+                    value=""
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="css-0"
+          >
+            <div
+              class="chakra-stack css-1h0sumw"
+            >
+              <div
+                class="chakra-form-control css-1kxonj9"
+                data-testid="form_control"
+                role="group"
+              >
+                <div
+                  class="css-vyr5r8"
+                >
+                  <div
+                    class="css-3qrqo0"
+                  />
+                  <span
+                    class="css-1f43avz-a11yText-A11yText"
+                    id="react-select-16-live-region"
+                  />
+                  <span
+                    aria-atomic="false"
+                    aria-live="polite"
+                    aria-relevant="additions text"
+                    class="css-1f43avz-a11yText-A11yText"
+                  />
+                  <div
+                    class=" css-17n5zh"
+                  >
+                    <div
+                      class="css-3y2vuh"
+                    >
+                      <span
+                        class="chakra-text css-fe5bdd"
+                        data-testid="select-placeholder"
+                      />
+                      <div
+                        class="css-vm4o8v"
+                      >
+                        True
+                      </div>
+                      <input
+                        aria-autocomplete="list"
+                        aria-expanded="false"
+                        aria-haspopup="true"
+                        aria-readonly="true"
+                        class="css-mohuvp-dummyInput-DummyInput"
+                        id="field-:r1o:"
+                        inputmode="none"
+                        role="combobox"
+                        tabindex="0"
+                        value=""
+                      />
+                    </div>
+                    <div
+                      class=" css-hfbj6y"
+                    >
+                      <div
+                        class="css-1aabyhj"
+                      >
+                        <svg
+                          class="chakra-icon css-13otjrl"
+                          fill="currentColor"
+                          focusable="false"
+                          height="1em"
+                          viewBox="0 0 256 256"
+                          width="1em"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <rect
+                            fill="none"
+                            height="256"
+                            width="256"
+                          />
+                          <polyline
+                            fill="none"
+                            points="208 96 128 176 48 96"
+                            stroke="currentColor"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="16"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                  <input
+                    name="fees.0.collectorsExempt"
+                    type="hidden"
+                    value="1"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="css-0"
+          >
+            <div
+              class="chakra-stack css-1h0sumw"
+            >
+              <div
+                class="chakra-form-control css-1kxonj9"
+                data-testid="form_control"
+                role="group"
+              >
+                <div
+                  class="css-1cxl831"
+                >
+                  <div
+                    class="css-3qrqo0"
+                  />
+                  <span
+                    class="css-1f43avz-a11yText-A11yText"
+                    id="react-select-17-live-region"
+                  />
+                  <span
+                    aria-atomic="false"
+                    aria-live="polite"
+                    aria-relevant="additions text"
+                    class="css-1f43avz-a11yText-A11yText"
+                  />
+                  <div
+                    class=" css-cinmhi"
+                    data-disabled="true"
+                  >
+                    <div
+                      class="css-3y2vuh"
+                    >
+                      <span
+                        class="chakra-text css-fe5bdd"
+                        data-testid="select-placeholder"
+                      />
+                      <div
+                        class="css-vm4o8v"
+                      >
+                        Sender
+                      </div>
+                      <input
+                        aria-autocomplete="list"
+                        aria-expanded="false"
+                        aria-haspopup="true"
+                        aria-readonly="true"
+                        class="css-mohuvp-dummyInput-DummyInput"
+                        disabled=""
+                        id="field-:r1p:"
+                        inputmode="none"
+                        role="combobox"
+                        tabindex="0"
+                        value=""
+                      />
+                    </div>
+                    <div
+                      class=" css-hfbj6y"
+                    >
+                      <div
+                        class="css-1aabyhj"
+                      >
+                        <svg
+                          class="chakra-icon css-13otjrl"
+                          fill="currentColor"
+                          focusable="false"
+                          height="1em"
+                          viewBox="0 0 256 256"
+                          width="1em"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <rect
+                            fill="none"
+                            height="256"
+                            width="256"
+                          />
+                          <polyline
+                            fill="none"
+                            points="208 96 128 176 48 96"
+                            stroke="currentColor"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="16"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="css-19118gu"
+          >
+            <svg
+              class="chakra-icon css-17j8zcq"
+              data-testid="trash-icon"
+              fill="currentColor"
+              focusable="false"
+              height="1em"
+              viewBox="0 0 256 256"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect
+                fill="none"
+                height="256"
+                width="256"
+              />
+              <line
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="16"
+                x1="216"
+                x2="40"
+                y1="56"
+                y2="56"
+              />
+              <line
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="16"
+                x1="104"
+                x2="104"
+                y1="104"
+                y2="168"
+              />
+              <line
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="16"
+                x1="152"
+                x2="152"
+                y1="104"
+                y2="168"
+              />
+              <path
+                d="M200,56V208a8,8,0,0,1-8,8H64a8,8,0,0,1-8-8V56"
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="16"
+              />
+              <path
+                d="M168,56V40a16,16,0,0,0-16-16H104A16,16,0,0,0,88,40V56"
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="16"
+              />
+            </svg>
+          </div>
+        </div>
+        <div
+          class="css-crslw2"
+        >
+          <button
+            class="chakra-button css-qvkb6r"
+            data-testid="add-btn"
+            type="button"
+          >
+            Add new fee
+          </button>
+          <button
+            class="chakra-button css-qvkb6r"
+            data-testid="save-btn"
+            disabled=""
+            type="button"
+          >
+            Save changes
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;
+
 exports[`<FeesManagement /> should render correctly 1`] = `
 <DocumentFragment>
   <div
-    class="chakra-stack css-19t9j1"
+    class="chakra-stack css-16oka5y"
   >
     <h2
       class="chakra-heading css-bqsusc"
