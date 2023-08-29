@@ -309,19 +309,9 @@ const StableCoinCreation = () => {
 			? formatKey(feeScheduleKey.label, 'feeScheduleKey')
 			: undefined;
 
-		request.cashInRoleAccount = formatRoleAccountByKey(
-			managementPermissions,
-			supplyKey,
-			cashInRoleAccount,
-			'cashIn',
-		);
+		request.cashInRoleAccount = formatRoleAccount(cashInRoleAccount, 'cashIn');
 		request.cashInRoleAllowance = cashInAllowanceType ? '0' : cashInAllowance;
-		request.burnRoleAccount = formatRoleAccountByKey(
-			managementPermissions,
-			supplyKey,
-			burnRoleAccount,
-			'burn',
-		);
+		request.burnRoleAccount = formatRoleAccount(burnRoleAccount, 'burn');
 		request.wipeRoleAccount = formatRoleAccountByKey(
 			managementPermissions,
 			wipeKey,
@@ -341,12 +331,7 @@ const StableCoinCreation = () => {
 			freezeRoleAccount,
 			'freeze',
 		);
-		request.deleteRoleAccount = formatRoleAccountByKey(
-			managementPermissions,
-			adminKey,
-			deleteRoleAccount,
-			'delete',
-		);
+		request.deleteRoleAccount = formatRoleAccount(deleteRoleAccount, 'delete');
 		request.kycRoleAccount = formatKycRoleAccountByKey(kycRequired, kycKey, kycRoleAccount, 'kyc');
 
 		request.hederaTokenManager = hederaTokenManagerId.value;
