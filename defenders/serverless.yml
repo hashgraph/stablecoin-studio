@@ -28,9 +28,9 @@ functions:
 resources:
   Resources:
     notifications:
-      alberto:
+      stable-coin-accelerator-notifications:
         type: email
-        name: Alberto
+        name: Accelerator email notification
         config:
           emails:
             - ${self:custom.config.email}
@@ -80,7 +80,7 @@ resources:
             {{ matchReasonsFormatted }}
           message-subject: 'Defender Sentinel: StableCoin Accelerator StableCoins triggered'
           channels:
-            - ${self:resources.Resources.notifications.alberto}
+            - ${self:resources.Resources.notifications.stable-coin-accelerator-notifications}
         conditions:
           event:
             - expression: null
@@ -163,7 +163,7 @@ resources:
             {{ matchReasonsFormatted }}
           message-subject: 'Defender Sentinel: StableCoin Accelerator Factory triggered'
           channels:
-            - ${self:resources.Resources.notifications.alberto}
+            - ${self:resources.Resources.notifications.stable-coin-accelerator-notifications}
         conditions:
           event:
             - expression: null
