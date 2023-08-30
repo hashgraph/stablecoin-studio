@@ -3,10 +3,10 @@
 exports[`<ProofOfReserve /> should render correctly 1`] = `
 <DocumentFragment>
   <div
-    class="chakra-stack css-1f6llri"
+    class="chakra-stack css-1wbej9n"
   >
     <div
-      class="chakra-stack css-135a0es"
+      class="chakra-stack css-8csoc2"
     >
       <h2
         class="chakra-heading css-p7jgmy"
@@ -15,7 +15,7 @@ exports[`<ProofOfReserve /> should render correctly 1`] = `
         Proof of Reserve
       </h2>
       <div
-        class="chakra-stack css-84zodg"
+        class="chakra-stack css-1igwmid"
       >
         <p
           class="chakra-text css-3crm2z"

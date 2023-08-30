@@ -3,7 +3,7 @@
 exports[`<DatePickerController /> .render should be disabled if disabled=true: Disabled 1`] = `
 <DocumentFragment>
   <div
-    class="chakra-stack css-1h0sumw"
+    class="chakra-stack css-ppmla1"
   >
     <div
       class="chakra-form-control css-1kxonj9"
@@ -115,7 +115,7 @@ exports[`<DatePickerController /> .render should be disabled if disabled=true: D
 exports[`<DatePickerController /> .render should render the component: WithLabel 1`] = `
 <DocumentFragment>
   <div
-    class="chakra-stack css-1h0sumw"
+    class="chakra-stack css-ppmla1"
   >
     <div
       class="chakra-form-control css-1kxonj9"
@@ -128,7 +128,7 @@ exports[`<DatePickerController /> .render should render the component: WithLabel
         id="field-:r0:-label"
       >
         <div
-          class="chakra-stack css-84zodg"
+          class="chakra-stack css-1igwmid"
         >
           <p
             class="chakra-text css-mgupmj"
@@ -240,7 +240,7 @@ exports[`<DatePickerController /> .render should render the component: WithLabel
 exports[`<DatePickerController /> .render should show the error message: WithError 1`] = `
 <DocumentFragment>
   <div
-    class="chakra-stack css-1h0sumw"
+    class="chakra-stack css-ppmla1"
   >
     <div
       class="chakra-form-control css-1kxonj9"
