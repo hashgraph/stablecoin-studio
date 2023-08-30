@@ -150,6 +150,9 @@ export const english = {
     askReserveAddress:
       'Enter the Proof of Reserve Feed you wish to link your stable coin to',
     askReserveInitialAmount: 'Enter the Proof of Reserve Feed initial amount',
+    askProxyAdminOwner:
+      'Do you want to use your current account as the proxy admin owner?',
+    askProxyAdminOwnerAccount: 'Enter the proxy admin owner account',
     askInitialSupply: 'Enter the initial supply',
     askSupplyType: 'Do you want the token max supply to be infinite?',
     askTotalSupply: 'Enter the max supply',
@@ -430,6 +433,8 @@ export const english = {
       ChangeFactory: 'Change factory',
       UpgradeFactory: 'Upgrade factory',
       ChangeOwner: 'Change owner',
+      AcceptOwner: 'Accept owner',
+      CancelOwner: 'Cancel owner change',
       FactoryDetails: 'Factory details',
       ...goBack,
     },
@@ -490,7 +495,8 @@ export const english = {
     customFeesRemoved: 'Custom fees removed',
     transferCompleted: 'Transfer completed',
     updateCompleted: 'Update completed',
-    changeOwnerCompleted: 'Owner change completed',
+    changeOwnerCompleted: 'Owner change requested',
+    acceptOwnerCompleted: 'Owner change accepted',
     upgradeImplementationCompleted: 'Implementation upgrade completed',
   },
   operation: {
@@ -611,6 +617,8 @@ export const english = {
     options: {
       implementation: 'Upgrade stable coin implementation',
       owner: 'Change stable coin owner',
+      accept: 'Accept stable coin owner',
+      cancel: 'Cancel stable coin owner change',
       ...goBack,
     },
     askNewImplementation:
@@ -618,6 +626,9 @@ export const english = {
     askNewOwner: 'Enter the new owner account id',
     askProxyConfiguration: 'What do you want to do',
     currentImplementation: 'Your current implementation is : ',
+    pendingOwner: 'pending owner : ',
+    askAcceptOwner: 'Are you sure you want to accept the ownership?',
+    askCancelOwner: 'Are you sure you want to cancel the ownership transfer?',
   },
   tokenConfiguration: {
     askAction: 'What token property do you want to update?',

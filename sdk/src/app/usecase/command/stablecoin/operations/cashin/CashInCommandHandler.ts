@@ -35,8 +35,12 @@ import {
 	FreezeStatus,
 	KycStatus,
 } from '../../../../../../port/out/mirror/response/AccountTokenRelationViewModel.js';
+import RPCQueryAdapter from '../../../../../../port/out/rpc/RPCQueryAdapter.js';
 import { AccountFreeze } from '../../error/AccountFreeze.js';
 import { AccountNotKyc } from '../../error/AccountNotKyc.js';
+import { GetReserveAmountQuery } from '../../../../query/stablecoin/getReserveAmount/GetReserveAmountQuery.js';
+import { RESERVE_DECIMALS } from '../../../../../../domain/context/reserve/Reserve.js';
+import { MirrorNodeAdapter } from '../../../../../../port/out/mirror/MirrorNodeAdapter.js';
 
 @CommandHandler(CashInCommand)
 export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
@@ -47,6 +51,10 @@ export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
 		public readonly accountService: AccountService,
 		@lazyInject(TransactionService)
 		public readonly transactionService: TransactionService,
+		@lazyInject(RPCQueryAdapter)
+		public readonly queryAdapter: RPCQueryAdapter,
+		@lazyInject(MirrorNodeAdapter)
+		public readonly mirrorNode: MirrorNodeAdapter,
 	) {}
 
 	async execute(command: CashInCommand): Promise<CashInCommandResponse> {
@@ -95,6 +103,36 @@ export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
 			throw new OperationNotAllowed(
 				`The amount is over the max supply (${amount})`,
 			);
+		}
+
+		if (coin.evmProxyAddress) {
+			const reserveAddress = await this.queryAdapter.getReserveAddress(
+				coin.evmProxyAddress,
+			);
+			if (reserveAddress.toString() !== '0.0.0') {
+				const totalAmount = amountBd.addUnsafe(coin.totalSupply);
+				const commonDecimals =
+					RESERVE_DECIMALS > coin.decimals
+						? RESERVE_DECIMALS
+						: coin.decimals;
+				const reserveAmountBd = (
+					await this.stableCoinService.queryBus.execute(
+						new GetReserveAmountQuery(tokenId),
+					)
+				).payload;
+
+				if (
+					totalAmount
+						.setDecimals(commonDecimals)
+						.isGreaterThan(
+							reserveAmountBd.setDecimals(commonDecimals),
+						)
+				) {
+					throw new OperationNotAllowed(
+						`The reserve is less than the amount to cash in (${amount})`,
+					);
+				}
+			}
 		}
 
 		const res = await handler.cashin(capabilities, targetId, amountBd);

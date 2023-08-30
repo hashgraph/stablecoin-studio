@@ -3,10 +3,10 @@
 exports[`<ImportedTokenCreation /> should render correctly 1`] = `
 <DocumentFragment>
   <div
-    class="chakra-stack css-16oka5y"
+    class="chakra-stack css-19t9j1"
   >
     <div
-      class="chakra-stack css-16oka5y"
+      class="chakra-stack css-19t9j1"
     >
       <h2
         class="chakra-heading css-bqsusc"
@@ -63,16 +63,16 @@ exports[`<ImportedTokenCreation /> should render correctly 1`] = `
               tabindex="0"
             >
               <div
-                class="chakra-stack css-1eot3nj"
+                class="chakra-stack css-tc011i"
               >
                 <div
                   class="css-1c3xk1u"
                 >
                   <div
-                    class="chakra-stack css-1f6llri"
+                    class="chakra-stack css-1wbej9n"
                   >
                     <div
-                      class="chakra-stack css-a55xzq"
+                      class="chakra-stack css-9pdmz3"
                     >
                       <h2
                         class="chakra-heading css-p7jgmy"
@@ -81,43 +81,47 @@ exports[`<ImportedTokenCreation /> should render correctly 1`] = `
                         Add token
                       </h2>
                       <form
-                        class="chakra-stack css-b5leqj"
+                        class="chakra-stack css-ahthbn"
                       >
                         <div
-                          class="chakra-stack css-1h0sumw"
+                          class="chakra-stack css-ppmla1"
                         >
                           <div
                             class="chakra-form-control css-1kxonj9"
                             role="group"
                           >
-                            <label
-                              class="chakra-form__label css-1hfoxt1"
-                              for="field-:r2:"
-                              id="field-:r2:-label"
+                            <div
+                              class="css-gg4vpm"
                             >
-                              <div
-                                class="chakra-stack css-84zodg"
+                              <label
+                                class="chakra-form__label css-1hfoxt1"
+                                for="field-:r2:"
+                                id="field-:r2:-label"
                               >
-                                <p
-                                  class="chakra-text css-mgupmj"
+                                <div
+                                  class="chakra-stack css-1igwmid"
                                 >
-                                  Stable coin id
-                                </p>
-                                <p
-                                  class="chakra-text css-ftb7fv"
-                                  data-testid="required"
-                                >
-                                  *
-                                </p>
-                              </div>
-                            </label>
+                                  <p
+                                    class="chakra-text css-mgupmj"
+                                  >
+                                    Stable coin id
+                                  </p>
+                                  <p
+                                    class="chakra-text css-ftb7fv"
+                                    data-testid="required"
+                                  >
+                                    *
+                                  </p>
+                                </div>
+                              </label>
+                            </div>
                             <div
                               class="chakra-input__group css-bx0blc"
                               data-group="true"
                             >
                               <input
                                 autocomplete="off"
-                                class="chakra-input css-l1kxkf"
+                                class="chakra-input css-1tcppn8"
                                 data-testid="stableCoinId"
                                 id="field-:r2:"
                                 name="stableCoinId"
@@ -128,7 +132,7 @@ exports[`<ImportedTokenCreation /> should render correctly 1`] = `
                           </div>
                         </div>
                         <div
-                          class="chakra-stack css-173lc29"
+                          class="chakra-stack css-1sqcbux"
                         >
                           <p
                             class="chakra-text css-16srhgc"
@@ -136,57 +140,69 @@ exports[`<ImportedTokenCreation /> should render correctly 1`] = `
                             Do you want to get the roles automatically? This operation will incur a cost
                           </p>
                           <div
-                            style="position: relative; display: inline-block; text-align: left; opacity: 1; direction: ltr; border-radius: 17.5px; transition: opacity 0.25s; user-select: none;"
+                            class="chakra-stack css-ppmla1"
                           >
                             <div
-                              class="react-switch-bg"
-                              style="height: 35px; width: 64px; margin: 0px; position: relative; background: rgb(255, 255, 255); border-radius: 17.5px; cursor: pointer; transition: background 0.25s;"
-                            />
-                            <div
-                              class="react-switch-handle"
-                              style="height: 29px; width: 29px; background: rgb(251, 206, 198); display: inline-block; cursor: pointer; border-radius: 50%; position: absolute; transform: translateX(3px); top: 3px; outline: 0; border: 0px; transition: background-color 0.25s, transform 0.25s, box-shadow 0.15s;"
+                              class="chakra-form-control css-1kxonj9"
+                              role="group"
                             >
                               <div
-                                style="height: 29px; width: 29px; opacity: 1; position: absolute; left: 0px; top: 0px; pointer-events: none; transition: opacity 0.25s;"
-                              >
-                                <div
-                                  class="chakra-stack css-191yzw1"
-                                >
-                                  <p
-                                    class="chakra-text css-1f7y1le"
-                                    data-testid="switch-handler-no"
-                                  >
-                                    NO
-                                  </p>
-                                </div>
-                              </div>
+                                class="css-8owaep"
+                              />
                               <div
-                                style="height: 29px; width: 29px; opacity: 0; position: absolute; left: 0px; top: 0px; pointer-events: none; transition: opacity 0.25s;"
+                                style="position: relative; display: inline-block; text-align: left; opacity: 1; direction: ltr; border-radius: 17.5px; transition: opacity 0.25s; user-select: none;"
                               >
                                 <div
-                                  class="chakra-stack css-191yzw1"
+                                  class="react-switch-bg"
+                                  style="height: 35px; width: 64px; margin: 0px; position: relative; background: rgb(255, 255, 255); border-radius: 17.5px; cursor: pointer; transition: background 0.25s;"
+                                />
+                                <div
+                                  class="react-switch-handle"
+                                  style="height: 29px; width: 29px; background: rgb(251, 206, 198); display: inline-block; cursor: pointer; border-radius: 50%; position: absolute; transform: translateX(3px); top: 3px; outline: 0; border: 0px; transition: background-color 0.25s, transform 0.25s, box-shadow 0.15s;"
                                 >
-                                  <p
-                                    class="chakra-text css-1f7y1le"
-                                    data-testid="switch-handler-yes"
+                                  <div
+                                    style="height: 29px; width: 29px; opacity: 1; position: absolute; left: 0px; top: 0px; pointer-events: none; transition: opacity 0.25s;"
                                   >
-                                    YES
-                                  </p>
+                                    <div
+                                      class="chakra-stack css-oe35x4"
+                                    >
+                                      <p
+                                        class="chakra-text css-1f7y1le"
+                                        data-testid="switch-handler-no"
+                                      >
+                                        NO
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <div
+                                    style="height: 29px; width: 29px; opacity: 0; position: absolute; left: 0px; top: 0px; pointer-events: none; transition: opacity 0.25s;"
+                                  >
+                                    <div
+                                      class="chakra-stack css-oe35x4"
+                                    >
+                                      <p
+                                        class="chakra-text css-1f7y1le"
+                                        data-testid="switch-handler-yes"
+                                      >
+                                        YES
+                                      </p>
+                                    </div>
+                                  </div>
                                 </div>
+                                <input
+                                  aria-checked="false"
+                                  data-testid="switch"
+                                  id="switch-component"
+                                  role="switch"
+                                  style="border: 0px; height: 1px; margin: -1px; overflow: hidden; padding: 0px; position: absolute; width: 1px;"
+                                  type="checkbox"
+                                />
                               </div>
                             </div>
-                            <input
-                              aria-checked="false"
-                              data-testid="switch"
-                              id="switch-component"
-                              role="switch"
-                              style="border: 0px; height: 1px; margin: -1px; overflow: hidden; padding: 0px; position: absolute; width: 1px;"
-                              type="checkbox"
-                            />
                           </div>
                         </div>
                         <div
-                          class="chakra-stack css-1h0sumw"
+                          class="chakra-stack css-ppmla1"
                         >
                           <div
                             class="chakra-form-control css-1kxonj9"
@@ -195,11 +211,11 @@ exports[`<ImportedTokenCreation /> should render correctly 1`] = `
                           >
                             <label
                               class="chakra-form__label css-1hfoxt1"
-                              for="field-:r3:"
-                              id="field-:r3:-label"
+                              for="field-:r4:"
+                              id="field-:r4:-label"
                             >
                               <div
-                                class="chakra-stack css-84zodg"
+                                class="chakra-stack css-1igwmid"
                               >
                                 <p
                                   class="chakra-text css-mgupmj"
@@ -250,7 +266,7 @@ exports[`<ImportedTokenCreation /> should render correctly 1`] = `
                                       autocomplete="off"
                                       autocorrect="off"
                                       class=" css-146k1ar-input"
-                                      id="field-:r3:"
+                                      id="field-:r4:"
                                       role="combobox"
                                       spellcheck="false"
                                       tabindex="0"

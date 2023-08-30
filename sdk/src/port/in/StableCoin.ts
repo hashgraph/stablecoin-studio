@@ -95,6 +95,7 @@ import { TransfersCommand } from '../../app/usecase/command/stablecoin/operation
 import { UpdateCommand } from '../../app/usecase/command/stablecoin/update/UpdateCommand.js';
 import NetworkService from '../../app/service/NetworkService.js';
 import { AssociateCommand } from '../../app/usecase/command/account/associate/AssociateCommand.js';
+import { MirrorNodeAdapter } from '../../port/out/mirror/MirrorNodeAdapter.js';
 
 export {
 	StableCoinViewModel,
@@ -153,6 +154,9 @@ class StableCoinInPort implements IStableCoinInPort {
 		private readonly networkService: NetworkService = Injectable.resolve(
 			NetworkService,
 		),
+		private readonly mirrorNode: MirrorNodeAdapter = Injectable.resolve(
+			MirrorNodeAdapter,
+		),
 	) {}
 
 	@LogError
@@ -166,6 +170,7 @@ class StableCoinInPort implements IStableCoinInPort {
 			reserveAddress,
 			reserveInitialAmount,
 			createReserve,
+			proxyAdminOwnerAccount,
 		} = req;
 
 		const stableCoinFactory =
@@ -233,22 +238,37 @@ class StableCoinInPort implements IStableCoinInPort {
 			metadata: req.metadata,
 		};
 
+		const stableCoinFactoryId: string | undefined = (
+			await this.mirrorNode.getContractInfo(stableCoinFactory)
+		).id;
+
+		const hederaTokenManagerId: string | undefined = hederaTokenManager
+			? (await this.mirrorNode.getContractInfo(hederaTokenManager)).id
+			: undefined;
+
+		const reserveAddressId: string | undefined = reserveAddress
+			? (await this.mirrorNode.getContractInfo(reserveAddress)).id
+			: undefined;
+
 		const createResponse = await this.commandBus.execute(
 			new CreateCommand(
 				coin,
 				createReserve,
-				stableCoinFactory
-					? new ContractId(stableCoinFactory)
+				stableCoinFactoryId
+					? new ContractId(stableCoinFactoryId)
 					: undefined,
-				hederaTokenManager
-					? new ContractId(hederaTokenManager)
+				hederaTokenManagerId
+					? new ContractId(hederaTokenManagerId)
 					: undefined,
-				reserveAddress ? new ContractId(reserveAddress) : undefined,
+				reserveAddressId ? new ContractId(reserveAddressId) : undefined,
 				reserveInitialAmount
 					? BigDecimal.fromString(
 							reserveInitialAmount,
 							RESERVE_DECIMALS,
 					  )
+					: undefined,
+				proxyAdminOwnerAccount
+					? new ContractId(proxyAdminOwnerAccount)
 					: undefined,
 			),
 		);
@@ -578,11 +598,15 @@ class StableCoinInPort implements IStableCoinInPort {
 	): Promise<boolean> {
 		handleValidation('UpdateReserveAddressRequest', request);
 
+		const reserveAddressId: string = (
+			await this.mirrorNode.getContractInfo(request.reserveAddress)
+		).id;
+
 		return (
 			await this.commandBus.execute(
 				new UpdateReserveAddressCommand(
 					HederaId.from(request.tokenId),
-					new ContractId(request.reserveAddress),
+					new ContractId(reserveAddressId),
 				),
 			)
 		).payload;

@@ -6,19 +6,40 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
     class="css-130jr3z"
   >
     <div
-      class="chakra-stack css-135a0es"
+      class="chakra-stack css-8csoc2"
     >
       <h2
         class="chakra-heading css-p7jgmy"
         data-testid="title"
       >
-        Permission management
+        <div
+          class="css-gg4vpm"
+        >
+          Permission management
+          <a
+            class="chakra-link css-spn4bz"
+            href="https://docs.hedera.com/hedera/sdks-and-apis/sdks/readme-1/define-a-token"
+            rel="noopener"
+            target="_blank"
+          >
+            <svg
+              class="chakra-icon css-onkibi"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M12,0A12,12,0,1,0,24,12,12.013,12.013,0,0,0,12,0Zm.25,5a1.5,1.5,0,1,1-1.5,1.5A1.5,1.5,0,0,1,12.25,5ZM14.5,18.5h-4a1,1,0,0,1,0-2h.75a.25.25,0,0,0,.25-.25v-4.5a.25.25,0,0,0-.25-.25H10.5a1,1,0,0,1,0-2h1a2,2,0,0,1,2,2v4.75a.25.25,0,0,0,.25.25h.75a1,1,0,1,1,0,2Z"
+                fill="currentColor"
+              />
+            </svg>
+          </a>
+        </div>
       </h2>
       <form
-        class="chakra-stack css-1tjpxl5"
+        class="chakra-stack css-1se0447"
       >
         <div
-          class="chakra-stack css-1tchtwa"
+          class="chakra-stack css-801656"
         >
           <p
             class="chakra-text css-3crm2z"
@@ -27,7 +48,7 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
           </p>
         </div>
         <div
-          class="chakra-stack css-oat9fj"
+          class="chakra-stack css-oswb0z"
         >
           <p
             class="chakra-text css-mgupmj"
@@ -46,33 +67,67 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
           </p>
         </div>
         <div
-          class="chakra-stack css-1tchtwa"
+          class="chakra-stack css-801656"
         >
           <p
             class="chakra-text css-3crm2z"
           >
-            Do you want to enable KYC?
+            Do you want to enable KYC? 
+            <a
+              class="chakra-link css-spn4bz"
+              href="https://hedera.com/blog/get-started-with-the-hedera-token-service-part-2-kyc-update-and-scheduled-transactions"
+              rel="noopener"
+              target="_blank"
+            >
+              <svg
+                class="chakra-icon css-onkibi"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M12,0A12,12,0,1,0,24,12,12.013,12.013,0,0,0,12,0Zm.25,5a1.5,1.5,0,1,1-1.5,1.5A1.5,1.5,0,0,1,12.25,5ZM14.5,18.5h-4a1,1,0,0,1,0-2h.75a.25.25,0,0,0,.25-.25v-4.5a.25.25,0,0,0-.25-.25H10.5a1,1,0,0,1,0-2h1a2,2,0,0,1,2,2v4.75a.25.25,0,0,0,.25.25h.75a1,1,0,1,1,0,2Z"
+                  fill="currentColor"
+                />
+              </svg>
+            </a>
           </p>
         </div>
         <div
-          class="chakra-stack css-owjkmg"
+          class="chakra-stack css-tl3ftk"
         />
         <div
-          class="chakra-stack css-1tchtwa"
+          class="chakra-stack css-801656"
         >
           <p
             class="chakra-text css-3crm2z"
           >
-            Do you want to add custom fees?
+            Do you want to add custom fees? 
+            <a
+              class="chakra-link css-spn4bz"
+              href="https://docs.hedera.com/hedera/sdks-and-apis/sdks/readme-1/custom-token-fees"
+              rel="noopener"
+              target="_blank"
+            >
+              <svg
+                class="chakra-icon css-onkibi"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M12,0A12,12,0,1,0,24,12,12.013,12.013,0,0,0,12,0Zm.25,5a1.5,1.5,0,1,1-1.5,1.5A1.5,1.5,0,0,1,12.25,5ZM14.5,18.5h-4a1,1,0,0,1,0-2h.75a.25.25,0,0,0,.25-.25v-4.5a.25.25,0,0,0-.25-.25H10.5a1,1,0,0,1,0-2h1a2,2,0,0,1,2,2v4.75a.25.25,0,0,0,.25.25h.75a1,1,0,1,1,0,2Z"
+                  fill="currentColor"
+                />
+              </svg>
+            </a>
           </p>
         </div>
         <div
-          class="chakra-stack css-owjkmg"
+          class="chakra-stack css-tl3ftk"
         />
       </form>
     </div>
     <div
-      class="chakra-stack css-135a0es"
+      class="chakra-stack css-8csoc2"
     >
       <div
         class="chakra-accordion css-0"
@@ -91,7 +146,24 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
             <span
               class="css-1irdfqk"
             >
-              Roles assignment
+              Roles assignment 
+              <a
+                class="chakra-link css-spn4bz"
+                href="https://github.com/hashgraph/hedera-accelerator-stablecoin#what-is-a-stable-coin"
+                rel="noopener"
+                target="_blank"
+              >
+                <svg
+                  class="chakra-icon css-onkibi"
+                  focusable="false"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M12,0A12,12,0,1,0,24,12,12.013,12.013,0,0,0,12,0Zm.25,5a1.5,1.5,0,1,1-1.5,1.5A1.5,1.5,0,0,1,12.25,5ZM14.5,18.5h-4a1,1,0,0,1,0-2h.75a.25.25,0,0,0,.25-.25v-4.5a.25.25,0,0,0-.25-.25H10.5a1,1,0,0,1,0-2h1a2,2,0,0,1,2,2v4.75a.25.25,0,0,0,.25.25h.75a1,1,0,1,1,0,2Z"
+                    fill="currentColor"
+                  />
+                </svg>
+              </a>
             </span>
             <svg
               aria-hidden="true"
@@ -120,10 +192,10 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
                 data-testid="supplier-quantity"
               >
                 <div
-                  class="chakra-stack css-owjkmg"
+                  class="chakra-stack css-tl3ftk"
                 />
                 <div
-                  class="chakra-stack css-1wytzre"
+                  class="chakra-stack css-14w8hkr"
                 >
                   <p
                     class="chakra-text css-4dzt3e"
@@ -133,23 +205,86 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
                 </div>
               </div>
               <div
-                class="chakra-stack css-owjkmg"
+                class="chakra-stack css-tl3ftk"
               />
               <div
-                class="chakra-stack css-owjkmg"
+                class="chakra-stack css-tl3ftk"
               />
               <div
-                class="chakra-stack css-owjkmg"
+                class="chakra-stack css-tl3ftk"
               />
               <div
-                class="chakra-stack css-owjkmg"
+                class="chakra-stack css-tl3ftk"
               />
               <div
-                class="chakra-stack css-owjkmg"
+                class="chakra-stack css-tl3ftk"
               />
               <div
-                class="chakra-stack css-owjkmg"
+                class="chakra-stack css-tl3ftk"
               />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="chakra-stack css-8csoc2"
+    >
+      <div
+        class="chakra-accordion css-0"
+      >
+        <div
+          class="chakra-accordion__item css-17mg6aq"
+        >
+          <button
+            aria-controls="accordion-panel-:r3:"
+            aria-expanded="false"
+            class="chakra-accordion__button css-uttm9k"
+            data-index="0"
+            id="accordion-button-:r3:"
+            type="button"
+          >
+            <span
+              class="css-1irdfqk"
+            >
+              Proxy admin
+            </span>
+            <svg
+              aria-hidden="true"
+              class="chakra-icon chakra-accordion__icon css-186l2rg"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"
+                fill="currentColor"
+              />
+            </svg>
+          </button>
+          <div
+            class="chakra-collapse"
+            style="overflow: hidden; display: none; opacity: 0; height: 0px;"
+          >
+            <div
+              aria-labelledby="accordion-button-:r3:"
+              class="chakra-accordion__panel css-1wt3bp2"
+              id="accordion-panel-:r3:"
+              role="region"
+            >
+              <div
+                class="css-0"
+                data-testid="supplier-quantity"
+              >
+                <div
+                  class="chakra-stack css-14w8hkr"
+                >
+                  <p
+                    class="chakra-text css-4dzt3e"
+                  >
+                    Do you want to use your current account as the proxy admin owner?
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>

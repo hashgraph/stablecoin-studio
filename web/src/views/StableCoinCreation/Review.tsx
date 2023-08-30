@@ -52,6 +52,8 @@ const Review = (props: ReviewProps) => {
 		reserveAddress,
 		reserveInitialAmount,
 		grantKYCToOriginalSender,
+		currentAccountAsProxyAdminOwner,
+		proxyAdminOwnerAccount,
 	} = getValues();
 
 	const getKey = (keySelected: { value: number; label: string }, nameOtherKey: string) => {
@@ -118,16 +120,8 @@ const Review = (props: ReviewProps) => {
 	};
 
 	const roleDetails: any[] = [];
-	setRoleAccountInfoByKey(
-		t('stableCoinCreation:managementPermissions.cashin'),
-		cashInRoleAccount,
-		supplyKey,
-	);
-	setRoleAccountInfoByKey(
-		t('stableCoinCreation:managementPermissions.burn'),
-		burnRoleAccount,
-		supplyKey,
-	);
+	setRoleAccountInfo(t('stableCoinCreation:managementPermissions.cashin'), cashInRoleAccount);
+	setRoleAccountInfo(t('stableCoinCreation:managementPermissions.burn'), burnRoleAccount);
 	setRoleAccountInfoByKey(
 		t('stableCoinCreation:managementPermissions.wipe'),
 		wipeRoleAccount,
@@ -144,11 +138,7 @@ const Review = (props: ReviewProps) => {
 		freezeRoleAccount,
 		freezeKey,
 	);
-	setRoleAccountInfoByKey(
-		t('stableCoinCreation:managementPermissions.delete'),
-		deleteRoleAccount,
-		adminKey,
-	);
+	setRoleAccountInfo(t('stableCoinCreation:managementPermissions.delete'), deleteRoleAccount);
 	setKycRoleAccountInfoByKey(
 		t('stableCoinCreation:managementPermissions.kyc'),
 		kycRoleAccount,
@@ -323,6 +313,19 @@ const Review = (props: ReviewProps) => {
 							]}
 						/>
 					)}
+
+					<DetailsReview
+						title={t('stableCoinCreation:proxyAdmin.title')}
+						titleProps={{ fontWeight: 700, color: 'brand.secondary' }}
+						details={[
+							{
+								label: t('stableCoinCreation:proxyAdmin.ownerAccount'),
+								value: currentAccountAsProxyAdminOwner
+									? t('stableCoinCreation:managementPermissions.currentUserAccount')
+									: proxyAdminOwnerAccount,
+							},
+						]}
+					/>
 				</Stack>
 			</Stack>
 		</VStack>

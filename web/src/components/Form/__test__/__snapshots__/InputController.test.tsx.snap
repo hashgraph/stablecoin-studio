@@ -3,19 +3,22 @@
 exports[`<InputController /> .render should be disabled if disabled=true: Disabled 1`] = `
 <DocumentFragment>
   <div
-    class="chakra-stack css-1h0sumw"
+    class="chakra-stack css-ppmla1"
   >
     <div
       class="chakra-form-control css-1kxonj9"
       role="group"
     >
       <div
+        class="css-gg4vpm"
+      />
+      <div
         class="chakra-input__group css-bx0blc"
         data-group="true"
       >
         <input
           autocomplete="off"
-          class="chakra-input css-l1kxkf"
+          class="chakra-input css-1tcppn8"
           data-testid="input-test"
           disabled=""
           id="field-:r5:"
@@ -35,34 +38,38 @@ exports[`<InputController /> .render should be disabled if disabled=true: Disabl
 exports[`<InputController /> .render should render the component: WithLabel 1`] = `
 <DocumentFragment>
   <div
-    class="chakra-stack css-1h0sumw"
+    class="chakra-stack css-ppmla1"
   >
     <div
       class="chakra-form-control css-1kxonj9"
       role="group"
     >
-      <label
-        class="chakra-form__label css-1hfoxt1"
-        for="field-:r0:"
-        id="field-:r0:-label"
+      <div
+        class="css-gg4vpm"
       >
-        <div
-          class="chakra-stack css-84zodg"
+        <label
+          class="chakra-form__label css-1hfoxt1"
+          for="field-:r0:"
+          id="field-:r0:-label"
         >
-          <p
-            class="chakra-text css-mgupmj"
+          <div
+            class="chakra-stack css-1igwmid"
           >
-            test-label
-          </p>
-        </div>
-      </label>
+            <p
+              class="chakra-text css-mgupmj"
+            >
+              test-label
+            </p>
+          </div>
+        </label>
+      </div>
       <div
         class="chakra-input__group css-bx0blc"
         data-group="true"
       >
         <input
           autocomplete="off"
-          class="chakra-input css-l1kxkf"
+          class="chakra-input css-1tcppn8"
           data-testid="input-test"
           id="field-:r0:"
           name="input-test"
@@ -81,12 +88,15 @@ exports[`<InputController /> .render should render the component: WithLabel 1`] 
 exports[`<InputController /> .render should render the left element: WithLeftElement 1`] = `
 <DocumentFragment>
   <div
-    class="chakra-stack css-1h0sumw"
+    class="chakra-stack css-ppmla1"
   >
     <div
       class="chakra-form-control css-1kxonj9"
       role="group"
     >
+      <div
+        class="css-gg4vpm"
+      />
       <div
         class="chakra-input__group css-bx0blc"
         data-group="true"
@@ -96,7 +106,7 @@ exports[`<InputController /> .render should render the left element: WithLeftEle
         />
         <input
           autocomplete="off"
-          class="chakra-input css-l1kxkf"
+          class="chakra-input css-1tcppn8"
           data-testid="input-test"
           id="field-:r7:"
           name="input-test"
@@ -115,19 +125,22 @@ exports[`<InputController /> .render should render the left element: WithLeftEle
 exports[`<InputController /> .render should render the right element: WithRightElement 1`] = `
 <DocumentFragment>
   <div
-    class="chakra-stack css-1h0sumw"
+    class="chakra-stack css-ppmla1"
   >
     <div
       class="chakra-form-control css-1kxonj9"
       role="group"
     >
       <div
+        class="css-gg4vpm"
+      />
+      <div
         class="chakra-input__group css-bx0blc"
         data-group="true"
       >
         <input
           autocomplete="off"
-          class="chakra-input css-l1kxkf"
+          class="chakra-input css-1tcppn8"
           data-testid="input-test"
           id="field-:r6:"
           name="input-test"
@@ -149,19 +162,22 @@ exports[`<InputController /> .render should render the right element: WithRightE
 exports[`<InputController /> .render should show placeholder: WithPlaceholder 1`] = `
 <DocumentFragment>
   <div
-    class="chakra-stack css-1h0sumw"
+    class="chakra-stack css-ppmla1"
   >
     <div
       class="chakra-form-control css-1kxonj9"
       role="group"
     >
       <div
+        class="css-gg4vpm"
+      />
+      <div
         class="chakra-input__group css-bx0blc"
         data-group="true"
       >
         <input
           autocomplete="off"
-          class="chakra-input css-l1kxkf"
+          class="chakra-input css-1tcppn8"
           data-testid="input-test"
           id="field-:r4:"
           name="input-test"
@@ -181,12 +197,15 @@ exports[`<InputController /> .render should show placeholder: WithPlaceholder 1`
 exports[`<InputController /> .render should show the error message: WithError 1`] = `
 <DocumentFragment>
   <div
-    class="chakra-stack css-1h0sumw"
+    class="chakra-stack css-ppmla1"
   >
     <div
       class="chakra-form-control css-1kxonj9"
       role="group"
     >
+      <div
+        class="css-gg4vpm"
+      />
       <div
         class="chakra-input__group css-bx0blc"
         data-group="true"
@@ -195,7 +214,7 @@ exports[`<InputController /> .render should show the error message: WithError 1`
           aria-describedby="field-:r2:-feedback"
           aria-invalid="true"
           autocomplete="off"
-          class="chakra-input css-l1kxkf"
+          class="chakra-input css-1tcppn8"
           data-testid="input-test"
           id="field-:r2:"
           name="input-test"

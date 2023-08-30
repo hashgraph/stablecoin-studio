@@ -32,6 +32,10 @@ import { CreateCommand, CreateCommandResponse } from './CreateCommand.js';
 import { RESERVE_DECIMALS } from '../../../../../domain/context/reserve/Reserve.js';
 import { InvalidRequest } from '../error/InvalidRequest.js';
 import { EVM_ZERO_ADDRESS } from '../../../../../core/Constants.js';
+import { MirrorNodeAdapter } from '../../../../../port/out/mirror/MirrorNodeAdapter.js';
+import RPCQueryAdapter from '../../../../../port/out/rpc/RPCQueryAdapter.js';
+import BigDecimal from '../../../../../domain/context/shared/BigDecimal.js';
+import EvmAddress from '../../../../../domain/context/contract/EvmAddress.js';
 
 @CommandHandler(CreateCommand)
 export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
@@ -42,6 +46,10 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 		public readonly transactionService: TransactionService,
 		@lazyInject(NetworkService)
 		public readonly networkService: NetworkService,
+		@lazyInject(MirrorNodeAdapter)
+		public readonly mirrorNodeAdapter: MirrorNodeAdapter,
+		@lazyInject(RPCQueryAdapter)
+		public readonly queryAdapter: RPCQueryAdapter,
 	) {}
 
 	async execute(command: CreateCommand): Promise<CreateCommandResponse> {
@@ -52,6 +60,7 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 			reserveAddress,
 			reserveInitialAmount,
 			createReserve,
+			proxyAdminOwnerAccount,
 		} = command;
 
 		if (!factory) {
@@ -76,17 +85,46 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 		const commonDecimals =
 			RESERVE_DECIMALS > coin.decimals ? RESERVE_DECIMALS : coin.decimals;
 
-		if (
-			createReserve &&
-			reserveInitialAmount &&
-			coin.initialSupply &&
-			coin.initialSupply
-				.setDecimals(commonDecimals)
-				.isGreaterThan(reserveInitialAmount.setDecimals(commonDecimals))
-		) {
-			throw new OperationNotAllowed(
-				'Initial supply cannot be more than the reserve initial amount',
-			);
+		if (coin.initialSupply) {
+			if (
+				createReserve &&
+				reserveInitialAmount &&
+				coin.initialSupply
+					.setDecimals(commonDecimals)
+					.isGreaterThan(
+						reserveInitialAmount.setDecimals(commonDecimals),
+					)
+			) {
+				throw new OperationNotAllowed(
+					'Initial supply cannot be more than the reserve initial amount',
+				);
+			} else if (reserveAddress) {
+				const reserveContractEvmAddress = (
+					await this.mirrorNodeAdapter.getContractInfo(
+						reserveAddress.value,
+					)
+				).evmAddress;
+				const reserveAmount = BigDecimal.fromStringFixed(
+					(
+						await this.queryAdapter.getReserveLatestRoundData(
+							new EvmAddress(reserveContractEvmAddress),
+						)
+					)[1].toString(),
+					RESERVE_DECIMALS,
+				);
+
+				if (
+					coin.initialSupply
+						.setDecimals(commonDecimals)
+						.isGreaterThan(
+							reserveAmount.setDecimals(commonDecimals),
+						)
+				) {
+					throw new OperationNotAllowed(
+						'Initial supply cannot be more than the reserve initial amount',
+					);
+				}
+			}
 		}
 
 		const res = await handler.create(
@@ -96,6 +134,7 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 			createReserve,
 			reserveAddress,
 			reserveInitialAmount,
+			proxyAdminOwnerAccount,
 		);
 		try {
 			return Promise.resolve(
@@ -106,15 +145,23 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 					res.response[0][4] === EVM_ZERO_ADDRESS
 						? new ContractId('0.0.0')
 						: ContractId.fromHederaContractId(
-								HContractId.fromSolidityAddress(
-									res.response[0][4],
+								HContractId.fromString(
+									(
+										await this.mirrorNodeAdapter.getContractInfo(
+											res.response[0][4],
+										)
+									).id,
 								),
 						  ),
 					res.response[0][5] === EVM_ZERO_ADDRESS
 						? new ContractId('0.0.0')
 						: ContractId.fromHederaContractId(
-								HContractId.fromSolidityAddress(
-									res.response[0][5],
+								HContractId.fromString(
+									(
+										await this.mirrorNodeAdapter.getContractInfo(
+											res.response[0][5],
+										)
+									).id,
 								),
 						  ),
 				),

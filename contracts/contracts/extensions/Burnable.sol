@@ -3,8 +3,11 @@ pragma solidity 0.8.16;
 
 import {TokenOwner} from './TokenOwner.sol';
 import {Roles} from './Roles.sol';
-import {IHederaTokenService} from '../hts-precompile/IHederaTokenService.sol';
+import {
+    IHederaTokenService
+} from '@hashgraph/smart-contracts/contracts/hts-precompile/IHederaTokenService.sol';
 import {IBurnable} from './Interfaces/IBurnable.sol';
+import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
 
 abstract contract Burnable is IBurnable, TokenOwner, Roles {
     /**
@@ -20,7 +23,7 @@ abstract contract Burnable is IBurnable, TokenOwner, Roles {
         onlyRole(_getRoleId(RoleName.BURN))
         amountIsNotNegative(amount, false)
         valueIsNotGreaterThan(
-            uint256(uint64(amount)),
+            SafeCast.toUint256(amount),
             _balanceOf(address(this)),
             true
         )

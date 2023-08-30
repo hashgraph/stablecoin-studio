@@ -12,6 +12,7 @@ import {
     getNonOperatorAccount,
     getNonOperatorE25519,
     tokenKeystoKey,
+    allTokenKeystoKey,
     tokenKeystoContract,
 } from '../scripts/deploy'
 import {
@@ -20,9 +21,7 @@ import {
     decimals,
     initialize,
     Mint,
-    Wipe,
     getTotalSupply,
-    getBalanceOf,
     getTokenAddress,
     upgradeTo,
     admin,
@@ -37,8 +36,15 @@ import {
     isUnlimitedSupplierAllowance,
     updateToken,
     getMetadata,
+    acceptOwnership_SCF,
 } from '../scripts/contractsMethods'
-import { clientId, toEvmAddress, oneYearLaterInSeconds } from '../scripts/utils'
+import {
+    clientId,
+    toEvmAddress,
+    oneYearLaterInSeconds,
+    getContractInfo,
+    sleep,
+} from '../scripts/utils'
 import { Client, ContractId } from '@hashgraph/sdk'
 import {
     ProxyAdmin__factory,
@@ -47,6 +53,8 @@ import {
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import {
+    ADDRESS_0,
+    ADDRESS_1,
     BURN_ROLE,
     CASHIN_ROLE,
     DEFAULT_ADMIN_ROLE,
@@ -223,6 +231,26 @@ describe('HederaTokenManager Tests', function () {
             '',
             operatorClient
         )
+    })
+
+    it('Admin and supply token keys cannot be updated', async function () {
+        const keysToKey = allTokenKeystoKey(
+            operatorPubKey,
+            operatorIsE25519,
+            false
+        )
+        await expect(
+            updateToken(
+                proxyAddress,
+                'newName',
+                'newSymbol',
+                keysToKey,
+                oneYearLaterInSeconds(),
+                7890000,
+                MetadataString,
+                operatorClient
+            )
+        ).to.eventually.be.rejectedWith(Error)
     })
 
     it('deploy SC with roles associated to another account', async function () {
@@ -504,27 +532,100 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
         stableCoinAddress = result[2]
     })
 
+    it('Can deploy a stable coin where proxy admin owner is the deploying account', async function () {
+        const result = await deployContractsWithSDK({
+            name: TokenName,
+            symbol: TokenSymbol,
+            decimals: TokenDecimals,
+            initialSupply: INIT_SUPPLY.toString(),
+            maxSupply: MAX_SUPPLY.toString(),
+            memo: TokenMemo,
+            account: operatorAccount,
+            privateKey: operatorPriKey,
+            publicKey: operatorPubKey,
+            isED25519Type: operatorIsE25519,
+            initialAmountDataFeed: INIT_SUPPLY.toString(),
+            proxyAdminOwnerAccount: ADDRESS_0,
+        })
+
+        // We retreive the HederaTokenManagerProxy admin and implementation
+        const ownerAccount = await owner(
+            abiProxyAdmin,
+            result[1],
+            operatorClient
+        )
+
+        // We check their values : success
+        expect(ownerAccount.toUpperCase()).to.equals(
+            (
+                await toEvmAddress(operatorAccount, operatorIsE25519)
+            ).toUpperCase()
+        )
+    })
+
+    it('Can deploy a stable coin where proxy admin owner is not the deploying account', async function () {
+        const result = await deployContractsWithSDK({
+            name: TokenName,
+            symbol: TokenSymbol,
+            decimals: TokenDecimals,
+            initialSupply: INIT_SUPPLY.toString(),
+            maxSupply: MAX_SUPPLY.toString(),
+            memo: TokenMemo,
+            account: operatorAccount,
+            privateKey: operatorPriKey,
+            publicKey: operatorPubKey,
+            isED25519Type: operatorIsE25519,
+            initialAmountDataFeed: INIT_SUPPLY.toString(),
+            proxyAdminOwnerAccount: await toEvmAddress(
+                nonOperatorAccount,
+                nonOperatorIsE25519
+            ),
+        })
+
+        // We retreive the HederaTokenManagerProxy admin and implementation
+        const ownerAccount = await owner(
+            abiProxyAdmin,
+            result[1],
+            operatorClient
+        )
+
+        // We check their values : success
+        expect(ownerAccount.toUpperCase()).to.equals(
+            (
+                await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)
+            ).toUpperCase()
+        )
+    })
+
     it('Retrieve admin and implementation addresses for the Proxy', async function () {
         // We retreive the HederaTokenManagerProxy admin and implementation
         const implementation = await getProxyImplementation(
             abiProxyAdmin,
             proxyAdminAddress,
             operatorClient,
-            proxyAddress.toSolidityAddress()
+            (
+                await getContractInfo(proxyAddress.toString())
+            ).evm_address
         )
         const admin = await getProxyAdmin(
             abiProxyAdmin,
             proxyAdminAddress,
             operatorClient,
-            proxyAddress.toSolidityAddress()
+            (
+                await getContractInfo(proxyAddress.toString())
+            ).evm_address
         )
 
         // We check their values : success
         expect(implementation.toUpperCase()).to.equals(
-            '0X' + stableCoinAddress.toSolidityAddress().toUpperCase()
+            (
+                await getContractInfo(stableCoinAddress.toString())
+            ).evm_address.toUpperCase()
         )
         expect(admin.toUpperCase()).to.equals(
-            '0X' + proxyAdminAddress.toSolidityAddress().toUpperCase()
+            (
+                await getContractInfo(proxyAdminAddress.toString())
+            ).evm_address.toUpperCase()
         )
     })
 
@@ -568,7 +669,9 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
                 abiProxyAdmin,
                 proxyAddress,
                 operatorClient,
-                newImplementationContract.toSolidityAddress()
+                (
+                    await getContractInfo(newImplementationContract.toString())
+                ).evm_address
             )
         ).to.eventually.be.rejectedWith(Error)
     })
@@ -609,8 +712,12 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
                 abiProxyAdmin,
                 proxyAdminAddress,
                 nonOperatorClient,
-                newImplementationContract.toSolidityAddress(),
-                proxyAddress.toSolidityAddress()
+                (
+                    await getContractInfo(newImplementationContract.toString())
+                ).evm_address,
+                (
+                    await getContractInfo(proxyAddress.toString())
+                ).evm_address
             )
         ).to.eventually.be.rejectedWith(Error)
     })
@@ -652,8 +759,12 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
             abiProxyAdmin,
             proxyAdminAddress,
             operatorClient,
-            newImplementationContract.toSolidityAddress(),
-            proxyAddress.toSolidityAddress()
+            (
+                await getContractInfo(newImplementationContract.toString())
+            ).evm_address,
+            (
+                await getContractInfo(proxyAddress.toString())
+            ).evm_address
         )
 
         // Check new implementation address
@@ -661,10 +772,14 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
             abiProxyAdmin,
             proxyAdminAddress,
             operatorClient,
-            proxyAddress.toSolidityAddress()
+            (
+                await getContractInfo(proxyAddress.toString())
+            ).evm_address
         )
         expect(implementation.toUpperCase()).to.equals(
-            '0X' + newImplementationContract.toSolidityAddress().toUpperCase()
+            (
+                await getContractInfo(newImplementationContract.toString())
+            ).evm_address.toUpperCase()
         )
 
         // reset
@@ -672,8 +787,12 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
             abiProxyAdmin,
             proxyAdminAddress,
             operatorClient,
-            stableCoinAddress.toSolidityAddress(),
-            proxyAddress.toSolidityAddress()
+            (
+                await getContractInfo(stableCoinAddress.toString())
+            ).evm_address,
+            (
+                await getContractInfo(proxyAddress.toString())
+            ).evm_address
         )
     })
 
@@ -694,7 +813,9 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
                 abiProxyAdmin,
                 proxyAdminAddress,
                 operatorClient,
-                proxyAddress.toSolidityAddress()
+                (
+                    await getContractInfo(proxyAddress.toString())
+                ).evm_address
             )
         ).to.eventually.be.rejectedWith(Error)
 
@@ -721,7 +842,9 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
             ITransparentUpgradeableProxy__factory.abi,
             proxyAddress,
             nonOperatorClient,
-            proxyAdminAddress.toSolidityAddress()
+            (
+                await getContractInfo(proxyAddress.toString())
+            ).evm_address
         )
     })
 
@@ -747,6 +870,9 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
             nonOperatorAccount,
             nonOperatorIsE25519
         )
+
+        await sleep(5000)
+        await acceptOwnership_SCF(proxyAdminAddress, nonOperatorClient)
 
         // Check
         const ownerAccount = await owner(

@@ -22,7 +22,6 @@ import KeyProps, { KeyType } from './KeyProps.js';
 import { PrivateKey as HPrivateKey } from '@hashgraph/sdk';
 import PublicKey from './PublicKey.js';
 import BaseError from '../../../core/error/BaseError.js';
-import { PrivateKeyNotValid } from './error/PrivateKeyNotValid.js';
 
 export default class PrivateKey implements KeyProps {
 	public readonly key: string;
@@ -61,12 +60,13 @@ export default class PrivateKey implements KeyProps {
 	}
 
 	public toHashgraphKey(): HPrivateKey {
-		try {
-			return this.type === KeyType.ED25519
-				? HPrivateKey.fromStringED25519(this.key)
-				: HPrivateKey.fromStringECDSA(this.key);
-		} catch (error) {
-			throw new PrivateKeyNotValid(this.key);
-		}
+		//try {
+		return this.type === KeyType.ED25519
+			? HPrivateKey.fromStringED25519(this.key)
+			: HPrivateKey.fromStringECDSA(this.key);
+		//} catch (error) {
+		//	console.log(error);
+		//	throw new PrivateKeyNotValid(this.key);
+		//}
 	}
 }

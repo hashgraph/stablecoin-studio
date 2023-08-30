@@ -4,13 +4,14 @@ import { HederaTokenManager__factory } from '../typechain-types'
 import { Client, ContractId } from '@hashgraph/sdk'
 import {
     deployContractsWithSDK,
+    getOperatorAccount,
     getOperatorClient,
     getOperatorE25519,
     getOperatorPrivateKey,
     getOperatorPublicKey,
     initializeClients,
 } from '../scripts/deploy'
-import { clientId } from '../scripts/utils'
+import { clientId, getContractInfo } from '../scripts/utils'
 import { BigNumber } from 'ethers'
 import { delay } from '../scripts/contractsMethods'
 
@@ -50,6 +51,12 @@ describe('Upgradable Tests', function () {
             client2publickey,
             client2isED25519Type,
         ] = initializeClients()
+
+        operatorAccount = getOperatorAccount(
+            client1account,
+            client2account,
+            clientId
+        )
 
         operatorClient = getOperatorClient(client1, client2, clientId)
 
@@ -98,7 +105,9 @@ describe('Upgradable Tests', function () {
             operatorClient,
             operatorPriKey,
             proxyAdminAddress,
-            proxyAddress.toSolidityAddress(),
+            (
+                await getContractInfo(proxyAddress.toString())
+            ).evm_address,
             undefined,
             false,
             true

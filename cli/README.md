@@ -18,19 +18,21 @@
 - [Quickstart](#quickstart)
   - [Starting the CLI](#starting-the-cli)
 - [Usage](#usage)
-  - [Creating a config file](#creating-a-config-file)
+  - [Automatically creating a config file](#automatically-creating-a-config-file)
+  - [Manually creating a config file](#manually-creating-a-config-file)
+  - [Factories ](#factories)
   - [CLI flow](#cli-flow)
     - [Main menu](#main-menu)
-      - [Create a new Stable Coin](#create-a-new-stable-coin)
+      - [Create a new stable coin](#create-a-new-stable-coin)
       - [Manage imported tokens](#manage-imported-tokens)
-      - [Operate with Stable Coin](#operate-with-stable-coin)
-      - [List Stable Coins](#list-stable-coins)
+      - [Operate with stable soin](#operate-with-stable-soin)
+      - [List stable coins](#list-stable-coins)
       - [Configuration](#configuration)
 - [Testing](#testing)
   - [Jest](#jest)
   - [Run](#run)
 - [Contributing](#contributing)
-- [Code of Conduct](#code-of-conduct)
+- [Code of conduct](#code-of-conduct)
 - [License](#license)
 
 # Overview
@@ -88,7 +90,7 @@ _Note that for testing purpose you should create a **Testnet** account instead o
 
 To use the CLI correctly it is necessary to generate a configuration file in which the default network, their associated accounts and the factory contract id will be included. These parameters can be modified later on, from the CLI.
 
-## Creating a config file
+## Automatically creating a config file
 
 The configuration file that is automatically generated populates its fields using the answers to the questions displayed in the CLI when the application is started for the first time.
 The file format is .yaml and the structure is as follows:
@@ -176,7 +178,44 @@ factories: [
   }
 ]
 ```
+## Manually creating a config file
 
+A config file can be manually created using the "hsca-config.sample.yaml" file as a template. Follow this steps:
+
+- **Copy/Paste** the "hsca-config.sample.yaml" file
+- **Rename** it "hsca-config.yaml"
+- **Fill** it like
+  - **defaultNetwork** : choose between mainnet, testnet and previewnet.
+  - **networks** : _(Optional)_ for each network:
+    - **consensusNodes** : list of consensus nodes **urls** and their respective **node Ids**.
+    - **chainId** : network chain Id.
+  - **accounts** : _(Mandatory at least one)_ list of accounts.
+    - **accountId** : Account's Hedera Id.
+    - **network** : Network in which the account exists, choose between mainnet, testnet and previewnet.
+    - **alias** : Account unique alias.
+    - **privateKey** : account's private **key** and private key **type** (choose between ED25519 and ECDSA).
+    - **importedTokens** : _(Optional)_ list of imported tokens for the account. For each imported token we must specify the token **id**, **symbol** and the list of **roles** the account's has been granted for the token.
+  - **mirrors** : _(Mandatory at least one)_ list of mirror nodes.
+    - **name** : Mirror node unique name.
+    - **network** : Network assigned to this mirror node url, choose between mainnet, testnet and previewnet.
+    - **baseUrl** : Mirror node url.
+    - **selected** : _true_ if this is the currently selected mirror, _false_ otherwise. At least one mirror node must be selected.
+    - **apiKey** : _(Optional)_ API Key that must be provided to the mirror node in order to authenticate the request.
+    - **headerName** : _(Optional)_ http header name that will contain the API Key.
+  - **rpcs** : _(Mandatory at least one)_ list of RPC nodes.
+    - **name** : RPC node unique name.
+    - **network** : Network assigned to this RPC node url, choose between mainnet, testnet and previewnet.
+    - **baseUrl** : RPC node url.
+    - **selected** : _true_ if this is the currently selected RPC, _false_ otherwise. At least one RPC node must be selected.
+    - **apiKey** : _(Optional)_ API Key that must be provided to the RPC node in order to authenticate the request.
+    - **headerName** : _(Optional)_ http header name that will contain the API Key.
+  - **logs** : 
+    - **path** : log file path. Typically './logs'
+    - **level** : log level ERROR, TRACE, ...
+  - **factories** : list of factories, at most one per network.
+    - **id** : Factory Id.
+    - **network** : Network where the factory exists, choose between mainnet, testnet and previewnet.
+    
 ## Factories 
 
 We provide default addresses for the factories that we have deployed for anyone to use that are updated whenever a new version is released.
@@ -231,6 +270,8 @@ The Wizard will give you the possibility to link your stable coin to an already 
 
 
 _For more information about PoR Feeds, check the official [ChainLink documentation](https://docs.chain.link/data-feeds/proof-of-reserve/)._
+
+Last question about the stable coin it is going to be created is about the proxy admin owner. By default, this ownership belongs to the account creating the stable coin, but the user has the chance to change this default behaviour by configuring another account id, which can belongs to a contract, like a timelock controller, a cold wallet, or whatever account.
 
 Once the request is ready, the CLI will extract from the configuration file the factory and HederaTokenManager contracts addresses for the network you are working on.
 The request will then be submitted to the SDK and the stable coin will be created.
@@ -307,6 +348,7 @@ https://user-images.githubusercontent.com/114951681/228851958-db534d9e-0bc3-41f5
 - **Refresh roles**: automatically refreshes the roles assigned to the current account (account's capacities).
 - **Configuration**: This last option allows the user to manage both the stable coin configuration and the token configuration. 
 Firstly, the stable coin configuration allows the user to upgrade the stable coin contract implementation and to change the stable coin proxy admin contract owner. In the case of the token configuration, stable coin administrators can edit the underlying token's properties such as "name", "symbol", "keys" ...
+To change the onwership of the proxy amdmin contract, the current owner will have to invite another account id to be the next owner. In this moment, this current owner could cancel the change before the proposed owner can accept the invitation. Once the invited account accepts the invitation, the change is completed.
 - **Danger Zone**: this section contains the stable coin operations deemed as particularly "dangerous" either because they affect every single token owner (PAUSE) or because they can not be rolled-back (DELETE).
   For security reasons these operations are grouped in a "sub-menu" so that users do not run them by mistake.
   - **Un/Pause**: pauses and unpauses the token preventing it from being involved in any kind of operation.

@@ -3,7 +3,7 @@
 exports[`<CashInOperation /> should render correctly 1`] = `
 <DocumentFragment>
   <div
-    class="chakra-stack css-16oka5y"
+    class="chakra-stack css-19t9j1"
   >
     <h2
       class="chakra-heading css-bqsusc"
@@ -22,7 +22,7 @@ exports[`<CashInOperation /> should render correctly 1`] = `
           class="css-1r9sqqd"
         >
           <div
-            class="chakra-stack css-n21gh5"
+            class="chakra-stack css-8g8ihq"
           >
             <h2
               class="chakra-heading css-utvjhb"
@@ -37,43 +37,47 @@ exports[`<CashInOperation /> should render correctly 1`] = `
               Operation details
             </p>
             <form
-              class="chakra-stack css-hdflcv"
+              class="chakra-stack css-ciro4a"
             >
               <div
-                class="chakra-stack css-1h0sumw"
+                class="chakra-stack css-ppmla1"
               >
                 <div
                   class="chakra-form-control css-1kxonj9"
                   role="group"
                 >
-                  <label
-                    class="chakra-form__label css-1hfoxt1"
-                    for="field-:r1:"
-                    id="field-:r1:-label"
+                  <div
+                    class="css-gg4vpm"
                   >
-                    <div
-                      class="chakra-stack css-84zodg"
+                    <label
+                      class="chakra-form__label css-1hfoxt1"
+                      for="field-:r1:"
+                      id="field-:r1:-label"
                     >
-                      <p
-                        class="chakra-text css-mgupmj"
+                      <div
+                        class="chakra-stack css-1igwmid"
                       >
-                        Enter the amount
-                      </p>
-                      <p
-                        class="chakra-text css-ftb7fv"
-                        data-testid="required"
-                      >
-                        *
-                      </p>
-                    </div>
-                  </label>
+                        <p
+                          class="chakra-text css-mgupmj"
+                        >
+                          Enter the amount
+                        </p>
+                        <p
+                          class="chakra-text css-ftb7fv"
+                          data-testid="required"
+                        >
+                          *
+                        </p>
+                      </div>
+                    </label>
+                  </div>
                   <div
                     class="chakra-input__group css-bx0blc"
                     data-group="true"
                   >
                     <input
                       autocomplete="off"
-                      class="chakra-input css-l1kxkf"
+                      class="chakra-input css-1tcppn8"
                       data-testid="amount"
                       id="field-:r1:"
                       name="amount"
@@ -84,40 +88,44 @@ exports[`<CashInOperation /> should render correctly 1`] = `
                 </div>
               </div>
               <div
-                class="chakra-stack css-1h0sumw"
+                class="chakra-stack css-ppmla1"
               >
                 <div
                   class="chakra-form-control css-1kxonj9"
                   role="group"
                 >
-                  <label
-                    class="chakra-form__label css-1hfoxt1"
-                    for="field-:r2:"
-                    id="field-:r2:-label"
+                  <div
+                    class="css-gg4vpm"
                   >
-                    <div
-                      class="chakra-stack css-84zodg"
+                    <label
+                      class="chakra-form__label css-1hfoxt1"
+                      for="field-:r2:"
+                      id="field-:r2:-label"
                     >
-                      <p
-                        class="chakra-text css-mgupmj"
+                      <div
+                        class="chakra-stack css-1igwmid"
                       >
-                        Destination account
-                      </p>
-                      <p
-                        class="chakra-text css-ftb7fv"
-                        data-testid="required"
-                      >
-                        *
-                      </p>
-                    </div>
-                  </label>
+                        <p
+                          class="chakra-text css-mgupmj"
+                        >
+                          Destination account
+                        </p>
+                        <p
+                          class="chakra-text css-ftb7fv"
+                          data-testid="required"
+                        >
+                          *
+                        </p>
+                      </div>
+                    </label>
+                  </div>
                   <div
                     class="chakra-input__group css-bx0blc"
                     data-group="true"
                   >
                     <input
                       autocomplete="off"
-                      class="chakra-input css-l1kxkf"
+                      class="chakra-input css-1tcppn8"
                       data-testid="destinationAccount"
                       id="field-:r2:"
                       name="destinationAccount"
@@ -130,10 +138,10 @@ exports[`<CashInOperation /> should render correctly 1`] = `
             </form>
           </div>
           <div
-            class="chakra-stack css-eunu1i"
+            class="chakra-stack css-1tzva4g"
           >
             <div
-              class="chakra-stack css-wqnj46"
+              class="chakra-stack css-rgkoyu"
             >
               <h2
                 class="chakra-heading css-1udj1g5"
@@ -171,7 +179,7 @@ exports[`<CashInOperation /> should render correctly 1`] = `
                         Name
                       </p>
                       <div
-                        class="chakra-stack css-1c8ysgd"
+                        class="chakra-stack css-w0g0w4"
                       >
                         <p
                           class="chakra-text css-mgupmj"
@@ -199,7 +207,7 @@ exports[`<CashInOperation /> should render correctly 1`] = `
                         Symbol
                       </p>
                       <div
-                        class="chakra-stack css-1c8ysgd"
+                        class="chakra-stack css-w0g0w4"
                       >
                         <p
                           class="chakra-text css-mgupmj"
@@ -227,7 +235,7 @@ exports[`<CashInOperation /> should render correctly 1`] = `
                         Decimals
                       </p>
                       <div
-                        class="chakra-stack css-1c8ysgd"
+                        class="chakra-stack css-w0g0w4"
                       >
                         <p
                           class="chakra-text css-mgupmj"
@@ -329,7 +337,7 @@ exports[`<CashInOperation /> should render correctly 1`] = `
                         Supply type
                       </p>
                       <div
-                        class="chakra-stack css-1c8ysgd"
+                        class="chakra-stack css-w0g0w4"
                       >
                         <p
                           class="chakra-text css-mgupmj"
@@ -348,7 +356,7 @@ exports[`<CashInOperation /> should render correctly 1`] = `
           class="css-3gu2fl"
         >
           <div
-            class="chakra-stack css-1amf41o"
+            class="chakra-stack css-1f6hfsa"
           >
             <button
               class="chakra-button css-1urzhdw"

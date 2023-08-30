@@ -17,6 +17,7 @@
 	"proxyAdminAddress": "Proxy admin address",
 	"proxyOwner": "Proxy owner",
 	"proxyImplementation": "Proxy implementation",
+	"pendingOwner": "Pending owner",
 	"paused": "Paused",
 	"deleted": "Deleted",
 	"adminKey": "Admin key",

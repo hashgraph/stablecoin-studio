@@ -24,6 +24,9 @@ import { QueryHandler } from '../../../../../core/decorator/QueryHandlerDecorato
 import { IQueryHandler } from '../../../../../core/query/QueryHandler.js';
 import ContractId from '../../../../../domain/context/contract/ContractId.js';
 import RPCQueryAdapter from '../../../../../port/out/rpc/RPCQueryAdapter.js';
+import { MirrorNodeAdapter } from '../../../../../port/out/mirror/MirrorNodeAdapter.js';
+import EvmAddress from '../../../../../domain/context/contract/EvmAddress.js';
+import { ContractId as HContractId } from '@hashgraph/sdk';
 import {
 	GetTokenManagerListQuery,
 	GetTokenManagerListQueryResponse,
@@ -36,23 +39,36 @@ export class GetTokenManagerListQueryHandler
 	constructor(
 		@lazyInject(RPCQueryAdapter)
 		public readonly queryAdapter: RPCQueryAdapter,
+		@lazyInject(MirrorNodeAdapter)
+		public readonly mirrorNode: MirrorNodeAdapter,
 	) {}
 
 	async execute(
 		command: GetTokenManagerListQuery,
 	): Promise<GetTokenManagerListQueryResponse> {
 		const { factoryId } = command;
+		const contractInfo = await this.mirrorNode.getContractInfo(
+			factoryId.toString(),
+		);
 		const res = await this.queryAdapter.getTokenManagerList(
-			factoryId.toEvmAddress(),
+			new EvmAddress(contractInfo.evmAddress),
 		);
 
-		const removeDeletedAddress = res.filter(
-			(item) => item !== EVM_ZERO_ADDRESS,
+		const removeDeletedAddress = await Promise.all(
+			res
+				.filter((item) => item !== EVM_ZERO_ADDRESS)
+				.map(async (evmAddress) => {
+					return (await this.mirrorNode.getContractInfo(evmAddress))
+						.id;
+				}),
 		);
+
 		return Promise.resolve(
 			new GetTokenManagerListQueryResponse(
 				removeDeletedAddress.map((item) =>
-					ContractId.fromHederaEthereumAddress(item),
+					ContractId.fromHederaContractId(
+						HContractId.fromString(item),
+					),
 				),
 			),
 		);

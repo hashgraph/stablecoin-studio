@@ -32,20 +32,24 @@ import {
 	AggregatorV3Interface__factory,
 	HederaTokenManager__factory,
 	StableCoinFactory__factory,
-	ProxyAdmin__factory,
+	StableCoinProxyAdmin__factory,
 	ITransparentUpgradeableProxy__factory,
+	HederaReserve__factory,
 } from '@hashgraph-dev/stablecoin-npm-contracts';
 import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
 import EvmAddress from '../../../domain/context/contract/EvmAddress.js';
+import { MirrorNodeAdapter } from '../mirror/MirrorNodeAdapter.js';
+import { ContractId as HContractId } from '@hashgraph/sdk';
 
 const LOCAL_JSON_RPC_RELAY_URL = 'http://127.0.0.1:7546/api';
 
 const HederaTokenManager = HederaTokenManager__factory;
 const Reserve = AggregatorV3Interface__factory;
 const Factory = StableCoinFactory__factory;
-const ProxyAdmin = ProxyAdmin__factory;
+const StableCoinProxyAdmin = StableCoinProxyAdmin__factory;
 const ITransparentUpgradeableProxy = ITransparentUpgradeableProxy__factory;
+const HederaReserve = HederaReserve__factory;
 
 type StaticConnect = { connect: (...args: any[]) => any };
 
@@ -62,6 +66,8 @@ export default class RPCQueryAdapter {
 	constructor(
 		@lazyInject(NetworkService)
 		private readonly networkService: NetworkService,
+		@lazyInject(MirrorNodeAdapter)
+		public readonly mirrorNode: MirrorNodeAdapter,
 	) {}
 
 	async init(urlRpcProvider?: string, apiKey?: string): Promise<string> {
@@ -104,7 +110,19 @@ export default class RPCQueryAdapter {
 			HederaTokenManager,
 			address.toString(),
 		).getReserveAddress();
-		return ContractId.fromHederaEthereumAddress(val);
+
+		if (
+			val == undefined ||
+			val.toString() == '0x0000000000000000000000000000000000000000'
+		) {
+			return new ContractId('0.0.0');
+		} else {
+			return ContractId.fromHederaContractId(
+				HContractId.fromString(
+					(await this.mirrorNode.getContractInfo(val)).id.toString(),
+				),
+			);
+		}
 	}
 
 	async getReserveAmount(address: EvmAddress): Promise<BigNumber> {
@@ -113,6 +131,14 @@ export default class RPCQueryAdapter {
 			HederaTokenManager,
 			address.toString(),
 		).getReserveAmount();
+	}
+
+	async getReserveLatestRoundData(address: EvmAddress): Promise<BigNumber[]> {
+		LogService.logTrace(`Requesting getReserveAmount address: ${address}`);
+		return await this.connect(
+			HederaReserve,
+			address.toString(),
+		).latestRoundData();
 	}
 
 	async isLimited(address: EvmAddress, target: EvmAddress): Promise<boolean> {
@@ -156,7 +182,7 @@ export default class RPCQueryAdapter {
 			`Requesting implementation for proxy Admin: ${proxyAdmin.toString()} and proxy: ${proxy.toString()}`,
 		);
 		return await this.connect(
-			ProxyAdmin,
+			StableCoinProxyAdmin,
 			proxyAdmin.toString(),
 		).getProxyImplementation(proxy.toString());
 	}
@@ -173,7 +199,20 @@ export default class RPCQueryAdapter {
 		LogService.logTrace(
 			`Requesting owner for proxy Admin: ${proxyAdmin.toString()}`,
 		);
-		return await this.connect(ProxyAdmin, proxyAdmin.toString()).owner();
+		return await this.connect(
+			StableCoinProxyAdmin,
+			proxyAdmin.toString(),
+		).owner();
+	}
+
+	async getProxyPendingOwner(proxyAdmin: EvmAddress): Promise<string> {
+		LogService.logTrace(
+			`Requesting owner for proxy Admin: ${proxyAdmin.toString()}`,
+		);
+		return await this.connect(
+			StableCoinProxyAdmin,
+			proxyAdmin.toString(),
+		).pendingOwner();
 	}
 
 	async getAccountsWithRole(
