@@ -1,0 +1,57 @@
+defaultNetwork: <mainnet-testnet-previewnet>
+networks:
+  - name: mainnet
+    consensusNodes:
+      - url: <Consensus node URL>
+        nodeId: <Node Id>
+    chainId: <Network chain Id>
+  - name: previewnet
+    consensusNodes:
+      - url: <Consensus node URL>
+        nodeId: <Node Id>
+    chainId: <Network chain Id>
+  - name: testnet
+    consensusNodes:
+      - url: <Consensus node URL>
+        nodeId: <Node Id>
+    chainId: <Network chain Id>
+accounts:
+  - accountId: <Hedera Id>
+    network: <mainnet-testnet-previewnet>
+    alias: <Account Alias>
+    privateKey:
+      key: <Account's private key>
+      type: <ED25519-ECDSA>
+    importedTokens:
+      - id: <Token Id>
+        roles:
+          - <Role Hash>
+          - <Role Hash>
+          - <Role Hash>
+          - <Role Hash>
+          - <Role Hash>
+          - <Role Hash>
+          - <Role Hash>
+          - <Role Hash>
+          - <Role Hash>
+        symbol: <Token symbol>
+mirrors:
+  - name: <Mirror Node Name>
+    network: <mainnet-testnet-previewnet>
+    baseUrl: <Mirror Node URL>
+    selected: <false-true>
+    apiKey: <API Key>
+    headerName: <HTTP hader name>
+rpcs:
+  - name: <RPC Node Name>
+    network: <mainnet-testnet-previewnet>
+    baseUrl: <RPC Node URL>
+    selected: <false-true>
+    apiKey: <API Key>
+    headerName: <HTTP hader name>
+logs:
+  path: './logs'
+  level: 'ERROR'
+factories:
+  - id: <Factory contract Hedera Id>
+    network: <mainnet-testnet-previewnet>
