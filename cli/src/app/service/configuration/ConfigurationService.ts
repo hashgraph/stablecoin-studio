@@ -122,13 +122,17 @@ export default class ConfigurationService extends Service {
    */
   public createDefaultConfiguration(path?: string): void {
     try {
-      const defaultConfig = yaml.load(
-        fs.readFileSync(
-          `${this.getGlobalPath()}/build/src/resources/config/${
-            this.configFileName
-          }`,
-        ),
-      );
+      let defaultConfig: IConfiguration;
+      const defaultConfigPath = `${this.getGlobalPath()}/build/src/resources/config/${
+        this.configFileName
+      }`;
+      if (fs.existsSync(defaultConfigPath)) {
+        defaultConfig = yaml.load(fs.readFileSync(defaultConfigPath));
+      } else {
+        defaultConfig = yaml.load(
+          fs.readFileSync(`src/resources/config/${this.configFileName}`),
+        );
+      }
       const filePath = path ?? this.getDefaultConfigurationPath();
       this.path = filePath;
       fs.ensureFileSync(filePath);
@@ -165,7 +169,9 @@ export default class ConfigurationService extends Service {
    */
   public getDefaultConfigurationPath(): string {
     if (this.path) return this.path;
-    return `${this.getGlobalPath()}/config/${this.configFileName}`;
+    return `${this.getGlobalPath()}/build/src/resources/config/${
+      this.configFileName
+    }`;
   }
 
   private getGlobalPath(): string {
