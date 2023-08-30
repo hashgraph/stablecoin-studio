@@ -7,7 +7,7 @@ exports[`<CoinDropdown /> should render correctly 1`] = `
     data-testid="coin-dropdown"
   >
     <div
-      class="chakra-stack css-ppmla1"
+      class="chakra-stack css-1h0sumw"
     >
       <div
         class="chakra-form-control css-1kxonj9"
