@@ -18,8 +18,8 @@
 - [Quickstart](#quickstart)
   - [Starting the CLI](#starting-the-cli)
 - [Usage](#usage)
-  - [Manually creating a config file](#manually-creating-a-config-file)
   - [Automatically creating a config file](#automatically-creating-a-config-file)
+  - [Manually creating a config file](#manually-creating-a-config-file)
   - [Factories ](#factories)
   - [CLI flow](#cli-flow)
     - [Main menu](#main-menu)
@@ -89,44 +89,6 @@ _Note that for testing purpose you should create a **Testnet** account instead o
 # Usage
 
 To use the CLI correctly it is necessary to generate a configuration file in which the default network, their associated accounts and the factory contract id will be included. These parameters can be modified later on, from the CLI.
-
-## Manually creating a config file
-
-A config file can be manually created using the "hsca-config.sample.yaml" file as a template. Follow this steps:
-
-- **Copy/Paste** the "hsca-config.sample.yaml" file
-- **Rename** it "hsca-config.yaml"
-- **Fill** it like
-  - **defaultNetwork** : choose between mainnet, testnet and previewnet.
-  - **networks** : _(Optional)_ for each network:
-    - **consensusNodes** : list of consensus nodes **urls** and their respective **node Ids**.
-    - **chainId** : network chain Id.
-  - **accounts** : _(Mandatory at least one)_ list of accounts.
-    - **accountId** : Account's Hedera Id.
-    - **network** : Network in which the account exists, choose between mainnet, testnet and previewnet.
-    - **alias** : Account unique alias.
-    - **privateKey** : account's private **key** and private key **type** (choose between ED25519 and ECDSA).
-    - **importedTokens** : _(Optional)_ list of imported tokens for the account. For each imported token we must specify the token **id**, **symbol** and the list of **roles** the account's has been granted for the token.
-  - **mirrors** : _(Mandatory at least one)_ list of mirror nodes.
-    - **name** : Mirror node unique name.
-    - **network** : Network assigned to this mirror node url, choose between mainnet, testnet and previewnet.
-    - **baseUrl** : Mirror node url.
-    - **selected** : _true_ if this is the currently selected mirror, _false_ otherwise. At least one mirror node must be selected.
-    - **apiKey** : _(Optional)_ API Key that must be provided to the mirror node in order to authenticate the request.
-    - **headerName** : _(Optional)_ http header name that will contain the API Key.
-  - **rpcs** : _(Mandatory at least one)_ list of RPC nodes.
-    - **name** : RPC node unique name.
-    - **network** : Network assigned to this RPC node url, choose between mainnet, testnet and previewnet.
-    - **baseUrl** : RPC node url.
-    - **selected** : _true_ if this is the currently selected RPC, _false_ otherwise. At least one RPC node must be selected.
-    - **apiKey** : _(Optional)_ API Key that must be provided to the RPC node in order to authenticate the request.
-    - **headerName** : _(Optional)_ http header name that will contain the API Key.
-  - **logs** : 
-    - **path** : log file path. Typically './logs'
-    - **level** : log level ERROR, TRACE, ...
-  - **factories** : list of factories, at most one per network.
-    - **id** : Factory Id.
-    - **network** : Network where the factory exists, choose between mainnet, testnet and previewnet.
 
 ## Automatically creating a config file
 
@@ -216,7 +178,44 @@ factories: [
   }
 ]
 ```
+## Manually creating a config file
 
+A config file can be manually created using the "hsca-config.sample.yaml" file as a template. Follow this steps:
+
+- **Copy/Paste** the "hsca-config.sample.yaml" file
+- **Rename** it "hsca-config.yaml"
+- **Fill** it like
+  - **defaultNetwork** : choose between mainnet, testnet and previewnet.
+  - **networks** : _(Optional)_ for each network:
+    - **consensusNodes** : list of consensus nodes **urls** and their respective **node Ids**.
+    - **chainId** : network chain Id.
+  - **accounts** : _(Mandatory at least one)_ list of accounts.
+    - **accountId** : Account's Hedera Id.
+    - **network** : Network in which the account exists, choose between mainnet, testnet and previewnet.
+    - **alias** : Account unique alias.
+    - **privateKey** : account's private **key** and private key **type** (choose between ED25519 and ECDSA).
+    - **importedTokens** : _(Optional)_ list of imported tokens for the account. For each imported token we must specify the token **id**, **symbol** and the list of **roles** the account's has been granted for the token.
+  - **mirrors** : _(Mandatory at least one)_ list of mirror nodes.
+    - **name** : Mirror node unique name.
+    - **network** : Network assigned to this mirror node url, choose between mainnet, testnet and previewnet.
+    - **baseUrl** : Mirror node url.
+    - **selected** : _true_ if this is the currently selected mirror, _false_ otherwise. At least one mirror node must be selected.
+    - **apiKey** : _(Optional)_ API Key that must be provided to the mirror node in order to authenticate the request.
+    - **headerName** : _(Optional)_ http header name that will contain the API Key.
+  - **rpcs** : _(Mandatory at least one)_ list of RPC nodes.
+    - **name** : RPC node unique name.
+    - **network** : Network assigned to this RPC node url, choose between mainnet, testnet and previewnet.
+    - **baseUrl** : RPC node url.
+    - **selected** : _true_ if this is the currently selected RPC, _false_ otherwise. At least one RPC node must be selected.
+    - **apiKey** : _(Optional)_ API Key that must be provided to the RPC node in order to authenticate the request.
+    - **headerName** : _(Optional)_ http header name that will contain the API Key.
+  - **logs** : 
+    - **path** : log file path. Typically './logs'
+    - **level** : log level ERROR, TRACE, ...
+  - **factories** : list of factories, at most one per network.
+    - **id** : Factory Id.
+    - **network** : Network where the factory exists, choose between mainnet, testnet and previewnet.
+    
 ## Factories 
 
 We provide default addresses for the factories that we have deployed for anyone to use that are updated whenever a new version is released.
