@@ -207,7 +207,7 @@ export default class RPCQueryAdapter {
 
 	async getProxyPendingOwner(proxyAdmin: EvmAddress): Promise<string> {
 		LogService.logTrace(
-			`Requesting owner for proxy Admin: ${proxyAdmin.toString()}`,
+			`Requesting pending owner for proxy Admin: ${proxyAdmin.toString()}`,
 		);
 		return await this.connect(
 			StableCoinProxyAdmin,
