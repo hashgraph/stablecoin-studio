@@ -1,11 +1,12 @@
-import { Proxy } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { ContractId, HederaId, Proxy } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { utilsService } from '../../../../src/index.js';
 import ConfigurationProxyService from '../../../../src/app/service/proxy/ConfigurationProxyService.js';
 
 describe('configurationProxyService', () => {
   const proxyConfigurationMock = {
-    implementationAddress: '0.0.123456',
-    owner: '0.0.234567',
+    implementationAddress: new ContractId('0.0.123456'),
+    owner: HederaId.from('0.0.234567'),
+    pendingOwner: HederaId.from('0.0.234567'),
   };
 
   beforeEach(() => {
@@ -28,7 +29,10 @@ describe('configurationProxyService', () => {
 
     // verify
     expect(getProxyConfigMock).toHaveBeenCalled();
-    expect(result.implementationAddress).toBe('0.0.123456');
-    expect(result.owner).toBe('0.0.234567');
+    expect(result.implementationAddress).toBe(
+      proxyConfigurationMock.implementationAddress,
+    );
+    expect(result.owner).toBe(proxyConfigurationMock.owner);
+    expect(result.pendingOwner).toBe(proxyConfigurationMock.pendingOwner);
   });
 });

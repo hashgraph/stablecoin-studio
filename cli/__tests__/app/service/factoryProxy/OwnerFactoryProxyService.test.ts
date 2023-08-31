@@ -23,10 +23,6 @@ describe('ownerFactoryProxyService', () => {
       .spyOn(Proxy, 'changeFactoryProxyOwner')
       .mockImplementation(() => Promise.resolve(true));
 
-    const defaultSingleAskMock = jest
-      .spyOn(utilsService, 'defaultSingleAsk')
-      .mockResolvedValue('0.0.345678');
-
     // create method request
     const req: ChangeFactoryProxyOwnerRequest =
       new ChangeFactoryProxyOwnerRequest({
@@ -38,7 +34,6 @@ describe('ownerFactoryProxyService', () => {
     await new OwnerFactoryProxyService().changeFactoryProxyOwner(req);
 
     // verify
-    expect(defaultSingleAskMock).toHaveBeenCalled();
     expect(changeFactoryProxyOwnerMock).toHaveBeenCalled();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
     expect(console.log).toHaveBeenCalledWith(

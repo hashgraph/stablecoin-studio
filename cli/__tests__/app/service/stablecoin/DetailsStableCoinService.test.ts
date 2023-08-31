@@ -74,12 +74,13 @@ describe(`Testing DetailsStableCoinService class`, () => {
   });
 
   it('Should instance getDetailsStableCoins show in true', async () => {
-    const implementationAddress = 'implementationAddress';
-    const owner = 'owner';
+    const implementationAddress = new ContractId('0.0.123456');
+    const owner = HederaId.from('0.0.234567');
+    const pendingOwner = HederaId.from('0.0.234567');
     jest.spyOn(console, 'log');
     jest
       .spyOn(Proxy, 'getProxyConfig')
-      .mockResolvedValue({ implementationAddress, owner });
+      .mockResolvedValue({ implementationAddress, owner, pendingOwner });
     const respDetail = await service.getDetailsStableCoins(id);
 
     expect(service).not.toBeNull();
@@ -126,12 +127,13 @@ describe(`Testing DetailsStableCoinService class`, () => {
       expirationTimestamp: undefined,
     };
     jest.spyOn(StableCoin, 'getInfo').mockResolvedValue(mockedStableCoin);
-    const implementationAddress = 'implementationAddress';
-    const owner = 'owner';
+    const implementationAddress = new ContractId('0.0.123456');
+    const owner = HederaId.from('0.0.234567');
+    const pendingOwner = HederaId.from('0.0.234567');
     jest.spyOn(console, 'log');
     jest
       .spyOn(Proxy, 'getProxyConfig')
-      .mockResolvedValue({ implementationAddress, owner });
+      .mockResolvedValue({ implementationAddress, owner, pendingOwner });
     const respDetail = await service.getDetailsStableCoins(id);
 
     expect(service).not.toBeNull();

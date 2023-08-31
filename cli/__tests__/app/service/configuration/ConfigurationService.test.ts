@@ -21,6 +21,26 @@ describe('configurationService', () => {
           type: 'ED25519',
         },
         network: 'testnet',
+        alias: 'test account',
+        importedTokens: [],
+      },
+      {
+        accountId: '0.0.456789',
+        privateKey: {
+          key: '0xbcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789a',
+          type: 'ED25519',
+        },
+        network: 'testnet',
+        alias: 'New account alias',
+        importedTokens: [],
+      },
+      {
+        accountId: '0.0.123456',
+        privateKey: {
+          key: '01234567890abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcde',
+          type: 'ED25519',
+        },
+        network: 'testnet',
         alias: 'test',
         importedTokens: [],
       },
@@ -178,6 +198,9 @@ describe('configurationService', () => {
 
   it('should get configuration and log configuration', async () => {
     const conf: IConfiguration = configurationService.getConfiguration();
+
+    console.log('UEEEEEEEEE 1' + JSON.stringify(conf.accounts));
+    console.log('UEEEEEEEEE 2' + JSON.stringify(configurationMock.accounts));
 
     expect(configurationService).not.toBeNull();
     expect(conf.defaultNetwork).toStrictEqual(configurationMock.defaultNetwork);

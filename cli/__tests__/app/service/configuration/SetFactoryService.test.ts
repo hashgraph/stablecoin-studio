@@ -13,6 +13,8 @@ import {
   ProxyConfigurationViewModel,
   Proxy,
   Network,
+  ContractId,
+  HederaId,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 const language: Language = new Language();
@@ -157,8 +159,9 @@ describe('setFactoryService', () => {
   };
 
   const factoryProxy: ProxyConfigurationViewModel = {
-    implementationAddress: '0.0.345678',
-    owner: '0.0.123456',
+    implementationAddress: new ContractId('0.0.345678'),
+    owner: HederaId.from('0.0.123456'),
+    pendingOwner: HederaId.from('0.0.234567'),
   };
 
   it('should configure factories', async () => {
