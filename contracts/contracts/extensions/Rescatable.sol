@@ -46,7 +46,7 @@ abstract contract Rescatable is
                 currentTokenAddress,
                 address(this),
                 msg.sender,
-                int64(int256(amount))
+                amount
             );
 
         bool success = _checkResponse(responseCode);
@@ -69,11 +69,7 @@ abstract contract Rescatable is
         external
         override(IRescatable)
         onlyRole(_getRoleId(RoleName.RESCUE))
-        valueIsNotGreaterThan(
-            uint256(uint64(amount)),
-            address(this).balance,
-            true
-        )
+        valueIsNotGreaterThan(amount, address(this).balance, true)
         nonReentrant
         returns (bool)
     {

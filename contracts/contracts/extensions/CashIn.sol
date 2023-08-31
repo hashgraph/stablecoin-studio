@@ -7,6 +7,7 @@ import {
     IHederaTokenService
 } from '@hashgraph/smart-contracts/contracts/hts-precompile/IHederaTokenService.sol';
 import {Reserve} from './Reserve.sol';
+import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
 
 abstract contract CashIn is ICashIn, SupplierAdmin, Reserve {
     /**
@@ -23,13 +24,13 @@ abstract contract CashIn is ICashIn, SupplierAdmin, Reserve {
         external
         override(ICashIn)
         onlyRole(_getRoleId(RoleName.CASHIN))
-        checkReserveIncrease(uint256(uint64(amount)))
+        checkReserveIncrease(SafeCast.toUint256(amount))
         addressIsNotZero(account)
         amountIsNotNegative(amount, false)
         returns (bool)
     {
         if (!_unlimitedSupplierAllowances[msg.sender])
-            _decreaseSupplierAllowance(msg.sender, uint256(uint64(amount)));
+            _decreaseSupplierAllowance(msg.sender, SafeCast.toUint256(amount));
 
         address currentTokenAddress = _getTokenAddress();
 
@@ -40,8 +41,10 @@ abstract contract CashIn is ICashIn, SupplierAdmin, Reserve {
 
         bool success = _checkResponse(responseCode);
 
-        if (!((_balanceOf(address(this)) - balance) == uint256(uint64(amount))))
-            revert('The smart contract is not the treasury account');
+        if (
+            !((_balanceOf(address(this)) - balance) ==
+                SafeCast.toUint256(amount))
+        ) revert('The smart contract is not the treasury account');
 
         _transfer(account, amount);
 
