@@ -205,7 +205,7 @@ We provide default addresses for the factories that we have deployed for anyone 
 
 | Contract name  | Address      | Network    | 
 |----------------|--------------|------------|
-| FactoryAddress | 0.0.14455068 | Testnet    |
+| FactoryAddress | 0.0.1137631   | Testnet    |
 | FactoryAddress | 0.0.XXXXXX   | Previewnet |
 
 

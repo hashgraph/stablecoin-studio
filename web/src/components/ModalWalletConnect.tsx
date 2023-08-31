@@ -36,7 +36,7 @@ import { useForm } from 'react-hook-form';
 const ModalWalletConnect = () => {
 	const { t } = useTranslation('global');
 	const dispatch = useDispatch();
-	
+
 	const { onClose } = useDisclosure();
 	const styles = {
 		providerStyle: {
@@ -143,9 +143,7 @@ const ModalWalletConnect = () => {
 		handleWalletConnect(SupportedWallets.HASHPACK, values.network.value);
 	};
 
-	const networkOptions = [
-		{ value: 'testnet', label: 'Testnet' },
-	];
+	const networkOptions = [{ value: 'testnet', label: 'Testnet' }];
 
 	const handleConnectMetamaskWallet = () => {
 		handleWalletConnect(SupportedWallets.METAMASK, '-');
@@ -173,7 +171,7 @@ const ModalWalletConnect = () => {
 			</>
 		);
 	};
-	
+
 	return (
 		<>
 			<Modal
@@ -221,17 +219,14 @@ const ModalWalletConnect = () => {
 											</PairingSpinner>
 										</VStack>
 									) : (
-										<VStack
-											data-testid='Hashpack'
-											{...styles.providerStyle}
-										>
+										<VStack data-testid='Hashpack' {...styles.providerStyle}>
 											<Link
 												href='https://www.hashpack.app/download'
 												isExternal
 												_hover={{ textDecoration: 'none' }}
-												>
-													<Image src={HASHPACK_LOGO_PNG} w={20} />
-													<Text>Hashpack</Text>
+											>
+												<Image src={HASHPACK_LOGO_PNG} w={20} />
+												<Text>Hashpack</Text>
 											</Link>
 										</VStack>
 									)}
@@ -248,14 +243,11 @@ const ModalWalletConnect = () => {
 											</PairingSpinner>
 										</VStack>
 									) : (
-										<VStack
-											data-testid='Metamask'
-											{...styles.providerStyle}
-										>
-										<Link
-											href='https://metamask.io/download/'
-											isExternal
-											_hover={{ textDecoration: 'none' }}
+										<VStack data-testid='Metamask' {...styles.providerStyle}>
+											<Link
+												href='https://metamask.io/download/'
+												isExternal
+												_hover={{ textDecoration: 'none' }}
 											>
 												<Image src={METAMASK_LOGO} w={20} />
 												<Text>Metamask</Text>
