@@ -46,7 +46,7 @@ The remaining smart contracts have been implemented for this project:
    - `Freezable.sol`: abstract contract implementing the *freeze* and *unfreeze* operations (if the token is fronzen for an account, this account will not be able to operate with the stable coin until unfrozen).
    - `KYC.sol`: abstract contract implementing the *grantKyc* and *revokeKyc* operations to grant or revoke KYC flag to a Hedera account for the stable coin.
    - `Pausable.sol`: abstract contract implementing the *pause* and *unpause* operations (if a token is paused, nobody will be able to operate with it until the token is unpaused).  
-   - `Rescatable.sol`: abstract contract implementing the *rescue* and *rescueHBAR* operation (transfers tokens and HBAR, respectively, from the treasury account being the stable coin's smart contract to another account).
+   - `Rescuable.sol`: abstract contract implementing the *rescue* and *rescueHBAR* operation (transfers tokens and HBAR, respectively, from the treasury account being the stable coin's smart contract to another account).
    - `Reserve.sol`: abstract contract implementing the reserve for the stable coin (checking against the current reserve before minting, changing the reserve data feed, etc...). The Reserve contract allows the option to update the reserve address to 0.0.0 (zero address) to disable the actual address.
    - `RoleManagement.sol`: abstract contract implementing the *grantRoles* and *revokeRoles* operations (granting and revoking multiple roles to/from multiple accounts in one single transaction).
    - `Roles.sol`: contains the definition of the roles that can be assigned for every stable coin.
@@ -138,7 +138,7 @@ Typescript test files can be found in the `test` folder:
 - `hederaTokenManager.ts`: tests the hederaTokenManager functionality.
 - `kyc.ts`: tests the KYC grant/revoke functionality to account for stable coins.
 - `pausable.ts`: tests the stable coin pause functionality.
-- `rescatable.ts`: tests the stable coin rescue functionality.
+- `rescuable.ts`: tests the stable coin rescue functionality.
 - `reserve.ts`: tests the stable coin reserve functionality.
 - `roleManagement.ts`: tests the stable coin roles (granting/revoking multiple roles) functionality.
 - `roles.ts`: tests the stable coin roles functionality.

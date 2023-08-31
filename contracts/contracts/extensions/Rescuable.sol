@@ -3,7 +3,7 @@ pragma solidity 0.8.16;
 
 import {TokenOwner} from './TokenOwner.sol';
 import {Roles} from './Roles.sol';
-import {IRescatable} from './Interfaces/IRescatable.sol';
+import {IRescuable} from './Interfaces/IRescuable.sol';
 import {
     IHederaTokenService
 } from '@hashgraph/smart-contracts/contracts/hts-precompile/IHederaTokenService.sol';
@@ -12,12 +12,7 @@ import {
 } from '@openzeppelin/contracts/security/ReentrancyGuard.sol';
 import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
 
-abstract contract Rescatable is
-    ReentrancyGuard,
-    IRescatable,
-    TokenOwner,
-    Roles
-{
+abstract contract Rescuable is ReentrancyGuard, IRescuable, TokenOwner, Roles {
     /**
      * @dev Rescues `value` `tokenId` from contractTokenOwner to rescuer
      *
@@ -29,7 +24,7 @@ abstract contract Rescatable is
         int64 amount
     )
         external
-        override(IRescatable)
+        override(IRescuable)
         onlyRole(_getRoleId(RoleName.RESCUE))
         amountIsNotNegative(amount, false)
         valueIsNotGreaterThan(
@@ -67,7 +62,7 @@ abstract contract Rescatable is
         uint256 amount
     )
         external
-        override(IRescatable)
+        override(IRescuable)
         onlyRole(_getRoleId(RoleName.RESCUE))
         valueIsNotGreaterThan(amount, address(this).balance, true)
         nonReentrant

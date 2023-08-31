@@ -9,7 +9,6 @@ import SDKService from '../../services/SDKService';
 const mockStore = configureMockStore();
 
 describe(`<${ModalWalletConnect.name} />`, () => {
-	
 	test('should render correctly', () => {
 		const component = render(<ModalWalletConnect />);
 
@@ -17,7 +16,7 @@ describe(`<${ModalWalletConnect.name} />`, () => {
 	});
 
 	test('should has title', () => {
-		const component = render(<ModalWalletConnect  />);
+		const component = render(<ModalWalletConnect />);
 
 		const title = component.getByTestId('title');
 
@@ -30,7 +29,7 @@ describe(`<${ModalWalletConnect.name} />`, () => {
 				foundWallets: [SupportedWallets.HASHPACK, SupportedWallets.METAMASK],
 			},
 		});
-		const component = render(<ModalWalletConnect  />, store);
+		const component = render(<ModalWalletConnect />, store);
 
 		const metamask = component.getByTestId('Metamask');
 		await userEvent.click(metamask);

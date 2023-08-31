@@ -162,18 +162,12 @@ const Router = () => {
 							<Route path={RoutesMappingUrl.unfreeze} element={<UnfreezeOperation />} />
 							<Route path={RoutesMappingUrl.checkFrozen} element={<CheckFrozenOperation />} />
 							<Route path={RoutesMappingUrl.dashboard} element={<Dashboard />} />
-							<Route
-								path={RoutesMappingUrl.editRole}
-								element={<HandleRoles action='editRole' />}
-							/>
+							<Route path={RoutesMappingUrl.editRole} element={<HandleRoles action='editRole' />} />
 							<Route
 								path={RoutesMappingUrl.getAccountsWithRoles}
 								element={<HandleRoles action='getAccountsWithRole' />}
 							/>
-							<Route
-								path={RoutesMappingUrl.giveRole}
-								element={<HandleRoles action='giveRole' />}
-							/>
+							<Route path={RoutesMappingUrl.giveRole} element={<HandleRoles action='giveRole' />} />
 							<Route path={RoutesMappingUrl.operations} element={<Operations />} />
 							<Route path={RoutesMappingUrl.dangerZone} element={<DangerZoneOperations />} />
 							<Route path={RoutesMappingUrl.grantKyc} element={<GrantKycOperation />} />
@@ -191,10 +185,7 @@ const Router = () => {
 							<Route path={RoutesMappingUrl.stableCoinDetails} element={<StableCoinDetails />} />
 							<Route path={RoutesMappingUrl.proofOfReserve} element={<StableCoinProof />} />
 							<Route path={RoutesMappingUrl.feesManagement} element={<FeesManagement />} />
-							<Route
-								path={RoutesMappingUrl.stableCoinSettings}
-								element={<StableCoinSettings />}
-							/>
+							<Route path={RoutesMappingUrl.stableCoinSettings} element={<StableCoinSettings />} />
 						</>
 					)}
 					<Route path={RoutesMappingUrl.settings} element={<Settings />} />
