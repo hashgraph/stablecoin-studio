@@ -1,181 +1,162 @@
 service: accelerator-defenders
 configValidationMode: error
 frameworkVersion: '3'
-
-custom:
-  factoryAbiFolder: "./abi/factory/json.abi"
-  stableCoinAbiFolder: "./abi/stablecoin/json.abi"
-  config: ${file(config.yml)}
-
 provider:
   name: defender
   stage: ${opt:stage, 'dev'}
   stackName: acceleratorStack
   ssot: false
-  
+custom:
+  factoryAbiFolder: "./abi/factory/json.abi"
+  stableCoinAbiFolder: "./abi/stablecoin/json.abi"
+  config: ${file(config.yml)}
 defender:
   key: ${self:custom.config.team_api_key}
   secret: ${self:custom.config.team_api_secret}
-  
-functions:
-  accelerator-new-stable-coin:
-    name: Accelerator New StableCoin
-    trigger:
-      type: sentinel
-    paused: false
-    path: './autotasks/add-SCs'
-    
 resources:
-  Resources:
-    notifications:
-      stable-coin-accelerator-notifications:
-        type: email
-        name: Accelerator email notification
-        config:
-          emails:
-            - ${self:custom.config.email}
-        paused: false
-    categories:
-      high-severity:
-        name: High Severity
-        description: A default category to be assigned for high risk monitors.
-      medium-severity:
-        name: Medium Severity
-        description: A default category to be assigned for medium risk monitors.
-      low-severity:
-        name: Low Severity
-        description: A default category to be assigned for low risk monitors.
-    sentinels:
-      stable-coin-accelerator-stable-coins:
-        name: StableCoin Accelerator StableCoins
-        type: BLOCK
-        network: hederatest
-        addresses:
-          - '0x0000000000000000000000000000000000000000'
-        abi:
-          - "${file(${self:custom.stableCoinAbiFolder})}"
-        paused: false
-        confirm-level: 1
-        notify-config:
-          timeout: 0
-          message: |-
-            **Defender Sentinel {{ sentinel.name }} Triggered**
+  actions:
+    accelerator-new-stable-coin:
+      name: Accelerator New StableCoin
+      trigger:
+        type: sentinel
+      paused: false
+      path: './autotasks/add-SCs'
+  notifications:
+    stable-coin-accelerator-notifications:
+      type: email
+      name: Accelerator email notification
+      config:
+        emails:
+          - ${self:custom.config.email}
+      paused: false
+  monitors:
+    stable-coin-accelerator-stable-coins:
+      name: StableCoin Accelerator StableCoins
+      type: BLOCK
+      network: hederatest
+      addresses:
+        - '0x0000000000000000000000000000000000000000'
+      skip-abi-validation: true
+      paused: false
+      confirm-level: 1
+      notify-config:
+        timeout: 1000
+        message: |-
+          **Platform Monitor {{ sentinel.name }} Triggered**
 
-            **Network**
+          **Network**
 
-            {{ sentinel.network }}
+          {{ sentinel.network }}
 
-            **Block Hash**
+          **Block Hash**
 
-            {{ blockHash }}
+          {{ blockHash }}
 
-            **Transaction Hash**
+          **Transaction Hash**
 
-            {{ transaction.transactionHash }}
+          {{ transaction.transactionHash }}
 
-            **Explorer Link**
+          **Explorer Link**
 
-            {{ transaction.link }}
+          {{ transaction.link }}
 
-            {{ matchReasonsFormatted }}
-          message-subject: 'Defender Sentinel: StableCoin Accelerator StableCoins triggered'
-          channels:
-            - ${self:resources.Resources.notifications.stable-coin-accelerator-notifications}
-        conditions:
-          event:
-            - expression: null
-              signature: GrantTokenKyc(address,address)
-            - expression: null
-              signature: HBARRescued(address,uint256)
-            - expression: null
-              signature: MetadataSet(address,string)
-            - expression: null
-              signature: ReserveAddressChanged(address,address)
-            - expression: null
-              signature: RevokeTokenKyc(address,address)
-            - expression: null
-              signature: RoleGranted(bytes32,address,address)
-            - expression: null
-              signature: RoleRevoked(bytes32,address,address)
-            - expression: null
-              signature: >-
-                SupplierAllowanceDecreased(address,address,uint256,uint256,uint256)
-            - expression: null
-              signature: >-
-                SupplierAllowanceIncreased(address,address,uint256,uint256,uint256)
-            - expression: null
-              signature: SupplierAllowanceReset(address,address,uint256,uint256)
-            - expression: null
-              signature: TokenDeleted(address)
-            - expression: null
-              signature: TokenPaused(address)
-            - expression: null
-              signature: TokenRescued(address,address,int64)
-            - expression: null
-              signature: TokenTransfer(address,address,address,int64)
-            - expression: null
-              signature: TokenUnpaused(address)
-            - expression: null
-              signature: >-
-                TokenUpdated(address,(string,string,(uint256,bytes,bool)[],int64,int64,string))
-            - expression: null
-              signature: TokensBurned(address,address,int64)
-            - expression: null
-              signature: TokensMinted(address,address,int64,address)
-            - expression: null
-              signature: TokensWiped(address,address,address,int64)
-            - expression: null
-              signature: TransfersFrozen(address,address)
-            - expression: null
-              signature: TransfersUnfrozen(address,address)
-      stable-coin-accelerator-factory:
-        name: StableCoin Accelerator Factory
-        type: BLOCK
-        network: hederatest
-        addresses:
-          - '0x0000000000000000000000000000000000070419'
-        abi:
-          - "${file(${self:custom.factoryAbiFolder})}"
-        paused: false
-        autotask-trigger: ${self:functions.accelerator-new-stable-coin}
-        confirm-level: 1
-        notify-config:
-          timeout: 1000
-          message: |-
-            **Defender Sentinel {{ sentinel.name }} Triggered**
+          {{ matchReasonsFormatted }}
+        message-subject: 'Platform Monitor: StableCoin Accelerator StableCoins triggered'
+        channels: []
+      conditions:
+        event:
+          - expression: null
+            signature: GrantTokenKyc(address,address)
+          - expression: null
+            signature: HBARRescued(address,uint256)
+          - expression: null
+            signature: MetadataSet(address,string)
+          - expression: null
+            signature: ReserveAddressChanged(address,address)
+          - expression: null
+            signature: RevokeTokenKyc(address,address)
+          - expression: null
+            signature: RoleGranted(bytes32,address,address)
+          - expression: null
+            signature: RoleRevoked(bytes32,address,address)
+          - expression: null
+            signature: >-
+              SupplierAllowanceDecreased(address,address,uint256,uint256,uint256)
+          - expression: null
+            signature: >-
+              SupplierAllowanceIncreased(address,address,uint256,uint256,uint256)
+          - expression: null
+            signature: SupplierAllowanceReset(address,address,uint256,uint256)
+          - expression: null
+            signature: TokenDeleted(address)
+          - expression: null
+            signature: TokenPaused(address)
+          - expression: null
+            signature: TokenRescued(address,address,int64)
+          - expression: null
+            signature: TokenTransfer(address,address,address,int64)
+          - expression: null
+            signature: TokenUnpaused(address)
+          - expression: null
+            signature: >-
+              TokenUpdated(address,(string,string,(uint256,bytes,bool)[],int64,int64,string))
+          - expression: null
+            signature: TokensBurned(address,address,int64)
+          - expression: null
+            signature: TokensMinted(address,address,int64,address)
+          - expression: null
+            signature: TokensWiped(address,address,address,int64)
+          - expression: null
+            signature: TransfersFrozen(address,address)
+          - expression: null
+            signature: TransfersUnfrozen(address,address)
+    stable-coin-accelerator-factory:
+      name: StableCoin Accelerator Factory
+      type: BLOCK
+      network: hederatest
+      addresses:
+        - '0x0000000000000000000000000000000000070419'
+      skip-abi-validation: false
+      paused: false
+      action-trigger: ${self:resources.actions.accelerator-new-stable-coin}
+      confirm-level: 1
+      notify-config:
+        timeout: 1000
+        message: |-
+          **Defender Sentinel {{ sentinel.name }} Triggered**
 
-            **Network**
+          **Network**
 
-            {{ sentinel.network }}
+          {{ sentinel.network }}
 
-            **Block Hash**
+          **Block Hash**
 
-            {{ blockHash }}
+          {{ blockHash }}
 
-            **Transaction Hash**
+          **Transaction Hash**
 
-            {{ transaction.transactionHash }}
+          {{ transaction.transactionHash }}
 
-            **Explorer Link**
+          **Explorer Link**
 
-            {{ transaction.link }}
+          {{ transaction.link }}
 
-            {{ matchReasonsFormatted }}
-          message-subject: 'Defender Sentinel: StableCoin Accelerator Factory triggered'
-          channels:
-            - ${self:resources.Resources.notifications.stable-coin-accelerator-notifications}
-        conditions:
-          event:
-            - expression: null
-              signature: AdminChanged(address,address)
-            - expression: null
-              signature: Deployed((address,address,address,address,address,address))
-            - expression: null
-              signature: HederaTokenManagerAddressAdded(address)
-            - expression: null
-              signature: HederaTokenManagerAddressEdited(address,address)
-            - expression: null
-              signature: HederaTokenManagerAddressRemoved(uint256,address)
-              
+          {{ matchReasonsFormatted }}
+        message-subject: 'Defender Sentinel: StableCoin Accelerator Factory triggered'
+        channels:
+          - >-
+            ${self:resources.notifications.stable-coin-accelerator-notifications}
+      conditions:
+        event:
+          - expression: null
+            signature: AdminChanged(address,address)
+          - expression: null
+            signature: Deployed((address,address,address,address,address,address))
+          - expression: null
+            signature: HederaTokenManagerAddressAdded(address)
+          - expression: null
+            signature: HederaTokenManagerAddressEdited(address,address)
+          - expression: null
+            signature: HederaTokenManagerAddressRemoved(uint256,address)
 plugins:
-  - '@openzeppelin/defender-serverless'
+  - '@openzeppelin/defender-as-code'

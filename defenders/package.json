@@ -4,7 +4,7 @@
   "description": "Accelerator integration with OZ Defenders",
   "license": "MIT",
   "devDependencies": {
-    "@openzeppelin/defender-serverless": "^1.2.3",
+    "@openzeppelin/defender-as-code": "^2.0.0",
     "serverless": "^3.20.0"
   }
 }
