@@ -487,7 +487,91 @@ exports[`<Review /> should render correctly 1`] = `
                 <p
                   class="chakra-text css-9s6br4"
                 >
+                  Cash in
+                </p>
+                <div
+                  class="chakra-stack css-w0g0w4"
+                >
+                  <p
+                    class="chakra-text css-mgupmj"
+                  >
+                    Current user account - undefined
+                  </p>
+                </div>
+              </div>
+              <hr
+                aria-orientation="horizontal"
+                class="chakra-divider css-zaaihy"
+                title="divider"
+              />
+            </div>
+            <div
+              class="css-0"
+            >
+              <div
+                class="css-gg4vpm"
+                data-testid="details-review-detail-1"
+              >
+                <p
+                  class="chakra-text css-9s6br4"
+                >
+                  Burn
+                </p>
+                <div
+                  class="chakra-stack css-w0g0w4"
+                >
+                  <p
+                    class="chakra-text css-mgupmj"
+                  >
+                    Current user account
+                  </p>
+                </div>
+              </div>
+              <hr
+                aria-orientation="horizontal"
+                class="chakra-divider css-zaaihy"
+                title="divider"
+              />
+            </div>
+            <div
+              class="css-0"
+            >
+              <div
+                class="css-gg4vpm"
+                data-testid="details-review-detail-2"
+              >
+                <p
+                  class="chakra-text css-9s6br4"
+                >
                   Rescue
+                </p>
+                <div
+                  class="chakra-stack css-w0g0w4"
+                >
+                  <p
+                    class="chakra-text css-mgupmj"
+                  >
+                    Current user account
+                  </p>
+                </div>
+              </div>
+              <hr
+                aria-orientation="horizontal"
+                class="chakra-divider css-zaaihy"
+                title="divider"
+              />
+            </div>
+            <div
+              class="css-0"
+            >
+              <div
+                class="css-gg4vpm"
+                data-testid="details-review-detail-3"
+              >
+                <p
+                  class="chakra-text css-9s6br4"
+                >
+                  Delete
                 </p>
                 <div
                   class="chakra-stack css-w0g0w4"

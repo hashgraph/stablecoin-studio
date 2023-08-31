@@ -281,8 +281,7 @@ The factory's and the stable coins's logic can be upgraded at any time using the
 
 # Change ProxyAdmin Owner
 
-The _Transparent Proxy admin_ also allows to change the owner who can manage the proxy, like upgrading it, as explained above.
-Initially, the account deploying the factory contract will be the proxy admin owner of this contract, while the user creating the stable coin will be able to select the account id (can be a contract id) during the stable coin creation process, which will be the owner of the stable coin proxy admin contract.
+Every stable coin is made of a ProxyAdmin and a TransparentUpgradeableProxy contracts (from [OpenZeppelin](https://docs.openzeppelin.com/contracts/4.x/api/proxy#TransparentUpgradeableProxy)) plus an underlying token managed through the HTS precompiled smart contract. The hederaTokenManager contract is meant to be "shared" by multiple users (using proxies). A stable coin admin may also choose to deploy a HederaReserve along with the stable coin at creation time, with its own TransparentUpgradeableProxy and ProxyAdmin contracts, or to define an existing reserve instead.
 
 # Generate documentation
 

@@ -11,14 +11,14 @@ import {
     getOperatorPublicKey,
     deployHederaReserve,
 } from '../scripts/deploy'
-import { Mint, initialize } from '../scripts/contractsMethods'
+import { Mint } from '../scripts/contractsMethods'
 import {
     getReserveAddress,
     updateDataFeed,
     getReserveAmount,
-    initializeHederaReserve
+    initializeHederaReserve,
 } from '../scripts/contractsMethods'
-import { clientId, getContractInfo, sleep } from '../scripts/utils'
+import { clientId, getContractInfo } from '../scripts/utils'
 import { AccountId, Client, ContractId } from '@hashgraph/sdk'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
@@ -156,7 +156,6 @@ describe('Reserve Tests', function () {
             operatorPriKey
         )
         await updateDataFeed(newDataFeed, proxyAddress, operatorClient)
-        
 
         await initializeHederaReserve(
             BigNumber.from(newReserve),
@@ -351,7 +350,7 @@ describe('Reserve Tests with reserve decimals higher than token decimals', funct
             proxyAddress,
             operatorClient
         )
-        
+
         // Cashin tokens to previously associated account
         await Mint(
             proxyAddress,

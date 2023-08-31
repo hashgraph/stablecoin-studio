@@ -26,6 +26,7 @@
 		"modalErrorTitle": "Recovering HederaTokenManager implementations",
 		"modalErrorDescription": "HederaTokenManager contracts implementations couldn't be obtained.",
 		"hederaTokenManager": "HederaTokenManager impl.",
+		"hederaTokenManagerLink": "https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/contracts",
 		"hederaTokenManagerPlaceholder": "Choose TokenManager address ID",
 		"hederaTokenManagerErrorRPC": "The RPC service is not working as expected",
 		"hederaTokenManagerErrorTime": "The TokenManager contracts list couldn't be obtained in a reasonable time."
@@ -40,7 +41,8 @@
 		"title": "Stable coin optional details",
 		"typeSupply": "Supply type",
 		"typeSupplyPlaceholder": "Choose supply type",
-		"metadata": "Metadata"
+		"metadata": "Metadata",
+		"link": "https://github.com/hashgraph/hedera-improvement-proposal/blob/main/HIP/hip-10.md"
 	},
 	"managementPermissions": {
 		"currentUserKey": "Current user key",
@@ -66,7 +68,9 @@
 		"feeSchedule": "Fee Schedule",
 		"theSmartContract": "The smart contract",
 		"keysTitle": "Permission management",
+		"titleLink": "https://docs.hedera.com/hedera/sdks-and-apis/sdks/readme-1/define-a-token",
 		"rolesTitle": "Roles assignment",
+		"rolesLink": "https://github.com/hashgraph/hedera-accelerator-stablecoin#what-is-a-stable-coin",
 		"totalSupply": "Total supply",
 		"treasuryAccountAddress": "Treasury account address",
 		"wipe": "Wipe",
@@ -74,7 +78,9 @@
 		"CreatorGrantedKYC": "TRUE",
 		"CreatorNotGrantedKYC": "FALSE",
 		"wantKyc": "Do you want to enable KYC?",
+		"wantKycLink": "https://hedera.com/blog/get-started-with-the-hedera-token-service-part-2-kyc-update-and-scheduled-transactions",
 		"manageCustomFees": "Do you want to add custom fees?",
+		"manageCustomFeesLink": "https://docs.hedera.com/hedera/sdks-and-apis/sdks/readme-1/custom-token-fees",
 		"accountPlaceholder": "0.0.0",
 		"proxyAdminTitle": "Proxy admin",
 		"proxyAdminOwner": "Do you want to use your current account as the proxy admin owner?",
@@ -93,7 +99,8 @@
 		"initialSupply": "Initial supply",
 		"addressPor": "Adrress proof of reserve  ",
 		"initialSupplyPor": "Initial supply PoR",
-		"initialSupplyPorExternal": "External PoR"
+		"initialSupplyPorExternal": "External PoR",
+		"link": "https://github.com/hashgraph/hedera-accelerator-stablecoin/blob/main/README.md#Proof-of-reserve"
 	},
 	"proxyAdmin": {
 		"title": "Proxy Admin",

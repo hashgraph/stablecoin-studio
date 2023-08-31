@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { Navigate, Route, Routes, Outlet } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { Flex, Spinner, Text } from '@chakra-ui/react';
 import Layout from '../layout/Layout';
 import { RoutesMappingUrl } from './RoutesMappingUrl';
 import CashInOperation from '../views/Operations/CashIn';
@@ -16,7 +15,6 @@ import CheckFrozenOperation from '../views/Operations/CheckFrozen';
 import Dashboard from '../views/Dashboard';
 import HandleRoles from '../views/Roles/HandleRoles';
 import { actions } from '../views/Roles/constants';
-import Login from '../views/Login';
 import Loading from '../views/Loading';
 import Operations from '.';
 import Roles from '../views/Roles';
@@ -25,7 +23,6 @@ import StableCoinNotSelected from '../views/ErrorPage/StableCoinNotSelected';
 import SDKService from '../services/SDKService';
 import StableCoinDetails from '../views/StableCoinDetails';
 import {
-	AVAILABLE_WALLETS,
 	SELECTED_WALLET_COIN,
 	SELECTING_WALLET_COIN,
 	SELECTED_WALLET_STATUS,
@@ -43,11 +40,12 @@ import CheckKycOperation from '../views/Operations/CheckKyc';
 import Settings from '../views/Settings';
 import StableCoinSettings from '../views/Settings/StableCoin';
 import FactorySettings from '../views/Settings/Factory';
+import ModalWalletConnect from '../components/ModalWalletConnect';
 
 const LoginOverlayRoute = ({ show, loadingSC }: { show: boolean; loadingSC: boolean }) => {
 	return (
 		<>
-			{show && <Login />}
+			{show && <ModalWalletConnect />}
 			{loadingSC && <Loading />}
 			<Layout>
 				<Outlet />
@@ -59,7 +57,6 @@ const LoginOverlayRoute = ({ show, loadingSC }: { show: boolean; loadingSC: bool
 const Router = () => {
 	const dispatch = useDispatch();
 
-	const availableWallets = useSelector(AVAILABLE_WALLETS);
 	const selectedWalletCoin = !!useSelector(SELECTED_WALLET_COIN);
 	const selectingWalletCoin = useSelector(SELECTING_WALLET_COIN);
 	const status = useSelector(SELECTED_WALLET_STATUS);
@@ -143,105 +140,65 @@ const Router = () => {
 
 	return (
 		<main>
-			{availableWallets.length > 0 ? (
-				<Routes>
-					{/* Private routes */}
-					<Route
-						element={
-							<LoginOverlayRoute
-								show={Boolean(status !== ConnectionState.Paired)}
-								loadingSC={selectingWalletCoin}
-							/>
-						}
-					>
-						{selectedWalletCoin && (
-							<>
-								<Route path={RoutesMappingUrl.balance} element={<GetBalanceOperation />} />
-								<Route path={RoutesMappingUrl.cashIn} element={<CashInOperation />} />
-								<Route path={RoutesMappingUrl.burn} element={<BurnOperation />} />
-								<Route path={RoutesMappingUrl.rescueTokens} element={<RescueTokenOperation />} />
-								<Route path={RoutesMappingUrl.rescueHBAR} element={<RescueHBAROperation />} />
-								<Route path={RoutesMappingUrl.wipe} element={<WipeOperation />} />
-								<Route path={RoutesMappingUrl.freeze} element={<FreezeOperation />} />
-								<Route path={RoutesMappingUrl.unfreeze} element={<UnfreezeOperation />} />
-								<Route path={RoutesMappingUrl.checkFrozen} element={<CheckFrozenOperation />} />
-								<Route path={RoutesMappingUrl.dashboard} element={<Dashboard />} />
-								<Route
-									path={RoutesMappingUrl.editRole}
-									element={<HandleRoles action='editRole' />}
-								/>
-								<Route
-									path={RoutesMappingUrl.getAccountsWithRoles}
-									element={<HandleRoles action='getAccountsWithRole' />}
-								/>
-								<Route
-									path={RoutesMappingUrl.giveRole}
-									element={<HandleRoles action='giveRole' />}
-								/>
-								<Route path={RoutesMappingUrl.operations} element={<Operations />} />
-								<Route path={RoutesMappingUrl.dangerZone} element={<DangerZoneOperations />} />
-								<Route path={RoutesMappingUrl.grantKyc} element={<GrantKycOperation />} />
-								<Route path={RoutesMappingUrl.revokeKyc} element={<RevokeKycOperation />} />
-								<Route path={RoutesMappingUrl.checkKyc} element={<CheckKycOperation />} />
-								<Route
-									path={RoutesMappingUrl.revokeRole}
-									element={<HandleRoles action='revokeRole' />}
-								/>
-								<Route
-									path={RoutesMappingUrl.refreshRoles}
-									element={<HandleRoles action={actions.refresh} />}
-								/>
-								<Route path={RoutesMappingUrl.roles} element={<Roles />} />
-								<Route path={RoutesMappingUrl.stableCoinDetails} element={<StableCoinDetails />} />
-								<Route path={RoutesMappingUrl.proofOfReserve} element={<StableCoinProof />} />
-								<Route path={RoutesMappingUrl.feesManagement} element={<FeesManagement />} />
-								<Route
-									path={RoutesMappingUrl.stableCoinSettings}
-									element={<StableCoinSettings />}
-								/>
-							</>
-						)}
-						<Route path={RoutesMappingUrl.settings} element={<Settings />} />
-						<Route path={RoutesMappingUrl.factorySettings} element={<FactorySettings />} />
-						<Route path={RoutesMappingUrl.stableCoinCreation} element={<StableCoinCreation />} />
-						<Route path={RoutesMappingUrl.importedToken} element={<ImportedTokenCreation />} />
-						<Route
-							path={RoutesMappingUrl.stableCoinNotSelected}
-							element={<StableCoinNotSelected />}
+			<Routes>
+				{/* Private routes */}
+				<Route
+					element={
+						<LoginOverlayRoute
+							show={Boolean(status !== ConnectionState.Paired)}
+							loadingSC={selectingWalletCoin}
 						/>
-						<Route path='*' element={<Navigate to={RoutesMappingUrl.stableCoinNotSelected} />} />
-					</Route>
-				</Routes>
-			) : (
-				<Flex
-					w='full'
-					h='100vh'
-					justify={'center'}
-					alignSelf='center'
-					alignContent={'center'}
-					flex={1}
-					flexDir='column'
-					gap={10}
+					}
 				>
-					<Spinner
-						color='brand.gray'
-						thickness='3px'
-						w='50px'
-						h='50px'
-						justifyContent='center'
-						alignSelf={'center'}
+					{selectedWalletCoin && (
+						<>
+							<Route path={RoutesMappingUrl.balance} element={<GetBalanceOperation />} />
+							<Route path={RoutesMappingUrl.cashIn} element={<CashInOperation />} />
+							<Route path={RoutesMappingUrl.burn} element={<BurnOperation />} />
+							<Route path={RoutesMappingUrl.rescueTokens} element={<RescueTokenOperation />} />
+							<Route path={RoutesMappingUrl.rescueHBAR} element={<RescueHBAROperation />} />
+							<Route path={RoutesMappingUrl.wipe} element={<WipeOperation />} />
+							<Route path={RoutesMappingUrl.freeze} element={<FreezeOperation />} />
+							<Route path={RoutesMappingUrl.unfreeze} element={<UnfreezeOperation />} />
+							<Route path={RoutesMappingUrl.checkFrozen} element={<CheckFrozenOperation />} />
+							<Route path={RoutesMappingUrl.dashboard} element={<Dashboard />} />
+							<Route path={RoutesMappingUrl.editRole} element={<HandleRoles action='editRole' />} />
+							<Route
+								path={RoutesMappingUrl.getAccountsWithRoles}
+								element={<HandleRoles action='getAccountsWithRole' />}
+							/>
+							<Route path={RoutesMappingUrl.giveRole} element={<HandleRoles action='giveRole' />} />
+							<Route path={RoutesMappingUrl.operations} element={<Operations />} />
+							<Route path={RoutesMappingUrl.dangerZone} element={<DangerZoneOperations />} />
+							<Route path={RoutesMappingUrl.grantKyc} element={<GrantKycOperation />} />
+							<Route path={RoutesMappingUrl.revokeKyc} element={<RevokeKycOperation />} />
+							<Route path={RoutesMappingUrl.checkKyc} element={<CheckKycOperation />} />
+							<Route
+								path={RoutesMappingUrl.revokeRole}
+								element={<HandleRoles action='revokeRole' />}
+							/>
+							<Route
+								path={RoutesMappingUrl.refreshRoles}
+								element={<HandleRoles action={actions.refresh} />}
+							/>
+							<Route path={RoutesMappingUrl.roles} element={<Roles />} />
+							<Route path={RoutesMappingUrl.stableCoinDetails} element={<StableCoinDetails />} />
+							<Route path={RoutesMappingUrl.proofOfReserve} element={<StableCoinProof />} />
+							<Route path={RoutesMappingUrl.feesManagement} element={<FeesManagement />} />
+							<Route path={RoutesMappingUrl.stableCoinSettings} element={<StableCoinSettings />} />
+						</>
+					)}
+					<Route path={RoutesMappingUrl.settings} element={<Settings />} />
+					<Route path={RoutesMappingUrl.factorySettings} element={<FactorySettings />} />
+					<Route path={RoutesMappingUrl.stableCoinCreation} element={<StableCoinCreation />} />
+					<Route path={RoutesMappingUrl.importedToken} element={<ImportedTokenCreation />} />
+					<Route
+						path={RoutesMappingUrl.stableCoinNotSelected}
+						element={<StableCoinNotSelected />}
 					/>
-					<Text
-						fontSize='16px'
-						fontWeight={500}
-						textAlign='center'
-						lineHeight='16px'
-						color='brand.gray'
-					>
-						Searching for supported wallets
-					</Text>
-				</Flex>
-			)}
+					<Route path='*' element={<Navigate to={RoutesMappingUrl.stableCoinNotSelected} />} />
+				</Route>
+			</Routes>
 		</main>
 	);
 };

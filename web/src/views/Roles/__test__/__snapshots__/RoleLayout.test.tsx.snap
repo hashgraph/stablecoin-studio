@@ -40,27 +40,31 @@ exports[`<RoleLayout /> should render correctly 1`] = `
                   class="chakra-form-control css-1kxonj9"
                   role="group"
                 >
-                  <label
-                    class="chakra-form__label css-1hfoxt1"
-                    for="field-:r0:"
-                    id="field-:r0:-label"
+                  <div
+                    class="css-gg4vpm"
                   >
-                    <div
-                      class="chakra-stack css-1igwmid"
+                    <label
+                      class="chakra-form__label css-1hfoxt1"
+                      for="field-:r0:"
+                      id="field-:r0:-label"
                     >
-                      <p
-                        class="chakra-text css-mgupmj"
+                      <div
+                        class="chakra-stack css-1igwmid"
                       >
-                        Account
-                      </p>
-                      <p
-                        class="chakra-text css-ftb7fv"
-                        data-testid="required"
-                      >
-                        *
-                      </p>
-                    </div>
-                  </label>
+                        <p
+                          class="chakra-text css-mgupmj"
+                        >
+                          Account
+                        </p>
+                        <p
+                          class="chakra-text css-ftb7fv"
+                          data-testid="required"
+                        >
+                          *
+                        </p>
+                      </div>
+                    </label>
+                  </div>
                   <div
                     class="chakra-input__group css-bx0blc"
                     data-group="true"

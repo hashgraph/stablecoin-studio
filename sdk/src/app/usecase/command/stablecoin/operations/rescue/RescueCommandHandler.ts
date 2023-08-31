@@ -103,7 +103,7 @@ export class RescueCommandHandler implements ICommandHandler<RescueCommand> {
 
 		if (amountBd.isGreaterThan(treasuryBalance)) {
 			throw new OperationNotAllowed(
-				'The treasury account balance is bigger than the amount',
+				'The rescue amount is bigger than the treasury account balance',
 			);
 		}
 		const res = await handler.rescue(capabilities, amountBd);

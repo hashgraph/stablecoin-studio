@@ -74,7 +74,7 @@ export class BurnCommandHandler implements ICommandHandler<BurnCommand> {
 
 		if (amountBd.isGreaterThan(treasuryBalance)) {
 			throw new OperationNotAllowed(
-				'The treasury account balance is bigger than the amount',
+				'The amount is bigger than the treasury account balance',
 			);
 		}
 
