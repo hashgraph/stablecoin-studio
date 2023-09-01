@@ -208,7 +208,7 @@ We provide default addresses for the factories that we have deployed for anyone 
 | FactoryAddress | 0.0.1137631   | Testnet   |
 | FactoryAddress | 0.0.XXXXXX   | Previewnet |
 
-(You can check the factorys associated to each version [here](https://github.com/hashgraph/hedera-accelerator-stablecoin/FACORY_VERSION.md))
+(You can check the factorys associated to each version [here](./FACTORY_VERSION.md))
 
 Follow the steps in the [contracts docs](https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/contracts#deploy-factory) to learn how to deploy the factories.
 
