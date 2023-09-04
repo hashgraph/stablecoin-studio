@@ -40,7 +40,7 @@ npm install @hashgraph-dev/stablecoin-dapp
 
 You will need the following supporting tools/frameworks installed
 
-- [Node.js](https://nodejs.org/) `>= v16.13` and `< v17`
+- [Node.js](https://nodejs.org/) `>= v16.13`
 - [npm](https://www.npmjs.com/)
 
 Then you have to install and build
