@@ -58,10 +58,27 @@ jobs:
           echo "HEDERA_TOKEN_MANAGER_ADDRESS=0.0.14455016"  >> .env
           echo "FACTORY_ADDRESS=0.0.14455068"  >> .env
         working-directory: sdk
-
+      
       - name: View File
         run: cat .env
         working-directory: sdk
+
+      - name: Create contracts
+        run: |
+          touch .env
+          echo "TESTNET_HEDERA_OPERATOR_PRIVATEKEY=${{ secrets.PRIVATE_KEY_ED25519 }}"  >> .env
+          echo "TESTNET_HEDERA_OPERATOR_PUBLICKEY=${{ secrets.PUBLIC_KEY_ED25519 }}"  >> .env
+          echo "TESTNET_HEDERA_OPERATOR_ED25519='true'"  >> .env
+          echo "TESTNET_HEDERA_OPERATOR_ACCOUNT=${{ secrets.ACCOUNT_ID_ED25519 }}"  >> .env
+          echo "TESTNET_HEDERA_NON_OPERATOR_PRIVATEKEY=${{ secrets.PRIVATE_KEY_ED25519_2 }}"  >> .env          
+          echo "TESTNET_HEDERA_NON_OPERATOR_PUBLICKEY=${{ secrets.PUBLIC_KEY_ED25519_2 }}"  >> .env
+          echo "TESTNET_HEDERA_NON_OPERATOR_ED25519='true'"  >> .env
+          echo "TESTNET_HEDERA_NON_OPERATOR_ACCOUNT=${{ secrets.ACCOUNT_ID_ED25519_2 }}"  >> .env
+        working-directory: contracts
+
+      - name: View File
+        run: cat .env
+        working-directory: contracts
       
       - name: Run the Docker image
         run:  nohup docker run --network="host" rpc &
@@ -72,13 +89,19 @@ jobs:
         run: docker ps
       - name: DockerStatus
         run:  curl --location --request POST 'http://localhost:7546/api' --data ""
-        
+      
+      - name: Test contracts
+        uses: ArtiomTr/jest-coverage-report-action@v2.0.9
+        with:
+          working-directory: contracts
+          test-script: npm run test
         
       - name: Test sdk
         uses: ArtiomTr/jest-coverage-report-action@v2.0.9
         with:
           working-directory: sdk
           test-script: npm run test
+
       - name: Test
         uses: ArtiomTr/jest-coverage-report-action@v2.0.9
         with:
