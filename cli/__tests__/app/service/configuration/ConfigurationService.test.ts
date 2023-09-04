@@ -188,7 +188,7 @@ describe('configurationService', () => {
     expect(defaultConfirmAskMock).toHaveBeenCalledTimes(0);
     expect(defaultMultipleAskMock).toHaveBeenCalledTimes(0);
     expect(defaultPasswordAskMock).toHaveBeenCalledTimes(0);
-  }, 10000);
+  });
 
   it('should init configuration with a path', async () => {
     await configurationService.init(configurationMock, path);
@@ -198,9 +198,6 @@ describe('configurationService', () => {
 
   it('should get configuration and log configuration', async () => {
     const conf: IConfiguration = configurationService.getConfiguration();
-
-    console.log('UEEEEEEEEE 1' + JSON.stringify(conf.accounts));
-    console.log('UEEEEEEEEE 2' + JSON.stringify(configurationMock.accounts));
 
     expect(configurationService).not.toBeNull();
     expect(conf.defaultNetwork).toStrictEqual(configurationMock.defaultNetwork);

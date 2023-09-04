@@ -13,8 +13,6 @@ import {
   ProxyConfigurationViewModel,
   Proxy,
   Network,
-  ContractId,
-  HederaId,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 const language: Language = new Language();
@@ -36,7 +34,9 @@ describe('setFactoryService', () => {
 
     jest
       .spyOn(Proxy, 'getFactoryProxyConfig')
-      .mockImplementation(() => Promise.resolve(factoryProxy));
+      .mockImplementation(() =>
+        Promise.resolve({} as ProxyConfigurationViewModel),
+      );
 
     jest
       .spyOn(utilsService, 'cleanAndShowBanner')
@@ -156,12 +156,6 @@ describe('setFactoryService', () => {
   const factory: IFactoryConfig = {
     id: '0.0.13579',
     network: 'testnet',
-  };
-
-  const factoryProxy: ProxyConfigurationViewModel = {
-    implementationAddress: new ContractId('0.0.345678'),
-    owner: HederaId.from('0.0.123456'),
-    pendingOwner: HederaId.from('0.0.234567'),
   };
 
   it('should configure factories', async () => {

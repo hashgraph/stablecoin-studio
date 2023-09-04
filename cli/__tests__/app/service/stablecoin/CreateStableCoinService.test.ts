@@ -179,6 +179,12 @@ describe(`Testing ManageImportedTokenService class`, () => {
       .spyOn(Account, 'getPublicKey')
       .mockResolvedValue(new PublicKey('0.0.12345'));
 
+    // proxyAdminOwner
+    jest.spyOn(utilsService, 'defaultConfirmAsk').mockResolvedValueOnce(true);
+    jest
+      .spyOn(utilsService, 'defaultMultipleAsk')
+      .mockResolvedValueOnce(language.getText('stablecoin.askProxyAdminOwner'));
+
     const createdToken = await service.createStableCoin(undefined, true, true);
 
     expect(service).not.toBeNull();
@@ -365,6 +371,12 @@ describe(`Testing ManageImportedTokenService class`, () => {
     jest
       .spyOn(Account, 'getPublicKey')
       .mockResolvedValue(new PublicKey('0.0.12345'));
+
+    // proxyAdminOwner
+    jest.spyOn(utilsService, 'defaultConfirmAsk').mockResolvedValueOnce(true);
+    jest
+      .spyOn(utilsService, 'defaultMultipleAsk')
+      .mockResolvedValueOnce(language.getText('stablecoin.askProxyAdminOwner'));
 
     const createdToken = await service.createStableCoin(undefined, true, false);
 

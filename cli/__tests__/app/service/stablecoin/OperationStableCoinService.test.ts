@@ -139,6 +139,7 @@ describe(`Testing OperationStableCoinService class`, () => {
       .mockResolvedValue({
         implementationAddress: 'implementationAddress',
         owner: 'owner',
+        pendingOwner: 'pendingOwner',
       });
     RoleStableCoinService.prototype.getRolesWithoutPrinting = jest
       .fn()
