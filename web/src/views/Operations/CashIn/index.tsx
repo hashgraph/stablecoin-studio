@@ -12,8 +12,6 @@ import { useSelector } from 'react-redux';
 import { SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
 import { useState } from 'react';
 import { CashInRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
-import { useNavigate } from 'react-router-dom';
-import { RouterManager } from '../../../Router/RouterManager';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 import { propertyNotFound } from '../../../constant';
 
@@ -29,7 +27,6 @@ const CashInOperation = () => {
 
 	const [errorOperation, setErrorOperation] = useState();
 	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
-	const navigate = useNavigate();
 
 	const [request] = useState(
 		new CashInRequest({
@@ -44,10 +41,6 @@ const CashInOperation = () => {
 	});
 
 	const { t } = useTranslation(['cashIn', 'global', 'operations']);
-
-	const handleCloseModal = () => {
-		RouterManager.goBack(navigate);
-	};
 
 	useRefreshCoinInfo();
 
@@ -159,8 +152,6 @@ const CashInOperation = () => {
 				}
 				successNotificationTitle={t('operations:modalSuccessTitle')}
 				successNotificationDescription={t('operations:modalSuccessDesc')}
-				handleOnCloseModalError={handleCloseModal}
-				handleOnCloseModalSuccess={handleCloseModal}
 			/>
 		</>
 	);
