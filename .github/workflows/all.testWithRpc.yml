@@ -91,19 +91,19 @@ jobs:
         run:  curl --location --request POST 'http://localhost:7546/api' --data ""
       
       - name: Test contracts
-        uses: ArtiomTr/jest-coverage-report-action@v2.0.9
+        uses: ArtiomTr/jest-coverage-report-action@v2.2.4
         with:
           working-directory: contracts
           test-script: npm run test
         
       - name: Test sdk
-        uses: ArtiomTr/jest-coverage-report-action@v2.0.9
+        uses: ArtiomTr/jest-coverage-report-action@v2.2.4
         with:
           working-directory: sdk
           test-script: npm run test
 
       - name: Test
-        uses: ArtiomTr/jest-coverage-report-action@v2.0.9
+        uses: ArtiomTr/jest-coverage-report-action@v2.2.4
         with:
           working-directory: cli
           test-script: npm run test
