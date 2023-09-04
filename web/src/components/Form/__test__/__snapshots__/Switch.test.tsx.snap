@@ -17,7 +17,7 @@ exports[`<SwitchComponent /> should render directly 1`] = `
         style="height: 29px; width: 29px; opacity: 0; position: absolute; left: 0px; top: 0px; pointer-events: none; transition: opacity 0.25s;"
       >
         <div
-          class="chakra-stack css-oe35x4"
+          class="chakra-stack css-191yzw1"
         >
           <p
             class="chakra-text css-1f7y1le"
@@ -31,7 +31,7 @@ exports[`<SwitchComponent /> should render directly 1`] = `
         style="height: 29px; width: 29px; opacity: 1; position: absolute; left: 0px; top: 0px; pointer-events: none; transition: opacity 0.25s;"
       >
         <div
-          class="chakra-stack css-oe35x4"
+          class="chakra-stack css-191yzw1"
         >
           <p
             class="chakra-text css-1f7y1le"
