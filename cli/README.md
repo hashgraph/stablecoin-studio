@@ -59,7 +59,7 @@ accelerator wizard
 
 You must have installed
 
-- [Node.js](https://nodejs.org/) `>= v16.13` and `< v17`
+- [Node.js](https://nodejs.org/) `>= v16.13`
 - [npm](https://www.npmjs.com/)
 
 Then you must install and build the following projects :
