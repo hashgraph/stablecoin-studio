@@ -92,6 +92,7 @@ jobs:
     
       - name: Test Contracts
         run:  npm run test
+        working-directory: contracts
         
       - name: Test sdk
         uses: ArtiomTr/jest-coverage-report-action@v2.2.4
