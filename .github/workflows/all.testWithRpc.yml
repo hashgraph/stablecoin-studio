@@ -102,6 +102,10 @@ jobs:
 #        run:  npm run test
 #        working-directory: web  
       
+      - name: Config cli
+        run:  npm config set @hashgraph-dev:registry=https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/
+        working-directory: cli
+
       - name: Test cli
         run:  npm run test
         working-directory: cli
