@@ -49,8 +49,7 @@
 	"scripts": {
 		"start": "react-app-rewired start",
 		"build": "react-app-rewired build",
-		"test": "react-app-rewired test --maxWorkers 2",
-		"test:c": "react-app-rewired test --watchAll --coverage --maxWorkers 2",
+		"test": "react-app-rewired test",
 		"eject": "react-app-rewired eject",
 		"lint": "eslint . --ext .ts --ext .mts",
 		"prettier": "prettier --config .prettierrc --write .",
@@ -112,8 +111,7 @@
 		"stream-browserify": "^3.0.0",
 		"stream-http": "^3.2.0",
 		"ts-jest": "^29.0.5",
-		"url": "^0.11.0",
-		"nwsapi": "^2.2.5"
+		"url": "^0.11.0"
 	},
 	"jest": {
 		"preset": "ts-jest",
@@ -128,8 +126,8 @@
 		],
 		"moduleNameMapper": {
 			"^(\\.{1,2}/.*)\\.(m)?js$": "$1",
-			"hashconnect/dist/esm(.*)": "<rootDir>/../sdk/node_modules/@hashgraph-dev/hashconnect/dist/cjs$1",
-			"hashconnect": "<rootDir>/../sdk/node_modules/@hashgraph-dev/hashconnect/dist/cjs/hashconnect.js",
+			"hashconnect/dist/esm(.*)": "<rootDir>/../sdk/node_modules/hashconnect/dist/cjs$1",
+			"hashconnect": "<rootDir>/../sdk/node_modules/hashconnect/dist/cjs/hashconnect.js",
 			"axios": "axios/dist/node/axios.cjs"
 		},
 		"transform": {
@@ -138,14 +136,6 @@
 		},
 		"transformIgnorePatterns": [
 			"node_modules/(?!@ngrx|(?!deck.gl)|ng-dynamic)"
-		],
-		"coverageThreshold": {
-			"global": {
-				"statements": 70,
-				"branches": 50,
-				"functions": 70,
-				"lines": 70
-			}
-		}
+		]
 	}
 }

@@ -23,7 +23,7 @@ import colors from 'colors';
 /**
  * Create Role Stable Coin Service
  */
-export default class RoleStableCoinsService extends Service {
+export default class RoleStableCoinService extends Service {
   constructor() {
     super('Role Stable Coin');
   }

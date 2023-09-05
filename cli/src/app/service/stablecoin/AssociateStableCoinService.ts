@@ -6,7 +6,7 @@ import {
   StableCoin,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 
-export default class AssociateStableCoinsService extends Service {
+export default class AssociateStableCoinService extends Service {
   constructor() {
     super('Associate Stable Coin');
   }

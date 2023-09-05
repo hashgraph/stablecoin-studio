@@ -6,7 +6,7 @@ import {
   StableCoin,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 
-export default class TransfersStableCoinsService extends Service {
+export default class TransfersStableCoinService extends Service {
   constructor() {
     super('Transfers Stable Coin');
   }

@@ -10,7 +10,7 @@ import Service from '../Service.js';
 import CreateStableCoinService from '../stablecoin/CreateStableCoinService.js';
 import OperationStableCoinService from '../stablecoin/OperationStableCoinService.js';
 import ManageImportedTokenService from '../stablecoin/ManageImportedTokenService.js';
-import ListStableCoinsService from '../stablecoin/ListStableCoinsService.js';
+import ListStableCoinsService from '../stablecoin/ListStableCoinService.js';
 import colors from 'colors';
 import { clear } from 'console';
 import {
@@ -229,6 +229,7 @@ export default class WizardService extends Service {
       );
       console.log(colors.yellow(language.getText('wizard.accountsNotFound')));
     }
+
     const account = await utilsService.defaultMultipleAsk(
       language.getText('wizard.accountLogin'),
       options,
@@ -244,7 +245,6 @@ export default class WizardService extends Service {
     const configuration = configurationService.getConfiguration();
     const { accounts } = configuration;
     const currentAccount = accounts[accounts.length - 1];
-
     await this.setSelectedAccount(currentAccount);
   }
 
