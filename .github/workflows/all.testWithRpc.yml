@@ -98,11 +98,11 @@ jobs:
 #        run:  npm run test
 #        working-directory: sdk  
       
-      - name: Test web
-        run:  npm run test
-        working-directory: web  
-      
-#      - name: Test cli
+#      - name: Test web
 #        run:  npm run test
-#        working-directory: cli
+#        working-directory: web  
+      
+      - name: Test cli
+        run:  npm run test
+        working-directory: cli
       
