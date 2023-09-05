@@ -11,8 +11,6 @@ import { SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
 import SDKService from '../../../services/SDKService';
 import { handleRequestValidation, validateDecimalsString } from '../../../utils/validationsHelper';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { RouterManager } from '../../../Router/RouterManager';
 import { BurnRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 import { propertyNotFound } from '../../../constant';
@@ -35,7 +33,6 @@ const BurnOperation = () => {
 			tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
 		}),
 	);
-	const navigate = useNavigate();
 	useRefreshCoinInfo();
 
 	const { control, getValues, formState } = useForm({
@@ -43,10 +40,6 @@ const BurnOperation = () => {
 	});
 
 	const { t } = useTranslation(['burn', 'global', 'operations']);
-
-	const handleCloseModal = () => {
-		RouterManager.goBack(navigate);
-	};
 
 	const handleBurn: ModalsHandlerActionsProps['onConfirm'] = async ({
 		onSuccess,
@@ -139,8 +132,6 @@ const BurnOperation = () => {
 						]}
 					/>
 				}
-				handleOnCloseModalError={handleCloseModal}
-				handleOnCloseModalSuccess={handleCloseModal}
 			/>
 		</>
 	);

@@ -12,8 +12,6 @@ import { SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
 
 import { handleRequestValidation, validateDecimalsString } from '../../../utils/validationsHelper';
 import OperationLayout from './../OperationLayout';
-import { useNavigate } from 'react-router-dom';
-import { RouterManager } from '../../../Router/RouterManager';
 import { WipeRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 import { propertyNotFound } from '../../../constant';
@@ -38,17 +36,11 @@ const WipeOperation = () => {
 		}),
 	);
 
-	const navigate = useNavigate();
-
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
 	});
 
 	const { t } = useTranslation(['wipe', 'global', 'operations']);
-
-	const handleCloseModal = () => {
-		RouterManager.goBack(navigate);
-	};
 
 	useRefreshCoinInfo();
 
@@ -166,8 +158,6 @@ const WipeOperation = () => {
 						]}
 					/>
 				}
-				handleOnCloseModalError={handleCloseModal}
-				handleOnCloseModalSuccess={handleCloseModal}
 			/>
 		</>
 	);

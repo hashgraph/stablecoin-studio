@@ -13,8 +13,6 @@ import SDKService from '../../../services/SDKService';
 import { useState } from 'react';
 import { formatAmount } from '../../../utils/inputHelper';
 
-import { useNavigate } from 'react-router-dom';
-import { RouterManager } from '../../../Router/RouterManager';
 import { RescueRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 import { propertyNotFound } from '../../../constant';
@@ -38,17 +36,11 @@ const RescueTokenOperation = () => {
 		}),
 	);
 
-	const navigate = useNavigate();
-
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
 	});
 
 	const { t } = useTranslation(['rescueTokens', 'global', 'operations']);
-
-	const handleCloseModal = () => {
-		RouterManager.goBack(navigate);
-	};
 
 	useRefreshCoinInfo();
 
@@ -144,8 +136,6 @@ const RescueTokenOperation = () => {
 						decimals: selectedStableCoin?.decimals,
 					}),
 				})}
-				handleOnCloseModalError={handleCloseModal}
-				handleOnCloseModalSuccess={handleCloseModal}
 			/>
 		</>
 	);

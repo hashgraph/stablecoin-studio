@@ -11,8 +11,6 @@ import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandle
 import { handleRequestValidation } from '../../../utils/validationsHelper';
 import SDKService from '../../../services/SDKService';
 import { SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
-import { useNavigate } from 'react-router-dom';
-import { RouterManager } from '../../../Router/RouterManager';
 
 import { FreezeAccountRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
@@ -36,16 +34,10 @@ const CheckFrozenOperation = () => {
 		}),
 	);
 
-	const navigate = useNavigate();
-
 	const { t } = useTranslation(['checkFrozen', 'global', 'operations']);
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
 	});
-
-	const handleCloseModal = () => {
-		RouterManager.goBack(navigate);
-	};
 
 	const [isFrozen, setIsFrozen] = useState(false);
 
@@ -147,8 +139,6 @@ const CheckFrozenOperation = () => {
 						account: getValues().targetAccount,
 					},
 				)}
-				handleOnCloseModalError={handleCloseModal}
-				handleOnCloseModalSuccess={handleCloseModal}
 			/>
 		</>
 	);
