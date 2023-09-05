@@ -1,2 +1,2 @@
-FROM ghcr.io/hashgraph/hedera-json-rpc-relay:0.25.0
+FROM ghcr.io/hashgraph/hedera-json-rpc-relay:0.30.0
 COPY .env /home/node/app/
