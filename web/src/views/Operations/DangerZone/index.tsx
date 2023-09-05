@@ -1,4 +1,4 @@
-import { Box, Heading } from '@chakra-ui/react';
+import { Box, Heading, Stack, HStack, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import BaseContainer from '../../../components/BaseContainer';
 import GridDirectAction from '../../../components/GridDirectAction';
@@ -61,11 +61,24 @@ const DangerZoneOperations = () => {
 			tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
 		}),
 	);
+
+	const [isPaused, setPaused] = useState(false);
+	const [isDeleted, setDeleted] = useState(false);
+
 	useEffect(() => {
 		if (selectedStableCoin) {
+			checkTokenStatus();
 			getAvailableFeatures();
 		}
 	}, [selectedStableCoin]);
+
+	const checkTokenStatus = async () => {
+		setPaused(selectedStableCoin?.paused || false);
+		setDeleted(selectedStableCoin?.deleted || false);
+		if (selectedStableCoin?.deleted) {
+			RouterManager.to(navigate, NamedRoutes.Operations);
+		}
+	};
 
 	const getAvailableFeatures = () => {
 		let isExternalToken = false;
@@ -146,6 +159,7 @@ const DangerZoneOperations = () => {
 
 			await SDKService.pause(requestPause);
 			dispatch(walletActions.setPausedToken(true));
+			dispatch(walletActions.setSelectedStableCoin({ ...selectedStableCoin, paused: true }));
 			onSuccess();
 		} catch (error: any) {
 			setErrorTransactionUrl(error.transactionUrl);
@@ -168,6 +182,7 @@ const DangerZoneOperations = () => {
 
 			await SDKService.unpause(requestPause);
 			dispatch(walletActions.setPausedToken(false));
+			dispatch(walletActions.setSelectedStableCoin({ ...selectedStableCoin, paused: false }));
 			onSuccess();
 		} catch (error: any) {
 			setErrorTransactionUrl(error.transactionUrl);
@@ -191,6 +206,7 @@ const DangerZoneOperations = () => {
 			await SDKService.delete(requestDelete);
 			onSuccess();
 			dispatch(walletActions.setDeletedToken(true));
+			dispatch(walletActions.setSelectedStableCoin({ ...selectedStableCoin, deleted: true }));
 			RouterManager.to(navigate, NamedRoutes.Operations);
 		} catch (error: any) {
 			setErrorTransactionUrl(error.transactionUrl);
@@ -230,14 +246,44 @@ const DangerZoneOperations = () => {
 	];
 
 	return (
-		<BaseContainer title={t('title')}>
-			<Box p={{ base: 4, md: '128px' }}>
-				<Heading fontSize='20px' fontWeight='600' mb={14} data-testid='subtitle'>
-					{t('subtitle')}
-				</Heading>
-				<GridDirectAction directActions={directActions} />
-			</Box>
-		</BaseContainer>
+		<Stack h='full'>
+			<HStack spacing={6} w='full'>
+				{isPaused && (
+					<Text
+						fontSize='16px'
+						color='brand.secondary'
+						fontWeight={700}
+						align='right'
+						w='full'
+						as='i'
+						data-testid='paused-subtitle'
+					>
+						{t('pausedToken')}
+					</Text>
+				)}
+				{isDeleted && (
+					<Text
+						fontSize='16px'
+						color='brand.secondary'
+						fontWeight={700}
+						align='right'
+						w='full'
+						as='i'
+						data-testid='deleted-subtitle'
+					>
+						{t('deletedToken')}
+					</Text>
+				)}
+			</HStack>
+			<BaseContainer title={t('title')}>
+				<Box p={{ base: 4, md: '128px' }}>
+					<Heading fontSize='20px' fontWeight='600' mb={14} data-testid='subtitle'>
+						{t('subtitle')}
+					</Heading>
+					<GridDirectAction directActions={directActions} />
+				</Box>
+			</BaseContainer>
+		</Stack>
 	);
 };
 
