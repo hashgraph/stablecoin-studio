@@ -221,7 +221,7 @@ Whenever a testnet reset occurs, the factories must be re-deployed and the addre
 5. Create a PR to be validated and merged for the new version.
 
 # Fees
-All fees are subject to change. The fees below reflect a base price for the transaction or query. Transaction characteristics may increase the price from the base price shown below. The following table reflects the cost that the transaction have through the Smart Contracts
+All fees are subject to change. The fees below reflect a base price for the transaction or query. Transaction characteristics may increase the price from the base price shown below. The following table reflects the cost that the transaction have through the Smart Contracts.
 
 | Operation  | Dollar      | Gas    | 
 |----------------|--------------|------------|
