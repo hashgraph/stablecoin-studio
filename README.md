@@ -23,6 +23,7 @@
 - **[Build](#Build)**<br>
 - **[Recommendations](#Recommendations)**<br>
 - **[Testnet reset procedure](#Testnet-reset-procedure)**<br>
+- **[Fees](#Fees)**<br>
 - **[Deploying the stable coin factories](#Deploying-the-stable-coin-factories)**<br>
 - **[Development manifesto](#Development-Manifesto)**<br>
 - **[Support](#Support)**<br>
@@ -218,6 +219,19 @@ Whenever a testnet reset occurs, the factories must be re-deployed and the addre
 3. Update the addresses in the CLI's configuration file in order to use the new factories in the CLI.
 4. Update the addresses in the web's `.env` file in order to use the new factories in the DApp.
 5. Create a PR to be validated and merged for the new version.
+
+# Fees
+All fees are subject to change. The fees below reflect a base price for the transaction or query. Transaction characteristics may increase the price from the base price shown below. The following table reflects the cost that the transaction have through the Smart Contracts
+
+| Operation  | Dollar      | Gas    | 
+|----------------|--------------|------------|
+| Cash in | 0.01$   | 101.497    |
+| Burn | 0.005$   | 60.356 |
+| Wipe | 0.005$   | 60.692 |
+| Freeze | 0.005$  | 56.261 |
+| Unfreeze | 0.005$   | 56.262 |
+| Grant KyC | 0.005$   | 56.167 |
+| Revoke KyC | 0.005$   | 56.195 |
 
 # Development manifesto
 The development of the project follows enterprise-grade practices for software development. Using DDD, hexagonal architecture, and the CQS pattern, all within an agile methodology.
