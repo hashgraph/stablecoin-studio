@@ -245,6 +245,8 @@ const DangerZoneOperations = () => {
 		},
 	];
 
+	const filteredDirectActions = directActions.filter((access) => !access.isDisabled);
+
 	return (
 		<Stack h='full'>
 			<HStack spacing={6} w='full'>
@@ -280,7 +282,7 @@ const DangerZoneOperations = () => {
 					<Heading fontSize='20px' fontWeight='600' mb={14} data-testid='subtitle'>
 						{t('subtitle')}
 					</Heading>
-					<GridDirectAction directActions={directActions} />
+					<GridDirectAction directActions={filteredDirectActions} />
 				</Box>
 			</BaseContainer>
 		</Stack>
