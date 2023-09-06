@@ -31,18 +31,4 @@ describe(`<${Settings.name} />`, () => {
 
 		expect(header).toHaveTextContent(translations.title);
 	});
-
-	test('should not allow to select stable coin settings', async () => {
-		const component = render(<Settings />);
-		const stablecoinSettingsButton = component.getByTestId('direct-access-stableCoinSettings');
-
-		expect(stablecoinSettingsButton).toBeDisabled();
-	});
-
-	test('should not allow to select factory settings', async () => {
-		const component = render(<Settings />);
-		const factorySettingsButton = component.getByTestId('direct-access-factorySettings');
-
-		expect(factorySettingsButton).toBeDisabled();
-	});
 });

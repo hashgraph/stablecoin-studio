@@ -13,45 +13,43 @@ import InnactivityTimer from '../components/InnactivityTimer';
 import { isMobile } from 'react-device-detect';
 
 function App() {
-	return (
-		isMobile ? ( 
-			<Flex
-					w='full'
-					h='100vh'
-					justify={'center'}
-					alignSelf='center'
-					alignContent={'center'}
-					flex={1}
-					flexDir='column'
-					gap={10}
-				>
-					<Text
-						fontSize='16px'
-						fontWeight={500}
-						textAlign='center'
-						lineHeight='16px'
-						color='brand.gray'
-						data-testid='isMobile'
-					>
-						This app is for desktop use only
-					</Text>
-				</Flex>
-		) : (		
-			<I18nextProvider i18n={i18n}>
-				<Provider store={store}>
-					<ChakraProvider theme={theme}>
-						<BrowserRouter>
-							<InnactivityTimer>
-								<Focus />
-								<Fonts />
-								<ScrollBar />
-								<Router />
-							</InnactivityTimer>
-						</BrowserRouter>
-					</ChakraProvider>
-				</Provider>
-			</I18nextProvider>
-		)
+	return isMobile ? (
+		<Flex
+			w='full'
+			h='100vh'
+			justify={'center'}
+			alignSelf='center'
+			alignContent={'center'}
+			flex={1}
+			flexDir='column'
+			gap={10}
+		>
+			<Text
+				fontSize='16px'
+				fontWeight={500}
+				textAlign='center'
+				lineHeight='16px'
+				color='brand.gray'
+				data-testid='isMobile'
+			>
+				This app is for desktop use only
+			</Text>
+		</Flex>
+	) : (
+		<I18nextProvider i18n={i18n}>
+			<Provider store={store}>
+				<ChakraProvider theme={theme}>
+					<BrowserRouter>
+						<InnactivityTimer>
+							<Focus />
+							<Fonts />
+							<ScrollBar />
+							<Router />
+						</InnactivityTimer>
+					</BrowserRouter>
+				</ChakraProvider>
+			</Provider>
+		</I18nextProvider>
 	);
 }
 
