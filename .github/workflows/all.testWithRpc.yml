@@ -26,6 +26,8 @@ jobs:
       
       - name: Install dependencies Hashconnect
         run: npm i
+      - name: Install dependencies Hashconnect
+        run: export NODE_OPTIONS="--max-old-space-size=8192"
         
       - name: Install dependencies Hashconnect
         run: |
