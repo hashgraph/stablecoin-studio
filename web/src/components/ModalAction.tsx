@@ -36,7 +36,9 @@ const ModalAction = (props: ModalActionProps) => {
 	} = props;
 
 	return (
-		<Modal data-testid='modal-action' isOpen={isOpen} onClose={onClose} size={'xl'} isCentered>
+		<Modal data-testid='modal-action' isOpen={isOpen} onClose={onClose} size={'xl'} isCentered 
+			closeOnEsc={false}
+			closeOnOverlayClick={false}>
 			<ModalOverlay />
 			<ModalContent data-testid='modal-action-content' p='50' w='500px'>
 				<ModalCloseButton />
