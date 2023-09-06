@@ -66,6 +66,8 @@ The ENV file contains the following parameters:
 - **REACT_APP_FACTORIES**: This var is required if you want to create a new stable coin. The var must be a JSON array with a factory id in Hedera format `0.0.XXXXX` per environment.
 - **REACT_APP_MIRROR_NODE**: This var is required if you want to create a new stable coin. The var must be a unique mirror node service for each Hedera network, and this is the service which would be used when the UI starts. The service is configured by the environment and the base url properties, and, optionally, can also have an api key and a http header through which the api key is provided.
 - **REACT_APP_RPC_NODE**: This var is required if you want to create a new stable coin. The var must be a unique rpc node service for Hedera network, and this is the service which would be used when the UI starts. The service is configured using the same properties than the mirror node.
+- **REACT_APP_SHOW_DISCLAIMER**: This variable is necessary if you want to display a legal notice when you start the application. The default value is "false".
+- **REACT_APP_ONLY_TESTNET**: This variable is necessary if you want only the testnet to be displayed. The default value is "false".
 ```
 REACT_APP_FACTORIES='[{"Environment":"mainnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.1234567"},{"Environment":"testnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.3950554"},{"Environment":"previewnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.239703"}]'
 REACT_APP_MIRROR_NODE='[{"Environment":"testnet","BASE_URL":"https://testnet.mirrornode.hedera.com/api/v1/", "API_KEY": "132456", "HEADER": "x-api-key"}]'

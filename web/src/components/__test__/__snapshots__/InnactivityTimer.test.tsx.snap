@@ -1,10 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`<KeySelector /> should render correctly 1`] = `
+exports[`<InnactivityTimer /> should render correctly when disconnect 1`] = `
 <DocumentFragment>
-  <div
-    class="chakra-stack css-owjkmg"
-  />
   <span
     hidden=""
     id="__chakra_env"
@@ -12,11 +9,8 @@ exports[`<KeySelector /> should render correctly 1`] = `
 </DocumentFragment>
 `;
 
-exports[`<KeySelector /> should render correctly with sentences 1`] = `
+exports[`<InnactivityTimer /> should render correctly when paired 1`] = `
 <DocumentFragment>
-  <div
-    class="chakra-stack css-owjkmg"
-  />
   <span
     hidden=""
     id="__chakra_env"

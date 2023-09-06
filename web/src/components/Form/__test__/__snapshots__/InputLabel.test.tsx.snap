@@ -6,7 +6,7 @@ exports[`<InputLabel /> should render correctly 1`] = `
     class="chakra-form__label css-1hfoxt1"
   >
     <div
-      class="chakra-stack css-1igwmid"
+      class="chakra-stack css-84zodg"
     >
       <p
         class="chakra-text css-mgupmj"
