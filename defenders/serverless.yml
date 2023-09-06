@@ -7,8 +7,8 @@ provider:
   stackName: acceleratorStack
   ssot: false
 custom:
-  factoryAbiFolder: "./abi/factory/json.abi"
-  stableCoinAbiFolder: "./abi/stablecoin/json.abi"
+  factoryAbi: ${file(./abi/factory/json.abi)}
+  stableCoinAbi: ${file(./abi/stablecoin/json.abi)}
   config: ${file(config.yml)}
 defender:
   key: ${self:custom.config.team_api_key}
@@ -34,6 +34,7 @@ resources:
       name: StableCoin Accelerator StableCoins
       type: BLOCK
       network: hederatest
+      abi: ${self:custom.stableCoinAbi}
       addresses:
         - '0x0000000000000000000000000000000000000000'
       skip-abi-validation: true
@@ -62,7 +63,9 @@ resources:
 
           {{ matchReasonsFormatted }}
         message-subject: 'Platform Monitor: StableCoin Accelerator StableCoins triggered'
-        channels: []
+        channels: 
+          - >-
+              ${self:resources.notifications.stable-coin-accelerator-notifications}
       conditions:
         event:
           - expression: null
@@ -114,8 +117,9 @@ resources:
       name: StableCoin Accelerator Factory
       type: BLOCK
       network: hederatest
+      abi: ${self:custom.factoryAbi}
       addresses:
-        - '0x0000000000000000000000000000000000070419'
+        - ${self:custom.config.factory}
       skip-abi-validation: false
       paused: false
       action-trigger: ${self:resources.actions.accelerator-new-stable-coin}
