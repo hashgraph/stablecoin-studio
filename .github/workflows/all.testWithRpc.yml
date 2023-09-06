@@ -54,8 +54,9 @@ jobs:
         run: npm install
         working-directory: web
       
-      - name: node modelues web
-        run: ls node_modules/
+      - name: package.lock web
+        run: cat package-lock.json
+        
         working-directory: web
       - name: node modelues sdk
         run: ls node_modules/
@@ -110,6 +111,7 @@ jobs:
       - name: DockerStatus
         run:  curl --location --request POST 'http://localhost:7546/api' --data ""
     
+
 #      - name: Test Contracts
 #        run:  npm run test
 #        working-directory: contracts
