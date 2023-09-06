@@ -14,8 +14,13 @@ import {
   Proxy,
   Network,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { rimraf } from 'rimraf';
+import fs from 'fs-extra';
 
 const language: Language = new Language();
+
+const configFilePath = `hsca-config_test.yaml`;
+fs.openSync(configFilePath, 'w');
 
 describe('setFactoryService', () => {
   beforeEach(() => {
@@ -23,6 +28,10 @@ describe('setFactoryService', () => {
 
     // mocks
     jest.spyOn(console, 'log');
+
+    jest
+      .spyOn(configurationService, 'getDefaultConfigurationPath')
+      .mockReturnValue(configFilePath);
 
     jest.spyOn(utilsService, 'getCurrentAccount').mockReturnValue(account);
 
@@ -306,5 +315,6 @@ describe('setFactoryService', () => {
 
   afterEach(() => {
     jest.restoreAllMocks();
+    rimraf(configFilePath);
   });
 });

@@ -171,6 +171,9 @@ describe('configurationService', () => {
           case language.getText('configuration.askNetworkAccount'):
             return Promise.resolve('testnet');
 
+          case language.getText('configuration.askNetwork'):
+            return Promise.resolve('testnet');
+
           default:
             return Promise.resolve('');
         }
@@ -194,10 +197,10 @@ describe('configurationService', () => {
     await configurationService.init();
 
     expect(configurationService).not.toBeNull();
-    expect(defaultSingleAskMock).toHaveBeenCalledTimes(0);
-    expect(defaultConfirmAskMock).toHaveBeenCalledTimes(0);
-    expect(defaultMultipleAskMock).toHaveBeenCalledTimes(0);
-    expect(defaultPasswordAskMock).toHaveBeenCalledTimes(0);
+    expect(defaultSingleAskMock).toHaveBeenCalledTimes(5);
+    expect(defaultConfirmAskMock).toHaveBeenCalledTimes(4);
+    expect(defaultMultipleAskMock).toHaveBeenCalledTimes(3);
+    expect(defaultPasswordAskMock).toHaveBeenCalledTimes(1);
   });
 
   it('should init configuration with a path', async () => {

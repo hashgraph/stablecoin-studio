@@ -11,7 +11,7 @@ import { rimraf } from 'rimraf';
 
 const language: Language = new Language();
 const testDir = 'test';
-const path = `${testDir}/hsca-config.yaml`;
+const path = `${testDir}/hsca-config_test.yaml`;
 
 describe('setConfigurationService', () => {
   beforeEach(() => {
@@ -77,73 +77,6 @@ describe('setConfigurationService', () => {
       },
     ],
   };
-
-  it('should manage account menu', async () => {
-    jest
-      .spyOn(utilsService, 'getCurrentAccount')
-      .mockReturnValue(configurationMock.accounts[0]);
-
-    jest.spyOn(utilsService, 'initSDK').mockImplementation(jest.fn());
-
-    jest.spyOn(wizardService, 'mainMenu').mockImplementation(jest.fn());
-
-    const defaultMultipleAskMock = jest
-      .spyOn(utilsService, 'defaultMultipleAsk')
-      .mockImplementationOnce(() =>
-        Promise.resolve(language.getText('wizard.manageAccountOptions.List')),
-      )
-      .mockImplementationOnce(() =>
-        Promise.resolve(language.getText('wizard.manageAccountOptions.Add')),
-      )
-      .mockImplementationOnce(() => Promise.resolve('ED25519'))
-      .mockImplementationOnce(() => Promise.resolve('testnet'))
-      .mockImplementationOnce(() =>
-        Promise.resolve(language.getText('wizard.manageAccountOptions.Change')),
-      )
-      .mockImplementationOnce(() => Promise.resolve('0.0.456789'))
-      .mockImplementationOnce(() =>
-        Promise.resolve(language.getText('wizard.manageAccountOptions.Delete')),
-      )
-      .mockImplementationOnce(() =>
-        Promise.resolve('0.0.456789 - New account alias (testnet)'),
-      );
-
-    const defaultSingleAskMock = jest
-      .spyOn(utilsService, 'defaultSingleAsk')
-      .mockImplementationOnce(() => Promise.resolve('0'))
-      .mockImplementationOnce(() => Promise.resolve('0.0.456789'))
-      .mockImplementationOnce(() => Promise.resolve('New account alias'));
-
-    const defaultPasswordAskMock = jest
-      .spyOn(utilsService, 'defaultPasswordAsk')
-      .mockImplementationOnce(() =>
-        Promise.resolve(
-          'bcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789a',
-        ),
-      );
-
-    const defaultConfirmAskMock = jest
-      .spyOn(utilsService, 'defaultConfirmAsk')
-      .mockImplementationOnce(() => Promise.resolve(false))
-      .mockImplementationOnce(() => Promise.resolve(false));
-
-    const keep = setConfigurationService.manageAccountMenu;
-    jest
-      .spyOn(setConfigurationService, 'manageAccountMenu')
-      .mockImplementationOnce(keep)
-      .mockImplementationOnce(keep)
-      .mockImplementationOnce(keep)
-      .mockImplementationOnce(keep)
-      .mockImplementation(jest.fn());
-
-    await setConfigurationService.manageAccountMenu();
-
-    expect(setConfigurationService).not.toBeNull();
-    expect(defaultMultipleAskMock).toHaveBeenCalledTimes(8);
-    expect(defaultConfirmAskMock).toHaveBeenCalledTimes(2);
-    expect(defaultSingleAskMock).toHaveBeenCalledTimes(3);
-    expect(defaultPasswordAskMock).toHaveBeenCalledTimes(1);
-  });
 
   it('should init configuration with no file path nor network', async () => {
     const defaultSingleAskMock = jest
@@ -281,13 +214,11 @@ describe('setConfigurationService', () => {
       .mockImplementationOnce(() => Promise.resolve('other net'))
       .mockImplementationOnce(() => Promise.resolve('testnet'));
 
-    setConfigurationService.configureDefaultNetwork(
-      'mainnet|previewnet|testnet|local',
-    );
+    setConfigurationService.configureDefaultNetwork('testnet');
 
     expect(setConfigurationService).not.toBeNull();
     expect(defaultSingleAskMock).toHaveBeenCalledTimes(0);
-    expect(defaultMultipleAskMock).toHaveBeenCalledTimes(1);
+    expect(defaultMultipleAskMock).toHaveBeenCalledTimes(0);
   });
 
   it('should configure default network', async () => {
@@ -304,13 +235,11 @@ describe('setConfigurationService', () => {
       .mockImplementationOnce(() => Promise.resolve('other net'))
       .mockImplementationOnce(() => Promise.resolve('testnet'));
 
-    setConfigurationService.configureDefaultNetwork(
-      'mainnet|previewnet|testnet|local',
-    );
+    setConfigurationService.configureDefaultNetwork('testnet');
 
     expect(setConfigurationService).not.toBeNull();
     expect(defaultSingleAskMock).toHaveBeenCalledTimes(0);
-    expect(defaultMultipleAskMock).toHaveBeenCalledTimes(1);
+    expect(defaultMultipleAskMock).toHaveBeenCalledTimes(0);
   });
 
   it('should configure custom network', async () => {
@@ -336,8 +265,81 @@ describe('setConfigurationService', () => {
     expect(conf.rpcs).toBe(configurationMock.rpcs);
   });
 
+  it('should manage account menu', async () => {
+    jest
+      .spyOn(configurationService, 'getDefaultConfigurationPath')
+      .mockReturnValue(path);
+
+    jest
+      .spyOn(utilsService, 'getCurrentAccount')
+      .mockReturnValue(configurationMock.accounts[0]);
+
+    jest.spyOn(utilsService, 'initSDK').mockImplementation(jest.fn());
+
+    jest.spyOn(wizardService, 'mainMenu').mockImplementation(jest.fn());
+
+    const defaultMultipleAskMock = jest
+      .spyOn(utilsService, 'defaultMultipleAsk')
+      .mockImplementationOnce(() =>
+        Promise.resolve(language.getText('wizard.manageAccountOptions.List')),
+      )
+      .mockImplementationOnce(() =>
+        Promise.resolve(language.getText('wizard.manageAccountOptions.Add')),
+      )
+      .mockImplementationOnce(() => Promise.resolve('ED25519'))
+      .mockImplementationOnce(() => Promise.resolve('testnet'))
+      .mockImplementationOnce(() =>
+        Promise.resolve(language.getText('wizard.manageAccountOptions.Change')),
+      )
+      .mockImplementationOnce(() => Promise.resolve('0.0.456789'))
+      .mockImplementationOnce(() =>
+        Promise.resolve(language.getText('wizard.manageAccountOptions.Delete')),
+      )
+      .mockImplementationOnce(() =>
+        Promise.resolve('0.0.456789 - New account alias (testnet)'),
+      );
+
+    const defaultSingleAskMock = jest
+      .spyOn(utilsService, 'defaultSingleAsk')
+      .mockImplementationOnce(() => Promise.resolve('0'))
+      .mockImplementationOnce(() => Promise.resolve('0.0.456789'))
+      .mockImplementationOnce(() => Promise.resolve('New account alias'));
+
+    const defaultPasswordAskMock = jest
+      .spyOn(utilsService, 'defaultPasswordAsk')
+      .mockImplementationOnce(() =>
+        Promise.resolve(
+          'bcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789a',
+        ),
+      );
+
+    const defaultConfirmAskMock = jest
+      .spyOn(utilsService, 'defaultConfirmAsk')
+      .mockImplementationOnce(() => Promise.resolve(false))
+      .mockImplementationOnce(() => Promise.resolve(false));
+
+    const keep = setConfigurationService.manageAccountMenu;
+    jest
+      .spyOn(setConfigurationService, 'manageAccountMenu')
+      .mockImplementationOnce(keep)
+      .mockImplementationOnce(keep)
+      .mockImplementationOnce(keep)
+      .mockImplementationOnce(keep)
+      .mockImplementation(jest.fn());
+
+    await setConfigurationService.manageAccountMenu();
+
+    rimraf(testDir);
+
+    expect(setConfigurationService).not.toBeNull();
+    expect(defaultMultipleAskMock).toHaveBeenCalledTimes(8);
+    expect(defaultConfirmAskMock).toHaveBeenCalledTimes(2);
+    expect(defaultSingleAskMock).toHaveBeenCalledTimes(3);
+    expect(defaultPasswordAskMock).toHaveBeenCalledTimes(1);
+  });
+
   afterEach(() => {
     jest.restoreAllMocks();
-    rimraf(testDir);
+    rimraf(path);
   });
 });

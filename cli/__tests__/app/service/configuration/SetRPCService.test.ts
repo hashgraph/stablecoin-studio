@@ -8,8 +8,13 @@ import Language from '../../../../src/domain/language/Language.js';
 import { IRPCsConfig } from '../../../../src/domain/configuration/interfaces/IRPCsConfig.js';
 import { IConfiguration } from '../../../../src/domain/configuration/interfaces/IConfiguration.js';
 import { Network } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { rimraf } from 'rimraf';
+import fs from 'fs-extra';
 
 const language: Language = new Language();
+
+const configFilePath = `hsca-config_test.yaml`;
+fs.openSync(configFilePath, 'w');
 
 describe('setRPCNodeService', () => {
   const configurationMock: IConfiguration = {
@@ -71,6 +76,9 @@ describe('setRPCNodeService', () => {
 
   beforeAll(() => {
     jest.spyOn(utilsService, 'showSpinner').mockImplementation();
+    jest
+      .spyOn(configurationService, 'getDefaultConfigurationPath')
+      .mockReturnValue(configFilePath);
     jest.spyOn(console, 'log');
   });
 
@@ -289,5 +297,6 @@ describe('setRPCNodeService', () => {
 
   afterAll(() => {
     jest.restoreAllMocks();
+    rimraf(configFilePath);
   });
 });
