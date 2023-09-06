@@ -125,6 +125,9 @@ jobs:
 #        working-directory: web  
       
       - name: Test cli
-        run:  npm run test
+        run:  |
+          export NODE_OPTIONS="--max-old-space-size=8192"  
+          npm run test
+          
         working-directory: cli
       
