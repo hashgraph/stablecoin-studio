@@ -3,7 +3,7 @@
 exports[`<undefined /> doesn't show error with showError=false: NotShowingError 1`] = `
 <DocumentFragment>
   <div
-    class="chakra-stack css-1h0sumw"
+    class="chakra-stack css-ppmla1"
   >
     <div
       class="chakra-form-control css-1kxonj9"
@@ -17,7 +17,7 @@ exports[`<undefined /> doesn't show error with showError=false: NotShowingError 
         id="field-:r6:-label"
       >
         <div
-          class="chakra-stack css-84zodg"
+          class="chakra-stack css-1igwmid"
         >
           <p
             class="chakra-text css-mgupmj"
@@ -41,7 +41,7 @@ exports[`<undefined /> doesn't show error with showError=false: NotShowingError 
           class="css-1f43avz-a11yText-A11yText"
         />
         <div
-          class=" css-ot5r48"
+          class=" css-15twfgh"
           data-invalid="true"
         >
           <div
@@ -124,7 +124,7 @@ exports[`<undefined /> doesn't show error with showError=false: NotShowingError 
 exports[`<undefined /> shows error with showErrors=true: ShowingError 1`] = `
 <DocumentFragment>
   <div
-    class="chakra-stack css-1h0sumw"
+    class="chakra-stack css-ppmla1"
   >
     <div
       class="chakra-form-control css-1kxonj9"
@@ -138,7 +138,7 @@ exports[`<undefined /> shows error with showErrors=true: ShowingError 1`] = `
         id="field-:r5:-label"
       >
         <div
-          class="chakra-stack css-84zodg"
+          class="chakra-stack css-1igwmid"
         >
           <p
             class="chakra-text css-mgupmj"
@@ -162,7 +162,7 @@ exports[`<undefined /> shows error with showErrors=true: ShowingError 1`] = `
           class="css-1f43avz-a11yText-A11yText"
         />
         <div
-          class=" css-ot5r48"
+          class=" css-15twfgh"
           data-invalid="true"
         >
           <div
@@ -251,7 +251,7 @@ exports[`<undefined /> shows error with showErrors=true: ShowingError 1`] = `
 exports[`<undefined /> shows placeholder with default value: DefaultPlaceholder 1`] = `
 <DocumentFragment>
   <div
-    class="chakra-stack css-1h0sumw"
+    class="chakra-stack css-ppmla1"
   >
     <div
       class="chakra-form-control css-1kxonj9"
@@ -264,7 +264,7 @@ exports[`<undefined /> shows placeholder with default value: DefaultPlaceholder 
         id="field-:r3:-label"
       >
         <div
-          class="chakra-stack css-84zodg"
+          class="chakra-stack css-1igwmid"
         >
           <p
             class="chakra-text css-mgupmj"
@@ -288,7 +288,7 @@ exports[`<undefined /> shows placeholder with default value: DefaultPlaceholder 
           class="css-1f43avz-a11yText-A11yText"
         />
         <div
-          class=" css-ot5r48"
+          class=" css-15twfgh"
         >
           <div
             class="css-3y2vuh"
@@ -369,7 +369,7 @@ exports[`<undefined /> shows placeholder with default value: DefaultPlaceholder 
 exports[`<undefined /> shows placeholder with the provided value: CustomPlaceholder 1`] = `
 <DocumentFragment>
   <div
-    class="chakra-stack css-1h0sumw"
+    class="chakra-stack css-ppmla1"
   >
     <div
       class="chakra-form-control css-1kxonj9"
@@ -382,7 +382,7 @@ exports[`<undefined /> shows placeholder with the provided value: CustomPlacehol
         id="field-:r4:-label"
       >
         <div
-          class="chakra-stack css-84zodg"
+          class="chakra-stack css-1igwmid"
         >
           <p
             class="chakra-text css-mgupmj"
@@ -406,7 +406,7 @@ exports[`<undefined /> shows placeholder with the provided value: CustomPlacehol
           class="css-1f43avz-a11yText-A11yText"
         />
         <div
-          class=" css-ot5r48"
+          class=" css-15twfgh"
         >
           <div
             class="css-3y2vuh"

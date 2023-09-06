@@ -144,8 +144,11 @@ const ModalWalletConnect = () => {
 	};
 
 	const networkOptions = [{ value: 'testnet', label: 'Testnet' }];
-	if(process.env.REACT_APP_ONLY_TESTNET === undefined || process.env.REACT_APP_ONLY_TESTNET === 'false'){		
-		networkOptions.push({ value: 'mainnet', label: 'Mainnet' })
+	if (
+		process.env.REACT_APP_ONLY_TESTNET === undefined ||
+		process.env.REACT_APP_ONLY_TESTNET === 'false'
+	) {
+		networkOptions.push({ value: 'mainnet', label: 'Mainnet' });
 	}
 
 	const handleConnectMetamaskWallet = () => {

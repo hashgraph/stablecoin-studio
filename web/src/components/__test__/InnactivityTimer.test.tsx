@@ -4,7 +4,7 @@ import configureMockStore from 'redux-mock-store';
 import { ConnectionState } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 const defaultProps = {
-	children: ''
+	children: '',
 };
 
 const mockStore = configureMockStore();
@@ -30,5 +30,4 @@ describe(`<${InnactivityTimer.name} />`, () => {
 
 		expect(component.asFragment()).toMatchSnapshot();
 	});
-
 });
