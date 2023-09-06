@@ -75,9 +75,6 @@ const DangerZoneOperations = () => {
 	const checkTokenStatus = async () => {
 		setPaused(selectedStableCoin?.paused || false);
 		setDeleted(selectedStableCoin?.deleted || false);
-		if (selectedStableCoin?.deleted) {
-			RouterManager.to(navigate, NamedRoutes.Operations);
-		}
 	};
 
 	const getAvailableFeatures = () => {

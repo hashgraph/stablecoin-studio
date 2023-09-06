@@ -335,6 +335,8 @@ const CoinDropdown = () => {
 					proxyConfig?.pendingOwner?.toString() === accountInfo?.id?.toString(),
 				),
 			);
+
+			RouterManager.to(navigate, NamedRoutes.Operations);
 		} catch (e) {
 			setSuccess(false);
 			dispatch(walletActions.setSelectingStableCoin(false));

@@ -22,14 +22,13 @@ describe(`<${App.name} />`, () => {
 	test('should render correctly disclaimer', async () => {
 		Object.defineProperty(reactDeviceDetect, 'isMobile', { get: () => false });
 		process.env = {
-			REACT_APP_SHOW_DISCLAIMER: 'true'
-		}
+			REACT_APP_SHOW_DISCLAIMER: 'true',
+		};
 		const component = render(<App />, {});
 
-		
 		let button = component.getByTestId('modal-action-cancel-button');
 		await userEvent.click(button);
-		
+
 		button = component.getByTestId('modal-term-conditions-button');
 		await userEvent.click(button);
 

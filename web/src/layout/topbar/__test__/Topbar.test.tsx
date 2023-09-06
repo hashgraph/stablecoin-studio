@@ -37,7 +37,6 @@ describe(`<${Topbar.name} />`, () => {
 	});
 
 	test('should has is Not Network Recognized', async () => {
-		
 		const mockStore = configureMockStore();
 		const store = mockStore({
 			wallet: {
@@ -52,7 +51,6 @@ describe(`<${Topbar.name} />`, () => {
 	});
 
 	test('should has is Not Account Recognized ', async () => {
-		
 		const mockStore = configureMockStore();
 		const store = mockStore({
 			wallet: {
