@@ -15,7 +15,7 @@
 		"@hashgraph-dev/stablecoin-npm-sdk": "file:./../sdk",
 		"@reduxjs/toolkit": "^1.9.1",
 		"@testing-library/jest-dom": "^5.16.5",
-		"@testing-library/react": "13.3.0",
+		"@testing-library/react": "https://pkg.csb.dev/testing-library/react-testing-library/commit/b156f877/@testing-library/react",
 		"@testing-library/user-event": "^14.4.2",
 		"@types/jest": "^29.2.6",
 		"@types/react": "^18.0.27",
