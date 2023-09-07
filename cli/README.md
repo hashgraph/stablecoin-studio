@@ -363,7 +363,7 @@ This option displays all the stable coins the user has created or added.
 This last option allows the user to display the current configuration file, modify the configuration path, change the default network and manage: 
 - **Accounts**: Allows the user to change the current account, see all configured accounts and also add new accounts and remove existing ones.
 - **Mirror nodes**: Allows the user to change the current mirror node, see all configured mirror nodes for the selected Hedera network, add new mirror nodes and remove existing ones except for the one that is being used.
-- **JSON-RPC-Relay services**: Allows the user to change the current JSON-RPC-Relay service, see all configured services for the selected Hedera network, add new JSON-RPC-Relay servies and remove existing ones except for the one that is being used.
+- **JSON-RPC-Relay services**: Allows the user to change the current JSON-RPC-Relay service, see all configured services for the selected Hedera network, add new JSON-RPC-Relay servies and remove existing ones except for the one that is being used. You can check the available JSON-RPC relays [here](https://github.com/hashgraph/hedera-accelerator-stablecoin/blob/main/README.md#JSON-RPC-Relays)
 - **Factory**: Allows the user to change the factory id of the selected Hedera network in the configuration file, to upgrade the factory's proxy, to change the factory's proxy admin owner account and, finally, to view de current factory implementation contract address as well as the factory owner account previously commented.
 
 # Testing
