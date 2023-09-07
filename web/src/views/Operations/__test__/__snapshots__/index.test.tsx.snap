@@ -3,13 +3,13 @@
 exports[`<Operations /> should render correctly 1`] = `
 <DocumentFragment>
   <div
-    class="chakra-stack css-19t9j1"
+    class="chakra-stack css-16oka5y"
   >
     <div
-      class="chakra-stack css-1u2nxl"
+      class="chakra-stack css-5vgp34"
     />
     <div
-      class="chakra-stack css-19t9j1"
+      class="chakra-stack css-16oka5y"
     >
       <h2
         class="chakra-heading css-bqsusc"
