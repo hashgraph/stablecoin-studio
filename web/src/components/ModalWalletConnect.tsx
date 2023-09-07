@@ -85,6 +85,7 @@ const ModalWalletConnect = () => {
 		dispatch(walletActions.setNetwork(network));
 		dispatch(walletActions.setSelectedStableCoin(undefined));
 		dispatch(walletActions.setSelectedStableCoinProxyConfig(undefined));
+		dispatch(walletActions.setSelectedNetworkFactoryProxyConfig(undefined));
 		dispatch(walletActions.setIsProxyOwner(false));
 		dispatch(walletActions.setIsPendingOwner(false));
 		dispatch(walletActions.setIsAcceptOwner(false));
@@ -92,10 +93,12 @@ const ModalWalletConnect = () => {
 		try {
 			await SDKService.connectWallet(wallet, network);
 
-			const factoryProxyConfig: StableCoinListViewModel = await getFactoryProxyConfig(
-				await Network.getFactoryAddress(),
-			);
-			dispatch(walletActions.setSelectedNetworkFactoryProxyConfig(factoryProxyConfig));
+			const factoryId = await Network.getFactoryAddress();
+
+			if (factoryId) {
+				const factoryProxyConfig: StableCoinListViewModel = await getFactoryProxyConfig(factoryId);
+				dispatch(walletActions.setSelectedNetworkFactoryProxyConfig(factoryProxyConfig));
+			}
 			dispatch(walletActions.setIsFactoryProxyOwner(false));
 			dispatch(walletActions.setIsFactoryPendingOwner(false));
 			dispatch(walletActions.setIsFactoryAcceptOwner(false));

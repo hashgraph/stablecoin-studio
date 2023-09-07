@@ -107,11 +107,34 @@ const CoinDropdown = () => {
 			}),
 		);
 
-		const factoryProxyConfig = await SDKService.getFactoryProxyConfig(
-			new GetFactoryProxyConfigRequest({
-				factoryId: await Network.getFactoryAddress(),
-			}),
-		);
+		const factoryId = await Network.getFactoryAddress();
+
+		if (factoryId) {
+			const factoryProxyConfig = await SDKService.getFactoryProxyConfig(
+				new GetFactoryProxyConfigRequest({
+					factoryId,
+				}),
+			);
+			dispatch(
+				walletActions.setIsFactoryProxyOwner(
+					factoryProxyConfig?.owner?.toString() === accountInfo?.id?.toString(),
+				),
+			);
+			dispatch(
+				walletActions.setIsFactoryPendingOwner(
+					factoryProxyConfig?.pendingOwner?.toString() !== factoryProxyConfig?.owner?.toString() &&
+						factoryProxyConfig?.pendingOwner?.toString() !== accountInfo?.id?.toString() &&
+						factoryProxyConfig?.pendingOwner?.toString() !== '0.0.0' &&
+						factoryProxyConfig?.pendingOwner?.toString() !== '' &&
+						factoryProxyConfig?.pendingOwner?.toString() !== undefined,
+				),
+			);
+			dispatch(
+				walletActions.setIsFactoryAcceptOwner(
+					factoryProxyConfig?.pendingOwner?.toString() === accountInfo?.id?.toString(),
+				),
+			);
+		}
 
 		dispatch(walletActions.setAccountInfo(accountInfo));
 		dispatch(
@@ -129,25 +152,6 @@ const CoinDropdown = () => {
 		dispatch(
 			walletActions.setIsAcceptOwner(
 				proxyConfig?.pendingOwner?.toString() === accountInfo?.id?.toString(),
-			),
-		);
-		dispatch(
-			walletActions.setIsFactoryProxyOwner(
-				factoryProxyConfig?.owner?.toString() === accountInfo?.id?.toString(),
-			),
-		);
-		dispatch(
-			walletActions.setIsFactoryPendingOwner(
-				factoryProxyConfig?.pendingOwner?.toString() !== factoryProxyConfig?.owner?.toString() &&
-					factoryProxyConfig?.pendingOwner?.toString() !== accountInfo?.id?.toString() &&
-					factoryProxyConfig?.pendingOwner?.toString() !== '0.0.0' &&
-					factoryProxyConfig?.pendingOwner?.toString() !== '' &&
-					factoryProxyConfig?.pendingOwner?.toString() !== undefined,
-			),
-		);
-		dispatch(
-			walletActions.setIsFactoryAcceptOwner(
-				factoryProxyConfig?.pendingOwner?.toString() === accountInfo?.id?.toString(),
 			),
 		);
 	};

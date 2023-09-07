@@ -3,7 +3,7 @@
 exports[`<KeySelector /> should render correctly 1`] = `
 <DocumentFragment>
   <div
-    class="chakra-stack css-owjkmg"
+    class="chakra-stack css-tl3ftk"
   />
   <span
     hidden=""
@@ -15,7 +15,7 @@ exports[`<KeySelector /> should render correctly 1`] = `
 exports[`<KeySelector /> should render correctly with sentences 1`] = `
 <DocumentFragment>
   <div
-    class="chakra-stack css-owjkmg"
+    class="chakra-stack css-tl3ftk"
   />
   <span
     hidden=""
