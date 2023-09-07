@@ -24,6 +24,7 @@
 - **[Recommendations](#Recommendations)**<br>
 - **[Testnet reset procedure](#Testnet-reset-procedure)**<br>
 - **[Fees](#Fees)**<br>
+- **[JSON-RPC relays](#JSON-RPC-Relays)**<br>
 - **[Deploying the stable coin factories](#Deploying-the-stable-coin-factories)**<br>
 - **[Development manifesto](#Development-Manifesto)**<br>
 - **[Support](#Support)**<br>
@@ -234,7 +235,7 @@ All fees are subject to change. The fees below reflect a base price for the tran
 | Revoke KyC | 0.005$   | 56.195 |
 
 # JSON-RPC Relays
-Anyone in the community can set up their own JSON RPC relay that applications can use to deploy, query, and execute smart contracts. You can use your local RPC-relay following this instructions: [hedera-json-rpc-relay](https://github.com/hashgraph/hedera-json-rpc-relay) or you can use one of the community-hosted Hedera JSON RPC relays like:
+Anyone in the community can set up their own JSON RPC relay that applications can use to deploy, query, and execute smart contracts. You can use your local RPC-relay following this [instructions](https://github.com/hashgraph/hedera-json-rpc-relay) or you can use one of the community-hosted Hedera JSON RPC relays like:
 - [Hashio](https://swirldslabs.com/hashio/)
 - [Arkhia](https://www.arkhia.io/features/#api-services)
 - [ValidationCloud](https://docs.validationcloud.io/v1/hedera/json-rpc-relay-api)
