@@ -233,6 +233,12 @@ All fees are subject to change. The fees below reflect a base price for the tran
 | Grant KyC | 0.005$   | 56.167 |
 | Revoke KyC | 0.005$   | 56.195 |
 
+# JSON-RPC Relays
+Anyone in the community can set up their own JSON RPC relay that applications can use to deploy, query, and execute smart contracts. You can use your local RPC-relay following this instructions: [hedera-json-rpc-relay](https://github.com/hashgraph/hedera-json-rpc-relay) or you can use one of the community-hosted Hedera JSON RPC relays like:
+- [Hashio](https://swirldslabs.com/hashio/)
+- [Arkhia](https://www.arkhia.io/features/#api-services)
+- [ValidationCloud](https://docs.validationcloud.io/v1/hedera/json-rpc-relay-api)
+
 # Development manifesto
 The development of the project follows enterprise-grade practices for software development. Using DDD, hexagonal architecture, and the CQS pattern, all within an agile methodology.
 
