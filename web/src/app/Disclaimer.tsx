@@ -8,7 +8,6 @@ interface DisclaimerProps {
 }
 
 const Disclaimer = ({ setAccepted }: DisclaimerProps) => {
-
 	const { isOpen, onOpen, onClose } = useDisclosure();
 
 	useEffect(() => {

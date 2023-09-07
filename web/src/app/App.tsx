@@ -50,7 +50,7 @@ function App() {
 			</Provider>
 		</I18nextProvider>
 	) : (
-		<Disclaimer setAccepted={setAccepted}/>
+		<Disclaimer setAccepted={setAccepted} />
 	);
 }
 
