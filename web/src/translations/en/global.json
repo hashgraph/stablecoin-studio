@@ -14,13 +14,6 @@
 	"mobile": {
 		"message": "This app is for desktop use only"
 	},
-	"disclaimer": {
-		"title": "Terms & Conditions",
-		"description": "Terms & Conditions Description",
-		"button": "Terms & Conditions",
-		"accept": "Accept",
-		"cancel": "Cancel"
-	},
 	"innactivity": {
 		"title": "Your session has expired!",
 		"description": "Please, reconnect your wallet"

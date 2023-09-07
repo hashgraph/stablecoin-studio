@@ -7,10 +7,10 @@ exports[`<TopbarRight /> should render correctly 1`] = `
     data-testid="topbar-right"
   >
     <div
-      class="chakra-stack css-cr3f1i"
+      class="chakra-stack css-d17m5h"
     >
       <div
-        class="chakra-stack css-dk69dq"
+        class="chakra-stack css-jp20jv"
       >
         <div
           class="css-1m8iww1"
