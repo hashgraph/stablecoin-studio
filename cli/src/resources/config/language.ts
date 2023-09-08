@@ -38,7 +38,7 @@ export const english = {
       'An error occurred, see above for details, press any key to continue',
   },
   initialConfiguration: {
-    title: '\n\n\t\tHedera Stable Coin initial configuration\n',
+    title: '\n\n\t\tHedera Stablecoin initial configuration\n',
   },
   configuration: {
     askPath: 'Write your config path',
@@ -133,7 +133,7 @@ export const english = {
       "You don't have configured your factory and HederaTokenManager address. Without this configuration you cannot create an stablecoin. Check the following link for more information. https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/cli#creating-a-config-file",
     askConfirmCreation:
       'Are you sure you want to create the stablecoin with these parameters?',
-    description: 'Creating Stable Coin',
+    description: 'Creating Stablecoin',
     askName: 'Enter the name',
     askSymbol: 'Enter the symbol',
     askAutoRenewAccountId: 'Enter the autorenew account',
@@ -208,7 +208,7 @@ export const english = {
     askOperateStableCoin:
       'Do you want to operate with the stablecoin you just created?',
     created:
-      'Stable Coin ${name} (${symbol}) with ${decimals} decimals has been created!',
+      'Stablecoin ${name} (${symbol}) with ${decimals} decimals has been created!',
     askCashInAmount: 'How many tokens do you want to cash in?',
     askBurnAmount: 'How many tokens do you want to burn?',
     askWipeAmount: 'How many tokens do you want to wipe?',
@@ -241,7 +241,7 @@ export const english = {
     owner: 'Factory owner',
   },
   commander: {
-    appDescription: 'Hedera Stable Coin is a CLI for managing stablecoins',
+    appDescription: 'Hedera Stablecoin is a CLI for managing stablecoins',
     version: 'Output the current version',
     initDescription: 'Init the application',
     wizardDescription: 'Start the wizard',
@@ -254,10 +254,10 @@ export const english = {
     },
     token: {
       createDescription:
-        'Create a new Stable Coin and associate the new token to the admin.',
+        'Create a new Stablecoin and associate the new token to the admin.',
       infoDescription:
-        'Get the name, symbol, totalSupply, decimals and address of a Stable Coin Token.',
-      balanceDescription: 'Get account balance for a Stable Coin Token.',
+        'Get the name, symbol, totalSupply, decimals and address of a Stablecoin Token.',
+      balanceDescription: 'Get account balance for a Stablecoin Token.',
       mintDescription: 'Mint stablecoins',
       options: {
         privateKey: "Account's private key",
@@ -334,10 +334,10 @@ export const english = {
       ...returnToMainMenu,
     },
     mainOptions: {
-      Create: 'Create a new Stable Coin',
+      Create: 'Create a new Stablecoin',
       Manage: 'Manage imported tokens',
-      Operate: 'Operate with an existing Stable Coin',
-      List: 'List Stable Coins',
+      Operate: 'Operate with an existing Stablecoin',
+      List: 'List Stablecoins',
       Configuration: 'Configuration',
       ...separator_1,
       Exit: 'Exit',
@@ -607,7 +607,7 @@ export const english = {
   },
   stableCoinConfiguration: {
     options: {
-      proxyConfiguration: 'Stable Coin Configuration',
+      proxyConfiguration: 'Stablecoin Configuration',
       tokenConfiguration: 'Token Configuration',
       ...goBack,
     },
