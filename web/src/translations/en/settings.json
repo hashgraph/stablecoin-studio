@@ -1,9 +1,9 @@
 {
 	"title": "Settings",
 	"operationTitle": "Settings",
-	"subtitle": "Choose a settings option",
-	"stableCoinSettings": "Stablecoin",
-	"factorySettings": "Factory",
+	"subtitle": "Choose an option",
+	"stableCoinSettings": "Stablecoin Setting",
+	"factorySettings": "Factory Contract",
 	"notOwner": "The current account is not the owner of the factory's proxy",
 	"stableCoin": {
 		"transferOwner": {
