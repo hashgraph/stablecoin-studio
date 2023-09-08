@@ -12,11 +12,11 @@ import {
 import FeeStableCoinService from './FeeStableCoinService.js';
 
 /**
- * Create Stable Coin Service
+ * Create Stablecoin Service
  */
 export default class DetailsStableCoinService extends Service {
   constructor() {
-    super('Details Stable Coin');
+    super('Details Stablecoin');
   }
 
   private epochTimestampToGMTString(timestamp: number | undefined): string {

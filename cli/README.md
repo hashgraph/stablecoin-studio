@@ -1,6 +1,6 @@
 <div align="center">
 
-# Hedera Stable Coin Accelerator - Command Line Interface (CLI)
+# Hedera Stablecoin Accelerator - Command Line Interface (CLI)
 
 [![CLI - Test](https://github.com/hashgraph/hedera-accelerator-stablecoin/actions/workflows/cli.test.yml/badge.svg)](https://github.com/hashgraph/hedera-accelerator-stablecoin/actions/workflows/cli.test.yml)
 
@@ -8,7 +8,7 @@
 
 ### Table of contents
 
-- [Hedera Stable Coin Accelerator - Command Line Interface (CLI)](#hedera-stable-coin-accelerator---command-line-interface-cli)
+- [Hedera Stablecoin Accelerator - Command Line Interface (CLI)](#hedera-stable-coin-accelerator---command-line-interface-cli)
     - [Table of contents](#table-of-contents)
 - [Overview](#overview)
 - [Installation](#installation)
@@ -23,10 +23,10 @@
   - [Factories ](#factories)
   - [CLI flow](#cli-flow)
     - [Main menu](#main-menu)
-      - [Create a new stable coin](#create-a-new-stable-coin)
+      - [Create a new stablecoin](#create-a-new-stable-coin)
       - [Manage imported tokens](#manage-imported-tokens)
       - [Operate with stable soin](#operate-with-stable-soin)
-      - [List stable coins](#list-stable-coins)
+      - [List stablecoins](#list-stable-coins)
       - [Configuration](#configuration)
 - [Testing](#testing)
   - [Jest](#jest)
@@ -37,7 +37,7 @@
 
 # Overview
 
-The Command Line Interface (CLI) uses the API exposed by the SDK to create, manage and operate stable coins. It is meant as a "demo tool" to showcase the project's functionalities.
+The Command Line Interface (CLI) uses the API exposed by the SDK to create, manage and operate stablecoins. It is meant as a "demo tool" to showcase the project's functionalities.
 
 # Installation
 
@@ -239,42 +239,42 @@ When an account is selected, the main menu is displayed. The network the account
 
 When your configuration file is set up and at least one account is added and selected, you are able to see the different options that are available.
 
-#### Create a new stable coin
+#### Create a new stablecoin
 
 In order to use this option you must set a factory first.
 You can check our factories deployed in [our documentation](https://github.com/hashgraph/hedera-accelerator-stablecoin#deploying-the-stable-coin-factories).
 
-With this option you are able to create a new stable coin adding the mandatory details like name and symbol.
+With this option you are able to create a new stablecoin adding the mandatory details like name and symbol.
 
-> The auto-renew account is not requested since is automatically set to be the user's current account, otherwise the stable coin creation will not work, this is due to the fact that the auto-renew account must sign the underlying token's creation transaction, and currently we do not support multi-signatures transactions.
+> The auto-renew account is not requested since is automatically set to be the user's current account, otherwise the stablecoin creation will not work, this is due to the fact that the auto-renew account must sign the underlying token's creation transaction, and currently we do not support multi-signatures transactions.
 
 After the minimum details have been added, you will be asked if you want to add optional details like the number of decimals, the initial supply or the max supply. If you reply "no", the default values will be set.
 
 Another question is prompt asking if you would like the smart contract to be set as the owner of all the underlying token keys (pause, wipe, ...), you could however set any key you wish as the owner of any token key, except for the admin key and the supply key that will be automatically set to be the smart contract.
 
-After managing token keys, you will be asked about to enable the KYC. If so, all accounts will need that the KYC to be granted in order to operate with the stable coin, and the token KYC key will be requested. Finally, you will be able to request the KYC to be granted to the current account during the stable coin creationg process. On the contrary, if you decide no to enable the KYC, the token KYC key will not be set and no account will need the KYC to be grante in order to operate with the stable coin.
+After managing token keys, you will be asked about to enable the KYC. If so, all accounts will need that the KYC to be granted in order to operate with the stablecoin, and the token KYC key will be requested. Finally, you will be able to request the KYC to be granted to the current account during the stablecoin creationg process. On the contrary, if you decide no to enable the KYC, the token KYC key will not be set and no account will need the KYC to be grante in order to operate with the stablecoin.
 
 Next, you will be requested about the possibility of adding custom fees to the token once it is created. If so, the token fee schedule key will be requested so the owner of this key will be able to add custom fees to the token. Otherwise, no one will be able to add any token custom fees.
 
 Once all the token keys are set, for all keys that were set to be the smart contract, you will be able to grant and revoke this capacity to any other account through roles, since it is the smart contract that will be ultimately controlling the underlying token. Therefore, for all the underlying token's keys assigned to the smart contract, you can choose to grant its corresponding role to the current account deploying the SC or any other.
 
-When you add an existing stable coin as an imported token, you will be able to operate with the roles that the stable coin's admin granted you. If after adding a stable coin you are granted other roles, you will have the possibility to refresh the stable coin's roles that you have.
+When you add an existing stablecoin as an imported token, you will be able to operate with the roles that the stablecoin's admin granted you. If after adding a stablecoin you are granted other roles, you will have the possibility to refresh the stablecoin's roles that you have.
 
-Then you will have the possibility to set a **Proof of Reserve feed (PoR)** for your stable coin. A PoR is a smart contract that connects your on-chain stable coin to your off-chain fiat currency supply. The idea is to have an on-chain representation of the amount of fiat currency currently collateralizing your stable coin, this amount is called the **"Reserve"**.
-The PoR smart contract will store at all time the current reserve so that the stable coin can check it before minting new tokens.
-The Wizard will give you the possibility to link your stable coin to an already existing PoR smart contract or, if you do not have any, deploy a new one setting an initial Reserve. 
+Then you will have the possibility to set a **Proof of Reserve feed (PoR)** for your stablecoin. A PoR is a smart contract that connects your on-chain stablecoin to your off-chain fiat currency supply. The idea is to have an on-chain representation of the amount of fiat currency currently collateralizing your stablecoin, this amount is called the **"Reserve"**.
+The PoR smart contract will store at all time the current reserve so that the stablecoin can check it before minting new tokens.
+The Wizard will give you the possibility to link your stablecoin to an already existing PoR smart contract or, if you do not have any, deploy a new one setting an initial Reserve. 
 
-> It is important to note that, if you choose to deploy a new PoR for your stable coin, your current account will be set as the PoR admin, meaning that it will have the possibility to update the Reserve and upgrade the smart contract code at any time. Nevertheless, the CLI will only let you deploy the PoR and link it to your stable coin, in order to operate the new PoR (update the Reserve etc...) or change the PoR your stable coin is linked to, you will have to use the UI...
+> It is important to note that, if you choose to deploy a new PoR for your stablecoin, your current account will be set as the PoR admin, meaning that it will have the possibility to update the Reserve and upgrade the smart contract code at any time. Nevertheless, the CLI will only let you deploy the PoR and link it to your stablecoin, in order to operate the new PoR (update the Reserve etc...) or change the PoR your stablecoin is linked to, you will have to use the UI...
 
 > It is also important to note that the PoR you deploy using our tools is purely for demo purposes. Chainlink implements a complex, secure and reliable decentralize off-chain system to manage the PoR reserves, whereas, as specified above, our PoR can be fully managed by your account.
 
 
 _For more information about PoR Feeds, check the official [ChainLink documentation](https://docs.chain.link/data-feeds/proof-of-reserve/)._
 
-Last question about the stable coin it is going to be created is about the proxy admin owner. By default, this ownership belongs to the account creating the stable coin, but the user has the chance to change this default behaviour by configuring another account id, which can belongs to a contract, like a timelock controller, a cold wallet, or whatever account.
+Last question about the stablecoin it is going to be created is about the proxy admin owner. By default, this ownership belongs to the account creating the stablecoin, but the user has the chance to change this default behaviour by configuring another account id, which can belongs to a contract, like a timelock controller, a cold wallet, or whatever account.
 
 Once the request is ready, the CLI will extract from the configuration file the factory and HederaTokenManager contracts addresses for the network you are working on.
-The request will then be submitted to the SDK and the stable coin will be created.
+The request will then be submitted to the SDK and the stablecoin will be created.
 
 > When the configuration file is first created, the factory contract added to the "testnet" network are the default one (pre-deployed contract). However, users are free to deploy and use their own contracts, in order to do that, the configuration file must be updated with the new factory contract id.
 
@@ -283,7 +283,7 @@ https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/dde7
 
 #### Manage imported tokens
 
-Stable coins that we have not created with our account but for which we have been assigned one or several roles must be imported in order to operate them.
+Stablecoins that we have not created with our account but for which we have been assigned one or several roles must be imported in order to operate them.
 
 1. Add token
 2. Refresh token
@@ -291,19 +291,19 @@ Stable coins that we have not created with our account but for which we have bee
 
 #### Operate with stable soin
 
-Once a stable coin is created or added, you can operate with it.
+Once a stablecoin is created or added, you can operate with it.
 
 The following list contains all the possible operations a user can perform if he/she has the appropriate role.
 
 - **Send tokens**: transfer tokens to other accounts.
-- **Cash in**: mints tokens and transfers them to an account. If you have linked a PoR Feed to your stable coin, this operation will fail in two cases : 
+- **Cash in**: mints tokens and transfers them to an account. If you have linked a PoR Feed to your stablecoin, this operation will fail in two cases : 
   - if you try to mint more tokens than the total Reserve (1 to 1 match between the token's total supply and the Reserve)
   - if you try to mint tokens using more decimals than the Reserve has, for instance, minting 1.001 tokens when the Reserve only has 2 decimals.
-  > this DOES NOT mean that a stable coin can not have more decimals than the Reserve, transfers between accounts can use as many decimals as required.
+  > this DOES NOT mean that a stablecoin can not have more decimals than the Reserve, transfers between accounts can use as many decimals as required.
 
 https://user-images.githubusercontent.com/102601367/205074103-e9f584d0-8262-406c-b45b-a9060a9aa32d.mov
 
-- **Details**: gets the stable coin details.
+- **Details**: gets the stablecoin details.
 - **Balance**: gets the balance from an account.
 - **Burn**: burns tokens from treasury account.
 
@@ -333,7 +333,7 @@ https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/a18f
 
 https://user-images.githubusercontent.com/114951681/228851958-db534d9e-0bc3-41f5-9820-7ce79fcf643b.mp4
 
-- **Role management**: administrators of a stable coin can manage user roles from this menu, they will have the possibility to grant, revoke, edit (manage the supplier allowance) and check roles.
+- **Role management**: administrators of a stablecoin can manage user roles from this menu, they will have the possibility to grant, revoke, edit (manage the supplier allowance) and check roles.
 
   - The available roles are:
     - CASHIN_ROLE
@@ -346,17 +346,17 @@ https://user-images.githubusercontent.com/114951681/228851958-db534d9e-0bc3-41f5
     - DELETE_ROLE
 
 - **Refresh roles**: automatically refreshes the roles assigned to the current account (account's capacities).
-- **Configuration**: This last option allows the user to manage both the stable coin configuration and the token configuration. 
-Firstly, the stable coin configuration allows the user to upgrade the stable coin contract implementation and to change the stable coin proxy admin contract owner. In the case of the token configuration, stable coin administrators can edit the underlying token's properties such as "name", "symbol", "keys" ...
+- **Configuration**: This last option allows the user to manage both the stablecoin configuration and the token configuration. 
+Firstly, the stablecoin configuration allows the user to upgrade the stablecoin contract implementation and to change the stablecoin proxy admin contract owner. In the case of the token configuration, stablecoin administrators can edit the underlying token's properties such as "name", "symbol", "keys" ...
 To change the onwership of the proxy amdmin contract, the current owner will have to invite another account id to be the next owner. In this moment, this current owner could cancel the change before the proposed owner can accept the invitation. Once the invited account accepts the invitation, the change is completed.
-- **Danger Zone**: this section contains the stable coin operations deemed as particularly "dangerous" either because they affect every single token owner (PAUSE) or because they can not be rolled-back (DELETE).
+- **Danger Zone**: this section contains the stablecoin operations deemed as particularly "dangerous" either because they affect every single token owner (PAUSE) or because they can not be rolled-back (DELETE).
   For security reasons these operations are grouped in a "sub-menu" so that users do not run them by mistake.
   - **Un/Pause**: pauses and unpauses the token preventing it from being involved in any kind of operation.
   - **Delete**: marks a token as deleted. This actions cannot be undone.
 
-#### List stable coins
+#### List stablecoins
 
-This option displays all the stable coins the user has created or added.
+This option displays all the stablecoins the user has created or added.
 
 #### Configuration
 

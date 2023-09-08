@@ -23,15 +23,15 @@ import AssociateStableCoinService from './AssociateStableCoinService.js';
 import KYCStableCoinService from './KYCStableCoinService.js';
 
 /**
- * Create Stable Coin Service
+ * Create Stablecoin Service
  */
 export default class CreateStableCoinService extends Service {
   constructor() {
-    super('Create Stable Coin');
+    super('Create Stablecoin');
   }
 
   /**
-   * Create stable coin in hedera
+   * Create stablecoin in hedera
    * @param stableCoin
    * @param isWizard
    */
@@ -115,12 +115,12 @@ export default class CreateStableCoinService extends Service {
   }
 
   /**
-   * Specific function for wizard to create stable coin
+   * Specific function for wizard to create stablecoin
    * @returns
    */
   public async wizardCreateStableCoin(): Promise<[CreateRequest, boolean]> {
     const currentAccount = utilsService.getCurrentAccount();
-    // Call to create stable coin sdk function
+    // Call to create stablecoin sdk function
     const tokenToCreate = new CreateRequest({
       name: '',
       symbol: '',

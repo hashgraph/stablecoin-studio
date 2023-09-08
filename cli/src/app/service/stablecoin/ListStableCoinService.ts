@@ -8,18 +8,18 @@ import {
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 /**
- * Create Stable Coin Service
+ * Create Stablecoin Service
  */
 export default class ListStableCoinService extends Service {
   constructor() {
-    super('List Stable Coins');
+    super('List Stablecoins');
   }
 
   /**
-   * List Stable Coins can be managed
+   * List Stablecoins can be managed
    */
   public async listStableCoins(draw = true): Promise<StableCoinListViewModel> {
-    // Call to list stable coins
+    // Call to list stablecoins
     const currentAccount = utilsService.getCurrentAccount();
 
     let resp;

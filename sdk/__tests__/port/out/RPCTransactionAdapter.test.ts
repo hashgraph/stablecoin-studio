@@ -1,6 +1,6 @@
 /*
  *
- * Hedera Stable Coin SDK
+ * Hedera Stablecoin SDK
  *
  * Copyright (C) 2023 Hedera Hashgraph, LLC
  *
@@ -381,7 +381,7 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 		);
 	}, 1500000);
 
-	it('Deploy a stable coin with the deploying account as the proxy admin owner', async () => {
+	it('Deploy a stablecoin with the deploying account as the proxy admin owner', async () => {
 		const coinSC = new StableCoin({
 			name: 'TEST_ACCELERATOR_SC',
 			symbol: 'TEST',
@@ -404,7 +404,7 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 		);
 	}, 30000);
 
-	it('Deploy a stable coin with a proxy admin owner different than the deploying account', async () => {
+	it('Deploy a stablecoin with a proxy admin owner different than the deploying account', async () => {
 		const coinSC = new StableCoin({
 			name: 'TEST_ACCELERATOR_SC',
 			symbol: 'TEST',

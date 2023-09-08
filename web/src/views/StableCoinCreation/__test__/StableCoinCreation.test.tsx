@@ -111,7 +111,7 @@ describe(`<${StableCoinCreation.name} />`, () => {
 
 		//step 5
 		await waitFor(() => {
-			const title = component.getByText('Stable coin review');
+			const title = component.getByText('Stablecoin review');
 			userEvent.click(title);
 		});
 

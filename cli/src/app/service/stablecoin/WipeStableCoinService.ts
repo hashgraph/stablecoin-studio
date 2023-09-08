@@ -5,7 +5,7 @@ import { WipeRequest, StableCoin } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 export default class WipeStableCoinService extends Service {
   constructor() {
-    super('Wipe Stable Coin');
+    super('Wipe Stablecoin');
   }
 
   public async wipeStableCoin(request: WipeRequest): Promise<void> {

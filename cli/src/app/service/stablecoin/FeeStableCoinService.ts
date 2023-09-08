@@ -22,11 +22,11 @@ const minLabel = 'Min: ';
 const maxLabel = 'Max: ';
 
 /**
- * Create Role Stable Coin Service
+ * Create Role Stablecoin Service
  */
 export default class FeeStableCoinService extends Service {
   constructor() {
-    super('Fee Stable Coin');
+    super('Fee Stablecoin');
   }
 
   public async addFixedFee(req: AddFixedFeeRequest): Promise<void> {

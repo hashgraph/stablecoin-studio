@@ -8,7 +8,7 @@ import {
 
 export default class AssociateStableCoinService extends Service {
   constructor() {
-    super('Associate Stable Coin');
+    super('Associate Stablecoin');
   }
 
   public async associateStableCoin(

@@ -49,7 +49,7 @@ contract StableCoinFactory is IStableCoinFactory, Initializable {
     }
 
     /**
-     * @dev Checks if the calling account is the admin of the stable coin
+     * @dev Checks if the calling account is the admin of the stablecoin
      *
      */
     modifier isAdmin() {
@@ -88,10 +88,10 @@ contract StableCoinFactory is IStableCoinFactory, Initializable {
     }
 
     /**
-     * @dev Deploys a stable coin
+     * @dev Deploys a stablecoin
      *
-     * @param requestedToken The information provided to create the stable coin's token
-     * @param stableCoinContractAddress The address of the HederaTokenManager contract to create the stable coin
+     * @param requestedToken The information provided to create the stablecoin's token
+     * @param stableCoinContractAddress The address of the HederaTokenManager contract to create the stablecoin
      */
     function deployStableCoin(
         TokenStruct calldata requestedToken,
@@ -202,7 +202,7 @@ contract StableCoinFactory is IStableCoinFactory, Initializable {
     }
 
     /**
-     * @dev Add a new stable coin to contract addresses
+     * @dev Add a new stablecoin to contract addresses
      *
      * @param newAddress The new address
      */
@@ -219,9 +219,9 @@ contract StableCoinFactory is IStableCoinFactory, Initializable {
     }
 
     /**
-     * @dev Get the stable coin contract addresses
+     * @dev Get the stablecoin contract addresses
      *
-     * @return The stable coin contract addresses
+     * @return The stablecoin contract addresses
      */
     function getHederaTokenManagerAddress()
         external
@@ -232,7 +232,7 @@ contract StableCoinFactory is IStableCoinFactory, Initializable {
     }
 
     /**
-     * @dev Edit a stable coin contract address
+     * @dev Edit a stablecoin contract address
      *
      * @param index The index of the address
      * @param newAddress The new address
@@ -252,7 +252,7 @@ contract StableCoinFactory is IStableCoinFactory, Initializable {
     }
 
     /**
-     * @dev Removes a stable coin contract address
+     * @dev Removes a stablecoin contract address
      *
      * @param index The index of the address
      */
@@ -304,8 +304,8 @@ contract StableCoinFactory is IStableCoinFactory, Initializable {
      * @dev Create a token with the given request
      *
      * @param requestedToken The token struct
-     * @param stableCoinProxyAddress The address of the stable coin proxy
-     * @param stableCoinProxyAdminAddress The address of the stable coin proxy admin
+     * @param stableCoinProxyAddress The address of the stablecoin proxy
+     * @param stableCoinProxyAdminAddress The address of the stablecoin proxy admin
      *
      * @return token The deployed token
      */

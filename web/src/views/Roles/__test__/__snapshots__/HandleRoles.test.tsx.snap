@@ -212,7 +212,7 @@ exports[`<HandleRoles /> should render correctly on editRole action 1`] = `
                 class="chakra-heading css-1udj1g5"
                 data-testid="details-title"
               >
-                Stable coin details
+                Stablecoin details
               </h2>
               <div
                 class="css-13brihr"
@@ -627,7 +627,7 @@ exports[`<HandleRoles /> should render correctly on getAccountsWithRole action 1
                 class="chakra-heading css-1udj1g5"
                 data-testid="details-title"
               >
-                Stable coin details
+                Stablecoin details
               </h2>
               <div
                 class="css-13brihr"
@@ -1048,7 +1048,7 @@ exports[`<HandleRoles /> should render correctly on giveRole action 1`] = `
                 class="chakra-heading css-1udj1g5"
                 data-testid="details-title"
               >
-                Stable coin details
+                Stablecoin details
               </h2>
               <div
                 class="css-13brihr"
@@ -1665,7 +1665,7 @@ exports[`<HandleRoles /> should render correctly on revokeRole action 1`] = `
                 class="chakra-heading css-1udj1g5"
                 data-testid="details-title"
               >
-                Stable coin details
+                Stablecoin details
               </h2>
               <div
                 class="css-13brihr"

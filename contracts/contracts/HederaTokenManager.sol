@@ -58,7 +58,7 @@ contract HederaTokenManager is
     }
 
     /**
-     * @dev Initializes the stable coin frmo the proxy
+     * @dev Initializes the stablecoin frmo the proxy
      *
      * @param init the underlying token to create
      *

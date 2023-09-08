@@ -1,6 +1,6 @@
 /*
  *
- * Hedera Stable Coin SDK
+ * Hedera Stablecoin SDK
  *
  * Copyright (C) 2023 Hedera Hashgraph, LLC
  *
@@ -85,7 +85,7 @@ export class MirrorNodeAdapter {
 			}tokens?limit=100&order=desc&account.id=${accountId.toString()}`;
 
 			LogService.logTrace(
-				'Getting stable coin list from mirror node -> ',
+				'Getting stablecoin list from mirror node -> ',
 				url,
 			);
 

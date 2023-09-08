@@ -80,7 +80,7 @@ enum tokenKeys {
 }
 
 /**
- * Operation Stable Coin Service
+ * Operation Stablecoin Service
  */
 export default class OperationStableCoinService extends Service {
   private stableCoinId;
@@ -98,7 +98,7 @@ export default class OperationStableCoinService extends Service {
   // private tokenUpdate: IManagedFeatures = undefined;
 
   constructor(tokenId?: string, memo?: string, symbol?: string) {
-    super('Operation Stable Coin');
+    super('Operation Stablecoin');
     if (tokenId && memo && symbol) {
       this.stableCoinId = tokenId; //TODO Cambiar name por el id que llegue en la creación del token
       this.stableCoinWithSymbol = `${tokenId} - ${symbol}`;
@@ -107,7 +107,7 @@ export default class OperationStableCoinService extends Service {
   }
 
   /**
-   * Start the wizard for operation a stable coin
+   * Start the wizard for operation a stablecoin
    */
   public async start(): Promise<void> {
     const configAccount = utilsService.getCurrentAccount();
@@ -116,7 +116,7 @@ export default class OperationStableCoinService extends Service {
     let coins: StableCoinList[];
     try {
       if (this.stableCoinId === undefined) {
-        //Get list of stable coins to display
+        //Get list of stablecoins to display
         const resp = await this.listStableCoinService.listStableCoins(false);
         coins = resp.coins;
 
@@ -983,7 +983,7 @@ export default class OperationStableCoinService extends Service {
             return showCustomFee;
             break;
         }
-        // TODO DELETE STABLE COIN
+        // TODO DELETE STABLECOIN
         return true;
       });
 
@@ -3245,7 +3245,7 @@ export default class OperationStableCoinService extends Service {
             return showDelete;
             break;
         }
-        // TODO DELETE STABLE COIN
+        // TODO DELETE STABLECOIN
         return true;
       });
 

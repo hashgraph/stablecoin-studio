@@ -8,7 +8,7 @@ import {
 
 export default class TransfersStableCoinService extends Service {
   constructor() {
-    super('Transfers Stable Coin');
+    super('Transfers Stablecoin');
   }
 
   public async transfersStableCoin(request: TransfersRequest): Promise<void> {

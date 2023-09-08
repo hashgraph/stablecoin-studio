@@ -104,7 +104,7 @@ exports[`<ImportedTokenCreation /> should render correctly 1`] = `
                                   <p
                                     class="chakra-text css-mgupmj"
                                   >
-                                    Stable coin id
+                                    Stablecoin id
                                   </p>
                                   <p
                                     class="chakra-text css-ftb7fv"

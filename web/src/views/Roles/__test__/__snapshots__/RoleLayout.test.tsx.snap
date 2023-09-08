@@ -212,7 +212,7 @@ exports[`<RoleLayout /> should render correctly 1`] = `
                 class="chakra-heading css-1udj1g5"
                 data-testid="details-title"
               >
-                Stable coin details
+                Stablecoin details
               </h2>
               <div
                 class="css-13brihr"

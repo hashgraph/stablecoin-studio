@@ -224,7 +224,7 @@ const CoinDropdown = () => {
 				),
 				new Promise((resolve, reject) => {
 					setTimeout(() => {
-						reject(new Error("Stable coin details couldn't be obtained in a reasonable time."));
+						reject(new Error("Stablecoin details couldn't be obtained in a reasonable time."));
 					}, 10000);
 				}),
 			]).catch((e) => {
@@ -242,7 +242,7 @@ const CoinDropdown = () => {
 				),
 				new Promise((resolve, reject) => {
 					setTimeout(() => {
-						reject(new Error("Stable coin details couldn't be obtained in a reasonable time."));
+						reject(new Error("Stablecoin details couldn't be obtained in a reasonable time."));
 					}, 10000);
 				}),
 			]).catch((e) => {
@@ -359,7 +359,7 @@ const CoinDropdown = () => {
 				),
 				new Promise((resolve, reject) => {
 					setTimeout(() => {
-						reject(new Error("Stable coin details couldn't be obtained in a reasonable time."));
+						reject(new Error("Stablecoin details couldn't be obtained in a reasonable time."));
 					}, 10000);
 				}),
 			]).catch((e) => {

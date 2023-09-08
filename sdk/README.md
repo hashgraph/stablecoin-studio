@@ -1,6 +1,6 @@
 <div align="center">
 
-# Hedera Stable Coin SDK
+# Hedera Stablecoin SDK
 
 [![SDK - Test](https://github.com/hashgraph/hedera-accelerator-stablecoin/actions/workflows/sdk.test.yml/badge.svg)](https://github.com/hashgraph/hedera-accelerator-stablecoin/actions/workflows/sdk.test.yml)
 [![Latest Version](https://img.shields.io/github/v/tag/hashgraph/hedera-accelerator-stablecoin?sort=semver&label=version)](README.md)
@@ -9,7 +9,7 @@
 </div>
 
 # Table of contents
-- [Hedera Stable Coin SDK](#hedera-stable-coin-sdk)
+- [Hedera Stablecoin SDK](#hedera-stable-coin-sdk)
 - [Table of contents](#table-of-contents)
 - [Overview](#overview)
 - [Installation](#installation)
@@ -26,9 +26,9 @@
 	- [About Operations Execution](#about-operations-execution)
 	- [StableCoin](#stablecoin)
 		- [Create](#create)
-		- [Creates a simple stable coin, with all keys set to the Smart Contracts](#creates-a-simple-stable-coin-with-all-keys-set-to-the-smart-contracts)
-		- [Creates a simple stable coin, with all keys set to the admin's public key](#creates-a-simple-stable-coin-with-all-keys-set-to-the-admins-public-key)
-		- [Creates a simple stable coin, with all keys set to none](#creates-a-simple-stable-coin-with-all-keys-set-to-none)
+		- [Creates a simple stablecoin, with all keys set to the Smart Contracts](#creates-a-simple-stable-coin-with-all-keys-set-to-the-smart-contracts)
+		- [Creates a simple stablecoin, with all keys set to the admin's public key](#creates-a-simple-stable-coin-with-all-keys-set-to-the-admins-public-key)
+		- [Creates a simple stablecoin, with all keys set to none](#creates-a-simple-stable-coin-with-all-keys-set-to-none)
 		- [GetInfo](#getinfo)
 		- [GetBalanceOf](#getbalanceof)
 		- [GetBalanceOfHBAR](#getbalanceofhbar)
@@ -169,7 +169,7 @@ await Network.init(
 );
 ```  
 
-In the configuration, you can also specify the factory contract address that will be invoked when creating a stable coin.
+In the configuration, you can also specify the factory contract address that will be invoked when creating a stablecoin.
 ```Typescript
 const init = await Network.init(
 	new InitializationRequest({
@@ -257,17 +257,17 @@ This section explains all the operations offered by this SDK.
 ## About Operations Execution
 
 Before explaining all operations exposed by the SDK, is important to understand how some of these operations are going to be performed.
-When creating a stable coin, a set of keys (wipe key, pause key, freeze key, etc...) must be provided in order to create the stable coin token. Each of these keys will control, first of all, if the operation related with the key can be performed or not (if the token wipe key is not set, the wipe operation can not be performed), but, if a key is provided, depending on its value the operation could be performed through the stable coin smart contract or through the Hedera SDK:
+When creating a stablecoin, a set of keys (wipe key, pause key, freeze key, etc...) must be provided in order to create the stablecoin token. Each of these keys will control, first of all, if the operation related with the key can be performed or not (if the token wipe key is not set, the wipe operation can not be performed), but, if a key is provided, depending on its value the operation could be performed through the stablecoin smart contract or through the Hedera SDK:
 
 1. If the token key corresponds to a Hedera account public key, the operation can only be performed by the Hedera account owning this public key, and only through the Hedera SDK.
-2. If the token key corresponds to the stable coin smart contract administrator key, the operation can only be performed through the smart contract, so whoever calls the smart contract can perform the operation. To prevent anyone from performing certain operations roles are used. When the need for a role is indicated in an operation's description, this is only when the related key of the stable coin token is configured to be the smart contract admin key.
+2. If the token key corresponds to the stablecoin smart contract administrator key, the operation can only be performed through the smart contract, so whoever calls the smart contract can perform the operation. To prevent anyone from performing certain operations roles are used. When the need for a role is indicated in an operation's description, this is only when the related key of the stablecoin token is configured to be the smart contract admin key.
 
 
 ## StableCoin
-The following operations represent most of the operations that can be performed using a stable coin. Some of them can be performed through the stable coin smart contract or through the Hedera SDK depending on the token configuration explained above.
+The following operations represent most of the operations that can be performed using a stablecoin. Some of them can be performed through the stablecoin smart contract or through the Hedera SDK depending on the token configuration explained above.
 
 ### Create
-Creates a new stable coin. You must use `Network.connect` first with a `SupportedWallet`.
+Creates a new stablecoin. You must use `Network.connect` first with a `SupportedWallet`.
 
 **Spec:**
 
@@ -308,9 +308,9 @@ Creates a new stable coin. You must use `Network.connect` first with a `Supporte
 ```
 
 **Example:**
-### Creates a simple stable coin, with all keys set to the Smart Contracts
+### Creates a simple stablecoin, with all keys set to the Smart Contracts
 
-This delegates access to features to the smart contract, and enables the usage of roles so multiple accounts can have the same role. The accounts to which the roles are granted can be set in this operation or later on, once the stable coin was created.
+This delegates access to features to the smart contract, and enables the usage of roles so multiple accounts can have the same role. The accounts to which the roles are granted can be set in this operation or later on, once the stablecoin was created.
 
 ```Typescript
 	import {
@@ -321,7 +321,7 @@ This delegates access to features to the smart contract, and enables the usage o
 	} from '@hashgraph-dev/stablecoin-npm-sdk';
 	const stableCoin: StableCoinViewModel = await StableCoin.create(
 		new CreateRequest({
-			name: 'Hedera Stable Coin',
+			name: 'Hedera Stablecoin',
 			symbol: 'HSC',
 			decimals: 6,
 			kycKey: Account.NullPublicKey,
@@ -337,9 +337,9 @@ This delegates access to features to the smart contract, and enables the usage o
 	);
 ```
 
-### Creates a simple stable coin, with all keys set to the admin's public key
+### Creates a simple stablecoin, with all keys set to the admin's public key
 
-By specifying the public key of an account, we can set the stable coin's keys to be the admin's enabling all features through the Hedera Token Service. In this scenario, only one account could be in charge of one or several operations, but is not possible to multiple accounts to be in charge of one operation.
+By specifying the public key of an account, we can set the stablecoin's keys to be the admin's enabling all features through the Hedera Token Service. In this scenario, only one account could be in charge of one or several operations, but is not possible to multiple accounts to be in charge of one operation.
 
 ```Typescript
 	import {
@@ -362,7 +362,7 @@ By specifying the public key of an account, we can set the stable coin's keys to
 	const publicKey = Account.getPublicKey(req);
 	const stableCoin: StableCoinViewModel = await StableCoin.create(
 		new CreateRequest({
-			name: 'Hedera Stable Coin',
+			name: 'Hedera Stablecoin',
 			symbol: 'HSC',
 			decimals: 6,
 			kycKey: publicKey,
@@ -379,11 +379,11 @@ By specifying the public key of an account, we can set the stable coin's keys to
 	);
 ```
 
-In the above exmaple, it is also important to notice that, when creating a stable coin, the `proxyAdminOwnerAccount` parameter in the `CreateRequest` class, allows the user to configure an account id, which may be a contract like a timelock controller, a cold wallet, etc, to be the stable coin proxy admin owner rather than the account id that is creating the stable coin, which is the default option if the user doesn't populate this optional parameter.
+In the above exmaple, it is also important to notice that, when creating a stablecoin, the `proxyAdminOwnerAccount` parameter in the `CreateRequest` class, allows the user to configure an account id, which may be a contract like a timelock controller, a cold wallet, etc, to be the stablecoin proxy admin owner rather than the account id that is creating the stablecoin, which is the default option if the user doesn't populate this optional parameter.
 
-### Creates a simple stable coin, with all keys set to none
+### Creates a simple stablecoin, with all keys set to none
  
-By not setting any of the keys, the stable coin will have the corresponding features disabled and the keys set to none.
+By not setting any of the keys, the stablecoin will have the corresponding features disabled and the keys set to none.
 
 ```Typescript
 	import {
@@ -394,7 +394,7 @@ By not setting any of the keys, the stable coin will have the corresponding feat
 	} from '@hashgraph-dev/stablecoin-npm-sdk';
 	const stableCoin: StableCoinViewModel = await StableCoin.create(
 		new CreateRequest({
-			name: 'Hedera Stable Coin',
+			name: 'Hedera Stablecoin',
 			symbol: 'HSC',
 			decimals: 6,
 			hederaTokenManager: HederaTokenManagerAddressTestnet,
@@ -405,7 +405,7 @@ By not setting any of the keys, the stable coin will have the corresponding feat
 ```
 
 ### GetInfo
-Gets the information of an existing stable coin.
+Gets the information of an existing stablecoin.
 
 **Spec:**
 
@@ -477,7 +477,7 @@ Gets the balance of HBARs for an account.
 
 
 ### Associate
-Associates a stable coin with an account.
+Associates a stablecoin with an account.
 
 **Spec:**
 
@@ -497,7 +497,7 @@ Associates a stable coin with an account.
 
 
 ### isAccountAssociated
-Checks if an account is associated with a stable coin.
+Checks if an account is associated with a stablecoin.
 
 **Spec:**
 
@@ -623,7 +623,7 @@ Wipes an amount of tokens from an account. The operating account must have the w
 
 
 ### Pause
-Pauses a stable coin. None of the operations can be taken while the stable coin is in paused state. The operating account must have the pause role.
+Pauses a stablecoin. None of the operations can be taken while the stablecoin is in paused state. The operating account must have the pause role.
 
 **Spec:**
 
@@ -642,7 +642,7 @@ Pauses a stable coin. None of the operations can be taken while the stable coin 
 ```
 
 ### Unpause
-Unpauses a stable coin. If the stable coin is not paused it will throw an exception. The operating account must have the pause role.
+Unpauses a stablecoin. If the stablecoin is not paused it will throw an exception. The operating account must have the pause role.
 
 **Spec:**
 
@@ -661,7 +661,7 @@ Unpauses a stable coin. If the stable coin is not paused it will throw an except
 ```
 
 ### Freeze
-Prevents transfer of a stable coin to/from an account. The operating account must have the freeze role.
+Prevents transfer of a stablecoin to/from an account. The operating account must have the freeze role.
 
 **Spec:**
 
@@ -681,7 +681,7 @@ Prevents transfer of a stable coin to/from an account. The operating account mus
 ```
 
 ### Unfreeze
-Enables transfer of a stable coin to/from an account. The operating account must have the freeze role.
+Enables transfer of a stablecoin to/from an account. The operating account must have the freeze role.
 
 **Spec:**
 
@@ -845,7 +845,7 @@ import {
 
 
 ### Delete
-Deletes a stable coin. **Important** this operation is not reversible. The operating account must have the admin role.
+Deletes a stablecoin. **Important** this operation is not reversible. The operating account must have the admin role.
 
 **Spec:**
 
@@ -906,7 +906,7 @@ Updates the contract reserve address.
 ```
 
 ### Capabilities
-Get capabilities for an account for a stable coin. Each capability determines the type of operation that can be performed (cash in, burn, wipe, etc...) and on whether it should be done via the smart contract for the stable coin (proxyAddress in the `coin: StableCoin` attribute) or through the Hedera Token Service. 
+Get capabilities for an account for a stablecoin. Each capability determines the type of operation that can be performed (cash in, burn, wipe, etc...) and on whether it should be done via the smart contract for the stablecoin (proxyAddress in the `coin: StableCoin` attribute) or through the Hedera Token Service. 
 
 See the spec below for all the attributes you can get from the request.
 
@@ -1007,10 +1007,10 @@ See the spec below for all the attributes you can get from the request.
 
 
 ## Proxy
-The following functions allow the user to both get information and execute operations regarding the stable coin proxy contract.
+The following functions allow the user to both get information and execute operations regarding the stablecoin proxy contract.
 
 ### GetProxyConfig
-Gets the configuration about the stable coin proxy: the **HederaTokenManager** contract implementation address and the proxy admin account that allows to change the previous implementation.
+Gets the configuration about the stablecoin proxy: the **HederaTokenManager** contract implementation address and the proxy admin account that allows to change the previous implementation.
 
 **Spec:**
 
@@ -1402,7 +1402,7 @@ Gets the account public key.
 ```
 	
 ### ListStableCoins
-Gets a list of stable coins associated with an account.
+Gets a list of stablecoins associated with an account.
 
 **Spec:**	
 	
@@ -1440,10 +1440,10 @@ Gets an account information.
 ```
 
 ## Role
-Roles allow Hedera accounts to perform certain operations on a stable coin through the smart contracts. Operations that can be performed through Hedera SDK, due to the token configuration, do not need any role to be assigned. The management of roles can only be performed by a Hedera account having the admin role.
+Roles allow Hedera accounts to perform certain operations on a stablecoin through the smart contracts. Operations that can be performed through Hedera SDK, due to the token configuration, do not need any role to be assigned. The management of roles can only be performed by a Hedera account having the admin role.
 
 ### HasRole
-Checks if an account has a specific role for a stable coin.
+Checks if an account has a specific role for a stablecoin.
 
 **Spec:**
 		
@@ -1464,7 +1464,7 @@ Checks if an account has a specific role for a stable coin.
 ```
 
 ### GrantRole
-Grants a role to an account for a stable coin. The operating account must have the admin role.
+Grants a role to an account for a stablecoin. The operating account must have the admin role.
 
 **Spec:**
 		
@@ -1484,7 +1484,7 @@ Grants a role to an account for a stable coin. The operating account must have t
 	);
 ```
 ### GrantMultiRoles
-Grants multiple roles to multiple accounts for a stable coin. The operating account must have the admin role.
+Grants multiple roles to multiple accounts for a stablecoin. The operating account must have the admin role.
 
 **Spec:**
 		
@@ -1506,7 +1506,7 @@ Grants multiple roles to multiple accounts for a stable coin. The operating acco
 ```
 
 ### RevokeRole
-Revokes a role of an account for a stable coin. The operating account must have the admin role.
+Revokes a role of an account for a stablecoin. The operating account must have the admin role.
 
 **Spec:**	
 	
@@ -1526,7 +1526,7 @@ Revokes a role of an account for a stable coin. The operating account must have 
 	);
 ```
 ### RevokeMultiRole
-Revokes multiple roles from multiple accounts for a stable coin. The operating account must have the admin role.
+Revokes multiple roles from multiple accounts for a stablecoin. The operating account must have the admin role.
 
 **Spec:**	
 	
@@ -1547,7 +1547,7 @@ Revokes multiple roles from multiple accounts for a stable coin. The operating a
 ```
 
 ### GetRoles
-Gets a list of all roles a Hedera account has for a stable coin. 
+Gets a list of all roles a Hedera account has for a stablecoin. 
 
 **Spec:**	
 	
@@ -1587,7 +1587,7 @@ Gets a list of all Hedera accounts that have been granted a certain role.
 ```
 
 ### GetAllowance
-Gets the supplier allowance (amount of tokens that can be minted by an account) for an account and a stable coin.
+Gets the supplier allowance (amount of tokens that can be minted by an account) for an account and a stablecoin.
 
 **Spec:**	
 	
@@ -1608,7 +1608,7 @@ Gets the supplier allowance (amount of tokens that can be minted by an account) 
 ```
 
 ### ResetAllowance
-Sets the supplier allowance to 0 for an account and a stable coin. The operating account must have the admin role.
+Sets the supplier allowance to 0 for an account and a stablecoin. The operating account must have the admin role.
 
 **Spec:**
 	
@@ -1629,7 +1629,7 @@ Sets the supplier allowance to 0 for an account and a stable coin. The operating
 ```
 
 ### IncreaseAllowance
-Increases the supplier allowance amount for an account and a stable coin. The operating account must have the admin role.
+Increases the supplier allowance amount for an account and a stablecoin. The operating account must have the admin role.
 
 **Spec:**
 	
@@ -1650,7 +1650,7 @@ Increases the supplier allowance amount for an account and a stable coin. The op
 ```
  
 ### DecreaseAllowance
-Decreases the supplier allowance amount for an account and a stable coin. The operating account must have the admin role.
+Decreases the supplier allowance amount for an account and a stablecoin. The operating account must have the admin role.
 
 **Spec:**	
 	
@@ -1671,7 +1671,7 @@ Decreases the supplier allowance amount for an account and a stable coin. The op
 ```
 
 ### IsLimited
-Checks if an account has a limited supplier allowance for a stable coin or not.
+Checks if an account has a limited supplier allowance for a stablecoin or not.
 
 **Spec:**
 	
@@ -1692,7 +1692,7 @@ Checks if an account has a limited supplier allowance for a stable coin or not.
 ```
 
 ### IsUnlimited
-Checks if an account has an unlimited supplier allowance for a stable coin or not.
+Checks if an account has an unlimited supplier allowance for a stablecoin or not.
 
 **Spec:**
 		
@@ -1713,11 +1713,11 @@ Checks if an account has an unlimited supplier allowance for a stable coin or no
 ```    
 
 ## Reserve Data Feed
-The following operations are always performed through smart contracts calls, since the reserve data feed is a contract which can be deployed alongside the stable coin.
+The following operations are always performed through smart contracts calls, since the reserve data feed is a contract which can be deployed alongside the stablecoin.
 Getting the reserve amount can be performed by anyone while updating this amount can only be performed by accounts with the appropriate role.
 
 ### Get Reserve Amount
-Gets the reserve amount for a stable coin.
+Gets the reserve amount for a stablecoin.
 
 **Spec:**
 
@@ -1736,7 +1736,7 @@ Gets the reserve amount for a stable coin.
 ```
 
 ### Update Reserve Amount
-Updates the reserve amount for a stable coin. The operating account must have the admin role.
+Updates the reserve amount for a stablecoin. The operating account must have the admin role.
 
 **Spec:**
 
@@ -1786,7 +1786,7 @@ We use [winston](https://github.com/winstonjs/winston) under the hood for loggin
 	const { Console } = LoggerTransports;
 	
 	SDK.appMetadata = {
-		name: 'Hedera Stable Coin',
+		name: 'Hedera Stablecoin',
 		description: 'Example application',
 		icon: 'https://example.png',
 		url: '',

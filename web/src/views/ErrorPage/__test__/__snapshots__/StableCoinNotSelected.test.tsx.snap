@@ -16,13 +16,13 @@ exports[`<StableCoinNotSelected /> should render correctly 1`] = `
       class="chakra-text css-1xvinut"
       data-testid="stable-coin-not-selected-title"
     >
-      Choose a stable coin to start operating!
+      Choose a stablecoin to start operating!
     </p>
     <p
       class="chakra-text css-exh7zu"
       data-testid="stable-coin-not-selected-description"
     >
-      You have not chosen a stable coin yet.
+      You have not chosen a stablecoin yet.
     </p>
     <p
       class="chakra-text css-c7s95i"

@@ -89,7 +89,7 @@ export const getStableCoinList = createAsyncThunk(
 				),
 				new Promise((resolve, reject) => {
 					setTimeout(() => {
-						reject(new Error("Stable coins list couldn't be obtained in a reasonable time."));
+						reject(new Error("Stablecoins list couldn't be obtained in a reasonable time."));
 					}, 10000);
 				}),
 			]).catch((e) => {

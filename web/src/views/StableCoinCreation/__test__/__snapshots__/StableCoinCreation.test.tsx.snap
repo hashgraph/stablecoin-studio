@@ -12,7 +12,7 @@ exports[`<StableCoinCreation /> should render correctly 1`] = `
         class="chakra-text css-ai2tcq"
         data-testid="creation-title"
       >
-        Create new stable coin
+        Create new stablecoin
       </p>
       <i
         class="chakra-text css-zcexcl"

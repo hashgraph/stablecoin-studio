@@ -516,7 +516,7 @@ exports[`<Layout /> should render correctly 1`] = `
               class="chakra-text css-1d26k2o"
               data-testid="sidebar-option-title"
             >
-              Stable coin details
+              Stablecoin details
             </p>
           </button>
         </div>

@@ -47,7 +47,7 @@ const TokenDecimals = 3
 const TokenFactor = BigNumber.from(10).pow(TokenDecimals)
 const INIT_SUPPLY = BigNumber.from(0).mul(TokenFactor)
 const MAX_SUPPLY = BigNumber.from(1).mul(TokenFactor)
-const TokenMemo = 'Hedera Accelerator Stable Coin'
+const TokenMemo = 'Hedera Accelerator Stablecoin'
 
 describe('Pause Tests', function () {
     before(async function () {

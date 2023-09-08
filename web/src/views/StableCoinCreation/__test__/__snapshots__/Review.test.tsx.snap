@@ -12,7 +12,7 @@ exports[`<Review /> should render correctly 1`] = `
         class="chakra-heading css-p7jgmy"
         data-testid="title"
       >
-        Stable coin review
+        Stablecoin review
       </h2>
       <form
         class="chakra-stack css-zr8z21"

@@ -5,7 +5,7 @@ import { CashInRequest, StableCoin } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 export default class CashInStableCoinService extends Service {
   constructor() {
-    super('Cash In Stable Coin');
+    super('Cash In Stablecoin');
   }
 
   public async cashInStableCoin(request: CashInRequest): Promise<void> {

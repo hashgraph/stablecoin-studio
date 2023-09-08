@@ -4,15 +4,15 @@ import Service from '../Service.js';
 import { BurnRequest, StableCoin } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 /**
- * Burn Stable Coin Service
+ * Burn Stablecoin Service
  */
 export default class BurnStableCoinsService extends Service {
   constructor() {
-    super('Burn Stable Coin');
+    super('Burn Stablecoin');
   }
 
   /**
-   * Burn Stable Coin
+   * Burn Stablecoin
    */
   public async burnStableCoin(req: BurnRequest): Promise<void> {
     await utilsService.showSpinner(StableCoin.burn(req), {

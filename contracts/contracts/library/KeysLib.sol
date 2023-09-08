@@ -10,7 +10,7 @@ library KeysLib {
         // Key id as defined for the Hedera Tokens
         uint256 keyType;
         // Public Key bytes of the EOA that will be assigned to the key Role
-        // If "0x" (empty bytes) the stable coin proxy will be selected
+        // If "0x" (empty bytes) the stablecoin proxy will be selected
         bytes publicKey;
         // If the PublicKey is an EOA (not empty) indicates whether it is an ED25519 or ECDSA key
         bool isED25519;
@@ -20,7 +20,7 @@ library KeysLib {
      * @dev Generates a IHederaTokenService.KeyValue depending on a public key
      *
      * @param publicKey The public key
-     * @param stableCoinProxyAddress The stable coin proxy address
+     * @param stableCoinProxyAddress The stablecoin proxy address
      * @param isED25519 A flag that indicates if the public key is an Ed25519 key
      */
     function generateKey(

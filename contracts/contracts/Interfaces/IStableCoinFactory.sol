@@ -33,14 +33,14 @@ interface IStableCoinFactory {
     }
 
     /**
-     * @dev Emitted when a new stable coin is deployed
+     * @dev Emitted when a new stablecoin is deployed
      *
-     * @param deployedStableCoin The new deployed stable coin
+     * @param deployedStableCoin The new deployed stablecoin
      */
     event Deployed(DeployedStableCoin deployedStableCoin);
 
     /**
-     * @dev Emitted when a stable coin factory is initialized
+     * @dev Emitted when a stablecoin factory is initialized
      *
      */
     event StableCoinFactoryInitialized();
@@ -105,10 +105,10 @@ interface IStableCoinFactory {
     error LessThan(uint256 value, uint256 ref);
 
     /**
-     * @dev Deploys a stable coin
+     * @dev Deploys a stablecoin
      *
-     * @param requestedToken The information provided to create the stable coin's token
-     * @param stableCoinContractAddress The address of the HederaTokenManager contract to create the stable coin
+     * @param requestedToken The information provided to create the stablecoin's token
+     * @param stableCoinContractAddress The address of the HederaTokenManager contract to create the stablecoin
      */
     function deployStableCoin(
         TokenStruct calldata requestedToken,
@@ -125,14 +125,14 @@ interface IStableCoinFactory {
         returns (address[] memory);
 
     /**
-     * @dev Adds a new stable coin to contract addresses
+     * @dev Adds a new stablecoin to contract addresses
      *
      * @param newAddress The new address
      */
     function addHederaTokenManagerVersion(address newAddress) external;
 
     /**
-     * @dev Edits a stable coin contract address
+     * @dev Edits a stablecoin contract address
      *
      * @param index The index of the address
      * @param newAddress The new address
@@ -150,7 +150,7 @@ interface IStableCoinFactory {
     function changeAdmin(address newAddress) external;
 
     /**
-     * @dev Removes a stable coin contract address
+     * @dev Removes a stablecoin contract address
      *
      * @param index The index of the address
      */
