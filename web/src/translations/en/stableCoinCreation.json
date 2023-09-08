@@ -87,12 +87,12 @@
 		"proxyAdminOwnerAccount": "Proxy admin owner account"
 	},
 	"proofOfReserve": {
-		"title": "Proof of Reserve",
-		"description": "Would you like that your stablecoin collateralization with any on-chain asset?",
-		"haveDataFeed": "Do you have an existing data feed? (You will need the contract address)",
-		"dataFeed": "Data Feed",
+		"title": "Proof-of-Reserve",
+		"description": "Will your stablecoin be collateralized by another on-chain asset?",
+		"haveDataFeed": "Do you have an existing data feed? You will need the contract address.",
+		"dataFeed": "Proof-of-Reserve supply",
 		"dataFeedPlaceholder": "Address for data feed contract",
-		"hasPor": "Has proof of reserve",
+		"hasPor": "Has Proof-of-Reserve",
 		"hasPorValue": "TRUE",
 		"hasPorValueFalse": "FALSE",
 		"createDataFeed": "Create data feed",
@@ -107,11 +107,11 @@
 		"ownerAccount": "Owner account"
 	},
 	"review": {
-		"basicDetails": "Basic details",
-		"managementPermissions": "Manage permissions",
+		"basicDetails": "Stablecoin Details",
+		"managementPermissions": "Permissions",
 		"rolesAssignment": "Roles assignment",
-		"optionalDetails": "Optional details",
-		"title": "stablecoin review"
+		"optionalDetails": "Supply & Metadata",
+		"title": "Review stablecoin details prior to creation"
 	},
 	"notification": {
 		"title": "{{ result }} creating the stablecoin",
