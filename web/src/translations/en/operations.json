@@ -19,7 +19,7 @@
 	"pausedToken": "Paused",
 	"deletedToken": "Deleted",
 	"details": {
-		"title": "Stable coin details",
+		"title": "stablecoin details",
 		"basicTitle": "Basic details",
 		"optionalTitle": "Optional details",
 		"name": "Name",
