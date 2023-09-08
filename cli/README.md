@@ -146,7 +146,6 @@ factories:
     network: 'testnet'
   - id: '0.0.765432'
     network: 'previewnet'
-
 ```
 ## Manually creating a config file
 
