@@ -38,7 +38,7 @@ exports[`<Router /> should render correctly 1`] = `
               data-testid="coin-dropdown"
             >
               <div
-                class="chakra-stack css-ppmla1"
+                class="chakra-stack css-1h0sumw"
               >
                 <div
                   class="chakra-form-control css-1kxonj9"
@@ -141,7 +141,7 @@ exports[`<Router /> should render correctly 1`] = `
             </div>
             <div
               aria-hidden="true"
-              class="chakra-stack css-1igwmid"
+              class="chakra-stack css-84zodg"
               data-aria-hidden="true"
             >
               <div
@@ -199,10 +199,10 @@ exports[`<Router /> should render correctly 1`] = `
             data-testid="topbar-right"
           >
             <div
-              class="chakra-stack css-cr3f1i"
+              class="chakra-stack css-d17m5h"
             >
               <div
-                class="chakra-stack css-dk69dq"
+                class="chakra-stack css-jp20jv"
               >
                 <div
                   class="css-1m8iww1"
@@ -533,7 +533,7 @@ exports[`<Router /> should render correctly 1`] = `
                 class="chakra-text css-1d26k2o"
                 data-testid="sidebar-option-title"
               >
-                Stable coin details
+                stablecoin details
               </p>
             </button>
           </div>
@@ -555,7 +555,7 @@ exports[`<Router /> should render correctly 1`] = `
               class="chakra-text css-1xvinut"
               data-testid="stable-coin-not-selected-title"
             >
-              Choose a stable coin to start operating!
+              Choose a stablecoin to start operating!
             </p>
             <p
               class="chakra-text css-exh7zu"

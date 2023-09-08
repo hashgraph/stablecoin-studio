@@ -158,7 +158,7 @@ const ManagementPermissions = ({
 										return (
 											<Text key={index} color='red'>
 												{item.nameTranslate +
-													' - ' +
+													' | ' +
 													t('stableCoinCreation:managementPermissions.none')}
 											</Text>
 										);
@@ -166,7 +166,7 @@ const ManagementPermissions = ({
 										return (
 											<Text key={index}>
 												{item.nameTranslate +
-													' - ' +
+													' | ' +
 													t('stableCoinCreation:managementPermissions.currentUserKey')}
 											</Text>
 										);
@@ -174,7 +174,7 @@ const ManagementPermissions = ({
 										return (
 											<Text key={index}>
 												{item.nameTranslate +
-													' - ' +
+													' | ' +
 													t('stableCoinCreation:managementPermissions.theSmartContract')}
 											</Text>
 										);
