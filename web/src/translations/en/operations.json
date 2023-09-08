@@ -6,7 +6,7 @@
 	"rescueOperation": "Rescue",
 	"rescueHBAROperation": "Rescue HBARs",
 	"burnOperation": "Burn",
-	"dangerZoneOperation": "Danger Zone",
+	"dangerZoneOperation": "Danger zone",
 	"getBalanceOperation": "Get balance",
 	"grantKycOperation": "Grant KYC",
 	"revokeKycOperation": "Revoke KYC",
