@@ -29,7 +29,7 @@ const basicFeatureOptions = {
 
 export const english = {
   general: {
-    title: 'Hedera Stable Coin',
+    title: 'StableCoin Studio',
     warning: '⚠️ All the transactions could incur a cost in HBar',
     newLine: '\n',
     incorrectNumber: 'Incorrect number',
@@ -130,9 +130,9 @@ export const english = {
   },
   stablecoin: {
     noFactories:
-      "You don't have configured your factory and HederaTokenManager address. Without this configuration you cannot create an stable coin. Check the following link for more information. https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/cli#creating-a-config-file",
+      "You don't have configured your factory and HederaTokenManager address. Without this configuration you cannot create an stablecoin. Check the following link for more information. https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/cli#creating-a-config-file",
     askConfirmCreation:
-      'Are you sure you want to create the stable coin with these parameters?',
+      'Are you sure you want to create the stablecoin with these parameters?',
     description: 'Creating Stable Coin',
     askName: 'Enter the name',
     askSymbol: 'Enter the symbol',
@@ -140,16 +140,16 @@ export const english = {
     askAutoRenewPeriod: 'Enter the token autorenew period in days',
     askDecimals: 'Enter the number of decimal places a token is divisible by',
     askToken:
-      'What is the token id of the stable coin you want to operate with?',
+      'What is the token id of the stablecoin you want to operate with?',
     askDoSomething: 'What do you want to do?',
     askOptionalProps:
       'Do you want to configure the initial supply, max supply, decimals or add some metadata?',
-    askReserve: 'Do you want to link the stable coin to a Proof of Reserve?',
+    askReserve: 'Do you want to link the stablecoin to a Proof-of-Reserve?',
     askExistingReserve:
-      'Do you want to link it to an already existing Proof of Reserve?',
+      'Do you want to link it to an already existing Proof-of-Reserve?',
     askReserveAddress:
-      'Enter the Proof of Reserve Feed you wish to link your stable coin to',
-    askReserveInitialAmount: 'Enter the Proof of Reserve Feed initial amount',
+      'Enter the Proof-of-Reserve Feed you wish to link your stablecoin to',
+    askReserveInitialAmount: 'Enter the Proof-of-Reserve Feed initial amount',
     askProxyAdminOwner:
       'Do you want to use your current account as the proxy admin owner?',
     askProxyAdminOwnerAccount: 'Enter the proxy admin owner account',
@@ -206,7 +206,7 @@ export const english = {
     },
     askTreasuryAccountAddress: 'Enter the treasury account id?',
     askOperateStableCoin:
-      'Do you want to operate with the stable coin you just created?',
+      'Do you want to operate with the stablecoin you just created?',
     created:
       'Stable Coin ${name} (${symbol}) with ${decimals} decimals has been created!',
     askCashInAmount: 'How many tokens do you want to cash in?',
@@ -241,7 +241,7 @@ export const english = {
     owner: 'Factory owner',
   },
   commander: {
-    appDescription: 'Hedera Stable Coin is a CLI for managing stable coins',
+    appDescription: 'Hedera Stable Coin is a CLI for managing stablecoins',
     version: 'Output the current version',
     initDescription: 'Init the application',
     wizardDescription: 'Start the wizard',
@@ -258,17 +258,17 @@ export const english = {
       infoDescription:
         'Get the name, symbol, totalSupply, decimals and address of a Stable Coin Token.',
       balanceDescription: 'Get account balance for a Stable Coin Token.',
-      mintDescription: 'Mint stable coins',
+      mintDescription: 'Mint stablecoins',
       options: {
         privateKey: "Account's private key",
         accountId: "User's id",
-        name: "Stable coin's name",
-        symbol: "Stable coin's symbol",
+        name: "Stablecoin's name",
+        symbol: "Stablecoin's symbol",
         autorenewAccountId:
           'Account that will pay the renew expiration time fee',
-        decimals: "Stable coin's decimals",
-        address: "Stable coin's address",
-        amount: 'Amount of stable coins for this action',
+        decimals: "Stablecoin's decimals",
+        address: "Stablecoin's address",
+        amount: 'Amount of stablecoins for this action',
       },
     },
     admin: {
@@ -476,10 +476,10 @@ export const english = {
     proxyConfigCompleted: 'Proxy config loaded',
     factoryProxyConfigCompleted: 'Factory proxy config loaded',
     balanceCompleted: 'Balance loaded',
-    associateCompleted: 'Stable coin associated',
-    deleteCompleted: 'Stable coin deleted',
-    pauseCompleted: 'Stable coin paused',
-    unpauseCompleted: 'Stable coin unpaused',
+    associateCompleted: 'Stablecoin associated',
+    deleteCompleted: 'Stablecoin deleted',
+    pauseCompleted: 'Stablecoin paused',
+    unpauseCompleted: 'Stablecoin unpaused',
     freezeCompleted: 'Account frozen',
     unfreezeCompleted: 'Account unfrozen',
     accountNotFrozen:
@@ -595,9 +595,9 @@ export const english = {
     askAssesmentMethod:
       'Do you want the fees to be deducted from the transfered amount?',
     confirmCreate:
-      'Are you sure want to add this custom fee to the stable coin?',
+      'Are you sure want to add this custom fee to the stablecoin?',
     confirmRemove:
-      'Are you sure you want to remove these custom fees from the stable coin?',
+      'Are you sure you want to remove these custom fees from the stablecoin?',
     options: {
       Create: 'Create fee',
       Remove: 'Remove fee',
@@ -615,10 +615,10 @@ export const english = {
   },
   proxyConfiguration: {
     options: {
-      implementation: 'Upgrade stable coin implementation',
-      owner: 'Change stable coin owner',
-      accept: 'Accept stable coin owner',
-      cancel: 'Cancel stable coin owner change',
+      implementation: 'Upgrade stablecoin implementation',
+      owner: 'Change stablecoin owner',
+      accept: 'Accept stablecoin owner',
+      cancel: 'Cancel stablecoin owner change',
       ...goBack,
     },
     askNewImplementation:
@@ -670,13 +670,13 @@ export const english = {
     },
   },
   dangerZone: {
-    confirmDelete: 'Are you sure want to delete the stable coin?',
-    confirmPause: 'Are you sure you want to pause the stable coin?',
-    confirmUnpause: 'Are you sure you want to unpause the stable coin?',
+    confirmDelete: 'Are you sure want to delete the stablecoin?',
+    confirmPause: 'Are you sure you want to pause the stablecoin?',
+    confirmUnpause: 'Are you sure you want to unpause the stablecoin?',
     options: {
-      Pause: 'Pause stable coin',
-      UnPause: 'Unpause stable coin',
-      Delete: 'Delete stable coin',
+      Pause: 'Pause stablecoin',
+      UnPause: 'Unpause stablecoin',
+      Delete: 'Delete stablecoin',
       ...goBack,
     },
   },
