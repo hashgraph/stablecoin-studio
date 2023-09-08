@@ -2,27 +2,27 @@
 	"common": {
 		"": "Next step",
 		"goBack": "Go back",
-		"createStableCoin": "Create stable coin",
-		"createNewStableCoin": "Create new stable coin",
+		"createStableCoin": "Create stablecoin",
+		"createNewStableCoin": "Create new stablecoin",
 		"factoryId": "Factory Id : ",
 		"cancel": "Cancel"
 	},
 	"tabs": {
-		"basicDetails": "Basic details",
-		"optionalDetails": "Optional details",
-		"managementPermissions": "Manage permissions",
+		"basicDetails": "Stablecoin Details",
+		"optionalDetails": "Supply & Metadata",
+		"managementPermissions": "Configure Permissions",
 		"supplierKey": "Supplier key",
-		"proofOfReserve": "Proof Of Reserve",
-		"review": "Review"
+		"proofOfReserve": "Proof-Of-Reserve",
+		"review": "Create Stablecoin"
 	},
 	"basicDetails": {
-		"name": "Name",
-		"namePlaceholder": "Name",
-		"symbol": "Symbol",
-		"symbolPlaceholder": "Symbol",
-		"title": "Stable coin basic details",
-		"hederaERC20": "HederaTokenManager impl.",
-		"hederaERC20Placeholder": "Choose HederaTokenManager address ID",
+		"name": "Stablecoin Name",
+		"namePlaceholder": "Stablecoin Name",
+		"symbol": "Stablecoin Symbol",
+		"symbolPlaceholder": "Stablecoin Symbol",
+		"title": "Stablecoin Creation",
+		"hederaERC20": "Select HederaTokenManager Smart Contract ID",
+		"hederaERC20Placeholder": "HederaTokenManager Smart Contract ID",
 		"modalErrorTitle": "Recovering HederaTokenManager implementations",
 		"modalErrorDescription": "HederaTokenManager contracts implementations couldn't be obtained.",
 		"hederaTokenManager": "HederaTokenManager impl.",
@@ -38,7 +38,7 @@
 		"infinite": "Infinite",
 		"placeholder": "Introduce {{placeholder}}",
 		"maxSupply": "Max supply",
-		"title": "Stable coin optional details",
+		"title": "Configure Supply & Metadata",
 		"typeSupply": "Supply type",
 		"typeSupplyPlaceholder": "Choose supply type",
 		"metadata": "Metadata",
@@ -66,8 +66,8 @@
 		"admin": "Admin",
 		"supply": "Supply",
 		"feeSchedule": "Fee Schedule",
-		"theSmartContract": "The smart contract",
-		"keysTitle": "Permission management",
+		"theSmartContract": "HederaTokenManager Smart Contract",
+		"keysTitle": "Configure Permissions",
 		"titleLink": "https://docs.hedera.com/hedera/sdks-and-apis/sdks/readme-1/define-a-token",
 		"rolesTitle": "Roles assignment",
 		"rolesLink": "https://github.com/hashgraph/hedera-accelerator-stablecoin#what-is-a-stable-coin",
@@ -77,7 +77,7 @@
 		"CreatorKYCFlag": "Creator account KYC",
 		"CreatorGrantedKYC": "TRUE",
 		"CreatorNotGrantedKYC": "FALSE",
-		"wantKyc": "Do you want to enable KYC?",
+		"wantKyc": "Enable KYC accounts flags?",
 		"wantKycLink": "https://hedera.com/blog/get-started-with-the-hedera-token-service-part-2-kyc-update-and-scheduled-transactions",
 		"manageCustomFees": "Do you want to add custom fees?",
 		"manageCustomFeesLink": "https://docs.hedera.com/hedera/sdks-and-apis/sdks/readme-1/custom-token-fees",
@@ -88,7 +88,7 @@
 	},
 	"proofOfReserve": {
 		"title": "Proof of Reserve",
-		"description": "Would you like that your stable coin collateralization with any on-chain asset?",
+		"description": "Would you like that your stablecoin collateralization with any on-chain asset?",
 		"haveDataFeed": "Do you have an existing data feed? (You will need the contract address)",
 		"dataFeed": "Data Feed",
 		"dataFeedPlaceholder": "Address for data feed contract",
@@ -111,11 +111,11 @@
 		"managementPermissions": "Manage permissions",
 		"rolesAssignment": "Roles assignment",
 		"optionalDetails": "Optional details",
-		"title": "Stable coin review"
+		"title": "stablecoin review"
 	},
 	"notification": {
-		"title": "{{ result }} creating the stable coin",
-		"descriptionSuccess": "The stable coin was created: {{ token }}",
-		"descriptionError": "Sorry, there was an error creating the stable coin"
+		"title": "{{ result }} creating the stablecoin",
+		"descriptionSuccess": "The stablecoin was created: {{ token }}",
+		"descriptionError": "Sorry, there was an error creating the stablecoin"
 	}
 }
