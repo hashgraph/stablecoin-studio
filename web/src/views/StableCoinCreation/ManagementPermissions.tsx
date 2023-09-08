@@ -127,7 +127,13 @@ const ManagementPermissions = ({
 				</Heading>
 				<Stack as='form' spacing={6} pb={6}>
 					<HStack mb={4} justifyContent='space-between'>
-						<Text maxW={'252px'} fontSize='14px' fontWeight='400' lineHeight='17px'>
+						<Text
+							maxW={'252px'}
+							fontSize='14px'
+							fontWeight='400'
+							lineHeight='17px'
+							whiteSpace='nowrap'
+						>
 							{t('stableCoinCreation:managementPermissions.description')}
 						</Text>
 						<SwitchController
@@ -184,7 +190,13 @@ const ManagementPermissions = ({
 					)}
 
 					<HStack mb={4} justifyContent='space-between'>
-						<Text maxW={'252px'} fontSize='14px' fontWeight='400' lineHeight='17px'>
+						<Text
+							maxW={'252px'}
+							fontSize='14px'
+							fontWeight='400'
+							lineHeight='17px'
+							whiteSpace='nowrap'
+						>
 							{t('stableCoinCreation:managementPermissions.wantKyc')}{' '}
 							{
 								<Link
@@ -211,7 +223,13 @@ const ManagementPermissions = ({
 						wallet.lastWallet === SupportedWallets.HASHPACK && (
 							<Stack minW={400}>
 								<HStack mb={4} justifyContent='space-between'>
-									<Text maxW={'252px'} fontSize='14px' fontWeight='400' lineHeight='17px'>
+									<Text
+										maxW={'252px'}
+										fontSize='14px'
+										fontWeight='400'
+										lineHeight='17px'
+										whiteSpace='nowrap'
+									>
 										{t('stableCoinCreation:managementPermissions.grantKYCToOriginalSender')}
 									</Text>
 
@@ -224,7 +242,13 @@ const ManagementPermissions = ({
 							</Stack>
 						)}
 					<HStack mb={4} justifyContent='space-between'>
-						<Text maxW={'252px'} fontSize='14px' fontWeight='400' lineHeight='17px'>
+						<Text
+							maxW={'252px'}
+							fontSize='14px'
+							fontWeight='400'
+							lineHeight='17px'
+							whiteSpace='nowrap'
+						>
 							{t('stableCoinCreation:managementPermissions.manageCustomFees')}{' '}
 							{
 								<Link
