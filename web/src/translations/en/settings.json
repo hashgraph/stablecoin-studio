@@ -2,7 +2,7 @@
 	"title": "Settings",
 	"operationTitle": "Settings",
 	"subtitle": "Choose a settings option",
-	"stableCoinSettings": "Stable Coin",
+	"stableCoinSettings": "Stablecoin",
 	"factorySettings": "Factory",
 	"notOwner": "The current account is not the owner of the factory's proxy",
 	"stableCoin": {
