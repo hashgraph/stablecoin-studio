@@ -96,87 +96,57 @@ The configuration file that is automatically generated populates its fields usin
 The file format is .yaml and the structure is as follows:
 
 ```
-defaultNetwork: 'testnet'
+defaultNetwork: testnet
 networks:
-  [
-    {
-      name: 'mainnet',
-      consensusNodes: []
-    },
-    {
-      name: 'previewnet',
-      consensusNodes: []
-    },
-    {
-      name: 'testnet',
-      consensusNodes: []
-    },
-  ]
+  - name: mainnet
+    consensusNodes: []
+  - name: previewnet
+    consensusNodes: []
+  - name: testnet
+    consensusNodes: []
 accounts:
-  [
-    {
-      accountId: '',
-      privateKey: { key: '', type: '' },
-      network: '',
-      alias: '',
-      importedTokens: [],
-    },
-  ]
+  - accountId: ''
+    privateKey: 
+      key: ''
+      type: ''
+    network: ''
+    alias: ''
+    importedTokens: []
 mirrors:
-  [
-    {
-      name: HEDERA,
-      network: testnet,
-      baseUrl: https://testnet.mirrornode.hedera.com/api/v1/,
-      selected: true
-    },
-    {
-      name: HEDERA,
-      network: previewnet,
-      baseUrl: https://previewnet.mirrornode.hedera.com/api/v1/,
-      selected: true
-    },
-    {
-      name: HEDERA,
-      network: mainnet,
-      baseUrl: https://mainnet-public.mirrornode.hedera.com/api/v1/,
-      selected: true
-    }
-  ]
+  - name: HEDERA
+    network: testnet
+    baseUrl: https://testnet.mirrornode.hedera.com/api/v1/
+    selected: true
+  - name: HEDERA
+    network: previewnet
+    baseUrl: https://previewnet.mirrornode.hedera.com/api/v1/
+    selected: true
+  - name: HEDERA
+    network: mainnet
+    baseUrl: https://mainnet-public.mirrornode.hedera.com/api/v1/
+    selected: true
 rpcs:
-  [
-    {
-      name: HASHIO,
-      network: testnet,
-      baseUrl: https://testnet.hashio.io/api,
-      selected: true
-    },
-    {
-      name: HASHIO,
-      network: previewnet,
-      baseUrl: https://previewnet.hashio.io/api,
-      selected: true
-    },
-    {
-      name: HASHIO,
-      network: mainnet,
-      baseUrl: https://mainnet.hashio.io/api,
-      selected: true
-    }
-  ]
+  - name: HASHIO
+    network: testnet
+    baseUrl: https://testnet.hashio.io/api
+    selected: true
+  - name: HASHIO
+    network: previewnet
+    baseUrl: https://previewnet.hashio.io/api
+    selected: true
+  - name: HASHIO
+    network: mainnet
+    baseUrl: https://mainnet.hashio.io/api
+    selected: true
 logs:
   path: './logs'
   level: 'ERROR'
-factories: [
-  {
-    id: '0.0.14455068',
+factories: 
+  - id: '0.0.14455068'
     network: 'testnet'
-  },
-  {
-    id: '0.0.765432',
+  - id: '0.0.765432'
     network: 'previewnet'
-  }
-]
+
 ```
 ## Manually creating a config file
 
