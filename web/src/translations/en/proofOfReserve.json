@@ -21,6 +21,6 @@
 	},
 	"noProofOfReserve": {
 		"title": "Missing Proof-of-Reserve",
-		"description": "The stable coin you have chosen does not have a Proof-of-Reserve, please, select a different stable coin."
+		"description": "The stablecoin you have chosen does not have a Proof-of-Reserve, please, select a different stablecoin."
 	}
 }
