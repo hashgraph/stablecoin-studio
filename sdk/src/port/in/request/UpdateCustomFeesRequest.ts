@@ -81,7 +81,7 @@ export default class UpdateCustomFeesRequest extends ValidatedRequest<UpdateCust
 						});
 					else
 						return [
-							new InvalidType(val, 'FixedFee / FractionalFee'),
+							new InvalidType(val),
 						];
 				});
 			},
