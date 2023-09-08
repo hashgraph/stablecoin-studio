@@ -46,10 +46,10 @@
 	},
 	"sidebar": {
 		"operations": "Operations",
-		"role": "Role management",
-		"details": "stablecoin details",
-		"proofOfReserve": "Proof of reserve",
-		"feesManagement": "Fees management",
+		"role": "Role Management",
+		"details": "Stablecoin Details",
+		"proofOfReserve": "Proof-of-Reserve",
+		"feesManagement": "Fees Management",
 		"settings": "Settings"
 	},
 	"validations": {
