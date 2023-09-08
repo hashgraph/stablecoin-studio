@@ -124,7 +124,8 @@ const StableCoinCreation = () => {
 
 	const isValidStep = () => {
 		// @ts-ignore
-		let fieldsStep = [];
+		let fieldsStep: any[] = [];
+		let keys: any[] = [];
 
 		if (currentStep === 0) {
 			// @ts-ignore
@@ -134,7 +135,7 @@ const StableCoinCreation = () => {
 		if (currentStep === 1) {
 			// @ts-ignore
 			const supplyType = watch('supplyType');
-			let keys = ['initialSupply', 'decimals'];
+			keys = ['initialSupply', 'decimals'];
 
 			if (supplyType?.value === 1) keys = keys.concat('maxSupply');
 
@@ -145,7 +146,7 @@ const StableCoinCreation = () => {
 			// @ts-ignore
 			const managePermissions = watch('managementPermissions');
 			const kycRequired = watch('kycRequired');
-			let keys: string[] = [];
+			keys = [];
 
 			if (kycRequired) keys = keys.concat('kycKey');
 
@@ -172,7 +173,7 @@ const StableCoinCreation = () => {
 			// @ts-ignore
 			const hasDataFeed = watch('hasDataFeed');
 			if (proofOfReserve) {
-				const keys: string[] = [];
+				keys = [];
 				if (hasDataFeed) {
 					keys.push('reserveAddress');
 				} else {
@@ -185,7 +186,7 @@ const StableCoinCreation = () => {
 
 		return setIsValidForm(
 			fieldsStep?.filter((item) => !item && item !== 0).length === 0 &&
-				Object.keys(errors).length === 0,
+				(Object.keys(errors).length === 0 || !Object.keys(errors).some((r) => keys.includes(r))),
 		);
 	};
 
@@ -249,13 +250,11 @@ const StableCoinCreation = () => {
 	const handleFinish = async () => {
 		const {
 			managementPermissions,
-			adminKey,
 			freezeKey,
 			kycRequired,
 			kycKey,
 			wipeKey,
 			pauseKey,
-			supplyKey,
 			manageCustomFees,
 			feeScheduleKey,
 			reserveInitialAmount,
