@@ -33,13 +33,13 @@
 		"network": "Op. network",
 		"account": "Op. account",
 		"coinDropdown": {
-			"placeholder": "Choose stable coin",
-			"noStableCoin": "No stable coins found with that id, would you like to import it?",
+			"placeholder": "Choose stablecoin",
+			"noStableCoin": "No stablecoins found with that id, would you like to import it?",
 			"invalidStableCoinId": "Enter a valid token id",
-			"importToken": "Import stable coin: {{ tokenId }}"
+			"importToken": "Import stablecoin: {{ tokenId }}"
 		},
 		"createSC": "Create coin",
-		"alertNoEnv": "You have not configured a factory address. Without it you can not create a stable coin.",
+		"alertNoEnv": "You have not configured a factory address. Without it you can not create a stablecoin.",
 		"alertNoEnvLink": "Go to documentation",
 		"alertNotHederaAccount": "Not a Hedera Account in this network",
 		"alertNotHederaNetwork": "Current network is not an hedera network"
@@ -47,7 +47,7 @@
 	"sidebar": {
 		"operations": "Operations",
 		"role": "Role management",
-		"details": "Stable coin details",
+		"details": "stablecoin details",
 		"proofOfReserve": "Proof of reserve",
 		"feesManagement": "Fees management",
 		"settings": "Settings"
@@ -56,7 +56,7 @@
 		"required": "This field is required",
 		"invalidAccount": "Incorrect account",
 		"invalidAmount": "Invalid amount",
-		"invalidCoinId": "Invalid stable coin id",
+		"invalidCoinId": "Invalid stablecoin id",
 		"decimalsValidation": "The amount has an invalid number of decimals",
 		"tokenIdNotExists": "Token {{ tokenId }} not exists",
 		"invalidOwner": "Invalid owner, is the current account owner",
