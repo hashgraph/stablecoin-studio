@@ -80,7 +80,7 @@ export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractio
 
 				const numerator = parseInt(val);
 
-				if (isNaN(numerator)) return [new InvalidType(val, 'integer')];
+				if (isNaN(numerator)) return [new InvalidType(val)];
 
 				if (CheckNums.hasMoreDecimals(val, 0)) {
 					return [new InvalidDecimalRange(val, 0)];
@@ -96,13 +96,13 @@ export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractio
 						this.amountNumerator === ''
 					)
 						return;
-					else return [new InvalidType(val, 'integer')];
+					else return [new InvalidType(val)];
 				}
 
 				const denominator = parseInt(val);
 
 				if (isNaN(denominator))
-					return [new InvalidType(val, 'integer')];
+					return [new InvalidType(val)];
 
 				if (CheckNums.hasMoreDecimals(val, 0)) {
 					return [new InvalidDecimalRange(val, 0)];
@@ -128,11 +128,11 @@ export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractio
 				}
 
 				if (val === undefined || val === '') {
-					return [new InvalidType(val, 'integer')];
+					return [new InvalidType(val)];
 				}
 
 				if (!BigDecimal.isBigDecimal(val)) {
-					return [new InvalidType(val, 'BigDecimal')];
+					return [new InvalidType(val)];
 				}
 
 				if (CheckNums.hasMoreDecimals(val, MAX_PERCENTAGE_DECIMALS)) {
@@ -166,7 +166,7 @@ export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractio
 					return;
 				}
 				if (!BigDecimal.isBigDecimal(val)) {
-					return [new InvalidType(val, 'BigDecimal')];
+					return [new InvalidType(val)];
 				}
 				if (CheckNums.hasMoreDecimals(val, this.decimals)) {
 					return [new InvalidDecimalRange(val, this.decimals)];
@@ -184,7 +184,7 @@ export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractio
 					return;
 				}
 				if (!BigDecimal.isBigDecimal(val)) {
-					return [new InvalidType(val, 'BigDecimal')];
+					return [new InvalidType(val)];
 				}
 				if (CheckNums.hasMoreDecimals(val, this.decimals)) {
 					return [new InvalidDecimalRange(val, this.decimals)];

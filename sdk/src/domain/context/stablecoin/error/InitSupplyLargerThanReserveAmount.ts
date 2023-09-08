@@ -24,7 +24,7 @@ export class InitSupplyLargerThanReserveAmount extends BaseError {
 	constructor(initSupply: string, reserveInitialAmount: string) {
 		super(
 			ErrorCode.InvalidRange,
-			`Initial supply ${initSupply} is bigger than PoR initial amount ${reserveInitialAmount}`,
+			`Initial supply of ${initSupply} is bigger than PoR initial amount ${reserveInitialAmount}`,
 		);
 	}
 }

@@ -194,7 +194,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 					return;
 				}
 				if (!BigDecimal.isBigDecimal(val)) {
-					return [new InvalidType(val, 'BigDecimal')];
+					return [new InvalidType(val)];
 				}
 				if (CheckNums.hasMoreDecimals(val, this.decimals)) {
 					return [new InvalidDecimalRange(val, this.decimals)];
@@ -222,7 +222,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 					return;
 				}
 				if (!BigDecimal.isBigDecimal(val)) {
-					return [new InvalidType(val, 'BigDecimal')];
+					return [new InvalidType(val)];
 				}
 				if (CheckNums.hasMoreDecimals(val, this.decimals)) {
 					return [new InvalidDecimalRange(val, this.decimals)];
@@ -266,7 +266,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 					return;
 				}
 				if (!BigDecimal.isBigDecimal(val)) {
-					return [new InvalidType(val, 'BigDecimal')];
+					return [new InvalidType(val)];
 				}
 				if (CheckNums.hasMoreDecimals(val, RESERVE_DECIMALS)) {
 					return [new InvalidDecimalRange(val, RESERVE_DECIMALS)];
@@ -314,7 +314,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 					return;
 				}
 				if (!BigDecimal.isBigDecimal(val)) {
-					return [new InvalidType(val, 'BigDecimal')];
+					return [new InvalidType(val)];
 				}
 				if (CheckNums.hasMoreDecimals(val, this.decimals)) {
 					return [new InvalidDecimalRange(val, this.decimals)];

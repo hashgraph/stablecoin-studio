@@ -56,7 +56,7 @@ export default class AddFixedFeeRequest extends ValidatedRequest<AddFixedFeeRequ
 			tokenIdCollected: Validation.checkHederaIdFormat(true),
 			amount: (val) => {
 				if (!BigDecimal.isBigDecimal(val)) {
-					return [new InvalidType(val, 'BigDecimal')];
+					return [new InvalidType(val)];
 				}
 
 				if (CheckNums.hasMoreDecimals(val, this.decimals)) {

@@ -71,7 +71,7 @@ export default class Validation {
 		return (val: any): BaseError[] => {
 			const err: BaseError[] = [];
 			if (typeof val !== 'string') {
-				err.push(new InvalidType(val, 'string'));
+				err.push(new InvalidType(val));
 			} else {
 				if (emptyCheck && !CheckStrings.isNotEmpty(val)) {
 					err.push(new EmptyValue(val));
@@ -93,7 +93,7 @@ export default class Validation {
 			const iMin = min || min === 0;
 			const isBigDecimal: boolean = CheckNums.isBigDecimal(val);
 			if (typeof val !== 'number' && !isBigDecimal) {
-				err.push(new InvalidType(val, 'string | number | BigDecimal'));
+				err.push(new InvalidType(val));
 			} else {
 				let v = val;
 				if (typeof v !== 'number') v = BigDecimal.fromString(v);
@@ -146,7 +146,7 @@ export default class Validation {
 			const numerator = parseInt(amountNumerator);
 
 			if (isNaN(numerator))
-				err.push(new InvalidType(amountNumerator, 'integer'));
+				err.push(new InvalidType(amountNumerator));
 
 			if (CheckNums.hasMoreDecimals(amountNumerator, 0)) {
 				err.push(new InvalidDecimalRange(amountNumerator, 0));
@@ -158,7 +158,7 @@ export default class Validation {
 			const denominator = parseInt(amountDenominator);
 
 			if (isNaN(denominator))
-				err.push(new InvalidType(amountDenominator, 'integer'));
+				err.push(new InvalidType(amountDenominator));
 
 			if (CheckNums.hasMoreDecimals(amountDenominator, 0)) {
 				err.push(new InvalidDecimalRange(amountDenominator, 0));
@@ -172,7 +172,7 @@ export default class Validation {
 				);
 
 			if (!BigDecimal.isBigDecimal(min)) {
-				err.push(new InvalidType(min, 'BigDecimal'));
+				err.push(new InvalidType(min));
 			}
 			if (CheckNums.hasMoreDecimals(min, decimals)) {
 				err.push(new InvalidDecimalRange(min, decimals));
@@ -193,7 +193,7 @@ export default class Validation {
 				);
 			}
 			if (!BigDecimal.isBigDecimal(max)) {
-				err.push(new InvalidType(max, 'BigDecimal'));
+				err.push(new InvalidType(max));
 			}
 			if (CheckNums.hasMoreDecimals(max, decimals)) {
 				err.push(new InvalidDecimalRange(max, decimals));
@@ -229,7 +229,7 @@ export default class Validation {
 			);
 
 			if (!BigDecimal.isBigDecimal(amount)) {
-				err.push(new InvalidType(amount, 'BigDecimal'));
+				err.push(new InvalidType(amount));
 			}
 
 			if (CheckNums.hasMoreDecimals(amount, decimals)) {
@@ -286,7 +286,7 @@ export default class Validation {
 			const err: BaseError[] = [];
 			const isBigDecimal: boolean = CheckNums.isBigDecimal(val);
 			if (!isBigDecimal) {
-				err.push(new InvalidType(val, 'BigDecimal'));
+				err.push(new InvalidType(val));
 				return err;
 			}
 			const valueDecimals = BigDecimal.getDecimalsFromString(val);
