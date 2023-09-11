@@ -22,7 +22,7 @@ exports[`<Settings /> should render correctly 1`] = `
           class="chakra-heading css-qltjox"
           data-testid="subtitle"
         >
-          Choose a settings option
+          Choose an option
         </h2>
         <div
           class="css-nxcc5s"

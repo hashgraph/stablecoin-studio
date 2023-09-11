@@ -9,7 +9,7 @@ exports[`<Roles /> should render correctly 1`] = `
       class="chakra-heading css-bqsusc"
       data-testid="base-container-heading"
     >
-      Role management
+      Role Management
     </h2>
     <div
       class="css-1b6lda7"
@@ -271,9 +271,9 @@ exports[`<Roles /> should render correctly 1`] = `
               </div>
               <p
                 class="chakra-text css-o5z2l9"
-                data-testid="direct-access-Check accounts that has a role"
+                data-testid="direct-access-Check accounts with role"
               >
-                Check accounts that has a role
+                Check accounts with role
               </p>
             </button>
           </div>
