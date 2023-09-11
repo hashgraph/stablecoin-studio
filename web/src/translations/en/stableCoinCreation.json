@@ -69,7 +69,7 @@
 		"theSmartContract": "HederaTokenManager Smart Contract",
 		"keysTitle": "Configure Permissions",
 		"titleLink": "https://docs.hedera.com/hedera/sdks-and-apis/sdks/readme-1/define-a-token",
-		"rolesTitle": "Roles assignment",
+		"rolesTitle": "Roles Assignment",
 		"rolesLink": "https://github.com/hashgraph/hedera-accelerator-stablecoin#what-is-a-stable-coin",
 		"totalSupply": "Total supply",
 		"treasuryAccountAddress": "Treasury account address",
@@ -82,7 +82,7 @@
 		"manageCustomFees": "Do you want to add custom fees?",
 		"manageCustomFeesLink": "https://docs.hedera.com/hedera/sdks-and-apis/sdks/readme-1/custom-token-fees",
 		"accountPlaceholder": "0.0.0",
-		"proxyAdminTitle": "Proxy admin",
+		"proxyAdminTitle": "Proxy Admin",
 		"proxyAdminOwner": "Do you want to use your current account as the proxy admin owner?",
 		"proxyAdminOwnerAccount": "Proxy admin owner account"
 	},
