@@ -9,7 +9,7 @@ exports[`<RoleLayout /> should render correctly 1`] = `
       class="chakra-heading css-bqsusc"
       data-testid="base-container-heading"
     >
-      Role management
+      Role Management
     </h2>
     <div
       class="css-1b6lda7"
