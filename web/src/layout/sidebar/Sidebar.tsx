@@ -7,7 +7,6 @@ import {
 	SELECTED_WALLET_COIN,
 } from '../../store/slices/walletSlice';
 import { useSelector } from 'react-redux';
-import { Network } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 interface optionsProps {
 	icon: string;
