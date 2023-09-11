@@ -1,6 +1,6 @@
 /*
  *
- * Hedera Stable Coin SDK
+ * Hedera Stablecoin SDK
  *
  * Copyright (C) 2023 Hedera Hashgraph, LLC
  *
@@ -93,7 +93,7 @@ export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
 
 		const amountBd = BigDecimal.fromString(amount, coin.decimals);
 		if (!coin.maxSupply || !coin.totalSupply)
-			throw new OperationNotAllowed(`The stable coin is not valid`);
+			throw new OperationNotAllowed(`The stablecoin is not valid`);
 
 		if (
 			coin.maxSupply &&

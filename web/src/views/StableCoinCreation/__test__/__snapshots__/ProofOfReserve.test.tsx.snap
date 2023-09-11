@@ -20,7 +20,7 @@ exports[`<ProofOfReserve /> should render correctly 1`] = `
         <p
           class="chakra-text css-3crm2z"
         >
-          Would you like that your stable coin collateralization with any on-chain asset?
+          Would you like that your stablecoin collateralization with any on-chain asset?
         </p>
       </div>
     </div>

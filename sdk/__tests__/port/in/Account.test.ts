@@ -1,6 +1,6 @@
 /*
  *
- * Hedera Stable Coin SDK
+ * Hedera Stablecoin SDK
  *
  * Copyright (C) 2023 Hedera Hashgraph, LLC
  *
@@ -73,7 +73,7 @@ describe('🧪 Account test', () => {
 		expect(res.toString()).toEqual(CLIENT_PUBLIC_KEY_ED25519.toString());
 	}, 60_000);
 
-	it('Lists stable coins', async () => {
+	it('Lists stablecoins', async () => {
 		const res = await Account.listStableCoins(
 			new GetListStableCoinRequest({
 				account: {

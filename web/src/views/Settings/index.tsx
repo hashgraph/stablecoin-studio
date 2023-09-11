@@ -95,13 +95,15 @@ const Settings = () => {
 		},
 	];
 
+	const filteredDirectAccesses = directAccesses.filter((access) => !access.isDisabled);
+
 	return (
 		<BaseContainer title={t('title')}>
 			<Box p={{ base: 4, md: '128px' }}>
 				<Heading fontSize='20px' fontWeight='600' mb={14} data-testid='subtitle'>
 					{t('subtitle')}
 				</Heading>
-				<GridDirectAccess directAccesses={directAccesses} />
+				<GridDirectAccess directAccesses={filteredDirectAccesses} />
 			</Box>
 		</BaseContainer>
 	);

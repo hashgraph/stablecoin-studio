@@ -64,12 +64,6 @@ const OperationLayout = ({ LeftContent, onConfirm, confirmBtnProps }: OperationL
 				: t('operations:details.finite'),
 		},
 		{
-			label: t('operations:details.supplyType'),
-			value: selectedStableCoin?.maxSupply?.isZero()
-				? t('operations:details.infinite')
-				: t('operations:details.finite'),
-		},
-		{
 			label: t('operations:details.metadata'),
 			value: selectedStableCoin?.metadata,
 		},

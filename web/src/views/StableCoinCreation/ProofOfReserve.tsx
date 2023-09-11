@@ -122,8 +122,10 @@ const ProofOfReserve = (props: ProofOfReserveProps) => {
 							isRequired
 							control={control}
 							name={'reserveInitialAmount'}
-							label={t('stableCoinCreation:proofOfReserve.initialSupply') ?? propertyNotFound}
-							placeholder={t('stableCoinCreation:proofOfReserve.initialSupply') ?? propertyNotFound}
+							label={t('stableCoinCreation:proofOfReserve.initialSupplyPor') ?? propertyNotFound}
+							placeholder={
+								t('stableCoinCreation:proofOfReserve.initialSupplyPor') ?? propertyNotFound
+							}
 						/>
 					</HStack>
 				)}

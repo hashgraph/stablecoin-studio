@@ -1,6 +1,6 @@
 /*
  *
- * Hedera Stable Coin SDK
+ * Hedera Stablecoin SDK
  *
  * Copyright (C) 2023 Hedera Hashgraph, LLC
  *
@@ -42,7 +42,7 @@ export default class UpdateReserveAmountRequest extends ValidatedRequest<UpdateR
 			reserveAddress: Validation.checkContractId(),
 			reserveAmount: (val) => {
 				if (!BigDecimal.isBigDecimal(val)) {
-					return [new InvalidType(val, 'BigDecimal')];
+					return [new InvalidType(val)];
 				}
 				if (CheckNums.hasMoreDecimals(val, RESERVE_DECIMALS)) {
 					return [new InvalidDecimalRange(val, RESERVE_DECIMALS)];

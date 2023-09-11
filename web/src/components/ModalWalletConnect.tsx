@@ -85,6 +85,7 @@ const ModalWalletConnect = () => {
 		dispatch(walletActions.setNetwork(network));
 		dispatch(walletActions.setSelectedStableCoin(undefined));
 		dispatch(walletActions.setSelectedStableCoinProxyConfig(undefined));
+		dispatch(walletActions.setSelectedNetworkFactoryProxyConfig(undefined));
 		dispatch(walletActions.setIsProxyOwner(false));
 		dispatch(walletActions.setIsPendingOwner(false));
 		dispatch(walletActions.setIsAcceptOwner(false));
@@ -92,10 +93,12 @@ const ModalWalletConnect = () => {
 		try {
 			await SDKService.connectWallet(wallet, network);
 
-			const factoryProxyConfig: StableCoinListViewModel = await getFactoryProxyConfig(
-				await Network.getFactoryAddress(),
-			);
-			dispatch(walletActions.setSelectedNetworkFactoryProxyConfig(factoryProxyConfig));
+			const factoryId = await Network.getFactoryAddress();
+
+			if (factoryId) {
+				const factoryProxyConfig: StableCoinListViewModel = await getFactoryProxyConfig(factoryId);
+				dispatch(walletActions.setSelectedNetworkFactoryProxyConfig(factoryProxyConfig));
+			}
 			dispatch(walletActions.setIsFactoryProxyOwner(false));
 			dispatch(walletActions.setIsFactoryPendingOwner(false));
 			dispatch(walletActions.setIsFactoryAcceptOwner(false));
@@ -117,7 +120,7 @@ const ModalWalletConnect = () => {
 			),
 			new Promise((resolve, reject) => {
 				setTimeout(() => {
-					reject(new Error("Stable coin details couldn't be obtained in a reasonable time."));
+					reject(new Error("Stablecoin details couldn't be obtained in a reasonable time."));
 				}, 10000);
 			}),
 		]).catch((e) => {
@@ -144,6 +147,12 @@ const ModalWalletConnect = () => {
 	};
 
 	const networkOptions = [{ value: 'testnet', label: 'Testnet' }];
+	if (
+		process.env.REACT_APP_ONLY_TESTNET === undefined ||
+		process.env.REACT_APP_ONLY_TESTNET === 'false'
+	) {
+		networkOptions.push({ value: 'mainnet', label: 'Mainnet' });
+	}
 
 	const handleConnectMetamaskWallet = () => {
 		handleWalletConnect(SupportedWallets.METAMASK, '-');

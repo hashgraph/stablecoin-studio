@@ -2,7 +2,7 @@
 	"common": {
 		"nextStep": "Next step",
 		"goBack": "Go back",
-		"createStableCoin": "Create stable coin",
+		"createStableCoin": "Create stablecoin",
 		"createNewStableCoin": "Add token",
 		"cancel": "Cancel",
 		"addExternalToken": "Add token"
@@ -11,7 +11,7 @@
 		"externalTokenInfo": "Token info"
 	},
 	"externalTokenInfo": {
-		"stableCoinId": "Stable coin id",
+		"stableCoinId": "stablecoin id",
 		"stableCoinIdPlaceholder": "0.0.0",
 		"title": "Add token",
 		"autoCheckRoles": "Do you want to get the roles automatically? This operation will incur a cost",
@@ -24,7 +24,7 @@
 		"infinite": "Infinite",
 		"placeholder": "Enter the {{placeholder}}",
 		"maxSupply": "Max supply",
-		"title": "Stable coin optional details",
+		"title": "stablecoin optional details",
 		"typeSupply": "Type supply",
 		"typeSupplyPlaceholder": "Choose type supply"
 	},
@@ -43,7 +43,7 @@
 		"supply": "Supply",
 		"feeSchedule": "Fee Schedule",
 		"theSmartContract": "The smart contract",
-		"title": "Stable coin management permissions",
+		"title": "stablecoin management permissions",
 		"totalSupply": "Total supply",
 		"treasuryAccountAddress": "Treasury account address",
 		"wipe": "Wipe"
@@ -52,15 +52,15 @@
 		"basicDetails": "Basic details",
 		"managementPermissions": "Management permissions",
 		"optionalDetails": "Optional details",
-		"title": "Stable coin review"
+		"title": "stablecoin review"
 	},
 	"notification": {
-		"titleLoading": "{{ result }} loading stable coin list",
-		"titleAdding": "{{ result }} adding the stable coin",
-		"titleSelecting": "{{ result }} selecting the stable coin",
+		"titleLoading": "{{ result }} loading stablecoin list",
+		"titleAdding": "{{ result }} adding the stablecoin",
+		"titleSelecting": "{{ result }} selecting the stablecoin",
 		"descriptionSuccess": "",
-		"descriptionLoadingError": "Sorry, there was an error loading the stable coin list",
-		"descriptionAddingError": "Sorry, there was an error adding the stable coin",
-		"descriptionSelectingError": "Sorry, there was an error selecting the stable coin"
+		"descriptionLoadingError": "Sorry, there was an error loading the stablecoin list",
+		"descriptionAddingError": "Sorry, there was an error adding the stablecoin",
+		"descriptionSelectingError": "Sorry, there was an error selecting the stablecoin"
 	}
 }

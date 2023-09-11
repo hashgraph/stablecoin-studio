@@ -5,11 +5,11 @@ import { KYCRequest, StableCoin } from '@hashgraph-dev/stablecoin-npm-sdk';
 import colors from 'colors';
 
 /**
- * Create Role Stable Coin Service
+ * Create Role Stablecoin Service
  */
 export default class KYCStableCoinService extends Service {
   constructor() {
-    super('KYC Stable Coin');
+    super('KYC Stablecoin');
   }
 
   public async grantKYCToAccount(req: KYCRequest): Promise<void> {

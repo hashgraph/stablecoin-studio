@@ -25,7 +25,7 @@ describe(`<${StableCoinSettings.name} />`, () => {
 		expect(header).toHaveTextContent(translations.title);
 	});
 
-	test('should have update owner and update implementation stable coin buttons', async () => {
+	test('should have update owner and update implementation stablecoin buttons', async () => {
 		const store = mockStore({
 			wallet: {
 				isProxyOwner: true,
@@ -60,7 +60,7 @@ describe(`<${StableCoinSettings.name} />`, () => {
 
 		const selector = component.getByRole('combobox');
 		await act(async () => userEvent.click(selector));
-		const option = component.getByText('0.0.3');
+		const option = component.getAllByText('0.0.3')[1];
 		userEvent.click(option);
 
 		const addressButton = await component.findByTestId('update-implementation-address-button');
@@ -77,7 +77,7 @@ describe(`<${StableCoinSettings.name} />`, () => {
 		await userEvent.click(ownerButton);
 	});
 
-	test('should have accept stable coin owner button', async () => {
+	test('should have accept stablecoin owner button', async () => {
 		const store = mockStore({
 			wallet: {
 				isProxyOwner: false,
@@ -113,7 +113,7 @@ describe(`<${StableCoinSettings.name} />`, () => {
 		await userEvent.click(acceptOwnerButton);
 	});
 
-	test('should have pending stable coin proxy owner buttons', async () => {
+	test('should have pending stablecoin proxy owner buttons', async () => {
 		const store = mockStore({
 			wallet: {
 				isProxyOwner: true,
@@ -148,7 +148,7 @@ describe(`<${StableCoinSettings.name} />`, () => {
 
 		const selector = component.getByRole('combobox');
 		await act(async () => userEvent.click(selector));
-		const option = component.getByText('0.0.3');
+		const option = component.getAllByText('0.0.3')[1];
 		userEvent.click(option);
 
 		const addressButton = await component.findByTestId('update-implementation-address-button');

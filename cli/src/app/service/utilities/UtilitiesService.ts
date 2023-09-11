@@ -408,7 +408,7 @@ export default class UtilitiesService extends Service {
     data?: StableCoinListViewModel,
   ): Promise<void> {
     if (data.coins.length === 0) {
-      console.log('There are no stable coins available at this time.');
+      console.log('There are no stablecoins available at this time.');
     } else {
       const table = new Table({
         style: { head: ['green'] },

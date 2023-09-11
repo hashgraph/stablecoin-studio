@@ -1,6 +1,6 @@
 /*
  *
- * Hedera Stable Coin SDK
+ * Hedera Stablecoin SDK
  *
  * Copyright (C) 2023 Hedera Hashgraph, LLC
  *
@@ -207,7 +207,7 @@ export default class RPCQueryAdapter {
 
 	async getProxyPendingOwner(proxyAdmin: EvmAddress): Promise<string> {
 		LogService.logTrace(
-			`Requesting owner for proxy Admin: ${proxyAdmin.toString()}`,
+			`Requesting pending owner for proxy Admin: ${proxyAdmin.toString()}`,
 		);
 		return await this.connect(
 			StableCoinProxyAdmin,

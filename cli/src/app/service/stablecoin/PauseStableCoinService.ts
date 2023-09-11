@@ -4,15 +4,15 @@ import Service from '../Service.js';
 import { PauseRequest, StableCoin } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 /**
- * Create Role Stable Coin Service
+ * Create Role Stablecoin Service
  */
 export default class PauseStableCoinService extends Service {
   constructor() {
-    super('Pause Stable Coin');
+    super('Pause Stablecoin');
   }
 
   /**
-   * pause stable coin
+   * pause stablecoin
    */
   public async pauseStableCoin(req: PauseRequest): Promise<void> {
     await utilsService.showSpinner(StableCoin.pause(req), {
@@ -26,7 +26,7 @@ export default class PauseStableCoinService extends Service {
   }
 
   /**
-   * unpause stable coin
+   * unpause stablecoin
    */
   public async unpauseStableCoin(req: PauseRequest): Promise<void> {
     await utilsService.showSpinner(StableCoin.unPause(req), {

@@ -9,7 +9,7 @@ import {
 
 export default class BalanceOfStableCoinsService extends Service {
   constructor() {
-    super('Balance Of Stable Coin');
+    super('Balance Of Stablecoin');
   }
 
   public async getBalanceOfStableCoin(
@@ -27,7 +27,7 @@ export default class BalanceOfStableCoinsService extends Service {
       },
     );
 
-    console.log('Balance of Stable Coin: ', respDetail.value.toString());
+    console.log('Balance of Stablecoin: ', respDetail.value.toString());
 
     utilsService.breakLine();
   }

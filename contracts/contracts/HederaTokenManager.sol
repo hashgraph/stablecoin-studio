@@ -13,7 +13,7 @@ import {Burnable} from './extensions/Burnable.sol';
 import {Wipeable} from './extensions/Wipeable.sol';
 import {Pausable} from './extensions/Pausable.sol';
 import {Freezable} from './extensions/Freezable.sol';
-import {Rescatable} from './extensions/Rescatable.sol';
+import {Rescuable} from './extensions/Rescuable.sol';
 import {Deletable} from './extensions/Deletable.sol';
 import {Reserve} from './extensions/Reserve.sol';
 
@@ -31,7 +31,7 @@ contract HederaTokenManager is
     Pausable,
     Freezable,
     Deletable,
-    Rescatable,
+    Rescuable,
     KYC,
     RoleManagement
 {
@@ -58,7 +58,7 @@ contract HederaTokenManager is
     }
 
     /**
-     * @dev Initializes the stable coin frmo the proxy
+     * @dev Initializes the stablecoin frmo the proxy
      *
      * @param init the underlying token to create
      *

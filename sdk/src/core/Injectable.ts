@@ -1,6 +1,6 @@
 /*
  *
- * Hedera Stable Coin SDK
+ * Hedera Stablecoin SDK
  *
  * Copyright (C) 2023 Hedera Hashgraph, LLC
  *
@@ -112,17 +112,17 @@ const COMMAND_HANDLERS = [
 		token: TOKENS.COMMAND_HANDLER,
 		useClass: ConcreteCommandHandler,
 	},
-	// Stable Coin Creation
+	// Stablecoin Creation
 	{
 		token: TOKENS.COMMAND_HANDLER,
 		useClass: CreateCommandHandler,
 	},
-	// Stable Coin Update
+	// Stablecoin Update
 	{
 		token: TOKENS.COMMAND_HANDLER,
 		useClass: UpdateCommandHandler,
 	},
-	// Stable Coin Operations
+	// Stablecoin Operations
 	{
 		token: TOKENS.COMMAND_HANDLER,
 		useClass: CashInCommandHandler,
@@ -183,7 +183,7 @@ const COMMAND_HANDLERS = [
 		token: TOKENS.COMMAND_HANDLER,
 		useClass: AssociateCommandHandler,
 	},
-	// Stable Coin Role Operations
+	// Stablecoin Role Operations
 	{
 		token: TOKENS.COMMAND_HANDLER,
 		useClass: DecreaseAllowanceCommandHandler,

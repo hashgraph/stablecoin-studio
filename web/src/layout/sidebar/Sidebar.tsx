@@ -2,8 +2,12 @@ import { Flex } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { NamedRoutes } from '../../Router/NamedRoutes';
 import SidebarOption from './SidebarOption';
-import { SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
+import {
+	SELECTED_NETWORK_FACTORY_PROXY_CONFIG,
+	SELECTED_WALLET_COIN,
+} from '../../store/slices/walletSlice';
 import { useSelector } from 'react-redux';
+import { Network } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 interface optionsProps {
 	icon: string;
@@ -16,6 +20,7 @@ interface optionsProps {
 const Sidebar = () => {
 	const { t } = useTranslation('global');
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
+	const selectedNetworkFactoryProxyConfig = useSelector(SELECTED_NETWORK_FACTORY_PROXY_CONFIG);
 	const options: optionsProps[] = [
 		{
 			icon: 'Coin',
@@ -49,6 +54,7 @@ const Sidebar = () => {
 			icon: 'GearSix',
 			title: t('sidebar.settings'),
 			route: NamedRoutes.Settings,
+			isHidden: !selectedNetworkFactoryProxyConfig,
 		},
 	];
 

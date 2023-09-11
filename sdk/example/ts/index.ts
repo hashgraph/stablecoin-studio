@@ -17,7 +17,7 @@ async function sleep(ms: number): Promise<void> {
 const main = async (): Promise<void> => {
 	// Configure app metadata
 	SDK.appMetadata = {
-		description: 'My first stable coin app',
+		description: 'My first stablecoin app',
 		icon: '',
 		name: 'Example TS App',
 		url: 'https://localhost:3000',
@@ -64,7 +64,7 @@ const main = async (): Promise<void> => {
 
 	console.log('Connection data ', connectionData);
 
-	// Create a stable coin
+	// Create a stablecoin
 	const createRequest = new CreateRequest({
 		stableCoinFactory: FactoryAddressTestnet,
 		hederaTokenManager: HederaTokenManagerAddressTestnet,

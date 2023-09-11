@@ -265,7 +265,7 @@ export class SDKService {
 		try {
 			return await Account.listStableCoins(req);
 		} catch (e) {
-			console.error('list of stable coin could not be retrieved : ' + e);
+			console.error('list of stablecoin could not be retrieved : ' + e);
 			return null;
 		}
 	}

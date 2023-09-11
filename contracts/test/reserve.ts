@@ -40,13 +40,14 @@ const OneTokenDecimals = 1
 const TwoTokenDecimals = 2
 const ThreeTokenDecimals = 3
 const ReserveDecimal = 2
+const INIT_AMOUNT_10 = 10
 const INIT_AMOUNT_100 = 100
 const INIT_AMOUNT_1000 = 1000
 const OneTokenFactor = BigNumber.from(10).pow(OneTokenDecimals)
 const TwoTokenFactor = BigNumber.from(10).pow(TwoTokenDecimals)
 const ThreeTokenFactor = BigNumber.from(10).pow(ThreeTokenDecimals)
 const INIT_SUPPLY_ONE_DECIMALS =
-    BigNumber.from(INIT_AMOUNT_100).mul(OneTokenFactor)
+    BigNumber.from(INIT_AMOUNT_10).mul(OneTokenFactor)
 const MAX_SUPPLY_ONE_DECIMALS = BigNumber.from(1000).mul(OneTokenFactor)
 const INIT_SUPPLY_TWO_DECIMALS =
     BigNumber.from(INIT_AMOUNT_100).mul(TwoTokenFactor)
@@ -54,7 +55,7 @@ const MAX_SUPPLY_TWO_DECIMALS = BigNumber.from(1000).mul(TwoTokenFactor)
 const INIT_SUPPLY_THREE_DECIMALS =
     BigNumber.from(INIT_AMOUNT_100).mul(ThreeTokenFactor)
 const MAX_SUPPLY_THREE_DECIMALS = BigNumber.from(1000).mul(ThreeTokenFactor)
-const TokenMemo = 'Hedera Accelerator Stable Coin'
+const TokenMemo = 'Hedera Accelerator Stablecoin'
 const INIT_RESERVE_100 = BigNumber.from(10)
     .pow(ReserveDecimal)
     .mul(BigNumber.from(INIT_AMOUNT_100))

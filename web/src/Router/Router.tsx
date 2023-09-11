@@ -121,7 +121,7 @@ const Router = () => {
 
 	const instanceSDK = async () => {
 		SDK.appMetadata = {
-			name: 'Hedera Stable Coin',
+			name: 'Hedera Stablecoin',
 			description: 'An hedera dApp',
 			icon: 'https://dashboard-assets.dappradar.com/document/15402/hashpack-dapp-defi-hedera-logo-166x166_696a701b42fd20aaa41f2591ef2339c7.png',
 			url: '',

@@ -166,10 +166,7 @@ export default class SetMirrorNodeService extends Service {
         (mirror) =>
           mirror.name !== currentMirrorNode.name && mirror.network === _network,
       )
-      .map(
-        (mirror) =>
-          `${mirror.name}` + colors.magenta(' (' + mirror.network + ')'),
-      );
+      .map((mirror) => `${mirror.name} (${mirror.network})`);
 
     if (options.length > 0) {
       const optionsWithoutColors = mirrors
@@ -400,6 +397,7 @@ export default class SetMirrorNodeService extends Service {
     const currentAccount = utilsService.getCurrentAccount();
     const currentMirror = utilsService.getCurrentMirror();
     const currentRPC = utilsService.getCurrentRPC();
+
     const manageOptions = language.getArrayFromObject(
       'wizard.manageMirrorNodeOptions',
     );
