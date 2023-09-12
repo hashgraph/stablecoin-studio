@@ -189,7 +189,8 @@ We provide default addresses for the factories that we have deployed for anyone 
 
 ## CLI flow
 
-![CLI-flow](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/f7735707-33e3-4f11-b4f0-6d249582694d)
+![CLI Flow](https://github.com/hashgraph/stablecoin-studio/assets/56278409/f75b66ab-b6d9-48f9-92b0-1c2a2af68556)
+
 
 When the CLI is started with the configuration file properly configured, the first action will be to select the account you want to operate with. By default, the list of configured accounts belonging to the default network indicated in the configuration file, is displayed.
 
