@@ -5,7 +5,7 @@
 		"registry": "https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/"
 	},
 	"engines": {
-		"node": "18.x"
+		"node": "18.17.1"
 	},
 	"files": [
 		"build/"
