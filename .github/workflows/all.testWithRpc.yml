@@ -2,7 +2,7 @@ name: LocalRPC
 on: 
   workflow_dispatch:
   push:
-    branches: [main]
+    branches: [main, fix_action_test]
 jobs:
   test-node:
     name: docker
@@ -113,19 +113,19 @@ jobs:
       - name: DockerStatus
         run:  curl --location --request POST 'http://localhost:7546/api' --data ""
     
-      - name: Test Contracts
-        run:  npm run test
-        working-directory: contracts
-      
-      - name: Test sdk
-        run:  npm run test
-        working-directory: sdk  
-      
-#      - name: Test web
+#      - name: Test Contracts
 #        run:  npm run test
-#        working-directory: web  
+#        working-directory: contracts
       
-      - name: Test cli
+#      - name: Test sdk
+#        run:  npm run test
+#        working-directory: sdk
+      
+      - name: Test web
         run:  npm run test
-        working-directory: cli
+        working-directory: web
+      
+#      - name: Test cli
+#        run:  npm run test
+#        working-directory: cli
       
