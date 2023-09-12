@@ -4,6 +4,9 @@
 	"publishConfig": {
 		"registry": "https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/"
 	},
+	"engines": {
+		"node": "18.x"
+	},
 	"files": [
 		"build/"
 	],
