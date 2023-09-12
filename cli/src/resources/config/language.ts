@@ -29,7 +29,7 @@ const basicFeatureOptions = {
 
 export const english = {
   general: {
-    title: 'StableCoin Studio',
+    title: 'Stablecoin Studio',
     warning: '⚠️ All the transactions could incur a cost in HBar',
     newLine: '\n',
     incorrectNumber: 'Incorrect number',
@@ -432,8 +432,8 @@ export const english = {
     manageFactoryOptions: {
       ChangeFactory: 'Change factory',
       UpgradeFactory: 'Upgrade factory',
-      ChangeOwner: 'Change owner',
-      AcceptOwner: 'Accept owner',
+      ChangeOwner: 'Change ownership',
+      AcceptOwner: 'Accept ownership',
       CancelOwner: 'Cancel owner change',
       FactoryDetails: 'Factory details',
       ...goBack,
@@ -495,8 +495,8 @@ export const english = {
     customFeesRemoved: 'Custom fees removed',
     transferCompleted: 'Transfer completed',
     updateCompleted: 'Update completed',
-    changeOwnerCompleted: 'Owner change requested',
-    acceptOwnerCompleted: 'Owner change accepted',
+    changeOwnerCompleted: 'Ownership change requested',
+    acceptOwnerCompleted: 'Ownership change accepted',
     upgradeImplementationCompleted: 'Implementation upgrade completed',
   },
   operation: {
@@ -616,9 +616,9 @@ export const english = {
   proxyConfiguration: {
     options: {
       implementation: 'Upgrade stablecoin implementation',
-      owner: 'Change stablecoin owner',
-      accept: 'Accept stablecoin owner',
-      cancel: 'Cancel stablecoin owner change',
+      owner: 'Change stablecoin ownership',
+      accept: 'Accept stablecoin ownership',
+      cancel: 'Cancel stablecoin ownership change',
       ...goBack,
     },
     askNewImplementation:
