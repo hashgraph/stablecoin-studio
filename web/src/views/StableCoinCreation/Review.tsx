@@ -30,8 +30,6 @@ const Review = (props: ReviewProps) => {
 		metadata,
 		managementPermissions,
 		isKycRequired,
-		adminKey,
-		supplyKey,
 		wipeKey,
 		freezeKey,
 		kycRequired,

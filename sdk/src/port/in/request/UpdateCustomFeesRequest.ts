@@ -79,10 +79,7 @@ export default class UpdateCustomFeesRequest extends ValidatedRequest<UpdateCust
 							max: customFee.max,
 							net: customFee.net,
 						});
-					else
-						return [
-							new InvalidType(val),
-						];
+					else return [new InvalidType(val)];
 				});
 			},
 		});

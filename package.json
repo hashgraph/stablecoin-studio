@@ -43,7 +43,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@chainlink/contracts": "^0.5.1",
     "concurrently": "^7.6.0",
     "ethers": "^5.7.2",
     "rimraf": "^4.1.1",

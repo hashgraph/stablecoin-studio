@@ -101,8 +101,7 @@ export default class AddFractionalFeeRequest extends ValidatedRequest<AddFractio
 
 				const denominator = parseInt(val);
 
-				if (isNaN(denominator))
-					return [new InvalidType(val)];
+				if (isNaN(denominator)) return [new InvalidType(val)];
 
 				if (CheckNums.hasMoreDecimals(val, 0)) {
 					return [new InvalidDecimalRange(val, 0)];

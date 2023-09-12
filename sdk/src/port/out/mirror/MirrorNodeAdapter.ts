@@ -343,7 +343,8 @@ export class MirrorNodeAdapter {
 		accountId: HederaId | string,
 	): Promise<AccountViewModel> {
 		try {
-			LogService.logTrace("Getting account info -> ",
+			LogService.logTrace(
+				'Getting account info -> ',
 				this.mirrorNodeConfig.baseUrl + 'accounts/' + accountId,
 			);
 			const res = await this.instance.get<IAccount>(
@@ -464,7 +465,7 @@ export class MirrorNodeAdapter {
 				this.mirrorNodeConfig.baseUrl +
 				'contracts/results/' +
 				transactionId;
-				LogService.logTrace(url);
+			LogService.logTrace(url);
 			const res = await this.instance.get<ITransactionResult>(url);
 			if (!res.data.call_result)
 				throw new Error(
@@ -495,7 +496,7 @@ export class MirrorNodeAdapter {
 
 			const url =
 				this.mirrorNodeConfig.baseUrl + 'transactions/' + transactionId;
-				LogService.logTrace(url);
+			LogService.logTrace(url);
 
 			await new Promise((resolve) => setTimeout(resolve, 5000));
 			const res = await this.instance.get<ITransactionList>(url);

@@ -24,7 +24,7 @@ export class InvalidType extends BaseError {
 	constructor(val: unknown) {
 		super(
 			ErrorCode.InvalidType,
-			`Value ${val} is not valid. Please enter a numerical value.`
+			`Value ${val} is not valid. Please enter a numerical value.`,
 		);
 	}
 }
