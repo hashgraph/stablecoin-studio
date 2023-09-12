@@ -1,6 +1,6 @@
 /*
  *
- * Hedera Stable Coin SDK
+ * Hedera Stablecoin SDK
  *
  * Copyright (C) 2023 Hedera Hashgraph, LLC
  *
@@ -24,7 +24,7 @@ export class InitSupplyLargerThanReserveAmount extends BaseError {
 	constructor(initSupply: string, reserveInitialAmount: string) {
 		super(
 			ErrorCode.InvalidRange,
-			`Initial supply ${initSupply} is bigger than PoR initial amount ${reserveInitialAmount}`,
+			`Initial supply of ${initSupply} is bigger than PoR initial amount ${reserveInitialAmount}`,
 		);
 	}
 }

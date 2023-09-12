@@ -36,7 +36,7 @@ describe(`<${StableCoinProof.name} />`, () => {
 			id: '0.0.48132286',
 			maxSupply: '100000',
 			treasuryId: '0.0.48160285',
-			memo: 'Hedera Accelerator Stable Coin',
+			memo: 'Hedera Accelerator Stablecoin',
 			adminKey: {
 				key: 'key',
 				type: 'ED25519',

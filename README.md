@@ -43,7 +43,7 @@ That is where stablecoin comes in. Unlike other cryptocurrencies, stablecoin are
 
 There are also some crypto backed stablecoin such as DAI by MakerDAO, or commodity backed stablecoin such as Paxos Gold (PAXG) by Paxos.
 
-stablecoin have transformed the way crypto markets work by allowing traders to exchange their volatile crypto assets for a stable asset that can quickly be transferred to any other platform. If they can change the way people trade, they can also become a real breakthrough in e-commerce.
+Stablecoin have transformed the way crypto markets work by allowing traders to exchange their volatile crypto assets for a stable asset that can quickly be transferred to any other platform. If they can change the way people trade, they can also become a real breakthrough in e-commerce.
 
 # Objective
 
@@ -62,19 +62,19 @@ Each stablecoin maps to an _underlying_ Hedera Token and adds the following func
 
   Hedera Tokens' operations (Wipe, Pause, ...) can only be performed by the accounts to which they are assigned (WipeKey, PauseKey, ...).
 
-  stablecoins allow for multiple accounts to share the same operation rights, we can wipe/pause/... tokens using any of the accounts with the wipe/pause/... role respectively.
+  Stablecoins allow for multiple accounts to share the same operation rights, we can wipe/pause/... tokens using any of the accounts with the wipe/pause/... role respectively.
 
 - **Supply role split into Cash-in and Burn roles**
 
   The Hedera Tokens' supply account has the right to change the supply of the token, it can be used to mint and burn tokens.
 
-  stablecoins split the supply role in two, the _cash-in_ and the _burn_ roles which can be assigned to different accounts.
+  Stablecoins split the supply role in two, the *cash-in* and the *burn* roles which can be assigned to different accounts.
 
 - **Cash-in role**
 
   When Hedera Tokens are minted, they are automatically assigned to the treasury account. If we want to assign them to another account, a second transaction (signed by the treasury account) is required to transfer the tokens.
 
-  stablecoins implement a "cash-in" operation that allows cash-in role owners to mint and assign tokens to any account in a single transaction.
+  Stablecoins implement a "cash-in" operation that allows cash-in role owners to mint and assign tokens to any account in a single transaction.
   The cash-in role comes in two flavours:
 
   - _unlimited_: Accounts with the unlimited cash-in role can mint as many tokens as they wish (as long as the total supply does not exceed the max supply).
@@ -112,7 +112,7 @@ Every time a stablecoin is deployed, the deploying account will be defined as th
 
 Any account having any role granted for a stablecoin can operate with it accordingly. For instance, if an account has the burn role granted, it will be allowed to burn tokens. Accounts do not need to be associate with the underlying token in order to operate with it, they only need to be granted roles. On the other hand, if they want to own tokens, they will have to associate the token as for any other Hedera token.
 
-## stablecoins categories
+## Stablecoins categories
 
 From an account's perspective, there are two kinds of stablecoins:
 
@@ -183,11 +183,17 @@ Learn more about them in their README:
 
 In a terminal:
 
-```
-npm install
+Before intstalling, its needed to execute the command below in order to configure repository for @hashgraph-dev in npm.
+
+```bash
+npm config set @hashgraph-dev:registry=https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/
 ```
 
 This will install the dependencies in all projects and sets up the links between them.
+
+```
+npm install
+```
 
 You can now start developing in any of the modules.
 
@@ -223,15 +229,16 @@ If you are using VSCode we recommend the use of the solidity extension from nomi
 > This may not be compatible with others solidity extensions, such as this one. [vscode-solidity](https://github.com/juanfranblanco/vscode-solidity)
 
 # Deploying the stablecoin factories
-
 In order to be able to deploy any stablecoin, the `HederaTokenManager` and `StablecoinFactory` smart contracts must be deployed on the network. Whenever a new version of these contracts is needed or when the testnet is reset, new contracts must be deployed. Moreover, the address of the `StablecoinFactory` smart contract must be updated in the SDK, CLI and web modules as explained above.
 
 We provide default addresses for the factories that we have deployed for anyone to use that are updated whenever a new version is released.
 
-| Contract name  | Address    | Network    |
-| -------------- | ---------- | ---------- |
-| FactoryAddress | 0.0.636690 | Testnet    |
-| FactoryAddress | 0.0.XXXXXX | Previewnet |
+| Contract name  | Address      | Network    | 
+|----------------|--------------|------------|
+| FactoryAddress | 0.0.1137631   | Testnet   |
+| FactoryAddress | 0.0.XXXXXX   | Previewnet |
+
+(You can check the factorys associated to each version [here](./FACTORY_VERSION.md))
 
 Follow the steps in the [contracts docs](https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/contracts#deploy-factory) to learn how to deploy the factories.
 
@@ -244,6 +251,25 @@ Whenever a testnet reset occurs, the factories must be re-deployed and the addre
 3. Update the addresses in the CLI's configuration file in order to use the new factories in the CLI.
 4. Update the addresses in the web's `.env` file in order to use the new factories in the DApp.
 5. Create a PR to be validated and merged for the new version.
+
+# Fees
+All fees are subject to change. The fees below reflect a base price for the transaction or query. Transaction characteristics may increase the price from the base price shown below. The following table reflects the cost that the transaction have through the Smart Contracts.
+
+| Operation  | Dollar      | Gas    | 
+|----------------|--------------|------------|
+| Cash in | 0.01$   | 101.497    |
+| Burn | 0.005$   | 60.356 |
+| Wipe | 0.005$   | 60.692 |
+| Freeze | 0.005$  | 56.261 |
+| Unfreeze | 0.005$   | 56.262 |
+| Grant KyC | 0.005$   | 56.167 |
+| Revoke KyC | 0.005$   | 56.195 |
+
+# JSON-RPC Relays
+Anyone in the community can set up their own JSON RPC relay that applications can use to deploy, query, and execute smart contracts. You can use your local RPC-relay following this [instructions](https://github.com/hashgraph/hedera-json-rpc-relay) or you can use one of the community-hosted Hedera JSON RPC relays like:
+- [Hashio](https://swirldslabs.com/hashio/)
+- [Arkhia](https://www.arkhia.io/features/#api-services)
+- [ValidationCloud](https://docs.validationcloud.io/v1/hedera/json-rpc-relay-api)
 
 # Development manifesto
 

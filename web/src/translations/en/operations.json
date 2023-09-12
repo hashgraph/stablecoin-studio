@@ -6,7 +6,7 @@
 	"rescueOperation": "Rescue",
 	"rescueHBAROperation": "Rescue HBARs",
 	"burnOperation": "Burn",
-	"dangerZoneOperation": "Danger Zone",
+	"dangerZoneOperation": "Danger zone",
 	"getBalanceOperation": "Get balance",
 	"grantKycOperation": "Grant KYC",
 	"revokeKycOperation": "Revoke KYC",
@@ -16,8 +16,10 @@
 	"modalSuccessDesc": "You can follow the order in the list of operations.",
 	"modalErrorTitle": "An error occurred",
 	"modalErrorDesc": "Operation failed, please try again later.",
+	"pausedToken": "Paused",
+	"deletedToken": "Deleted",
 	"details": {
-		"title": "Stable coin details",
+		"title": "Stablecoin details",
 		"basicTitle": "Basic details",
 		"optionalTitle": "Optional details",
 		"name": "Name",
@@ -42,7 +44,7 @@
 	"pause": {
 		"title": "Pause",
 		"modalSuccessTitle": "Operation successfully completed",
-		"modalSuccessDesc": "Pause successful",
+		"modalSuccessDesc": "Paused successful",
 		"modalAction": {
 			"accept": "Pause",
 			"subtitle": "Are you sure you want to continue with the pause operation?"
@@ -51,7 +53,7 @@
 	"unpause": {
 		"title": "Unpause",
 		"modalSuccessTitle": "Operation successfully completed",
-		"modalSuccessDesc": "Unpause successful",
+		"modalSuccessDesc": "Unpaused successful",
 		"modalAction": {
 			"accept": "Unpause",
 			"subtitle": "Are you sure you want to continue with the unpause operation?"

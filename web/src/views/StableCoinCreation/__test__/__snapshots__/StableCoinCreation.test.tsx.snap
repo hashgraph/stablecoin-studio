@@ -12,7 +12,7 @@ exports[`<StableCoinCreation /> should render correctly 1`] = `
         class="chakra-text css-ai2tcq"
         data-testid="creation-title"
       >
-        Create new stable coin
+        Create new stablecoin
       </p>
       <i
         class="chakra-text css-zcexcl"
@@ -61,7 +61,7 @@ exports[`<StableCoinCreation /> should render correctly 1`] = `
                 class="chakra-text css-1i91963"
                 data-testid="stepper-step-title-1"
               >
-                Basic details
+                Stablecoin Details
               </p>
             </button>
             <button
@@ -85,7 +85,7 @@ exports[`<StableCoinCreation /> should render correctly 1`] = `
                 class="chakra-text css-1i91963"
                 data-testid="stepper-step-title-2"
               >
-                Optional details
+                Supply & Metadata
               </p>
             </button>
             <button
@@ -109,7 +109,7 @@ exports[`<StableCoinCreation /> should render correctly 1`] = `
                 class="chakra-text css-1i91963"
                 data-testid="stepper-step-title-3"
               >
-                Manage permissions
+                Configure Permissions
               </p>
             </button>
             <button
@@ -133,7 +133,7 @@ exports[`<StableCoinCreation /> should render correctly 1`] = `
                 class="chakra-text css-1i91963"
                 data-testid="stepper-step-title-4"
               >
-                Proof Of Reserve
+                Proof-Of-Reserve
               </p>
             </button>
             <button
@@ -157,7 +157,7 @@ exports[`<StableCoinCreation /> should render correctly 1`] = `
                 class="chakra-text css-1i91963"
                 data-testid="stepper-step-title-5"
               >
-                Review
+                Create Stablecoin
               </p>
             </button>
           </div>

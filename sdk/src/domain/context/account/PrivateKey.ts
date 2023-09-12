@@ -1,6 +1,6 @@
 /*
  *
- * Hedera Stable Coin SDK
+ * Hedera Stablecoin SDK
  *
  * Copyright (C) 2023 Hedera Hashgraph, LLC
  *
@@ -22,7 +22,6 @@ import KeyProps, { KeyType } from './KeyProps.js';
 import { PrivateKey as HPrivateKey } from '@hashgraph/sdk';
 import PublicKey from './PublicKey.js';
 import BaseError from '../../../core/error/BaseError.js';
-import { PrivateKeyNotValid } from './error/PrivateKeyNotValid.js';
 
 export default class PrivateKey implements KeyProps {
 	public readonly key: string;

@@ -18,7 +18,7 @@ function addHederaTokenManagerVersion(address newAddress) external nonpayable
 
 
 
-*Adds a new stable coin to contract addresses*
+*Adds a new stablecoin to contract addresses*
 
 #### Parameters
 
@@ -73,7 +73,7 @@ function editHederaTokenManagerAddress(uint256 index, address newAddress) extern
 
 
 
-*Edits a stable coin contract address*
+*Edits a stablecoin contract address*
 
 #### Parameters
 
@@ -124,7 +124,7 @@ function removeHederaTokenManagerAddress(uint256 index) external nonpayable
 
 
 
-*Removes a stable coin contract address*
+*Removes a stablecoin contract address*
 
 #### Parameters
 
@@ -161,13 +161,13 @@ event Deployed(IStableCoinFactory.DeployedStableCoin deployedStableCoin)
 
 
 
-*Emitted when a new stable coin is deployed*
+*Emitted when a new stablecoin is deployed*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| deployedStableCoin  | IStableCoinFactory.DeployedStableCoin | The new deployed stable coin |
+| deployedStableCoin  | IStableCoinFactory.DeployedStableCoin | The new deployed stablecoin |
 
 ### HederaTokenManagerAddressAdded
 
@@ -227,7 +227,7 @@ event StableCoinFactoryInitialized()
 
 
 
-*Emitted when a stable coin factory is initialized*
+*Emitted when a stablecoin factory is initialized*
 
 
 

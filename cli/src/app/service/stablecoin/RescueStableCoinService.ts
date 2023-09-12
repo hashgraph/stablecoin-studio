@@ -4,15 +4,15 @@ import Service from '../Service.js';
 import { RescueRequest, StableCoin } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 /**
- * Create Stable Coin Service
+ * Create Stablecoin Service
  */
-export default class RescueStableCoinsService extends Service {
+export default class RescueStableCoinService extends Service {
   constructor() {
-    super('Rescue Stable Coin');
+    super('Rescue Stablecoin');
   }
 
   /**
-   * List Stable Coins can be managed
+   * List Stablecoins can be managed
    */
   public async rescueStableCoin(req: RescueRequest): Promise<void> {
     await utilsService.showSpinner(StableCoin.rescue(req), {

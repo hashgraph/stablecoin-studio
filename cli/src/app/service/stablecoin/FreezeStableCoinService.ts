@@ -8,11 +8,11 @@ import {
 import colors from 'colors';
 
 /**
- * Create Role Stable Coin Service
+ * Create Role Stablecoin Service
  */
 export default class FreezeStableCoinService extends Service {
   constructor() {
-    super('Freeze Stable Coin');
+    super('Freeze Stablecoin');
   }
 
   public async freezeAccount(req: FreezeAccountRequest): Promise<void> {

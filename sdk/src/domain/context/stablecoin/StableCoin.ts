@@ -1,6 +1,6 @@
 /*
  *
- * Hedera Stable Coin SDK
+ * Hedera Stablecoin SDK
  *
  * Copyright (C) 2023 Hedera Hashgraph, LLC
  *
@@ -263,7 +263,7 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 		const max = EIGHTEEN;
 
 		if (CheckNums.hasMoreDecimals(value.toString(), 0)) {
-			errorList.push(new InvalidType(value, 'integer'));
+			errorList.push(new InvalidType(value));
 		}
 		if (!CheckNums.isWithinRange(value, min, max))
 			errorList.push(new InvalidDecimalRange(value, min, max));
@@ -275,7 +275,7 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 		const errorList: BaseError[] = [];
 
 		if (!Number.isInteger(value)) {
-			return [new InvalidType(value, 'integer')];
+			return [new InvalidType(value)];
 		}
 
 		return errorList;
@@ -424,7 +424,7 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 
 		const regexp = /^\d{19}$/;
 		if (!value.match(regexp)) {
-			return [new InvalidType(value, 'timestamp')];
+			return [new InvalidType(value)];
 		}
 
 		const epochTimestamp: number = Number(value) / 1000000;
@@ -448,7 +448,7 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 
 		const v: number = Number(value) / 60 / 60 / 24;
 		if (!Number.isInteger(v)) {
-			return [new InvalidType(v, 'integer')];
+			return [new InvalidType(v)];
 		}
 
 		if (

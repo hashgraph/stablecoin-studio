@@ -18,7 +18,7 @@ function addHederaTokenManagerVersion(address newAddress) external nonpayable
 
 
 
-*Add a new stable coin to contract addresses*
+*Add a new stablecoin to contract addresses*
 
 #### Parameters
 
@@ -73,7 +73,7 @@ function editHederaTokenManagerAddress(uint256 index, address newAddress) extern
 
 
 
-*Edit a stable coin contract address*
+*Edit a stablecoin contract address*
 
 #### Parameters
 
@@ -107,14 +107,14 @@ function getHederaTokenManagerAddress() external view returns (address[])
 
 
 
-*Get the stable coin contract addresses*
+*Get the stablecoin contract addresses*
 
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | address[] | The stable coin contract addresses |
+| _0 | address[] | The stablecoin contract addresses |
 
 ### initialize
 
@@ -141,7 +141,11 @@ function removeHederaTokenManagerAddress(uint256 index) external nonpayable
 
 
 
+<<<<<<< HEAD
+*Removes a stablecoin contract address*
+=======
 *Removes a stable coin contract address*
+>>>>>>> origin/main
 
 #### Parameters
 

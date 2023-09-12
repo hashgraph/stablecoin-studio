@@ -63,7 +63,12 @@ const ProofOfReserve = (props: ProofOfReserveProps) => {
 					<Text maxW={'252px'} fontSize='14px' fontWeight='400' lineHeight='17px'>
 						{t('stableCoinCreation:proofOfReserve.description')}
 					</Text>
-					<SwitchController control={control} name={'proofOfReserve'} defaultValue={false} />
+					<SwitchController
+						control={control}
+						name={'proofOfReserve'}
+						defaultValue={false}
+						link={t('stableCoinCreation:proofOfReserve.link')}
+					/>
 				</HStack>
 
 				{proofOfReserve === true && (
@@ -117,8 +122,10 @@ const ProofOfReserve = (props: ProofOfReserveProps) => {
 							isRequired
 							control={control}
 							name={'reserveInitialAmount'}
-							label={t('stableCoinCreation:proofOfReserve.initialSupply') ?? propertyNotFound}
-							placeholder={t('stableCoinCreation:proofOfReserve.initialSupply') ?? propertyNotFound}
+							label={t('stableCoinCreation:proofOfReserve.initialSupplyPor') ?? propertyNotFound}
+							placeholder={
+								t('stableCoinCreation:proofOfReserve.initialSupplyPor') ?? propertyNotFound
+							}
 						/>
 					</HStack>
 				)}

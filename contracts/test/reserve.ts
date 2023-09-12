@@ -55,7 +55,7 @@ const MAX_SUPPLY_TWO_DECIMALS = BigNumber.from(1000).mul(TwoTokenFactor)
 const INIT_SUPPLY_THREE_DECIMALS =
     BigNumber.from(INIT_AMOUNT_100).mul(ThreeTokenFactor)
 const MAX_SUPPLY_THREE_DECIMALS = BigNumber.from(1000).mul(ThreeTokenFactor)
-const TokenMemo = 'Hedera Accelerator Stable Coin'
+const TokenMemo = 'Hedera Accelerator Stablecoin'
 const INIT_RESERVE_100 = BigNumber.from(10)
     .pow(ReserveDecimal)
     .mul(BigNumber.from(INIT_AMOUNT_100))

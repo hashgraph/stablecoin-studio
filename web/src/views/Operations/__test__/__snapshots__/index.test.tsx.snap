@@ -5,51 +5,58 @@ exports[`<Operations /> should render correctly 1`] = `
   <div
     class="chakra-stack css-19t9j1"
   >
-    <h2
-      class="chakra-heading css-bqsusc"
-      data-testid="base-container-heading"
-    >
-      Operations
-    </h2>
     <div
-      class="css-1b6lda7"
-      data-testid="base-container-children"
+      class="chakra-stack css-1u2nxl"
+    />
+    <div
+      class="chakra-stack css-19t9j1"
     >
+      <h2
+        class="chakra-heading css-bqsusc"
+        data-testid="base-container-heading"
+      >
+        Operations
+      </h2>
       <div
-        class="css-10opskl"
-        data-testid="no-proof-of-reserve-container"
+        class="css-1b6lda7"
+        data-testid="base-container-children"
       >
         <div
-          class="css-mnqf94"
+          class="css-10opskl"
+          data-testid="no-proof-of-reserve-container"
         >
-          <svg
-            viewBox="0 0 2500 2500"
-            width="48px"
-            xmlns="http://www.w3.org/2000/svg"
+          <div
+            class="css-mnqf94"
           >
-            <g
-              data-name="Layer 2"
+            <svg
+              viewBox="0 0 2500 2500"
+              width="48px"
+              xmlns="http://www.w3.org/2000/svg"
             >
               <g
-                data-name="Layer 1"
+                data-name="Layer 2"
               >
-                <path
-                  d="M1250 0C559.64 0 0 559.64 0 1250s559.64 1250 1250 1250 1250-559.64 1250-1250S1940.36 0 1250 0"
-                />
-                <path
-                  d="M1758.12 1790.62h-158.74v-337.49H900.62v337.49H741.87V696.25h158.75v329.37h698.76V696.25h158.75zm-850-463.75h698.75V1152.5H908.12z"
-                  fill="#fff"
-                />
+                <g
+                  data-name="Layer 1"
+                >
+                  <path
+                    d="M1250 0C559.64 0 0 559.64 0 1250s559.64 1250 1250 1250 1250-559.64 1250-1250S1940.36 0 1250 0"
+                  />
+                  <path
+                    d="M1758.12 1790.62h-158.74v-337.49H900.62v337.49H741.87V696.25h158.75v329.37h698.76V696.25h158.75zm-850-463.75h698.75V1152.5H908.12z"
+                    fill="#fff"
+                  />
+                </g>
               </g>
-            </g>
-          </svg>
+            </svg>
+          </div>
+          <p
+            class="chakra-text css-e8j0ix"
+            data-testid="no-proof-of-reserve-title"
+          >
+            Loading data
+          </p>
         </div>
-        <p
-          class="chakra-text css-e8j0ix"
-          data-testid="no-proof-of-reserve-title"
-        >
-          Loading data
-        </p>
       </div>
     </div>
   </div>

@@ -1,6 +1,6 @@
 /*
  *
- * Hedera Stable Coin SDK
+ * Hedera Stablecoin SDK
  *
  * Copyright (C) 2023 Hedera Hashgraph, LLC
  *
@@ -21,12 +21,10 @@
 import BaseError, { ErrorCode } from '../../../../core/error/BaseError.js';
 
 export class InvalidType extends BaseError {
-	constructor(val: unknown, type?: string) {
+	constructor(val: unknown) {
 		super(
 			ErrorCode.InvalidType,
-			`Value ${val} is not of a valid type${
-				type && `, expected ${type}`
-			}`,
+			`Value ${val} is not valid. Please enter a numerical value.`,
 		);
 	}
 }

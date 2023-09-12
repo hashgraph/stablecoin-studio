@@ -4,7 +4,7 @@
 	"subtitle": "Manage Custom Fees",
 	"noFeesManagement": {
 		"title": "Missing Fees Management",
-		"description": "The stable coin you have chosen does not allow fees management, please, select a different stable coin."
+		"description": "The stablecoin you have chosen does not allow fees management, please, select a different stablecoin."
 	},
 	"columns": {
 		"feeType": "Fee type",

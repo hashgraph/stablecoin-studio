@@ -127,6 +127,7 @@ const Topbar = () => {
 						</Box>
 					</Flex>
 					<CloseButton
+						data-testid='isNotNetworkRecognized'
 						alignSelf='flex-start'
 						position='relative'
 						right={-1}
@@ -146,6 +147,7 @@ const Topbar = () => {
 						</Box>
 					</Flex>
 					<CloseButton
+						data-testid='isNotAccountRecognized'
 						alignSelf='flex-start'
 						position='relative'
 						right={-1}

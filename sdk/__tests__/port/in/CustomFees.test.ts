@@ -1,6 +1,6 @@
 /*
  *
- * Hedera Stable Coin SDK
+ * Hedera Stablecoin SDK
  *
  * Copyright (C) 2023 Hedera Hashgraph, LLC
  *
@@ -121,7 +121,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		await delay();
 	}, 1500000);
 
-	it('Create a fixed custom fee for an existing stable coin', async () => {
+	it('Create a fixed custom fee for an existing stablecoin', async () => {
 		const CustomFeesNumber = 1;
 		const amount = 1;
 
@@ -154,7 +154,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		await delay();
 	}, 150000);
 
-	it('Create a fractional custom fees for an existing stable coin (num+den)', async () => {
+	it('Create a fractional custom fees for an existing stablecoin (num+den)', async () => {
 		const CustomFeesNumber = 1;
 		const numerator = 1;
 		const denominator = 10;
@@ -197,7 +197,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		await delay();
 	}, 150000);
 
-	it('Create a fractional custom fees for an existing stable coin (perc.)', async () => {
+	it('Create a fractional custom fees for an existing stablecoin (perc.)', async () => {
 		const CustomFeesNumber = 1;
 		const percentage = 22;
 		const net = true;
@@ -241,7 +241,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		await delay();
 	}, 150000);
 
-	it('Create a fixed and two fractional custom fees, charged to the receiver, for an existing stable coin', async () => {
+	it('Create a fixed and two fractional custom fees, charged to the receiver, for an existing stablecoin', async () => {
 		const CustomFeesNumber = 3;
 		const percentage = 7;
 		const numerator = 1;

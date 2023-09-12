@@ -8,7 +8,7 @@ import { INetworkConfig } from '../../../domain/configuration/interfaces/INetwor
 import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
 import { IMirrorsConfig } from '../../../domain/configuration/interfaces/IMirrorsConfig.js';
 import { IRPCsConfig } from '../../../domain/configuration/interfaces/IRPCsConfig.js';
-import { configurationService, utilsService } from '../../../index.js';
+import { utilsService } from '../../../index.js';
 import SetConfigurationService from './SetConfigurationService.js';
 import MaskData from 'maskdata';
 import { ILogConfig } from '../../../domain/configuration/interfaces/ILogConfig.js';
@@ -35,6 +35,7 @@ export default class ConfigurationService extends Service {
     if (path) {
       this.path = path;
     }
+
     if (
       !fs.existsSync(this.getDefaultConfigurationPath()) ||
       !this.validateConfigurationFile()
@@ -46,6 +47,7 @@ export default class ConfigurationService extends Service {
         overrides?.defaultNetwork,
       );
     }
+
     this.configuration = this.setConfigFromConfigFile();
     if (overrides?.defaultNetwork) {
       this.configuration.defaultNetwork = overrides.defaultNetwork;
@@ -122,18 +124,22 @@ export default class ConfigurationService extends Service {
    */
   public createDefaultConfiguration(path?: string): void {
     try {
-      const defaultConfig = yaml.load(
-        fs.readFileSync(
-          `${this.getGlobalPath()}/build/src/resources/config/${
-            this.configFileName
-          }`,
-        ),
-      );
+      let defaultConfig: IConfiguration;
+      const defaultConfigPath = `${this.getGlobalPath()}/build/src/resources/config/${
+        this.configFileName
+      }`;
+      if (fs.existsSync(defaultConfigPath)) {
+        defaultConfig = yaml.load(fs.readFileSync(defaultConfigPath));
+      } else {
+        defaultConfig = yaml.load(
+          fs.readFileSync(`src/resources/config/${this.configFileName}`),
+        );
+      }
       const filePath = path ?? this.getDefaultConfigurationPath();
       this.path = filePath;
       fs.ensureFileSync(filePath);
       fs.writeFileSync(filePath, yaml.dump(defaultConfig), 'utf8');
-      configurationService.setConfiguration(defaultConfig, filePath);
+      this.setConfiguration(defaultConfig, filePath);
     } catch (ex) {
       utilsService.showError(ex);
     }
@@ -165,7 +171,9 @@ export default class ConfigurationService extends Service {
    */
   public getDefaultConfigurationPath(): string {
     if (this.path) return this.path;
-    return `${this.getGlobalPath()}/config/${this.configFileName}`;
+    return `${this.getGlobalPath()}/build/src/resources/config/${
+      this.configFileName
+    }`;
   }
 
   private getGlobalPath(): string {

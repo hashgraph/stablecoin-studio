@@ -1,6 +1,6 @@
 /*
  *
- * Hedera Stable Coin SDK
+ * Hedera Stablecoin SDK
  *
  * Copyright (C) 2023 Hedera Hashgraph, LLC
  *
@@ -34,6 +34,7 @@ import {
 	StableCoinFactory__factory,
 	StableCoinProxyAdmin__factory,
 	ITransparentUpgradeableProxy__factory,
+	HederaReserve__factory,
 } from '@hashgraph-dev/stablecoin-npm-contracts';
 import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
@@ -48,6 +49,7 @@ const Reserve = AggregatorV3Interface__factory;
 const Factory = StableCoinFactory__factory;
 const StableCoinProxyAdmin = StableCoinProxyAdmin__factory;
 const ITransparentUpgradeableProxy = ITransparentUpgradeableProxy__factory;
+const HederaReserve = HederaReserve__factory;
 
 type StaticConnect = { connect: (...args: any[]) => any };
 
@@ -131,6 +133,14 @@ export default class RPCQueryAdapter {
 		).getReserveAmount();
 	}
 
+	async getReserveLatestRoundData(address: EvmAddress): Promise<BigNumber[]> {
+		LogService.logTrace(`Requesting getReserveAmount address: ${address}`);
+		return await this.connect(
+			HederaReserve,
+			address.toString(),
+		).latestRoundData();
+	}
+
 	async isLimited(address: EvmAddress, target: EvmAddress): Promise<boolean> {
 		LogService.logTrace(
 			`Requesting isLimited address: ${address.toString()}, target: ${target.toString()}`,
@@ -197,7 +207,7 @@ export default class RPCQueryAdapter {
 
 	async getProxyPendingOwner(proxyAdmin: EvmAddress): Promise<string> {
 		LogService.logTrace(
-			`Requesting owner for proxy Admin: ${proxyAdmin.toString()}`,
+			`Requesting pending owner for proxy Admin: ${proxyAdmin.toString()}`,
 		);
 		return await this.connect(
 			StableCoinProxyAdmin,

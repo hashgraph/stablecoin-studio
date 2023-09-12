@@ -16,30 +16,53 @@ jobs:
         run: docker build -t rpc . 
         working-directory: dockerfile
         
-      - name: Use Node.js TLS 16.x
+      - name: Use Node.js TLS 18.x
         uses: actions/setup-node@v1
         with:
-          node-version: 16.x
+          node-version: 18.x
+      
+      #- name: Config cli
+      #  run:  npm config set @hashgraph-dev:registry=https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/  
       
       - name: Install dependencies Hashconnect
-        run: npm install
+        run: npm i
+      - name: Install dependencies Hashconnect
+        run: export NODE_OPTIONS="--max-old-space-size=8192"
+        
+      - name: Install dependencies Hashconnect
+        run: |
+          npm install
+          npm run build
         working-directory: hashconnect/lib
-      - name: Build Hashconnect
-        run: npm run build
-        working-directory: hashconnect/lib
+      
       - name: Install dependencies Contracts
-        run: npm install
+        run: |
+          npm install
+          npm run build
+          npm install
         working-directory: contracts
       - name: Install dependencies SDK
-        run: npm install
+        run: |
+          npm install
+          npm run build
+          npm install
         working-directory: sdk
       - name: Install dependencies Cli
-        run: npm install
+        run: | 
+          npm install
+          npm run build
         working-directory: cli
       - name: Install dependencies web
         run: npm install
         working-directory: web
-   
+      
+      - name: package.lock web
+        run: cat package-lock.json
+
+        working-directory: web
+      - name: node modelues sdk
+        run: ls node_modules/
+        working-directory: sdk
       - name: Create file
         run: |
           touch .env
@@ -90,22 +113,18 @@ jobs:
       - name: DockerStatus
         run:  curl --location --request POST 'http://localhost:7546/api' --data ""
     
-#      - name: Test Contracts
-#        run:  npm run test
-#        working-directory: contracts
+      - name: Test Contracts
+        run:  npm run test
+        working-directory: contracts
       
-#      - name: Test sdk
-#        run:  npm run test
-#        working-directory: sdk  
+      - name: Test sdk
+        run:  npm run test
+        working-directory: sdk  
       
 #      - name: Test web
 #        run:  npm run test
 #        working-directory: web  
       
-      - name: Config cli
-        run:  npm config set @hashgraph-dev:registry=https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/
-        working-directory: cli
-
       - name: Test cli
         run:  npm run test
         working-directory: cli

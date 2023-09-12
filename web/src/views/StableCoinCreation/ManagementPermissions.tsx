@@ -9,6 +9,8 @@ import {
 	AccordionButton,
 	AccordionIcon,
 	AccordionPanel,
+	Flex,
+	Link,
 } from '@chakra-ui/react';
 import { SupportedWallets } from '@hashgraph-dev/stablecoin-npm-sdk';
 import type { CreateRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
@@ -24,6 +26,7 @@ import RoleSelector from './components/RoleSelector';
 import { handleRequestValidation, validateDecimalsString } from '../../utils/validationsHelper';
 import { propertyNotFound } from '../../constant';
 import { SELECTED_WALLET } from '../../store/slices/walletSlice';
+import { InfoIcon } from '@chakra-ui/icons';
 
 interface ManagementPermissionsProps {
 	control: Control<FieldValues>;
@@ -110,11 +113,27 @@ const ManagementPermissions = ({
 					lineHeight='15.2px'
 					textAlign={'left'}
 				>
-					{t('stableCoinCreation:managementPermissions.keysTitle')}
+					<Flex justifyContent='space-between'>
+						{t('stableCoinCreation:managementPermissions.keysTitle')}
+						{
+							<Link
+								href={t('stableCoinCreation:managementPermissions.titleLink') || undefined}
+								isExternal
+							>
+								<InfoIcon />
+							</Link>
+						}
+					</Flex>
 				</Heading>
 				<Stack as='form' spacing={6} pb={6}>
 					<HStack mb={4} justifyContent='space-between'>
-						<Text maxW={'252px'} fontSize='14px' fontWeight='400' lineHeight='17px'>
+						<Text
+							maxW={'252px'}
+							fontSize='14px'
+							fontWeight='400'
+							lineHeight='17px'
+							whiteSpace='nowrap'
+						>
 							{t('stableCoinCreation:managementPermissions.description')}
 						</Text>
 						<SwitchController
@@ -145,7 +164,7 @@ const ManagementPermissions = ({
 										return (
 											<Text key={index} color='red'>
 												{item.nameTranslate +
-													' - ' +
+													' | ' +
 													t('stableCoinCreation:managementPermissions.none')}
 											</Text>
 										);
@@ -153,7 +172,7 @@ const ManagementPermissions = ({
 										return (
 											<Text key={index}>
 												{item.nameTranslate +
-													' - ' +
+													' | ' +
 													t('stableCoinCreation:managementPermissions.currentUserKey')}
 											</Text>
 										);
@@ -161,7 +180,7 @@ const ManagementPermissions = ({
 										return (
 											<Text key={index}>
 												{item.nameTranslate +
-													' - ' +
+													' | ' +
 													t('stableCoinCreation:managementPermissions.theSmartContract')}
 											</Text>
 										);
@@ -171,8 +190,22 @@ const ManagementPermissions = ({
 					)}
 
 					<HStack mb={4} justifyContent='space-between'>
-						<Text maxW={'252px'} fontSize='14px' fontWeight='400' lineHeight='17px'>
-							{t('stableCoinCreation:managementPermissions.wantKyc')}
+						<Text
+							maxW={'252px'}
+							fontSize='14px'
+							fontWeight='400'
+							lineHeight='17px'
+							whiteSpace='nowrap'
+						>
+							{t('stableCoinCreation:managementPermissions.wantKyc')}{' '}
+							{
+								<Link
+									href={t('stableCoinCreation:managementPermissions.wantKycLink') || undefined}
+									isExternal
+								>
+									<InfoIcon />
+								</Link>
+							}
 						</Text>
 						<SwitchController control={control} name={'kycRequired'} defaultValue={false} />
 					</HStack>
@@ -190,7 +223,13 @@ const ManagementPermissions = ({
 						wallet.lastWallet === SupportedWallets.HASHPACK && (
 							<Stack minW={400}>
 								<HStack mb={4} justifyContent='space-between'>
-									<Text maxW={'252px'} fontSize='14px' fontWeight='400' lineHeight='17px'>
+									<Text
+										maxW={'252px'}
+										fontSize='14px'
+										fontWeight='400'
+										lineHeight='17px'
+										whiteSpace='nowrap'
+									>
 										{t('stableCoinCreation:managementPermissions.grantKYCToOriginalSender')}
 									</Text>
 
@@ -203,8 +242,24 @@ const ManagementPermissions = ({
 							</Stack>
 						)}
 					<HStack mb={4} justifyContent='space-between'>
-						<Text maxW={'252px'} fontSize='14px' fontWeight='400' lineHeight='17px'>
-							{t('stableCoinCreation:managementPermissions.manageCustomFees')}
+						<Text
+							maxW={'252px'}
+							fontSize='14px'
+							fontWeight='400'
+							lineHeight='17px'
+							whiteSpace='nowrap'
+						>
+							{t('stableCoinCreation:managementPermissions.manageCustomFees')}{' '}
+							{
+								<Link
+									href={
+										t('stableCoinCreation:managementPermissions.manageCustomFeesLink') || undefined
+									}
+									isExternal
+								>
+									<InfoIcon />
+								</Link>
+							}
 						</Text>
 						<SwitchController control={control} name={'manageCustomFees'} defaultValue={false} />
 					</HStack>
@@ -224,7 +279,15 @@ const ManagementPermissions = ({
 					<AccordionItem>
 						<AccordionButton>
 							<Box as='span' flex='1' textAlign='left' fontSize='16px' fontWeight='600'>
-								{t('stableCoinCreation:managementPermissions.rolesTitle')}
+								{t('stableCoinCreation:managementPermissions.rolesTitle')}{' '}
+								{
+									<Link
+										href={t('stableCoinCreation:managementPermissions.rolesLink') || undefined}
+										isExternal
+									>
+										<InfoIcon />
+									</Link>
+								}
 							</Box>
 							<AccordionIcon />
 						</AccordionButton>

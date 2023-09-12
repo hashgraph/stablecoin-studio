@@ -1,6 +1,6 @@
 /*
  *
- * Hedera Stable Coin SDK
+ * Hedera Stablecoin SDK
  *
  * Copyright (C) 2023 Hedera Hashgraph, LLC
  *
@@ -33,6 +33,9 @@ import { RESERVE_DECIMALS } from '../../../../../domain/context/reserve/Reserve.
 import { InvalidRequest } from '../error/InvalidRequest.js';
 import { EVM_ZERO_ADDRESS } from '../../../../../core/Constants.js';
 import { MirrorNodeAdapter } from '../../../../../port/out/mirror/MirrorNodeAdapter.js';
+import RPCQueryAdapter from '../../../../../port/out/rpc/RPCQueryAdapter.js';
+import BigDecimal from '../../../../../domain/context/shared/BigDecimal.js';
+import EvmAddress from '../../../../../domain/context/contract/EvmAddress.js';
 
 @CommandHandler(CreateCommand)
 export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
@@ -45,6 +48,8 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 		public readonly networkService: NetworkService,
 		@lazyInject(MirrorNodeAdapter)
 		public readonly mirrorNodeAdapter: MirrorNodeAdapter,
+		@lazyInject(RPCQueryAdapter)
+		public readonly queryAdapter: RPCQueryAdapter,
 	) {}
 
 	async execute(command: CreateCommand): Promise<CreateCommandResponse> {
@@ -80,17 +85,46 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 		const commonDecimals =
 			RESERVE_DECIMALS > coin.decimals ? RESERVE_DECIMALS : coin.decimals;
 
-		if (
-			createReserve &&
-			reserveInitialAmount &&
-			coin.initialSupply &&
-			coin.initialSupply
-				.setDecimals(commonDecimals)
-				.isGreaterThan(reserveInitialAmount.setDecimals(commonDecimals))
-		) {
-			throw new OperationNotAllowed(
-				'Initial supply cannot be more than the reserve initial amount',
-			);
+		if (coin.initialSupply) {
+			if (
+				createReserve &&
+				reserveInitialAmount &&
+				coin.initialSupply
+					.setDecimals(commonDecimals)
+					.isGreaterThan(
+						reserveInitialAmount.setDecimals(commonDecimals),
+					)
+			) {
+				throw new OperationNotAllowed(
+					'Initial supply cannot be more than the reserve initial amount',
+				);
+			} else if (reserveAddress) {
+				const reserveContractEvmAddress = (
+					await this.mirrorNodeAdapter.getContractInfo(
+						reserveAddress.value,
+					)
+				).evmAddress;
+				const reserveAmount = BigDecimal.fromStringFixed(
+					(
+						await this.queryAdapter.getReserveLatestRoundData(
+							new EvmAddress(reserveContractEvmAddress),
+						)
+					)[1].toString(),
+					RESERVE_DECIMALS,
+				);
+
+				if (
+					coin.initialSupply
+						.setDecimals(commonDecimals)
+						.isGreaterThan(
+							reserveAmount.setDecimals(commonDecimals),
+						)
+				) {
+					throw new OperationNotAllowed(
+						'Initial supply cannot be more than the reserve initial amount',
+					);
+				}
+			}
 		}
 
 		const res = await handler.create(

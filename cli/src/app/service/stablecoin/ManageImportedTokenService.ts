@@ -10,8 +10,7 @@ import {
   GetRolesRequest,
   StableCoinViewModel,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
-// import RoleStableCoinsService from './RoleStableCoinService';
-import DetailsStableCoinsService from './DetailsStableCoinService.js';
+import DetailsStableCoinService from './DetailsStableCoinService.js';
 
 export default class ManageImportedTokenService extends Service {
   constructor() {
@@ -56,7 +55,6 @@ export default class ManageImportedTokenService extends Service {
           },
         );
 
-        //call to roles
         const importedTokens = currentAccount.importedTokens;
         while (
           importedTokens.length > 0 &&
@@ -73,7 +71,7 @@ export default class ManageImportedTokenService extends Service {
           );
           getRolesRequestForAdding.tokenId = tokenId;
         }
-        await new DetailsStableCoinsService()
+        await new DetailsStableCoinService()
           .getDetailsStableCoins(getRolesRequestForAdding.tokenId, false)
           .then((response: StableCoinViewModel) => {
             symbol = response.symbol;
@@ -174,33 +172,5 @@ export default class ManageImportedTokenService extends Service {
     defaultCfgData.accounts = accsToUpdate;
 
     configurationService.setConfiguration(defaultCfgData);
-  }
-
-  public mixImportedTokens(tokens: string[]): string[] {
-    const currentAccount = utilsService.getCurrentAccount();
-    const filterTokens = tokens.filter((token) => {
-      if (
-        currentAccount.importedTokens &&
-        currentAccount.importedTokens.find(
-          (tok) => tok.id === token.split(' - ')[0],
-        )
-      ) {
-        return false;
-      }
-      return true;
-    });
-
-    return filterTokens
-      .concat(
-        currentAccount.importedTokens.map(
-          (token) => `${token.id} - ${token.symbol}`,
-        ),
-      )
-      .sort((token1, token2) =>
-        +token1.split(' - ')[0].split('.').slice(-1)[0] >
-        +token2.split(' - ')[0].split('.').slice(-1)[0]
-          ? -1
-          : 1,
-      );
   }
 }

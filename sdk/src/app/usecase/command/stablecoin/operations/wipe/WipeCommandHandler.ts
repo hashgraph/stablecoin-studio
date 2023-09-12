@@ -1,6 +1,6 @@
 /*
  *
- * Hedera Stable Coin SDK
+ * Hedera Stablecoin SDK
  *
  * Copyright (C) 2023 Hedera Hashgraph, LLC
  *
@@ -28,6 +28,7 @@ import StableCoinService from '../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
 import { GetAccountTokenRelationshipQuery } from '../../../../query/account/tokenRelationship/GetAccountTokenRelationshipQuery.js';
 import { DecimalsOverRange } from '../../error/DecimalsOverRange.js';
+import { OperationNotAllowed } from '../../error/OperationNotAllowed.js';
 import { StableCoinNotAssociated } from '../../error/StableCoinNotAssociated.js';
 import { WipeCommand, WipeCommandResponse } from './WipeCommand.js';
 
@@ -66,8 +67,16 @@ export class WipeCommandHandler implements ICommandHandler<WipeCommand> {
 		);
 		const coin = capabilities.coin;
 
+		const amountBd = BigDecimal.fromString(amount, coin.decimals);
+
 		if (CheckNums.hasMoreDecimals(amount, coin.decimals)) {
 			throw new DecimalsOverRange(coin.decimals);
+		}
+
+		if (amountBd.isGreaterThan(tokenRelationship.balance)) {
+			throw new OperationNotAllowed(
+				'The wipe amount is bigger than the account balance',
+			);
 		}
 
 		const res = await handler.wipe(

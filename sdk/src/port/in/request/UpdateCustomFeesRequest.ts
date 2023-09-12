@@ -1,6 +1,6 @@
 /*
  *
- * Hedera Stable Coin SDK
+ * Hedera Stablecoin SDK
  *
  * Copyright (C) 2023 Hedera Hashgraph, LLC
  *
@@ -79,10 +79,7 @@ export default class UpdateCustomFeesRequest extends ValidatedRequest<UpdateCust
 							max: customFee.max,
 							net: customFee.net,
 						});
-					else
-						return [
-							new InvalidType(val, 'FixedFee / FractionalFee'),
-						];
+					else return [new InvalidType(val)];
 				});
 			},
 		});

@@ -1,5 +1,5 @@
 {
-	"title": "Stable coin details",
+	"title": "Stablecoin details",
 	"subtitle": "Basic information",
 	"tokenId": "Token id",
 	"name": "Name",
@@ -33,6 +33,6 @@
 	"otherKey": "Other key: {{key}}",
 	"htsAccount": "HTS account",
 	"proxyContract": "Proxy contract",
-	"reserveAddress": "Reserve Address",
+	"reserveAddress": "Proof-of-Reserve address",
 	"reserveAmount": "Reserve amount"
 }

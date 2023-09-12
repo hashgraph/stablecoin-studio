@@ -35,7 +35,7 @@ exports[`<FeesManagement /> should render correctly 1`] = `
           class="chakra-text css-exh7zu"
           data-testid="no-fees-management-description"
         >
-          The stable coin you have chosen does not allow fees management, please, select a different stable coin.
+          The stablecoin you have chosen does not allow fees management, please, select a different stablecoin.
         </p>
       </div>
     </div>

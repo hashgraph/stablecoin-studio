@@ -2,7 +2,7 @@ import { StableCoinList } from '../../../domain/stablecoin/StableCoinList.js';
 import Big from 'big.js';
 import { language, utilsService, wizardService } from '../../../index.js';
 import Service from '../Service.js';
-import DetailsStableCoinsService from './DetailsStableCoinService.js';
+import DetailsStableCoinService from './DetailsStableCoinService.js';
 import {
   RequestAccount,
   StableCoinRole,
@@ -47,22 +47,21 @@ import {
   AcceptProxyOwnerRequest,
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 
-import BalanceOfStableCoinsService from './BalanceOfStableCoinService.js';
-import CashInStableCoinsService from './CashInStableCoinService.js';
+import BalanceOfStableCoinService from './BalanceOfStableCoinService.js';
+import CashInStableCoinService from './CashInStableCoinService.js';
 import WipeStableCoinService from './WipeStableCoinService.js';
-import RoleStableCoinsService from './RoleStableCoinService.js';
-import RescueStableCoinsService from './RescueStableCoinService.js';
-import RescueHBARStableCoinsService from './RescueHBARStableCoinService.js';
-import BurnStableCoinsService from './BurnStableCoinService.js';
+import RoleStableCoinService from './RoleStableCoinService.js';
+import RescueStableCoinService from './RescueStableCoinService.js';
+import RescueHBARStableCoinService from './RescueHBARStableCoinService.js';
+import BurnStableCoinService from './BurnStableCoinService.js';
 import DeleteStableCoinService from './DeleteStableCoinService.js';
 import PauseStableCoinService from './PauseStableCoinService.js';
-import ManageImportedTokenService from './ManageImportedTokenService';
 import FreezeStableCoinService from './FreezeStableCoinService.js';
 import KYCStableCoinService from './KYCStableCoinService.js';
-import ListStableCoinsService from './ListStableCoinsService.js';
+import ListStableCoinService from './ListStableCoinService.js';
 import CapabilitiesStableCoinService from './CapabilitiesStableCoinService.js';
 import FeeStableCoinService from './FeeStableCoinService.js';
-import TransfersStableCoinsService from './TransfersStableCoinService.js';
+import TransfersStableCoinService from './TransfersStableCoinService.js';
 import colors from 'colors';
 import UpdateStableCoinService from './UpdateStableCoinService.js';
 import OwnerProxyService from '../proxy/OwnerProxyService.js';
@@ -81,15 +80,15 @@ enum tokenKeys {
 }
 
 /**
- * Operation Stable Coin Service
+ * Operation Stablecoin Service
  */
 export default class OperationStableCoinService extends Service {
   private stableCoinId;
   private stableCoinWithSymbol;
   private stableCoinSymbol;
-  private roleStableCoinService = new RoleStableCoinsService();
+  private roleStableCoinService = new RoleStableCoinService();
   private capabilitiesStableCoinService = new CapabilitiesStableCoinService();
-  private listStableCoinService = new ListStableCoinsService();
+  private listStableCoinService = new ListStableCoinService();
   private stableCoinPaused;
   private stableCoinDeleted;
   private hasKycKey;
@@ -99,7 +98,7 @@ export default class OperationStableCoinService extends Service {
   // private tokenUpdate: IManagedFeatures = undefined;
 
   constructor(tokenId?: string, memo?: string, symbol?: string) {
-    super('Operation Stable Coin');
+    super('Operation Stablecoin');
     if (tokenId && memo && symbol) {
       this.stableCoinId = tokenId; //TODO Cambiar name por el id que llegue en la creación del token
       this.stableCoinWithSymbol = `${tokenId} - ${symbol}`;
@@ -108,7 +107,7 @@ export default class OperationStableCoinService extends Service {
   }
 
   /**
-   * Start the wizard for operation a stable coin
+   * Start the wizard for operation a stablecoin
    */
   public async start(): Promise<void> {
     const configAccount = utilsService.getCurrentAccount();
@@ -117,13 +116,13 @@ export default class OperationStableCoinService extends Service {
     let coins: StableCoinList[];
     try {
       if (this.stableCoinId === undefined) {
-        //Get list of stable coins to display
+        //Get list of stablecoins to display
         const resp = await this.listStableCoinService.listStableCoins(false);
         coins = resp.coins;
 
         this.stableCoinId = await utilsService.defaultMultipleAsk(
           language.getText('stablecoin.askToken'),
-          new ManageImportedTokenService().mixImportedTokens(
+          this.mixImportedTokens(
             coins.map((item) => {
               return `${item.id} - ${item.symbol}`;
             }),
@@ -153,7 +152,7 @@ export default class OperationStableCoinService extends Service {
           await utilsService.cleanAndShowBanner();
           await wizardService.mainMenu();
         } else {
-          await new DetailsStableCoinsService().getDetailsStableCoins(
+          await new DetailsStableCoinService().getDetailsStableCoins(
             this.stableCoinId,
             false,
           );
@@ -275,7 +274,7 @@ export default class OperationStableCoinService extends Service {
           },
         );
         try {
-          await new CashInStableCoinsService().cashInStableCoin(cashInRequest);
+          await new CashInStableCoinService().cashInStableCoin(cashInRequest);
         } catch (error) {
           await utilsService.askErrorConfirmation(
             async () => await this.operationsStableCoin(),
@@ -288,7 +287,7 @@ export default class OperationStableCoinService extends Service {
         await utilsService.cleanAndShowBanner();
 
         // Call to details
-        await new DetailsStableCoinsService().getDetailsStableCoins(
+        await new DetailsStableCoinService().getDetailsStableCoins(
           this.stableCoinId,
         );
         break;
@@ -318,7 +317,7 @@ export default class OperationStableCoinService extends Service {
         );
 
         try {
-          await new BalanceOfStableCoinsService().getBalanceOfStableCoin(
+          await new BalanceOfStableCoinService().getBalanceOfStableCoin(
             getAccountBalanceRequest,
           );
         } catch (error) {
@@ -354,7 +353,7 @@ export default class OperationStableCoinService extends Service {
         );
 
         try {
-          await new BurnStableCoinsService().burnStableCoin(cashOutRequest);
+          await new BurnStableCoinService().burnStableCoin(cashOutRequest);
         } catch (error) {
           await utilsService.askErrorConfirmation(
             async () => await this.operationsStableCoin(),
@@ -436,7 +435,7 @@ export default class OperationStableCoinService extends Service {
 
         // Call to Rescue
         try {
-          await new RescueStableCoinsService().rescueStableCoin(rescueRequest);
+          await new RescueStableCoinService().rescueStableCoin(rescueRequest);
         } catch (error) {
           await utilsService.askErrorConfirmation(
             async () => await this.operationsStableCoin(),
@@ -471,7 +470,7 @@ export default class OperationStableCoinService extends Service {
 
         // Call to Rescue HBAR
         try {
-          await new RescueHBARStableCoinsService().rescueHBARStableCoin(
+          await new RescueHBARStableCoinService().rescueHBARStableCoin(
             rescueHBARRequest,
           );
         } catch (error) {
@@ -495,21 +494,21 @@ export default class OperationStableCoinService extends Service {
       case language.getText('wizard.stableCoinOptions.FeesMgmt'):
         await utilsService.cleanAndShowBanner();
 
-        // Call to Supplier Role
         await this.feesManagementFlow();
         break;
       case language.getText('wizard.stableCoinOptions.RoleMgmt'):
         await utilsService.cleanAndShowBanner();
 
-        // Call to Supplier Role
         await this.roleManagementFlow();
         break;
       case language.getText('wizard.stableCoinOptions.Configuration'):
         await utilsService.cleanAndShowBanner();
+
         await this.configuration();
         break;
       case language.getText('wizard.stableCoinOptions.DangerZone'):
         await utilsService.cleanAndShowBanner();
+
         await this.dangerZone();
         break;
       case wizardOperationsStableCoinOptions[
@@ -542,7 +541,7 @@ export default class OperationStableCoinService extends Service {
     });
 
     const balance = new Big(
-      await new BalanceOfStableCoinsService().getBalanceOfStableCoin_2(
+      await new BalanceOfStableCoinService().getBalanceOfStableCoin_2(
         getAccountBalanceRequest,
       ),
     );
@@ -638,7 +637,7 @@ export default class OperationStableCoinService extends Service {
 
     if (confirmation) {
       try {
-        await new TransfersStableCoinsService().transfersStableCoin(
+        await new TransfersStableCoinService().transfersStableCoin(
           transfersRequest,
         );
       } catch (error) {
@@ -965,7 +964,7 @@ export default class OperationStableCoinService extends Service {
       (a) => a.operation,
     );
     const detailsStableCoin =
-      await new DetailsStableCoinsService().getDetailsStableCoins(
+      await new DetailsStableCoinService().getDetailsStableCoins(
         this.stableCoinId,
         false,
       );
@@ -984,11 +983,10 @@ export default class OperationStableCoinService extends Service {
             return showCustomFee;
             break;
         }
-        // TODO DELETE STABLE COIN
+        // TODO DELETE STABLECOIN
         return true;
       });
 
-    // const accountTarget = '0.0.0';
     switch (
       await utilsService.defaultMultipleAsk(
         language.getText('stablecoin.askAction'),
@@ -1270,7 +1268,7 @@ export default class OperationStableCoinService extends Service {
         } else if (addFixedFeeRequest.tokenIdCollected !== this.stableCoinId) {
           try {
             const detailsExternalStableCoin =
-              await new DetailsStableCoinsService().getDetailsStableCoins(
+              await new DetailsStableCoinService().getDetailsStableCoins(
                 addFixedFeeRequest.tokenIdCollected,
                 false,
               );
@@ -1868,7 +1866,7 @@ export default class OperationStableCoinService extends Service {
           },
         );
 
-        await new RoleStableCoinsService().getRoles(getRolesRequest);
+        await new RoleStableCoinService().getRoles(getRolesRequest);
 
         break;
       case roleManagementOptionsFiltered[
@@ -1944,7 +1942,7 @@ export default class OperationStableCoinService extends Service {
     });
 
     await utilsService.showSpinner(
-      new RoleStableCoinsService().getAccountsWithRole(request),
+      new RoleStableCoinService().getAccountsWithRole(request),
       {},
     );
   }
@@ -1992,7 +1990,7 @@ export default class OperationStableCoinService extends Service {
     if (!confirm) return;
 
     try {
-      await new RoleStableCoinsService().grantMultiRolesStableCoin(
+      await new RoleStableCoinService().grantMultiRolesStableCoin(
         grantMultiRolesRequest,
       );
     } catch (error) {
@@ -2034,7 +2032,7 @@ export default class OperationStableCoinService extends Service {
     if (!confirm) return;
 
     try {
-      await new RoleStableCoinsService().revokeMultiRolesStableCoin(
+      await new RoleStableCoinService().revokeMultiRolesStableCoin(
         revokeMultiRolesRequest,
       );
     } catch (error) {
@@ -2335,7 +2333,6 @@ export default class OperationStableCoinService extends Service {
   ): string[] {
     let result = [];
     let capabilitiesFilter = [];
-    // if (stableCoinCapabilities.capabilities.length === 0) return options;
     const capabilities: Operation[] = stableCoinCapabilities.capabilities.map(
       (a) => a.operation,
     );
@@ -2611,7 +2608,7 @@ export default class OperationStableCoinService extends Service {
       targetId: configAccount.accountId,
       tokenId: this.stableCoinId,
     });
-    return await new RoleStableCoinsService().getRolesWithoutPrinting(
+    return await new RoleStableCoinService().getRolesWithoutPrinting(
       getRolesRequest,
     );
   }
@@ -2834,7 +2831,7 @@ export default class OperationStableCoinService extends Service {
   private async tokenConfiguration(): Promise<void> {
     const updateRequest = new UpdateRequest({ tokenId: this.stableCoinId });
     const stableCoinViewModel: StableCoinViewModel =
-      await new DetailsStableCoinsService().getDetailsStableCoins(
+      await new DetailsStableCoinService().getDetailsStableCoins(
         this.stableCoinId,
         false,
       );
@@ -3248,11 +3245,10 @@ export default class OperationStableCoinService extends Service {
             return showDelete;
             break;
         }
-        // TODO DELETE STABLE COIN
+        // TODO DELETE STABLECOIN
         return true;
       });
 
-    // const accountTarget = '0.0.0';
     switch (
       await utilsService.defaultMultipleAsk(
         language.getText('stablecoin.askAction'),
@@ -3339,5 +3335,33 @@ export default class OperationStableCoinService extends Service {
         await this.operationsStableCoin();
     }
     await this.dangerZone();
+  }
+
+  public mixImportedTokens(tokens: string[]): string[] {
+    const currentAccount = utilsService.getCurrentAccount();
+    const filterTokens = tokens.filter((token) => {
+      if (
+        currentAccount.importedTokens &&
+        currentAccount.importedTokens.find(
+          (tok) => tok.id === token.split(' - ')[0],
+        )
+      ) {
+        return false;
+      }
+      return true;
+    });
+
+    return filterTokens
+      .concat(
+        currentAccount.importedTokens.map(
+          (token) => `${token.id} - ${token.symbol}`,
+        ),
+      )
+      .sort((token1, token2) =>
+        +token1.split(' - ')[0].split('.').slice(-1)[0] >
+        +token2.split(' - ')[0].split('.').slice(-1)[0]
+          ? -1
+          : 1,
+      );
   }
 }

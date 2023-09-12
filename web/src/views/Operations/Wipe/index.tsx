@@ -2,19 +2,17 @@ import { Heading, Text, Stack, useDisclosure } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import DetailsReview from '../../../components/DetailsReview';
 import InputController from '../../../components/Form/InputController';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
 import ModalsHandler from '../../../components/ModalsHandler';
 import SDKService from '../../../services/SDKService';
-import { SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
+import { SELECTED_WALLET_COIN, walletActions } from '../../../store/slices/walletSlice';
 
 import { handleRequestValidation, validateDecimalsString } from '../../../utils/validationsHelper';
 import OperationLayout from './../OperationLayout';
-import { useNavigate } from 'react-router-dom';
-import { RouterManager } from '../../../Router/RouterManager';
-import { WipeRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { BigDecimal, WipeRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 import { propertyNotFound } from '../../../constant';
 
@@ -28,6 +26,8 @@ const WipeOperation = () => {
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const { decimals = 0 } = selectedStableCoin || {};
 
+	const dispatch = useDispatch();
+
 	const [errorOperation, setErrorOperation] = useState();
 	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
 	const [request] = useState(
@@ -38,17 +38,11 @@ const WipeOperation = () => {
 		}),
 	);
 
-	const navigate = useNavigate();
-
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
 	});
 
 	const { t } = useTranslation(['wipe', 'global', 'operations']);
-
-	const handleCloseModal = () => {
-		RouterManager.goBack(navigate);
-	};
 
 	useRefreshCoinInfo();
 
@@ -64,6 +58,13 @@ const WipeOperation = () => {
 				return;
 			}
 			await SDKService.wipe(request);
+			const requestAmount = BigDecimal.fromString(request.amount, decimals);
+			dispatch(
+				walletActions.setSelectedStableCoin({
+					...selectedStableCoin,
+					totalSupply: selectedStableCoin.totalSupply?.subUnsafe(requestAmount),
+				}),
+			);
 			onSuccess();
 		} catch (error: any) {
 			setErrorTransactionUrl(error.transactionUrl);
@@ -166,8 +167,6 @@ const WipeOperation = () => {
 						]}
 					/>
 				}
-				handleOnCloseModalError={handleCloseModal}
-				handleOnCloseModalSuccess={handleCloseModal}
 			/>
 		</>
 	);

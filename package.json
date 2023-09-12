@@ -1,6 +1,6 @@
 {
   "name": "hedera-stable-coin",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "description": "",
   "scripts": {
     "install": "node install.js && npm run build:cli:full && npm run prepare",
@@ -43,12 +43,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@chainlink/contracts": "^0.5.1",
     "concurrently": "^7.6.0",
     "ethers": "^5.7.2",
-    "rimraf": "^4.1.1"
+    "rimraf": "^4.1.1",
+    "serverless": "^3.34.0"
   },
   "devDependencies": {
+    "dotenv": "^16.3.1",
+    "fs": "^0.0.1-security",
     "husky": "^8.0.3"
   }
 }

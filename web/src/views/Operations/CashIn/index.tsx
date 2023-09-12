@@ -8,12 +8,10 @@ import { handleRequestValidation, validateDecimalsString } from '../../../utils/
 import OperationLayout from './../OperationLayout';
 import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
-import { useSelector } from 'react-redux';
-import { SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { SELECTED_WALLET_COIN, walletActions } from '../../../store/slices/walletSlice';
 import { useState } from 'react';
-import { CashInRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
-import { useNavigate } from 'react-router-dom';
-import { RouterManager } from '../../../Router/RouterManager';
+import { BigDecimal, CashInRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 import { propertyNotFound } from '../../../constant';
 
@@ -29,7 +27,8 @@ const CashInOperation = () => {
 
 	const [errorOperation, setErrorOperation] = useState();
 	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
-	const navigate = useNavigate();
+
+	const dispatch = useDispatch();
 
 	const [request] = useState(
 		new CashInRequest({
@@ -45,10 +44,6 @@ const CashInOperation = () => {
 
 	const { t } = useTranslation(['cashIn', 'global', 'operations']);
 
-	const handleCloseModal = () => {
-		RouterManager.goBack(navigate);
-	};
-
 	useRefreshCoinInfo();
 
 	const handleCashIn: ModalsHandlerActionsProps['onConfirm'] = async ({
@@ -63,6 +58,13 @@ const CashInOperation = () => {
 				return;
 			}
 			await SDKService.cashIn(request);
+			const requestAmount = BigDecimal.fromString(request.amount, decimals);
+			dispatch(
+				walletActions.setSelectedStableCoin({
+					...selectedStableCoin,
+					totalSupply: selectedStableCoin.totalSupply?.addUnsafe(requestAmount),
+				}),
+			);
 			onSuccess();
 		} catch (error: any) {
 			console.log(JSON.stringify(error));
@@ -159,8 +161,6 @@ const CashInOperation = () => {
 				}
 				successNotificationTitle={t('operations:modalSuccessTitle')}
 				successNotificationDescription={t('operations:modalSuccessDesc')}
-				handleOnCloseModalError={handleCloseModal}
-				handleOnCloseModalSuccess={handleCloseModal}
 			/>
 		</>
 	);

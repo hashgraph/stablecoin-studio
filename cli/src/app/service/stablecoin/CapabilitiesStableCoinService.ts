@@ -8,7 +8,7 @@ import {
 
 export default class CapabilitiesStableCoinsService extends Service {
   constructor() {
-    super('Capabilities Stable Coin');
+    super('Capabilities Stablecoin');
   }
 
   public async getCapabilitiesStableCoins(

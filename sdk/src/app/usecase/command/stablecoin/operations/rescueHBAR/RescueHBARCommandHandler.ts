@@ -1,6 +1,6 @@
 /*
  *
- * Hedera Stable Coin SDK
+ * Hedera Stablecoin SDK
  *
  * Copyright (C) 2023 Hedera Hashgraph, LLC
  *
@@ -85,7 +85,7 @@ export class RescueHBARCommandHandler
 
 		if (amountBd.isGreaterThan(treasuryBalance)) {
 			throw new OperationNotAllowed(
-				'The amount to rescue is bigger than the treasury account balance ',
+				'The rescue HBAR amount is bigger than the treasury account balance',
 			);
 		}
 

@@ -5,214 +5,34 @@ exports[`<DangerZoneOperations /> should render correctly 1`] = `
   <div
     class="chakra-stack css-19t9j1"
   >
-    <h2
-      class="chakra-heading css-bqsusc"
-      data-testid="base-container-heading"
-    >
-      Operations
-    </h2>
     <div
-      class="css-1b6lda7"
-      data-testid="base-container-children"
+      class="chakra-stack css-1u2nxl"
+    />
+    <div
+      class="chakra-stack css-19t9j1"
     >
-      <div
-        class="css-src872"
+      <h2
+        class="chakra-heading css-bqsusc"
+        data-testid="base-container-heading"
       >
-        <h2
-          class="chakra-heading css-qltjox"
-          data-testid="subtitle"
-        >
-          Choose an operation
-        </h2>
+        Operations
+      </h2>
+      <div
+        class="css-1b6lda7"
+        data-testid="base-container-children"
+      >
         <div
-          class="css-nxcc5s"
+          class="css-src872"
         >
-          <div
-            class="css-180e663"
+          <h2
+            class="chakra-heading css-qltjox"
+            data-testid="subtitle"
           >
-            <button
-              class="css-qfko7q"
-              disabled=""
-            >
-              <div
-                class="css-1i763ui"
-              >
-                <svg
-                  class="chakra-icon css-1f9qa95"
-                  data-testid="direct-access-Pause"
-                  fill="currentColor"
-                  focusable="false"
-                  height="1em"
-                  viewBox="0 0 256 256"
-                  width="1em"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <rect
-                    fill="none"
-                    height="256"
-                    width="256"
-                  />
-                  <rect
-                    fill="none"
-                    height="176"
-                    rx="8"
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="16"
-                    width="52"
-                    x="156"
-                    y="40"
-                  />
-                  <rect
-                    fill="none"
-                    height="176"
-                    rx="8"
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="16"
-                    width="52"
-                    x="48"
-                    y="40"
-                  />
-                </svg>
-              </div>
-              <p
-                class="chakra-text css-o5z2l9"
-                data-testid="direct-access-Pause"
-              >
-                Pause
-              </p>
-            </button>
-          </div>
+            Choose an operation
+          </h2>
           <div
-            class="css-180e663"
-          >
-            <button
-              class="css-qfko7q"
-              disabled=""
-            >
-              <div
-                class="css-1i763ui"
-              >
-                <svg
-                  class="chakra-icon css-1f9qa95"
-                  data-testid="direct-access-Play"
-                  fill="currentColor"
-                  focusable="false"
-                  height="1em"
-                  viewBox="0 0 256 256"
-                  width="1em"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <rect
-                    fill="none"
-                    height="256"
-                    width="256"
-                  />
-                  <path
-                    d="M228.1,121.2,84.2,33.2A8,8,0,0,0,72,40V216a8,8,0,0,0,12.2,6.8l143.9-88A7.9,7.9,0,0,0,228.1,121.2Z"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="16"
-                  />
-                </svg>
-              </div>
-              <p
-                class="chakra-text css-o5z2l9"
-                data-testid="direct-access-Unpause"
-              >
-                Unpause
-              </p>
-            </button>
-          </div>
-          <div
-            class="css-180e663"
-          >
-            <button
-              class="css-qfko7q"
-              disabled=""
-            >
-              <div
-                class="css-1i763ui"
-              >
-                <svg
-                  class="chakra-icon css-1f9qa95"
-                  data-testid="direct-access-Trash"
-                  fill="currentColor"
-                  focusable="false"
-                  height="1em"
-                  viewBox="0 0 256 256"
-                  width="1em"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <rect
-                    fill="none"
-                    height="256"
-                    width="256"
-                  />
-                  <line
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="16"
-                    x1="216"
-                    x2="40"
-                    y1="56"
-                    y2="56"
-                  />
-                  <line
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="16"
-                    x1="104"
-                    x2="104"
-                    y1="104"
-                    y2="168"
-                  />
-                  <line
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="16"
-                    x1="152"
-                    x2="152"
-                    y1="104"
-                    y2="168"
-                  />
-                  <path
-                    d="M200,56V208a8,8,0,0,1-8,8H64a8,8,0,0,1-8-8V56"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="16"
-                  />
-                  <path
-                    d="M168,56V40a16,16,0,0,0-16-16H104A16,16,0,0,0,88,40V56"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="16"
-                  />
-                </svg>
-              </div>
-              <p
-                class="chakra-text css-o5z2l9"
-                data-testid="direct-access-Delete"
-              >
-                Delete
-              </p>
-            </button>
-          </div>
+            class="css-nxcc5s"
+          />
         </div>
       </div>
     </div>

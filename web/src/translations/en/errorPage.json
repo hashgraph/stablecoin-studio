@@ -1,7 +1,7 @@
 {
 	"stableCoinNotSelected": {
-		"title": "Choose a stable coin to start operating!",
-		"description": "You have not chosen a stable coin yet.",
+		"title": "Choose a stablecoin to start operating!",
+		"description": "You have not chosen a stablecoin yet.",
 		"description2": "Choose an item to operate."
 	}
 }

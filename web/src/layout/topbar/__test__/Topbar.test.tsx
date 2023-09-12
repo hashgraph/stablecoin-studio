@@ -1,5 +1,7 @@
 import Topbar from '../Topbar';
 import { render } from '../../../test/';
+import configureMockStore from 'redux-mock-store';
+import userEvent from '@testing-library/user-event';
 
 const HEDERA_LOGO = 'hedera-hbar-logo.svg';
 
@@ -32,5 +34,33 @@ describe(`<${Topbar.name} />`, () => {
 
 		const TopbarRight = component.getByTestId('topbar-right');
 		expect(TopbarRight).toBeInTheDocument();
+	});
+
+	test('should has is Not Network Recognized', async () => {
+		const mockStore = configureMockStore();
+		const store = mockStore({
+			wallet: {
+				accountRecognized: false,
+				networkRecognized: false,
+			},
+		});
+		const component = render(<Topbar />, store);
+
+		const button = component.getByTestId('isNotNetworkRecognized');
+		await userEvent.click(button);
+	});
+
+	test('should has is Not Account Recognized ', async () => {
+		const mockStore = configureMockStore();
+		const store = mockStore({
+			wallet: {
+				accountRecognized: false,
+				networkRecognized: true,
+			},
+		});
+		const component = render(<Topbar />, store);
+
+		const isNotAccountRecognized = component.getByTestId('isNotAccountRecognized');
+		await userEvent.click(isNotAccountRecognized);
 	});
 });

@@ -48,7 +48,7 @@ describe(`<${CoinDropdown.name} />`, () => {
 		expect(component.asFragment()).toMatchSnapshot();
 	});
 
-	test('should show all stable coins', async () => {
+	test('should show all stablecoins', async () => {
 		const component = render(<CoinDropdown />);
 
 		const select = component.getByTestId('select-placeholder');

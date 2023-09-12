@@ -44,7 +44,7 @@ describe(`<${OperationLayout.name} />`, () => {
 		expect(RouterManager.goBack).toHaveBeenCalled();
 	});
 
-	test('should render stable coin details in right side', () => {
+	test('should render stablecoin details in right side', () => {
 		const component = render(<OperationLayout {...props} />);
 		expect(component.getByTestId('details-title')).toHaveTextContent(translations.details.title);
 		expect(component.queryAllByTestId('details-review-title')[0]).toHaveTextContent(

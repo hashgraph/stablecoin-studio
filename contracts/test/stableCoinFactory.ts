@@ -79,7 +79,7 @@ const toReserve = (amount: BigNumber) => {
 const TokenFactor = BigNumber.from(10).pow(TokenDecimals)
 const INIT_SUPPLY = BigNumber.from(10).mul(TokenFactor)
 const MAX_SUPPLY = BigNumber.from(1000).mul(TokenFactor)
-const TokenMemo = 'Hedera Accelerator Stable Coin'
+const TokenMemo = 'Hedera Accelerator Stablecoin'
 
 let newFactoryProxyAddress = factoryProxyAddress
 

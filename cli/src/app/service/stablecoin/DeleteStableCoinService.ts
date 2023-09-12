@@ -4,11 +4,11 @@ import Service from '../Service.js';
 import { DeleteRequest, StableCoin } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 /**
- * Create Role Stable Coin Service
+ * Create Role Stablecoin Service
  */
 export default class DeleteStableCoinService extends Service {
   constructor() {
-    super('Delete Stable Coin');
+    super('Delete Stablecoin');
   }
 
   /**

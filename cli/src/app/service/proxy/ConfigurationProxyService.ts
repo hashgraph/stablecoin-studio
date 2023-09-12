@@ -8,7 +8,7 @@ import {
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 /**
- * Create Stable Coin Service
+ * Create Stablecoin Service
  */
 export default class ConfigurationProxyService extends Service {
   constructor() {

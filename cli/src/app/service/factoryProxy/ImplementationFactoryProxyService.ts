@@ -25,7 +25,6 @@ export default class ImplementationFactoryProxyService extends Service {
       language.getText('proxyConfiguration.currentImplementation') +
         currentImpl,
     );
-
     await utilsService.handleValidation(
       () => req.validate('implementationAddress'),
       async () => {

@@ -1,6 +1,6 @@
 /*
  *
- * Hedera Stable Coin SDK
+ * Hedera Stablecoin SDK
  *
  * Copyright (C) 2023 Hedera Hashgraph, LLC
  *
@@ -85,7 +85,7 @@ export class MirrorNodeAdapter {
 			}tokens?limit=100&order=desc&account.id=${accountId.toString()}`;
 
 			LogService.logTrace(
-				'Getting stable coin list from mirror node -> ',
+				'Getting stablecoin list from mirror node -> ',
 				url,
 			);
 
@@ -250,12 +250,8 @@ export class MirrorNodeAdapter {
 			const proxyAdminAddressContractInfo = await this.getContractInfo(
 				proxyAdminAddress,
 			);
-
-			const proxyId: string = (await this.getContractInfo(proxyAddress))
-				.id;
-			const proxyAdminId: string = (
-				await this.getContractInfo(proxyAdminAddress)
-			).id;
+			const proxyId: string = proxyAddressContractInfo.id;
+			const proxyAdminId: string = proxyAdminAddressContractInfo.id;
 
 			const stableCoinDetail: StableCoinViewModel = {
 				tokenId: HederaId.from(response.data.token_id),
@@ -348,6 +344,7 @@ export class MirrorNodeAdapter {
 	): Promise<AccountViewModel> {
 		try {
 			LogService.logTrace(
+				'Getting account info -> ',
 				this.mirrorNodeConfig.baseUrl + 'accounts/' + accountId,
 			);
 			const res = await this.instance.get<IAccount>(
@@ -401,7 +398,7 @@ export class MirrorNodeAdapter {
 		try {
 			const url = `${this.mirrorNodeConfig.baseUrl}contracts/${contractEvmAddress}`;
 
-			LogService.logTrace(url);
+			LogService.logTrace('Getting contract info -> ', url);
 
 			const retry = 10;
 			let i = 0;
@@ -437,7 +434,7 @@ export class MirrorNodeAdapter {
 			const url = `${
 				this.mirrorNodeConfig.baseUrl
 			}accounts/${targetId.toString()}/tokens?token.id=${tokenId.toString()}`;
-			LogService.logTrace(url);
+			LogService.logTrace('Getting account token -> ', url);
 			const res = await this.instance.get<AccountTokenRelationList>(url);
 			if (res.data.tokens && res.data.tokens.length > 0) {
 				const obj = res.data.tokens[0];
@@ -504,17 +501,17 @@ export class MirrorNodeAdapter {
 			await new Promise((resolve) => setTimeout(resolve, 5000));
 			const res = await this.instance.get<ITransactionList>(url);
 
-			let lastChildtransaction: ITransaction;
+			let lastChildTransaction: ITransaction;
 			if (res.data.transactions) {
-				lastChildtransaction =
+				lastChildTransaction =
 					res.data.transactions[res.data.transactions.length - 1];
-				LogService.logError(JSON.stringify(lastChildtransaction));
+				LogService.logError(JSON.stringify(lastChildTransaction));
 			} else {
 				throw new Error('Response does not contain any transaction');
 			}
 
 			const result: TransactionResultViewModel = {
-				result: lastChildtransaction.result,
+				result: lastChildTransaction.result,
 			};
 
 			return result;

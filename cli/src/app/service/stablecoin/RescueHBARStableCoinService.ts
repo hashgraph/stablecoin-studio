@@ -9,9 +9,9 @@ import {
 /**
  * Rescue HBAR Service
  */
-export default class RescueHBARStableCoinsService extends Service {
+export default class RescueHBARStableCoinService extends Service {
   constructor() {
-    super('Rescue HBAR Stable Coin');
+    super('Rescue HBAR Stablecoin');
   }
 
   /**

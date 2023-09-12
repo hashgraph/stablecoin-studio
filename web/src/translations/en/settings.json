@@ -1,9 +1,9 @@
 {
 	"title": "Settings",
 	"operationTitle": "Settings",
-	"subtitle": "Choose a settings option",
-	"stableCoinSettings": "Stable Coin",
-	"factorySettings": "Factory",
+	"subtitle": "Choose an option",
+	"stableCoinSettings": "Stablecoin Setting",
+	"factorySettings": "Factory Contract",
 	"notOwner": "The current account is not the owner of the factory's proxy",
 	"stableCoin": {
 		"transferOwner": {
@@ -32,7 +32,8 @@
 			"title": "{{ result }} updating settings",
 			"descriptionSuccess": "Proxy settings was updated",
 			"descriptionError": "Sorry, there was an error updating the proxy settings"
-		}
+		},
+		"link": "https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/contracts#change-proxyAdmin-owner"
 	},
 	"factory": {
 		"transferOwner": {

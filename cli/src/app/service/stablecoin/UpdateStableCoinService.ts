@@ -5,7 +5,7 @@ import { UpdateRequest, StableCoin } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 export default class UpdateStableCoinService extends Service {
   constructor() {
-    super('Update Stable Coin');
+    super('Update Stablecoin');
   }
 
   public async update(request: UpdateRequest): Promise<void> {

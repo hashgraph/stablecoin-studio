@@ -1,6 +1,6 @@
 /*
  *
- * Hedera Stable Coin SDK
+ * Hedera Stablecoin SDK
  *
  * Copyright (C) 2023 Hedera Hashgraph, LLC
  *
@@ -103,7 +103,7 @@ export class TransfersCommandHandler
 		const coin = capabilities.coin;
 
 		if (!coin.tokenId)
-			throw new OperationNotAllowed(`The stable coin is not valid`);
+			throw new OperationNotAllowed(`The stablecoin is not valid`);
 
 		const amountsBd: BigDecimal[] = [];
 

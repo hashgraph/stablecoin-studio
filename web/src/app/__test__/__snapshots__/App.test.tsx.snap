@@ -2,26 +2,17 @@
 
 exports[`<App /> should render correctly 1`] = `
 <DocumentFragment>
-  <main>
-    <div
-      class="css-1amrwrf"
+  <div
+    class="css-1amrwrf"
+  >
+    <button
+      class="chakra-button css-aev8ym"
+      data-testid="modal-term-conditions-button"
+      type="button"
     >
-      <div
-        class="chakra-spinner css-djtcb6"
-      >
-        <span
-          class="css-8b45rq"
-        >
-          Loading...
-        </span>
-      </div>
-      <p
-        class="chakra-text css-1sna1gh"
-      >
-        Searching for supported wallets
-      </p>
-    </div>
-  </main>
+      Terms & Conditions
+    </button>
+  </div>
   <span
     hidden=""
     id="__chakra_env"

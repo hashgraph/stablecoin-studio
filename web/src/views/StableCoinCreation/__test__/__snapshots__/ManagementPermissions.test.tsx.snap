@@ -12,7 +12,28 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
         class="chakra-heading css-p7jgmy"
         data-testid="title"
       >
-        Permission management
+        <div
+          class="css-gg4vpm"
+        >
+          Configure Permissions
+          <a
+            class="chakra-link css-spn4bz"
+            href="https://docs.hedera.com/hedera/sdks-and-apis/sdks/readme-1/define-a-token"
+            rel="noopener"
+            target="_blank"
+          >
+            <svg
+              class="chakra-icon css-onkibi"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M12,0A12,12,0,1,0,24,12,12.013,12.013,0,0,0,12,0Zm.25,5a1.5,1.5,0,1,1-1.5,1.5A1.5,1.5,0,0,1,12.25,5ZM14.5,18.5h-4a1,1,0,0,1,0-2h.75a.25.25,0,0,0,.25-.25v-4.5a.25.25,0,0,0-.25-.25H10.5a1,1,0,0,1,0-2h1a2,2,0,0,1,2,2v4.75a.25.25,0,0,0,.25.25h.75a1,1,0,1,1,0,2Z"
+                fill="currentColor"
+              />
+            </svg>
+          </a>
+        </div>
       </h2>
       <form
         class="chakra-stack css-1se0447"
@@ -21,7 +42,7 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
           class="chakra-stack css-801656"
         >
           <p
-            class="chakra-text css-3crm2z"
+            class="chakra-text css-1x1jfpp"
           >
             Assign default values
           </p>
@@ -32,26 +53,43 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
           <p
             class="chakra-text css-mgupmj"
           >
-            Wipe - The smart contract
+            Wipe | HederaTokenManager Smart Contract
           </p>
           <p
             class="chakra-text css-mgupmj"
           >
-            Freeze - The smart contract
+            Freeze | HederaTokenManager Smart Contract
           </p>
           <p
             class="chakra-text css-mgupmj"
           >
-            Pause - The smart contract
+            Pause | HederaTokenManager Smart Contract
           </p>
         </div>
         <div
           class="chakra-stack css-801656"
         >
           <p
-            class="chakra-text css-3crm2z"
+            class="chakra-text css-1x1jfpp"
           >
-            Do you want to enable KYC?
+            Enable KYC accounts flags? 
+            <a
+              class="chakra-link css-spn4bz"
+              href="https://hedera.com/blog/get-started-with-the-hedera-token-service-part-2-kyc-update-and-scheduled-transactions"
+              rel="noopener"
+              target="_blank"
+            >
+              <svg
+                class="chakra-icon css-onkibi"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M12,0A12,12,0,1,0,24,12,12.013,12.013,0,0,0,12,0Zm.25,5a1.5,1.5,0,1,1-1.5,1.5A1.5,1.5,0,0,1,12.25,5ZM14.5,18.5h-4a1,1,0,0,1,0-2h.75a.25.25,0,0,0,.25-.25v-4.5a.25.25,0,0,0-.25-.25H10.5a1,1,0,0,1,0-2h1a2,2,0,0,1,2,2v4.75a.25.25,0,0,0,.25.25h.75a1,1,0,1,1,0,2Z"
+                  fill="currentColor"
+                />
+              </svg>
+            </a>
           </p>
         </div>
         <div
@@ -61,9 +99,26 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
           class="chakra-stack css-801656"
         >
           <p
-            class="chakra-text css-3crm2z"
+            class="chakra-text css-1x1jfpp"
           >
-            Do you want to add custom fees?
+            Do you want to add custom fees? 
+            <a
+              class="chakra-link css-spn4bz"
+              href="https://docs.hedera.com/hedera/sdks-and-apis/sdks/readme-1/custom-token-fees"
+              rel="noopener"
+              target="_blank"
+            >
+              <svg
+                class="chakra-icon css-onkibi"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M12,0A12,12,0,1,0,24,12,12.013,12.013,0,0,0,12,0Zm.25,5a1.5,1.5,0,1,1-1.5,1.5A1.5,1.5,0,0,1,12.25,5ZM14.5,18.5h-4a1,1,0,0,1,0-2h.75a.25.25,0,0,0,.25-.25v-4.5a.25.25,0,0,0-.25-.25H10.5a1,1,0,0,1,0-2h1a2,2,0,0,1,2,2v4.75a.25.25,0,0,0,.25.25h.75a1,1,0,1,1,0,2Z"
+                  fill="currentColor"
+                />
+              </svg>
+            </a>
           </p>
         </div>
         <div
@@ -91,7 +146,24 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
             <span
               class="css-1irdfqk"
             >
-              Roles assignment
+              Roles assignment 
+              <a
+                class="chakra-link css-spn4bz"
+                href="https://github.com/hashgraph/hedera-accelerator-stablecoin#what-is-a-stable-coin"
+                rel="noopener"
+                target="_blank"
+              >
+                <svg
+                  class="chakra-icon css-onkibi"
+                  focusable="false"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M12,0A12,12,0,1,0,24,12,12.013,12.013,0,0,0,12,0Zm.25,5a1.5,1.5,0,1,1-1.5,1.5A1.5,1.5,0,0,1,12.25,5ZM14.5,18.5h-4a1,1,0,0,1,0-2h.75a.25.25,0,0,0,.25-.25v-4.5a.25.25,0,0,0-.25-.25H10.5a1,1,0,0,1,0-2h1a2,2,0,0,1,2,2v4.75a.25.25,0,0,0,.25.25h.75a1,1,0,1,1,0,2Z"
+                    fill="currentColor"
+                  />
+                </svg>
+              </a>
             </span>
             <svg
               aria-hidden="true"

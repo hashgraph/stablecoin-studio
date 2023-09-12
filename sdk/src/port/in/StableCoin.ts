@@ -1,6 +1,6 @@
 /*
  *
- * Hedera Stable Coin SDK
+ * Hedera Stablecoin SDK
  *
  * Copyright (C) 2023 Hedera Hashgraph, LLC
  *
@@ -31,6 +31,7 @@ import AssociateTokenRequest from './request/AssociateTokenRequest.js';
 import BigDecimal from '../../domain/context/shared/BigDecimal.js';
 import { HederaId } from '../../domain/context/shared/HederaId.js';
 import ContractId from '../../domain/context/contract/ContractId.js';
+import EvmAddress from '../../domain/context/contract/EvmAddress.js';
 import {
 	StableCoinProps,
 	TRANSFER_LIST_SIZE,
@@ -104,7 +105,7 @@ export {
 };
 export { StableCoinCapabilities, Capability, Access, Operation, Balance };
 export { TokenSupplyType };
-export { BigDecimal };
+export { BigDecimal, HederaId, ContractId, EvmAddress, PublicKey };
 
 interface IStableCoinInPort {
 	create(request: CreateRequest): Promise<{

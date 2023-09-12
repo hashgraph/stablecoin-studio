@@ -388,7 +388,6 @@ By specifying the public key of an account, we can set the stablecoin's keys to 
 In the above exmaple, it is also important to notice that, when creating a stablecoin, the `proxyAdminOwnerAccount` parameter in the `CreateRequest` class, allows the user to configure an account id, which may be a contract like a timelock controller, a cold wallet, etc, to be the stablecoin proxy admin owner rather than the account id that is creating the stablecoin, which is the default option if the user doesn't populate this optional parameter.
 
 ### Creates a simple stablecoin, with all keys set to none
-
 By not setting any of the keys, the stablecoin will have the corresponding features disabled and the keys set to none.
 
 ```Typescript
@@ -411,7 +410,6 @@ By not setting any of the keys, the stablecoin will have the corresponding featu
 ```
 
 ### GetInfo
-
 Gets the information of an existing stablecoin.
 
 **Spec:**
@@ -484,7 +482,6 @@ Gets the balance of HBARs for an account.
 ```
 
 ### Associate
-
 Associates a stablecoin with an account.
 
 **Spec:**
@@ -504,7 +501,6 @@ Associates a stablecoin with an account.
 ```
 
 ### isAccountAssociated
-
 Checks if an account is associated with a stablecoin.
 
 **Spec:**
@@ -632,7 +628,10 @@ Wipes an amount of tokens from an account. The operating account must have the w
 ```
 
 ### Pause
+<<<<<<< HEAD
+=======
 
+>>>>>>> origin/main
 Pauses a stablecoin. None of the operations can be taken while the stablecoin is in paused state. The operating account must have the pause role.
 
 **Spec:**
@@ -652,7 +651,10 @@ Pauses a stablecoin. None of the operations can be taken while the stablecoin is
 ```
 
 ### Unpause
+<<<<<<< HEAD
+=======
 
+>>>>>>> origin/main
 Unpauses a stablecoin. If the stablecoin is not paused it will throw an exception. The operating account must have the pause role.
 
 **Spec:**
@@ -672,7 +674,10 @@ Unpauses a stablecoin. If the stablecoin is not paused it will throw an exceptio
 ```
 
 ### Freeze
+<<<<<<< HEAD
+=======
 
+>>>>>>> origin/main
 Prevents transfer of a stablecoin to/from an account. The operating account must have the freeze role.
 
 **Spec:**
@@ -693,7 +698,10 @@ Prevents transfer of a stablecoin to/from an account. The operating account must
 ```
 
 ### Unfreeze
+<<<<<<< HEAD
+=======
 
+>>>>>>> origin/main
 Enables transfer of a stablecoin to/from an account. The operating account must have the freeze role.
 
 **Spec:**
@@ -862,7 +870,10 @@ import {
 ```
 
 ### Delete
+<<<<<<< HEAD
+=======
 
+>>>>>>> origin/main
 Deletes a stablecoin. **Important** this operation is not reversible. The operating account must have the admin role.
 
 **Spec:**
@@ -1497,7 +1508,6 @@ Checks if an account has a specific role for a stablecoin.
 ```
 
 ### GrantRole
-
 Grants a role to an account for a stablecoin. The operating account must have the admin role.
 
 **Spec:**
@@ -1519,7 +1529,6 @@ Grants a role to an account for a stablecoin. The operating account must have th
 ```
 
 ### GrantMultiRoles
-
 Grants multiple roles to multiple accounts for a stablecoin. The operating account must have the admin role.
 
 **Spec:**
@@ -1650,7 +1659,6 @@ Gets the supplier allowance (amount of tokens that can be minted by an account) 
 ```
 
 ### ResetAllowance
-
 Sets the supplier allowance to 0 for an account and a stablecoin. The operating account must have the admin role.
 
 **Spec:**
@@ -1672,7 +1680,6 @@ Sets the supplier allowance to 0 for an account and a stablecoin. The operating 
 ```
 
 ### IncreaseAllowance
-
 Increases the supplier allowance amount for an account and a stablecoin. The operating account must have the admin role.
 
 **Spec:**
@@ -1716,7 +1723,6 @@ Decreases the supplier allowance amount for an account and a stablecoin. The ope
 ```
 
 ### IsLimited
-
 Checks if an account has a limited supplier allowance for a stablecoin or not.
 
 **Spec:**
@@ -1738,7 +1744,6 @@ Checks if an account has a limited supplier allowance for a stablecoin or not.
 ```
 
 ### IsUnlimited
-
 Checks if an account has an unlimited supplier allowance for a stablecoin or not.
 
 **Spec:**
@@ -1760,12 +1765,10 @@ Checks if an account has an unlimited supplier allowance for a stablecoin or not
 ```
 
 ## Reserve Data Feed
-
 The following operations are always performed through smart contracts calls, since the reserve data feed is a contract which can be deployed alongside the stablecoin.
 Getting the reserve amount can be performed by anyone while updating this amount can only be performed by accounts with the appropriate role.
 
 ### Get Reserve Amount
-
 Gets the reserve amount for a stablecoin.
 
 **Spec:**
@@ -1785,7 +1788,6 @@ Gets the reserve amount for a stablecoin.
 ```
 
 ### Update Reserve Amount
-
 Updates the reserve amount for a stablecoin. The operating account must have the admin role.
 
 **Spec:**

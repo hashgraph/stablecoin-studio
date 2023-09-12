@@ -4,11 +4,20 @@ import type {
 	FormLabelProps,
 	StackProps,
 } from '@chakra-ui/react';
-import { FormControl, FormErrorMessage, Input, InputGroup, Stack } from '@chakra-ui/react';
+import {
+	Flex,
+	FormControl,
+	FormErrorMessage,
+	Input,
+	InputGroup,
+	Link,
+	Stack,
+} from '@chakra-ui/react';
 import type { Control, FieldValues, UseControllerProps } from 'react-hook-form';
 import { Controller } from 'react-hook-form';
 import type { ChangeEventHandler, ChangeEvent, FocusEvent, ReactNode } from 'react';
 import InputLabel from './InputLabel';
+import { InfoIcon } from '@chakra-ui/icons';
 
 export interface InputControllerProps extends Omit<ChakraInputProps, 'name'> {
 	rules?: UseControllerProps['rules'];
@@ -26,6 +35,7 @@ export interface InputControllerProps extends Omit<ChakraInputProps, 'name'> {
 	labelStyle?: FormLabelProps;
 	name: string;
 	containerStyle?: StackProps;
+	link?: string | null;
 }
 
 const InputController = ({
@@ -47,6 +57,7 @@ const InputController = ({
 	labelStyle,
 	defaultValue,
 	containerStyle,
+	link,
 	...props
 }: InputControllerProps) => {
 	return (
@@ -68,11 +79,18 @@ const InputController = ({
 				return (
 					<Stack w='full' {...containerStyle}>
 						<FormControl isInvalid={!!error} {...formStyle}>
-							{label && (
-								<InputLabel isRequired={isRequired} style={labelStyle}>
-									{label}
-								</InputLabel>
-							)}
+							<Flex justifyContent='space-between'>
+								{label && (
+									<InputLabel isRequired={isRequired} style={labelStyle}>
+										{label}
+									</InputLabel>
+								)}
+								{link && (
+									<Link href={link} isExternal>
+										<InfoIcon />
+									</Link>
+								)}
+							</Flex>
 							<InputGroup>
 								{leftElement}
 								<Input

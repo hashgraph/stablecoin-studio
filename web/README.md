@@ -41,7 +41,7 @@ npm install @hashgraph-dev/stablecoin-dapp
 
 You will need the following supporting tools/frameworks installed
 
-- [Node.js](https://nodejs.org/) `>= v16.13` and `< v17`
+- [Node.js](https://nodejs.org/) `>= v16.13`
 - [npm](https://www.npmjs.com/)
 
 Then you have to install and build
@@ -66,8 +66,7 @@ The ENV file contains the following parameters:
 - **REACT_APP_LOG_LEVEL**: defines the log level the application is going to apply to filter the logs been displayed in the browser's console. The default value is "ERROR".
 - **REACT_APP_FACTORIES**: This var is required if you want to create a new stablecoin. The var must be a JSON array with a factory id in Hedera format `0.0.XXXXX` per environment.
 - **REACT_APP_MIRROR_NODE**: This var is required if you want to create a new stablecoin. The var must be a unique mirror node service for each Hedera network, and this is the service which would be used when the UI starts. The service is configured by the environment and the base url properties, and, optionally, can also have an api key and a http header through which the api key is provided.
-- **REACT_APP_RPC_NODE**: This var is required if you want to create a new stablecoin. The var must be a unique rpc node service for Hedera network, and this is the service which would be used when the UI starts. The service is configured using the same properties than the mirror node.
-
+- **REACT_APP_RPC_NODE**: This var is required if you want to create a new stablecoin. The var must be a unique rpc node service for Hedera network, and this is the service which would be used when the UI starts. The service is configured using the same properties than the mirror node. You can check the available JSON-RPC relays [here](https://github.com/hashgraph/hedera-accelerator-stablecoin/blob/main/README.md#JSON-RPC-Relays)
 ```
 REACT_APP_FACTORIES='[{"Environment":"mainnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.1234567"},{"Environment":"testnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.3950554"},{"Environment":"previewnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.239703"}]'
 REACT_APP_MIRROR_NODE='[{"Environment":"testnet","BASE_URL":"https://testnet.mirrornode.hedera.com/api/v1/", "API_KEY": "132456", "HEADER": "x-api-key"}]'
@@ -148,7 +147,7 @@ Basic information about the stablecoin.
 
 **Optional details**
 
-stablecoin supply and accuracy definition (initial supply, max supply, decimals)
+Stablecoin supply and accuracy definition (initial supply, max supply, decimals)
 
 ![Selection_037](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/8bc0fa3b-86ce-4956-9660-64be44c4f826)
 
@@ -197,11 +196,11 @@ The operations linked to the capabilities (roles) assigned to your account for t
 
 If your account has the stablecoin admin role, you will also be allowed to manage the stablecoin's roles.
 
-### stablecoin details
+### Stablecoin details
 
 ![Selection_031](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/bbc2deb4-aaa1-4294-a811-e9f2ec785759)
 
-This menú option displays stablecoin details and also allows the user to update some of the token properties, like the name, the symbol, the keys..., clicking on the the pencil icon located at the top right side of the screen, which transforms the information page into a form where this properties can be modified by the user.
+This menú option displays stablecoin details and also allows the user to update some of the token properties, like the name, the symbol, the keys..., clicking on the the pencil icon located at the top right side of the screen, which transforms the information page into a form where this properties can be modified by the user. 
 
 ### Fees management
 

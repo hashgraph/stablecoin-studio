@@ -91,7 +91,7 @@ const TokenDecimals = 3
 const TokenFactor = BigNumber.from(10).pow(TokenDecimals)
 const INIT_SUPPLY = BigNumber.from(10).mul(TokenFactor)
 const MAX_SUPPLY = BigNumber.from(1000).mul(TokenFactor)
-const TokenMemo = 'Hedera Accelerator Stable Coin'
+const TokenMemo = 'Hedera Accelerator Stablecoin'
 const abiProxyAdmin = ProxyAdmin__factory.abi
 const MetadataString = 'Metadata_String'
 
@@ -532,7 +532,7 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
         stableCoinAddress = result[2]
     })
 
-    it('Can deploy a stable coin where proxy admin owner is the deploying account', async function () {
+    it('Can deploy a stablecoin where proxy admin owner is the deploying account', async function () {
         const result = await deployContractsWithSDK({
             name: TokenName,
             symbol: TokenSymbol,
@@ -563,7 +563,7 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
         )
     })
 
-    it('Can deploy a stable coin where proxy admin owner is not the deploying account', async function () {
+    it('Can deploy a stablecoin where proxy admin owner is not the deploying account', async function () {
         const result = await deployContractsWithSDK({
             name: TokenName,
             symbol: TokenSymbol,

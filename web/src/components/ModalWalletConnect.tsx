@@ -2,9 +2,9 @@ import {
 	Button,
 	HStack,
 	Image,
+	Link,
 	Modal,
 	ModalBody,
-	ModalCloseButton,
 	ModalContent,
 	ModalFooter,
 	ModalHeader,
@@ -12,6 +12,7 @@ import {
 	Spinner,
 	Text,
 	VStack,
+	useDisclosure,
 } from '@chakra-ui/react';
 import {
 	GetFactoryProxyConfigRequest,
@@ -20,10 +21,10 @@ import {
 } from '@hashgraph-dev/stablecoin-npm-sdk';
 import type { StableCoinListViewModel } from '@hashgraph-dev/stablecoin-npm-sdk';
 import type { FC, ReactNode } from 'react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import HEDERA_LOGO from '../assets/png/hashpackLogo.png';
+import HASHPACK_LOGO_PNG from '../assets/png/hashpackLogo.png';
 import METAMASK_LOGO from '../assets/svg/MetaMask_Fox.svg';
 import SDKService from '../services/SDKService';
 import { AVAILABLE_WALLETS, walletActions } from '../store/slices/walletSlice';
@@ -32,14 +33,11 @@ import ERROR_ICON from '../assets/svg/error.svg';
 import { SelectController } from './Form/SelectController';
 import { useForm } from 'react-hook-form';
 
-export interface ModalWalletConnectProps {
-	isOpen: boolean;
-	onClose: () => void;
-}
-
-const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
+const ModalWalletConnect = () => {
 	const { t } = useTranslation('global');
 	const dispatch = useDispatch();
+
+	const { onClose } = useDisclosure();
 	const styles = {
 		providerStyle: {
 			boxShadow: '0 0 12px 2px #E0E0E0',
@@ -76,10 +74,6 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 	const [hashpackSelected, setHashpackSelected] = useState<boolean>(false);
 	const availableWallets = useSelector(AVAILABLE_WALLETS);
 
-	useEffect(() => {
-		isOpen && setLoading(undefined);
-	}, [isOpen]);
-
 	const { control, getValues } = useForm({
 		mode: 'onChange',
 	});
@@ -91,6 +85,7 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 		dispatch(walletActions.setNetwork(network));
 		dispatch(walletActions.setSelectedStableCoin(undefined));
 		dispatch(walletActions.setSelectedStableCoinProxyConfig(undefined));
+		dispatch(walletActions.setSelectedNetworkFactoryProxyConfig(undefined));
 		dispatch(walletActions.setIsProxyOwner(false));
 		dispatch(walletActions.setIsPendingOwner(false));
 		dispatch(walletActions.setIsAcceptOwner(false));
@@ -98,10 +93,12 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 		try {
 			await SDKService.connectWallet(wallet, network);
 
-			const factoryProxyConfig: StableCoinListViewModel = await getFactoryProxyConfig(
-				await Network.getFactoryAddress(),
-			);
-			dispatch(walletActions.setSelectedNetworkFactoryProxyConfig(factoryProxyConfig));
+			const factoryId = await Network.getFactoryAddress();
+
+			if (factoryId) {
+				const factoryProxyConfig: StableCoinListViewModel = await getFactoryProxyConfig(factoryId);
+				dispatch(walletActions.setSelectedNetworkFactoryProxyConfig(factoryProxyConfig));
+			}
 			dispatch(walletActions.setIsFactoryProxyOwner(false));
 			dispatch(walletActions.setIsFactoryPendingOwner(false));
 			dispatch(walletActions.setIsFactoryAcceptOwner(false));
@@ -123,7 +120,7 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 			),
 			new Promise((resolve, reject) => {
 				setTimeout(() => {
-					reject(new Error("Stable coin details couldn't be obtained in a reasonable time."));
+					reject(new Error("Stablecoin details couldn't be obtained in a reasonable time."));
 				}, 10000);
 			}),
 		]).catch((e) => {
@@ -149,10 +146,13 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 		handleWalletConnect(SupportedWallets.HASHPACK, values.network.value);
 	};
 
-	const networkOptions = [
-		{ value: 'testnet', label: 'Testnet' },
-		{ value: 'mainnet', label: 'Mainnet' },
-	];
+	const networkOptions = [{ value: 'testnet', label: 'Testnet' }];
+	if (
+		process.env.REACT_APP_ONLY_TESTNET === undefined ||
+		process.env.REACT_APP_ONLY_TESTNET === 'false'
+	) {
+		networkOptions.push({ value: 'mainnet', label: 'Mainnet' });
+	}
 
 	const handleConnectMetamaskWallet = () => {
 		handleWalletConnect(SupportedWallets.METAMASK, '-');
@@ -184,7 +184,7 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 	return (
 		<>
 			<Modal
-				isOpen={isOpen}
+				isOpen={true}
 				onClose={onClose}
 				size={'xl'}
 				isCentered
@@ -193,7 +193,6 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 			>
 				<ModalOverlay />
 				<ModalContent data-testid='modal-action-content' p='50' w='500px'>
-					<ModalCloseButton onClick={unHandleConnectHashpackWallet} />
 					{!error && !rejected && !hashpackSelected && (
 						<>
 							<ModalHeader p='0' justifyContent='center'>
@@ -216,28 +215,52 @@ const ModalWalletConnect = ({ isOpen, onClose }: ModalWalletConnectProps) => {
 									justifyContent={'center'}
 									alignItems={'stretch'}
 								>
-									{availableWallets.includes(SupportedWallets.HASHPACK) && (
+									{availableWallets.includes(SupportedWallets.HASHPACK) ? (
 										<VStack
 											data-testid='Hashpack'
 											{...styles.providerStyle}
+											shouldWrapChildren
 											onClick={handleConnectHashpackWallet}
 										>
 											<PairingSpinner wallet={SupportedWallets.HASHPACK}>
-												<Image src={HEDERA_LOGO} w={20} />
+												<Image src={HASHPACK_LOGO_PNG} w={20} />
 												<Text>Hashpack</Text>
 											</PairingSpinner>
 										</VStack>
+									) : (
+										<VStack data-testid='Hashpack' {...styles.providerStyle}>
+											<Link
+												href='https://www.hashpack.app/download'
+												isExternal
+												_hover={{ textDecoration: 'none' }}
+											>
+												<Image src={HASHPACK_LOGO_PNG} w={20} />
+												<Text>Hashpack</Text>
+											</Link>
+										</VStack>
 									)}
-									{availableWallets.includes(SupportedWallets.METAMASK) && (
+									{availableWallets.includes(SupportedWallets.METAMASK) ? (
 										<VStack
 											data-testid='Metamask'
 											{...styles.providerStyle}
+											shouldWrapChildren
 											onClick={handleConnectMetamaskWallet}
 										>
 											<PairingSpinner wallet={SupportedWallets.METAMASK}>
 												<Image src={METAMASK_LOGO} w={20} />
 												<Text>Metamask</Text>
 											</PairingSpinner>
+										</VStack>
+									) : (
+										<VStack data-testid='Metamask' {...styles.providerStyle}>
+											<Link
+												href='https://metamask.io/download/'
+												isExternal
+												_hover={{ textDecoration: 'none' }}
+											>
+												<Image src={METAMASK_LOGO} w={20} />
+												<Text>Metamask</Text>
+											</Link>
 										</VStack>
 									)}
 								</HStack>
