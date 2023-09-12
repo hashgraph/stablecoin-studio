@@ -8,7 +8,6 @@ on:
       - 'hashconnect/**'
       - 'sdk/**'
       - 'cli/**'
-      - 'web/**'
 jobs:
   ALL-publish:
     name: Publish ALL packages
@@ -76,16 +75,5 @@ jobs:
           EOF 
       - name: Publish cli package
         run: npm run publish:cli
-      - name: Install web dependencies 
-        run: npm run install:web
-      - name: Create .npmrc web
-        run: |
-          cd web && cat << EOF > .npmrc
-            @hashgraph:registry=https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/
-            //us-npm.pkg.dev/hedera-registry/stablecoin-npm/:_authToken="${{ steps.auth.outputs.access_token }}"
-            //us-npm.pkg.dev/hedera-registry/stablecoin-npm/:always-auth=true
-          EOF 
-      - name: Publish web package
-        run: npm run publish:web
         env:
           CI: ""
