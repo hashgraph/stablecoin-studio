@@ -183,11 +183,17 @@ Learn more about them in their README:
 
 In a terminal:
 
-```
-npm install
+Before intstalling, its needed to execute the command below in order to configure repository for @hashgraph-dev in npm.
+
+```bash
+npm config set @hashgraph-dev:registry=https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/
 ```
 
 This will install the dependencies in all projects and sets up the links between them.
+
+```
+npm install
+```
 
 You can now start developing in any of the modules.
 
