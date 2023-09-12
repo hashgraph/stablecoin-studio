@@ -9,7 +9,7 @@ exports[`<StableCoinProof /> should render correctly 1`] = `
       class="chakra-heading css-bqsusc"
       data-testid="base-container-heading"
     >
-      Proof of Reserve
+      Proof-of-Reserve
     </h2>
     <div
       class="css-1b6lda7"

@@ -12,7 +12,7 @@ exports[`<OptionalDetails /> should render correctly 1`] = `
         class="chakra-heading css-p7jgmy"
         data-testid="title"
       >
-        Stablecoin optional details
+        Configure Supply & Metadata
       </h2>
       <form
         class="chakra-stack css-ahthbn"

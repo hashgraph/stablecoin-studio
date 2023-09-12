@@ -8,10 +8,10 @@ import { handleRequestValidation, validateDecimalsString } from '../../../utils/
 import OperationLayout from './../OperationLayout';
 import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
-import { useSelector } from 'react-redux';
-import { SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { SELECTED_WALLET_COIN, walletActions } from '../../../store/slices/walletSlice';
 import { useState } from 'react';
-import { CashInRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { BigDecimal, CashInRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 import { propertyNotFound } from '../../../constant';
 
@@ -27,6 +27,8 @@ const CashInOperation = () => {
 
 	const [errorOperation, setErrorOperation] = useState();
 	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
+
+	const dispatch = useDispatch();
 
 	const [request] = useState(
 		new CashInRequest({
@@ -56,6 +58,13 @@ const CashInOperation = () => {
 				return;
 			}
 			await SDKService.cashIn(request);
+			const requestAmount = BigDecimal.fromString(request.amount, decimals);
+			dispatch(
+				walletActions.setSelectedStableCoin({
+					...selectedStableCoin,
+					totalSupply: selectedStableCoin.totalSupply?.addUnsafe(requestAmount),
+				}),
+			);
 			onSuccess();
 		} catch (error: any) {
 			console.log(JSON.stringify(error));

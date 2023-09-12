@@ -433,7 +433,7 @@ exports[`<Layout /> should render correctly 1`] = `
               class="chakra-text css-1d26k2o"
               data-testid="sidebar-option-title"
             >
-              Role management
+              Role Management
             </p>
           </button>
           <button
@@ -516,7 +516,7 @@ exports[`<Layout /> should render correctly 1`] = `
               class="chakra-text css-1d26k2o"
               data-testid="sidebar-option-title"
             >
-              Stablecoin details
+              Stablecoin Details
             </p>
           </button>
         </div>
