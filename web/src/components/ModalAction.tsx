@@ -21,6 +21,7 @@ export interface ModalActionProps {
 	onClose: () => void;
 	onConfirm: () => void;
 	title: string;
+	isDisabled?: boolean;
 }
 
 const ModalAction = (props: ModalActionProps) => {
@@ -33,6 +34,7 @@ const ModalAction = (props: ModalActionProps) => {
 		onClose,
 		onConfirm,
 		title,
+		isDisabled = false,
 	} = props;
 
 	return (
@@ -72,7 +74,12 @@ const ModalAction = (props: ModalActionProps) => {
 						>
 							{cancelButtonLabel}
 						</Button>
-						<Button data-testid='modal-action-confirm-button' onClick={onConfirm} flex={1}>
+						<Button
+							data-testid='modal-action-confirm-button'
+							onClick={onConfirm}
+							flex={1}
+							isDisabled={isDisabled}
+						>
 							{confirmButtonLabel}
 						</Button>
 					</HStack>
