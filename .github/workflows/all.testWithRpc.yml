@@ -2,7 +2,7 @@ name: LocalRPC
 on: 
   workflow_dispatch:
   push:
-    branches: [sprint-24]
+    branches: [main]
 jobs:
   test-node:
     name: docker
