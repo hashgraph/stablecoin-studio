@@ -1,6 +1,6 @@
 {
   "name": "accelerator-service",
-  "version": "1.0.0",
+  "version": "1.9.0",
   "description": "Accelerator integration with OZ Defenders",
   "license": "MIT",
   "devDependencies": {
