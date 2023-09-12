@@ -13,7 +13,7 @@ import {
   StableCoinListViewModel,
   InitializationRequest,
   SDK,
-} from '@hashgraph-dev/stablecoin-npm-sdk';
+} from '@hashgraph/stablecoin-npm-sdk';
 import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
 import { INetworkConfig } from '../../../domain/configuration/interfaces/INetworkConfig.js';
 import colors from 'colors';

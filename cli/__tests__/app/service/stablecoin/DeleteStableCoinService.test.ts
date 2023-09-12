@@ -1,4 +1,4 @@
-import { DeleteRequest, StableCoin } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { DeleteRequest, StableCoin } from '@hashgraph/stablecoin-npm-sdk';
 import DeleteStableCoinService from '../../../../src/app/service/stablecoin/DeleteStableCoinService';
 import { utilsService } from '../../../../src/index.js';
 import Language from '../../../../src/domain/language/Language.js';

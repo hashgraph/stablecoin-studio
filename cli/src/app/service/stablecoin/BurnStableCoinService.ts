@@ -1,7 +1,7 @@
 import { language } from '../../../index.js';
 import { utilsService } from '../../../index.js';
 import Service from '../Service.js';
-import { BurnRequest, StableCoin } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { BurnRequest, StableCoin } from '@hashgraph/stablecoin-npm-sdk';
 
 /**
  * Burn Stablecoin Service

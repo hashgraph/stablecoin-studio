@@ -1,7 +1,7 @@
 import { roleOptions } from './constants';
 import { useSelector } from 'react-redux';
 import { SELECTED_WALLET_CAPABILITIES } from '../../store/slices/walletSlice';
-import { Operation, Access } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { Operation, Access } from '@hashgraph/stablecoin-npm-sdk';
 import { useRefreshCoinInfo } from '../../hooks/useRefreshCoinInfo';
 import RevokeRoleOperation from './RevokeRoles';
 import GrantRoleOperation from './GrantRoles';

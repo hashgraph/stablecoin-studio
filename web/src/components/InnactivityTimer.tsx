@@ -1,5 +1,5 @@
 import { Alert, AlertDescription, AlertIcon, AlertTitle, CloseButton } from '@chakra-ui/react';
-import { ConnectionState } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { ConnectionState } from '@hashgraph/stablecoin-npm-sdk';
 import type { ReactNode } from 'react';
 import { useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';

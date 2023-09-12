@@ -1,4 +1,4 @@
-import { PauseRequest, StableCoin } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { PauseRequest, StableCoin } from '@hashgraph/stablecoin-npm-sdk';
 import PauseStableCoinService from '../../../../src/app/service/stablecoin/PauseStableCoinService';
 import { utilsService } from '../../../../src/index.js';
 import Language from '../../../../src/domain/language/Language.js';

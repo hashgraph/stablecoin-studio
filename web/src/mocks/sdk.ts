@@ -1,7 +1,7 @@
-import { BigDecimal } from '@hashgraph-dev/stablecoin-npm-sdk';
-import PublicKey from '@hashgraph-dev/stablecoin-npm-sdk/build/esm/src/domain/context/account/PublicKey.js';
-import ContractId from '@hashgraph-dev/stablecoin-npm-sdk/build/esm/src/domain/context/contract/ContractId.js';
-import { HederaId } from '@hashgraph-dev/stablecoin-npm-sdk/build/esm/src/domain/context/shared/HederaId.js';
+import { BigDecimal } from '@hashgraph/stablecoin-npm-sdk';
+import PublicKey from '@hashgraph/stablecoin-npm-sdk/build/esm/src/domain/context/account/PublicKey.js';
+import ContractId from '@hashgraph/stablecoin-npm-sdk/build/esm/src/domain/context/contract/ContractId.js';
+import { HederaId } from '@hashgraph/stablecoin-npm-sdk/build/esm/src/domain/context/shared/HederaId.js';
 
 export const mockedStableCoinsList = {
 	coins: [

@@ -1,7 +1,7 @@
 import { language } from '../../../index.js';
 import { utilsService } from '../../../index.js';
 import Service from '../Service.js';
-import { DeleteRequest, StableCoin } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { DeleteRequest, StableCoin } from '@hashgraph/stablecoin-npm-sdk';
 
 /**
  * Create Role Stablecoin Service

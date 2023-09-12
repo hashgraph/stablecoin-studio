@@ -11,6 +11,6 @@
 	"license": "ISC",
 	"devDependencies": {
 		"typescript": "^4.8.4",
-		"@hashgraph-dev/stablecoin-npm-sdk": "../../"
+		"@hashgraph/stablecoin-npm-sdk": "../../"
 	}
 }

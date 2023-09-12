@@ -5,7 +5,7 @@ import {
   RequestFixedFee,
   RequestFractionalFee,
   UpdateCustomFeesRequest,
-} from '@hashgraph-dev/stablecoin-npm-sdk';
+} from '@hashgraph/stablecoin-npm-sdk';
 import FeeStableCoinService from '../../../../src/app/service/stablecoin/FeeStableCoinService';
 import { utilsService } from '../../../../src/index.js';
 import Language from '../../../../src/domain/language/Language.js';

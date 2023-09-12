@@ -12,7 +12,7 @@ import { handleRequestValidation } from '../../../utils/validationsHelper';
 import SDKService from '../../../services/SDKService';
 import { SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
 
-import { KYCRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { KYCRequest } from '@hashgraph/stablecoin-npm-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 import { propertyNotFound } from '../../../constant';
 

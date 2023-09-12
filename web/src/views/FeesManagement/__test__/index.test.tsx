@@ -4,7 +4,7 @@ import translations from '../../../translations/en/feesManagement.json';
 import configureMockStore from 'redux-mock-store';
 import userEvent from '@testing-library/user-event';
 import { act, waitFor } from '@testing-library/react';
-import { RequestFractionalFee, RequestFixedFee } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { RequestFractionalFee, RequestFixedFee } from '@hashgraph/stablecoin-npm-sdk';
 
 const mockStore = configureMockStore();
 

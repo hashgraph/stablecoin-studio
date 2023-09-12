@@ -12,7 +12,7 @@ import { SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
 import SDKService from '../../../services/SDKService';
 import { useState } from 'react';
 import { formatAmount } from '../../../utils/inputHelper';
-import { RescueHBARRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { RescueHBARRequest } from '@hashgraph/stablecoin-npm-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 import { propertyNotFound } from '../../../constant';
 

@@ -1,7 +1,7 @@
 import {
   RescueHBARRequest,
   StableCoin,
-} from '@hashgraph-dev/stablecoin-npm-sdk';
+} from '@hashgraph/stablecoin-npm-sdk';
 import RescueHBARStableCoinService from '../../../../src/app/service/stablecoin/RescueHBARStableCoinService';
 import { utilsService } from '../../../../src/index.js';
 import Language from '../../../../src/domain/language/Language.js';

@@ -1,5 +1,5 @@
 import { VStack } from '@chakra-ui/react';
-import { CreateRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { CreateRequest } from '@hashgraph/stablecoin-npm-sdk';
 import type { Control, FieldValues } from 'react-hook-form';
 import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';

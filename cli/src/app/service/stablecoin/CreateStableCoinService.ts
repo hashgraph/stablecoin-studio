@@ -13,7 +13,7 @@ import {
   Factory,
   GetTokenManagerListRequest,
   KYCRequest,
-} from '@hashgraph-dev/stablecoin-npm-sdk';
+} from '@hashgraph/stablecoin-npm-sdk';
 
 import { IManagedFeatures } from '../../../domain/configuration/interfaces/IManagedFeatures.js';
 import Service from '../Service.js';

@@ -40,11 +40,11 @@ import {
 } from '@hashgraph/sdk';
 import { singleton } from 'tsyringe';
 import { HederaTransactionAdapter } from '../HederaTransactionAdapter.js';
-import { HashConnect } from '@hashgraph-dev/hashconnect';
-import { HashConnectProvider } from '@hashgraph-dev/hashconnect/provider/provider';
-import { HashConnectSigner } from '@hashgraph-dev/hashconnect/provider/signer';
-import { HashConnectTypes } from '@hashgraph-dev/hashconnect';
-import { HashConnectConnectionState } from '@hashgraph-dev/hashconnect/types';
+import { HashConnect } from '@hashgraph/hashconnect';
+import { HashConnectProvider } from '@hashgraph/hashconnect/provider/provider';
+import { HashConnectSigner } from '@hashgraph/hashconnect/provider/signer';
+import { HashConnectTypes } from '@hashgraph/hashconnect';
+import { HashConnectConnectionState } from '@hashgraph/hashconnect/types';
 import Account from '../../../../domain/context/account/Account.js';
 import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
 import Injectable from '../../../../core/Injectable.js';

@@ -17,7 +17,7 @@ import {
   Network,
   SetNetworkRequest,
   StableCoinViewModel,
-} from '@hashgraph-dev/stablecoin-npm-sdk';
+} from '@hashgraph/stablecoin-npm-sdk';
 import { IAccountConfig } from 'domain/configuration/interfaces/IAccountConfig.js';
 import { MIRROR_NODE, RPC } from '../../../core/Constants.js';
 

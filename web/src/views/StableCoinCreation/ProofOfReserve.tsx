@@ -1,5 +1,5 @@
 import { Heading, HStack, Stack, Text, VStack } from '@chakra-ui/react';
-import type { CreateRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
+import type { CreateRequest } from '@hashgraph/stablecoin-npm-sdk';
 import { useEffect } from 'react';
 
 import type { Control, FieldValues, UseFormReturn } from 'react-hook-form';

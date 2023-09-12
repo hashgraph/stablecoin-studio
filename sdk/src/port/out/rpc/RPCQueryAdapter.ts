@@ -35,7 +35,7 @@ import {
 	StableCoinProxyAdmin__factory,
 	ITransparentUpgradeableProxy__factory,
 	HederaReserve__factory,
-} from '@hashgraph-dev/stablecoin-npm-contracts';
+} from '@hashgraph/stablecoin-npm-contracts';
 import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
 import EvmAddress from '../../../domain/context/contract/EvmAddress.js';

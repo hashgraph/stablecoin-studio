@@ -1,7 +1,7 @@
 import {
   Proxy,
   UpgradeFactoryImplementationRequest,
-} from '@hashgraph-dev/stablecoin-npm-sdk';
+} from '@hashgraph/stablecoin-npm-sdk';
 import { utilsService } from '../../../../src/index.js';
 import ImplementationFactoryProxyService from '../../../../src/app/service/factoryProxy/ImplementationFactoryProxyService.js';
 import Language from '../../../../src/domain/language/Language.js';

@@ -9,7 +9,7 @@ import {
 import {
   GetRolesRequest,
   StableCoinViewModel,
-} from '@hashgraph-dev/stablecoin-npm-sdk';
+} from '@hashgraph/stablecoin-npm-sdk';
 import DetailsStableCoinService from './DetailsStableCoinService.js';
 
 export default class ManageImportedTokenService extends Service {

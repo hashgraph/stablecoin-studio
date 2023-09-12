@@ -7,7 +7,7 @@ import {
 import Language from '../../../../src/domain/language/Language.js';
 import { IMirrorsConfig } from '../../../../src/domain/configuration/interfaces/IMirrorsConfig.js';
 import { IConfiguration } from '../../../../src/domain/configuration/interfaces/IConfiguration.js';
-import { Network } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { Network } from '@hashgraph/stablecoin-npm-sdk';
 import { rimraf } from 'rimraf';
 import fs from 'fs-extra';
 

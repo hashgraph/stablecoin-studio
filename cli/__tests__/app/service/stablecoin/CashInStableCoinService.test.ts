@@ -1,4 +1,4 @@
-import { CashInRequest, StableCoin } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { CashInRequest, StableCoin } from '@hashgraph/stablecoin-npm-sdk';
 import CashInStableCoinService from '../../../../src/app/service/stablecoin/CashInStableCoinService';
 import { utilsService } from '../../../../src/index.js';
 import Language from '../../../../src/domain/language/Language.js';

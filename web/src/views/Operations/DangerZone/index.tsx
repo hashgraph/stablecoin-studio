@@ -12,14 +12,14 @@ import {
 	walletActions,
 } from '../../../store/slices/walletSlice';
 import type { DirectActionProps } from '../../../components/DirectAction';
-import type { StableCoinCapabilities } from '@hashgraph-dev/stablecoin-npm-sdk';
+import type { StableCoinCapabilities } from '@hashgraph/stablecoin-npm-sdk';
 import {
 	PauseRequest,
 	DeleteRequest,
 	Operation,
 	Access,
 	StableCoinRole,
-} from '@hashgraph-dev/stablecoin-npm-sdk';
+} from '@hashgraph/stablecoin-npm-sdk';
 import type { IAccountToken } from '../../../interfaces/IAccountToken';
 import type { IExternalToken } from '../../../interfaces/IExternalToken';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';

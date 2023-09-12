@@ -21,7 +21,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch } from '../../store/store';
 import ImportedTokenInfo from './ImportedTokenInfo';
 import { ImportTokenService } from '../../services/ImportTokenService';
-import { GetStableCoinDetailsRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { GetStableCoinDetailsRequest } from '@hashgraph/stablecoin-npm-sdk';
 
 const ImportedTokenCreation = () => {
 	const navigate = useNavigate();

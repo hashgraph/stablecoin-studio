@@ -1,4 +1,4 @@
-import { StableCoin } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { StableCoin } from '@hashgraph/stablecoin-npm-sdk';
 
 describe('🧪 CLI Unit Test', () => {
   it('StableCoin loaded', () => {

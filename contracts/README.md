@@ -117,7 +117,7 @@ Then compile and build the contracts, you can choose one of the following option
 The first two commands will generate a `build` folder that contains a `typechain-types` folder. This folder contains the contracts wrappers that allows us to access contracts abi importing the wrappers as shown below:
 
 ```code
-import { hederaTokenManager__factory } from '@hashgraph-dev/stablecoin-npm-contracts/typechain-types';
+import { hederaTokenManager__factory } from '@hashgraph/stablecoin-npm-contracts/typechain-types';
 ```
 
 # Test

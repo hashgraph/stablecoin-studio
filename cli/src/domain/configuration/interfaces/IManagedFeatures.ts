@@ -1,4 +1,4 @@
-import { RequestPublicKey } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { RequestPublicKey } from '@hashgraph/stablecoin-npm-sdk';
 
 export interface IManagedFeatures {
   name?: string;
