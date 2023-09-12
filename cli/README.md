@@ -1,6 +1,6 @@
 <div align="center">
 
-# Hedera Stablecoin Accelerator - Command Line Interface (CLI)
+# Stablecoin Studio - Command Line Interface (CLI)
 
 [![CLI - Test](https://github.com/hashgraph/hedera-accelerator-stablecoin/actions/workflows/cli.test.yml/badge.svg)](https://github.com/hashgraph/hedera-accelerator-stablecoin/actions/workflows/cli.test.yml)
 
@@ -8,8 +8,8 @@
 
 ### Table of contents
 
-- [Hedera Stablecoin Accelerator - Command Line Interface (CLI)](#hedera-stable-coin-accelerator---command-line-interface-cli)
-    - [Table of contents](#table-of-contents)
+- [Stablecoin Studio - Command Line Interface (CLI)](#stablecoin-studio---command-line-interface-cli)
+  - [Table of contents](#table-of-contents)
 - [Overview](#overview)
 - [Installation](#installation)
 - [Build](#build)
@@ -23,10 +23,10 @@
   - [Factories ](#factories)
   - [CLI flow](#cli-flow)
     - [Main menu](#main-menu)
-      - [Create a new stablecoin](#create-a-new-stable-coin)
+      - [Create a new stablecoin](#create-a-new-stablecoin)
       - [Manage imported tokens](#manage-imported-tokens)
-      - [Operate with stable soin](#operate-with-stable-soin)
-      - [List stablecoins](#list-stable-coins)
+      - [Operate with stablecoin](#operate-with-stablecoin)
+      - [List stablecoins](#list-stablecoins)
       - [Configuration](#configuration)
 - [Testing](#testing)
   - [Jest](#jest)
@@ -194,14 +194,14 @@ A config file can be manually created using the "hsca-config.sample.yaml" file a
 
 We provide default addresses for the factories that we have deployed for anyone to use that are updated whenever a new version is released.
 
-| Contract name  | Address      | Network    | 
-|----------------|--------------|------------|
+| Contract name  | Address      | Network    |
+| -------------- | ------------ | ---------- |
 | FactoryAddress | 0.0.14455068 | Testnet    |
 | FactoryAddress | 0.0.XXXXXX   | Previewnet |
 
 ## CLI flow
 
-![CLI-flow](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/f7735707-33e3-4f11-b4f0-6d249582694d)
+![CLI Flow](https://github.com/hashgraph/stablecoin-studio/assets/56278409/f75b66ab-b6d9-48f9-92b0-1c2a2af68556)
 
 When the CLI is started with the configuration file properly configured, the first action will be to select the account you want to operate with. By default, the list of configured accounts belonging to the default network indicated in the configuration file, is displayed.
 
@@ -242,7 +242,6 @@ The Wizard will give you the possibility to link your stablecoin to an already e
 
 > It is also important to note that the PoR you deploy using our tools is purely for demo purposes. Chainlink implements a complex, secure and reliable decentralize off-chain system to manage the PoR reserves, whereas, as specified above, our PoR can be fully managed by your account.
 
-
 _For more information about PoR Feeds, check the official [ChainLink documentation](https://docs.chain.link/data-feeds/proof-of-reserve/)._
 
 Last question about the stablecoin it is going to be created is about the proxy admin owner. By default, this ownership belongs to the account creating the stablecoin, but the user has the chance to change this default behaviour by configuring another account id, which can belongs to a contract, like a timelock controller, a cold wallet, or whatever account.
@@ -254,7 +253,6 @@ The request will then be submitted to the SDK and the stablecoin will be created
 
 https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/dde74619-8c48-40b7-a0ff-3553214fa819
 
-
 #### Manage imported tokens
 
 Stablecoins that we have not created with our account but for which we have been assigned one or several roles must be imported in order to operate them.
@@ -263,7 +261,7 @@ Stablecoins that we have not created with our account but for which we have been
 2. Refresh token
 3. Remove token
 
-#### Operate with stable soin
+#### Operate with stablecoin
 
 Once a stablecoin is created or added, you can operate with it.
 
@@ -334,7 +332,8 @@ This option displays all the stablecoins the user has created or added.
 
 #### Configuration
 
-This last option allows the user to display the current configuration file, modify the configuration path, change the default network and manage: 
+This last option allows the user to display the current configuration file, modify the configuration path, change the default network and manage:
+
 - **Accounts**: Allows the user to change the current account, see all configured accounts and also add new accounts and remove existing ones.
 - **Mirror nodes**: Allows the user to change the current mirror node, see all configured mirror nodes for the selected Hedera network, add new mirror nodes and remove existing ones except for the one that is being used.
 - **JSON-RPC-Relay services**: Allows the user to change the current JSON-RPC-Relay service, see all configured services for the selected Hedera network, add new JSON-RPC-Relay servies and remove existing ones except for the one that is being used. You can check the available JSON-RPC relays [here](https://github.com/hashgraph/hedera-accelerator-stablecoin/blob/main/README.md#JSON-RPC-Relays)

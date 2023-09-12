@@ -1,6 +1,6 @@
 <div align="center">
 
-# Hedera Stablecoin SDK
+# Stablecoin Studio SDK
 
 [![SDK - Test](https://github.com/hashgraph/hedera-accelerator-stablecoin/actions/workflows/sdk.test.yml/badge.svg)](https://github.com/hashgraph/hedera-accelerator-stablecoin/actions/workflows/sdk.test.yml)
 [![Latest Version](https://img.shields.io/github/v/tag/hashgraph/hedera-accelerator-stablecoin?sort=semver&label=version)](README.md)
@@ -9,102 +9,98 @@
 </div>
 
 # Table of contents
-- [Hedera Stablecoin SDK](#hedera-stable-coin-sdk)
+
+- [Stablecoin Studio SDK](#stablecoin-studio-sdk)
 - [Table of contents](#table-of-contents)
 - [Overview](#overview)
-- [Installation](#installation)
-		- [Prerequisites](#prerequisites)
-		- [Steps](#steps)
-			- [**For projects (WIP - when published)**](#for-projects-wip---when-published)
-			- [**For development**](#for-development)
+- [Installation](#installation) - [Prerequisites](#prerequisites) - [Steps](#steps) - [**For projects (WIP - when published)**](#for-projects-wip---when-published) - [**For development**](#for-development)
 - [Build](#build)
 - [Quick Start](#quick-start)
-	- [Initialization](#initialization)
-	- [Connect SDK](#connect-sdk)
-	- [Wallet Events](#wallet-events)
+  - [Initialization](#initialization)
+  - [Connect SDK](#connect-sdk)
+  - [Wallet Events](#wallet-events)
 - [Usage](#usage)
-	- [About Operations Execution](#about-operations-execution)
-	- [StableCoin](#stablecoin)
-		- [Create](#create)
-		- [Creates a simple stablecoin, with all keys set to the Smart Contracts](#creates-a-simple-stable-coin-with-all-keys-set-to-the-smart-contracts)
-		- [Creates a simple stablecoin, with all keys set to the admin's public key](#creates-a-simple-stable-coin-with-all-keys-set-to-the-admins-public-key)
-		- [Creates a simple stablecoin, with all keys set to none](#creates-a-simple-stable-coin-with-all-keys-set-to-none)
-		- [GetInfo](#getinfo)
-		- [GetBalanceOf](#getbalanceof)
-		- [GetBalanceOfHBAR](#getbalanceofhbar)
-		- [Associate](#associate)
-		- [isAccountAssociated](#isaccountassociated)
-		- [CashIn](#cashin)
-		- [Burn](#burn)
-		- [Rescue](#rescue)
-		- [Rescue HBAR](#rescue-hbar)
-		- [Wipe](#wipe)
-		- [Pause](#pause)
-		- [Unpause](#unpause)
-		- [Freeze](#freeze)
-		- [Unfreeze](#unfreeze)
-		- [GrantKYC](#grantkyc)
-		- [RevokeKYC](#revokekyc)
-		- [IsAccountKYCGranted](#isaccountkycgranted)
-		- [Transfers](#transfers)
-		- [Update](#update)
-		- [Delete](#delete)
-		- [GetReserveAddress](#getreserveaddress)
-		- [UpdateReserveAddress](#updatereserveaddress)
-		- [Capabilities](#capabilities)
-	- [Proxy](#proxy)
-		- [GetProxyConfig](#getproxyconfig)
-		- [ChangeProxyOwner](#changeproxyowner)
-		- [AcceptProxyOwner](#acceptproxyowner)
-		- [UpgradeImplementation](#upgradeimplementation)
-		- [GetFactoryProxyConfig](#getfactoryproxyconfig)
-		- [UpgradeFactoryImplementation](#upgradefactoryimplementation)
-		- [ChangeFactoryProxyOwner](#changefactoryproxyowner)
-	- [Network](#network)
-		- [Connect](#connect)
-		- [Disconnect](#disconnect)
-		- [Init](#init)
-		- [SetNetwork](#setnetwork)
-		- [GetNetwork](#getnetwork)
-		- [IsNetworkRecognized](#isnetworkrecognized)
-		- [SetConfig](#setconfig)
-		- [GetFactoryAddress](#getfactoryaddress)
-	- [Event](#event)
-		- [Register](#register)
-	- [Account](#account)
-		- [GetPublicKey](#getpublickey)
-		- [ListStableCoins](#liststablecoins)
-		- [GetInfo](#getinfo-1)
-	- [Role](#role)
-		- [HasRole](#hasrole)
-		- [GrantRole](#grantrole)
-		- [GrantMultiRoles](#grantmultiroles)
-		- [RevokeRole](#revokerole)
-		- [RevokeMultiRole](#revokemultirole)
-		- [GetRoles](#getroles)
-		- [GetAccountsWithRoles](#getaccountswithroles)
-		- [GetAllowance](#getallowance)
-		- [ResetAllowance](#resetallowance)
-		- [IncreaseAllowance](#increaseallowance)
-		- [DecreaseAllowance](#decreaseallowance)
-		- [IsLimited](#islimited)
-		- [IsUnlimited](#isunlimited)
-	- [Reserve Data Feed](#reserve-data-feed)
-		- [Get Reserve Amount](#get-reserve-amount)
-		- [Update Reserve Amount](#update-reserve-amount)
-	- [Factory](#factory)
-		- [GetHederaTokenManagerList](#gethederatokenmanagerlist)
-	- [Common](#common)
-- [Testing](#testing)
-		- [Jest](#jest)
+  - [About Operations Execution](#about-operations-execution)
+  - [StableCoin](#stablecoin)
+    - [Create](#create)
+    - [Creates a simple stablecoin, with all keys set to the Smart Contracts](#creates-a-simple-stablecoin-with-all-keys-set-to-the-smart-contracts)
+    - [Creates a simple stablecoin, with all keys set to the admin's public key](#creates-a-simple-stablecoin-with-all-keys-set-to-the-admins-public-key)
+    - [Creates a simple stablecoin, with all keys set to none](#creates-a-simple-stablecoin-with-all-keys-set-to-none)
+    - [GetInfo](#getinfo)
+    - [GetBalanceOf](#getbalanceof)
+    - [GetBalanceOfHBAR](#getbalanceofhbar)
+    - [Associate](#associate)
+    - [isAccountAssociated](#isaccountassociated)
+    - [CashIn](#cashin)
+    - [Burn](#burn)
+    - [Rescue](#rescue)
+    - [Rescue HBAR](#rescue-hbar)
+    - [Wipe](#wipe)
+    - [Pause](#pause)
+    - [Unpause](#unpause)
+    - [Freeze](#freeze)
+    - [Unfreeze](#unfreeze)
+    - [GrantKYC](#grantkyc)
+    - [RevokeKYC](#revokekyc)
+    - [IsAccountKYCGranted](#isaccountkycgranted)
+    - [Transfers](#transfers)
+    - [Update](#update)
+    - [Delete](#delete)
+    - [GetReserveAddress](#getreserveaddress)
+    - [UpdateReserveAddress](#updatereserveaddress)
+    - [Capabilities](#capabilities)
+  - [Proxy](#proxy)
+    - [GetProxyConfig](#getproxyconfig)
+    - [ChangeProxyOwner](#changeproxyowner)
+    - [AcceptProxyOwner](#acceptproxyowner)
+    - [UpgradeImplementation](#upgradeimplementation)
+    - [GetFactoryProxyConfig](#getfactoryproxyconfig)
+    - [UpgradeFactoryImplementation](#upgradefactoryimplementation)
+    - [ChangeFactoryProxyOwner](#changefactoryproxyowner)
+  - [Network](#network)
+    - [Connect](#connect)
+    - [Disconnect](#disconnect)
+    - [Init](#init)
+    - [SetNetwork](#setnetwork)
+    - [GetNetwork](#getnetwork)
+    - [IsNetworkRecognized](#isnetworkrecognized)
+    - [SetConfig](#setconfig)
+    - [GetFactoryAddress](#getfactoryaddress)
+  - [Event](#event)
+    - [Register](#register)
+  - [Account](#account)
+    - [GetPublicKey](#getpublickey)
+    - [ListStableCoins](#liststablecoins)
+    - [GetInfo](#getinfo-1)
+  - [Role](#role)
+    - [HasRole](#hasrole)
+    - [GrantRole](#grantrole)
+    - [GrantMultiRoles](#grantmultiroles)
+    - [RevokeRole](#revokerole)
+    - [RevokeMultiRole](#revokemultirole)
+    - [GetRoles](#getroles)
+    - [GetAccountsWithRoles](#getaccountswithroles)
+    - [GetAllowance](#getallowance)
+    - [ResetAllowance](#resetallowance)
+    - [IncreaseAllowance](#increaseallowance)
+    - [DecreaseAllowance](#decreaseallowance)
+    - [IsLimited](#islimited)
+    - [IsUnlimited](#isunlimited)
+  - [Reserve Data Feed](#reserve-data-feed)
+    - [Get Reserve Amount](#get-reserve-amount)
+    - [Update Reserve Amount](#update-reserve-amount)
+  - [Factory](#factory)
+    - [GetHederaTokenManagerList](#gethederatokenmanagerlist)
+  - [Common](#common)
+- [Testing](#testing) - [Jest](#jest)
 - [Typescript](#typescript)
-	- [Tsconfig](#tsconfig)
-		- [Client side](#client-side)
-		- [Server side](#server-side)
+  - [Tsconfig](#tsconfig)
+    - [Client side](#client-side)
+    - [Server side](#server-side)
 - [Support](#support)
 - [Contributing](#contributing)
 - [Code of Conduct](#code-of-conduct)
-	- [License](#license)
+  - [License](#license)
 
 # Overview
 
@@ -151,11 +147,13 @@ To use this project in development mode you must follow the steps indicated in t
 9. Import and use the SDK. Or use one of the example projects under `/examples`.
 
 # Quick Start
+
 ## Initialization
 
 Before using the SDK we need to execute the `Network.init` function and specify network details:
 
 Example
+
 ```Typescript
 import { LoggerTransports, SDK } from '@hashgraph-dev/stablecoin-npm-sdk';
 SDK.log = {
@@ -167,9 +165,10 @@ await Network.init(
 		network: 'testnet',
 	}),
 );
-```  
+```
 
 In the configuration, you can also specify the factory contract address that will be invoked when creating a stablecoin.
+
 ```Typescript
 const init = await Network.init(
 	new InitializationRequest({
@@ -180,7 +179,9 @@ const init = await Network.init(
 	}),
 );
 ```
+
 ## Connect SDK
+
 The next step would be to connect to the network. Currently, 3 types of connections are offered: Client (a Hedera account configured in an application configuration file), MetaMask and HashPack. These 3 connection types are in the SupportedWallets enum.
 
 ```Typescript
@@ -190,7 +191,8 @@ export enum SupportedWallets {
 	CLIENT = 'Client',
 }
 ```
-In addition to this we have to specify the accountId and private key for the Client, while HashPack and MetaMask do not require an account in the request. 
+
+In addition to this we have to specify the accountId and private key for the Client, while HashPack and MetaMask do not require an account in the request.
 
 Below are examples of each of them.
 
@@ -212,6 +214,7 @@ await Network.connect(
     );
 }
 ```
+
 HashPack Example
 
 ```Typescript
@@ -237,7 +240,8 @@ await Network.connect(
 ```
 
 ## Wallet Events
-Wallets fire the following events, see [Event.register](#Register) for more info. 
+
+Wallets fire the following events, see [Event.register](#Register) for more info.
 
 ```Typescript
 export enum WalletEvents {
@@ -262,11 +266,12 @@ When creating a stablecoin, a set of keys (wipe key, pause key, freeze key, etc.
 1. If the token key corresponds to a Hedera account public key, the operation can only be performed by the Hedera account owning this public key, and only through the Hedera SDK.
 2. If the token key corresponds to the stablecoin smart contract administrator key, the operation can only be performed through the smart contract, so whoever calls the smart contract can perform the operation. To prevent anyone from performing certain operations roles are used. When the need for a role is indicated in an operation's description, this is only when the related key of the stablecoin token is configured to be the smart contract admin key.
 
-
 ## StableCoin
+
 The following operations represent most of the operations that can be performed using a stablecoin. Some of them can be performed through the stablecoin smart contract or through the Hedera SDK depending on the token configuration explained above.
 
 ### Create
+
 Creates a new stablecoin. You must use `Network.connect` first with a `SupportedWallet`.
 
 **Spec:**
@@ -280,7 +285,7 @@ Creates a new stablecoin. You must use `Network.connect` first with a `Supported
 		maxSupply?: string;
 		freezeDefault?: boolean;
 		freezeKey?: RequestPublicKey;
-		KYCKey?: RequestPublicKey;		
+		KYCKey?: RequestPublicKey;
 		wipeKey?: RequestPublicKey;
 		pauseKey?: RequestPublicKey;
 		supplyType?: TokenSupplyType;
@@ -290,7 +295,7 @@ Creates a new stablecoin. You must use `Network.connect` first with a `Supported
 		reserveAddress?: string;
 		reserveInitialAmount?: string;
 		createReserve: boolean;
-		grantKYCToOriginalSender?: boolean;		
+		grantKYCToOriginalSender?: boolean;
 		burnRoleAccount?: string | undefined;
 		wipeRoleAccount?: string | undefined;
 		rescueRoleAccount?: string | undefined;
@@ -308,6 +313,7 @@ Creates a new stablecoin. You must use `Network.connect` first with a `Supported
 ```
 
 **Example:**
+
 ### Creates a simple stablecoin, with all keys set to the Smart Contracts
 
 This delegates access to features to the smart contract, and enables the usage of roles so multiple accounts can have the same role. The accounts to which the roles are granted can be set in this operation or later on, once the stablecoin was created.
@@ -321,7 +327,7 @@ This delegates access to features to the smart contract, and enables the usage o
 	} from '@hashgraph-dev/stablecoin-npm-sdk';
 	const stableCoin: StableCoinViewModel = await StableCoin.create(
 		new CreateRequest({
-			name: 'Hedera Stablecoin',
+			name: 'Hedera stablecoin',
 			symbol: 'HSC',
 			decimals: 6,
 			kycKey: Account.NullPublicKey,
@@ -362,7 +368,7 @@ By specifying the public key of an account, we can set the stablecoin's keys to 
 	const publicKey = Account.getPublicKey(req);
 	const stableCoin: StableCoinViewModel = await StableCoin.create(
 		new CreateRequest({
-			name: 'Hedera Stablecoin',
+			name: 'Hedera stablecoin',
 			symbol: 'HSC',
 			decimals: 6,
 			kycKey: publicKey,
@@ -382,7 +388,6 @@ By specifying the public key of an account, we can set the stablecoin's keys to 
 In the above exmaple, it is also important to notice that, when creating a stablecoin, the `proxyAdminOwnerAccount` parameter in the `CreateRequest` class, allows the user to configure an account id, which may be a contract like a timelock controller, a cold wallet, etc, to be the stablecoin proxy admin owner rather than the account id that is creating the stablecoin, which is the default option if the user doesn't populate this optional parameter.
 
 ### Creates a simple stablecoin, with all keys set to none
- 
 By not setting any of the keys, the stablecoin will have the corresponding features disabled and the keys set to none.
 
 ```Typescript
@@ -394,7 +399,7 @@ By not setting any of the keys, the stablecoin will have the corresponding featu
 	} from '@hashgraph-dev/stablecoin-npm-sdk';
 	const stableCoin: StableCoinViewModel = await StableCoin.create(
 		new CreateRequest({
-			name: 'Hedera Stablecoin',
+			name: 'Hedera stablecoin',
 			symbol: 'HSC',
 			decimals: 6,
 			hederaTokenManager: HederaTokenManagerAddressTestnet,
@@ -423,15 +428,15 @@ Gets the information of an existing stablecoin.
 	);
 ```
 
-
 ### GetBalanceOf
+
 Gets the balance of tokens for an account.
 
 **Spec:**
 
 ```Typescript
 	StableCoin.getBalanceOf = (request: GetAccountBalanceRequest): Promise<Balance>
-	
+
 	type Balance = {
 		value: BigDecimal
 	}
@@ -451,13 +456,14 @@ Gets the balance of tokens for an account.
 ```
 
 ### GetBalanceOfHBAR
+
 Gets the balance of HBARs for an account.
 
 **Spec:**
 
 ```Typescript
 	StableCoin.getBalanceOfHBAR = (request: GetAccountBalanceHBARRequest): Promise<Balance>
-	
+
 	type Balance = {
 		value: BigDecimal
 	}
@@ -474,7 +480,6 @@ Gets the balance of HBARs for an account.
 	result.toString()
 	result.decimals
 ```
-
 
 ### Associate
 Associates a stablecoin with an account.
@@ -494,7 +499,6 @@ Associates a stablecoin with an account.
 		})
 	);
 ```
-
 
 ### isAccountAssociated
 Checks if an account is associated with a stablecoin.
@@ -516,8 +520,8 @@ Checks if an account is associated with a stablecoin.
 	);
 ```
 
-
 ### CashIn
+
 Mints tokens and then transfers to an account. The operating account must have the supplier role.
 
 **Spec:**
@@ -538,8 +542,8 @@ Mints tokens and then transfers to an account. The operating account must have t
 	);
 ```
 
-
 ### Burn
+
 Burns an amount of tokens existing in the treasury account. The operating account must have the burn role.
 
 **Spec:**
@@ -559,8 +563,8 @@ Burns an amount of tokens existing in the treasury account. The operating accoun
 	);
 ```
 
-
 ### Rescue
+
 Transfers an amount of tokens existing in the treasury account to the account that invokes the operation. The operating account must have the rescue role.
 
 **Spec:**
@@ -581,6 +585,7 @@ Transfers an amount of tokens existing in the treasury account to the account th
 ```
 
 ### Rescue HBAR
+
 Transfers an amount of HBARs existing in the treasury account to the account that invokes the operation. The operating account must have the rescue role.
 
 **Spec:**
@@ -601,6 +606,7 @@ Transfers an amount of HBARs existing in the treasury account to the account tha
 ```
 
 ### Wipe
+
 Wipes an amount of tokens from an account. The operating account must have the wipe role.
 
 **Spec:**
@@ -621,8 +627,11 @@ Wipes an amount of tokens from an account. The operating account must have the w
 	);
 ```
 
-
 ### Pause
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/main
 Pauses a stablecoin. None of the operations can be taken while the stablecoin is in paused state. The operating account must have the pause role.
 
 **Spec:**
@@ -642,6 +651,10 @@ Pauses a stablecoin. None of the operations can be taken while the stablecoin is
 ```
 
 ### Unpause
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/main
 Unpauses a stablecoin. If the stablecoin is not paused it will throw an exception. The operating account must have the pause role.
 
 **Spec:**
@@ -661,6 +674,10 @@ Unpauses a stablecoin. If the stablecoin is not paused it will throw an exceptio
 ```
 
 ### Freeze
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/main
 Prevents transfer of a stablecoin to/from an account. The operating account must have the freeze role.
 
 **Spec:**
@@ -681,6 +698,10 @@ Prevents transfer of a stablecoin to/from an account. The operating account must
 ```
 
 ### Unfreeze
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/main
 Enables transfer of a stablecoin to/from an account. The operating account must have the freeze role.
 
 **Spec:**
@@ -701,6 +722,7 @@ Enables transfer of a stablecoin to/from an account. The operating account must 
 ```
 
 ### GrantKYC
+
 Grants KYC to an account. If a Token has KYC enabled, only accounts with KYC can operate it. The operating account must have the KYC role.
 
 **Spec:**
@@ -721,12 +743,13 @@ Grants KYC to an account. If a Token has KYC enabled, only accounts with KYC can
 ```
 
 ### RevokeKYC
+
 Revokes KYC from an account. If a Token has KYC enabled, only accounts with KYC can operate it. The operating account must have the KYC role.
 
 **Spec:**
 
 ```Typescript
-	StableCoin.revokeKyc(request: KYCRequest): Promise<boolean> 
+	StableCoin.revokeKyc(request: KYCRequest): Promise<boolean>
 ```
 
 **Example:**
@@ -741,12 +764,13 @@ Revokes KYC from an account. If a Token has KYC enabled, only accounts with KYC 
 ```
 
 ### IsAccountKYCGranted
+
 Checks if an account has the KYC granted.
 
 **Spec:**
 
 ```Typescript
-	StableCoin.isAccountKYCGranted(request: KYCRequest): Promise<boolean> 
+	StableCoin.isAccountKYCGranted(request: KYCRequest): Promise<boolean>
 ```
 
 **Example:**
@@ -761,12 +785,13 @@ Checks if an account has the KYC granted.
 ```
 
 ### Transfers
+
 Transfer tokens from an account to up to 9 accounts. This operation is always performed through the Hedera SDK.
 
 **Spec:**
 
 ```Typescript
-	StableCoin.transfers(request: TransfersRequest): Promise<boolean> 
+	StableCoin.transfers(request: TransfersRequest): Promise<boolean>
 ```
 
 **Example:**
@@ -783,6 +808,7 @@ Transfer tokens from an account to up to 9 accounts. This operation is always pe
 ```
 
 ### Update
+
 Updates certain properties of a token. The operating account must have the admin role.
 
 **Spec:**
@@ -802,7 +828,7 @@ Updates certain properties of a token. The operating account must have the admin
 		metadata?: string | undefined;
 	}
 
-	StableCoin.update(request: UpdateRequest): Promise<boolean> 
+	StableCoin.update(request: UpdateRequest): Promise<boolean>
 ```
 
 **Example:**
@@ -843,8 +869,11 @@ import {
 	);
 ```
 
-
 ### Delete
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/main
 Deletes a stablecoin. **Important** this operation is not reversible. The operating account must have the admin role.
 
 **Spec:**
@@ -863,8 +892,8 @@ Deletes a stablecoin. **Important** this operation is not reversible. The operat
 	);
 ```
 
-
 ### GetReserveAddress
+
 Gets the contract reserve address.
 
 **Spec:**
@@ -881,10 +910,11 @@ Gets the contract reserve address.
 		new GetReserveAddressRequest({
 			tokenId: '0.0.1',
 		})
-	);	
+	);
 ```
 
 ### UpdateReserveAddress
+
 Updates the contract reserve address.
 
 **Spec:**
@@ -902,11 +932,12 @@ Updates the contract reserve address.
 			tokenId: '0.0.1',
 			reserveAddress: '0.0.54445787'
 		})
-	);	
+	);
 ```
 
 ### Capabilities
-Get capabilities for an account for a stablecoin. Each capability determines the type of operation that can be performed (cash in, burn, wipe, etc...) and on whether it should be done via the smart contract for the stablecoin (proxyAddress in the `coin: StableCoin` attribute) or through the Hedera Token Service. 
+
+Get capabilities for an account for a stablecoin. Each capability determines the type of operation that can be performed (cash in, burn, wipe, etc...) and on whether it should be done via the smart contract for the stablecoin (proxyAddress in the `coin: StableCoin` attribute) or through the Hedera Token Service.
 
 See the spec below for all the attributes you can get from the request.
 
@@ -914,7 +945,7 @@ See the spec below for all the attributes you can get from the request.
 
 ```Typescript
 	StableCoin.capabiltities = (request: CapabilitiesRequest): Promise<StableCoinCapabilities>
-	
+
 	class StableCoinCapabilities {
 		constructor(
 			public readonly coin: StableCoin,
@@ -922,7 +953,7 @@ See the spec below for all the attributes you can get from the request.
 			public readonly account: Account,
 		) {}
 	}
-	
+
 	enum Operation {
 		CASH_IN = 'Cash_in',
 		BURN = 'Burn',
@@ -945,14 +976,14 @@ See the spec below for all the attributes you can get from the request.
 		HTS,
 		CONTRACT,
 	}
-	
+
 	class Capability {
 		constructor(
 			public readonly operation: Operation,
 			public readonly access: Access,
 		) {}
 	}
-	
+
 	class Account {
 		constructor(
 			public id: HederaId;
@@ -961,7 +992,7 @@ See the spec below for all the attributes you can get from the request.
 			public publicKey?: PublicKey;
 		) {}
 	}
-	
+
 	class StableCoin {
 		constructor(
 			public name: string;
@@ -1005,11 +1036,12 @@ See the spec below for all the attributes you can get from the request.
 	);
 ```
 
-
 ## Proxy
+
 The following functions allow the user to both get information and execute operations regarding the stablecoin proxy contract.
 
 ### GetProxyConfig
+
 Gets the configuration about the stablecoin proxy: the **HederaTokenManager** contract implementation address and the proxy admin account that allows to change the previous implementation.
 
 **Spec:**
@@ -1026,10 +1058,11 @@ Gets the configuration about the stablecoin proxy: the **HederaTokenManager** co
 		new GetProxyConfigRequest({
 			tokenId: '0.0.1',
 		})
-	);	
+	);
 ```
 
 ### ChangeProxyOwner
+
 Proposes the change of the **HederaTokenManager** contract proxy admin owner.
 
 **Spec:**
@@ -1047,10 +1080,11 @@ Proposes the change of the **HederaTokenManager** contract proxy admin owner.
 			tokenId: '0.0.1',
 			targetId: '0.0.2'
 		})
-	);	
+	);
 ```
 
 ### AcceptProxyOwner
+
 A proposed account accepts the change to be the new **HederaTokenManager** contract proxy admin owner.
 
 **Spec:**
@@ -1068,10 +1102,11 @@ A proposed account accepts the change to be the new **HederaTokenManager** contr
 			tokenId: '0.0.1',
 			targetId: '0.0.2'
 		})
-	);	
+	);
 ```
 
 ### UpgradeImplementation
+
 Updates the **HederaTokenManager** contract implementation address.
 
 **Spec:**
@@ -1089,10 +1124,11 @@ Updates the **HederaTokenManager** contract implementation address.
 			tokenId: '0.0.1',
 			implementationAddress: '0.0.2'
 		})
-	);	
+	);
 ```
 
 ### GetFactoryProxyConfig
+
 Gets the factory implementation contract address and the factory proxy owner account.
 
 **Spec:**
@@ -1109,10 +1145,11 @@ Gets the factory implementation contract address and the factory proxy owner acc
 		new GetFactoryProxyConfigRequest({
 			factoryId: '0.0.1'
 		})
-	);	
+	);
 ```
 
 ### UpgradeFactoryImplementation
+
 Upgrades the factory with a new factory implementation contract. Only the owner of the factory proxy can perform this action.
 
 **Spec:**
@@ -1130,10 +1167,11 @@ Upgrades the factory with a new factory implementation contract. Only the owner 
 			factoryId: '0.0.1',
 			implementationAddress: '0.0.2'
 		})
-	);	
+	);
 ```
 
 ### ChangeFactoryProxyOwner
+
 Changes the owner of the factory proxy. Only the owner of the factory proxy can perform this action.
 
 **Spec:**
@@ -1151,17 +1189,17 @@ Changes the owner of the factory proxy. Only the owner of the factory proxy can 
 			factoryId: '0.0.1',
 			targetId: '0.0.2'
 		})
-	);	
+	);
 ```
 
 ## Network
 
 ### Connect
+
 Establishes the connection to work with an existing Hedera account in a wallet in a certain Hedera network, also setting the mirror node and JSON-RPC-Relay services to use in the connection.
 
 **Spec:**
-	
-	
+
 ```Typescript
 	Network.connect(req: ConnectRequest): Promise<InitializationData>;
 ```
@@ -1173,11 +1211,11 @@ Establishes the connection to work with an existing Hedera account in a wallet i
 		new ConnectRequest({
         	network: 'testnet',
 			mirrorNode: {
-				name: 'mirrorNode', 
+				name: 'mirrorNode',
 				baseUrl: 'https://testnet.mirrornode.hedera.com/'
 			},
 			rpcNode: {
-				name: 'rpcNode', 
+				name: 'rpcNode',
 				baseUrl: 'https://testnet.hashio.io/api'
 			},
         	wallet: SupportedWallets.HASHPACK
@@ -1186,11 +1224,11 @@ Establishes the connection to work with an existing Hedera account in a wallet i
 ```
 
 ### Disconnect
+
 Disconnects the previously established connection.
 
 **Spec:**
-	
-	
+
 ```Typescript
 	Network.disconnect(): Promise<boolean>;
 ```
@@ -1202,11 +1240,11 @@ Disconnects the previously established connection.
 ```
 
 ### Init
+
 Sets the network and could also set the mirror node and the JSON-RPC-Relay services, the factory smart contract address and register the events, returning supported wallets depending on wheter the SDK was started through a DApp or not.
 
 **Spec:**
-	
-	
+
 ```Typescript
 	Network.init(req: InitializationRequest): Promise<SupportedWallets[]>;
 ```
@@ -1218,13 +1256,13 @@ Sets the network and could also set the mirror node and the JSON-RPC-Relay servi
 		new InitializationRequest({
 			network: 'testnet',
 			mirrorNode: {
-				name: 'mirrorNode', 
+				name: 'mirrorNode',
 				baseUrl: 'https://testnet.mirrornode.hedera.com/'
 			},
 			rpcNode: {
-				name: 'rpcNode', 
+				name: 'rpcNode',
 				baseUrl: 'https://testnet.hashio.io/api'
-			},			
+			},
 			configuration: {
 				factoryAddress: '0.0.1'
 			}
@@ -1233,11 +1271,11 @@ Sets the network and could also set the mirror node and the JSON-RPC-Relay servi
 ```
 
 ### SetNetwork
+
 Configures a Hedera network, setting some properties like environment and the mirror node and JSON-RPC-Relay services, and also, and optionally, the list of consensus nodes.
 
 **Spec:**
-	
-	
+
 ```Typescript
 	Network.setNetwork(req: SetNetworkRequest): Promise<NetworkResponse>;
 ```
@@ -1256,11 +1294,11 @@ Configures a Hedera network, setting some properties like environment and the mi
 ```
 
 ### GetNetwork
+
 Gets the Hedera network you are currently working in.
 
 **Spec:**
-	
-	
+
 ```Typescript
 	Network.getNetwork(): string;
 ```
@@ -1272,11 +1310,11 @@ Gets the Hedera network you are currently working in.
 ```
 
 ### IsNetworkRecognized
+
 Checks if the Hedera network you are currently working in is an existing Hedera network.
 
 **Spec:**
-	
-	
+
 ```Typescript
 	Network.isNetworkRecognized(): boolean;
 ```
@@ -1288,11 +1326,11 @@ Checks if the Hedera network you are currently working in is an existing Hedera 
 ```
 
 ### SetConfig
+
 Sets the factory smart contract address in the configuration object.
 
 **Spec:**
-	
-	
+
 ```Typescript
 	Network.setConfig(req: SetNetworkRequest): Promise<ConfigResponse>;
 ```
@@ -1308,11 +1346,11 @@ Sets the factory smart contract address in the configuration object.
 ```
 
 ### GetFactoryAddress
+
 Gets the factory smart contract address.
 
 **Spec:**
-	
-	
+
 ```Typescript
 	Network.getFactoryAddress(): string;
 ```
@@ -1322,11 +1360,11 @@ Gets the factory smart contract address.
 ```Typescript
 	Network.getFactoryAddress();
 ```
-	
-	
+
 ## Event
 
 ### Register
+
 Registers for wallet events. All event listeners are optional, just make sure to call it before trying to pair with any wallet, since pairing events can occur right when the page loads and the extension is found, if the wallet was paired previously.
 
 Multiple wallets can emit events, so make sure to filter them by the `wallet` attribute available in all of them indicating which wallet is emitting the event. All supported wallets emit the same events.
@@ -1337,7 +1375,7 @@ All events use the [standard node event emitting system](https://nodejs.dev/es/l
 
 ```Typescript
 	Event.register = (events: Partial<WalletEvent>): void;
-	
+
 	type WalletEvent = {
 		walletInit: (data: WalletInitEvent) => void;
 		walletFound: (data: WalletFoundEvent) => void;
@@ -1348,7 +1386,7 @@ All events use the [standard node event emitting system](https://nodejs.dev/es/l
 		walletAcknowledgeMessage: (data: WalletAcknowledgeMessageEvent) => void;
 		walletDisconnect: (data: WalletBaseEvent) => void;
 	};
-	
+
 	interface WalletBaseEvent {
 		wallet: SupportedWallets;
 	}
@@ -1360,12 +1398,12 @@ All events use the [standard node event emitting system](https://nodejs.dev/es/l
 	interface WalletFoundEvent extends WalletBaseEvent {
 		name: string;
 	}
-	
+
 	interface WalletPairedEvent extends WalletBaseEvent {
 		data: InitializationData;
 		network: Environment;
 	}
-	
+
 	interface WalletConnectionStatusChangedEvent extends WalletBaseEvent {
 		status: ConnectionState;
 	}
@@ -1380,13 +1418,15 @@ All events use the [standard node event emitting system](https://nodejs.dev/es/l
 Check out [Router.tsx](https://github.com/hashgraph/hedera-accelerator-stablecoin/blob/main/web/src/Router/Router.tsx) from the web repository for a comprehensive example in React of how to subscribe to events.
 
 ## Account
+
 The following operations give information about Hedera accounts using Hedera mirror nodes, so do not imply any cost.
 
 ### GetPublicKey
+
 Gets the account public key.
 
 **Spec:**
-	
+
 ```Typescript
 	Account.getPublicKey(request: GetPublicKeyRequest): Promise<PublicKey>;
 ```
@@ -1400,12 +1440,13 @@ Gets the account public key.
 		})
 	);
 ```
-	
+
 ### ListStableCoins
+
 Gets a list of stablecoins associated with an account.
 
-**Spec:**	
-	
+**Spec:**
+
 ```Typescript
 	Account.listStableCoins(request: GetListStableCoinRequest,): Promise<StableCoinListViewModel>;
 ```
@@ -1421,10 +1462,11 @@ Gets a list of stablecoins associated with an account.
 ```
 
 ### GetInfo
+
 Gets an account information.
 
 **Spec:**
-	
+
 ```Typescript
 	Account.getInfo(request: GetAccountInfoRequest): Promise<AccountViewModel>;
 ```
@@ -1440,13 +1482,15 @@ Gets an account information.
 ```
 
 ## Role
+
 Roles allow Hedera accounts to perform certain operations on a stablecoin through the smart contracts. Operations that can be performed through Hedera SDK, due to the token configuration, do not need any role to be assigned. The management of roles can only be performed by a Hedera account having the admin role.
 
 ### HasRole
+
 Checks if an account has a specific role for a stablecoin.
 
 **Spec:**
-		
+
 ```Typescript
 	Role.hasRole(request: HasRoleRequest): Promise<boolean>;
 ```
@@ -1467,7 +1511,7 @@ Checks if an account has a specific role for a stablecoin.
 Grants a role to an account for a stablecoin. The operating account must have the admin role.
 
 **Spec:**
-		
+
 ```Typescript
 	Role.grantRole(request: GrantRoleRequest): Promise<boolean>;
 ```
@@ -1483,11 +1527,12 @@ Grants a role to an account for a stablecoin. The operating account must have th
 		})
 	);
 ```
+
 ### GrantMultiRoles
 Grants multiple roles to multiple accounts for a stablecoin. The operating account must have the admin role.
 
 **Spec:**
-		
+
 ```Typescript
 	Role.grantMultiRoles(request: GrantMultiRolesRequest): Promise<boolean>;
 ```
@@ -1506,10 +1551,11 @@ Grants multiple roles to multiple accounts for a stablecoin. The operating accou
 ```
 
 ### RevokeRole
+
 Revokes a role of an account for a stablecoin. The operating account must have the admin role.
 
-**Spec:**	
-	
+**Spec:**
+
 ```Typescript
 	Role.revokeRole(request: RevokeRoleRequest): Promise<boolean>;
 ```
@@ -1525,11 +1571,13 @@ Revokes a role of an account for a stablecoin. The operating account must have t
 		})
 	);
 ```
+
 ### RevokeMultiRole
+
 Revokes multiple roles from multiple accounts for a stablecoin. The operating account must have the admin role.
 
-**Spec:**	
-	
+**Spec:**
+
 ```Typescript
 	Role.revokeMultiRoles(request: RevokeMultiRolesRequest): Promise<boolean>;
 ```
@@ -1547,10 +1595,11 @@ Revokes multiple roles from multiple accounts for a stablecoin. The operating ac
 ```
 
 ### GetRoles
-Gets a list of all roles a Hedera account has for a stablecoin. 
 
-**Spec:**	
-	
+Gets a list of all roles a Hedera account has for a stablecoin.
+
+**Spec:**
+
 ```Typescript
 	Role.getRoles(request: GetRolesRequest): Promise<string[]>;
 ```
@@ -1567,10 +1616,11 @@ Gets a list of all roles a Hedera account has for a stablecoin.
 ```
 
 ### GetAccountsWithRoles
+
 Gets a list of all Hedera accounts that have been granted a certain role.
 
-**Spec:**	
-	
+**Spec:**
+
 ```Typescript
 	Role.getAccountsWithRoles(request: GetRolesRequest): Promise<string[]>;
 ```
@@ -1587,10 +1637,11 @@ Gets a list of all Hedera accounts that have been granted a certain role.
 ```
 
 ### GetAllowance
+
 Gets the supplier allowance (amount of tokens that can be minted by an account) for an account and a stablecoin.
 
-**Spec:**	
-	
+**Spec:**
+
 ```Typescript
 	Role.getAllowance(request: GetSupplierAllowanceRequest): Promise<Balance>;
 ```
@@ -1602,7 +1653,7 @@ Gets the supplier allowance (amount of tokens that can be minted by an account) 
 		new GetSupplierAllowanceRequest({
 			targetId: '0.0.1'
 			tokenId: '0.0.2',
-			
+
 		})
 	);
 ```
@@ -1611,7 +1662,7 @@ Gets the supplier allowance (amount of tokens that can be minted by an account) 
 Sets the supplier allowance to 0 for an account and a stablecoin. The operating account must have the admin role.
 
 **Spec:**
-	
+
 ```Typescript
 	Role.resetAllowance(request: ResetSupplierAllowanceRequest): Promise<boolean>;
 ```
@@ -1623,7 +1674,7 @@ Sets the supplier allowance to 0 for an account and a stablecoin. The operating 
 		new ResetSupplierAllowanceRequest({
 			targetId: '0.0.1'
 			tokenId: '0.0.2'
-			
+
 		})
 	);
 ```
@@ -1632,7 +1683,7 @@ Sets the supplier allowance to 0 for an account and a stablecoin. The operating 
 Increases the supplier allowance amount for an account and a stablecoin. The operating account must have the admin role.
 
 **Spec:**
-	
+
 ```Typescript
 	Role.increaseAllowance(request: IncreaseSupplierAllowanceRequest): Promise<boolean>;
 ```
@@ -1648,12 +1699,13 @@ Increases the supplier allowance amount for an account and a stablecoin. The ope
 		})
 	);
 ```
- 
+
 ### DecreaseAllowance
+
 Decreases the supplier allowance amount for an account and a stablecoin. The operating account must have the admin role.
 
-**Spec:**	
-	
+**Spec:**
+
 ```Typescript
 	Role.decreaseAllowance(request: DecreaseSupplierAllowanceRequest): Promise<boolean>;
 ```
@@ -1674,7 +1726,7 @@ Decreases the supplier allowance amount for an account and a stablecoin. The ope
 Checks if an account has a limited supplier allowance for a stablecoin or not.
 
 **Spec:**
-	
+
 ```Typescript
 	Role.isLimited(request: CheckSupplierLimitRequest): Promise<boolean>;
 ```
@@ -1695,7 +1747,7 @@ Checks if an account has a limited supplier allowance for a stablecoin or not.
 Checks if an account has an unlimited supplier allowance for a stablecoin or not.
 
 **Spec:**
-		
+
 ```Typescript
 	Role.isUnlimited(request: CheckSupplierLimitRequest): Promise<boolean>;
 ```
@@ -1710,7 +1762,7 @@ Checks if an account has an unlimited supplier allowance for a stablecoin or not
 			supplierType: 'unlimited'
 		})
 	);
-```    
+```
 
 ## Reserve Data Feed
 The following operations are always performed through smart contracts calls, since the reserve data feed is a contract which can be deployed alongside the stablecoin.
@@ -1751,14 +1803,16 @@ Updates the reserve amount for a stablecoin. The operating account must have the
 		new UpdateReserveAmountRequest({
 			reserveAddress: '0.0.1',
 			reserveAmount: 1
-		})		
+		})
 	);
 ```
 
 ## Factory
+
 The following operations are always performed through smart contracts calls.
 
 ### GetHederaTokenManagerList
+
 Get a list of HederaTokenManager smart contract addresses stored in the factory.
 
 **Spec:**
@@ -1766,32 +1820,35 @@ Get a list of HederaTokenManager smart contract addresses stored in the factory.
 ```Typescript
 	Factory.getHederaTokenManagerList = (request: GetTokenManagerListRequest): Promise<ContractId[]>;
 ```
+
 **Example**
+
 ```Typescript
 	const list = await Factory.getHederaTokenManagerList(
-			new GetTokenManagerListRequest({ 
-				factoryId: '0.0.1' 
+			new GetTokenManagerListRequest({
+				factoryId: '0.0.1'
 			})
 		);
 ```
 
 ## Common
+
 The SDK class is exported. This static class enables the log level and application metadata to be set at any point in your code, just import it and change the values.
 
 We use [winston](https://github.com/winstonjs/winston) under the hood for logging, so all transports are exported from the SDK under `LoggerTransports` for you to use. Refer to the [documentation](https://github.com/winstonjs/winston/blob/master/docs/transports.md) for more information on what transports are available.
 
 ```Typescript
 	import { LoggerTransports, SDK } from '@hashgraph-dev/stablecoin-npm-sdk';
-	
+
 	const { Console } = LoggerTransports;
-	
+
 	SDK.appMetadata = {
-		name: 'Hedera Stablecoin',
+		name: 'Hedera stablecoin',
 		description: 'Example application',
 		icon: 'https://example.png',
 		url: '',
 	};
-	
+
 	SDK.log = {
 		level: 'ERROR', // or 'WARN', 'INFO', 'HTTP', 'VERBOSE', 'DEBUG', 'SILLY'
 		transports: new Console(),

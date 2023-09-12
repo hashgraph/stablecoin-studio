@@ -141,7 +141,11 @@ function removeHederaTokenManagerAddress(uint256 index) external nonpayable
 
 
 
+<<<<<<< HEAD
 *Removes a stablecoin contract address*
+=======
+*Removes a stable coin contract address*
+>>>>>>> origin/main
 
 #### Parameters
 

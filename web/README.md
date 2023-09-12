@@ -1,26 +1,27 @@
 <div align="center">
 
-# Hedera Stablecoin - Web
+# Stablecoin Studio - Web
 
 [![WEB - Test](https://github.com/hashgraph/hedera-accelerator-stablecoin/actions/workflows/web.test.yml/badge.svg)](https://github.com/hashgraph/hedera-accelerator-stablecoin/actions/workflows/web.test.yml)
 
 </div>
 
 ### Table of Contents
-- **[Overview](#Overview)**<br>
-- **[Installation](#Installation)**<br>
-- **[Build](#Build)**<br>
-- **[Quick Start](#Quick-Start)**<br>
-  - [ENV vars](#ENV-vars)<br>
-  - [Starting the UI](#Starting-the-UI)<br>
-  - [Pairing a wallet](#Pairing-a-wallet)<br>
-- **[Usage](#Usage)**<br>
-  - [Supported Wallets](#Supported-Wallets)<br>
-  - [Web Flow](#Web-Flow)<br>
-- **[Testing](#Testing)**<br>
-- **[Contributing](#Contributing)**<br>
-- **[Code of Conduct](#Code-of-Conduct)**<br>
-- **[License](#License)**<br>
+
+- **[Overview](#overview)**<br>
+- **[Installation](#installation)**<br>
+- **[Build](#build)**<br>
+- **[Quick Start](#quick-start)**<br>
+  - [ENV vars](#env-vars)<br>
+  - [Starting the UI](#starting-the-ui)<br>
+  - [Pairing a wallet](#pairing-a-wallet)<br>
+- **[Usage](#usage)**<br>
+  - [Supported Wallets](#supported-wallets)<br>
+  - [Web Flow](#web-flow)<br>
+- **[Testing](#testing)**<br>
+- **[Contributing](#contributing)**<br>
+- **[Code of Conduct](#code-of-conduct)**<br>
+- **[License](#license)**<br>
 
 # Overview
 
@@ -71,10 +72,12 @@ REACT_APP_FACTORIES='[{"Environment":"mainnet","STABLE_COIN_FACTORY_ADDRESS":"0.
 REACT_APP_MIRROR_NODE='[{"Environment":"testnet","BASE_URL":"https://testnet.mirrornode.hedera.com/api/v1/", "API_KEY": "132456", "HEADER": "x-api-key"}]'
 REACT_APP_RPC_NODE='[{"Environment":"testnet","BASE_URL":"https://testnet.hashio.io/api", "API_KEY": "132456", "HEADER": "x-api-key"}]'
 ```
-If the env files does not exist or the factory var is not set when you click in "Create a new Stablecoin" an alert will be shown.
+
+If the env files does not exist or the factory var is not set when you click in "Create a new stablecoin" an alert will be shown.
 ![image](https://user-images.githubusercontent.com/114951681/229088627-369506c3-9c28-435c-9e44-d8908f8a15ab.png)
 You can use our [deployed factories](https://github.com/hashgraph/hedera-accelerator-stablecoin#deploying-the-stable-coin-factories).
-- **GENERATE_SOURCEMAP**: This is a proprietary Create React App configuration. You can read more information in its documentation.[Create React App documentation](https://create-react-app.dev/docs/advanced-configuration/)
+
+- **GENERATE_SOURCEMAP**: This is a proprietary Create React App configuration. You can read more information in its documentation. [Create React App documentation](https://create-react-app.dev/docs/advanced-configuration/)
 
 ## Starting the UI
 
@@ -106,7 +109,8 @@ The Wallets currently supported by the project are [HashPack](https://www.hashpa
 
 In order to use MetaMask you must first configure it to interact with a Hedera relay [JSON-RPC relay node](https://docs.hedera.com/hedera/core-concepts/smart-contracts/json-rpc-relay) because Hedera consensus nodes are not JSON-RPC compatible.
 
-Add a new network with the following information : 
+Add a new network with the following information :
+
 - **Network Name**: HederaTestNet _(or any other name you wish)_
 - **RPC URL**: https://testnet.hashio.io/api _(or the url of any other Hedera JSON-RPC relay node)_
 - **Chain ID**: 296
@@ -125,7 +129,6 @@ If you select a non-Hedera network.
 
 If you select an account that does not exist in the Hedera network.
 
-
 > In order to use the web application correctly it is necessary to have at least one of those two wallets already installed in your browser. You can nevertheless have both and switch from one to the other.
 
 ## Web flow
@@ -138,17 +141,15 @@ In order to create a new stablecoin using the web application, you must click on
 
 **Basic details**
 
-Basic information about the Stablecoin.
+Basic information about the stablecoin.
 
 ![Selection_036](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/d6baa730-349a-4df7-abe2-b3bf2182e584)
-
 
 **Optional details**
 
 Stablecoin supply and accuracy definition (initial supply, max supply, decimals)
 
 ![Selection_037](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/8bc0fa3b-86ce-4956-9660-64be44c4f826)
-
 
 **Manage permissions**
 
@@ -158,7 +159,6 @@ In this step, the user can also configure the stablecoin proxy admin owner. By d
 
 ![Selection_038](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/99d76040-8ac6-4bb9-b6d1-18c433b0bc43)
 
-
 **Proof of reserve**
 
 Choose if the stablecoin will have a proof of reserve (PoR) associated to it or not.
@@ -166,13 +166,11 @@ If so, the user will have two options, either submit the address of an already e
 
 ![Selection_039](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/a566a494-9855-4ef7-96e1-210a7ce38c58)
 
-
 **Review**
 
 Final validation before creating the stablecoin.
 
 ![Selection_040](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/44bd4928-6b12-44bc-a3f3-9881df779fef)
-
 
 You will then have to validate the transaction using the wallet you paired to.
 
@@ -228,11 +226,11 @@ This option allows the user to manage the stablecoin and the factory contracts. 
 
 ![Selection_021](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/e0724fbe-e8c0-478e-8cbb-66394250d64b)
 
-If the user selects the option to manage the stablecoin, it could change the **HederaTokenManager** contract proxy admin owner and upgrade the stablecoin contract implementation. 
+If the user selects the option to manage the stablecoin, it could change the **HederaTokenManager** contract proxy admin owner and upgrade the stablecoin contract implementation.
 
 ![Selection_014](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/abb0b89f-6ec5-449f-a035-f7f9fcea08e1)
 
-While if the user select the option to manage the factory, it could change the **Factory** contract proxy admin owner and upgrade the factory contract implementation.
+While if the user selects the option to manage the factory, it could change the **Factory** contract proxy admin owner and upgrade the factory contract implementation.
 
 ![Selection_019](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/3ebb3243-e12a-470b-91cc-de9086af9a9e)
 
@@ -247,15 +245,18 @@ npm run test
 ```
 
 # Contributing
+
 Contributions are welcome. Please see the
 [contributing guide](https://github.com/hashgraph/.github/blob/main/CONTRIBUTING.md)
 to see how you can get involved.
 
 # Code of conduct
+
 This project is governed by the
 [Contributor Covenant Code of Conduct](https://github.com/hashgraph/.github/blob/main/CODE_OF_CONDUCT.md). By
 participating, you are expected to uphold this code of conduct. Please report unacceptable behavior
 to [oss@hedera.com](mailto:oss@hedera.com).
 
 # License
+
 [Apache License 2.0](../LICENSE)
