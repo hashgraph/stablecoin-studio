@@ -1,4 +1,4 @@
-import { Box, Heading } from '@chakra-ui/react';
+import { Box, Heading, Flex, Image, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -18,9 +18,10 @@ import {
 	IS_FACTORY_PENDING_OWNER,
 } from '../../store/slices/walletSlice';
 import { NamedRoutes } from './../../Router/NamedRoutes';
+import SAFE_BOX from '../../assets/svg/safe-box.svg';
 
 const Settings = () => {
-	const { t } = useTranslation('settings');
+	const { t } = useTranslation(['settings', 'errorPage']);
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const accountId = useSelector(SELECTED_WALLET_PAIRED_ACCOUNTID);
@@ -80,6 +81,52 @@ const Settings = () => {
 		setDisabledFeatures(areDisabled);
 	};
 
+	if (!selectedStableCoin) {
+		return (
+			<Flex
+				data-testid='stable-coin-not-selected-container'
+				bgColor='white'
+				w='100%'
+				h='100%'
+				justifyContent='center'
+				alignItems='center'
+				flexDirection='column'
+			>
+				<Image
+					data-testid='stable-coin-not-selected-logo'
+					src={SAFE_BOX}
+					alt='Safe box'
+					w='140px'
+					h='140px'
+					mb='40px'
+				/>
+				<Text
+					data-testid='stable-coin-not-selected-title'
+					fontSize='22px'
+					fontWeight='700'
+					lineHeight='16px'
+					mb='16px'
+				>
+					{t('errorPage:stableCoinNotSelected.title')}
+				</Text>
+				<Text
+					data-testid='stable-coin-not-selected-description'
+					fontSize='16px'
+					fontWeight='500'
+					lineHeight='16px'
+					maxW='500px'
+					textAlign='center'
+					mb='2px'
+				>
+					{t('errorPage:stableCoinNotSelected.description')}
+				</Text>
+				<Text fontSize='16px' fontWeight='500' lineHeight='16px' maxW='500px' textAlign='center'>
+					{t('errorPage:stableCoinNotSelected.description2')}
+				</Text>
+			</Flex>
+		);
+	}
+
 	const directAccesses: DirectAccessProps[] = [
 		{
 			icon: 'CoinVertical',
@@ -101,7 +148,7 @@ const Settings = () => {
 		<BaseContainer title={t('title')}>
 			<Box p={{ base: 4, md: '128px' }}>
 				<Heading fontSize='20px' fontWeight='600' mb={14} data-testid='subtitle'>
-					{t('subtitle')}
+					{t('settings:subtitle')}
 				</Heading>
 				<GridDirectAccess directAccesses={filteredDirectAccesses} />
 			</Box>
