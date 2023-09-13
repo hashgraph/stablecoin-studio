@@ -1,4 +1,4 @@
-# Accelerator Integration with OZ Defender
+# Stablecoin Studio Integration with OZ Defender
 
 ### Table of Contents
 - **[Introduction](#Introduction)**<br>
@@ -50,7 +50,7 @@ _sls deploy_
 Log in your Defender tenant and follow these steps:
 
 - Go to the **Actions** section.
-- Click on **Edit code** of the newly deployed action named **Accelerator New StableCoin**
+- Click on **Edit code** of the newly deployed action named **Stablecoin Studio New StableCoin**
 - Replace **SUBSCRIBER_ID** with the subscriber Id of the Monitor monitoring the stable coins (*)
 - **Save** your changes.
 - Create a **Team API Key/Secret** (check OZ documentation)
