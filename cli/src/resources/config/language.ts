@@ -52,7 +52,7 @@ export const english = {
     AccountsConfigurationMessage: 'You will now configure your accounts:',
     askAccountId: 'Enter the account id',
     askConfigurateFactories:
-      'Do you want to config your factories? Check the documentation for more information : https://github.com/hashgraph/hedera-accelerator-stablecoin#deploying-the-stable-coin-factories',
+      'Do you want to config your factories? Check the documentation for more information : https://github.com/hashgraph/stablecoin-studio#deploying-the-stable-coin-factories',
     askConfigurateDefaultMirrorsAndRPCs:
       'Do you want to use default mirror node/JSON-RPC-Relay services? (y/n)',
     askNetworkAccount: 'Which network does this account belong to?',
@@ -130,7 +130,7 @@ export const english = {
   },
   stablecoin: {
     noFactories:
-      "You don't have configured your factory and HederaTokenManager address. Without this configuration you cannot create an stablecoin. Check the following link for more information. https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/cli#creating-a-config-file",
+      "You don't have configured your factory and HederaTokenManager address. Without this configuration you cannot create an stablecoin. Check the following link for more information. https://github.com/hashgraph/stablecoin-studio/tree/main/cli#creating-a-config-file",
     askConfirmCreation:
       'Are you sure you want to create the stablecoin with these parameters?',
     description: 'Creating Stablecoin',

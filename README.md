@@ -33,7 +33,7 @@
 
 # Abstract
 
-The Stablecoin Studio is a comprehensive set of tools and resources designed to enable developers to build applications and services that make use of the stablecoin. The Stablecoin Studio includes smart contracts, documentation, and sample code to help developers understand how to use the Stablecoin Studio and other functionality provided by the platform. With the Stablecoin Studio, developers can easily integrate the stablecoin into their own applications or create new applications or services that make use of the stablecoin's unique features. Whether you're a seasoned cryptocurrency developer or new to the space, the Stablecoin Studio has everything you need to start building with stablecoins today.
+The Hedera Stablecoin Studio is a comprehensive set of tools and resources designed to enable developers to build applications and services that make use of the stablecoin. The project includes smart contracts, documentation, and sample code to help developers understand how to use the project and other functionality provided by the platform. With the Hedera Stablecoin studio, developers can easily integrate the stablecoin into their own applications or create new applications or services that make use of the stablecoin's unique features. Whether you're a seasoned cryptocurrency developer or new to the space, the Hedera stablecoin accelerator has everything you need to start building with stablecoins today.
 
 # Context
 
@@ -94,7 +94,7 @@ Each stablecoin maps to an _underlying_ Hedera Token and adds the following func
 Every time a stablecoin is created, a new Hedera Token is created (the underlying token) and the following smart contracts are deployed:
 
 - The stablecoin proxy smart contract: pointing to the `HederaTokenManager` logic smart contract that was passed as an input argument(\*). Proxies are used to make stablecoins upgradable.
-- The stablecoin proxy admin smart contract: this contract will act as an intermediary to upgrade the stablecoin proxy implementation. For more information on this, check the [contract module's README](https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/contracts/README.md).
+- The stablecoin proxy admin smart contract: this contract will act as an intermediary to upgrade the stablecoin proxy implementation. For more information on this, check the [contract module's README](https://github.com/hashgraph/stablecoin-studio/tree/main/contracts/README.md).
 
 An smart contract, named `StablecoinFactory`, must be previously deployed since implements the flow to create a new stablecoin in a single transaction. A default `StablecoinFactory` is deployed, but any user will be able to [deploy their own factory](#deploying-the-stablecoin-factories).
 
@@ -146,7 +146,7 @@ Therefore, three options exist
 
 In any case, the reserve address can be edited after creation. However, changing the amount in the reserve can only be performed when the reserve smart contract was deployed during the stablecoin creation.
 
-For more information about the SDK and the methods to perform these operations, visit to the [docs](https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/sdk#reserve-data-feed).
+For more information about the SDK and the methods to perform these operations, visit to the [docs](https://github.com/hashgraph/stablecoin-studio/tree/main/sdk#reserve-data-feed).
 
 # Architecture
 
@@ -166,10 +166,10 @@ The project is divided in 4 node modules:
 
 Learn more about them in their README:
 
-- [contracts](https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/contracts/README.md)
-- [sdk](https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/sdk/README.md)
-- [cli](https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/cli/README.md)
-- [web](https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/web/README.md)
+- [contracts](https://github.com/hashgraph/stablecoin-studio/tree/main/contracts/README.md)
+- [sdk](https://github.com/hashgraph/stablecoin-studio/tree/main/sdk/README.md)
+- [cli](https://github.com/hashgraph/stablecoin-studio/tree/main/cli/README.md)
+- [web](https://github.com/hashgraph/stablecoin-studio/tree/main/web/README.md)
 
 # Technologies
 
@@ -240,7 +240,7 @@ We provide default addresses for the factories that we have deployed for anyone 
 
 (You can check the factorys associated to each version [here](./FACTORY_VERSION.md))
 
-Follow the steps in the [contracts docs](https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/contracts#deploy-factory) to learn how to deploy the factories.
+Follow the steps in the [contracts docs](https://github.com/hashgraph/stablecoin-studio/tree/main/contracts#deploy-factory) to learn how to deploy the factories.
 
 # Testnet reset procedure
 
@@ -314,3 +314,7 @@ to [oss@hedera.com](mailto:oss@hedera.com).
 # License
 
 [Apache License 2.0](LICENSE)
+
+# 🔐 Security
+
+Please do not file a public ticket mentioning the vulnerability. Refer to the security policy defined in the [SECURITY.md](https://github.com/hashgraph/stablecoin-studio/blob/main/SECURITY.md).
