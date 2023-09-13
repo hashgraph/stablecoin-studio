@@ -33,7 +33,7 @@
 
 # Abstract
 
-The Stablecoin Studio is a comprehensive set of tools and resources designed to enable developers to build applications and services that make use of the stablecoin. The accelerator includes smart contracts, documentation, and sample code to help developers understand how to use the accelerator and other functionality provided by the platform. With the Stablecoin Studio, developers can easily integrate the stablecoin into their own applications or create new applications or services that make use of the stablecoin's unique features. Whether you're a seasoned cryptocurrency developer or new to the space, the Stablecoin Studio has everything you need to start building with stablecoins today.
+The Stablecoin Studio is a comprehensive set of tools and resources designed to enable developers to build applications and services that make use of the stablecoin. The Stablecoin Studio includes smart contracts, documentation, and sample code to help developers understand how to use the Stablecoin Studio and other functionality provided by the platform. With the Stablecoin Studio, developers can easily integrate the stablecoin into their own applications or create new applications or services that make use of the stablecoin's unique features. Whether you're a seasoned cryptocurrency developer or new to the space, the Stablecoin Studio has everything you need to start building with stablecoins today.
 
 # Context
 
