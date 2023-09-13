@@ -8,10 +8,9 @@
 		"build/"
 	],
 	"dependencies": {
-		"@chakra-ui/icons": "2.0.17",
-		"@chakra-ui/react": "^2.4.9",
-		"@emotion/react": "^11.10.5",
-		"@emotion/styled": "^11.10.5 ",
+		"@chakra-ui/react": "2.6.1",
+		"@emotion/react": "^11.0.0",
+		"@emotion/styled": "^11.0.0 ",
 		"@hashgraph-dev/stablecoin-npm-sdk": "1.9.0",
 		"@reduxjs/toolkit": "^1.9.1",
 		"@testing-library/jest-dom": "^5.16.5",
@@ -24,7 +23,7 @@
 		"@types/react-redux": "^7.1.25",
 		"axios": "^1.2.3",
 		"browserify-zlib": "^0.2.0",
-		"chakra-react-select": "^4.4.3",
+		"chakra-react-select": "4.5.0",
 		"framer-motion": "^8.5.2",
 		"maskdata": "^1.1.10",
 		"moment": "^2.29.4",
@@ -49,7 +48,7 @@
 	"scripts": {
 		"start": "react-app-rewired start",
 		"build": "react-app-rewired build",
-		"test": "react-app-rewired test --maxWorkers 2 -u",
+		"test": "react-app-rewired test --watchAll--maxWorkers 2",
 		"eject": "react-app-rewired eject",
 		"lint": "eslint . --ext .ts --ext .mts",
 		"prettier": "prettier --config .prettierrc --write .",
