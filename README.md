@@ -146,7 +146,7 @@ Therefore, three options exist
 
 In any case, the reserve address can be edited after creation. However, changing the amount in the reserve can only be performed when the reserve smart contract was deployed during the stablecoin creation.
 
-For more information about the SDK and the methods to perform these operations, visit to the [docs](https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/sdk#reserve-data-feed).
+For more information about the SDK and the methods to perform these operations, visit to the [docs](https://github.com/hashgraph/stablecoin-studio/tree/main/sdk#reserve-data-feed).
 
 # Architecture
 
@@ -166,10 +166,10 @@ The project is divided in 4 node modules:
 
 Learn more about them in their README:
 
-- [contracts](https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/contracts/README.md)
-- [sdk](https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/sdk/README.md)
-- [cli](https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/cli/README.md)
-- [web](https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/web/README.md)
+- [contracts](https://github.com/hashgraph/stablecoin-studio/tree/main/contracts/README.md)
+- [sdk](https://github.com/hashgraph/stablecoin-studio/tree/main/sdk/README.md)
+- [cli](https://github.com/hashgraph/stablecoin-studio/tree/main/cli/README.md)
+- [web](https://github.com/hashgraph/stablecoin-studio/tree/main/web/README.md)
 
 # Technologies
 
@@ -240,7 +240,7 @@ We provide default addresses for the factories that we have deployed for anyone 
 
 (You can check the factorys associated to each version [here](./FACTORY_VERSION.md))
 
-Follow the steps in the [contracts docs](https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/contracts#deploy-factory) to learn how to deploy the factories.
+Follow the steps in the [contracts docs](https://github.com/hashgraph/stablecoin-studio/tree/main/contracts#deploy-factory) to learn how to deploy the factories.
 
 # Testnet reset procedure
 
@@ -314,3 +314,7 @@ to [oss@hedera.com](mailto:oss@hedera.com).
 # License
 
 [Apache License 2.0](LICENSE)
+
+# 🔐 Security
+
+Please do not file a public ticket mentioning the vulnerability. Refer to the security policy defined in the [SECURITY.md](https://github.com/hashgraph/stablecoin-studio/blob/main/SECURITY.md).
