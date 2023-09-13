@@ -47,7 +47,7 @@ Stablecoin have transformed the way crypto markets work by allowing traders to e
 
 # Objective
 
-A stablecoin is a type of cryptocurrency that is designed to maintain a stable value relative to a specific asset or basket of assets. Currently, there is no out-of-the-box solution to create and manage stablecoins on Hedera Hashgraph. This project aims to provide developers with the tools they need to build applications that make use of the stablecoin, such as wallets, as well as documentation and sample code to help developers understand how to use the SDK and other functionality provided by the stablecoin platform. With all of this, we want to enable developers to integrate the stablecoin into their own applications or systems.
+A stablecoin is a type of cryptocurrency that is designed to maintain a stable value relative to a specific asset or basket of assets. Currently, there is no out-of-the-box solution to create and manage stablecoins on Hedera. This project aims to provide developers with the tools they need to build applications that make use of the stablecoin, such as wallets, as well as documentation and sample code to help developers understand how to use the SDK and other functionality provided by the stablecoin platform. With all of this, we want to enable developers to integrate the stablecoin into their own applications or systems.
 
 # Overview
 
