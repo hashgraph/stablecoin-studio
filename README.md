@@ -51,7 +51,7 @@ A stablecoin is a type of cryptocurrency that is designed to maintain a stable v
 
 # Overview
 
-This solution consists of a set of tools, including Smart Contracts, SDK, CLI and UI to facilitate the deployment and management of stablecoins in Hedera Hashgraph.
+This open source solution consists of a comprehensive set of tools, including Smart Contracts, SDK, CLI, and UI to facilitate the deployment and management of stablecoins on Hedera.
 
 ## What is a stablecoin
 
@@ -98,7 +98,7 @@ Every time a stablecoin is created, a new Hedera Token is created (the underlyin
 
 An smart contract, named `StablecoinFactory`, must be previously deployed since implements the flow to create a new stablecoin in a single transaction. A default `StablecoinFactory` is deployed, but any user will be able to [deploy their own factory](#deploying-the-stablecoin-factories).
 
-(\*)By default, the HederaTokenManager smart contract that will be used will be the pre-deployed one, but users can use any other contract they want. For more information on this check the contract module's README.
+(\*)By default, the `HederaTokenManager` smart contract that will be used will be the pre-deployed one, but users can use any other contract they want. For more information on this check the contract module's README.
 
 Users interact with the stablecoin proxy smart contract, instead of doing with the stablecoin logic smart contract, because its address will never change. stablecoin logic smart contract address change if a new version is deployed.
 
@@ -223,13 +223,13 @@ Or within any of the modules:
 
 # Recommendations
 
-If you are using VSCode we recommend the use of the solidity extension from nomicFoundation, it will facilitate the use of hardhat.
+If you are using VSCode we recommend the use of the Solidity extension from nomicFoundation, it will facilitate the use of hardhat.
 [hardhat-vscode](https://github.com/NomicFoundation/hardhat-vscode)
 
-> This may not be compatible with others solidity extensions, such as this one. [vscode-solidity](https://github.com/juanfranblanco/vscode-solidity)
+> This may not be compatible with others Solidity extensions, such as this one. [vscode-solidity](https://github.com/juanfranblanco/vscode-solidity)
 
 # Deploying the stablecoin factories
-In order to be able to deploy any stablecoin, the `HederaTokenManager` and `StablecoinFactory` smart contracts must be deployed on the network. Whenever a new version of these contracts is needed or when the testnet is reset, new contracts must be deployed. Moreover, the address of the `StablecoinFactory` smart contract must be updated in the SDK, CLI and web modules as explained above.
+In order to be able to deploy any stablecoin, the `HederaTokenManager` and `StablecoinFactory` smart contracts must be deployed on the network. Whenever a new version of these contracts is needed or when the testnet is reset, new contracts must be deployed. Moreover, the address of the `StablecoinFactory` smart contract must be updated in the SDK, CLI, and web modules as explained above.
 
 We provide default addresses for the factories that we have deployed for anyone to use that are updated whenever a new version is released.
 
