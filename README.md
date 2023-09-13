@@ -33,7 +33,7 @@
 
 # Abstract
 
-The Hedera stablecoin accelerator is a comprehensive set of tools and resources designed to enable developers to build applications and services that make use of the stablecoin. The accelerator includes smart contracts, documentation, and sample code to help developers understand how to use the accelerator and other functionality provided by the platform. With the Hedera stablecoin accelerator, developers can easily integrate the stablecoin into their own applications or create new applications or services that make use of the stablecoin's unique features. Whether you're a seasoned cryptocurrency developer or new to the space, the Hedera stablecoin accelerator has everything you need to start building with stablecoins today.
+The Hedera Stablecoin Studio is a comprehensive set of tools and resources designed to enable developers to build applications and services that make use of the stablecoin. The project includes smart contracts, documentation, and sample code to help developers understand how to use the project and other functionality provided by the platform. With the Hedera Stablecoin studio, developers can easily integrate the stablecoin into their own applications or create new applications or services that make use of the stablecoin's unique features. Whether you're a seasoned cryptocurrency developer or new to the space, the Hedera stablecoin accelerator has everything you need to start building with stablecoins today.
 
 # Context
 
@@ -94,7 +94,7 @@ Each stablecoin maps to an _underlying_ Hedera Token and adds the following func
 Every time a stablecoin is created, a new Hedera Token is created (the underlying token) and the following smart contracts are deployed:
 
 - The stablecoin proxy smart contract: pointing to the `HederaTokenManager` logic smart contract that was passed as an input argument(\*). Proxies are used to make stablecoins upgradable.
-- The stablecoin proxy admin smart contract: this contract will act as an intermediary to upgrade the stablecoin proxy implementation. For more information on this, check the [contract module's README](https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/contracts/README.md).
+- The stablecoin proxy admin smart contract: this contract will act as an intermediary to upgrade the stablecoin proxy implementation. For more information on this, check the [contract module's README](https://github.com/hashgraph/stablecoin-studio/tree/main/contracts/README.md).
 
 An smart contract, named `StablecoinFactory`, must be previously deployed since implements the flow to create a new stablecoin in a single transaction. A default `StablecoinFactory` is deployed, but any user will be able to [deploy their own factory](#deploying-the-stablecoin-factories).
 
