@@ -52,10 +52,10 @@ The command below can be used to install the official release from the NPM repos
 npm install -g @hashgraph-dev/stablecoin-npm-cli
 ```
 
-Once installed globally you can use the `accelerator wizard` command to run the CLI.
+Once installed globally you can use the `wizard` command to run the CLI.
 
 ```bash
-accelerator wizard
+npm run start:wizard
 ```
 
 # Build
@@ -78,14 +78,14 @@ Then you must install and build the following projects :
 From the root of the CLI project workspace:
 
 - Run `npm install`. This will create and populate `node_modules` and build the project and dependencies.
-- Run `npm start`. This will display the CLI options.
+- Run `npm run start`. This will display the CLI options.
 - Run `npm run start:wizard`. To start the CLI in wizard mode creating a config file in the project folder.
 
 # Quickstart
 
 ## Starting the CLI
 
-The first time you execute the `accelerator wizard` command in your terminal, if you haven't added your default configuration path the interface will ask you whether you want to create a new configuration file in the default path. When the configuration file is created you must configure the default network, operating accounts and the factory contract id. In order to create the default account you can use [HashPack](https://www.hashpack.app/download) or the [Hedera Developer Portal](https://portal.hedera.com/register).
+The first time you execute the `npm run start:wizard` command in your terminal, if you haven't added your default configuration path the interface will ask you whether you want to create a new configuration file in the default path. When the configuration file is created you must configure the default network, operating accounts and the factory contract id. In order to create the default account you can use [HashPack](https://www.hashpack.app/download) or the [Hedera Developer Portal](https://portal.hedera.com/register).
 
 https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/73c2ed6c-ebc4-4717-b837-c4595c007ba0
 
@@ -98,7 +98,7 @@ To use the CLI correctly it is necessary to generate a configuration file in whi
 ## Automatically creating a config file
 
 The configuration file that is automatically generated populates its fields using the answers to the questions displayed in the CLI when the application is started for the first time.
-The file format is .yaml and the structure is as follows:
+The file format is `.yaml` and the structure is as follows:
 
 ```
 defaultNetwork: testnet
