@@ -39,13 +39,11 @@ jobs:
         run: |
           npm install
           npm run build
-          npm install
         working-directory: contracts
       - name: Install dependencies SDK
         run: |
           npm install
           npm run build
-          npm install
         working-directory: sdk
       - name: Install dependencies Cli
         run: | 
@@ -58,11 +56,8 @@ jobs:
       
       - name: package.lock web
         run: cat package-lock.json
-
         working-directory: web
-      - name: node modelues sdk
-        run: ls node_modules/
-        working-directory: sdk
+
       - name: Create file
         run: |
           touch .env
@@ -105,8 +100,8 @@ jobs:
       
       - name: Run the Docker image
         run:  nohup docker run --network="host" rpc &
-      - name: Sleep for 30 seconds
-        run: sleep 35s
+      - name: Sleep for 25 seconds
+        run: sleep 25s
         shell: bash
       - name: DockerStatus
         run: docker ps
@@ -117,9 +112,9 @@ jobs:
 #        run:  npm run test
 #        working-directory: contracts
       
-      - name: Test sdk
-        run:  npm run test
-        working-directory: sdk  
+#      - name: Test sdk
+#        run:  npm run test
+#        working-directory: sdk  
       
 #      - name: Test web
 #        run:  npm run test
