@@ -1,4 +1,4 @@
-# Accelerator Integration with OZ Defender
+# Studio Integration with OZ Defender
 
 ### Table of Contents
 - **[Introduction](#Introduction)**<br>

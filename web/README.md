@@ -2,7 +2,7 @@
 
 # Stablecoin Studio - Web
 
-[![WEB - Test](https://github.com/hashgraph/hedera-accelerator-stablecoin/actions/workflows/web.test.yml/badge.svg)](https://github.com/hashgraph/hedera-accelerator-stablecoin/actions/workflows/web.test.yml)
+[![WEB - Test](https://github.com/hashgraph/stablecoin-studio/actions/workflows/web.test.yml/badge.svg)](https://github.com/hashgraph/stablecoin-studio/actions/workflows/web.test.yml)
 
 </div>
 
@@ -46,9 +46,9 @@ You will need the following supporting tools/frameworks installed
 
 Then you have to install and build
 
-1. [Contracts installation](https://github.com/hashgraph/hedera-accelerator-stablecoin/blob/main/contracts/README.md#installation)
-2. [SDK installation](https://github.com/hashgraph/hedera-accelerator-stablecoin/blob/main/sdk/README.md#installation)
-3. [Hashconnect installation](https://github.com/hashgraph/hedera-accelerator-stablecoin/blob/main/hashconnect/lib/README.md#installation)
+1. [Contracts installation](https://github.com/hashgraph/stablecoin-studio/blob/main/contracts/README.md#installation)
+2. [SDK installation](https://github.com/hashgraph/stablecoin-studio/blob/main/sdk/README.md#installation)
+3. [Hashconnect installation](https://github.com/hashgraph/stablecoin-studio/blob/main/hashconnect/lib/README.md#installation)
 
 Finally, in order to build the project, go to the root of the WEB project workspace:
 
@@ -66,7 +66,7 @@ The ENV file contains the following parameters:
 - **REACT_APP_LOG_LEVEL**: defines the log level the application is going to apply to filter the logs been displayed in the browser's console. The default value is "ERROR".
 - **REACT_APP_FACTORIES**: This var is required if you want to create a new stablecoin. The var must be a JSON array with a factory id in Hedera format `0.0.XXXXX` per environment.
 - **REACT_APP_MIRROR_NODE**: This var is required if you want to create a new stablecoin. The var must be a unique mirror node service for each Hedera network, and this is the service which would be used when the UI starts. The service is configured by the environment and the base url properties, and, optionally, can also have an api key and a http header through which the api key is provided.
-- **REACT_APP_RPC_NODE**: This var is required if you want to create a new stablecoin. The var must be a unique rpc node service for Hedera network, and this is the service which would be used when the UI starts. The service is configured using the same properties than the mirror node. You can check the available JSON-RPC relays [here](https://github.com/hashgraph/hedera-accelerator-stablecoin/blob/main/README.md#JSON-RPC-Relays)
+- **REACT_APP_RPC_NODE**: This var is required if you want to create a new stablecoin. The var must be a unique rpc node service for Hedera network, and this is the service which would be used when the UI starts. The service is configured using the same properties than the mirror node. You can check the available JSON-RPC relays [here](https://github.com/hashgraph/stablecoin-studio/blob/main/README.md#JSON-RPC-Relays)
 ```
 REACT_APP_FACTORIES='[{"Environment":"mainnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.1234567"},{"Environment":"testnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.3950554"},{"Environment":"previewnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.239703"}]'
 REACT_APP_MIRROR_NODE='[{"Environment":"testnet","BASE_URL":"https://testnet.mirrornode.hedera.com/api/v1/", "API_KEY": "132456", "HEADER": "x-api-key"}]'
@@ -75,7 +75,7 @@ REACT_APP_RPC_NODE='[{"Environment":"testnet","BASE_URL":"https://testnet.hashio
 
 If the env files does not exist or the factory var is not set when you click in "Create a new stablecoin" an alert will be shown.
 ![image](https://user-images.githubusercontent.com/114951681/229088627-369506c3-9c28-435c-9e44-d8908f8a15ab.png)
-You can use our [deployed factories](https://github.com/hashgraph/hedera-accelerator-stablecoin#deploying-the-stable-coin-factories).
+You can use our [deployed factories](https://github.com/hashgraph/stablecoin-studio#deploying-the-stable-coin-factories).
 
 - **GENERATE_SOURCEMAP**: This is a proprietary Create React App configuration. You can read more information in its documentation. [Create React App documentation](https://create-react-app.dev/docs/advanced-configuration/)
 
@@ -143,13 +143,13 @@ In order to create a new stablecoin using the web application, you must click on
 
 Basic information about the stablecoin.
 
-![Selection_036](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/d6baa730-349a-4df7-abe2-b3bf2182e584)
+![Selection_036](https://github.com/hashgraph/stablecoin-studio/assets/108128685/d6baa730-349a-4df7-abe2-b3bf2182e584)
 
 **Optional details**
 
 Stablecoin supply and accuracy definition (initial supply, max supply, decimals)
 
-![Selection_037](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/8bc0fa3b-86ce-4956-9660-64be44c4f826)
+![Selection_037](https://github.com/hashgraph/stablecoin-studio/assets/108128685/8bc0fa3b-86ce-4956-9660-64be44c4f826)
 
 **Manage permissions**
 
@@ -157,20 +157,20 @@ Underlying token's keys definition (stablecoin smart contract, current key, anot
 
 In this step, the user can also configure the stablecoin proxy admin owner. By default, this ownership belongs to the account creating the stablecoin, but the user has the chance to change this default behaviour by configuring another account id, which can belongs to a contract, like a timelock controller, a cold wallet, or whatever account.
 
-![Selection_038](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/99d76040-8ac6-4bb9-b6d1-18c433b0bc43)
+![Selection_038](https://github.com/hashgraph/stablecoin-studio/assets/108128685/99d76040-8ac6-4bb9-b6d1-18c433b0bc43)
 
 **Proof of reserve**
 
 Choose if the stablecoin will have a proof of reserve (PoR) associated to it or not.
 If so, the user will have two options, either submit the address of an already existing PoR contract or generate a completely new one (using the demo implementation of a PoR contract included in the project) specifying an initial Reserve amount.
 
-![Selection_039](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/a566a494-9855-4ef7-96e1-210a7ce38c58)
+![Selection_039](https://github.com/hashgraph/stablecoin-studio/assets/108128685/a566a494-9855-4ef7-96e1-210a7ce38c58)
 
 **Review**
 
 Final validation before creating the stablecoin.
 
-![Selection_040](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/44bd4928-6b12-44bc-a3f3-9881df779fef)
+![Selection_040](https://github.com/hashgraph/stablecoin-studio/assets/108128685/44bd4928-6b12-44bc-a3f3-9881df779fef)
 
 You will then have to validate the transaction using the wallet you paired to.
 
@@ -186,19 +186,19 @@ You can import any stablecoin you want, and it will be added to the drop-down li
 
 ### Operate stablecoins
 
-![Selection_015](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/b9a74668-03bd-4d59-b8f1-3d1234a1e065)
+![Selection_015](https://github.com/hashgraph/stablecoin-studio/assets/108128685/b9a74668-03bd-4d59-b8f1-3d1234a1e065)
 
 The operations linked to the capabilities (roles) assigned to your account for the selected stablecoin will be available.
 
 ### Manage roles
 
-![Selection_035](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/4f48bb78-110d-426e-935f-e520ab506208)
+![Selection_035](https://github.com/hashgraph/stablecoin-studio/assets/108128685/4f48bb78-110d-426e-935f-e520ab506208)
 
 If your account has the stablecoin admin role, you will also be allowed to manage the stablecoin's roles.
 
 ### Stablecoin details
 
-![Selection_031](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/bbc2deb4-aaa1-4294-a811-e9f2ec785759)
+![Selection_031](https://github.com/hashgraph/stablecoin-studio/assets/108128685/bbc2deb4-aaa1-4294-a811-e9f2ec785759)
 
 This menú option displays stablecoin details and also allows the user to update some of the token properties, like the name, the symbol, the keys..., clicking on the the pencil icon located at the top right side of the screen, which transforms the information page into a form where this properties can be modified by the user. 
 
@@ -224,15 +224,15 @@ If (and only if) the PoR contract attached to your stablecoin is the PoR demo im
 
 This option allows the user to manage the stablecoin and the factory contracts. These contracts are both upgradeable, using an implementation of the OpenZeppelin **TransparentUpgradeableProxy** contract. This proxy can only be managed by an administrator contract. Therefore, only the account which is the owner of the proxy's administrator contract will be able to manage the proxy, and this management allows the user to change the owner of the proxy's administrator contract and also to change the implementation contract. To change the owner, a two step flow was implemented, so the current owner has to invite another account, which has to accept the invitation before the change is finally performed. Since the invitation is sent until is accepted by the new owner, the invitation can be cancelled by the current owner.
 
-![Selection_021](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/e0724fbe-e8c0-478e-8cbb-66394250d64b)
+![Selection_021](https://github.com/hashgraph/stablecoin-studio/assets/108128685/e0724fbe-e8c0-478e-8cbb-66394250d64b)
 
 If the user selects the option to manage the stablecoin, it could change the **HederaTokenManager** contract proxy admin owner and upgrade the stablecoin contract implementation.
 
-![Selection_014](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/abb0b89f-6ec5-449f-a035-f7f9fcea08e1)
+![Selection_014](https://github.com/hashgraph/stablecoin-studio/assets/108128685/abb0b89f-6ec5-449f-a035-f7f9fcea08e1)
 
 While if the user selects the option to manage the factory, it could change the **Factory** contract proxy admin owner and upgrade the factory contract implementation.
 
-![Selection_019](https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/3ebb3243-e12a-470b-91cc-de9086af9a9e)
+![Selection_019](https://github.com/hashgraph/stablecoin-studio/assets/108128685/3ebb3243-e12a-470b-91cc-de9086af9a9e)
 
 # Testing
 

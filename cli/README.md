@@ -2,7 +2,7 @@
 
 # Stablecoin Studio - Command Line Interface (CLI)
 
-[![CLI - Test](https://github.com/hashgraph/hedera-accelerator-stablecoin/actions/workflows/cli.test.yml/badge.svg)](https://github.com/hashgraph/hedera-accelerator-stablecoin/actions/workflows/cli.test.yml)
+[![CLI - Test](https://github.com/hashgraph/stablecoin-studio/actions/workflows/cli.test.yml/badge.svg)](https://github.com/hashgraph/stablecoin-studio/actions/workflows/cli.test.yml)
 
 </div>
 
@@ -69,9 +69,9 @@ You must have installed
 
 Then you must install and build the following projects :
 
-1. [Contract installation](https://github.com/hashgraph/hedera-accelerator-stablecoin/blob/main/contracts/README.md#installation)
-2. [SDK installation](https://github.com/hashgraph/hedera-accelerator-stablecoin/blob/main/sdk/README.md#installation)
-3. [Hashconnect installation](https://github.com/hashgraph/hedera-accelerator-stablecoin/blob/main/hashconnect/lib/README.md#installation)
+1. [Contract installation](https://github.com/hashgraph/stablecoin-studio/blob/main/contracts/README.md#installation)
+2. [SDK installation](https://github.com/hashgraph/stablecoin-studio/blob/main/sdk/README.md#installation)
+3. [Hashconnect installation](https://github.com/hashgraph/stablecoin-studio/blob/main/hashconnect/lib/README.md#installation)
 
 ## Steps
 
@@ -87,7 +87,7 @@ From the root of the CLI project workspace:
 
 The first time you execute the `npm run start:wizard` command in your terminal, if you haven't added your default configuration path the interface will ask you whether you want to create a new configuration file in the default path. When the configuration file is created you must configure the default network, operating accounts and the factory contract id. In order to create the default account you can use [HashPack](https://www.hashpack.app/download) or the [Hedera Developer Portal](https://portal.hedera.com/register).
 
-https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/73c2ed6c-ebc4-4717-b837-c4595c007ba0
+https://github.com/hashgraph/stablecoin-studio/assets/108128685/73c2ed6c-ebc4-4717-b837-c4595c007ba0
 
 > _**Note:** that for testing purpose you should create a **Testnet** account instead of Mainnet account. Everything executed on Mainnet will incur a cost with real money._
 
@@ -216,7 +216,7 @@ When your configuration file is set up and at least one account is added and sel
 #### Create a new stablecoin
 
 In order to use this option you must set a factory first.
-You can check our factories deployed in [our documentation](https://github.com/hashgraph/hedera-accelerator-stablecoin#deploying-the-stable-coin-factories).
+You can check our factories deployed in [our documentation](https://github.com/hashgraph/stablecoin-studio#deploying-the-stable-coin-factories).
 
 With this option, you are able to create a new stablecoin, adding the mandatory details like name and symbol.
 
@@ -251,7 +251,7 @@ The request will then be submitted to the SDK and the stablecoin will be created
 
 > When the configuration file is first created, the factory contract added to the "testnet" network are the default one (pre-deployed contract). However, users are free to deploy and use their own contracts, in order to do that, the configuration file must be updated with the new factory contract id.
 
-https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/dde74619-8c48-40b7-a0ff-3553214fa819
+https://github.com/hashgraph/stablecoin-studio/assets/108128685/dde74619-8c48-40b7-a0ff-3553214fa819
 
 #### Manage imported tokens
 
@@ -291,7 +291,7 @@ https://user-images.githubusercontent.com/102601367/205074235-32145a1b-4ce0-4913
 
 - **Rescue HBAR**: transfers HBAR from the treasury account to a rescue account. This option is only available through the smart contract.
 
-https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/e09a9389-8f29-4869-a696-58b25d99a6f3
+https://github.com/hashgraph/stablecoin-studio/assets/108128685/e09a9389-8f29-4869-a696-58b25d99a6f3
 
 - **Freeze Management**: freezes/unfreezes an account for a token or checks if an account is frozen/unfrozen. If an account is frozen, it will not be able to transfer any tokens.
 
@@ -299,7 +299,7 @@ https://user-images.githubusercontent.com/114951681/228851899-8a63b255-8e97-4705
 
 - **FeeS Management**: creats/removes custom fees for a token or lists existing ones. Fees are applied when the token is transferred.
 
-https://github.com/hashgraph/hedera-accelerator-stablecoin/assets/108128685/a18f8723-d161-4283-a867-81d0d204e015
+https://github.com/hashgraph/stablecoin-studio/assets/108128685/a18f8723-d161-4283-a867-81d0d204e015
 
 - **KYC Management**: grants/revokes KYC to/from an account or checks an account's kyc status. If an account is granted KYC, it can be involved in any token transfer.
 
@@ -336,7 +336,7 @@ This last option allows the user to display the current configuration file, modi
 
 - **Accounts**: Allows the user to change the current account, see all configured accounts and also add new accounts and remove existing ones.
 - **Mirror nodes**: Allows the user to change the current mirror node, see all configured mirror nodes for the selected Hedera network, add new mirror nodes and remove existing ones except for the one that is being used.
-- **JSON-RPC-Relay services**: Allows the user to change the current JSON-RPC-Relay service, see all configured services for the selected Hedera network, add new JSON-RPC-Relay servies and remove existing ones except for the one that is being used. You can check the available JSON-RPC relays [here](https://github.com/hashgraph/hedera-accelerator-stablecoin/blob/main/README.md#JSON-RPC-Relays)
+- **JSON-RPC-Relay services**: Allows the user to change the current JSON-RPC-Relay service, see all configured services for the selected Hedera network, add new JSON-RPC-Relay servies and remove existing ones except for the one that is being used. You can check the available JSON-RPC relays [here](https://github.com/hashgraph/stablecoin-studio/blob/main/README.md#JSON-RPC-Relays)
 - **Factory**: Allows the user to change the factory id of the selected Hedera network in the configuration file, to upgrade the factory's proxy, to change the factory's proxy admin owner account and, finally, to view de current factory implementation contract address as well as the factory owner account previously commented.
 
 # Testing

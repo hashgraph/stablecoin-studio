@@ -100,7 +100,7 @@ const Topbar = () => {
 								<Link
 									textDecoration='underline'
 									isExternal={true}
-									href='https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/web#env-vars'
+									href='https://github.com/hashgraph/stablecoin-studio/tree/main/web#env-vars'
 								>
 									{t('topbar.alertNoEnvLink')}
 								</Link>
