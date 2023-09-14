@@ -7,6 +7,10 @@
 	"files": [
 		"build/"
 	],
+	"engines" : { 
+		"npm" : "9.6.4",
+		"node" : "18.17.1"
+	},
 	"dependencies": {
 		"@chakra-ui/icons": "2.0.17",
 		"@chakra-ui/react": "2.6.1",
