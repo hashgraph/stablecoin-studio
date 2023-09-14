@@ -9,7 +9,7 @@
 ### Table of contents
 
 - [Stablecoin Studio - Command Line Interface (CLI)](#stablecoin-studio---command-line-interface-cli)
-  - [Table of contents](#table-of-contents)
+    - [Table of contents](#table-of-contents)
 - [Overview](#overview)
 - [Installation](#installation)
 - [Build](#build)
