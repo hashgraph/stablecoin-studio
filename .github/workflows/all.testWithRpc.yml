@@ -78,7 +78,7 @@ jobs:
           echo "CLIENT_PUBLIC_KEY_ED25519_2='302a300506032b6570032100369b111faa5d011b34b0c434340f0fa9584fcc0c92b5f5df3883e5bfbc725b3f'"  >> .env
           echo "CLIENT_EVM_ADDRESS_ED25519_2='0x000000000000000000000000000000000006bfb5'"  >> .env
           echo "CLIENT_ACCOUNT_ID_ED25519_2='0.0.442293'"  >> .env
-          echo "HEDERA_TOKEN_MANAGER_ADDRESS=0.0.1583579"  >> .env
+          echo "HEDERA_TOKEN_MANAGER_ADDRESS=0.0.1137621  >> .env
           echo "FACTORY_ADDRESS=0.0.1137631"  >> .env
         working-directory: sdk
       
