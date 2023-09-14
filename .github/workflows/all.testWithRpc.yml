@@ -128,4 +128,203 @@ jobs:
       - name: Test cli
         run:  npm run test
         working-directory: cli
-      
+        name: LocalRPC
+        on: 
+          workflow_dispatch:
+          push:
+            branches: [main]
+        jobs:
+          test-node:
+            name: docker
+            runs-on: ubuntu-latest
+            
+            steps:
+              - name: Checkout repository
+                uses: actions/checkout@v3
+              
+              - name: Build the Docker image
+                run: docker build -t rpc . 
+                working-directory: dockerfile
+                
+              - name: Use Node.js TLS 18.x
+                uses: actions/setup-node@v1
+                with:
+                  node-version: 18.x
+              
+              #- name: Config cli
+              #  run:  npm config set @hashgraph-dev:registry=https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/  
+              
+              - name: Install dependencies Hashconnect
+                run: npm i
+              - name: Install dependencies Hashconnect
+                run: export NODE_OPTIONS="--max-old-space-size=8192"
+                
+              - name: Install dependencies Hashconnect
+                run: |
+                  npm install
+                  npm run build
+                working-directory: hashconnect/lib
+              
+              - name: Install dependencies Contracts
+                run: |
+                  npm install
+                  npm run build
+                  npm install
+                working-directory: contracts
+              - name: Install dependencies SDK
+                run: |
+                  npm install
+                  npm run build
+                  npm install
+                working-directory: sdk
+              - name: Install dependencies Cli
+                run: | 
+                  npm install
+                  npm run build
+                working-directory: cli
+              - name: Install dependencies web
+                run: npm install
+                working-directory: web
+              
+              - name: package.lock web
+                run: cat package-lock.json
+        
+                working-directory: web
+              - name: node modelues sdk
+                run: ls node_modules/
+                working-directory: sdk
+              - name: Create file
+                run: |
+                  touch .env
+                  echo "CLIENT_PRIVATE_KEY_ECDSA='3030020100300706052b8104000a042204203b246060c02fb81582b2299f947e72447d81523575f83a63bf2b7397421eb709'" >> .env
+                  echo "CLIENT_PUBLIC_KEY_ECDSA='302d300706052b8104000a0322000329087cf808aea861034668f7f2d6fe56299d62746414ac2cc2d3b147ba301b81'"  >> .env
+                  echo "CLIENT_EVM_ADDRESS_ECDSA='0x3a5c210bd658f7509a5f63df48f710a0240f2cab'" >> .env
+                  echo "CLIENT_ACCOUNT_ID_ECDSA='0.0.442280'" >> .env
+                  echo "CLIENT_PRIVATE_KEY_ED25519='302e020100300506032b657004220420016c98e8556ca5b1298602652da290de928ca29c336215baa88de9c629f26e99'"  >> .env
+                  echo "CLIENT_PUBLIC_KEY_ED25519='302a300506032b657003210071e784a0c58c3e0fff92abc5962a5e8e048382723fa136bb71c4d183687456df'"  >> .env
+                  echo "CLIENT_EVM_ADDRESS_ED25519='0x000000000000000000000000000000000006bfa9'"  >> .env
+                  echo "CLIENT_ACCOUNT_ID_ED25519='0.0.442281'"  >> .env
+                  echo "CLIENT_PRIVATE_KEY_ED25519_2='302e020100300506032b657004220420915a4680c82cb23fc2b0f00bda27ff3767ddfeb064c986221dddbba944d9e17c'"  >> .env          
+                  echo "CLIENT_PUBLIC_KEY_ED25519_2='302a300506032b6570032100369b111faa5d011b34b0c434340f0fa9584fcc0c92b5f5df3883e5bfbc725b3f'"  >> .env
+                  echo "CLIENT_EVM_ADDRESS_ED25519_2='0x000000000000000000000000000000000006bfb5'"  >> .env
+                  echo "CLIENT_ACCOUNT_ID_ED25519_2='0.0.442293'"  >> .env
+                  echo "HEDERA_TOKEN_MANAGER_ADDRESS=0.0.14455016"  >> .env
+                  echo "FACTORY_ADDRESS=0.0.14455068"  >> .env
+                working-directory: sdk
+              
+              - name: View File
+                run: cat .env
+                working-directory: sdk
+        
+              - name: Create contracts
+                run: |
+                  touch .env
+                  echo "TESTNET_HEDERA_OPERATOR_PRIVATEKEY='302e020100300506032b657004220420016c98e8556ca5b1298602652da290de928ca29c336215baa88de9c629f26e99'"  >> .env
+                  echo "TESTNET_HEDERA_OPERATOR_PUBLICKEY='302a300506032b657003210071e784a0c58c3e0fff92abc5962a5e8e048382723fa136bb71c4d183687456df'"  >> .env
+                  echo "TESTNET_HEDERA_OPERATOR_ED25519='true'"  >> .env
+                  echo "TESTNET_HEDERA_OPERATOR_ACCOUNT='0.0.442281'"  >> .env
+                  echo "TESTNET_HEDERA_NON_OPERATOR_PRIVATEKEY='302e020100300506032b657004220420915a4680c82cb23fc2b0f00bda27ff3767ddfeb064c986221dddbba944d9e17c'"  >> .env          
+                  echo "TESTNET_HEDERA_NON_OPERATOR_PUBLICKEY='302a300506032b6570032100369b111faa5d011b34b0c434340f0fa9584fcc0c92b5f5df3883e5bfbc725b3f'"  >> .env
+                  echo "TESTNET_HEDERA_NON_OPERATOR_ED25519='true'"  >> .env
+                  echo "TESTNET_HEDERA_NON_OPERATOR_ACCOUNT='0.0.442293'"  >> .env
+                working-directory: contracts
+        
+              - name: View File
+                run: cat .env
+                working-directory: contracts
+              
+              - name: Run the Docker image
+                run:  nohup docker run --network="host" rpc &
+              - name: Sleep for 30 seconds
+                run: sleep 35s
+                shell: bash
+              - name: DockerStatus
+                run: docker ps
+              - name: DockerStatus
+                run:  curl --location --request POST 'http://localhost:7546/api' --data ""
+            
+              - name: Test Contracts
+                run:  npm run test
+                working-directory: contracts
+              
+              - name: Test sdk
+                run:  npm run test
+                working-directory: sdk  
+              
+        #      - name: Test web
+        #        run:  npm run test
+        #        working-directory: web  
+              
+              - name: Test cli
+                run:  npm run test
+                working-directory: cli
+        
+          ALL-publish:
+            name: Publish ALL packages
+            runs-on: ubuntu-latest
+            permissions:
+              contents: 'read'
+              id-token: 'write'
+            steps:
+              - name: Use Node.js TLS 18.x
+                uses: actions/setup-node@v1
+                with:
+                  node-version: 18.x
+              - name: Checkout repository
+                uses: actions/checkout@v3
+              - name: Authenticate to Google Cloud
+                id: auth
+                uses: google-github-actions/auth@v1
+                with:
+                  workload_identity_provider: 'projects/101730247931/locations/global/workloadIdentityPools/registry-identity-pool/providers/gh-provider'
+                  service_account: 'stablecoin-npm-publisher@hedera-registry.iam.gserviceaccount.com'
+                  token_format: 'access_token'
+              - name: Setup Google Cloud SDK
+                uses: google-github-actions/setup-gcloud@v1
+              - name: Install contracts dependencies 
+                run: npm run install:contracts
+              - name: Create .npmrc contracts
+                run: |
+                  cd contracts && cat << EOF > .npmrc
+                    @hashgraph:registry=https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/
+                    //us-npm.pkg.dev/hedera-registry/stablecoin-npm/:_authToken="${{ steps.auth.outputs.access_token }}"
+                    //us-npm.pkg.dev/hedera-registry/stablecoin-npm/:always-auth=true
+                  EOF 
+              - name: Publish contracts package
+                run: npm run publish:contracts
+              - name: Install hashconnect dependencies 
+                run: npm run install:hashconnect
+              - name: Create .npmrc hashconnect
+                run: |
+                  cd hashconnect/lib && cat << EOF > .npmrc
+                    @hashgraph:registry=https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/
+                    //us-npm.pkg.dev/hedera-registry/stablecoin-npm/:_authToken="${{ steps.auth.outputs.access_token }}"
+                    //us-npm.pkg.dev/hedera-registry/stablecoin-npm/:always-auth=true
+                  EOF 
+              - name: Publish hashconnect package
+                run: npm run publish:hashconnect
+              - name: Install sdk dependencies 
+                run: npm run install:sdk
+              - name: Create .npmrc sdk
+                run: |
+                  cd sdk && cat << EOF > .npmrc
+                    @hashgraph:registry=https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/
+                    //us-npm.pkg.dev/hedera-registry/stablecoin-npm/:_authToken="${{ steps.auth.outputs.access_token }}"
+                    //us-npm.pkg.dev/hedera-registry/stablecoin-npm/:always-auth=true
+                  EOF 
+              - name: Publish sdk package
+                run: npm run publish:sdk
+              - name: Install cli dependencies 
+                run: npm run install:cli
+              - name: Create .npmrc cli
+                run: |
+                  cd cli && cat << EOF > .npmrc
+                    @hashgraph:registry=https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/
+                    //us-npm.pkg.dev/hedera-registry/stablecoin-npm/:_authToken="${{ steps.auth.outputs.access_token }}"
+                    //us-npm.pkg.dev/hedera-registry/stablecoin-npm/:always-auth=true
+                  EOF 
+              - name: Publish cli package
+                run: npm run publish:cli
+                env:
+                  CI: ""
+          
