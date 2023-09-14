@@ -112,9 +112,9 @@ jobs:
         run:  npm run test
         working-directory: contracts
       
-#      - name: Test sdk
-#        run:  npm run test
-#        working-directory: sdk  
+      - name: Test sdk
+        run:  npm run test
+        working-directory: sdk  
       
 #      - name: Test web
 #        run:  npm run test
