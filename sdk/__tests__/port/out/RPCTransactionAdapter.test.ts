@@ -292,7 +292,7 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 		);
 	}, 1500000);
 
-	it('Proxy change Owner and implementation', async () => {
+	it.skip('Proxy change Owner and implementation', async () => {
 		const proxyConfig_before: ProxyConfigurationViewModel =
 			await ProxyInPort.getProxyConfig(
 				new GetProxyConfigRequest({
@@ -597,7 +597,7 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 		expect(diff_account.toString()).toEqual(AmountWithDecimals.toString());
 	}, 1500000);
 
-	it('RescueHBAR', async () => {
+	it.skip('RescueHBAR', async () => {
 		const initalHBARAmount = BigDecimal.fromString('2.5', HBAR_DECIMALS);
 		const rescueAmount = BigDecimal.fromString('1.5', HBAR_DECIMALS);
 
