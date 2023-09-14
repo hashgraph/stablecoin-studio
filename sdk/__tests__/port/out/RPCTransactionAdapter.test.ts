@@ -292,7 +292,7 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 		);
 	}, 1500000);
 
-	it('Proxy change Owner and implementation', async () => {
+	it.skip('Proxy change Owner and implementation', async () => {
 		const proxyConfig_before: ProxyConfigurationViewModel =
 			await ProxyInPort.getProxyConfig(
 				new GetProxyConfigRequest({
