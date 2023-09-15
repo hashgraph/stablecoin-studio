@@ -42,7 +42,6 @@ jobs:
       - name: Install dependencies SDK
         run: |
           npm install
-          npx hardhar b
           npm run build
         working-directory: sdk
       - name: Install dependencies Cli
