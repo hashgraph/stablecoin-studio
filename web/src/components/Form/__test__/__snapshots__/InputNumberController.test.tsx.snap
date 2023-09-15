@@ -3,7 +3,7 @@
 exports[`<InputNumberController /> .render should be disabled if disabled=true: Disabled 1`] = `
 <DocumentFragment>
   <div
-    class="chakra-stack css-1h0sumw"
+    class="chakra-stack css-ppmla1"
   >
     <div
       class="chakra-form-control css-1kxonj9"
@@ -11,11 +11,11 @@ exports[`<InputNumberController /> .render should be disabled if disabled=true: 
       role="group"
     >
       <div
-        class="chakra-input__group css-bx0blc"
+        class="chakra-input__group css-1y0e7gb"
         data-group="true"
       >
         <input
-          class="chakra-input css-l1kxkf"
+          class="chakra-input css-6fkiph"
           data-testid="input-test"
           disabled=""
           id="field-:r5:"
@@ -24,7 +24,7 @@ exports[`<InputNumberController /> .render should be disabled if disabled=true: 
           value=""
         />
         <div
-          class="chakra-input__right-element css-y1u7d2"
+          class="chakra-input__right-element css-1mbs9dq"
         />
       </div>
     </div>
@@ -39,7 +39,7 @@ exports[`<InputNumberController /> .render should be disabled if disabled=true: 
 exports[`<InputNumberController /> .render should render the component: WithLabel 1`] = `
 <DocumentFragment>
   <div
-    class="chakra-stack css-1h0sumw"
+    class="chakra-stack css-ppmla1"
   >
     <div
       class="chakra-form-control css-1kxonj9"
@@ -52,7 +52,7 @@ exports[`<InputNumberController /> .render should render the component: WithLabe
         id="field-:r0:-label"
       >
         <div
-          class="chakra-stack css-84zodg"
+          class="chakra-stack css-1igwmid"
         >
           <p
             class="chakra-text css-mgupmj"
@@ -62,11 +62,11 @@ exports[`<InputNumberController /> .render should render the component: WithLabe
         </div>
       </label>
       <div
-        class="chakra-input__group css-bx0blc"
+        class="chakra-input__group css-1y0e7gb"
         data-group="true"
       >
         <input
-          class="chakra-input css-l1kxkf"
+          class="chakra-input css-6fkiph"
           data-testid="input-test"
           id="field-:r0:"
           inputmode="numeric"
@@ -74,7 +74,7 @@ exports[`<InputNumberController /> .render should render the component: WithLabe
           value=""
         />
         <div
-          class="chakra-input__right-element css-y1u7d2"
+          class="chakra-input__right-element css-1mbs9dq"
         />
       </div>
     </div>
@@ -89,7 +89,7 @@ exports[`<InputNumberController /> .render should render the component: WithLabe
 exports[`<InputNumberController /> .render should show placeholder: WithPlaceholder 1`] = `
 <DocumentFragment>
   <div
-    class="chakra-stack css-1h0sumw"
+    class="chakra-stack css-ppmla1"
   >
     <div
       class="chakra-form-control css-1kxonj9"
@@ -97,11 +97,11 @@ exports[`<InputNumberController /> .render should show placeholder: WithPlacehol
       role="group"
     >
       <div
-        class="chakra-input__group css-bx0blc"
+        class="chakra-input__group css-1y0e7gb"
         data-group="true"
       >
         <input
-          class="chakra-input css-l1kxkf"
+          class="chakra-input css-6fkiph"
           data-testid="input-test"
           id="field-:r4:"
           inputmode="numeric"
@@ -110,7 +110,7 @@ exports[`<InputNumberController /> .render should show placeholder: WithPlacehol
           value=""
         />
         <div
-          class="chakra-input__right-element css-y1u7d2"
+          class="chakra-input__right-element css-1mbs9dq"
         />
       </div>
     </div>
@@ -125,7 +125,7 @@ exports[`<InputNumberController /> .render should show placeholder: WithPlacehol
 exports[`<InputNumberController /> .render should show the error message: WithError 1`] = `
 <DocumentFragment>
   <div
-    class="chakra-stack css-1h0sumw"
+    class="chakra-stack css-ppmla1"
   >
     <div
       class="chakra-form-control css-1kxonj9"
@@ -133,13 +133,13 @@ exports[`<InputNumberController /> .render should show the error message: WithEr
       role="group"
     >
       <div
-        class="chakra-input__group css-bx0blc"
+        class="chakra-input__group css-1y0e7gb"
         data-group="true"
       >
         <input
           aria-describedby="field-:r2:-feedback"
           aria-invalid="true"
-          class="chakra-input css-l1kxkf"
+          class="chakra-input css-6fkiph"
           data-testid="input-test"
           id="field-:r2:"
           inputmode="numeric"
@@ -147,7 +147,7 @@ exports[`<InputNumberController /> .render should show the error message: WithEr
           value=""
         />
         <div
-          class="chakra-input__right-element css-y1u7d2"
+          class="chakra-input__right-element css-1mbs9dq"
         />
       </div>
       <div

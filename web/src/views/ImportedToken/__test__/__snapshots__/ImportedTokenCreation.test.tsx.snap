@@ -3,10 +3,10 @@
 exports[`<ImportedTokenCreation /> should render correctly 1`] = `
 <DocumentFragment>
   <div
-    class="chakra-stack css-16oka5y"
+    class="chakra-stack css-19t9j1"
   >
     <div
-      class="chakra-stack css-16oka5y"
+      class="chakra-stack css-19t9j1"
     >
       <h2
         class="chakra-heading css-bqsusc"
@@ -63,16 +63,16 @@ exports[`<ImportedTokenCreation /> should render correctly 1`] = `
               tabindex="0"
             >
               <div
-                class="chakra-stack css-1eot3nj"
+                class="chakra-stack css-tc011i"
               >
                 <div
                   class="css-1c3xk1u"
                 >
                   <div
-                    class="chakra-stack css-1f6llri"
+                    class="chakra-stack css-1wbej9n"
                   >
                     <div
-                      class="chakra-stack css-a55xzq"
+                      class="chakra-stack css-9pdmz3"
                     >
                       <h2
                         class="chakra-heading css-p7jgmy"
@@ -81,10 +81,10 @@ exports[`<ImportedTokenCreation /> should render correctly 1`] = `
                         Add token
                       </h2>
                       <form
-                        class="chakra-stack css-b5leqj"
+                        class="chakra-stack css-ahthbn"
                       >
                         <div
-                          class="chakra-stack css-1h0sumw"
+                          class="chakra-stack css-ppmla1"
                         >
                           <div
                             class="chakra-form-control css-1kxonj9"
@@ -99,7 +99,7 @@ exports[`<ImportedTokenCreation /> should render correctly 1`] = `
                                 id="field-:r2:-label"
                               >
                                 <div
-                                  class="chakra-stack css-84zodg"
+                                  class="chakra-stack css-1igwmid"
                                 >
                                   <p
                                     class="chakra-text css-mgupmj"
@@ -116,12 +116,12 @@ exports[`<ImportedTokenCreation /> should render correctly 1`] = `
                               </label>
                             </div>
                             <div
-                              class="chakra-input__group css-bx0blc"
+                              class="chakra-input__group css-1y0e7gb"
                               data-group="true"
                             >
                               <input
                                 autocomplete="off"
-                                class="chakra-input css-l1kxkf"
+                                class="chakra-input css-6fkiph"
                                 data-testid="stableCoinId"
                                 id="field-:r2:"
                                 name="stableCoinId"
@@ -132,7 +132,7 @@ exports[`<ImportedTokenCreation /> should render correctly 1`] = `
                           </div>
                         </div>
                         <div
-                          class="chakra-stack css-173lc29"
+                          class="chakra-stack css-1sqcbux"
                         >
                           <p
                             class="chakra-text css-16srhgc"
@@ -140,7 +140,7 @@ exports[`<ImportedTokenCreation /> should render correctly 1`] = `
                             Do you want to get the roles automatically? This operation will incur a cost
                           </p>
                           <div
-                            class="chakra-stack css-1h0sumw"
+                            class="chakra-stack css-ppmla1"
                           >
                             <div
                               class="chakra-form-control css-1kxonj9"
@@ -164,7 +164,7 @@ exports[`<ImportedTokenCreation /> should render correctly 1`] = `
                                     style="height: 29px; width: 29px; opacity: 1; position: absolute; left: 0px; top: 0px; pointer-events: none; transition: opacity 0.25s;"
                                   >
                                     <div
-                                      class="chakra-stack css-191yzw1"
+                                      class="chakra-stack css-oe35x4"
                                     >
                                       <p
                                         class="chakra-text css-1f7y1le"
@@ -178,7 +178,7 @@ exports[`<ImportedTokenCreation /> should render correctly 1`] = `
                                     style="height: 29px; width: 29px; opacity: 0; position: absolute; left: 0px; top: 0px; pointer-events: none; transition: opacity 0.25s;"
                                   >
                                     <div
-                                      class="chakra-stack css-191yzw1"
+                                      class="chakra-stack css-oe35x4"
                                     >
                                       <p
                                         class="chakra-text css-1f7y1le"
@@ -202,7 +202,7 @@ exports[`<ImportedTokenCreation /> should render correctly 1`] = `
                           </div>
                         </div>
                         <div
-                          class="chakra-stack css-1h0sumw"
+                          class="chakra-stack css-ppmla1"
                         >
                           <div
                             class="chakra-form-control css-1kxonj9"
@@ -215,7 +215,7 @@ exports[`<ImportedTokenCreation /> should render correctly 1`] = `
                               id="field-:r4:-label"
                             >
                               <div
-                                class="chakra-stack css-84zodg"
+                                class="chakra-stack css-1igwmid"
                               >
                                 <p
                                   class="chakra-text css-mgupmj"
@@ -242,7 +242,7 @@ exports[`<ImportedTokenCreation /> should render correctly 1`] = `
                                 class="css-1f43avz-a11yText-A11yText"
                               />
                               <div
-                                class=" css-17n5zh"
+                                class=" css-l7r8n8"
                               >
                                 <div
                                   class="css-3y2vuh"
@@ -254,7 +254,7 @@ exports[`<ImportedTokenCreation /> should render correctly 1`] = `
                                     Select the roles
                                   </span>
                                   <div
-                                    class=" css-svnjlw"
+                                    class=" css-18euh9p"
                                     data-value=""
                                   >
                                     <input
@@ -265,7 +265,7 @@ exports[`<ImportedTokenCreation /> should render correctly 1`] = `
                                       autocapitalize="none"
                                       autocomplete="off"
                                       autocorrect="off"
-                                      class=" css-146k1ar-input"
+                                      class=" css-10wwmqn"
                                       id="field-:r4:"
                                       role="combobox"
                                       spellcheck="false"

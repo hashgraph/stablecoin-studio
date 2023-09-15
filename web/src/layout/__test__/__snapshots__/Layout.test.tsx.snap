@@ -33,7 +33,7 @@ exports[`<Layout /> should render correctly 1`] = `
             data-testid="coin-dropdown"
           >
             <div
-              class="chakra-stack css-1h0sumw"
+              class="chakra-stack css-ppmla1"
             >
               <div
                 class="chakra-form-control css-1kxonj9"
@@ -54,7 +54,7 @@ exports[`<Layout /> should render correctly 1`] = `
                     class="css-1f43avz-a11yText-A11yText"
                   />
                   <div
-                    class=" css-lub9qs"
+                    class=" css-xtthwf"
                   >
                     <div
                       class="css-3y2vuh"
@@ -66,7 +66,7 @@ exports[`<Layout /> should render correctly 1`] = `
                         0.0.49319786 - TEST
                       </span>
                       <div
-                        class=" css-svnjlw"
+                        class=" css-18euh9p"
                         data-value=""
                       >
                         <input
@@ -77,7 +77,7 @@ exports[`<Layout /> should render correctly 1`] = `
                           autocapitalize="none"
                           autocomplete="off"
                           autocorrect="off"
-                          class=" css-146k1ar-input"
+                          class=" css-10wwmqn"
                           id="field-:r1:"
                           role="combobox"
                           spellcheck="false"
@@ -129,7 +129,7 @@ exports[`<Layout /> should render correctly 1`] = `
             </div>
           </div>
           <div
-            class="chakra-stack css-84zodg"
+            class="chakra-stack css-1igwmid"
           >
             <div
               class="css-0"
@@ -184,10 +184,10 @@ exports[`<Layout /> should render correctly 1`] = `
           data-testid="topbar-right"
         >
           <div
-            class="chakra-stack css-d17m5h"
+            class="chakra-stack css-cr3f1i"
           >
             <div
-              class="chakra-stack css-jp20jv"
+              class="chakra-stack css-dk69dq"
             >
               <div
                 class="css-1m8iww1"
