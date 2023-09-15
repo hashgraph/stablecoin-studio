@@ -5,6 +5,8 @@
 	"stableCoinSettings": "Stablecoin Setting",
 	"factorySettings": "Factory Contract",
 	"notOwner": "The current account is not the owner of the factory's proxy",
+	"alertNoEnv": "You have not configured a factory address. Without it you can not configure Factory settings.",
+	"alertNoEnvLink": "Go to documentation",
 	"stableCoin": {
 		"transferOwner": {
 			"title": "Transfer proxy owner",
