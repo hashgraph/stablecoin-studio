@@ -19,7 +19,6 @@ interface optionsProps {
 const Sidebar = () => {
 	const { t } = useTranslation('global');
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
-	const selectedNetworkFactoryProxyConfig = useSelector(SELECTED_NETWORK_FACTORY_PROXY_CONFIG);
 	const options: optionsProps[] = [
 		{
 			icon: 'Coin',
@@ -53,7 +52,6 @@ const Sidebar = () => {
 			icon: 'GearSix',
 			title: t('sidebar.settings'),
 			route: NamedRoutes.Settings,
-			isHidden: !selectedNetworkFactoryProxyConfig,
 		},
 	];
 
