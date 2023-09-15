@@ -13,8 +13,8 @@ exports[`<undefined /> doesn't show error with showError=false: NotShowingError 
       <label
         class="chakra-form__label css-1hfoxt1"
         data-invalid=""
-        for="field-:r6:"
-        id="field-:r6:-label"
+        for="field-:ra:"
+        id="field-:ra:-label"
       >
         <div
           class="chakra-stack css-1igwmid"
@@ -41,7 +41,7 @@ exports[`<undefined /> doesn't show error with showError=false: NotShowingError 
           class="css-1f43avz-a11yText-A11yText"
         />
         <div
-          class=" css-15twfgh"
+          class=" css-oc2fss"
           data-invalid="true"
         >
           <div
@@ -52,7 +52,7 @@ exports[`<undefined /> doesn't show error with showError=false: NotShowingError 
               data-testid="select-placeholder"
             />
             <div
-              class=" css-svnjlw"
+              class=" css-18euh9p"
               data-value=""
             >
               <input
@@ -64,8 +64,8 @@ exports[`<undefined /> doesn't show error with showError=false: NotShowingError 
                 autocapitalize="none"
                 autocomplete="off"
                 autocorrect="off"
-                class=" css-146k1ar-input"
-                id="field-:r6:"
+                class=" css-10wwmqn"
+                id="field-:ra:"
                 role="combobox"
                 spellcheck="false"
                 tabindex="0"
@@ -134,8 +134,8 @@ exports[`<undefined /> shows error with showErrors=true: ShowingError 1`] = `
       <label
         class="chakra-form__label css-1hfoxt1"
         data-invalid=""
-        for="field-:r5:"
-        id="field-:r5:-label"
+        for="field-:r9:"
+        id="field-:r9:-label"
       >
         <div
           class="chakra-stack css-1igwmid"
@@ -162,7 +162,7 @@ exports[`<undefined /> shows error with showErrors=true: ShowingError 1`] = `
           class="css-1f43avz-a11yText-A11yText"
         />
         <div
-          class=" css-15twfgh"
+          class=" css-oc2fss"
           data-invalid="true"
         >
           <div
@@ -173,7 +173,7 @@ exports[`<undefined /> shows error with showErrors=true: ShowingError 1`] = `
               data-testid="select-placeholder"
             />
             <div
-              class=" css-svnjlw"
+              class=" css-18euh9p"
               data-value=""
             >
               <input
@@ -185,8 +185,8 @@ exports[`<undefined /> shows error with showErrors=true: ShowingError 1`] = `
                 autocapitalize="none"
                 autocomplete="off"
                 autocorrect="off"
-                class=" css-146k1ar-input"
-                id="field-:r5:"
+                class=" css-10wwmqn"
+                id="field-:r9:"
                 role="combobox"
                 spellcheck="false"
                 tabindex="0"
@@ -237,7 +237,7 @@ exports[`<undefined /> shows error with showErrors=true: ShowingError 1`] = `
         aria-live="polite"
         class="chakra-form__error-message css-10ckq1i"
         data-testid="form-error-msg"
-        id="field-:r5:-feedback"
+        id="field-:r9:-feedback"
       />
     </div>
   </div>
@@ -260,8 +260,8 @@ exports[`<undefined /> shows placeholder with default value: DefaultPlaceholder 
     >
       <label
         class="chakra-form__label css-1hfoxt1"
-        for="field-:r3:"
-        id="field-:r3:-label"
+        for="field-:r7:"
+        id="field-:r7:-label"
       >
         <div
           class="chakra-stack css-1igwmid"
@@ -288,7 +288,7 @@ exports[`<undefined /> shows placeholder with default value: DefaultPlaceholder 
           class="css-1f43avz-a11yText-A11yText"
         />
         <div
-          class=" css-15twfgh"
+          class=" css-oc2fss"
         >
           <div
             class="css-3y2vuh"
@@ -298,7 +298,7 @@ exports[`<undefined /> shows placeholder with default value: DefaultPlaceholder 
               data-testid="select-placeholder"
             />
             <div
-              class=" css-svnjlw"
+              class=" css-18euh9p"
               data-value=""
             >
               <input
@@ -309,8 +309,8 @@ exports[`<undefined /> shows placeholder with default value: DefaultPlaceholder 
                 autocapitalize="none"
                 autocomplete="off"
                 autocorrect="off"
-                class=" css-146k1ar-input"
-                id="field-:r3:"
+                class=" css-10wwmqn"
+                id="field-:r7:"
                 role="combobox"
                 spellcheck="false"
                 tabindex="0"
@@ -378,8 +378,8 @@ exports[`<undefined /> shows placeholder with the provided value: CustomPlacehol
     >
       <label
         class="chakra-form__label css-1hfoxt1"
-        for="field-:r4:"
-        id="field-:r4:-label"
+        for="field-:r8:"
+        id="field-:r8:-label"
       >
         <div
           class="chakra-stack css-1igwmid"
@@ -406,7 +406,7 @@ exports[`<undefined /> shows placeholder with the provided value: CustomPlacehol
           class="css-1f43avz-a11yText-A11yText"
         />
         <div
-          class=" css-15twfgh"
+          class=" css-oc2fss"
         >
           <div
             class="css-3y2vuh"
@@ -418,7 +418,7 @@ exports[`<undefined /> shows placeholder with the provided value: CustomPlacehol
               Value of placeholder
             </span>
             <div
-              class=" css-svnjlw"
+              class=" css-18euh9p"
               data-value=""
             >
               <input
@@ -429,8 +429,8 @@ exports[`<undefined /> shows placeholder with the provided value: CustomPlacehol
                 autocapitalize="none"
                 autocomplete="off"
                 autocorrect="off"
-                class=" css-146k1ar-input"
-                id="field-:r4:"
+                class=" css-10wwmqn"
+                id="field-:r8:"
                 role="combobox"
                 spellcheck="false"
                 tabindex="0"

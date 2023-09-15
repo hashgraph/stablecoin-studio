@@ -597,7 +597,7 @@ exports[`<Review /> should render correctly 1`] = `
               class="chakra-text css-ol2bzi"
               data-testid="details-review-title"
             >
-              Treasury account address
+              Treasury Account Address
             </p>
           </div>
           <div
@@ -613,7 +613,7 @@ exports[`<Review /> should render correctly 1`] = `
                 <p
                   class="chakra-text css-9s6br4"
                 >
-                  Treasury account address
+                  Treasury Account Address
                 </p>
                 <div
                   class="chakra-stack css-w0g0w4"

@@ -86,36 +86,42 @@ Object {
       class="chakra-portal"
     >
       <div
+        aria-label="Notifications"
         aria-live="polite"
         id="chakra-toast-manager-top"
         role="region"
         style="position: fixed; z-index: var(--toast-z-index, 5500); pointer-events: none; display: flex; flex-direction: column; margin: 0px auto;"
       />
       <div
+        aria-label="Notifications"
         aria-live="polite"
         id="chakra-toast-manager-top-left"
         role="region"
         style="position: fixed; z-index: var(--toast-z-index, 5500); pointer-events: none; display: flex; flex-direction: column;"
       />
       <div
+        aria-label="Notifications"
         aria-live="polite"
         id="chakra-toast-manager-top-right"
         role="region"
         style="position: fixed; z-index: var(--toast-z-index, 5500); pointer-events: none; display: flex; flex-direction: column;"
       />
       <div
+        aria-label="Notifications"
         aria-live="polite"
         id="chakra-toast-manager-bottom-left"
         role="region"
         style="position: fixed; z-index: var(--toast-z-index, 5500); pointer-events: none; display: flex; flex-direction: column;"
       />
       <div
+        aria-label="Notifications"
         aria-live="polite"
         id="chakra-toast-manager-bottom"
         role="region"
         style="position: fixed; z-index: var(--toast-z-index, 5500); pointer-events: none; display: flex; flex-direction: column; margin: 0px auto;"
       />
       <div
+        aria-label="Notifications"
         aria-live="polite"
         id="chakra-toast-manager-bottom-right"
         role="region"

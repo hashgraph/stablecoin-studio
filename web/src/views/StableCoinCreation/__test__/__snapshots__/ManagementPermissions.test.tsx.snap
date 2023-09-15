@@ -72,7 +72,7 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
           <p
             class="chakra-text css-1x1jfpp"
           >
-            Enable KYC accounts flags?
+            Enable KYC accounts flags? 
             <a
               class="chakra-link css-spn4bz"
               href="https://hedera.com/blog/get-started-with-the-hedera-token-service-part-2-kyc-update-and-scheduled-transactions"
@@ -101,7 +101,7 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
           <p
             class="chakra-text css-1x1jfpp"
           >
-            Do you want to add custom fees?
+            Do you want to add custom fees? 
             <a
               class="chakra-link css-spn4bz"
               href="https://docs.hedera.com/hedera/sdks-and-apis/sdks/readme-1/custom-token-fees"
@@ -146,7 +146,7 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
             <span
               class="css-1irdfqk"
             >
-              Roles assignment
+              Roles Assignment 
               <a
                 class="chakra-link css-spn4bz"
                 href="https://github.com/hashgraph/stablecoin-studio#what-is-a-stable-coin"
@@ -247,7 +247,7 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
             <span
               class="css-1irdfqk"
             >
-              Proxy admin
+              Proxy Admin
             </span>
             <svg
               aria-hidden="true"

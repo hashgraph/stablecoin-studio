@@ -14,19 +14,14 @@ exports[`<DatePickerController /> .render should be disabled if disabled=true: D
         class="react-datepicker-wrapper"
       >
         <div
-          class="react-datepicker__input-container "
+          class="react-datepicker__input-container"
         >
-          <span
-            aria-live="polite"
-            class="react-datepicker__aria-live"
-            role="alert"
-          />
           <div
-            class="chakra-input__group css-1rp2huo"
+            class="chakra-input__group css-1sr3k7m"
             data-group="true"
           >
             <div
-              class="chakra-input__left-element css-nc17it"
+              class="chakra-input__left-element css-t0mi2f"
             >
               <div
                 class="css-1n2mv2k"
@@ -94,7 +89,7 @@ exports[`<DatePickerController /> .render should be disabled if disabled=true: D
               </div>
             </div>
             <input
-              class="chakra-input css-1jo7i1r"
+              class="chakra-input css-1f4qdul"
               disabled=""
               id="field-:r4:"
               placeholder="datepicker-placeholder"
@@ -141,19 +136,14 @@ exports[`<DatePickerController /> .render should render the component: WithLabel
         class="react-datepicker-wrapper"
       >
         <div
-          class="react-datepicker__input-container "
+          class="react-datepicker__input-container"
         >
-          <span
-            aria-live="polite"
-            class="react-datepicker__aria-live"
-            role="alert"
-          />
           <div
-            class="chakra-input__group css-1rp2huo"
+            class="chakra-input__group css-1sr3k7m"
             data-group="true"
           >
             <div
-              class="chakra-input__left-element css-nc17it"
+              class="chakra-input__left-element css-t0mi2f"
             >
               <div
                 class="css-1n2mv2k"
@@ -221,7 +211,7 @@ exports[`<DatePickerController /> .render should render the component: WithLabel
               </div>
             </div>
             <input
-              class="chakra-input css-1jo7i1r"
+              class="chakra-input css-1f4qdul"
               id="field-:r0:"
               value=""
             />
@@ -251,19 +241,14 @@ exports[`<DatePickerController /> .render should show the error message: WithErr
         class="react-datepicker-wrapper"
       >
         <div
-          class="react-datepicker__input-container "
+          class="react-datepicker__input-container"
         >
-          <span
-            aria-live="polite"
-            class="react-datepicker__aria-live"
-            role="alert"
-          />
           <div
-            class="chakra-input__group css-1rp2huo"
+            class="chakra-input__group css-1sr3k7m"
             data-group="true"
           >
             <div
-              class="chakra-input__left-element css-nc17it"
+              class="chakra-input__left-element css-t0mi2f"
             >
               <div
                 class="css-1n2mv2k"
@@ -333,7 +318,7 @@ exports[`<DatePickerController /> .render should show the error message: WithErr
             <input
               aria-describedby="field-:r2:-feedback"
               aria-invalid="true"
-              class="chakra-input css-1jo7i1r"
+              class="chakra-input css-1f4qdul"
               id="field-:r2:"
               value=""
             />

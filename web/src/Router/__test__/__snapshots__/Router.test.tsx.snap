@@ -62,7 +62,7 @@ exports[`<Router /> should render correctly 1`] = `
                     />
                     <div
                       aria-hidden="true"
-                      class=" css-lub9qs"
+                      class=" css-xtthwf"
                       data-aria-hidden="true"
                     >
                       <div
@@ -75,7 +75,7 @@ exports[`<Router /> should render correctly 1`] = `
                           0.0.49319786 - TEST
                         </span>
                         <div
-                          class=" css-svnjlw"
+                          class=" css-18euh9p"
                           data-value=""
                         >
                           <input
@@ -86,7 +86,7 @@ exports[`<Router /> should render correctly 1`] = `
                             autocapitalize="none"
                             autocomplete="off"
                             autocorrect="off"
-                            class=" css-146k1ar-input"
+                            class=" css-10wwmqn"
                             id="field-:r4:"
                             role="combobox"
                             spellcheck="false"

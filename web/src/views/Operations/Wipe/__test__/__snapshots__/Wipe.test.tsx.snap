@@ -72,12 +72,12 @@ exports[`<WipeOperation /> should render correctly 1`] = `
                     </label>
                   </div>
                   <div
-                    class="chakra-input__group css-bx0blc"
+                    class="chakra-input__group css-1y0e7gb"
                     data-group="true"
                   >
                     <input
                       autocomplete="off"
-                      class="chakra-input css-1tcppn8"
+                      class="chakra-input css-6fkiph"
                       data-testid="amount"
                       id="field-:r1:"
                       name="amount"
@@ -120,12 +120,12 @@ exports[`<WipeOperation /> should render correctly 1`] = `
                     </label>
                   </div>
                   <div
-                    class="chakra-input__group css-bx0blc"
+                    class="chakra-input__group css-1y0e7gb"
                     data-group="true"
                   >
                     <input
                       autocomplete="off"
-                      class="chakra-input css-1tcppn8"
+                      class="chakra-input css-6fkiph"
                       data-testid="destinationAccount"
                       id="field-:r2:"
                       name="destinationAccount"

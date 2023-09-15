@@ -79,7 +79,7 @@ exports[`<HandleRoles /> should render correctly on editRole action 1`] = `
                       class="css-1f43avz-a11yText-A11yText"
                     />
                     <div
-                      class=" css-17n5zh"
+                      class=" css-l7r8n8"
                     >
                       <div
                         class="css-3y2vuh"
@@ -91,7 +91,7 @@ exports[`<HandleRoles /> should render correctly on editRole action 1`] = `
                           Select cash in limit option
                         </span>
                         <div
-                          class=" css-svnjlw"
+                          class=" css-18euh9p"
                           data-value=""
                         >
                           <input
@@ -102,7 +102,7 @@ exports[`<HandleRoles /> should render correctly on editRole action 1`] = `
                             autocapitalize="none"
                             autocomplete="off"
                             autocorrect="off"
-                            class=" css-146k1ar-input"
+                            class=" css-10wwmqn"
                             id="field-:r10:"
                             role="combobox"
                             spellcheck="false"
@@ -185,12 +185,12 @@ exports[`<HandleRoles /> should render correctly on editRole action 1`] = `
                     </label>
                   </div>
                   <div
-                    class="chakra-input__group css-bx0blc"
+                    class="chakra-input__group css-1y0e7gb"
                     data-group="true"
                   >
                     <input
                       autocomplete="off"
-                      class="chakra-input css-1tcppn8"
+                      class="chakra-input css-6fkiph"
                       data-testid="account"
                       id="field-:r11:"
                       name="account"
@@ -521,7 +521,7 @@ exports[`<HandleRoles /> should render correctly on getAccountsWithRole action 1
                     class="css-1f43avz-a11yText-A11yText"
                   />
                   <div
-                    class=" css-17n5zh"
+                    class=" css-l7r8n8"
                   >
                     <div
                       class="css-3y2vuh"
@@ -538,7 +538,7 @@ exports[`<HandleRoles /> should render correctly on getAccountsWithRole action 1
                         Admin
                       </div>
                       <div
-                        class=" css-svnjlw"
+                        class=" css-18euh9p"
                         data-value=""
                       >
                         <input
@@ -548,7 +548,7 @@ exports[`<HandleRoles /> should render correctly on getAccountsWithRole action 1
                           autocapitalize="none"
                           autocomplete="off"
                           autocorrect="off"
-                          class=" css-146k1ar-input"
+                          class=" css-10wwmqn"
                           id="field-:r2v:"
                           role="combobox"
                           spellcheck="false"
@@ -946,12 +946,12 @@ exports[`<HandleRoles /> should render correctly on giveRole action 1`] = `
                       </label>
                     </div>
                     <div
-                      class="chakra-input__group css-bx0blc"
+                      class="chakra-input__group css-1y0e7gb"
                       data-group="true"
                     >
                       <input
                         autocomplete="off"
-                        class="chakra-input css-1tcppn8"
+                        class="chakra-input css-6fkiph"
                         data-testid="rol.0.accountId"
                         id="field-:ru:"
                         name="rol.0.accountId"
@@ -1564,12 +1564,12 @@ exports[`<HandleRoles /> should render correctly on revokeRole action 1`] = `
                     </label>
                   </div>
                   <div
-                    class="chakra-input__group css-bx0blc"
+                    class="chakra-input__group css-1y0e7gb"
                     data-group="true"
                   >
                     <input
                       autocomplete="off"
-                      class="chakra-input css-1tcppn8"
+                      class="chakra-input css-6fkiph"
                       data-testid="rol.0.accountId"
                       id="field-:r2t:"
                       name="rol.0.accountId"

@@ -127,7 +127,7 @@ You will need the following supporting tools/frameworks installed:
 
 #### **For projects (WIP - when published)**
 
-1. Run `npm install @hashgraph-dev/stablecoin-npm-sdk` to install the dependency from NPM.
+1. Run `npm install @hashgraph/stablecoin-npm-sdk` to install the dependency from NPM.
 2. Import and use the SDK.
 
 #### **For development**
@@ -155,7 +155,7 @@ Before using the SDK we need to execute the `Network.init` function and specify 
 Example
 
 ```Typescript
-import { LoggerTransports, SDK } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { LoggerTransports, SDK } from '@hashgraph/stablecoin-npm-sdk';
 SDK.log = {
 	level: process.env.REACT_APP_LOG_LEVEL ?? 'ERROR',
 	transports: new LoggerTransports.Console(),
@@ -324,7 +324,7 @@ This delegates access to features to the smart contract, and enables the usage o
 		HederaTokenManagerAddressTestnet,
 		Account,
 		CreateRequest,
-	} from '@hashgraph-dev/stablecoin-npm-sdk';
+	} from '@hashgraph/stablecoin-npm-sdk';
 	const stableCoin: StableCoinViewModel = await StableCoin.create(
 		new CreateRequest({
 			name: 'Hedera stablecoin',
@@ -353,7 +353,7 @@ By specifying the public key of an account, we can set the stablecoin's keys to 
 		HederaTokenManagerAddressTestnet,
 		Account,
 		CreateRequest,
-	} from '@hashgraph-dev/stablecoin-npm-sdk';
+	} from '@hashgraph/stablecoin-npm-sdk';
 	const privateKey: RequestPrivateKey = {
 		key: 'someKey',
 		type: 'ED25519',
@@ -396,7 +396,7 @@ By not setting any of the keys, the stablecoin will have the corresponding featu
 		HederaTokenManagerAddressTestnet,
 		Account,
 		CreateRequest,
-	} from '@hashgraph-dev/stablecoin-npm-sdk';
+	} from '@hashgraph/stablecoin-npm-sdk';
 	const stableCoin: StableCoinViewModel = await StableCoin.create(
 		new CreateRequest({
 			name: 'Hedera stablecoin',
@@ -839,7 +839,7 @@ import {
 		HederaTokenManagerAddressTestnet,
 		Account,
 		CreateRequest
-	} from '@hashgraph-dev/stablecoin-npm-sdk';
+	} from '@hashgraph/stablecoin-npm-sdk';
 	const privateKey: RequestPrivateKey = {
 		key: 'someKey',
 		type: 'ED25519'
@@ -1838,7 +1838,7 @@ The SDK class is exported. This static class enables the log level and applicati
 We use [winston](https://github.com/winstonjs/winston) under the hood for logging, so all transports are exported from the SDK under `LoggerTransports` for you to use. Refer to the [documentation](https://github.com/winstonjs/winston/blob/master/docs/transports.md) for more information on what transports are available.
 
 ```Typescript
-	import { LoggerTransports, SDK } from '@hashgraph-dev/stablecoin-npm-sdk';
+	import { LoggerTransports, SDK } from '@hashgraph/stablecoin-npm-sdk';
 
 	const { Console } = LoggerTransports;
 
