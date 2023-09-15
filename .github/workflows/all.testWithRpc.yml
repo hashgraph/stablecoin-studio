@@ -36,11 +36,12 @@ jobs:
       - name: Install dependencies Contracts
         run: |
           npm install
-          npm run build
+          npm run compile:force
         working-directory: contracts
       - name: Install dependencies SDK
         run: |
           npm install
+          npx hardhar b
           npm run build
         working-directory: sdk
       - name: Install dependencies Cli
@@ -52,10 +53,6 @@ jobs:
         run: npm install
         working-directory: web
       
-      - name: package.lock web
-        run: cat package-lock.json
-        working-directory: web
-
       - name: Create file
         run: |
           touch .env
