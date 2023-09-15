@@ -52,7 +52,7 @@
 	"scripts": {
 		"start": "react-app-rewired start",
 		"build": "react-app-rewired build",
-		"test": "react-app-rewired test --watchAll --maxWorkers 2",
+		"test": "react-app-rewired test --watchAll --maxWorkers 2 -u",
 		"eject": "react-app-rewired eject",
 		"lint": "eslint . --ext .ts --ext .mts",
 		"prettier": "prettier --config .prettierrc --write .",
@@ -132,6 +132,7 @@
 			"^(\\.{1,2}/.*)\\.(m)?js$": "$1",
 			"hashconnect/dist/esm(.*)": "<rootDir>/../sdk/node_modules/@hashgraph-dev/hashconnect/dist/cjs$1",
 			"hashconnect": "<rootDir>/../sdk/node_modules/@hashgraph-dev/hashconnect/dist/cjs/hashconnect.js",
+			"@hashgraph-dev/stablecoin-npm-sdk/(.*)": "<rootDir>/../sdk/$1",
 			"axios": "axios/dist/node/axios.cjs"
 		},
 		"transform": {
