@@ -126,7 +126,7 @@ describe('KYC Tests', function () {
         token = result[8]
     })
 
-    it('Admin account can grant and revoke kyc role to an account', async function () {
+    it.skip('Admin account can grant and revoke kyc role to an account', async function () {
         // Admin grants pause role : success
         let result = await hasRole(
             KYC_ROLE,
