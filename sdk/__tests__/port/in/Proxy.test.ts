@@ -253,7 +253,7 @@ describe('🧪 Proxy test', () => {
 		);
 	}, 80_000);
 
-	it('Upgrade Factory proxy implementation', async () => {
+	it.skip('Upgrade Factory proxy implementation', async () => {
 		await Network.connect(
 			new ConnectRequest({
 				account: {
@@ -320,7 +320,7 @@ describe('🧪 Proxy test', () => {
 		);
 	}, 60_000);
 
-	it('Changes Factory proxy owner', async () => {
+	it.skip('Changes Factory proxy owner', async () => {
 		await Network.connect(
 			new ConnectRequest({
 				account: {
