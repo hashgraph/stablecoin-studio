@@ -99,7 +99,7 @@ const Settings = () => {
 		setDisabledFeatures(areDisabled);
 	};
 
-	if (!selectedStableCoin) {
+	if (!selectedStableCoin && disabledFeatures?.factory) {
 		return (
 			<Flex
 				data-testid='stable-coin-not-selected-container'
