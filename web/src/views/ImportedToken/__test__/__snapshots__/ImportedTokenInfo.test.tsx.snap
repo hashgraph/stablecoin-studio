@@ -3,10 +3,10 @@
 exports[`<ImportedTokenInfo /> should render correctly 1`] = `
 <DocumentFragment>
   <div
-    class="chakra-stack css-1f6llri"
+    class="chakra-stack css-1wbej9n"
   >
     <div
-      class="chakra-stack css-a55xzq"
+      class="chakra-stack css-9pdmz3"
     >
       <h2
         class="chakra-heading css-p7jgmy"
@@ -15,10 +15,10 @@ exports[`<ImportedTokenInfo /> should render correctly 1`] = `
         Add token
       </h2>
       <form
-        class="chakra-stack css-b5leqj"
+        class="chakra-stack css-ahthbn"
       >
         <div
-          class="chakra-stack css-173lc29"
+          class="chakra-stack css-1sqcbux"
         >
           <p
             class="chakra-text css-16srhgc"

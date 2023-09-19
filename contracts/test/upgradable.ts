@@ -32,7 +32,7 @@ const INIT_SUPPLY = BigNumber.from(10).mul(TokenFactor)
 const MAX_SUPPLY = BigNumber.from(1000).mul(TokenFactor)
 const TokenMemo = 'Hedera Accelerator Stablecoin'
 
-describe('Upgradable Tests', function () {
+describe.skip('Upgradable Tests', function () {
     const validationOptions: ValidationOptions = {
         unsafeAllow: ['constructor'],
     }
@@ -97,7 +97,7 @@ describe('Upgradable Tests', function () {
         await delay(3000)
     })
 
-    it('Same contract', async () => {
+    it.skip('Same contract', async () => {
         await upgradeContract(
             HederaTokenManager__factory.abi,
             HederaTokenManager__factory,

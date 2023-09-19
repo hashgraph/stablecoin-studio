@@ -35,7 +35,7 @@
 			"descriptionSuccess": "Proxy settings was updated",
 			"descriptionError": "Sorry, there was an error updating the proxy settings"
 		},
-		"link": "https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/contracts#change-proxyAdmin-owner"
+		"link": "https://github.com/hashgraph/stablecoin-studio/tree/main/contracts#change-proxyAdmin-owner"
 	},
 	"factory": {
 		"transferOwner": {

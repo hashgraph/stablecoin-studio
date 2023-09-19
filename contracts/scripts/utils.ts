@@ -220,24 +220,25 @@ export async function toEvmAddress(
 }
 
 export async function getContractInfo(contractId: string): Promise<IContract> {
-    try {
-        const URI_BASE = `${getHederaNetworkMirrorNodeURL()}/api/v1/`
-        const url = URI_BASE + 'contracts/' + contractId
+    const URI_BASE = `${getHederaNetworkMirrorNodeURL()}/api/v1/`
+    const url = URI_BASE + 'contracts/' + contractId
 
-        console.log(url)
-        const retry = 10
-        let i = 0
-        let res = null
-        do {
+    console.log(url)
+    const retry = 10
+    let i = 0
+    let res = null
+    do {
+        try {
             res = await axios.get<IContract>(url)
-            i++
+        } catch (error) {
             await sleep(1000)
-        } while (res.status !== 200 && i < retry)
+        }
+        i++
+    } while ((!res || (res && res.status !== 200)) && i < retry)
 
-        return res.data
-    } catch (error) {
-        throw new Error('Error retrieving the Evm Address : ' + error)
-    }
+    if (!res || res.status !== 200)
+        throw new Error(`Error retrieving the Evm Address (${contractId})`)
+    return res.data
 }
 
 export async function evmToHederaFormat(evmAddress: string): Promise<string> {
