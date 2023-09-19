@@ -29,7 +29,7 @@ exports[`<Topbar /> should render correctly 1`] = `
           data-testid="coin-dropdown"
         >
           <div
-            class="chakra-stack css-ppmla1"
+            class="chakra-stack css-1h0sumw"
           >
             <div
               class="chakra-form-control css-1kxonj9"
@@ -50,7 +50,7 @@ exports[`<Topbar /> should render correctly 1`] = `
                   class="css-1f43avz-a11yText-A11yText"
                 />
                 <div
-                  class=" css-xtthwf"
+                  class=" css-lub9qs"
                 >
                   <div
                     class="css-3y2vuh"
@@ -62,7 +62,7 @@ exports[`<Topbar /> should render correctly 1`] = `
                       0.0.49319786 - TEST
                     </span>
                     <div
-                      class=" css-18euh9p"
+                      class=" css-svnjlw"
                       data-value=""
                     >
                       <input
@@ -73,7 +73,7 @@ exports[`<Topbar /> should render correctly 1`] = `
                         autocapitalize="none"
                         autocomplete="off"
                         autocorrect="off"
-                        class=" css-10wwmqn"
+                        class=" css-146k1ar-input"
                         id="field-:r1:"
                         role="combobox"
                         spellcheck="false"
@@ -125,7 +125,7 @@ exports[`<Topbar /> should render correctly 1`] = `
           </div>
         </div>
         <div
-          class="chakra-stack css-1igwmid"
+          class="chakra-stack css-84zodg"
         >
           <div
             class="css-0"
@@ -180,10 +180,10 @@ exports[`<Topbar /> should render correctly 1`] = `
         data-testid="topbar-right"
       >
         <div
-          class="chakra-stack css-cr3f1i"
+          class="chakra-stack css-d17m5h"
         >
           <div
-            class="chakra-stack css-dk69dq"
+            class="chakra-stack css-jp20jv"
           >
             <div
               class="css-1m8iww1"

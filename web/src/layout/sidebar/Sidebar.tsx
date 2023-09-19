@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { NamedRoutes } from '../../Router/NamedRoutes';
 import SidebarOption from './SidebarOption';
 import {
-	SELECTED_NETWORK_FACTORY_PROXY_CONFIG,
 	SELECTED_WALLET_COIN,
 } from '../../store/slices/walletSlice';
 import { useSelector } from 'react-redux';

@@ -3,7 +3,7 @@
 exports[`<CheckKycOperation /> should render correctly 1`] = `
 <DocumentFragment>
   <div
-    class="chakra-stack css-19t9j1"
+    class="chakra-stack css-16oka5y"
   >
     <h2
       class="chakra-heading css-bqsusc"
@@ -22,7 +22,7 @@ exports[`<CheckKycOperation /> should render correctly 1`] = `
           class="css-1r9sqqd"
         >
           <div
-            class="chakra-stack css-8g8ihq"
+            class="chakra-stack css-n21gh5"
           >
             <h2
               class="chakra-heading css-utvjhb"
@@ -37,10 +37,10 @@ exports[`<CheckKycOperation /> should render correctly 1`] = `
               Operation details
             </p>
             <form
-              class="chakra-stack css-ciro4a"
+              class="chakra-stack css-hdflcv"
             >
               <div
-                class="chakra-stack css-ppmla1"
+                class="chakra-stack css-1h0sumw"
               >
                 <div
                   class="chakra-form-control css-1kxonj9"
@@ -55,7 +55,7 @@ exports[`<CheckKycOperation /> should render correctly 1`] = `
                       id="field-:r1:-label"
                     >
                       <div
-                        class="chakra-stack css-1igwmid"
+                        class="chakra-stack css-84zodg"
                       >
                         <p
                           class="chakra-text css-mgupmj"
@@ -72,12 +72,12 @@ exports[`<CheckKycOperation /> should render correctly 1`] = `
                     </label>
                   </div>
                   <div
-                    class="chakra-input__group css-1y0e7gb"
+                    class="chakra-input__group css-bx0blc"
                     data-group="true"
                   >
                     <input
                       autocomplete="off"
-                      class="chakra-input css-6fkiph"
+                      class="chakra-input css-l1kxkf"
                       data-testid="targetAccount"
                       id="field-:r1:"
                       name="targetAccount"
@@ -90,10 +90,10 @@ exports[`<CheckKycOperation /> should render correctly 1`] = `
             </form>
           </div>
           <div
-            class="chakra-stack css-1tzva4g"
+            class="chakra-stack css-eunu1i"
           >
             <div
-              class="chakra-stack css-rgkoyu"
+              class="chakra-stack css-wqnj46"
             >
               <h2
                 class="chakra-heading css-1udj1g5"
@@ -131,7 +131,7 @@ exports[`<CheckKycOperation /> should render correctly 1`] = `
                         Name
                       </p>
                       <div
-                        class="chakra-stack css-w0g0w4"
+                        class="chakra-stack css-1c8ysgd"
                       >
                         <p
                           class="chakra-text css-mgupmj"
@@ -159,7 +159,7 @@ exports[`<CheckKycOperation /> should render correctly 1`] = `
                         Symbol
                       </p>
                       <div
-                        class="chakra-stack css-w0g0w4"
+                        class="chakra-stack css-1c8ysgd"
                       >
                         <p
                           class="chakra-text css-mgupmj"
@@ -187,7 +187,7 @@ exports[`<CheckKycOperation /> should render correctly 1`] = `
                         Decimals
                       </p>
                       <div
-                        class="chakra-stack css-w0g0w4"
+                        class="chakra-stack css-1c8ysgd"
                       >
                         <p
                           class="chakra-text css-mgupmj"
@@ -289,7 +289,7 @@ exports[`<CheckKycOperation /> should render correctly 1`] = `
                         Supply type
                       </p>
                       <div
-                        class="chakra-stack css-w0g0w4"
+                        class="chakra-stack css-1c8ysgd"
                       >
                         <p
                           class="chakra-text css-mgupmj"
@@ -308,7 +308,7 @@ exports[`<CheckKycOperation /> should render correctly 1`] = `
           class="css-3gu2fl"
         >
           <div
-            class="chakra-stack css-1f6hfsa"
+            class="chakra-stack css-1amf41o"
           >
             <button
               class="chakra-button css-1urzhdw"
