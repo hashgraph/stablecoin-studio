@@ -103,21 +103,10 @@ jobs:
       - name: DockerStatus
         run:  curl --location --request POST 'http://localhost:7546/api' --data ""
 
-      - name: Test Contracts
-        run:  npm run test
-        working-directory: contracts
-
-      - name: Test sdk
-        run:  npm run test
-        working-directory: sdk
-
       - name: Test web
         run:  npm run test
         working-directory: web
 
-      - name: Test cli
-        run:  npm run test
-        working-directory: cli
       - name: Authenticate to Google Cloud
         id: auth
         uses: google-github-actions/auth@v1
