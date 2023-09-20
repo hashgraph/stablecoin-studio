@@ -11,11 +11,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      
+
       - name: Build the Docker image
-        run: docker build -t rpc . 
+        run: docker build -t rpc .
         working-directory: dockerfile
-        
+
       - name: Use Node.js TLS 18.x
         uses: actions/setup-node@v1
         with:
@@ -23,17 +23,17 @@ jobs:
       
       #- name: Config cli
       #  run:  npm config set @hashgraph-dev:registry=https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/  
-      
+
       - name: Set node memory
         run: export NODE_OPTIONS="--max-old-space-size=16384"
-        
+
       - name: Install dependencies Hashconnect
         run: |
           npm install
           npm run build
           npm install
         working-directory: hashconnect/lib
-      
+
       - name: Install dependencies Contracts
         run: |
           npm install
@@ -45,7 +45,7 @@ jobs:
           npm run build
         working-directory: sdk
       - name: Install dependencies Cli
-        run: | 
+        run: |
           npm install
           npm run build
         working-directory: cli
@@ -71,7 +71,7 @@ jobs:
           echo "HEDERA_TOKEN_MANAGER_ADDRESS=0.0.1137621"  >> .env
           echo "FACTORY_ADDRESS=0.0.1137631"  >> .env
         working-directory: sdk
-      
+
       - name: View File
         run: cat .env
         working-directory: sdk
@@ -92,7 +92,7 @@ jobs:
       - name: View File
         run: cat .env
         working-directory: contracts
-      
+
       - name: Run the Docker image
         run:  nohup docker run --network="host" rpc &
       - name: Sleep for 25 seconds
@@ -118,4 +118,4 @@ jobs:
       - name: Test cli
         run:  npm run test
         working-directory: cli
-      
+

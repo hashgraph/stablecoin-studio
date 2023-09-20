@@ -97,45 +97,48 @@ const StableCoinSettings = () => {
 	});
 
 	const optionsHederaTokenManager = async () => {
-		setGettingHederaTokenManager(true);
+		const factoryId: string = await Network.getFactoryAddress();
 
-		try {
-			const hederaTokenManagerOption: any = await Promise.race([
-				SDKService.getHederaTokenManagerList(
-					new GetTokenManagerListRequest({
-						factoryId: await Network.getFactoryAddress(),
+		if (factoryId) {
+			setGettingHederaTokenManager(true);
+
+			try {
+				const hederaTokenManagerOption: any = await Promise.race([
+					SDKService.getHederaTokenManagerList(new GetTokenManagerListRequest({ factoryId })),
+					new Promise((resolve, reject) => {
+						setTimeout(() => {
+							reject(
+								new Error("TokenManager contracts list couldn't be obtained in a reasonable time."),
+							);
+						}, 10000);
 					}),
-				),
-				new Promise((resolve, reject) => {
-					setTimeout(() => {
-						reject(
-							new Error("TokenManager contracts list couldn't be obtained in a reasonable time."),
-						);
-					}, 10000);
-				}),
-			]).catch((e) => {
-				console.log(e.message);
-				onOpen();
+				]).catch((e) => {
+					console.log(e.message);
+					onOpen();
+					throw e;
+				});
+
+				const AllOptions: any[] = [];
+
+				const options = hederaTokenManagerOption.map((item: any) => {
+					return { label: item.value, value: item.value };
+				});
+
+				options.forEach((option: any) => {
+					if (option.value.toString() !== proxyConfig?.implementationAddress?.toString())
+						AllOptions.push(option);
+				});
+
+				setOptionsHederaTokenManagerAddresses(AllOptions.reverse());
+
+				setGettingHederaTokenManager(false);
+			} catch (e) {
+				setGettingHederaTokenManager(false);
 				throw e;
-			});
-
-			const AllOptions: any[] = [];
-
-			const options = hederaTokenManagerOption.map((item: any) => {
-				return { label: item.value, value: item.value };
-			});
-
-			options.forEach((option: any) => {
-				if (option.value.toString() !== proxyConfig?.implementationAddress?.toString())
-					AllOptions.push(option);
-			});
-
-			setOptionsHederaTokenManagerAddresses(AllOptions.reverse());
-
+			}
+		} else {
 			setGettingHederaTokenManager(false);
-		} catch (e) {
-			setGettingHederaTokenManager(false);
-			throw e;
+			setOptionsHederaTokenManagerAddresses([]);
 		}
 	};
 
