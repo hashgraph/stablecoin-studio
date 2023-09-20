@@ -25,7 +25,7 @@ jobs:
       #  run:  npm config set @hashgraph-dev:registry=https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/  
 
       - name: Set node memory
-        run: export NODE_OPTIONS="--max-old-space-size=16384"
+        run: export NODE_OPTIONS="--max-old-space-size=20480"
 
       - name: Install dependencies Hashconnect
         run: |
@@ -111,11 +111,10 @@ jobs:
 #        run:  npm run test
 #        working-directory: sdk
 
-      - name: Test web
-        run:  npm run test
-        working-directory: web
-
       - name: Test cli
         run:  npm run test
         working-directory: cli
 
+      - name: Test web
+        run:  npm run test
+        working-directory: web
