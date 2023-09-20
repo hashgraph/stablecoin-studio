@@ -2,8 +2,8 @@
 
 # Stablecoin Studio SDK
 
-[![SDK - Test](https://github.com/hashgraph/hedera-accelerator-stablecoin/actions/workflows/sdk.test.yml/badge.svg)](https://github.com/hashgraph/hedera-accelerator-stablecoin/actions/workflows/sdk.test.yml)
-[![Latest Version](https://img.shields.io/github/v/tag/hashgraph/hedera-accelerator-stablecoin?sort=semver&label=version)](README.md)
+[![SDK - Test](https://github.com/hashgraph/stablecoin-studio/actions/workflows/sdk.test.yml/badge.svg)](https://github.com/hashgraph/stablecoin-studio/actions/workflows/sdk.test.yml)
+[![Latest Version](https://img.shields.io/github/v/tag/hashgraph/stablecoin-studio?sort=semver&label=version)](README.md)
 [![License](https://img.shields.io/badge/license-apache2-blue.svg)](LICENSE)
 
 </div>
@@ -1415,7 +1415,7 @@ All events use the [standard node event emitting system](https://nodejs.dev/es/l
 
 **Example:**
 
-Check out [Router.tsx](https://github.com/hashgraph/hedera-accelerator-stablecoin/blob/main/web/src/Router/Router.tsx) from the web repository for a comprehensive example in React of how to subscribe to events.
+Check out [Router.tsx](https://github.com/hashgraph/stablecoin-studio/blob/main/web/src/Router/Router.tsx) from the web repository for a comprehensive example in React of how to subscribe to events.
 
 ## Account
 

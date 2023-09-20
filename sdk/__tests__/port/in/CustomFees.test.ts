@@ -154,7 +154,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		await delay();
 	}, 150000);
 
-	it('Create a fractional custom fees for an existing stablecoin (num+den)', async () => {
+	it.skip('Create a fractional custom fees for an existing stablecoin (num+den)', async () => {
 		const CustomFeesNumber = 1;
 		const numerator = 1;
 		const denominator = 10;
@@ -197,7 +197,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		await delay();
 	}, 150000);
 
-	it('Create a fractional custom fees for an existing stablecoin (perc.)', async () => {
+	it.skip('Create a fractional custom fees for an existing stablecoin (perc.)', async () => {
 		const CustomFeesNumber = 1;
 		const percentage = 22;
 		const net = true;

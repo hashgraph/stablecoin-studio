@@ -149,7 +149,7 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
               Roles Assignment 
               <a
                 class="chakra-link css-spn4bz"
-                href="https://github.com/hashgraph/hedera-accelerator-stablecoin#what-is-a-stable-coin"
+                href="https://github.com/hashgraph/stablecoin-studio#what-is-a-stable-coin"
                 rel="noopener"
                 target="_blank"
               >

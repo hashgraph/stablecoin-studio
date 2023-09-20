@@ -26,7 +26,7 @@
 		"modalErrorTitle": "Recovering HederaTokenManager implementations",
 		"modalErrorDescription": "HederaTokenManager contracts implementations couldn't be obtained.",
 		"hederaTokenManager": "HederaTokenManager impl.",
-		"hederaTokenManagerLink": "https://github.com/hashgraph/hedera-accelerator-stablecoin/tree/main/contracts",
+		"hederaTokenManagerLink": "https://github.com/hashgraph/stablecoin-studio/tree/main/contracts",
 		"hederaTokenManagerPlaceholder": "Choose TokenManager address ID",
 		"hederaTokenManagerErrorRPC": "The RPC service is not working as expected",
 		"hederaTokenManagerErrorTime": "The TokenManager contracts list couldn't be obtained in a reasonable time."
@@ -70,7 +70,7 @@
 		"keysTitle": "Configure Permissions",
 		"titleLink": "https://docs.hedera.com/hedera/sdks-and-apis/sdks/readme-1/define-a-token",
 		"rolesTitle": "Roles Assignment",
-		"rolesLink": "https://github.com/hashgraph/hedera-accelerator-stablecoin#what-is-a-stable-coin",
+		"rolesLink": "https://github.com/hashgraph/stablecoin-studio#what-is-a-stable-coin",
 		"totalSupply": "Total supply",
 		"treasuryAccountAddress": "Treasury Account Address",
 		"wipe": "Wipe",
@@ -100,7 +100,7 @@
 		"addressPor": "Proof-of-reserve address",
 		"initialSupplyPor": "Proof-of-reserve supply",
 		"initialSupplyPorExternal": "External PoR",
-		"link": "https://github.com/hashgraph/hedera-accelerator-stablecoin/blob/main/README.md#Proof-of-reserve"
+		"link": "https://github.com/hashgraph/stablecoin-studio/blob/main/README.md#Proof-of-reserve"
 	},
 	"proxyAdmin": {
 		"title": "Proxy Admin",
