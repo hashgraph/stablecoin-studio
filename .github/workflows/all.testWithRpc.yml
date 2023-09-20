@@ -56,10 +56,10 @@ jobs:
       - name: Create file
         run: |
           touch .env
-          echo "CLIENT_PRIVATE_KEY_ECDSA='3b246060c02fb81582b2299f947e72447d81523575f83a63bf2b7397421eb709'" >> .env
-          echo "CLIENT_PUBLIC_KEY_ECDSA='29087cf808aea861034668f7f2d6fe56299d62746414ac2cc2d3b147ba301b81'"  >> .env
-          echo "CLIENT_EVM_ADDRESS_ECDSA='0x3a5c210bd658f7509a5f63df48f710a0240f2cab'" >> .env
-          echo "CLIENT_ACCOUNT_ID_ECDSA='0.0.442280'" >> .env
+          echo "CLIENT_PRIVATE_KEY_ECDSA='0f8f88855b7c84c0c3ea75fbe3db277101ac0eaa0c10df6d41d88548bde545b3'" >> .env
+          echo "CLIENT_PUBLIC_KEY_ECDSA='757bf125f92eef5e2cc1f35e62477b1c438fba628630a5fc73f6424a1467701f'"  >> .env
+          echo "CLIENT_EVM_ADDRESS_ECDSA='0xbd0f3683d1db402d73e479ea625daacdcd89ca4d'" >> .env
+          echo "CLIENT_ACCOUNT_ID_ECDSA='0.0.2113061'" >> .env
           echo "CLIENT_PRIVATE_KEY_ED25519='016c98e8556ca5b1298602652da290de928ca29c336215baa88de9c629f26e99'"  >> .env
           echo "CLIENT_PUBLIC_KEY_ED25519='71e784a0c58c3e0fff92abc5962a5e8e048382723fa136bb71c4d183687456df'"  >> .env
           echo "CLIENT_EVM_ADDRESS_ED25519='0x000000000000000000000000000000000006bfa9'"  >> .env
