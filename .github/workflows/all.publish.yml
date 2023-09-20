@@ -1,0 +1,74 @@
+name: Publishing
+on: 
+  workflow_dispatch:
+  push:
+    branches: []
+jobs:
+  test-node:
+    name: docker
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        
+      - name: Use Node.js TLS 18.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 18.x
+      
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: 'projects/101730247931/locations/global/workloadIdentityPools/registry-identity-pool/providers/gh-provider'
+          service_account: 'stablecoin-npm-publisher@hedera-registry.iam.gserviceaccount.com'
+          token_format: 'access_token'
+      - name: Setup Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+      - name: Install contracts dependencies 
+        run: npm run install:contracts
+      - name: Create .npmrc contracts
+        run: |
+          cd contracts && cat << EOF > .npmrc
+            @hashgraph:registry=https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/
+            //us-npm.pkg.dev/hedera-registry/stablecoin-npm/:_authToken="${{ steps.auth.outputs.access_token }}"
+            //us-npm.pkg.dev/hedera-registry/stablecoin-npm/:always-auth=true
+          EOF 
+      - name: Publish contracts package
+        run: npm run publish:contracts
+      - name: Install hashconnect dependencies 
+        run: npm run install:hashconnect
+      - name: Create .npmrc hashconnect
+        run: |
+          cd hashconnect/lib && cat << EOF > .npmrc
+            @hashgraph:registry=https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/
+            //us-npm.pkg.dev/hedera-registry/stablecoin-npm/:_authToken="${{ steps.auth.outputs.access_token }}"
+            //us-npm.pkg.dev/hedera-registry/stablecoin-npm/:always-auth=true
+          EOF 
+      - name: Publish hashconnect package
+        run: npm run publish:hashconnect
+      - name: Install sdk dependencies 
+        run: npm run install:sdk
+      - name: Create .npmrc sdk
+        run: |
+          cd sdk && cat << EOF > .npmrc
+            @hashgraph:registry=https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/
+            //us-npm.pkg.dev/hedera-registry/stablecoin-npm/:_authToken="${{ steps.auth.outputs.access_token }}"
+            //us-npm.pkg.dev/hedera-registry/stablecoin-npm/:always-auth=true
+          EOF 
+      - name: Publish sdk package
+        run: npm run publish:sdk
+      - name: Install cli dependencies 
+        run: npm run install:cli
+      - name: Create .npmrc cli
+        run: |
+          cd cli && cat << EOF > .npmrc
+            @hashgraph:registry=https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/
+            //us-npm.pkg.dev/hedera-registry/stablecoin-npm/:_authToken="${{ steps.auth.outputs.access_token }}"
+            //us-npm.pkg.dev/hedera-registry/stablecoin-npm/:always-auth=true
+          EOF 
+      - name: Publish cli package
+        run: npm run publish:cli
+        env:
+          CI: ""
+          
