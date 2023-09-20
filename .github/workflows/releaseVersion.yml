@@ -2,7 +2,7 @@ name: Release Version
 on: 
   workflow_dispatch:
   push:
-    branches: [main]
+    branches: []
 jobs:
   test-node:
     name: docker
