@@ -1,4 +1,4 @@
-name: LocalRPC
+name: Testing
 on: 
   workflow_dispatch:
   push:
