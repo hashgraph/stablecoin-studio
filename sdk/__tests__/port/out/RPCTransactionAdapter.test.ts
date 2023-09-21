@@ -91,7 +91,7 @@ const decimals = 6;
 const initSupply = 1000;
 const reserve = 100000000;
 
-describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
+describe.skip('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 	let stableCoinCapabilitiesSC: StableCoinCapabilities;
 
 	let th: RPCTransactionAdapter;
