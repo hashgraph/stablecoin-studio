@@ -94,7 +94,7 @@ jobs:
         working-directory: contracts
 
       - name: Run the Docker image
-        run:  nohup docker run --network="host" rpc &
+        run: nohup docker run --network="host" rpc &
       - name: Sleep for 25 seconds
         run: sleep 25s
         shell: bash
@@ -103,18 +103,26 @@ jobs:
       - name: DockerStatus
         run:  curl --location --request POST 'http://localhost:7546/api' --data ""
 
-      - name: Test Contracts
-        run:  npm run test
-        working-directory: contracts
-
-#      - name: Test sdk
-#        run:  npm run test
-#        working-directory: sdk
-
       - name: Test cli
-        run:  npm run test
+        run: |
+          npm run test
+          npm run cleanCache
         working-directory: cli
 
       - name: Test web
-        run:  npm run test
+        run: |
+          npm run test
+          npm run cleanCache
         working-directory: web
+
+      - name: Test Contracts
+        run: |
+          npm run test
+          npm run cleanCache
+        working-directory: contracts
+
+      - name: Test sdk
+        run: |
+          npm run test
+          npm run cleanCache
+        working-directory: sdk
