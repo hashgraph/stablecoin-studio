@@ -25,7 +25,7 @@ jobs:
       #  run:  npm config set @hashgraph-dev:registry=https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/  
 
       - name: Set node memory
-        run: export NODE_OPTIONS="--max-old-space-size=20480"
+        run: export NODE_OPTIONS="--max-old-space-size=32768"
 
       - name: Install dependencies Hashconnect
         run: |
@@ -60,10 +60,10 @@ jobs:
           echo "CLIENT_PUBLIC_KEY_ECDSA='757bf125f92eef5e2cc1f35e62477b1c438fba628630a5fc73f6424a1467701f'"  >> .env
           echo "CLIENT_EVM_ADDRESS_ECDSA='0xbd0f3683d1db402d73e479ea625daacdcd89ca4d'" >> .env
           echo "CLIENT_ACCOUNT_ID_ECDSA='0.0.2113061'" >> .env
-          echo "CLIENT_PRIVATE_KEY_ED25519='016c98e8556ca5b1298602652da290de928ca29c336215baa88de9c629f26e99'"  >> .env
-          echo "CLIENT_PUBLIC_KEY_ED25519='71e784a0c58c3e0fff92abc5962a5e8e048382723fa136bb71c4d183687456df'"  >> .env
-          echo "CLIENT_EVM_ADDRESS_ED25519='0x000000000000000000000000000000000006bfa9'"  >> .env
-          echo "CLIENT_ACCOUNT_ID_ED25519='0.0.442281'"  >> .env
+          echo "CLIENT_PRIVATE_KEY_ED25519='ad84097fd0daae75ed9b55fc5c6a2c3d81431d4b847d4aba14b9ef98db75b815'"  >> .env
+          echo "CLIENT_PUBLIC_KEY_ED25519='ee5478aaa2854e34b1b2a2a6fab7681dd37fec2cd425662187f7c92c36df1165'"  >> .env
+          echo "CLIENT_EVM_ADDRESS_ED25519='0x0000000000000000000000000000000000113d07'"  >> .env
+          echo "CLIENT_ACCOUNT_ID_ED25519='0.0.1129735'"  >> .env
           echo "CLIENT_PRIVATE_KEY_ED25519_2='915a4680c82cb23fc2b0f00bda27ff3767ddfeb064c986221dddbba944d9e17c'"  >> .env          
           echo "CLIENT_PUBLIC_KEY_ED25519_2='369b111faa5d011b34b0c434340f0fa9584fcc0c92b5f5df3883e5bfbc725b3f'"  >> .env
           echo "CLIENT_EVM_ADDRESS_ED25519_2='0x000000000000000000000000000000000006bfb5'"  >> .env
@@ -79,10 +79,10 @@ jobs:
       - name: Create contracts
         run: |
           touch .env
-          echo "TESTNET_HEDERA_OPERATOR_PRIVATEKEY='302e020100300506032b657004220420016c98e8556ca5b1298602652da290de928ca29c336215baa88de9c629f26e99'"  >> .env
-          echo "TESTNET_HEDERA_OPERATOR_PUBLICKEY='302a300506032b657003210071e784a0c58c3e0fff92abc5962a5e8e048382723fa136bb71c4d183687456df'"  >> .env
+          echo "TESTNET_HEDERA_OPERATOR_PRIVATEKEY='302e020100300506032b65700422042044fbf876d64486b66313fa948cc59b690b0569f419ec84019c7b284b403c0445'"  >> .env
+          echo "TESTNET_HEDERA_OPERATOR_PUBLICKEY='302a300506032b6570032100b173df887f8af85ca71b1733d47bd76fbbc91e767343abb17ea448fefa26544a'"  >> .env
           echo "TESTNET_HEDERA_OPERATOR_ED25519='true'"  >> .env
-          echo "TESTNET_HEDERA_OPERATOR_ACCOUNT='0.0.442281'"  >> .env
+          echo "TESTNET_HEDERA_OPERATOR_ACCOUNT='0.0.2141201'"  >> .env
           echo "TESTNET_HEDERA_NON_OPERATOR_PRIVATEKEY='302e020100300506032b657004220420915a4680c82cb23fc2b0f00bda27ff3767ddfeb064c986221dddbba944d9e17c'"  >> .env          
           echo "TESTNET_HEDERA_NON_OPERATOR_PUBLICKEY='302a300506032b6570032100369b111faa5d011b34b0c434340f0fa9584fcc0c92b5f5df3883e5bfbc725b3f'"  >> .env
           echo "TESTNET_HEDERA_NON_OPERATOR_ED25519='true'"  >> .env
