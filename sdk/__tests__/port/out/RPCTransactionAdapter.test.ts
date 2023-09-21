@@ -92,7 +92,6 @@ const initSupply = 1000;
 const reserve = 100000000;
 
 describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
-	
 	let stableCoinCapabilitiesSC: StableCoinCapabilities;
 
 	let th: RPCTransactionAdapter;
