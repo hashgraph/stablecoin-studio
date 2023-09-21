@@ -25,7 +25,7 @@
     "build:watch": "tsc -w -p tsconfig.json",
     "build:release": "npm run clean && tsc -p tsconfig.release.json",
     "lint": "eslint --ext .ts --ext .mts .",
-    "test": "npx jest --coverage --forceExit",
+    "test": "npx jest --maxWorkers 2",
     "cleanCache": "npx jest --clearCache",
     "test:ci": "NODE_OPTIONS=--experimental-vm-modules npx jest --ci --json --coverage --forceExit --testLocationInResults --outputFile=report.json",
     "test:vm": "NODE_OPTIONS=--experimental-vm-modules npm run test",
