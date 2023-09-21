@@ -7,7 +7,8 @@ jobs:
   test-node:
     name: docker
     runs-on: ubuntu-latest
-    
+    env:
+      NODE_OPTIONS: "--max_old_space_size=32768"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -23,9 +24,6 @@ jobs:
       
       #- name: Config cli
       #  run:  npm config set @hashgraph-dev:registry=https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/  
-
-      - name: Set node memory
-        run: export NODE_OPTIONS="--max-old-space-size=32768"
 
       - name: Install dependencies Hashconnect
         run: |
