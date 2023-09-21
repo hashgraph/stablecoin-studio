@@ -7,7 +7,8 @@ on:
 jobs:
   test-node:
     name: docker    
-    runs-on: [ self-hosted, Linux, medium, ephemeral ]
+    runs-on: ubuntu-latest
+    #runs-on: [ self-hosted, Linux, medium, ephemeral ]
     
     steps:
       - name: Checkout repository
