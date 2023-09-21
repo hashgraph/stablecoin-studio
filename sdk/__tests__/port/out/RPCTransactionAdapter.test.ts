@@ -102,7 +102,7 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 	let proxy: string;
 
 	const delay = async (seconds = 4): Promise<void> => {
-		seconds = seconds * 1000;
+		seconds = seconds * 10000;
 		await new Promise((r) => setTimeout(r, seconds));
 	};
 
