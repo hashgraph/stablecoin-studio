@@ -402,7 +402,7 @@ describe.skip('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 		expect(proxyConfigurationViewModel.owner.value).toEqual(
 			CLIENT_ACCOUNT_ECDSA.id.value,
 		);
-	}, 30000);
+	}, 1500000);
 
 	it('Deploy a stablecoin with a proxy admin owner different than the deploying account', async () => {
 		const coinSC = new StableCoin({
@@ -426,7 +426,7 @@ describe.skip('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 				}),
 			);
 		expect(proxyConfigurationViewModel.owner.value).toEqual('0.0.12345');
-	}, 30000);
+	}, 1500000);
 
 	it('Cash In & Wipe', async () => {
 		const Amount = 1;

@@ -1,14 +1,13 @@
 name: Testing
 on: 
-  workflow_dispatch:
+  pull_request:
   push:
     branches: [main]
 jobs:
   test-node:
-    name: docker
-    runs-on: ubuntu-latest
-    env:
-      NODE_OPTIONS: "--max_old_space_size=32768"
+    name: docker    
+    runs-on: [ self-hosted, Linux, medium, ephemeral ]
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -17,13 +16,13 @@ jobs:
         run: docker build -t rpc .
         working-directory: dockerfile
 
-      - name: Use Node.js TLS 18.x
-        uses: actions/setup-node@v1
+      - name: Setup NodeJS Environment
+        uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d
         with:
-          node-version: 18.x
-      
-      #- name: Config cli
-      #  run:  npm config set @hashgraph-dev:registry=https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/  
+          node-version: 18.x      
+          
+      - name: Set node memory
+        run: export NODE_OPTIONS="--max-old-space-size=32768"
 
       - name: Install dependencies Hashconnect
         run: |
