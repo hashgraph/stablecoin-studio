@@ -57,41 +57,33 @@ jobs:
       - name: Create file
         run: |
           touch .env
-          echo "CLIENT_PRIVATE_KEY_ECDSA='0f8f88855b7c84c0c3ea75fbe3db277101ac0eaa0c10df6d41d88548bde545b3'" >> .env
-          echo "CLIENT_PUBLIC_KEY_ECDSA='757bf125f92eef5e2cc1f35e62477b1c438fba628630a5fc73f6424a1467701f'"  >> .env
-          echo "CLIENT_EVM_ADDRESS_ECDSA='0xbd0f3683d1db402d73e479ea625daacdcd89ca4d'" >> .env
-          echo "CLIENT_ACCOUNT_ID_ECDSA='0.0.2113061'" >> .env
-          echo "CLIENT_PRIVATE_KEY_ED25519='ad84097fd0daae75ed9b55fc5c6a2c3d81431d4b847d4aba14b9ef98db75b815'"  >> .env
-          echo "CLIENT_PUBLIC_KEY_ED25519='ee5478aaa2854e34b1b2a2a6fab7681dd37fec2cd425662187f7c92c36df1165'"  >> .env
-          echo "CLIENT_EVM_ADDRESS_ED25519='0x0000000000000000000000000000000000113d07'"  >> .env
-          echo "CLIENT_ACCOUNT_ID_ED25519='0.0.1129735'"  >> .env
-          echo "CLIENT_PRIVATE_KEY_ED25519_2='915a4680c82cb23fc2b0f00bda27ff3767ddfeb064c986221dddbba944d9e17c'"  >> .env          
-          echo "CLIENT_PUBLIC_KEY_ED25519_2='369b111faa5d011b34b0c434340f0fa9584fcc0c92b5f5df3883e5bfbc725b3f'"  >> .env
-          echo "CLIENT_EVM_ADDRESS_ED25519_2='0x000000000000000000000000000000000006bfb5'"  >> .env
-          echo "CLIENT_ACCOUNT_ID_ED25519_2='0.0.442293'"  >> .env
-          echo "HEDERA_TOKEN_MANAGER_ADDRESS=0.0.1137621"  >> .env
-          echo "FACTORY_ADDRESS=0.0.1137631"  >> .env
+          echo "CLIENT_PRIVATE_KEY_ECDSA=${{ secrets.PRIVATE_KEY_ECDSA }}" >> .env
+          echo "CLIENT_PUBLIC_KEY_ECDSA=${{ secrets.PUBLIC_KEY_ECDSA }}"  >> .env
+          echo "CLIENT_EVM_ADDRESS_ECDSA=${{ secrets.EVM_ADDRESS_ECDSA }}" >> .env
+          echo "CLIENT_ACCOUNT_ID_ECDSA=${{ secrets.ACCOUNT_ID_ECDSA }}" >> .env
+          echo "CLIENT_PRIVATE_KEY_ED25519=${{ secrets.PRIVATE_KEY_ED25519 }}"  >> .env
+          echo "CLIENT_PUBLIC_KEY_ED25519=${{ secrets.PUBLIC_KEY_ED25519 }}"  >> .env
+          echo "CLIENT_EVM_ADDRESS_ED25519=${{ secrets.EVM_ADDRESS_ED25519 }}"  >> .env
+          echo "CLIENT_ACCOUNT_ID_ED25519=${{ secrets.ACCOUNT_ID_ED25519 }}"  >> .env
+          echo "CLIENT_PRIVATE_KEY_ED25519_2=${{ secrets.PRIVATE_KEY_ED25519_2 }}"  >> .env          
+          echo "CLIENT_PUBLIC_KEY_ED25519_2=${{ secrets.PUBLIC_KEY_ED25519_2 }}"  >> .env
+          echo "CLIENT_EVM_ADDRESS_ED25519_2=${{ secrets.EVM_ADDRESS_ED25519_2 }}"  >> .env
+          echo "CLIENT_ACCOUNT_ID_ED25519_2=${{ secrets.ACCOUNT_ID_ED25519_2 }}"  >> .env
+          echo "HEDERA_TOKEN_MANAGER_ADDRESS=0.0.14455016"  >> .env
+          echo "FACTORY_ADDRESS=0.0.14455068"  >> .env
         working-directory: sdk
-
-      - name: View File
-        run: cat .env
-        working-directory: sdk
-
+    
       - name: Create contracts
         run: |
           touch .env
-          echo "TESTNET_HEDERA_OPERATOR_PRIVATEKEY='302e020100300506032b65700422042044fbf876d64486b66313fa948cc59b690b0569f419ec84019c7b284b403c0445'"  >> .env
-          echo "TESTNET_HEDERA_OPERATOR_PUBLICKEY='302a300506032b6570032100b173df887f8af85ca71b1733d47bd76fbbc91e767343abb17ea448fefa26544a'"  >> .env
+          echo "TESTNET_HEDERA_OPERATOR_PRIVATEKEY=${{ secrets.PRIVATE_KEY_ED25519 }}"  >> .env
+          echo "TESTNET_HEDERA_OPERATOR_PUBLICKEY=${{ secrets.PUBLIC_KEY_ED25519 }}"  >> .env
           echo "TESTNET_HEDERA_OPERATOR_ED25519='true'"  >> .env
-          echo "TESTNET_HEDERA_OPERATOR_ACCOUNT='0.0.2141201'"  >> .env
-          echo "TESTNET_HEDERA_NON_OPERATOR_PRIVATEKEY='302e020100300506032b657004220420915a4680c82cb23fc2b0f00bda27ff3767ddfeb064c986221dddbba944d9e17c'"  >> .env          
-          echo "TESTNET_HEDERA_NON_OPERATOR_PUBLICKEY='302a300506032b6570032100369b111faa5d011b34b0c434340f0fa9584fcc0c92b5f5df3883e5bfbc725b3f'"  >> .env
+          echo "TESTNET_HEDERA_OPERATOR_ACCOUNT=${{ secrets.ACCOUNT_ID_ED25519 }}"  >> .env
+          echo "TESTNET_HEDERA_NON_OPERATOR_PRIVATEKEY=${{ secrets.PRIVATE_KEY_ED25519_2 }}"  >> .env          
+          echo "TESTNET_HEDERA_NON_OPERATOR_PUBLICKEY=${{ secrets.PUBLIC_KEY_ED25519_2 }}"  >> .env
           echo "TESTNET_HEDERA_NON_OPERATOR_ED25519='true'"  >> .env
-          echo "TESTNET_HEDERA_NON_OPERATOR_ACCOUNT='0.0.442293'"  >> .env
-        working-directory: contracts
-
-      - name: View File
-        run: cat .env
+          echo "TESTNET_HEDERA_NON_OPERATOR_ACCOUNT=${{ secrets.ACCOUNT_ID_ED25519_2 }}"  >> .env
         working-directory: contracts
 
       - name: Test cli
