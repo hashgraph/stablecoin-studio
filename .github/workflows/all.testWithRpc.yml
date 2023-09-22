@@ -8,6 +8,8 @@ jobs:
   test-node:
     name: docker    
     runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: "--max-old-space-size=32768"
     #runs-on: [ self-hosted, Linux, medium, ephemeral ]
     
     steps:
