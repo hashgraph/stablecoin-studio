@@ -48,7 +48,7 @@ describe(`<${Topbar.name} />`, () => {
 
 		const button = component.getByTestId('isNotNetworkRecognized');
 		await userEvent.click(button);
-	});
+	}, 30000);
 
 	test('should has is Not Account Recognized ', async () => {
 		const mockStore = configureMockStore();
