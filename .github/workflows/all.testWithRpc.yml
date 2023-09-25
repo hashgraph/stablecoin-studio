@@ -6,7 +6,7 @@ on:
 jobs:
   test-node:
     name: docker    
-    runs-on: ubuntu-latest
+    runs-on: [ self-hosted, Linux, medium, ephemeral ]
     env:
       NODE_OPTIONS: "--max-old-space-size=32768"
     
@@ -23,9 +23,6 @@ jobs:
         with:
           node-version: 18.x      
           
-      - name: Set node memory
-        run: export NODE_OPTIONS="--max-old-space-size=32768"
-
       - name: Install dependencies Hashconnect
         run: |
           npm install

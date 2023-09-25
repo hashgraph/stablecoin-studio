@@ -6,15 +6,16 @@ on:
 jobs:
   test-node:
     name: docker
-    runs-on: ubuntu-latest
+    runs-on: [ self-hosted, Linux, medium, ephemeral ]
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
         
-      - name: Use Node.js TLS 18.x
-        uses: actions/setup-node@v1
+      - name: Setup NodeJS Environment
+        uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d
         with:
-          node-version: 18.x
+          node-version: 18.x      
       
       - name: Authenticate to Google Cloud
         id: auth
