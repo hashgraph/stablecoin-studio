@@ -57,7 +57,8 @@
 		"build:watch": "concurrently --kill-others --names \"ESM,CJS\" \"npx tsc -w -p tsconfig.json\" \"npx tsc -w -p tsconfig-cjs.json\"",
 		"build:release": "npm run clean && tsc -p tsconfig.release.json",
 		"lint": "eslint . --ext .ts --ext .mts",
-		"test": "npx jest --coverage --forceExit",
+		"test": "NODE_OPTIONS=--max-old-space-size=16384 npx jest --coverage --forceExit",
+		"cleanCache": "npx jest --clearCache",
 		"prettier": "prettier --config .prettierrc --write .",
 		"format:imports": "npx format-imports ./src",
 		"test:watch": "concurrently --kill-others \"npm run build:watch\" \"npm run test:jest:watch\"",
@@ -79,7 +80,7 @@
 		"dotenv": "^16.0.3",
 		"ethers": "^5.7.2",
 		"fast-safe-stringify": "^2.1.1",
-		"@hashgraph-dev/hashconnect": "1.9.1",
+		"@hashgraph-dev/hashconnect": "./../hashconnect/lib",
 		"perf_hooks": "^0.0.1",
 		"reflect-metadata": "^0.1.13",
 		"ts-xor": "^1.0.8",
@@ -89,7 +90,7 @@
 		"web3": "^1.8.1",
 		"winston": "^3.8.2",
 		"winston-daily-rotate-file": "^4.7.1",
-		"@hashgraph-dev/stablecoin-npm-contracts": "1.9.1"
+		"@hashgraph-dev/stablecoin-npm-contracts": "./../contracts"
 	},
 	"volta": {
 		"node": "16.13.0"

@@ -6,6 +6,7 @@ import configureMockStore from 'redux-mock-store';
 import { act } from '@testing-library/react';
 import SDKService from '../../../../services/SDKService';
 import ContractId from '@hashgraph-dev/stablecoin-npm-sdk/build/esm/src/domain/context/contract/ContractId';
+import { Network } from '@hashgraph-dev/stablecoin-npm-sdk';
 
 const mockStore = configureMockStore();
 
@@ -48,6 +49,8 @@ describe(`<${StableCoinSettings.name} />`, () => {
 				}),
 			}),
 		}));
+
+		jest.spyOn(Network, 'getFactoryAddress').mockReturnValue('0.0.12345');
 
 		jest
 			.spyOn(SDKService, 'getHederaTokenManagerList')
@@ -136,6 +139,9 @@ describe(`<${StableCoinSettings.name} />`, () => {
 				}),
 			}),
 		}));
+
+		
+		jest.spyOn(Network, 'getFactoryAddress').mockReturnValue('0.0.12345');
 
 		jest
 			.spyOn(SDKService, 'getHederaTokenManagerList')

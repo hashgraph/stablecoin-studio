@@ -6,7 +6,7 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
     class="css-130jr3z"
   >
     <div
-      class="chakra-stack css-8csoc2"
+      class="chakra-stack css-135a0es"
     >
       <h2
         class="chakra-heading css-p7jgmy"
@@ -36,10 +36,10 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
         </div>
       </h2>
       <form
-        class="chakra-stack css-1se0447"
+        class="chakra-stack css-1tjpxl5"
       >
         <div
-          class="chakra-stack css-801656"
+          class="chakra-stack css-1tchtwa"
         >
           <p
             class="chakra-text css-1x1jfpp"
@@ -48,7 +48,7 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
           </p>
         </div>
         <div
-          class="chakra-stack css-oswb0z"
+          class="chakra-stack css-oat9fj"
         >
           <p
             class="chakra-text css-mgupmj"
@@ -67,12 +67,12 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
           </p>
         </div>
         <div
-          class="chakra-stack css-801656"
+          class="chakra-stack css-1tchtwa"
         >
           <p
             class="chakra-text css-1x1jfpp"
           >
-            Enable KYC accounts flags?
+            Enable KYC accounts flags? 
             <a
               class="chakra-link css-spn4bz"
               href="https://hedera.com/blog/get-started-with-the-hedera-token-service-part-2-kyc-update-and-scheduled-transactions"
@@ -93,15 +93,15 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
           </p>
         </div>
         <div
-          class="chakra-stack css-tl3ftk"
+          class="chakra-stack css-owjkmg"
         />
         <div
-          class="chakra-stack css-801656"
+          class="chakra-stack css-1tchtwa"
         >
           <p
             class="chakra-text css-1x1jfpp"
           >
-            Do you want to add custom fees?
+            Do you want to add custom fees? 
             <a
               class="chakra-link css-spn4bz"
               href="https://docs.hedera.com/hedera/sdks-and-apis/sdks/readme-1/custom-token-fees"
@@ -122,12 +122,12 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
           </p>
         </div>
         <div
-          class="chakra-stack css-tl3ftk"
+          class="chakra-stack css-owjkmg"
         />
       </form>
     </div>
     <div
-      class="chakra-stack css-8csoc2"
+      class="chakra-stack css-135a0es"
     >
       <div
         class="chakra-accordion css-0"
@@ -146,7 +146,7 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
             <span
               class="css-1irdfqk"
             >
-              Roles assignment
+              Roles Assignment 
               <a
                 class="chakra-link css-spn4bz"
                 href="https://github.com/hashgraph/stablecoin-studio#what-is-a-stable-coin"
@@ -192,10 +192,10 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
                 data-testid="supplier-quantity"
               >
                 <div
-                  class="chakra-stack css-tl3ftk"
+                  class="chakra-stack css-owjkmg"
                 />
                 <div
-                  class="chakra-stack css-14w8hkr"
+                  class="chakra-stack css-1wytzre"
                 >
                   <p
                     class="chakra-text css-4dzt3e"
@@ -205,22 +205,22 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
                 </div>
               </div>
               <div
-                class="chakra-stack css-tl3ftk"
+                class="chakra-stack css-owjkmg"
               />
               <div
-                class="chakra-stack css-tl3ftk"
+                class="chakra-stack css-owjkmg"
               />
               <div
-                class="chakra-stack css-tl3ftk"
+                class="chakra-stack css-owjkmg"
               />
               <div
-                class="chakra-stack css-tl3ftk"
+                class="chakra-stack css-owjkmg"
               />
               <div
-                class="chakra-stack css-tl3ftk"
+                class="chakra-stack css-owjkmg"
               />
               <div
-                class="chakra-stack css-tl3ftk"
+                class="chakra-stack css-owjkmg"
               />
             </div>
           </div>
@@ -228,7 +228,7 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
       </div>
     </div>
     <div
-      class="chakra-stack css-8csoc2"
+      class="chakra-stack css-135a0es"
     >
       <div
         class="chakra-accordion css-0"
@@ -247,7 +247,7 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
             <span
               class="css-1irdfqk"
             >
-              Proxy admin
+              Proxy Admin
             </span>
             <svg
               aria-hidden="true"
@@ -276,7 +276,7 @@ exports[`<ManagementPermissions /> should render correctly 1`] = `
                 data-testid="supplier-quantity"
               >
                 <div
-                  class="chakra-stack css-14w8hkr"
+                  class="chakra-stack css-1wytzre"
                 >
                   <p
                     class="chakra-text css-4dzt3e"

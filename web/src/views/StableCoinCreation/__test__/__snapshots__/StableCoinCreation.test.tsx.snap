@@ -3,10 +3,10 @@
 exports[`<StableCoinCreation /> should render correctly 1`] = `
 <DocumentFragment>
   <div
-    class="chakra-stack css-19t9j1"
+    class="chakra-stack css-16oka5y"
   >
     <div
-      class="chakra-stack css-1u2nxl"
+      class="chakra-stack css-5vgp34"
     >
       <p
         class="chakra-text css-ai2tcq"
@@ -22,7 +22,7 @@ exports[`<StableCoinCreation /> should render correctly 1`] = `
       </i>
     </div>
     <div
-      class="chakra-stack css-19t9j1"
+      class="chakra-stack css-16oka5y"
     >
       <h2
         class="chakra-heading css-bqsusc"
@@ -173,13 +173,13 @@ exports[`<StableCoinCreation /> should render correctly 1`] = `
               tabindex="0"
             >
               <div
-                class="chakra-stack css-tc011i"
+                class="chakra-stack css-1eot3nj"
               >
                 <div
                   class="css-1c3xk1u"
                 >
                   <div
-                    class="chakra-stack css-1wbej9n"
+                    class="chakra-stack css-1f6llri"
                   >
                     <div
                       class="css-10opskl"
