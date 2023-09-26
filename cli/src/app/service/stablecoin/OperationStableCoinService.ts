@@ -3070,7 +3070,9 @@ export default class OperationStableCoinService extends Service {
         updateRequest.feeScheduleKey = await this.checkAnswer(
           await utilsService.defaultMultipleAsk(
             language.getText('stablecoin.features.feeSchedule'),
-            language.getArrayFromObject('wizard.nonNoneFeatureOptions'),
+            language.getArrayFromObject(
+              'wizard.nonSmartContractAndNoneFeatureOptions',
+            ),
           ),
         );
         break;
