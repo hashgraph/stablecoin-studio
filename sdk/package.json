@@ -72,7 +72,7 @@
 	"dependencies": {
 		"@hashgraph/hethers": "^1.2.5",
 		"@hashgraph/sdk": "^2.23.0",
-		"@hashgraph/cryptography": "1.4.3",
+		"@hashgraph/cryptography": "1.4.7",
 		"@metamask/detect-provider": "^2.0.0",
 		"@metamask/providers": "^10.2.1",
 		"chai": "^4.3.6",
