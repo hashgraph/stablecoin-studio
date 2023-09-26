@@ -2973,6 +2973,11 @@ export default class OperationStableCoinService extends Service {
         );
         if (confirm) {
           try {
+            if ((Object.entries(updateRequest)
+              .filter(([key, value]) => key === 'symbol' && value !== undefined)).length > 0) {
+              this.stableCoinWithSymbol = `${updateRequest.tokenId} - ${updateRequest.symbol}`;
+            }
+
             await new UpdateStableCoinService().update(updateRequest);
             updateRequest = new UpdateRequest({ tokenId: this.stableCoinId });
           } catch (error) {
