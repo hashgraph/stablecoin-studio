@@ -406,7 +406,7 @@ const ManagementPermissions = ({
 					</AccordionItem>
 				</Accordion>
 			</Stack>
-			<Stack minW={400}>
+			<Stack minW={400} maxW={400}>
 				<Accordion defaultIndex={[1]} allowMultiple>
 					<AccordionItem>
 						<AccordionButton>
