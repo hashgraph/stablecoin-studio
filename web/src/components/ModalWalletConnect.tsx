@@ -108,6 +108,7 @@ const ModalWalletConnect = () => {
 			} else {
 				setError(error.message);
 			}
+			setLoading(undefined);
 		}
 	};
 
@@ -139,6 +140,7 @@ const ModalWalletConnect = () => {
 
 	const unHandleConnectHashpackWallet = () => {
 		setHashpackSelected(false);
+		setLoading(undefined);
 	};
 
 	const handleConnectHashpackWalletConfirmed = () => {
