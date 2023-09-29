@@ -4,7 +4,7 @@ import Service from '../Service.js';
 import {
   UpgradeFactoryImplementationRequest,
   Proxy,
-} from '@hashgraph-dev/stablecoin-npm-sdk';
+} from '@hashgraph/stablecoin-npm-sdk';
 
 /**
  * Factory Proxy Implementation

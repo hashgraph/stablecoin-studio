@@ -33,7 +33,7 @@
 
 # Abstract
 
-The Hedera Stablecoin Studio is a comprehensive set of tools and resources designed to enable developers to build applications and services that make use of the stablecoin. The project includes smart contracts, documentation, and sample code to help developers understand how to use the project and other functionality provided by the platform. With the Hedera Stablecoin studio, developers can easily integrate the stablecoin into their own applications or create new applications or services that make use of the stablecoin's unique features. Whether you're a seasoned cryptocurrency developer or new to the space, the Hedera stablecoin accelerator has everything you need to start building with stablecoins today.
+The Stablecoin Studio is a comprehensive set of tools and resources designed to enable developers to build applications and services that make use of the stablecoin. The accelerator includes smart contracts, documentation, and sample code to help developers understand how to use the accelerator and other functionality provided by the platform. With the Stablecoin Studio, developers can easily integrate the stablecoin into their own applications or create new applications or services that make use of the stablecoin's unique features. Whether you're a seasoned cryptocurrency developer or new to the space, the Stablecoin Studio has everything you need to start building with stablecoins today.
 
 # Context
 
@@ -183,6 +183,7 @@ Learn more about them in their README:
 
 In a terminal:
 
+<<<<<<< HEAD
 Before intstalling, its needed to execute the command below in order to configure repository for @hashgraph in npm.
 
 ```bash
@@ -191,9 +192,13 @@ npm config set @hashgraph:registry=https://us-npm.pkg.dev/hedera-registry/stable
 
 This will install the dependencies in all projects and sets up the links between them.
 
+=======
+>>>>>>> origin/change_npm_registry
 ```
 npm install
 ```
+
+This will install the dependencies in all projects and sets up the links between them.
 
 You can now start developing in any of the modules.
 

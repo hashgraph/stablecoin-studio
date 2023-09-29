@@ -2,7 +2,7 @@ import { Heading, Stack, VStack } from '@chakra-ui/react';
 import type { UseFormReturn } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { SupportedWallets } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { SupportedWallets } from '@hashgraph/stablecoin-npm-sdk';
 import DetailsReview from '../../components/DetailsReview';
 import { OTHER_KEY_VALUE } from './components/KeySelector';
 import { OTHER_ACCOUNT_VALUE } from './components/RoleSelector';

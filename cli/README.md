@@ -40,11 +40,6 @@
 The Command Line Interface (CLI) uses the API exposed by the SDK to create, manage and operate stablecoins. It is meant as a "demo tool" to showcase the project's functionalities.
 
 # Installation
-The command below can be used to configure repository for @hashgraph  in npm
-
-```bash
-npm config set @hashgraph:registry=https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/
-```
 
 The command below can be used to install the official release from the NPM repository. This version may not reflect the most recent changes to the main branch of this repository.
 

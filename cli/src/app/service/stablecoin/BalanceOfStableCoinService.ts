@@ -5,7 +5,7 @@ import {
   GetAccountBalanceRequest,
   StableCoin,
   Balance,
-} from '@hashgraph-dev/stablecoin-npm-sdk';
+} from '@hashgraph/stablecoin-npm-sdk';
 
 export default class BalanceOfStableCoinsService extends Service {
   constructor() {

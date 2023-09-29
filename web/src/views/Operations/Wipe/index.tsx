@@ -12,7 +12,7 @@ import { SELECTED_WALLET_COIN, walletActions } from '../../../store/slices/walle
 
 import { handleRequestValidation, validateDecimalsString } from '../../../utils/validationsHelper';
 import OperationLayout from './../OperationLayout';
-import { BigDecimal, WipeRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { BigDecimal, WipeRequest } from '@hashgraph/stablecoin-npm-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 import { propertyNotFound } from '../../../constant';
 

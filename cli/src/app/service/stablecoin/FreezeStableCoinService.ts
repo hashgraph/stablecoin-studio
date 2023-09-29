@@ -4,7 +4,7 @@ import Service from '../Service.js';
 import {
   FreezeAccountRequest,
   StableCoin,
-} from '@hashgraph-dev/stablecoin-npm-sdk';
+} from '@hashgraph/stablecoin-npm-sdk';
 import colors from 'colors';
 
 /**

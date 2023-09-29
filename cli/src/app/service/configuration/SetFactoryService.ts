@@ -11,11 +11,11 @@ import {
   Network,
   SetConfigurationRequest,
   UpgradeFactoryImplementationRequest,
-} from '@hashgraph-dev/stablecoin-npm-sdk';
+} from '@hashgraph/stablecoin-npm-sdk';
 import ConfigurationFactoryProxyService from '../factoryProxy/ConfigurationFactoryProxyService.js';
 import ImplementationFactoryProxyService from '../factoryProxy/ImplementationFactoryProxyService.js';
-import { ProxyConfigurationViewModel } from '@hashgraph-dev/stablecoin-npm-sdk';
-import { ChangeFactoryProxyOwnerRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { ProxyConfigurationViewModel } from '@hashgraph/stablecoin-npm-sdk';
+import { ChangeFactoryProxyOwnerRequest } from '@hashgraph/stablecoin-npm-sdk';
 import OwnerFactoryProxyService from '../factoryProxy/OwnerFactoryProxyService.js';
 import { ZERO_ADDRESS } from '../../../core/Constants.js';
 const colors = require('colors');

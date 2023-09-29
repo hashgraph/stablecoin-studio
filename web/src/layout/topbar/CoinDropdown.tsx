@@ -32,7 +32,7 @@ import {
 	GetProxyConfigRequest,
 	GetFactoryProxyConfigRequest,
 	Network,
-} from '@hashgraph-dev/stablecoin-npm-sdk';
+} from '@hashgraph/stablecoin-npm-sdk';
 import type { IExternalToken } from '../../interfaces/IExternalToken';
 import type { GroupBase, SelectInstance } from 'chakra-react-select';
 import type { IAccountToken } from '../../interfaces/IAccountToken';

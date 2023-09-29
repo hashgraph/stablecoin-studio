@@ -5,7 +5,7 @@ import {
   AcceptProxyOwnerRequest,
   ChangeProxyOwnerRequest,
   Proxy,
-} from '@hashgraph-dev/stablecoin-npm-sdk';
+} from '@hashgraph/stablecoin-npm-sdk';
 
 /**
  * Proxy Owner

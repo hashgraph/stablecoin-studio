@@ -1,4 +1,4 @@
-import { Network } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { Network } from '@hashgraph/stablecoin-npm-sdk';
 import {
   wizardService,
   utilsService,

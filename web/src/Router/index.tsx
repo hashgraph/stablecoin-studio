@@ -13,7 +13,7 @@ import {
 import { NamedRoutes } from './NamedRoutes';
 // import type { AppDispatch } from '../../store/store.js';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Access, Operation, StableCoinRole } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { Access, Operation, StableCoinRole } from '@hashgraph/stablecoin-npm-sdk';
 import AwaitingWalletSignature from '../components/AwaitingWalletSignature';
 import { useRefreshCoinInfo } from '../hooks/useRefreshCoinInfo';
 

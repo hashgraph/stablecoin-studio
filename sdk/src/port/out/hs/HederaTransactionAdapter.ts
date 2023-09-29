@@ -43,7 +43,7 @@ import {
 	HederaReserve__factory,
 	StableCoinFactory__factory,
 	StableCoinProxyAdmin__factory,
-} from '@hashgraph-dev/stablecoin-npm-contracts';
+} from '@hashgraph/stablecoin-npm-contracts';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 import { TransactionType } from '../TransactionResponseEnums.js';
 import { HTSTransactionBuilder } from './HTSTransactionBuilder.js';

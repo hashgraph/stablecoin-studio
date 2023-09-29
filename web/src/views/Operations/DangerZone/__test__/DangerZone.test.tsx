@@ -4,7 +4,7 @@ import DangerZone from '..';
 import configureMockStore from 'redux-mock-store';
 import { mockedStableCoinCapabilities } from '../../../../mocks/sdk';
 import userEvent from '@testing-library/user-event';
-import { StableCoinRole } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { StableCoinRole } from '@hashgraph/stablecoin-npm-sdk';
 
 const translations = en;
 

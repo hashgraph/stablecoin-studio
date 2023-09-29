@@ -21,7 +21,7 @@ import type {
 	IncreaseSupplierAllowanceRequest,
 	ResetSupplierAllowanceRequest,
 	RevokeRoleRequest,
-} from '@hashgraph-dev/stablecoin-npm-sdk';
+} from '@hashgraph/stablecoin-npm-sdk';
 import { propertyNotFound } from '../../constant';
 
 const styles = {

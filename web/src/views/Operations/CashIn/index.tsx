@@ -11,7 +11,7 @@ import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandle
 import { useDispatch, useSelector } from 'react-redux';
 import { SELECTED_WALLET_COIN, walletActions } from '../../../store/slices/walletSlice';
 import { useState } from 'react';
-import { BigDecimal, CashInRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { BigDecimal, CashInRequest } from '@hashgraph/stablecoin-npm-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 import { propertyNotFound } from '../../../constant';
 

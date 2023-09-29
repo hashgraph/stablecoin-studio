@@ -1,4 +1,4 @@
-import { StableCoin, UpdateRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { StableCoin, UpdateRequest } from '@hashgraph/stablecoin-npm-sdk';
 import UpdateStableCoinService from '../../../../src/app/service/stablecoin/UpdateStableCoinService';
 import { utilsService } from '../../../../src/index.js';
 import Language from '../../../../src/domain/language/Language.js';

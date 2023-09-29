@@ -31,8 +31,8 @@ import {
 	KYCRequest,
 	GetStableCoinDetailsRequest,
 	SupportedWallets,
-} from '@hashgraph-dev/stablecoin-npm-sdk';
-import type { RequestPublicKey } from '@hashgraph-dev/stablecoin-npm-sdk';
+} from '@hashgraph/stablecoin-npm-sdk';
+import type { RequestPublicKey } from '@hashgraph/stablecoin-npm-sdk';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch } from '../../store/store';
 import ProofOfReserve from './ProofOfReserve';

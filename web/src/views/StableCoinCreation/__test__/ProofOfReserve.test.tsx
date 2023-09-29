@@ -2,7 +2,7 @@ import { FieldValues, useForm } from 'react-hook-form';
 import { render } from '../../../test/index';
 import translations from '../../../translations/en/stableCoinCreation.json';
 import ProofOfReserve from '../ProofOfReserve';
-import { CreateRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { CreateRequest } from '@hashgraph/stablecoin-npm-sdk';
 
 jest.mock('react-hook-form', () => ({
 	...jest.requireActual('react-hook-form'),

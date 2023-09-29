@@ -3,7 +3,7 @@ import {
   BigDecimal,
   GetAccountBalanceRequest,
   StableCoin,
-} from '@hashgraph-dev/stablecoin-npm-sdk';
+} from '@hashgraph/stablecoin-npm-sdk';
 import BalanceOfStableCoinService from '../../../../src/app/service/stablecoin/BalanceOfStableCoinService';
 import { utilsService } from '../../../../src/index.js';
 

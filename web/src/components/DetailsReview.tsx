@@ -15,8 +15,8 @@ import type {
 	AccountViewModel,
 	RequestPublicKey,
 	UpdateRequest,
-} from '@hashgraph-dev/stablecoin-npm-sdk';
-import { Account } from '@hashgraph-dev/stablecoin-npm-sdk';
+} from '@hashgraph/stablecoin-npm-sdk';
+import { Account } from '@hashgraph/stablecoin-npm-sdk';
 import { useEffect, useState } from 'react';
 import type { FieldValues, UseFormGetValues } from 'react-hook-form';
 import { useForm } from 'react-hook-form';

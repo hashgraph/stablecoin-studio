@@ -13,7 +13,7 @@ import SDKService from '../../../services/SDKService';
 import { useState } from 'react';
 import { formatAmount } from '../../../utils/inputHelper';
 
-import { RescueRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { RescueRequest } from '@hashgraph/stablecoin-npm-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 import { propertyNotFound } from '../../../constant';
 

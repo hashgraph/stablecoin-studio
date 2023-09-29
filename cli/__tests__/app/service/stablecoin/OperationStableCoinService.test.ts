@@ -9,7 +9,7 @@ import {
   PublicKey,
   StableCoinRole,
   StableCoinViewModel,
-} from '@hashgraph-dev/stablecoin-npm-sdk';
+} from '@hashgraph/stablecoin-npm-sdk';
 import FreezeStableCoinService from '../../../../src/app/service/stablecoin/FreezeStableCoinService.js';
 import BalanceOfStableCoinsService from '../../../../src/app/service/stablecoin/BalanceOfStableCoinService.js';
 import ConfigurationProxyService from '../../../../src/app/service/proxy/ConfigurationProxyService.js';

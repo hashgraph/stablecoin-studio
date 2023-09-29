@@ -3,7 +3,7 @@ import { render } from '../../../../test/index';
 import translations from '../../../../translations/en/settings.json';
 import userEvent from '@testing-library/user-event';
 import configureMockStore from 'redux-mock-store';
-import { Network } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { Network } from '@hashgraph/stablecoin-npm-sdk';
 
 const mockStore = configureMockStore();
 

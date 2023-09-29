@@ -1,7 +1,7 @@
 import {
   ChangeFactoryProxyOwnerRequest,
   Proxy,
-} from '@hashgraph-dev/stablecoin-npm-sdk';
+} from '@hashgraph/stablecoin-npm-sdk';
 import { utilsService } from '../../../../src/index.js';
 import OwnerFactoryProxyService from '../../../../src/app/service/factoryProxy/OwnerFactoryProxyService.js';
 import Language from '../../../../src/domain/language/Language.js';

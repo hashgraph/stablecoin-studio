@@ -1,7 +1,7 @@
 import InnactivityTimer from '../InnactivityTimer';
 import { render } from '../../test/index';
 import configureMockStore from 'redux-mock-store';
-import { ConnectionState } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { ConnectionState } from '@hashgraph/stablecoin-npm-sdk';
 
 const defaultProps = {
 	children: '',

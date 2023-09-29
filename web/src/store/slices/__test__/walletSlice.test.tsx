@@ -1,7 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { walletSlice, getStableCoinList, getExternalTokenList, initialState } from '../walletSlice';
 import SDKService from '../../../services/SDKService';
-import { ConnectionState, SupportedWallets } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { ConnectionState, SupportedWallets } from '@hashgraph/stablecoin-npm-sdk';
 
 const store = configureStore({ reducer: walletSlice.reducer });
 

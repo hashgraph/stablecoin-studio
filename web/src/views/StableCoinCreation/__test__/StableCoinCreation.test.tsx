@@ -5,9 +5,9 @@ import configureMockStore from 'redux-mock-store';
 import userEvent from '@testing-library/user-event';
 import { waitFor } from '@testing-library/react';
 import SDKService from '../../../services/SDKService';
-import ContractId from '@hashgraph-dev/stablecoin-npm-sdk/build/esm/src/domain/context/contract/ContractId';
-import { SupportedWallets } from '@hashgraph-dev/stablecoin-npm-sdk';
-import { HederaId } from '@hashgraph-dev/stablecoin-npm-sdk/build/esm/src/domain/context/shared/HederaId';
+import ContractId from '@hashgraph/stablecoin-npm-sdk/build/esm/src/domain/context/contract/ContractId';
+import { SupportedWallets } from '@hashgraph/stablecoin-npm-sdk';
+import { HederaId } from '@hashgraph/stablecoin-npm-sdk/build/esm/src/domain/context/shared/HederaId';
 
 describe(`<${StableCoinCreation.name} />`, () => {
 	test('should render correctly', () => {

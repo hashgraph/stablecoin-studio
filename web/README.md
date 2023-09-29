@@ -34,7 +34,7 @@ The web application is compatible with HashPack and MetaMask and although both w
 To install from NPM
 
 ```shell
-npm install @hashgraph-dev/stablecoin-dapp
+npm install @hashgraph/stablecoin-dapp
 ```
 
 # Build
