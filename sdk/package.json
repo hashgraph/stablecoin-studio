@@ -1,7 +1,7 @@
 {
 	"name": "@hashgraph/stablecoin-npm-sdk",
 	"version": "1.9.1",
-	"description": "",
+	"description": "stablecoin studio SDK",
 	"main": "./build/cjs/src/index.js",
 	"module": "./build/esm/src/index.js",
 	"engines": {
