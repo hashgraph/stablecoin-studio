@@ -17,6 +17,9 @@ jobs:
         with:
           node-version: 18.x      
       
+      - name: Change references
+        run: ./changeProyectsReferencesToRepo.sh
+  
       - name: Authenticate to Google Cloud
         id: auth
         uses: google-github-actions/auth@v1
