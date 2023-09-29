@@ -1,4 +1,4 @@
-import { StableCoin, WipeRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { StableCoin, WipeRequest } from '@hashgraph/stablecoin-npm-sdk';
 import WipeStableCoinService from '../../../../src/app/service/stablecoin/WipeStableCoinService';
 import { utilsService } from '../../../../src/index.js';
 import Language from '../../../../src/domain/language/Language.js';

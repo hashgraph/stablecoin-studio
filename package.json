@@ -1,7 +1,7 @@
 {
   "name": "hedera-stable-coin",
   "version": "1.9.1",
-  "description": "",
+  "description": "stablecoin studio",
   "scripts": {
     "install": "node install.js && npm run build:cli:full && npm run prepare",
     "install:contracts": "cd contracts && npm install",

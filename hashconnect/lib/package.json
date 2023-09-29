@@ -1,11 +1,8 @@
 {
-  "name": "@hashgraph-dev/hashconnect",
+  "name": "@hashgraph/hashconnect",
   "version": "1.9.1",
   "description": "hashconnect interoperability library",
   "author": "Tyler Coté <tyler@hashpack.app>, Nick Hanna <nick@hashpack.app>",
-  "publishConfig": {
-    "registry": "https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/"
-  },
   "license": "MIT",
   "keywords": [
     "hashgraph",

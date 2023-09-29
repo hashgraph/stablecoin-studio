@@ -1,6 +1,6 @@
 import { Heading, Stack, VStack } from '@chakra-ui/react';
-import type { CreateRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
-import { TokenSupplyType } from '@hashgraph-dev/stablecoin-npm-sdk';
+import type { CreateRequest } from '@hashgraph/stablecoin-npm-sdk';
+import { TokenSupplyType } from '@hashgraph/stablecoin-npm-sdk';
 import type { Control, FieldValues, UseFormReturn } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import InputController from '../../components/Form/InputController';

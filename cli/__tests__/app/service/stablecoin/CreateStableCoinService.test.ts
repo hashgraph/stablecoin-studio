@@ -10,7 +10,7 @@ import {
   HederaId,
   PublicKey,
   StableCoin,
-} from '@hashgraph-dev/stablecoin-npm-sdk';
+} from '@hashgraph/stablecoin-npm-sdk';
 import AssociateStableCoinService from '../../../../src/app/service/stablecoin/AssociateStableCoinService';
 import SetConfigurationService from '../../../../src/app/service/configuration/SetConfigurationService';
 import KYCStableCoinService from '../../../../src/app/service/stablecoin/KYCStableCoinService';

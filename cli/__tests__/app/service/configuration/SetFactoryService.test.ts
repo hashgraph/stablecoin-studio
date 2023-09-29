@@ -13,7 +13,7 @@ import {
   ProxyConfigurationViewModel,
   Proxy,
   Network,
-} from '@hashgraph-dev/stablecoin-npm-sdk';
+} from '@hashgraph/stablecoin-npm-sdk';
 import { rimraf } from 'rimraf';
 import fs from 'fs-extra';
 

@@ -1,4 +1,4 @@
-import { StableCoin } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { StableCoin } from '@hashgraph/stablecoin-npm-sdk';
 import CapabilitiesStableCoinService from '../../../../src/app/service/stablecoin/CapabilitiesStableCoinService';
 
 const service = new CapabilitiesStableCoinService();

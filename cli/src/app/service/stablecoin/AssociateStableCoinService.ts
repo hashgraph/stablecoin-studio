@@ -4,7 +4,7 @@ import Service from '../Service.js';
 import {
   AssociateTokenRequest,
   StableCoin,
-} from '@hashgraph-dev/stablecoin-npm-sdk';
+} from '@hashgraph/stablecoin-npm-sdk';
 
 export default class AssociateStableCoinService extends Service {
   constructor() {

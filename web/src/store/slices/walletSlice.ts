@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { ConnectionState, GetListStableCoinRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { ConnectionState, GetListStableCoinRequest } from '@hashgraph/stablecoin-npm-sdk';
 import SDKService from '../../services/SDKService';
 import type { RootState } from '../store';
 import type { IExternalToken } from '../../interfaces/IExternalToken';
@@ -12,7 +12,7 @@ import type {
 	StableCoinListViewModel,
 	StableCoinViewModel,
 	ProxyConfigurationViewModel,
-} from '@hashgraph-dev/stablecoin-npm-sdk';
+} from '@hashgraph/stablecoin-npm-sdk';
 
 export interface InitialStateProps {
 	data?: InitializationData;

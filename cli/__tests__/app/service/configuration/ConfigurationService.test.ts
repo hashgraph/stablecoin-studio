@@ -1,7 +1,7 @@
 import { configurationService, utilsService } from '../../../../src/index.js';
 import Language from '../../../../src/domain/language/Language.js';
 import { IConfiguration } from 'domain/configuration/interfaces/IConfiguration.js';
-import { LogOptions } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { LogOptions } from '@hashgraph/stablecoin-npm-sdk';
 import { rimraf } from 'rimraf';
 
 const language: Language = new Language();

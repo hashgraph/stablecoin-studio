@@ -1,7 +1,7 @@
 {
-	"name": "@hashgraph-dev/stablecoin-npm-sdk",
+	"name": "@hashgraph/stablecoin-npm-sdk",
 	"version": "1.9.1",
-	"description": "",
+	"description": "stablecoin studio SDK",
 	"main": "./build/cjs/src/index.js",
 	"module": "./build/esm/src/index.js",
 	"engines": {
@@ -10,9 +10,6 @@
 	"files": [
 		"./build"
 	],
-	"publishConfig": {
-		"registry": "https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/"
-	},
 	"readme": "README.md",
 	"types": "./build/esm/src/index.d.ts",
 	"exports": {
@@ -80,7 +77,7 @@
 		"dotenv": "^16.0.3",
 		"ethers": "^5.7.2",
 		"fast-safe-stringify": "^2.1.1",
-		"@hashgraph-dev/hashconnect": "./../hashconnect/lib",
+		"@hashgraph/hashconnect": "file:./../hashconnect/lib",
 		"perf_hooks": "^0.0.1",
 		"reflect-metadata": "^0.1.13",
 		"ts-xor": "^1.0.8",
@@ -90,7 +87,7 @@
 		"web3": "^1.8.1",
 		"winston": "^3.8.2",
 		"winston-daily-rotate-file": "^4.7.1",
-		"@hashgraph-dev/stablecoin-npm-contracts": "./../contracts"
+		"@hashgraph/stablecoin-npm-contracts": "file:./../contracts"
 	},
 	"volta": {
 		"node": "16.13.0"

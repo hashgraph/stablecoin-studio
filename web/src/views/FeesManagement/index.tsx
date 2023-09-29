@@ -17,13 +17,13 @@ import {
 	GetStableCoinDetailsRequest,
 	HBAR_DECIMALS,
 	MAX_CUSTOM_FEES,
-} from '@hashgraph-dev/stablecoin-npm-sdk';
+} from '@hashgraph/stablecoin-npm-sdk';
 import type {
 	RequestFractionalFee,
 	RequestCustomFee,
 	RequestFixedFee,
 	StableCoinViewModel,
-} from '@hashgraph-dev/stablecoin-npm-sdk';
+} from '@hashgraph/stablecoin-npm-sdk';
 import { handleRequestValidation } from '../../utils/validationsHelper';
 import SDKService from '../../services/SDKService';
 import SelectCreatableController from '../../components/Form/SelectCreatableController';

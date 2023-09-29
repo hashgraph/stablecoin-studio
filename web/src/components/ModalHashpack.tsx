@@ -1,5 +1,5 @@
 import { Button, Flex, Image, Link, Text } from '@chakra-ui/react';
-import { SupportedWallets } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { SupportedWallets } from '@hashgraph/stablecoin-npm-sdk';
 
 import { useTranslation } from 'react-i18next';
 import HEDERA_LOGO from '../assets/svg/hedera-hbar-logo.svg';

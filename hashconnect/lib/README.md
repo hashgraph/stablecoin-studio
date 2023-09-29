@@ -80,7 +80,7 @@ Import the library like you would any npm package
 
 > ESM
 ```js
-import { HashConnect } from '@hashgraph-dev/hashconnect';
+import { HashConnect } from '@hashgraph/hashconnect';
 ```
 > CommonJS
 ```js

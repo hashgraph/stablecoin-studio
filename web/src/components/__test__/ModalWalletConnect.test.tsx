@@ -2,7 +2,7 @@ import { render } from '../../test/index';
 import ModalWalletConnect from '../ModalWalletConnect';
 import translations from '../../translations/en/global.json';
 import configureMockStore from 'redux-mock-store';
-import { SupportedWallets } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { SupportedWallets } from '@hashgraph/stablecoin-npm-sdk';
 import userEvent from '@testing-library/user-event';
 import SDKService from '../../services/SDKService';
 

@@ -45,7 +45,7 @@ import {
   ChangeProxyOwnerRequest,
   UpgradeImplementationRequest,
   AcceptProxyOwnerRequest,
-} from '@hashgraph-dev/stablecoin-npm-sdk';
+} from '@hashgraph/stablecoin-npm-sdk';
 
 import BalanceOfStableCoinService from './BalanceOfStableCoinService.js';
 import CashInStableCoinService from './CashInStableCoinService.js';

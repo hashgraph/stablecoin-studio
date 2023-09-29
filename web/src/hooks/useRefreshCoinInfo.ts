@@ -2,7 +2,7 @@
 import {
 	GetProxyConfigRequest,
 	GetStableCoinDetailsRequest,
-} from '@hashgraph-dev/stablecoin-npm-sdk';
+} from '@hashgraph/stablecoin-npm-sdk';
 
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';

@@ -5,7 +5,7 @@ import {
   Proxy,
   GetProxyConfigRequest,
   ProxyConfigurationViewModel,
-} from '@hashgraph-dev/stablecoin-npm-sdk';
+} from '@hashgraph/stablecoin-npm-sdk';
 
 /**
  * Create Stablecoin Service

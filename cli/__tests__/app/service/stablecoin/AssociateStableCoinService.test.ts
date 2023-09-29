@@ -1,4 +1,4 @@
-import { StableCoin } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { StableCoin } from '@hashgraph/stablecoin-npm-sdk';
 import AssociateStableCoinService from '../../../../src/app/service/stablecoin/AssociateStableCoinService';
 import { utilsService } from '../../../../src/index.js';
 

@@ -1,4 +1,4 @@
-import { BurnRequest, StableCoin } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { BurnRequest, StableCoin } from '@hashgraph/stablecoin-npm-sdk';
 import BurnStableCoinService from '../../../../src/app/service/stablecoin/BurnStableCoinService';
 import { utilsService } from '../../../../src/index.js';
 import Language from '../../../../src/domain/language/Language.js';

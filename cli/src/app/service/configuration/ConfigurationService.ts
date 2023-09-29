@@ -17,7 +17,7 @@ import {
   DailyRotateFile,
   DefaultLoggerFormat,
   LogOptions,
-} from '@hashgraph-dev/stablecoin-npm-sdk';
+} from '@hashgraph/stablecoin-npm-sdk';
 
 /**
  * Configuration Service

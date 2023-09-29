@@ -11,7 +11,7 @@ import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandle
 import { handleRequestValidation } from '../../../utils/validationsHelper';
 import SDKService from '../../../services/SDKService';
 import { SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
-import { GetAccountBalanceRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { GetAccountBalanceRequest } from '@hashgraph/stablecoin-npm-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 import { propertyNotFound } from '../../../constant';
 

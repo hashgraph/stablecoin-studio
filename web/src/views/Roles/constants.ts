@@ -1,4 +1,4 @@
-import { StableCoinRole } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { StableCoinRole } from '@hashgraph/stablecoin-npm-sdk';
 import type { Action } from './HandleRoles';
 
 export const actions: Record<string, Action> = {

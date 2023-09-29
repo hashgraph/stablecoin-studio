@@ -5,8 +5,8 @@ import userEvent from '@testing-library/user-event';
 import configureMockStore from 'redux-mock-store';
 import { act } from '@testing-library/react';
 import SDKService from '../../../../services/SDKService';
-import ContractId from '@hashgraph-dev/stablecoin-npm-sdk/build/esm/src/domain/context/contract/ContractId';
-import { Network } from '@hashgraph-dev/stablecoin-npm-sdk';
+import ContractId from '@hashgraph/stablecoin-npm-sdk/build/esm/src/domain/context/contract/ContractId';
+import { Network } from '@hashgraph/stablecoin-npm-sdk';
 
 const mockStore = configureMockStore();
 

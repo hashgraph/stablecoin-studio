@@ -8,7 +8,7 @@ import {
 	SDK,
 	StableCoin,
 	SupportedWallets,
-} from '@hashgraph-dev/stablecoin-npm-sdk';
+} from '@hashgraph/stablecoin-npm-sdk';
 
 async function sleep(ms) {
 	return new Promise((resolve) => setTimeout(resolve, ms));

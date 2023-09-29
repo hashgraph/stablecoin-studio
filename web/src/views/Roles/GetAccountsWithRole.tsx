@@ -1,5 +1,5 @@
 import { Heading, useDisclosure } from '@chakra-ui/react';
-import { GetAccountsWithRolesRequest, StableCoinRole } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { GetAccountsWithRolesRequest, StableCoinRole } from '@hashgraph/stablecoin-npm-sdk';
 import { SelectController } from '../../components/Form/SelectController';
 import { useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';

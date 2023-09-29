@@ -11,7 +11,7 @@ import { SELECTED_WALLET_COIN, walletActions } from '../../../store/slices/walle
 import SDKService from '../../../services/SDKService';
 import { handleRequestValidation, validateDecimalsString } from '../../../utils/validationsHelper';
 import { useState } from 'react';
-import { BigDecimal, BurnRequest } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { BigDecimal, BurnRequest } from '@hashgraph/stablecoin-npm-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 import { propertyNotFound } from '../../../constant';
 

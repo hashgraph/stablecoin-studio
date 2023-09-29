@@ -4,7 +4,7 @@ import Service from '../Service.js';
 import {
   RescueHBARRequest,
   StableCoin,
-} from '@hashgraph-dev/stablecoin-npm-sdk';
+} from '@hashgraph/stablecoin-npm-sdk';
 
 /**
  * Rescue HBAR Service

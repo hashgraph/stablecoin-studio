@@ -1,4 +1,4 @@
-import { Account } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { Account } from '@hashgraph/stablecoin-npm-sdk';
 import ListStableCoinService from '../../../../src/app/service/stablecoin/ListStableCoinService';
 import { utilsService } from '../../../../src/index.js';
 

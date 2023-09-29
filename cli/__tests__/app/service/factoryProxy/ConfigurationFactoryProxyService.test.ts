@@ -1,4 +1,4 @@
-import { ContractId, HederaId, Proxy } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { ContractId, HederaId, Proxy } from '@hashgraph/stablecoin-npm-sdk';
 import { utilsService } from '../../../../src/index.js';
 import ConfigurationFactoryProxyService from '../../../../src/app/service/factoryProxy/ConfigurationFactoryProxyService.js';
 

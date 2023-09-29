@@ -31,7 +31,7 @@ import {
 	IHederaTokenService__factory,
 	StableCoinProxyAdmin__factory,
 	ProxyAdmin__factory,
-} from '@hashgraph-dev/stablecoin-npm-contracts';
+} from '@hashgraph/stablecoin-npm-contracts';
 import TransactionAdapter, { InitializationData } from '../TransactionAdapter';
 import { BigNumber, ContractTransaction, ethers, Signer } from 'ethers';
 import { singleton } from 'tsyringe';

@@ -6,10 +6,10 @@ import {
   ContractId,
   EvmAddress,
   PublicKey,
-} from '@hashgraph-dev/stablecoin-npm-sdk';
+} from '@hashgraph/stablecoin-npm-sdk';
 import DetailsStableCoinService from '../../../../src/app/service/stablecoin/DetailsStableCoinService';
 import { utilsService } from '../../../../src/index.js';
-import { RequestFixedFee } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { RequestFixedFee } from '@hashgraph/stablecoin-npm-sdk';
 
 const service = new DetailsStableCoinService();
 const id = 'id;';

@@ -1,4 +1,4 @@
-import { KYCRequest, StableCoin } from '@hashgraph-dev/stablecoin-npm-sdk';
+import { KYCRequest, StableCoin } from '@hashgraph/stablecoin-npm-sdk';
 import KYCStableCoinService from '../../../../src/app/service/stablecoin/KYCStableCoinService';
 import { utilsService } from '../../../../src/index.js';
 import Language from '../../../../src/domain/language/Language.js';
