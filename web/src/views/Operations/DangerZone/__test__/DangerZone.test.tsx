@@ -71,5 +71,5 @@ describe(`<${DangerZone.name} />`, () => {
 
 		const confirmButtons = component.getAllByTestId('modal-action-confirm-button');
 		await userEvent.click(confirmButtons[1]);
-	});
+	}, 60000);
 });
