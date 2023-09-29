@@ -9,9 +9,6 @@
   "exports": {
     ".": "./build/src/index.js"
   },
-  "publishConfig": {
-    "registry": "https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/"
-  },
   "files": [
     "build/"
   ],

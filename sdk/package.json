@@ -10,9 +10,6 @@
 	"files": [
 		"./build"
 	],
-	"publishConfig": {
-		"registry": "https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/"
-	},
 	"readme": "README.md",
 	"types": "./build/esm/src/index.d.ts",
 	"exports": {

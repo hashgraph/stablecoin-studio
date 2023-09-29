@@ -2,9 +2,6 @@
     "name": "@hashgraph/stablecoin-npm-contracts",
     "version": "1.9.1",
     "description": "",
-    "publishConfig": {
-        "registry": "https://us-npm.pkg.dev/hedera-registry/stablecoin-npm/"
-    },
     "main": "./build/typechain-types/index.js",
     "module": "./build/typechain-types/index.js",
     "files": [
