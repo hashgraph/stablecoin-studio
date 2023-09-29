@@ -9,6 +9,8 @@ jobs:
     runs-on: [ self-hosted, Linux, medium, ephemeral ]
     env:
       NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+    permissions:
+      contents: read  
 
     steps:
       - name: Checkout repository
