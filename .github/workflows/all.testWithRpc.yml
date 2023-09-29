@@ -6,14 +6,15 @@ on:
 jobs:
   test-node:
     name: docker    
-    #runs-on: [ self-hosted, Linux, medium, ephemeral ]
-    runs-on: ubuntu-latest
+    runs-on: [ self-hosted, Linux, medium, ephemeral ]
     env:
       NODE_OPTIONS: "--max-old-space-size=32768"
+    permissions:
+      contents: read
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608
 
       - name: Build the Docker image
         run: docker build -t rpc .

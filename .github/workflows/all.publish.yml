@@ -1,16 +1,16 @@
 name: Publishing
 on: 
-  workflow_dispatch:
-  push:
-    branches: []
+  release:
+    types:
+      - published
 jobs:
-  test-node:
+  publish:
     name: docker
     runs-on: [ self-hosted, Linux, medium, ephemeral ]
-    
+
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608
         
       - name: Setup NodeJS Environment
         uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d
@@ -40,6 +40,8 @@ jobs:
           EOF 
       - name: Publish contracts package
         run: npm run publish:contracts
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Install hashconnect dependencies 
         run: npm run install:hashconnect
       - name: Create .npmrc hashconnect
@@ -51,6 +53,8 @@ jobs:
           EOF 
       - name: Publish hashconnect package
         run: npm run publish:hashconnect
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Install sdk dependencies 
         run: npm run install:sdk
       - name: Create .npmrc sdk
@@ -62,6 +66,8 @@ jobs:
           EOF 
       - name: Publish sdk package
         run: npm run publish:sdk
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Install cli dependencies 
         run: npm run install:cli
       - name: Create .npmrc cli
@@ -73,3 +79,5 @@ jobs:
           EOF 
       - name: Publish cli package
         run: npm run publish:cli
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
