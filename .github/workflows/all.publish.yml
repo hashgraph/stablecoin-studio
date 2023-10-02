@@ -22,7 +22,13 @@ jobs:
         with:
           node-version: 18.x      
       
-            
+      - name: Change references
+        run: |
+              cp .npmrc ./contracts/.npmrc
+              cp .npmrc ./sdk/.npmrc
+              cp .npmrc ./cli/.npmrc
+              cp .npmrc ./hasconnect/lib/.npmrc
+
       - name: Change references
         run: ./changeProyectsReferencesToRepo.sh
   
