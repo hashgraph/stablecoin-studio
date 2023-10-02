@@ -8,8 +8,7 @@ jobs:
     name: docker
     #runs-on: [ self-hosted, Linux, medium, ephemeral ]
     runs-on: ubuntu-latest
-    env:
-      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+    
     permissions:
       contents: read  
 
@@ -20,15 +19,9 @@ jobs:
       - name: Setup NodeJS Environment
         uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d
         with:
-          node-version: 18.x      
+          node-version: 18.x     
+          token: ${{ secrets.NPM_TOKEN }} 
       
-      - name: Copy npmrc file to all projects
-        run: |
-              cp .npmrc ./contracts/.npmrc
-              cp .npmrc ./sdk/.npmrc
-              cp .npmrc ./cli/.npmrc
-              cp .npmrc ./hasconnect/lib/.npmrc
-
       - name: Change references
         run: ./changeProyectsReferencesToRepo.sh
   
