@@ -22,7 +22,13 @@ jobs:
         with:
           node-version: 18.x      
       
-            
+      - name: Copy npmrc file to all projects
+        run: |
+              cp .npmrc ./contracts/.npmrc
+              cp .npmrc ./sdk/.npmrc
+              cp .npmrc ./cli/.npmrc
+              cp .npmrc ./hasconnect/lib/.npmrc
+
       - name: Change references
         run: ./changeProyectsReferencesToRepo.sh
   
