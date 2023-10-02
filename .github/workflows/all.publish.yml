@@ -20,7 +20,6 @@ jobs:
         uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d
         with:
           node-version: 18.x     
-          token: ${{ secrets.NPM_TOKEN }} 
       
       - name: Change references
         run: ./changeProyectsReferencesToRepo.sh
@@ -30,23 +29,32 @@ jobs:
 
       - name: Publish contracts package
         run: npm run publish:contracts
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       
       - name: Install hashconnect dependencies 
         run: npm run install:hashconnect
       
       - name: Publish hashconnect package
         run: npm run publish:hashconnect
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       
       - name: Install sdk dependencies 
         run: npm run install:sdk
 
       - name: Publish sdk package
         run: npm run publish:sdk
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       
       - name: Install cli dependencies 
         run: npm run install:cli
       
       - name: Publish cli package
         run: npm run publish:cli
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
 
       
