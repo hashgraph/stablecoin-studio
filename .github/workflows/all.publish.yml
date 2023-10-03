@@ -6,8 +6,7 @@ on:
 jobs:
   publish:
     name: docker
-    #runs-on: [ self-hosted, Linux, medium, ephemeral ]
-    runs-on: ubuntu-latest
+    runs-on: [ self-hosted, Linux, medium, ephemeral ]
     
     permissions:
       contents: read  
@@ -28,9 +27,7 @@ jobs:
         run: npm run install:contracts
 
       - name: Publish contracts package
-        run: |
-          npm adduser --registry=https://registry.npmjs.org/
-          npm run publish:contracts
+        run: npm run publish:contracts
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       
@@ -38,9 +35,7 @@ jobs:
         run: npm run install:hashconnect
       
       - name: Publish hashconnect package
-        run: |
-          npm adduser --registry=https://registry.npmjs.org/
-          npm run publish:hashconnect
+        run: npm run publish:hashconnect
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       
@@ -48,9 +43,7 @@ jobs:
         run: npm run install:sdk
 
       - name: Publish sdk package
-        run: |
-          npm adduser --registry=https://registry.npmjs.org/
-          npm run publish:sdk
+        run: npm run publish:sdk
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       
@@ -58,9 +51,7 @@ jobs:
         run: npm run install:cli
       
       - name: Publish cli package
-        run: |
-          npm adduser --registry=https://registry.npmjs.org/
-          npm run publish:cli
+        run: npm run publish:cli
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
