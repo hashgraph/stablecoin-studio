@@ -19,7 +19,8 @@ jobs:
         uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d
         with:
           node-version: 18.x     
-      - name: Create file
+      
+      - name: Create file .npmrc
         run: |
             touch .npmrc
             echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> .npmrc
@@ -36,7 +37,7 @@ jobs:
         run: npm run install:contracts
 
       - name: Publish contracts package
-        run: npm run publish:contracts
+        run: npm run publish:contracts --access=public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       
@@ -44,7 +45,7 @@ jobs:
         run: npm run install:hashconnect
       
       - name: Publish hashconnect package
-        run: npm run publish:hashconnect
+        run: npm run publish:hashconnect --access=public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       
@@ -52,7 +53,7 @@ jobs:
         run: npm run install:sdk
 
       - name: Publish sdk package
-        run: npm run publish:sdk
+        run: npm run publish:sdk --access=public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       
@@ -60,7 +61,7 @@ jobs:
         run: npm run install:cli
       
       - name: Publish cli package
-        run: npm run publish:cli
+        run: npm run publish:cli --access=public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
