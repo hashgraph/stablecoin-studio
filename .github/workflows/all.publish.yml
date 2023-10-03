@@ -19,6 +19,15 @@ jobs:
         uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d
         with:
           node-version: 18.x     
+      - name: Create file
+        run: |
+            touch .npmrc
+            echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> .npmrc
+            cp .npmrc ./contracts/.npmrc
+            cp .npmrc ./sdk/.npmrc
+            cp .npmrc ./hashconnect/lib/.npmrc
+            cp .npmrc ./cli/.npmrc
+        
       
       - name: Change references
         run: ./changeProyectsReferencesToRepo.sh
