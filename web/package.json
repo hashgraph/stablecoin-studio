@@ -6,7 +6,7 @@
 	],
 	"dependencies": {
 		"@chakra-ui/icons": "2.0.17",
-		"@chakra-ui/react": "2.6.1",
+		"@chakra-ui/react": "2.8.1",
 		"@emotion/react": "^11.0.0",
 		"@emotion/styled": "^11.0.0 ",
 		"@hashgraph/stablecoin-npm-sdk": "file:./../sdk",
