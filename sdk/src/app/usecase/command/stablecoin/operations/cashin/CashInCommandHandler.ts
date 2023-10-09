@@ -101,7 +101,7 @@ export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
 			amountBd.isGreaterThan(coin.maxSupply.subUnsafe(coin.totalSupply))
 		) {
 			throw new OperationNotAllowed(
-				`The amount is over the max supply (${amount})`,
+				`The amount (${amount}) is over the max supply (${coin.maxSupply}). You could check the limits here: https://docs.hedera.com/guides/docs/hedera-api/token-service/tokencreate`,
 			);
 		}
 

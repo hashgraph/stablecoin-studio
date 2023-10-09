@@ -317,7 +317,7 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 	): BaseError[] {
 		let list: BaseError[] = [];
 		const min = initialSupply ?? BigDecimal.ZERO;
-		const max = BigDecimal.fromValue(BigNumber.from(MAX_SUPPLY), decimals);
+		const max = BigDecimal.fromValue(BigNumber.from(MAX_SUPPLY), decimals, decimals);
 		if (CheckNums.isLessThan(maxSupply, min)) {
 			if (min.isZero()) {
 				list.push(
