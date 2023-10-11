@@ -295,7 +295,8 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 			if (maxSupply) {
 				list.push(new InitSupplyInvalid(initialSupply.toString()));
 			} else {
-				list.push(new InitSupplyInvalid(initialSupply.toString(), max.toString()));
+				list.push(new InitSupplyInvalid(initialSupply.toString(), max.toString() +
+					". You could check the limits here: https://docs.hedera.com/guides/docs/hedera-api/token-service/tokencreate"));
 			}
 		}
 		return list;

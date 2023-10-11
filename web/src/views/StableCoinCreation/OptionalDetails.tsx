@@ -62,6 +62,13 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 		if (maxSupply && initialSupply >= maxSupply) form.setValue('maxSupply', initialSupply);
 	};
 
+	const handleInfiniteMaxSupply = () => {
+		if (form.getValues().supplyType?.value !== 1) {
+			form.setValue('maxSupply', undefined);
+			request.maxSupply = undefined;
+		}
+	};
+
 	return (
 		<VStack h='full' justify={'space-between'} pt='80px'>
 			<Stack minW={400}>
@@ -88,6 +95,9 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 							},
 						}}
 						isRequired
+						formStyle={{
+							maxWidth: '400px',
+						}}
 						control={control}
 						name={'initialSupply'}
 						label={t('stableCoinCreation:optionalDetails.initialSupply') ?? propertyNotFound}
@@ -108,6 +118,7 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 						addonLeft={true}
 						variant='unstyled'
 						defaultValue={'0'}
+						onChangeAux={handleInfiniteMaxSupply}
 					/>
 					{isSupplyTypeFinite && (
 						<InputController
@@ -142,7 +153,7 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 								validation: (value: string) => {
 									request.decimals = value;
 									const res = handleRequestValidation(request.validate('decimals'));
-									if(form.getValues().initialSupply !== 0){trigger(["maxSupply", "initialSupply"])};
+									if (form.getValues().initialSupply !== 0) { trigger(["maxSupply", "initialSupply"]) };
 									return res;
 								},
 							},
