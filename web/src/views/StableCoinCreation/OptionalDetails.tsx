@@ -142,7 +142,7 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 								validation: (value: string) => {
 									request.decimals = value;
 									const res = handleRequestValidation(request.validate('decimals'));
-									trigger(["maxSupply", "initialSupply"]);
+									if(form.getValues().initialSupply !== 0){trigger(["maxSupply", "initialSupply"])};
 									return res;
 								},
 							},
