@@ -24,7 +24,7 @@ export class MaxSupplyOverLimit extends BaseError {
 	constructor(maxSupply: string, limit: string) {
 		super(
 			ErrorCode.InvalidAmount,
-			`Max supply ${maxSupply} is over maximum limit ${limit}.`,
+			`Max supply ${maxSupply} is over maximum limit ${limit}. You could check the limits here: https://docs.hedera.com/guides/docs/hedera-api/token-service/tokencreate`,
 		);
 	}
 }

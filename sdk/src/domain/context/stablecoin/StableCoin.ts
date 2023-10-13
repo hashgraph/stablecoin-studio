@@ -290,9 +290,14 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 		const min = BigDecimal.ZERO;
 		const max =
 			maxSupply ??
-			BigDecimal.fromValue(BigNumber.from(MAX_SUPPLY), decimals);
+			BigDecimal.fromValue(BigNumber.from(MAX_SUPPLY), decimals, decimals);
 		if (!CheckNums.isWithinRange(initialSupply, min, max)) {
-			list.push(new InitSupplyInvalid(initialSupply.toString()));
+			if (maxSupply) {
+				list.push(new InitSupplyInvalid(initialSupply.toString()));
+			} else {
+				list.push(new InitSupplyInvalid(initialSupply.toString(), max.toString() +
+					". You could check the limits here: https://docs.hedera.com/guides/docs/hedera-api/token-service/tokencreate"));
+			}
 		}
 		return list;
 	}
@@ -302,7 +307,7 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 		decimals: number,
 	): BaseError[] {
 		const list: BaseError[] = [];
-		const max = BigDecimal.fromValue(BigNumber.from(MAX_SUPPLY), decimals);
+		const max = BigDecimal.fromValue(BigNumber.from(MAX_SUPPLY), decimals, decimals);
 		if (!CheckNums.isWithinRange(cashInAllowance, BigDecimal.ZERO, max)) {
 			list.push(new CashInAllowanceInvalid(cashInAllowance.toString()));
 		}
@@ -317,7 +322,7 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 	): BaseError[] {
 		let list: BaseError[] = [];
 		const min = initialSupply ?? BigDecimal.ZERO;
-		const max = BigDecimal.fromValue(BigNumber.from(MAX_SUPPLY), decimals);
+		const max = BigDecimal.fromValue(BigNumber.from(MAX_SUPPLY), decimals, decimals);
 		if (CheckNums.isLessThan(maxSupply, min)) {
 			if (min.isZero()) {
 				list.push(
@@ -351,7 +356,7 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 		const list: BaseError[] = [];
 
 		const min = initialSupply ?? BigDecimal.ZERO;
-		const max = BigDecimal.fromValue(BigNumber.from(MAX_SUPPLY), decimals);
+		const max = BigDecimal.fromValue(BigNumber.from(MAX_SUPPLY), decimals, decimals);
 
 		if (!CheckNums.isWithinRange(reserveInitialAmount, min, max)) {
 			list.push(
@@ -372,7 +377,7 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 		const list: BaseError[] = [];
 
 		const min = BigDecimal.ZERO;
-		const max = BigDecimal.fromValue(BigNumber.from(MAX_SUPPLY), decimals);
+		const max = BigDecimal.fromValue(BigNumber.from(MAX_SUPPLY), decimals, decimals);
 
 		if (CheckNums.isLessThan(reserveAmount, min)) {
 			list.push(
