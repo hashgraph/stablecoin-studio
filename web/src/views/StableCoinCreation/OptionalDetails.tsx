@@ -19,6 +19,8 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 	const { control, form, request } = props;
 	const { t } = useTranslation(['global', 'stableCoinCreation']);
 
+	const { trigger } = form;
+
 	const supplyTypes = [
 		{
 			value: 0,
@@ -80,6 +82,7 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 								validation: (value: string) => {
 									request.initialSupply = value;
 									const res = handleRequestValidation(request.validate('initialSupply'));
+									trigger('maxSupply');
 									return res;
 								},
 							},
@@ -139,6 +142,7 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 								validation: (value: string) => {
 									request.decimals = value;
 									const res = handleRequestValidation(request.validate('decimals'));
+									trigger(['maxSupply', 'initialSupply']);
 									return res;
 								},
 							},

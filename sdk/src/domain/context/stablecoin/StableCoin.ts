@@ -290,7 +290,11 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 		const min = BigDecimal.ZERO;
 		const max =
 			maxSupply ??
-			BigDecimal.fromValue(BigNumber.from(MAX_SUPPLY), decimals);
+			BigDecimal.fromValue(
+				BigNumber.from(MAX_SUPPLY),
+				decimals,
+				decimals,
+			);
 		if (!CheckNums.isWithinRange(initialSupply, min, max)) {
 			list.push(new InitSupplyInvalid(initialSupply.toString()));
 		}
@@ -302,7 +306,11 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 		decimals: number,
 	): BaseError[] {
 		const list: BaseError[] = [];
-		const max = BigDecimal.fromValue(BigNumber.from(MAX_SUPPLY), decimals);
+		const max = BigDecimal.fromValue(
+			BigNumber.from(MAX_SUPPLY),
+			decimals,
+			decimals,
+		);
 		if (!CheckNums.isWithinRange(cashInAllowance, BigDecimal.ZERO, max)) {
 			list.push(new CashInAllowanceInvalid(cashInAllowance.toString()));
 		}
@@ -355,7 +363,11 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 		const list: BaseError[] = [];
 
 		const min = initialSupply ?? BigDecimal.ZERO;
-		const max = BigDecimal.fromValue(BigNumber.from(MAX_SUPPLY), decimals);
+		const max = BigDecimal.fromValue(
+			BigNumber.from(MAX_SUPPLY),
+			decimals,
+			decimals,
+		);
 
 		if (!CheckNums.isWithinRange(reserveInitialAmount, min, max)) {
 			list.push(
@@ -376,7 +388,11 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 		const list: BaseError[] = [];
 
 		const min = BigDecimal.ZERO;
-		const max = BigDecimal.fromValue(BigNumber.from(MAX_SUPPLY), decimals);
+		const max = BigDecimal.fromValue(
+			BigNumber.from(MAX_SUPPLY),
+			decimals,
+			decimals,
+		);
 
 		if (CheckNums.isLessThan(reserveAmount, min)) {
 			list.push(
