@@ -119,6 +119,9 @@ const OptionalDetails = (props: OptionalDetailsProps) => {
 								},
 							}}
 							isRequired
+							formStyle={{
+								maxWidth: '400px',
+							}}
 							control={control}
 							name={'maxSupply'}
 							label={t('stableCoinCreation:optionalDetails.maxSupply') ?? propertyNotFound}
