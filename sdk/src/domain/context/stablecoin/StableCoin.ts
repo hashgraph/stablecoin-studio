@@ -296,7 +296,16 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 				decimals,
 			);
 		if (!CheckNums.isWithinRange(initialSupply, min, max)) {
-			list.push(new InitSupplyInvalid(initialSupply.toString()));
+			if (maxSupply) {
+				list.push(new InitSupplyInvalid(initialSupply.toString()));
+			} else {
+				list.push(
+					new InitSupplyInvalid(
+						initialSupply.toString(),
+						max.toString(),
+					),
+				);
+			}
 		}
 		return list;
 	}
