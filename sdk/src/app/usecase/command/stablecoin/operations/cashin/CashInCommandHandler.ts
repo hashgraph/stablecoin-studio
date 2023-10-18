@@ -41,6 +41,10 @@ import { AccountNotKyc } from '../../error/AccountNotKyc.js';
 import { GetReserveAmountQuery } from '../../../../query/stablecoin/getReserveAmount/GetReserveAmountQuery.js';
 import { RESERVE_DECIMALS } from '../../../../../../domain/context/reserve/Reserve.js';
 import { MirrorNodeAdapter } from '../../../../../../port/out/mirror/MirrorNodeAdapter.js';
+import { BigNumber } from 'ethers';
+import { TokenSupplyType } from '@hashgraph/sdk';
+
+const MAX_SUPPLY = 9_223_372_036_854_775_807n;
 
 @CommandHandler(CashInCommand)
 export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
@@ -95,14 +99,30 @@ export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
 		if (!coin.maxSupply || !coin.totalSupply)
 			throw new OperationNotAllowed(`The stablecoin is not valid`);
 
-		if (
-			coin.maxSupply &&
-			coin.maxSupply.isGreaterThan(BigDecimal.ZERO) &&
-			amountBd.isGreaterThan(coin.maxSupply.subUnsafe(coin.totalSupply))
-		) {
-			throw new OperationNotAllowed(
-				`The amount is over the max supply (${amount})`,
+		if (coin.supplyType === TokenSupplyType.Finite.toString()) {
+			if (
+				coin.maxSupply &&
+				coin.maxSupply.isGreaterThan(BigDecimal.ZERO) &&
+				amountBd.isGreaterThan(
+					coin.maxSupply.subUnsafe(coin.totalSupply),
+				)
+			) {
+				throw new OperationNotAllowed(
+					`The total supply amount cannot be greater than the max supply (${coin.maxSupply}).`,
+				);
+			}
+		} else {
+			const max = BigDecimal.fromValue(
+				BigNumber.from(MAX_SUPPLY),
+				coin.decimals,
+				coin.decimals,
 			);
+
+			if (amountBd.isGreaterThan(max.subUnsafe(coin.totalSupply))) {
+				throw new OperationNotAllowed(
+					`The total supply amount cannot be greater than the limit ${max}. You could check the limits here: https://docs.hedera.com/guides/docs/hedera-api/token-service/tokencreate`,
+				);
+			}
 		}
 
 		if (coin.evmProxyAddress) {
