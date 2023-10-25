@@ -1,8 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {
-	GetProxyConfigRequest,
-	GetStableCoinDetailsRequest,
-} from '@hashgraph/stablecoin-npm-sdk';
+import { GetProxyConfigRequest, GetStableCoinDetailsRequest } from '@hashgraph/stablecoin-npm-sdk';
 
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';

@@ -2,9 +2,7 @@ import { Flex } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { NamedRoutes } from '../../Router/NamedRoutes';
 import SidebarOption from './SidebarOption';
-import {
-	SELECTED_WALLET_COIN,
-} from '../../store/slices/walletSlice';
+import { SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
 import { useSelector } from 'react-redux';
 
 interface optionsProps {

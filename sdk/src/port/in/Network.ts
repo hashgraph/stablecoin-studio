@@ -43,6 +43,7 @@ import SetConfigurationRequest from './request/SetConfigurationRequest.js';
 import { handleValidation } from './Common.js';
 import { MirrorNode } from '../../domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from '../../domain/context/network/JsonRpcRelay.js';
+import { BladeTransactionAdapter } from '../out/hs/blade/BladeTransactionAdapter.js';
 
 export { InitializationData, SupportedWallets };
 
@@ -150,6 +151,8 @@ class NetworkInPort implements INetworkInPort {
 				wallets.push(SupportedWallets.METAMASK);
 			} else if (val instanceof HashpackTransactionAdapter) {
 				wallets.push(SupportedWallets.HASHPACK);
+			} else if (val instanceof BladeTransactionAdapter) {
+				wallets.push(SupportedWallets.BLADE);
 			} else {
 				wallets.push(SupportedWallets.CLIENT);
 			}
@@ -173,6 +176,14 @@ class NetworkInPort implements INetworkInPort {
 			const instances = Injectable.registerTransactionAdapterInstances();
 			for (const val of instances) {
 				if (val instanceof HashpackTransactionAdapter) {
+					await val.restart(req.network);
+				}
+			}
+		}
+		if (req.wallet == SupportedWallets.BLADE) {
+			const instances = Injectable.registerTransactionAdapterInstances();
+			for (const val of instances) {
+				if (val instanceof BladeTransactionAdapter) {
 					await val.restart(req.network);
 				}
 			}

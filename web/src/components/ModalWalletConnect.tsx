@@ -78,47 +78,9 @@ const ModalWalletConnect = () => {
 	const { control, getValues } = useForm({
 		mode: 'onChange',
 	});
-	
-	const handleWalletConnectBlade = async (wallet: SupportedWallets, network: string) => {
-		console.log("AQUUIIIII")
-		if (loading) return;
-		setLoading(wallet);
-		dispatch(walletActions.setLastWallet(wallet));
-		dispatch(walletActions.setNetwork(network));
-		dispatch(walletActions.setSelectedStableCoin(undefined));
-		dispatch(walletActions.setSelectedStableCoinProxyConfig(undefined));
-		dispatch(walletActions.setSelectedNetworkFactoryProxyConfig(undefined));
-		dispatch(walletActions.setIsProxyOwner(false));
-		dispatch(walletActions.setIsPendingOwner(false));
-		dispatch(walletActions.setIsAcceptOwner(false));
 
-		try {
-			console.log("AQUUIIIII2")
-			await SDKService.connectWallet(wallet, network);
-			console.log("AQUUIIIII3")
-			const factoryId = await Network.getFactoryAddress();
-
-			if (factoryId) {
-				const factoryProxyConfig: StableCoinListViewModel = await getFactoryProxyConfig(factoryId);
-				dispatch(walletActions.setSelectedNetworkFactoryProxyConfig(factoryProxyConfig));
-			}
-			dispatch(walletActions.setIsFactoryProxyOwner(false));
-			dispatch(walletActions.setIsFactoryPendingOwner(false));
-			dispatch(walletActions.setIsFactoryAcceptOwner(false));
-			console.log("AQUUIIIII5")
-		} catch (error: any) {
-			if ('errorCode' in error && error.errorCode === '40009') {
-				setRejected(true);
-			} else {
-				setError(error.message);
-			}
-			setLoading(undefined);
-		}
-		console.log("AQUUIIIII4")
-	}
-	
 	const handleWalletConnect = async (wallet: SupportedWallets, network: string) => {
-		console.log("AQUUIIIII")
+		console.log('AQUUIIIII');
 		if (loading) return;
 		setLoading(wallet);
 		dispatch(walletActions.setLastWallet(wallet));
@@ -131,9 +93,9 @@ const ModalWalletConnect = () => {
 		dispatch(walletActions.setIsAcceptOwner(false));
 
 		try {
-			console.log("AQUUIIIII2")
+			console.log('AQUUIIIII2');
 			await SDKService.connectWallet(wallet, network);
-			console.log("AQUUIIIII3")
+			console.log('AQUUIIIII3');
 			const factoryId = await Network.getFactoryAddress();
 
 			if (factoryId) {
@@ -143,7 +105,7 @@ const ModalWalletConnect = () => {
 			dispatch(walletActions.setIsFactoryProxyOwner(false));
 			dispatch(walletActions.setIsFactoryPendingOwner(false));
 			dispatch(walletActions.setIsFactoryAcceptOwner(false));
-			console.log("AQUUIIIII5")
+			console.log('AQUUIIIII5');
 		} catch (error: any) {
 			if ('errorCode' in error && error.errorCode === '40009') {
 				setRejected(true);
@@ -152,7 +114,7 @@ const ModalWalletConnect = () => {
 			}
 			setLoading(undefined);
 		}
-		console.log("AQUUIIIII4")
+		console.log('AQUUIIIII4');
 	};
 
 	const getFactoryProxyConfig = async (factoryId: string): Promise<StableCoinListViewModel> => {
@@ -204,9 +166,8 @@ const ModalWalletConnect = () => {
 	};
 
 	const handleConnectBladeWallet = () => {
-		handleWalletConnectBlade(SupportedWallets.BLADE, 'Testnet');
+		handleWalletConnect(SupportedWallets.BLADE, 'Testnet');
 	};
-
 
 	const PairingSpinner: FC<{ wallet: SupportedWallets; children?: ReactNode }> = ({
 		wallet,

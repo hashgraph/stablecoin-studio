@@ -1,7 +1,4 @@
-import {
-  ChangeProxyOwnerRequest,
-  Proxy,
-} from '@hashgraph/stablecoin-npm-sdk';
+import { ChangeProxyOwnerRequest, Proxy } from '@hashgraph/stablecoin-npm-sdk';
 import { utilsService } from '../../../../src/index.js';
 import Language from '../../../../src/domain/language/Language.js';
 import OwnerProxyService from '../../../../src/app/service/proxy/OwnerProxyService.js';
