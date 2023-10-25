@@ -40,11 +40,7 @@ import {
 } from '@hashgraph/sdk';
 import { singleton } from 'tsyringe';
 import { HederaTransactionAdapter } from '../HederaTransactionAdapter.js';
-import { HashConnect } from '@hashgraph/hashconnect';
-import { HashConnectProvider } from '@hashgraph/hashconnect/provider/provider';
-import { HashConnectSigner } from '@hashgraph/hashconnect/provider/signer';
-import { HashConnectTypes } from '@hashgraph/hashconnect';
-import { HashConnectConnectionState } from '@hashgraph/hashconnect/types';
+
 import Account from '../../../../domain/context/account/Account.js';
 import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
 import Injectable from '../../../../core/Injectable.js';
@@ -59,13 +55,10 @@ import { lazyInject } from '../../../../core/decorator/LazyInjectDecorator.js';
 import NetworkService from '../../../../app/service/NetworkService.js';
 import { RuntimeError } from '../../../../core/error/RuntimeError.js';
 import {
-	ConnectionState,
 	WalletEvents,
-	WalletInitEvent,
 } from '../../../../app/service/event/WalletEvent.js';
 import { SupportedWallets } from '../../../in/Network.js'; 
 import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter.js';
-import { SDK } from '../../../in/Common.js';
 import { HederaId } from '../../../../domain/context/shared/HederaId.js';
 import { QueryBus } from '../../../../core/query/QueryBus.js';
 import { AccountIdNotValid } from '../../../../domain/context/account/error/AccountIdNotValid.js';
@@ -73,20 +66,17 @@ import { GetAccountInfoQuery } from '../../../../app/usecase/query/account/info/
 
 import {BladeConnector, ConnectorStrategy, HederaNetwork} from '@bladelabs/blade-web3.js';
 import { HashpackTransactionResponseAdapter } from '../hashpack/HashpackTransactionResponseAdapter.js';
-import { PublicKey } from '@hashgraph/cryptography';
+
 
 @singleton()
 export class BladeTransactionAdapter extends HederaTransactionAdapter {
 	private bc: BladeConnector;
 	public account: Account;
-	public provider: HashConnectProvider;
+	
 	public signer: Signer|null;
-	private initData: HashConnectTypes.InitilizationData;
-	private hashConnectConectionState: HashConnectConnectionState;
+	private initData: string;
 	private availableExtension = false;
-	private pairingData: HashConnectTypes.SavedPairingData | null = null;
-	state: HashConnectConnectionState;
-
+	
 	constructor(
 		@lazyInject(EventService)
 		public readonly eventService: EventService,
@@ -152,7 +142,7 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 			name: SupportedWallets.BLADE,
 			account: this.account,
 			
-			topic: this.initData.topic,
+			
 		});
 	}
 
@@ -188,7 +178,7 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 			}
 			const trx = await this.signer.signTransaction(signedT);
 			const hashPackTrx = {
-				topic: this.initData.topic,
+				//topic: this.initData.topic,
 				byteArray: trx.toBytes(),
 				metadata: {
 					accountToSign: this.account.id.toString(),

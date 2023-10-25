@@ -24,6 +24,7 @@ import type { FC, ReactNode } from 'react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
+import BLADE_LOGO_PNG from '../assets/png/bladeLogo.png';
 import HASHPACK_LOGO_PNG from '../assets/png/hashpackLogo.png';
 import METAMASK_LOGO from '../assets/svg/MetaMask_Fox.svg';
 import SDKService from '../services/SDKService';
@@ -77,8 +78,9 @@ const ModalWalletConnect = () => {
 	const { control, getValues } = useForm({
 		mode: 'onChange',
 	});
-
-	const handleWalletConnect = async (wallet: SupportedWallets, network: string) => {
+	
+	const handleWalletConnectBlade = async (wallet: SupportedWallets, network: string) => {
+		console.log("AQUUIIIII")
 		if (loading) return;
 		setLoading(wallet);
 		dispatch(walletActions.setLastWallet(wallet));
@@ -91,8 +93,9 @@ const ModalWalletConnect = () => {
 		dispatch(walletActions.setIsAcceptOwner(false));
 
 		try {
+			console.log("AQUUIIIII2")
 			await SDKService.connectWallet(wallet, network);
-
+			console.log("AQUUIIIII3")
 			const factoryId = await Network.getFactoryAddress();
 
 			if (factoryId) {
@@ -102,6 +105,7 @@ const ModalWalletConnect = () => {
 			dispatch(walletActions.setIsFactoryProxyOwner(false));
 			dispatch(walletActions.setIsFactoryPendingOwner(false));
 			dispatch(walletActions.setIsFactoryAcceptOwner(false));
+			console.log("AQUUIIIII5")
 		} catch (error: any) {
 			if ('errorCode' in error && error.errorCode === '40009') {
 				setRejected(true);
@@ -110,6 +114,45 @@ const ModalWalletConnect = () => {
 			}
 			setLoading(undefined);
 		}
+		console.log("AQUUIIIII4")
+	}
+	
+	const handleWalletConnect = async (wallet: SupportedWallets, network: string) => {
+		console.log("AQUUIIIII")
+		if (loading) return;
+		setLoading(wallet);
+		dispatch(walletActions.setLastWallet(wallet));
+		dispatch(walletActions.setNetwork(network));
+		dispatch(walletActions.setSelectedStableCoin(undefined));
+		dispatch(walletActions.setSelectedStableCoinProxyConfig(undefined));
+		dispatch(walletActions.setSelectedNetworkFactoryProxyConfig(undefined));
+		dispatch(walletActions.setIsProxyOwner(false));
+		dispatch(walletActions.setIsPendingOwner(false));
+		dispatch(walletActions.setIsAcceptOwner(false));
+
+		try {
+			console.log("AQUUIIIII2")
+			await SDKService.connectWallet(wallet, network);
+			console.log("AQUUIIIII3")
+			const factoryId = await Network.getFactoryAddress();
+
+			if (factoryId) {
+				const factoryProxyConfig: StableCoinListViewModel = await getFactoryProxyConfig(factoryId);
+				dispatch(walletActions.setSelectedNetworkFactoryProxyConfig(factoryProxyConfig));
+			}
+			dispatch(walletActions.setIsFactoryProxyOwner(false));
+			dispatch(walletActions.setIsFactoryPendingOwner(false));
+			dispatch(walletActions.setIsFactoryAcceptOwner(false));
+			console.log("AQUUIIIII5")
+		} catch (error: any) {
+			if ('errorCode' in error && error.errorCode === '40009') {
+				setRejected(true);
+			} else {
+				setError(error.message);
+			}
+			setLoading(undefined);
+		}
+		console.log("AQUUIIIII4")
 	};
 
 	const getFactoryProxyConfig = async (factoryId: string): Promise<StableCoinListViewModel> => {
@@ -159,6 +202,11 @@ const ModalWalletConnect = () => {
 	const handleConnectMetamaskWallet = () => {
 		handleWalletConnect(SupportedWallets.METAMASK, '-');
 	};
+
+	const handleConnectBladeWallet = () => {
+		handleWalletConnectBlade(SupportedWallets.BLADE, 'Testnet');
+	};
+
 
 	const PairingSpinner: FC<{ wallet: SupportedWallets; children?: ReactNode }> = ({
 		wallet,
@@ -263,6 +311,31 @@ const ModalWalletConnect = () => {
 												<Image src={METAMASK_LOGO} w={20} />
 												<Text>Metamask</Text>
 											</Link>
+										</VStack>
+									)}
+									{availableWallets.includes(SupportedWallets.BLADE) ? (
+										<VStack
+											data-testid='Blade'
+											{...styles.providerStyle}
+											shouldWrapChildren
+											onClick={handleConnectBladeWallet}
+										>
+											<PairingSpinner wallet={SupportedWallets.BLADE}>
+												<Image src={BLADE_LOGO_PNG} w={20} />
+												<Text>Blade</Text>
+											</PairingSpinner>
+										</VStack>
+									) : (
+										<VStack
+											data-testid='Blade2'
+											{...styles.providerStyle}
+											shouldWrapChildren
+											onClick={handleConnectBladeWallet}
+										>
+											<PairingSpinner wallet={SupportedWallets.BLADE}>
+												<Image src={BLADE_LOGO_PNG} w={20} />
+												<Text>Blade</Text>
+											</PairingSpinner>
 										</VStack>
 									)}
 								</HStack>
