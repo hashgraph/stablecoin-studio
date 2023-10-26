@@ -20,50 +20,45 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-	Transaction,
-	Signer,
-	PublicKey as HPublicKey,
-	TokenBurnTransaction,
-	TokenCreateTransaction,
-	TokenDeleteTransaction,
-	TokenFreezeTransaction,
-	TokenMintTransaction,
-	TokenPauseTransaction,
-	TokenUnfreezeTransaction,
-	TokenUnpauseTransaction,
-	TokenWipeTransaction,
-	TransferTransaction,
-	TokenRevokeKycTransaction,
-	TokenGrantKycTransaction,
-	TokenFeeScheduleUpdateTransaction,
-	TokenAssociateTransaction,
-} from '@hashgraph/sdk';
-import { singleton } from 'tsyringe';
-import { HederaTransactionAdapter } from '../HederaTransactionAdapter.js';
-import Account from '../../../../domain/context/account/Account.js';
-import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
-import Injectable from '../../../../core/Injectable.js';
-import { SigningError } from '../error/SigningError.js';
-import { TransactionType } from '../../TransactionResponseEnums.js';
-import LogService from '../../../../app/service/LogService.js';
-import EventService from '../../../../app/service/event/EventService.js';
-import { PairingError } from '../hashpack/error/PairingError.js';
-import { InitializationData } from '../../TransactionAdapter.js';
-import { lazyInject } from '../../../../core/decorator/LazyInjectDecorator.js';
-import NetworkService from '../../../../app/service/NetworkService.js';
-import { RuntimeError } from '../../../../core/error/RuntimeError.js';
-import { WalletEvents } from '../../../../app/service/event/WalletEvent.js';
-import { SupportedWallets } from '../../../in/Network.js';
-import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter.js';
-import { HederaId } from '../../../../domain/context/shared/HederaId.js';
-import { QueryBus } from '../../../../core/query/QueryBus.js';
-import { AccountIdNotValid } from '../../../../domain/context/account/error/AccountIdNotValid.js';
-import { GetAccountInfoQuery } from '../../../../app/usecase/query/account/info/GetAccountInfoQuery.js';
-import {
 	BladeConnector,
 	ConnectorStrategy,
 	HederaNetwork,
 } from '@bladelabs/blade-web3.js';
+import {
+	Signer,
+	TokenAssociateTransaction,
+	TokenBurnTransaction,
+	TokenCreateTransaction,
+	TokenDeleteTransaction,
+	TokenFeeScheduleUpdateTransaction,
+	TokenFreezeTransaction,
+	TokenGrantKycTransaction,
+	TokenMintTransaction,
+	TokenPauseTransaction,
+	TokenRevokeKycTransaction,
+	TokenUnfreezeTransaction,
+	TokenUnpauseTransaction,
+	TokenWipeTransaction,
+	Transaction,
+	TransferTransaction,
+} from '@hashgraph/sdk';
+import { singleton } from 'tsyringe';
+import LogService from '../../../../app/service/LogService.js';
+import NetworkService from '../../../../app/service/NetworkService.js';
+import EventService from '../../../../app/service/event/EventService.js';
+import { WalletEvents } from '../../../../app/service/event/WalletEvent.js';
+import Injectable from '../../../../core/Injectable.js';
+import { lazyInject } from '../../../../core/decorator/LazyInjectDecorator.js';
+import { RuntimeError } from '../../../../core/error/RuntimeError.js';
+import { QueryBus } from '../../../../core/query/QueryBus.js';
+import Account from '../../../../domain/context/account/Account.js';
+import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
+import { SupportedWallets } from '../../../in/Network.js';
+import { InitializationData } from '../../TransactionAdapter.js';
+import { TransactionType } from '../../TransactionResponseEnums.js';
+import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter.js';
+import { HederaTransactionAdapter } from '../HederaTransactionAdapter.js';
+import { SigningError } from '../error/SigningError.js';
 import { HashpackTransactionResponseAdapter } from '../hashpack/HashpackTransactionResponseAdapter.js';
 
 @singleton()
@@ -89,9 +84,9 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 	}
 
 	async init(network?: string): Promise<string> {
-		/*const currentNetwork = network ?? this.networkService.environment;
+		const currentNetwork = network ?? this.networkService.environment;
 		this.bc = await BladeConnector.init(
-			ConnectorStrategy.WALLET_CONNECT, // preferred strategy is optional
+			ConnectorStrategy.EXTENSION, // preferred strategy is optional
 			{
 				// dApp metadata options are optional, but are highly recommended to use
 				name: 'Awesome DApp',
@@ -108,15 +103,16 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 
 		const pairedAccountIds = await this.bc.createSession(params);
 		// retrieving the currently active signer to perform all the Hedera operations
+		//this.account = Account.pairedAccountIds[0];
+
 		this.setSigner(currentNetwork);
-		this.eventService.emit(WalletEvents.walletFound, {
+		/*this.eventService.emit(WalletEvents.walletFound, {
 			wallet: SupportedWallets.BLADE,
 			name: SupportedWallets.BLADE,
-		});
+		});*/
 		LogService.logTrace('Previous paring found: ', this.account);
 
-		return currentNetwork;*/
-		return 'hola';
+		return currentNetwork;
 	}
 
 	private async setSigner(network: string): Promise<void> {
@@ -128,9 +124,9 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 		Injectable.registerTransactionHandler(this);
 		LogService.logTrace('Blade Registered as handler');
 		console.log('llego');
+		this.init();
 
 		return Promise.resolve({
-			name: SupportedWallets.BLADE,
 			account: this.account,
 		});
 	}
@@ -139,9 +135,9 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 		if (this.bc) await this.bc.killSession();
 
 		LogService.logTrace('Blade stopped');
-		this.eventService.emit(WalletEvents.walletDisconnect, {
+		/*this.eventService.emit(WalletEvents.walletDisconnect, {
 			wallet: SupportedWallets.BLADE,
-		});
+		});*/
 		return Promise.resolve(true);
 	}
 

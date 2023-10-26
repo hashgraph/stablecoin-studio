@@ -180,14 +180,14 @@ class NetworkInPort implements INetworkInPort {
 				}
 			}
 		}
-		if (req.wallet == SupportedWallets.BLADE) {
+		/*if (req.wallet == SupportedWallets.BLADE) {
 			const instances = Injectable.registerTransactionAdapterInstances();
 			for (const val of instances) {
 				if (val instanceof BladeTransactionAdapter) {
 					await val.restart(req.network);
 				}
 			}
-		}
+		}*/
 		await this.commandBus.execute(
 			new SetNetworkCommand(req.network, req.mirrorNode, req.rpcNode),
 		);
