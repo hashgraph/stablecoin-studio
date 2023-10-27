@@ -178,12 +178,12 @@ const ModalWalletConnect = () => {
 				{loading && loading === wallet && (
 					<HStack w={20} justifyContent='center' alignItems={'center'} h='full'>
 						<Spinner
-							w={25}
-							h={25}
+							w={50}
+							h={50}
 							justifyContent='center'
 							alignSelf={'center'}
 							color={wallet === SupportedWallets.HASHPACK ? '#C6AEFA' : '#f39c12'}
-							thickness='4px'
+							thickness='8px'
 						/>
 					</HStack>
 				)}
@@ -282,7 +282,7 @@ const ModalWalletConnect = () => {
 											onClick={handleConnectBladeWallet}
 										>
 											<PairingSpinner wallet={SupportedWallets.BLADE}>
-												<Image src={BLADE_LOGO_PNG} w={20}/>
+												<Image src={BLADE_LOGO_PNG} w={20} />
 												<Text textAlign='center'>Blade</Text>
 											</PairingSpinner>
 										</VStack>
