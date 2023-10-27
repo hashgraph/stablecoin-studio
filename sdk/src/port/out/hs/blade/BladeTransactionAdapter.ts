@@ -50,7 +50,6 @@ import { WalletEvents } from '../../../../app/service/event/WalletEvent.js';
 import Injectable from '../../../../core/Injectable.js';
 import { lazyInject } from '../../../../core/decorator/LazyInjectDecorator.js';
 import { RuntimeError } from '../../../../core/error/RuntimeError.js';
-import { QueryBus } from '../../../../core/query/QueryBus.js';
 import Account from '../../../../domain/context/account/Account.js';
 import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
 import { SupportedWallets } from '../../../in/request/ConnectRequest.js';
@@ -60,9 +59,7 @@ import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter.js';
 import { HederaTransactionAdapter } from '../HederaTransactionAdapter.js';
 import { SigningError } from '../error/SigningError.js';
 import { HashpackTransactionResponseAdapter } from '../hashpack/HashpackTransactionResponseAdapter.js';
-import { GetAccountInfoQuery } from '../../../../app/usecase/query/account/info/GetAccountInfoQuery.js';
-import { HederaId } from '../../../in/StableCoin.js';
-import { AccountIdNotValid } from '../../../../domain/context/account/error/AccountIdNotValid.js';
+import PublicKey from '../../../../domain/context/account/PublicKey.js';
 
 @singleton()
 export class BladeTransactionAdapter extends HederaTransactionAdapter {
@@ -70,8 +67,6 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 	public account: Account;
 
 	public signer: Signer | null;
-	private initData: string;
-	private availableExtension = false;
 
 	constructor(
 		@lazyInject(EventService)
@@ -80,7 +75,6 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 		public readonly networkService: NetworkService,
 		@lazyInject(MirrorNodeAdapter)
 		public readonly mirrorNodeAdapter: MirrorNodeAdapter,
-		
 	) {
 		super(mirrorNodeAdapter, networkService);
 	}
@@ -104,18 +98,24 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 		};
 
 		const pairedAccountIds = await this.bc.createSession(params);
-		// retrieving the currently active signer to perform all the Hedera operations
-		//this.account = Account.0;
-		
+
 		const bladeSigner = this.bc.getSigner();
 		const accountInfo = await bladeSigner?.getAccountInfo();
-		console.log(accountInfo)
-		if (accountInfo){
-			this.account=new Account({
-				id: accountInfo?.accountId.toString()
+
+		if (accountInfo && accountInfo.accountId) {
+			const accountId = accountInfo?.accountId.toString();
+
+			if (accountId) {
+				const publicKey =
+					accountInfo.key.toString().length > 64
+						? accountInfo.key.toString().slice(-64)
+						: accountInfo.key.toString();
+				this.account = new Account({
+					id: accountId!,
+					publicKey: new PublicKey(publicKey),
 				});
+			}
 		}
-		
 
 		this.setSigner(currentNetwork);
 		this.eventService.emit(WalletEvents.walletFound, {
@@ -123,8 +123,7 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 			name: SupportedWallets.BLADE,
 		});
 		const iniData: InitializationData = {
-			account: this.account
-			
+			account: this.account,
 		};
 		this.eventService.emit(WalletEvents.walletPaired, {
 			data: iniData,
@@ -147,10 +146,8 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 	}
 
 	async register(): Promise<InitializationData> {
-		console.log('llego');
 		Injectable.registerTransactionHandler(this);
 		LogService.logTrace('Blade Registered as handler');
-		console.log('llego');
 		this.init();
 
 		return Promise.resolve({
@@ -257,18 +254,4 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 			'There are no accounts currently paired with HashPack!',
 		);
 	}
-	
-	/*async getAccountInfo(id: string): Promise<Account> {
-		const account = (
-			await this.queryBus.execute(
-				new GetAccountInfoQuery(HederaId.from(id)),
-			)
-		).account;
-		if (!account.id) throw new AccountIdNotValid(id.toString());
-		return new Account({
-			id: account.id,
-			publicKey: account.publicKey,
-			evmAddress: account.accountEvmAddress,
-		});
-	}*/
 }
