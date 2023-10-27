@@ -166,7 +166,7 @@ const ModalWalletConnect = () => {
 	};
 
 	const handleConnectBladeWallet = () => {
-		handleWalletConnect(SupportedWallets.BLADE, 'Testnet');
+		handleWalletConnect(SupportedWallets.BLADE, 'testnet');
 	};
 
 	const PairingSpinner: FC<{ wallet: SupportedWallets; children?: ReactNode }> = ({
