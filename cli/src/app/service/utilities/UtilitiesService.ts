@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as inquirer from 'inquirer';
 import figlet from 'figlet-promised';
-import {configurationService, language, setMirrorNodeService, setRPCService} from '../../../index.js';
+import {configurationService, language, setMirrorNodeService, setRPCService,} from '../../../index.js';
 import Service from '../Service.js';
 import Table from 'cli-table3';
 import {
@@ -34,7 +34,6 @@ export default class UtilitiesService extends Service {
   private currentRPC: IRPCsConfig;
   private currentFactory: IFactoryConfig;
   private currentHederaTokenManager: IHederaTokenManagerConfig;
-  private MIN_PUBLIC_KEY_LENGTH = 64;
 
   constructor() {
     super('Utilities');
@@ -386,8 +385,11 @@ export default class UtilitiesService extends Service {
    * Function to configure the public key, fail if length doesn't 96 or 64 or 66
    */
   public async defaultPublicKeyAsk(): Promise<{ key: string }> {
+    const MIN_PUBLIC_KEY_LENGTH = 64;
+    const MAX_PUBLIC_KEY_LENGTH = 130;
     let publicKey: string = await this.defaultSingleAsk(
-      language.getText('configuration.askPublicKey'),
+      language.getText('configuration.askPublicKey') +
+        ` with a length of ${MIN_PUBLIC_KEY_LENGTH}-${MAX_PUBLIC_KEY_LENGTH} characters`,
       undefined,
     );
 
@@ -395,7 +397,7 @@ export default class UtilitiesService extends Service {
       publicKey = publicKey.substring(2);
     }
 
-    if (publicKey.length < this.MIN_PUBLIC_KEY_LENGTH) {
+    if (publicKey.length < MIN_PUBLIC_KEY_LENGTH || publicKey.length > MAX_PUBLIC_KEY_LENGTH) {
       this.showError(language.getText('general.incorrectParam'));
       return await this.defaultPublicKeyAsk();
     }

@@ -1,6 +1,6 @@
-import {StableCoinList} from '../../../domain/stablecoin/StableCoinList.js';
+import { StableCoinList } from '../../../domain/stablecoin/StableCoinList.js';
 import Big from 'big.js';
-import {language, utilsService, wizardService} from '../../../index.js';
+import { language, utilsService, wizardService } from '../../../index.js';
 import Service from '../Service.js';
 import DetailsStableCoinService from './DetailsStableCoinService.js';
 import {
@@ -67,7 +67,7 @@ import UpdateStableCoinService from './UpdateStableCoinService.js';
 import OwnerProxyService from '../proxy/OwnerProxyService.js';
 import ConfigurationProxyService from '../proxy/ConfigurationProxyService.js';
 import ImplementationProxyService from '../proxy/ImplementationProxyService.js';
-import {IAccountConfig} from '../../../domain/configuration/interfaces/IAccountConfig.js';
+import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
 
 enum tokenKeys {
   admin,
@@ -2973,8 +2973,11 @@ export default class OperationStableCoinService extends Service {
         );
         if (confirm) {
           try {
-            if ((Object.entries(updateRequest)
-              .filter(([key, value]) => key === 'symbol' && value !== undefined)).length > 0) {
+            if (
+              Object.entries(updateRequest).filter(
+                ([key, value]) => key === 'symbol' && value !== undefined,
+              ).length > 0
+            ) {
               this.stableCoinWithSymbol = `${updateRequest.tokenId} - ${updateRequest.symbol}`;
             }
 
