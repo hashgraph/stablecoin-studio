@@ -203,7 +203,7 @@ const ModalWalletConnect = () => {
 				closeOnOverlayClick={false}
 			>
 				<ModalOverlay />
-				<ModalContent data-testid='modal-action-content' p='50' w='500px'>
+				<ModalContent data-testid='modal-action-content' p='50' w='600px'>
 					{!error && !rejected && !hashpackSelected && (
 						<>
 							<ModalHeader p='0' justifyContent='center'>
@@ -220,7 +220,7 @@ const ModalWalletConnect = () => {
 							</ModalHeader>
 							<ModalFooter p='0' justifyContent='center'>
 								<HStack
-									spacing={14}
+									spacing={10}
 									pt={8}
 									w='full'
 									justifyContent={'center'}
@@ -259,7 +259,7 @@ const ModalWalletConnect = () => {
 										>
 											<PairingSpinner wallet={SupportedWallets.METAMASK}>
 												<Image src={METAMASK_LOGO} w={20} />
-												<Text>Metamask</Text>
+												<Text textAlign='center'>Metamask</Text>
 											</PairingSpinner>
 										</VStack>
 									) : (
@@ -270,7 +270,7 @@ const ModalWalletConnect = () => {
 												_hover={{ textDecoration: 'none' }}
 											>
 												<Image src={METAMASK_LOGO} w={20} />
-												<Text>Metamask</Text>
+												<Text textAlign='center'>Metamask</Text>
 											</Link>
 										</VStack>
 									)}
@@ -282,20 +282,20 @@ const ModalWalletConnect = () => {
 											onClick={handleConnectBladeWallet}
 										>
 											<PairingSpinner wallet={SupportedWallets.BLADE}>
-												<Image src={BLADE_LOGO_PNG} w={20} />
-												<Text>Blade</Text>
+												<Image src={BLADE_LOGO_PNG} w={20}/>
+												<Text textAlign='center'>Blade</Text>
 											</PairingSpinner>
 										</VStack>
 									) : (
 										<VStack
-											data-testid='Blade2'
+											data-testid='Blade'
 											{...styles.providerStyle}
 											shouldWrapChildren
 											onClick={handleConnectBladeWallet}
 										>
 											<PairingSpinner wallet={SupportedWallets.BLADE}>
 												<Image src={BLADE_LOGO_PNG} w={20} />
-												<Text>Blade</Text>
+												<Text textAlign='center'>Blade</Text>
 											</PairingSpinner>
 										</VStack>
 									)}
