@@ -1,50 +1,50 @@
-import { StableCoinList } from '../../../domain/stablecoin/StableCoinList.js';
+import {StableCoinList} from '../../../domain/stablecoin/StableCoinList.js';
 import Big from 'big.js';
-import { language, utilsService, wizardService } from '../../../index.js';
+import {language, utilsService, wizardService} from '../../../index.js';
 import Service from '../Service.js';
 import DetailsStableCoinService from './DetailsStableCoinService.js';
 import {
-  RequestAccount,
-  StableCoinRole,
-  BurnRequest,
-  GetAccountBalanceRequest,
-  GetRolesRequest,
-  FreezeAccountRequest,
-  KYCRequest,
-  StableCoinCapabilities,
+  AcceptProxyOwnerRequest,
   Access,
-  Operation,
-  RequestPrivateKey,
-  CashInRequest,
-  WipeRequest,
-  RescueRequest,
-  RescueHBARRequest,
-  UpdateRequest,
-  IncreaseSupplierAllowanceRequest,
-  CheckSupplierLimitRequest,
-  DecreaseSupplierAllowanceRequest,
-  ResetSupplierAllowanceRequest,
-  PauseRequest,
-  DeleteRequest,
-  GetSupplierAllowanceRequest,
+  Account,
   AddFixedFeeRequest,
   AddFractionalFeeRequest,
-  RequestCustomFee,
-  UpdateCustomFeesRequest,
-  HBAR_DECIMALS,
-  GrantMultiRolesRequest,
-  MAX_ACCOUNTS_ROLES,
-  TRANSFER_LIST_SIZE,
-  RevokeMultiRolesRequest,
-  TransfersRequest,
-  StableCoinViewModel,
-  RequestPublicKey,
-  Account,
-  GetPublicKeyRequest,
-  GetAccountsWithRolesRequest,
+  BurnRequest,
+  CashInRequest,
   ChangeProxyOwnerRequest,
+  CheckSupplierLimitRequest,
+  DecreaseSupplierAllowanceRequest,
+  DeleteRequest,
+  FreezeAccountRequest,
+  GetAccountBalanceRequest,
+  GetAccountsWithRolesRequest,
+  GetPublicKeyRequest,
+  GetRolesRequest,
+  GetSupplierAllowanceRequest,
+  GrantMultiRolesRequest,
+  HBAR_DECIMALS,
+  IncreaseSupplierAllowanceRequest,
+  KYCRequest,
+  MAX_ACCOUNTS_ROLES,
+  Operation,
+  PauseRequest,
+  RequestAccount,
+  RequestCustomFee,
+  RequestPrivateKey,
+  RequestPublicKey,
+  RescueHBARRequest,
+  RescueRequest,
+  ResetSupplierAllowanceRequest,
+  RevokeMultiRolesRequest,
+  StableCoinCapabilities,
+  StableCoinRole,
+  StableCoinViewModel,
+  TRANSFER_LIST_SIZE,
+  TransfersRequest,
+  UpdateCustomFeesRequest,
+  UpdateRequest,
   UpgradeImplementationRequest,
-  AcceptProxyOwnerRequest,
+  WipeRequest,
 } from '@hashgraph/stablecoin-npm-sdk';
 
 import BalanceOfStableCoinService from './BalanceOfStableCoinService.js';
@@ -67,7 +67,7 @@ import UpdateStableCoinService from './UpdateStableCoinService.js';
 import OwnerProxyService from '../proxy/OwnerProxyService.js';
 import ConfigurationProxyService from '../proxy/ConfigurationProxyService.js';
 import ImplementationProxyService from '../proxy/ImplementationProxyService.js';
-import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
+import {IAccountConfig} from '../../../domain/configuration/interfaces/IAccountConfig.js';
 
 enum tokenKeys {
   admin,
@@ -3129,7 +3129,7 @@ export default class OperationStableCoinService extends Service {
           console.log(
             colors.yellow(
               `${element[0]}: ${stableCoinViewModel[element[0]]} --> ${
-                element[1]
+                element[1].key
               }`,
             ),
           );
