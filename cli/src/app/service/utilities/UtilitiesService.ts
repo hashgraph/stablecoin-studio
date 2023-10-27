@@ -1,29 +1,28 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as inquirer from 'inquirer';
 import figlet from 'figlet-promised';
-import { setMirrorNodeService, setRPCService } from '../../../index.js';
+import {configurationService, language, setMirrorNodeService, setRPCService,} from '../../../index.js';
 import Service from '../Service.js';
-import { configurationService, language } from '../../../index.js';
 import Table from 'cli-table3';
 import {
-  ValidationResponse,
-  Network,
   ConnectRequest,
-  SupportedWallets,
-  StableCoinListViewModel,
   InitializationRequest,
+  Network,
   SDK,
+  StableCoinListViewModel,
+  SupportedWallets,
+  ValidationResponse,
 } from '@hashgraph/stablecoin-npm-sdk';
-import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
-import { INetworkConfig } from '../../../domain/configuration/interfaces/INetworkConfig.js';
+import {IAccountConfig} from '../../../domain/configuration/interfaces/IAccountConfig.js';
+import {INetworkConfig} from '../../../domain/configuration/interfaces/INetworkConfig.js';
 import colors from 'colors';
 import MaskData from 'maskdata';
-import { clear } from 'console';
-import { IFactoryConfig } from '../../../domain/configuration/interfaces/IFactoryConfig.js';
-import { IHederaTokenManagerConfig } from '../../../domain/configuration/interfaces/IHederaTokenManagerConfig.js';
-import { IMirrorsConfig } from 'domain/configuration/interfaces/IMirrorsConfig.js';
-import { IRPCsConfig } from 'domain/configuration/interfaces/IRPCsConfig.js';
-import { MIRROR_NODE, RPC } from '../../../core/Constants.js';
+import {clear} from 'console';
+import {IFactoryConfig} from '../../../domain/configuration/interfaces/IFactoryConfig.js';
+import {IHederaTokenManagerConfig} from '../../../domain/configuration/interfaces/IHederaTokenManagerConfig.js';
+import {IMirrorsConfig} from 'domain/configuration/interfaces/IMirrorsConfig.js';
+import {IRPCsConfig} from 'domain/configuration/interfaces/IRPCsConfig.js';
+import {MIRROR_NODE, RPC} from '../../../core/Constants.js';
 
 /**
  * Utilities Service
@@ -386,9 +385,11 @@ export default class UtilitiesService extends Service {
    * Function to configure the public key, fail if length doesn't 96 or 64 or 66
    */
   public async defaultPublicKeyAsk(): Promise<{ key: string }> {
+    const MIN_PUBLIC_KEY_LENGTH = 64;
+    const MAX_PUBLIC_KEY_LENGTH = 130;
     let publicKey: string = await this.defaultSingleAsk(
       language.getText('configuration.askPublicKey') +
-        ` '96|64|66|68 characters'`,
+        ` with a length of ${MIN_PUBLIC_KEY_LENGTH}-${MAX_PUBLIC_KEY_LENGTH} characters`,
       undefined,
     );
 
@@ -396,7 +397,10 @@ export default class UtilitiesService extends Service {
       publicKey = publicKey.substring(2);
     }
 
-    if (![64, 66, 68, 96].includes(publicKey.length)) {
+    if (
+      publicKey.length < MIN_PUBLIC_KEY_LENGTH ||
+      publicKey.length > MAX_PUBLIC_KEY_LENGTH
+    ) {
       this.showError(language.getText('general.incorrectParam'));
       return await this.defaultPublicKeyAsk();
     }
