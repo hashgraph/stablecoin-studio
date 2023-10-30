@@ -256,4 +256,18 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 			'There are no accounts currently paired with HashPack!',
 		);
 	}
+
+	/*async getAccountInfo(id: string): Promise<Account> {
+		const account = (
+			await this.queryBus.execute(
+				new GetAccountInfoQuery(HederaId.from(id)),
+			)
+		).account;
+		if (!account.id) throw new AccountIdNotValid(id.toString());
+		return new Account({
+			id: account.id,
+			publicKey: account.publicKey,
+			evmAddress: account.accountEvmAddress,
+		});
+	}*/
 }
