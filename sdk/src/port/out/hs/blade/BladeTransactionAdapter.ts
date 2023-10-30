@@ -107,8 +107,10 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 
 			if (accountId) {
 				const publicKey =
-					accountInfo.key.toString().length > 64
+					accountInfo.key.toString().length === 88
 						? accountInfo.key.toString().slice(-64)
+						: accountInfo.key.toString().length === 94
+						? accountInfo.key.toString().slice(-66)
 						: accountInfo.key.toString();
 				this.account = new Account({
 					id: accountId!,
