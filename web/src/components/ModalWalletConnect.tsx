@@ -80,7 +80,6 @@ const ModalWalletConnect = () => {
 	});
 
 	const handleWalletConnect = async (wallet: SupportedWallets, network: string) => {
-		console.log('AQUUIIIII');
 		if (loading) return;
 		setLoading(wallet);
 		dispatch(walletActions.setLastWallet(wallet));
@@ -93,9 +92,7 @@ const ModalWalletConnect = () => {
 		dispatch(walletActions.setIsAcceptOwner(false));
 
 		try {
-			console.log('AQUUIIIII2');
 			await SDKService.connectWallet(wallet, network);
-			console.log('AQUUIIIII3');
 			const factoryId = await Network.getFactoryAddress();
 
 			if (factoryId) {
@@ -105,7 +102,6 @@ const ModalWalletConnect = () => {
 			dispatch(walletActions.setIsFactoryProxyOwner(false));
 			dispatch(walletActions.setIsFactoryPendingOwner(false));
 			dispatch(walletActions.setIsFactoryAcceptOwner(false));
-			console.log('AQUUIIIII5');
 		} catch (error: any) {
 			if ('errorCode' in error && error.errorCode === '40009') {
 				setRejected(true);
@@ -114,7 +110,6 @@ const ModalWalletConnect = () => {
 			}
 			setLoading(undefined);
 		}
-		console.log('AQUUIIIII4');
 	};
 
 	const getFactoryProxyConfig = async (factoryId: string): Promise<StableCoinListViewModel> => {
@@ -130,7 +125,6 @@ const ModalWalletConnect = () => {
 				}, 10000);
 			}),
 		]).catch((e) => {
-			console.log(e.message);
 			if (e.code === 'NETWORK_ERROR') {
 				throw new Error('The RPC service is not working as expected');
 			}
