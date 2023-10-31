@@ -55,11 +55,14 @@ import TransactionResponse from '../../../../domain/context/transaction/Transact
 import { SupportedWallets } from '../../../in/request/ConnectRequest.js';
 import { InitializationData } from '../../TransactionAdapter.js';
 import { TransactionType } from '../../TransactionResponseEnums.js';
+import { HederaId } from '../../../../domain/context/shared/HederaId.js';
 import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter.js';
 import { HederaTransactionAdapter } from '../HederaTransactionAdapter.js';
 import { SigningError } from '../error/SigningError.js';
 import { HashpackTransactionResponseAdapter } from '../hashpack/HashpackTransactionResponseAdapter.js';
-import PublicKey from '../../../../domain/context/account/PublicKey.js';
+import { QueryBus } from '../../../../core/query/QueryBus.js';
+import { AccountIdNotValid } from '../../../../domain/context/account/error/AccountIdNotValid.js';
+import { GetAccountInfoQuery } from '../../../../app/usecase/query/account/info/GetAccountInfoQuery.js';
 
 @singleton()
 export class BladeTransactionAdapter extends HederaTransactionAdapter {
@@ -75,6 +78,8 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 		public readonly networkService: NetworkService,
 		@lazyInject(MirrorNodeAdapter)
 		public readonly mirrorNodeAdapter: MirrorNodeAdapter,
+		@lazyInject(QueryBus)
+		private readonly queryBus: QueryBus,
 	) {
 		super(mirrorNodeAdapter, networkService);
 	}
@@ -98,23 +103,13 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 		};
 
 		const pairedAccountIds = await this.bc.createSession(params);
+		if (pairedAccountIds) {
+			const accountInfo = await this.getAccountInfo(pairedAccountIds[0]);
 
-		const bladeSigner = this.bc.getSigner();
-		const accountInfo = await bladeSigner?.getAccountInfo();
-
-		if (accountInfo && accountInfo.accountId) {
-			const accountId = accountInfo?.accountId.toString();
-
-			if (accountId) {
-				const publicKey =
-					accountInfo.key.toString().length === 88
-						? accountInfo.key.toString().slice(-64)
-						: accountInfo.key.toString().length === 94
-						? accountInfo.key.toString().slice(-66)
-						: accountInfo.key.toString();
+			if (accountInfo) {
 				this.account = new Account({
-					id: accountId!,
-					publicKey: new PublicKey(publicKey),
+					id: pairedAccountIds[0],
+					publicKey: accountInfo.publicKey,
 				});
 			}
 		}
@@ -257,7 +252,7 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 		);
 	}
 
-	/*async getAccountInfo(id: string): Promise<Account> {
+	async getAccountInfo(id: string): Promise<Account> {
 		const account = (
 			await this.queryBus.execute(
 				new GetAccountInfoQuery(HederaId.from(id)),
@@ -269,5 +264,5 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 			publicKey: account.publicKey,
 			evmAddress: account.accountEvmAddress,
 		});
-	}*/
+	}
 }
