@@ -90,10 +90,11 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 			ConnectorStrategy.EXTENSION, // preferred strategy is optional
 			{
 				// dApp metadata options are optional, but are highly recommended to use
-				name: 'Awesome DApp',
-				description: 'DApp description',
-				url: 'https://awesome-dapp.io/',
-				icons: ['some-image-url.png'],
+				name: 'Stablecoin Studio',
+				description:
+					'Stablecoin Studio is an open-source SDK that makes it easy for web3 stablecoin platforms, institutional issuers, enterprises, and payment providers to build stablecoin applications on the Hedera network.',
+				url: 'https://hedera.com/stablecoin-studio',
+				icons: [],
 			},
 		);
 		LogService.logTrace('Checking for previously saved pairings: ');
