@@ -30,6 +30,7 @@ abstract contract CashIn is ICashIn, SupplierAdmin, Reserve {
         returns (bool)
     {
         if (!_unlimitedSupplierAllowances[msg.sender])
+            //si no es unlimited
             _decreaseSupplierAllowance(msg.sender, SafeCast.toUint256(amount));
 
         address currentTokenAddress = _getTokenAddress();
