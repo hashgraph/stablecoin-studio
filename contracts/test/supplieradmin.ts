@@ -673,6 +673,14 @@ describe('Supplier Admin Tests - (Unlimited)', function () {
                 nonOperatorIsE25519
             )
         ).to.eventually.be.rejectedWith(Error)
+
+        // Grant unlimited supplier role to continue testing next tests cases
+        await grantUnlimitedSupplierRole(
+            proxyAddress,
+            operatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
     })
 
     it('An account with unlimited supplier role can not increase supplier allowance', async function () {
@@ -681,7 +689,7 @@ describe('Supplier Admin Tests - (Unlimited)', function () {
             increaseSupplierAllowance(
                 proxyAddress,
                 BigNumber.from(1),
-                nonOperatorClient,
+                operatorClient,
                 nonOperatorAccount,
                 nonOperatorIsE25519
             )
