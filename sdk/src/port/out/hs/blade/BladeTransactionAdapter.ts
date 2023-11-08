@@ -23,7 +23,9 @@ import {
 	BladeConnector,
 	ConnectorStrategy,
 	HederaNetwork,
-} from '@bladelabs/blade-web3.js';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+} from '#blade';
 import {
 	Signer,
 	TokenAssociateTransaction,

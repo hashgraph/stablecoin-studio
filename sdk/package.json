@@ -92,5 +92,11 @@
 	},
 	"volta": {
 		"node": "16.13.0"
+	},
+	"imports": {
+		"#blade": {
+			"require": "@hashgraph/cryptography",
+			"import": "@bladelabs/blade-web3.js"
+		}
 	}
 }
