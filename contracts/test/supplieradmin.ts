@@ -681,7 +681,7 @@ describe('Supplier Admin Tests - (Unlimited)', function () {
             increaseSupplierAllowance(
                 proxyAddress,
                 BigNumber.from(1),
-                operatorClient,
+                nonOperatorClient,
                 nonOperatorAccount,
                 nonOperatorIsE25519
             )
