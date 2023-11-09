@@ -47,10 +47,10 @@ The command below can be used to install the official release from the NPM repos
 npm install -g @hashgraph/stablecoin-npm-cli
 ```
 
-Once installed globally you can use the `accelerator wizard` command to run the CLI.
+Once installed globally you can use the `wizard` command to run the CLI.
 
 ```bash
-accelerator wizard
+npm run start:wizard
 ```
 
 # Build
@@ -73,29 +73,29 @@ Then you must install and build the following projects :
 From the root of the CLI project workspace:
 
 - Run `npm install`. This will create and populate `node_modules` and build the project and dependencies.
-- Run `npm start`. This will display the CLI options.
+- Run `npm run start`. This will display the CLI options.
 - Run `npm run start:wizard`. To start the CLI in wizard mode creating a config file in the project folder.
 
 # Quickstart
 
 ## Starting the CLI
 
-The first time you execute the `accelerator wizard` command in your terminal, if you haven't added your default configuration path the interface will ask you whether you want to create a new configuration file in the default path. When the configuration file is created you must configure the default network, operating accounts and the factory contract id. In order to create the default account you can use [HashPack](https://www.hashpack.app/download) or the [Hedera Developer Portal](https://portal.hedera.com/register).
+The first time you execute the `npm run start:wizard` command in your terminal, if you haven't added your default configuration path the interface will ask you whether you want to create a new configuration file in the default path. When the configuration file is created you must configure the default network, operating accounts and the factory contract id. In order to create the default account you can use [HashPack](https://www.hashpack.app/download) or the [Hedera Developer Portal](https://portal.hedera.com/register).
 
 https://github.com/hashgraph/stablecoin-studio/assets/108128685/73c2ed6c-ebc4-4717-b837-c4595c007ba0
 
-_Note that for testing purpose you should create a **Testnet** account instead of Mainnet account. Everything executed on Mainnet will incur a cost with real money._
+> _**Note:** that for testing purpose you should create a **Testnet** account instead of Mainnet account. Everything executed on Mainnet will incur a cost with real money._
 
 # Usage
 
-To use the CLI correctly it is necessary to generate a configuration file in which the default network, their associated accounts and the factory contract id will be included. These parameters can be modified later on, from the CLI.
+To use the CLI correctly, it is necessary to generate a configuration file in which the default network, their associated accounts and the factory contract id will be included. These parameters can be modified later on from the CLI.
 
 ## Automatically creating a config file
 
 The configuration file that is automatically generated populates its fields using the answers to the questions displayed in the CLI when the application is started for the first time.
-The file format is .yaml and the structure is as follows:
+The file format is `.yaml` and the structure is as follows:
 
-```
+```yaml
 defaultNetwork: testnet
 networks:
   - name: mainnet
@@ -149,10 +149,10 @@ factories:
 ```
 ## Manually creating a config file
 
-A config file can be manually created using the "hsca-config.sample.yaml" file as a template. Follow this steps:
+A config file can be manually created using the `hsca-config.sample.yaml` file as a template. Follow these steps:
 
-- **Copy/Paste** the "hsca-config.sample.yaml" file
-- **Rename** it "hsca-config.yaml"
+- **Copy/Paste** the `hsca-config.sample.yaml` file
+- **Rename** it `hsca-config.yaml`
 - **Fill** it like
   - **defaultNetwork** : choose between mainnet, testnet and previewnet.
   - **networks** : _(Optional)_ for each network:
@@ -187,7 +187,7 @@ A config file can be manually created using the "hsca-config.sample.yaml" file a
     
 ## Factories 
 
-We provide default addresses for the factories that we have deployed for anyone to use that are updated whenever a new version is released.
+We provide default addresses for the factories that we have deployed for anyone to use that is updated whenever a new version is released.
 
 | Contract name  | Address      | Network    |
 | -------------- | ------------ | ---------- |
@@ -198,7 +198,7 @@ We provide default addresses for the factories that we have deployed for anyone 
 
 ![CLI Flow](https://github.com/hashgraph/stablecoin-studio/assets/56278409/f75b66ab-b6d9-48f9-92b0-1c2a2af68556)
 
-When the CLI is started with the configuration file properly configured, the first action will be to select the account you want to operate with. By default, the list of configured accounts belonging to the default network indicated in the configuration file, is displayed.
+When the CLI is started with the configuration file properly configured, the first action will be to select the account you want to operate with. By default, the list of configured accounts belonging to the default network indicated in the configuration file is displayed.
 
 If there are no accounts in the file for the default network, a warning message will be displayed and a list of all the accounts in the file will be displayed.
 
@@ -206,18 +206,18 @@ When an account is selected, the main menu is displayed. The network the account
 
 ### Main menu
 
-When your configuration file is set up and at least one account is added and selected, you are able to see the different options that are available.
+When your configuration file is set up and at least one account is added and selected, you can see the different available options.
 
 #### Create a new stablecoin
 
 In order to use this option you must set a factory first.
 You can check our factories deployed in [our documentation](https://github.com/hashgraph/stablecoin-studio#deploying-the-stable-coin-factories).
 
-With this option you are able to create a new stablecoin adding the mandatory details like name and symbol.
+With this option, you are able to create a new stablecoin, adding the mandatory details like name and symbol.
 
-> The auto-renew account is not requested since is automatically set to be the user's current account, otherwise the stablecoin creation will not work, this is due to the fact that the auto-renew account must sign the underlying token's creation transaction, and currently we do not support multi-signatures transactions.
+> The `auto-renew` account is not requested since it is automatically set to be the user's current account. Otherwise, the stablecoin creation will not work. This is due to the fact that the `auto-renew` account must sign the underlying token's creation transaction, and currently, we do not support multi-signature transactions.
 
-After the minimum details have been added, you will be asked if you want to add optional details like the number of decimals, the initial supply or the max supply. If you reply "no", the default values will be set.
+After the minimum details have been added, you will be asked if you want to add optional details like the number of decimals, the initial supply, or the max supply. If you reply "no," the default values will be set.
 
 Another question is prompt asking if you would like the smart contract to be set as the owner of all the underlying token keys (pause, wipe, ...), you could however set any key you wish as the owner of any token key, except for the admin key and the supply key that will be automatically set to be the smart contract.
 
