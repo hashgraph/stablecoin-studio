@@ -64,7 +64,7 @@ Copy the provided `.env.sample` to `.env` and edit as necessary.
 The ENV file contains the following parameters:
 
 - **REACT_APP_LOG_LEVEL**: defines the log level the application is going to apply to filter the logs been displayed in the browser's console. The default value is "ERROR".
-- **REACT_APP_FACTORIES**: This var is required if you want to create a new stablecoin. The var must be a JSON array with a factory id in Hedera format `0.0.XXXXX` per environment. Regarding this, your can find the factories's contract ids depending on the Stablecoin Studio versión [here](./../FACTORY_VERSION.md).
+- **REACT_APP_FACTORIES**: This var is only required if you want to create a new stablecoin. The var must be a JSON array with a factory id in Hedera format `0.0.XXXXX` per environment. Regarding this, your can find the factories's contract ids depending on the Stablecoin Studio versión [here](./../FACTORY_VERSION.md).
 - **REACT_APP_MIRROR_NODE**: This var is required if you want to create a new stablecoin. The var must be a unique mirror node service for each Hedera network, and this is the service which would be used when the UI starts. The service is configured by the environment and the base url properties, and, optionally, can also have an api key and a http header through which the api key is provided.
 - **REACT_APP_RPC_NODE**: This var is required if you want to create a new stablecoin. The var must be a unique rpc node service for Hedera network, and this is the service which would be used when the UI starts. The service is configured using the same properties than the mirror node. You can check the available JSON-RPC relays [here](https://github.com/hashgraph/stablecoin-studio/blob/main/README.md#JSON-RPC-Relays).
 ```
@@ -78,6 +78,15 @@ If the env files does not exist or the factory var is not set when you click in 
 You can use our [deployed factories](https://github.com/hashgraph/stablecoin-studio/blob/main/README.md#deploying-the-stablecoin-factories).
 
 - **GENERATE_SOURCEMAP**: This is a proprietary Create React App configuration. You can read more information in its documentation. [Create React App documentation](https://create-react-app.dev/docs/advanced-configuration/)
+
+For example, the following is a full working .env file that uses the Hedera mirror node service, the Hashio implementation of the JSON-RPC relay and the current factory.
+
+```REACT_APP_LOG_LEVEL=ERROR
+REACT_APP_FACTORIES='[{"Environment":"testnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.1137631"}]'
+REACT_APP_MIRROR_NODE='[{"Environment":"testnet","BASE_URL":"https://testnet.mirrornode.hedera.com/api/v1/", "API_KEY": "", "HEADER": ""}]'
+REACT_APP_RPC_NODE='[{"Environment":"testnet","BASE_URL":"http://localhost:7546/api", "API_KEY": "", "HEADER": ""}]'
+GENERATE_SOURCEMAP=false
+```
 
 ## Starting the UI
 
@@ -103,7 +112,7 @@ If you want to switch to another compatible wallet, you can do it at any time by
 
 ## Supported wallets
 
-The Wallets currently supported by the project are [HashPack](https://www.hashpack.app/)(for [ED25519](https://docs.hedera.com/hedera/docs/sdks/keys/generate-a-new-key-pair#ed25519) accounts) and [MetaMask](https://metamask.io/)(for [ECDSA](https://docs.hedera.com/hedera/docs/sdks/keys/generate-a-new-key-pair#ecdsa-secp256k1_) accounts)
+The Wallets currently supported by the project are [HashPack](https://www.hashpack.app/)(for [ED25519](https://docs.hedera.com/hedera/docs/sdks/keys/generate-a-new-key-pair#ed25519) accounts), [Blade](https://bladewallet.io/) and [MetaMask](https://metamask.io/)(for [ECDSA](https://docs.hedera.com/hedera/docs/sdks/keys/generate-a-new-key-pair#ecdsa-secp256k1_) accounts)
 
 ### MetaMask configuration
 
