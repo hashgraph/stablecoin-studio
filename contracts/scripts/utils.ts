@@ -18,13 +18,10 @@ import {
     ContractCreateFlow,
 } from '@hashgraph/sdk'
 
-import Web3 from 'web3'
 import axios from 'axios'
 import { ADDRESS_0 } from './constants'
 import { BigNumber } from 'ethers'
-import { string } from 'hardhat/internal/core/params/argumentTypes.js'
 
-const web3 = new Web3()
 const SuccessStatus = 22
 
 export const sleep = (ms: number) =>
@@ -187,9 +184,9 @@ export async function deployContractSDK(
     )
 
     const txResponse = await contractCreateSign.execute(clientOperator)
-    await sleep(2000)
+    await sleep(4000)
     const receipt = await txResponse.getReceipt(clientOperator)
-    await sleep(2000)
+    await sleep(4000)
     const contractId = receipt.contractId
     if (!contractId) {
         throw Error('Error deploying contractSDK')
