@@ -64,9 +64,9 @@ Copy the provided `.env.sample` to `.env` and edit as necessary.
 The ENV file contains the following parameters:
 
 - **REACT_APP_LOG_LEVEL**: defines the log level the application is going to apply to filter the logs been displayed in the browser's console. The default value is "ERROR".
-- **REACT_APP_FACTORIES**: This var is required if you want to create a new stablecoin. The var must be a JSON array with a factory id in Hedera format `0.0.XXXXX` per environment.
+- **REACT_APP_FACTORIES**: This var is required if you want to create a new stablecoin. The var must be a JSON array with a factory id in Hedera format `0.0.XXXXX` per environment. Regarding this, your can find the factories's contract ids depending on the Stablecoin Studio versión [here](./../FACTORY_VERSION.md).
 - **REACT_APP_MIRROR_NODE**: This var is required if you want to create a new stablecoin. The var must be a unique mirror node service for each Hedera network, and this is the service which would be used when the UI starts. The service is configured by the environment and the base url properties, and, optionally, can also have an api key and a http header through which the api key is provided.
-- **REACT_APP_RPC_NODE**: This var is required if you want to create a new stablecoin. The var must be a unique rpc node service for Hedera network, and this is the service which would be used when the UI starts. The service is configured using the same properties than the mirror node. You can check the available JSON-RPC relays [here](https://github.com/hashgraph/stablecoin-studio/blob/main/README.md#JSON-RPC-Relays)
+- **REACT_APP_RPC_NODE**: This var is required if you want to create a new stablecoin. The var must be a unique rpc node service for Hedera network, and this is the service which would be used when the UI starts. The service is configured using the same properties than the mirror node. You can check the available JSON-RPC relays [here](https://github.com/hashgraph/stablecoin-studio/blob/main/README.md#JSON-RPC-Relays).
 ```
 REACT_APP_FACTORIES='[{"Environment":"mainnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.1234567"},{"Environment":"testnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.3950554"},{"Environment":"previewnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.239703"}]'
 REACT_APP_MIRROR_NODE='[{"Environment":"testnet","BASE_URL":"https://testnet.mirrornode.hedera.com/api/v1/", "API_KEY": "132456", "HEADER": "x-api-key"}]'
@@ -75,7 +75,7 @@ REACT_APP_RPC_NODE='[{"Environment":"testnet","BASE_URL":"https://testnet.hashio
 
 If the env files does not exist or the factory var is not set when you click in "Create a new stablecoin" an alert will be shown.
 ![image](https://user-images.githubusercontent.com/114951681/229088627-369506c3-9c28-435c-9e44-d8908f8a15ab.png)
-You can use our [deployed factories](https://github.com/hashgraph/stablecoin-studio#deploying-the-stable-coin-factories).
+You can use our [deployed factories](https://github.com/hashgraph/stablecoin-studio/blob/main/README.md#deploying-the-stablecoin-factories).
 
 - **GENERATE_SOURCEMAP**: This is a proprietary Create React App configuration. You can read more information in its documentation. [Create React App documentation](https://create-react-app.dev/docs/advanced-configuration/)
 
