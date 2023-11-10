@@ -31,14 +31,11 @@ export const RolesId = {
     Kyc: 8,
 }
 
-export const Gas0 = 7800000
-export const Gas1 = 4800000
-export const Gas2 = 60000
-export const Gas3 = 1800000
-export const Gas4 = 500000
-export const Gas5 = 130000
-export const Gas6 = 140000
-
+export const GAS_LIMIT_TINY = 60000
+export const GAS_LIMIT_SMALL = 130000
+export const GAS_LIMIT_MODERATE = 1800000
+export const GAS_LIMIT_HIGH = 4800000
+export const GAS_LIMIT_HIGHEST = 7800000
 export const CREATE_SC_GAS = 1900000
 export const CASHIN_GAS = 120000
 export const BURN_GAS = 70000
@@ -63,8 +60,6 @@ export const UPDATE_TOKEN_GAS = 120000
 export const UPDATE_RESERVE_AMOUNT_GAS = 40000
 export const CHANGE_PROXY_OWNER = 50000
 export const ACCEPT_PROXY_OWNER = 40000
-export const UPDATE_PROXY_IMPLEMENTATION = 40000
-
 export const BALANCE_OF_GAS = 120000
 export const GET_RESERVE_ADDRESS_GAS = 120000
 export const GET_RESERVE_AMOUNT_GAS = 120000
