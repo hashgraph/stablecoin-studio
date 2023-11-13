@@ -340,7 +340,12 @@ const StableCoinCreation = () => {
 			createResponse = await SDKService.createStableCoin(request);
 			const tokenId = createResponse.coin.tokenId.toString();
 			setToken(tokenId);
-			if (wallet.lastWallet === SupportedWallets.HASHPACK && createResponse?.coin.tokenId) {
+
+			if (
+				(wallet.lastWallet === SupportedWallets.HASHPACK ||
+					wallet.lastWallet === SupportedWallets.BLADE) &&
+				createResponse?.coin.tokenId
+			) {
 				const associateRequest = new AssociateTokenRequest({
 					targetId: accountInfo.id!,
 					tokenId,

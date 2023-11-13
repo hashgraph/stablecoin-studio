@@ -99,6 +99,7 @@ import { GetTokenManagerListQueryHandler } from '../app/usecase/query/factory/ge
 import { GetAccountsWithRolesQueryHandler } from '../app/usecase/query/stablecoin/roles/getAccountsWithRole/GetAccountsWithRolesQueryHandler.js';
 import { GetProxyConfigQueryHandler } from '../app/usecase/query/proxy/GetProxyConfigQueryHandler.js';
 import { GetFactoryProxyConfigQueryHandler } from '../app/usecase/query/factoryProxy/GetFactoryProxyConfigQueryHandler.js';
+import { BladeTransactionAdapter } from '../port/out/hs/blade/BladeTransactionAdapter.js';
 
 export const TOKENS = {
 	COMMAND_HANDLER: Symbol('CommandHandler'),
@@ -367,6 +368,10 @@ const TRANSACTION_HANDLER = [
 		token: TOKENS.TRANSACTION_HANDLER,
 		useClass: HashpackTransactionAdapter,
 	},
+	{
+		token: TOKENS.TRANSACTION_HANDLER,
+		useClass: BladeTransactionAdapter,
+	},
 ];
 
 const defaultNetworkProps: NetworkProps = {
@@ -453,6 +458,7 @@ export default class Injectable {
 		if (this.isWeb()) {
 			adapters.push(Injectable.resolve(HashpackTransactionAdapter));
 			adapters.push(Injectable.resolve(RPCTransactionAdapter));
+			adapters.push(Injectable.resolve(BladeTransactionAdapter));
 		} else {
 			adapters.push(Injectable.resolve(HTSTransactionAdapter));
 		}
