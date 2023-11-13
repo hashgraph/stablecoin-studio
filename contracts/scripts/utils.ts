@@ -184,9 +184,9 @@ export async function deployContractSDK(
     )
 
     const txResponse = await contractCreateSign.execute(clientOperator)
-    await sleep(4000)
+    await sleep(2000)
     const receipt = await txResponse.getReceipt(clientOperator)
-    await sleep(4000)
+    await sleep(2000)
     const contractId = receipt.contractId
     if (!contractId) {
         throw Error('Error deploying contractSDK')
