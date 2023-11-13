@@ -54,9 +54,13 @@ export class HashpackTransactionResponseAdapter extends TransactionResponseAdapt
 			await this.getReceipt(network, signer, transactionResponse);
 			let transId;
 			if (transactionResponse instanceof HTransactionResponse) {
-				transId = JSON.parse(
-					JSON.stringify(transactionResponse),
-				).response.transactionId.toString();
+				if (transactionResponse?.transactionId) {
+					transId = transactionResponse?.transactionId;
+				} else {
+					transId = JSON.parse(
+						JSON.stringify(transactionResponse),
+					).response.transactionId.toString();
+				}
 			} else {
 				transId = transactionResponse.id;
 			}
@@ -71,6 +75,7 @@ export class HashpackTransactionResponseAdapter extends TransactionResponseAdapt
 			const transactionRecord:
 				| TransactionRecord
 				| Uint32Array
+				| Uint8Array
 				| undefined = await this.getRecord(
 				network,
 				signer,
@@ -81,6 +86,8 @@ export class HashpackTransactionResponseAdapter extends TransactionResponseAdapt
 				if (transactionRecord instanceof TransactionRecord) {
 					record = transactionRecord?.contractFunctionResult?.bytes;
 				} else if (transactionRecord instanceof Uint32Array) {
+					record = transactionRecord;
+				} else if (transactionRecord instanceof Uint8Array) {
 					record = transactionRecord;
 				}
 				if (!record)
@@ -201,7 +208,7 @@ export class HashpackTransactionResponseAdapter extends TransactionResponseAdapt
 		transactionResponse:
 			| MessageTypes.TransactionResponse
 			| HTransactionResponse,
-	): Promise<Uint32Array | undefined> {
+	): Promise<Uint32Array | undefined | Uint8Array> {
 		let record;
 		if (transactionResponse instanceof HTransactionResponse) {
 			record = await transactionResponse.getRecordWithSigner(signer);
@@ -243,7 +250,11 @@ export class HashpackTransactionResponseAdapter extends TransactionResponseAdapt
 			throw new TransactionResponseError(transactionError);
 		} else {
 			try {
-				return new Uint32Array(Object.values(record));
+				if (record instanceof TransactionRecord) {
+					return record.contractFunctionResult?.bytes;
+				} else {
+					return new Uint32Array(Object.values(record));
+				}
 			} catch (err) {
 				LogService.logError(err);
 				throw new TransactionResponseError({

@@ -80,7 +80,7 @@ From the root of the CLI project workspace:
 
 ## Starting the CLI
 
-The first time you execute the `accelerator wizard` command in your terminal, if you haven't added your default configuration path the interface will ask you whether you want to create a new configuration file in the default path. When the configuration file is created you must configure the default network, operating accounts and the factory contract id. In order to create the default account you can use [HashPack](https://www.hashpack.app/download) or the [Hedera Developer Portal](https://portal.hedera.com/register).
+The first time you execute the `accelerator wizard` command in your terminal, if you haven't added your default configuration path the interface will ask you whether you want to create a neSw configuration file in the default path. When the configuration file is created you must configure the default network, operating accounts and the factory contract id. In order to create the default account you can use [HashPack](https://www.hashpack.app/download), [Blade](https://bladewallet.io/) or the [Hedera Developer Portal](https://portal.hedera.com/register).
 
 https://github.com/hashgraph/stablecoin-studio/assets/108128685/73c2ed6c-ebc4-4717-b837-c4595c007ba0
 

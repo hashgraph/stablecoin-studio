@@ -140,7 +140,6 @@ describe(`<${StableCoinSettings.name} />`, () => {
 			}),
 		}));
 
-		
 		jest.spyOn(Network, 'getFactoryAddress').mockReturnValue('0.0.12345');
 
 		jest

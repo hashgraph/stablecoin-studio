@@ -24,6 +24,7 @@ export enum SupportedWallets {
 	METAMASK = 'Metamask',
 	HASHPACK = 'HashPack',
 	CLIENT = 'Client',
+	BLADE = 'Blade',
 }
 
 export default interface Wallet {
