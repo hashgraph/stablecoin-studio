@@ -1,6 +1,6 @@
 {
 	"name": "@hashgraph/stablecoin-npm-sdk",
-	"version": "1.9.1",
+	"version": "1.9.2",
 	"description": "stablecoin studio SDK",
 	"main": "./build/cjs/src/index.js",
 	"module": "./build/esm/src/index.js",
@@ -67,9 +67,12 @@
 	},
 	"license": "Apache-2.0",
 	"dependencies": {
+		"@bladelabs/blade-web3.js": "^1.2.0",
+		"@hashgraph/cryptography": "1.4.3",
+		"@hashgraph/hashconnect": "file:./../hashconnect/lib",
 		"@hashgraph/hethers": "^1.2.5",
 		"@hashgraph/sdk": "^2.23.0",
-		"@hashgraph/cryptography": "1.4.3",
+		"@hashgraph/stablecoin-npm-contracts": "file:./../contracts",
 		"@metamask/detect-provider": "^2.0.0",
 		"@metamask/providers": "^10.2.1",
 		"chai": "^4.3.6",
@@ -77,7 +80,6 @@
 		"dotenv": "^16.0.3",
 		"ethers": "^5.7.2",
 		"fast-safe-stringify": "^2.1.1",
-		"@hashgraph/hashconnect": "file:./../hashconnect/lib",
 		"perf_hooks": "^0.0.1",
 		"reflect-metadata": "^0.1.13",
 		"ts-xor": "^1.0.8",
@@ -86,10 +88,15 @@
 		"uuid": "^9.0.0",
 		"web3": "^1.8.1",
 		"winston": "^3.8.2",
-		"winston-daily-rotate-file": "^4.7.1",
-		"@hashgraph/stablecoin-npm-contracts": "file:./../contracts"
+		"winston-daily-rotate-file": "^4.7.1"
 	},
 	"volta": {
 		"node": "16.13.0"
+	},
+	"imports": {
+		"#blade": {
+			"require": "@hashgraph/cryptography",
+			"import": "@bladelabs/blade-web3.js"
+		}
 	}
 }

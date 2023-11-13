@@ -27,6 +27,7 @@ import { HTSTransactionAdapter } from '../../port/out/hs/hts/HTSTransactionAdapt
 import RPCTransactionAdapter from '../../port/out/rpc/RPCTransactionAdapter.js';
 import TransactionAdapter from '../../port/out/TransactionAdapter.js';
 import Service from './Service.js';
+import { BladeTransactionAdapter } from '../../port/out/hs/blade/BladeTransactionAdapter.js';
 
 @singleton()
 export default class TransactionService extends Service {
@@ -50,6 +51,11 @@ export default class TransactionService extends Service {
 					throw new InvalidWalletTypeError(type);
 				}
 				return Injectable.resolve(HashpackTransactionAdapter);
+			case SupportedWallets.BLADE:
+				if (!Injectable.isWeb()) {
+					throw new InvalidWalletTypeError(type);
+				}
+				return Injectable.resolve(BladeTransactionAdapter);
 			case SupportedWallets.METAMASK:
 				if (!Injectable.isWeb()) {
 					throw new InvalidWalletTypeError(type);

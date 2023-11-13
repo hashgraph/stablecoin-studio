@@ -41,12 +41,12 @@ import {
     UPDATE_TOKEN_GAS,
     WIPE_GAS,
     CHANGE_PROXY_OWNER,
-    Gas2,
-    Gas1,
-    Gas3,
-    Gas0,
+    GAS_LIMIT_TINY,
+    GAS_LIMIT_HIGH,
+    GAS_LIMIT_MODERATE,
+    GAS_LIMIT_HIGHEST,
     ACCEPT_PROXY_OWNER,
-    Gas5,
+    GAS_LIMIT_SMALL,
 } from './constants'
 
 import { BigNumber } from 'ethers'
@@ -179,7 +179,7 @@ export async function getTotalSupply(proxyAddress: ContractId, client: Client) {
         'totalSupply',
         [],
         client,
-        Gas2,
+        GAS_LIMIT_TINY,
         HederaTokenManager__factory.abi
     )
     return BigNumber.from(result[0])
@@ -216,7 +216,7 @@ export async function name(
         'name',
         params,
         client,
-        Gas2,
+        GAS_LIMIT_TINY,
         HederaTokenManager__factory.abi
     )
     return result[0]
@@ -232,7 +232,7 @@ export async function symbol(
         'symbol',
         params,
         client,
-        Gas2,
+        GAS_LIMIT_TINY,
         HederaTokenManager__factory.abi
     )
     return result[0]
@@ -248,7 +248,7 @@ export async function decimals(
         'decimals',
         params,
         client,
-        Gas2,
+        GAS_LIMIT_TINY,
         HederaTokenManager__factory.abi
     )
     return Number(result[0])
@@ -265,7 +265,7 @@ export async function initialize(
         'initialize',
         params,
         client,
-        Gas2,
+        GAS_LIMIT_TINY,
         HederaTokenManager__factory.abi
     )
 }
@@ -310,7 +310,7 @@ export async function getMetadata(
         'getMetadata',
         params,
         client,
-        Gas2,
+        GAS_LIMIT_TINY,
         HederaTokenManager__factory.abi
     )
     return result[0]
@@ -362,7 +362,7 @@ export async function admin(
         'admin',
         params,
         client,
-        Gas2,
+        GAS_LIMIT_TINY,
         proxyAbi
     )
     return result[0]
@@ -380,7 +380,7 @@ export async function owner(
         'owner',
         params,
         client,
-        Gas2,
+        GAS_LIMIT_TINY,
         proxyAdminAbi
     )
     return result[0]
@@ -397,7 +397,7 @@ export async function pendingOwner(
         'pendingOwner',
         params,
         client,
-        Gas2,
+        GAS_LIMIT_TINY,
         proxyAdminAbi
     )
     return result[0]
@@ -416,7 +416,7 @@ export async function upgrade(
         'upgrade',
         params,
         client,
-        Gas3,
+        GAS_LIMIT_MODERATE,
         proxyAdminAbi
     )
 }
@@ -489,7 +489,7 @@ export async function getProxyImplementation(
         'getProxyImplementation',
         params,
         client,
-        Gas2,
+        GAS_LIMIT_TINY,
         proxyAdminAbi
     )
     return result[0]
@@ -507,7 +507,7 @@ export async function getProxyAdmin(
         'getProxyAdmin',
         params,
         client,
-        Gas2,
+        GAS_LIMIT_TINY,
         proxyAdminAbi
     )
     return result[0]
@@ -525,7 +525,7 @@ export async function upgradeTo_SCF(
         'upgradeTo',
         params,
         client,
-        Gas3,
+        GAS_LIMIT_MODERATE,
         ITransparentUpgradeableProxy__factory.abi
     )
 }
@@ -541,7 +541,7 @@ export async function changeAdmin_SCF(
         'changeAdmin',
         params,
         client,
-        Gas3,
+        GAS_LIMIT_MODERATE,
         ITransparentUpgradeableProxy__factory.abi
     )
 }
@@ -556,7 +556,7 @@ export async function admin_SCF(
         'admin',
         params,
         client,
-        Gas2,
+        GAS_LIMIT_TINY,
         ITransparentUpgradeableProxy__factory.abi
     )
     return result[0]
@@ -573,7 +573,7 @@ export async function owner_SCF(
         'owner',
         params,
         client,
-        Gas2,
+        GAS_LIMIT_TINY,
         StableCoinProxyAdmin__factory.abi
     )
     return result[0]
@@ -589,7 +589,7 @@ export async function pendingOwner_SCF(
         'pendingOwner',
         params,
         client,
-        Gas2,
+        GAS_LIMIT_TINY,
         StableCoinProxyAdmin__factory.abi
     )
     return result[0]
@@ -607,7 +607,7 @@ export async function upgrade_SCF(
         'upgrade',
         params,
         client,
-        Gas3,
+        GAS_LIMIT_MODERATE,
         StableCoinProxyAdmin__factory.abi
     )
 }
@@ -628,7 +628,7 @@ export async function changeProxyAdmin_SCF(
         'changeProxyAdmin',
         params,
         client,
-        Gas3,
+        GAS_LIMIT_MODERATE,
         StableCoinProxyAdmin__factory.abi
     )
 }
@@ -645,7 +645,7 @@ export async function transferOwnership_SCF(
         'transferOwnership',
         params,
         client,
-        Gas3,
+        GAS_LIMIT_MODERATE,
         StableCoinProxyAdmin__factory.abi
     )
 }
@@ -676,7 +676,7 @@ export async function getProxyImplementation_SCF(
         'getProxyImplementation',
         params,
         client,
-        Gas2,
+        GAS_LIMIT_TINY,
         StableCoinProxyAdmin__factory.abi
     )
     return result[0]
@@ -693,7 +693,7 @@ export async function getProxyAdmin_SCF(
         'getProxyAdmin',
         params,
         client,
-        Gas2,
+        GAS_LIMIT_TINY,
         StableCoinProxyAdmin__factory.abi
     )
     return result[0]
@@ -710,7 +710,7 @@ export async function getTokenAddress(
         'getTokenAddress',
         params,
         client,
-        Gas3,
+        GAS_LIMIT_MODERATE,
         HederaTokenManager__factory.abi
     )
     return response[0]
@@ -968,7 +968,7 @@ export async function grantRoles(
         'grantRoles',
         params,
         clientGrantingRoles,
-        Gas0,
+        GAS_LIMIT_HIGHEST,
         HederaTokenManager__factory.abi
     )
 }
@@ -994,7 +994,7 @@ export async function revokeRoles(
         'revokeRoles',
         params,
         clientRevokingRoles,
-        Gas0,
+        GAS_LIMIT_HIGHEST,
         HederaTokenManager__factory.abi
     )
 }
@@ -1092,7 +1092,7 @@ export async function isUnlimitedSupplierAllowance(
         'isUnlimitedSupplierAllowance',
         params,
         clientChecking,
-        Gas2,
+        GAS_LIMIT_TINY,
         HederaTokenManager__factory.abi
     )
     return result[0]
@@ -1144,7 +1144,7 @@ export async function getSupplierAllowance(
         'getSupplierAllowance',
         params,
         clientCheckingAllowance,
-        Gas2,
+        GAS_LIMIT_TINY,
         HederaTokenManager__factory.abi
     )
     return BigNumber.from(result[0])
@@ -1161,7 +1161,7 @@ export async function getReserveAmount(
         'getReserveAmount',
         params,
         operatorClient,
-        Gas2,
+        GAS_LIMIT_TINY,
         HederaTokenManager__factory.abi
     )
     return BigNumber.from(result[0])
@@ -1177,7 +1177,7 @@ export async function getReserveAddress(
         'getReserveAddress',
         params,
         operatorClient,
-        Gas2,
+        GAS_LIMIT_TINY,
         HederaTokenManager__factory.abi
     )
     return result[0]
@@ -1196,7 +1196,7 @@ export async function updateDataFeed(
         'updateReserveAddress',
         params,
         operatorClient,
-        Gas2,
+        GAS_LIMIT_TINY,
         HederaTokenManager__factory.abi
     )
 }
@@ -1214,7 +1214,7 @@ export async function initializeHederaReserve(
         'initialize',
         params,
         operatorClient,
-        Gas5,
+        GAS_LIMIT_SMALL,
         HederaReserve__factory.abi
     )
 }
@@ -1229,7 +1229,7 @@ export async function setAmountHederaReserve(
         'setAmount',
         params,
         operatorClient,
-        Gas2,
+        GAS_LIMIT_TINY,
         HederaReserve__factory.abi
     )
 }
@@ -1244,7 +1244,7 @@ export async function setAdminHederaReserve(
         'setAdmin',
         params,
         operatorClient,
-        Gas3,
+        GAS_LIMIT_MODERATE,
         HederaReserve__factory.abi
     )
 }
@@ -1258,7 +1258,7 @@ export async function decimalsHederaReserve(
         'decimals',
         params,
         operatorClient,
-        Gas2,
+        GAS_LIMIT_TINY,
         HederaReserve__factory.abi
     )
     return result[0]
@@ -1273,7 +1273,7 @@ export async function descriptionHederaReserve(
         'description',
         params,
         operatorClient,
-        Gas2,
+        GAS_LIMIT_TINY,
         HederaReserve__factory.abi
     )
     return result[0]
@@ -1288,7 +1288,7 @@ export async function versionHederaReserve(
         'version',
         params,
         operatorClient,
-        Gas2,
+        GAS_LIMIT_TINY,
         HederaReserve__factory.abi
     )
     return result[0]
@@ -1303,7 +1303,7 @@ export async function latestRoundDataDataHederaReserve(
         'latestRoundData',
         params,
         operatorClient,
-        Gas2,
+        GAS_LIMIT_TINY,
         HederaReserve__factory.abi
     )
 
@@ -1360,7 +1360,7 @@ export async function getHederaTokenManagerAddresses(
         'getHederaTokenManagerAddress',
         [],
         client,
-        Gas1,
+        GAS_LIMIT_HIGH,
         StableCoinFactory__factory.abi
     )
     return result[0]
@@ -1376,7 +1376,7 @@ export async function addHederaTokenManagerVersion(
         'addHederaTokenManagerVersion',
         [newAddress],
         client,
-        Gas1,
+        GAS_LIMIT_HIGH,
         StableCoinFactory__factory.abi
     )
 }
@@ -1392,7 +1392,7 @@ export async function editHederaTokenManagerVersion(
         'editHederaTokenManagerAddress',
         [index, newAddress],
         client,
-        Gas1,
+        GAS_LIMIT_HIGH,
         StableCoinFactory__factory.abi
     )
 }
@@ -1407,7 +1407,7 @@ export async function changeAdminStablecoinFactory(
         'changeAdmin',
         [newAdmin],
         client,
-        Gas1,
+        GAS_LIMIT_HIGH,
         StableCoinFactory__factory.abi
     )
 }
@@ -1421,7 +1421,7 @@ export async function removeHederaTokenManagerVersion(
         'removeHederaTokenManagerAddress',
         [index],
         client,
-        Gas1,
+        GAS_LIMIT_HIGH,
         StableCoinFactory__factory.abi
     )
 }
@@ -1435,7 +1435,7 @@ export async function getAdminStableCoinFactory(
         'getAdmin',
         [],
         client,
-        Gas1,
+        GAS_LIMIT_HIGH,
         StableCoinFactory__factory.abi
     )
     return result[0]
