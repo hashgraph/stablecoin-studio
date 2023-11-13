@@ -16,6 +16,8 @@ import {
     TransactionResponse,
     ContractId,
     ContractCreateFlow,
+    FileCreateTransaction,
+    FileAppendTransaction,
 } from '@hashgraph/sdk'
 
 import Web3 from 'web3'
@@ -23,6 +25,8 @@ import axios from 'axios'
 import { ADDRESS_0 } from './constants'
 import { BigNumber } from 'ethers'
 import { string } from 'hardhat/internal/core/params/argumentTypes.js'
+import Key from '@hashgraph/sdk/lib/Key'
+import KeyList from '@hashgraph/sdk/lib/KeyList'
 
 const web3 = new Web3()
 const SuccessStatus = 22
@@ -294,4 +298,30 @@ function getHederaNetworkMirrorNodeURL(network?: string): string {
         default:
             return 'https://testnet.mirrornode.hedera.com'
     }
+}
+
+export async function fileCreate(
+    bytecode: Uint8Array | string,
+    chunks: number,
+    signingPrivateKey: PrivateKey,
+    clientOperator: Client
+) {
+    const fileCreateTx = new FileCreateTransaction()
+        .setKeys([signingPrivateKey])
+        .freezeWith(clientOperator)
+    const fileSign = await fileCreateTx.sign(signingPrivateKey)
+    const fileSubmit = await fileSign.execute(clientOperator)
+    const fileCreateRx = await fileSubmit.getReceipt(clientOperator)
+
+    const fileId = fileCreateRx.fileId || ''
+    const fileAppendTx = new FileAppendTransaction()
+        .setFileId(fileId)
+        .setContents(bytecode)
+        .setMaxChunks(chunks)
+        .setMaxTransactionFee(new Hbar(2))
+        .freezeWith(clientOperator)
+    const fileAppendSign = await fileAppendTx.sign(signingPrivateKey)
+    const fileAppendSubmit = await fileAppendSign.execute(clientOperator)
+    const fileAppendRx = await fileAppendSubmit.getReceipt(clientOperator)
+    return fileId
 }
