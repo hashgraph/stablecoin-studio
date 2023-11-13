@@ -40,7 +40,7 @@ import {
     pendingOwner_SCF,
     acceptOwnership_SCF,
 } from '../scripts/contractsMethods'
-import { ADDRESS_0 } from '../scripts/constants'
+import { ADDRESS_ZERO } from '../scripts/constants'
 
 import {
     clientId,
@@ -229,11 +229,11 @@ describe('StableCoinFactory Tests', function () {
         const address = await getReserveAddress(proxyAddress, operatorClient)
         const amount = await getReserveAmount(proxyAddress, operatorClient)
 
-        expect(address).to.equal(ADDRESS_0)
+        expect(address).to.equal(ADDRESS_ZERO)
         expect(amount).to.equal(BigNumber.from(0))
 
-        expect('0x' + res[7].toSolidityAddress()).to.equal(ADDRESS_0)
-        expect('0x' + res[6].toSolidityAddress()).to.equal(ADDRESS_0)
+        expect('0x' + res[7].toSolidityAddress()).to.equal(ADDRESS_ZERO)
+        expect('0x' + res[6].toSolidityAddress()).to.equal(ADDRESS_ZERO)
     })
 
     it('Create StableCoin setting all token keys to the Account, with less decimals than reserve', async function () {
@@ -257,7 +257,7 @@ describe('StableCoinFactory Tests', function () {
         const address = await getReserveAddress(proxyAddress, operatorClient)
         const amount = await getReserveAmount(proxyAddress, operatorClient)
 
-        expect(address).not.to.equal(ADDRESS_0)
+        expect(address).not.to.equal(ADDRESS_ZERO)
         expect(amount.toString()).to.equal(toReserve(INIT_SUPPLY).toString())
     })
 
@@ -403,7 +403,7 @@ describe('StableCoinFactory Tests', function () {
     })
 
     it('Add new hederaTokenManager address, throw error address is zero', async function () {
-        const newAddress = ADDRESS_0
+        const newAddress = ADDRESS_ZERO
         expect(
             addHederaTokenManagerVersion(
                 ContractId.fromString(newFactoryProxyAddress),
@@ -453,7 +453,7 @@ describe('StableCoinFactory Tests', function () {
     })
 
     it('Edit hederaTokenManager address, throw error address is zero', async function () {
-        const newAddress = ADDRESS_0
+        const newAddress = ADDRESS_ZERO
         expect(
             editHederaTokenManagerVersion(
                 ContractId.fromString(newFactoryProxyAddress),
@@ -514,7 +514,7 @@ describe('StableCoinFactory Tests', function () {
     })
 
     it('Change admin, throw error address is zero', async function () {
-        const newAddress = ADDRESS_0
+        const newAddress = ADDRESS_ZERO
         expect(
             changeAdminStablecoinFactory(
                 ContractId.fromString(newFactoryProxyAddress),
@@ -553,7 +553,7 @@ describe('StableCoinFactory Tests', function () {
             )
 
         expect(addressArray.at(index)?.toUpperCase()).to.be.equal(
-            ADDRESS_0.toUpperCase()
+            ADDRESS_ZERO.toUpperCase()
         )
     })
 

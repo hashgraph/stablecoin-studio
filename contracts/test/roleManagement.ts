@@ -34,16 +34,16 @@ import {
     DEFAULT_ADMIN_ROLE,
     KYC_ROLE,
     RolesId,
-    ADDRESS_1,
-    ADDRESS_2,
-    ADDRESS_3,
-    ADDRESS_4,
-    ADDRESS_5,
-    ADDRESS_6,
-    ADDRESS_7,
-    ADDRESS_8,
-    ADDRESS_9,
-    ADDRESS_10,
+    ACCOUNT_ONE,
+    ACCOUNT_TWO,
+    ACCOUNT_THREE,
+    ACCOUNT_FOUR,
+    ACCOUNT_FIVE,
+    ACCOUNT_SIX,
+    ACCOUNT_SEVEN,
+    ACCOUNT_EIGHT,
+    ACCOUNT_NINE,
+    ACCOUNT_TEN,
 } from '../scripts/constants'
 
 import { clientId, toEvmAddress } from '../scripts/utils'
@@ -73,16 +73,16 @@ const INIT_SUPPLY = BigNumber.from(0).mul(TokenFactor)
 const MAX_SUPPLY = BigNumber.from(1).mul(TokenFactor)
 const TokenMemo = 'Hedera Accelerator Stablecoin'
 const AllAccounts = [
-    ADDRESS_1,
-    ADDRESS_2,
-    ADDRESS_3,
-    ADDRESS_4,
-    ADDRESS_5,
-    ADDRESS_6,
-    ADDRESS_7,
-    ADDRESS_8,
-    ADDRESS_9,
-    ADDRESS_10,
+    ACCOUNT_ONE,
+    ACCOUNT_TWO,
+    ACCOUNT_THREE,
+    ACCOUNT_FOUR,
+    ACCOUNT_FIVE,
+    ACCOUNT_SIX,
+    ACCOUNT_SEVEN,
+    ACCOUNT_EIGHT,
+    ACCOUNT_NINE,
+    ACCOUNT_TEN,
 ]
 
 describe('Role Management Tests', function () {

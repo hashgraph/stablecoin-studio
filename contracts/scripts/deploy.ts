@@ -32,7 +32,7 @@ import {
     PAUSE_ROLE,
     RESCUE_ROLE,
     WIPE_ROLE,
-    ADDRESS_0,
+    ADDRESS_ZERO,
 } from './constants'
 import { grantKyc } from './contractsMethods'
 import { deployContract } from './contractsLifeCycle/deploy'
@@ -364,7 +364,7 @@ export async function deployContractsWithSDK({
     isED25519Type,
     freeze = false,
     allToContract = true,
-    reserveAddress = ADDRESS_0,
+    reserveAddress = ADDRESS_ZERO,
     initialAmountDataFeed = initialSupply,
     createReserve = true,
     grantKYCToOriginalSender = false,
@@ -373,7 +373,7 @@ export async function deployContractsWithSDK({
     RolesToAccount = '',
     isRolesToAccountE25519 = false,
     initialMetadata = 'test',
-    proxyAdminOwnerAccount = ADDRESS_0,
+    proxyAdminOwnerAccount = ADDRESS_ZERO,
 }: DeployParameters): Promise<ContractId[]> {
     const AccountEvmAddress = await toEvmAddress(account, isED25519Type)
 
@@ -606,7 +606,7 @@ export async function deployContractsWithSDK({
 async function getHederaIdFromSolidityAddress(
     solidityAddress: string
 ): Promise<string> {
-    return solidityAddress != ADDRESS_0
+    return solidityAddress != ADDRESS_ZERO
         ? (await getContractInfo(solidityAddress)).contract_id
         : '0.0.0'
 }
@@ -782,7 +782,7 @@ async function cashInRoleAssignment(
             ? allRolesToCreator
                 ? await toEvmAddress(CreatorAccount, isCreatorE25519)
                 : await toEvmAddress(RolesToAccount, isRolesToAccountE25519)
-            : ADDRESS_0,
+            : ADDRESS_ZERO,
         allowance: 0,
     }
 

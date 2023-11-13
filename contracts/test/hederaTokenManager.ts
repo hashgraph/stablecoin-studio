@@ -53,8 +53,8 @@ import {
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import {
-    ADDRESS_0,
-    ADDRESS_1,
+    ADDRESS_ZERO,
+    ACCOUNT_ONE,
     BURN_ROLE,
     CASHIN_ROLE,
     DEFAULT_ADMIN_ROLE,
@@ -545,7 +545,7 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
             publicKey: operatorPubKey,
             isED25519Type: operatorIsE25519,
             initialAmountDataFeed: INIT_SUPPLY.toString(),
-            proxyAdminOwnerAccount: ADDRESS_0,
+            proxyAdminOwnerAccount: ADDRESS_ZERO,
         })
 
         // We retreive the HederaTokenManagerProxy admin and implementation
