@@ -21,11 +21,12 @@ import {
 } from '@hashgraph/sdk'
 
 import axios from 'axios'
-import { ADDRESS_0 } from './constants'
+import { ADDRESS_ZERO } from './constants'
 import { BigNumber } from 'ethers'
 import { string } from 'hardhat/internal/core/params/argumentTypes.js'
 import Key from '@hashgraph/sdk/lib/Key'
 import KeyList from '@hashgraph/sdk/lib/KeyList'
+import FileId from '@hashgraph/sdk/lib/file/FileId'
 
 const SuccessStatus = 22
 
@@ -244,7 +245,7 @@ export async function getContractInfo(contractId: string): Promise<IContract> {
 }
 
 export async function evmToHederaFormat(evmAddress: string): Promise<string> {
-    if (evmAddress === ADDRESS_0) return '0.0.0'
+    if (evmAddress === ADDRESS_ZERO) return '0.0.0'
     const URI_BASE = `${getHederaNetworkMirrorNodeURL()}/api/v1/`
     const url = URI_BASE + 'accounts/' + evmAddress
     const res = await axios.get<IAccount>(url)
@@ -270,7 +271,7 @@ interface IContract {
     file_id: string
     max_automatic_token_associations: string
     memo: string
-    obtainer_id: string
+    obtained_id: string
     permanent_removal: string
     proxy_account_id: string
     timestamp: string
@@ -304,6 +305,20 @@ export async function fileCreate(
     signingPrivateKey: PrivateKey,
     clientOperator: Client
 ) {
+    try {
+        await createFile(bytecode, chunks, signingPrivateKey, clientOperator)
+    } catch (error) {
+        console.error('Error creating file:', error)
+        throw error
+    }
+}
+
+async function createFile(
+    bytecode: Uint8Array | string,
+    chunks: number,
+    signingPrivateKey: PrivateKey,
+    clientOperator: Client
+): Promise<FileId> {
     const fileCreateTx = new FileCreateTransaction()
         .setKeys([signingPrivateKey])
         .freezeWith(clientOperator)
@@ -311,7 +326,11 @@ export async function fileCreate(
     const fileSubmit = await fileSign.execute(clientOperator)
     const fileCreateRx = await fileSubmit.getReceipt(clientOperator)
 
-    const fileId = fileCreateRx.fileId || ''
+    const fileId = fileCreateRx.fileId
+    if (!fileId) {
+        throw Error('FileId is null')
+    }
+    //To append the bytecode to the file when the file is large
     const fileAppendTx = new FileAppendTransaction()
         .setFileId(fileId)
         .setContents(bytecode)
@@ -320,6 +339,6 @@ export async function fileCreate(
         .freezeWith(clientOperator)
     const fileAppendSign = await fileAppendTx.sign(signingPrivateKey)
     const fileAppendSubmit = await fileAppendSign.execute(clientOperator)
-    const fileAppendRx = await fileAppendSubmit.getReceipt(clientOperator)
+    await fileAppendSubmit.getReceipt(clientOperator)
     return fileId
 }
