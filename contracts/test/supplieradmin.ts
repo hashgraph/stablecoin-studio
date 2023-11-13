@@ -2,32 +2,35 @@ import '@hashgraph/hardhat-hethers'
 import { BigNumber } from 'ethers'
 import {
     deployContractsWithSDK,
-    initializeClients,
-    getOperatorClient,
-    getOperatorAccount,
-    getOperatorPrivateKey,
-    getOperatorE25519,
-    getOperatorPublicKey,
-    getNonOperatorClient,
     getNonOperatorAccount,
+    getNonOperatorClient,
     getNonOperatorE25519,
+    getOperatorAccount,
+    getOperatorClient,
+    getOperatorE25519,
+    getOperatorPrivateKey,
+    getOperatorPublicKey,
+    initializeClients,
 } from '../scripts/deploy'
 import {
     decreaseSupplierAllowance,
-    grantSupplierRole,
-    grantUnlimitedSupplierRole,
-    increaseSupplierAllowance,
-    isUnlimitedSupplierAllowance,
-    resetSupplierAllowance,
-    revokeSupplierRole,
+    getBalanceOf,
     getSupplierAllowance,
     getTotalSupply,
-    getBalanceOf,
-    Mint,
+    grantRole,
+    grantSupplierRole,
+    grantUnlimitedSupplierRole,
     hasRole,
+    increaseSupplierAllowance,
+    isUnlimitedSupplierAllowance,
+    Mint,
+    resetSupplierAllowance,
+    revokeRole,
+    revokeSupplierRole,
+    Wipe,
 } from '../scripts/contractsMethods'
-import { CASHIN_ROLE } from '../scripts/constants'
-import { clientId, associateToken, getContractInfo } from '../scripts/utils'
+import { CASHIN_ROLE, WIPE_ROLE } from '../scripts/constants'
+import { associateToken, clientId, getContractInfo } from '../scripts/utils'
 import { Client, ContractId } from '@hashgraph/sdk'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
@@ -670,6 +673,14 @@ describe('Supplier Admin Tests - (Unlimited)', function () {
                 nonOperatorIsE25519
             )
         ).to.eventually.be.rejectedWith(Error)
+
+        // Grant unlimited supplier role to continue testing next tests cases
+        await grantUnlimitedSupplierRole(
+            proxyAddress,
+            operatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
     })
 
     it('An account with unlimited supplier role can not increase supplier allowance', async function () {
@@ -879,6 +890,62 @@ describe('Supplier Admin Tests - (Limited)', function () {
                 nonOperatorIsE25519
             )
         ).to.eventually.be.rejectedWith(Error)
+    })
+
+    it('An account with supplier role and and allowance of 100 token can mint ALL tokens then allowance can be increased', async function () {
+        const extraAllowance = BigNumber.from(10).mul(TokenFactor)
+
+        // Cashin all tokens
+        await Mint(
+            proxyAddress,
+            cashInLimit,
+            nonOperatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
+
+        // Increase total allowance
+        await increaseSupplierAllowance(
+            proxyAddress,
+            extraAllowance,
+            operatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
+
+        // Check that supplier Allowance was not set
+        const result = await getSupplierAllowance(
+            proxyAddress,
+            nonOperatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
+        expect(result.toString()).to.eq(extraAllowance)
+
+        await grantRole(
+            WIPE_ROLE,
+            proxyAddress,
+            operatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
+
+        //Wipe all tokens to restore the initial state
+        await Wipe(
+            proxyAddress,
+            extraAllowance,
+            operatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
+
+        await revokeRole(
+            WIPE_ROLE,
+            proxyAddress,
+            operatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
     })
 
     it('An account with supplier role and an allowance of 100 tokens, can mint 90 tokens but, later on, cannot mint 11 tokens', async function () {

@@ -6,7 +6,7 @@ import { ValidationOptions } from '@openzeppelin/upgrades-core'
 import { ProxyAdmin__factory } from '../../typechain-types'
 import { contractCall } from './utils'
 import { ContractFactory, utils } from 'ethers'
-import { Gas2 } from '../constants'
+import { GAS_LIMIT_TINY } from '../constants'
 import axios from 'axios'
 import { upgrade } from '../contractsMethods'
 
@@ -55,7 +55,7 @@ export async function upgradeContract(
             'getProxyImplementation',
             params,
             clientOperator,
-            Gas2,
+            GAS_LIMIT_TINY,
             ProxyAdmin__factory.abi
         )
 
