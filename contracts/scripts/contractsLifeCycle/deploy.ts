@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
     Client,
-    PrivateKey,
     ContractCreateFlow,
-    ContractId,
     ContractFunctionParameters,
+    ContractId,
+    PrivateKey,
 } from '@hashgraph/sdk'
 import {
     ProxyAdmin__factory,
@@ -51,6 +51,7 @@ export async function deployContract(
     return contractId
 }
 
+//TODO: this function is not used
 export async function deployUpgradableContract(
     factory: any,
     clientOperator: Client,

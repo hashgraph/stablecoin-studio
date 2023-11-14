@@ -1,60 +1,36 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { BigNumber } from 'ethers'
+import {BigNumber} from 'ethers'
+import {allTokenKeystoKey, deployContractsWithSDK, tokenKeystoContract, tokenKeystoKey,} from '../scripts/deploy'
 import {
-    deployContractsWithSDK,
-    initializeClients,
-    getOperatorClient,
-    getOperatorAccount,
-    getOperatorPrivateKey,
-    getOperatorE25519,
-    getOperatorPublicKey,
-    getNonOperatorClient,
-    getNonOperatorAccount,
-    getNonOperatorE25519,
-    tokenKeystoKey,
-    allTokenKeystoKey,
-    tokenKeystoContract,
-} from '../scripts/deploy'
-import {
-    name,
-    symbol,
-    decimals,
-    initialize,
-    Mint,
-    getTotalSupply,
-    getTokenAddress,
-    upgradeTo,
+    acceptOwnership_SCF,
     admin,
     changeAdmin,
-    owner,
-    upgrade,
     changeProxyAdmin,
-    transferOwnership,
+    decimals,
+    getMetadata,
     getProxyAdmin,
     getProxyImplementation,
     getRoles,
+    getTokenAddress,
+    getTotalSupply,
+    initialize,
     isUnlimitedSupplierAllowance,
+    Mint,
+    name,
+    owner,
+    symbol,
+    transferOwnership,
     updateToken,
-    getMetadata,
-    acceptOwnership_SCF,
+    upgrade,
+    upgradeTo,
 } from '../scripts/contractsMethods'
-import {
-    clientId,
-    toEvmAddress,
-    oneYearLaterInSeconds,
-    getContractInfo,
-    sleep,
-} from '../scripts/utils'
-import { Client, ContractId } from '@hashgraph/sdk'
-import {
-    ProxyAdmin__factory,
-    ITransparentUpgradeableProxy__factory,
-} from '../typechain-types'
+import {getContractInfo, oneYearLaterInSeconds, sleep, toEvmAddress,} from '../scripts/utils'
+import {ContractId} from '@hashgraph/sdk'
+import {ITransparentUpgradeableProxy__factory, ProxyAdmin__factory,} from '../typechain-types'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import {
     ADDRESS_ZERO,
-    ACCOUNT_ONE,
     BURN_ROLE,
     CASHIN_ROLE,
     DEFAULT_ADMIN_ROLE,
@@ -67,6 +43,23 @@ import {
     WIPE_ROLE,
     WITHOUT_ROLE,
 } from '../scripts/constants'
+import {
+    INIT_SUPPLY,
+    MAX_SUPPLY,
+    nonOperatorAccount,
+    nonOperatorClient,
+    nonOperatorIsE25519,
+    operatorAccount,
+    operatorClient,
+    operatorIsE25519,
+    operatorPriKey,
+    operatorPubKey,
+    TOKEN_DECIMALS,
+    TOKEN_FACTOR,
+    TOKEN_MEMO,
+    TOKEN_NAME,
+    TOKEN_SYMBOL,
+} from './shared/utils'
 
 chai.use(chaiAsPromised)
 const expect = chai.expect
@@ -75,88 +68,23 @@ let proxyAddress: ContractId
 let proxyAdminAddress: ContractId
 let stableCoinAddress: ContractId
 let reserveProxy: ContractId
-
-let operatorClient: Client
-let nonOperatorClient: Client
-let operatorAccount: string
-let nonOperatorAccount: string
-let operatorPriKey: string
-let operatorPubKey: string
-let operatorIsE25519: boolean
-let nonOperatorIsE25519: boolean
-
-const TokenName = 'MIDAS'
-const TokenSymbol = 'MD'
-const TokenDecimals = 3
-const TokenFactor = BigNumber.from(10).pow(TokenDecimals)
-const INIT_SUPPLY = BigNumber.from(10).mul(TokenFactor)
-const MAX_SUPPLY = BigNumber.from(1000).mul(TokenFactor)
-const TokenMemo = 'Hedera Accelerator Stablecoin'
 const abiProxyAdmin = ProxyAdmin__factory.abi
-const MetadataString = 'Metadata_String'
 
 describe('HederaTokenManager Tests', function () {
     before(async function () {
-        // Generate Client 1 and Client 2
-        const [
-            client1,
-            client1account,
-            client1privatekey,
-            client1publickey,
-            client1isED25519Type,
-            client2,
-            client2account,
-            client2privatekey,
-            client2publickey,
-            client2isED25519Type,
-        ] = initializeClients()
-
-        operatorClient = getOperatorClient(client1, client2, clientId)
-        nonOperatorClient = getNonOperatorClient(client1, client2, clientId)
-        operatorAccount = getOperatorAccount(
-            client1account,
-            client2account,
-            clientId
-        )
-        nonOperatorAccount = getNonOperatorAccount(
-            client1account,
-            client2account,
-            clientId
-        )
-        operatorPriKey = getOperatorPrivateKey(
-            client1privatekey,
-            client2privatekey,
-            clientId
-        )
-        operatorPubKey = getOperatorPublicKey(
-            client1publickey,
-            client2publickey,
-            clientId
-        )
-        operatorIsE25519 = getOperatorE25519(
-            client1isED25519Type,
-            client2isED25519Type,
-            clientId
-        )
-        nonOperatorIsE25519 = getNonOperatorE25519(
-            client1isED25519Type,
-            client2isED25519Type,
-            clientId
-        )
-
         // Deploy Token using Client
         const result = await deployContractsWithSDK({
-            name: TokenName,
-            symbol: TokenSymbol,
-            decimals: TokenDecimals,
+            name: TOKEN_NAME,
+            symbol: TOKEN_SYMBOL,
+            decimals: TOKEN_DECIMALS,
             initialSupply: INIT_SUPPLY.toString(),
             maxSupply: MAX_SUPPLY.toString(),
-            memo: TokenMemo,
+            memo: TOKEN_MEMO,
             account: operatorAccount,
             privateKey: operatorPriKey,
             publicKey: operatorPubKey,
             isED25519Type: operatorIsE25519,
-            initialAmountDataFeed: BigNumber.from('2000').toString(),
+            initialAmountDataFeed: INIT_SUPPLY.toString(),
         })
 
         proxyAddress = result[0]
@@ -173,7 +101,7 @@ describe('HederaTokenManager Tests', function () {
                 keys,
                 oneYearLaterInSeconds(),
                 7890000,
-                MetadataString,
+                TOKEN_MEMO,
                 nonOperatorClient
             )
         ).to.eventually.be.rejectedWith(Error)
@@ -212,19 +140,19 @@ describe('HederaTokenManager Tests', function () {
             keysToKey,
             oneYearLaterInSeconds(),
             7890000,
-            MetadataString,
+            TOKEN_MEMO,
             operatorClient
         )
 
         const newMetadata = await getMetadata(proxyAddress, operatorClient)
 
-        expect(newMetadata).to.equal(MetadataString)
+        expect(newMetadata).to.equal(TOKEN_MEMO)
 
         const keysToContract = tokenKeystoContract(false)
         await updateToken(
             proxyAddress,
-            TokenName,
-            TokenSymbol,
+            TOKEN_NAME,
+            TOKEN_SYMBOL,
             keysToContract,
             0,
             7776000,
@@ -247,7 +175,7 @@ describe('HederaTokenManager Tests', function () {
                 keysToKey,
                 oneYearLaterInSeconds(),
                 7890000,
-                MetadataString,
+                TOKEN_MEMO,
                 operatorClient
             )
         ).to.eventually.be.rejectedWith(Error)
@@ -256,12 +184,12 @@ describe('HederaTokenManager Tests', function () {
     it('deploy SC with roles associated to another account', async function () {
         // Deploy Token using Client
         const creation = await deployContractsWithSDK({
-            name: TokenName,
-            symbol: TokenSymbol,
-            decimals: TokenDecimals,
+            name: TOKEN_NAME,
+            symbol: TOKEN_SYMBOL,
+            decimals: TOKEN_DECIMALS,
             initialSupply: INIT_SUPPLY.toString(),
             maxSupply: MAX_SUPPLY.toString(),
-            memo: TokenMemo,
+            memo: TOKEN_MEMO,
             account: operatorAccount,
             privateKey: operatorPriKey,
             publicKey: operatorPubKey,
@@ -405,9 +333,9 @@ describe('HederaTokenManager Tests', function () {
         )
 
         // We check their values : success
-        expect(retrievedTokenName).to.equals(TokenName)
-        expect(retrievedTokenSymbol).to.equals(TokenSymbol)
-        expect(retrievedTokenDecimals).to.equals(TokenDecimals)
+        expect(retrievedTokenName).to.equals(TOKEN_NAME)
+        expect(retrievedTokenSymbol).to.equals(TOKEN_SYMBOL)
+        expect(retrievedTokenDecimals).to.equals(TOKEN_DECIMALS)
         expect(retrievedTokenTotalSupply.toString()).to.equals(
             INIT_SUPPLY.toString()
         )
@@ -448,7 +376,7 @@ describe('HederaTokenManager Tests', function () {
 
         await Mint(
             proxyAddress,
-            BigNumber.from(1).mul(TokenFactor),
+            BigNumber.from(1).mul(TOKEN_FACTOR),
             operatorClient,
             operatorAccount,
             operatorIsE25519
@@ -457,69 +385,21 @@ describe('HederaTokenManager Tests', function () {
         const totalSupply = await getTotalSupply(proxyAddress, operatorClient)
 
         expect(totalSupply).to.equal(
-            initialTotalSupply.add(BigNumber.from(1).mul(TokenFactor))
+            initialTotalSupply.add(BigNumber.from(1).mul(TOKEN_FACTOR))
         )
     })
 })
 
 describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', function () {
     before(async function () {
-        // Generate Client 1 and Client 2
-
-        const [
-            client1,
-            client1account,
-            client1privatekey,
-            client1publickey,
-            client1isED25519Type,
-            client2,
-            client2account,
-            client2privatekey,
-            client2publickey,
-            client2isED25519Type,
-        ] = initializeClients()
-
-        operatorClient = getOperatorClient(client1, client2, clientId)
-        nonOperatorClient = getNonOperatorClient(client1, client2, clientId)
-        operatorAccount = getOperatorAccount(
-            client1account,
-            client2account,
-            clientId
-        )
-        nonOperatorAccount = getNonOperatorAccount(
-            client1account,
-            client2account,
-            clientId
-        )
-        operatorPriKey = getOperatorPrivateKey(
-            client1privatekey,
-            client2privatekey,
-            clientId
-        )
-        operatorPubKey = getOperatorPublicKey(
-            client1publickey,
-            client2publickey,
-            clientId
-        )
-        operatorIsE25519 = getOperatorE25519(
-            client1isED25519Type,
-            client2isED25519Type,
-            clientId
-        )
-        nonOperatorIsE25519 = getNonOperatorE25519(
-            client1isED25519Type,
-            client2isED25519Type,
-            clientId
-        )
-
         // Deploy Token using Client
         const result = await deployContractsWithSDK({
-            name: TokenName,
-            symbol: TokenSymbol,
-            decimals: TokenDecimals,
+            name: TOKEN_NAME,
+            symbol: TOKEN_SYMBOL,
+            decimals: TOKEN_DECIMALS,
             initialSupply: INIT_SUPPLY.toString(),
             maxSupply: MAX_SUPPLY.toString(),
-            memo: TokenMemo,
+            memo: TOKEN_MEMO,
             account: operatorAccount,
             privateKey: operatorPriKey,
             publicKey: operatorPubKey,
@@ -534,12 +414,12 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
 
     it('Can deploy a stablecoin where proxy admin owner is the deploying account', async function () {
         const result = await deployContractsWithSDK({
-            name: TokenName,
-            symbol: TokenSymbol,
-            decimals: TokenDecimals,
+            name: TOKEN_NAME,
+            symbol: TOKEN_SYMBOL,
+            decimals: TOKEN_DECIMALS,
             initialSupply: INIT_SUPPLY.toString(),
             maxSupply: MAX_SUPPLY.toString(),
-            memo: TokenMemo,
+            memo: TOKEN_MEMO,
             account: operatorAccount,
             privateKey: operatorPriKey,
             publicKey: operatorPubKey,
@@ -565,12 +445,12 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
 
     it('Can deploy a stablecoin where proxy admin owner is not the deploying account', async function () {
         const result = await deployContractsWithSDK({
-            name: TokenName,
-            symbol: TokenSymbol,
-            decimals: TokenDecimals,
+            name: TOKEN_NAME,
+            symbol: TOKEN_SYMBOL,
+            decimals: TOKEN_DECIMALS,
             initialSupply: INIT_SUPPLY.toString(),
             maxSupply: MAX_SUPPLY.toString(),
-            memo: TokenMemo,
+            memo: TOKEN_MEMO,
             account: operatorAccount,
             privateKey: operatorPriKey,
             publicKey: operatorPubKey,
@@ -648,12 +528,12 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
     it('Upgrade Proxy implementation without the proxy admin', async function () {
         // Deploy a new contract
         const result = await deployContractsWithSDK({
-            name: TokenName,
-            symbol: TokenSymbol,
-            decimals: TokenDecimals,
+            name: TOKEN_NAME,
+            symbol: TOKEN_SYMBOL,
+            decimals: TOKEN_DECIMALS,
             initialSupply: INIT_SUPPLY.toString(),
             maxSupply: MAX_SUPPLY.toString(),
-            memo: TokenMemo,
+            memo: TOKEN_MEMO,
             account: operatorAccount,
             privateKey: operatorPriKey,
             publicKey: operatorPubKey,
@@ -691,12 +571,12 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
     it('Upgrade Proxy implementation with the proxy admin but without the owner account', async function () {
         // Deploy a new contract
         const result = await deployContractsWithSDK({
-            name: TokenName,
-            symbol: TokenSymbol,
-            decimals: TokenDecimals,
+            name: TOKEN_NAME,
+            symbol: TOKEN_SYMBOL,
+            decimals: TOKEN_DECIMALS,
             initialSupply: INIT_SUPPLY.toString(),
             maxSupply: MAX_SUPPLY.toString(),
-            memo: TokenMemo,
+            memo: TOKEN_MEMO,
             account: operatorAccount,
             privateKey: operatorPriKey,
             publicKey: operatorPubKey,
@@ -739,12 +619,12 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
     it('Upgrade Proxy implementation with the proxy admin and the owner account', async function () {
         // Deploy a new contract
         const result = await deployContractsWithSDK({
-            name: TokenName,
-            symbol: TokenSymbol,
-            decimals: TokenDecimals,
+            name: TOKEN_NAME,
+            symbol: TOKEN_SYMBOL,
+            decimals: TOKEN_DECIMALS,
             initialSupply: INIT_SUPPLY.toString(),
             maxSupply: MAX_SUPPLY.toString(),
-            memo: TokenMemo,
+            memo: TOKEN_MEMO,
             account: operatorAccount,
             privateKey: operatorPriKey,
             publicKey: operatorPubKey,

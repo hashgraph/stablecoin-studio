@@ -1,43 +1,43 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
-    initializeClients,
-    getOperatorAccount,
-    getOperatorPrivateKey,
-    getOperatorE25519,
-    toHashgraphKey,
     deployFactory as dp,
     deployHederaTokenManager,
+    getOperatorAccount,
+    getOperatorE25519,
+    getOperatorPrivateKey,
+    initializeClients,
+    toHashgraphKey,
 } from './deploy'
 
-import { getClient, clientId, toEvmAddress, getContractInfo } from './utils'
+import {clientId, getClient, getContractInfo, toEvmAddress} from './utils'
 
 export const deployFactory = async () => {
     const [
-        client1,
-        client1account,
-        client1privatekey,
-        client1publickey,
-        client1isED25519Type,
-        client2,
-        client2account,
-        client2privatekey,
-        client2publickey,
-        client2isED25519Type,
+        clientOne,
+        clientOneAccount,
+        clientOnePrivateKey,
+        clientOnePublicKey,
+        clientOneIsED25519Type,
+        clientTwo,
+        clientTwoAccount,
+        clientTwoPrivateKey,
+        clientTwoPublicKey,
+        clientTwoIsED25519Type,
     ] = initializeClients()
 
     const operatorAccount = getOperatorAccount(
-        client1account,
-        client2account,
+        clientOneAccount,
+        clientTwoAccount,
         clientId
     )
     const operatorPriKey = getOperatorPrivateKey(
-        client1privatekey,
-        client2privatekey,
+        clientOnePrivateKey,
+        clientTwoPrivateKey,
         clientId
     )
     const operatorIsE25519 = getOperatorE25519(
-        client1isED25519Type,
-        client2isED25519Type,
+        clientOneIsED25519Type,
+        clientTwoIsED25519Type,
         clientId
     )
     // Deploy Token using Client
@@ -46,14 +46,14 @@ export const deployFactory = async () => {
         operatorAccount,
         toHashgraphKey(operatorPriKey, operatorIsE25519)
     )
-
-    const resulttokenManager = await deployHederaTokenManager(
+    //TODO: MARIO: the function is uploading and deploying the contracts
+    const resultTokenManager = await deployHederaTokenManager(
         clientSdk,
         operatorPriKey
     )
     const initializeFactory = {
         admin: await toEvmAddress(operatorAccount, operatorIsE25519),
-        tokenManager: (await getContractInfo(resulttokenManager.toString()))
+        tokenManager: (await getContractInfo(resultTokenManager.toString()))
             .evm_address,
     }
     const result = await dp(
@@ -63,7 +63,7 @@ export const deployFactory = async () => {
         operatorIsE25519
     )
 
-    const tokenManager = resulttokenManager
+    const tokenManager = resultTokenManager
     const proxyAddress = result[0]
     const proxyAdminAddress = result[1]
     const factoryAddress = result[2]

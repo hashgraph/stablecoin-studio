@@ -1,31 +1,28 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-    Client,
-    TokenCreateTransaction,
-    DelegateContractId,
-    Hbar,
     AccountId,
+    Client,
+    ContractCreateFlow,
+    ContractId,
+    DelegateContractId,
+    FileAppendTransaction,
+    FileCreateTransaction,
+    Hbar,
     PrivateKey,
     PublicKey,
-    TokenSupplyType,
-    TokenId,
     TokenAssociateTransaction,
+    TokenCreateTransaction,
     TokenDissociateTransaction,
-    TransferTransaction,
+    TokenId,
+    TokenSupplyType,
     TransactionResponse,
-    ContractId,
-    ContractCreateFlow,
-    FileCreateTransaction,
-    FileAppendTransaction,
+    TransferTransaction,
 } from '@hashgraph/sdk'
 
 import axios from 'axios'
-import { ADDRESS_ZERO } from './constants'
-import { BigNumber } from 'ethers'
-import { string } from 'hardhat/internal/core/params/argumentTypes.js'
-import Key from '@hashgraph/sdk/lib/Key'
-import KeyList from '@hashgraph/sdk/lib/KeyList'
+import {ADDRESS_ZERO} from './constants'
+import {BigNumber} from 'ethers'
 import FileId from '@hashgraph/sdk/lib/file/FileId'
 
 const SuccessStatus = 22
@@ -166,6 +163,7 @@ export async function createToken(
     return tokenId
 }
 
+//TODO: MARIO: deploy and upload the contracts
 export async function deployContractSDK(
     factory: any,
     privateKey: string,
