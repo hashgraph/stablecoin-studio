@@ -92,7 +92,7 @@ jobs:
 
       - name: Test web
         run: |
-          npm run test
+          npm run test:parallel
           npm run cleanCache
         working-directory: web
 

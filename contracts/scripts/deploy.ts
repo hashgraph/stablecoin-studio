@@ -169,8 +169,8 @@ export async function deployHederaTokenManager(
     privateKey: string
 ) {
     // Deploying Factory logic
+    console.log('!!!!ContractCreateFlow: deployHederaTokenManager -> deploying factory')
     console.log(`Deploying HederaTokenManager. please wait...`)
-
     const hederaTokenManager = await deployContract(
         HederaTokenManager__factory,
         privateKey,
@@ -379,10 +379,6 @@ export async function deployContractsWithSDK({
 
     // Deploying HederaTokenManager or using an already deployed one
     if (!HEDERA_TOKEN_MANAGER_ADDRESS) {
-        //TODO: MARIO ensure if the tests are calling this more than once
-        console.log(
-            '!!!!!!!!!!!!!!UPLOADED FILE!!!!!!!!!!!!!!!!!: deployHederaTokenManager'
-        )
         hederaTokenManager = await deployHederaTokenManager(
             clientSdk,
             privateKey

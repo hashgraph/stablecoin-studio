@@ -163,7 +163,6 @@ export async function createToken(
     return tokenId
 }
 
-//TODO: MARIO: deploy and upload the contracts
 export async function deployContractSDK(
     factory: any,
     privateKey: string,

@@ -46,7 +46,6 @@ export const deployFactory = async () => {
         operatorAccount,
         toHashgraphKey(operatorPriKey, operatorIsE25519)
     )
-    //TODO: MARIO: the function is uploading and deploying the contracts
     const resultTokenManager = await deployHederaTokenManager(
         clientSdk,
         operatorPriKey
