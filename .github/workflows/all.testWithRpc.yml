@@ -49,7 +49,9 @@ jobs:
           npm run build
         working-directory: cli
       - name: Install dependencies web
-        run: npm install
+        run: |
+          npm install
+          npm run build
         working-directory: web
 
       - name: Create file
