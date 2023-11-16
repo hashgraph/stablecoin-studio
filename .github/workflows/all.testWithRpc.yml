@@ -92,13 +92,13 @@ jobs:
 
       - name: Test web
         run: |
-          npm run test:parallel
+          npm run test
           npm run cleanCache
         working-directory: web
 
       - name: Test Contracts
         run: |
-          npm run test
+          npm run test:parallel
           npm run cleanCache
         working-directory: contracts
       
