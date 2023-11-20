@@ -24,6 +24,7 @@ import {
     nonOperatorAccount,
     nonOperatorClient,
     nonOperatorIsE25519,
+    ONE_TOKEN,
     operatorAccount,
     operatorClient,
     operatorIsE25519,
@@ -41,6 +42,7 @@ const expect = chai.expect
 
 let proxyAddress: ContractId
 let token: ContractId
+
 const HBARDecimals = 8
 const HBARFactor = BigNumber.from(10).pow(HBARDecimals)
 const HBARInitialAmount = BigNumber.from(100).mul(HBARFactor)
@@ -166,8 +168,8 @@ describe('Rescue Tests', function () {
         )
     })
 
-    it('Should rescue 10 token', async function () {
-        const AmountToRescue = BigNumber.from(10).mul(TOKEN_FACTOR)
+    it('Should rescue 10 tokens', async function () {
+        const tenTokens = BigNumber.from(10).mul(TOKEN_FACTOR)
 
         // Get the initial balance of the token owner and client
         const initialTokenOwnerBalance = await getBalanceOf(
@@ -187,7 +189,7 @@ describe('Rescue Tests', function () {
         )
 
         // rescue some tokens
-        await rescue(proxyAddress, AmountToRescue, operatorClient)
+        await rescue(proxyAddress, tenTokens, operatorClient)
 
         // check new balances : success
         const finalTokenOwnerBalance = await getBalanceOf(
@@ -207,8 +209,8 @@ describe('Rescue Tests', function () {
         )
 
         const expectedTokenOwnerBalance =
-            initialTokenOwnerBalance.sub(AmountToRescue)
-        const expectedClientBalance = initialClientBalance.add(AmountToRescue)
+            initialTokenOwnerBalance.sub(tenTokens)
+        const expectedClientBalance = initialClientBalance.add(tenTokens)
 
         expect(finalTokenOwnerBalance.toString()).to.equals(
             expectedTokenOwnerBalance.toString()
@@ -243,9 +245,7 @@ describe('Rescue Tests', function () {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('User with granted rescue role can rescue tokens', async function () {
-        const AmountToRescue = BigNumber.from(1)
-
+    it.only('User with granted rescue role can rescue tokens', async function () {
         // Retrieve original balances
         const initialTokenOwnerBalance = await getBalanceOf(
             proxyAddress,
@@ -280,7 +280,7 @@ describe('Rescue Tests', function () {
         )
 
         // Rescue tokens with newly granted account
-        await rescue(proxyAddress, AmountToRescue, nonOperatorClient)
+        await rescue(proxyAddress, ONE_TOKEN, nonOperatorClient)
 
         // Check final balances : success
         const finalTokenOwnerBalance = await getBalanceOf(
@@ -300,8 +300,8 @@ describe('Rescue Tests', function () {
         )
 
         const expectedTokenOwnerBalance =
-            initialTokenOwnerBalance.sub(AmountToRescue)
-        const expectedClientBalance = initialClientBalance.add(AmountToRescue)
+            initialTokenOwnerBalance.sub(ONE_TOKEN)
+        const expectedClientBalance = initialClientBalance.add(ONE_TOKEN)
 
         expect(finalTokenOwnerBalance.toString()).to.equals(
             expectedTokenOwnerBalance.toString()
@@ -321,9 +321,8 @@ describe('Rescue Tests', function () {
     })
 
     it('Should rescue 10 HBAR', async function () {
-        const AmountToRescue = BigNumber.from(10).mul(HBARFactor)
-
         // Get the initial balance of the token owner and client
+        const AmountToRescue = BigNumber.from(10).mul(HBARFactor)
         const initialTokenOwnerBalance = await getHBARBalanceOf(
             proxyAddress.toString(),
             operatorClient,
@@ -389,7 +388,6 @@ describe('Rescue Tests', function () {
 
     it('User with granted rescue role can rescue HBAR', async function () {
         const AmountToRescue = BigNumber.from(10).mul(HBARFactor)
-
         // Retrieve original balances
         const initialTokenOwnerBalance = await getHBARBalanceOf(
             proxyAddress.toString(),

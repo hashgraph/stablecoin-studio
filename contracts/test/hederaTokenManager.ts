@@ -67,7 +67,6 @@ const expect = chai.expect
 let proxyAddress: ContractId
 let proxyAdminAddress: ContractId
 let stableCoinAddress: ContractId
-let reserveProxy: ContractId
 const abiProxyAdmin = ProxyAdmin__factory.abi
 
 describe('HederaTokenManager Tests', function () {
@@ -88,7 +87,6 @@ describe('HederaTokenManager Tests', function () {
         })
 
         proxyAddress = result[0]
-        reserveProxy = result[6]
     })
 
     it('Cannot Update token if not Admin', async function () {
@@ -194,7 +192,7 @@ describe('HederaTokenManager Tests', function () {
             privateKey: operatorPriKey,
             publicKey: operatorPubKey,
             isED25519Type: operatorIsE25519,
-            initialAmountDataFeed: BigNumber.from('2000').toString(),
+            initialAmountDataFeed: INIT_SUPPLY.toString(),
             allRolesToCreator: false,
             RolesToAccount: nonOperatorAccount,
             isRolesToAccountE25519: nonOperatorIsE25519,

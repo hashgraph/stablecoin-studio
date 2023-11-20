@@ -169,7 +169,6 @@ export async function deployHederaTokenManager(
     privateKey: string
 ) {
     // Deploying Factory logic
-    console.log('!!!!ContractCreateFlow: deployHederaTokenManager -> deploying factory')
     console.log(`Deploying HederaTokenManager. please wait...`)
     const hederaTokenManager = await deployContract(
         HederaTokenManager__factory,
@@ -465,7 +464,7 @@ export async function deployContractsWithSDK({
             'deployStableCoin',
             parametersContractCall,
             clientSdk,
-            15000000,
+            1700000,
             StableCoinFactory__factory.abi,
             35
         )

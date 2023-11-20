@@ -19,7 +19,7 @@ export const TOKEN_SYMBOL = 'MD'
 export const TOKEN_FACTOR = BigNumber.from(10).pow(TOKEN_DECIMALS)
 export const INIT_SUPPLY = BigNumber.from(100).mul(TOKEN_FACTOR)
 export const MAX_SUPPLY = BigNumber.from(1000).mul(TOKEN_FACTOR)
-
+export const ONE_TOKEN = BigNumber.from(1).mul(TOKEN_FACTOR)
 export const [
     clientOne,
     clientOneAccount,
@@ -32,7 +32,6 @@ export const [
     clientTwoPublicKey,
     clientTwoIsED25519Type,
 ] = initializeClients()
-
 export const operatorClient = getOperatorClient(clientOne, clientTwo, clientId)
 export const nonOperatorClient = getNonOperatorClient(
     clientOne,

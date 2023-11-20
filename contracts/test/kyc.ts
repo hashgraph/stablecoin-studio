@@ -27,13 +27,13 @@ import {
     nonOperatorAccount,
     nonOperatorClient,
     nonOperatorIsE25519,
+    ONE_TOKEN,
     operatorAccount,
     operatorClient,
     operatorIsE25519,
     operatorPriKey,
     operatorPubKey,
     TOKEN_DECIMALS,
-    TOKEN_FACTOR,
     TOKEN_MEMO,
     TOKEN_NAME,
     TOKEN_SYMBOL,
@@ -44,8 +44,6 @@ const expect = chai.expect
 
 let proxyAddress: ContractId
 let token: ContractId
-
-const ONE_TOKEN = BigNumber.from(1).mul(TOKEN_FACTOR)
 
 describe('KYC Tests', function () {
     before(async function () {
@@ -61,7 +59,9 @@ describe('KYC Tests', function () {
             privateKey: operatorPriKey,
             publicKey: operatorPubKey,
             isED25519Type: operatorIsE25519,
-            initialAmountDataFeed: BigNumber.from('2000').toString(),
+            initialAmountDataFeed: INIT_SUPPLY.add(
+                BigNumber.from('100000')
+            ).toString(),
             grantKYCToOriginalSender: true,
             addKyc: true,
         })
@@ -70,7 +70,7 @@ describe('KYC Tests', function () {
         token = result[8]
     })
 
-    it.skip('Admin account can grant and revoke kyc role to an account', async function () {
+    it('Admin account can grant and revoke kyc role to an account', async function () {
         // Admin grants pause role : success
         let result = await hasRole(
             KYC_ROLE,
@@ -196,7 +196,6 @@ describe('KYC Tests', function () {
     })
 
     it('An account without kyc can not cash in', async () => {
-        const ONE_TOKEN = BigNumber.from(1).mul(TOKEN_FACTOR)
         await expect(
             Mint(
                 proxyAddress,
@@ -486,17 +485,13 @@ describe('KYC Tests', function () {
     })
 
     it('Account without kyc can not rescue tokens', async function () {
-        const ONE_TOKENToRescue = BigNumber.from(10).mul(TOKEN_FACTOR)
-
         // rescue some tokens
         await expect(
-            rescue(proxyAddress, ONE_TOKENToRescue, operatorClient)
+            rescue(proxyAddress, ONE_TOKEN, operatorClient)
         ).to.eventually.be.rejectedWith(Error)
     })
 
     it('Account with granted kyc can rescue tokens', async function () {
-        const amountToRescue = BigNumber.from(10).mul(TOKEN_FACTOR)
-
         // Get the initial balance of the token owner and client
         const initialTokenOwnerBalance = await getBalanceOf(
             proxyAddress,
@@ -524,7 +519,7 @@ describe('KYC Tests', function () {
         )
 
         // rescue some tokens
-        await rescue(proxyAddress, amountToRescue, operatorClient)
+        await rescue(proxyAddress, ONE_TOKEN, operatorClient)
 
         // check new balances : success
         const finalTokenOwnerBalance = await getBalanceOf(
@@ -544,8 +539,8 @@ describe('KYC Tests', function () {
         )
 
         const expectedTokenOwnerBalance =
-            initialTokenOwnerBalance.sub(amountToRescue)
-        const expectedClientBalance = initialClientBalance.add(amountToRescue)
+            initialTokenOwnerBalance.sub(ONE_TOKEN)
+        const expectedClientBalance = initialClientBalance.add(ONE_TOKEN)
 
         expect(finalTokenOwnerBalance.toString()).to.equals(
             expectedTokenOwnerBalance.toString()
@@ -556,8 +551,6 @@ describe('KYC Tests', function () {
     })
 
     it('Account with revoked kyc can not rescue tokens', async function () {
-        const amountToRescue = BigNumber.from(10).mul(TOKEN_FACTOR)
-
         // revoke kyc to client for the token
         await revokeKyc(
             proxyAddress,
@@ -568,7 +561,7 @@ describe('KYC Tests', function () {
 
         // rescue some tokens
         await expect(
-            rescue(proxyAddress, amountToRescue, operatorClient)
+            rescue(proxyAddress, ONE_TOKEN, operatorClient)
         ).to.eventually.be.rejectedWith(Error)
     })
 })
