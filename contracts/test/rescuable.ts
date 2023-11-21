@@ -245,7 +245,7 @@ describe('Rescue Tests', function () {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it.only('User with granted rescue role can rescue tokens', async function () {
+    it('User with granted rescue role can rescue tokens', async function () {
         // Retrieve original balances
         const initialTokenOwnerBalance = await getBalanceOf(
             proxyAddress,
