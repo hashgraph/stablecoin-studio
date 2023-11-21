@@ -4,6 +4,7 @@ import { NamedRoutes } from '../../Router/NamedRoutes';
 import SidebarOption from './SidebarOption';
 import { SELECTED_WALLET_COIN, LAST_WALLET_SELECTED } from '../../store/slices/walletSlice';
 import { useSelector } from 'react-redux';
+import { SupportedWallets } from '@hashgraph/stablecoin-npm-sdk';
 
 interface optionsProps {
 	icon: string;
@@ -40,7 +41,7 @@ const Sidebar = () => {
 			title: t('sidebar.feesManagement'),
 			route: NamedRoutes.FeesManagement,
 			isHidden:
-				lastWalletSelected === 'Metamask' ||
+				lastWalletSelected === SupportedWallets.METAMASK ||
 				(selectedStableCoin && !selectedStableCoin.feeScheduleKey),
 		},
 		{
