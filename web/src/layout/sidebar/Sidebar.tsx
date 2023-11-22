@@ -50,8 +50,19 @@ const Sidebar = () => {
 			title: t('sidebar.settings'),
 			route: NamedRoutes.Settings,
 		},
+		
 	];
-
+	const appProperties: optionsProps = {
+		icon: 'GearSix',
+		title: t('sidebar.appSettings'),
+		route: NamedRoutes.AppSettings,
+	
+	};
+	
+	if (process.env.REACT_APP_SHOW_CONFIG === "true") {
+		options.push(appProperties);		
+	}
+	
 	return (
 		<Flex
 			data-testid='sidebar'

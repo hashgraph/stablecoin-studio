@@ -50,7 +50,8 @@
 		"details": "Stablecoin Details",
 		"proofOfReserve": "Proof-of-Reserve",
 		"feesManagement": "Fees Management",
-		"settings": "Settings"
+		"settings": "Settings",
+		"appSettings": "appSettings"
 	},
 	"validations": {
 		"required": "This field is required",

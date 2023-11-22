@@ -21,6 +21,7 @@ import UNFREEZE_EN from './translations/en/unfreeze.json';
 import CHECK_FROZEN_STATUS_EN from './translations/en/checkFrozen.json';
 import PROOF_OF_RESERVE_EN from './translations/en/proofOfReserve.json';
 import SETTINGS_EN from './translations/en/settings.json';
+import APPSETTINGS_EN from './translations/en/appSettings.json';
 import GRANT_KYC_EN from './translations/en/grantKYC.json';
 import REVOKE_KYC_EN from './translations/en/revokeKYC.json';
 import CHECK_KYC_EN from './translations/en/checkKyc.json';
@@ -64,6 +65,7 @@ i18n
 				checkKyc: CHECK_KYC_EN,
 				feesManagement: FEES_MANAGEMENT_EN,
 				updateToken: UPDATE_TOKEN_EN,
+				appSettings: APPSETTINGS_EN
 			},
 			es: {
 				global: GLOBAL_ES,

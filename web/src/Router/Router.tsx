@@ -41,6 +41,7 @@ import Settings from '../views/Settings';
 import StableCoinSettings from '../views/Settings/StableCoin';
 import FactorySettings from '../views/Settings/Factory';
 import ModalWalletConnect from '../components/ModalWalletConnect';
+import AppSettings from '../views/AppSettings';
 
 const LoginOverlayRoute = ({ show, loadingSC }: { show: boolean; loadingSC: boolean }) => {
 	return (
@@ -189,6 +190,7 @@ const Router = () => {
 						</>
 					)}
 					<Route path={RoutesMappingUrl.settings} element={<Settings />} />
+					
 					<Route path={RoutesMappingUrl.factorySettings} element={<FactorySettings />} />
 					<Route path={RoutesMappingUrl.stableCoinCreation} element={<StableCoinCreation />} />
 					<Route path={RoutesMappingUrl.importedToken} element={<ImportedTokenCreation />} />
@@ -196,6 +198,7 @@ const Router = () => {
 						path={RoutesMappingUrl.stableCoinNotSelected}
 						element={<StableCoinNotSelected />}
 					/>
+					<Route path={RoutesMappingUrl.appSettings} element={<AppSettings />} />
 					<Route path='*' element={<Navigate to={RoutesMappingUrl.stableCoinNotSelected} />} />
 				</Route>
 			</Routes>
