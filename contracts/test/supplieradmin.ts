@@ -1,17 +1,6 @@
 import '@hashgraph/hardhat-hethers'
 import { BigNumber } from 'ethers'
-import {
-    deployContractsWithSDK,
-    getNonOperatorAccount,
-    getNonOperatorClient,
-    getNonOperatorE25519,
-    getOperatorAccount,
-    getOperatorClient,
-    getOperatorE25519,
-    getOperatorPrivateKey,
-    getOperatorPublicKey,
-    initializeClients,
-} from '../scripts/deploy'
+import { deployContractsWithSDK } from '../scripts/deploy'
 import {
     decreaseSupplierAllowance,
     getBalanceOf,
@@ -30,10 +19,27 @@ import {
     Wipe,
 } from '../scripts/contractsMethods'
 import { CASHIN_ROLE, WIPE_ROLE } from '../scripts/constants'
-import { associateToken, clientId, getContractInfo } from '../scripts/utils'
-import { Client, ContractId } from '@hashgraph/sdk'
+import { associateToken, getContractInfo } from '../scripts/utils'
+import { ContractId } from '@hashgraph/sdk'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
+import {
+    INIT_SUPPLY,
+    MAX_SUPPLY,
+    nonOperatorAccount,
+    nonOperatorClient,
+    nonOperatorIsE25519,
+    operatorAccount,
+    operatorClient,
+    operatorIsE25519,
+    operatorPriKey,
+    operatorPubKey,
+    TOKEN_DECIMALS,
+    TOKEN_FACTOR,
+    TOKEN_MEMO,
+    TOKEN_NAME,
+    TOKEN_SYMBOL,
+} from './shared/utils'
 
 chai.use(chaiAsPromised)
 const expect = chai.expect
@@ -41,89 +47,24 @@ const expect = chai.expect
 let proxyAddress: ContractId
 let token: ContractId
 
-let operatorClient: Client
-let nonOperatorClient: Client
-let operatorAccount: string
-let nonOperatorAccount: string
-let operatorPriKey: string
-let operatorPubKey: string
-let operatorIsE25519: boolean
-let nonOperatorIsE25519: boolean
-
-const TokenName = 'MIDAS'
-const TokenSymbol = 'MD'
-const TokenDecimals = 6
-const TokenFactor = BigNumber.from(10).pow(TokenDecimals)
-const INIT_SUPPLY = BigNumber.from(0).mul(TokenFactor)
-const MAX_SUPPLY = BigNumber.from(1000).mul(TokenFactor)
-const TokenMemo = 'Hedera Accelerator Stablecoin'
-
 describe('Supplier Admin Tests - (roles)', function () {
     before(async function () {
-        // Generate Client 1 and Client 2
-        const [
-            client1,
-            client1account,
-            client1privatekey,
-            client1publickey,
-            client1isED25519Type,
-            client2,
-            client2account,
-            client2privatekey,
-            client2publickey,
-            client2isED25519Type,
-        ] = initializeClients()
-
-        operatorClient = getOperatorClient(client1, client2, clientId)
-        nonOperatorClient = getNonOperatorClient(client1, client2, clientId)
-        operatorAccount = getOperatorAccount(
-            client1account,
-            client2account,
-            clientId
-        )
-        nonOperatorAccount = getNonOperatorAccount(
-            client1account,
-            client2account,
-            clientId
-        )
-        operatorPriKey = getOperatorPrivateKey(
-            client1privatekey,
-            client2privatekey,
-            clientId
-        )
-        operatorPubKey = getOperatorPublicKey(
-            client1publickey,
-            client2publickey,
-            clientId
-        )
-        operatorIsE25519 = getOperatorE25519(
-            client1isED25519Type,
-            client2isED25519Type,
-            clientId
-        )
-        nonOperatorIsE25519 = getNonOperatorE25519(
-            client1isED25519Type,
-            client2isED25519Type,
-            clientId
-        )
-
         // Deploy Token using Client
         const result = await deployContractsWithSDK({
-            name: TokenName,
-            symbol: TokenSymbol,
-            decimals: TokenDecimals,
+            name: TOKEN_NAME,
+            symbol: TOKEN_SYMBOL,
+            decimals: TOKEN_DECIMALS,
             initialSupply: INIT_SUPPLY.toString(),
             maxSupply: MAX_SUPPLY.toString(),
-            memo: TokenMemo,
+            memo: TOKEN_MEMO,
             account: operatorAccount,
             privateKey: operatorPriKey,
             publicKey: operatorPubKey,
             isED25519Type: operatorIsE25519,
             initialAmountDataFeed: INIT_SUPPLY.add(
-                BigNumber.from('150').mul(TokenFactor)
+                BigNumber.from('150').mul(TOKEN_FACTOR)
             ).toString(),
         })
-
         proxyAddress = result[0]
     })
 
@@ -441,67 +382,20 @@ describe('Supplier Admin Tests - (roles)', function () {
 
 describe('Supplier Admin Tests - (Unlimited)', function () {
     before(async function () {
-        // Generate Client 1 and Client 2
-        const [
-            client1,
-            client1account,
-            client1privatekey,
-            client1publickey,
-            client1isED25519Type,
-            client2,
-            client2account,
-            client2privatekey,
-            client2publickey,
-            client2isED25519Type,
-        ] = initializeClients()
-
-        operatorClient = getOperatorClient(client1, client2, clientId)
-        nonOperatorClient = getNonOperatorClient(client1, client2, clientId)
-        operatorAccount = getOperatorAccount(
-            client1account,
-            client2account,
-            clientId
-        )
-        nonOperatorAccount = getNonOperatorAccount(
-            client1account,
-            client2account,
-            clientId
-        )
-        operatorPriKey = getOperatorPrivateKey(
-            client1privatekey,
-            client2privatekey,
-            clientId
-        )
-        operatorPubKey = getOperatorPublicKey(
-            client1publickey,
-            client2publickey,
-            clientId
-        )
-        operatorIsE25519 = getOperatorE25519(
-            client1isED25519Type,
-            client2isED25519Type,
-            clientId
-        )
-        nonOperatorIsE25519 = getNonOperatorE25519(
-            client1isED25519Type,
-            client2isED25519Type,
-            clientId
-        )
-
         // Deploy Token using Client
         const result = await deployContractsWithSDK({
-            name: TokenName,
-            symbol: TokenSymbol,
-            decimals: TokenDecimals,
+            name: TOKEN_NAME,
+            symbol: TOKEN_SYMBOL,
+            decimals: TOKEN_DECIMALS,
             initialSupply: INIT_SUPPLY.toString(),
             maxSupply: MAX_SUPPLY.toString(),
-            memo: TokenMemo,
+            memo: TOKEN_MEMO,
             account: operatorAccount,
             privateKey: operatorPriKey,
             publicKey: operatorPubKey,
             isED25519Type: operatorIsE25519,
             initialAmountDataFeed: INIT_SUPPLY.add(
-                BigNumber.from('1500').mul(TokenFactor)
+                BigNumber.from('1500').mul(TOKEN_FACTOR)
             ).toString(),
         })
 
@@ -525,7 +419,7 @@ describe('Supplier Admin Tests - (Unlimited)', function () {
     })
 
     it('An account with unlimited supplier role can cash in 100 tokens to the treasury account', async function () {
-        const AmountToMint = BigNumber.from(100).mul(TokenFactor)
+        const AmountToMint = BigNumber.from(100).mul(TOKEN_FACTOR)
 
         // Get the initial total supply and account's balanceOf
         const initialTotalSupply = await getTotalSupply(
@@ -580,7 +474,7 @@ describe('Supplier Admin Tests - (Unlimited)', function () {
     })
 
     it('An account with unlimited supplier role can cash in 100 tokens', async function () {
-        const AmountToMint = BigNumber.from(100).mul(TokenFactor)
+        const AmountToMint = BigNumber.from(100).mul(TOKEN_FACTOR)
 
         // Get the initial total supply and account's balanceOf
         const initialTotalSupply = await getTotalSupply(
@@ -667,7 +561,7 @@ describe('Supplier Admin Tests - (Unlimited)', function () {
         await expect(
             Mint(
                 proxyAddress,
-                BigNumber.from(1).mul(TokenFactor),
+                BigNumber.from(1).mul(TOKEN_FACTOR),
                 nonOperatorClient,
                 nonOperatorAccount,
                 nonOperatorIsE25519
@@ -711,70 +605,23 @@ describe('Supplier Admin Tests - (Unlimited)', function () {
 })
 
 describe('Supplier Admin Tests - (Limited)', function () {
-    const cashInLimit = BigNumber.from(100).mul(TokenFactor)
+    const cashInLimit = BigNumber.from(100).mul(TOKEN_FACTOR)
 
     before(async function () {
-        // Generate Client 1 and Client 2
-        const [
-            client1,
-            client1account,
-            client1privatekey,
-            client1publickey,
-            client1isED25519Type,
-            client2,
-            client2account,
-            client2privatekey,
-            client2publickey,
-            client2isED25519Type,
-        ] = initializeClients()
-
-        operatorClient = getOperatorClient(client1, client2, clientId)
-        nonOperatorClient = getNonOperatorClient(client1, client2, clientId)
-        operatorAccount = getOperatorAccount(
-            client1account,
-            client2account,
-            clientId
-        )
-        nonOperatorAccount = getNonOperatorAccount(
-            client1account,
-            client2account,
-            clientId
-        )
-        operatorPriKey = getOperatorPrivateKey(
-            client1privatekey,
-            client2privatekey,
-            clientId
-        )
-        operatorPubKey = getOperatorPublicKey(
-            client1publickey,
-            client2publickey,
-            clientId
-        )
-        operatorIsE25519 = getOperatorE25519(
-            client1isED25519Type,
-            client2isED25519Type,
-            clientId
-        )
-        nonOperatorIsE25519 = getNonOperatorE25519(
-            client1isED25519Type,
-            client2isED25519Type,
-            clientId
-        )
-
         // Deploy Token using Client
         const result = await deployContractsWithSDK({
-            name: TokenName,
-            symbol: TokenSymbol,
-            decimals: TokenDecimals,
+            name: TOKEN_NAME,
+            symbol: TOKEN_SYMBOL,
+            decimals: TOKEN_DECIMALS,
             initialSupply: INIT_SUPPLY.toString(),
             maxSupply: MAX_SUPPLY.toString(),
-            memo: TokenMemo,
+            memo: TOKEN_MEMO,
             account: operatorAccount,
             privateKey: operatorPriKey,
             publicKey: operatorPubKey,
             isED25519Type: operatorIsE25519,
             initialAmountDataFeed: INIT_SUPPLY.add(
-                BigNumber.from('250').mul(TokenFactor)
+                BigNumber.from('250').mul(TOKEN_FACTOR)
             ).toString(),
         })
 
@@ -847,7 +694,7 @@ describe('Supplier Admin Tests - (Limited)', function () {
     })
 
     it('An account with supplier role and an allowance of 90 tokens can not cash in 91 tokens', async function () {
-        const cashInDecreaseAmount = BigNumber.from(10).mul(TokenFactor)
+        const cashInDecreaseAmount = BigNumber.from(10).mul(TOKEN_FACTOR)
 
         // decrease allowance
         await decreaseSupplierAllowance(
@@ -893,7 +740,7 @@ describe('Supplier Admin Tests - (Limited)', function () {
     })
 
     it('An account with supplier role and and allowance of 100 token can mint ALL tokens then allowance can be increased', async function () {
-        const extraAllowance = BigNumber.from(10).mul(TokenFactor)
+        const extraAllowance = BigNumber.from(10).mul(TOKEN_FACTOR)
 
         // Cashin all tokens
         await Mint(
@@ -949,7 +796,7 @@ describe('Supplier Admin Tests - (Limited)', function () {
     })
 
     it('An account with supplier role and an allowance of 100 tokens, can mint 90 tokens but, later on, cannot mint 11 tokens', async function () {
-        const amountToMintlater = BigNumber.from(10).mul(TokenFactor)
+        const amountToMintlater = BigNumber.from(10).mul(TOKEN_FACTOR)
 
         // Cashin all allowed token minus "amountToMintLater"
         await Mint(
@@ -1012,7 +859,7 @@ describe('Supplier Admin Tests - (Limited)', function () {
         await expect(
             Mint(
                 proxyAddress,
-                BigNumber.from(1).mul(TokenFactor),
+                BigNumber.from(1).mul(TOKEN_FACTOR),
                 nonOperatorClient,
                 nonOperatorAccount,
                 nonOperatorIsE25519

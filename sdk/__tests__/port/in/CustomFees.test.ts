@@ -23,32 +23,31 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import Account from '../../../src/domain/context/account/Account';
 import {
-	Network,
-	RequestCustomFee,
-	StableCoinCapabilities,
-	RequestFixedFee,
-	RequestFractionalFee,
-	Fees,
-	StableCoin,
 	AddFixedFeeRequest,
 	AddFractionalFeeRequest,
-	UpdateCustomFeesRequest,
 	AssociateTokenRequest,
 	CreateRequest,
-	InitializationRequest,
+	Fees,
 	GetStableCoinDetailsRequest,
+	InitializationRequest,
+	Network,
+	RequestCustomFee,
+	RequestFixedFee,
+	RequestFractionalFee,
+	StableCoin,
+	StableCoinCapabilities,
+	UpdateCustomFeesRequest,
 } from '../../../src/index';
 import ConnectRequest, {
 	SupportedWallets,
 } from '../../../src/port/in/request/ConnectRequest';
-import { TokenSupplyType } from '../../../src/port/in/StableCoin';
+import { HederaId, TokenSupplyType } from '../../../src';
 import {
 	CLIENT_ACCOUNT_ED25519,
 	FACTORY_ADDRESS,
 	HEDERA_TOKEN_MANAGER_ADDRESS,
 } from '../../config';
 import Injectable from '../../../src/core/Injectable';
-import { HederaId } from '../../../src/domain/context/shared/HederaId';
 import StableCoinService from '../../../src/app/service/StableCoinService';
 import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
