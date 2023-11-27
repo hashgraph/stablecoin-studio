@@ -51,7 +51,7 @@
 		"proofOfReserve": "Proof-of-Reserve",
 		"feesManagement": "Fees Management",
 		"settings": "Settings",
-		"appSettings": "appSettings"
+		"appSettings": "Network settings"
 	},
 	"validations": {
 		"required": "This field is required",

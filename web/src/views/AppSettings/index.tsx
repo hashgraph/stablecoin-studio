@@ -11,7 +11,9 @@ import {
 	HStack,
 	Button,
 	RadioGroup,
-	Radio
+	Radio,
+	Flex,
+	Icon
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -81,6 +83,13 @@ const AppSettings = () => {
 		setArrayRPC(newArray);
 	};
 
+	const removeMirrorToArray = (mirrorName: string) => {
+		setArrayMirror(arrayMirror.filter((obj: OptionMirror) => obj.name !== mirrorName));
+	};
+	const removeRPCToArray = (rpcName: string) => {
+		setArrayRPC(arrayRPC.filter((obj: OptionMirror) => obj.name !== rpcName));
+	};
+
 	const apiKeyMirror = useWatch({
 		control,
 		name: 'apiKeyMirror',
@@ -102,6 +111,7 @@ const AppSettings = () => {
 		console.log(urlRPC + " - Apikey:" + apiKeyRpc ? apiKeyValueRpc : '');
 
 	}
+
 
 	function createOptionMirror(name: string, url: string, apikey: string): OptionMirror {
 		return { name, url, apikey };
@@ -133,7 +143,26 @@ const AppSettings = () => {
 								/>
 								<RadioGroup onChange={setDefaultValue}  >
 									{arrayMirror.map((option: OptionMirror) => {
-										return <Radio value={option.name} key={option.name}>{option.name} -{option.url} - Apikey: {option.apikey} </Radio>;
+										return 	<HStack key={option.name}>
+													<Radio value={option.name} >{option.name} -{option.url} - Apikey: {option.apikey} </Radio>
+													
+													<Box borderLeft='2px solid' borderLeftColor='light.primary' w='1px' />
+			<Flex
+				onClick={() =>removeMirrorToArray(option.name)}
+				h='32px'
+				minW='32px'
+				borderRadius='50%'
+				justifyContent='center'
+				alignItems='center'
+				alignSelf='center'
+				_hover={{
+					cursor: 'pointer',
+					bgColor: 'light.purple2',
+				}}
+			>
+				<Icon name='Trash' fontSize='24px' color='dark.primary' />
+			</Flex>
+												</HStack>;
 									})}
 
 								</RadioGroup>
