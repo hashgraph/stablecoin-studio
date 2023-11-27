@@ -1,14 +1,7 @@
 import {
 	Box,
 	Heading,
-	Alert,
-	AlertDescription,
-	AlertIcon,
-	CloseButton,
-	Flex,
-	Link,
 	Text,
-	Image,
 	Tabs, 
 	TabList, 
 	TabPanels, 
@@ -22,38 +15,24 @@ import {
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+
 import { useNavigate } from 'react-router-dom';
 import BaseContainer from '../../components/BaseContainer';
-import type { DirectAccessProps } from '../../components/DirectAccess';
-import GridDirectAccess from '../../components/GridDirectAccess';
-import type { IAccountToken } from '../../interfaces/IAccountToken';
-import type { IExternalToken } from '../../interfaces/IExternalToken';
-import {
-	SELECTED_WALLET_COIN,
-	SELECTED_WALLET_PAIRED_ACCOUNTID,
-	IS_PROXY_OWNER,
-	IS_FACTORY_PROXY_OWNER,
-	IS_PENDING_OWNER,
-	IS_ACCEPT_OWNER,
-	IS_FACTORY_ACCEPT_OWNER,
-	IS_FACTORY_PENDING_OWNER,
-	SELECTED_NETWORK_FACTORY_PROXY_CONFIG,
-} from '../../store/slices/walletSlice';
-import { NamedRoutes } from './../../Router/NamedRoutes';
-import { RouterManager } from '../../Router/RouterManager';
-import SAFE_BOX from '../../assets/svg/safe-box.svg';
 import { SelectController } from '../../components/Form/SelectController';
 import { networkOptions } from './constants';
-import { useForm, useWatch } from 'react-hook-form';
+import { FieldValues, useForm, useWatch } from 'react-hook-form';
 import { propertyNotFound } from '../../constant';
 import InputController from '../../components/Form/InputController';
-import InputLabel from '../../components/Form/InputLabel.js';
 import SwitchController from '../../components/Form/SwitchController';
-
-
 const AppSettings = () => {
+	
+	interface OptionMirror{
+		name:string;
+		url:string;
+		apikey:string;
+	}
 	const { t } = useTranslation(['appSettings', 'errorPage']);
+	
 	const navigate = useNavigate();
 	const [value, setValue] = React.useState('1')
   
@@ -73,11 +52,34 @@ const AppSettings = () => {
 		},
 	};
 
-
-	const { control, getValues } = useForm({
+	const form = useForm<FieldValues>({
 		mode: 'onChange',
 	});
+	const { control, getValues } = form;
 
+	let mirrorNodeList,rpcList;
+	
+
+	if (process.env.REACT_APP_RPC_NODE) {
+		rpcList = JSON.parse(process.env.REACT_APP_RPC_NODE);
+	}
+
+	if (process.env.REACT_APP_MIRROR_NODE) {
+		mirrorNodeList = JSON.parse(process.env.REACT_APP_MIRROR_NODE);
+		console.log(mirrorNodeList[0]);
+	}
+
+	const [arrayMirror, setArrayMirror] = useState([createOptionMirror("default",mirrorNodeList[0].BASE_URL,mirrorNodeList[0].API_KEY)]);
+	const [arrayRPC, setArrayRPC] = useState([createOptionMirror("default",rpcList[0].BASE_URL,rpcList[0].API_KEY)]);
+
+	const addMirrorToArray = (newMirror: OptionMirror) => {
+	  const newArray = [...arrayMirror, newMirror];
+	  setArrayMirror(newArray);
+	};
+	const addRPCToArray = (newRPC: OptionMirror) => {
+		const newArray = [...arrayRPC, newRPC];
+		setArrayRPC(newArray);
+	  };
 
 	const apiKeyMirror = useWatch({
 		control,
@@ -88,18 +90,25 @@ const AppSettings = () => {
 		name: 'apiKeyRpc',
 	});
 
-	const handleChangeOwner = async () => {
-		const { updateOwner } = getValues();
+	const addMirror = async () => {	
+		console.log("hola");
+		const { nameMirror, urlMirror, apiKeyValueMirror ,apiKeyMirror} = getValues();
+		addMirrorToArray(createOptionMirror(nameMirror,urlMirror,apiKeyValueMirror))
+
+		console.log(urlMirror + " - Apikey:" + apiKeyMirror?apiKeyValueMirror:'');
 	}
-	let mirrorNodeList,rpcList;
-	if (process.env.REACT_APP_MIRROR_NODE) {
-		mirrorNodeList = JSON.parse(process.env.REACT_APP_MIRROR_NODE);
-		
-	}
-	if (process.env.REACT_APP_RPC_NODE) {
-		rpcList = JSON.parse(process.env.REACT_APP_RPC_NODE);
+	const addRpc = async () => {
+		const { nameRPC, urlRPC, apiKeyValueRpc,apiKeyRPC } = getValues();
+		console.log(urlRPC + " - Apikey:" + apiKeyRpc?apiKeyValueRpc:'');
+
 	}
 
+
+	function createOptionMirror(name: string, url: string, apikey: string): OptionMirror {
+		return { name, url, apikey };
+	  }
+	  
+	  
 	return (
 		<BaseContainer title={t('title')}>
 			<Box p={{ base: 1, md: '32px' }}>
@@ -125,8 +134,8 @@ const AppSettings = () => {
 								variant='unstyled'
 							/>
 							 <RadioGroup onChange={setValue} >
-							 	{mirrorNodeList.map((option: { BASE_URL: any;API_KEY: any; }) => {
-								return <Radio key={option.BASE_URL}>{option.BASE_URL} - Apikey: {option.API_KEY} </Radio>;
+							 	{arrayMirror.map((option: OptionMirror) => {
+									return <Radio key={option.name}>{option.name} -{option.url} - Apikey: {option.apikey} </Radio>;
 								})}
         							
     						</RadioGroup>
@@ -140,7 +149,6 @@ const AppSettings = () => {
 							>
 								{t('addMirror')}
 							</Heading>
-							
 							
 							<InputController
 							isRequired
@@ -170,7 +178,7 @@ const AppSettings = () => {
 								<InputController
 									isRequired
 									control={control}
-									name={'ApiKeyValueMirror'}
+									name={'apiKeyValueMirror'}
 									placeholder={t('apiKey') ?? propertyNotFound}
 									/>	
 								</HStack>
@@ -179,12 +187,13 @@ const AppSettings = () => {
 							<Button
 											data-testid={`update-owner-button`}
 											variant='primary'
-											onClick={handleChangeOwner}
+											onClick={addMirror}
 											
 										>
 											{t('addMirror')}
 										</Button>					
 							</Stack>
+							
 						</TabPanel>
 						<TabPanel>
 						<Stack as='form' spacing={6} maxW='520px'>
@@ -202,8 +211,8 @@ const AppSettings = () => {
 								variant='unstyled'
 							/>
 							 <RadioGroup onChange={setValue} >
-							 	{rpcList.map((option: { BASE_URL: any;API_KEY: any; }) => {
-								return <Radio key={option.BASE_URL}>{option.BASE_URL} - Apikey: {option.API_KEY} </Radio>;
+							 	{arrayRPC.map((option: OptionMirror) => {
+									return <Radio key={option.name}>{option.name} -{option.url} - Apikey: {option.apikey} </Radio>;
 								})}
         							
     						</RadioGroup>
@@ -217,7 +226,6 @@ const AppSettings = () => {
 							>
 								{t('addRPC')}
 							</Heading>
-							
 							
 							<InputController
 							isRequired
@@ -247,7 +255,7 @@ const AppSettings = () => {
 								<InputController
 									isRequired
 									control={control}
-									name={'ApiKeyValueMirror'}
+									name={'apiKeyValueRPC'}
 									placeholder={t('apiKey') ?? propertyNotFound}
 									/>	
 								</HStack>
@@ -256,8 +264,7 @@ const AppSettings = () => {
 							<Button
 											data-testid={`update-owner-button`}
 											variant='primary'
-											onClick={handleChangeOwner}
-											
+											onClick={addRpc}
 										>
 											{t('addRPC')}
 										</Button>					
