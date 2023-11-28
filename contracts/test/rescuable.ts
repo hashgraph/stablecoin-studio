@@ -1,34 +1,41 @@
 import '@hashgraph/hardhat-hethers'
 import '@hashgraph/sdk'
 import { BigNumber } from 'ethers'
+import { deployContractsWithSDK } from '../scripts/deploy'
 import {
-    deployContractsWithSDK,
-    initializeClients,
-    getOperatorClient,
-    getOperatorAccount,
-    getOperatorPrivateKey,
-    getOperatorE25519,
-    getOperatorPublicKey,
-    getNonOperatorClient,
-    getNonOperatorAccount,
-    getNonOperatorE25519,
-} from '../scripts/deploy'
-import {
+    delay,
+    getBalanceOf,
+    getHBARBalanceOf,
     grantRole,
-    revokeRole,
     hasRole,
     rescue,
-    getBalanceOf,
-    transferHBAR,
     rescueHBAR,
-    getHBARBalanceOf,
-    delay,
+    revokeRole,
+    transferHBAR,
 } from '../scripts/contractsMethods'
 import { RESCUE_ROLE } from '../scripts/constants'
-import { clientId, associateToken, getContractInfo } from '../scripts/utils'
-import { Client, ContractId } from '@hashgraph/sdk'
+import { associateToken, getContractInfo } from '../scripts/utils'
+import { ContractId } from '@hashgraph/sdk'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
+import {
+    INIT_SUPPLY,
+    MAX_SUPPLY,
+    nonOperatorAccount,
+    nonOperatorClient,
+    nonOperatorIsE25519,
+    ONE_TOKEN,
+    operatorAccount,
+    operatorClient,
+    operatorIsE25519,
+    operatorPriKey,
+    operatorPubKey,
+    TOKEN_DECIMALS,
+    TOKEN_FACTOR,
+    TOKEN_MEMO,
+    TOKEN_NAME,
+    TOKEN_SYMBOL,
+} from './shared/utils'
 
 chai.use(chaiAsPromised)
 const expect = chai.expect
@@ -36,85 +43,20 @@ const expect = chai.expect
 let proxyAddress: ContractId
 let token: ContractId
 
-let operatorClient: Client
-let nonOperatorClient: Client
-let operatorAccount: string
-let nonOperatorAccount: string
-let operatorPriKey: string
-
-let operatorPubKey: string
-
-let operatorIsE25519: boolean
-let nonOperatorIsE25519: boolean
-
-const TokenName = 'MIDAS'
-const TokenSymbol = 'MD'
-const TokenDecimals = 3
-const TokenFactor = BigNumber.from(10).pow(TokenDecimals)
-const INIT_SUPPLY = BigNumber.from(100).mul(TokenFactor)
-const MAX_SUPPLY = BigNumber.from(1000).mul(TokenFactor)
-const TokenMemo = 'Hedera Accelerator Stablecoin'
 const HBARDecimals = 8
 const HBARFactor = BigNumber.from(10).pow(HBARDecimals)
 const HBARInitialAmount = BigNumber.from(100).mul(HBARFactor)
 
 describe('Rescue Tests', function () {
     before(async function () {
-        // Generate Client 1 and Client 2
-        const [
-            client1,
-            client1account,
-            client1privatekey,
-            client1publickey,
-            client1isED25519Type,
-            client2,
-            client2account,
-            client2privatekey,
-            client2publickey,
-            client2isED25519Type,
-        ] = initializeClients()
-
-        operatorClient = getOperatorClient(client1, client2, clientId)
-        nonOperatorClient = getNonOperatorClient(client1, client2, clientId)
-        operatorAccount = getOperatorAccount(
-            client1account,
-            client2account,
-            clientId
-        )
-        nonOperatorAccount = getNonOperatorAccount(
-            client1account,
-            client2account,
-            clientId
-        )
-        operatorPriKey = getOperatorPrivateKey(
-            client1privatekey,
-            client2privatekey,
-            clientId
-        )
-        operatorPubKey = getOperatorPublicKey(
-            client1publickey,
-            client2publickey,
-            clientId
-        )
-        operatorIsE25519 = getOperatorE25519(
-            client1isED25519Type,
-            client2isED25519Type,
-            clientId
-        )
-        nonOperatorIsE25519 = getNonOperatorE25519(
-            client1isED25519Type,
-            client2isED25519Type,
-            clientId
-        )
-
         // Deploy Token using Client
         const result = await deployContractsWithSDK({
-            name: TokenName,
-            symbol: TokenSymbol,
-            decimals: TokenDecimals,
+            name: TOKEN_NAME,
+            symbol: TOKEN_SYMBOL,
+            decimals: TOKEN_DECIMALS,
             initialSupply: INIT_SUPPLY.toString(),
             maxSupply: MAX_SUPPLY.toString(),
-            memo: TokenMemo,
+            memo: TOKEN_MEMO,
             account: operatorAccount,
             privateKey: operatorPriKey,
             publicKey: operatorPubKey,
@@ -226,8 +168,8 @@ describe('Rescue Tests', function () {
         )
     })
 
-    it('Should rescue 10 token', async function () {
-        const AmountToRescue = BigNumber.from(10).mul(TokenFactor)
+    it('Should rescue 10 tokens', async function () {
+        const tenTokens = BigNumber.from(10).mul(TOKEN_FACTOR)
 
         // Get the initial balance of the token owner and client
         const initialTokenOwnerBalance = await getBalanceOf(
@@ -247,7 +189,7 @@ describe('Rescue Tests', function () {
         )
 
         // rescue some tokens
-        await rescue(proxyAddress, AmountToRescue, operatorClient)
+        await rescue(proxyAddress, tenTokens, operatorClient)
 
         // check new balances : success
         const finalTokenOwnerBalance = await getBalanceOf(
@@ -267,8 +209,8 @@ describe('Rescue Tests', function () {
         )
 
         const expectedTokenOwnerBalance =
-            initialTokenOwnerBalance.sub(AmountToRescue)
-        const expectedClientBalance = initialClientBalance.add(AmountToRescue)
+            initialTokenOwnerBalance.sub(tenTokens)
+        const expectedClientBalance = initialClientBalance.add(tenTokens)
 
         expect(finalTokenOwnerBalance.toString()).to.equals(
             expectedTokenOwnerBalance.toString()
@@ -304,8 +246,6 @@ describe('Rescue Tests', function () {
     })
 
     it('User with granted rescue role can rescue tokens', async function () {
-        const AmountToRescue = BigNumber.from(1)
-
         // Retrieve original balances
         const initialTokenOwnerBalance = await getBalanceOf(
             proxyAddress,
@@ -340,7 +280,7 @@ describe('Rescue Tests', function () {
         )
 
         // Rescue tokens with newly granted account
-        await rescue(proxyAddress, AmountToRescue, nonOperatorClient)
+        await rescue(proxyAddress, ONE_TOKEN, nonOperatorClient)
 
         // Check final balances : success
         const finalTokenOwnerBalance = await getBalanceOf(
@@ -360,8 +300,8 @@ describe('Rescue Tests', function () {
         )
 
         const expectedTokenOwnerBalance =
-            initialTokenOwnerBalance.sub(AmountToRescue)
-        const expectedClientBalance = initialClientBalance.add(AmountToRescue)
+            initialTokenOwnerBalance.sub(ONE_TOKEN)
+        const expectedClientBalance = initialClientBalance.add(ONE_TOKEN)
 
         expect(finalTokenOwnerBalance.toString()).to.equals(
             expectedTokenOwnerBalance.toString()
@@ -381,9 +321,8 @@ describe('Rescue Tests', function () {
     })
 
     it('Should rescue 10 HBAR', async function () {
-        const AmountToRescue = BigNumber.from(10).mul(HBARFactor)
-
         // Get the initial balance of the token owner and client
+        const AmountToRescue = BigNumber.from(10).mul(HBARFactor)
         const initialTokenOwnerBalance = await getHBARBalanceOf(
             proxyAddress.toString(),
             operatorClient,
@@ -449,7 +388,6 @@ describe('Rescue Tests', function () {
 
     it('User with granted rescue role can rescue HBAR', async function () {
         const AmountToRescue = BigNumber.from(10).mul(HBARFactor)
-
         // Retrieve original balances
         const initialTokenOwnerBalance = await getHBARBalanceOf(
             proxyAddress.toString(),

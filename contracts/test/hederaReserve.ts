@@ -1,44 +1,40 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { BigNumber } from 'ethers'
+import {BigNumber} from 'ethers'
+import {deployHederaReserve} from '../scripts/deploy'
 import {
-    initializeClients,
-    getOperatorClient,
-    getOperatorAccount,
-    getOperatorPrivateKey,
-    getOperatorE25519,
-    getOperatorPublicKey,
-    getNonOperatorClient,
-    getNonOperatorAccount,
-    getNonOperatorE25519,
-    deployHederaReserve,
-} from '../scripts/deploy'
-import {
-    upgradeTo,
     admin,
     changeAdmin,
-    owner,
-    upgrade,
     changeProxyAdmin,
-    transferOwnership,
+    decimalsHederaReserve,
+    descriptionHederaReserve,
     getProxyAdmin,
     getProxyImplementation,
     initializeHederaReserve,
+    latestRoundDataDataHederaReserve,
+    owner,
     setAdminHederaReserve,
     setAmountHederaReserve,
-    latestRoundDataDataHederaReserve,
-    decimalsHederaReserve,
-    descriptionHederaReserve,
+    transferOwnership,
+    upgrade,
+    upgradeTo,
     versionHederaReserve,
 } from '../scripts/contractsMethods'
-import { clientId, toEvmAddress, getContractInfo } from '../scripts/utils'
-import { AccountId, Client, ContractId } from '@hashgraph/sdk'
-import {
-    ProxyAdmin__factory,
-    ITransparentUpgradeableProxy__factory,
-} from '../typechain-types'
+import {getContractInfo, toEvmAddress} from '../scripts/utils'
+import {AccountId, ContractId} from '@hashgraph/sdk'
+import {ITransparentUpgradeableProxy__factory, ProxyAdmin__factory,} from '../typechain-types'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
+import {
+    nonOperatorAccount,
+    nonOperatorClient,
+    nonOperatorIsE25519,
+    operatorAccount,
+    operatorClient,
+    operatorIsE25519,
+    operatorPriKey,
+    TOKEN_FACTOR,
+} from './shared/utils'
 
 chai.use(chaiAsPromised)
 const expect = chai.expect
@@ -47,70 +43,13 @@ let proxyAddress: ContractId
 let proxyAdminAddress: ContractId
 let hederaReserveAddress: ContractId
 
-let operatorClient: Client
-let nonOperatorClient: Client
-let operatorAccount: string
-let nonOperatorAccount: string
-let operatorPriKey: string
-let operatorPubKey: string
-let operatorIsE25519: boolean
-let nonOperatorIsE25519: boolean
-
-const TokenFactor = BigNumber.from(10).pow(3)
-const reserve = BigNumber.from('100').mul(TokenFactor)
+const reserve = BigNumber.from('100').mul(TOKEN_FACTOR)
 
 const proxyAdminAbi = ProxyAdmin__factory.abi
 
 describe('HederaReserve Tests', function () {
     before(async function () {
         // Generate Client 1 and Client 2
-
-        const [
-            client1,
-            client1account,
-            client1privatekey,
-            client1publickey,
-            client1isED25519Type,
-            client2,
-            client2account,
-            client2privatekey,
-            client2publickey,
-            client2isED25519Type,
-        ] = initializeClients()
-
-        operatorClient = getOperatorClient(client1, client2, clientId)
-        nonOperatorClient = getNonOperatorClient(client1, client2, clientId)
-        operatorAccount = getOperatorAccount(
-            client1account,
-            client2account,
-            clientId
-        )
-        nonOperatorAccount = getNonOperatorAccount(
-            client1account,
-            client2account,
-            clientId
-        )
-        operatorPriKey = getOperatorPrivateKey(
-            client1privatekey,
-            client2privatekey,
-            clientId
-        )
-        operatorPubKey = getOperatorPublicKey(
-            client1publickey,
-            client2publickey,
-            clientId
-        )
-        operatorIsE25519 = getOperatorE25519(
-            client1isED25519Type,
-            client2isED25519Type,
-            clientId
-        )
-        nonOperatorIsE25519 = getNonOperatorE25519(
-            client1isED25519Type,
-            client2isED25519Type,
-            clientId
-        )
-
         const result = await deployHederaReserve(
             reserve,
             operatorAccount,
@@ -252,54 +191,6 @@ describe('HederaReserve Tests', function () {
 
 describe('HederaReserveProxy and HederaReserveProxyAdmin Tests', function () {
     before(async function () {
-        // Generate Client 1 and Client 2
-
-        const [
-            client1,
-            client1account,
-            client1privatekey,
-            client1publickey,
-            client1isED25519Type,
-            client2,
-            client2account,
-            client2privatekey,
-            client2publickey,
-            client2isED25519Type,
-        ] = initializeClients()
-
-        operatorClient = getOperatorClient(client1, client2, clientId)
-        nonOperatorClient = getNonOperatorClient(client1, client2, clientId)
-        operatorAccount = getOperatorAccount(
-            client1account,
-            client2account,
-            clientId
-        )
-        nonOperatorAccount = getNonOperatorAccount(
-            client1account,
-            client2account,
-            clientId
-        )
-        operatorPriKey = getOperatorPrivateKey(
-            client1privatekey,
-            client2privatekey,
-            clientId
-        )
-        operatorPubKey = getOperatorPublicKey(
-            client1publickey,
-            client2publickey,
-            clientId
-        )
-        operatorIsE25519 = getOperatorE25519(
-            client1isED25519Type,
-            client2isED25519Type,
-            clientId
-        )
-        nonOperatorIsE25519 = getNonOperatorE25519(
-            client1isED25519Type,
-            client2isED25519Type,
-            clientId
-        )
-
         const result = await deployHederaReserve(
             reserve,
             operatorAccount,

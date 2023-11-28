@@ -2,8 +2,9 @@ import { Flex } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { NamedRoutes } from '../../Router/NamedRoutes';
 import SidebarOption from './SidebarOption';
-import { SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
+import { SELECTED_WALLET_COIN, LAST_WALLET_SELECTED } from '../../store/slices/walletSlice';
 import { useSelector } from 'react-redux';
+import { SupportedWallets } from '@hashgraph/stablecoin-npm-sdk';
 
 interface optionsProps {
 	icon: string;
@@ -16,6 +17,8 @@ interface optionsProps {
 const Sidebar = () => {
 	const { t } = useTranslation('global');
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
+	const lastWalletSelected = useSelector(LAST_WALLET_SELECTED);
+
 	const options: optionsProps[] = [
 		{
 			icon: 'Coin',
@@ -37,7 +40,9 @@ const Sidebar = () => {
 			icon: 'Receipt',
 			title: t('sidebar.feesManagement'),
 			route: NamedRoutes.FeesManagement,
-			isHidden: selectedStableCoin && !selectedStableCoin.feeScheduleKey,
+			isHidden:
+				lastWalletSelected === SupportedWallets.METAMASK ||
+				(selectedStableCoin && !selectedStableCoin.feeScheduleKey),
 		},
 		{
 			icon: 'File',

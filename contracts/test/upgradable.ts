@@ -32,6 +32,7 @@ const INIT_SUPPLY = BigNumber.from(10).mul(TokenFactor)
 const MAX_SUPPLY = BigNumber.from(1000).mul(TokenFactor)
 const TokenMemo = 'Hedera Accelerator Stablecoin'
 
+//TODO: why skip?
 describe.skip('Upgradable Tests', function () {
     const validationOptions: ValidationOptions = {
         unsafeAllow: ['constructor'],
@@ -40,39 +41,39 @@ describe.skip('Upgradable Tests', function () {
     before(async function () {
         // Generate Client 1 and Client 2
         const [
-            client1,
-            client1account,
-            client1privatekey,
-            client1publickey,
-            client1isED25519Type,
-            client2,
-            client2account,
-            client2privatekey,
-            client2publickey,
-            client2isED25519Type,
+            clientOne,
+            clientOneAccount,
+            clientOnePrivateKey,
+            clientOnePublicKey,
+            clientOneIsED25519Type,
+            clientTwo,
+            clientTwoAccount,
+            clientTwoPrivateKey,
+            clientTwoPublicKey,
+            clientTwoIsED25519Type,
         ] = initializeClients()
 
         operatorAccount = getOperatorAccount(
-            client1account,
-            client2account,
+            clientOneAccount,
+            clientTwoAccount,
             clientId
         )
 
-        operatorClient = getOperatorClient(client1, client2, clientId)
+        operatorClient = getOperatorClient(clientOne, clientTwo, clientId)
 
         operatorPriKey = getOperatorPrivateKey(
-            client1privatekey,
-            client2privatekey,
+            clientOnePrivateKey,
+            clientTwoPrivateKey,
             clientId
         )
         operatorPubKey = getOperatorPublicKey(
-            client1publickey,
-            client2publickey,
+            clientOnePublicKey,
+            clientTwoPublicKey,
             clientId
         )
         operatorIsE25519 = getOperatorE25519(
-            client1isED25519Type,
-            client2isED25519Type,
+            clientOneIsED25519Type,
+            clientTwoIsED25519Type,
             clientId
         )
 

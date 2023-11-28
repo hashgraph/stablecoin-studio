@@ -1,116 +1,62 @@
 import '@hashgraph/hardhat-hethers'
 import '@hashgraph/sdk'
 import { BigNumber } from 'ethers'
-import {
-    deployContractsWithSDK,
-    initializeClients,
-    getOperatorClient,
-    getOperatorAccount,
-    getOperatorPrivateKey,
-    getOperatorE25519,
-    getOperatorPublicKey,
-    deployHederaReserve,
-} from '../scripts/deploy'
-import { Mint } from '../scripts/contractsMethods'
+import { deployContractsWithSDK, deployHederaReserve } from '../scripts/deploy'
 import {
     getReserveAddress,
-    updateDataFeed,
     getReserveAmount,
     initializeHederaReserve,
+    Mint,
+    updateDataFeed,
 } from '../scripts/contractsMethods'
-import { clientId, getContractInfo } from '../scripts/utils'
-import { AccountId, Client, ContractId } from '@hashgraph/sdk'
+import { getContractInfo } from '../scripts/utils'
+import { AccountId, ContractId } from '@hashgraph/sdk'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
+import {
+    operatorAccount,
+    operatorClient,
+    operatorIsE25519,
+    operatorPriKey,
+    operatorPubKey,
+    TOKEN_NAME,
+    TOKEN_SYMBOL,
+} from './shared/utils'
 
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-let proxyAddress: ContractId
-
-let operatorClient: Client
-let operatorAccount: string
-let operatorPriKey: string
-let operatorPubKey: string
-let operatorIsE25519: boolean
-
-const TokenName = 'MIDAS'
-const TokenSymbol = 'MD'
-const OneTokenDecimals = 1
-const TwoTokenDecimals = 2
-const ThreeTokenDecimals = 3
-const ReserveDecimal = 2
-const INIT_AMOUNT_10 = 10
-const INIT_AMOUNT_100 = 100
-const INIT_AMOUNT_1000 = 1000
-const OneTokenFactor = BigNumber.from(10).pow(OneTokenDecimals)
-const TwoTokenFactor = BigNumber.from(10).pow(TwoTokenDecimals)
-const ThreeTokenFactor = BigNumber.from(10).pow(ThreeTokenDecimals)
-const INIT_SUPPLY_ONE_DECIMALS =
-    BigNumber.from(INIT_AMOUNT_10).mul(OneTokenFactor)
-const MAX_SUPPLY_ONE_DECIMALS = BigNumber.from(1000).mul(OneTokenFactor)
-const INIT_SUPPLY_TWO_DECIMALS =
-    BigNumber.from(INIT_AMOUNT_100).mul(TwoTokenFactor)
-const MAX_SUPPLY_TWO_DECIMALS = BigNumber.from(1000).mul(TwoTokenFactor)
-const INIT_SUPPLY_THREE_DECIMALS =
-    BigNumber.from(INIT_AMOUNT_100).mul(ThreeTokenFactor)
-const MAX_SUPPLY_THREE_DECIMALS = BigNumber.from(1000).mul(ThreeTokenFactor)
-const TokenMemo = 'Hedera Accelerator Stablecoin'
+const RESERVE_DECIMALS = 2
+const ONE_TOKEN_FACTOR = BigNumber.from(10).pow(1)
+const TWO_TOKEN_FACTOR = BigNumber.from(10).pow(2)
+const THREE_TOKEN_FACTOR = BigNumber.from(10).pow(3)
+const INIT_SUPPLY_ONE_DECIMALS = BigNumber.from(10).mul(ONE_TOKEN_FACTOR)
+const MAX_SUPPLY_ONE_DECIMALS = BigNumber.from(1000).mul(ONE_TOKEN_FACTOR)
+const INIT_SUPPLY_TWO_DECIMALS = BigNumber.from(100).mul(TWO_TOKEN_FACTOR)
+const MAX_SUPPLY_TWO_DECIMALS = BigNumber.from(1000).mul(TWO_TOKEN_FACTOR)
+const INIT_SUPPLY_THREE_DECIMALS = BigNumber.from(100).mul(THREE_TOKEN_FACTOR)
+const MAX_SUPPLY_THREE_DECIMALS = BigNumber.from(1000).mul(THREE_TOKEN_FACTOR)
+const TOKEN_MEMO = 'Hedera Accelerator Stablecoin'
 const INIT_RESERVE_100 = BigNumber.from(10)
-    .pow(ReserveDecimal)
-    .mul(BigNumber.from(INIT_AMOUNT_100))
+    .pow(RESERVE_DECIMALS)
+    .mul(BigNumber.from(100))
 const INIT_RESERVE_1000 = BigNumber.from(10)
-    .pow(ReserveDecimal)
-    .mul(BigNumber.from(INIT_AMOUNT_1000))
+    .pow(RESERVE_DECIMALS)
+    .mul(BigNumber.from(1000))
+
+let proxyAddress: ContractId
 let hederaReserveProxy: ContractId
 
 describe('Reserve Tests', function () {
     before(async function () {
-        // Generate Client 1 and Client 2
-        const [
-            client1,
-            client1account,
-            client1privatekey,
-            client1publickey,
-            client1isED25519Type,
-            client2,
-            client2account,
-            client2privatekey,
-            client2publickey,
-            client2isED25519Type,
-        ] = initializeClients()
-
-        operatorClient = getOperatorClient(client1, client2, clientId)
-
-        operatorAccount = getOperatorAccount(
-            client1account,
-            client2account,
-            clientId
-        )
-        operatorPriKey = getOperatorPrivateKey(
-            client1privatekey,
-            client2privatekey,
-            clientId
-        )
-        operatorPubKey = getOperatorPublicKey(
-            client1publickey,
-            client2publickey,
-            clientId
-        )
-        operatorIsE25519 = getOperatorE25519(
-            client1isED25519Type,
-            client2isED25519Type,
-            clientId
-        )
-
         // Deploy Token using Client
         const result = await deployContractsWithSDK({
-            name: TokenName,
-            symbol: TokenSymbol,
-            decimals: ThreeTokenDecimals,
+            name: TOKEN_NAME,
+            symbol: TOKEN_SYMBOL,
+            decimals: 3,
             initialSupply: INIT_SUPPLY_THREE_DECIMALS.toString(),
             maxSupply: MAX_SUPPLY_THREE_DECIMALS.toString(),
-            memo: TokenMemo,
+            memo: TOKEN_MEMO,
             account: operatorAccount,
             privateKey: operatorPriKey,
             publicKey: operatorPubKey,
@@ -147,7 +93,7 @@ describe('Reserve Tests', function () {
             operatorClient
         )
         const newReserve = beforeReserve.add(
-            BigNumber.from('100').mul(ThreeTokenFactor)
+            BigNumber.from('100').mul(THREE_TOKEN_FACTOR)
         )
         const [newDataFeed] = await deployHederaReserve(
             newReserve,
@@ -181,51 +127,14 @@ describe('Reserve Tests', function () {
 
 describe('Reserve Tests with reserve and token with same Decimals', function () {
     before(async function () {
-        // Generate Client 1 and Client 2
-        const [
-            client1,
-            client1account,
-            client1privatekey,
-            client1publickey,
-            client1isED25519Type,
-            client2,
-            client2account,
-            client2privatekey,
-            client2publickey,
-            client2isED25519Type,
-        ] = initializeClients()
-
-        operatorClient = getOperatorClient(client1, client2, clientId)
-
-        operatorAccount = getOperatorAccount(
-            client1account,
-            client2account,
-            clientId
-        )
-        operatorPriKey = getOperatorPrivateKey(
-            client1privatekey,
-            client2privatekey,
-            clientId
-        )
-        operatorPubKey = getOperatorPublicKey(
-            client1publickey,
-            client2publickey,
-            clientId
-        )
-        operatorIsE25519 = getOperatorE25519(
-            client1isED25519Type,
-            client2isED25519Type,
-            clientId
-        )
-
         // Deploy Token using Client
         const result = await deployContractsWithSDK({
-            name: TokenName,
-            symbol: TokenSymbol,
-            decimals: TwoTokenDecimals,
+            name: TOKEN_NAME,
+            symbol: TOKEN_SYMBOL,
+            decimals: 2,
             initialSupply: INIT_SUPPLY_TWO_DECIMALS.toString(),
             maxSupply: MAX_SUPPLY_TWO_DECIMALS.toString(),
-            memo: TokenMemo,
+            memo: TOKEN_MEMO,
             account: operatorAccount,
             privateKey: operatorPriKey,
             publicKey: operatorPubKey,
@@ -238,7 +147,7 @@ describe('Reserve Tests with reserve and token with same Decimals', function () 
     })
 
     it('Can Mint less tokens than reserve', async function () {
-        const AmountToMint = BigNumber.from(10).mul(TwoTokenFactor)
+        const AmountToMint = BigNumber.from(10).mul(TWO_TOKEN_FACTOR)
 
         // Get the initial reserve amount
         const initialReserve = await getReserveAmount(
@@ -287,51 +196,14 @@ describe('Reserve Tests with reserve and token with same Decimals', function () 
 
 describe('Reserve Tests with reserve decimals higher than token decimals', function () {
     before(async function () {
-        // Generate Client 1 and Client 2
-        const [
-            client1,
-            client1account,
-            client1privatekey,
-            client1publickey,
-            client1isED25519Type,
-            client2,
-            client2account,
-            client2privatekey,
-            client2publickey,
-            client2isED25519Type,
-        ] = initializeClients()
-
-        operatorClient = getOperatorClient(client1, client2, clientId)
-
-        operatorAccount = getOperatorAccount(
-            client1account,
-            client2account,
-            clientId
-        )
-        operatorPriKey = getOperatorPrivateKey(
-            client1privatekey,
-            client2privatekey,
-            clientId
-        )
-        operatorPubKey = getOperatorPublicKey(
-            client1publickey,
-            client2publickey,
-            clientId
-        )
-        operatorIsE25519 = getOperatorE25519(
-            client1isED25519Type,
-            client2isED25519Type,
-            clientId
-        )
-
         // Deploy Token using Client
         const result = await deployContractsWithSDK({
-            name: TokenName,
-            symbol: TokenSymbol,
-            decimals: OneTokenDecimals,
+            name: TOKEN_NAME,
+            symbol: TOKEN_SYMBOL,
+            decimals: 1,
             initialSupply: INIT_SUPPLY_ONE_DECIMALS.toString(),
             maxSupply: MAX_SUPPLY_ONE_DECIMALS.toString(),
-            memo: TokenMemo,
+            memo: TOKEN_MEMO,
             account: operatorAccount,
             privateKey: operatorPriKey,
             publicKey: operatorPubKey,
@@ -344,7 +216,7 @@ describe('Reserve Tests with reserve decimals higher than token decimals', funct
     })
 
     it('Can Mint less tokens than reserve', async function () {
-        const AmountToMint = BigNumber.from(10).mul(OneTokenFactor)
+        const AmountToMint = BigNumber.from(10).mul(ONE_TOKEN_FACTOR)
 
         // Get the initial reserve amount
         const initialReserve = await getReserveAmount(
@@ -393,51 +265,14 @@ describe('Reserve Tests with reserve decimals higher than token decimals', funct
 
 describe('Reserve Tests with reserve decimals lower than token decimals', function () {
     before(async function () {
-        // Generate Client 1 and Client 2
-        const [
-            client1,
-            client1account,
-            client1privatekey,
-            client1publickey,
-            client1isED25519Type,
-            client2,
-            client2account,
-            client2privatekey,
-            client2publickey,
-            client2isED25519Type,
-        ] = initializeClients()
-
-        operatorClient = getOperatorClient(client1, client2, clientId)
-
-        operatorAccount = getOperatorAccount(
-            client1account,
-            client2account,
-            clientId
-        )
-        operatorPriKey = getOperatorPrivateKey(
-            client1privatekey,
-            client2privatekey,
-            clientId
-        )
-        operatorPubKey = getOperatorPublicKey(
-            client1publickey,
-            client2publickey,
-            clientId
-        )
-        operatorIsE25519 = getOperatorE25519(
-            client1isED25519Type,
-            client2isED25519Type,
-            clientId
-        )
-
         // Deploy Token using Client
         const result = await deployContractsWithSDK({
-            name: TokenName,
-            symbol: TokenSymbol,
-            decimals: ThreeTokenDecimals,
+            name: TOKEN_NAME,
+            symbol: TOKEN_SYMBOL,
+            decimals: 3,
             initialSupply: INIT_SUPPLY_THREE_DECIMALS.toString(),
             maxSupply: MAX_SUPPLY_THREE_DECIMALS.toString(),
-            memo: TokenMemo,
+            memo: TOKEN_MEMO,
             account: operatorAccount,
             privateKey: operatorPriKey,
             publicKey: operatorPubKey,
@@ -450,7 +285,7 @@ describe('Reserve Tests with reserve decimals lower than token decimals', functi
     })
 
     it('Can Mint less tokens than reserve', async function () {
-        const AmountToMint = BigNumber.from(10).mul(ThreeTokenFactor)
+        const AmountToMint = BigNumber.from(10).mul(THREE_TOKEN_FACTOR)
 
         // Get the initial reserve amount
         const initialReserve = await getReserveAmount(

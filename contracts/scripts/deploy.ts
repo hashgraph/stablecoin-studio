@@ -1,30 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import {Client, ContractFunctionParameters, ContractId, PrivateKey, PublicKey, TokenSupplyType,} from '@hashgraph/sdk'
+import {BigNumber} from 'ethers'
 import {
-    ContractId,
-    PublicKey,
-    TokenSupplyType,
-    PrivateKey,
-    ContractFunctionParameters,
-    Client,
-} from '@hashgraph/sdk'
-import { BigNumber } from 'ethers'
-import {
-    StableCoinProxyAdmin__factory,
-    ProxyAdmin__factory,
-    TransparentUpgradeableProxy__factory,
-    StableCoinFactory__factory,
-    HederaTokenManager__factory,
     HederaReserve__factory,
+    HederaTokenManager__factory,
+    ProxyAdmin__factory,
+    StableCoinFactory__factory,
+    StableCoinProxyAdmin__factory,
+    TransparentUpgradeableProxy__factory,
 } from '../typechain-types'
+import {associateToken, deployContractSDK, getClient, getContractInfo, sleep, toEvmAddress,} from './utils'
 import {
-    getClient,
-    deployContractSDK,
-    toEvmAddress,
-    associateToken,
-    getContractInfo,
-    sleep,
-} from './utils'
-import {
+    ADDRESS_ZERO,
     BURN_ROLE,
     DELETE_ROLE,
     FREEZE_ROLE,
@@ -32,16 +19,15 @@ import {
     PAUSE_ROLE,
     RESCUE_ROLE,
     WIPE_ROLE,
-    ADDRESS_0,
 } from './constants'
-import { grantKyc } from './contractsMethods'
-import { deployContract } from './contractsLifeCycle/deploy'
-import { contractCall } from './contractsLifeCycle/utils'
+import {grantKyc} from './contractsMethods'
+import {deployContract} from './contractsLifeCycle/deploy'
+import {contractCall} from './contractsLifeCycle/utils'
 
-const hederaTokenManagerAddress = '0.0.1137621'
-export const factoryProxyAddress = '0.0.1137631'
-const factoryProxyAdminAddress = '0.0.1137629'
-const factoryAddress = '0.0.1137625'
+const HEDERA_TOKEN_MANAGER_ADDRESS = '0.0.1137621'
+export const FACTORY_PROXY_ADDRESS = '0.0.1137631'
+const FACTORY_PROXY_ADMIN_ADDRESS = '0.0.1137629'
+const FACTORY_ADDRESS = '0.0.1137625'
 
 export function initializeClients(): [
     Client,
@@ -57,38 +43,38 @@ export function initializeClients(): [
 ] {
     const hre = require('hardhat')
     const hreConfig = hre.network.config
-    const client1 = getClient()
-    const client1account: string = hreConfig.accounts[0].account
-    const client1privatekey: string = hreConfig.accounts[0].privateKey
-    const client1publickey: string = hreConfig.accounts[0].publicKey
-    const client1isED25519: boolean =
+    const clientOne = getClient()
+    const clientOneAccount: string = hreConfig.accounts[0].account
+    const clientOnePrivateKey: string = hreConfig.accounts[0].privateKey
+    const clientOnePublicKey: string = hreConfig.accounts[0].publicKey
+    const clientOneIsED25519: boolean =
         hreConfig.accounts[0].isED25519Type === 'true'
-    client1.setOperator(
-        client1account,
-        toHashgraphKey(client1privatekey, client1isED25519)
+    clientOne.setOperator(
+        clientOneAccount,
+        toHashgraphKey(clientOnePrivateKey, clientOneIsED25519)
     )
 
-    const client2 = getClient()
-    const client2account: string = hreConfig.accounts[1].account
-    const client2privatekey: string = hreConfig.accounts[1].privateKey
-    const client2publickey: string = hreConfig.accounts[1].publicKey
-    const client2isED25519 = hreConfig.accounts[1].isED25519Type === 'true'
-    client2.setOperator(
-        client2account,
-        toHashgraphKey(client2privatekey, client2isED25519)
+    const clientTwo = getClient()
+    const clientTwoAccount: string = hreConfig.accounts[1].account
+    const clientTwoPrivateKey: string = hreConfig.accounts[1].privateKey
+    const clientTwoPublicKey: string = hreConfig.accounts[1].publicKey
+    const clientTwoIsED25519 = hreConfig.accounts[1].isED25519Type === 'true'
+    clientTwo.setOperator(
+        clientTwoAccount,
+        toHashgraphKey(clientTwoPrivateKey, clientTwoIsED25519)
     )
 
     return [
-        client1,
-        client1account,
-        client1privatekey,
-        client1publickey,
-        client1isED25519,
-        client2,
-        client2account,
-        client2privatekey,
-        client2publickey,
-        client2isED25519,
+        clientOne,
+        clientOneAccount,
+        clientOnePrivateKey,
+        clientOnePublicKey,
+        clientOneIsED25519,
+        clientTwo,
+        clientTwoAccount,
+        clientTwoPrivateKey,
+        clientTwoPublicKey,
+        clientTwoIsED25519,
     ]
 }
 
@@ -99,83 +85,83 @@ export function toHashgraphKey(privateKey: string, isED25519: boolean) {
 }
 
 export function getOperatorClient(
-    client1: Client,
-    client2: Client,
+    clientOne: Client,
+    clientTwo: Client,
     clientId: number
 ) {
-    return clientId == 1 ? client1 : client2
+    return clientId == 1 ? clientOne : clientTwo
 }
 
 export function getOperatorAccount(
-    client1account: string,
-    client2account: string,
+    clientOneAccount: string,
+    clientTwoAccount: string,
     clientId: number
 ) {
-    return clientId == 1 ? client1account : client2account
+    return clientId == 1 ? clientOneAccount : clientTwoAccount
 }
 
 export function getOperatorPrivateKey(
-    client1privatekey: string,
-    client2privatekey: string,
+    clientOnePrivateKey: string,
+    clientTwoPrivateKey: string,
     clientId: number
 ) {
-    return clientId == 1 ? client1privatekey : client2privatekey
+    return clientId == 1 ? clientOnePrivateKey : clientTwoPrivateKey
 }
 
 export function getOperatorE25519(
-    client1isED25519Type: boolean,
-    client2isED25519Type: boolean,
+    clientOneIsED25519Type: boolean,
+    clientTwoIsED25519Type: boolean,
     clientId: number
 ) {
-    return clientId == 1 ? client1isED25519Type : client2isED25519Type
+    return clientId == 1 ? clientOneIsED25519Type : clientTwoIsED25519Type
 }
 
 export function getOperatorPublicKey(
-    client1publickey: string,
-    client2publickey: string,
+    clientOnePublicKey: string,
+    clientTwoPublicKey: string,
     clientId: number
 ) {
-    return clientId == 1 ? client1publickey : client2publickey
+    return clientId == 1 ? clientOnePublicKey : clientTwoPublicKey
 }
 
 export function getNonOperatorClient(
-    client1: Client,
-    client2: Client,
+    clientOne: Client,
+    clientTwo: Client,
     clientId: number
 ) {
-    return clientId == 2 ? client1 : client2
+    return clientId == 2 ? clientOne : clientTwo
 }
 
 export function getNonOperatorAccount(
-    client1account: string,
-    client2account: string,
+    clientOneAccount: string,
+    clientTwoAccount: string,
     clientId: number
 ) {
-    return clientId == 2 ? client1account : client2account
+    return clientId == 2 ? clientOneAccount : clientTwoAccount
 }
 
 export function getNonOperatorPrivateKey(
-    client1privatekey: string,
-    client2privatekey: string,
+    clientOnePrivateKey: string,
+    clientTwoPrivateKey: string,
     clientId: number
 ) {
-    return clientId == 2 ? client1privatekey : client2privatekey
+    return clientId == 2 ? clientOnePrivateKey : clientTwoPrivateKey
 }
 
 export function getNonOperatorE25519(
-    client1isED25519Type: boolean,
-    client2isED25519Type: boolean,
+    clientOneIsED25519Type: boolean,
+    clientTwoIsED25519Type: boolean,
     clientId: number
 ): boolean {
-    return clientId == 2 ? client1isED25519Type : client2isED25519Type
+    return clientId == 2 ? clientOneIsED25519Type : clientTwoIsED25519Type
 }
 
 export function getNonOperatorPublicKey(
-    client1publickey: string,
-    client2publickey: string,
+    clientOnePublicKey: string,
+    clientTwoPublicKey: string,
     clientId: number
 ) {
-    return clientId == 2 ? client1publickey : client2publickey
+    return clientId == 2 ? clientOnePublicKey : clientTwoPublicKey
 }
 
 export async function deployHederaTokenManager(
@@ -184,7 +170,6 @@ export async function deployHederaTokenManager(
 ) {
     // Deploying Factory logic
     console.log(`Deploying HederaTokenManager. please wait...`)
-
     const hederaTokenManager = await deployContract(
         HederaTokenManager__factory,
         privateKey,
@@ -364,7 +349,7 @@ export async function deployContractsWithSDK({
     isED25519Type,
     freeze = false,
     allToContract = true,
-    reserveAddress = ADDRESS_0,
+    reserveAddress = ADDRESS_ZERO,
     initialAmountDataFeed = initialSupply,
     createReserve = true,
     grantKYCToOriginalSender = false,
@@ -373,7 +358,7 @@ export async function deployContractsWithSDK({
     RolesToAccount = '',
     isRolesToAccountE25519 = false,
     initialMetadata = 'test',
-    proxyAdminOwnerAccount = ADDRESS_0,
+    proxyAdminOwnerAccount = ADDRESS_ZERO,
 }: DeployParameters): Promise<ContractId[]> {
     const AccountEvmAddress = await toEvmAddress(account, isED25519Type)
 
@@ -392,13 +377,13 @@ export async function deployContractsWithSDK({
     let f_proxyAddress: ContractId
 
     // Deploying HederaTokenManager or using an already deployed one
-    if (!hederaTokenManagerAddress) {
+    if (!HEDERA_TOKEN_MANAGER_ADDRESS) {
         hederaTokenManager = await deployHederaTokenManager(
             clientSdk,
             privateKey
         )
     } else {
-        hederaTokenManager = ContractId.fromString(hederaTokenManagerAddress)
+        hederaTokenManager = ContractId.fromString(HEDERA_TOKEN_MANAGER_ADDRESS)
     }
 
     console.log(
@@ -406,7 +391,7 @@ export async function deployContractsWithSDK({
     )
 
     // Deploying a Factory or using an already deployed one
-    if (!factoryAddress) {
+    if (!FACTORY_ADDRESS) {
         const initializeFactory = {
             admin: AccountEvmAddress,
             tokenManager: (await getContractInfo(hederaTokenManager.toString()))
@@ -422,9 +407,9 @@ export async function deployContractsWithSDK({
         f_proxyAdminAddress = result[1]
         f_address = result[2]
     } else {
-        f_address = ContractId.fromString(factoryAddress)
-        f_proxyAdminAddress = ContractId.fromString(factoryProxyAdminAddress)
-        f_proxyAddress = ContractId.fromString(factoryProxyAddress)
+        f_address = ContractId.fromString(FACTORY_ADDRESS)
+        f_proxyAdminAddress = ContractId.fromString(FACTORY_PROXY_ADMIN_ADDRESS)
+        f_proxyAddress = ContractId.fromString(FACTORY_PROXY_ADDRESS)
     }
 
     console.log(`Invoking Factory Proxy at ${f_proxyAddress}... please wait.`)
@@ -479,7 +464,7 @@ export async function deployContractsWithSDK({
             'deployStableCoin',
             parametersContractCall,
             clientSdk,
-            15000000,
+            1700000,
             StableCoinFactory__factory.abi,
             35
         )
@@ -606,7 +591,7 @@ export async function deployContractsWithSDK({
 async function getHederaIdFromSolidityAddress(
     solidityAddress: string
 ): Promise<string> {
-    return solidityAddress != ADDRESS_0
+    return solidityAddress != ADDRESS_ZERO
         ? (await getContractInfo(solidityAddress)).contract_id
         : '0.0.0'
 }
@@ -782,7 +767,7 @@ async function cashInRoleAssignment(
             ? allRolesToCreator
                 ? await toEvmAddress(CreatorAccount, isCreatorE25519)
                 : await toEvmAddress(RolesToAccount, isRolesToAccountE25519)
-            : ADDRESS_0,
+            : ADDRESS_ZERO,
         allowance: 0,
     }
 

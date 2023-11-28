@@ -1,19 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ContractId } from '@hashgraph/sdk'
-import { task } from 'hardhat/config'
-import {
-    deployFactory,
-    deployHederaTokenManager,
-    toHashgraphKey,
-    updateProxy,
-    getProxyImpl,
-} from './deploy'
-import {
-    evmToHederaFormat,
-    getClient,
-    toEvmAddress,
-    getContractInfo,
-} from './utils'
+import {ContractId} from '@hashgraph/sdk'
+import {task} from 'hardhat/config'
+import {deployFactory, deployHederaTokenManager, getProxyImpl, toHashgraphKey, updateProxy,} from './deploy'
+import {evmToHederaFormat, getClient, getContractInfo, toEvmAddress,} from './utils'
 import {
     addHederaTokenManagerVersion,
     editHederaTokenManagerVersion,
@@ -47,14 +36,14 @@ task('addNewVersionTokenManager', 'Add a new version TokenManager in factory')
                 .accounts as unknown as Array<AccountHedera>
             const client = getClient(hre.network.name)
 
-            const client1account: string = accounts[0].account
-            const client1privatekey: string = accounts[0].privateKey
-            const client1isED25519: boolean =
+            const clientOneAccount: string = accounts[0].account
+            const clientOnePrivateKey: string = accounts[0].privateKey
+            const clientOneIsED25519: boolean =
                 accounts[0].isED25519Type === 'true'
 
             client.setOperator(
-                client1account,
-                toHashgraphKey(client1privatekey, client1isED25519)
+                clientOneAccount,
+                toHashgraphKey(clientOnePrivateKey, clientOneIsED25519)
             )
 
             await addHederaTokenManagerVersion(
@@ -76,13 +65,13 @@ task('getTokenManager', 'Get TokenManager list in factory')
             .accounts as unknown as Array<AccountHedera>
         const client = getClient(hre.network.name)
 
-        const client1account: string = accounts[0].account
-        const client1privatekey: string = accounts[0].privateKey
-        const client1isED25519: boolean = accounts[0].isED25519Type === 'true'
+        const clientOneAccount: string = accounts[0].account
+        const clientOnePrivateKey: string = accounts[0].privateKey
+        const clientOneIsED25519: boolean = accounts[0].isED25519Type === 'true'
 
         client.setOperator(
-            client1account,
-            toHashgraphKey(client1privatekey, client1isED25519)
+            clientOneAccount,
+            toHashgraphKey(clientOnePrivateKey, clientOneIsED25519)
         )
 
         const tokenManagerAddress: string[] =
@@ -116,14 +105,14 @@ task('getProxyAdminconfig', 'Get Proxy Admin owner and implementation')
             const accounts = hre.network.config
                 .accounts as unknown as Array<AccountHedera>
             const client = getClient(hre.network.name)
-            const client1account: string = accounts[0].account
-            const client1privatekey: string = accounts[0].privateKey
-            const client1isED25519: boolean =
+            const clientOneAccount: string = accounts[0].account
+            const clientOnePrivateKey: string = accounts[0].privateKey
+            const clientOneIsED25519: boolean =
                 accounts[0].isED25519Type === 'true'
 
             client.setOperator(
-                client1account,
-                toHashgraphKey(client1privatekey, client1isED25519)
+                clientOneAccount,
+                toHashgraphKey(clientOnePrivateKey, clientOneIsED25519)
             )
             console.log(hre.network.name)
             const owner = await evmToHederaFormat(
@@ -173,14 +162,14 @@ task('updateTokenManager', 'Update TokenManager in factory')
                 .accounts as unknown as Array<AccountHedera>
             const client = getClient(hre.network.name)
 
-            const client1account: string = accounts[0].account
-            const client1privatekey: string = accounts[0].privateKey
-            const client1isED25519: boolean =
+            const clientOneAccount: string = accounts[0].account
+            const clientOnePrivateKey: string = accounts[0].privateKey
+            const clientOneIsED25519: boolean =
                 accounts[0].isED25519Type === 'true'
 
             client.setOperator(
-                client1account,
-                toHashgraphKey(client1privatekey, client1isED25519)
+                clientOneAccount,
+                toHashgraphKey(clientOnePrivateKey, clientOneIsED25519)
             )
 
             await editHederaTokenManagerVersion(
@@ -208,14 +197,14 @@ task('removeTokenManager', 'Remove TokenManager in factory')
                 .accounts as unknown as Array<AccountHedera>
             const client = getClient(hre.network.name)
 
-            const client1account: string = accounts[0].account
-            const client1privatekey: string = accounts[0].privateKey
-            const client1isED25519: boolean =
+            const clientOneAccount: string = accounts[0].account
+            const clientOnePrivateKey: string = accounts[0].privateKey
+            const clientOneIsED25519: boolean =
                 accounts[0].isED25519Type === 'true'
 
             client.setOperator(
-                client1account,
-                toHashgraphKey(client1privatekey, client1isED25519)
+                clientOneAccount,
+                toHashgraphKey(clientOnePrivateKey, clientOneIsED25519)
             )
 
             await removeHederaTokenManagerVersion(
@@ -234,30 +223,30 @@ task('deployFactory', 'Deploy new factory').setAction(
             .accounts as unknown as Array<AccountHedera>
         const client = getClient(hre.network.name)
 
-        const client1account: string = accounts[0].account
-        const client1privatekey: string = accounts[0].privateKey
-        const client1isED25519: boolean = accounts[0].isED25519Type === 'true'
+        const clientOneAccount: string = accounts[0].account
+        const clientOnePrivateKey: string = accounts[0].privateKey
+        const clientOneIsED25519: boolean = accounts[0].isED25519Type === 'true'
 
         console.log(hre.network.name)
 
         client.setOperator(
-            client1account,
-            toHashgraphKey(client1privatekey, client1isED25519)
+            clientOneAccount,
+            toHashgraphKey(clientOnePrivateKey, clientOneIsED25519)
         )
         const tokenManager = await deployHederaTokenManager(
             client,
-            client1privatekey
+            clientOnePrivateKey
         )
         const initializeFactory = {
-            admin: await toEvmAddress(client1account, client1isED25519),
+            admin: await toEvmAddress(clientOneAccount, clientOneIsED25519),
             tokenManager: (await getContractInfo(tokenManager.toString()))
                 .evm_address,
         }
         const result = await deployFactory(
             initializeFactory,
             client,
-            client1privatekey,
-            client1isED25519
+            clientOnePrivateKey,
+            clientOneIsED25519
         )
         const proxyAddress = result[0]
         const proxyAdminAddress = result[1]
@@ -292,14 +281,14 @@ task(
             const accounts = hre.network.config
                 .accounts as unknown as Array<AccountHedera>
             const client = getClient(hre.network.name)
-            const client1account: string = accounts[0].account
-            const client1privatekey: string = accounts[0].privateKey
-            const client1isED25519: boolean =
+            const clientOneAccount: string = accounts[0].account
+            const clientOnePrivateKey: string = accounts[0].privateKey
+            const clientOneIsED25519: boolean =
                 accounts[0].isED25519Type === 'true'
 
             client.setOperator(
-                client1account,
-                toHashgraphKey(client1privatekey, client1isED25519)
+                clientOneAccount,
+                toHashgraphKey(clientOnePrivateKey, clientOneIsED25519)
             )
             console.log(hre.network.name)
             const admin = await evmToHederaFormat(
@@ -319,17 +308,17 @@ task('deployTokenManager', 'Deploy new TokenManager').setAction(
             .accounts as unknown as Array<AccountHedera>
         const client = getClient(hre.network.name)
 
-        const client1account: string = accounts[0].account
-        const client1privatekey: string = accounts[0].privateKey
-        const client1isED25519: boolean = accounts[0].isED25519Type === 'true'
+        const clientOneAccount: string = accounts[0].account
+        const clientOnePrivateKey: string = accounts[0].privateKey
+        const clientOneIsED25519: boolean = accounts[0].isED25519Type === 'true'
 
         client.setOperator(
-            client1account,
-            toHashgraphKey(client1privatekey, client1isED25519)
+            clientOneAccount,
+            toHashgraphKey(clientOnePrivateKey, clientOneIsED25519)
         )
         const tokenManager = await deployHederaTokenManager(
             client,
-            client1privatekey
+            clientOnePrivateKey
         )
 
         console.log('\nHederaTokenManager Address: \t', tokenManager.toString())
@@ -355,14 +344,14 @@ task('updateFactoryVersion', 'Update factory version')
             const accounts = hre.network.config
                 .accounts as unknown as Array<AccountHedera>
             const client = getClient(hre.network.name)
-            const client1account: string = accounts[0].account
-            const client1privatekey: string = accounts[0].privateKey
-            const client1isED25519: boolean =
+            const clientOneAccount: string = accounts[0].account
+            const clientOnePrivateKey: string = accounts[0].privateKey
+            const clientOneIsED25519: boolean =
                 accounts[0].isED25519Type === 'true'
 
             client.setOperator(
-                client1account,
-                toHashgraphKey(client1privatekey, client1isED25519)
+                clientOneAccount,
+                toHashgraphKey(clientOnePrivateKey, clientOneIsED25519)
             )
             console.log(hre.network.name)
 

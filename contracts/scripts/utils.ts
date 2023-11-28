@@ -1,26 +1,29 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-    Client,
-    TokenCreateTransaction,
-    DelegateContractId,
-    Hbar,
     AccountId,
+    Client,
+    ContractCreateFlow,
+    ContractId,
+    DelegateContractId,
+    FileAppendTransaction,
+    FileCreateTransaction,
+    Hbar,
     PrivateKey,
     PublicKey,
-    TokenSupplyType,
-    TokenId,
     TokenAssociateTransaction,
+    TokenCreateTransaction,
     TokenDissociateTransaction,
-    TransferTransaction,
+    TokenId,
+    TokenSupplyType,
     TransactionResponse,
-    ContractId,
-    ContractCreateFlow,
+    TransferTransaction,
 } from '@hashgraph/sdk'
 
 import axios from 'axios'
-import { ADDRESS_0 } from './constants'
-import { BigNumber } from 'ethers'
+import {ADDRESS_ZERO} from './constants'
+import {BigNumber} from 'ethers'
+import FileId from '@hashgraph/sdk/lib/file/FileId'
 
 const SuccessStatus = 22
 
@@ -239,7 +242,7 @@ export async function getContractInfo(contractId: string): Promise<IContract> {
 }
 
 export async function evmToHederaFormat(evmAddress: string): Promise<string> {
-    if (evmAddress === ADDRESS_0) return '0.0.0'
+    if (evmAddress === ADDRESS_ZERO) return '0.0.0'
     const URI_BASE = `${getHederaNetworkMirrorNodeURL()}/api/v1/`
     const url = URI_BASE + 'accounts/' + evmAddress
     const res = await axios.get<IAccount>(url)
@@ -265,7 +268,7 @@ interface IContract {
     file_id: string
     max_automatic_token_associations: string
     memo: string
-    obtainer_id: string
+    obtained_id: string
     permanent_removal: string
     proxy_account_id: string
     timestamp: string
@@ -291,4 +294,48 @@ function getHederaNetworkMirrorNodeURL(network?: string): string {
         default:
             return 'https://testnet.mirrornode.hedera.com'
     }
+}
+
+export async function fileCreate(
+    bytecode: Uint8Array | string,
+    chunks: number,
+    signingPrivateKey: PrivateKey,
+    clientOperator: Client
+) {
+    try {
+        await createFile(bytecode, chunks, signingPrivateKey, clientOperator)
+    } catch (error) {
+        console.error('Error creating file:', error)
+        throw error
+    }
+}
+
+async function createFile(
+    bytecode: Uint8Array | string,
+    chunks: number,
+    signingPrivateKey: PrivateKey,
+    clientOperator: Client
+): Promise<FileId> {
+    const fileCreateTx = new FileCreateTransaction()
+        .setKeys([signingPrivateKey])
+        .freezeWith(clientOperator)
+    const fileSign = await fileCreateTx.sign(signingPrivateKey)
+    const fileSubmit = await fileSign.execute(clientOperator)
+    const fileCreateRx = await fileSubmit.getReceipt(clientOperator)
+
+    const fileId = fileCreateRx.fileId
+    if (!fileId) {
+        throw Error('FileId is null')
+    }
+    //To append the bytecode to the file when the file is large
+    const fileAppendTx = new FileAppendTransaction()
+        .setFileId(fileId)
+        .setContents(bytecode)
+        .setMaxChunks(chunks)
+        .setMaxTransactionFee(new Hbar(2))
+        .freezeWith(clientOperator)
+    const fileAppendSign = await fileAppendTx.sign(signingPrivateKey)
+    const fileAppendSubmit = await fileAppendSign.execute(clientOperator)
+    await fileAppendSubmit.getReceipt(clientOperator)
+    return fileId
 }

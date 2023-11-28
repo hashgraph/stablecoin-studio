@@ -98,7 +98,7 @@ jobs:
 
       - name: Test Contracts
         run: |
-          npm run test
+          npm run test:parallel
           npm run cleanCache
         working-directory: contracts
       
