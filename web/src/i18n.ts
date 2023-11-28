@@ -65,7 +65,7 @@ i18n
 				checkKyc: CHECK_KYC_EN,
 				feesManagement: FEES_MANAGEMENT_EN,
 				updateToken: UPDATE_TOKEN_EN,
-				appSettings: APPSETTINGS_EN
+				appSettings: APPSETTINGS_EN,
 			},
 			es: {
 				global: GLOBAL_ES,

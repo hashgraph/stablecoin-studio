@@ -190,7 +190,7 @@ const Router = () => {
 						</>
 					)}
 					<Route path={RoutesMappingUrl.settings} element={<Settings />} />
-					
+
 					<Route path={RoutesMappingUrl.factorySettings} element={<FactorySettings />} />
 					<Route path={RoutesMappingUrl.stableCoinCreation} element={<StableCoinCreation />} />
 					<Route path={RoutesMappingUrl.importedToken} element={<ImportedTokenCreation />} />
