@@ -1,147 +1,85 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import '@hashgraph/hardhat-hethers'
 import '@hashgraph/sdk'
-import { BigNumber } from 'ethers'
+import {BigNumber} from 'ethers'
+import {deployContractsWithSDK} from '../scripts/deploy'
 import {
-    deployContractsWithSDK,
-    initializeClients,
-    getOperatorClient,
-    getOperatorAccount,
-    getOperatorPrivateKey,
-    getOperatorE25519,
-    getOperatorPublicKey,
-    getNonOperatorClient,
-    getNonOperatorAccount,
-    getNonOperatorE25519,
-} from '../scripts/deploy'
-import {
-    grantRoles,
-    revokeRoles,
-    getRoles,
     getAccountsForRole,
+    getRoles,
     getSupplierAllowance,
+    grantRoles,
     isUnlimitedSupplierAllowance,
+    revokeRoles,
 } from '../scripts/contractsMethods'
 import {
+    ACCOUNT_EIGHT,
+    ACCOUNT_FIVE,
+    ACCOUNT_FOUR,
+    ACCOUNT_NINE,
+    ACCOUNT_ONE,
+    ACCOUNT_SEVEN,
+    ACCOUNT_SIX,
+    ACCOUNT_TEN,
+    ACCOUNT_THREE,
+    ACCOUNT_TWO,
     BURN_ROLE,
+    CASHIN_ROLE,
+    DEFAULT_ADMIN_ROLE,
+    DELETE_ROLE,
+    FREEZE_ROLE,
+    KYC_ROLE,
     PAUSE_ROLE,
     RESCUE_ROLE,
-    WIPE_ROLE,
-    CASHIN_ROLE,
-    FREEZE_ROLE,
-    DELETE_ROLE,
-    WITHOUT_ROLE,
-    DEFAULT_ADMIN_ROLE,
-    KYC_ROLE,
     RolesId,
-    ADDRESS_1,
-    ADDRESS_2,
-    ADDRESS_3,
-    ADDRESS_4,
-    ADDRESS_5,
-    ADDRESS_6,
-    ADDRESS_7,
-    ADDRESS_8,
-    ADDRESS_9,
-    ADDRESS_10,
+    WIPE_ROLE,
+    WITHOUT_ROLE,
 } from '../scripts/constants'
 
-import { clientId, toEvmAddress } from '../scripts/utils'
-import { Client, ContractId } from '@hashgraph/sdk'
+import {toEvmAddress} from '../scripts/utils'
+import {ContractId} from '@hashgraph/sdk'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
+import {
+    INIT_SUPPLY,
+    MAX_SUPPLY,
+    nonOperatorClient,
+    operatorAccount,
+    operatorClient,
+    operatorIsE25519,
+    operatorPriKey,
+    operatorPubKey,
+    TOKEN_DECIMALS,
+    TOKEN_MEMO,
+    TOKEN_NAME,
+    TOKEN_SYMBOL,
+} from './shared/utils'
 
 chai.use(chaiAsPromised)
 const expect = chai.expect
-
-let proxyAddress: ContractId
-
-let operatorClient: Client
-let nonOperatorClient: Client
-let operatorAccount: string
-let nonOperatorAccount: string
-let operatorPriKey: string
-let operatorPubKey: string
-let operatorIsE25519: boolean
-let nonOperatorIsE25519: boolean
-
-const TokenName = 'MIDAS'
-const TokenSymbol = 'MD'
-const TokenDecimals = 3
-const TokenFactor = BigNumber.from(10).pow(TokenDecimals)
-const INIT_SUPPLY = BigNumber.from(0).mul(TokenFactor)
-const MAX_SUPPLY = BigNumber.from(1).mul(TokenFactor)
-const TokenMemo = 'Hedera Accelerator Stablecoin'
-const AllAccounts = [
-    ADDRESS_1,
-    ADDRESS_2,
-    ADDRESS_3,
-    ADDRESS_4,
-    ADDRESS_5,
-    ADDRESS_6,
-    ADDRESS_7,
-    ADDRESS_8,
-    ADDRESS_9,
-    ADDRESS_10,
+const ACCOUNTS = [
+    ACCOUNT_ONE,
+    ACCOUNT_TWO,
+    ACCOUNT_THREE,
+    ACCOUNT_FOUR,
+    ACCOUNT_FIVE,
+    ACCOUNT_SIX,
+    ACCOUNT_SEVEN,
+    ACCOUNT_EIGHT,
+    ACCOUNT_NINE,
+    ACCOUNT_TEN,
 ]
+let proxyAddress: ContractId
 
 describe('Role Management Tests', function () {
     before(async function () {
-        // Generate Client 1 and Client 2
-        const [
-            client1,
-            client1account,
-            client1privatekey,
-            client1publickey,
-            client1isED25519Type,
-            client2,
-            client2account,
-            client2privatekey,
-            client2publickey,
-            client2isED25519Type,
-        ] = initializeClients()
-
-        operatorClient = getOperatorClient(client1, client2, clientId)
-        nonOperatorClient = getNonOperatorClient(client1, client2, clientId)
-        operatorAccount = getOperatorAccount(
-            client1account,
-            client2account,
-            clientId
-        )
-        nonOperatorAccount = getNonOperatorAccount(
-            client1account,
-            client2account,
-            clientId
-        )
-        operatorPriKey = getOperatorPrivateKey(
-            client1privatekey,
-            client2privatekey,
-            clientId
-        )
-        operatorPubKey = getOperatorPublicKey(
-            client1publickey,
-            client2publickey,
-            clientId
-        )
-        operatorIsE25519 = getOperatorE25519(
-            client1isED25519Type,
-            client2isED25519Type,
-            clientId
-        )
-        nonOperatorIsE25519 = getNonOperatorE25519(
-            client1isED25519Type,
-            client2isED25519Type,
-            clientId
-        )
-
         // Deploy Token using Client
         const result = await deployContractsWithSDK({
-            name: TokenName,
-            symbol: TokenSymbol,
-            decimals: TokenDecimals,
+            name: TOKEN_NAME,
+            symbol: TOKEN_SYMBOL,
+            decimals: TOKEN_DECIMALS,
             initialSupply: INIT_SUPPLY.toString(),
             maxSupply: MAX_SUPPLY.toString(),
-            memo: TokenMemo,
+            memo: TOKEN_MEMO,
             account: operatorAccount,
             privateKey: operatorPriKey,
             publicKey: operatorPubKey,
@@ -159,7 +97,7 @@ describe('Role Management Tests', function () {
         const Roles = [BURN_ROLE, FREEZE_ROLE]
         const amounts: BigNumber[] = []
         const areE25519: boolean[] = []
-        AllAccounts.forEach((accountToGrantRolesTo, index) => {
+        ACCOUNTS.forEach((accountToGrantRolesTo, index) => {
             areE25519.push(true)
         })
 
@@ -168,7 +106,7 @@ describe('Role Management Tests', function () {
                 Roles,
                 proxyAddress,
                 nonOperatorClient,
-                AllAccounts,
+                ACCOUNTS,
                 amounts,
                 areE25519
             )
@@ -179,7 +117,7 @@ describe('Role Management Tests', function () {
             Roles,
             proxyAddress,
             operatorClient,
-            AllAccounts,
+            ACCOUNTS,
             amounts,
             areE25519
         )
@@ -190,7 +128,7 @@ describe('Role Management Tests', function () {
                 Roles,
                 proxyAddress,
                 nonOperatorClient,
-                AllAccounts,
+                ACCOUNTS,
                 areE25519
             )
         ).to.eventually.be.rejectedWith(Error)
@@ -200,7 +138,7 @@ describe('Role Management Tests', function () {
             Roles,
             proxyAddress,
             operatorClient,
-            AllAccounts,
+            ACCOUNTS,
             areE25519
         )
     })
@@ -210,7 +148,7 @@ describe('Role Management Tests', function () {
         const Roles = [CASHIN_ROLE]
         const amounts: BigNumber[] = []
         const areE25519: boolean[] = []
-        AllAccounts.forEach((accountToGrantRolesTo, index) => {
+        ACCOUNTS.forEach((accountToGrantRolesTo, index) => {
             areE25519.push(true)
         })
 
@@ -219,7 +157,7 @@ describe('Role Management Tests', function () {
                 Roles,
                 proxyAddress,
                 operatorClient,
-                AllAccounts,
+                ACCOUNTS,
                 amounts,
                 areE25519
             )
@@ -228,11 +166,11 @@ describe('Role Management Tests', function () {
 
     it('Admin grants and revokes roles to multiple accounts including CashIn role', async function () {
         // Checking roles
-        for (let i = 0; i < AllAccounts.length; i++) {
+        for (let i = 0; i < ACCOUNTS.length; i++) {
             const result = await getRoles(
                 proxyAddress,
                 operatorClient,
-                AllAccounts[i],
+                ACCOUNTS[i],
                 true
             )
 
@@ -256,7 +194,7 @@ describe('Role Management Tests', function () {
         const amounts: BigNumber[] = []
         const areE25519: boolean[] = []
 
-        for (let i = 0; i < AllAccounts.length; i++) {
+        for (let i = 0; i < ACCOUNTS.length; i++) {
             amounts.push(BigNumber.from(i))
             areE25519.push(true)
         }
@@ -265,17 +203,17 @@ describe('Role Management Tests', function () {
             Roles,
             proxyAddress,
             operatorClient,
-            AllAccounts,
+            ACCOUNTS,
             amounts,
             areE25519
         )
 
         // Checking roles and cash in allowances
-        for (let i = 0; i < AllAccounts.length; i++) {
+        for (let i = 0; i < ACCOUNTS.length; i++) {
             const result = await getRoles(
                 proxyAddress,
                 operatorClient,
-                AllAccounts[i],
+                ACCOUNTS[i],
                 true
             )
 
@@ -325,7 +263,7 @@ describe('Role Management Tests', function () {
             const allowance = await getSupplierAllowance(
                 proxyAddress,
                 nonOperatorClient,
-                AllAccounts[i],
+                ACCOUNTS[i],
                 true
             )
 
@@ -334,7 +272,7 @@ describe('Role Management Tests', function () {
             const isUnlimited = await isUnlimitedSupplierAllowance(
                 proxyAddress,
                 nonOperatorClient,
-                AllAccounts[i],
+                ACCOUNTS[i],
                 true
             )
 
@@ -346,16 +284,16 @@ describe('Role Management Tests', function () {
             Roles,
             proxyAddress,
             operatorClient,
-            AllAccounts,
+            ACCOUNTS,
             areE25519
         )
 
         // Checking roles and cash in allowances
-        for (let i = 0; i < AllAccounts.length; i++) {
+        for (let i = 0; i < ACCOUNTS.length; i++) {
             const result = await getRoles(
                 proxyAddress,
                 operatorClient,
-                AllAccounts[i],
+                ACCOUNTS[i],
                 true
             )
 
@@ -405,7 +343,7 @@ describe('Role Management Tests', function () {
             const allowance = await getSupplierAllowance(
                 proxyAddress,
                 nonOperatorClient,
-                AllAccounts[i],
+                ACCOUNTS[i],
                 true
             )
 
@@ -414,7 +352,7 @@ describe('Role Management Tests', function () {
             const isUnlimited = await isUnlimitedSupplierAllowance(
                 proxyAddress,
                 nonOperatorClient,
-                AllAccounts[i],
+                ACCOUNTS[i],
                 true
             )
 
@@ -428,7 +366,7 @@ describe('Role Management Tests', function () {
         const amounts: BigNumber[] = []
         const areE25519: boolean[] = []
 
-        for (let i = 0; i < AllAccounts.length; i++) {
+        for (let i = 0; i < ACCOUNTS.length; i++) {
             amounts.push(BigNumber.from(i))
             areE25519.push(true)
         }
@@ -437,7 +375,7 @@ describe('Role Management Tests', function () {
             Roles,
             proxyAddress,
             operatorClient,
-            AllAccounts,
+            ACCOUNTS,
             [],
             areE25519
         )
@@ -448,18 +386,19 @@ describe('Role Management Tests', function () {
             operatorClient
         )
 
-        AllAccounts.forEach(async (accountId, index) => {
+        for (const accountId of ACCOUNTS) {
+            const index = ACCOUNTS.indexOf(accountId)
             expect(burnRoleAccounts).to.include(
                 await toEvmAddress(accountId, areE25519[index])
             )
-        })
+        }
 
         // Revoking roles
         await revokeRoles(
             Roles,
             proxyAddress,
             operatorClient,
-            AllAccounts,
+            ACCOUNTS,
             areE25519
         )
 
@@ -469,10 +408,11 @@ describe('Role Management Tests', function () {
             operatorClient
         )
 
-        AllAccounts.forEach(async (accountId, index) => {
+        for (const accountId of ACCOUNTS) {
+            const index = ACCOUNTS.indexOf(accountId)
             expect(burnRoleAccounts).to.not.include(
                 await toEvmAddress(accountId, areE25519[index])
             )
-        })
+        }
     })
 })

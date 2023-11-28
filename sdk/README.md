@@ -13,94 +13,99 @@
 - [Stablecoin Studio SDK](#stablecoin-studio-sdk)
 - [Table of contents](#table-of-contents)
 - [Overview](#overview)
-- [Installation](#installation) - [Prerequisites](#prerequisites) - [Steps](#steps) - [**For projects (WIP - when published)**](#for-projects-wip---when-published) - [**For development**](#for-development)
+- [Installation](#installation)
+		- [Prerequisites](#prerequisites)
+		- [Steps](#steps)
+			- [**For projects (WIP - when published)**](#for-projects-wip---when-published)
+			- [**For development**](#for-development)
 - [Build](#build)
 - [Quick Start](#quick-start)
-  - [Initialization](#initialization)
-  - [Connect SDK](#connect-sdk)
-  - [Wallet Events](#wallet-events)
+	- [Initialization](#initialization)
+	- [Connect SDK](#connect-sdk)
+	- [Wallet Events](#wallet-events)
 - [Usage](#usage)
-  - [About Operations Execution](#about-operations-execution)
-  - [StableCoin](#stablecoin)
-    - [Create](#create)
-    - [Creates a simple stablecoin, with all keys set to the Smart Contracts](#creates-a-simple-stablecoin-with-all-keys-set-to-the-smart-contracts)
-    - [Creates a simple stablecoin, with all keys set to the admin's public key](#creates-a-simple-stablecoin-with-all-keys-set-to-the-admins-public-key)
-    - [Creates a simple stablecoin, with all keys set to none](#creates-a-simple-stablecoin-with-all-keys-set-to-none)
-    - [GetInfo](#getinfo)
-    - [GetBalanceOf](#getbalanceof)
-    - [GetBalanceOfHBAR](#getbalanceofhbar)
-    - [Associate](#associate)
-    - [isAccountAssociated](#isaccountassociated)
-    - [CashIn](#cashin)
-    - [Burn](#burn)
-    - [Rescue](#rescue)
-    - [Rescue HBAR](#rescue-hbar)
-    - [Wipe](#wipe)
-    - [Pause](#pause)
-    - [Unpause](#unpause)
-    - [Freeze](#freeze)
-    - [Unfreeze](#unfreeze)
-    - [GrantKYC](#grantkyc)
-    - [RevokeKYC](#revokekyc)
-    - [IsAccountKYCGranted](#isaccountkycgranted)
-    - [Transfers](#transfers)
-    - [Update](#update)
-    - [Delete](#delete)
-    - [GetReserveAddress](#getreserveaddress)
-    - [UpdateReserveAddress](#updatereserveaddress)
-    - [Capabilities](#capabilities)
-  - [Proxy](#proxy)
-    - [GetProxyConfig](#getproxyconfig)
-    - [ChangeProxyOwner](#changeproxyowner)
-    - [AcceptProxyOwner](#acceptproxyowner)
-    - [UpgradeImplementation](#upgradeimplementation)
-    - [GetFactoryProxyConfig](#getfactoryproxyconfig)
-    - [UpgradeFactoryImplementation](#upgradefactoryimplementation)
-    - [ChangeFactoryProxyOwner](#changefactoryproxyowner)
-  - [Network](#network)
-    - [Connect](#connect)
-    - [Disconnect](#disconnect)
-    - [Init](#init)
-    - [SetNetwork](#setnetwork)
-    - [GetNetwork](#getnetwork)
-    - [IsNetworkRecognized](#isnetworkrecognized)
-    - [SetConfig](#setconfig)
-    - [GetFactoryAddress](#getfactoryaddress)
-  - [Event](#event)
-    - [Register](#register)
-  - [Account](#account)
-    - [GetPublicKey](#getpublickey)
-    - [ListStableCoins](#liststablecoins)
-    - [GetInfo](#getinfo-1)
-  - [Role](#role)
-    - [HasRole](#hasrole)
-    - [GrantRole](#grantrole)
-    - [GrantMultiRoles](#grantmultiroles)
-    - [RevokeRole](#revokerole)
-    - [RevokeMultiRole](#revokemultirole)
-    - [GetRoles](#getroles)
-    - [GetAccountsWithRoles](#getaccountswithroles)
-    - [GetAllowance](#getallowance)
-    - [ResetAllowance](#resetallowance)
-    - [IncreaseAllowance](#increaseallowance)
-    - [DecreaseAllowance](#decreaseallowance)
-    - [IsLimited](#islimited)
-    - [IsUnlimited](#isunlimited)
-  - [Reserve Data Feed](#reserve-data-feed)
-    - [Get Reserve Amount](#get-reserve-amount)
-    - [Update Reserve Amount](#update-reserve-amount)
-  - [Factory](#factory)
-    - [GetHederaTokenManagerList](#gethederatokenmanagerlist)
-  - [Common](#common)
-- [Testing](#testing) - [Jest](#jest)
+	- [About Operations Execution](#about-operations-execution)
+	- [StableCoin](#stablecoin)
+		- [Create](#create)
+		- [Creates a simple stablecoin, with all keys set to the Smart Contracts](#creates-a-simple-stablecoin-with-all-keys-set-to-the-smart-contracts)
+		- [Creates a simple stablecoin, with all keys set to the admin's public key](#creates-a-simple-stablecoin-with-all-keys-set-to-the-admins-public-key)
+		- [Creates a simple stablecoin, with all keys set to none](#creates-a-simple-stablecoin-with-all-keys-set-to-none)
+		- [GetInfo](#getinfo)
+		- [GetBalanceOf](#getbalanceof)
+		- [GetBalanceOfHBAR](#getbalanceofhbar)
+		- [Associate](#associate)
+		- [isAccountAssociated](#isaccountassociated)
+		- [CashIn](#cashin)
+		- [Burn](#burn)
+		- [Rescue](#rescue)
+		- [Rescue HBAR](#rescue-hbar)
+		- [Wipe](#wipe)
+		- [Pause](#pause)
+		- [Unpause](#unpause)
+		- [Freeze](#freeze)
+		- [Unfreeze](#unfreeze)
+		- [GrantKYC](#grantkyc)
+		- [RevokeKYC](#revokekyc)
+		- [IsAccountKYCGranted](#isaccountkycgranted)
+		- [Transfers](#transfers)
+		- [Update](#update)
+		- [Delete](#delete)
+		- [GetReserveAddress](#getreserveaddress)
+		- [UpdateReserveAddress](#updatereserveaddress)
+		- [Capabilities](#capabilities)
+	- [Proxy](#proxy)
+		- [GetProxyConfig](#getproxyconfig)
+		- [ChangeProxyOwner](#changeproxyowner)
+		- [AcceptProxyOwner](#acceptproxyowner)
+		- [UpgradeImplementation](#upgradeimplementation)
+		- [GetFactoryProxyConfig](#getfactoryproxyconfig)
+		- [UpgradeFactoryImplementation](#upgradefactoryimplementation)
+		- [ChangeFactoryProxyOwner](#changefactoryproxyowner)
+	- [Network](#network)
+		- [Connect](#connect)
+		- [Disconnect](#disconnect)
+		- [Init](#init)
+		- [SetNetwork](#setnetwork)
+		- [GetNetwork](#getnetwork)
+		- [IsNetworkRecognized](#isnetworkrecognized)
+		- [SetConfig](#setconfig)
+		- [GetFactoryAddress](#getfactoryaddress)
+	- [Event](#event)
+		- [Register](#register)
+	- [Account](#account)
+		- [GetPublicKey](#getpublickey)
+		- [ListStableCoins](#liststablecoins)
+		- [GetInfo](#getinfo-1)
+	- [Role](#role)
+		- [HasRole](#hasrole)
+		- [GrantRole](#grantrole)
+		- [GrantMultiRoles](#grantmultiroles)
+		- [RevokeRole](#revokerole)
+		- [RevokeMultiRole](#revokemultirole)
+		- [GetRoles](#getroles)
+		- [GetAccountsWithRoles](#getaccountswithroles)
+		- [GetAllowance](#getallowance)
+		- [ResetAllowance](#resetallowance)
+		- [IncreaseAllowance](#increaseallowance)
+		- [DecreaseAllowance](#decreaseallowance)
+		- [IsLimited](#islimited)
+		- [IsUnlimited](#isunlimited)
+	- [Reserve Data Feed](#reserve-data-feed)
+		- [Get Reserve Amount](#get-reserve-amount)
+		- [Update Reserve Amount](#update-reserve-amount)
+	- [Factory](#factory)
+		- [GetHederaTokenManagerList](#gethederatokenmanagerlist)
+	- [Common](#common)
+- [Testing](#testing)
+		- [Jest](#jest)
 - [Typescript](#typescript)
-  - [Tsconfig](#tsconfig)
-    - [Client side](#client-side)
-    - [Server side](#server-side)
+	- [Tsconfig](#tsconfig)
+		- [Client side](#client-side)
+		- [Server side](#server-side)
 - [Support](#support)
 - [Contributing](#contributing)
 - [Code of Conduct](#code-of-conduct)
-  - [License](#license)
+	- [License](#license)
 
 # Overview
 
@@ -628,10 +633,6 @@ Wipes an amount of tokens from an account. The operating account must have the w
 ```
 
 ### Pause
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/main
 Pauses a stablecoin. None of the operations can be taken while the stablecoin is in paused state. The operating account must have the pause role.
 
 **Spec:**
@@ -651,10 +652,6 @@ Pauses a stablecoin. None of the operations can be taken while the stablecoin is
 ```
 
 ### Unpause
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/main
 Unpauses a stablecoin. If the stablecoin is not paused it will throw an exception. The operating account must have the pause role.
 
 **Spec:**
@@ -674,10 +671,6 @@ Unpauses a stablecoin. If the stablecoin is not paused it will throw an exceptio
 ```
 
 ### Freeze
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/main
 Prevents transfer of a stablecoin to/from an account. The operating account must have the freeze role.
 
 **Spec:**
@@ -698,10 +691,6 @@ Prevents transfer of a stablecoin to/from an account. The operating account must
 ```
 
 ### Unfreeze
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/main
 Enables transfer of a stablecoin to/from an account. The operating account must have the freeze role.
 
 **Spec:**
@@ -870,10 +859,6 @@ import {
 ```
 
 ### Delete
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/main
 Deletes a stablecoin. **Important** this operation is not reversible. The operating account must have the admin role.
 
 **Spec:**

@@ -217,6 +217,8 @@ This menú option displays stablecoin details and also allows the user to update
 
 If your account has the stablecoin fee role, you will also be allowed to manage the token's custom fees.
 
+This menu option will only be visible when using Hashpack or Blade, and will soon be available when using Metamask as well.
+
 ### Proof of reserve
 
 ![image](https://user-images.githubusercontent.com/110887433/213154467-70663bd0-2116-4121-9b3a-3028e4309fff.png)
