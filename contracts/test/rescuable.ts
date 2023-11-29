@@ -320,9 +320,9 @@ describe('Rescue Tests', function () {
         )
     })
 
-    it('Should rescue 10 HBAR', async function () {
+    it('Should rescue 1 HBAR', async function () {
         // Get the initial balance of the token owner and client
-        const AmountToRescue = BigNumber.from(10).mul(HBARFactor)
+        const AmountToRescue = BigNumber.from(1).mul(HBARFactor)
         const initialTokenOwnerBalance = await getHBARBalanceOf(
             proxyAddress.toString(),
             operatorClient,
@@ -335,7 +335,6 @@ describe('Rescue Tests', function () {
             true,
             false
         )
-
         // rescue some tokens
         await rescueHBAR(proxyAddress, AmountToRescue, operatorClient)
         await delay(3000)
@@ -356,12 +355,10 @@ describe('Rescue Tests', function () {
 
         const expectedTokenOwnerBalance =
             initialTokenOwnerBalance.sub(AmountToRescue)
-        const diffClientBalance = finalClientBalance.sub(initialClientBalance)
-
         expect(finalTokenOwnerBalance.toString()).to.equals(
             expectedTokenOwnerBalance.toString()
         )
-        expect(diffClientBalance.gt(BigNumber.from(0))).to.be.true
+        expect(finalClientBalance.gt(initialClientBalance)).to.be.true
     })
 
     it('we cannot rescue more HBAR than the owner balance', async function () {
