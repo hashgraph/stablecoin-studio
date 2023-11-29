@@ -20,14 +20,14 @@ import Icon from '../../components/Icon';
 import BaseContainer from '../../components/BaseContainer';
 import { SelectController } from '../../components/Form/SelectController';
 import { networkOptions } from './constants';
-import { FieldValues, useForm, useWatch } from 'react-hook-form';
+import { type FieldValues, useForm, useWatch } from 'react-hook-form';
 import { propertyNotFound } from '../../constant';
 import InputController from '../../components/Form/InputController';
 import SwitchController from '../../components/Form/SwitchController';
 import { useDispatch, useSelector } from 'react-redux';
 import { LAST_WALLET_SELECTED, MIRROR_LIST, RPC_LIST, SELECTED_MIRROR, SELECTED_RPC, walletActions } from '../../store/slices/walletSlice';
 import SDKService from '../../services/SDKService';
-import { IMirrorRPCNode } from '../../interfaces/IMirrorRPCNode';
+import { type IMirrorRPCNode } from '../../interfaces/IMirrorRPCNode';
 
 const AppSettings = () => {
 	const { t } = useTranslation(['appSettings', 'errorPage']);
@@ -49,11 +49,6 @@ const AppSettings = () => {
 	const selectedMirror: IMirrorRPCNode = useSelector(SELECTED_MIRROR);
 	const rpcList: IMirrorRPCNode[] = useSelector(RPC_LIST);
 	const selectedRPC: IMirrorRPCNode = useSelector(SELECTED_RPC);
-
-	console.log("mirrorList", mirrorList);
-	console.log("selectedMirror", selectedMirror);
-	console.log("rpcList", rpcList);
-	console.log("selectedRPC", selectedRPC);
 
 	const styles = {
 		menuList: {
@@ -99,7 +94,7 @@ const AppSettings = () => {
 	}
 	function addRpc() {
 		const { nameRPC, urlRPC, apiKeyValueRPC, apiKeyHeaderRPC, mirrorNetwork } = getValues();
-		const newArray = [...arrayRPC, createOptionMirror(nameRPC, urlRPC, apiKeyValueRPC, mirrorNetwork, false, apiKeyHeaderRPC)];
+		const newArray = [...arrayRPC, createOptionMirror(nameRPC, urlRPC, apiKeyValueRPC, mirrorNetwork.value, false, apiKeyHeaderRPC)];
 		setArrayRPC(newArray);
 		dispatch(walletActions.setRPCList(newArray.filter((rpc) => rpc.isInConfig === false)));
 	};
@@ -117,17 +112,17 @@ const AppSettings = () => {
 
 	useEffect(() => {
 		if (defaultMirror !== '0') {
-			const selectedMirror = arrayMirror.find((mirror: any) => mirror.name === defaultMirror);
-			dispatch(walletActions.setSelectedMirror(selectedMirror));
-			SDKService.connectWallet(selectedWallet!, selectedMirror!.Environment.toLocaleLowerCase());
+			const selectedDefaultMirror = arrayMirror.find((mirror: any) => mirror.name === defaultMirror);
+			dispatch(walletActions.setSelectedMirror(selectedDefaultMirror));
+			SDKService.connectWallet(selectedWallet!, selectedDefaultMirror!.Environment.toLocaleLowerCase(), selectedDefaultMirror, selectedRPC);
 		}
 	}, [defaultMirror]);
 
 	useEffect(() => {
 		if (defaultRPC !== '0') {
-			const selectedRPC = arrayRPC.find((rpc: any) => rpc.name === defaultRPC);
-			dispatch(walletActions.setSelectedRPC(selectedRPC));
-			SDKService.connectWallet(selectedWallet!, selectedRPC!.Environment.toLocaleLowerCase());
+			const selectedDefaultRPC = arrayRPC.find((rpc: any) => rpc.name === defaultRPC);
+			dispatch(walletActions.setSelectedRPC(selectedDefaultRPC));
+			SDKService.connectWallet(selectedWallet!, selectedDefaultRPC!.Environment.toLocaleLowerCase(), selectedMirror, selectedDefaultRPC);
 		}
 	}, [defaultRPC]);
 
@@ -143,7 +138,7 @@ const AppSettings = () => {
 		if (mirrorList) {
 			mirrorList
 				.filter((obj) => obj.Environment !== undefined)
-				.filter((obj) => obj.Environment.toUpperCase() === mirrorNetwork.value.toUpperCase())
+				.filter((obj) => obj.Environment.toLocaleLowerCase() === mirrorNetwork.value.toLocaleLowerCase())
 				.forEach((obj) => mirrors.push(obj));
 		}
 		setArrayMirror(mirrors);
@@ -161,7 +156,7 @@ const AppSettings = () => {
 		if (rpcList) {
 			rpcList
 				.filter((obj) => obj.Environment !== undefined)
-				.filter((obj) => obj.Environment.toUpperCase() === rpcNetwork.value.toUpperCase())
+				.filter((obj) => obj.Environment.toLocaleLowerCase() === rpcNetwork.value.toLocaleLowerCase())
 				.forEach((obj) => rpcs.push(obj));
 		}
 		setArrayRPC(rpcs);
@@ -170,7 +165,7 @@ const AppSettings = () => {
 	function setNodeArrayByNetwork(list: IMirrorRPCNode[], network: string): IMirrorRPCNode[] {
 		const nodes: IMirrorRPCNode[] = list
 			.filter((obj) => obj.Environment !== undefined)
-			.filter((obj) => obj.Environment.toUpperCase() === network.toUpperCase())
+			.filter((obj) => obj.Environment.toLocaleLowerCase() === network.toLocaleLowerCase())
 			.map((obj, index) =>
 				createOptionMirror(
 					'EnvConf' + String(index),
