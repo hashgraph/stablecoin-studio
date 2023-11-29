@@ -52,7 +52,7 @@ const Sidebar = () => {
 		},
 	];
 	const appProperties: optionsProps = {
-		icon: 'GearSix',
+		icon: 'ShareNetwork',
 		title: t('sidebar.appSettings'),
 		route: NamedRoutes.AppSettings,
 	};

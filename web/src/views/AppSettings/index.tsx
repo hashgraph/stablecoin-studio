@@ -214,7 +214,7 @@ const AppSettings = () => {
 											return (
 												<HStack key={option.name}>
 													<Radio value={option.name} >
-														{option.name} - {option.BASE_URL} - Apikey: {option.API_KEY}{' '}
+													{option.name} -{option.BASE_URL} - Apikey: {option.API_KEY}{' '} -Header {option.HEADER}
 													</Radio>
 													<Box borderLeft='2px solid' borderLeftColor='light.primary' w='1px' />
 													<Flex>
@@ -309,7 +309,7 @@ const AppSettings = () => {
 											return (
 												<HStack key={option.name}>
 													<Radio value={option.name}>
-														{option.name} -{option.BASE_URL} - Apikey: {option.API_KEY}{' '}
+														{option.name} -{option.BASE_URL} - Apikey: {option.API_KEY}{' '} -Header {option.HEADER}
 													</Radio>
 													<Box borderLeft='2px solid' borderLeftColor='light.primary' w='1px' />
 													<Flex>
