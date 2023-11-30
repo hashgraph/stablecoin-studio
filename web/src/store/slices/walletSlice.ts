@@ -1,9 +1,9 @@
 import { ConnectionState, GetListStableCoinRequest } from '@hashgraph/stablecoin-npm-sdk';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import SDKService from '../../services/SDKService';
 import type { RootState } from '../store';
 import type { IExternalToken } from '../../interfaces/IExternalToken';
 import type { IAccountToken } from '../../interfaces/IAccountToken';
-import type { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type {
 	SupportedWallets,
 	InitializationData,
@@ -13,7 +13,7 @@ import type {
 	StableCoinViewModel,
 	ProxyConfigurationViewModel,
 } from '@hashgraph/stablecoin-npm-sdk';
-import { IMirrorRPCNode } from '../../interfaces/IMirrorRPCNode';
+import type { IMirrorRPCNode } from '../../interfaces/IMirrorRPCNode';
 
 const LAST_WALLET_LS = 'lastWallet';
 const MIRROR_LIST_LS = 'mirrorList';
