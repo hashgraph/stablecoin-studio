@@ -23,8 +23,8 @@ import {
 	BladeConnector,
 	ConnectorStrategy,
 	HederaNetwork,
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+	// @ts-ignore
 } from '#blade';
 import {
 	Signer,
@@ -88,17 +88,22 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 
 	async init(network?: string): Promise<string> {
 		const currentNetwork = network ?? this.networkService.environment;
-		this.bc = await BladeConnector.init(
-			ConnectorStrategy.EXTENSION, // preferred strategy is optional
-			{
-				// dApp metadata options are optional, but are highly recommended to use
-				name: 'Stablecoin Studio',
-				description:
-					'Stablecoin Studio is an open-source SDK that makes it easy for web3 stablecoin platforms, institutional issuers, enterprises, and payment providers to build stablecoin applications on the Hedera network.',
-				url: 'https://hedera.com/stablecoin-studio',
-				icons: [],
-			},
-		);
+		try {
+			this.bc = await BladeConnector.init(
+				ConnectorStrategy.EXTENSION, // preferred strategy is optional
+				{
+					// dApp metadata options are optional, but are highly recommended to use
+					name: 'Stablecoin Studio',
+					description:
+						'Stablecoin Studio is an open-source SDK that makes it easy for web3 stablecoin platforms, institutional issuers, enterprises, and payment providers to build stablecoin applications on the Hedera network.',
+					url: 'https://hedera.com/stablecoin-studio',
+					icons: [],
+				},
+			);
+		} catch (error: any) {
+			LogService.logTrace('Error initializing Blade', error);
+			return currentNetwork;
+		}
 		LogService.logTrace('Checking for previously saved pairings: ');
 		const params = {
 			network: HederaNetwork.Testnet,
