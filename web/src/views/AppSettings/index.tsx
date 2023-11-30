@@ -25,7 +25,14 @@ import { propertyNotFound } from '../../constant';
 import InputController from '../../components/Form/InputController';
 import SwitchController from '../../components/Form/SwitchController';
 import { useDispatch, useSelector } from 'react-redux';
-import { LAST_WALLET_SELECTED, MIRROR_LIST, RPC_LIST, SELECTED_MIRROR, SELECTED_RPC, walletActions } from '../../store/slices/walletSlice';
+import {
+	LAST_WALLET_SELECTED,
+	MIRROR_LIST,
+	RPC_LIST,
+	SELECTED_MIRROR,
+	SELECTED_RPC,
+	walletActions,
+} from '../../store/slices/walletSlice';
 import SDKService from '../../services/SDKService';
 import { type IMirrorRPCNode } from '../../interfaces/IMirrorRPCNode';
 
@@ -70,12 +77,12 @@ const AppSettings = () => {
 		const newArray = arrayMirror.filter((obj: IMirrorRPCNode) => obj.name !== mirrorName);
 		setArrayMirror(newArray);
 		dispatch(walletActions.setMirrorList(newArray.filter((mirror) => mirror.isInConfig === false)));
-	};
+	}
 	function removeRPCToArray(rpcName: string) {
 		const newArray = arrayRPC.filter((obj: IMirrorRPCNode) => obj.name !== rpcName);
 		setArrayRPC(newArray);
 		dispatch(walletActions.setRPCList(newArray.filter((rpc) => rpc.isInConfig === false)));
-	};
+	}
 
 	const apiKeyMirror = useWatch({
 		control,
@@ -87,17 +94,38 @@ const AppSettings = () => {
 	});
 
 	function addMirror() {
-		const { nameMirror, urlMirror, apiKeyValueMirror, mirrorNetwork, apiKeyHeaderMirror } = getValues();
-		const newArray = [...arrayMirror, createOptionMirror(nameMirror, urlMirror, apiKeyValueMirror, mirrorNetwork.value, false, apiKeyHeaderMirror)];
+		const { nameMirror, urlMirror, apiKeyValueMirror, mirrorNetwork, apiKeyHeaderMirror } =
+			getValues();
+		const newArray = [
+			...arrayMirror,
+			createOptionMirror(
+				nameMirror,
+				urlMirror,
+				apiKeyValueMirror,
+				mirrorNetwork.value,
+				false,
+				apiKeyHeaderMirror,
+			),
+		];
 		setArrayMirror(newArray);
 		dispatch(walletActions.setMirrorList(newArray.filter((mirror) => mirror.isInConfig === false)));
 	}
 	function addRpc() {
 		const { nameRPC, urlRPC, apiKeyValueRPC, apiKeyHeaderRPC, mirrorNetwork } = getValues();
-		const newArray = [...arrayRPC, createOptionMirror(nameRPC, urlRPC, apiKeyValueRPC, mirrorNetwork.value, false, apiKeyHeaderRPC)];
+		const newArray = [
+			...arrayRPC,
+			createOptionMirror(
+				nameRPC,
+				urlRPC,
+				apiKeyValueRPC,
+				mirrorNetwork.value,
+				false,
+				apiKeyHeaderRPC,
+			),
+		];
 		setArrayRPC(newArray);
 		dispatch(walletActions.setRPCList(newArray.filter((rpc) => rpc.isInConfig === false)));
-	};
+	}
 
 	function createOptionMirror(
 		name: string,
@@ -112,9 +140,16 @@ const AppSettings = () => {
 
 	useEffect(() => {
 		if (defaultMirror !== '0') {
-			const selectedDefaultMirror = arrayMirror.find((mirror: any) => mirror.name === defaultMirror);
+			const selectedDefaultMirror = arrayMirror.find(
+				(mirror: any) => mirror.name === defaultMirror,
+			);
 			dispatch(walletActions.setSelectedMirror(selectedDefaultMirror));
-			SDKService.connectWallet(selectedWallet!, selectedDefaultMirror!.Environment.toLocaleLowerCase(), selectedDefaultMirror, selectedRPC);
+			SDKService.connectWallet(
+				selectedWallet!,
+				selectedDefaultMirror!.Environment.toLocaleLowerCase(),
+				selectedDefaultMirror,
+				selectedRPC,
+			);
 		}
 	}, [defaultMirror]);
 
@@ -122,7 +157,12 @@ const AppSettings = () => {
 		if (defaultRPC !== '0') {
 			const selectedDefaultRPC = arrayRPC.find((rpc: any) => rpc.name === defaultRPC);
 			dispatch(walletActions.setSelectedRPC(selectedDefaultRPC));
-			SDKService.connectWallet(selectedWallet!, selectedDefaultRPC!.Environment.toLocaleLowerCase(), selectedMirror, selectedDefaultRPC);
+			SDKService.connectWallet(
+				selectedWallet!,
+				selectedDefaultRPC!.Environment.toLocaleLowerCase(),
+				selectedMirror,
+				selectedDefaultRPC,
+			);
 		}
 	}, [defaultRPC]);
 
@@ -133,16 +173,21 @@ const AppSettings = () => {
 		let mirrors: IMirrorRPCNode[] = [];
 
 		if (process.env.REACT_APP_MIRROR_NODE) {
-			mirrors = setNodeArrayByNetwork(JSON.parse(process.env.REACT_APP_MIRROR_NODE), mirrorNetwork.value);
+			mirrors = setNodeArrayByNetwork(
+				JSON.parse(process.env.REACT_APP_MIRROR_NODE),
+				mirrorNetwork.value,
+			);
 		}
 		if (mirrorList) {
 			mirrorList
 				.filter((obj) => obj.Environment !== undefined)
-				.filter((obj) => obj.Environment.toLocaleLowerCase() === mirrorNetwork.value.toLocaleLowerCase())
+				.filter(
+					(obj) => obj.Environment.toLocaleLowerCase() === mirrorNetwork.value.toLocaleLowerCase(),
+				)
 				.forEach((obj) => mirrors.push(obj));
 		}
 		setArrayMirror(mirrors);
-	};
+	}
 
 	async function handleTypeChangeRPC(): Promise<void> {
 		const { rpcNetwork } = getValues();
@@ -156,11 +201,13 @@ const AppSettings = () => {
 		if (rpcList) {
 			rpcList
 				.filter((obj) => obj.Environment !== undefined)
-				.filter((obj) => obj.Environment.toLocaleLowerCase() === rpcNetwork.value.toLocaleLowerCase())
+				.filter(
+					(obj) => obj.Environment.toLocaleLowerCase() === rpcNetwork.value.toLocaleLowerCase(),
+				)
 				.forEach((obj) => rpcs.push(obj));
 		}
 		setArrayRPC(rpcs);
-	};
+	}
 
 	function setNodeArrayByNetwork(list: IMirrorRPCNode[], network: string): IMirrorRPCNode[] {
 		const nodes: IMirrorRPCNode[] = list
@@ -174,9 +221,10 @@ const AppSettings = () => {
 					obj.Environment,
 					true,
 					obj.HEADER,
-				));
+				),
+			);
 		return nodes;
-	};
+	}
 
 	return (
 		<BaseContainer title={t('title')}>
@@ -204,12 +252,17 @@ const AppSettings = () => {
 									onChangeAux={() => handleTypeChangeMirror()}
 								/>
 								<Stack display={!showContentMirror ? 'none' : 'block'}>
-									<RadioGroup onChange={setDefaultMirror} defaultValue={selectedMirror?.name} name="radioMirror">
+									<RadioGroup
+										onChange={setDefaultMirror}
+										defaultValue={selectedMirror?.name}
+										name='radioMirror'
+									>
 										{arrayMirror.map((option: IMirrorRPCNode) => {
 											return (
 												<HStack key={option.name}>
-													<Radio value={option.name} >
-													{option.name} -{option.BASE_URL} - Apikey: {option.API_KEY}{' '} -Header {option.HEADER}
+													<Radio value={option.name}>
+														{option.name} -{option.BASE_URL} - Apikey: {option.API_KEY} -Header{' '}
+														{option.HEADER}
 													</Radio>
 													<Box borderLeft='2px solid' borderLeftColor='light.primary' w='1px' />
 													<Flex>
@@ -299,12 +352,17 @@ const AppSettings = () => {
 									onChangeAux={() => handleTypeChangeRPC()}
 								/>
 								<Stack display={!showContentRPC ? 'none' : 'block'}>
-									<RadioGroup onChange={setDefaultRPC} defaultValue={selectedRPC?.name} name="radioRPC">
+									<RadioGroup
+										onChange={setDefaultRPC}
+										defaultValue={selectedRPC?.name}
+										name='radioRPC'
+									>
 										{arrayRPC.map((option: IMirrorRPCNode) => {
 											return (
 												<HStack key={option.name}>
 													<Radio value={option.name}>
-														{option.name} -{option.BASE_URL} - Apikey: {option.API_KEY}{' '} -Header {option.HEADER}
+														{option.name} -{option.BASE_URL} - Apikey: {option.API_KEY} -Header{' '}
+														{option.HEADER}
 													</Radio>
 													<Box borderLeft='2px solid' borderLeftColor='light.primary' w='1px' />
 													<Flex>

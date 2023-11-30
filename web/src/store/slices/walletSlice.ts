@@ -1,9 +1,9 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { ConnectionState, GetListStableCoinRequest } from '@hashgraph/stablecoin-npm-sdk';
 import SDKService from '../../services/SDKService';
 import type { RootState } from '../store';
 import type { IExternalToken } from '../../interfaces/IExternalToken';
 import type { IAccountToken } from '../../interfaces/IAccountToken';
+import type { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type {
 	SupportedWallets,
 	InitializationData,
@@ -87,7 +87,7 @@ export const initialState: InitialStateProps = {
 	mirrorList: [],
 	selectedMirror: undefined,
 	rpcList: [],
-	selectedRPC: undefined
+	selectedRPC: undefined,
 };
 
 export const getStableCoinList = createAsyncThunk(
@@ -341,24 +341,24 @@ export const MIRROR_LIST = (state: RootState) => {
 	if (list) {
 		return JSON.parse(list);
 	} else return state.wallet.mirrorList;
-}
+};
 export const SELECTED_MIRROR = (state: RootState) => {
 	const mirror = localStorage?.getItem(SELECTED_MIRROR_LS);
 	if (mirror) {
 		return JSON.parse(mirror);
 	} else return state.wallet.selectedMirror;
-}
+};
 export const RPC_LIST = (state: RootState) => {
 	const list = localStorage?.getItem(RPC_LIST_LS);
 	if (list) {
 		return JSON.parse(list);
 	} else return state.wallet.rpcList;
-}
+};
 export const SELECTED_RPC = (state: RootState) => {
 	const rpc = localStorage?.getItem(SELECTED_RPC_LS);
 	if (rpc) {
 		return JSON.parse(rpc);
 	} else return state.wallet.selectedRPC;
-}
+};
 
 export const walletActions = walletSlice.actions;

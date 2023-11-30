@@ -71,7 +71,6 @@ import { type IMirrorRPCNode } from '../interfaces/IMirrorRPCNode';
 
 export type StableCoinListRaw = Array<Record<'id' | 'symbol', string>>;
 
-
 export class SDKService {
 	static initData?: InitializationData = undefined;
 
@@ -80,38 +79,43 @@ export class SDKService {
 		return !!this.initData;
 	}
 
-	public static async connectWallet(wallet: SupportedWallets, connectNetwork: string, selectedMirror?: IMirrorRPCNode , selectedRPC?: IMirrorRPCNode ) {
+	public static async connectWallet(
+		wallet: SupportedWallets,
+		connectNetwork: string,
+		selectedMirror?: IMirrorRPCNode,
+		selectedRPC?: IMirrorRPCNode,
+	) {
 		let mirrorNode = []; // REACT_APP_MIRROR_NODE load from .env
-		console.log("selectedMirror", selectedMirror)
-		console.log("selectedRPC", selectedRPC)
+		console.log('selectedMirror', selectedMirror);
+		console.log('selectedRPC', selectedRPC);
 
 		if (selectedMirror) {
-			mirrorNode = [selectedMirror]
+			mirrorNode = [selectedMirror];
 		} else if (process.env.REACT_APP_MIRROR_NODE) {
 			mirrorNode = JSON.parse(process.env.REACT_APP_MIRROR_NODE);
 		}
 		const mirrorNodeFiltered = mirrorNode.find((i: any) => i.Environment === connectNetwork);
-		const _mirrorNode = mirrorNodeFiltered ?
-			{
-				baseUrl: mirrorNodeFiltered.BASE_URL ?? '',
-				apiKey: mirrorNodeFiltered.API_KEY ?? '',
-				headerName: mirrorNodeFiltered.HEADER ?? '',
-			}
+		const _mirrorNode = mirrorNodeFiltered
+			? {
+					baseUrl: mirrorNodeFiltered.BASE_URL ?? '',
+					apiKey: mirrorNodeFiltered.API_KEY ?? '',
+					headerName: mirrorNodeFiltered.HEADER ?? '',
+			  }
 			: { baseUrl: '', apiKey: '', headerName: '' };
 
 		let rpcNode = []; // REACT_APP_RPC_NODE load from .env
 		if (selectedRPC) {
-			rpcNode = [selectedRPC]
+			rpcNode = [selectedRPC];
 		} else if (process.env.REACT_APP_RPC_NODE) {
 			rpcNode = JSON.parse(process.env.REACT_APP_RPC_NODE);
 		}
 		const rpcNodeFiltered = rpcNode.find((i: any) => i.Environment === connectNetwork);
-		const _rpcNode = rpcNodeFiltered ?
-			{
-				baseUrl: rpcNodeFiltered.BASE_URL ?? '',
-				apiKey: rpcNodeFiltered.API_KEY ?? '',
-				headerName: rpcNodeFiltered.HEADER ?? '',
-			}
+		const _rpcNode = rpcNodeFiltered
+			? {
+					baseUrl: rpcNodeFiltered.BASE_URL ?? '',
+					apiKey: rpcNodeFiltered.API_KEY ?? '',
+					headerName: rpcNodeFiltered.HEADER ?? '',
+			  }
 			: { baseUrl: '', apiKey: '', headerName: '' };
 
 		await Network.setNetwork(
