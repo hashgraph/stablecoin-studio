@@ -56,6 +56,15 @@ const Sidebar = () => {
 			route: NamedRoutes.Settings,
 		},
 	];
+	const appProperties: optionsProps = {
+		icon: 'ShareNetwork',
+		title: t('sidebar.appSettings'),
+		route: NamedRoutes.AppSettings,
+	};
+
+	if (process.env.REACT_APP_SHOW_CONFIG === 'true') {
+		options.push(appProperties);
+	}
 
 	return (
 		<Flex
