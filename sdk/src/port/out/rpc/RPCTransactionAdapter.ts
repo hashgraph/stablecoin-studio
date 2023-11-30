@@ -1273,7 +1273,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					name: SupportedWallets.METAMASK,
 				});
 				if (ethProvider.isMetaMask) {
-					if (!ethereum.isConnected())
+					if (pair && !ethereum.isConnected())
 						throw new WalletConnectError(
 							'Metamask is not connected!',
 						);
