@@ -18,6 +18,7 @@
  *
  */
 
+/* eslint-disable jest/no-disabled-tests */
 import Injectable from '../../../src/core/Injectable.js';
 import {
 	Account,
