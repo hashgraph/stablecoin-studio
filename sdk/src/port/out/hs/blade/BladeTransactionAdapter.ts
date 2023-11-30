@@ -100,10 +100,21 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 					icons: [],
 				},
 			);
+			this.signer = this.bc.getSigner();
 		} catch (error: any) {
 			LogService.logTrace('Error initializing Blade', error);
 			return currentNetwork;
 		}
+		LogService.logTrace('Client Initialized');
+		this.eventService.emit(WalletEvents.walletFound, {
+			wallet: SupportedWallets.BLADE,
+			name: SupportedWallets.BLADE,
+		});
+
+		return Promise.resolve(currentNetwork);
+	}
+
+	async register(): Promise<InitializationData> {
 		LogService.logTrace('Checking for previously saved pairings: ');
 		const params = {
 			network: HederaNetwork.Testnet,
@@ -122,18 +133,13 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 			}
 		}
 
-		this.setSigner(currentNetwork);
-		this.eventService.emit(WalletEvents.walletFound, {
-			wallet: SupportedWallets.BLADE,
-			name: SupportedWallets.BLADE,
-		});
 		const iniData: InitializationData = {
 			account: this.account,
 		};
 		this.eventService.emit(WalletEvents.walletPaired, {
 			data: iniData,
 			network: {
-				name: currentNetwork,
+				name: this.networkService.environment,
 				recognized: true,
 				factoryId: this.networkService.configuration
 					? this.networkService.configuration.factoryAddress
@@ -143,14 +149,6 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 		});
 		LogService.logTrace('Previous paring found: ', this.account);
 
-		return currentNetwork;
-	}
-
-	private async setSigner(network: string): Promise<void> {
-		this.signer = this.bc.getSigner();
-	}
-
-	async register(): Promise<InitializationData> {
 		Injectable.registerTransactionHandler(this);
 		LogService.logTrace('Blade Registered as handler');
 		this.init();

@@ -86,9 +86,6 @@ export class SDKService {
 		selectedRPC?: IMirrorRPCNode,
 	) {
 		let mirrorNode = []; // REACT_APP_MIRROR_NODE load from .env
-		console.log('selectedMirror', selectedMirror);
-		console.log('selectedRPC', selectedRPC);
-
 		if (selectedMirror) {
 			mirrorNode = [selectedMirror];
 		} else if (process.env.REACT_APP_MIRROR_NODE) {
