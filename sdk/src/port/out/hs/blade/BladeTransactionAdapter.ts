@@ -23,8 +23,8 @@ import {
 	BladeConnector,
 	ConnectorStrategy,
 	HederaNetwork,
-	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-	// @ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 } from '#blade';
 import {
 	Signer,
@@ -162,9 +162,6 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 		if (this.bc) await this.bc.killSession();
 
 		LogService.logTrace('Blade stopped');
-		/*this.eventService.emit(WalletEvents.walletDisconnect, {
-			wallet: SupportedWallets.BLADE,
-		});*/
 		return Promise.resolve(true);
 	}
 
@@ -187,15 +184,6 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 				signedT = await t.freezeWithSigner(this.signer);
 			}
 			const trx = await this.signer.signTransaction(signedT);
-			const hashPackTrx = {
-				//topic: this.initData.topic,
-				byteArray: trx.toBytes(),
-				metadata: {
-					accountToSign: this.account.id.toString(),
-					returnTransaction: false,
-					getRecord: true,
-				},
-			};
 			let hashPackTransactionResponse;
 			if (
 				t instanceof TokenCreateTransaction ||
@@ -216,22 +204,8 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 				hashPackTransactionResponse = await t.executeWithSigner(
 					this.signer,
 				);
-				/*this.logTransaction(
-					JSON.parse(
-						JSON.stringify(hashPackTransactionResponse),
-					).response.transactionId.toString(),
-					this.networkService.environment,
-				);*/
 			} else {
 				hashPackTransactionResponse = await this.signer.call(trx);
-				/*this.logTransaction(
-					hashPackTransactionResponse
-						? (hashPackTransactionResponse as any).transactionId ??
-								''
-						: (hashPackTransactionResponse as any).transactionId ??
-								'',
-					this.networkService.environment,
-				);*/
 			}
 			return HashpackTransactionResponseAdapter.manageResponse(
 				this.networkService.environment,
@@ -246,9 +220,8 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 			throw new SigningError(error);
 		}
 	}
-	public async restart(network: string): Promise<void> {
+	public async restart(): Promise<void> {
 		await this.stop();
-		//await this.init(network);
 	}
 
 	getAccount(): Account {
