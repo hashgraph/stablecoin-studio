@@ -73,6 +73,7 @@ const ModalWalletConnect = () => {
 	const [error, setError] = useState<any>();
 	const [rejected, setRejected] = useState<boolean>(false);
 	const [hashpackSelected, setHashpackSelected] = useState<boolean>(false);
+	const [bladeSelected, setBladeSelected] = useState<boolean>(false);
 	const availableWallets = useSelector(AVAILABLE_WALLETS);
 
 	const { control, getValues } = useForm({
@@ -161,6 +162,17 @@ const ModalWalletConnect = () => {
 
 	const handleConnectBladeWallet = () => {
 		handleWalletConnect(SupportedWallets.BLADE, 'testnet');
+		setBladeSelected(true);
+	};
+
+	const unHandleConnectBladeWallet = () => {
+		setBladeSelected(false);
+		setLoading(undefined);
+	};
+
+	const handleConnectBladeWalletConfirmed = () => {
+		const values = getValues();
+		handleWalletConnect(SupportedWallets.BLADE, values.network.value);
 	};
 
 	const PairingSpinner: FC<{ wallet: SupportedWallets; children?: ReactNode }> = ({
@@ -198,7 +210,7 @@ const ModalWalletConnect = () => {
 			>
 				<ModalOverlay />
 				<ModalContent data-testid='modal-action-content' p='50' w='600px'>
-					{!error && !rejected && !hashpackSelected && (
+					{!error && !rejected && !hashpackSelected && !bladeSelected && (
 						<>
 							<ModalHeader p='0' justifyContent='center'>
 								<Text
@@ -332,6 +344,51 @@ const ModalWalletConnect = () => {
 										<Button
 											data-testid='modal-notification-button'
 											onClick={handleConnectHashpackWalletConfirmed}
+											variant='primary'
+										>
+											{t('common.accept')}
+										</Button>
+									</HStack>
+								</VStack>
+							</ModalFooter>
+						</>
+					)}
+					{bladeSelected && (
+						<>
+							<ModalHeader p='0' justifyContent='center'>
+								<Text
+									fontSize='20px'
+									fontWeight={700}
+									textAlign='center'
+									lineHeight='16px'
+									color='brand.black'
+								>
+									{t('walletActions.selectWallet')}
+								</Text>
+							</ModalHeader>
+							<ModalFooter alignSelf='center' pt='24px' pb='0'>
+								<VStack>
+									<SelectController
+										control={control}
+										isRequired
+										name='network'
+										defaultValue='0'
+										options={networkOptions}
+										addonLeft={true}
+										overrideStyles={stylesNetworkOptions}
+										variant='unstyled'
+									/>
+									<HStack>
+										<Button
+											data-testid='modal-notification-button'
+											onClick={unHandleConnectBladeWallet}
+											variant='secondary'
+										>
+											{t('common.cancel')}
+										</Button>
+										<Button
+											data-testid='modal-notification-button'
+											onClick={handleConnectBladeWalletConfirmed}
 											variant='primary'
 										>
 											{t('common.accept')}
