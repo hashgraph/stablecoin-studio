@@ -27,6 +27,12 @@ export const cashinLimitOptions = [
 	{ value: 'CHECK', label: 'Check cash in limit' },
 ];
 
+export const networkOptions = [
+	{ value: 'TESTNET', label: 'Tesnet' },
+	{ value: 'PREVIEWNET', label: 'Previewnet' },
+	{ value: 'MAINNET', label: 'Mainnet' },
+];
+
 export const fields = {
 	amount: 'amount',
 	account: 'account',

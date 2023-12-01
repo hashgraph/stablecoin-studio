@@ -1,5 +1,5 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { ConnectionState, GetListStableCoinRequest } from '@hashgraph/stablecoin-npm-sdk';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import SDKService from '../../services/SDKService';
 import type { RootState } from '../store';
 import type { IExternalToken } from '../../interfaces/IExternalToken';
@@ -13,6 +13,13 @@ import type {
 	StableCoinViewModel,
 	ProxyConfigurationViewModel,
 } from '@hashgraph/stablecoin-npm-sdk';
+import type { IMirrorRPCNode } from '../../interfaces/IMirrorRPCNode';
+
+const LAST_WALLET_LS = 'lastWallet';
+const MIRROR_LIST_LS = 'mirrorList';
+const SELECTED_MIRROR_LS = 'selectedMirror';
+const RPC_LIST_LS = 'rpcList';
+const SELECTED_RPC_LS = 'selectedRPC';
 
 export interface InitialStateProps {
 	data?: InitializationData;
@@ -43,6 +50,10 @@ export interface InitialStateProps {
 	networkRecognized?: boolean;
 	accountRecognized?: boolean;
 	factoryId?: string;
+	mirrorList?: IMirrorRPCNode[];
+	selectedMirror?: IMirrorRPCNode;
+	rpcList?: IMirrorRPCNode[];
+	selectedRPC?: IMirrorRPCNode;
 }
 
 export const initialState: InitialStateProps = {
@@ -58,7 +69,7 @@ export const initialState: InitialStateProps = {
 	stableCoinList: undefined,
 	externalTokenList: [],
 	capabilities: undefined,
-	lastWallet: (localStorage?.getItem('lastWallet') as SupportedWallets) ?? undefined,
+	lastWallet: (localStorage?.getItem(LAST_WALLET_LS) as SupportedWallets) ?? undefined,
 	status: ConnectionState.Disconnected,
 	deletedToken: undefined,
 	pausedToken: undefined,
@@ -73,6 +84,10 @@ export const initialState: InitialStateProps = {
 	isFactoryAcceptOwner: false,
 	accountRecognized: true,
 	factoryId: undefined,
+	mirrorList: [],
+	selectedMirror: undefined,
+	rpcList: [],
+	selectedRPC: undefined,
 };
 
 export const getStableCoinList = createAsyncThunk(
@@ -127,7 +142,6 @@ export const getExternalTokenList = createAsyncThunk(
 	},
 );
 
-const LAST_WALLET_LS = 'lastWallet';
 export const walletSlice = createSlice({
 	name: 'wallet',
 	initialState,
@@ -208,6 +222,22 @@ export const walletSlice = createSlice({
 		},
 		setFactoryId: (state, action) => {
 			state.factoryId = action.payload;
+		},
+		setMirrorList: (state, action) => {
+			state.mirrorList = action.payload;
+			localStorage.setItem(MIRROR_LIST_LS, JSON.stringify(action.payload));
+		},
+		setSelectedMirror: (state, action) => {
+			state.selectedMirror = action.payload;
+			localStorage.setItem(SELECTED_MIRROR_LS, JSON.stringify(action.payload));
+		},
+		setRPCList: (state, action) => {
+			state.rpcList = action.payload;
+			localStorage.setItem(RPC_LIST_LS, JSON.stringify(action.payload));
+		},
+		setSelectedRPC: (state, action) => {
+			state.selectedRPC = action.payload;
+			localStorage.setItem(SELECTED_RPC_LS, JSON.stringify(action.payload));
 		},
 		clearData: (state) => {
 			state.data = initialState.data;
@@ -305,6 +335,30 @@ export const SELECTED_TOKEN_RESERVE_ADDRESS = (state: RootState) =>
 	state.wallet.selectedStableCoin?.reserveAddress;
 export const SELECTED_TOKEN_RESERVE_AMOUNT = (state: RootState) =>
 	state.wallet.selectedStableCoin?.reserveAmount;
-
 export const SELECTED_TOKEN_ROLES = (state: RootState) => state.wallet.roles;
+export const MIRROR_LIST = (state: RootState) => {
+	const list = localStorage?.getItem(MIRROR_LIST_LS);
+	if (list) {
+		return JSON.parse(list);
+	} else return state.wallet.mirrorList;
+};
+export const SELECTED_MIRROR = (state: RootState) => {
+	const mirror = localStorage?.getItem(SELECTED_MIRROR_LS);
+	if (mirror) {
+		return JSON.parse(mirror);
+	} else return state.wallet.selectedMirror;
+};
+export const RPC_LIST = (state: RootState) => {
+	const list = localStorage?.getItem(RPC_LIST_LS);
+	if (list) {
+		return JSON.parse(list);
+	} else return state.wallet.rpcList;
+};
+export const SELECTED_RPC = (state: RootState) => {
+	const rpc = localStorage?.getItem(SELECTED_RPC_LS);
+	if (rpc) {
+		return JSON.parse(rpc);
+	} else return state.wallet.selectedRPC;
+};
+
 export const walletActions = walletSlice.actions;

@@ -1,6 +1,6 @@
 {
     "name": "@hashgraph/stablecoin-npm-contracts",
-    "version": "1.10.0",
+    "version": "1.11.0",
     "description": "",
     "main": "./build/typechain-types/index.js",
     "module": "./build/typechain-types/index.js",
@@ -122,7 +122,7 @@
         "@chainlink/contracts": "^0.5.1",
         "@openzeppelin/contracts": "^4.8.2",
         "@openzeppelin/contracts-upgradeable": "^4.8.2",
-        "@hashgraph/smart-contracts": "github:hashgraph/hedera-smart-contracts#v0.4.0",
+        "@hashgraph/smart-contracts": "github:hashgraph/hedera-smart-contracts#v0.6.0",
         "chai-as-promised": "^7.1.1",
         "dotenv": "^16.0.3",
         "ethers": "5.7.2",

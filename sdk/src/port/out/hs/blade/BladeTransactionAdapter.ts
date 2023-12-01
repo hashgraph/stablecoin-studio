@@ -88,17 +88,33 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 
 	async init(network?: string): Promise<string> {
 		const currentNetwork = network ?? this.networkService.environment;
-		this.bc = await BladeConnector.init(
-			ConnectorStrategy.EXTENSION, // preferred strategy is optional
-			{
-				// dApp metadata options are optional, but are highly recommended to use
-				name: 'Stablecoin Studio',
-				description:
-					'Stablecoin Studio is an open-source SDK that makes it easy for web3 stablecoin platforms, institutional issuers, enterprises, and payment providers to build stablecoin applications on the Hedera network.',
-				url: 'https://hedera.com/stablecoin-studio',
-				icons: [],
-			},
-		);
+		try {
+			this.bc = await BladeConnector.init(
+				ConnectorStrategy.EXTENSION, // preferred strategy is optional
+				{
+					// dApp metadata options are optional, but are highly recommended to use
+					name: 'Stablecoin Studio',
+					description:
+						'Stablecoin Studio is an open-source SDK that makes it easy for web3 stablecoin platforms, institutional issuers, enterprises, and payment providers to build stablecoin applications on the Hedera network.',
+					url: 'https://hedera.com/stablecoin-studio',
+					icons: [],
+				},
+			);
+			this.signer = this.bc.getSigner();
+		} catch (error: any) {
+			LogService.logTrace('Error initializing Blade', error);
+			return currentNetwork;
+		}
+		LogService.logTrace('Client Initialized');
+		this.eventService.emit(WalletEvents.walletFound, {
+			wallet: SupportedWallets.BLADE,
+			name: SupportedWallets.BLADE,
+		});
+
+		return Promise.resolve(currentNetwork);
+	}
+
+	async register(): Promise<InitializationData> {
 		LogService.logTrace('Checking for previously saved pairings: ');
 		const params = {
 			network: HederaNetwork.Testnet,
@@ -117,18 +133,13 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 			}
 		}
 
-		this.setSigner(currentNetwork);
-		this.eventService.emit(WalletEvents.walletFound, {
-			wallet: SupportedWallets.BLADE,
-			name: SupportedWallets.BLADE,
-		});
 		const iniData: InitializationData = {
 			account: this.account,
 		};
 		this.eventService.emit(WalletEvents.walletPaired, {
 			data: iniData,
 			network: {
-				name: currentNetwork,
+				name: this.networkService.environment,
 				recognized: true,
 				factoryId: this.networkService.configuration
 					? this.networkService.configuration.factoryAddress
@@ -138,14 +149,6 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 		});
 		LogService.logTrace('Previous paring found: ', this.account);
 
-		return currentNetwork;
-	}
-
-	private async setSigner(network: string): Promise<void> {
-		this.signer = this.bc.getSigner();
-	}
-
-	async register(): Promise<InitializationData> {
 		Injectable.registerTransactionHandler(this);
 		LogService.logTrace('Blade Registered as handler');
 		this.init();
@@ -159,9 +162,6 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 		if (this.bc) await this.bc.killSession();
 
 		LogService.logTrace('Blade stopped');
-		/*this.eventService.emit(WalletEvents.walletDisconnect, {
-			wallet: SupportedWallets.BLADE,
-		});*/
 		return Promise.resolve(true);
 	}
 
@@ -184,15 +184,6 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 				signedT = await t.freezeWithSigner(this.signer);
 			}
 			const trx = await this.signer.signTransaction(signedT);
-			const hashPackTrx = {
-				//topic: this.initData.topic,
-				byteArray: trx.toBytes(),
-				metadata: {
-					accountToSign: this.account.id.toString(),
-					returnTransaction: false,
-					getRecord: true,
-				},
-			};
 			let hashPackTransactionResponse;
 			if (
 				t instanceof TokenCreateTransaction ||
@@ -213,22 +204,8 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 				hashPackTransactionResponse = await t.executeWithSigner(
 					this.signer,
 				);
-				/*this.logTransaction(
-					JSON.parse(
-						JSON.stringify(hashPackTransactionResponse),
-					).response.transactionId.toString(),
-					this.networkService.environment,
-				);*/
 			} else {
 				hashPackTransactionResponse = await this.signer.call(trx);
-				/*this.logTransaction(
-					hashPackTransactionResponse
-						? (hashPackTransactionResponse as any).transactionId ??
-								''
-						: (hashPackTransactionResponse as any).transactionId ??
-								'',
-					this.networkService.environment,
-				);*/
 			}
 			return HashpackTransactionResponseAdapter.manageResponse(
 				this.networkService.environment,
@@ -243,9 +220,8 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 			throw new SigningError(error);
 		}
 	}
-	public async restart(network: string): Promise<void> {
+	public async restart(): Promise<void> {
 		await this.stop();
-		//await this.init(network);
 	}
 
 	getAccount(): Account {

@@ -28,6 +28,7 @@ export enum NamedRoutes {
 	ProofOfReserve = 'proofOfReserve',
 	FeesManagement = 'feesManagement',
 	Settings = 'settings',
+	AppSettings = 'appSettings',
 	StableCoinSettings = 'stableCoinSettings',
 	FactorySettings = 'factorySettings',
 }
