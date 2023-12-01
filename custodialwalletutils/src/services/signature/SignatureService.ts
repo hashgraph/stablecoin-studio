@@ -1,8 +1,8 @@
 import { SignatureStrategyFactory } from "../../factories/SignatureStrategyFactory";
-import { ISignatureRequest } from "../../models/signature/ISignatureRequest";
+import { SignatureRequest } from "../../models/signature/SignatureRequest";
 
 export class SignatureService {
-  signTransaction(signatureRequest: ISignatureRequest): Promise<Uint8Array> {
+  signTransaction(signatureRequest: SignatureRequest): Promise<Uint8Array> {
     // By using the factory we will get the correct strategy
     const strategy = SignatureStrategyFactory.createStrategy(signatureRequest);
     // We will use the strategy to sign the transaction

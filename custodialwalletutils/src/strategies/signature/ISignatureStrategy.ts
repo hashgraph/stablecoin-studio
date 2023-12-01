@@ -1,5 +1,5 @@
-import { ISignatureRequest } from "../../models/signature/ISignatureRequest";
+import { SignatureRequest } from "../../models/signature/SignatureRequest";
 
 export interface ISignatureStrategy {
-  sign(request: ISignatureRequest): Promise<Uint8Array>;
+  sign(request: SignatureRequest): Promise<Uint8Array>;
 }
