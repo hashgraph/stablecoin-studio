@@ -117,18 +117,24 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 
 	async connectBlade(pair = true, network?: string): Promise<string> {
 		const currentNetwork = network ?? this.networkService.environment;
-		this.bc = await BladeConnector.init(
-			ConnectorStrategy.EXTENSION, // preferred strategy is optional
-			{
-				// dApp metadata options are optional, but are highly recommended to use
-				name: 'Stablecoin Studio',
-				description:
-					'Stablecoin Studio is an open-source SDK that makes it easy for web3 stablecoin platforms, institutional issuers, enterprises, and payment providers to build stablecoin applications on the Hedera network.',
-				url: 'https://hedera.com/stablecoin-studio',
-				icons: [],
-			},
-		);
-
+		try {
+			this.bc = await BladeConnector.init(
+				ConnectorStrategy.EXTENSION, // preferred strategy is optional
+				{
+					// dApp metadata options are optional, but are highly recommended to use
+					name: 'Stablecoin Studio',
+					description:
+						'Stablecoin Studio is an open-source SDK that makes it easy for web3 stablecoin platforms, institutional issuers, enterprises, and payment providers to build stablecoin applications on the Hedera network.',
+					url: 'https://hedera.com/stablecoin-studio',
+					icons: [],
+				},
+			);
+			this.setSigner();
+		} catch (error: any) {
+			LogService.logTrace('Error initializing Blade', error);
+			return currentNetwork;
+		}
+		LogService.logTrace('Client Initialized');
 		this.eventService.emit(WalletEvents.walletFound, {
 			wallet: SupportedWallets.BLADE,
 			name: SupportedWallets.BLADE,
