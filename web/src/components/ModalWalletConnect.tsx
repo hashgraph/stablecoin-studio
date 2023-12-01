@@ -145,7 +145,7 @@ const ModalWalletConnect = () => {
 
 	const handleConnectHashpackWalletConfirmed = () => {
 		const values = getValues();
-		handleWalletConnect(SupportedWallets.HASHPACK, values.network.value);
+		handleWalletConnect(SupportedWallets.HASHPACK, values.networkHashpack.value);
 	};
 
 	const networkOptions = [{ value: 'testnet', label: 'Testnet' }];
@@ -171,7 +171,7 @@ const ModalWalletConnect = () => {
 
 	const handleConnectBladeWalletConfirmed = () => {
 		const values = getValues();
-		handleWalletConnect(SupportedWallets.BLADE, values.network.value);
+		handleWalletConnect(SupportedWallets.BLADE, values.networkBlade.value);
 	};
 
 	const PairingSpinner: FC<{ wallet: SupportedWallets; children?: ReactNode }> = ({
@@ -325,7 +325,7 @@ const ModalWalletConnect = () => {
 									<SelectController
 										control={control}
 										isRequired
-										name='network'
+										name='networkHashpack'
 										defaultValue='0'
 										options={networkOptions}
 										addonLeft={true}
@@ -334,14 +334,14 @@ const ModalWalletConnect = () => {
 									/>
 									<HStack>
 										<Button
-											data-testid='modal-notification-button'
+											data-testid='modal-notification-button-Hashpack'
 											onClick={unHandleConnectHashpackWallet}
 											variant='secondary'
 										>
 											{t('common.cancel')}
 										</Button>
 										<Button
-											data-testid='modal-notification-button'
+											data-testid='modal-notification-button-Hashpack'
 											onClick={handleConnectHashpackWalletConfirmed}
 											variant='primary'
 										>
@@ -370,7 +370,7 @@ const ModalWalletConnect = () => {
 									<SelectController
 										control={control}
 										isRequired
-										name='network'
+										name='networkBlade'
 										defaultValue='0'
 										options={networkOptions}
 										addonLeft={true}
@@ -379,14 +379,14 @@ const ModalWalletConnect = () => {
 									/>
 									<HStack>
 										<Button
-											data-testid='modal-notification-button'
+											data-testid='modal-notification-button-Blade'
 											onClick={unHandleConnectBladeWallet}
 											variant='secondary'
 										>
 											{t('common.cancel')}
 										</Button>
 										<Button
-											data-testid='modal-notification-button'
+											data-testid='modal-notification-button-Blade'
 											onClick={handleConnectBladeWalletConfirmed}
 											variant='primary'
 										>
