@@ -161,7 +161,6 @@ const ModalWalletConnect = () => {
 	};
 
 	const handleConnectBladeWallet = () => {
-		handleWalletConnect(SupportedWallets.BLADE, 'testnet');
 		setBladeSelected(true);
 	};
 

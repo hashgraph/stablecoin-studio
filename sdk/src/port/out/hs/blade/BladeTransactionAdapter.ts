@@ -97,10 +97,6 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 			wallet: SupportedWallets.BLADE,
 		};
 		this.eventService.emit(WalletEvents.walletInit, eventData);
-		this.eventService.emit(WalletEvents.walletFound, {
-			wallet: SupportedWallets.BLADE,
-			name: SupportedWallets.BLADE,
-		});
 
 		return currentNetwork;
 	}
@@ -133,6 +129,11 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 			},
 		);
 
+		this.eventService.emit(WalletEvents.walletFound, {
+			wallet: SupportedWallets.BLADE,
+			name: SupportedWallets.BLADE,
+		});
+
 		if (pair) {
 			LogService.logTrace('Checking for previously saved pairings: ');
 			const bladeNetwork =
@@ -159,10 +160,7 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 			}
 
 			this.setSigner();
-			this.eventService.emit(WalletEvents.walletFound, {
-				wallet: SupportedWallets.BLADE,
-				name: SupportedWallets.BLADE,
-			});
+
 			const iniData: InitializationData = {
 				account: this.account,
 			};
