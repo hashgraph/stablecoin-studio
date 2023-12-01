@@ -281,16 +281,15 @@ const ModalWalletConnect = () => {
 											</PairingSpinner>
 										</VStack>
 									) : (
-										<VStack
-											data-testid='Blade'
-											{...styles.providerStyle}
-											shouldWrapChildren
-											onClick={handleConnectBladeWallet}
-										>
-											<PairingSpinner wallet={SupportedWallets.BLADE}>
+										<VStack data-testid='Blade' {...styles.providerStyle}>
+											<Link
+												href='https://bladewallet.io/'
+												isExternal
+												_hover={{ textDecoration: 'none' }}
+											>
 												<Image src={BLADE_LOGO_PNG} w={20} />
 												<Text textAlign='center'>Blade</Text>
-											</PairingSpinner>
+											</Link>
 										</VStack>
 									)}
 								</HStack>

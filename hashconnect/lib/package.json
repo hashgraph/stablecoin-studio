@@ -1,6 +1,6 @@
 {
   "name": "@hashgraph/hashconnect",
-  "version": "1.10.0",
+  "version": "1.11.0",
   "description": "hashconnect interoperability library",
   "author": "Tyler Coté <tyler@hashpack.app>, Nick Hanna <nick@hashpack.app>",
   "license": "MIT",
@@ -87,7 +87,7 @@
     "yarn": "^1.22.17"
   },
   "dependencies": {
-    "@hashgraph/sdk": "^2.23.0",
+    "@hashgraph/sdk": "2.38.0",
     "@hashgraph/cryptography": "1.4.3",
     "buffer": "^6.0.3",
     "crypto-es": "^1.2.7",

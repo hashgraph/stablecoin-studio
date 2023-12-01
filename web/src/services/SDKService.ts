@@ -67,6 +67,7 @@ import type {
 	AcceptProxyOwnerRequest,
 	AcceptFactoryProxyOwnerRequest,
 } from '@hashgraph/stablecoin-npm-sdk';
+import { type IMirrorRPCNode } from '../interfaces/IMirrorRPCNode';
 
 export type StableCoinListRaw = Array<Record<'id' | 'symbol', string>>;
 
@@ -78,38 +79,41 @@ export class SDKService {
 		return !!this.initData;
 	}
 
-	public static async connectWallet(wallet: SupportedWallets, connectNetwork: string) {
+	public static async connectWallet(
+		wallet: SupportedWallets,
+		connectNetwork: string,
+		selectedMirror?: IMirrorRPCNode,
+		selectedRPC?: IMirrorRPCNode,
+	) {
 		let mirrorNode = []; // REACT_APP_MIRROR_NODE load from .env
-
-		if (process.env.REACT_APP_MIRROR_NODE)
+		if (selectedMirror) {
+			mirrorNode = [selectedMirror];
+		} else if (process.env.REACT_APP_MIRROR_NODE) {
 			mirrorNode = JSON.parse(process.env.REACT_APP_MIRROR_NODE);
-
-		const _mirrorNode =
-			mirrorNode.length !== 0
-				? mirrorNode.find((i: any) => i.Environment === connectNetwork)
-					? {
-							baseUrl: mirrorNode.find((i: any) => i.Environment === connectNetwork).BASE_URL ?? '',
-							apiKey: mirrorNode.find((i: any) => i.Environment === connectNetwork).API_KEY ?? '',
-							headerName:
-								mirrorNode.find((i: any) => i.Environment === connectNetwork).HEADER ?? '',
-					  }
-					: { baseUrl: '', apiKey: '', headerName: '' }
-				: { baseUrl: '', apiKey: '', headerName: '' };
+		}
+		const mirrorNodeFiltered = mirrorNode.find((i: any) => i.Environment === connectNetwork);
+		const _mirrorNode = mirrorNodeFiltered
+			? {
+					baseUrl: mirrorNodeFiltered.BASE_URL ?? '',
+					apiKey: mirrorNodeFiltered.API_KEY ?? '',
+					headerName: mirrorNodeFiltered.HEADER ?? '',
+			  }
+			: { baseUrl: '', apiKey: '', headerName: '' };
 
 		let rpcNode = []; // REACT_APP_RPC_NODE load from .env
-
-		if (process.env.REACT_APP_RPC_NODE) rpcNode = JSON.parse(process.env.REACT_APP_RPC_NODE);
-
-		const _rpcNode =
-			rpcNode.length !== 0
-				? rpcNode.find((i: any) => i.Environment === connectNetwork)
-					? {
-							baseUrl: rpcNode.find((i: any) => i.Environment === connectNetwork).BASE_URL ?? '',
-							apiKey: rpcNode.find((i: any) => i.Environment === connectNetwork).API_KEY ?? '',
-							headerName: rpcNode.find((i: any) => i.Environment === connectNetwork).HEADER ?? '',
-					  }
-					: { baseUrl: '', apiKey: '', headerName: '' }
-				: { baseUrl: '', apiKey: '', headerName: '' };
+		if (selectedRPC) {
+			rpcNode = [selectedRPC];
+		} else if (process.env.REACT_APP_RPC_NODE) {
+			rpcNode = JSON.parse(process.env.REACT_APP_RPC_NODE);
+		}
+		const rpcNodeFiltered = rpcNode.find((i: any) => i.Environment === connectNetwork);
+		const _rpcNode = rpcNodeFiltered
+			? {
+					baseUrl: rpcNodeFiltered.BASE_URL ?? '',
+					apiKey: rpcNodeFiltered.API_KEY ?? '',
+					headerName: rpcNodeFiltered.HEADER ?? '',
+			  }
+			: { baseUrl: '', apiKey: '', headerName: '' };
 
 		await Network.setNetwork(
 			new SetNetworkRequest({
