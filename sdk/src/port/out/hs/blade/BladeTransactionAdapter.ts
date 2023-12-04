@@ -23,8 +23,8 @@ import {
 	BladeConnector,
 	ConnectorStrategy,
 	HederaNetwork,
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+	// @ts-ignore
 } from '#blade';
 import {
 	Signer,
@@ -87,6 +87,35 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 	}
 
 	async init(network?: string): Promise<string> {
+		const currentNetwork = await this.connectBlade(false, network);
+		const eventData = {
+			initData: {
+				account: this.account,
+				pairing: '',
+				topic: '',
+			},
+			wallet: SupportedWallets.BLADE,
+		};
+		this.eventService.emit(WalletEvents.walletInit, eventData);
+
+		return currentNetwork;
+	}
+
+	private async setSigner(): Promise<void> {
+		this.signer = this.bc.getSigner();
+	}
+
+	async register(): Promise<InitializationData> {
+		Injectable.registerTransactionHandler(this);
+		LogService.logTrace('Blade Registered as handler');
+		this.connectBlade(true);
+
+		return Promise.resolve({
+			account: this.account,
+		});
+	}
+
+	async connectBlade(pair = true, network?: string): Promise<string> {
 		const currentNetwork = network ?? this.networkService.environment;
 		try {
 			this.bc = await BladeConnector.init(
@@ -100,68 +129,71 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 					icons: [],
 				},
 			);
-			this.signer = this.bc.getSigner();
 		} catch (error: any) {
 			LogService.logTrace('Error initializing Blade', error);
 			return currentNetwork;
 		}
+
 		LogService.logTrace('Client Initialized');
 		this.eventService.emit(WalletEvents.walletFound, {
 			wallet: SupportedWallets.BLADE,
 			name: SupportedWallets.BLADE,
 		});
 
-		return Promise.resolve(currentNetwork);
-	}
+		if (pair) {
+			LogService.logTrace('Checking for previously saved pairings: ');
+			const bladeNetwork =
+				currentNetwork == 'testnet'
+					? HederaNetwork.Testnet
+					: HederaNetwork.Mainnet;
+			const params = {
+				network: bladeNetwork,
+				dAppCode: 'SomeAwesomeDApp', // optional while testing, request specific one by contacting us
+			};
 
-	async register(): Promise<InitializationData> {
-		LogService.logTrace('Checking for previously saved pairings: ');
-		const params = {
-			network: HederaNetwork.Testnet,
-			dAppCode: 'SomeAwesomeDApp', // optional while testing, request specific one by contacting us
-		};
+			const pairedAccountIds = await this.bc.createSession(params);
+			if (pairedAccountIds) {
+				const accountInfo = await this.getAccountInfo(
+					pairedAccountIds[0],
+				);
 
-		const pairedAccountIds = await this.bc.createSession(params);
-		if (pairedAccountIds) {
-			const accountInfo = await this.getAccountInfo(pairedAccountIds[0]);
-
-			if (accountInfo) {
-				this.account = new Account({
-					id: pairedAccountIds[0],
-					publicKey: accountInfo.publicKey,
-				});
+				if (accountInfo) {
+					this.account = new Account({
+						id: pairedAccountIds[0],
+						publicKey: accountInfo.publicKey,
+					});
+				}
 			}
+
+			this.setSigner();
+
+			const iniData: InitializationData = {
+				account: this.account,
+			};
+			this.eventService.emit(WalletEvents.walletPaired, {
+				data: iniData,
+				network: {
+					name: currentNetwork,
+					recognized: true,
+					factoryId: this.networkService.configuration
+						? this.networkService.configuration.factoryAddress
+						: '',
+				},
+				wallet: SupportedWallets.BLADE,
+			});
+			LogService.logTrace('Previous paring found: ', this.account);
 		}
 
-		const iniData: InitializationData = {
-			account: this.account,
-		};
-		this.eventService.emit(WalletEvents.walletPaired, {
-			data: iniData,
-			network: {
-				name: this.networkService.environment,
-				recognized: true,
-				factoryId: this.networkService.configuration
-					? this.networkService.configuration.factoryAddress
-					: '',
-			},
-			wallet: SupportedWallets.BLADE,
-		});
-		LogService.logTrace('Previous paring found: ', this.account);
-
-		Injectable.registerTransactionHandler(this);
-		LogService.logTrace('Blade Registered as handler');
-		this.init();
-
-		return Promise.resolve({
-			account: this.account,
-		});
+		return currentNetwork;
 	}
 
 	async stop(): Promise<boolean> {
 		if (this.bc) await this.bc.killSession();
 
 		LogService.logTrace('Blade stopped');
+		this.eventService.emit(WalletEvents.walletDisconnect, {
+			wallet: SupportedWallets.BLADE,
+		});
 		return Promise.resolve(true);
 	}
 
@@ -220,8 +252,9 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 			throw new SigningError(error);
 		}
 	}
-	public async restart(): Promise<void> {
+	public async restart(network: string): Promise<void> {
 		await this.stop();
+		await this.init(network);
 	}
 
 	getAccount(): Account {
