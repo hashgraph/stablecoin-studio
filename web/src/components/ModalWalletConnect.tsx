@@ -200,6 +200,10 @@ const ModalWalletConnect = () => {
 		);
 	};
 
+	var userAgent = navigator.userAgent;
+
+	var isChrome = userAgent.indexOf('Chrome') !== -1;
+
 	return (
 		<>
 			<Modal
@@ -282,29 +286,33 @@ const ModalWalletConnect = () => {
 											</Link>
 										</VStack>
 									)}
-									{availableWallets.includes(SupportedWallets.BLADE) ? (
-										<VStack
-											data-testid='Blade'
-											{...styles.providerStyle}
-											shouldWrapChildren
-											onClick={handleConnectBladeWallet}
-										>
-											<PairingSpinner wallet={SupportedWallets.BLADE}>
-												<Image src={BLADE_LOGO_PNG} w={20} />
-												<Text textAlign='center'>Blade</Text>
-											</PairingSpinner>
-										</VStack>
-									) : (
-										<VStack data-testid='Blade' {...styles.providerStyle}>
-											<Link
-												href='https://bladewallet.io/'
-												isExternal
-												_hover={{ textDecoration: 'none' }}
+									{isChrome ? (
+										availableWallets.includes(SupportedWallets.BLADE) ? (
+											<VStack
+												data-testid='Blade'
+												{...styles.providerStyle}
+												shouldWrapChildren
+												onClick={handleConnectBladeWallet}
 											>
-												<Image src={BLADE_LOGO_PNG} w={20} />
-												<Text textAlign='center'>Blade</Text>
-											</Link>
-										</VStack>
+												<PairingSpinner wallet={SupportedWallets.BLADE}>
+													<Image src={BLADE_LOGO_PNG} w={20} />
+													<Text textAlign='center'>Blade</Text>
+												</PairingSpinner>
+											</VStack>
+										) : (
+											<VStack data-testid='Blade' {...styles.providerStyle}>
+												<Link
+													href='https://bladewallet.io/'
+													isExternal
+													_hover={{ textDecoration: 'none' }}
+												>
+													<Image src={BLADE_LOGO_PNG} w={20} />
+													<Text textAlign='center'>Blade</Text>
+												</Link>
+											</VStack>
+										)
+									) : (
+										<></>
 									)}
 								</HStack>
 							</ModalFooter>
