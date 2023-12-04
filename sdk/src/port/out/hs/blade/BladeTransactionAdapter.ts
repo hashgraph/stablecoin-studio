@@ -129,11 +129,11 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 					icons: [],
 				},
 			);
-			this.setSigner();
 		} catch (error: any) {
 			LogService.logTrace('Error initializing Blade', error);
 			return currentNetwork;
 		}
+
 		LogService.logTrace('Client Initialized');
 		this.eventService.emit(WalletEvents.walletFound, {
 			wallet: SupportedWallets.BLADE,
