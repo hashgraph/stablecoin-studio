@@ -26,7 +26,6 @@ import InputController from '../../components/Form/InputController';
 import SwitchController from '../../components/Form/SwitchController';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-	LAST_WALLET_SELECTED,
 	MIRROR_LIST,
 	RPC_LIST,
 	SELECTED_MIRROR,
@@ -51,7 +50,6 @@ const AppSettings = () => {
 	const [arrayMirror, setArrayMirror] = useState<IMirrorRPCNode[]>([]);
 	const [arrayRPC, setArrayRPC] = useState<IMirrorRPCNode[]>([]);
 
-	const selectedWallet = useSelector(LAST_WALLET_SELECTED);
 	const mirrorList: IMirrorRPCNode[] = useSelector(MIRROR_LIST);
 	const selectedMirror: IMirrorRPCNode = useSelector(SELECTED_MIRROR);
 	const rpcList: IMirrorRPCNode[] = useSelector(RPC_LIST);

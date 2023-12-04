@@ -93,7 +93,10 @@ const ModalWalletConnect = () => {
 		dispatch(walletActions.setIsAcceptOwner(false));
 
 		try {
-			await SDKService.connectWallet(wallet, network);
+			const result = await SDKService.connectWallet(wallet, network);
+			dispatch(walletActions.setSelectedMirror(result[1]));
+			dispatch(walletActions.setSelectedRPC(result[2]));
+
 			const factoryId = await Network.getFactoryAddress();
 
 			if (factoryId) {

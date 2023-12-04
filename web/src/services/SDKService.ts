@@ -116,7 +116,25 @@ export class SDKService {
 			}),
 		);
 
-		return this.initData;
+		const returnedSelectedRPC: IMirrorRPCNode = {
+			name: 'EnvConf' + String(0),
+			BASE_URL: _rpcNode.baseUrl,
+			API_KEY: _rpcNode.apiKey,
+			Environment: connectNetwork,
+			isInConfig: true,
+			HEADER: _rpcNode.headerName,
+		};
+
+		const returnedSelectedMirror: IMirrorRPCNode = {
+			name: 'EnvConf' + String(0),
+			BASE_URL: _mirrorNode.baseUrl,
+			API_KEY: _mirrorNode.apiKey,
+			Environment: connectNetwork,
+			isInConfig: true,
+			HEADER: _mirrorNode.headerName,
+		};
+
+		return [this.initData, returnedSelectedMirror, returnedSelectedRPC];
 	}
 
 	public static async setNetwork(

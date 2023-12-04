@@ -4,6 +4,8 @@ import { SupportedWallets } from '@hashgraph/stablecoin-npm-sdk';
 import { useTranslation } from 'react-i18next';
 import HEDERA_LOGO from '../assets/svg/hedera-hbar-logo.svg';
 import SDKService from '../services/SDKService';
+import { walletActions } from '../store/slices/walletSlice';
+import { useDispatch } from 'react-redux';
 
 interface ModalHashpackProps {
 	type: 'no-installed' | 'no-connected';
@@ -11,9 +13,12 @@ interface ModalHashpackProps {
 
 const ModalHashpack = ({ type }: ModalHashpackProps) => {
 	const { t } = useTranslation('global');
+	const dispatch = useDispatch();
 
 	const handleConnectWallet = async () => {
-		SDKService.connectWallet(SupportedWallets.HASHPACK, '');
+		const result = await SDKService.connectWallet(SupportedWallets.HASHPACK, '');
+		dispatch(walletActions.setSelectedMirror(result[1]));
+		dispatch(walletActions.setSelectedRPC(result[2]));
 	};
 
 	return (
