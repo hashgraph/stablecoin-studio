@@ -144,8 +144,7 @@ const AppSettings = () => {
 				(mirror: any) => mirror.name === defaultMirror,
 			);
 			dispatch(walletActions.setSelectedMirror(selectedDefaultMirror));
-			SDKService.connectWallet(
-				selectedWallet!,
+			SDKService.setNetwork(
 				selectedDefaultMirror!.Environment.toLocaleLowerCase(),
 				selectedDefaultMirror,
 				selectedRPC,
@@ -157,8 +156,7 @@ const AppSettings = () => {
 		if (defaultRPC !== '0') {
 			const selectedDefaultRPC = arrayRPC.find((rpc: any) => rpc.name === defaultRPC);
 			dispatch(walletActions.setSelectedRPC(selectedDefaultRPC));
-			SDKService.connectWallet(
-				selectedWallet!,
+			SDKService.setNetwork(
 				selectedDefaultRPC!.Environment.toLocaleLowerCase(),
 				selectedMirror,
 				selectedDefaultRPC,

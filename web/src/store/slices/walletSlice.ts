@@ -16,10 +16,10 @@ import type {
 import type { IMirrorRPCNode } from '../../interfaces/IMirrorRPCNode';
 
 const LAST_WALLET_LS = 'lastWallet';
-const MIRROR_LIST_LS = 'mirrorList';
-const SELECTED_MIRROR_LS = 'selectedMirror';
-const RPC_LIST_LS = 'rpcList';
-const SELECTED_RPC_LS = 'selectedRPC';
+export const MIRROR_LIST_LS = 'mirrorList';
+export const SELECTED_MIRROR_LS = 'selectedMirror';
+export const RPC_LIST_LS = 'rpcList';
+export const SELECTED_RPC_LS = 'selectedRPC';
 
 export interface InitialStateProps {
 	data?: InitializationData;
