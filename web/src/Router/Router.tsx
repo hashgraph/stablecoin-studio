@@ -27,6 +27,10 @@ import {
 	SELECTING_WALLET_COIN,
 	SELECTED_WALLET_STATUS,
 	walletActions,
+	MIRROR_LIST_LS,
+	SELECTED_MIRROR_LS,
+	RPC_LIST_LS,
+	SELECTED_RPC_LS,
 } from '../store/slices/walletSlice';
 import ImportedTokenCreation from '../views/ImportedToken/ImportedTokenCreation';
 import DangerZoneOperations from '../views/Operations/DangerZone';
@@ -42,6 +46,7 @@ import StableCoinSettings from '../views/Settings/StableCoin';
 import FactorySettings from '../views/Settings/Factory';
 import ModalWalletConnect from '../components/ModalWalletConnect';
 import AppSettings from '../views/AppSettings';
+import { cleanLocalStorage } from '../utils/cleanStorage';
 
 const LoginOverlayRoute = ({ show, loadingSC }: { show: boolean; loadingSC: boolean }) => {
 	return (
@@ -64,11 +69,7 @@ const Router = () => {
 
 	useEffect(() => {
 		instanceSDK();
-		const items = { ...localStorage };
-		delete items.tokensAccount;
-		for (const item in items) {
-			localStorage.removeItem(item);
-		}
+		cleanLocalStorage([MIRROR_LIST_LS, SELECTED_MIRROR_LS, RPC_LIST_LS, SELECTED_RPC_LS]);
 	}, []);
 
 	const onLastWalletEvent = <T extends keyof WalletEvent>(
