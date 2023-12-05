@@ -12,7 +12,8 @@
     "build": "tsc -p tsconfig.json",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:ci": "jest --ci --coverage"
+    "test:ci": "jest --ci --coverage",
+    "prettier": "prettier --config .prettierrc --write ."
   },
   "author": "",
   "license": "ISC",
