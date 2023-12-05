@@ -29,7 +29,8 @@ import {
 	walletActions,
 	MIRROR_LIST_LS,
 	RPC_LIST_LS,
-	SELECTED_RPC,
+	SELECTED_RPC_LS,
+	SELECTED_MIRROR_LS,
 } from '../store/slices/walletSlice';
 import ImportedTokenCreation from '../views/ImportedToken/ImportedTokenCreation';
 import DangerZoneOperations from '../views/Operations/DangerZone';
@@ -65,11 +66,10 @@ const Router = () => {
 	const selectedWalletCoin = !!useSelector(SELECTED_WALLET_COIN);
 	const selectingWalletCoin = useSelector(SELECTING_WALLET_COIN);
 	const status = useSelector(SELECTED_WALLET_STATUS);
-	const selectedRPC = useSelector(SELECTED_RPC);
 
 	useEffect(() => {
 		instanceSDK();
-		cleanLocalStorage([MIRROR_LIST_LS, RPC_LIST_LS]);
+		cleanLocalStorage([MIRROR_LIST_LS, SELECTED_MIRROR_LS, RPC_LIST_LS, SELECTED_RPC_LS]);
 	}, []);
 
 	const onLastWalletEvent = <T extends keyof WalletEvent>(

@@ -28,11 +28,17 @@ import BLADE_LOGO_PNG from '../assets/png/bladeLogo.png';
 import HASHPACK_LOGO_PNG from '../assets/png/hashpackLogo.png';
 import METAMASK_LOGO from '../assets/svg/MetaMask_Fox.svg';
 import SDKService from '../services/SDKService';
-import { AVAILABLE_WALLETS, walletActions } from '../store/slices/walletSlice';
+import {
+	AVAILABLE_WALLETS,
+	SELECTED_MIRRORS,
+	SELECTED_RPCS,
+	walletActions,
+} from '../store/slices/walletSlice';
 import WARNING_ICON from '../assets/svg/warning.svg';
 import ERROR_ICON from '../assets/svg/error.svg';
 import { SelectController } from './Form/SelectController';
 import { useForm } from 'react-hook-form';
+import { IMirrorRPCNode } from '../interfaces/IMirrorRPCNode';
 
 const ModalWalletConnect = () => {
 	const { t } = useTranslation('global');
@@ -75,6 +81,8 @@ const ModalWalletConnect = () => {
 	const [hashpackSelected, setHashpackSelected] = useState<boolean>(false);
 	const [bladeSelected, setBladeSelected] = useState<boolean>(false);
 	const availableWallets = useSelector(AVAILABLE_WALLETS);
+	const selectedMirrors: IMirrorRPCNode[] = useSelector(SELECTED_MIRRORS);
+	const selectedRPCs: IMirrorRPCNode[] = useSelector(SELECTED_RPCS);
 
 	const { control, getValues } = useForm({
 		mode: 'onChange',
@@ -93,9 +101,48 @@ const ModalWalletConnect = () => {
 		dispatch(walletActions.setIsAcceptOwner(false));
 
 		try {
-			const result = await SDKService.connectWallet(wallet, network);
-			dispatch(walletActions.setSelectedMirror(result[1]));
-			dispatch(walletActions.setSelectedRPC(result[2]));
+			let mirrorNode;
+			if (selectedMirrors.length > 0) {
+				const listMirrors = selectedMirrors.filter(
+					(obj: IMirrorRPCNode) =>
+						obj.Environment.toLocaleLowerCase() === network.toLocaleLowerCase(),
+				);
+				if (listMirrors) mirrorNode = listMirrors[0];
+			}
+			let rpcNode;
+			if (selectedRPCs.length > 0) {
+				const listRPCs = selectedRPCs.filter(
+					(obj: IMirrorRPCNode) =>
+						obj.Environment.toLocaleLowerCase() === network.toLocaleLowerCase(),
+				);
+				if (listRPCs) rpcNode = listRPCs[0];
+			}
+
+			const result = await SDKService.connectWallet(wallet, network, mirrorNode, rpcNode);
+
+			const newselectedMirrors: IMirrorRPCNode[] = [];
+
+			selectedMirrors.forEach((obj) => {
+				newselectedMirrors.push(obj);
+			});
+
+			if (!mirrorNode) {
+				newselectedMirrors.push(result[1] as IMirrorRPCNode);
+			}
+
+			dispatch(walletActions.setSelectedMirrors(newselectedMirrors));
+
+			const newselectedRPCs: IMirrorRPCNode[] = [];
+
+			selectedRPCs.forEach((obj) => {
+				newselectedRPCs.push(obj);
+			});
+
+			if (!rpcNode) {
+				newselectedRPCs.push(result[2] as IMirrorRPCNode);
+			}
+
+			dispatch(walletActions.setSelectedRPCs(newselectedRPCs));
 
 			const factoryId = await Network.getFactoryAddress();
 
