@@ -109,17 +109,10 @@ const AppSettings = () => {
 		dispatch(walletActions.setMirrorList(newArray.filter((mirror) => mirror.isInConfig === false)));
 	}
 	function addRpc() {
-		const { nameRPC, urlRPC, apiKeyValueRPC, apiKeyHeaderRPC, mirrorNetwork } = getValues();
+		const { nameRPC, urlRPC, apiKeyValueRPC, apiKeyHeaderRPC, rpcNetwork } = getValues();
 		const newArray = [
 			...arrayRPC,
-			createOptionMirror(
-				nameRPC,
-				urlRPC,
-				apiKeyValueRPC,
-				mirrorNetwork.value,
-				false,
-				apiKeyHeaderRPC,
-			),
+			createOptionMirror(nameRPC, urlRPC, apiKeyValueRPC, rpcNetwork.value, false, apiKeyHeaderRPC),
 		];
 		setArrayRPC(newArray);
 		dispatch(walletActions.setRPCList(newArray.filter((rpc) => rpc.isInConfig === false)));
