@@ -328,14 +328,15 @@ const AppSettings = () => {
 									onChangeAux={() => handleTypeChangeMirror()}
 								/>
 								<Stack display={!showContentMirror ? 'none' : 'block'}>
-									<RadioGroup onChange={setDefaultMirror} name='radioMirror'>
+									<RadioGroup
+										onChange={setDefaultMirror}
+										defaultValue={selectedMirror?.name}
+										name='radioMirror'
+									>
 										{arrayMirrorCurrentNetwork.map((option: IMirrorRPCNode) => {
 											return (
 												<HStack key={option.name}>
-													<Radio
-														value={option.name}
-														isChecked={option.name === selectedMirror?.name}
-													>
+													<Radio value={option.name}>
 														{option.name} -{option.BASE_URL} - Apikey: {option.API_KEY} -Header{' '}
 														{option.HEADER}
 													</Radio>
@@ -431,11 +432,15 @@ const AppSettings = () => {
 									onChangeAux={() => handleTypeChangeRPC()}
 								/>
 								<Stack display={!showContentRPC ? 'none' : 'block'}>
-									<RadioGroup onChange={setDefaultRPC} name='radioRPC'>
+									<RadioGroup
+										onChange={setDefaultRPC}
+										defaultValue={selectedRPC?.name}
+										name='radioRPC'
+									>
 										{arrayRPCCurrentNetwork.map((option: IMirrorRPCNode) => {
 											return (
 												<HStack key={option.name}>
-													<Radio value={option.name} isChecked={option.name === selectedRPC?.name}>
+													<Radio value={option.name}>
 														{option.name} -{option.BASE_URL} - Apikey: {option.API_KEY} -Header{' '}
 														{option.HEADER}
 													</Radio>
