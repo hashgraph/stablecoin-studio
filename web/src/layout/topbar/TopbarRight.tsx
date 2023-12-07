@@ -7,6 +7,8 @@ import {
 	SELECTED_NETWORK,
 	MIRROR_LIST_LS,
 	RPC_LIST_LS,
+	SELECTED_MIRROR_LS,
+	SELECTED_RPC_LS,
 } from '../../store/slices/walletSlice';
 import HEDERA_LOGO from '../../assets/png/hashpackLogo.png';
 import METAMASK_LOGO from '../../assets/svg/MetaMask_Fox.svg';
@@ -24,7 +26,7 @@ const TopbarRight = () => {
 
 	const handleDisconnect = async () => {
 		window.location.reload();
-		cleanLocalStorage([MIRROR_LIST_LS, RPC_LIST_LS]);
+		cleanLocalStorage([MIRROR_LIST_LS, SELECTED_MIRROR_LS, RPC_LIST_LS, SELECTED_RPC_LS]);
 	};
 
 	const getIcon = (): ReactElement => {
