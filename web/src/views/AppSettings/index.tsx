@@ -118,6 +118,12 @@ const AppSettings = () => {
 	function addMirror() {
 		const { nameMirror, urlMirror, apiKeyValueMirror, mirrorNetwork, apiKeyHeaderMirror } =
 			getValues();
+
+		if (mirrorList.find((obj) => obj.name === nameMirror)) {
+			window.alert(t('mirrorNameExists'));
+			return;
+		}
+
 		const newArray = [
 			...arrayMirror,
 			createOptionMirror(
@@ -146,6 +152,12 @@ const AppSettings = () => {
 	}
 	function addRpc() {
 		const { nameRPC, urlRPC, apiKeyValueRPC, apiKeyHeaderRPC, rpcNetwork } = getValues();
+
+		if (rpcList.find((obj) => obj.name === nameRPC)) {
+			window.alert(t('rpcNameExists'));
+			return;
+		}
+
 		const newArray = [
 			...arrayRPC,
 			createOptionMirror(nameRPC, urlRPC, apiKeyValueRPC, rpcNetwork.value, false, apiKeyHeaderRPC),
