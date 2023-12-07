@@ -29,6 +29,7 @@ import {
 	MIRROR_LIST,
 	RPC_LIST,
 	SELECTED_MIRRORS,
+	SELECTED_NETWORK,
 	SELECTED_RPCS,
 	walletActions,
 } from '../../store/slices/walletSlice';
@@ -58,6 +59,7 @@ const AppSettings = () => {
 	const selectedMirrors: IMirrorRPCNode[] = useSelector(SELECTED_MIRRORS);
 	const rpcList: IMirrorRPCNode[] = useSelector(RPC_LIST);
 	const selectedRPCs: IMirrorRPCNode[] = useSelector(SELECTED_RPCS);
+	const activeNetwork = useSelector(SELECTED_NETWORK);
 
 	const styles = {
 		menuList: {
@@ -184,11 +186,19 @@ const AppSettings = () => {
 			dispatch(walletActions.setSelectedMirrors(newSelectedMirrors));
 			setSelectedMirror(selectedDefaultMirror);
 
-			SDKService.setNetwork(
-				selectedDefaultMirror!.Environment.toLocaleLowerCase(),
-				selectedDefaultMirror,
-				selectedRPC,
-			);
+			const selectedRPCForNetwork = selectedRPCs.filter(
+				(obj: IMirrorRPCNode) =>
+					obj.Environment.toLocaleLowerCase() ===
+					selectedDefaultMirror!.Environment.toLocaleLowerCase(),
+			)[0];
+
+			if (activeNetwork === selectedDefaultMirror!.Environment.toLocaleLowerCase()) {
+				SDKService.setNetwork(
+					selectedDefaultMirror!.Environment.toLocaleLowerCase(),
+					selectedDefaultMirror,
+					selectedRPCForNetwork,
+				);
+			}
 		}
 	}, [defaultMirror]);
 
@@ -205,11 +215,19 @@ const AppSettings = () => {
 			dispatch(walletActions.setSelectedRPCs(newSelectedRPCs));
 			setSelectedRPC(selectedDefaultRPC);
 
-			SDKService.setNetwork(
-				selectedDefaultRPC!.Environment.toLocaleLowerCase(),
-				selectedMirror,
-				selectedDefaultRPC,
-			);
+			const selectedMirrorForNetwork = selectedMirrors.filter(
+				(obj: IMirrorRPCNode) =>
+					obj.Environment.toLocaleLowerCase() ===
+					selectedDefaultRPC!.Environment.toLocaleLowerCase(),
+			)[0];
+
+			if (activeNetwork === selectedDefaultRPC!.Environment.toLocaleLowerCase()) {
+				SDKService.setNetwork(
+					selectedDefaultRPC!.Environment.toLocaleLowerCase(),
+					selectedMirrorForNetwork,
+					selectedDefaultRPC,
+				);
+			}
 		}
 	}, [defaultRPC]);
 
@@ -217,14 +235,18 @@ const AppSettings = () => {
 		const { mirrorNetwork } = getValues();
 		setShowContentMirror(true);
 
-		let newMirrorList: IMirrorRPCNode[] = [];
+		let configMirrorList: IMirrorRPCNode[] = [];
 
 		if (process.env.REACT_APP_MIRROR_NODE) {
-			newMirrorList = setNodeArrayByNetwork(
+			configMirrorList = setNodeArrayByNetwork(
 				JSON.parse(process.env.REACT_APP_MIRROR_NODE),
 				mirrorNetwork.value,
 			);
 		}
+
+		const newMirrorList: IMirrorRPCNode[] = [];
+
+		configMirrorList.forEach((obj) => newMirrorList.push(obj));
 
 		const previousMirrorList = mirrorList.filter(
 			(obj: IMirrorRPCNode) =>
@@ -245,21 +267,38 @@ const AppSettings = () => {
 			(obj: IMirrorRPCNode) =>
 				obj.Environment.toLocaleLowerCase() === mirrorNetwork.value.toLocaleLowerCase(),
 		);
-		if (selectedDefaultMirror.length > 0) setSelectedMirror(selectedDefaultMirror[0]);
+
+		if (selectedDefaultMirror.length === 0) {
+			const newSelectedMirror = configMirrorList.filter(
+				(obj: IMirrorRPCNode) =>
+					obj.Environment.toLocaleLowerCase() === mirrorNetwork.value.toLocaleLowerCase(),
+			)[0];
+			const newSelectedMirrors: IMirrorRPCNode[] = [];
+			selectedMirrors.forEach((obj) => newSelectedMirrors.push(obj));
+			newSelectedMirrors.push(newSelectedMirror);
+			dispatch(walletActions.setSelectedMirrors(newSelectedMirrors));
+			selectedDefaultMirror.push(newSelectedMirror);
+		}
+
+		setSelectedMirror(selectedDefaultMirror[0]);
 	}
 
 	async function handleTypeChangeRPC(): Promise<void> {
 		const { rpcNetwork } = getValues();
 		setShowContentRPC(true);
 
-		let newRPCList: IMirrorRPCNode[] = [];
+		let configRPCList: IMirrorRPCNode[] = [];
 
 		if (process.env.REACT_APP_RPC_NODE) {
-			newRPCList = setNodeArrayByNetwork(
+			configRPCList = setNodeArrayByNetwork(
 				JSON.parse(process.env.REACT_APP_RPC_NODE),
 				rpcNetwork.value,
 			);
 		}
+
+		const newRPCList: IMirrorRPCNode[] = [];
+
+		configRPCList.forEach((obj) => newRPCList.push(obj));
 
 		const previousRPCList = rpcList.filter(
 			(obj: IMirrorRPCNode) =>
@@ -282,7 +321,19 @@ const AppSettings = () => {
 				obj.Environment.toLocaleLowerCase() === rpcNetwork.value.toLocaleLowerCase(),
 		);
 
-		if (selectedDefaultRPC.length > 0) setSelectedRPC(selectedDefaultRPC[0]);
+		if (selectedDefaultRPC.length === 0) {
+			const newSelectedRPC = configRPCList.filter(
+				(obj: IMirrorRPCNode) =>
+					obj.Environment.toLocaleLowerCase() === rpcNetwork.value.toLocaleLowerCase(),
+			)[0];
+			const newSelectedRPCs: IMirrorRPCNode[] = [];
+			selectedRPCs.forEach((obj) => newSelectedRPCs.push(obj));
+			newSelectedRPCs.push(newSelectedRPC);
+			dispatch(walletActions.setSelectedRPCs(newSelectedRPCs));
+			selectedDefaultRPC.push(newSelectedRPC);
+		}
+
+		setSelectedRPC(selectedDefaultRPC[0]);
 	}
 
 	function setNodeArrayByNetwork(list: IMirrorRPCNode[], network: string): IMirrorRPCNode[] {
