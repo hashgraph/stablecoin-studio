@@ -330,7 +330,7 @@ const AppSettings = () => {
 								<Stack display={!showContentMirror ? 'none' : 'block'}>
 									<RadioGroup
 										onChange={setDefaultMirror}
-										defaultValue={selectedMirror?.name}
+										value={selectedMirror?.name}
 										name='radioMirror'
 									>
 										{arrayMirrorCurrentNetwork.map((option: IMirrorRPCNode) => {
@@ -432,11 +432,7 @@ const AppSettings = () => {
 									onChangeAux={() => handleTypeChangeRPC()}
 								/>
 								<Stack display={!showContentRPC ? 'none' : 'block'}>
-									<RadioGroup
-										onChange={setDefaultRPC}
-										defaultValue={selectedRPC?.name}
-										name='radioRPC'
-									>
+									<RadioGroup onChange={setDefaultRPC} value={selectedRPC?.name} name='radioRPC'>
 										{arrayRPCCurrentNetwork.map((option: IMirrorRPCNode) => {
 											return (
 												<HStack key={option.name}>
