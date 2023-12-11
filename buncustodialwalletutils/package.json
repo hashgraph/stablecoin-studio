@@ -1,0 +1,11 @@
+{
+  "name": "buncustodialwalletutils",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "bun-types": "^1.0.16"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
