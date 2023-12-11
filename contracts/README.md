@@ -83,7 +83,7 @@ These are the folders and files you can find in this project:
 -   `.env`: environment file used in tests execution.
 -   `.eslintrc.json`: ESLint tool configuration file for linting JavaScript code.
 -   `.solhint.json`: Solhint tool configuration file for linting solidity code.
--   `hardhat.config.ts`: hardhat configuration file.
+-   `hardhat.SignatureServiceConfig.ts`: hardhat configuration file.
 -   `package.json`: Node project configuration file.
 -   `prettier.config.js`: several languages code formatter configuration file.
 -   `README.md`
@@ -194,11 +194,11 @@ Tests use a factory and a HederaTokenManager contract to create the stablecoins.
 -   If you want to deploy a new factory and HederaTokenManager every time: scripts -> deploy.ts -> hederaTokenManagerAddress = "" / factoryProxyAddress = "" / factoryProxyAdminAddress = "" / factoryAddress = ""
 -   If you want to re-use a factory and hederaTokenManager : Set the Hedera ContractIds in scripts -> deploy.ts -> hederaTokenManagerAddress /factoryProxyAddress / factoryProxyAdminAddress / factoryAddress
 
-> If you set the factory contracts addresses as described above, the tests included in the "stableCoinFactory.ts" file might not work because they will try to upgrade the factory implementation and the accounts used for that (those defined in the "hardhat.config.ts") might not have the right to do it.
+> If you set the factory contracts addresses as described above, the tests included in the "stableCoinFactory.ts" file might not work because they will try to upgrade the factory implementation and the accounts used for that (those defined in the "hardhat.SignatureServiceConfig.ts") might not have the right to do it.
 
 ## Run
 
-There are several ways to run the tests using the commands defined in the `package.json` file (according to the configuration defined in `hardhat.config.ts`):
+There are several ways to run the tests using the commands defined in the `package.json` file (according to the configuration defined in `hardhat.SignatureServiceConfig.ts`):
 
 -   Run all the test files in the `defaultNetwork` network:
 
