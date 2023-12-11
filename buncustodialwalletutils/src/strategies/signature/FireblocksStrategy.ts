@@ -1,6 +1,5 @@
 import { FireblocksSignatureRequest } from "../../models/signature/FireblocksSignatureRequest";
 import { ISignatureStrategy } from "./ISignatureStrategy";
-// @ts-ignore
 import {
   FireblocksSDK,
   PeerType,
