@@ -35,8 +35,6 @@ describe('[Fireblocks] Signatures', () => {
     async () => {
       const message = new Uint8Array([1, 2, 3]);
 
-      console.log(message);
-
       const fireblocksSignatureRequest = new FireblocksSignatureRequest(
         vaultAccountId,
         message,
@@ -46,7 +44,7 @@ describe('[Fireblocks] Signatures', () => {
         fireblocksSignatureRequest,
       );
 
-      console.log(signedMessage);
+      expect(signedMessage).not.toBeEmpty();
     },
     TEST_TIMEOUT,
   );
