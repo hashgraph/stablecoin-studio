@@ -44,3 +44,4 @@ contracts/docs/
 contracts/cache/*
 contracts/typechain-types/
 
+buncustodialwalletutils/tests/utils/fireblocks-secret.key
