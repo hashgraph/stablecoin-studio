@@ -1,8 +1,11 @@
-import { DFNSConfig, FireblocksConfig } from "../../strategies/IStrategyConfig";
-import { SignatureStrategyFactory } from "../../factories/SignatureStrategyFactory";
-import { FireblocksStrategy } from "../../strategies/signature/FireblocksStrategy";
-import { DFNSStrategy } from "../../strategies/signature/DFNSStrategy";
 import { expect, test } from "bun:test";
+import {
+  DFNSConfig,
+  FireblocksConfig,
+} from "../../src/strategies/IStrategyConfig";
+import { SignatureStrategyFactory } from "../../src/factories/SignatureStrategyFactory";
+import { FireblocksStrategy } from "../../src/strategies/signature/FireblocksStrategy";
+import { DFNSStrategy } from "../../src/strategies/signature/DFNSStrategy";
 
 const API_KEY = "API_KEY";
 const BASE_URL = "BASE_URL";
