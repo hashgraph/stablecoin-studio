@@ -1,0 +1,53 @@
+import { expect, test, describe, beforeAll } from 'bun:test';
+import fs from 'fs';
+import path from 'path';
+import { FireblocksConfig } from '../../src/strategies/IStrategyConfig.ts';
+import { FireblocksSignatureRequest } from '../../src/models/signature/FireblocksSignatureRequest.ts';
+import { FireblocksStrategy } from '../../src/strategies/signature/FireblocksStrategy.ts';
+
+const absolute_path = 'tests/' + process.env.FIREBLOCKS_API_SECRET_PATH;
+
+const FIREBLOCKS_API_SECRET_KEY = fs.readFileSync(
+  path.resolve(absolute_path),
+  'utf8',
+);
+const FIREBLOCKS_API_KEY = process.env.FIREBLOCKS_API_KEY ?? '';
+const FIREBLOCKS_BASE_URL = process.env.FIREBLOCKS_BASE_URL ?? '';
+const vaultAccountId = process.env.FIREBLOCKS_VAULT ?? '';
+const fireblocksAccountId = process.env.FIREBLOCKS_ACCOUNT_ID;
+const TEST_TIMEOUT = 10000;
+
+const FireblocksStrategyConfig = new FireblocksConfig(
+  FIREBLOCKS_API_KEY,
+  FIREBLOCKS_API_SECRET_KEY,
+  FIREBLOCKS_BASE_URL,
+);
+
+let fireblocksSignatureStrategy = new FireblocksStrategy(
+  FireblocksStrategyConfig,
+);
+
+describe('[Fireblocks] Signatures', () => {
+  beforeAll(() => {});
+
+  test(
+    'Sign bunch of bytes',
+    async () => {
+      const message = new Uint8Array([1, 2, 3]);
+
+      console.log(message);
+
+      const fireblocksSignatureRequest = new FireblocksSignatureRequest(
+        vaultAccountId,
+        message,
+      );
+
+      const signedMessage = await fireblocksSignatureStrategy.sign(
+        fireblocksSignatureRequest,
+      );
+
+      console.log(signedMessage);
+    },
+    TEST_TIMEOUT,
+  );
+});

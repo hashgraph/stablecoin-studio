@@ -55,10 +55,7 @@ export class FireblocksStrategy implements ISignatureStrategy {
     let currentStatus = status;
     let txInfo: any;
 
-    while (
-      currentStatus != TransactionStatus.COMPLETED &&
-      currentStatus != TransactionStatus.FAILED
-    ) {
+    do {
       try {
         console.log('keep polling for tx ' + id + '; status: ' + currentStatus);
         txInfo = await this.fireblocks.getTransactionById(id);
@@ -67,7 +64,10 @@ export class FireblocksStrategy implements ISignatureStrategy {
         console.log('err', err);
       }
       await new Promise((r) => setTimeout(r, 1000));
-    }
+    } while (
+      currentStatus != TransactionStatus.COMPLETED &&
+      currentStatus != TransactionStatus.FAILED
+    );
 
     const signature = txInfo.signedMessages[0].signature;
     return signature.fullSig;
