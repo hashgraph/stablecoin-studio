@@ -5,6 +5,9 @@
   "peerDependencies": {
     "typescript": "^5.0.0"
   },
+  "scripts": {
+    "prettier": "prettier --config .prettierrc --write ."
+  },
   "devDependencies": {
     "bun-types": "^1.0.16",
     "@typescript-eslint/eslint-plugin": "^5.48.2",

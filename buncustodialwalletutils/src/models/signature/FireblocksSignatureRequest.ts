@@ -1,4 +1,4 @@
-import { SignatureRequest } from "./SignatureRequest";
+import { SignatureRequest } from './SignatureRequest';
 
 export class FireblocksSignatureRequest extends SignatureRequest {
   private vaultAccountId: string;
