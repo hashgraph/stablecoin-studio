@@ -3,11 +3,12 @@ import path from 'path';
 import { FireblocksConfig } from '../../src/strategies/StrategyConfig';
 import { FireblocksSignatureRequest } from '../../src/models/signature/FireblocksSignatureRequest';
 import { FireblocksStrategy } from '../../src/strategies/signature/FireblocksStrategy';
+import { config } from 'dotenv';
 
-const absolute_path = 'tests/' + process.env.FIREBLOCKS_API_SECRET_PATH;
+config();
 
 const FIREBLOCKS_API_SECRET_KEY = fs.readFileSync(
-  path.resolve(absolute_path),
+  path.resolve(process.env.FIREBLOCKS_API_SECRET_PATH!),
   'utf8',
 );
 const FIREBLOCKS_API_KEY = process.env.FIREBLOCKS_API_KEY ?? '';
