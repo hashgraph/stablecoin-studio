@@ -14,14 +14,32 @@ describe('Service TESTS', () => {
     beforeAll(() => {});
 
     it(
+      'Try Sign bunch of bytes Using the wrong request',
+      async () => {
+        let dfnsSignatureRequest = new DFNSSignatureRequest(
+          DFNS_WALLET_ID,
+          new Uint8Array([1, 2, 3]),
+        );
+        let signatureService = new CustodialWalletService(fireblocksConfig);
+        try {
+          await signatureService.signTransaction(dfnsSignatureRequest);
+          expect(false).toEqual(true);
+        } catch (e) {
+          expect(true).toEqual(true);
+        }
+      },
+      TEST_TIMEOUT,
+    );
+
+    it(
       'Sign bunch of bytes',
       async () => {
-        const fireblocksSignatureRequest = new FireblocksSignatureRequest(
+        let fireblocksSignatureRequest = new FireblocksSignatureRequest(
           FIREBLOCKS_VAULT,
           new Uint8Array([1, 2, 3]),
         );
-        const signatureService = new CustodialWalletService(fireblocksConfig);
-        const signature = await signatureService.signTransaction(
+        let signatureService = new CustodialWalletService(fireblocksConfig);
+        let signature = await signatureService.signTransaction(
           fireblocksSignatureRequest,
         );
         expect(signature.length).toBeGreaterThan(0);
@@ -34,14 +52,32 @@ describe('Service TESTS', () => {
     beforeAll(() => {});
 
     it(
+      'Try Sign bunch of bytes Using the wrong request',
+      async () => {
+        let fireblocksSignatureRequest = new FireblocksSignatureRequest(
+          FIREBLOCKS_VAULT,
+          new Uint8Array([1, 2, 3]),
+        );
+        let signatureService = new CustodialWalletService(dfnsConfig);
+        try {
+          await signatureService.signTransaction(fireblocksSignatureRequest);
+          expect(false).toEqual(true);
+        } catch (e) {
+          expect(true).toEqual(true);
+        }
+      },
+      TEST_TIMEOUT,
+    );
+
+    it(
       'Sign bunch of bytes',
       async () => {
-        const dfnsSignatureRequest = new DFNSSignatureRequest(
+        let dfnsSignatureRequest = new DFNSSignatureRequest(
           DFNS_WALLET_ID,
           new Uint8Array([1, 2, 3]),
         );
-        const signatureService = new CustodialWalletService(dfnsConfig);
-        const signature = await signatureService.signTransaction(
+        let signatureService = new CustodialWalletService(dfnsConfig);
+        let signature = await signatureService.signTransaction(
           dfnsSignatureRequest,
         );
         expect(signature.length).toBeGreaterThan(0);
