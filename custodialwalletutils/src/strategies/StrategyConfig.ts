@@ -20,12 +20,12 @@ export class FireblocksConfig implements StrategyConfig {
 
 export class DFNSConfig implements StrategyConfig {
   constructor(
-      public privateKeyToCreateECDSAServiceAccount: string,
-      public dfnsEcdsaServiceaccountCredentialId: string,
-      public dfnsAppOrigin: string,
-      public dfnsAppId: string,
-      public dfnsEcdsaServiceAccountAuthToken: string,
-      public dfnsTestUrl: string
+    public privateKeyToCreateECDSAServiceAccount: string,
+    public dfnsEcdsaServiceaccountCredentialId: string,
+    public dfnsAppOrigin: string,
+    public dfnsAppId: string,
+    public dfnsEcdsaServiceAccountAuthToken: string,
+    public dfnsTestUrl: string,
   ) {}
 
   getSignatureStrategy(): ISignatureStrategy {
