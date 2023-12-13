@@ -37,12 +37,16 @@ let fireblocksSignatureStrategy = new FireblocksStrategy(
 );
 
 // DFNS parameters
-const DFNS_SERVICE_ACCOUNT_PRIVATE_KEY =
-  process.env.DFNS_SERVICE_ACCOUNT_PRIVATE_KEY ?? '';
+const DFNS_SERVICE_ACCOUNT_PRIVATE_KEY = fs.readFileSync(
+  path.resolve(process.env.DFNS_SERVICE_ACCOUNT_PRIVATE_KEY_PATH!),
+  'utf8',
+);
 const DFNS_SERVICE_ACCOUNT_CREDENTIAL_ID =
   process.env.DFNS_SERVICE_ACCOUNT_CREDENTIAL_ID ?? '';
-const DFNS_SERVICE_ACCOUNT_AUTHORIZATION_TOKEN =
-  process.env.DFNS_SERVICE_ACCOUNT_AUTHORIZATION_TOKEN ?? '';
+const DFNS_SERVICE_ACCOUNT_AUTHORIZATION_TOKEN = fs.readFileSync(
+  path.resolve(process.env.DFNS_SERVICE_ACCOUNT_AUTHORIZATION_TOKEN_PATH!),
+  'utf8',
+);
 const DFNS_APP_ORIGIN = process.env.DFNS_APP_ORIGIN ?? '';
 const DFNS_APP_ID = process.env.DFNS_APP_ID ?? '';
 const DFNS_WALLET_ID = process.env.DFNS_WALLET_ID ?? '';
