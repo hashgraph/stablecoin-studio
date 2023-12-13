@@ -6,7 +6,7 @@ import {
   TransactionOperation,
   TransactionStatus,
 } from 'fireblocks-sdk';
-import { FireblocksConfig } from '../IStrategyConfig';
+import { FireblocksConfig } from '../StrategyConfig';
 
 export class FireblocksStrategy implements ISignatureStrategy {
   private fireblocks: FireblocksSDK;
@@ -61,7 +61,7 @@ export class FireblocksStrategy implements ISignatureStrategy {
         txInfo = await this.fireblocks.getTransactionById(id);
         currentStatus = txInfo.status;
       } catch (err) {
-        console.log('err', err);
+        console.error('err', err);
       }
       await new Promise((r) => setTimeout(r, 1000));
     } while (

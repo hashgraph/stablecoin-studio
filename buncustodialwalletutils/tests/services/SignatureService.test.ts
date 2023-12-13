@@ -1,18 +1,17 @@
 import { expect, test } from 'bun:test';
 import fs from 'fs';
 import path from 'path';
-import { FireblocksConfig } from '../../src/strategies/IStrategyConfig';
+import { FireblocksConfig } from '../../src/strategies/StrategyConfig';
 import { FireblocksSignatureRequest } from '../../src/models/signature/FireblocksSignatureRequest';
-import { CustodialWalletService } from '../../src/services/CustodialWalletService.ts';
+import { CustodialWalletService } from '../../src/services/CustodialWalletService';
 
 const FIREBLOCKS_API_SECRET_KEY = fs.readFileSync(
-  path.resolve('../../utils/fireblocks-secret.key'),
+  path.resolve('../utils/fireblocks-secret.key'),
   'utf8',
 );
 const FIREBLOCKS_API_KEY = '652415d5-e004-4dfd-9b3b-d93e8fc939d7';
 const FIREBLOCKS_BASE_URL = 'https://api.fireblocks.io';
 const vaultAccountId = '2';
-const fireblocksAccountId = '0.0.5712904';
 
 test('[Fireblocks] signTransaction calls the correct strategy with the correct request', async () => {
   const FireblocksStrategyConfig = new FireblocksConfig(

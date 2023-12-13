@@ -1,8 +1,7 @@
 import {
   DFNSConfig,
   FireblocksConfig,
-  IStrategyConfig,
-} from '../../src/strategies/IStrategyConfig';
+} from '../../src/strategies/StrategyConfig';
 import { StrategyFactory } from '../../src/factories/StrategyFactory';
 import { FireblocksStrategy } from '../../src/strategies/signature/FireblocksStrategy';
 import { DFNSStrategy } from '../../src/strategies/signature/DFNSStrategy';
@@ -29,7 +28,7 @@ describe('🧪 Factory TESTS', () => {
   });
 
   /* it('SignatureStrategyFactory throws an error for unrecognized config', () => {
-    const strategyConfig: IStrategyConfig;
+    const strategyConfig: StrategyConfig;
     try {
       StrategyFactory.createSignatureStrategy(strategyConfig);
       throw new Error('Test failed: should have thrown an error');

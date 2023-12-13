@@ -6,7 +6,7 @@ import {
   TransactionOperation,
   TransactionStatus,
 } from 'fireblocks-sdk';
-import { FireblocksConfig } from '../IStrategyConfig';
+import { FireblocksConfig } from '../StrategyConfig';
 
 export class FireblocksStrategy implements ISignatureStrategy {
   private fireblocks: FireblocksSDK;

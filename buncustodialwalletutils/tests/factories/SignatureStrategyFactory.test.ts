@@ -2,7 +2,7 @@ import { expect, test } from 'bun:test';
 import {
   DFNSConfig,
   FireblocksConfig,
-} from '../../src/strategies/IStrategyConfig';
+} from '../../src/strategies/StrategyConfig.ts';
 import { SignatureStrategyFactory } from '../../src/factories/StrategyFactory';
 import { FireblocksStrategy } from '../../src/strategies/signature/FireblocksStrategy';
 import { DFNSStrategy } from '../../src/strategies/signature/DFNSStrategy';

@@ -1,7 +1,7 @@
-import { expect, test, describe, beforeAll } from 'bun:test';
+import { beforeAll, describe, expect, test } from 'bun:test';
 import fs from 'fs';
 import path from 'path';
-import { FireblocksConfig } from '../../src/strategies/IStrategyConfig.ts';
+import { FireblocksConfig } from '../../src/strategies/StrategyConfig.ts';
 import { FireblocksSignatureRequest } from '../../src/models/signature/FireblocksSignatureRequest.ts';
 import { FireblocksStrategy } from '../../src/strategies/signature/FireblocksStrategy.ts';
 

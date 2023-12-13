@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { FireblocksConfig } from '../../src/strategies/IStrategyConfig';
+import { FireblocksConfig } from '../../src/strategies/StrategyConfig';
 import { FireblocksSignatureRequest } from '../../src/models/signature/FireblocksSignatureRequest';
 import { CustodialWalletService } from '../../src/services/CustodialWalletService';
 

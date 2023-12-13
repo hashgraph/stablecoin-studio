@@ -1,12 +1,12 @@
-import { DFNSStrategy } from './signature/DFNSStrategy.ts';
-import { FireblocksStrategy } from './signature/FireblocksStrategy.ts';
-import { ISignatureStrategy } from './signature/ISignatureStrategy.ts';
+import { DFNSStrategy } from './signature/DFNSStrategy';
+import { FireblocksStrategy } from './signature/FireblocksStrategy';
+import { ISignatureStrategy } from './signature/ISignatureStrategy';
 
-export interface IStrategyConfig {
+export interface StrategyConfig {
   getSignatureStrategy(): ISignatureStrategy;
 }
 
-export class FireblocksConfig implements IStrategyConfig {
+export class FireblocksConfig implements StrategyConfig {
   constructor(
     public apiKey: string,
     public apiSecretKey: string,
@@ -18,7 +18,7 @@ export class FireblocksConfig implements IStrategyConfig {
   }
 }
 
-export class DFNSConfig implements IStrategyConfig {
+export class DFNSConfig implements StrategyConfig {
   constructor() {}
 
   getSignatureStrategy(): ISignatureStrategy {

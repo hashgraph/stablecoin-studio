@@ -1,9 +1,9 @@
 import { ISignatureStrategy } from '../strategies/signature/ISignatureStrategy';
-import { IStrategyConfig } from '../strategies/IStrategyConfig';
+import { StrategyConfig } from '../strategies/StrategyConfig';
 
 export class StrategyFactory {
   static createSignatureStrategy(
-    strategyConfig: IStrategyConfig,
+    strategyConfig: StrategyConfig,
   ): ISignatureStrategy {
     return strategyConfig.getSignatureStrategy();
   }
