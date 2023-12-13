@@ -58,6 +58,7 @@ const sleep = (interval = 0) =>
 export class DFNSStrategy implements ISignatureStrategy {
   private signer: AsymmetricKeySigner;
   public dfnsApiClientOptions: DfnsApiClientOptions;
+  
   constructor(private strategyConfig: DFNSConfig) {
     this.signer = new AsymmetricKeySigner({
       privateKey: strategyConfig.privateKeyToCreateECDSAServiceAccount,
@@ -100,8 +101,7 @@ async function waitForSignature(signatureId: string) {
   let maxRetries = dfnsWalletOptions.maxRetries ?? 3;
   const retryInterval = dfnsWalletOptions.retryInterval ?? 1000;
 
-  while (maxRetries > 0) {
-    await sleep(retryInterval);
+  do {
     const res = await dfnsClient.wallets.getSignature({
       walletId,
       signatureId,
@@ -116,9 +116,8 @@ async function waitForSignature(signatureId: string) {
       break;
     }
     maxRetries -= 1;
-  }
-  const waitedSeconds = Math.floor((maxRetries * retryInterval) / 1000);
-  throw new Error(
-    `Signature request ${signatureId} took more than ${waitedSeconds}s to complete, stopping polling. Please update options "maxRetries" or "retryIntervals" to wait longer.`,
-  );
+    await sleep(retryInterval);
+  } while (maxRetries > 0);
+
+  throw new Error(`DFNS Signature request ${signatureId} failed.`);
 }
