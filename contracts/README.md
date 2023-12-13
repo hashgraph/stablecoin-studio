@@ -185,7 +185,7 @@ All tests will use the two above mentioned accounts.
 -   `Non Operator Account`: This is the account that will NOT deploy the stablecoin used for testing. It will have no rights to the stablecoin unless explicitly granted during the test.
 
 You can change which account is the _operator_ and the _non-operator_ account by changing the **clientId** value at:
-scripts -> utils.ts -> const clientId
+scripts -> utilities.ts -> const clientId
 
 ### Pre-deployed factory & hederaTokenManager contracts
 

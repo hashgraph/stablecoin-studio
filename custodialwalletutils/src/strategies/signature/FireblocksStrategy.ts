@@ -7,6 +7,7 @@ import {
   TransactionStatus,
 } from 'fireblocks-sdk';
 import { FireblocksConfig } from '../StrategyConfig';
+import { hexStringToUint8Array } from '../../utils/utilities';
 
 export class FireblocksStrategy implements ISignatureStrategy {
   private fireblocks: FireblocksSDK;
@@ -27,7 +28,7 @@ export class FireblocksStrategy implements ISignatureStrategy {
       request.getVaultAccountId(),
       serializedTransaction,
     );
-    return this.hexStringToUint8Array(signatureHex);
+    return hexStringToUint8Array(signatureHex);
   }
 
   private async signArbitraryMessage(
@@ -71,15 +72,5 @@ export class FireblocksStrategy implements ISignatureStrategy {
 
     const signature = txInfo.signedMessages[0].signature;
     return signature.fullSig;
-  }
-
-  private hexStringToUint8Array(hexString: string): Uint8Array {
-    const uint8Array = new Uint8Array(hexString.length / 2);
-
-    for (let i = 0; i < hexString.length; i += 2) {
-      const byte = parseInt(hexString.substr(i, 2), 16);
-      uint8Array[i / 2] = byte;
-    }
-    return uint8Array;
   }
 }

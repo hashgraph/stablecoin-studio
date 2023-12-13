@@ -7,6 +7,7 @@ import {
   SignatureKind,
   SignatureStatus,
 } from '@dfns/sdk/codegen/datamodel/Wallets';
+import { hexStringToUint8Array } from '../../utils/utilities';
 
 const dfnsWalletId = 'wa-6qfr0-heg0c-985bmvv9hphbok47'; // Wallet EdDSA
 const dfnsTestUrl = 'https://api.dfns.ninja';
@@ -125,14 +126,4 @@ async function waitForSignature(signatureId: string) {
   throw new Error(
       `Signature request ${signatureId} took more than ${waitedSeconds}s to complete, stopping polling. Please update options "maxRetries" or "retryIntervals" to wait longer.`,
   );
-}
-
-function hexStringToUint8Array(hexString: string): Uint8Array {
-  const uint8Array = new Uint8Array(hexString.length / 2);
-
-  for (let i = 0; i < hexString.length; i += 2) {
-    const byte = parseInt(hexString.substr(i, 2), 16);
-    uint8Array[i / 2] = byte;
-  }
-  return uint8Array;
 }
