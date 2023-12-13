@@ -58,7 +58,7 @@ const sleep = (interval = 0) =>
 export class DFNSStrategy implements ISignatureStrategy {
   private signer: AsymmetricKeySigner;
   public dfnsApiClientOptions: DfnsApiClientOptions;
-  
+
   constructor(private strategyConfig: DFNSConfig) {
     this.signer = new AsymmetricKeySigner({
       privateKey: strategyConfig.privateKeyToCreateECDSAServiceAccount,
