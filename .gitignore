@@ -44,16 +44,6 @@ contracts/docs/
 contracts/cache/*
 contracts/typechain-types/
 
-buncustodialwalletutils/tests/utils/fireblocks-secret.key
-custodialwalletutils/tests/utils/fireblocks-secret.key
-custodialwalletutils/__tests__/files/dfns/dfns-secret.key
-custodialwalletutils/__tests__/files/dfns/dfns-token.txt
-custodialwalletutils/__tests__/files/fireblocks/fireblocks-secret.key
-custodialwalletutils/__tests__/utils/fireblocks-secret.key
-custodialwalletutils/__tests__/utils/fireblocks-secret.key
-custodialwalletutils/__tests__/files/dfns/credential.txt
 custodialwalletutils/__tests__/files/dfns/secret.key
 custodialwalletutils/__tests__/files/dfns/token.txt
-custodialwalletutils/__tests__/files/fireblocks/apiKey.txt
 custodialwalletutils/__tests__/files/fireblocks/secret.key
-custodialwalletutils/__tests__/files/dfns/credentialID.txt
