@@ -21,13 +21,13 @@ describe('🧪 Factory TESTS', () => {
     const strategy = StrategyFactory.createSignatureStrategy(strategyConfig);
     expect(strategy instanceof FireblocksStrategy);
   });
-  
+
   it('SignatureStrategyFactory creates DFNSStrategy for DFNSConfig', () => {
     const strategyConfig = new DFNSConfig();
     const strategy = StrategyFactory.createSignatureStrategy(strategyConfig);
     expect(strategy instanceof DFNSStrategy);
   });
-  
+
   /* it('SignatureStrategyFactory throws an error for unrecognized config', () => {
     const strategyConfig: IStrategyConfig;
     try {
@@ -40,6 +40,4 @@ describe('🧪 Factory TESTS', () => {
       );
     }
   }); */
-})
-
-
+});

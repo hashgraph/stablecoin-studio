@@ -25,28 +25,27 @@ const FireblocksStrategyConfig = new FireblocksConfig(
 let fireblocksSignatureStrategy = new FireblocksStrategy(
   FireblocksStrategyConfig,
 );
-describe( 'Strategy TESTS', () => {
+describe('Strategy TESTS', () => {
   describe('[Fireblocks] Signatures', () => {
     beforeAll(() => {});
-  
+
     it(
       'Sign bunch of bytes',
       async () => {
         const message = new Uint8Array([1, 2, 3]);
-  
+
         const fireblocksSignatureRequest = new FireblocksSignatureRequest(
           vaultAccountId,
           message,
         );
-  
+
         const signedMessage = await fireblocksSignatureStrategy.sign(
           fireblocksSignatureRequest,
         );
-  
+
         expect(signedMessage.length).toBeGreaterThan(0);
       },
       TEST_TIMEOUT,
     );
   });
-})
-
+});

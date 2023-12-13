@@ -13,7 +13,7 @@ const FIREBLOCKS_BASE_URL = 'https://api.fireblocks.io';
 const vaultAccountId = '2';
 const fireblocksAccountId = '0.0.5712904';
 
-describe( 'Strategy TESTS', () => { 
+describe('Strategy TESTS', () => {
   it('[Fireblocks] signTransaction calls the correct strategy with the correct request', async () => {
     const FireblocksStrategyConfig = new FireblocksConfig(
       FIREBLOCKS_API_KEY,
@@ -24,12 +24,13 @@ describe( 'Strategy TESTS', () => {
       vaultAccountId,
       new Uint8Array([1, 2, 3]),
     );
-    const signatureService = new CustodialWalletService(FireblocksStrategyConfig);
+    const signatureService = new CustodialWalletService(
+      FireblocksStrategyConfig,
+    );
     const signature = await signatureService.signTransaction(
       fireblocksSignatureRequest,
     );
     expect(signature.length).toBeGreaterThan(0);
     console.log(signature);
   });
-})
-
+});
