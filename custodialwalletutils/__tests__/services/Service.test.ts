@@ -1,4 +1,3 @@
-import fs from 'fs';
 import { FireblocksSignatureRequest } from '../../src/models/signature/FireblocksSignatureRequest';
 import { CustodialWalletService } from '../../src/services/CustodialWalletService';
 import {
@@ -26,7 +25,6 @@ describe('Service TESTS', () => {
           fireblocksSignatureRequest,
         );
         expect(signature.length).toBeGreaterThan(0);
-        console.log(signature);
       },
       TEST_TIMEOUT,
     );
@@ -47,7 +45,6 @@ describe('Service TESTS', () => {
           dfnsSignatureRequest,
         );
         expect(signature.length).toBeGreaterThan(0);
-        console.log(signature);
       },
       TEST_TIMEOUT,
     );
