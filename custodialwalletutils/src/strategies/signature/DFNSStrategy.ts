@@ -8,6 +8,7 @@ import {
   SignatureStatus,
 } from '@dfns/sdk/codegen/datamodel/Wallets';
 import { hexStringToUint8Array } from '../../utils/utilities';
+import { DfnsWallet, DfnsWalletOptions } from '../../utils/DfnsWallet';
 
 const dfnsWalletId = 'wa-6qfr0-heg0c-985bmvv9hphbok47'; // Wallet EdDSA
 const dfnsTestUrl = 'https://api.dfns.ninja';
@@ -61,6 +62,7 @@ export class DFNSStrategy implements ISignatureStrategy {
   private signer: AsymmetricKeySigner;
   public dfnsApiClientOptions: DfnsApiClientOptions;
   constructor(private strategyConfig: DFNSConfig) {
+
     this.signer = new AsymmetricKeySigner({
       privateKey: strategyConfig.privateKeyToCreateECDSAServiceAccount,
       credId: strategyConfig.dfnsEcdsaServiceaccountCredentialId,
@@ -71,7 +73,7 @@ export class DFNSStrategy implements ISignatureStrategy {
       appId: strategyConfig.dfnsAppId,
       authToken: strategyConfig.dfnsEcdsaServiceAccountAuthToken,
       baseUrl: strategyConfig.dfnsTestUrl,
-      signer: strategyConfig.signer,
+      signer: this.signer,
     };
   }
   async sign(request: DFNSSignatureRequest): Promise<Uint8Array> {

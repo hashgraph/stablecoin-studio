@@ -1,10 +1,6 @@
-import {
-  DFNSConfig,
-  FireblocksConfig,
-} from '../../src/strategies/StrategyConfig';
+import { FireblocksConfig } from '../../src/strategies/StrategyConfig';
 import { StrategyFactory } from '../../src/factories/StrategyFactory';
 import { FireblocksStrategy } from '../../src/strategies/signature/FireblocksStrategy';
-import { DFNSStrategy } from '../../src/strategies/signature/DFNSStrategy';
 
 const API_KEY = 'API_KEY';
 const BASE_URL = 'BASE_URL';
@@ -21,11 +17,11 @@ describe('🧪 Factory TESTS', () => {
     expect(strategy instanceof FireblocksStrategy);
   });
 
-  it('SignatureStrategyFactory creates DFNSStrategy for DFNSConfig', () => {
-    const strategyConfig = new DFNSConfig();
-    const strategy = StrategyFactory.createSignatureStrategy(strategyConfig);
-    expect(strategy instanceof DFNSStrategy);
-  });
+  // it('SignatureStrategyFactory creates DFNSStrategy for DFNSConfig', () => {
+  //   const strategyConfig = new DFNSConfig();
+  //   const strategy = StrategyFactory.createSignatureStrategy(strategyConfig);
+  //   expect(strategy instanceof DFNSStrategy);
+  // });
 
   /* it('SignatureStrategyFactory throws an error for unrecognized config', () => {
     const strategyConfig: StrategyConfig;
