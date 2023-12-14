@@ -21,12 +21,8 @@
 import fs from 'fs';
 import path from 'path';
 import { config } from 'dotenv';
-import {
-  DFNSConfig,
-} from '../../src/strategies/config/DFNSConfig.js';
-import {
-  FireblocksConfig,
-} from '../../src/strategies/config/FireblocksConfig.js';
+import { DFNSConfig } from '../../src/strategies/config/DFNSConfig.js';
+import { FireblocksConfig } from '../../src/strategies/config/FireblocksConfig.js';
 
 config();
 

@@ -18,68 +18,47 @@
  *
  */
 
-import {
-  TEST_TIMEOUT,
-  FIREBLOCKS_VAULT,
-  DFNS_WALLET_ID,
-} from '../utils/config';
-import { FireblocksSignatureRequest } from '../../src/models/signature/FireblocksSignatureRequest';
-import { DFNSSignatureRequest } from '../../src/models/signature/DFNSSignatureRequest';
+import { TEST_TIMEOUT } from '../utils/config';
+import { SignatureRequest } from '../../src/models/signature/SignatureRequest';
 
 describe('🧪 Models TESTS', () => {
-  describe('[Fireblocks] Signatures Request', () => {
+  describe('Signatures Request', () => {
     it(
-      'build request',
+      'Get Transaction',
       () => {
-        let message = new Uint8Array([1, 2, 3]);
+        const message = new Uint8Array([1, 2, 3]);
 
-        const fireblocksSignatureRequest = new FireblocksSignatureRequest(
-          FIREBLOCKS_VAULT,
-          message,
-        );
+        const signatureRequest = new SignatureRequest(message);
 
-        expect(fireblocksSignatureRequest.getVaultAccountId()).toEqual(
-          FIREBLOCKS_VAULT,
-        );
-        expect(fireblocksSignatureRequest.getTransactionBytes()).toEqual(
-          message,
-        );
+        const retrievedMessage = signatureRequest.getTransactionBytes();
 
-        message = new Uint8Array([4, 5, 6]);
+        expect(retrievedMessage.length).toEqual(message.length);
 
-        fireblocksSignatureRequest.setVaultAccountId('');
-        fireblocksSignatureRequest.setTransactionBytes(message);
-
-        expect(fireblocksSignatureRequest.getVaultAccountId()).toEqual('');
-        expect(fireblocksSignatureRequest.getTransactionBytes()).toEqual(
-          message,
-        );
+        for (let i = 0; i < message.length; i++) {
+          expect(retrievedMessage[i]).toEqual(message[i]);
+        }
       },
       TEST_TIMEOUT,
     );
-  });
 
-  describe('[DFNS] Signatures Request', () => {
     it(
-      'build request',
+      'Set Transaction',
       () => {
-        let message = new Uint8Array([1, 2, 3]);
+        const message = new Uint8Array([1, 2, 3]);
 
-        const dfnsSignatureRequest = new DFNSSignatureRequest(
-          DFNS_WALLET_ID,
-          message,
-        );
+        const signatureRequest = new SignatureRequest(message);
 
-        expect(dfnsSignatureRequest.getWalletId()).toEqual(DFNS_WALLET_ID);
-        expect(dfnsSignatureRequest.getTransactionBytes()).toEqual(message);
+        const message_2 = new Uint8Array([4, 5, 6, 7]);
 
-        message = new Uint8Array([4, 5, 6]);
+        signatureRequest.setTransactionBytes(message_2);
 
-        dfnsSignatureRequest.setWalletId('');
-        dfnsSignatureRequest.setTransactionBytes(message);
+        const retrievedMessage = signatureRequest.getTransactionBytes();
 
-        expect(dfnsSignatureRequest.getWalletId()).toEqual('');
-        expect(dfnsSignatureRequest.getTransactionBytes()).toEqual(message);
+        expect(retrievedMessage.length).toEqual(message_2.length);
+
+        for (let i = 0; i < message_2.length; i++) {
+          expect(retrievedMessage[i]).toEqual(message_2[i]);
+        }
       },
       TEST_TIMEOUT,
     );

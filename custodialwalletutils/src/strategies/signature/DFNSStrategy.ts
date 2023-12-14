@@ -18,14 +18,17 @@
  *
  */
 
-import {ISignatureStrategy} from './ISignatureStrategy';
-import {SignatureRequest} from '../../models/signature/SignatureRequest';
-import {AsymmetricKeySigner} from '@dfns/sdk-keysigner';
-import {DfnsApiClient, DfnsApiClientOptions} from '@dfns/sdk';
+import { ISignatureStrategy } from './ISignatureStrategy';
+import { SignatureRequest } from '../../models/signature/SignatureRequest';
+import { AsymmetricKeySigner } from '@dfns/sdk-keysigner';
+import { DfnsApiClient, DfnsApiClientOptions } from '@dfns/sdk';
 import { DFNSConfig } from '../config/DFNSConfig';
-import {SignatureKind, SignatureStatus,} from '@dfns/sdk/codegen/datamodel/Wallets';
-import {hexStringToUint8Array} from '../../utils/utilities';
-import {DfnsWalletOptions} from '../../utils/DFNSWallet';
+import {
+  SignatureKind,
+  SignatureStatus,
+} from '@dfns/sdk/codegen/datamodel/Wallets';
+import { hexStringToUint8Array } from '../../utils/utilities';
+import { DfnsWalletOptions } from '../../utils/DFNSWallet';
 
 const sleep = (interval = 0) =>
   new Promise((resolve) => setTimeout(resolve, interval));
@@ -53,10 +56,8 @@ export class DFNSStrategy implements ISignatureStrategy {
     this.dfnsApiClient = new DfnsApiClient(this.dfnsApiClientOptions);
 
     this.config = strategyConfig;
-
   }
   async sign(request: SignatureRequest): Promise<Uint8Array> {
-
     const dfnsWalletOptions: DfnsWalletOptions = {
       walletId: this.config.walletId,
       dfnsClient: this.dfnsApiClient,
@@ -64,13 +65,21 @@ export class DFNSStrategy implements ISignatureStrategy {
       retryInterval: 2000,
     };
 
-    const serializedTransaction = Buffer.from(request.getTransactionBytes()).toString('hex');
-    const signature = await signMessage(serializedTransaction, dfnsWalletOptions);
+    const serializedTransaction = Buffer.from(
+      request.getTransactionBytes(),
+    ).toString('hex');
+    const signature = await signMessage(
+      serializedTransaction,
+      dfnsWalletOptions,
+    );
     return hexStringToUint8Array(signature);
   }
 }
 
-async function signMessage(message: string, dfnsWalletOptions: DfnsWalletOptions): Promise<string> {
+async function signMessage(
+  message: string,
+  dfnsWalletOptions: DfnsWalletOptions,
+): Promise<string> {
   const { walletId, dfnsClient } = dfnsWalletOptions;
   const res = await dfnsClient.wallets.generateSignature({
     walletId,
@@ -80,7 +89,10 @@ async function signMessage(message: string, dfnsWalletOptions: DfnsWalletOptions
   return signature.toString('hex');
 }
 
-async function waitForSignature(signatureId: string, dfnsWalletOptions: DfnsWalletOptions) {
+async function waitForSignature(
+  signatureId: string,
+  dfnsWalletOptions: DfnsWalletOptions,
+) {
   const { walletId, dfnsClient } = dfnsWalletOptions;
   let maxRetries = dfnsWalletOptions.maxRetries ?? 3;
   const retryInterval = dfnsWalletOptions.retryInterval ?? 1000;

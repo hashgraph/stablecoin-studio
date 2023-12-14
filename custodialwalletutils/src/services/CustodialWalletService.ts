@@ -25,12 +25,12 @@ import { SignatureRequest } from '../models/signature/SignatureRequest';
 export class CustodialWalletService {
   constructor(private config: IStrategyConfig) {}
 
-  getconfig(): IStrategyConfig{
+  getconfig(): IStrategyConfig {
     return this.config;
   }
 
-  setconfig(newConfig: IStrategyConfig){
-   this.config = newConfig;
+  setconfig(newConfig: IStrategyConfig) {
+    this.config = newConfig;
   }
 
   signTransaction(signatureRequest: SignatureRequest): Promise<Uint8Array> {

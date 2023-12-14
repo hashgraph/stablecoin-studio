@@ -23,5 +23,3 @@ import { ISignatureStrategy } from '../signature/ISignatureStrategy';
 export interface IStrategyConfig {
   getSignatureStrategy(): ISignatureStrategy;
 }
-
-

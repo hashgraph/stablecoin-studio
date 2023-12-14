@@ -18,19 +18,19 @@
  *
  */
 
-import { FireblocksStrategy } from "../signature/FireblocksStrategy";
-import { ISignatureStrategy } from "../signature/ISignatureStrategy";
-import { IStrategyConfig } from "./IStrategyConfig";
+import { FireblocksStrategy } from '../signature/FireblocksStrategy';
+import { ISignatureStrategy } from '../signature/ISignatureStrategy';
+import { IStrategyConfig } from './IStrategyConfig';
 
 export class FireblocksConfig implements IStrategyConfig {
-    constructor(
-      public apiKey: string,
-      public apiSecretKey: string,
-      public baseUrl: string,
-      public vaultAccountId: string,
-    ) {}
-  
-    getSignatureStrategy(): ISignatureStrategy {
-      return new FireblocksStrategy(this);
-    }
+  constructor(
+    public apiKey: string,
+    public apiSecretKey: string,
+    public baseUrl: string,
+    public vaultAccountId: string,
+  ) {}
+
+  getSignatureStrategy(): ISignatureStrategy {
+    return new FireblocksStrategy(this);
   }
+}

@@ -19,13 +19,7 @@
  */
 
 import { SignatureRequest } from '../../src/index.js';
-import {
-  TEST_TIMEOUT,
-  FIREBLOCKS_VAULT,
-  fireblocksConfig,
-  DFNS_WALLET_ID,
-  dfnsConfig,
-} from '../utils/config';
+import { TEST_TIMEOUT, fireblocksConfig, dfnsConfig } from '../utils/config';
 import { DFNSStrategy } from '../../src/strategies/signature/DFNSStrategy.js';
 import { FireblocksStrategy } from '../../src/strategies/signature/FireblocksStrategy.js';
 
@@ -36,16 +30,14 @@ describe('Strategy TESTS', () => {
       async () => {
         const message = new Uint8Array([1, 2, 3]);
 
-        const signatureRequest = new SignatureRequest(
-          message,
-        );
+        const signatureRequest = new SignatureRequest(message);
 
         const fireblocksSignatureStrategy = new FireblocksStrategy(
           fireblocksConfig,
         );
 
         const signedMessage = await fireblocksSignatureStrategy.sign(
-          fireblocksSignatureRequest,
+          signatureRequest,
         );
 
         expect(signedMessage.length).toBeGreaterThan(0);
@@ -60,15 +52,12 @@ describe('Strategy TESTS', () => {
       async () => {
         const message = new Uint8Array([1, 2, 3]);
 
-        const dfnsSignatureRequest = new DFNSSignatureRequest(
-          DFNS_WALLET_ID,
-          message,
-        );
+        const signatureRequest = new SignatureRequest(message);
 
         const dfnsSignatureStrategy = new DFNSStrategy(dfnsConfig);
 
         const signedMessage = await dfnsSignatureStrategy.sign(
-          dfnsSignatureRequest,
+          signatureRequest,
         );
 
         expect(signedMessage.length).toBeGreaterThan(0);
