@@ -18,8 +18,7 @@
  *
  */
 
-import { FireblocksSignatureRequest } from '../../src/models/signature/FireblocksSignatureRequest';
-import { DFNSSignatureRequest } from '../../src/index.js';
+import { SignatureRequest } from '../../src/index.js';
 import {
   TEST_TIMEOUT,
   FIREBLOCKS_VAULT,
@@ -37,8 +36,7 @@ describe('Strategy TESTS', () => {
       async () => {
         const message = new Uint8Array([1, 2, 3]);
 
-        const fireblocksSignatureRequest = new FireblocksSignatureRequest(
-          FIREBLOCKS_VAULT,
+        const signatureRequest = new SignatureRequest(
           message,
         );
 

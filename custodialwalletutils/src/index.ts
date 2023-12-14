@@ -19,5 +19,6 @@
  */
 
 export * from './services/CustodialWalletService.js';
-export * from './models/signature/FireblocksSignatureRequest';
-export * from './models/signature/DFNSSignatureRequest';
+export * from './models/signature/SignatureRequest';
+export * from './strategies/config/DFNSConfig';
+export * from './strategies/config/FireblocksConfig';

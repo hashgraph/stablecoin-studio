@@ -19,11 +19,11 @@
  */
 
 import { ISignatureStrategy } from '../strategies/signature/ISignatureStrategy';
-import { StrategyConfig } from '../strategies/StrategyConfig';
+import { IStrategyConfig } from '../strategies/config/IStrategyConfig';
 
 export class StrategyFactory {
   static createSignatureStrategy(
-    strategyConfig: StrategyConfig,
+    strategyConfig: IStrategyConfig,
   ): ISignatureStrategy {
     return strategyConfig.getSignatureStrategy();
   }

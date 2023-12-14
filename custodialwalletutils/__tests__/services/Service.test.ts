@@ -20,47 +20,83 @@
 
 /* eslint-disable jest/no-conditional-expect */
 
-import { FireblocksSignatureRequest } from '../../src/models/signature/FireblocksSignatureRequest';
 import { CustodialWalletService } from '../../src/services/CustodialWalletService';
 import {
   TEST_TIMEOUT,
-  FIREBLOCKS_VAULT,
-  DFNS_WALLET_ID,
   fireblocksConfig,
   dfnsConfig,
+  FIREBLOCKS_API_KEY,
+  FIREBLOCKS_VAULT,
+  FIREBLOCKS_BASE_URL,
+  FIREBLOCKS_API_SECRET_KEY,
+  DFNS_WALLET_ID,
+  DFNS_TEST_URL,
+  DFNS_APP_ID,
+  DFNS_APP_ORIGIN,
+  DFNS_SERVICE_ACCOUNT_AUTHORIZATION_TOKEN,
+  DFNS_SERVICE_ACCOUNT_CREDENTIAL_ID,
+  DFNS_SERVICE_ACCOUNT_PRIVATE_KEY,
 } from '../utils/config';
-import { DFNSSignatureRequest } from '../../src/index.js';
+import { DFNSConfig, FireblocksConfig, SignatureRequest } from '../../src/index.js';
+
+const signatureRequest = new SignatureRequest(
+  new Uint8Array([1, 2, 3]),
+);
 
 describe('Service TESTS', () => {
-  describe('[Fireblocks] Signatures', () => {
+  describe('Configuration', () => {
     it(
-      'Try Sign bunch of bytes Using the wrong request',
+      'Get configuration',
       async () => {
-        const dfnsSignatureRequest = new DFNSSignatureRequest(
-          DFNS_WALLET_ID,
-          new Uint8Array([1, 2, 3]),
-        );
+        // arrange
         const signatureService = new CustodialWalletService(fireblocksConfig);
-        try {
-          await signatureService.signTransaction(dfnsSignatureRequest);
-          expect(false).toEqual(true);
-        } catch (e) {
-          expect(true).toEqual(true);
-        }
+
+        // act
+        const config = await signatureService.getconfig();
+
+        // assert
+        expect(config instanceof FireblocksConfig);
+        expect((config as  FireblocksConfig).apiKey).toEqual(FIREBLOCKS_API_KEY);
+        expect((config as  FireblocksConfig).apiSecretKey).toEqual(FIREBLOCKS_API_SECRET_KEY);
+        expect((config as  FireblocksConfig).baseUrl).toEqual(FIREBLOCKS_BASE_URL);
+        expect((config as  FireblocksConfig).vaultAccountId).toEqual(FIREBLOCKS_VAULT);
+
       },
       TEST_TIMEOUT,
     );
 
     it(
+      'Set configuration',
+      async () => {
+        // arrange
+        const signatureService = new CustodialWalletService(fireblocksConfig);
+
+        // act
+        await signatureService.setconfig(dfnsConfig);
+        const config = await signatureService.getconfig();
+
+        // assert
+        expect(config instanceof DFNSConfig);
+        expect((config as  DFNSConfig).serviceAccountPrivateKey).toEqual(DFNS_SERVICE_ACCOUNT_PRIVATE_KEY);
+        expect((config as  DFNSConfig).serviceAccountCredentialId).toEqual(DFNS_SERVICE_ACCOUNT_CREDENTIAL_ID);
+        expect((config as  DFNSConfig).serviceAccountAuthToken).toEqual(DFNS_SERVICE_ACCOUNT_AUTHORIZATION_TOKEN);
+        expect((config as  DFNSConfig).appOrigin).toEqual(DFNS_APP_ORIGIN);
+        expect((config as  DFNSConfig).appId).toEqual(DFNS_APP_ID);
+        expect((config as  DFNSConfig).baseUrl).toEqual(DFNS_TEST_URL);
+        expect((config as  DFNSConfig).walletId).toEqual(DFNS_WALLET_ID);
+
+      },
+      TEST_TIMEOUT,
+    );
+
+  });
+  describe('[Fireblocks] Signatures', () => {
+    it(
       'Sign bunch of bytes',
       async () => {
-        const fireblocksSignatureRequest = new FireblocksSignatureRequest(
-          FIREBLOCKS_VAULT,
-          new Uint8Array([1, 2, 3]),
-        );
         const signatureService = new CustodialWalletService(fireblocksConfig);
         const signature = await signatureService.signTransaction(
-          fireblocksSignatureRequest,
+          signatureRequest,
         );
         expect(signature.length).toBeGreaterThan(0);
       },
@@ -70,33 +106,11 @@ describe('Service TESTS', () => {
 
   describe('[DFNS] Signatures', () => {
     it(
-      'Try Sign bunch of bytes Using the wrong request',
-      async () => {
-        const fireblocksSignatureRequest = new FireblocksSignatureRequest(
-          FIREBLOCKS_VAULT,
-          new Uint8Array([1, 2, 3]),
-        );
-        const signatureService = new CustodialWalletService(dfnsConfig);
-        try {
-          await signatureService.signTransaction(fireblocksSignatureRequest);
-          expect(false).toEqual(true);
-        } catch (e) {
-          expect(true).toEqual(true);
-        }
-      },
-      TEST_TIMEOUT,
-    );
-
-    it(
       'Sign bunch of bytes',
       async () => {
-        const dfnsSignatureRequest = new DFNSSignatureRequest(
-          DFNS_WALLET_ID,
-          new Uint8Array([1, 2, 3]),
-        );
         const signatureService = new CustodialWalletService(dfnsConfig);
         const signature = await signatureService.signTransaction(
-          dfnsSignatureRequest,
+          signatureRequest,
         );
         expect(signature.length).toBeGreaterThan(0);
       },

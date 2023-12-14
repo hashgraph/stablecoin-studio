@@ -18,7 +18,7 @@
  *
  */
 
-import { FireblocksSignatureRequest } from '../../models/signature/FireblocksSignatureRequest';
+import { SignatureRequest } from '../../models/signature/SignatureRequest';
 import { ISignatureStrategy } from './ISignatureStrategy';
 import {
   FireblocksSDK,
@@ -26,11 +26,12 @@ import {
   TransactionOperation,
   TransactionStatus,
 } from 'fireblocks-sdk';
-import { FireblocksConfig } from '../StrategyConfig';
+import { FireblocksConfig } from '../config/FireblocksConfig';
 import { hexStringToUint8Array } from '../../utils/utilities';
 
 export class FireblocksStrategy implements ISignatureStrategy {
   private fireblocks: FireblocksSDK;
+  private config: FireblocksConfig;
 
   constructor(private strategyConfig: FireblocksConfig) {
     this.fireblocks = new FireblocksSDK(
@@ -38,14 +39,15 @@ export class FireblocksStrategy implements ISignatureStrategy {
       strategyConfig.apiKey,
       strategyConfig.baseUrl,
     );
+    this.config = strategyConfig;
   }
 
-  async sign(request: FireblocksSignatureRequest): Promise<Uint8Array> {
+  async sign(request: SignatureRequest): Promise<Uint8Array> {
     const serializedTransaction = Buffer.from(
       request.getTransactionBytes(),
     ).toString('hex');
     const signatureHex = await this.signArbitraryMessage(
-      request.getVaultAccountId(),
+      this.config.vaultAccountId,
       serializedTransaction,
     );
     return hexStringToUint8Array(signatureHex);

@@ -18,21 +18,19 @@
  *
  */
 
-import { SignatureRequest } from './SignatureRequest';
+import { FireblocksStrategy } from "../signature/FireblocksStrategy";
+import { ISignatureStrategy } from "../signature/ISignatureStrategy";
+import { IStrategyConfig } from "./IStrategyConfig";
 
-export class FireblocksSignatureRequest extends SignatureRequest {
-  private vaultAccountId: string;
-
-  constructor(vaultAccountId: string, transactionBytes: Uint8Array) {
-    super(transactionBytes);
-    this.vaultAccountId = vaultAccountId;
+export class FireblocksConfig implements IStrategyConfig {
+    constructor(
+      public apiKey: string,
+      public apiSecretKey: string,
+      public baseUrl: string,
+      public vaultAccountId: string,
+    ) {}
+  
+    getSignatureStrategy(): ISignatureStrategy {
+      return new FireblocksStrategy(this);
+    }
   }
-
-  public getVaultAccountId(): string {
-    return this.vaultAccountId;
-  }
-
-  public setVaultAccountId(vaultAccountId: string): void {
-    this.vaultAccountId = vaultAccountId;
-  }
-}

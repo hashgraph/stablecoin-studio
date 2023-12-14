@@ -19,10 +19,10 @@
  */
 
 import {ISignatureStrategy} from './ISignatureStrategy';
-import {DFNSSignatureRequest} from '../../models/signature/DFNSSignatureRequest';
+import {SignatureRequest} from '../../models/signature/SignatureRequest';
 import {AsymmetricKeySigner} from '@dfns/sdk-keysigner';
 import {DfnsApiClient, DfnsApiClientOptions} from '@dfns/sdk';
-import {DFNSConfig} from '../StrategyConfig';
+import { DFNSConfig } from '../config/DFNSConfig';
 import {SignatureKind, SignatureStatus,} from '@dfns/sdk/codegen/datamodel/Wallets';
 import {hexStringToUint8Array} from '../../utils/utilities';
 import {DfnsWalletOptions} from '../../utils/DFNSWallet';
@@ -34,6 +34,7 @@ export class DFNSStrategy implements ISignatureStrategy {
   private signer: AsymmetricKeySigner;
   private dfnsApiClientOptions: DfnsApiClientOptions;
   private dfnsApiClient: DfnsApiClient;
+  private config: DFNSConfig;
 
   constructor(private strategyConfig: DFNSConfig) {
     this.signer = new AsymmetricKeySigner({
@@ -45,17 +46,19 @@ export class DFNSStrategy implements ISignatureStrategy {
     this.dfnsApiClientOptions = {
       appId: strategyConfig.appId,
       authToken: strategyConfig.serviceAccountAuthToken,
-      baseUrl: strategyConfig.testUrl,
+      baseUrl: strategyConfig.baseUrl,
       signer: this.signer,
     };
 
     this.dfnsApiClient = new DfnsApiClient(this.dfnsApiClientOptions);
 
+    this.config = strategyConfig;
+
   }
-  async sign(request: DFNSSignatureRequest): Promise<Uint8Array> {
+  async sign(request: SignatureRequest): Promise<Uint8Array> {
 
     const dfnsWalletOptions: DfnsWalletOptions = {
-      walletId: request.getWalletId(),
+      walletId: this.config.walletId,
       dfnsClient: this.dfnsApiClient,
       maxRetries: 6,
       retryInterval: 2000,

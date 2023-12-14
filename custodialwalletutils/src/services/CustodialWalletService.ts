@@ -18,12 +18,20 @@
  *
  */
 
-import { StrategyConfig } from '../strategies/StrategyConfig';
+import { IStrategyConfig } from '../strategies/config/IStrategyConfig';
 import { StrategyFactory } from '../factories/StrategyFactory';
 import { SignatureRequest } from '../models/signature/SignatureRequest';
 
 export class CustodialWalletService {
-  constructor(private config: StrategyConfig) {}
+  constructor(private config: IStrategyConfig) {}
+
+  getconfig(): IStrategyConfig{
+    return this.config;
+  }
+
+  setconfig(newConfig: IStrategyConfig){
+   this.config = newConfig;
+  }
 
   signTransaction(signatureRequest: SignatureRequest): Promise<Uint8Array> {
     const strategy = StrategyFactory.createSignatureStrategy(this.config);

@@ -18,21 +18,22 @@
  *
  */
 
-import { SignatureRequest } from './SignatureRequest';
+import { DFNSStrategy } from "../signature/DFNSStrategy";
+import { ISignatureStrategy } from "../signature/ISignatureStrategy";
+import { IStrategyConfig } from "./IStrategyConfig";
 
-export class DFNSSignatureRequest extends SignatureRequest {
-  private walletId: string;
-
-  constructor(walletId: string, transactionBytes: Uint8Array) {
-    super(transactionBytes);
-    this.walletId = walletId;
+export class DFNSConfig implements IStrategyConfig {
+    constructor(
+      public serviceAccountPrivateKey: string,
+      public serviceAccountCredentialId: string,
+      public serviceAccountAuthToken: string,
+      public appOrigin: string,
+      public appId: string,
+      public baseUrl: string,
+      public walletId: string,
+    ) {}
+  
+    getSignatureStrategy(): ISignatureStrategy {
+      return new DFNSStrategy(this);
+    }
   }
-
-  public getWalletId(): string {
-    return this.walletId;
-  }
-
-  public setWalletId(walletId: string): void {
-    this.walletId = walletId;
-  }
-}
