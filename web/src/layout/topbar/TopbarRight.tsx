@@ -5,6 +5,10 @@ import {
 	LAST_WALLET_SELECTED,
 	SELECTED_WALLET_PAIRED,
 	SELECTED_NETWORK,
+	MIRROR_LIST_LS,
+	RPC_LIST_LS,
+	SELECTED_MIRROR_LS,
+	SELECTED_RPC_LS,
 } from '../../store/slices/walletSlice';
 import HEDERA_LOGO from '../../assets/png/hashpackLogo.png';
 import METAMASK_LOGO from '../../assets/svg/MetaMask_Fox.svg';
@@ -13,6 +17,7 @@ import TooltipCopy from '../../components/TooltipCopy';
 import { SupportedWallets } from '@hashgraph/stablecoin-npm-sdk';
 import { Question } from 'phosphor-react';
 import { type ReactElement } from 'react';
+import { cleanLocalStorage } from '../../utils/cleanStorage';
 
 const TopbarRight = () => {
 	const initData = useSelector(SELECTED_WALLET_PAIRED);
@@ -21,11 +26,7 @@ const TopbarRight = () => {
 
 	const handleDisconnect = async () => {
 		window.location.reload();
-		const items = { ...localStorage };
-		delete items.tokensAccount;
-		for (const item in items) {
-			localStorage.removeItem(item);
-		}
+		cleanLocalStorage([MIRROR_LIST_LS, SELECTED_MIRROR_LS, RPC_LIST_LS, SELECTED_RPC_LS]);
 	};
 
 	const getIcon = (): ReactElement => {
