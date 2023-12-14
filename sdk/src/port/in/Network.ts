@@ -172,22 +172,20 @@ class NetworkInPort implements INetworkInPort {
 		handleValidation('ConnectRequest', req);
 
 		const account = RequestMapper.mapAccount(req.account);
-		if (req.wallet == SupportedWallets.HASHPACK) {
+		if (
+			req.wallet == SupportedWallets.HASHPACK ||
+			req.wallet == SupportedWallets.BLADE
+		) {
 			const instances = Injectable.registerTransactionAdapterInstances();
 			for (const val of instances) {
-				if (val instanceof HashpackTransactionAdapter) {
+				if (
+					val instanceof HashpackTransactionAdapter ||
+					val instanceof BladeTransactionAdapter
+				) {
 					await val.restart(req.network);
 				}
 			}
 		}
-		/*if (req.wallet == SupportedWallets.BLADE) {
-			const instances = Injectable.registerTransactionAdapterInstances();
-			for (const val of instances) {
-				if (val instanceof BladeTransactionAdapter) {
-					await val.restart(req.network);
-				}
-			}
-		}*/
 		await this.commandBus.execute(
 			new SetNetworkCommand(req.network, req.mirrorNode, req.rpcNode),
 		);

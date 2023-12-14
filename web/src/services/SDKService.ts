@@ -85,6 +85,63 @@ export class SDKService {
 		selectedMirror?: IMirrorRPCNode,
 		selectedRPC?: IMirrorRPCNode,
 	) {
+		const networkConfig = await this.setNetwork(connectNetwork, selectedMirror, selectedRPC);
+		const _mirrorNode = networkConfig[0];
+		const _rpcNode = networkConfig[1];
+
+		let factories = []; // REACT_APP_FACTORIES load from .env
+
+		if (process.env.REACT_APP_FACTORIES) factories = JSON.parse(process.env.REACT_APP_FACTORIES);
+
+		const _lastFactoryId =
+			factories.length !== 0
+				? factories.find((i: any) => i.Environment === connectNetwork)
+					? factories.find((i: any) => i.Environment === connectNetwork).STABLE_COIN_FACTORY_ADDRESS
+					: ''
+				: '';
+
+		if (_lastFactoryId)
+			await Network.setConfig(
+				new SetConfigurationRequest({
+					factoryAddress: _lastFactoryId,
+				}),
+			);
+
+		this.initData = await Network.connect(
+			new ConnectRequest({
+				network: connectNetwork,
+				mirrorNode: _mirrorNode,
+				rpcNode: _rpcNode,
+				wallet,
+			}),
+		);
+
+		const returnedSelectedRPC: IMirrorRPCNode = {
+			name: 'EnvConf' + String(0),
+			BASE_URL: _rpcNode.baseUrl,
+			API_KEY: _rpcNode.apiKey,
+			Environment: connectNetwork,
+			isInConfig: true,
+			HEADER: _rpcNode.headerName,
+		};
+
+		const returnedSelectedMirror: IMirrorRPCNode = {
+			name: 'EnvConf' + String(0),
+			BASE_URL: _mirrorNode.baseUrl,
+			API_KEY: _mirrorNode.apiKey,
+			Environment: connectNetwork,
+			isInConfig: true,
+			HEADER: _mirrorNode.headerName,
+		};
+
+		return [this.initData, returnedSelectedMirror, returnedSelectedRPC];
+	}
+
+	public static async setNetwork(
+		connectNetwork: string,
+		selectedMirror?: IMirrorRPCNode,
+		selectedRPC?: IMirrorRPCNode,
+	) {
 		let mirrorNode = []; // REACT_APP_MIRROR_NODE load from .env
 		if (selectedMirror) {
 			mirrorNode = [selectedMirror];
@@ -123,34 +180,7 @@ export class SDKService {
 			}),
 		);
 
-		let factories = []; // REACT_APP_FACTORIES load from .env
-
-		if (process.env.REACT_APP_FACTORIES) factories = JSON.parse(process.env.REACT_APP_FACTORIES);
-
-		const _lastFactoryId =
-			factories.length !== 0
-				? factories.find((i: any) => i.Environment === connectNetwork)
-					? factories.find((i: any) => i.Environment === connectNetwork).STABLE_COIN_FACTORY_ADDRESS
-					: ''
-				: '';
-
-		if (_lastFactoryId)
-			await Network.setConfig(
-				new SetConfigurationRequest({
-					factoryAddress: _lastFactoryId,
-				}),
-			);
-
-		this.initData = await Network.connect(
-			new ConnectRequest({
-				network: connectNetwork,
-				mirrorNode: _mirrorNode,
-				rpcNode: _rpcNode,
-				wallet,
-			}),
-		);
-
-		return this.initData;
+		return [_mirrorNode, _rpcNode];
 	}
 
 	// dummy init

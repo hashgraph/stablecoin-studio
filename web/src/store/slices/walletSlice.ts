@@ -16,10 +16,10 @@ import type {
 import type { IMirrorRPCNode } from '../../interfaces/IMirrorRPCNode';
 
 const LAST_WALLET_LS = 'lastWallet';
-const MIRROR_LIST_LS = 'mirrorList';
-const SELECTED_MIRROR_LS = 'selectedMirror';
-const RPC_LIST_LS = 'rpcList';
-const SELECTED_RPC_LS = 'selectedRPC';
+export const MIRROR_LIST_LS = 'mirrorList';
+export const SELECTED_MIRROR_LS = 'selectedMirrors';
+export const RPC_LIST_LS = 'rpcList';
+export const SELECTED_RPC_LS = 'selectedRPCs';
 
 export interface InitialStateProps {
 	data?: InitializationData;
@@ -51,9 +51,9 @@ export interface InitialStateProps {
 	accountRecognized?: boolean;
 	factoryId?: string;
 	mirrorList?: IMirrorRPCNode[];
-	selectedMirror?: IMirrorRPCNode;
+	selectedMirrors?: IMirrorRPCNode[];
 	rpcList?: IMirrorRPCNode[];
-	selectedRPC?: IMirrorRPCNode;
+	selectedRPCs?: IMirrorRPCNode[];
 }
 
 export const initialState: InitialStateProps = {
@@ -85,9 +85,9 @@ export const initialState: InitialStateProps = {
 	accountRecognized: true,
 	factoryId: undefined,
 	mirrorList: [],
-	selectedMirror: undefined,
+	selectedMirrors: [],
 	rpcList: [],
-	selectedRPC: undefined,
+	selectedRPCs: [],
 };
 
 export const getStableCoinList = createAsyncThunk(
@@ -227,16 +227,16 @@ export const walletSlice = createSlice({
 			state.mirrorList = action.payload;
 			localStorage.setItem(MIRROR_LIST_LS, JSON.stringify(action.payload));
 		},
-		setSelectedMirror: (state, action) => {
-			state.selectedMirror = action.payload;
+		setSelectedMirrors: (state, action) => {
+			state.selectedMirrors = action.payload;
 			localStorage.setItem(SELECTED_MIRROR_LS, JSON.stringify(action.payload));
 		},
 		setRPCList: (state, action) => {
 			state.rpcList = action.payload;
 			localStorage.setItem(RPC_LIST_LS, JSON.stringify(action.payload));
 		},
-		setSelectedRPC: (state, action) => {
-			state.selectedRPC = action.payload;
+		setSelectedRPCs: (state, action) => {
+			state.selectedRPCs = action.payload;
 			localStorage.setItem(SELECTED_RPC_LS, JSON.stringify(action.payload));
 		},
 		clearData: (state) => {
@@ -342,11 +342,11 @@ export const MIRROR_LIST = (state: RootState) => {
 		return JSON.parse(list);
 	} else return state.wallet.mirrorList;
 };
-export const SELECTED_MIRROR = (state: RootState) => {
-	const mirror = localStorage?.getItem(SELECTED_MIRROR_LS);
-	if (mirror) {
-		return JSON.parse(mirror);
-	} else return state.wallet.selectedMirror;
+export const SELECTED_MIRRORS = (state: RootState) => {
+	const mirrors = localStorage?.getItem(SELECTED_MIRROR_LS);
+	if (mirrors) {
+		return JSON.parse(mirrors);
+	} else return state.wallet.selectedMirrors;
 };
 export const RPC_LIST = (state: RootState) => {
 	const list = localStorage?.getItem(RPC_LIST_LS);
@@ -354,11 +354,11 @@ export const RPC_LIST = (state: RootState) => {
 		return JSON.parse(list);
 	} else return state.wallet.rpcList;
 };
-export const SELECTED_RPC = (state: RootState) => {
-	const rpc = localStorage?.getItem(SELECTED_RPC_LS);
-	if (rpc) {
-		return JSON.parse(rpc);
-	} else return state.wallet.selectedRPC;
+export const SELECTED_RPCS = (state: RootState) => {
+	const rpcs = localStorage?.getItem(SELECTED_RPC_LS);
+	if (rpcs) {
+		return JSON.parse(rpcs);
+	} else return state.wallet.selectedRPCs;
 };
 
 export const walletActions = walletSlice.actions;

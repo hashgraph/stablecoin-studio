@@ -28,11 +28,17 @@ import BLADE_LOGO_PNG from '../assets/png/bladeLogo.png';
 import HASHPACK_LOGO_PNG from '../assets/png/hashpackLogo.png';
 import METAMASK_LOGO from '../assets/svg/MetaMask_Fox.svg';
 import SDKService from '../services/SDKService';
-import { AVAILABLE_WALLETS, walletActions } from '../store/slices/walletSlice';
+import {
+	AVAILABLE_WALLETS,
+	SELECTED_MIRRORS,
+	SELECTED_RPCS,
+	walletActions,
+} from '../store/slices/walletSlice';
 import WARNING_ICON from '../assets/svg/warning.svg';
 import ERROR_ICON from '../assets/svg/error.svg';
 import { SelectController } from './Form/SelectController';
 import { useForm } from 'react-hook-form';
+import { IMirrorRPCNode } from '../interfaces/IMirrorRPCNode';
 
 const ModalWalletConnect = () => {
 	const { t } = useTranslation('global');
@@ -73,7 +79,10 @@ const ModalWalletConnect = () => {
 	const [error, setError] = useState<any>();
 	const [rejected, setRejected] = useState<boolean>(false);
 	const [hashpackSelected, setHashpackSelected] = useState<boolean>(false);
+	const [bladeSelected, setBladeSelected] = useState<boolean>(false);
 	const availableWallets = useSelector(AVAILABLE_WALLETS);
+	const selectedMirrors: IMirrorRPCNode[] = useSelector(SELECTED_MIRRORS);
+	const selectedRPCs: IMirrorRPCNode[] = useSelector(SELECTED_RPCS);
 
 	const { control, getValues } = useForm({
 		mode: 'onChange',
@@ -92,7 +101,49 @@ const ModalWalletConnect = () => {
 		dispatch(walletActions.setIsAcceptOwner(false));
 
 		try {
-			await SDKService.connectWallet(wallet, network);
+			let mirrorNode;
+			if (selectedMirrors.length > 0) {
+				const listMirrors = selectedMirrors.filter(
+					(obj: IMirrorRPCNode) =>
+						obj.Environment.toLocaleLowerCase() === network.toLocaleLowerCase(),
+				);
+				if (listMirrors) mirrorNode = listMirrors[0];
+			}
+			let rpcNode;
+			if (selectedRPCs.length > 0) {
+				const listRPCs = selectedRPCs.filter(
+					(obj: IMirrorRPCNode) =>
+						obj.Environment.toLocaleLowerCase() === network.toLocaleLowerCase(),
+				);
+				if (listRPCs) rpcNode = listRPCs[0];
+			}
+
+			const result = await SDKService.connectWallet(wallet, network, mirrorNode, rpcNode);
+
+			const newselectedMirrors: IMirrorRPCNode[] = [];
+
+			selectedMirrors.forEach((obj) => {
+				newselectedMirrors.push(obj);
+			});
+
+			if (!mirrorNode) {
+				newselectedMirrors.push(result[1] as IMirrorRPCNode);
+			}
+
+			dispatch(walletActions.setSelectedMirrors(newselectedMirrors));
+
+			const newselectedRPCs: IMirrorRPCNode[] = [];
+
+			selectedRPCs.forEach((obj) => {
+				newselectedRPCs.push(obj);
+			});
+
+			if (!rpcNode) {
+				newselectedRPCs.push(result[2] as IMirrorRPCNode);
+			}
+
+			dispatch(walletActions.setSelectedRPCs(newselectedRPCs));
+
 			const factoryId = await Network.getFactoryAddress();
 
 			if (factoryId) {
@@ -144,7 +195,7 @@ const ModalWalletConnect = () => {
 
 	const handleConnectHashpackWalletConfirmed = () => {
 		const values = getValues();
-		handleWalletConnect(SupportedWallets.HASHPACK, values.network.value);
+		handleWalletConnect(SupportedWallets.HASHPACK, values.networkHashpack.value);
 	};
 
 	const networkOptions = [{ value: 'testnet', label: 'Testnet' }];
@@ -160,7 +211,17 @@ const ModalWalletConnect = () => {
 	};
 
 	const handleConnectBladeWallet = () => {
-		handleWalletConnect(SupportedWallets.BLADE, 'testnet');
+		setBladeSelected(true);
+	};
+
+	const unHandleConnectBladeWallet = () => {
+		setBladeSelected(false);
+		setLoading(undefined);
+	};
+
+	const handleConnectBladeWalletConfirmed = () => {
+		const values = getValues();
+		handleWalletConnect(SupportedWallets.BLADE, values.networkBlade.value);
 	};
 
 	const PairingSpinner: FC<{ wallet: SupportedWallets; children?: ReactNode }> = ({
@@ -186,6 +247,10 @@ const ModalWalletConnect = () => {
 		);
 	};
 
+	var userAgent = navigator.userAgent;
+
+	var isChrome = userAgent.indexOf('Chrome') !== -1;
+
 	return (
 		<>
 			<Modal
@@ -198,7 +263,7 @@ const ModalWalletConnect = () => {
 			>
 				<ModalOverlay />
 				<ModalContent data-testid='modal-action-content' p='50' w='600px'>
-					{!error && !rejected && !hashpackSelected && (
+					{!error && !rejected && !hashpackSelected && !bladeSelected && (
 						<>
 							<ModalHeader p='0' justifyContent='center'>
 								<Text
@@ -268,29 +333,33 @@ const ModalWalletConnect = () => {
 											</Link>
 										</VStack>
 									)}
-									{availableWallets.includes(SupportedWallets.BLADE) ? (
-										<VStack
-											data-testid='Blade'
-											{...styles.providerStyle}
-											shouldWrapChildren
-											onClick={handleConnectBladeWallet}
-										>
-											<PairingSpinner wallet={SupportedWallets.BLADE}>
-												<Image src={BLADE_LOGO_PNG} w={20} />
-												<Text textAlign='center'>Blade</Text>
-											</PairingSpinner>
-										</VStack>
-									) : (
-										<VStack data-testid='Blade' {...styles.providerStyle}>
-											<Link
-												href='https://bladewallet.io/'
-												isExternal
-												_hover={{ textDecoration: 'none' }}
+									{isChrome ? (
+										availableWallets.includes(SupportedWallets.BLADE) ? (
+											<VStack
+												data-testid='Blade'
+												{...styles.providerStyle}
+												shouldWrapChildren
+												onClick={handleConnectBladeWallet}
 											>
-												<Image src={BLADE_LOGO_PNG} w={20} />
-												<Text textAlign='center'>Blade</Text>
-											</Link>
-										</VStack>
+												<PairingSpinner wallet={SupportedWallets.BLADE}>
+													<Image src={BLADE_LOGO_PNG} w={20} />
+													<Text textAlign='center'>Blade</Text>
+												</PairingSpinner>
+											</VStack>
+										) : (
+											<VStack data-testid='Blade' {...styles.providerStyle}>
+												<Link
+													href='https://bladewallet.io/'
+													isExternal
+													_hover={{ textDecoration: 'none' }}
+												>
+													<Image src={BLADE_LOGO_PNG} w={20} />
+													<Text textAlign='center'>Blade</Text>
+												</Link>
+											</VStack>
+										)
+									) : (
+										<></>
 									)}
 								</HStack>
 							</ModalFooter>
@@ -314,7 +383,7 @@ const ModalWalletConnect = () => {
 									<SelectController
 										control={control}
 										isRequired
-										name='network'
+										name='networkHashpack'
 										defaultValue='0'
 										options={networkOptions}
 										addonLeft={true}
@@ -323,15 +392,60 @@ const ModalWalletConnect = () => {
 									/>
 									<HStack>
 										<Button
-											data-testid='modal-notification-button'
+											data-testid='modal-notification-button-Hashpack'
 											onClick={unHandleConnectHashpackWallet}
 											variant='secondary'
 										>
 											{t('common.cancel')}
 										</Button>
 										<Button
-											data-testid='modal-notification-button'
+											data-testid='modal-notification-button-Hashpack'
 											onClick={handleConnectHashpackWalletConfirmed}
+											variant='primary'
+										>
+											{t('common.accept')}
+										</Button>
+									</HStack>
+								</VStack>
+							</ModalFooter>
+						</>
+					)}
+					{bladeSelected && (
+						<>
+							<ModalHeader p='0' justifyContent='center'>
+								<Text
+									fontSize='20px'
+									fontWeight={700}
+									textAlign='center'
+									lineHeight='16px'
+									color='brand.black'
+								>
+									{t('walletActions.selectWallet')}
+								</Text>
+							</ModalHeader>
+							<ModalFooter alignSelf='center' pt='24px' pb='0'>
+								<VStack>
+									<SelectController
+										control={control}
+										isRequired
+										name='networkBlade'
+										defaultValue='0'
+										options={networkOptions}
+										addonLeft={true}
+										overrideStyles={stylesNetworkOptions}
+										variant='unstyled'
+									/>
+									<HStack>
+										<Button
+											data-testid='modal-notification-button-Blade'
+											onClick={unHandleConnectBladeWallet}
+											variant='secondary'
+										>
+											{t('common.cancel')}
+										</Button>
+										<Button
+											data-testid='modal-notification-button-Blade'
+											onClick={handleConnectBladeWalletConfirmed}
 											variant='primary'
 										>
 											{t('common.accept')}
