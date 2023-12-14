@@ -20,9 +20,9 @@
 
 import fs from 'fs';
 import path from 'path';
-import { config } from 'dotenv';
-import { DFNSConfig } from '../../src/strategies/config/DFNSConfig.js';
-import { FireblocksConfig } from '../../src/strategies/config/FireblocksConfig.js';
+import {config} from 'dotenv';
+import {DFNSConfig} from '../../src/strategies/config/DFNSConfig';
+import {FireblocksConfig} from '../../src/strategies/config/FireblocksConfig';
 
 config();
 
@@ -49,13 +49,13 @@ export const fireblocksConfig = new FireblocksConfig(
 );
 
 // DFNS parameters
-export const DFNS_SERVICE_ACCOUNT_PRIVATE_KEY = fs.readFileSync(
+export const DFNS_SERVICE_ACCOUNT_PRIVATE_KEY = process.env.DFNS_SERVICE_ACCOUNT_PRIVATE_KEY ?? fs.readFileSync(
   path.resolve(process.env.DFNS_SERVICE_ACCOUNT_PRIVATE_KEY_PATH!),
   'utf8',
 );
 export const DFNS_SERVICE_ACCOUNT_CREDENTIAL_ID =
   process.env.DFNS_SERVICE_ACCOUNT_CREDENTIAL_ID ?? '';
-export const DFNS_SERVICE_ACCOUNT_AUTHORIZATION_TOKEN = fs.readFileSync(
+export const DFNS_SERVICE_ACCOUNT_AUTHORIZATION_TOKEN = process.env.DFNS_SERVICE_ACCOUNT_AUTHORIZATION_TOKEN ?? fs.readFileSync(
   path.resolve(process.env.DFNS_SERVICE_ACCOUNT_AUTHORIZATION_TOKEN_PATH!),
   'utf8',
 );
