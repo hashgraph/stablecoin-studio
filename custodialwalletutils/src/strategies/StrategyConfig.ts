@@ -18,9 +18,9 @@
  *
  */
 
-import { DFNSStrategy } from './signature/DFNSStrategy';
-import { FireblocksStrategy } from './signature/FireblocksStrategy';
-import { ISignatureStrategy } from './signature/ISignatureStrategy';
+import {DFNSStrategy} from './signature/DFNSStrategy';
+import {FireblocksStrategy} from './signature/FireblocksStrategy';
+import {ISignatureStrategy} from './signature/ISignatureStrategy';
 
 export interface StrategyConfig {
   getSignatureStrategy(): ISignatureStrategy;
@@ -40,10 +40,10 @@ export class FireblocksConfig implements StrategyConfig {
 
 export class DFNSConfig implements StrategyConfig {
   constructor(
-    public privateKeyToCreateECDSAServiceAccount: string,
+    public privateKeyToCreateECDSAServiceAccount: string, //signer
     public dfnsEcdsaServiceaccountCredentialId: string,
     public dfnsAppOrigin: string,
-    public dfnsAppId: string,
+    public dfnsAppId: string, //apiclientoptions
     public dfnsEcdsaServiceAccountAuthToken: string,
     public dfnsTestUrl: string,
   ) {}

@@ -20,11 +20,8 @@
 
 import fs from 'fs';
 import path from 'path';
-import { config } from 'dotenv';
-import {
-  DFNSConfig,
-  FireblocksConfig,
-} from '../../src/strategies/StrategyConfig.js';
+import {config} from 'dotenv';
+import {DFNSConfig, FireblocksConfig,} from '../../src/strategies/StrategyConfig.js';
 
 config();
 
@@ -39,7 +36,6 @@ export const FIREBLOCKS_API_SECRET_KEY = fs.readFileSync(
 export const FIREBLOCKS_API_KEY = process.env.FIREBLOCKS_API_KEY ?? '';
 export const FIREBLOCKS_BASE_URL = process.env.FIREBLOCKS_BASE_URL ?? '';
 export const FIREBLOCKS_VAULT = process.env.FIREBLOCKS_VAULT ?? '';
-export const FIREBLOCKS_ACCOUNT_ID = process.env.FIREBLOCKS_ACCOUNT_ID;
 
 // Fireblocks configuration
 
@@ -50,16 +46,9 @@ export const fireblocksConfig = new FireblocksConfig(
 );
 
 // DFNS parameters
-export const DFNS_SERVICE_ACCOUNT_PRIVATE_KEY = fs.readFileSync(
-  path.resolve(process.env.DFNS_SERVICE_ACCOUNT_PRIVATE_KEY_PATH!),
-  'utf8',
-);
-export const DFNS_SERVICE_ACCOUNT_CREDENTIAL_ID =
-  process.env.DFNS_SERVICE_ACCOUNT_CREDENTIAL_ID ?? '';
-export const DFNS_SERVICE_ACCOUNT_AUTHORIZATION_TOKEN = fs.readFileSync(
-  path.resolve(process.env.DFNS_SERVICE_ACCOUNT_AUTHORIZATION_TOKEN_PATH!),
-  'utf8',
-);
+export const DFNS_SERVICE_ACCOUNT_PRIVATE_KEY = process.env.DFNS_SERVICE_ACCOUNT_PRIVATE_KEY ?? ''
+export const DFNS_SERVICE_ACCOUNT_CREDENTIAL_ID = process.env.DFNS_SERVICE_ACCOUNT_CREDENTIAL_ID ?? '';
+export const DFNS_SERVICE_ACCOUNT_AUTHORIZATION_TOKEN = process.env.DFNS_SERVICE_ACCOUNT_AUTHORIZATION_TOKEN ?? ''
 export const DFNS_APP_ORIGIN = process.env.DFNS_APP_ORIGIN ?? '';
 export const DFNS_APP_ID = process.env.DFNS_APP_ID ?? '';
 export const DFNS_WALLET_ID = process.env.DFNS_WALLET_ID ?? '';

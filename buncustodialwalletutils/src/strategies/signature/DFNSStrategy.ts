@@ -6,5 +6,3 @@ export class DFNSStrategy implements ISignatureStrategy {
     return Uint8Array.from([]);
   }
 }
-
-

@@ -1,4 +1,4 @@
-import { StrategyConfig } from '../strategies/StrategyConfig.ts';
+import { StrategyConfig } from '../strategies/StrategyConfig';
 import { StrategyFactory } from '../factories/StrategyFactory';
 import { SignatureRequest } from '../models/signature/SignatureRequest';
 

@@ -18,30 +18,16 @@
  *
  */
 
-import { DfnsApiClient } from '@dfns/sdk';
-import {
-  KeyCurve,
-  KeyScheme,
-  SignatureKind,
-  SignatureStatus,
-} from '@dfns/sdk/codegen/datamodel/Wallets';
-import { getAddress } from '@ethersproject/address';
-import { Provider, TransactionRequest } from '@ethersproject/abstract-provider';
-import {
-  Signer,
-  TypedDataDomain,
-  TypedDataField,
-  TypedDataSigner,
-} from '@ethersproject/abstract-signer';
-import { joinSignature } from '@ethersproject/bytes';
-import { _TypedDataEncoder, hashMessage } from '@ethersproject/hash';
-import { keccak256 } from '@ethersproject/keccak256';
-import { defineReadOnly, resolveProperties } from '@ethersproject/properties';
-import {
-  computeAddress,
-  serialize,
-  UnsignedTransaction,
-} from '@ethersproject/transactions';
+import {DfnsApiClient} from '@dfns/sdk';
+import {KeyCurve, KeyScheme, SignatureKind, SignatureStatus,} from '@dfns/sdk/codegen/datamodel/Wallets';
+import {getAddress} from '@ethersproject/address';
+import {Provider, TransactionRequest} from '@ethersproject/abstract-provider';
+import {Signer, TypedDataDomain, TypedDataField, TypedDataSigner,} from '@ethersproject/abstract-signer';
+import {joinSignature} from '@ethersproject/bytes';
+import {_TypedDataEncoder, hashMessage} from '@ethersproject/hash';
+import {keccak256} from '@ethersproject/keccak256';
+import {defineReadOnly, resolveProperties} from '@ethersproject/properties';
+import {computeAddress, serialize, UnsignedTransaction,} from '@ethersproject/transactions';
 
 const sleep = (interval = 0) =>
   new Promise((resolve) => setTimeout(resolve, interval));
@@ -53,7 +39,7 @@ export type DfnsWalletOptions = {
   retryInterval?: number;
 };
 
-export class DfnsWallet extends Signer implements TypedDataSigner {
+export class DFNSWallet extends Signer implements TypedDataSigner {
   private address?: string;
   private options: Required<DfnsWalletOptions>;
 
@@ -70,7 +56,7 @@ export class DfnsWallet extends Signer implements TypedDataSigner {
   }
 
   connect(provider: Provider | null): Signer {
-    return new DfnsWallet(this.options, provider);
+    return new DFNSWallet(this.options, provider);
   }
 
   async getAddress(): Promise<string> {
