@@ -31,13 +31,12 @@ export const TEST_TIMEOUT = 10000;
 // Fireblocks parameters
 
 export const FIREBLOCKS_API_SECRET_KEY = fs.readFileSync(
-  path.resolve(process.env.FIREBLOCKS_API_SECRET_PATH!),
+  path.resolve(process.env.FIREBLOCKS_API_SECRET_KEY_PATH!),
   'utf8',
 );
 export const FIREBLOCKS_API_KEY = process.env.FIREBLOCKS_API_KEY ?? '';
 export const FIREBLOCKS_BASE_URL = process.env.FIREBLOCKS_BASE_URL ?? '';
 export const FIREBLOCKS_VAULT = process.env.FIREBLOCKS_VAULT ?? '';
-export const FIREBLOCKS_ACCOUNT_ID = process.env.FIREBLOCKS_ACCOUNT_ID;
 
 // Fireblocks configuration
 
