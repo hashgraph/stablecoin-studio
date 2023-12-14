@@ -37,15 +37,15 @@ export class DFNSStrategy implements ISignatureStrategy {
 
   constructor(private strategyConfig: DFNSConfig) {
     this.signer = new AsymmetricKeySigner({
-      privateKey: strategyConfig.privateKeyToCreateECDSAServiceAccount,
-      credId: strategyConfig.dfnsEcdsaServiceaccountCredentialId,
-      appOrigin: strategyConfig.dfnsAppOrigin,
+      privateKey: strategyConfig.serviceAccountPrivateKey,
+      credId: strategyConfig.serviceAccountCredentialId,
+      appOrigin: strategyConfig.appOrigin,
     });
 
     this.dfnsApiClientOptions = {
-      appId: strategyConfig.dfnsAppId,
-      authToken: strategyConfig.dfnsEcdsaServiceAccountAuthToken,
-      baseUrl: strategyConfig.dfnsTestUrl,
+      appId: strategyConfig.appId,
+      authToken: strategyConfig.serviceAccountAuthToken,
+      baseUrl: strategyConfig.testUrl,
       signer: this.signer,
     };
 
