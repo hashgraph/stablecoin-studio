@@ -73,15 +73,19 @@ describe('DFNSStrategy', () => {
             signer: mockSigner,
         });
 
+        jest.spyOn(mockDfnsApiClient.wallets, 'generateSignature');
+        jest.spyOn(mockDfnsApiClient.wallets, 'getSignature');
+
         dfnsStrategy = new DFNSStrategy(mockStrategyConfig);
     });
 
     it('should correctly sign a signature request', async () => {
         const mockSignatureRequest = new SignatureRequest(new Uint8Array([1, 2, 3]));
         const result = await dfnsStrategy.sign(mockSignatureRequest);
+        const expectedSignatureResponse = new Uint8Array([0, 0, 114, 0, 0, 115]);
+
         expect(mockDfnsApiClient.wallets.generateSignature).toHaveBeenCalledTimes(1);
         expect(mockDfnsApiClient.wallets.getSignature).toHaveBeenCalledTimes(1);
-        const expectedSignatureResponse = new Uint8Array([0, 0, 114, 0, 0, 115]);
         expect(result).toEqual(expectedSignatureResponse);
     });
 });
