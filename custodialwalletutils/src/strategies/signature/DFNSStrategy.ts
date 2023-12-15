@@ -18,32 +18,26 @@
  *
  */
 
-import { ISignatureStrategy } from './ISignatureStrategy';
-import { SignatureRequest } from '../../models/signature/SignatureRequest';
-import { AsymmetricKeySigner } from '@dfns/sdk-keysigner';
-import { DfnsApiClient } from '@dfns/sdk';
-import { DFNSConfig } from '../config/DFNSConfig';
-import {
-  SignatureKind,
-  SignatureStatus,
-} from '@dfns/sdk/codegen/datamodel/Wallets';
-import { hexStringToUint8Array } from '../../utils/utilities';
-import { DfnsWalletOptions } from '../../utils/DFNSWallet';
+import {ISignatureStrategy} from './ISignatureStrategy';
+import {SignatureRequest} from '../../models/signature/SignatureRequest';
+import {AsymmetricKeySigner} from '@dfns/sdk-keysigner';
+import {DfnsApiClient} from '@dfns/sdk';
+import {DFNSConfig} from '../config/DFNSConfig';
+import {SignatureKind, SignatureStatus,} from '@dfns/sdk/codegen/datamodel/Wallets';
+import {hexStringToUint8Array} from '../../utils/utilities';
 
 const sleep = (interval = 0) =>
   new Promise((resolve) => setTimeout(resolve, interval));
 const DEFAULT_MAX_RETRIES = 3;
-const DEFAULT_RETRY_INTERVAL = 2000;
+const DEFAULT_RETRY_INTERVAL = 1000;
 
 export class DFNSStrategy implements ISignatureStrategy {
   private readonly dfnsApiClient: DfnsApiClient;
-  private readonly dfnsWalletOptions: DfnsWalletOptions;
-  private config: DFNSConfig;
+  private readonly walletId: string;
 
-  constructor(private strategyConfig: DFNSConfig) {
+  constructor(strategyConfig: DFNSConfig) {
     this.dfnsApiClient = this.createDfnsApiClient(strategyConfig);
-    this.dfnsWalletOptions = this.createDfnsWalletOptions();
-    this.config = strategyConfig;
+    this.walletId = strategyConfig.walletId;
   }
 
   private createDfnsApiClient(strategyConfig: DFNSConfig): DfnsApiClient {
@@ -61,15 +55,6 @@ export class DFNSStrategy implements ISignatureStrategy {
     });
   }
 
-  private createDfnsWalletOptions(): DfnsWalletOptions {
-    return {
-      walletId: this.strategyConfig.walletId,
-      dfnsClient: this.dfnsApiClient,
-      maxRetries: DEFAULT_MAX_RETRIES,
-      retryInterval: DEFAULT_RETRY_INTERVAL,
-    };
-  }
-
   async sign(request: SignatureRequest): Promise<Uint8Array> {
     const serializedTransaction = Buffer.from(
       request.getTransactionBytes(),
@@ -79,9 +64,8 @@ export class DFNSStrategy implements ISignatureStrategy {
   }
 
   async signMessage(message: string): Promise<string> {
-    const { walletId, dfnsClient } = this.dfnsWalletOptions;
-    const response = await dfnsClient.wallets.generateSignature({
-      walletId,
+    const response = await this.dfnsApiClient.wallets.generateSignature({
+      walletId: this.walletId,
       body: { kind: SignatureKind.Message, message: `0x${message}` },
     });
 
@@ -89,16 +73,9 @@ export class DFNSStrategy implements ISignatureStrategy {
   }
 
   async waitForSignature(signatureId: string): Promise<string> {
-    const {
-      walletId,
-      dfnsClient,
-      maxRetries = 3,
-      retryInterval = 1000,
-    } = this.dfnsWalletOptions;
-
-    for (let retries = maxRetries; retries > 0; retries--) {
-      const response = await dfnsClient.wallets.getSignature({
-        walletId,
+    for (let retries = DEFAULT_MAX_RETRIES; retries > 0; retries--) {
+      const response = await this.dfnsApiClient.wallets.getSignature({
+        walletId: this.walletId,
         signatureId,
       });
 
@@ -111,7 +88,7 @@ export class DFNSStrategy implements ISignatureStrategy {
         break;
       }
 
-      await sleep(retryInterval);
+      await sleep(DEFAULT_RETRY_INTERVAL);
     }
 
     throw new Error(`DFNS Signature request ${signatureId} failed.`);

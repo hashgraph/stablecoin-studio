@@ -18,8 +18,8 @@
  *
  */
 
-import { TEST_TIMEOUT } from '../utils/config';
-import { SignatureRequest } from '../../src/models/signature/SignatureRequest';
+import {TEST_TIMEOUT} from '../utils/config';
+import {SignatureRequest} from '../../src/models/signature/SignatureRequest';
 
 describe('🧪 Models TESTS', () => {
   describe('Signatures Request', () => {
@@ -48,16 +48,16 @@ describe('🧪 Models TESTS', () => {
 
         const signatureRequest = new SignatureRequest(message);
 
-        const message_2 = new Uint8Array([4, 5, 6, 7]);
+        const message_two = new Uint8Array([4, 5, 6, 7]);
 
-        signatureRequest.setTransactionBytes(message_2);
+        signatureRequest.setTransactionBytes(message_two);
 
         const retrievedMessage = signatureRequest.getTransactionBytes();
 
-        expect(retrievedMessage.length).toEqual(message_2.length);
+        expect(retrievedMessage.length).toEqual(message_two.length);
 
-        for (let i = 0; i < message_2.length; i++) {
-          expect(retrievedMessage[i]).toEqual(message_2[i]);
+        for (let i = 0; i < message_two.length; i++) {
+          expect(retrievedMessage[i]).toEqual(message_two[i]);
         }
       },
       TEST_TIMEOUT,
