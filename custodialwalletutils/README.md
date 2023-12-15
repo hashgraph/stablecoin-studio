@@ -2,23 +2,22 @@
 
 ### Table of Contents
 
--   **[Overview](#overview)**<br>
--   **[Architecture](#architecture)**<br>
--   **[Content](#content)**<br>
--   **[Technologies](#technologies)**<br>
--   **[How to use it](#how-to-use-it)**<br>
-    -   [Install](#install)<br>
-    -   [Import](#import)<br>
-    -   [Run](#run)<br>
--   **[Build](#build)**<br>
--   **[Test](#test)**<br>
-    -   [Files](#files)<br>
-    -   [Configuration](#configuration)<br>
-    -   [Run](#run)<br>
--   **[Contributing](#contributing)**<br>
--   **[Code of conduct](#code-of-conduct)**<br>
--   **[License](#license)**<br>
-
+- **[Overview](#overview)**<br>
+- **[Architecture](#architecture)**<br>
+- **[Content](#content)**<br>
+- **[Technologies](#technologies)**<br>
+- **[How to use it](#how-to-use-it)**<br>
+  - [Install](#install)<br>
+  - [Import](#import)<br>
+  - [Run](#run)<br>
+- **[Build](#build)**<br>
+- **[Test](#test)**<br>
+  - [Files](#files)<br>
+  - [Configuration](#configuration)<br>
+  - [Run](#run)<br>
+- **[Contributing](#contributing)**<br>
+- **[Code of conduct](#code-of-conduct)**<br>
+- **[License](#license)**<br>
 
 # Overview
 

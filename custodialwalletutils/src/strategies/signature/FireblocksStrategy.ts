@@ -46,23 +46,17 @@ export class FireblocksStrategy implements ISignatureStrategy {
     const serializedTransaction = Buffer.from(
       request.getTransactionBytes(),
     ).toString('hex');
-    const signatureHex = await this.signArbitraryMessage(
-      this.config.vaultAccountId,
-      serializedTransaction,
-    );
+    const signatureHex = await this.signMessage(serializedTransaction);
     return hexStringToUint8Array(signatureHex);
   }
 
-  private async signArbitraryMessage(
-    vaultAccountId: string,
-    message: string,
-  ): Promise<string> {
+  private async signMessage(message: string): Promise<string> {
     const { status, id } = await this.fireblocks.createTransaction({
       operation: TransactionOperation.RAW,
       assetId: 'HBAR_TEST',
       source: {
         type: PeerType.VAULT_ACCOUNT,
-        id: vaultAccountId,
+        id: this.config.vaultAccountId,
       },
       extraParameters: {
         rawMessageData: {

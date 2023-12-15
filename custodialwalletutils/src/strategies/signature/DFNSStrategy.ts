@@ -37,9 +37,28 @@ const DEFAULT_RETRY_INTERVAL = 2000;
 
 export class DFNSStrategy implements ISignatureStrategy {
   private readonly dfnsApiClient: DfnsApiClient;
+  private readonly dfnsWalletOptions: DfnsWalletOptions;
+  private config: DFNSConfig;
 
   constructor(private strategyConfig: DFNSConfig) {
-    this.dfnsApiClient = createDfnsApiClient(strategyConfig);
+    this.dfnsApiClient = this.createDfnsApiClient(strategyConfig);
+    this.dfnsWalletOptions = this.createDfnsWalletOptions();
+    this.config = strategyConfig;
+  }
+
+  private createDfnsApiClient(strategyConfig: DFNSConfig): DfnsApiClient {
+    const signer = new AsymmetricKeySigner({
+      privateKey: strategyConfig.serviceAccountPrivateKey,
+      credId: strategyConfig.serviceAccountCredentialId,
+      appOrigin: strategyConfig.appOrigin,
+    });
+
+    return new DfnsApiClient({
+      appId: strategyConfig.appId,
+      authToken: strategyConfig.serviceAccountAuthToken,
+      baseUrl: strategyConfig.baseUrl,
+      signer: signer,
+    });
   }
 
   private createDfnsWalletOptions(): DfnsWalletOptions {
@@ -52,74 +71,49 @@ export class DFNSStrategy implements ISignatureStrategy {
   }
 
   async sign(request: SignatureRequest): Promise<Uint8Array> {
-    const dfnsWalletOptions = this.createDfnsWalletOptions();
     const serializedTransaction = Buffer.from(
       request.getTransactionBytes(),
     ).toString('hex');
-    const signatureHex = await signMessage(
-      serializedTransaction,
-      dfnsWalletOptions,
-    );
+    const signatureHex = await this.signMessage(serializedTransaction);
     return hexStringToUint8Array(signatureHex);
   }
-}
 
-function createDfnsApiClient(strategyConfig: DFNSConfig): DfnsApiClient {
-  const signer = new AsymmetricKeySigner({
-    privateKey: strategyConfig.serviceAccountPrivateKey,
-    credId: strategyConfig.serviceAccountCredentialId,
-    appOrigin: strategyConfig.appOrigin,
-  });
-
-  return new DfnsApiClient({
-    appId: strategyConfig.appId,
-    authToken: strategyConfig.serviceAccountAuthToken,
-    baseUrl: strategyConfig.baseUrl,
-    signer: signer,
-  });
-}
-
-async function signMessage(
-  message: string,
-  dfnsWalletOptions: DfnsWalletOptions,
-): Promise<string> {
-  const { walletId, dfnsClient } = dfnsWalletOptions;
-  const response = await dfnsClient.wallets.generateSignature({
-    walletId,
-    body: { kind: SignatureKind.Message, message: `0x${message}` },
-  });
-
-  return waitForSignature(response.id, dfnsWalletOptions);
-}
-
-async function waitForSignature(
-  signatureId: string,
-  dfnsWalletOptions: DfnsWalletOptions,
-): Promise<string> {
-  const {
-    walletId,
-    dfnsClient,
-    maxRetries = 3,
-    retryInterval = 1000,
-  } = dfnsWalletOptions;
-
-  for (let retries = maxRetries; retries > 0; retries--) {
-    const response = await dfnsClient.wallets.getSignature({
+  async signMessage(message: string): Promise<string> {
+    const { walletId, dfnsClient } = this.dfnsWalletOptions;
+    const response = await dfnsClient.wallets.generateSignature({
       walletId,
-      signatureId,
+      body: { kind: SignatureKind.Message, message: `0x${message}` },
     });
 
-    if (response.status === SignatureStatus.Signed && response.signature) {
-      return Buffer.from(
-        response.signature.r.substring(2) + response.signature.s.substring(2),
-        'hex',
-      ).toString('hex');
-    } else if (response.status === SignatureStatus.Failed) {
-      break;
-    }
-
-    await sleep(retryInterval);
+    return this.waitForSignature(response.id);
   }
 
-  throw new Error(`DFNS Signature request ${signatureId} failed.`);
+  async waitForSignature(signatureId: string): Promise<string> {
+    const {
+      walletId,
+      dfnsClient,
+      maxRetries = 3,
+      retryInterval = 1000,
+    } = this.dfnsWalletOptions;
+
+    for (let retries = maxRetries; retries > 0; retries--) {
+      const response = await dfnsClient.wallets.getSignature({
+        walletId,
+        signatureId,
+      });
+
+      if (response.status === SignatureStatus.Signed && response.signature) {
+        return Buffer.from(
+          response.signature.r.substring(2) + response.signature.s.substring(2),
+          'hex',
+        ).toString('hex');
+      } else if (response.status === SignatureStatus.Failed) {
+        break;
+      }
+
+      await sleep(retryInterval);
+    }
+
+    throw new Error(`DFNS Signature request ${signatureId} failed.`);
+  }
 }
