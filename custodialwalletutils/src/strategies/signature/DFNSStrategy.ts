@@ -90,7 +90,6 @@ export class DFNSStrategy implements ISignatureStrategy {
 
       await sleep(DEFAULT_RETRY_INTERVAL);
     }
-
     throw new Error(`DFNS Signature request ${signatureId} failed.`);
   }
 }
