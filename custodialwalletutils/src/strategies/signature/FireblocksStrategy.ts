@@ -18,22 +18,20 @@
  *
  */
 
-import { SignatureRequest } from '../../models/signature/SignatureRequest';
-import { ISignatureStrategy } from './ISignatureStrategy';
-import {
-  FireblocksSDK,
-  PeerType,
-  TransactionOperation,
-  TransactionStatus,
-} from 'fireblocks-sdk';
-import { FireblocksConfig } from '../config/FireblocksConfig';
-import { hexStringToUint8Array } from '../../utils/utilities';
+import {SignatureRequest} from '../../models/signature/SignatureRequest';
+import {ISignatureStrategy} from './ISignatureStrategy';
+import {FireblocksSDK, PeerType, TransactionOperation, TransactionStatus,} from 'fireblocks-sdk';
+import {FireblocksConfig} from '../config/FireblocksConfig';
+import {hexStringToUint8Array} from '../../utils/utilities';
+
+const MAX_RETRIES = 5;
+const POLL_INTERVAL = 1000;
 
 export class FireblocksStrategy implements ISignatureStrategy {
   private fireblocks: FireblocksSDK;
   private config: FireblocksConfig;
 
-  constructor(private strategyConfig: FireblocksConfig) {
+  constructor(strategyConfig: FireblocksConfig) {
     this.fireblocks = new FireblocksSDK(
       strategyConfig.apiSecretKey,
       strategyConfig.apiKey,
@@ -51,40 +49,43 @@ export class FireblocksStrategy implements ISignatureStrategy {
   }
 
   private async signMessage(message: string): Promise<string> {
-    const { status, id } = await this.fireblocks.createTransaction({
+    const {id} = await this.createFireblocksTransaction(message);
+    await this.waitForTransactionCompletion(id);
+    return await this.extractSignature(id);
+  }
+
+  private async createFireblocksTransaction(message: string) {
+    return await this.fireblocks.createTransaction({
       operation: TransactionOperation.RAW,
       assetId: 'HBAR_TEST',
-      source: {
-        type: PeerType.VAULT_ACCOUNT,
-        id: this.config.vaultAccountId,
-      },
-      extraParameters: {
-        rawMessageData: {
-          messages: [
-            {
-              content: message,
-            },
-          ],
-        },
-      },
+      source: { type: PeerType.VAULT_ACCOUNT, id: this.config.vaultAccountId },
+      extraParameters: { rawMessageData: { messages: [{ content: message }] } },
     });
+  }
 
-    let currentStatus = status;
-    let txInfo: any;
+  private async waitForTransactionCompletion(transactionId: string): Promise<void> {
 
-    do {
+    for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
       try {
-        console.log('keep polling for tx ' + id + '; status: ' + currentStatus);
-        txInfo = await this.fireblocks.getTransactionById(id);
-        currentStatus = txInfo.status;
+        const txInfo = await this.fireblocks.getTransactionById(transactionId);
+        if ([TransactionStatus.COMPLETED, TransactionStatus.FAILED].includes(txInfo.status)) {
+          return;
+        }
       } catch (err) {
-        console.log('err', err);
+        console.error('Error polling transaction:', err);
       }
-      await new Promise((r) => setTimeout(r, 1000));
-    } while (
-      currentStatus != TransactionStatus.COMPLETED &&
-      currentStatus != TransactionStatus.FAILED
-    );
+      await new Promise(resolve => setTimeout(resolve, POLL_INTERVAL));
+    }
+
+    throw new Error(`Transaction ${transactionId} did not complete within the expected time frame.`);
+  }
+
+
+  private async extractSignature(transactionId: string): Promise<string> {
+    const txInfo = await this.fireblocks.getTransactionById(transactionId);
+    if (!txInfo || !txInfo.signedMessages || txInfo.signedMessages.length === 0) {
+      throw new Error('Transaction information is incomplete or missing.');
+    }
 
     const signature = txInfo.signedMessages[0].signature;
     return signature.fullSig;
