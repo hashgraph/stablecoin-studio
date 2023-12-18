@@ -29,20 +29,27 @@ const signatureResponse = {
     signature: { r: '00r', s: '00s' },
 }
 
+const mockGenerateSignature = jest.fn().mockResolvedValue(signatureResponse)
+
+const mockGetSignature = jest.fn().mockResolvedValue(
+    signatureResponse
+)
+
+const mockDfnsApiClient = jest.fn().mockImplementation(() => ({
+    wallets: {
+        generateSignature: mockGenerateSignature,
+        getSignature: mockGetSignature,
+    },
+}))
+
 jest.mock('@dfns/sdk', () => {
     return {
-        DfnsApiClient: jest.fn().mockImplementation(() => ({
-            wallets: {
-                generateSignature: jest.fn().mockResolvedValue(signatureResponse),
-                getSignature: jest.fn().mockResolvedValue(signatureResponse),
-            },
-        })),
+        DfnsApiClient: mockDfnsApiClient,
     };
 });
 
 describe('DFNSStrategy', () => {
     let dfnsStrategy: DFNSStrategy;
-    // let mockDfnsApiClient: DfnsApiClient;
     const walletId = 'wallet-id';
 
     beforeEach(() => {
@@ -55,22 +62,17 @@ describe('DFNSStrategy', () => {
             'mockedBaseUrl',
             walletId,
         );
-        // const mockSigner = new AsymmetricKeySigner(
-        //     {
-        //         privateKey: mockStrategyConfig.serviceAccountPrivateKey,
-        //         credId: mockStrategyConfig.serviceAccountCredentialId,
-        //         appOrigin: mockStrategyConfig.appOrigin,
-        //     }
-        // );
-        // mockDfnsApiClient = new DfnsApiClient({
-        //     appId: mockStrategyConfig.appId,
-        //     authToken: mockStrategyConfig.serviceAccountAuthToken,
-        //     baseUrl: mockStrategyConfig.baseUrl,
-        //     signer: mockSigner,
-        // });
 
         dfnsStrategy = new DFNSStrategy(mockStrategyConfig);
+
+        jest.spyOn(dfnsStrategy['dfnsApiClient']['wallets'], 'generateSignature');
+        jest.spyOn(dfnsStrategy['dfnsApiClient']['wallets'], 'getSignature');
     });
+
+    afterEach(() => {
+        mockGenerateSignature.mockReset()
+        mockGenerateSignature.mockReset()
+    })
 
     it('should correctly sign a signature request', async () => {
         const mockSignatureRequest = new SignatureRequest(new Uint8Array([1, 2, 3]));
@@ -83,14 +85,17 @@ describe('DFNSStrategy', () => {
         //     body: { kind: SignatureKind.Message, message: `0x${serializedTransaction}` },
         // }
 
-      // expect(mockDfnsApiClient.wallets.generateSignature).toHaveBeenCalledTimes(1);
-    //   expect(mockDfnsApiClient.wallets.generateSignature).toHaveBeenCalledWith(expectedGenerateSignatureRequest);
- //       expect(mockDfnsApiClient.wallets.getSignature).toHaveBeenCalledTimes(1);
+        // expect(mockGenerateSignature).toHaveBeenCalledTimes(1);
+        //   expect(mockDfnsApiClient.wallets.generateSignature).toHaveBeenCalledWith(expectedGenerateSignatureRequest);
+        //       expect(mockGenerateSignature).toHaveBeenCalledTimes(1);
         const expectedSignatureResponse = hexStringToUint8Array(Buffer.from(
             signatureResponse.signature.r.substring(2) + signatureResponse.signature.s.substring(2),
             'hex',
         ).toString('hex'));
+        expect(mockGenerateSignature).toHaveBeenCalledTimes(1);
+        expect(mockGenerateSignature).toHaveBeenCalledTimes(1);
         expect(result).toEqual(expectedSignatureResponse);
     });
+
 });
 
