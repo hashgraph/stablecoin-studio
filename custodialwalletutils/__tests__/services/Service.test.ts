@@ -20,35 +20,31 @@
 
 /* eslint-disable jest/no-conditional-expect */
 
-import { CustodialWalletService } from '../../src/services/CustodialWalletService';
+import {CustodialWalletService} from '../../src/services/CustodialWalletService';
 import {
-  TEST_TIMEOUT,
-  fireblocksConfig,
-  dfnsConfig,
-  FIREBLOCKS_API_KEY,
-  FIREBLOCKS_VAULT,
-  FIREBLOCKS_BASE_URL,
-  FIREBLOCKS_API_SECRET_KEY,
-  DFNS_WALLET_ID,
-  DFNS_TEST_URL,
-  DFNS_APP_ID,
-  DFNS_APP_ORIGIN,
-  DFNS_SERVICE_ACCOUNT_AUTHORIZATION_TOKEN,
-  DFNS_SERVICE_ACCOUNT_CREDENTIAL_ID,
-  DFNS_SERVICE_ACCOUNT_PRIVATE_KEY,
+    DFNS_APP_ID,
+    DFNS_APP_ORIGIN,
+    DFNS_SERVICE_ACCOUNT_AUTHORIZATION_TOKEN,
+    DFNS_SERVICE_ACCOUNT_CREDENTIAL_ID,
+    DFNS_SERVICE_ACCOUNT_PRIVATE_KEY,
+    DFNS_TEST_URL,
+    DFNS_WALLET_ID,
+    dfnsConfig,
+    FIREBLOCKS_API_KEY,
+    FIREBLOCKS_API_SECRET_KEY,
+    FIREBLOCKS_BASE_URL,
+    FIREBLOCKS_VAULT,
+    fireblocksConfig,
+    TEST_TIMEOUT,
 } from '../utils/config';
-import {
-  DFNSConfig,
-  FireblocksConfig,
-  SignatureRequest,
-} from '../../src/index.js';
+import {DFNSConfig, FireblocksConfig, SignatureRequest,} from '../../src/index.js';
 
 const signatureRequest = new SignatureRequest(new Uint8Array([1, 2, 3]));
 
-describe('Service TESTS', () => {
+describe('🧪 Service TESTS', () => {
   describe('Configuration', () => {
     it(
-      'Get configuration',
+      'Get configuration from service instance (Fireblocks)',
       async () => {
         const signatureService = new CustodialWalletService(fireblocksConfig);
 
@@ -70,7 +66,7 @@ describe('Service TESTS', () => {
     );
 
     it(
-      'Set configuration',
+      'Set configuration to service instance (Fireblocks)',
       async () => {
         const signatureService = new CustodialWalletService(fireblocksConfig);
 

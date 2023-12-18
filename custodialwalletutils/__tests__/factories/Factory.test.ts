@@ -18,15 +18,15 @@
  *
  */
 
-import { StrategyFactory } from '../../src/factories/StrategyFactory';
-import { FireblocksStrategy } from '../../src/strategies/signature/FireblocksStrategy';
-import { DFNSStrategy } from '../../src/strategies/signature/DFNSStrategy';
-import { TEST_TIMEOUT, fireblocksConfig, dfnsConfig } from '../utils/config';
+import {StrategyFactory} from '../../src/factories/StrategyFactory';
+import {FireblocksStrategy} from '../../src/strategies/signature/FireblocksStrategy';
+import {DFNSStrategy} from '../../src/strategies/signature/DFNSStrategy';
+import {dfnsConfig, fireblocksConfig, TEST_TIMEOUT} from '../utils/config';
 
 describe('🧪 Factory TESTS', () => {
-  describe('[Fireblocks] Signatures', () => {
+  describe('[Fireblocks]', () => {
     it(
-      'get strategy',
+      'Factory should correctly instantiate a FireblocksStrategy when given Fireblocks configuration',
       () => {
         const strategy =
           StrategyFactory.createSignatureStrategy(fireblocksConfig);
@@ -37,9 +37,9 @@ describe('🧪 Factory TESTS', () => {
     );
   });
 
-  describe('[DFNS] Signatures', () => {
+  describe('[DFNS]', () => {
     it(
-      'get strategy',
+      'Factory should correctly instantiate a DFNSStrategy when given DFNS configuration',
       () => {
         const strategy = StrategyFactory.createSignatureStrategy(dfnsConfig);
 

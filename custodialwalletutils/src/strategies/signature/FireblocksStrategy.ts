@@ -23,6 +23,7 @@ import {ISignatureStrategy} from './ISignatureStrategy';
 import {FireblocksSDK, PeerType, TransactionOperation, TransactionStatus,} from 'fireblocks-sdk';
 import {FireblocksConfig} from '../config/FireblocksConfig';
 import {hexStringToUint8Array} from '../../utils/utilities';
+import {CreateTransactionResponse} from "fireblocks-sdk/dist/src/types";
 
 const MAX_RETRIES = 5;
 const POLL_INTERVAL = 1000;
@@ -54,7 +55,7 @@ export class FireblocksStrategy implements ISignatureStrategy {
     return await this.extractSignature(id);
   }
 
-  private async createFireblocksTransaction(message: string) {
+  private async createFireblocksTransaction(message: string): Promise<CreateTransactionResponse> {
     return await this.fireblocks.createTransaction({
       operation: TransactionOperation.RAW,
       assetId: 'HBAR_TEST',

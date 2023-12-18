@@ -40,7 +40,7 @@ jest.mock('@dfns/sdk', () => {
     };
 });
 
-describe('DFNSStrategy', () => {
+describe('🧪 DFNSStrategy TESTS', () => {
     let dfnsStrategy: DFNSStrategy;
     const walletId = 'wallet-id';
 

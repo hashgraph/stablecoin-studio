@@ -18,7 +18,7 @@
  *
  */
 
-import {FireblocksSDK, TransactionStatus} from "fireblocks-sdk";
+import {TransactionStatus} from "fireblocks-sdk";
 import {FireblocksStrategy} from "../../src/strategies/signature/FireblocksStrategy";
 import {FireblocksConfig, SignatureRequest} from "../../src";
 import {hexStringToUint8Array} from "../../src/utils/utilities";
@@ -41,35 +41,32 @@ jest.mock('fireblocks-sdk', () => {
     };
 });
 
-describe('FireblocksStrategy', () => {
+describe('🧪 FireblocksStrategy TESTS', () => {
     let fireblocksStrategy: FireblocksStrategy;
-    let mockFireblocksSDK: FireblocksSDK;
 
     beforeEach(() => {
-        const mockStrategyConfig = new FireblocksConfig(
-             'mockedApiSecretKey',
-             'mockedApiKey',
-             'mockedBaseUrl',
-            'mockedVaultAccountId'
-        );
-        mockFireblocksSDK = new FireblocksSDK(
-            mockStrategyConfig.apiSecretKey,
-            mockStrategyConfig.apiKey,
-            mockStrategyConfig.baseUrl,
-        );
-
-        jest.spyOn(mockFireblocksSDK, 'createTransaction');
-        jest.spyOn(mockFireblocksSDK, 'getTransactionById');
-
-        fireblocksStrategy = new FireblocksStrategy(mockStrategyConfig);
+        fireblocksStrategy = setupFireblocksStrategy();
+        jest.spyOn(fireblocksStrategy['fireblocks'], 'createTransaction');
+        jest.spyOn(fireblocksStrategy['fireblocks'], 'getTransactionById');
     });
 
     it('should correctly sign a signature request', async () => {
         const mockSignatureRequest = new SignatureRequest(new Uint8Array([1, 2, 3]));
         const result = await fireblocksStrategy.sign(mockSignatureRequest);
 
-        // expect(mockFireblocksSDK.createTransaction).toHaveBeenCalledTimes(1);
-        // expect(mockFireblocksSDK.getTransactionById).toHaveBeenCalledTimes(1);
+        expect(fireblocksStrategy['fireblocks']['createTransaction']).toHaveBeenCalledTimes(1);
+        expect(fireblocksStrategy['fireblocks']['getTransactionById']).toHaveBeenCalledTimes(2);
         expect(result).toEqual(hexStringToUint8Array(signatureResponse.signedMessages[0].signature.fullSig));
     });
 });
+
+const setupFireblocksStrategy = ():FireblocksStrategy => {
+    return new FireblocksStrategy(
+        new FireblocksConfig(
+        'mockedApiSecretKey',
+        'mockedApiKey',
+        'mockedBaseUrl',
+        'mockedVaultAccountId'
+        )
+    );
+}
