@@ -18,10 +18,10 @@
  *
  */
 
-import {StrategyFactory} from '../../src/factories/StrategyFactory';
-import {FireblocksStrategy} from '../../src/strategies/signature/FireblocksStrategy';
-import {DFNSStrategy} from '../../src/strategies/signature/DFNSStrategy';
-import {dfnsConfig, fireblocksConfig, TEST_TIMEOUT} from '../utils/config';
+import { StrategyFactory } from '../../src/factories/StrategyFactory';
+import { FireblocksStrategy } from '../../src/strategies/signature/FireblocksStrategy';
+import { DFNSStrategy } from '../../src/strategies/signature/DFNSStrategy';
+import { dfnsConfig, fireblocksConfig, TEST_TIMEOUT } from '../utils/config';
 
 describe('🧪 Factory TESTS', () => {
   describe('[Fireblocks]', () => {

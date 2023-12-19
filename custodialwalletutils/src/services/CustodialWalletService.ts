@@ -18,9 +18,9 @@
  *
  */
 
-import {IStrategyConfig} from '../strategies/config/IStrategyConfig';
-import {StrategyFactory} from '../factories/StrategyFactory';
-import {SignatureRequest} from '../models/signature/SignatureRequest';
+import { IStrategyConfig } from '../strategies/config/IStrategyConfig';
+import { StrategyFactory } from '../factories/StrategyFactory';
+import { SignatureRequest } from '../models/signature/SignatureRequest';
 
 export class CustodialWalletService {
   constructor(private config: IStrategyConfig) {}
@@ -29,7 +29,7 @@ export class CustodialWalletService {
     return this.config;
   }
 
-  setConfig(newConfig: IStrategyConfig):void {
+  setConfig(newConfig: IStrategyConfig): void {
     this.config = newConfig;
   }
 

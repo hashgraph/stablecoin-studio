@@ -18,9 +18,9 @@
  *
  */
 
-import {DFNSStrategy} from '../signature/DFNSStrategy';
-import {ISignatureStrategy} from '../signature/ISignatureStrategy';
-import {IStrategyConfig} from './IStrategyConfig';
+import { DFNSStrategy } from '../signature/DFNSStrategy';
+import { ISignatureStrategy } from '../signature/ISignatureStrategy';
+import { IStrategyConfig } from './IStrategyConfig';
 
 export class DFNSConfig implements IStrategyConfig {
   constructor(
@@ -31,8 +31,7 @@ export class DFNSConfig implements IStrategyConfig {
     public appId: string,
     public baseUrl: string,
     public walletId: string,
-  ) {
-  }
+  ) {}
 
   getSignatureStrategy(): ISignatureStrategy {
     return new DFNSStrategy(this);

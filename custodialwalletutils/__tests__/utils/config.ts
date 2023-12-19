@@ -45,7 +45,7 @@ export const fireblocksConfig = new FireblocksConfig(
   FIREBLOCKS_API_SECRET_KEY,
   FIREBLOCKS_BASE_URL,
   FIREBLOCKS_VAULT,
-    FIREBLOCKS_ASSET_ID
+  FIREBLOCKS_ASSET_ID,
 );
 
 // DFNS parameters

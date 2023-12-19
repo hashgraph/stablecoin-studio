@@ -22,22 +22,27 @@
 
 import {CustodialWalletService, DFNSConfig, FireblocksConfig, SignatureRequest} from '../../src';
 import {
-    DFNS_APP_ID,
-    DFNS_APP_ORIGIN,
-    DFNS_SERVICE_ACCOUNT_AUTHORIZATION_TOKEN,
-    DFNS_SERVICE_ACCOUNT_CREDENTIAL_ID,
-    DFNS_SERVICE_ACCOUNT_PRIVATE_KEY,
-    DFNS_TEST_URL,
-    DFNS_WALLET_ID,
-    dfnsConfig,
-    FIREBLOCKS_API_KEY,
-    FIREBLOCKS_API_SECRET_KEY,
-    FIREBLOCKS_ASSET_ID,
-    FIREBLOCKS_BASE_URL,
-    FIREBLOCKS_VAULT,
-    fireblocksConfig,
-    TEST_TIMEOUT
+  DFNS_APP_ID,
+  DFNS_APP_ORIGIN,
+  DFNS_SERVICE_ACCOUNT_AUTHORIZATION_TOKEN,
+  DFNS_SERVICE_ACCOUNT_CREDENTIAL_ID,
+  DFNS_SERVICE_ACCOUNT_PRIVATE_KEY,
+  DFNS_TEST_URL,
+  DFNS_WALLET_ID,
+  dfnsConfig,
+  FIREBLOCKS_API_KEY,
+  FIREBLOCKS_API_SECRET_KEY,
+  FIREBLOCKS_ASSET_ID,
+  FIREBLOCKS_BASE_URL,
+  FIREBLOCKS_VAULT,
+  fireblocksConfig,
+  TEST_TIMEOUT,
 } from '../utils/config';
+import {
+  DFNSConfig,
+  FireblocksConfig,
+  SignatureRequest,
+} from '../../src/index.js';
 
 const signatureRequest = new SignatureRequest(new Uint8Array([1, 2, 3]));
 
@@ -62,7 +67,7 @@ describe('🧪 Service TESTS', () => {
           FIREBLOCKS_VAULT,
         );
         expect((config as FireblocksConfig).assetId).toEqual(
-            FIREBLOCKS_ASSET_ID
+          FIREBLOCKS_ASSET_ID,
         );
       },
       TEST_TIMEOUT,

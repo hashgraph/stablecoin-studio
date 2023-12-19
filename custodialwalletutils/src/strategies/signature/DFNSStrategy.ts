@@ -18,13 +18,16 @@
  *
  */
 
-import {ISignatureStrategy} from './ISignatureStrategy';
-import {SignatureRequest} from '../../models/signature/SignatureRequest';
-import {AsymmetricKeySigner} from '@dfns/sdk-keysigner';
-import {DfnsApiClient} from '@dfns/sdk';
-import {DFNSConfig} from '../config/DFNSConfig';
-import {SignatureKind, SignatureStatus,} from '@dfns/sdk/codegen/datamodel/Wallets';
-import {hexStringToUint8Array} from '../../utils/utilities';
+import { ISignatureStrategy } from './ISignatureStrategy';
+import { SignatureRequest } from '../../models/signature/SignatureRequest';
+import { AsymmetricKeySigner } from '@dfns/sdk-keysigner';
+import { DfnsApiClient } from '@dfns/sdk';
+import { DFNSConfig } from '../config/DFNSConfig';
+import {
+  SignatureKind,
+  SignatureStatus,
+} from '@dfns/sdk/codegen/datamodel/Wallets';
+import { hexStringToUint8Array } from '../../utils/utilities';
 
 const sleep = (interval = 0) =>
   new Promise((resolve) => setTimeout(resolve, interval));
