@@ -18,10 +18,10 @@
  *
  */
 
-import { TransactionStatus } from 'fireblocks-sdk';
-import { FireblocksStrategy } from '../../src/strategies/signature/FireblocksStrategy';
-import { FireblocksConfig, SignatureRequest } from '../../src';
-import { hexStringToUint8Array } from '../../src/utils/utilities';
+import {TransactionStatus} from 'fireblocks-sdk';
+import {FireblocksStrategy} from '../../src/strategies/signature/FireblocksStrategy';
+import {FireblocksConfig, SignatureRequest} from '../../src';
+import {hexStringToUint8Array} from '../../src/utils/utilities';
 
 const signatureResponse = {
   status: TransactionStatus.COMPLETED,
@@ -61,7 +61,7 @@ describe('🧪 FireblocksStrategy TESTS', () => {
     ).toHaveBeenCalledTimes(1);
     expect(
       fireblocksStrategy['fireblocks']['getTransactionById'],
-    ).toHaveBeenCalledTimes(2);
+    ).toHaveBeenCalledTimes(1);
     expect(result).toEqual(
       hexStringToUint8Array(
         signatureResponse.signedMessages[0].signature.fullSig,
