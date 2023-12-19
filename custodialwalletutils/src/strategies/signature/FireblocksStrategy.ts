@@ -32,7 +32,7 @@ export class FireblocksStrategy implements ISignatureStrategy {
   private fireblocks: FireblocksSDK;
   private config: FireblocksConfig;
 
-  constructor(private strategyConfig: FireblocksConfig) {
+  constructor(strategyConfig: FireblocksConfig) {
     this.fireblocks = new FireblocksSDK(
         strategyConfig.apiSecretKey,
         strategyConfig.apiKey,

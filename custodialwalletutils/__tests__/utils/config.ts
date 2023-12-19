@@ -35,7 +35,7 @@ export const FIREBLOCKS_API_SECRET_KEY = fs.readFileSync(
 );
 export const FIREBLOCKS_API_KEY = process.env.FIREBLOCKS_API_KEY ?? '';
 export const FIREBLOCKS_BASE_URL = process.env.FIREBLOCKS_BASE_URL ?? '';
-export const FIREBLOCKS_VAULT = process.env.FIREBLOCKS_VAULT ?? '';
+export const FIREBLOCKS_VAULT_ACCOUNT_ID = process.env.FIREBLOCKS_VAULT_ACCOUNT_ID ?? '';
 export const FIREBLOCKS_ASSET_ID = process.env.FIREBLOCKS_ASSET_ID ?? '';
 
 // Fireblocks configuration
@@ -44,7 +44,7 @@ export const fireblocksConfig = new FireblocksConfig(
   FIREBLOCKS_API_KEY,
   FIREBLOCKS_API_SECRET_KEY,
   FIREBLOCKS_BASE_URL,
-  FIREBLOCKS_VAULT,
+    FIREBLOCKS_VAULT_ACCOUNT_ID,
   FIREBLOCKS_ASSET_ID,
 );
 

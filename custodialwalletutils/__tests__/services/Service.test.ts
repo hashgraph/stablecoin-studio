@@ -34,7 +34,7 @@ import {
     FIREBLOCKS_API_SECRET_KEY,
     FIREBLOCKS_ASSET_ID,
     FIREBLOCKS_BASE_URL,
-    FIREBLOCKS_VAULT,
+    FIREBLOCKS_VAULT_ACCOUNT_ID,
     fireblocksConfig,
     TEST_TIMEOUT,
 } from '../utils/config';
@@ -59,7 +59,7 @@ describe('🧪 Service TESTS', () => {
           FIREBLOCKS_BASE_URL,
         );
         expect((config as FireblocksConfig).vaultAccountId).toEqual(
-          FIREBLOCKS_VAULT,
+            FIREBLOCKS_VAULT_ACCOUNT_ID,
         );
         expect((config as FireblocksConfig).assetId).toEqual(
           FIREBLOCKS_ASSET_ID,
