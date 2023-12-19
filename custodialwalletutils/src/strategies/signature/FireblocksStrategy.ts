@@ -20,7 +20,7 @@
 
 import {SignatureRequest} from '../../models/signature/SignatureRequest';
 import {ISignatureStrategy} from './ISignatureStrategy';
-import {FireblocksSDK, PeerType, TransactionOperation, TransactionStatus,} from 'fireblocks-sdk';
+import {FireblocksSDK, PeerType, TransactionOperation, TransactionResponse, TransactionStatus,} from 'fireblocks-sdk';
 import {FireblocksConfig} from '../config/FireblocksConfig';
 import {hexStringToUint8Array} from '../../utils/utilities';
 import {CreateTransactionResponse} from "fireblocks-sdk/dist/src/types";
@@ -36,7 +36,7 @@ export class FireblocksStrategy implements ISignatureStrategy {
     this.fireblocks = new FireblocksSDK(
       strategyConfig.apiSecretKey,
       strategyConfig.apiKey,
-      strategyConfig.baseUrl,
+      strategyConfig.baseUrl
     );
     this.config = strategyConfig;
   }
@@ -58,7 +58,7 @@ export class FireblocksStrategy implements ISignatureStrategy {
   private async createFireblocksTransaction(message: string): Promise<CreateTransactionResponse> {
     return await this.fireblocks.createTransaction({
       operation: TransactionOperation.RAW,
-      assetId: 'HBAR_TEST',
+      assetId: this.config.assetId,
       source: { type: PeerType.VAULT_ACCOUNT, id: this.config.vaultAccountId },
       extraParameters: { rawMessageData: { messages: [{ content: message }] } },
     });
@@ -83,7 +83,7 @@ export class FireblocksStrategy implements ISignatureStrategy {
 
 
   private async extractSignature(transactionId: string): Promise<string> {
-    const txInfo = await this.fireblocks.getTransactionById(transactionId);
+    const txInfo: TransactionResponse = await this.fireblocks.getTransactionById(transactionId);
     if (!txInfo || !txInfo.signedMessages || txInfo.signedMessages.length === 0) {
       throw new Error('Transaction information is incomplete or missing.');
     }

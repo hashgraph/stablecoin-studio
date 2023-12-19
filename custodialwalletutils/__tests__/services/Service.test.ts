@@ -32,10 +32,11 @@ import {
     dfnsConfig,
     FIREBLOCKS_API_KEY,
     FIREBLOCKS_API_SECRET_KEY,
+    FIREBLOCKS_ASSET_ID,
     FIREBLOCKS_BASE_URL,
     FIREBLOCKS_VAULT,
     fireblocksConfig,
-    TEST_TIMEOUT,
+    TEST_TIMEOUT
 } from '../utils/config';
 import {DFNSConfig, FireblocksConfig, SignatureRequest,} from '../../src/index.js';
 
@@ -48,7 +49,7 @@ describe('🧪 Service TESTS', () => {
       async () => {
         const signatureService = new CustodialWalletService(fireblocksConfig);
 
-        const config = await signatureService.getconfig();
+        const config = signatureService.getConfig();
 
         expect(config instanceof FireblocksConfig).toEqual(true);
         expect((config as FireblocksConfig).apiKey).toEqual(FIREBLOCKS_API_KEY);
@@ -61,6 +62,9 @@ describe('🧪 Service TESTS', () => {
         expect((config as FireblocksConfig).vaultAccountId).toEqual(
           FIREBLOCKS_VAULT,
         );
+        expect((config as FireblocksConfig).assetId).toEqual(
+            FIREBLOCKS_ASSET_ID
+        );
       },
       TEST_TIMEOUT,
     );
@@ -70,8 +74,8 @@ describe('🧪 Service TESTS', () => {
       async () => {
         const signatureService = new CustodialWalletService(fireblocksConfig);
 
-        await signatureService.setconfig(dfnsConfig);
-        const config = await signatureService.getconfig();
+        signatureService.setConfig(dfnsConfig);
+        const config = signatureService.getConfig();
 
         expect(config instanceof DFNSConfig).toEqual(true);
         expect((config as DFNSConfig).serviceAccountPrivateKey).toEqual(
