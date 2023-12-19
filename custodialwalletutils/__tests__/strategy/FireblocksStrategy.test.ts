@@ -66,7 +66,8 @@ const setupFireblocksStrategy = ():FireblocksStrategy => {
         'mockedApiSecretKey',
         'mockedApiKey',
         'mockedBaseUrl',
-        'mockedVaultAccountId'
+        'mockedVaultAccountId',
+            'mockedAssetId'
         )
     );
 }
