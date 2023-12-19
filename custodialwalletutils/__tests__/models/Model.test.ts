@@ -19,7 +19,7 @@
  */
 
 import {TEST_TIMEOUT} from '../utils/config';
-import {SignatureRequest} from '../../src/models/signature/SignatureRequest';
+import {SignatureRequest} from '../../src';
 
 describe('🧪 Models TESTS', () => {
   describe('Signatures Request', () => {

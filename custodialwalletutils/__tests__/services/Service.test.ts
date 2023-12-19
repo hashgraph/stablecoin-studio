@@ -20,7 +20,7 @@
 
 /* eslint-disable jest/no-conditional-expect */
 
-import {CustodialWalletService} from '../../src/services/CustodialWalletService';
+import {CustodialWalletService, DFNSConfig, FireblocksConfig, SignatureRequest} from '../../src';
 import {
     DFNS_APP_ID,
     DFNS_APP_ORIGIN,
@@ -38,7 +38,6 @@ import {
     fireblocksConfig,
     TEST_TIMEOUT
 } from '../utils/config';
-import {DFNSConfig, FireblocksConfig, SignatureRequest,} from '../../src/index.js';
 
 const signatureRequest = new SignatureRequest(new Uint8Array([1, 2, 3]));
 
