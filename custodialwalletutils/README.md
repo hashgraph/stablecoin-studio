@@ -8,6 +8,9 @@
   - [5.1. Install](#51-install)
   - [5.2. Import](#52-import)
   - [5.3. Run](#53-run)
+    - [5.3.1. Create Service](#531-create-service)
+    - [5.3.2. Create Signature Request](#532-create-signature-request)
+    - [5.3.3. Sign Transaction](#533-sign-transaction)
 - [6. Build](#6-build)
 - [7. Test](#7-test)
   - [7.1. Files](#71-files)
@@ -96,15 +99,64 @@ Replace `functionName` with the actual name of the function you want to use.
 
 ### 5.3. Run
 
-To run a function from the custodialwalletutils library, call it in your code like this:
+In the custodial wallet management process, the CustodialWalletService class plays a central role. To create a service, instantiate the class with a relevant configuration, such as FireblocksConfig. This involves specifying essential parameters like API keys and account IDs. Following this, a signature request is created using the SignatureRequest class, defining the transaction bytes to be signed. The transaction signing is accomplished by calling the signTransaction method on the service instance. This streamlined approach provides a concise and effective way to manage custodial wallets in an application.
 
-```typescript
-functionName(arguments);
+#### 5.3.1. Create Service
+
+To create a service, you need to instantiate the `CustodialWalletService` class with the appropriate configuration. This can be either a `FireblocksConfig` or `DFNSConfig` instance, depending on the service you want to use.
+
+Here's an example of how to create a service:
+
+```javascript
+import { CustodialWalletService, FireblocksConfig } from 'custodialwalletutils';
+
+const config = new FireblocksConfig(
+  FIREBLOCKS_API_KEY,
+  FIREBLOCKS_API_SECRET_KEY,
+  FIREBLOCKS_BASE_URL,
+  FIREBLOCKS_VAULT_ACCOUNT_ID,
+  FIREBLOCKS_ASSET_ID,
+);
+
+const service = new CustodialWalletService(config);
 ```
 
-Replace `functionName` with the name of the function you want to run, and `arguments` with the arguments you want to pass to the function.
+#### 5.3.2. Create Signature Request
+
+To create a signature request, you need to instantiate the `SignatureRequest` class with the transaction bytes you want to sign.
+
+Here's an example of how to create a signature request:
+
+```javascript
+import { SignatureRequest } from 'custodialwalletutils';
+
+const transactionBytes = new Uint8Array([1, 2, 3]); // replace with your transaction bytes
+const request = new SignatureRequest(transactionBytes);
+```
+
+#### 5.3.3. Sign Transaction
+
+To sign a transaction, you need to call the `signTransaction` method on the service instance, passing in the signature request.
+
+Here's an example of how to sign a transaction:
+
+```javascript
+const signature = await service.signTransaction(request);
+```
+
+This will return a `Uint8Array` containing the signature of the transaction.
 
 ## 6. Build
+
+To compile TypeScript files into JavaScript. The command `tsc -p tsconfig.json` is typically run before deploying the application or testing the compiled JavaScript code.
+
+Here's a breakdown of the command:
+
+- `tsc`: This is the TypeScript compiler command. It's used to compile TypeScript (`.ts`) files into JavaScript (`.js`) files.
+
+- `-p tsconfig.json`: The `-p` option tells the TypeScript compiler to use the configuration from the `tsconfig.json` file. This file contains settings for the TypeScript compiler, such as the target JavaScript version, the root directory of the source files, compiler options, and more.
+
+When you run `npm run build` in your terminal, npm will execute this script command, which will compile your TypeScript code into JavaScript using the settings from your `tsconfig.json` file.
 
 ## 7. Test
 
@@ -174,14 +226,6 @@ The `__tests__/` directory contains the following test files:
 
   The `sign` method of `FireblocksStrategy` takes a `SignatureRequest`, converts the transaction bytes to a hex string, signs this string using the Fireblocks API, and then converts the signature from a hex string to a `Uint8Array`.
 
-- `config.ts`: configuration file for the `custodialwalletutils` tests. This file is responsible for setting up the configurations for the `FireblocksConfig` and `DFNSStrategy` classes, which are used to manage the interactions with the Fireblocks and DFNS APIs, respectively.
-
-  The `dotenv` package is used to load environment variables from a `.env` file. These environment variables are then used to set up the configurations for the `FireblocksConfig` and `DFNSStrategy` classes.
-
-  The `TEST_TIMEOUT` constant is set to 10000 milliseconds, or 10 seconds. This value can be used to set a timeout for tests to prevent them from running indefinitely.
-
-  The `fs` and `path` modules are used to read the private keys for the Fireblocks and DFNS configurations from files. The path to these files is specified by the `FIREBLOCKS_API_SECRET_KEY_PATH` and `DFNS_SERVICE_ACCOUNT_PRIVATE_KEY_PATH` environment variables, respectively.
-
 Each test file contains multiple tests for the different methods in the corresponding class from the `src/` directory. The tests are written using the Jest testing framework and are designed to be run in the Node.js environment.
 
 Please note that this is a basic guide and might need to be adjusted based on the actual implementation of your custodialwalletutils library and its dependencies.
@@ -190,7 +234,27 @@ Please note that this is a basic guide and might need to be adjusted based on th
 
 The configuration for the tests is defined in the `jest.config.js` file located in the root directory of the library. This file contains settings for Jest, the testing framework used in this project. It specifies options such as the test environment, the locations of the test files, and the setup files to be used.
 
-In addition to the Jest configuration, you may also need to set up environment variables for your tests. These can be defined in a `.env` file in the root directory of your project. The `dotenv` package can be used to load these environment variables when running your tests.
+`config.ts`: configuration file for the `custodialwalletutils` tests. This file is responsible for setting up the configurations for the `FireblocksConfig` and `DFNSStrategy` classes, which are used to manage the interactions with the Fireblocks and DFNS APIs, respectively.
+
+The `dotenv` package is used to load environment variables from a `.env` file. These environment variables are then used to set up the configurations for the `FireblocksConfig` and `DFNSStrategy` classes.
+
+- `FIREBLOCKS_API_SECRET_KEY_PATH`: The path to the file containing the Fireblocks API secret key.
+- `FIREBLOCKS_API_KEY`: The Fireblocks API key.
+- `FIREBLOCKS_BASE_URL`: The base URL of the Fireblocks API.
+- `FIREBLOCKS_ASSET_ID`: The asset ID for Fireblocks.
+- `FIREBLOCKS_VAULT_ACCOUNT_ID`: The vault account ID for Fireblocks.
+
+- `DFNS_SERVICE_ACCOUNT_AUTHORIZATION_TOKEN`: The authorization token for the DFNS service account.
+- `DFNS_SERVICE_ACCOUNT_CREDENTIAL_ID`: The credential ID for the DFNS service account.
+- `DFNS_SERVICE_ACCOUNT_PRIVATE_KEY_PATH`: The path to the file containing the DFNS service account private key.
+- `DFNS_APP_ORIGIN`: The origin of the DFNS app.
+- `DFNS_APP_ID`: The ID of the DFNS app.
+- `DFNS_TEST_URL`: The test URL for the DFNS API.
+- `DFNS_WALLET_ID`: The wallet ID for DFNS.
+
+The `TEST_TIMEOUT` constant is set to 10000 milliseconds, or 10 seconds. This value can be used to set a timeout for tests to prevent them from running indefinitely.
+
+The `fs` and `path` modules are used to read the private keys for the Fireblocks and DFNS configurations from files. The path to these files is specified by the `FIREBLOCKS_API_SECRET_KEY_PATH` and `DFNS_SERVICE_ACCOUNT_PRIVATE_KEY_PATH` environment variables, respectively.
 
 ### 7.3. Run
 
