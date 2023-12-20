@@ -114,7 +114,7 @@ The test files for the custodialwalletutils library are located in the `__tests_
 
 The `__tests__/` directory contains the following test files:
 
-- `StrategyFactory.test.ts`: test file for the `StrategyFactory` class in the `custodialwalletutils` library. This test file is written in TypeScript and uses the Jest testing framework. The `StrategyFactory` class is part of the factory pattern implemented in the library. The factory pattern is a creational design pattern that provides an interface for creating objects in a superclass, but allows subclasses to alter the type of objects that will be created. In this case, the `StrategyFactory` class provides a method for creating instances of different signature strategy classes.
+- `StrategyFactory.test.ts`: test file for the `StrategyFactory` class in the `custodialwalletutils` library. The `StrategyFactory` class is part of the factory pattern implemented in the library. The factory pattern is a creational design pattern that provides an interface for creating objects in a superclass, but allows subclasses to alter the type of objects that will be created. In this case, the `StrategyFactory` class provides a method for creating instances of different signature strategy classes.
 
   The `createSignatureStrategy` method of the `StrategyFactory` class takes a `strategyConfig` object as an argument and calls the `getSignatureStrategy` method on this object. The `getSignatureStrategy` method is expected to return an instance of a class that implements the `ISignatureStrategy` interface.
 
@@ -125,6 +125,30 @@ The `__tests__/` directory contains the following test files:
   The `dfnsConfig` and `fireblocksConfig` objects are mock configuration objects that are passed to the `createSignatureStrategy` method in the test cases. They are expected to have a `getSignatureStrategy` method that returns an instance of the `DFNSStrategy` or `FireblocksStrategy` class, respectively.
 
   The `TEST_TIMEOUT` constant is used to set a timeout for the test cases. This can be useful to prevent tests from running indefinitely if there is an issue with the code.
+
+- `Model.test.ts`: test suite for the `SignatureRequest` class. This test suite is written in TypeScript and uses the Jest testing framework. The `SignatureRequest` class is a simple data class that holds the bytes of a transaction to be signed. It has a constructor that takes a `Uint8Array` of transaction bytes, a `getTransactionBytes` method that returns the transaction bytes, and a `setTransactionBytes` method that updates the transaction bytes.
+
+  The test suite contains two test cases:
+
+  1. `Get Transaction`: This test case verifies that the `getTransactionBytes` method of the `SignatureRequest` class correctly returns the transaction bytes. It creates a new `SignatureRequest` with a predefined `Uint8Array` of transaction bytes, calls the `getTransactionBytes` method, and checks that the returned `Uint8Array` is the same as the one that was passed to the constructor.
+
+  2. `Set Transaction`: This test case verifies that the `setTransactionBytes` method of the `SignatureRequest` class correctly updates the transaction bytes. It creates a new `SignatureRequest` with a predefined `Uint8Array` of transaction bytes, calls the `setTransactionBytes` method with a different `Uint8Array`, and then calls the `getTransactionBytes` method to check that the returned `Uint8Array` is the same as the one that was passed to the `setTransactionBytes` method.
+
+  The `SignatureRequest` class and its methods are a crucial part of the `custodialwalletutils` library, as they provide a way to handle the transaction bytes that are to be signed by the different signature strategies. The tests ensure that these methods work as expected.
+
+- `Service.test.ts`: test suite for the `CustodialWalletService` class. The `CustodialWalletService` class is responsible for managing the configuration of the signature strategy and signing transactions. It has methods to get and set the configuration (`getConfig` and `setConfig`), and a method to sign a transaction (`signTransaction`).
+
+  The test suite contains several test cases grouped into three `describe` blocks:
+
+  1. `Configuration`: This block contains two test cases that verify the `getConfig` and `setConfig` methods. The first test case creates a `CustodialWalletService` instance with a Fireblocks configuration, retrieves the configuration using `getConfig`, and checks that the returned configuration matches the original Fireblocks configuration. The second test case creates a `CustodialWalletService` instance with a Fireblocks configuration, sets a new DFNS configuration using `setConfig`, retrieves the configuration using `getConfig`, and checks that the returned configuration matches the new DFNS configuration.
+
+  2. `[Fireblocks] Signatures`: This block contains a test case that verifies the `signTransaction` method with a Fireblocks configuration. It creates a `CustodialWalletService` instance, calls `signTransaction` with a `SignatureRequest`, and checks that the returned signature has a length greater than zero.
+
+  3. `[DFNS] Signatures`: This block contains a test case that verifies the `signTransaction` method with a DFNS configuration. It creates a `CustodialWalletService` instance, calls `signTransaction` with a `SignatureRequest`, and checks that the returned signature has a length greater than zero.
+
+  The `SignatureRequest` class is used to represent a request to sign a transaction. It has a constructor that takes a `Uint8Array` of transaction bytes, and methods to get and set the transaction bytes (`getTransactionBytes` and `setTransactionBytes`).
+
+  The `CustodialWalletService` class and its methods are a crucial part of the `custodialwalletutils` library, as they provide a way to manage the configuration of the signature strategy and sign transactions. The tests ensure that these methods work as expected.
 
 - `DFNSStrategy.test.ts`: This file contains tests for the `DFNSStrategy` class in the `src/` directory. It verifies the correct functionality of the `sign` method and other operations related to the DFNSStrategy.
 
@@ -150,7 +174,13 @@ The `__tests__/` directory contains the following test files:
 
   The `sign` method of `FireblocksStrategy` takes a `SignatureRequest`, converts the transaction bytes to a hex string, signs this string using the Fireblocks API, and then converts the signature from a hex string to a `Uint8Array`.
 
-- jjjjj
+- `config.ts`: configuration file for the `custodialwalletutils` tests. This file is responsible for setting up the configurations for the `FireblocksConfig` and `DFNSStrategy` classes, which are used to manage the interactions with the Fireblocks and DFNS APIs, respectively.
+
+  The `dotenv` package is used to load environment variables from a `.env` file. These environment variables are then used to set up the configurations for the `FireblocksConfig` and `DFNSStrategy` classes.
+
+  The `TEST_TIMEOUT` constant is set to 10000 milliseconds, or 10 seconds. This value can be used to set a timeout for tests to prevent them from running indefinitely.
+
+  The `fs` and `path` modules are used to read the private keys for the Fireblocks and DFNS configurations from files. The path to these files is specified by the `FIREBLOCKS_API_SECRET_KEY_PATH` and `DFNS_SERVICE_ACCOUNT_PRIVATE_KEY_PATH` environment variables, respectively.
 
 Each test file contains multiple tests for the different methods in the corresponding class from the `src/` directory. The tests are written using the Jest testing framework and are designed to be run in the Node.js environment.
 
