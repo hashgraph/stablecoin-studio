@@ -18,20 +18,43 @@
  *
  */
 
-import { FireblocksStrategy } from '../signature/FireblocksStrategy';
-import { ISignatureStrategy } from '../signature/ISignatureStrategy';
-import { IStrategyConfig } from './IStrategyConfig';
+import {FireblocksStrategy} from '../signature/FireblocksStrategy';
+import {ISignatureStrategy} from '../signature/ISignatureStrategy';
+import {IStrategyConfig} from './IStrategyConfig';
 
+/**
+ * Configuration for the Fireblocks strategy.
+ * This class holds the necessary credentials and settings for interfacing with the Fireblocks service.
+ *
+ * @export
+ * @class FireblocksConfig
+ * @implements {IStrategyConfig}
+ */
 export class FireblocksConfig implements IStrategyConfig {
+  /**
+   * Creates an instance of FireblocksConfig.
+   *
+   * @param {string} apiKey - The API key for accessing Fireblocks.
+   * @param {string} apiSecretKey - The API secret key for secure accessing Fireblocks.
+   * @param {string} baseUrl - The base URL for the Fireblocks API.
+   * @param {string} vaultAccountId - The account ID for the Fireblocks vault.
+   * @param {string} assetId - The ID of the asset to be managed.
+   */
   constructor(
-    public apiKey: string,
-    public apiSecretKey: string,
-    public baseUrl: string,
-    public vaultAccountId: string,
-    public assetId: string,
+      public apiKey: string,
+      public apiSecretKey: string,
+      public baseUrl: string,
+      public vaultAccountId: string,
+      public assetId: string,
   ) {}
 
+  /**
+   * Retrieves the signature strategy for the Fireblocks configuration.
+   *
+   * @returns {FireblocksStrategy} An instance of the FireblocksStrategy signature strategy.
+   */
   getSignatureStrategy(): ISignatureStrategy {
     return new FireblocksStrategy(this);
   }
 }
+

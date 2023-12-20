@@ -18,13 +18,29 @@
  *
  */
 
-import { ISignatureStrategy } from '../strategies/signature/ISignatureStrategy';
-import { IStrategyConfig } from '../strategies/config/IStrategyConfig';
+import {ISignatureStrategy} from '../strategies/signature/ISignatureStrategy';
+import {IStrategyConfig} from '../strategies/config/IStrategyConfig';
 
+/**
+ * Factory class for creating signature strategies.
+ * This class provides a static method to create signature strategy instances based on the provided configuration.
+ *
+ * @export
+ * @class StrategyFactory
+ */
 export class StrategyFactory {
+  /**
+   * Creates a signature strategy based on the provided strategy configuration.
+   * The method delegates the creation of the strategy to the configuration object itself.
+   *
+   * @static
+   * @param {IStrategyConfig} strategyConfig - The configuration object that determines which signature strategy to use.
+   * @returns {ISignatureStrategy} An instance of a class that implements the ISignatureStrategy interface.
+   */
   static createSignatureStrategy(
-    strategyConfig: IStrategyConfig,
+      strategyConfig: IStrategyConfig,
   ): ISignatureStrategy {
     return strategyConfig.getSignatureStrategy();
   }
 }
+

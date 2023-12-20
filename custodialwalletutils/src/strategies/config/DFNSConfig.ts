@@ -18,22 +18,47 @@
  *
  */
 
-import { DFNSStrategy } from '../signature/DFNSStrategy';
-import { ISignatureStrategy } from '../signature/ISignatureStrategy';
-import { IStrategyConfig } from './IStrategyConfig';
+import {DFNSStrategy} from '../signature/DFNSStrategy';
+import {ISignatureStrategy} from '../signature/ISignatureStrategy';
+import {IStrategyConfig} from './IStrategyConfig';
 
+/**
+ * Configuration for the DFNS strategy.
+ * This class stores the credentials and settings required to interact with a specific service.
+ *
+ * @export
+ * @class DFNSConfig
+ * @implements {IStrategyConfig}
+ */
 export class DFNSConfig implements IStrategyConfig {
+  /**
+   * Creates an instance of DFNSConfig.
+   *
+   * @param {string} serviceAccountPrivateKey - The service account's private key.
+   * @param {string} serviceAccountCredentialId - The credential ID of the service account.
+   * @param {string} serviceAccountAuthToken - The authentication token of the service account.
+   * @param {string} appOrigin - The url of the origin application.
+   * @param {string} appId - The ID of the origin application.
+   * @param {string} baseUrl - The base URL for requests.
+   * @param {string} walletId - The ID of the associated wallet.
+   */
   constructor(
-    public serviceAccountPrivateKey: string,
-    public serviceAccountCredentialId: string,
-    public serviceAccountAuthToken: string,
-    public appOrigin: string,
-    public appId: string,
-    public baseUrl: string,
-    public walletId: string,
+      public serviceAccountPrivateKey: string,
+      public serviceAccountCredentialId: string,
+      public serviceAccountAuthToken: string,
+      public appOrigin: string,
+      public appId: string,
+      public baseUrl: string,
+      public walletId: string,
   ) {}
 
+  /**
+   * Retrieves the signature strategy for DFNS configuration.
+   *
+   * @returns {DFNSStrategy} An instance of the DFNSStrategy signature strategy.
+   */
   getSignatureStrategy(): ISignatureStrategy {
     return new DFNSStrategy(this);
   }
 }
+
