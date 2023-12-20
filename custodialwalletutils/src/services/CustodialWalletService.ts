@@ -18,23 +18,52 @@
  *
  */
 
-import { IStrategyConfig } from '../strategies/config/IStrategyConfig';
-import { StrategyFactory } from '../factories/StrategyFactory';
-import { SignatureRequest } from '../models/signature/SignatureRequest';
+import {IStrategyConfig} from '../strategies/config/IStrategyConfig';
+import {StrategyFactory} from '../factories/StrategyFactory';
+import {SignatureRequest} from '../models/signature/SignatureRequest';
 
+/**
+ * Service class for managing custodial wallet operations.
+ *
+ * @export
+ * @class CustodialWalletService
+ */
 export class CustodialWalletService {
+  /**
+   * Creates an instance of CustodialWalletService with a given signature strategy configuration.
+   *
+   * @param {IStrategyConfig} config - The configuration for the signature strategy.
+   */
   constructor(private config: IStrategyConfig) {}
 
+  /**
+   * Retrieves the current signature strategy configuration.
+   *
+   * @returns {IStrategyConfig} The current strategy configuration.
+   */
   getConfig(): IStrategyConfig {
     return this.config;
   }
 
+  /**
+   * Sets or updates the signature strategy configuration.
+   *
+   * @param {IStrategyConfig} newConfig - The new configuration for the signature strategy.
+   */
   setConfig(newConfig: IStrategyConfig): void {
     this.config = newConfig;
   }
 
+  /**
+   * Signs a transaction based on the provided signature request.
+   * The method utilizes the signature strategy defined in the current configuration to sign the transaction.
+   *
+   * @param {SignatureRequest} signatureRequest - The request containing the transaction details to be signed.
+   * @returns {Promise<Uint8Array>} A promise that resolves to the signed transaction bytes.
+   */
   signTransaction(signatureRequest: SignatureRequest): Promise<Uint8Array> {
     const strategy = StrategyFactory.createSignatureStrategy(this.config);
     return strategy.sign(signatureRequest);
   }
 }
+
