@@ -1,5 +1,7 @@
 # Custodial Wallets Library
 
+[![License](https://img.shields.io/badge/license-apache2-blue.svg)](LICENSE)
+
 - [1. Overview](#1-overview)
 - [2. Architecture](#2-architecture)
 - [3. Technologies](#3-technologies)
