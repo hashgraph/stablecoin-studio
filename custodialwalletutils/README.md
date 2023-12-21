@@ -50,14 +50,9 @@ The strategy classes in the src/ directory, following a factory-strategy pattern
 - **TypeScript**: TypeScript is a typed superset of JavaScript that adds static types. It's used in this project for writing the source code.
 - **npm**: npm is the package manager for Node.js and is used for managing dependencies and running scripts.
 - **Jest**: Jest is a JavaScript testing framework used to write and run tests.
-- **ESLint**: ESLint is a tool for identifying and reporting on patterns found in ECMAScript/JavaScript code.
-- **Prettier**: Prettier is an opinionated code formatter. It enforces a consistent style by parsing your code and re-printing it with its own rules.
-- **rimraf**: rimraf is a deep deletion module for node (like `rm -rf`).
-- **@hashgraph/sdk**: This is the Hedera Hashgraph SDK for JavaScript. It's used for interacting with the Hedera Hashgraph network.
 - **dfns-sdk**: This is the Dfns SDK. It's used for integrating with the Dfns platform.
 - **fireblocks-sdk**: This is the Fireblocks SDK. It's used for integrating with the Fireblocks platform.
 - **dotenv**: This is a zero-dependency module that loads environment variables from a `.env` file into `process.env`.
-- **ethers**: This is a complete Ethereum wallet implementation and utilities in JavaScript and TypeScript.
 
 ## 5. How to use it
 
