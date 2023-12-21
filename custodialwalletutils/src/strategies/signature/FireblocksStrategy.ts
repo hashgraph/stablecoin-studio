@@ -36,10 +36,17 @@ import {
 const MAX_RETRIES = 10;
 const POLL_INTERVAL = 1000;
 
+/**
+ * Represents a signature strategy using the Fireblocks SDK.
+ */
 export class FireblocksStrategy implements ISignatureStrategy {
   private fireblocks: FireblocksSDK;
   private config: FireblocksConfig;
 
+  /**
+   * Constructs a new instance of the FireblocksStrategy class.
+   * @param strategyConfig The configuration for the Fireblocks strategy.
+   */
   constructor(strategyConfig: FireblocksConfig) {
     this.fireblocks = new FireblocksSDK(
       strategyConfig.apiSecretKey,
@@ -49,6 +56,11 @@ export class FireblocksStrategy implements ISignatureStrategy {
     this.config = strategyConfig;
   }
 
+  /**
+   * Signs a signature request using the Fireblocks SDK.
+   * @param request The signature request to sign.
+   * @returns A promise that resolves to the signature as a Uint8Array.
+   */
   async sign(request: SignatureRequest): Promise<Uint8Array> {
     const serializedTransaction = Buffer.from(
       request.getTransactionBytes(),
@@ -57,6 +69,11 @@ export class FireblocksStrategy implements ISignatureStrategy {
     return hexStringToUint8Array(signatureHex);
   }
 
+  /**
+   * Signs a message using the Fireblocks SDK.
+   * @param message The message to sign.
+   * @returns A promise that resolves to the signature as a string.
+   */
   private async signMessage(message: string): Promise<string> {
     const { id } = await this.createFireblocksTransaction(message);
     const txInfo = await this.pollTransaction(id);
@@ -69,6 +86,12 @@ export class FireblocksStrategy implements ISignatureStrategy {
     return signature.fullSig;
   }
 
+  /**
+   * Polls a Fireblocks transaction until it is completed or failed.
+   * @param transactionId The ID of the transaction to poll.
+   * @returns A promise that resolves to the transaction response.
+   * @throws An error if the transaction does not complete within the expected time frame.
+   */
   private async pollTransaction(
     transactionId: string,
   ): Promise<TransactionResponse> {
@@ -92,6 +115,11 @@ export class FireblocksStrategy implements ISignatureStrategy {
     );
   }
 
+  /**
+   * Creates a Fireblocks transaction for signing a message.
+   * @param message The message to include in the transaction.
+   * @returns A promise that resolves to the created transaction response.
+   */
   private async createFireblocksTransaction(
     message: string,
   ): Promise<CreateTransactionResponse> {

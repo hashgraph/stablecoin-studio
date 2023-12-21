@@ -36,15 +36,27 @@ const sleep = (interval = 0) =>
 const DEFAULT_MAX_RETRIES = 3;
 const DEFAULT_RETRY_INTERVAL = 1000;
 
+/**
+ * Represents a signature strategy for DFNSStrategy.
+ */
 export class DFNSStrategy implements ISignatureStrategy {
   private readonly dfnsApiClient: DfnsApiClient;
   private readonly walletId: string;
 
+  /**
+   * Creates an instance of DFNSStrategy.
+   * @param strategyConfig - The configuration for the DFNSStrategy.
+   */
   constructor(strategyConfig: DFNSConfig) {
     this.dfnsApiClient = this.createDfnsApiClient(strategyConfig);
     this.walletId = strategyConfig.walletId;
   }
 
+  /**
+   * Creates a DfnsApiClient instance.
+   * @param strategyConfig - The configuration for the DFNSStrategy.
+   * @returns The created DfnsApiClient instance.
+   */
   private createDfnsApiClient(strategyConfig: DFNSConfig): DfnsApiClient {
     const signer = new AsymmetricKeySigner({
       privateKey: strategyConfig.serviceAccountPrivateKey,
@@ -60,6 +72,11 @@ export class DFNSStrategy implements ISignatureStrategy {
     });
   }
 
+  /**
+   * Signs a signature request and returns the signature as a Uint8Array.
+   * @param request The signature request to sign.
+   * @returns A Promise that resolves to the signature as a Uint8Array.
+   */
   async sign(request: SignatureRequest): Promise<Uint8Array> {
     const serializedTransaction = Buffer.from(
       request.getTransactionBytes(),
@@ -68,6 +85,11 @@ export class DFNSStrategy implements ISignatureStrategy {
     return hexStringToUint8Array(signatureHex);
   }
 
+  /**
+   * Signs a message using the DFNSStrategy.
+   * @param message - The message to be signed.
+   * @returns A promise that resolves to the generated signature.
+   */
   async signMessage(message: string): Promise<string> {
     const response = await this.dfnsApiClient.wallets.generateSignature({
       walletId: this.walletId,
@@ -77,6 +99,12 @@ export class DFNSStrategy implements ISignatureStrategy {
     return this.waitForSignature(response.id);
   }
 
+  /**
+   * Waits for a signature with the specified signatureId.
+   * @param signatureId - The ID of the signature to wait for.
+   * @returns A promise that resolves to the signature string.
+   * @throws An error if the signature request fails.
+   */
   async waitForSignature(signatureId: string): Promise<string> {
     for (let retries = DEFAULT_MAX_RETRIES; retries > 0; retries--) {
       const response = await this.dfnsApiClient.wallets.getSignature({
