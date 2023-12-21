@@ -2,23 +2,22 @@
 
 - [1. Overview](#1-overview)
 - [2. Architecture](#2-architecture)
-- [3. Content](#3-content)
-- [4. Technologies](#4-technologies)
-- [5. How to use it](#5-how-to-use-it)
-  - [5.1. Install](#51-install)
-  - [5.2. Import](#52-import)
-  - [5.3. Run](#53-run)
-    - [5.3.1. Create Service](#531-create-service)
-    - [5.3.2. Create Signature Request](#532-create-signature-request)
-    - [5.3.3. Sign Transaction](#533-sign-transaction)
-- [6. Build](#6-build)
-- [7. Test](#7-test)
-  - [7.1. Files](#71-files)
-  - [7.2. Configuration](#72-configuration)
-  - [7.3. Run](#73-run)
-- [8. Contributing](#8-contributing)
-- [9. Code of Conduct](#9-code-of-conduct)
-- [10. License](#10-license)
+- [3. Technologies](#3-technologies)
+- [4. How to use it](#4-how-to-use-it)
+  - [4.1. Install](#41-install)
+  - [4.2. Import](#42-import)
+  - [4.3. Run](#43-run)
+    - [4.3.1. Create Service](#431-create-service)
+    - [4.3.2. Create Signature Request](#432-create-signature-request)
+    - [4.3.3. Sign Transaction](#433-sign-transaction)
+- [5. Build](#5-build)
+- [6. Test](#6-test)
+  - [6.1. Files](#61-files)
+  - [6.2. Configuration](#62-configuration)
+  - [6.3. Run](#63-run)
+- [7. Contributing](#7-contributing)
+- [8. Code of Conduct](#8-code-of-conduct)
+- [9. License](#9-license)
 
 ## 1. Overview
 
@@ -43,9 +42,8 @@ The `custodialwalletutils` library implements a factory-strategy pattern, enabli
 2. **tests/**: Contains all unit tests for the utility functions and classes in the library. Each test file corresponds to a source file and includes tests for various functions and classes.
 
 The strategy classes in the src/ directory, following a factory-strategy pattern, along with various helper functions and classes, facilitate the creation and management of custodial wallets, enhancing code readability and maintainability.
-## 3. Content
 
-## 4. Technologies
+## 3. Technologies
 
 - **TypeScript**: TypeScript is a typed superset of JavaScript that adds static types. It's used in this project for writing the source code.
 - **npm**: npm is the package manager for Node.js and is used for managing dependencies and running scripts.
@@ -54,9 +52,9 @@ The strategy classes in the src/ directory, following a factory-strategy pattern
 - **fireblocks-sdk**: This is the Fireblocks SDK. It's used for integrating with the Fireblocks platform.
 - **dotenv**: This is a zero-dependency module that loads environment variables from a `.env` file into `process.env`.
 
-## 5. How to use it
+## 4. How to use it
 
-### 5.1. Install
+### 4.1. Install
 
 To install the custodialwalletutils library, navigate to the root directory of the library and run the following command:
 
@@ -76,11 +74,11 @@ const { functionName } = require('custodialwalletutils');
 
 Replace `functionName` with the actual name of the function you want to use.
 
-### 5.3. Run
+### 4.3. Run
 
 In the custodial wallet management process, the CustodialWalletService class plays a central role. To create a service, instantiate the class with a relevant configuration, such as FireblocksConfig. This involves specifying essential parameters like API keys and account IDs. Following this, a signature request is created using the SignatureRequest class, defining the transaction bytes to be signed. The transaction signing is accomplished by calling the signTransaction method on the service instance. This streamlined approach provides a concise and effective way to manage custodial wallets in an application.
 
-#### 5.3.1. Create Service
+#### 4.3.1. Create Service
 
 To create a service, you need to instantiate the `CustodialWalletService` class with the appropriate configuration. This can be either a `FireblocksConfig` or `DFNSConfig` instance, depending on the service you want to use.
 
@@ -100,7 +98,7 @@ const config = new FireblocksConfig(
 const service = new CustodialWalletService(config);
 ```
 
-#### 5.3.2. Create Signature Request
+#### 4.3.2. Create Signature Request
 
 To create a signature request, you need to instantiate the `SignatureRequest` class with the transaction bytes you want to sign.
 
@@ -113,7 +111,7 @@ const transactionBytes = new Uint8Array([1, 2, 3]); // replace with your transac
 const request = new SignatureRequest(transactionBytes);
 ```
 
-#### 5.3.3. Sign Transaction
+#### 4.3.3. Sign Transaction
 
 To sign a transaction, you need to call the `signTransaction` method on the service instance, passing in the signature request.
 
@@ -125,7 +123,7 @@ const signature = await service.signTransaction(request);
 
 This will return a `Uint8Array` containing the signature of the transaction.
 
-## 6. Build
+## 5. Build
 
 To compile TypeScript files into JavaScript. The command `tsc -p tsconfig.json` is typically run before deploying the application or testing the compiled JavaScript code.
 
@@ -137,9 +135,9 @@ Here's a breakdown of the command:
 
 When you run `npm run build` in your terminal, npm will execute this script command, which will compile your TypeScript code into JavaScript using the settings from your `tsconfig.json` file.
 
-## 7. Test
+## 6. Test
 
-### 7.1. Files
+### 6.1. Files
 
 Test files for the `custodialwalletutils` library are in the `__tests__/` directory, corresponding to the source files in the `src/` directory. Key test files include:
 
@@ -157,7 +155,7 @@ Test files for the `custodialwalletutils` library are in the `__tests__/` direct
 The tests, written using Jest in a Node.js environment, comprehensively cover signature strategies, transaction handling, and other functionalities of the library.
 
 
-### 7.2. Configuration
+### 6.2 Configuration
 
 The configuration for the tests is defined in the `jest.config.js` file located in the root directory of the library. 
 `config.ts`: configuration file for the `custodialwalletutils` tests. This file is responsible for setting up the configurations for the `FireblocksConfig` and `DFNSStrategy` classes, which are used to manage the interactions with the Fireblocks and DFNS APIs, respectively.
@@ -179,7 +177,7 @@ DFNS_TEST_URL=Test URL for DFNS API
 DFNS_WALLET_ID=Wallet ID for DFNS
 ```
 
-### 7.3. Run
+### 6.3. Run
 
 To run the tests, navigate to the root directory of the custodialwalletutils library and run the following command:
 
@@ -187,19 +185,19 @@ To run the tests, navigate to the root directory of the custodialwalletutils lib
 npm run test
 ```
 
-## 8. Contributing
+## 7. Contributing
 
 Contributions are welcome. Please see the
 [contributing guide](https://github.com/hashgraph/.github/blob/main/CONTRIBUTING.md)
 to see how you can get involved.
 
-## 9. Code of Conduct
+## 8. Code of Conduct
 
 This project is governed by the
 [Contributor Covenant Code of Conduct](https://github.com/hashgraph/.github/blob/main/CODE_OF_CONDUCT.md). By
 participating, you are expected to uphold this code of conduct. Please report unacceptable behavior
 to [oss@hedera.com](mailto:oss@hedera.com).
 
-## 10. License
+## 9. License
 
 [Apache License 2.0](LICENSE)
