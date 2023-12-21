@@ -31,7 +31,7 @@ Optimized for integration with the Hedera network, it supports services like Fir
 
 ## 2. Architecture
 
-The `custodialwalletutils` library implements a factory pattern, enabling object creation without specifying their exact class. The library's structure is divided into two primary directories:
+The `custodialwalletutils` library implements a factory-strategy pattern, enabling object creation without specifying their exact class. The library's structure is divided into two primary directories:
 
 1. **src/**: This directory houses the core source code and is organized into subdirectories:
   - **factories/**: Contains logic to return the correct strategy based on received configuration.
@@ -47,7 +47,6 @@ The strategy classes in the src/ directory, following a factory-strategy pattern
 
 ## 4. Technologies
 
-- **JavaScript (Node.js)**: The library is written in JavaScript and is designed to run in a Node.js environment.
 - **TypeScript**: TypeScript is a typed superset of JavaScript that adds static types. It's used in this project for writing the source code.
 - **npm**: npm is the package manager for Node.js and is used for managing dependencies and running scripts.
 - **Jest**: Jest is a JavaScript testing framework used to write and run tests.
@@ -165,11 +164,10 @@ The tests, written using Jest in a Node.js environment, comprehensively cover si
 
 ### 7.2. Configuration
 
-The configuration for the tests is defined in the `jest.config.js` file located in the root directory of the library. This file contains settings for Jest, the testing framework used in this project. It specifies options such as the test environment, the locations of the test files, and the setup files to be used.
-
+The configuration for the tests is defined in the `jest.config.js` file located in the root directory of the library. 
 `config.ts`: configuration file for the `custodialwalletutils` tests. This file is responsible for setting up the configurations for the `FireblocksConfig` and `DFNSStrategy` classes, which are used to manage the interactions with the Fireblocks and DFNS APIs, respectively.
 
-The `dotenv` package is used to load environment variables from a `.env` file. These environment variables are then used to set up the configurations for the `FireblocksConfig` and `DFNSStrategy` classes.
+The `dotenv` package is used to load environment variables from a `.env` file. These environment variables are necessary for the tests to run.
 ```env
 FIREBLOCKS_API_SECRET_KEY_PATH=Path to Fireblocks API secret key file
 FIREBLOCKS_API_KEY=Your Fireblocks API key
@@ -186,10 +184,6 @@ DFNS_TEST_URL=Test URL for DFNS API
 DFNS_WALLET_ID=Wallet ID for DFNS
 ```
 
-The `TEST_TIMEOUT` constant is set to 10000 milliseconds, or 10 seconds. This value can be used to set a timeout for tests to prevent them from running indefinitely.
-
-The `fs` and `path` modules are used to read the private keys for the Fireblocks and DFNS configurations from files. The path to these files is specified by the `FIREBLOCKS_API_SECRET_KEY_PATH` and `DFNS_SERVICE_ACCOUNT_PRIVATE_KEY_PATH` environment variables, respectively.
-
 ### 7.3. Run
 
 To run the tests, navigate to the root directory of the custodialwalletutils library and run the following command:
@@ -197,8 +191,6 @@ To run the tests, navigate to the root directory of the custodialwalletutils lib
 ```sh
 npm run test
 ```
-
-This command runs the Jest testing framework, which will find and execute all test files in the `__tests__/` directory. The results of the tests will be displayed in the terminal.
 
 ## 8. Contributing
 
