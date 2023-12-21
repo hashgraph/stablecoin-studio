@@ -18,7 +18,18 @@
  *
  */
 
-export * from './services/CustodialWalletService.js';
+//* Factories
+export * from './factories/StrategyFactory';
+//* Models
 export * from './models/signature/SignatureRequest';
+//* Services
+export * from './services/CustodialWalletService.js';
+//* Strategies
 export * from './strategies/config/DFNSConfig';
 export * from './strategies/config/FireblocksConfig';
+export * from './strategies/config/IStrategyConfig';
+export * from './strategies/signature/DFNSStrategy';
+export * from './strategies/signature/FireblocksStrategy';
+export * from './strategies/signature/ISignatureStrategy';
+//* Utils
+export * from './utils/utilities';

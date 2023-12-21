@@ -18,16 +18,18 @@
  *
  */
 
-import { ISignatureStrategy } from './ISignatureStrategy';
-import { SignatureRequest } from '../../models/signature/SignatureRequest';
 import { AsymmetricKeySigner } from '@dfns/sdk-keysigner';
 import { DfnsApiClient } from '@dfns/sdk';
-import { DFNSConfig } from '../config/DFNSConfig';
 import {
   SignatureKind,
   SignatureStatus,
 } from '@dfns/sdk/codegen/datamodel/Wallets';
-import { hexStringToUint8Array } from '../../utils/utilities';
+import {
+  DFNSConfig,
+  ISignatureStrategy,
+  SignatureRequest,
+  hexStringToUint8Array,
+} from '../../';
 
 const sleep = (interval = 0) =>
   new Promise((resolve) => setTimeout(resolve, interval));
@@ -54,7 +56,7 @@ export class DFNSStrategy implements ISignatureStrategy {
       appId: strategyConfig.appId,
       authToken: strategyConfig.serviceAccountAuthToken,
       baseUrl: strategyConfig.baseUrl,
-      signer: signer,
+      signer,
     });
   }
 
@@ -83,14 +85,13 @@ export class DFNSStrategy implements ISignatureStrategy {
       });
 
       if (response.status === SignatureStatus.Signed && response.signature) {
-        return Buffer.from(
-          response.signature.r.substring(2) + response.signature.s.substring(2),
-          'hex',
-        ).toString('hex');
+        const signature = response.signature;
+        const r = signature.r.substring(2);
+        const s = signature.s.substring(2);
+        return Buffer.from(r + s, 'hex').toString('hex');
       } else if (response.status === SignatureStatus.Failed) {
         break;
       }
-
       await sleep(DEFAULT_RETRY_INTERVAL);
     }
     throw new Error(`DFNS Signature request ${signatureId} failed.`);

@@ -18,10 +18,13 @@
  *
  */
 
-import {TransactionStatus} from 'fireblocks-sdk';
-import {FireblocksStrategy} from '../../src/strategies/signature/FireblocksStrategy';
-import {FireblocksConfig, SignatureRequest} from '../../src';
-import {hexStringToUint8Array} from '../../src/utils/utilities';
+import { TransactionStatus } from 'fireblocks-sdk';
+import {
+  FireblocksConfig,
+  SignatureRequest,
+  FireblocksStrategy,
+  hexStringToUint8Array,
+} from '../../src';
 
 const signatureResponse = {
   status: TransactionStatus.COMPLETED,

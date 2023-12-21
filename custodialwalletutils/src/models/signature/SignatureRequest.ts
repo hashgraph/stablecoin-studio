@@ -46,21 +46,18 @@ export class SignatureRequest {
   /**
    * Gets the transaction bytes that need to be signed.
    *
-   * @public
    * @returns {Uint8Array} The transaction bytes.
    */
-  public getTransactionBytes(): Uint8Array {
+  getTransactionBytes(): Uint8Array {
     return this.transactionBytes;
   }
 
   /**
    * Sets or updates the transaction bytes that need to be signed.
    *
-   * @public
    * @param {Uint8Array} transactionBytes - The new transaction bytes.
    */
-  public setTransactionBytes(transactionBytes: Uint8Array): void {
+  setTransactionBytes(transactionBytes: Uint8Array): void {
     this.transactionBytes = transactionBytes;
   }
 }
-

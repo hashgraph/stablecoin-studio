@@ -18,7 +18,7 @@
  *
  */
 
-import { ISignatureStrategy } from '../signature/ISignatureStrategy';
+import { ISignatureStrategy } from '../../';
 
 export interface IStrategyConfig {
   getSignatureStrategy(): ISignatureStrategy;

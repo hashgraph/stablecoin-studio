@@ -4,6 +4,30 @@
   "description": "A library to provide integration with custodial wallets",
   "main": "build/src/index.js",
   "types": "build/src/index.d.ts",
+  "type": "commonjs",
+  "homepage": "https://github.com/hashgraph/stablecoin-studio",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hashgraph/stablecoin-studio"
+  },
+  "bugs": {
+    "url": "https://github.com/hashgraph/stablecoin-studio/issues"
+  },
+  "license": "ISC",
+  "engines": {
+    "node": ">=16",
+    "npm": ">=8"
+  },
+  "os": [
+    "darwin",
+    "linux"
+  ],
+  "cpu": [
+    "x86_64",
+    "x64",
+    "arm",
+    "arm64"
+  ],
   "scripts": {
     "start": "node build/src/index.js",
     "clean": "rimraf build coverage",
@@ -15,8 +39,6 @@
     "test:ci": "jest --ci --coverage",
     "prettier": "prettier --config .prettierrc --write ."
   },
-  "author": "",
-  "license": "ISC",
   "devDependencies": {
     "@types/jest": "^29.2.6",
     "@types/node": "^18.11.18",
@@ -38,7 +60,6 @@
     "dotenv": "^16.0.3",
     "reflect-metadata": "^0.1.13",
     "tsyringe": "^4.7.0",
-    "ethers": "^6.6.1",
     "@dfns/sdk": "^0.1.0-beta.5",
     "@dfns/sdk-keysigner": "^0.1.0-beta.5",
     "fireblocks-sdk": "^5.9.0",

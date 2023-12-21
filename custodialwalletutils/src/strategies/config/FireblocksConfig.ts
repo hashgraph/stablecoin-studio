@@ -18,9 +18,11 @@
  *
  */
 
-import {FireblocksStrategy} from '../signature/FireblocksStrategy';
-import {ISignatureStrategy} from '../signature/ISignatureStrategy';
-import {IStrategyConfig} from './IStrategyConfig';
+import {
+  FireblocksStrategy,
+  ISignatureStrategy,
+  IStrategyConfig,
+} from '../../';
 
 /**
  * Configuration for the Fireblocks strategy.
@@ -41,11 +43,11 @@ export class FireblocksConfig implements IStrategyConfig {
    * @param {string} assetId - The ID of the asset to be managed.
    */
   constructor(
-      public apiKey: string,
-      public apiSecretKey: string,
-      public baseUrl: string,
-      public vaultAccountId: string,
-      public assetId: string,
+    public apiKey: string,
+    public apiSecretKey: string,
+    public baseUrl: string,
+    public vaultAccountId: string,
+    public assetId: string,
   ) {}
 
   /**
@@ -57,4 +59,3 @@ export class FireblocksConfig implements IStrategyConfig {
     return new FireblocksStrategy(this);
   }
 }
-
