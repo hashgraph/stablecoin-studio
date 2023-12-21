@@ -66,7 +66,7 @@ npm install
 
 This command installs all the dependencies listed in the [`package.json`](package.json) file.
 
-### 5.2. Import
+### 4.2. Import
 
 To use a function or class from the custodialwalletutils library in your code, you first need to import it. Here's an example of how to import a function:
 
