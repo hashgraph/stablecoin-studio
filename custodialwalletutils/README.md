@@ -27,6 +27,7 @@ The _custodialwalletutils_ library is a Typescript utility designed to simplify 
 Optimized for integration with the Hedera network, it supports services like Fireblocks and Dfns and is scalable for various wallet services. The library's code is organized in a clear directory structure, with source code and unit and integration tests in separate folders. It's developed in Typescript, optimized for Node.js, and managed through npm for easy dependency handling and testing. The library is user-friendly, emphasizing developer experience and code readability. It includes extensive unit tests, ensuring its reliability and stability for managing custodial wallets in Typescript applications.
 
 #### Current services supported
+
 - DFNS
 - Fireblocks
 
@@ -35,11 +36,12 @@ Optimized for integration with the Hedera network, it supports services like Fir
 The `custodialwalletutils` library implements a factory-strategy pattern, enabling object creation without specifying their exact class. The library's structure is divided into two primary directories:
 
 1. **src/**: This directory houses the core source code and is organized into subdirectories:
-  - **factories/**: Contains logic to return the correct strategy based on received configuration.
-  - **models/**: Hosts models for interacting with the library's exposed services, including the `SignatureRequest`.
-  - **services/**: Includes `CustodialWalletService`, which exposes the library's services.
-  - **strategies/**: Comprises configuration classes for the factory and individual strategy classes, each with specific strategy logic.
-  - **utils/**: Stores reusable logic utilized across different strategies.
+
+- **factories/**: Contains logic to return the correct strategy based on received configuration.
+- **models/**: Hosts models for interacting with the library's exposed services, including the `SignatureRequest`.
+- **services/**: Includes `CustodialWalletService`, which exposes the library's services.
+- **strategies/**: Comprises configuration classes for the factory and individual strategy classes, each with specific strategy logic.
+- **utils/**: Stores reusable logic utilized across different strategies.
 
 2. **tests/**: Contains all unit tests for the utility functions and classes in the library. Each test file corresponds to a source file and includes tests for various functions and classes.
 
@@ -149,20 +151,19 @@ Test files for the `custodialwalletutils` library are in the `__tests__/` direct
 
 - **Service.test.ts**: An integration test suite for the `CustodialWalletService` class. It assesses the class's ability to manage configurations and sign transactions. The suite features distinct test cases, focusing on configuration settings and the signing process, with special attention to the integration with Fireblocks and DFNS services.
 
-
 - **DFNSStrategy.test.ts**: Tests the `DFNSStrategy` class, especially the `sign` method, using a mock DFNS API client for signature generation and verification.
 
 - **FireblocksStrategy.test.ts**: Similar to DFNSStrategy tests, but focused on the `FireblocksStrategy` class, using a mock Fireblocks SDK for the signing process.
 
 The tests, written using Jest in a Node.js environment, comprehensively cover signature strategies, transaction handling, and other functionalities of the library.
 
-
 ### 6.2 Configuration
 
-The configuration for the tests is defined in the `jest.config.js` file located in the root directory of the library. 
+The configuration for the tests is defined in the `jest.config.js` file located in the root directory of the library.
 `config.ts`: configuration file for the `custodialwalletutils` tests. This file is responsible for setting up the configurations for the `FireblocksConfig` and `DFNSStrategy` classes, which are used to manage the interactions with the Fireblocks and DFNS APIs, respectively.
 
 The `dotenv` package is used to load environment variables from a `.env` file. These environment variables are necessary for the tests to run.
+
 ```env
 FIREBLOCKS_API_SECRET_KEY_PATH=Path to Fireblocks API secret key file
 FIREBLOCKS_API_KEY=Your Fireblocks API key
