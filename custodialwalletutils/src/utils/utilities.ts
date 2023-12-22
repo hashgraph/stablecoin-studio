@@ -18,11 +18,17 @@
  *
  */
 
+/**
+ * Converts a hexadecimal string to a Uint8Array.
+ *
+ * @param hexString - The hexadecimal string to convert.
+ * @returns The Uint8Array representation of the hexadecimal string.
+ */
 export function hexStringToUint8Array(hexString: string): Uint8Array {
   const uint8Array = new Uint8Array(hexString.length / 2);
-
   for (let i = 0; i < hexString.length; i += 2) {
-    uint8Array[i / 2] = parseInt(hexString.substr(i, 2), 16);
+    const decimal = parseInt(hexString.substring(i, i + 2), 16);
+    uint8Array[i / 2] = decimal;
   }
   return uint8Array;
 }

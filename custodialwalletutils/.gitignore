@@ -25,9 +25,13 @@ build
 # Optional eslint cache
 .eslintcache
 
+# Security | Keys
+.env.test
+resources/keys/*
+resources/keystore/*
+
 # Misc
 .DS_Store
 
 package-lock.json
 report.json
-.env

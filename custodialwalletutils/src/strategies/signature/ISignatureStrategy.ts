@@ -18,8 +18,16 @@
  *
  */
 
-import { SignatureRequest } from '../../models/signature/SignatureRequest';
+import { SignatureRequest } from '../../';
 
+/**
+ * Represents a signature strategy for signing requests.
+ */
 export interface ISignatureStrategy {
+  /**
+   * Signs the provided signature request.
+   * @param request The signature request to be signed.
+   * @returns A promise that resolves to the signed data as a Uint8Array.
+   */
   sign(request: SignatureRequest): Promise<Uint8Array>;
 }

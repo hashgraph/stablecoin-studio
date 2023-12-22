@@ -18,8 +18,15 @@
  *
  */
 
-import { ISignatureStrategy } from '../signature/ISignatureStrategy';
+import { ISignatureStrategy } from '../../';
 
+/**
+ * Represents the configuration for a strategy.
+ */
 export interface IStrategyConfig {
+  /**
+   * Gets the signature strategy for the strategy configuration.
+   * @returns The signature strategy.
+   */
   getSignatureStrategy(): ISignatureStrategy;
 }
