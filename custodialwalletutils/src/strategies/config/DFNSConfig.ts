@@ -18,9 +18,7 @@
  *
  */
 
-import {DFNSStrategy} from '../signature/DFNSStrategy';
-import {ISignatureStrategy} from '../signature/ISignatureStrategy';
-import {IStrategyConfig} from './IStrategyConfig';
+import { DFNSStrategy, ISignatureStrategy, IStrategyConfig } from '../../';
 
 /**
  * Configuration for the DFNS strategy.
@@ -43,13 +41,13 @@ export class DFNSConfig implements IStrategyConfig {
    * @param {string} walletId - The ID of the associated wallet.
    */
   constructor(
-      public serviceAccountPrivateKey: string,
-      public serviceAccountCredentialId: string,
-      public serviceAccountAuthToken: string,
-      public appOrigin: string,
-      public appId: string,
-      public baseUrl: string,
-      public walletId: string,
+    public serviceAccountPrivateKey: string,
+    public serviceAccountCredentialId: string,
+    public serviceAccountAuthToken: string,
+    public appOrigin: string,
+    public appId: string,
+    public baseUrl: string,
+    public walletId: string,
   ) {}
 
   /**
@@ -61,4 +59,3 @@ export class DFNSConfig implements IStrategyConfig {
     return new DFNSStrategy(this);
   }
 }
-

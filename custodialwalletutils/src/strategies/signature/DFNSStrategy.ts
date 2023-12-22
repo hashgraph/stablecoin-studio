@@ -18,31 +18,45 @@
  *
  */
 
-import { ISignatureStrategy } from './ISignatureStrategy';
-import { SignatureRequest } from '../../models/signature/SignatureRequest';
 import { AsymmetricKeySigner } from '@dfns/sdk-keysigner';
 import { DfnsApiClient } from '@dfns/sdk';
-import { DFNSConfig } from '../config/DFNSConfig';
 import {
   SignatureKind,
   SignatureStatus,
 } from '@dfns/sdk/codegen/datamodel/Wallets';
-import { hexStringToUint8Array } from '../../utils/utilities';
+import {
+  DFNSConfig,
+  ISignatureStrategy,
+  SignatureRequest,
+  hexStringToUint8Array,
+} from '../../';
 
 const sleep = (interval = 0) =>
   new Promise((resolve) => setTimeout(resolve, interval));
 const DEFAULT_MAX_RETRIES = 3;
 const DEFAULT_RETRY_INTERVAL = 1000;
 
+/**
+ * Represents a signature strategy for DFNSStrategy.
+ */
 export class DFNSStrategy implements ISignatureStrategy {
   private readonly dfnsApiClient: DfnsApiClient;
   private readonly walletId: string;
 
+  /**
+   * Creates an instance of DFNSStrategy.
+   * @param strategyConfig - The configuration for the DFNSStrategy.
+   */
   constructor(strategyConfig: DFNSConfig) {
     this.dfnsApiClient = this.createDfnsApiClient(strategyConfig);
     this.walletId = strategyConfig.walletId;
   }
 
+  /**
+   * Creates a DfnsApiClient instance.
+   * @param strategyConfig - The configuration for the DFNSStrategy.
+   * @returns The created DfnsApiClient instance.
+   */
   private createDfnsApiClient(strategyConfig: DFNSConfig): DfnsApiClient {
     const signer = new AsymmetricKeySigner({
       privateKey: strategyConfig.serviceAccountPrivateKey,
@@ -54,10 +68,15 @@ export class DFNSStrategy implements ISignatureStrategy {
       appId: strategyConfig.appId,
       authToken: strategyConfig.serviceAccountAuthToken,
       baseUrl: strategyConfig.baseUrl,
-      signer: signer,
+      signer,
     });
   }
 
+  /**
+   * Signs a signature request and returns the signature as a Uint8Array.
+   * @param request The signature request to sign.
+   * @returns A Promise that resolves to the signature as a Uint8Array.
+   */
   async sign(request: SignatureRequest): Promise<Uint8Array> {
     const serializedTransaction = Buffer.from(
       request.getTransactionBytes(),
@@ -66,6 +85,11 @@ export class DFNSStrategy implements ISignatureStrategy {
     return hexStringToUint8Array(signatureHex);
   }
 
+  /**
+   * Signs a message using the DFNSStrategy.
+   * @param message - The message to be signed.
+   * @returns A promise that resolves to the generated signature.
+   */
   async signMessage(message: string): Promise<string> {
     const response = await this.dfnsApiClient.wallets.generateSignature({
       walletId: this.walletId,
@@ -75,6 +99,12 @@ export class DFNSStrategy implements ISignatureStrategy {
     return this.waitForSignature(response.id);
   }
 
+  /**
+   * Waits for a signature with the specified signatureId.
+   * @param signatureId - The ID of the signature to wait for.
+   * @returns A promise that resolves to the signature string.
+   * @throws An error if the signature request fails.
+   */
   async waitForSignature(signatureId: string): Promise<string> {
     for (let retries = DEFAULT_MAX_RETRIES; retries > 0; retries--) {
       const response = await this.dfnsApiClient.wallets.getSignature({
@@ -83,14 +113,13 @@ export class DFNSStrategy implements ISignatureStrategy {
       });
 
       if (response.status === SignatureStatus.Signed && response.signature) {
-        return Buffer.from(
-          response.signature.r.substring(2) + response.signature.s.substring(2),
-          'hex',
-        ).toString('hex');
+        const signature = response.signature;
+        const r = signature.r.substring(2);
+        const s = signature.s.substring(2);
+        return Buffer.from(r + s, 'hex').toString('hex');
       } else if (response.status === SignatureStatus.Failed) {
         break;
       }
-
       await sleep(DEFAULT_RETRY_INTERVAL);
     }
     throw new Error(`DFNS Signature request ${signatureId} failed.`);

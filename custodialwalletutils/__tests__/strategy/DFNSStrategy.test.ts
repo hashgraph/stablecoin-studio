@@ -18,10 +18,13 @@
  *
  */
 
-import { DFNSConfig, SignatureRequest } from '../../src';
-import { DFNSStrategy } from '../../src/strategies/signature/DFNSStrategy';
+import {
+  DFNSConfig,
+  SignatureRequest,
+  DFNSStrategy,
+  hexStringToUint8Array,
+} from '../../src';
 import { SignatureStatus } from '@dfns/sdk/codegen/datamodel/Wallets';
-import { hexStringToUint8Array } from '../../src/utils/utilities';
 
 const signatureResponse = {
   id: 'signature-id',
@@ -29,16 +32,14 @@ const signatureResponse = {
   signature: { r: '00r', s: '00s' },
 };
 
-jest.mock('@dfns/sdk', () => {
-  return {
-    DfnsApiClient: jest.fn().mockImplementation(() => ({
-      wallets: {
-        generateSignature: jest.fn().mockResolvedValue(signatureResponse),
-        getSignature: jest.fn().mockResolvedValue(signatureResponse),
-      },
-    })),
-  };
-});
+jest.mock('@dfns/sdk', () => ({
+  DfnsApiClient: jest.fn().mockImplementation(() => ({
+    wallets: {
+      generateSignature: jest.fn().mockResolvedValue(signatureResponse),
+      getSignature: jest.fn().mockResolvedValue(signatureResponse),
+    },
+  })),
+}));
 
 describe('🧪 DFNSStrategy TESTS', () => {
   let dfnsStrategy: DFNSStrategy;

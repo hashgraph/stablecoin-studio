@@ -20,24 +20,13 @@
 
 /* eslint-disable jest/no-conditional-expect */
 
-import {CustodialWalletService, DFNSConfig, FireblocksConfig, SignatureRequest} from '../../src';
 import {
-    DFNS_APP_ID,
-    DFNS_APP_ORIGIN,
-    DFNS_SERVICE_ACCOUNT_AUTHORIZATION_TOKEN,
-    DFNS_SERVICE_ACCOUNT_CREDENTIAL_ID,
-    DFNS_SERVICE_ACCOUNT_PRIVATE_KEY,
-    DFNS_TEST_URL,
-    DFNS_WALLET_ID,
-    dfnsConfig,
-    FIREBLOCKS_API_KEY,
-    FIREBLOCKS_API_SECRET_KEY,
-    FIREBLOCKS_ASSET_ID,
-    FIREBLOCKS_BASE_URL,
-    FIREBLOCKS_VAULT_ACCOUNT_ID,
-    fireblocksConfig,
-    TEST_TIMEOUT,
-} from '../utils/config';
+  CustodialWalletService,
+  DFNSConfig,
+  FireblocksConfig,
+  SignatureRequest,
+} from '../../src'; // Replace '@src' with the actual file path of the module being imported
+import { dfnsConfig, fireblocksConfig, TEST_TIMEOUT } from '../utils/config';
 
 const signatureRequest = new SignatureRequest(new Uint8Array([1, 2, 3]));
 
@@ -48,22 +37,14 @@ describe('🧪 Service TESTS', () => {
       async () => {
         const signatureService = new CustodialWalletService(fireblocksConfig);
 
-        const config = signatureService.getConfig();
+        const config = signatureService.getConfig() as FireblocksConfig;
 
-        expect(config instanceof FireblocksConfig).toEqual(true);
-        expect((config as FireblocksConfig).apiKey).toEqual(FIREBLOCKS_API_KEY);
-        expect((config as FireblocksConfig).apiSecretKey).toEqual(
-          FIREBLOCKS_API_SECRET_KEY,
-        );
-        expect((config as FireblocksConfig).baseUrl).toEqual(
-          FIREBLOCKS_BASE_URL,
-        );
-        expect((config as FireblocksConfig).vaultAccountId).toEqual(
-            FIREBLOCKS_VAULT_ACCOUNT_ID,
-        );
-        expect((config as FireblocksConfig).assetId).toEqual(
-          FIREBLOCKS_ASSET_ID,
-        );
+        expect(config).toBeInstanceOf(FireblocksConfig);
+        expect(config.apiKey).toEqual(fireblocksConfig.apiKey);
+        expect(config.apiSecretKey).toEqual(fireblocksConfig.apiSecretKey);
+        expect(config.baseUrl).toEqual(fireblocksConfig.baseUrl);
+        expect(config.vaultAccountId).toEqual(fireblocksConfig.vaultAccountId);
+        expect(config.assetId).toEqual(fireblocksConfig.assetId);
       },
       TEST_TIMEOUT,
     );
@@ -74,22 +55,22 @@ describe('🧪 Service TESTS', () => {
         const signatureService = new CustodialWalletService(fireblocksConfig);
 
         signatureService.setConfig(dfnsConfig);
-        const config = signatureService.getConfig();
+        const config = signatureService.getConfig() as DFNSConfig;
 
-        expect(config instanceof DFNSConfig).toEqual(true);
-        expect((config as DFNSConfig).serviceAccountPrivateKey).toEqual(
-          DFNS_SERVICE_ACCOUNT_PRIVATE_KEY,
+        expect(config).toBeInstanceOf(DFNSConfig);
+        expect(config.serviceAccountPrivateKey).toEqual(
+          dfnsConfig.serviceAccountPrivateKey,
         );
-        expect((config as DFNSConfig).serviceAccountCredentialId).toEqual(
-          DFNS_SERVICE_ACCOUNT_CREDENTIAL_ID,
+        expect(config.serviceAccountCredentialId).toEqual(
+          dfnsConfig.serviceAccountCredentialId,
         );
-        expect((config as DFNSConfig).serviceAccountAuthToken).toEqual(
-          DFNS_SERVICE_ACCOUNT_AUTHORIZATION_TOKEN,
+        expect(config.serviceAccountAuthToken).toEqual(
+          dfnsConfig.serviceAccountAuthToken,
         );
-        expect((config as DFNSConfig).appOrigin).toEqual(DFNS_APP_ORIGIN);
-        expect((config as DFNSConfig).appId).toEqual(DFNS_APP_ID);
-        expect((config as DFNSConfig).baseUrl).toEqual(DFNS_TEST_URL);
-        expect((config as DFNSConfig).walletId).toEqual(DFNS_WALLET_ID);
+        expect(config.appOrigin).toEqual(dfnsConfig.appOrigin);
+        expect(config.appId).toEqual(dfnsConfig.appId);
+        expect(config.baseUrl).toEqual(dfnsConfig.baseUrl);
+        expect(config.walletId).toEqual(dfnsConfig.walletId);
       },
       TEST_TIMEOUT,
     );

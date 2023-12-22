@@ -18,10 +18,7 @@
  *
  */
 
-import {IStrategyConfig} from '../strategies/config/IStrategyConfig';
-import {StrategyFactory} from '../factories/StrategyFactory';
-import {SignatureRequest} from '../models/signature/SignatureRequest';
-
+import { IStrategyConfig, SignatureRequest, StrategyFactory } from '../';
 /**
  * Service class for managing custodial wallet operations.
  *
@@ -66,4 +63,3 @@ export class CustodialWalletService {
     return strategy.sign(signatureRequest);
   }
 }
-
