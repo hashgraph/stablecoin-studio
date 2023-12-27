@@ -2,3 +2,4 @@
 build
 coverage
 package.json
+/sdk/__tests__/poc/

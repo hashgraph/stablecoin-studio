@@ -18,6 +18,4 @@
  *
  */
 
-export class CustodialWalletUtilsTransactionResponseAdapter {
-
-}
+export class CustodialWalletUtilsTransactionResponseAdapter {}
