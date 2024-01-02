@@ -18,93 +18,109 @@
  *
  */
 
-import {HederaTransactionAdapter} from '../HederaTransactionAdapter';
-import {singleton} from 'tsyringe';
+import {CustodialWalletService, FireblocksConfig, SignatureRequest,} from 'custodialwalletutils/build/cjs/src';
 import Account from 'domain/context/account/Account';
-import {AccountId, Client, Transaction} from '@hashgraph/sdk';
-import {TransactionType} from '../../TransactionResponseEnums';
-import {
-	CustodialWalletService,
-	DFNSConfig,
-	FireblocksConfig,
-	SignatureRequest,
-} from 'custodialwalletutils/build/esm/src';
-import LogService from '../../../../app/service/LogService';
-import {SigningError} from '../error/SigningError';
-import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
 import fs from 'fs';
 import path from 'path';
-import {GetAccountInfoQuery} from '../../../../app/usecase/query/account/info/GetAccountInfoQuery';
-import {HederaId} from '../../../../domain/context/shared/HederaId';
-import {AccountIdNotValid} from '../../../../domain/context/account/error/AccountIdNotValid';
-import {lazyInject} from '../../../../core/decorator/LazyInjectDecorator';
+import {singleton} from 'tsyringe';
+
+import {Client, Transaction} from '@hashgraph/sdk';
+
 import EventService from '../../../../app/service/event/EventService';
+import {WalletEvents, WalletPairedEvent,} from '../../../../app/service/event/WalletEvent';
+import LogService from '../../../../app/service/LogService';
 import NetworkService from '../../../../app/service/NetworkService';
+import {lazyInject} from '../../../../core/decorator/LazyInjectDecorator';
+import Injectable from '../../../../core/Injectable';
+import {Environment} from '../../../../domain/context/network/Environment';
+import {SupportedWallets} from '../../../../domain/context/network/Wallet';
+import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
 import {MirrorNodeAdapter} from '../../mirror/MirrorNodeAdapter';
-import {QueryBus} from '../../../../core/query/QueryBus';
+import {InitializationData} from '../../TransactionAdapter';
+import {TransactionType} from '../../TransactionResponseEnums';
+import {SigningError} from '../error/SigningError';
+import {HederaTransactionAdapter} from '../HederaTransactionAdapter';
 import {HTSTransactionResponseAdapter} from '../hts/HTSTransactionResponseAdapter';
-
-const apiSecretKey = fs.readFileSync(
-	path.resolve('/home/mamorales/fireblocks_dario/fireblocks_secret.key'),
-	'utf8',
-);
-const apiKey = '652415d5-e004-4dfd-9b3b-d93e8fc939d7';
-const baseUrl = 'https://api.fireblocks.io';
-const vaultAccountId = '2';
-
-const nodeId = [];
-nodeId.push(new AccountId(3));
 
 const fireblocksAccountId = '0.0.5712904';
 const fireblocksPublicKey =
 	'04eb152576e3af4dccbabda7026b85d8fdc0ad3f18f26540e42ac71a08e21623';
 
+//------------------  Fireblocks  ------------------//
+const apiSecretKey = fs.readFileSync(
+	path.resolve('/home/mario/Documents/fireblocks-secret.key'),
+	'utf8',
+);
+const apiKey = '652415d5-e004-4dfd-9b3b-d93e8fc939d7';
+const baseUrl = 'https://api.fireblocks.io';
+const vaultAccountId = '2';
+//------------------  end Fireblocks  ------------------//
+
 @singleton()
 export class CustodialWalletUtilsTransactionAdapter extends HederaTransactionAdapter {
-	private client: Client;
+	private _client: Client;
 	private custodialWalletService: CustodialWalletService;
+	public network: Environment;
+	public account: Account;
+	private fireblocksConfig: FireblocksConfig;
+
+	public get client(): Client {
+		return this._client;
+	}
 
 	constructor(
-		@lazyInject(EventService)
-		public readonly eventService: EventService,
-		@lazyInject(NetworkService)
-		public readonly networkService: NetworkService,
+		@lazyInject(EventService) public readonly eventService: EventService,
 		@lazyInject(MirrorNodeAdapter)
 		public readonly mirrorNodeAdapter: MirrorNodeAdapter,
-		@lazyInject(QueryBus)
-		private readonly queryBus: QueryBus,
-		private fireblocksConfig?: FireblocksConfig,
-		private dfnsConfig?: DFNSConfig,
+		@lazyInject(NetworkService)
+		public readonly networkService: NetworkService, //private fireblocksConfig?: FireblocksConfig, //private dfnsConfig?: DFNSConfig,
 	) {
 		super(mirrorNodeAdapter, networkService);
 		this.initClient();
 		this.initCustodialWalletService();
 	}
 
-	initClient(network?: string): void {
-		const currentNetwork = network ?? this.networkService.environment;
+	init(): Promise<string> {
+		this.eventService.emit(WalletEvents.walletInit, {
+			wallet: SupportedWallets.CLIENT,
+			initData: {},
+		});
+		LogService.logTrace('Client Initialized');
+		return Promise.resolve(this.networkService.environment);
+	}
+
+	private initClient(): void {
+		const currentNetwork = this.networkService.environment;
 		switch (currentNetwork) {
 			case 'testnet':
-				this.client = Client.forTestnet();
+				this._client = Client.forTestnet();
 				break;
 			case 'mainnet':
-				this.client = Client.forMainnet();
+				this._client = Client.forMainnet();
 				break;
 			default:
 				throw new Error('Network not supported');
 		}
-		this.client.setOperator(fireblocksAccountId, fireblocksPublicKey);
+		this._client.setOperator(fireblocksAccountId, fireblocksPublicKey);
 	}
 
-	initCustodialWalletService(): void {
+	private initCustodialWalletService(): void {
+		//DELETE
+		this.fireblocksConfig = new FireblocksConfig(
+			apiKey,
+			apiSecretKey,
+			baseUrl,
+			vaultAccountId,
+			'HBAR_TEST',
+		);
 		if (this.fireblocksConfig) {
 			this.custodialWalletService = new CustodialWalletService(
 				this.fireblocksConfig,
 			);
-		} else if (this.dfnsConfig) {
-			this.custodialWalletService = new CustodialWalletService(
-				this.dfnsConfig,
-			);
+			// } else if (this.dfnsConfig) {
+			// 	this.custodialWalletService = new CustodialWalletService(
+			// 		this.dfnsConfig,
+			// 	);
 		} else {
 			throw new Error(
 				'No custodial wallet service configuration provided',
@@ -113,20 +129,35 @@ export class CustodialWalletUtilsTransactionAdapter extends HederaTransactionAda
 	}
 
 	getAccount(): Account {
-		throw new Error('Method not implemented.');
+		return this.account;
 	}
 
-	async getAccountInfo(id: string): Promise<Account> {
-		const account = (
-			await this.queryBus.execute(
-				new GetAccountInfoQuery(HederaId.from(id)),
-			)
-		).account;
-		if (!account.id) throw new AccountIdNotValid(id.toString());
-		return new Account({
-			id: account.id,
-			publicKey: account.publicKey,
-			evmAddress: account.accountEvmAddress,
+	async register(account: Account): Promise<InitializationData> {
+		Injectable.registerTransactionHandler(this);
+		const accountMirror = await this.mirrorNodeAdapter.getAccountInfo(
+			account.id,
+		);
+		this.account = account;
+		this.account.publicKey = accountMirror.publicKey;
+		const eventData: WalletPairedEvent = {
+			wallet: SupportedWallets.CUSTODIAL,
+			data: {
+				account: this.account,
+				pairing: '',
+				topic: '',
+			},
+			network: {
+				name: this.networkService.environment,
+				recognized: true,
+				factoryId: this.networkService.configuration
+					? this.networkService.configuration.factoryAddress
+					: '',
+			},
+		};
+		this.eventService.emit(WalletEvents.walletPaired, eventData);
+		LogService.logTrace('Client registered as handler: ', eventData);
+		return Promise.resolve({
+			account: this.getAccount(),
 		});
 	}
 
@@ -142,6 +173,10 @@ export class CustodialWalletUtilsTransactionAdapter extends HederaTransactionAda
 				nameFunction,
 			);
 
+			if (!t.isFrozen()) {
+				t.freezeWith(this._client);
+			}
+
 			const signatureRequest = new SignatureRequest(t.toBytes());
 			const signedTransactionBytes =
 				await this.custodialWalletService.signTransaction(
@@ -150,13 +185,13 @@ export class CustodialWalletUtilsTransactionAdapter extends HederaTransactionAda
 			const signedTransaction = Transaction.fromBytes(
 				signedTransactionBytes,
 			);
-			const response = await signedTransaction.execute(this.client);
+			const response = await signedTransaction.execute(this._client);
 
 			return HTSTransactionResponseAdapter.manageResponse(
 				this.networkService.environment,
 				response,
 				transactionType,
-				this.client,
+				this._client,
 				nameFunction,
 				abi,
 			);

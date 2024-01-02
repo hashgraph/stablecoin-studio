@@ -2,4 +2,6 @@
 build
 coverage
 package.json
-/sdk/__tests__/poc/
+__tests__/poc/
+__tests__/port/in/StableCoin.test.ts
+

@@ -18,32 +18,32 @@
  *
  */
 
+import NetworkService from '../../app/service/NetworkService.js';
+import TransactionService from '../../app/service/TransactionService.js';
+import {ConnectCommand} from '../../app/usecase/command/network/connect/ConnectCommand.js';
+import {SetConfigurationCommand} from '../../app/usecase/command/network/setConfiguration/SetConfigurationCommand.js';
+import {SetNetworkCommand} from '../../app/usecase/command/network/setNetwork/SetNetworkCommand.js';
+import {CommandBus} from '../../core/command/CommandBus.js';
+import {LogError} from '../../core/decorator/LogErrorDecorator.js';
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import Injectable from '../../core/Injectable.js';
-import { CommandBus } from '../../core/command/CommandBus.js';
-import { InitializationData } from '../out/TransactionAdapter.js';
-import { ConnectCommand } from '../../app/usecase/command/network/connect/ConnectCommand.js';
-import ConnectRequest, { SupportedWallets } from './request/ConnectRequest.js';
-import RequestMapper from './request/mapping/RequestMapper.js';
-import TransactionService from '../../app/service/TransactionService.js';
-import NetworkService from '../../app/service/NetworkService.js';
-import SetNetworkRequest from './request/SetNetworkRequest.js';
-import { SetNetworkCommand } from '../../app/usecase/command/network/setNetwork/SetNetworkCommand.js';
-import { SetConfigurationCommand } from '../../app/usecase/command/network/setConfiguration/SetConfigurationCommand.js';
+import {Environment, unrecognized,} from '../../domain/context/network/Environment.js';
+import {JsonRpcRelay} from '../../domain/context/network/JsonRpcRelay.js';
+import {MirrorNode} from '../../domain/context/network/MirrorNode.js';
+import {BladeTransactionAdapter} from '../out/hs/blade/BladeTransactionAdapter.js';
 import {
-	Environment,
-	unrecognized,
-} from '../../domain/context/network/Environment.js';
-import InitializationRequest from './request/InitializationRequest.js';
-import Event, { WalletEvents } from './Event.js';
+	CustodialWalletUtilsTransactionAdapter
+} from '../out/hs/custodialwalletutils/CustodialWalletUtilsTransactionAdapter';
+import {HashpackTransactionAdapter} from '../out/hs/hashpack/HashpackTransactionAdapter.js';
 import RPCTransactionAdapter from '../out/rpc/RPCTransactionAdapter.js';
-import { HashpackTransactionAdapter } from '../out/hs/hashpack/HashpackTransactionAdapter.js';
-import { LogError } from '../../core/decorator/LogErrorDecorator.js';
+import {InitializationData} from '../out/TransactionAdapter.js';
+import {handleValidation} from './Common.js';
+import Event from './Event.js';
+import ConnectRequest, {SupportedWallets} from './request/ConnectRequest.js';
+import InitializationRequest from './request/InitializationRequest.js';
+import RequestMapper from './request/mapping/RequestMapper.js';
 import SetConfigurationRequest from './request/SetConfigurationRequest.js';
-import { handleValidation } from './Common.js';
-import { MirrorNode } from '../../domain/context/network/MirrorNode.js';
-import { JsonRpcRelay } from '../../domain/context/network/JsonRpcRelay.js';
-import { BladeTransactionAdapter } from '../out/hs/blade/BladeTransactionAdapter.js';
+import SetNetworkRequest from './request/SetNetworkRequest.js';
 
 export { InitializationData, SupportedWallets };
 
@@ -153,6 +153,8 @@ class NetworkInPort implements INetworkInPort {
 				wallets.push(SupportedWallets.HASHPACK);
 			} else if (val instanceof BladeTransactionAdapter) {
 				wallets.push(SupportedWallets.BLADE);
+			} else if (val instanceof CustodialWalletUtilsTransactionAdapter) {
+				wallets.push(SupportedWallets.CUSTODIAL);
 			} else {
 				wallets.push(SupportedWallets.CLIENT);
 			}

@@ -21,59 +21,55 @@
 /* eslint-disable jest/no-standalone-expect */
 
 import EventService from '../../../src/app/service/event/EventService.js';
-import { WalletEvents } from '../../../src/app/service/event/WalletEvent.js';
+import {WalletEvents} from '../../../src/app/service/event/WalletEvent.js';
 import Injectable from '../../../src/core/Injectable.js';
 import {
-	SDK,
 	Account,
 	Balance,
 	BigDecimal,
+	HBAR_DECIMALS,
+	LoggerTransports,
 	Network,
+	SDK,
 	StableCoin,
 	StableCoinViewModel,
 	TokenSupplyType,
-	HBAR_DECIMALS,
-	LoggerTransports,
 } from '../../../src/index.js';
 import {
-	CashInRequest,
+	AssociateTokenRequest,
 	BurnRequest,
-	WipeRequest,
-	GetAccountBalanceRequest,
 	CapabilitiesRequest,
-	PauseRequest,
+	CashInRequest,
+	CreateRequest,
 	DeleteRequest,
 	FreezeAccountRequest,
-	CreateRequest,
-	RescueRequest,
-	RescueHBARRequest,
-	IsAccountAssociatedTokenRequest,
-	InitializationRequest,
-	KYCRequest,
-	GetReserveAddressRequest,
-	AssociateTokenRequest,
-	UpdateReserveAddressRequest,
-	UpdateRequest,
 	GetAccountBalanceHBARRequest,
+	GetAccountBalanceRequest,
+	GetReserveAddressRequest,
+	InitializationRequest,
+	IsAccountAssociatedTokenRequest,
+	KYCRequest,
+	PauseRequest,
+	RescueHBARRequest,
+	RescueRequest,
 	TransfersRequest,
+	UpdateRequest,
+	UpdateReserveAddressRequest,
+	WipeRequest,
 } from '../../../src/port/in/request/index.js';
-import ConnectRequest, {
-	SupportedWallets,
-} from '../../../src/port/in/request/ConnectRequest.js';
+import ConnectRequest, {SupportedWallets,} from '../../../src/port/in/request/ConnectRequest.js';
 import GetStableCoinDetailsRequest from '../../../src/port/in/request/GetStableCoinDetailsRequest.js';
 import {
-	CLIENT_ACCOUNT_ED25519,
 	CLIENT_ACCOUNT_ECDSA,
+	CLIENT_ACCOUNT_ED25519,
 	FACTORY_ADDRESS,
 	HEDERA_TOKEN_MANAGER_ADDRESS,
 } from '../../config.js';
-import { Client, Hbar, TransferTransaction } from '@hashgraph/sdk';
-import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
-import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
-import BaseError, {
-	ErrorCategory,
-	ErrorCode,
-} from '../../../src/core/error/BaseError.js';
+import {Client, Hbar, TransferTransaction} from '@hashgraph/sdk';
+import {MirrorNode} from '../../../src/domain/context/network/MirrorNode.js';
+import {JsonRpcRelay} from '../../../src/domain/context/network/JsonRpcRelay.js';
+import BaseError, {ErrorCategory, ErrorCode,} from '../../../src/core/error/BaseError.js';
+
 const decimals = 6;
 const initialSupply = 1000;
 const maxSupply = 1000000;
@@ -107,7 +103,7 @@ describe('🧪 Stablecoin test', () => {
 					privateKey: CLIENT_ACCOUNT_ED25519.privateKey,
 				},
 				network: 'testnet',
-				wallet: SupportedWallets.CLIENT,
+				wallet: SupportedWallets.CUSTODIAL,
 				mirrorNode: mirrorNode,
 				rpcNode: rpcNode,
 			}),
