@@ -18,13 +18,8 @@
  *
  */
 
-import { TransactionStatus } from 'fireblocks-sdk';
-import {
-  FireblocksConfig,
-  SignatureRequest,
-  FireblocksStrategy,
-  hexStringToUint8Array,
-} from '../../src';
+import {TransactionStatus} from 'fireblocks-sdk';
+import {FireblocksConfig, FireblocksStrategy, hexStringToUint8Array, SignatureRequest,} from '../../src';
 
 const signatureResponse = {
   status: TransactionStatus.COMPLETED,
@@ -53,7 +48,7 @@ describe('🧪 FireblocksStrategy TESTS', () => {
     jest.spyOn(fireblocksStrategy['fireblocks'], 'getTransactionById');
   });
 
-  it('should correctly sign a signature request', async () => {
+  it('should correctly sign a correct signature request', async () => {
     const mockSignatureRequest = new SignatureRequest(
       new Uint8Array([1, 2, 3]),
     );
@@ -71,6 +66,35 @@ describe('🧪 FireblocksStrategy TESTS', () => {
       ),
     );
   });
+
+    it('should throw an error if fireblocks cant create the transaction', async () => {
+        const mockSignatureRequest = new SignatureRequest(
+          new Uint8Array([1, 2, 3]),
+        );
+        jest
+          .spyOn(fireblocksStrategy['fireblocks'], 'createTransaction')
+          .mockRejectedValue(new Error('someError'));
+        await expect(
+          fireblocksStrategy.sign(mockSignatureRequest),
+        ).rejects.toThrow('someError');
+    });
+
+    it('should throw an error if the transaction does not complete within the expected time frame', async () => {
+      const signatureResponse = {
+        status: TransactionStatus.PENDING_SIGNATURE,
+        id: 'transaction-id',
+        signedMessages: [{ signature: { fullSig: 'signature-string' } }],
+      };
+      const mockSignatureRequest = new SignatureRequest(
+          new Uint8Array([1, 2, 3]),
+      );
+        jest
+            .spyOn(fireblocksStrategy['fireblocks'], 'getTransactionById')
+            .mockRejectedValue(signatureResponse);
+        await expect(
+            fireblocksStrategy.sign(mockSignatureRequest),
+        ).rejects.toThrow(`Transaction ${signatureResponse.id} did not complete within the expected time frame.`);
+    }, 11000);
 });
 
 const setupFireblocksStrategy = (): FireblocksStrategy => {
