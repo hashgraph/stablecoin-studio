@@ -1,0 +1,61 @@
+/*
+ *
+ * Hedera Stablecoin SDK
+ *
+ * Copyright (C) 2023 Hedera Hashgraph, LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+import {
+  FireblocksStrategy,
+  ISignatureStrategy,
+  IStrategyConfig,
+} from '../../';
+
+/**
+ * Configuration for the Fireblocks strategy.
+ * This class holds the necessary credentials and settings for interfacing with the Fireblocks service.
+ *
+ * @export
+ * @class FireblocksConfig
+ * @implements {IStrategyConfig}
+ */
+export class FireblocksConfig implements IStrategyConfig {
+  /**
+   * Creates an instance of FireblocksConfig.
+   *
+   * @param {string} apiKey - The API key for accessing Fireblocks.
+   * @param {string} apiSecretKey - The API secret key for secure accessing Fireblocks.
+   * @param {string} baseUrl - The base URL for the Fireblocks API.
+   * @param {string} vaultAccountId - The account ID for the Fireblocks vault.
+   * @param {string} assetId - The ID of the asset to be managed.
+   */
+  constructor(
+    public apiKey: string,
+    public apiSecretKey: string,
+    public baseUrl: string,
+    public vaultAccountId: string,
+    public assetId: string,
+  ) {}
+
+  /**
+   * Retrieves the signature strategy for the Fireblocks configuration.
+   *
+   * @returns {FireblocksStrategy} An instance of the FireblocksStrategy signature strategy.
+   */
+  getSignatureStrategy(): ISignatureStrategy {
+    return new FireblocksStrategy(this);
+  }
+}
