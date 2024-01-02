@@ -90,7 +90,7 @@ export class DFNSStrategy implements ISignatureStrategy {
    * @param message - The message to be signed.
    * @returns A promise that resolves to the generated signature.
    */
-  async signMessage(message: string): Promise<string> {
+  private async signMessage(message: string): Promise<string> {
     const response = await this.dfnsApiClient.wallets.generateSignature({
       walletId: this.walletId,
       body: { kind: SignatureKind.Message, message: `0x${message}` },
@@ -105,7 +105,7 @@ export class DFNSStrategy implements ISignatureStrategy {
    * @returns A promise that resolves to the signature string.
    * @throws An error if the signature request fails.
    */
-  async waitForSignature(signatureId: string): Promise<string> {
+  private async waitForSignature(signatureId: string): Promise<string> {
     for (let retries = DEFAULT_MAX_RETRIES; retries > 0; retries--) {
       const response = await this.dfnsApiClient.wallets.getSignature({
         walletId: this.walletId,

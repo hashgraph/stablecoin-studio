@@ -20,8 +20,13 @@
 
 /* eslint-disable jest/no-conditional-expect */
 
-import {CustodialWalletService, DFNSConfig, FireblocksConfig, SignatureRequest,} from '../../src'; // Replace '@src' with the actual file path of the module being imported
-import {dfnsConfig, fireblocksConfig, TEST_TIMEOUT} from '../utils/config';
+import {
+  CustodialWalletService,
+  DFNSConfig,
+  FireblocksConfig,
+  SignatureRequest,
+} from '../../src'; // Replace '@src' with the actual file path of the module being imported
+import { dfnsConfig, fireblocksConfig, TEST_TIMEOUT } from '../utils/config';
 
 const signatureRequest = new SignatureRequest(new Uint8Array([1, 2, 3]));
 
