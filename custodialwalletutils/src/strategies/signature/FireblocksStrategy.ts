@@ -106,7 +106,7 @@ export class FireblocksStrategy implements ISignatureStrategy {
           return txInfo;
         }
       } catch (err) {
-        console.error(`Error polling transaction ${transactionId}:`, err);
+        console.log(`Error polling transaction ${transactionId}:`, err);
       }
       await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL));
     }
