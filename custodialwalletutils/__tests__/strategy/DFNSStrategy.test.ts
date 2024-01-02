@@ -51,7 +51,6 @@ const signatureResponse = {
 jest.mock('@dfns/sdk', () => ({
   DfnsApiClient: jest.fn().mockImplementation(() => ({
     wallets: {
-      // generateSignature: jest.fn().mockResolvedValue(signatureResponse),
       generateSignature: jest.fn().mockImplementation((val) => {
         if (val.body.message === emptyMessage) {
           return emptySignatureResponse;
