@@ -18,29 +18,36 @@
  *
  */
 
-import {CustodialWalletService, FireblocksConfig, SignatureRequest,} from 'custodialwalletutils/build/cjs/src';
+import {
+	CustodialWalletService,
+	FireblocksConfig,
+	SignatureRequest,
+} from 'custodialwalletutils/build/cjs/src';
 import Account from 'domain/context/account/Account';
 import fs from 'fs';
 import path from 'path';
-import {singleton} from 'tsyringe';
+import { singleton } from 'tsyringe';
 
-import {Client, Transaction} from '@hashgraph/sdk';
+import { Client, PublicKey, Transaction } from '@hashgraph/sdk';
 
 import EventService from '../../../../app/service/event/EventService';
-import {WalletEvents, WalletPairedEvent,} from '../../../../app/service/event/WalletEvent';
+import {
+	WalletEvents,
+	WalletPairedEvent,
+} from '../../../../app/service/event/WalletEvent';
 import LogService from '../../../../app/service/LogService';
 import NetworkService from '../../../../app/service/NetworkService';
-import {lazyInject} from '../../../../core/decorator/LazyInjectDecorator';
+import { lazyInject } from '../../../../core/decorator/LazyInjectDecorator';
 import Injectable from '../../../../core/Injectable';
-import {Environment} from '../../../../domain/context/network/Environment';
-import {SupportedWallets} from '../../../../domain/context/network/Wallet';
+import { Environment } from '../../../../domain/context/network/Environment';
+import { SupportedWallets } from '../../../../domain/context/network/Wallet';
 import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
-import {MirrorNodeAdapter} from '../../mirror/MirrorNodeAdapter';
-import {InitializationData} from '../../TransactionAdapter';
-import {TransactionType} from '../../TransactionResponseEnums';
-import {SigningError} from '../error/SigningError';
-import {HederaTransactionAdapter} from '../HederaTransactionAdapter';
-import {HTSTransactionResponseAdapter} from '../hts/HTSTransactionResponseAdapter';
+import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter';
+import { InitializationData } from '../../TransactionAdapter';
+import { TransactionType } from '../../TransactionResponseEnums';
+import { SigningError } from '../error/SigningError';
+import { HederaTransactionAdapter } from '../HederaTransactionAdapter';
+import { HTSTransactionResponseAdapter } from '../hts/HTSTransactionResponseAdapter';
 
 const fireblocksAccountId = '0.0.5712904';
 const fireblocksPublicKey =
@@ -76,8 +83,8 @@ export class CustodialWalletUtilsTransactionAdapter extends HederaTransactionAda
 		public readonly networkService: NetworkService, //private fireblocksConfig?: FireblocksConfig, //private dfnsConfig?: DFNSConfig,
 	) {
 		super(mirrorNodeAdapter, networkService);
-		this.initClient();
-		this.initCustodialWalletService();
+		// this.initClient();
+		// this.initCustodialWalletService();
 	}
 
 	init(): Promise<string> {
@@ -137,6 +144,8 @@ export class CustodialWalletUtilsTransactionAdapter extends HederaTransactionAda
 		const accountMirror = await this.mirrorNodeAdapter.getAccountInfo(
 			account.id,
 		);
+		this.initClient();
+		this.initCustodialWalletService();
 		this.account = account;
 		this.account.publicKey = accountMirror.publicKey;
 		const eventData: WalletPairedEvent = {
@@ -177,14 +186,27 @@ export class CustodialWalletUtilsTransactionAdapter extends HederaTransactionAda
 				t.freezeWith(this._client);
 			}
 
-			const signatureRequest = new SignatureRequest(t.toBytes());
+			// const signatureRequest = new SignatureRequest(t.toBytes());
+			// const signedTransactionBytes =
+			// 	await this.custodialWalletService.signTransaction(
+			// 		signatureRequest,
+			// 	);
+			// const signedTransaction = Transaction.fromBytes(
+			// 	signedTransactionBytes,
+			// );
+			// const response = await signedTransaction.execute(this._client);
+
+			const transactionBytes = t.toBytes();
 			const signedTransactionBytes =
 				await this.custodialWalletService.signTransaction(
-					signatureRequest,
+					new SignatureRequest(transactionBytes),
 				);
+
+			const publicKey = PublicKey.fromString(fireblocksPublicKey);
 			const signedTransaction = Transaction.fromBytes(
-				signedTransactionBytes,
-			);
+				transactionBytes,
+			).addSignature(publicKey, signedTransactionBytes);
+
 			const response = await signedTransaction.execute(this._client);
 
 			return HTSTransactionResponseAdapter.manageResponse(

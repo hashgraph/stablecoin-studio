@@ -18,17 +18,15 @@
  *
  */
 
-import {singleton} from 'tsyringe';
+import { singleton } from 'tsyringe';
 
 import Injectable from '../../core/Injectable.js';
-import {InvalidWalletTypeError} from '../../domain/context/network/error/InvalidWalletAccountTypeError.js';
-import {SupportedWallets} from '../../domain/context/network/Wallet.js';
-import {BladeTransactionAdapter} from '../../port/out/hs/blade/BladeTransactionAdapter.js';
-import {
-	CustodialWalletUtilsTransactionAdapter
-} from '../../port/out/hs/custodialwalletutils/CustodialWalletUtilsTransactionAdapter';
-import {HashpackTransactionAdapter} from '../../port/out/hs/hashpack/HashpackTransactionAdapter.js';
-import {HTSTransactionAdapter} from '../../port/out/hs/hts/HTSTransactionAdapter.js';
+import { InvalidWalletTypeError } from '../../domain/context/network/error/InvalidWalletAccountTypeError.js';
+import { SupportedWallets } from '../../domain/context/network/Wallet.js';
+import { BladeTransactionAdapter } from '../../port/out/hs/blade/BladeTransactionAdapter.js';
+import { CustodialWalletUtilsTransactionAdapter } from '../../port/out/hs/custodialwalletutils/CustodialWalletUtilsTransactionAdapter';
+import { HashpackTransactionAdapter } from '../../port/out/hs/hashpack/HashpackTransactionAdapter.js';
+import { HTSTransactionAdapter } from '../../port/out/hs/hts/HTSTransactionAdapter.js';
 import RPCTransactionAdapter from '../../port/out/rpc/RPCTransactionAdapter.js';
 import TransactionAdapter from '../../port/out/TransactionAdapter.js';
 import Service from './Service.js';

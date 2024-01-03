@@ -18,21 +18,19 @@
  *
  */
 
-import {
-	CustodialWalletUtilsTransactionAdapter
-} from '../../../src/port/out/hs/custodialwalletutils/CustodialWalletUtilsTransactionAdapter';
+import { CustodialWalletUtilsTransactionAdapter } from '../../../src/port/out/hs/custodialwalletutils/CustodialWalletUtilsTransactionAdapter';
 import EventService from '../../../src/app/service/event/EventService';
 import NetworkService from '../../../src/app/service/NetworkService';
-import {MirrorNodeAdapter} from '../../../src/port/out/mirror/MirrorNodeAdapter';
+import { MirrorNodeAdapter } from '../../../src/port/out/mirror/MirrorNodeAdapter';
 import fs from 'fs';
 import path from 'path';
-import {ContractExecuteTransaction} from '@hashgraph/sdk';
-import {HederaTokenManager__factory} from '@hashgraph/stablecoin-npm-contracts';
-import {BigDecimal} from '../../../src';
+import { ContractExecuteTransaction } from '@hashgraph/sdk';
+import { HederaTokenManager__factory } from '@hashgraph/stablecoin-npm-contracts';
+import { BigDecimal } from '../../../src';
 import Web3 from 'web3';
-import {TransactionType} from '../../../src/port/out/TransactionResponseEnums';
-import {FireblocksConfig} from 'custodialwalletutils/build/cjs/src/strategies/config/FireblocksConfig';
-import {MirrorNode} from '../../../src/domain/context/network/MirrorNode';
+import { TransactionType } from '../../../src/port/out/TransactionResponseEnums';
+import { FireblocksConfig } from 'custodialwalletutils/build/cjs/src/strategies/config/FireblocksConfig';
+import { MirrorNode } from '../../../src/domain/context/network/MirrorNode';
 import StableCoinService from '../../../src/app/service/StableCoinService';
 import Injectable from '../../../src/core/Injectable';
 

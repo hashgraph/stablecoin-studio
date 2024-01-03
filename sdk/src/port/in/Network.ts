@@ -20,26 +20,27 @@
 
 import NetworkService from '../../app/service/NetworkService.js';
 import TransactionService from '../../app/service/TransactionService.js';
-import {ConnectCommand} from '../../app/usecase/command/network/connect/ConnectCommand.js';
-import {SetConfigurationCommand} from '../../app/usecase/command/network/setConfiguration/SetConfigurationCommand.js';
-import {SetNetworkCommand} from '../../app/usecase/command/network/setNetwork/SetNetworkCommand.js';
-import {CommandBus} from '../../core/command/CommandBus.js';
-import {LogError} from '../../core/decorator/LogErrorDecorator.js';
+import { ConnectCommand } from '../../app/usecase/command/network/connect/ConnectCommand.js';
+import { SetConfigurationCommand } from '../../app/usecase/command/network/setConfiguration/SetConfigurationCommand.js';
+import { SetNetworkCommand } from '../../app/usecase/command/network/setNetwork/SetNetworkCommand.js';
+import { CommandBus } from '../../core/command/CommandBus.js';
+import { LogError } from '../../core/decorator/LogErrorDecorator.js';
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import Injectable from '../../core/Injectable.js';
-import {Environment, unrecognized,} from '../../domain/context/network/Environment.js';
-import {JsonRpcRelay} from '../../domain/context/network/JsonRpcRelay.js';
-import {MirrorNode} from '../../domain/context/network/MirrorNode.js';
-import {BladeTransactionAdapter} from '../out/hs/blade/BladeTransactionAdapter.js';
 import {
-	CustodialWalletUtilsTransactionAdapter
-} from '../out/hs/custodialwalletutils/CustodialWalletUtilsTransactionAdapter';
-import {HashpackTransactionAdapter} from '../out/hs/hashpack/HashpackTransactionAdapter.js';
+	Environment,
+	unrecognized,
+} from '../../domain/context/network/Environment.js';
+import { JsonRpcRelay } from '../../domain/context/network/JsonRpcRelay.js';
+import { MirrorNode } from '../../domain/context/network/MirrorNode.js';
+import { BladeTransactionAdapter } from '../out/hs/blade/BladeTransactionAdapter.js';
+import { CustodialWalletUtilsTransactionAdapter } from '../out/hs/custodialwalletutils/CustodialWalletUtilsTransactionAdapter';
+import { HashpackTransactionAdapter } from '../out/hs/hashpack/HashpackTransactionAdapter.js';
 import RPCTransactionAdapter from '../out/rpc/RPCTransactionAdapter.js';
-import {InitializationData} from '../out/TransactionAdapter.js';
-import {handleValidation} from './Common.js';
+import { InitializationData } from '../out/TransactionAdapter.js';
+import { handleValidation } from './Common.js';
 import Event from './Event.js';
-import ConnectRequest, {SupportedWallets} from './request/ConnectRequest.js';
+import ConnectRequest, { SupportedWallets } from './request/ConnectRequest.js';
 import InitializationRequest from './request/InitializationRequest.js';
 import RequestMapper from './request/mapping/RequestMapper.js';
 import SetConfigurationRequest from './request/SetConfigurationRequest.js';
