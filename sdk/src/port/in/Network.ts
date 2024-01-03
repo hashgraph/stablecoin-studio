@@ -34,7 +34,6 @@ import {
 import { JsonRpcRelay } from '../../domain/context/network/JsonRpcRelay.js';
 import { MirrorNode } from '../../domain/context/network/MirrorNode.js';
 import { BladeTransactionAdapter } from '../out/hs/blade/BladeTransactionAdapter.js';
-import { FireblocksTransactionAdapter } from '../out/hs/custodyproviders/FireblocksTransactionAdapter';
 import { HashpackTransactionAdapter } from '../out/hs/hashpack/HashpackTransactionAdapter.js';
 import RPCTransactionAdapter from '../out/rpc/RPCTransactionAdapter.js';
 import { InitializationData } from '../out/TransactionAdapter.js';
@@ -45,7 +44,8 @@ import InitializationRequest from './request/InitializationRequest.js';
 import RequestMapper from './request/mapping/RequestMapper.js';
 import SetConfigurationRequest from './request/SetConfigurationRequest.js';
 import SetNetworkRequest from './request/SetNetworkRequest.js';
-import { DFNSTransactionAdapter } from '../out/hs/custodyproviders/DFNSTransactionAdapter';
+import { FireblocksTransactionAdapter } from '../out/hs/hts/custodialproviders/FireblocksTransactionAdapter';
+import { DFNSTransactionAdapter } from '../out/hs/hts/custodialproviders/DFNSTransactionAdapter';
 
 export { InitializationData, SupportedWallets };
 
