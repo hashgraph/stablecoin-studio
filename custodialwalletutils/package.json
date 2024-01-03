@@ -1,6 +1,6 @@
 {
-  "name": "custodialwalletutils",
-  "version": "0.1.0",
+  "name": "@hashgraph/hedera-custodians-integration",
+  "version": "1.0.0",
   "description": "A library to provide integration with custodial wallets",
   "main": "build/src/index.js",
   "types": "build/src/index.d.ts",
