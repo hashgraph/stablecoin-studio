@@ -18,7 +18,7 @@
  *
  */
 
-import { CustodialWalletUtilsTransactionAdapter } from '../../../src/port/out/hs/custodialwalletutils/CustodialWalletUtilsTransactionAdapter';
+import { FireblocksTransactionAdapter } from '../../../src/port/out/hs/custodyproviders/FireblocksTransactionAdapter';
 import EventService from '../../../src/app/service/event/EventService';
 import NetworkService from '../../../src/app/service/NetworkService';
 import { MirrorNodeAdapter } from '../../../src/port/out/mirror/MirrorNodeAdapter';
@@ -54,7 +54,7 @@ const initSupply = 1000;
 const reserve = 100000000;
 
 describe('CustodialWalletUtilsTransactionAdapter', () => {
-	let adapter: CustodialWalletUtilsTransactionAdapter;
+	let adapter: FireblocksTransactionAdapter;
 	let eventService: EventService;
 	let mirrorNodeAdapter: MirrorNodeAdapter;
 	let networkService: NetworkService;
@@ -77,7 +77,7 @@ describe('CustodialWalletUtilsTransactionAdapter', () => {
 		networkService = Injectable.resolve(NetworkService);
 		networkService.environment = 'testnet';
 
-		adapter = new CustodialWalletUtilsTransactionAdapter(
+		adapter = new FireblocksTransactionAdapter(
 			eventService,
 			mirrorNodeAdapter,
 			networkService,

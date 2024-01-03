@@ -25,7 +25,8 @@ export enum SupportedWallets {
 	HASHPACK = 'HashPack',
 	CLIENT = 'Client',
 	BLADE = 'Blade',
-	CUSTODIAL = 'Custodial',
+	FIREBLOCKS = 'Fireblocks',
+	DFNS = 'Dfns',
 }
 
 export default interface Wallet {

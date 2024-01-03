@@ -24,12 +24,13 @@ import Injectable from '../../core/Injectable.js';
 import { InvalidWalletTypeError } from '../../domain/context/network/error/InvalidWalletAccountTypeError.js';
 import { SupportedWallets } from '../../domain/context/network/Wallet.js';
 import { BladeTransactionAdapter } from '../../port/out/hs/blade/BladeTransactionAdapter.js';
-import { CustodialWalletUtilsTransactionAdapter } from '../../port/out/hs/custodialwalletutils/CustodialWalletUtilsTransactionAdapter';
+import { FireblocksTransactionAdapter } from '../../port/out/hs/custodyproviders/FireblocksTransactionAdapter';
 import { HashpackTransactionAdapter } from '../../port/out/hs/hashpack/HashpackTransactionAdapter.js';
 import { HTSTransactionAdapter } from '../../port/out/hs/hts/HTSTransactionAdapter.js';
 import RPCTransactionAdapter from '../../port/out/rpc/RPCTransactionAdapter.js';
 import TransactionAdapter from '../../port/out/TransactionAdapter.js';
 import Service from './Service.js';
+import { DFNSTransactionAdapter } from '../../port/out/hs/custodyproviders/DFNSTransactionAdapter';
 
 @singleton()
 export default class TransactionService extends Service {
@@ -63,10 +64,10 @@ export default class TransactionService extends Service {
 					throw new InvalidWalletTypeError(type);
 				}
 				return Injectable.resolve(RPCTransactionAdapter);
-			case SupportedWallets.CUSTODIAL:
-				return Injectable.resolve(
-					CustodialWalletUtilsTransactionAdapter,
-				);
+			case SupportedWallets.FIREBLOCKS:
+				return Injectable.resolve(FireblocksTransactionAdapter);
+			case SupportedWallets.DFNS:
+				return Injectable.resolve(DFNSTransactionAdapter);
 			default:
 				return Injectable.resolve(HTSTransactionAdapter);
 		}
