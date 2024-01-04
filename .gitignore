@@ -44,3 +44,6 @@ contracts/docs/
 contracts/cache/*
 contracts/typechain-types/
 
+custodialwalletutils/__tests__/files/dfns/secret.key
+custodialwalletutils/__tests__/files/dfns/token.txt
+custodialwalletutils/__tests__/files/fireblocks/secret.key
