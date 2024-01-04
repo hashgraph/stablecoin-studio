@@ -26,6 +26,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import BLADE_LOGO_PNG from '../assets/png/bladeLogo.png';
 import HASHPACK_LOGO_PNG from '../assets/png/hashpackLogo.png';
+import FIREBLOCKS_LOGO_PNG from '../assets/png/fireblocksLogo.png';
 import METAMASK_LOGO from '../assets/svg/MetaMask_Fox.svg';
 import SDKService from '../services/SDKService';
 import {
@@ -38,7 +39,7 @@ import WARNING_ICON from '../assets/svg/warning.svg';
 import ERROR_ICON from '../assets/svg/error.svg';
 import { SelectController } from './Form/SelectController';
 import { useForm } from 'react-hook-form';
-import { IMirrorRPCNode } from '../interfaces/IMirrorRPCNode';
+import type { IMirrorRPCNode } from '../interfaces/IMirrorRPCNode';
 
 const ModalWalletConnect = () => {
 	const { t } = useTranslation('global');
@@ -87,6 +88,11 @@ const ModalWalletConnect = () => {
 	const { control, getValues } = useForm({
 		mode: 'onChange',
 	});
+
+	const handleCustodialWalletConnect = async (wallet: SupportedWallets, network: string) => {
+		if (loading) return;
+		setLoading(wallet);
+	}
 
 	const handleWalletConnect = async (wallet: SupportedWallets, network: string) => {
 		if (loading) return;
@@ -210,6 +216,11 @@ const ModalWalletConnect = () => {
 		handleWalletConnect(SupportedWallets.METAMASK, '-');
 	};
 
+	const handleConnectFireblocks = () => {
+		handleCustodialWalletConnect(SupportedWallets.FIREBLOCKS, '-');
+	};
+
+
 	const handleConnectBladeWallet = () => {
 		setBladeSelected(true);
 	};
@@ -247,9 +258,9 @@ const ModalWalletConnect = () => {
 		);
 	};
 
-	var userAgent = navigator.userAgent;
+	const userAgent = navigator.userAgent;
 
-	var isChrome = userAgent.indexOf('Chrome') !== -1;
+	const isChrome = userAgent.indexOf('Chrome') !== -1;
 
 	return (
 		<>
@@ -330,6 +341,30 @@ const ModalWalletConnect = () => {
 											>
 												<Image src={METAMASK_LOGO} w={20} />
 												<Text textAlign='center'>Metamask</Text>
+											</Link>
+										</VStack>
+									)}
+									{availableWallets.includes(SupportedWallets.FIREBLOCKS) ? (
+										<VStack
+											data-testid='Fireblocks'
+											{...styles.providerStyle}
+											shouldWrapChildren
+											onClick={handleConnectFireblocks}
+										>
+											<PairingSpinner wallet={SupportedWallets.FIREBLOCKS}>
+												<Image src={FIREBLOCKS_LOGO_PNG} w={20} />
+												<Text textAlign='center'>Fireblocks</Text>
+											</PairingSpinner>
+										</VStack>
+									) : (
+										<VStack data-testid='Fireblocks' {...styles.providerStyle}>
+											<Link
+												href='https://fireblocks.com'
+												isExternal
+												_hover={{ textDecoration: 'none' }}
+											>
+												<Image src={FIREBLOCKS_LOGO_PNG} w={20} />
+												<Text textAlign='center'>Fireblocks</Text>
 											</Link>
 										</VStack>
 									)}
