@@ -57,10 +57,11 @@ const fireblocksPublicKey =
 	'04eb152576e3af4dccbabda7026b85d8fdc0ad3f18f26540e42ac71a08e21623';
 
 //------------------  Fireblocks  ------------------//
-const apiSecretKey = fs.readFileSync(
-	path.resolve('/home/mario/Documents/fireblocks-secret.key'),
-	'utf8',
-);
+// const apiSecretKey = fs.readFileSync(
+// 	path.resolve('/home/mario/Documents/fireblocks-secret.key'),
+// 	'utf8',
+// );
+const apiSecretKey = 'c2VjcmV0';
 const apiKey = '652415d5-e004-4dfd-9b3b-d93e8fc939d7';
 const baseUrl = 'https://api.fireblocks.io';
 const vaultAccountId = '2';

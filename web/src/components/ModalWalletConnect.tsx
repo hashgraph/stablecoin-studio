@@ -21,7 +21,7 @@ import {
 } from '@hashgraph/stablecoin-npm-sdk';
 import type { StableCoinListViewModel } from '@hashgraph/stablecoin-npm-sdk';
 import type { FC, ReactNode } from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import BLADE_LOGO_PNG from '../assets/png/bladeLogo.png';
@@ -40,12 +40,25 @@ import ERROR_ICON from '../assets/svg/error.svg';
 import { SelectController } from './Form/SelectController';
 import { useForm } from 'react-hook-form';
 import type { IMirrorRPCNode } from '../interfaces/IMirrorRPCNode';
+import FireblocksFormModal from "./Form/FireblocksFormModal";
 
 const ModalWalletConnect = () => {
 	const { t } = useTranslation('global');
 	const dispatch = useDispatch();
 
-	const { onClose } = useDisclosure();
+	const {
+		isOpen: isWalletSelectOpen,
+		onOpen: onWalletSelectOpen,
+		onClose: onWalletSelectClose,
+	} = useDisclosure({ defaultIsOpen: true });
+
+	const {
+		isOpen: isFireblocksFormOpen,
+		onOpen: onFireblocksFormOpen,
+		onClose: onFireblocksFormClose,
+	} = useDisclosure();
+
+
 	const styles = {
 		providerStyle: {
 			boxShadow: '0 0 12px 2px #E0E0E0',
@@ -84,6 +97,7 @@ const ModalWalletConnect = () => {
 	const availableWallets = useSelector(AVAILABLE_WALLETS);
 	const selectedMirrors: IMirrorRPCNode[] = useSelector(SELECTED_MIRRORS);
 	const selectedRPCs: IMirrorRPCNode[] = useSelector(SELECTED_RPCS);
+
 
 	const { control, getValues } = useForm({
 		mode: 'onChange',
@@ -217,7 +231,14 @@ const ModalWalletConnect = () => {
 	};
 
 	const handleConnectFireblocks = () => {
-		handleCustodialWalletConnect(SupportedWallets.FIREBLOCKS, '-');
+		console.log('handleConnectFireblocks');
+		// handleCustodialWalletConnect(SupportedWallets.FIREBLOCKS, '-');
+		onWalletSelectClose(); // Cierra el modal de selección de wallet
+		onFireblocksFormOpen(); // Abre el modal del formulario
+	};
+
+	const handleFireblocksFormConfirm = () => {
+		onFireblocksFormClose();
 	};
 
 
@@ -266,7 +287,7 @@ const ModalWalletConnect = () => {
 		<>
 			<Modal
 				isOpen={true}
-				onClose={onClose}
+				onClose={onWalletSelectClose}
 				size={'xl'}
 				isCentered
 				closeOnEsc={false}
@@ -344,30 +365,17 @@ const ModalWalletConnect = () => {
 											</Link>
 										</VStack>
 									)}
-									{availableWallets.includes(SupportedWallets.FIREBLOCKS) ? (
-										<VStack
-											data-testid='Fireblocks'
-											{...styles.providerStyle}
-											shouldWrapChildren
-											onClick={handleConnectFireblocks}
-										>
-											<PairingSpinner wallet={SupportedWallets.FIREBLOCKS}>
-												<Image src={FIREBLOCKS_LOGO_PNG} w={20} />
-												<Text textAlign='center'>Fireblocks</Text>
-											</PairingSpinner>
-										</VStack>
-									) : (
-										<VStack data-testid='Fireblocks' {...styles.providerStyle}>
-											<Link
-												href='https://fireblocks.com'
-												isExternal
-												_hover={{ textDecoration: 'none' }}
-											>
-												<Image src={FIREBLOCKS_LOGO_PNG} w={20} />
-												<Text textAlign='center'>Fireblocks</Text>
-											</Link>
-										</VStack>
-									)}
+									<VStack
+										data-testid='Fireblocks'
+										{...styles.providerStyle}
+										shouldWrapChildren
+										onClick={handleConnectFireblocks}
+									>
+									<PairingSpinner wallet={SupportedWallets.FIREBLOCKS}>
+										<Image src={FIREBLOCKS_LOGO_PNG} w={20} />
+										<Text textAlign='center'>Fireblocks</Text>
+									</PairingSpinner>
+									</VStack>
 									{isChrome ? (
 										availableWallets.includes(SupportedWallets.BLADE) ? (
 											<VStack
@@ -528,6 +536,12 @@ const ModalWalletConnect = () => {
 					)}
 				</ModalContent>
 			</Modal>
+			<FireblocksFormModal
+				isOpen={isFireblocksFormOpen}
+				onClose={onFireblocksFormClose}
+				onBackToWalletSelect={onWalletSelectOpen}
+				onConfirm={handleFireblocksFormConfirm}
+			/>
 		</>
 	);
 };

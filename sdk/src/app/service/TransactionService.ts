@@ -24,13 +24,13 @@ import Injectable from '../../core/Injectable.js';
 import { InvalidWalletTypeError } from '../../domain/context/network/error/InvalidWalletAccountTypeError.js';
 import { SupportedWallets } from '../../domain/context/network/Wallet.js';
 import { BladeTransactionAdapter } from '../../port/out/hs/blade/BladeTransactionAdapter.js';
-import { FireblocksTransactionAdapter } from '../../port/out/hs/custodyproviders/FireblocksTransactionAdapter';
 import { HashpackTransactionAdapter } from '../../port/out/hs/hashpack/HashpackTransactionAdapter.js';
 import { HTSTransactionAdapter } from '../../port/out/hs/hts/HTSTransactionAdapter.js';
 import RPCTransactionAdapter from '../../port/out/rpc/RPCTransactionAdapter.js';
 import TransactionAdapter from '../../port/out/TransactionAdapter.js';
 import Service from './Service.js';
-import { DFNSTransactionAdapter } from '../../port/out/hs/custodyproviders/DFNSTransactionAdapter';
+import { FireblocksTransactionAdapter } from '../../port/out/hs/hts/custodialproviders/FireblocksTransactionAdapter';
+import { DFNSTransactionAdapter } from '../../port/out/hs/hts/custodialproviders/DFNSTransactionAdapter';
 
 @singleton()
 export default class TransactionService extends Service {

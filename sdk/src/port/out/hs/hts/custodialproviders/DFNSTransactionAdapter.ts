@@ -51,10 +51,11 @@ import Account, {
 } from '../../../../../domain/context/account/Account';
 
 //------------------  dfns  ------------------//
-const serviceAccountSecretKey = fs.readFileSync(
-	path.resolve('/home/mario/Documents/dfns-secret.key'),
-	'utf8',
-);
+const serviceAccountSecretKey = '';
+// const serviceAccountSecretKey = fs.readFileSync(
+// 	path.resolve('/home/mario/Documents/dfns-secret.key'),
+// 	'utf8',
+// );
 const dfnsWalletId = 'wa-6qfr0-heg0c-985bmvv9hphbok47'; // Wallet EdDSA
 const dfnsTestUrl = 'https://api.dfns.ninja';
 const dfnsAppId = 'ap-b6uj2-95t58-55o0cprm1lqqkpn';
