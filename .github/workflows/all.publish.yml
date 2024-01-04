@@ -28,7 +28,6 @@ jobs:
             cp .npmrc ./sdk/.npmrc
             cp .npmrc ./hashconnect/lib/.npmrc
             cp .npmrc ./cli/.npmrc
-            cp .npmrc ./custodialwalletutils/.npmrc
         
       
       - name: Change references
@@ -47,14 +46,6 @@ jobs:
       
       - name: Publish hashconnect package
         run: npm run publish:hashconnect --access=public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Install custodialwalletutils dependencies
-        run: npm run install:custodialwalletutils
-
-      - name: Publish custodialwalletutils package
-        run: npm run publish:custodialwalletutils --access=public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       
