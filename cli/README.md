@@ -8,32 +8,21 @@
 
 ### Table of contents
 
-- [Stablecoin Studio - Command Line Interface (CLI)](#stablecoin-studio---command-line-interface-cli)
-    - [Table of contents](#table-of-contents)
-- [Overview](#overview)
-- [Installation](#installation)
-- [Build](#build)
-  - [Pre-requirements](#pre-requirements)
-  - [Steps](#steps)
-- [Quickstart](#quickstart)
-  - [Starting the CLI](#starting-the-cli)
-- [Usage](#usage)
-  - [Automatically creating a config file](#automatically-creating-a-config-file)
-  - [Manually creating a config file](#manually-creating-a-config-file)
-  - [Factories ](#factories)
-  - [CLI flow](#cli-flow)
-    - [Main menu](#main-menu)
-      - [Create a new stablecoin](#create-a-new-stablecoin)
-      - [Manage imported tokens](#manage-imported-tokens)
-      - [Operate with stablecoin](#operate-with-stablecoin)
-      - [List stablecoins](#list-stablecoins)
-      - [Configuration](#configuration)
-- [Testing](#testing)
-  - [Jest](#jest)
-  - [Run](#run)
-- [Contributing](#contributing)
-- [Code of conduct](#code-of-conduct)
-- [License](#license)
+- [Pre-requirements](#pre-requirements)
+- [Steps](#steps)
+- [Starting the CLI](#starting-the-cli)
+- [Automatically creating a config file](#automatically-creating-a-config-file)
+- [Manually creating a config file](#manually-creating-a-config-file)
+- [Factories ](#factories)
+- [CLI flow](#cli-flow)
+  - [Main menu](#main-menu)
+    - [Create a new stablecoin](#create-a-new-stablecoin)
+    - [Manage imported tokens](#manage-imported-tokens)
+    - [Operate with stablecoin](#operate-with-stablecoin)
+    - [List stablecoins](#list-stablecoins)
+    - [Configuration](#configuration)
+- [Jest](#jest)
+- [Run](#run)
 
 # Overview
 
@@ -80,7 +69,7 @@ From the root of the CLI project workspace:
 
 ## Starting the CLI
 
-The first time you execute the `accelerator wizard` command in your terminal, if you haven't added your default configuration path the interface will ask you whether you want to create a neSw configuration file in the default path. When the configuration file is created you must configure the default network, operating accounts and the factory contract id. In order to create the default account you can use [HashPack](https://www.hashpack.app/download), [Blade](https://bladewallet.io/) or the [Hedera Developer Portal](https://portal.hedera.com/register).
+The first time you execute the `accelerator wizard` command in your terminal, if you haven't added your default configuration path the interface will ask you whether you want to create a new configuration file in the default path. When the configuration file is created you must configure the default network, operating accounts and the factory contract id. In order to create the default account you can use [HashPack](https://www.hashpack.app/download), [Blade](https://bladewallet.io/) or the [Hedera Developer Portal](https://portal.hedera.com/register).
 
 https://github.com/hashgraph/stablecoin-studio/assets/108128685/73c2ed6c-ebc4-4717-b837-c4595c007ba0
 
