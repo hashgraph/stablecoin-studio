@@ -1,7 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as inquirer from 'inquirer';
 import figlet from 'figlet-promised';
-import {configurationService, language, setMirrorNodeService, setRPCService,} from '../../../index.js';
+import {
+  configurationService,
+  language,
+  setMirrorNodeService,
+  setRPCService,
+} from '../../../index.js';
 import Service from '../Service.js';
 import Table from 'cli-table3';
 import {
@@ -13,16 +18,16 @@ import {
   SupportedWallets,
   ValidationResponse,
 } from '@hashgraph/stablecoin-npm-sdk';
-import {IAccountConfig} from '../../../domain/configuration/interfaces/IAccountConfig.js';
-import {INetworkConfig} from '../../../domain/configuration/interfaces/INetworkConfig.js';
+import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
+import { INetworkConfig } from '../../../domain/configuration/interfaces/INetworkConfig.js';
 import colors from 'colors';
 import MaskData from 'maskdata';
-import {clear} from 'console';
-import {IFactoryConfig} from '../../../domain/configuration/interfaces/IFactoryConfig.js';
-import {IHederaTokenManagerConfig} from '../../../domain/configuration/interfaces/IHederaTokenManagerConfig.js';
-import {IMirrorsConfig} from 'domain/configuration/interfaces/IMirrorsConfig.js';
-import {IRPCsConfig} from 'domain/configuration/interfaces/IRPCsConfig.js';
-import {MIRROR_NODE, RPC} from '../../../core/Constants.js';
+import { clear } from 'console';
+import { IFactoryConfig } from '../../../domain/configuration/interfaces/IFactoryConfig.js';
+import { IHederaTokenManagerConfig } from '../../../domain/configuration/interfaces/IHederaTokenManagerConfig.js';
+import { IMirrorsConfig } from 'domain/configuration/interfaces/IMirrorsConfig.js';
+import { IRPCsConfig } from 'domain/configuration/interfaces/IRPCsConfig.js';
+import { MIRROR_NODE, RPC } from '../../../core/Constants.js';
 
 /**
  * Utilities Service

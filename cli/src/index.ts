@@ -25,7 +25,7 @@ export const setFactoryService: SetFactoryService = new SetFactoryService();
 export const setConfigurationService: SetConfigurationService =
   new SetConfigurationService();
 // TODO
- // nothing 
+// nothing delete
 /**
  * Main function
  */
