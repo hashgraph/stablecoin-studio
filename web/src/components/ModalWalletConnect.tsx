@@ -38,7 +38,7 @@ import WARNING_ICON from '../assets/svg/warning.svg';
 import ERROR_ICON from '../assets/svg/error.svg';
 import { SelectController } from './Form/SelectController';
 import { useForm } from 'react-hook-form';
-import { IMirrorRPCNode } from '../interfaces/IMirrorRPCNode';
+import type { IMirrorRPCNode } from '../interfaces/IMirrorRPCNode';
 
 const ModalWalletConnect = () => {
 	const { t } = useTranslation('global');
@@ -247,9 +247,9 @@ const ModalWalletConnect = () => {
 		);
 	};
 
-	var userAgent = navigator.userAgent;
+	const userAgent = navigator.userAgent;
 
-	var isChrome = userAgent.indexOf('Chrome') !== -1;
+	const isChrome = userAgent.indexOf('Chrome') !== -1;
 
 	return (
 		<>
@@ -311,7 +311,7 @@ const ModalWalletConnect = () => {
 									)}
 									{availableWallets.includes(SupportedWallets.METAMASK) ? (
 										<VStack
-											data-testid='Metamask'
+											data-testid="Metamask"
 											{...styles.providerStyle}
 											shouldWrapChildren
 											onClick={handleConnectMetamaskWallet}
