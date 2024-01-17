@@ -44,7 +44,10 @@ abstract contract CashIn is ICashIn, SupplierAdmin, Reserve {
         if (
             !((_balanceOf(address(this)) - balance) ==
                 SafeCast.toUint256(amount))
-        ) revert('The smart contract is not the treasury account');
+        ) {
+            // solhint-disable-next-line custom-errors
+            revert('The smart contract is not the treasury account');
+        }
 
         _transfer(account, amount);
 

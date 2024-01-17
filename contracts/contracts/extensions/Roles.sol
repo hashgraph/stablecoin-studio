@@ -7,10 +7,6 @@ import {
     Initializable
 } from '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 
-import {
-    StringsUpgradeable
-} from '@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol';
-
 abstract contract Roles is IRoles, Initializable {
     struct MemberData {
         bool active;
@@ -193,10 +189,12 @@ abstract contract Roles is IRoles, Initializable {
 
         rolesToReturn = new bytes32[](rolesLength);
 
-        for (uint i = 0; i < rolesLength; i++) {
-            bytes32 role = _listOfroles[i];
+        for (uint256 index; index < rolesLength; index++) {
+            bytes32 role = _listOfroles[index];
 
-            rolesToReturn[i] = _hasRole(role, account) ? role : _WITHOUT_ROLE;
+            rolesToReturn[index] = _hasRole(role, account)
+                ? role
+                : _WITHOUT_ROLE;
         }
     }
 

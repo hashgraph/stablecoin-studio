@@ -6,9 +6,6 @@ import {
     HederaResponseCodes
 } from '@hashgraph/smart-contracts/contracts/hts-precompile/HederaResponseCodes.sol';
 import {
-    IHederaTokenService
-} from '@hashgraph/smart-contracts/contracts/hts-precompile/IHederaTokenService.sol';
-import {
     IERC20Upgradeable
 } from '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
 import {
