@@ -18,6 +18,7 @@ contract HederaReserve is IHederaReserve, Initializable {
      *
      */
     modifier isAdmin() {
+        // solhint-disable-next-line custom-errors
         require(
             _admin == msg.sender,
             'Only administrator can change the reserve'
@@ -123,6 +124,7 @@ contract HederaReserve is IHederaReserve, Initializable {
             uint80 /* answeredInRound */
         )
     {
+        // solhint-disable-next-line custom-errors
         revert('Not implemented');
     }
 
