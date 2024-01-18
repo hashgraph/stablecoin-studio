@@ -273,7 +273,10 @@ export default abstract class TransactionAdapter
 	getAccount(): Account {
 		throw new Error('Method not implemented.');
 	}
-	register(account?: Account): Promise<InitializationData> {
+	register(
+		account?: Account,
+		custodialWalletSettings?: any,
+	): Promise<InitializationData> {
 		throw new Error('Method not implemented.');
 	}
 	stop(): Promise<boolean> {
