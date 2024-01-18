@@ -52,7 +52,6 @@ interface FireblocksSettings {
 
 type CustodialSettings = DFNSsettings | FireblocksSettings;
 
-
 export default class ConnectRequest
 	extends ValidatedRequest<ConnectRequest>
 	implements BaseRequest
@@ -63,7 +62,7 @@ export default class ConnectRequest
 	mirrorNode: MirrorNode;
 	rpcNode: JsonRpcRelay;
 	wallet: SupportedWallets;
-	custodialWalletSettings?:CustodialSettings;
+	custodialWalletSettings?: CustodialSettings;
 
 	constructor({
 		account,
