@@ -29,6 +29,30 @@ import Validation from './validation/Validation.js';
 
 export { SupportedWallets };
 
+interface DFNSsettings {
+	authorizationToken: string;
+	credentialId: string;
+	serviceAccountPrivateKey: string;
+	urlApplicationOrigin: string;
+	applicationId: string;
+	testUrl: string;
+	walletId: string;
+	hederaAccountId: string;
+	hederaAccountPublicKey: string;
+}
+
+interface FireblocksSettings {
+	apiSecretKeyFile: string;
+	apiKey: string;
+	baseUrl: string;
+	vaultAccountId: string;
+	hederaAccountId: string;
+	hederaAccountPublicKey: string;
+}
+
+type CustodialSettings = DFNSsettings | FireblocksSettings;
+
+
 export default class ConnectRequest
 	extends ValidatedRequest<ConnectRequest>
 	implements BaseRequest
@@ -39,6 +63,7 @@ export default class ConnectRequest
 	mirrorNode: MirrorNode;
 	rpcNode: JsonRpcRelay;
 	wallet: SupportedWallets;
+	custodialWalletSettings?:CustodialSettings;
 
 	constructor({
 		account,
@@ -46,12 +71,14 @@ export default class ConnectRequest
 		mirrorNode,
 		rpcNode,
 		wallet,
+		custodialWalletSettings,
 	}: {
 		account?: RequestAccount;
 		network: Environment;
 		mirrorNode: MirrorNode;
 		rpcNode: JsonRpcRelay;
 		wallet: SupportedWallets;
+		custodialWalletSettings?: CustodialSettings;
 	}) {
 		super({
 			account: Validation.checkAccount(),
@@ -62,5 +89,6 @@ export default class ConnectRequest
 		this.mirrorNode = mirrorNode;
 		this.rpcNode = rpcNode;
 		this.wallet = wallet;
+		this.custodialWalletSettings = custodialWalletSettings;
 	}
 }

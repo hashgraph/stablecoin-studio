@@ -17,6 +17,7 @@ export class ConnectCommand extends Command<ConnectCommandResponse> {
 		public readonly environment: Environment,
 		public readonly wallet: SupportedWallets,
 		public readonly account?: Account,
+		public readonly custodialSettings?: any,
 	) {
 		super();
 	}
