@@ -44,6 +44,7 @@ import { handleValidation } from './Common.js';
 import { MirrorNode } from '../../domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from '../../domain/context/network/JsonRpcRelay.js';
 import { BladeTransactionAdapter } from '../out/hs/blade/BladeTransactionAdapter.js';
+import DfnsSettings from 'domain/context/custodialwalletsettings/DfnsSettings.js';
 
 export { InitializationData, SupportedWallets };
 
@@ -172,6 +173,24 @@ class NetworkInPort implements INetworkInPort {
 		handleValidation('ConnectRequest', req);
 
 		const account = RequestMapper.mapAccount(req.account);
+		if (req.custodialWalletSettings && req.wallet == SupportedWallets.DFNS) {
+			// TODO: review syntax
+			// req.custodialWalletSettings = req.custodialWalletSettings as unknown as DfnsSettings;
+			// new DfnsSettings(req.custodialWalletSettings.serviceAccountPrivateKey,
+			// 	req.custodialWalletSettings.serviceAccountCredentialId: string,
+			// 	req.custodialWalletSettings.serviceAccountAuthToken: string,
+			// 	req.custodialWalletSettings.appOrigin: string,
+			// 	req.custodialWalletSettings.appId: string,
+			// 	req.custodialWalletSettings.baseUrl: string,
+			// 	req.custodialWalletSettings.walletId: string,
+			// 	req.custodialWalletSettings.hederaAccountId: HederaId,
+			// 	req.custodialWalletSettings.hederaAccountPublicKey: PublicKey,)
+		} else if (
+			req.custodialWalletSettings &&
+			req.wallet == SupportedWallets.FIREBLOCKS
+		) {
+
+		}
 		if (
 			req.wallet == SupportedWallets.HASHPACK ||
 			req.wallet == SupportedWallets.BLADE

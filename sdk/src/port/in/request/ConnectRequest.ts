@@ -38,7 +38,7 @@ interface DFNSsettings {
 	testUrl: string;
 	walletId: string;
 	hederaAccountId: string;
-	hederaAccountPublicKey: string;
+	hederaAccountPublicKey: string; // TODO: check if public key is mandatory or can be retrieved from the custodial service
 }
 
 interface FireblocksSettings {
