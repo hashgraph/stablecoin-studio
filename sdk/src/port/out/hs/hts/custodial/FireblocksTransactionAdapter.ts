@@ -49,6 +49,7 @@ import Account, {
 	AccountProps,
 } from '../../../../../domain/context/account/Account';
 import { HTSTransactionResponseAdapter } from '../HTSTransactionResponseAdapter';
+import FireblocksSettings from '../../../../../domain/context/custodialwalletsettings/FireblocksSettings';
 
 @singleton()
 export class FireblocksTransactionAdapter extends HederaTransactionAdapter {
@@ -80,7 +81,7 @@ export class FireblocksTransactionAdapter extends HederaTransactionAdapter {
 		return this._client;
 	}
 
-	private initClient(): void {
+	private initClient(accountId: string, publicKey: string): void {
 		const currentNetwork = this.networkService.environment;
 		switch (currentNetwork) {
 			case 'testnet':
@@ -92,11 +93,7 @@ export class FireblocksTransactionAdapter extends HederaTransactionAdapter {
 			default:
 				throw new Error('Network not supported');
 		}
-		this._client.setOperatorWith(
-			fireblocksAccountId,
-			fireblocksPublicKey,
-			this.signingService,
-		);
+		this._client.setOperatorWith(accountId, publicKey, this.signingService);
 	}
 
 	private signingService = async (
@@ -108,7 +105,12 @@ export class FireblocksTransactionAdapter extends HederaTransactionAdapter {
 		);
 	};
 
-	private initCustodialWalletService(): void {
+	private initCustodialWalletService(
+		apiKey: string,
+		apiSecretKey: string,
+		baseUrl: string,
+		vaultAccountId: string,
+	): void {
 		const fireblocksConfig = new FireblocksConfig(
 			apiKey,
 			apiSecretKey,
@@ -125,16 +127,25 @@ export class FireblocksTransactionAdapter extends HederaTransactionAdapter {
 		return this.account;
 	}
 
-	async register(settings: any): Promise<InitializationData> {
+	async register(
+		fireblocksSettings: FireblocksSettings,
+	): Promise<InitializationData> {
 		Injectable.registerTransactionHandler(this);
+		const accountId = fireblocksSettings.hederaAccountId;
+		//TODO: test if we can get the public key from the mirror node -> delete from the request
 		const accountMirror = await this.mirrorNodeAdapter.getAccountInfo(
-			fireblocksAccountId,
+			accountId,
 		);
-		this.initClient();
-		this.initCustodialWalletService();
+		this.initCustodialWalletService(
+			fireblocksSettings.apiKey,
+			fireblocksSettings.apiSecretKey,
+			fireblocksSettings.baseUrl,
+			fireblocksSettings.vaultAccountId,
+		);
 		const publicKey = accountMirror.publicKey;
+		this.initClient(accountId, fireblocksSettings.hederaAccountPublicKey);
 		const accountProps: AccountProps = {
-			id: fireblocksAccountId,
+			id: accountId,
 			publicKey: publicKey,
 		};
 		this.account = new Account(accountProps);

@@ -47,6 +47,7 @@ import Account, {
 	AccountProps,
 } from '../../../../../domain/context/account/Account';
 import { HTSTransactionResponseAdapter } from '../HTSTransactionResponseAdapter';
+import DfnsSettings from '../../../../../domain/context/custodialwalletsettings/DfnsSettings';
 
 @singleton()
 export class DFNSTransactionAdapter extends HederaTransactionAdapter {
@@ -75,16 +76,21 @@ export class DFNSTransactionAdapter extends HederaTransactionAdapter {
 		return Promise.resolve(this.networkService.environment);
 	}
 
-	async register(): Promise<InitializationData> {
+	async register(dfnsSettings: DfnsSettings): Promise<InitializationData> {
 		Injectable.registerTransactionHandler(this);
+		const accountId = dfnsSettings.hederaAccountId.toString();
 		const accountMirror = await this.mirrorNodeAdapter.getAccountInfo(
-			dfnsAccountId,
+			accountId,
 		);
-		this.initClient();
-		this.initCustodialWalletService();
+		this.initCustodialWalletService(dfnsSettings);
+		//TODO: test if we can get the public key from the mirror node -> delete from the request
 		const publicKey = accountMirror.publicKey;
+		this.initClient(
+			accountId,
+			dfnsSettings.hederaAccountPublicKey.toString(),
+		);
 		const accountProps: AccountProps = {
-			id: dfnsAccountId,
+			id: accountId,
 			publicKey: publicKey,
 		};
 		this.account = new Account(accountProps);
@@ -143,7 +149,7 @@ export class DFNSTransactionAdapter extends HederaTransactionAdapter {
 		}
 	}
 
-	private initClient(): void {
+	private initClient(accountId: string, publicKey: string): void {
 		const currentNetwork = this.networkService.environment;
 		switch (currentNetwork) {
 			case 'testnet':
@@ -155,11 +161,7 @@ export class DFNSTransactionAdapter extends HederaTransactionAdapter {
 			default:
 				throw new Error('Network not supported');
 		}
-		this._client.setOperatorWith(
-			dfnsAccountId,
-			dfnsPublicKey,
-			this.signingService,
-		);
+		this._client.setOperatorWith(accountId, publicKey, this.signingService);
 	}
 
 	private signingService = async (
@@ -171,16 +173,15 @@ export class DFNSTransactionAdapter extends HederaTransactionAdapter {
 		);
 	};
 
-	private initCustodialWalletService(): void {
-		//DELETE
+	private initCustodialWalletService(dfnsSettings: DfnsSettings): void {
 		this.dfnsConfig = new DFNSConfig(
-			serviceAccountSecretKey,
-			dfnsEcdsaServiceaccountCredentialId,
-			dfnsEcdsaServiceAccountAuthToken,
-			dfnsAppOrigin,
-			dfnsAppId,
-			dfnsTestUrl,
-			dfnsWalletId,
+			dfnsSettings.serviceAccountSecretKey,
+			dfnsSettings.serviceAccountCredentialId,
+			dfnsSettings.serviceAccountAuthToken,
+			dfnsSettings.appOrigin,
+			dfnsSettings.appId,
+			dfnsSettings.baseUrl,
+			dfnsSettings.walletId,
 		);
 		if (this.dfnsConfig) {
 			this.custodialWalletService = new CustodialWalletService(
@@ -188,7 +189,7 @@ export class DFNSTransactionAdapter extends HederaTransactionAdapter {
 			);
 		} else {
 			throw new Error(
-				'No custodial wallet service configuration provided',
+				'No custodial wallet service configuration provided correctly',
 			);
 		}
 	}
