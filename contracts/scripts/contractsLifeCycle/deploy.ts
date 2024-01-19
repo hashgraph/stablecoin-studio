@@ -23,7 +23,7 @@ export async function deployContract(
 ): Promise<ContractId> {
     const transaction = new ContractCreateFlow()
         .setBytecode(factory.bytecode)
-        .setGas(250_000)
+        .setGas(500_000)
     //.setAdminKey(Key)
     if (contractMemo) {
         transaction.setContractMemo(contractMemo)
