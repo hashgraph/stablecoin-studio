@@ -34,32 +34,14 @@ import CustodialWalletSettings from "./CustodialWalletSettings.js";
 // 	hederaAccountPublicKey: PublicKey;
 // 	}
 
-export default class DfnsSettings extends CustodialWalletSettings {
-	public serviceAccountPrivateKey: string;
-	public serviceAccountCredentialId: string;
-	public serviceAccountAuthToken: string;
-	public appOrigin: string;
-	public appId: string;
-	public baseUrl: string;
-	public walletId: string;
+export default class DfnsSettings {
 	constructor(
-		serviceAccountPrivateKey: string,
-		serviceAccountCredentialId: string,
-		serviceAccountAuthToken: string,
-		appOrigin: string,
-		appId: string,
-		baseUrl: string,
-		walletId: string,
-		hederaAccountId: HederaId,
-		hederaAccountPublicKey: PublicKey,
-	) {
-		super(hederaAccountId, hederaAccountPublicKey);
-		this.serviceAccountPrivateKey = serviceAccountPrivateKey;
-		this.serviceAccountCredentialId = serviceAccountCredentialId;
-		this.serviceAccountAuthToken = serviceAccountAuthToken;
-		this.appOrigin = appOrigin;
-		this.appId = appId;
-		this.baseUrl = baseUrl;
-		this.walletId = walletId;
-	}
+		public authorizationToken: string,
+		public credentialId: string,
+		public privateKeyPath: string,
+		public appOrigin: string,
+		public appId: string,
+		public testUrl: string,
+		public walletId: string
+	) {}
 }

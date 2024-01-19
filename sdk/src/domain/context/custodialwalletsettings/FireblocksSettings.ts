@@ -30,26 +30,12 @@ import CustodialWalletSettings from "./CustodialWalletSettings.js";
 // 	assetId: string;
 // }
 
-export default class FireblocksSettings extends CustodialWalletSettings {
-	public apiKey: string;
-	public apiSecretKey: string;
-	public baseUrl: string;
-	public vaultAccountId: string;
-	public assetId: string;
-	constructor(
-		apiKey: string,
-		apiSecretKey: string,
-		baseUrl: string,
-		vaultAccountId: string,
-		assetId: string,
-		hederaAccountId: HederaId,
-		hederaAccountPublicKey: PublicKey,
-	) {
-		super(hederaAccountId, hederaAccountPublicKey);
-		this.apiKey = apiKey;
-		this.apiSecretKey = apiSecretKey;
-		this.baseUrl = baseUrl;
-		this.vaultAccountId = vaultAccountId;
-		this.assetId = assetId;
-	}
+export default class FireblocksConfig {
+  constructor(
+    public apiSecretKey: string,
+    public apiKey: string,
+    public baseUrl: string,
+    public assetId: string,
+    public vaultAccountId: string
+  ) {}
 }
