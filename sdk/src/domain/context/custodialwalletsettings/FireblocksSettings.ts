@@ -18,18 +18,6 @@
  *
  */
 
-import PublicKey from "../account/PublicKey.js";
-import { HederaId } from "../shared/HederaId.js";
-import CustodialWalletSettings from "./CustodialWalletSettings.js";
-
-// export interface FireblocksProps {
-// 	apiKey: string;
-// 	apiSecretKey: string;
-// 	baseUrl: string;
-// 	vaultAccountId: string;
-// 	assetId: string;
-// }
-
 export default class FireblocksConfig {
   constructor(
     public apiSecretKey: string,
