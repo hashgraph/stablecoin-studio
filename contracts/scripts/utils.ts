@@ -21,8 +21,8 @@ import {
 } from '@hashgraph/sdk'
 
 import axios from 'axios'
-import {ADDRESS_ZERO} from './constants'
-import {BigNumber} from 'ethers'
+import { ADDRESS_ZERO } from './constants'
+import { BigNumber } from 'ethers'
 import FileId from '@hashgraph/sdk/lib/file/FileId'
 
 const SuccessStatus = 22
@@ -105,14 +105,11 @@ export function getClient(network?: string): Client {
     switch (network) {
         case 'previewnet':
             return Client.forPreviewnet()
-            break
         case 'mainnet':
             return Client.forMainnet()
-            break
         default:
         case 'testnet':
             return Client.forTestnet()
-            break
     }
 }
 
