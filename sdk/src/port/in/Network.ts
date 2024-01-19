@@ -211,51 +211,24 @@ class NetworkInPort implements INetworkInPort {
 		return res.payload;
 	}
 
+	// TODO: check with @Alberto on monday
 	private getCustodialSettings(req: ConnectRequest) {
 		if (
 			req.custodialWalletSettings &&
 			req.wallet === SupportedWallets.DFNS
 		) {
-			return this.createDfnsSettings(
+			return RequestMapper.dfnsRequestToDfnsSettings(
 				req.custodialWalletSettings as DFNSConfigRequest,
 			);
 		} else if (
 			req.custodialWalletSettings &&
 			req.wallet === SupportedWallets.FIREBLOCKS
 		) {
-			return this.createFireblocksSettings(
+			return RequestMapper.fireblocksRequestToFireblocksSettings(
 				req.custodialWalletSettings as FireblocksConfigRequest,
 			);
 		}
 		return undefined;
-	}
-
-	private createDfnsSettings(req: DFNSConfigRequest): DfnsSettings {
-		return new DfnsSettings(
-			req.serviceAccountPrivateKey,
-			req.credentialId,
-			req.authorizationToken,
-			req.urlApplicationOrigin,
-			req.applicationId,
-			req.testUrl,
-			req.walletId,
-			req.hederaAccountId,
-			req.hederaAccountPublicKey,
-		);
-	}
-
-	private createFireblocksSettings(
-		req: FireblocksConfigRequest,
-	): FireblocksSettings {
-		return new FireblocksSettings(
-			req.apiKey,
-			req.apiSecretKey,
-			req.baseUrl,
-			req.vaultAccountId,
-			req.assetId,
-			req.hederaAccountId,
-			req.hederaAccountPublicKey,
-		);
 	}
 
 	disconnect(): Promise<boolean> {

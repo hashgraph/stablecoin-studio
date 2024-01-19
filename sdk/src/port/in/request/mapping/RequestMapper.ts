@@ -19,6 +19,7 @@
  */
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import FireblocksSettings from 'domain/context/custodialwalletsettings/FireblocksSettings.js';
 import LogService from '../../../../app/service/LogService.js';
 import { isConstructible } from '../../../../core/Cast.js';
 import { Constructible, MapFunction } from '../../../../core/Type.js';
@@ -26,11 +27,12 @@ import Account from '../../../../domain/context/account/Account.js';
 import PrivateKey from '../../../../domain/context/account/PrivateKey.js';
 import PublicKey from '../../../../domain/context/account/PublicKey.js';
 import {
-	RequestAccount,
-	RequestPrivateKey,
-	RequestPublicKey,
-} from '../BaseRequest.js';
+	FireblocksConfigRequest,
+	DFNSConfigRequest
+} from '../ConnectRequest.js';
+import { RequestAccount, RequestPrivateKey, RequestPublicKey } from '../BaseRequest.js';
 import ValidatedRequest from '../validation/ValidatedRequest.js';
+import DfnsSettings from 'domain/context/custodialwalletsettings/DfnsSettings.js';
 
 export default class RequestMapper {
 	public static isPublicKey = (val: any): val is RequestPublicKey => {
@@ -181,5 +183,31 @@ export default class RequestMapper {
 							: undefined,
 			  })
 			: undefined;
+	}
+
+	public static dfnsRequestToDfnsSettings(req: DFNSConfigRequest): DfnsSettings {
+		return new DfnsSettings(
+			req.serviceAccountPrivateKey,
+			req.credentialId,
+			req.authorizationToken,
+			req.urlApplicationOrigin,
+			req.applicationId,
+			req.testUrl,
+			req.walletId,
+			req.hederaAccountId,
+			req.hederaAccountPublicKey,
+		);
+	}
+
+	public static fireblocksRequestToFireblocksSettings(req: FireblocksConfigRequest): FireblocksSettings {
+		return new FireblocksSettings(
+			req.apiKey,
+			req.apiSecretKey,
+			req.baseUrl,
+			req.vaultAccountId,
+			req.assetId,
+			req.hederaAccountId,
+			req.hederaAccountPublicKey,
+		);
 	}
 }
