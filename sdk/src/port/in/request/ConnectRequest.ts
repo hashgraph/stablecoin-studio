@@ -29,7 +29,7 @@ import Validation from './validation/Validation.js';
 
 export { SupportedWallets };
 
-interface DFNSsettings {
+export interface DFNSConfigRequest {
 	authorizationToken: string;
 	credentialId: string;
 	serviceAccountPrivateKey: string;
@@ -41,16 +41,17 @@ interface DFNSsettings {
 	hederaAccountPublicKey: string; // TODO: check if public key is mandatory or can be retrieved from the custodial service
 }
 
-interface FireblocksSettings {
-	apiSecretKeyFile: string;
+export interface FireblocksConfigRequest {
+	apiSecretKey: string;
 	apiKey: string;
 	baseUrl: string;
 	vaultAccountId: string;
+	assetId: string;
 	hederaAccountId: string;
 	hederaAccountPublicKey: string;
 }
 
-type CustodialSettings = DFNSsettings | FireblocksSettings;
+type CustodialSettings = DFNSConfigRequest | FireblocksConfigRequest;
 
 export default class ConnectRequest
 	extends ValidatedRequest<ConnectRequest>

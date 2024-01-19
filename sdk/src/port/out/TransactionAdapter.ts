@@ -37,6 +37,8 @@ import { Environment } from '../../domain/context/network/Environment.js';
 import LogService from '../../app/service/LogService.js';
 import PublicKey from '../../domain/context/account/PublicKey.js';
 import { FactoryKey } from '../../domain/context/factory/FactoryKey.js';
+import FireblocksSettings from '../../domain/context/custodialwalletsettings/FireblocksSettings';
+import DfnsSettings from '../../domain/context/custodialwalletsettings/DfnsSettings';
 
 export interface InitializationData {
 	account?: Account;
@@ -274,8 +276,7 @@ export default abstract class TransactionAdapter
 		throw new Error('Method not implemented.');
 	}
 	register(
-		account?: Account,
-		custodialWalletSettings?: any,
+		input?: Account | FireblocksSettings | DfnsSettings,
 	): Promise<InitializationData> {
 		throw new Error('Method not implemented.');
 	}

@@ -23,7 +23,11 @@ import Injectable from '../../core/Injectable.js';
 import { CommandBus } from '../../core/command/CommandBus.js';
 import { InitializationData } from '../out/TransactionAdapter.js';
 import { ConnectCommand } from '../../app/usecase/command/network/connect/ConnectCommand.js';
-import ConnectRequest, { SupportedWallets } from './request/ConnectRequest.js';
+import ConnectRequest, {
+	DFNSConfigRequest,
+	FireblocksConfigRequest,
+	SupportedWallets,
+} from './request/ConnectRequest.js';
 import RequestMapper from './request/mapping/RequestMapper.js';
 import TransactionService from '../../app/service/TransactionService.js';
 import NetworkService from '../../app/service/NetworkService.js';
@@ -35,7 +39,7 @@ import {
 	unrecognized,
 } from '../../domain/context/network/Environment.js';
 import InitializationRequest from './request/InitializationRequest.js';
-import Event, { WalletEvents } from './Event.js';
+import Event from './Event.js';
 import RPCTransactionAdapter from '../out/rpc/RPCTransactionAdapter.js';
 import { HashpackTransactionAdapter } from '../out/hs/hashpack/HashpackTransactionAdapter.js';
 import { LogError } from '../../core/decorator/LogErrorDecorator.js';
@@ -45,6 +49,9 @@ import { MirrorNode } from '../../domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from '../../domain/context/network/JsonRpcRelay.js';
 import { BladeTransactionAdapter } from '../out/hs/blade/BladeTransactionAdapter.js';
 import DfnsSettings from 'domain/context/custodialwalletsettings/DfnsSettings.js';
+import FireblocksSettings from '../../domain/context/custodialwalletsettings/FireblocksSettings';
+import { HederaId } from '../../domain/context/shared/HederaId';
+import PublicKey from '../../domain/context/account/PublicKey';
 
 export { InitializationData, SupportedWallets };
 
@@ -173,24 +180,7 @@ class NetworkInPort implements INetworkInPort {
 		handleValidation('ConnectRequest', req);
 
 		const account = RequestMapper.mapAccount(req.account);
-		if (req.custodialWalletSettings && req.wallet == SupportedWallets.DFNS) {
-			// TODO: review syntax
-			// req.custodialWalletSettings = req.custodialWalletSettings as unknown as DfnsSettings;
-			// new DfnsSettings(req.custodialWalletSettings.serviceAccountPrivateKey,
-			// 	req.custodialWalletSettings.serviceAccountCredentialId: string,
-			// 	req.custodialWalletSettings.serviceAccountAuthToken: string,
-			// 	req.custodialWalletSettings.appOrigin: string,
-			// 	req.custodialWalletSettings.appId: string,
-			// 	req.custodialWalletSettings.baseUrl: string,
-			// 	req.custodialWalletSettings.walletId: string,
-			// 	req.custodialWalletSettings.hederaAccountId: HederaId,
-			// 	req.custodialWalletSettings.hederaAccountPublicKey: PublicKey,)
-		} else if (
-			req.custodialWalletSettings &&
-			req.wallet == SupportedWallets.FIREBLOCKS
-		) {
-
-		}
+		const custodialSettings = this.getCustodialSettings(req);
 		if (
 			req.wallet == SupportedWallets.HASHPACK ||
 			req.wallet == SupportedWallets.BLADE
@@ -205,6 +195,7 @@ class NetworkInPort implements INetworkInPort {
 				}
 			}
 		}
+
 		await this.commandBus.execute(
 			new SetNetworkCommand(req.network, req.mirrorNode, req.rpcNode),
 		);
@@ -214,10 +205,57 @@ class NetworkInPort implements INetworkInPort {
 				req.network,
 				req.wallet,
 				account,
-				req.custodialWalletSettings,
+				custodialSettings,
 			),
 		);
 		return res.payload;
+	}
+
+	private getCustodialSettings(req: ConnectRequest) {
+		if (
+			req.custodialWalletSettings &&
+			req.wallet === SupportedWallets.DFNS
+		) {
+			return this.createDfnsSettings(
+				req.custodialWalletSettings as DFNSConfigRequest,
+			);
+		} else if (
+			req.custodialWalletSettings &&
+			req.wallet === SupportedWallets.FIREBLOCKS
+		) {
+			return this.createFireblocksSettings(
+				req.custodialWalletSettings as FireblocksConfigRequest,
+			);
+		}
+		return undefined;
+	}
+
+	private createDfnsSettings(req: DFNSConfigRequest): DfnsSettings {
+		return new DfnsSettings(
+			req.serviceAccountPrivateKey,
+			req.credentialId,
+			req.authorizationToken,
+			req.urlApplicationOrigin,
+			req.applicationId,
+			req.testUrl,
+			req.walletId,
+			req.hederaAccountId,
+			req.hederaAccountPublicKey,
+		);
+	}
+
+	private createFireblocksSettings(
+		req: FireblocksConfigRequest,
+	): FireblocksSettings {
+		return new FireblocksSettings(
+			req.apiKey,
+			req.apiSecretKey,
+			req.baseUrl,
+			req.vaultAccountId,
+			req.assetId,
+			req.hederaAccountId,
+			req.hederaAccountPublicKey,
+		);
 	}
 
 	disconnect(): Promise<boolean> {
