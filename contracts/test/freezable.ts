@@ -29,12 +29,11 @@ const expect = chai.expect
 
 let proxyAddress: ContractId
 
-export const freezable = (deployedContracts: ContractId[]) => {
+export const freezable = (proxyAddresses: ContractId[]) => {
+    before(() => {
+        proxyAddress = proxyAddresses[0]
+    })
     describe('Freeze Tests', function () {
-        before(async function () {
-            proxyAddress = deployedContracts[0]
-        })
-
         it('Admin account can grant and revoke freeze role to an account', async function () {
             // Admin grants freeze role : success
             let result = await hasRole(

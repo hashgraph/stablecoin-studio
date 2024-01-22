@@ -1,6 +1,5 @@
 import '@hashgraph/hardhat-hethers'
 import { BigNumber } from 'ethers'
-import { deployContractsWithSDK } from '../scripts/deploy'
 import {
     Burn,
     getTotalSupply,
@@ -14,19 +13,10 @@ import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import {
     INIT_SUPPLY,
-    MAX_SUPPLY,
     nonOperatorAccount,
     nonOperatorClient,
     nonOperatorIsE25519,
-    operatorAccount,
     operatorClient,
-    operatorIsE25519,
-    operatorPriKey,
-    operatorPubKey,
-    TOKEN_DECIMALS,
-    TOKEN_MEMO,
-    TOKEN_NAME,
-    TOKEN_SYMBOL,
 } from './shared/utils'
 
 chai.use(chaiAsPromised)
@@ -34,31 +24,12 @@ const expect = chai.expect
 
 let proxyAddress: ContractId
 
-export const burnable = (deployedContracts: ContractId[]) => {
-    describe('Burn Tests', function () {
-        before(async function () {
-            // Deploy Token using Client
-            const [result] = await Promise.all([
-                deployContractsWithSDK({
-                    name: TOKEN_NAME,
-                    symbol: TOKEN_SYMBOL,
-                    decimals: TOKEN_DECIMALS,
-                    initialSupply: INIT_SUPPLY.toString(),
-                    maxSupply: MAX_SUPPLY.toString(),
-                    memo: TOKEN_MEMO,
-                    account: operatorAccount,
-                    privateKey: operatorPriKey,
-                    publicKey: operatorPubKey,
-                    isED25519Type: operatorIsE25519,
-                    initialAmountDataFeed: INIT_SUPPLY.add(
-                        BigNumber.from('100000')
-                    ).toString(),
-                }),
-            ])
-            deployedContracts.push(result[0])
-            proxyAddress = deployedContracts[0]
-        })
+export const burnable = (proxyAddresses: ContractId[]) => {
+    before(() => {
+        proxyAddress = proxyAddresses[0]
+    })
 
+    describe('Burn Tests', function () {
         it('Admin account can grant and revoke burnable role to an account', async function () {
             // Admin grants burn role : success
             let result = await hasRole(

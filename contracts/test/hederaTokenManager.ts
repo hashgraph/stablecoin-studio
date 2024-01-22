@@ -57,6 +57,7 @@ import {
     WITHOUT_ROLE,
 } from '../scripts/constants'
 import {
+    IContractIdMap,
     INIT_SUPPLY,
     MAX_SUPPLY,
     nonOperatorAccount,
@@ -67,6 +68,7 @@ import {
     operatorIsE25519,
     operatorPriKey,
     operatorPubKey,
+    regularfactory,
     TOKEN_DECIMALS,
     TOKEN_FACTOR,
     TOKEN_MEMO,
@@ -82,104 +84,56 @@ let proxyAdminAddress: ContractId
 let stableCoinAddress: ContractId
 const abiProxyAdmin = ProxyAdmin__factory.abi
 
-describe('HederaTokenManager Tests', function () {
-    before(async function () {
-        // Deploy Token using Client
-        const result = await deployContractsWithSDK({
-            name: TOKEN_NAME,
-            symbol: TOKEN_SYMBOL,
-            decimals: TOKEN_DECIMALS,
-            initialSupply: INIT_SUPPLY.toString(),
-            maxSupply: MAX_SUPPLY.toString(),
-            memo: TOKEN_MEMO,
-            account: operatorAccount,
-            privateKey: operatorPriKey,
-            publicKey: operatorPubKey,
-            isED25519Type: operatorIsE25519,
-            initialAmountDataFeed: INIT_SUPPLY.toString(),
+export const hederaTokenManager = (deployedContracts: IContractIdMap) => {
+    describe('HederaTokenManager Tests', function () {
+        before(async function () {
+            // Deploy Token using Client
+            proxyAddress = deployedContracts[regularfactory][0]
         })
 
-        proxyAddress = result[0]
-    })
+        it('Cannot Update token if not Admin', async function () {
+            const keys = tokenKeystoKey(operatorPubKey, operatorIsE25519)
+            await expect(
+                updateToken(
+                    proxyAddress,
+                    'newName',
+                    'newSymbol',
+                    keys,
+                    oneYearLaterInSeconds(),
+                    7890000,
+                    TOKEN_MEMO,
+                    nonOperatorClient
+                )
+            ).to.eventually.be.rejectedWith(Error)
+        })
 
-    it('Cannot Update token if not Admin', async function () {
-        const keys = tokenKeystoKey(operatorPubKey, operatorIsE25519)
-        await expect(
-            updateToken(
-                proxyAddress,
-                'newName',
-                'newSymbol',
-                keys,
-                oneYearLaterInSeconds(),
-                7890000,
-                TOKEN_MEMO,
-                nonOperatorClient
+        it('Admin cannot update token if metadata more than 100 chars', async function () {
+            const keysToKey = tokenKeystoKey(
+                operatorPubKey,
+                operatorIsE25519,
+                false
             )
-        ).to.eventually.be.rejectedWith(Error)
-    })
+            await expect(
+                updateToken(
+                    proxyAddress,
+                    'newName',
+                    'newSymbol',
+                    keysToKey,
+                    oneYearLaterInSeconds(),
+                    7890000,
+                    'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+                    operatorClient
+                )
+            ).to.eventually.be.rejectedWith(Error)
+        })
 
-    it('Admin cannot update token if metadata more than 100 chars', async function () {
-        const keysToKey = tokenKeystoKey(
-            operatorPubKey,
-            operatorIsE25519,
-            false
-        )
-        await expect(
-            updateToken(
-                proxyAddress,
-                'newName',
-                'newSymbol',
-                keysToKey,
-                oneYearLaterInSeconds(),
-                7890000,
-                'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
-                operatorClient
+        it('Admin can update token', async function () {
+            const keysToKey = tokenKeystoKey(
+                operatorPubKey,
+                operatorIsE25519,
+                false
             )
-        ).to.eventually.be.rejectedWith(Error)
-    })
-
-    it('Admin can update token', async function () {
-        const keysToKey = tokenKeystoKey(
-            operatorPubKey,
-            operatorIsE25519,
-            false
-        )
-        await updateToken(
-            proxyAddress,
-            'newName',
-            'newSymbol',
-            keysToKey,
-            oneYearLaterInSeconds(),
-            7890000,
-            TOKEN_MEMO,
-            operatorClient
-        )
-
-        const newMetadata = await getMetadata(proxyAddress, operatorClient)
-
-        expect(newMetadata).to.equal(TOKEN_MEMO)
-
-        const keysToContract = tokenKeystoContract(false)
-        await updateToken(
-            proxyAddress,
-            TOKEN_NAME,
-            TOKEN_SYMBOL,
-            keysToContract,
-            0,
-            7776000,
-            '',
-            operatorClient
-        )
-    })
-
-    it('Admin and supply token keys cannot be updated', async function () {
-        const keysToKey = allTokenKeystoKey(
-            operatorPubKey,
-            operatorIsE25519,
-            false
-        )
-        await expect(
-            updateToken(
+            await updateToken(
                 proxyAddress,
                 'newName',
                 'newSymbol',
@@ -189,420 +143,465 @@ describe('HederaTokenManager Tests', function () {
                 TOKEN_MEMO,
                 operatorClient
             )
-        ).to.eventually.be.rejectedWith(Error)
-    })
 
-    it('deploy SC with roles associated to another account', async function () {
-        // Deploy Token using Client
-        const creation = await deployContractsWithSDK({
-            name: TOKEN_NAME,
-            symbol: TOKEN_SYMBOL,
-            decimals: TOKEN_DECIMALS,
-            initialSupply: INIT_SUPPLY.toString(),
-            maxSupply: MAX_SUPPLY.toString(),
-            memo: TOKEN_MEMO,
-            account: operatorAccount,
-            privateKey: operatorPriKey,
-            publicKey: operatorPubKey,
-            isED25519Type: operatorIsE25519,
-            initialAmountDataFeed: INIT_SUPPLY.toString(),
-            allRolesToCreator: false,
-            RolesToAccount: nonOperatorAccount,
-            isRolesToAccountE25519: nonOperatorIsE25519,
+            const newMetadata = await getMetadata(proxyAddress, operatorClient)
+
+            expect(newMetadata).to.equal(TOKEN_MEMO)
+
+            const keysToContract = tokenKeystoContract(false)
+            await updateToken(
+                proxyAddress,
+                TOKEN_NAME,
+                TOKEN_SYMBOL,
+                keysToContract,
+                0,
+                7776000,
+                '',
+                operatorClient
+            )
         })
 
-        const newProxyAddress = creation[0]
+        it('Admin and supply token keys cannot be updated', async function () {
+            const keysToKey = allTokenKeystoKey(
+                operatorPubKey,
+                operatorIsE25519,
+                false
+            )
+            await expect(
+                updateToken(
+                    proxyAddress,
+                    'newName',
+                    'newSymbol',
+                    keysToKey,
+                    oneYearLaterInSeconds(),
+                    7890000,
+                    TOKEN_MEMO,
+                    operatorClient
+                )
+            ).to.eventually.be.rejectedWith(Error)
+        })
 
-        // Checking roles
-        const resultNonOperatorAccount = await getRoles(
-            newProxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-        const isUnlimitedNonOperator = await isUnlimitedSupplierAllowance(
-            newProxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
+        it('deploy SC with roles associated to another account', async function () {
+            // Deploy Token using Client
+            const creation = await deployContractsWithSDK({
+                name: TOKEN_NAME,
+                symbol: TOKEN_SYMBOL,
+                decimals: TOKEN_DECIMALS,
+                initialSupply: INIT_SUPPLY.toString(),
+                maxSupply: MAX_SUPPLY.toString(),
+                memo: TOKEN_MEMO,
+                account: operatorAccount,
+                privateKey: operatorPriKey,
+                publicKey: operatorPubKey,
+                isED25519Type: operatorIsE25519,
+                initialAmountDataFeed: INIT_SUPPLY.toString(),
+                allRolesToCreator: false,
+                RolesToAccount: nonOperatorAccount,
+                isRolesToAccountE25519: nonOperatorIsE25519,
+            })
 
-        const resultOperatorAccount = await getRoles(
-            newProxyAddress,
-            operatorClient,
-            operatorAccount,
-            operatorIsE25519
-        )
-        const isUnlimitedOperator = await isUnlimitedSupplierAllowance(
-            newProxyAddress,
-            operatorClient,
-            operatorAccount,
-            operatorIsE25519
-        )
+            const newProxyAddress = creation[0]
 
-        expect(isUnlimitedOperator).to.eq(false)
-        expect(isUnlimitedNonOperator).to.eq(true)
+            // Checking roles
+            const resultNonOperatorAccount = await getRoles(
+                newProxyAddress,
+                operatorClient,
+                nonOperatorAccount,
+                nonOperatorIsE25519
+            )
+            const isUnlimitedNonOperator = await isUnlimitedSupplierAllowance(
+                newProxyAddress,
+                operatorClient,
+                nonOperatorAccount,
+                nonOperatorIsE25519
+            )
 
-        for (let i = 0; i < resultOperatorAccount.length; i++) {
-            if (i == RolesId.Cashin)
-                expect(resultOperatorAccount[i].toUpperCase()).to.equals(
-                    WITHOUT_ROLE.toUpperCase()
-                )
-            else if (i == RolesId.Burn)
-                expect(resultOperatorAccount[i].toUpperCase()).to.equals(
-                    WITHOUT_ROLE.toUpperCase()
-                )
-            else if (i == RolesId.Delete)
-                expect(resultOperatorAccount[i].toUpperCase()).to.equals(
-                    WITHOUT_ROLE.toUpperCase()
-                )
-            else if (i == RolesId.Freeze)
-                expect(resultOperatorAccount[i].toUpperCase()).to.equals(
-                    WITHOUT_ROLE.toUpperCase()
-                )
-            else if (i == RolesId.Wipe)
-                expect(resultOperatorAccount[i].toUpperCase()).to.equals(
-                    WITHOUT_ROLE.toUpperCase()
-                )
-            else if (i == RolesId.Rescue)
-                expect(resultOperatorAccount[i].toUpperCase()).to.equals(
-                    WITHOUT_ROLE.toUpperCase()
-                )
-            else if (i == RolesId.Pause)
-                expect(resultOperatorAccount[i].toUpperCase()).to.equals(
-                    WITHOUT_ROLE.toUpperCase()
-                )
-            else if (i == RolesId.Kyc)
-                expect(resultOperatorAccount[i].toUpperCase()).to.equals(
-                    WITHOUT_ROLE.toUpperCase()
-                )
-            else if (i == RolesId.Admin)
-                expect(resultOperatorAccount[i].toUpperCase()).to.equals(
-                    DEFAULT_ADMIN_ROLE.toUpperCase()
-                )
-            else
-                expect(resultOperatorAccount[i].toUpperCase()).to.equals(
-                    WITHOUT_ROLE.toUpperCase()
-                )
-        }
-
-        for (let i = 0; i < resultNonOperatorAccount.length; i++) {
-            if (i == RolesId.Cashin)
-                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
-                    CASHIN_ROLE.toUpperCase()
-                )
-            else if (i == RolesId.Burn)
-                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
-                    BURN_ROLE.toUpperCase()
-                )
-            else if (i == RolesId.Delete)
-                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
-                    DELETE_ROLE.toUpperCase()
-                )
-            else if (i == RolesId.Freeze)
-                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
-                    FREEZE_ROLE.toUpperCase()
-                )
-            else if (i == RolesId.Wipe)
-                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
-                    WIPE_ROLE.toUpperCase()
-                )
-            else if (i == RolesId.Rescue)
-                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
-                    RESCUE_ROLE.toUpperCase()
-                )
-            else if (i == RolesId.Pause)
-                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
-                    PAUSE_ROLE.toUpperCase()
-                )
-            else if (i == RolesId.Kyc)
-                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
-                    KYC_ROLE.toUpperCase()
-                )
-            else if (i == RolesId.Admin)
-                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
-                    WITHOUT_ROLE.toUpperCase()
-                )
-            else
-                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
-                    WITHOUT_ROLE.toUpperCase()
-                )
-        }
-    })
-
-    it('input parmeters check', async function () {
-        // We retreive the Token basic params
-        const retrievedTokenName = await name(proxyAddress, operatorClient)
-        const retrievedTokenSymbol = await symbol(proxyAddress, operatorClient)
-        const retrievedTokenDecimals = await decimals(
-            proxyAddress,
-            operatorClient
-        )
-        const retrievedTokenTotalSupply = await getTotalSupply(
-            proxyAddress,
-            operatorClient
-        )
-
-        // We check their values : success
-        expect(retrievedTokenName).to.equals(TOKEN_NAME)
-        expect(retrievedTokenSymbol).to.equals(TOKEN_SYMBOL)
-        expect(retrievedTokenDecimals).to.equals(TOKEN_DECIMALS)
-        expect(retrievedTokenTotalSupply.toString()).to.equals(
-            INIT_SUPPLY.toString()
-        )
-    })
-
-    it('Check initialize can only be run once', async function () {
-        // Retrieve current Token address
-        const TokenAddress = await getTokenAddress(proxyAddress, operatorClient)
-
-        // Initiliaze : fail
-        await expect(
-            initialize(proxyAddress, operatorClient, TokenAddress)
-        ).to.eventually.be.rejectedWith(Error)
-    })
-
-    it('Mint token throw error format number incorrrect', async () => {
-        const initialTotalSupply = await getTotalSupply(
-            proxyAddress,
-            operatorClient
-        )
-
-        await expect(
-            Mint(
-                proxyAddress,
-                BigNumber.from(1),
+            const resultOperatorAccount = await getRoles(
+                newProxyAddress,
                 operatorClient,
                 operatorAccount,
                 operatorIsE25519
             )
-        ).to.eventually.be.rejectedWith(Error)
-
-        const afterErrorTotalSupply = await getTotalSupply(
-            proxyAddress,
-            operatorClient
-        )
-
-        expect(initialTotalSupply).to.equal(afterErrorTotalSupply)
-
-        await Mint(
-            proxyAddress,
-            BigNumber.from(1).mul(TOKEN_FACTOR),
-            operatorClient,
-            operatorAccount,
-            operatorIsE25519
-        )
-
-        const totalSupply = await getTotalSupply(proxyAddress, operatorClient)
-
-        expect(totalSupply).to.equal(
-            initialTotalSupply.add(BigNumber.from(1).mul(TOKEN_FACTOR))
-        )
-    })
-})
-
-describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', function () {
-    before(async function () {
-        // Deploy Token using Client
-        const result = await deployContractsWithSDK({
-            name: TOKEN_NAME,
-            symbol: TOKEN_SYMBOL,
-            decimals: TOKEN_DECIMALS,
-            initialSupply: INIT_SUPPLY.toString(),
-            maxSupply: MAX_SUPPLY.toString(),
-            memo: TOKEN_MEMO,
-            account: operatorAccount,
-            privateKey: operatorPriKey,
-            publicKey: operatorPubKey,
-            isED25519Type: operatorIsE25519,
-            initialAmountDataFeed: INIT_SUPPLY.toString(),
-        })
-
-        proxyAddress = result[0]
-        proxyAdminAddress = result[1]
-        stableCoinAddress = result[2]
-    })
-
-    it('Can deploy a stablecoin where proxy admin owner is the deploying account', async function () {
-        const result = await deployContractsWithSDK({
-            name: TOKEN_NAME,
-            symbol: TOKEN_SYMBOL,
-            decimals: TOKEN_DECIMALS,
-            initialSupply: INIT_SUPPLY.toString(),
-            maxSupply: MAX_SUPPLY.toString(),
-            memo: TOKEN_MEMO,
-            account: operatorAccount,
-            privateKey: operatorPriKey,
-            publicKey: operatorPubKey,
-            isED25519Type: operatorIsE25519,
-            initialAmountDataFeed: INIT_SUPPLY.toString(),
-            proxyAdminOwnerAccount: ADDRESS_ZERO,
-        })
-
-        // We retreive the HederaTokenManagerProxy admin and implementation
-        const ownerAccount = await owner(
-            abiProxyAdmin,
-            result[1],
-            operatorClient
-        )
-
-        // We check their values : success
-        expect(ownerAccount.toUpperCase()).to.equals(
-            (
-                await toEvmAddress(operatorAccount, operatorIsE25519)
-            ).toUpperCase()
-        )
-    })
-
-    it('Can deploy a stablecoin where proxy admin owner is not the deploying account', async function () {
-        const result = await deployContractsWithSDK({
-            name: TOKEN_NAME,
-            symbol: TOKEN_SYMBOL,
-            decimals: TOKEN_DECIMALS,
-            initialSupply: INIT_SUPPLY.toString(),
-            maxSupply: MAX_SUPPLY.toString(),
-            memo: TOKEN_MEMO,
-            account: operatorAccount,
-            privateKey: operatorPriKey,
-            publicKey: operatorPubKey,
-            isED25519Type: operatorIsE25519,
-            initialAmountDataFeed: INIT_SUPPLY.toString(),
-            proxyAdminOwnerAccount: await toEvmAddress(
-                nonOperatorAccount,
-                nonOperatorIsE25519
-            ),
-        })
-
-        // We retreive the HederaTokenManagerProxy admin and implementation
-        const ownerAccount = await owner(
-            abiProxyAdmin,
-            result[1],
-            operatorClient
-        )
-
-        // We check their values : success
-        expect(ownerAccount.toUpperCase()).to.equals(
-            (
-                await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)
-            ).toUpperCase()
-        )
-    })
-
-    it('Retrieve admin and implementation addresses for the Proxy', async function () {
-        // We retreive the HederaTokenManagerProxy admin and implementation
-        const implementation = await getProxyImplementation(
-            abiProxyAdmin,
-            proxyAdminAddress,
-            operatorClient,
-            (
-                await getContractInfo(proxyAddress.toString())
-            ).evm_address
-        )
-        const admin = await getProxyAdmin(
-            abiProxyAdmin,
-            proxyAdminAddress,
-            operatorClient,
-            (
-                await getContractInfo(proxyAddress.toString())
-            ).evm_address
-        )
-
-        // We check their values : success
-        expect(implementation.toUpperCase()).to.equals(
-            (
-                await getContractInfo(stableCoinAddress.toString())
-            ).evm_address.toUpperCase()
-        )
-        expect(admin.toUpperCase()).to.equals(
-            (
-                await getContractInfo(proxyAdminAddress.toString())
-            ).evm_address.toUpperCase()
-        )
-    })
-
-    it('Retrieve proxy admin owner', async function () {
-        // We retreive the HederaTokenManagerProxy admin and implementation
-        const ownerAccount = await owner(
-            abiProxyAdmin,
-            proxyAdminAddress,
-            operatorClient
-        )
-
-        // We check their values : success
-        expect(ownerAccount.toUpperCase()).to.equals(
-            (
-                await toEvmAddress(operatorAccount, operatorIsE25519)
-            ).toUpperCase()
-        )
-    })
-
-    it('Upgrade Proxy implementation without the proxy admin', async function () {
-        // Deploy a new contract
-        const result = await deployContractsWithSDK({
-            name: TOKEN_NAME,
-            symbol: TOKEN_SYMBOL,
-            decimals: TOKEN_DECIMALS,
-            initialSupply: INIT_SUPPLY.toString(),
-            maxSupply: MAX_SUPPLY.toString(),
-            memo: TOKEN_MEMO,
-            account: operatorAccount,
-            privateKey: operatorPriKey,
-            publicKey: operatorPubKey,
-            isED25519Type: operatorIsE25519,
-            initialAmountDataFeed: INIT_SUPPLY.toString(),
-        })
-
-        const newImplementationContract = result[2]
-
-        // Non Admin upgrades implementation : fail
-        await expect(
-            upgradeTo(
-                abiProxyAdmin,
-                proxyAddress,
+            const isUnlimitedOperator = await isUnlimitedSupplierAllowance(
+                newProxyAddress,
                 operatorClient,
+                operatorAccount,
+                operatorIsE25519
+            )
+
+            expect(isUnlimitedOperator).to.eq(false)
+            expect(isUnlimitedNonOperator).to.eq(true)
+
+            for (let i = 0; i < resultOperatorAccount.length; i++) {
+                if (i == RolesId.Cashin)
+                    expect(resultOperatorAccount[i].toUpperCase()).to.equals(
+                        WITHOUT_ROLE.toUpperCase()
+                    )
+                else if (i == RolesId.Burn)
+                    expect(resultOperatorAccount[i].toUpperCase()).to.equals(
+                        WITHOUT_ROLE.toUpperCase()
+                    )
+                else if (i == RolesId.Delete)
+                    expect(resultOperatorAccount[i].toUpperCase()).to.equals(
+                        WITHOUT_ROLE.toUpperCase()
+                    )
+                else if (i == RolesId.Freeze)
+                    expect(resultOperatorAccount[i].toUpperCase()).to.equals(
+                        WITHOUT_ROLE.toUpperCase()
+                    )
+                else if (i == RolesId.Wipe)
+                    expect(resultOperatorAccount[i].toUpperCase()).to.equals(
+                        WITHOUT_ROLE.toUpperCase()
+                    )
+                else if (i == RolesId.Rescue)
+                    expect(resultOperatorAccount[i].toUpperCase()).to.equals(
+                        WITHOUT_ROLE.toUpperCase()
+                    )
+                else if (i == RolesId.Pause)
+                    expect(resultOperatorAccount[i].toUpperCase()).to.equals(
+                        WITHOUT_ROLE.toUpperCase()
+                    )
+                else if (i == RolesId.Kyc)
+                    expect(resultOperatorAccount[i].toUpperCase()).to.equals(
+                        WITHOUT_ROLE.toUpperCase()
+                    )
+                else if (i == RolesId.Admin)
+                    expect(resultOperatorAccount[i].toUpperCase()).to.equals(
+                        DEFAULT_ADMIN_ROLE.toUpperCase()
+                    )
+                else
+                    expect(resultOperatorAccount[i].toUpperCase()).to.equals(
+                        WITHOUT_ROLE.toUpperCase()
+                    )
+            }
+
+            for (let i = 0; i < resultNonOperatorAccount.length; i++) {
+                if (i == RolesId.Cashin)
+                    expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
+                        CASHIN_ROLE.toUpperCase()
+                    )
+                else if (i == RolesId.Burn)
+                    expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
+                        BURN_ROLE.toUpperCase()
+                    )
+                else if (i == RolesId.Delete)
+                    expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
+                        DELETE_ROLE.toUpperCase()
+                    )
+                else if (i == RolesId.Freeze)
+                    expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
+                        FREEZE_ROLE.toUpperCase()
+                    )
+                else if (i == RolesId.Wipe)
+                    expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
+                        WIPE_ROLE.toUpperCase()
+                    )
+                else if (i == RolesId.Rescue)
+                    expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
+                        RESCUE_ROLE.toUpperCase()
+                    )
+                else if (i == RolesId.Pause)
+                    expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
+                        PAUSE_ROLE.toUpperCase()
+                    )
+                else if (i == RolesId.Kyc)
+                    expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
+                        KYC_ROLE.toUpperCase()
+                    )
+                else if (i == RolesId.Admin)
+                    expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
+                        WITHOUT_ROLE.toUpperCase()
+                    )
+                else
+                    expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
+                        WITHOUT_ROLE.toUpperCase()
+                    )
+            }
+        })
+
+        it('input parmeters check', async function () {
+            // We retreive the Token basic params
+            const retrievedTokenName = await name(proxyAddress, operatorClient)
+            const retrievedTokenSymbol = await symbol(
+                proxyAddress,
+                operatorClient
+            )
+            const retrievedTokenDecimals = await decimals(
+                proxyAddress,
+                operatorClient
+            )
+            const retrievedTokenTotalSupply = await getTotalSupply(
+                proxyAddress,
+                operatorClient
+            )
+
+            // We check their values : success
+            expect(retrievedTokenName).to.equals(TOKEN_NAME)
+            expect(retrievedTokenSymbol).to.equals(TOKEN_SYMBOL)
+            expect(retrievedTokenDecimals).to.equals(TOKEN_DECIMALS)
+            expect(retrievedTokenTotalSupply.toString()).to.equals(
+                INIT_SUPPLY.toString()
+            )
+        })
+
+        it('Check initialize can only be run once', async function () {
+            // Retrieve current Token address
+            const TokenAddress = await getTokenAddress(
+                proxyAddress,
+                operatorClient
+            )
+
+            // Initiliaze : fail
+            await expect(
+                initialize(proxyAddress, operatorClient, TokenAddress)
+            ).to.eventually.be.rejectedWith(Error)
+        })
+
+        it('Mint token throw error format number incorrrect', async () => {
+            const initialTotalSupply = await getTotalSupply(
+                proxyAddress,
+                operatorClient
+            )
+
+            await expect(
+                Mint(
+                    proxyAddress,
+                    BigNumber.from(1),
+                    operatorClient,
+                    operatorAccount,
+                    operatorIsE25519
+                )
+            ).to.eventually.be.rejectedWith(Error)
+
+            const afterErrorTotalSupply = await getTotalSupply(
+                proxyAddress,
+                operatorClient
+            )
+
+            expect(initialTotalSupply).to.equal(afterErrorTotalSupply)
+
+            await Mint(
+                proxyAddress,
+                BigNumber.from(1).mul(TOKEN_FACTOR),
+                operatorClient,
+                operatorAccount,
+                operatorIsE25519
+            )
+
+            const totalSupply = await getTotalSupply(
+                proxyAddress,
+                operatorClient
+            )
+
+            expect(totalSupply).to.equal(
+                initialTotalSupply.add(BigNumber.from(1).mul(TOKEN_FACTOR))
+            )
+        })
+    })
+
+    describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', function () {
+        before(async function () {
+            // Deploy Token using Client
+            proxyAddress = deployedContracts[regularfactory][0]
+            proxyAdminAddress = deployedContracts[regularfactory][1]
+            stableCoinAddress = deployedContracts[regularfactory][2]
+        })
+
+        it('Can deploy a stablecoin where proxy admin owner is the deploying account', async function () {
+            const result = await deployContractsWithSDK({
+                name: TOKEN_NAME,
+                symbol: TOKEN_SYMBOL,
+                decimals: TOKEN_DECIMALS,
+                initialSupply: INIT_SUPPLY.toString(),
+                maxSupply: MAX_SUPPLY.toString(),
+                memo: TOKEN_MEMO,
+                account: operatorAccount,
+                privateKey: operatorPriKey,
+                publicKey: operatorPubKey,
+                isED25519Type: operatorIsE25519,
+                initialAmountDataFeed: INIT_SUPPLY.toString(),
+                proxyAdminOwnerAccount: ADDRESS_ZERO,
+            })
+
+            // We retreive the HederaTokenManagerProxy admin and implementation
+            const ownerAccount = await owner(
+                abiProxyAdmin,
+                result[1],
+                operatorClient
+            )
+
+            // We check their values : success
+            expect(ownerAccount.toUpperCase()).to.equals(
                 (
-                    await getContractInfo(newImplementationContract.toString())
-                ).evm_address
+                    await toEvmAddress(operatorAccount, operatorIsE25519)
+                ).toUpperCase()
             )
-        ).to.eventually.be.rejectedWith(Error)
-    })
-
-    it('Change Proxy admin without the proxy admin', async function () {
-        // Non Admin changes admin : fail
-        await expect(
-            changeAdmin(
-                abiProxyAdmin,
-                proxyAddress,
-                operatorClient,
-                await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)
-            )
-        ).to.eventually.be.rejectedWith(Error)
-    })
-
-    it('Upgrade Proxy implementation with the proxy admin but without the owner account', async function () {
-        // Deploy a new contract
-        const result = await deployContractsWithSDK({
-            name: TOKEN_NAME,
-            symbol: TOKEN_SYMBOL,
-            decimals: TOKEN_DECIMALS,
-            initialSupply: INIT_SUPPLY.toString(),
-            maxSupply: MAX_SUPPLY.toString(),
-            memo: TOKEN_MEMO,
-            account: operatorAccount,
-            privateKey: operatorPriKey,
-            publicKey: operatorPubKey,
-            isED25519Type: operatorIsE25519,
-            initialAmountDataFeed: INIT_SUPPLY.toString(),
         })
 
-        const newImplementationContract = result[2]
+        it('Can deploy a stablecoin where proxy admin owner is not the deploying account', async function () {
+            const result = await deployContractsWithSDK({
+                name: TOKEN_NAME,
+                symbol: TOKEN_SYMBOL,
+                decimals: TOKEN_DECIMALS,
+                initialSupply: INIT_SUPPLY.toString(),
+                maxSupply: MAX_SUPPLY.toString(),
+                memo: TOKEN_MEMO,
+                account: operatorAccount,
+                privateKey: operatorPriKey,
+                publicKey: operatorPubKey,
+                isED25519Type: operatorIsE25519,
+                initialAmountDataFeed: INIT_SUPPLY.toString(),
+                proxyAdminOwnerAccount: await toEvmAddress(
+                    nonOperatorAccount,
+                    nonOperatorIsE25519
+                ),
+            })
 
-        // Upgrading the proxy implementation using the Proxy Admin with an account that is not the owner : fails
-        await expect(
-            upgrade(
+            // We retreive the HederaTokenManagerProxy admin and implementation
+            const ownerAccount = await owner(
+                abiProxyAdmin,
+                result[1],
+                operatorClient
+            )
+
+            // We check their values : success
+            expect(ownerAccount.toUpperCase()).to.equals(
+                (
+                    await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)
+                ).toUpperCase()
+            )
+        })
+
+        it('Retrieve admin and implementation addresses for the Proxy', async function () {
+            // We retreive the HederaTokenManagerProxy admin and implementation
+            const implementation = await getProxyImplementation(
                 abiProxyAdmin,
                 proxyAdminAddress,
-                nonOperatorClient,
+                operatorClient,
+                (
+                    await getContractInfo(proxyAddress.toString())
+                ).evm_address
+            )
+            const admin = await getProxyAdmin(
+                abiProxyAdmin,
+                proxyAdminAddress,
+                operatorClient,
+                (
+                    await getContractInfo(proxyAddress.toString())
+                ).evm_address
+            )
+
+            // We check their values : success
+            expect(implementation.toUpperCase()).to.equals(
+                (
+                    await getContractInfo(stableCoinAddress.toString())
+                ).evm_address.toUpperCase()
+            )
+            expect(admin.toUpperCase()).to.equals(
+                (
+                    await getContractInfo(proxyAdminAddress.toString())
+                ).evm_address.toUpperCase()
+            )
+        })
+
+        it('Retrieve proxy admin owner', async function () {
+            // We retreive the HederaTokenManagerProxy admin and implementation
+            const ownerAccount = await owner(
+                abiProxyAdmin,
+                proxyAdminAddress,
+                operatorClient
+            )
+
+            // We check their values : success
+            expect(ownerAccount.toUpperCase()).to.equals(
+                (
+                    await toEvmAddress(operatorAccount, operatorIsE25519)
+                ).toUpperCase()
+            )
+        })
+
+        it('Upgrade Proxy implementation without the proxy admin', async function () {
+            // Deploy a new contract
+            const result = deployedContracts[regularfactory]
+
+            const newImplementationContract = result[2]
+
+            // Non Admin upgrades implementation : fail
+            await expect(
+                upgradeTo(
+                    abiProxyAdmin,
+                    proxyAddress,
+                    operatorClient,
+                    (
+                        await getContractInfo(
+                            newImplementationContract.toString()
+                        )
+                    ).evm_address
+                )
+            ).to.eventually.be.rejectedWith(Error)
+        })
+
+        it('Change Proxy admin without the proxy admin', async function () {
+            // Non Admin changes admin : fail
+            await expect(
+                changeAdmin(
+                    abiProxyAdmin,
+                    proxyAddress,
+                    operatorClient,
+                    await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)
+                )
+            ).to.eventually.be.rejectedWith(Error)
+        })
+
+        it('Upgrade Proxy implementation with the proxy admin but without the owner account', async function () {
+            // Deploy a new contract
+            const result = deployedContracts[regularfactory]
+
+            const newImplementationContract = result[2]
+
+            // Upgrading the proxy implementation using the Proxy Admin with an account that is not the owner : fails
+            await expect(
+                upgrade(
+                    abiProxyAdmin,
+                    proxyAdminAddress,
+                    nonOperatorClient,
+                    (
+                        await getContractInfo(
+                            newImplementationContract.toString()
+                        )
+                    ).evm_address,
+                    (
+                        await getContractInfo(proxyAddress.toString())
+                    ).evm_address
+                )
+            ).to.eventually.be.rejectedWith(Error)
+        })
+
+        it('Change Proxy admin with the proxy admin but without the owner account', async function () {
+            // Non Owner changes admin : fail
+            await expect(
+                changeProxyAdmin(
+                    abiProxyAdmin,
+                    proxyAdminAddress,
+                    nonOperatorClient,
+                    nonOperatorAccount,
+                    proxyAddress,
+                    nonOperatorIsE25519
+                )
+            ).to.eventually.be.rejectedWith(Error)
+        })
+
+        it('Upgrade Proxy implementation with the proxy admin and the owner account', async function () {
+            // Deploy a new contract
+            const result = deployedContracts[regularfactory]
+
+            const newImplementationContract = result[2]
+
+            // Upgrading the proxy implementation using the Proxy Admin with an account that is the owner : success
+            await upgrade(
+                abiProxyAdmin,
+                proxyAdminAddress,
+                operatorClient,
                 (
                     await getContractInfo(newImplementationContract.toString())
                 ).evm_address,
@@ -610,97 +609,9 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
                     await getContractInfo(proxyAddress.toString())
                 ).evm_address
             )
-        ).to.eventually.be.rejectedWith(Error)
-    })
 
-    it('Change Proxy admin with the proxy admin but without the owner account', async function () {
-        // Non Owner changes admin : fail
-        await expect(
-            changeProxyAdmin(
-                abiProxyAdmin,
-                proxyAdminAddress,
-                nonOperatorClient,
-                nonOperatorAccount,
-                proxyAddress,
-                nonOperatorIsE25519
-            )
-        ).to.eventually.be.rejectedWith(Error)
-    })
-
-    it('Upgrade Proxy implementation with the proxy admin and the owner account', async function () {
-        // Deploy a new contract
-        const result = await deployContractsWithSDK({
-            name: TOKEN_NAME,
-            symbol: TOKEN_SYMBOL,
-            decimals: TOKEN_DECIMALS,
-            initialSupply: INIT_SUPPLY.toString(),
-            maxSupply: MAX_SUPPLY.toString(),
-            memo: TOKEN_MEMO,
-            account: operatorAccount,
-            privateKey: operatorPriKey,
-            publicKey: operatorPubKey,
-            isED25519Type: operatorIsE25519,
-            initialAmountDataFeed: INIT_SUPPLY.toString(),
-        })
-
-        const newImplementationContract = result[2]
-
-        // Upgrading the proxy implementation using the Proxy Admin with an account that is the owner : success
-        await upgrade(
-            abiProxyAdmin,
-            proxyAdminAddress,
-            operatorClient,
-            (
-                await getContractInfo(newImplementationContract.toString())
-            ).evm_address,
-            (
-                await getContractInfo(proxyAddress.toString())
-            ).evm_address
-        )
-
-        // Check new implementation address
-        const implementation = await getProxyImplementation(
-            abiProxyAdmin,
-            proxyAdminAddress,
-            operatorClient,
-            (
-                await getContractInfo(proxyAddress.toString())
-            ).evm_address
-        )
-        expect(implementation.toUpperCase()).to.equals(
-            (
-                await getContractInfo(newImplementationContract.toString())
-            ).evm_address.toUpperCase()
-        )
-
-        // reset
-        await upgrade(
-            abiProxyAdmin,
-            proxyAdminAddress,
-            operatorClient,
-            (
-                await getContractInfo(stableCoinAddress.toString())
-            ).evm_address,
-            (
-                await getContractInfo(proxyAddress.toString())
-            ).evm_address
-        )
-    })
-
-    it('Change Proxy admin with the proxy admin and the owner account', async function () {
-        // Owner changes admin : success
-        await changeProxyAdmin(
-            abiProxyAdmin,
-            proxyAdminAddress,
-            operatorClient,
-            operatorAccount,
-            proxyAddress,
-            operatorIsE25519
-        )
-
-        // Now we cannot get the admin using the Proxy admin contract.
-        await expect(
-            getProxyAdmin(
+            // Check new implementation address
+            const implementation = await getProxyImplementation(
                 abiProxyAdmin,
                 proxyAdminAddress,
                 operatorClient,
@@ -708,82 +619,124 @@ describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', funct
                     await getContractInfo(proxyAddress.toString())
                 ).evm_address
             )
-        ).to.eventually.be.rejectedWith(Error)
+            expect(implementation.toUpperCase()).to.equals(
+                (
+                    await getContractInfo(newImplementationContract.toString())
+                ).evm_address.toUpperCase()
+            )
 
-        // Check that proxy admin has been changed
-        const _admin = await admin(
-            ITransparentUpgradeableProxy__factory.abi,
-            proxyAddress,
-            operatorClient
-        )
-        expect(_admin.toUpperCase()).to.equals(
-            (
-                await toEvmAddress(operatorAccount, operatorIsE25519)
-            ).toUpperCase()
-        )
-
-        // reset
-        await changeAdmin(
-            ITransparentUpgradeableProxy__factory.abi,
-            proxyAddress,
-            operatorClient,
-            await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)
-        )
-        await changeAdmin(
-            ITransparentUpgradeableProxy__factory.abi,
-            proxyAddress,
-            nonOperatorClient,
-            (
-                await getContractInfo(proxyAddress.toString())
-            ).evm_address
-        )
-    })
-
-    it('Transfers Proxy admin owner without the owner account', async function () {
-        // Non Owner transfers owner : fail
-        await expect(
-            transferOwnership(
+            // reset
+            await upgrade(
                 abiProxyAdmin,
                 proxyAdminAddress,
+                operatorClient,
+                (
+                    await getContractInfo(stableCoinAddress.toString())
+                ).evm_address,
+                (
+                    await getContractInfo(proxyAddress.toString())
+                ).evm_address
+            )
+        })
+
+        it('Change Proxy admin with the proxy admin and the owner account', async function () {
+            // Owner changes admin : success
+            await changeProxyAdmin(
+                abiProxyAdmin,
+                proxyAdminAddress,
+                operatorClient,
+                operatorAccount,
+                proxyAddress,
+                operatorIsE25519
+            )
+
+            // Now we cannot get the admin using the Proxy admin contract.
+            await expect(
+                getProxyAdmin(
+                    abiProxyAdmin,
+                    proxyAdminAddress,
+                    operatorClient,
+                    (
+                        await getContractInfo(proxyAddress.toString())
+                    ).evm_address
+                )
+            ).to.eventually.be.rejectedWith(Error)
+
+            // Check that proxy admin has been changed
+            const _admin = await admin(
+                ITransparentUpgradeableProxy__factory.abi,
+                proxyAddress,
+                operatorClient
+            )
+            expect(_admin.toUpperCase()).to.equals(
+                (
+                    await toEvmAddress(operatorAccount, operatorIsE25519)
+                ).toUpperCase()
+            )
+
+            // reset
+            await changeAdmin(
+                ITransparentUpgradeableProxy__factory.abi,
+                proxyAddress,
+                operatorClient,
+                await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)
+            )
+            await changeAdmin(
+                ITransparentUpgradeableProxy__factory.abi,
+                proxyAddress,
                 nonOperatorClient,
+                (
+                    await getContractInfo(proxyAddress.toString())
+                ).evm_address
+            )
+        })
+
+        it('Transfers Proxy admin owner without the owner account', async function () {
+            // Non Owner transfers owner : fail
+            await expect(
+                transferOwnership(
+                    abiProxyAdmin,
+                    proxyAdminAddress,
+                    nonOperatorClient,
+                    nonOperatorAccount,
+                    nonOperatorIsE25519
+                )
+            ).to.eventually.be.rejectedWith(Error)
+        })
+
+        it('Transfers Proxy admin owner with the owner account', async function () {
+            // Owner transfers owner : success
+            await transferOwnership(
+                abiProxyAdmin,
+                proxyAdminAddress,
+                operatorClient,
                 nonOperatorAccount,
                 nonOperatorIsE25519
             )
-        ).to.eventually.be.rejectedWith(Error)
+
+            await sleep(5000)
+            await acceptOwnership_SCF(proxyAdminAddress, nonOperatorClient)
+
+            // Check
+            const ownerAccount = await owner(
+                abiProxyAdmin,
+                proxyAdminAddress,
+                operatorClient
+            )
+            expect(ownerAccount.toUpperCase()).to.equals(
+                (
+                    await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)
+                ).toUpperCase()
+            )
+
+            // reset
+            await transferOwnership(
+                abiProxyAdmin,
+                proxyAdminAddress,
+                nonOperatorClient,
+                operatorAccount,
+                operatorIsE25519
+            )
+        })
     })
-
-    it('Transfers Proxy admin owner with the owner account', async function () {
-        // Owner transfers owner : success
-        await transferOwnership(
-            abiProxyAdmin,
-            proxyAdminAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-
-        await sleep(5000)
-        await acceptOwnership_SCF(proxyAdminAddress, nonOperatorClient)
-
-        // Check
-        const ownerAccount = await owner(
-            abiProxyAdmin,
-            proxyAdminAddress,
-            operatorClient
-        )
-        expect(ownerAccount.toUpperCase()).to.equals(
-            (
-                await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)
-            ).toUpperCase()
-        )
-
-        // reset
-        await transferOwnership(
-            abiProxyAdmin,
-            proxyAdminAddress,
-            nonOperatorClient,
-            operatorAccount,
-            operatorIsE25519
-        )
-    })
-})
+}
