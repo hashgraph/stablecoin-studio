@@ -6,6 +6,7 @@ import {
     deployRegularFactory,
     deployRegularFactoryPlus100000,
     IContractIdMap,
+    regularfactory,
     regularfactoryplus100000,
 } from './shared/utils'
 import { pausable } from './pausable'
@@ -36,7 +37,6 @@ describe('Stable Coin Studio test suite', () => {
         freezable(deployedContracts[regularfactoryplus100000])
         rescuable(deployedContracts[regularfactoryplus100000])
         wipeable(deployedContracts[regularfactoryplus100000])
-        pausable(deployedContracts[regularfactoryplus100000])
         deletable(deployedContracts[regularfactoryplus100000])
     })
 
@@ -47,5 +47,6 @@ describe('Stable Coin Studio test suite', () => {
         })
 
         hederaTokenManager(deployedContracts)
+        pausable(deployedContracts[regularfactory])
     })
 })
