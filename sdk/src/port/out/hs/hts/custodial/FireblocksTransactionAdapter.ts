@@ -22,7 +22,7 @@ import {
 	CustodialWalletService,
 	FireblocksConfig,
 	SignatureRequest,
-} from 'custodialwalletutils/build/cjs/src';
+} from '@hashgraph/hedera-custodians-integration/src';
 import { singleton } from 'tsyringe';
 
 import { Client, Transaction } from '@hashgraph/sdk';
