@@ -107,3 +107,14 @@ export const RPC_NODE = {
 	name: 'testrpcNode',
 	baseUrl: process.env.RPC_NODE_BASE_URL ?? 'https://testnet.hashio.io/api',
 };
+
+export const FIREBLOCKS_SETTINGS = {
+	apiKey: process.env.FIREBLOCKS_API_KEY ?? '',
+	apiSecretKey: process.env.FIREBLOCKS_API_SECRET_KEY ?? '',
+	baseUrl: process.env.FIREBLOCKS_BASE_URL ?? '',
+	vaultAccountId: process.env.FIREBLOCKS_VAULT_ACCOUNT_ID ?? '',
+	assetId: process.env.FIREBLOCKS_ASSET_ID ?? '',
+	hederaAccountId: process.env.FIREBLOCKS_HEDERA_ACCOUNT_ID ?? '',
+	hederaAccountPublicKey:
+		process.env.FIREBLOCKS_HEDERA_ACCOUNT_PUBLIC_KEY ?? '',
+};

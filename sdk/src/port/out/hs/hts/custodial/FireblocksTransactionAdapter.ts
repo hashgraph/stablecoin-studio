@@ -73,7 +73,7 @@ export class FireblocksTransactionAdapter extends HederaTransactionAdapter {
 			wallet: SupportedWallets.FIREBLOCKS,
 			initData: {},
 		});
-		LogService.logTrace('Client Initialized');
+		LogService.logTrace('Fireblocks Initialized');
 		return Promise.resolve(this.networkService.environment);
 	}
 
@@ -179,7 +179,7 @@ export class FireblocksTransactionAdapter extends HederaTransactionAdapter {
 	): Promise<TransactionResponse> {
 		try {
 			LogService.logTrace(
-				'[Fireblocks] Signing and sending transaction:',
+				'Fireblocks signing and sending transaction:',
 				nameFunction,
 			);
 
