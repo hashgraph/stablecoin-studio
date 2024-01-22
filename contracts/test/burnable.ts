@@ -25,11 +25,11 @@ const expect = chai.expect
 let proxyAddress: ContractId
 
 export const burnable = (proxyAddresses: ContractId[]) => {
-    before(() => {
-        proxyAddress = proxyAddresses[0]
-    })
-
     describe('Burn Tests', function () {
+        before(() => {
+            proxyAddress = proxyAddresses[0]
+        })
+
         it('Admin account can grant and revoke burnable role to an account', async function () {
             // Admin grants burn role : success
             let result = await hasRole(

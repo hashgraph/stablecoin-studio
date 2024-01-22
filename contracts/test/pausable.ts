@@ -26,12 +26,12 @@ let proxyAddress: ContractId
 let token: ContractId
 
 export const pausable = (proxyAddresses: ContractId[]) => {
-    before(() => {
-        proxyAddress = proxyAddresses[0]
-        token = proxyAddresses[8]
-    })
-
     describe('Pause Tests', () => {
+        before(() => {
+            proxyAddress = proxyAddresses[0]
+            token = proxyAddresses[8]
+        })
+
         it('Admin account can grant and revoke pause role to an account', async function () {
             // Admin grants pause role : success
             let result = await hasRole(

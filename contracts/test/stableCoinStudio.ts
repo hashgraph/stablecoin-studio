@@ -18,16 +18,20 @@ import { wipeable } from './wipeable'
 import { reserve } from './reserve'
 import { supplierAdmin } from './supplieradmin'
 import { hederaReserve } from './hederaReserve'
+import { roleManagement } from './roleManagement'
+import { roles } from './roles'
+import {stableCoinFactory} from "./stableCoinFactory";
 
 const deployedContracts: IContractIdMap = buildDeployedContracts()
 describe('Stable Coin Studio test suite', () => {
     deployAFactory()
+    stableCoinFactory();
     kyc()
     reserve()
     hederaReserve()
     supplierAdmin()
 
-    describe('Burnable & Freezable', () => {
+    describe('Burnable, Freezable, Rescuable, Wipeable, Deletable & Role Management', () => {
         before(async () => {
             // Deploy Token using Client
             await deployRegularFactoryPlus100000(deployedContracts)
@@ -38,15 +42,17 @@ describe('Stable Coin Studio test suite', () => {
         rescuable(deployedContracts[regularfactoryplus100000])
         wipeable(deployedContracts[regularfactoryplus100000])
         deletable(deployedContracts[regularfactoryplus100000])
+        roleManagement(deployedContracts[regularfactoryplus100000])
     })
 
-    describe('HederaTokenManager', () => {
+    describe('HederaTokenManager, Roles & Pausable', () => {
         before(async () => {
             // Deploy Token using Client
             await deployRegularFactory(deployedContracts)
         })
 
         hederaTokenManager(deployedContracts)
+        roles(deployedContracts[regularfactory])
         pausable(deployedContracts[regularfactory])
     })
 })

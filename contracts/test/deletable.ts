@@ -28,11 +28,11 @@ const expect = chai.expect
 let proxyAddress: ContractId
 
 export const deletable = (proxyAddresses: ContractId[]) => {
-    before(() => {
-        proxyAddress = proxyAddresses[0]
-    })
-
     describe('Delete Tests', () => {
+        before(() => {
+            proxyAddress = proxyAddresses[0]
+        })
+
         it('Admin account can grant and revoke delete role to an account', async function () {
             // Admin grants delete role : success
             let result = await hasRole(
