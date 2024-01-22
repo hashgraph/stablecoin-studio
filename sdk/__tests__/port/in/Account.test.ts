@@ -31,6 +31,8 @@ import ConnectRequest, {
 import {
 	CLIENT_ACCOUNT_ED25519,
 	CLIENT_PUBLIC_KEY_ED25519,
+	MIRROR_NODE,
+	RPC_NODE,
 } from '../../config.js';
 import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
@@ -38,13 +40,13 @@ import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.j
 describe('🧪 Account test', () => {
 	beforeAll(async () => {
 		const mirrorNode: MirrorNode = {
-			name: 'testmirrorNode',
-			baseUrl: 'https://testnet.mirrornode.hedera.com/api/v1/',
+			name: MIRROR_NODE.name,
+			baseUrl: MIRROR_NODE.baseUrl,
 		};
-
+		
 		const rpcNode: JsonRpcRelay = {
-			name: 'testrpcNode',
-			baseUrl: 'http://127.0.0.1:7546/api',
+			name: RPC_NODE.name,
+			baseUrl: RPC_NODE.baseUrl,
 		};
 
 		await Network.connect(
