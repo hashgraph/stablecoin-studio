@@ -43,7 +43,7 @@ describe('🧪 Account test', () => {
 			name: MIRROR_NODE.name,
 			baseUrl: MIRROR_NODE.baseUrl,
 		};
-		
+
 		const rpcNode: JsonRpcRelay = {
 			name: RPC_NODE.name,
 			baseUrl: RPC_NODE.baseUrl,

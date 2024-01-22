@@ -19,27 +19,38 @@
  */
 
 import {
-	Account, AssociateTokenRequest,
+	Account,
+	AssociateTokenRequest,
 	CreateRequest,
-	InitializationRequest, KYCRequest,
-	Network, RequestAccount, RequestPublicKey, StableCoin,
+	InitializationRequest,
+	KYCRequest,
+	Network,
+	RequestAccount,
+	RequestPublicKey,
+	StableCoin,
 	StableCoinViewModel,
-	SupportedWallets, TokenSupplyType
-} from "../../../src";
-import {MirrorNode} from "../../../src/domain/context/network/MirrorNode";
-import {JsonRpcRelay} from "../../../src/domain/context/network/JsonRpcRelay";
-import ConnectRequest, {FireblocksConfigRequest} from "../../../src/port/in/request/ConnectRequest";
-import {CLIENT_ACCOUNT_ED25519, FACTORY_ADDRESS, FIREBLOCKS_SETTINGS, HEDERA_TOKEN_MANAGER_ADDRESS} from "../../config";
-import Injectable from "../../../src/core/Injectable";
-import account from "../../../src/port/in/Account";
-
+	SupportedWallets,
+	TokenSupplyType,
+} from '../../../src';
+import { MirrorNode } from '../../../src/domain/context/network/MirrorNode';
+import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay';
+import ConnectRequest, {
+	FireblocksConfigRequest,
+} from '../../../src/port/in/request/ConnectRequest';
+import {
+	CLIENT_ACCOUNT_ED25519,
+	FACTORY_ADDRESS,
+	FIREBLOCKS_SETTINGS,
+	HEDERA_TOKEN_MANAGER_ADDRESS,
+} from '../../config';
+import Injectable from '../../../src/core/Injectable';
+import account from '../../../src/port/in/Account';
 
 const decimals = 6;
 const initialSupply = 1000;
 const maxSupply = 1000000;
 
 describe('🧪 FireblocksTransactionAdapter test', () => {
-
 	let stableCoinHTS: StableCoinViewModel;
 
 	const delay = async (seconds = 5): Promise<void> => {
@@ -64,16 +75,16 @@ describe('🧪 FireblocksTransactionAdapter test', () => {
 		vaultAccountId: FIREBLOCKS_SETTINGS.vaultAccountId,
 		assetId: FIREBLOCKS_SETTINGS.assetId,
 		hederaAccountId: FIREBLOCKS_SETTINGS.hederaAccountId,
-		hederaAccountPublicKey: FIREBLOCKS_SETTINGS.hederaAccountPublicKey
+		hederaAccountPublicKey: FIREBLOCKS_SETTINGS.hederaAccountPublicKey,
 	};
 
-	const requestPublicKey:RequestPublicKey = {
-		key: FIREBLOCKS_SETTINGS.hederaAccountPublicKey
-	}
+	const requestPublicKey: RequestPublicKey = {
+		key: FIREBLOCKS_SETTINGS.hederaAccountPublicKey,
+	};
 
-	const requestAccount:RequestAccount = {
-		accountId: ""
-	}
+	const requestAccount: RequestAccount = {
+		accountId: '',
+	};
 
 	beforeAll(async () => {
 		await Network.connect(
@@ -143,9 +154,6 @@ describe('🧪 FireblocksTransactionAdapter test', () => {
 			metadata: '',
 		});
 
-
 		stableCoinHTS = (await StableCoin.create(requestHTS)).coin;
-
 	}, 60_000);
-
 });
