@@ -19,7 +19,6 @@
  */
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import FireblocksSettings from 'domain/context/custodialwalletsettings/FireblocksSettings.js';
 import LogService from '../../../../app/service/LogService.js';
 import { isConstructible } from '../../../../core/Cast.js';
 import { Constructible, MapFunction } from '../../../../core/Type.js';
@@ -32,7 +31,8 @@ import {
 } from '../ConnectRequest.js';
 import { RequestAccount, RequestPrivateKey, RequestPublicKey } from '../BaseRequest.js';
 import ValidatedRequest from '../validation/ValidatedRequest.js';
-import DfnsSettings from 'domain/context/custodialwalletsettings/DfnsSettings.js';
+import DfnsSettings from '../../../../domain/context/custodialwalletsettings/DfnsSettings.js';
+import FireblocksSettings from '../../../../domain/context/custodialwalletsettings/FireblocksSettings.js';
 
 export default class RequestMapper {
 	public static isPublicKey = (val: any): val is RequestPublicKey => {
