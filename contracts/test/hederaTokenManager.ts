@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {BigNumber} from 'ethers'
-import {allTokenKeystoKey, deployContractsWithSDK, tokenKeystoContract, tokenKeystoKey,} from '../scripts/deploy'
+import { BigNumber } from 'ethers'
+import {
+    allTokenKeystoKey,
+    deployContractsWithSDK,
+    tokenKeystoContract,
+    tokenKeystoKey,
+} from '../scripts/deploy'
 import {
     acceptOwnership_SCF,
     admin,
@@ -24,9 +29,17 @@ import {
     upgrade,
     upgradeTo,
 } from '../scripts/contractsMethods'
-import {getContractInfo, oneYearLaterInSeconds, sleep, toEvmAddress,} from '../scripts/utils'
-import {ContractId} from '@hashgraph/sdk'
-import {ITransparentUpgradeableProxy__factory, ProxyAdmin__factory,} from '../typechain-types'
+import {
+    getContractInfo,
+    oneYearLaterInSeconds,
+    sleep,
+    toEvmAddress,
+} from '../scripts/utils'
+import { ContractId } from '@hashgraph/sdk'
+import {
+    ITransparentUpgradeableProxy__factory,
+    ProxyAdmin__factory,
+} from '../typechain-types'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import {

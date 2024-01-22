@@ -5,6 +5,7 @@ import configureMockStore from 'redux-mock-store';
 import { SupportedWallets } from '@hashgraph/stablecoin-npm-sdk';
 import userEvent from '@testing-library/user-event';
 import SDKService from '../../services/SDKService';
+import type {IMirrorRPCNode} from "../../interfaces/IMirrorRPCNode";
 
 const mockStore = configureMockStore();
 
@@ -24,9 +25,20 @@ describe(`<${ModalWalletConnect.name} />`, () => {
 	});
 
 	test('should has wallets and is clicked', async () => {
+		const rpcNode:IMirrorRPCNode = {
+			name: '::name::',
+			BASE_URL: '::url::',
+			API_KEY: '::key::',
+			Environment: '::env::',
+			isInConfig: true,
+			HEADER: '::header::'
+		}
+
 		const store = mockStore({
 			wallet: {
 				foundWallets: [SupportedWallets.HASHPACK, SupportedWallets.METAMASK],
+				selectedMirrors: rpcNode,
+				selectedRPCs: rpcNode
 			},
 		});
 		const component = render(<ModalWalletConnect />, store);
@@ -34,6 +46,7 @@ describe(`<${ModalWalletConnect.name} />`, () => {
 		const metamask = component.getByTestId('Metamask');
 		await userEvent.click(metamask);
 
-		expect(SDKService.connectWallet).toHaveBeenCalledWith('Metamask', expect.any(String));
+		expect(SDKService.connectWallet).toHaveBeenCalledWith('Metamask', expect.any(String), undefined, undefined);
 	});
+
 });
