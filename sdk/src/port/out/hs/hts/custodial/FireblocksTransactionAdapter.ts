@@ -18,37 +18,28 @@
  *
  */
 
-import {
-	CustodialWalletService,
-	FireblocksConfig,
-	SignatureRequest,
-} from '@hashgraph/hedera-custodians-integration';
-import { singleton } from 'tsyringe';
+import {CustodialWalletService, FireblocksConfig, SignatureRequest,} from '@hashgraph/hedera-custodians-integration';
+import {singleton} from 'tsyringe';
 
-import { Client, Transaction } from '@hashgraph/sdk';
+import {Client, Transaction} from '@hashgraph/sdk';
 
 import EventService from '../../../../../app/service/event/EventService';
-import {
-	WalletEvents,
-	WalletPairedEvent,
-} from '../../../../../app/service/event/WalletEvent';
+import {WalletEvents, WalletPairedEvent,} from '../../../../../app/service/event/WalletEvent';
 import LogService from '../../../../../app/service/LogService';
 import NetworkService from '../../../../../app/service/NetworkService';
-import { lazyInject } from '../../../../../core/decorator/LazyInjectDecorator';
+import {lazyInject} from '../../../../../core/decorator/LazyInjectDecorator';
 import Injectable from '../../../../../core/Injectable';
-import { Environment } from '../../../../../domain/context/network/Environment';
-import { SupportedWallets } from '../../../../../domain/context/network/Wallet';
+import {Environment} from '../../../../../domain/context/network/Environment';
+import {SupportedWallets} from '../../../../../domain/context/network/Wallet';
 import TransactionResponse from '../../../../../domain/context/transaction/TransactionResponse.js';
-import { MirrorNodeAdapter } from '../../../mirror/MirrorNodeAdapter';
-import { InitializationData } from '../../../TransactionAdapter';
-import { TransactionType } from '../../../TransactionResponseEnums';
-import { SigningError } from '../../error/SigningError';
-import { HederaTransactionAdapter } from '../../HederaTransactionAdapter';
-import { TransactionResponse as HTransactionResponse } from '@hashgraph/sdk/lib/exports';
-import Account, {
-	AccountProps,
-} from '../../../../../domain/context/account/Account';
-import { HTSTransactionResponseAdapter } from '../HTSTransactionResponseAdapter';
+import {MirrorNodeAdapter} from '../../../mirror/MirrorNodeAdapter';
+import {InitializationData} from '../../../TransactionAdapter';
+import {TransactionType} from '../../../TransactionResponseEnums';
+import {SigningError} from '../../error/SigningError';
+import {HederaTransactionAdapter} from '../../HederaTransactionAdapter';
+import {TransactionResponse as HTransactionResponse} from '@hashgraph/sdk/lib/exports';
+import Account, {AccountProps,} from '../../../../../domain/context/account/Account';
+import {HTSTransactionResponseAdapter} from '../HTSTransactionResponseAdapter';
 import FireblocksSettings from '../../../../../domain/context/custodialwalletsettings/FireblocksSettings';
 
 @singleton()
@@ -99,10 +90,12 @@ export class FireblocksTransactionAdapter extends HederaTransactionAdapter {
 	private signingService = async (
 		message: Uint8Array,
 	): Promise<Uint8Array> => {
-		const signatureRequest = new SignatureRequest(message);
-		return await this.custodialWalletService.signTransaction(
-			signatureRequest,
+		const uint8Array = new Uint8Array(message);
+		const signatureRequest = new SignatureRequest(uint8Array);
+		const result = await this.custodialWalletService.signTransaction(
+			signatureRequest
 		);
+		return result;
 	};
 
 	private initCustodialWalletService(
@@ -119,7 +112,7 @@ export class FireblocksTransactionAdapter extends HederaTransactionAdapter {
 			'HBAR_TEST',
 		);
 		this.custodialWalletService = new CustodialWalletService(
-			fireblocksConfig,
+			fireblocksConfig
 		);
 	}
 

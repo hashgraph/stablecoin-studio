@@ -22,8 +22,8 @@ import CustodialWalletSettings from './CustodialWalletSettings';
 
 export default class FireblocksConfig extends CustodialWalletSettings {
 	constructor(
-		public apiSecretKey: string,
 		public apiKey: string,
+		public apiSecretKey: string,
 		public baseUrl: string,
 		public assetId: string,
 		public vaultAccountId: string,
