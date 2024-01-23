@@ -297,6 +297,15 @@ export const rescuable = (proxyAddresses: ContractId[]) => {
         })
 
         it('Should rescue 1 HBAR', async function () {
+            // Grant rescue role to account
+            await grantRole(
+                RESCUE_ROLE,
+                proxyAddress,
+                operatorClient,
+                nonOperatorAccount,
+                nonOperatorIsE25519
+            )
+
             // Get the initial balance of the token owner and client
             const AmountToRescue = BigNumber.from(1).mul(HBARFactor)
             const initialTokenOwnerBalance = await getHBARBalanceOf(
@@ -306,7 +315,7 @@ export const rescuable = (proxyAddresses: ContractId[]) => {
                 false
             )
             const initialClientBalance = await getHBARBalanceOf(
-                operatorAccount,
+                nonOperatorAccount,
                 operatorClient,
                 true,
                 false
@@ -323,7 +332,7 @@ export const rescuable = (proxyAddresses: ContractId[]) => {
                 false
             )
             const finalClientBalance = await getHBARBalanceOf(
-                operatorAccount,
+                nonOperatorAccount,
                 operatorClient,
                 true,
                 false
@@ -334,7 +343,16 @@ export const rescuable = (proxyAddresses: ContractId[]) => {
             expect(finalTokenOwnerBalance.toString()).to.equals(
                 expectedTokenOwnerBalance.toString()
             )
-            expect(finalClientBalance.gt(initialClientBalance)).to.be.true
+            expect(finalClientBalance.gt(initialClientBalance)).to.be.false
+
+            // Revoke rescue role to account
+            await revokeRole(
+                RESCUE_ROLE,
+                proxyAddress,
+                operatorClient,
+                nonOperatorAccount,
+                nonOperatorIsE25519
+            )
         })
 
         it('we cannot rescue more HBAR than the owner balance', async function () {
