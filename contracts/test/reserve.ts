@@ -47,292 +47,290 @@ const INIT_RESERVE_1000 = BigNumber.from(10)
 let proxyAddress: ContractId
 let hederaReserveProxy: ContractId
 
-export const reserve = () => {
-    describe('Reserve Tests', function () {
-        before(async function () {
-            // Deploy Token using Client
-            const result = await deployContractsWithSDK({
-                name: TOKEN_NAME,
-                symbol: TOKEN_SYMBOL,
-                decimals: 3,
-                initialSupply: INIT_SUPPLY_THREE_DECIMALS.toString(),
-                maxSupply: MAX_SUPPLY_THREE_DECIMALS.toString(),
-                memo: TOKEN_MEMO,
-                account: operatorAccount,
-                privateKey: operatorPriKey,
-                publicKey: operatorPubKey,
-                isED25519Type: operatorIsE25519,
-                initialAmountDataFeed: INIT_RESERVE_100.toString(),
-            })
-
-            proxyAddress = result[0]
-            hederaReserveProxy = result[7]
+describe('Reserve Tests', function () {
+    before(async function () {
+        // Deploy Token using Client
+        const result = await deployContractsWithSDK({
+            name: TOKEN_NAME,
+            symbol: TOKEN_SYMBOL,
+            decimals: 3,
+            initialSupply: INIT_SUPPLY_THREE_DECIMALS.toString(),
+            maxSupply: MAX_SUPPLY_THREE_DECIMALS.toString(),
+            memo: TOKEN_MEMO,
+            account: operatorAccount,
+            privateKey: operatorPriKey,
+            publicKey: operatorPubKey,
+            isED25519Type: operatorIsE25519,
+            initialAmountDataFeed: INIT_RESERVE_100.toString(),
         })
 
-        it('Get getReserveAmount', async () => {
-            const reserve = await getReserveAmount(proxyAddress, operatorClient)
-            expect(reserve).to.equals(INIT_RESERVE_100.toString())
-        })
-
-        it('Get datafeed', async () => {
-            const datafeed = await getReserveAddress(
-                proxyAddress,
-                operatorClient
-            )
-            expect(datafeed.toUpperCase()).not.to.equals(
-                '0x' +
-                    (
-                        await getContractInfo(hederaReserveProxy.toString())
-                    ).evm_address.toUpperCase()
-            )
-        })
-
-        it('Update datafeed', async () => {
-            const beforeDataFeed = await getReserveAddress(
-                proxyAddress,
-                operatorClient
-            )
-            const beforeReserve = await getReserveAmount(
-                proxyAddress,
-                operatorClient
-            )
-            const newReserve = beforeReserve.add(
-                BigNumber.from('100').mul(THREE_TOKEN_FACTOR)
-            )
-            const [newDataFeed] = await deployHederaReserve(
-                newReserve,
-                operatorAccount,
-                operatorIsE25519,
-                operatorClient,
-                operatorPriKey
-            )
-            await updateDataFeed(newDataFeed, proxyAddress, operatorClient)
-
-            await initializeHederaReserve(
-                BigNumber.from(newReserve),
-                newDataFeed,
-                operatorClient,
-                AccountId.fromString(operatorAccount).toSolidityAddress()
-            )
-            const afterDataFeed = await getReserveAddress(
-                proxyAddress,
-                operatorClient
-            )
-            const afterReserve = await getReserveAmount(
-                proxyAddress,
-                operatorClient
-            )
-
-            expect(beforeDataFeed).not.to.equals(afterDataFeed)
-            expect(beforeReserve).not.to.equals(afterReserve)
-            expect(afterReserve).to.equals(newReserve)
-        })
+        proxyAddress = result[0]
+        hederaReserveProxy = result[7]
     })
 
-    describe('Reserve Tests with reserve and token with same Decimals', function () {
-        before(async function () {
-            // Deploy Token using Client
-            const result = await deployContractsWithSDK({
-                name: TOKEN_NAME,
-                symbol: TOKEN_SYMBOL,
-                decimals: 2,
-                initialSupply: INIT_SUPPLY_TWO_DECIMALS.toString(),
-                maxSupply: MAX_SUPPLY_TWO_DECIMALS.toString(),
-                memo: TOKEN_MEMO,
-                account: operatorAccount,
-                privateKey: operatorPriKey,
-                publicKey: operatorPubKey,
-                isED25519Type: operatorIsE25519,
-                initialAmountDataFeed: INIT_RESERVE_1000.toString(),
-            })
-
-            proxyAddress = result[0]
-            hederaReserveProxy = result[7]
-        })
-
-        it('Can Mint less tokens than reserve', async function () {
-            const AmountToMint = BigNumber.from(10).mul(TWO_TOKEN_FACTOR)
-
-            // Get the initial reserve amount
-            const initialReserve = await getReserveAmount(
-                proxyAddress,
-                operatorClient
-            )
-
-            // Cashin tokens to previously associated account
-            await Mint(
-                proxyAddress,
-                AmountToMint,
-                operatorClient,
-                operatorAccount,
-                operatorIsE25519
-            )
-
-            // Check the reserve account : success
-            const finalReserve = (
-                await getReserveAmount(proxyAddress, operatorClient)
-            ).sub(AmountToMint)
-
-            const expectedTotalReserve = initialReserve.sub(AmountToMint)
-            expect(finalReserve.toString()).to.equals(
-                expectedTotalReserve.toString()
-            )
-        })
-
-        it('Can not mint more tokens than reserve', async function () {
-            // Retrieve current reserve amount
-            const totalReserve = await getReserveAmount(
-                proxyAddress,
-                operatorClient
-            )
-            // Cashin more tokens than reserve amount: fail
-            await expect(
-                Mint(
-                    proxyAddress,
-                    totalReserve.add(1),
-                    operatorClient,
-                    operatorAccount,
-                    operatorIsE25519
-                )
-            ).to.eventually.be.rejectedWith(Error)
-        })
+    it('Get getReserveAmount', async () => {
+        const reserve = await getReserveAmount(proxyAddress, operatorClient)
+        expect(reserve).to.equals(INIT_RESERVE_100.toString())
     })
 
-    describe('Reserve Tests with reserve decimals higher than token decimals', function () {
-        before(async function () {
-            // Deploy Token using Client
-            const result = await deployContractsWithSDK({
-                name: TOKEN_NAME,
-                symbol: TOKEN_SYMBOL,
-                decimals: 1,
-                initialSupply: INIT_SUPPLY_ONE_DECIMALS.toString(),
-                maxSupply: MAX_SUPPLY_ONE_DECIMALS.toString(),
-                memo: TOKEN_MEMO,
-                account: operatorAccount,
-                privateKey: operatorPriKey,
-                publicKey: operatorPubKey,
-                isED25519Type: operatorIsE25519,
-                initialAmountDataFeed: INIT_RESERVE_100.toString(),
-            })
+    it('Get datafeed', async () => {
+        const datafeed = await getReserveAddress(
+            proxyAddress,
+            operatorClient
+        )
+        expect(datafeed.toUpperCase()).not.to.equals(
+            '0x' +
+                (
+                    await getContractInfo(hederaReserveProxy.toString())
+                ).evm_address.toUpperCase()
+        )
+    })
 
-            proxyAddress = result[0]
-            hederaReserveProxy = result[7]
+    it('Update datafeed', async () => {
+        const beforeDataFeed = await getReserveAddress(
+            proxyAddress,
+            operatorClient
+        )
+        const beforeReserve = await getReserveAmount(
+            proxyAddress,
+            operatorClient
+        )
+        const newReserve = beforeReserve.add(
+            BigNumber.from('100').mul(THREE_TOKEN_FACTOR)
+        )
+        const [newDataFeed] = await deployHederaReserve(
+            newReserve,
+            operatorAccount,
+            operatorIsE25519,
+            operatorClient,
+            operatorPriKey
+        )
+        await updateDataFeed(newDataFeed, proxyAddress, operatorClient)
+
+        await initializeHederaReserve(
+            BigNumber.from(newReserve),
+            newDataFeed,
+            operatorClient,
+            AccountId.fromString(operatorAccount).toSolidityAddress()
+        )
+        const afterDataFeed = await getReserveAddress(
+            proxyAddress,
+            operatorClient
+        )
+        const afterReserve = await getReserveAmount(
+            proxyAddress,
+            operatorClient
+        )
+
+        expect(beforeDataFeed).not.to.equals(afterDataFeed)
+        expect(beforeReserve).not.to.equals(afterReserve)
+        expect(afterReserve).to.equals(newReserve)
+    })
+})
+
+describe('Reserve Tests with reserve and token with same Decimals', function () {
+    before(async function () {
+        // Deploy Token using Client
+        const result = await deployContractsWithSDK({
+            name: TOKEN_NAME,
+            symbol: TOKEN_SYMBOL,
+            decimals: 2,
+            initialSupply: INIT_SUPPLY_TWO_DECIMALS.toString(),
+            maxSupply: MAX_SUPPLY_TWO_DECIMALS.toString(),
+            memo: TOKEN_MEMO,
+            account: operatorAccount,
+            privateKey: operatorPriKey,
+            publicKey: operatorPubKey,
+            isED25519Type: operatorIsE25519,
+            initialAmountDataFeed: INIT_RESERVE_1000.toString(),
         })
 
-        it('Can Mint less tokens than reserve', async function () {
-            const AmountToMint = BigNumber.from(10).mul(ONE_TOKEN_FACTOR)
+        proxyAddress = result[0]
+        hederaReserveProxy = result[7]
+    })
 
-            // Get the initial reserve amount
-            const initialReserve = await getReserveAmount(
-                proxyAddress,
-                operatorClient
-            )
+    it('Can Mint less tokens than reserve', async function () {
+        const AmountToMint = BigNumber.from(10).mul(TWO_TOKEN_FACTOR)
 
-            // Cashin tokens to previously associated account
-            await Mint(
+        // Get the initial reserve amount
+        const initialReserve = await getReserveAmount(
+            proxyAddress,
+            operatorClient
+        )
+
+        // Cashin tokens to previously associated account
+        await Mint(
+            proxyAddress,
+            AmountToMint,
+            operatorClient,
+            operatorAccount,
+            operatorIsE25519
+        )
+
+        // Check the reserve account : success
+        const finalReserve = (
+            await getReserveAmount(proxyAddress, operatorClient)
+        ).sub(AmountToMint)
+
+        const expectedTotalReserve = initialReserve.sub(AmountToMint)
+        expect(finalReserve.toString()).to.equals(
+            expectedTotalReserve.toString()
+        )
+    })
+
+    it('Can not mint more tokens than reserve', async function () {
+        // Retrieve current reserve amount
+        const totalReserve = await getReserveAmount(
+            proxyAddress,
+            operatorClient
+        )
+        // Cashin more tokens than reserve amount: fail
+        await expect(
+            Mint(
                 proxyAddress,
-                AmountToMint,
+                totalReserve.add(1),
                 operatorClient,
                 operatorAccount,
                 operatorIsE25519
             )
+        ).to.eventually.be.rejectedWith(Error)
+    })
+})
 
-            // Check the reserve account : success
-            const finalReserve = (
-                await getReserveAmount(proxyAddress, operatorClient)
-            ).sub(AmountToMint)
-
-            const expectedTotalReserve = initialReserve.sub(AmountToMint)
-            expect(finalReserve.toString()).to.equals(
-                expectedTotalReserve.toString()
-            )
+describe('Reserve Tests with reserve decimals higher than token decimals', function () {
+    before(async function () {
+        // Deploy Token using Client
+        const result = await deployContractsWithSDK({
+            name: TOKEN_NAME,
+            symbol: TOKEN_SYMBOL,
+            decimals: 1,
+            initialSupply: INIT_SUPPLY_ONE_DECIMALS.toString(),
+            maxSupply: MAX_SUPPLY_ONE_DECIMALS.toString(),
+            memo: TOKEN_MEMO,
+            account: operatorAccount,
+            privateKey: operatorPriKey,
+            publicKey: operatorPubKey,
+            isED25519Type: operatorIsE25519,
+            initialAmountDataFeed: INIT_RESERVE_100.toString(),
         })
 
-        it('Can not mint more tokens than reserve', async function () {
-            // Retrieve current reserve amount
-            const totalReserve = await getReserveAmount(
-                proxyAddress,
-                operatorClient
-            )
-            // Cashin more tokens than reserve amount: fail
-            await expect(
-                Mint(
-                    proxyAddress,
-                    totalReserve.add(1),
-                    operatorClient,
-                    operatorAccount,
-                    operatorIsE25519
-                )
-            ).to.eventually.be.rejectedWith(Error)
-        })
+        proxyAddress = result[0]
+        hederaReserveProxy = result[7]
     })
 
-    describe('Reserve Tests with reserve decimals lower than token decimals', function () {
-        before(async function () {
-            // Deploy Token using Client
-            const result = await deployContractsWithSDK({
-                name: TOKEN_NAME,
-                symbol: TOKEN_SYMBOL,
-                decimals: 3,
-                initialSupply: INIT_SUPPLY_THREE_DECIMALS.toString(),
-                maxSupply: MAX_SUPPLY_THREE_DECIMALS.toString(),
-                memo: TOKEN_MEMO,
-                account: operatorAccount,
-                privateKey: operatorPriKey,
-                publicKey: operatorPubKey,
-                isED25519Type: operatorIsE25519,
-                initialAmountDataFeed: INIT_RESERVE_1000.toString(),
-            })
+    it('Can Mint less tokens than reserve', async function () {
+        const AmountToMint = BigNumber.from(10).mul(ONE_TOKEN_FACTOR)
 
-            proxyAddress = result[0]
-            hederaReserveProxy = result[7]
-        })
+        // Get the initial reserve amount
+        const initialReserve = await getReserveAmount(
+            proxyAddress,
+            operatorClient
+        )
 
-        it('Can Mint less tokens than reserve', async function () {
-            const AmountToMint = BigNumber.from(10).mul(THREE_TOKEN_FACTOR)
+        // Cashin tokens to previously associated account
+        await Mint(
+            proxyAddress,
+            AmountToMint,
+            operatorClient,
+            operatorAccount,
+            operatorIsE25519
+        )
 
-            // Get the initial reserve amount
-            const initialReserve = await getReserveAmount(
+        // Check the reserve account : success
+        const finalReserve = (
+            await getReserveAmount(proxyAddress, operatorClient)
+        ).sub(AmountToMint)
+
+        const expectedTotalReserve = initialReserve.sub(AmountToMint)
+        expect(finalReserve.toString()).to.equals(
+            expectedTotalReserve.toString()
+        )
+    })
+
+    it('Can not mint more tokens than reserve', async function () {
+        // Retrieve current reserve amount
+        const totalReserve = await getReserveAmount(
+            proxyAddress,
+            operatorClient
+        )
+        // Cashin more tokens than reserve amount: fail
+        await expect(
+            Mint(
                 proxyAddress,
-                operatorClient
-            )
-
-            // Cashin tokens to previously associated account
-            await Mint(
-                proxyAddress,
-                AmountToMint,
+                totalReserve.add(1),
                 operatorClient,
                 operatorAccount,
                 operatorIsE25519
             )
-
-            // Check the reserve account : success
-            const finalReserve = (
-                await getReserveAmount(proxyAddress, operatorClient)
-            ).sub(AmountToMint)
-
-            const expectedTotalReserve = initialReserve.sub(AmountToMint)
-            expect(finalReserve.toString()).to.equals(
-                expectedTotalReserve.toString()
-            )
-        })
-
-        it('Can not mint more tokens than reserve', async function () {
-            // Retrieve current reserve amount
-            const totalReserve = await getReserveAmount(
-                proxyAddress,
-                operatorClient
-            )
-            // Cashin more tokens than reserve amount: fail
-            await expect(
-                Mint(
-                    proxyAddress,
-                    totalReserve.add(1),
-                    operatorClient,
-                    operatorAccount,
-                    operatorIsE25519
-                )
-            ).to.eventually.be.rejectedWith(Error)
-        })
+        ).to.eventually.be.rejectedWith(Error)
     })
-}
+})
+
+describe('Reserve Tests with reserve decimals lower than token decimals', function () {
+    before(async function () {
+        // Deploy Token using Client
+        const result = await deployContractsWithSDK({
+            name: TOKEN_NAME,
+            symbol: TOKEN_SYMBOL,
+            decimals: 3,
+            initialSupply: INIT_SUPPLY_THREE_DECIMALS.toString(),
+            maxSupply: MAX_SUPPLY_THREE_DECIMALS.toString(),
+            memo: TOKEN_MEMO,
+            account: operatorAccount,
+            privateKey: operatorPriKey,
+            publicKey: operatorPubKey,
+            isED25519Type: operatorIsE25519,
+            initialAmountDataFeed: INIT_RESERVE_1000.toString(),
+        })
+
+        proxyAddress = result[0]
+        hederaReserveProxy = result[7]
+    })
+
+    it('Can Mint less tokens than reserve', async function () {
+        const AmountToMint = BigNumber.from(10).mul(THREE_TOKEN_FACTOR)
+
+        // Get the initial reserve amount
+        const initialReserve = await getReserveAmount(
+            proxyAddress,
+            operatorClient
+        )
+
+        // Cashin tokens to previously associated account
+        await Mint(
+            proxyAddress,
+            AmountToMint,
+            operatorClient,
+            operatorAccount,
+            operatorIsE25519
+        )
+
+        // Check the reserve account : success
+        const finalReserve = (
+            await getReserveAmount(proxyAddress, operatorClient)
+        ).sub(AmountToMint)
+
+        const expectedTotalReserve = initialReserve.sub(AmountToMint)
+        expect(finalReserve.toString()).to.equals(
+            expectedTotalReserve.toString()
+        )
+    })
+
+    it('Can not mint more tokens than reserve', async function () {
+        // Retrieve current reserve amount
+        const totalReserve = await getReserveAmount(
+            proxyAddress,
+            operatorClient
+        )
+        // Cashin more tokens than reserve amount: fail
+        await expect(
+            Mint(
+                proxyAddress,
+                totalReserve.add(1),
+                operatorClient,
+                operatorAccount,
+                operatorIsE25519
+            )
+        ).to.eventually.be.rejectedWith(Error)
+    })
+})
