@@ -52,6 +52,8 @@ import DfnsSettings from 'domain/context/custodialwalletsettings/DfnsSettings.js
 import FireblocksSettings from '../../domain/context/custodialwalletsettings/FireblocksSettings';
 import { HederaId } from '../../domain/context/shared/HederaId';
 import PublicKey from '../../domain/context/account/PublicKey';
+import { FireblocksTransactionAdapter } from '../out/hs/hts/custodial/FireblocksTransactionAdapter.js';
+import { DFNSTransactionAdapter } from '../out/hs/hts/custodial/DFNSTransactionAdapter.js';
 
 export { InitializationData, SupportedWallets };
 
@@ -161,6 +163,10 @@ class NetworkInPort implements INetworkInPort {
 				wallets.push(SupportedWallets.HASHPACK);
 			} else if (val instanceof BladeTransactionAdapter) {
 				wallets.push(SupportedWallets.BLADE);
+			} else if (val instanceof FireblocksTransactionAdapter) {
+				wallets.push(SupportedWallets.FIREBLOCKS);
+			} else if (val instanceof DFNSTransactionAdapter) {
+				wallets.push(SupportedWallets.DFNS);
 			} else {
 				wallets.push(SupportedWallets.CLIENT);
 			}
