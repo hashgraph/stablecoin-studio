@@ -19,17 +19,17 @@
  */
 
 //* Factories
-export * from './factories/StrategyFactory';
+export * from './factories/StrategyFactory.js';
 //* Models
 export * from './models/signature/SignatureRequest';
 //* Services
 export * from './services/CustodialWalletService.js';
 //* Strategies
-export * from './strategies/config/DFNSConfig';
-export * from './strategies/config/FireblocksConfig';
-export * from './strategies/config/IStrategyConfig';
-export * from './strategies/signature/DFNSStrategy';
-export * from './strategies/signature/FireblocksStrategy';
-export * from './strategies/signature/ISignatureStrategy';
+export * from './strategies/config/DFNSConfig.js';
+export * from './strategies/config/FireblocksConfig.js';
+export * from './strategies/config/IStrategyConfig.js';
+export * from './strategies/signature/DFNSStrategy.js';
+export * from './strategies/signature/FireblocksStrategy.js';
+export * from './strategies/signature/ISignatureStrategy.js';
 //* Utils
-export * from './utils/utilities';
+export * from './utils/utilities.js';

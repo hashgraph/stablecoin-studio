@@ -26,7 +26,7 @@ import {
 	CustodialWalletService,
 	DFNSConfig,
 	SignatureRequest,
-} from '@hashgraph/hedera-custodians-integration/src';
+} from '@hashgraph/hedera-custodians-integration';
 import { Environment } from '../../../../../domain/context/network/Environment';
 import { singleton } from 'tsyringe';
 import LogService from '../../../../../app/service/LogService';
