@@ -185,7 +185,9 @@ class NetworkInPort implements INetworkInPort {
 	async connect(req: ConnectRequest): Promise<InitializationData> {
 		handleValidation('ConnectRequest', req);
 
-		const account = RequestMapper.mapAccount(req.account);
+		const account = req.account
+			? RequestMapper.mapAccount(req.account)
+			: undefined;
 		const custodialSettings = this.getCustodialSettings(req);
 		if (
 			req.wallet == SupportedWallets.HASHPACK ||
@@ -217,8 +219,9 @@ class NetworkInPort implements INetworkInPort {
 		return res.payload;
 	}
 
-	// TODO: check with @Alberto on monday
-	private getCustodialSettings(req: ConnectRequest) {
+	private getCustodialSettings(
+		req: ConnectRequest,
+	): DfnsSettings | FireblocksSettings | undefined {
 		if (
 			req.custodialWalletSettings &&
 			req.wallet === SupportedWallets.DFNS

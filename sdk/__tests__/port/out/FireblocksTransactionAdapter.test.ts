@@ -19,13 +19,9 @@
  */
 
 import {
-	Account,
-	AssociateTokenRequest,
 	CreateRequest,
 	InitializationRequest,
-	KYCRequest,
 	Network,
-	RequestAccount,
 	RequestPublicKey,
 	StableCoin,
 	StableCoinViewModel,
@@ -38,17 +34,21 @@ import ConnectRequest, {
 	FireblocksConfigRequest,
 } from '../../../src/port/in/request/ConnectRequest';
 import {
-	CLIENT_ACCOUNT_ED25519,
 	FACTORY_ADDRESS,
 	FIREBLOCKS_SETTINGS,
 	HEDERA_TOKEN_MANAGER_ADDRESS,
 } from '../../config';
 import Injectable from '../../../src/core/Injectable';
-import account from '../../../src/port/in/Account';
+import * as fs from 'fs';
+import * as path from 'path';
 
 const decimals = 6;
 const initialSupply = 1000;
 const maxSupply = 1000000;
+const apiSecretKey = fs.readFileSync(
+	path.resolve(FIREBLOCKS_SETTINGS.apiSecretKeyPath),
+	'utf8',
+);
 
 describe('🧪 FireblocksTransactionAdapter test', () => {
 	let stableCoinHTS: StableCoinViewModel;
@@ -69,7 +69,7 @@ describe('🧪 FireblocksTransactionAdapter test', () => {
 	};
 
 	const fireblocksSettings: FireblocksConfigRequest = {
-		apiSecretKey: FIREBLOCKS_SETTINGS.apiSecretKey,
+		apiSecretKey: apiSecretKey,
 		apiKey: FIREBLOCKS_SETTINGS.apiKey,
 		baseUrl: FIREBLOCKS_SETTINGS.baseUrl,
 		vaultAccountId: FIREBLOCKS_SETTINGS.vaultAccountId,
@@ -82,14 +82,9 @@ describe('🧪 FireblocksTransactionAdapter test', () => {
 		key: FIREBLOCKS_SETTINGS.hederaAccountPublicKey,
 	};
 
-	const requestAccount: RequestAccount = {
-		accountId: '',
-	};
-
 	beforeAll(async () => {
 		await Network.connect(
 			new ConnectRequest({
-				account: requestAccount,
 				network: 'testnet',
 				wallet: SupportedWallets.FIREBLOCKS,
 				mirrorNode: mirrorNode,
@@ -109,7 +104,7 @@ describe('🧪 FireblocksTransactionAdapter test', () => {
 		);
 		Injectable.resolveTransactionHandler();
 
-		// await delay();
+		await delay();
 		//
 		// await StableCoin.associate(
 		// 	new AssociateTokenRequest({

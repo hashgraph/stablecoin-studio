@@ -110,11 +110,11 @@ export const RPC_NODE = {
 
 export const FIREBLOCKS_SETTINGS = {
 	apiKey: process.env.FIREBLOCKS_API_KEY ?? '',
-	apiSecretKey: process.env.FIREBLOCKS_API_SECRET_KEY ?? '',
+	apiSecretKeyPath: process.env.FIREBLOCKS_API_SECRET_KEY_PATH ?? '',
 	baseUrl: process.env.FIREBLOCKS_BASE_URL ?? '',
 	vaultAccountId: process.env.FIREBLOCKS_VAULT_ACCOUNT_ID ?? '',
 	assetId: process.env.FIREBLOCKS_ASSET_ID ?? '',
 	hederaAccountId: process.env.FIREBLOCKS_HEDERA_ACCOUNT_ID ?? '',
 	hederaAccountPublicKey:
-		process.env.FIREBLOCKS_HEDERA_ACCOUNT_PUBLIC_KEY ?? '',
+		process.env.FIREBLOCKS_HEDERA_ACCOUNT_CLIENT_PUBLIC_KEY_ED25519 ?? '',
 };
