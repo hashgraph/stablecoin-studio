@@ -18,15 +18,18 @@
  *
  */
 
-import { ISignatureStrategy } from '../signature/ISignatureStrategy.js';
+import CustodialWalletSettings from './CustodialWalletSettings';
 
-/**
- * Represents the configuration for a strategy.
- */
-export interface IStrategyConfig {
-  /**
-   * Gets the signature strategy for the strategy configuration.
-   * @returns The signature strategy.
-   */
-  getSignatureStrategy(): ISignatureStrategy;
+export default class FireblocksConfig extends CustodialWalletSettings {
+	constructor(
+		public apiKey: string,
+		public apiSecretKey: string,
+		public baseUrl: string,
+		public assetId: string,
+		public vaultAccountId: string,
+		hederaAccountId: string,
+		hederaAccountPublicKey: string,
+	) {
+		super(hederaAccountId, hederaAccountPublicKey);
+	}
 }
