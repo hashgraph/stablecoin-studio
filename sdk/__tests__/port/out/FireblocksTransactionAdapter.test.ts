@@ -104,7 +104,7 @@ describe('🧪 FireblocksTransactionAdapter test', () => {
 		);
 		Injectable.resolveTransactionHandler();
 
-		await delay();
+		//await delay();
 		//
 		// await StableCoin.associate(
 		// 	new AssociateTokenRequest({
@@ -126,7 +126,7 @@ describe('🧪 FireblocksTransactionAdapter test', () => {
 	}, 60_000);
 
 	it('Fireblocks should create a Stable Coin', async () => {
-		const requestHTS = new CreateRequest({
+		const requesCreateStableCoin = new CreateRequest({
 			name: 'TEST_ACCELERATOR_HTS',
 			symbol: 'TEST',
 			decimals: decimals,
@@ -149,6 +149,6 @@ describe('🧪 FireblocksTransactionAdapter test', () => {
 			metadata: '',
 		});
 
-		stableCoinHTS = (await StableCoin.create(requestHTS)).coin;
+		stableCoinHTS = (await StableCoin.create(requesCreateStableCoin)).coin;
 	}, 60_000);
 });

@@ -92,10 +92,9 @@ export class FireblocksTransactionAdapter extends HederaTransactionAdapter {
 	): Promise<Uint8Array> => {
 		const uint8Array = new Uint8Array(message);
 		const signatureRequest = new SignatureRequest(uint8Array);
-		const result = await this.custodialWalletService.signTransaction(
+		return await this.custodialWalletService.signTransaction(
 			signatureRequest
 		);
-		return result;
 	};
 
 	private initCustodialWalletService(
