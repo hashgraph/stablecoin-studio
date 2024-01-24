@@ -5,6 +5,7 @@ npm-debug.log*
 
 # Dependencies
 node_modules/
+# package-lock.json
 
 # Coverage
 coverage
@@ -32,6 +33,4 @@ resources/keystore/*
 
 # Misc
 .DS_Store
-
-package-lock.json
 report.json

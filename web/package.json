@@ -5,8 +5,8 @@
 		"build/"
 	],
 	"dependencies": {
-		"@chakra-ui/icons": "^2.1.1",
-		"@chakra-ui/react": "^2.8.2",
+		"@chakra-ui/icons": "2.0.17",
+		"@chakra-ui/react": "2.6.1",
 		"@emotion/react": "^11.0.0",
 		"@emotion/styled": "^11.0.0 ",
 		"@hashgraph/stablecoin-npm-sdk": "file:./../sdk",
@@ -21,7 +21,7 @@
 		"@types/react-redux": "^7.1.25",
 		"axios": "^1.2.3",
 		"browserify-zlib": "^0.2.0",
-		"chakra-react-select": "^4.7.6",
+		"chakra-react-select": "4.5.0",
 		"framer-motion": "^8.5.2",
 		"maskdata": "^1.1.10",
 		"moment": "^2.29.4",
