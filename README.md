@@ -1,7 +1,6 @@
 <div align="center">
 
 # Stablecoin Studio
-test
 
 [![License](https://img.shields.io/badge/license-apache2-blue.svg)](LICENSE)
 
