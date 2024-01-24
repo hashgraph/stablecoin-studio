@@ -60,6 +60,8 @@ import {
 	CLIENT_ACCOUNT_ED25519,
 	FACTORY_ADDRESS,
 	HEDERA_TOKEN_MANAGER_ADDRESS,
+	MIRROR_NODE,
+	RPC_NODE,
 } from '../../config.js';
 import Account from '../../../src/domain/context/account/Account.js';
 import NetworkService from '../../../src/app/service/NetworkService.js';
@@ -80,12 +82,13 @@ import EvmAddress from '../../../src/domain/context/contract/EvmAddress.js';
 
 SDK.log = { level: 'ERROR', transports: new LoggerTransports.Console() };
 const mirrorNode: MirrorNode = {
-	name: 'testmirrorNode',
-	baseUrl: 'https://testnet.mirrornode.hedera.com/api/v1/',
+	name: MIRROR_NODE.name,
+	baseUrl: MIRROR_NODE.baseUrl,
 };
+
 const rpcNode: JsonRpcRelay = {
-	name: 'testrpcNode',
-	baseUrl: 'http://127.0.0.1:7546/api',
+	name: RPC_NODE.name,
+	baseUrl: RPC_NODE.baseUrl,
 };
 const decimals = 6;
 const initSupply = 1000;

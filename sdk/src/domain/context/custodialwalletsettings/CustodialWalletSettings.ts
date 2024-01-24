@@ -18,15 +18,9 @@
  *
  */
 
-import { ISignatureStrategy } from '../signature/ISignatureStrategy.js';
-
-/**
- * Represents the configuration for a strategy.
- */
-export interface IStrategyConfig {
-  /**
-   * Gets the signature strategy for the strategy configuration.
-   * @returns The signature strategy.
-   */
-  getSignatureStrategy(): ISignatureStrategy;
+export default class CustodialWalletSettings {
+	constructor(
+		public hederaAccountId: string,
+		public hederaAccountPublicKey: string,
+	) {}
 }
