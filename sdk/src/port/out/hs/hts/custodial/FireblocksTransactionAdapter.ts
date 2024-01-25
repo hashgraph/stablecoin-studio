@@ -149,7 +149,7 @@ export class FireblocksTransactionAdapter extends HederaTransactionAdapter {
 			fireblocksSettings.vaultAccountId,
 			fireblocksSettings.assetId
 		);
-		this.initClient(accountId, accountMirror.publicKey ? accountMirror.publicKey.toString() : '');
+		this.initClient(accountId, fireblocksSettings.hederaAccountPublicKey);
 		const eventData: WalletPairedEvent = {
 			wallet: SupportedWallets.FIREBLOCKS,
 			data: {

@@ -83,7 +83,7 @@ export class DFNSTransactionAdapter extends HederaTransactionAdapter {
 			accountId,
 		);
 		this.initCustodialWalletService(dfnsSettings);
-		this.initClient(accountId, accountMirror.publicKey?.toString() ?? '');
+		this.initClient(accountId, dfnsSettings.hederaAccountPublicKey);
 		const accountProps: AccountProps = {
 			id: accountId,
 			publicKey: accountMirror.publicKey,
