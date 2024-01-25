@@ -35,7 +35,7 @@ export interface DFNSConfigRequest {
 	serviceAccountPrivateKey: string;
 	urlApplicationOrigin: string;
 	applicationId: string;
-	testUrl: string;
+	baseUrl: string;
 	walletId: string;
 	hederaAccountId: string;
 	hederaAccountPublicKey: string; // TODO: check if public key is mandatory or can be retrieved from the custodial service

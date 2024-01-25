@@ -198,7 +198,7 @@ export default class RequestMapper {
 			req.authorizationToken,
 			req.urlApplicationOrigin,
 			req.applicationId,
-			req.testUrl,
+			req.baseUrl,
 			req.walletId,
 			req.hederaAccountId,
 			req.hederaAccountPublicKey,
