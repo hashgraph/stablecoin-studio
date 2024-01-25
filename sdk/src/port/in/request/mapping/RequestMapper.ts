@@ -212,8 +212,8 @@ export default class RequestMapper {
 			req.apiKey,
 			req.apiSecretKey,
 			req.baseUrl,
-			req.vaultAccountId,
 			req.assetId,
+			req.vaultAccountId,
 			req.hederaAccountId,
 			req.hederaAccountPublicKey,
 		);
