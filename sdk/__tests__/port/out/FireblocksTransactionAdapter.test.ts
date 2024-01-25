@@ -103,26 +103,6 @@ describe('🧪 FireblocksTransactionAdapter test', () => {
 			}),
 		);
 		Injectable.resolveTransactionHandler();
-
-		//await delay();
-		//
-		// await StableCoin.associate(
-		// 	new AssociateTokenRequest({
-		// 		targetId: FIREBLOCKS_SETTINGS.hederaAccountId.toString(),
-		// 		tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.0',
-		// 	}),
-		// );
-		//
-		// await delay();
-		//
-		// await StableCoin.grantKyc(
-		// 	new KYCRequest({
-		// 		targetId: FIREBLOCKS_SETTINGS.hederaAccountId.toString(),
-		// 		tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.0',
-		// 	}),
-		// );
-		//
-		// await delay();
 	}, 60_000);
 
 	it('Fireblocks should create a Stable Coin', async () => {

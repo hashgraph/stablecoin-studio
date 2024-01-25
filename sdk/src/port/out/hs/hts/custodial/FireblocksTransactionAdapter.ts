@@ -111,13 +111,14 @@ export class FireblocksTransactionAdapter extends HederaTransactionAdapter {
 		apiSecretKey: string,
 		baseUrl: string,
 		vaultAccountId: string,
+		assetId: string
 	): void {
 		const fireblocksConfig = new FireblocksConfig(
 			apiKey,
 			apiSecretKey,
 			baseUrl,
 			vaultAccountId,
-			'HBAR_TEST',
+			assetId
 		);
 		this.custodialWalletService = new CustodialWalletService(
 			fireblocksConfig,
@@ -133,23 +134,22 @@ export class FireblocksTransactionAdapter extends HederaTransactionAdapter {
 	): Promise<InitializationData> {
 		Injectable.registerTransactionHandler(this);
 		const accountId = fireblocksSettings.hederaAccountId;
-		//TODO: test if we can get the public key from the mirror node -> delete from the request
 		const accountMirror = await this.mirrorNodeAdapter.getAccountInfo(
-			accountId,
+			accountId
 		);
-		this.initCustodialWalletService(
-			fireblocksSettings.apiKey,
-			fireblocksSettings.apiSecretKey,
-			fireblocksSettings.baseUrl,
-			fireblocksSettings.vaultAccountId,
-		);
-
-		this.initClient(accountId, fireblocksSettings.hederaAccountPublicKey);
 		const accountProps: AccountProps = {
 			id: accountId,
 			publicKey: accountMirror.publicKey,
 		};
 		this.account = new Account(accountProps);
+		this.initCustodialWalletService(
+			fireblocksSettings.apiKey,
+			fireblocksSettings.apiSecretKey,
+			fireblocksSettings.baseUrl,
+			fireblocksSettings.vaultAccountId,
+			fireblocksSettings.assetId
+		);
+		this.initClient(accountId, accountMirror.publicKey ? accountMirror.publicKey.toString() : '');
 		const eventData: WalletPairedEvent = {
 			wallet: SupportedWallets.FIREBLOCKS,
 			data: {
