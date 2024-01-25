@@ -111,14 +111,14 @@ export class FireblocksTransactionAdapter extends HederaTransactionAdapter {
 		apiSecretKey: string,
 		baseUrl: string,
 		vaultAccountId: string,
-		assetId: string
+		assetId: string,
 	): void {
 		const fireblocksConfig = new FireblocksConfig(
 			apiKey,
 			apiSecretKey,
 			baseUrl,
 			vaultAccountId,
-			assetId
+			assetId,
 		);
 		this.custodialWalletService = new CustodialWalletService(
 			fireblocksConfig,
@@ -135,7 +135,7 @@ export class FireblocksTransactionAdapter extends HederaTransactionAdapter {
 		Injectable.registerTransactionHandler(this);
 		const accountId = fireblocksSettings.hederaAccountId;
 		const accountMirror = await this.mirrorNodeAdapter.getAccountInfo(
-			accountId
+			accountId,
 		);
 		const accountProps: AccountProps = {
 			id: accountId,
@@ -147,7 +147,7 @@ export class FireblocksTransactionAdapter extends HederaTransactionAdapter {
 			fireblocksSettings.apiSecretKey,
 			fireblocksSettings.baseUrl,
 			fireblocksSettings.vaultAccountId,
-			fireblocksSettings.assetId
+			fireblocksSettings.assetId,
 		);
 		this.initClient(accountId, fireblocksSettings.hederaAccountPublicKey);
 		const eventData: WalletPairedEvent = {

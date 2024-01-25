@@ -19,6 +19,7 @@
  */
 
 import {
+	AssociateTokenRequest,
 	CreateRequest,
 	InitializationRequest,
 	Network,
@@ -44,7 +45,6 @@ import * as path from 'path';
 
 const decimals = 6;
 const initialSupply = 1000;
-const maxSupply = 1000000;
 const apiSecretKey = fs.readFileSync(
 	path.resolve(FIREBLOCKS_SETTINGS.apiSecretKeyPath),
 	'utf8',
@@ -52,7 +52,6 @@ const apiSecretKey = fs.readFileSync(
 
 describe('🧪 FireblocksTransactionAdapter test', () => {
 	let stableCoinHTS: StableCoinViewModel;
-
 	const delay = async (seconds = 5): Promise<void> => {
 		seconds = seconds * 1000;
 		await new Promise((r) => setTimeout(r, seconds));
@@ -103,6 +102,7 @@ describe('🧪 FireblocksTransactionAdapter test', () => {
 			}),
 		);
 		Injectable.resolveTransactionHandler();
+		await delay();
 	}, 60_000);
 
 	it('Fireblocks should create a Stable Coin', async () => {
@@ -130,5 +130,16 @@ describe('🧪 FireblocksTransactionAdapter test', () => {
 		});
 
 		stableCoinHTS = (await StableCoin.create(requesCreateStableCoin)).coin;
+		expect(stableCoinHTS?.tokenId).not.toBeNull();
+	}, 60_000);
+
+	it('Fireblocks should associate a token', async () => {
+		await delay();
+		await StableCoin.associate(
+			new AssociateTokenRequest({
+				targetId: FIREBLOCKS_SETTINGS.hederaAccountId,
+				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.0',
+			}),
+		);
 	}, 60_000);
 });
