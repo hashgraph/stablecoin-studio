@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {BigNumber} from 'ethers'
-import {deployHederaReserve} from '../scripts/deploy'
+import { BigNumber } from 'ethers'
+import { deployHederaReserve } from '../scripts/deploy'
 import {
     admin,
     changeAdmin,
@@ -20,9 +20,12 @@ import {
     upgradeTo,
     versionHederaReserve,
 } from '../scripts/contractsMethods'
-import {getContractInfo, toEvmAddress} from '../scripts/utils'
-import {AccountId, ContractId} from '@hashgraph/sdk'
-import {ITransparentUpgradeableProxy__factory, ProxyAdmin__factory,} from '../typechain-types'
+import { getContractInfo, toEvmAddress } from '../scripts/utils'
+import { AccountId, ContractId } from '@hashgraph/sdk'
+import {
+    ITransparentUpgradeableProxy__factory,
+    ProxyAdmin__factory,
+} from '../typechain-types'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import {
