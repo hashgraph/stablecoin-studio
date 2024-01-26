@@ -41,7 +41,7 @@ export class DFNSTransactionAdapter extends CustodialTransactionAdapter {
 		return Promise.resolve(this.networkService.environment);
 	}
 
-	private initCustodialWalletService(settings: DfnsSettings): void {
+	initCustodialWalletService(settings: DfnsSettings): void {
 		this.custodialWalletService = new CustodialWalletService(
 			new DFNSConfig(
 				settings.serviceAccountSecretKey,
@@ -55,27 +55,8 @@ export class DFNSTransactionAdapter extends CustodialTransactionAdapter {
 		);
 	}
 
-	async register(settings: DfnsSettings): Promise<InitializationData> {
-		Injectable.registerTransactionHandler(this);
-
-		const accountMirror = await this.mirrorNodeAdapter.getAccountInfo(settings.hederaAccountId);
-		if (!accountMirror.publicKey) {
-			throw new Error('PublicKey not found in the mirror node');
-		}
-
-		this.initCustodialWalletService(settings);
-		this.initClient(settings.hederaAccountId, accountMirror.publicKey.key);
-
-		this.account = new Account({
-			id: settings.hederaAccountId,
-			publicKey: accountMirror.publicKey,
-		});
-
-		const eventData = this.createWalletPairedEvent(SupportedWallets.DFNS);
-		this.eventService.emit(WalletEvents.walletPaired, eventData);
-		LogService.logTrace('DFNS registered as handler: ', eventData);
-
-		return { account: this.getAccount() };
+	getSupportedWallet(): SupportedWallets {
+		return SupportedWallets.DFNS;
 	}
 
 }

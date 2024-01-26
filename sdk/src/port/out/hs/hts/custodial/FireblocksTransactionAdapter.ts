@@ -22,10 +22,7 @@ import {CustodialWalletService, FireblocksConfig,} from '@hashgraph/hedera-custo
 import {singleton} from 'tsyringe';
 import {WalletEvents,} from '../../../../../app/service/event/WalletEvent';
 import LogService from '../../../../../app/service/LogService';
-import Injectable from '../../../../../core/Injectable';
 import {SupportedWallets} from '../../../../../domain/context/network/Wallet';
-import {InitializationData} from '../../../TransactionAdapter';
-import Account from '../../../../../domain/context/account/Account';
 import FireblocksSettings from '../../../../../domain/context/custodialwalletsettings/FireblocksSettings';
 import {CustodialTransactionAdapter} from "./CustodialTransactionAdapter";
 
@@ -34,41 +31,22 @@ export class FireblocksTransactionAdapter extends CustodialTransactionAdapter {
 
 	init(): Promise<string> {
 		this.eventService.emit(WalletEvents.walletInit, {
-			wallet: SupportedWallets.FIREBLOCKS,
+			wallet: this.getSupportedWallet(),
 			initData: {},
 		});
 		LogService.logTrace('Fireblocks Initialized');
 		return Promise.resolve(this.networkService.environment);
 	}
 
-	private initCustodialWalletService(settings: FireblocksSettings): void {
+	initCustodialWalletService(settings: FireblocksSettings): void {
 		const { apiKey, apiSecretKey, baseUrl, vaultAccountId, assetId } = settings;
 		this.custodialWalletService = new CustodialWalletService(
 			new FireblocksConfig(apiKey, apiSecretKey, baseUrl, vaultAccountId, assetId),
 		);
 	}
 
-	async register(
-		fireblocksSettings: FireblocksSettings,
-	): Promise<InitializationData> {
-		Injectable.registerTransactionHandler(this);
-		const accountMirror = await this.mirrorNodeAdapter.getAccountInfo(fireblocksSettings.hederaAccountId);
-		if (!accountMirror.publicKey) {
-			throw new Error('PublicKey not found in the mirror node');
-		}
-
-		this.account = new Account({
-			id: fireblocksSettings.hederaAccountId,
-			publicKey: accountMirror.publicKey,
-		});
-
-		this.initCustodialWalletService(fireblocksSettings);
-		this.initClient(fireblocksSettings.hederaAccountId, accountMirror.publicKey.key);
-
-		const eventData = this.createWalletPairedEvent(SupportedWallets.FIREBLOCKS);
-		this.eventService.emit(WalletEvents.walletPaired, eventData);
-		LogService.logTrace('Fireblocks registered as handler: ', eventData);
-
-		return { account: this.getAccount() };
+	getSupportedWallet(): SupportedWallets {
+		return SupportedWallets.FIREBLOCKS;
 	}
+
 }

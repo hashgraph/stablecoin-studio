@@ -37,7 +37,8 @@ import {TransactionResponse as HTransactionResponse} from "@hashgraph/sdk/lib/ex
 import {HTSTransactionResponseAdapter} from "../HTSTransactionResponseAdapter";
 import {SigningError} from "../../error/SigningError";
 import {SupportedWallets} from "../../../../../domain/context/network/Wallet";
-import {WalletPairedEvent} from "../../../../../app/service/event/WalletEvent";
+import {WalletEvents, WalletPairedEvent} from "../../../../../app/service/event/WalletEvent";
+import Injectable from "../../../../../core/Injectable";
 
 export abstract class CustodialTransactionAdapter extends HederaTransactionAdapter {
 	protected client: Client;
@@ -72,8 +73,6 @@ export abstract class CustodialTransactionAdapter extends HederaTransactionAdapt
 		const signatureRequest = new SignatureRequest(message);
 		return await this.custodialWalletService.signTransaction(signatureRequest);
 	};
-
-	public abstract register(settings: DfnsSettings | FireblocksSettings): Promise<InitializationData>;
 
 	public signAndSendTransaction = async (
 		t: Transaction,
@@ -115,6 +114,35 @@ export abstract class CustodialTransactionAdapter extends HederaTransactionAdapt
 				factoryId: this.networkService.configuration?.factoryAddress ?? '',
 			},
 		};
+	}
+
+	protected abstract initCustodialWalletService(settings: FireblocksSettings | DfnsSettings): void;
+
+	protected abstract getSupportedWallet(): SupportedWallets;
+
+	async register(
+		settings: FireblocksSettings | DfnsSettings,
+	): Promise<InitializationData> {
+		Injectable.registerTransactionHandler(this);
+		const accountMirror = await this.mirrorNodeAdapter.getAccountInfo(settings.hederaAccountId);
+		if (!accountMirror.publicKey) {
+			throw new Error('PublicKey not found in the mirror node');
+		}
+
+		this.account = new Account({
+			id: settings.hederaAccountId,
+			publicKey: accountMirror.publicKey,
+		});
+
+		this.initCustodialWalletService(settings);
+		this.initClient(settings.hederaAccountId, accountMirror.publicKey.key);
+
+		const wallet = this.getSupportedWallet();
+		const eventData = this.createWalletPairedEvent(wallet);
+		this.eventService.emit(WalletEvents.walletPaired, eventData);
+		LogService.logTrace(`${wallet} registered as handler: `, eventData);
+
+		return { account: this.getAccount() };
 	}
 
 	public getAccount(): Account {
