@@ -77,7 +77,6 @@ describe('🧪 DFNSTransactionAdapter test', () => {
 		baseUrl: DFNS_SETTINGS.baseUrl,
 		walletId: DFNS_SETTINGS.walletId,
 		hederaAccountId: DFNS_SETTINGS.hederaAccountId,
-		hederaAccountPublicKey: DFNS_SETTINGS.hederaAccountPublicKey,
 	};
 
 	const requestPublicKey: RequestPublicKey = {
@@ -105,10 +104,10 @@ describe('🧪 DFNSTransactionAdapter test', () => {
 			}),
 		);
 		Injectable.resolveTransactionHandler();
+		await delay();
 	}, 60_000);
 
 	it('DFNS should create a Stable Coin', async () => {
-		await delay();
 		const requestCreateStableCoin = new CreateRequest({
 			name: 'TEST_ACCELERATOR_HTS',
 			symbol: 'TEST',
@@ -137,7 +136,6 @@ describe('🧪 DFNSTransactionAdapter test', () => {
 	}, 60_000);
 
 	it('DFNS should associate a token', async () => {
-		await delay();
 		await StableCoin.associate(
 			new AssociateTokenRequest({
 				targetId: DFNS_SETTINGS.hederaAccountId,

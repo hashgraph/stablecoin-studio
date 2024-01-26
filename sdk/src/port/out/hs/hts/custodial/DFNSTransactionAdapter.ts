@@ -62,7 +62,7 @@ export class DFNSTransactionAdapter extends HederaTransactionAdapter {
 		@lazyInject(MirrorNodeAdapter)
 		public readonly mirrorNodeAdapter: MirrorNodeAdapter,
 		@lazyInject(NetworkService)
-		public readonly networkService: NetworkService, //private fireblocksConfig?: FireblocksConfig, //private dfnsConfig?: DFNSConfig,
+		public readonly networkService: NetworkService,
 	) {
 		super(mirrorNodeAdapter, networkService);
 	}
@@ -82,8 +82,11 @@ export class DFNSTransactionAdapter extends HederaTransactionAdapter {
 		const accountMirror = await this.mirrorNodeAdapter.getAccountInfo(
 			accountId,
 		);
+		if (!accountMirror.publicKey) {
+			throw new Error('PublicKey not found in the mirror node');
+		}
 		this.initCustodialWalletService(dfnsSettings);
-		this.initClient(accountId, dfnsSettings.hederaAccountPublicKey);
+		this.initClient(accountId, accountMirror.publicKey.key);
 		const accountProps: AccountProps = {
 			id: accountId,
 			publicKey: accountMirror.publicKey,

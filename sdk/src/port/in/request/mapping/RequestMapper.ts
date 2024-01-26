@@ -201,7 +201,6 @@ export default class RequestMapper {
 			req.baseUrl,
 			req.walletId,
 			req.hederaAccountId,
-			req.hederaAccountPublicKey,
 		);
 	}
 
@@ -215,7 +214,6 @@ export default class RequestMapper {
 			req.assetId,
 			req.vaultAccountId,
 			req.hederaAccountId,
-			req.hederaAccountPublicKey,
 		);
 	}
 }

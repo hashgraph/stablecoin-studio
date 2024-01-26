@@ -74,7 +74,6 @@ describe('🧪 FireblocksTransactionAdapter test', () => {
 		vaultAccountId: FIREBLOCKS_SETTINGS.vaultAccountId,
 		assetId: FIREBLOCKS_SETTINGS.assetId,
 		hederaAccountId: FIREBLOCKS_SETTINGS.hederaAccountId,
-		hederaAccountPublicKey: FIREBLOCKS_SETTINGS.hederaAccountPublicKey,
 	};
 
 	const requestPublicKey: RequestPublicKey = {
@@ -134,7 +133,6 @@ describe('🧪 FireblocksTransactionAdapter test', () => {
 	}, 60_000);
 
 	it('Fireblocks should associate a token', async () => {
-		await delay();
 		await StableCoin.associate(
 			new AssociateTokenRequest({
 				targetId: FIREBLOCKS_SETTINGS.hederaAccountId,

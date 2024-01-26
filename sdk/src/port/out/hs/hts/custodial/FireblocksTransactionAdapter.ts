@@ -137,6 +137,9 @@ export class FireblocksTransactionAdapter extends HederaTransactionAdapter {
 		const accountMirror = await this.mirrorNodeAdapter.getAccountInfo(
 			accountId,
 		);
+		if (!accountMirror.publicKey) {
+			throw new Error('PublicKey not found in the mirror node');
+		}
 		const accountProps: AccountProps = {
 			id: accountId,
 			publicKey: accountMirror.publicKey,
@@ -149,7 +152,7 @@ export class FireblocksTransactionAdapter extends HederaTransactionAdapter {
 			fireblocksSettings.vaultAccountId,
 			fireblocksSettings.assetId,
 		);
-		this.initClient(accountId, fireblocksSettings.hederaAccountPublicKey);
+		this.initClient(accountId, accountMirror.publicKey.key);
 		const eventData: WalletPairedEvent = {
 			wallet: SupportedWallets.FIREBLOCKS,
 			data: {

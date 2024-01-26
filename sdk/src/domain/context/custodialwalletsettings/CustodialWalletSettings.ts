@@ -19,8 +19,5 @@
  */
 
 export default class CustodialWalletSettings {
-	constructor(
-		public hederaAccountId: string,
-		public hederaAccountPublicKey: string,
-	) {}
+	constructor(public hederaAccountId: string) {}
 }

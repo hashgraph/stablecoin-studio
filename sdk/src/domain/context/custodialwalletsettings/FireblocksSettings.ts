@@ -28,8 +28,7 @@ export default class FireblocksConfig extends CustodialWalletSettings {
 		public assetId: string,
 		public vaultAccountId: string,
 		hederaAccountId: string,
-		hederaAccountPublicKey: string,
 	) {
-		super(hederaAccountId, hederaAccountPublicKey);
+		super(hederaAccountId);
 	}
 }

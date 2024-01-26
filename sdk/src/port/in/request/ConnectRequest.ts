@@ -38,7 +38,6 @@ export interface DFNSConfigRequest {
 	baseUrl: string;
 	walletId: string;
 	hederaAccountId: string;
-	hederaAccountPublicKey: string; // TODO: check if public key is mandatory or can be retrieved from the custodial service
 }
 
 export interface FireblocksConfigRequest {
@@ -48,7 +47,6 @@ export interface FireblocksConfigRequest {
 	vaultAccountId: string;
 	assetId: string;
 	hederaAccountId: string;
-	hederaAccountPublicKey: string;
 }
 
 type CustodialSettings = DFNSConfigRequest | FireblocksConfigRequest;

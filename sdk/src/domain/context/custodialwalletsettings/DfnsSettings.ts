@@ -30,8 +30,7 @@ export default class DfnsSettings extends CustodialWalletSettings {
 		public baseUrl: string,
 		public walletId: string,
 		hederaAccountId: string,
-		hederaAccountPublicKey: string,
 	) {
-		super(hederaAccountId, hederaAccountPublicKey);
+		super(hederaAccountId);
 	}
 }
