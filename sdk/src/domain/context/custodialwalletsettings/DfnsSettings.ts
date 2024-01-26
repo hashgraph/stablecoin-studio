@@ -18,9 +18,7 @@
  *
  */
 
-import CustodialWalletSettings from './CustodialWalletSettings.js';
-
-export default class DfnsSettings extends CustodialWalletSettings {
+export default class DfnsSettings {
 	constructor(
 		public serviceAccountSecretKey: string,
 		public serviceAccountCredentialId: string,
@@ -29,8 +27,6 @@ export default class DfnsSettings extends CustodialWalletSettings {
 		public appId: string,
 		public baseUrl: string,
 		public walletId: string,
-		hederaAccountId: string,
-	) {
-		super(hederaAccountId);
-	}
+		public hederaAccountId: string
+	) {}
 }

@@ -18,17 +18,13 @@
  *
  */
 
-import CustodialWalletSettings from './CustodialWalletSettings';
-
-export default class FireblocksConfig extends CustodialWalletSettings {
+export default class FireblocksSettings {
 	constructor(
 		public apiKey: string,
 		public apiSecretKey: string,
 		public baseUrl: string,
 		public assetId: string,
 		public vaultAccountId: string,
-		hederaAccountId: string,
-	) {
-		super(hederaAccountId);
-	}
+		public hederaAccountId: string,
+	) {}
 }
