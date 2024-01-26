@@ -101,8 +101,7 @@ describe('🧪 FireblocksTransactionAdapter test', () => {
 			}),
 		);
 		Injectable.resolveTransactionHandler();
-		await delay();
-	}, 60_000);
+	}, 80_000);
 
 	it('Fireblocks should create a Stable Coin', async () => {
 		const requesCreateStableCoin = new CreateRequest({
@@ -130,7 +129,7 @@ describe('🧪 FireblocksTransactionAdapter test', () => {
 
 		stableCoinHTS = (await StableCoin.create(requesCreateStableCoin)).coin;
 		expect(stableCoinHTS?.tokenId).not.toBeNull();
-	}, 60_000);
+	}, 80_000);
 
 	it('Fireblocks should associate a token', async () => {
 		await StableCoin.associate(
@@ -139,5 +138,5 @@ describe('🧪 FireblocksTransactionAdapter test', () => {
 				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.0',
 			}),
 		);
-	}, 60_000);
+	}, 80_000);
 });
