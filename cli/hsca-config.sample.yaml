@@ -17,11 +17,9 @@ networks:
     chainId: <Network chain Id>
 accounts:
   - accountId: <Hedera Id>
+    type: <SELF-CUSTODIAL|FIREBLOCKS|DFNS>
     network: <mainnet-testnet-previewnet>
     alias: <Account Alias>
-    privateKey:
-      key: <Account's private key>
-      type: <ED25519-ECDSA>
     importedTokens:
       - id: <Token Id>
         roles:
@@ -35,6 +33,29 @@ accounts:
           - <Role Hash>
           - <Role Hash>
         symbol: <Token symbol>
+    selfCustodial:
+      privateKey:
+        key: <Account's private key>
+        type: <ED25519-ECDSA>
+    nonCustodial:
+      fireblocks:
+        apiSecretKey: <Fireblocks API Secret Key>
+        apiKey: <Fireblocks API Key>
+        baseUrl: <Fireblocks API Base URL>
+        assetId: <Fireblocks Asset Id>
+        vaultAccountId: <Fireblocks Vault Account Id>
+        hederaAccountId: <Fireblocks Hedera Account Id>
+        hederaAccountPublicKey: <Fireblocks Hedera Account Public Key>
+      dfns:
+        authorizationToken: <DFNS Authorization Token>
+        credentialId: <DFNS Credential Id>
+        privateKey: <DFNS Private Key>
+        appOrigin: <DFNS App Origin>
+        appId: <DFNS App Id>
+        testUrl: <DFNS Test URL>
+        walletId: <DFNS Wallet Id>
+        hederaAccountId: <DFNS Hedera Account Id>
+        hederaAccountPublicKey: <DFNS Hedera Account Public Key>
 mirrors:
   - name: <Mirror Node Name>
     network: <mainnet-testnet-previewnet>

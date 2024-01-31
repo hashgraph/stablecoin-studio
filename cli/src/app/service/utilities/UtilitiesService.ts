@@ -1,7 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as inquirer from 'inquirer';
 import figlet from 'figlet-promised';
-import {configurationService, language, setMirrorNodeService, setRPCService,} from '../../../index.js';
+import {
+  configurationService,
+  language,
+  setMirrorNodeService,
+  setRPCService,
+} from '../../../index.js';
 import Service from '../Service.js';
 import Table from 'cli-table3';
 import {
@@ -13,16 +18,17 @@ import {
   SupportedWallets,
   ValidationResponse,
 } from '@hashgraph/stablecoin-npm-sdk';
-import {IAccountConfig} from '../../../domain/configuration/interfaces/IAccountConfig.js';
-import {INetworkConfig} from '../../../domain/configuration/interfaces/INetworkConfig.js';
+import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
+import { INetworkConfig } from '../../../domain/configuration/interfaces/INetworkConfig.js';
 import colors from 'colors';
 import MaskData from 'maskdata';
-import {clear} from 'console';
-import {IFactoryConfig} from '../../../domain/configuration/interfaces/IFactoryConfig.js';
-import {IHederaTokenManagerConfig} from '../../../domain/configuration/interfaces/IHederaTokenManagerConfig.js';
-import {IMirrorsConfig} from 'domain/configuration/interfaces/IMirrorsConfig.js';
-import {IRPCsConfig} from 'domain/configuration/interfaces/IRPCsConfig.js';
-import {MIRROR_NODE, RPC} from '../../../core/Constants.js';
+import { clear } from 'console';
+import { IFactoryConfig } from '../../../domain/configuration/interfaces/IFactoryConfig.js';
+import { IHederaTokenManagerConfig } from '../../../domain/configuration/interfaces/IHederaTokenManagerConfig.js';
+import { IMirrorsConfig } from 'domain/configuration/interfaces/IMirrorsConfig.js';
+import { IRPCsConfig } from 'domain/configuration/interfaces/IRPCsConfig.js';
+import { MIRROR_NODE, RPC } from '../../../core/Constants.js';
+import { AccountType } from '../../../domain/configuration/interfaces/AccountType';
 
 /**
  * Utilities Service
@@ -53,15 +59,51 @@ export default class UtilitiesService extends Service {
       new ConnectRequest({
         account: {
           accountId: account.accountId,
-          privateKey: {
-            key: account.privateKey.key,
-            type: account.privateKey.type,
-          },
+          privateKey:
+            account.type == AccountType.SelfCustodial
+              ? {
+                  key: account.selfCustodial.privateKey.key,
+                  type: account.selfCustodial.privateKey.type,
+                }
+              : undefined,
         },
         network: this.getCurrentNetwork().name,
         mirrorNode: this.getCurrentMirror(),
         rpcNode: this.getCurrentRPC(),
-        wallet: SupportedWallets.CLIENT,
+        wallet:
+          account.type == AccountType.SelfCustodial
+            ? SupportedWallets.CLIENT
+            : account.type == AccountType.Fireblocks
+            ? SupportedWallets.FIREBLOCKS
+            : SupportedWallets.DFNS,
+        custodialWalletSettings:
+          account.type == AccountType.SelfCustodial
+            ? undefined
+            : account.type == AccountType.Fireblocks
+            ? {
+                apiSecretKey: account.nonCustodial.fireblocks.apiSecretKey,
+                apiKey: account.nonCustodial.fireblocks.apiKey,
+                baseUrl: account.nonCustodial.fireblocks.baseUrl,
+                vaultAccountId: account.nonCustodial.fireblocks.vaultAccountId,
+                assetId: account.nonCustodial.fireblocks.assetId,
+                hederaAccountId:
+                  account.nonCustodial.fireblocks.hederaAccountId,
+                hederaAccountPublicKey:
+                  account.nonCustodial.fireblocks.hederaAccountPublicKey,
+              }
+            : {
+                authorizationToken:
+                  account.nonCustodial.dfns.authorizationToken,
+                credentialId: account.nonCustodial.dfns.credentialId,
+                privateKey: account.nonCustodial.dfns.privateKey,
+                appOrigin: account.nonCustodial.dfns.appOrigin,
+                appId: account.nonCustodial.dfns.appId,
+                testUrl: account.nonCustodial.dfns.testUrl,
+                walletId: account.nonCustodial.dfns.walletId,
+                hederaAccountId: account.nonCustodial.dfns.hederaAccountId,
+                hederaAccountPublicKey:
+                  account.nonCustodial.dfns.hederaAccountPublicKey,
+              },
       }),
     );
   }
@@ -465,13 +507,65 @@ export default class UtilitiesService extends Service {
     };
     const result = accounts.map((acc) => {
       return {
-        privateKey: {
-          key: MaskData.maskPassword(acc.privateKey.key, maskJSONOptions),
-          type: acc.privateKey.type,
-        },
         accountId: acc.accountId,
+        type: acc.type,
         network: acc.network,
         alias: acc.alias,
+        importedTokens: acc.importedTokens,
+        selfCustodial: !acc.selfCustodial
+          ? undefined
+          : {
+              privateKey: {
+                key: MaskData.maskPassword(
+                  acc.selfCustodial.privateKey.key,
+                  maskJSONOptions,
+                ),
+                type: acc.selfCustodial.privateKey.type,
+              },
+            },
+        nonCustodial: !acc.nonCustodial
+          ? undefined
+          : {
+              fireblocks: !acc.nonCustodial.fireblocks
+                ? undefined
+                : {
+                    apiSecretKey: MaskData.maskPassword(
+                      acc.nonCustodial.fireblocks.apiSecretKey,
+                      maskJSONOptions,
+                    ),
+                    apiKey: MaskData.maskPassword(
+                      acc.nonCustodial.fireblocks.apiKey,
+                      maskJSONOptions,
+                    ),
+                    baseUrl: acc.nonCustodial.fireblocks.baseUrl,
+                    assetId: acc.nonCustodial.fireblocks.assetId,
+                    vaultAccountId: acc.nonCustodial.fireblocks.vaultAccountId,
+                    hederaAccountId:
+                      acc.nonCustodial.fireblocks.hederaAccountId,
+                    hederaAccountPublicKey:
+                      acc.nonCustodial.fireblocks.hederaAccountPublicKey,
+                  },
+              dfns: !acc.nonCustodial.dfns
+                ? undefined
+                : {
+                    authorizationToken: MaskData.maskPassword(
+                      acc.nonCustodial.dfns.authorizationToken,
+                      maskJSONOptions,
+                    ),
+                    credentialId: acc.nonCustodial.dfns.credentialId,
+                    privateKey: MaskData.maskPassword(
+                      acc.nonCustodial.dfns.privateKey,
+                      maskJSONOptions,
+                    ),
+                    appOrigin: acc.nonCustodial.dfns.appOrigin,
+                    appId: acc.nonCustodial.dfns.appId,
+                    testUrl: acc.nonCustodial.dfns.testUrl,
+                    walletId: acc.nonCustodial.dfns.walletId,
+                    hederaAccountId: acc.nonCustodial.dfns.hederaAccountId,
+                    hederaAccountPublicKey:
+                      acc.nonCustodial.dfns.hederaAccountPublicKey,
+                  },
+            },
       };
     });
     return result;

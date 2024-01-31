@@ -15,6 +15,10 @@ import { INetworkConfig } from '../../../domain/configuration/interfaces/INetwor
 import { IMirrorsConfig } from 'domain/configuration/interfaces/IMirrorsConfig.js';
 import { IRPCsConfig } from 'domain/configuration/interfaces/IRPCsConfig.js';
 import { ZERO_ADDRESS } from '../../../core/Constants.js';
+import { AccountType } from '../../../domain/configuration/interfaces/AccountType';
+import { IPrivateKey } from '../../../domain/configuration/interfaces/IPrivateKey';
+import { IFireblocksAccountConfig } from '../../../domain/configuration/interfaces/IFireblocksAccountConfig';
+import { IDfnsAccountConfig } from '../../../domain/configuration/interfaces/IDfnsAccountConfig';
 const colors = require('colors');
 
 /**
@@ -170,7 +174,14 @@ export default class SetConfigurationService extends Service {
   public async configureAccounts(): Promise<IAccountConfig[]> {
     const configuration = configurationService.getConfiguration();
     let accounts: IAccountConfig[] = configuration?.accounts || [];
-    if (accounts.length === 1 && accounts[0].privateKey.key === '') {
+    if (
+      accounts.length === 1 &&
+      ((accounts[0].selfCustodial &&
+        accounts[0].selfCustodial.privateKey.key === '') ||
+        (accounts[0].nonCustodial &&
+          (accounts[0].nonCustodial.fireblocks ||
+            accounts[0].nonCustodial.dfns)))
+    ) {
       accounts = [];
     }
     let moreAccounts = true;
@@ -191,8 +202,7 @@ export default class SetConfigurationService extends Service {
         );
       }
 
-      const accountFromPrivKey: IAccountConfig =
-        await this.askForPrivateKeyOfAccount(accountId);
+      const accountType = await this.askForAccountType();
 
       const network = await utilsService.defaultMultipleAsk(
         language.getText('configuration.askNetworkAccount'),
@@ -214,13 +224,31 @@ export default class SetConfigurationService extends Service {
           'AdminAccount',
         );
       }
-      accounts.push({
+      const accountConfig: IAccountConfig = {
         accountId: accountId,
-        privateKey: accountFromPrivKey.privateKey,
+        type: accountType,
         network: network,
         alias: alias,
-        importedTokens: [],
-      });
+      };
+
+      switch (accountType) {
+        case AccountType.SelfCustodial:
+          accountConfig.selfCustodial = {
+            privateKey: await this.askForPrivateKeyOfAccount(accountId),
+          };
+          break;
+        case AccountType.Fireblocks:
+          accountConfig.nonCustodial = {
+            fireblocks: await this.askForFireblocksOfAccount(),
+          };
+          break;
+        default:
+          accountConfig.nonCustodial = {
+            dfns: await this.askForDfnsOfAccount(),
+          };
+          break;
+      }
+      accounts.push(accountConfig);
 
       const response = await utilsService.defaultConfirmAsk(
         language.getText('configuration.askMoreAccounts'),
@@ -378,29 +406,43 @@ export default class SetConfigurationService extends Service {
     await this.manageAccountMenu();
   }
 
+  public async askForAccountType(): Promise<AccountType> {
+    const accountType = await utilsService.defaultMultipleAsk(
+      language.getText('configuration.askAccountType'),
+      language.getArrayFromObject('wizard.accountType'),
+      false,
+    );
+    switch (accountType) {
+      case 'SELF-CUSTODIAL':
+        return AccountType.SelfCustodial;
+      case 'FIREBLOCKS':
+        return AccountType.Fireblocks;
+      default:
+        return AccountType.Dfns;
+    }
+  }
+
   /**
    * Function to configure the private key, fail if length doesn't 96 or 64 or 66
    */
   public async askForPrivateKeyOfAccount(
     accountId: string,
-  ): Promise<IAccountConfig> {
-    let privateKey = await utilsService.defaultPasswordAsk(
+  ): Promise<IPrivateKey> {
+    let privateKey: IPrivateKey = { key: '', type: '' };
+    privateKey.key = await utilsService.defaultPasswordAsk(
       language.getText('configuration.askPrivateKey') +
         ` '96|64|66|68 characters' (${accountId})`,
     );
 
-    const pkType = await utilsService.defaultMultipleAsk(
+    privateKey.type = await utilsService.defaultMultipleAsk(
       language.getText('configuration.askPrivateKeyType'),
       language.getArrayFromObject('wizard.privateKeyType'),
     );
 
-    const network = configurationService.getConfiguration().defaultNetwork;
-    let alias = '';
-
     // Actions by length
-    switch (privateKey.length) {
+    switch (privateKey.key.length) {
       case 64:
-        privateKey = '0x' + privateKey;
+        privateKey.key = '0x' + privateKey.key;
         break;
       case 96:
       default:
@@ -408,21 +450,105 @@ export default class SetConfigurationService extends Service {
     }
 
     if (
-      privateKey.length !== 96 &&
-      privateKey.length !== 64 &&
-      privateKey.length !== 66
+      privateKey.key.length !== 96 &&
+      privateKey.key.length !== 64 &&
+      privateKey.key.length !== 66
     ) {
       utilsService.showError(language.getText('general.incorrectParam'));
-      const acc = await this.askForPrivateKeyOfAccount(accountId);
-      privateKey = acc.privateKey.key;
-      alias = acc.alias;
+      privateKey = await this.askForPrivateKeyOfAccount(accountId);
     }
 
+    return privateKey;
+  }
+
+  public async askForFireblocksOfAccount(): Promise<IFireblocksAccountConfig> {
+    utilsService.showMessage(
+      language.getText('configuration.fireblocks.title'),
+    );
+    const apiSecretKey = await utilsService.defaultPasswordAsk(
+      language.getText('configuration.fireblocks.askApiSecretKey'),
+    );
+    const apiKey = await utilsService.defaultPasswordAsk(
+      language.getText('configuration.fireblocks.askApiKey'),
+    );
+    const baseUrl = await utilsService.defaultSingleAsk(
+      language.getText('configuration.fireblocks.askBaseUrl'),
+      'https://api.fireblocks.io',
+    );
+    const assetId = await utilsService.defaultSingleAsk(
+      language.getText('configuration.fireblocks.askAssetId'),
+      '0.0.50000',
+    );
+    const vaultAccountId = await utilsService.defaultSingleAsk(
+      language.getText('configuration.fireblocks.askVaultAccountId'),
+      '0.0.50000',
+    );
+    const hederaAccountId = await utilsService.defaultSingleAsk(
+      language.getText('configuration.fireblocks.askHederaAccountId'),
+      '0.0.50000',
+    );
+    const hederaAccountPublicKey = await utilsService.defaultSingleAsk(
+      language.getText('configuration.dfns.askHederaAccountPublicKey'),
+      '',
+    );
+
     return {
-      accountId: accountId,
-      privateKey: { key: privateKey, type: pkType },
-      network,
-      alias: alias,
+      apiSecretKey,
+      apiKey,
+      baseUrl,
+      assetId,
+      vaultAccountId,
+      hederaAccountId,
+      hederaAccountPublicKey,
+    };
+  }
+
+  public async askForDfnsOfAccount(): Promise<IDfnsAccountConfig> {
+    utilsService.showMessage(language.getText('configuration.dfns.title'));
+    const authorizationToken = await utilsService.defaultPasswordAsk(
+      language.getText('configuration.dfns.askAuthorizationToken'),
+    );
+    const credentialId = await utilsService.defaultPasswordAsk(
+      language.getText('configuration.dfns.askCredentialId'),
+    );
+    const privateKey = await utilsService.defaultPasswordAsk(
+      language.getText('configuration.dfns.askPrivateKey'),
+    );
+    const appOrigin = await utilsService.defaultSingleAsk(
+      language.getText('configuration.dfns.askAppOrigin'),
+      'https://localhost:3000',
+    );
+    const appId = await utilsService.defaultSingleAsk(
+      language.getText('configuration.dfns.askAppId'),
+      '0.0.50000',
+    );
+    const testUrl = await utilsService.defaultSingleAsk(
+      language.getText('configuration.dfns.askTestUrl'),
+      'https://localhost:3000',
+    );
+    const walletId = await utilsService.defaultSingleAsk(
+      language.getText('configuration.dfns.askWalletId'),
+      '0.0.50000',
+    );
+    const hederaAccountId = await utilsService.defaultSingleAsk(
+      language.getText('configuration.dfns.askHederaAccountId'),
+      '0.0.50000',
+    );
+    const hederaAccountPublicKey = await utilsService.defaultSingleAsk(
+      language.getText('configuration.dfns.askHederaAccountPublicKey'),
+      '',
+    );
+
+    return {
+      authorizationToken,
+      credentialId,
+      privateKey,
+      appOrigin,
+      appId,
+      testUrl,
+      walletId,
+      hederaAccountId,
+      hederaAccountPublicKey,
     };
   }
 
