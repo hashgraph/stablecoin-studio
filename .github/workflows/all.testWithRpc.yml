@@ -5,7 +5,7 @@ on:
     branches: [main]
 jobs:
   test-node:
-    name: docker    
+    name: testing    
     #runs-on: [ self-hosted, Linux, medium, ephemeral ]
     runs-on: ubuntu-latest
     env:
@@ -28,32 +28,31 @@ jobs:
           
       - name: Install dependencies Hashconnect
         run: |
-          npm install
+          npm ci
           npm run build
-          npm install
         working-directory: hashconnect/lib
 
       - name: Install dependencies Contracts
         run: |
-          npm install
+          npm ci
           npm run compile:force
         working-directory: contracts
       
       - name: Install dependencies Custodial Library
         run: |
-          npm install
+          npm ci
           npm run build
         working-directory: custodialwalletutils
 
       - name: Install dependencies SDK
         run: |
-          npm install
+          npm ci
           npm run build
         working-directory: sdk
       
       - name: Install dependencies Cli
         run: |
-          npm install
+          npm ci
           npm run build
         working-directory: cli
       
