@@ -58,7 +58,7 @@ jobs:
         working-directory: cli
       
       - name: Install dependencies web
-        run: npm install
+        run: npm ci
         working-directory: web
 
       - name: Create file
