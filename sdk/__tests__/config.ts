@@ -96,7 +96,7 @@ export const HEDERA_TOKEN_MANAGER_ADDRESS =
 	process.env.HEDERA_TOKEN_MANAGER_ADDRESS ?? '';
 export const FACTORY_ADDRESS = process.env.FACTORY_ADDRESS ?? '';
 
-//*  Infrastructure
+//* Infrastructure
 export const MIRROR_NODE = {
 	name: 'testMirrorNode',
 	baseUrl:

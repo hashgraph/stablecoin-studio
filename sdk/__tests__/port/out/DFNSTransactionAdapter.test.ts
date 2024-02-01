@@ -38,6 +38,8 @@ import {
 	DFNS_SETTINGS,
 	FACTORY_ADDRESS,
 	HEDERA_TOKEN_MANAGER_ADDRESS,
+	MIRROR_NODE,
+	RPC_NODE,
 } from '../../config';
 import Injectable from '../../../src/core/Injectable';
 import * as fs from 'fs';
@@ -50,6 +52,8 @@ const apiSecretKey = fs.readFileSync(
 	'utf8',
 );
 
+
+
 describe('🧪 DFNSTransactionAdapter test', () => {
 	let stableCoinHTS: StableCoinViewModel;
 
@@ -59,13 +63,13 @@ describe('🧪 DFNSTransactionAdapter test', () => {
 	};
 
 	const mirrorNode: MirrorNode = {
-		name: 'testmirrorNode',
-		baseUrl: 'https://testnet.mirrornode.hedera.com/api/v1/',
+		name: MIRROR_NODE.name,
+		baseUrl: MIRROR_NODE.baseUrl,
 	};
 
 	const rpcNode: JsonRpcRelay = {
-		name: 'testrpcNode',
-		baseUrl: 'http://127.0.0.1:7546/api',
+		name: RPC_NODE.name,
+		baseUrl: RPC_NODE.baseUrl,
 	};
 
 	const dfnsSettings: DFNSConfigRequest = {

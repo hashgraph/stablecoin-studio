@@ -38,6 +38,8 @@ import {
 	FACTORY_ADDRESS,
 	FIREBLOCKS_SETTINGS,
 	HEDERA_TOKEN_MANAGER_ADDRESS,
+	MIRROR_NODE,
+	RPC_NODE,
 } from '../../config';
 import Injectable from '../../../src/core/Injectable';
 import * as fs from 'fs';
@@ -58,13 +60,13 @@ describe('🧪 FireblocksTransactionAdapter test', () => {
 	};
 
 	const mirrorNode: MirrorNode = {
-		name: 'testmirrorNode',
-		baseUrl: 'https://testnet.mirrornode.hedera.com/api/v1/',
+		name: MIRROR_NODE.name,
+		baseUrl: MIRROR_NODE.baseUrl,
 	};
 
 	const rpcNode: JsonRpcRelay = {
-		name: 'testrpcNode',
-		baseUrl: 'http://127.0.0.1:7546/api',
+		name: RPC_NODE.name,
+		baseUrl: RPC_NODE.baseUrl,
 	};
 
 	const fireblocksSettings: FireblocksConfigRequest = {
