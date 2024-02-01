@@ -533,10 +533,7 @@ export default class UtilitiesService extends Service {
                       acc.nonCustodial.fireblocks.apiSecretKey,
                       maskJSONOptions,
                     ),
-                    apiKey: MaskData.maskPassword(
-                      acc.nonCustodial.fireblocks.apiKey,
-                      maskJSONOptions,
-                    ),
+                    apiKey: acc.nonCustodial.fireblocks.apiKey,
                     baseUrl: acc.nonCustodial.fireblocks.baseUrl,
                     assetId: acc.nonCustodial.fireblocks.assetId,
                     vaultAccountId: acc.nonCustodial.fireblocks.vaultAccountId,
@@ -548,10 +545,8 @@ export default class UtilitiesService extends Service {
               dfns: !acc.nonCustodial.dfns
                 ? undefined
                 : {
-                    authorizationToken: MaskData.maskPassword(
+                    authorizationToken:
                       acc.nonCustodial.dfns.authorizationToken,
-                      maskJSONOptions,
-                    ),
                     credentialId: acc.nonCustodial.dfns.credentialId,
                     privateKey: MaskData.maskPassword(
                       acc.nonCustodial.dfns.privateKey,

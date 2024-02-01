@@ -461,6 +461,68 @@ export default class SetConfigurationService extends Service {
     return privateKey;
   }
 
+  private async askForApiKey(
+    attribute: string,
+    defaultValue: string,
+  ): Promise<string> {
+    let apiKey = '';
+    const uuidRexExpValidator =
+      /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/g;
+    while (!uuidRexExpValidator.test(apiKey)) {
+      apiKey = await utilsService.defaultSingleAsk(
+        language.getText(attribute),
+        defaultValue,
+      );
+    }
+    return apiKey;
+  }
+
+  private async askForUrl(
+    attribute: string,
+    defaultValue: string,
+  ): Promise<string> {
+    let baseUrl = '';
+    const urlRegExpValidator =
+      /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/g;
+    while (!urlRegExpValidator.test(baseUrl)) {
+      baseUrl = await utilsService.defaultSingleAsk(
+        language.getText(attribute),
+        defaultValue,
+      );
+    }
+    return baseUrl;
+  }
+
+  private async askForHederaAccountId(
+    attribute: string,
+    defaultValue: string,
+  ): Promise<string> {
+    let hederaAccountId = '';
+    const hbarAccountIdRegExpValidator = /[0-9]+\.[0-9]+\.[0-9]+/g;
+    while (!hbarAccountIdRegExpValidator.test(hederaAccountId)) {
+      hederaAccountId = await utilsService.defaultSingleAsk(
+        language.getText(attribute),
+        defaultValue,
+      );
+    }
+    return hederaAccountId;
+  }
+
+  private async askForHederaAccountPublicKey(
+    attribute: string,
+    defaultValue: string,
+  ): Promise<string> {
+    let hederaAccountPublicKey = '';
+    const publicKeyRegExpValidator = /[0-9a-f]{64}/g;
+    while (!publicKeyRegExpValidator.test(hederaAccountPublicKey)) {
+      hederaAccountPublicKey = await utilsService.defaultSingleAsk(
+        language.getText(attribute),
+        defaultValue,
+      );
+    }
+    return hederaAccountPublicKey;
+  }
+
   public async askForFireblocksOfAccount(): Promise<IFireblocksAccountConfig> {
     utilsService.showMessage(
       language.getText('configuration.fireblocks.title'),
@@ -468,28 +530,29 @@ export default class SetConfigurationService extends Service {
     const apiSecretKey = await utilsService.defaultPasswordAsk(
       language.getText('configuration.fireblocks.askApiSecretKey'),
     );
-    const apiKey = await utilsService.defaultPasswordAsk(
-      language.getText('configuration.fireblocks.askApiKey'),
+    const apiKey = await this.askForApiKey(
+      'configuration.fireblocks.askApiKey',
+      'bbe6a358-0c98-460a-a2fc-91e035f74d54',
     );
-    const baseUrl = await utilsService.defaultSingleAsk(
-      language.getText('configuration.fireblocks.askBaseUrl'),
+    const baseUrl = await this.askForUrl(
+      'configuration.fireblocks.askBaseUrl',
       'https://api.fireblocks.io',
     );
     const assetId = await utilsService.defaultSingleAsk(
       language.getText('configuration.fireblocks.askAssetId'),
-      '0.0.50000',
+      'HBAR_TEST',
     );
     const vaultAccountId = await utilsService.defaultSingleAsk(
       language.getText('configuration.fireblocks.askVaultAccountId'),
-      '0.0.50000',
+      '2',
     );
-    const hederaAccountId = await utilsService.defaultSingleAsk(
-      language.getText('configuration.fireblocks.askHederaAccountId'),
-      '0.0.50000',
+    const hederaAccountId = await this.askForHederaAccountId(
+      'configuration.fireblocks.askHederaAccountId',
+      '0.0.5712904',
     );
-    const hederaAccountPublicKey = await utilsService.defaultSingleAsk(
-      language.getText('configuration.dfns.askHederaAccountPublicKey'),
-      '',
+    const hederaAccountPublicKey = await this.askForHederaAccountPublicKey(
+      'configuration.dfns.askHederaAccountPublicKey',
+      '04eb152576e3af4dccbabda7026b85d8fdc0ad3f18f26540e42ac71a08e21623',
     );
 
     return {
@@ -508,35 +571,25 @@ export default class SetConfigurationService extends Service {
     const authorizationToken = await utilsService.defaultPasswordAsk(
       language.getText('configuration.dfns.askAuthorizationToken'),
     );
-    const credentialId = await utilsService.defaultPasswordAsk(
-      language.getText('configuration.dfns.askCredentialId'),
-    );
-    const privateKey = await utilsService.defaultPasswordAsk(
-      language.getText('configuration.dfns.askPrivateKey'),
-    );
-    const appOrigin = await utilsService.defaultSingleAsk(
-      language.getText('configuration.dfns.askAppOrigin'),
+    const credentialId = await this.askForDfnsCredentialId();
+    const privateKey = await this.askForDfnsPrivateKey();
+    const appOrigin = await this.askForUrl(
+      'configuration.dfns.askAppOrigin',
       'https://localhost:3000',
     );
-    const appId = await utilsService.defaultSingleAsk(
-      language.getText('configuration.dfns.askAppId'),
+    const appId = await this.askForDfnsAppId();
+    const testUrl = await this.askForUrl(
+      'configuration.dfns.askTestUrl',
+      'https://api.dfns.ninja/',
+    );
+    const walletId = await this.askForDfnsWalletId();
+    const hederaAccountId = await this.askForHederaAccountId(
+      'configuration.dfns.askHederaAccountId',
       '0.0.50000',
     );
-    const testUrl = await utilsService.defaultSingleAsk(
-      language.getText('configuration.dfns.askTestUrl'),
-      'https://localhost:3000',
-    );
-    const walletId = await utilsService.defaultSingleAsk(
-      language.getText('configuration.dfns.askWalletId'),
-      '0.0.50000',
-    );
-    const hederaAccountId = await utilsService.defaultSingleAsk(
-      language.getText('configuration.dfns.askHederaAccountId'),
-      '0.0.50000',
-    );
-    const hederaAccountPublicKey = await utilsService.defaultSingleAsk(
-      language.getText('configuration.dfns.askHederaAccountPublicKey'),
-      '',
+    const hederaAccountPublicKey = await this.askForHederaAccountPublicKey(
+      'configuration.dfns.askHederaAccountPublicKey',
+      '04eb152576e3af4dccbabda7026b85d8fdc0ad3f18f26540e42ac71a08e21623',
     );
 
     return {
@@ -550,6 +603,54 @@ export default class SetConfigurationService extends Service {
       hederaAccountId,
       hederaAccountPublicKey,
     };
+  }
+
+  private async askForDfnsCredentialId(): Promise<string> {
+    let credentialId = '';
+    const credentialIdRegExpValidator = /[a-zA-Z0-9]{42}$/g;
+    while (!credentialIdRegExpValidator.test(credentialId)) {
+      credentialId = await utilsService.defaultSingleAsk(
+        language.getText('configuration.dfns.askCredentialId'),
+        'Y2ktMTZ2NTMtZXF0ZzAtOWRvOXJub3NjbGI1a3RwYg',
+      );
+    }
+    return credentialId;
+  }
+
+  private async askForDfnsPrivateKey(): Promise<string> {
+    let privateKey = '';
+    const privateKeyRegExpValidator =
+      /-----BEGIN EC PRIVATE KEY-----\n[a-zA-Z0-9]+==\n-----END EC PRIVATE KEY-----/gm;
+    while (!privateKeyRegExpValidator.test(privateKey)) {
+      privateKey = await utilsService.defaultPasswordAsk(
+        language.getText('configuration.dfns.askPrivateKey'),
+      );
+    }
+    return privateKey;
+  }
+
+  private async askForDfnsAppId(): Promise<string> {
+    let appId = '';
+    const appIdRegExpValidator = /ap-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+/g;
+    while (!appIdRegExpValidator.test(appId)) {
+      appId = await utilsService.defaultSingleAsk(
+        language.getText('configuration.dfns.askAppId'),
+        'ap-2ng9jv-80cfc-983pop0iauf2sv8r',
+      );
+    }
+    return appId;
+  }
+
+  private async askForDfnsWalletId(): Promise<string> {
+    let walletId = '';
+    const walletIdRegExpValidator = /wa-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+/g;
+    while (!walletIdRegExpValidator.test(walletId)) {
+      walletId = await utilsService.defaultSingleAsk(
+        language.getText('configuration.dfns.askWalletId'),
+        'wa-6qfr0-heg0c-985bmvv9hphbok47',
+      );
+    }
+    return walletId;
   }
 
   /**
