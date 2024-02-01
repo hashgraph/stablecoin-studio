@@ -75,13 +75,13 @@ export interface IContractIdMap {
     [key: string]: ContractId[]
 }
 
-export const regularfactory = 'REGULAR_FACTORY'
-export const regularfactoryplus100000 = 'REGULAR_FACTORY_PLUS_100000'
+export const regularFactory = 'REGULAR_FACTORY'
+export const regularFactoryPlus100000 = 'REGULAR_FACTORY_PLUS_100000'
 
 export const buildDeployedContracts = () => {
     const deployedContracts: IContractIdMap = {}
-    deployedContracts[regularfactory] = []
-    deployedContracts[regularfactoryplus100000] = []
+    deployedContracts[regularFactory] = []
+    deployedContracts[regularFactoryPlus100000] = []
     return deployedContracts
 }
 
@@ -104,7 +104,7 @@ export const deployRegularFactory = async (
         }),
     ])
     result.forEach((contractId) =>
-        deployedContracts[regularfactory].push(contractId)
+        deployedContracts[regularFactory].push(contractId)
     )
 }
 export const deployRegularFactoryPlus100000 = async (
@@ -128,6 +128,6 @@ export const deployRegularFactoryPlus100000 = async (
         }),
     ])
     result.forEach((contractId) =>
-        deployedContracts[regularfactoryplus100000].push(contractId)
+        deployedContracts[regularFactoryPlus100000].push(contractId)
     )
 }

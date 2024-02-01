@@ -2,7 +2,7 @@ import {
     buildDeployedContracts,
     deployRegularFactory,
     IContractIdMap,
-    regularfactory,
+    regularFactory,
 } from './shared/utils'
 import { pausable } from './pausable'
 import { hederaTokenManager } from './hederaTokenManager'
@@ -16,6 +16,6 @@ describe('HederaTokenManager, Roles & Pausable', () => {
     })
 
     hederaTokenManager(deployedContracts)
-    roles(deployedContracts[regularfactory])
-    pausable(deployedContracts[regularfactory])
+    roles(deployedContracts[regularFactory])
+    pausable(deployedContracts[regularFactory])
 })

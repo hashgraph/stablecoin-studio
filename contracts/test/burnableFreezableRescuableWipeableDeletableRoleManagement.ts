@@ -5,7 +5,7 @@ import {
     buildDeployedContracts,
     deployRegularFactoryPlus100000,
     IContractIdMap,
-    regularfactoryplus100000,
+    regularFactoryPlus100000,
 } from './shared/utils'
 import { rescuable } from './rescuable'
 import { wipeable } from './wipeable'
@@ -19,10 +19,10 @@ describe('Burnable, Freezable, Rescuable, Wipeable, Deletable & Role Management'
         await deployRegularFactoryPlus100000(deployedContracts)
     })
 
-    burnable(deployedContracts[regularfactoryplus100000])
-    freezable(deployedContracts[regularfactoryplus100000])
-    rescuable(deployedContracts[regularfactoryplus100000])
-    wipeable(deployedContracts[regularfactoryplus100000])
-    deletable(deployedContracts[regularfactoryplus100000])
-    roleManagement(deployedContracts[regularfactoryplus100000])
+    burnable(deployedContracts[regularFactoryPlus100000])
+    freezable(deployedContracts[regularFactoryPlus100000])
+    rescuable(deployedContracts[regularFactoryPlus100000])
+    wipeable(deployedContracts[regularFactoryPlus100000])
+    deletable(deployedContracts[regularFactoryPlus100000])
+    roleManagement(deployedContracts[regularFactoryPlus100000])
 })

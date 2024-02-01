@@ -68,7 +68,7 @@ import {
     operatorIsE25519,
     operatorPriKey,
     operatorPubKey,
-    regularfactory,
+    regularFactory,
     TOKEN_DECIMALS,
     TOKEN_FACTOR,
     TOKEN_MEMO,
@@ -88,7 +88,7 @@ export const hederaTokenManager = (deployedContracts: IContractIdMap) => {
     describe('HederaTokenManager Tests', function () {
         before(async function () {
             // Deploy Token using Client
-            proxyAddress = deployedContracts[regularfactory][0]
+            proxyAddress = deployedContracts[regularFactory][0]
         })
 
         it('Cannot Update token if not Admin', async function () {
@@ -402,9 +402,9 @@ export const hederaTokenManager = (deployedContracts: IContractIdMap) => {
     describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', function () {
         before(async function () {
             // Deploy Token using Client
-            proxyAddress = deployedContracts[regularfactory][0]
-            proxyAdminAddress = deployedContracts[regularfactory][1]
-            stableCoinAddress = deployedContracts[regularfactory][2]
+            proxyAddress = deployedContracts[regularFactory][0]
+            proxyAdminAddress = deployedContracts[regularFactory][1]
+            stableCoinAddress = deployedContracts[regularFactory][2]
         })
 
         it('Can deploy a stablecoin where proxy admin owner is the deploying account', async function () {
@@ -522,7 +522,7 @@ export const hederaTokenManager = (deployedContracts: IContractIdMap) => {
 
         it('Upgrade Proxy implementation without the proxy admin', async function () {
             // Deploy a new contract
-            const result = deployedContracts[regularfactory]
+            const result = deployedContracts[regularFactory]
 
             const newImplementationContract = result[2]
 
@@ -555,7 +555,7 @@ export const hederaTokenManager = (deployedContracts: IContractIdMap) => {
 
         it('Upgrade Proxy implementation with the proxy admin but without the owner account', async function () {
             // Deploy a new contract
-            const result = deployedContracts[regularfactory]
+            const result = deployedContracts[regularFactory]
 
             const newImplementationContract = result[2]
 
@@ -593,7 +593,7 @@ export const hederaTokenManager = (deployedContracts: IContractIdMap) => {
 
         it('Upgrade Proxy implementation with the proxy admin and the owner account', async function () {
             // Deploy a new contract
-            const result = deployedContracts[regularfactory]
+            const result = deployedContracts[regularFactory]
 
             const newImplementationContract = result[2]
 
