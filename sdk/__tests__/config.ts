@@ -96,7 +96,7 @@ export const HEDERA_TOKEN_MANAGER_ADDRESS =
 	process.env.HEDERA_TOKEN_MANAGER_ADDRESS ?? '';
 export const FACTORY_ADDRESS = process.env.FACTORY_ADDRESS ?? '';
 
-//*  Infrastructure
+//* Infrastructure
 export const MIRROR_NODE = {
 	name: 'testMirrorNode',
 	baseUrl:
@@ -117,4 +117,19 @@ export const FIREBLOCKS_SETTINGS = {
 	hederaAccountId: process.env.FIREBLOCKS_HEDERA_ACCOUNT_ID ?? '',
 	hederaAccountPublicKey:
 		process.env.FIREBLOCKS_HEDERA_ACCOUNT_CLIENT_PUBLIC_KEY_ED25519 ?? '',
+};
+
+export const DFNS_SETTINGS = {
+	authorizationToken:
+		process.env.DFNS_SERVICE_ACCOUNT_AUTHORIZATION_TOKEN ?? '',
+	credentialId: process.env.DFNS_SERVICE_ACCOUNT_CREDENTIAL_ID ?? '',
+	serviceAccountPrivateKeyPath:
+		process.env.DFNS_SERVICE_ACCOUNT_PRIVATE_KEY_PATH ?? '',
+	urlApplicationOrigin: process.env.DFNS_APP_ORIGIN ?? '',
+	applicationId: process.env.DFNS_APP_ID ?? '',
+	baseUrl: process.env.DFNS_BASE_URL ?? '',
+	walletId: process.env.DFNS_WALLET_ID ?? '',
+	hederaAccountId: process.env.DFNS_HEDERA_ACCOUNT_ID ?? '',
+	hederaAccountPublicKey:
+		process.env.DFNS_HEDERA_ACCOUNT_CLIENT_PUBLIC_KEY_ED25519 ?? '',
 };

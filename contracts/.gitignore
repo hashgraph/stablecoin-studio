@@ -34,12 +34,10 @@ build
 # history
 .history
 
-node_modules
 .env
 coverage
 coverage.json
-typechain
-typechain-types
+typechain*
 
 #Hardhat files
 cache

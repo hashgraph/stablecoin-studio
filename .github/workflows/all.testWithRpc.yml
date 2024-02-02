@@ -5,7 +5,7 @@ on:
     branches: [main]
 jobs:
   test-node:
-    name: docker    
+    name: testing    
     #runs-on: [ self-hosted, Linux, medium, ephemeral ]
     runs-on: ubuntu-latest
     env:
@@ -25,31 +25,47 @@ jobs:
         uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d
         with:
           node-version: 18.x      
-          
+      
+      - name: Cache npm dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
       - name: Install dependencies Hashconnect
         run: |
-          npm install
+          npm ci
           npm run build
-          npm install
         working-directory: hashconnect/lib
 
       - name: Install dependencies Contracts
         run: |
-          npm install
+          npm ci
           npm run compile:force
         working-directory: contracts
+      
+      - name: Install dependencies Custodial Library
+        run: |
+          npm ci
+          npm run build
+        working-directory: custodialwalletutils
+
       - name: Install dependencies SDK
         run: |
-          npm install
+          npm ci
           npm run build
         working-directory: sdk
+      
       - name: Install dependencies Cli
         run: |
-          npm install
+          npm ci
           npm run build
         working-directory: cli
+      
       - name: Install dependencies web
-        run: npm install
+        run: npm ci
         working-directory: web
 
       - name: Create file
@@ -86,7 +102,7 @@ jobs:
 
       - name: Test cli
         run: |
-          npm run test
+          npm run test:ci
           npm run cleanCache
         working-directory: cli
 
@@ -117,12 +133,6 @@ jobs:
           npm run test
           npm run cleanCache
         working-directory: sdk
-
-      - name: Test custodialwalletutils
-        run: |
-          npm run test
-          npm run cleanCache
-        working-directory: custodialwalletutils
 
       - name: Test custodialwalletutils
         run: |

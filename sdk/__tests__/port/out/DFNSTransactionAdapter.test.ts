@@ -32,11 +32,11 @@ import {
 import { MirrorNode } from '../../../src/domain/context/network/MirrorNode';
 import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay';
 import ConnectRequest, {
-	FireblocksConfigRequest,
+	DFNSConfigRequest,
 } from '../../../src/port/in/request/ConnectRequest';
 import {
+	DFNS_SETTINGS,
 	FACTORY_ADDRESS,
-	FIREBLOCKS_SETTINGS,
 	HEDERA_TOKEN_MANAGER_ADDRESS,
 	MIRROR_NODE,
 	RPC_NODE,
@@ -48,11 +48,11 @@ import * as path from 'path';
 const decimals = 6;
 const initialSupply = 1000;
 const apiSecretKey = fs.readFileSync(
-	path.resolve(FIREBLOCKS_SETTINGS.apiSecretKeyPath),
+	path.resolve(DFNS_SETTINGS.serviceAccountPrivateKeyPath),
 	'utf8',
 );
 
-describe('🧪 FireblocksTransactionAdapter test', () => {
+describe('🧪 DFNSTransactionAdapter test', () => {
 	let stableCoinHTS: StableCoinViewModel;
 	const delay = async (seconds = 5): Promise<void> => {
 		seconds = seconds * 1000;
@@ -69,27 +69,29 @@ describe('🧪 FireblocksTransactionAdapter test', () => {
 		baseUrl: RPC_NODE.baseUrl,
 	};
 
-	const fireblocksSettings: FireblocksConfigRequest = {
-		apiSecretKey: apiSecretKey,
-		apiKey: FIREBLOCKS_SETTINGS.apiKey,
-		baseUrl: FIREBLOCKS_SETTINGS.baseUrl,
-		vaultAccountId: FIREBLOCKS_SETTINGS.vaultAccountId,
-		assetId: FIREBLOCKS_SETTINGS.assetId,
-		hederaAccountId: FIREBLOCKS_SETTINGS.hederaAccountId,
+	const dfnsSettings: DFNSConfigRequest = {
+		authorizationToken: DFNS_SETTINGS.authorizationToken,
+		credentialId: DFNS_SETTINGS.credentialId,
+		serviceAccountPrivateKey: apiSecretKey,
+		urlApplicationOrigin: DFNS_SETTINGS.urlApplicationOrigin,
+		applicationId: DFNS_SETTINGS.applicationId,
+		baseUrl: DFNS_SETTINGS.baseUrl,
+		walletId: DFNS_SETTINGS.walletId,
+		hederaAccountId: DFNS_SETTINGS.hederaAccountId,
 	};
 
 	const requestPublicKey: RequestPublicKey = {
-		key: FIREBLOCKS_SETTINGS.hederaAccountPublicKey,
+		key: DFNS_SETTINGS.hederaAccountPublicKey,
 	};
 
 	beforeAll(async () => {
 		await Network.connect(
 			new ConnectRequest({
 				network: 'testnet',
-				wallet: SupportedWallets.FIREBLOCKS,
+				wallet: SupportedWallets.DFNS,
 				mirrorNode: mirrorNode,
 				rpcNode: rpcNode,
-				custodialWalletSettings: fireblocksSettings,
+				custodialWalletSettings: dfnsSettings,
 			}),
 		);
 		await Network.init(
@@ -103,10 +105,10 @@ describe('🧪 FireblocksTransactionAdapter test', () => {
 			}),
 		);
 		Injectable.resolveTransactionHandler();
-	}, 80_000);
+	}, 60_000);
 
-	it('Fireblocks should create a Stable Coin', async () => {
-		const requesCreateStableCoin = new CreateRequest({
+	it('DFNS should create a Stable Coin', async () => {
+		const requestCreateStableCoin = new CreateRequest({
 			name: 'TEST_ACCELERATOR_HTS',
 			symbol: 'TEST',
 			decimals: decimals,
@@ -121,26 +123,26 @@ describe('🧪 FireblocksTransactionAdapter test', () => {
 			reserveInitialAmount: '1000000',
 			createReserve: true,
 			grantKYCToOriginalSender: true,
-			burnRoleAccount: FIREBLOCKS_SETTINGS.hederaAccountId,
-			rescueRoleAccount: FIREBLOCKS_SETTINGS.hederaAccountId,
-			deleteRoleAccount: FIREBLOCKS_SETTINGS.hederaAccountId,
-			cashInRoleAccount: FIREBLOCKS_SETTINGS.hederaAccountId,
+			burnRoleAccount: DFNS_SETTINGS.hederaAccountId,
+			rescueRoleAccount: DFNS_SETTINGS.hederaAccountId,
+			deleteRoleAccount: DFNS_SETTINGS.hederaAccountId,
+			cashInRoleAccount: DFNS_SETTINGS.hederaAccountId,
 			cashInRoleAllowance: '0',
 			metadata: '',
 		});
 
-		stableCoinHTS = (await StableCoin.create(requesCreateStableCoin)).coin;
+		stableCoinHTS = (await StableCoin.create(requestCreateStableCoin)).coin;
 		expect(stableCoinHTS?.tokenId).not.toBeNull();
 		await delay();
-	}, 80_000);
+	}, 60_000);
 
-	it('Fireblocks should associate a token', async () => {
+	it('DFNS should associate a token', async () => {
 		const result = await StableCoin.associate(
 			new AssociateTokenRequest({
-				targetId: FIREBLOCKS_SETTINGS.hederaAccountId,
+				targetId: DFNS_SETTINGS.hederaAccountId,
 				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.0',
 			}),
 		);
 		expect(result).toBe(true);
-	}, 80_000);
+	}, 60_000);
 });

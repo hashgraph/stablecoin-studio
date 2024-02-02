@@ -18,181 +18,35 @@
  *
  */
 
-import {CustodialWalletService, FireblocksConfig, SignatureRequest,} from '@hashgraph/hedera-custodians-integration';
+import {CustodialWalletService, FireblocksConfig,} from '@hashgraph/hedera-custodians-integration';
 import {singleton} from 'tsyringe';
-
-import {Client, Transaction} from '@hashgraph/sdk';
-
-import EventService from '../../../../../app/service/event/EventService';
-import {WalletEvents, WalletPairedEvent,} from '../../../../../app/service/event/WalletEvent';
+import {WalletEvents,} from '../../../../../app/service/event/WalletEvent';
 import LogService from '../../../../../app/service/LogService';
-import NetworkService from '../../../../../app/service/NetworkService';
-import {lazyInject} from '../../../../../core/decorator/LazyInjectDecorator';
-import Injectable from '../../../../../core/Injectable';
-import {Environment} from '../../../../../domain/context/network/Environment';
 import {SupportedWallets} from '../../../../../domain/context/network/Wallet';
-import TransactionResponse from '../../../../../domain/context/transaction/TransactionResponse.js';
-import {MirrorNodeAdapter} from '../../../mirror/MirrorNodeAdapter';
-import {InitializationData} from '../../../TransactionAdapter';
-import {TransactionType} from '../../../TransactionResponseEnums';
-import {SigningError} from '../../error/SigningError';
-import {HederaTransactionAdapter} from '../../HederaTransactionAdapter';
-import {TransactionResponse as HTransactionResponse} from '@hashgraph/sdk/lib/exports';
-import Account, {AccountProps,} from '../../../../../domain/context/account/Account';
-import {HTSTransactionResponseAdapter} from '../HTSTransactionResponseAdapter';
 import FireblocksSettings from '../../../../../domain/context/custodialwalletsettings/FireblocksSettings';
+import {CustodialTransactionAdapter} from "./CustodialTransactionAdapter";
 
 @singleton()
-export class FireblocksTransactionAdapter extends HederaTransactionAdapter {
-	private _client: Client;
-	private custodialWalletService: CustodialWalletService;
-	public network: Environment;
-	public account: Account;
-
-	constructor(
-		@lazyInject(EventService) public readonly eventService: EventService,
-		@lazyInject(MirrorNodeAdapter)
-		public readonly mirrorNodeAdapter: MirrorNodeAdapter,
-		@lazyInject(NetworkService)
-		public readonly networkService: NetworkService,
-	) {
-		super(mirrorNodeAdapter, networkService);
-	}
+export class FireblocksTransactionAdapter extends CustodialTransactionAdapter {
 
 	init(): Promise<string> {
 		this.eventService.emit(WalletEvents.walletInit, {
-			wallet: SupportedWallets.FIREBLOCKS,
+			wallet: this.getSupportedWallet(),
 			initData: {},
 		});
 		LogService.logTrace('Fireblocks Initialized');
 		return Promise.resolve(this.networkService.environment);
 	}
 
-	public get client(): Client {
-		return this._client;
-	}
-
-	private initClient(accountId: string, publicKey: string): void {
-		const currentNetwork = this.networkService.environment;
-		switch (currentNetwork) {
-			case 'testnet':
-				this._client = Client.forTestnet();
-				break;
-			case 'mainnet':
-				this._client = Client.forMainnet();
-				break;
-			default:
-				throw new Error('Network not supported');
-		}
-		this._client.setOperatorWith(accountId, publicKey, this.signingService);
-	}
-
-	private signingService = async (
-		message: Uint8Array,
-	): Promise<Uint8Array> => {
-		const uint8Array = new Uint8Array(message);
-		const signatureRequest = new SignatureRequest(uint8Array);
-		return await this.custodialWalletService.signTransaction(
-			signatureRequest
-		);
-	};
-
-	private initCustodialWalletService(
-		apiKey: string,
-		apiSecretKey: string,
-		baseUrl: string,
-		vaultAccountId: string,
-	): void {
-		const fireblocksConfig = new FireblocksConfig(
-			apiKey,
-			apiSecretKey,
-			baseUrl,
-			vaultAccountId,
-			'HBAR_TEST',
-		);
+	initCustodialWalletService(settings: FireblocksSettings): void {
+		const { apiKey, apiSecretKey, baseUrl, vaultAccountId, assetId } = settings;
 		this.custodialWalletService = new CustodialWalletService(
-			fireblocksConfig
+			new FireblocksConfig(apiKey, apiSecretKey, baseUrl, vaultAccountId, assetId),
 		);
 	}
 
-	getAccount(): Account {
-		return this.account;
+	getSupportedWallet(): SupportedWallets {
+		return SupportedWallets.FIREBLOCKS;
 	}
 
-	async register(
-		fireblocksSettings: FireblocksSettings,
-	): Promise<InitializationData> {
-		Injectable.registerTransactionHandler(this);
-		const accountId = fireblocksSettings.hederaAccountId;
-		//TODO: test if we can get the public key from the mirror node -> delete from the request
-		const accountMirror = await this.mirrorNodeAdapter.getAccountInfo(
-			accountId,
-		);
-		this.initCustodialWalletService(
-			fireblocksSettings.apiKey,
-			fireblocksSettings.apiSecretKey,
-			fireblocksSettings.baseUrl,
-			fireblocksSettings.vaultAccountId,
-		);
-
-		this.initClient(accountId, fireblocksSettings.hederaAccountPublicKey);
-		const accountProps: AccountProps = {
-			id: accountId,
-			publicKey: accountMirror.publicKey,
-		};
-		this.account = new Account(accountProps);
-		const eventData: WalletPairedEvent = {
-			wallet: SupportedWallets.FIREBLOCKS,
-			data: {
-				account: this.account,
-				pairing: '',
-				topic: '',
-			},
-			network: {
-				name: this.networkService.environment,
-				recognized: true,
-				factoryId: this.networkService.configuration
-					? this.networkService.configuration.factoryAddress
-					: '',
-			},
-		};
-		this.eventService.emit(WalletEvents.walletPaired, eventData);
-		LogService.logTrace('Fireblocks registered as handler: ', eventData);
-		return Promise.resolve({
-			account: this.getAccount(),
-		});
-	}
-
-	async signAndSendTransaction(
-		t: Transaction,
-		transactionType: TransactionType,
-		nameFunction?: string,
-		abi?: any[],
-	): Promise<TransactionResponse> {
-		try {
-			LogService.logTrace(
-				'Fireblocks signing and sending transaction:',
-				nameFunction,
-			);
-
-			const tr: HTransactionResponse = await t.execute(this._client);
-
-			this.logTransaction(
-				tr.transactionId.toString(),
-				this.networkService.environment,
-			);
-
-			return HTSTransactionResponseAdapter.manageResponse(
-				this.networkService.environment,
-				tr,
-				transactionType,
-				this._client,
-				nameFunction,
-				abi,
-			);
-		} catch (error) {
-			LogService.logError(error);
-			throw new SigningError(error);
-		}
-	}
 }
