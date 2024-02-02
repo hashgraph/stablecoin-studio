@@ -49,7 +49,7 @@ export interface FireblocksConfigRequest {
 	hederaAccountId: string;
 }
 
-type CustodialSettings = DFNSConfigRequest | FireblocksConfigRequest;
+export type CustodialSettings = DFNSConfigRequest | FireblocksConfigRequest;
 
 export default class ConnectRequest
 	extends ValidatedRequest<ConnectRequest>

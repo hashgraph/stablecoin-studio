@@ -33,5 +33,4 @@ resources/keystore/*
 
 # Misc
 .DS_Store
-
 report.json
