@@ -131,14 +131,16 @@ describe('🧪 FireblocksTransactionAdapter test', () => {
 
 		stableCoinHTS = (await StableCoin.create(requesCreateStableCoin)).coin;
 		expect(stableCoinHTS?.tokenId).not.toBeNull();
+		await delay();
 	}, 80_000);
 
 	it('Fireblocks should associate a token', async () => {
-		await StableCoin.associate(
+		const result = await StableCoin.associate(
 			new AssociateTokenRequest({
 				targetId: FIREBLOCKS_SETTINGS.hederaAccountId,
 				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.0',
 			}),
 		);
+		expect(result).toBe(true);
 	}, 80_000);
 });

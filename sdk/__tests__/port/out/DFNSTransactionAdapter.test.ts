@@ -52,11 +52,8 @@ const apiSecretKey = fs.readFileSync(
 	'utf8',
 );
 
-
-
 describe('🧪 DFNSTransactionAdapter test', () => {
 	let stableCoinHTS: StableCoinViewModel;
-
 	const delay = async (seconds = 5): Promise<void> => {
 		seconds = seconds * 1000;
 		await new Promise((r) => setTimeout(r, seconds));
@@ -108,7 +105,6 @@ describe('🧪 DFNSTransactionAdapter test', () => {
 			}),
 		);
 		Injectable.resolveTransactionHandler();
-		await delay();
 	}, 60_000);
 
 	it('DFNS should create a Stable Coin', async () => {
@@ -137,14 +133,16 @@ describe('🧪 DFNSTransactionAdapter test', () => {
 
 		stableCoinHTS = (await StableCoin.create(requestCreateStableCoin)).coin;
 		expect(stableCoinHTS?.tokenId).not.toBeNull();
+		await delay();
 	}, 60_000);
 
 	it('DFNS should associate a token', async () => {
-		await StableCoin.associate(
+		const result = await StableCoin.associate(
 			new AssociateTokenRequest({
 				targetId: DFNS_SETTINGS.hederaAccountId,
 				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.0',
 			}),
 		);
+		expect(result).toBe(true);
 	}, 60_000);
 });
