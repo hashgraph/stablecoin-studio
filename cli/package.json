@@ -24,7 +24,7 @@
     "lint": "eslint --ext .ts --ext .mts .",
     "test": "jest --maxWorkers=50%",
     "test:watch": "jest --watch --maxWorkers=25%",
-    "test:ci": "jest --runInBand",
+    "test:ci": "jest --runInBand --forceExit",
     "cleanCache": "npx jest --clearCache",
     "test:vm": "NODE_OPTIONS=--experimental-vm-modules npm run test",
     "prettier": "prettier --config .prettierrc --write .",
