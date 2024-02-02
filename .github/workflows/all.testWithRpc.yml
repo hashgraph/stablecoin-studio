@@ -25,7 +25,15 @@ jobs:
         uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d
         with:
           node-version: 18.x      
-          
+      
+      - name: Cache npm dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
       - name: Install dependencies Hashconnect
         run: |
           npm ci
@@ -94,7 +102,7 @@ jobs:
 
       - name: Test cli
         run: |
-          npm run test
+          npm run test:ci
           npm run cleanCache
         working-directory: cli
 
