@@ -5,7 +5,7 @@ on:
     branches: [main]
 jobs:
   test-node:
-    name: docker    
+    name: testing    
     #runs-on: [ self-hosted, Linux, medium, ephemeral ]
     runs-on: ubuntu-latest
     env:
@@ -25,31 +25,47 @@ jobs:
         uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d
         with:
           node-version: 18.x      
-          
+      
+      - name: Cache npm dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
       - name: Install dependencies Hashconnect
         run: |
-          npm install
+          npm ci
           npm run build
-          npm install
         working-directory: hashconnect/lib
 
       - name: Install dependencies Contracts
         run: |
-          npm install
+          npm ci
           npm run compile:force
         working-directory: contracts
+      
+      - name: Install dependencies Custodial Library
+        run: |
+          npm ci
+          npm run build
+        working-directory: custodialwalletutils
+
       - name: Install dependencies SDK
         run: |
-          npm install
+          npm ci
           npm run build
         working-directory: sdk
+      
       - name: Install dependencies Cli
         run: |
-          npm install
+          npm ci
           npm run build
         working-directory: cli
+      
       - name: Install dependencies web
-        run: npm install
+        run: npm ci
         working-directory: web
 
       - name: Create file
@@ -67,8 +83,8 @@ jobs:
           echo "CLIENT_PUBLIC_KEY_ED25519_2=${{ secrets.PUBLIC_KEY_ED25519_2 }}"  >> .env
           echo "CLIENT_EVM_ADDRESS_ED25519_2=${{ secrets.EVM_ADDRESS_ED25519_2 }}"  >> .env
           echo "CLIENT_ACCOUNT_ID_ED25519_2=${{ secrets.ACCOUNT_ID_ED25519_2 }}"  >> .env
-          echo "HEDERA_TOKEN_MANAGER_ADDRESS=0.0.1137621"  >> .env
-          echo "FACTORY_ADDRESS=0.0.1137631"  >> .env
+          echo "HEDERA_TOKEN_MANAGER_ADDRESS=0.0.2167020"  >> .env
+          echo "FACTORY_ADDRESS=0.0.2167166"  >> .env
         working-directory: sdk
     
       - name: Create contracts
@@ -86,7 +102,7 @@ jobs:
 
       - name: Test cli
         run: |
-          npm run test
+          npm run test:ci
           npm run cleanCache
         working-directory: cli
 
@@ -117,12 +133,6 @@ jobs:
           npm run test
           npm run cleanCache
         working-directory: sdk
-
-      - name: Test custodialwalletutils
-        run: |
-          npm run test
-          npm run cleanCache
-        working-directory: custodialwalletutils
 
       - name: Test custodialwalletutils
         run: |

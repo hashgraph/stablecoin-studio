@@ -78,7 +78,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 	};
 
 	beforeAll(async () => {
-		await connectAccount(CLIENT_ACCOUNT_ED25519);
+				await connectAccount(CLIENT_ACCOUNT_ED25519);
 
 		stableCoinService = Injectable.resolve(StableCoinService);
 
