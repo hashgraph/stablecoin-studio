@@ -417,8 +417,10 @@ export default class SetConfigurationService extends Service {
         return AccountType.SelfCustodial;
       case 'FIREBLOCKS':
         return AccountType.Fireblocks;
-      default:
+      case 'DFNS':
         return AccountType.Dfns;
+      default:
+        return await this.askForAccountType();
     }
   }
 

@@ -1,14 +1,18 @@
 import { Network } from '@hashgraph/stablecoin-npm-sdk';
 import { utilsService, configurationService } from '../../../../src/index.js';
+import { AccountType } from '../../../../src/domain/configuration/interfaces/AccountType';
 
 describe('UtilitiesService', () => {
   it('should initialize the SDK and connect to the network', async () => {
     // mocks
     const mockAccount = {
       accountId: 'mockAccountId',
-      privateKey: {
-        key: 'mockPrivateKey',
-        type: 'mockPrivateKeyType',
+      type: AccountType.SelfCustodial,
+      selfCustodial: {
+        privateKey: {
+          key: 'mockPrivateKey',
+          type: 'mockPrivateKeyType',
+        },
       },
       network: 'mockNetwork',
       alias: 'mockAlias',

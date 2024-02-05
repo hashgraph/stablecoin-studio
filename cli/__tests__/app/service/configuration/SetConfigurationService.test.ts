@@ -1,13 +1,14 @@
 import {
-  setConfigurationService,
   configurationService,
+  setConfigurationService,
+  setMirrorNodeService,
   utilsService,
   wizardService,
-  setMirrorNodeService,
 } from '../../../../src/index.js';
 import { IConfiguration } from '../../../../src/domain/configuration/interfaces/IConfiguration.js';
 import Language from '../../../../src/domain/language/Language.js';
 import { rimraf } from 'rimraf';
+import { AccountType } from '../../../../src/domain/configuration/interfaces/AccountType';
 
 const language: Language = new Language();
 const testDir = 'test';
@@ -33,9 +34,12 @@ describe('setConfigurationService', () => {
     accounts: [
       {
         accountId: '0.0.123456',
-        privateKey: {
-          key: '01234567890abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcde',
-          type: 'ED25519',
+        type: AccountType.SelfCustodial,
+        selfCustodial: {
+          privateKey: {
+            key: '01234567890abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcde',
+            type: 'ED25519',
+          },
         },
         network: 'testnet',
         alias: 'test account',

@@ -4,6 +4,7 @@ import {
   utilsService,
   configurationService,
 } from '../../../../src/index.js';
+import { AccountType } from '../../../../src/domain/configuration/interfaces/AccountType';
 
 describe('wizardService', () => {
   const configurationMock = {
@@ -15,15 +16,48 @@ describe('wizardService', () => {
     accounts: [
       {
         accountId: 'account1',
-        privateKey: { key: 'key', type: 'type' },
+        type: AccountType.SelfCustodial,
+        selfCustodial: {
+          privateKey: { key: 'key', type: 'type' },
+        },
         network: 'testnet',
         alias: 'alias1',
       },
       {
         accountId: 'account2',
-        privateKey: { key: 'key', type: 'type' },
+        type: AccountType.Fireblocks,
         network: 'testnet',
         alias: 'alias2',
+        nonCustodial: {
+          fireblocks: {
+            apiSecretKey: 'apiSecretKey',
+            apiKey: 'apiKey',
+            baseUrl: 'baseUrl',
+            assetId: 'assetId',
+            vaultAccountId: 'vaultAccountId',
+            hederaAccountId: 'hederaAccountId',
+            hederaAccountPublicKey: 'hederaAccountPublicKey',
+          },
+        },
+      },
+      {
+        accountId: 'account3',
+        type: AccountType.Dfns,
+        network: 'testnet',
+        alias: 'alias3',
+        nonCustodial: {
+          dfns: {
+            authorizationToken: 'authorizationToken',
+            credentialId: 'credentialId',
+            privateKey: 'privateKey',
+            appOrigin: 'appOrigin',
+            appId: 'appId',
+            testUrl: 'testUrl',
+            walletId: 'walletId',
+            hederaAccountId: 'hederaAccountId',
+            hederaAccountPublicKey: 'hederaAccountPublicKey',
+          },
+        },
       },
     ],
     rpcs: [
@@ -192,10 +226,23 @@ describe('wizardService', () => {
     // verify
     expect(getConfigurationMock).toHaveBeenCalled();
     expect(setSelectedAccountMock).toHaveBeenCalledWith({
-      accountId: 'account2',
-      alias: 'alias2',
+      accountId: 'account3',
+      type: AccountType.Dfns,
       network: 'testnet',
-      privateKey: { key: 'key', type: 'type' },
+      alias: 'alias3',
+      nonCustodial: {
+        dfns: {
+          authorizationToken: 'authorizationToken',
+          credentialId: 'credentialId',
+          privateKey: 'privateKey',
+          appOrigin: 'appOrigin',
+          appId: 'appId',
+          testUrl: 'testUrl',
+          walletId: 'walletId',
+          hederaAccountId: 'hederaAccountId',
+          hederaAccountPublicKey: 'hederaAccountPublicKey',
+        },
+      },
     });
   });
 
@@ -230,9 +277,20 @@ describe('wizardService', () => {
     expect(getConfigurationMock).toHaveBeenCalled();
     expect(setCurrentAccountMock).toHaveBeenCalledWith({
       accountId: 'account2',
-      alias: 'alias2',
+      type: AccountType.Fireblocks,
       network: 'testnet',
-      privateKey: { key: 'key', type: 'type' },
+      alias: 'alias2',
+      nonCustodial: {
+        fireblocks: {
+          apiSecretKey: 'apiSecretKey',
+          apiKey: 'apiKey',
+          baseUrl: 'baseUrl',
+          assetId: 'assetId',
+          vaultAccountId: 'vaultAccountId',
+          hederaAccountId: 'hederaAccountId',
+          hederaAccountPublicKey: 'hederaAccountPublicKey',
+        },
+      },
     });
     expect(setCurrentNetworkMock).toHaveBeenCalledWith({
       name: 'testnet',

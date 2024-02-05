@@ -95,9 +95,9 @@ export default class UtilitiesService extends Service {
                 authorizationToken:
                   account.nonCustodial.dfns.authorizationToken,
                 credentialId: account.nonCustodial.dfns.credentialId,
-                privateKey: account.nonCustodial.dfns.privateKey,
-                appOrigin: account.nonCustodial.dfns.appOrigin,
-                appId: account.nonCustodial.dfns.appId,
+                serviceAccountPrivateKey: account.nonCustodial.dfns.privateKey,
+                urlApplicationOrigin: account.nonCustodial.dfns.appOrigin,
+                applicationId: account.nonCustodial.dfns.appId,
                 testUrl: account.nonCustodial.dfns.testUrl,
                 walletId: account.nonCustodial.dfns.walletId,
                 hederaAccountId: account.nonCustodial.dfns.hederaAccountId,
@@ -118,6 +118,18 @@ export default class UtilitiesService extends Service {
     } else {
       return this.currentAccount;
     }
+  }
+
+  public isAccountConfigValid(account: IAccountConfig): boolean {
+    const validations = {
+      [AccountType.SelfCustodial]: () => !!account.selfCustodial,
+      [AccountType.Fireblocks]: () =>
+        !!account.nonCustodial && !!account.nonCustodial.fireblocks,
+      [AccountType.Dfns]: () =>
+        !!account.nonCustodial && !!account.nonCustodial.dfns,
+    };
+
+    return validations[account.type]();
   }
 
   public setCurrentNetwotk(network: INetworkConfig): void {

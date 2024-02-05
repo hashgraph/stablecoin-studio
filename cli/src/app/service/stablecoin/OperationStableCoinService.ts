@@ -30,7 +30,6 @@ import {
   PauseRequest,
   RequestAccount,
   RequestCustomFee,
-  RequestPrivateKey,
   RequestPublicKey,
   RescueHBARRequest,
   RescueRequest,
@@ -175,13 +174,9 @@ export default class OperationStableCoinService extends Service {
     const configAccount = utilsService.getCurrentAccount();
     const currentMirror = utilsService.getCurrentMirror();
     const currentRPC = utilsService.getCurrentRPC();
-    const privateKey: RequestPrivateKey = {
-      key: configAccount.privateKey.key,
-      type: configAccount.privateKey.type,
-    };
+    // TODO: depending del tipo hacer una cosa u otra
     const currentAccount: RequestAccount = {
       accountId: configAccount.accountId,
-      privateKey: privateKey,
     };
 
     const wizardOperationsStableCoinOptions = language.getArrayFromObject(
@@ -655,13 +650,8 @@ export default class OperationStableCoinService extends Service {
     const configAccount = utilsService.getCurrentAccount();
     const currentMirror = utilsService.getCurrentMirror();
     const currentRPC = utilsService.getCurrentRPC();
-    const privateKey: RequestPrivateKey = {
-      key: configAccount.privateKey.key,
-      type: configAccount.privateKey.type,
-    };
     const currentAccount: RequestAccount = {
       accountId: configAccount.accountId,
-      privateKey: privateKey,
     };
 
     const capabilitiesStableCoin: StableCoinCapabilities =
@@ -798,13 +788,8 @@ export default class OperationStableCoinService extends Service {
     const configAccount = utilsService.getCurrentAccount();
     const currentMirror = utilsService.getCurrentMirror();
     const currentRPC = utilsService.getCurrentRPC();
-    const privateKey: RequestPrivateKey = {
-      key: configAccount.privateKey.key,
-      type: configAccount.privateKey.type,
-    };
     const currentAccount: RequestAccount = {
       accountId: configAccount.accountId,
-      privateKey: privateKey,
     };
 
     const capabilitiesStableCoin: StableCoinCapabilities =
@@ -946,13 +931,8 @@ export default class OperationStableCoinService extends Service {
     const configAccount = utilsService.getCurrentAccount();
     const currentMirror = utilsService.getCurrentMirror();
     const currentRPC = utilsService.getCurrentRPC();
-    const privateKey: RequestPrivateKey = {
-      key: configAccount.privateKey.key,
-      type: configAccount.privateKey.type,
-    };
     const currentAccount: RequestAccount = {
       accountId: configAccount.accountId,
-      privateKey: privateKey,
     };
 
     const stableCoinCapabilities = await this.getCapabilities(
@@ -1343,13 +1323,8 @@ export default class OperationStableCoinService extends Service {
     const configAccount = utilsService.getCurrentAccount();
     const currentMirror = utilsService.getCurrentMirror();
     const currentRPC = utilsService.getCurrentRPC();
-    const privateKey: RequestPrivateKey = {
-      key: configAccount.privateKey.key,
-      type: configAccount.privateKey.type,
-    };
     const currentAccount: RequestAccount = {
       accountId: configAccount.accountId,
-      privateKey: privateKey,
     };
 
     const stableCoinCapabilities = await this.getCapabilities(currentAccount);
@@ -2621,13 +2596,8 @@ export default class OperationStableCoinService extends Service {
 
   private async configuration(): Promise<void> {
     const configAccount = utilsService.getCurrentAccount();
-    const privateKey: RequestPrivateKey = {
-      key: configAccount.privateKey.key,
-      type: configAccount.privateKey.type,
-    };
     const currentAccount: RequestAccount = {
       accountId: configAccount.accountId,
-      privateKey: privateKey,
     };
 
     const capabilitiesStableCoin: StableCoinCapabilities =
@@ -3170,13 +3140,8 @@ export default class OperationStableCoinService extends Service {
     switch (answer) {
       case language.getText('wizard.featureOptions.CurrentUser'): {
         const currentAccount = utilsService.getCurrentAccount();
-        const privateKey: RequestPrivateKey = {
-          key: currentAccount.privateKey.key,
-          type: currentAccount.privateKey.type,
-        };
         const reqAccount: RequestAccount = {
           accountId: currentAccount.accountId,
-          privateKey: privateKey,
         };
         const req: GetPublicKeyRequest = new GetPublicKeyRequest({
           account: reqAccount,
@@ -3206,13 +3171,8 @@ export default class OperationStableCoinService extends Service {
     const configAccount = utilsService.getCurrentAccount();
     const currentMirror = utilsService.getCurrentMirror();
     const currentRPC = utilsService.getCurrentRPC();
-    const privateKey: RequestPrivateKey = {
-      key: configAccount.privateKey.key,
-      type: configAccount.privateKey.type,
-    };
     const currentAccount: RequestAccount = {
       accountId: configAccount.accountId,
-      privateKey: privateKey,
     };
 
     const stableCoinCapabilities = await this.getCapabilities(

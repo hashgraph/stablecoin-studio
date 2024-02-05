@@ -161,10 +161,12 @@ export default class ManageImportedTokenService extends Service {
       ) {
         return {
           accountId: acc.accountId,
+          type: acc.type,
           network: acc.network,
           alias: acc.alias,
-          privateKey: acc.privateKey,
+          selfCustodial: acc.selfCustodial,
           importedTokens: importedTokens,
+          nonCustodial: acc.nonCustodial,
         };
       }
       return acc;

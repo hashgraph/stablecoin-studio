@@ -29,14 +29,18 @@ import UpdateStableCoinService from '../../../../src/app/service/stablecoin/Upda
 import PauseStableCoinService from '../../../../src/app/service/stablecoin/PauseStableCoinService.js';
 import DeleteStableCoinService from '../../../../src/app/service/stablecoin/DeleteStableCoinService.js';
 import ListStableCoinService from '../../../../src/app/service/stablecoin/ListStableCoinService.js';
+import { AccountType } from '../../../../src/domain/configuration/interfaces/AccountType';
 
 const service = new OperationStableCoinService('tokenId', 'memo', 'symbol');
 const language: Language = new Language();
 const currentAccount = {
   accountId: '0.0.12345',
-  privateKey: {
-    key: 'key',
-    type: 'type',
+  type: AccountType.SelfCustodial,
+  selfCustodial: {
+    privateKey: {
+      key: 'key',
+      type: 'type',
+    },
   },
   network: 'testnet',
   alias: 'alias',
