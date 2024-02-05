@@ -21,7 +21,7 @@ import {
 } from '@hashgraph/stablecoin-npm-sdk';
 import type { StableCoinListViewModel } from '@hashgraph/stablecoin-npm-sdk';
 import type { FC, ReactNode } from 'react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import BLADE_LOGO_PNG from '../assets/png/bladeLogo.png';
@@ -41,25 +41,20 @@ import ERROR_ICON from '../assets/svg/error.svg';
 import { SelectController } from './Form/SelectController';
 import { useForm } from 'react-hook-form';
 import type { IMirrorRPCNode } from '../interfaces/IMirrorRPCNode';
-import type {FireblocksFormValues} from "./Form/FireblocksFormModal";
-import FireblocksFormModal from "./Form/FireblocksFormModal";
+import type { FireblocksFormValues } from './Form/FireblocksFormModal';
+import FireblocksFormModal from './Form/FireblocksFormModal';
 
 const ModalWalletConnect = () => {
 	const { t } = useTranslation('global');
 	const dispatch = useDispatch();
 
-	const {
-		isOpen: isWalletSelectOpen,
-		onOpen: onWalletSelectOpen,
-		onClose: onWalletSelectClose,
-	} = useDisclosure({ defaultIsOpen: true });
+	const { onClose: onWalletSelectClose } = useDisclosure({ defaultIsOpen: true });
 
 	const {
 		isOpen: isFireblocksFormOpen,
 		onOpen: onFireblocksFormOpen,
 		onClose: onFireblocksFormClose,
 	} = useDisclosure();
-
 
 	const styles = {
 		providerStyle: {
@@ -99,7 +94,6 @@ const ModalWalletConnect = () => {
 	const availableWallets = useSelector(AVAILABLE_WALLETS);
 	const selectedMirrors: IMirrorRPCNode[] = useSelector(SELECTED_MIRRORS);
 	const selectedRPCs: IMirrorRPCNode[] = useSelector(SELECTED_RPCS);
-
 
 	const { control, getValues } = useForm({
 		mode: 'onChange',
@@ -234,11 +228,10 @@ const ModalWalletConnect = () => {
 	};
 
 	const handleFireblocksFormConfirm = (formData: FireblocksFormValues) => {
-		console.log("Datos del formulario:", formData);
+		console.log('Datos del formulario:', formData);
 
 		onFireblocksFormClose();
 		// handleWalletConnect(SupportedWallets.FIREBLOCKS, '-');
-
 	};
 
 	const handleConnectBladeWallet = () => {
@@ -293,7 +286,7 @@ const ModalWalletConnect = () => {
 				closeOnOverlayClick={false}
 			>
 				<ModalOverlay />
-				<ModalContent data-testid='modal-action-content' p='50' maxW="960px">
+				<ModalContent data-testid='modal-action-content' p='50' maxW='960px'>
 					{!error && !rejected && !hashpackSelected && !bladeSelected && (
 						<>
 							<ModalHeader p='0' justifyContent='center'>
