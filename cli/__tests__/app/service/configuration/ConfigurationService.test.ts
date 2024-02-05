@@ -215,7 +215,7 @@ describe('configurationService', () => {
     expect(configurationService).not.toBeNull();
     expect(defaultSingleAskMock).toHaveBeenCalledTimes(5);
     expect(defaultConfirmAskMock).toHaveBeenCalledTimes(4);
-    expect(defaultMultipleAskMock).toHaveBeenCalledTimes(3);
+    expect(defaultMultipleAskMock).toHaveBeenCalledTimes(4);
     expect(defaultPasswordAskMock).toHaveBeenCalledTimes(1);
   });
 
