@@ -88,8 +88,6 @@ export default class UtilitiesService extends Service {
                 assetId: account.nonCustodial.fireblocks.assetId,
                 hederaAccountId:
                   account.nonCustodial.fireblocks.hederaAccountId,
-                hederaAccountPublicKey:
-                  account.nonCustodial.fireblocks.hederaAccountPublicKey,
               }
             : {
                 authorizationToken:
@@ -98,11 +96,9 @@ export default class UtilitiesService extends Service {
                 serviceAccountPrivateKey: account.nonCustodial.dfns.privateKey,
                 urlApplicationOrigin: account.nonCustodial.dfns.appOrigin,
                 applicationId: account.nonCustodial.dfns.appId,
-                testUrl: account.nonCustodial.dfns.testUrl,
+                baseUrl: account.nonCustodial.dfns.testUrl,
                 walletId: account.nonCustodial.dfns.walletId,
                 hederaAccountId: account.nonCustodial.dfns.hederaAccountId,
-                hederaAccountPublicKey:
-                  account.nonCustodial.dfns.hederaAccountPublicKey,
               },
       }),
     );

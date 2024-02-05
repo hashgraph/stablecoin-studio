@@ -15,13 +15,6 @@ const testDir = 'test';
 const path = `${testDir}/hsca-config_test.yaml`;
 
 describe('setConfigurationService', () => {
-  beforeEach(() => {
-    jest
-      .spyOn(configurationService, 'getConfiguration')
-      .mockReturnValue(configurationMock);
-    jest.spyOn(utilsService, 'showSpinner').mockImplementation();
-    jest.spyOn(console, 'log');
-  });
   const configurationMock: IConfiguration = {
     defaultNetwork: 'testnet',
     networks: [
@@ -81,6 +74,14 @@ describe('setConfigurationService', () => {
       },
     ],
   };
+
+  beforeEach(() => {
+    jest
+      .spyOn(configurationService, 'getConfiguration')
+      .mockReturnValue(configurationMock);
+    jest.spyOn(utilsService, 'showSpinner').mockImplementation();
+    jest.spyOn(console, 'log');
+  });
 
   it('should init configuration with no file path nor network', async () => {
     const defaultSingleAskMock = jest
@@ -278,6 +279,14 @@ describe('setConfigurationService', () => {
       .spyOn(utilsService, 'getCurrentAccount')
       .mockReturnValue(configurationMock.accounts[0]);
 
+    jest
+      .spyOn(utilsService, 'getCurrentMirror')
+      .mockReturnValue(configurationMock.mirrors[0]);
+
+    jest
+      .spyOn(utilsService, 'getCurrentRPC')
+      .mockReturnValue(configurationMock.rpcs[0]);
+
     jest.spyOn(utilsService, 'initSDK').mockImplementation(jest.fn());
 
     jest.spyOn(wizardService, 'mainMenu').mockImplementation(jest.fn());
@@ -291,7 +300,9 @@ describe('setConfigurationService', () => {
         Promise.resolve(language.getText('wizard.manageAccountOptions.Add')),
       )
       .mockImplementationOnce(() => Promise.resolve('ED25519'))
+      .mockImplementationOnce(() => Promise.resolve('SELF-CUSTODIAL'))
       .mockImplementationOnce(() => Promise.resolve('testnet'))
+      .mockImplementationOnce(() => Promise.resolve('test account'))
       .mockImplementationOnce(() =>
         Promise.resolve(language.getText('wizard.manageAccountOptions.Change')),
       )
@@ -336,7 +347,7 @@ describe('setConfigurationService', () => {
     rimraf(testDir);
 
     expect(setConfigurationService).not.toBeNull();
-    expect(defaultMultipleAskMock).toHaveBeenCalledTimes(8);
+    expect(defaultMultipleAskMock).toHaveBeenCalledTimes(10);
     expect(defaultConfirmAskMock).toHaveBeenCalledTimes(2);
     expect(defaultSingleAskMock).toHaveBeenCalledTimes(3);
     expect(defaultPasswordAskMock).toHaveBeenCalledTimes(1);

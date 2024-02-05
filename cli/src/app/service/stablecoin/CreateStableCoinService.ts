@@ -53,7 +53,7 @@ export default class CreateStableCoinService extends Service {
 
     const factoryService: SetFactoryService = new SetFactoryService();
 
-    if (utilsService.isAccountConfigValid(currentAccount)) {
+    if (!utilsService.isAccountConfigValid(currentAccount)) {
       await setConfigurationService.initConfiguration(
         configurationService.getDefaultConfigurationPath(),
         currentAccount.network,

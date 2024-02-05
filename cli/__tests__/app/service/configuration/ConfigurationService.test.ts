@@ -178,6 +178,9 @@ describe('configurationService', () => {
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockImplementation((question: string) => {
         switch (question) {
+          case language.getText('configuration.askAccountType'):
+            return Promise.resolve('SELF-CUSTODIAL');
+
           case language.getText('configuration.askPrivateKeyType'):
             return Promise.resolve('ED25519');
 
