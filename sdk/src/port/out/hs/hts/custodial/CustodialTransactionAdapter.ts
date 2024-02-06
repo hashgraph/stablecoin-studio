@@ -19,11 +19,16 @@
  */
 
 import { HederaTransactionAdapter } from '../../HederaTransactionAdapter';
-import { Client, Transaction } from '@hashgraph/sdk';
+import {
+	Client,
+	Transaction,
+	TransactionResponse as HTransactionResponse,
+} from '@hashgraph/sdk';
 import {
 	CustodialWalletService,
 	SignatureRequest,
 } from '@hashgraph/hedera-custodians-integration';
+import TransactionResponse from '../../../../../domain/context/transaction/TransactionResponse.js';
 import DfnsSettings from '../../../../../domain/context/custodialwalletsettings/DfnsSettings';
 import FireblocksSettings from '../../../../../domain/context/custodialwalletsettings/FireblocksSettings';
 import Account from '../../../../../domain/context/account/Account';
@@ -33,10 +38,7 @@ import EventService from '../../../../../app/service/event/EventService';
 import { MirrorNodeAdapter } from '../../../mirror/MirrorNodeAdapter';
 import NetworkService from '../../../../../app/service/NetworkService';
 import { Environment } from '../../../../../domain/context/network/Environment';
-import { TransactionType } from '../../../TransactionResponseEnums';
-import TransactionResponse from '../../../../../domain/context/transaction/TransactionResponse';
 import LogService from '../../../../../app/service/LogService';
-import { TransactionResponse as HTransactionResponse } from '@hashgraph/sdk/lib/exports';
 import { HTSTransactionResponseAdapter } from '../HTSTransactionResponseAdapter';
 import { SigningError } from '../../error/SigningError';
 import { SupportedWallets } from '../../../../../domain/context/network/Wallet';
@@ -45,6 +47,7 @@ import {
 	WalletPairedEvent,
 } from '../../../../../app/service/event/WalletEvent';
 import Injectable from '../../../../../core/Injectable';
+import { TransactionType } from '../../../TransactionResponseEnums';
 
 export abstract class CustodialTransactionAdapter extends HederaTransactionAdapter {
 	protected client: Client;
@@ -87,10 +90,10 @@ export abstract class CustodialTransactionAdapter extends HederaTransactionAdapt
 	};
 
 	public signAndSendTransaction = async (
-		t: Transaction,
+		transaction: Transaction,
 		transactionType: TransactionType,
 		nameFunction?: string,
-		abi?: any[], // eslint-disable-line @typescript-eslint/no-explicit-any
+		abi?: object[],
 	): Promise<TransactionResponse> => {
 		try {
 			LogService.logTrace(
@@ -98,15 +101,17 @@ export abstract class CustodialTransactionAdapter extends HederaTransactionAdapt
 				nameFunction,
 			);
 
-			const tr: HTransactionResponse = await t.execute(this.client);
+			const txResponse: HTransactionResponse = await transaction.execute(
+				this.client,
+			);
 			this.logTransaction(
-				tr.transactionId.toString(),
+				txResponse.transactionId.toString(),
 				this.networkService.environment,
 			);
 
 			return HTSTransactionResponseAdapter.manageResponse(
 				this.networkService.environment,
-				tr,
+				txResponse,
 				transactionType,
 				this.client,
 				nameFunction,

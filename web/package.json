@@ -4,6 +4,50 @@
 	"files": [
 		"build/"
 	],
+	"scripts": {
+		"start": "react-app-rewired start",
+		"build": "react-app-rewired build",
+		"test": "react-app-rewired test --maxWorkers=50% --watchAll=false",
+		"test:watch": "react-app-rewired test --maxWorkers=50% --watchAll=true",
+		"cleanCache": "react-app-rewired test --clearCache",
+		"eject": "react-app-rewired eject",
+		"lint": "eslint . --ext .ts --ext .mts",
+		"prettier": "prettier --config .prettierrc --write .",
+		"prettierCheck": "prettier --config .prettierrc --check",
+		"pre-commit": "npm run lint && npm run prettier",
+		"prepack": "npm run build"
+	},
+	"devDependencies": {
+		"@babel/plugin-proposal-private-property-in-object": "^7.21.0",
+		"@types/node": "^18.11.18",
+		"@types/react-toastify": "^4.1.0",
+		"@types/redux-mock-store": "^1.0.3",
+		"@typescript-eslint/eslint-plugin": "^5.48.2",
+		"@typescript-eslint/parser": "^5.48.2 ",
+		"assert": "^2.0.0",
+		"buffer": "^6.0.3",
+		"crypto-browserify": "^3.12.0",
+		"eslint": "^8.32.0",
+		"eslint-config-prettier": "^8.6.0",
+		"eslint-config-standard": "^17.0.0",
+		"eslint-plugin-import": "^2.27.5",
+		"eslint-plugin-n": "^15.6.1",
+		"eslint-plugin-promise": "^6.0.0",
+		"eslint-plugin-react": "^7.32.1",
+		"https-browserify": "^1.0.0",
+		"i18next": "^22.4.9",
+		"i18next-browser-languagedetector": "^7.0.1",
+		"os-browserify": "^0.3.0",
+		"phosphor-react": "^1.4.1",
+		"prettier": "^2.8.3",
+		"process": "^0.11.10",
+		"react-app-rewired": "^2.2.1",
+		"react-i18next": "^12.1.4",
+		"stream-browserify": "^3.0.0",
+		"stream-http": "^3.2.0",
+		"ts-jest": "^29.0.5",
+		"url": "^0.11.0"
+	},
 	"dependencies": {
 		"@chakra-ui/icons": "~2.0.17",
 		"@chakra-ui/react": "~2.6.1",
@@ -43,18 +87,6 @@
 		"web-vitals": "^3.1.1",
 		"webpack": "^5.75.0"
 	},
-	"scripts": {
-		"start": "react-app-rewired start",
-		"build": "react-app-rewired build",
-		"test": "react-app-rewired test --maxWorkers=50%",
-		"cleanCache": "react-app-rewired test --clearCache",
-		"eject": "react-app-rewired eject",
-		"lint": "eslint . --ext .ts --ext .mts",
-		"prettier": "prettier --config .prettierrc --write .",
-		"prettierCheck": "prettier --config .prettierrc --check",
-		"pre-commit": "npm run lint && npm run prettier",
-		"prepack": "npm run build"
-	},
 	"eslintConfig": {
 		"extends": [
 			"react-app",
@@ -81,37 +113,6 @@
 			"last 1 safari version"
 		]
 	},
-	"devDependencies": {
-		"@babel/plugin-proposal-private-property-in-object": "^7.21.0",
-		"@types/node": "^18.11.18",
-		"@types/react-toastify": "^4.1.0",
-		"@types/redux-mock-store": "^1.0.3",
-		"@typescript-eslint/eslint-plugin": "^5.48.2",
-		"@typescript-eslint/parser": "^5.48.2 ",
-		"assert": "^2.0.0",
-		"buffer": "^6.0.3",
-		"crypto-browserify": "^3.12.0",
-		"eslint": "^8.32.0",
-		"eslint-config-prettier": "^8.6.0",
-		"eslint-config-standard": "^17.0.0",
-		"eslint-plugin-import": "^2.27.5",
-		"eslint-plugin-n": "^15.6.1",
-		"eslint-plugin-promise": "^6.0.0",
-		"eslint-plugin-react": "^7.32.1",
-		"https-browserify": "^1.0.0",
-		"i18next": "^22.4.9",
-		"i18next-browser-languagedetector": "^7.0.1",
-		"os-browserify": "^0.3.0",
-		"phosphor-react": "^1.4.1",
-		"prettier": "^2.8.3",
-		"process": "^0.11.10",
-		"react-app-rewired": "^2.2.1",
-		"react-i18next": "^12.1.4",
-		"stream-browserify": "^3.0.0",
-		"stream-http": "^3.2.0",
-		"ts-jest": "^29.0.5",
-		"url": "^0.11.0"
-	},
 	"jest": {
 		"preset": "ts-jest",
 		"testEnvironment": "jsdom",
@@ -127,7 +128,7 @@
 			"^(\\.{1,2}/.*)\\.(m)?js$": "$1",
 			"hashconnect/dist/esm(.*)": "<rootDir>/../sdk/node_modules/@hashgraph/hashconnect/dist/cjs$1",
 			"hashconnect": "<rootDir>/../sdk/node_modules/@hashgraph/hashconnect/dist/cjs/hashconnect.js",
-			"axios": "axios/dist/node/axios.cjs",
+			"axios": "<rootDir>/node_modules/axios/dist/node/axios.cjs",
 			"blade": "<rootDir>/../sdk/node_modules/@hashgraph/hashconnect/dist/cjs/hashconnect.js"
 		},
 		"transform": {
