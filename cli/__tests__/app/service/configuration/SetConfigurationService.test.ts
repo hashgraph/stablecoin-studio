@@ -293,13 +293,10 @@ describe('setConfigurationService', () => {
       jest.spyOn(wizardService, 'mainMenu').mockImplementation(jest.fn());
     });
 
-    afterEach(() => {
-      rimraf(testDir);
-    });
-
-    // eslint-disable @typescript-eslint/explicit-function-return-type
-    const buildInitDefaultMultipleAsk = (accountType: string) =>
-      jesttt
+    const buildInitDefaultMultipleAsk = (
+      accountType: string,
+    ): jest.SpyInstance => {
+      return jest
         .spyOn(utilsService, 'defaultMultipleAsk')
         .mockImplementationOnce(() =>
           Promise.resolve(language.getText('wizard.manageAccountOptions.List')),
@@ -309,8 +306,11 @@ describe('setConfigurationService', () => {
         )
         .mockImplementationOnce(() => Promise.resolve(accountType))
         .mockImplementationOnce(() => Promise.resolve('testnet'));
+    };
 
-    const buildDefaultMultipleAskMock = (accountType: string) => {
+    const buildDefaultMultipleAskMock = (
+      accountType: string,
+    ): jest.SpyInstance => {
       return buildInitDefaultMultipleAsk(accountType)
         .mockImplementationOnce(() => Promise.resolve('ED25519'))
         .mockImplementationOnce(() =>
@@ -331,7 +331,9 @@ describe('setConfigurationService', () => {
         );
     };
 
-    const buildDefaultMultipleAskNonCustodial = (accountType: string) => {
+    const buildDefaultMultipleAskNonCustodial = (
+      accountType: string,
+    ): jest.SpyInstance => {
       return buildInitDefaultMultipleAsk(accountType)
         .mockImplementationOnce(() =>
           Promise.resolve(
@@ -351,7 +353,9 @@ describe('setConfigurationService', () => {
         );
     };
 
-    const buildDefaultSingleAskMock = (accountType) => {
+    const buildDefaultSingleAskMock = (
+      accountType: string,
+    ): jest.SpyInstance => {
       return jest
         .spyOn(utilsService, 'defaultSingleAsk')
         .mockImplementationOnce(() => Promise.resolve('0.0.456789'))
@@ -360,7 +364,7 @@ describe('setConfigurationService', () => {
         );
     };
 
-    const buildDefaultPasswordAskMock = () => {
+    const buildDefaultPasswordAskMock = (): jest.SpyInstance => {
       return jest
         .spyOn(utilsService, 'defaultPasswordAsk')
         .mockImplementationOnce(() =>
@@ -370,13 +374,12 @@ describe('setConfigurationService', () => {
         );
     };
 
-    const buildDefaultConfirmAskMock = () => {
+    const buildDefaultConfirmAskMock = (): jest.SpyInstance => {
       return jest
         .spyOn(utilsService, 'defaultConfirmAsk')
         .mockImplementationOnce(() => Promise.resolve(false))
         .mockImplementationOnce(() => Promise.resolve(false));
     };
-    // eslint-enable @typescript-eslint/explicit-function-return-type
 
     it('should manage account menu for self custodial accounts', async () => {
       const accountType = 'SELF-CUSTODIAL';
