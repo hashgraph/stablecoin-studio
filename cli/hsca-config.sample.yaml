@@ -44,7 +44,6 @@ accounts:
         baseUrl: <Fireblocks API Base URL>
         assetId: <Fireblocks Asset Id>
         vaultAccountId: <Fireblocks Vault Account Id>
-        hederaAccountId: <Fireblocks Hedera Account Id>
         hederaAccountPublicKey: <Fireblocks Hedera Account Public Key>
       dfns:
         authorizationToken: <DFNS Authorization Token>
@@ -54,7 +53,6 @@ accounts:
         appId: <DFNS App Id>
         testUrl: <DFNS Test URL>
         walletId: <DFNS Wallet Id>
-        hederaAccountId: <DFNS Hedera Account Id>
         hederaAccountPublicKey: <DFNS Hedera Account Public Key>
 mirrors:
   - name: <Mirror Node Name>

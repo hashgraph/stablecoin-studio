@@ -139,8 +139,6 @@ export default class ConfigurationService extends Service {
                     baseUrl: acc.nonCustodial.fireblocks.baseUrl,
                     assetId: acc.nonCustodial.fireblocks.assetId,
                     vaultAccountId: acc.nonCustodial.fireblocks.vaultAccountId,
-                    hederaAccountId:
-                      acc.nonCustodial.fireblocks.hederaAccountId,
                     hederaAccountPublicKey:
                       acc.nonCustodial.fireblocks.hederaAccountPublicKey,
                   },
@@ -160,7 +158,6 @@ export default class ConfigurationService extends Service {
                     appId: acc.nonCustodial.dfns.appId,
                     testUrl: acc.nonCustodial.dfns.testUrl,
                     walletId: acc.nonCustodial.dfns.walletId,
-                    hederaAccountId: acc.nonCustodial.dfns.hederaAccountId,
                     hederaAccountPublicKey:
                       acc.nonCustodial.dfns.hederaAccountPublicKey,
                   },

@@ -86,8 +86,7 @@ export default class UtilitiesService extends Service {
                 baseUrl: account.nonCustodial.fireblocks.baseUrl,
                 vaultAccountId: account.nonCustodial.fireblocks.vaultAccountId,
                 assetId: account.nonCustodial.fireblocks.assetId,
-                hederaAccountId:
-                  account.nonCustodial.fireblocks.hederaAccountId,
+                hederaAccountId: account.accountId,
               }
             : {
                 authorizationToken:
@@ -98,7 +97,7 @@ export default class UtilitiesService extends Service {
                 applicationId: account.nonCustodial.dfns.appId,
                 baseUrl: account.nonCustodial.dfns.testUrl,
                 walletId: account.nonCustodial.dfns.walletId,
-                hederaAccountId: account.nonCustodial.dfns.hederaAccountId,
+                hederaAccountId: account.accountId,
               },
       }),
     );
@@ -545,8 +544,6 @@ export default class UtilitiesService extends Service {
                     baseUrl: acc.nonCustodial.fireblocks.baseUrl,
                     assetId: acc.nonCustodial.fireblocks.assetId,
                     vaultAccountId: acc.nonCustodial.fireblocks.vaultAccountId,
-                    hederaAccountId:
-                      acc.nonCustodial.fireblocks.hederaAccountId,
                     hederaAccountPublicKey:
                       acc.nonCustodial.fireblocks.hederaAccountPublicKey,
                   },
@@ -564,7 +561,6 @@ export default class UtilitiesService extends Service {
                     appId: acc.nonCustodial.dfns.appId,
                     testUrl: acc.nonCustodial.dfns.testUrl,
                     walletId: acc.nonCustodial.dfns.walletId,
-                    hederaAccountId: acc.nonCustodial.dfns.hederaAccountId,
                     hederaAccountPublicKey:
                       acc.nonCustodial.dfns.hederaAccountPublicKey,
                   },
