@@ -24,7 +24,7 @@
 /* eslint-disable jest/no-standalone-expect */
 /* eslint-disable jest/no-disabled-tests */
 
-import {StableCoin} from '../../../src/domain/context/stablecoin/StableCoin.js';
+import { StableCoin } from '../../../src/domain/context/stablecoin/StableCoin.js';
 import {
 	AcceptProxyOwnerRequest,
 	AssociateTokenRequest,
@@ -50,13 +50,13 @@ import {
 } from '../../../src/index.js';
 import StableCoinCapabilities from '../../../src/domain/context/stablecoin/StableCoinCapabilities.js';
 import BigDecimal from '../../../src/domain/context/shared/BigDecimal.js';
-import {ethers, Wallet} from 'ethers';
-import {StableCoinRole} from '../../../src/domain/context/stablecoin/StableCoinRole.js';
+import { ethers, Wallet } from 'ethers';
+import { StableCoinRole } from '../../../src/domain/context/stablecoin/StableCoinRole.js';
 import Injectable from '../../../src/core/Injectable.js';
-import {MirrorNodeAdapter} from '../../../src/port/out/mirror/MirrorNodeAdapter.js';
+import { MirrorNodeAdapter } from '../../../src/port/out/mirror/MirrorNodeAdapter.js';
 import PublicKey from '../../../src/domain/context/account/PublicKey.js';
 import ContractId from '../../../src/domain/context/contract/ContractId.js';
-import {TokenSupplyType} from '../../../src/port/in/StableCoin.js';
+import { TokenSupplyType } from '../../../src/port/in/StableCoin.js';
 import {
 	CLIENT_ACCOUNT_ECDSA,
 	CLIENT_ACCOUNT_ED25519,
@@ -67,13 +67,18 @@ import {
 } from '../../config.js';
 import Account from '../../../src/domain/context/account/Account.js';
 import NetworkService from '../../../src/app/service/NetworkService.js';
-import {Client, ContractId as HContractId, Hbar, TransferTransaction,} from '@hashgraph/sdk';
+import {
+	Client,
+	ContractId as HContractId,
+	Hbar,
+	TransferTransaction,
+} from '@hashgraph/sdk';
 import StableCoinService from '../../../src/app/service/StableCoinService.js';
-import {RESERVE_DECIMALS} from '../../../src/domain/context/reserve/Reserve.js';
+import { RESERVE_DECIMALS } from '../../../src/domain/context/reserve/Reserve.js';
 import RPCTransactionAdapter from '../../../src/port/out/rpc/RPCTransactionAdapter.js';
 import RPCQueryAdapter from '../../../src/port/out/rpc/RPCQueryAdapter.js';
-import {MirrorNode} from '../../../src/domain/context/network/MirrorNode.js';
-import {JsonRpcRelay} from '../../../src/domain/context/network/JsonRpcRelay.js';
+import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
+import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
 import EvmAddress from '../../../src/domain/context/contract/EvmAddress.js';
 
 SDK.log = { level: 'ERROR', transports: new LoggerTransports.Console() };

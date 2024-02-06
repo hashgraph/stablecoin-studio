@@ -18,17 +18,19 @@
  *
  */
 
-import {CustodialWalletService, FireblocksConfig,} from '@hashgraph/hedera-custodians-integration';
-import {singleton} from 'tsyringe';
-import {WalletEvents,} from '../../../../../app/service/event/WalletEvent';
+import {
+	CustodialWalletService,
+	FireblocksConfig,
+} from '@hashgraph/hedera-custodians-integration';
+import { singleton } from 'tsyringe';
+import { WalletEvents } from '../../../../../app/service/event/WalletEvent';
 import LogService from '../../../../../app/service/LogService';
-import {SupportedWallets} from '../../../../../domain/context/network/Wallet';
+import { SupportedWallets } from '../../../../../domain/context/network/Wallet';
 import FireblocksSettings from '../../../../../domain/context/custodialwalletsettings/FireblocksSettings';
-import {CustodialTransactionAdapter} from "./CustodialTransactionAdapter";
+import { CustodialTransactionAdapter } from './CustodialTransactionAdapter';
 
 @singleton()
 export class FireblocksTransactionAdapter extends CustodialTransactionAdapter {
-
 	init(): Promise<string> {
 		this.eventService.emit(WalletEvents.walletInit, {
 			wallet: this.getSupportedWallet(),
@@ -39,14 +41,20 @@ export class FireblocksTransactionAdapter extends CustodialTransactionAdapter {
 	}
 
 	initCustodialWalletService(settings: FireblocksSettings): void {
-		const { apiKey, apiSecretKey, baseUrl, vaultAccountId, assetId } = settings;
+		const { apiKey, apiSecretKey, baseUrl, vaultAccountId, assetId } =
+			settings;
 		this.custodialWalletService = new CustodialWalletService(
-			new FireblocksConfig(apiKey, apiSecretKey, baseUrl, vaultAccountId, assetId),
+			new FireblocksConfig(
+				apiKey,
+				apiSecretKey,
+				baseUrl,
+				vaultAccountId,
+				assetId,
+			),
 		);
 	}
 
 	getSupportedWallet(): SupportedWallets {
 		return SupportedWallets.FIREBLOCKS;
 	}
-
 }

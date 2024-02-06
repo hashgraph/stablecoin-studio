@@ -18,20 +18,19 @@
  *
  */
 
-import {CustodialWalletService, DFNSConfig,} from '@hashgraph/hedera-custodians-integration';
-import {singleton} from 'tsyringe';
+import {
+	CustodialWalletService,
+	DFNSConfig,
+} from '@hashgraph/hedera-custodians-integration';
+import { singleton } from 'tsyringe';
 import LogService from '../../../../../app/service/LogService';
-import {InitializationData} from '../../../TransactionAdapter';
-import Injectable from '../../../../../core/Injectable';
-import {WalletEvents,} from '../../../../../app/service/event/WalletEvent';
-import {SupportedWallets} from '../../../../../domain/context/network/Wallet';
-import Account from '../../../../../domain/context/account/Account';
+import { WalletEvents } from '../../../../../app/service/event/WalletEvent';
+import { SupportedWallets } from '../../../../../domain/context/network/Wallet';
 import DfnsSettings from '../../../../../domain/context/custodialwalletsettings/DfnsSettings';
-import {CustodialTransactionAdapter} from "./CustodialTransactionAdapter";
+import { CustodialTransactionAdapter } from './CustodialTransactionAdapter';
 
 @singleton()
 export class DFNSTransactionAdapter extends CustodialTransactionAdapter {
-
 	init(): Promise<string> {
 		this.eventService.emit(WalletEvents.walletInit, {
 			wallet: SupportedWallets.DFNS,
@@ -58,5 +57,4 @@ export class DFNSTransactionAdapter extends CustodialTransactionAdapter {
 	getSupportedWallet(): SupportedWallets {
 		return SupportedWallets.DFNS;
 	}
-
 }
