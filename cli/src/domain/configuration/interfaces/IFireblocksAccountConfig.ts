@@ -4,6 +4,5 @@ export interface IFireblocksAccountConfig {
   baseUrl: string;
   assetId: string;
   vaultAccountId: string;
-  hederaAccountId: string;
   hederaAccountPublicKey: string;
 }

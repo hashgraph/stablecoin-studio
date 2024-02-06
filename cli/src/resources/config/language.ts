@@ -51,6 +51,7 @@ export const english = {
       'Your option is not one of the default networks, do you want to create a new network? (y/n)',
     AccountsConfigurationMessage: 'You will now configure your accounts:',
     askAccountId: 'Enter the account id',
+    askAccountPubKey: 'Enter the public key (Hexadecimal format)',
     askAccountType: 'Enter the account type (SELF-CUSTODIAL|FIREBLOCKS|DFNS)',
     askConfigurateFactories:
       'Do you want to config your factories? Check the documentation for more information : https://github.com/hashgraph/stablecoin-studio#deploying-the-stable-coin-factories',
@@ -135,8 +136,6 @@ export const english = {
       baseUrl: 'Enter your base url',
       assetId: 'Enter your asset id',
       vaultAccountId: 'Enter your vault account id',
-      hederaAccountId: 'Enter your Hedera account id',
-      hederaAccountPublicKey: 'Enter your Hedera account public key',
     },
     dfns: {
       title: 'DFNS account configuration',
@@ -147,8 +146,6 @@ export const english = {
       askAppId: 'Enter your app id',
       askTestUrl: 'Enter you test url',
       askWalletId: 'Enter your wallet id',
-      askHederaAccountId: 'Enter your Hedera account id',
-      hederaAccountPublicKey: 'Enter your Hedera account public key',
     },
   },
   stablecoin: {

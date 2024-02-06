@@ -495,21 +495,6 @@ export default class SetConfigurationService extends Service {
     return baseUrl;
   }
 
-  private async askForHederaAccountId(
-    attribute: string,
-    defaultValue: string,
-  ): Promise<string> {
-    let hederaAccountId = '';
-    const hbarAccountIdRegExpValidator = /[0-9]+\.[0-9]+\.[0-9]+/g;
-    while (!hbarAccountIdRegExpValidator.test(hederaAccountId)) {
-      hederaAccountId = await utilsService.defaultSingleAsk(
-        language.getText(attribute),
-        defaultValue,
-      );
-    }
-    return hederaAccountId;
-  }
-
   private async askForHederaAccountPublicKey(
     attribute: string,
     defaultValue: string,
@@ -548,12 +533,8 @@ export default class SetConfigurationService extends Service {
       language.getText('configuration.fireblocks.askVaultAccountId'),
       '2',
     );
-    const hederaAccountId = await this.askForHederaAccountId(
-      'configuration.fireblocks.askHederaAccountId',
-      '0.0.5712904',
-    );
     const hederaAccountPublicKey = await this.askForHederaAccountPublicKey(
-      'configuration.dfns.askHederaAccountPublicKey',
+      'configuration.askAccountPubKey',
       '04eb152576e3af4dccbabda7026b85d8fdc0ad3f18f26540e42ac71a08e21623',
     );
 
@@ -563,7 +544,6 @@ export default class SetConfigurationService extends Service {
       baseUrl,
       assetId,
       vaultAccountId,
-      hederaAccountId,
       hederaAccountPublicKey,
     };
   }
@@ -585,12 +565,8 @@ export default class SetConfigurationService extends Service {
       'https://api.dfns.ninja/',
     );
     const walletId = await this.askForDfnsWalletId();
-    const hederaAccountId = await this.askForHederaAccountId(
-      'configuration.dfns.askHederaAccountId',
-      '0.0.50000',
-    );
     const hederaAccountPublicKey = await this.askForHederaAccountPublicKey(
-      'configuration.dfns.askHederaAccountPublicKey',
+      'configuration.askAccountPubKey',
       '04eb152576e3af4dccbabda7026b85d8fdc0ad3f18f26540e42ac71a08e21623',
     );
 
@@ -602,7 +578,6 @@ export default class SetConfigurationService extends Service {
       appId,
       testUrl,
       walletId,
-      hederaAccountId,
       hederaAccountPublicKey,
     };
   }
@@ -622,12 +597,14 @@ export default class SetConfigurationService extends Service {
   private async askForDfnsPrivateKey(): Promise<string> {
     let privateKey = '';
     const privateKeyRegExpValidator =
-      /-----BEGIN EC PRIVATE KEY-----\n[a-zA-Z0-9]+==\n-----END EC PRIVATE KEY-----/gm;
+      /-----BEGIN EC PRIVATE KEY-----[a-zA-Z0-9+/=\n]+-----END EC PRIVATE KEY-----/gm;
+
     while (!privateKeyRegExpValidator.test(privateKey)) {
       privateKey = await utilsService.defaultPasswordAsk(
         language.getText('configuration.dfns.askPrivateKey'),
       );
     }
+
     return privateKey;
   }
 
