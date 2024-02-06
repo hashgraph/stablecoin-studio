@@ -294,11 +294,12 @@ describe('setConfigurationService', () => {
     });
 
     afterEach(() => {
-      // rimraf(testDir);
+      rimraf(testDir);
     });
 
-    const buildDefaultMultipleAskMock = (accountType: string) => {
-      return jest
+    // eslint-disable @typescript-eslint/explicit-function-return-type
+    const buildInitDefaultMultipleAsk = (accountType: string) =>
+      jesttt
         .spyOn(utilsService, 'defaultMultipleAsk')
         .mockImplementationOnce(() =>
           Promise.resolve(language.getText('wizard.manageAccountOptions.List')),
@@ -306,10 +307,12 @@ describe('setConfigurationService', () => {
         .mockImplementationOnce(() =>
           Promise.resolve(language.getText('wizard.manageAccountOptions.Add')),
         )
-        .mockImplementationOnce(() => Promise.resolve('ED25519'))
         .mockImplementationOnce(() => Promise.resolve(accountType))
-        .mockImplementationOnce(() => Promise.resolve('testnet'))
-        .mockImplementationOnce(() => Promise.resolve('account alias '))
+        .mockImplementationOnce(() => Promise.resolve('testnet'));
+
+    const buildDefaultMultipleAskMock = (accountType: string) => {
+      return buildInitDefaultMultipleAsk(accountType)
+        .mockImplementationOnce(() => Promise.resolve('ED25519'))
         .mockImplementationOnce(() =>
           Promise.resolve(
             language.getText('wizard.manageAccountOptions.Change'),
@@ -322,17 +325,38 @@ describe('setConfigurationService', () => {
           ),
         )
         .mockImplementationOnce(() =>
-          Promise.resolve('0.0.456789 - New account alias (testnet)'),
+          Promise.resolve(
+            `0.0.456789 - Account alias ${accountType} (testnet)`,
+          ),
+        );
+    };
+
+    const buildDefaultMultipleAskNonCustodial = (accountType: string) => {
+      return buildInitDefaultMultipleAsk(accountType)
+        .mockImplementationOnce(() =>
+          Promise.resolve(
+            language.getText('wizard.manageAccountOptions.Change'),
+          ),
+        )
+        .mockImplementationOnce(() => Promise.resolve('0.0.456789'))
+        .mockImplementationOnce(() =>
+          Promise.resolve(
+            language.getText('wizard.manageAccountOptions.Delete'),
+          ),
+        )
+        .mockImplementationOnce(() =>
+          Promise.resolve(
+            `0.0.456789 - Account alias ${accountType} (testnet)`,
+          ),
         );
     };
 
     const buildDefaultSingleAskMock = (accountType) => {
       return jest
         .spyOn(utilsService, 'defaultSingleAsk')
-        .mockImplementationOnce(() => Promise.resolve('0'))
         .mockImplementationOnce(() => Promise.resolve('0.0.456789'))
         .mockImplementationOnce(() =>
-          Promise.resolve('Account alias '.concat(accountType)),
+          Promise.resolve(`Account alias ${accountType}`),
         );
     };
 
@@ -352,15 +376,13 @@ describe('setConfigurationService', () => {
         .mockImplementationOnce(() => Promise.resolve(false))
         .mockImplementationOnce(() => Promise.resolve(false));
     };
+    // eslint-enable @typescript-eslint/explicit-function-return-type
 
     it('should manage account menu for self custodial accounts', async () => {
       const accountType = 'SELF-CUSTODIAL';
       const defaultMultipleAskMock = buildDefaultMultipleAskMock(accountType);
-
       const defaultSingleAskMock = buildDefaultSingleAskMock(accountType);
-
       const defaultPasswordAskMock = buildDefaultPasswordAskMock();
-
       const defaultConfirmAskMock = buildDefaultConfirmAskMock();
 
       const keep = setConfigurationService.manageAccountMenu;
@@ -375,16 +397,16 @@ describe('setConfigurationService', () => {
       await setConfigurationService.manageAccountMenu();
 
       expect(setConfigurationService).not.toBeNull();
-      expect(defaultMultipleAskMock).toHaveBeenCalledTimes(10);
+      expect(defaultMultipleAskMock).toHaveBeenCalledTimes(9);
       expect(defaultConfirmAskMock).toHaveBeenCalledTimes(2);
-      expect(defaultSingleAskMock).toHaveBeenCalledTimes(3);
+      expect(defaultSingleAskMock).toHaveBeenCalledTimes(2);
       expect(defaultPasswordAskMock).toHaveBeenCalledTimes(1);
     });
 
     it('should manage account menu for non-custodial Firebloks', async () => {
       const accountType = 'FIREBLOCKS';
-      const defaultMultipleAskMock = buildDefaultMultipleAskMock(accountType);
-
+      const defaultMultipleAskMock =
+        buildDefaultMultipleAskNonCustodial(accountType);
       const defaultSingleAskMock = buildDefaultSingleAskMock(accountType)
         .mockImplementationOnce(() =>
           Promise.resolve(language.getText('configuration.fireblocks.title')),
@@ -403,9 +425,7 @@ describe('setConfigurationService', () => {
             '04eb152576e3af4dccbabda7026b85d8fdc0ad3f18f26540e42ac71a08e21623',
           ),
         );
-
       const defaultPasswordAskMock = buildDefaultPasswordAskMock();
-
       const defaultConfirmAskMock = buildDefaultConfirmAskMock();
 
       const keep = setConfigurationService.manageAccountMenu;
@@ -420,25 +440,26 @@ describe('setConfigurationService', () => {
       await setConfigurationService.manageAccountMenu();
 
       expect(setConfigurationService).not.toBeNull();
-      expect(defaultMultipleAskMock).toHaveBeenCalledTimes(10);
+      expect(defaultMultipleAskMock).toHaveBeenCalledTimes(8);
       expect(defaultConfirmAskMock).toHaveBeenCalledTimes(2);
-      expect(defaultSingleAskMock).toHaveBeenCalledTimes(10);
+      expect(defaultSingleAskMock).toHaveBeenCalledTimes(9);
       expect(defaultPasswordAskMock).toHaveBeenCalledTimes(1);
     });
 
     it('should manage account menu for non-custodial Dfns', async () => {
       const accountType = 'DFNS';
-      const defaultMultipleAskMock = buildDefaultMultipleAskMock(accountType);
-
+      const defaultMultipleAskMock =
+        buildDefaultMultipleAskNonCustodial(accountType);
       const defaultSingleAskMock = buildDefaultSingleAskMock(accountType)
         .mockImplementationOnce(() =>
-          Promise.resolve(language.getText('configuration.dfns.title')),
+          Promise.resolve('Y2ktMTZ2NTMtZXF0ZzAtOWRvOXJub3NjbGI1a3RwYg'),
         )
-        .mockImplementationOnce(() => Promise.resolve('credentialId'))
         .mockImplementationOnce(() => Promise.resolve('https://localhost:3000'))
-        .mockImplementationOnce(() => Promise.resolve('2'))
         .mockImplementationOnce(() =>
           Promise.resolve('ap-2ng9jv-80cfc-983pop0iauf2sv8r'),
+        )
+        .mockImplementationOnce(() =>
+          Promise.resolve('https://api.dfns.ninja/'),
         )
         .mockImplementationOnce(() =>
           Promise.resolve('wa-6qfr0-heg0c-985bmvv9hphbok47'),
@@ -449,14 +470,12 @@ describe('setConfigurationService', () => {
             '04eb152576e3af4dccbabda7026b85d8fdc0ad3f18f26540e42ac71a08e21623',
           ),
         );
-
       const defaultPasswordAskMock =
         buildDefaultPasswordAskMock().mockImplementationOnce(() =>
           Promise.resolve(
             '-----BEGIN EC PRIVATE KEY-----\n04eb152576e3af4dccbabda7026b85d8fdc0ad3f18f26540e42ac71a08e21623==\n-----END EC PRIVATE KEY-----',
           ),
         );
-
       const defaultConfirmAskMock = buildDefaultConfirmAskMock();
 
       const keep = setConfigurationService.manageAccountMenu;
@@ -471,9 +490,9 @@ describe('setConfigurationService', () => {
       await setConfigurationService.manageAccountMenu();
 
       expect(setConfigurationService).not.toBeNull();
-      expect(defaultMultipleAskMock).toHaveBeenCalledTimes(10);
+      expect(defaultMultipleAskMock).toHaveBeenCalledTimes(8);
       expect(defaultConfirmAskMock).toHaveBeenCalledTimes(2);
-      expect(defaultSingleAskMock).toHaveBeenCalledTimes(11);
+      expect(defaultSingleAskMock).toHaveBeenCalledTimes(9);
       expect(defaultPasswordAskMock).toHaveBeenCalledTimes(2);
     });
   });

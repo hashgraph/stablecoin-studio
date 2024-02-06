@@ -485,7 +485,7 @@ export default class SetConfigurationService extends Service {
   ): Promise<string> {
     let baseUrl = '';
     const urlRegExpValidator =
-      /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/g;
+      /^(http|https):\/\/[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]$/g;
     while (!urlRegExpValidator.test(baseUrl)) {
       baseUrl = await utilsService.defaultSingleAsk(
         language.getText(attribute),
