@@ -273,7 +273,9 @@ describe('HederaReserveProxy and HederaReserveProxyAdmin Tests', function () {
                 proxyAddress,
                 operatorClient,
                 (
-                    await getContractInfo(newImplementationContract.toString())
+                    await getContractInfo(
+                        newImplementationContract.toString()
+                    )
                 ).evm_address
             )
         ).to.eventually.be.rejectedWith(Error)
@@ -309,7 +311,9 @@ describe('HederaReserveProxy and HederaReserveProxyAdmin Tests', function () {
                 proxyAdminAddress,
                 nonOperatorClient,
                 (
-                    await getContractInfo(newImplementationContract.toString())
+                    await getContractInfo(
+                        newImplementationContract.toString()
+                    )
                 ).evm_address,
                 (
                     await getContractInfo(proxyAddress.toString())

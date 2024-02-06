@@ -521,7 +521,10 @@ describe('Supplier Admin Tests - (Unlimited)', function () {
 
     it('An account with unlimited supplier role can not cash in more than maxSupply tokens', async function () {
         // Retrieve current total supply
-        const TotalSupply = await getTotalSupply(proxyAddress, operatorClient)
+        const TotalSupply = await getTotalSupply(
+            proxyAddress,
+            operatorClient
+        )
 
         // Cashin more tokens than max supply : fail
         await expect(

@@ -1,8 +1,7 @@
-import {language, utilsService} from '../../../index.js';
+import { language, utilsService } from '../../../index.js';
 import Service from '../Service.js';
 
 import { RescueHBARRequest, StableCoin } from '@hashgraph/stablecoin-npm-sdk';
-
 
 /**
  * Rescue HBAR Service

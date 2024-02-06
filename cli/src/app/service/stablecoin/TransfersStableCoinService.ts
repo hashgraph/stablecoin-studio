@@ -3,7 +3,6 @@ import Service from '../Service.js';
 
 import { TransfersRequest, StableCoin } from '@hashgraph/stablecoin-npm-sdk';
 
-
 export default class TransfersStableCoinService extends Service {
   constructor() {
     super('Transfers Stablecoin');

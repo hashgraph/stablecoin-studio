@@ -74,7 +74,10 @@ describe('Reserve Tests', function () {
     })
 
     it('Get datafeed', async () => {
-        const datafeed = await getReserveAddress(proxyAddress, operatorClient)
+        const datafeed = await getReserveAddress(
+            proxyAddress,
+            operatorClient
+        )
         expect(datafeed.toUpperCase()).not.to.equals(
             '0x' +
                 (
