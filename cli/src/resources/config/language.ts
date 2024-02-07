@@ -63,7 +63,7 @@ export const english = {
     aliasAlreadyInUse:
       'Alias ${alias} already in use. Please use another alias.',
     askMoreAccounts: 'Do you want to enter more accounts? (y/n)',
-    askPrivateKey: 'Enter the private key',
+    askPrivateKeyPath: 'Enter the private key path',
     askPublicKey: 'Enter the public key',
     askConsensusUrl: 'Enter the url',
     askMoreConsensusNodes: 'Do you want to enter more consensus nodes? (y/n)',

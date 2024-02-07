@@ -457,6 +457,9 @@ describe('setConfigurationService', () => {
         .mockImplementationOnce(() =>
           Promise.resolve('Y2ktMTZ2NTMtZXF0ZzAtOWRvOXJub3NjbGI1a3RwYg'),
         )
+        .mockImplementationOnce(() =>
+          Promise.resolve('/user/foo/keystore/key.pem'),
+        )
         .mockImplementationOnce(() => Promise.resolve('https://localhost:3000'))
         .mockImplementationOnce(() =>
           Promise.resolve('ap-2ng9jv-80cfc-983pop0iauf2sv8r'),
@@ -473,12 +476,7 @@ describe('setConfigurationService', () => {
             '04eb152576e3af4dccbabda7026b85d8fdc0ad3f18f26540e42ac71a08e21623',
           ),
         );
-      const defaultPasswordAskMock =
-        buildDefaultPasswordAskMock().mockImplementationOnce(() =>
-          Promise.resolve(
-            '-----BEGIN EC PRIVATE KEY-----\n04eb152576e3af4dccbabda7026b85d8fdc0ad3f18f26540e42ac71a08e21623==\n-----END EC PRIVATE KEY-----',
-          ),
-        );
+      const defaultPasswordAskMock = buildDefaultPasswordAskMock();
       const defaultConfirmAskMock = buildDefaultConfirmAskMock();
 
       const keep = setConfigurationService.manageAccountMenu;
@@ -495,8 +493,8 @@ describe('setConfigurationService', () => {
       expect(setConfigurationService).not.toBeNull();
       expect(defaultMultipleAskMock).toHaveBeenCalledTimes(8);
       expect(defaultConfirmAskMock).toHaveBeenCalledTimes(2);
-      expect(defaultSingleAskMock).toHaveBeenCalledTimes(9);
-      expect(defaultPasswordAskMock).toHaveBeenCalledTimes(2);
+      expect(defaultSingleAskMock).toHaveBeenCalledTimes(10);
+      expect(defaultPasswordAskMock).toHaveBeenCalledTimes(1);
     });
   });
 

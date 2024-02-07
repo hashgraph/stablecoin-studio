@@ -48,7 +48,7 @@ accounts:
       dfns:
         authorizationToken: <DFNS Authorization Token>
         credentialId: <DFNS Credential Id>
-        privateKey: <DFNS Private Key>
+        privateKeyPath: <DFNS Private Key>
         appOrigin: <DFNS App Origin>
         appId: <DFNS App Id>
         testUrl: <DFNS Test URL>

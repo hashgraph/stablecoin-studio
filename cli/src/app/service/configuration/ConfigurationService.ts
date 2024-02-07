@@ -150,10 +150,7 @@ export default class ConfigurationService extends Service {
                       maskJSONOptions,
                     ),
                     credentialId: acc.nonCustodial.dfns.credentialId,
-                    privateKey: MaskData.maskPassword(
-                      acc.nonCustodial.dfns.privateKey,
-                      maskJSONOptions,
-                    ),
+                    privateKeyPath: acc.nonCustodial.dfns.privateKeyPath,
                     appOrigin: acc.nonCustodial.dfns.appOrigin,
                     appId: acc.nonCustodial.dfns.appId,
                     testUrl: acc.nonCustodial.dfns.testUrl,

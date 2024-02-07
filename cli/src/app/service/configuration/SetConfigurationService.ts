@@ -554,7 +554,10 @@ export default class SetConfigurationService extends Service {
       language.getText('configuration.dfns.askAuthorizationToken'),
     );
     const credentialId = await this.askForDfnsCredentialId();
-    const privateKey = await this.askForDfnsPrivateKey();
+    const privateKeyPath = await this.askForFilePath(
+      'configuration.dfns.askPrivateKeyPath',
+      '/user/dfns/privateKey.key',
+    );
     const appOrigin = await this.askForUrl(
       'configuration.dfns.askAppOrigin',
       'https://localhost:3000',
@@ -573,7 +576,7 @@ export default class SetConfigurationService extends Service {
     return {
       authorizationToken,
       credentialId,
-      privateKey,
+      privateKeyPath,
       appOrigin,
       appId,
       testUrl,
@@ -594,14 +597,17 @@ export default class SetConfigurationService extends Service {
     return credentialId;
   }
 
-  private async askForDfnsPrivateKey(): Promise<string> {
+  private async askForFilePath(
+    attribute: string,
+    defaultValue: string,
+  ): Promise<string> {
     let privateKey = '';
-    const privateKeyRegExpValidator =
-      /-----BEGIN EC PRIVATE KEY-----[a-zA-Z0-9+/=\n]+-----END EC PRIVATE KEY-----/gm;
+    const privateKeyRegExpValidator = /^(\/[^/ ]*)+\/?$/g;
 
     while (!privateKeyRegExpValidator.test(privateKey)) {
-      privateKey = await utilsService.defaultPasswordAsk(
-        language.getText('configuration.dfns.askPrivateKey'),
+      privateKey = await utilsService.defaultSingleAsk(
+        language.getText(attribute),
+        defaultValue,
       );
     }
 

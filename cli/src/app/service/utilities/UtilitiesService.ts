@@ -29,6 +29,7 @@ import { IMirrorsConfig } from 'domain/configuration/interfaces/IMirrorsConfig.j
 import { IRPCsConfig } from 'domain/configuration/interfaces/IRPCsConfig.js';
 import { MIRROR_NODE, RPC } from '../../../core/Constants.js';
 import { AccountType } from '../../../domain/configuration/interfaces/AccountType';
+import fs from 'fs';
 
 /**
  * Utilities Service
@@ -92,7 +93,10 @@ export default class UtilitiesService extends Service {
                 authorizationToken:
                   account.nonCustodial.dfns.authorizationToken,
                 credentialId: account.nonCustodial.dfns.credentialId,
-                serviceAccountPrivateKey: account.nonCustodial.dfns.privateKey,
+                serviceAccountPrivateKey: fs.readFileSync(
+                  account.nonCustodial.dfns.privateKeyPath,
+                  'utf8',
+                ),
                 urlApplicationOrigin: account.nonCustodial.dfns.appOrigin,
                 applicationId: account.nonCustodial.dfns.appId,
                 baseUrl: account.nonCustodial.dfns.testUrl,
@@ -553,10 +557,7 @@ export default class UtilitiesService extends Service {
                     authorizationToken:
                       acc.nonCustodial.dfns.authorizationToken,
                     credentialId: acc.nonCustodial.dfns.credentialId,
-                    privateKey: MaskData.maskPassword(
-                      acc.nonCustodial.dfns.privateKey,
-                      maskJSONOptions,
-                    ),
+                    privateKeyPath: acc.nonCustodial.dfns.privateKeyPath,
                     appOrigin: acc.nonCustodial.dfns.appOrigin,
                     appId: acc.nonCustodial.dfns.appId,
                     testUrl: acc.nonCustodial.dfns.testUrl,

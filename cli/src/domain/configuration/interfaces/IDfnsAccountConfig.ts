@@ -1,7 +1,7 @@
 export interface IDfnsAccountConfig {
   authorizationToken: string;
   credentialId: string;
-  privateKey: string;
+  privateKeyPath: string;
   appOrigin: string;
   appId: string;
   testUrl: string;
