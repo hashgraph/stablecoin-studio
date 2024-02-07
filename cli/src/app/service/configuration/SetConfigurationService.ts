@@ -601,17 +601,22 @@ export default class SetConfigurationService extends Service {
     attribute: string,
     defaultValue: string,
   ): Promise<string> {
-    let privateKey = '';
-    const privateKeyRegExpValidator = /^(\/[^/ ]*)+\/?$/g;
+    let privateKeyPath = '';
+    const pathRegExpValidator = /^(\/[^/ ]*)+\/?$/g;
 
-    while (!privateKeyRegExpValidator.test(privateKey)) {
-      privateKey = await utilsService.defaultSingleAsk(
+    while (
+      !(
+        pathRegExpValidator.test(privateKeyPath) &&
+        fs.existsSync(privateKeyPath)
+      )
+    ) {
+      privateKeyPath = await utilsService.defaultSingleAsk(
         language.getText(attribute),
         defaultValue,
       );
     }
 
-    return privateKey;
+    return privateKeyPath;
   }
 
   private async askForDfnsAppId(): Promise<string> {

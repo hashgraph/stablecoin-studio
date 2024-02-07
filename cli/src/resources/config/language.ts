@@ -63,7 +63,7 @@ export const english = {
     aliasAlreadyInUse:
       'Alias ${alias} already in use. Please use another alias.',
     askMoreAccounts: 'Do you want to enter more accounts? (y/n)',
-    askPrivateKeyPath: 'Enter the private key path',
+    askPrivateKey: 'Enter the private key',
     askPublicKey: 'Enter the public key',
     askConsensusUrl: 'Enter the url',
     askMoreConsensusNodes: 'Do you want to enter more consensus nodes? (y/n)',
@@ -141,7 +141,7 @@ export const english = {
       title: 'DFNS account configuration',
       askAuthorizationToken: 'Enter your authorization token',
       askCredentialId: 'Enter your credential id',
-      askPrivateKey: 'Enter your private key',
+      askPrivateKeyPath: 'Enter your private key path',
       askAppOrigin: 'Enter your app origin',
       askAppId: 'Enter your app id',
       askTestUrl: 'Enter you test url',

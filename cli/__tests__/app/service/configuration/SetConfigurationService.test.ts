@@ -9,6 +9,7 @@ import { IConfiguration } from '../../../../src/domain/configuration/interfaces/
 import Language from '../../../../src/domain/language/Language.js';
 import { rimraf } from 'rimraf';
 import { AccountType } from '../../../../src/domain/configuration/interfaces/AccountType';
+import fs from 'fs-extra';
 
 const language: Language = new Language();
 const testDir = 'test';
@@ -478,6 +479,9 @@ describe('setConfigurationService', () => {
         );
       const defaultPasswordAskMock = buildDefaultPasswordAskMock();
       const defaultConfirmAskMock = buildDefaultConfirmAskMock();
+      const privateKeyPathValidation = jest
+        .spyOn(fs, 'existsSync')
+        .mockImplementationOnce(() => true);
 
       const keep = setConfigurationService.manageAccountMenu;
       jest
@@ -495,6 +499,7 @@ describe('setConfigurationService', () => {
       expect(defaultConfirmAskMock).toHaveBeenCalledTimes(2);
       expect(defaultSingleAskMock).toHaveBeenCalledTimes(10);
       expect(defaultPasswordAskMock).toHaveBeenCalledTimes(1);
+      expect(privateKeyPathValidation).toHaveBeenCalledTimes(1);
     });
   });
 
