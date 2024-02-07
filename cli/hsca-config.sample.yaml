@@ -39,7 +39,7 @@ accounts:
         type: <ED25519-ECDSA>
     nonCustodial:
       fireblocks:
-        apiSecretKey: <Fireblocks API Secret Key>
+        apiSecretKeyPath: <Fireblocks API Secret Key Path>
         apiKey: <Fireblocks API Key>
         baseUrl: <Fireblocks API Base URL>
         assetId: <Fireblocks Asset Id>

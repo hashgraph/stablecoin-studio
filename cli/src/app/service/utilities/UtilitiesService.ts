@@ -82,7 +82,10 @@ export default class UtilitiesService extends Service {
             ? undefined
             : account.type == AccountType.Fireblocks
             ? {
-                apiSecretKey: account.nonCustodial.fireblocks.apiSecretKey,
+                apiSecretKey: fs.readFileSync(
+                  account.nonCustodial.fireblocks.apiSecretKeyPath,
+                  'utf8',
+                ),
                 apiKey: account.nonCustodial.fireblocks.apiKey,
                 baseUrl: account.nonCustodial.fireblocks.baseUrl,
                 vaultAccountId: account.nonCustodial.fireblocks.vaultAccountId,
@@ -540,10 +543,8 @@ export default class UtilitiesService extends Service {
               fireblocks: !acc.nonCustodial.fireblocks
                 ? undefined
                 : {
-                    apiSecretKey: MaskData.maskPassword(
-                      acc.nonCustodial.fireblocks.apiSecretKey,
-                      maskJSONOptions,
-                    ),
+                    apiSecretKeyPath:
+                      acc.nonCustodial.fireblocks.apiSecretKeyPath,
                     apiKey: acc.nonCustodial.fireblocks.apiKey,
                     baseUrl: acc.nonCustodial.fireblocks.baseUrl,
                     assetId: acc.nonCustodial.fireblocks.assetId,

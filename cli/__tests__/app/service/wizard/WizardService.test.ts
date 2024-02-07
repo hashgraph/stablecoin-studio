@@ -30,7 +30,7 @@ describe('wizardService', () => {
         alias: 'alias2',
         nonCustodial: {
           fireblocks: {
-            apiSecretKey: 'apiSecretKey',
+            apiSecretKeyPath: 'apiSecretKeyPath',
             apiKey: 'apiKey',
             baseUrl: 'baseUrl',
             assetId: 'assetId',
@@ -279,7 +279,7 @@ describe('wizardService', () => {
       alias: 'alias2',
       nonCustodial: {
         fireblocks: {
-          apiSecretKey: 'apiSecretKey',
+          apiSecretKeyPath: 'apiSecretKeyPath',
           apiKey: 'apiKey',
           baseUrl: 'baseUrl',
           assetId: 'assetId',

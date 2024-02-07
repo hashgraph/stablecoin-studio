@@ -1,5 +1,5 @@
 export interface IFireblocksAccountConfig {
-  apiSecretKey: string;
+  apiSecretKeyPath: string;
   apiKey: string;
   baseUrl: string;
   assetId: string;

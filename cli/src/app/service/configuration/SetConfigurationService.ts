@@ -514,8 +514,9 @@ export default class SetConfigurationService extends Service {
     utilsService.showMessage(
       language.getText('configuration.fireblocks.title'),
     );
-    const apiSecretKey = await utilsService.defaultPasswordAsk(
-      language.getText('configuration.fireblocks.askApiSecretKey'),
+    const apiSecretKeyPath = await this.askForFilePath(
+      'configuration.fireblocks.askApiSecretKey',
+      '/user/fireblocks/privateKey.key',
     );
     const apiKey = await this.askForApiKey(
       'configuration.fireblocks.askApiKey',
@@ -539,7 +540,7 @@ export default class SetConfigurationService extends Service {
     );
 
     return {
-      apiSecretKey,
+      apiSecretKeyPath,
       apiKey,
       baseUrl,
       assetId,

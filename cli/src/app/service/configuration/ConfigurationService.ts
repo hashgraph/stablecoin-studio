@@ -128,10 +128,8 @@ export default class ConfigurationService extends Service {
               fireblocks: !acc.nonCustodial.fireblocks
                 ? undefined
                 : {
-                    apiSecretKey: MaskData.maskPassword(
-                      acc.nonCustodial.fireblocks.apiSecretKey,
-                      maskJSONOptions,
-                    ),
+                    apiSecretKeyPath:
+                      acc.nonCustodial.fireblocks.apiSecretKeyPath,
                     apiKey: MaskData.maskPassword(
                       acc.nonCustodial.fireblocks.apiKey,
                       maskJSONOptions,

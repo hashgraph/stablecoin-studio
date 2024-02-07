@@ -416,6 +416,9 @@ describe('setConfigurationService', () => {
           Promise.resolve(language.getText('configuration.fireblocks.title')),
         )
         .mockImplementationOnce(() =>
+          Promise.resolve('/user/foo/keystore/key.pem'),
+        )
+        .mockImplementationOnce(() =>
           Promise.resolve('bbe6a358-0c98-460a-a2fc-91e035f74d54'),
         )
         .mockImplementationOnce(() =>
@@ -429,8 +432,10 @@ describe('setConfigurationService', () => {
             '04eb152576e3af4dccbabda7026b85d8fdc0ad3f18f26540e42ac71a08e21623',
           ),
         );
-      const defaultPasswordAskMock = buildDefaultPasswordAskMock();
       const defaultConfirmAskMock = buildDefaultConfirmAskMock();
+      const privateKeyPathValidation = jest
+        .spyOn(fs, 'existsSync')
+        .mockImplementationOnce(() => true);
 
       const keep = setConfigurationService.manageAccountMenu;
       jest
@@ -446,8 +451,8 @@ describe('setConfigurationService', () => {
       expect(setConfigurationService).not.toBeNull();
       expect(defaultMultipleAskMock).toHaveBeenCalledTimes(8);
       expect(defaultConfirmAskMock).toHaveBeenCalledTimes(2);
-      expect(defaultSingleAskMock).toHaveBeenCalledTimes(9);
-      expect(defaultPasswordAskMock).toHaveBeenCalledTimes(1);
+      expect(defaultSingleAskMock).toHaveBeenCalledTimes(10);
+      expect(privateKeyPathValidation).toHaveBeenCalledTimes(1);
     });
 
     it('should manage account menu for non-custodial Dfns', async () => {

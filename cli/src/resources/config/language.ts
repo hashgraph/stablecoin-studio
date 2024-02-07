@@ -131,11 +131,11 @@ export const english = {
     RPCNotToChange: '\nThere is no nJSON-RPC-Relay to change',
     fireblocks: {
       title: 'Fireblocks account configuration',
-      askApiSecretKey: 'Enter your API secret key',
+      askApiSecretKeyPath: 'Enter your API secret key path',
       askApiKey: 'Enter you API key',
-      baseUrl: 'Enter your base url',
-      assetId: 'Enter your asset id',
-      vaultAccountId: 'Enter your vault account id',
+      askBaseUrl: 'Enter your base url',
+      askAssetId: 'Enter your asset id',
+      askVaultAccountId: 'Enter your vault account id',
     },
     dfns: {
       title: 'DFNS account configuration',
