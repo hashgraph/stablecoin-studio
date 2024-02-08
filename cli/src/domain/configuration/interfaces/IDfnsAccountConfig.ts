@@ -7,4 +7,5 @@ export interface IDfnsAccountConfig {
   testUrl: string;
   walletId: string;
   hederaAccountPublicKey: string;
+  hederaAccountKeyType: string;
 }

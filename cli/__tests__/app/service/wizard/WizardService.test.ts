@@ -54,6 +54,7 @@ describe('wizardService', () => {
             testUrl: 'testUrl',
             walletId: 'walletId',
             hederaAccountPublicKey: 'hederaAccountPublicKey',
+            hederaAccountKeyType: 'hederaAccountKeyType',
           },
         },
       },
@@ -238,6 +239,7 @@ describe('wizardService', () => {
           testUrl: 'testUrl',
           walletId: 'walletId',
           hederaAccountPublicKey: 'hederaAccountPublicKey',
+          hederaAccountKeyType: 'hederaAccountKeyType',
         },
       },
     });

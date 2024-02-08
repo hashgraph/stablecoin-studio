@@ -436,9 +436,8 @@ export default class SetConfigurationService extends Service {
         ` '96|64|66|68 characters' (${accountId})`,
     );
 
-    privateKey.type = await utilsService.defaultMultipleAsk(
-      language.getText('configuration.askPrivateKeyType'),
-      language.getArrayFromObject('wizard.privateKeyType'),
+    privateKey.type = await this.askForPrivateKeyType(
+      'configuration.askPrivateKeyType',
     );
 
     // Actions by length
@@ -461,6 +460,13 @@ export default class SetConfigurationService extends Service {
     }
 
     return privateKey;
+  }
+
+  private async askForPrivateKeyType(attribute: string): Promise<string> {
+    return await utilsService.defaultMultipleAsk(
+      language.getText(attribute),
+      language.getArrayFromObject('wizard.privateKeyType'),
+    );
   }
 
   private async askForApiKey(
@@ -520,7 +526,7 @@ export default class SetConfigurationService extends Service {
     );
     const apiKey = await this.askForApiKey(
       'configuration.fireblocks.askApiKey',
-      'bbe6a358-0c98-460a-a2fc-91e035f74d54',
+      '',
     );
     const baseUrl = await this.askForUrl(
       'configuration.fireblocks.askBaseUrl',
@@ -528,15 +534,15 @@ export default class SetConfigurationService extends Service {
     );
     const assetId = await utilsService.defaultSingleAsk(
       language.getText('configuration.fireblocks.askAssetId'),
-      'HBAR_TEST',
+      '',
     );
     const vaultAccountId = await utilsService.defaultSingleAsk(
       language.getText('configuration.fireblocks.askVaultAccountId'),
-      '2',
+      '',
     );
     const hederaAccountPublicKey = await this.askForHederaAccountPublicKey(
       'configuration.askAccountPubKey',
-      '04eb152576e3af4dccbabda7026b85d8fdc0ad3f18f26540e42ac71a08e21623',
+      '',
     );
 
     return {
@@ -571,7 +577,10 @@ export default class SetConfigurationService extends Service {
     const walletId = await this.askForDfnsWalletId();
     const hederaAccountPublicKey = await this.askForHederaAccountPublicKey(
       'configuration.askAccountPubKey',
-      '04eb152576e3af4dccbabda7026b85d8fdc0ad3f18f26540e42ac71a08e21623',
+      '',
+    );
+    const hederaAccountKeyType = await this.askForPrivateKeyType(
+      'configuration.askPrivateKeyType',
     );
 
     return {
@@ -583,6 +592,7 @@ export default class SetConfigurationService extends Service {
       testUrl,
       walletId,
       hederaAccountPublicKey,
+      hederaAccountKeyType,
     };
   }
 
@@ -592,7 +602,7 @@ export default class SetConfigurationService extends Service {
     while (!credentialIdRegExpValidator.test(credentialId)) {
       credentialId = await utilsService.defaultSingleAsk(
         language.getText('configuration.dfns.askCredentialId'),
-        'Y2ktMTZ2NTMtZXF0ZzAtOWRvOXJub3NjbGI1a3RwYg',
+        '',
       );
     }
     return credentialId;
@@ -626,7 +636,7 @@ export default class SetConfigurationService extends Service {
     while (!appIdRegExpValidator.test(appId)) {
       appId = await utilsService.defaultSingleAsk(
         language.getText('configuration.dfns.askAppId'),
-        'ap-2ng9jv-80cfc-983pop0iauf2sv8r',
+        '',
       );
     }
     return appId;
@@ -638,7 +648,7 @@ export default class SetConfigurationService extends Service {
     while (!walletIdRegExpValidator.test(walletId)) {
       walletId = await utilsService.defaultSingleAsk(
         language.getText('configuration.dfns.askWalletId'),
-        'wa-6qfr0-heg0c-985bmvv9hphbok47',
+        '',
       );
     }
     return walletId;

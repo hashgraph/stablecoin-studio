@@ -332,28 +332,6 @@ describe('setConfigurationService', () => {
         );
     };
 
-    const buildDefaultMultipleAskNonCustodial = (
-      accountType: string,
-    ): jest.SpyInstance => {
-      return buildInitDefaultMultipleAsk(accountType)
-        .mockImplementationOnce(() =>
-          Promise.resolve(
-            language.getText('wizard.manageAccountOptions.Change'),
-          ),
-        )
-        .mockImplementationOnce(() => Promise.resolve('0.0.456789'))
-        .mockImplementationOnce(() =>
-          Promise.resolve(
-            language.getText('wizard.manageAccountOptions.Delete'),
-          ),
-        )
-        .mockImplementationOnce(() =>
-          Promise.resolve(
-            `0.0.456789 - Account alias ${accountType} (testnet)`,
-          ),
-        );
-    };
-
     const buildDefaultSingleAskMock = (
       accountType: string,
     ): jest.SpyInstance => {
@@ -409,8 +387,23 @@ describe('setConfigurationService', () => {
 
     it('should manage account menu for non-custodial Firebloks', async () => {
       const accountType = 'FIREBLOCKS';
-      const defaultMultipleAskMock =
-        buildDefaultMultipleAskNonCustodial(accountType);
+      const defaultMultipleAskMock = buildInitDefaultMultipleAsk(accountType)
+        .mockImplementationOnce(() =>
+          Promise.resolve(
+            language.getText('wizard.manageAccountOptions.Change'),
+          ),
+        )
+        .mockImplementationOnce(() => Promise.resolve('0.0.456789'))
+        .mockImplementationOnce(() =>
+          Promise.resolve(
+            language.getText('wizard.manageAccountOptions.Delete'),
+          ),
+        )
+        .mockImplementationOnce(() =>
+          Promise.resolve(
+            `0.0.456789 - Account alias ${accountType} (testnet)`,
+          ),
+        );
       const defaultSingleAskMock = buildDefaultSingleAskMock(accountType)
         .mockImplementationOnce(() =>
           Promise.resolve(language.getText('configuration.fireblocks.title')),
@@ -457,8 +450,24 @@ describe('setConfigurationService', () => {
 
     it('should manage account menu for non-custodial Dfns', async () => {
       const accountType = 'DFNS';
-      const defaultMultipleAskMock =
-        buildDefaultMultipleAskNonCustodial(accountType);
+      const defaultMultipleAskMock = buildInitDefaultMultipleAsk(accountType)
+        .mockImplementationOnce(() => Promise.resolve('ED25519'))
+        .mockImplementationOnce(() =>
+          Promise.resolve(
+            language.getText('wizard.manageAccountOptions.Change'),
+          ),
+        )
+        .mockImplementationOnce(() => Promise.resolve('0.0.456789'))
+        .mockImplementationOnce(() =>
+          Promise.resolve(
+            language.getText('wizard.manageAccountOptions.Delete'),
+          ),
+        )
+        .mockImplementationOnce(() =>
+          Promise.resolve(
+            `0.0.456789 - Account alias ${accountType} (testnet)`,
+          ),
+        );
       const defaultSingleAskMock = buildDefaultSingleAskMock(accountType)
         .mockImplementationOnce(() =>
           Promise.resolve('Y2ktMTZ2NTMtZXF0ZzAtOWRvOXJub3NjbGI1a3RwYg'),
@@ -500,7 +509,7 @@ describe('setConfigurationService', () => {
       await setConfigurationService.manageAccountMenu();
 
       expect(setConfigurationService).not.toBeNull();
-      expect(defaultMultipleAskMock).toHaveBeenCalledTimes(8);
+      expect(defaultMultipleAskMock).toHaveBeenCalledTimes(9);
       expect(defaultConfirmAskMock).toHaveBeenCalledTimes(2);
       expect(defaultSingleAskMock).toHaveBeenCalledTimes(10);
       expect(defaultPasswordAskMock).toHaveBeenCalledTimes(1);

@@ -565,6 +565,8 @@ export default class UtilitiesService extends Service {
                     walletId: acc.nonCustodial.dfns.walletId,
                     hederaAccountPublicKey:
                       acc.nonCustodial.dfns.hederaAccountPublicKey,
+                    hederaAccountKeyType:
+                      acc.nonCustodial.dfns.hederaAccountKeyType,
                   },
             },
       };
