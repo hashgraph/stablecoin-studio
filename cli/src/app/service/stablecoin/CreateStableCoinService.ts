@@ -694,8 +694,16 @@ export default class CreateStableCoinService extends Service {
         const currentAccount = utilsService.getCurrentAccount();
         switch (currentAccount.type) {
           case AccountType.Fireblocks:
+            return Promise.resolve({
+              key: currentAccount.nonCustodial.fireblocks
+                .hederaAccountPublicKey,
+              type: 'ED25519',
+            });
           case AccountType.Dfns:
-            return undefined;
+            return Promise.resolve({
+              key: currentAccount.nonCustodial.dfns.hederaAccountPublicKey,
+              type: currentAccount.nonCustodial.dfns.hederaAccountKeyType,
+            });
         }
         const privateKey: RequestPrivateKey = {
           key: currentAccount.selfCustodial.privateKey.key,
