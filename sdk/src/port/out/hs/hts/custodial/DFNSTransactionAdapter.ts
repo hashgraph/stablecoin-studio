@@ -57,4 +57,13 @@ export class DFNSTransactionAdapter extends CustodialTransactionAdapter {
 	getSupportedWallet(): SupportedWallets {
 		return SupportedWallets.DFNS;
 	}
+
+	stop(): Promise<boolean> {
+		this.client?.close();
+		LogService.logTrace('DFNS stopped');
+		this.eventService.emit(WalletEvents.walletDisconnect, {
+			wallet: SupportedWallets.DFNS,
+		});
+		return Promise.resolve(true);
+	}
 }

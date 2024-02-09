@@ -57,4 +57,13 @@ export class FireblocksTransactionAdapter extends CustodialTransactionAdapter {
 	getSupportedWallet(): SupportedWallets {
 		return SupportedWallets.FIREBLOCKS;
 	}
+
+	stop(): Promise<boolean> {
+		this.client?.close();
+		LogService.logTrace('Fireblocks stopped');
+		this.eventService.emit(WalletEvents.walletDisconnect, {
+			wallet: SupportedWallets.FIREBLOCKS,
+		});
+		return Promise.resolve(true);
+	}
 }
