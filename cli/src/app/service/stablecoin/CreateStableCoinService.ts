@@ -333,7 +333,7 @@ export default class CreateStableCoinService extends Service {
       tokenToCreate,
     );
 
-    console.log({
+    const stableCoinResume = {
       hederaTokenManager: tokenToCreate.hederaTokenManager,
       name: tokenToCreate.name,
       symbol: tokenToCreate.symbol,
@@ -397,7 +397,8 @@ export default class CreateStableCoinService extends Service {
         tokenToCreate.proxyAdminOwnerAccount === undefined
           ? currentAccount.accountId
           : tokenToCreate.proxyAdminOwnerAccount,
-    });
+    };
+    console.log(stableCoinResume);
     if (
       !(await utilsService.defaultConfirmAsk(
         language.getText('stablecoin.askConfirmCreation'),
