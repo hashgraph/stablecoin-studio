@@ -3323,9 +3323,11 @@ export default class OperationStableCoinService extends Service {
 
     return filterTokens
       .concat(
-        currentAccount.importedTokens.map(
-          (token) => `${token.id} - ${token.symbol}`,
-        ),
+        !currentAccount.importedTokens
+          ? []
+          : currentAccount.importedTokens.map(
+              (token) => `${token.id} - ${token.symbol}`,
+            ),
       )
       .sort((token1, token2) =>
         +token1.split(' - ')[0].split('.').slice(-1)[0] >
