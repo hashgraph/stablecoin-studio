@@ -9,6 +9,7 @@ module.exports = {
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.(m)?js$': '$1',
   },
+
   testMatch: ['**/__tests__/**/*.(test|spec).[jt]s?(x)'],
   testPathIgnorePatterns: ['/build/', '/src_old/'],
   coverageDirectory: 'coverage',
