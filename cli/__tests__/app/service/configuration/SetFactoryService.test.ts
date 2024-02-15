@@ -16,6 +16,7 @@ import {
 } from '@hashgraph/stablecoin-npm-sdk';
 import { rimraf } from 'rimraf';
 import fs from 'fs-extra';
+import { AccountType } from '../../../../src/domain/configuration/interfaces/AccountType';
 
 const language: Language = new Language();
 
@@ -68,9 +69,12 @@ describe('setFactoryService', () => {
     accounts: [
       {
         accountId: '0.0.123456',
-        privateKey: {
-          key: '01234567890abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcde',
-          type: 'ED25519',
+        type: AccountType.SelfCustodial,
+        selfCustodial: {
+          privateKey: {
+            key: '01234567890abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcde',
+            type: 'ED25519',
+          },
         },
         network: 'testnet',
         alias: 'test',
@@ -135,9 +139,12 @@ describe('setFactoryService', () => {
 
   const account: IAccountConfig = {
     accountId: '0.0.123456',
-    privateKey: {
-      key: '01234567890abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcde',
-      type: 'ED25519',
+    type: AccountType.SelfCustodial,
+    selfCustodial: {
+      privateKey: {
+        key: '01234567890abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcde',
+        type: 'ED25519',
+      },
     },
     network: 'testnet',
     alias: 'test',

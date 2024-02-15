@@ -14,14 +14,18 @@ import {
 import AssociateStableCoinService from '../../../../src/app/service/stablecoin/AssociateStableCoinService';
 import SetConfigurationService from '../../../../src/app/service/configuration/SetConfigurationService';
 import KYCStableCoinService from '../../../../src/app/service/stablecoin/KYCStableCoinService';
+import { AccountType } from '../../../../src/domain/configuration/interfaces/AccountType';
 
 const service = new CreateStableCoinService();
 const language: Language = new Language();
 const currentAccount = {
   accountId: '0.0.12345',
-  privateKey: {
-    key: 'key',
-    type: 'type',
+  type: AccountType.SelfCustodial,
+  selfCustodial: {
+    privateKey: {
+      key: 'key',
+      type: 'type',
+    },
   },
   network: 'testnet',
   alias: 'alias',
@@ -197,9 +201,12 @@ describe(`Testing ManageImportedTokenService class`, () => {
   it('Should instance createStableCoin with true and sender', async () => {
     const currentAccount = {
       accountId: '0.0.12345',
-      privateKey: {
-        key: '',
-        type: 'type',
+      type: AccountType.SelfCustodial,
+      selfCustodial: {
+        privateKey: {
+          key: 'key',
+          type: 'type',
+        },
       },
       network: 'testnet',
       alias: 'alias',

@@ -106,14 +106,59 @@ export default class ConfigurationService extends Service {
     const result = { ...configuration };
     result.accounts = configuration.accounts.map((acc) => {
       return {
-        privateKey: {
-          key: MaskData.maskPassword(acc.privateKey.key, maskJSONOptions),
-          type: acc.privateKey.type,
-        },
         accountId: acc.accountId,
+        type: acc.type,
         network: acc.network,
         alias: acc.alias,
         importedTokens: acc.importedTokens,
+        selfCustodial: !acc.selfCustodial
+          ? undefined
+          : {
+              privateKey: {
+                key: MaskData.maskPassword(
+                  acc.selfCustodial.privateKey.key,
+                  maskJSONOptions,
+                ),
+                type: acc.selfCustodial.privateKey.type,
+              },
+            },
+        nonCustodial: !acc.nonCustodial
+          ? undefined
+          : {
+              fireblocks: !acc.nonCustodial.fireblocks
+                ? undefined
+                : {
+                    apiSecretKeyPath:
+                      acc.nonCustodial.fireblocks.apiSecretKeyPath,
+                    apiKey: MaskData.maskPassword(
+                      acc.nonCustodial.fireblocks.apiKey,
+                      maskJSONOptions,
+                    ),
+                    baseUrl: acc.nonCustodial.fireblocks.baseUrl,
+                    assetId: acc.nonCustodial.fireblocks.assetId,
+                    vaultAccountId: acc.nonCustodial.fireblocks.vaultAccountId,
+                    hederaAccountPublicKey:
+                      acc.nonCustodial.fireblocks.hederaAccountPublicKey,
+                  },
+              dfns: !acc.nonCustodial.dfns
+                ? undefined
+                : {
+                    authorizationToken: MaskData.maskPassword(
+                      acc.nonCustodial.dfns.authorizationToken,
+                      maskJSONOptions,
+                    ),
+                    credentialId: acc.nonCustodial.dfns.credentialId,
+                    privateKeyPath: acc.nonCustodial.dfns.privateKeyPath,
+                    appOrigin: acc.nonCustodial.dfns.appOrigin,
+                    appId: acc.nonCustodial.dfns.appId,
+                    testUrl: acc.nonCustodial.dfns.testUrl,
+                    walletId: acc.nonCustodial.dfns.walletId,
+                    hederaAccountPublicKey:
+                      acc.nonCustodial.dfns.hederaAccountPublicKey,
+                    hederaAccountKeyType:
+                      acc.nonCustodial.dfns.hederaAccountKeyType,
+                  },
+            },
       };
     });
     console.dir(result, { depth: null });

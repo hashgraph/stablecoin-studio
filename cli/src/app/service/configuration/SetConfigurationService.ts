@@ -15,6 +15,10 @@ import { INetworkConfig } from '../../../domain/configuration/interfaces/INetwor
 import { IMirrorsConfig } from 'domain/configuration/interfaces/IMirrorsConfig.js';
 import { IRPCsConfig } from 'domain/configuration/interfaces/IRPCsConfig.js';
 import { ZERO_ADDRESS } from '../../../core/Constants.js';
+import { AccountType } from '../../../domain/configuration/interfaces/AccountType';
+import { IPrivateKey } from '../../../domain/configuration/interfaces/IPrivateKey';
+import { IFireblocksAccountConfig } from '../../../domain/configuration/interfaces/IFireblocksAccountConfig';
+import { IDfnsAccountConfig } from '../../../domain/configuration/interfaces/IDfnsAccountConfig';
 const colors = require('colors');
 
 /**
@@ -170,7 +174,14 @@ export default class SetConfigurationService extends Service {
   public async configureAccounts(): Promise<IAccountConfig[]> {
     const configuration = configurationService.getConfiguration();
     let accounts: IAccountConfig[] = configuration?.accounts || [];
-    if (accounts.length === 1 && accounts[0].privateKey.key === '') {
+    if (
+      accounts.length === 1 &&
+      ((accounts[0].selfCustodial &&
+        accounts[0].selfCustodial.privateKey.key === '') ||
+        (accounts[0].nonCustodial &&
+          (accounts[0].nonCustodial.fireblocks ||
+            accounts[0].nonCustodial.dfns)))
+    ) {
       accounts = [];
     }
     let moreAccounts = true;
@@ -191,8 +202,7 @@ export default class SetConfigurationService extends Service {
         );
       }
 
-      const accountFromPrivKey: IAccountConfig =
-        await this.askForPrivateKeyOfAccount(accountId);
+      const accountType = await this.askForAccountType();
 
       const network = await utilsService.defaultMultipleAsk(
         language.getText('configuration.askNetworkAccount'),
@@ -214,13 +224,31 @@ export default class SetConfigurationService extends Service {
           'AdminAccount',
         );
       }
-      accounts.push({
+      const accountConfig: IAccountConfig = {
         accountId: accountId,
-        privateKey: accountFromPrivKey.privateKey,
+        type: accountType,
         network: network,
         alias: alias,
-        importedTokens: [],
-      });
+      };
+
+      switch (accountType) {
+        case AccountType.SelfCustodial:
+          accountConfig.selfCustodial = {
+            privateKey: await this.askForPrivateKeyOfAccount(accountId),
+          };
+          break;
+        case AccountType.Fireblocks:
+          accountConfig.nonCustodial = {
+            fireblocks: await this.askForFireblocksOfAccount(),
+          };
+          break;
+        default:
+          accountConfig.nonCustodial = {
+            dfns: await this.askForDfnsOfAccount(),
+          };
+          break;
+      }
+      accounts.push(accountConfig);
 
       const response = await utilsService.defaultConfirmAsk(
         language.getText('configuration.askMoreAccounts'),
@@ -378,29 +406,44 @@ export default class SetConfigurationService extends Service {
     await this.manageAccountMenu();
   }
 
+  public async askForAccountType(): Promise<AccountType> {
+    const accountType = await utilsService.defaultMultipleAsk(
+      language.getText('configuration.askAccountType'),
+      language.getArrayFromObject('wizard.accountType'),
+      false,
+    );
+    switch (accountType) {
+      case 'SELF-CUSTODIAL':
+        return AccountType.SelfCustodial;
+      case 'FIREBLOCKS':
+        return AccountType.Fireblocks;
+      case 'DFNS':
+        return AccountType.Dfns;
+      default:
+        return await this.askForAccountType();
+    }
+  }
+
   /**
    * Function to configure the private key, fail if length doesn't 96 or 64 or 66
    */
   public async askForPrivateKeyOfAccount(
     accountId: string,
-  ): Promise<IAccountConfig> {
-    let privateKey = await utilsService.defaultPasswordAsk(
+  ): Promise<IPrivateKey> {
+    let privateKey: IPrivateKey = { key: '', type: '' };
+    privateKey.key = await utilsService.defaultPasswordAsk(
       language.getText('configuration.askPrivateKey') +
         ` '96|64|66|68 characters' (${accountId})`,
     );
 
-    const pkType = await utilsService.defaultMultipleAsk(
-      language.getText('configuration.askPrivateKeyType'),
-      language.getArrayFromObject('wizard.privateKeyType'),
+    privateKey.type = await this.askForPrivateKeyType(
+      'configuration.askPrivateKeyType',
     );
 
-    const network = configurationService.getConfiguration().defaultNetwork;
-    let alias = '';
-
     // Actions by length
-    switch (privateKey.length) {
+    switch (privateKey.key.length) {
       case 64:
-        privateKey = '0x' + privateKey;
+        privateKey.key = '0x' + privateKey.key;
         break;
       case 96:
       default:
@@ -408,22 +451,207 @@ export default class SetConfigurationService extends Service {
     }
 
     if (
-      privateKey.length !== 96 &&
-      privateKey.length !== 64 &&
-      privateKey.length !== 66
+      privateKey.key.length !== 96 &&
+      privateKey.key.length !== 64 &&
+      privateKey.key.length !== 66
     ) {
       utilsService.showError(language.getText('general.incorrectParam'));
-      const acc = await this.askForPrivateKeyOfAccount(accountId);
-      privateKey = acc.privateKey.key;
-      alias = acc.alias;
+      privateKey = await this.askForPrivateKeyOfAccount(accountId);
     }
 
+    return privateKey;
+  }
+
+  private async askForPrivateKeyType(attribute: string): Promise<string> {
+    return await utilsService.defaultMultipleAsk(
+      language.getText(attribute),
+      language.getArrayFromObject('wizard.privateKeyType'),
+    );
+  }
+
+  private async askForApiKey(
+    attribute: string,
+    defaultValue: string,
+  ): Promise<string> {
+    let apiKey = '';
+    const uuidRexExpValidator =
+      /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/g;
+    while (!uuidRexExpValidator.test(apiKey)) {
+      apiKey = await utilsService.defaultSingleAsk(
+        language.getText(attribute),
+        defaultValue,
+      );
+    }
+    return apiKey;
+  }
+
+  private async askForUrl(
+    attribute: string,
+    defaultValue: string,
+  ): Promise<string> {
+    let baseUrl = '';
+    const urlRegExpValidator =
+      /^(http|https):\/\/[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]$/g;
+    while (!urlRegExpValidator.test(baseUrl)) {
+      baseUrl = await utilsService.defaultSingleAsk(
+        language.getText(attribute),
+        defaultValue,
+      );
+    }
+    return baseUrl;
+  }
+
+  private async askForHederaAccountPublicKey(
+    attribute: string,
+    defaultValue: string,
+  ): Promise<string> {
+    let hederaAccountPublicKey = '';
+    const publicKeyRegExpValidator = /[0-9a-f]{64}/g;
+    while (!publicKeyRegExpValidator.test(hederaAccountPublicKey)) {
+      hederaAccountPublicKey = await utilsService.defaultSingleAsk(
+        language.getText(attribute),
+        defaultValue,
+      );
+    }
+    return hederaAccountPublicKey;
+  }
+
+  public async askForFireblocksOfAccount(): Promise<IFireblocksAccountConfig> {
+    utilsService.showMessage(
+      language.getText('configuration.fireblocks.title'),
+    );
+    const apiSecretKeyPath = await this.askForFilePath(
+      'configuration.fireblocks.askApiSecretKey',
+      '/user/fireblocks/privateKey.key',
+    );
+    const apiKey = await this.askForApiKey(
+      'configuration.fireblocks.askApiKey',
+      '',
+    );
+    const baseUrl = await this.askForUrl(
+      'configuration.fireblocks.askBaseUrl',
+      'https://api.fireblocks.io',
+    );
+    const assetId = await utilsService.defaultSingleAsk(
+      language.getText('configuration.fireblocks.askAssetId'),
+      '',
+    );
+    const vaultAccountId = await utilsService.defaultSingleAsk(
+      language.getText('configuration.fireblocks.askVaultAccountId'),
+      '',
+    );
+    const hederaAccountPublicKey = await this.askForHederaAccountPublicKey(
+      'configuration.askAccountPubKey',
+      '',
+    );
+
     return {
-      accountId: accountId,
-      privateKey: { key: privateKey, type: pkType },
-      network,
-      alias: alias,
+      apiSecretKeyPath,
+      apiKey,
+      baseUrl,
+      assetId,
+      vaultAccountId,
+      hederaAccountPublicKey,
     };
+  }
+
+  public async askForDfnsOfAccount(): Promise<IDfnsAccountConfig> {
+    utilsService.showMessage(language.getText('configuration.dfns.title'));
+    const authorizationToken = await utilsService.defaultPasswordAsk(
+      language.getText('configuration.dfns.askAuthorizationToken'),
+    );
+    const credentialId = await this.askForDfnsCredentialId();
+    const privateKeyPath = await this.askForFilePath(
+      'configuration.dfns.askPrivateKeyPath',
+      '/user/dfns/privateKey.key',
+    );
+    const appOrigin = await this.askForUrl(
+      'configuration.dfns.askAppOrigin',
+      'https://localhost:3000',
+    );
+    const appId = await this.askForDfnsAppId();
+    const testUrl = await this.askForUrl(
+      'configuration.dfns.askTestUrl',
+      'https://api.dfns.ninja/',
+    );
+    const walletId = await this.askForDfnsWalletId();
+    const hederaAccountPublicKey = await this.askForHederaAccountPublicKey(
+      'configuration.askAccountPubKey',
+      '',
+    );
+    const hederaAccountKeyType = await this.askForPrivateKeyType(
+      'configuration.askPrivateKeyType',
+    );
+
+    return {
+      authorizationToken,
+      credentialId,
+      privateKeyPath,
+      appOrigin,
+      appId,
+      testUrl,
+      walletId,
+      hederaAccountPublicKey,
+      hederaAccountKeyType,
+    };
+  }
+
+  private async askForDfnsCredentialId(): Promise<string> {
+    let credentialId = '';
+    const credentialIdRegExpValidator = /[a-zA-Z0-9]{42}$/g;
+    while (!credentialIdRegExpValidator.test(credentialId)) {
+      credentialId = await utilsService.defaultSingleAsk(
+        language.getText('configuration.dfns.askCredentialId'),
+        '',
+      );
+    }
+    return credentialId;
+  }
+
+  private async askForFilePath(
+    attribute: string,
+    defaultValue: string,
+  ): Promise<string> {
+    let privateKeyPath = '';
+    const pathRegExpValidator = /^(\/[^/ ]*)+\/?$/g;
+
+    while (
+      !(
+        pathRegExpValidator.test(privateKeyPath) &&
+        fs.existsSync(privateKeyPath)
+      )
+    ) {
+      privateKeyPath = await utilsService.defaultSingleAsk(
+        language.getText(attribute),
+        defaultValue,
+      );
+    }
+
+    return privateKeyPath;
+  }
+
+  private async askForDfnsAppId(): Promise<string> {
+    let appId = '';
+    const appIdRegExpValidator = /ap-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+/g;
+    while (!appIdRegExpValidator.test(appId)) {
+      appId = await utilsService.defaultSingleAsk(
+        language.getText('configuration.dfns.askAppId'),
+        '',
+      );
+    }
+    return appId;
+  }
+
+  private async askForDfnsWalletId(): Promise<string> {
+    let walletId = '';
+    const walletIdRegExpValidator = /wa-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+/g;
+    while (!walletIdRegExpValidator.test(walletId)) {
+      walletId = await utilsService.defaultSingleAsk(
+        language.getText('configuration.dfns.askWalletId'),
+        '',
+      );
+    }
+    return walletId;
   }
 
   /**
