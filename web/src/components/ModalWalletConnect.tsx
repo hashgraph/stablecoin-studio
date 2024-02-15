@@ -26,8 +26,6 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import BLADE_LOGO_PNG from '../assets/png/bladeLogo.png';
 import HASHPACK_LOGO_PNG from '../assets/png/hashpackLogo.png';
-import FIREBLOCKS_LOGO_PNG from '../assets/png/fireblocksLogo.png';
-import DFNS_LOGO_PNG from '../assets/png/dfnsLogo.png';
 import METAMASK_LOGO from '../assets/svg/MetaMask_Fox.svg';
 import SDKService from '../services/SDKService';
 import {
@@ -41,21 +39,12 @@ import ERROR_ICON from '../assets/svg/error.svg';
 import { SelectController } from './Form/SelectController';
 import { useForm } from 'react-hook-form';
 import type { IMirrorRPCNode } from '../interfaces/IMirrorRPCNode';
-import type { FireblocksFormValues } from './Form/FireblocksFormModal';
-import FireblocksFormModal from './Form/FireblocksFormModal';
 
 const ModalWalletConnect = () => {
 	const { t } = useTranslation('global');
 	const dispatch = useDispatch();
 
-	const { onClose: onWalletSelectClose } = useDisclosure({ defaultIsOpen: true });
-
-	const {
-		isOpen: isFireblocksFormOpen,
-		onOpen: onFireblocksFormOpen,
-		onClose: onFireblocksFormClose,
-	} = useDisclosure();
-
+	const { onClose } = useDisclosure();
 	const styles = {
 		providerStyle: {
 			boxShadow: '0 0 12px 2px #E0E0E0',
@@ -221,19 +210,6 @@ const ModalWalletConnect = () => {
 		handleWalletConnect(SupportedWallets.METAMASK, '-');
 	};
 
-	const handleConnectFireblocks = () => {
-		// handleCustodialWalletConnect(SupportedWallets.FIREBLOCKS, '-');
-		onWalletSelectClose(); // Cierra el modal de selección de wallet
-		onFireblocksFormOpen(); // Abre el modal del formulario
-	};
-
-	const handleFireblocksFormConfirm = (formData: FireblocksFormValues) => {
-		console.log('Datos del formulario:', formData);
-
-		onFireblocksFormClose();
-		// handleWalletConnect(SupportedWallets.FIREBLOCKS, '-');
-	};
-
 	const handleConnectBladeWallet = () => {
 		setBladeSelected(true);
 	};
@@ -279,14 +255,14 @@ const ModalWalletConnect = () => {
 		<>
 			<Modal
 				isOpen={true}
-				onClose={onWalletSelectClose}
+				onClose={onClose}
 				size={'xl'}
 				isCentered
 				closeOnEsc={false}
 				closeOnOverlayClick={false}
 			>
 				<ModalOverlay />
-				<ModalContent data-testid='modal-action-content' p='50' maxW='960px'>
+				<ModalContent data-testid='modal-action-content' p='50' w='600px'>
 					{!error && !rejected && !hashpackSelected && !bladeSelected && (
 						<>
 							<ModalHeader p='0' justifyContent='center'>
@@ -335,7 +311,7 @@ const ModalWalletConnect = () => {
 									)}
 									{availableWallets.includes(SupportedWallets.METAMASK) ? (
 										<VStack
-											data-testid='Metamask'
+											data-testid="Metamask"
 											{...styles.providerStyle}
 											shouldWrapChildren
 											onClick={handleConnectMetamaskWallet}
@@ -385,28 +361,6 @@ const ModalWalletConnect = () => {
 									) : (
 										<></>
 									)}
-									<VStack
-										data-testid='Fireblocks'
-										{...styles.providerStyle}
-										shouldWrapChildren
-										onClick={handleConnectFireblocks}
-									>
-										<PairingSpinner wallet={SupportedWallets.FIREBLOCKS}>
-											<Image src={FIREBLOCKS_LOGO_PNG} w={20} />
-											<Text textAlign='center'>Fireblocks</Text>
-										</PairingSpinner>
-									</VStack>
-									<VStack
-										data-testid='Dfns'
-										{...styles.providerStyle}
-										shouldWrapChildren
-										onClick={handleConnectFireblocks}
-									>
-										<PairingSpinner wallet={SupportedWallets.DFNS}>
-											<Image src={DFNS_LOGO_PNG} w={20} />
-											<Text textAlign='center'>DFNS</Text>
-										</PairingSpinner>
-									</VStack>
 								</HStack>
 							</ModalFooter>
 						</>
@@ -539,11 +493,6 @@ const ModalWalletConnect = () => {
 					)}
 				</ModalContent>
 			</Modal>
-			<FireblocksFormModal
-				isOpen={isFireblocksFormOpen}
-				onClose={onFireblocksFormClose}
-				onConfirm={handleFireblocksFormConfirm}
-			/>
 		</>
 	);
 };

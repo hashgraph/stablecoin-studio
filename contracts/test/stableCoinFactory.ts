@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import '@hashgraph/hardhat-hethers'
 import '@hashgraph/sdk'
-import {BigNumber} from 'ethers'
+import { BigNumber } from 'ethers'
 import {
     deployContractsWithSDK,
     deployFactory,
@@ -31,10 +31,10 @@ import {
     upgrade_SCF,
     upgradeTo_SCF,
 } from '../scripts/contractsMethods'
-import {ADDRESS_ZERO} from '../scripts/constants'
+import { ADDRESS_ZERO } from '../scripts/constants'
 
-import {getClient, getContractInfo, toEvmAddress} from '../scripts/utils'
-import {Client, ContractId} from '@hashgraph/sdk'
+import { getClient, getContractInfo, toEvmAddress } from '../scripts/utils'
+import { Client, ContractId } from '@hashgraph/sdk'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import {
@@ -450,12 +450,11 @@ describe('StableCoinFactory Tests', function () {
     })
 
     it('Change admin, throw error address is zero', async function () {
-        const newAddress = ADDRESS_ZERO
         expect(
             changeAdminStablecoinFactory(
                 ContractId.fromString(newFactoryProxyAddress),
                 operatorClient,
-                newAddress
+                ADDRESS_ZERO
             )
         ).to.eventually.be.rejectedWith(Error)
     })

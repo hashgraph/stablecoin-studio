@@ -166,15 +166,25 @@ For each account you must provide the following information:
 Example for the Hedera testnet (_these are fake accounts/keys_):
 
 ```.env
-    HEDERA_OPERATOR_ACCOUNT='0.0.48513676'
-    HEDERA_OPERATOR_PUBLICKEY='c14dbe4c936181b7a2fe7faf086fd95bdc6900e2d16533e3e8ffd00cac1fe607'
-    HEDERA_OPERATOR_PRIVATEKEY='8830990f02fae1c3a843b8aaad0433a73ee47b08d56426a8e416d08727ea0609'
-    HEDERA_OPERATOR_ED25519=true
+    TESTNET_HEDERA_OPERATOR_ACCOUNT='0.0.48513676'
+    TESTNET_HEDERA_OPERATOR_PUBLICKEY='c14dbe4c936181b7a2fe7faf086fd95bdc6900e2d16533e3e8ffd00cac1fe607'
+    TESTNET_HEDERA_OPERATOR_PRIVATEKEY='8830990f02fae1c3a843b8aaad0433a73ee47b08d56426a8e416d08727ea0609'
+    TESTNET_HEDERA_OPERATOR_ED25519=true
 
-    HEDERA_NON_OPERATOR_ACCOUNT='0.0.47786654'
-    HEDERA_NON_OPERATOR_PUBLICKEY='302a300506032b657003210057056288u5d5a9cdaeb85687391dc7372707c464f9e7cb0efb386cf4244ebdf6'
-    HEDERA_NON_OPERATOR_PRIVATEKEY='302e020100300506032b6baf04220420b7ca8f1a5453d5c03b0d8ba99d06306ed6c93ee64d7bf122c21b0981e2b0b679'
-    HEDERA_NON_OPERATOR_ED25519=true
+    TESTNET_HEDERA_NON_OPERATOR_ACCOUNT='0.0.47786654'
+    TESTNET_HEDERA_NON_OPERATOR_PUBLICKEY='302a300506032b657003210057056288u5d5a9cdaeb85687391dc7372707c464f9e7cb0efb386cf4244ebdf6'
+    TESTNET_HEDERA_NON_OPERATOR_PRIVATEKEY='302e020100300506032b6baf04220420b7ca8f1a5453d5c03b0d8ba99d06306ed6c93ee64d7bf122c21b0981e2b0b679'
+    TESTNET_HEDERA_NON_OPERATOR_ED25519=true
+    
+    PREVIEWNET_HEDERA_OPERATOR_ACCOUNT='0.0.48513676'
+    PREVIEWNET_HEDERA_OPERATOR_PUBLICKEY='c14dbe4c936181b7a2fe7faf086fd95bdc6900e2d16533e3e8ffd00cac1fe607'
+    PREVIEWNET_HEDERA_OPERATOR_PRIVATEKEY='8830990f02fae1c3a843b8aaad0433a73ee47b08d56426a8e416d08727ea0609'
+    PREVIEWNET_HEDERA_OPERATOR_ED25519=true
+
+    PREVIEWNET_HEDERA_NON_OPERATOR_ACCOUNT='0.0.47786654'
+    PREVIEWNET_HEDERA_NON_OPERATOR_PUBLICKEY='302a300506032b657003210057056288u5d5a9cdaeb85687391dc7372707c464f9e7cb0efb386cf4244ebdf6'
+    PREVIEWNET_HEDERA_NON_OPERATOR_PRIVATEKEY='302e020100300506032b6baf04220420b7ca8f1a5453d5c03b0d8ba99d06306ed6c93ee64d7bf122c21b0981e2b0b679'
+    PREVIEWNET_HEDERA_NON_OPERATOR_ED25519=true
 ```
 
 ### Operating accounts
@@ -209,20 +219,22 @@ npm test
 -   Run all the test files in a specific network (Hedera TestNet):
 
 ```shell
-npm test:testnet
+npm run test:testnet
 ```
 
 -   Run a single test file in the `defaultNetwork` network:
 
 ```shell
-npm test:mintable
+npm run test:mintable
 ```
 
 -   Run a single test file in a specific network (Hedera PreviewNet):
 
 ```shell
-npm test:previewnet:mintable
+npm run test:previewnet:mintable
 ```
+
+> The accounts used to test will be determined by the values in the `.env` file, that must contain the `HEDERA_OPERATOR_` entries for the account id, public / private key and evm address. See the `.env.sample` file to see all the attributes. See [Test accounts](#Test-accounts) to learn more.
 
 # Deploy
 
@@ -242,6 +254,8 @@ If you want to deploy your own Factory contracts do the following steps:
 1. Deploy the Factory **Logic** smart contract (_StableCoinFactory.sol_).
 2. Deploy the Factory **Proxy Admin** smart contract.
 3. Deploy the Factory **TransparentUpgradeableProxy** smart contract setting the Factory logic as the implementation and the Factory proxy admin as the admin.
+
+> To enable `deployFactory` task in hardhat, it's necessary to un comment in `hardhat.config.ts` the line 10.
 
 You may also clone this repository, install the dependencies (see [Build](#Build)) and run `npx hardhat deployFactory` in order to deploy all factories (hederaTokenManager and stableCoinFactory) and its proxies onto the testnet network. Once completed, an output with the new addresses is provided:
 

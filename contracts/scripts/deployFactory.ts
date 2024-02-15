@@ -9,7 +9,7 @@ import {
     toHashgraphKey,
 } from './deploy'
 
-import {clientId, getClient, getContractInfo, toEvmAddress} from './utils'
+import { clientId, getClient, getContractInfo, toEvmAddress } from './utils'
 
 export const deployFactory = async () => {
     const [
