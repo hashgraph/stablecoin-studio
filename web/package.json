@@ -129,7 +129,8 @@
 			"hashconnect/dist/esm(.*)": "<rootDir>/../sdk/node_modules/@hashgraph/hashconnect/dist/cjs$1",
 			"hashconnect": "<rootDir>/../sdk/node_modules/@hashgraph/hashconnect/dist/cjs/hashconnect.js",
 			"axios": "<rootDir>/node_modules/axios/dist/node/axios.cjs",
-			"blade": "<rootDir>/../sdk/node_modules/@hashgraph/hashconnect/dist/cjs/hashconnect.js"
+			"blade": "<rootDir>/../sdk/node_modules/@hashgraph/hashconnect/dist/cjs/hashconnect.js",
+			"fireblocks-sdk": "<rootDir>/src/mocks/fireblocks-sdk-mock.js"
 		},
 		"transform": {
 			"^.+\\.ts?$": "ts-jest",
