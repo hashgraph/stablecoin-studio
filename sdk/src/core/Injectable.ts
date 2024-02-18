@@ -457,8 +457,8 @@ export default class Injectable {
 		const adapters: TransactionAdapter[] = [];
 		if (this.isWeb()) {
 			adapters.push(Injectable.resolve(HashpackTransactionAdapter));
-			adapters.push(Injectable.resolve(RPCTransactionAdapter));
 			adapters.push(Injectable.resolve(BladeTransactionAdapter));
+			adapters.push(Injectable.resolve(RPCTransactionAdapter));
 		} else {
 			adapters.push(Injectable.resolve(HTSTransactionAdapter));
 		}
