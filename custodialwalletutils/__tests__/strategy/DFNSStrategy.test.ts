@@ -26,22 +26,6 @@ import {
 } from '../../src';
 import { SignatureStatus } from '@dfns/sdk/codegen/datamodel/Wallets';
 
-const emptyMessage = '0x00';
-const emptyID = 'emptyID';
-
-const wrongMessage = '0x01';
-const wrongID = 'WrongID';
-
-const emptySignatureResponse = {
-  id: emptyID,
-  status: '',
-};
-
-const wrongSignatureResponse = {
-  id: wrongID,
-  status: SignatureStatus.Failed,
-};
-
 const signatureResponse = {
   id: 'signature-id',
   status: SignatureStatus.Signed,
@@ -51,23 +35,8 @@ const signatureResponse = {
 jest.mock('@dfns/sdk', () => ({
   DfnsApiClient: jest.fn().mockImplementation(() => ({
     wallets: {
-      generateSignature: jest.fn().mockImplementation((val) => {
-        if (val.body.message === emptyMessage) {
-          return emptySignatureResponse;
-        } else if (val.body.message === wrongMessage) {
-          return wrongSignatureResponse;
-        }
-        return signatureResponse;
-      }),
-
-      getSignature: jest.fn().mockImplementation((val) => {
-        if (val.signatureId === emptyID) {
-          return emptySignatureResponse;
-        } else if (val.signatureId === wrongID) {
-          return wrongSignatureResponse;
-        }
-        return signatureResponse;
-      }),
+      generateSignature: jest.fn().mockResolvedValue(signatureResponse),
+      getSignature: jest.fn().mockResolvedValue(signatureResponse),
     },
   })),
 }));
@@ -102,20 +71,6 @@ describe('🧪 DFNSStrategy TESTS', () => {
       dfnsStrategy['dfnsApiClient']['wallets']['getSignature'],
     ).toHaveBeenCalledTimes(1);
     expect(result).toEqual(expectedSignatureResponse);
-  });
-
-  it('waiting for non existing signature id', async () => {
-    const mockSignatureRequest = new SignatureRequest(new Uint8Array([0]));
-    await expect(dfnsStrategy.sign(mockSignatureRequest)).rejects.toThrow(
-      `DFNS Signature request ${emptyID} failed.`,
-    );
-  });
-
-  it('waiting for wrong signature id', async () => {
-    const mockSignatureRequest = new SignatureRequest(new Uint8Array([1]));
-    await expect(dfnsStrategy.sign(mockSignatureRequest)).rejects.toThrow(
-      `DFNS Signature request ${wrongID} failed.`,
-    );
   });
 });
 

@@ -26,25 +26,27 @@
 
 import { StableCoin } from '../../../src/domain/context/stablecoin/StableCoin.js';
 import {
+	AcceptProxyOwnerRequest,
 	AssociateTokenRequest,
+	ChangeProxyOwnerRequest,
 	ConnectRequest,
+	Factory as FactoryInPort,
 	FreezeAccountRequest,
 	GetAccountBalanceHBARRequest,
 	GetAccountBalanceRequest,
+	GetProxyConfigRequest,
 	GetStableCoinDetailsRequest,
+	GetTokenManagerListRequest,
 	HBAR_DECIMALS,
 	KYCRequest,
+	LoggerTransports,
 	Network,
-	StableCoin as StableCoinInPort,
 	Proxy as ProxyInPort,
-	Factory as FactoryInPort,
-	SupportedWallets,
-	ChangeProxyOwnerRequest,
 	ProxyConfigurationViewModel,
-	GetProxyConfigRequest,
-	GetTokenManagerListRequest,
+	SDK,
+	StableCoin as StableCoinInPort,
+	SupportedWallets,
 	UpgradeImplementationRequest,
-	AcceptProxyOwnerRequest,
 } from '../../../src/index.js';
 import StableCoinCapabilities from '../../../src/domain/context/stablecoin/StableCoinCapabilities.js';
 import BigDecimal from '../../../src/domain/context/shared/BigDecimal.js';
@@ -60,6 +62,8 @@ import {
 	CLIENT_ACCOUNT_ED25519,
 	FACTORY_ADDRESS,
 	HEDERA_TOKEN_MANAGER_ADDRESS,
+	MIRROR_NODE,
+	RPC_NODE,
 } from '../../config.js';
 import Account from '../../../src/domain/context/account/Account.js';
 import NetworkService from '../../../src/app/service/NetworkService.js';
@@ -73,19 +77,19 @@ import StableCoinService from '../../../src/app/service/StableCoinService.js';
 import { RESERVE_DECIMALS } from '../../../src/domain/context/reserve/Reserve.js';
 import RPCTransactionAdapter from '../../../src/port/out/rpc/RPCTransactionAdapter.js';
 import RPCQueryAdapter from '../../../src/port/out/rpc/RPCQueryAdapter.js';
-import { LoggerTransports, SDK } from '../../../src/index.js';
 import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
 import EvmAddress from '../../../src/domain/context/contract/EvmAddress.js';
 
 SDK.log = { level: 'ERROR', transports: new LoggerTransports.Console() };
 const mirrorNode: MirrorNode = {
-	name: 'testmirrorNode',
-	baseUrl: 'https://testnet.mirrornode.hedera.com/api/v1/',
+	name: MIRROR_NODE.name,
+	baseUrl: MIRROR_NODE.baseUrl,
 };
+
 const rpcNode: JsonRpcRelay = {
-	name: 'testrpcNode',
-	baseUrl: 'http://127.0.0.1:7546/api',
+	name: RPC_NODE.name,
+	baseUrl: RPC_NODE.baseUrl,
 };
 const decimals = 6;
 const initSupply = 1000;

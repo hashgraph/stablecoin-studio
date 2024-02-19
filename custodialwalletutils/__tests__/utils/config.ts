@@ -49,6 +49,6 @@ export const dfnsConfig = new DFNSConfig(
   process.env.DFNS_SERVICE_ACCOUNT_AUTHORIZATION_TOKEN ?? '',
   process.env.DFNS_APP_ORIGIN ?? '',
   process.env.DFNS_APP_ID ?? '',
-  process.env.DFNS_TEST_URL ?? '',
+  process.env.DFNS_BASE_URL ?? '',
   process.env.DFNS_WALLET_ID ?? '',
 );

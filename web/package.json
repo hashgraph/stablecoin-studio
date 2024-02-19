@@ -4,49 +4,11 @@
 	"files": [
 		"build/"
 	],
-	"dependencies": {
-		"@chakra-ui/icons": "2.0.17",
-		"@chakra-ui/react": "2.6.1",
-		"@emotion/react": "^11.0.0",
-		"@emotion/styled": "^11.0.0 ",
-		"@hashgraph/stablecoin-npm-sdk": "file:./../sdk",
-		"@reduxjs/toolkit": "^1.9.1",
-		"@testing-library/jest-dom": "^5.16.5",
-		"@testing-library/react": "14.0.0-alpha.3",
-		"@testing-library/user-event": "^14.4.2",
-		"@types/jest": "^29.2.6",
-		"@types/react": "^18.0.27",
-		"@types/react-datepicker": "^4.8.0",
-		"@types/react-dom": "^18.0.6",
-		"@types/react-redux": "^7.1.25",
-		"axios": "^1.2.3",
-		"browserify-zlib": "^0.2.0",
-		"chakra-react-select": "4.5.0",
-		"framer-motion": "^8.5.2",
-		"maskdata": "^1.1.10",
-		"moment": "^2.29.4",
-		"named-urls": "^2.0.1",
-		"path-browserify": "^1.0.1",
-		"react": "^18.2.0",
-		"react-datepicker": "^4.8.0",
-		"react-device-detect": "^2.2.3",
-		"react-dom": "^18.2.0",
-		"react-hook-form": "^7.42.1",
-		"react-number-format": "^5.1.3",
-		"react-redux": "^8.0.5",
-		"react-router-dom": "^6.7.0",
-		"react-scripts": "5.0.1",
-		"react-switch": "^7.0.0",
-		"react-toastify": "^9.1.1",
-		"redux-mock-store": "^1.5.4",
-		"typescript": "^4.9.4",
-		"web-vitals": "^3.1.1",
-		"webpack": "^5.75.0"
-	},
 	"scripts": {
 		"start": "react-app-rewired start",
 		"build": "react-app-rewired build",
-		"test": "react-app-rewired test --maxWorkers=50%",
+		"test": "react-app-rewired test --maxWorkers=50% --watchAll=false",
+		"test:watch": "react-app-rewired test --maxWorkers=50% --watchAll=true",
 		"cleanCache": "react-app-rewired test --clearCache",
 		"eject": "react-app-rewired eject",
 		"lint": "eslint . --ext .ts --ext .mts",
@@ -55,33 +17,8 @@
 		"pre-commit": "npm run lint && npm run prettier",
 		"prepack": "npm run build"
 	},
-	"eslintConfig": {
-		"extends": [
-			"react-app",
-			"react-app/jest"
-		]
-	},
-	"typesVersions": {
-		"*": {
-			"*": [
-				"./lib/*"
-			]
-		}
-	},
-	"types": "./lib/*.d.ts",
-	"browserslist": {
-		"production": [
-			">0.2%",
-			"not dead",
-			"not op_mini all"
-		],
-		"development": [
-			"last 1 chrome version",
-			"last 1 firefox version",
-			"last 1 safari version"
-		]
-	},
 	"devDependencies": {
+		"@babel/plugin-proposal-private-property-in-object": "^7.21.0",
 		"@types/node": "^18.11.18",
 		"@types/react-toastify": "^4.1.0",
 		"@types/redux-mock-store": "^1.0.3",
@@ -109,8 +46,72 @@
 		"stream-browserify": "^3.0.0",
 		"stream-http": "^3.2.0",
 		"ts-jest": "^29.0.5",
-		"url": "^0.11.0",
-		"@babel/plugin-proposal-private-property-in-object":"^7.21.0"
+		"url": "^0.11.0"
+	},
+	"dependencies": {
+		"@chakra-ui/icons": "~2.0.17",
+		"@chakra-ui/react": "~2.6.1",
+		"@emotion/react": "^11.0.0",
+		"@emotion/styled": "^11.0.0 ",
+		"@hashgraph/stablecoin-npm-sdk": "file:./../sdk",
+		"@reduxjs/toolkit": "^1.9.1",
+		"@testing-library/jest-dom": "^5.16.5",
+		"@testing-library/react": "14.0.0-alpha.3",
+		"@testing-library/user-event": "^14.4.2",
+		"@types/jest": "^29.2.6",
+		"@types/react": "^18.0.27",
+		"@types/react-datepicker": "^4.8.0",
+		"@types/react-dom": "^18.0.6",
+		"@types/react-redux": "^7.1.25",
+		"axios": "^1.2.3",
+		"browserify-zlib": "^0.2.0",
+		"chakra-react-select": "~4.5.0",
+		"framer-motion": "^8.5.2",
+		"maskdata": "^1.1.10",
+		"moment": "^2.29.4",
+		"named-urls": "^2.0.1",
+		"path-browserify": "^1.0.1",
+		"react": "^18.2.0",
+		"react-datepicker": "^4.8.0",
+		"react-device-detect": "^2.2.3",
+		"react-dom": "^18.2.0",
+		"react-hook-form": "^7.42.1",
+		"react-number-format": "^5.1.3",
+		"react-redux": "^8.0.5",
+		"react-router-dom": "^6.7.0",
+		"react-scripts": "5.0.1",
+		"react-switch": "^7.0.0",
+		"react-toastify": "^9.1.1",
+		"redux-mock-store": "^1.5.4",
+		"typescript": "^4.9.4",
+		"web-vitals": "^3.1.1",
+		"webpack": "^5.75.0"
+	},
+	"eslintConfig": {
+		"extends": [
+			"react-app",
+			"react-app/jest"
+		]
+	},
+	"typesVersions": {
+		"*": {
+			"*": [
+				"./lib/*"
+			]
+		}
+	},
+	"types": "./lib/*.d.ts",
+	"browserslist": {
+		"production": [
+			">0.2%",
+			"not dead",
+			"not op_mini all"
+		],
+		"development": [
+			"last 1 chrome version",
+			"last 1 firefox version",
+			"last 1 safari version"
+		]
 	},
 	"jest": {
 		"preset": "ts-jest",
@@ -127,8 +128,9 @@
 			"^(\\.{1,2}/.*)\\.(m)?js$": "$1",
 			"hashconnect/dist/esm(.*)": "<rootDir>/../sdk/node_modules/@hashgraph/hashconnect/dist/cjs$1",
 			"hashconnect": "<rootDir>/../sdk/node_modules/@hashgraph/hashconnect/dist/cjs/hashconnect.js",
-			"axios": "axios/dist/node/axios.cjs",
-			"blade": "<rootDir>/../sdk/node_modules/@hashgraph/hashconnect/dist/cjs/hashconnect.js"
+			"axios": "<rootDir>/node_modules/axios/dist/node/axios.cjs",
+			"blade": "<rootDir>/../sdk/node_modules/@hashgraph/hashconnect/dist/cjs/hashconnect.js",
+			"fireblocks-sdk": "<rootDir>/src/mocks/fireblocks-sdk-mock.js"
 		},
 		"transform": {
 			"^.+\\.ts?$": "ts-jest",

@@ -1,10 +1,19 @@
 {
   "name": "@hashgraph/hedera-custodians-integration",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A library to provide integration with custodial wallets",
-  "main": "build/src/index.js",
-  "types": "build/src/index.d.ts",
-  "type": "commonjs",
+  "main": "./build/cjs/src/index.js",
+  "module": "./build/esm/src/index.js",
+  "types": "./build/esm/src/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./build/esm/src/index.js",
+      "require": "./build/cjs/src/index.js"
+    }
+  },
+  "files": [
+    "./build"
+  ],
   "homepage": "https://github.com/hashgraph/stablecoin-studio",
   "repository": {
     "type": "git",
@@ -33,7 +42,11 @@
     "clean": "rimraf build coverage",
     "lint": "eslint . --ext .ts",
     "format": "prettier --write \"**/*.{ts,js,json,md}\"",
-    "build": "tsc -p tsconfig.json",
+    "build": "rimraf build && npx tsc -p tsconfig.json && npx tsc -p tsconfig-cjs.json",
+    "build:types": "npx tsc -p tsconfig.json --emitDeclarationOnly",
+    "build:tsc": "rm -rf build && npx tsc -p tsconfig.json",
+    "build:watch": "concurrently --kill-others --names \"ESM,CJS\" \"npx tsc -w -p tsconfig.json\" \"npx tsc -w -p tsconfig-cjs.json\"",
+    "build:release": "npm run clean && tsc -p tsconfig.release.json",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:ci": "jest --ci --coverage",

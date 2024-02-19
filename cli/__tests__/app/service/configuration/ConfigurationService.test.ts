@@ -3,6 +3,7 @@ import Language from '../../../../src/domain/language/Language.js';
 import { IConfiguration } from 'domain/configuration/interfaces/IConfiguration.js';
 import { LogOptions } from '@hashgraph/stablecoin-npm-sdk';
 import { rimraf } from 'rimraf';
+import { AccountType } from '../../../../src/domain/configuration/interfaces/AccountType';
 
 const language: Language = new Language();
 const accountId = '0.0.123456';
@@ -16,9 +17,12 @@ describe('configurationService', () => {
     accounts: [
       {
         accountId: '0.0.123456',
-        privateKey: {
-          key: '01234567890abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcde',
-          type: 'ED25519',
+        type: AccountType.SelfCustodial,
+        selfCustodial: {
+          privateKey: {
+            key: '01234567890abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcde',
+            type: 'ED25519',
+          },
         },
         network: 'testnet',
         alias: 'test account',
@@ -26,9 +30,12 @@ describe('configurationService', () => {
       },
       {
         accountId: '0.0.456789',
-        privateKey: {
-          key: '0xbcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789a',
-          type: 'ED25519',
+        type: AccountType.SelfCustodial,
+        selfCustodial: {
+          privateKey: {
+            key: '0xbcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789a',
+            type: 'ED25519',
+          },
         },
         network: 'testnet',
         alias: 'New account alias',
@@ -36,9 +43,12 @@ describe('configurationService', () => {
       },
       {
         accountId: '0.0.654321',
-        privateKey: {
-          key: 'abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789',
-          type: 'ED25519',
+        type: AccountType.SelfCustodial,
+        selfCustodial: {
+          privateKey: {
+            key: 'abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789',
+            type: 'ED25519',
+          },
         },
         network: 'testnet',
         alias: 'another test account',
@@ -46,9 +56,12 @@ describe('configurationService', () => {
       },
       {
         accountId: '0.0.123456',
-        privateKey: {
-          key: '01234567890abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcde',
-          type: 'ED25519',
+        type: AccountType.SelfCustodial,
+        selfCustodial: {
+          privateKey: {
+            key: '01234567890abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcde',
+            type: 'ED25519',
+          },
         },
         network: 'testnet',
         alias: 'test',
@@ -165,6 +178,9 @@ describe('configurationService', () => {
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockImplementation((question: string) => {
         switch (question) {
+          case language.getText('configuration.askAccountType'):
+            return Promise.resolve('SELF-CUSTODIAL');
+
           case language.getText('configuration.askPrivateKeyType'):
             return Promise.resolve('ED25519');
 
@@ -199,7 +215,7 @@ describe('configurationService', () => {
     expect(configurationService).not.toBeNull();
     expect(defaultSingleAskMock).toHaveBeenCalledTimes(5);
     expect(defaultConfirmAskMock).toHaveBeenCalledTimes(4);
-    expect(defaultMultipleAskMock).toHaveBeenCalledTimes(3);
+    expect(defaultMultipleAskMock).toHaveBeenCalledTimes(4);
     expect(defaultPasswordAskMock).toHaveBeenCalledTimes(1);
   });
 

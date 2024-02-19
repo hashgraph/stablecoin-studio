@@ -106,12 +106,31 @@ networks:
     consensusNodes: []
 accounts:
   - accountId: ''
-    privateKey: 
-      key: ''
-      type: ''
+    type: 'SELF-CUSTODIAL',
+    selfCustodial: 
+      privateKey: 
+        key: ''
+        type: ''
     network: ''
     alias: ''
-    importedTokens: []
+    importedTokens: [],
+    nonCustodial: 
+      fireblocks:
+        apiSecretKey: '',
+        apiKey: '',
+        baseUrl: '',
+        assetId: '',
+        vaultAccountId: '',
+        hederaAccountPublicKey: ''
+      dfns:
+        authorizationToken: '',
+        credentialId: '',
+        privateKey: '',
+        appOrigin: '',
+        appId: '',
+        testUrl: '',
+        walletId: '',
+        hederaAccountId: ''
 mirrors:
   - name: HEDERA
     network: testnet
@@ -160,9 +179,28 @@ A config file can be manually created using the "hsca-config.sample.yaml" file a
     - **chainId** : network chain Id.
   - **accounts** : _(Mandatory at least one)_ list of accounts.
     - **accountId** : Account's Hedera Id.
+    - **type**: Accounts types, choose between SELF-CUSTODIAL, FIREBLOCKS and DFNS.
     - **network** : Network in which the account exists, choose between mainnet, testnet and previewnet.
     - **alias** : Account unique alias.
-    - **privateKey** : account's private **key** and private key **type** (choose between ED25519 and ECDSA).
+    - For self-custodial accounts:
+      - **privateKey** : account's private **key** and private key **type** (choose between ED25519 and ECDSA).
+    - For non-custodial accounts:
+      - **fireblocks** : Fireblocks account details.
+        - **apiSecretKey** : Fireblocks API secret key.
+        - **apiKey** : Fireblocks API key.
+        - **baseUrl** : Fireblocks base url.
+        - **assetId** : Fireblocks asset Id.
+        - **vaultAccountId** : Fireblocks vault account Id.
+        - **hederaAccountPublicKey** : Fireblocks Hedera account public key.
+      - **dfns** : DFNS account details.
+        - **authorizationToken** : DFNS authorization token.
+        - **credentialId** : DFNS credential Id.
+        - **privateKey** : DFNS private key.
+        - **appOrigin** : DFNS app origin.
+        - **appId** : DFNS app Id.
+        - **testUrl** : DFNS test url.
+        - **walletId** : DFNS wallet Id.
+        - **hederaAccountPublicKey** : DFNS Hedera account public key.
     - **importedTokens** : _(Optional)_ list of imported tokens for the account. For each imported token we must specify the token **id**, **symbol** and the list of **roles** the account's has been granted for the token.
   - **mirrors** : _(Mandatory at least one)_ list of mirror nodes.
     - **name** : Mirror node unique name.

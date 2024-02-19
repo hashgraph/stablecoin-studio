@@ -5,6 +5,7 @@ npm-debug.log*
 
 # Dependencies
 node_modules/
+# package-lock.json
 
 # Coverage
 coverage
@@ -28,7 +29,6 @@ build
 # Misc
 .DS_Store
 
-package-lock.json
 report.json
 
 hsca-config.yaml

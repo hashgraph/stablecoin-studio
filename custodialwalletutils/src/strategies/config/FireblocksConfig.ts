@@ -18,12 +18,9 @@
  *
  */
 
-import {
-  FireblocksStrategy,
-  ISignatureStrategy,
-  IStrategyConfig,
-} from '../../';
-
+import { ISignatureStrategy } from '../signature/ISignatureStrategy.js';
+import { FireblocksStrategy } from '../signature/FireblocksStrategy.js';
+import { IStrategyConfig } from '../config/IStrategyConfig.js';
 /**
  * Configuration for the Fireblocks strategy.
  * This class holds the necessary credentials and settings for interfacing with the Fireblocks service.
