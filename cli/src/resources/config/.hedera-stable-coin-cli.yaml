@@ -9,7 +9,8 @@ accounts:
   [
     {
       accountId: '',
-      privateKey: { key: '', type: '' },
+      type: 'SELF-CUSTODIAL',
+      selfCustodial: { privateKey: { key: '', type: '' } },
       network: '',
       alias: '',
       importedTokens: [],

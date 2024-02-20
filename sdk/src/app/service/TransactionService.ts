@@ -28,6 +28,8 @@ import RPCTransactionAdapter from '../../port/out/rpc/RPCTransactionAdapter.js';
 import TransactionAdapter from '../../port/out/TransactionAdapter.js';
 import Service from './Service.js';
 import { BladeTransactionAdapter } from '../../port/out/hs/blade/BladeTransactionAdapter.js';
+import { FireblocksTransactionAdapter } from '../../port/out/hs/hts/custodial/FireblocksTransactionAdapter';
+import { DFNSTransactionAdapter } from '../../port/out/hs/hts/custodial/DFNSTransactionAdapter';
 
 @singleton()
 export default class TransactionService extends Service {
@@ -61,6 +63,10 @@ export default class TransactionService extends Service {
 					throw new InvalidWalletTypeError(type);
 				}
 				return Injectable.resolve(RPCTransactionAdapter);
+			case SupportedWallets.FIREBLOCKS:
+				return Injectable.resolve(FireblocksTransactionAdapter);
+			case SupportedWallets.DFNS:
+				return Injectable.resolve(DFNSTransactionAdapter);
 			default:
 				return Injectable.resolve(HTSTransactionAdapter);
 		}

@@ -73,6 +73,7 @@ import AcceptFactoryProxyOwnerRequest from './AcceptFactoryProxyOwnerRequest.js'
 import UpgradeImplementationRequest from './UpgradeImplementationRequest.js';
 import UpgradeFactoryImplementationRequest from './UpgradeFactoryImplementationRequest.js';
 
+export * from './ConnectRequest.js';
 export * from './BaseRequest.js';
 export {
 	CreateRequest,

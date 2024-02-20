@@ -11,6 +11,7 @@ import {
   StableCoinViewModel,
 } from '@hashgraph/stablecoin-npm-sdk';
 import DetailsStableCoinService from './DetailsStableCoinService.js';
+import { isUndefined } from 'lodash';
 
 export default class ManageImportedTokenService extends Service {
   constructor() {
@@ -55,7 +56,7 @@ export default class ManageImportedTokenService extends Service {
           },
         );
 
-        const importedTokens = currentAccount.importedTokens;
+        const importedTokens = currentAccount.importedTokens || [];
         while (
           importedTokens.length > 0 &&
           importedTokens
@@ -103,23 +104,26 @@ export default class ManageImportedTokenService extends Service {
           await this.start();
         }
 
-        const importedTokensRefreshed = currentAccount.importedTokens.map(
-          (token) => {
-            if (token.id === tokenToRefresh.split(' - ')[0]) {
-              return {
-                id: token.id,
-                symbol: token.symbol,
-              };
-            }
-            return token;
-          },
-        );
+        const importedTokensRefreshed = !currentAccount.importedTokens
+          ? []
+          : currentAccount.importedTokens.map((token) => {
+              if (token.id === tokenToRefresh.split(' - ')[0]) {
+                return {
+                  id: token.id,
+                  symbol: token.symbol,
+                };
+              }
+              return token;
+            });
         this.updateAccount(importedTokensRefreshed);
         currentAccount.importedTokens = importedTokensRefreshed;
         break;
       case language.getText('wizard.manageImportedTokens.Remove'):
         await utilsService.cleanAndShowBanner();
-        if (currentAccount.importedTokens.length === 0) {
+        if (
+          isUndefined(currentAccount.importedTokens) ||
+          currentAccount.importedTokens.length === 0
+        ) {
           console.log(
             language.getText('manageImportedToken.noImportedTokensDelete'),
           );
@@ -128,17 +132,21 @@ export default class ManageImportedTokenService extends Service {
         //show list to delete
         const tokenToDelete = await utilsService.defaultMultipleAsk(
           language.getText('manageImportedToken.tokenToDelete'),
-          currentAccount.importedTokens.map(
-            (token) => `${token.id} - ${token.symbol}`,
-          ),
+          !currentAccount.importedTokens
+            ? []
+            : currentAccount.importedTokens.map(
+                (token) => `${token.id} - ${token.symbol}`,
+              ),
           true,
         );
         if (tokenToDelete === 'Go back') {
           await this.start();
         }
-        const newImportedTokens = currentAccount.importedTokens.filter(
-          (token) => token.id !== tokenToDelete.split(' - ')[0],
-        );
+        const newImportedTokens = !currentAccount.importedTokens
+          ? []
+          : currentAccount.importedTokens.filter(
+              (token) => token.id !== tokenToDelete.split(' - ')[0],
+            );
         this.updateAccount(newImportedTokens);
         currentAccount.importedTokens = newImportedTokens;
         break;
@@ -161,10 +169,12 @@ export default class ManageImportedTokenService extends Service {
       ) {
         return {
           accountId: acc.accountId,
+          type: acc.type,
           network: acc.network,
           alias: acc.alias,
-          privateKey: acc.privateKey,
+          selfCustodial: acc.selfCustodial,
           importedTokens: importedTokens,
+          nonCustodial: acc.nonCustodial,
         };
       }
       return acc;

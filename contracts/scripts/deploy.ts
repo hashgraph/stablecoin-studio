@@ -1,6 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {Client, ContractFunctionParameters, ContractId, PrivateKey, PublicKey, TokenSupplyType,} from '@hashgraph/sdk'
-import {BigNumber} from 'ethers'
+import {
+    Client,
+    ContractFunctionParameters,
+    ContractId,
+    PrivateKey,
+    PublicKey,
+    TokenSupplyType,
+} from '@hashgraph/sdk'
+import { BigNumber } from 'ethers'
 import {
     HederaReserve__factory,
     HederaTokenManager__factory,
@@ -9,7 +16,14 @@ import {
     StableCoinProxyAdmin__factory,
     TransparentUpgradeableProxy__factory,
 } from '../typechain-types'
-import {associateToken, deployContractSDK, getClient, getContractInfo, sleep, toEvmAddress,} from './utils'
+import {
+    associateToken,
+    deployContractSDK,
+    getClient,
+    getContractInfo,
+    sleep,
+    toEvmAddress,
+} from './utils'
 import {
     ADDRESS_ZERO,
     BURN_ROLE,
@@ -20,14 +34,14 @@ import {
     RESCUE_ROLE,
     WIPE_ROLE,
 } from './constants'
-import {grantKyc} from './contractsMethods'
-import {deployContract} from './contractsLifeCycle/deploy'
-import {contractCall} from './contractsLifeCycle/utils'
+import { grantKyc } from './contractsMethods'
+import { deployContract } from './contractsLifeCycle/deploy'
+import { contractCall } from './contractsLifeCycle/utils'
 
-const HEDERA_TOKEN_MANAGER_ADDRESS = '0.0.1137621'
-export const FACTORY_PROXY_ADDRESS = '0.0.1137631'
-const FACTORY_PROXY_ADMIN_ADDRESS = '0.0.1137629'
-const FACTORY_ADDRESS = '0.0.1137625'
+const HEDERA_TOKEN_MANAGER_ADDRESS = '0.0.2167020'
+export const FACTORY_PROXY_ADDRESS = '0.0.2167166'
+const FACTORY_PROXY_ADMIN_ADDRESS = '0.0.2167128'
+const FACTORY_ADDRESS = '0.0.2167098'
 
 export function initializeClients(): [
     Client,
@@ -602,13 +616,11 @@ function fixKeys(): any {
         supplyKey: true,
     })
 
-    const fixKeysToReturn = {
+    return {
         keyType: keyType,
         publicKey: '0x',
         isED25519: false,
     }
-
-    return fixKeysToReturn
 }
 
 export function tokenKeystoContract(addKyc = false) {
@@ -620,7 +632,8 @@ export function tokenKeystoContract(addKyc = false) {
         pauseKey: true,
         ignored: false,
     })
-    const keys = [
+
+    return [
         fixKeys(),
         {
             keyType: keyType,
@@ -628,8 +641,6 @@ export function tokenKeystoContract(addKyc = false) {
             isED25519: false,
         },
     ]
-
-    return keys
 }
 
 export function tokenKeystoKey(
@@ -646,7 +657,8 @@ export function tokenKeystoKey(
         pauseKey: true,
         ignored: false,
     })
-    const keys = [
+
+    return [
         fixKeys(),
         {
             keyType: keyType,
@@ -654,8 +666,6 @@ export function tokenKeystoKey(
             isED25519: isED25519,
         },
     ]
-
-    return keys
 }
 
 export function allTokenKeystoKey(
@@ -674,15 +684,14 @@ export function allTokenKeystoKey(
         pauseKey: true,
         ignored: false,
     })
-    const keys = [
+
+    return [
         {
             keyType: keyType,
             publicKey: PK,
             isED25519: isED25519,
         },
     ]
-
-    return keys
 }
 
 function generateKeyType({
@@ -721,7 +730,7 @@ async function rolestoAccountsByKeys(
         ? await toEvmAddress(CreatorAccount, isCreatorE25519)
         : await toEvmAddress(RolesToAccount, isRolesToAccountE25519)
 
-    const roles = [
+    return [
         {
             role: BURN_ROLE,
             account: RoleToAccount,
@@ -751,7 +760,6 @@ async function rolestoAccountsByKeys(
             account: RoleToAccount,
         },
     ]
-    return roles
 }
 
 async function cashInRoleAssignment(
@@ -762,7 +770,7 @@ async function cashInRoleAssignment(
     RolesToAccount: string,
     isRolesToAccountE25519: boolean
 ) {
-    const CashInRole = {
+    return {
         account: allToContract
             ? allRolesToCreator
                 ? await toEvmAddress(CreatorAccount, isCreatorE25519)
@@ -770,8 +778,6 @@ async function cashInRoleAssignment(
             : ADDRESS_ZERO,
         allowance: 0,
     }
-
-    return CashInRole
 }
 
 export async function deployHederaReserve(

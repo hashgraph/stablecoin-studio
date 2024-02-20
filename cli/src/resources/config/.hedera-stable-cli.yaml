@@ -35,4 +35,13 @@ networks:
       chainId: 0,
     },
   ]
-accounts: [{ accountId: '', privateKey: '', isECDA25519Type: false, alias: '' }]
+accounts:
+  [
+    {
+      accountId: '',
+      type: 'SELF-CUSTODIAL',
+      privateKey: '',
+      isECDA25519Type: false,
+      alias: '',
+    },
+  ]

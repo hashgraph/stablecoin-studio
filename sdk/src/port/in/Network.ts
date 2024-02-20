@@ -23,7 +23,11 @@ import Injectable from '../../core/Injectable.js';
 import { CommandBus } from '../../core/command/CommandBus.js';
 import { InitializationData } from '../out/TransactionAdapter.js';
 import { ConnectCommand } from '../../app/usecase/command/network/connect/ConnectCommand.js';
-import ConnectRequest, { SupportedWallets } from './request/ConnectRequest.js';
+import ConnectRequest, {
+	DFNSConfigRequest,
+	FireblocksConfigRequest,
+	SupportedWallets,
+} from './request/ConnectRequest.js';
 import RequestMapper from './request/mapping/RequestMapper.js';
 import TransactionService from '../../app/service/TransactionService.js';
 import NetworkService from '../../app/service/NetworkService.js';
@@ -35,7 +39,7 @@ import {
 	unrecognized,
 } from '../../domain/context/network/Environment.js';
 import InitializationRequest from './request/InitializationRequest.js';
-import Event, { WalletEvents } from './Event.js';
+import Event from './Event.js';
 import RPCTransactionAdapter from '../out/rpc/RPCTransactionAdapter.js';
 import { HashpackTransactionAdapter } from '../out/hs/hashpack/HashpackTransactionAdapter.js';
 import { LogError } from '../../core/decorator/LogErrorDecorator.js';
@@ -44,6 +48,12 @@ import { handleValidation } from './Common.js';
 import { MirrorNode } from '../../domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from '../../domain/context/network/JsonRpcRelay.js';
 import { BladeTransactionAdapter } from '../out/hs/blade/BladeTransactionAdapter.js';
+import DfnsSettings from 'domain/context/custodialwalletsettings/DfnsSettings.js';
+import FireblocksSettings from '../../domain/context/custodialwalletsettings/FireblocksSettings';
+import { HederaId } from '../../domain/context/shared/HederaId';
+import PublicKey from '../../domain/context/account/PublicKey';
+import { FireblocksTransactionAdapter } from '../out/hs/hts/custodial/FireblocksTransactionAdapter.js';
+import { DFNSTransactionAdapter } from '../out/hs/hts/custodial/DFNSTransactionAdapter.js';
 
 export { InitializationData, SupportedWallets };
 
@@ -153,6 +163,10 @@ class NetworkInPort implements INetworkInPort {
 				wallets.push(SupportedWallets.HASHPACK);
 			} else if (val instanceof BladeTransactionAdapter) {
 				wallets.push(SupportedWallets.BLADE);
+			} else if (val instanceof FireblocksTransactionAdapter) {
+				wallets.push(SupportedWallets.FIREBLOCKS);
+			} else if (val instanceof DFNSTransactionAdapter) {
+				wallets.push(SupportedWallets.DFNS);
 			} else {
 				wallets.push(SupportedWallets.CLIENT);
 			}
@@ -171,7 +185,10 @@ class NetworkInPort implements INetworkInPort {
 	async connect(req: ConnectRequest): Promise<InitializationData> {
 		handleValidation('ConnectRequest', req);
 
-		const account = RequestMapper.mapAccount(req.account);
+		const account = req.account
+			? RequestMapper.mapAccount(req.account)
+			: undefined;
+		const custodialSettings = this.getCustodialSettings(req);
 		if (
 			req.wallet == SupportedWallets.HASHPACK ||
 			req.wallet == SupportedWallets.BLADE
@@ -186,14 +203,41 @@ class NetworkInPort implements INetworkInPort {
 				}
 			}
 		}
+
 		await this.commandBus.execute(
 			new SetNetworkCommand(req.network, req.mirrorNode, req.rpcNode),
 		);
 
 		const res = await this.commandBus.execute(
-			new ConnectCommand(req.network, req.wallet, account),
+			new ConnectCommand(
+				req.network,
+				req.wallet,
+				account,
+				custodialSettings,
+			),
 		);
 		return res.payload;
+	}
+
+	private getCustodialSettings(
+		req: ConnectRequest,
+	): DfnsSettings | FireblocksSettings | undefined {
+		if (
+			req.custodialWalletSettings &&
+			req.wallet === SupportedWallets.DFNS
+		) {
+			return RequestMapper.dfnsRequestToDfnsSettings(
+				req.custodialWalletSettings as DFNSConfigRequest,
+			);
+		} else if (
+			req.custodialWalletSettings &&
+			req.wallet === SupportedWallets.FIREBLOCKS
+		) {
+			return RequestMapper.fireblocksRequestToFireblocksSettings(
+				req.custodialWalletSettings as FireblocksConfigRequest,
+			);
+		}
+		return undefined;
 	}
 
 	disconnect(): Promise<boolean> {

@@ -1,13 +1,17 @@
 import { Account } from '@hashgraph/stablecoin-npm-sdk';
 import ListStableCoinService from '../../../../src/app/service/stablecoin/ListStableCoinService';
 import { utilsService } from '../../../../src/index.js';
+import { AccountType } from '../../../../src/domain/configuration/interfaces/AccountType';
 
 const service = new ListStableCoinService();
 const currentAccount = {
   accountId: 'id',
-  privateKey: {
-    key: 'key',
-    type: 'type',
+  type: AccountType.SelfCustodial,
+  selfCustodial: {
+    privateKey: {
+      key: 'key',
+      type: 'type',
+    },
   },
   network: 'network',
   alias: 'aliasts',

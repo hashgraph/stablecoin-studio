@@ -1,9 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import '@hashgraph/hardhat-hethers'
 import '@hashgraph/sdk'
-import {BigNumber} from 'ethers'
-import {deployContractsWithSDK} from '../scripts/deploy'
-import {getRoleId, getRoles, grantRole, revokeRole,} from '../scripts/contractsMethods'
+import { BigNumber } from 'ethers'
+import { deployContractsWithSDK } from '../scripts/deploy'
+import {
+    getRoleId,
+    getRoles,
+    grantRole,
+    revokeRole,
+} from '../scripts/contractsMethods'
 import {
     BURN_ROLE,
     CASHIN_ROLE,
@@ -17,7 +22,7 @@ import {
     WIPE_ROLE,
     WITHOUT_ROLE,
 } from '../scripts/constants'
-import {ContractId} from '@hashgraph/sdk'
+import { ContractId } from '@hashgraph/sdk'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import {
