@@ -53,19 +53,21 @@ import {
 	CLIENT_ACCOUNT_ECDSA,
 	FACTORY_ADDRESS,
 	HEDERA_TOKEN_MANAGER_ADDRESS,
+	MIRROR_NODE,
+	RPC_NODE,
 } from '../../config.js';
 import ContractId from 'domain/context/contract/ContractId.js';
 import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
 
 const mirrorNode: MirrorNode = {
-	name: 'testmirrorNode',
-	baseUrl: 'https://testnet.mirrornode.hedera.com/api/v1/',
+	name: MIRROR_NODE.name,
+	baseUrl: MIRROR_NODE.baseUrl,
 };
 
 const rpcNode: JsonRpcRelay = {
-	name: 'testrpcNode',
-	baseUrl: 'http://127.0.0.1:7546/api',
+	name: RPC_NODE.name,
+	baseUrl: RPC_NODE.baseUrl,
 };
 
 describe('🧪 Proxy test', () => {

@@ -51,6 +51,8 @@ export const english = {
       'Your option is not one of the default networks, do you want to create a new network? (y/n)',
     AccountsConfigurationMessage: 'You will now configure your accounts:',
     askAccountId: 'Enter the account id',
+    askAccountPubKey: 'Enter the public key (Hexadecimal format)',
+    askAccountType: 'Enter the account type (SELF-CUSTODIAL|FIREBLOCKS|DFNS)',
     askConfigurateFactories:
       'Do you want to config your factories? Check the documentation for more information : https://github.com/hashgraph/stablecoin-studio#deploying-the-stable-coin-factories',
     askConfigurateDefaultMirrorsAndRPCs:
@@ -127,6 +129,24 @@ export const english = {
     selectMirrorNode: 'Select the mirror node: ',
     selectRPC: 'Select the JSON-RPC-Relay: ',
     RPCNotToChange: '\nThere is no nJSON-RPC-Relay to change',
+    fireblocks: {
+      title: 'Fireblocks account configuration',
+      askApiSecretKeyPath: 'Enter your API secret key path',
+      askApiKey: 'Enter you API key',
+      askBaseUrl: 'Enter the Fireblocks API url',
+      askAssetId: 'Enter your asset id',
+      askVaultAccountId: 'Enter your vault account id',
+    },
+    dfns: {
+      title: 'DFNS account configuration',
+      askAuthorizationToken: 'Enter your authorization token',
+      askCredentialId: 'Enter your credential id',
+      askPrivateKeyPath: 'Enter your private key path',
+      askAppOrigin: 'Enter your app origin',
+      askAppId: 'Enter your app id',
+      askTestUrl: 'Enter the DFNS API url',
+      askWalletId: 'Enter your wallet id',
+    },
   },
   stablecoin: {
     noFactories:
@@ -444,6 +464,11 @@ export const english = {
     privateKeyType: {
       ED25519: 'ED25519',
       ECDSA: 'ECDSA',
+    },
+    accountType: {
+      SELF_CUSTODIAL: 'SELF-CUSTODIAL',
+      FIREBLOCKS: 'FIREBLOCKS',
+      DFNS: 'DFNS',
     },
   },
   manageImportedToken: {

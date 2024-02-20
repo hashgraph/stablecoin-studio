@@ -35,18 +35,23 @@ import ConnectRequest, {
 	SupportedWallets,
 } from '../../../src/port/in/request/ConnectRequest.js';
 
-import { CLIENT_ACCOUNT_ED25519, FACTORY_ADDRESS } from '../../config.js';
+import {
+	CLIENT_ACCOUNT_ED25519,
+	FACTORY_ADDRESS,
+	MIRROR_NODE,
+	RPC_NODE,
+} from '../../config.js';
 import { MirrorNode } from 'domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from 'domain/context/network/JsonRpcRelay.js';
 
 const mirrorNode: MirrorNode = {
-	name: 'testmirrorNode',
-	baseUrl: 'https://testnet.mirrornode.hedera.com/api/v1/',
+	name: MIRROR_NODE.name,
+	baseUrl: MIRROR_NODE.baseUrl,
 };
 
 const rpcNode: JsonRpcRelay = {
-	name: 'testrpcNode',
-	baseUrl: 'http://127.0.0.1:7546/api',
+	name: RPC_NODE.name,
+	baseUrl: RPC_NODE.baseUrl,
 };
 
 describe('🧪 Network test', () => {

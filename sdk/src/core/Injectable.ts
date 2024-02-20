@@ -100,6 +100,8 @@ import { GetAccountsWithRolesQueryHandler } from '../app/usecase/query/stablecoi
 import { GetProxyConfigQueryHandler } from '../app/usecase/query/proxy/GetProxyConfigQueryHandler.js';
 import { GetFactoryProxyConfigQueryHandler } from '../app/usecase/query/factoryProxy/GetFactoryProxyConfigQueryHandler.js';
 import { BladeTransactionAdapter } from '../port/out/hs/blade/BladeTransactionAdapter.js';
+import { FireblocksTransactionAdapter } from '../port/out/hs/hts/custodial/FireblocksTransactionAdapter.js';
+import { DFNSTransactionAdapter } from '../port/out/hs/hts/custodial/DFNSTransactionAdapter.js';
 
 export const TOKENS = {
 	COMMAND_HANDLER: Symbol('CommandHandler'),
@@ -459,6 +461,8 @@ export default class Injectable {
 			adapters.push(Injectable.resolve(HashpackTransactionAdapter));
 			adapters.push(Injectable.resolve(RPCTransactionAdapter));
 			adapters.push(Injectable.resolve(BladeTransactionAdapter));
+			adapters.push(Injectable.resolve(FireblocksTransactionAdapter));
+			adapters.push(Injectable.resolve(DFNSTransactionAdapter));
 		} else {
 			adapters.push(Injectable.resolve(HTSTransactionAdapter));
 		}

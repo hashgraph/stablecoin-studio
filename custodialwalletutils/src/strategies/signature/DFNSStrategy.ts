@@ -24,12 +24,10 @@ import {
   SignatureKind,
   SignatureStatus,
 } from '@dfns/sdk/codegen/datamodel/Wallets';
-import {
-  DFNSConfig,
-  ISignatureStrategy,
-  SignatureRequest,
-  hexStringToUint8Array,
-} from '../../';
+import { ISignatureStrategy } from '../signature/ISignatureStrategy.js';
+import { DFNSConfig } from '../config/DFNSConfig.js';
+import { SignatureRequest } from '../../models/signature/SignatureRequest.js';
+import { hexStringToUint8Array } from '../../utils/utilities.js';
 
 const sleep = (interval = 0) =>
   new Promise((resolve) => setTimeout(resolve, interval));

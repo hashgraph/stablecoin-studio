@@ -18,7 +18,10 @@
  *
  */
 
-import { IStrategyConfig, SignatureRequest, StrategyFactory } from '../';
+import { IStrategyConfig } from '../strategies/config/IStrategyConfig.js';
+import { SignatureRequest } from '../models/signature/SignatureRequest.js';
+import { StrategyFactory } from '../factories/StrategyFactory.js';
+
 /**
  * Service class for managing custodial wallet operations.
  *

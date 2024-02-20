@@ -1,18 +1,18 @@
 import { configurationService, language } from './../../../index.js';
 import { utilsService } from '../../../index.js';
 import {
+  Account,
   CreateRequest,
+  Factory,
+  GetPublicKeyRequest,
+  GetTokenManagerListRequest,
+  KYCRequest,
+  RequestAccount,
+  RequestPrivateKey,
+  RequestPublicKey,
   StableCoin,
   StableCoinViewModel,
   TokenSupplyType,
-  RequestPrivateKey,
-  RequestPublicKey,
-  GetPublicKeyRequest,
-  RequestAccount,
-  Account,
-  Factory,
-  GetTokenManagerListRequest,
-  KYCRequest,
 } from '@hashgraph/stablecoin-npm-sdk';
 
 import { IManagedFeatures } from '../../../domain/configuration/interfaces/IManagedFeatures.js';
@@ -21,6 +21,7 @@ import SetConfigurationService from '../configuration/SetConfigurationService.js
 import SetFactoryService from '../configuration/SetFactoryService.js';
 import AssociateStableCoinService from './AssociateStableCoinService.js';
 import KYCStableCoinService from './KYCStableCoinService.js';
+import { AccountType } from '../../../domain/configuration/interfaces/AccountType';
 
 /**
  * Create Stablecoin Service
@@ -52,11 +53,7 @@ export default class CreateStableCoinService extends Service {
 
     const factoryService: SetFactoryService = new SetFactoryService();
 
-    if (
-      currentAccount.privateKey == null ||
-      currentAccount.privateKey == undefined ||
-      currentAccount.privateKey.key == ''
-    ) {
+    if (!utilsService.isAccountConfigValid(currentAccount)) {
       await setConfigurationService.initConfiguration(
         configurationService.getDefaultConfigurationPath(),
         currentAccount.network,
@@ -336,7 +333,7 @@ export default class CreateStableCoinService extends Service {
       tokenToCreate,
     );
 
-    console.log({
+    const stableCoinResume = {
       hederaTokenManager: tokenToCreate.hederaTokenManager,
       name: tokenToCreate.name,
       symbol: tokenToCreate.symbol,
@@ -400,7 +397,8 @@ export default class CreateStableCoinService extends Service {
         tokenToCreate.proxyAdminOwnerAccount === undefined
           ? currentAccount.accountId
           : tokenToCreate.proxyAdminOwnerAccount,
-    });
+    };
+    console.log(stableCoinResume);
     if (
       !(await utilsService.defaultConfirmAsk(
         language.getText('stablecoin.askConfirmCreation'),
@@ -695,9 +693,22 @@ export default class CreateStableCoinService extends Service {
     switch (answer) {
       case language.getText('wizard.featureOptions.CurrentUser'): {
         const currentAccount = utilsService.getCurrentAccount();
+        switch (currentAccount.type) {
+          case AccountType.Fireblocks:
+            return Promise.resolve({
+              key: currentAccount.nonCustodial.fireblocks
+                .hederaAccountPublicKey,
+              type: 'ED25519',
+            });
+          case AccountType.Dfns:
+            return Promise.resolve({
+              key: currentAccount.nonCustodial.dfns.hederaAccountPublicKey,
+              type: currentAccount.nonCustodial.dfns.hederaAccountKeyType,
+            });
+        }
         const privateKey: RequestPrivateKey = {
-          key: currentAccount.privateKey.key,
-          type: currentAccount.privateKey.type,
+          key: currentAccount.selfCustodial.privateKey.key,
+          type: currentAccount.selfCustodial.privateKey.type,
         };
         const reqAccount: RequestAccount = {
           accountId: currentAccount.accountId,

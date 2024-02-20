@@ -5,9 +5,6 @@ import {
     IHederaTokenService
 } from '@hashgraph/smart-contracts/contracts/hts-precompile/IHederaTokenService.sol';
 import {
-    HederaResponseCodes
-} from '@hashgraph/smart-contracts/contracts/hts-precompile/HederaResponseCodes.sol';
-import {
     HederaTokenManager,
     IHederaTokenManager
 } from './HederaTokenManager.sol';

@@ -26,12 +26,10 @@ import {
   TransactionStatus,
 } from 'fireblocks-sdk';
 import { CreateTransactionResponse } from 'fireblocks-sdk/dist/src/types';
-import {
-  FireblocksConfig,
-  ISignatureStrategy,
-  SignatureRequest,
-  hexStringToUint8Array,
-} from '../../';
+import { ISignatureStrategy } from '../signature/ISignatureStrategy.js';
+import { FireblocksConfig } from '../config/FireblocksConfig.js';
+import { SignatureRequest } from '../../models/signature/SignatureRequest.js';
+import { hexStringToUint8Array } from '../../utils/utilities.js';
 
 const MAX_RETRIES = 10;
 const POLL_INTERVAL = 1000;
@@ -77,7 +75,7 @@ export class FireblocksStrategy implements ISignatureStrategy {
   private async signMessage(message: string): Promise<string> {
     const { id } = await this.createFireblocksTransaction(message);
     const txInfo = await this.pollTransaction(id);
-
+    console.log('Transaction response:', txInfo);
     if (!txInfo.signedMessages || txInfo.signedMessages.length === 0) {
       throw new Error('No signature found in transaction response.');
     }
@@ -97,7 +95,7 @@ export class FireblocksStrategy implements ISignatureStrategy {
   ): Promise<TransactionResponse> {
     for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
       try {
-        const txInfo = await this.fireblocks.getTransactionById(transactionId);
+        const txInfo:TransactionResponse = await this.fireblocks.getTransactionById(transactionId);
         if (
           [TransactionStatus.COMPLETED, TransactionStatus.FAILED].includes(
             txInfo.status,

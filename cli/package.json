@@ -1,6 +1,6 @@
 {
   "name": "@hashgraph/stablecoin-npm-cli",
-  "version": "1.13.0",
+  "version": "1.15.0",
   "description": "CLI for Hedera Stablecoin",
   "main": "./build/src/index.js",
   "bin": {
@@ -22,13 +22,13 @@
     "build:watch": "tsc -w -p tsconfig.json",
     "build:release": "npm run clean && tsc -p tsconfig.release.json",
     "lint": "eslint --ext .ts --ext .mts .",
-    "test": "npx jest --maxWorkers=50%",
+    "test": "jest --maxWorkers=50%",
+    "test:watch": "jest --watch --maxWorkers=25%",
+    "test:ci": "jest --runInBand --forceExit",
     "cleanCache": "npx jest --clearCache",
-    "test:ci": "NODE_OPTIONS=--experimental-vm-modules npx jest --ci --json --coverage --forceExit --testLocationInResults --outputFile=report.json",
     "test:vm": "NODE_OPTIONS=--experimental-vm-modules npm run test",
     "prettier": "prettier --config .prettierrc --write .",
     "prettierCheck": "prettier --config .prettierrc --check",
-    "test:watch": "jest --watch",
     "pre-commit": "npm run lint && npm run prettier",
     "prepack": "npm run build"
   },

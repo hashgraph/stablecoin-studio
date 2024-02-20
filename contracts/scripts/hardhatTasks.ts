@@ -1,8 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {ContractId} from '@hashgraph/sdk'
-import {task} from 'hardhat/config'
-import {deployFactory, deployHederaTokenManager, getProxyImpl, toHashgraphKey, updateProxy,} from './deploy'
-import {evmToHederaFormat, getClient, getContractInfo, toEvmAddress,} from './utils'
+import { ContractId } from '@hashgraph/sdk'
+import { task } from 'hardhat/config'
+import {
+    deployFactory,
+    deployHederaTokenManager,
+    getProxyImpl,
+    toHashgraphKey,
+    updateProxy,
+} from './deploy'
+import {
+    evmToHederaFormat,
+    getClient,
+    getContractInfo,
+    toEvmAddress,
+} from './utils'
 import {
     addHederaTokenManagerVersion,
     editHederaTokenManagerVersion,

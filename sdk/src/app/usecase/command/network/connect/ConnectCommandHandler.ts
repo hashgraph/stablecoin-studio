@@ -29,7 +29,11 @@ export class ConnectCommandHandler implements ICommandHandler<ConnectCommand> {
 		console.log('ConnectCommand Handler' + command.wallet);
 		const handler = TransactionService.getHandlerClass(command.wallet);
 
-		const registration = await handler.register(command.account);
+		const registration = await handler.register(
+			command.custodialSettings === undefined
+				? command.account
+				: command.custodialSettings,
+		);
 
 		return Promise.resolve(
 			new ConnectCommandResponse(registration, command.wallet),

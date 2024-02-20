@@ -3,14 +3,18 @@ import { configurationService, utilsService } from '../../../../src/index.js';
 import Language from '../../../../src/domain/language/Language.js';
 import DetailsStableCoinService from '../../../../src/app/service/stablecoin/DetailsStableCoinService';
 import WizardService from '../../../../src/app/service/wizard/WizardService';
+import { AccountType } from '../../../../src/domain/configuration/interfaces/AccountType';
 
 const service = new ManageImportedTokenService();
 const language: Language = new Language();
 const currentAccount = {
   accountId: '0.0.12345',
-  privateKey: {
-    key: 'key',
-    type: 'type',
+  type: AccountType.SelfCustodial,
+  selfCustodial: {
+    privateKey: {
+      key: 'key',
+      type: 'type',
+    },
   },
   network: 'testnet',
   alias: 'alias',
@@ -100,9 +104,12 @@ describe(`Testing ManageImportedTokenService class`, () => {
   it('Should instance start with Refresh without tokens', async () => {
     const currentAccount = {
       accountId: '0.0.12345',
-      privateKey: {
-        key: 'key',
-        type: 'type',
+      type: AccountType.SelfCustodial,
+      selfCustodial: {
+        privateKey: {
+          key: 'key',
+          type: 'type',
+        },
       },
       network: 'testnet',
       alias: 'alia',
@@ -190,9 +197,12 @@ describe(`Testing ManageImportedTokenService class`, () => {
   it('Should instance start with Remove without tokens', async () => {
     const currentAccount = {
       accountId: '0.0.12345',
-      privateKey: {
-        key: 'key',
-        type: 'type',
+      type: AccountType.SelfCustodial,
+      selfCustodial: {
+        privateKey: {
+          key: 'key',
+          type: 'type',
+        },
       },
       network: 'testnet',
       alias: 'alias',
