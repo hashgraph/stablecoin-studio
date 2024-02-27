@@ -84,14 +84,15 @@ jobs:
       - name: Create contracts
         run: |
           touch .env
-          echo "TESTNET_HEDERA_OPERATOR_PRIVATEKEY=${{ secrets.PRIVATE_KEY_ED25519 }}"  >> .env
-          echo "TESTNET_HEDERA_OPERATOR_PUBLICKEY=${{ secrets.PUBLIC_KEY_ED25519 }}"  >> .env
-          echo "TESTNET_HEDERA_OPERATOR_ED25519='true'"  >> .env
-          echo "TESTNET_HEDERA_OPERATOR_ACCOUNT=${{ secrets.ACCOUNT_ID_ED25519 }}"  >> .env
-          echo "TESTNET_HEDERA_NON_OPERATOR_PRIVATEKEY=${{ secrets.PRIVATE_KEY_ED25519_2 }}"  >> .env          
-          echo "TESTNET_HEDERA_NON_OPERATOR_PUBLICKEY=${{ secrets.PUBLIC_KEY_ED25519_2 }}"  >> .env
-          echo "TESTNET_HEDERA_NON_OPERATOR_ED25519='false'"  >> .env
-          echo "TESTNET_HEDERA_NON_OPERATOR_ACCOUNT=${{ secrets.ACCOUNT_ID_ED25519_2 }}"  >> .env
+          touch .env
+          echo "TESTNET_HEDERA_OPERATOR_PRIVATEKEY=${{ secrets.TESTNET_HEDERA_OPERATOR_PRIVATEKEY }}" >> .env
+          echo "TESTNET_HEDERA_OPERATOR_PUBLICKEY=${{ secrets.TESTNET_HEDERA_OPERATOR_PUBLICKEY }}" >> .env
+          echo "TESTNET_HEDERA_OPERATOR_ED25519='true'" >> .env
+          echo "TESTNET_HEDERA_OPERATOR_ACCOUNT=${{ secrets.TESTNET_HEDERA_OPERATOR_ACCOUNT }}" >> .env
+          echo "TESTNET_HEDERA_NON_OPERATOR_PRIVATEKEY=${{ secrets.TESTNET_HEDERA_NON_OPERATOR_PRIVATEKEY }}" >> .env
+          echo "TESTNET_HEDERA_NON_OPERATOR_PUBLICKEY=${{ secrets.TESTNET_HEDERA_NON_OPERATOR_PUBLICKEY }}" >> .env
+          echo "TESTNET_HEDERA_NON_OPERATOR_ED25519='false'" >> .env
+          echo "TESTNET_HEDERA_NON_OPERATOR_ACCOUNT=${{ secrets.TESTNET_HEDERA_NON_OPERATOR_ACCOUNT }}" >> .env
         working-directory: contracts
 
       - name: Test cli
