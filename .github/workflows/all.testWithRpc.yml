@@ -90,7 +90,7 @@ jobs:
           echo "TESTNET_HEDERA_OPERATOR_ACCOUNT=${{ secrets.ACCOUNT_ID_ED25519 }}"  >> .env
           echo "TESTNET_HEDERA_NON_OPERATOR_PRIVATEKEY=${{ secrets.PRIVATE_KEY_ED25519_2 }}"  >> .env          
           echo "TESTNET_HEDERA_NON_OPERATOR_PUBLICKEY=${{ secrets.PUBLIC_KEY_ED25519_2 }}"  >> .env
-          echo "TESTNET_HEDERA_NON_OPERATOR_ED25519='true'"  >> .env
+          echo "TESTNET_HEDERA_NON_OPERATOR_ED25519='false'"  >> .env
           echo "TESTNET_HEDERA_NON_OPERATOR_ACCOUNT=${{ secrets.ACCOUNT_ID_ED25519_2 }}"  >> .env
         working-directory: contracts
 
