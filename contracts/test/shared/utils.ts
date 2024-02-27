@@ -68,37 +68,3 @@ export const nonOperatorIsE25519 = getNonOperatorE25519(
     clientTwoIsED25519Type,
     clientId
 )
-//TODO: DELETE THIS
-function printConstants() {
-    console.log(`TOKEN_DECIMALS: ${TOKEN_DECIMALS}`);
-    console.log(`TOKEN_MEMO: ${TOKEN_MEMO}`);
-    console.log(`TOKEN_NAME: ${TOKEN_NAME}`);
-    console.log(`TOKEN_SYMBOL: ${TOKEN_SYMBOL}`);
-    console.log(`TOKEN_FACTOR: ${TOKEN_FACTOR}`);
-    console.log(`INIT_SUPPLY: ${INIT_SUPPLY}`);
-    console.log(`MAX_SUPPLY: ${MAX_SUPPLY}`);
-    console.log(`ONE_TOKEN: ${ONE_TOKEN}`);
-    console.log(`operatorClient: ${operatorClient}`);
-    console.log(`nonOperatorClient: ${nonOperatorClient}`);
-    console.log(`operatorAccount: ${operatorAccount}`);
-    console.log(`nonOperatorAccount: ${nonOperatorAccount}`);
-    console.log(`operatorPubKey: ${operatorPubKey}`);
-    console.log(`operatorIsE25519: ${operatorIsE25519}`);
-    console.log(`nonOperatorIsE25519: ${nonOperatorIsE25519}`);
-}
-
-const asciiArt = `
-  +----+
-  |    |
-  |    |
-  +----+
-   \\__\\
-`
-
-function printAsciiArt() {
-    console.log(asciiArt);
-}
-
-printAsciiArt();
-printConstants();
-printAsciiArt();

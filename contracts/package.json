@@ -24,7 +24,7 @@
         "test:parallel": "npx hardhat test --parallel",
         "cleanCache": "npx hardhat clean",
         "test:upgradable": "npx hardhat test test/upgradable.ts",
-        "test:testnet": "npx ha rdhat test --network testnet",
+        "test:testnet": "npx hardhat test --network testnet",
         "test:previewnet": "npx hardhat test --network previewnet",
         "test:roles": "npx hardhat test test/roles.ts",
         "test:roleManagement": "npx hardhat test test/roleManagement.ts",
