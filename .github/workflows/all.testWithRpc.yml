@@ -45,12 +45,6 @@ jobs:
           npm ci
           npm run compile:force
         working-directory: contracts
-      
-      - name: Install dependencies Custodial Library
-        run: |
-          npm ci
-          npm run build
-        working-directory: custodialwalletutils
 
       - name: Install dependencies SDK
         run: |
@@ -133,9 +127,3 @@ jobs:
           npm run test
           npm run cleanCache
         working-directory: sdk
-
-      - name: Test custodialwalletutils
-        run: |
-          npm run test
-          npm run cleanCache
-        working-directory: custodialwalletutils
