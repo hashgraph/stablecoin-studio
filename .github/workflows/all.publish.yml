@@ -28,7 +28,6 @@ jobs:
             cp .npmrc ./sdk/.npmrc
             cp .npmrc ./hashconnect/lib/.npmrc
             cp .npmrc ./cli/.npmrc
-            cp .npmrc ./custodialwalletutils/.npmrc
         
       
       - name: Change references
