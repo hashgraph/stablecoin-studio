@@ -50,14 +50,6 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Install custodialwalletutils dependencies
-        run: npm run install:custodialwalletutils
-
-      - name: Publish custodialwalletutils package
-        run: npm run publish:custodialwalletutils --access=public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-      
       - name: Install sdk dependencies 
         run: npm run install:sdk
 
@@ -73,6 +65,3 @@ jobs:
         run: npm run publish:cli --access=public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-
-      

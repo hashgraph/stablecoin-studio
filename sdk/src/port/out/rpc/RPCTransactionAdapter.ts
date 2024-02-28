@@ -1266,7 +1266,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 	 */
 	async connectMetamask(pair = true): Promise<void> {
 		try {
-			const ethProvider = await detectEthereumProvider({ silent: true });
+			const ethProvider = await detectEthereumProvider({
+				mustBeMetaMask: true,
+				silent: true,
+			});
 			if (ethProvider) {
 				this.eventService.emit(WalletEvents.walletFound, {
 					wallet: SupportedWallets.METAMASK,

@@ -1,8 +1,0 @@
-{
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "module": "CommonJS" /* Specify what module code is generated. */,
-    "outDir": "./build/cjs" /* Specify an output folder for all emitted files. */
-  },
-  "exclude": ["**/__mocks__/**"]
-}
