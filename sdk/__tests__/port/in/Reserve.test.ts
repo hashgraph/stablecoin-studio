@@ -49,7 +49,7 @@ describe('🧪 Reserve test', () => {
 	const initialSupply = 10;
 	const reserveInitialAmount = initialSupply * 2;
 
-	const delay = async (seconds = 3): Promise<void> => {
+	const delay = async (seconds = 5): Promise<void> => {
 		seconds = seconds * 1000;
 		await new Promise((r) => setTimeout(r, seconds));
 	};
