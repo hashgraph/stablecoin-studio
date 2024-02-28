@@ -62,7 +62,7 @@ import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.j
 describe('🧪 Role test', () => {
 	let stableCoinSC: StableCoinViewModel;
 
-	const delay = async (seconds = 3): Promise<void> => {
+	const delay = async (seconds = 5): Promise<void> => {
 		seconds = seconds * 1000;
 		await new Promise((r) => setTimeout(r, seconds));
 	};
