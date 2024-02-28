@@ -64,6 +64,7 @@ jobs:
 
       - name: Create file
         run: |
+          touch .env
           echo "CLIENT_PRIVATE_KEY_ECDSA=${{ secrets.CLIENT_PRIVATE_KEY_ECDSA }}" >> .env
           echo "CLIENT_PUBLIC_KEY_ECDSA=${{ secrets.CLIENT_PUBLIC_KEY_ECDSA }}"  >> .env
           echo "CLIENT_EVM_ADDRESS_ECDSA=${{ secrets.CLIENT_EVM_ADDRESS_ECDSA }}" >> .env
@@ -82,7 +83,6 @@ jobs:
     
       - name: Create contracts
         run: |
-          touch .env
           touch .env
           echo "TESTNET_HEDERA_OPERATOR_PRIVATEKEY=${{ secrets.TESTNET_HEDERA_OPERATOR_PRIVATEKEY }}" >> .env
           echo "TESTNET_HEDERA_OPERATOR_PUBLICKEY=${{ secrets.TESTNET_HEDERA_OPERATOR_PUBLICKEY }}" >> .env
