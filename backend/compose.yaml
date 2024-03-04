@@ -1,0 +1,38 @@
+version: '3.9'
+
+services:
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: backend
+    restart: unless-stopped
+    volumes:
+      - ./src:/app/src
+      - ./test:/app/test
+      - ./tsconfig.json:/app/tsconfig.json
+      # - ./tsconfig.build.json:/app/tsconfig.build.json
+    expose:
+      - "3000"
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+    command: >
+      sh -c "npm run start:dev"
+  
+  db:
+    image: postgres:14.11-alpine3.19
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5432:5432'
+    volumes: 
+      - db:/var/lib/postgresql/data
+
+volumes:
+  db:
+    driver: local

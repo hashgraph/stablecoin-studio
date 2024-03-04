@@ -1,4 +1,4 @@
 FROM node:20.11.1-alpine3.19
-WORKDIR /usr/src/app
+WORKDIR /app
 COPY package.json ./
 RUN npm install
