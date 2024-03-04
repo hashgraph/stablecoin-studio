@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { TransactionModule } from './transaction/transaction.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       entities: [], // This is where your entities (tables) would go
       synchronize: true, // In development, it can be true to synchronize the database schema automatically
     }),
+    TransactionModule,
   ],
   controllers: [AppController],
   providers: [AppService],
