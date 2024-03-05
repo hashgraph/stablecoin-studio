@@ -1,35 +1,41 @@
 version: '3.9'
 
 services:
-
+  # Uses base image from node and maps local needed files to the container
   backend:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: backend
+    image: node:20.11.1-alpine3.19
+    container_name: backend
     restart: unless-stopped
     volumes:
       - ./src:/app/src
       - ./test:/app/test
+      - ./package.json:/app/package.json
       - ./tsconfig.json:/app/tsconfig.json
-      # - ./tsconfig.build.json:/app/tsconfig.build.json
-    expose:
-      - "3000"
+      - ./tsconfig.build.json:/app/tsconfig.build.json
+    # expose:
+    #   - "${SERVER_PORT}"
     ports:
-      - "3000:3000"
+      - "${SERVER_PORT}:${SERVER_PORT}"
     environment:
       - NODE_ENV=development
+      - SERVER_HOST=${SERVER_HOST}
+      - SERVER_PORT=${SERVER_PORT}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
     command: >
-      sh -c "npm run start:dev"
+      sh -c "npm install && npm run start:dev"
   
   db:
     image: postgres:14.11-alpine3.19
+    container_name: db
     restart: unless-stopped
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
     ports:
-      - '5432:5432'
+      - '${DB_PORT}:${DB_PORT}'
     volumes: 
       - db:/var/lib/postgresql/data
 
