@@ -31,23 +31,29 @@ export class TransactionService {
   }
 
   async sign(
-    updateTransactionDto: SignTransactionRequestDto,
+    signTransactionDto: SignTransactionRequestDto,
     transactionId: string,
   ): Promise<Transaction> {
     const transaction = await this.transactionRepository.findOne({
       where: { id: transactionId },
     });
     if (transaction) {
+      if (transaction.signed_keys.includes(signTransactionDto.public_key)) {
+        throw new Error('message already signed');
+      }
+      if (!transaction.key_list.includes(signTransactionDto.public_key)) {
+        throw new Error('Key not found');
+      }
       transaction.signed_keys = [
         ...transaction.signed_keys,
-        updateTransactionDto.public_key,
+        signTransactionDto.public_key,
       ];
       if (transaction.signed_keys.length >= transaction.threshold) {
         transaction.status = 'SIGNED';
       }
       transaction.signed_messages = [
         ...transaction.signed_messages,
-        updateTransactionDto.signed_transaction_message,
+        signTransactionDto.signed_transaction_message,
       ];
       await this.transactionRepository.save(transaction);
       return transaction;
