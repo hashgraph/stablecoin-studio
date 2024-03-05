@@ -3,17 +3,18 @@ version: '3.9'
 services:
   # Uses base image from node and maps local needed files to the container
   backend:
-    image: node:20.11.1-alpine3.19
-    container_name: backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: backend # This is the name of the container
+    image: multisig-back # This is the name of the image that will be created
     restart: unless-stopped
     volumes:
-      - ./src:/app/src
-      - ./test:/app/test
-      - ./package.json:/app/package.json
-      - ./tsconfig.json:/app/tsconfig.json
-      - ./tsconfig.build.json:/app/tsconfig.build.json
-    # expose:
-    #   - "${SERVER_PORT}"
+      - .:/app
+      # This ensures that the NestJS container manages the node_modules folder
+      # rather than synchronizes it with the host machine
+      - /app/node_modules
     ports:
       - "${SERVER_PORT}:${SERVER_PORT}"
     environment:
@@ -24,8 +25,9 @@ services:
       - DB_PORT=${DB_PORT}
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
-    command: >
-      sh -c "npm install && npm run start:dev"
+    depends_on:
+      - db
+    command: npx nest start --watch
   
   db:
     image: postgres:14.11-alpine3.19
