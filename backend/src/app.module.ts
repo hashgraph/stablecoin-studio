@@ -1,24 +1,29 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TransactionModule } from './transaction/transaction.module';
-import { TransactionService } from './transaction/transaction.service';
-import { TransactionController } from './transaction/transaction.controller';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Transaction } from './transaction/transaction.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres', // Specifies that you're using PostgreSQL
-      host: 'localhost', // The address of your database server
-      port: 5432, // The port of your PostgreSQL server
-      username: 'postgres', // Your PostgreSQL username
-      password: 'postgres', // Your PostgreSQL password
-      database: 'postgres', // The name of your database
-      entities: [], // This is where your entities (tables) would go
-      synchronize: true, // In development, it can be true to synchronize the database schema automatically
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get<string>('DB_HOST'),
+        port: configService.get<number>('DB_PORT'),
+        username: configService.get<string>('DB_USERNAME'),
+        password: configService.get<string>('DB_PASSWORD'),
+        database: configService.get<string>('DB_NAME'),
+        entities: [Transaction],
+        synchronize: true,
+      }),
     }),
     TransactionModule,
   ],
-  controllers: [TransactionController],
-  providers: [TransactionService],
 })
 export class AppModule {}
