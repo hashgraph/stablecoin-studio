@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class UpdateTransactionRequestDto {
+export class SignTransactionRequestDto {
   @IsNotEmpty()
   @IsString()
   signed_transaction_message: string;

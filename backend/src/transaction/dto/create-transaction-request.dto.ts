@@ -1,4 +1,11 @@
-import { IsString, IsArray, ArrayNotEmpty, IsInt, Min } from 'class-validator';
+import {
+  IsString,
+  IsArray,
+  ArrayNotEmpty,
+  IsInt,
+  Min,
+  Matches,
+} from 'class-validator';
 
 export class CreateTransactionRequestDto {
   @IsString()
@@ -8,11 +15,19 @@ export class CreateTransactionRequestDto {
   description: string;
 
   @IsString()
+  @Matches(/^\d+\.\d+\.\d+$/, {
+    message:
+      'Hedera Account ID must be in the format shard.realm.account with each part being a number',
+  })
   hedera_account_id: string;
 
   @IsArray()
   @ArrayNotEmpty()
   @IsString({ each: true })
+  @Matches(/^0x[0-9a-fA-F]+$/, {
+    each: true,
+    message: 'Each key must be ED25519 or ECDSA',
+  })
   key_list: string[];
 
   @IsInt()

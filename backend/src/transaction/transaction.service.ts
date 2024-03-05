@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateTransactionRequestDto } from './dto/create-transaction-request.dto';
 import { Transaction } from './transaction.entity';
-import { UpdateTransactionRequestDto } from './dto/update-transaction-request.dto';
+import { SignTransactionRequestDto } from './dto/sign-transaction-request.dto';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -30,8 +30,8 @@ export class TransactionService {
     return transaction;
   }
 
-  async update(
-    updateTransactionDto: UpdateTransactionRequestDto,
+  async sign(
+    updateTransactionDto: SignTransactionRequestDto,
     transactionId: string,
   ): Promise<Transaction> {
     const transaction = await this.transactionRepository.findOne({
@@ -45,8 +45,10 @@ export class TransactionService {
       if (transaction.signed_keys.length >= transaction.threshold) {
         transaction.status = 'SIGNED';
       }
-      transaction.transaction_message =
-        updateTransactionDto.signed_transaction_message;
+      transaction.signed_messages = [
+        ...transaction.signed_messages,
+        updateTransactionDto.signed_transaction_message,
+      ];
       await this.transactionRepository.save(transaction);
       return transaction;
     } else {

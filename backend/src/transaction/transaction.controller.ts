@@ -13,7 +13,7 @@ import { CreateTransactionResponseDto } from './dto/create-transaction-response.
 import { CreateTransactionRequestDto } from './dto/create-transaction-request.dto';
 import { TransactionService } from './transaction.service';
 import { Transaction } from './transaction.entity';
-import { UpdateTransactionRequestDto } from './dto/update-transaction-request.dto';
+import { SignTransactionRequestDto } from './dto/sign-transaction-request.dto';
 
 @Controller('/transactions')
 export class TransactionController {
@@ -30,12 +30,12 @@ export class TransactionController {
   }
 
   @Put(':transactionId')
-  @HttpCode(HttpStatus.OK) // 200 OK
-  async updateTransaction(
+  @HttpCode(HttpStatus.NO_CONTENT) // 204 No Content (successful update, no response body needed
+  async signTransaction(
     @Param('transactionId') transactionId: string,
-    @Body() updateTransactionDto: UpdateTransactionRequestDto,
+    @Body() signTransactionDto: SignTransactionRequestDto,
   ): Promise<void> {
-    await this.transactionService.update(updateTransactionDto, transactionId);
+    await this.transactionService.sign(signTransactionDto, transactionId);
   }
 
   @Delete(':transactionId')
