@@ -57,4 +57,8 @@ export class TransactionService {
   async delete(transactionId: string): Promise<void> {
     await this.transactionRepository.delete({ id: transactionId });
   }
+
+  async getAll(): Promise<Transaction[]> {
+    return await this.transactionRepository.find();
+  }
 }

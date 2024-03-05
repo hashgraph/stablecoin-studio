@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   HttpCode,
   HttpStatus,
   Param,
@@ -43,5 +44,11 @@ export class TransactionController {
     @Param('transactionId') transactionId: string,
   ): Promise<void> {
     await this.transactionService.delete(transactionId);
+  }
+
+  @Get()
+  @HttpCode(HttpStatus.OK) // 200 OK
+  async getTransactions(): Promise<Transaction[]> {
+    return await this.transactionService.getAll();
   }
 }
