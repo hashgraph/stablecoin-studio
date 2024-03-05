@@ -19,7 +19,7 @@ export class Transaction {
   key_list: string[];
 
   @Column('simple-array')
-  remaining_keys: string[];
+  signed_keys: string[];
 
   @Column()
   status: 'SIGNED' | 'PENDING';
