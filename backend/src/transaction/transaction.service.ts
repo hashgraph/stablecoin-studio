@@ -4,6 +4,7 @@ import { CreateTransactionRequestDto } from './dto/create-transaction-request.dt
 import { Transaction } from './transaction.entity';
 import { SignTransactionRequestDto } from './dto/sign-transaction-request.dto';
 import { Repository } from 'typeorm';
+import { getTransactionsResponseDto } from './dto/get-transactions-response.dto';
 
 @Injectable()
 export class TransactionService {
@@ -67,10 +68,21 @@ export class TransactionService {
     await this.transactionRepository.delete({ id: transactionId });
   }
 
-  async getAll(publicKey: string): Promise<Transaction[]> {
-    //return all transactions that have the public key in the key list
-    return await this.transactionRepository.find({
+  async getAll(publicKey: string): Promise<getTransactionsResponseDto[]> {
+    const transactions = await this.transactionRepository.find({
       where: { signed_keys: publicKey },
+    });
+
+    return transactions.map((transaction: Transaction) => {
+      return new getTransactionsResponseDto(
+        transaction.id,
+        transaction.transaction_message,
+        transaction.description,
+        transaction.status,
+        transaction.threshold,
+        transaction.key_list,
+        transaction.signed_keys,
+      );
     });
   }
 }

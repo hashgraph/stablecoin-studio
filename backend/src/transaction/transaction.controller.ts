@@ -14,6 +14,7 @@ import { CreateTransactionRequestDto } from './dto/create-transaction-request.dt
 import { TransactionService } from './transaction.service';
 import { Transaction } from './transaction.entity';
 import { SignTransactionRequestDto } from './dto/sign-transaction-request.dto';
+import { getTransactionsResponseDto } from './dto/get-transactions-response.dto';
 
 @Controller('/api/transactions')
 export class TransactionController {
@@ -50,7 +51,7 @@ export class TransactionController {
   @HttpCode(HttpStatus.OK) // 200 OK
   async getTransactions(
     @Param('publicKey') publicKey: string,
-  ): Promise<Transaction[]> {
+  ): Promise<getTransactionsResponseDto[]> {
     return await this.transactionService.getAll(publicKey);
   }
 }
