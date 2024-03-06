@@ -7,7 +7,7 @@ import { Repository } from 'typeorm';
 import { getTransactionsResponseDto } from './dto/get-transactions-response.dto';
 
 @Injectable()
-export class TransactionService {
+export default class TransactionService {
   constructor(
     @InjectRepository(Transaction)
     private readonly transactionRepository: Repository<Transaction>,

@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { CreateTransactionResponseDto } from './dto/create-transaction-response.dto';
 import { CreateTransactionRequestDto } from './dto/create-transaction-request.dto';
-import { TransactionService } from './transaction.service';
+import TransactionService from './transaction.service';
 import { Transaction } from './transaction.entity';
 import { SignTransactionRequestDto } from './dto/sign-transaction-request.dto';
 import { getTransactionsResponseDto } from './dto/get-transactions-response.dto';
@@ -26,7 +26,7 @@ import {
 
 @ApiTags('Transactions')
 @Controller('/api/transactions')
-export class TransactionController {
+export default class TransactionController {
   constructor(private readonly transactionService: TransactionService) {}
 
   @Post()
