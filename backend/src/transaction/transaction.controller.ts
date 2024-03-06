@@ -46,9 +46,11 @@ export class TransactionController {
     await this.transactionService.delete(transactionId);
   }
 
-  @Get()
+  @Get(':publicKey')
   @HttpCode(HttpStatus.OK) // 200 OK
-  async getTransactions(): Promise<Transaction[]> {
-    return await this.transactionService.getAll();
+  async getTransactions(
+    @Param('publicKey') publicKey: string,
+  ): Promise<Transaction[]> {
+    return await this.transactionService.getAll(publicKey);
   }
 }

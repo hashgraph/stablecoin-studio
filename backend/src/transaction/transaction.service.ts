@@ -67,7 +67,10 @@ export class TransactionService {
     await this.transactionRepository.delete({ id: transactionId });
   }
 
-  async getAll(): Promise<Transaction[]> {
-    return await this.transactionRepository.find();
+  async getAll(publicKey: string): Promise<Transaction[]> {
+    //return all transactions that have the public key in the key list
+    return await this.transactionRepository.find({
+      where: { key_list: publicKey },
+    });
   }
 }
