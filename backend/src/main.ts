@@ -14,7 +14,7 @@ async function bootstrap() {
     .setTitle('Hedera Multisignature Backend API')
     .setDescription('The Hedera Multisignature Backend API description')
     .setVersion('1.0.0')
-    .addTag('hedera')
+    .addTag('Transactions', 'Hedera Multisignature Transactions')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);

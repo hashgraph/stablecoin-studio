@@ -24,7 +24,10 @@ export class TransactionService {
       key_list: createTransactionDto.key_list,
       signed_keys: emptyStringArray,
       status: 'PENDING',
-      threshold: createTransactionDto.threshold,
+      threshold:
+        createTransactionDto.threshold === 0
+          ? createTransactionDto.key_list.length
+          : createTransactionDto.threshold,
       signed_messages: emptyStringArray,
     });
 

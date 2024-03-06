@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsString,
   IsArray,
@@ -8,12 +9,30 @@ import {
 } from 'class-validator';
 
 export class CreateTransactionRequestDto {
+  @ApiProperty({
+    description: 'The message to be signed by the keys',
+    example: '0xd3c0de...',
+    minLength: 10,
+    required: true,
+  })
   @IsString()
   transaction_message: string;
 
+  @ApiProperty({
+    description: 'A description of the transaction',
+    example: 'This transaction is for the creation of a new StableCoin',
+    minLength: 5,
+    maxLength: 200,
+    required: true,
+  })
   @IsString()
   description: string;
 
+  @ApiProperty({
+    description: 'The Hedera Account ID used for this transaction',
+    example: '0.0.12345',
+    required: true,
+  })
   @IsString()
   @Matches(/^\d+\.\d+\.\d+$/, {
     message:
@@ -21,6 +40,11 @@ export class CreateTransactionRequestDto {
   })
   hedera_account_id: string;
 
+  @ApiProperty({
+    description: 'A list of public keys to be used for signing the transaction',
+    example: ['0x1234...', '0x5678...'],
+    required: true,
+  })
   @IsArray()
   @ArrayNotEmpty()
   @IsString({ each: true })
@@ -30,8 +54,14 @@ export class CreateTransactionRequestDto {
   })
   key_list: string[];
 
+  @ApiProperty({
+    description: 'The number of keys required to sign the transaction',
+    example: 1,
+    default: 0, // KeyList with no threshold
+    required: true,
+  })
   @IsInt()
-  @Min(1)
+  @Min(0)
   threshold: number;
 
   constructor(

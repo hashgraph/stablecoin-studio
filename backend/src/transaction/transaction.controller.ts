@@ -15,13 +15,17 @@ import { TransactionService } from './transaction.service';
 import { Transaction } from './transaction.entity';
 import { SignTransactionRequestDto } from './dto/sign-transaction-request.dto';
 import { getTransactionsResponseDto } from './dto/get-transactions-response.dto';
+import { ApiCreatedResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Transactions')
 @Controller('/api/transactions')
 export class TransactionController {
   constructor(private readonly transactionService: TransactionService) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED) // 201 Created
+  @ApiCreatedResponse({description: 'The transaction has been successfully created.', type: CreateTransactionResponseDto})
+  @ApiResponse({ status: 500, description: 'Internal Server Error'})
   async addTransaction(
     @Body() createTransactionDto: CreateTransactionRequestDto,
   ): Promise<CreateTransactionResponseDto> {
