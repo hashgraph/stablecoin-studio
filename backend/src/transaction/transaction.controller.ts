@@ -15,7 +15,7 @@ import { TransactionService } from './transaction.service';
 import { Transaction } from './transaction.entity';
 import { SignTransactionRequestDto } from './dto/sign-transaction-request.dto';
 
-@Controller('/transactions')
+@Controller('/api/transactions')
 export class TransactionController {
   constructor(private readonly transactionService: TransactionService) {}
 

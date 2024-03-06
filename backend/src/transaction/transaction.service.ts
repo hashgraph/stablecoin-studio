@@ -24,6 +24,7 @@ export class TransactionService {
       signed_keys: emptyStringArray,
       status: 'PENDING',
       threshold: createTransactionDto.threshold,
+      signed_messages: emptyStringArray,
     });
 
     await this.transactionRepository.save(transaction);
