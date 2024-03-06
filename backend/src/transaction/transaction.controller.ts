@@ -15,7 +15,14 @@ import { TransactionService } from './transaction.service';
 import { Transaction } from './transaction.entity';
 import { SignTransactionRequestDto } from './dto/sign-transaction-request.dto';
 import { getTransactionsResponseDto } from './dto/get-transactions-response.dto';
-import { ApiCreatedResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiOkResponse,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @ApiTags('Transactions')
 @Controller('/api/transactions')
@@ -24,8 +31,11 @@ export class TransactionController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED) // 201 Created
-  @ApiCreatedResponse({description: 'The transaction has been successfully created.', type: CreateTransactionResponseDto})
-  @ApiResponse({ status: 500, description: 'Internal Server Error'})
+  @ApiCreatedResponse({
+    description: 'The transaction has been successfully created.',
+    type: CreateTransactionResponseDto,
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
   async addTransaction(
     @Body() createTransactionDto: CreateTransactionRequestDto,
   ): Promise<CreateTransactionResponseDto> {
@@ -36,6 +46,14 @@ export class TransactionController {
 
   @Put(':transactionId')
   @HttpCode(HttpStatus.NO_CONTENT) // 204 No Content (successful update, no response body needed
+  @ApiNoContentResponse({
+    description: 'The transaction has been successfully updated.',
+  })
+  @ApiParam({
+    name: 'transactionId',
+    description: 'The transaction ID to update',
+    required: true,
+  })
   async signTransaction(
     @Param('transactionId') transactionId: string,
     @Body() signTransactionDto: SignTransactionRequestDto,
@@ -45,6 +63,14 @@ export class TransactionController {
 
   @Delete(':transactionId')
   @HttpCode(HttpStatus.OK) // 200 OK
+  @ApiOkResponse({
+    description: 'The transaction has been successfully deleted.',
+  })
+  @ApiParam({
+    name: 'transactionId',
+    description: 'The transaction ID to delete',
+    required: true,
+  })
   async deleteTransaction(
     @Param('transactionId') transactionId: string,
   ): Promise<void> {
@@ -53,6 +79,15 @@ export class TransactionController {
 
   @Get(':publicKey')
   @HttpCode(HttpStatus.OK) // 200 OK
+  @ApiOkResponse({
+    description: 'The transactions have been successfully retrieved.',
+    type: [getTransactionsResponseDto],
+  })
+  @ApiParam({
+    name: 'publicKey',
+    description: 'The public key to retrieve transactions for',
+    required: true,
+  })
   async getTransactions(
     @Param('publicKey') publicKey: string,
   ): Promise<getTransactionsResponseDto[]> {
