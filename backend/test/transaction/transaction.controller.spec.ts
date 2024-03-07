@@ -1,5 +1,6 @@
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { ConfigService } from '@nestjs/config';
 import { Repository } from 'typeorm';
 import { CreateTransactionRequestDto } from '../../src/transaction/dto/create-transaction-request.dto';
 import TransactionController from '../../src/transaction/transaction.controller';
@@ -16,6 +17,7 @@ describe('Transaction Controller Test', () => {
       controllers: [TransactionController],
       providers: [
         TransactionService,
+        ConfigService,
         {
           provide: getRepositoryToken(Transaction),
           useClass: Repository,
@@ -42,8 +44,56 @@ describe('Transaction Controller Test', () => {
       const expectedResult = new CreateTransactionResponseDto(
         createTransactionServiceResult.id,
       );
-      const result = await transactionController.addTransaction(addTransactionInput);
+      const result =
+        await transactionController.addTransaction(addTransactionInput);
       expect(result.transactionId).toBe(expectedResult.transactionId);
+    });
+    it('should create a new transaction with threshold = 0', async () => {
+      const addTransactionInput = createAddTransactionInput();
+      addTransactionInput.threshold = 0;
+      const createTransactionServiceResult = createMockTransaction();
+      jest
+        .spyOn(transactionService, 'create')
+        .mockImplementation(() =>
+          Promise.resolve(createTransactionServiceResult),
+        );
+
+      const expectedResult = new CreateTransactionResponseDto(
+        createTransactionServiceResult.id,
+      );
+      const result =
+        await transactionController.addTransaction(addTransactionInput);
+      expect(result.transactionId).toBe(expectedResult.transactionId);
+    });
+    // TODO: check why it passes the Body validation
+    // it('should return 401 or something like that ', async () => {
+    //   const addTransactionInput = createAddTransactionInput();
+    //   jest.spyOn(transactionService, 'create').mockImplementation(() => {
+    //     throw new Error('Should not get here');
+    //   });
+
+    //   const result =
+    //     await transactionController.addTransaction(addTransactionInput);
+    //   console.log(result);
+    // });
+  });
+  describe('Sign Transaction', () => {
+    it('should sign a transaction', async () => {
+      const signTransactionInput = {
+        transaction_id: '0.0.123456',
+        signed_message: '0x1234...',
+      };
+      const signTransactionServiceResult = createMockTransaction();
+      jest
+        .spyOn(transactionService, 'sign')
+        .mockImplementation(() =>
+          Promise.resolve(signTransactionServiceResult),
+        );
+
+      await transactionController.signTransaction(
+        signTransactionInput.transaction_id,
+        signTransactionInput,
+      );
     });
   });
 });
