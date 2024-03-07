@@ -9,18 +9,22 @@ describe('Transaction Controller Test', () => {
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
-        controllers: [TransactionController],
-        providers: [TransactionService],
-      }).compile();
+      controllers: [TransactionController],
+      providers: [TransactionService],
+    }).compile();
 
     transactionService = moduleRef.get<TransactionService>(TransactionService);
-    transactionController = moduleRef.get<TransactionController>(TransactionController);
+    transactionController = moduleRef.get<TransactionController>(
+      TransactionController,
+    );
   });
 
   describe('Create Transaction', () => {
     it('should create a new transaction', async () => {
       const result = createMockTransaction();
-      jest.spyOn(transactionService, 'create').mockImplementation(() => Promise.resolve(result));
+      jest
+        .spyOn(transactionService, 'create')
+        .mockImplementation(() => Promise.resolve(result));
 
       expect(await transactionController.addTransaction()).toBe(result);
     });

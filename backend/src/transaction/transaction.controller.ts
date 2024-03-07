@@ -8,6 +8,7 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateTransactionResponseDto } from './dto/create-transaction-response.dto';
 import { CreateTransactionRequestDto } from './dto/create-transaction-request.dto';
@@ -23,6 +24,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { OriginGuard } from '../guards/origin.guard';
 
 @ApiTags('Transactions')
 @Controller('/api/transactions')
@@ -30,6 +32,7 @@ export default class TransactionController {
   constructor(private readonly transactionService: TransactionService) {}
 
   @Post()
+  @UseGuards(OriginGuard)
   @HttpCode(HttpStatus.CREATED) // 201 Created
   @ApiCreatedResponse({
     description: 'The transaction has been successfully created.',
@@ -62,6 +65,7 @@ export default class TransactionController {
   }
 
   @Delete(':transactionId')
+  @UseGuards(OriginGuard)
   @HttpCode(HttpStatus.OK) // 200 OK
   @ApiOkResponse({
     description: 'The transaction has been successfully deleted.',
@@ -78,6 +82,7 @@ export default class TransactionController {
   }
 
   @Get(':publicKey')
+  @UseGuards(OriginGuard)
   @HttpCode(HttpStatus.OK) // 200 OK
   @ApiOkResponse({
     description: 'The transactions have been successfully retrieved.',
