@@ -16,7 +16,6 @@ export class OriginGuard implements CanActivate {
     const origin = request.headers['access-control-allow-origin'];
 
     // Assuming origin is expected to be 'domain.com'
-    console.log('origin', origin, origins);
     return origins.includes(origin);
     // If the origin is not as expected, you can choose to throw an error
     // or return false to reject the request
