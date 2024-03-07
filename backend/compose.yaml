@@ -16,7 +16,7 @@ services:
       # rather than synchronizes it with the host machine
       - /app/node_modules
     ports:
-      - "${SERVER_PORT}:${SERVER_PORT}"
+      - '${SERVER_PORT}:${SERVER_PORT}'
     networks:
       - default-network
     environment:
@@ -30,7 +30,7 @@ services:
     depends_on:
       - ${CONTAINER_DB_NAME}
     command: npx nest start --watch
-  
+
   db:
     image: postgres:14.11-alpine3.19
     container_name: ${CONTAINER_DB_NAME}
@@ -42,7 +42,7 @@ services:
       - '${DB_PORT}:${DB_PORT}'
     networks:
       - default-network
-    volumes: 
+    volumes:
       - db:/var/lib/postgresql/data
 
 volumes:
