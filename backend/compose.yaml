@@ -8,7 +8,7 @@ services:
       dockerfile: Dockerfile
       target: development
     container_name: ${CONTAINER_BACK_NAME} # This is the name of the container
-    image: multisig-back # This is the name of the image that will be created
+    image: multisig-back:latest # This is the name of the image that will be created
     restart: unless-stopped
     volumes:
       - .:/app
@@ -17,6 +17,8 @@ services:
       - /app/node_modules
     ports:
       - "${SERVER_PORT}:${SERVER_PORT}"
+    networks:
+      - default-network
     environment:
       - NODE_ENV=development
       - SERVER_HOST=${SERVER_HOST}
@@ -38,9 +40,15 @@ services:
       - POSTGRES_PASSWORD=${DB_PASSWORD}
     ports:
       - '${DB_PORT}:${DB_PORT}'
+    networks:
+      - default-network
     volumes: 
       - db:/var/lib/postgresql/data
 
 volumes:
   db:
     driver: local
+
+networks:
+  default-network:
+    name: ${DOCKER_NETWORK_NAME}
