@@ -37,11 +37,6 @@ export default class TransactionController {
   @Post()
   @UseGuards(OriginGuard)
   @HttpCode(HttpStatus.CREATED) // 201 Created
-  @ApiHeader({
-    name: 'Access-Control-Allow-Origin',
-    description: 'The origin of the request',
-    required: false,
-  })
   @ApiCreatedResponse({
     description: 'The transaction has been successfully created.',
     type: CreateTransactionResponseDto,
@@ -57,11 +52,6 @@ export default class TransactionController {
 
   @Put(':transactionId')
   @HttpCode(HttpStatus.NO_CONTENT) // 204 No Content (successful update, no response body needed
-  @ApiHeader({
-    name: 'Access-Control-Allow-Origin',
-    description: 'The origin of the request',
-    required: false,
-  })
   @ApiNoContentResponse({
     description: 'The transaction has been successfully updated.',
   })
@@ -80,11 +70,6 @@ export default class TransactionController {
   @Delete(':transactionId')
   @UseGuards(OriginGuard)
   @HttpCode(HttpStatus.OK) // 200 OK
-  @ApiHeader({
-    name: 'Access-Control-Allow-Origin',
-    description: 'The origin of the request',
-    required: false,
-  })
   @ApiOkResponse({
     description: 'The transaction has been successfully deleted.',
   })
@@ -100,13 +85,7 @@ export default class TransactionController {
   }
 
   @Get(':publicKey')
-  @UseGuards(OriginGuard)
   @HttpCode(HttpStatus.OK) // 200 OK
-  @ApiHeader({
-    name: 'Access-Control-Allow-Origin',
-    description: 'The origin of the request',
-    required: false,
-  })
   @ApiOkResponse({
     description: 'The transactions have been successfully retrieved.',
     type: [getTransactionsResponseDto],

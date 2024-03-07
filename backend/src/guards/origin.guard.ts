@@ -13,12 +13,13 @@ export class OriginGuard implements CanActivate {
     const origins = this.configService.get<string>('ORIGIN').split(',');
 
     const request = context.switchToHttp().getRequest();
-    const origin = request.headers['access-control-allow-origin'];
+    const origin = request.headers['origin'];
 
-    // Assuming origin is expected to be 'domain.com'
-    return origins.includes(origin);
-    // If the origin is not as expected, you can choose to throw an error
-    // or return false to reject the request
-    // throw new Error('Unauthorized origin');
+    const isAllowed = origins.some((allowedOrigin) => {
+      const pattern = new RegExp(`^${allowedOrigin.replace('*', '.*')}$`);
+      return pattern.test(origin);
+    });
+
+    return isAllowed;
   }
 }
