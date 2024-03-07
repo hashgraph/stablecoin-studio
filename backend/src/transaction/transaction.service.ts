@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateTransactionRequestDto } from './dto/create-transaction-request.dto';
-import { Transaction } from './transaction.entity';
+import Transaction, { TransactionStatus } from './transaction.entity';
 import { SignTransactionRequestDto } from './dto/sign-transaction-request.dto';
 import { Repository } from 'typeorm';
-import { getTransactionsResponseDto } from './dto/get-transactions-response.dto';
+import { GetTransactionsResponseDto } from './dto/get-transactions-response.dto';
 
 @Injectable()
 export default class TransactionService {
@@ -23,7 +23,7 @@ export default class TransactionService {
       hedera_account_id: createTransactionDto.hedera_account_id,
       key_list: createTransactionDto.key_list,
       signed_keys: emptyStringArray,
-      status: 'PENDING',
+      status: TransactionStatus.PENDING,
       threshold:
         createTransactionDto.threshold === 0
           ? createTransactionDto.key_list.length
@@ -54,7 +54,7 @@ export default class TransactionService {
         signTransactionDto.public_key,
       ];
       if (transaction.signed_keys.length >= transaction.threshold) {
-        transaction.status = 'SIGNED';
+        transaction.status = TransactionStatus.SIGN;
       }
       transaction.signed_messages = [
         ...transaction.signed_messages,
@@ -71,13 +71,13 @@ export default class TransactionService {
     await this.transactionRepository.delete({ id: transactionId });
   }
 
-  async getAll(publicKey: string): Promise<getTransactionsResponseDto[]> {
+  async getAll(publicKey: string): Promise<GetTransactionsResponseDto[]> {
     const transactions = await this.transactionRepository.find({
       where: { signed_keys: publicKey },
     });
 
     return transactions.map((transaction: Transaction) => {
-      return new getTransactionsResponseDto(
+      return new GetTransactionsResponseDto(
         transaction.id,
         transaction.transaction_message,
         transaction.description,

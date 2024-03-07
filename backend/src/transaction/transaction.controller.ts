@@ -14,9 +14,9 @@ import {
 import { CreateTransactionResponseDto } from './dto/create-transaction-response.dto';
 import { CreateTransactionRequestDto } from './dto/create-transaction-request.dto';
 import TransactionService from './transaction.service';
-import { Transaction } from './transaction.entity';
+import Transaction from './transaction.entity';
 import { SignTransactionRequestDto } from './dto/sign-transaction-request.dto';
-import { getTransactionsResponseDto } from './dto/get-transactions-response.dto';
+import { GetTransactionsResponseDto } from './dto/get-transactions-response.dto';
 import {
   ApiCreatedResponse,
   ApiForbiddenResponse,
@@ -88,7 +88,7 @@ export default class TransactionController {
   @HttpCode(HttpStatus.OK) // 200 OK
   @ApiOkResponse({
     description: 'The transactions have been successfully retrieved.',
-    type: [getTransactionsResponseDto],
+    type: [GetTransactionsResponseDto],
   })
   @ApiForbiddenResponse({ description: 'Forbidden', type: ForbiddenException })
   @ApiParam({
@@ -98,7 +98,7 @@ export default class TransactionController {
   })
   async getTransactions(
     @Param('publicKey') publicKey: string,
-  ): Promise<getTransactionsResponseDto[]> {
+  ): Promise<GetTransactionsResponseDto[]> {
     return await this.transactionService.getAll(publicKey);
   }
 }

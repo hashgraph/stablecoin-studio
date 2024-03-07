@@ -1,7 +1,12 @@
 import { Column, Entity, Generated, PrimaryColumn } from 'typeorm';
 
+export enum TransactionStatus {
+  SIGN = 'SIGN',
+  PENDING = 'PENDING',
+}
+
 @Entity()
-export class Transaction {
+export default class Transaction {
   @PrimaryColumn('uuid')
   @Generated('uuid')
   id: string;
@@ -25,7 +30,7 @@ export class Transaction {
   signed_keys: string[];
 
   @Column()
-  status: 'SIGNED' | 'PENDING';
+  status: TransactionStatus;
 
   @Column()
   threshold: number;

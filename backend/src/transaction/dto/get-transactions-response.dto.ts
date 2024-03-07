@@ -1,4 +1,4 @@
-export class getTransactionsResponseDto {
+export class GetTransactionsResponseDto {
   id: string;
   transaction_message: string;
   description: string;
