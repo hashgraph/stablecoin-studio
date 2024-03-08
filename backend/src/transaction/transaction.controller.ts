@@ -1,14 +1,17 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Delete,
   ForbiddenException,
   Get,
   HttpCode,
   HttpStatus,
   Param,
+  ParseIntPipe,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { CreateTransactionResponseDto } from './dto/create-transaction-response.dto';
@@ -20,7 +23,6 @@ import { GetTransactionsResponseDto } from './dto/get-transactions-response.dto'
 import {
   ApiCreatedResponse,
   ApiForbiddenResponse,
-  ApiHeader,
   ApiNoContentResponse,
   ApiOkResponse,
   ApiParam,
@@ -28,6 +30,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { OriginGuard } from '../guards/origin.guard';
+import { Pagination } from 'nestjs-typeorm-paginate';
 
 @ApiTags('Transactions')
 @Controller('/api/transactions')
@@ -96,9 +99,34 @@ export default class TransactionController {
     description: 'The public key to retrieve transactions for',
     required: true,
   })
-  async getTransactions(
+  async getByPublicKey(
     @Param('publicKey') publicKey: string,
-  ): Promise<GetTransactionsResponseDto[]> {
-    return await this.transactionService.getAll(publicKey);
+    @Query('type') type: string,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+  ): Promise<Pagination<GetTransactionsResponseDto>> {
+    limit = limit > 100 ? 100 : limit;
+    type = type ? type.toLowerCase() : type;
+    return await this.transactionService.getAllByPublicKey(publicKey, type, {
+      page,
+      limit,
+    });
+  }
+
+  @ApiOkResponse({
+    description: 'The transactions have been successfully retrieved.',
+    type: [GetTransactionsResponseDto],
+  })
+  @ApiForbiddenResponse({ description: 'Forbidden', type: ForbiddenException })
+  @Get()
+  async getAll(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+  ): Promise<Pagination<GetTransactionsResponseDto>> {
+    limit = limit > 100 ? 100 : limit;
+    return await this.transactionService.getAll({
+      page,
+      limit,
+    });
   }
 }

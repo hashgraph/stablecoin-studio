@@ -1,7 +1,7 @@
 import { Column, Entity, Generated, PrimaryColumn } from 'typeorm';
 
 export enum TransactionStatus {
-  SIGN = 'SIGN',
+  SIGNED = 'SIGNED',
   PENDING = 'PENDING',
 }
 
@@ -20,13 +20,13 @@ export default class Transaction {
   @Column()
   hedera_account_id: string;
 
-  @Column('simple-array')
+  @Column('text', { array: true })
   signed_messages: string[];
 
-  @Column('simple-array')
+  @Column('text', { array: true })
   key_list: string[];
 
-  @Column('simple-array')
+  @Column('text', { array: true })
   signed_keys: string[];
 
   @Column()

@@ -4,6 +4,11 @@ import { CreateTransactionRequestDto } from './dto/create-transaction-request.dt
 import Transaction, { TransactionStatus } from './transaction.entity';
 import { SignTransactionRequestDto } from './dto/sign-transaction-request.dto';
 import { Repository } from 'typeorm';
+import {
+  IPaginationOptions,
+  paginate,
+  Pagination,
+} from 'nestjs-typeorm-paginate';
 import { GetTransactionsResponseDto } from './dto/get-transactions-response.dto';
 
 @Injectable()
@@ -54,7 +59,7 @@ export default class TransactionService {
         signTransactionDto.public_key,
       ];
       if (transaction.signed_keys.length >= transaction.threshold) {
-        transaction.status = TransactionStatus.SIGN;
+        transaction.status = TransactionStatus.SIGNED;
       }
       transaction.signed_messages = [
         ...transaction.signed_messages,
@@ -71,21 +76,52 @@ export default class TransactionService {
     await this.transactionRepository.delete({ id: transactionId });
   }
 
-  async getAll(publicKey: string): Promise<GetTransactionsResponseDto[]> {
-    const transactions = await this.transactionRepository.find({
-      where: { signed_keys: publicKey },
-    });
+  async getAllByPublicKey(
+    publicKey: string,
+    type: string,
+    options: IPaginationOptions,
+  ): Promise<Pagination<GetTransactionsResponseDto>> {
+    let queryBuilder;
+    if (type == TransactionStatus.SIGNED.toLowerCase()) {
+      queryBuilder = this.transactionRepository
+        .createQueryBuilder('transaction')
+        .where(':publicKey = ANY(transaction.signed_keys)', { publicKey });
+    } else if (type == TransactionStatus.PENDING.toLowerCase()) {
+      queryBuilder = this.transactionRepository
+        .createQueryBuilder('transaction')
+        .where(':publicKey = ANY(transaction.key_list)', { publicKey })
+        .andWhere('transaction.status = :status', {
+          status: TransactionStatus.PENDING,
+        });
+    } else {
+      queryBuilder = this.transactionRepository
+        .createQueryBuilder('transaction')
+        .where(':publicKey = ANY(transaction.key_list)', { publicKey });
+    }
 
-    return transactions.map((transaction: Transaction) => {
-      return new GetTransactionsResponseDto(
-        transaction.id,
-        transaction.transaction_message,
-        transaction.description,
-        transaction.status,
-        transaction.threshold,
-        transaction.key_list,
-        transaction.signed_keys,
-      );
-    });
+    const paginatedResults = await paginate<Transaction>(queryBuilder, options);
+
+    const itemsTransformed = paginatedResults.items.map(
+      (transaction) =>
+        new GetTransactionsResponseDto(
+          transaction.id,
+          transaction.transaction_message,
+          transaction.description,
+          transaction.status,
+          transaction.threshold,
+          transaction.key_list,
+          transaction.signed_keys,
+        ),
+    );
+
+    return new Pagination<GetTransactionsResponseDto>(
+      itemsTransformed,
+      paginatedResults.meta,
+      paginatedResults.links,
+    );
+  }
+
+  async getAll(options: IPaginationOptions): Promise<Pagination<Transaction>> {
+    return paginate<Transaction>(this.transactionRepository, options);
   }
 }

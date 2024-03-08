@@ -18,7 +18,7 @@ const DEFAULT = {
     message:
       '0a81012a7f0a7b0a1a0a0b08e8eea5af0610defbe66e12090800100018ddd6a20118001206080010001803188084af5f2202087832005a4a0a22122094ac3f274e59cb947c4685d16cfa2d8a5d055984f43a70e1c62d986a474770611080cab5ee0130ffffffffffffffff7f38ffffffffffffffff7f40004a050880ceda0388010012000a81012a7f0a7b0a1a0a0b08e8eea5af0610defbe66e12090800100018ddd6a20118001206080010001807188084af5f2202087832005a4a0a22122094ac3f274e59cb947c4685d16cfa2d8a5d055984f43a70e1c62d986a474770611080cab5ee0130ffffffffffffffff7f38ffffffffffffffff7f40004a050880ceda0388010012000a81012a7f0a7b0a1a0a0b08e8eea5af0610defbe66e12090800100018ddd6a20118001206080010001803188084af5f2202087832005a4a0a22122094ac3f274e59cb947c4685d16cfa2d8a5d055984f43a70e1c62d986a474770611080cab5ee0130ffffffffffffffff7f38ffffffffffffffff7f40004a050880ceda0388010012000a81012a7f0a7b0a1a0a0b08e8eea5af0610defbe66e12090800100018ddd6a20118001206080010001809188084af5f2202087832005a4a0a22122094ac3f274e59cb947c4685d16cfa2d8a5d055984f43a70e1c62d986a474770611080cab5ee0130ffffffffffffffff7f38ffffffffffffffff7f40004a050880ceda0388010012000a81012a7f0a7b0a1a0a0b08e8eea5af0610defbe66e12090800100018ddd6a20118001206080010001804188084af5f2202087832005a4a0a22122094ac3f274e59cb947c4685d16cfa2d8a5d055984f43a70e1c62d986a474770611080cab5ee0130ffffffffffffffff7f38ffffffffffffffff7f40004a050880ceda038801001200',
     description: 'This transaction is for the creation of a new StableCoin',
-    status: TransactionStatus.SIGN,
+    status: TransactionStatus.SIGNED,
     threshold: 2,
     hedera_account_id: '0.0.123456',
     key_list: [
@@ -134,7 +134,7 @@ describe('Transaction Controller Test', () => {
   describe('Get Transactions', () => {
     it('should get transactions linked to a public key', async () => {
       jest
-        .spyOn(transactionService, 'getAll')
+        .spyOn(transactionService, 'getAllByPublicKey')
         .mockImplementation(() =>
           Promise.resolve(createMockGetAllTransactionServiceResult()),
         );
@@ -199,7 +199,7 @@ function createMockSignTransactionServiceResult(): Transaction {
   transaction.signed_messages = DEFAULT.transaction.signed_messages;
   transaction.key_list = DEFAULT.transaction.key_list;
   transaction.signed_keys = DEFAULT.transaction.signed_keys;
-  transaction.status = TransactionStatus.SIGN;
+  transaction.status = TransactionStatus.SIGNED;
   transaction.threshold = DEFAULT.transaction.threshold;
 
   return transaction;
