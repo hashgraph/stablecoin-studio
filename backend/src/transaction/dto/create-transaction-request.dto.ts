@@ -6,7 +6,9 @@ import {
   IsInt,
   Min,
   Matches,
+  IsNotEmpty,
 } from 'class-validator';
+import { hederaIdRegex, keyRegex } from '../../common/Regexp';
 
 export class CreateTransactionRequestDto {
   @ApiProperty({
@@ -17,6 +19,7 @@ export class CreateTransactionRequestDto {
     required: true,
   })
   @IsString()
+  @IsNotEmpty()
   transaction_message: string;
 
   @ApiProperty({
@@ -27,6 +30,7 @@ export class CreateTransactionRequestDto {
     required: true,
   })
   @IsString()
+  @IsNotEmpty()
   description: string;
 
   @ApiProperty({
@@ -35,7 +39,7 @@ export class CreateTransactionRequestDto {
     required: true,
   })
   @IsString()
-  @Matches(/^\d+\.\d+\.\d+$/, {
+  @Matches(hederaIdRegex, {
     message:
       'Hedera Account ID must be in the format shard.realm.account with each part being a number',
   })
@@ -53,7 +57,7 @@ export class CreateTransactionRequestDto {
   @IsArray()
   @ArrayNotEmpty()
   @IsString({ each: true })
-  @Matches(/^0x[0-9a-fA-F]+$/, {
+  @Matches(keyRegex, {
     each: true,
     message: 'Each key must be ED25519 or ECDSA',
   })

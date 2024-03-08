@@ -1,9 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString, Matches } from 'class-validator';
+import { keyRegex } from '../../common/Regexp';
 
 export class SignTransactionRequestDto {
-  @IsNotEmpty()
-  @IsString()
   @ApiProperty({
     description: 'The signed transaction message',
     example:
@@ -11,14 +10,20 @@ export class SignTransactionRequestDto {
     minLength: 10,
     required: true,
   })
-  signed_transaction_message: string;
-
   @IsNotEmpty()
   @IsString()
+  signed_transaction_message: string;
+
   @ApiProperty({
     description: 'The public key used to sign the transaction',
     example: '75ec8c1997089874ce881690e95900f821a7f69152814728be971e67e4bc2224',
     required: true,
+  })
+  @IsNotEmpty()
+  @IsString()
+  @Matches(keyRegex, {
+    each: true,
+    message: 'Each key must be ED25519 or ECDSA',
   })
   public_key: string;
 

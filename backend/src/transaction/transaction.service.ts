@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateTransactionRequestDto } from './dto/create-transaction-request.dto';
 import Transaction, { TransactionStatus } from './transaction.entity';
@@ -10,6 +10,7 @@ import {
   Pagination,
 } from 'nestjs-typeorm-paginate';
 import { GetTransactionsResponseDto } from './dto/get-transactions-response.dto';
+import { uuidRegex } from '../common/Regexp';
 
 @Injectable()
 export default class TransactionService {
@@ -40,6 +41,9 @@ export default class TransactionService {
     signTransactionDto: SignTransactionRequestDto,
     transactionId: string,
   ): Promise<Transaction> {
+    if (!uuidRegex.test(transactionId))
+      throw new HttpException('Invalid Transaction uuid format', 400);
+
     //TODO VALIDATE SIGNATURE WITH THE PUBLIC KEY
 
     const transaction = await this.transactionRepository.findOne({
@@ -47,10 +51,10 @@ export default class TransactionService {
     });
     if (transaction) {
       if (transaction.signed_keys.includes(signTransactionDto.public_key)) {
-        throw new Error('message already signed');
+        throw new HttpException('message already signed', 409);
       }
       if (!transaction.key_list.includes(signTransactionDto.public_key)) {
-        throw new Error('Key not found');
+        throw new HttpException('Unauthorized Key', 401);
       }
       transaction.signed_keys = [
         ...transaction.signed_keys,
@@ -66,12 +70,22 @@ export default class TransactionService {
       await this.transactionRepository.save(transaction);
       return transaction;
     } else {
-      throw new Error('Transaction not found');
+      throw new HttpException('Transaction not found', 404);
     }
   }
 
   async delete(transactionId: string): Promise<void> {
-    await this.transactionRepository.delete({ id: transactionId });
+    if (!uuidRegex.test(transactionId))
+      throw new HttpException('Invalid Transaction uuid format', 400);
+
+    const transaction = await this.transactionRepository.findOne({
+      where: { id: transactionId },
+    });
+    if (transaction) {
+      await this.transactionRepository.delete({ id: transactionId });
+    } else {
+      throw new HttpException('Transaction not found', 404);
+    }
   }
 
   async getAllByPublicKey(
