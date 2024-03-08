@@ -6,6 +6,7 @@ import {
   IsInt,
   Min,
   Matches,
+  IsNotEmpty,
 } from 'class-validator';
 
 export class CreateTransactionRequestDto {
@@ -17,6 +18,7 @@ export class CreateTransactionRequestDto {
     required: true,
   })
   @IsString()
+  @IsNotEmpty()
   transaction_message: string;
 
   @ApiProperty({
@@ -27,6 +29,7 @@ export class CreateTransactionRequestDto {
     required: true,
   })
   @IsString()
+  @IsNotEmpty()
   description: string;
 
   @ApiProperty({
@@ -44,9 +47,9 @@ export class CreateTransactionRequestDto {
   @ApiProperty({
     description: 'A list of public keys to be used for signing the transaction',
     example: [
-      '75ec8c1997089874ce881690e95900f821a7f69152814728be971e67e4bc2224',
-      '4617e0079f0e943fc407e77ca9fc366f47ccdb4cbec6d5d51eeb996e781c052d',
-      'a0d7a883021253dc9f260ca7934b352f2d75e96d23ebdd1b3851ec0f0f0729d1',
+      '0x75ec8c1997089874ce881690e95900f821a7f69152814728be971e67e4bc2224',
+      '0x4617e0079f0e943fc407e77ca9fc366f47ccdb4cbec6d5d51eeb996e781c052d',
+      '0xa0d7a883021253dc9f260ca7934b352f2d75e96d23ebdd1b3851ec0f0f0729d1',
     ],
     required: true,
   })
