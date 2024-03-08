@@ -10,9 +10,7 @@ import {
   Pagination,
 } from 'nestjs-typeorm-paginate';
 import { GetTransactionsResponseDto } from './dto/get-transactions-response.dto';
-
-const uuidRegex: RegExp =
-  /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+import { uuidRegex } from '../common/Regexp';
 
 @Injectable()
 export default class TransactionService {
