@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateTransactionRequestDto } from './dto/create-transaction-request.dto';
 import Transaction, { TransactionStatus } from './transaction.entity';
 import { SignTransactionRequestDto } from './dto/sign-transaction-request.dto';
-import { Repository } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 import {
   IPaginationOptions,
   paginate,
@@ -76,10 +76,10 @@ export default class TransactionService {
 
   async getAllByPublicKey(
     publicKey: string,
-    type: string,
-    options: IPaginationOptions,
+    type?: string,
+    options?: IPaginationOptions,
   ): Promise<Pagination<GetTransactionsResponseDto>> {
-    let queryBuilder;
+    let queryBuilder: Repository<Transaction> | SelectQueryBuilder<Transaction>;
     if (type == TransactionStatus.SIGNED.toLowerCase()) {
       queryBuilder = this.transactionRepository
         .createQueryBuilder('transaction')

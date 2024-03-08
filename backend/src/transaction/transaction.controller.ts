@@ -101,9 +101,9 @@ export default class TransactionController {
   })
   async getByPublicKey(
     @Param('publicKey') publicKey: string,
-    @Query('type') type: string,
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+    @Query('type') type?: string,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page?: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit?: number,
   ): Promise<Pagination<GetTransactionsResponseDto>> {
     limit = limit > 100 ? 100 : limit;
     type = type ? type.toLowerCase() : type;
@@ -120,8 +120,8 @@ export default class TransactionController {
   @ApiForbiddenResponse({ description: 'Forbidden', type: ForbiddenException })
   @Get()
   async getAll(
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page?: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit?: number,
   ): Promise<Pagination<GetTransactionsResponseDto>> {
     limit = limit > 100 ? 100 : limit;
     return await this.transactionService.getAll({

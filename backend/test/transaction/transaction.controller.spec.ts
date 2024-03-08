@@ -2,6 +2,7 @@ import { Test } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { Pagination, IPaginationMeta } from 'nestjs-typeorm-paginate';
 import { CreateTransactionRequestDto } from '../../src/transaction/dto/create-transaction-request.dto';
 import TransactionController from '../../src/transaction/transaction.controller';
 import Transaction, {
@@ -94,17 +95,6 @@ describe('Transaction Controller Test', () => {
       );
       expect(result.transactionId).toBe(expectedResult.transactionId);
     });
-    // TODO: check why it passes the Body validation
-    // it('should return 401 or something like that ', async () => {
-    //   const addTransactionInput = createAddTransactionInput();
-    //   jest.spyOn(transactionService, 'create').mockImplementation(() => {
-    //     throw new Error('Should not get here');
-    //   });
-
-    //   const result =
-    //     await transactionController.addTransaction(addTransactionInput);
-    //   console.log(result);
-    // });
   });
 
   describe('Sign Transaction', () => {
@@ -134,22 +124,50 @@ describe('Transaction Controller Test', () => {
   });
 
   describe('Get Transactions', () => {
-    it('should get transactions linked to a public key', async () => {
+    it('should get all transactions linked to a public key', async () => {
+      const publicKey = DEFAULT.transaction.key_list[0];
       jest
         .spyOn(service, 'getAllByPublicKey')
         .mockImplementation(() =>
-          Promise.resolve(createMockGetAllTransactionServiceResult()),
+          Promise.resolve(
+            createMockGetAllByPublicKeyTxServiceResult(publicKey),
+          ),
         );
 
       // Same as service result
-      const expectedResult = createMockGetTransactionsControllerResponse();
-      // TODO
-      const result = await controller.getByPublicKey(
-        createMockGetTransactionsControllerRequest(),
-      );
-      expect(result.length).toEqual(expectedResult.length);
-      result.forEach((transaction, index) => {
-        expect(transaction).toEqual(expectedResult[index]);
+      const expectedResult = await service.getAllByPublicKey(publicKey);
+      const result = await controller.getByPublicKey(publicKey);
+      expect(result.items.length).toEqual(expectedResult.items.length);
+      result.items.forEach((transaction: any, index: string | number) => {
+        expect(transaction.id).toEqual(expectedResult.items[index].id);
+        expect(transaction.transaction_message).toEqual(
+          expectedResult.items[index].transaction_message,
+        );
+        expect(transaction.description).toEqual(
+          expectedResult.items[index].description,
+        );
+        expect(transaction.status).toEqual(expectedResult.items[index].status);
+        expect(transaction.threshold).toEqual(
+          expectedResult.items[index].threshold,
+        );
+        expect(transaction.key_list.length).toEqual(
+          expectedResult.items[index].key_list.length,
+        );
+        transaction.key_list.forEach(
+          (key: string, keyIndex: string | number) => {
+            expect(key).toEqual(expectedResult.items[index].key_list[keyIndex]);
+          },
+        );
+        expect(transaction.signed_keys.length).toEqual(
+          expectedResult.items[index].signed_keys.length,
+        );
+        transaction.signed_keys.forEach(
+          (key: string, keyIndex: string | number) => {
+            expect(key).toEqual(
+              expectedResult.items[index].signed_keys[keyIndex],
+            );
+          },
+        );
       });
     });
   });
@@ -220,24 +238,30 @@ function createMockSignTransactionControllerRequest() {
 
 //* Get Mocks
 
-function createMockGetAllTransactionServiceResult(): GetTransactionsResponseDto[] {
+function createMockGetAllByPublicKeyTxServiceResult(
+  publicKey: string,
+  options?: { page?: number; limit?: number },
+): Pagination<GetTransactionsResponseDto, IPaginationMeta> {
   const transactionResponse = new GetTransactionsResponseDto(
     DEFAULT.transaction.id,
     DEFAULT.transaction.message,
     DEFAULT.transaction.description,
     DEFAULT.transaction.status,
     DEFAULT.transaction.threshold,
-    DEFAULT.transaction.key_list,
+    [
+      publicKey,
+      DEFAULT.transaction.key_list[1],
+      DEFAULT.transaction.key_list[2],
+    ],
     DEFAULT.transaction.signed_keys,
   );
-  return [transactionResponse, transactionResponse];
-}
-
-function createMockGetTransactionsControllerRequest(): string {
-  const publicKey = DEFAULT.transaction.key_list[0];
-  return publicKey;
-}
-
-function createMockGetTransactionsControllerResponse(): GetTransactionsResponseDto[] {
-  return createMockGetAllTransactionServiceResult();
+  return new Pagination<GetTransactionsResponseDto>(
+    [transactionResponse, transactionResponse],
+    {
+      currentPage: (options && options.page) || 1,
+      itemCount: 2,
+      itemsPerPage: 100,
+    },
+    {}, // TODO: meaninfull info
+  );
 }
