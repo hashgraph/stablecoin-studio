@@ -44,6 +44,8 @@ export default class TransactionService {
     if (!uuidRegex.test(transactionId))
       throw new HttpException('Invalid Transaction uuid format', 400);
 
+    //TODO VALIDATE SIGNATURE WITH THE PUBLIC KEY
+
     const transaction = await this.transactionRepository.findOne({
       where: { id: transactionId },
     });
@@ -102,7 +104,8 @@ export default class TransactionService {
         .where(':publicKey = ANY(transaction.key_list)', { publicKey })
         .andWhere('transaction.status = :status', {
           status: TransactionStatus.PENDING,
-        });
+        })
+        .andWhere(':publicKey != ALL(transaction.signed_keys)', { publicKey });
     } else {
       queryBuilder = this.transactionRepository
         .createQueryBuilder('transaction')
