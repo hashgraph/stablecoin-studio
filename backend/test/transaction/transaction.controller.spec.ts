@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
+import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateTransactionRequestDto } from '../../src/transaction/dto/create-transaction-request.dto';
 import TransactionController from '../../src/transaction/transaction.controller';
@@ -38,11 +38,11 @@ const DEFAULT = {
 };
 
 describe('Transaction Controller Test', () => {
-  let transactionController: TransactionController;
-  let transactionService: TransactionService;
+  let controller: TransactionController;
+  let service: TransactionService;
 
   beforeEach(async () => {
-    const moduleRef = await Test.createTestingModule({
+    const testingModule = await Test.createTestingModule({
       controllers: [TransactionController],
       providers: [
         TransactionService,
@@ -54,22 +54,26 @@ describe('Transaction Controller Test', () => {
       ],
     }).compile();
 
-    transactionService = moduleRef.get<TransactionService>(TransactionService);
-    transactionController = moduleRef.get<TransactionController>(
+    service = testingModule.get<TransactionService>(TransactionService);
+    controller = testingModule.get<TransactionController>(
       TransactionController,
     );
   });
 
-  describe('Create Transaction', () => {
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
+  });
+
+  describe('Create transaction', () => {
     it('should create a new transaction', async () => {
       jest
-        .spyOn(transactionService, 'create')
+        .spyOn(service, 'create')
         .mockImplementation(() =>
           Promise.resolve(createMockCreateTransactionServiceResult()),
         );
 
       const expectedResult = createMockAddTransactionControllerResponse();
-      const result = await transactionController.addTransaction(
+      const result = await controller.addTransaction(
         createMockAddTransactionControllerRequest(),
       );
       expect(result.transactionId).toBe(expectedResult.transactionId);
@@ -79,13 +83,13 @@ describe('Transaction Controller Test', () => {
         createMockAddTransactionControllerRequest();
       mockAddTransactionControllerRequest.threshold = 0;
       jest
-        .spyOn(transactionService, 'create')
+        .spyOn(service, 'create')
         .mockImplementation(() =>
           Promise.resolve(createMockCreateTransactionServiceResult()),
         );
 
       const expectedResult = createMockAddTransactionControllerResponse();
-      const result = await transactionController.addTransaction(
+      const result = await controller.addTransaction(
         mockAddTransactionControllerRequest,
       );
       expect(result.transactionId).toBe(expectedResult.transactionId);
@@ -108,12 +112,12 @@ describe('Transaction Controller Test', () => {
       const mockSignTransactionControllerRequest =
         createMockSignTransactionControllerRequest();
       jest
-        .spyOn(transactionService, 'sign')
+        .spyOn(service, 'sign')
         .mockImplementation(() =>
           Promise.resolve(createMockSignTransactionServiceResult()),
         );
 
-      await transactionController.signTransaction(
+      await controller.signTransaction(
         mockSignTransactionControllerRequest.transaction_id,
         mockSignTransactionControllerRequest.signedTransation,
       );
@@ -123,25 +127,24 @@ describe('Transaction Controller Test', () => {
   describe('Delete Transaction', () => {
     it('should delete a transaction', async () => {
       const transaction_id = DEFAULT.transaction.id;
-      jest
-        .spyOn(transactionService, 'delete')
-        .mockImplementation(() => Promise.resolve());
+      jest.spyOn(service, 'delete').mockImplementation(() => Promise.resolve());
 
-      await transactionController.deleteTransaction(transaction_id);
+      await controller.deleteTransaction(transaction_id);
     });
   });
 
   describe('Get Transactions', () => {
     it('should get transactions linked to a public key', async () => {
       jest
-        .spyOn(transactionService, 'getAllByPublicKey')
+        .spyOn(service, 'getAllByPublicKey')
         .mockImplementation(() =>
           Promise.resolve(createMockGetAllTransactionServiceResult()),
         );
 
       // Same as service result
       const expectedResult = createMockGetTransactionsControllerResponse();
-      const result = await transactionController.getTransactions(
+      // TODO
+      const result = await controller.getByPublicKey(
         createMockGetTransactionsControllerRequest(),
       );
       expect(result.length).toEqual(expectedResult.length);

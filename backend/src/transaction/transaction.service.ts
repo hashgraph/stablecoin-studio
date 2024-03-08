@@ -24,19 +24,15 @@ export default class TransactionService {
   async create(
     createTransactionDto: CreateTransactionRequestDto,
   ): Promise<Transaction> {
-    const emptyStringArray: string[] = [];
     const transaction: Transaction = this.transactionRepository.create({
-      transaction_message: createTransactionDto.transaction_message,
-      description: createTransactionDto.description,
-      hedera_account_id: createTransactionDto.hedera_account_id,
-      key_list: createTransactionDto.key_list,
-      signed_keys: emptyStringArray,
+      ...createTransactionDto,
+      signed_keys: [],
       status: TransactionStatus.PENDING,
       threshold:
         createTransactionDto.threshold === 0
           ? createTransactionDto.key_list.length
           : createTransactionDto.threshold,
-      signed_messages: emptyStringArray,
+      signed_messages: [],
     });
 
     await this.transactionRepository.save(transaction);
