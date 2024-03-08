@@ -99,8 +99,8 @@ describe('Transaction Service Test', () => {
       transaction.signed_keys.forEach((key) => {
         expect(key).toBeUndefined();
       });
-      expect(transaction.signed_messages.length).toEqual(0);
-      transaction.signed_messages.forEach((message) => {
+      expect(transaction.signatures.length).toEqual(0);
+      transaction.signatures.forEach((message) => {
         expect(message).toBeUndefined();
       });
     });
@@ -146,8 +146,8 @@ describe('Transaction Service Test', () => {
       transaction.signed_keys.forEach((key) => {
         expect(key).toBeUndefined();
       });
-      expect(transaction.signed_messages.length).toEqual(0);
-      transaction.signed_messages.forEach((message) => {
+      expect(transaction.signatures.length).toEqual(0);
+      transaction.signatures.forEach((message) => {
         expect(message).toBeUndefined();
       });
     });
@@ -168,6 +168,6 @@ function createMockCreateTxRepositoryResult({
   transaction.hedera_account_id = entityLike.hedera_account_id;
   transaction.key_list = entityLike.key_list;
   transaction.signed_keys = [];
-  transaction.signed_messages = [];
+  transaction.signatures = [];
   return transaction;
 }

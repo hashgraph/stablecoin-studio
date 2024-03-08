@@ -21,7 +21,7 @@ export default class Transaction {
   hedera_account_id: string;
 
   @Column('text', { array: true })
-  signed_messages: string[];
+  signatures: string[];
 
   @Column('text', { array: true })
   key_list: string[];

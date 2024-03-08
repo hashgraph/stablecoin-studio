@@ -30,7 +30,7 @@ export default class TransactionService {
         createTransactionDto.threshold === 0
           ? createTransactionDto.key_list.length
           : createTransactionDto.threshold,
-      signed_messages: [],
+      signatures: [],
     });
 
     await this.transactionRepository.save(transaction);
@@ -63,8 +63,8 @@ export default class TransactionService {
       if (transaction.signed_keys.length >= transaction.threshold) {
         transaction.status = TransactionStatus.SIGNED;
       }
-      transaction.signed_messages = [
-        ...transaction.signed_messages,
+      transaction.signatures = [
+        ...transaction.signatures,
         signTransactionDto.signed_transaction_message,
       ];
       await this.transactionRepository.save(transaction);

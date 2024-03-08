@@ -31,7 +31,7 @@ const DEFAULT = {
       '75ec8c1997089874ce881690e95900f821a7f69152814728be971e67e4bc2224',
       '4617e0079f0e943fc407e77ca9fc366f47ccdb4cbec6d5d51eeb996e781c052d',
     ],
-    signed_messages: [
+    signatures: [
       '0a81012a7f0a7b0a1a0a0b08e8eea5af0610defbe66e12090800100018ddd6a20118001206080010001803188084af5f2202087832005a4a0a22122094ac3f274e59cb947c4685d16cfa2d8a5d055984f43a70e1c62d986a474770611080cab5ee0130ffffffffffffffff7f38ffffffffffffffff7f40004a050880ceda038801001200',
       '0a81012a7f0a7b0a1a0a0b08e8eea5af0610defbe66e12090800100018ddd6a20118001206080010001807188084af5f2202087832005a4a0a22122094ac3f274e59cb947c4685d16cfa2d8a5d055984f43a70e1c62d986a474770611080cab5ee0130ffffffffffffffff7f38ffffffffffffffff7f40004a050880ceda038801001200',
     ],
@@ -182,7 +182,7 @@ function createMockCreateTransactionServiceResult(): Transaction {
   transaction.transaction_message = DEFAULT.transaction.message;
   transaction.description = DEFAULT.transaction.description;
   transaction.hedera_account_id = DEFAULT.transaction.hedera_account_id;
-  transaction.signed_messages = DEFAULT.transaction.signed_messages;
+  transaction.signatures = DEFAULT.transaction.signatures;
   transaction.key_list = DEFAULT.transaction.key_list;
   transaction.signed_keys = DEFAULT.transaction.signed_keys;
   transaction.status = DEFAULT.transaction.status;
@@ -217,7 +217,7 @@ function createMockSignTransactionServiceResult(): Transaction {
   transaction.transaction_message = DEFAULT.transaction.message;
   transaction.description = DEFAULT.transaction.description;
   transaction.hedera_account_id = DEFAULT.transaction.hedera_account_id;
-  transaction.signed_messages = DEFAULT.transaction.signed_messages;
+  transaction.signatures = DEFAULT.transaction.signatures;
   transaction.key_list = DEFAULT.transaction.key_list;
   transaction.signed_keys = DEFAULT.transaction.signed_keys;
   transaction.status = TransactionStatus.SIGNED;
@@ -230,7 +230,7 @@ function createMockSignTransactionControllerRequest() {
   return {
     transaction_id: DEFAULT.transaction.id,
     signedTransation: {
-      signed_transaction_message: DEFAULT.transaction.signed_messages[0],
+      signed_transaction_message: DEFAULT.transaction.signatures[0],
       public_key: DEFAULT.transaction.key_list[0],
     } as SignTransactionRequestDto,
   };
