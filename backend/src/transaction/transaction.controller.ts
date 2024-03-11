@@ -64,9 +64,20 @@ export default class TransactionController {
         createTransactionDto,
       ),
     );
-    const transaction: Transaction =
-      await this.transactionService.create(createTransactionDto);
-    return new CreateTransactionResponseDto(transaction.id);
+    try {
+      const transaction: Transaction =
+        await this.transactionService.create(createTransactionDto);
+      return new CreateTransactionResponseDto(transaction.id);
+    } catch (error) {
+      this.loggerService.error(
+        new LogMessageDTO(
+          request[REQUEST_ID_HTTP_HEADER],
+          'Error adding transaction',
+          error.message,
+        ),
+      );
+      throw error;
+    }
   }
 
   @Put(':transactionId')
@@ -90,7 +101,18 @@ export default class TransactionController {
         body: signTransactionDto,
       }),
     );
-    await this.transactionService.sign(signTransactionDto, transactionId);
+    try {
+      await this.transactionService.sign(signTransactionDto, transactionId);
+    } catch (error) {
+      this.loggerService.error(
+        new LogMessageDTO(
+          request[REQUEST_ID_HTTP_HEADER],
+          'Error signing transaction',
+          error.message,
+        ),
+      );
+      throw error;
+    }
   }
 
   @Delete(':transactionId')
@@ -115,7 +137,18 @@ export default class TransactionController {
         transactionId,
       ),
     );
-    await this.transactionService.delete(transactionId);
+    try {
+      await this.transactionService.delete(transactionId);
+    } catch (error) {
+      this.loggerService.error(
+        new LogMessageDTO(
+          request[REQUEST_ID_HTTP_HEADER],
+          'Error deleting transaction',
+          error.message,
+        ),
+      );
+      throw error;
+    }
   }
 
   @Get(':publicKey')
@@ -162,11 +195,21 @@ export default class TransactionController {
         type,
       ),
     );
-
-    return await this.transactionService.getAllByPublicKey(publicKey, type, {
-      page,
-      limit,
-    });
+    try {
+      return await this.transactionService.getAllByPublicKey(publicKey, type, {
+        page,
+        limit,
+      });
+    } catch (error) {
+      this.loggerService.error(
+        new LogMessageDTO(
+          request[REQUEST_ID_HTTP_HEADER],
+          'Error getting transactions',
+          error.message,
+        ),
+      );
+      throw error;
+    }
   }
 
   @ApiOkResponse({
@@ -195,9 +238,20 @@ export default class TransactionController {
       ),
     );
 
-    return await this.transactionService.getAll({
-      page,
-      limit,
-    });
+    try {
+      return await this.transactionService.getAll({
+        page,
+        limit,
+      });
+    } catch (error) {
+      this.loggerService.error(
+        new LogMessageDTO(
+          request[REQUEST_ID_HTTP_HEADER],
+          'Error getting all transactions',
+          error.message,
+        ),
+      );
+      throw error;
+    }
   }
 }
