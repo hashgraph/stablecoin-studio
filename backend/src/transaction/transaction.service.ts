@@ -45,16 +45,6 @@ export default class TransactionService {
     if (!uuidRegex.test(transactionId))
       throw new HttpException('Invalid Transaction uuid format', 400);
 
-    if (
-      !verifySignature(
-        signTransactionDto.public_key,
-        signTransactionDto.signed_transaction_message,
-        signTransactionDto.signed_transaction_message,
-      )
-    ) {
-      throw new HttpException('Invalid signature', 400);
-    }
-
     const transaction = await this.transactionRepository.findOne({
       where: { id: transactionId },
     });
@@ -70,6 +60,16 @@ export default class TransactionService {
       // TODO: coupled with Infrastructure layer, controller should map exceptions to http status codes
       throw new HttpException('Unauthorized Key', 401);
     }
+    if (
+      !verifySignature(
+        signTransactionDto.public_key,
+        transaction.transaction_message,
+        signTransactionDto.signed_transaction_message,
+      )
+    ) {
+      throw new HttpException('Invalid signature', 400);
+    }
+
     transaction.signed_keys = [
       ...transaction.signed_keys,
       signTransactionDto.public_key,
