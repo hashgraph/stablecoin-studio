@@ -2,6 +2,8 @@ import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { ConfigService } from '@nestjs/config';
 import { LoggerService } from '../logger/logger.service';
+import LogMessageDTO from '../logger/dto/log-message.dto.js';
+import { REQUEST_ID_HTTP_HEADER } from '../common/Constants.js';
 
 @Injectable()
 export class OriginGuard implements CanActivate {
@@ -25,8 +27,11 @@ export class OriginGuard implements CanActivate {
     });
 
     this.loggerService.log(
-      `Request allowed : ${isAllowed}`,
-      request['requestId'],
+      new LogMessageDTO(
+        request[REQUEST_ID_HTTP_HEADER],
+        'Request allowed',
+        isAllowed,
+      ),
     );
 
     return isAllowed;

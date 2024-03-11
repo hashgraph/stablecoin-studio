@@ -33,7 +33,9 @@ import {
 import { OriginGuard } from '../guards/origin.guard';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { LoggerService } from '../logger/logger.service';
+import LogMessageDTO from '../logger/dto/log-message.dto.js';
 import { Request } from 'express';
+import { REQUEST_ID_HTTP_HEADER } from '../common/Constants.js';
 
 @ApiTags('Transactions')
 @Controller('/api/transactions')
@@ -56,8 +58,11 @@ export default class TransactionController {
     @Body() createTransactionDto: CreateTransactionRequestDto,
   ): Promise<CreateTransactionResponseDto> {
     this.loggerService.log(
-      `Add transaction body ${JSON.stringify(createTransactionDto)}`,
-      request['requestId'],
+      new LogMessageDTO(
+        request[REQUEST_ID_HTTP_HEADER],
+        'Add transaction body ',
+        createTransactionDto,
+      ),
     );
     const transaction: Transaction =
       await this.transactionService.create(createTransactionDto);
@@ -80,8 +85,10 @@ export default class TransactionController {
     @Body() signTransactionDto: SignTransactionRequestDto,
   ): Promise<void> {
     this.loggerService.log(
-      `Sign transaction id ${transactionId}, body ${JSON.stringify(signTransactionDto)}`,
-      request['requestId'],
+      new LogMessageDTO(request[REQUEST_ID_HTTP_HEADER], 'Sign transaction', {
+        id: transactionId,
+        body: signTransactionDto,
+      }),
     );
     await this.transactionService.sign(signTransactionDto, transactionId);
   }
@@ -102,8 +109,11 @@ export default class TransactionController {
     @Param('transactionId') transactionId: string,
   ): Promise<void> {
     this.loggerService.log(
-      `Delete transaction id ${transactionId}`,
-      request['requestId'],
+      new LogMessageDTO(
+        request[REQUEST_ID_HTTP_HEADER],
+        'Delete transaction',
+        transactionId,
+      ),
     );
     await this.transactionService.delete(transactionId);
   }
@@ -128,15 +138,14 @@ export default class TransactionController {
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit?: number,
   ): Promise<Pagination<GetTransactionsResponseDto>> {
     this.loggerService.log(
-      `Get transactions for public key ${publicKey}, type ${type}, page ${page ? page : '0'}, limit ${limit ? limit : '0'}`,
-      request['requestId'],
+      new LogMessageDTO(request[REQUEST_ID_HTTP_HEADER], 'Get transactions', {
+        key: publicKey,
+        type: type,
+      }),
     );
     limit = limit > 100 ? 100 : limit;
     type = type ? type.toLowerCase() : type;
-    this.loggerService.log(
-      `type ${type}, limit ${limit}`,
-      request['requestId'],
-    );
+
     return await this.transactionService.getAllByPublicKey(publicKey, type, {
       page,
       limit,

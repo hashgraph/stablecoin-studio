@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common';
 import * as winston from 'winston';
 import * as DailyRotateFile from 'winston-daily-rotate-file';
 import { ConfigService } from '@nestjs/config';
+import LogMessageDTO from './dto/log-message.dto.js';
 
 @Injectable()
 export class LoggerService {
@@ -14,9 +15,14 @@ export class LoggerService {
       level: 'info',
       format: winston.format.combine(
         winston.format.timestamp(), // Add timestamp
-        winston.format.printf(({ timestamp, ...info }) => {
-          // Customize log message format
-          return JSON.stringify({ timestamp, ...info }); // Include timestamp as the first property
+        winston.format.printf(({ timestamp, level, ...info }) => {
+          // Construct log message object with nested properties
+          const logMessage = {
+            timestamp,
+            level,
+            ...info,
+          };
+          return JSON.stringify(logMessage); // Convert log message object to JSON string
         }),
       ),
       transports: [
@@ -31,19 +37,19 @@ export class LoggerService {
     });
   }
 
-  log(message: string, requestId: string) {
-    this.logger.log('info', `${requestId} ${message}`);
+  log(message: LogMessageDTO) {
+    this.logger.log('info', `${JSON.stringify(message)}`);
   }
 
-  error(message: string, trace: string, requestId: string) {
-    this.logger.error(`${requestId} ${message}`, trace);
+  error(message: LogMessageDTO) {
+    this.logger.error(`${message}`);
   }
 
-  warn(message: string, requestId: string) {
-    this.logger.warn(`${requestId} ${message}`);
+  warn(message: LogMessageDTO) {
+    this.logger.warn(`${message}`);
   }
 
-  debug(message: string, requestId: string) {
-    this.logger.debug(`${requestId} ${message}`);
+  debug(message: LogMessageDTO) {
+    this.logger.debug(`${message}`);
   }
 }
