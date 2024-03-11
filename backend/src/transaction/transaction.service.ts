@@ -11,6 +11,7 @@ import {
 } from 'nestjs-typeorm-paginate';
 import { GetTransactionsResponseDto } from './dto/get-transactions-response.dto';
 import { uuidRegex } from '../common/Regexp';
+import { LoggerService } from '../logger/logger.service.js';
 import { verifySignature } from '../utils/utils';
 
 @Injectable()
@@ -18,6 +19,7 @@ export default class TransactionService {
   constructor(
     @InjectRepository(Transaction)
     private readonly transactionRepository: Repository<Transaction>,
+    private readonly loggerService: LoggerService,
   ) {}
 
   async create(

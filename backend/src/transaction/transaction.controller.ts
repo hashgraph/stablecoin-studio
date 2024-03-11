@@ -1,4 +1,5 @@
 import {
+  Req,
   Body,
   Controller,
   DefaultValuePipe,
@@ -31,11 +32,18 @@ import {
 } from '@nestjs/swagger';
 import { OriginGuard } from '../guards/origin.guard';
 import { Pagination } from 'nestjs-typeorm-paginate';
+import { LoggerService } from '../logger/logger.service';
+import LogMessageDTO from '../logger/dto/log-message.dto.js';
+import { Request } from 'express';
+import { REQUEST_ID_HTTP_HEADER } from '../common/Constants.js';
 
 @ApiTags('Transactions')
 @Controller('/api/transactions')
 export default class TransactionController {
-  constructor(private readonly transactionService: TransactionService) {}
+  constructor(
+    private readonly transactionService: TransactionService,
+    private readonly loggerService: LoggerService,
+  ) {}
 
   @Post()
   @UseGuards(OriginGuard)
@@ -46,11 +54,30 @@ export default class TransactionController {
   })
   @ApiResponse({ status: 500, description: 'Internal Server Error' })
   async addTransaction(
+    @Req() request: Request,
     @Body() createTransactionDto: CreateTransactionRequestDto,
   ): Promise<CreateTransactionResponseDto> {
-    const transaction: Transaction =
-      await this.transactionService.create(createTransactionDto);
-    return new CreateTransactionResponseDto(transaction.id);
+    this.loggerService.log(
+      new LogMessageDTO(
+        request[REQUEST_ID_HTTP_HEADER],
+        'Add transaction body ',
+        createTransactionDto,
+      ),
+    );
+    try {
+      const transaction: Transaction =
+        await this.transactionService.create(createTransactionDto);
+      return new CreateTransactionResponseDto(transaction.id);
+    } catch (error) {
+      this.loggerService.error(
+        new LogMessageDTO(
+          request[REQUEST_ID_HTTP_HEADER],
+          'Error adding transaction',
+          error.message,
+        ),
+      );
+      throw error;
+    }
   }
 
   @Put(':transactionId')
@@ -64,10 +91,28 @@ export default class TransactionController {
     required: true,
   })
   async signTransaction(
+    @Req() request: Request,
     @Param('transactionId') transactionId: string,
     @Body() signTransactionDto: SignTransactionRequestDto,
   ): Promise<void> {
-    await this.transactionService.sign(signTransactionDto, transactionId);
+    this.loggerService.log(
+      new LogMessageDTO(request[REQUEST_ID_HTTP_HEADER], 'Sign transaction', {
+        id: transactionId,
+        body: signTransactionDto,
+      }),
+    );
+    try {
+      await this.transactionService.sign(signTransactionDto, transactionId);
+    } catch (error) {
+      this.loggerService.error(
+        new LogMessageDTO(
+          request[REQUEST_ID_HTTP_HEADER],
+          'Error signing transaction',
+          error.message,
+        ),
+      );
+      throw error;
+    }
   }
 
   @Delete(':transactionId')
@@ -82,9 +127,28 @@ export default class TransactionController {
     required: true,
   })
   async deleteTransaction(
+    @Req() request: Request,
     @Param('transactionId') transactionId: string,
   ): Promise<void> {
-    await this.transactionService.delete(transactionId);
+    this.loggerService.log(
+      new LogMessageDTO(
+        request[REQUEST_ID_HTTP_HEADER],
+        'Delete transaction',
+        transactionId,
+      ),
+    );
+    try {
+      await this.transactionService.delete(transactionId);
+    } catch (error) {
+      this.loggerService.error(
+        new LogMessageDTO(
+          request[REQUEST_ID_HTTP_HEADER],
+          'Error deleting transaction',
+          error.message,
+        ),
+      );
+      throw error;
+    }
   }
 
   @Get(':publicKey')
@@ -100,17 +164,52 @@ export default class TransactionController {
     required: true,
   })
   async getByPublicKey(
+    @Req() request: Request,
     @Param('publicKey') publicKey: string,
     @Query('type') type?: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page?: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit?: number,
   ): Promise<Pagination<GetTransactionsResponseDto>> {
+    this.loggerService.log(
+      new LogMessageDTO(request[REQUEST_ID_HTTP_HEADER], 'Get transactions', {
+        key: publicKey,
+        type: type,
+        page: page,
+        limit: limit,
+      }),
+    );
     limit = limit > 100 ? 100 : limit;
     type = type ? type.toLowerCase() : type;
-    return await this.transactionService.getAllByPublicKey(publicKey, type, {
-      page,
-      limit,
-    });
+
+    this.loggerService.debug(
+      new LogMessageDTO(
+        request[REQUEST_ID_HTTP_HEADER],
+        'Get transactions limit set',
+        limit,
+      ),
+    );
+    this.loggerService.debug(
+      new LogMessageDTO(
+        request[REQUEST_ID_HTTP_HEADER],
+        'Get transactions type set',
+        type,
+      ),
+    );
+    try {
+      return await this.transactionService.getAllByPublicKey(publicKey, type, {
+        page,
+        limit,
+      });
+    } catch (error) {
+      this.loggerService.error(
+        new LogMessageDTO(
+          request[REQUEST_ID_HTTP_HEADER],
+          'Error getting transactions',
+          error.message,
+        ),
+      );
+      throw error;
+    }
   }
 
   @ApiOkResponse({
@@ -120,13 +219,39 @@ export default class TransactionController {
   @ApiForbiddenResponse({ description: 'Forbidden', type: ForbiddenException })
   @Get()
   async getAll(
+    @Req() request: Request,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page?: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit?: number,
   ): Promise<Pagination<GetTransactionsResponseDto>> {
+    this.loggerService.log(
+      new LogMessageDTO(request[REQUEST_ID_HTTP_HEADER], 'Get All', {
+        page: page,
+        limit: limit,
+      }),
+    );
     limit = limit > 100 ? 100 : limit;
-    return await this.transactionService.getAll({
-      page,
-      limit,
-    });
+    this.loggerService.debug(
+      new LogMessageDTO(
+        request[REQUEST_ID_HTTP_HEADER],
+        'Get All limit set',
+        limit,
+      ),
+    );
+
+    try {
+      return await this.transactionService.getAll({
+        page,
+        limit,
+      });
+    } catch (error) {
+      this.loggerService.error(
+        new LogMessageDTO(
+          request[REQUEST_ID_HTTP_HEADER],
+          'Error getting all transactions',
+          error.message,
+        ),
+      );
+      throw error;
+    }
   }
 }
