@@ -15,6 +15,7 @@ services:
       # This ensures that the NestJS container manages the node_modules folder
       # rather than synchronizes it with the host machine
       - /app/node_modules
+      - log:/var/lib/logs
     ports:
       - '${SERVER_PORT}:${SERVER_PORT}'
     networks:
@@ -47,6 +48,7 @@ services:
 
 volumes:
   db:
+  log:
     driver: local
 
 networks:

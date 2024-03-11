@@ -1,5 +1,5 @@
 import {
-  BadRequestException,
+  Req,
   Body,
   Controller,
   DefaultValuePipe,
@@ -32,12 +32,16 @@ import {
 } from '@nestjs/swagger';
 import { OriginGuard } from '../guards/origin.guard';
 import { Pagination } from 'nestjs-typeorm-paginate';
-import { IsNotEmpty } from 'class-validator';
+import { LoggerService } from '../logger/logger.service';
+import { Request } from 'express';
 
 @ApiTags('Transactions')
 @Controller('/api/transactions')
 export default class TransactionController {
-  constructor(private readonly transactionService: TransactionService) {}
+  constructor(
+    private readonly transactionService: TransactionService,
+    private readonly loggerService: LoggerService,
+  ) {}
 
   @Post()
   @UseGuards(OriginGuard)
@@ -48,8 +52,13 @@ export default class TransactionController {
   })
   @ApiResponse({ status: 500, description: 'Internal Server Error' })
   async addTransaction(
+    @Req() request: Request,
     @Body() createTransactionDto: CreateTransactionRequestDto,
   ): Promise<CreateTransactionResponseDto> {
+    this.loggerService.log(
+      `Add transaction body ${JSON.stringify(createTransactionDto)}`,
+      request['requestId'],
+    );
     const transaction: Transaction =
       await this.transactionService.create(createTransactionDto);
     return new CreateTransactionResponseDto(transaction.id);
@@ -66,9 +75,14 @@ export default class TransactionController {
     required: true,
   })
   async signTransaction(
+    @Req() request: Request,
     @Param('transactionId') transactionId: string,
     @Body() signTransactionDto: SignTransactionRequestDto,
   ): Promise<void> {
+    this.loggerService.log(
+      `Sign transaction id ${transactionId}, body ${JSON.stringify(signTransactionDto)}`,
+      request['requestId'],
+    );
     await this.transactionService.sign(signTransactionDto, transactionId);
   }
 
@@ -84,8 +98,13 @@ export default class TransactionController {
     required: true,
   })
   async deleteTransaction(
+    @Req() request: Request,
     @Param('transactionId') transactionId: string,
   ): Promise<void> {
+    this.loggerService.log(
+      `Delete transaction id ${transactionId}`,
+      request['requestId'],
+    );
     await this.transactionService.delete(transactionId);
   }
 
@@ -102,13 +121,22 @@ export default class TransactionController {
     required: true,
   })
   async getByPublicKey(
+    @Req() request: Request,
     @Param('publicKey') publicKey: string,
     @Query('type') type?: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page?: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit?: number,
   ): Promise<Pagination<GetTransactionsResponseDto>> {
+    this.loggerService.log(
+      `Get transactions for public key ${publicKey}, type ${type}, page ${page ? page : '0'}, limit ${limit ? limit : '0'}`,
+      request['requestId'],
+    );
     limit = limit > 100 ? 100 : limit;
     type = type ? type.toLowerCase() : type;
+    this.loggerService.log(
+      `type ${type}, limit ${limit}`,
+      request['requestId'],
+    );
     return await this.transactionService.getAllByPublicKey(publicKey, type, {
       page,
       limit,
@@ -122,6 +150,7 @@ export default class TransactionController {
   @ApiForbiddenResponse({ description: 'Forbidden', type: ForbiddenException })
   @Get()
   async getAll(
+    @Req() request: Request,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page?: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit?: number,
   ): Promise<Pagination<GetTransactionsResponseDto>> {

@@ -1,8 +1,10 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TransactionModule } from './transaction/transaction.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import Transaction from './transaction/transaction.entity';
+import { LoggerService } from './logger/logger.service.js';
+import { RequestIDMiddleware } from './middleware/requestId.middleware.js';
 
 @Module({
   imports: [
@@ -25,5 +27,10 @@ import Transaction from './transaction/transaction.entity';
     }),
     TransactionModule,
   ],
+  providers: [LoggerService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(RequestIDMiddleware).forRoutes('*');
+  }
+}
