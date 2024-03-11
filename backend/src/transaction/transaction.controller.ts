@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   DefaultValuePipe,
@@ -32,7 +31,6 @@ import {
 } from '@nestjs/swagger';
 import { OriginGuard } from '../guards/origin.guard';
 import { Pagination } from 'nestjs-typeorm-paginate';
-import { IsNotEmpty } from 'class-validator';
 
 @ApiTags('Transactions')
 @Controller('/api/transactions')
