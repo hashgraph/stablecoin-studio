@@ -12,6 +12,7 @@ import {
 import { GetTransactionsResponseDto } from './dto/get-transactions-response.dto';
 import { uuidRegex } from '../common/Regexp';
 import { LoggerService } from '../logger/logger.service.js';
+import { verifySignature } from '../utils/utils';
 
 @Injectable()
 export default class TransactionService {
@@ -32,7 +33,7 @@ export default class TransactionService {
         createTransactionDto.threshold === 0
           ? createTransactionDto.key_list.length
           : createTransactionDto.threshold,
-      signed_messages: [],
+      signatures: [],
     });
 
     await this.transactionRepository.save(transaction);
@@ -46,34 +47,45 @@ export default class TransactionService {
     if (!uuidRegex.test(transactionId))
       throw new HttpException('Invalid Transaction uuid format', 400);
 
-    //TODO VALIDATE SIGNATURE WITH THE PUBLIC KEY
-
     const transaction = await this.transactionRepository.findOne({
       where: { id: transactionId },
     });
-    if (transaction) {
-      if (transaction.signed_keys.includes(signTransactionDto.public_key)) {
-        throw new HttpException('message already signed', 409);
-      }
-      if (!transaction.key_list.includes(signTransactionDto.public_key)) {
-        throw new HttpException('Unauthorized Key', 401);
-      }
-      transaction.signed_keys = [
-        ...transaction.signed_keys,
-        signTransactionDto.public_key,
-      ];
-      if (transaction.signed_keys.length >= transaction.threshold) {
-        transaction.status = TransactionStatus.SIGNED;
-      }
-      transaction.signed_messages = [
-        ...transaction.signed_messages,
-        signTransactionDto.signed_transaction_message,
-      ];
-      await this.transactionRepository.save(transaction);
-      return transaction;
-    } else {
+    if (!transaction) {
+      // TODO: coupled with Infrastructure layer, controller should map exceptions to http status codes
       throw new HttpException('Transaction not found', 404);
     }
+    if (transaction.signed_keys.includes(signTransactionDto.public_key)) {
+      // TODO: coupled with Infrastructure layer, controller should map exceptions to http status codes
+      throw new HttpException('message already signed', 409);
+    }
+    if (!transaction.key_list.includes(signTransactionDto.public_key)) {
+      // TODO: coupled with Infrastructure layer, controller should map exceptions to http status codes
+      throw new HttpException('Unauthorized Key', 401);
+    }
+    if (
+      !verifySignature(
+        signTransactionDto.public_key,
+        transaction.transaction_message,
+        signTransactionDto.signed_transaction_message,
+      )
+    ) {
+      throw new HttpException('Invalid signature', 400);
+    }
+
+    transaction.signed_keys = [
+      ...transaction.signed_keys,
+      signTransactionDto.public_key,
+    ];
+    transaction.signatures = [
+      ...transaction.signatures,
+      signTransactionDto.signed_transaction_message,
+    ];
+    // Update transaction status to 'SIGNED' if the number of signed keys meets or exceeds the threshold
+    if (transaction.signed_keys.length >= transaction.threshold) {
+      transaction.status = TransactionStatus.SIGNED;
+    }
+    await this.transactionRepository.save(transaction);
+    return transaction;
   }
 
   async delete(transactionId: string): Promise<void> {

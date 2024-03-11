@@ -6,10 +6,12 @@ import TransactionService from '../../src/transaction/transaction.service';
 import Transaction, {
   TransactionStatus,
 } from '../../src/transaction/transaction.entity';
+import { SignTransactionRequestDto } from 'src/transaction/dto/sign-transaction-request.dto';
+import { randomUUID } from 'crypto';
 
 const DEFAULT = {
   transaction: {
-    id: '0.0.2665309',
+    id: randomUUID(),
     message:
       '0a81012a7f0a7b0a1a0a0b08e8eea5af0610defbe66e12090800100018ddd6a20118001206080010001803188084af5f2202087832005a4a0a22122094ac3f274e59cb947c4685d16cfa2d8a5d055984f43a70e1c62d986a474770611080cab5ee0130ffffffffffffffff7f38ffffffffffffffff7f40004a050880ceda0388010012000a81012a7f0a7b0a1a0a0b08e8eea5af0610defbe66e12090800100018ddd6a20118001206080010001807188084af5f2202087832005a4a0a22122094ac3f274e59cb947c4685d16cfa2d8a5d055984f43a70e1c62d986a474770611080cab5ee0130ffffffffffffffff7f38ffffffffffffffff7f40004a050880ceda0388010012000a81012a7f0a7b0a1a0a0b08e8eea5af0610defbe66e12090800100018ddd6a20118001206080010001803188084af5f2202087832005a4a0a22122094ac3f274e59cb947c4685d16cfa2d8a5d055984f43a70e1c62d986a474770611080cab5ee0130ffffffffffffffff7f38ffffffffffffffff7f40004a050880ceda0388010012000a81012a7f0a7b0a1a0a0b08e8eea5af0610defbe66e12090800100018ddd6a20118001206080010001809188084af5f2202087832005a4a0a22122094ac3f274e59cb947c4685d16cfa2d8a5d055984f43a70e1c62d986a474770611080cab5ee0130ffffffffffffffff7f38ffffffffffffffff7f40004a050880ceda0388010012000a81012a7f0a7b0a1a0a0b08e8eea5af0610defbe66e12090800100018ddd6a20118001206080010001804188084af5f2202087832005a4a0a22122094ac3f274e59cb947c4685d16cfa2d8a5d055984f43a70e1c62d986a474770611080cab5ee0130ffffffffffffffff7f38ffffffffffffffff7f40004a050880ceda038801001200',
     description: 'This transaction is for the creation of a new StableCoin',
@@ -27,7 +29,7 @@ const DEFAULT = {
     ],
     signed_messages: [
       '0a81012a7f0a7b0a1a0a0b08e8eea5af0610defbe66e12090800100018ddd6a20118001206080010001803188084af5f2202087832005a4a0a22122094ac3f274e59cb947c4685d16cfa2d8a5d055984f43a70e1c62d986a474770611080cab5ee0130ffffffffffffffff7f38ffffffffffffffff7f40004a050880ceda038801001200',
-      '0a81012a7f0a7b0a1a0a0b08e8eea5af0610defbe66e12090800100018ddd6a20118001206080010001807188084af5f2202087832005a4a0a22122094ac3f274e59cb947c4685d16cfa2d8a5d055984f43a70e1c62d986a474770611080cab5ee0130ffffffffffffffff7f38ffffffffffffffff7f40004a050880ceda038801001200',
+      '1a81012a7f0a7b0a1a0a0b08e8eea5af0610defbe66e12090800100018ddd6a20118001206080010001807188084af5f2202087832005a4a0a22122094ac3f274e59cb947c4685d16cfa2d8a5d055984f43a70e1c62d986a474770611080cab5ee0130ffffffffffffffff7f38ffffffffffffffff7f40004a050880ceda038801001200',
     ],
   },
 };
@@ -58,7 +60,7 @@ describe('Transaction Service Test', () => {
   });
   describe('Create transaction', () => {
     it('should create a transaction', async () => {
-      // Arrange
+      //* 🗂️ Arrange ⬇
       const createTransactionDto = {
         transaction_message: DEFAULT.transaction.message,
         description: DEFAULT.transaction.description,
@@ -77,10 +79,10 @@ describe('Transaction Service Test', () => {
           Promise.resolve(repository.create(createTransactionDto)),
         );
 
-      // Act
+      //* 🎬 Act ⬇
       const transaction = await service.create(createTransactionDto);
 
-      // Assert
+      //* ☑️ Assert ⬇
       expect(transaction).toBeDefined();
       expect(transaction.id).toBeDefined();
       expect(transaction.transaction_message).toEqual(
@@ -99,13 +101,13 @@ describe('Transaction Service Test', () => {
       transaction.signed_keys.forEach((key) => {
         expect(key).toBeUndefined();
       });
-      expect(transaction.signed_messages.length).toEqual(0);
-      transaction.signed_messages.forEach((message) => {
+      expect(transaction.signatures.length).toEqual(0);
+      transaction.signatures.forEach((message) => {
         expect(message).toBeUndefined();
       });
     });
     it('should create a transaction with threshold equal to 0', async () => {
-      // Arrange
+      //* 🗂️ Arrange ⬇
       const createTransactionDto = {
         transaction_message: DEFAULT.transaction.message,
         description: DEFAULT.transaction.description,
@@ -124,10 +126,10 @@ describe('Transaction Service Test', () => {
           Promise.resolve(repository.create(createTransactionDto)),
         );
 
-      // Act
+      //* 🎬 Act ⬇
       const transaction = await service.create(createTransactionDto);
 
-      // Assert
+      //* ☑️ Assert ⬇
       expect(transaction).toBeDefined();
       expect(transaction.id).toBeDefined();
       expect(transaction.transaction_message).toEqual(
@@ -146,13 +148,169 @@ describe('Transaction Service Test', () => {
       transaction.signed_keys.forEach((key) => {
         expect(key).toBeUndefined();
       });
-      expect(transaction.signed_messages.length).toEqual(0);
-      transaction.signed_messages.forEach((message) => {
+      expect(transaction.signatures.length).toEqual(0);
+      transaction.signatures.forEach((message) => {
         expect(message).toBeUndefined();
       });
     });
   });
+  describe('Sign transaction', () => {
+    it('should sign a transaction in pending and remain in pending', async () => {
+      //* 🗂️ Arrange ⬇
+      const THRESHOLD = 2;
+      // Mock Input
+      const signTransactionDto = {
+        signed_transaction_message: DEFAULT.transaction.signed_messages[0],
+        public_key: DEFAULT.transaction.key_list[0],
+      } as SignTransactionRequestDto;
+      const signTransactionCommand = {
+        body: signTransactionDto,
+        txId: DEFAULT.transaction.id,
+      };
+      // Mock the repository
+      jest.spyOn(repository, 'findOne').mockImplementation(() =>
+        Promise.resolve(
+          createMockTransaction({
+            id: signTransactionCommand.txId,
+            threshold: THRESHOLD,
+            status: TransactionStatus.PENDING,
+            signedKeys: [],
+            signedMessages: [],
+          }),
+        ),
+      );
+      jest
+        .spyOn(repository, 'save')
+        .mockImplementation((transaction: Transaction) =>
+          Promise.resolve(transaction),
+        );
+      // Mock expected result
+      const expected = createMockTransaction({
+        id: signTransactionCommand.txId,
+        threshold: THRESHOLD,
+        status: TransactionStatus.PENDING,
+        signedKeys: [signTransactionDto.public_key],
+        signedMessages: [signTransactionDto.signed_transaction_message],
+      });
+
+      //* 🎬 Act ⬇
+      const transaction = await service.sign(
+        signTransactionCommand.body,
+        signTransactionCommand.txId,
+      );
+
+      //* ☑️ Assert ⬇
+      expect(transaction).toBeDefined();
+      expect(transaction.id).toBeDefined();
+      expect(transaction.transaction_message).toEqual(
+        expected.transaction_message,
+      );
+      expect(transaction.description).toEqual(expected.description);
+      expect(transaction.status).toEqual(TransactionStatus.PENDING);
+      expect(transaction.threshold).toEqual(expected.threshold);
+      expect(transaction.hedera_account_id).toEqual(expected.hedera_account_id);
+      transaction.key_list.forEach((key, index) => {
+        expect(key).toEqual(expected.key_list[index]);
+      });
+      expect(
+        transaction.key_list.includes(signTransactionDto.public_key),
+      ).toBeTruthy();
+      expect(transaction.signed_keys.length).toEqual(1);
+      expect(transaction.signed_keys[0]).toEqual(signTransactionDto.public_key);
+      expect(
+        transaction.signed_keys.includes(signTransactionDto.public_key),
+      ).toBeTruthy();
+      expect(transaction.signed_messages.length).toEqual(1);
+      expect(transaction.signed_messages[0]).toEqual(
+        signTransactionDto.signed_transaction_message,
+      );
+      expect(
+        transaction.signed_messages.includes(
+          signTransactionDto.signed_transaction_message,
+        ),
+      ).toBeTruthy();
+    });
+    it('should sign a transaction in pending and change to sign', async () => {
+      //* 🗂️ Arrange ⬇
+      const THRESHOLD = 2;
+      const signTransactionDto = {
+        signed_transaction_message: DEFAULT.transaction.signed_messages[0],
+        public_key: DEFAULT.transaction.key_list[0],
+      } as SignTransactionRequestDto;
+      const signTransactionCommand = {
+        body: signTransactionDto,
+        txId: DEFAULT.transaction.id,
+      };
+      // Mock the repository
+      jest.spyOn(repository, 'findOne').mockImplementation(() =>
+        Promise.resolve(
+          createMockTransaction({
+            id: signTransactionCommand.txId,
+            threshold: THRESHOLD,
+            status: TransactionStatus.PENDING,
+            signedKeys: [DEFAULT.transaction.key_list[1]],
+            signedMessages: [DEFAULT.transaction.signed_messages[1]],
+          }),
+        ),
+      );
+      jest
+        .spyOn(repository, 'save')
+        .mockImplementation((transaction: Transaction) =>
+          Promise.resolve(transaction),
+        );
+      // Mock expected result
+      const expected = createMockTransaction({
+        id: signTransactionCommand.txId,
+        threshold: THRESHOLD,
+        status: TransactionStatus.SIGNED,
+        signedKeys: [
+          signTransactionDto.signed_transaction_message[1],
+          signTransactionDto.public_key,
+        ],
+        signedMessages: [
+          DEFAULT.transaction.signed_messages[1],
+          signTransactionDto.signed_transaction_message,
+        ],
+      });
+
+      //* 🎬 Act ⬇
+      const transaction = await service.sign(
+        signTransactionCommand.body,
+        signTransactionCommand.txId,
+      );
+
+      //* ☑️ Assert ⬇
+      expect(transaction).toBeDefined();
+      expect(transaction.id).toBeDefined();
+      expect(transaction.id).toEqual(expected.id);
+      expect(transaction.transaction_message).toEqual(
+        expected.transaction_message,
+      );
+      expect(transaction.description).toEqual(expected.description);
+      expect(transaction.status).toEqual(expected.status);
+      expect(transaction.threshold).toEqual(expected.threshold);
+      expect(transaction.hedera_account_id).toEqual(expected.hedera_account_id);
+      transaction.key_list.forEach((key, index) => {
+        expect(key).toEqual(expected.key_list[index]);
+      });
+      expect(
+        transaction.key_list.includes(signTransactionDto.public_key),
+      ).toBeTruthy();
+      expect(transaction.signed_keys.length).toEqual(2);
+      expect(
+        transaction.signed_keys.includes(signTransactionDto.public_key),
+      ).toBeTruthy();
+      expect(transaction.signed_messages.length).toEqual(2);
+      expect(
+        transaction.signed_messages.includes(
+          signTransactionDto.signed_transaction_message,
+        ),
+      ).toBeTruthy();
+    });
+  });
 });
+
+//* 🛠️ Mocks ⬇
 
 function createMockCreateTxRepositoryResult({
   entityLike,
@@ -168,6 +326,40 @@ function createMockCreateTxRepositoryResult({
   transaction.hedera_account_id = entityLike.hedera_account_id;
   transaction.key_list = entityLike.key_list;
   transaction.signed_keys = [];
-  transaction.signed_messages = [];
+  transaction.signatures = [];
+  return transaction;
+}
+
+function createMockTransaction({
+  id = DEFAULT.transaction.id,
+  message = DEFAULT.transaction.message,
+  description = DEFAULT.transaction.description,
+  status = DEFAULT.transaction.status,
+  threshold = DEFAULT.transaction.threshold,
+  accountId = DEFAULT.transaction.hedera_account_id,
+  keyList = DEFAULT.transaction.key_list,
+  signedKeys = DEFAULT.transaction.signed_keys,
+  signedMessages = DEFAULT.transaction.signed_messages,
+}: {
+  id?: string;
+  message?: string;
+  description?: string;
+  status?: TransactionStatus;
+  threshold?: number;
+  accountId?: string;
+  keyList?: string[];
+  signedKeys?: string[];
+  signedMessages?: string[];
+}): Transaction {
+  const transaction = new Transaction();
+  transaction.id = id;
+  transaction.transaction_message = message;
+  transaction.description = description;
+  transaction.status = status;
+  transaction.threshold = threshold;
+  transaction.hedera_account_id = accountId;
+  transaction.key_list = keyList;
+  transaction.signed_keys = signedKeys;
+  transaction.signed_messages = signedMessages;
   return transaction;
 }
