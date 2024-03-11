@@ -1,6 +1,7 @@
 import * as nacl from 'tweetnacl';
 import { decodeUTF8 } from 'tweetnacl-util';
 import * as elliptic from 'elliptic';
+import { hexRegex } from '../common/Regexp';
 
 export function verifySignature(
   publicKeyHex: string,
@@ -34,7 +35,7 @@ export function verifySignature(
 }
 
 function hexToUint8Array(hexString: string): Uint8Array {
-  if (!hexString.match(/^[0-9a-fA-F]*$/)) {
+  if (!hexRegex.test(hexString)) {
     throw new Error('Invalid hex string');
   }
   return new Uint8Array(
