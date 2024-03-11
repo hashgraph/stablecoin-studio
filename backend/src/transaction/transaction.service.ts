@@ -11,6 +11,7 @@ import {
 } from 'nestjs-typeorm-paginate';
 import { GetTransactionsResponseDto } from './dto/get-transactions-response.dto';
 import { uuidRegex } from '../common/Regexp';
+import { verifySignature } from '../utils/utils';
 
 @Injectable()
 export default class TransactionService {
@@ -44,34 +45,41 @@ export default class TransactionService {
     if (!uuidRegex.test(transactionId))
       throw new HttpException('Invalid Transaction uuid format', 400);
 
-    //TODO VALIDATE SIGNATURE WITH THE PUBLIC KEY
+    if (
+      !verifySignature(
+        signTransactionDto.public_key,
+        signTransactionDto.signed_transaction_message,
+        signTransactionDto.signed_transaction_message,
+      )
+    ) {
+      throw new HttpException('Invalid signature', 400);
+    }
 
     const transaction = await this.transactionRepository.findOne({
       where: { id: transactionId },
     });
-    if (transaction) {
-      if (transaction.signed_keys.includes(signTransactionDto.public_key)) {
-        throw new HttpException('message already signed', 409);
-      }
-      if (!transaction.key_list.includes(signTransactionDto.public_key)) {
-        throw new HttpException('Unauthorized Key', 401);
-      }
-      transaction.signed_keys = [
-        ...transaction.signed_keys,
-        signTransactionDto.public_key,
-      ];
-      if (transaction.signed_keys.length >= transaction.threshold) {
-        transaction.status = TransactionStatus.SIGNED;
-      }
-      transaction.signatures = [
-        ...transaction.signatures,
-        signTransactionDto.signed_transaction_message,
-      ];
-      await this.transactionRepository.save(transaction);
-      return transaction;
-    } else {
+    if (!transaction) {
       throw new HttpException('Transaction not found', 404);
     }
+    if (transaction.signed_keys.includes(signTransactionDto.public_key)) {
+      throw new HttpException('message already signed', 409);
+    }
+    if (!transaction.key_list.includes(signTransactionDto.public_key)) {
+      throw new HttpException('Unauthorized Key', 401);
+    }
+    transaction.signed_keys = [
+      ...transaction.signed_keys,
+      signTransactionDto.public_key,
+    ];
+    if (transaction.signed_keys.length >= transaction.threshold) {
+      transaction.status = TransactionStatus.SIGNED;
+    }
+    transaction.signatures = [
+      ...transaction.signatures,
+      signTransactionDto.signed_transaction_message,
+    ];
+    await this.transactionRepository.save(transaction);
+    return transaction;
   }
 
   async delete(transactionId: string): Promise<void> {
