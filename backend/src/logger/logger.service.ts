@@ -12,7 +12,7 @@ export class LoggerService {
 
   constructor(configService: ConfigService) {
     this.logger = winston.createLogger({
-      level: 'info',
+      level: configService.get<string>('LOG_LEVEL'),
       format: winston.format.combine(
         winston.format.timestamp(), // Add timestamp
         winston.format.printf(({ timestamp, level, ...info }) => {
@@ -28,8 +28,8 @@ export class LoggerService {
       transports: [
         new winston.transports.Console(),
         new DailyRotateFile({
-          filename: 'logs/log-%DATE%.log',
-          datePattern: 'YYYY-MM-DD',
+          filename: configService.get<string>('FILE_NAME'),
+          datePattern: configService.get<string>('DATE_PATTERN'),
           zippedArchive: true,
           maxSize: configService.get<string>('MAX_LOG_FILESIZE'),
         }),
@@ -42,14 +42,14 @@ export class LoggerService {
   }
 
   error(message: LogMessageDTO) {
-    this.logger.error(`${message}`);
+    this.logger.error(`${JSON.stringify(message)}`);
   }
 
   warn(message: LogMessageDTO) {
-    this.logger.warn(`${message}`);
+    this.logger.warn(`${JSON.stringify(message)}`);
   }
 
   debug(message: LogMessageDTO) {
-    this.logger.debug(`${message}`);
+    this.logger.debug(`${JSON.stringify(message)}`);
   }
 }

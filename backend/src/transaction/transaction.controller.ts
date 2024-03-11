@@ -141,10 +141,27 @@ export default class TransactionController {
       new LogMessageDTO(request[REQUEST_ID_HTTP_HEADER], 'Get transactions', {
         key: publicKey,
         type: type,
+        page: page,
+        limit: limit,
       }),
     );
     limit = limit > 100 ? 100 : limit;
     type = type ? type.toLowerCase() : type;
+
+    this.loggerService.debug(
+      new LogMessageDTO(
+        request[REQUEST_ID_HTTP_HEADER],
+        'Get transactions limit set',
+        limit,
+      ),
+    );
+    this.loggerService.debug(
+      new LogMessageDTO(
+        request[REQUEST_ID_HTTP_HEADER],
+        'Get transactions type set',
+        type,
+      ),
+    );
 
     return await this.transactionService.getAllByPublicKey(publicKey, type, {
       page,
@@ -163,7 +180,21 @@ export default class TransactionController {
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page?: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit?: number,
   ): Promise<Pagination<GetTransactionsResponseDto>> {
+    this.loggerService.log(
+      new LogMessageDTO(request[REQUEST_ID_HTTP_HEADER], 'Get All', {
+        page: page,
+        limit: limit,
+      }),
+    );
     limit = limit > 100 ? 100 : limit;
+    this.loggerService.debug(
+      new LogMessageDTO(
+        request[REQUEST_ID_HTTP_HEADER],
+        'Get All limit set',
+        limit,
+      ),
+    );
+
     return await this.transactionService.getAll({
       page,
       limit,
