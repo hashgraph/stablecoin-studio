@@ -59,25 +59,29 @@ export default class TransactionService {
       where: { id: transactionId },
     });
     if (!transaction) {
+      // TODO: coupled with Infrastructure layer, controller should map exceptions to http status codes
       throw new HttpException('Transaction not found', 404);
     }
     if (transaction.signed_keys.includes(signTransactionDto.public_key)) {
+      // TODO: coupled with Infrastructure layer, controller should map exceptions to http status codes
       throw new HttpException('message already signed', 409);
     }
     if (!transaction.key_list.includes(signTransactionDto.public_key)) {
+      // TODO: coupled with Infrastructure layer, controller should map exceptions to http status codes
       throw new HttpException('Unauthorized Key', 401);
     }
     transaction.signed_keys = [
       ...transaction.signed_keys,
       signTransactionDto.public_key,
     ];
-    if (transaction.signed_keys.length >= transaction.threshold) {
-      transaction.status = TransactionStatus.SIGNED;
-    }
     transaction.signatures = [
       ...transaction.signatures,
       signTransactionDto.signed_transaction_message,
     ];
+    // Update transaction status to 'SIGNED' if the number of signed keys meets or exceeds the threshold
+    if (transaction.signed_keys.length >= transaction.threshold) {
+      transaction.status = TransactionStatus.SIGNED;
+    }
     await this.transactionRepository.save(transaction);
     return transaction;
   }
