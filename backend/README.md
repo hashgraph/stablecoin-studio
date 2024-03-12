@@ -14,7 +14,8 @@
   - [Add a transaction](#add-a-transaction)<br>
   - [Sign a transaction](#sing-a-transaction)<br>
   - [Delete a transaction](#delete-a-transaction)<br>
-  - [Retrieve transactions](#retrieve-transactions)<br>
+  - [Retrieve all transactions](#retrieve-all-transactions)<br>
+  - [Retrieve transactions for public key](#retrieve-transactions-for-public-key)<br>
 - **[Technologies](#technologies)**<br>
 - **[Installation](#installation)**<br>
 - **[Build](#build)**<br>
@@ -62,20 +63,134 @@ The backend is made of two components:
 
 ## Add a transaction
 
+ - __Path__ : /v1/transactions
+ - __HTTP Method__ : POST
+ - __Body__ : 
+ ```
+{
+  "payload": "transaction_raw_message",
+  "description": "transaction_short_description",
+  "accountId": "your_account_id",
+  "keyList": ["PK1", "PK2", ...],
+  "threshold": "number"
+}
+ ```
+ - __Logic__ : 
+    - Action : transaction is added to the DB.
+ - __Status code__ :
+    - 201 Created: Transaction added successfully.
+    - 400 Bad Request: Invalid request payload.
+    - 500 Internal Server Error: An error occurred during the process.
+
+ - __Response__ : 
+```
+{
+  "transactionId": "generated_transaction_ID"
+}
+```
+
 ## Sign a transaction
+
+ - __Path__ : /v1/transactions/{transactionId}
+ - __HTTP Method__ : PUT
+ - __Body__ : 
+ ```
+{
+  "signedTransactionMessage": "transaction_signed_message",
+  "publicKey": "public_key_used_for_signing"
+}
+ ```
+ - __Logic__ : 
+    - Success : 
+      - transaction id exists
+      - public key is part of the remaining key list (has the right to sign)
+      - body’s signatures matches the provided public key
+      - the signature added to the body is indeed associated to the provided public key (compare with the current transaction body)
+    - Action : 
+      - updates the Body of the transaction in the DB
+      - removes the public key from the list of “Remaining keys”
+      - Updates the threshold
+ - __Status code__ :
+    - 204 No content: Transaction updated successfully.
+    - 400 Bad Request: Invalid _transactionId_ format.
+    - 401 Unauthorized: Unauthorized key.
+    - 404 Not Found: _transactionId_ could not be found.
+    - 409 Conflict: _transactionId_ already signed by the provided key.
+    - 500 Internal Server Error: An error occurred during the process.
 
 ## Delete a transaction
 
-## Retrieve transactions
+ - __Path__ : /v1/transactions/{transactionId}
+ - __HTTP Method__ : DELETE
+  __Logic__ : 
+    - Success : 
+      - transaction id exists
+    - Action : removes transaction from the DB.
+ - __Status code__ :
+    - 204 No content: Transaction removed successfully.
+    - 400 Bad Request: Invalid _transactionId_ format.
+    - 404 Not Found: _transactionId_ could not be found.
+    - 500 Internal Server Error: An error occurred during the process.
 
+## Retrieve All transactions
 
+ - __Path__ : /v1/transactions
+ - __HTTP Method__ : GET
+  __Logic__ : 
+    - Action : returns all the transaction from the DB (paginated response).
+ - __Status code__ :
+    - 200 OK.
+    - 500 Internal Server Error: An error occurred during the process.
+ - __Response__ : 
+```
+[
+  {
+    "id" :"transaction_id",
+    "transaction_message": "hexadecimal_array_of_bytes",
+    "description": "transaction_short_description",
+    "hedera_account_id": "your_account_id",
+    "signatures": ["signature_1", "signature_2", ...],
+    "key_list": ["PK1", "PK2", ...],
+    "signed_keys": ["PK1", "PK2", ...],
+    "status": "transaction_status",
+    "threshold":"number"
+  },
+  {...}
+]
+```
 
+## Retrieve transactions for public Key
 
+ - __Path__ : /v1/transactions/{publicKey}
+ - __HTTP Method__ : GET
+  __Logic__ : 
+    - Action : returns all the transaction from the DB for a specific public Key and type (PENDING/SIGNED) (paginated response).
+ - __Status code__ :
+    - 200 OK.
+    - 500 Internal Server Error: An error occurred during the process.
+ - __Response__ : 
+```
+[
+  {
+    "id" :"transaction_id",
+    "transaction_message": "hexadecimal_array_of_bytes",
+    "description": "transaction_short_description",
+    "hedera_account_id": "your_account_id",
+    "signatures": ["signature_1", "signature_2", ...],
+    "key_list": ["PK1", "PK2", ...],
+    "signed_keys": ["PK1", "PK2", ...],
+    "status": "transaction_status",
+    "threshold":"number"
+  },
+  {...}
+]
+```
 
 # Technologies
 
 - Typescript
 - NestJS
+- TypeORM
 - Winston
 - Postgres
 - Docker
