@@ -19,7 +19,6 @@
  */
 
 import {
-  Req,
   Body,
   Controller,
   DefaultValuePipe,
@@ -29,18 +28,19 @@ import {
   HttpCode,
   HttpStatus,
   Param,
-  ParseIntPipe,
   Post,
   Put,
   Query,
+  Req,
+  UseFilters,
   UseGuards,
 } from '@nestjs/common';
-import { CreateTransactionResponseDto } from './dto/create-transaction-response.dto';
-import { CreateTransactionRequestDto } from './dto/create-transaction-request.dto';
+import {CreateTransactionResponseDto} from './dto/create-transaction-response.dto';
+import {CreateTransactionRequestDto} from './dto/create-transaction-request.dto';
 import TransactionService from './transaction.service';
 import Transaction from './transaction.entity';
-import { SignTransactionRequestDto } from './dto/sign-transaction-request.dto';
-import { GetTransactionsResponseDto } from './dto/get-transactions-response.dto';
+import {SignTransactionRequestDto} from './dto/sign-transaction-request.dto';
+import {GetTransactionsResponseDto} from './dto/get-transactions-response.dto';
 import {
   ApiCreatedResponse,
   ApiForbiddenResponse,
@@ -50,12 +50,14 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { OriginGuard } from '../guards/origin.guard';
-import { Pagination } from 'nestjs-typeorm-paginate';
-import { LoggerService } from '../logger/logger.service';
+import {OriginGuard} from '../guards/origin.guard';
+import {Pagination} from 'nestjs-typeorm-paginate';
+import {LoggerService} from '../logger/logger.service';
 import LogMessageDTO from '../logger/dto/log-message.dto';
-import { Request } from 'express';
-import { REQUEST_ID_HTTP_HEADER } from '../common/Constants';
+import {Request} from 'express';
+import {REQUEST_ID_HTTP_HEADER} from '../common/constants';
+import {HttpExceptionFilter} from '../common/exceptions/http-exception.filter';
+import {ParsePagePipe} from '../common/pipes/parse-page.pipe';
 
 @ApiTags('Transactions')
 @Controller('/api/transactions')
@@ -73,6 +75,7 @@ export default class TransactionController {
     type: CreateTransactionResponseDto,
   })
   @ApiResponse({ status: 500, description: 'Internal Server Error' })
+  @UseFilters(HttpExceptionFilter)
   async addTransaction(
     @Req() request: Request,
     @Body() createTransactionDto: CreateTransactionRequestDto,
@@ -110,6 +113,7 @@ export default class TransactionController {
     description: 'The transaction ID to update',
     required: true,
   })
+  @UseFilters(HttpExceptionFilter)
   async signTransaction(
     @Req() request: Request,
     @Param('transactionId') transactionId: string,
@@ -146,6 +150,7 @@ export default class TransactionController {
     description: 'The transaction ID to delete',
     required: true,
   })
+  @UseFilters(HttpExceptionFilter)
   async deleteTransaction(
     @Req() request: Request,
     @Param('transactionId') transactionId: string,
@@ -183,12 +188,13 @@ export default class TransactionController {
     description: 'The public key to retrieve transactions for',
     required: true,
   })
+  @UseFilters(HttpExceptionFilter)
   async getByPublicKey(
     @Req() request: Request,
     @Param('publicKey') publicKey: string,
     @Query('type') type?: string,
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page?: number,
-    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit?: number,
+    @Query('page', new DefaultValuePipe(1), ParsePagePipe) page?: number,
+    @Query('limit', new DefaultValuePipe(10), ParsePagePipe) limit?: number,
   ): Promise<Pagination<GetTransactionsResponseDto>> {
     this.loggerService.log(
       new LogMessageDTO(request[REQUEST_ID_HTTP_HEADER], 'Get transactions', {
@@ -238,10 +244,11 @@ export default class TransactionController {
   })
   @ApiForbiddenResponse({ description: 'Forbidden', type: ForbiddenException })
   @Get()
+  @UseFilters(HttpExceptionFilter)
   async getAll(
     @Req() request: Request,
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page?: number,
-    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit?: number,
+    @Query('page', new DefaultValuePipe(1), ParsePagePipe) page?: number,
+    @Query('limit', new DefaultValuePipe(10), ParsePagePipe) limit?: number,
   ): Promise<Pagination<GetTransactionsResponseDto>> {
     this.loggerService.log(
       new LogMessageDTO(request[REQUEST_ID_HTTP_HEADER], 'Get All', {

@@ -20,11 +20,11 @@
 
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString, Matches } from 'class-validator';
-import { keyRegex } from '../../common/Regexp';
+import { keyRegex } from '../../common/regexp';
 
 export class SignTransactionRequestDto {
   @ApiProperty({
-    description: 'The signed transaction message',
+    description: 'The signature of the transaction message',
     example:
       '0a81012a7f0a7b0a1a0a0b08e8eea5af0610defbe66e12090800100018ddd6a20118001206080010001803188084af5f2202087832005a4a0a22122094ac3f274e59cb947c4685d16cfa2d8a5d055984f43a70e1c62d986a474770611080cab5ee0130ffffffffffffffff7f38ffffffffffffffff7f40004a050880ceda0388010012000a81012a7f0a7b0a1a0a0b08e8eea5af0610defbe66e12090800100018ddd6a20118001206080010001807188084af5f2202087832005a4a0a22122094ac3f274e59cb947c4685d16cfa2d8a5d055984f43a70e1c62d986a474770611080cab5ee0130ffffffffffffffff7f38ffffffffffffffff7f40004a050880ceda0388010012000a81012a7f0a7b0a1a0a0b08e8eea5af0610defbe66e12090800100018ddd6a20118001206080010001803188084af5f2202087832005a4a0a22122094ac3f274e59cb947c4685d16cfa2d8a5d055984f43a70e1c62d986a474770611080cab5ee0130ffffffffffffffff7f38ffffffffffffffff7f40004a050880ceda0388010012000a81012a7f0a7b0a1a0a0b08e8eea5af0610defbe66e12090800100018ddd6a20118001206080010001809188084af5f2202087832005a4a0a22122094ac3f274e59cb947c4685d16cfa2d8a5d055984f43a70e1c62d986a474770611080cab5ee0130ffffffffffffffff7f38ffffffffffffffff7f40004a050880ceda0388010012000a81012a7f0a7b0a1a0a0b08e8eea5af0610defbe66e12090800100018ddd6a20118001206080010001804188084af5f2202087832005a4a0a22122094ac3f274e59cb947c4685d16cfa2d8a5d055984f43a70e1c62d986a474770611080cab5ee0130ffffffffffffffff7f38ffffffffffffffff7f40004a050880ceda038801001200',
     minLength: 10,
@@ -32,7 +32,7 @@ export class SignTransactionRequestDto {
   })
   @IsNotEmpty()
   @IsString()
-  signed_transaction_message: string;
+  signature: string;
 
   @ApiProperty({
     description: 'The public key used to sign the transaction',
@@ -47,8 +47,8 @@ export class SignTransactionRequestDto {
   })
   public_key: string;
 
-  constructor(signed_transaction_message: string, public_key: string) {
-    this.signed_transaction_message = signed_transaction_message;
+  constructor(signature: string, public_key: string) {
+    this.signature = signature;
     this.public_key = public_key;
   }
 }

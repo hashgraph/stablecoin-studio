@@ -28,7 +28,7 @@ import {
   Matches,
   IsNotEmpty,
 } from 'class-validator';
-import { hederaIdRegex, keyRegex } from '../../common/Regexp';
+import { hederaIdRegex, keyRegex } from '../../common/regexp';
 
 export class CreateTransactionRequestDto {
   @ApiProperty({

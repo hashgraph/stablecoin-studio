@@ -18,28 +18,28 @@
  *
  */
 
-import { HttpException, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { CreateTransactionRequestDto } from './dto/create-transaction-request.dto';
-import Transaction, { TransactionStatus } from './transaction.entity';
-import { SignTransactionRequestDto } from './dto/sign-transaction-request.dto';
-import { Repository, SelectQueryBuilder } from 'typeorm';
+import {HttpException, Injectable} from '@nestjs/common';
+import {InjectRepository} from '@nestjs/typeorm';
+import {CreateTransactionRequestDto} from './dto/create-transaction-request.dto';
+import Transaction, {TransactionStatus} from './transaction.entity';
+import {SignTransactionRequestDto} from './dto/sign-transaction-request.dto';
+import {Repository, SelectQueryBuilder} from 'typeorm';
+import {IPaginationOptions, paginate, Pagination,} from 'nestjs-typeorm-paginate';
+import {GetTransactionsResponseDto} from './dto/get-transactions-response.dto';
+import {uuidRegex} from '../common/regexp';
+import {verifySignature} from '../utils/utils';
 import {
-  IPaginationOptions,
-  paginate,
-  Pagination,
-} from 'nestjs-typeorm-paginate';
-import { GetTransactionsResponseDto } from './dto/get-transactions-response.dto';
-import { uuidRegex } from '../common/Regexp';
-import { LoggerService } from '../logger/logger.service';
-import { verifySignature } from '../utils/utils';
+  InvalidSignatureException,
+  MessageAlreadySignedException,
+  TransactionNotFoundException,
+  UnauthorizedKeyException,
+} from '../common/exceptions/domain-exceptions';
 
 @Injectable()
 export default class TransactionService {
   constructor(
     @InjectRepository(Transaction)
     private readonly transactionRepository: Repository<Transaction>,
-    private readonly loggerService: LoggerService,
   ) {}
 
   async create(
@@ -70,23 +70,28 @@ export default class TransactionService {
     const transaction = await this.transactionRepository.findOne({
       where: { id: transactionId },
     });
-    if (!transaction) {
-      // TODO: coupled with Infrastructure layer, controller should map exceptions to http status codes
-      throw new HttpException('Transaction not found', 404);
-    }
-    if (transaction.signed_keys.includes(signTransactionDto.public_key)) {
-      // TODO: coupled with Infrastructure layer, controller should map exceptions to http status codes
-      throw new HttpException('message already signed', 409);
-    }
-    if (!transaction.key_list.includes(signTransactionDto.public_key)) {
-      // TODO: coupled with Infrastructure layer, controller should map exceptions to http status codes
-      throw new HttpException('Unauthorized Key', 401);
-    }
+    if (!transaction)
+      throw new TransactionNotFoundException('Transaction not found');
+
+    if (transaction.signed_keys.includes(signTransactionDto.public_key))
+      throw new MessageAlreadySignedException('Message already signed');
+
+    if (!transaction.key_list.includes(signTransactionDto.public_key))
+      throw new UnauthorizedKeyException('Unauthorized Key');
+
     if (
       !verifySignature(
         signTransactionDto.public_key,
         transaction.transaction_message,
-        signTransactionDto.signed_transaction_message,
+        signTransactionDto.signature,
+      )
+    )
+      throw new InvalidSignatureException('Invalid signature');
+    if (
+      !verifySignature(
+        signTransactionDto.public_key,
+        transaction.transaction_message,
+        signTransactionDto.signature,
       )
     ) {
       throw new HttpException('Invalid signature', 400);
@@ -98,7 +103,7 @@ export default class TransactionService {
     ];
     transaction.signatures = [
       ...transaction.signatures,
-      signTransactionDto.signed_transaction_message,
+      signTransactionDto.signature,
     ];
     // Update transaction status to 'SIGNED' if the number of signed keys meets or exceeds the threshold
     if (transaction.signed_keys.length >= transaction.threshold) {
@@ -110,7 +115,7 @@ export default class TransactionService {
 
   async delete(transactionId: string): Promise<void> {
     if (!uuidRegex.test(transactionId))
-      throw new HttpException('Invalid Transaction uuid format', 400);
+      throw new TransactionNotFoundException('Transaction not found');
 
     const transaction = await this.transactionRepository.findOne({
       where: { id: transactionId },
@@ -118,7 +123,7 @@ export default class TransactionService {
     if (transaction) {
       await this.transactionRepository.delete({ id: transactionId });
     } else {
-      throw new HttpException('Transaction not found', 404);
+      throw new TransactionNotFoundException('Transaction not found');
     }
   }
 

@@ -121,7 +121,7 @@ describe('Transaction Service Test', () => {
       const THRESHOLD = 2;
       // Mock Input
       const signTransactionDto = {
-        signed_transaction_message: DEFAULT.txSignedThreshold.signatures[0],
+        signature: DEFAULT.txSignedThreshold.signatures[0],
         public_key: DEFAULT.txSignedThreshold.key_list[0],
       } as SignTransactionRequestDto;
       const signTransactionCommand = {
@@ -146,7 +146,7 @@ describe('Transaction Service Test', () => {
         threshold: THRESHOLD,
         status: TransactionStatus.PENDING,
         signed_keys: [signTransactionDto.public_key],
-        signatures: [signTransactionDto.signed_transaction_message],
+        signatures: [signTransactionDto.signature],
       });
 
       //* 🎬 Act ⬇
@@ -163,7 +163,7 @@ describe('Transaction Service Test', () => {
       //* 🗂️ Arrange ⬇
       const THRESHOLD = 2;
       const signTransactionDto = {
-        signed_transaction_message: DEFAULT.txSignedThreshold.signatures[1],
+        signature: DEFAULT.txSignedThreshold.signatures[1],
         public_key: DEFAULT.txSignedThreshold.key_list[1],
       } as SignTransactionRequestDto;
       const signTransactionCommand = {
@@ -193,7 +193,7 @@ describe('Transaction Service Test', () => {
         ],
         signatures: [
           DEFAULT.txSignedThreshold.signatures[0],
-          signTransactionDto.signed_transaction_message,
+          signTransactionDto.signature,
         ],
       });
 

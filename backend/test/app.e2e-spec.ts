@@ -35,6 +35,7 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
+  // eslint-disable-next-line jest/expect-expect
   it('/ (GET)', () => {
     expect(1).toBe(1); // TODO:  remove linter NO assert
     return request(app.getHttpServer())

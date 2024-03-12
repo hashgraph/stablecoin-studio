@@ -173,7 +173,7 @@ describe('Transaction Controller Test', () => {
       const httpRequest = HTTP_REQUEST;
       const transactionId = DEFAULT.txPending0.id;
       const signTransactionRequestDto = {
-        signed_transaction_message: DEFAULT.txPending0.signatures[0],
+        signature: DEFAULT.txPending0.signatures[0],
         public_key: DEFAULT.txPending0.key_list[0],
       } as SignTransactionRequestDto;
       const signTransactionCommand = {
@@ -190,7 +190,7 @@ describe('Transaction Controller Test', () => {
               new TransactionMock({
                 id: transactionId,
                 signed_keys: [signTxDto.public_key],
-                signatures: [signTxDto.signed_transaction_message],
+                signatures: [signTxDto.signature],
               }),
             ),
         );

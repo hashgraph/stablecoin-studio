@@ -19,9 +19,9 @@
  */
 
 import * as nacl from 'tweetnacl';
-import { decodeUTF8 } from 'tweetnacl-util';
+import {decodeUTF8} from 'tweetnacl-util';
 import * as elliptic from 'elliptic';
-import { hexRegex } from '../common/Regexp';
+import {hexRegex} from '../common/regexp';
 
 export function verifySignature(
   publicKeyHex: string,
@@ -39,7 +39,7 @@ export function verifySignature(
       return true;
     }
   } catch (error) {
-    console.log('Error verifying ED25519 signature:', error);
+    //console.log('Error verifying ED25519 signature:', error);
   }
 
   try {
@@ -49,7 +49,7 @@ export function verifySignature(
 
     return keyECDSA.verify(messageHash, signatureHex);
   } catch (error) {
-    console.log('Error verifying ECDSA secp256k1 signature:', error);
+    //console.log('Error verifying ECDSA secp256k1 signature:', error);
     return false;
   }
 }

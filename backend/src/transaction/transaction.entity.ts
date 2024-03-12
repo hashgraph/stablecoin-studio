@@ -1,23 +1,3 @@
-/*
- *
- * Hedera Stablecoin SDK
- *
- * Copyright (C) 2023 Hedera Hashgraph, LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- */
-
 import { Column, Entity, Generated, PrimaryColumn } from 'typeorm';
 
 export enum TransactionStatus {
@@ -32,7 +12,7 @@ export default class Transaction {
   id: string;
 
   @Column('text')
-  transaction_message: string;
+  private _transaction_message: string;
 
   @Column()
   description: string;
@@ -44,7 +24,7 @@ export default class Transaction {
   signatures: string[];
 
   @Column('text', { array: true })
-  key_list: string[];
+  private _key_list: string[];
 
   @Column('text', { array: true })
   signed_keys: string[];
@@ -54,4 +34,24 @@ export default class Transaction {
 
   @Column()
   threshold: number;
+
+  set transaction_message(message: string) {
+    this._transaction_message = message.startsWith('0x')
+      ? message.slice(2)
+      : message;
+  }
+
+  get transaction_message(): string {
+    return this._transaction_message;
+  }
+
+  set key_list(keys: string[]) {
+    this._key_list = keys.map((key) =>
+      key.startsWith('0x') ? key.slice(2) : key,
+    );
+  }
+
+  get key_list(): string[] {
+    return this._key_list;
+  }
 }
