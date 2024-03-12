@@ -35,12 +35,12 @@ import {
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
-import {CreateTransactionResponseDto} from './dto/create-transaction-response.dto';
-import {CreateTransactionRequestDto} from './dto/create-transaction-request.dto';
+import { CreateTransactionResponseDto } from './dto/create-transaction-response.dto';
+import { CreateTransactionRequestDto } from './dto/create-transaction-request.dto';
 import TransactionService from './transaction.service';
 import Transaction from './transaction.entity';
-import {SignTransactionRequestDto} from './dto/sign-transaction-request.dto';
-import {GetTransactionsResponseDto} from './dto/get-transactions-response.dto';
+import { SignTransactionRequestDto } from './dto/sign-transaction-request.dto';
+import { GetTransactionsResponseDto } from './dto/get-transactions-response.dto';
 import {
   ApiCreatedResponse,
   ApiForbiddenResponse,
@@ -50,14 +50,14 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import {OriginGuard} from '../guards/origin.guard';
-import {Pagination} from 'nestjs-typeorm-paginate';
-import {LoggerService} from '../logger/logger.service';
+import { OriginGuard } from '../guards/origin.guard';
+import { Pagination } from 'nestjs-typeorm-paginate';
+import { LoggerService } from '../logger/logger.service';
 import LogMessageDTO from '../logger/dto/log-message.dto';
-import {Request} from 'express';
-import {REQUEST_ID_HTTP_HEADER} from '../common/constants';
-import {HttpExceptionFilter} from '../common/exceptions/http-exception.filter';
-import {ParsePagePipe} from '../common/pipes/parse-page.pipe';
+import { Request } from 'express';
+import { REQUEST_ID_HTTP_HEADER } from '../common/constants';
+import { HttpExceptionFilter } from '../common/exceptions/http-exception.filter';
+import { ParsePagePipe } from '../common/pipes/parse-page.pipe';
 
 @ApiTags('Transactions')
 @Controller('/api/transactions')

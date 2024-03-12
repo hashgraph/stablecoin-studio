@@ -60,8 +60,7 @@ describe('Transaction Service Test', () => {
     jest
       .spyOn(repository, 'create')
       .mockImplementation(
-        (transaction) =>
-          ({ ...transaction, id: DEFAULT.txPending0.id }) as Transaction,
+        (transaction) => ({ ...transaction, id: DEFAULT.id }) as Transaction,
       );
     jest
       .spyOn(repository, 'save')
@@ -77,12 +76,13 @@ describe('Transaction Service Test', () => {
   describe('Create transaction', () => {
     it('should create a transaction', async () => {
       //* 🗂️ Arrange ⬇
+      const pendingTransaction = TransactionMock.txPending0();
       const createTransactionDto = {
-        transaction_message: DEFAULT.txPending0.transaction_message,
-        description: DEFAULT.txPending0.description,
-        hedera_account_id: DEFAULT.txPending0.hedera_account_id,
-        key_list: DEFAULT.txPending0.key_list,
-        threshold: DEFAULT.txPending0.threshold,
+        transaction_message: pendingTransaction.transaction_message,
+        description: pendingTransaction.description,
+        hedera_account_id: pendingTransaction.hedera_account_id,
+        key_list: pendingTransaction.key_list,
+        threshold: pendingTransaction.threshold,
       };
 
       const expected = TransactionMock.txPending0();
@@ -96,12 +96,15 @@ describe('Transaction Service Test', () => {
     it('should create a transaction with threshold equal to 0', async () => {
       //* 🗂️ Arrange ⬇
       const THRESHOLD = 0;
-      const createTransactionDto = {
-        transaction_message: DEFAULT.txPending0.transaction_message,
-        description: DEFAULT.txPending0.description,
-        hedera_account_id: DEFAULT.txPending0.hedera_account_id,
-        key_list: DEFAULT.txPending0.key_list,
+      const pendingTransaction = TransactionMock.txPending0({
         threshold: THRESHOLD,
+      });
+      const createTransactionDto = {
+        transaction_message: pendingTransaction.transaction_message,
+        description: pendingTransaction.description,
+        hedera_account_id: pendingTransaction.hedera_account_id,
+        key_list: pendingTransaction.key_list,
+        threshold: pendingTransaction.threshold,
       };
 
       const expected = TransactionMock.txPending0({
@@ -119,14 +122,17 @@ describe('Transaction Service Test', () => {
     it('should sign a transaction in pending and remain in pending', async () => {
       //* 🗂️ Arrange ⬇
       const THRESHOLD = 2;
+      const thresholdTransaction = TransactionMock.txSignedThreshold({
+        threshold: THRESHOLD,
+      });
       // Mock Input
       const signTransactionDto = {
-        signature: DEFAULT.txSignedThreshold.signatures[0],
-        public_key: DEFAULT.txSignedThreshold.key_list[0],
+        signature: thresholdTransaction.signatures[0],
+        public_key: thresholdTransaction.key_list[0],
       } as SignTransactionRequestDto;
       const signTransactionCommand = {
         body: signTransactionDto,
-        txId: DEFAULT.txSignedThreshold.id,
+        txId: thresholdTransaction.id,
       };
       // Mock the repository
       jest.spyOn(repository, 'findOne').mockImplementation(() =>
@@ -162,13 +168,17 @@ describe('Transaction Service Test', () => {
     it('should sign a transaction in pending and change to sign', async () => {
       //* 🗂️ Arrange ⬇
       const THRESHOLD = 2;
+      // Mock Input
+      const thresholdTransaction = TransactionMock.txSignedThreshold({
+        threshold: THRESHOLD,
+      });
       const signTransactionDto = {
-        signature: DEFAULT.txSignedThreshold.signatures[1],
-        public_key: DEFAULT.txSignedThreshold.key_list[1],
+        signature: thresholdTransaction.signatures[1],
+        public_key: thresholdTransaction.key_list[1],
       } as SignTransactionRequestDto;
       const signTransactionCommand = {
         body: signTransactionDto,
-        txId: DEFAULT.txSignedThreshold.id,
+        txId: thresholdTransaction.id,
       };
       // Mock the repository
       jest.spyOn(repository, 'findOne').mockImplementation(() =>
@@ -177,8 +187,8 @@ describe('Transaction Service Test', () => {
             id: signTransactionCommand.txId,
             threshold: THRESHOLD,
             status: TransactionStatus.PENDING,
-            signed_keys: [DEFAULT.txSignedThreshold.key_list[0]],
-            signatures: [DEFAULT.txSignedThreshold.signatures[0]],
+            signed_keys: [thresholdTransaction.key_list[0]],
+            signatures: [thresholdTransaction.signatures[0]],
           }),
         ),
       );
@@ -187,14 +197,8 @@ describe('Transaction Service Test', () => {
         id: signTransactionCommand.txId,
         threshold: THRESHOLD,
         status: TransactionStatus.SIGNED,
-        signed_keys: [
-          DEFAULT.txSignedThreshold.key_list[0],
-          signTransactionDto.public_key,
-        ],
-        signatures: [
-          DEFAULT.txSignedThreshold.signatures[0],
-          signTransactionDto.signature,
-        ],
+        signed_keys: [DEFAULT.key_list[0], signTransactionDto.public_key],
+        signatures: [DEFAULT.signatures[0], signTransactionDto.signature],
       });
 
       //* 🎬 Act ⬇

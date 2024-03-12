@@ -64,6 +64,8 @@ describe('Transaction Controller Test', () => {
           provide: LoggerService,
           useValue: {
             log: jest.fn(),
+            debug: jest.fn(),
+            error: jest.fn(),
           },
         },
         {
@@ -89,12 +91,13 @@ describe('Transaction Controller Test', () => {
       //* 🗂️ Arrange ⬇
       // Mock input
       const httpRequest = HTTP_REQUEST;
+      const pendingTransaction = TransactionMock.txPending0();
       const createTransactionRequestDto = {
-        description: DEFAULT.txPending0.description,
-        hedera_account_id: DEFAULT.txPending0.hedera_account_id,
-        key_list: DEFAULT.txPending0.key_list,
-        threshold: DEFAULT.txPending0.threshold,
-        transaction_message: DEFAULT.txPending0.transaction_message,
+        description: pendingTransaction.description,
+        hedera_account_id: pendingTransaction.hedera_account_id,
+        key_list: pendingTransaction.key_list,
+        threshold: pendingTransaction.threshold,
+        transaction_message: pendingTransaction.transaction_message,
       } as CreateTransactionRequestDto;
       const createTxRequestCommand = {
         request: httpRequest,
@@ -131,12 +134,15 @@ describe('Transaction Controller Test', () => {
       const THRESHOLD = 0;
       // Mock input
       const httpRequest = HTTP_REQUEST;
-      const createTransactionRequestDto = {
-        description: DEFAULT.txPending0.description,
-        hedera_account_id: DEFAULT.txPending0.hedera_account_id,
-        key_list: DEFAULT.txPending0.key_list,
+      const pendingTransaction = TransactionMock.txPending0({
         threshold: THRESHOLD,
-        transaction_message: DEFAULT.txPending0.transaction_message,
+      });
+      const createTransactionRequestDto = {
+        description: pendingTransaction.description,
+        hedera_account_id: pendingTransaction.hedera_account_id,
+        key_list: pendingTransaction.key_list,
+        threshold: pendingTransaction.threshold,
+        transaction_message: pendingTransaction.transaction_message,
       } as CreateTransactionRequestDto;
       const createTxRequestCommand = {
         request: httpRequest,
@@ -171,10 +177,10 @@ describe('Transaction Controller Test', () => {
       //* 🗂️ Arrange ⬇
       // Input
       const httpRequest = HTTP_REQUEST;
-      const transactionId = DEFAULT.txPending0.id;
+      const transactionId = DEFAULT.id;
       const signTransactionRequestDto = {
-        signature: DEFAULT.txPending0.signatures[0],
-        public_key: DEFAULT.txPending0.key_list[0],
+        signature: DEFAULT.signatures[0],
+        public_key: DEFAULT.key_list[0],
       } as SignTransactionRequestDto;
       const signTransactionCommand = {
         request: httpRequest,
@@ -212,7 +218,7 @@ describe('Transaction Controller Test', () => {
       //* 🗂️ Arrange ⬇
       // Input
       const httpRequest = HTTP_REQUEST;
-      const transactionId = DEFAULT.txPending0.id;
+      const transactionId = DEFAULT.id;
       const signTransactionCommand = {
         request: httpRequest,
         transactionId,
@@ -239,7 +245,7 @@ describe('Transaction Controller Test', () => {
       //* 🗂️ Arrange ⬇
       // Input
       const request = HTTP_REQUEST;
-      const publicKey = DEFAULT.transaction.key_list[0];
+      const publicKey = DEFAULT.key_list[0];
       const getAllByPublicKeyCommand = {
         request,
         publicKey,
@@ -255,7 +261,7 @@ describe('Transaction Controller Test', () => {
       // Mock expected result
       // Same as service result
       const expectedResult = new Pagination<GetTransactionsResponseDto>(
-        [new TransactionMock(), new TransactionMock()],
+        [TransactionMock.txPending0(), TransactionMock.txPending0()],
         {
           currentPage: 1,
           itemCount: 2,
@@ -313,18 +319,15 @@ function createMockGetAllByPublicKeyTxServiceResult(
   publicKey: string,
   options?: { page?: number; limit?: number },
 ): Pagination<GetTransactionsResponseDto, IPaginationMeta> {
+  const pendingTransaction = TransactionMock.txPending0();
   const transactionResponse = new GetTransactionsResponseDto(
-    DEFAULT.transaction.id,
-    DEFAULT.transaction.transaction_message,
-    DEFAULT.transaction.description,
-    DEFAULT.transaction.status,
-    DEFAULT.transaction.threshold,
-    [
-      publicKey,
-      DEFAULT.transaction.key_list[1],
-      DEFAULT.transaction.key_list[2],
-    ],
-    DEFAULT.transaction.signed_keys,
+    pendingTransaction.id,
+    pendingTransaction.transaction_message,
+    pendingTransaction.description,
+    pendingTransaction.status,
+    pendingTransaction.threshold,
+    [publicKey, pendingTransaction.key_list[1], pendingTransaction.key_list[2]],
+    pendingTransaction.signed_keys,
   );
   return new Pagination<GetTransactionsResponseDto>(
     [transactionResponse, transactionResponse],

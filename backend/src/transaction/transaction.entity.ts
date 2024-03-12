@@ -30,7 +30,8 @@ export default class Transaction {
   @Column({
     type: 'simple-array',
     transformer: {
-      to: (value: string[]) => value.map(key => (key.startsWith('0x') ? key.slice(2) : key)),
+      to: (value: string[]) =>
+        value.map((key) => (key.startsWith('0x') ? key.slice(2) : key)),
       from: (value: string[]) => value,
     },
   })

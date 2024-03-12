@@ -19,9 +19,9 @@
  */
 
 import * as nacl from 'tweetnacl';
-import {decodeUTF8} from 'tweetnacl-util';
+import { decodeUTF8 } from 'tweetnacl-util';
 import * as elliptic from 'elliptic';
-import {hexRegex} from '../common/regexp';
+import { hexRegex } from '../common/regexp';
 
 export function verifySignature(
   publicKeyHex: string,

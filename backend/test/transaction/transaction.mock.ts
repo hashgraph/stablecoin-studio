@@ -18,8 +18,35 @@
  *
  */
 
-import {randomUUID, UUID} from 'crypto';
-import Transaction, {TransactionStatus,} from '../../src/transaction/transaction.entity';
+import { randomUUID, UUID } from 'crypto';
+import Transaction, {
+  TransactionStatus,
+} from '../../src/transaction/transaction.entity';
+
+export const DEFAULT = {
+  id: randomUUID(),
+  transaction_message:
+    '0a1a0a0c0892d5c0af0610efaedd950312080800100018c3bf0c180012080800100018c3bf0c1880c2d72f22020878320072020a00',
+  description: 'This transaction is for the creation of a new StableCoin',
+  status: TransactionStatus.SIGNED,
+  threshold: 2,
+  hedera_account_id: '0.0.123456',
+  key_list: [
+    'cf8c984270cd7cd25e1bd6df1a3a22ee2d1cd53a0f7bbfdf917a8bd881b11b5e',
+    'c539f0f94cd937b721f9bd4c0b965164622798cf8ddea6169d2cb734f70baf8e',
+    '0e3c05cf1c2a04db21d0e73f0e608d80d7043851154a4d9516e6b0ee929f7f9f',
+  ],
+  signed_keys: [
+    'cf8c984270cd7cd25e1bd6df1a3a22ee2d1cd53a0f7bbfdf917a8bd881b11b5e',
+    'c539f0f94cd937b721f9bd4c0b965164622798cf8ddea6169d2cb734f70baf8e',
+    '0e3c05cf1c2a04db21d0e73f0e608d80d7043851154a4d9516e6b0ee929f7f9f',
+  ],
+  signatures: [
+    'e120be5fa7fa085c989e69b60b6f80218d8a49751abc84456bc8bd88ba3766101b658d45ebd7e0b742382e9bd8ad98a88f03a9d6118cad42da275531e068a50b',
+    '6cf580daa232d279badbd1bc1227531d4c98ab444a2a7ec1851af17400e01c805bf96223ad2cd7a4469f3709c0fb35b77cb217543e4741d8db92175de583cc00',
+    'ff79cb99db2d5001835b7ed3c26fa8a980ee541b9a1fb1c3972a6a62dfce1bd05372fed331ee1d672dc41df5ec1c12a38104962d2fb6a80dbf12286375f59c0f',
+  ],
+} as TransactionMock;
 
 interface TransactionMockCommand {
   id?: UUID;
@@ -33,73 +60,17 @@ interface TransactionMockCommand {
   signatures?: string[];
 }
 
-const DEFAULT: Record<string, Transaction | null> = {
-  txPending0: null,
-  txPending1: null,
-  txSignedThreshold: null,
-  txSignedMax: null,
-};
-
-DEFAULT.txPending0 = {
-  id: randomUUID(),
-  transaction_message:
-    '0a1a0a0c0892d5c0af0610efaedd950312080800100018c3bf0c180012080800100018c3bf0c1880c2d72f22020878320072020a00',
-  description: 'This transaction is for the creation of a new StableCoin',
-  status: TransactionStatus.PENDING,
-  threshold: 2,
-  hedera_account_id: '0.0.123456',
-  key_list: [
-    'cf8c984270cd7cd25e1bd6df1a3a22ee2d1cd53a0f7bbfdf917a8bd881b11b5e',
-    'c539f0f94cd937b721f9bd4c0b965164622798cf8ddea6169d2cb734f70baf8e',
-    '0e3c05cf1c2a04db21d0e73f0e608d80d7043851154a4d9516e6b0ee929f7f9f',
-  ],
-  signed_keys: [],
-  signatures: [],
-};
-
-DEFAULT.txPending1 = {
-  ...DEFAULT.txPending0,
-  signed_keys: [DEFAULT.txPending0.key_list[0]],
-  signatures: [
-    'e120be5fa7fa085c989e69b60b6f80218d8a49751abc84456bc8bd88ba3766101b658d45ebd7e0b742382e9bd8ad98a88f03a9d6118cad42da275531e068a50b',
-  ],
-};
-
-DEFAULT.txSignedThreshold = {
-  ...DEFAULT.txPending1,
-  status: TransactionStatus.SIGNED,
-  signed_keys: [DEFAULT.txPending1.key_list[0], DEFAULT.txPending0.key_list[1]],
-  signatures: [
-    DEFAULT.txPending1.signatures[0],
-    '6cf580daa232d279badbd1bc1227531d4c98ab444a2a7ec1851af17400e01c805bf96223ad2cd7a4469f3709c0fb35b77cb217543e4741d8db92175de583cc00',
-  ],
-};
-
-DEFAULT.txSignedMax = {
-  ...DEFAULT.txSignedThreshold,
-  signed_keys: [
-    ...DEFAULT.txSignedThreshold.signed_keys,
-    DEFAULT.txPending0.key_list[2],
-  ],
-  signatures: [
-    ...DEFAULT.txSignedThreshold.signatures,
-    'ff79cb99db2d5001835b7ed3c26fa8a980ee541b9a1fb1c3972a6a62dfce1bd05372fed331ee1d672dc41df5ec1c12a38104962d2fb6a80dbf12286375f59c0f',
-  ],
-};
-
-export { DEFAULT };
-
 export default class TransactionMock extends Transaction {
   constructor({
-    id = DEFAULT.txSignedThreshold.id,
-    transaction_message = DEFAULT.txSignedThreshold.transaction_message,
-    description = DEFAULT.txSignedThreshold.description,
-    status = DEFAULT.txSignedThreshold.status,
-    threshold = DEFAULT.txSignedThreshold.threshold,
-    hedera_account_id = DEFAULT.txSignedThreshold.hedera_account_id,
-    key_list = DEFAULT.txSignedThreshold.key_list,
-    signed_keys = DEFAULT.txSignedThreshold.signed_keys,
-    signatures = DEFAULT.txSignedThreshold.signatures,
+    id = DEFAULT.id,
+    transaction_message = DEFAULT.transaction_message,
+    description = DEFAULT.description,
+    status = DEFAULT.status,
+    threshold = DEFAULT.threshold,
+    hedera_account_id = DEFAULT.hedera_account_id,
+    key_list = DEFAULT.key_list,
+    signed_keys = DEFAULT.signed_keys,
+    signatures = DEFAULT.signatures,
   } = {}) {
     super();
     this.id = id;
@@ -115,25 +86,43 @@ export default class TransactionMock extends Transaction {
 
   static txPending0(command: Partial<TransactionMockCommand> = {}) {
     return new TransactionMock({
-      ...DEFAULT.txPending0,
+      id: DEFAULT.id,
+      transaction_message: DEFAULT.transaction_message,
+      description: DEFAULT.description,
+      status: TransactionStatus.PENDING,
+      threshold: DEFAULT.threshold,
+      hedera_account_id: DEFAULT.hedera_account_id,
+      key_list: DEFAULT.key_list,
+      signed_keys: [],
+      signatures: [],
       ...command,
     });
   }
   static txPending1(command: Partial<TransactionMockCommand> = {}) {
+    const base = TransactionMock.txPending0();
     return new TransactionMock({
-      ...DEFAULT.txPending1,
+      ...base,
+      signed_keys: [base.key_list[0]],
+      signatures: [DEFAULT.signatures[0]],
       ...command,
     });
   }
   static txSignedThreshold(command: Partial<TransactionMockCommand> = {}) {
+    const base = TransactionMock.txPending1();
     return new TransactionMock({
-      ...DEFAULT.txSignedThreshold,
+      ...base,
+      status: TransactionStatus.SIGNED,
+      signed_keys: [base.key_list[0], base.key_list[1]],
+      signatures: [base.signatures[0], DEFAULT.signatures[1]],
       ...command,
     });
   }
   static txSignedMax(command: Partial<TransactionMockCommand> = {}) {
+    const base = TransactionMock.txSignedThreshold();
     return new TransactionMock({
-      ...DEFAULT.txSignedMax,
+      ...base,
+      signed_keys: base.key_list,
+      signatures: [...base.signatures, DEFAULT.signatures[2]],
       ...command,
     });
   }
