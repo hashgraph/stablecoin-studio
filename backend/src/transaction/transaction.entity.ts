@@ -1,4 +1,4 @@
-import { Column, Entity, Generated, PrimaryColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 export enum TransactionStatus {
   SIGNED = 'SIGNED',
@@ -7,12 +7,16 @@ export enum TransactionStatus {
 
 @Entity()
 export default class Transaction {
-  @PrimaryColumn('uuid')
-  @Generated('uuid')
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column('text')
-  private _transaction_message: string;
+  @Column({
+    transformer: {
+      to: (value: string) => (value.startsWith('0x') ? value.slice(2) : value),
+      from: (value: string) => value,
+    },
+  })
+  transaction_message: string;
 
   @Column()
   description: string;
@@ -20,38 +24,27 @@ export default class Transaction {
   @Column()
   hedera_account_id: string;
 
-  @Column('text', { array: true })
+  @Column('simple-array')
   signatures: string[];
 
-  @Column('text', { array: true })
-  private _key_list: string[];
+  @Column({
+    type: 'simple-array',
+    transformer: {
+      to: (value: string[]) => value.map(key => (key.startsWith('0x') ? key.slice(2) : key)),
+      from: (value: string[]) => value,
+    },
+  })
+  key_list: string[];
 
-  @Column('text', { array: true })
+  @Column('simple-array')
   signed_keys: string[];
 
-  @Column()
+  @Column({
+    type: 'enum',
+    enum: TransactionStatus,
+  })
   status: TransactionStatus;
 
   @Column()
   threshold: number;
-
-  set transaction_message(message: string) {
-    this._transaction_message = message.startsWith('0x')
-      ? message.slice(2)
-      : message;
-  }
-
-  get transaction_message(): string {
-    return this._transaction_message;
-  }
-
-  set key_list(keys: string[]) {
-    this._key_list = keys.map((key) =>
-      key.startsWith('0x') ? key.slice(2) : key,
-    );
-  }
-
-  get key_list(): string[] {
-    return this._key_list;
-  }
 }

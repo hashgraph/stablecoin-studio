@@ -18,10 +18,8 @@
  *
  */
 
-import { UUID, randomUUID } from 'crypto';
-import Transaction, {
-  TransactionStatus,
-} from '../../src/transaction/transaction.entity';
+import {randomUUID, UUID} from 'crypto';
+import Transaction, {TransactionStatus,} from '../../src/transaction/transaction.entity';
 
 interface TransactionMockCommand {
   id?: UUID;
