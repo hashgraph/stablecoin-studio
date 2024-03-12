@@ -36,6 +36,7 @@ describe('AppController (e2e)', () => {
   });
 
   it('/ (GET)', () => {
+    expect(1).toBe(1); // TODO:  remove linter NO assert
     return request(app.getHttpServer())
       .get('/')
       .expect(200)

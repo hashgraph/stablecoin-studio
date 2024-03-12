@@ -31,7 +31,7 @@ import {
 } from 'nestjs-typeorm-paginate';
 import { GetTransactionsResponseDto } from './dto/get-transactions-response.dto';
 import { uuidRegex } from '../common/Regexp';
-import { LoggerService } from '../logger/logger.service.js';
+import { LoggerService } from '../logger/logger.service';
 import { verifySignature } from '../utils/utils';
 
 @Injectable()

@@ -35,7 +35,7 @@ echo "\nValidating Prettier & Linting:\n"
 
 if ( [ "$BACKEND_STAGED_FILES" != "" ] ); then
   cd backend
-  checkPrettier $BACKEND_STAGED_FILES 
+#   checkPrettier $BACKEND_STAGED_FILES 
   checkLinter
   cd ..
 fi

@@ -35,7 +35,7 @@ interface TransactionMockCommand {
   signatures?: string[];
 }
 
-const DEFAULT = {
+const DEFAULT: Record<string, Transaction | null> = {
   txPending0: null,
   txPending1: null,
   txSignedThreshold: null,
@@ -45,15 +45,15 @@ const DEFAULT = {
 DEFAULT.txPending0 = {
   id: randomUUID(),
   transaction_message:
-    '858076a8dde510aa28bf7ac5aa65a447ded08712e83d149fa71712ac7f01b6febf6326b8c15832d54a1d8f9f690dd865',
+    '0a1a0a0c0892d5c0af0610efaedd950312080800100018c3bf0c180012080800100018c3bf0c1880c2d72f22020878320072020a00',
   description: 'This transaction is for the creation of a new StableCoin',
   status: TransactionStatus.PENDING,
   threshold: 2,
   hedera_account_id: '0.0.123456',
   key_list: [
-    '302a300506032b6570032100cf8c984270cd7cd25e1bd6df1a3a22ee2d1cd53a0f7bbfdf917a8bd881b11b5e',
-    '302a300506032b6570032100c539f0f94cd937b721f9bd4c0b965164622798cf8ddea6169d2cb734f70baf8e',
-    '302a300506032b65700321000e3c05cf1c2a04db21d0e73f0e608d80d7043851154a4d9516e6b0ee929f7f9f',
+    'cf8c984270cd7cd25e1bd6df1a3a22ee2d1cd53a0f7bbfdf917a8bd881b11b5e',
+    'c539f0f94cd937b721f9bd4c0b965164622798cf8ddea6169d2cb734f70baf8e',
+    '0e3c05cf1c2a04db21d0e73f0e608d80d7043851154a4d9516e6b0ee929f7f9f',
   ],
   signed_keys: [],
   signatures: [],
@@ -63,7 +63,7 @@ DEFAULT.txPending1 = {
   ...DEFAULT.txPending0,
   signed_keys: [DEFAULT.txPending0.key_list[0]],
   signatures: [
-    'd211c25d68b77f46edfb7b25a91fd9fa41881e8b302b549b27c9c10f231b983249253f6f6df2a23d858fbdb1262db138f9000ad5465649ae5c714145bd12030f',
+    'e120be5fa7fa085c989e69b60b6f80218d8a49751abc84456bc8bd88ba3766101b658d45ebd7e0b742382e9bd8ad98a88f03a9d6118cad42da275531e068a50b',
   ],
 };
 
@@ -73,7 +73,7 @@ DEFAULT.txSignedThreshold = {
   signed_keys: [DEFAULT.txPending1.key_list[0], DEFAULT.txPending0.key_list[1]],
   signatures: [
     DEFAULT.txPending1.signatures[0],
-    'ac61e05c58a370f91ec1b0e31ee0a6322c80a5323a3866f7b8e3208f1827a896018e47bf4776f740d7d1798340e4abd82e14dde7e2c059868d3a3d0839661a0d',
+    '6cf580daa232d279badbd1bc1227531d4c98ab444a2a7ec1851af17400e01c805bf96223ad2cd7a4469f3709c0fb35b77cb217543e4741d8db92175de583cc00',
   ],
 };
 
@@ -85,7 +85,7 @@ DEFAULT.txSignedMax = {
   ],
   signatures: [
     ...DEFAULT.txSignedThreshold.signatures,
-    '03a22c4e10e15e50bd15e3f0ba9ff0f225be1b3eb82378817846bd24be0b5ef6d6041eee87cbe16e317255255f5e01bea64a72e89a980c6dbd2f010aebdfc904',
+    'ff79cb99db2d5001835b7ed3c26fa8a980ee541b9a1fb1c3972a6a62dfce1bd05372fed331ee1d672dc41df5ec1c12a38104962d2fb6a80dbf12286375f59c0f',
   ],
 };
 
@@ -140,25 +140,50 @@ export default class TransactionMock extends Transaction {
     });
   }
 
-  assert(transaction: Transaction) {
-    expect(transaction.id).toBeDefined();
-    expect(transaction.id).toBe(this.id);
-    expect(transaction.transaction_message).toBe(this.transaction_message);
-    expect(transaction.description).toBe(this.description);
-    expect(transaction.status).toBe(this.status);
-    expect(transaction.threshold).toBe(this.threshold);
-    expect(transaction.hedera_account_id).toBe(this.hedera_account_id);
-    expect(transaction.key_list.length).toBe(this.key_list.length);
-    transaction.key_list.forEach((key, i) => {
-      expect(key).toBe(this.key_list[i]);
-    });
-    expect(transaction.signed_keys.length).toBe(this.signed_keys.length);
-    transaction.signed_keys.forEach((key, i) => {
-      expect(key).toBe(this.signed_keys[i]);
-    });
-    expect(transaction.signatures.length).toBe(this.signatures.length);
-    transaction.signatures.forEach((signature, i) => {
-      expect(signature).toBe(this.signatures[i]);
-    });
+  /* eslint-disable jest/no-standalone-expect */
+  assert({
+    transaction,
+    disableChecks = {},
+  }: {
+    transaction: Transaction;
+    disableChecks?: Partial<Record<keyof Transaction, boolean>>;
+  }): void {
+    if (!disableChecks.id) {
+      expect(transaction.id).toBeDefined();
+      expect(transaction.id).toBe(this.id);
+    }
+    if (!disableChecks.transaction_message) {
+      expect(transaction.transaction_message).toBe(this.transaction_message);
+    }
+    if (!disableChecks.description) {
+      expect(transaction.description).toBe(this.description);
+    }
+    if (!disableChecks.status) {
+      expect(transaction.status).toBe(this.status);
+    }
+    if (!disableChecks.threshold) {
+      expect(transaction.threshold).toBe(this.threshold);
+    }
+    if (!disableChecks.hedera_account_id) {
+      expect(transaction.hedera_account_id).toBe(this.hedera_account_id);
+    }
+    if (!disableChecks.key_list) {
+      expect(transaction.key_list.length).toBe(this.key_list.length);
+      transaction.key_list.forEach((key, i) => {
+        expect(key).toBe(this.key_list[i]);
+      });
+    }
+    if (!disableChecks.signed_keys) {
+      expect(transaction.signed_keys.length).toBe(this.signed_keys.length);
+      transaction.signed_keys.forEach((key, i) => {
+        expect(key).toBe(this.signed_keys[i]);
+      });
+    }
+    if (!disableChecks.signatures) {
+      expect(transaction.signatures.length).toBe(this.signatures.length);
+      transaction.signatures.forEach((signature, i) => {
+        expect(signature).toBe(this.signatures[i]);
+      });
+    }
   }
 }

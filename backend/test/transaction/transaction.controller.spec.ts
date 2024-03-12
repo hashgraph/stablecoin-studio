@@ -25,38 +25,26 @@ import { Repository } from 'typeorm';
 import { Pagination, IPaginationMeta } from 'nestjs-typeorm-paginate';
 import { CreateTransactionRequestDto } from '../../src/transaction/dto/create-transaction-request.dto';
 import TransactionController from '../../src/transaction/transaction.controller';
-import Transaction, {
-  TransactionStatus,
-} from '../../src/transaction/transaction.entity';
+import Transaction from '../../src/transaction/transaction.entity';
 import TransactionService from '../../src/transaction/transaction.service';
 import { CreateTransactionResponseDto } from '../../src/transaction/dto/create-transaction-response.dto';
 import { SignTransactionRequestDto } from '../../src/transaction/dto/sign-transaction-request.dto';
 import { GetTransactionsResponseDto } from '../../src/transaction/dto/get-transactions-response.dto';
+import { LoggerService } from '../../src/logger/logger.service';
+import TransactionMock, { DEFAULT } from './transaction.mock';
+import { Request } from 'express';
+import { OriginGuard } from '../../src/guards/origin.guard';
 
-const DEFAULT = {
-  transaction: {
-    id: '0.0.2665309',
-    message:
-      '0a81012a7f0a7b0a1a0a0b08e8eea5af0610defbe66e12090800100018ddd6a20118001206080010001803188084af5f2202087832005a4a0a22122094ac3f274e59cb947c4685d16cfa2d8a5d055984f43a70e1c62d986a474770611080cab5ee0130ffffffffffffffff7f38ffffffffffffffff7f40004a050880ceda0388010012000a81012a7f0a7b0a1a0a0b08e8eea5af0610defbe66e12090800100018ddd6a20118001206080010001807188084af5f2202087832005a4a0a22122094ac3f274e59cb947c4685d16cfa2d8a5d055984f43a70e1c62d986a474770611080cab5ee0130ffffffffffffffff7f38ffffffffffffffff7f40004a050880ceda0388010012000a81012a7f0a7b0a1a0a0b08e8eea5af0610defbe66e12090800100018ddd6a20118001206080010001803188084af5f2202087832005a4a0a22122094ac3f274e59cb947c4685d16cfa2d8a5d055984f43a70e1c62d986a474770611080cab5ee0130ffffffffffffffff7f38ffffffffffffffff7f40004a050880ceda0388010012000a81012a7f0a7b0a1a0a0b08e8eea5af0610defbe66e12090800100018ddd6a20118001206080010001809188084af5f2202087832005a4a0a22122094ac3f274e59cb947c4685d16cfa2d8a5d055984f43a70e1c62d986a474770611080cab5ee0130ffffffffffffffff7f38ffffffffffffffff7f40004a050880ceda0388010012000a81012a7f0a7b0a1a0a0b08e8eea5af0610defbe66e12090800100018ddd6a20118001206080010001804188084af5f2202087832005a4a0a22122094ac3f274e59cb947c4685d16cfa2d8a5d055984f43a70e1c62d986a474770611080cab5ee0130ffffffffffffffff7f38ffffffffffffffff7f40004a050880ceda038801001200',
-    description: 'This transaction is for the creation of a new StableCoin',
-    status: TransactionStatus.SIGNED,
-    threshold: 2,
-    hedera_account_id: '0.0.123456',
-    key_list: [
-      '75ec8c1997089874ce881690e95900f821a7f69152814728be971e67e4bc2224',
-      '4617e0079f0e943fc407e77ca9fc366f47ccdb4cbec6d5d51eeb996e781c052d',
-      'a0d7a883021253dc9f260ca7934b352f2d75e96d23ebdd1b3851ec0f0f0729d1',
-    ],
-    signed_keys: [
-      '75ec8c1997089874ce881690e95900f821a7f69152814728be971e67e4bc2224',
-      '4617e0079f0e943fc407e77ca9fc366f47ccdb4cbec6d5d51eeb996e781c052d',
-    ],
-    signatures: [
-      '0a81012a7f0a7b0a1a0a0b08e8eea5af0610defbe66e12090800100018ddd6a20118001206080010001803188084af5f2202087832005a4a0a22122094ac3f274e59cb947c4685d16cfa2d8a5d055984f43a70e1c62d986a474770611080cab5ee0130ffffffffffffffff7f38ffffffffffffffff7f40004a050880ceda038801001200',
-      '0a81012a7f0a7b0a1a0a0b08e8eea5af0610defbe66e12090800100018ddd6a20118001206080010001807188084af5f2202087832005a4a0a22122094ac3f274e59cb947c4685d16cfa2d8a5d055984f43a70e1c62d986a474770611080cab5ee0130ffffffffffffffff7f38ffffffffffffffff7f40004a050880ceda038801001200',
-    ],
+const HTTP_REQUEST = {
+  headers: {
+    'x-request-id': '1234',
   },
-};
+  get: jest.fn(),
+  header: jest.fn(),
+  accepts: jest.fn(),
+  acceptsCharsets: jest.fn(),
+  // Add the rest of the missing methods here
+} as unknown as Request;
 
 describe('Transaction Controller Test', () => {
   let controller: TransactionController;
@@ -72,91 +60,217 @@ describe('Transaction Controller Test', () => {
           provide: getRepositoryToken(Transaction),
           useClass: Repository,
         },
+        {
+          provide: LoggerService,
+          useValue: {
+            log: jest.fn(),
+          },
+        },
+        {
+          provide: OriginGuard,
+          useClass: OriginGuard,
+        },
       ],
     }).compile();
 
-    service = testingModule.get<TransactionService>(TransactionService);
     controller = testingModule.get<TransactionController>(
       TransactionController,
     );
+    service = testingModule.get<TransactionService>(TransactionService);
   });
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
+    expect(service).toBeDefined();
   });
 
   describe('Create transaction', () => {
-    it('should create a new transaction', async () => {
+    it('should add a new transaction', async () => {
+      //* 🗂️ Arrange ⬇
+      // Mock input
+      const httpRequest = HTTP_REQUEST;
+      const createTransactionRequestDto = {
+        description: DEFAULT.txPending0.description,
+        hedera_account_id: DEFAULT.txPending0.hedera_account_id,
+        key_list: DEFAULT.txPending0.key_list,
+        threshold: DEFAULT.txPending0.threshold,
+        transaction_message: DEFAULT.txPending0.transaction_message,
+      } as CreateTransactionRequestDto;
+      const createTxRequestCommand = {
+        request: httpRequest,
+        createTransactionDto: createTransactionRequestDto,
+      };
+      // Mock service
       jest
         .spyOn(service, 'create')
-        .mockImplementation(() =>
-          Promise.resolve(createMockCreateTransactionServiceResult()),
+        .mockImplementation((createTxDto: CreateTransactionRequestDto) =>
+          Promise.resolve(
+            TransactionMock.txPending0({
+              description: createTxDto.description,
+              hedera_account_id: createTxDto.hedera_account_id,
+              key_list: createTxDto.key_list,
+              threshold: createTxDto.threshold,
+              transaction_message: createTxDto.transaction_message,
+            }),
+          ),
         );
-
-      const expectedResult = createMockAddTransactionControllerResponse();
+      // Mock expected result
+      const expected = {
+        transactionId: new TransactionMock().id,
+      } as CreateTransactionResponseDto;
+      //* 🎬 Act ⬇
       const result = await controller.addTransaction(
-        createMockAddTransactionControllerRequest(),
+        createTxRequestCommand.request,
+        createTxRequestCommand.createTransactionDto,
       );
-      expect(result.transactionId).toBe(expectedResult.transactionId);
+      //* ☑️ Assert ⬇
+      expect(result.transactionId).toBe(expected.transactionId);
     });
     it('should create a new transaction with threshold = 0', async () => {
-      const mockAddTransactionControllerRequest =
-        createMockAddTransactionControllerRequest();
-      mockAddTransactionControllerRequest.threshold = 0;
+      //* 🗂️ Arrange ⬇
+      const THRESHOLD = 0;
+      // Mock input
+      const httpRequest = HTTP_REQUEST;
+      const createTransactionRequestDto = {
+        description: DEFAULT.txPending0.description,
+        hedera_account_id: DEFAULT.txPending0.hedera_account_id,
+        key_list: DEFAULT.txPending0.key_list,
+        threshold: THRESHOLD,
+        transaction_message: DEFAULT.txPending0.transaction_message,
+      } as CreateTransactionRequestDto;
+      const createTxRequestCommand = {
+        request: httpRequest,
+        createTransactionDto: createTransactionRequestDto,
+      };
+      // Mock service
       jest
         .spyOn(service, 'create')
-        .mockImplementation(() =>
-          Promise.resolve(createMockCreateTransactionServiceResult()),
+        .mockImplementation((createTxDto: CreateTransactionRequestDto) =>
+          Promise.resolve(
+            TransactionMock.txPending0({
+              threshold: createTxDto.key_list.length,
+            }),
+          ),
         );
-
-      const expectedResult = createMockAddTransactionControllerResponse();
+      // Mock expected result
+      const expected = {
+        transactionId: new TransactionMock().id,
+      } as CreateTransactionResponseDto;
+      //* 🎬 Act ⬇
       const result = await controller.addTransaction(
-        mockAddTransactionControllerRequest,
+        createTxRequestCommand.request,
+        createTxRequestCommand.createTransactionDto,
       );
-      expect(result.transactionId).toBe(expectedResult.transactionId);
+      //* ☑️ Assert ⬇
+      expect(result.transactionId).toBe(expected.transactionId);
     });
   });
 
   describe('Sign Transaction', () => {
     it('should sign a transaction', async () => {
-      const mockSignTransactionControllerRequest =
-        createMockSignTransactionControllerRequest();
+      //* 🗂️ Arrange ⬇
+      // Input
+      const httpRequest = HTTP_REQUEST;
+      const transactionId = DEFAULT.txPending0.id;
+      const signTransactionRequestDto = {
+        signed_transaction_message: DEFAULT.txPending0.signatures[0],
+        public_key: DEFAULT.txPending0.key_list[0],
+      } as SignTransactionRequestDto;
+      const signTransactionCommand = {
+        request: httpRequest,
+        transactionId,
+        signTransactionDto: signTransactionRequestDto,
+      };
+      // Mock service
       jest
         .spyOn(service, 'sign')
-        .mockImplementation(() =>
-          Promise.resolve(createMockSignTransactionServiceResult()),
+        .mockImplementation(
+          (signTxDto: SignTransactionRequestDto, transactionId: string) =>
+            Promise.resolve(
+              new TransactionMock({
+                id: transactionId,
+                signed_keys: [signTxDto.public_key],
+                signatures: [signTxDto.signed_transaction_message],
+              }),
+            ),
         );
-
-      await controller.signTransaction(
-        mockSignTransactionControllerRequest.transaction_id,
-        mockSignTransactionControllerRequest.signedTransation,
+      // Mock expected result
+      // VOID
+      //* 🎬 Act ⬇
+      const result = await controller.signTransaction(
+        signTransactionCommand.request,
+        signTransactionCommand.transactionId,
+        signTransactionCommand.signTransactionDto,
       );
+      //* ☑️ Assert ⬇
+      expect(result).toBeUndefined();
     });
   });
 
   describe('Delete Transaction', () => {
     it('should delete a transaction', async () => {
-      const transaction_id = DEFAULT.transaction.id;
-      jest.spyOn(service, 'delete').mockImplementation(() => Promise.resolve());
-
-      await controller.deleteTransaction(transaction_id);
+      //* 🗂️ Arrange ⬇
+      // Input
+      const httpRequest = HTTP_REQUEST;
+      const transactionId = DEFAULT.txPending0.id;
+      const signTransactionCommand = {
+        request: httpRequest,
+        transactionId,
+      };
+      // Mock service
+      jest
+        .spyOn(service, 'delete')
+        .mockImplementation((/*transactionId: string*/) =>
+          Promise.resolve(undefined),);
+      // Mock expected result
+      // VOID
+      //* 🎬 Act ⬇
+      const result = await controller.deleteTransaction(
+        signTransactionCommand.request,
+        signTransactionCommand.transactionId,
+      );
+      //* ☑️ Assert ⬇
+      expect(result).toBeUndefined();
     });
   });
 
   describe('Get Transactions', () => {
     it('should get all transactions linked to a public key', async () => {
+      //* 🗂️ Arrange ⬇
+      // Input
+      const request = HTTP_REQUEST;
       const publicKey = DEFAULT.transaction.key_list[0];
+      const getAllByPublicKeyCommand = {
+        request,
+        publicKey,
+      };
+      // Mock service
       jest
         .spyOn(service, 'getAllByPublicKey')
-        .mockImplementation(() =>
+        .mockImplementation((publicKey: string) =>
           Promise.resolve(
             createMockGetAllByPublicKeyTxServiceResult(publicKey),
           ),
         );
-
+      // Mock expected result
       // Same as service result
-      const expectedResult = await service.getAllByPublicKey(publicKey);
-      const result = await controller.getByPublicKey(publicKey);
+      const expectedResult = new Pagination<GetTransactionsResponseDto>(
+        [new TransactionMock(), new TransactionMock()],
+        {
+          currentPage: 1,
+          itemCount: 2,
+          itemsPerPage: 100,
+        },
+        {},
+      );
+
+      //* 🎬 Act ⬇
+      const result = await controller.getByPublicKey(
+        getAllByPublicKeyCommand.request,
+        getAllByPublicKeyCommand.publicKey,
+      );
+
+      //* ☑️ Assert ⬇
       expect(result.items.length).toEqual(expectedResult.items.length);
       result.items.forEach((transaction: any, index: string | number) => {
         expect(transaction.id).toEqual(expectedResult.items[index].id);
@@ -194,77 +308,14 @@ describe('Transaction Controller Test', () => {
 });
 
 //* Helper Functions
-//* Create Mocks
-
-function createMockCreateTransactionServiceResult(): Transaction {
-  const transaction = new Transaction();
-  transaction.id = DEFAULT.transaction.id;
-  transaction.transaction_message = DEFAULT.transaction.message;
-  transaction.description = DEFAULT.transaction.description;
-  transaction.hedera_account_id = DEFAULT.transaction.hedera_account_id;
-  transaction.signatures = DEFAULT.transaction.signatures;
-  transaction.key_list = DEFAULT.transaction.key_list;
-  transaction.signed_keys = DEFAULT.transaction.signed_keys;
-  transaction.status = DEFAULT.transaction.status;
-  transaction.threshold = DEFAULT.transaction.threshold;
-
-  return transaction;
-}
-
-function createMockAddTransactionControllerRequest(): CreateTransactionRequestDto {
-  const createTransactionRequestDto: CreateTransactionRequestDto = {
-    transaction_message: DEFAULT.transaction.message,
-    description: DEFAULT.transaction.description,
-    hedera_account_id: DEFAULT.transaction.hedera_account_id,
-    key_list: DEFAULT.transaction.key_list,
-    threshold: DEFAULT.transaction.threshold,
-  };
-
-  return createTransactionRequestDto;
-}
-
-function createMockAddTransactionControllerResponse(): CreateTransactionResponseDto {
-  const createTransactionServiceResult =
-    createMockCreateTransactionServiceResult();
-  return new CreateTransactionResponseDto(createTransactionServiceResult.id);
-}
-
-//* Sign Mocks
-
-function createMockSignTransactionServiceResult(): Transaction {
-  const transaction = new Transaction();
-  transaction.id = DEFAULT.transaction.id;
-  transaction.transaction_message = DEFAULT.transaction.message;
-  transaction.description = DEFAULT.transaction.description;
-  transaction.hedera_account_id = DEFAULT.transaction.hedera_account_id;
-  transaction.signatures = DEFAULT.transaction.signatures;
-  transaction.key_list = DEFAULT.transaction.key_list;
-  transaction.signed_keys = DEFAULT.transaction.signed_keys;
-  transaction.status = TransactionStatus.SIGNED;
-  transaction.threshold = DEFAULT.transaction.threshold;
-
-  return transaction;
-}
-
-function createMockSignTransactionControllerRequest() {
-  return {
-    transaction_id: DEFAULT.transaction.id,
-    signedTransation: {
-      signed_transaction_message: DEFAULT.transaction.signatures[0],
-      public_key: DEFAULT.transaction.key_list[0],
-    } as SignTransactionRequestDto,
-  };
-}
-
-//* Get Mocks
-
+// Get Mocks
 function createMockGetAllByPublicKeyTxServiceResult(
   publicKey: string,
   options?: { page?: number; limit?: number },
 ): Pagination<GetTransactionsResponseDto, IPaginationMeta> {
   const transactionResponse = new GetTransactionsResponseDto(
     DEFAULT.transaction.id,
-    DEFAULT.transaction.message,
+    DEFAULT.transaction.transaction_message,
     DEFAULT.transaction.description,
     DEFAULT.transaction.status,
     DEFAULT.transaction.threshold,

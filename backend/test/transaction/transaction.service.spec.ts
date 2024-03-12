@@ -26,8 +26,9 @@ import TransactionService from '../../src/transaction/transaction.service';
 import Transaction, {
   TransactionStatus,
 } from '../../src/transaction/transaction.entity';
-import { SignTransactionRequestDto } from 'src/transaction/dto/sign-transaction-request.dto';
+import { SignTransactionRequestDto } from '../../src/transaction/dto/sign-transaction-request.dto';
 import TransactionMock, { DEFAULT } from './transaction.mock';
+import { LoggerService } from '../../src/logger/logger.service';
 
 describe('Transaction Service Test', () => {
   let service: TransactionService;
@@ -43,11 +44,30 @@ describe('Transaction Service Test', () => {
           provide: repositoryToken,
           useClass: Repository,
         },
+        {
+          provide: LoggerService,
+          useValue: {
+            log: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
     service = testingModule.get<TransactionService>(TransactionService);
     repository = testingModule.get<Repository<Transaction>>(repositoryToken);
+
+    // Mock common repository methods
+    jest
+      .spyOn(repository, 'create')
+      .mockImplementation(
+        (transaction) =>
+          ({ ...transaction, id: DEFAULT.txPending0.id }) as Transaction,
+      );
+    jest
+      .spyOn(repository, 'save')
+      .mockImplementation((transaction) =>
+        Promise.resolve(transaction as Transaction),
+      );
   });
 
   it('should be defined', () => {
@@ -64,40 +84,14 @@ describe('Transaction Service Test', () => {
         key_list: DEFAULT.txPending0.key_list,
         threshold: DEFAULT.txPending0.threshold,
       };
-      jest
-        .spyOn(repository, 'create')
-        .mockImplementation((transaction) => transaction as Transaction);
-      jest
-        .spyOn(repository, 'save')
-        .mockImplementation((transaction) =>
-          Promise.resolve(transaction as Transaction),
-        );
+
       const expected = TransactionMock.txPending0();
       //* 🎬 Act ⬇
       const transaction = await service.create(createTransactionDto);
 
       //* ☑️ Assert ⬇
       expect(transaction).toBeDefined();
-      // expect(transaction.id).toBeDefined();
-      expect(transaction.transaction_message).toBe(
-        expected.transaction_message,
-      );
-      expect(transaction.description).toBe(expected.description);
-      expect(transaction.status).toBe(expected.status);
-      expect(transaction.threshold).toBe(expected.threshold);
-      expect(transaction.hedera_account_id).toBe(expected.hedera_account_id);
-      expect(transaction.key_list.length).toBe(expected.key_list.length);
-      transaction.key_list.forEach((key, i) => {
-        expect(key).toBe(expected.key_list[i]);
-      });
-      expect(transaction.signed_keys.length).toBe(expected.signed_keys.length);
-      transaction.signed_keys.forEach((key, i) => {
-        expect(key).toBe(expected.signed_keys[i]);
-      });
-      expect(transaction.signatures.length).toBe(expected.signatures.length);
-      transaction.signatures.forEach((signature, i) => {
-        expect(signature).toBe(expected.signatures[i]);
-      });
+      expected.assert({ transaction });
     });
     it('should create a transaction with threshold equal to 0', async () => {
       //* 🗂️ Arrange ⬇
@@ -109,14 +103,7 @@ describe('Transaction Service Test', () => {
         key_list: DEFAULT.txPending0.key_list,
         threshold: THRESHOLD,
       };
-      jest
-        .spyOn(repository, 'create')
-        .mockImplementation((transaction) => transaction as Transaction);
-      jest
-        .spyOn(repository, 'save')
-        .mockImplementation((transaction) =>
-          Promise.resolve(transaction as Transaction),
-        );
+
       const expected = TransactionMock.txPending0({
         threshold: createTransactionDto.key_list.length,
       });
@@ -125,26 +112,7 @@ describe('Transaction Service Test', () => {
 
       //* ☑️ Assert ⬇
       expect(transaction).toBeDefined();
-      // expect(transaction.id).toBeDefined();
-      expect(transaction.transaction_message).toBe(
-        expected.transaction_message,
-      );
-      expect(transaction.description).toBe(expected.description);
-      expect(transaction.status).toBe(expected.status);
-      expect(transaction.threshold).toBe(expected.threshold);
-      expect(transaction.hedera_account_id).toBe(expected.hedera_account_id);
-      expect(transaction.key_list.length).toBe(expected.key_list.length);
-      transaction.key_list.forEach((key, i) => {
-        expect(key).toBe(expected.key_list[i]);
-      });
-      expect(transaction.signed_keys.length).toBe(expected.signed_keys.length);
-      transaction.signed_keys.forEach((key, i) => {
-        expect(key).toBe(expected.signed_keys[i]);
-      });
-      expect(transaction.signatures.length).toBe(expected.signatures.length);
-      transaction.signatures.forEach((signature, i) => {
-        expect(signature).toBe(expected.signatures[i]);
-      });
+      expected.assert({ transaction });
     });
   });
   describe('Sign transaction', () => {
@@ -172,11 +140,6 @@ describe('Transaction Service Test', () => {
           }),
         ),
       );
-      jest
-        .spyOn(repository, 'save')
-        .mockImplementation((transaction: Transaction) =>
-          Promise.resolve(transaction),
-        );
       // Mock expected result
       const expected = new TransactionMock({
         id: signTransactionCommand.txId,
@@ -194,7 +157,7 @@ describe('Transaction Service Test', () => {
 
       //* ☑️ Assert ⬇
       expect(transaction).toBeDefined();
-      expected.assert(transaction);
+      expected.assert({ transaction });
     });
     it('should sign a transaction in pending and change to sign', async () => {
       //* 🗂️ Arrange ⬇
@@ -219,11 +182,6 @@ describe('Transaction Service Test', () => {
           }),
         ),
       );
-      jest
-        .spyOn(repository, 'save')
-        .mockImplementation((transaction: Transaction) =>
-          Promise.resolve(transaction),
-        );
       // Mock expected result
       const expected = new TransactionMock({
         id: signTransactionCommand.txId,
@@ -247,7 +205,7 @@ describe('Transaction Service Test', () => {
 
       //* ☑️ Assert ⬇
       expect(transaction).toBeDefined();
-      expected.assert(transaction);
+      expected.assert({ transaction });
     });
   });
 });
