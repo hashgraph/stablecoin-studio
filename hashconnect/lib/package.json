@@ -90,7 +90,7 @@
     "@hashgraph/sdk": "2.38.0",
     "@hashgraph/cryptography": "1.4.3",
     "buffer": "^6.0.3",
-    "crypto-es": "^1.2.7",
+    "crypto-es": "^2.1.0",
     "crypto-js": "^4.1.1",
     "i": "^0.3.7",
     "isomorphic-ws": "^5.0.0",
