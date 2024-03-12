@@ -17,13 +17,14 @@ checkLinter(){
     fi
 }
 
-
+BACKEND_STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM ./backend/ | sed 's/backend\///1')
 CLI_STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM ./cli/ | sed 's/cli\///1')
 CONTRACTS_STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM ./contracts/ | sed 's/contracts\///1')
 SDK_STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM ./sdk/ | sed 's/sdk\///1')
 WEB_STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM ./web/ | sed 's/web\///1')
 
-if ( [ "$CLI_STAGED_FILES" = "" ] && 
+if ( [ "$BACKEND_STAGED_FILES" = "" ] && 
+    [ "$CLI_STAGED_FILES" = "" ] && 
     [ "$CONTRACTS_STAGED_FILES" = "" ] && 
     [ "$SDK_STAGED_FILES" = "" ] && 
     [ "$WEB_STAGED_FILES" = "" ] ); then
@@ -31,6 +32,13 @@ if ( [ "$CLI_STAGED_FILES" = "" ] &&
 fi
 
 echo "\nValidating Prettier & Linting:\n"
+
+if ( [ "$BACKEND_STAGED_FILES" != "" ] ); then
+  cd backend
+  checkPrettier $BACKEND_STAGED_FILES 
+  checkLinter
+  cd ..
+fi
 
 if ( [ "$CLI_STAGED_FILES" != "" ] ); then
   cd cli

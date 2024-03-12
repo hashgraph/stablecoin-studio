@@ -25,6 +25,7 @@ jobs:
             touch .npmrc
             echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> .npmrc
             cp .npmrc ./contracts/.npmrc
+            cp .npmrc ./backend/.npmrc
             cp .npmrc ./sdk/.npmrc
             cp .npmrc ./hashconnect/lib/.npmrc
             cp .npmrc ./cli/.npmrc
@@ -33,6 +34,14 @@ jobs:
       
       - name: Change references
         run: ./changeProyectsReferencesToRepo.sh
+
+      - name: Install backend dependencies 
+        run: npm run install:backend
+
+      - name: Publish backend package
+        run: npm run publish:backend --access=public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
   
       - name: Install contracts dependencies 
         run: npm run install:contracts
