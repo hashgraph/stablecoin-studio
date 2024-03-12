@@ -21,7 +21,7 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import { v4 as uuidv4 } from 'uuid'; // Import v4 as uuidv4
-import { REQUEST_ID_HTTP_HEADER } from '../common/Constants';
+import { REQUEST_ID_HTTP_HEADER } from '../common/constants';
 
 // Logger middleware
 @Injectable()
