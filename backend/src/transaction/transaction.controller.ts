@@ -53,9 +53,9 @@ import {
 import { OriginGuard } from '../guards/origin.guard';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { LoggerService } from '../logger/logger.service';
-import LogMessageDTO from '../logger/dto/log-message.dto.js';
+import LogMessageDTO from '../logger/dto/log-message.dto';
 import { Request } from 'express';
-import { REQUEST_ID_HTTP_HEADER } from '../common/Constants.js';
+import { REQUEST_ID_HTTP_HEADER } from '../common/Constants';
 
 @ApiTags('Transactions')
 @Controller('/api/transactions')

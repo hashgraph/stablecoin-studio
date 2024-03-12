@@ -23,7 +23,7 @@ import { Observable } from 'rxjs';
 import { ConfigService } from '@nestjs/config';
 import { LoggerService } from '../logger/logger.service';
 import LogMessageDTO from '../logger/dto/log-message.dto';
-import { REQUEST_ID_HTTP_HEADER } from '../common/Constants.js';
+import { REQUEST_ID_HTTP_HEADER } from '../common/Constants';
 
 @Injectable()
 export class OriginGuard implements CanActivate {
