@@ -23,8 +23,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TransactionModule } from './transaction/transaction.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import Transaction from './transaction/transaction.entity';
-import { LoggerService } from './logger/logger.service.js';
-import { RequestIDMiddleware } from './middleware/requestId.middleware.js';
+import { LoggerService } from './logger/logger.service';
+import { RequestIDMiddleware } from './middleware/requestId.middleware';
 
 @Module({
   imports: [
