@@ -47,7 +47,10 @@ export default class TransactionService {
       ...createTransactionDto,
       signed_keys: [],
       status: TransactionStatus.PENDING,
-      threshold: createTransactionDto.threshold,
+      threshold:
+        createTransactionDto.threshold === 0
+          ? createTransactionDto.key_list.length
+          : createTransactionDto.threshold,
       signatures: [],
     });
 
