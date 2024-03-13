@@ -28,6 +28,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  ParseIntPipe,
   Post,
   Put,
   Query,
@@ -58,7 +59,7 @@ import LogMessageDTO from '../logger/dto/log-message.dto';
 import { Request } from 'express';
 import { REQUEST_ID_HTTP_HEADER } from '../common/constants';
 import { HttpExceptionFilter } from '../common/exceptions/http-exception.filter';
-import { ParsePagePipe } from '../common/pipes/parse-page.pipe';
+import { RemoveHexPrefixPipe } from '../common/pipes/remove-hexPrefix.pipe';
 
 @ApiTags('Transactions')
 @Controller('/api/transactions')
@@ -212,11 +213,14 @@ export default class TransactionController {
   @UseFilters(HttpExceptionFilter)
   async getByPublicKey(
     @Req() request: Request,
-    @Param('publicKey') publicKey: string,
+    @Param('publicKey', RemoveHexPrefixPipe) publicKey: string,
     @Query('type') type?: string,
-    @Query('page', new DefaultValuePipe(1), ParsePagePipe) page?: number,
-    @Query('limit', new DefaultValuePipe(10), ParsePagePipe) limit?: number,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page?: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit?: number,
   ): Promise<Pagination<GetTransactionsResponseDto>> {
+    if (page < 1) {
+      throw new Error('Page must be greater than 0');
+    }
     this.loggerService.log(
       new LogMessageDTO(request[REQUEST_ID_HTTP_HEADER], 'Get transactions', {
         key: publicKey,
@@ -279,9 +283,12 @@ export default class TransactionController {
   @UseFilters(HttpExceptionFilter)
   async getAll(
     @Req() request: Request,
-    @Query('page', new DefaultValuePipe(1), ParsePagePipe) page?: number,
-    @Query('limit', new DefaultValuePipe(10), ParsePagePipe) limit?: number,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page?: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit?: number,
   ): Promise<Pagination<GetTransactionsResponseDto>> {
+    if (page < 1) {
+      throw new Error('Page must be greater than 0');
+    }
     this.loggerService.log(
       new LogMessageDTO(request[REQUEST_ID_HTTP_HEADER], 'Get All', {
         page: page,

@@ -20,7 +20,8 @@
 
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString, Matches } from 'class-validator';
-import { keyRegex } from '../../common/regexp';
+import { hexRegex } from '../../common/regexp';
+import { RemoveHexPrefix } from '../../common/decorators/transform-hexPrefix.decorator';
 
 export class SignTransactionRequestDto {
   @ApiProperty({
@@ -32,6 +33,7 @@ export class SignTransactionRequestDto {
   })
   @IsNotEmpty()
   @IsString()
+  @RemoveHexPrefix()
   signature: string;
 
   @ApiProperty({
@@ -41,14 +43,15 @@ export class SignTransactionRequestDto {
   })
   @IsNotEmpty()
   @IsString()
-  @Matches(keyRegex, {
+  @RemoveHexPrefix()
+  @Matches(hexRegex, {
     each: true,
     message: 'Each key must be ED25519 or ECDSA',
   })
   public_key: string;
 
   constructor(signature: string, public_key: string) {
-    this.signature = signature;
-    this.public_key = public_key;
+    this.signature = signature
+    this.public_key = public_key
   }
 }

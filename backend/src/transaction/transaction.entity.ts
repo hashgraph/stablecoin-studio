@@ -10,12 +10,7 @@ export default class Transaction {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({
-    transformer: {
-      to: (value: string) => (value.startsWith('0x') ? value.slice(2) : value),
-      from: (value: string) => value,
-    },
-  })
+  @Column()
   transaction_message: string;
 
   @Column()
@@ -28,16 +23,17 @@ export default class Transaction {
   signatures: string[];
 
   @Column({
-    type: 'simple-array',
-    transformer: {
-      to: (value: string[]) =>
-        value.map((key) => (key.startsWith('0x') ? key.slice(2) : key)),
-      from: (value: string[]) => value,
-    },
+    type: 'text',
+    array: true,
+    nullable: false,
   })
   key_list: string[];
 
-  @Column('simple-array')
+  @Column({
+    type: 'text',
+    array: true,
+    nullable: true,
+  })
   signed_keys: string[];
 
   @Column({

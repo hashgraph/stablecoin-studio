@@ -19,16 +19,9 @@
  */
 
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsString,
-  IsArray,
-  ArrayNotEmpty,
-  IsInt,
-  Min,
-  Matches,
-  IsNotEmpty,
-} from 'class-validator';
-import { hederaIdRegex, keyRegex } from '../../common/regexp';
+import { ArrayNotEmpty, IsArray, IsInt, IsNotEmpty, IsString, Matches, Min } from 'class-validator';
+import { hederaIdRegex, hexRegex } from '../../common/regexp';
+import { RemoveHexPrefix } from '../../common/decorators/transform-hexPrefix.decorator';
 
 export class CreateTransactionRequestDto {
   @ApiProperty({
@@ -74,10 +67,11 @@ export class CreateTransactionRequestDto {
     ],
     required: true,
   })
+  @RemoveHexPrefix()
   @IsArray()
   @ArrayNotEmpty()
   @IsString({ each: true })
-  @Matches(keyRegex, {
+  @Matches(hexRegex, {
     each: true,
     message: 'Each key must be ED25519 or ECDSA',
   })
