@@ -24,7 +24,7 @@ import { IsString } from 'class-validator';
 export class CreateTransactionResponseDto {
   @ApiProperty({
     description: 'The transaction ID',
-    example: '0x1234...',
+    example: 'e8fe7d5e-2a94-472c-bab8-e693e401134f',
     required: true,
   })
   @IsString()

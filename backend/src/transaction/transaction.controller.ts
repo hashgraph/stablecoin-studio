@@ -47,6 +47,7 @@ import {
   ApiNoContentResponse,
   ApiOkResponse,
   ApiParam,
+  ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -111,6 +112,7 @@ export default class TransactionController {
   @ApiParam({
     name: 'transactionId',
     description: 'The transaction ID to update',
+    example: 'e8fe7d5e-2a94-472c-bab8-e693e401134f',
     required: true,
   })
   @UseFilters(HttpExceptionFilter)
@@ -186,7 +188,26 @@ export default class TransactionController {
   @ApiParam({
     name: 'publicKey',
     description: 'The public key to retrieve transactions for',
+    example: 'cf8c984270cd7cd25e1bd6df1a3a22ee2d1cd53a0f7bbfdf917a8bd881b11b5e',
     required: true,
+  })
+  @ApiQuery({
+    name: 'type',
+    description: 'The type of transaction to retrieve',
+    example: 'pending',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'page',
+    description: 'The page number to retrieve',
+    example: 1,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'limit',
+    description: 'The number of transactions to retrieve per page',
+    example: 10,
+    required: false,
   })
   @UseFilters(HttpExceptionFilter)
   async getByPublicKey(
@@ -237,13 +258,24 @@ export default class TransactionController {
       throw error;
     }
   }
-
+  @Get()
   @ApiOkResponse({
     description: 'The transactions have been successfully retrieved.',
     type: [GetTransactionsResponseDto],
   })
   @ApiForbiddenResponse({ description: 'Forbidden', type: ForbiddenException })
-  @Get()
+  @ApiQuery({
+    name: 'page',
+    description: 'The page number to retrieve',
+    example: 1,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'limit',
+    description: 'The number of transactions to retrieve per page',
+    example: 10,
+    required: false,
+  })
   @UseFilters(HttpExceptionFilter)
   async getAll(
     @Req() request: Request,
