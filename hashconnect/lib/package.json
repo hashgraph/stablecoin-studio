@@ -1,6 +1,6 @@
 {
   "name": "@hashgraph/hashconnect",
-  "version": "1.15.3",
+  "version": "1.15.4",
   "description": "hashconnect interoperability library",
   "author": "Tyler Coté <tyler@hashpack.app>, Nick Hanna <nick@hashpack.app>",
   "license": "MIT",
