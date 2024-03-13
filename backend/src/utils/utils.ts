@@ -30,7 +30,7 @@ export function verifySignature(
   try {
     const publicKeyBytes = hexToUint8Array(publicKeyHex);
     const signatureBytes = hexToUint8Array(signatureHex);
-    const messageBytes = decodeUTF8(message);
+    const messageBytes = hexToUint8Array(message);
 
     if (
       nacl.sign.detached.verify(messageBytes, signatureBytes, publicKeyBytes)
