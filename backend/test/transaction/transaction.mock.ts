@@ -18,13 +18,13 @@
  *
  */
 
-import { randomUUID, UUID } from 'crypto';
+import { UUID } from 'crypto';
 import Transaction, {
   TransactionStatus,
 } from '../../src/transaction/transaction.entity';
 
 export const DEFAULT = {
-  id: randomUUID(),
+  id: 'e8fe7d5e-2a94-472c-bab8-e693e401134f',
   transaction_message:
     '0a1a0a0c0892d5c0af0610efaedd950312080800100018c3bf0c180012080800100018c3bf0c1880c2d72f22020878320072020a00',
   description: 'This transaction is for the creation of a new StableCoin',
