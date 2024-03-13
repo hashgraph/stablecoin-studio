@@ -1,5 +1,6 @@
 | Version | Contract name  | Address      | Network    | 
 |---------|----------------|--------------|------------|
+| 1.15.4  | FactoryAddress | 0.0.1137631  | Testnet    |
 | 1.15.3  | FactoryAddress | 0.0.1137631  | Testnet    |
 | 1.15.2  | FactoryAddress | 0.0.1137631  | Testnet    |
 | 1.15.0  | FactoryAddress | 0.0.1137631  | Testnet    |
