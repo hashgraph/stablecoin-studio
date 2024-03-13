@@ -82,15 +82,6 @@ export default class TransactionService {
       )
     )
       throw new InvalidSignatureException('Invalid signature');
-    if (
-      !verifySignature(
-        signTransactionDto.public_key,
-        transaction.transaction_message,
-        signTransactionDto.signature,
-      )
-    ) {
-      throw new HttpException('Invalid signature', 400);
-    }
 
     transaction.signed_keys = [
       ...transaction.signed_keys,

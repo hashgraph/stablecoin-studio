@@ -22,7 +22,7 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { ConfigService } from '@nestjs/config';
 import { LoggerService } from '../logger/logger.service';
-import LogMessageDTO from '../logger/dto/log-message.dto.js';
+import LogMessageDTO from '../logger/dto/log-message.dto';
 import { REQUEST_ID_HTTP_HEADER } from '../common/constants';
 
 @Injectable()
