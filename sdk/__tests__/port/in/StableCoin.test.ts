@@ -21,7 +21,7 @@
 /* eslint-disable jest/no-standalone-expect */
 
 import EventService from '../../../src/app/service/event/EventService.js';
-import { WalletEvents } from '../../../src/app/service/event/WalletEvent.js';
+import {WalletEvents} from '../../../src/app/service/event/WalletEvent.js';
 import Injectable from '../../../src/core/Injectable.js';
 import {
 	Account,
@@ -57,9 +57,7 @@ import {
 	UpdateReserveAddressRequest,
 	WipeRequest,
 } from '../../../src/port/in/request/index.js';
-import ConnectRequest, {
-	SupportedWallets,
-} from '../../../src/port/in/request/ConnectRequest.js';
+import ConnectRequest, {SupportedWallets,} from '../../../src/port/in/request/ConnectRequest.js';
 import GetStableCoinDetailsRequest from '../../../src/port/in/request/GetStableCoinDetailsRequest.js';
 import {
 	CLIENT_ACCOUNT_ECDSA,
@@ -67,13 +65,10 @@ import {
 	FACTORY_ADDRESS,
 	HEDERA_TOKEN_MANAGER_ADDRESS,
 } from '../../config.js';
-import { Client, Hbar, TransferTransaction } from '@hashgraph/sdk';
-import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
-import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
-import BaseError, {
-	ErrorCategory,
-	ErrorCode,
-} from '../../../src/core/error/BaseError.js';
+import {Client, Hbar, TransferTransaction} from '@hashgraph/sdk';
+import {MirrorNode} from '../../../src/domain/context/network/MirrorNode.js';
+import {JsonRpcRelay} from '../../../src/domain/context/network/JsonRpcRelay.js';
+import BaseError, {ErrorCategory, ErrorCode,} from '../../../src/core/error/BaseError.js';
 
 const decimals = 6;
 const initialSupply = 1000;
@@ -85,7 +80,7 @@ describe('🧪 Stablecoin test', () => {
 	let stableCoinSC: StableCoinViewModel;
 	let stableCoinHTS: StableCoinViewModel;
 
-	const delay = async (seconds = 5): Promise<void> => {
+	const delay = async (seconds = 7): Promise<void> => {
 		seconds = seconds * 1000;
 		await new Promise((r) => setTimeout(r, seconds));
 	};
@@ -108,7 +103,7 @@ describe('🧪 Stablecoin test', () => {
 					privateKey: CLIENT_ACCOUNT_ED25519.privateKey,
 				},
 				network: 'testnet',
-				wallet: SupportedWallets.DFNS,
+				wallet: SupportedWallets.CLIENT,
 				mirrorNode: mirrorNode,
 				rpcNode: rpcNode,
 			}),
@@ -255,7 +250,7 @@ describe('🧪 Stablecoin test', () => {
 					privateKey: CLIENT_ACCOUNT_ECDSA.privateKey,
 				},
 				network: 'testnet',
-				wallet: SupportedWallets.DFNS,
+				wallet: SupportedWallets.CLIENT,
 				mirrorNode: mirrorNode,
 				rpcNode: rpcNode,
 			}),
@@ -275,7 +270,7 @@ describe('🧪 Stablecoin test', () => {
 					privateKey: CLIENT_ACCOUNT_ED25519.privateKey,
 				},
 				network: 'testnet',
-				wallet: SupportedWallets.DFNS,
+				wallet: SupportedWallets.CLIENT,
 				mirrorNode: mirrorNode,
 				rpcNode: rpcNode,
 			}),
@@ -428,7 +423,7 @@ describe('🧪 Stablecoin test', () => {
 						privateKey: CLIENT_ACCOUNT_ECDSA.privateKey,
 					},
 					network: 'testnet',
-					wallet: SupportedWallets.DFNS,
+					wallet: SupportedWallets.CLIENT,
 					mirrorNode: mirrorNode,
 					rpcNode: rpcNode,
 				}),
@@ -448,7 +443,7 @@ describe('🧪 Stablecoin test', () => {
 						privateKey: CLIENT_ACCOUNT_ED25519.privateKey,
 					},
 					network: 'testnet',
-					wallet: SupportedWallets.DFNS,
+					wallet: SupportedWallets.CLIENT,
 					mirrorNode: mirrorNode,
 					rpcNode: rpcNode,
 				}),
@@ -809,7 +804,7 @@ describe('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		await delay();
+		await delay(7);
 
 		const finalAmount = await StableCoin.getBalanceOfHBAR(
 			new GetAccountBalanceHBARRequest({

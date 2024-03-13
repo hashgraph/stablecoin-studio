@@ -45,12 +45,6 @@ jobs:
           npm ci
           npm run compile:force
         working-directory: contracts
-      
-      - name: Install dependencies Custodial Library
-        run: |
-          npm ci
-          npm run build
-        working-directory: custodialwalletutils
 
       - name: Install dependencies SDK
         run: |
@@ -71,18 +65,18 @@ jobs:
       - name: Create file
         run: |
           touch .env
-          echo "CLIENT_PRIVATE_KEY_ECDSA=${{ secrets.PRIVATE_KEY_ECDSA }}" >> .env
-          echo "CLIENT_PUBLIC_KEY_ECDSA=${{ secrets.PUBLIC_KEY_ECDSA }}"  >> .env
-          echo "CLIENT_EVM_ADDRESS_ECDSA=${{ secrets.EVM_ADDRESS_ECDSA }}" >> .env
-          echo "CLIENT_ACCOUNT_ID_ECDSA=${{ secrets.ACCOUNT_ID_ECDSA }}" >> .env
-          echo "CLIENT_PRIVATE_KEY_ED25519=${{ secrets.PRIVATE_KEY_ED25519 }}"  >> .env
-          echo "CLIENT_PUBLIC_KEY_ED25519=${{ secrets.PUBLIC_KEY_ED25519 }}"  >> .env
-          echo "CLIENT_EVM_ADDRESS_ED25519=${{ secrets.EVM_ADDRESS_ED25519 }}"  >> .env
-          echo "CLIENT_ACCOUNT_ID_ED25519=${{ secrets.ACCOUNT_ID_ED25519 }}"  >> .env
-          echo "CLIENT_PRIVATE_KEY_ED25519_2=${{ secrets.PRIVATE_KEY_ED25519_2 }}"  >> .env          
-          echo "CLIENT_PUBLIC_KEY_ED25519_2=${{ secrets.PUBLIC_KEY_ED25519_2 }}"  >> .env
-          echo "CLIENT_EVM_ADDRESS_ED25519_2=${{ secrets.EVM_ADDRESS_ED25519_2 }}"  >> .env
-          echo "CLIENT_ACCOUNT_ID_ED25519_2=${{ secrets.ACCOUNT_ID_ED25519_2 }}"  >> .env
+          echo "CLIENT_PRIVATE_KEY_ECDSA=${{ secrets.CLIENT_PRIVATE_KEY_ECDSA }}" >> .env
+          echo "CLIENT_PUBLIC_KEY_ECDSA=${{ secrets.CLIENT_PUBLIC_KEY_ECDSA }}"  >> .env
+          echo "CLIENT_EVM_ADDRESS_ECDSA=${{ secrets.CLIENT_EVM_ADDRESS_ECDSA }}" >> .env
+          echo "CLIENT_ACCOUNT_ID_ECDSA=${{ secrets.CLIENT_ACCOUNT_ID_ECDSA }}" >> .env
+          echo "CLIENT_PRIVATE_KEY_ED25519=${{ secrets.CLIENT_PRIVATE_KEY_ED25519 }}"  >> .env
+          echo "CLIENT_PUBLIC_KEY_ED25519=${{ secrets.CLIENT_PUBLIC_KEY_ED25519 }}"  >> .env
+          echo "CLIENT_EVM_ADDRESS_ED25519=${{ secrets.CLIENT_EVM_ADDRESS_ED25519 }}"  >> .env
+          echo "CLIENT_ACCOUNT_ID_ED25519=${{ secrets.CLIENT_ACCOUNT_ID_ED25519 }}"  >> .env
+          echo "CLIENT_PRIVATE_KEY_ED25519_2=${{ secrets.CLIENT_PRIVATE_KEY_ED25519_2 }}"  >> .env
+          echo "CLIENT_PUBLIC_KEY_ED25519_2=${{ secrets.CLIENT_PUBLIC_KEY_ED25519_2 }}"  >> .env
+          echo "CLIENT_EVM_ADDRESS_ED25519_2=${{ secrets.CLIENT_EVM_ADDRESS_ED25519_2 }}"  >> .env
+          echo "CLIENT_ACCOUNT_ID_ED25519_2=${{ secrets.CLIENT_ACCOUNT_ID_ED25519_2 }}"  >> .env
           echo "HEDERA_TOKEN_MANAGER_ADDRESS=0.0.2167020"  >> .env
           echo "FACTORY_ADDRESS=0.0.2167166"  >> .env
         working-directory: sdk
@@ -90,14 +84,14 @@ jobs:
       - name: Create contracts
         run: |
           touch .env
-          echo "TESTNET_HEDERA_OPERATOR_PRIVATEKEY=${{ secrets.PRIVATE_KEY_ED25519 }}"  >> .env
-          echo "TESTNET_HEDERA_OPERATOR_PUBLICKEY=${{ secrets.PUBLIC_KEY_ED25519 }}"  >> .env
-          echo "TESTNET_HEDERA_OPERATOR_ED25519='true'"  >> .env
-          echo "TESTNET_HEDERA_OPERATOR_ACCOUNT=${{ secrets.ACCOUNT_ID_ED25519 }}"  >> .env
-          echo "TESTNET_HEDERA_NON_OPERATOR_PRIVATEKEY=${{ secrets.PRIVATE_KEY_ED25519_2 }}"  >> .env          
-          echo "TESTNET_HEDERA_NON_OPERATOR_PUBLICKEY=${{ secrets.PUBLIC_KEY_ED25519_2 }}"  >> .env
-          echo "TESTNET_HEDERA_NON_OPERATOR_ED25519='true'"  >> .env
-          echo "TESTNET_HEDERA_NON_OPERATOR_ACCOUNT=${{ secrets.ACCOUNT_ID_ED25519_2 }}"  >> .env
+          echo "TESTNET_HEDERA_OPERATOR_PRIVATEKEY=${{ secrets.TESTNET_HEDERA_OPERATOR_PRIVATEKEY }}" >> .env
+          echo "TESTNET_HEDERA_OPERATOR_PUBLICKEY=${{ secrets.TESTNET_HEDERA_OPERATOR_PUBLICKEY }}" >> .env
+          echo "TESTNET_HEDERA_OPERATOR_ED25519='true'" >> .env
+          echo "TESTNET_HEDERA_OPERATOR_ACCOUNT=${{ secrets.TESTNET_HEDERA_OPERATOR_ACCOUNT }}" >> .env
+          echo "TESTNET_HEDERA_NON_OPERATOR_PRIVATEKEY=${{ secrets.TESTNET_HEDERA_NON_OPERATOR_PRIVATEKEY }}" >> .env
+          echo "TESTNET_HEDERA_NON_OPERATOR_PUBLICKEY=${{ secrets.TESTNET_HEDERA_NON_OPERATOR_PUBLICKEY }}" >> .env
+          echo "TESTNET_HEDERA_NON_OPERATOR_ED25519='false'" >> .env
+          echo "TESTNET_HEDERA_NON_OPERATOR_ACCOUNT=${{ secrets.TESTNET_HEDERA_NON_OPERATOR_ACCOUNT }}" >> .env
         working-directory: contracts
 
       - name: Test cli
@@ -133,9 +127,3 @@ jobs:
           npm run test
           npm run cleanCache
         working-directory: sdk
-
-      - name: Test custodialwalletutils
-        run: |
-          npm run test
-          npm run cleanCache
-        working-directory: custodialwalletutils
