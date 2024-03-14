@@ -20,7 +20,7 @@
 
 import * as nacl from 'tweetnacl';
 import * as elliptic from 'elliptic';
-import { arrayify, sha256 } from 'ethers/lib/utils';
+import { getBytes, sha256 } from 'ethers';
 
 export function verifySignature(
   publicKeyHex: string,
@@ -47,7 +47,7 @@ export function verifySignature(
 
     const messageBytes = hexToUint8Array(messageHex);
     const messageHashHex = sha256(messageBytes);
-    const messageHashBytes = arrayify(messageHashHex);
+    const messageHashBytes = getBytes(messageHashHex);
 
     const signature = {
       r: signatureHex.slice(0, 64),
