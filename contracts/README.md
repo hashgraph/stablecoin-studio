@@ -253,7 +253,7 @@ If you want to deploy your own Factory contracts do the following steps:
 
 1. Deploy the Factory **Logic** smart contract (_StableCoinFactory.sol_).
 2. Deploy the Factory **Proxy Admin** smart contract.
-3. Deploy the Factory **TransparentUpgradeableProxy** smart contract setting the Factory logic as the implementation and the Factory proxy admin as the admin.
+3. Deploy the Factory **TransparentUpgradeableProxy** smart contract setting the Factory logic as the implementation and the Factory proxy admin as the admin. _**DO NOT FORGET** to add the Factory proxy admin **EVM** address to the "memo" field of the TransparentUpgradeableProxy contract_.
 
 > To enable `deployFactory` task in hardhat, it's necessary to un comment in `hardhat.config.ts` the line 10.
 
