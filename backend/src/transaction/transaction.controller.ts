@@ -193,8 +193,8 @@ export default class TransactionController {
     required: true,
   })
   @ApiQuery({
-    name: 'type',
-    description: 'The type of transaction to retrieve',
+    name: 'status',
+    description: 'The status of transaction to retrieve',
     example: 'pending',
     required: false,
   })
@@ -214,7 +214,7 @@ export default class TransactionController {
   async getByPublicKey(
     @Req() request: Request,
     @Param('publicKey', RemoveHexPrefixPipe) publicKey: string,
-    @Query('type') type?: string,
+    @Query('status') status?: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page?: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit?: number,
   ): Promise<Pagination<GetTransactionsResponseDto>> {
@@ -224,13 +224,13 @@ export default class TransactionController {
     this.loggerService.log(
       new LogMessageDTO(request[REQUEST_ID_HTTP_HEADER], 'Get transactions', {
         key: publicKey,
-        type: type,
+        status: status,
         page: page,
         limit: limit,
       }),
     );
     limit = limit > 100 ? 100 : limit;
-    type = type ? type.toLowerCase() : type;
+    status = status ? status.toLowerCase() : status;
 
     this.loggerService.debug(
       new LogMessageDTO(
@@ -243,11 +243,11 @@ export default class TransactionController {
       new LogMessageDTO(
         request[REQUEST_ID_HTTP_HEADER],
         'Get transactions type set',
-        type,
+        status,
       ),
     );
     try {
-      return await this.transactionService.getAllByPublicKey(publicKey, type, {
+      return await this.transactionService.getAllByPublicKey(publicKey, status, {
         page,
         limit,
       });

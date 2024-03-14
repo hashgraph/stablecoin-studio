@@ -118,15 +118,15 @@ export default class TransactionService {
 
   async getAllByPublicKey(
     publicKey: string,
-    type?: string,
+    status?: string,
     options?: IPaginationOptions,
   ): Promise<Pagination<GetTransactionsResponseDto>> {
     let queryBuilder: Repository<Transaction> | SelectQueryBuilder<Transaction>;
-    if (type == TransactionStatus.SIGNED.toLowerCase()) {
+    if (status == TransactionStatus.SIGNED.toLowerCase()) {
       queryBuilder = this.transactionRepository
         .createQueryBuilder('transaction')
         .where(':publicKey = ANY(transaction.signed_keys)', { publicKey });
-    } else if (type == TransactionStatus.PENDING.toLowerCase()) {
+    } else if (status == TransactionStatus.PENDING.toLowerCase()) {
       queryBuilder = this.transactionRepository
         .createQueryBuilder('transaction')
         .where(':publicKey = ANY(transaction.key_list)', { publicKey })
