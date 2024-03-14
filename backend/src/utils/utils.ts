@@ -18,9 +18,9 @@
  *
  */
 
-import * as Nacl from 'tweetnacl';
+import * as nacl from 'tweetnacl';
+import * as elliptic from 'elliptic';
 import { getBytes, sha256 } from 'ethers';
-import { ec as EC } from 'elliptic';
 
 
 export function verifySignature(
@@ -34,7 +34,7 @@ export function verifySignature(
     const messageBytes = hexToUint8Array(messageHex);
 
     if (
-      Nacl.sign.detached.verify(messageBytes, signatureBytes, publicKeyBytes)
+      nacl.sign.detached.verify(messageBytes, signatureBytes, publicKeyBytes)
     ) {
       return true;
     }
@@ -43,7 +43,7 @@ export function verifySignature(
   }
 
   try {
-    const ec = EC('secp256k1');
+    const ec = new elliptic.ec('secp256k1');
     const keyECDSA = ec.keyFromPublic(publicKeyHex, 'hex');
 
     const messageBytes = hexToUint8Array(messageHex);
