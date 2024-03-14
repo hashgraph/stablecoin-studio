@@ -247,10 +247,14 @@ export default class TransactionController {
       ),
     );
     try {
-      return await this.transactionService.getAllByPublicKey(publicKey, status, {
-        page,
-        limit,
-      });
+      return await this.transactionService.getAllByPublicKey(
+        publicKey,
+        status,
+        {
+          page,
+          limit,
+        },
+      );
     } catch (error) {
       this.loggerService.error(
         new LogMessageDTO(

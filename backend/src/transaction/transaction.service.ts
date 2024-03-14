@@ -24,7 +24,11 @@ import { CreateTransactionRequestDto } from './dto/create-transaction-request.dt
 import Transaction, { TransactionStatus } from './transaction.entity';
 import { SignTransactionRequestDto } from './dto/sign-transaction-request.dto';
 import { Repository, SelectQueryBuilder } from 'typeorm';
-import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
+import {
+  IPaginationOptions,
+  paginate,
+  Pagination,
+} from 'nestjs-typeorm-paginate';
 import { GetTransactionsResponseDto } from './dto/get-transactions-response.dto';
 import { uuidRegex } from '../common/regexp';
 import { verifySignature } from '../utils/utils';
@@ -42,7 +46,9 @@ export default class TransactionService {
     private readonly transactionRepository: Repository<Transaction>,
   ) {}
 
-  async create(createTransactionDto: CreateTransactionRequestDto): Promise<Transaction> {
+  async create(
+    createTransactionDto: CreateTransactionRequestDto,
+  ): Promise<Transaction> {
     const transaction: Transaction = this.transactionRepository.create({
       ...createTransactionDto,
       signed_keys: [],

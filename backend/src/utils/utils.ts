@@ -51,7 +51,7 @@ export function verifySignature(
 
     const signature = {
       r: signatureHex.slice(0, 64),
-      s: signatureHex.slice(64, 128)
+      s: signatureHex.slice(64, 128),
     };
 
     return keyECDSA.verify(messageHashBytes, signature);

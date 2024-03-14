@@ -23,4 +23,3 @@ export const uuidRegex: RegExp =
 
 export const hexRegex: RegExp = /[0-9a-fA-F]+$/;
 export const hederaIdRegex: RegExp = /^\d+\.\d+\.\d+$/;
-

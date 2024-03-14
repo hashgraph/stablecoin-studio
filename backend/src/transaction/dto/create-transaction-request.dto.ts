@@ -19,7 +19,15 @@
  */
 
 import { ApiProperty } from '@nestjs/swagger';
-import { ArrayNotEmpty, IsArray, IsInt, IsNotEmpty, IsString, Matches, Min } from 'class-validator';
+import {
+  ArrayNotEmpty,
+  IsArray,
+  IsInt,
+  IsNotEmpty,
+  IsString,
+  Matches,
+  Min,
+} from 'class-validator';
 import { hederaIdRegex, hexRegex } from '../../common/regexp';
 import { RemoveHexPrefix } from '../../common/decorators/transform-hexPrefix.decorator';
 

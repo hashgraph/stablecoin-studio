@@ -51,7 +51,7 @@ export class SignTransactionRequestDto {
   public_key: string;
 
   constructor(signature: string, public_key: string) {
-    this.signature = signature
-    this.public_key = public_key
+    this.signature = signature;
+    this.public_key = public_key;
   }
 }
