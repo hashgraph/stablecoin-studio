@@ -311,7 +311,7 @@ const ModalWalletConnect = () => {
 									)}
 									{availableWallets.includes(SupportedWallets.METAMASK) ? (
 										<VStack
-											data-testid="Metamask"
+											data-testid='Metamask'
 											{...styles.providerStyle}
 											shouldWrapChildren
 											onClick={handleConnectMetamaskWallet}

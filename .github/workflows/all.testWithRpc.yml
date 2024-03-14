@@ -40,6 +40,12 @@ jobs:
           npm run build
         working-directory: hashconnect/lib
 
+      - name: Install dependencies Backend
+        run: |
+          npm ci
+          npm run build
+        working-directory: backend
+
       - name: Install dependencies Contracts
         run: |
           npm ci
@@ -93,6 +99,12 @@ jobs:
           echo "TESTNET_HEDERA_NON_OPERATOR_ED25519='false'" >> .env
           echo "TESTNET_HEDERA_NON_OPERATOR_ACCOUNT=${{ secrets.TESTNET_HEDERA_NON_OPERATOR_ACCOUNT }}" >> .env
         working-directory: contracts
+
+      - name: Test backend
+        run: |
+          npm run test
+          npm run cleanCache
+        working-directory: backend
 
       - name: Test cli
         run: |
