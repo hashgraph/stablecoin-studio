@@ -1,4 +1,3 @@
-const FireblocksSdkMock = jest.fn().mockImplementation(() => ({
-}));
+const FireblocksSdkMock = jest.fn().mockImplementation(() => ({}));
 
 module.exports = { FireblocksSDK: FireblocksSdkMock };

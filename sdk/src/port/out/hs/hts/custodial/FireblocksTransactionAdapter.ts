@@ -18,13 +18,16 @@
  *
  */
 
-import {CustodialWalletService, FireblocksConfig,} from '@hashgraph/hedera-custodians-integration';
-import {singleton} from 'tsyringe';
-import {WalletEvents} from '../../../../../app/service/event/WalletEvent';
+import {
+	CustodialWalletService,
+	FireblocksConfig,
+} from '@hashgraph/hedera-custodians-integration';
+import { singleton } from 'tsyringe';
+import { WalletEvents } from '../../../../../app/service/event/WalletEvent';
 import LogService from '../../../../../app/service/LogService';
-import {SupportedWallets} from '../../../../../domain/context/network/Wallet';
+import { SupportedWallets } from '../../../../../domain/context/network/Wallet';
 import FireblocksSettings from '../../../../../domain/context/custodialwalletsettings/FireblocksSettings';
-import {CustodialTransactionAdapter} from './CustodialTransactionAdapter';
+import { CustodialTransactionAdapter } from './CustodialTransactionAdapter';
 
 @singleton()
 export class FireblocksTransactionAdapter extends CustodialTransactionAdapter {
