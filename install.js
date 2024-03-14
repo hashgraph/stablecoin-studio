@@ -1,6 +1,7 @@
 const { execSync } = require("node:child_process");
 
 const dir = __dirname;
+const backendDir = `${dir}/backend`;
 const cliDir = `${dir}/cli`;
 const webDir = `${dir}/web`;
 const sdkDir = `${dir}/sdk`;
@@ -37,6 +38,7 @@ if (option) {
 } else {
   npmInstall(hashDir, "HASHCONNECT");
   npmBuild(hashDir, "HASHCONNECT");
+  npmInstall(backendDir, "BACKEND");
   npmInstall(conDir, "CONTRACTS");
   npmInstall(sdkDir, "SDK");
   npmInstall(cliDir, "CLI");
