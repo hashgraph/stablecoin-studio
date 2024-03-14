@@ -19,18 +19,18 @@
  */
 
 import * as nacl from 'tweetnacl';
-import { decodeUTF8 } from 'tweetnacl-util';
 import * as elliptic from 'elliptic';
+import { arrayify, sha256 } from 'ethers/lib/utils';
 
 export function verifySignature(
   publicKeyHex: string,
-  message: string,
+  messageHex: string,
   signatureHex: string,
 ): boolean {
   try {
     const publicKeyBytes = hexToUint8Array(publicKeyHex);
     const signatureBytes = hexToUint8Array(signatureHex);
-    const messageBytes = hexToUint8Array(message);
+    const messageBytes = hexToUint8Array(messageHex);
 
     if (
       nacl.sign.detached.verify(messageBytes, signatureBytes, publicKeyBytes)
@@ -44,11 +44,19 @@ export function verifySignature(
   try {
     const ec = new elliptic.ec('secp256k1');
     const keyECDSA = ec.keyFromPublic(publicKeyHex, 'hex');
-    const messageHash = ec.hash().update(decodeUTF8(message)).digest();
 
-    return keyECDSA.verify(messageHash, signatureHex);
+    const messageBytes = hexToUint8Array(messageHex);
+    const messageHashHex = sha256(messageBytes);
+    const messageHashBytes = arrayify(messageHashHex);
+
+    const signature = {
+      r: signatureHex.slice(0, 64),
+      s: signatureHex.slice(64, 128)
+    };
+
+    return keyECDSA.verify(messageHashBytes, signature);
   } catch (error) {
-    //console.log('Error verifying ECDSA secp256k1 signature:', error);
+    //console.error('Error verifying ECDSA secp256k1 signature:', error);
     return false;
   }
 }
@@ -64,4 +72,3 @@ function hexToUint8Array(hexString: string): Uint8Array {
     cleanHexString.match(/[\da-fA-F]{2}/g).map((byte) => parseInt(byte, 16)),
   );
 }
-
