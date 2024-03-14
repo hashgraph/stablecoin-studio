@@ -21,7 +21,7 @@
     "build:sdk": "cd sdk && npm run build",
     "build:cli": "cd cli && npm run build",
     "build:cli:full": "npm run build:backend && npm run build:contracts && npm run build:hashconnect &&  npm run build:sdk && npm run build:cli",
-    "build:backend": "cd backend && npm run compile:force",
+    "build:backend": "cd backend && npm run build",
     "build:contracts": "cd contracts && npm run compile:force",
     "build:web": "cd web && npm run build",
     "build:hashconnect": "cd hashconnect/lib && npm run build",
