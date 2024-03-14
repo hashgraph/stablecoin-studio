@@ -32,6 +32,8 @@ The backend module is meant to be used in combination with the __Hedera StableCo
 
 Its purpose is to enable multisignatures for stable coins management operations.
 
+> Only _single level_ multikeys are supported for now. Keys lists/Threshold keys associated to accounts cannot contain key lists/threshold keys themselves as keys.
+
 Whenever users need to submit to the DLT network a transaction (Cash In, Freeze, ...) associated to an account that has multiple keys (key list or threshold keys) they will have the possibility to interact with the backend in the following way:
 
 - They will first add the "raw transaction" (unsigned string of bytes) to the backend's database using the backend's api.
