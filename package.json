@@ -42,7 +42,7 @@
     "clean:web:custodialwalletutils": "rimraf ./custodialwalletutils/build",
     "clean:contracts:build": "rimraf ./contracts/build",
     "clean:all:build": "concurrently \"npm run clean:sdk:build\" \"npm run clean:backend:build\" \"npm run clean:cli:build\" \"npm run clean:web:build\" \"npm run clean:contracts:modules\" \"npm run clean:custodialwalletutils:modules\"",
-    "prepare": "npx husky install",
+    "prepare": "husky",
     "prettier": "concurrently \"npm run prettier:sdk\" \"npm run prettier:backend\" \"npm run prettier:web\" \"npm run prettier:cli\" \"npm run prettier:contracts\" \"npm run prettier:custodialwalletutils\"",
     "prettier:sdk": "cd sdk && npm run prettier",
     "prettier:web": "cd web && npm run prettier",
@@ -63,6 +63,6 @@
   "devDependencies": {
     "dotenv": "^16.3.1",
     "fs": "^0.0.1-security",
-    "husky": "^8.0.3"
+    "husky": "^9.0.11"
   }
 }
