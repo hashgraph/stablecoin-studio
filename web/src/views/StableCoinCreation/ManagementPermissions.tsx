@@ -77,6 +77,17 @@ const ManagementPermissions = ({
 		}
 	}, [watch('kycKey'), watch('supplyKey')]);
 
+	useEffect(() => {
+		setValue('isKycRequired', isKycRequired);
+		if (!isKycRequired) {
+			request.kycRoleAccount = undefined;
+			request.grantKYCToOriginalSender = false;
+			setValue('kycKey', undefined);
+			setValue('kycRoleAccount', undefined);
+			setValue('grantKYCToOriginalSender', false);
+		}
+	}, [watch('kycRequired')]);
+
 	const keys = [
 		{
 			name: 'wipeKey',
@@ -220,7 +231,7 @@ const ManagementPermissions = ({
 					)}
 					{isKycRequired === true &&
 						watch('kycKey')?.value === 2 &&
-						wallet.lastWallet === SupportedWallets.HASHPACK && (
+						wallet.lastWallet !== SupportedWallets.METAMASK && (
 							<Stack minW={400}>
 								<HStack mb={4} justifyContent='space-between'>
 									<Text
