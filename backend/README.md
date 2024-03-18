@@ -188,6 +188,13 @@ The backend is made of two components:
 ]
 ```
 
+## Delete all transactions
+This functionality is not exposed through the API. It is meant to be used for testing purposes only.
+To delete all transactions from the DB, run the following command:
+```shell
+npm run deleteAllTransactions
+```
+
 # Technologies
 
 - Typescript
