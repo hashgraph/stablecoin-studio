@@ -72,6 +72,10 @@ import ChangeFactoryProxyOwnerRequest from './ChangeFactoryProxyOwnerRequest.js'
 import AcceptFactoryProxyOwnerRequest from './AcceptFactoryProxyOwnerRequest.js';
 import UpgradeImplementationRequest from './UpgradeImplementationRequest.js';
 import UpgradeFactoryImplementationRequest from './UpgradeFactoryImplementationRequest.js';
+import SignTransactionRequest from './SignTransactionRequest.js';
+import SubmitTransactionRequest from './SubmitTransactionRequest.js';
+import RemoveTransactionRequest from './RemoveTransactionRequest.js';
+import GetTransactionsRequest from './GetTransactionsRequest.js';
 
 export * from './ConnectRequest.js';
 export * from './BaseRequest.js';
@@ -130,4 +134,8 @@ export {
 	AcceptFactoryProxyOwnerRequest,
 	UpgradeImplementationRequest,
 	UpgradeFactoryImplementationRequest,
+	SignTransactionRequest,
+	SubmitTransactionRequest,
+	RemoveTransactionRequest,
+	GetTransactionsRequest,
 };

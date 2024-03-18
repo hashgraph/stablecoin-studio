@@ -39,6 +39,7 @@ import PublicKey from '../../domain/context/account/PublicKey.js';
 import { FactoryKey } from '../../domain/context/factory/FactoryKey.js';
 import FireblocksSettings from '../../domain/context/custodialwalletsettings/FireblocksSettings';
 import DfnsSettings from '../../domain/context/custodialwalletsettings/DfnsSettings';
+import { Transaction } from '@hashgraph/sdk';
 
 export interface InitializationData {
 	account?: Account;
@@ -157,6 +158,8 @@ interface ITransactionAdapter {
 	): Promise<TransactionResponse>;
 	acceptOwner(proxyAdminId: HederaId): Promise<TransactionResponse>;
 	getMirrorNodeAdapter(): MirrorNodeAdapter;
+	sign(message: string): Promise<string>;
+	submit(t: Transaction): Promise<TransactionResponse>;
 }
 
 interface RoleTransactionAdapter {
@@ -604,5 +607,12 @@ export default abstract class TransactionAdapter
 		}${id}\n`;
 		LogService.logInfo(msg);
 		console.log(msg);
+	}
+
+	sign(message: string): Promise<string> {
+		throw new Error('Method not implemented.');
+	}
+	submit(t: Transaction): Promise<TransactionResponse<any, Error>> {
+		throw new Error('Method not implemented.');
 	}
 }

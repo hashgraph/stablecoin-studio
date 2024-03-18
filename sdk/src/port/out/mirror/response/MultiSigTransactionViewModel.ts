@@ -18,27 +18,14 @@
  *
  */
 
-import { HederaId } from '../shared/HederaId.js';
-import PrivateKey from './PrivateKey.js';
-import PublicKey from './PublicKey.js';
-import MultiKey from './MultiKey.js';
+import { QueryResponse } from '../../../../core/query/QueryResponse.js';
 
-export interface AccountProps {
+export default interface MultiSigTransactionViewModel extends QueryResponse {
 	id: string;
-	privateKey?: PrivateKey;
-	publicKey?: PublicKey;
-	evmAddress?: string;
-	multiKey?: MultiKey;
-}
-
-export default class Account {
-	public static readonly NULL: Account = new Account({ id: '0.0.0' });
-	public id: HederaId;
-	public evmAddress?: string;
-	public privateKey?: PrivateKey;
-	public publicKey?: PublicKey;
-	public multiKey?: MultiKey;
-	constructor(props: AccountProps) {
-		Object.assign(this, { ...props, id: HederaId.from(props.id) });
-	}
+	transaction_message: string;
+	description: string;
+	status: string;
+	threshold: number;
+	key_list: string[];
+	signed_keys: string[];
 }

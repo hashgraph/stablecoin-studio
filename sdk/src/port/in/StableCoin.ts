@@ -96,6 +96,11 @@ import { UpdateCommand } from '../../app/usecase/command/stablecoin/update/Updat
 import NetworkService from '../../app/service/NetworkService.js';
 import { AssociateCommand } from '../../app/usecase/command/account/associate/AssociateCommand.js';
 import { MirrorNodeAdapter } from '../../port/out/mirror/MirrorNodeAdapter.js';
+import MultiSigTransactionViewModel from '../out/mirror/response/MultiSigTransactionViewModel.js';
+import SignTransactionRequest from './request/SignTransactionRequest.js';
+import SubmitTransactionRequest from './request/SubmitTransactionRequest.js';
+import RemoveTransactionRequest from './request/RemoveTransactionRequest.js';
+import GetTransactionsRequest from './request/GetTransactionsRequest.js';
 
 export {
 	StableCoinViewModel,
@@ -140,6 +145,12 @@ interface IStableCoinInPort {
 	isAccountKYCGranted(request: KYCRequest): Promise<boolean>;
 	transfers(request: TransfersRequest): Promise<boolean>;
 	update(request: UpdateRequest): Promise<boolean>;
+	signTransaction(request: SignTransactionRequest): Promise<boolean>;
+	submitTransaction(request: SubmitTransactionRequest): Promise<boolean>;
+	removeTransaction(request: RemoveTransactionRequest): Promise<boolean>;
+	getTransactions(
+		request: GetTransactionsRequest,
+	): Promise<MultiSigTransactionViewModel[]>;
 }
 
 class StableCoinInPort implements IStableCoinInPort {
@@ -158,7 +169,6 @@ class StableCoinInPort implements IStableCoinInPort {
 			MirrorNodeAdapter,
 		),
 	) {}
-
 	@LogError
 	async create(req: CreateRequest): Promise<{
 		coin: StableCoinViewModel;
@@ -695,6 +705,32 @@ class StableCoinInPort implements IStableCoinInPort {
 				),
 			)
 		).payload;
+	}
+
+	@LogError
+	async signTransaction(request: SignTransactionRequest): Promise<boolean> {
+		throw new Error('Method not implemented.');
+	}
+
+	@LogError
+	async submitTransaction(
+		request: SubmitTransactionRequest,
+	): Promise<boolean> {
+		throw new Error('Method not implemented.');
+	}
+
+	@LogError
+	async removeTransaction(
+		request: RemoveTransactionRequest,
+	): Promise<boolean> {
+		throw new Error('Method not implemented.');
+	}
+
+	@LogError
+	async getTransactions(
+		request: GetTransactionsRequest,
+	): Promise<MultiSigTransactionViewModel[]> {
+		throw new Error('Method not implemented.');
 	}
 }
 

@@ -178,4 +178,24 @@ export abstract class CustodialTransactionAdapter extends HederaTransactionAdapt
 	public getAccount(): Account {
 		return this.account;
 	}
+
+	async sign(message: string): Promise<string> {
+		if (!this.custodialWalletService)
+			throw new SigningError('Custodial Wallet is empty');
+
+		try {
+			const encoder = new TextEncoder();
+			const decoder = new TextDecoder();
+
+			const encoded_message: Uint8Array = encoder.encode(message);
+			const encoded_signed_message = await this.signingService(
+				encoded_message,
+			);
+
+			return decoder.decode(encoded_signed_message);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(error);
+		}
+	}
 }

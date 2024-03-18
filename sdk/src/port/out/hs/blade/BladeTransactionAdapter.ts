@@ -252,6 +252,7 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 			throw new SigningError(error);
 		}
 	}
+
 	public async restart(network: string): Promise<void> {
 		await this.stop();
 		await this.init(network);
@@ -276,5 +277,24 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 			publicKey: account.publicKey,
 			evmAddress: account.accountEvmAddress,
 		});
+	}
+
+	async sign(message: string): Promise<string> {
+		if (!this.signer) throw new SigningError('Signer is empty');
+
+		try {
+			const encoder = new TextEncoder();
+			const decoder = new TextDecoder();
+
+			const encoded_messages: Uint8Array[] = [encoder.encode(message)];
+			const encoded_signed_messages = await this.signer.sign(
+				encoded_messages,
+			);
+
+			return decoder.decode(encoded_signed_messages[0].signature);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(error);
+		}
 	}
 }

@@ -52,6 +52,8 @@ import {
 import { MirrorNode } from '../../../domain/context/network/MirrorNode.js';
 import ContractViewModel from '../../out/mirror/response/ContractViewModel.js';
 
+const MULTI_KEY_TYPE = 'ProtobufEncoded';
+
 @singleton()
 export class MirrorNodeAdapter {
 	private instance: AxiosInstance;
@@ -359,13 +361,18 @@ export class MirrorNodeAdapter {
 				alias: res.data.alias,
 			};
 
-			if (res.data.key)
-				account.publicKey = new PublicKey({
-					key: res.data.key ? res.data.key.key : undefined,
-					type: res.data.key
-						? (res.data.key._type as KeyType)
-						: undefined,
-				});
+			if (res.data.key) {
+				if (res.data.key._type != MULTI_KEY_TYPE) {
+					account.publicKey = new PublicKey({
+						key: res.data.key ? res.data.key.key : undefined,
+						type: res.data.key
+							? (res.data.key._type as KeyType)
+							: undefined,
+					});
+				} else {
+					// DECODE PROTOBUF /////////////////////
+				}
+			}
 
 			return account;
 		} catch (error) {

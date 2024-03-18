@@ -18,14 +18,10 @@
  *
  */
 
-import { QueryResponse } from '../../../../core/query/QueryResponse.js';
-import MultiKey from '../../../../domain/context/account/MultiKey.js';
-import PublicKey from '../../../../domain/context/account/PublicKey.js';
+import { Transaction } from '@hashgraph/sdk';
 
-export default interface AccountViewModel extends QueryResponse {
-	id?: string;
-	accountEvmAddress?: string;
-	publicKey?: PublicKey;
-	alias?: string;
-	multiKey?: MultiKey;
+export class MultiSigTransactionAdapter {
+	static getDescription(t: Transaction): string {
+		return 'description';
+	}
 }

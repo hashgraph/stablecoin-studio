@@ -43,6 +43,7 @@ import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter.js';
 import NetworkService from '../../../../app/service/NetworkService.js';
 import LogService from '../../../../app/service/LogService.js';
 import { WalletConnectError } from '../../../../domain/context/network/error/WalletConnectError.js';
+import { SigningError } from '../error/SigningError.js';
 
 @singleton()
 export class HTSTransactionAdapter extends HederaTransactionAdapter {
@@ -144,5 +145,17 @@ export class HTSTransactionAdapter extends HederaTransactionAdapter {
 
 	getAccount(): Account {
 		return this.account;
+	}
+
+	async sign(message: string): Promise<string> {
+		if (!this.account.privateKey)
+			throw new SigningError('Private Key is empty');
+
+		try {
+			return 'Signed message';
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(error);
+		}
 	}
 }

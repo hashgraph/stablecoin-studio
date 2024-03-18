@@ -26,6 +26,7 @@ import {
 	Transaction,
 	ContractId as HContractId,
 	CustomFee as HCustomFee,
+	Client,
 } from '@hashgraph/sdk';
 import TransactionAdapter from '../TransactionAdapter';
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
@@ -1331,6 +1332,27 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		nameFunction?: string,
 		abi?: any[],
 	): Promise<TransactionResponse>;
+
+	abstract sign(message: string): Promise<string>;
+
+	async submit(t: Transaction): Promise<TransactionResponse<any, Error>> {
+		try {
+			const client: Client = Client.forName(
+				this.networkService.environment,
+			);
+
+			const submitTx = await t.execute(client);
+
+			return new TransactionResponse(
+				(submitTx.transactionId ?? '').toString(),
+			);
+		} catch (error) {
+			throw new TransactionResponseError({
+				message: 'Error submitting the transaction',
+				network: this.networkService.environment,
+			});
+		}
+	}
 }
 
 class Params {
