@@ -53,7 +53,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "dependencies": {
     "concurrently": "^7.6.0",
     "ethers": "^5.7.2",
