@@ -171,4 +171,9 @@ export default class TransactionService {
   async getAll(options: IPaginationOptions): Promise<Pagination<Transaction>> {
     return paginate<Transaction>(this.transactionRepository, options);
   }
+
+  //This function is used to delete all transactions from the database
+  async deleteAllTransactions(): Promise<void> {
+    await this.transactionRepository.clear();
+  }
 }
