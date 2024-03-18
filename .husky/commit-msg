@@ -1,17 +1,8 @@
 message="$(cat $1)"
-requiredPattern="^(add|remove|cut|fix|update|bump|make|start|stop|refactor|reformat|optimise|document|merge|Add|Remove|Cut|Fix|Update|Bump|Make|Start|Stop|Refactor|Reformat|Optimise|Document|Merge) .*"
 signedOffPattern="Signed-off-by:"
 
-# Check if the commit message has the required format
-if ! [[ $message =~ $requiredPattern ]]; then
-  echo "❌ Wrong commit message! 😕"
-  echo "The commit message must have this format:"
-  echo "<verb in imperative mood> <what was done>"
-  echo "Allowed verbs in imperative mood: add, cut, fix, bump, make, start, stop, refactor, reformat, optimise, document, merge (in lowercase or capital case)"
-  echo "Example: add login button"
-  exit 1
-fi
-
+# Check if the commit message follows the Conventional Commits format
+echo $message | npm run commitlint
 # Check if the commit message has a 'Signed-off-by:' line
 if ! [[ $message =~ $signedOffPattern ]]; then
   echo "❌ Missing 'Signed-off-by:' line! 😕"
