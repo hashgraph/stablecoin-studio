@@ -86,7 +86,7 @@
         "prepack": "npm run compile:force"
     },
     "author": "",
-    "license": "ISC",
+    "license": "Apache-2.0",
     "devDependencies": {
         "@chainlink/contracts": "^0.5.1",
         "@hashgraph/hardhat-hethers": "1.0.3",

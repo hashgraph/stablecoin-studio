@@ -12,5 +12,5 @@
 		"@hashgraph/stablecoin-npm-sdk": "file:../../"
 	},
 	"author": "",
-	"license": "ISC"
+	"license": "Apache-2.0"
 }

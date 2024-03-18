@@ -3,7 +3,7 @@
   "version": "1.17.0",
   "description": "",
   "author": "",
-  "license": "UNLICENSED",
+  "license": "Apache-2.0",
   "scripts": {
     "build": "nest build",
     "prettier": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
