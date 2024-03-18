@@ -212,4 +212,13 @@ describe('Transaction Service Test', () => {
       expected.assert({ transaction });
     });
   });
+  describe('Delete all transactions', () => {
+    it('should delete all transactions from DB', async () => {
+      jest.spyOn(repository, 'clear').mockResolvedValue(undefined);
+
+      await service.deleteAllTransactions();
+
+      expect(repository.clear).toHaveBeenCalled();
+    });
+  });
 });
