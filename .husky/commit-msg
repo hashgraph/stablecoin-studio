@@ -1,0 +1,21 @@
+message="$(cat $1)"
+signedOffPattern="Signed-off-by:"
+
+# Check if the commit message follows the Conventional Commits format
+echo $message | npm run commitlint
+# Check if the commit message has a 'Signed-off-by:' line
+if ! [[ $message =~ $signedOffPattern ]]; then
+  echo "❌ Missing 'Signed-off-by:' line! 😕"
+  echo "Please add a 'Signed-off-by:' line to your commit message."
+  echo "Message: $message"
+  exit 1
+fi
+
+# # Verify GPG signature for the previous HEAD commit
+# if ! git verify-commit HEAD &>/dev/null; then
+#   echo "❌ Previos (HEAD) Commit does not have a valid GPG signature. Please sign your commits."
+#   exit 1
+# fi
+
+# #! Uncomment for Testing
+# exit 1
