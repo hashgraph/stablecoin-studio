@@ -61,6 +61,7 @@ export enum ErrorCode {
 	DeplymentError = '40006',
 	ProviderError = '40007',
 	PairingRejected = '40008',
+	BackendError = '40009',
 }
 
 export enum ErrorCategory {

@@ -21,16 +21,21 @@
 import { singleton } from 'tsyringe';
 import axios, { AxiosInstance } from 'axios';
 import BackendTransaction from '../../../domain/context/transaction/BackendTransaction.js';
+import { BackendError } from './error/BackendError.js';
+import BackendEndpoint from '../../../domain/context/network/BackendEndpoint.js';
 
 @singleton()
 export class BackendAdapter {
-	private readonly apiUrl: string;
-	private readonly httpClient: AxiosInstance;
+	private httpClient: AxiosInstance;
+	private backendEndpoint: BackendEndpoint;
 
-	constructor(apiUrl: string) {
-		this.apiUrl = apiUrl;
+	public set(be: BackendEndpoint): void {
+		this.backendEndpoint = be;
+
+		this.backendEndpoint.url = be.url.endsWith('/') ? be.url : `${be.url}/`;
+
 		this.httpClient = axios.create({
-			baseURL: this.apiUrl,
+			baseURL: this.backendEndpoint.url,
 		});
 	}
 
@@ -54,27 +59,19 @@ export class BackendAdapter {
 
 			if (response.status == 201) {
 				if (!response.data)
-					throw new Error(
+					throw new BackendError(
 						`add transaction api call succeeded but returned no data....`,
 					);
 				return response.data.transactionId;
 			} else
-				throw new Error(
+				throw new BackendError(
 					`add transaction api call returned error ${response.status}, ${response.statusText}`,
 				);
 		} catch (error) {
-			if (
-				typeof error === 'object' &&
-				error !== null &&
-				'message' in error
-			) {
-				throw new Error(
-					`Failed to add transaction ${transactionMessage}: ${
-						(error as Error).message
-					}`,
-				);
+			if (error instanceof BackendError) {
+				throw error;
 			} else {
-				throw new Error(
+				throw new BackendError(
 					`Failed to add transaction ${transactionMessage}: Unknown error`,
 				);
 			}
@@ -99,22 +96,14 @@ export class BackendAdapter {
 
 			if (response.status == 204) return;
 			else
-				throw new Error(
+				throw new BackendError(
 					`sign transaction api call returned error ${response.status}, ${response.statusText}`,
 				);
 		} catch (error) {
-			if (
-				typeof error === 'object' &&
-				error !== null &&
-				'message' in error
-			) {
-				throw new Error(
-					`Failed to sign transaction ${transactionId}: ${
-						(error as Error).message
-					}`,
-				);
+			if (error instanceof BackendError) {
+				throw error;
 			} else {
-				throw new Error(
+				throw new BackendError(
 					`Failed to sign transaction ${transactionId}: Unknown error`,
 				);
 			}
@@ -127,22 +116,14 @@ export class BackendAdapter {
 
 			if (response.status == 200) return;
 			else
-				throw new Error(
+				throw new BackendError(
 					`delete api call returned error ${response.status}, ${response.statusText}`,
 				);
 		} catch (error) {
-			if (
-				typeof error === 'object' &&
-				error !== null &&
-				'message' in error
-			) {
-				throw new Error(
-					`Failed to delete transaction ${transactionId}: ${
-						(error as Error).message
-					}`,
-				);
+			if (error instanceof BackendError) {
+				throw error;
 			} else {
-				throw new Error(
+				throw new BackendError(
 					`Failed to delete transaction ${transactionId}: Unknown error`,
 				);
 			}
@@ -168,7 +149,7 @@ export class BackendAdapter {
 
 			if (response.status == 200) {
 				if (!response.data)
-					throw new Error(
+					throw new BackendError(
 						`get transaction api call succeeded but returned no data....`,
 					);
 
@@ -182,22 +163,14 @@ export class BackendAdapter {
 
 				return transactions;
 			} else
-				throw new Error(
+				throw new BackendError(
 					`get transactions api call returned error ${response.status}, ${response.statusText}`,
 				);
 		} catch (error) {
-			if (
-				typeof error === 'object' &&
-				error !== null &&
-				'message' in error
-			) {
-				throw new Error(
-					`Failed to get transactions for ${publicKey}: ${
-						(error as Error).message
-					}`,
-				);
+			if (error instanceof BackendError) {
+				throw error;
 			} else {
-				throw new Error(
+				throw new BackendError(
 					`Failed to get transactions for ${publicKey}: Unknown error`,
 				);
 			}

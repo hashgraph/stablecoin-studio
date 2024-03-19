@@ -51,7 +51,6 @@ import {
 } from '../../in/request/BaseRequest.js';
 import { MirrorNode } from '../../../domain/context/network/MirrorNode.js';
 import ContractViewModel from '../../out/mirror/response/ContractViewModel.js';
-import { proto } from '@hashgraph/proto';
 import MultiKey from '../../../domain/context/account/MultiKey.js';
 
 const PROTOBUF_ENCODED = 'ProtobufEncoded';

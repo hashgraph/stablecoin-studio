@@ -101,6 +101,9 @@ import SignTransactionRequest from './request/SignTransactionRequest.js';
 import SubmitTransactionRequest from './request/SubmitTransactionRequest.js';
 import RemoveTransactionRequest from './request/RemoveTransactionRequest.js';
 import GetTransactionsRequest from './request/GetTransactionsRequest.js';
+import { SignCommand } from '../../app/usecase/command/stablecoin/backend/sign/SignCommand.js';
+import { RemoveCommand } from '../../app/usecase/command/stablecoin/backend/remove/RemoveCommand.js';
+import { SubmitCommand } from '../../app/usecase/command/stablecoin/backend/submit/SubmitCommand.js';
 
 export {
 	StableCoinViewModel,
@@ -709,21 +712,36 @@ class StableCoinInPort implements IStableCoinInPort {
 
 	@LogError
 	async signTransaction(request: SignTransactionRequest): Promise<boolean> {
-		throw new Error('Method not implemented.');
+		const { transactionId } = request;
+
+		handleValidation('SignTransactionRequest', request);
+
+		return (await this.commandBus.execute(new SignCommand(transactionId)))
+			.payload;
 	}
 
 	@LogError
 	async submitTransaction(
 		request: SubmitTransactionRequest,
 	): Promise<boolean> {
-		throw new Error('Method not implemented.');
+		const { transactionId } = request;
+
+		handleValidation('SubmitTransactionRequest', request);
+
+		return (await this.commandBus.execute(new SubmitCommand(transactionId)))
+			.payload;
 	}
 
 	@LogError
 	async removeTransaction(
 		request: RemoveTransactionRequest,
 	): Promise<boolean> {
-		throw new Error('Method not implemented.');
+		const { transactionId } = request;
+
+		handleValidation('RemoveTransactionRequest', request);
+
+		return (await this.commandBus.execute(new RemoveCommand(transactionId)))
+			.payload;
 	}
 
 	@LogError
