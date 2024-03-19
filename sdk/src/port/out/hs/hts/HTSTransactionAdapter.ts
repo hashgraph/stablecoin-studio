@@ -44,6 +44,7 @@ import NetworkService from '../../../../app/service/NetworkService.js';
 import LogService from '../../../../app/service/LogService.js';
 import { WalletConnectError } from '../../../../domain/context/network/error/WalletConnectError.js';
 import { SigningError } from '../error/SigningError.js';
+import Hex from '../../../../core/Hex.js';
 
 @singleton()
 export class HTSTransactionAdapter extends HederaTransactionAdapter {
@@ -147,12 +148,18 @@ export class HTSTransactionAdapter extends HederaTransactionAdapter {
 		return this.account;
 	}
 
-	async sign(message: string): Promise<string> {
+	async sign(message: string | Transaction): Promise<string> {
 		if (!this.account.privateKey)
 			throw new SigningError('Private Key is empty');
 
+		if (!(message instanceof Transaction))
+			throw new SigningError('HTS must sign a transaction not a string');
+
 		try {
-			return 'Signed message';
+			const signer = this.account.privateKey.toHashgraphKey();
+			const signed_Transaction = await signer.signTransaction(message)
+
+			return Hex.fromUint8Array(signed_Transaction);
 		} catch (error) {
 			LogService.logError(error);
 			throw new SigningError(error);

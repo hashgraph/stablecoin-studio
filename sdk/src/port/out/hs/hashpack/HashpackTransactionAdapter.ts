@@ -428,7 +428,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 		if (!this.signer) throw new SigningError('Signer is empty');
 		if (!(message instanceof Transaction))
 			throw new SigningError(
-				'Blade must sign a transaction not a string',
+				'Hashpack must sign a transaction not a string',
 			);
 
 		try {

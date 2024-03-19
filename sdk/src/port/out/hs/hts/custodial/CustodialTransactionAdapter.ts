@@ -105,6 +105,7 @@ export abstract class CustodialTransactionAdapter extends HederaTransactionAdapt
 			const txResponse: HTransactionResponse = await transaction.execute(
 				this.client,
 			);
+
 			this.logTransaction(
 				txResponse.transactionId.toString(),
 				this.networkService.environment,
