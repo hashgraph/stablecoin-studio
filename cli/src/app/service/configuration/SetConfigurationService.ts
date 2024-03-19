@@ -19,7 +19,7 @@ import { AccountType } from '../../../domain/configuration/interfaces/AccountTyp
 import { IPrivateKey } from '../../../domain/configuration/interfaces/IPrivateKey';
 import { IFireblocksAccountConfig } from '../../../domain/configuration/interfaces/IFireblocksAccountConfig';
 import { IDfnsAccountConfig } from '../../../domain/configuration/interfaces/IDfnsAccountConfig';
-const colors = require('colors');
+import colors from 'colors';
 
 /**
  * Set Configuration Service
@@ -190,64 +190,67 @@ export default class SetConfigurationService extends Service {
       utilsService.showMessage(
         language.getText('configuration.AccountsConfigurationMessage'),
       );
-      let accountId = await utilsService.defaultSingleAsk(
-        language.getText('configuration.askAccountId'),
-        ZERO_ADDRESS,
-      );
-      while (!/\d\.\d\.\d/.test(accountId)) {
-        console.log(language.getText('validations.wrongFormatAddress'));
+      let accountId: string;
+      do {
         accountId = await utilsService.defaultSingleAsk(
           language.getText('configuration.askAccountId'),
           ZERO_ADDRESS,
         );
-      }
+        if (!/\d\.\d\.\d/.test(accountId)) {
+          console.log(language.getText('validations.wrongFormatAddress'));
+        }
+      } while (!/\d\.\d\.\d/.test(accountId));
 
-      const accountType = await this.askForAccountType();
+      //* Ask for Account Type
+      const type = await this.askForAccountType();
 
+      //* Ask for Network
       const network = await utilsService.defaultMultipleAsk(
         language.getText('configuration.askNetworkAccount'),
         configuration.networks.map((acc) => acc.name),
       );
 
-      let alias = await utilsService.defaultSingleAsk(
-        language.getText('configuration.askAlias'),
-        'AdminAccount',
-      );
-      while (accounts.some((account) => account.alias === alias)) {
-        utilsService.showError(
-          language.getText('configuration.aliasAlreadyInUse', {
-            alias,
-          }),
-        );
+      //* Ask for Account Alias
+      let alias: string;
+      do {
         alias = await utilsService.defaultSingleAsk(
           language.getText('configuration.askAlias'),
           'AdminAccount',
         );
-      }
+        // Check if alias is already in use
+        if (accounts.some((account) => account.alias === alias)) {
+          utilsService.showError(
+            language.getText('configuration.aliasAlreadyInUse', {
+              alias,
+            }),
+          );
+          alias = '';
+        }
+      } while (!alias);
+      // Basic account configuration
       const accountConfig: IAccountConfig = {
-        accountId: accountId,
-        type: accountType,
-        network: network,
-        alias: alias,
+        accountId,
+        type,
+        network,
+        alias,
       };
 
-      switch (accountType) {
-        case AccountType.SelfCustodial:
-          accountConfig.selfCustodial = {
-            privateKey: await this.askForPrivateKeyOfAccount(accountId),
-          };
-          break;
-        case AccountType.Fireblocks:
-          accountConfig.nonCustodial = {
-            fireblocks: await this.askForFireblocksOfAccount(),
-          };
-          break;
-        default:
-          accountConfig.nonCustodial = {
-            dfns: await this.askForDfnsOfAccount(),
-          };
-          break;
+      // Additional configuration based on account type
+      if (type === AccountType.SelfCustodial) {
+        accountConfig.selfCustodial = {
+          privateKey: await this.askForPrivateKeyOfAccount(accountId),
+        };
+      } else if (type === AccountType.Fireblocks) {
+        accountConfig.nonCustodial = {
+          fireblocks: await this.askForFireblocksOfAccount(),
+        };
+      } else if (type === AccountType.Dfns) {
+        accountConfig.nonCustodial = {
+          dfns: await this.askForDfnsOfAccount(),
+        };
       }
+
+      // Add accountConfig to the list
       accounts.push(accountConfig);
 
       const response = await utilsService.defaultConfirmAsk(
@@ -407,21 +410,16 @@ export default class SetConfigurationService extends Service {
   }
 
   public async askForAccountType(): Promise<AccountType> {
-    const accountType = await utilsService.defaultMultipleAsk(
-      language.getText('configuration.askAccountType'),
-      language.getArrayFromObject('wizard.accountType'),
-      false,
-    );
-    switch (accountType) {
-      case 'SELF-CUSTODIAL':
-        return AccountType.SelfCustodial;
-      case 'FIREBLOCKS':
-        return AccountType.Fireblocks;
-      case 'DFNS':
-        return AccountType.Dfns;
-      default:
-        return await this.askForAccountType();
-    }
+    let accountType: string;
+    do {
+      accountType = await utilsService.defaultMultipleAsk(
+        language.getText('configuration.askAccountType'),
+        language.getArrayFromObject('wizard.accountType'),
+        false,
+      );
+    } while (!Object.values(AccountType).includes(accountType as AccountType));
+
+    return accountType as AccountType;
   }
 
   /**

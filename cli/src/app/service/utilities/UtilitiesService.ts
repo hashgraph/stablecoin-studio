@@ -56,58 +56,66 @@ export default class UtilitiesService extends Service {
         rpcNode: this.getCurrentRPC(),
       }),
     );
-    await Network.connect(
-      new ConnectRequest({
-        account: {
-          accountId: account.accountId,
-          privateKey:
-            account.type == AccountType.SelfCustodial
-              ? {
-                  key: account.selfCustodial.privateKey.key,
-                  type: account.selfCustodial.privateKey.type,
-                }
-              : undefined,
-        },
-        network: this.getCurrentNetwork().name,
-        mirrorNode: this.getCurrentMirror(),
-        rpcNode: this.getCurrentRPC(),
-        wallet:
-          account.type == AccountType.SelfCustodial
-            ? SupportedWallets.CLIENT
-            : account.type == AccountType.Fireblocks
-            ? SupportedWallets.FIREBLOCKS
-            : SupportedWallets.DFNS,
-        custodialWalletSettings:
-          account.type == AccountType.SelfCustodial
-            ? undefined
-            : account.type == AccountType.Fireblocks
-            ? {
-                apiSecretKey: fs.readFileSync(
-                  account.nonCustodial.fireblocks.apiSecretKeyPath,
-                  'utf8',
-                ),
-                apiKey: account.nonCustodial.fireblocks.apiKey,
-                baseUrl: account.nonCustodial.fireblocks.baseUrl,
-                vaultAccountId: account.nonCustodial.fireblocks.vaultAccountId,
-                assetId: account.nonCustodial.fireblocks.assetId,
-                hederaAccountId: account.accountId,
-              }
-            : {
-                authorizationToken:
-                  account.nonCustodial.dfns.authorizationToken,
-                credentialId: account.nonCustodial.dfns.credentialId,
-                serviceAccountPrivateKey: fs.readFileSync(
-                  account.nonCustodial.dfns.privateKeyPath,
-                  'utf8',
-                ),
-                urlApplicationOrigin: account.nonCustodial.dfns.appOrigin,
-                applicationId: account.nonCustodial.dfns.appId,
-                baseUrl: account.nonCustodial.dfns.testUrl,
-                walletId: account.nonCustodial.dfns.walletId,
-                hederaAccountId: account.accountId,
-              },
-      }),
-    );
+    //* Connect to the network
+    let privateKey: { key: string; type: string };
+    let wallet: SupportedWallets;
+    let custodialWalletSettings: any;
+    switch (account.type) {
+      case AccountType.SelfCustodial:
+        privateKey = {
+          key: account.selfCustodial.privateKey.key,
+          type: account.selfCustodial.privateKey.type,
+        };
+        wallet = SupportedWallets.CLIENT;
+        break;
+      case AccountType.Fireblocks:
+        wallet = SupportedWallets.FIREBLOCKS;
+        custodialWalletSettings = {
+          apiSecretKey: fs.readFileSync(
+            account.nonCustodial.fireblocks.apiSecretKeyPath,
+            'utf8',
+          ),
+          apiKey: account.nonCustodial.fireblocks.apiKey,
+          baseUrl: account.nonCustodial.fireblocks.baseUrl,
+          vaultAccountId: account.nonCustodial.fireblocks.vaultAccountId,
+          assetId: account.nonCustodial.fireblocks.assetId,
+          hederaAccountId: account.accountId,
+        };
+        break;
+      case AccountType.Dfns:
+        wallet = SupportedWallets.DFNS;
+        custodialWalletSettings = {
+          authorizationToken: account.nonCustodial.dfns.authorizationToken,
+          credentialId: account.nonCustodial.dfns.credentialId,
+          serviceAccountPrivateKey: fs.readFileSync(
+            account.nonCustodial.dfns.privateKeyPath,
+            'utf8',
+          ),
+          urlApplicationOrigin: account.nonCustodial.dfns.appOrigin,
+          applicationId: account.nonCustodial.dfns.appId,
+          baseUrl: account.nonCustodial.dfns.testUrl,
+          walletId: account.nonCustodial.dfns.walletId,
+          hederaAccountId: account.accountId,
+        };
+        break;
+      case AccountType.MultiSignature:
+        // wallet = SupportedWallets.MULTISIG;
+        break;
+      default:
+        throw new Error('Invalid account type');
+    }
+    const connectRequest = {
+      account: {
+        accountId: account.accountId,
+        privateKey: privateKey,
+      },
+      network: this.getCurrentNetwork().name,
+      mirrorNode: this.getCurrentMirror(),
+      rpcNode: this.getCurrentRPC(),
+      wallet: wallet,
+      custodialWalletSettings: custodialWalletSettings,
+    };
+    await Network.connect(new ConnectRequest(connectRequest));
   }
 
   public setCurrentAccount(account: IAccountConfig): void {
