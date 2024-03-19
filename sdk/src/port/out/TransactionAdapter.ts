@@ -158,7 +158,7 @@ interface ITransactionAdapter {
 	): Promise<TransactionResponse>;
 	acceptOwner(proxyAdminId: HederaId): Promise<TransactionResponse>;
 	getMirrorNodeAdapter(): MirrorNodeAdapter;
-	sign(message: string): Promise<string>;
+	sign(message: string | Transaction): Promise<string>;
 	submit(t: Transaction): Promise<TransactionResponse>;
 }
 
@@ -609,7 +609,7 @@ export default abstract class TransactionAdapter
 		console.log(msg);
 	}
 
-	sign(message: string): Promise<string> {
+	sign(message: string | Transaction): Promise<string> {
 		throw new Error('Method not implemented.');
 	}
 	submit(t: Transaction): Promise<TransactionResponse<any, Error>> {

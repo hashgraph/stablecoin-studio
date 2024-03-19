@@ -70,6 +70,7 @@ import { HederaId } from '../../../../domain/context/shared/HederaId.js';
 import { QueryBus } from '../../../../core/query/QueryBus.js';
 import { AccountIdNotValid } from '../../../../domain/context/account/error/AccountIdNotValid.js';
 import { GetAccountInfoQuery } from '../../../../app/usecase/query/account/info/GetAccountInfoQuery.js';
+import Hex from '../../../../core/Hex.js';
 
 @singleton()
 export class HashpackTransactionAdapter extends HederaTransactionAdapter {
@@ -423,23 +424,19 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 		});
 	}
 
-	async sign(message: string): Promise<string> {
+	async sign(message: string | Transaction): Promise<string> {
 		if (!this.signer) throw new SigningError('Signer is empty');
+		if (!(message instanceof Transaction))
+			throw new SigningError(
+				'Blade must sign a transaction not a string',
+			);
 
 		try {
-			const encoded_messages: Uint8Array[] = [
-				Uint8Array.from(Buffer.from(message, 'hex')),
-			];
-			const encoded_signed_messages = await this.signer.sign(
-				encoded_messages,
+			const signed_Transaction = await this.signer.signTransaction(
+				message,
 			);
 
-			const hexArray = Array.from(
-				encoded_signed_messages[0].signature,
-				(byte) => ('0' + byte.toString(16)).slice(-2),
-			);
-
-			return hexArray.join('');
+			return Hex.fromUint8Array(signed_Transaction.toBytes());
 		} catch (error) {
 			LogService.logError(error);
 			throw new SigningError(error);

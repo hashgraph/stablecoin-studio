@@ -1333,7 +1333,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		abi?: any[],
 	): Promise<TransactionResponse>;
 
-	abstract sign(message: string): Promise<string>;
+	abstract sign(message: string | Transaction): Promise<string>;
 
 	async submit(t: Transaction): Promise<TransactionResponse<any, Error>> {
 		try {

@@ -24,4 +24,8 @@ export default class Hex {
 			('0' + byte.toString(16)).slice(-2),
 		).join('');
 	}
+
+	static toUint8Array(hex: string): Uint8Array {
+		return Uint8Array.from(Buffer.from(hex, 'hex'));
+	}
 }

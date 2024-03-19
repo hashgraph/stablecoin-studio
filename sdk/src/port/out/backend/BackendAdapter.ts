@@ -176,4 +176,20 @@ export class BackendAdapter {
 			}
 		}
 	}
+
+	public async getTransaction(
+		transactionId: string,
+	): Promise<BackendTransaction> {
+		try {
+			throw new Error('not implemented');
+		} catch (error) {
+			if (error instanceof BackendError) {
+				throw error;
+			} else {
+				throw new BackendError(
+					`Failed to get transaction with transaction Id ${transactionId}: Unknown error`,
+				);
+			}
+		}
+	}
 }

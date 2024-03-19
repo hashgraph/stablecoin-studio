@@ -48,6 +48,7 @@ import {
 } from '../../../../../app/service/event/WalletEvent';
 import Injectable from '../../../../../core/Injectable';
 import { TransactionType } from '../../../TransactionResponseEnums';
+import Hex from '../../../../../core/Hex.js';
 
 export abstract class CustodialTransactionAdapter extends HederaTransactionAdapter {
 	protected client: Client;
@@ -184,9 +185,7 @@ export abstract class CustodialTransactionAdapter extends HederaTransactionAdapt
 			throw new SigningError('Custodial Wallet is empty');
 
 		try {
-			const encoded_message: Uint8Array = Uint8Array.from(
-				Buffer.from(message, 'hex'),
-			);
+			const encoded_message: Uint8Array = Hex.toUint8Array(message);
 			const encoded_signed_message = await this.signingService(
 				encoded_message,
 			);

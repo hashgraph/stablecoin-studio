@@ -18,70 +18,49 @@
  *
  */
 
-import CheckNums from '../../../../../../core/checks/numbers/CheckNums.js';
-import { CommandBus } from '../../../../../../core/command/CommandBus.js';
+import Hex from '../../../../../../core/Hex.js';
 import { ICommandHandler } from '../../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
-import { QueryBus } from '../../../../../../core/query/QueryBus.js';
-import BigDecimal from '../../../../../../domain/context/shared/BigDecimal.js';
+import { BackendAdapter } from '../../../../../../port/out/backend/BackendAdapter.js';
 import AccountService from '../../../../../service/AccountService.js';
-import StableCoinService from '../../../../../service/StableCoinService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
-import { BalanceOfQuery } from '../../../../query/stablecoin/balanceof/BalanceOfQuery.js';
-import { DecimalsOverRange } from '../../error/DecimalsOverRange.js';
-import { OperationNotAllowed } from '../../error/OperationNotAllowed.js';
 import { SubmitCommand, SubmitCommandResponse } from './SubmitCommand.js';
+import { Transaction } from '@hashgraph/sdk';
 
 @CommandHandler(SubmitCommand)
 export class SubmitCommandHandler implements ICommandHandler<SubmitCommand> {
 	constructor(
-		@lazyInject(StableCoinService)
-		public readonly stableCoinService: StableCoinService,
-		@lazyInject(CommandBus)
-		public readonly commandBus: CommandBus,
-		@lazyInject(QueryBus)
-		public readonly queryBus: QueryBus,
 		@lazyInject(AccountService)
 		public readonly accountService: AccountService,
+		@lazyInject(BackendAdapter)
+		public readonly backendAdapter: BackendAdapter,
 		@lazyInject(TransactionService)
 		public readonly transactionService: TransactionService,
 	) {}
 
 	async execute(command: SubmitCommand): Promise<SubmitCommandResponse> {
-		throw new Error('not implemented');
-		/*const { amount, tokenId } = command;
+		const { transactionId } = command;
 		const handler = this.transactionService.getHandler();
-		const account = this.accountService.getCurrentAccount();
-		const capabilities = await this.stableCoinService.getCapabilities(
-			account,
-			tokenId,
+
+		// retrieves transansaction from Backend
+		const transaction = await this.backendAdapter.getTransaction(
+			transactionId,
 		);
-		const coin = capabilities.coin;
-		const amountBd = BigDecimal.fromString(amount, coin.decimals);
 
-		if (CheckNums.hasMoreDecimals(amount, coin.decimals)) {
-			throw new DecimalsOverRange(coin.decimals);
-		}
+		// submit transaction
+		// CHECK IF TRANSACTION ALREADY SUBMITTED, SKIP THIS STEP
+		const deserializedTransaction = Transaction.fromBytes(
+			Hex.toUint8Array(transaction.transaction_message),
+		);
 
-		if (!coin.treasury || !coin.tokenId)
-			throw new OperationNotAllowed(`The stablecoin is not valid`);
+		//const signedTransaction = deserializedTransaction.addSignature(publicKey1, signature1).addSignature(publicKey2, signature2).addSignature(publicKey3, signature3);
 
-		const treasuryBalance = (
-			await this.queryBus.execute(
-				new BalanceOfQuery(coin.tokenId, coin.treasury),
-			)
-		).payload;
+		//await handler.submit(signedTransaction);
 
-		if (amountBd.isGreaterThan(treasuryBalance)) {
-			throw new OperationNotAllowed(
-				'The amount is bigger than the treasury account balance',
-			);
-		}
+		// remove from the backend
+		await this.backendAdapter.deleteTransaction(transactionId);
 
-		const res = await handler.burn(capabilities, amountBd);
-		return Promise.resolve(
-			new SubmitCommandResponse(res.error === undefined),
-		);*/
+		return Promise.resolve(new SubmitCommandResponse(true));
 	}
 }

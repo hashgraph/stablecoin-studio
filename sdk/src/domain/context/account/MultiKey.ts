@@ -34,7 +34,7 @@ export default class MultiKey {
 	}
 
 	public static fromProtobuf(protobuf: string): MultiKey {
-		const uint8Array = Uint8Array.from(Buffer.from(protobuf, 'hex'));
+		const uint8Array = Hex.toUint8Array(protobuf);
 		const decoded_key = proto.Key.decode(uint8Array);
 
 		if (decoded_key.keyList) {

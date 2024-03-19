@@ -26,7 +26,6 @@ import TransactionResponse from '../../../../domain/context/transaction/Transact
 import { TransactionType } from '../../TransactionResponseEnums.js';
 import { lazyInject } from '../../../../core/decorator/LazyInjectDecorator.js';
 import NetworkService from '../../../../app/service/NetworkService.js';
-import { QueryBus } from '../../../../core/query/QueryBus.js';
 import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter.js';
 import { BackendAdapter } from '../../backend/BackendAdapter.js';
 import { SupportedWallets } from '../../../../domain/context/network/Wallet';

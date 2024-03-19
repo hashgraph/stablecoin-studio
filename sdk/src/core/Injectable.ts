@@ -107,6 +107,7 @@ import { SignCommandHandler } from '../app/usecase/command/stablecoin/backend/si
 import { SubmitCommandHandler } from '../app/usecase/command/stablecoin/backend/submit/SubmitCommandHandler.js';
 import { RemoveCommandHandler } from '../app/usecase/command/stablecoin/backend/remove/RemoveCommandHandler.js';
 import { SetBackendCommandHandler } from '../app/usecase/command/network/setBackend/SetBackendCommandHandler.js';
+import { GetTransactionsQueryHandler } from '../app/usecase/query/stablecoin/backend/getTransactions/GetTransactionsQueryHandler.js';
 
 export const TOKENS = {
 	COMMAND_HANDLER: Symbol('CommandHandler'),
@@ -375,6 +376,10 @@ const QUERY_HANDLERS = [
 	{
 		token: TOKENS.QUERY_HANDLER,
 		useClass: GetFactoryProxyConfigQueryHandler,
+	},
+	{
+		token: TOKENS.QUERY_HANDLER,
+		useClass: GetTransactionsQueryHandler,
 	},
 ];
 

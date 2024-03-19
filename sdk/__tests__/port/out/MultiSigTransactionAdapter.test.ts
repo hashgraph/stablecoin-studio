@@ -94,6 +94,7 @@ import {
 	RPC_NODE,
 } from '../../config';
 import ConnectRequest from '../../../src/port/in/request/ConnectRequest';
+import Hex from '../../../src/core/Hex.js';
 
 describe('🧪 MultiSigTransactionAdapter test', () => {
 	let stableCoinHTS: StableCoinViewModel;
@@ -256,14 +257,12 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 		const protoBufString_combinedKey =
 			'32ce030a722a700802126c0a221220cf8c984270cd7cd25e1bd6df1a3a22ee2d1cd53a0f7bbfdf917a8bd881b11b5e0a221220c539f0f94cd937b721f9bd4c0b965164622798cf8ddea6169d2cb734f70baf8e0a2212200e3c05cf1c2a04db21d0e73f0e608d80d7043851154a4d9516e6b0ee929f7f9f0a6e326c0a221220cf8c984270cd7cd25e1bd6df1a3a22ee2d1cd53a0f7bbfdf917a8bd881b11b5e0a221220c539f0f94cd937b721f9bd4c0b965164622798cf8ddea6169d2cb734f70baf8e0a2212200e3c05cf1c2a04db21d0e73f0e608d80d7043851154a4d9516e6b0ee929f7f9f0ae70132e4010a722a700801126c0a2212205ac253d0505239c0320276d441e8e574bf503093c95341c9e8ee5d0f49b8288e0a22122033f6fefe851ed8d085a9e766186a42b6c76571683ee66079e026a4e74f9460c30a2212200d1e405bf0c14370efc959c3d9fc2420ed543c4b20e54fc9a83ca9bd7a46c4230a6e326c0a2212205ac253d0505239c0320276d441e8e574bf503093c95341c9e8ee5d0f49b8288e0a22122033f6fefe851ed8d085a9e766186a42b6c76571683ee66079e026a4e74f9460c30a2212200d1e405bf0c14370efc959c3d9fc2420ed543c4b20e54fc9a83ca9bd7a46c423';
 
-		const uint8Array_keyList = Uint8Array.from(
-			Buffer.from(protoBufString_keyList, 'hex'),
+		const uint8Array_keyList = Hex.toUint8Array(protoBufString_keyList);
+		const uint8Array_thresholdKey = Hex.toUint8Array(
+			protoBufString_thresholdKey,
 		);
-		const uint8Array_thresholdKey = Uint8Array.from(
-			Buffer.from(protoBufString_thresholdKey, 'hex'),
-		);
-		const uint8Array_combinedKey = Uint8Array.from(
-			Buffer.from(protoBufString_combinedKey, 'hex'),
+		const uint8Array_combinedKey = Hex.toUint8Array(
+			protoBufString_combinedKey,
 		);
 
 		const out_keyList = proto.Key.decode(uint8Array_keyList);

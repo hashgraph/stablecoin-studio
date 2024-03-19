@@ -104,6 +104,7 @@ import GetTransactionsRequest from './request/GetTransactionsRequest.js';
 import { SignCommand } from '../../app/usecase/command/stablecoin/backend/sign/SignCommand.js';
 import { RemoveCommand } from '../../app/usecase/command/stablecoin/backend/remove/RemoveCommand.js';
 import { SubmitCommand } from '../../app/usecase/command/stablecoin/backend/submit/SubmitCommand.js';
+import { GetTransactionsQuery } from '../../app/usecase/query/stablecoin/backend/getTransactions/GetTransactionsQuery.js';
 
 export {
 	StableCoinViewModel,
@@ -748,7 +749,18 @@ class StableCoinInPort implements IStableCoinInPort {
 	async getTransactions(
 		request: GetTransactionsRequest,
 	): Promise<MultiSigTransactionViewModel[]> {
-		throw new Error('Method not implemented.');
+		handleValidation('GetTransactionsRequest', request);
+
+		return (
+			await this.queryBus.execute(
+				new GetTransactionsQuery(
+					request.publicKey.key,
+					request.page,
+					request.limit,
+					request.status,
+				),
+			)
+		).payload;
 	}
 }
 
