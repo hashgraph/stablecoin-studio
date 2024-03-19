@@ -20,7 +20,7 @@
 
 import { singleton } from 'tsyringe';
 import { HederaTransactionAdapter } from '../HederaTransactionAdapter.js';
-import { Transaction } from '@hashgraph/sdk';
+import { AccountId, Client, Transaction } from '@hashgraph/sdk';
 import Account from '../../../../domain/context/account/Account.js';
 import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
 import { TransactionType } from '../../TransactionResponseEnums.js';
@@ -29,7 +29,12 @@ import NetworkService from '../../../../app/service/NetworkService.js';
 import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter.js';
 import { BackendAdapter } from '../../backend/BackendAdapter.js';
 import { SupportedWallets } from '../../../../domain/context/network/Wallet';
-import { Environment } from '../../../../domain/context/network/Environment';
+import {
+	Environment,
+	testnet,
+	previewnet,
+	mainnet,
+} from '../../../../domain/context/network/Environment';
 import Injectable from '../../../../core/Injectable.js';
 import { InitializationData } from '../../TransactionAdapter.js';
 import LogService from '../../../../app/service/LogService.js';
@@ -66,10 +71,22 @@ export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
 	): Promise<TransactionResponse<any, Error>> {
 		const publicKeys: string[] = [];
 
+		const accountId: AccountId = AccountId.fromString(
+			this.account.id.toString(),
+		);
+		t._freezeWithAccountId(accountId);
+
+		let client: Client = Client.forTestnet();
+
+		if (this.networkService.environment == previewnet)
+			client = Client.forPreviewnet();
+		else if (this.networkService.environment == mainnet)
+			client = Client.forMainnet();
+
 		this.account.multiKey!.keys.forEach((key) => publicKeys.push(key.key));
 
 		const trasnactionId = await this.backendAdapter.addTransaction(
-			Hex.fromUint8Array(t.toBytes()),
+			Hex.fromUint8Array(t.freezeWith(client).toBytes()),
 			TransactionDescription.getDescription(t),
 			this.account.id.toString(),
 			publicKeys,

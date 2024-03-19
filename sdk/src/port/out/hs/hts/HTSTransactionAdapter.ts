@@ -157,7 +157,7 @@ export class HTSTransactionAdapter extends HederaTransactionAdapter {
 
 		try {
 			const signer = this.account.privateKey.toHashgraphKey();
-			const signed_Transaction = await signer.signTransaction(message)
+			const signed_Transaction = await signer.signTransaction(message);
 
 			return Hex.fromUint8Array(signed_Transaction);
 		} catch (error) {

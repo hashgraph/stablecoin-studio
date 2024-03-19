@@ -76,6 +76,7 @@ combined : threshold 1/3, key list 3
 import Injectable from '../../../src/core/Injectable';
 import {
 	AssociateTokenRequest,
+	CashInRequest,
 	CreateRequest,
 	InitializationRequest,
 	Network,
@@ -95,6 +96,9 @@ import {
 } from '../../config';
 import ConnectRequest from '../../../src/port/in/request/ConnectRequest';
 import Hex from '../../../src/core/Hex.js';
+
+const decimals = 6;
+const initialSupply = 1000;
 
 describe('🧪 MultiSigTransactionAdapter test', () => {
 	let stableCoinHTS: StableCoinViewModel;
@@ -117,7 +121,7 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 		await Network.connect(
 			new ConnectRequest({
 				account: {
-					accountId: '0.0.1328',
+					accountId: '0.0.3728066',
 				},
 				network: 'testnet',
 				wallet: SupportedWallets.MULTISIG,
@@ -125,6 +129,7 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 				rpcNode: rpcNode,
 			}),
 		);
+
 		await Network.init(
 			new InitializationRequest({
 				network: 'testnet',
@@ -137,7 +142,7 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 		);
 		Injectable.resolveTransactionHandler();
 
-		const privateKey = PrivateKey.fromStringECDSA(PRIVATE_KEY);
+		/*const privateKey = PrivateKey.fromStringECDSA(PRIVATE_KEY);
 		const accountId = AccountId.fromString(ACCOUNT_ID);
 		const mnemonic = await Mnemonic.fromString(MNEMONIC);
 		//const mnemonic = await Mnemonic.generate();
@@ -151,10 +156,20 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 			mnemonic.toStandardEd25519PrivateKey(undefined, 3),
 			mnemonic.toStandardEd25519PrivateKey(undefined, 4),
 			mnemonic.toStandardEd25519PrivateKey(undefined, 5),
-		]);
+		]);*/
 	});
 
-	it('create key lists', async () => {
+	it('Multisig should associate a token', async () => {
+		const result = await StableCoin.associate(
+			new AssociateTokenRequest({
+				targetId: '0.0.3728066',
+				tokenId: '0.0.3735939',
+			}),
+		);
+		expect(result).toBe(true);
+	}, 80_000);
+
+	/*it('create key lists', async () => {
 		const keyList = KeyList.of(
 			signerKeys[0].publicKey,
 			signerKeys[1].publicKey,
@@ -274,27 +289,6 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 		console.log(out_thresholdKey.thresholdKey?.threshold);
 		console.log(out_thresholdKey.thresholdKey?.keys);
 		console.log(out_thresholdKey.thresholdKey?.keys?.keys);
-
-		/*out_keyList.keyList?.keys?.keys!.forEach((key) => {
-			console.log(key.ed25519);
-			console.log(key.ECDSASecp256k1);
-			const hexArray = Array.from(key.ed25519!, (byte) =>
-				('0' + byte.toString(16)).slice(-2),
-			);
-			console.log(hexArray.join(''));
-		});*/
-
-		/*console.log(out_thresholdKey.thresholdKey?.threshold);
-		out_thresholdKey.thresholdKey?.keys?.keys!.forEach((key) => {
-			console.log(key.ed25519);
-			console.log(key.ECDSASecp256k1);
-			const hexArray = Array.from(key.ed25519!, (byte) =>
-				('0' + byte.toString(16)).slice(-2),
-			);
-			console.log(hexArray.join(''));
-		});*/
-
-		//console.log(out_combinedKey.keyList)
-		//console.log(out_combinedKey.thresholdKey)
-	});
+		
+	});*/
 });

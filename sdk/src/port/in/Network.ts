@@ -69,11 +69,16 @@ export type ConfigResponse = {
 	factoryAddress: string;
 };
 
+export type BackendResponse = {
+	url: string;
+};
+
 interface INetworkInPort {
 	connect(req: ConnectRequest): Promise<InitializationData>;
 	disconnect(): Promise<boolean>;
 	setNetwork(req: SetNetworkRequest): Promise<NetworkResponse>;
 	setConfig(req: SetConfigurationRequest): Promise<ConfigResponse>;
+	//setBackend(req: SetBackendRequest): Promise<BackendResponse>;
 	getFactoryAddress(): string;
 	getNetwork(): string;
 	isNetworkRecognized(): boolean;
