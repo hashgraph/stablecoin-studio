@@ -33,6 +33,8 @@ import {
 	KeyList,
 } from '@hashgraph/sdk';
 import { config } from 'dotenv';
+import { proto } from '@hashgraph/proto';
+import { hashgraph } from '@hashgraph/stablecoin-npm-contracts';
 
 const PRIVATE_KEY =
 	'3c8055953320b1001b93f6c99518ec0a1daf7210f1bb02dd11c64f3dec96fdb6';
@@ -48,6 +50,7 @@ let client: Client;
     "_type": "ProtobufEncoded",
     "key": "326c0a221220cf8c984270cd7cd25e1bd6df1a3a22ee2d1cd53a0f7bbfdf917a8bd881b11b5e0a221220c539f0f94cd937b721f9bd4c0b965164622798cf8ddea6169d2cb734f70baf8e0a2212200e3c05cf1c2a04db21d0e73f0e608d80d7043851154a4d9516e6b0ee929f7f9f"
   },
+key list 3
  */
 
 // 0.0.3728073
@@ -55,7 +58,19 @@ let client: Client;
  * "key": {
     "_type": "ProtobufEncoded",
     "key": "2a700802126c0a221220cf8c984270cd7cd25e1bd6df1a3a22ee2d1cd53a0f7bbfdf917a8bd881b11b5e0a221220c539f0f94cd937b721f9bd4c0b965164622798cf8ddea6169d2cb734f70baf8e0a2212200e3c05cf1c2a04db21d0e73f0e608d80d7043851154a4d9516e6b0ee929f7f9f"
-  
+  },
+threshold 2/3
+ */
+
+// 0.0.3733080
+/**
+ * "key": {
+    "_type": "ProtobufEncoded",
+    "key": "32ce030a722a700802126c0a221220cf8c984270cd7cd25e1bd6df1a3a22ee2d1cd53a0f7bbfdf917a8bd881b11b5e0a221220c539f0f94cd937b721f9bd4c0b965164622798cf8ddea6169d2cb734f70baf8e0a2212200e3c05cf1c2a04db21d0e73f0e608d80d7043851154a4d9516e6b0ee929f7f9f0a6e326c0a221220cf8c984270cd7cd25e1bd6df1a3a22ee2d1cd53a0f7bbfdf917a8bd881b11b5e0a221220c539f0f94cd937b721f9bd4c0b965164622798cf8ddea6169d2cb734f70baf8e0a2212200e3c05cf1c2a04db21d0e73f0e608d80d7043851154a4d9516e6b0ee929f7f9f0ae70132e4010a722a700801126c0a2212205ac253d0505239c0320276d441e8e574bf503093c95341c9e8ee5d0f49b8288e0a22122033f6fefe851ed8d085a9e766186a42b6c76571683ee66079e026a4e74f9460c30a2212200d1e405bf0c14370efc959c3d9fc2420ed543c4b20e54fc9a83ca9bd7a46c4230a6e326c0a2212205ac253d0505239c0320276d441e8e574bf503093c95341c9e8ee5d0f49b8288e0a22122033f6fefe851ed8d085a9e766186a42b6c76571683ee66079e026a4e74f9460c30a2212200d1e405bf0c14370efc959c3d9fc2420ed543c4b20e54fc9a83ca9bd7a46c423"
+  }
+threshold 2/3
+key list 3
+combined : threshold 1/3, key list 3
  */
 
 describe('🧪 MultiSigTransactionAdapter test', () => {
@@ -71,6 +86,9 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 			mnemonic.toStandardEd25519PrivateKey(undefined, 0),
 			mnemonic.toStandardEd25519PrivateKey(undefined, 1),
 			mnemonic.toStandardEd25519PrivateKey(undefined, 2),
+			mnemonic.toStandardEd25519PrivateKey(undefined, 3),
+			mnemonic.toStandardEd25519PrivateKey(undefined, 4),
+			mnemonic.toStandardEd25519PrivateKey(undefined, 5),
 		]);
 	});
 
@@ -97,7 +115,7 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 	});
 
 	it('create key threshold', async () => {
-		const keyList = new KeyList(
+		const thresholdKey = new KeyList(
 			[
 				signerKeys[0].publicKey,
 				signerKeys[1].publicKey,
@@ -106,7 +124,9 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 			2,
 		);
 
-		const newAccountTx = new AccountCreateTransaction().setKey(keyList);
+		const newAccountTx = new AccountCreateTransaction().setKey(
+			thresholdKey,
+		);
 		// Execute the transaction
 		const newAccountResponse = await newAccountTx.execute(client);
 		// Get receipt
@@ -119,5 +139,102 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 		console.log(signerKeys[0].publicKey._key.toBytes());
 		console.log(signerKeys[1].publicKey._key.toBytes());
 		console.log(signerKeys[2].publicKey._key.toBytes());
+	});
+
+	it('create multi level key list/threshold', async () => {
+		const thresholdKey_1 = new KeyList(
+			[
+				signerKeys[0].publicKey,
+				signerKeys[1].publicKey,
+				signerKeys[2].publicKey,
+			],
+			2,
+		);
+
+		const thresholdKey_2 = new KeyList(
+			[
+				signerKeys[3].publicKey,
+				signerKeys[4].publicKey,
+				signerKeys[5].publicKey,
+			],
+			1,
+		);
+
+		const keyList_1 = KeyList.of(
+			signerKeys[0].publicKey,
+			signerKeys[1].publicKey,
+			signerKeys[2].publicKey,
+		);
+
+		const keyList_2 = KeyList.of(
+			signerKeys[3].publicKey,
+			signerKeys[4].publicKey,
+			signerKeys[5].publicKey,
+		);
+
+		const keyCombined = KeyList.of(thresholdKey_2, keyList_2);
+
+		const finalKey = KeyList.of(thresholdKey_1, keyList_1, keyCombined);
+
+		const newAccountTx = new AccountCreateTransaction().setKey(finalKey);
+		// Execute the transaction
+		const newAccountResponse = await newAccountTx.execute(client);
+		// Get receipt
+		const newAccountReceipt = await newAccountResponse.getReceipt(client);
+		// Get the account ID
+		const newAccountId = newAccountReceipt.accountId;
+
+		console.log(newAccountId);
+	});
+
+	it('decode protobuf', async () => {
+		const protoBufString_keyList =
+			'326c0a221220cf8c984270cd7cd25e1bd6df1a3a22ee2d1cd53a0f7bbfdf917a8bd881b11b5e0a221220c539f0f94cd937b721f9bd4c0b965164622798cf8ddea6169d2cb734f70baf8e0a2212200e3c05cf1c2a04db21d0e73f0e608d80d7043851154a4d9516e6b0ee929f7f9f';
+		const protoBufString_thresholdKey =
+			'2a700802126c0a221220cf8c984270cd7cd25e1bd6df1a3a22ee2d1cd53a0f7bbfdf917a8bd881b11b5e0a221220c539f0f94cd937b721f9bd4c0b965164622798cf8ddea6169d2cb734f70baf8e0a2212200e3c05cf1c2a04db21d0e73f0e608d80d7043851154a4d9516e6b0ee929f7f9f';
+		const protoBufString_combinedKey =
+			'32ce030a722a700802126c0a221220cf8c984270cd7cd25e1bd6df1a3a22ee2d1cd53a0f7bbfdf917a8bd881b11b5e0a221220c539f0f94cd937b721f9bd4c0b965164622798cf8ddea6169d2cb734f70baf8e0a2212200e3c05cf1c2a04db21d0e73f0e608d80d7043851154a4d9516e6b0ee929f7f9f0a6e326c0a221220cf8c984270cd7cd25e1bd6df1a3a22ee2d1cd53a0f7bbfdf917a8bd881b11b5e0a221220c539f0f94cd937b721f9bd4c0b965164622798cf8ddea6169d2cb734f70baf8e0a2212200e3c05cf1c2a04db21d0e73f0e608d80d7043851154a4d9516e6b0ee929f7f9f0ae70132e4010a722a700801126c0a2212205ac253d0505239c0320276d441e8e574bf503093c95341c9e8ee5d0f49b8288e0a22122033f6fefe851ed8d085a9e766186a42b6c76571683ee66079e026a4e74f9460c30a2212200d1e405bf0c14370efc959c3d9fc2420ed543c4b20e54fc9a83ca9bd7a46c4230a6e326c0a2212205ac253d0505239c0320276d441e8e574bf503093c95341c9e8ee5d0f49b8288e0a22122033f6fefe851ed8d085a9e766186a42b6c76571683ee66079e026a4e74f9460c30a2212200d1e405bf0c14370efc959c3d9fc2420ed543c4b20e54fc9a83ca9bd7a46c423';
+
+		const uint8Array_keyList = Uint8Array.from(
+			Buffer.from(protoBufString_keyList, 'hex'),
+		);
+		const uint8Array_thresholdKey = Uint8Array.from(
+			Buffer.from(protoBufString_thresholdKey, 'hex'),
+		);
+		const uint8Array_combinedKey = Uint8Array.from(
+			Buffer.from(protoBufString_combinedKey, 'hex'),
+		);
+
+		const out_keyList = proto.Key.decode(uint8Array_keyList);
+		const out_thresholdKey = proto.Key.decode(uint8Array_thresholdKey);
+		const out_combinedKey = proto.Key.decode(uint8Array_combinedKey);
+
+		console.log(out_keyList.keyList?.keys);
+		console.log('-----------');
+		console.log(out_thresholdKey.thresholdKey?.threshold);
+		console.log(out_thresholdKey.thresholdKey?.keys);
+		console.log(out_thresholdKey.thresholdKey?.keys?.keys);
+
+		/*out_keyList.keyList?.keys?.keys!.forEach((key) => {
+			console.log(key.ed25519);
+			console.log(key.ECDSASecp256k1);
+			const hexArray = Array.from(key.ed25519!, (byte) =>
+				('0' + byte.toString(16)).slice(-2),
+			);
+			console.log(hexArray.join(''));
+		});*/
+
+		/*console.log(out_thresholdKey.thresholdKey?.threshold);
+		out_thresholdKey.thresholdKey?.keys?.keys!.forEach((key) => {
+			console.log(key.ed25519);
+			console.log(key.ECDSASecp256k1);
+			const hexArray = Array.from(key.ed25519!, (byte) =>
+				('0' + byte.toString(16)).slice(-2),
+			);
+			console.log(hexArray.join(''));
+		});*/
+
+		//console.log(out_combinedKey.keyList)
+		//console.log(out_combinedKey.thresholdKey)
 	});
 });

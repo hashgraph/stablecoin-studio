@@ -54,6 +54,7 @@ import { HederaId } from '../../domain/context/shared/HederaId';
 import PublicKey from '../../domain/context/account/PublicKey';
 import { FireblocksTransactionAdapter } from '../out/hs/hts/custodial/FireblocksTransactionAdapter.js';
 import { DFNSTransactionAdapter } from '../out/hs/hts/custodial/DFNSTransactionAdapter.js';
+import { MultiSigTransactionAdapter } from '../out/hs/multiSig/MultiSigTransactionAdapter.js';
 
 export { InitializationData, SupportedWallets };
 
@@ -167,6 +168,8 @@ class NetworkInPort implements INetworkInPort {
 				wallets.push(SupportedWallets.FIREBLOCKS);
 			} else if (val instanceof DFNSTransactionAdapter) {
 				wallets.push(SupportedWallets.DFNS);
+			} else if (val instanceof MultiSigTransactionAdapter) {
+				wallets.push(SupportedWallets.MULTISIG);
 			} else {
 				wallets.push(SupportedWallets.CLIENT);
 			}

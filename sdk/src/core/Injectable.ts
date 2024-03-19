@@ -102,6 +102,7 @@ import { GetFactoryProxyConfigQueryHandler } from '../app/usecase/query/factoryP
 import { BladeTransactionAdapter } from '../port/out/hs/blade/BladeTransactionAdapter.js';
 import { FireblocksTransactionAdapter } from '../port/out/hs/hts/custodial/FireblocksTransactionAdapter.js';
 import { DFNSTransactionAdapter } from '../port/out/hs/hts/custodial/DFNSTransactionAdapter.js';
+import { MultiSigTransactionAdapter } from '../port/out/hs/multiSig/MultiSigTransactionAdapter.js';
 
 export const TOKENS = {
 	COMMAND_HANDLER: Symbol('CommandHandler'),
@@ -374,6 +375,10 @@ const TRANSACTION_HANDLER = [
 		token: TOKENS.TRANSACTION_HANDLER,
 		useClass: BladeTransactionAdapter,
 	},
+	{
+		token: TOKENS.TRANSACTION_HANDLER,
+		useClass: MultiSigTransactionAdapter,
+	},
 ];
 
 const defaultNetworkProps: NetworkProps = {
@@ -466,6 +471,7 @@ export default class Injectable {
 		} else {
 			adapters.push(Injectable.resolve(HTSTransactionAdapter));
 		}
+		adapters.push(Injectable.resolve(MultiSigTransactionAdapter));
 		return adapters;
 	}
 

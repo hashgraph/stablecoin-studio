@@ -19,6 +19,9 @@
  */
 
 import PublicKey from './PublicKey.js';
+import { proto } from '@hashgraph/proto';
+import { UnsupportedKeyType } from './error/UnsupportedKeyType.js';
+import { KeyType } from './KeyProps.js';
 
 export default class MultiKey {
 	keys: PublicKey[];
@@ -27,5 +30,79 @@ export default class MultiKey {
 	constructor(keys: PublicKey[], threshold: number) {
 		this.keys = keys;
 		this.threshold = threshold;
+	}
+
+	public static fromProtobuf(protobuf: string): MultiKey {
+		const uint8Array = Uint8Array.from(Buffer.from(protobuf, 'hex'));
+		const decoded_key = proto.Key.decode(uint8Array);
+
+		if (decoded_key.keyList) {
+			if (!decoded_key.keyList.keys)
+				throw new UnsupportedKeyType(
+					`No Keys found in key list : ${decoded_key.keyList.keys}`,
+				);
+
+			const keys: PublicKey[] = this.getPublicKeys(
+				decoded_key.keyList.keys,
+			);
+
+			return new MultiKey(keys, keys.length);
+		} else if (decoded_key.thresholdKey) {
+			if (!decoded_key.thresholdKey.threshold)
+				throw new UnsupportedKeyType(
+					`Threshold undefined in threshold key : ${decoded_key.thresholdKey.threshold}`,
+				);
+			if (!decoded_key.thresholdKey.keys)
+				throw new UnsupportedKeyType(
+					`No Keys found in threshold key : ${decoded_key.thresholdKey.keys}`,
+				);
+			if (!decoded_key.thresholdKey.keys.keys)
+				throw new UnsupportedKeyType(
+					`No key list found in threshold key : ${decoded_key.thresholdKey.keys.keys}`,
+				);
+
+			const threshold = decoded_key.thresholdKey.threshold;
+
+			const keys: PublicKey[] = this.getPublicKeys(
+				decoded_key.thresholdKey.keys.keys,
+			);
+
+			return new MultiKey(keys, threshold);
+		} else {
+			throw new UnsupportedKeyType(decoded_key.key ?? 'empty');
+		}
+	}
+
+	private static getPublicKeys(listOfKeys: proto.IKey[]): PublicKey[] {
+		const keys: PublicKey[] = [];
+
+		listOfKeys.forEach((key) => {
+			let uint8ArrayKey: Uint8Array = new Uint8Array();
+			let keyType: KeyType;
+
+			if (key.ed25519) {
+				uint8ArrayKey = key.ed25519;
+				keyType = KeyType.ED25519;
+			} else if (key.ECDSASecp256k1) {
+				uint8ArrayKey = key.ECDSASecp256k1;
+				keyType = KeyType.ECDSA;
+			} else
+				throw new UnsupportedKeyType(
+					`Only ECDSASecp256k1 and ed25519 are supported: ${key}`,
+				);
+
+			const hexKey = Array.from(uint8ArrayKey, (byte) =>
+				('0' + byte.toString(16)).slice(-2),
+			).join('');
+
+			const pk = new PublicKey({
+				key: hexKey,
+				type: keyType,
+			});
+
+			keys.push(pk);
+		});
+
+		return keys;
 	}
 }

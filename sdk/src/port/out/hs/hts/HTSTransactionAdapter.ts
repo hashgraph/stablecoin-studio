@@ -92,7 +92,7 @@ export class HTSTransactionAdapter extends HederaTransactionAdapter {
 		const privateKey = account.privateKey.toHashgraphKey();
 		this._client.setOperator(id, privateKey);
 		const eventData: WalletPairedEvent = {
-			wallet: SupportedWallets.HASHPACK,
+			wallet: SupportedWallets.CLIENT,
 			data: {
 				account: this.account,
 				pairing: '',

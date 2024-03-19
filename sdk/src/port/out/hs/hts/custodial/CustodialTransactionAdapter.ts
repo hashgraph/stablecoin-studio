@@ -184,15 +184,18 @@ export abstract class CustodialTransactionAdapter extends HederaTransactionAdapt
 			throw new SigningError('Custodial Wallet is empty');
 
 		try {
-			const encoder = new TextEncoder();
-			const decoder = new TextDecoder();
-
-			const encoded_message: Uint8Array = encoder.encode(message);
+			const encoded_message: Uint8Array = Uint8Array.from(
+				Buffer.from(message, 'hex'),
+			);
 			const encoded_signed_message = await this.signingService(
 				encoded_message,
 			);
 
-			return decoder.decode(encoded_signed_message);
+			const hexArray = Array.from(encoded_signed_message, (byte) =>
+				('0' + byte.toString(16)).slice(-2),
+			);
+
+			return hexArray.join('');
 		} catch (error) {
 			LogService.logError(error);
 			throw new SigningError(error);

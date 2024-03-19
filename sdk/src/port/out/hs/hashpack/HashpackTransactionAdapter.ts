@@ -427,15 +427,19 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 		if (!this.signer) throw new SigningError('Signer is empty');
 
 		try {
-			const encoder = new TextEncoder();
-			const decoder = new TextDecoder();
-
-			const encoded_messages: Uint8Array[] = [encoder.encode(message)];
+			const encoded_messages: Uint8Array[] = [
+				Uint8Array.from(Buffer.from(message, 'hex')),
+			];
 			const encoded_signed_messages = await this.signer.sign(
 				encoded_messages,
 			);
 
-			return decoder.decode(encoded_signed_messages[0].signature);
+			const hexArray = Array.from(
+				encoded_signed_messages[0].signature,
+				(byte) => ('0' + byte.toString(16)).slice(-2),
+			);
+
+			return hexArray.join('');
 		} catch (error) {
 			LogService.logError(error);
 			throw new SigningError(error);

@@ -29,10 +29,24 @@ import NetworkService from '../../../../app/service/NetworkService.js';
 import { QueryBus } from '../../../../core/query/QueryBus.js';
 import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter.js';
 import { BackendAdapter } from '../../backend/BackendAdapter.js';
+import { SupportedWallets } from '../../../../domain/context/network/Wallet';
+import { Environment } from '../../../../domain/context/network/Environment';
+import Injectable from '../../../../core/Injectable.js';
+import { InitializationData } from '../../TransactionAdapter.js';
+import LogService from '../../../../app/service/LogService.js';
+import {
+	WalletEvents,
+	WalletPairedEvent,
+} from '../../../../app/service/event/WalletEvent.js';
+import EventService from '../../../../app/service/event/EventService.js';
 
 @singleton()
 export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
+	public account: Account;
+	protected network: Environment;
+
 	constructor(
+		@lazyInject(EventService) public readonly eventService: EventService,
 		@lazyInject(NetworkService)
 		public readonly networkService: NetworkService,
 		@lazyInject(MirrorNodeAdapter)
@@ -43,10 +57,6 @@ export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
 		public readonly queryBus: QueryBus,
 	) {
 		super(mirrorNodeAdapter, networkService);
-	}
-
-	getAccount(): Account {
-		throw new Error('Method not implemented.');
 	}
 
 	async signAndSendTransaction(
@@ -63,5 +73,62 @@ export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
 
 	sign(message: string): Promise<string> {
 		throw new Error('Method not implemented.');
+	}
+
+	getSupportedWallet(): SupportedWallets {
+		return SupportedWallets.MULTISIG;
+	}
+
+	init(): Promise<string> {
+		this.eventService.emit(WalletEvents.walletInit, {
+			wallet: SupportedWallets.MULTISIG,
+			initData: {},
+		});
+		LogService.logTrace('Multisig Initialized');
+		return Promise.resolve(this.networkService.environment);
+	}
+
+	async register(account: Account): Promise<InitializationData> {
+		Injectable.registerTransactionHandler(this);
+		LogService.logTrace('MultiSig Registered as handler');
+
+		const accountMirror = await this.mirrorNodeAdapter.getAccountInfo(
+			account.id,
+		);
+		if (!accountMirror.multiKey) {
+			throw new Error('multiKey not found in the mirror node');
+		}
+
+		this.account = account;
+		this.account.publicKey = accountMirror.publicKey;
+		this.account.multiKey = accountMirror.multiKey;
+		this.account.evmAddress = accountMirror.accountEvmAddress;
+
+		this.network = this.networkService.environment;
+
+		const eventData: WalletPairedEvent = {
+			wallet: SupportedWallets.MULTISIG,
+			data: {
+				account: this.account,
+				pairing: '',
+				topic: '',
+			},
+			network: {
+				name: this.networkService.environment,
+				recognized: true,
+				factoryId: this.networkService.configuration
+					? this.networkService.configuration.factoryAddress
+					: '',
+			},
+		};
+		this.eventService.emit(WalletEvents.walletPaired, eventData);
+		LogService.logTrace('Multisig registered as handler: ', eventData);
+		return Promise.resolve({
+			account: this.getAccount(),
+		});
+	}
+
+	public getAccount(): Account {
+		return this.account;
 	}
 }
