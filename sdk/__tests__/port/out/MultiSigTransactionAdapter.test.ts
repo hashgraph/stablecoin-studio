@@ -73,8 +73,69 @@ key list 3
 combined : threshold 1/3, key list 3
  */
 
+import Injectable from '../../../src/core/Injectable';
+import {
+	AssociateTokenRequest,
+	CreateRequest,
+	InitializationRequest,
+	Network,
+	RequestPublicKey,
+	StableCoin,
+	StableCoinViewModel,
+	SupportedWallets,
+	TokenSupplyType,
+} from '../../../src';
+import { MirrorNode } from '../../../src/domain/context/network/MirrorNode';
+import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay';
+import {
+	FACTORY_ADDRESS,
+	HEDERA_TOKEN_MANAGER_ADDRESS,
+	MIRROR_NODE,
+	RPC_NODE,
+} from '../../config';
+import ConnectRequest from '../../../src/port/in/request/ConnectRequest';
+
 describe('🧪 MultiSigTransactionAdapter test', () => {
+	let stableCoinHTS: StableCoinViewModel;
+	const delay = async (seconds = 5): Promise<void> => {
+		seconds = seconds * 1000;
+		await new Promise((r) => setTimeout(r, seconds));
+	};
+
+	const mirrorNode: MirrorNode = {
+		name: MIRROR_NODE.name,
+		baseUrl: MIRROR_NODE.baseUrl,
+	};
+
+	const rpcNode: JsonRpcRelay = {
+		name: RPC_NODE.name,
+		baseUrl: RPC_NODE.baseUrl,
+	};
+
 	beforeAll(async () => {
+		await Network.connect(
+			new ConnectRequest({
+				account: {
+					accountId: '0.0.1328',
+				},
+				network: 'testnet',
+				wallet: SupportedWallets.MULTISIG,
+				mirrorNode: mirrorNode,
+				rpcNode: rpcNode,
+			}),
+		);
+		await Network.init(
+			new InitializationRequest({
+				network: 'testnet',
+				configuration: {
+					factoryAddress: FACTORY_ADDRESS,
+				},
+				mirrorNode: mirrorNode,
+				rpcNode: rpcNode,
+			}),
+		);
+		Injectable.resolveTransactionHandler();
+
 		const privateKey = PrivateKey.fromStringECDSA(PRIVATE_KEY);
 		const accountId = AccountId.fromString(ACCOUNT_ID);
 		const mnemonic = await Mnemonic.fromString(MNEMONIC);

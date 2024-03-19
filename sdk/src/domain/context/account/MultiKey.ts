@@ -39,9 +39,7 @@ export default class MultiKey {
 
 		if (decoded_key.keyList) {
 			if (!decoded_key.keyList.keys)
-				throw new UnsupportedKeyType(
-					`No Keys found in key list : ${decoded_key.keyList.keys}`,
-				);
+				throw new UnsupportedKeyType(`No Keys found in key list`);
 
 			const keys: PublicKey[] = this.getPublicKeys(
 				decoded_key.keyList.keys,
@@ -51,15 +49,13 @@ export default class MultiKey {
 		} else if (decoded_key.thresholdKey) {
 			if (!decoded_key.thresholdKey.threshold)
 				throw new UnsupportedKeyType(
-					`Threshold undefined in threshold key : ${decoded_key.thresholdKey.threshold}`,
+					`Threshold undefined in threshold key`,
 				);
 			if (!decoded_key.thresholdKey.keys)
-				throw new UnsupportedKeyType(
-					`No Keys found in threshold key : ${decoded_key.thresholdKey.keys}`,
-				);
+				throw new UnsupportedKeyType(`No Keys found in threshold key`);
 			if (!decoded_key.thresholdKey.keys.keys)
 				throw new UnsupportedKeyType(
-					`No key list found in threshold key : ${decoded_key.thresholdKey.keys.keys}`,
+					`No key list found in threshold key`,
 				);
 
 			const threshold = decoded_key.thresholdKey.threshold;
@@ -89,7 +85,7 @@ export default class MultiKey {
 				keyType = KeyType.ECDSA;
 			} else
 				throw new UnsupportedKeyType(
-					`Only ECDSASecp256k1 and ed25519 are supported: ${key}`,
+					`Only ECDSASecp256k1 and ed25519 are supported`,
 				);
 
 			const hexKey = Hex.fromUint8Array(uint8ArrayKey);

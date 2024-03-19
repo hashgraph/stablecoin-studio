@@ -24,7 +24,7 @@ export class UnsupportedKeyType extends BaseError {
 	constructor(val: unknown) {
 		super(
 			ErrorCode.UnsupportedKeyType,
-			`thre retrieved key type is not supported: ${val}`,
+			`the retrieved key type is not supported: ${val}`,
 		);
 	}
 }
