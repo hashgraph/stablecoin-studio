@@ -1,4 +1,5 @@
 import colors from 'colors';
+import { AccountType } from '../../domain/configuration/interfaces/AccountType';
 import * as inquirer from 'inquirer';
 
 const separator_1 = {
@@ -52,7 +53,7 @@ export const english = {
     AccountsConfigurationMessage: 'You will now configure your accounts:',
     askAccountId: 'Enter the account id',
     askAccountPubKey: 'Enter the public key (Hexadecimal format)',
-    askAccountType: 'Enter the account type (SELF-CUSTODIAL|FIREBLOCKS|DFNS)',
+    askAccountType: `Enter the account type (${AccountType.SelfCustodial}|${AccountType.MultiSignature}|${AccountType.Fireblocks}|${AccountType.Dfns})`,
     askConfigurateFactories:
       'Do you want to config your factories? Check the documentation for more information : https://github.com/hashgraph/stablecoin-studio#deploying-the-stable-coin-factories',
     askConfigurateDefaultMirrorsAndRPCs:
@@ -466,9 +467,10 @@ export const english = {
       ECDSA: 'ECDSA',
     },
     accountType: {
-      SELF_CUSTODIAL: 'SELF-CUSTODIAL',
-      FIREBLOCKS: 'FIREBLOCKS',
-      DFNS: 'DFNS',
+      SELF_CUSTODIAL: AccountType.SelfCustodial,
+      MULTI_SIGNATURE: AccountType.MultiSignature,
+      FIREBLOCKS: AccountType.Fireblocks,
+      DFNS: AccountType.Dfns,
     },
   },
   manageImportedToken: {
