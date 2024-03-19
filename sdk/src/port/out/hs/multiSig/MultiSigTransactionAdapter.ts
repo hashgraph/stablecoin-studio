@@ -39,6 +39,8 @@ import {
 	WalletPairedEvent,
 } from '../../../../app/service/event/WalletEvent.js';
 import EventService from '../../../../app/service/event/EventService.js';
+import TransactionDescription from './TransactionDescription.js';
+import Hex from '../../../../core/Hex.js';
 
 @singleton()
 export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
@@ -53,8 +55,6 @@ export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
 		public readonly mirrorNodeAdapter: MirrorNodeAdapter,
 		@lazyInject(BackendAdapter)
 		public readonly backendAdapter: BackendAdapter,
-		@lazyInject(QueryBus)
-		public readonly queryBus: QueryBus,
 	) {
 		super(mirrorNodeAdapter, networkService);
 	}
@@ -65,12 +65,22 @@ export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
 		nameFunction?: string | undefined,
 		abi?: any[] | undefined,
 	): Promise<TransactionResponse<any, Error>> {
-		throw new Error('Method not implemented.');
-		//const trasnactionId = await this.backendAdapter.addTransaction();
+		const publicKeys: string[] = [];
 
-		//return new TransactionResponse(trasnactionId);
+		this.account.multiKey!.keys.forEach((key) => publicKeys.push(key.key));
+
+		const trasnactionId = await this.backendAdapter.addTransaction(
+			Hex.fromUint8Array(t.toBytes()),
+			TransactionDescription.getDescription(t),
+			this.account.id.toString(),
+			publicKeys,
+			this.account.multiKey!.threshold,
+		);
+
+		return new TransactionResponse(trasnactionId);
 	}
 
+	// MultiSig cannot eb used to sign anything
 	sign(message: string): Promise<string> {
 		throw new Error('Method not implemented.');
 	}

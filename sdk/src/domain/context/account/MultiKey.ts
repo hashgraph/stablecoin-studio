@@ -22,6 +22,7 @@ import PublicKey from './PublicKey.js';
 import { proto } from '@hashgraph/proto';
 import { UnsupportedKeyType } from './error/UnsupportedKeyType.js';
 import { KeyType } from './KeyProps.js';
+import Hex from '../../../core/Hex.js';
 
 export default class MultiKey {
 	keys: PublicKey[];
@@ -91,9 +92,7 @@ export default class MultiKey {
 					`Only ECDSASecp256k1 and ed25519 are supported: ${key}`,
 				);
 
-			const hexKey = Array.from(uint8ArrayKey, (byte) =>
-				('0' + byte.toString(16)).slice(-2),
-			).join('');
+			const hexKey = Hex.fromUint8Array(uint8ArrayKey);
 
 			const pk = new PublicKey({
 				key: hexKey,

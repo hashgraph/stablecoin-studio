@@ -20,7 +20,7 @@
 
 import { Transaction } from '@hashgraph/sdk';
 
-export class MultiSigTransactionAdapter {
+export default class TransactionDescription {
 	static getDescription(t: Transaction): string {
 		return 'description';
 	}
