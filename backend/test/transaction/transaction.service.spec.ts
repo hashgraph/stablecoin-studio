@@ -23,12 +23,11 @@ import { ConfigService } from '@nestjs/config';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import TransactionService from '../../src/transaction/transaction.service';
-import Transaction, {
-  TransactionStatus,
-} from '../../src/transaction/transaction.entity';
+import Transaction  from '../../src/transaction/transaction.entity';
 import { SignTransactionRequestDto } from '../../src/transaction/dto/sign-transaction-request.dto';
 import TransactionMock, { DEFAULT } from './transaction.mock';
 import { LoggerService } from '../../src/logger/logger.service';
+import { TransactionStatus } from '../../src/transaction/status.enum';
 
 describe('Transaction Service Test', () => {
   let service: TransactionService;

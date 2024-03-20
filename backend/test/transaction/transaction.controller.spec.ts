@@ -241,7 +241,7 @@ describe('Transaction Controller Test', () => {
   });
 
   describe('Get Transactions', () => {
-    it('should get all transactions linked to a public key', async () => {
+    it('should get all transactions by public key', async () => {
       //* 🗂️ Arrange ⬇
       // Input
       const request = HTTP_REQUEST;
@@ -252,7 +252,7 @@ describe('Transaction Controller Test', () => {
       };
       // Mock service
       jest
-        .spyOn(service, 'getAllByPublicKey')
+        .spyOn(service, 'getAll')
         .mockImplementation((publicKey: string) =>
           Promise.resolve(
             createMockGetAllByPublicKeyTxServiceResult(publicKey),
@@ -271,7 +271,7 @@ describe('Transaction Controller Test', () => {
       );
 
       //* 🎬 Act ⬇
-      const result = await controller.getTransactionsByPublicKey(
+      const result = await controller.getTransactions(
         getAllByPublicKeyCommand.request,
         getAllByPublicKeyCommand.publicKey,
       );
@@ -312,7 +312,7 @@ describe('Transaction Controller Test', () => {
     });
   });
   describe('Get Transaction', () => {
-    it('should get transacion by id', async () => {
+    it('should get transaction by id', async () => {
       //* 🗂️ Arrange ⬇
       const transactionId = DEFAULT.id;
       const request = HTTP_REQUEST;

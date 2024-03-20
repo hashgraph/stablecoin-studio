@@ -59,7 +59,6 @@ import LogMessageDTO from '../logger/dto/log-message.dto';
 import { Request } from 'express';
 import { REQUEST_ID_HTTP_HEADER } from '../common/constants';
 import { HttpExceptionFilter } from '../common/exceptions/http-exception.filter';
-import { RemoveHexPrefixPipe } from '../common/pipes/remove-hexPrefix.pipe';
 
 @ApiTags('Transactions')
 @Controller('/api/transactions')
@@ -179,156 +178,65 @@ export default class TransactionController {
     }
   }
 
-  @Get(':publicKey')
+  @Get()
   @HttpCode(HttpStatus.OK) // 200 OK
   @ApiOkResponse({
     description: 'The transactions have been successfully retrieved.',
     type: [GetTransactionsResponseDto],
   })
   @ApiForbiddenResponse({ description: 'Forbidden', type: ForbiddenException })
-  @ApiParam({
-    name: 'publicKey',
-    description: 'The public key to retrieve transactions for',
-    example: 'cf8c984270cd7cd25e1bd6df1a3a22ee2d1cd53a0f7bbfdf917a8bd881b11b5e',
-    required: true,
-  })
-  @ApiQuery({
-    name: 'status',
-    description: 'The status of transaction to retrieve',
-    example: 'pending',
-    required: false,
-  })
-  @ApiQuery({
-    name: 'page',
-    description: 'The page number to retrieve',
-    example: 1,
-    required: false,
-  })
-  @ApiQuery({
-    name: 'limit',
-    description: 'The number of transactions to retrieve per page',
-    example: 10,
-    required: false,
-  })
+  @ApiQuery({ name: 'publicKey', description: 'The public key to retrieve transactions for', required: false })
+  @ApiQuery({ name: 'status', description: 'The status of transaction to retrieve', required: false })
+  @ApiQuery({ name: 'page', description: 'The page number to retrieve', required: false })
+  @ApiQuery({ name: 'limit', description: 'The number of transactions to retrieve per page', required: false })
+  @ApiQuery({ name: 'network', description: 'The network from which to retrieve transactions', required: false })
   @UseFilters(HttpExceptionFilter)
-  async getTransactionsByPublicKey(
+  async getTransactions(
     @Req() request: Request,
-    @Param('publicKey', RemoveHexPrefixPipe) publicKey: string,
+    @Query('publicKey') publicKey?: string,
     @Query('status') status?: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page?: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit?: number,
-    @Query('network') network?: string
+    @Query('network') network?: string,
   ): Promise<Pagination<GetTransactionsResponseDto>> {
-    if (page < 1) {
-      throw new Error('Page must be greater than 0');
-    }
-    this.loggerService.log(
-      new LogMessageDTO(request[REQUEST_ID_HTTP_HEADER], 'Get transactions', {
-        key: publicKey,
-        status: status,
-        page: page,
-        limit: limit,
-      }),
-    );
-    limit = limit > 100 ? 100 : limit;
-    status = status ? status.toLowerCase() : status;
+    {
+      if (page < 1) {
+        throw new Error('Page must be greater than 0');
+      }
+      this.loggerService.log(
+        new LogMessageDTO(request[REQUEST_ID_HTTP_HEADER], 'Get All', {
+          page: page,
+          limit: limit,
+        }),
+      );
+      limit = limit > 100 ? 100 : limit;
+      this.loggerService.debug(
+        new LogMessageDTO(
+          request[REQUEST_ID_HTTP_HEADER],
+          'Get All limit set',
+          limit,
+        ),
+      );
 
-    this.loggerService.debug(
-      new LogMessageDTO(
-        request[REQUEST_ID_HTTP_HEADER],
-        'Get transactions limit set',
-        limit,
-      ),
-    );
-    this.loggerService.debug(
-      new LogMessageDTO(
-        request[REQUEST_ID_HTTP_HEADER],
-        'Get transactions type set',
-        status,
-      ),
-    );
-    try {
-      return await this.transactionService.getAllByPublicKey(
-        publicKey,
-        status,
-        network,
-        {
+      try {
+        return await this.transactionService.getAll(publicKey, status, network, {
           page,
           limit,
-        },
-      );
-    } catch (error) {
-      this.loggerService.error(
-        new LogMessageDTO(
-          request[REQUEST_ID_HTTP_HEADER],
-          'Error getting transactions',
-          error.message,
-        ),
-      );
-      throw error;
-    }
-  }
-  @Get()
-  @ApiOkResponse({
-    description: 'The transactions have been successfully retrieved.',
-    type: [GetTransactionsResponseDto],
-  })
-  @ApiForbiddenResponse({ description: 'Forbidden', type: ForbiddenException })
-  @ApiQuery({
-    name: 'page',
-    description: 'The page number to retrieve',
-    example: 1,
-    required: false,
-  })
-  @ApiQuery({
-    name: 'limit',
-    description: 'The number of transactions to retrieve per page',
-    example: 10,
-    required: false,
-  })
-  @UseFilters(HttpExceptionFilter)
-  async getAll(
-    @Req() request: Request,
-    @Query('network') network?: string,
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page?: number,
-    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit?: number
-  ): Promise<Pagination<GetTransactionsResponseDto>> {
-    if (page < 1) {
-      throw new Error('Page must be greater than 0');
-    }
-    this.loggerService.log(
-      new LogMessageDTO(request[REQUEST_ID_HTTP_HEADER], 'Get All', {
-        page: page,
-        limit: limit,
-      }),
-    );
-    limit = limit > 100 ? 100 : limit;
-    this.loggerService.debug(
-      new LogMessageDTO(
-        request[REQUEST_ID_HTTP_HEADER],
-        'Get All limit set',
-        limit,
-      ),
-    );
-
-    try {
-      return await this.transactionService.getAll(network, {
-        page,
-        limit,
-      });
-    } catch (error) {
-      this.loggerService.error(
-        new LogMessageDTO(
-          request[REQUEST_ID_HTTP_HEADER],
-          'Error getting all transactions',
-          error.message,
-        ),
-      );
-      throw error;
+        });
+      } catch (error) {
+        this.loggerService.error(
+          new LogMessageDTO(
+            request[REQUEST_ID_HTTP_HEADER],
+            'Error getting all transactions',
+            error.message,
+          ),
+        );
+        throw error;
+      }
     }
   }
 
-  @Get('/:transactionId/detail')
+  @Get('/:transactionId')
   @ApiOkResponse({
     description: 'The transaction has been successfully retrieved.',
     type: GetTransactionsResponseDto,

@@ -19,10 +19,9 @@
  */
 
 import { UUID } from 'crypto';
-import Transaction, {
-  TransactionStatus,
-} from '../../src/transaction/transaction.entity';
+import Transaction from '../../src/transaction/transaction.entity';
 import { Network } from '../../src/transaction/network.enum';
+import { TransactionStatus } from '../../src/transaction/status.enum';
 
 export const DEFAULT = {
   id: 'e8fe7d5e-2a94-472c-bab8-e693e401134f',

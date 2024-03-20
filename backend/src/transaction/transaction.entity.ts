@@ -1,10 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { Network } from './network.enum';
-
-export enum TransactionStatus {
-  SIGNED = 'SIGNED',
-  PENDING = 'PENDING',
-}
+import { TransactionStatus } from './status.enum';
 
 @Entity()
 export default class Transaction {
@@ -20,7 +16,11 @@ export default class Transaction {
   @Column()
   hedera_account_id: string;
 
-  @Column('simple-array')
+  @Column({
+    type: 'text',
+    array: true,
+    nullable: false,
+  })
   signatures: string[];
 
   @Column({
