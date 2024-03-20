@@ -223,4 +223,25 @@ describe('Transaction Service Test', () => {
       expect(repository.clear).toHaveBeenCalled();
     });
   });
+  describe('Get transaction', () => {
+    it('should get a transaction by id', async () => {
+      const transaction = TransactionMock.txPending0();
+      jest.spyOn(repository, 'findOne').mockResolvedValue(transaction);
+
+      const result = await service.getById(transaction.id);
+
+      expect(result).toEqual(expect.objectContaining({
+        id: transaction.id,
+        transaction_message: transaction.transaction_message,
+        description: transaction.description,
+        status: transaction.status,
+        threshold: transaction.threshold,
+        // hedera_account_id is not returned
+        key_list: transaction.key_list,
+        signed_keys: transaction.signed_keys,
+        signatures: transaction.signatures,
+        network: transaction.network,
+      }));
+    });
+  });
 });

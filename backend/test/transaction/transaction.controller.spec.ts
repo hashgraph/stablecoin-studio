@@ -311,6 +311,48 @@ describe('Transaction Controller Test', () => {
       });
     });
   });
+  describe('Get Transaction', () => {
+    it('should get transacion by id', async () => {
+      //* 🗂️ Arrange ⬇
+      const transactionId = DEFAULT.id;
+      const request = HTTP_REQUEST;
+
+      jest
+        .spyOn(service, 'getById')
+        .mockImplementation((transactionId: string) =>
+          Promise.resolve(
+            new GetTransactionsResponseDto(
+              transactionId,
+              DEFAULT.transaction_message,
+              DEFAULT.description,
+              DEFAULT.status,
+              DEFAULT.threshold,
+              DEFAULT.key_list,
+              DEFAULT.signed_keys,
+              DEFAULT.signatures,
+              DEFAULT.network,
+            ),
+          ),
+        );
+      // Mock expected result
+      const expectedResult = new GetTransactionsResponseDto(
+        DEFAULT.id,
+        DEFAULT.transaction_message,
+        DEFAULT.description,
+        DEFAULT.status,
+        DEFAULT.threshold,
+        DEFAULT.key_list,
+        DEFAULT.signed_keys,
+        DEFAULT.signatures,
+        DEFAULT.network,
+      );
+      //* 🎬 Act ⬇
+      const result = await controller.getTransactionById(request, transactionId);
+
+      //* ☑️ Assert ⬇
+      expect(result).toEqual(expectedResult);
+    });
+  });
 });
 
 //* Helper Functions
