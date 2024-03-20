@@ -217,6 +217,7 @@ export default class TransactionController {
     @Query('status') status?: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page?: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit?: number,
+    @Query('network') network?: string
   ): Promise<Pagination<GetTransactionsResponseDto>> {
     if (page < 1) {
       throw new Error('Page must be greater than 0');
@@ -250,6 +251,7 @@ export default class TransactionController {
       return await this.transactionService.getAllByPublicKey(
         publicKey,
         status,
+        network,
         {
           page,
           limit,
@@ -287,8 +289,9 @@ export default class TransactionController {
   @UseFilters(HttpExceptionFilter)
   async getAll(
     @Req() request: Request,
+    @Query('network') network?: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page?: number,
-    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit?: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit?: number
   ): Promise<Pagination<GetTransactionsResponseDto>> {
     if (page < 1) {
       throw new Error('Page must be greater than 0');
@@ -309,7 +312,7 @@ export default class TransactionController {
     );
 
     try {
-      return await this.transactionService.getAll({
+      return await this.transactionService.getAll(network, {
         page,
         limit,
       });

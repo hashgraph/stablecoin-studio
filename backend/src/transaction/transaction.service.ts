@@ -125,25 +125,26 @@ export default class TransactionService {
   async getAllByPublicKey(
     publicKey: string,
     status?: string,
+    network?: string,
     options?: IPaginationOptions,
   ): Promise<Pagination<GetTransactionsResponseDto>> {
-    let queryBuilder: Repository<Transaction> | SelectQueryBuilder<Transaction>;
-    if (status == TransactionStatus.SIGNED.toLowerCase()) {
-      queryBuilder = this.transactionRepository
-        .createQueryBuilder('transaction')
-        .where(':publicKey = ANY(transaction.signed_keys)', { publicKey });
-    } else if (status == TransactionStatus.PENDING.toLowerCase()) {
-      queryBuilder = this.transactionRepository
-        .createQueryBuilder('transaction')
-        .where(':publicKey = ANY(transaction.key_list)', { publicKey })
-        .andWhere('transaction.status = :status', {
-          status: TransactionStatus.PENDING,
-        })
-        .andWhere(':publicKey != ALL(transaction.signed_keys)', { publicKey });
-    } else {
-      queryBuilder = this.transactionRepository
-        .createQueryBuilder('transaction')
-        .where(':publicKey = ANY(transaction.key_list)', { publicKey });
+    let queryBuilder = this.transactionRepository.createQueryBuilder('transaction')
+      .where(':publicKey = ANY(transaction.key_list)', { publicKey });
+
+    if (status) {
+      if (status.toLowerCase() === TransactionStatus.SIGNED.toLowerCase()) {
+        queryBuilder = queryBuilder
+          .andWhere('transaction.status = :status', { status: TransactionStatus.SIGNED })
+          .andWhere(':publicKey = ANY(transaction.signed_keys)', { publicKey });
+      } else if (status.toLowerCase() === TransactionStatus.PENDING.toLowerCase()) {
+        queryBuilder = queryBuilder
+          .andWhere('transaction.status = :status', { status: TransactionStatus.PENDING })
+          .andWhere(':publicKey != ALL(transaction.signed_keys)', { publicKey });
+      }
+    }
+
+    if (network) {
+      queryBuilder = queryBuilder.andWhere('transaction.network = :network', { network: network.toLowerCase() });
     }
 
     const paginatedResults = await paginate<Transaction>(queryBuilder, options);
@@ -194,8 +195,14 @@ export default class TransactionService {
     }
   }
 
-  async getAll(options: IPaginationOptions): Promise<Pagination<Transaction>> {
-    return paginate<Transaction>(this.transactionRepository, options);
+  async getAll(network: string, options: IPaginationOptions): Promise<Pagination<Transaction>> {
+    let queryBuilder: SelectQueryBuilder<Transaction> = this.transactionRepository.createQueryBuilder('transaction');
+
+    if (network) {
+      queryBuilder = queryBuilder.andWhere('transaction.network = :network', { network: network.toLowerCase() });
+    }
+
+    return paginate<Transaction>(queryBuilder, options);
   }
 
   //This function is used to delete all transactions from the database
