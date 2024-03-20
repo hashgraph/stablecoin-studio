@@ -1,25 +1,15 @@
 /* istanbul ignore file */
-import {
-	StableCoin,
-	Network,
-	Account,
-	Role,
-	CapabilitiesRequest,
-	ConnectRequest,
-	SetConfigurationRequest,
-	InitializationRequest,
-	ReserveDataFeed,
-	Fees,
-	Factory,
-	SetNetworkRequest,
-	Proxy,
-} from '@hashgraph/stablecoin-npm-sdk';
 import type {
-	WalletEvent,
-	WipeRequest,
+	AcceptFactoryProxyOwnerRequest,
+	AcceptProxyOwnerRequest,
+	AccountViewModel,
+	AddFixedFeeRequest,
+	AddFractionalFeeRequest,
 	AssociateTokenRequest,
 	BurnRequest,
 	CashInRequest,
+	ChangeFactoryProxyOwnerRequest,
+	ChangeProxyOwnerRequest,
 	CheckSupplierLimitRequest,
 	CreateRequest,
 	DecreaseSupplierAllowanceRequest,
@@ -27,13 +17,17 @@ import type {
 	FreezeAccountRequest,
 	GetAccountBalanceRequest,
 	GetAccountInfoRequest,
-	GetTokenManagerListRequest,
+	GetAccountsWithRolesRequest,
+	GetFactoryProxyConfigRequest,
 	GetListStableCoinRequest,
+	GetMultiSigTransactionsRequest,
+	GetProxyConfigRequest,
 	GetReserveAddressRequest,
 	GetReserveAmountRequest,
 	GetRolesRequest,
 	GetStableCoinDetailsRequest,
 	GetSupplierAllowanceRequest,
+	GetTokenManagerListRequest,
 	GrantMultiRolesRequest,
 	HasRoleRequest,
 	IncreaseSupplierAllowanceRequest,
@@ -41,31 +35,40 @@ import type {
 	KYCRequest,
 	PauseRequest,
 	RequestAccount,
-	RescueRequest,
 	RescueHBARRequest,
+	RescueRequest,
 	ReserveViewModel,
 	ResetSupplierAllowanceRequest,
 	RevokeMultiRolesRequest,
+	SignMultiSigTransactionRequest,
 	StableCoinCapabilities,
 	StableCoinListViewModel,
 	StableCoinViewModel,
+	SubmitMultiSigTransactionRequest,
 	SupportedWallets,
 	UpdateCustomFeesRequest,
 	UpdateRequest,
 	UpdateReserveAddressRequest,
 	UpdateReserveAmountRequest,
-	AddFixedFeeRequest,
-	AddFractionalFeeRequest,
-	AccountViewModel,
-	GetAccountsWithRolesRequest,
-	GetProxyConfigRequest,
-	GetFactoryProxyConfigRequest,
-	ChangeProxyOwnerRequest,
-	UpgradeImplementationRequest,
-	ChangeFactoryProxyOwnerRequest,
 	UpgradeFactoryImplementationRequest,
-	AcceptProxyOwnerRequest,
-	AcceptFactoryProxyOwnerRequest,
+	UpgradeImplementationRequest,
+	WalletEvent,
+	WipeRequest,
+} from '@hashgraph/stablecoin-npm-sdk';
+import {
+	Account,
+	CapabilitiesRequest,
+	ConnectRequest,
+	Factory,
+	Fees,
+	InitializationRequest,
+	Network,
+	Proxy,
+	ReserveDataFeed,
+	Role,
+	SetConfigurationRequest,
+	SetNetworkRequest,
+	StableCoin,
 } from '@hashgraph/stablecoin-npm-sdk';
 import { type IMirrorRPCNode } from '../interfaces/IMirrorRPCNode';
 
@@ -518,6 +521,18 @@ export class SDKService {
 
 	public static async getHederaTokenManagerList(data: GetTokenManagerListRequest) {
 		return await Factory.getHederaTokenManagerList(data);
+	}
+
+	public static async getMultiSigTransactions(data: GetMultiSigTransactionsRequest) {
+		return await StableCoin.getTransactions(data);
+	}
+
+	public static async submitMultiSigTransaction(data: SubmitMultiSigTransactionRequest) {
+		return await StableCoin.submitTransaction(data);
+	}
+
+	public static async signMultiSigTransaction(data: SignMultiSigTransactionRequest) {
+		return StableCoin.signTransaction(data);
 	}
 }
 

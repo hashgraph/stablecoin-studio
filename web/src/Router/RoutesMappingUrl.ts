@@ -36,4 +36,5 @@ export const RoutesMappingUrl: Record<NamedRoutes, string> = {
 	[NamedRoutes.AppSettings]: '/appSettings',
 	[NamedRoutes.StableCoinSettings]: '/settings/stableCoin',
 	[NamedRoutes.FactorySettings]: '/settings/factory',
+	[NamedRoutes.MultiSigTransactions]: '/multisig/transactions',
 };

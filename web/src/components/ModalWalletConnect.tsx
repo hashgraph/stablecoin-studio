@@ -11,29 +11,21 @@ import {
 	ModalOverlay,
 	Spinner,
 	Text,
-	VStack,
 	useDisclosure,
+	VStack,
 } from '@chakra-ui/react';
-import {
-	GetFactoryProxyConfigRequest,
-	SupportedWallets,
-	Network,
-} from '@hashgraph/stablecoin-npm-sdk';
 import type { StableCoinListViewModel } from '@hashgraph/stablecoin-npm-sdk';
+import { GetFactoryProxyConfigRequest, Network, SupportedWallets } from '@hashgraph/stablecoin-npm-sdk';
 import type { FC, ReactNode } from 'react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import BLADE_LOGO_PNG from '../assets/png/bladeLogo.png';
+import MULTISIG_LOGO_PNG from '../assets/png/multisigLogo.png';
 import HASHPACK_LOGO_PNG from '../assets/png/hashpackLogo.png';
 import METAMASK_LOGO from '../assets/svg/MetaMask_Fox.svg';
 import SDKService from '../services/SDKService';
-import {
-	AVAILABLE_WALLETS,
-	SELECTED_MIRRORS,
-	SELECTED_RPCS,
-	walletActions,
-} from '../store/slices/walletSlice';
+import { AVAILABLE_WALLETS, SELECTED_MIRRORS, SELECTED_RPCS, walletActions } from '../store/slices/walletSlice';
 import WARNING_ICON from '../assets/svg/warning.svg';
 import ERROR_ICON from '../assets/svg/error.svg';
 import { SelectController } from './Form/SelectController';
@@ -80,6 +72,7 @@ const ModalWalletConnect = () => {
 	const [rejected, setRejected] = useState<boolean>(false);
 	const [hashpackSelected, setHashpackSelected] = useState<boolean>(false);
 	const [bladeSelected, setBladeSelected] = useState<boolean>(false);
+	const [multiSigSelected, setMultiSigSelected] = useState<boolean>(false);
 	const availableWallets = useSelector(AVAILABLE_WALLETS);
 	const selectedMirrors: IMirrorRPCNode[] = useSelector(SELECTED_MIRRORS);
 	const selectedRPCs: IMirrorRPCNode[] = useSelector(SELECTED_RPCS);
@@ -214,6 +207,10 @@ const ModalWalletConnect = () => {
 		setBladeSelected(true);
 	};
 
+	const handleMultiSigMode = () => {
+		setMultiSigSelected(true);
+	}
+
 	const unHandleConnectBladeWallet = () => {
 		setBladeSelected(false);
 		setLoading(undefined);
@@ -262,7 +259,7 @@ const ModalWalletConnect = () => {
 				closeOnOverlayClick={false}
 			>
 				<ModalOverlay />
-				<ModalContent data-testid='modal-action-content' p='50' w='600px'>
+				<ModalContent data-testid='modal-action-content' p='50' maxW='1000px'>
 					{!error && !rejected && !hashpackSelected && !bladeSelected && (
 						<>
 							<ModalHeader p='0' justifyContent='center'>
@@ -360,6 +357,24 @@ const ModalWalletConnect = () => {
 										)
 									) : (
 										<></>
+									)}
+									{availableWallets.includes(SupportedWallets.MULTISIG) ? (
+										<VStack
+											data-testid='Multisig'
+											{...styles.providerStyle}
+											shouldWrapChildren
+											onClick={handleMultiSigMode}
+										>
+											<PairingSpinner wallet={SupportedWallets.MULTISIG}>
+												<Image src={MULTISIG_LOGO_PNG} w={20} />
+												<Text textAlign='center'>Metamask</Text>
+											</PairingSpinner>
+										</VStack>
+									) : (
+										<VStack data-testid='Metamask' {...styles.providerStyle}>
+												<Image src={MULTISIG_LOGO_PNG} w={20} />
+												<Text textAlign='center'>MultiSig</Text>
+										</VStack>
 									)}
 								</HStack>
 							</ModalFooter>

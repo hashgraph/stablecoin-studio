@@ -51,7 +51,8 @@
 		"proofOfReserve": "Proof-of-Reserve",
 		"feesManagement": "Fees Management",
 		"settings": "Settings",
-		"appSettings": "Network settings"
+		"appSettings": "Network settings",
+		"multiSigTransactions": "MultiSig Transactions"
 	},
 	"validations": {
 		"required": "This field is required",
@@ -79,7 +80,7 @@
 	"walletActions": {
 		"awaitingSignatureTitle": "Awaiting wallet action",
 		"loading": "Loading data",
-		"selectWallet": "Select a wallet",
+		"selectWallet": "Select an option",
 		"selectNetwork": "Select a network"
 	}
 }
