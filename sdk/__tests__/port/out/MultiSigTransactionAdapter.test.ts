@@ -191,7 +191,7 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 		expect(result).toBe(true);
 	}, 80_000);
 
-	const transactionId = 'a8f9a938-04d8-45ab-bdc6-218f0614fd9a';
+	const transactionId = '9eb2bc47-c620-47d1-ad18-1821aec22ef7';
 
 	it('Client should sign a transaction', async () => {
 		let account = CLIENT_ACCOUNT_ECDSA;

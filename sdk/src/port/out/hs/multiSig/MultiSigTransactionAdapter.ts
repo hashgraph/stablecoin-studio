@@ -74,6 +74,7 @@ export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
 		const accountId: AccountId = AccountId.fromString(
 			this.account.id.toString(),
 		);
+		t.setTransactionValidDuration(180);
 		t._freezeWithAccountId(accountId);
 
 		let client: Client = Client.forTestnet();
