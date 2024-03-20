@@ -271,7 +271,7 @@ describe('Transaction Controller Test', () => {
       );
 
       //* 🎬 Act ⬇
-      const result = await controller.getByPublicKey(
+      const result = await controller.getTransactionsByPublicKey(
         getAllByPublicKeyCommand.request,
         getAllByPublicKeyCommand.publicKey,
       );

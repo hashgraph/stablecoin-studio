@@ -211,7 +211,7 @@ export default class TransactionController {
     required: false,
   })
   @UseFilters(HttpExceptionFilter)
-  async getByPublicKey(
+  async getTransactionsByPublicKey(
     @Req() request: Request,
     @Param('publicKey', RemoveHexPrefixPipe) publicKey: string,
     @Query('status') status?: string,
@@ -325,9 +325,9 @@ export default class TransactionController {
     }
   }
 
-  @Get()
+  @Get('/:transactionId/detail')
   @ApiOkResponse({
-    description: 'The transactions have been successfully retrieved.',
+    description: 'The transaction has been successfully retrieved.',
     type: GetTransactionsResponseDto,
   })
   @ApiForbiddenResponse({ description: 'Forbidden', type: ForbiddenException })
