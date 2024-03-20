@@ -138,8 +138,14 @@ The backend is made of two components:
 
  - __Path__ : /v1/transactions
  - __HTTP Method__ : GET
+ - __Query Params__ : 
+    - _network_: network name (optional)
+    - _publicKey_: public key (optional)
+    - _status_: transaction status (optional)
+    - _page_: page number (optional)
+    - _limit_: number of transactions per page (optional)
   __Logic__ : 
-    - Action : returns all the transaction from the DB (paginated response).
+    - Action: Returns all the transactions from the DB (paginated response), optionally filtered by network, publicKey, and status.
  - __Status code__ :
     - 200 OK.
     - 500 Internal Server Error: An error occurred during the process.
@@ -155,7 +161,8 @@ The backend is made of two components:
     "key_list": ["PK1", "PK2", ...],
     "signed_keys": ["PK1", "PK2", ...],
     "status": "transaction_status",
-    "threshold":"number"
+    "threshold":"number",
+    "signatures": ["signature_1", "signature_2", ...]
   },
   {...}
 ]
@@ -163,10 +170,10 @@ The backend is made of two components:
 
 ## Retrieve transactions for public Key
 
- - __Path__ : /v1/transactions/{publicKey}
+ - __Path__ : /v1/transactions/{transactionId}
  - __HTTP Method__ : GET
   __Logic__ : 
-    - Action : returns all the transaction from the DB for a specific public Key and type (PENDING/SIGNED) (paginated response).
+    - Action : returns all the transaction from the DB for a specific transactionId and status (PENDING/SIGNED) (paginated response).
  - __Status code__ :
     - 200 OK.
     - 500 Internal Server Error: An error occurred during the process.
@@ -182,7 +189,8 @@ The backend is made of two components:
     "key_list": ["PK1", "PK2", ...],
     "signed_keys": ["PK1", "PK2", ...],
     "status": "transaction_status",
-    "threshold":"number"
+    "threshold":"number",
+    "signatures": ["signature_1", "signature_2", ...]
   },
   {...}
 ]
