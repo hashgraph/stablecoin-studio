@@ -26,7 +26,7 @@ import { BackendAdapter } from '../../../../../../port/out/backend/BackendAdapte
 import AccountService from '../../../../../service/AccountService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
 import { SubmitCommand, SubmitCommandResponse } from './SubmitCommand.js';
-import { Transaction } from '@hashgraph/sdk';
+import { Transaction, PublicKey } from '@hashgraph/sdk';
 
 @CommandHandler(SubmitCommand)
 export class SubmitCommandHandler implements ICommandHandler<SubmitCommand> {
@@ -48,15 +48,28 @@ export class SubmitCommandHandler implements ICommandHandler<SubmitCommand> {
 			transactionId,
 		);
 
+		if (transaction.signatures.length != transaction.signed_keys.length)
+			throw new Error(
+				'Unexpected error when submiting transaction : number of signatures should equal number of signed keys',
+			);
+
 		// submit transaction
 		// CHECK IF TRANSACTION ALREADY SUBMITTED, SKIP THIS STEP
-		const deserializedTransaction = Transaction.fromBytes(
+		let deserializedTransaction = Transaction.fromBytes(
 			Hex.toUint8Array(transaction.transaction_message),
 		);
 
-		//const signedTransaction = deserializedTransaction.addSignature(publicKey1, signature1).addSignature(publicKey2, signature2).addSignature(publicKey3, signature3);
+		for (let i = 0; i < transaction.signatures.length; i++) {
+			const publicKey_i = PublicKey.fromString(
+				transaction.signed_keys[i],
+			);
+			deserializedTransaction = deserializedTransaction.addSignature(
+				publicKey_i,
+				Hex.toUint8Array(transaction.signatures[i]),
+			);
+		}
 
-		//await handler.submit(signedTransaction);
+		await handler.submit(deserializedTransaction);
 
 		// remove from the backend
 		await this.backendAdapter.deleteTransaction(transactionId);

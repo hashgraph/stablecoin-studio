@@ -26,6 +26,8 @@ export default class BackendTransaction {
 	threshold: number;
 	key_list: string[];
 	signed_keys: string[];
+	signatures: string[];
+	network: string;
 
 	constructor(
 		id: string,
@@ -35,6 +37,8 @@ export default class BackendTransaction {
 		threshold: number,
 		key_list: string[],
 		signed_keys: string[],
+		signatures: string[],
+		network: string,
 	) {
 		this.id = id;
 		this.transaction_message = transaction_message;
@@ -43,5 +47,7 @@ export default class BackendTransaction {
 		this.threshold = threshold;
 		this.key_list = key_list;
 		this.signed_keys = signed_keys;
+		this.signatures = signatures;
+		this.network = network;
 	}
 }

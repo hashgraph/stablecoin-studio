@@ -18,32 +18,6 @@
  *
  */
 
-import {
-	Client,
-	AccountId,
-	PrivateKey,
-	Mnemonic,
-	AccountCreateTransaction,
-	PublicKey,
-	TransactionResponse,
-	TransactionReceipt,
-	TransferTransaction,
-	Transaction,
-	TransactionId,
-	KeyList,
-} from '@hashgraph/sdk';
-import { config } from 'dotenv';
-import { proto } from '@hashgraph/proto';
-import { hashgraph } from '@hashgraph/stablecoin-npm-contracts';
-
-const PRIVATE_KEY =
-	'3c8055953320b1001b93f6c99518ec0a1daf7210f1bb02dd11c64f3dec96fdb6';
-const ACCOUNT_ID = '0.0.1328';
-const MNEMONIC =
-	'point cactus sand length embark castle bulk process decade acoustic green either ozone tunnel lunar job project corn match topic energy attack ignore please';
-let signerKeys: PrivateKey[];
-let client: Client;
-
 // 0.0.3728066
 /**
  * "key": {
@@ -71,8 +45,27 @@ threshold 2/3
 threshold 2/3
 key list 3
 combined : threshold 1/3, key list 3
- */
 
+// 0.0.3739997
+key list 3
+ */
+import {
+	Client,
+	AccountId,
+	PrivateKey,
+	Mnemonic,
+	AccountCreateTransaction,
+	PublicKey,
+	TransactionResponse,
+	TransactionReceipt,
+	TransferTransaction,
+	Transaction,
+	TransactionId,
+	KeyList,
+} from '@hashgraph/sdk';
+import { config } from 'dotenv';
+import { proto } from '@hashgraph/proto';
+import { hashgraph } from '@hashgraph/stablecoin-npm-contracts';
 import Injectable from '../../../src/core/Injectable';
 import {
 	AssociateTokenRequest,
@@ -80,17 +73,25 @@ import {
 	CreateRequest,
 	InitializationRequest,
 	Network,
+	RemoveTransactionRequest,
 	RequestPublicKey,
+	SignTransactionRequest,
 	StableCoin,
 	StableCoinViewModel,
+	SubmitTransactionRequest,
 	SupportedWallets,
 	TokenSupplyType,
 } from '../../../src';
 import { MirrorNode } from '../../../src/domain/context/network/MirrorNode';
 import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay';
 import {
+	CLIENT_ACCOUNT_ECDSA,
+	CLIENT_ACCOUNT_ED25519,
+	CLIENT_ACCOUNT_ED25519_2,
+	CLIENT_PRIVATE_KEY_ECDSA,
+	CLIENT_PRIVATE_KEY_ED25519,
+	CLIENT_PRIVATE_KEY_ED25519_2,
 	FACTORY_ADDRESS,
-	HEDERA_TOKEN_MANAGER_ADDRESS,
 	MIRROR_NODE,
 	RPC_NODE,
 } from '../../config';
@@ -98,8 +99,13 @@ import ConnectRequest from '../../../src/port/in/request/ConnectRequest';
 import Hex from '../../../src/core/Hex.js';
 import SetBackendRequest from '../../../src/port/in/request/SetBackendRequest.js';
 
-const decimals = 6;
-const initialSupply = 1000;
+const PRIVATE_KEY =
+	'3c8055953320b1001b93f6c99518ec0a1daf7210f1bb02dd11c64f3dec96fdb6';
+const ACCOUNT_ID = '0.0.1328';
+const MNEMONIC =
+	'point cactus sand length embark castle bulk process decade acoustic green either ozone tunnel lunar job project corn match topic energy attack ignore please';
+let signerKeys: PrivateKey[];
+let client: Client;
 
 describe('🧪 MultiSigTransactionAdapter test', () => {
 	let stableCoinHTS: StableCoinViewModel;
@@ -118,11 +124,17 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 		baseUrl: RPC_NODE.baseUrl,
 	};
 
+	const privateKey = PrivateKey.fromStringECDSA(PRIVATE_KEY);
+	const accountId = AccountId.fromString(ACCOUNT_ID);
+	// let mnemonic: Mnemonic;
+
 	beforeAll(async () => {
+		// mnemonic = await Mnemonic.fromString(MNEMONIC);
+
 		await Network.connect(
 			new ConnectRequest({
 				account: {
-					accountId: '0.0.3728066',
+					accountId: '0.0.3739997',
 				},
 				network: 'testnet',
 				wallet: SupportedWallets.MULTISIG,
@@ -149,14 +161,17 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 		);
 		Injectable.resolveTransactionHandler();
 
-		/*const privateKey = PrivateKey.fromStringECDSA(PRIVATE_KEY);
-		const accountId = AccountId.fromString(ACCOUNT_ID);
-		const mnemonic = await Mnemonic.fromString(MNEMONIC);
 		//const mnemonic = await Mnemonic.generate();
 
 		client = Client.forTestnet().setOperator(accountId, privateKey);
 
-		signerKeys = await Promise.all([
+		signerKeys = [
+			CLIENT_ACCOUNT_ECDSA.privateKey!.toHashgraphKey(),
+			CLIENT_ACCOUNT_ED25519.privateKey!.toHashgraphKey(),
+			CLIENT_ACCOUNT_ED25519_2.privateKey!.toHashgraphKey(),
+		];
+
+		/*signerKeys = await Promise.all([
 			mnemonic.toStandardEd25519PrivateKey(undefined, 0),
 			mnemonic.toStandardEd25519PrivateKey(undefined, 1),
 			mnemonic.toStandardEd25519PrivateKey(undefined, 2),
@@ -169,14 +184,135 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 	it('Multisig should associate a token', async () => {
 		const result = await StableCoin.associate(
 			new AssociateTokenRequest({
-				targetId: '0.0.3728066',
+				targetId: '0.0.3739997',
 				tokenId: '0.0.3735939',
 			}),
 		);
 		expect(result).toBe(true);
 	}, 80_000);
 
-	/*it('create key lists', async () => {
+	const transactionId = 'a8f9a938-04d8-45ab-bdc6-218f0614fd9a';
+
+	it('Client should sign a transaction', async () => {
+		let account = CLIENT_ACCOUNT_ECDSA;
+
+		await Network.connect(
+			new ConnectRequest({
+				account: {
+					accountId: account.id.toString(),
+					privateKey: {
+						key: account.privateKey?.key ?? '',
+						type: account.privateKey?.type ?? '',
+					},
+				},
+				network: 'testnet',
+				wallet: SupportedWallets.CLIENT,
+				mirrorNode: mirrorNode,
+				rpcNode: rpcNode,
+			}),
+		);
+
+		Injectable.resolveTransactionHandler();
+
+		await StableCoin.signTransaction(
+			new SignTransactionRequest({
+				transactionId: transactionId,
+			}),
+		);
+
+		account = CLIENT_ACCOUNT_ED25519;
+
+		await Network.connect(
+			new ConnectRequest({
+				account: {
+					accountId: account.id.toString(),
+					privateKey: {
+						key: account.privateKey?.key ?? '',
+						type: account.privateKey?.type ?? '',
+					},
+				},
+				network: 'testnet',
+				wallet: SupportedWallets.CLIENT,
+				mirrorNode: mirrorNode,
+				rpcNode: rpcNode,
+			}),
+		);
+
+		Injectable.resolveTransactionHandler();
+
+		await StableCoin.signTransaction(
+			new SignTransactionRequest({
+				transactionId: transactionId,
+			}),
+		);
+
+		account = CLIENT_ACCOUNT_ED25519_2;
+
+		await Network.connect(
+			new ConnectRequest({
+				account: {
+					accountId: account.id.toString(),
+					privateKey: {
+						key: account.privateKey?.key ?? '',
+						type: account.privateKey?.type ?? '',
+					},
+				},
+				network: 'testnet',
+				wallet: SupportedWallets.CLIENT,
+				mirrorNode: mirrorNode,
+				rpcNode: rpcNode,
+			}),
+		);
+
+		Injectable.resolveTransactionHandler();
+
+		await StableCoin.signTransaction(
+			new SignTransactionRequest({
+				transactionId: transactionId,
+			}),
+		);
+		expect(true).toBe(true);
+	}, 80_000);
+
+	it('Client should submit a transaction', async () => {
+		const account = CLIENT_ACCOUNT_ED25519_2;
+
+		await Network.connect(
+			new ConnectRequest({
+				account: {
+					accountId: account.id.toString(),
+					privateKey: {
+						key: account.privateKey?.key ?? '',
+						type: account.privateKey?.type ?? '',
+					},
+				},
+				network: 'testnet',
+				wallet: SupportedWallets.CLIENT,
+				mirrorNode: mirrorNode,
+				rpcNode: rpcNode,
+			}),
+		);
+
+		Injectable.resolveTransactionHandler();
+
+		const result = await StableCoin.submitTransaction(
+			new SubmitTransactionRequest({
+				transactionId: transactionId,
+			}),
+		);
+		expect(result).toBe(true);
+	}, 80_000);
+
+	it('Client should remove a transaction', async () => {
+		const result = await StableCoin.removeTransaction(
+			new RemoveTransactionRequest({
+				transactionId: transactionId,
+			}),
+		);
+		expect(result).toBe(true);
+	}, 80_000);
+
+	it('create key lists', async () => {
 		const keyList = KeyList.of(
 			signerKeys[0].publicKey,
 			signerKeys[1].publicKey,
@@ -198,7 +334,7 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 		console.log(signerKeys[2].publicKey._key.toBytes());
 	});
 
-	it('create key threshold', async () => {
+	/*it('create key threshold', async () => {
 		const thresholdKey = new KeyList(
 			[
 				signerKeys[0].publicKey,

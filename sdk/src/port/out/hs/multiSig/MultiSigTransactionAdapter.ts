@@ -77,6 +77,7 @@ export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
 		t._freezeWithAccountId(accountId);
 
 		let client: Client = Client.forTestnet();
+		client.setNetwork({ '34.94.106.61:50211': '0.0.3' });
 
 		if (this.networkService.environment == previewnet)
 			client = Client.forPreviewnet();
@@ -91,6 +92,7 @@ export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
 			this.account.id.toString(),
 			publicKeys,
 			this.account.multiKey!.threshold,
+			this.networkService.environment,
 		);
 
 		return new TransactionResponse(trasnactionId);
@@ -152,6 +154,14 @@ export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
 		return Promise.resolve({
 			account: this.getAccount(),
 		});
+	}
+
+	stop(): Promise<boolean> {
+		LogService.logTrace('MultiSig stopped');
+		this.eventService.emit(WalletEvents.walletDisconnect, {
+			wallet: SupportedWallets.MULTISIG,
+		});
+		return Promise.resolve(true);
 	}
 
 	public getAccount(): Account {

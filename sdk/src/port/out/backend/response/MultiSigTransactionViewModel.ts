@@ -28,4 +28,6 @@ export default interface MultiSigTransactionViewModel extends QueryResponse {
 	threshold: number;
 	key_list: string[];
 	signed_keys: string[];
+	signatures: string[];
+	network: string;
 }

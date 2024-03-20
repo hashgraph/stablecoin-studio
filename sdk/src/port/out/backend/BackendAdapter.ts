@@ -46,6 +46,7 @@ export class BackendAdapter {
 		HederaAccountId: string,
 		keyList: string[],
 		threshold: number,
+		network: string,
 	): Promise<string> {
 		try {
 			const body = {
@@ -54,21 +55,14 @@ export class BackendAdapter {
 				hedera_account_id: HederaAccountId,
 				key_list: keyList,
 				threshold: threshold,
+				network: network,
 			};
 
-			const originHeaderValue = !Injectable.isWeb()
-				? 'http://localhost:3000'
-				: undefined;
-
-			const config = {
-				headers: {} as { [key: string]: string | undefined }, // Type assertion
-			};
-
-			if (originHeaderValue) {
-				config.headers['Origin'] = originHeaderValue;
-			}
-
-			const response = await this.httpClient.post('', body, config);
+			const response = await this.httpClient.post(
+				'',
+				body,
+				this.configureHeaders(),
+			);
 
 			if (response.status == 201) {
 				if (!response.data)
@@ -125,7 +119,10 @@ export class BackendAdapter {
 
 	public async deleteTransaction(transactionId: string): Promise<void> {
 		try {
-			const response = await this.httpClient.delete(`${transactionId}`);
+			const response = await this.httpClient.delete(
+				`${transactionId}`,
+				this.configureHeaders(),
+			);
 
 			if (response.status == 200) return;
 			else
@@ -163,7 +160,7 @@ export class BackendAdapter {
 			if (response.status == 200) {
 				if (!response.data)
 					throw new BackendError(
-						`get transaction api call succeeded but returned no data....`,
+						`get transactions by public key api call succeeded but returned no data....`,
 					);
 
 				const transactions: BackendTransaction[] = [];
@@ -177,7 +174,7 @@ export class BackendAdapter {
 				return transactions;
 			} else
 				throw new BackendError(
-					`get transactions api call returned error ${response.status}, ${response.statusText}`,
+					`get transactions by public key api call returned error ${response.status}, ${response.statusText}`,
 				);
 		} catch (error) {
 			if (error instanceof BackendError) {
@@ -194,7 +191,21 @@ export class BackendAdapter {
 		transactionId: string,
 	): Promise<BackendTransaction> {
 		try {
-			throw new Error('not implemented');
+			const response = await this.httpClient.get(
+				`${transactionId}/detail`,
+			);
+
+			if (response.status == 200) {
+				if (!response.data)
+					throw new BackendError(
+						`get transaction by transaction id api call succeeded but returned no data....`,
+					);
+
+				return response.data;
+			} else
+				throw new BackendError(
+					`get transaction by transaction id api call returned error ${response.status}, ${response.statusText}`,
+				);
 		} catch (error) {
 			if (error instanceof BackendError) {
 				throw error;
@@ -204,5 +215,21 @@ export class BackendAdapter {
 				);
 			}
 		}
+	}
+
+	private configureHeaders(): any {
+		const originHeaderValue = !Injectable.isWeb()
+			? 'http://localhost:3000'
+			: undefined;
+
+		const config = {
+			headers: {} as { [key: string]: string | undefined }, // Type assertion
+		};
+
+		if (originHeaderValue) {
+			config.headers['Origin'] = originHeaderValue;
+		}
+
+		return config;
 	}
 }
