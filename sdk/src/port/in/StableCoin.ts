@@ -96,7 +96,7 @@ import { UpdateCommand } from '../../app/usecase/command/stablecoin/update/Updat
 import NetworkService from '../../app/service/NetworkService.js';
 import { AssociateCommand } from '../../app/usecase/command/account/associate/AssociateCommand.js';
 import { MirrorNodeAdapter } from '../../port/out/mirror/MirrorNodeAdapter.js';
-import MultiSigTransactionViewModel from '../out/mirror/response/MultiSigTransactionViewModel.js';
+import MultiSigTransactionViewModel from '../out/backend/response/MultiSigTransactionViewModel.js';
 import SignTransactionRequest from './request/SignTransactionRequest.js';
 import SubmitTransactionRequest from './request/SubmitTransactionRequest.js';
 import RemoveTransactionRequest from './request/RemoveTransactionRequest.js';
@@ -110,6 +110,7 @@ export {
 	StableCoinViewModel,
 	StableCoinListViewModel,
 	ReserveViewModel,
+	MultiSigTransactionViewModel,
 	TRANSFER_LIST_SIZE,
 };
 export { StableCoinCapabilities, Capability, Access, Operation, Balance };

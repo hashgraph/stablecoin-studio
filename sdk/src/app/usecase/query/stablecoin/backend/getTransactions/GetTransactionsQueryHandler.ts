@@ -25,7 +25,7 @@ import { RESERVE_DECIMALS } from '../../../../../../domain/context/reserve/Reser
 import BigDecimal from '../../../../../../domain/context/shared/BigDecimal.js';
 import { BackendAdapter } from '../../../../../../port/out/backend/BackendAdapter.js';
 import { MirrorNodeAdapter } from '../../../../../../port/out/mirror/MirrorNodeAdapter.js';
-import MultiSigTransactionViewModel from '../../../../../../port/out/mirror/response/MultiSigTransactionViewModel.js';
+import MultiSigTransactionViewModel from '../../../../../../port/out/backend/response/MultiSigTransactionViewModel.js';
 import RPCQueryAdapter from '../../../../../../port/out/rpc/RPCQueryAdapter.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
 import {

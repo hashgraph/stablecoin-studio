@@ -20,7 +20,7 @@
 
 import { Query } from '../../../../../../core/query/Query.js';
 import { QueryResponse } from '../../../../../../core/query/QueryResponse.js';
-import MultiSigTransactionViewModel from '../../../../../../port/out/mirror/response/MultiSigTransactionViewModel.js';
+import MultiSigTransactionViewModel from '../../../../../../port/out/backend/response/MultiSigTransactionViewModel.js';
 
 export class GetTransactionsQueryResponse implements QueryResponse {
 	constructor(public readonly payload: MultiSigTransactionViewModel[]) {}
