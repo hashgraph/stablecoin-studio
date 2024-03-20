@@ -144,7 +144,7 @@ The backend is made of two components:
     - _status_: transaction status (optional)
     - _page_: page number (optional)
     - _limit_: number of transactions per page (optional)
-  __Logic__ : 
+  - __Logic__ : 
     - Action: Returns all the transactions from the DB (paginated response), optionally filtered by network, publicKey, and status.
  - __Status code__ :
     - 200 OK.
@@ -168,7 +168,7 @@ The backend is made of two components:
 ]
 ```
 
-## Retrieve transactions for public Key
+## Retrieve transactions by transactionId
 
  - __Path__ : /v1/transactions/{transactionId}
  - __HTTP Method__ : GET
