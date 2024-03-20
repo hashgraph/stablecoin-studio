@@ -158,6 +158,8 @@ export default class TransactionService {
           transaction.threshold,
           transaction.key_list,
           transaction.signed_keys,
+          transaction.signatures,
+          transaction.network,
         ),
     );
 
@@ -166,6 +168,30 @@ export default class TransactionService {
       paginatedResults.meta,
       paginatedResults.links,
     );
+  }
+
+  async getById(transactionId: string): Promise<GetTransactionsResponseDto> {
+    if (!uuidRegex.test(transactionId))
+      throw new TransactionNotFoundException('Transaction not found');
+
+    const transaction = await this.transactionRepository.findOne({
+      where: { id: transactionId },
+    });
+    if (transaction) {
+      return new GetTransactionsResponseDto(
+        transaction.id,
+        transaction.transaction_message,
+        transaction.description,
+        transaction.status,
+        transaction.threshold,
+        transaction.key_list,
+        transaction.signed_keys,
+        transaction.signatures,
+        transaction.network,
+      );
+    } else {
+      throw new TransactionNotFoundException('Transaction not found');
+    }
   }
 
   async getAll(options: IPaginationOptions): Promise<Pagination<Transaction>> {

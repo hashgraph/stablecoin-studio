@@ -22,6 +22,7 @@ import { UUID } from 'crypto';
 import Transaction, {
   TransactionStatus,
 } from '../../src/transaction/transaction.entity';
+import { Network } from '../../src/transaction/network.enum';
 
 export const DEFAULT = {
   id: 'e8fe7d5e-2a94-472c-bab8-e693e401134f',
@@ -46,6 +47,7 @@ export const DEFAULT = {
     '6cf580daa232d279badbd1bc1227531d4c98ab444a2a7ec1851af17400e01c805bf96223ad2cd7a4469f3709c0fb35b77cb217543e4741d8db92175de583cc00',
     'ff79cb99db2d5001835b7ed3c26fa8a980ee541b9a1fb1c3972a6a62dfce1bd05372fed331ee1d672dc41df5ec1c12a38104962d2fb6a80dbf12286375f59c0f',
   ],
+  network: Network.TESTNET,
 } as TransactionMock;
 
 interface TransactionMockCommand {
@@ -71,6 +73,7 @@ export default class TransactionMock extends Transaction {
     key_list = DEFAULT.key_list,
     signed_keys = DEFAULT.signed_keys,
     signatures = DEFAULT.signatures,
+    network = DEFAULT.network,
   } = {}) {
     super();
     this.id = id;
@@ -82,6 +85,7 @@ export default class TransactionMock extends Transaction {
     this.key_list = key_list;
     this.signed_keys = signed_keys;
     this.signatures = signatures;
+    this.network = network;
   }
 
   static txPending0(command: Partial<TransactionMockCommand> = {}) {
@@ -95,6 +99,7 @@ export default class TransactionMock extends Transaction {
       key_list: DEFAULT.key_list,
       signed_keys: [],
       signatures: [],
+      network: Network.TESTNET,
       ...command,
     });
   }
@@ -171,6 +176,9 @@ export default class TransactionMock extends Transaction {
       transaction.signatures.forEach((signature, i) => {
         expect(signature).toBe(this.signatures[i]);
       });
+    }
+    if (!disableChecks.network) {
+      expect(transaction.network).toBe(this.network);
     }
   }
 }

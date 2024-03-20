@@ -83,6 +83,7 @@ describe('Transaction Service Test', () => {
         hedera_account_id: pendingTransaction.hedera_account_id,
         key_list: pendingTransaction.key_list,
         threshold: pendingTransaction.threshold,
+        network: pendingTransaction.network
       };
 
       const expected = TransactionMock.txPending0();
@@ -105,6 +106,7 @@ describe('Transaction Service Test', () => {
         hedera_account_id: pendingTransaction.hedera_account_id,
         key_list: pendingTransaction.key_list,
         threshold: pendingTransaction.threshold,
+        network: pendingTransaction.network
       };
 
       const expected = TransactionMock.txPending0({

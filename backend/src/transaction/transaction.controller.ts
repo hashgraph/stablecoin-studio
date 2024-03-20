@@ -324,4 +324,36 @@ export default class TransactionController {
       throw error;
     }
   }
+
+  @Get()
+  @ApiOkResponse({
+    description: 'The transactions have been successfully retrieved.',
+    type: GetTransactionsResponseDto,
+  })
+  @ApiForbiddenResponse({ description: 'Forbidden', type: ForbiddenException })
+  @UseFilters(HttpExceptionFilter)
+  async getTransactionById(
+    @Req() request: Request,
+    @Param('transactionId') transactionId: string,
+  ): Promise<GetTransactionsResponseDto> {
+    this.loggerService.log(
+      new LogMessageDTO(
+        request[REQUEST_ID_HTTP_HEADER],
+        'Get transaction by id',
+        transactionId,
+      ),
+    );
+    try {
+      return await this.transactionService.getById(transactionId);
+    } catch (error) {
+      this.loggerService.error(
+        new LogMessageDTO(
+          request[REQUEST_ID_HTTP_HEADER],
+          'Error getting transaction by id',
+          error.message,
+        ),
+      );
+      throw error;
+    }
+  }
 }

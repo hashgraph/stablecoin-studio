@@ -1,4 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Network } from './network.enum';
 
 export enum TransactionStatus {
   SIGNED = 'SIGNED',
@@ -44,4 +45,13 @@ export default class Transaction {
 
   @Column()
   threshold: number;
+
+  @Column(
+    {
+      type: 'enum',
+      enum: Network,
+      nullable: false
+    },
+  )
+  network: Network;
 }

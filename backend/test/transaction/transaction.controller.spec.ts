@@ -328,6 +328,8 @@ function createMockGetAllByPublicKeyTxServiceResult(
     pendingTransaction.threshold,
     [publicKey, pendingTransaction.key_list[1], pendingTransaction.key_list[2]],
     pendingTransaction.signed_keys,
+    pendingTransaction.signatures,
+    pendingTransaction.network,
   );
   return new Pagination<GetTransactionsResponseDto>(
     [transactionResponse, transactionResponse],
