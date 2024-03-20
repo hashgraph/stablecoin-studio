@@ -22,7 +22,6 @@ import * as nacl from 'tweetnacl';
 import * as elliptic from 'elliptic';
 import { getBytes, sha256 } from 'ethers';
 
-
 export function verifySignature(
   publicKeyHex: string,
   messageHex: string,
