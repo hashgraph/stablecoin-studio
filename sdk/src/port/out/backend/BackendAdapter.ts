@@ -23,6 +23,7 @@ import axios, { AxiosInstance } from 'axios';
 import BackendTransaction from '../../../domain/context/transaction/BackendTransaction.js';
 import { BackendError } from './error/BackendError.js';
 import BackendEndpoint from '../../../domain/context/network/BackendEndpoint.js';
+import Injectable from '../../../core/Injectable.js';
 
 @singleton()
 export class BackendAdapter {
@@ -55,7 +56,19 @@ export class BackendAdapter {
 				threshold: threshold,
 			};
 
-			const response = await this.httpClient.post('', body);
+			const originHeaderValue = !Injectable.isWeb()
+				? 'http://localhost:3000'
+				: undefined;
+
+			const config = {
+				headers: {} as { [key: string]: string | undefined }, // Type assertion
+			};
+
+			if (originHeaderValue) {
+				config.headers['Origin'] = originHeaderValue;
+			}
+
+			const response = await this.httpClient.post('', body, config);
 
 			if (response.status == 201) {
 				if (!response.data)

@@ -23,7 +23,7 @@ import ValidatedRequest from './validation/ValidatedRequest.js';
 export default class SetBackendRequest extends ValidatedRequest<SetBackendRequest> {
 	url: string;
 
-	constructor(url: string) {
+	constructor({ url }: { url: string }) {
 		super({});
 		this.url = url;
 	}

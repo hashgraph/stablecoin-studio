@@ -96,6 +96,7 @@ import {
 } from '../../config';
 import ConnectRequest from '../../../src/port/in/request/ConnectRequest';
 import Hex from '../../../src/core/Hex.js';
+import SetBackendRequest from '../../../src/port/in/request/SetBackendRequest.js';
 
 const decimals = 6;
 const initialSupply = 1000;
@@ -138,6 +139,12 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 				},
 				mirrorNode: mirrorNode,
 				rpcNode: rpcNode,
+			}),
+		);
+
+		await Network.setBackend(
+			new SetBackendRequest({
+				url: 'http://localhost:3000/api/transactions/',
 			}),
 		);
 		Injectable.resolveTransactionHandler();
