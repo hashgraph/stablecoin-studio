@@ -185,11 +185,36 @@ export default class TransactionController {
     type: [GetTransactionsResponseDto],
   })
   @ApiForbiddenResponse({ description: 'Forbidden', type: ForbiddenException })
-  @ApiQuery({ name: 'publicKey', description: 'The public key to retrieve transactions for', required: false })
-  @ApiQuery({ name: 'status', description: 'The status of transaction to retrieve', required: false })
-  @ApiQuery({ name: 'page', description: 'The page number to retrieve', required: false })
-  @ApiQuery({ name: 'limit', description: 'The number of transactions to retrieve per page', required: false })
-  @ApiQuery({ name: 'network', description: 'The network from which to retrieve transactions', required: false })
+  @ApiQuery({
+    name: 'publicKey',
+    description: 'The public key to retrieve transactions for',
+    example: 'cf8c984270cd7cd25e1bd6df1a3a22ee2d1cd53a0f7bbfdf917a8bd881b11b5e',
+    required: true,
+  })
+  @ApiQuery({
+    name: 'status',
+    description: 'The status of transaction to retrieve',
+    example: 'pending',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'page',
+    description: 'The page number to retrieve',
+    example: 1,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'limit',
+    description: 'The number of transactions to retrieve per page',
+    example: 10,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'network',
+    description: 'The network from which to retrieve transactions',
+    'example': 'mainnet',
+    required: false
+  })
   @UseFilters(HttpExceptionFilter)
   async getTransactions(
     @Req() request: Request,
@@ -237,6 +262,12 @@ export default class TransactionController {
   }
 
   @Get('/:transactionId')
+  @ApiParam({
+    name: 'transactionId',
+    description: 'The transaction ID to retrieve',
+    example: 'e8fe7d5e-2a94-472c-bab8-e693e401134f',
+    required: true,
+  })
   @ApiOkResponse({
     description: 'The transaction has been successfully retrieved.',
     type: GetTransactionsResponseDto,
