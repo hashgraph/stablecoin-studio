@@ -21,23 +21,23 @@
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
 import { QueryHandler } from '../../../../../../core/decorator/QueryHandlerDecorator.js';
 import { IQueryHandler } from '../../../../../../core/query/QueryHandler.js';
-import { RESERVE_DECIMALS } from '../../../../../../domain/context/reserve/Reserve.js';
-import BigDecimal from '../../../../../../domain/context/shared/BigDecimal.js';
 import { BackendAdapter } from '../../../../../../port/out/backend/BackendAdapter.js';
 import { MirrorNodeAdapter } from '../../../../../../port/out/mirror/MirrorNodeAdapter.js';
 import MultiSigTransactionViewModel from '../../../../../../port/out/backend/response/MultiSigTransactionViewModel.js';
 import RPCQueryAdapter from '../../../../../../port/out/rpc/RPCQueryAdapter.js';
-import StableCoinService from '../../../../../service/StableCoinService.js';
 import {
 	GetTransactionsQuery,
 	GetTransactionsQueryResponse,
 } from './GetTransactionsQuery.js';
+import NetworkService from '../../../../../service/NetworkService.js';
 
 @QueryHandler(GetTransactionsQuery)
 export class GetTransactionsQueryHandler
 	implements IQueryHandler<GetTransactionsQuery>
 {
 	constructor(
+		@lazyInject(NetworkService)
+		public readonly networkService: NetworkService,
 		@lazyInject(BackendAdapter)
 		public readonly backendAdapter: BackendAdapter,
 		@lazyInject(MirrorNodeAdapter)
@@ -56,6 +56,7 @@ export class GetTransactionsQueryHandler
 			page,
 			limit,
 			status,
+			this.networkService.environment,
 		);
 
 		const returnValue: MultiSigTransactionViewModel[] = res.map(

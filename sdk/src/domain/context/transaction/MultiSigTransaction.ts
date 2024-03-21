@@ -18,7 +18,7 @@
  *
  */
 
-export default class BackendTransaction {
+export default class MultiSigTransaction {
 	id: string;
 	transaction_message: string;
 	description: string;

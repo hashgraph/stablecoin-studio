@@ -75,6 +75,9 @@ export abstract class CustodialTransactionAdapter extends HederaTransactionAdapt
 			case 'mainnet':
 				this.client = Client.forMainnet();
 				break;
+			case 'previewnet':
+				this.client = Client.forPreviewnet();
+				break;
 			default:
 				throw new Error('Network not supported');
 		}

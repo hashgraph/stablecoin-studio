@@ -20,10 +20,11 @@
 
 import { singleton } from 'tsyringe';
 import axios, { AxiosInstance } from 'axios';
-import BackendTransaction from '../../../domain/context/transaction/BackendTransaction.js';
+import MultiSigTransaction from '../../../domain/context/transaction/MultiSigTransaction.js';
 import { BackendError } from './error/BackendError.js';
 import BackendEndpoint from '../../../domain/context/network/BackendEndpoint.js';
 import Injectable from '../../../core/Injectable.js';
+import { Environment } from '../../../domain/context/network/Environment.js';
 
 @singleton()
 export class BackendAdapter {
@@ -46,7 +47,7 @@ export class BackendAdapter {
 		HederaAccountId: string,
 		keyList: string[],
 		threshold: number,
-		network: string,
+		network: Environment,
 	): Promise<string> {
 		try {
 			const body = {
@@ -145,12 +146,15 @@ export class BackendAdapter {
 		page: number,
 		limit: number,
 		status: string,
-	): Promise<BackendTransaction[]> {
+		network: Environment,
+	): Promise<MultiSigTransaction[]> {
 		try {
 			const queryParams = {
+				publicKey: publicKey,
 				page: page,
 				limit: limit,
 				status: status,
+				network: network,
 			};
 
 			const response = await this.httpClient.get(`${publicKey}`, {
@@ -163,13 +167,15 @@ export class BackendAdapter {
 						`get transactions by public key api call succeeded but returned no data....`,
 					);
 
-				const transactions: BackendTransaction[] = [];
+				const transactions: MultiSigTransaction[] = [];
 
 				const returnedTrx = response.data;
 
-				returnedTrx.array.forEach((transaction: BackendTransaction) => {
-					transactions.push(transaction);
-				});
+				returnedTrx.array.forEach(
+					(transaction: MultiSigTransaction) => {
+						transactions.push(transaction);
+					},
+				);
 
 				return transactions;
 			} else
@@ -189,11 +195,9 @@ export class BackendAdapter {
 
 	public async getTransaction(
 		transactionId: string,
-	): Promise<BackendTransaction> {
+	): Promise<MultiSigTransaction> {
 		try {
-			const response = await this.httpClient.get(
-				`${transactionId}/detail`,
-			);
+			const response = await this.httpClient.get(`${transactionId}`);
 
 			if (response.status == 200) {
 				if (!response.data)

@@ -49,6 +49,13 @@ combined : threshold 1/3, key list 3
 // 0.0.3739997
 key list 3
  */
+
+/**
+ * PreviewNet
+ *
+ *  // 0.0.266995
+ * key list 2 (custodials)
+ */
 import {
 	Client,
 	AccountId,
@@ -62,6 +69,7 @@ import {
 	Transaction,
 	TransactionId,
 	KeyList,
+	Hbar,
 } from '@hashgraph/sdk';
 import { config } from 'dotenv';
 import { proto } from '@hashgraph/proto';
@@ -91,21 +99,32 @@ import {
 	CLIENT_PRIVATE_KEY_ECDSA,
 	CLIENT_PRIVATE_KEY_ED25519,
 	CLIENT_PRIVATE_KEY_ED25519_2,
+	DFNS_SETTINGS,
 	FACTORY_ADDRESS,
+	FIREBLOCKS_SETTINGS,
 	MIRROR_NODE,
 	RPC_NODE,
 } from '../../config';
-import ConnectRequest from '../../../src/port/in/request/ConnectRequest';
+import ConnectRequest, {
+	DFNSConfigRequest,
+	FireblocksConfigRequest,
+} from '../../../src/port/in/request/ConnectRequest';
 import Hex from '../../../src/core/Hex.js';
 import SetBackendRequest from '../../../src/port/in/request/SetBackendRequest.js';
+import * as fs from 'fs';
+import * as path from 'path';
 
-const PRIVATE_KEY =
-	'3c8055953320b1001b93f6c99518ec0a1daf7210f1bb02dd11c64f3dec96fdb6';
-const ACCOUNT_ID = '0.0.1328';
 const MNEMONIC =
 	'point cactus sand length embark castle bulk process decade acoustic green either ozone tunnel lunar job project corn match topic energy attack ignore please';
 let signerKeys: PrivateKey[];
+let signerKeysCustodials: PublicKey[];
+
 let client: Client;
+
+const apiSecretKey = fs.readFileSync(
+	path.resolve(DFNS_SETTINGS.serviceAccountPrivateKeyPath),
+	'utf8',
+);
 
 describe('🧪 MultiSigTransactionAdapter test', () => {
 	let stableCoinHTS: StableCoinViewModel;
@@ -124,9 +143,44 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 		baseUrl: RPC_NODE.baseUrl,
 	};
 
-	const privateKey = PrivateKey.fromStringECDSA(PRIVATE_KEY);
-	const accountId = AccountId.fromString(ACCOUNT_ID);
 	// let mnemonic: Mnemonic;
+
+	const dfnsSettings: DFNSConfigRequest = {
+		authorizationToken: DFNS_SETTINGS.authorizationToken,
+		credentialId: DFNS_SETTINGS.credentialId,
+		serviceAccountPrivateKey: apiSecretKey,
+		urlApplicationOrigin: DFNS_SETTINGS.urlApplicationOrigin,
+		applicationId: DFNS_SETTINGS.applicationId,
+		baseUrl: DFNS_SETTINGS.baseUrl,
+		walletId: DFNS_SETTINGS.walletId,
+		hederaAccountId: DFNS_SETTINGS.hederaAccountId,
+	};
+
+	const publcKeyDFNS = PublicKey.fromString(
+		DFNS_SETTINGS.hederaAccountPublicKey,
+	);
+
+	const fireblocksSettings: FireblocksConfigRequest = {
+		apiSecretKey: apiSecretKey,
+		apiKey: FIREBLOCKS_SETTINGS.apiKey,
+		baseUrl: FIREBLOCKS_SETTINGS.baseUrl,
+		vaultAccountId: FIREBLOCKS_SETTINGS.vaultAccountId,
+		assetId: FIREBLOCKS_SETTINGS.assetId,
+		hederaAccountId: FIREBLOCKS_SETTINGS.hederaAccountId,
+	};
+
+	const publcKeyFIREBLOCKS = PublicKey.fromString(
+		FIREBLOCKS_SETTINGS.hederaAccountPublicKey,
+	);
+
+	const multisigAccountId = '0.0.3739997';
+	const tokenId = '0.0.266905';
+	const hederaNetwork = 'testnet';
+	const transactionId = '40feabbf-8954-4f99-a553-38a3a217be0d';
+	const privateKey = PrivateKey.fromStringECDSA(
+		'3c8055953320b1001b93f6c99518ec0a1daf7210f1bb02dd11c64f3dec96fdb6',
+	);
+	const accountId = AccountId.fromString('0.0.1328');
 
 	beforeAll(async () => {
 		// mnemonic = await Mnemonic.fromString(MNEMONIC);
@@ -134,9 +188,9 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 		await Network.connect(
 			new ConnectRequest({
 				account: {
-					accountId: '0.0.3739997',
+					accountId: multisigAccountId,
 				},
-				network: 'testnet',
+				network: hederaNetwork,
 				wallet: SupportedWallets.MULTISIG,
 				mirrorNode: mirrorNode,
 				rpcNode: rpcNode,
@@ -145,7 +199,7 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 
 		await Network.init(
 			new InitializationRequest({
-				network: 'testnet',
+				network: hederaNetwork,
 				configuration: {
 					factoryAddress: FACTORY_ADDRESS,
 				},
@@ -163,7 +217,12 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 
 		//const mnemonic = await Mnemonic.generate();
 
-		client = Client.forTestnet().setOperator(accountId, privateKey);
+		signerKeysCustodials = [publcKeyDFNS, publcKeyFIREBLOCKS];
+
+		client =
+			hederaNetwork === 'testnet'
+				? Client.forTestnet().setOperator(accountId, privateKey)
+				: Client.forPreviewnet().setOperator(accountId, privateKey);
 
 		signerKeys = [
 			CLIENT_ACCOUNT_ECDSA.privateKey!.toHashgraphKey(),
@@ -184,14 +243,12 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 	it('Multisig should associate a token', async () => {
 		const result = await StableCoin.associate(
 			new AssociateTokenRequest({
-				targetId: '0.0.3739997',
-				tokenId: '0.0.3735939',
+				targetId: multisigAccountId,
+				tokenId: tokenId,
 			}),
 		);
 		expect(result).toBe(true);
 	}, 80_000);
-
-	const transactionId = '9eb2bc47-c620-47d1-ad18-1821aec22ef7';
 
 	it('Client should sign a transaction', async () => {
 		let account = CLIENT_ACCOUNT_ECDSA;
@@ -205,7 +262,7 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 						type: account.privateKey?.type ?? '',
 					},
 				},
-				network: 'testnet',
+				network: hederaNetwork,
 				wallet: SupportedWallets.CLIENT,
 				mirrorNode: mirrorNode,
 				rpcNode: rpcNode,
@@ -231,7 +288,7 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 						type: account.privateKey?.type ?? '',
 					},
 				},
-				network: 'testnet',
+				network: hederaNetwork,
 				wallet: SupportedWallets.CLIENT,
 				mirrorNode: mirrorNode,
 				rpcNode: rpcNode,
@@ -257,7 +314,7 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 						type: account.privateKey?.type ?? '',
 					},
 				},
-				network: 'testnet',
+				network: hederaNetwork,
 				wallet: SupportedWallets.CLIENT,
 				mirrorNode: mirrorNode,
 				rpcNode: rpcNode,
@@ -274,27 +331,47 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 		expect(true).toBe(true);
 	}, 80_000);
 
-	it('Client should submit a transaction', async () => {
-		const account = CLIENT_ACCOUNT_ED25519_2;
-
+	it('Custodials should sign a transaction', async () => {
 		await Network.connect(
 			new ConnectRequest({
-				account: {
-					accountId: account.id.toString(),
-					privateKey: {
-						key: account.privateKey?.key ?? '',
-						type: account.privateKey?.type ?? '',
-					},
-				},
-				network: 'testnet',
-				wallet: SupportedWallets.CLIENT,
+				network: hederaNetwork,
+				wallet: SupportedWallets.DFNS,
 				mirrorNode: mirrorNode,
 				rpcNode: rpcNode,
+				custodialWalletSettings: dfnsSettings,
 			}),
 		);
 
 		Injectable.resolveTransactionHandler();
 
+		await StableCoin.signTransaction(
+			new SignTransactionRequest({
+				transactionId: transactionId,
+			}),
+		);
+
+		await Network.connect(
+			new ConnectRequest({
+				network: hederaNetwork,
+				wallet: SupportedWallets.FIREBLOCKS,
+				mirrorNode: mirrorNode,
+				rpcNode: rpcNode,
+				custodialWalletSettings: fireblocksSettings,
+			}),
+		);
+
+		Injectable.resolveTransactionHandler();
+
+		await StableCoin.signTransaction(
+			new SignTransactionRequest({
+				transactionId: transactionId,
+			}),
+		);
+
+		expect(true).toBe(true);
+	}, 80_000);
+
+	it('Should submit a transaction', async () => {
 		const result = await StableCoin.submitTransaction(
 			new SubmitTransactionRequest({
 				transactionId: transactionId,
@@ -303,7 +380,7 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 		expect(result).toBe(true);
 	}, 80_000);
 
-	it('Client should remove a transaction', async () => {
+	it('Should remove a transaction', async () => {
 		const result = await StableCoin.removeTransaction(
 			new RemoveTransactionRequest({
 				transactionId: transactionId,
@@ -312,7 +389,33 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 		expect(result).toBe(true);
 	}, 80_000);
 
-	it('create key lists', async () => {
+	it('create key lists (Custodials)', async () => {
+		const keyList = KeyList.of(
+			signerKeysCustodials[0],
+			signerKeysCustodials[1],
+		);
+
+		const newAccountTx = new AccountCreateTransaction().setKey(keyList);
+		// Execute the transaction
+		const newAccountResponse = await newAccountTx.execute(client);
+		// Get receipt
+		const newAccountReceipt = await newAccountResponse.getReceipt(client);
+		// Get the account ID
+		const newAccountId = newAccountReceipt.accountId;
+
+		console.log(newAccountId);
+
+		const newTransferTx = new TransferTransaction()
+			.addHbarTransfer(accountId, new Hbar(-100))
+			.addHbarTransfer(newAccountId!, new Hbar(100));
+
+		await newTransferTx.execute(client);
+
+		console.log(signerKeysCustodials[0]._key.toBytes());
+		console.log(signerKeysCustodials[1]._key.toBytes());
+	}, 80_000);
+
+	it('create key lists (Client)', async () => {
 		const keyList = KeyList.of(
 			signerKeys[0].publicKey,
 			signerKeys[1].publicKey,
@@ -332,7 +435,7 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 		console.log(signerKeys[0].publicKey._key.toBytes());
 		console.log(signerKeys[1].publicKey._key.toBytes());
 		console.log(signerKeys[2].publicKey._key.toBytes());
-	});
+	}, 80_000);
 
 	/*it('create key threshold', async () => {
 		const thresholdKey = new KeyList(
