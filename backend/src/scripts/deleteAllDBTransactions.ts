@@ -10,8 +10,7 @@ async function deleteAllTransactions() {
   await app.close();
 }
 
-deleteAllTransactions()
-  .catch(err => {
-    console.error('Error:', err);
-    process.exit(1);
-  });
+deleteAllTransactions().catch((err) => {
+  console.error('Error:', err);
+  process.exit(1);
+});

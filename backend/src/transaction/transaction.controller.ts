@@ -212,8 +212,8 @@ export default class TransactionController {
   @ApiQuery({
     name: 'network',
     description: 'The network from which to retrieve transactions',
-    'example': 'mainnet',
-    required: false
+    example: 'mainnet',
+    required: false,
   })
   @UseFilters(HttpExceptionFilter)
   async getTransactions(
@@ -244,10 +244,15 @@ export default class TransactionController {
       );
 
       try {
-        return await this.transactionService.getAll(publicKey, status, network, {
-          page,
-          limit,
-        });
+        return await this.transactionService.getAll(
+          publicKey,
+          status,
+          network,
+          {
+            page,
+            limit,
+          },
+        );
       } catch (error) {
         this.loggerService.error(
           new LogMessageDTO(
