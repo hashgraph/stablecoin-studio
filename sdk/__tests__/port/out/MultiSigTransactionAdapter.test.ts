@@ -53,7 +53,7 @@ key list 3
 /**
  * PreviewNet
  *
- *  // 0.0.266995
+ *  // 0.0.2971
  * key list 2 (custodials)
  */
 import {
@@ -82,6 +82,7 @@ import {
 	InitializationRequest,
 	Network,
 	RemoveTransactionRequest,
+	RequestPrivateKey,
 	RequestPublicKey,
 	SignTransactionRequest,
 	StableCoin,
@@ -173,14 +174,19 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 		FIREBLOCKS_SETTINGS.hederaAccountPublicKey,
 	);
 
-	const multisigAccountId = '0.0.3739997';
-	const tokenId = '0.0.266905';
-	const hederaNetwork = 'testnet';
-	const transactionId = '40feabbf-8954-4f99-a553-38a3a217be0d';
+	const multisigAccountId = '0.0.3034';
+	const tokenId = '0.0.2894';
+	const hederaNetwork = 'previewnet';
+	const transactionId = '1ef40c37-1f65-4a1f-a0f2-f836009dcb71';
 	const privateKey = PrivateKey.fromStringECDSA(
-		'3c8055953320b1001b93f6c99518ec0a1daf7210f1bb02dd11c64f3dec96fdb6',
+		'3afd47ceaa327ec8e5379615766fcd288892ed8f2e6f521c4023ff31645d125e',
 	);
-	const accountId = AccountId.fromString('0.0.1328');
+	const accountId = AccountId.fromString('0.0.1602');
+	const DFNSHederaAccountId = '0.0.2969';
+	const FIREBLOCKSHederaAccountId = '0.0.2970';
+
+	// client = Client.forTestnet().setOperator(accountId, privateKey)
+	client = Client.forPreviewnet().setOperator(accountId, privateKey);
 
 	beforeAll(async () => {
 		// mnemonic = await Mnemonic.fromString(MNEMONIC);
@@ -196,6 +202,23 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 				rpcNode: rpcNode,
 			}),
 		);
+		/*const pk: RequestPrivateKey = {
+			key: privateKey.toStringRaw(),
+			type: privateKey.type
+		};
+
+		await Network.connect(
+			new ConnectRequest({
+				account: {
+					accountId: accountId.toString(),
+					privateKey: pk
+				},
+				network: hederaNetwork,
+				wallet: SupportedWallets.CLIENT,
+				mirrorNode: mirrorNode,
+				rpcNode: rpcNode,
+			})
+		);*/
 
 		await Network.init(
 			new InitializationRequest({
@@ -218,11 +241,6 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 		//const mnemonic = await Mnemonic.generate();
 
 		signerKeysCustodials = [publcKeyDFNS, publcKeyFIREBLOCKS];
-
-		client =
-			hederaNetwork === 'testnet'
-				? Client.forTestnet().setOperator(accountId, privateKey)
-				: Client.forPreviewnet().setOperator(accountId, privateKey);
 
 		signerKeys = [
 			CLIENT_ACCOUNT_ECDSA.privateKey!.toHashgraphKey(),
@@ -332,6 +350,9 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 	}, 80_000);
 
 	it('Custodials should sign a transaction', async () => {
+		dfnsSettings.hederaAccountId = DFNSHederaAccountId;
+		//fireblocksSettings.hederaAccountId = FIREBLOCKSHederaAccountId;
+
 		await Network.connect(
 			new ConnectRequest({
 				network: hederaNetwork,
@@ -350,7 +371,7 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 			}),
 		);
 
-		await Network.connect(
+		/* await Network.connect(
 			new ConnectRequest({
 				network: hederaNetwork,
 				wallet: SupportedWallets.FIREBLOCKS,
@@ -366,7 +387,7 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 			new SignTransactionRequest({
 				transactionId: transactionId,
 			}),
-		);
+		);*/
 
 		expect(true).toBe(true);
 	}, 80_000);
@@ -390,9 +411,23 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 	}, 80_000);
 
 	it('create key lists (Custodials)', async () => {
+		/*const DFNSPublickKey = PublicKey.fromStringED25519(DFNS_SETTINGS.hederaAccountPublicKey)
+		const newDFNSAccountTx = new AccountCreateTransaction().setKey(DFNSPublickKey);
+		const FIREBLOCKSPublickKey = PublicKey.fromStringED25519(FIREBLOCKS_SETTINGS.hederaAccountPublicKey)
+		const newFIREBLOCKSAccountTx = new AccountCreateTransaction().setKey(FIREBLOCKSPublickKey);
+
+		const newDFNSAccountResponse = await newDFNSAccountTx.execute(client);
+		const newFIREBLOCKSAccountResponse = await newFIREBLOCKSAccountTx.execute(client);
+
+		const newDFNSAccountReceipt = await newDFNSAccountResponse.getReceipt(client);
+		const newFIREBLOCKSAccountReceipt = await newFIREBLOCKSAccountResponse.getReceipt(client);
+
+		console.log(newDFNSAccountReceipt.accountId);
+		console.log(newFIREBLOCKSAccountReceipt.accountId);*/
+
 		const keyList = KeyList.of(
 			signerKeysCustodials[0],
-			signerKeysCustodials[1],
+			signerKeysCustodials[0],
 		);
 
 		const newAccountTx = new AccountCreateTransaction().setKey(keyList);

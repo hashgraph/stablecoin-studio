@@ -97,7 +97,7 @@ export const HEDERA_TOKEN_MANAGER_ADDRESS =
 export const FACTORY_ADDRESS = process.env.FACTORY_ADDRESS ?? '';
 
 //* Infrastructure
-export const MIRROR_NODE = {
+/*export const MIRROR_NODE = {
 	name: 'testMirrorNode',
 	baseUrl:
 		process.env.MIRROR_NODE_BASE_URL ??
@@ -106,8 +106,8 @@ export const MIRROR_NODE = {
 export const RPC_NODE = {
 	name: 'testrpcNode',
 	baseUrl: process.env.RPC_NODE_BASE_URL ?? 'https://testnet.hashio.io/api',
-};
-/*
+};*/
+
 export const MIRROR_NODE = {
 	name: 'previewMirrorNode',
 	baseUrl:
@@ -116,8 +116,9 @@ export const MIRROR_NODE = {
 };
 export const RPC_NODE = {
 	name: 'previewrpcNode',
-	baseUrl: process.env.RPC_NODE_BASE_URL ?? 'https://previewnet.hashio.io/api',
-};*/
+	baseUrl:
+		process.env.RPC_NODE_BASE_URL ?? 'https://previewnet.hashio.io/api',
+};
 
 export const FIREBLOCKS_SETTINGS = {
 	apiKey: process.env.FIREBLOCKS_API_KEY ?? '',
