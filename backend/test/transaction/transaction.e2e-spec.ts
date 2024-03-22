@@ -60,6 +60,7 @@ describe('Transaction Controller (e2e)', () => {
         threshold: DEFAULT.threshold,
         hedera_account_id: DEFAULT.hedera_account_id,
         key_list: DEFAULT.key_list,
+        network: DEFAULT.network,
       };
       return request(app.getHttpServer())
         .post('/api/transactions')
@@ -83,6 +84,7 @@ describe('Transaction Controller (e2e)', () => {
         threshold: THRESHOLD,
         hedera_account_id: DEFAULT.hedera_account_id,
         key_list: DEFAULT.key_list,
+        network: DEFAULT.network,
       };
       return request(app.getHttpServer())
         .post('/api/transactions')

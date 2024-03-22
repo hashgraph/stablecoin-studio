@@ -21,14 +21,10 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateTransactionRequestDto } from './dto/create-transaction-request.dto';
-import Transaction, { TransactionStatus } from './transaction.entity';
+import Transaction from './transaction.entity';
 import { SignTransactionRequestDto } from './dto/sign-transaction-request.dto';
-import { Repository, SelectQueryBuilder } from 'typeorm';
-import {
-  IPaginationOptions,
-  paginate,
-  Pagination,
-} from 'nestjs-typeorm-paginate';
+import { Repository } from 'typeorm';
+import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { GetTransactionsResponseDto } from './dto/get-transactions-response.dto';
 import { uuidRegex } from '../common/regexp';
 import { verifySignature } from '../utils/utils';
@@ -38,6 +34,8 @@ import {
   TransactionNotFoundException,
   UnauthorizedKeyException,
 } from '../common/exceptions/domain-exceptions';
+import { TransactionStatus } from './status.enum';
+import { Network } from './network.enum';
 
 @Injectable()
 export default class TransactionService {
@@ -122,58 +120,71 @@ export default class TransactionService {
     }
   }
 
-  async getAllByPublicKey(
-    publicKey: string,
+  async getAll(
+    publicKey?: string,
     status?: string,
+    network?: string,
     options?: IPaginationOptions,
   ): Promise<Pagination<GetTransactionsResponseDto>> {
-    let queryBuilder: Repository<Transaction> | SelectQueryBuilder<Transaction>;
-    if (status == TransactionStatus.SIGNED.toLowerCase()) {
-      queryBuilder = this.transactionRepository
-        .createQueryBuilder('transaction')
-        .where(':publicKey = ANY(transaction.signed_keys)', { publicKey });
-    } else if (status == TransactionStatus.PENDING.toLowerCase()) {
-      queryBuilder = this.transactionRepository
-        .createQueryBuilder('transaction')
-        .where(':publicKey = ANY(transaction.key_list)', { publicKey })
-        .andWhere('transaction.status = :status', {
-          status: TransactionStatus.PENDING,
-        })
-        .andWhere(':publicKey != ALL(transaction.signed_keys)', { publicKey });
-    } else {
-      queryBuilder = this.transactionRepository
-        .createQueryBuilder('transaction')
-        .where(':publicKey = ANY(transaction.key_list)', { publicKey });
+    let queryBuilder = this.transactionRepository.createQueryBuilder('transaction');
+    //TODO: move this to the controller
+    const normalizedNetwork = network?.toLowerCase();
+    if (normalizedNetwork && !(Object.values(Network).map(value => value.toLowerCase()).includes(normalizedNetwork))) {
+      throw new Error(`Invalid network: ${network}. Valid values are: ${Object.values(Network).join(', ')}`);
+    }
+    const normalizedStatus = status?.toUpperCase();
+    if (normalizedStatus && !(normalizedStatus in TransactionStatus)) {
+      throw new Error(`Invalid status: ${status}. Valid values are: ${Object.values(TransactionStatus).join(', ')}`);
+    }
+    //---
+    if (publicKey) {
+      queryBuilder = queryBuilder.where(':publicKey = ANY(transaction.key_list)', { publicKey });
+
+    }
+    if (normalizedStatus) {
+      queryBuilder = queryBuilder.andWhere('transaction.status = :status', { status: normalizedStatus });
+    }
+    if (normalizedNetwork) {
+      queryBuilder = queryBuilder.andWhere('transaction.network = :network', { network: normalizedNetwork });
     }
 
     const paginatedResults = await paginate<Transaction>(queryBuilder, options);
 
-    const itemsTransformed = paginatedResults.items.map(
-      (transaction) =>
-        new GetTransactionsResponseDto(
-          transaction.id,
-          transaction.transaction_message,
-          transaction.description,
-          transaction.status,
-          transaction.threshold,
-          transaction.key_list,
-          transaction.signed_keys,
-        ),
-    );
+    const itemsTransformed = paginatedResults.items.map(transaction => this.transformToDto(transaction));
 
-    return new Pagination<GetTransactionsResponseDto>(
-      itemsTransformed,
-      paginatedResults.meta,
-      paginatedResults.links,
-    );
+    return new Pagination<GetTransactionsResponseDto>(itemsTransformed, paginatedResults.meta, paginatedResults.links);
   }
 
-  async getAll(options: IPaginationOptions): Promise<Pagination<Transaction>> {
-    return paginate<Transaction>(this.transactionRepository, options);
+  async getById(transactionId: string): Promise<GetTransactionsResponseDto> {
+    if (!uuidRegex.test(transactionId))
+      throw new TransactionNotFoundException('Transaction not found');
+
+    const transaction = await this.transactionRepository.findOne({
+      where: { id: transactionId },
+    });
+    if (transaction) {
+      return this.transformToDto(transaction);
+    } else {
+      throw new TransactionNotFoundException('Transaction not found');
+    }
   }
 
   //This function is used to delete all transactions from the database
   async deleteAllTransactions(): Promise<void> {
     await this.transactionRepository.clear();
+  }
+
+  private transformToDto(transaction: Transaction): GetTransactionsResponseDto {
+    return new GetTransactionsResponseDto(
+      transaction.id,
+      transaction.transaction_message,
+      transaction.description,
+      transaction.status,
+      transaction.threshold,
+      transaction.key_list,
+      transaction.signed_keys,
+      transaction.signatures,
+      transaction.network,
+    );
   }
 }

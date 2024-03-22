@@ -241,7 +241,7 @@ describe('Transaction Controller Test', () => {
   });
 
   describe('Get Transactions', () => {
-    it('should get all transactions linked to a public key', async () => {
+    it('should get all transactions by public key', async () => {
       //* 🗂️ Arrange ⬇
       // Input
       const request = HTTP_REQUEST;
@@ -252,7 +252,7 @@ describe('Transaction Controller Test', () => {
       };
       // Mock service
       jest
-        .spyOn(service, 'getAllByPublicKey')
+        .spyOn(service, 'getAll')
         .mockImplementation((publicKey: string) =>
           Promise.resolve(
             createMockGetAllByPublicKeyTxServiceResult(publicKey),
@@ -271,7 +271,7 @@ describe('Transaction Controller Test', () => {
       );
 
       //* 🎬 Act ⬇
-      const result = await controller.getByPublicKey(
+      const result = await controller.getTransactions(
         getAllByPublicKeyCommand.request,
         getAllByPublicKeyCommand.publicKey,
       );
@@ -311,6 +311,48 @@ describe('Transaction Controller Test', () => {
       });
     });
   });
+  describe('Get Transaction', () => {
+    it('should get transaction by id', async () => {
+      //* 🗂️ Arrange ⬇
+      const transactionId = DEFAULT.id;
+      const request = HTTP_REQUEST;
+
+      jest
+        .spyOn(service, 'getById')
+        .mockImplementation((transactionId: string) =>
+          Promise.resolve(
+            new GetTransactionsResponseDto(
+              transactionId,
+              DEFAULT.transaction_message,
+              DEFAULT.description,
+              DEFAULT.status,
+              DEFAULT.threshold,
+              DEFAULT.key_list,
+              DEFAULT.signed_keys,
+              DEFAULT.signatures,
+              DEFAULT.network,
+            ),
+          ),
+        );
+      // Mock expected result
+      const expectedResult = new GetTransactionsResponseDto(
+        DEFAULT.id,
+        DEFAULT.transaction_message,
+        DEFAULT.description,
+        DEFAULT.status,
+        DEFAULT.threshold,
+        DEFAULT.key_list,
+        DEFAULT.signed_keys,
+        DEFAULT.signatures,
+        DEFAULT.network,
+      );
+      //* 🎬 Act ⬇
+      const result = await controller.getTransactionById(request, transactionId);
+
+      //* ☑️ Assert ⬇
+      expect(result).toEqual(expectedResult);
+    });
+  });
 });
 
 //* Helper Functions
@@ -328,6 +370,8 @@ function createMockGetAllByPublicKeyTxServiceResult(
     pendingTransaction.threshold,
     [publicKey, pendingTransaction.key_list[1], pendingTransaction.key_list[2]],
     pendingTransaction.signed_keys,
+    pendingTransaction.signatures,
+    pendingTransaction.network,
   );
   return new Pagination<GetTransactionsResponseDto>(
     [transactionResponse, transactionResponse],
