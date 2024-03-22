@@ -60,7 +60,8 @@ export default class TransactionService {
       signed_keys: [],
       status: TransactionStatus.PENDING,
       threshold:
-        createTransactionDto.threshold === 0
+        createTransactionDto.threshold === 0 ||
+        createTransactionDto.threshold > createTransactionDto.key_list.length
           ? createTransactionDto.key_list.length
           : createTransactionDto.threshold,
       signatures: [],

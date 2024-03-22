@@ -121,6 +121,31 @@ describe('Transaction Service Test', () => {
       expect(transaction).toBeDefined();
       expected.assert({ transaction });
     });
+    it('should create a transaction with threshold equal to key list length', async () => {
+      //* 🗂️ Arrange ⬇
+      const pendingTransaction = TransactionMock.txPending0();
+      const expected = TransactionMock.txPending0();
+
+      expected.threshold = pendingTransaction.key_list.length;
+      const new_threshold = pendingTransaction.key_list.length + 1;
+
+      const createTransactionDto = {
+        transaction_message: pendingTransaction.transaction_message,
+        description: pendingTransaction.description,
+        hedera_account_id: pendingTransaction.hedera_account_id,
+        key_list: pendingTransaction.key_list,
+        threshold: new_threshold,
+        network: pendingTransaction.network,
+      };
+
+      //* 🎬 Act ⬇
+      const transaction = await service.create(createTransactionDto);
+
+      //* ☑️ Assert ⬇
+      expect(transaction).toBeDefined();
+      expected.assert({ transaction });
+    });
+
     it('should create a transaction with threshold equal to 0', async () => {
       //* 🗂️ Arrange ⬇
       const THRESHOLD = 0;
