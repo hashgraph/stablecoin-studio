@@ -102,6 +102,7 @@ export default class TransactionMock extends Transaction {
       ...command,
     });
   }
+
   static txPending1(command: Partial<TransactionMockCommand> = {}) {
     const base = TransactionMock.txPending0();
     return new TransactionMock({

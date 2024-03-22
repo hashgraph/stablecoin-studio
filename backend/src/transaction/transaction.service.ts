@@ -31,7 +31,7 @@ import {
 } from 'nestjs-typeorm-paginate';
 import { GetTransactionsResponseDto } from './dto/get-transactions-response.dto';
 import { uuidRegex } from '../common/regexp';
-import { verifySignature } from '../utils/utils';
+import { removeDuplicates, verifySignature } from '../utils/utils';
 import {
   InvalidSignatureException,
   MessageAlreadySignedException,
@@ -51,6 +51,10 @@ export default class TransactionService {
   async create(
     createTransactionDto: CreateTransactionRequestDto,
   ): Promise<Transaction> {
+    createTransactionDto.key_list = removeDuplicates(
+      createTransactionDto.key_list,
+    );
+
     const transaction: Transaction = this.transactionRepository.create({
       ...createTransactionDto,
       signed_keys: [],

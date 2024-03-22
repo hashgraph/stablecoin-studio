@@ -78,3 +78,7 @@ function hexToUint8Array(hexString: string): Uint8Array {
     cleanHexString.match(/[\da-fA-F]{2}/g).map((byte) => parseInt(byte, 16)),
   );
 }
+
+export function removeDuplicates(array: string[]): string[] {
+  return Array.from(new Set(array));
+}
