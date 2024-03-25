@@ -24,10 +24,14 @@ import { CreateTransactionRequestDto } from './dto/create-transaction-request.dt
 import Transaction from './transaction.entity';
 import { SignTransactionRequestDto } from './dto/sign-transaction-request.dto';
 import { Repository } from 'typeorm';
-import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
+import {
+  IPaginationOptions,
+  paginate,
+  Pagination,
+} from 'nestjs-typeorm-paginate';
 import { GetTransactionsResponseDto } from './dto/get-transactions-response.dto';
 import { uuidRegex } from '../common/regexp';
-import { verifySignature } from '../utils/utils';
+import { removeDuplicates, verifySignature } from '../utils/utils';
 import {
   InvalidSignatureException,
   MessageAlreadySignedException,
@@ -47,12 +51,17 @@ export default class TransactionService {
   async create(
     createTransactionDto: CreateTransactionRequestDto,
   ): Promise<Transaction> {
+    createTransactionDto.key_list = removeDuplicates(
+      createTransactionDto.key_list,
+    );
+
     const transaction: Transaction = this.transactionRepository.create({
       ...createTransactionDto,
       signed_keys: [],
       status: TransactionStatus.PENDING,
       threshold:
-        createTransactionDto.threshold === 0
+        createTransactionDto.threshold === 0 ||
+        createTransactionDto.threshold > createTransactionDto.key_list.length
           ? createTransactionDto.key_list.length
           : createTransactionDto.threshold,
       signatures: [],
@@ -126,33 +135,55 @@ export default class TransactionService {
     network?: string,
     options?: IPaginationOptions,
   ): Promise<Pagination<GetTransactionsResponseDto>> {
-    let queryBuilder = this.transactionRepository.createQueryBuilder('transaction');
+    let queryBuilder =
+      this.transactionRepository.createQueryBuilder('transaction');
     //TODO: move this to the controller
     const normalizedNetwork = network?.toLowerCase();
-    if (normalizedNetwork && !(Object.values(Network).map(value => value.toLowerCase()).includes(normalizedNetwork))) {
-      throw new Error(`Invalid network: ${network}. Valid values are: ${Object.values(Network).join(', ')}`);
+    if (
+      normalizedNetwork &&
+      !Object.values(Network)
+        .map((value) => value.toLowerCase())
+        .includes(normalizedNetwork)
+    ) {
+      throw new Error(
+        `Invalid network: ${network}. Valid values are: ${Object.values(Network).join(', ')}`,
+      );
     }
     const normalizedStatus = status?.toUpperCase();
     if (normalizedStatus && !(normalizedStatus in TransactionStatus)) {
-      throw new Error(`Invalid status: ${status}. Valid values are: ${Object.values(TransactionStatus).join(', ')}`);
+      throw new Error(
+        `Invalid status: ${status}. Valid values are: ${Object.values(TransactionStatus).join(', ')}`,
+      );
     }
     //---
     if (publicKey) {
-      queryBuilder = queryBuilder.where(':publicKey = ANY(transaction.key_list)', { publicKey });
-
+      queryBuilder = queryBuilder.where(
+        ':publicKey = ANY(transaction.key_list)',
+        { publicKey },
+      );
     }
     if (normalizedStatus) {
-      queryBuilder = queryBuilder.andWhere('transaction.status = :status', { status: normalizedStatus });
+      queryBuilder = queryBuilder.andWhere('transaction.status = :status', {
+        status: normalizedStatus,
+      });
     }
     if (normalizedNetwork) {
-      queryBuilder = queryBuilder.andWhere('transaction.network = :network', { network: normalizedNetwork });
+      queryBuilder = queryBuilder.andWhere('transaction.network = :network', {
+        network: normalizedNetwork,
+      });
     }
 
     const paginatedResults = await paginate<Transaction>(queryBuilder, options);
 
-    const itemsTransformed = paginatedResults.items.map(transaction => this.transformToDto(transaction));
+    const itemsTransformed = paginatedResults.items.map((transaction) =>
+      this.transformToDto(transaction),
+    );
 
-    return new Pagination<GetTransactionsResponseDto>(itemsTransformed, paginatedResults.meta, paginatedResults.links);
+    return new Pagination<GetTransactionsResponseDto>(
+      itemsTransformed,
+      paginatedResults.meta,
+      paginatedResults.links,
+    );
   }
 
   async getById(transactionId: string): Promise<GetTransactionsResponseDto> {

@@ -347,7 +347,10 @@ describe('Transaction Controller Test', () => {
         DEFAULT.network,
       );
       //* 🎬 Act ⬇
-      const result = await controller.getTransactionById(request, transactionId);
+      const result = await controller.getTransactionById(
+        request,
+        transactionId,
+      );
 
       //* ☑️ Assert ⬇
       expect(result).toEqual(expectedResult);

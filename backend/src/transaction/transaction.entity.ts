@@ -46,12 +46,10 @@ export default class Transaction {
   @Column()
   threshold: number;
 
-  @Column(
-    {
-      type: 'enum',
-      enum: Network,
-      nullable: false
-    },
-  )
+  @Column({
+    type: 'enum',
+    enum: Network,
+    nullable: false,
+  })
   network: Network;
 }

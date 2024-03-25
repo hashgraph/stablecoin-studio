@@ -21,7 +21,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   ArrayNotEmpty,
-  IsArray, IsIn,
+  IsArray,
+  IsIn,
   IsInt,
   IsNotEmpty,
   IsString,
@@ -105,7 +106,9 @@ export class CreateTransactionRequestDto {
   @IsString()
   @IsNotEmpty()
   @IsIn(Object.values(Network))
-  @Transform(({ value }) => Network[value.toUpperCase() as keyof typeof Network])
+  @Transform(
+    ({ value }) => Network[value.toUpperCase() as keyof typeof Network],
+  )
   network: Network;
 
   constructor(
