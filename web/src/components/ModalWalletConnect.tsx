@@ -2,9 +2,11 @@ import {
 	Button,
 	HStack,
 	Image,
+	Input,
 	Link,
 	Modal,
 	ModalBody,
+	ModalCloseButton,
 	ModalContent,
 	ModalFooter,
 	ModalHeader,
@@ -15,7 +17,11 @@ import {
 	VStack,
 } from '@chakra-ui/react';
 import type { StableCoinListViewModel } from '@hashgraph/stablecoin-npm-sdk';
-import { GetFactoryProxyConfigRequest, Network, SupportedWallets } from '@hashgraph/stablecoin-npm-sdk';
+import {
+	GetFactoryProxyConfigRequest,
+	Network,
+	SupportedWallets,
+} from '@hashgraph/stablecoin-npm-sdk';
 import type { FC, ReactNode } from 'react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -25,7 +31,12 @@ import MULTISIG_LOGO_PNG from '../assets/png/multisigLogo.png';
 import HASHPACK_LOGO_PNG from '../assets/png/hashpackLogo.png';
 import METAMASK_LOGO from '../assets/svg/MetaMask_Fox.svg';
 import SDKService from '../services/SDKService';
-import { AVAILABLE_WALLETS, SELECTED_MIRRORS, SELECTED_RPCS, walletActions } from '../store/slices/walletSlice';
+import {
+	AVAILABLE_WALLETS,
+	SELECTED_MIRRORS,
+	SELECTED_RPCS,
+	walletActions,
+} from '../store/slices/walletSlice';
 import WARNING_ICON from '../assets/svg/warning.svg';
 import ERROR_ICON from '../assets/svg/error.svg';
 import { SelectController } from './Form/SelectController';
@@ -73,9 +84,11 @@ const ModalWalletConnect = () => {
 	const [hashpackSelected, setHashpackSelected] = useState<boolean>(false);
 	const [bladeSelected, setBladeSelected] = useState<boolean>(false);
 	const [multiSigSelected, setMultiSigSelected] = useState<boolean>(false);
-	const availableWallets = useSelector(AVAILABLE_WALLETS);
+	const availableWallets: SupportedWallets[] = useSelector(AVAILABLE_WALLETS);
 	const selectedMirrors: IMirrorRPCNode[] = useSelector(SELECTED_MIRRORS);
 	const selectedRPCs: IMirrorRPCNode[] = useSelector(SELECTED_RPCS);
+	const [isHederaAccountIdModalOpen, setIsHederaAccountIdModalOpen] = useState(false);
+	const [hederaAccountId, setHederaAccountId] = useState('');
 
 	const { control, getValues } = useForm({
 		mode: 'onChange',
@@ -207,10 +220,6 @@ const ModalWalletConnect = () => {
 		setBladeSelected(true);
 	};
 
-	const handleMultiSigMode = () => {
-		setMultiSigSelected(true);
-	}
-
 	const unHandleConnectBladeWallet = () => {
 		setBladeSelected(false);
 		setLoading(undefined);
@@ -219,6 +228,18 @@ const ModalWalletConnect = () => {
 	const handleConnectBladeWalletConfirmed = () => {
 		const values = getValues();
 		handleWalletConnect(SupportedWallets.BLADE, values.networkBlade.value);
+	};
+
+	const handleMultiSigMode = () => {
+		console.log('MultiSig Mode');
+		setMultiSigSelected(true);
+		setIsHederaAccountIdModalOpen(true);
+	};
+
+	const handleHederaIdSubmit = () => {
+		console.log(hederaAccountId);
+		setIsHederaAccountIdModalOpen(false);
+		// TODO: Logics
 	};
 
 	const PairingSpinner: FC<{ wallet: SupportedWallets; children?: ReactNode }> = ({
@@ -356,9 +377,10 @@ const ModalWalletConnect = () => {
 											</VStack>
 										)
 									) : (
+										//* Blade is not supported in this browser
 										<></>
 									)}
-									{availableWallets.includes(SupportedWallets.MULTISIG) ? (
+									{!availableWallets.includes(SupportedWallets.MULTISIG) ? (
 										<VStack
 											data-testid='Multisig'
 											{...styles.providerStyle}
@@ -367,14 +389,11 @@ const ModalWalletConnect = () => {
 										>
 											<PairingSpinner wallet={SupportedWallets.MULTISIG}>
 												<Image src={MULTISIG_LOGO_PNG} w={20} />
-												<Text textAlign='center'>Metamask</Text>
+												<Text textAlign='center'>Multisig</Text>
 											</PairingSpinner>
 										</VStack>
 									) : (
-										<VStack data-testid='Metamask' {...styles.providerStyle}>
-												<Image src={MULTISIG_LOGO_PNG} w={20} />
-												<Text textAlign='center'>MultiSig</Text>
-										</VStack>
+										<></>
 									)}
 								</HStack>
 							</ModalFooter>
@@ -506,6 +525,27 @@ const ModalWalletConnect = () => {
 							</ModalFooter>
 						</>
 					)}
+				</ModalContent>
+			</Modal>
+			<Modal
+				isOpen={isHederaAccountIdModalOpen}
+				onClose={() => setIsHederaAccountIdModalOpen(false)}
+			>
+				<ModalContent>
+					<ModalHeader>Enter your Hedera Account ID</ModalHeader>
+					<ModalCloseButton />
+					<ModalBody>
+						<Input
+							placeholder='Your Hedera MultiSig Account ID'
+							value={hederaAccountId}
+							onChange={(e) => setHederaAccountId(e.target.value)}
+						/>
+					</ModalBody>
+					<ModalFooter>
+						<Button mr={3} onClick={handleHederaIdSubmit}>
+							Submit
+						</Button>
+					</ModalFooter>
 				</ModalContent>
 			</Modal>
 		</>

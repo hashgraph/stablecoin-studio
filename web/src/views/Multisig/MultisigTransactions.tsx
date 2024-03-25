@@ -1,94 +1,287 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Button,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Table,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
-  useDisclosure,
+	Box,
+	Button,
+	Modal,
+	ModalBody,
+	ModalCloseButton,
+	ModalContent,
+	ModalFooter,
+	ModalHeader,
+	ModalOverlay,
+	Select,
+	Table,
+	TableContainer,
+	Tag,
+	Tbody,
+	Td,
+	Th,
+	Thead,
+	Tr,
+	useDisclosure,
 } from '@chakra-ui/react';
-import SDKService from '../../services/SDKService';
 import { MultiSigTransactionViewModel } from '@hashgraph/stablecoin-npm-sdk';
+import { ArrowForwardIcon, DeleteIcon, SearchIcon } from '@chakra-ui/icons';
+import BaseContainer from '../../components/BaseContainer';
+import { useTranslation } from 'react-i18next';
+import MultiSigTransactionModal from './components/MultiSigTransactionModal';
 
-const TransactionsTable = ({ webSDK, publicKey }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [transactions, setTransactions] = useState([]);
-  const [selectedTransaction, setSelectedTransaction] = useState(null);
+// @ts-ignore
+const MultiSigTransactions = () => {
+	const { isOpen, onOpen, onClose } = useDisclosure();
+	const {
+		isOpen: isDeleteModalOpen,
+		onOpen: onDeleteModalOpen,
+		onClose: onDeleteModalClose,
+	} = useDisclosure();
+	const [transactionToDelete, setTransactionToDelete] =
+		useState<MultiSigTransactionViewModel | null>(null);
+	const [transactions, setTransactions] = useState<MultiSigTransactionViewModel[]>([]);
+	const [selectedTransaction, setSelectedTransaction] =
+		useState<MultiSigTransactionViewModel | null>(null);
+	const [filter, setFilter] = useState('');
+	const { t } = useTranslation(['multiSig', 'global']);
 
-  useEffect(() => {
-    const fetchTransactions = async () => {
-      if (!publicKey) return;
-      try {
-        const transactions:MultiSigTransactionViewModel[] = await SDKService.getMultiSigTransactions();
-        setTransactions(transactions);
-      } catch (error) {
-        console.error("Failed to fetch transactions:", error);
-      }
-    };
+	const publicKey = 'key1';
+	useEffect(() => {
+		const fetchTransactions = async () => {
+			// TODO: Call SDK or API to get the transactions
+			if (!publicKey) return;
+			const transactionsMock: MultiSigTransactionViewModel[] = [
+				//! MOCKED TRANSACTIONS FOR TESTING
+				{
+					id: 'tx1',
+					transaction_message: 'Transaction 1',
+					description: 'First transaction for testing',
+					status: 'PENDING',
+					threshold: 2,
+					key_list: [
+						'f1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1u2v3w4x5y6z7a8b9c0d1e2f3',
+						'g2h3i4j5k6l7m8n9o0p1q2r3s4t5u5v6w7x8y9z0a1b2c3d4e5f6g7h8i9j0k1l2m3',
+						'h3i4j5k6l7m8n9o0p1q2r3s4t5u6v7w8x9y0z1a2b3c4d5e6f7g8h9i0j1k2l3m4n4o5',
+					],
+					signed_keys: ['f1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1u2v3w4x5y6z7a8b9c0d1e2f3'],
+				},
+				{
+					id: 'tx2',
+					transaction_message: 'Transaction 2',
+					description: 'Second transaction for testing',
+					status: 'SIGNED',
+					threshold: 3,
+					key_list: [
+						'i4j5k6l7m8n9o0p1q2r3s4t5u6v7w8x9y0z1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p',
+						'j5k6l7m8n9o0p1q2r3s4t5u6v7w8x9y0z1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p7q8',
+						'k6l7m8n9o0p1q2r3s4t5u6v7w8x9y0z1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s',
+					],
+					signed_keys: [
+						'i4j5k6l7m8n9o0p1q2r3s4t5u6v7w8x9y0z1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p',
+						'j5k6l7m8n9o0p1q2r3s4t5u6v7w8x9y0z1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p7q8',
+						'k6l7m8n9o0p1q2r3s4t5u6v7w8x9y0z1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s',
+					],
+				},
+			];
+			setTransactions(transactionsMock);
+		};
 
-    fetchTransactions();
-  }, [publicKey, webSDK]);
+		fetchTransactions();
+	});
 
-  const handleRowClick = (transaction) => {
-    setSelectedTransaction(transaction);
-    onOpen();
-  };
+	const canSignTransaction = (transaction: MultiSigTransactionViewModel) => {
+		return transaction.signed_keys.includes(publicKey) && transaction.status === 'PENDING';
+	};
 
-  return (
-    <>
-      <Table variant="simple">
-        <Thead>
-          <Tr>
-            <Th>ID</Th>
-            <Th>Description</Th>
-            <Th>Threshold</Th>
-            <Th>Status</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {transactions.map((transaction:MultiSigTransactionViewModel) => (
-            <Tr key={transaction.id} onClick={() => handleRowClick(transaction)} cursor="pointer">
-              <Td>{transaction.id}</Td>
-              <Td>{transaction.description}</Td>
-              <Td>{transaction.threshold}</Td>
-              <Td>{transaction.status}</Td>
-            </Tr>
-          ))}
-        </Tbody>
-      </Table>
+	const canSendTransaction = (transaction: MultiSigTransactionViewModel) => {
+		return (
+			transaction.signed_keys.length >= transaction.threshold && transaction.status !== 'SIGNED'
+		);
+	};
 
-      {selectedTransaction && (
-        <Modal isOpen={isOpen} onClose={onClose}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>Transaction Details</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              <p>ID: {selectedTransaction.id}</p>
-              <p>Transaction Message: {selectedTransaction.transaction_message}</p>
-              <p>Description: {selectedTransaction.description}</p>
-              <p>Status: {selectedTransaction.status}</p>
-              <p>Threshold: {selectedTransaction.threshold}</p>
-              <p>Key List: {selectedTransaction.key_list.join(', ')}</p>
-              <p>Signed Keys: {selectedTransaction.signed_keys.join(', ')}</p>
-            </ModalBody>
-            <ModalFooter>
-              <Button colorScheme="blue" mr={3} onClick={onClose}>
-                Close
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
-      )}
-    </>
-  );
+	const filteredTransactions = transactions.filter((transaction) => {
+		if (!filter) return true;
+		return transaction.status.toUpperCase() === filter.toUpperCase();
+	});
+
+	const handleSignTransaction = async (transaction: MultiSigTransactionViewModel) => {
+		try {
+			// TODO: Call SDK or API to sign the transaction
+			console.log(`Signing transaction ${transaction.id}`);
+			const updatedTransaction = {
+				...transaction,
+				signed_keys: [...transaction.signed_keys, publicKey],
+			};
+			setTransactions(transactions.map((t) => (t.id === transaction.id ? updatedTransaction : t)));
+			onClose();
+		} catch (error) {
+			console.error('Error signing transaction:', error);
+		}
+	};
+
+	const handleSendTransaction = async (transaction: MultiSigTransactionViewModel) => {
+		try {
+			// TODO: Call SDK or API to send the transaction
+			console.log(`Sending transaction ${transaction.id}`);
+			const updatedTransaction = {
+				...transaction,
+				status: 'completed',
+			};
+			setTransactions(transactions.map((t) => (t.id === transaction.id ? updatedTransaction : t)));
+			onClose();
+		} catch (error) {
+			console.error('Error sending transaction:', error);
+		}
+	};
+
+	const handleDeleteTransaction = async (transaction: MultiSigTransactionViewModel) => {
+		try {
+			// TODO: Call SDK or API to delete the transaction
+			showDeleteConfirmationModal(transaction);
+			console.log(`Deleting transaction ${transaction.id}`);
+		} catch (error) {
+			console.error('Error deleting transaction:', error);
+		}
+	};
+
+	const handleDeleteConfirmation = async () => {
+		if (!transactionToDelete) return;
+		// LOGIC TO DELETE TRANSACTION
+		console.log(`Deleting transaction ${transactionToDelete.id}`);
+		// DELETE FROM ARRAY
+		setTransactions(transactions.filter((t) => t.id !== transactionToDelete.id));
+		setTransactionToDelete(null);
+		onDeleteModalClose();
+	};
+
+	const showDeleteConfirmationModal = (transaction: MultiSigTransactionViewModel) => {
+		setTransactionToDelete(transaction);
+		onDeleteModalOpen();
+	};
+
+	const handleDetailsClick = (transaction: MultiSigTransactionViewModel) => {
+		setSelectedTransaction(transaction);
+		onOpen();
+	};
+
+	return (
+		<BaseContainer title={t('Multi-sig transactions')}>
+			<Box position='relative' mb='4'>
+				<Select
+					position='absolute'
+					right='0'
+					mt='2'
+					mr='2'
+					size='sm'
+					width='auto'
+					borderRadius='md'
+					bg='white'
+					zIndex='1'
+					placeholder='Filter by status'
+					onChange={(e) => setFilter(e.target.value)}
+				>
+					<option value=''>All</option>
+					<option value='pending'>Pending</option>
+					<option value='signed'>Signed</option>
+				</Select>
+				<TableContainer bg='white' borderRadius='lg' shadow='sm' overflow='hidden'>
+					<Table variant='simple'>
+						<Thead bg='#ece8ff'>
+							<Tr>
+								<Th>ID</Th>
+								<Th>Description</Th>
+								<Th>Threshold</Th>
+								<Th>Status</Th>
+								<Th>Actions</Th>
+							</Tr>
+						</Thead>
+						<Tbody>
+							{filteredTransactions.map((transaction) => (
+								<Tr key={transaction.id}>
+									<Td borderBottom='1px' borderColor='gray.200'>
+										{transaction.id}
+									</Td>
+									<Td borderBottom='1px' borderColor='gray.200'>
+										{transaction.description}
+									</Td>
+									<Td borderBottom='1px' borderColor='gray.200'>
+										{transaction.threshold}
+									</Td>
+									<Td borderBottom='1px' borderColor='gray.200'>
+										<Tag>{transaction.status}</Tag>
+									</Td>
+									<Td borderBottom='1px' borderColor='gray.200'>
+										<Button
+											size={'sm'}
+											mr={2}
+											style={{ maxWidth: '90px' }}
+											rightIcon={<SearchIcon />}
+											onClick={() => handleDetailsClick(transaction)}
+										>
+											Details
+										</Button>
+										{canSignTransaction(transaction) && (
+											<Button
+												size={'sm'}
+												mr={2}
+												style={{ maxWidth: '90px' }}
+												rightIcon={<ArrowForwardIcon />}
+												onClick={() => handleSignTransaction(transaction)}
+											>
+												Sign
+											</Button>
+										)}
+										{canSendTransaction(transaction) && (
+											<Button
+												size={'sm'}
+												mr={2}
+												style={{ maxWidth: '90px' }}
+												rightIcon={<ArrowForwardIcon />}
+												onClick={() => handleSendTransaction(transaction)}
+											>
+												Send
+											</Button>
+										)}
+										<Button
+											size={'sm'}
+											mr={2}
+											style={{ maxWidth: '90px' }}
+											rightIcon={<DeleteIcon />}
+											onClick={() => handleDeleteTransaction(transaction)}
+										>
+											Delete
+										</Button>
+									</Td>
+								</Tr>
+							))}
+						</Tbody>
+					</Table>
+				</TableContainer>
+			</Box>
+			{selectedTransaction && (
+				<MultiSigTransactionModal
+					selectedTransaction={selectedTransaction}
+					isOpen={isOpen}
+					onClose={onClose}
+				/>
+			)}
+			{transactionToDelete && (
+				<Modal isOpen={isDeleteModalOpen} onClose={onDeleteModalClose}>
+					<ModalOverlay />
+					<ModalContent>
+						<ModalHeader>Confirm Delete</ModalHeader>
+						<ModalCloseButton />
+						<ModalBody>Are you sure you want to delete this transaction?</ModalBody>
+						<ModalFooter>
+							<Button variant='ghost' onClick={onDeleteModalClose}>
+								Cancel
+							</Button>
+							<Button colorScheme='red' mr={3} onClick={handleDeleteConfirmation}>
+								Delete
+							</Button>
+						</ModalFooter>
+					</ModalContent>
+				</Modal>
+			)}
+		</BaseContainer>
+	);
 };
+
+export default MultiSigTransactions;

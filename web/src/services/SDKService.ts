@@ -20,7 +20,7 @@ import type {
 	GetAccountsWithRolesRequest,
 	GetFactoryProxyConfigRequest,
 	GetListStableCoinRequest,
-	GetMultiSigTransactionsRequest,
+	GetTransactionsRequest,
 	GetProxyConfigRequest,
 	GetReserveAddressRequest,
 	GetReserveAmountRequest,
@@ -40,11 +40,11 @@ import type {
 	ReserveViewModel,
 	ResetSupplierAllowanceRequest,
 	RevokeMultiRolesRequest,
-	SignMultiSigTransactionRequest,
+	SignTransactionRequest,
 	StableCoinCapabilities,
 	StableCoinListViewModel,
 	StableCoinViewModel,
-	SubmitMultiSigTransactionRequest,
+	SubmitTransactionRequest,
 	SupportedWallets,
 	UpdateCustomFeesRequest,
 	UpdateRequest,
@@ -523,15 +523,15 @@ export class SDKService {
 		return await Factory.getHederaTokenManagerList(data);
 	}
 
-	public static async getMultiSigTransactions(data: GetMultiSigTransactionsRequest) {
+	public static async getMultiSigTransactions(data: GetTransactionsRequest) {
 		return await StableCoin.getTransactions(data);
 	}
 
-	public static async submitMultiSigTransaction(data: SubmitMultiSigTransactionRequest) {
+	public static async submitMultiSigTransaction(data: SubmitTransactionRequest) {
 		return await StableCoin.submitTransaction(data);
 	}
 
-	public static async signMultiSigTransaction(data: SignMultiSigTransactionRequest) {
+	public static async signMultiSigTransaction(data: SignTransactionRequest) {
 		return StableCoin.signTransaction(data);
 	}
 }

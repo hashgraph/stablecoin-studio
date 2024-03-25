@@ -52,7 +52,7 @@
 		"feesManagement": "Fees Management",
 		"settings": "Settings",
 		"appSettings": "Network settings",
-		"multiSigTransactions": "MultiSig Transactions"
+		"multiSigTransactions": "Multi-sig transactions"
 	},
 	"validations": {
 		"required": "This field is required",
@@ -63,6 +63,9 @@
 		"tokenIdNotExists": "Token {{ tokenId }} not exists",
 		"invalidOwner": "Invalid owner, is the current account owner",
 		"invalidFactoryOwner": "Invalid factory owner, is the current account factory owner"
+	},
+	"multiSig": {
+		"title": "Multi-sig transactions"
 	},
 	"operations": {
 		"title": "Operations"

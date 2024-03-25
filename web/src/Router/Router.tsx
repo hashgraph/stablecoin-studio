@@ -47,6 +47,7 @@ import FactorySettings from '../views/Settings/Factory';
 import ModalWalletConnect from '../components/ModalWalletConnect';
 import AppSettings from '../views/AppSettings';
 import { cleanLocalStorage } from '../utils/cleanStorage';
+import MultiSigTransactions from '../views/Multisig/MultisigTransactions';
 
 const LoginOverlayRoute = ({ show, loadingSC }: { show: boolean; loadingSC: boolean }) => {
 	return (
@@ -168,6 +169,10 @@ const Router = () => {
 							<Route
 								path={RoutesMappingUrl.getAccountsWithRoles}
 								element={<HandleRoles action='getAccountsWithRole' />}
+							/>
+							<Route
+								path={RoutesMappingUrl.multiSigTransactions}
+								element={<MultiSigTransactions />}
 							/>
 							<Route path={RoutesMappingUrl.giveRole} element={<HandleRoles action='giveRole' />} />
 							<Route path={RoutesMappingUrl.operations} element={<Operations />} />
