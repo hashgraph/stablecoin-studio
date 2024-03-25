@@ -48,6 +48,10 @@ combined : threshold 1/3, key list 3
 
 // 0.0.3739997
 key list 3
+
+// 0.0.3774578
+ * key list 2 (custodials)
+
  */
 
 /**
@@ -73,7 +77,7 @@ import {
 } from '@hashgraph/sdk';
 import { config } from 'dotenv';
 import { proto } from '@hashgraph/proto';
-import { hashgraph } from '@hashgraph/stablecoin-npm-contracts';
+import { HederaTokenManager__factory } from '@hashgraph/stablecoin-npm-contracts';
 import Injectable from '../../../src/core/Injectable';
 import {
 	AssociateTokenRequest,
@@ -86,6 +90,7 @@ import {
 	RequestPublicKey,
 	SignTransactionRequest,
 	StableCoin,
+	StableCoinRole,
 	StableCoinViewModel,
 	SubmitTransactionRequest,
 	SupportedWallets,
@@ -114,6 +119,9 @@ import Hex from '../../../src/core/Hex.js';
 import SetBackendRequest from '../../../src/port/in/request/SetBackendRequest.js';
 import * as fs from 'fs';
 import * as path from 'path';
+import { HTSTransactionBuilder } from '../../../src/port/out/hs/HTSTransactionBuilder.js';
+import Web3 from 'web3';
+import TransactionDescription from '../../../src/port/out/hs/multiSig/TransactionDescription.js';
 
 const MNEMONIC =
 	'point cactus sand length embark castle bulk process decade acoustic green either ozone tunnel lunar job project corn match topic energy attack ignore please';
@@ -174,19 +182,19 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 		FIREBLOCKS_SETTINGS.hederaAccountPublicKey,
 	);
 
-	const multisigAccountId = '0.0.3034';
-	const tokenId = '0.0.2894';
-	const hederaNetwork = 'previewnet';
-	const transactionId = '1ef40c37-1f65-4a1f-a0f2-f836009dcb71';
+	const multisigAccountId = '0.0.3774578';
+	const tokenId = '0.0.3774562';
+	const hederaNetwork = 'testnet';
+	const transactionId = 'd2b55ddf-7803-4625-9d07-3b9f323155e1';
 	const privateKey = PrivateKey.fromStringECDSA(
-		'3afd47ceaa327ec8e5379615766fcd288892ed8f2e6f521c4023ff31645d125e',
+		'3c8055953320b1001b93f6c99518ec0a1daf7210f1bb02dd11c64f3dec96fdb6',
 	);
-	const accountId = AccountId.fromString('0.0.1602');
-	const DFNSHederaAccountId = '0.0.2969';
-	const FIREBLOCKSHederaAccountId = '0.0.2970';
+	const accountId = AccountId.fromString('0.0.1328');
+	//const DFNSHederaAccountId = '0.0.2969';
+	//const FIREBLOCKSHederaAccountId = '0.0.2970';
 
-	// client = Client.forTestnet().setOperator(accountId, privateKey)
-	client = Client.forPreviewnet().setOperator(accountId, privateKey);
+	client = Client.forTestnet().setOperator(accountId, privateKey);
+	//client = Client.forPreviewnet().setOperator(accountId, privateKey);
 
 	beforeAll(async () => {
 		// mnemonic = await Mnemonic.fromString(MNEMONIC);
@@ -257,6 +265,44 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 			mnemonic.toStandardEd25519PrivateKey(undefined, 5),
 		]);*/
 	});
+
+	it('Contract Call description', async () => {
+		const functionName = 'grantRole';
+		const abi = HederaTokenManager__factory.abi;
+		const parameters = [
+			StableCoinRole.CASHIN_ROLE,
+			'0x0000000000000000000000000000000000399906',
+		];
+
+		const functionAbi = (abi as any).find(
+			(func: { name: any; type: string }) =>
+				func.name === functionName && func.type === 'function',
+		);
+
+		if (!functionAbi) {
+			const message = `Contract function ${functionName} not found in ABI, are you using the right version?`;
+			throw new Error(message);
+		}
+
+		const web3 = new Web3();
+
+		const encodedParametersHex = web3.eth.abi
+			.encodeFunctionCall(functionAbi, parameters)
+			.slice(2);
+
+		const functionCallParameters = Buffer.from(encodedParametersHex, 'hex');
+
+		const transaction: Transaction =
+			HTSTransactionBuilder.buildContractExecuteTransaction(
+				'0.0.3774708',
+				functionCallParameters,
+				0,
+			);
+
+		const desc = TransactionDescription.getDescription(transaction);
+
+		expect(true).toBe(true);
+	}, 80_000);
 
 	it('Multisig should associate a token', async () => {
 		const result = await StableCoin.associate(
@@ -350,7 +396,7 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 	}, 80_000);
 
 	it('Custodials should sign a transaction', async () => {
-		dfnsSettings.hederaAccountId = DFNSHederaAccountId;
+		//dfnsSettings.hederaAccountId = DFNSHederaAccountId;
 		//fireblocksSettings.hederaAccountId = FIREBLOCKSHederaAccountId;
 
 		await Network.connect(
@@ -371,7 +417,7 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 			}),
 		);
 
-		/* await Network.connect(
+		await Network.connect(
 			new ConnectRequest({
 				network: hederaNetwork,
 				wallet: SupportedWallets.FIREBLOCKS,
@@ -387,7 +433,7 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 			new SignTransactionRequest({
 				transactionId: transactionId,
 			}),
-		);*/
+		);
 
 		expect(true).toBe(true);
 	}, 80_000);
@@ -427,7 +473,7 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 
 		const keyList = KeyList.of(
 			signerKeysCustodials[0],
-			signerKeysCustodials[0],
+			signerKeysCustodials[1],
 		);
 
 		const newAccountTx = new AccountCreateTransaction().setKey(keyList);
