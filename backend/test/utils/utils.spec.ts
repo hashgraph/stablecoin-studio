@@ -39,11 +39,6 @@ const ECDSA_SECP256K1 = {
     'a8d5fff76455e40a0bf7d0b821849829c54e24c75f4498178ade1aa37a05f88edb911a37a9654a73e2db045c62e3b77fa450a39816de0cd481b721ee7cdc95e7',
 };
 
-const INVALID_SIGNATURE = {
-  publicKey: 'C676E0B88E6BD90CC975D0B8AF47D898F34336F393027B8F9474B2B26D771D11',
-  signature:
-    '3044022003402794e20db98496d2ed4735c2ff9cac11b69ae0c4dc14644c0e5271a4a14b02203fa0152c3d5b1904ee804eef4a76bdb0471bd73a0c131448c4eab1184bed1cbc',
-};
 
 describe('verifySignature function', () => {
   it('should verify a valid ED25519 signature correctly', () => {
@@ -65,9 +60,9 @@ describe('verifySignature function', () => {
   it('should return false for an invalid signature', () => {
     expect(
       verifySignature(
-        INVALID_SIGNATURE.publicKey,
+        ECDSA_SECP256K1.publicKey,
         HEX_TEST_MESSAGE,
-        INVALID_SIGNATURE.signature,
+        ECDSA_SECP256K1.signature,
       ),
     ).toBe(false);
   });
