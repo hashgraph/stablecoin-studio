@@ -18,7 +18,7 @@
  *
  */
 
-import nacl from 'tweetnacl';
+import * as nacl from 'tweetnacl';
 import * as elliptic from 'elliptic';
 import { keccak256 } from 'ethereum-cryptography/keccak';
 import { Transaction } from '@hashgraph/sdk';
