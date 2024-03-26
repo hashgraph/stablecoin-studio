@@ -23,7 +23,7 @@ import { ConfigService } from '@nestjs/config';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import TransactionService from '../../src/transaction/transaction.service';
-import Transaction  from '../../src/transaction/transaction.entity';
+import Transaction from '../../src/transaction/transaction.entity';
 import { SignTransactionRequestDto } from '../../src/transaction/dto/sign-transaction-request.dto';
 import TransactionMock, { DEFAULT } from './transaction.mock';
 import { LoggerService } from '../../src/logger/logger.service';
@@ -82,7 +82,7 @@ describe('Transaction Service Test', () => {
         hedera_account_id: pendingTransaction.hedera_account_id,
         key_list: pendingTransaction.key_list,
         threshold: pendingTransaction.threshold,
-        network: pendingTransaction.network
+        network: pendingTransaction.network,
       };
 
       const expected = TransactionMock.txPending0();
@@ -105,7 +105,7 @@ describe('Transaction Service Test', () => {
         hedera_account_id: pendingTransaction.hedera_account_id,
         key_list: pendingTransaction.key_list,
         threshold: pendingTransaction.threshold,
-        network: pendingTransaction.network
+        network: pendingTransaction.network,
       };
 
       const expected = TransactionMock.txPending0({
@@ -229,18 +229,20 @@ describe('Transaction Service Test', () => {
 
       const result = await service.getById(transaction.id);
 
-      expect(result).toEqual(expect.objectContaining({
-        id: transaction.id,
-        transaction_message: transaction.transaction_message,
-        description: transaction.description,
-        status: transaction.status,
-        threshold: transaction.threshold,
-        // hedera_account_id is not returned
-        key_list: transaction.key_list,
-        signed_keys: transaction.signed_keys,
-        signatures: transaction.signatures,
-        network: transaction.network,
-      }));
+      expect(result).toEqual(
+        expect.objectContaining({
+          id: transaction.id,
+          transaction_message: transaction.transaction_message,
+          description: transaction.description,
+          status: transaction.status,
+          threshold: transaction.threshold,
+          // hedera_account_id is not returned
+          key_list: transaction.key_list,
+          signed_keys: transaction.signed_keys,
+          signatures: transaction.signatures,
+          network: transaction.network,
+        }),
+      );
     });
   });
 });
