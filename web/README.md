@@ -64,7 +64,7 @@ Copy the provided `.env.sample` to `.env` and edit as necessary.
 The ENV file contains the following parameters:
 
 - **REACT_APP_LOG_LEVEL**: defines the log level the application is going to apply to filter the logs been displayed in the browser's console. The default value is "ERROR".
-- **REACT_APP_FACTORIES**: This var is only required if you want to create a new stablecoin. The var must be a JSON array with a factory id in Hedera format `0.0.XXXXX` per environment. Regarding this, your can find the factories's contract ids depending on the Stablecoin Studio versión [here](./../FACTORY_VERSION.md).
+- **REACT_APP_FACTORIES**: This var is only required if you want to create a new stablecoin. The var must be a JSON array with a factory proxy id in Hedera format `0.0.XXXXX` per environment. Regarding this, your can find the factories proxy's contract ids depending on the Stablecoin Studio versión [here](./../FACTORY_VERSION.md).
 - **REACT_APP_MIRROR_NODE**: This var is required if you want to create a new stablecoin. The var must be a unique mirror node service for each Hedera network, and this is the service which would be used when the UI starts. The service is configured by the environment and the base url properties, and, optionally, can also have an api key and a http header through which the api key is provided.
 - **REACT_APP_RPC_NODE**: This var is required if you want to create a new stablecoin. The var must be a unique rpc node service for Hedera network, and this is the service which would be used when the UI starts. The service is configured using the same properties than the mirror node. You can check the available JSON-RPC relays [here](https://github.com/hashgraph/stablecoin-studio/blob/main/README.md#JSON-RPC-Relays).
 

@@ -1,6 +1,6 @@
 {
     "name": "@hashgraph/stablecoin-npm-contracts",
-    "version": "1.16.0",
+    "version": "1.17.0",
     "description": "",
     "main": "./build/typechain-types/index.js",
     "module": "./build/typechain-types/index.js",
@@ -86,7 +86,7 @@
         "prepack": "npm run compile:force"
     },
     "author": "",
-    "license": "ISC",
+    "license": "Apache-2.0",
     "devDependencies": {
         "@chainlink/contracts": "^0.5.1",
         "@hashgraph/hardhat-hethers": "1.0.3",

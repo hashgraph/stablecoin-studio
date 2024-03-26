@@ -112,7 +112,7 @@ const Review = (props: ReviewProps) => {
 		roleValue: { value: number; label: string },
 		keyValue: { value: number; label: string },
 	) => {
-		if (isKycRequired || (keyValue && keyValue.value === 2)) {
+		if (isKycRequired && keyValue && keyValue.value === 2) {
 			setRoleAccountInfo(label, roleValue);
 		}
 	};

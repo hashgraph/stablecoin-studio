@@ -1,8 +1,8 @@
 {
   "name": "accelerator-service",
-  "version": "1.16.0",
+  "version": "1.17.0",
   "description": "Accelerator integration with OZ Defenders",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "devDependencies": {
     "@openzeppelin/defender-as-code": "^2.0.0",
     "serverless": "^3.20.0"
