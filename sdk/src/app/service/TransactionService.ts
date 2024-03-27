@@ -30,6 +30,7 @@ import Service from './Service.js';
 import { BladeTransactionAdapter } from '../../port/out/hs/blade/BladeTransactionAdapter.js';
 import { FireblocksTransactionAdapter } from '../../port/out/hs/hts/custodial/FireblocksTransactionAdapter';
 import { DFNSTransactionAdapter } from '../../port/out/hs/hts/custodial/DFNSTransactionAdapter';
+import { MultiSigTransactionAdapter } from '../../port/out/hs/multiSig/MultiSigTransactionAdapter.js';
 
 @singleton()
 export default class TransactionService extends Service {
@@ -67,6 +68,8 @@ export default class TransactionService extends Service {
 				return Injectable.resolve(FireblocksTransactionAdapter);
 			case SupportedWallets.DFNS:
 				return Injectable.resolve(DFNSTransactionAdapter);
+			case SupportedWallets.MULTISIG:
+				return Injectable.resolve(MultiSigTransactionAdapter);
 			default:
 				return Injectable.resolve(HTSTransactionAdapter);
 		}

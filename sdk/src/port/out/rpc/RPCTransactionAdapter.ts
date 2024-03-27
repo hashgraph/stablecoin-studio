@@ -1540,26 +1540,6 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					);
 					return response;
 
-				/* case Decision.HTS:
-					if (!coin.coin.evmProxyAddress?.toString())
-						throw new Error(
-							`StableCoin ${coin.coin.name} does not have a proxy address`,
-						);
-					if (!coin.coin.tokenId)
-						throw new Error(
-							`StableCoin ${coin.coin.name}  does not have an underlying token`,
-						);
-					response = await this.performHTSOperation(
-						coin,
-						operation,
-						params,
-					);
-					this.logTransaction(
-						response.id ?? '',
-						this.networkService.environment,
-					);
-					return response; */
-
 				default:
 					const tokenId = coin.coin.tokenId
 						? coin.coin.tokenId.value
@@ -1759,6 +1739,13 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					`Operation not implemented through Smart Contracts`,
 				);
 		}
+	}
+
+	sign(message: string): Promise<string> {
+		if (!(this.signerOrProvider instanceof Signer))
+			throw new Error('RPC instance is not a Signer.');
+
+		return this.signerOrProvider.signMessage(message);
 	}
 
 	/* private async performHTSOperation(

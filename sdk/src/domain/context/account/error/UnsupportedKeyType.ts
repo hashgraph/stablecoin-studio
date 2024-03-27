@@ -18,20 +18,13 @@
  *
  */
 
-import Account from '../account/Account.js';
+import BaseError, { ErrorCode } from '../../../../core/error/BaseError.js';
 
-export enum SupportedWallets {
-	METAMASK = 'Metamask',
-	HASHPACK = 'HashPack',
-	CLIENT = 'Client',
-	BLADE = 'Blade',
-	FIREBLOCKS = 'Fireblocks',
-	DFNS = 'DFNS',
-	MULTISIG = 'MultiSig',
-}
-
-export default interface Wallet {
-	type: SupportedWallets;
-	account: Account;
-	// Events...
+export class UnsupportedKeyType extends BaseError {
+	constructor(val: unknown) {
+		super(
+			ErrorCode.UnsupportedKeyType,
+			`the retrieved key type is not supported: ${val}`,
+		);
+	}
 }

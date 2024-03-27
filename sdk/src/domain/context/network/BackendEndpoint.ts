@@ -18,20 +18,10 @@
  *
  */
 
-import Account from '../account/Account.js';
+export default class BackendEndpoint {
+	url: string;
 
-export enum SupportedWallets {
-	METAMASK = 'Metamask',
-	HASHPACK = 'HashPack',
-	CLIENT = 'Client',
-	BLADE = 'Blade',
-	FIREBLOCKS = 'Fireblocks',
-	DFNS = 'DFNS',
-	MULTISIG = 'MultiSig',
-}
-
-export default interface Wallet {
-	type: SupportedWallets;
-	account: Account;
-	// Events...
+	constructor(url: string) {
+		this.url = url;
+	}
 }

@@ -18,20 +18,13 @@
  *
  */
 
-import Account from '../account/Account.js';
+import ValidatedRequest from './validation/ValidatedRequest.js';
 
-export enum SupportedWallets {
-	METAMASK = 'Metamask',
-	HASHPACK = 'HashPack',
-	CLIENT = 'Client',
-	BLADE = 'Blade',
-	FIREBLOCKS = 'Fireblocks',
-	DFNS = 'DFNS',
-	MULTISIG = 'MultiSig',
-}
+export default class SignTransactionRequest extends ValidatedRequest<SignTransactionRequest> {
+	transactionId: string;
 
-export default interface Wallet {
-	type: SupportedWallets;
-	account: Account;
-	// Events...
+	constructor({ transactionId }: { transactionId: string }) {
+		super({});
+		this.transactionId = transactionId;
+	}
 }

@@ -65,6 +65,7 @@ import { HashpackTransactionResponseAdapter } from '../hashpack/HashpackTransact
 import { QueryBus } from '../../../../core/query/QueryBus.js';
 import { AccountIdNotValid } from '../../../../domain/context/account/error/AccountIdNotValid.js';
 import { GetAccountInfoQuery } from '../../../../app/usecase/query/account/info/GetAccountInfoQuery.js';
+import Hex from '../../../../core/Hex.js';
 
 @singleton()
 export class BladeTransactionAdapter extends HederaTransactionAdapter {
@@ -252,6 +253,7 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 			throw new SigningError(error);
 		}
 	}
+
 	public async restart(network: string): Promise<void> {
 		await this.stop();
 		await this.init(network);
@@ -276,5 +278,24 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 			publicKey: account.publicKey,
 			evmAddress: account.accountEvmAddress,
 		});
+	}
+
+	async sign(message: string | Transaction): Promise<string> {
+		if (!this.signer) throw new SigningError('Signer is empty');
+		if (!(message instanceof Transaction))
+			throw new SigningError(
+				'Blade must sign a transaction not a string',
+			);
+
+		try {
+			const signed_Transaction = await this.signer.signTransaction(
+				message,
+			);
+
+			return Hex.fromUint8Array(signed_Transaction.toBytes());
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(error);
+		}
 	}
 }
