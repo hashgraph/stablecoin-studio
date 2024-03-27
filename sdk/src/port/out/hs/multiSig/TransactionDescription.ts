@@ -43,7 +43,12 @@ import {
 	CustomFractionalFee,
 	CustomFixedFee,
 } from '@hashgraph/sdk';
-import { HederaTokenManager__factory } from '@hashgraph/stablecoin-npm-contracts';
+import {
+	HederaTokenManager__factory,
+	ProxyAdmin__factory,
+	Proxy__factory,
+	StableCoinProxyAdmin__factory,
+} from '@hashgraph/stablecoin-npm-contracts';
 import { ethers } from 'ethers';
 
 import Web3 from 'web3';
@@ -77,9 +82,7 @@ export default class TransactionDescription {
 					);
 				}
 
-				return `Calling contract ${contractId?.toSolidityAddress()}. Function : ${
-					decodedFunctionParameters.name
-				}, Arguments : ${args}}`;
+				return `Calling contract ${contractId?.shard}.${contractId?.realm}.${contractId?.num}. Function : ${decodedFunctionParameters.name}, Arguments : ${args}}`;
 			} else if (t instanceof TokenWipeTransaction) {
 				const tokenId = (t as TokenWipeTransaction).tokenId;
 				const accountId = (t as TokenWipeTransaction).accountId;
@@ -222,10 +225,35 @@ export default class TransactionDescription {
 	private static decodeFunctionCall(
 		parameters: Uint8Array,
 	): ethers.utils.TransactionDescription {
-		const iface = new ethers.utils.Interface(
-			HederaTokenManager__factory.abi,
-		);
 		const inputData = '0x' + Hex.fromUint8Array(parameters);
-		return iface.parseTransaction({ data: inputData });
+
+		try {
+			const iface_tokenManager = new ethers.utils.Interface(
+				HederaTokenManager__factory.abi,
+			);
+			return iface_tokenManager.parseTransaction({ data: inputData });
+		} catch (e) {
+			// nothing
+		}
+		try {
+			const iface_ProxyAdmin = new ethers.utils.Interface(
+				ProxyAdmin__factory.abi,
+			);
+			return iface_ProxyAdmin.parseTransaction({ data: inputData });
+		} catch (e) {
+			// nothing
+		}
+		try {
+			const iface_StableCoinProxyAdmin = new ethers.utils.Interface(
+				StableCoinProxyAdmin__factory.abi,
+			);
+			return iface_StableCoinProxyAdmin.parseTransaction({
+				data: inputData,
+			});
+		} catch (e) {
+			// nothing
+		}
+		const iface_Proxy = new ethers.utils.Interface(Proxy__factory.abi);
+		return iface_Proxy.parseTransaction({ data: inputData });
 	}
 }
