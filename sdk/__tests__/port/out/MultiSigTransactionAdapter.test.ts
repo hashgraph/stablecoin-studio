@@ -33,7 +33,6 @@ import {
 	ConnectRequest,
 	CreateRequest,
 	InitializationRequest,
-	KYCRequest,
 	LoggerTransports,
 	Network,
 	SDK,
@@ -69,7 +68,7 @@ import SetBackendRequest from '../../../src/port/in/request/SetBackendRequest.js
 const decimals = 6;
 const initialSupply = 1000;
 const maxSupply = 1000000;
-const multisigAccountId = '0.0.3792838';
+let multisigAccountId = '0.0.3792838';
 const hederaNetwork = 'testnet';
 const StableCoinSC_Name = 'TEST_MULTISIG_SC';
 const StableCoinSC_Symbol = 'TEST_M_SC';
@@ -81,6 +80,81 @@ let signerKeys: PrivateKey[];
 
 describe('🧪 MultiSigTransactionAdapter test', () => {
 	let stableCoinSC: StableCoinViewModel;
+
+	const multisig_signing_submit = async (
+		accounts: any[],
+		transactionId: string,
+	): Promise<boolean> => {
+		for (const account of accounts) {
+			await Network.connect(
+				new ConnectRequest({
+					account: {
+						accountId: account.id.toString(),
+						privateKey: {
+							key: account.privateKey?.key ?? '',
+							type: account.privateKey?.type ?? '',
+						},
+					},
+					network: hederaNetwork,
+					wallet: SupportedWallets.CLIENT,
+					mirrorNode: mirrorNode,
+					rpcNode: rpcNode,
+				}),
+			);
+
+			Injectable.resolveTransactionHandler();
+
+			await StableCoin.signTransaction(
+				new SignTransactionRequest({
+					transactionId: transactionId,
+				}),
+			);
+		}
+
+		return await StableCoin.submitTransaction(
+			new SubmitTransactionRequest({
+				transactionId: transactionId,
+			}),
+		);
+	};
+
+	const deploy_multisig_account = async (): Promise<void> => {
+		signerKeys = [
+			CLIENT_ACCOUNT_ECDSA.privateKey!.toHashgraphKey(),
+			CLIENT_ACCOUNT_ED25519.privateKey!.toHashgraphKey(),
+		];
+
+		const keyList = KeyList.of(
+			signerKeys[0].publicKey,
+			signerKeys[1].publicKey,
+		);
+
+		const newAccountTx = new AccountCreateTransaction().setKey(keyList);
+
+		const client = Client.forTestnet().setOperator(
+			AccountId.fromString(CLIENT_ACCOUNT_ECDSA.id.toString()),
+			PrivateKey.fromStringECDSA(
+				CLIENT_ACCOUNT_ECDSA.privateKey!.key.toString(),
+			),
+		);
+
+		const newAccountResponse = await newAccountTx.execute(client);
+
+		await delay();
+
+		// Get receipt
+		const newAccountReceipt = await newAccountResponse.getReceipt(client);
+		// Get the account ID
+		const newAccountId = newAccountReceipt.accountId;
+
+		multisigAccountId = newAccountId!.toString();
+
+		const newTransferTx = new TransferTransaction()
+			.addHbarTransfer(CLIENT_ACCOUNT_ECDSA.id.toString(), new Hbar(-100))
+			.addHbarTransfer(newAccountId!, new Hbar(100));
+
+		await newTransferTx.execute(client);
+	};
 
 	const delay = async (seconds = 5): Promise<void> => {
 		seconds = seconds * 1000;
@@ -124,41 +198,7 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 
 		// Deploy MultiSig account
 
-		/* signerKeys = [
-			CLIENT_ACCOUNT_ECDSA.privateKey!.toHashgraphKey(),
-			CLIENT_ACCOUNT_ED25519.privateKey!.toHashgraphKey(),
-		];
-
-		const keyList = KeyList.of(
-			signerKeys[0].publicKey,
-			signerKeys[1].publicKey,
-		);
-
-		const newAccountTx = new AccountCreateTransaction().setKey(keyList);
-		
-		const client = Client.forTestnet().setOperator(
-			AccountId.fromString(CLIENT_ACCOUNT_ECDSA.id.toString()),
-			PrivateKey.fromStringECDSA(
-				CLIENT_ACCOUNT_ECDSA.privateKey!.key.toString(),
-			),
-		);
-
-		const newAccountResponse = await newAccountTx.execute(client);
-
-		await delay();
-
-		// Get receipt
-		const newAccountReceipt = await newAccountResponse.getReceipt(client);
-		// Get the account ID
-		const newAccountId = newAccountReceipt.accountId;
-
-		multisigAccountId = newAccountId!.toString();
-
-		const newTransferTx = new TransferTransaction()
-			.addHbarTransfer(CLIENT_ACCOUNT_ECDSA.id.toString(), new Hbar(-100))
-			.addHbarTransfer(newAccountId!, new Hbar(100));
-
-		await newTransferTx.execute(client); */
+		// await deploy_multisig_account();
 
 		// Deploy StableCoin
 
@@ -268,62 +308,9 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 
 		const transactionId = transactionIds[0].id;
 
-		let account = CLIENT_ACCOUNT_ECDSA;
-
-		await Network.connect(
-			new ConnectRequest({
-				account: {
-					accountId: account.id.toString(),
-					privateKey: {
-						key: account.privateKey?.key ?? '',
-						type: account.privateKey?.type ?? '',
-					},
-				},
-				network: hederaNetwork,
-				wallet: SupportedWallets.CLIENT,
-				mirrorNode: mirrorNode,
-				rpcNode: rpcNode,
-			}),
-		);
-
-		Injectable.resolveTransactionHandler();
-
-		await StableCoin.signTransaction(
-			new SignTransactionRequest({
-				transactionId: transactionId,
-			}),
-		);
-
-		account = CLIENT_ACCOUNT_ED25519;
-
-		await Network.connect(
-			new ConnectRequest({
-				account: {
-					accountId: account.id.toString(),
-					privateKey: {
-						key: account.privateKey?.key ?? '',
-						type: account.privateKey?.type ?? '',
-					},
-				},
-				network: hederaNetwork,
-				wallet: SupportedWallets.CLIENT,
-				mirrorNode: mirrorNode,
-				rpcNode: rpcNode,
-			}),
-		);
-
-		Injectable.resolveTransactionHandler();
-
-		await StableCoin.signTransaction(
-			new SignTransactionRequest({
-				transactionId: transactionId,
-			}),
-		);
-
-		const result = await StableCoin.submitTransaction(
-			new SubmitTransactionRequest({
-				transactionId: transactionId,
-			}),
+		const result = await multisig_signing_submit(
+			[CLIENT_ACCOUNT_ECDSA, CLIENT_ACCOUNT_ED25519],
+			transactionId,
 		);
 
 		expect(result).toBe(true);
