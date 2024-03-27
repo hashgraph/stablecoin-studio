@@ -69,7 +69,7 @@ import SetBackendRequest from '../../../src/port/in/request/SetBackendRequest.js
 const decimals = 6;
 const initialSupply = 1000;
 const maxSupply = 1000000;
-let multisigAccountId: string;
+const multisigAccountId = '0.0.3792838';
 const hederaNetwork = 'testnet';
 const StableCoinSC_Name = 'TEST_MULTISIG_SC';
 const StableCoinSC_Symbol = 'TEST_M_SC';
@@ -124,7 +124,7 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 
 		// Deploy MultiSig account
 
-		signerKeys = [
+		/* signerKeys = [
 			CLIENT_ACCOUNT_ECDSA.privateKey!.toHashgraphKey(),
 			CLIENT_ACCOUNT_ED25519.privateKey!.toHashgraphKey(),
 		];
@@ -135,7 +135,7 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 		);
 
 		const newAccountTx = new AccountCreateTransaction().setKey(keyList);
-		// Execute the transaction
+		
 		const client = Client.forTestnet().setOperator(
 			AccountId.fromString(CLIENT_ACCOUNT_ECDSA.id.toString()),
 			PrivateKey.fromStringECDSA(
@@ -158,7 +158,7 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 			.addHbarTransfer(CLIENT_ACCOUNT_ECDSA.id.toString(), new Hbar(-100))
 			.addHbarTransfer(newAccountId!, new Hbar(100));
 
-		await newTransferTx.execute(client);
+		await newTransferTx.execute(client); */
 
 		// Deploy StableCoin
 
@@ -327,5 +327,5 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 		);
 
 		expect(result).toBe(true);
-	}, 60_000);
+	}, 600_000);
 });

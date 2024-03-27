@@ -157,7 +157,7 @@ export class BackendAdapter {
 				network: network,
 			};
 
-			const response = await this.httpClient.get(`${publicKey}`, {
+			const response = await this.httpClient.get('', {
 				params: queryParams,
 			});
 
