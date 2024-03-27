@@ -157,7 +157,7 @@ export class BackendAdapter {
 				network: network,
 			};
 
-			const response = await this.httpClient.get(`${publicKey}`, {
+			const response = await this.httpClient.get('', {
 				params: queryParams,
 			});
 
@@ -171,11 +171,12 @@ export class BackendAdapter {
 
 				const returnedTrx = response.data;
 
-				returnedTrx.array.forEach(
-					(transaction: MultiSigTransaction) => {
-						transactions.push(transaction);
-					},
-				);
+				if (returnedTrx && returnedTrx.items)
+					returnedTrx.items.forEach(
+						(transaction: MultiSigTransaction) => {
+							transactions.push(transaction);
+						},
+					);
 
 				return transactions;
 			} else
