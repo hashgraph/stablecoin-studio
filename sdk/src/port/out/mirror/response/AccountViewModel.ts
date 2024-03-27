@@ -19,6 +19,7 @@
  */
 
 import { QueryResponse } from '../../../../core/query/QueryResponse.js';
+import MultiKey from '../../../../domain/context/account/MultiKey.js';
 import PublicKey from '../../../../domain/context/account/PublicKey.js';
 
 export default interface AccountViewModel extends QueryResponse {
@@ -26,4 +27,5 @@ export default interface AccountViewModel extends QueryResponse {
 	accountEvmAddress?: string;
 	publicKey?: PublicKey;
 	alias?: string;
+	multiKey?: MultiKey;
 }

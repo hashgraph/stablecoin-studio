@@ -48,6 +48,7 @@ import {
 } from '../../../../../app/service/event/WalletEvent';
 import Injectable from '../../../../../core/Injectable';
 import { TransactionType } from '../../../TransactionResponseEnums';
+import Hex from '../../../../../core/Hex.js';
 
 export abstract class CustodialTransactionAdapter extends HederaTransactionAdapter {
 	protected client: Client;
@@ -73,6 +74,9 @@ export abstract class CustodialTransactionAdapter extends HederaTransactionAdapt
 				break;
 			case 'mainnet':
 				this.client = Client.forMainnet();
+				break;
+			case 'previewnet':
+				this.client = Client.forPreviewnet();
 				break;
 			default:
 				throw new Error('Network not supported');
@@ -104,6 +108,7 @@ export abstract class CustodialTransactionAdapter extends HederaTransactionAdapt
 			const txResponse: HTransactionResponse = await transaction.execute(
 				this.client,
 			);
+
 			this.logTransaction(
 				txResponse.transactionId.toString(),
 				this.networkService.environment,
@@ -177,5 +182,26 @@ export abstract class CustodialTransactionAdapter extends HederaTransactionAdapt
 
 	public getAccount(): Account {
 		return this.account;
+	}
+
+	async sign(message: string): Promise<string> {
+		if (!this.custodialWalletService)
+			throw new SigningError('Custodial Wallet is empty');
+
+		try {
+			const encoded_message: Uint8Array = Hex.toUint8Array(message);
+			const encoded_signed_message = await this.signingService(
+				encoded_message,
+			);
+
+			const hexArray = Array.from(encoded_signed_message, (byte) =>
+				('0' + byte.toString(16)).slice(-2),
+			);
+
+			return hexArray.join('');
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(error);
+		}
 	}
 }

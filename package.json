@@ -1,6 +1,6 @@
 {
   "name": "hedera-stable-coin",
-  "version": "1.17.0",
+  "version": "1.18.0",
   "description": "stablecoin studio",
   "scripts": {
     "install": "node install.js && npm run build:cli:full && npm run prepare",

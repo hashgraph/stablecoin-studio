@@ -51,6 +51,9 @@ import {
 } from '../../in/request/BaseRequest.js';
 import { MirrorNode } from '../../../domain/context/network/MirrorNode.js';
 import ContractViewModel from '../../out/mirror/response/ContractViewModel.js';
+import MultiKey from '../../../domain/context/account/MultiKey.js';
+
+const PROTOBUF_ENCODED = 'ProtobufEncoded';
 
 @singleton()
 export class MirrorNodeAdapter {
@@ -359,13 +362,18 @@ export class MirrorNodeAdapter {
 				alias: res.data.alias,
 			};
 
-			if (res.data.key)
-				account.publicKey = new PublicKey({
-					key: res.data.key ? res.data.key.key : undefined,
-					type: res.data.key
-						? (res.data.key._type as KeyType)
-						: undefined,
-				});
+			if (res.data.key) {
+				if (res.data.key._type != PROTOBUF_ENCODED) {
+					account.publicKey = new PublicKey({
+						key: res.data.key ? res.data.key.key : undefined,
+						type: res.data.key
+							? (res.data.key._type as KeyType)
+							: undefined,
+					});
+				} else {
+					account.multiKey = MultiKey.fromProtobuf(res.data.key.key);
+				}
+			}
 
 			return account;
 		} catch (error) {

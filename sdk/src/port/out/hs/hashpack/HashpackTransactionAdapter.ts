@@ -70,6 +70,7 @@ import { HederaId } from '../../../../domain/context/shared/HederaId.js';
 import { QueryBus } from '../../../../core/query/QueryBus.js';
 import { AccountIdNotValid } from '../../../../domain/context/account/error/AccountIdNotValid.js';
 import { GetAccountInfoQuery } from '../../../../app/usecase/query/account/info/GetAccountInfoQuery.js';
+import Hex from '../../../../core/Hex.js';
 
 @singleton()
 export class HashpackTransactionAdapter extends HederaTransactionAdapter {
@@ -421,5 +422,24 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 			publicKey: account.publicKey,
 			evmAddress: account.accountEvmAddress,
 		});
+	}
+
+	async sign(message: string | Transaction): Promise<string> {
+		if (!this.signer) throw new SigningError('Signer is empty');
+		if (!(message instanceof Transaction))
+			throw new SigningError(
+				'Hashpack must sign a transaction not a string',
+			);
+
+		try {
+			const signed_Transaction = await this.signer.signTransaction(
+				message,
+			);
+
+			return Hex.fromUint8Array(signed_Transaction.toBytes());
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(error);
+		}
 	}
 }
