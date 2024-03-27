@@ -108,6 +108,18 @@ export const RPC_NODE = {
 	baseUrl: process.env.RPC_NODE_BASE_URL ?? 'https://testnet.hashio.io/api',
 };
 
+/*export const MIRROR_NODE = {
+	name: 'previewMirrorNode',
+	baseUrl:
+		process.env.MIRROR_NODE_BASE_URL ??
+		'https://previewnet.mirrornode.hedera.com/api/v1/',
+};
+export const RPC_NODE = {
+	name: 'previewrpcNode',
+	baseUrl:
+		process.env.RPC_NODE_BASE_URL ?? 'https://previewnet.hashio.io/api',
+};*/
+
 export const FIREBLOCKS_SETTINGS = {
 	apiKey: process.env.FIREBLOCKS_API_KEY ?? '',
 	apiSecretKeyPath: process.env.FIREBLOCKS_API_SECRET_KEY_PATH ?? '',

@@ -20,9 +20,11 @@
 
 import { singleton } from 'tsyringe';
 import axios, { AxiosInstance } from 'axios';
-import BackendTransaction from '../../../domain/context/transaction/BackendTransaction.js';
+import MultiSigTransaction from '../../../domain/context/transaction/MultiSigTransaction.js';
 import { BackendError } from './error/BackendError.js';
 import BackendEndpoint from '../../../domain/context/network/BackendEndpoint.js';
+import Injectable from '../../../core/Injectable.js';
+import { Environment } from '../../../domain/context/network/Environment.js';
 
 @singleton()
 export class BackendAdapter {
@@ -45,6 +47,7 @@ export class BackendAdapter {
 		HederaAccountId: string,
 		keyList: string[],
 		threshold: number,
+		network: Environment,
 	): Promise<string> {
 		try {
 			const body = {
@@ -53,9 +56,14 @@ export class BackendAdapter {
 				hedera_account_id: HederaAccountId,
 				key_list: keyList,
 				threshold: threshold,
+				network: network,
 			};
 
-			const response = await this.httpClient.post('', body);
+			const response = await this.httpClient.post(
+				'',
+				body,
+				this.configureHeaders(),
+			);
 
 			if (response.status == 201) {
 				if (!response.data)
@@ -112,7 +120,10 @@ export class BackendAdapter {
 
 	public async deleteTransaction(transactionId: string): Promise<void> {
 		try {
-			const response = await this.httpClient.delete(`${transactionId}`);
+			const response = await this.httpClient.delete(
+				`${transactionId}`,
+				this.configureHeaders(),
+			);
 
 			if (response.status == 200) return;
 			else
@@ -135,12 +146,15 @@ export class BackendAdapter {
 		page: number,
 		limit: number,
 		status: string,
-	): Promise<BackendTransaction[]> {
+		network: Environment,
+	): Promise<MultiSigTransaction[]> {
 		try {
 			const queryParams = {
+				publicKey: publicKey,
 				page: page,
 				limit: limit,
 				status: status,
+				network: network,
 			};
 
 			const response = await this.httpClient.get(`${publicKey}`, {
@@ -150,21 +164,23 @@ export class BackendAdapter {
 			if (response.status == 200) {
 				if (!response.data)
 					throw new BackendError(
-						`get transaction api call succeeded but returned no data....`,
+						`get transactions by public key api call succeeded but returned no data....`,
 					);
 
-				const transactions: BackendTransaction[] = [];
+				const transactions: MultiSigTransaction[] = [];
 
 				const returnedTrx = response.data;
 
-				returnedTrx.array.forEach((transaction: BackendTransaction) => {
-					transactions.push(transaction);
-				});
+				returnedTrx.array.forEach(
+					(transaction: MultiSigTransaction) => {
+						transactions.push(transaction);
+					},
+				);
 
 				return transactions;
 			} else
 				throw new BackendError(
-					`get transactions api call returned error ${response.status}, ${response.statusText}`,
+					`get transactions by public key api call returned error ${response.status}, ${response.statusText}`,
 				);
 		} catch (error) {
 			if (error instanceof BackendError) {
@@ -179,9 +195,21 @@ export class BackendAdapter {
 
 	public async getTransaction(
 		transactionId: string,
-	): Promise<BackendTransaction> {
+	): Promise<MultiSigTransaction> {
 		try {
-			throw new Error('not implemented');
+			const response = await this.httpClient.get(`${transactionId}`);
+
+			if (response.status == 200) {
+				if (!response.data)
+					throw new BackendError(
+						`get transaction by transaction id api call succeeded but returned no data....`,
+					);
+
+				return response.data;
+			} else
+				throw new BackendError(
+					`get transaction by transaction id api call returned error ${response.status}, ${response.statusText}`,
+				);
 		} catch (error) {
 			if (error instanceof BackendError) {
 				throw error;
@@ -191,5 +219,21 @@ export class BackendAdapter {
 				);
 			}
 		}
+	}
+
+	private configureHeaders(): any {
+		const originHeaderValue = !Injectable.isWeb()
+			? 'http://localhost:3000'
+			: undefined;
+
+		const config = {
+			headers: {} as { [key: string]: string | undefined }, // Type assertion
+		};
+
+		if (originHeaderValue) {
+			config.headers['Origin'] = originHeaderValue;
+		}
+
+		return config;
 	}
 }

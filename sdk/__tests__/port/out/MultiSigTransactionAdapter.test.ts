@@ -18,32 +18,6 @@
  *
  */
 
-import {
-	Client,
-	AccountId,
-	PrivateKey,
-	Mnemonic,
-	AccountCreateTransaction,
-	PublicKey,
-	TransactionResponse,
-	TransactionReceipt,
-	TransferTransaction,
-	Transaction,
-	TransactionId,
-	KeyList,
-} from '@hashgraph/sdk';
-import { config } from 'dotenv';
-import { proto } from '@hashgraph/proto';
-import { hashgraph } from '@hashgraph/stablecoin-npm-contracts';
-
-const PRIVATE_KEY =
-	'3c8055953320b1001b93f6c99518ec0a1daf7210f1bb02dd11c64f3dec96fdb6';
-const ACCOUNT_ID = '0.0.1328';
-const MNEMONIC =
-	'point cactus sand length embark castle bulk process decade acoustic green either ozone tunnel lunar job project corn match topic energy attack ignore please';
-let signerKeys: PrivateKey[];
-let client: Client;
-
 // 0.0.3728066
 /**
  * "key": {
@@ -71,8 +45,39 @@ threshold 2/3
 threshold 2/3
 key list 3
 combined : threshold 1/3, key list 3
+
+// 0.0.3739997
+key list 3
+
+// 0.0.3774578
+ * key list 2 (custodials)
+
  */
 
+/**
+ * PreviewNet
+ *
+ *  // 0.0.2971
+ * key list 2 (custodials)
+ */
+import {
+	Client,
+	AccountId,
+	PrivateKey,
+	Mnemonic,
+	AccountCreateTransaction,
+	PublicKey,
+	TransactionResponse,
+	TransactionReceipt,
+	TransferTransaction,
+	Transaction,
+	TransactionId,
+	KeyList,
+	Hbar,
+} from '@hashgraph/sdk';
+import { config } from 'dotenv';
+import { proto } from '@hashgraph/proto';
+import { HederaTokenManager__factory } from '@hashgraph/stablecoin-npm-contracts';
 import Injectable from '../../../src/core/Injectable';
 import {
 	AssociateTokenRequest,
@@ -80,25 +85,55 @@ import {
 	CreateRequest,
 	InitializationRequest,
 	Network,
+	RemoveTransactionRequest,
+	RequestPrivateKey,
 	RequestPublicKey,
+	SignTransactionRequest,
 	StableCoin,
+	StableCoinRole,
 	StableCoinViewModel,
+	SubmitTransactionRequest,
 	SupportedWallets,
 	TokenSupplyType,
 } from '../../../src';
 import { MirrorNode } from '../../../src/domain/context/network/MirrorNode';
 import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay';
 import {
+	CLIENT_ACCOUNT_ECDSA,
+	CLIENT_ACCOUNT_ED25519,
+	CLIENT_ACCOUNT_ED25519_2,
+	CLIENT_PRIVATE_KEY_ECDSA,
+	CLIENT_PRIVATE_KEY_ED25519,
+	CLIENT_PRIVATE_KEY_ED25519_2,
+	DFNS_SETTINGS,
 	FACTORY_ADDRESS,
-	HEDERA_TOKEN_MANAGER_ADDRESS,
+	FIREBLOCKS_SETTINGS,
 	MIRROR_NODE,
 	RPC_NODE,
 } from '../../config';
-import ConnectRequest from '../../../src/port/in/request/ConnectRequest';
+import ConnectRequest, {
+	DFNSConfigRequest,
+	FireblocksConfigRequest,
+} from '../../../src/port/in/request/ConnectRequest';
 import Hex from '../../../src/core/Hex.js';
+import SetBackendRequest from '../../../src/port/in/request/SetBackendRequest.js';
+import * as fs from 'fs';
+import * as path from 'path';
+import { HTSTransactionBuilder } from '../../../src/port/out/hs/HTSTransactionBuilder.js';
+import Web3 from 'web3';
+import TransactionDescription from '../../../src/port/out/hs/multiSig/TransactionDescription.js';
 
-const decimals = 6;
-const initialSupply = 1000;
+const MNEMONIC =
+	'point cactus sand length embark castle bulk process decade acoustic green either ozone tunnel lunar job project corn match topic energy attack ignore please';
+let signerKeys: PrivateKey[];
+let signerKeysCustodials: PublicKey[];
+
+let client: Client;
+
+const apiSecretKey = fs.readFileSync(
+	path.resolve(DFNS_SETTINGS.serviceAccountPrivateKeyPath),
+	'utf8',
+);
 
 describe('🧪 MultiSigTransactionAdapter test', () => {
 	let stableCoinHTS: StableCoinViewModel;
@@ -117,22 +152,85 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 		baseUrl: RPC_NODE.baseUrl,
 	};
 
+	// let mnemonic: Mnemonic;
+
+	const dfnsSettings: DFNSConfigRequest = {
+		authorizationToken: DFNS_SETTINGS.authorizationToken,
+		credentialId: DFNS_SETTINGS.credentialId,
+		serviceAccountPrivateKey: apiSecretKey,
+		urlApplicationOrigin: DFNS_SETTINGS.urlApplicationOrigin,
+		applicationId: DFNS_SETTINGS.applicationId,
+		baseUrl: DFNS_SETTINGS.baseUrl,
+		walletId: DFNS_SETTINGS.walletId,
+		hederaAccountId: DFNS_SETTINGS.hederaAccountId,
+	};
+
+	const publcKeyDFNS = PublicKey.fromString(
+		DFNS_SETTINGS.hederaAccountPublicKey,
+	);
+
+	const fireblocksSettings: FireblocksConfigRequest = {
+		apiSecretKey: apiSecretKey,
+		apiKey: FIREBLOCKS_SETTINGS.apiKey,
+		baseUrl: FIREBLOCKS_SETTINGS.baseUrl,
+		vaultAccountId: FIREBLOCKS_SETTINGS.vaultAccountId,
+		assetId: FIREBLOCKS_SETTINGS.assetId,
+		hederaAccountId: FIREBLOCKS_SETTINGS.hederaAccountId,
+	};
+
+	const publcKeyFIREBLOCKS = PublicKey.fromString(
+		FIREBLOCKS_SETTINGS.hederaAccountPublicKey,
+	);
+
+	const multisigAccountId = '0.0.3774578';
+	const tokenId = '0.0.3774562';
+	const hederaNetwork = 'testnet';
+	const transactionId = 'd2b55ddf-7803-4625-9d07-3b9f323155e1';
+	const privateKey = PrivateKey.fromStringECDSA(
+		'3c8055953320b1001b93f6c99518ec0a1daf7210f1bb02dd11c64f3dec96fdb6',
+	);
+	const accountId = AccountId.fromString('0.0.1328');
+	//const DFNSHederaAccountId = '0.0.2969';
+	//const FIREBLOCKSHederaAccountId = '0.0.2970';
+
+	client = Client.forTestnet().setOperator(accountId, privateKey);
+	//client = Client.forPreviewnet().setOperator(accountId, privateKey);
+
 	beforeAll(async () => {
+		// mnemonic = await Mnemonic.fromString(MNEMONIC);
+
 		await Network.connect(
 			new ConnectRequest({
 				account: {
-					accountId: '0.0.3728066',
+					accountId: multisigAccountId,
 				},
-				network: 'testnet',
+				network: hederaNetwork,
 				wallet: SupportedWallets.MULTISIG,
 				mirrorNode: mirrorNode,
 				rpcNode: rpcNode,
 			}),
 		);
+		/*const pk: RequestPrivateKey = {
+			key: privateKey.toStringRaw(),
+			type: privateKey.type
+		};
+
+		await Network.connect(
+			new ConnectRequest({
+				account: {
+					accountId: accountId.toString(),
+					privateKey: pk
+				},
+				network: hederaNetwork,
+				wallet: SupportedWallets.CLIENT,
+				mirrorNode: mirrorNode,
+				rpcNode: rpcNode,
+			})
+		);*/
 
 		await Network.init(
 			new InitializationRequest({
-				network: 'testnet',
+				network: hederaNetwork,
 				configuration: {
 					factoryAddress: FACTORY_ADDRESS,
 				},
@@ -140,16 +238,25 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 				rpcNode: rpcNode,
 			}),
 		);
+
+		await Network.setBackend(
+			new SetBackendRequest({
+				url: 'http://localhost:3000/api/transactions/',
+			}),
+		);
 		Injectable.resolveTransactionHandler();
 
-		/*const privateKey = PrivateKey.fromStringECDSA(PRIVATE_KEY);
-		const accountId = AccountId.fromString(ACCOUNT_ID);
-		const mnemonic = await Mnemonic.fromString(MNEMONIC);
 		//const mnemonic = await Mnemonic.generate();
 
-		client = Client.forTestnet().setOperator(accountId, privateKey);
+		signerKeysCustodials = [publcKeyDFNS, publcKeyFIREBLOCKS];
 
-		signerKeys = await Promise.all([
+		signerKeys = [
+			CLIENT_ACCOUNT_ECDSA.privateKey!.toHashgraphKey(),
+			CLIENT_ACCOUNT_ED25519.privateKey!.toHashgraphKey(),
+			CLIENT_ACCOUNT_ED25519_2.privateKey!.toHashgraphKey(),
+		];
+
+		/*signerKeys = await Promise.all([
 			mnemonic.toStandardEd25519PrivateKey(undefined, 0),
 			mnemonic.toStandardEd25519PrivateKey(undefined, 1),
 			mnemonic.toStandardEd25519PrivateKey(undefined, 2),
@@ -159,17 +266,237 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 		]);*/
 	});
 
+	it('Contract Call description', async () => {
+		const functionName = 'grantRole';
+		const abi = HederaTokenManager__factory.abi;
+		const parameters = [
+			StableCoinRole.CASHIN_ROLE,
+			'0x0000000000000000000000000000000000399906',
+		];
+
+		const functionAbi = (abi as any).find(
+			(func: { name: any; type: string }) =>
+				func.name === functionName && func.type === 'function',
+		);
+
+		if (!functionAbi) {
+			const message = `Contract function ${functionName} not found in ABI, are you using the right version?`;
+			throw new Error(message);
+		}
+
+		const web3 = new Web3();
+
+		const encodedParametersHex = web3.eth.abi
+			.encodeFunctionCall(functionAbi, parameters)
+			.slice(2);
+
+		const functionCallParameters = Buffer.from(encodedParametersHex, 'hex');
+
+		const transaction: Transaction =
+			HTSTransactionBuilder.buildContractExecuteTransaction(
+				'0.0.3774708',
+				functionCallParameters,
+				0,
+			);
+
+		const desc = TransactionDescription.getDescription(transaction);
+
+		expect(true).toBe(true);
+	}, 80_000);
+
 	it('Multisig should associate a token', async () => {
 		const result = await StableCoin.associate(
 			new AssociateTokenRequest({
-				targetId: '0.0.3728066',
-				tokenId: '0.0.3735939',
+				targetId: multisigAccountId,
+				tokenId: tokenId,
 			}),
 		);
 		expect(result).toBe(true);
 	}, 80_000);
 
-	/*it('create key lists', async () => {
+	it('Client should sign a transaction', async () => {
+		let account = CLIENT_ACCOUNT_ECDSA;
+
+		await Network.connect(
+			new ConnectRequest({
+				account: {
+					accountId: account.id.toString(),
+					privateKey: {
+						key: account.privateKey?.key ?? '',
+						type: account.privateKey?.type ?? '',
+					},
+				},
+				network: hederaNetwork,
+				wallet: SupportedWallets.CLIENT,
+				mirrorNode: mirrorNode,
+				rpcNode: rpcNode,
+			}),
+		);
+
+		Injectable.resolveTransactionHandler();
+
+		await StableCoin.signTransaction(
+			new SignTransactionRequest({
+				transactionId: transactionId,
+			}),
+		);
+
+		account = CLIENT_ACCOUNT_ED25519;
+
+		await Network.connect(
+			new ConnectRequest({
+				account: {
+					accountId: account.id.toString(),
+					privateKey: {
+						key: account.privateKey?.key ?? '',
+						type: account.privateKey?.type ?? '',
+					},
+				},
+				network: hederaNetwork,
+				wallet: SupportedWallets.CLIENT,
+				mirrorNode: mirrorNode,
+				rpcNode: rpcNode,
+			}),
+		);
+
+		Injectable.resolveTransactionHandler();
+
+		await StableCoin.signTransaction(
+			new SignTransactionRequest({
+				transactionId: transactionId,
+			}),
+		);
+
+		account = CLIENT_ACCOUNT_ED25519_2;
+
+		await Network.connect(
+			new ConnectRequest({
+				account: {
+					accountId: account.id.toString(),
+					privateKey: {
+						key: account.privateKey?.key ?? '',
+						type: account.privateKey?.type ?? '',
+					},
+				},
+				network: hederaNetwork,
+				wallet: SupportedWallets.CLIENT,
+				mirrorNode: mirrorNode,
+				rpcNode: rpcNode,
+			}),
+		);
+
+		Injectable.resolveTransactionHandler();
+
+		await StableCoin.signTransaction(
+			new SignTransactionRequest({
+				transactionId: transactionId,
+			}),
+		);
+		expect(true).toBe(true);
+	}, 80_000);
+
+	it('Custodials should sign a transaction', async () => {
+		//dfnsSettings.hederaAccountId = DFNSHederaAccountId;
+		//fireblocksSettings.hederaAccountId = FIREBLOCKSHederaAccountId;
+
+		await Network.connect(
+			new ConnectRequest({
+				network: hederaNetwork,
+				wallet: SupportedWallets.DFNS,
+				mirrorNode: mirrorNode,
+				rpcNode: rpcNode,
+				custodialWalletSettings: dfnsSettings,
+			}),
+		);
+
+		Injectable.resolveTransactionHandler();
+
+		await StableCoin.signTransaction(
+			new SignTransactionRequest({
+				transactionId: transactionId,
+			}),
+		);
+
+		await Network.connect(
+			new ConnectRequest({
+				network: hederaNetwork,
+				wallet: SupportedWallets.FIREBLOCKS,
+				mirrorNode: mirrorNode,
+				rpcNode: rpcNode,
+				custodialWalletSettings: fireblocksSettings,
+			}),
+		);
+
+		Injectable.resolveTransactionHandler();
+
+		await StableCoin.signTransaction(
+			new SignTransactionRequest({
+				transactionId: transactionId,
+			}),
+		);
+
+		expect(true).toBe(true);
+	}, 80_000);
+
+	it('Should submit a transaction', async () => {
+		const result = await StableCoin.submitTransaction(
+			new SubmitTransactionRequest({
+				transactionId: transactionId,
+			}),
+		);
+		expect(result).toBe(true);
+	}, 80_000);
+
+	it('Should remove a transaction', async () => {
+		const result = await StableCoin.removeTransaction(
+			new RemoveTransactionRequest({
+				transactionId: transactionId,
+			}),
+		);
+		expect(result).toBe(true);
+	}, 80_000);
+
+	it('create key lists (Custodials)', async () => {
+		/*const DFNSPublickKey = PublicKey.fromStringED25519(DFNS_SETTINGS.hederaAccountPublicKey)
+		const newDFNSAccountTx = new AccountCreateTransaction().setKey(DFNSPublickKey);
+		const FIREBLOCKSPublickKey = PublicKey.fromStringED25519(FIREBLOCKS_SETTINGS.hederaAccountPublicKey)
+		const newFIREBLOCKSAccountTx = new AccountCreateTransaction().setKey(FIREBLOCKSPublickKey);
+
+		const newDFNSAccountResponse = await newDFNSAccountTx.execute(client);
+		const newFIREBLOCKSAccountResponse = await newFIREBLOCKSAccountTx.execute(client);
+
+		const newDFNSAccountReceipt = await newDFNSAccountResponse.getReceipt(client);
+		const newFIREBLOCKSAccountReceipt = await newFIREBLOCKSAccountResponse.getReceipt(client);
+
+		console.log(newDFNSAccountReceipt.accountId);
+		console.log(newFIREBLOCKSAccountReceipt.accountId);*/
+
+		const keyList = KeyList.of(
+			signerKeysCustodials[0],
+			signerKeysCustodials[1],
+		);
+
+		const newAccountTx = new AccountCreateTransaction().setKey(keyList);
+		// Execute the transaction
+		const newAccountResponse = await newAccountTx.execute(client);
+		// Get receipt
+		const newAccountReceipt = await newAccountResponse.getReceipt(client);
+		// Get the account ID
+		const newAccountId = newAccountReceipt.accountId;
+
+		console.log(newAccountId);
+
+		const newTransferTx = new TransferTransaction()
+			.addHbarTransfer(accountId, new Hbar(-100))
+			.addHbarTransfer(newAccountId!, new Hbar(100));
+
+		await newTransferTx.execute(client);
+
+		console.log(signerKeysCustodials[0]._key.toBytes());
+		console.log(signerKeysCustodials[1]._key.toBytes());
+	}, 80_000);
+
+	it('create key lists (Client)', async () => {
 		const keyList = KeyList.of(
 			signerKeys[0].publicKey,
 			signerKeys[1].publicKey,
@@ -189,9 +516,9 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 		console.log(signerKeys[0].publicKey._key.toBytes());
 		console.log(signerKeys[1].publicKey._key.toBytes());
 		console.log(signerKeys[2].publicKey._key.toBytes());
-	});
+	}, 80_000);
 
-	it('create key threshold', async () => {
+	/*it('create key threshold', async () => {
 		const thresholdKey = new KeyList(
 			[
 				signerKeys[0].publicKey,

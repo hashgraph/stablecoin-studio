@@ -18,6 +18,10 @@
  *
  */
 
-export default interface BackendEndpoint {
+export default class BackendEndpoint {
 	url: string;
+
+	constructor(url: string) {
+		this.url = url;
+	}
 }

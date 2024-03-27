@@ -74,14 +74,19 @@ export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
 		const accountId: AccountId = AccountId.fromString(
 			this.account.id.toString(),
 		);
+		t.setTransactionValidDuration(180);
 		t._freezeWithAccountId(accountId);
 
 		let client: Client = Client.forTestnet();
+		client.setNetwork({ '34.94.106.61:50211': '0.0.3' });
 
-		if (this.networkService.environment == previewnet)
+		if (this.networkService.environment == previewnet) {
 			client = Client.forPreviewnet();
-		else if (this.networkService.environment == mainnet)
+			client.setNetwork({ '3.211.248.172:50211': '0.0.3' });
+		} else if (this.networkService.environment == mainnet) {
 			client = Client.forMainnet();
+			client.setNetwork({ '35.237.200.180:50211': '0.0.3' });
+		}
 
 		this.account.multiKey!.keys.forEach((key) => publicKeys.push(key.key));
 
@@ -91,6 +96,7 @@ export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
 			this.account.id.toString(),
 			publicKeys,
 			this.account.multiKey!.threshold,
+			this.networkService.environment,
 		);
 
 		return new TransactionResponse(trasnactionId);
@@ -152,6 +158,14 @@ export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
 		return Promise.resolve({
 			account: this.getAccount(),
 		});
+	}
+
+	stop(): Promise<boolean> {
+		LogService.logTrace('MultiSig stopped');
+		this.eventService.emit(WalletEvents.walletDisconnect, {
+			wallet: SupportedWallets.MULTISIG,
+		});
+		return Promise.resolve(true);
 	}
 
 	public getAccount(): Account {

@@ -18,30 +18,13 @@
  *
  */
 
-export default class BackendTransaction {
-	id: string;
-	transaction_message: string;
-	description: string;
-	status: string;
-	threshold: number;
-	key_list: string[];
-	signed_keys: string[];
+import ValidatedRequest from './validation/ValidatedRequest.js';
 
-	constructor(
-		id: string,
-		transaction_message: string,
-		description: string,
-		status: string,
-		threshold: number,
-		key_list: string[],
-		signed_keys: string[],
-	) {
-		this.id = id;
-		this.transaction_message = transaction_message;
-		this.description = description;
-		this.status = status;
-		this.threshold = threshold;
-		this.key_list = key_list;
-		this.signed_keys = signed_keys;
+export default class SetBackendRequest extends ValidatedRequest<SetBackendRequest> {
+	url: string;
+
+	constructor({ url }: { url: string }) {
+		super({});
+		this.url = url;
 	}
 }
