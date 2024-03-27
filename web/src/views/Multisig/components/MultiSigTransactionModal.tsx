@@ -16,6 +16,7 @@ const copyToClipboard = (text: string) => {
 	});
 };
 
+// @ts-ignore
 const MultiSigTransactionModal = ({ isOpen, onClose, selectedTransaction }) => {
 	if (!selectedTransaction) return null;
 
@@ -55,7 +56,7 @@ const MultiSigTransactionModal = ({ isOpen, onClose, selectedTransaction }) => {
 
 					<strong>Key List:</strong>
 					<ul style={{ listStyleType: 'none', paddingLeft: 0 }}>
-						{selectedTransaction.key_list.map((key, index) => (
+						{selectedTransaction.key_list.map((key: string, index: string) => (
 							<li key={index}>
 								<code onClick={() => copyToClipboard(key)} style={{ cursor: 'pointer' }}>
 									{key}
@@ -67,7 +68,7 @@ const MultiSigTransactionModal = ({ isOpen, onClose, selectedTransaction }) => {
 					<strong>Signed Keys:</strong>
 					{selectedTransaction.signed_keys.length > 0 ? (
 						<ul style={{ listStyleType: 'none', paddingLeft: 0 }}>
-							{selectedTransaction.signed_keys.map((key, index) => (
+							{selectedTransaction.signed_keys.map((key: string, index: string) => (
 								<li key={index}>
 									<code onClick={() => copyToClipboard(key)} style={{ cursor: 'pointer' }}>
 										{key}

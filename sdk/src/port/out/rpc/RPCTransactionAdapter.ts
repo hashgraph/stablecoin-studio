@@ -25,12 +25,12 @@
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
 import { ContractId as HContractId } from '@hashgraph/sdk';
 import {
-	HederaTokenManager__factory,
 	HederaReserve__factory,
-	StableCoinFactory__factory,
+	HederaTokenManager__factory,
 	IHederaTokenService__factory,
-	StableCoinProxyAdmin__factory,
 	ProxyAdmin__factory,
+	StableCoinFactory__factory,
+	StableCoinProxyAdmin__factory,
 } from '@hashgraph/stablecoin-npm-contracts';
 import TransactionAdapter, { InitializationData } from '../TransactionAdapter';
 import { BigNumber, ContractTransaction, ethers, Signer } from 'ethers';
@@ -58,10 +58,10 @@ import { FactoryStableCoin } from '../../../domain/context/factory/FactoryStable
 import { FactoryKey } from '../../../domain/context/factory/FactoryKey.js';
 import PublicKey from '../../../domain/context/account/PublicKey.js';
 import {
+	ACCEPT_PROXY_OWNER_GAS,
 	BURN_GAS,
 	CASHIN_GAS,
 	CHANGE_PROXY_OWNER_GAS,
-	ACCEPT_PROXY_OWNER_GAS,
 	CREATE_SC_GAS,
 	DECREASE_SUPPLY_GAS,
 	DELETE_GAS,
@@ -88,10 +88,7 @@ import {
 import { MetaMaskInpageProvider } from '@metamask/providers';
 import { WalletConnectError } from '../../../domain/context/network/error/WalletConnectError.js';
 import EventService from '../../../app/service/event/EventService.js';
-import {
-	ConnectionState,
-	WalletEvents,
-} from '../../../app/service/event/WalletEvent.js';
+import { ConnectionState, WalletEvents } from '../../../app/service/event/WalletEvent.js';
 import { SupportedWallets } from '../../../domain/context/network/Wallet.js';
 import { RPCTransactionResponseAdapter } from './RPCTransactionResponseAdapter.js';
 import LogService from '../../../app/service/LogService.js';
@@ -101,27 +98,15 @@ import { SigningError } from '../hs/error/SigningError.js';
 import { RESERVE_DECIMALS } from '../../../domain/context/reserve/Reserve.js';
 import { FactoryRole } from '../../../domain/context/factory/FactoryRole.js';
 import { FactoryCashinRole } from '../../../domain/context/factory/FactoryCashinRole.js';
-import {
-	HederaNetworks,
-	unrecognized,
-} from '../../../domain/context/network/Environment.js';
+import { HederaNetworks, unrecognized } from '../../../domain/context/network/Environment.js';
 import { CommandBus } from '../../../core/command/CommandBus.js';
 import { SetNetworkCommand } from '../../../app/usecase/command/network/setNetwork/SetNetworkCommand.js';
-import { SetConfigurationCommand } from '../../../app/usecase/command/network/setConfiguration/SetConfigurationCommand.js';
 import {
-	EnvironmentMirrorNode,
-	MirrorNode,
-	MirrorNodes,
-} from '../../../domain/context/network/MirrorNode.js';
-import {
-	EnvironmentJsonRpcRelay,
-	JsonRpcRelay,
-	JsonRpcRelays,
-} from '../../../domain/context/network/JsonRpcRelay.js';
-import {
-	EnvironmentFactory,
-	Factories,
-} from '../../../domain/context/factory/Factories.js';
+	SetConfigurationCommand,
+} from '../../../app/usecase/command/network/setConfiguration/SetConfigurationCommand.js';
+import { EnvironmentMirrorNode, MirrorNode, MirrorNodes } from '../../../domain/context/network/MirrorNode.js';
+import { EnvironmentJsonRpcRelay, JsonRpcRelay, JsonRpcRelays } from '../../../domain/context/network/JsonRpcRelay.js';
+import { EnvironmentFactory, Factories } from '../../../domain/context/factory/Factories.js';
 
 // eslint-disable-next-line no-var
 declare var ethereum: MetaMaskInpageProvider;

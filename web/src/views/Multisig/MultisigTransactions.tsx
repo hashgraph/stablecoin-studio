@@ -20,11 +20,17 @@ import {
 	Tr,
 	useDisclosure,
 } from '@chakra-ui/react';
-import { MultiSigTransactionViewModel } from '@hashgraph/stablecoin-npm-sdk';
+// @ts-ignore
+import {
+	GetTransactionsRequest,
+	MultiSigTransactionViewModel,
+	RequestPublicKey,
+} from '@hashgraph/stablecoin-npm-sdk';
 import { ArrowForwardIcon, DeleteIcon, SearchIcon } from '@chakra-ui/icons';
 import BaseContainer from '../../components/BaseContainer';
 import { useTranslation } from 'react-i18next';
 import MultiSigTransactionModal from './components/MultiSigTransactionModal';
+import SDKService from '../../services/SDKService';
 
 // @ts-ignore
 const MultiSigTransactions = () => {
@@ -45,42 +51,17 @@ const MultiSigTransactions = () => {
 	const publicKey = 'key1';
 	useEffect(() => {
 		const fetchTransactions = async () => {
-			// TODO: Call SDK or API to get the transactions
 			if (!publicKey) return;
-			const transactionsMock: MultiSigTransactionViewModel[] = [
-				//! MOCKED TRANSACTIONS FOR TESTING
-				{
-					id: 'tx1',
-					transaction_message: 'Transaction 1',
-					description: 'First transaction for testing',
-					status: 'PENDING',
-					threshold: 2,
-					key_list: [
-						'f1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1u2v3w4x5y6z7a8b9c0d1e2f3',
-						'g2h3i4j5k6l7m8n9o0p1q2r3s4t5u5v6w7x8y9z0a1b2c3d4e5f6g7h8i9j0k1l2m3',
-						'h3i4j5k6l7m8n9o0p1q2r3s4t5u6v7w8x9y0z1a2b3c4d5e6f7g8h9i0j1k2l3m4n4o5',
-					],
-					signed_keys: ['f1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1u2v3w4x5y6z7a8b9c0d1e2f3'],
+			const request = new GetTransactionsRequest({
+				publicKey: {
+					key: publicKey,
 				},
-				{
-					id: 'tx2',
-					transaction_message: 'Transaction 2',
-					description: 'Second transaction for testing',
-					status: 'SIGNED',
-					threshold: 3,
-					key_list: [
-						'i4j5k6l7m8n9o0p1q2r3s4t5u6v7w8x9y0z1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p',
-						'j5k6l7m8n9o0p1q2r3s4t5u6v7w8x9y0z1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p7q8',
-						'k6l7m8n9o0p1q2r3s4t5u6v7w8x9y0z1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s',
-					],
-					signed_keys: [
-						'i4j5k6l7m8n9o0p1q2r3s4t5u6v7w8x9y0z1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p',
-						'j5k6l7m8n9o0p1q2r3s4t5u6v7w8x9y0z1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p7q8',
-						'k6l7m8n9o0p1q2r3s4t5u6v7w8x9y0z1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s',
-					],
-				},
-			];
-			setTransactions(transactionsMock);
+				page: 1,
+				limit: 10,
+				status: 'PENDING',
+			});
+			const resp = await SDKService.getMultiSigTransactions(request);
+			setTransactions(resp);
 		};
 
 		fetchTransactions();

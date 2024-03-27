@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Check if the commit message follows the Conventional Commits format
+echo "$message" | npm run --silent commitlint --edit "$1"
+if [ $? -ne 0 ]; then
+    exit 1
+fi
+
+# Check if the commit message has a 'Signed-off-by:' line
+if ! echo "$message" | grep -q "$signedOffPattern"; then
+  echo "❌ Missing 'Signed-off-by:' line! 😕"
+  echo "Please add a 'Signed-off-by:' line to your commit message."
+  echo "Message: $message"
+  exit 1
+fi

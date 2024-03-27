@@ -193,7 +193,7 @@ class NetworkInPort implements INetworkInPort {
 	@LogError
 	async connect(req: ConnectRequest): Promise<InitializationData> {
 		handleValidation('ConnectRequest', req);
-
+		console.log('connect');
 		const account = req.account
 			? RequestMapper.mapAccount(req.account)
 			: undefined;
@@ -212,11 +212,11 @@ class NetworkInPort implements INetworkInPort {
 				}
 			}
 		}
-
+		console.log('SetNetworkCommand', req.network, req.mirrorNode, req.rpcNode)
 		await this.commandBus.execute(
 			new SetNetworkCommand(req.network, req.mirrorNode, req.rpcNode),
 		);
-
+		console.log('ConnectRequest', req.wallet, account, custodialSettings);
 		const res = await this.commandBus.execute(
 			new ConnectCommand(
 				req.network,

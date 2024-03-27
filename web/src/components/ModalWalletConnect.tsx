@@ -87,14 +87,19 @@ const ModalWalletConnect = () => {
 	const availableWallets: SupportedWallets[] = useSelector(AVAILABLE_WALLETS);
 	const selectedMirrors: IMirrorRPCNode[] = useSelector(SELECTED_MIRRORS);
 	const selectedRPCs: IMirrorRPCNode[] = useSelector(SELECTED_RPCS);
-	const [isHederaAccountIdModalOpen, setIsHederaAccountIdModalOpen] = useState(false);
 	const [hederaAccountId, setHederaAccountId] = useState('');
+	const [networkError, setNetworkError] = useState('');
+	const [accountIdError, setAccountIdError] = useState('');
 
 	const { control, getValues } = useForm({
 		mode: 'onChange',
 	});
 
-	const handleWalletConnect = async (wallet: SupportedWallets, network: string) => {
+	const handleWalletConnect = async (
+		wallet: SupportedWallets,
+		network: string,
+		hederaAccountId?: string,
+	) => {
 		if (loading) return;
 		setLoading(wallet);
 		dispatch(walletActions.setLastWallet(wallet));
@@ -123,8 +128,14 @@ const ModalWalletConnect = () => {
 				);
 				if (listRPCs) rpcNode = listRPCs[0];
 			}
-
-			const result = await SDKService.connectWallet(wallet, network, mirrorNode, rpcNode);
+			console.log('Connecting wallet', wallet, network, mirrorNode, rpcNode, hederaAccountId);
+			const result = await SDKService.connectWallet(
+				wallet,
+				network,
+				mirrorNode,
+				rpcNode,
+				hederaAccountId,
+			);
 
 			const newselectedMirrors: IMirrorRPCNode[] = [];
 
@@ -233,13 +244,34 @@ const ModalWalletConnect = () => {
 	const handleMultiSigMode = () => {
 		console.log('MultiSig Mode');
 		setMultiSigSelected(true);
-		setIsHederaAccountIdModalOpen(true);
 	};
 
-	const handleHederaIdSubmit = () => {
-		console.log(hederaAccountId);
-		setIsHederaAccountIdModalOpen(false);
-		// TODO: Logics
+	const validateAccountId = (accountId: string) => {
+		const regex = /^\d+\.\d+\.\d+$/;
+		return regex.test(accountId);
+	};
+
+	const handleConnectClick = () => {
+		const networkSelection = getValues('networkMultisig');
+		const networkValue = networkSelection.value;
+		const isValidAccountId = validateAccountId(hederaAccountId);
+
+		// Reset errors
+		setNetworkError('');
+		setAccountIdError('');
+
+		if (!networkValue) {
+			setNetworkError('Please select a network.');
+		}
+		if (!isValidAccountId) {
+			setAccountIdError('Please enter a valid Hedera Account ID (e.g., 0.0.123).');
+		}
+		if (!networkValue || !isValidAccountId) {
+			return;
+		}
+
+		handleWalletConnect(SupportedWallets.MULTISIG, networkValue, hederaAccountId);
+		setMultiSigSelected(false);
 	};
 
 	const PairingSpinner: FC<{ wallet: SupportedWallets; children?: ReactNode }> = ({
@@ -281,7 +313,7 @@ const ModalWalletConnect = () => {
 			>
 				<ModalOverlay />
 				<ModalContent data-testid='modal-action-content' p='50' maxW='1000px'>
-					{!error && !rejected && !hashpackSelected && !bladeSelected && (
+					{!error && !rejected && !hashpackSelected && !bladeSelected && !multiSigSelected && (
 						<>
 							<ModalHeader p='0' justifyContent='center'>
 								<Text
@@ -444,6 +476,61 @@ const ModalWalletConnect = () => {
 							</ModalFooter>
 						</>
 					)}
+					{multiSigSelected && (
+						<>
+							<ModalHeader p='0' justifyContent='center'>
+								<Text
+									fontSize='20px'
+									fontWeight={700}
+									textAlign='center'
+									lineHeight='16px'
+									color='brand.black'
+								>
+									Enter your Hedera MultiSig Account ID
+								</Text>
+							</ModalHeader>
+							<ModalBody>
+								<VStack spacing={4}>
+									<SelectController
+										control={control}
+										isRequired
+										name='networkMultisig'
+										defaultValue=''
+										options={networkOptions}
+										addonLeft={true}
+										overrideStyles={stylesNetworkOptions}
+										variant='unstyled'
+									/>
+									{networkError && <Text color='red'>{networkError}</Text>}
+									<Input
+										placeholder='0.0.0'
+										value={hederaAccountId}
+										onChange={(e) => setHederaAccountId(e.target.value)}
+									/>
+									{accountIdError && <Text color='red'>{accountIdError}</Text>}
+								</VStack>
+							</ModalBody>
+							<ModalFooter>
+								<HStack spacing={4}>
+									<Button
+										data-testid='modal-cancel-button-Multisig'
+										onClick={() => setMultiSigSelected(false)}
+										variant='secondary'
+									>
+										Cancel
+									</Button>
+									<Button
+										data-testid='modal-confirm-button-Multisig'
+										onClick={handleConnectClick}
+										variant='primary'
+									>
+										Connect
+									</Button>
+								</HStack>
+							</ModalFooter>
+						</>
+					)}
+
 					{bladeSelected && (
 						<>
 							<ModalHeader p='0' justifyContent='center'>
@@ -525,27 +612,6 @@ const ModalWalletConnect = () => {
 							</ModalFooter>
 						</>
 					)}
-				</ModalContent>
-			</Modal>
-			<Modal
-				isOpen={isHederaAccountIdModalOpen}
-				onClose={() => setIsHederaAccountIdModalOpen(false)}
-			>
-				<ModalContent>
-					<ModalHeader>Enter your Hedera Account ID</ModalHeader>
-					<ModalCloseButton />
-					<ModalBody>
-						<Input
-							placeholder='Your Hedera MultiSig Account ID'
-							value={hederaAccountId}
-							onChange={(e) => setHederaAccountId(e.target.value)}
-						/>
-					</ModalBody>
-					<ModalFooter>
-						<Button mr={3} onClick={handleHederaIdSubmit}>
-							Submit
-						</Button>
-					</ModalFooter>
 				</ModalContent>
 			</Modal>
 		</>

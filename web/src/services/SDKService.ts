@@ -1,4 +1,5 @@
 /* istanbul ignore file */
+// @ts-ignore
 import type {
 	AcceptFactoryProxyOwnerRequest,
 	AcceptProxyOwnerRequest,
@@ -20,7 +21,6 @@ import type {
 	GetAccountsWithRolesRequest,
 	GetFactoryProxyConfigRequest,
 	GetListStableCoinRequest,
-	GetTransactionsRequest,
 	GetProxyConfigRequest,
 	GetReserveAddressRequest,
 	GetReserveAmountRequest,
@@ -28,6 +28,7 @@ import type {
 	GetStableCoinDetailsRequest,
 	GetSupplierAllowanceRequest,
 	GetTokenManagerListRequest,
+	GetTransactionsRequest,
 	GrantMultiRolesRequest,
 	HasRoleRequest,
 	IncreaseSupplierAllowanceRequest,
@@ -54,6 +55,7 @@ import type {
 	UpgradeImplementationRequest,
 	WalletEvent,
 	WipeRequest,
+	MultiSigTransactionViewModel,
 } from '@hashgraph/stablecoin-npm-sdk';
 import {
 	Account,
@@ -87,6 +89,7 @@ export class SDKService {
 		connectNetwork: string,
 		selectedMirror?: IMirrorRPCNode,
 		selectedRPC?: IMirrorRPCNode,
+		hederaAccount?: string,
 	) {
 		const networkConfig = await this.setNetwork(connectNetwork, selectedMirror, selectedRPC);
 		const _mirrorNode = networkConfig[0];
@@ -95,14 +98,14 @@ export class SDKService {
 		let factories = []; // REACT_APP_FACTORIES load from .env
 
 		if (process.env.REACT_APP_FACTORIES) factories = JSON.parse(process.env.REACT_APP_FACTORIES);
-
+		console.log('factories');
 		const _lastFactoryId =
 			factories.length !== 0
 				? factories.find((i: any) => i.Environment === connectNetwork)
 					? factories.find((i: any) => i.Environment === connectNetwork).STABLE_COIN_FACTORY_ADDRESS
 					: ''
 				: '';
-
+		console.log('factories2');
 		if (_lastFactoryId)
 			await Network.setConfig(
 				new SetConfigurationRequest({
@@ -112,6 +115,7 @@ export class SDKService {
 
 		this.initData = await Network.connect(
 			new ConnectRequest({
+				account: hederaAccount ? { accountId: hederaAccount } : undefined,
 				network: connectNetwork,
 				mirrorNode: _mirrorNode,
 				rpcNode: _rpcNode,
@@ -308,6 +312,7 @@ export class SDKService {
 	}
 
 	public static async getStableCoinDetails(req: GetStableCoinDetailsRequest) {
+		console.log('getStableCoinDetails', req);
 		return await StableCoin.getInfo(req);
 	}
 
@@ -523,7 +528,9 @@ export class SDKService {
 		return await Factory.getHederaTokenManagerList(data);
 	}
 
-	public static async getMultiSigTransactions(data: GetTransactionsRequest) {
+	public static async getMultiSigTransactions(
+		data: GetTransactionsRequest,
+	): Promise<MultiSigTransactionViewModel[]> {
 		return await StableCoin.getTransactions(data);
 	}
 
