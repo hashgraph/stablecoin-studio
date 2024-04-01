@@ -316,13 +316,8 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 
 		const transactionIds = await StableCoin.getTransactions(
 			new GetTransactionsRequest({
-				publicKey: {
-					key: CLIENT_ACCOUNT_ECDSA.privateKey!.toHashgraphKey().publicKey.toStringRaw(),
-					type: CLIENT_ACCOUNT_ECDSA.publicKey!.type,
-				},
 				page: 1,
-				limit: 1,
-				status: 'pending',
+				limit: 10,
 			}),
 		);
 

@@ -60,22 +60,9 @@ export class GetTransactionsQueryHandler
 			accountId,
 		);
 
-		const returnValue: MultiSigTransactionViewModel[] = [];
-
-		res.forEach((trans) => {
-			returnValue.push({
-				id: trans.id,
-				transaction_message: trans.transaction_message,
-				description: trans.description,
-				status: trans.status,
-				threshold: trans.threshold,
-				key_list: trans.key_list,
-				signed_keys: trans.signed_keys,
-				signatures: trans.signatures,
-				network: trans.network,
-				accountId: trans.account.toString(),
-			});
-		});
+		const returnValue: MultiSigTransactionViewModel[] = res.map(
+			(trans) => ({ ...trans }),
+		);
 
 		return Promise.resolve(new GetTransactionsQueryResponse(returnValue));
 	}

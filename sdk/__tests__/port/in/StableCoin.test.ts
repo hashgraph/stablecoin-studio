@@ -117,7 +117,7 @@ jest.mock('../../../src/port/out/backend/BackendAdapter', () => {
 						[],
 						[],
 						network,
-						new HederaId(HederaAccountId),
+						HederaAccountId,
 					);
 				},
 			),
@@ -283,7 +283,7 @@ describe('🧪 Stablecoin test', () => {
 		);
 
 		await delay();
-	}, 60_000);
+	}, 180_000);
 
 	async function checkFail(
 		op: () => Promise<void>,

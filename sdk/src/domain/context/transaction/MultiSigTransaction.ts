@@ -30,7 +30,7 @@ export default class MultiSigTransaction {
 	signed_keys: string[];
 	signatures: string[];
 	network: string;
-	account: HederaId;
+	hedera_account_id: string;
 
 	constructor(
 		id: string,
@@ -42,7 +42,7 @@ export default class MultiSigTransaction {
 		signed_keys: string[],
 		signatures: string[],
 		network: string,
-		account: HederaId,
+		hedera_account_id: string,
 	) {
 		this.id = id;
 		this.transaction_message = transaction_message;
@@ -53,6 +53,6 @@ export default class MultiSigTransaction {
 		this.signed_keys = signed_keys;
 		this.signatures = signatures;
 		this.network = network;
-		this.account = account;
+		this.hedera_account_id = hedera_account_id;
 	}
 }
