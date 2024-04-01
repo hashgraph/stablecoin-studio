@@ -160,6 +160,11 @@ class NetworkInPort implements INetworkInPort {
 					}),
 				);
 
+		if (req.backend)
+			await this.setBackend(
+				new SetBackendRequest({ url: req.backend.url }),
+			);
+
 		req.events && Event.register(req.events);
 		const wallets: SupportedWallets[] = [];
 		const instances = Injectable.registerTransactionAdapterInstances();
