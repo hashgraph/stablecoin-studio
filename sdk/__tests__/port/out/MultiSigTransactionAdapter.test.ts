@@ -50,6 +50,10 @@ import {
 	SignTransactionRequest,
 	GetTransactionsRequest,
 	SubmitTransactionRequest,
+	GetAccountBalanceRequest,
+	CashInRequest,
+	WipeRequest,
+	KYCRequest,
 } from '../../../src';
 import { MirrorNode } from '../../../src/domain/context/network/MirrorNode';
 import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay';
@@ -64,6 +68,7 @@ import {
 } from '../../config';
 import Injectable from '../../../src/core/Injectable';
 import SetBackendRequest from '../../../src/port/in/request/SetBackendRequest.js';
+import BackendEndpoint from '../../../src/domain/context/network/BackendEndpoint.js';
 
 const decimals = 6;
 const initialSupply = 1000;
@@ -111,11 +116,27 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 			);
 		}
 
-		return await StableCoin.submitTransaction(
+		const result = await StableCoin.submitTransaction(
 			new SubmitTransactionRequest({
 				transactionId: transactionId,
 			}),
 		);
+
+		await Network.connect(
+			new ConnectRequest({
+				account: {
+					accountId: multisigAccountId,
+				},
+				network: hederaNetwork,
+				wallet: SupportedWallets.MULTISIG,
+				mirrorNode: mirrorNode,
+				rpcNode: rpcNode,
+			}),
+		);
+
+		Injectable.resolveTransactionHandler();
+
+		return result;
 	};
 
 	const deploy_multisig_account = async (): Promise<void> => {
@@ -171,6 +192,10 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 		baseUrl: RPC_NODE.baseUrl,
 	};
 
+	const backendEndpoint: BackendEndpoint = {
+		url: BACKEND_NODE.baseUrl,
+	};
+
 	beforeAll(async () => {
 		await Network.connect(
 			new ConnectRequest({
@@ -192,6 +217,7 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 				},
 				mirrorNode: mirrorNode,
 				rpcNode: rpcNode,
+				backend: backendEndpoint,
 			}),
 		);
 		Injectable.resolveTransactionHandler();
@@ -278,12 +304,6 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 			}),
 		);
 
-		await Network.setBackend(
-			new SetBackendRequest({
-				url: BACKEND_NODE.baseUrl,
-			}),
-		);
-
 		Injectable.resolveTransactionHandler();
 	}, 60_000);
 
@@ -314,5 +334,116 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 		);
 
 		expect(result).toBe(true);
+	}, 60_000);
+
+	it('MultiSig should grant KYC, cash in and wipe', async () => {
+		await StableCoin.grantKyc(
+			new KYCRequest({
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+			}),
+		);
+
+		await multisig_signing_submit(
+			[CLIENT_ACCOUNT_ECDSA, CLIENT_ACCOUNT_ED25519],
+			(
+				await StableCoin.getTransactions(
+					new GetTransactionsRequest({
+						publicKey: {
+							key: CLIENT_ACCOUNT_ECDSA.privateKey!.toHashgraphKey().publicKey.toStringRaw(),
+							type: CLIENT_ACCOUNT_ECDSA.publicKey!.type,
+						},
+						page: 1,
+						limit: 1,
+						status: 'pending',
+					}),
+				)
+			)[0].id,
+		);
+
+		await delay();
+
+		const Amount = 1;
+
+		const balance_before = await StableCoin.getBalanceOf(
+			new GetAccountBalanceRequest({
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+			}),
+		);
+
+		await StableCoin.cashIn(
+			new CashInRequest({
+				amount: Amount.toString(),
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+			}),
+		);
+
+		await multisig_signing_submit(
+			[CLIENT_ACCOUNT_ECDSA, CLIENT_ACCOUNT_ED25519],
+			(
+				await StableCoin.getTransactions(
+					new GetTransactionsRequest({
+						publicKey: {
+							key: CLIENT_ACCOUNT_ECDSA.privateKey!.toHashgraphKey().publicKey.toStringRaw(),
+							type: CLIENT_ACCOUNT_ECDSA.publicKey!.type,
+						},
+						page: 1,
+						limit: 1,
+						status: 'pending',
+					}),
+				)
+			)[0].id,
+		);
+
+		await delay();
+
+		const balance_after_cashIn = await StableCoin.getBalanceOf(
+			new GetAccountBalanceRequest({
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+			}),
+		);
+
+		await StableCoin.wipe(
+			new WipeRequest({
+				amount: Amount.toString(),
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+			}),
+		);
+
+		await multisig_signing_submit(
+			[CLIENT_ACCOUNT_ECDSA, CLIENT_ACCOUNT_ED25519],
+			(
+				await StableCoin.getTransactions(
+					new GetTransactionsRequest({
+						publicKey: {
+							key: CLIENT_ACCOUNT_ECDSA.privateKey!.toHashgraphKey().publicKey.toStringRaw(),
+							type: CLIENT_ACCOUNT_ECDSA.publicKey!.type,
+						},
+						page: 1,
+						limit: 1,
+						status: 'pending',
+					}),
+				)
+			)[0].id,
+		);
+
+		await delay();
+
+		const balance_after_wipe = await StableCoin.getBalanceOf(
+			new GetAccountBalanceRequest({
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+			}),
+		);
+
+		expect(balance_before.value.toString()).toEqual('0');
+		expect(balance_after_cashIn.value.toString()).toEqual(
+			Amount.toString(),
+		);
+		expect(balance_after_wipe.value.toString()).toEqual('0');
 	}, 600_000);
 });

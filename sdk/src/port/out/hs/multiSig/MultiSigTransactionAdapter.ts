@@ -31,7 +31,6 @@ import { BackendAdapter } from '../../backend/BackendAdapter.js';
 import { SupportedWallets } from '../../../../domain/context/network/Wallet';
 import {
 	Environment,
-	testnet,
 	previewnet,
 	mainnet,
 } from '../../../../domain/context/network/Environment';
@@ -43,8 +42,8 @@ import {
 	WalletPairedEvent,
 } from '../../../../app/service/event/WalletEvent.js';
 import EventService from '../../../../app/service/event/EventService.js';
-import TransactionDescription from './TransactionDescription.js';
 import Hex from '../../../../core/Hex.js';
+import TransactionService from '../../../../app/service/TransactionService.js';
 
 @singleton()
 export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
@@ -90,9 +89,14 @@ export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
 
 		this.account.multiKey!.keys.forEach((key) => publicKeys.push(key.key));
 
+		const transactionDescription = await TransactionService.getDescription(
+			t,
+			this.mirrorNodeAdapter,
+		);
+
 		const trasnactionId = await this.backendAdapter.addTransaction(
 			Hex.fromUint8Array(t.freezeWith(client).toBytes()),
-			TransactionDescription.getDescription(t),
+			transactionDescription,
 			this.account.id.toString(),
 			publicKeys,
 			this.account.multiKey!.threshold,

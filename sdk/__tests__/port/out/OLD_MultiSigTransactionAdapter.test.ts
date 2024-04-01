@@ -121,7 +121,6 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { HTSTransactionBuilder } from '../../../src/port/out/hs/HTSTransactionBuilder.js';
 import Web3 from 'web3';
-import TransactionDescription from '../../../src/port/out/hs/multiSig/TransactionDescription.js';
 
 const MNEMONIC =
 	'point cactus sand length embark castle bulk process decade acoustic green either ozone tunnel lunar job project corn match topic energy attack ignore please';
@@ -265,44 +264,6 @@ describe.skip('🧪 MultiSigTransactionAdapter test', () => {
 			mnemonic.toStandardEd25519PrivateKey(undefined, 5),
 		]);*/
 	});
-
-	it('Contract Call description', async () => {
-		const functionName = 'grantRole';
-		const abi = HederaTokenManager__factory.abi;
-		const parameters = [
-			StableCoinRole.CASHIN_ROLE,
-			'0x0000000000000000000000000000000000399906',
-		];
-
-		const functionAbi = (abi as any).find(
-			(func: { name: any; type: string }) =>
-				func.name === functionName && func.type === 'function',
-		);
-
-		if (!functionAbi) {
-			const message = `Contract function ${functionName} not found in ABI, are you using the right version?`;
-			throw new Error(message);
-		}
-
-		const web3 = new Web3();
-
-		const encodedParametersHex = web3.eth.abi
-			.encodeFunctionCall(functionAbi, parameters)
-			.slice(2);
-
-		const functionCallParameters = Buffer.from(encodedParametersHex, 'hex');
-
-		const transaction: Transaction =
-			HTSTransactionBuilder.buildContractExecuteTransaction(
-				'0.0.3774708',
-				functionCallParameters,
-				0,
-			);
-
-		const desc = TransactionDescription.getDescription(transaction);
-
-		expect(true).toBe(true);
-	}, 80_000);
 
 	it('Multisig should associate a token', async () => {
 		const result = await StableCoin.associate(
