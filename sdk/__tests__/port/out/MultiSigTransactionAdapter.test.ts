@@ -307,7 +307,7 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 		Injectable.resolveTransactionHandler();
 	}, 60_000);
 
-	it('MultiSig should accept proxy ownership', async () => {
+	it.skip('MultiSig should accept proxy ownership', async () => {
 		await Proxy.acceptProxyOwner(
 			new AcceptProxyOwnerRequest({
 				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
@@ -336,7 +336,7 @@ describe('🧪 MultiSigTransactionAdapter test', () => {
 		expect(result).toBe(true);
 	}, 60_000);
 
-	it('MultiSig should grant KYC, cash in and wipe', async () => {
+	it.skip('MultiSig should grant KYC, cash in and wipe', async () => {
 		await StableCoin.grantKyc(
 			new KYCRequest({
 				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',

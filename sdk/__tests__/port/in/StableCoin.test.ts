@@ -52,6 +52,8 @@ import {
 	PauseRequest,
 	RescueHBARRequest,
 	RescueRequest,
+	SignTransactionRequest,
+	SubmitTransactionRequest,
 	TransfersRequest,
 	UpdateRequest,
 	UpdateReserveAddressRequest,
@@ -62,10 +64,12 @@ import ConnectRequest, {
 } from '../../../src/port/in/request/ConnectRequest.js';
 import GetStableCoinDetailsRequest from '../../../src/port/in/request/GetStableCoinDetailsRequest.js';
 import {
+	BACKEND_NODE,
 	CLIENT_ACCOUNT_ECDSA,
 	CLIENT_ACCOUNT_ED25519,
 	FACTORY_ADDRESS,
 	HEDERA_TOKEN_MANAGER_ADDRESS,
+	MULTISIG_ACCOUNT_ADDRESS,
 } from '../../config.js';
 import { Client, Hbar, TransferTransaction } from '@hashgraph/sdk';
 import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
@@ -74,12 +78,74 @@ import BaseError, {
 	ErrorCategory,
 	ErrorCode,
 } from '../../../src/core/error/BaseError.js';
+import BackendEndpoint from '../../../src/domain/context/network/BackendEndpoint.js';
+import { BackendAdapter } from '../../../src/port/out/backend/BackendAdapter.js';
+import { Environment } from '../../../src/domain/context/network/Environment.js';
+import MultiSigTransaction from '../../../src/domain/context/transaction/MultiSigTransaction.js';
 
 const decimals = 6;
 const initialSupply = 1000;
 const maxSupply = 1000000;
+const multisigAccountId = MULTISIG_ACCOUNT_ADDRESS;
+
+let multiSigTransaction: MultiSigTransaction;
 
 SDK.log = { level: 'ERROR', transports: new LoggerTransports.Console() };
+
+jest.mock('../../../src/port/out/backend/BackendAdapter', () => {
+	return {
+		BackendAdapter: jest.fn().mockImplementation(() => ({
+			set: jest.fn().mockResolvedValue('mocked set'),
+			addTransaction: jest.fn(
+				(
+					transactionMessage: string,
+					description: string,
+					HederaAccountId: string,
+					keyList: string[],
+					threshold: number,
+					network: Environment,
+				) => {
+					multiSigTransaction = new MultiSigTransaction(
+						'1',
+						transactionMessage,
+						description,
+						'pending',
+						threshold,
+						keyList,
+						[],
+						[],
+						network,
+					);
+				},
+			),
+			signTransaction: jest.fn(
+				(
+					transactionId: string,
+					transactionSignature: string,
+					publicKey: string,
+				) => {
+					multiSigTransaction.signed_keys.push(publicKey);
+					multiSigTransaction.signatures.push(transactionSignature);
+					if (
+						multiSigTransaction.signed_keys.length ==
+						multiSigTransaction.threshold
+					)
+						multiSigTransaction.status = 'signed';
+				},
+			),
+			deleteTransaction: jest
+				.fn()
+				.mockResolvedValue('mocked deleteTransaction'),
+			getTransactions: jest
+				.fn()
+				.mockResolvedValue('mocked getTransactions'),
+			getTransaction: jest.fn(() => {
+				return multiSigTransaction;
+			}),
+			// Add other methods as necessary
+		})),
+	};
+});
 
 describe('🧪 Stablecoin test', () => {
 	let stableCoinSC: StableCoinViewModel;
@@ -98,6 +164,10 @@ describe('🧪 Stablecoin test', () => {
 	const rpcNode: JsonRpcRelay = {
 		name: 'testrpcNode',
 		baseUrl: 'http://127.0.0.1:7546/api',
+	};
+
+	const backendEndpoint: BackendEndpoint = {
+		url: BACKEND_NODE.baseUrl,
 	};
 
 	beforeAll(async () => {
@@ -121,6 +191,7 @@ describe('🧪 Stablecoin test', () => {
 				},
 				mirrorNode: mirrorNode,
 				rpcNode: rpcNode,
+				backend: backendEndpoint,
 			}),
 		);
 		Injectable.resolveTransactionHandler();
@@ -539,6 +610,78 @@ describe('🧪 Stablecoin test', () => {
 		const result = await updateToken(stableCoinSC);
 		expect(result).not.toBeNull();
 	}, 60_000);
+
+	it('Performs multisign and submit transaction', async () => {
+		await Network.connect(
+			new ConnectRequest({
+				account: {
+					accountId: multisigAccountId,
+				},
+				network: 'testnet',
+				wallet: SupportedWallets.MULTISIG,
+				mirrorNode: mirrorNode,
+				rpcNode: rpcNode,
+			}),
+		);
+
+		Injectable.resolveTransactionHandler();
+
+		await StableCoin.associate(
+			new AssociateTokenRequest({
+				targetId: multisigAccountId,
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
+			}),
+		);
+
+		const accounts = [CLIENT_ACCOUNT_ECDSA, CLIENT_ACCOUNT_ED25519];
+
+		for (const account of accounts) {
+			await Network.connect(
+				new ConnectRequest({
+					account: {
+						accountId: account.id.toString(),
+						privateKey: {
+							key: account.privateKey?.key ?? '',
+							type: account.privateKey?.type ?? '',
+						},
+					},
+					network: 'testnet',
+					wallet: SupportedWallets.CLIENT,
+					mirrorNode: mirrorNode,
+					rpcNode: rpcNode,
+				}),
+			);
+
+			Injectable.resolveTransactionHandler();
+
+			await StableCoin.signTransaction(
+				new SignTransactionRequest({
+					transactionId: '1',
+				}),
+			);
+		}
+
+		const result = await StableCoin.submitTransaction(
+			new SubmitTransactionRequest({
+				transactionId: '1',
+			}),
+		);
+
+		await Network.connect(
+			new ConnectRequest({
+				account: {
+					accountId: CLIENT_ACCOUNT_ED25519.id.toString(),
+					privateKey: CLIENT_ACCOUNT_ED25519.privateKey,
+				},
+				network: 'testnet',
+				wallet: SupportedWallets.CLIENT,
+				mirrorNode: mirrorNode,
+				rpcNode: rpcNode,
+			}),
+		);
+
+		expect(result).toBe(true);
+	}, 600_000);
 
 	// ----------------------HTS--------------------------
 
