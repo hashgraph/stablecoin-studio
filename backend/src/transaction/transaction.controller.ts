@@ -223,6 +223,7 @@ export default class TransactionController {
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page?: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit?: number,
     @Query('network') network?: string,
+    @Query('hederaAccountId') hederaAccountId?: string,
   ): Promise<Pagination<GetTransactionsResponseDto>> {
     {
       if (page < 1) {
@@ -248,6 +249,7 @@ export default class TransactionController {
           publicKey,
           status,
           network,
+          hederaAccountId,
           {
             page,
             limit,

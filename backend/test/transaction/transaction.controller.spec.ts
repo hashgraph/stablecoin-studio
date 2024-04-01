@@ -331,6 +331,7 @@ describe('Transaction Controller Test', () => {
               DEFAULT.signed_keys,
               DEFAULT.signatures,
               DEFAULT.network,
+              DEFAULT.hedera_account_id,
             ),
           ),
         );
@@ -345,6 +346,7 @@ describe('Transaction Controller Test', () => {
         DEFAULT.signed_keys,
         DEFAULT.signatures,
         DEFAULT.network,
+        DEFAULT.hedera_account_id
       );
       //* 🎬 Act ⬇
       const result = await controller.getTransactionById(
@@ -375,6 +377,7 @@ function createMockGetAllByPublicKeyTxServiceResult(
     pendingTransaction.signed_keys,
     pendingTransaction.signatures,
     pendingTransaction.network,
+    pendingTransaction.hedera_account_id,
   );
   return new Pagination<GetTransactionsResponseDto>(
     [transactionResponse, transactionResponse],
