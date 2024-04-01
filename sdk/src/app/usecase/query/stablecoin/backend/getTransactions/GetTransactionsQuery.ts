@@ -28,10 +28,11 @@ export class GetTransactionsQueryResponse implements QueryResponse {
 
 export class GetTransactionsQuery extends Query<GetTransactionsQueryResponse> {
 	constructor(
-		public readonly publicKey: string,
 		public readonly page: number,
 		public readonly limit: number,
-		public readonly status: string,
+		public readonly publicKey?: string,
+		public readonly status?: string,
+		public readonly accountId?: string,
 	) {
 		super();
 	}

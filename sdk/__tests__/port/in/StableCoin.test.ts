@@ -28,6 +28,7 @@ import {
 	Balance,
 	BigDecimal,
 	HBAR_DECIMALS,
+	HederaId,
 	LoggerTransports,
 	Network,
 	SDK,
@@ -46,6 +47,7 @@ import {
 	GetAccountBalanceHBARRequest,
 	GetAccountBalanceRequest,
 	GetReserveAddressRequest,
+	GetTransactionsRequest,
 	InitializationRequest,
 	IsAccountAssociatedTokenRequest,
 	KYCRequest,
@@ -115,6 +117,7 @@ jest.mock('../../../src/port/out/backend/BackendAdapter', () => {
 						[],
 						[],
 						network,
+						new HederaId(HederaAccountId),
 					);
 				},
 			),
@@ -136,9 +139,9 @@ jest.mock('../../../src/port/out/backend/BackendAdapter', () => {
 			deleteTransaction: jest
 				.fn()
 				.mockResolvedValue('mocked deleteTransaction'),
-			getTransactions: jest
-				.fn()
-				.mockResolvedValue('mocked getTransactions'),
+			getTransactions: jest.fn(() => {
+				return [multiSigTransaction];
+			}),
 			getTransaction: jest.fn(() => {
 				return multiSigTransaction;
 			}),
@@ -611,7 +614,7 @@ describe('🧪 Stablecoin test', () => {
 		expect(result).not.toBeNull();
 	}, 60_000);
 
-	it('Performs multisign and submit transaction', async () => {
+	it('Performs add, multisign and submit transaction', async () => {
 		await Network.connect(
 			new ConnectRequest({
 				account: {
@@ -630,6 +633,34 @@ describe('🧪 Stablecoin test', () => {
 			new AssociateTokenRequest({
 				targetId: multisigAccountId,
 				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
+			}),
+		);
+
+		const trans_account = await StableCoin.getTransactions(
+			new GetTransactionsRequest({
+				page: 1,
+				limit: 1,
+				status: 'pending',
+				account: multisigAccountId,
+			}),
+		);
+
+		const trans_pk = await StableCoin.getTransactions(
+			new GetTransactionsRequest({
+				publicKey: {
+					key: CLIENT_ACCOUNT_ECDSA.privateKey!.toHashgraphKey().publicKey.toStringRaw(),
+					type: CLIENT_ACCOUNT_ECDSA.publicKey!.type,
+				},
+				page: 1,
+				limit: 1,
+				status: 'pending',
+			}),
+		);
+
+		const trans = await StableCoin.getTransactions(
+			new GetTransactionsRequest({
+				page: 1,
+				limit: 1,
 			}),
 		);
 
@@ -681,7 +712,9 @@ describe('🧪 Stablecoin test', () => {
 		);
 
 		expect(result).toBe(true);
-	}, 600_000);
+		expect(trans[0].id).toEqual(trans_pk[0].id);
+		expect(trans[0].id).toEqual(trans_account[0].id);
+	}, 180_000);
 
 	// ----------------------HTS--------------------------
 

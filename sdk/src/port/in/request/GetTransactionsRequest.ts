@@ -18,34 +18,47 @@
  *
  */
 
+import { OptionalField } from '../../../core/decorator/OptionalDecorator.js';
 import { RequestPublicKey } from './BaseRequest.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
 
 export default class GetTransactionsRequest extends ValidatedRequest<GetTransactionsRequest> {
-	publicKey: RequestPublicKey;
+	@OptionalField()
+	publicKey?: RequestPublicKey;
+
 	page: number;
+
 	limit: number;
-	status: string;
+
+	@OptionalField()
+	status?: string | undefined;
+
+	@OptionalField()
+	account?: string;
 
 	constructor({
 		publicKey,
 		page,
 		limit,
 		status,
+		account,
 	}: {
-		publicKey: RequestPublicKey;
+		publicKey?: RequestPublicKey;
 		page: number;
 		limit: number;
-		status: string;
+		status?: string;
+		account?: string;
 	}) {
 		super({
 			publicKey: Validation.checkPublicKey(),
 			page: Validation.checkNumber({ max: undefined, min: 1 }),
+			account: Validation.checkHederaIdFormat(true),
 		});
 		this.publicKey = publicKey;
 		this.page = page;
 		this.limit = limit;
 		this.status = status;
+		this.account = account;
 	}
 }

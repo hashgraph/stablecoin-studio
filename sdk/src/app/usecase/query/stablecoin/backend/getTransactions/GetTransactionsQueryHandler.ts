@@ -49,19 +49,33 @@ export class GetTransactionsQueryHandler
 	async execute(
 		command: GetTransactionsQuery,
 	): Promise<GetTransactionsQueryResponse> {
-		const { publicKey, page, limit, status } = command;
+		const { publicKey, page, limit, status, accountId } = command;
 
 		const res = await this.backendAdapter.getTransactions(
-			publicKey,
 			page,
 			limit,
-			status,
 			this.networkService.environment,
+			publicKey,
+			status,
+			accountId,
 		);
 
-		const returnValue: MultiSigTransactionViewModel[] = res.map(
-			(trans) => ({ ...trans }),
-		);
+		const returnValue: MultiSigTransactionViewModel[] = [];
+
+		res.forEach((trans) => {
+			returnValue.push({
+				id: trans.id,
+				transaction_message: trans.transaction_message,
+				description: trans.description,
+				status: trans.status,
+				threshold: trans.threshold,
+				key_list: trans.key_list,
+				signed_keys: trans.signed_keys,
+				signatures: trans.signatures,
+				network: trans.network,
+				accountId: trans.account.toString(),
+			});
+		});
 
 		return Promise.resolve(new GetTransactionsQueryResponse(returnValue));
 	}
