@@ -47,7 +47,7 @@ import FactorySettings from '../views/Settings/Factory';
 import ModalWalletConnect from '../components/ModalWalletConnect';
 import AppSettings from '../views/AppSettings';
 import { cleanLocalStorage } from '../utils/cleanStorage';
-import MultiSigTransactions from '../views/Multisig/MultisigTransactions';
+import MultiSigTransactions from '../views/MultiSigTransactions/MultisigTransactions';
 
 const LoginOverlayRoute = ({ show, loadingSC }: { show: boolean; loadingSC: boolean }) => {
 	return (

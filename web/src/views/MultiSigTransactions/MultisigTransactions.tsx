@@ -21,11 +21,7 @@ import {
 	useDisclosure,
 } from '@chakra-ui/react';
 // @ts-ignore
-import {
-	GetTransactionsRequest,
-	MultiSigTransactionViewModel,
-	RequestPublicKey,
-} from '@hashgraph/stablecoin-npm-sdk';
+import { GetTransactionsRequest, MultiSigTransactionViewModel } from '@hashgraph/stablecoin-npm-sdk';
 import { ArrowForwardIcon, DeleteIcon, SearchIcon } from '@chakra-ui/icons';
 import BaseContainer from '../../components/BaseContainer';
 import { useTranslation } from 'react-i18next';
@@ -48,8 +44,9 @@ const MultiSigTransactions = () => {
 	const [filter, setFilter] = useState('');
 	const { t } = useTranslation(['multiSig', 'global']);
 
-	const publicKey = 'key1';
+	const publicKey = '0x000000000000000000000000000000000038e2c9';
 	useEffect(() => {
+		// TODO: if is a multisig account, retrieve transactions where hedera account id is the current account id otherwise use public key
 		const fetchTransactions = async () => {
 			if (!publicKey) return;
 			const request = new GetTransactionsRequest({
@@ -58,7 +55,7 @@ const MultiSigTransactions = () => {
 				},
 				page: 1,
 				limit: 10,
-				status: 'PENDING',
+				status: 'ALL',
 			});
 			const resp = await SDKService.getMultiSigTransactions(request);
 			setTransactions(resp);
