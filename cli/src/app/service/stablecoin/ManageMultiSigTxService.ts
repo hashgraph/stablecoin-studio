@@ -7,6 +7,7 @@ import MultiSigTransaction, {
 import ListMultiSigTxService from './ListMultiSigTxService.js';
 import { Account, GetPublicKeyRequest } from '@hashgraph/stablecoin-npm-sdk';
 import ListMultiSigTxResponse from '../../../domain/stablecoin/ListMultiSigTxResponse.js';
+import Pagination from '../../../domain/stablecoin/Pagination.js';
 
 export default class ManageMultiSigTxService extends Service {
   status?: Status;
@@ -20,7 +21,7 @@ export default class ManageMultiSigTxService extends Service {
       status,
     }: {
       multiSigTxListResponse?: ListMultiSigTxResponse;
-      status?: Status;
+      status: Status;
     } = { status: this.status || Status.Pending },
   ): Promise<void> {
     this.status = status;
@@ -28,7 +29,7 @@ export default class ManageMultiSigTxService extends Service {
     if (!multiSigTxListResponse || !multiSigTxListResponse.multiSigTxList) {
       multiSigTxListResponse = await new ListMultiSigTxService().get({
         status,
-        pagination: { page: 1, limit: 10 },
+        pagination: new Pagination(),
       });
     }
     const multiSigTxList = multiSigTxListResponse.multiSigTxList;
@@ -49,22 +50,20 @@ export default class ManageMultiSigTxService extends Service {
     }
     if (selectedOption === 'previous page') {
       // Get the previous page of the MultiSig transaction list
-      const previousPage = multiSigTxListResponse.pagination.page - 1;
       await this.start({
         multiSigTxListResponse: await new ListMultiSigTxService().get({
           status,
-          pagination: { page: previousPage, limit: 10 },
+          pagination: multiSigTxListResponse.pagination.previous(),
         }),
         status,
       });
     }
     if (selectedOption === 'next page') {
       // Get the next page of the MultiSig transaction list
-      const nextPage = multiSigTxListResponse.pagination.page + 1;
       await this.start({
         multiSigTxListResponse: await new ListMultiSigTxService().get({
           status,
-          pagination: { page: nextPage, limit: 10 },
+          pagination: multiSigTxListResponse.pagination.next(),
         }),
         status,
       });

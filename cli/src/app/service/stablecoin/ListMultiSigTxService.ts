@@ -1,14 +1,15 @@
 import { language } from '../../../index.js';
 import { utilsService } from '../../../index.js';
-import MultiSigTransaction, {
-  Status,
-} from '../../../domain/stablecoin/MultiSigTransaction.js';
+import { Status } from '../../../domain/stablecoin/MultiSigTransaction.js';
 import Service from '../Service.js';
-import { Account, GetPublicKeyRequest } from '@hashgraph/stablecoin-npm-sdk';
-import ListMultiSigTxResponse from 'domain/stablecoin/ListMultiSigTxResponse.js';
-
-const DEFAULT_PAGE = 1;
-const DEFAULT_LIMIT = 5;
+import {
+  Account,
+  GetPublicKeyRequest,
+  GetTransactionsRequest,
+  StableCoin,
+} from '@hashgraph/stablecoin-npm-sdk';
+import ListMultiSigTxResponse from '../../../domain/stablecoin/ListMultiSigTxResponse.js';
+import Pagination from '../../../domain/stablecoin/Pagination.js';
 
 /**
  * Service class for listing MultiSig transactions.
@@ -23,10 +24,18 @@ export default class ListMultiSigTxService extends Service {
    * @param draw - Whether to draw the table.
    * @returns A promise that resolves to an array of MultiSigTransaction objects.
    */
-  public async all(draw = false): Promise<ListMultiSigTxResponse> {
+  public async all(
+    {
+      pagination = new Pagination(),
+      draw = false,
+    }: {
+      pagination?: Pagination;
+      draw?: boolean;
+    } = { pagination: new Pagination(), draw: false },
+  ): Promise<ListMultiSigTxResponse> {
     const multiSigTxListResponse = await this.get({
       status: undefined,
-      pagination: { page: DEFAULT_PAGE, limit: DEFAULT_LIMIT },
+      pagination,
     });
 
     // Draw table if draw is true
@@ -44,10 +53,18 @@ export default class ListMultiSigTxService extends Service {
    * @param draw - Whether to draw the table.
    * @returns A promise that resolves to an array of MultiSigTransaction objects.
    */
-  public async pending(draw = false): Promise<ListMultiSigTxResponse> {
+  public async pending(
+    {
+      pagination = new Pagination(),
+      draw = false,
+    }: {
+      pagination?: Pagination;
+      draw?: boolean;
+    } = { pagination: new Pagination(), draw: false },
+  ): Promise<ListMultiSigTxResponse> {
     const multiSigTxListResponse = await this.get({
       status: Status.Pending,
-      pagination: { page: DEFAULT_PAGE, limit: DEFAULT_LIMIT },
+      pagination: pagination,
     });
 
     // Draw table if draw is true
@@ -67,10 +84,10 @@ export default class ListMultiSigTxService extends Service {
    */
   public async get({
     status,
-    pagination = { page: DEFAULT_PAGE, limit: DEFAULT_LIMIT },
+    pagination,
   }: {
     status?: Status;
-    pagination?: { page: number; limit: number };
+    pagination: Pagination;
   }): Promise<ListMultiSigTxResponse> {
     const currentAccount = utilsService.getCurrentAccount();
     const publicKey = await Account.getPublicKey(
@@ -79,7 +96,7 @@ export default class ListMultiSigTxService extends Service {
       }),
     );
 
-    const multiSigTxListRaw = Account.listMultisigTx(
+    const getTransactionsResponse = StableCoin.getTransactions(
       new GetTransactionsRequest({
         publicKey: publicKey,
         status,
@@ -89,15 +106,16 @@ export default class ListMultiSigTxService extends Service {
     );
 
     // Show spinner while fetching data
-    await utilsService.showSpinner(multiSigTxListRaw, {
+    await utilsService.showSpinner(getTransactionsResponse, {
       text: language.getText('state.searching'),
       successText: `${language.getText('state.searchingSuccess')}\n`,
     });
 
     // Generate MultiSigTransaction domain objects
     return ListMultiSigTxResponse.fromRawMultiSigTxList({
-      multiSigTxListRaw: await multiSigTxListRaw,
+      multiSigTxListRaw: (await getTransactionsResponse).multiSigTxListRaw,
       publicKey,
+      pagination: (await getTransactionsResponse).pagination,
     });
   }
 }

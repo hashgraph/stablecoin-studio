@@ -16,17 +16,27 @@ export default class MultiSigTransaction {
   status: Status;
   threshold: number;
 
-  constructor(
-    id: UUID | string,
-    message: string,
-    description: string,
-    hederaAccountId: string,
-    signatures: string[],
-    keyList: string[],
-    signedKeys: string[],
-    status: string | Status,
-    threshold: number,
-  ) {
+  constructor({
+    id,
+    message,
+    description,
+    hederaAccountId,
+    signatures,
+    keyList,
+    signedKeys,
+    status,
+    threshold,
+  }: {
+    id: UUID | string;
+    message: string;
+    description: string;
+    hederaAccountId: string;
+    signatures: string[];
+    keyList: string[];
+    signedKeys: string[];
+    status: string | Status;
+    threshold: number;
+  }) {
     this.id = this.validateId(id);
     this.message = this.validateMessage(message);
     this.description = this.validateDescription(description);
