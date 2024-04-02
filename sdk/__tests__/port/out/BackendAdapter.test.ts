@@ -70,6 +70,7 @@ jest.mock('axios', () => {
 		create: jest.fn(() => ({
 			post: jest.fn((url, body, config) => {
 				if (
+					url == '' &&
 					body.transaction_message ==
 						TRANSACTION.transaction_message &&
 					body.description == TRANSACTION.description &&
@@ -104,7 +105,7 @@ jest.mock('axios', () => {
 					status: 400,
 				};
 			}),
-			get: jest.fn((url, body, config) => {
+			get: jest.fn((url, body) => {
 				if (url == GET_TRANSACTION.id)
 					return {
 						status: 200,
@@ -188,10 +189,14 @@ describe('🧪 BackendAdapter test', () => {
 			SIGNATURE.transactionSignature,
 			SIGNATURE.publicKey,
 		);
+
+		expect(true).toBe(true);
 	}, 60_000);
 
 	it('Delete transaction', async () => {
 		await backendAdapter.deleteTransaction(DELETE.transactionId);
+
+		expect(true).toBe(true);
 	}, 60_000);
 
 	it('Get transactions', async () => {

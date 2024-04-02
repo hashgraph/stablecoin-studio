@@ -28,7 +28,6 @@ import {
 	Balance,
 	BigDecimal,
 	HBAR_DECIMALS,
-	HederaId,
 	LoggerTransports,
 	Network,
 	SDK,
@@ -81,7 +80,6 @@ import BaseError, {
 	ErrorCode,
 } from '../../../src/core/error/BaseError.js';
 import BackendEndpoint from '../../../src/domain/context/network/BackendEndpoint.js';
-import { BackendAdapter } from '../../../src/port/out/backend/BackendAdapter.js';
 import { Environment } from '../../../src/domain/context/network/Environment.js';
 import MultiSigTransaction from '../../../src/domain/context/transaction/MultiSigTransaction.js';
 
@@ -648,8 +646,12 @@ describe('🧪 Stablecoin test', () => {
 		const trans_pk = await StableCoin.getTransactions(
 			new GetTransactionsRequest({
 				publicKey: {
-					key: CLIENT_ACCOUNT_ECDSA.privateKey!.toHashgraphKey().publicKey.toStringRaw(),
-					type: CLIENT_ACCOUNT_ECDSA.publicKey!.type,
+					key: CLIENT_ACCOUNT_ECDSA.privateKey
+						? CLIENT_ACCOUNT_ECDSA.privateKey
+								.toHashgraphKey()
+								.publicKey.toStringRaw()
+						: '',
+					type: CLIENT_ACCOUNT_ECDSA.publicKey?.type,
 				},
 				page: 1,
 				limit: 1,
