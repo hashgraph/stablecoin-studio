@@ -85,5 +85,8 @@
 		"loading": "Loading data",
 		"selectWallet": "Select an option",
 		"selectNetwork": "Select a network"
+	},
+	"multiSigActions": {
+		"title": "Enter your Hedera MultiSig Account ID"
 	}
 }

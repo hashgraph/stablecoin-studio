@@ -478,7 +478,7 @@ const ModalWalletConnect = () => {
 					)}
 					{multiSigSelected && (
 						<>
-							<ModalHeader p='0' justifyContent='center'>
+							<ModalHeader p='0' pb='6' justifyContent='center'>
 								<Text
 									fontSize='20px'
 									fontWeight={700}
@@ -486,16 +486,15 @@ const ModalWalletConnect = () => {
 									lineHeight='16px'
 									color='brand.black'
 								>
-									Enter your Hedera MultiSig Account ID
+									{t('multiSigActions.title')}
 								</Text>
 							</ModalHeader>
-							<ModalBody>
-								<VStack spacing={4}>
+							<ModalBody maxWidth='500px'>
+								<VStack spacing={4} alignItems='center' justifyContent='center'>
 									<SelectController
 										control={control}
 										isRequired
 										name='networkMultisig'
-										defaultValue=''
 										options={networkOptions}
 										addonLeft={true}
 										overrideStyles={stylesNetworkOptions}
@@ -511,7 +510,7 @@ const ModalWalletConnect = () => {
 								</VStack>
 							</ModalBody>
 							<ModalFooter>
-								<HStack spacing={4}>
+								<HStack justifyContent='center' w='full'>
 									<Button
 										data-testid='modal-cancel-button-Multisig'
 										onClick={() => setMultiSigSelected(false)}
@@ -530,7 +529,6 @@ const ModalWalletConnect = () => {
 							</ModalFooter>
 						</>
 					)}
-
 					{bladeSelected && (
 						<>
 							<ModalHeader p='0' justifyContent='center'>

@@ -113,6 +113,7 @@ const MultiSigTransactions = () => {
 						return t;
 					}),
 				);
+				console.log('Transaction signed:', response);
 			} else {
 				console.error('Public key is undefined, cannot sign transaction');
 			}
