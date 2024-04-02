@@ -1,20 +1,25 @@
 /* istanbul ignore file */
 // @ts-ignore
-import type {
+import {
 	AcceptFactoryProxyOwnerRequest,
 	AcceptProxyOwnerRequest,
+	Account,
 	AccountViewModel,
 	AddFixedFeeRequest,
 	AddFractionalFeeRequest,
 	AssociateTokenRequest,
 	BurnRequest,
+	CapabilitiesRequest,
 	CashInRequest,
 	ChangeFactoryProxyOwnerRequest,
 	ChangeProxyOwnerRequest,
 	CheckSupplierLimitRequest,
+	ConnectRequest,
 	CreateRequest,
 	DecreaseSupplierAllowanceRequest,
 	DeleteRequest,
+	Factory,
+	Fees,
 	FreezeAccountRequest,
 	GetAccountBalanceRequest,
 	GetAccountInfoRequest,
@@ -33,15 +38,24 @@ import type {
 	HasRoleRequest,
 	IncreaseSupplierAllowanceRequest,
 	InitializationData,
+	InitializationRequest,
 	KYCRequest,
+	MultiSigTransactionViewModel,
+	Network,
 	PauseRequest,
+	Proxy,
 	RequestAccount,
 	RescueHBARRequest,
 	RescueRequest,
+	ReserveDataFeed,
 	ReserveViewModel,
 	ResetSupplierAllowanceRequest,
 	RevokeMultiRolesRequest,
+	Role,
+	SetConfigurationRequest,
+	SetNetworkRequest,
 	SignTransactionRequest,
+	StableCoin,
 	StableCoinCapabilities,
 	StableCoinListViewModel,
 	StableCoinViewModel,
@@ -55,22 +69,7 @@ import type {
 	UpgradeImplementationRequest,
 	WalletEvent,
 	WipeRequest,
-	MultiSigTransactionViewModel,
-} from '@hashgraph/stablecoin-npm-sdk';
-import {
-	Account,
-	CapabilitiesRequest,
-	ConnectRequest,
-	Factory,
-	Fees,
-	InitializationRequest,
-	Network,
-	Proxy,
-	ReserveDataFeed,
-	Role,
-	SetConfigurationRequest,
-	SetNetworkRequest,
-	StableCoin,
+	RemoveTransactionRequest
 } from '@hashgraph/stablecoin-npm-sdk';
 import { type IMirrorRPCNode } from '../interfaces/IMirrorRPCNode';
 
@@ -281,9 +280,17 @@ export class SDKService {
 					console.error('RPC Nodes could not be found in .env');
 				}
 			}
-			const init = await Network.init(initReq);
-
-			return init;
+			if (process.env.REACT_APP_BACKEND_URL) {
+				try {
+					initReq.backend = {
+						url: process.env.REACT_APP_BACKEND_URL,
+					};
+				} catch (e) {
+					console.error('Backend URL could not be found in .env');
+				}
+			}
+			console.log('initReq', initReq);
+			return await Network.init(initReq);
 		} catch (e) {
 			console.error('Error initializing the Network : ' + e);
 			window.alert(
@@ -534,12 +541,28 @@ export class SDKService {
 		return await StableCoin.getTransactions(data);
 	}
 
-	public static async submitMultiSigTransaction(data: SubmitTransactionRequest) {
-		return await StableCoin.submitTransaction(data);
+	public static async submitMultiSigTransaction(multiSigTransactionId: string) {
+		return await StableCoin.submitTransaction(
+			new SubmitTransactionRequest({
+				transactionId: multiSigTransactionId,
+			})
+		);
 	}
 
-	public static async signMultiSigTransaction(data: SignTransactionRequest) {
-		return StableCoin.signTransaction(data);
+	public static async signMultiSigTransaction(multiSigTransactionId: string) {
+		return StableCoin.signTransaction(
+			new SignTransactionRequest({
+				transactionId: multiSigTransactionId,
+			})
+		);
+	}
+
+	public static async removeMultiSigTransaction(multiSigTransactionId: string) {
+		return StableCoin.removeTransaction(
+			new RemoveTransactionRequest({
+				transactionId: multiSigTransactionId,
+			})
+		);
 	}
 }
 

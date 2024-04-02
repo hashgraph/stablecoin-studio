@@ -54,7 +54,6 @@ const Sidebar = () => {
 			icon: 'File',
 			title: t('sidebar.multiSigTransactions'),
 			route: NamedRoutes.MultiSigTransactions,
-			// isHidden: selectedStableCoin && !selectedStableCoin.reserveAddress, TODO: add logic to hide this option when multisig is not enabled
 		},
 		{
 			icon: 'GearSix',

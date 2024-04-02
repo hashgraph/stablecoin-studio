@@ -21,16 +21,22 @@ import {
 	useDisclosure,
 } from '@chakra-ui/react';
 // @ts-ignore
-import { GetTransactionsRequest, MultiSigTransactionViewModel } from '@hashgraph/stablecoin-npm-sdk';
+import { AccountViewModel, GetTransactionsRequest, MultiSigTransactionViewModel } from '@hashgraph/stablecoin-npm-sdk';
 import { ArrowForwardIcon, DeleteIcon, SearchIcon } from '@chakra-ui/icons';
 import BaseContainer from '../../components/BaseContainer';
 import { useTranslation } from 'react-i18next';
 import MultiSigTransactionModal from './components/MultiSigTransactionModal';
 import SDKService from '../../services/SDKService';
+import { useSelector } from 'react-redux';
+import { SELECTED_WALLET_ACCOUNT_INFO, SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
 
 // @ts-ignore
 const MultiSigTransactions = () => {
 	const { isOpen, onOpen, onClose } = useDisclosure();
+	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
+	const wallet:AccountViewModel = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
+	const publicKey = wallet.publicKey?.key;
+
 	const {
 		isOpen: isDeleteModalOpen,
 		onOpen: onDeleteModalOpen,
@@ -44,28 +50,35 @@ const MultiSigTransactions = () => {
 	const [filter, setFilter] = useState('');
 	const { t } = useTranslation(['multiSig', 'global']);
 
-	const publicKey = '0x000000000000000000000000000000000038e2c9';
 	useEffect(() => {
-		// TODO: if is a multisig account, retrieve transactions where hedera account id is the current account id otherwise use public key
 		const fetchTransactions = async () => {
-			if (!publicKey) return;
-			const request = new GetTransactionsRequest({
-				publicKey: {
-					key: publicKey,
-				},
-				page: 1,
-				limit: 10,
-				status: 'ALL',
-			});
-			const resp = await SDKService.getMultiSigTransactions(request);
-			setTransactions(resp);
+			if(wallet.multiKey && wallet.multiKey.keys.length > 0) {
+				const request = new GetTransactionsRequest({
+					page: 1,
+					limit: 10,
+					account: wallet.id,
+				});
+				const resp = await SDKService.getMultiSigTransactions(request);
+				setTransactions(resp);
+			} else if (publicKey) {
+				const request = new GetTransactionsRequest({
+					publicKey: {
+						key: publicKey,
+					},
+					page: 1,
+					limit: 10,
+				});
+				const resp = await SDKService.getMultiSigTransactions(request);
+				setTransactions(resp);
+			} else {
+				console.error('Public key not found');
+			}
 		};
-
 		fetchTransactions();
 	});
 
 	const canSignTransaction = (transaction: MultiSigTransactionViewModel) => {
-		return transaction.signed_keys.includes(publicKey) && transaction.status === 'PENDING';
+		return publicKey && transaction.signed_keys.includes(publicKey) && transaction.status === 'PENDING';
 	};
 
 	const canSendTransaction = (transaction: MultiSigTransactionViewModel) => {
@@ -81,13 +94,12 @@ const MultiSigTransactions = () => {
 
 	const handleSignTransaction = async (transaction: MultiSigTransactionViewModel) => {
 		try {
-			// TODO: Call SDK or API to sign the transaction
-			console.log(`Signing transaction ${transaction.id}`);
+			await SDKService.signMultiSigTransaction(transaction.id, publicKey);
 			const updatedTransaction = {
 				...transaction,
 				signed_keys: [...transaction.signed_keys, publicKey],
 			};
-			setTransactions(transactions.map((t) => (t.id === transaction.id ? updatedTransaction : t)));
+			setTransactions(transactions.map((t) => (t.id === transaction.id ? updatedTransaction : t);
 			onClose();
 		} catch (error) {
 			console.error('Error signing transaction:', error);
@@ -96,8 +108,7 @@ const MultiSigTransactions = () => {
 
 	const handleSendTransaction = async (transaction: MultiSigTransactionViewModel) => {
 		try {
-			// TODO: Call SDK or API to send the transaction
-			console.log(`Sending transaction ${transaction.id}`);
+			await SDKService.submitMultiSigTransaction(transaction.id)
 			const updatedTransaction = {
 				...transaction,
 				status: 'completed',
@@ -111,7 +122,6 @@ const MultiSigTransactions = () => {
 
 	const handleDeleteTransaction = async (transaction: MultiSigTransactionViewModel) => {
 		try {
-			// TODO: Call SDK or API to delete the transaction
 			showDeleteConfirmationModal(transaction);
 			console.log(`Deleting transaction ${transaction.id}`);
 		} catch (error) {
@@ -120,13 +130,14 @@ const MultiSigTransactions = () => {
 	};
 
 	const handleDeleteConfirmation = async () => {
-		if (!transactionToDelete) return;
-		// LOGIC TO DELETE TRANSACTION
-		console.log(`Deleting transaction ${transactionToDelete.id}`);
-		// DELETE FROM ARRAY
-		setTransactions(transactions.filter((t) => t.id !== transactionToDelete.id));
-		setTransactionToDelete(null);
-		onDeleteModalClose();
+		if (!transactionToDelete) {
+			console.error('No transaction to delete');
+		} else {
+			await SDKService.removeMultiSigTransaction(transactionToDelete.id);
+			setTransactions(transactions.filter((t) => t.id !== transactionToDelete.id));
+			setTransactionToDelete(null);
+			onDeleteModalClose();
+		}
 	};
 
 	const showDeleteConfirmationModal = (transaction: MultiSigTransactionViewModel) => {
@@ -149,22 +160,22 @@ const MultiSigTransactions = () => {
 					mr='2'
 					size='sm'
 					width='auto'
-					borderRadius='md'
 					bg='white'
 					zIndex='1'
 					placeholder='Filter by status'
 					onChange={(e) => setFilter(e.target.value)}
 				>
-					<option value=''>All</option>
+					<option >All</option>
 					<option value='pending'>Pending</option>
 					<option value='signed'>Signed</option>
 				</Select>
-				<TableContainer bg='white' borderRadius='lg' shadow='sm' overflow='hidden'>
+				<TableContainer bg='white' shadow='sm' overflow='hidden'>
 					<Table variant='simple'>
 						<Thead bg='#ece8ff'>
 							<Tr>
 								<Th>ID</Th>
 								<Th>Description</Th>
+								<Th>Account</Th>
 								<Th>Threshold</Th>
 								<Th>Status</Th>
 								<Th>Actions</Th>
@@ -178,6 +189,9 @@ const MultiSigTransactions = () => {
 									</Td>
 									<Td borderBottom='1px' borderColor='gray.200'>
 										{transaction.description}
+									</Td>
+									<Td borderBottom='1px' borderColor='gray.200'>
+										{transaction.hedera_account_id}
 									</Td>
 									<Td borderBottom='1px' borderColor='gray.200'>
 										{transaction.threshold}
