@@ -27,7 +27,7 @@ export default class CommanderService extends Service {
 
     program.option('-d, --debug', 'Output extra debugging');
 
-    //GENERAL
+    //* GENERAL
     program
       .name(pkg.name)
       .description(language.getText('commander.appDescription'));

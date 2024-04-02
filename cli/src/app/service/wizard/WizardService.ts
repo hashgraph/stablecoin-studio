@@ -20,6 +20,10 @@ import {
 } from '@hashgraph/stablecoin-npm-sdk';
 import { IAccountConfig } from 'domain/configuration/interfaces/IAccountConfig.js';
 import { MIRROR_NODE, RPC } from '../../../core/Constants.js';
+import { AccountType } from '../../../domain/configuration/interfaces/AccountType.js';
+import ManageMultiSigTxService from '../stablecoin/ManageMultiSigTxService.js';
+import ListMultiSigTxResponse from 'domain/stablecoin/ListMultiSigTxResponse.js';
+import { Status } from 'domain/stablecoin/MultiSigTransaction.js';
 
 /**
  * Wizard Service
@@ -39,29 +43,40 @@ export default class WizardService extends Service {
    */
   public async mainMenu(): Promise<void> {
     try {
+      // Retrieve the main options from the language file
       const wizardMainOptions: Array<string> =
         language.getArrayFromObject('wizard.mainOptions');
       const currentAccount = utilsService.getCurrentAccount();
       const currentMirror = utilsService.getCurrentMirror();
       const currentRPC = utilsService.getCurrentRPC();
 
-      switch (
-        await utilsService.defaultMultipleAsk(
-          language.getText('wizard.mainMenuTitle'),
-          wizardMainOptions,
-          false,
-          {
-            network: currentAccount.network,
-            mirrorNode: currentMirror.name,
-            rpc: currentRPC.name,
-            account: `${currentAccount.accountId} - ${currentAccount.alias}`,
-          },
-        )
-      ) {
+      // Remove ListPendingMultiSig from options if the account is a MultiSig account
+      if (currentAccount.type === AccountType.MultiSignature) {
+        wizardMainOptions.splice(
+          wizardMainOptions.indexOf(
+            language.getText('wizard.mainOptions.ListPendingMultiSig'),
+          ),
+          1,
+        );
+      }
+
+      // Show the main menu and get the selected option
+      const selectedOption = await utilsService.defaultMultipleAsk(
+        language.getText('wizard.mainMenuTitle'),
+        wizardMainOptions,
+        false,
+        {
+          network: currentAccount.network,
+          mirrorNode: currentMirror.name,
+          rpc: currentRPC.name,
+          account: `${currentAccount.accountId} - ${currentAccount.alias}`,
+        },
+      );
+      switch (selectedOption) {
         case language.getText('wizard.mainOptions.Create'):
           await utilsService.cleanAndShowBanner();
           utilsService.displayCurrentUserInfo(currentAccount);
-          let configuration = await configurationService.getConfiguration();
+          let configuration = configurationService.getConfiguration();
           if (
             !configuration.factories.find(
               (item) => item.network === currentAccount.network,
@@ -76,7 +91,7 @@ export default class WizardService extends Service {
             );
             if (configFactories) {
               await this.setFactoryService.configureFactories();
-              configuration = await configurationService.getConfiguration();
+              configuration = configurationService.getConfiguration();
               const { factories } = configuration;
               const currentFactory = factories.find(
                 (factory) => currentAccount.network === factory.network,
@@ -118,6 +133,17 @@ export default class WizardService extends Service {
             false,
           );
           utilsService.drawTableListStableCoin(resp);
+          break;
+        case language.getText('wizard.mainOptions.ListPendingMultiSig'):
+          await utilsService.cleanAndShowBanner();
+          // Draw table
+          const multiSigTxListResponse: ListMultiSigTxResponse =
+            await new ListMultiSigTxService().pending(true);
+          // Continue to MultiSig Submenu
+          await new ManageMultiSigTxService().start({
+            multiSigTxListResponse,
+            status: Status.Pending,
+          });
           break;
         case language.getText('wizard.mainOptions.Configuration'):
           await utilsService.cleanAndShowBanner();
