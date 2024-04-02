@@ -87,9 +87,7 @@ const MultiSigTransactions = () => {
 	};
 
 	const canSendTransaction = (transaction: MultiSigTransactionViewModel) => {
-		return (
-			transaction.signed_keys.length >= transaction.threshold && transaction.status !== 'SIGNED'
-		);
+		return transaction.signed_keys.length >= transaction.threshold;
 	};
 
 	const filteredTransactions = transactions.filter((transaction) => {
