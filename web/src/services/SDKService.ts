@@ -40,7 +40,7 @@ import {
 	InitializationData,
 	InitializationRequest,
 	KYCRequest,
-	MultiSigTransactionViewModel,
+	MultiSigTransactionsViewModel,
 	Network,
 	PauseRequest,
 	Proxy,
@@ -535,7 +535,7 @@ export class SDKService {
 
 	public static async getMultiSigTransactions(
 		data: GetTransactionsRequest,
-	): Promise<MultiSigTransactionViewModel[]> {
+	): Promise<MultiSigTransactionsViewModel> {
 		return await StableCoin.getTransactions(data);
 	}
 

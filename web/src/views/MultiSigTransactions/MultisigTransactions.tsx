@@ -64,7 +64,7 @@ const MultiSigTransactions = () => {
 					account: wallet.id,
 				});
 				const resp = await SDKService.getMultiSigTransactions(request);
-				setTransactions(resp);
+				setTransactions(resp.transactions);
 			} else if (publicKey) {
 				const request = new GetTransactionsRequest({
 					publicKey: {
@@ -74,7 +74,7 @@ const MultiSigTransactions = () => {
 					limit: 10,
 				});
 				const resp = await SDKService.getMultiSigTransactions(request);
-				setTransactions(resp);
+				setTransactions(resp.transactions);
 			}
 		};
 		fetchTransactions();
