@@ -359,6 +359,7 @@ export const english = {
       Manage: 'Manage imported tokens',
       Operate: 'Operate with an existing Stablecoin',
       List: 'List Stablecoins',
+      ListPendingMultiSig: 'List pending multi-signature transactions',
       Configuration: 'Configuration',
       ...separator_1,
       Exit: 'Exit',
@@ -471,6 +472,19 @@ export const english = {
       MULTI_SIGNATURE: AccountType.MultiSignature,
       FIREBLOCKS: AccountType.Fireblocks,
       DFNS: AccountType.Dfns,
+    },
+    // * Multi-Signature Transactions
+    multiSig: {
+      listMenuTitle: 'Select a multi-signature transaction',
+      txActions: {
+        title: 'Multi-signature transaction actions',
+        sign: 'Sign',
+        submit: 'Submit',
+        remove: 'Remove',
+        details: 'Details',
+        signing: '🖋️ Signing transaction...',
+        signed: '✅ Transaction signed successfully',
+      },
     },
   },
   manageImportedToken: {

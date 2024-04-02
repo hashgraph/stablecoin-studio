@@ -10,7 +10,9 @@ import {
 import Service from '../Service.js';
 import Table from 'cli-table3';
 import {
+  Account,
   ConnectRequest,
+  GetPublicKeyRequest,
   InitializationRequest,
   Network,
   SDK,
@@ -30,6 +32,7 @@ import { IRPCsConfig } from 'domain/configuration/interfaces/IRPCsConfig.js';
 import { MIRROR_NODE, RPC } from '../../../core/Constants.js';
 import { AccountType } from '../../../domain/configuration/interfaces/AccountType';
 import fs from 'fs';
+import MultiSigTransaction from 'domain/stablecoin/MultiSigTransaction.js';
 
 /**
  * Utilities Service
@@ -492,6 +495,45 @@ export default class UtilitiesService extends Service {
 
       console.log(table.toString());
     }
+  }
+
+  public async drawTableListPendingMultiSig({
+    multiSigTxList,
+    publicKey,
+  }: {
+    multiSigTxList: MultiSigTransaction[];
+    publicKey?: string;
+  }): Promise<void> {
+    const currentAccount = this.getCurrentAccount();
+    const publicKeyFromHederaAccount = Account.getPublicKey(
+      new GetPublicKeyRequest({
+        account: { accountId: currentAccount.accountId },
+      }),
+    );
+    publicKey = publicKey || (await publicKeyFromHederaAccount).toString();
+
+    if (multiSigTxList.length === 0) {
+      console.log(
+        '🙌🏼 There are no pending multisig transactions at this time!',
+      );
+      return;
+    }
+
+    console.log('📜 There are pending multisig transactions for:');
+    // Define table for pending multisig transactions
+    const table = new Table({
+      style: { head: ['green'] },
+      head: ['Transaction ID', 'Description', 'Status'],
+      colWidths: [15, 20, 10],
+    });
+
+    // Add pending multisig transactions to table
+    multiSigTxList.forEach((multiSigTx) =>
+      table.push([multiSigTx.id, multiSigTx.description, multiSigTx.status]),
+    );
+
+    // Show table
+    console.log(table.toString());
   }
 
   public exitApplication(cause?: string): void {
