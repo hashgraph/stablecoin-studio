@@ -9,7 +9,7 @@ import {
   StableCoin,
 } from '@hashgraph/stablecoin-npm-sdk';
 import ListMultiSigTxResponse from '../../../domain/stablecoin/ListMultiSigTxResponse.js';
-import Pagination from '../../../domain/stablecoin/Pagination.js';
+import PaginationRequest from '../../../domain/stablecoin/PaginationRequest.js';
 
 /**
  * Service class for listing MultiSig transactions.
@@ -26,12 +26,12 @@ export default class ListMultiSigTxService extends Service {
    */
   public async all(
     {
-      pagination = new Pagination(),
+      pagination = new PaginationRequest(),
       draw = false,
     }: {
-      pagination?: Pagination;
+      pagination?: PaginationRequest;
       draw?: boolean;
-    } = { pagination: new Pagination(), draw: false },
+    } = { pagination: new PaginationRequest(), draw: false },
   ): Promise<ListMultiSigTxResponse> {
     const multiSigTxListResponse = await this.get({
       status: undefined,
@@ -55,12 +55,12 @@ export default class ListMultiSigTxService extends Service {
    */
   public async pending(
     {
-      pagination = new Pagination(),
+      pagination = new PaginationRequest(),
       draw = false,
     }: {
-      pagination?: Pagination;
+      pagination?: PaginationRequest;
       draw?: boolean;
-    } = { pagination: new Pagination(), draw: false },
+    } = { pagination: new PaginationRequest(), draw: false },
   ): Promise<ListMultiSigTxResponse> {
     const multiSigTxListResponse = await this.get({
       status: Status.Pending,
@@ -87,7 +87,7 @@ export default class ListMultiSigTxService extends Service {
     pagination,
   }: {
     status?: Status;
-    pagination: Pagination;
+    pagination: PaginationRequest;
   }): Promise<ListMultiSigTxResponse> {
     const currentAccount = utilsService.getCurrentAccount();
     const publicKey = await Account.getPublicKey(
@@ -113,9 +113,9 @@ export default class ListMultiSigTxService extends Service {
 
     // Generate MultiSigTransaction domain objects
     return ListMultiSigTxResponse.fromRawMultiSigTxList({
-      multiSigTxListRaw: (await getTransactionsResponse).multiSigTxListRaw,
+      multiSigTxListRaw: (await getTransactionsResponse).transactions,
       publicKey,
-      pagination: (await getTransactionsResponse).pagination,
+      paginationResRaw: (await getTransactionsResponse).pagination,
     });
   }
 }

@@ -1,7 +1,12 @@
 const DEFAULT_PAGE = 1;
 const DEFAULT_LIMIT = 5;
 
-export default class Pagination {
+export interface IPaginationRequest {
+  page: number;
+  limit: number;
+}
+
+export default class PaginationRequest implements IPaginationRequest {
   public page: number;
   public limit: number;
 
@@ -16,19 +21,6 @@ export default class Pagination {
   ) {
     this.page = this.validatePage(page);
     this.limit = this.validateLimit(limit);
-  }
-
-  public next(): Pagination {
-    return new Pagination({
-      page: this.page + 1,
-      limit: this.limit,
-    });
-  }
-  public previous(): Pagination {
-    return new Pagination({
-      page: this.page - 1,
-      limit: this.limit,
-    });
   }
 
   private validatePage(page: number): number {

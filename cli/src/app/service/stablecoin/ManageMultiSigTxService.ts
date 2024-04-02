@@ -7,7 +7,7 @@ import MultiSigTransaction, {
 import ListMultiSigTxService from './ListMultiSigTxService.js';
 import { Account, GetPublicKeyRequest } from '@hashgraph/stablecoin-npm-sdk';
 import ListMultiSigTxResponse from '../../../domain/stablecoin/ListMultiSigTxResponse.js';
-import Pagination from '../../../domain/stablecoin/Pagination.js';
+import PaginationRequest from '../../../domain/stablecoin/PaginationRequest.js';
 
 export default class ManageMultiSigTxService extends Service {
   status?: Status;
@@ -15,6 +15,13 @@ export default class ManageMultiSigTxService extends Service {
     super('Manage MultiSig Transactions Actions');
   }
 
+  /**
+   * Starts the process of managing MultiSig transactions.
+   *
+   * @param multiSigTxListResponse - The response containing the list of MultiSig transactions.
+   * @param status - The status of the MultiSig transactions.
+   * @returns A Promise that resolves when the process is complete.
+   */
   public async start(
     {
       multiSigTxListResponse,
@@ -29,15 +36,17 @@ export default class ManageMultiSigTxService extends Service {
     if (!multiSigTxListResponse || !multiSigTxListResponse.multiSigTxList) {
       multiSigTxListResponse = await new ListMultiSigTxService().get({
         status,
-        pagination: new Pagination(),
+        pagination: new PaginationRequest(),
       });
     }
     const multiSigTxList = multiSigTxListResponse.multiSigTxList;
     const publicKey = multiSigTxListResponse.publicKey.toString();
+    const pagination = multiSigTxListResponse.pagination;
     // Id transaction list
     const txIdListAsOptions = (
       multiSigTxList.map((tx) => tx.id) as string[]
     ).concat(['previous', 'next']);
+    // TODO: set in language
     const selectedOption = await utilsService.defaultMultipleAsk(
       language.getText('wizard.multiSig.listMenuTitle'),
       txIdListAsOptions,
@@ -48,22 +57,22 @@ export default class ManageMultiSigTxService extends Service {
     if (selectedOption === language.getText('wizard.backOption')) {
       await wizardService.mainMenu();
     }
-    if (selectedOption === 'previous page') {
+    if (selectedOption === 'previous') {
       // Get the previous page of the MultiSig transaction list
       await this.start({
         multiSigTxListResponse: await new ListMultiSigTxService().get({
           status,
-          pagination: multiSigTxListResponse.pagination.previous(),
+          pagination: pagination.previous(),
         }),
         status,
       });
     }
-    if (selectedOption === 'next page') {
+    if (selectedOption === 'next') {
       // Get the next page of the MultiSig transaction list
       await this.start({
         multiSigTxListResponse: await new ListMultiSigTxService().get({
           status,
-          pagination: multiSigTxListResponse.pagination.next(),
+          pagination: pagination.next(),
         }),
         status,
       });
@@ -147,10 +156,12 @@ export default class ManageMultiSigTxService extends Service {
   }
 
   private async submit(multiSigTx: MultiSigTransaction) {
+    return multiSigTx;
     // Submit the MultiSig transaction
   }
 
   private async remove(multiSigTx: MultiSigTransaction) {
+    return multiSigTx;
     // Remove the MultiSig transaction
   }
 

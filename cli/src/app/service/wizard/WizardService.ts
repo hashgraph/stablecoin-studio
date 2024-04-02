@@ -18,12 +18,13 @@ import {
   SetNetworkRequest,
   StableCoinViewModel,
 } from '@hashgraph/stablecoin-npm-sdk';
-import { IAccountConfig } from 'domain/configuration/interfaces/IAccountConfig.js';
+import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
 import { MIRROR_NODE, RPC } from '../../../core/Constants.js';
 import { AccountType } from '../../../domain/configuration/interfaces/AccountType.js';
 import ManageMultiSigTxService from '../stablecoin/ManageMultiSigTxService.js';
-import ListMultiSigTxResponse from 'domain/stablecoin/ListMultiSigTxResponse.js';
-import { Status } from 'domain/stablecoin/MultiSigTransaction.js';
+import ListMultiSigTxResponse from '../../../domain/stablecoin/ListMultiSigTxResponse.js';
+import { Status } from '../../../domain/stablecoin/MultiSigTransaction.js';
+import ListMultiSigTxService from '../stablecoin/ListMultiSigTxService.js';
 
 /**
  * Wizard Service
@@ -138,7 +139,7 @@ export default class WizardService extends Service {
           await utilsService.cleanAndShowBanner();
           // Draw table
           const multiSigTxListResponse: ListMultiSigTxResponse =
-            await new ListMultiSigTxService().pending(true);
+            await new ListMultiSigTxService().pending({ draw: true });
           // Continue to MultiSig Submenu
           await new ManageMultiSigTxService().start({
             multiSigTxListResponse,

@@ -1,21 +1,21 @@
 import {
-  MultiSigTransactionViewModel,
   PublicKey,
+  MultiSigTransactionsViewModel,
 } from '@hashgraph/stablecoin-npm-sdk';
 import MultiSigTransaction from './MultiSigTransaction';
-import Pagination from './Pagination';
+import PaginationResponse from './PaginationResponse';
 
 export default class ListMultiSigTxResponse {
   public multiSigTxList: MultiSigTransaction[];
   public publicKey: PublicKey;
-  public pagination: Pagination;
+  public pagination: PaginationResponse;
 
   /**
    * Represents a response object for listing multi-signature transactions.
    *
    * @param multiSigTxList - The list of multi-signature transactions.
    * @param publicKey - The public key associated with the transaction list.
-   * @param pagination - Optional pagination parameters.
+   * @param pagination - The pagination response object.
    */
   constructor({
     multiSigTxList,
@@ -24,7 +24,7 @@ export default class ListMultiSigTxResponse {
   }: {
     multiSigTxList: MultiSigTransaction[];
     publicKey: PublicKey;
-    pagination: Pagination;
+    pagination: PaginationResponse;
   }) {
     this.multiSigTxList = multiSigTxList;
     this.publicKey = publicKey;
@@ -36,38 +36,42 @@ export default class ListMultiSigTxResponse {
    *
    * @param multiSigTxListRaw - The raw multiSig transaction list data.
    * @param publicKey - The public key associated with the transaction list.
-   * @param pagination - Optional pagination parameters.
+   * @param pagination - The pagination response object.
    * @returns A new instance of ListMultiSigTxResponse.
    */
   public static fromRawMultiSigTxList({
     multiSigTxListRaw,
     publicKey,
-    pagination,
+    paginationResRaw,
   }: {
-    multiSigTxListRaw: any[];
+    multiSigTxListRaw: MultiSigTransactionsViewModel['transactions'];
     publicKey: string | PublicKey;
-    pagination: Pagination;
+    paginationResRaw: MultiSigTransactionsViewModel['pagination'];
   }): ListMultiSigTxResponse {
-    const multiSigTxList = multiSigTxListRaw.map(
-      (multiSigTxRaw: MultiSigTransactionViewModel) => {
-        return new MultiSigTransaction({
-          id: multiSigTxRaw.id,
-          message: multiSigTxRaw.transaction_message,
-          description: multiSigTxRaw.description,
-          hederaAccountId: multiSigTxRaw.hedera_account_id,
-          signatures: multiSigTxRaw.signatures,
-          keyList: multiSigTxRaw.key_list,
-          signedKeys: multiSigTxRaw.signed_keys,
-          status: multiSigTxRaw.status,
-          threshold: multiSigTxRaw.threshold,
-        });
-      },
-    );
+    const multiSigTxList = multiSigTxListRaw.map((multiSigTxRaw) => {
+      return new MultiSigTransaction({
+        id: multiSigTxRaw.id,
+        message: multiSigTxRaw.transaction_message,
+        description: multiSigTxRaw.description,
+        hederaAccountId: multiSigTxRaw.hedera_account_id,
+        signatures: multiSigTxRaw.signatures,
+        keyList: multiSigTxRaw.key_list,
+        signedKeys: multiSigTxRaw.signed_keys,
+        status: multiSigTxRaw.status,
+        threshold: multiSigTxRaw.threshold,
+      });
+    });
 
     return new ListMultiSigTxResponse({
       multiSigTxList,
       publicKey: new PublicKey(publicKey),
-      pagination,
+      pagination: new PaginationResponse({
+        totalItems: paginationResRaw.totalItems,
+        itemCount: paginationResRaw.itemCount,
+        itemsPerPage: paginationResRaw.itemsPerPage,
+        totalPages: paginationResRaw.totalPages,
+        currentPage: paginationResRaw.currentPage,
+      }),
     });
   }
 }
