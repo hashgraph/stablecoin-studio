@@ -49,14 +49,15 @@ export class GetTransactionsQueryHandler
 	async execute(
 		command: GetTransactionsQuery,
 	): Promise<GetTransactionsQueryResponse> {
-		const { publicKey, page, limit, status } = command;
+		const { publicKey, page, limit, status, accountId } = command;
 
 		const res = await this.backendAdapter.getTransactions(
-			publicKey,
 			page,
 			limit,
-			status,
 			this.networkService.environment,
+			publicKey,
+			status,
+			accountId,
 		);
 
 		const returnValue: MultiSigTransactionViewModel[] = res.map(

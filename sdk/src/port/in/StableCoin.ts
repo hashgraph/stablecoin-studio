@@ -755,10 +755,11 @@ class StableCoinInPort implements IStableCoinInPort {
 		return (
 			await this.queryBus.execute(
 				new GetTransactionsQuery(
-					request.publicKey.key,
 					request.page,
 					request.limit,
+					request.publicKey ? request.publicKey.key : undefined,
 					request.status,
+					request.account,
 				),
 			)
 		).payload;
