@@ -142,11 +142,12 @@ export class BackendAdapter {
 	}
 
 	public async getTransactions(
-		publicKey: string,
 		page: number,
 		limit: number,
-		status: string,
 		network: Environment,
+		publicKey?: string,
+		status?: string,
+		accountId?: string,
 	): Promise<MultiSigTransaction[]> {
 		try {
 			const queryParams = {
@@ -155,6 +156,7 @@ export class BackendAdapter {
 				limit: limit,
 				status: status,
 				network: network,
+				hederaAccountId: accountId,
 			};
 
 			const response = await this.httpClient.get('', {

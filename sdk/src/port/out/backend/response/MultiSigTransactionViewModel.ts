@@ -30,4 +30,5 @@ export default interface MultiSigTransactionViewModel extends QueryResponse {
 	signed_keys: string[];
 	signatures: string[];
 	network: string;
+	hedera_account_id: string;
 }
