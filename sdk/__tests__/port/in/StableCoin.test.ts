@@ -81,7 +81,7 @@ import BaseError, {
 } from '../../../src/core/error/BaseError.js';
 import BackendEndpoint from '../../../src/domain/context/network/BackendEndpoint.js';
 import { Environment } from '../../../src/domain/context/network/Environment.js';
-import MultiSigTransaction from '../../../src/domain/context/transaction/MultiSigTransaction.js';
+import { MultiSigTransaction } from '../../../src/domain/context/transaction/MultiSigTransaction.js';
 
 const decimals = 6;
 const initialSupply = 1000;
@@ -138,7 +138,16 @@ jest.mock('../../../src/port/out/backend/BackendAdapter', () => {
 				.fn()
 				.mockResolvedValue('mocked deleteTransaction'),
 			getTransactions: jest.fn(() => {
-				return [multiSigTransaction];
+				return {
+					transactions: [multiSigTransaction],
+					pagination: {
+						totalItems: 0,
+						itemCount: 0,
+						itemsPerPage: 10,
+						totalPages: 0,
+						currentPage: 1,
+					},
+				};
 			}),
 			getTransaction: jest.fn(() => {
 				return multiSigTransaction;
@@ -714,8 +723,10 @@ describe('🧪 Stablecoin test', () => {
 		);
 
 		expect(result).toBe(true);
-		expect(trans[0].id).toEqual(trans_pk[0].id);
-		expect(trans[0].id).toEqual(trans_account[0].id);
+		expect(trans.transactions[0].id).toEqual(trans_pk.transactions[0].id);
+		expect(trans.transactions[0].id).toEqual(
+			trans_account.transactions[0].id,
+		);
 	}, 180_000);
 
 	// ----------------------HTS--------------------------

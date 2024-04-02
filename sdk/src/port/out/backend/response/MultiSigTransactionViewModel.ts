@@ -20,7 +20,15 @@
 
 import { QueryResponse } from '../../../../core/query/QueryResponse.js';
 
-export default interface MultiSigTransactionViewModel extends QueryResponse {
+export interface PaginationViewModel {
+	totalItems: number;
+	itemCount: number;
+	itemsPerPage: number;
+	totalPages: number;
+	currentPage: number;
+}
+
+export interface MultiSigTransactionViewModel extends QueryResponse {
 	id: string;
 	transaction_message: string;
 	description: string;
@@ -31,4 +39,8 @@ export default interface MultiSigTransactionViewModel extends QueryResponse {
 	signatures: string[];
 	network: string;
 	hedera_account_id: string;
+}
+export interface MultiSigTransactionsViewModel extends QueryResponse {
+	transactions: MultiSigTransactionViewModel[];
+	pagination: PaginationViewModel;
 }

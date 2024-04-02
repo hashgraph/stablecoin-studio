@@ -23,7 +23,11 @@ import { QueryHandler } from '../../../../../../core/decorator/QueryHandlerDecor
 import { IQueryHandler } from '../../../../../../core/query/QueryHandler.js';
 import { BackendAdapter } from '../../../../../../port/out/backend/BackendAdapter.js';
 import { MirrorNodeAdapter } from '../../../../../../port/out/mirror/MirrorNodeAdapter.js';
-import MultiSigTransactionViewModel from '../../../../../../port/out/backend/response/MultiSigTransactionViewModel.js';
+import {
+	MultiSigTransactionsViewModel,
+	MultiSigTransactionViewModel,
+	PaginationViewModel,
+} from '../../../../../../port/out/backend/response/MultiSigTransactionViewModel.js';
 import RPCQueryAdapter from '../../../../../../port/out/rpc/RPCQueryAdapter.js';
 import {
 	GetTransactionsQuery,
@@ -60,10 +64,16 @@ export class GetTransactionsQueryHandler
 			accountId,
 		);
 
-		const returnValue: MultiSigTransactionViewModel[] = res.map(
-			(trans) => ({ ...trans }),
-		);
+		const returnedTransactions: MultiSigTransactionViewModel[] =
+			res.transactions.map((trans) => ({ ...trans }));
 
-		return Promise.resolve(new GetTransactionsQueryResponse(returnValue));
+		const returnedPagination: PaginationViewModel = res.pagination;
+
+		const returnedValue: MultiSigTransactionsViewModel = {
+			transactions: returnedTransactions,
+			pagination: returnedPagination,
+		};
+
+		return Promise.resolve(new GetTransactionsQueryResponse(returnedValue));
 	}
 }

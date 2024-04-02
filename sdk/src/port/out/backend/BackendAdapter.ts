@@ -20,7 +20,11 @@
 
 import { singleton } from 'tsyringe';
 import axios, { AxiosInstance } from 'axios';
-import MultiSigTransaction from '../../../domain/context/transaction/MultiSigTransaction.js';
+import {
+	MultiSigTransaction,
+	MultiSigTransactions,
+	Pagination,
+} from '../../../domain/context/transaction/MultiSigTransaction.js';
 import { BackendError } from './error/BackendError.js';
 import BackendEndpoint from '../../../domain/context/network/BackendEndpoint.js';
 import Injectable from '../../../core/Injectable.js';
@@ -148,7 +152,7 @@ export class BackendAdapter {
 		publicKey?: string,
 		status?: string,
 		accountId?: string,
-	): Promise<MultiSigTransaction[]> {
+	): Promise<MultiSigTransactions> {
 		try {
 			const queryParams = {
 				publicKey: publicKey,
@@ -169,14 +173,17 @@ export class BackendAdapter {
 						`get transactions by public key api call succeeded but returned no data....`,
 					);
 
-				const transactions: MultiSigTransaction[] = [];
-
 				const returnedTrx = response.data;
+				const pagination = returnedTrx.meta as Pagination;
+
+				const transaction_list: MultiSigTransaction[] = [];
+				const transactions: MultiSigTransactions =
+					new MultiSigTransactions(transaction_list, pagination);
 
 				if (returnedTrx && returnedTrx.items)
 					returnedTrx.items.forEach(
 						(transaction: MultiSigTransaction) => {
-							transactions.push(transaction);
+							transactions.transactions.push(transaction);
 						},
 					);
 

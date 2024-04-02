@@ -52,6 +52,14 @@ const GET_TRANSACTIONS = {
 	accountId: '0.0.1',
 };
 
+const PAGINATION = {
+	totalItems: 560,
+	itemCount: 10,
+	itemsPerPage: 10,
+	totalPages: 56,
+	currentPage: 1,
+};
+
 const GET_TRANSACTION = {
 	id: 'id',
 	transaction_message: 'transaction_message',
@@ -125,6 +133,7 @@ jest.mock('axios', () => {
 							status: 200,
 							data: {
 								items: [GET_TRANSACTION],
+								meta: PAGINATION,
 							},
 						};
 
@@ -138,6 +147,7 @@ jest.mock('axios', () => {
 							status: 200,
 							data: {
 								items: [GET_TRANSACTION],
+								meta: PAGINATION,
 							},
 						};
 				}
@@ -222,42 +232,59 @@ describe('🧪 BackendAdapter test', () => {
 		);
 
 		transactions.forEach((trans) => {
-			expect(trans[0].id).toEqual(GET_TRANSACTION.id);
-			expect(trans[0].transaction_message).toEqual(
+			expect(trans.transactions[0].id).toEqual(GET_TRANSACTION.id);
+			expect(trans.transactions[0].transaction_message).toEqual(
 				GET_TRANSACTION.transaction_message,
 			);
-			expect(trans[0].description).toEqual(GET_TRANSACTION.description);
-			expect(trans[0].status).toEqual(GET_TRANSACTION.status);
-			expect(trans[0].threshold).toEqual(GET_TRANSACTION.threshold);
-			expect(trans[0].key_list.length).toEqual(
+			expect(trans.transactions[0].description).toEqual(
+				GET_TRANSACTION.description,
+			);
+			expect(trans.transactions[0].status).toEqual(
+				GET_TRANSACTION.status,
+			);
+			expect(trans.transactions[0].threshold).toEqual(
+				GET_TRANSACTION.threshold,
+			);
+			expect(trans.transactions[0].key_list.length).toEqual(
 				GET_TRANSACTION.key_list.length,
 			);
-			expect(trans[0].signed_keys.length).toEqual(
+			expect(trans.transactions[0].signed_keys.length).toEqual(
 				GET_TRANSACTION.signed_keys.length,
 			);
-			expect(trans[0].signatures.length).toEqual(
+			expect(trans.transactions[0].signatures.length).toEqual(
 				GET_TRANSACTION.signatures.length,
 			);
-			expect(trans[0].network).toEqual(GET_TRANSACTION.network);
-			expect(trans[0].hedera_account_id).toEqual(
+			expect(trans.transactions[0].network).toEqual(
+				GET_TRANSACTION.network,
+			);
+			expect(trans.transactions[0].hedera_account_id).toEqual(
 				GET_TRANSACTION.hedera_account_id,
 			);
 
-			for (let i = 0; i < trans[0].key_list.length; i++) {
-				expect(trans[0].key_list[i]).toEqual(
+			for (let i = 0; i < trans.transactions[0].key_list.length; i++) {
+				expect(trans.transactions[0].key_list[i]).toEqual(
 					GET_TRANSACTION.key_list[i],
 				);
 			}
-			for (let i = 0; i < trans[0].signed_keys.length; i++) {
-				expect(trans[0].signed_keys[i]).toEqual(
+			for (let i = 0; i < trans.transactions[0].signed_keys.length; i++) {
+				expect(trans.transactions[0].signed_keys[i]).toEqual(
 					GET_TRANSACTION.signed_keys[i],
 				);
 			}
-			for (let i = 0; i < trans[0].signatures.length; i++) {
-				expect(trans[0].signatures[i]).toEqual(
+			for (let i = 0; i < trans.transactions[0].signatures.length; i++) {
+				expect(trans.transactions[0].signatures[i]).toEqual(
 					GET_TRANSACTION.signatures[i],
 				);
 			}
+			expect(trans.pagination.totalItems).toEqual(PAGINATION.totalItems);
+			expect(trans.pagination.currentPage).toEqual(
+				PAGINATION.currentPage,
+			);
+			expect(trans.pagination.itemCount).toEqual(PAGINATION.itemCount);
+			expect(trans.pagination.itemsPerPage).toEqual(
+				PAGINATION.itemsPerPage,
+			);
+			expect(trans.pagination.totalPages).toEqual(PAGINATION.totalPages);
 		});
 	}, 60_000);
 
