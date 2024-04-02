@@ -170,10 +170,6 @@ const Router = () => {
 								path={RoutesMappingUrl.getAccountsWithRoles}
 								element={<HandleRoles action='getAccountsWithRole' />}
 							/>
-							<Route
-								path={RoutesMappingUrl.multiSigTransactions}
-								element={<MultiSigTransactions />}
-							/>
 							<Route path={RoutesMappingUrl.giveRole} element={<HandleRoles action='giveRole' />} />
 							<Route path={RoutesMappingUrl.operations} element={<Operations />} />
 							<Route path={RoutesMappingUrl.dangerZone} element={<DangerZoneOperations />} />
@@ -195,6 +191,7 @@ const Router = () => {
 							<Route path={RoutesMappingUrl.stableCoinSettings} element={<StableCoinSettings />} />
 						</>
 					)}
+					<Route path={RoutesMappingUrl.multiSigTransactions} element={<MultiSigTransactions />} />
 					<Route path={RoutesMappingUrl.settings} element={<Settings />} />
 
 					<Route path={RoutesMappingUrl.factorySettings} element={<FactorySettings />} />

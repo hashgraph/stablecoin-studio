@@ -21,20 +21,25 @@ import {
 	useDisclosure,
 } from '@chakra-ui/react';
 // @ts-ignore
-import { AccountViewModel, GetTransactionsRequest, MultiSigTransactionViewModel } from '@hashgraph/stablecoin-npm-sdk';
+import {
+	AccountViewModel,
+	GetTransactionsRequest,
+	MultiSigTransactionViewModel,
+	SupportedWallets,
+} from '@hashgraph/stablecoin-npm-sdk';
 import { ArrowForwardIcon, DeleteIcon, SearchIcon } from '@chakra-ui/icons';
 import BaseContainer from '../../components/BaseContainer';
 import { useTranslation } from 'react-i18next';
 import MultiSigTransactionModal from './components/MultiSigTransactionModal';
 import SDKService from '../../services/SDKService';
 import { useSelector } from 'react-redux';
-import { SELECTED_WALLET_ACCOUNT_INFO, SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
+import { LAST_WALLET_SELECTED, SELECTED_WALLET_ACCOUNT_INFO } from '../../store/slices/walletSlice';
 
 // @ts-ignore
 const MultiSigTransactions = () => {
 	const { isOpen, onOpen, onClose } = useDisclosure();
-	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
-	const wallet:AccountViewModel = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
+	const selectedWallet = useSelector(LAST_WALLET_SELECTED);
+	const wallet: AccountViewModel = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 	const publicKey = wallet.publicKey?.key;
 
 	const {
@@ -52,7 +57,7 @@ const MultiSigTransactions = () => {
 
 	useEffect(() => {
 		const fetchTransactions = async () => {
-			if(wallet.multiKey && wallet.multiKey.keys.length > 0) {
+			if (selectedWallet === SupportedWallets.MULTISIG) {
 				const request = new GetTransactionsRequest({
 					page: 1,
 					limit: 10,
@@ -70,15 +75,15 @@ const MultiSigTransactions = () => {
 				});
 				const resp = await SDKService.getMultiSigTransactions(request);
 				setTransactions(resp);
-			} else {
-				console.error('Public key not found');
 			}
 		};
 		fetchTransactions();
-	});
+	}, [selectedWallet, publicKey]);
 
 	const canSignTransaction = (transaction: MultiSigTransactionViewModel) => {
-		return publicKey && transaction.signed_keys.includes(publicKey) && transaction.status === 'PENDING';
+		return (
+			publicKey && transaction.key_list.includes(publicKey) && transaction.status === 'PENDING'
+		);
 	};
 
 	const canSendTransaction = (transaction: MultiSigTransactionViewModel) => {
@@ -92,51 +97,49 @@ const MultiSigTransactions = () => {
 		return transaction.status.toUpperCase() === filter.toUpperCase();
 	});
 
-	const handleSignTransaction = async (transaction: MultiSigTransactionViewModel) => {
+	const handleSignTransaction = async (transactionId: string) => {
 		try {
-			await SDKService.signMultiSigTransaction(transaction.id, publicKey);
-			const updatedTransaction = {
-				...transaction,
-				signed_keys: [...transaction.signed_keys, publicKey],
-			};
-			setTransactions(transactions.map((t) => (t.id === transaction.id ? updatedTransaction : t);
-			onClose();
+			const response = await SDKService.signMultiSigTransaction(transactionId);
+			if (publicKey) {
+				setTransactions(
+					transactions.map((t) => {
+						if (t.id === transactionId) {
+							return {
+								...t,
+								status: 'SIGNED',
+								signed_keys: [...t.signed_keys, publicKey],
+							};
+						}
+						return t;
+					}),
+				);
+			} else {
+				console.error('Public key is undefined, cannot sign transaction');
+			}
 		} catch (error) {
 			console.error('Error signing transaction:', error);
 		}
 	};
 
-	const handleSendTransaction = async (transaction: MultiSigTransactionViewModel) => {
+	const handleSendTransaction = async (transactionId: string) => {
 		try {
-			await SDKService.submitMultiSigTransaction(transaction.id)
-			const updatedTransaction = {
-				...transaction,
-				status: 'completed',
-			};
-			setTransactions(transactions.map((t) => (t.id === transaction.id ? updatedTransaction : t)));
-			onClose();
+			await SDKService.submitMultiSigTransaction(transactionId);
+			// Remove the transaction from the list as it is sent
+			setTransactions(transactions.filter((t) => t.id !== transactionId));
 		} catch (error) {
 			console.error('Error sending transaction:', error);
 		}
 	};
 
-	const handleDeleteTransaction = async (transaction: MultiSigTransactionViewModel) => {
-		try {
-			showDeleteConfirmationModal(transaction);
-			console.log(`Deleting transaction ${transaction.id}`);
-		} catch (error) {
-			console.error('Error deleting transaction:', error);
-		}
-	};
-
-	const handleDeleteConfirmation = async () => {
-		if (!transactionToDelete) {
-			console.error('No transaction to delete');
-		} else {
-			await SDKService.removeMultiSigTransaction(transactionToDelete.id);
-			setTransactions(transactions.filter((t) => t.id !== transactionToDelete.id));
-			setTransactionToDelete(null);
-			onDeleteModalClose();
+	const handleConfirmDeleteTransaction = async () => {
+		if (transactionToDelete) {
+			try {
+				await SDKService.removeMultiSigTransaction(transactionToDelete.id);
+				setTransactions(transactions.filter((t) => t.id !== transactionToDelete.id));
+				onDeleteModalClose();
+			} catch (error) {
+				console.error('Error deleting transaction:', error);
+			}
 		}
 	};
 
@@ -165,7 +168,6 @@ const MultiSigTransactions = () => {
 					placeholder='Filter by status'
 					onChange={(e) => setFilter(e.target.value)}
 				>
-					<option >All</option>
 					<option value='pending'>Pending</option>
 					<option value='signed'>Signed</option>
 				</Select>
@@ -215,7 +217,7 @@ const MultiSigTransactions = () => {
 												mr={2}
 												style={{ maxWidth: '90px' }}
 												rightIcon={<ArrowForwardIcon />}
-												onClick={() => handleSignTransaction(transaction)}
+												onClick={() => handleSignTransaction(transaction.id)}
 											>
 												Sign
 											</Button>
@@ -226,7 +228,7 @@ const MultiSigTransactions = () => {
 												mr={2}
 												style={{ maxWidth: '90px' }}
 												rightIcon={<ArrowForwardIcon />}
-												onClick={() => handleSendTransaction(transaction)}
+												onClick={() => handleSendTransaction(transaction.id)}
 											>
 												Send
 											</Button>
@@ -236,7 +238,7 @@ const MultiSigTransactions = () => {
 											mr={2}
 											style={{ maxWidth: '90px' }}
 											rightIcon={<DeleteIcon />}
-											onClick={() => handleDeleteTransaction(transaction)}
+											onClick={() => showDeleteConfirmationModal(transaction)}
 										>
 											Delete
 										</Button>
@@ -265,7 +267,7 @@ const MultiSigTransactions = () => {
 							<Button variant='ghost' onClick={onDeleteModalClose}>
 								Cancel
 							</Button>
-							<Button colorScheme='red' mr={3} onClick={handleDeleteConfirmation}>
+							<Button colorScheme='red' mr={3} onClick={handleConfirmDeleteTransaction}>
 								Delete
 							</Button>
 						</ModalFooter>

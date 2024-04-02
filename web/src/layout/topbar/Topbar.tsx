@@ -9,7 +9,7 @@ import {
 	Image,
 	Link,
 } from '@chakra-ui/react';
-import { Network } from '@hashgraph/stablecoin-npm-sdk';
+import { Network, SupportedWallets } from '@hashgraph/stablecoin-npm-sdk';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -18,10 +18,11 @@ import LOGO_HEDERA from '../../assets/svg/hedera-hbar-logo.svg';
 import { NamedRoutes } from '../../Router/NamedRoutes';
 import { RouterManager } from '../../Router/RouterManager';
 import {
-	SELECTED_NETWORK_RECOGNIZED,
-	SELECTED_WALLET_PAIRED_ACCOUNT_RECOGNIZED,
+	LAST_WALLET_SELECTED,
 	SELECTED_NETWORK,
+	SELECTED_NETWORK_RECOGNIZED,
 	SELECTED_WALLET_PAIRED_ACCOUNT,
+	SELECTED_WALLET_PAIRED_ACCOUNT_RECOGNIZED,
 } from '../../store/slices/walletSlice';
 import CoinDropdown from './CoinDropdown';
 import CollapsibleButton from './components/CollapsibleButton';
@@ -33,6 +34,7 @@ const Topbar = () => {
 	const [haveFactory, setHaveFactory] = useState<boolean>(true);
 	const accountRecognized = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT_RECOGNIZED);
 	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
+	const selectedWallet = useSelector(LAST_WALLET_SELECTED);
 	const [isAccountRecognized, setIsAccountRecognized] = useState<boolean>(
 		accountRecognized ?? true,
 	);
@@ -80,11 +82,13 @@ const Topbar = () => {
 					<Flex gap={5} alignItems='center'>
 						<CoinDropdown />
 						<HStack>
-							<CollapsibleButton
-								nameIcon='Plus'
-								text={t('topbar.createSC')}
-								onClick={handleNavigateSC}
-							/>
+							{selectedWallet !== SupportedWallets.MULTISIG && (
+								<CollapsibleButton
+									nameIcon='Plus'
+									text={t('topbar.createSC')}
+									onClick={handleNavigateSC}
+								/>
+							)}
 						</HStack>
 					</Flex>
 					<TopbarRight />

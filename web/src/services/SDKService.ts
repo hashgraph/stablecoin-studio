@@ -69,7 +69,7 @@ import {
 	UpgradeImplementationRequest,
 	WalletEvent,
 	WipeRequest,
-	RemoveTransactionRequest
+	RemoveTransactionRequest,
 } from '@hashgraph/stablecoin-npm-sdk';
 import { type IMirrorRPCNode } from '../interfaces/IMirrorRPCNode';
 
@@ -97,14 +97,12 @@ export class SDKService {
 		let factories = []; // REACT_APP_FACTORIES load from .env
 
 		if (process.env.REACT_APP_FACTORIES) factories = JSON.parse(process.env.REACT_APP_FACTORIES);
-		console.log('factories');
 		const _lastFactoryId =
 			factories.length !== 0
 				? factories.find((i: any) => i.Environment === connectNetwork)
 					? factories.find((i: any) => i.Environment === connectNetwork).STABLE_COIN_FACTORY_ADDRESS
 					: ''
 				: '';
-		console.log('factories2');
 		if (_lastFactoryId)
 			await Network.setConfig(
 				new SetConfigurationRequest({
@@ -545,7 +543,7 @@ export class SDKService {
 		return await StableCoin.submitTransaction(
 			new SubmitTransactionRequest({
 				transactionId: multiSigTransactionId,
-			})
+			}),
 		);
 	}
 
@@ -553,7 +551,7 @@ export class SDKService {
 		return StableCoin.signTransaction(
 			new SignTransactionRequest({
 				transactionId: multiSigTransactionId,
-			})
+			}),
 		);
 	}
 
@@ -561,7 +559,7 @@ export class SDKService {
 		return StableCoin.removeTransaction(
 			new RemoveTransactionRequest({
 				transactionId: multiSigTransactionId,
-			})
+			}),
 		);
 	}
 }
