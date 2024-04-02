@@ -20,20 +20,27 @@
 
 import * as nacl from 'tweetnacl';
 import * as elliptic from 'elliptic';
-import { getBytes, sha256 } from 'ethers';
+import { keccak256 } from 'ethereum-cryptography/keccak';
+import { Transaction } from '@hashgraph/sdk';
 
 export function verifySignature(
   publicKeyHex: string,
   messageHex: string,
   signatureHex: string,
 ): boolean {
+  // extracts bytes to sign
+  const deserializedTransaction = Transaction.fromBytes(
+    hexToUint8Array(messageHex),
+  );
+  const bytesToSign =
+    deserializedTransaction._signedTransactions.get(0)!.bodyBytes!;
+
   try {
     const publicKeyBytes = hexToUint8Array(publicKeyHex);
     const signatureBytes = hexToUint8Array(signatureHex);
-    const messageBytes = hexToUint8Array(messageHex);
 
     if (
-      nacl.sign.detached.verify(messageBytes, signatureBytes, publicKeyBytes)
+      nacl.sign.detached.verify(bytesToSign, signatureBytes, publicKeyBytes)
     ) {
       return true;
     }
@@ -45,20 +52,22 @@ export function verifySignature(
     const ec = new elliptic.ec('secp256k1');
     const keyECDSA = ec.keyFromPublic(publicKeyHex, 'hex');
 
-    const messageBytes = hexToUint8Array(messageHex);
-    const messageHashHex = sha256(messageBytes);
-    const messageHashBytes = getBytes(messageHashHex);
+    const bytesToSignHash = calcKeccak256(bytesToSign);
 
     const signature = {
       r: signatureHex.slice(0, 64),
       s: signatureHex.slice(64, 128),
     };
 
-    return keyECDSA.verify(messageHashBytes, signature);
+    return keyECDSA.verify(bytesToSignHash, signature);
   } catch (error) {
-    // console.error('Error verifying ECDSA secp256k1 signature:', error);
+    console.error('Error verifying ECDSA secp256k1 signature:', error);
     return false;
   }
+}
+
+function calcKeccak256(message: Uint8Array): Buffer {
+  return Buffer.from(keccak256(message));
 }
 
 function hexToUint8Array(hexString: string): Uint8Array {
@@ -71,4 +80,8 @@ function hexToUint8Array(hexString: string): Uint8Array {
   return new Uint8Array(
     cleanHexString.match(/[\da-fA-F]{2}/g).map((byte) => parseInt(byte, 16)),
   );
+}
+
+export function removeDuplicates(array: string[]): string[] {
+  return Array.from(new Set(array));
 }

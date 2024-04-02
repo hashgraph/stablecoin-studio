@@ -22,6 +22,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   ArrayNotEmpty,
   IsArray,
+  IsIn,
   IsInt,
   IsNotEmpty,
   IsString,
@@ -30,6 +31,8 @@ import {
 } from 'class-validator';
 import { hederaIdRegex, hexRegex } from '../../common/regexp';
 import { RemoveHexPrefix } from '../../common/decorators/transform-hexPrefix.decorator';
+import { Network } from '../network.enum';
+import { Transform } from 'class-transformer';
 
 export class CreateTransactionRequestDto {
   @ApiProperty({
@@ -95,17 +98,32 @@ export class CreateTransactionRequestDto {
   @Min(0)
   threshold: number;
 
+  @ApiProperty({
+    description: 'The network to which the transaction belongs',
+    example: 'testnet',
+    required: true,
+  })
+  @IsString()
+  @IsNotEmpty()
+  @IsIn(Object.values(Network))
+  @Transform(
+    ({ value }) => Network[value.toUpperCase() as keyof typeof Network],
+  )
+  network: Network;
+
   constructor(
     transaction_message: string,
     description: string,
     hedera_account_id: string,
     key_list: string[],
     threshold: number,
+    network: Network,
   ) {
     this.transaction_message = transaction_message;
     this.description = description;
     this.hedera_account_id = hedera_account_id;
     this.key_list = key_list;
     this.threshold = threshold;
+    this.network = network;
   }
 }

@@ -26,6 +26,9 @@ export class GetTransactionsResponseDto {
   threshold: number;
   key_list: string[];
   signed_keys: string[];
+  signatures: string[];
+  network: string;
+  hedera_account_id: string;
 
   constructor(
     id: string,
@@ -35,6 +38,9 @@ export class GetTransactionsResponseDto {
     threshold: number,
     key_list: string[],
     signed_keys: string[],
+    signatures: string[],
+    network: string,
+    hedera_account_id: string
   ) {
     this.id = id;
     this.transaction_message = transaction_message;
@@ -43,5 +49,8 @@ export class GetTransactionsResponseDto {
     this.threshold = threshold;
     this.key_list = key_list;
     this.signed_keys = signed_keys;
+    this.signatures = signatures;
+    this.network = network;
+    this.hedera_account_id = hedera_account_id;
   }
 }

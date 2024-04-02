@@ -102,6 +102,12 @@ import { GetFactoryProxyConfigQueryHandler } from '../app/usecase/query/factoryP
 import { BladeTransactionAdapter } from '../port/out/hs/blade/BladeTransactionAdapter.js';
 import { FireblocksTransactionAdapter } from '../port/out/hs/hts/custodial/FireblocksTransactionAdapter.js';
 import { DFNSTransactionAdapter } from '../port/out/hs/hts/custodial/DFNSTransactionAdapter.js';
+import { MultiSigTransactionAdapter } from '../port/out/hs/multiSig/MultiSigTransactionAdapter.js';
+import { SignCommandHandler } from '../app/usecase/command/stablecoin/backend/sign/SignCommandHandler.js';
+import { SubmitCommandHandler } from '../app/usecase/command/stablecoin/backend/submit/SubmitCommandHandler.js';
+import { RemoveCommandHandler } from '../app/usecase/command/stablecoin/backend/remove/RemoveCommandHandler.js';
+import { SetBackendCommandHandler } from '../app/usecase/command/network/setBackend/SetBackendCommandHandler.js';
+import { GetTransactionsQueryHandler } from '../app/usecase/query/stablecoin/backend/getTransactions/GetTransactionsQueryHandler.js';
 
 export const TOKENS = {
 	COMMAND_HANDLER: Symbol('CommandHandler'),
@@ -250,6 +256,10 @@ const COMMAND_HANDLERS = [
 	},
 	{
 		token: TOKENS.COMMAND_HANDLER,
+		useClass: SetBackendCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
 		useClass: SetConfigurationCommandHandler,
 	},
 	{
@@ -283,6 +293,18 @@ const COMMAND_HANDLERS = [
 	{
 		token: TOKENS.COMMAND_HANDLER,
 		useClass: AcceptFactoryOwnerCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: SignCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: SubmitCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: RemoveCommandHandler,
 	},
 ];
 
@@ -355,6 +377,10 @@ const QUERY_HANDLERS = [
 		token: TOKENS.QUERY_HANDLER,
 		useClass: GetFactoryProxyConfigQueryHandler,
 	},
+	{
+		token: TOKENS.QUERY_HANDLER,
+		useClass: GetTransactionsQueryHandler,
+	},
 ];
 
 const TRANSACTION_HANDLER = [
@@ -373,6 +399,10 @@ const TRANSACTION_HANDLER = [
 	{
 		token: TOKENS.TRANSACTION_HANDLER,
 		useClass: BladeTransactionAdapter,
+	},
+	{
+		token: TOKENS.TRANSACTION_HANDLER,
+		useClass: MultiSigTransactionAdapter,
 	},
 ];
 
@@ -466,6 +496,7 @@ export default class Injectable {
 		} else {
 			adapters.push(Injectable.resolve(HTSTransactionAdapter));
 		}
+		adapters.push(Injectable.resolve(MultiSigTransactionAdapter));
 		return adapters;
 	}
 

@@ -1,6 +1,6 @@
 {
   "name": "hedera-stable-coin",
-  "version": "1.17.0",
+  "version": "1.18.0",
   "description": "stablecoin studio",
   "scripts": {
     "install": "node install.js && npm run build:cli:full && npm run prepare",
@@ -57,6 +57,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "concurrently": "^7.6.0",
+    "elliptic": "^6.5.5",
     "ethers": "^5.7.2",
     "rimraf": "^4.1.1",
     "serverless": "^3.34.0"
