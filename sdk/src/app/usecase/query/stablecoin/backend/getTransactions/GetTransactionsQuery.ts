@@ -20,10 +20,10 @@
 
 import { Query } from '../../../../../../core/query/Query.js';
 import { QueryResponse } from '../../../../../../core/query/QueryResponse.js';
-import MultiSigTransactionViewModel from '../../../../../../port/out/backend/response/MultiSigTransactionViewModel.js';
+import { MultiSigTransactionsViewModel } from '../../../../../../port/out/backend/response/MultiSigTransactionViewModel.js';
 
 export class GetTransactionsQueryResponse implements QueryResponse {
-	constructor(public readonly payload: MultiSigTransactionViewModel[]) {}
+	constructor(public readonly payload: MultiSigTransactionsViewModel) {}
 }
 
 export class GetTransactionsQuery extends Query<GetTransactionsQueryResponse> {
