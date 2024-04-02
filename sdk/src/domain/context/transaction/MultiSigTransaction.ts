@@ -18,9 +18,15 @@
  *
  */
 
-import { HederaId } from '../shared/HederaId.js';
+export class Pagination {
+	totalItems: number;
+	itemCount: number;
+	itemsPerPage: number;
+	totalPages: number;
+	currentPage: number;
+}
 
-export default class MultiSigTransaction {
+export class MultiSigTransaction {
 	id: string;
 	transaction_message: string;
 	description: string;
@@ -54,5 +60,15 @@ export default class MultiSigTransaction {
 		this.signatures = signatures;
 		this.network = network;
 		this.hedera_account_id = hedera_account_id;
+	}
+}
+
+export class MultiSigTransactions {
+	transactions: MultiSigTransaction[];
+	pagination: Pagination;
+
+	constructor(transactions: MultiSigTransaction[], pagination: Pagination) {
+		this.transactions = transactions;
+		this.pagination = pagination;
 	}
 }
