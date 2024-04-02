@@ -147,7 +147,7 @@ export default class TransactionService extends Service {
 					);
 				}
 
-				return `Calling contract ${contractId?.shard}.${contractId?.realm}.${contractId?.num}. Function : ${decodedFunctionParameters.name}, Arguments : ${args}}`;
+				return `Calling contract ${contractId?.shard}.${contractId?.realm}.${contractId?.num}. ${decodedFunctionParameters.name} : ${args}`;
 			} else if (t instanceof TokenWipeTransaction) {
 				const tokenId = (t as TokenWipeTransaction).tokenId;
 				const accountId = (t as TokenWipeTransaction).accountId;
