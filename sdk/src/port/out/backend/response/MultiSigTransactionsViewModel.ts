@@ -18,17 +18,17 @@
  *
  */
 
-import { QueryResponse } from '../../../../core/query/QueryResponse.js';
+import { QueryResponse } from '../../../../core/query/QueryResponse';
+import { MultiSigTransactionViewModel } from './MultiSigTransactionViewModel';
 
-export interface MultiSigTransactionViewModel extends QueryResponse {
-	id: string;
-	transaction_message: string;
-	description: string;
-	status: string;
-	threshold: number;
-	key_list: string[];
-	signed_keys: string[];
-	signatures: string[];
-	network: string;
-	hedera_account_id: string;
+export interface PaginationViewModel {
+	totalItems: number;
+	itemCount: number;
+	itemsPerPage: number;
+	totalPages: number;
+	currentPage: number;
+}
+export interface MultiSigTransactionsViewModel extends QueryResponse {
+	transactions: MultiSigTransactionViewModel[];
+	pagination: PaginationViewModel;
 }
