@@ -98,6 +98,9 @@ import { AssociateCommand } from '../../app/usecase/command/account/associate/As
 import { MirrorNodeAdapter } from '../../port/out/mirror/MirrorNodeAdapter.js';
 import MultiSigTransactionViewModel from '../out/backend/response/MultiSigTransactionViewModel';
 import MultiSigTransactionsViewModel from '../out/backend/response/MultiSigTransactionsViewModel';
+import {
+	PaginationViewModel,
+} from '../out/backend/response/MultiSigTransactionViewModel.js';
 import SignTransactionRequest from './request/SignTransactionRequest.js';
 import SubmitTransactionRequest from './request/SubmitTransactionRequest.js';
 import RemoveTransactionRequest from './request/RemoveTransactionRequest.js';
@@ -113,6 +116,7 @@ export {
 	ReserveViewModel,
 	MultiSigTransactionsViewModel,
 	MultiSigTransactionViewModel,
+	PaginationViewModel,
 	TRANSFER_LIST_SIZE,
 };
 export { StableCoinCapabilities, Capability, Access, Operation, Balance };
