@@ -23,19 +23,20 @@ import { MirrorNode } from '../../../domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from '../../../domain/context/network/JsonRpcRelay.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
+import { ConsensusNode } from '../../../domain/context/network/ConsensusNodes.js';
 
 export interface SetNetworkRequestProps {
 	environment: Environment;
 	mirrorNode: MirrorNode;
 	rpcNode: JsonRpcRelay;
-	consensusNodes?: string;
+	consensusNodes?: ConsensusNode[];
 }
 
 export default class SetNetworkRequest extends ValidatedRequest<SetNetworkRequest> {
 	environment: Environment;
 	mirrorNode: MirrorNode;
 	rpcNode: JsonRpcRelay;
-	consensusNodes?: string;
+	consensusNodes?: ConsensusNode[];
 	constructor(props: SetNetworkRequestProps) {
 		super({
 			environment: Validation.checkString({ emptyCheck: true }),
