@@ -432,11 +432,47 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 			);
 
 		try {
-			const signed_Transaction = await this.signer.signTransaction(
-				message,
+			const nodeId = '0.0.3';
+
+			const hashPackTrx = {
+				topic: this.initData.topic,
+				byteArray: message.toBytes(),
+				metadata: {
+					accountToSign: this.account.id.toString(),
+					returnTransaction: true,
+					getRecord: false,
+				},
+			};
+
+			const PublicKey_Der_Encoded =
+				this.account.publicKey?.toHederaKey().toStringDer() ?? '';
+
+			const t = await this.hc.sendTransaction(
+				this.initData.topic,
+				hashPackTrx,
 			);
 
-			return Hex.fromUint8Array(signed_Transaction.toBytes());
+			if (t.signedTransaction instanceof Uint8Array) {
+				const signedTrans = Transaction.fromBytes(t.signedTransaction);
+				const signatures_list = signedTrans.getSignatures();
+				const nodes_signature = signatures_list.get(nodeId);
+				if (nodes_signature) {
+					const signature = nodes_signature.get(
+						PublicKey_Der_Encoded,
+					);
+					if (signature) {
+						return Hex.fromUint8Array(signature);
+					}
+					throw new Error(
+						'Hashapck no signatures found for public key : ' +
+							PublicKey_Der_Encoded,
+					);
+				}
+				throw new Error(
+					'Hashapck no signatures found for node id : ' + nodeId,
+				);
+			}
+			throw new Error('Hashapck wrong signed transaction');
 		} catch (error) {
 			LogService.logError(error);
 			throw new SigningError(error);

@@ -61,13 +61,15 @@ export class SignCommandHandler implements ICommandHandler<SignCommand> {
 		const serializedBytes = Hex.fromUint8Array(bytesToSign);
 
 		// signs
-		const messageToSign =
+		let signature = '';
+
+		if (
 			handler instanceof HashpackTransactionAdapter ||
 			handler instanceof BladeTransactionAdapter ||
 			handler instanceof HTSTransactionAdapter
-				? deserializedTransaction
-				: serializedBytes;
-		const signature = await handler.sign(messageToSign);
+		) {
+			signature = await handler.sign(deserializedTransaction);
+		} else signature = await handler.sign(serializedBytes);
 
 		// update the backend
 		await this.backendAdapter.signTransaction(
