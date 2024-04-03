@@ -217,7 +217,12 @@ class NetworkInPort implements INetworkInPort {
 				}
 			}
 		}
-		console.log('SetNetworkCommand', req.network, req.mirrorNode, req.rpcNode)
+		console.log(
+			'SetNetworkCommand',
+			req.network,
+			req.mirrorNode,
+			req.rpcNode,
+		);
 		await this.commandBus.execute(
 			new SetNetworkCommand(req.network, req.mirrorNode, req.rpcNode),
 		);

@@ -36,7 +36,7 @@ const MultiSigTransactionModal = ({ isOpen, onClose, selectedTransaction }) => {
 						<strong>ID:</strong> {selectedTransaction.id}
 					</p>
 					<p>
-						<strong>Transaction Message:</strong>
+						<strong>Transaction Message: </strong>
 						<code
 							onClick={() => copyToClipboard(selectedTransaction.transaction_message)}
 							style={{ cursor: 'pointer' }}
@@ -46,12 +46,6 @@ const MultiSigTransactionModal = ({ isOpen, onClose, selectedTransaction }) => {
 					</p>
 					<p>
 						<strong>Description:</strong> {selectedTransaction.description}
-					</p>
-					<p>
-						<strong>Status:</strong> {selectedTransaction.status}
-					</p>
-					<p>
-						<strong>Threshold:</strong> {selectedTransaction.threshold}
 					</p>
 
 					<strong>Key List:</strong>

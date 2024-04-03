@@ -137,7 +137,10 @@ export class MirrorNodeAdapter {
 	public async getStableCoin(
 		tokenId: HederaId,
 	): Promise<StableCoinViewModel> {
-		console.log('Getting stablecoin from mirror node -> ', tokenId.toString());
+		console.log(
+			'Getting stablecoin from mirror node -> ',
+			tokenId.toString(),
+		);
 		try {
 			const response = await this.getTokenInfo(tokenId);
 			const getKeyOrDefault = (
@@ -155,7 +158,7 @@ export class MirrorNodeAdapter {
 					return undefined;
 				}
 			};
-			console.log('CUSTOM FEES'+response.data.custom_fees);
+			console.log('CUSTOM FEES' + response.data.custom_fees);
 			const getCustomFeesOrDefault = async (
 				val?: ICustomFees,
 			): Promise<RequestCustomFee[] | undefined> => {
@@ -194,7 +197,7 @@ export class MirrorNodeAdapter {
 
 					customFees.push(requestFixedFee);
 				}
-				console.log('FRACTIONAL FEES'+val.fractional_fees);
+				console.log('FRACTIONAL FEES' + val.fractional_fees);
 				val.fractional_fees.forEach((fractionalFee) => {
 					const requestFractionalFee: RequestFractionalFee = {
 						decimals: decimals,

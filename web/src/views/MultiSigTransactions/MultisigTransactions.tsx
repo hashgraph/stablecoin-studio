@@ -21,14 +21,14 @@ import {
 	useDisclosure,
 } from '@chakra-ui/react';
 // @ts-ignore
-import {
+import type {
 	AccountViewModel,
-	GetTransactionsRequest,
 	MultiSigTransactionsViewModel,
 	MultiSigTransactionViewModel,
-	SupportedWallets,
 } from '@hashgraph/stablecoin-npm-sdk';
-import { ArrowForwardIcon, DeleteIcon, SearchIcon } from '@chakra-ui/icons';
+
+import { GetTransactionsRequest, SupportedWallets } from '@hashgraph/stablecoin-npm-sdk';
+import { ArrowForwardIcon, DeleteIcon } from '@chakra-ui/icons';
 import BaseContainer from '../../components/BaseContainer';
 import { useTranslation } from 'react-i18next';
 import MultiSigTransactionModal from './components/MultiSigTransactionModal';
@@ -52,7 +52,7 @@ const MultiSigTransactions = () => {
 		useState<MultiSigTransactionViewModel | null>(null);
 	const [transactions, setTransactions] = useState<MultiSigTransactionViewModel[]>([]);
 	const [selectedTransaction, setSelectedTransaction] =
-		useState<MultiSigTransactionsViewModel | null>(null);
+		useState<MultiSigTransactionViewModel | null>(null);
 	const [filter, setFilter] = useState('');
 	const { t } = useTranslation(['multiSig', 'global']);
 
@@ -143,12 +143,12 @@ const MultiSigTransactions = () => {
 		}
 	};
 
-	const showDeleteConfirmationModal = (transaction: MultiSigTransactionsViewModel) => {
+	const showDeleteConfirmationModal = (transaction: MultiSigTransactionViewModel) => {
 		setTransactionToDelete(transaction);
 		onDeleteModalOpen();
 	};
 
-	const handleDetailsClick = (transaction: MultiSigTransactionsViewModel) => {
+	const handleDetailsClick = (transaction: MultiSigTransactionViewModel) => {
 		setSelectedTransaction(transaction);
 		onOpen();
 	};
@@ -197,7 +197,12 @@ const MultiSigTransactions = () => {
 										overflow='hidden'
 										textOverflow='ellipsis'
 									>
-										{transaction.description}
+										<span
+											style={{ textDecoration: 'underline', cursor: 'pointer' }}
+											onClick={() => handleDetailsClick(transaction)}
+										>
+											{transaction.description}
+										</span>
 									</Td>
 									<Td borderBottom='1px' borderColor='gray.200'>
 										{transaction.hedera_account_id}
@@ -209,15 +214,6 @@ const MultiSigTransactions = () => {
 										<Tag>{transaction.status}</Tag>
 									</Td>
 									<Td borderBottom='1px' borderColor='gray.200'>
-										<Button
-											size={'sm'}
-											mr={2}
-											style={{ maxWidth: '90px' }}
-											rightIcon={<SearchIcon />}
-											onClick={() => handleDetailsClick(transaction)}
-										>
-											Details
-										</Button>
 										{canSignTransaction(transaction) && (
 											<Button
 												size={'sm'}

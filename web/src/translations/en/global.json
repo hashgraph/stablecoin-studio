@@ -87,6 +87,6 @@
 		"selectNetwork": "Select a network"
 	},
 	"multiSigActions": {
-		"title": "Enter your Hedera MultiSig Account ID"
+		"title": "Enter your Hedera Multi-sig account Id"
 	}
 }

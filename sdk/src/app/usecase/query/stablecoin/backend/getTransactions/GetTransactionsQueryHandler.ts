@@ -23,17 +23,15 @@ import { QueryHandler } from '../../../../../../core/decorator/QueryHandlerDecor
 import { IQueryHandler } from '../../../../../../core/query/QueryHandler.js';
 import { BackendAdapter } from '../../../../../../port/out/backend/BackendAdapter.js';
 import { MirrorNodeAdapter } from '../../../../../../port/out/mirror/MirrorNodeAdapter.js';
-import {
-	MultiSigTransactionsViewModel,
-	MultiSigTransactionViewModel,
-	PaginationViewModel,
-} from '../../../../../../port/out/backend/response/MultiSigTransactionViewModel.js';
 import RPCQueryAdapter from '../../../../../../port/out/rpc/RPCQueryAdapter.js';
 import {
 	GetTransactionsQuery,
 	GetTransactionsQueryResponse,
 } from './GetTransactionsQuery.js';
 import NetworkService from '../../../../../service/NetworkService.js';
+import MultiSigTransactionViewModel from '../../../../../../port/out/backend/response/MultiSigTransactionViewModel';
+import MultiSigTransactionsViewModel from '../../../../../../port/out/backend/response/MultiSigTransactionsViewModel';
+import { PaginationViewModel } from '../../../../../../port/out/backend/response/MultiSigTransactionsViewModel';
 
 @QueryHandler(GetTransactionsQuery)
 export class GetTransactionsQueryHandler

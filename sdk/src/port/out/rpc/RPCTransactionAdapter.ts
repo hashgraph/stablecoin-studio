@@ -88,7 +88,10 @@ import {
 import { MetaMaskInpageProvider } from '@metamask/providers';
 import { WalletConnectError } from '../../../domain/context/network/error/WalletConnectError.js';
 import EventService from '../../../app/service/event/EventService.js';
-import { ConnectionState, WalletEvents } from '../../../app/service/event/WalletEvent.js';
+import {
+	ConnectionState,
+	WalletEvents,
+} from '../../../app/service/event/WalletEvent.js';
 import { SupportedWallets } from '../../../domain/context/network/Wallet.js';
 import { RPCTransactionResponseAdapter } from './RPCTransactionResponseAdapter.js';
 import LogService from '../../../app/service/LogService.js';
@@ -98,15 +101,27 @@ import { SigningError } from '../hs/error/SigningError.js';
 import { RESERVE_DECIMALS } from '../../../domain/context/reserve/Reserve.js';
 import { FactoryRole } from '../../../domain/context/factory/FactoryRole.js';
 import { FactoryCashinRole } from '../../../domain/context/factory/FactoryCashinRole.js';
-import { HederaNetworks, unrecognized } from '../../../domain/context/network/Environment.js';
+import {
+	HederaNetworks,
+	unrecognized,
+} from '../../../domain/context/network/Environment.js';
 import { CommandBus } from '../../../core/command/CommandBus.js';
 import { SetNetworkCommand } from '../../../app/usecase/command/network/setNetwork/SetNetworkCommand.js';
+import { SetConfigurationCommand } from '../../../app/usecase/command/network/setConfiguration/SetConfigurationCommand.js';
 import {
-	SetConfigurationCommand,
-} from '../../../app/usecase/command/network/setConfiguration/SetConfigurationCommand.js';
-import { EnvironmentMirrorNode, MirrorNode, MirrorNodes } from '../../../domain/context/network/MirrorNode.js';
-import { EnvironmentJsonRpcRelay, JsonRpcRelay, JsonRpcRelays } from '../../../domain/context/network/JsonRpcRelay.js';
-import { EnvironmentFactory, Factories } from '../../../domain/context/factory/Factories.js';
+	EnvironmentMirrorNode,
+	MirrorNode,
+	MirrorNodes,
+} from '../../../domain/context/network/MirrorNode.js';
+import {
+	EnvironmentJsonRpcRelay,
+	JsonRpcRelay,
+	JsonRpcRelays,
+} from '../../../domain/context/network/JsonRpcRelay.js';
+import {
+	EnvironmentFactory,
+	Factories,
+} from '../../../domain/context/factory/Factories.js';
 
 // eslint-disable-next-line no-var
 declare var ethereum: MetaMaskInpageProvider;

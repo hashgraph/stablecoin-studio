@@ -6,7 +6,6 @@ import {
 	Link,
 	Modal,
 	ModalBody,
-	ModalCloseButton,
 	ModalContent,
 	ModalFooter,
 	ModalHeader,
@@ -312,7 +311,13 @@ const ModalWalletConnect = () => {
 				closeOnOverlayClick={false}
 			>
 				<ModalOverlay />
-				<ModalContent data-testid='modal-action-content' p='50' maxW='1000px'>
+				<ModalContent
+					data-testid='modal-action-content'
+					alignItems='center'
+					justifyContent='center'
+					p='50'
+					maxW='1000px'
+				>
 					{!error && !rejected && !hashpackSelected && !bladeSelected && !multiSigSelected && (
 						<>
 							<ModalHeader p='0' justifyContent='center'>
@@ -478,7 +483,7 @@ const ModalWalletConnect = () => {
 					)}
 					{multiSigSelected && (
 						<>
-							<ModalHeader p='0' pb='6' justifyContent='center'>
+							<ModalHeader>
 								<Text
 									fontSize='20px'
 									fontWeight={700}
@@ -489,13 +494,14 @@ const ModalWalletConnect = () => {
 									{t('multiSigActions.title')}
 								</Text>
 							</ModalHeader>
-							<ModalBody maxWidth='500px'>
+							<ModalBody alignItems='center' justifyContent='center'>
 								<VStack spacing={4} alignItems='center' justifyContent='center'>
 									<SelectController
 										control={control}
 										isRequired
 										name='networkMultisig'
 										options={networkOptions}
+										defaultValue='0'
 										addonLeft={true}
 										overrideStyles={stylesNetworkOptions}
 										variant='unstyled'
