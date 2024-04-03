@@ -50,6 +50,7 @@ export default class WizardService extends Service {
       const currentAccount = utilsService.getCurrentAccount();
       const currentMirror = utilsService.getCurrentMirror();
       const currentRPC = utilsService.getCurrentRPC();
+      const currentBackend = utilsService.getCurrentBackend();
 
       // Remove ListPendingMultiSig from options if the account is a MultiSig account
       if (currentAccount.type === AccountType.MultiSignature) {
@@ -71,6 +72,7 @@ export default class WizardService extends Service {
           mirrorNode: currentMirror.name,
           rpc: currentRPC.name,
           account: `${currentAccount.accountId} - ${currentAccount.alias}`,
+          backend: currentBackend.endpoint,
         },
       );
       switch (selectedOption) {
@@ -305,6 +307,8 @@ export default class WizardService extends Service {
     const currentFactory = factories.find(
       (factory) => currentAccount.network === factory.network,
     );
+
+    utilsService.setCurrentBackend(configuration.backend);
 
     utilsService.setCurrentFactory(currentFactory);
 

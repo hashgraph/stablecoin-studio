@@ -32,7 +32,8 @@ import { IRPCsConfig } from 'domain/configuration/interfaces/IRPCsConfig.js';
 import { MIRROR_NODE, RPC } from '../../../core/Constants.js';
 import { AccountType } from '../../../domain/configuration/interfaces/AccountType';
 import fs from 'fs';
-import MultiSigTransaction from 'domain/stablecoin/MultiSigTransaction.js';
+import MultiSigTransaction from '../../../domain/stablecoin/MultiSigTransaction.js';
+import BackendConfig from '../../../domain/configuration/interfaces/BackendConfig.js';
 
 /**
  * Utilities Service
@@ -42,6 +43,7 @@ export default class UtilitiesService extends Service {
   private currentNetwork: INetworkConfig;
   private currentMirror: IMirrorsConfig;
   private currentRPC: IRPCsConfig;
+  private currentBackend: BackendConfig;
   private currentFactory: IFactoryConfig;
   private currentHederaTokenManager: IHederaTokenManagerConfig;
 
@@ -57,6 +59,11 @@ export default class UtilitiesService extends Service {
         network: this.getCurrentNetwork().name,
         mirrorNode: this.getCurrentMirror(),
         rpcNode: this.getCurrentRPC(),
+        backend: this.getCurrentBackend()
+          ? {
+              url: this.getCurrentBackend().endpoint,
+            }
+          : undefined,
       }),
     );
     //* Connect to the network
@@ -102,7 +109,7 @@ export default class UtilitiesService extends Service {
         };
         break;
       case AccountType.MultiSignature:
-        // wallet = SupportedWallets.MULTISIG;
+        wallet = SupportedWallets.MULTISIG;
         break;
       default:
         throw new Error('Invalid account type');
@@ -178,6 +185,24 @@ export default class UtilitiesService extends Service {
       throw new Error('JSON-RPC-Relay not initialized');
     } else {
       return this.currentRPC;
+    }
+  }
+
+  public setCurrentBackend(backend: BackendConfig): void {
+    this.currentBackend = backend;
+  }
+
+  public getCurrentBackend(): BackendConfig | undefined {
+    if (!this.currentBackend) {
+      // throw new Error('Backend not initialized');
+      console.warn(
+        colors.yellow('Backend not initialized'),
+        'Current Backend: ',
+        this.currentBackend,
+      );
+      return undefined;
+    } else {
+      return this.currentBackend;
     }
   }
 
@@ -309,56 +334,54 @@ export default class UtilitiesService extends Service {
       tokenDeleted?: boolean;
       mirrorNode?: string;
       rpc?: string;
+      backend?: string;
     },
   ): Promise<string> {
-    let networkInfo = '';
-    let mirrorInfo = '';
-    let rpcInfo = '';
+    const {
+      network,
+      mirrorNode,
+      rpc,
+      backend,
+      account,
+      token,
+      tokenPaused,
+      tokenDeleted,
+    } = options || {};
 
-    if (options?.network)
-      networkInfo =
-        ' ' +
-        colors.underline(colors.bold('Network:')) +
-        ' ' +
-        colors.cyan('(' + options.network);
-    if (options?.mirrorNode)
-      mirrorInfo = colors.cyan(' - mirror: ' + options.mirrorNode);
-    if (options?.rpc) rpcInfo = colors.cyan(', rpc: ' + options.rpc);
+    const networkInfo = network
+      ? ` ${colors.underline(colors.bold('Network:'))} ${colors.cyan(
+          `(${network}`,
+        )}`
+      : '';
+    const mirrorInfo = mirrorNode
+      ? colors.cyan(` - mirror: ${mirrorNode}`)
+      : '';
+    const rpcInfo = rpc ? colors.cyan(`, rpc: ${rpc}`) : '';
+    const backendInfo = backend ? colors.cyan(`, backend: ${backend}`) : '';
 
-    if (networkInfo || mirrorInfo || rpcInfo) {
-      question =
-        question + networkInfo + mirrorInfo + rpcInfo + colors.cyan(')');
-    }
+    const accountInfo = account
+      ? ` ${colors.underline(colors.bold('Account:'))} ${colors.magenta(
+          `(${account})`,
+        )}`
+      : '';
+    const tokenInfo = token
+      ? ` ${colors.underline(colors.bold('Stablecoin:'))} ${colors.yellow(
+          `(${token})`,
+        )}`
+      : '';
+    const tokenPausedInfo = tokenPaused ? ' | ' + colors.red('PAUSED') : '';
+    const tokenDeletedInfo = tokenDeleted ? ' | ' + colors.red('DELETED') : '';
 
-    if (options?.account) {
-      question =
-        question +
-        ' ' +
-        colors.underline(colors.bold('Account:')) +
-        ' ' +
-        colors.magenta('(' + options.account + ')');
-    }
-    if (options?.token) {
-      question =
-        question +
-        ' ' +
-        colors.underline(colors.bold('Stablecoin:')) +
-        ' ' +
-        colors.yellow('(' + options.token + ')');
-    }
-    if (options?.tokenPaused) {
-      question = question + ' | ' + colors.red('PAUSED');
-    }
-    if (options?.tokenDeleted) {
-      question = question + ' | ' + colors.red('DELETED');
-    }
-    question = question + '\n';
+    question += `${networkInfo}${mirrorInfo}${rpcInfo}${backendInfo}${colors.cyan(
+      ')',
+    )}${accountInfo}${tokenInfo}${tokenPausedInfo}${tokenDeletedInfo}\n`;
+
     const variable = await inquirer.prompt({
       name: 'response',
       type: 'rawlist',
       message: question,
       choices: goBack
-        ? choices.concat(language.getArrayFromObject('wizard.backOption'))
+        ? [...choices, ...language.getArrayFromObject('wizard.backOption')]
         : choices,
     });
     return variable.response;

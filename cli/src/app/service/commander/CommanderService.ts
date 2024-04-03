@@ -66,7 +66,6 @@ export default class CommanderService extends Service {
           },
           options.config,
         );
-
         let sdkInitializeError = true;
         do {
           await wizardService.chooseAccount(
@@ -83,6 +82,7 @@ export default class CommanderService extends Service {
                 language.getText('wizard.mirrorNodeNotRespondedAsExpected'),
               ),
             );
+            console.error(error);
           }
         } while (sdkInitializeError);
 

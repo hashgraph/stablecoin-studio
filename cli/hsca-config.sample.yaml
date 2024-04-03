@@ -68,6 +68,8 @@ rpcs:
     selected: <false-true>
     apiKey: <API Key>
     headerName: <HTTP hader name>
+backend:
+  endpoint: <Backend URL>
 logs:
   path: './logs'
   level: 'ERROR'
