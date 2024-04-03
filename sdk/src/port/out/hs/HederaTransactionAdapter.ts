@@ -1348,7 +1348,9 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			);
 		} catch (error) {
 			throw new TransactionResponseError({
-				message: 'Error submitting the transaction',
+				message: `Error submitting the transaction : ${
+					(error as Error).message
+				}`,
 				network: this.networkService.environment,
 			});
 		}
