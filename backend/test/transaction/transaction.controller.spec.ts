@@ -346,7 +346,7 @@ describe('Transaction Controller Test', () => {
         DEFAULT.signed_keys,
         DEFAULT.signatures,
         DEFAULT.network,
-        DEFAULT.hedera_account_id
+        DEFAULT.hedera_account_id,
       );
       //* 🎬 Act ⬇
       const result = await controller.getTransactionById(
