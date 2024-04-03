@@ -39,7 +39,6 @@ const ECDSA_SECP256K1 = {
     'a8d5fff76455e40a0bf7d0b821849829c54e24c75f4498178ade1aa37a05f88edb911a37a9654a73e2db045c62e3b77fa450a39816de0cd481b721ee7cdc95e7',
 };
 
-
 describe('verifySignature function', () => {
   it('should verify a valid ED25519 signature correctly', () => {
     expect(
