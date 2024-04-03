@@ -1755,10 +1755,12 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		const bytesToSignHash = this.calcKeccak256(bytesToSign);
 		const bytesToSignHashHex = '0x' + Hex.fromUint8Array(bytesToSignHash);
 
-		return await this.web3Provider.send('eth_sign', [
+		const signature = await this.web3Provider.send('eth_sign', [
 			this.account.evmAddress,
 			bytesToSignHashHex,
 		]);
+
+		return signature.toString().slice(0, 130);
 	}
 
 	calcKeccak256(message: Uint8Array): Buffer {
