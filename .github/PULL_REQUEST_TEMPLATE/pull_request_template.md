@@ -16,7 +16,7 @@ Fixes # (issue) 🛠️
 Please describe the tests that you ran to verify your changes. Provide instructions so we can reproduce. Please also list any relevant details for your test configuration. 🧪
 
 - [ ] Local Tests (npm run test)
-- [ ] Local Example (npx tsx examples/index.ts)
+- [ ] Manually (example: cli with wizard or web using web interface)
 - [ ] Local Github Actions (act pull_request)
 
 **Test Configuration**:
