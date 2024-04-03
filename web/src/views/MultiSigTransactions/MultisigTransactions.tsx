@@ -24,6 +24,7 @@ import {
 import {
 	AccountViewModel,
 	GetTransactionsRequest,
+	MultiSigTransactionsViewModel,
 	MultiSigTransactionViewModel,
 	SupportedWallets,
 } from '@hashgraph/stablecoin-npm-sdk';
@@ -51,7 +52,7 @@ const MultiSigTransactions = () => {
 		useState<MultiSigTransactionViewModel | null>(null);
 	const [transactions, setTransactions] = useState<MultiSigTransactionViewModel[]>([]);
 	const [selectedTransaction, setSelectedTransaction] =
-		useState<MultiSigTransactionViewModel | null>(null);
+		useState<MultiSigTransactionsViewModel | null>(null);
 	const [filter, setFilter] = useState('');
 	const { t } = useTranslation(['multiSig', 'global']);
 
@@ -142,12 +143,12 @@ const MultiSigTransactions = () => {
 		}
 	};
 
-	const showDeleteConfirmationModal = (transaction: MultiSigTransactionViewModel) => {
+	const showDeleteConfirmationModal = (transaction: MultiSigTransactionsViewModel) => {
 		setTransactionToDelete(transaction);
 		onDeleteModalOpen();
 	};
 
-	const handleDetailsClick = (transaction: MultiSigTransactionViewModel) => {
+	const handleDetailsClick = (transaction: MultiSigTransactionsViewModel) => {
 		setSelectedTransaction(transaction);
 		onOpen();
 	};
@@ -188,7 +189,14 @@ const MultiSigTransactions = () => {
 									<Td borderBottom='1px' borderColor='gray.200'>
 										{transaction.id}
 									</Td>
-									<Td borderBottom='1px' borderColor='gray.200'>
+									<Td
+										borderBottom='1px'
+										borderColor='gray.200'
+										maxWidth='200px'
+										whiteSpace='nowrap'
+										overflow='hidden'
+										textOverflow='ellipsis'
+									>
 										{transaction.description}
 									</Td>
 									<Td borderBottom='1px' borderColor='gray.200'>
