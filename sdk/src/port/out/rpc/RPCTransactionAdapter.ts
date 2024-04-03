@@ -122,6 +122,8 @@ import {
 	EnvironmentFactory,
 	Factories,
 } from '../../../domain/context/factory/Factories.js';
+import Hex from '../../../core/Hex.js';
+import { keccak256 } from 'ethereum-cryptography/keccak';
 
 // eslint-disable-next-line no-var
 declare var ethereum: MetaMaskInpageProvider;
@@ -129,6 +131,7 @@ declare var ethereum: MetaMaskInpageProvider;
 @singleton()
 export default class RPCTransactionAdapter extends TransactionAdapter {
 	account: Account;
+	web3Provider: ethers.providers.Web3Provider;
 	signerOrProvider: Signer | Provider;
 	mirrorNodes: MirrorNodes;
 	jsonRpcRelays: JsonRpcRelays;
@@ -1282,10 +1285,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 						);
 
 					pair && (await this.pairWallet());
-					this.signerOrProvider = new ethers.providers.Web3Provider(
+					this.web3Provider = new ethers.providers.Web3Provider(
 						// @ts-expect-error No TS compatibility
 						ethereum,
-					).getSigner();
+					);
+					this.signerOrProvider = this.web3Provider.getSigner();
 				} else {
 					throw new WalletConnectError('Metamask was not found!');
 				}
@@ -1318,10 +1322,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				evmAddress: mirrorAccount.accountEvmAddress,
 				publicKey: mirrorAccount.publicKey,
 			});
-			this.signerOrProvider = new ethers.providers.Web3Provider(
+			this.web3Provider = new ethers.providers.Web3Provider(
 				// @ts-expect-error No TS compatibility
 				ethereum,
-			).getSigner();
+			);
+			this.signerOrProvider = this.web3Provider.getSigner();
 		} else {
 			this.account = Account.NULL;
 		}
@@ -1404,10 +1409,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		);
 		await this.commandBus.execute(new SetConfigurationCommand(factoryId));
 
-		this.signerOrProvider = new ethers.providers.Web3Provider(
+		this.web3Provider = new ethers.providers.Web3Provider(
 			// @ts-expect-error No TS compatibility
 			ethereum,
-		).getSigner();
+		);
+		this.signerOrProvider = this.web3Provider.getSigner();
 
 		// await new Promise(f => setTimeout(f, 3000));
 	}
@@ -1741,11 +1747,22 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		}
 	}
 
-	sign(message: string): Promise<string> {
+	async sign(message: string): Promise<string> {
 		if (!(this.signerOrProvider instanceof Signer))
 			throw new Error('RPC instance is not a Signer.');
 
-		return this.signerOrProvider.signMessage(message);
+		const bytesToSign = Hex.toUint8Array(message);
+		const bytesToSignHash = this.calcKeccak256(bytesToSign);
+		const bytesToSignHashHex = '0x' + Hex.fromUint8Array(bytesToSignHash);
+
+		return await this.web3Provider.send('eth_sign', [
+			this.account.evmAddress,
+			bytesToSignHashHex,
+		]);
+	}
+
+	calcKeccak256(message: Uint8Array): Buffer {
+		return Buffer.from(keccak256(message));
 	}
 
 	/* private async performHTSOperation(
