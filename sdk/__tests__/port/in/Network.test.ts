@@ -43,6 +43,7 @@ import {
 } from '../../config.js';
 import { MirrorNode } from 'domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from 'domain/context/network/JsonRpcRelay.js';
+import { ConsensusNode } from '../../../src/domain/context/network/ConsensusNodes.js';
 
 const mirrorNode: MirrorNode = {
 	name: MIRROR_NODE.name,
@@ -164,16 +165,38 @@ describe('🧪 Network test', () => {
 			apiKey: 'apiKeyValue',
 			headerName: 'httpHeaderName',
 		};
+		const newConsensusNode_1: ConsensusNode = {
+			url: '34.94.106.61:50211',
+			nodeId: '0.0.3',
+		};
+		const newConsensusNode_2: ConsensusNode = {
+			url: '35.237.119.55:50211',
+			nodeId: '0.0.4',
+		};
 		const spy = jest.spyOn(Network, 'setNetwork');
 		const params = {
 			environment: previewnet,
-			consensusNodes: 'nodes',
+			consensusNodes: [newConsensusNode_1, newConsensusNode_2],
 			mirrorNode: newMirrorNode,
 			rpcNode: newRpcNode,
 		};
 		const init = await Network.setNetwork(new SetNetworkRequest(params));
 		expect(spy).toHaveBeenCalled();
-		expect(networkService.consensusNodes).toEqual(params.consensusNodes);
+		expect(networkService.consensusNodes?.length).toEqual(
+			params.consensusNodes.length,
+		);
+		/* eslint-disable jest/no-conditional-expect */
+		if (networkService.consensusNodes) {
+			for (let i = 0; i < networkService.consensusNodes?.length; i++) {
+				expect(networkService.consensusNodes[i].url).toEqual(
+					params.consensusNodes[i].url,
+				);
+				expect(networkService.consensusNodes[i].nodeId).toEqual(
+					params.consensusNodes[i].nodeId,
+				);
+			}
+		}
+		/* eslint-disable jest/no-conditional-expect */
 		expect(networkService.mirrorNode.name).toEqual(params.mirrorNode.name);
 		expect(networkService.mirrorNode.baseUrl).toEqual(
 			params.mirrorNode.baseUrl,
@@ -207,7 +230,7 @@ describe('🧪 Network test', () => {
 
 		const params_2 = {
 			environment: testnet,
-			consensusNodes: '',
+			consensusNodes: [],
 			mirrorNode: mirrorNode,
 			rpcNode: rpcNode,
 		};
@@ -221,7 +244,7 @@ describe('🧪 Network test', () => {
 
 		const params = {
 			environment: unrecognized,
-			consensusNodes: '',
+			consensusNodes: [],
 			mirrorNode: networkService.mirrorNode,
 			rpcNode: networkService.rpcNode,
 		};
