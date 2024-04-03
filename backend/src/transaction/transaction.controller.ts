@@ -212,7 +212,13 @@ export default class TransactionController {
   @ApiQuery({
     name: 'network',
     description: 'The network from which to retrieve transactions',
-    example: 'mainnet',
+    example: 'testnet',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'hederaAccountId',
+    description: 'The Hedera account ID to retrieve transactions for',
+    example: '0.0.12345',
     required: false,
   })
   @UseFilters(HttpExceptionFilter)

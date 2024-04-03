@@ -40,7 +40,7 @@ export class GetTransactionsResponseDto {
     signed_keys: string[],
     signatures: string[],
     network: string,
-    hedera_account_id: string
+    hedera_account_id: string,
   ) {
     this.id = id;
     this.transaction_message = transaction_message;
