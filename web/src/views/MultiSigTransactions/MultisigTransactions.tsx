@@ -57,6 +57,8 @@ const MultiSigTransactions = () => {
 	const { t } = useTranslation(['multiSig', 'global']);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [totalPages, setTotalPages] = useState(0);
+	const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+	const [successMessage, setSuccessMessage] = useState('');
 
 	useEffect(() => {
 		const fetchTransactions = async () => {
@@ -77,7 +79,7 @@ const MultiSigTransactions = () => {
 		};
 
 		fetchTransactions();
-	}, [selectedWallet, publicKey, currentPage]);
+	}, [selectedWallet, currentPage]);
 
 	const canSignTransaction = (transaction: MultiSigTransactionViewModel) => {
 		return (
@@ -121,11 +123,15 @@ const MultiSigTransactions = () => {
 
 	const handleSendTransaction = async (transactionId: string) => {
 		try {
-			await SDKService.submitMultiSigTransaction(transactionId);
+			SDKService.submitMultiSigTransaction(transactionId);
 			// Remove the transaction from the list as it is sent
+			setSuccessMessage(`Operation successfully sent.`);
+			setIsSuccessModalOpen(true); // Open the success modal
 			setTransactions(transactions.filter((t) => t.id !== transactionId));
 		} catch (error) {
-			console.error('Error sending transaction:', error);
+			// @ts-ignore
+			setSuccessMessage(`Error sending transaction: ${error.message}`);
+			setIsSuccessModalOpen(true); // Open the success modal
 		}
 	};
 
@@ -294,6 +300,19 @@ const MultiSigTransactions = () => {
 					</ModalContent>
 				</Modal>
 			)}
+			<Modal isOpen={isSuccessModalOpen} onClose={() => setIsSuccessModalOpen(false)}>
+				<ModalOverlay />
+				<ModalContent>
+					<ModalHeader>Success</ModalHeader>
+					<ModalCloseButton />
+					<ModalBody>{successMessage}</ModalBody>
+					<ModalFooter>
+						<Button colorScheme='blue' mr={3} onClick={() => setIsSuccessModalOpen(false)}>
+							OK
+						</Button>
+					</ModalFooter>
+				</ModalContent>
+			</Modal>
 		</BaseContainer>
 	);
 };
