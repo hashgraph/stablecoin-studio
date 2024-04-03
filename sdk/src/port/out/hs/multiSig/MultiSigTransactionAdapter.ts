@@ -77,15 +77,26 @@ export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
 		t._freezeWithAccountId(accountId);
 
 		let client: Client = Client.forTestnet();
-		client.setNetwork({ '34.94.106.61:50211': '0.0.3' });
 
 		if (this.networkService.environment == previewnet) {
 			client = Client.forPreviewnet();
-			client.setNetwork({ '3.211.248.172:50211': '0.0.3' });
 		} else if (this.networkService.environment == mainnet) {
 			client = Client.forMainnet();
-			client.setNetwork({ '35.237.200.180:50211': '0.0.3' });
 		}
+
+		if (
+			!this.networkService.consensusNodes ||
+			this.networkService.consensusNodes.length == 0
+		) {
+			throw new Error(
+				'In order to create multisignature transactions you must set consensus nodes for the environment',
+			);
+		}
+
+		client.setNetwork({
+			[this.networkService.consensusNodes[0].url]:
+				this.networkService.consensusNodes[0].nodeId,
+		});
 
 		this.account.multiKey!.keys.forEach((key) => publicKeys.push(key.key));
 
