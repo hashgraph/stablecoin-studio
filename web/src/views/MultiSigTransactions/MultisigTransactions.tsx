@@ -55,31 +55,29 @@ const MultiSigTransactions = () => {
 		useState<MultiSigTransactionViewModel | null>(null);
 	const [filter, setFilter] = useState('');
 	const { t } = useTranslation(['multiSig', 'global']);
+	const [currentPage, setCurrentPage] = useState(1);
+	const [totalPages, setTotalPages] = useState(0);
 
 	useEffect(() => {
 		const fetchTransactions = async () => {
+			const request = new GetTransactionsRequest({
+				limit: 8,
+				page: currentPage,
+			});
+
 			if (selectedWallet === SupportedWallets.MULTISIG) {
-				const request = new GetTransactionsRequest({
-					page: 1,
-					limit: 10,
-					account: wallet.id,
-				});
-				const resp = await SDKService.getMultiSigTransactions(request);
-				setTransactions(resp.transactions);
+				request.account = wallet.id;
 			} else if (publicKey) {
-				const request = new GetTransactionsRequest({
-					publicKey: {
-						key: publicKey,
-					},
-					page: 1,
-					limit: 10,
-				});
-				const resp = await SDKService.getMultiSigTransactions(request);
-				setTransactions(resp.transactions);
+				request.publicKey = { key: publicKey };
 			}
+
+			const resp = await SDKService.getMultiSigTransactions(request);
+			setTotalPages(resp.pagination.totalPages);
+			setTransactions(resp.transactions);
 		};
+
 		fetchTransactions();
-	}, [selectedWallet, publicKey]);
+	}, [selectedWallet, publicKey, currentPage]);
 
 	const canSignTransaction = (transaction: MultiSigTransactionViewModel) => {
 		return (
@@ -153,24 +151,20 @@ const MultiSigTransactions = () => {
 		onOpen();
 	};
 
+	// @ts-ignore
 	return (
 		<BaseContainer title={t('Multi-sig transactions')}>
-			<Box position='relative' mb='4'>
+			<Box display='flex' justifyContent='space-between' p={4} bg='white' shadow='sm'>
 				<Select
-					position='absolute'
-					right='0'
-					mt='2'
-					mr='2'
-					size='sm'
-					width='auto'
-					bg='white'
-					zIndex='1'
 					placeholder='Filter by status'
+					width='auto'
 					onChange={(e) => setFilter(e.target.value)}
 				>
 					<option value='pending'>Pending</option>
 					<option value='signed'>Signed</option>
 				</Select>
+			</Box>
+			<Box position='relative' mb='4'>
 				<TableContainer bg='white' shadow='sm' overflow='hidden'>
 					<Table variant='simple'>
 						<Thead bg='#ece8ff'>
@@ -251,6 +245,29 @@ const MultiSigTransactions = () => {
 						</Tbody>
 					</Table>
 				</TableContainer>
+				{totalPages > 1 && (
+					<Box display='flex' justifyContent='center' alignItems='center' p={4}>
+						<Button
+							size={'sm'}
+							style={{ maxWidth: '50px' }}
+							onClick={() => setCurrentPage((prevPage) => Math.max(prevPage - 1, 1))}
+							disabled={currentPage <= 1}
+						>
+							Prev
+						</Button>
+						<Box mx={2}>
+							Page {currentPage} of {totalPages}
+						</Box>
+						<Button
+							size={'sm'}
+							style={{ maxWidth: '50px' }}
+							onClick={() => setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages))}
+							disabled={currentPage >= totalPages}
+						>
+							Next
+						</Button>
+					</Box>
+				)}
 			</Box>
 			{selectedTransaction && (
 				<MultiSigTransactionModal
