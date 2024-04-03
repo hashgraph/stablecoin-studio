@@ -288,11 +288,28 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 			);
 
 		try {
-			const signed_Transaction = await this.signer.signTransaction(
-				message,
-			);
+			const nodeId = '0.0.3';
 
-			return Hex.fromUint8Array(signed_Transaction.toBytes());
+			const PublicKey_Der_Encoded =
+				this.account.publicKey?.toHederaKey().toStringDer() ?? '';
+
+			const signedTrans = await this.signer.signTransaction(message);
+
+			const list = signedTrans.getSignatures();
+			const nodes_signature = list.get(nodeId);
+			if (nodes_signature) {
+				const pk_signature = nodes_signature.get(PublicKey_Der_Encoded);
+				if (pk_signature) {
+					return Hex.fromUint8Array(pk_signature);
+				}
+				throw new Error(
+					'Blade no signatures found for public key : ' +
+						PublicKey_Der_Encoded,
+				);
+			}
+			throw new Error(
+				'Blade no signatures found for node id : ' + nodeId,
+			);
 		} catch (error) {
 			LogService.logError(error);
 			throw new SigningError(error);
