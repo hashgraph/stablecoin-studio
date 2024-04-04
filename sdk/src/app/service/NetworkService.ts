@@ -25,12 +25,13 @@ import { MirrorNode } from '../../domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from '../../domain/context/network/JsonRpcRelay.js';
 import Service from './Service.js';
 import BackendEndpoint from '../../domain/context/network/BackendEndpoint.js';
+import { ConsensusNode } from '../../domain/context/network/ConsensusNodes.js';
 
 export interface NetworkProps {
 	environment: Environment;
 	mirrorNode: MirrorNode;
 	rpcNode: JsonRpcRelay;
-	consensusNodes?: string;
+	consensusNodes?: ConsensusNode[];
 	configuration?: Configuration;
 }
 
@@ -39,7 +40,7 @@ export default class NetworkService extends Service implements NetworkProps {
 	private _environment: Environment;
 	private _mirrorNode: MirrorNode;
 	private _rpcNode: JsonRpcRelay;
-	private _consensusNodes?: string | undefined;
+	private _consensusNodes?: ConsensusNode[] | undefined;
 	private _configuration: Configuration;
 	private _backend: BackendEndpoint;
 
@@ -75,11 +76,11 @@ export default class NetworkService extends Service implements NetworkProps {
 		this._rpcNode = value;
 	}
 
-	public get consensusNodes(): string | undefined {
+	public get consensusNodes(): ConsensusNode[] | undefined {
 		return this._consensusNodes;
 	}
 
-	public set consensusNodes(value: string | undefined) {
+	public set consensusNodes(value: ConsensusNode[] | undefined) {
 		this._consensusNodes = value;
 	}
 

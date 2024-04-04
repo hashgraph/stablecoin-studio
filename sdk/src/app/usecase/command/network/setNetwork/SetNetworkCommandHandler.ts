@@ -64,7 +64,7 @@ export class SetNetworkCommandHandler
 				this.networkService.environment,
 				this.networkService.mirrorNode ?? '',
 				this.networkService.rpcNode ?? '',
-				this.networkService.consensusNodes ?? '',
+				this.networkService.consensusNodes ?? [],
 			),
 		);
 	}

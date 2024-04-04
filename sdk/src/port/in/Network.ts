@@ -56,6 +56,7 @@ import { MultiSigTransactionAdapter } from '../out/hs/multiSig/MultiSigTransacti
 import SetBackendRequest from './request/SetBackendRequest.js';
 import { SetBackendCommand } from '../../app/usecase/command/network/setBackend/SetBackendCommand.js';
 import BackendEndpoint from '../../domain/context/network/BackendEndpoint.js';
+import { ConsensusNode } from '../../domain/context/network/ConsensusNodes.js';
 
 export { InitializationData, SupportedWallets };
 
@@ -63,7 +64,7 @@ export type NetworkResponse = {
 	environment: Environment;
 	mirrorNode: MirrorNode;
 	rpcNode: JsonRpcRelay;
-	consensusNodes: string;
+	consensusNodes: ConsensusNode[];
 };
 
 export type ConfigResponse = {
@@ -75,6 +76,7 @@ export type BackendResponse = {
 };
 
 interface INetworkInPort {
+	init(req: InitializationRequest): Promise<SupportedWallets[]>;
 	connect(req: ConnectRequest): Promise<InitializationData>;
 	disconnect(): Promise<boolean>;
 	setNetwork(req: SetNetworkRequest): Promise<NetworkResponse>;
@@ -149,6 +151,7 @@ class NetworkInPort implements INetworkInPort {
 				environment: req.network,
 				mirrorNode: req.mirrorNode,
 				rpcNode: req.rpcNode,
+				consensusNodes: req.consensusNodes,
 			}),
 		);
 
@@ -224,7 +227,12 @@ class NetworkInPort implements INetworkInPort {
 			req.rpcNode,
 		);
 		await this.commandBus.execute(
-			new SetNetworkCommand(req.network, req.mirrorNode, req.rpcNode),
+			new SetNetworkCommand(
+				req.network,
+				req.mirrorNode,
+				req.rpcNode,
+				req.consensusNodes,
+			),
 		);
 		console.log('ConnectRequest', req.wallet, account, custodialSettings);
 		const res = await this.commandBus.execute(
