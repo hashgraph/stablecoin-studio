@@ -432,7 +432,14 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 			);
 
 		try {
-			const nodeId = '0.0.3';
+			if (
+				!this.networkService.consensusNodes ||
+				this.networkService.consensusNodes.length == 0
+			) {
+				throw new Error(
+					'In order to create sign multisignature transactions you must set consensus nodes for the environment',
+				);
+			}
 
 			const hashPackTrx = {
 				topic: this.initData.topic,
@@ -455,7 +462,9 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 			if (t.signedTransaction instanceof Uint8Array) {
 				const signedTrans = Transaction.fromBytes(t.signedTransaction);
 				const signatures_list = signedTrans.getSignatures();
-				const nodes_signature = signatures_list.get(nodeId);
+				const nodes_signature = signatures_list.get(
+					this.networkService.consensusNodes[0].nodeId,
+				);
 				if (nodes_signature) {
 					const signature = nodes_signature.get(
 						PublicKey_Der_Encoded,
@@ -469,7 +478,8 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 					);
 				}
 				throw new Error(
-					'Hashapck no signatures found for node id : ' + nodeId,
+					'Hashapck no signatures found for node id : ' +
+						this.networkService.consensusNodes[0].nodeId,
 				);
 			}
 			throw new Error('Hashapck wrong signed transaction');

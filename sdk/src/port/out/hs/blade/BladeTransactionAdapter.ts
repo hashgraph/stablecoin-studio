@@ -288,7 +288,14 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 			);
 
 		try {
-			const nodeId = '0.0.3';
+			if (
+				!this.networkService.consensusNodes ||
+				this.networkService.consensusNodes.length == 0
+			) {
+				throw new Error(
+					'In order to create sign multisignature transactions you must set consensus nodes for the environment',
+				);
+			}
 
 			const PublicKey_Der_Encoded =
 				this.account.publicKey?.toHederaKey().toStringDer() ?? '';
@@ -296,7 +303,9 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 			const signedTrans = await this.signer.signTransaction(message);
 
 			const list = signedTrans.getSignatures();
-			const nodes_signature = list.get(nodeId);
+			const nodes_signature = list.get(
+				this.networkService.consensusNodes[0].nodeId,
+			);
 			if (nodes_signature) {
 				const pk_signature = nodes_signature.get(PublicKey_Der_Encoded);
 				if (pk_signature) {
@@ -308,7 +317,8 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 				);
 			}
 			throw new Error(
-				'Blade no signatures found for node id : ' + nodeId,
+				'Blade no signatures found for node id : ' +
+					this.networkService.consensusNodes[0].nodeId,
 			);
 		} catch (error) {
 			LogService.logError(error);

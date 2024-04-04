@@ -82,6 +82,7 @@ import BaseError, {
 import BackendEndpoint from '../../../src/domain/context/network/BackendEndpoint.js';
 import { Environment } from '../../../src/domain/context/network/Environment.js';
 import { MultiSigTransaction } from '../../../src/domain/context/transaction/MultiSigTransaction.js';
+import { ConsensusNode } from '../../../src/domain/context/network/ConsensusNodes.js';
 
 const decimals = 6;
 const initialSupply = 1000;
@@ -175,6 +176,16 @@ describe('🧪 Stablecoin test', () => {
 		name: 'testrpcNode',
 		baseUrl: 'http://127.0.0.1:7546/api',
 	};
+
+	const newConsensusNode_1: ConsensusNode = {
+		url: '34.94.106.61:50211',
+		nodeId: '0.0.3',
+	};
+	const newConsensusNode_2: ConsensusNode = {
+		url: '35.237.119.55:50211',
+		nodeId: '0.0.4',
+	};
+	const consensusNodes = [newConsensusNode_1, newConsensusNode_2];
 
 	const backendEndpoint: BackendEndpoint = {
 		url: BACKEND_NODE.baseUrl,
@@ -631,6 +642,7 @@ describe('🧪 Stablecoin test', () => {
 				wallet: SupportedWallets.MULTISIG,
 				mirrorNode: mirrorNode,
 				rpcNode: rpcNode,
+				consensusNodes: consensusNodes,
 			}),
 		);
 
