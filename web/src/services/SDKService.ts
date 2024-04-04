@@ -1,25 +1,20 @@
 /* istanbul ignore file */
 // @ts-ignore
-import {
+import type {
 	AcceptFactoryProxyOwnerRequest,
 	AcceptProxyOwnerRequest,
-	Account,
 	AccountViewModel,
 	AddFixedFeeRequest,
 	AddFractionalFeeRequest,
 	AssociateTokenRequest,
 	BurnRequest,
-	CapabilitiesRequest,
 	CashInRequest,
 	ChangeFactoryProxyOwnerRequest,
 	ChangeProxyOwnerRequest,
 	CheckSupplierLimitRequest,
-	ConnectRequest,
 	CreateRequest,
 	DecreaseSupplierAllowanceRequest,
 	DeleteRequest,
-	Factory,
-	Fees,
 	FreezeAccountRequest,
 	GetAccountBalanceRequest,
 	GetAccountInfoRequest,
@@ -38,29 +33,18 @@ import {
 	HasRoleRequest,
 	IncreaseSupplierAllowanceRequest,
 	InitializationData,
-	InitializationRequest,
 	KYCRequest,
 	MultiSigTransactionsViewModel,
-	Network,
 	PauseRequest,
-	Proxy,
-	RemoveTransactionRequest,
 	RequestAccount,
 	RescueHBARRequest,
 	RescueRequest,
-	ReserveDataFeed,
 	ReserveViewModel,
 	ResetSupplierAllowanceRequest,
 	RevokeMultiRolesRequest,
-	Role,
-	SetConfigurationRequest,
-	SetNetworkRequest,
-	SignTransactionRequest,
-	StableCoin,
 	StableCoinCapabilities,
 	StableCoinListViewModel,
 	StableCoinViewModel,
-	SubmitTransactionRequest,
 	SupportedWallets,
 	UpdateCustomFeesRequest,
 	UpdateRequest,
@@ -71,8 +55,26 @@ import {
 	WalletEvent,
 	WipeRequest,
 } from '@hashgraph/stablecoin-npm-sdk';
+import {
+	Account,
+	CapabilitiesRequest,
+	ConnectRequest,
+	Factory,
+	Fees,
+	InitializationRequest,
+	Network,
+	Proxy,
+	RemoveTransactionRequest,
+	ReserveDataFeed,
+	Role,
+	SetConfigurationRequest,
+	SetNetworkRequest,
+	SignTransactionRequest,
+	StableCoin,
+	SubmitTransactionRequest,
+} from '@hashgraph/stablecoin-npm-sdk';
 import { type IMirrorRPCNode } from '../interfaces/IMirrorRPCNode';
-import { IConsensusNodes } from '../interfaces/IConsensusNodes';
+import type { IConsensusNodes } from '../interfaces/IConsensusNodes';
 
 export type StableCoinListRaw = Array<Record<'id' | 'symbol', string>>;
 
@@ -94,7 +96,7 @@ export class SDKService {
 		const networkConfig = await this.setNetwork(connectNetwork, selectedMirror, selectedRPC);
 		const _mirrorNode = networkConfig[0];
 		const _rpcNode = networkConfig[1];
-		const consensusNodes:IConsensusNodes[] = []; // REACT_APP_CONSENSUS_NODES load from .env
+		const consensusNodes: IConsensusNodes[] = []; // REACT_APP_CONSENSUS_NODES load from .env
 		let factories = []; // REACT_APP_FACTORIES load from .env
 
 		if (process.env.REACT_APP_FACTORIES) factories = JSON.parse(process.env.REACT_APP_FACTORIES);
@@ -114,18 +116,22 @@ export class SDKService {
 		if (process.env.REACT_APP_CONSENSUS_NODES && connectNetwork) {
 			const environments = JSON.parse(process.env.REACT_APP_CONSENSUS_NODES) as {
 				Environment: string;
-				CONSENSUS_NODES: { ID: string; ADDRESS: string; }[];
+				CONSENSUS_NODES: { ID: string; ADDRESS: string }[];
 			}[];
 
-			const selectedEnvironment = environments.find(env => env.Environment.toUpperCase() === connectNetwork.toUpperCase());
+			const selectedEnvironment = environments.find(
+				(env) => env.Environment.toUpperCase() === connectNetwork.toUpperCase(),
+			);
 
 			if (selectedEnvironment && selectedEnvironment.CONSENSUS_NODES) {
-				selectedEnvironment.CONSENSUS_NODES.forEach(node => {
+				selectedEnvironment.CONSENSUS_NODES.forEach((node) => {
 					consensusNodes.push({
 						nodeId: node.ID,
 						url: node.ADDRESS,
 					});
 				});
+			} else {
+				console.error('Consensus nodes could not be found in .env');
 			}
 		}
 
@@ -136,7 +142,7 @@ export class SDKService {
 				mirrorNode: _mirrorNode,
 				rpcNode: _rpcNode,
 				wallet,
-				consensusNodes: consensusNodes
+				consensusNodes,
 			}),
 		);
 
