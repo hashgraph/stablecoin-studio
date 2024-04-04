@@ -197,7 +197,9 @@ export class BackendAdapter {
 				throw error;
 			} else {
 				throw new BackendError(
-					`Failed to get transactions for ${publicKey}: Unknown error`,
+					`Failed to get transactions for ${publicKey}, ${page}, ${limit}, ${status}, ${network}, ${accountId}: ${
+						(error as Error).message
+					}`,
 				);
 			}
 		}
