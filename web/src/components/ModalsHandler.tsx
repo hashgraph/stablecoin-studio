@@ -4,14 +4,16 @@ import { useTranslation } from 'react-i18next';
 import ModalAction from './ModalAction';
 import type { ModalActionProps } from './ModalAction';
 import ModalNotification from './ModalNotification';
+import { SupportedWallets } from '@hashgraph/stablecoin-npm-sdk';
+import { useSelector } from 'react-redux';
+import { LAST_WALLET_SELECTED } from '../store/slices/walletSlice';
 
-export interface ModalsHandlerActionsProps
-	extends Pick<ModalActionProps, 'title' | 'confirmButtonLabel' | 'isOpen' | 'onClose'> {
+export interface ModalsHandlerActionsProps extends Pick<ModalActionProps, 'title' | 'confirmButtonLabel' | 'isOpen' | 'onClose'> {
 	onConfirm: ({
-		onSuccess,
-		onError,
-		onWarning,
-	}: Record<
+								onSuccess,
+								onError,
+								onWarning,
+							}: Record<
 		'onSuccess' | 'onError' | 'onWarning' | 'onLoading' | 'onCloseModalLoading',
 		() => void
 	>) => void;
@@ -50,6 +52,7 @@ const ModalsHandler = (props: ModalsHandlerProps) => {
 		handleOnCloseModalLoading,
 	} = props;
 	const { t } = useTranslation(['global', 'roles']);
+	const selectedWallet = useSelector(LAST_WALLET_SELECTED);
 	const {
 		isOpen: isOpenModalSuccess,
 		onOpen: onOpenModalSuccess,
@@ -72,6 +75,11 @@ const ModalsHandler = (props: ModalsHandlerProps) => {
 	} = useDisclosure();
 
 	const anyMessageOpen = isOpenModalError || isOpenModalSuccess || isOpenModalWarning;
+
+	// TODO: add to language.json
+	const successDescription = selectedWallet === SupportedWallets.MULTISIG
+		? "MultiSig transaction has been successfully created and is now awaiting signatures. Accounts have 180 seconds to sign the transaction." // Customize this as needed
+		: successNotificationDescription;
 
 	return (
 		<>
@@ -100,7 +108,7 @@ const ModalsHandler = (props: ModalsHandlerProps) => {
 			<ModalNotification
 				variant='success'
 				title={successNotificationTitle}
-				description={successNotificationDescription}
+				description={successDescription}
 				isOpen={isOpenModalSuccess}
 				onClose={
 					handleOnCloseModalSuccess ??

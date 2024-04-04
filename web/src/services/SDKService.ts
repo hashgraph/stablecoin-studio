@@ -44,6 +44,7 @@ import {
 	Network,
 	PauseRequest,
 	Proxy,
+	RemoveTransactionRequest,
 	RequestAccount,
 	RescueHBARRequest,
 	RescueRequest,
@@ -69,9 +70,9 @@ import {
 	UpgradeImplementationRequest,
 	WalletEvent,
 	WipeRequest,
-	RemoveTransactionRequest,
 } from '@hashgraph/stablecoin-npm-sdk';
 import { type IMirrorRPCNode } from '../interfaces/IMirrorRPCNode';
+import { IConsensusNodes } from '../interfaces/IConsensusNodes';
 
 export type StableCoinListRaw = Array<Record<'id' | 'symbol', string>>;
 
@@ -93,7 +94,7 @@ export class SDKService {
 		const networkConfig = await this.setNetwork(connectNetwork, selectedMirror, selectedRPC);
 		const _mirrorNode = networkConfig[0];
 		const _rpcNode = networkConfig[1];
-
+		const consensusNodes:IConsensusNodes[] = []; // REACT_APP_CONSENSUS_NODES load from .env
 		let factories = []; // REACT_APP_FACTORIES load from .env
 
 		if (process.env.REACT_APP_FACTORIES) factories = JSON.parse(process.env.REACT_APP_FACTORIES);
@@ -110,6 +111,24 @@ export class SDKService {
 				}),
 			);
 
+		if (process.env.REACT_APP_CONSENSUS_NODES && connectNetwork) {
+			const environments = JSON.parse(process.env.REACT_APP_CONSENSUS_NODES) as {
+				Environment: string;
+				CONSENSUS_NODES: { ID: string; ADDRESS: string; }[];
+			}[];
+
+			const selectedEnvironment = environments.find(env => env.Environment.toUpperCase() === connectNetwork.toUpperCase());
+
+			if (selectedEnvironment && selectedEnvironment.CONSENSUS_NODES) {
+				selectedEnvironment.CONSENSUS_NODES.forEach(node => {
+					consensusNodes.push({
+						nodeId: node.ID,
+						url: node.ADDRESS,
+					});
+				});
+			}
+		}
+
 		this.initData = await Network.connect(
 			new ConnectRequest({
 				account: hederaAccount ? { accountId: hederaAccount } : undefined,
@@ -117,6 +136,7 @@ export class SDKService {
 				mirrorNode: _mirrorNode,
 				rpcNode: _rpcNode,
 				wallet,
+				consensusNodes: consensusNodes
 			}),
 		);
 
