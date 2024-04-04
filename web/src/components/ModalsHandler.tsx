@@ -53,7 +53,6 @@ const ModalsHandler = (props: ModalsHandlerProps) => {
 		handleOnCloseModalLoading,
 	} = props;
 	const { t } = useTranslation(['global', 'roles']);
-	const selectedWallet = useSelector(LAST_WALLET_SELECTED);
 	const {
 		isOpen: isOpenModalSuccess,
 		onOpen: onOpenModalSuccess,
@@ -76,12 +75,6 @@ const ModalsHandler = (props: ModalsHandlerProps) => {
 	} = useDisclosure();
 
 	const anyMessageOpen = isOpenModalError || isOpenModalSuccess || isOpenModalWarning;
-
-	// TODO: add to language.json
-	const successDescription =
-		selectedWallet === SupportedWallets.MULTISIG
-			? 'MultiSig transaction has been successfully created and is now awaiting signatures. Accounts have 180 seconds to sign the transaction.' // Customize this as needed
-			: successNotificationDescription;
 
 	return (
 		<>
@@ -110,7 +103,7 @@ const ModalsHandler = (props: ModalsHandlerProps) => {
 			<ModalNotification
 				variant='success'
 				title={successNotificationTitle}
-				description={successDescription}
+				description={successNotificationDescription}
 				isOpen={isOpenModalSuccess}
 				onClose={
 					handleOnCloseModalSuccess ??

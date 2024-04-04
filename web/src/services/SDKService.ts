@@ -213,11 +213,13 @@ export class SDKService {
 		return [_mirrorNode, _rpcNode];
 	}
 
-	// dummy init
+	// dummy init to avoid errors in the SDK service initialization
+	// TODO: review
 	public static async init(events: Partial<WalletEvent>) {
+		const network = 'mainnet';
 		try {
 			const initReq: InitializationRequest = new InitializationRequest({
-				network: 'mainnet',
+				network,
 				mirrorNode: {
 					baseUrl: 'https://mainnet-public.mirrornode.hedera.com/api/v1/',
 					apiKey: '',
@@ -314,6 +316,30 @@ export class SDKService {
 				}
 			}
 			console.log('initReq', initReq);
+			if (process.env.REACT_APP_CONSENSUS_NODES) {
+				try {
+					const consensusNodes: IConsensusNodes[] = [];
+					const environments = JSON.parse(process.env.REACT_APP_CONSENSUS_NODES) as {
+						Environment: string;
+						CONSENSUS_NODES: { ID: string; ADDRESS: string }[];
+					}[];
+					const selectedEnvironment = environments.find(
+						(env) => env.Environment.toUpperCase() === network.toUpperCase(),
+					);
+					if (selectedEnvironment && selectedEnvironment.CONSENSUS_NODES) {
+						selectedEnvironment.CONSENSUS_NODES.forEach((node) => {
+							consensusNodes.push({
+								nodeId: node.ID,
+								url: node.ADDRESS,
+							});
+						});
+						initReq.consensusNodes = consensusNodes;
+					}
+				} catch (e) {
+					console.error('Consensus nodes could not be found in .env');
+				}
+			}
+			console.log('dummy initReq', initReq);
 			return await Network.init(initReq);
 		} catch (e) {
 			console.error('Error initializing the Network : ' + e);

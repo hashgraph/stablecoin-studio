@@ -10,7 +10,7 @@ import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
 import { handleRequestValidation } from '../../../utils/validationsHelper';
 import SDKService from '../../../services/SDKService';
-import { SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
+import { LAST_WALLET_SELECTED, SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
 
 import { KYCRequest } from '@hashgraph/stablecoin-npm-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
