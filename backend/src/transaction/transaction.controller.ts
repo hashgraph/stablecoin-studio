@@ -189,7 +189,7 @@ export default class TransactionController {
     name: 'publicKey',
     description: 'The public key to retrieve transactions for',
     example: 'cf8c984270cd7cd25e1bd6df1a3a22ee2d1cd53a0f7bbfdf917a8bd881b11b5e',
-    required: true,
+    required: false,
   })
   @ApiQuery({
     name: 'status',
