@@ -308,10 +308,7 @@ export default class WizardService extends Service {
     await Network.setNetwork(
       new SetNetworkRequest({
         environment: currentNetwork.name,
-        consensusNodes:
-          currentNetwork.consensusNodes.length > 0
-            ? currentNetwork.name
-            : undefined,
+        consensusNodes: currentNetwork.consensusNodes,
         mirrorNode: currentMirror ? currentMirror : undefined,
         rpcNode: currentRPC ? currentRPC : undefined,
       }),

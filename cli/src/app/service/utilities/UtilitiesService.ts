@@ -52,11 +52,13 @@ export default class UtilitiesService extends Service {
   public async initSDK(): Promise<void> {
     const account = this.getCurrentAccount();
     SDK.log = configurationService.getLogConfiguration();
+    const network = this.getCurrentNetwork();
     await Network.init(
       new InitializationRequest({
-        network: this.getCurrentNetwork().name,
+        network: network.name,
         mirrorNode: this.getCurrentMirror(),
         rpcNode: this.getCurrentRPC(),
+        consensusNodes: network.consensusNodes,
         backend: this.getCurrentBackend()
           ? {
               url: this.getCurrentBackend().endpoint,
