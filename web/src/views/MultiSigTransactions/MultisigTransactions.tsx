@@ -72,10 +72,11 @@ const MultiSigTransactions = () => {
 			} else if (publicKey) {
 				request.publicKey = { key: publicKey };
 			}
-
-			const resp = await SDKService.getMultiSigTransactions(request);
-			setTotalPages(resp.pagination.totalPages);
-			setTransactions(resp.transactions);
+			if (request.account || request.publicKey) {
+				const resp = await SDKService.getMultiSigTransactions(request);
+				setTotalPages(resp.pagination.totalPages);
+				setTransactions(resp.transactions);
+			}
 		};
 
 		fetchTransactions();
