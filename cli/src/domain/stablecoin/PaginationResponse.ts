@@ -44,8 +44,8 @@ export default class PaginationResponse implements IPaginationResponse {
   }
 
   private validateItemCount(itemCount: number, itemsPerPage: number): number {
-    if (itemCount < 1) {
-      throw new Error('Item count must be greater than 0');
+    if (itemCount < 0) {
+      throw new Error('Item count must be greater than or equal to 0');
     }
     if (itemCount > itemsPerPage) {
       throw new Error(
@@ -56,8 +56,8 @@ export default class PaginationResponse implements IPaginationResponse {
   }
 
   private validateTotalItems(totalItems?: number): number {
-    if (totalItems && totalItems < 1) {
-      throw new Error('Total items must be greater than 0');
+    if (totalItems && totalItems < 0) {
+      throw new Error('Total items must be greater than or equal to 0');
     }
     return totalItems;
   }

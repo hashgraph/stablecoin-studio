@@ -58,7 +58,7 @@
     "@iarna/toml": "^2.2.5",
     "big.js": "^6.2.1",
     "chalk": "^5.2.0",
-    "cli-table3": "^0.6.2",
+    "cli-table3": "^0.6.4",
     "colors": "^1.4.0",
     "commander": "^10.0.0",
     "figlet-promised": "^1.0.0",

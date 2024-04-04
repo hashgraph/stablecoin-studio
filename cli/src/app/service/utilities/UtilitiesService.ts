@@ -10,9 +10,7 @@ import {
 import Service from '../Service.js';
 import Table from 'cli-table3';
 import {
-  Account,
   ConnectRequest,
-  GetPublicKeyRequest,
   InitializationRequest,
   Network,
   SDK,
@@ -358,6 +356,8 @@ export default class UtilitiesService extends Service {
       : '';
     const rpcInfo = rpc ? colors.cyan(`, rpc: ${rpc}`) : '';
     const backendInfo = backend ? colors.cyan(`, backend: ${backend}`) : '';
+    const closingBracket =
+      networkInfo || mirrorInfo || rpcInfo ? colors.cyan(')') : '';
 
     const accountInfo = account
       ? ` ${colors.underline(colors.bold('Account:'))} ${colors.magenta(
@@ -372,9 +372,19 @@ export default class UtilitiesService extends Service {
     const tokenPausedInfo = tokenPaused ? ' | ' + colors.red('PAUSED') : '';
     const tokenDeletedInfo = tokenDeleted ? ' | ' + colors.red('DELETED') : '';
 
-    question += `${networkInfo}${mirrorInfo}${rpcInfo}${backendInfo}${colors.cyan(
-      ')',
-    )}${accountInfo}${tokenInfo}${tokenPausedInfo}${tokenDeletedInfo}\n`;
+    const infoArray = [
+      networkInfo,
+      mirrorInfo,
+      rpcInfo,
+      backendInfo,
+      closingBracket,
+      accountInfo,
+      tokenInfo,
+      tokenPausedInfo,
+      tokenDeletedInfo,
+    ];
+
+    question += infoArray.filter(Boolean).join('') + '\n';
 
     const variable = await inquirer.prompt({
       name: 'response',
@@ -455,6 +465,17 @@ export default class UtilitiesService extends Service {
     return variable.response;
   }
 
+  public async confirmContinue(
+    question = language.getText('general.continue'),
+  ): Promise<boolean> {
+    const variable = await inquirer.prompt({
+      name: 'response',
+      type: 'confirm',
+      message: question,
+    });
+    return variable.response;
+  }
+
   /**
    * Function for simple ask questions with inquire
    * @param question
@@ -520,34 +541,34 @@ export default class UtilitiesService extends Service {
     }
   }
 
+  /**
+   * Draws a table to display pending multisig transactions.
+   * If there are no pending transactions, a message is logged.
+   *
+   * @param {Object} options - The options for drawing the table.
+   * @param {MultiSigTransaction[]} options.multiSigTxList - The list of pending multisig transactions.
+   * @returns {Promise<void>} - A promise that resolves when the table is drawn.
+   */
   public async drawTableListPendingMultiSig({
     multiSigTxList,
-    publicKey,
   }: {
     multiSigTxList: MultiSigTransaction[];
-    publicKey?: string;
   }): Promise<void> {
-    const currentAccount = this.getCurrentAccount();
-    const publicKeyFromHederaAccount = Account.getPublicKey(
-      new GetPublicKeyRequest({
-        account: { accountId: currentAccount.accountId },
-      }),
-    );
-    publicKey = publicKey || (await publicKeyFromHederaAccount).toString();
-
     if (multiSigTxList.length === 0) {
       console.log(
-        '🙌🏼 There are no pending multisig transactions at this time!',
+        '🙌 There are no pending multisig transactions at this time!',
       );
       return;
     }
 
-    console.log('📜 There are pending multisig transactions for:');
+    console.log('📜 There are pending multisig transactions for: ');
     // Define table for pending multisig transactions
     const table = new Table({
-      style: { head: ['green'] },
+      style: { head: ['cyan', 'bold'] },
       head: ['Transaction ID', 'Description', 'Status'],
-      colWidths: [15, 20, 10],
+      colWidths: [40, 60, 12],
+      wordWrap: true,
+      wrapOnWordBoundary: true,
     });
 
     // Add pending multisig transactions to table
@@ -556,7 +577,7 @@ export default class UtilitiesService extends Service {
     );
 
     // Show table
-    console.log(table.toString());
+    console.info(table.toString());
   }
 
   public exitApplication(cause?: string): void {

@@ -20,75 +20,25 @@ export default class ListMultiSigTxService extends Service {
   }
 
   /**
-   * Retrieves all MultiSig transactions.
-   * @param draw - Whether to draw the table.
-   * @returns A promise that resolves to an array of MultiSigTransaction objects.
-   */
-  public async all(
-    {
-      pagination = new PaginationRequest(),
-      draw = false,
-    }: {
-      pagination?: PaginationRequest;
-      draw?: boolean;
-    } = { pagination: new PaginationRequest(), draw: false },
-  ): Promise<ListMultiSigTxResponse> {
-    const multiSigTxListResponse = await this.get({
-      status: undefined,
-      pagination,
-    });
-
-    // Draw table if draw is true
-    if (draw) {
-      utilsService.drawTableListPendingMultiSig({
-        multiSigTxList: multiSigTxListResponse.multiSigTxList,
-        publicKey: multiSigTxListResponse.publicKey.toString(),
-      });
-    }
-    return multiSigTxListResponse;
-  }
-
-  /**
-   * Retrieves pending MultiSig transactions.
-   * @param draw - Whether to draw the table.
-   * @returns A promise that resolves to an array of MultiSigTransaction objects.
-   */
-  public async pending(
-    {
-      pagination = new PaginationRequest(),
-      draw = false,
-    }: {
-      pagination?: PaginationRequest;
-      draw?: boolean;
-    } = { pagination: new PaginationRequest(), draw: false },
-  ): Promise<ListMultiSigTxResponse> {
-    const multiSigTxListResponse = await this.get({
-      status: Status.Pending,
-      pagination: pagination,
-    });
-
-    // Draw table if draw is true
-    if (draw) {
-      utilsService.drawTableListPendingMultiSig({
-        multiSigTxList: multiSigTxListResponse.multiSigTxList,
-        publicKey: multiSigTxListResponse.publicKey.toString(),
-      });
-    }
-    return multiSigTxListResponse;
-  }
-
-  /**
    * Retrieves MultiSig transactions based on the provided parameters.
    * @param options - The options for retrieving MultiSig transactions.
    * @returns A promise that resolves to an array of MultiSigTransaction objects.
    */
-  public async get({
-    status,
-    pagination,
-  }: {
-    status?: Status;
-    pagination: PaginationRequest;
-  }): Promise<ListMultiSigTxResponse> {
+  public async get(
+    {
+      status,
+      pagination = new PaginationRequest(),
+      draw = false,
+    }: {
+      status?: Status;
+      pagination?: PaginationRequest;
+      draw?: boolean;
+    } = {
+      status: Status.Pending,
+      pagination: new PaginationRequest(),
+      draw: false,
+    },
+  ): Promise<ListMultiSigTxResponse> {
     const currentAccount = utilsService.getCurrentAccount();
     const publicKey = await Account.getPublicKey(
       new GetPublicKeyRequest({
@@ -112,10 +62,21 @@ export default class ListMultiSigTxService extends Service {
     });
 
     // Generate MultiSigTransaction domain objects
-    return ListMultiSigTxResponse.fromRawMultiSigTxList({
-      multiSigTxListRaw: (await getTransactionsResponse).transactions,
-      publicKey,
-      paginationResRaw: (await getTransactionsResponse).pagination,
-    });
+    const multiSigTxListResponse = ListMultiSigTxResponse.fromRawMultiSigTxList(
+      {
+        multiSigTxListRaw: (await getTransactionsResponse).transactions,
+        publicKey,
+        paginationResRaw: (await getTransactionsResponse).pagination,
+      },
+    );
+
+    // Draw table if draw is true
+    if (draw) {
+      utilsService.drawTableListPendingMultiSig({
+        multiSigTxList: multiSigTxListResponse.multiSigTxList,
+      });
+    }
+
+    return multiSigTxListResponse;
   }
 }

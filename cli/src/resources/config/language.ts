@@ -10,9 +10,11 @@ const separator_2 = {
   Separator_2: new inquirer.Separator(' '),
 };
 
+const backOption = 'Go back';
+
 const goBack = {
   ...separator_1,
-  goBack: 'Go back',
+  goBack: backOption,
   ...separator_2,
 };
 
@@ -37,6 +39,8 @@ export const english = {
     incorrectParam: 'Incorrect input, retrying',
     error:
       'An error occurred, see above for details, press any key to continue',
+    continue: '↩️ Press enter to continue',
+    backOption: backOption,
   },
   initialConfiguration: {
     title: '\n\n\t\tHedera Stablecoin initial configuration\n',
@@ -478,12 +482,27 @@ export const english = {
       listMenuTitle: 'Select a multi-signature transaction',
       txActions: {
         title: 'Multi-signature transaction actions',
-        sign: 'Sign',
-        submit: 'Submit',
-        remove: 'Remove',
-        details: 'Details',
-        signing: '🖋️ Signing transaction...',
-        signed: '✅ Transaction signed successfully',
+        actions: {
+          sign: '🖋️  Sign',
+          submit: '📨 Submit',
+          details: '👀 Details',
+          remove: colors.red('❌ Remove'),
+        },
+        signingTx: '🖋️ Signing transaction...',
+        signedTx: colors.green('✅ Transaction signed successfully'),
+        errorSigningTx: colors.red('❌ Error signing transaction'),
+        // TODO: signReturn: 'Returning to multi-signature transaction actions...',
+        signReturn: 'Returning to multi-signature transaction list...',
+        submittingTx: '📨 Submitting transaction...',
+        submittedTx: colors.green('✅ Transaction submitted successfully'),
+        errorSubmittingTx: colors.red('❌ Error submitting transaction'),
+        submitReturn: 'Returning to multi-signature transaction list...',
+        removingTx: 'Removing transaction...',
+        errorRemovingTx: colors.red('❌ Error removing transaction'),
+        removedTx: colors.green('✅ Transaction removed successfully \n'),
+        removeReturn: 'Returning to multi-signature transaction list...',
+        detailsContinue:
+          'Press return to go back to the multi-signature transaction actions...',
       },
     },
   },

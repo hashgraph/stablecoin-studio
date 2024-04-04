@@ -22,9 +22,6 @@ import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccoun
 import { MIRROR_NODE, RPC } from '../../../core/Constants.js';
 import { AccountType } from '../../../domain/configuration/interfaces/AccountType.js';
 import ManageMultiSigTxService from '../stablecoin/ManageMultiSigTxService.js';
-import ListMultiSigTxResponse from '../../../domain/stablecoin/ListMultiSigTxResponse.js';
-import { Status } from '../../../domain/stablecoin/MultiSigTransaction.js';
-import ListMultiSigTxService from '../stablecoin/ListMultiSigTxService.js';
 
 /**
  * Wizard Service
@@ -138,14 +135,10 @@ export default class WizardService extends Service {
           utilsService.drawTableListStableCoin(resp);
           break;
         case language.getText('wizard.mainOptions.ListPendingMultiSig'):
-          await utilsService.cleanAndShowBanner();
-          // Draw table
-          const multiSigTxListResponse: ListMultiSigTxResponse =
-            await new ListMultiSigTxService().pending({ draw: true });
           // Continue to MultiSig Submenu
           await new ManageMultiSigTxService().start({
-            multiSigTxListResponse,
-            status: Status.Pending,
+            drawTable: true,
+            options: { clear: true },
           });
           break;
         case language.getText('wizard.mainOptions.Configuration'):
