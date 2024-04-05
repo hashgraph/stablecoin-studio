@@ -49,6 +49,7 @@ import {
 	TokenUpdateTransaction,
 	CustomFractionalFee,
 	CustomFixedFee,
+	TransferTransaction,
 } from '@hashgraph/sdk';
 import { MirrorNodeAdapter } from '../../port/out/mirror/MirrorNodeAdapter.js';
 import {
@@ -279,6 +280,16 @@ export default class TransactionService extends Service {
 
 				return `Updating token ${tokenId} name : ${tokenName}, symbol : ${tokenSymbol}, autoRenewPeriod : ${autoRenewPeriod}, expirationTime : ${expirationTime},
 				kycKey : ${kycKey}, freezeKey : ${freezeKey}, feeScheduleKey : ${feeScheduleKey}, pauseKey : ${pauseKey}, wipeKey : ${wipeKey}`;
+			} else if (t instanceof TransferTransaction) {
+				let message = '';
+				const tokenTransfers = (t as TransferTransaction)
+					.tokenTransfers;
+				for (const key of tokenTransfers.keys()) {
+					const tokenTransfer = tokenTransfers.get(key);
+					message = message + tokenTransfer?.toString() + ', ';
+				}
+
+				return message;
 			}
 
 			return 'No description found....';
