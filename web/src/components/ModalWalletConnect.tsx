@@ -494,7 +494,7 @@ const ModalWalletConnect = () => {
 									{t('multiSigActions.title')}
 								</Text>
 							</ModalHeader>
-							<ModalBody alignItems='center' justifyContent='center'>
+							<ModalFooter>
 								<VStack spacing={4} alignItems='center' justifyContent='center'>
 									<SelectController
 										control={control}
@@ -513,25 +513,23 @@ const ModalWalletConnect = () => {
 										onChange={(e) => setHederaAccountId(e.target.value)}
 									/>
 									{accountIdError && <Text color='red'>{accountIdError}</Text>}
+									<HStack justifyContent='center' w='full'>
+										<Button
+											data-testid='modal-cancel-button-Multisig'
+											onClick={() => setMultiSigSelected(false)}
+											variant='secondary'
+										>
+											Cancel
+										</Button>
+										<Button
+											data-testid='modal-confirm-button-Multisig'
+											onClick={handleConnectClick}
+											variant='primary'
+										>
+											Connect
+										</Button>
+									</HStack>
 								</VStack>
-							</ModalBody>
-							<ModalFooter>
-								<HStack justifyContent='center' w='full'>
-									<Button
-										data-testid='modal-cancel-button-Multisig'
-										onClick={() => setMultiSigSelected(false)}
-										variant='secondary'
-									>
-										Cancel
-									</Button>
-									<Button
-										data-testid='modal-confirm-button-Multisig'
-										onClick={handleConnectClick}
-										variant='primary'
-									>
-										Connect
-									</Button>
-								</HStack>
 							</ModalFooter>
 						</>
 					)}
