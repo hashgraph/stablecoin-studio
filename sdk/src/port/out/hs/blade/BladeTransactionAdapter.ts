@@ -150,12 +150,10 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 				currentNetwork == 'testnet'
 					? HederaNetwork.Testnet
 					: HederaNetwork.Mainnet;
-			const params = {
+			const pairedAccountIds = await this.bc.createSession({
 				network: bladeNetwork,
-				dAppCode: 'SomeAwesomeDApp', // optional while testing, request specific one by contacting us
-			};
+			});
 
-			const pairedAccountIds = await this.bc.createSession(params);
 			if (pairedAccountIds) {
 				const accountInfo = await this.getAccountInfo(
 					pairedAccountIds[0],
