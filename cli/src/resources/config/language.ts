@@ -1,4 +1,5 @@
 import colors from 'colors';
+import { AccountType } from '../../domain/configuration/interfaces/AccountType';
 import * as inquirer from 'inquirer';
 
 const separator_1 = {
@@ -9,9 +10,11 @@ const separator_2 = {
   Separator_2: new inquirer.Separator(' '),
 };
 
+const backOption = 'Go back';
+
 const goBack = {
   ...separator_1,
-  goBack: 'Go back',
+  goBack: backOption,
   ...separator_2,
 };
 
@@ -36,6 +39,8 @@ export const english = {
     incorrectParam: 'Incorrect input, retrying',
     error:
       'An error occurred, see above for details, press any key to continue',
+    continue: '↩️ Press enter to continue',
+    backOption: backOption,
   },
   initialConfiguration: {
     title: '\n\n\t\tHedera Stablecoin initial configuration\n',
@@ -52,7 +57,7 @@ export const english = {
     AccountsConfigurationMessage: 'You will now configure your accounts:',
     askAccountId: 'Enter the account id',
     askAccountPubKey: 'Enter the public key (Hexadecimal format)',
-    askAccountType: 'Enter the account type (SELF-CUSTODIAL|FIREBLOCKS|DFNS)',
+    askAccountType: `Enter the account type (${AccountType.SelfCustodial}|${AccountType.MultiSignature}|${AccountType.Fireblocks}|${AccountType.Dfns})`,
     askConfigurateFactories:
       'Do you want to config your factories? Check the documentation for more information : https://github.com/hashgraph/stablecoin-studio#deploying-the-stable-coin-factories',
     askConfigurateDefaultMirrorsAndRPCs:
@@ -358,6 +363,7 @@ export const english = {
       Manage: 'Manage imported tokens',
       Operate: 'Operate with an existing Stablecoin',
       List: 'List Stablecoins',
+      ListPendingMultiSig: 'List pending multi-signature transactions',
       Configuration: 'Configuration',
       ...separator_1,
       Exit: 'Exit',
@@ -466,9 +472,38 @@ export const english = {
       ECDSA: 'ECDSA',
     },
     accountType: {
-      SELF_CUSTODIAL: 'SELF-CUSTODIAL',
-      FIREBLOCKS: 'FIREBLOCKS',
-      DFNS: 'DFNS',
+      SELF_CUSTODIAL: AccountType.SelfCustodial,
+      MULTI_SIGNATURE: AccountType.MultiSignature,
+      FIREBLOCKS: AccountType.Fireblocks,
+      DFNS: AccountType.Dfns,
+    },
+    // * Multi-Signature Transactions
+    multiSig: {
+      listMenuTitle: 'Select a multi-signature transaction',
+      txActions: {
+        title: 'Multi-signature transaction actions',
+        actions: {
+          sign: '🖋️  Sign',
+          submit: '📨 Submit',
+          details: '👀 Details',
+          remove: colors.red('❌ Remove'),
+        },
+        signingTx: '🖋️ Signing transaction...',
+        signedTx: colors.green('✅ Transaction signed successfully'),
+        errorSigningTx: colors.red('❌ Error signing transaction'),
+        // TODO: signReturn: 'Returning to multi-signature transaction actions...',
+        signReturn: 'Returning to multi-signature transaction list...',
+        submittingTx: '📨 Submitting transaction...',
+        submittedTx: colors.green('✅ Transaction submitted successfully'),
+        errorSubmittingTx: colors.red('❌ Error submitting transaction'),
+        submitReturn: 'Returning to multi-signature transaction list...',
+        removingTx: 'Removing transaction...',
+        errorRemovingTx: colors.red('❌ Error removing transaction'),
+        removedTx: colors.green('✅ Transaction removed successfully \n'),
+        removeReturn: 'Returning to multi-signature transaction list...',
+        detailsContinue:
+          'Press return to go back to the multi-signature transaction actions...',
+      },
     },
   },
   manageImportedToken: {
