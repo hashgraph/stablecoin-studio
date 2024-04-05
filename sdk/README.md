@@ -25,6 +25,7 @@
 	- [Wallet Events](#wallet-events)
 - [Usage](#usage)
 	- [About Operations Execution](#about-operations-execution)
+		- [Multisig wallet](#multisig-wallet)
 	- [StableCoin](#stablecoin)
 		- [Create](#create)
 		- [Creates a simple stablecoin, with all keys set to the Smart Contracts](#creates-a-simple-stablecoin-with-all-keys-set-to-the-smart-contracts)
@@ -53,6 +54,10 @@
 		- [GetReserveAddress](#getreserveaddress)
 		- [UpdateReserveAddress](#updatereserveaddress)
 		- [Capabilities](#capabilities)
+		- [SignTransaction](#signtransaction)
+		- [SubmitTransaction](#submittransaction)
+		- [RemoveTransaction](#removetransaction)
+		- [GetTransactions](#gettransactions)
 	- [Proxy](#proxy)
 		- [GetProxyConfig](#getproxyconfig)
 		- [ChangeProxyOwner](#changeproxyowner)
@@ -69,7 +74,8 @@
 		- [GetNetwork](#getnetwork)
 		- [IsNetworkRecognized](#isnetworkrecognized)
 		- [SetConfig](#setconfig)
-		- [GetFactoryAddress](#getfactoryaddress)
+		- [SetBackend](#setbackend)
+		- [SetConfig](#setconfig)
 	- [Event](#event)
 		- [Register](#register)
 	- [Account](#account)
@@ -185,15 +191,29 @@ const init = await Network.init(
 );
 ```
 
+If you are using a backend (for multisignature transactions) you can also specify its url.
+
+```Typescript
+const init = await Network.init(
+	new InitializationRequest({
+		network: 'testnet',
+		backend: {
+			url: 'http://127.0.0.1:3001/api/'
+		},
+	}),
+);
+```
+
 ## Connect SDK
 
-The next step would be to connect to the network. Currently, 3 types of connections are offered: Client (a Hedera account configured in an application configuration file), MetaMask and HashPack. These 3 connection types are in the SupportedWallets enum.
+The next step would be to connect to the network. Currently, multiple types of connections are offered: Client (a Hedera account configured in an application configuration file), MetaMask, HashPack, Blade, fireblocks, DFNS and Multisig. These connection types are in the SupportedWallets enum.
 
 ```Typescript
 export enum SupportedWallets {
 	METAMASK = 'Metamask',
 	HASHPACK = 'HashPack',
 	CLIENT = 'Client',
+	...
 }
 ```
 
@@ -270,6 +290,10 @@ When creating a stablecoin, a set of keys (wipe key, pause key, freeze key, etc.
 
 1. If the token key corresponds to a Hedera account public key, the operation can only be performed by the Hedera account owning this public key, and only through the Hedera SDK.
 2. If the token key corresponds to the stablecoin smart contract administrator key, the operation can only be performed through the smart contract, so whoever calls the smart contract can perform the operation. To prevent anyone from performing certain operations roles are used. When the need for a role is indicated in an operation's description, this is only when the related key of the stablecoin token is configured to be the smart contract admin key.
+
+### Multisig wallet
+
+The multisig wallet mode is a special one. Operations executed when connected as "multisig" will not be submitted to the Hedera DLT, instead they will be stored in a backend waiting for the multisig account key owners to sign it. Once the operation has been signed by all the required keys it will be ready for submission to the Hedera DLT.
 
 ## StableCoin
 
@@ -1021,6 +1045,94 @@ See the spec below for all the attributes you can get from the request.
 	);
 ```
 
+### SignTransaction
+
+Signs a multisig transaction stored in the backend.
+
+**Spec:**
+
+```Typescript
+	StableCoin.signTransaction = (request: SignTransactionRequest): Promise<boolean>;
+
+```
+
+**Example:**
+
+```Typescript
+	const result: boolean = await StableCoin.signTransaction(
+		new SignTransactionRequest({
+			transactionId: 'f8ff7778-1cbd-429a-acf3-bfc92c5fe875',
+		})
+	);
+```
+
+### SubmitTransaction
+
+Submits a multisig transaction stored in the backend.
+_The transaction must have been previously signed by all required keys_
+
+**Spec:**
+
+```Typescript
+	StableCoin.submitTransaction = (request: SubmitTransactionRequest): Promise<boolean>;
+
+```
+
+**Example:**
+
+```Typescript
+	const result: boolean = await StableCoin.submitTransaction(
+		new SubmitTransactionRequest({
+			transactionId: 'f8ff7778-1cbd-429a-acf3-bfc92c5fe875',
+		})
+	);
+```
+
+### RemoveTransaction
+
+Removes a multisig transaction stored in the backend.
+
+**Spec:**
+
+```Typescript
+	StableCoin.removeTransaction = (request: RemoveTransactionRequest): Promise<boolean>;
+
+```
+
+**Example:**
+
+```Typescript
+	const result: boolean = await StableCoin.removeTransaction(
+		new RemoveTransactionRequest({
+			transactionId: 'f8ff7778-1cbd-429a-acf3-bfc92c5fe875',
+		})
+	);
+```
+
+### GetTransactions
+
+Retrieves multisig transactions from the backend.
+
+**Spec:**
+
+```Typescript
+	StableCoin.getTransactions = (request: GetTransactionsRequest): Promise<MultiSigTransactionsViewModel>;
+
+```
+
+**Example:**
+
+```Typescript
+	const result: MultiSigTransactionsViewModel = await StableCoin.getTransactions(
+		new GetTransactionsRequest({
+			page: 1,
+			limit: 10,
+			account: '0.0.1'
+		})
+	);
+```
+
+
 ## Proxy
 
 The following functions allow the user to both get information and execute operations regarding the stablecoin proxy contract.
@@ -1326,6 +1438,26 @@ Sets the factory smart contract address in the configuration object.
 	await Network.setConfig(
 		new SetConfigurationRequest({
 			factoryAddress: '0.0.1'
+		})
+	);
+```
+
+### SetBackend
+
+Sets the backend url.
+
+**Spec:**
+
+```Typescript
+	Network.setBackend(req: SetBackendRequest): Promise<BackendResponse>;
+```
+
+**Example:**
+
+```Typescript
+	await Network.setBackend(
+		new SetBackendRequest({
+			url: 'http://127.0.0.1:3001/api'
 		})
 	);
 ```
