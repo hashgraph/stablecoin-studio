@@ -18,6 +18,7 @@ import {
   DefaultLoggerFormat,
   LogOptions,
 } from '@hashgraph/stablecoin-npm-sdk';
+import BackendConfig from '../../../domain/configuration/interfaces/BackendConfig.js';
 
 /**
  * Configuration Service
@@ -203,6 +204,7 @@ export default class ConfigurationService extends Service {
       accounts: defaultConfigRaw['accounts'] as unknown as IAccountConfig[],
       mirrors: defaultConfigRaw['mirrors'] as unknown as IMirrorsConfig[],
       rpcs: defaultConfigRaw['rpcs'] as unknown as IRPCsConfig[],
+      backend: defaultConfigRaw['backend'] as unknown as BackendConfig,
       logs: defaultConfigRaw['logs'] as unknown as ILogConfig,
       factories: defaultConfigRaw['factories'] as unknown as IFactoryConfig[],
     };
