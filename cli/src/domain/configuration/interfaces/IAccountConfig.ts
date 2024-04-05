@@ -1,6 +1,6 @@
 import { IImportedToken } from './IImportedToken';
 import { ISelfCustodialAccountConfig } from './ISelfCustodialAccountConfig';
-import { INonCustodialAccountConfig } from './INonCustodialAccountConfig';
+import { ICustodialAccountConfig } from './ICustodialAccountConfig';
 import { AccountType } from './AccountType';
 
 export interface IAccountConfig {
@@ -10,5 +10,5 @@ export interface IAccountConfig {
   alias: string;
   importedTokens?: IImportedToken[];
   selfCustodial?: ISelfCustodialAccountConfig;
-  nonCustodial?: INonCustodialAccountConfig;
+  custodial?: ICustodialAccountConfig;
 }

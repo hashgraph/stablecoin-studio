@@ -178,9 +178,9 @@ export default class SetConfigurationService extends Service {
       accounts.length === 1 &&
       ((accounts[0].selfCustodial &&
         accounts[0].selfCustodial.privateKey.key === '') ||
-        (accounts[0].nonCustodial &&
-          (accounts[0].nonCustodial.fireblocks ||
-            accounts[0].nonCustodial.dfns)))
+        (accounts[0].custodial &&
+          (accounts[0].custodial.fireblocks ||
+            accounts[0].custodial.dfns)))
     ) {
       accounts = [];
     }
@@ -241,11 +241,11 @@ export default class SetConfigurationService extends Service {
           privateKey: await this.askForPrivateKeyOfAccount(accountId),
         };
       } else if (type === AccountType.Fireblocks) {
-        accountConfig.nonCustodial = {
+        accountConfig.custodial = {
           fireblocks: await this.askForFireblocksOfAccount(),
         };
       } else if (type === AccountType.Dfns) {
-        accountConfig.nonCustodial = {
+        accountConfig.custodial = {
           dfns: await this.askForDfnsOfAccount(),
         };
       }

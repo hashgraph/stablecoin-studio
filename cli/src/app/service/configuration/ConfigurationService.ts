@@ -123,41 +123,40 @@ export default class ConfigurationService extends Service {
                 type: acc.selfCustodial.privateKey.type,
               },
             },
-        nonCustodial: !acc.nonCustodial
+        custodial: !acc.custodial
           ? undefined
           : {
-              fireblocks: !acc.nonCustodial.fireblocks
+              fireblocks: !acc.custodial.fireblocks
                 ? undefined
                 : {
-                    apiSecretKeyPath:
-                      acc.nonCustodial.fireblocks.apiSecretKeyPath,
+                    apiSecretKeyPath: acc.custodial.fireblocks.apiSecretKeyPath,
                     apiKey: MaskData.maskPassword(
-                      acc.nonCustodial.fireblocks.apiKey,
+                      acc.custodial.fireblocks.apiKey,
                       maskJSONOptions,
                     ),
-                    baseUrl: acc.nonCustodial.fireblocks.baseUrl,
-                    assetId: acc.nonCustodial.fireblocks.assetId,
-                    vaultAccountId: acc.nonCustodial.fireblocks.vaultAccountId,
+                    baseUrl: acc.custodial.fireblocks.baseUrl,
+                    assetId: acc.custodial.fireblocks.assetId,
+                    vaultAccountId: acc.custodial.fireblocks.vaultAccountId,
                     hederaAccountPublicKey:
-                      acc.nonCustodial.fireblocks.hederaAccountPublicKey,
+                      acc.custodial.fireblocks.hederaAccountPublicKey,
                   },
-              dfns: !acc.nonCustodial.dfns
+              dfns: !acc.custodial.dfns
                 ? undefined
                 : {
                     authorizationToken: MaskData.maskPassword(
-                      acc.nonCustodial.dfns.authorizationToken,
+                      acc.custodial.dfns.authorizationToken,
                       maskJSONOptions,
                     ),
-                    credentialId: acc.nonCustodial.dfns.credentialId,
-                    privateKeyPath: acc.nonCustodial.dfns.privateKeyPath,
-                    appOrigin: acc.nonCustodial.dfns.appOrigin,
-                    appId: acc.nonCustodial.dfns.appId,
-                    testUrl: acc.nonCustodial.dfns.testUrl,
-                    walletId: acc.nonCustodial.dfns.walletId,
+                    credentialId: acc.custodial.dfns.credentialId,
+                    privateKeyPath: acc.custodial.dfns.privateKeyPath,
+                    appOrigin: acc.custodial.dfns.appOrigin,
+                    appId: acc.custodial.dfns.appId,
+                    testUrl: acc.custodial.dfns.testUrl,
+                    walletId: acc.custodial.dfns.walletId,
                     hederaAccountPublicKey:
-                      acc.nonCustodial.dfns.hederaAccountPublicKey,
+                      acc.custodial.dfns.hederaAccountPublicKey,
                     hederaAccountKeyType:
-                      acc.nonCustodial.dfns.hederaAccountKeyType,
+                      acc.custodial.dfns.hederaAccountKeyType,
                   },
             },
       };

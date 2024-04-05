@@ -696,14 +696,13 @@ export default class CreateStableCoinService extends Service {
         switch (currentAccount.type) {
           case AccountType.Fireblocks:
             return Promise.resolve({
-              key: currentAccount.nonCustodial.fireblocks
-                .hederaAccountPublicKey,
+              key: currentAccount.custodial.fireblocks.hederaAccountPublicKey,
               type: 'ED25519',
             });
           case AccountType.Dfns:
             return Promise.resolve({
-              key: currentAccount.nonCustodial.dfns.hederaAccountPublicKey,
-              type: currentAccount.nonCustodial.dfns.hederaAccountKeyType,
+              key: currentAccount.custodial.dfns.hederaAccountPublicKey,
+              type: currentAccount.custodial.dfns.hederaAccountKeyType,
             });
         }
         const privateKey: RequestPrivateKey = {

@@ -174,7 +174,7 @@ export default class ManageImportedTokenService extends Service {
           alias: acc.alias,
           selfCustodial: acc.selfCustodial,
           importedTokens: importedTokens,
-          nonCustodial: acc.nonCustodial,
+          custodial: acc.custodial,
         };
       }
       return acc;

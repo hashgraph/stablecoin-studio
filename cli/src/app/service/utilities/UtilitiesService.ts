@@ -82,29 +82,29 @@ export default class UtilitiesService extends Service {
         wallet = SupportedWallets.FIREBLOCKS;
         custodialWalletSettings = {
           apiSecretKey: fs.readFileSync(
-            account.nonCustodial.fireblocks.apiSecretKeyPath,
+            account.custodial.fireblocks.apiSecretKeyPath,
             'utf8',
           ),
-          apiKey: account.nonCustodial.fireblocks.apiKey,
-          baseUrl: account.nonCustodial.fireblocks.baseUrl,
-          vaultAccountId: account.nonCustodial.fireblocks.vaultAccountId,
-          assetId: account.nonCustodial.fireblocks.assetId,
+          apiKey: account.custodial.fireblocks.apiKey,
+          baseUrl: account.custodial.fireblocks.baseUrl,
+          vaultAccountId: account.custodial.fireblocks.vaultAccountId,
+          assetId: account.custodial.fireblocks.assetId,
           hederaAccountId: account.accountId,
         };
         break;
       case AccountType.Dfns:
         wallet = SupportedWallets.DFNS;
         custodialWalletSettings = {
-          authorizationToken: account.nonCustodial.dfns.authorizationToken,
-          credentialId: account.nonCustodial.dfns.credentialId,
+          authorizationToken: account.custodial.dfns.authorizationToken,
+          credentialId: account.custodial.dfns.credentialId,
           serviceAccountPrivateKey: fs.readFileSync(
-            account.nonCustodial.dfns.privateKeyPath,
+            account.custodial.dfns.privateKeyPath,
             'utf8',
           ),
-          urlApplicationOrigin: account.nonCustodial.dfns.appOrigin,
-          applicationId: account.nonCustodial.dfns.appId,
-          baseUrl: account.nonCustodial.dfns.testUrl,
-          walletId: account.nonCustodial.dfns.walletId,
+          urlApplicationOrigin: account.custodial.dfns.appOrigin,
+          applicationId: account.custodial.dfns.appId,
+          baseUrl: account.custodial.dfns.testUrl,
+          walletId: account.custodial.dfns.walletId,
           hederaAccountId: account.accountId,
         };
         break;
@@ -144,9 +144,8 @@ export default class UtilitiesService extends Service {
     const validations = {
       [AccountType.SelfCustodial]: () => !!account.selfCustodial,
       [AccountType.Fireblocks]: () =>
-        !!account.nonCustodial && !!account.nonCustodial.fireblocks,
-      [AccountType.Dfns]: () =>
-        !!account.nonCustodial && !!account.nonCustodial.dfns,
+        !!account.custodial && !!account.custodial.fireblocks,
+      [AccountType.Dfns]: () => !!account.custodial && !!account.custodial.dfns,
     };
 
     return validations[account.type]();
@@ -633,36 +632,34 @@ export default class UtilitiesService extends Service {
                 type: acc.selfCustodial.privateKey.type,
               },
             },
-        nonCustodial: !acc.nonCustodial
+        custodial: !acc.custodial
           ? undefined
           : {
-              fireblocks: !acc.nonCustodial.fireblocks
+              fireblocks: !acc.custodial.fireblocks
                 ? undefined
                 : {
-                    apiSecretKeyPath:
-                      acc.nonCustodial.fireblocks.apiSecretKeyPath,
-                    apiKey: acc.nonCustodial.fireblocks.apiKey,
-                    baseUrl: acc.nonCustodial.fireblocks.baseUrl,
-                    assetId: acc.nonCustodial.fireblocks.assetId,
-                    vaultAccountId: acc.nonCustodial.fireblocks.vaultAccountId,
+                    apiSecretKeyPath: acc.custodial.fireblocks.apiSecretKeyPath,
+                    apiKey: acc.custodial.fireblocks.apiKey,
+                    baseUrl: acc.custodial.fireblocks.baseUrl,
+                    assetId: acc.custodial.fireblocks.assetId,
+                    vaultAccountId: acc.custodial.fireblocks.vaultAccountId,
                     hederaAccountPublicKey:
-                      acc.nonCustodial.fireblocks.hederaAccountPublicKey,
+                      acc.custodial.fireblocks.hederaAccountPublicKey,
                   },
-              dfns: !acc.nonCustodial.dfns
+              dfns: !acc.custodial.dfns
                 ? undefined
                 : {
-                    authorizationToken:
-                      acc.nonCustodial.dfns.authorizationToken,
-                    credentialId: acc.nonCustodial.dfns.credentialId,
-                    privateKeyPath: acc.nonCustodial.dfns.privateKeyPath,
-                    appOrigin: acc.nonCustodial.dfns.appOrigin,
-                    appId: acc.nonCustodial.dfns.appId,
-                    testUrl: acc.nonCustodial.dfns.testUrl,
-                    walletId: acc.nonCustodial.dfns.walletId,
+                    authorizationToken: acc.custodial.dfns.authorizationToken,
+                    credentialId: acc.custodial.dfns.credentialId,
+                    privateKeyPath: acc.custodial.dfns.privateKeyPath,
+                    appOrigin: acc.custodial.dfns.appOrigin,
+                    appId: acc.custodial.dfns.appId,
+                    testUrl: acc.custodial.dfns.testUrl,
+                    walletId: acc.custodial.dfns.walletId,
                     hederaAccountPublicKey:
-                      acc.nonCustodial.dfns.hederaAccountPublicKey,
+                      acc.custodial.dfns.hederaAccountPublicKey,
                     hederaAccountKeyType:
-                      acc.nonCustodial.dfns.hederaAccountKeyType,
+                      acc.custodial.dfns.hederaAccountKeyType,
                   },
             },
       };
