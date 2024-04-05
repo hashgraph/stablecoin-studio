@@ -89,6 +89,7 @@ const MultiSigTransactions = () => {
 	};
 
 	const canSendTransaction = (transaction: MultiSigTransactionViewModel) => {
+		if (selectedWallet === SupportedWallets.METAMASK) return false;
 		return transaction.signed_keys.length >= transaction.threshold;
 	};
 
