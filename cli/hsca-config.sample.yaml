@@ -1,6 +1,7 @@
 defaultNetwork: <mainnet-testnet-previewnet>
 networks:
   - name: mainnet
+    # Consensus nodes are needed if usign Stablecoin Backend (Multi-signature)
     consensusNodes:
       - url: <Consensus node URL>
         nodeId: <Node Id>
@@ -12,12 +13,16 @@ networks:
     chainId: <Network chain Id>
   - name: testnet
     consensusNodes:
+      # https://docs.hedera.com/hedera/networks/testnet/testnet-nodes
       - url: <Consensus node URL>
         nodeId: <Node Id>
     chainId: <Network chain Id>
 accounts:
   - accountId: <Hedera Id>
-    type: <SELF-CUSTODIAL|FIREBLOCKS|DFNS>
+    # SELF-CUSTODIAL => Account with private key
+    # FIREBLOCKS and DFNS => Custodial accounts
+    # MULTI-SIGNATURE => Multi-signature account using Stablecoin Backend
+    type: <SELF-CUSTODIAL|FIREBLOCKS|DFNS|MULTI-SIGNATURE>
     network: <mainnet-testnet-previewnet>
     alias: <Account Alias>
     importedTokens:
@@ -25,19 +30,12 @@ accounts:
         roles:
           - <Role Hash>
           - <Role Hash>
-          - <Role Hash>
-          - <Role Hash>
-          - <Role Hash>
-          - <Role Hash>
-          - <Role Hash>
-          - <Role Hash>
-          - <Role Hash>
         symbol: <Token symbol>
     selfCustodial:
       privateKey:
         key: <Account's private key>
         type: <ED25519-ECDSA>
-    nonCustodial:
+    custodial:
       fireblocks:
         apiSecretKeyPath: <Fireblocks API Secret Key Path>
         apiKey: <Fireblocks API Key>
