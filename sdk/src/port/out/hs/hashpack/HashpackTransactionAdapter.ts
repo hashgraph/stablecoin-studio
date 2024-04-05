@@ -102,7 +102,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 	async init(network?: string): Promise<string> {
 		const currentNetwork = network ?? this.networkService.environment;
 		this.initData = await this.hc.init(
-			SDK.appMetadata,
+			{ ...SDK.appMetadata }, // prevent app metadata object modifying
 			currentNetwork as 'testnet' | 'previewnet' | 'mainnet',
 		);
 		const eventData: WalletInitEvent = {
