@@ -27,7 +27,7 @@
 
 The Web uses the API exposed by the SDK to create, manage and operate stablecoins. It is meant as a "demo tool" to showcase the project's functionalities.
 It is a user-friendly Front End application based on React for technical and non-technical people to use (as opposed to the CLI which is meant for more technical people).
-The web application is compatible with HashPack and MetaMask and although both wallets can be paired at the same time, only one will actually be "in scope" (used to sign the transactions). Users will be free to switch from one wallet to the other at any time they want.
+The web application is compatible with Blade, HashPack and MetaMask and although all wallets can be paired at the same time, only one will actually be "in scope" (used to sign the transactions). Users will be free to switch from one wallet to the other at any time they want.
 
 # Installation
 
@@ -67,11 +67,15 @@ The ENV file contains the following parameters:
 - **REACT_APP_FACTORIES**: This var is only required if you want to create a new stablecoin. The var must be a JSON array with a factory proxy id in Hedera format `0.0.XXXXX` per environment. Regarding this, your can find the factories proxy's contract ids depending on the Stablecoin Studio versión [here](./../FACTORY_VERSION.md).
 - **REACT_APP_MIRROR_NODE**: This var is required if you want to create a new stablecoin. The var must be a unique mirror node service for each Hedera network, and this is the service which would be used when the UI starts. The service is configured by the environment and the base url properties, and, optionally, can also have an api key and a http header through which the api key is provided.
 - **REACT_APP_RPC_NODE**: This var is required if you want to create a new stablecoin. The var must be a unique rpc node service for Hedera network, and this is the service which would be used when the UI starts. The service is configured using the same properties than the mirror node. You can check the available JSON-RPC relays [here](https://github.com/hashgraph/stablecoin-studio/blob/main/README.md#JSON-RPC-Relays).
+- **REACT_APP_BACKEND_URL**: This var is only required if you want to enable multisignature functionality. It is the backend rest api endpoint.
+- **REACT_APP_CONSENSUS_NODES**: This var is only required if you want to enable multisignature functionality. It is a list of consensus nodes per environment. When generating a multisignature transaction the first consensus node of the environment will be added to the transaction.
 
 ```bash
 REACT_APP_FACTORIES='[{"Environment":"mainnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.1234567"},{"Environment":"testnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.3950554"},{"Environment":"previewnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.239703"}]'
 REACT_APP_MIRROR_NODE='[{"Environment":"testnet","BASE_URL":"https://testnet.mirrornode.hedera.com/api/v1/", "API_KEY": "132456", "HEADER": "x-api-key"}]'
 REACT_APP_RPC_NODE='[{"Environment":"testnet","BASE_URL":"https://testnet.hashio.io/api", "API_KEY": "132456", "HEADER": "x-api-key"}]'
+REACT_APP_BACKEND_URL='http://localhost:3001/api/'
+REACT_APP_CONSENSUS_NODES='[{"Environment":"testnet","CONSENSUS_NODES":[{"ID":"0.0.3","ADDRESS":"34.94.106.61:50211"}]}]'
 ```
 
 If the env files does not exist or the factory var is not set when you click in "Create a new stablecoin" an alert will be shown.
@@ -87,6 +91,8 @@ REACT_APP_LOG_LEVEL=ERROR
 REACT_APP_FACTORIES='[{"Environment":"testnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.2167166"}]'
 REACT_APP_MIRROR_NODE='[{"Environment":"testnet","BASE_URL":"https://testnet.mirrornode.hedera.com/api/v1/", "API_KEY": "", "HEADER": ""}]'
 REACT_APP_RPC_NODE='[{"Environment":"testnet","BASE_URL":"http://localhost:7546/api", "API_KEY": "", "HEADER": ""}]'
+REACT_APP_BACKEND_URL='http://localhost:3001/api/'
+REACT_APP_CONSENSUS_NODES='[{"Environment":"testnet","CONSENSUS_NODES":[{"ID":"0.0.3","ADDRESS":"34.94.106.61:50211"}]}]'
 GENERATE_SOURCEMAP=false
 ```
 
@@ -98,17 +104,22 @@ npm run start
 
 ## Pairing a wallet
 
-![Alt text](docs/images/init.png?raw=true 'selecting a wallet')
+![Alt text](docs/images/wallets.png?raw=true 'selecting a wallet')
 
 The front end will automatically detect how many compatible wallets are available and ask you to select one of them to operate with.
 
 ![image](https://user-images.githubusercontent.com/114951681/229089031-9f014228-68cf-4d94-b4da-448d16e884b3.png)
 
-If you choose HashPack, you will be asked to choose a network (testnet or mainnet)
+
+If you choose HashPack or Blade, you will be asked to choose a network (testnet or mainnet)
 
 ![Alt text](docs/images/disconnect.png?raw=true 'disconnect')
 
 If you want to switch to another compatible wallet, you can do it at any time by clicking on the disconnect button (top right corner) then connecting again.
+
+![Alt text](docs/images/Multisig.png?raw=true)
+
+If you choose Multisig, you will be asked to choose a network (testnet or mainnet) and enter the multisig account id
 
 # Usage
 
@@ -246,6 +257,35 @@ If the user selects the option to manage the stablecoin, it could change the **H
 While if the user selects the option to manage the factory, it could change the **Factory** contract proxy admin owner and upgrade the factory contract implementation.
 
 ![Selection_019](https://github.com/hashgraph/stablecoin-studio/assets/108128685/3ebb3243-e12a-470b-91cc-de9086af9a9e)
+
+### Multisig transactions
+
+This tab will list all the pending transactions currently in the backend that : 
+- If you are connected with a wallet (Hashpack, Blade, Metamask): your current private key can sign.
+- If you are connected with a multisig account: are associated to your account id.
+
+For each displayed transactions you will have one or many options, also depending on your connection mode and the current status of the transaction:
+- If you are connected with a **wallet** (Hashpack, Blade, Metamask):
+  - If the transaction has not been fully signed yet:
+    - If you have not signed it yet: **SIGN, REMOVE.**
+    - If you have signed it already: **REMOVE.**
+  - If the transaction has been fully signed already: **SEND(*), REMOVE.** 
+> (*)SEND is not available if you are connected with Metamask
+- If you are connected with a **multisig account**: 
+  - If the transaction has not been fully signed yet: **REMOVE.**
+  - If the transaction has been fully signed already: **SEND, REMOVE.** 
+
+The operations that you can perform on a transaction are:
+- __SIGN__: Signs the transaction using the private key associated to your wallet.
+- __SEND__: Submits the transaction to the Hedera DLT.
+- __REMOVE__: Removes the transaction from the backend, the transaction will be "discarded".
+
+![Alt text](docs/images/MultisigTransactions.png?raw=true)
+
+In order to view the __DETAILS__ of a transaction you can click on its __DESCRIPTION__
+
+![Alt text](docs/images/MultisigTransactionDetails.png?raw=true)
+
 
 # Testing
 
