@@ -2,6 +2,7 @@ import {
 	Button,
 	HStack,
 	Image,
+	Input,
 	Link,
 	Modal,
 	ModalBody,
@@ -11,20 +12,21 @@ import {
 	ModalOverlay,
 	Spinner,
 	Text,
-	VStack,
 	useDisclosure,
+	VStack,
 } from '@chakra-ui/react';
+import type { StableCoinListViewModel } from '@hashgraph/stablecoin-npm-sdk';
 import {
 	GetFactoryProxyConfigRequest,
-	SupportedWallets,
 	Network,
+	SupportedWallets,
 } from '@hashgraph/stablecoin-npm-sdk';
-import type { StableCoinListViewModel } from '@hashgraph/stablecoin-npm-sdk';
 import type { FC, ReactNode } from 'react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import BLADE_LOGO_PNG from '../assets/png/bladeLogo.png';
+import MULTISIG_LOGO_PNG from '../assets/png/multisigLogo.png';
 import HASHPACK_LOGO_PNG from '../assets/png/hashpackLogo.png';
 import METAMASK_LOGO from '../assets/svg/MetaMask_Fox.svg';
 import SDKService from '../services/SDKService';
@@ -80,15 +82,23 @@ const ModalWalletConnect = () => {
 	const [rejected, setRejected] = useState<boolean>(false);
 	const [hashpackSelected, setHashpackSelected] = useState<boolean>(false);
 	const [bladeSelected, setBladeSelected] = useState<boolean>(false);
-	const availableWallets = useSelector(AVAILABLE_WALLETS);
+	const [multiSigSelected, setMultiSigSelected] = useState<boolean>(false);
+	const availableWallets: SupportedWallets[] = useSelector(AVAILABLE_WALLETS);
 	const selectedMirrors: IMirrorRPCNode[] = useSelector(SELECTED_MIRRORS);
 	const selectedRPCs: IMirrorRPCNode[] = useSelector(SELECTED_RPCS);
+	const [hederaAccountId, setHederaAccountId] = useState('');
+	const [networkError, setNetworkError] = useState('');
+	const [accountIdError, setAccountIdError] = useState('');
 
 	const { control, getValues } = useForm({
 		mode: 'onChange',
 	});
 
-	const handleWalletConnect = async (wallet: SupportedWallets, network: string) => {
+	const handleWalletConnect = async (
+		wallet: SupportedWallets,
+		network: string,
+		hederaAccountId?: string,
+	) => {
 		if (loading) return;
 		setLoading(wallet);
 		dispatch(walletActions.setLastWallet(wallet));
@@ -117,8 +127,14 @@ const ModalWalletConnect = () => {
 				);
 				if (listRPCs) rpcNode = listRPCs[0];
 			}
-
-			const result = await SDKService.connectWallet(wallet, network, mirrorNode, rpcNode);
+			console.log('Connecting wallet', wallet, network, mirrorNode, rpcNode, hederaAccountId);
+			const result = await SDKService.connectWallet(
+				wallet,
+				network,
+				mirrorNode,
+				rpcNode,
+				hederaAccountId,
+			);
 
 			const newselectedMirrors: IMirrorRPCNode[] = [];
 
@@ -224,6 +240,39 @@ const ModalWalletConnect = () => {
 		handleWalletConnect(SupportedWallets.BLADE, values.networkBlade.value);
 	};
 
+	const handleMultiSigMode = () => {
+		console.log('MultiSig Mode');
+		setMultiSigSelected(true);
+	};
+
+	const validateAccountId = (accountId: string) => {
+		const regex = /^\d+\.\d+\.\d+$/;
+		return regex.test(accountId);
+	};
+
+	const handleConnectClick = () => {
+		const networkSelection = getValues('networkMultisig');
+		const networkValue = networkSelection.value;
+		const isValidAccountId = validateAccountId(hederaAccountId);
+
+		// Reset errors
+		setNetworkError('');
+		setAccountIdError('');
+
+		if (!networkValue) {
+			setNetworkError('Please select a network.');
+		}
+		if (!isValidAccountId) {
+			setAccountIdError('Please enter a valid Hedera Account ID (e.g., 0.0.123).');
+		}
+		if (!networkValue || !isValidAccountId) {
+			return;
+		}
+
+		handleWalletConnect(SupportedWallets.MULTISIG, networkValue, hederaAccountId);
+		setMultiSigSelected(false);
+	};
+
 	const PairingSpinner: FC<{ wallet: SupportedWallets; children?: ReactNode }> = ({
 		wallet,
 		children,
@@ -262,8 +311,14 @@ const ModalWalletConnect = () => {
 				closeOnOverlayClick={false}
 			>
 				<ModalOverlay />
-				<ModalContent data-testid='modal-action-content' p='50' w='600px'>
-					{!error && !rejected && !hashpackSelected && !bladeSelected && (
+				<ModalContent
+					data-testid='modal-action-content'
+					alignItems='center'
+					justifyContent='center'
+					p='50'
+					maxW='1000px'
+				>
+					{!error && !rejected && !hashpackSelected && !bladeSelected && !multiSigSelected && (
 						<>
 							<ModalHeader p='0' justifyContent='center'>
 								<Text
@@ -359,6 +414,22 @@ const ModalWalletConnect = () => {
 											</VStack>
 										)
 									) : (
+										//* Blade is not supported in this browser
+										<></>
+									)}
+									{!availableWallets.includes(SupportedWallets.MULTISIG) ? (
+										<VStack
+											data-testid='Multisig'
+											{...styles.providerStyle}
+											shouldWrapChildren
+											onClick={handleMultiSigMode}
+										>
+											<PairingSpinner wallet={SupportedWallets.MULTISIG}>
+												<Image src={MULTISIG_LOGO_PNG} w={20} />
+												<Text textAlign='center'>Multisig</Text>
+											</PairingSpinner>
+										</VStack>
+									) : (
 										<></>
 									)}
 								</HStack>
@@ -404,6 +475,58 @@ const ModalWalletConnect = () => {
 											variant='primary'
 										>
 											{t('common.accept')}
+										</Button>
+									</HStack>
+								</VStack>
+							</ModalFooter>
+						</>
+					)}
+					{multiSigSelected && (
+						<>
+							<ModalHeader>
+								<Text
+									fontSize='20px'
+									fontWeight={700}
+									textAlign='center'
+									lineHeight='16px'
+									color='brand.black'
+								>
+									{t('multiSigActions.title')}
+								</Text>
+							</ModalHeader>
+							<ModalFooter>
+								<VStack spacing={4} alignItems='center' justifyContent='center'>
+									<SelectController
+										control={control}
+										isRequired
+										name='networkMultisig'
+										options={networkOptions}
+										defaultValue='0'
+										addonLeft={true}
+										overrideStyles={stylesNetworkOptions}
+										variant='unstyled'
+									/>
+									{networkError && <Text color='red'>{networkError}</Text>}
+									<Input
+										placeholder='0.0.0'
+										value={hederaAccountId}
+										onChange={(e) => setHederaAccountId(e.target.value)}
+									/>
+									{accountIdError && <Text color='red'>{accountIdError}</Text>}
+									<HStack justifyContent='center' w='full'>
+										<Button
+											data-testid='modal-cancel-button-Multisig'
+											onClick={() => setMultiSigSelected(false)}
+											variant='secondary'
+										>
+											Cancel
+										</Button>
+										<Button
+											data-testid='modal-confirm-button-Multisig'
+											onClick={handleConnectClick}
+											variant='primary'
+										>
+											Connect
 										</Button>
 									</HStack>
 								</VStack>

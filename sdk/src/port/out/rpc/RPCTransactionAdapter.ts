@@ -25,12 +25,12 @@
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
 import { ContractId as HContractId } from '@hashgraph/sdk';
 import {
-	HederaTokenManager__factory,
 	HederaReserve__factory,
-	StableCoinFactory__factory,
+	HederaTokenManager__factory,
 	IHederaTokenService__factory,
-	StableCoinProxyAdmin__factory,
 	ProxyAdmin__factory,
+	StableCoinFactory__factory,
+	StableCoinProxyAdmin__factory,
 } from '@hashgraph/stablecoin-npm-contracts';
 import TransactionAdapter, { InitializationData } from '../TransactionAdapter';
 import { BigNumber, ContractTransaction, ethers, Signer } from 'ethers';
@@ -58,10 +58,10 @@ import { FactoryStableCoin } from '../../../domain/context/factory/FactoryStable
 import { FactoryKey } from '../../../domain/context/factory/FactoryKey.js';
 import PublicKey from '../../../domain/context/account/PublicKey.js';
 import {
+	ACCEPT_PROXY_OWNER_GAS,
 	BURN_GAS,
 	CASHIN_GAS,
 	CHANGE_PROXY_OWNER_GAS,
-	ACCEPT_PROXY_OWNER_GAS,
 	CREATE_SC_GAS,
 	DECREASE_SUPPLY_GAS,
 	DELETE_GAS,

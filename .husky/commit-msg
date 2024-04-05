@@ -1,13 +1,8 @@
 #!/bin/bash
 
-# Initialize commit message
-message="$(cat $1)"
-signedOffPattern="Signed-off-by:"
-
 # Check if the commit message follows the Conventional Commits format
-echo "$message" | npm run --silent commitlint --edit
+echo "$message" | npm run --silent commitlint --edit "$1"
 if [ $? -ne 0 ]; then
-    echo "❌ Commit message does not follow the Conventional Commits format."
     exit 1
 fi
 

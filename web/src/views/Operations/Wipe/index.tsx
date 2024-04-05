@@ -8,13 +8,18 @@ import InputController from '../../../components/Form/InputController';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
 import ModalsHandler from '../../../components/ModalsHandler';
 import SDKService from '../../../services/SDKService';
-import { SELECTED_WALLET_COIN, walletActions } from '../../../store/slices/walletSlice';
+import {
+	LAST_WALLET_SELECTED,
+	SELECTED_WALLET_COIN,
+	walletActions,
+} from '../../../store/slices/walletSlice';
 
 import { handleRequestValidation, validateDecimalsString } from '../../../utils/validationsHelper';
 import OperationLayout from './../OperationLayout';
-import { BigDecimal, WipeRequest } from '@hashgraph/stablecoin-npm-sdk';
+import { BigDecimal, SupportedWallets, WipeRequest } from '@hashgraph/stablecoin-npm-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 import { propertyNotFound } from '../../../constant';
+import { formatAmount } from '../../../utils/inputHelper';
 
 const WipeOperation = () => {
 	const {
@@ -37,12 +42,21 @@ const WipeOperation = () => {
 			tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
 		}),
 	);
+	const selectedWallet = useSelector(LAST_WALLET_SELECTED);
 
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
 	});
 
 	const { t } = useTranslation(['wipe', 'global', 'operations']);
+
+	const successDescription =
+		selectedWallet === SupportedWallets.MULTISIG
+			? 'MultiSig transaction has been successfully created and is now awaiting signatures. Accounts have 180 seconds to sign the transaction.'
+			: t('wipe:modalSuccessDesc', {
+					amount: getValues().amount,
+					account: getValues().destinationAccount,
+			  });
 
 	useRefreshCoinInfo();
 
@@ -140,10 +154,7 @@ const WipeOperation = () => {
 				errorNotificationDescription={errorOperation}
 				errorTransactionUrl={errorTransactionUrl}
 				successNotificationTitle={t('operations:modalSuccessTitle')}
-				successNotificationDescription={t('wipe:modalSuccessDesc', {
-					amount: getValues().amount,
-					account: getValues().destinationAccount,
-				})}
+				successNotificationDescription={successDescription}
 				modalActionProps={{
 					isOpen: isOpenModalAction,
 					onClose: onCloseModalAction,

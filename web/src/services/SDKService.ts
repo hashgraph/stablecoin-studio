@@ -1,25 +1,16 @@
 /* istanbul ignore file */
-import {
-	StableCoin,
-	Network,
-	Account,
-	Role,
-	CapabilitiesRequest,
-	ConnectRequest,
-	SetConfigurationRequest,
-	InitializationRequest,
-	ReserveDataFeed,
-	Fees,
-	Factory,
-	SetNetworkRequest,
-	Proxy,
-} from '@hashgraph/stablecoin-npm-sdk';
+// @ts-ignore
 import type {
-	WalletEvent,
-	WipeRequest,
+	AcceptFactoryProxyOwnerRequest,
+	AcceptProxyOwnerRequest,
+	AccountViewModel,
+	AddFixedFeeRequest,
+	AddFractionalFeeRequest,
 	AssociateTokenRequest,
 	BurnRequest,
 	CashInRequest,
+	ChangeFactoryProxyOwnerRequest,
+	ChangeProxyOwnerRequest,
 	CheckSupplierLimitRequest,
 	CreateRequest,
 	DecreaseSupplierAllowanceRequest,
@@ -27,22 +18,27 @@ import type {
 	FreezeAccountRequest,
 	GetAccountBalanceRequest,
 	GetAccountInfoRequest,
-	GetTokenManagerListRequest,
+	GetAccountsWithRolesRequest,
+	GetFactoryProxyConfigRequest,
 	GetListStableCoinRequest,
+	GetProxyConfigRequest,
 	GetReserveAddressRequest,
 	GetReserveAmountRequest,
 	GetRolesRequest,
 	GetStableCoinDetailsRequest,
 	GetSupplierAllowanceRequest,
+	GetTokenManagerListRequest,
+	GetTransactionsRequest,
 	GrantMultiRolesRequest,
 	HasRoleRequest,
 	IncreaseSupplierAllowanceRequest,
 	InitializationData,
 	KYCRequest,
+	MultiSigTransactionsViewModel,
 	PauseRequest,
 	RequestAccount,
-	RescueRequest,
 	RescueHBARRequest,
+	RescueRequest,
 	ReserveViewModel,
 	ResetSupplierAllowanceRequest,
 	RevokeMultiRolesRequest,
@@ -54,20 +50,31 @@ import type {
 	UpdateRequest,
 	UpdateReserveAddressRequest,
 	UpdateReserveAmountRequest,
-	AddFixedFeeRequest,
-	AddFractionalFeeRequest,
-	AccountViewModel,
-	GetAccountsWithRolesRequest,
-	GetProxyConfigRequest,
-	GetFactoryProxyConfigRequest,
-	ChangeProxyOwnerRequest,
-	UpgradeImplementationRequest,
-	ChangeFactoryProxyOwnerRequest,
 	UpgradeFactoryImplementationRequest,
-	AcceptProxyOwnerRequest,
-	AcceptFactoryProxyOwnerRequest,
+	UpgradeImplementationRequest,
+	WalletEvent,
+	WipeRequest,
+} from '@hashgraph/stablecoin-npm-sdk';
+import {
+	Account,
+	CapabilitiesRequest,
+	ConnectRequest,
+	Factory,
+	Fees,
+	InitializationRequest,
+	Network,
+	Proxy,
+	RemoveTransactionRequest,
+	ReserveDataFeed,
+	Role,
+	SetConfigurationRequest,
+	SetNetworkRequest,
+	SignTransactionRequest,
+	StableCoin,
+	SubmitTransactionRequest,
 } from '@hashgraph/stablecoin-npm-sdk';
 import { type IMirrorRPCNode } from '../interfaces/IMirrorRPCNode';
+import type { IConsensusNodes } from '../interfaces/IConsensusNodes';
 
 export type StableCoinListRaw = Array<Record<'id' | 'symbol', string>>;
 
@@ -84,22 +91,21 @@ export class SDKService {
 		connectNetwork: string,
 		selectedMirror?: IMirrorRPCNode,
 		selectedRPC?: IMirrorRPCNode,
+		hederaAccount?: string,
 	) {
 		const networkConfig = await this.setNetwork(connectNetwork, selectedMirror, selectedRPC);
 		const _mirrorNode = networkConfig[0];
 		const _rpcNode = networkConfig[1];
-
+		const consensusNodes: IConsensusNodes[] = []; // REACT_APP_CONSENSUS_NODES load from .env
 		let factories = []; // REACT_APP_FACTORIES load from .env
 
 		if (process.env.REACT_APP_FACTORIES) factories = JSON.parse(process.env.REACT_APP_FACTORIES);
-
 		const _lastFactoryId =
 			factories.length !== 0
 				? factories.find((i: any) => i.Environment === connectNetwork)
 					? factories.find((i: any) => i.Environment === connectNetwork).STABLE_COIN_FACTORY_ADDRESS
 					: ''
 				: '';
-
 		if (_lastFactoryId)
 			await Network.setConfig(
 				new SetConfigurationRequest({
@@ -107,12 +113,36 @@ export class SDKService {
 				}),
 			);
 
+		if (process.env.REACT_APP_CONSENSUS_NODES && connectNetwork) {
+			const environments = JSON.parse(process.env.REACT_APP_CONSENSUS_NODES) as {
+				Environment: string;
+				CONSENSUS_NODES: { ID: string; ADDRESS: string }[];
+			}[];
+
+			const selectedEnvironment = environments.find(
+				(env) => env.Environment.toUpperCase() === connectNetwork.toUpperCase(),
+			);
+
+			if (selectedEnvironment && selectedEnvironment.CONSENSUS_NODES) {
+				selectedEnvironment.CONSENSUS_NODES.forEach((node) => {
+					consensusNodes.push({
+						nodeId: node.ID,
+						url: node.ADDRESS,
+					});
+				});
+			} else {
+				console.error('Consensus nodes could not be found in .env');
+			}
+		}
+
 		this.initData = await Network.connect(
 			new ConnectRequest({
+				account: hederaAccount ? { accountId: hederaAccount } : undefined,
 				network: connectNetwork,
 				mirrorNode: _mirrorNode,
 				rpcNode: _rpcNode,
 				wallet,
+				consensusNodes,
 			}),
 		);
 
@@ -183,11 +213,13 @@ export class SDKService {
 		return [_mirrorNode, _rpcNode];
 	}
 
-	// dummy init
+	// dummy init to avoid errors in the SDK service initialization
+	// TODO: review
 	public static async init(events: Partial<WalletEvent>) {
+		const network = 'mainnet';
 		try {
 			const initReq: InitializationRequest = new InitializationRequest({
-				network: 'mainnet',
+				network,
 				mirrorNode: {
 					baseUrl: 'https://mainnet-public.mirrornode.hedera.com/api/v1/',
 					apiKey: '',
@@ -274,9 +306,41 @@ export class SDKService {
 					console.error('RPC Nodes could not be found in .env');
 				}
 			}
-			const init = await Network.init(initReq);
-
-			return init;
+			if (process.env.REACT_APP_BACKEND_URL) {
+				try {
+					initReq.backend = {
+						url: process.env.REACT_APP_BACKEND_URL,
+					};
+				} catch (e) {
+					console.error('Backend URL could not be found in .env');
+				}
+			}
+			console.log('initReq', initReq);
+			if (process.env.REACT_APP_CONSENSUS_NODES) {
+				try {
+					const consensusNodes: IConsensusNodes[] = [];
+					const environments = JSON.parse(process.env.REACT_APP_CONSENSUS_NODES) as {
+						Environment: string;
+						CONSENSUS_NODES: { ID: string; ADDRESS: string }[];
+					}[];
+					const selectedEnvironment = environments.find(
+						(env) => env.Environment.toUpperCase() === network.toUpperCase(),
+					);
+					if (selectedEnvironment && selectedEnvironment.CONSENSUS_NODES) {
+						selectedEnvironment.CONSENSUS_NODES.forEach((node) => {
+							consensusNodes.push({
+								nodeId: node.ID,
+								url: node.ADDRESS,
+							});
+						});
+						initReq.consensusNodes = consensusNodes;
+					}
+				} catch (e) {
+					console.error('Consensus nodes could not be found in .env');
+				}
+			}
+			console.log('dummy initReq', initReq);
+			return await Network.init(initReq);
 		} catch (e) {
 			console.error('Error initializing the Network : ' + e);
 			window.alert(
@@ -305,6 +369,7 @@ export class SDKService {
 	}
 
 	public static async getStableCoinDetails(req: GetStableCoinDetailsRequest) {
+		console.log('getStableCoinDetails', req);
 		return await StableCoin.getInfo(req);
 	}
 
@@ -518,6 +583,36 @@ export class SDKService {
 
 	public static async getHederaTokenManagerList(data: GetTokenManagerListRequest) {
 		return await Factory.getHederaTokenManagerList(data);
+	}
+
+	public static async getMultiSigTransactions(
+		data: GetTransactionsRequest,
+	): Promise<MultiSigTransactionsViewModel> {
+		return await StableCoin.getTransactions(data);
+	}
+
+	public static async submitMultiSigTransaction(multiSigTransactionId: string) {
+		return await StableCoin.submitTransaction(
+			new SubmitTransactionRequest({
+				transactionId: multiSigTransactionId,
+			}),
+		);
+	}
+
+	public static async signMultiSigTransaction(multiSigTransactionId: string) {
+		return StableCoin.signTransaction(
+			new SignTransactionRequest({
+				transactionId: multiSigTransactionId,
+			}),
+		);
+	}
+
+	public static async removeMultiSigTransaction(multiSigTransactionId: string) {
+		return StableCoin.removeTransaction(
+			new RemoveTransactionRequest({
+				transactionId: multiSigTransactionId,
+			}),
+		);
 	}
 }
 

@@ -51,7 +51,8 @@
 		"proofOfReserve": "Proof-of-Reserve",
 		"feesManagement": "Fees Management",
 		"settings": "Settings",
-		"appSettings": "Network settings"
+		"appSettings": "Network settings",
+		"multiSigTransactions": "Multi-sig transactions"
 	},
 	"validations": {
 		"required": "This field is required",
@@ -62,6 +63,9 @@
 		"tokenIdNotExists": "Token {{ tokenId }} not exists",
 		"invalidOwner": "Invalid owner, is the current account owner",
 		"invalidFactoryOwner": "Invalid factory owner, is the current account factory owner"
+	},
+	"multiSig": {
+		"title": "Multi-sig transactions"
 	},
 	"operations": {
 		"title": "Operations"
@@ -79,7 +83,10 @@
 	"walletActions": {
 		"awaitingSignatureTitle": "Awaiting wallet action",
 		"loading": "Loading data",
-		"selectWallet": "Select a wallet",
+		"selectWallet": "Select an option",
 		"selectNetwork": "Select a network"
+	},
+	"multiSigActions": {
+		"title": "Enter your Hedera Multi-sig account Id"
 	}
 }

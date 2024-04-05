@@ -10,9 +10,9 @@ import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
 import { handleRequestValidation } from '../../../utils/validationsHelper';
 import SDKService from '../../../services/SDKService';
-import { SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
+import { LAST_WALLET_SELECTED, SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
 
-import { KYCRequest } from '@hashgraph/stablecoin-npm-sdk';
+import { KYCRequest, SupportedWallets } from '@hashgraph/stablecoin-npm-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 import { propertyNotFound } from '../../../constant';
 
@@ -33,6 +33,7 @@ const GrantKycOperation = () => {
 			targetId: '',
 		}),
 	);
+	const selectedWallet = useSelector(LAST_WALLET_SELECTED);
 
 	const { t } = useTranslation(['grantKYC', 'global', 'operations']);
 	const { control, getValues, formState } = useForm({
@@ -61,6 +62,13 @@ const GrantKycOperation = () => {
 			onError();
 		}
 	};
+
+	const successDescription =
+		selectedWallet === SupportedWallets.MULTISIG
+			? 'MultiSig transaction has been successfully created and is now awaiting signatures. Accounts have 180 seconds to sign the transaction.'
+			: t('grantKYC:modalSuccess', {
+					account: getValues().targetAccount,
+			  });
 
 	return (
 		<>
@@ -120,9 +128,7 @@ const GrantKycOperation = () => {
 					/>
 				}
 				successNotificationTitle={t('operations:modalSuccessTitle')}
-				successNotificationDescription={t('grantKYC:modalSuccess', {
-					account: getValues().targetAccount,
-				})}
+				successNotificationDescription={successDescription}
 			/>
 		</>
 	);

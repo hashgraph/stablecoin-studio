@@ -8,11 +8,11 @@ import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
 import { handleRequestValidation, validateDecimalsString } from '../../../utils/validationsHelper';
 import { useSelector } from 'react-redux';
-import { SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
+import { LAST_WALLET_SELECTED, SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
 import SDKService from '../../../services/SDKService';
 import { useState } from 'react';
 import { formatAmount } from '../../../utils/inputHelper';
-import { RescueHBARRequest } from '@hashgraph/stablecoin-npm-sdk';
+import { RescueHBARRequest, SupportedWallets } from '@hashgraph/stablecoin-npm-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 import { propertyNotFound } from '../../../constant';
 
@@ -40,6 +40,17 @@ const RescueHBAROperation = () => {
 	});
 
 	const { t } = useTranslation(['rescueHBAR', 'global', 'operations']);
+	const selectedWallet = useSelector(LAST_WALLET_SELECTED);
+
+	const successDescription =
+		selectedWallet === SupportedWallets.MULTISIG
+			? 'MultiSig transaction has been successfully created and is now awaiting signatures. Accounts have 180 seconds to sign the transaction.'
+			: t('rescueHBAR:modalSuccessDesc', {
+					amount: formatAmount({
+						amount: getValues().amount ?? undefined,
+						decimals: selectedStableCoin?.decimals,
+					}),
+			  });
 
 	useRefreshCoinInfo();
 
@@ -129,12 +140,7 @@ const RescueHBAROperation = () => {
 					/>
 				}
 				successNotificationTitle={t('operations:modalSuccessTitle')}
-				successNotificationDescription={t('rescueHBAR:modalSuccessDesc', {
-					amount: formatAmount({
-						amount: getValues().amount ?? undefined,
-						decimals: selectedStableCoin?.decimals,
-					}),
-				})}
+				successNotificationDescription={successDescription}
 			/>
 		</>
 	);

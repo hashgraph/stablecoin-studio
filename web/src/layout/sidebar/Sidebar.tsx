@@ -51,6 +51,11 @@ const Sidebar = () => {
 			isHidden: selectedStableCoin && !selectedStableCoin.reserveAddress,
 		},
 		{
+			icon: 'File',
+			title: t('sidebar.multiSigTransactions'),
+			route: NamedRoutes.MultiSigTransactions,
+		},
+		{
 			icon: 'GearSix',
 			title: t('sidebar.settings'),
 			route: NamedRoutes.Settings,

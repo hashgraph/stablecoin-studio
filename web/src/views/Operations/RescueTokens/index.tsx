@@ -8,12 +8,12 @@ import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
 import { handleRequestValidation, validateDecimalsString } from '../../../utils/validationsHelper';
 import { useSelector } from 'react-redux';
-import { SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
+import { LAST_WALLET_SELECTED, SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
 import SDKService from '../../../services/SDKService';
 import { useState } from 'react';
 import { formatAmount } from '../../../utils/inputHelper';
 
-import { RescueRequest } from '@hashgraph/stablecoin-npm-sdk';
+import { RescueRequest, SupportedWallets } from '@hashgraph/stablecoin-npm-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 import { propertyNotFound } from '../../../constant';
 
@@ -35,6 +35,7 @@ const RescueTokenOperation = () => {
 			amount: '0',
 		}),
 	);
+	const selectedWallet = useSelector(LAST_WALLET_SELECTED);
 
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
@@ -43,6 +44,16 @@ const RescueTokenOperation = () => {
 	const { t } = useTranslation(['rescueTokens', 'global', 'operations']);
 
 	useRefreshCoinInfo();
+
+	const successDescription =
+		selectedWallet === SupportedWallets.MULTISIG
+			? 'MultiSig transaction has been successfully created and is now awaiting signatures. Accounts have 180 seconds to sign the transaction.'
+			: t('rescueTokens:modalSuccessDesc', {
+					amount: formatAmount({
+						amount: getValues().amount ?? undefined,
+						decimals: selectedStableCoin?.decimals,
+					}),
+			  });
 
 	const handleRescueToken: ModalsHandlerActionsProps['onConfirm'] = async ({
 		onSuccess,
@@ -130,12 +141,7 @@ const RescueTokenOperation = () => {
 					/>
 				}
 				successNotificationTitle={t('operations:modalSuccessTitle')}
-				successNotificationDescription={t('rescueTokens:modalSuccessDesc', {
-					amount: formatAmount({
-						amount: getValues().amount ?? undefined,
-						decimals: selectedStableCoin?.decimals,
-					}),
-				})}
+				successNotificationDescription={successDescription}
 			/>
 		</>
 	);
