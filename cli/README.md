@@ -8,32 +8,21 @@
 
 ### Table of contents
 
-- [Stablecoin Studio - Command Line Interface (CLI)](#stablecoin-studio---command-line-interface-cli)
-    - [Table of contents](#table-of-contents)
-- [Overview](#overview)
-- [Installation](#installation)
-- [Build](#build)
-  - [Pre-requirements](#pre-requirements)
-  - [Steps](#steps)
-- [Quickstart](#quickstart)
-  - [Starting the CLI](#starting-the-cli)
-- [Usage](#usage)
-  - [Automatically creating a config file](#automatically-creating-a-config-file)
-  - [Manually creating a config file](#manually-creating-a-config-file)
-  - [Factories ](#factories)
-  - [CLI flow](#cli-flow)
-    - [Main menu](#main-menu)
-      - [Create a new stablecoin](#create-a-new-stablecoin)
-      - [Manage imported tokens](#manage-imported-tokens)
-      - [Operate with stablecoin](#operate-with-stablecoin)
-      - [List stablecoins](#list-stablecoins)
-      - [Configuration](#configuration)
-- [Testing](#testing)
-  - [Jest](#jest)
-  - [Run](#run)
-- [Contributing](#contributing)
-- [Code of conduct](#code-of-conduct)
-- [License](#license)
+- [Pre-requirements](#pre-requirements)
+- [Steps](#steps)
+- [Starting the CLI](#starting-the-cli)
+- [Automatically creating a config file](#automatically-creating-a-config-file)
+- [Manually creating a config file](#manually-creating-a-config-file)
+- [Factories ](#factories)
+- [CLI flow](#cli-flow)
+  - [Main menu](#main-menu)
+    - [Create a new stablecoin](#create-a-new-stablecoin)
+    - [Manage imported tokens](#manage-imported-tokens)
+    - [Operate with stablecoin](#operate-with-stablecoin)
+    - [List stablecoins](#list-stablecoins)
+    - [Configuration](#configuration)
+- [Jest](#jest)
+- [Run](#run)
 
 # Overview
 
@@ -80,9 +69,15 @@ From the root of the CLI project workspace:
 
 ## Starting the CLI
 
-The first time you execute the `accelerator wizard` command in your terminal, if you haven't added your default configuration path the interface will ask you whether you want to create a neSw configuration file in the default path. When the configuration file is created you must configure the default network, operating accounts and the factory contract id. In order to create the default account you can use [HashPack](https://www.hashpack.app/download), [Blade](https://bladewallet.io/) or the [Hedera Developer Portal](https://portal.hedera.com/register).
+The first time you execute the `accelerator wizard` command in your terminal, if you haven't added your default configuration path the interface will ask you whether you want to create a new configuration file in the default path. When the configuration file is created you must configure the default network, operating accounts and the factory contract id.
 
-https://github.com/hashgraph/stablecoin-studio/assets/108128685/73c2ed6c-ebc4-4717-b837-c4595c007ba0
+[Example configuration video](https://github.com/hashgraph/stablecoin-studio/assets/108128685/73c2ed6c-ebc4-4717-b837-c4595c007ba0)
+
+In order to configure an account you can:
+
+1. Use a raw **Private Key**: you can use any ED25519 or ECDSA private key that has a related Hedera account. For example, you can use [HashPack](https://www.hashpack.app/download), [Blade](https://bladewallet.io/) or the [Hedera Developer Portal](https://portal.hedera.com/register) (Recommended).
+2. Use a **Custodial Wallet**: Dfns and Fireblocks custodial wallets support.
+3. Use a **Multi-signature Account**: you can use a multi-signature account (keyList or thresholdKey) to create transactions that can be signed by the account keys (using the Private Key mode (1)). A [backend](../backend/README.md) is needed to use this mode.
 
 _Note that for testing purpose you should create a **Testnet** account instead of Mainnet account. Everything executed on Mainnet will incur a cost with real money._
 
@@ -93,85 +88,21 @@ To use the CLI correctly it is necessary to generate a configuration file in whi
 ## Automatically creating a config file
 
 The configuration file that is automatically generated populates its fields using the answers to the questions displayed in the CLI when the application is started for the first time.
-The file format is .yaml and the structure is as follows:
+The file format is .yaml and there is a sample config file [here](./hsca-config.sample.yaml).
 
-```
-defaultNetwork: testnet
-networks:
-  - name: mainnet
-    consensusNodes: []
-  - name: previewnet
-    consensusNodes: []
-  - name: testnet
-    consensusNodes: []
-accounts:
-  - accountId: ''
-    type: 'SELF-CUSTODIAL',
-    selfCustodial: 
-      privateKey: 
-        key: ''
-        type: ''
-    network: ''
-    alias: ''
-    importedTokens: [],
-    nonCustodial: 
-      fireblocks:
-        apiSecretKey: '',
-        apiKey: '',
-        baseUrl: '',
-        assetId: '',
-        vaultAccountId: '',
-        hederaAccountPublicKey: ''
-      dfns:
-        authorizationToken: '',
-        credentialId: '',
-        privateKey: '',
-        appOrigin: '',
-        appId: '',
-        testUrl: '',
-        walletId: '',
-        hederaAccountId: ''
-mirrors:
-  - name: HEDERA
-    network: testnet
-    baseUrl: https://testnet.mirrornode.hedera.com/api/v1/
-    selected: true
-  - name: HEDERA
-    network: previewnet
-    baseUrl: https://previewnet.mirrornode.hedera.com/api/v1/
-    selected: true
-  - name: HEDERA
-    network: mainnet
-    baseUrl: https://mainnet-public.mirrornode.hedera.com/api/v1/
-    selected: true
-rpcs:
-  - name: HASHIO
-    network: testnet
-    baseUrl: https://testnet.hashio.io/api
-    selected: true
-  - name: HASHIO
-    network: previewnet
-    baseUrl: https://previewnet.hashio.io/api
-    selected: true
-  - name: HASHIO
-    network: mainnet
-    baseUrl: https://mainnet.hashio.io/api
-    selected: true
-logs:
-  path: './logs'
-  level: 'ERROR'
-factories: 
-  - id: '0.0.14455068'
-    network: 'testnet'
-  - id: '0.0.765432'
-    network: 'previewnet'
-```
 ## Manually creating a config file
 
-A config file can be manually created using the "hsca-config.sample.yaml" file as a template. Follow this steps:
+A config file can be manually created using the [sample file (hsca-config.sample.yaml)](./hsca-config.sample.yaml) as a template. Follow this steps:
 
 - **Copy/Paste** the "hsca-config.sample.yaml" file
+
 - **Rename** it "hsca-config.yaml"
+
+  ```bash
+  cd path/to/cli/
+  cp hsca-config.sample.yaml hsca-config.yaml
+  ```
+
 - **Fill** it like
   - **defaultNetwork** : choose between mainnet, testnet and previewnet.
   - **networks** : _(Optional)_ for each network:
@@ -179,8 +110,8 @@ A config file can be manually created using the "hsca-config.sample.yaml" file a
     - **chainId** : network chain Id.
   - **accounts** : _(Mandatory at least one)_ list of accounts.
     - **accountId** : Account's Hedera Id.
-    - **type**: Accounts types, choose between SELF-CUSTODIAL, FIREBLOCKS and DFNS.
-    - **network** : Network in which the account exists, choose between mainnet, testnet and previewnet.
+    - **type**: Accounts types, choose between _SELF-CUSTODIAL_, _FIREBLOCKS_, _DFNS_ or _MULTI-SIGNATURE_.
+    - **network** : Network in which the account exists, choose between _mainnet_, _testnet_ and _previewnet_.
     - **alias** : Account unique alias.
     - For self-custodial accounts:
       - **privateKey** : account's private **key** and private key **type** (choose between ED25519 and ECDSA).
@@ -216,13 +147,15 @@ A config file can be manually created using the "hsca-config.sample.yaml" file a
     - **selected** : _true_ if this is the currently selected RPC, _false_ otherwise. At least one RPC node must be selected.
     - **apiKey** : _(Optional)_ API Key that must be provided to the RPC node in order to authenticate the request.
     - **headerName** : _(Optional)_ http header name that will contain the API Key.
-  - **logs** : 
+  - **backend**: (Optional - required if using MultiSig)
+    - **endpoint**: the URL where the backend is listening
+  - **logs** :
     - **path** : log file path. Typically './logs'
     - **level** : log level ERROR, TRACE, ...
   - **factories** : list of factories, at most one per network.
     - **id** : Factory Id.
     - **network** : Network where the factory exists, choose between mainnet, testnet and previewnet.
-    
+
 ## Factories 
 
 We provide default addresses for the factories that we have deployed for anyone to use that are updated whenever a new version is released.
@@ -269,7 +202,7 @@ When you add an existing stablecoin as an imported token, you will be able to op
 
 Then you will have the possibility to set a **Proof of Reserve feed (PoR)** for your stablecoin. A PoR is a smart contract that connects your on-chain stablecoin to your off-chain fiat currency supply. The idea is to have an on-chain representation of the amount of fiat currency currently collateralizing your stablecoin, this amount is called the **"Reserve"**.
 The PoR smart contract will store at all time the current reserve so that the stablecoin can check it before minting new tokens.
-The Wizard will give you the possibility to link your stablecoin to an already existing PoR smart contract or, if you do not have any, deploy a new one setting an initial Reserve. 
+The Wizard will give you the possibility to link your stablecoin to an already existing PoR smart contract or, if you do not have any, deploy a new one setting an initial Reserve.
 
 > It is important to note that, if you choose to deploy a new PoR for your stablecoin, your current account will be set as the PoR admin, meaning that it will have the possibility to update the Reserve and upgrade the smart contract code at any time. Nevertheless, the CLI will only let you deploy the PoR and link it to your stablecoin, in order to operate the new PoR (update the Reserve etc...) or change the PoR your stablecoin is linked to, you will have to use the UI...
 
@@ -301,10 +234,10 @@ Once a stablecoin is created or added, you can operate with it.
 The following list contains all the possible operations a user can perform if he/she has the appropriate role.
 
 - **Send tokens**: transfer tokens to other accounts.
-- **Cash in**: mints tokens and transfers them to an account. If you have linked a PoR Feed to your stablecoin, this operation will fail in two cases : 
+- **Cash in**: mints tokens and transfers them to an account. If you have linked a PoR Feed to your stablecoin, this operation will fail in two cases :
   - if you try to mint more tokens than the total Reserve (1 to 1 match between the token's total supply and the Reserve)
   - if you try to mint tokens using more decimals than the Reserve has, for instance, minting 1.001 tokens when the Reserve only has 2 decimals.
-  > this DOES NOT mean that a stablecoin can not have more decimals than the Reserve, transfers between accounts can use as many decimals as required.
+    > this DOES NOT mean that a stablecoin can not have more decimals than the Reserve, transfers between accounts can use as many decimals as required.
 
 https://user-images.githubusercontent.com/102601367/205074103-e9f584d0-8262-406c-b45b-a9060a9aa32d.mov
 
@@ -351,9 +284,9 @@ https://user-images.githubusercontent.com/114951681/228851958-db534d9e-0bc3-41f5
     - DELETE_ROLE
 
 - **Refresh roles**: automatically refreshes the roles assigned to the current account (account's capacities).
-- **Configuration**: This last option allows the user to manage both the stablecoin configuration and the token configuration. 
-Firstly, the stablecoin configuration allows the user to upgrade the stablecoin contract implementation and to change the stablecoin proxy admin contract owner. In the case of the token configuration, stablecoin administrators can edit the underlying token's properties such as "name", "symbol", "keys" ...
-To change the onwership of the proxy amdmin contract, the current owner will have to invite another account id to be the next owner. In this moment, this current owner could cancel the change before the proposed owner can accept the invitation. Once the invited account accepts the invitation, the change is completed.
+- **Configuration**: This last option allows the user to manage both the stablecoin configuration and the token configuration.
+  Firstly, the stablecoin configuration allows the user to upgrade the stablecoin contract implementation and to change the stablecoin proxy admin contract owner. In the case of the token configuration, stablecoin administrators can edit the underlying token's properties such as "name", "symbol", "keys" ...
+  To change the onwership of the proxy amdmin contract, the current owner will have to invite another account id to be the next owner. In this moment, this current owner could cancel the change before the proposed owner can accept the invitation. Once the invited account accepts the invitation, the change is completed.
 - **Danger Zone**: this section contains the stablecoin operations deemed as particularly "dangerous" either because they affect every single token owner (PAUSE) or because they can not be rolled-back (DELETE).
   For security reasons these operations are grouped in a "sub-menu" so that users do not run them by mistake.
   - **Un/Pause**: pauses and unpauses the token preventing it from being involved in any kind of operation.
@@ -371,6 +304,7 @@ This last option allows the user to display the current configuration file, modi
 - **Mirror nodes**: Allows the user to change the current mirror node, see all configured mirror nodes for the selected Hedera network, add new mirror nodes and remove existing ones except for the one that is being used.
 - **JSON-RPC-Relay services**: Allows the user to change the current JSON-RPC-Relay service, see all configured services for the selected Hedera network, add new JSON-RPC-Relay servies and remove existing ones except for the one that is being used. You can check the available JSON-RPC relays [here](https://github.com/hashgraph/stablecoin-studio/blob/main/README.md#JSON-RPC-Relays)
 - **Factory**: Allows the user to change the factory id of the selected Hedera network in the configuration file, to upgrade the factory's proxy, to change the factory's proxy admin owner account and, finally, to view de current factory implementation contract address as well as the factory owner account previously commented.
+- **Backend**: Allows the user to update the backend configuration and remove it.
 
 # Testing
 
