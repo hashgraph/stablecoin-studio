@@ -90,7 +90,7 @@ export default class WizardService extends Service {
           mirrorNode: currentMirror.name,
           rpc: currentRPC.name,
           account: `${currentAccount.accountId} - ${currentAccount.alias}`,
-          backend: currentBackend.endpoint,
+          backend: currentBackend?.endpoint,
         },
       );
       switch (selectedOption) {
@@ -324,11 +324,11 @@ export default class WizardService extends Service {
     );
     utilsService.setCurrentRPC(currentRPC);
 
+    utilsService.setCurrentBackend(configuration.backend);
+
     const currentFactory = factories.find(
       (factory) => currentAccount.network === factory.network,
     );
-
-    utilsService.setCurrentBackend(configuration.backend);
 
     utilsService.setCurrentFactory(currentFactory);
 

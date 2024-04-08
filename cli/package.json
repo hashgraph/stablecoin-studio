@@ -31,7 +31,7 @@
     "test:vm": "NODE_OPTIONS=--experimental-vm-modules npm run test",
     "prettier": "prettier --config .prettierrc --write .",
     "prettierCheck": "prettier --config .prettierrc --check",
-    "pre-commit": "npm run license:add && npm run lint && npm run prettier",
+    "pre-commit": "npm run license:add && npm run prettier && npm run lint",
     "prepack": "npm run build"
   },
   "keywords": [],
