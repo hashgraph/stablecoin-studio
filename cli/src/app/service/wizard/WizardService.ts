@@ -20,6 +20,7 @@
 
 /* eslint-disable no-case-declarations */
 import {
+  backendConfigurationService,
   configurationService,
   language,
   utilsService,
@@ -232,6 +233,12 @@ export default class WizardService extends Service {
       case language.getText('wizard.changeOptions.ManageRPC'):
         await utilsService.cleanAndShowBanner();
         await utilsService.configureNetwork(RPC);
+        break;
+
+      case language.getText('wizard.changeOptions.ManageBackend'):
+        await backendConfigurationService.manageBackendMenu({
+          options: { clean: true },
+        });
         break;
 
       case language.getText('wizard.changeOptions.ManageFactory'):

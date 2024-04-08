@@ -18,8 +18,14 @@
  *
  */
 
+import colors from 'colors';
 import { DEFAULT_BACKEND_ENDPOINT } from '../../../core/Constants';
-import { configurationService, language, utilsService } from '../../../index';
+import {
+  configurationService,
+  language,
+  utilsService,
+  wizardService,
+} from '../../../index';
 import IBackendConfig from '../../../domain/configuration/interfaces/BackendConfig';
 import Service from '../Service';
 
@@ -30,17 +36,85 @@ export default class BackendConfigurationService extends Service {
 
   public async configureBackend(): Promise<IBackendConfig> {
     const configuration = configurationService.getConfiguration();
-    let endpoint: URL | undefined;
+    if (
+      !configuration ||
+      !configuration.backend ||
+      !configuration.backend.endpoint
+    ) {
+      configuration.backend = await this._setBackendEndpoint();
+    }
+    return await this._setBackendEndpoint({
+      endpoint: configuration.backend.endpoint,
+    });
+  }
 
+  /**
+   * Manages the backend menu based on the provided options.
+   *
+   * @param options - The options for managing the backend menu.
+   * @param options.clean - A boolean indicating whether to clean the terminal and show the banner. Default is false.
+   *
+   * @returns A Promise that resolves when the backend menu is managed.
+   */
+  public async manageBackendMenu(
+    { options }: { options: { clean?: boolean } } = {
+      options: { clean: false },
+    },
+  ): Promise<void> {
+    // Clean the terminal and show the banner
+    if (options.clean) {
+      await utilsService.cleanAndShowBanner();
+    }
+    // Get the current account, mirror, rpc to display
+    const manageOptions = language.getArrayFromObject(
+      'wizard.manageBackendOptions',
+    );
+    const currentBackend = configurationService.getConfiguration().backend;
+    const selectedOption = await utilsService.defaultMultipleAsk(
+      language.getText('wizard.manageBackendTitle'),
+      manageOptions,
+      true,
+      {
+        backend:
+          currentBackend?.endpoint ||
+          language.getText('configuration.backendNotDefined'),
+      },
+    );
+
+    switch (selectedOption) {
+      case manageOptions[0]: // Update backend
+        const result = await this._setBackendEndpoint();
+        console.info(
+          colors.green(
+            `${language.getText('configuration.backendNew')}: ${
+              result.endpoint
+            }`,
+          ),
+        );
+        break;
+      case manageOptions[1]: // Remove backend
+        this._removeBackend();
+        console.info(
+          colors.green(language.getText('configuration.backendRemoved')),
+        );
+        break;
+      default:
+        await utilsService.cleanAndShowBanner();
+        await wizardService.configurationMenu();
+        break;
+    }
+  }
+
+  private async _setBackendEndpoint({
+    endpoint,
+  }: { endpoint?: URL | string } = {}): Promise<IBackendConfig> {
     // Try to get the endpoint up to 5 times
     for (let tries = 0; tries < 5; tries++) {
       try {
-        const answer = configuration.backend?.endpoint
-          ? configuration.backend.endpoint
-          : await utilsService.defaultSingleAsk(
-              language.getText('configuration.askBackendUrl'),
-              DEFAULT_BACKEND_ENDPOINT,
-            );
+        const answer = await utilsService.defaultSingleAsk(
+          language.getText('configuration.askBackendUrl'),
+          DEFAULT_BACKEND_ENDPOINT,
+        );
         endpoint = new URL(answer);
         if (endpoint) break; // If we have a valid endpoint, break the loop
       } catch (error) {
@@ -49,17 +123,23 @@ export default class BackendConfigurationService extends Service {
         );
       }
     }
-
     // If we still don't have a valid endpoint, use the default one
     if (!endpoint) {
       endpoint = new URL(DEFAULT_BACKEND_ENDPOINT);
     }
 
     // Update the configuration and return it
+    const configuration = configurationService.getConfiguration();
     configuration.backend = {
       endpoint: endpoint.toString(),
     } as IBackendConfig;
     configurationService.setConfiguration(configuration);
     return configuration.backend;
+  }
+
+  private _removeBackend(): void {
+    const configuration = configurationService.getConfiguration();
+    configuration.backend = undefined;
+    configurationService.setConfiguration(configuration);
   }
 }

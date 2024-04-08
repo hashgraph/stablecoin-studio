@@ -154,6 +154,9 @@ export const english = {
     selectMirrorNode: 'Select the mirror node: ',
     selectRPC: 'Select the JSON-RPC-Relay: ',
     RPCNotToChange: '\nThere is no nJSON-RPC-Relay to change',
+    backendNew: 'New backend endpoint',
+    backendRemoved: 'Backend endpoint removed',
+    backendNotDefined: colors.red('There is no backend defined'),
     fireblocks: {
       title: 'Fireblocks account configuration',
       askApiSecretKeyPath: 'Enter your API secret key path',
@@ -397,6 +400,7 @@ export const english = {
       ManageMirrorNode: 'Manage mirror node',
       ManageRPC: 'Manage JSON-RPC-Relay',
       ManageFactory: 'Manage factory',
+      ManageBackend: 'Manage backend',
       ...returnToMainMenu,
     },
     manageAccountOptions: {
@@ -419,6 +423,11 @@ export const english = {
       Add: 'Set up JSON-RPC-Relay',
       Delete: 'Remove JSON-RPC-Relay',
       ...goBack,
+    },
+    manageBackendTitle: 'Manage backend options',
+    manageBackendOptions: {
+      update: 'Update current backend endpoint',
+      remove: 'Remove current backend endpoint',
     },
     manageImportedTokens: {
       Add: 'Add token',
