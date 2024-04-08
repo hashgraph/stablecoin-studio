@@ -31,5 +31,6 @@ build
 
 report.json
 
+.hsca-config*.yaml
 hsca-config.yaml
 ./docs/*

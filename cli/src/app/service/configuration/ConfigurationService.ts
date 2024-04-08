@@ -184,26 +184,26 @@ export default class ConfigurationService extends Service {
     console.dir(result, { depth: null });
   }
 
-  /**
-   * Create default configuration file and override if exists
-   */
   public createDefaultConfiguration(path?: string): void {
     try {
-      let defaultConfig: IConfiguration;
       const defaultConfigPath = `${this.getGlobalPath()}/build/src/resources/config/${
         this.configFileName
       }`;
-      if (fs.existsSync(defaultConfigPath)) {
-        defaultConfig = yaml.load(fs.readFileSync(defaultConfigPath));
-      } else {
-        defaultConfig = yaml.load(
-          fs.readFileSync(`src/resources/config/${this.configFileName}`),
-        );
-      }
+      const fallbackConfigPath = `src/resources/config/${this.configFileName}`;
+
+      const configPath = fs.existsSync(defaultConfigPath)
+        ? defaultConfigPath
+        : fallbackConfigPath;
+      const defaultConfig: IConfiguration = yaml.load(
+        fs.readFileSync(configPath, 'utf8'),
+      );
+
       const filePath = path ?? this.getDefaultConfigurationPath();
       this.path = filePath;
+
       fs.ensureFileSync(filePath);
       fs.writeFileSync(filePath, yaml.dump(defaultConfig), 'utf8');
+
       this.setConfiguration(defaultConfig, filePath);
     } catch (ex) {
       utilsService.showError(ex);

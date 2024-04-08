@@ -62,10 +62,8 @@ export const english = {
     continue: '↩️ Press enter to continue',
     backOption: backOption,
   },
-  initialConfiguration: {
-    title: '\n\n\t\tHedera Stablecoin initial configuration\n',
-  },
   configuration: {
+    initialTitle: '\n\n\t\tHedera Stablecoin configuration\n',
     askPath: 'Write your config path',
     askCreateConfig:
       'No configuration file found at the specified path, would you like to create one? (y/n)',
@@ -82,6 +80,8 @@ export const english = {
       'Do you want to config your factories? Check the documentation for more information : https://github.com/hashgraph/stablecoin-studio#deploying-the-stable-coin-factories',
     askConfigurateDefaultMirrorsAndRPCs:
       'Do you want to use default mirror node/JSON-RPC-Relay services? (y/n)',
+    askConfigurateBackend: 'Do you want to configure the backend? (y/n)',
+    askBackendUrl: 'Enter the backend url',
     askNetworkAccount: 'Which network does this account belong to?',
     askPrivateKeyType: 'Which type of private key will the account use?',
     askAlias: 'Enter an alias for this account',
