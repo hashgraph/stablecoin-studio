@@ -293,6 +293,15 @@ export default class UtilitiesService extends Service {
   }
 
   /**
+   * Delays the execution for the specified number of milliseconds.
+   * @param ms - The number of milliseconds to delay.
+   * @returns A promise that resolves after the specified delay.
+   */
+  public delay(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  /**
    * Function to create n break line
    * @param n
    */
