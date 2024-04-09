@@ -36,7 +36,12 @@ describe(`<${ModalWalletConnect.name} />`, () => {
 
 		const store = mockStore({
 			wallet: {
-				foundWallets: [SupportedWallets.HASHPACK, SupportedWallets.METAMASK],
+				foundWallets: [
+					SupportedWallets.HASHPACK,
+					SupportedWallets.METAMASK,
+					SupportedWallets.BLADE,
+					SupportedWallets.MULTISIG,
+				],
 				selectedMirrors: rpcNode,
 				selectedRPCs: rpcNode,
 			},
@@ -49,6 +54,7 @@ describe(`<${ModalWalletConnect.name} />`, () => {
 		expect(SDKService.connectWallet).toHaveBeenCalledWith(
 			'Metamask',
 			expect.any(String),
+			undefined,
 			undefined,
 			undefined,
 		);

@@ -638,6 +638,49 @@ exports[`<App /> should render correctly 1`] = `
             </button>
             <button
               class="chakra-button css-9d0zi7"
+              data-testid="sidebar-option-File"
+              type="button"
+            >
+              <svg
+                class="chakra-icon css-wrbp2a"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                viewBox="0 0 256 256"
+                width="1em"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  fill="none"
+                  height="256"
+                  width="256"
+                />
+                <path
+                  d="M200,224H56a8,8,0,0,1-8-8V40a8,8,0,0,1,8-8h96l56,56V216A8,8,0,0,1,200,224Z"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="16"
+                />
+                <polyline
+                  fill="none"
+                  points="152 32 152 88 208 88"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="16"
+                />
+              </svg>
+              <p
+                class="chakra-text css-1d26k2o"
+                data-testid="sidebar-option-title"
+              >
+                Multi-sig transactions
+              </p>
+            </button>
+            <button
+              class="chakra-button css-9d0zi7"
               data-testid="sidebar-option-GearSix"
               type="button"
             >
@@ -679,6 +722,85 @@ exports[`<App /> should render correctly 1`] = `
                 data-testid="sidebar-option-title"
               >
                 Settings
+              </p>
+            </button>
+            <button
+              class="chakra-button css-9d0zi7"
+              data-testid="sidebar-option-ShareNetwork"
+              type="button"
+            >
+              <svg
+                class="chakra-icon css-wrbp2a"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                viewBox="0 0 256 256"
+                width="1em"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  fill="none"
+                  height="256"
+                  width="256"
+                />
+                <circle
+                  cx="64"
+                  cy="128"
+                  fill="none"
+                  r="32"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="16"
+                />
+                <circle
+                  cx="176"
+                  cy="200"
+                  fill="none"
+                  r="32"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="16"
+                />
+                <circle
+                  cx="176"
+                  cy="56"
+                  fill="none"
+                  r="32"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="16"
+                />
+                <line
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="16"
+                  x1="149.1"
+                  x2="90.9"
+                  y1="73.3"
+                  y2="110.7"
+                />
+                <line
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="16"
+                  x1="90.9"
+                  x2="149.1"
+                  y1="145.3"
+                  y2="182.7"
+                />
+              </svg>
+              <p
+                class="chakra-text css-1d26k2o"
+                data-testid="sidebar-option-title"
+              >
+                Network settings
               </p>
             </button>
           </div>
