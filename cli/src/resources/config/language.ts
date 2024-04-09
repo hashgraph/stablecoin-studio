@@ -386,7 +386,7 @@ export const english = {
       Manage: 'Manage imported tokens',
       Operate: 'Operate with an existing Stablecoin',
       List: 'List Stablecoins',
-      ListPendingMultiSig: 'List pending multi-signature transactions',
+      ListPendingMultiSig: 'List multi-signature transactions',
       Configuration: 'Configuration',
       ...separator_1,
       Exit: 'Exit',

@@ -20,6 +20,7 @@
     - [Manage imported tokens](#manage-imported-tokens)
     - [Operate with stablecoin](#operate-with-stablecoin)
     - [List stablecoins](#list-stablecoins)
+  - [List multi-signature transactions](#list-multi-signature-transactions)
     - [Configuration](#configuration)
 - [Jest](#jest)
 - [Run](#run)
@@ -167,8 +168,6 @@ We provide default addresses for the factories that we have deployed for anyone 
 
 ## CLI flow
 
-![CLI Flow](https://github.com/hashgraph/stablecoin-studio/assets/56278409/f75b66ab-b6d9-48f9-92b0-1c2a2af68556)
-
 When the CLI is started with the configuration file properly configured, the first action will be to select the account you want to operate with. By default, the list of configured accounts belonging to the default network indicated in the configuration file, is displayed.
 
 If there are no accounts in the file for the default network, a warning message will be displayed and a list of all the accounts in the file will be displayed.
@@ -295,6 +294,30 @@ https://user-images.githubusercontent.com/114951681/228851958-db534d9e-0bc3-41f5
 #### List stablecoins
 
 This option displays all the stablecoins the user has created or added.
+
+### List multi-signature transactions
+
+This option will list all the pending transactions currently in the backend that:
+
+- If you are connected with a self-custodial (private key): your current private key can sign.
+- If you are connected with a multisig account: are associated to your account id.
+
+For each displayed transactions you will have one or many options, also depending on your connection mode and the current status of the transaction:
+
+- If you are connected with a **Self-custodial** account:
+  - If the transaction has not been fully signed yet:
+    - If you have not signed it yet: **SIGN, REMOVE.**
+    - If you have signed it already: **REMOVE.**
+  - If the transaction has been fully signed already: **SEND, REMOVE.**
+- If you are connected with a **multisig account**:
+  - If the transaction has not been fully signed yet: **REMOVE.**
+  - If the transaction has been fully signed already: **SEND, REMOVE.**
+
+The operations that you can perform on a transaction are:
+
+- **SIGN**: Signs the transaction using the private key associated to your wallet.
+- **SEND**: Submits the transaction to the Hedera DLT.
+- **REMOVE**: Removes the transaction from the backend, the transaction will be "discarded".
 
 #### Configuration
 
