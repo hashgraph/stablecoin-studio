@@ -36,4 +36,5 @@ export const HASHIO_RPC_TESTNET_URL = 'https://testnet.hashio.io/api';
 export const HASHIO_RPC_PREVIEWNET_URL = 'https://previewnet.hashio.io/api';
 export const HASHIO_RPC_MAINNET_URL = 'https://mainnet.hashio.io/api';
 
-export const DEFAULT_BACKEND_ENDPOINT = 'http://localhost:3000';
+export const DEFAULT_BACKEND_ENDPOINT =
+  'http://localhost:3000/api/transactions';

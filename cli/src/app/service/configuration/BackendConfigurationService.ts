@@ -36,16 +36,8 @@ export default class BackendConfigurationService extends Service {
 
   public async configureBackend(): Promise<IBackendConfig> {
     const configuration = configurationService.getConfiguration();
-    if (
-      !configuration ||
-      !configuration.backend ||
-      !configuration.backend.endpoint
-    ) {
-      configuration.backend = await this._setBackendEndpoint();
-    }
-    return await this._setBackendEndpoint({
-      endpoint: configuration.backend.endpoint,
-    });
+    const endpoint = configuration?.backend?.endpoint;
+    return this._setBackendEndpoint({ endpoint });
   }
 
   /**

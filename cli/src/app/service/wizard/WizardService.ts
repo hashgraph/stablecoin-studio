@@ -200,6 +200,7 @@ export default class WizardService extends Service {
           mirrorNode: currentMirror.name,
           rpc: currentRPC.name,
           account: `${configAccount.accountId} - ${configAccount.alias}`,
+          backend: utilsService.getCurrentBackend()?.endpoint,
         },
       )
     ) {
