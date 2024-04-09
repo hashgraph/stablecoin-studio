@@ -89,8 +89,8 @@ export default class WizardService extends Service {
           network: currentAccount.network,
           mirrorNode: currentMirror.name,
           rpc: currentRPC.name,
-          account: `${currentAccount.accountId} - ${currentAccount.alias}`,
           backend: currentBackend?.endpoint,
+          account: `${currentAccount.accountId} - ${currentAccount.alias}`,
         },
       );
       switch (selectedOption) {
@@ -200,8 +200,8 @@ export default class WizardService extends Service {
           network: configAccount.network,
           mirrorNode: currentMirror.name,
           rpc: currentRPC.name,
-          account: `${configAccount.accountId} - ${configAccount.alias}`,
           backend: currentBackend?.endpoint,
+          account: `${configAccount.accountId} - ${configAccount.alias}`,
         },
       )
     ) {

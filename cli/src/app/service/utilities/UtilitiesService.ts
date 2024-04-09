@@ -816,6 +816,7 @@ export default class UtilitiesService extends Service {
     const currentAccount = this.getCurrentAccount();
     const currentMirror = this.getCurrentMirror();
     const currentRPC = this.getCurrentRPC();
+    const currentBackend = this.getCurrentBackend();
     const networks = configurationService
       .getConfiguration()
       .networks.map((network) => network.name);
@@ -827,6 +828,7 @@ export default class UtilitiesService extends Service {
         network: currentAccount.network,
         mirrorNode: currentMirror.name,
         rpc: currentRPC.name,
+        backend: currentBackend?.endpoint,
         account: `${currentAccount.accountId} - ${currentAccount.alias}`,
       },
     );
