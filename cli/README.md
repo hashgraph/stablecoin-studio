@@ -319,6 +319,8 @@ The operations that you can perform on a transaction are:
 - **SEND**: Submits the transaction to the Hedera DLT.
 - **REMOVE**: Removes the transaction from the backend, the transaction will be "discarded".
 
+https://github.com/hashgraph/stablecoin-studio/assets/10762009/20030a9f-2185-49a8-b554-318782f51d8d
+
 #### Configuration
 
 This last option allows the user to display the current configuration file, modify the configuration path, change the default network and manage:
