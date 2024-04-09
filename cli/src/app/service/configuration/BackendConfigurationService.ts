@@ -83,12 +83,14 @@ export default class BackendConfigurationService extends Service {
             }`,
           ),
         );
+        await wizardService.configurationMenu();
         break;
       case manageOptions[1]: // Remove backend
         this._removeBackend();
         console.info(
           colors.green(language.getText('configuration.backendRemoved')),
         );
+        await wizardService.configurationMenu();
         break;
       default:
         await utilsService.cleanAndShowBanner();
@@ -126,6 +128,7 @@ export default class BackendConfigurationService extends Service {
       endpoint: endpoint.toString(),
     } as IBackendConfig;
     configurationService.setConfiguration(configuration);
+    utilsService.setCurrentBackend(configuration.backend);
     return configuration.backend;
   }
 
@@ -133,5 +136,6 @@ export default class BackendConfigurationService extends Service {
     const configuration = configurationService.getConfiguration();
     configuration.backend = undefined;
     configurationService.setConfiguration(configuration);
+    utilsService.setCurrentBackend(configuration.backend);
   }
 }
