@@ -1,5 +1,7 @@
 # Stablecoin Studio Smart Contracts
 
+[![License](https://img.shields.io/badge/license-apache2-blue.svg)](../LICENSE.md)
+
 ### Table of Contents
 
 -   **[Overview](#overview)**<br>
@@ -175,7 +177,7 @@ Example for the Hedera testnet (_these are fake accounts/keys_):
     TESTNET_HEDERA_NON_OPERATOR_PUBLICKEY='302a300506032b657003210057056288u5d5a9cdaeb85687391dc7372707c464f9e7cb0efb386cf4244ebdf6'
     TESTNET_HEDERA_NON_OPERATOR_PRIVATEKEY='302e020100300506032b6baf04220420b7ca8f1a5453d5c03b0d8ba99d06306ed6c93ee64d7bf122c21b0981e2b0b679'
     TESTNET_HEDERA_NON_OPERATOR_ED25519=true
-    
+
     PREVIEWNET_HEDERA_OPERATOR_ACCOUNT='0.0.48513676'
     PREVIEWNET_HEDERA_OPERATOR_PUBLICKEY='c14dbe4c936181b7a2fe7faf086fd95bdc6900e2d16533e3e8ffd00cac1fe607'
     PREVIEWNET_HEDERA_OPERATOR_PRIVATEKEY='8830990f02fae1c3a843b8aaad0433a73ee47b08d56426a8e416d08727ea0609'

@@ -2,7 +2,7 @@
 
 # Stablecoin Studio - Command Line Interface (CLI)
 
-[![CLI - Test](https://github.com/hashgraph/stablecoin-studio/actions/workflows/cli.test.yml/badge.svg)](https://github.com/hashgraph/stablecoin-studio/actions/workflows/cli.test.yml)
+[![License](https://img.shields.io/badge/license-apache2-blue.svg)](../LICENSE.md)
 
 </div>
 
