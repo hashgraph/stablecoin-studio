@@ -187,6 +187,7 @@ export default class WizardService extends Service {
     const configAccount = utilsService.getCurrentAccount();
     const currentMirror = utilsService.getCurrentMirror();
     const currentRPC = utilsService.getCurrentRPC();
+    const currentBackend = utilsService.getCurrentBackend();
     const wizardChangeConfigOptions: Array<string> =
       language.getArrayFromObject('wizard.changeOptions');
 
@@ -200,12 +201,13 @@ export default class WizardService extends Service {
           mirrorNode: currentMirror.name,
           rpc: currentRPC.name,
           account: `${configAccount.accountId} - ${configAccount.alias}`,
+          backend: currentBackend?.endpoint,
         },
       )
     ) {
       case language.getText('wizard.changeOptions.Show'):
         await utilsService.cleanAndShowBanner();
-        await configurationService.showFullConfiguration();
+        configurationService.showFullConfiguration();
         break;
 
       case language.getText('wizard.changeOptions.EditPath'):

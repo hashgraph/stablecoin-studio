@@ -492,7 +492,6 @@ export default class SetMirrorNodeService extends Service {
         break;
       default:
         await utilsService.cleanAndShowBanner();
-
         await wizardService.configurationMenu();
     }
     await this.manageMirrorNodeMenu(_network);

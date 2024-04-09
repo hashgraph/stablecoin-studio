@@ -36,16 +36,8 @@ export default class BackendConfigurationService extends Service {
 
   public async configureBackend(): Promise<IBackendConfig> {
     const configuration = configurationService.getConfiguration();
-    if (
-      !configuration ||
-      !configuration.backend ||
-      !configuration.backend.endpoint
-    ) {
-      configuration.backend = await this._setBackendEndpoint();
-    }
-    return await this._setBackendEndpoint({
-      endpoint: configuration.backend.endpoint,
-    });
+    const endpoint = configuration?.backend?.endpoint;
+    return this._setBackendEndpoint({ endpoint });
   }
 
   /**
@@ -91,12 +83,14 @@ export default class BackendConfigurationService extends Service {
             }`,
           ),
         );
+        await wizardService.configurationMenu();
         break;
       case manageOptions[1]: // Remove backend
         this._removeBackend();
         console.info(
           colors.green(language.getText('configuration.backendRemoved')),
         );
+        await wizardService.configurationMenu();
         break;
       default:
         await utilsService.cleanAndShowBanner();
@@ -134,6 +128,7 @@ export default class BackendConfigurationService extends Service {
       endpoint: endpoint.toString(),
     } as IBackendConfig;
     configurationService.setConfiguration(configuration);
+    utilsService.setCurrentBackend(configuration.backend);
     return configuration.backend;
   }
 
@@ -141,5 +136,6 @@ export default class BackendConfigurationService extends Service {
     const configuration = configurationService.getConfiguration();
     configuration.backend = undefined;
     configurationService.setConfiguration(configuration);
+    utilsService.setCurrentBackend(configuration.backend);
   }
 }
