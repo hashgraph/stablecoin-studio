@@ -751,6 +751,7 @@ export default class UtilitiesService extends Service {
     let networkInfo = '';
     let mirrorInfo = '';
     let rpcInfo = '';
+    let backendInfo = '';
 
     if (network)
       networkInfo =
@@ -762,9 +763,17 @@ export default class UtilitiesService extends Service {
       mirrorInfo = colors.cyan(' - mirror: ' + this.currentMirror.name);
     if (this.currentRPC)
       rpcInfo = colors.cyan(', rpc: ' + this.currentRPC.name);
+    if (this.currentBackend)
+      backendInfo = colors.cyan(', backend: ' + this.currentBackend.endpoint);
 
-    if (networkInfo || mirrorInfo || rpcInfo) {
-      result = result + networkInfo + mirrorInfo + rpcInfo + colors.cyan(')');
+    if (networkInfo || mirrorInfo || rpcInfo || backendInfo) {
+      result =
+        result +
+        networkInfo +
+        mirrorInfo +
+        rpcInfo +
+        backendInfo +
+        colors.cyan(')');
     }
 
     if (accountId) {
