@@ -119,36 +119,41 @@ export default class TransactionService extends Service {
 				const contractId = (t as ContractExecuteTransaction).contractId;
 				const functionParameters = (t as ContractExecuteTransaction)
 					.functionParameters;
-				const decodedFunctionParameters = this.decodeFunctionCall(
-					functionParameters!,
-				);
-				const inputArgs = decodedFunctionParameters.args;
 				let args = '';
+				let name = '';
 
-				for (
-					let i = 0;
-					i <
-					decodedFunctionParameters.functionFragment.inputs.length;
-					i++
-				) {
-					if (i != 0) args = args.concat(', ');
-					let value = inputArgs[i];
+				if (functionParameters) {
+					const decodedFunctionParameters =
+						this.decodeFunctionCall(functionParameters);
+					name = decodedFunctionParameters.name;
+					const inputArgs = decodedFunctionParameters.args;
 
-					if (EVM_ADDRESS_REGEX.test(value)) {
-						const accountInfo =
-							await mirrorNodeAdapter.getAccountInfo(value);
-						value = accountInfo.id;
+					for (
+						let i = 0;
+						i <
+						decodedFunctionParameters.functionFragment.inputs
+							.length;
+						i++
+					) {
+						if (i != 0) args = args.concat(', ');
+						let value = inputArgs[i];
+
+						if (EVM_ADDRESS_REGEX.test(value)) {
+							const accountInfo =
+								await mirrorNodeAdapter.getAccountInfo(value);
+							value = accountInfo.id;
+						}
+
+						args = args.concat(
+							decodedFunctionParameters.functionFragment.inputs[i]
+								.name +
+								' : ' +
+								value,
+						);
 					}
-
-					args = args.concat(
-						decodedFunctionParameters.functionFragment.inputs[i]
-							.name +
-							' : ' +
-							value,
-					);
 				}
 
-				return `Calling contract ${contractId?.shard}.${contractId?.realm}.${contractId?.num}. ${decodedFunctionParameters.name} : ${args}`;
+				return `Calling contract ${contractId?.shard}.${contractId?.realm}.${contractId?.num}. ${name} : ${args}`;
 			} else if (t instanceof TokenWipeTransaction) {
 				const tokenId = (t as TokenWipeTransaction).tokenId;
 				const accountId = (t as TokenWipeTransaction).accountId;
