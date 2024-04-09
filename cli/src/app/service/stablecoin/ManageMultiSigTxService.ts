@@ -76,13 +76,16 @@ export default class ManageMultiSigTxService extends Service {
     const multiSigTxList = multiSigTxListResponse.multiSigTxList;
     const publicKey = multiSigTxListResponse.publicKey?.toString();
     const paginationRes = multiSigTxListResponse.pagination;
-    // Id transaction list
-    const txIdListAsOptions = (
-      multiSigTxList.map((tx) => tx.id) as string[]
-    ).concat([
-      language.getText('general.previous'),
-      language.getText('general.next'),
-    ]);
+    // Create a list of transaction IDs as options for the user to select
+    const txIdListAsOptions: string[] = multiSigTxList.map((tx) => tx.id);
+    // Add 'previous' option if not on the first page
+    if (paginationRes.currentPage != 1) {
+      txIdListAsOptions.push(language.getText('general.previous'));
+    }
+    // Add 'next' option if not on the last page
+    if (paginationRes.currentPage != paginationRes.totalPages) {
+      txIdListAsOptions.push(language.getText('general.next'));
+    }
     const selectedOption = await utilsService.defaultMultipleAsk(
       language.getText('wizard.multiSig.listMenuTitle'),
       txIdListAsOptions,
@@ -93,13 +96,13 @@ export default class ManageMultiSigTxService extends Service {
       case language.getText('general.backOption'):
         await wizardService.mainMenu();
         return;
-      case 'previous':
+      case language.getText('general.previous'):
         await this.start({
           status,
           paginationReq: paginationRes.previous(),
         });
         return;
-      case 'next':
+      case language.getText('general.next'):
         await this.start({
           status,
           paginationReq: paginationRes.next(),
