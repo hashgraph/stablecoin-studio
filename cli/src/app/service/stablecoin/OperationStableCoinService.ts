@@ -132,6 +132,7 @@ export default class OperationStableCoinService extends Service {
     const configAccount = utilsService.getCurrentAccount();
     const currentMirror = utilsService.getCurrentMirror();
     const currentRPC = utilsService.getCurrentRPC();
+    const currentBackend = utilsService.getCurrentBackend();
     let coins: StableCoinList[];
     try {
       if (this.stableCoinId === undefined) {
@@ -151,6 +152,7 @@ export default class OperationStableCoinService extends Service {
             network: configAccount.network,
             mirrorNode: currentMirror.name,
             rpc: currentRPC.name,
+            backend: currentBackend?.endpoint,
             account: `${configAccount.accountId} - ${configAccount.alias}`,
             tokenPaused: this.stableCoinPaused,
             tokenDeleted: this.stableCoinDeleted,
@@ -194,6 +196,7 @@ export default class OperationStableCoinService extends Service {
     const configAccount = utilsService.getCurrentAccount();
     const currentMirror = utilsService.getCurrentMirror();
     const currentRPC = utilsService.getCurrentRPC();
+    const currentBackend = utilsService.getCurrentBackend();
     // TODO: depending del tipo hacer una cosa u otra
     const currentAccount: RequestAccount = {
       accountId: configAccount.accountId,
@@ -234,6 +237,7 @@ export default class OperationStableCoinService extends Service {
           network: configAccount.network,
           mirrorNode: currentMirror.name,
           rpc: currentRPC.name,
+          backend: currentBackend?.endpoint,
           account: `${currentAccount.accountId} - ${configAccount.alias}`,
           token: this.stableCoinWithSymbol,
           tokenPaused: this.stableCoinPaused,
@@ -670,6 +674,7 @@ export default class OperationStableCoinService extends Service {
     const configAccount = utilsService.getCurrentAccount();
     const currentMirror = utilsService.getCurrentMirror();
     const currentRPC = utilsService.getCurrentRPC();
+    const currentBackend = utilsService.getCurrentBackend();
     const currentAccount: RequestAccount = {
       accountId: configAccount.accountId,
     };
@@ -693,6 +698,7 @@ export default class OperationStableCoinService extends Service {
           network: configAccount.network,
           mirrorNode: currentMirror.name,
           rpc: currentRPC.name,
+          backend: currentBackend?.endpoint,
           account: `${configAccount.accountId} - ${configAccount.alias}`,
           token: this.stableCoinWithSymbol,
           tokenPaused: this.stableCoinPaused,
@@ -808,6 +814,7 @@ export default class OperationStableCoinService extends Service {
     const configAccount = utilsService.getCurrentAccount();
     const currentMirror = utilsService.getCurrentMirror();
     const currentRPC = utilsService.getCurrentRPC();
+    const currentBackend = utilsService.getCurrentBackend();
     const currentAccount: RequestAccount = {
       accountId: configAccount.accountId,
     };
@@ -833,6 +840,7 @@ export default class OperationStableCoinService extends Service {
           network: configAccount.network,
           mirrorNode: currentMirror.name,
           rpc: currentRPC.name,
+          backend: currentBackend?.endpoint,
           account: `${configAccount.accountId} - ${configAccount.alias}`,
           token: this.stableCoinWithSymbol,
           tokenPaused: this.stableCoinPaused,
@@ -951,6 +959,7 @@ export default class OperationStableCoinService extends Service {
     const configAccount = utilsService.getCurrentAccount();
     const currentMirror = utilsService.getCurrentMirror();
     const currentRPC = utilsService.getCurrentRPC();
+    const currentBackend = utilsService.getCurrentBackend();
     const currentAccount: RequestAccount = {
       accountId: configAccount.accountId,
     };
@@ -996,6 +1005,7 @@ export default class OperationStableCoinService extends Service {
           network: configAccount.network,
           mirrorNode: currentMirror.name,
           rpc: currentRPC.name,
+          backend: currentBackend?.endpoint,
           account: `${configAccount.accountId} - ${configAccount.alias}`,
           token: this.stableCoinWithSymbol,
           tokenPaused: this.stableCoinPaused,
@@ -1343,6 +1353,7 @@ export default class OperationStableCoinService extends Service {
     const configAccount = utilsService.getCurrentAccount();
     const currentMirror = utilsService.getCurrentMirror();
     const currentRPC = utilsService.getCurrentRPC();
+    const currentBackend = utilsService.getCurrentBackend();
     const currentAccount: RequestAccount = {
       accountId: configAccount.accountId,
     };
@@ -1387,6 +1398,7 @@ export default class OperationStableCoinService extends Service {
           network: configAccount.network,
           mirrorNode: currentMirror.name,
           rpc: currentRPC.name,
+          backend: currentBackend?.endpoint,
           account: `${configAccount.accountId} - ${configAccount.alias}`,
           token: this.stableCoinWithSymbol,
           tokenPaused: this.stableCoinPaused,
@@ -1412,6 +1424,7 @@ export default class OperationStableCoinService extends Service {
               network: configAccount.network,
               mirrorNode: currentMirror.name,
               rpc: currentRPC.name,
+              backend: currentBackend?.endpoint,
               account: `${configAccount.accountId} - ${configAccount.alias}`,
               token: this.stableCoinWithSymbol,
               tokenPaused: this.stableCoinPaused,
@@ -1504,6 +1517,7 @@ export default class OperationStableCoinService extends Service {
               network: configAccount.network,
               mirrorNode: currentMirror.name,
               rpc: currentRPC.name,
+              backend: currentBackend?.endpoint,
               account: `${currentAccount.accountId} - ${configAccount.alias}`,
               token: this.stableCoinWithSymbol,
               tokenPaused: this.stableCoinPaused,
@@ -3191,6 +3205,7 @@ export default class OperationStableCoinService extends Service {
     const configAccount = utilsService.getCurrentAccount();
     const currentMirror = utilsService.getCurrentMirror();
     const currentRPC = utilsService.getCurrentRPC();
+    const currentBackend = utilsService.getCurrentBackend();
     const currentAccount: RequestAccount = {
       accountId: configAccount.accountId,
     };
@@ -3248,6 +3263,7 @@ export default class OperationStableCoinService extends Service {
           network: configAccount.network,
           mirrorNode: currentMirror.name,
           rpc: currentRPC.name,
+          backend: currentBackend?.endpoint,
           account: `${configAccount.accountId} - ${configAccount.alias}`,
           token: this.stableCoinWithSymbol,
           tokenPaused: this.stableCoinPaused,

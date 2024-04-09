@@ -41,7 +41,6 @@ import {
 } from '@hashgraph/stablecoin-npm-sdk';
 import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
 import { MIRROR_NODE, RPC } from '../../../core/Constants.js';
-import { AccountType } from '../../../domain/configuration/interfaces/AccountType.js';
 import ManageMultiSigTxService from '../stablecoin/ManageMultiSigTxService.js';
 
 /**
@@ -70,16 +69,6 @@ export default class WizardService extends Service {
       const currentRPC = utilsService.getCurrentRPC();
       const currentBackend = utilsService.getCurrentBackend();
 
-      // Remove ListPendingMultiSig from options if the account is a MultiSig account
-      if (currentAccount.type === AccountType.MultiSignature) {
-        wizardMainOptions.splice(
-          wizardMainOptions.indexOf(
-            language.getText('wizard.mainOptions.ListPendingMultiSig'),
-          ),
-          1,
-        );
-      }
-
       // Show the main menu and get the selected option
       const selectedOption = await utilsService.defaultMultipleAsk(
         language.getText('wizard.mainMenuTitle'),
@@ -89,8 +78,8 @@ export default class WizardService extends Service {
           network: currentAccount.network,
           mirrorNode: currentMirror.name,
           rpc: currentRPC.name,
-          account: `${currentAccount.accountId} - ${currentAccount.alias}`,
           backend: currentBackend?.endpoint,
+          account: `${currentAccount.accountId} - ${currentAccount.alias}`,
         },
       );
       switch (selectedOption) {
@@ -200,8 +189,8 @@ export default class WizardService extends Service {
           network: configAccount.network,
           mirrorNode: currentMirror.name,
           rpc: currentRPC.name,
-          account: `${configAccount.accountId} - ${configAccount.alias}`,
           backend: currentBackend?.endpoint,
+          account: `${configAccount.accountId} - ${configAccount.alias}`,
         },
       )
     ) {

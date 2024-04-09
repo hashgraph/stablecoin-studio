@@ -417,6 +417,7 @@ export default class SetMirrorNodeService extends Service {
     const currentAccount = utilsService.getCurrentAccount();
     const currentMirror = utilsService.getCurrentMirror();
     const currentRPC = utilsService.getCurrentRPC();
+    const currentBackend = utilsService.getCurrentBackend();
 
     const manageOptions = language.getArrayFromObject(
       'wizard.manageMirrorNodeOptions',
@@ -432,6 +433,7 @@ export default class SetMirrorNodeService extends Service {
         account: `${currentAccount.accountId} - ${currentAccount.alias}`,
         mirrorNode: currentMirror.name,
         rpc: currentRPC.name,
+        backend: currentBackend?.endpoint,
       },
     );
     switch (mirrorNodeAction) {

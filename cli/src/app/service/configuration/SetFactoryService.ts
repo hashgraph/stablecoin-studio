@@ -116,6 +116,7 @@ export default class SetFactoryService extends Service {
     const currentMirror = utilsService.getCurrentMirror();
     const currentRPC = utilsService.getCurrentRPC();
     const currentFactory = utilsService.getCurrentFactory();
+    const currentBackend = utilsService.getCurrentBackend();
 
     try {
       const factoryProxyConfig: ProxyConfigurationViewModel =
@@ -143,6 +144,7 @@ export default class SetFactoryService extends Service {
           account: `${currentAccount.accountId} - ${currentAccount.alias}`,
           mirrorNode: currentMirror.name,
           rpc: currentRPC.name,
+          backend: currentBackend?.endpoint,
         },
       );
 
@@ -283,6 +285,7 @@ export default class SetFactoryService extends Service {
     const currentAccount = utilsService.getCurrentAccount();
     const currentMirror = utilsService.getCurrentMirror();
     const currentRPC = utilsService.getCurrentRPC();
+    const currentBackend = utilsService.getCurrentBackend();
 
     const factories: IFactoryConfig[] = configuration?.factories || [];
     const networks = configuration?.networks.map((network) => network.name);
@@ -296,6 +299,7 @@ export default class SetFactoryService extends Service {
         mirrorNode: currentMirror.name,
         rpc: currentRPC.name,
         account: `${currentAccount.accountId} - ${currentAccount.alias}`,
+        backend: currentBackend?.endpoint,
       },
     );
 

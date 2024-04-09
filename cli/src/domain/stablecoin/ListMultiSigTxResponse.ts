@@ -27,7 +27,7 @@ import PaginationResponse from './PaginationResponse';
 
 export default class ListMultiSigTxResponse {
   public multiSigTxList: MultiSigTransaction[];
-  public publicKey: PublicKey;
+  public publicKey?: PublicKey;
   public pagination: PaginationResponse;
 
   /**
@@ -43,7 +43,7 @@ export default class ListMultiSigTxResponse {
     pagination,
   }: {
     multiSigTxList: MultiSigTransaction[];
-    publicKey: PublicKey;
+    publicKey?: PublicKey;
     pagination: PaginationResponse;
   }) {
     this.multiSigTxList = multiSigTxList;
@@ -65,7 +65,7 @@ export default class ListMultiSigTxResponse {
     paginationResRaw,
   }: {
     multiSigTxListRaw: MultiSigTransactionsViewModel['transactions'];
-    publicKey: string | PublicKey;
+    publicKey?: string | PublicKey;
     paginationResRaw: MultiSigTransactionsViewModel['pagination'];
   }): ListMultiSigTxResponse {
     const multiSigTxList = multiSigTxListRaw.map((multiSigTxRaw) => {
@@ -84,7 +84,7 @@ export default class ListMultiSigTxResponse {
 
     return new ListMultiSigTxResponse({
       multiSigTxList,
-      publicKey: new PublicKey(publicKey),
+      publicKey: publicKey ? new PublicKey(publicKey) : undefined,
       pagination: new PaginationResponse({
         totalItems: paginationResRaw.totalItems,
         itemCount: paginationResRaw.itemCount,

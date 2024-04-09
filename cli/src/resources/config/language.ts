@@ -61,6 +61,8 @@ export const english = {
       'An error occurred, see above for details, press any key to continue',
     continue: '↩️ Press enter to continue',
     backOption: backOption,
+    previous: 'Previous',
+    next: 'Next',
   },
   configuration: {
     initialTitle: '\n\n\t\tHedera Stablecoin configuration\n',
@@ -520,7 +522,6 @@ export const english = {
         signingTx: '🖋️ Signing transaction...',
         signedTx: colors.green('✅ Transaction signed successfully'),
         errorSigningTx: colors.red('❌ Error signing transaction'),
-        // TODO: signReturn: 'Returning to multi-signature transaction actions...',
         signReturn: 'Returning to multi-signature transaction list...',
         submittingTx: '📨 Submitting transaction...',
         submittedTx: colors.green('✅ Transaction submitted successfully'),

@@ -293,6 +293,15 @@ export default class UtilitiesService extends Service {
   }
 
   /**
+   * Delays the execution for the specified number of milliseconds.
+   * @param ms - The number of milliseconds to delay.
+   * @returns A promise that resolves after the specified delay.
+   */
+  public delay(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  /**
    * Function to create n break line
    * @param n
    */
@@ -816,6 +825,7 @@ export default class UtilitiesService extends Service {
     const currentAccount = this.getCurrentAccount();
     const currentMirror = this.getCurrentMirror();
     const currentRPC = this.getCurrentRPC();
+    const currentBackend = this.getCurrentBackend();
     const networks = configurationService
       .getConfiguration()
       .networks.map((network) => network.name);
@@ -827,6 +837,7 @@ export default class UtilitiesService extends Service {
         network: currentAccount.network,
         mirrorNode: currentMirror.name,
         rpc: currentRPC.name,
+        backend: currentBackend?.endpoint,
         account: `${currentAccount.accountId} - ${currentAccount.alias}`,
       },
     );

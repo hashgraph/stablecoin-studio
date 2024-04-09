@@ -18,18 +18,20 @@
  *
  */
 
-import { language } from '../../../index.js';
-import { utilsService } from '../../../index.js';
-import { Status } from '../../../domain/stablecoin/MultiSigTransaction.js';
-import Service from '../Service.js';
 import {
   Account,
   GetPublicKeyRequest,
   GetTransactionsRequest,
+  PublicKey,
   StableCoin,
 } from '@hashgraph/stablecoin-npm-sdk';
+import Service from '../Service.js';
+import { language } from '../../../index.js';
+import { utilsService } from '../../../index.js';
+import { Status } from '../../../domain/stablecoin/MultiSigTransaction.js';
 import ListMultiSigTxResponse from '../../../domain/stablecoin/ListMultiSigTxResponse.js';
 import PaginationRequest from '../../../domain/stablecoin/PaginationRequest.js';
+import { AccountType } from '../../../domain/configuration/interfaces/AccountType.js';
 
 /**
  * Service class for listing MultiSig transactions.
@@ -60,15 +62,19 @@ export default class ListMultiSigTxService extends Service {
     },
   ): Promise<ListMultiSigTxResponse> {
     const currentAccount = utilsService.getCurrentAccount();
-    const publicKey = await Account.getPublicKey(
-      new GetPublicKeyRequest({
-        account: { accountId: currentAccount.accountId },
-      }),
-    );
+    const publicKey: PublicKey | undefined =
+      currentAccount.type !== AccountType.MultiSignature
+        ? await Account.getPublicKey(
+            new GetPublicKeyRequest({
+              account: { accountId: currentAccount.accountId },
+            }),
+          )
+        : undefined;
 
     const getTransactionsResponse = StableCoin.getTransactions(
       new GetTransactionsRequest({
         publicKey: publicKey,
+        account: publicKey ? undefined : currentAccount.accountId,
         status,
         page: pagination.page,
         limit: pagination.limit,
@@ -92,7 +98,7 @@ export default class ListMultiSigTxService extends Service {
 
     // Draw table if draw is true
     if (draw) {
-      utilsService.drawTableListPendingMultiSig({
+      await utilsService.drawTableListPendingMultiSig({
         multiSigTxList: multiSigTxListResponse.multiSigTxList,
       });
     }

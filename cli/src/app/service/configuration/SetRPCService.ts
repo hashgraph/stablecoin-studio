@@ -383,6 +383,7 @@ export default class SetRPCService extends Service {
     const currentAccount = utilsService.getCurrentAccount();
     const currentMirror = utilsService.getCurrentMirror();
     const currentRPC = utilsService.getCurrentRPC();
+    const currentBackend = utilsService.getCurrentBackend();
     const manageOptions = language.getArrayFromObject(
       'wizard.manageRPCOptions',
     );
@@ -397,6 +398,7 @@ export default class SetRPCService extends Service {
         account: `${currentAccount.accountId} - ${currentAccount.alias}`,
         mirrorNode: currentMirror.name,
         rpc: currentRPC.name,
+        backend: currentBackend?.endpoint,
       },
     );
     switch (rpcAction) {
