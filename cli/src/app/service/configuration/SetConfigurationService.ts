@@ -1,3 +1,25 @@
+/*
+ *
+ * Hedera Stablecoin CLI
+ *
+ * Copyright (C) 2023 Hedera Hashgraph, LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+import fs from 'fs-extra';
+import colors from 'colors';
 import {
   configurationService,
   language,
@@ -6,20 +28,19 @@ import {
   setMirrorNodeService,
   setRPCService,
   setFactoryService,
+  backendConfigurationService,
 } from '../../../index.js';
 import Service from '../Service.js';
-import fs from 'fs-extra';
+import { ZERO_ADDRESS } from '../../../core/Constants.js';
 import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
 import { IConsensusNodeConfig } from '../../../domain/configuration/interfaces/IConsensusNodeConfig.js';
 import { INetworkConfig } from '../../../domain/configuration/interfaces/INetworkConfig.js';
-import { IMirrorsConfig } from 'domain/configuration/interfaces/IMirrorsConfig.js';
-import { IRPCsConfig } from 'domain/configuration/interfaces/IRPCsConfig.js';
-import { ZERO_ADDRESS } from '../../../core/Constants.js';
+import { IMirrorsConfig } from '../../../domain/configuration/interfaces/IMirrorsConfig.js';
+import { IRPCsConfig } from '../../../domain/configuration/interfaces/IRPCsConfig.js';
 import { AccountType } from '../../../domain/configuration/interfaces/AccountType';
 import { IPrivateKey } from '../../../domain/configuration/interfaces/IPrivateKey';
 import { IFireblocksAccountConfig } from '../../../domain/configuration/interfaces/IFireblocksAccountConfig';
 import { IDfnsAccountConfig } from '../../../domain/configuration/interfaces/IDfnsAccountConfig';
-import colors from 'colors';
 
 /**
  * Set Configuration Service
@@ -39,7 +60,7 @@ export default class SetConfigurationService extends Service {
     path?: string,
     network?: string,
   ): Promise<void> {
-    utilsService.showMessage(language.getText('initialConfiguration.title'));
+    utilsService.showMessage(language.getText('configuration.initialTitle'));
     await this.configurePath(path);
     await this.configureDefaultNetwork(network);
     await this.configureAccounts();
@@ -66,6 +87,14 @@ export default class SetConfigurationService extends Service {
         language.getText('configuration.RPCsConfigurationMessage'),
       );
       await setRPCService.configureRPCs();
+    }
+    // Stablecoin Backend Configuration
+    const configBackend = await utilsService.defaultConfirmAsk(
+      language.getText('configuration.askConfigurateBackend'),
+      true,
+    );
+    if (configBackend) {
+      await backendConfigurationService.configureBackend();
     }
   }
 
@@ -111,11 +140,14 @@ export default class SetConfigurationService extends Service {
   }
 
   /**
-   * Function to configure the default network
+   * Configures the default network for the application.
+   * If a network is provided, it sets it as the default network.
+   * If no network is provided, it prompts the user to select a network from the available options.
+   * If the selected network is a default network, it prompts the user to select a different network or create a custom one.
+   * Finally, it sets the selected network as the default network in the configuration and returns it.
    *
-   * @param _network Network to use
-   *
-   * @returns The new default network
+   * @param _network (optional) The network to set as the default. If not provided, the user will be prompted to select a network.
+   * @returns A Promise that resolves to the selected network.
    */
   public async configureDefaultNetwork(_network?: string): Promise<string> {
     const networks = configurationService
@@ -178,9 +210,8 @@ export default class SetConfigurationService extends Service {
       accounts.length === 1 &&
       ((accounts[0].selfCustodial &&
         accounts[0].selfCustodial.privateKey.key === '') ||
-        (accounts[0].nonCustodial &&
-          (accounts[0].nonCustodial.fireblocks ||
-            accounts[0].nonCustodial.dfns)))
+        (accounts[0].custodial &&
+          (accounts[0].custodial.fireblocks || accounts[0].custodial.dfns)))
     ) {
       accounts = [];
     }
@@ -241,11 +272,11 @@ export default class SetConfigurationService extends Service {
           privateKey: await this.askForPrivateKeyOfAccount(accountId),
         };
       } else if (type === AccountType.Fireblocks) {
-        accountConfig.nonCustodial = {
+        accountConfig.custodial = {
           fireblocks: await this.askForFireblocksOfAccount(),
         };
       } else if (type === AccountType.Dfns) {
-        accountConfig.nonCustodial = {
+        accountConfig.custodial = {
           dfns: await this.askForDfnsOfAccount(),
         };
       }
@@ -409,6 +440,10 @@ export default class SetConfigurationService extends Service {
     await this.manageAccountMenu();
   }
 
+  /**
+   * Asks the user for the account type and returns the selected account type.
+   * @returns A Promise that resolves to the selected AccountType.
+   */
   public async askForAccountType(): Promise<AccountType> {
     let accountType: string;
     do {

@@ -1,5 +1,26 @@
+/*
+ *
+ * Hedera Stablecoin CLI
+ *
+ * Copyright (C) 2023 Hedera Hashgraph, LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 /* eslint-disable no-case-declarations */
 import {
+  backendConfigurationService,
   configurationService,
   language,
   utilsService,
@@ -20,7 +41,6 @@ import {
 } from '@hashgraph/stablecoin-npm-sdk';
 import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
 import { MIRROR_NODE, RPC } from '../../../core/Constants.js';
-import { AccountType } from '../../../domain/configuration/interfaces/AccountType.js';
 import ManageMultiSigTxService from '../stablecoin/ManageMultiSigTxService.js';
 
 /**
@@ -49,16 +69,6 @@ export default class WizardService extends Service {
       const currentRPC = utilsService.getCurrentRPC();
       const currentBackend = utilsService.getCurrentBackend();
 
-      // Remove ListPendingMultiSig from options if the account is a MultiSig account
-      if (currentAccount.type === AccountType.MultiSignature) {
-        wizardMainOptions.splice(
-          wizardMainOptions.indexOf(
-            language.getText('wizard.mainOptions.ListPendingMultiSig'),
-          ),
-          1,
-        );
-      }
-
       // Show the main menu and get the selected option
       const selectedOption = await utilsService.defaultMultipleAsk(
         language.getText('wizard.mainMenuTitle'),
@@ -68,8 +78,8 @@ export default class WizardService extends Service {
           network: currentAccount.network,
           mirrorNode: currentMirror.name,
           rpc: currentRPC.name,
+          backend: currentBackend?.endpoint,
           account: `${currentAccount.accountId} - ${currentAccount.alias}`,
-          backend: currentBackend.endpoint,
         },
       );
       switch (selectedOption) {
@@ -166,6 +176,7 @@ export default class WizardService extends Service {
     const configAccount = utilsService.getCurrentAccount();
     const currentMirror = utilsService.getCurrentMirror();
     const currentRPC = utilsService.getCurrentRPC();
+    const currentBackend = utilsService.getCurrentBackend();
     const wizardChangeConfigOptions: Array<string> =
       language.getArrayFromObject('wizard.changeOptions');
 
@@ -178,13 +189,14 @@ export default class WizardService extends Service {
           network: configAccount.network,
           mirrorNode: currentMirror.name,
           rpc: currentRPC.name,
+          backend: currentBackend?.endpoint,
           account: `${configAccount.accountId} - ${configAccount.alias}`,
         },
       )
     ) {
       case language.getText('wizard.changeOptions.Show'):
         await utilsService.cleanAndShowBanner();
-        await configurationService.showFullConfiguration();
+        configurationService.showFullConfiguration();
         break;
 
       case language.getText('wizard.changeOptions.EditPath'):
@@ -212,6 +224,12 @@ export default class WizardService extends Service {
       case language.getText('wizard.changeOptions.ManageRPC'):
         await utilsService.cleanAndShowBanner();
         await utilsService.configureNetwork(RPC);
+        break;
+
+      case language.getText('wizard.changeOptions.ManageBackend'):
+        await backendConfigurationService.manageBackendMenu({
+          options: { clean: true },
+        });
         break;
 
       case language.getText('wizard.changeOptions.ManageFactory'):
@@ -297,11 +315,11 @@ export default class WizardService extends Service {
     );
     utilsService.setCurrentRPC(currentRPC);
 
+    utilsService.setCurrentBackend(configuration.backend);
+
     const currentFactory = factories.find(
       (factory) => currentAccount.network === factory.network,
     );
-
-    utilsService.setCurrentBackend(configuration.backend);
 
     utilsService.setCurrentFactory(currentFactory);
 

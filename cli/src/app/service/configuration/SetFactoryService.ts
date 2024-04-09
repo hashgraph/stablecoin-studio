@@ -1,3 +1,23 @@
+/*
+ *
+ * Hedera Stablecoin CLI
+ *
+ * Copyright (C) 2023 Hedera Hashgraph, LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 import {
   configurationService,
   language,
@@ -96,6 +116,7 @@ export default class SetFactoryService extends Service {
     const currentMirror = utilsService.getCurrentMirror();
     const currentRPC = utilsService.getCurrentRPC();
     const currentFactory = utilsService.getCurrentFactory();
+    const currentBackend = utilsService.getCurrentBackend();
 
     try {
       const factoryProxyConfig: ProxyConfigurationViewModel =
@@ -123,6 +144,7 @@ export default class SetFactoryService extends Service {
           account: `${currentAccount.accountId} - ${currentAccount.alias}`,
           mirrorNode: currentMirror.name,
           rpc: currentRPC.name,
+          backend: currentBackend?.endpoint,
         },
       );
 
@@ -263,6 +285,7 @@ export default class SetFactoryService extends Service {
     const currentAccount = utilsService.getCurrentAccount();
     const currentMirror = utilsService.getCurrentMirror();
     const currentRPC = utilsService.getCurrentRPC();
+    const currentBackend = utilsService.getCurrentBackend();
 
     const factories: IFactoryConfig[] = configuration?.factories || [];
     const networks = configuration?.networks.map((network) => network.name);
@@ -276,6 +299,7 @@ export default class SetFactoryService extends Service {
         mirrorNode: currentMirror.name,
         rpc: currentRPC.name,
         account: `${currentAccount.accountId} - ${currentAccount.alias}`,
+        backend: currentBackend?.endpoint,
       },
     );
 

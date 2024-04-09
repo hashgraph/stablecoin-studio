@@ -1,3 +1,23 @@
+/*
+ *
+ * Hedera Stablecoin CLI
+ *
+ * Copyright (C) 2023 Hedera Hashgraph, LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as inquirer from 'inquirer';
 import figlet from 'figlet-promised';
@@ -82,29 +102,29 @@ export default class UtilitiesService extends Service {
         wallet = SupportedWallets.FIREBLOCKS;
         custodialWalletSettings = {
           apiSecretKey: fs.readFileSync(
-            account.nonCustodial.fireblocks.apiSecretKeyPath,
+            account.custodial.fireblocks.apiSecretKeyPath,
             'utf8',
           ),
-          apiKey: account.nonCustodial.fireblocks.apiKey,
-          baseUrl: account.nonCustodial.fireblocks.baseUrl,
-          vaultAccountId: account.nonCustodial.fireblocks.vaultAccountId,
-          assetId: account.nonCustodial.fireblocks.assetId,
+          apiKey: account.custodial.fireblocks.apiKey,
+          baseUrl: account.custodial.fireblocks.baseUrl,
+          vaultAccountId: account.custodial.fireblocks.vaultAccountId,
+          assetId: account.custodial.fireblocks.assetId,
           hederaAccountId: account.accountId,
         };
         break;
       case AccountType.Dfns:
         wallet = SupportedWallets.DFNS;
         custodialWalletSettings = {
-          authorizationToken: account.nonCustodial.dfns.authorizationToken,
-          credentialId: account.nonCustodial.dfns.credentialId,
+          authorizationToken: account.custodial.dfns.authorizationToken,
+          credentialId: account.custodial.dfns.credentialId,
           serviceAccountPrivateKey: fs.readFileSync(
-            account.nonCustodial.dfns.privateKeyPath,
+            account.custodial.dfns.privateKeyPath,
             'utf8',
           ),
-          urlApplicationOrigin: account.nonCustodial.dfns.appOrigin,
-          applicationId: account.nonCustodial.dfns.appId,
-          baseUrl: account.nonCustodial.dfns.testUrl,
-          walletId: account.nonCustodial.dfns.walletId,
+          urlApplicationOrigin: account.custodial.dfns.appOrigin,
+          applicationId: account.custodial.dfns.appId,
+          baseUrl: account.custodial.dfns.testUrl,
+          walletId: account.custodial.dfns.walletId,
           hederaAccountId: account.accountId,
         };
         break;
@@ -144,9 +164,8 @@ export default class UtilitiesService extends Service {
     const validations = {
       [AccountType.SelfCustodial]: () => !!account.selfCustodial,
       [AccountType.Fireblocks]: () =>
-        !!account.nonCustodial && !!account.nonCustodial.fireblocks,
-      [AccountType.Dfns]: () =>
-        !!account.nonCustodial && !!account.nonCustodial.dfns,
+        !!account.custodial && !!account.custodial.fireblocks,
+      [AccountType.Dfns]: () => !!account.custodial && !!account.custodial.dfns,
     };
 
     return validations[account.type]();
@@ -271,6 +290,15 @@ export default class UtilitiesService extends Service {
    */
   public showMessage(message: string): void {
     console.log(message);
+  }
+
+  /**
+   * Delays the execution for the specified number of milliseconds.
+   * @param ms - The number of milliseconds to delay.
+   * @returns A promise that resolves after the specified delay.
+   */
+  public delay(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   /**
@@ -633,36 +661,34 @@ export default class UtilitiesService extends Service {
                 type: acc.selfCustodial.privateKey.type,
               },
             },
-        nonCustodial: !acc.nonCustodial
+        custodial: !acc.custodial
           ? undefined
           : {
-              fireblocks: !acc.nonCustodial.fireblocks
+              fireblocks: !acc.custodial.fireblocks
                 ? undefined
                 : {
-                    apiSecretKeyPath:
-                      acc.nonCustodial.fireblocks.apiSecretKeyPath,
-                    apiKey: acc.nonCustodial.fireblocks.apiKey,
-                    baseUrl: acc.nonCustodial.fireblocks.baseUrl,
-                    assetId: acc.nonCustodial.fireblocks.assetId,
-                    vaultAccountId: acc.nonCustodial.fireblocks.vaultAccountId,
+                    apiSecretKeyPath: acc.custodial.fireblocks.apiSecretKeyPath,
+                    apiKey: acc.custodial.fireblocks.apiKey,
+                    baseUrl: acc.custodial.fireblocks.baseUrl,
+                    assetId: acc.custodial.fireblocks.assetId,
+                    vaultAccountId: acc.custodial.fireblocks.vaultAccountId,
                     hederaAccountPublicKey:
-                      acc.nonCustodial.fireblocks.hederaAccountPublicKey,
+                      acc.custodial.fireblocks.hederaAccountPublicKey,
                   },
-              dfns: !acc.nonCustodial.dfns
+              dfns: !acc.custodial.dfns
                 ? undefined
                 : {
-                    authorizationToken:
-                      acc.nonCustodial.dfns.authorizationToken,
-                    credentialId: acc.nonCustodial.dfns.credentialId,
-                    privateKeyPath: acc.nonCustodial.dfns.privateKeyPath,
-                    appOrigin: acc.nonCustodial.dfns.appOrigin,
-                    appId: acc.nonCustodial.dfns.appId,
-                    testUrl: acc.nonCustodial.dfns.testUrl,
-                    walletId: acc.nonCustodial.dfns.walletId,
+                    authorizationToken: acc.custodial.dfns.authorizationToken,
+                    credentialId: acc.custodial.dfns.credentialId,
+                    privateKeyPath: acc.custodial.dfns.privateKeyPath,
+                    appOrigin: acc.custodial.dfns.appOrigin,
+                    appId: acc.custodial.dfns.appId,
+                    testUrl: acc.custodial.dfns.testUrl,
+                    walletId: acc.custodial.dfns.walletId,
                     hederaAccountPublicKey:
-                      acc.nonCustodial.dfns.hederaAccountPublicKey,
+                      acc.custodial.dfns.hederaAccountPublicKey,
                     hederaAccountKeyType:
-                      acc.nonCustodial.dfns.hederaAccountKeyType,
+                      acc.custodial.dfns.hederaAccountKeyType,
                   },
             },
       };
@@ -725,6 +751,7 @@ export default class UtilitiesService extends Service {
     let networkInfo = '';
     let mirrorInfo = '';
     let rpcInfo = '';
+    let backendInfo = '';
 
     if (network)
       networkInfo =
@@ -736,9 +763,17 @@ export default class UtilitiesService extends Service {
       mirrorInfo = colors.cyan(' - mirror: ' + this.currentMirror.name);
     if (this.currentRPC)
       rpcInfo = colors.cyan(', rpc: ' + this.currentRPC.name);
+    if (this.currentBackend)
+      backendInfo = colors.cyan(', backend: ' + this.currentBackend.endpoint);
 
-    if (networkInfo || mirrorInfo || rpcInfo) {
-      result = result + networkInfo + mirrorInfo + rpcInfo + colors.cyan(')');
+    if (networkInfo || mirrorInfo || rpcInfo || backendInfo) {
+      result =
+        result +
+        networkInfo +
+        mirrorInfo +
+        rpcInfo +
+        backendInfo +
+        colors.cyan(')');
     }
 
     if (accountId) {
@@ -799,6 +834,7 @@ export default class UtilitiesService extends Service {
     const currentAccount = this.getCurrentAccount();
     const currentMirror = this.getCurrentMirror();
     const currentRPC = this.getCurrentRPC();
+    const currentBackend = this.getCurrentBackend();
     const networks = configurationService
       .getConfiguration()
       .networks.map((network) => network.name);
@@ -810,6 +846,7 @@ export default class UtilitiesService extends Service {
         network: currentAccount.network,
         mirrorNode: currentMirror.name,
         rpc: currentRPC.name,
+        backend: currentBackend?.endpoint,
         account: `${currentAccount.accountId} - ${currentAccount.alias}`,
       },
     );

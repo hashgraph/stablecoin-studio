@@ -1,6 +1,26 @@
-import colors from 'colors';
+/*
+ *
+ * Hedera Stablecoin CLI
+ *
+ * Copyright (C) 2023 Hedera Hashgraph, LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 import { AccountType } from '../../domain/configuration/interfaces/AccountType';
 import * as inquirer from 'inquirer';
+import colors from 'colors';
 
 const separator_1 = {
   Separator_1: new inquirer.Separator(),
@@ -41,11 +61,11 @@ export const english = {
       'An error occurred, see above for details, press any key to continue',
     continue: '↩️ Press enter to continue',
     backOption: backOption,
-  },
-  initialConfiguration: {
-    title: '\n\n\t\tHedera Stablecoin initial configuration\n',
+    previous: 'Previous',
+    next: 'Next',
   },
   configuration: {
+    initialTitle: '\n\n\t\tHedera Stablecoin configuration\n',
     askPath: 'Write your config path',
     askCreateConfig:
       'No configuration file found at the specified path, would you like to create one? (y/n)',
@@ -62,6 +82,8 @@ export const english = {
       'Do you want to config your factories? Check the documentation for more information : https://github.com/hashgraph/stablecoin-studio#deploying-the-stable-coin-factories',
     askConfigurateDefaultMirrorsAndRPCs:
       'Do you want to use default mirror node/JSON-RPC-Relay services? (y/n)',
+    askConfigurateBackend: 'Do you want to configure the backend? (y/n)',
+    askBackendUrl: 'Enter the backend url',
     askNetworkAccount: 'Which network does this account belong to?',
     askPrivateKeyType: 'Which type of private key will the account use?',
     askAlias: 'Enter an alias for this account',
@@ -134,6 +156,9 @@ export const english = {
     selectMirrorNode: 'Select the mirror node: ',
     selectRPC: 'Select the JSON-RPC-Relay: ',
     RPCNotToChange: '\nThere is no nJSON-RPC-Relay to change',
+    backendNew: 'New backend endpoint',
+    backendRemoved: 'Backend endpoint removed',
+    backendNotDefined: colors.red('There is no backend defined'),
     fireblocks: {
       title: 'Fireblocks account configuration',
       askApiSecretKeyPath: 'Enter your API secret key path',
@@ -377,6 +402,7 @@ export const english = {
       ManageMirrorNode: 'Manage mirror node',
       ManageRPC: 'Manage JSON-RPC-Relay',
       ManageFactory: 'Manage factory',
+      ManageBackend: 'Manage backend',
       ...returnToMainMenu,
     },
     manageAccountOptions: {
@@ -399,6 +425,11 @@ export const english = {
       Add: 'Set up JSON-RPC-Relay',
       Delete: 'Remove JSON-RPC-Relay',
       ...goBack,
+    },
+    manageBackendTitle: 'Manage backend options',
+    manageBackendOptions: {
+      update: 'Update current backend endpoint',
+      remove: 'Remove current backend endpoint',
     },
     manageImportedTokens: {
       Add: 'Add token',
@@ -491,7 +522,6 @@ export const english = {
         signingTx: '🖋️ Signing transaction...',
         signedTx: colors.green('✅ Transaction signed successfully'),
         errorSigningTx: colors.red('❌ Error signing transaction'),
-        // TODO: signReturn: 'Returning to multi-signature transaction actions...',
         signReturn: 'Returning to multi-signature transaction list...',
         submittingTx: '📨 Submitting transaction...',
         submittedTx: colors.green('✅ Transaction submitted successfully'),

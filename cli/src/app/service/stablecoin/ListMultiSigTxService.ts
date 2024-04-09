@@ -1,15 +1,37 @@
-import { language } from '../../../index.js';
-import { utilsService } from '../../../index.js';
-import { Status } from '../../../domain/stablecoin/MultiSigTransaction.js';
-import Service from '../Service.js';
+/*
+ *
+ * Hedera Stablecoin CLI
+ *
+ * Copyright (C) 2023 Hedera Hashgraph, LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 import {
   Account,
   GetPublicKeyRequest,
   GetTransactionsRequest,
+  PublicKey,
   StableCoin,
 } from '@hashgraph/stablecoin-npm-sdk';
+import Service from '../Service.js';
+import { language } from '../../../index.js';
+import { utilsService } from '../../../index.js';
+import { Status } from '../../../domain/stablecoin/MultiSigTransaction.js';
 import ListMultiSigTxResponse from '../../../domain/stablecoin/ListMultiSigTxResponse.js';
 import PaginationRequest from '../../../domain/stablecoin/PaginationRequest.js';
+import { AccountType } from '../../../domain/configuration/interfaces/AccountType.js';
 
 /**
  * Service class for listing MultiSig transactions.
@@ -40,15 +62,19 @@ export default class ListMultiSigTxService extends Service {
     },
   ): Promise<ListMultiSigTxResponse> {
     const currentAccount = utilsService.getCurrentAccount();
-    const publicKey = await Account.getPublicKey(
-      new GetPublicKeyRequest({
-        account: { accountId: currentAccount.accountId },
-      }),
-    );
+    const publicKey: PublicKey | undefined =
+      currentAccount.type !== AccountType.MultiSignature
+        ? await Account.getPublicKey(
+            new GetPublicKeyRequest({
+              account: { accountId: currentAccount.accountId },
+            }),
+          )
+        : undefined;
 
     const getTransactionsResponse = StableCoin.getTransactions(
       new GetTransactionsRequest({
         publicKey: publicKey,
+        account: publicKey ? undefined : currentAccount.accountId,
         status,
         page: pagination.page,
         limit: pagination.limit,
@@ -72,7 +98,7 @@ export default class ListMultiSigTxService extends Service {
 
     // Draw table if draw is true
     if (draw) {
-      utilsService.drawTableListPendingMultiSig({
+      await utilsService.drawTableListPendingMultiSig({
         multiSigTxList: multiSigTxListResponse.multiSigTxList,
       });
     }

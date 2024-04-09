@@ -1,10 +1,23 @@
-import Service from '../Service.js';
-import { wizardService } from '../../../index';
-import { language, utilsService } from '../../../index.js';
-import MultiSigTransaction, {
-  Status,
-} from '../../../domain/stablecoin/MultiSigTransaction.js';
-import ListMultiSigTxService from './ListMultiSigTxService.js';
+/*
+ *
+ * Hedera Stablecoin CLI
+ *
+ * Copyright (C) 2023 Hedera Hashgraph, LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 import {
   Account,
   GetPublicKeyRequest,
@@ -12,7 +25,15 @@ import {
   SignTransactionRequest,
   StableCoin,
 } from '@hashgraph/stablecoin-npm-sdk';
+import Service from '../Service.js';
+import { wizardService } from '../../../index';
+import { language, utilsService } from '../../../index.js';
+import ListMultiSigTxService from './ListMultiSigTxService.js';
+import MultiSigTransaction, {
+  Status,
+} from '../../../domain/stablecoin/MultiSigTransaction.js';
 import PaginationRequest from '../../../domain/stablecoin/PaginationRequest.js';
+import { AccountType } from '../../../domain/configuration/interfaces/AccountType.js';
 
 export default class ManageMultiSigTxService extends Service {
   status?: Status;
@@ -53,13 +74,18 @@ export default class ManageMultiSigTxService extends Service {
       pagination: paginationReq,
     });
     const multiSigTxList = multiSigTxListResponse.multiSigTxList;
-    const publicKey = multiSigTxListResponse.publicKey.toString();
+    const publicKey = multiSigTxListResponse.publicKey?.toString();
     const paginationRes = multiSigTxListResponse.pagination;
-    // Id transaction list
-    const txIdListAsOptions = (
-      multiSigTxList.map((tx) => tx.id) as string[]
-    ).concat(['previous', 'next']);
-    // TODO: set in language
+    // Create a list of transaction IDs as options for the user to select
+    const txIdListAsOptions: string[] = multiSigTxList.map((tx) => tx.id);
+    // Add 'previous' option if not on the first page
+    if (paginationRes.currentPage != 1) {
+      txIdListAsOptions.push(language.getText('general.previous'));
+    }
+    // Add 'next' option if not on the last page
+    if (paginationRes.currentPage != paginationRes.totalPages) {
+      txIdListAsOptions.push(language.getText('general.next'));
+    }
     const selectedOption = await utilsService.defaultMultipleAsk(
       language.getText('wizard.multiSig.listMenuTitle'),
       txIdListAsOptions,
@@ -70,13 +96,13 @@ export default class ManageMultiSigTxService extends Service {
       case language.getText('general.backOption'):
         await wizardService.mainMenu();
         return;
-      case 'previous':
+      case language.getText('general.previous'):
         await this.start({
           status,
           paginationReq: paginationRes.previous(),
         });
         return;
-      case 'next':
+      case language.getText('general.next'):
         await this.start({
           status,
           paginationReq: paginationRes.next(),
@@ -107,27 +133,43 @@ export default class ManageMultiSigTxService extends Service {
     publicKey?: string;
   }): Promise<void> {
     const currentAccount = utilsService.getCurrentAccount();
-    const publicKeyFromHederaAccount = Account.getPublicKey(
-      new GetPublicKeyRequest({
-        account: { accountId: currentAccount.accountId },
-      }),
+    const publicKeyFromHederaAccount =
+      currentAccount.type !== AccountType.MultiSignature
+        ? await Account.getPublicKey(
+            new GetPublicKeyRequest({
+              account: { accountId: currentAccount.accountId },
+            }),
+          )
+        : undefined;
+    publicKey = publicKey || publicKeyFromHederaAccount?.toString();
+    const signAction = language.getText(
+      'wizard.multiSig.txActions.actions.sign',
     );
-    publicKey = publicKey || (await publicKeyFromHederaAccount).toString();
-    const actions = language.getArrayFromObject(
-      'wizard.multiSig.txActions.actions',
+    const submitAction = language.getText(
+      'wizard.multiSig.txActions.actions.submit',
     );
+    const removeAction = language.getText(
+      'wizard.multiSig.txActions.actions.remove',
+    );
+    const detailsAction = language.getText(
+      'wizard.multiSig.txActions.actions.details',
+    );
+    const actions = [signAction, submitAction, removeAction, detailsAction];
     // * Remove actions that are not allowed based on the status of the MultiSig transaction
     // Remove the "Submit" action if the MultiSig transaction is pending
     if (multiSigTx.status === Status.Pending) {
-      actions.splice(
-        actions.indexOf(
-          language.getText('wizard.multiSig.txActions.actions.submit'),
-        ),
-        1,
-      );
+      actions.splice(actions.indexOf(submitAction), 1);
     }
     // Remove the "Sign" action if is signed with this account key
     if (multiSigTx.signedKeys.includes(publicKey)) {
+      actions.splice(actions.indexOf(signAction), 1);
+    }
+    //* Remove actions that are not allowed based on the type of Account
+    // Remove the "Sign" action if the account is multisig
+    if (
+      currentAccount.type === AccountType.MultiSignature &&
+      actions.includes(signAction)
+    ) {
       actions.splice(
         actions.indexOf(
           language.getText('wizard.multiSig.txActions.actions.sign'),
@@ -187,12 +229,6 @@ export default class ManageMultiSigTxService extends Service {
       );
     }
     console.info(language.getText('wizard.multiSig.txActions.signReturn'));
-    // TODO: retrieve the updated transaction and return to the same transaction actions
-    // multiSigTx = await StableCoin.getTransactions(
-    //   new GetTransactionRequest({}),
-    // );
-    // await utilsService.confirmContinue();
-    // await this.multiSigTxActions({ multiSigTx });
     await utilsService.confirmContinue();
     await this.start({ options: { clear: true } });
   }

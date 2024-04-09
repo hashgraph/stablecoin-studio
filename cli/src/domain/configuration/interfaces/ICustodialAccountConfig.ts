@@ -18,16 +18,10 @@
  *
  */
 
-import { RequestPublicKey } from '@hashgraph/stablecoin-npm-sdk';
+import { IFireblocksAccountConfig } from './IFireblocksAccountConfig';
+import { IDfnsAccountConfig } from './IDfnsAccountConfig';
 
-export interface IManagedFeatures {
-  name?: string;
-  symbol?: string;
-  adminKey?: RequestPublicKey;
-  supplyKey?: RequestPublicKey;
-  freezeKey?: RequestPublicKey;
-  wipeKey?: RequestPublicKey;
-  pauseKey?: RequestPublicKey;
-  kycKey?: RequestPublicKey;
-  feeScheduleKey?: RequestPublicKey;
+export interface ICustodialAccountConfig {
+  fireblocks?: IFireblocksAccountConfig;
+  dfns?: IDfnsAccountConfig;
 }
