@@ -2,7 +2,7 @@
 
 # Stablecoin Studio - Web
 
-[![WEB - Test](https://github.com/hashgraph/stablecoin-studio/actions/workflows/web.test.yml/badge.svg)](https://github.com/hashgraph/stablecoin-studio/actions/workflows/web.test.yml)
+[![License](https://img.shields.io/badge/license-apache2-blue.svg)](../LICENSE.md)
 
 </div>
 
@@ -109,7 +109,6 @@ npm run start
 The front end will automatically detect how many compatible wallets are available and ask you to select one of them to operate with.
 
 ![image](https://user-images.githubusercontent.com/114951681/229089031-9f014228-68cf-4d94-b4da-448d16e884b3.png)
-
 
 If you choose HashPack or Blade, you will be asked to choose a network (testnet or mainnet)
 
@@ -260,32 +259,34 @@ While if the user selects the option to manage the factory, it could change the 
 
 ### Multisig transactions
 
-This tab will list all the pending transactions currently in the backend that : 
+This tab will list all the pending transactions currently in the backend that :
+
 - If you are connected with a wallet (Hashpack, Blade, Metamask): your current private key can sign.
 - If you are connected with a multisig account: are associated to your account id.
 
 For each displayed transactions you will have one or many options, also depending on your connection mode and the current status of the transaction:
+
 - If you are connected with a **wallet** (Hashpack, Blade, Metamask):
   - If the transaction has not been fully signed yet:
     - If you have not signed it yet: **SIGN, REMOVE.**
     - If you have signed it already: **REMOVE.**
-  - If the transaction has been fully signed already: **SEND(*), REMOVE.** 
-> (*)SEND is not available if you are connected with Metamask
-- If you are connected with a **multisig account**: 
+  - If the transaction has been fully signed already: **SEND(\*), REMOVE.**
+    > (\*)SEND is not available if you are connected with Metamask
+- If you are connected with a **multisig account**:
   - If the transaction has not been fully signed yet: **REMOVE.**
-  - If the transaction has been fully signed already: **SEND, REMOVE.** 
+  - If the transaction has been fully signed already: **SEND, REMOVE.**
 
 The operations that you can perform on a transaction are:
-- __SIGN__: Signs the transaction using the private key associated to your wallet.
-- __SEND__: Submits the transaction to the Hedera DLT.
-- __REMOVE__: Removes the transaction from the backend, the transaction will be "discarded".
+
+- **SIGN**: Signs the transaction using the private key associated to your wallet.
+- **SEND**: Submits the transaction to the Hedera DLT.
+- **REMOVE**: Removes the transaction from the backend, the transaction will be "discarded".
 
 ![Alt text](docs/images/MultisigTransactions.png?raw=true)
 
-In order to view the __DETAILS__ of a transaction you can click on its __DESCRIPTION__
+In order to view the **DETAILS** of a transaction you can click on its **DESCRIPTION**
 
 ![Alt text](docs/images/MultisigTransactionDetails.png?raw=true)
-
 
 # Testing
 
