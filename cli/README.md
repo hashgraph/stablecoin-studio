@@ -295,29 +295,30 @@ https://user-images.githubusercontent.com/114951681/228851958-db534d9e-0bc3-41f5
 
 This option displays all the stablecoins the user has created or added.
 
-### List multi-signature transactions
+#### List Multi-Signature Transactions
 
-This option will list all the pending transactions currently in the backend that:
+This feature lists all pending transactions in the backend that meet the following criteria:
 
-- If you are connected with a self-custodial (private key): your current private key can sign.
-- If you are connected with a multisig account: are associated to your account id.
+- For self-custodial connections (private key): Transactions that can be signed by your current private key.
+- For multisig account connections: Transactions associated with your account ID.
 
-For each displayed transactions you will have one or many options, also depending on your connection mode and the current status of the transaction:
+Depending on your connection mode and the current status of the transaction, each listed transaction will have one or more available options:
 
-- If you are connected with a **Self-custodial** account:
-  - If the transaction has not been fully signed yet:
-    - If you have not signed it yet: **SIGN, REMOVE.**
-    - If you have signed it already: **REMOVE.**
-  - If the transaction has been fully signed already: **SEND, REMOVE.**
-- If you are connected with a **multisig account**:
-  - If the transaction has not been fully signed yet: **REMOVE.**
-  - If the transaction has been fully signed already: **SEND, REMOVE.**
+- For **Self-custodial** account connections:
+  - For transactions not yet fully signed:
+    - If you haven't signed it yet: Options are **SIGN** and **REMOVE**.
+    - If you've already signed it: The only option is **REMOVE**.
+  - For transactions that are fully signed: Options are **SEND** and **REMOVE**.
+- For **Multi-signature** account connections:
+  - For transactions not yet fully signed: The only option is **REMOVE**.
+  - For transactions that are fully signed: Options are **SEND** and **REMOVE**.
 
-The operations that you can perform on a transaction are:
+The actions you can perform on a transaction include:
 
-- **SIGN**: Signs the transaction using the private key associated to your wallet.
-- **SEND**: Submits the transaction to the Hedera DLT.
-- **REMOVE**: Removes the transaction from the backend, the transaction will be "discarded".
+- **SIGN**: Sign the transaction using the private key associated with your wallet.
+- **SEND**: Submit the transaction to the Hedera DLT.
+- **REMOVE**: Remove the transaction from the backend, effectively "discarding" it.
+- **DETAILS**: View raw transaction details such as the message to be signed, the public keys of the signatories, who has already signed it, the signatures, etc. This option is **always available**.
 
 https://github.com/hashgraph/stablecoin-studio/assets/10762009/20030a9f-2185-49a8-b554-318782f51d8d
 
