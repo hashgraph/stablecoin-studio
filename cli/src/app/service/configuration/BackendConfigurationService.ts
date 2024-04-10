@@ -29,14 +29,25 @@ import {
 import IBackendConfig from '../../../domain/configuration/interfaces/BackendConfig';
 import Service from '../Service';
 
+/**
+ * Service class for managing the backend configuration.
+ */
 export default class BackendConfigurationService extends Service {
   constructor() {
     super('Backend Configuration');
   }
 
-  public async configureBackend(): Promise<IBackendConfig> {
-    const configuration = configurationService.getConfiguration();
-    const endpoint = configuration?.backend?.endpoint;
+  /**
+   * Configures the backend with the provided endpoint.
+   *
+   * @param options - The options for configuring the backend.
+   * @param options.endpoint - The endpoint URL or string.
+   *
+   * @returns A Promise that resolves to the updated backend configuration.
+   */
+  public async configureBackend({
+    endpoint,
+  }: { endpoint?: URL | string } = {}): Promise<IBackendConfig> {
     return this._setBackendEndpoint({ endpoint });
   }
 
@@ -49,12 +60,12 @@ export default class BackendConfigurationService extends Service {
    * @returns A Promise that resolves when the backend menu is managed.
    */
   public async manageBackendMenu(
-    { options }: { options: { clean?: boolean } } = {
-      options: { clean: false },
+    { options }: { options: { clear?: boolean } } = {
+      options: { clear: false },
     },
   ): Promise<void> {
     // Clean the terminal and show the banner
-    if (options.clean) {
+    if (options.clear) {
       await utilsService.cleanAndShowBanner();
     }
     // Get the current account, mirror, rpc to display
@@ -99,31 +110,41 @@ export default class BackendConfigurationService extends Service {
     }
   }
 
+  /**
+   * Sets the backend endpoint configuration.
+   *
+   * @param {Object} options - The options for setting the backend endpoint.
+   * @param {URL | string} options.endpoint - The endpoint URL or string.
+   *
+   * @returns {Promise<IBackendConfig>} The updated backend configuration.
+   */
   private async _setBackendEndpoint({
     endpoint,
   }: { endpoint?: URL | string } = {}): Promise<IBackendConfig> {
-    // Try to get the endpoint up to 5 times
+    // Try to get a valid endpoint up to 5 times
     for (let tries = 0; tries < 5; tries++) {
       try {
+        if (endpoint) break; // If we have a valid endpoint, break the loop
         const answer = await utilsService.defaultSingleAsk(
           language.getText('configuration.askBackendUrl'),
           DEFAULT_BACKEND_ENDPOINT,
         );
         endpoint = new URL(answer);
-        if (endpoint) break; // If we have a valid endpoint, break the loop
       } catch (error) {
         utilsService.showError(
           `${error}\n${language.getText('general.incorrectParam')}`,
         );
       }
     }
-    // If we still don't have a valid endpoint, use the default one
-    if (!endpoint) {
-      endpoint = new URL(DEFAULT_BACKEND_ENDPOINT);
-    }
-
-    // Update the configuration and return it
+    // Get the current configuration
     const configuration = configurationService.getConfiguration();
+    // If we still don't have a valid endpoint, use the actual configured or use the default one
+    if (!endpoint) {
+      endpoint = new URL(
+        configuration.backend?.endpoint || DEFAULT_BACKEND_ENDPOINT,
+      );
+    }
+    // Update the configuration and return it
     configuration.backend = {
       endpoint: endpoint.toString(),
     } as IBackendConfig;
@@ -132,6 +153,10 @@ export default class BackendConfigurationService extends Service {
     return configuration.backend;
   }
 
+  /**
+   * Removes the backend configuration from the service.
+   * This method sets the backend configuration to undefined and updates the current backend.
+   */
   private _removeBackend(): void {
     const configuration = configurationService.getConfiguration();
     configuration.backend = undefined;

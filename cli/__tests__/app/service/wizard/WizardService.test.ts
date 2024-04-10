@@ -60,6 +60,13 @@ describe('wizardService', () => {
         },
       },
       {
+        accountId: '0.0.4',
+        type: AccountType.MultiSignature,
+        network: 'testnet',
+        alias: 'aliasmulti-signature',
+        importedTokens: [{ id: '0.0.58325', symbol: 'TEST' }],
+      },
+      {
         accountId: 'account3',
         type: AccountType.Dfns,
         network: 'testnet',
@@ -97,6 +104,9 @@ describe('wizardService', () => {
         selected: true,
       },
     ],
+    backend: {
+      endpoint: 'http://localhost:3000/api/transactions',
+    },
     factories: [
       { id: '1', network: 'dev' },
       { id: '2', network: 'testnet' },
@@ -244,25 +254,9 @@ describe('wizardService', () => {
 
     // verify
     expect(getConfigurationMock).toHaveBeenCalled();
-    expect(setSelectedAccountMock).toHaveBeenCalledWith({
-      accountId: 'account3',
-      type: AccountType.Dfns,
-      network: 'testnet',
-      alias: 'alias3',
-      nonCustodial: {
-        dfns: {
-          authorizationToken: 'authorizationToken',
-          credentialId: 'credentialId',
-          privateKeyPath: 'privateKeyPath',
-          appOrigin: 'appOrigin',
-          appId: 'appId',
-          testUrl: 'testUrl',
-          walletId: 'walletId',
-          hederaAccountPublicKey: 'hederaAccountPublicKey',
-          hederaAccountKeyType: 'hederaAccountKeyType',
-        },
-      },
-    });
+    expect(setSelectedAccountMock).toHaveBeenCalledWith(
+      configurationMock.accounts[configurationMock.accounts.length - 1],
+    );
   });
 
   it('should set the selected account and related configurations', async () => {
@@ -281,6 +275,9 @@ describe('wizardService', () => {
       .mockImplementation();
     const setCurrentRPCMock = jest
       .spyOn(utilsService, 'setCurrentRPC')
+      .mockImplementation();
+    const setCurrentBackendMock = jest
+      .spyOn(utilsService, 'setCurrentBackend')
       .mockImplementation();
     const setCurrentFactoryMock = jest
       .spyOn(utilsService, 'setCurrentFactory')
@@ -330,6 +327,9 @@ describe('wizardService', () => {
       apiKey: '',
       headerName: '',
       selected: true,
+    });
+    expect(setCurrentBackendMock).toHaveBeenCalledWith({
+      endpoint: configurationMock.backend.endpoint,
     });
     expect(setCurrentFactoryMock).toHaveBeenCalledWith({
       id: '2',
