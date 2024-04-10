@@ -20,7 +20,7 @@
     - [Manage imported tokens](#manage-imported-tokens)
     - [Operate with stablecoin](#operate-with-stablecoin)
     - [List stablecoins](#list-stablecoins)
-  - [List multi-signature transactions](#list-multi-signature-transactions)
+    - [List Multi-Signature Transactions](#list-multi-signature-transactions)
     - [Configuration](#configuration)
 - [Jest](#jest)
 - [Run](#run)
