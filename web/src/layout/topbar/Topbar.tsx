@@ -8,6 +8,7 @@ import {
 	HStack,
 	Image,
 	Link,
+	Tooltip,
 } from '@chakra-ui/react';
 import { Network, SupportedWallets } from '@hashgraph/stablecoin-npm-sdk';
 import { useEffect, useState } from 'react';
@@ -82,7 +83,17 @@ const Topbar = () => {
 					<Flex gap={5} alignItems='center'>
 						<CoinDropdown />
 						<HStack>
-							{selectedWallet !== SupportedWallets.MULTISIG && (
+							{selectedWallet === SupportedWallets.MULTISIG ? (
+								<Tooltip label='Stable coin creation is not supported by MultiSig'>
+									<div>
+										<CollapsibleButton
+											nameIcon='Plus'
+											text={t('topbar.createSC')}
+											disabled={true}
+										/>
+									</div>
+								</Tooltip>
+							) : (
 								<CollapsibleButton
 									nameIcon='Plus'
 									text={t('topbar.createSC')}
