@@ -298,47 +298,46 @@ describe('Backend Configuration Service', () => {
         endpoint: ENDPOINT,
       });
     });
-  });
+    it('should remove backend', async () => {
+      //* 🗂️ Arrange
+      const MENU_OPTIONS = language.getArrayFromObject(
+        'wizard.manageBackendOptions',
+      );
+      const mocks = {
+        cleanAndShowBanner: jest
+          .spyOn(utilsService, 'cleanAndShowBanner')
+          .mockReturnValue(Promise.resolve()),
+        getConfiguration: jest
+          .spyOn(configurationService, 'getConfiguration')
+          .mockReturnValue(CONFIG),
+        defaultMultipleAsk: jest
+          .spyOn(utilsService, 'defaultMultipleAsk')
+          .mockReturnValueOnce(Promise.resolve(MENU_OPTIONS[1])),
+        setConfiguration: jest
+          .spyOn(configurationService, 'setConfiguration')
+          .mockReturnValue(),
+        setCurrentBackend: jest
+          .spyOn(utilsService, 'setCurrentBackend')
+          .mockReturnValue(),
+        configurationMenu: jest
+          .spyOn(wizardService, 'configurationMenu')
+          .mockReturnValue(Promise.resolve()),
+      };
+      //* 🎬 Act
+      await backendConfigurationService.manageBackendMenu();
 
-  it('should remove backend', async () => {
-    //* 🗂️ Arrange
-    const MENU_OPTIONS = language.getArrayFromObject(
-      'wizard.manageBackendOptions',
-    );
-    const mocks = {
-      cleanAndShowBanner: jest
-        .spyOn(utilsService, 'cleanAndShowBanner')
-        .mockReturnValue(Promise.resolve()),
-      getConfiguration: jest
-        .spyOn(configurationService, 'getConfiguration')
-        .mockReturnValue(CONFIG),
-      defaultMultipleAsk: jest
-        .spyOn(utilsService, 'defaultMultipleAsk')
-        .mockReturnValueOnce(Promise.resolve(MENU_OPTIONS[1])),
-      setConfiguration: jest
-        .spyOn(configurationService, 'setConfiguration')
-        .mockReturnValue(),
-      setCurrentBackend: jest
-        .spyOn(utilsService, 'setCurrentBackend')
-        .mockReturnValue(),
-      configurationMenu: jest
-        .spyOn(wizardService, 'configurationMenu')
-        .mockReturnValue(Promise.resolve()),
-    };
-    //* 🎬 Act
-    await backendConfigurationService.manageBackendMenu();
-
-    //* 🕵️ Assert
-    expect(mocks.cleanAndShowBanner).toHaveBeenCalledTimes(0);
-    expect(mocks.getConfiguration).toHaveBeenCalledTimes(2);
-    expect(mocks.defaultMultipleAsk).toHaveBeenCalledTimes(1);
-    expect(mocks.setConfiguration).toHaveBeenCalledTimes(1);
-    expect(mocks.setCurrentBackend).toHaveBeenCalledTimes(1);
-    expect(mocks.configurationMenu).toHaveBeenCalledTimes(1);
-    expect(mocks.setConfiguration).toHaveBeenCalledWith({
-      ...CONFIG,
-      backend: undefined,
+      //* 🕵️ Assert
+      expect(mocks.cleanAndShowBanner).toHaveBeenCalledTimes(0);
+      expect(mocks.getConfiguration).toHaveBeenCalledTimes(2);
+      expect(mocks.defaultMultipleAsk).toHaveBeenCalledTimes(1);
+      expect(mocks.setConfiguration).toHaveBeenCalledTimes(1);
+      expect(mocks.setCurrentBackend).toHaveBeenCalledTimes(1);
+      expect(mocks.configurationMenu).toHaveBeenCalledTimes(1);
+      expect(mocks.setConfiguration).toHaveBeenCalledWith({
+        ...CONFIG,
+        backend: undefined,
+      });
+      expect(mocks.setCurrentBackend).toHaveBeenCalledWith(undefined);
     });
-    expect(mocks.setCurrentBackend).toHaveBeenCalledWith(undefined);
   });
 });
