@@ -48,6 +48,12 @@ const listStableCoins = {
 describe(`Testing ListStableCoinService class`, () => {
   beforeEach(() => {
     jest.spyOn(utilsService, 'showSpinner').mockImplementation();
+    jest.spyOn(utilsService, 'showMessage').mockImplementation();
+    jest.spyOn(console, 'log').mockImplementation();
+    jest.spyOn(console, 'info').mockImplementation();
+    jest.spyOn(console, 'warn').mockImplementation();
+    jest.spyOn(console, 'error').mockImplementation();
+    jest.spyOn(console, 'dir').mockImplementation();
     jest
       .spyOn(utilsService, 'getCurrentAccount')
       .mockReturnValue(currentAccount);

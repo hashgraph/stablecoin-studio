@@ -76,6 +76,12 @@ const mockedSelectedStableCoin = {
 describe(`Testing DetailsStableCoinService class`, () => {
   beforeEach(() => {
     jest.spyOn(utilsService, 'showSpinner').mockImplementation();
+    jest.spyOn(utilsService, 'showMessage').mockImplementation();
+    jest.spyOn(console, 'log').mockImplementation();
+    jest.spyOn(console, 'info').mockImplementation();
+    jest.spyOn(console, 'warn').mockImplementation();
+    jest.spyOn(console, 'error').mockImplementation();
+    jest.spyOn(console, 'dir').mockImplementation();
     jest
       .spyOn(StableCoin, 'getInfo')
       .mockResolvedValue(mockedSelectedStableCoin);

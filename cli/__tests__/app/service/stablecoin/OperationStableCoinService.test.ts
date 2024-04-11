@@ -143,6 +143,12 @@ const roles = [
 describe(`Testing OperationStableCoinService class`, () => {
   beforeEach(() => {
     jest.spyOn(utilsService, 'showSpinner').mockImplementation();
+    jest.spyOn(utilsService, 'showMessage').mockImplementation();
+    jest.spyOn(console, 'log').mockImplementation();
+    jest.spyOn(console, 'info').mockImplementation();
+    jest.spyOn(console, 'warn').mockImplementation();
+    jest.spyOn(console, 'error').mockImplementation();
+    jest.spyOn(console, 'dir').mockImplementation();
     jest.spyOn(utilsService, 'cleanAndShowBanner').mockImplementation();
     jest
       .spyOn(utilsService, 'getCurrentAccount')
@@ -170,7 +176,6 @@ describe(`Testing OperationStableCoinService class`, () => {
       .mockResolvedValue(roles);
     jest.spyOn(utilsService, 'displayCurrentUserInfo').mockImplementation();
     jest.spyOn(wizardService, 'mainMenu').mockImplementation();
-    jest.spyOn(console, 'log').mockImplementation();
 
     const keep = (OperationStableCoinService.prototype as any)
       .operationsStableCoin;
