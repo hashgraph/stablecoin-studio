@@ -26,6 +26,7 @@ import { SupportedWallets } from '../../../domain/context/network/Wallet.js';
 import { BaseRequest, RequestAccount } from './BaseRequest.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
+import { ConsensusNode } from '../../../domain/context/network/ConsensusNodes.js';
 
 export { SupportedWallets };
 
@@ -62,6 +63,7 @@ export default class ConnectRequest
 	rpcNode: JsonRpcRelay;
 	wallet: SupportedWallets;
 	custodialWalletSettings?: CustodialSettings;
+	consensusNodes?: ConsensusNode[];
 
 	constructor({
 		account,
@@ -70,6 +72,7 @@ export default class ConnectRequest
 		rpcNode,
 		wallet,
 		custodialWalletSettings,
+		consensusNodes,
 	}: {
 		account?: RequestAccount;
 		network: Environment;
@@ -77,6 +80,7 @@ export default class ConnectRequest
 		rpcNode: JsonRpcRelay;
 		wallet: SupportedWallets;
 		custodialWalletSettings?: CustodialSettings;
+		consensusNodes?: ConsensusNode[];
 	}) {
 		super({
 			account: Validation.checkAccount(),
@@ -88,5 +92,6 @@ export default class ConnectRequest
 		this.rpcNode = rpcNode;
 		this.wallet = wallet;
 		this.custodialWalletSettings = custodialWalletSettings;
+		this.consensusNodes = consensusNodes;
 	}
 }

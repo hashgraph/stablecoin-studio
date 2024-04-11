@@ -21,12 +21,14 @@
 import { HederaId } from '../shared/HederaId.js';
 import PrivateKey from './PrivateKey.js';
 import PublicKey from './PublicKey.js';
+import MultiKey from './MultiKey.js';
 
 export interface AccountProps {
 	id: string;
 	privateKey?: PrivateKey;
 	publicKey?: PublicKey;
 	evmAddress?: string;
+	multiKey?: MultiKey;
 }
 
 export default class Account {
@@ -35,6 +37,7 @@ export default class Account {
 	public evmAddress?: string;
 	public privateKey?: PrivateKey;
 	public publicKey?: PublicKey;
+	public multiKey?: MultiKey;
 	constructor(props: AccountProps) {
 		Object.assign(this, { ...props, id: HederaId.from(props.id) });
 	}

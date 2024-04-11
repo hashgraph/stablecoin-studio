@@ -45,6 +45,7 @@ export class GetStableCoinQueryHandler
 		query: GetStableCoinQuery,
 	): Promise<GetStableCoinQueryResponse> {
 		const { tokenId } = query;
+		console.log('GetStableCoinQueryHandler', tokenId);
 		const coin = await this.mirrorNode.getStableCoin(tokenId);
 
 		if (!coin.evmProxyAddress) throw new Error('Invalid proxy address');

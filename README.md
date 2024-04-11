@@ -18,6 +18,7 @@
   - [Operating stablecoins](#operating-stablecoins)<br>
   - [Stablecoin categories](#stablecoins-categories)<br>
   - [Proof of reserve](#proof-of-reserve)<br>
+  - [Multisignature functionality](#multisignature-functionality)<br>
 - **[Architecture](#architecture)**<br>
 - **[Technologies](#technologies)**<br>
 - **[Installation](#installation)**<br>
@@ -130,6 +131,17 @@ Under the current implementation, all stablecoins may choose to implement a proo
 
 > A proof of reserve is, in very simple terms, an external feed that provides the backing of the tokens in real world. This may be FIAT or other assets.
 
+## Multisignature functionality
+
+The Stablecoin solution enables the management of a stablecoin through a multi-key account, where the admin key is configured as either a key list or a threshold key.
+
+When an operation (cash-in, burn, ...) is carried out using the _multisig_ mode, the corresponding transaction will not be directly submitted to the Hedera DLT, instead, it will be temporarily stored in a backend waiting for the multisig account key owners to sign it. Once it has been signed by all the required keys it will be available for submission.
+
+It's crucial to note that there is a time constraint for multisig transactions: they must be signed and submitted within three minutes of their initiation. If this timeframe is not met, the Hedera DLT will consider these transactions as expired and reject them.
+
+> The functionality has a limitation: Complex keys must have only one level, in other words, key list and threshold keys must contain only ED25519/ECDSA keys, they cannot contain firther key lists and/or threshold keys.
+
+
 ### Setting up a proof of reserve
 
 During setup, it is possible to link an existing data feed by providing the smart contract's address, or create a new one based on our implementation. If a reserve was created during the stablecoin deployment, it will also be possible to edit the amount of the reserve.
@@ -150,23 +162,27 @@ For more information about the SDK and the methods to perform these operations, 
 
 # Architecture
 
-The project is divided in 4 node modules:
+The project is divided in 5 node modules:
 
 ```
   /contracts
+  /backend
   /sdk
   /cli
   /web
 ```
 
 - **`/contracts`:** The solidity smart contracts implementing the stablecoin functionalities.
-- **`/sdk`:** The SDK implementing the features to create, manage and operate stablecoins. The SDK interacts with the smart contracts and exposes an API to be used by client facing applications.
+- **`/backend`:** A Backend tool implemented for managing the multisignature transactions that must be signed then submitted to the Hdera DLT. It exposes a REST API.
+- **`/sdk`:** The SDK implementing the features to create, manage and operate stablecoins. The SDK interacts with the smart contracts and the backend REST API and exposes an API to be used by client facing applications.
 - **`/cli`:** A CLI tool for creating, managing and operating stablecoins. Uses the SDK exposed API.
 - **`/web`:** A DApp developed with React to create, manage and operate stablecoins. Uses the SDK exposed API.
+
 
 Learn more about them in their README:
 
 - [contracts](https://github.com/hashgraph/stablecoin-studio/tree/main/contracts/README.md)
+- [backend](https://github.com/hashgraph/stablecoin-studio/tree/main/backend/README.md)
 - [sdk](https://github.com/hashgraph/stablecoin-studio/tree/main/sdk/README.md)
 - [cli](https://github.com/hashgraph/stablecoin-studio/tree/main/cli/README.md)
 - [web](https://github.com/hashgraph/stablecoin-studio/tree/main/web/README.md)
@@ -174,7 +190,7 @@ Learn more about them in their README:
 # Technologies
 
 - **Smart contracts**: Solidity version 0.8.16 (and lower versions for contracts imported from external sources like OpenZeppelin).
-- **SDK, CLI and UI**: Typescript `>=4.7`
+- **SDK, Backend, CLI and UI**: Typescript `>=4.7`
 - **SDK**: Node `>= v18.13`
 - **UI**: React.js `>=2.2.6`
 - **CONTRACTS**: Hardhat `^2.14.0`

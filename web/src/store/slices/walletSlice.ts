@@ -47,6 +47,7 @@ export interface InitialStateProps {
 	pausedToken?: boolean;
 	roles?: string[];
 	network?: string;
+	backendUrl?: string;
 	networkRecognized?: boolean;
 	accountRecognized?: boolean;
 	factoryId?: string;
@@ -75,6 +76,7 @@ export const initialState: InitialStateProps = {
 	pausedToken: undefined,
 	roles: undefined,
 	network: undefined,
+	backendUrl: undefined,
 	networkRecognized: true,
 	isProxyOwner: false,
 	isPendingOwner: false,
@@ -195,6 +197,9 @@ export const walletSlice = createSlice({
 		},
 		setNetwork: (state, action) => {
 			state.network = action.payload;
+		},
+		setBackendUrl: (state, action) => {
+			state.backendUrl = action.payload;
 		},
 		setNetworkRecognized: (state, action) => {
 			state.networkRecognized = action.payload;

@@ -31,4 +31,5 @@ export enum NamedRoutes {
 	AppSettings = 'appSettings',
 	StableCoinSettings = 'stableCoinSettings',
 	FactorySettings = 'factorySettings',
+	MultiSigTransactions = 'multiSigTransactions',
 }

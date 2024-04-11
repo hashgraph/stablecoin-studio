@@ -11,27 +11,39 @@ interface CollapsibleButtonProps {
 	textProps?: TextProps;
 	iconColor?: string;
 	onClick?: MouseEventHandler<HTMLButtonElement>;
+	disabled?: boolean;
 }
 
 const CollapsibleButton = (props: CollapsibleButtonProps) => {
-	const { nameIcon, text, onClick, buttonProps, textProps, iconColor } = props;
+	const { nameIcon, text, onClick, buttonProps, textProps, iconColor, disabled } = props;
 
 	const [isHover, setIsHover] = useState(false);
+
+	const disabledStyle = {
+		bgColor: 'gray.300',
+		color: 'gray.500',
+		cursor: 'not-allowed',
+		_hover: { bgColor: 'gray.300' },
+	};
 
 	return (
 		<Box onMouseEnter={() => setIsHover(true)} onMouseLeave={() => setIsHover(false)}>
 			<Button
 				placeContent={'flex-start'}
-				w={isHover ? '140px' : '50px'}
+				w={isHover && !disabled ? '140px' : '50px'}
 				h='40px'
 				borderRadius='8px'
-				_hover={{ bgColor: 'dark.primary' }}
 				onClick={onClick}
 				transition='all 500ms'
-				{...buttonProps}
+				disabled={disabled}
+				{...(disabled ? disabledStyle : buttonProps)}
 			>
-				<Icon name={nameIcon} fontSize='20px' color={iconColor || 'white'} />
-				{isHover && (
+				<Icon
+					name={nameIcon}
+					fontSize='20px'
+					color={disabled ? 'gray.500' : iconColor || 'white'}
+				/>
+				{isHover && !disabled && (
 					<Text transition='all 1000ms' ml={2} {...textProps}>
 						{text}
 					</Text>

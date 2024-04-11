@@ -50,10 +50,13 @@ import { JsonRpcRelay } from '../../domain/context/network/JsonRpcRelay.js';
 import { BladeTransactionAdapter } from '../out/hs/blade/BladeTransactionAdapter.js';
 import DfnsSettings from 'domain/context/custodialwalletsettings/DfnsSettings.js';
 import FireblocksSettings from '../../domain/context/custodialwalletsettings/FireblocksSettings';
-import { HederaId } from '../../domain/context/shared/HederaId';
-import PublicKey from '../../domain/context/account/PublicKey';
 import { FireblocksTransactionAdapter } from '../out/hs/hts/custodial/FireblocksTransactionAdapter.js';
 import { DFNSTransactionAdapter } from '../out/hs/hts/custodial/DFNSTransactionAdapter.js';
+import { MultiSigTransactionAdapter } from '../out/hs/multiSig/MultiSigTransactionAdapter.js';
+import SetBackendRequest from './request/SetBackendRequest.js';
+import { SetBackendCommand } from '../../app/usecase/command/network/setBackend/SetBackendCommand.js';
+import BackendEndpoint from '../../domain/context/network/BackendEndpoint.js';
+import { ConsensusNode } from '../../domain/context/network/ConsensusNodes.js';
 
 export { InitializationData, SupportedWallets };
 
@@ -61,18 +64,24 @@ export type NetworkResponse = {
 	environment: Environment;
 	mirrorNode: MirrorNode;
 	rpcNode: JsonRpcRelay;
-	consensusNodes: string;
+	consensusNodes: ConsensusNode[];
 };
 
 export type ConfigResponse = {
 	factoryAddress: string;
 };
 
+export type BackendResponse = {
+	url: string;
+};
+
 interface INetworkInPort {
+	init(req: InitializationRequest): Promise<SupportedWallets[]>;
 	connect(req: ConnectRequest): Promise<InitializationData>;
 	disconnect(): Promise<boolean>;
 	setNetwork(req: SetNetworkRequest): Promise<NetworkResponse>;
 	setConfig(req: SetConfigurationRequest): Promise<ConfigResponse>;
+	setBackend(req: SetBackendRequest): Promise<BackendResponse>;
 	getFactoryAddress(): string;
 	getNetwork(): string;
 	isNetworkRecognized(): boolean;
@@ -142,6 +151,7 @@ class NetworkInPort implements INetworkInPort {
 				environment: req.network,
 				mirrorNode: req.mirrorNode,
 				rpcNode: req.rpcNode,
+				consensusNodes: req.consensusNodes,
 			}),
 		);
 
@@ -152,6 +162,11 @@ class NetworkInPort implements INetworkInPort {
 						factoryAddress: req.configuration.factoryAddress,
 					}),
 				);
+
+		if (req.backend)
+			await this.setBackend(
+				new SetBackendRequest({ url: req.backend.url }),
+			);
 
 		req.events && Event.register(req.events);
 		const wallets: SupportedWallets[] = [];
@@ -167,6 +182,8 @@ class NetworkInPort implements INetworkInPort {
 				wallets.push(SupportedWallets.FIREBLOCKS);
 			} else if (val instanceof DFNSTransactionAdapter) {
 				wallets.push(SupportedWallets.DFNS);
+			} else if (val instanceof MultiSigTransactionAdapter) {
+				wallets.push(SupportedWallets.MULTISIG);
 			} else {
 				wallets.push(SupportedWallets.CLIENT);
 			}
@@ -184,7 +201,7 @@ class NetworkInPort implements INetworkInPort {
 	@LogError
 	async connect(req: ConnectRequest): Promise<InitializationData> {
 		handleValidation('ConnectRequest', req);
-
+		console.log('connect');
 		const account = req.account
 			? RequestMapper.mapAccount(req.account)
 			: undefined;
@@ -203,11 +220,21 @@ class NetworkInPort implements INetworkInPort {
 				}
 			}
 		}
-
-		await this.commandBus.execute(
-			new SetNetworkCommand(req.network, req.mirrorNode, req.rpcNode),
+		console.log(
+			'SetNetworkCommand',
+			req.network,
+			req.mirrorNode,
+			req.rpcNode,
 		);
-
+		await this.commandBus.execute(
+			new SetNetworkCommand(
+				req.network,
+				req.mirrorNode,
+				req.rpcNode,
+				req.consensusNodes,
+			),
+		);
+		console.log('ConnectRequest', req.wallet, account, custodialSettings);
 		const res = await this.commandBus.execute(
 			new ConnectCommand(
 				req.network,
@@ -217,6 +244,17 @@ class NetworkInPort implements INetworkInPort {
 			),
 		);
 		return res.payload;
+	}
+
+	@LogError
+	async setBackend(req: SetBackendRequest): Promise<BackendResponse> {
+		handleValidation('SetBackendRequest', req);
+
+		const be = new BackendEndpoint(req.url);
+
+		const res = await this.commandBus.execute(new SetBackendCommand(be));
+
+		return res.backendEndpoint;
 	}
 
 	private getCustodialSettings(

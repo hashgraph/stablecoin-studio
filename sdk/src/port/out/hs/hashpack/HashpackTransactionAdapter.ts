@@ -70,6 +70,7 @@ import { HederaId } from '../../../../domain/context/shared/HederaId.js';
 import { QueryBus } from '../../../../core/query/QueryBus.js';
 import { AccountIdNotValid } from '../../../../domain/context/account/error/AccountIdNotValid.js';
 import { GetAccountInfoQuery } from '../../../../app/usecase/query/account/info/GetAccountInfoQuery.js';
+import Hex from '../../../../core/Hex.js';
 
 @singleton()
 export class HashpackTransactionAdapter extends HederaTransactionAdapter {
@@ -421,5 +422,70 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 			publicKey: account.publicKey,
 			evmAddress: account.accountEvmAddress,
 		});
+	}
+
+	async sign(message: string | Transaction): Promise<string> {
+		if (!this.signer) throw new SigningError('Signer is empty');
+		if (!(message instanceof Transaction))
+			throw new SigningError(
+				'Hashpack must sign a transaction not a string',
+			);
+
+		try {
+			if (
+				!this.networkService.consensusNodes ||
+				this.networkService.consensusNodes.length == 0
+			) {
+				throw new Error(
+					'In order to create sign multisignature transactions you must set consensus nodes for the environment',
+				);
+			}
+
+			const hashPackTrx = {
+				topic: this.initData.topic,
+				byteArray: message.toBytes(),
+				metadata: {
+					accountToSign: this.account.id.toString(),
+					returnTransaction: true,
+					getRecord: false,
+				},
+			};
+
+			const PublicKey_Der_Encoded =
+				this.account.publicKey?.toHederaKey().toStringDer() ?? '';
+
+			const t = await this.hc.sendTransaction(
+				this.initData.topic,
+				hashPackTrx,
+			);
+
+			if (t.signedTransaction instanceof Uint8Array) {
+				const signedTrans = Transaction.fromBytes(t.signedTransaction);
+				const signatures_list = signedTrans.getSignatures();
+				const nodes_signature = signatures_list.get(
+					this.networkService.consensusNodes[0].nodeId,
+				);
+				if (nodes_signature) {
+					const signature = nodes_signature.get(
+						PublicKey_Der_Encoded,
+					);
+					if (signature) {
+						return Hex.fromUint8Array(signature);
+					}
+					throw new Error(
+						'Hashapck no signatures found for public key : ' +
+							PublicKey_Der_Encoded,
+					);
+				}
+				throw new Error(
+					'Hashapck no signatures found for node id : ' +
+						this.networkService.consensusNodes[0].nodeId,
+				);
+			}
+			throw new Error('Hashapck wrong signed transaction');
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(error);
+		}
 	}
 }

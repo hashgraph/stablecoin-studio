@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Navigate, Route, Routes, Outlet } from 'react-router-dom';
+import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import Layout from '../layout/Layout';
 import { RoutesMappingUrl } from './RoutesMappingUrl';
@@ -23,19 +23,19 @@ import StableCoinNotSelected from '../views/ErrorPage/StableCoinNotSelected';
 import SDKService from '../services/SDKService';
 import StableCoinDetails from '../views/StableCoinDetails';
 import {
-	SELECTED_WALLET_COIN,
-	SELECTING_WALLET_COIN,
-	SELECTED_WALLET_STATUS,
-	walletActions,
 	MIRROR_LIST_LS,
 	RPC_LIST_LS,
-	SELECTED_RPC_LS,
 	SELECTED_MIRROR_LS,
+	SELECTED_RPC_LS,
+	SELECTED_WALLET_COIN,
+	SELECTED_WALLET_STATUS,
+	SELECTING_WALLET_COIN,
+	walletActions,
 } from '../store/slices/walletSlice';
 import ImportedTokenCreation from '../views/ImportedToken/ImportedTokenCreation';
 import DangerZoneOperations from '../views/Operations/DangerZone';
-import { Account, LoggerTransports, SDK, ConnectionState } from '@hashgraph/stablecoin-npm-sdk';
 import type { EventParameter, WalletEvent } from '@hashgraph/stablecoin-npm-sdk';
+import { Account, ConnectionState, LoggerTransports, SDK } from '@hashgraph/stablecoin-npm-sdk';
 import StableCoinProof from '../views/StableCoinProof';
 import FeesManagement from '../views/FeesManagement';
 import GrantKycOperation from '../views/Operations/GrantKyc';
@@ -47,6 +47,7 @@ import FactorySettings from '../views/Settings/Factory';
 import ModalWalletConnect from '../components/ModalWalletConnect';
 import AppSettings from '../views/AppSettings';
 import { cleanLocalStorage } from '../utils/cleanStorage';
+import MultiSigTransactions from '../views/MultiSigTransactions/MultisigTransactions';
 
 const LoginOverlayRoute = ({ show, loadingSC }: { show: boolean; loadingSC: boolean }) => {
 	return (
@@ -190,6 +191,7 @@ const Router = () => {
 							<Route path={RoutesMappingUrl.stableCoinSettings} element={<StableCoinSettings />} />
 						</>
 					)}
+					<Route path={RoutesMappingUrl.multiSigTransactions} element={<MultiSigTransactions />} />
 					<Route path={RoutesMappingUrl.settings} element={<Settings />} />
 
 					<Route path={RoutesMappingUrl.factorySettings} element={<FactorySettings />} />

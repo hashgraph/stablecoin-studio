@@ -65,6 +65,7 @@ import { HashpackTransactionResponseAdapter } from '../hashpack/HashpackTransact
 import { QueryBus } from '../../../../core/query/QueryBus.js';
 import { AccountIdNotValid } from '../../../../domain/context/account/error/AccountIdNotValid.js';
 import { GetAccountInfoQuery } from '../../../../app/usecase/query/account/info/GetAccountInfoQuery.js';
+import Hex from '../../../../core/Hex.js';
 
 @singleton()
 export class BladeTransactionAdapter extends HederaTransactionAdapter {
@@ -252,6 +253,7 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 			throw new SigningError(error);
 		}
 	}
+
 	public async restart(network: string): Promise<void> {
 		await this.stop();
 		await this.init(network);
@@ -276,5 +278,51 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 			publicKey: account.publicKey,
 			evmAddress: account.accountEvmAddress,
 		});
+	}
+
+	async sign(message: string | Transaction): Promise<string> {
+		if (!this.signer) throw new SigningError('Signer is empty');
+		if (!(message instanceof Transaction))
+			throw new SigningError(
+				'Blade must sign a transaction not a string',
+			);
+
+		try {
+			if (
+				!this.networkService.consensusNodes ||
+				this.networkService.consensusNodes.length == 0
+			) {
+				throw new Error(
+					'In order to create sign multisignature transactions you must set consensus nodes for the environment',
+				);
+			}
+
+			const PublicKey_Der_Encoded =
+				this.account.publicKey?.toHederaKey().toStringDer() ?? '';
+
+			const signedTrans = await this.signer.signTransaction(message);
+
+			const list = signedTrans.getSignatures();
+			const nodes_signature = list.get(
+				this.networkService.consensusNodes[0].nodeId,
+			);
+			if (nodes_signature) {
+				const pk_signature = nodes_signature.get(PublicKey_Der_Encoded);
+				if (pk_signature) {
+					return Hex.fromUint8Array(pk_signature);
+				}
+				throw new Error(
+					'Blade no signatures found for public key : ' +
+						PublicKey_Der_Encoded,
+				);
+			}
+			throw new Error(
+				'Blade no signatures found for node id : ' +
+					this.networkService.consensusNodes[0].nodeId,
+			);
+		} catch (error) {
+			LogService.logError(error);
+			throw new SigningError(error);
+		}
 	}
 }

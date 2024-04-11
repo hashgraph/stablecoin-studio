@@ -25,6 +25,9 @@ import { HederaId } from '../src/domain/context/shared/HederaId.js';
 import { config } from 'dotenv';
 config();
 
+export const MULTISIG_ACCOUNT_ADDRESS =
+	process.env.MULTISIG_ACCOUNT_ADDRESS ?? '';
+
 export const ENVIRONMENT = 'testnet';
 
 export const CLIENT_PRIVATE_KEY_ECDSA = new PrivateKey({
@@ -97,6 +100,13 @@ export const HEDERA_TOKEN_MANAGER_ADDRESS =
 export const FACTORY_ADDRESS = process.env.FACTORY_ADDRESS ?? '';
 
 //* Infrastructure
+export const BACKEND_NODE = {
+	name: 'testBackendNode',
+	baseUrl:
+		process.env.BACKEND_NODE_BASE_URL ??
+		'http://localhost:3000/api/transactions/',
+};
+
 export const MIRROR_NODE = {
 	name: 'testMirrorNode',
 	baseUrl:

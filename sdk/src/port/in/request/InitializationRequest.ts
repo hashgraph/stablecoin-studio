@@ -33,6 +33,8 @@ import { SupportedWallets } from '../../../domain/context/network/Wallet.js';
 import { BaseRequest } from './BaseRequest.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import { Factories } from '../../../domain/context/factory/Factories.js';
+import BackendEndpoint from '../../../domain/context/network/BackendEndpoint.js';
+import { ConsensusNode } from '../../../domain/context/network/ConsensusNodes.js';
 
 export { SupportedWallets };
 
@@ -45,9 +47,11 @@ export default class InitializationRequest
 	rpcNode: JsonRpcRelay;
 	events?: Partial<WalletEvent>;
 	configuration?: Configuration;
+	consensusNodes?: ConsensusNode[];
 	mirrorNodes?: MirrorNodes;
 	jsonRpcRelays?: JsonRpcRelays;
 	factories?: Factories;
+	backend?: BackendEndpoint;
 
 	constructor({
 		network,
@@ -55,18 +59,22 @@ export default class InitializationRequest
 		rpcNode,
 		events,
 		configuration,
+		consensusNodes,
 		mirrorNodes,
 		jsonRpcRelays,
 		factories,
+		backend,
 	}: {
 		network: Environment;
 		mirrorNode: MirrorNode;
 		rpcNode: JsonRpcRelay;
 		events?: Partial<WalletEvent>;
 		configuration?: Configuration;
+		consensusNodes?: ConsensusNode[];
 		mirrorNodes?: MirrorNodes;
 		jsonRpcRelays?: JsonRpcRelays;
 		factories?: Factories;
+		backend?: BackendEndpoint;
 	}) {
 		super({});
 		this.network = network;
@@ -74,8 +82,10 @@ export default class InitializationRequest
 		this.rpcNode = rpcNode;
 		this.events = events;
 		this.configuration = configuration;
+		this.consensusNodes = consensusNodes;
 		this.mirrorNodes = mirrorNodes;
 		this.jsonRpcRelays = jsonRpcRelays;
 		this.factories = factories;
+		this.backend = backend;
 	}
 }
