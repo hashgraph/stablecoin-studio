@@ -59,6 +59,10 @@ describe('UtilitiesService', () => {
       selected: true,
     };
 
+    const mockCurrentBackend = {
+      endpoint: 'http://localhost:3000/path',
+    };
+
     const mockLogConfiguration = {
       level: 'debug',
     };
@@ -81,6 +85,9 @@ describe('UtilitiesService', () => {
       .fn()
       .mockReturnValue(mockCurrentMirror);
     utilsService.getCurrentRPC = jest.fn().mockReturnValue(mockCurrentRPC);
+    utilsService.getCurrentBackend = jest
+      .fn()
+      .mockReturnValue(mockCurrentBackend);
 
     // method call
     await utilsService.initSDK();

@@ -34,6 +34,12 @@ const language: Language = new Language();
 describe('implementationProxyService', () => {
   beforeEach(() => {
     jest.spyOn(utilsService, 'showSpinner').mockImplementation();
+    jest.spyOn(utilsService, 'showMessage').mockImplementation();
+    jest.spyOn(console, 'log').mockImplementation();
+    jest.spyOn(console, 'info').mockImplementation();
+    jest.spyOn(console, 'warn').mockImplementation();
+    jest.spyOn(console, 'error').mockImplementation();
+    jest.spyOn(console, 'dir').mockImplementation();
   });
   afterEach(() => {
     jest.restoreAllMocks();

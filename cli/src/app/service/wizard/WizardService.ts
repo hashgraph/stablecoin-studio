@@ -228,7 +228,7 @@ export default class WizardService extends Service {
 
       case language.getText('wizard.changeOptions.ManageBackend'):
         await backendConfigurationService.manageBackendMenu({
-          options: { clean: true },
+          options: { clear: true },
         });
         break;
 

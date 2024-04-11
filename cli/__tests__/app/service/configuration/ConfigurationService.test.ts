@@ -144,6 +144,14 @@ describe('configurationService', () => {
     ],
   };
 
+  beforeAll(() => {
+    jest.spyOn(console, 'log').mockImplementation();
+    jest.spyOn(console, 'info').mockImplementation();
+    jest.spyOn(console, 'warn').mockImplementation();
+    jest.spyOn(console, 'error').mockImplementation();
+    jest.spyOn(console, 'dir').mockImplementation();
+  });
+
   it('should init configuration with no initial configuration or a file path', async () => {
     const defaultSingleAskMock = jest
       .spyOn(utilsService, 'defaultSingleAsk')

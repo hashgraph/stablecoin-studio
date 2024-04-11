@@ -33,10 +33,15 @@ const request = new KYCRequest({
 
 describe(`Testing KYCStableCoinService class`, () => {
   beforeEach(() => {
-    jest.spyOn(utilsService, 'showSpinner').mockImplementation();
     jest.spyOn(StableCoin, 'grantKyc').mockImplementation();
     jest.spyOn(StableCoin, 'revokeKyc').mockImplementation();
-    jest.spyOn(console, 'log');
+    jest.spyOn(utilsService, 'showSpinner').mockImplementation();
+    jest.spyOn(utilsService, 'showMessage').mockImplementation();
+    jest.spyOn(console, 'log').mockImplementation();
+    jest.spyOn(console, 'info').mockImplementation();
+    jest.spyOn(console, 'warn').mockImplementation();
+    jest.spyOn(console, 'error').mockImplementation();
+    jest.spyOn(console, 'dir').mockImplementation();
   });
   afterEach(() => {
     jest.restoreAllMocks();

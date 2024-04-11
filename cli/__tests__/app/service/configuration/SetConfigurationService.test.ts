@@ -101,7 +101,12 @@ describe('setConfigurationService', () => {
       .spyOn(configurationService, 'getConfiguration')
       .mockReturnValue(configurationMock);
     jest.spyOn(utilsService, 'showSpinner').mockImplementation();
-    jest.spyOn(console, 'log');
+    jest.spyOn(utilsService, 'showMessage').mockImplementation();
+    jest.spyOn(console, 'log').mockImplementation();
+    jest.spyOn(console, 'info').mockImplementation();
+    jest.spyOn(console, 'warn').mockImplementation();
+    jest.spyOn(console, 'error').mockImplementation();
+    jest.spyOn(console, 'dir').mockImplementation();
   });
 
   it('should init configuration with no file path nor network', async () => {
@@ -128,18 +133,16 @@ describe('setConfigurationService', () => {
         switch (question) {
           case language.getText('configuration.askCreateConfig'):
             return Promise.resolve(true);
-
           case language.getText('configuration.askMoreAccounts'):
             return Promise.resolve(false);
-
           case language.getText('configuration.askConfigurateFactories'):
             return Promise.resolve(false);
-
           case language.getText(
             'configuration.askConfigurateDefaultMirrorsAndRPCs',
           ):
             return Promise.resolve(true);
-
+          case language.getText('configuration.askConfigurateBackend'):
+            return Promise.resolve(false);
           default:
             return Promise.resolve(false);
         }
@@ -148,6 +151,7 @@ describe('setConfigurationService', () => {
     const defaultMultipleAskMock = jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockImplementationOnce(() => Promise.resolve('testnet'))
+      // .mockImplementationOnce(() => Promise.resolve('SELF-CUSTODIAL'))
       .mockImplementationOnce(() => Promise.resolve('ED25519'))
       .mockImplementationOnce(() => Promise.resolve('ED25519'))
       .mockImplementationOnce(() => Promise.resolve('testnet'));
