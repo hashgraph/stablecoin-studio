@@ -57,6 +57,7 @@ import SetBackendRequest from './request/SetBackendRequest.js';
 import { SetBackendCommand } from '../../app/usecase/command/network/setBackend/SetBackendCommand.js';
 import BackendEndpoint from '../../domain/context/network/BackendEndpoint.js';
 import { ConsensusNode } from '../../domain/context/network/ConsensusNodes.js';
+import { HederaWalletConnectTransactionAdapter } from '../out/hs/walletConnect/HederaWalletConnectTransactionAdapter.js';
 
 export { InitializationData, SupportedWallets };
 
@@ -184,6 +185,8 @@ class NetworkInPort implements INetworkInPort {
 				wallets.push(SupportedWallets.DFNS);
 			} else if (val instanceof MultiSigTransactionAdapter) {
 				wallets.push(SupportedWallets.MULTISIG);
+			} else if (val instanceof HederaWalletConnectTransactionAdapter) {
+				wallets.push(SupportedWallets.HWALLETCONNECT);
 			} else {
 				wallets.push(SupportedWallets.CLIENT);
 			}
