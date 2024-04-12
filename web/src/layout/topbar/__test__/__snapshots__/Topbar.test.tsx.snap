@@ -1,0 +1,291 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Topbar /> should render correctly 1`] = `
+<DocumentFragment>
+  <div
+    class="css-1njzpr3"
+    data-testid="topbar"
+  >
+    <div
+      class="css-gut43g"
+    >
+      <img
+        class="chakra-image css-z4bd0k"
+        data-testid="topbar-logo"
+        src="hedera-hbar-logo.svg"
+      />
+    </div>
+    <div
+      class="css-1grq7v1"
+    />
+    <div
+      class="css-1xcxk9t"
+    >
+      <div
+        class="css-1lbjv5i"
+      >
+        <div
+          class="css-1rc4l3d"
+          data-testid="coin-dropdown"
+        >
+          <div
+            class="chakra-stack css-1h0sumw"
+          >
+            <div
+              class="chakra-form-control css-1kxonj9"
+              data-testid="form_control"
+              role="group"
+            >
+              <div
+                class="css-frrdvf"
+              >
+                <span
+                  class="css-1f43avz-a11yText-A11yText"
+                  id="react-select-2-live-region"
+                />
+                <span
+                  aria-atomic="false"
+                  aria-live="polite"
+                  aria-relevant="additions text"
+                  class="css-1f43avz-a11yText-A11yText"
+                />
+                <div
+                  class=" css-lub9qs"
+                >
+                  <div
+                    class="css-3y2vuh"
+                  >
+                    <span
+                      class="chakra-text css-4pvr19"
+                      data-testid="select-placeholder"
+                    >
+                      0.0.49319786 - TEST
+                    </span>
+                    <div
+                      class=" css-svnjlw"
+                      data-value=""
+                    >
+                      <input
+                        aria-autocomplete="list"
+                        aria-describedby="react-select-2-placeholder"
+                        aria-expanded="false"
+                        aria-haspopup="true"
+                        autocapitalize="none"
+                        autocomplete="off"
+                        autocorrect="off"
+                        class=" css-146k1ar-input"
+                        id="field-:r1:"
+                        role="combobox"
+                        spellcheck="false"
+                        tabindex="0"
+                        type="text"
+                        value=""
+                      />
+                    </div>
+                  </div>
+                  <div
+                    class=" css-hfbj6y"
+                  >
+                    <div
+                      class="css-1aabyhj"
+                    >
+                      <svg
+                        class="chakra-icon css-1r5bg7h"
+                        fill="currentColor"
+                        focusable="false"
+                        height="1em"
+                        viewBox="0 0 256 256"
+                        width="1em"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <rect
+                          fill="none"
+                          height="256"
+                          width="256"
+                        />
+                        <polyline
+                          fill="none"
+                          points="208 96 128 176 48 96"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="16"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                <input
+                  name="coin-dropdown"
+                  type="hidden"
+                  value=""
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="chakra-stack css-84zodg"
+        >
+          <div
+            class="css-0"
+          >
+            <button
+              class="chakra-button css-kjpgeo"
+              type="button"
+            >
+              <svg
+                class="chakra-icon css-1ita9rw"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                viewBox="0 0 256 256"
+                width="1em"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  fill="none"
+                  height="256"
+                  width="256"
+                />
+                <line
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="16"
+                  x1="40"
+                  x2="216"
+                  y1="128"
+                  y2="128"
+                />
+                <line
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="16"
+                  x1="128"
+                  x2="128"
+                  y1="40"
+                  y2="216"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div
+        class="css-166re2f"
+        data-testid="topbar-right"
+      >
+        <div
+          class="chakra-stack css-d17m5h"
+        >
+          <div
+            class="chakra-stack css-jp20jv"
+          >
+            <div
+              class="css-1m8iww1"
+            >
+              <p
+                class="chakra-text css-1oyarqz"
+                data-testid="topbar-right-account"
+              />
+            </div>
+            <div
+              class="css-1m8iww1"
+            >
+              <p
+                class="chakra-text css-gegx7f"
+                data-testid="topbar-right-network"
+              />
+            </div>
+          </div>
+          <svg
+            fill="#fdfdfc"
+            height="22"
+            viewBox="0 0 256 256"
+            width="22"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect
+              fill="none"
+              height="256"
+              width="256"
+            />
+            <circle
+              cx="128"
+              cy="128"
+              fill="none"
+              r="96"
+              stroke="#fdfdfc"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="12"
+            />
+            <circle
+              cx="128"
+              cy="180"
+              r="10"
+            />
+            <path
+              d="M128,144v-8a28,28,0,1,0-28-28"
+              fill="none"
+              stroke="#fdfdfc"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="12"
+            />
+          </svg>
+        </div>
+        <div
+          class="css-dv2lk7"
+        />
+        <div
+          class="css-hf30mn"
+        >
+          <svg
+            class="chakra-icon css-dee54c"
+            fill="currentColor"
+            focusable="false"
+            height="1em"
+            viewBox="0 0 256 256"
+            width="1em"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect
+              fill="none"
+              height="256"
+              width="256"
+            />
+            <line
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="16"
+              x1="128"
+              x2="128"
+              y1="48"
+              y2="124"
+            />
+            <path
+              d="M176,54.2a88,88,0,1,1-96,0"
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="16"
+            />
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;
