@@ -28,6 +28,7 @@ export enum SupportedWallets {
 	FIREBLOCKS = 'Fireblocks',
 	DFNS = 'DFNS',
 	MULTISIG = 'MultiSig',
+	HWALLETCONNECT = 'HederaWalletConnect',
 }
 
 export default interface Wallet {
