@@ -245,6 +245,10 @@ const ModalWalletConnect = () => {
 		setMultiSigSelected(true);
 	};
 
+	const handleHederaWalletConnect = () => {
+		handleWalletConnect(SupportedWallets.HWALLETCONNECT, '-');
+	}
+
 	const validateAccountId = (accountId: string) => {
 		const regex = /^\d+\.\d+\.\d+$/;
 		return regex.test(accountId);
@@ -427,6 +431,21 @@ const ModalWalletConnect = () => {
 											<PairingSpinner wallet={SupportedWallets.MULTISIG}>
 												<Image src={MULTISIG_LOGO_PNG} w={20} />
 												<Text textAlign='center'>Multisig</Text>
+											</PairingSpinner>
+										</VStack>
+									) : (
+										<></>
+									)}
+									{!availableWallets.includes(SupportedWallets.HWALLETCONNECT) ? (
+										<VStack
+											data-testid='walletconnect'
+											{...styles.providerStyle}
+											shouldWrapChildren
+											onClick={handleHederaWalletConnect}
+										>
+											<PairingSpinner wallet={SupportedWallets.MULTISIG}>
+												<Image src={MULTISIG_LOGO_PNG} w={20} />
+												<Text textAlign='center'>WalletConnect</Text>
 											</PairingSpinner>
 										</VStack>
 									) : (

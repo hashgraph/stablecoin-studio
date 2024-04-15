@@ -57,7 +57,7 @@ import SetBackendRequest from './request/SetBackendRequest.js';
 import { SetBackendCommand } from '../../app/usecase/command/network/setBackend/SetBackendCommand.js';
 import BackendEndpoint from '../../domain/context/network/BackendEndpoint.js';
 import { ConsensusNode } from '../../domain/context/network/ConsensusNodes.js';
-import { HederaWalletConnectTransactionAdapter } from '../out/hs/walletConnect/HederaWalletConnectTransactionAdapter.js';
+import { HederaWalletConnectTransactionAdapter } from '../out/hs/walletconnect/HederaWalletConnectTransactionAdapter';
 
 export { InitializationData, SupportedWallets };
 

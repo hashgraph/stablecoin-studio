@@ -93,6 +93,7 @@ export class SDKService {
 		selectedRPC?: IMirrorRPCNode,
 		hederaAccount?: string,
 	) {
+		console.log('connectWallet', wallet, connectNetwork, selectedMirror, selectedRPC, hederaAccount);
 		const networkConfig = await this.setNetwork(connectNetwork, selectedMirror, selectedRPC);
 		const _mirrorNode = networkConfig[0];
 		const _rpcNode = networkConfig[1];
