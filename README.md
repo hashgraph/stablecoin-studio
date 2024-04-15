@@ -178,6 +178,12 @@ If you wish to deploy a stablecoin and fully manage it with a multisig account t
 - Connect to the stablecoin platform using the multisig account and manually import the deployed stablecoin
 > Since the deployment was carried out by another account, the multisig account was not associated to the token, that is the reason why you need to import it manually. It you associate your multisig account to the stablecoin's hedera token, you will not need to import it anymore.
 
+### Importing a multisig account key into a Wallet
+
+In order to manage a stablecoin using a multisig account we will need to, **for every single key _K_** in the multisig account's key list / threshold key, do as follows:
+- Create a single key account _A_ and set _K_ as its admin key
+- Import _A_ into Hashpack/Blade/Metamask/... depending on whether _K_ is an ED25519 or ECDSA key
+- Whenever we want to sign a multisig transaction using _K_, we will log into the wallet we used to import _A_ and carry out the signature.
 
 # Architecture
 
