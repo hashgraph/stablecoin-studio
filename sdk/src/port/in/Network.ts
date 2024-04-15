@@ -163,7 +163,6 @@ class NetworkInPort implements INetworkInPort {
 						factoryAddress: req.configuration.factoryAddress,
 					}),
 				);
-
 		if (req.backend)
 			await this.setBackend(
 				new SetBackendRequest({ url: req.backend.url }),

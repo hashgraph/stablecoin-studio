@@ -28,54 +28,58 @@ import EventService from '../../../../app/service/event/EventService';
 import NetworkService from '../../../../app/service/NetworkService';
 import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter';
 import { BackendAdapter } from '../../backend/BackendAdapter';
-import { WalletEvents, WalletPairedEvent } from '../../../../app/service/event/WalletEvent';
+import {
+	WalletEvents,
+	WalletPairedEvent,
+} from '../../../../app/service/event/WalletEvent';
 import { SupportedWallets } from '../../../../domain/context/network/Wallet';
 import LogService from '../../../../app/service/LogService';
 import { InitializationData } from '../../TransactionAdapter';
 import Injectable from '../../../../core/Injectable';
-import { SignClientTypes } from '@walletconnect/types'
+import { SignClientTypes } from '@walletconnect/types';
 import { DAppConnector } from '@hashgraph/hedera-wallet-connect';
 import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
+import { singleton } from 'tsyringe';
+import { QueryBus } from '../../../../core/query/QueryBus';
 
-
+@singleton()
 export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdapter {
-
 	public account: Account;
 	protected network: Environment;
-	protected dAppConnector: DAppConnector | undefined
+	protected dAppConnector: DAppConnector | undefined;
 
 	constructor(
-		@lazyInject(EventService) public readonly eventService: EventService,
+		@lazyInject(EventService)
+		public readonly eventService: EventService,
 		@lazyInject(NetworkService)
 		public readonly networkService: NetworkService,
 		@lazyInject(MirrorNodeAdapter)
 		public readonly mirrorNodeAdapter: MirrorNodeAdapter,
-		@lazyInject(BackendAdapter)
-		public readonly backendAdapter: BackendAdapter,
+		@lazyInject(QueryBus)
+		public readonly queryBus: QueryBus,
 	) {
 		super(mirrorNodeAdapter, networkService);
 	}
 
 	// TODO: review
-	async init(): Promise<string> {
-		const projectId = 'e8847fc2148698b9d2006253eb1c631a'
+	init(): Promise<string> {
+		const projectId = 'e8847fc2148698b9d2006253eb1c631a';
 		const metadata: SignClientTypes.Metadata = {
 			name: 'name',
 			description: 'description',
 			url: 'https://78a6-139-47-73-174.ngrok-free.app/',
 			icons: ['icons'],
-		}
+		};
 		this.dAppConnector = new DAppConnector(
 			metadata,
 			LedgerId.TESTNET,
-			projectId
-		)
+			projectId,
+		);
 
 		this.eventService.emit(WalletEvents.walletInit, {
 			wallet: SupportedWallets.HWALLETCONNECT,
 			initData: {},
 		});
-		console.log('HOLAAAAAAAAAAAAAAAAAAAAA');
 		LogService.logTrace('WalletConnect Initialized');
 		return Promise.resolve(this.networkService.environment);
 	}
@@ -83,7 +87,6 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 	// TODO: review
 	async register(account: Account): Promise<InitializationData> {
 		Injectable.registerTransactionHandler(this);
-		console.log('HOLAAAAAAAAAAAAAAAAAAAAA');
 		LogService.logTrace('WalletConnect Registered as handler');
 
 		//this.dAppConnector?.openModal()
@@ -91,7 +94,6 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 		const accountMirror = await this.mirrorNodeAdapter.getAccountInfo(
 			account.id,
 		);
-
 
 		this.account = account;
 		this.account.publicKey = accountMirror.publicKey;
@@ -119,7 +121,6 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 			account: this.getAccount(),
 		});
 	}
-
 
 	// async function hedera_signAndExecuteTransaction(_: Event) {
 	// 	const transaction = new TransferTransaction()
@@ -152,5 +153,4 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 	sign(message: string | Transaction): Promise<string> {
 		throw new Error('Method not implemented.');
 	}
-
 }
