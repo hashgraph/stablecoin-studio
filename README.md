@@ -165,7 +165,7 @@ When an operation (cash-in, burn, ...) is carried out using the _multisig_ mode,
 
 It's crucial to note that there is a time constraint for multisig transactions: they must be signed and submitted within three minutes of their initiation. If this timeframe is not met, the Hedera DLT will consider these transactions as expired and reject them.
 
-> The functionality has a limitation: Complex keys must have only one level, in other words, key list and threshold keys must contain only ED25519/ECDSA keys, they cannot contain firther key lists and/or threshold keys.
+> The functionality has a limitation: Complex keys must have only one level, in other words, key list and threshold keys must contain only ED25519/ECDSA keys, they cannot contain further key lists and/or threshold keys.
 
 ### Steps to deploy a multisig-managed stablecoin
 
