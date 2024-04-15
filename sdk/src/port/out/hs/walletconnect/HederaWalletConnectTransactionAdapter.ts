@@ -62,7 +62,7 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 	}
 
 	// TODO: review
-	init(): Promise<string> {
+	async init(): Promise<string> {
 		const projectId = 'e8847fc2148698b9d2006253eb1c631a';
 		const metadata: SignClientTypes.Metadata = {
 			name: 'name',
@@ -75,12 +75,18 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 			LedgerId.TESTNET,
 			projectId,
 		);
+		// TODO:  wondering if we need to recover account id here to pass to register and if the modal should be open here
+		try{
+			await this.dAppConnector.openModal();
+		}catch (e){
+			console.log('open modal error: ',e)
+		}
 
 		this.eventService.emit(WalletEvents.walletInit, {
 			wallet: SupportedWallets.HWALLETCONNECT,
 			initData: {},
 		});
-		LogService.logTrace('WalletConnect Initialized');
+		LogService.logTrace('Hedera WalletConnect Initialized');
 		return Promise.resolve(this.networkService.environment);
 	}
 

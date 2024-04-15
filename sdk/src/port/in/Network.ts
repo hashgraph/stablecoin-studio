@@ -222,6 +222,7 @@ class NetworkInPort implements INetworkInPort {
 				}
 			}
 		}
+		// TODO: check this, when should be select the network when wallet connect mode(?)
 		console.log(
 			'SetNetworkCommand',
 			req.network,
