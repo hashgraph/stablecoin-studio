@@ -132,7 +132,7 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 		try {
 			this.bc = await BladeConnector.init(ConnectorStrategy.AUTO, {
 				...SDK.appMetadata,
-				icons: [SDK.appMetadata.icon],
+				icons: [],
 			});
 		} catch (error: any) {
 			LogService.logTrace('Error initializing Blade', error);
