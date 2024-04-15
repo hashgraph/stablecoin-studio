@@ -144,8 +144,9 @@ The backend is made of two components:
     - _status_: transaction status (optional)
     - _page_: page number (optional)
     - _limit_: number of transactions per page (optional)
+    - _hederaAccountId_: account id (optional)
   - __Logic__ : 
-    - Action: Returns all the transactions from the DB (paginated response), optionally filtered by network, publicKey, and status.
+    - Action: Returns all the transactions from the DB (paginated response), optionally filtered by network, publicKey, account id and status.
  - __Status code__ :
     - 200 OK.
     - 500 Internal Server Error: An error occurred during the process.

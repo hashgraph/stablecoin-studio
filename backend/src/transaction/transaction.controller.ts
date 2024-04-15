@@ -189,7 +189,7 @@ export default class TransactionController {
     name: 'publicKey',
     description: 'The public key to retrieve transactions for',
     example: 'cf8c984270cd7cd25e1bd6df1a3a22ee2d1cd53a0f7bbfdf917a8bd881b11b5e',
-    required: true,
+    required: false,
   })
   @ApiQuery({
     name: 'status',
@@ -212,7 +212,13 @@ export default class TransactionController {
   @ApiQuery({
     name: 'network',
     description: 'The network from which to retrieve transactions',
-    example: 'mainnet',
+    example: 'testnet',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'hederaAccountId',
+    description: 'The Hedera account ID to retrieve transactions for',
+    example: '0.0.12345',
     required: false,
   })
   @UseFilters(HttpExceptionFilter)
@@ -223,6 +229,7 @@ export default class TransactionController {
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page?: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit?: number,
     @Query('network') network?: string,
+    @Query('hederaAccountId') hederaAccountId?: string,
   ): Promise<Pagination<GetTransactionsResponseDto>> {
     {
       if (page < 1) {
@@ -248,6 +255,7 @@ export default class TransactionController {
           publicKey,
           status,
           network,
+          hederaAccountId,
           {
             page,
             limit,

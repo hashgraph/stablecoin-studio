@@ -27,6 +27,7 @@ export enum SupportedWallets {
 	BLADE = 'Blade',
 	FIREBLOCKS = 'Fireblocks',
 	DFNS = 'DFNS',
+	MULTISIG = 'MultiSig',
 }
 
 export default interface Wallet {

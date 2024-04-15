@@ -1,3 +1,23 @@
+/*
+ *
+ * Hedera Stablecoin CLI
+ *
+ * Copyright (C) 2023 Hedera Hashgraph, LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as inquirer from 'inquirer';
 import figlet from 'figlet-promised';
@@ -30,6 +50,8 @@ import { IRPCsConfig } from 'domain/configuration/interfaces/IRPCsConfig.js';
 import { MIRROR_NODE, RPC } from '../../../core/Constants.js';
 import { AccountType } from '../../../domain/configuration/interfaces/AccountType';
 import fs from 'fs';
+import MultiSigTransaction from '../../../domain/stablecoin/MultiSigTransaction.js';
+import BackendConfig from '../../../domain/configuration/interfaces/BackendConfig.js';
 
 /**
  * Utilities Service
@@ -39,6 +61,7 @@ export default class UtilitiesService extends Service {
   private currentNetwork: INetworkConfig;
   private currentMirror: IMirrorsConfig;
   private currentRPC: IRPCsConfig;
+  private currentBackend: BackendConfig;
   private currentFactory: IFactoryConfig;
   private currentHederaTokenManager: IHederaTokenManagerConfig;
 
@@ -49,65 +72,80 @@ export default class UtilitiesService extends Service {
   public async initSDK(): Promise<void> {
     const account = this.getCurrentAccount();
     SDK.log = configurationService.getLogConfiguration();
+    const network = this.getCurrentNetwork();
     await Network.init(
       new InitializationRequest({
-        network: this.getCurrentNetwork().name,
+        network: network.name,
         mirrorNode: this.getCurrentMirror(),
         rpcNode: this.getCurrentRPC(),
+        consensusNodes: network.consensusNodes,
+        backend: this.getCurrentBackend()
+          ? {
+              url: this.getCurrentBackend().endpoint,
+            }
+          : undefined,
       }),
     );
-    await Network.connect(
-      new ConnectRequest({
-        account: {
-          accountId: account.accountId,
-          privateKey:
-            account.type == AccountType.SelfCustodial
-              ? {
-                  key: account.selfCustodial.privateKey.key,
-                  type: account.selfCustodial.privateKey.type,
-                }
-              : undefined,
-        },
-        network: this.getCurrentNetwork().name,
-        mirrorNode: this.getCurrentMirror(),
-        rpcNode: this.getCurrentRPC(),
-        wallet:
-          account.type == AccountType.SelfCustodial
-            ? SupportedWallets.CLIENT
-            : account.type == AccountType.Fireblocks
-            ? SupportedWallets.FIREBLOCKS
-            : SupportedWallets.DFNS,
-        custodialWalletSettings:
-          account.type == AccountType.SelfCustodial
-            ? undefined
-            : account.type == AccountType.Fireblocks
-            ? {
-                apiSecretKey: fs.readFileSync(
-                  account.nonCustodial.fireblocks.apiSecretKeyPath,
-                  'utf8',
-                ),
-                apiKey: account.nonCustodial.fireblocks.apiKey,
-                baseUrl: account.nonCustodial.fireblocks.baseUrl,
-                vaultAccountId: account.nonCustodial.fireblocks.vaultAccountId,
-                assetId: account.nonCustodial.fireblocks.assetId,
-                hederaAccountId: account.accountId,
-              }
-            : {
-                authorizationToken:
-                  account.nonCustodial.dfns.authorizationToken,
-                credentialId: account.nonCustodial.dfns.credentialId,
-                serviceAccountPrivateKey: fs.readFileSync(
-                  account.nonCustodial.dfns.privateKeyPath,
-                  'utf8',
-                ),
-                urlApplicationOrigin: account.nonCustodial.dfns.appOrigin,
-                applicationId: account.nonCustodial.dfns.appId,
-                baseUrl: account.nonCustodial.dfns.testUrl,
-                walletId: account.nonCustodial.dfns.walletId,
-                hederaAccountId: account.accountId,
-              },
-      }),
-    );
+    //* Connect to the network
+    let privateKey: { key: string; type: string };
+    let wallet: SupportedWallets;
+    let custodialWalletSettings: any;
+    switch (account.type) {
+      case AccountType.SelfCustodial:
+        privateKey = {
+          key: account.selfCustodial.privateKey.key,
+          type: account.selfCustodial.privateKey.type,
+        };
+        wallet = SupportedWallets.CLIENT;
+        break;
+      case AccountType.Fireblocks:
+        wallet = SupportedWallets.FIREBLOCKS;
+        custodialWalletSettings = {
+          apiSecretKey: fs.readFileSync(
+            account.custodial.fireblocks.apiSecretKeyPath,
+            'utf8',
+          ),
+          apiKey: account.custodial.fireblocks.apiKey,
+          baseUrl: account.custodial.fireblocks.baseUrl,
+          vaultAccountId: account.custodial.fireblocks.vaultAccountId,
+          assetId: account.custodial.fireblocks.assetId,
+          hederaAccountId: account.accountId,
+        };
+        break;
+      case AccountType.Dfns:
+        wallet = SupportedWallets.DFNS;
+        custodialWalletSettings = {
+          authorizationToken: account.custodial.dfns.authorizationToken,
+          credentialId: account.custodial.dfns.credentialId,
+          serviceAccountPrivateKey: fs.readFileSync(
+            account.custodial.dfns.privateKeyPath,
+            'utf8',
+          ),
+          urlApplicationOrigin: account.custodial.dfns.appOrigin,
+          applicationId: account.custodial.dfns.appId,
+          baseUrl: account.custodial.dfns.testUrl,
+          walletId: account.custodial.dfns.walletId,
+          hederaAccountId: account.accountId,
+        };
+        break;
+      case AccountType.MultiSignature:
+        wallet = SupportedWallets.MULTISIG;
+        break;
+      default:
+        throw new Error('Invalid account type');
+    }
+    const connectRequest = {
+      account: {
+        accountId: account.accountId,
+        privateKey: privateKey,
+      },
+      network: this.getCurrentNetwork().name,
+      mirrorNode: this.getCurrentMirror(),
+      rpcNode: this.getCurrentRPC(),
+      wallet: wallet,
+      custodialWalletSettings: custodialWalletSettings,
+    };
+    await Network.connect(new ConnectRequest(connectRequest));
   }
 
   public setCurrentAccount(account: IAccountConfig): void {
@@ -126,9 +164,8 @@ export default class UtilitiesService extends Service {
     const validations = {
       [AccountType.SelfCustodial]: () => !!account.selfCustodial,
       [AccountType.Fireblocks]: () =>
-        !!account.nonCustodial && !!account.nonCustodial.fireblocks,
-      [AccountType.Dfns]: () =>
-        !!account.nonCustodial && !!account.nonCustodial.dfns,
+        !!account.custodial && !!account.custodial.fireblocks,
+      [AccountType.Dfns]: () => !!account.custodial && !!account.custodial.dfns,
     };
 
     return validations[account.type]();
@@ -167,6 +204,24 @@ export default class UtilitiesService extends Service {
       throw new Error('JSON-RPC-Relay not initialized');
     } else {
       return this.currentRPC;
+    }
+  }
+
+  public setCurrentBackend(backend: BackendConfig): void {
+    this.currentBackend = backend;
+  }
+
+  public getCurrentBackend(): BackendConfig | undefined {
+    if (!this.currentBackend) {
+      // throw new Error('Backend not initialized');
+      console.warn(
+        colors.yellow('Backend not initialized'),
+        'Current Backend: ',
+        this.currentBackend,
+      );
+      return undefined;
+    } else {
+      return this.currentBackend;
     }
   }
 
@@ -238,6 +293,15 @@ export default class UtilitiesService extends Service {
   }
 
   /**
+   * Delays the execution for the specified number of milliseconds.
+   * @param ms - The number of milliseconds to delay.
+   * @returns A promise that resolves after the specified delay.
+   */
+  public delay(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  /**
    * Function to create n break line
    * @param n
    */
@@ -298,56 +362,66 @@ export default class UtilitiesService extends Service {
       tokenDeleted?: boolean;
       mirrorNode?: string;
       rpc?: string;
+      backend?: string;
     },
   ): Promise<string> {
-    let networkInfo = '';
-    let mirrorInfo = '';
-    let rpcInfo = '';
+    const {
+      network,
+      mirrorNode,
+      rpc,
+      backend,
+      account,
+      token,
+      tokenPaused,
+      tokenDeleted,
+    } = options || {};
 
-    if (options?.network)
-      networkInfo =
-        ' ' +
-        colors.underline(colors.bold('Network:')) +
-        ' ' +
-        colors.cyan('(' + options.network);
-    if (options?.mirrorNode)
-      mirrorInfo = colors.cyan(' - mirror: ' + options.mirrorNode);
-    if (options?.rpc) rpcInfo = colors.cyan(', rpc: ' + options.rpc);
+    const networkInfo = network
+      ? ` ${colors.underline(colors.bold('Network:'))} ${colors.cyan(
+          `(${network}`,
+        )}`
+      : '';
+    const mirrorInfo = mirrorNode
+      ? colors.cyan(` - mirror: ${mirrorNode}`)
+      : '';
+    const rpcInfo = rpc ? colors.cyan(`, rpc: ${rpc}`) : '';
+    const backendInfo = backend ? colors.cyan(`, backend: ${backend}`) : '';
+    const closingBracket =
+      networkInfo || mirrorInfo || rpcInfo ? colors.cyan(')') : '';
 
-    if (networkInfo || mirrorInfo || rpcInfo) {
-      question =
-        question + networkInfo + mirrorInfo + rpcInfo + colors.cyan(')');
-    }
+    const accountInfo = account
+      ? ` ${colors.underline(colors.bold('Account:'))} ${colors.magenta(
+          `(${account})`,
+        )}`
+      : '';
+    const tokenInfo = token
+      ? ` ${colors.underline(colors.bold('Stablecoin:'))} ${colors.yellow(
+          `(${token})`,
+        )}`
+      : '';
+    const tokenPausedInfo = tokenPaused ? ' | ' + colors.red('PAUSED') : '';
+    const tokenDeletedInfo = tokenDeleted ? ' | ' + colors.red('DELETED') : '';
 
-    if (options?.account) {
-      question =
-        question +
-        ' ' +
-        colors.underline(colors.bold('Account:')) +
-        ' ' +
-        colors.magenta('(' + options.account + ')');
-    }
-    if (options?.token) {
-      question =
-        question +
-        ' ' +
-        colors.underline(colors.bold('Stablecoin:')) +
-        ' ' +
-        colors.yellow('(' + options.token + ')');
-    }
-    if (options?.tokenPaused) {
-      question = question + ' | ' + colors.red('PAUSED');
-    }
-    if (options?.tokenDeleted) {
-      question = question + ' | ' + colors.red('DELETED');
-    }
-    question = question + '\n';
+    const infoArray = [
+      networkInfo,
+      mirrorInfo,
+      rpcInfo,
+      backendInfo,
+      closingBracket,
+      accountInfo,
+      tokenInfo,
+      tokenPausedInfo,
+      tokenDeletedInfo,
+    ];
+
+    question += infoArray.filter(Boolean).join('') + '\n';
+
     const variable = await inquirer.prompt({
       name: 'response',
       type: 'rawlist',
       message: question,
       choices: goBack
-        ? choices.concat(language.getArrayFromObject('wizard.backOption'))
+        ? [...choices, ...language.getArrayFromObject('wizard.backOption')]
         : choices,
     });
     return variable.response;
@@ -421,6 +495,17 @@ export default class UtilitiesService extends Service {
     return variable.response;
   }
 
+  public async confirmContinue(
+    question = language.getText('general.continue'),
+  ): Promise<boolean> {
+    const variable = await inquirer.prompt({
+      name: 'response',
+      type: 'confirm',
+      message: question,
+    });
+    return variable.response;
+  }
+
   /**
    * Function for simple ask questions with inquire
    * @param question
@@ -486,6 +571,45 @@ export default class UtilitiesService extends Service {
     }
   }
 
+  /**
+   * Draws a table to display pending multisig transactions.
+   * If there are no pending transactions, a message is logged.
+   *
+   * @param {Object} options - The options for drawing the table.
+   * @param {MultiSigTransaction[]} options.multiSigTxList - The list of pending multisig transactions.
+   * @returns {Promise<void>} - A promise that resolves when the table is drawn.
+   */
+  public async drawTableListPendingMultiSig({
+    multiSigTxList,
+  }: {
+    multiSigTxList: MultiSigTransaction[];
+  }): Promise<void> {
+    if (multiSigTxList.length === 0) {
+      console.log(
+        '🙌 There are no pending multisig transactions at this time!',
+      );
+      return;
+    }
+
+    console.log('📜 There are pending multisig transactions for: ');
+    // Define table for pending multisig transactions
+    const table = new Table({
+      style: { head: ['cyan', 'bold'] },
+      head: ['Transaction ID', 'Description', 'Status'],
+      colWidths: [40, 60, 12],
+      wordWrap: true,
+      wrapOnWordBoundary: true,
+    });
+
+    // Add pending multisig transactions to table
+    multiSigTxList.forEach((multiSigTx) =>
+      table.push([multiSigTx.id, multiSigTx.description, multiSigTx.status]),
+    );
+
+    // Show table
+    console.info(table.toString());
+  }
+
   public exitApplication(cause?: string): void {
     let code = 0; // OK
     if (cause) {
@@ -537,36 +661,34 @@ export default class UtilitiesService extends Service {
                 type: acc.selfCustodial.privateKey.type,
               },
             },
-        nonCustodial: !acc.nonCustodial
+        custodial: !acc.custodial
           ? undefined
           : {
-              fireblocks: !acc.nonCustodial.fireblocks
+              fireblocks: !acc.custodial.fireblocks
                 ? undefined
                 : {
-                    apiSecretKeyPath:
-                      acc.nonCustodial.fireblocks.apiSecretKeyPath,
-                    apiKey: acc.nonCustodial.fireblocks.apiKey,
-                    baseUrl: acc.nonCustodial.fireblocks.baseUrl,
-                    assetId: acc.nonCustodial.fireblocks.assetId,
-                    vaultAccountId: acc.nonCustodial.fireblocks.vaultAccountId,
+                    apiSecretKeyPath: acc.custodial.fireblocks.apiSecretKeyPath,
+                    apiKey: acc.custodial.fireblocks.apiKey,
+                    baseUrl: acc.custodial.fireblocks.baseUrl,
+                    assetId: acc.custodial.fireblocks.assetId,
+                    vaultAccountId: acc.custodial.fireblocks.vaultAccountId,
                     hederaAccountPublicKey:
-                      acc.nonCustodial.fireblocks.hederaAccountPublicKey,
+                      acc.custodial.fireblocks.hederaAccountPublicKey,
                   },
-              dfns: !acc.nonCustodial.dfns
+              dfns: !acc.custodial.dfns
                 ? undefined
                 : {
-                    authorizationToken:
-                      acc.nonCustodial.dfns.authorizationToken,
-                    credentialId: acc.nonCustodial.dfns.credentialId,
-                    privateKeyPath: acc.nonCustodial.dfns.privateKeyPath,
-                    appOrigin: acc.nonCustodial.dfns.appOrigin,
-                    appId: acc.nonCustodial.dfns.appId,
-                    testUrl: acc.nonCustodial.dfns.testUrl,
-                    walletId: acc.nonCustodial.dfns.walletId,
+                    authorizationToken: acc.custodial.dfns.authorizationToken,
+                    credentialId: acc.custodial.dfns.credentialId,
+                    privateKeyPath: acc.custodial.dfns.privateKeyPath,
+                    appOrigin: acc.custodial.dfns.appOrigin,
+                    appId: acc.custodial.dfns.appId,
+                    testUrl: acc.custodial.dfns.testUrl,
+                    walletId: acc.custodial.dfns.walletId,
                     hederaAccountPublicKey:
-                      acc.nonCustodial.dfns.hederaAccountPublicKey,
+                      acc.custodial.dfns.hederaAccountPublicKey,
                     hederaAccountKeyType:
-                      acc.nonCustodial.dfns.hederaAccountKeyType,
+                      acc.custodial.dfns.hederaAccountKeyType,
                   },
             },
       };
@@ -629,6 +751,7 @@ export default class UtilitiesService extends Service {
     let networkInfo = '';
     let mirrorInfo = '';
     let rpcInfo = '';
+    let backendInfo = '';
 
     if (network)
       networkInfo =
@@ -640,9 +763,17 @@ export default class UtilitiesService extends Service {
       mirrorInfo = colors.cyan(' - mirror: ' + this.currentMirror.name);
     if (this.currentRPC)
       rpcInfo = colors.cyan(', rpc: ' + this.currentRPC.name);
+    if (this.currentBackend)
+      backendInfo = colors.cyan(', backend: ' + this.currentBackend.endpoint);
 
-    if (networkInfo || mirrorInfo || rpcInfo) {
-      result = result + networkInfo + mirrorInfo + rpcInfo + colors.cyan(')');
+    if (networkInfo || mirrorInfo || rpcInfo || backendInfo) {
+      result =
+        result +
+        networkInfo +
+        mirrorInfo +
+        rpcInfo +
+        backendInfo +
+        colors.cyan(')');
     }
 
     if (accountId) {
@@ -703,6 +834,7 @@ export default class UtilitiesService extends Service {
     const currentAccount = this.getCurrentAccount();
     const currentMirror = this.getCurrentMirror();
     const currentRPC = this.getCurrentRPC();
+    const currentBackend = this.getCurrentBackend();
     const networks = configurationService
       .getConfiguration()
       .networks.map((network) => network.name);
@@ -714,6 +846,7 @@ export default class UtilitiesService extends Service {
         network: currentAccount.network,
         mirrorNode: currentMirror.name,
         rpc: currentRPC.name,
+        backend: currentBackend?.endpoint,
         account: `${currentAccount.accountId} - ${currentAccount.alias}`,
       },
     );

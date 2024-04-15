@@ -51,6 +51,9 @@ import {
 } from '../../in/request/BaseRequest.js';
 import { MirrorNode } from '../../../domain/context/network/MirrorNode.js';
 import ContractViewModel from '../../out/mirror/response/ContractViewModel.js';
+import MultiKey from '../../../domain/context/account/MultiKey.js';
+
+const PROTOBUF_ENCODED = 'ProtobufEncoded';
 
 @singleton()
 export class MirrorNodeAdapter {
@@ -113,7 +116,7 @@ export class MirrorNodeAdapter {
 		const url = `${
 			this.mirrorNodeConfig.baseUrl
 		}tokens/${tokenId.toString()}`;
-
+		console.log('Getting token from mirror node -> ', url);
 		LogService.logTrace('Getting token from mirror node -> ', url);
 
 		const retry = 10;
@@ -134,6 +137,10 @@ export class MirrorNodeAdapter {
 	public async getStableCoin(
 		tokenId: HederaId,
 	): Promise<StableCoinViewModel> {
+		console.log(
+			'Getting stablecoin from mirror node -> ',
+			tokenId.toString(),
+		);
 		try {
 			const response = await this.getTokenInfo(tokenId);
 			const getKeyOrDefault = (
@@ -151,13 +158,14 @@ export class MirrorNodeAdapter {
 					return undefined;
 				}
 			};
+			console.log('CUSTOM FEES' + response.data.custom_fees);
 			const getCustomFeesOrDefault = async (
 				val?: ICustomFees,
 			): Promise<RequestCustomFee[] | undefined> => {
 				if (!val) return undefined;
 				const customFees: RequestCustomFee[] = [];
 
-				val.fixed_fees.forEach(async (fixedFee) => {
+				for (const fixedFee of val.fixed_fees) {
 					const denominatingToken = fixedFee.denominating_token_id
 						? HederaId.from(fixedFee.denominating_token_id)
 						: HederaId.NULL;
@@ -188,8 +196,8 @@ export class MirrorNodeAdapter {
 					};
 
 					customFees.push(requestFixedFee);
-				});
-
+				}
+				console.log('FRACTIONAL FEES' + val.fractional_fees);
 				val.fractional_fees.forEach((fractionalFee) => {
 					const requestFractionalFee: RequestFractionalFee = {
 						decimals: decimals,
@@ -359,13 +367,18 @@ export class MirrorNodeAdapter {
 				alias: res.data.alias,
 			};
 
-			if (res.data.key)
-				account.publicKey = new PublicKey({
-					key: res.data.key ? res.data.key.key : undefined,
-					type: res.data.key
-						? (res.data.key._type as KeyType)
-						: undefined,
-				});
+			if (res.data.key) {
+				if (res.data.key._type != PROTOBUF_ENCODED) {
+					account.publicKey = new PublicKey({
+						key: res.data.key ? res.data.key.key : undefined,
+						type: res.data.key
+							? (res.data.key._type as KeyType)
+							: undefined,
+					});
+				} else {
+					account.multiKey = MultiKey.fromProtobuf(res.data.key.key);
+				}
+			}
 
 			return account;
 		} catch (error) {

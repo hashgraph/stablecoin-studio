@@ -1,3 +1,23 @@
+/*
+ *
+ * Hedera Stablecoin CLI
+ *
+ * Copyright (C) 2023 Hedera Hashgraph, LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 import { Network } from '@hashgraph/stablecoin-npm-sdk';
 import {
   wizardService,
@@ -40,6 +60,13 @@ describe('wizardService', () => {
         },
       },
       {
+        accountId: '0.0.4',
+        type: AccountType.MultiSignature,
+        network: 'testnet',
+        alias: 'aliasmulti-signature',
+        importedTokens: [{ id: '0.0.58325', symbol: 'TEST' }],
+      },
+      {
         accountId: 'account3',
         type: AccountType.Dfns,
         network: 'testnet',
@@ -77,6 +104,9 @@ describe('wizardService', () => {
         selected: true,
       },
     ],
+    backend: {
+      endpoint: 'http://localhost:3000/api/transactions',
+    },
     factories: [
       { id: '1', network: 'dev' },
       { id: '2', network: 'testnet' },
@@ -224,25 +254,9 @@ describe('wizardService', () => {
 
     // verify
     expect(getConfigurationMock).toHaveBeenCalled();
-    expect(setSelectedAccountMock).toHaveBeenCalledWith({
-      accountId: 'account3',
-      type: AccountType.Dfns,
-      network: 'testnet',
-      alias: 'alias3',
-      nonCustodial: {
-        dfns: {
-          authorizationToken: 'authorizationToken',
-          credentialId: 'credentialId',
-          privateKeyPath: 'privateKeyPath',
-          appOrigin: 'appOrigin',
-          appId: 'appId',
-          testUrl: 'testUrl',
-          walletId: 'walletId',
-          hederaAccountPublicKey: 'hederaAccountPublicKey',
-          hederaAccountKeyType: 'hederaAccountKeyType',
-        },
-      },
-    });
+    expect(setSelectedAccountMock).toHaveBeenCalledWith(
+      configurationMock.accounts[configurationMock.accounts.length - 1],
+    );
   });
 
   it('should set the selected account and related configurations', async () => {
@@ -261,6 +275,9 @@ describe('wizardService', () => {
       .mockImplementation();
     const setCurrentRPCMock = jest
       .spyOn(utilsService, 'setCurrentRPC')
+      .mockImplementation();
+    const setCurrentBackendMock = jest
+      .spyOn(utilsService, 'setCurrentBackend')
       .mockImplementation();
     const setCurrentFactoryMock = jest
       .spyOn(utilsService, 'setCurrentFactory')
@@ -310,6 +327,9 @@ describe('wizardService', () => {
       apiKey: '',
       headerName: '',
       selected: true,
+    });
+    expect(setCurrentBackendMock).toHaveBeenCalledWith({
+      endpoint: configurationMock.backend.endpoint,
     });
     expect(setCurrentFactoryMock).toHaveBeenCalledWith({
       id: '2',

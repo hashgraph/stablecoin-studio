@@ -1,0 +1,23 @@
+{
+  "ignore": [
+    "build",
+    "coverage",
+    "*.*",
+    "**/*.js",
+    "**/*.html",
+    "**/*.css",
+    "**/*.json",
+    "**/*.md",
+    "**/*.txt",
+    "**/*.yml",
+    "**/*.yaml",
+    "**/*.log",
+    "**/*.xml"
+  ],
+  "license": "src/resources/license-header.js",
+  "licenseFormats": {
+    "ts": {
+      "append": ""
+    }
+  }
+}

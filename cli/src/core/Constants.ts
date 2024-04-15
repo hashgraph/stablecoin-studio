@@ -1,6 +1,6 @@
 /*
  *
- * Hedera Stablecoin SDK
+ * Hedera Stablecoin CLI
  *
  * Copyright (C) 2023 Hedera Hashgraph, LLC
  *
@@ -35,3 +35,6 @@ export const HEDERA_RPC_NAME = 'HASHIO';
 export const HASHIO_RPC_TESTNET_URL = 'https://testnet.hashio.io/api';
 export const HASHIO_RPC_PREVIEWNET_URL = 'https://previewnet.hashio.io/api';
 export const HASHIO_RPC_MAINNET_URL = 'https://mainnet.hashio.io/api';
+
+export const DEFAULT_BACKEND_ENDPOINT =
+  'http://localhost:3000/api/transactions';

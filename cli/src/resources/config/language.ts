@@ -1,5 +1,26 @@
-import colors from 'colors';
+/*
+ *
+ * Hedera Stablecoin CLI
+ *
+ * Copyright (C) 2023 Hedera Hashgraph, LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+import { AccountType } from '../../domain/configuration/interfaces/AccountType';
 import * as inquirer from 'inquirer';
+import colors from 'colors';
 
 const separator_1 = {
   Separator_1: new inquirer.Separator(),
@@ -9,9 +30,11 @@ const separator_2 = {
   Separator_2: new inquirer.Separator(' '),
 };
 
+const backOption = 'Go back';
+
 const goBack = {
   ...separator_1,
-  goBack: 'Go back',
+  goBack: backOption,
   ...separator_2,
 };
 
@@ -36,11 +59,13 @@ export const english = {
     incorrectParam: 'Incorrect input, retrying',
     error:
       'An error occurred, see above for details, press any key to continue',
-  },
-  initialConfiguration: {
-    title: '\n\n\t\tHedera Stablecoin initial configuration\n',
+    continue: '↩️ Press enter to continue',
+    backOption: backOption,
+    previous: 'Previous',
+    next: 'Next',
   },
   configuration: {
+    initialTitle: '\n\n\t\tHedera Stablecoin configuration\n',
     askPath: 'Write your config path',
     askCreateConfig:
       'No configuration file found at the specified path, would you like to create one? (y/n)',
@@ -52,11 +77,13 @@ export const english = {
     AccountsConfigurationMessage: 'You will now configure your accounts:',
     askAccountId: 'Enter the account id',
     askAccountPubKey: 'Enter the public key (Hexadecimal format)',
-    askAccountType: 'Enter the account type (SELF-CUSTODIAL|FIREBLOCKS|DFNS)',
+    askAccountType: `Enter the account type (${AccountType.SelfCustodial}|${AccountType.MultiSignature}|${AccountType.Fireblocks}|${AccountType.Dfns})`,
     askConfigurateFactories:
       'Do you want to config your factories? Check the documentation for more information : https://github.com/hashgraph/stablecoin-studio#deploying-the-stable-coin-factories',
     askConfigurateDefaultMirrorsAndRPCs:
       'Do you want to use default mirror node/JSON-RPC-Relay services? (y/n)',
+    askConfigurateBackend: 'Do you want to configure the backend? (y/n)',
+    askBackendUrl: 'Enter the backend url',
     askNetworkAccount: 'Which network does this account belong to?',
     askPrivateKeyType: 'Which type of private key will the account use?',
     askAlias: 'Enter an alias for this account',
@@ -129,6 +156,9 @@ export const english = {
     selectMirrorNode: 'Select the mirror node: ',
     selectRPC: 'Select the JSON-RPC-Relay: ',
     RPCNotToChange: '\nThere is no nJSON-RPC-Relay to change',
+    backendNew: 'New backend endpoint',
+    backendRemoved: 'Backend endpoint removed',
+    backendNotDefined: colors.red('There is no backend defined'),
     fireblocks: {
       title: 'Fireblocks account configuration',
       askApiSecretKeyPath: 'Enter your API secret key path',
@@ -358,6 +388,7 @@ export const english = {
       Manage: 'Manage imported tokens',
       Operate: 'Operate with an existing Stablecoin',
       List: 'List Stablecoins',
+      ListPendingMultiSig: 'List multi-signature transactions',
       Configuration: 'Configuration',
       ...separator_1,
       Exit: 'Exit',
@@ -371,6 +402,7 @@ export const english = {
       ManageMirrorNode: 'Manage mirror node',
       ManageRPC: 'Manage JSON-RPC-Relay',
       ManageFactory: 'Manage factory',
+      ManageBackend: 'Manage backend',
       ...returnToMainMenu,
     },
     manageAccountOptions: {
@@ -393,6 +425,11 @@ export const english = {
       Add: 'Set up JSON-RPC-Relay',
       Delete: 'Remove JSON-RPC-Relay',
       ...goBack,
+    },
+    manageBackendTitle: 'Manage backend options',
+    manageBackendOptions: {
+      update: 'Update current backend endpoint',
+      remove: 'Remove current backend endpoint',
     },
     manageImportedTokens: {
       Add: 'Add token',
@@ -466,9 +503,37 @@ export const english = {
       ECDSA: 'ECDSA',
     },
     accountType: {
-      SELF_CUSTODIAL: 'SELF-CUSTODIAL',
-      FIREBLOCKS: 'FIREBLOCKS',
-      DFNS: 'DFNS',
+      SELF_CUSTODIAL: AccountType.SelfCustodial,
+      MULTI_SIGNATURE: AccountType.MultiSignature,
+      FIREBLOCKS: AccountType.Fireblocks,
+      DFNS: AccountType.Dfns,
+    },
+    // * Multi-Signature Transactions
+    multiSig: {
+      listMenuTitle: 'Select a multi-signature transaction',
+      txActions: {
+        title: 'Multi-signature transaction actions',
+        actions: {
+          sign: '🖋️  Sign',
+          submit: '📨 Submit',
+          details: '👀 Details',
+          remove: colors.red('❌ Remove'),
+        },
+        signingTx: '🖋️ Signing transaction...',
+        signedTx: colors.green('✅ Transaction signed successfully'),
+        errorSigningTx: colors.red('❌ Error signing transaction'),
+        signReturn: 'Returning to multi-signature transaction list...',
+        submittingTx: '📨 Submitting transaction...',
+        submittedTx: colors.green('✅ Transaction submitted successfully'),
+        errorSubmittingTx: colors.red('❌ Error submitting transaction'),
+        submitReturn: 'Returning to multi-signature transaction list...',
+        removingTx: 'Removing transaction...',
+        errorRemovingTx: colors.red('❌ Error removing transaction'),
+        removedTx: colors.green('✅ Transaction removed successfully \n'),
+        removeReturn: 'Returning to multi-signature transaction list...',
+        detailsContinue:
+          'Press return to go back to the multi-signature transaction actions...',
+      },
     },
   },
   manageImportedToken: {

@@ -133,6 +133,7 @@ export default class TransactionService {
     publicKey?: string,
     status?: string,
     network?: string,
+    hederaAccountId?: string,
     options?: IPaginationOptions,
   ): Promise<Pagination<GetTransactionsResponseDto>> {
     let queryBuilder =
@@ -155,7 +156,6 @@ export default class TransactionService {
         `Invalid status: ${status}. Valid values are: ${Object.values(TransactionStatus).join(', ')}`,
       );
     }
-    //---
     if (publicKey) {
       queryBuilder = queryBuilder.where(
         ':publicKey = ANY(transaction.key_list)',
@@ -172,7 +172,12 @@ export default class TransactionService {
         network: normalizedNetwork,
       });
     }
-
+    if (hederaAccountId) {
+      queryBuilder = queryBuilder.andWhere(
+        'transaction.hedera_account_id = :hederaAccountId',
+        { hederaAccountId },
+      );
+    }
     const paginatedResults = await paginate<Transaction>(queryBuilder, options);
 
     const itemsTransformed = paginatedResults.items.map((transaction) =>
@@ -200,7 +205,7 @@ export default class TransactionService {
     }
   }
 
-  //This function is used to delete all transactions from the database
+  //*This function is used to delete all transactions from the database
   async deleteAllTransactions(): Promise<void> {
     await this.transactionRepository.clear();
   }
@@ -216,6 +221,7 @@ export default class TransactionService {
       transaction.signed_keys,
       transaction.signatures,
       transaction.network,
+      transaction.hedera_account_id,
     );
   }
 }

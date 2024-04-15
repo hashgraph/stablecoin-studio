@@ -10,7 +10,7 @@
     "sourceType": "module",
     "ecmaVersion": 2020
   },
-  "plugins": ["@typescript-eslint", "jest"],
+  "plugins": ["@typescript-eslint", "jest", "license-header"],
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
@@ -21,6 +21,7 @@
     "@typescript-eslint/explicit-function-return-type": "warn",
     "@typescript-eslint/no-var-requires": "off",
     "@typescript-eslint/no-explicit-any": "off",
-    "no-case-declarations": "off"
+    "no-case-declarations": "off",
+    "license-header/header": ["error", "./src/resources/license-header.js"]
   }
 }

@@ -10,11 +10,12 @@ import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
 import { handleRequestValidation } from '../../../utils/validationsHelper';
 import SDKService from '../../../services/SDKService';
-import { SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
+import { LAST_WALLET_SELECTED, SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
 
-import { FreezeAccountRequest } from '@hashgraph/stablecoin-npm-sdk';
+import { FreezeAccountRequest, SupportedWallets } from '@hashgraph/stablecoin-npm-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 import { propertyNotFound } from '../../../constant';
+import { formatAmount } from '../../../utils/inputHelper';
 
 const UnfreezeOperation = () => {
 	const {
@@ -38,8 +39,14 @@ const UnfreezeOperation = () => {
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
 	});
+	const selectedWallet = useSelector(LAST_WALLET_SELECTED);
 
 	useRefreshCoinInfo();
+
+	const successDescription =
+		selectedWallet === SupportedWallets.MULTISIG
+			? 'MultiSig transaction has been successfully created and is now awaiting signatures. Accounts have 180 seconds to sign the transaction.'
+			: t('operations:modalSuccessTitle');
 
 	const handleUnfreeze: ModalsHandlerActionsProps['onConfirm'] = async ({
 		onSuccess,
@@ -119,7 +126,7 @@ const UnfreezeOperation = () => {
 						]}
 					/>
 				}
-				successNotificationTitle={t('operations:modalSuccessTitle')}
+				successNotificationTitle={successDescription}
 				successNotificationDescription={t('unfreeze:modalSuccess', {
 					account: getValues().targetAccount,
 				})}

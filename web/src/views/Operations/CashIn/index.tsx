@@ -9,11 +9,16 @@ import OperationLayout from './../OperationLayout';
 import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
 import { useDispatch, useSelector } from 'react-redux';
-import { SELECTED_WALLET_COIN, walletActions } from '../../../store/slices/walletSlice';
+import {
+	LAST_WALLET_SELECTED,
+	SELECTED_WALLET_COIN,
+	walletActions,
+} from '../../../store/slices/walletSlice';
 import { useState } from 'react';
-import { BigDecimal, CashInRequest } from '@hashgraph/stablecoin-npm-sdk';
+import { BigDecimal, CashInRequest, SupportedWallets } from '@hashgraph/stablecoin-npm-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 import { propertyNotFound } from '../../../constant';
+import { formatAmount } from '../../../utils/inputHelper';
 
 const CashInOperation = () => {
 	const {
@@ -24,6 +29,7 @@ const CashInOperation = () => {
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
 	const { decimals = 0 } = selectedStableCoin || {};
+	const selectedWallet = useSelector(LAST_WALLET_SELECTED);
 
 	const [errorOperation, setErrorOperation] = useState();
 	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
@@ -45,6 +51,11 @@ const CashInOperation = () => {
 	const { t } = useTranslation(['cashIn', 'global', 'operations']);
 
 	useRefreshCoinInfo();
+
+	const successDescription =
+		selectedWallet === SupportedWallets.MULTISIG
+			? 'MultiSig transaction has been successfully created and is now awaiting signatures. Accounts have 180 seconds to sign the transaction.'
+			: t('operations:modalSuccessDesc');
 
 	const handleCashIn: ModalsHandlerActionsProps['onConfirm'] = async ({
 		onSuccess,
@@ -160,7 +171,7 @@ const CashInOperation = () => {
 					/>
 				}
 				successNotificationTitle={t('operations:modalSuccessTitle')}
-				successNotificationDescription={t('operations:modalSuccessDesc')}
+				successNotificationDescription={successDescription}
 			/>
 		</>
 	);

@@ -55,8 +55,8 @@ import IsAccountAssociatedTokenRequest from './request/IsAccountAssociatedTokenR
 import { Balance } from '../../domain/context/stablecoin/Balance.js';
 import StableCoinCapabilities from '../../domain/context/stablecoin/StableCoinCapabilities.js';
 import {
-	Capability,
 	Access,
+	Capability,
 	Operation,
 } from '../../domain/context/stablecoin/Capability.js';
 import { TokenSupplyType } from '../../domain/context/stablecoin/TokenSupply.js';
@@ -96,11 +96,25 @@ import { UpdateCommand } from '../../app/usecase/command/stablecoin/update/Updat
 import NetworkService from '../../app/service/NetworkService.js';
 import { AssociateCommand } from '../../app/usecase/command/account/associate/AssociateCommand.js';
 import { MirrorNodeAdapter } from '../../port/out/mirror/MirrorNodeAdapter.js';
+import MultiSigTransactionViewModel from '../out/backend/response/MultiSigTransactionViewModel';
+import MultiSigTransactionsViewModel from '../out/backend/response/MultiSigTransactionsViewModel';
+import { PaginationViewModel } from '../out/backend/response/MultiSigTransactionsViewModel.js';
+import SignTransactionRequest from './request/SignTransactionRequest.js';
+import SubmitTransactionRequest from './request/SubmitTransactionRequest.js';
+import RemoveTransactionRequest from './request/RemoveTransactionRequest.js';
+import GetTransactionsRequest from './request/GetTransactionsRequest.js';
+import { SignCommand } from '../../app/usecase/command/stablecoin/backend/sign/SignCommand.js';
+import { RemoveCommand } from '../../app/usecase/command/stablecoin/backend/remove/RemoveCommand.js';
+import { SubmitCommand } from '../../app/usecase/command/stablecoin/backend/submit/SubmitCommand.js';
+import { GetTransactionsQuery } from '../../app/usecase/query/stablecoin/backend/getTransactions/GetTransactionsQuery.js';
 
 export {
 	StableCoinViewModel,
 	StableCoinListViewModel,
 	ReserveViewModel,
+	MultiSigTransactionsViewModel,
+	MultiSigTransactionViewModel,
+	PaginationViewModel,
 	TRANSFER_LIST_SIZE,
 };
 export { StableCoinCapabilities, Capability, Access, Operation, Balance };
@@ -140,6 +154,12 @@ interface IStableCoinInPort {
 	isAccountKYCGranted(request: KYCRequest): Promise<boolean>;
 	transfers(request: TransfersRequest): Promise<boolean>;
 	update(request: UpdateRequest): Promise<boolean>;
+	signTransaction(request: SignTransactionRequest): Promise<boolean>;
+	submitTransaction(request: SubmitTransactionRequest): Promise<boolean>;
+	removeTransaction(request: RemoveTransactionRequest): Promise<boolean>;
+	getTransactions(
+		request: GetTransactionsRequest,
+	): Promise<MultiSigTransactionsViewModel>;
 }
 
 class StableCoinInPort implements IStableCoinInPort {
@@ -158,7 +178,6 @@ class StableCoinInPort implements IStableCoinInPort {
 			MirrorNodeAdapter,
 		),
 	) {}
-
 	@LogError
 	async create(req: CreateRequest): Promise<{
 		coin: StableCoinViewModel;
@@ -692,6 +711,59 @@ class StableCoinInPort implements IStableCoinInPort {
 						  })
 						: undefined,
 					metadata,
+				),
+			)
+		).payload;
+	}
+
+	@LogError
+	async signTransaction(request: SignTransactionRequest): Promise<boolean> {
+		const { transactionId } = request;
+
+		handleValidation('SignTransactionRequest', request);
+
+		return (await this.commandBus.execute(new SignCommand(transactionId)))
+			.payload;
+	}
+
+	@LogError
+	async submitTransaction(
+		request: SubmitTransactionRequest,
+	): Promise<boolean> {
+		const { transactionId } = request;
+
+		handleValidation('SubmitTransactionRequest', request);
+
+		return (await this.commandBus.execute(new SubmitCommand(transactionId)))
+			.payload;
+	}
+
+	@LogError
+	async removeTransaction(
+		request: RemoveTransactionRequest,
+	): Promise<boolean> {
+		const { transactionId } = request;
+
+		handleValidation('RemoveTransactionRequest', request);
+
+		return (await this.commandBus.execute(new RemoveCommand(transactionId)))
+			.payload;
+	}
+
+	@LogError
+	async getTransactions(
+		request: GetTransactionsRequest,
+	): Promise<MultiSigTransactionsViewModel> {
+		handleValidation('GetTransactionsRequest', request);
+
+		return (
+			await this.queryBus.execute(
+				new GetTransactionsQuery(
+					request.page,
+					request.limit,
+					request.publicKey ? request.publicKey.key : undefined,
+					request.status,
+					request.account,
 				),
 			)
 		).payload;

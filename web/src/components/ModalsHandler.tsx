@@ -4,6 +4,9 @@ import { useTranslation } from 'react-i18next';
 import ModalAction from './ModalAction';
 import type { ModalActionProps } from './ModalAction';
 import ModalNotification from './ModalNotification';
+import { SupportedWallets } from '@hashgraph/stablecoin-npm-sdk';
+import { useSelector } from 'react-redux';
+import { LAST_WALLET_SELECTED } from '../store/slices/walletSlice';
 
 export interface ModalsHandlerActionsProps
 	extends Pick<ModalActionProps, 'title' | 'confirmButtonLabel' | 'isOpen' | 'onClose'> {

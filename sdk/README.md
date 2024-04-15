@@ -2,7 +2,6 @@
 
 # Stablecoin Studio SDK
 
-[![SDK - Test](https://github.com/hashgraph/stablecoin-studio/actions/workflows/sdk.test.yml/badge.svg)](https://github.com/hashgraph/stablecoin-studio/actions/workflows/sdk.test.yml)
 [![Latest Version](https://img.shields.io/github/v/tag/hashgraph/stablecoin-studio?sort=semver&label=version)](README.md)
 [![License](https://img.shields.io/badge/license-apache2-blue.svg)](LICENSE)
 
@@ -10,102 +9,92 @@
 
 # Table of contents
 
-- [Stablecoin Studio SDK](#stablecoin-studio-sdk)
-- [Table of contents](#table-of-contents)
-- [Overview](#overview)
-- [Installation](#installation)
-		- [Prerequisites](#prerequisites)
-		- [Steps](#steps)
-			- [**For projects (WIP - when published)**](#for-projects-wip---when-published)
-			- [**For development**](#for-development)
-- [Build](#build)
-- [Quick Start](#quick-start)
-	- [Initialization](#initialization)
-	- [Connect SDK](#connect-sdk)
-	- [Wallet Events](#wallet-events)
-- [Usage](#usage)
-	- [About Operations Execution](#about-operations-execution)
-	- [StableCoin](#stablecoin)
-		- [Create](#create)
-		- [Creates a simple stablecoin, with all keys set to the Smart Contracts](#creates-a-simple-stablecoin-with-all-keys-set-to-the-smart-contracts)
-		- [Creates a simple stablecoin, with all keys set to the admin's public key](#creates-a-simple-stablecoin-with-all-keys-set-to-the-admins-public-key)
-		- [Creates a simple stablecoin, with all keys set to none](#creates-a-simple-stablecoin-with-all-keys-set-to-none)
-		- [GetInfo](#getinfo)
-		- [GetBalanceOf](#getbalanceof)
-		- [GetBalanceOfHBAR](#getbalanceofhbar)
-		- [Associate](#associate)
-		- [isAccountAssociated](#isaccountassociated)
-		- [CashIn](#cashin)
-		- [Burn](#burn)
-		- [Rescue](#rescue)
-		- [Rescue HBAR](#rescue-hbar)
-		- [Wipe](#wipe)
-		- [Pause](#pause)
-		- [Unpause](#unpause)
-		- [Freeze](#freeze)
-		- [Unfreeze](#unfreeze)
-		- [GrantKYC](#grantkyc)
-		- [RevokeKYC](#revokekyc)
-		- [IsAccountKYCGranted](#isaccountkycgranted)
-		- [Transfers](#transfers)
-		- [Update](#update)
-		- [Delete](#delete)
-		- [GetReserveAddress](#getreserveaddress)
-		- [UpdateReserveAddress](#updatereserveaddress)
-		- [Capabilities](#capabilities)
-	- [Proxy](#proxy)
-		- [GetProxyConfig](#getproxyconfig)
-		- [ChangeProxyOwner](#changeproxyowner)
-		- [AcceptProxyOwner](#acceptproxyowner)
-		- [UpgradeImplementation](#upgradeimplementation)
-		- [GetFactoryProxyConfig](#getfactoryproxyconfig)
-		- [UpgradeFactoryImplementation](#upgradefactoryimplementation)
-		- [ChangeFactoryProxyOwner](#changefactoryproxyowner)
-	- [Network](#network)
-		- [Connect](#connect)
-		- [Disconnect](#disconnect)
-		- [Init](#init)
-		- [SetNetwork](#setnetwork)
-		- [GetNetwork](#getnetwork)
-		- [IsNetworkRecognized](#isnetworkrecognized)
-		- [SetConfig](#setconfig)
-		- [GetFactoryAddress](#getfactoryaddress)
-	- [Event](#event)
-		- [Register](#register)
-	- [Account](#account)
-		- [GetPublicKey](#getpublickey)
-		- [ListStableCoins](#liststablecoins)
-		- [GetInfo](#getinfo-1)
-	- [Role](#role)
-		- [HasRole](#hasrole)
-		- [GrantRole](#grantrole)
-		- [GrantMultiRoles](#grantmultiroles)
-		- [RevokeRole](#revokerole)
-		- [RevokeMultiRole](#revokemultirole)
-		- [GetRoles](#getroles)
-		- [GetAccountsWithRoles](#getaccountswithroles)
-		- [GetAllowance](#getallowance)
-		- [ResetAllowance](#resetallowance)
-		- [IncreaseAllowance](#increaseallowance)
-		- [DecreaseAllowance](#decreaseallowance)
-		- [IsLimited](#islimited)
-		- [IsUnlimited](#isunlimited)
-	- [Reserve Data Feed](#reserve-data-feed)
-		- [Get Reserve Amount](#get-reserve-amount)
-		- [Update Reserve Amount](#update-reserve-amount)
-	- [Factory](#factory)
-		- [GetHederaTokenManagerList](#gethederatokenmanagerlist)
-	- [Common](#common)
-- [Testing](#testing)
-		- [Jest](#jest)
-- [Typescript](#typescript)
-	- [Tsconfig](#tsconfig)
-		- [Client side](#client-side)
-		- [Server side](#server-side)
-- [Support](#support)
-- [Contributing](#contributing)
-- [Code of Conduct](#code-of-conduct)
-	- [License](#license)
+- [Initialization](#initialization)
+- [Connect SDK](#connect-sdk)
+- [Wallet Events](#wallet-events)
+- [About Operations Execution](#about-operations-execution)
+	- [Multisig wallet](#multisig-wallet)
+- [StableCoin](#stablecoin)
+	- [Create](#create)
+	- [Creates a simple stablecoin, with all keys set to the Smart Contracts](#creates-a-simple-stablecoin-with-all-keys-set-to-the-smart-contracts)
+	- [Creates a simple stablecoin, with all keys set to the admin's public key](#creates-a-simple-stablecoin-with-all-keys-set-to-the-admins-public-key)
+	- [Creates a simple stablecoin, with all keys set to none](#creates-a-simple-stablecoin-with-all-keys-set-to-none)
+	- [GetInfo](#getinfo)
+	- [GetBalanceOf](#getbalanceof)
+	- [GetBalanceOfHBAR](#getbalanceofhbar)
+	- [Associate](#associate)
+	- [isAccountAssociated](#isaccountassociated)
+	- [CashIn](#cashin)
+	- [Burn](#burn)
+	- [Rescue](#rescue)
+	- [Rescue HBAR](#rescue-hbar)
+	- [Wipe](#wipe)
+	- [Pause](#pause)
+	- [Unpause](#unpause)
+	- [Freeze](#freeze)
+	- [Unfreeze](#unfreeze)
+	- [GrantKYC](#grantkyc)
+	- [RevokeKYC](#revokekyc)
+	- [IsAccountKYCGranted](#isaccountkycgranted)
+	- [Transfers](#transfers)
+	- [Update](#update)
+	- [Delete](#delete)
+	- [GetReserveAddress](#getreserveaddress)
+	- [UpdateReserveAddress](#updatereserveaddress)
+	- [Capabilities](#capabilities)
+	- [SignTransaction](#signtransaction)
+	- [SubmitTransaction](#submittransaction)
+	- [RemoveTransaction](#removetransaction)
+	- [GetTransactions](#gettransactions)
+- [Proxy](#proxy)
+	- [GetProxyConfig](#getproxyconfig)
+	- [ChangeProxyOwner](#changeproxyowner)
+	- [AcceptProxyOwner](#acceptproxyowner)
+	- [UpgradeImplementation](#upgradeimplementation)
+	- [GetFactoryProxyConfig](#getfactoryproxyconfig)
+	- [UpgradeFactoryImplementation](#upgradefactoryimplementation)
+	- [ChangeFactoryProxyOwner](#changefactoryproxyowner)
+- [Network](#network)
+	- [Connect](#connect)
+	- [Disconnect](#disconnect)
+	- [Init](#init)
+	- [SetNetwork](#setnetwork)
+	- [GetNetwork](#getnetwork)
+	- [IsNetworkRecognized](#isnetworkrecognized)
+	- [SetConfig](#setconfig)
+	- [SetBackend](#setbackend)
+	- [GetFactoryAddress](#getfactoryaddress)
+- [Event](#event)
+	- [Register](#register)
+- [Account](#account)
+	- [GetPublicKey](#getpublickey)
+	- [ListStableCoins](#liststablecoins)
+	- [GetInfo](#getinfo-1)
+- [Role](#role)
+	- [HasRole](#hasrole)
+	- [GrantRole](#grantrole)
+	- [GrantMultiRoles](#grantmultiroles)
+	- [RevokeRole](#revokerole)
+	- [RevokeMultiRole](#revokemultirole)
+	- [GetRoles](#getroles)
+	- [GetAccountsWithRoles](#getaccountswithroles)
+	- [GetAllowance](#getallowance)
+	- [ResetAllowance](#resetallowance)
+	- [IncreaseAllowance](#increaseallowance)
+	- [DecreaseAllowance](#decreaseallowance)
+	- [IsLimited](#islimited)
+	- [IsUnlimited](#isunlimited)
+- [Reserve Data Feed](#reserve-data-feed)
+	- [Get Reserve Amount](#get-reserve-amount)
+	- [Update Reserve Amount](#update-reserve-amount)
+- [Factory](#factory)
+	- [GetHederaTokenManagerList](#gethederatokenmanagerlist)
+- [Common](#common)
+	- [Jest](#jest)
+- [Tsconfig](#tsconfig)
+	- [Client side](#client-side)
+	- [Server side](#server-side)
+- [License](#license)
 
 # Overview
 
@@ -185,15 +174,29 @@ const init = await Network.init(
 );
 ```
 
+If you are using a backend (for multisignature transactions) you can also specify its url.
+
+```Typescript
+const init = await Network.init(
+	new InitializationRequest({
+		network: 'testnet',
+		backend: {
+			url: 'http://127.0.0.1:3001/api/'
+		},
+	}),
+);
+```
+
 ## Connect SDK
 
-The next step would be to connect to the network. Currently, 3 types of connections are offered: Client (a Hedera account configured in an application configuration file), MetaMask and HashPack. These 3 connection types are in the SupportedWallets enum.
+The next step would be to connect to the network. Currently, multiple types of connections are offered: Client (a Hedera account configured in an application configuration file), MetaMask, HashPack, Blade, fireblocks, DFNS and Multisig. These connection types are in the SupportedWallets enum.
 
 ```Typescript
 export enum SupportedWallets {
 	METAMASK = 'Metamask',
 	HASHPACK = 'HashPack',
 	CLIENT = 'Client',
+	...
 }
 ```
 
@@ -270,6 +273,10 @@ When creating a stablecoin, a set of keys (wipe key, pause key, freeze key, etc.
 
 1. If the token key corresponds to a Hedera account public key, the operation can only be performed by the Hedera account owning this public key, and only through the Hedera SDK.
 2. If the token key corresponds to the stablecoin smart contract administrator key, the operation can only be performed through the smart contract, so whoever calls the smart contract can perform the operation. To prevent anyone from performing certain operations roles are used. When the need for a role is indicated in an operation's description, this is only when the related key of the stablecoin token is configured to be the smart contract admin key.
+
+### Multisig wallet
+
+The multisig wallet mode is a special one. Operations executed when connected as "multisig" will not be submitted to the Hedera DLT, instead they will be stored in a backend waiting for the multisig account key owners to sign it. Once the operation has been signed by all the required keys it will be ready for submission to the Hedera DLT.
 
 ## StableCoin
 
@@ -393,6 +400,7 @@ By specifying the public key of an account, we can set the stablecoin's keys to 
 In the above exmaple, it is also important to notice that, when creating a stablecoin, the `proxyAdminOwnerAccount` parameter in the `CreateRequest` class, allows the user to configure an account id, which may be a contract like a timelock controller, a cold wallet, etc, to be the stablecoin proxy admin owner rather than the account id that is creating the stablecoin, which is the default option if the user doesn't populate this optional parameter.
 
 ### Creates a simple stablecoin, with all keys set to none
+
 By not setting any of the keys, the stablecoin will have the corresponding features disabled and the keys set to none.
 
 ```Typescript
@@ -415,6 +423,7 @@ By not setting any of the keys, the stablecoin will have the corresponding featu
 ```
 
 ### GetInfo
+
 Gets the information of an existing stablecoin.
 
 **Spec:**
@@ -487,6 +496,7 @@ Gets the balance of HBARs for an account.
 ```
 
 ### Associate
+
 Associates a stablecoin with an account.
 
 **Spec:**
@@ -506,6 +516,7 @@ Associates a stablecoin with an account.
 ```
 
 ### isAccountAssociated
+
 Checks if an account is associated with a stablecoin.
 
 **Spec:**
@@ -633,6 +644,7 @@ Wipes an amount of tokens from an account. The operating account must have the w
 ```
 
 ### Pause
+
 Pauses a stablecoin. None of the operations can be taken while the stablecoin is in paused state. The operating account must have the pause role.
 
 **Spec:**
@@ -652,6 +664,7 @@ Pauses a stablecoin. None of the operations can be taken while the stablecoin is
 ```
 
 ### Unpause
+
 Unpauses a stablecoin. If the stablecoin is not paused it will throw an exception. The operating account must have the pause role.
 
 **Spec:**
@@ -671,6 +684,7 @@ Unpauses a stablecoin. If the stablecoin is not paused it will throw an exceptio
 ```
 
 ### Freeze
+
 Prevents transfer of a stablecoin to/from an account. The operating account must have the freeze role.
 
 **Spec:**
@@ -691,6 +705,7 @@ Prevents transfer of a stablecoin to/from an account. The operating account must
 ```
 
 ### Unfreeze
+
 Enables transfer of a stablecoin to/from an account. The operating account must have the freeze role.
 
 **Spec:**
@@ -859,6 +874,7 @@ import {
 ```
 
 ### Delete
+
 Deletes a stablecoin. **Important** this operation is not reversible. The operating account must have the admin role.
 
 **Spec:**
@@ -1017,6 +1033,93 @@ See the spec below for all the attributes you can get from the request.
 			  accountId: "0.0.1"
 			},
 			tokenId: "0.0.2"
+		})
+	);
+```
+
+### SignTransaction
+
+Signs a multisig transaction stored in the backend.
+
+**Spec:**
+
+```Typescript
+	StableCoin.signTransaction = (request: SignTransactionRequest): Promise<boolean>;
+
+```
+
+**Example:**
+
+```Typescript
+	const result: boolean = await StableCoin.signTransaction(
+		new SignTransactionRequest({
+			transactionId: 'f8ff7778-1cbd-429a-acf3-bfc92c5fe875',
+		})
+	);
+```
+
+### SubmitTransaction
+
+Submits a multisig transaction stored in the backend.
+_The transaction must have been previously signed by all required keys_
+
+**Spec:**
+
+```Typescript
+	StableCoin.submitTransaction = (request: SubmitTransactionRequest): Promise<boolean>;
+
+```
+
+**Example:**
+
+```Typescript
+	const result: boolean = await StableCoin.submitTransaction(
+		new SubmitTransactionRequest({
+			transactionId: 'f8ff7778-1cbd-429a-acf3-bfc92c5fe875',
+		})
+	);
+```
+
+### RemoveTransaction
+
+Removes a multisig transaction stored in the backend.
+
+**Spec:**
+
+```Typescript
+	StableCoin.removeTransaction = (request: RemoveTransactionRequest): Promise<boolean>;
+
+```
+
+**Example:**
+
+```Typescript
+	const result: boolean = await StableCoin.removeTransaction(
+		new RemoveTransactionRequest({
+			transactionId: 'f8ff7778-1cbd-429a-acf3-bfc92c5fe875',
+		})
+	);
+```
+
+### GetTransactions
+
+Retrieves multisig transactions from the backend.
+
+**Spec:**
+
+```Typescript
+	StableCoin.getTransactions = (request: GetTransactionsRequest): Promise<MultiSigTransactionsViewModel>;
+
+```
+
+**Example:**
+
+```Typescript
+	const result: MultiSigTransactionsViewModel = await StableCoin.getTransactions(
+		new GetTransactionsRequest({
+			page: 1,
+			limit: 10,
+			account: '0.0.1'
 		})
 	);
 ```
@@ -1330,6 +1433,26 @@ Sets the factory smart contract address in the configuration object.
 	);
 ```
 
+### SetBackend
+
+Sets the backend url.
+
+**Spec:**
+
+```Typescript
+	Network.setBackend(req: SetBackendRequest): Promise<BackendResponse>;
+```
+
+**Example:**
+
+```Typescript
+	await Network.setBackend(
+		new SetBackendRequest({
+			url: 'http://127.0.0.1:3001/api'
+		})
+	);
+```
+
 ### GetFactoryAddress
 
 Gets the factory smart contract address.
@@ -1493,6 +1616,7 @@ Checks if an account has a specific role for a stablecoin.
 ```
 
 ### GrantRole
+
 Grants a role to an account for a stablecoin. The operating account must have the admin role.
 
 **Spec:**
@@ -1514,6 +1638,7 @@ Grants a role to an account for a stablecoin. The operating account must have th
 ```
 
 ### GrantMultiRoles
+
 Grants multiple roles to multiple accounts for a stablecoin. The operating account must have the admin role.
 
 **Spec:**
@@ -1644,6 +1769,7 @@ Gets the supplier allowance (amount of tokens that can be minted by an account) 
 ```
 
 ### ResetAllowance
+
 Sets the supplier allowance to 0 for an account and a stablecoin. The operating account must have the admin role.
 
 **Spec:**
@@ -1665,6 +1791,7 @@ Sets the supplier allowance to 0 for an account and a stablecoin. The operating 
 ```
 
 ### IncreaseAllowance
+
 Increases the supplier allowance amount for an account and a stablecoin. The operating account must have the admin role.
 
 **Spec:**
@@ -1708,6 +1835,7 @@ Decreases the supplier allowance amount for an account and a stablecoin. The ope
 ```
 
 ### IsLimited
+
 Checks if an account has a limited supplier allowance for a stablecoin or not.
 
 **Spec:**
@@ -1729,6 +1857,7 @@ Checks if an account has a limited supplier allowance for a stablecoin or not.
 ```
 
 ### IsUnlimited
+
 Checks if an account has an unlimited supplier allowance for a stablecoin or not.
 
 **Spec:**
@@ -1750,10 +1879,12 @@ Checks if an account has an unlimited supplier allowance for a stablecoin or not
 ```
 
 ## Reserve Data Feed
+
 The following operations are always performed through smart contracts calls, since the reserve data feed is a contract which can be deployed alongside the stablecoin.
 Getting the reserve amount can be performed by anyone while updating this amount can only be performed by accounts with the appropriate role.
 
 ### Get Reserve Amount
+
 Gets the reserve amount for a stablecoin.
 
 **Spec:**
@@ -1773,6 +1904,7 @@ Gets the reserve amount for a stablecoin.
 ```
 
 ### Update Reserve Amount
+
 Updates the reserve amount for a stablecoin. The operating account must have the admin role.
 
 **Spec:**

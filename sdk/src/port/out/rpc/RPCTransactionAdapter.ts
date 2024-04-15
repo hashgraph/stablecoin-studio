@@ -25,12 +25,12 @@
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
 import { ContractId as HContractId } from '@hashgraph/sdk';
 import {
-	HederaTokenManager__factory,
 	HederaReserve__factory,
-	StableCoinFactory__factory,
+	HederaTokenManager__factory,
 	IHederaTokenService__factory,
-	StableCoinProxyAdmin__factory,
 	ProxyAdmin__factory,
+	StableCoinFactory__factory,
+	StableCoinProxyAdmin__factory,
 } from '@hashgraph/stablecoin-npm-contracts';
 import TransactionAdapter, { InitializationData } from '../TransactionAdapter';
 import { BigNumber, ContractTransaction, ethers, Signer } from 'ethers';
@@ -58,10 +58,10 @@ import { FactoryStableCoin } from '../../../domain/context/factory/FactoryStable
 import { FactoryKey } from '../../../domain/context/factory/FactoryKey.js';
 import PublicKey from '../../../domain/context/account/PublicKey.js';
 import {
+	ACCEPT_PROXY_OWNER_GAS,
 	BURN_GAS,
 	CASHIN_GAS,
 	CHANGE_PROXY_OWNER_GAS,
-	ACCEPT_PROXY_OWNER_GAS,
 	CREATE_SC_GAS,
 	DECREASE_SUPPLY_GAS,
 	DELETE_GAS,
@@ -122,6 +122,8 @@ import {
 	EnvironmentFactory,
 	Factories,
 } from '../../../domain/context/factory/Factories.js';
+import Hex from '../../../core/Hex.js';
+import { keccak256 } from 'ethereum-cryptography/keccak';
 
 // eslint-disable-next-line no-var
 declare var ethereum: MetaMaskInpageProvider;
@@ -129,6 +131,7 @@ declare var ethereum: MetaMaskInpageProvider;
 @singleton()
 export default class RPCTransactionAdapter extends TransactionAdapter {
 	account: Account;
+	web3Provider: ethers.providers.Web3Provider;
 	signerOrProvider: Signer | Provider;
 	mirrorNodes: MirrorNodes;
 	jsonRpcRelays: JsonRpcRelays;
@@ -1282,10 +1285,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 						);
 
 					pair && (await this.pairWallet());
-					this.signerOrProvider = new ethers.providers.Web3Provider(
+					this.web3Provider = new ethers.providers.Web3Provider(
 						// @ts-expect-error No TS compatibility
 						ethereum,
-					).getSigner();
+					);
+					this.signerOrProvider = this.web3Provider.getSigner();
 				} else {
 					throw new WalletConnectError('Metamask was not found!');
 				}
@@ -1318,10 +1322,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				evmAddress: mirrorAccount.accountEvmAddress,
 				publicKey: mirrorAccount.publicKey,
 			});
-			this.signerOrProvider = new ethers.providers.Web3Provider(
+			this.web3Provider = new ethers.providers.Web3Provider(
 				// @ts-expect-error No TS compatibility
 				ethereum,
-			).getSigner();
+			);
+			this.signerOrProvider = this.web3Provider.getSigner();
 		} else {
 			this.account = Account.NULL;
 		}
@@ -1404,10 +1409,11 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		);
 		await this.commandBus.execute(new SetConfigurationCommand(factoryId));
 
-		this.signerOrProvider = new ethers.providers.Web3Provider(
+		this.web3Provider = new ethers.providers.Web3Provider(
 			// @ts-expect-error No TS compatibility
 			ethereum,
-		).getSigner();
+		);
+		this.signerOrProvider = this.web3Provider.getSigner();
 
 		// await new Promise(f => setTimeout(f, 3000));
 	}
@@ -1539,26 +1545,6 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 						this.networkService.environment,
 					);
 					return response;
-
-				/* case Decision.HTS:
-					if (!coin.coin.evmProxyAddress?.toString())
-						throw new Error(
-							`StableCoin ${coin.coin.name} does not have a proxy address`,
-						);
-					if (!coin.coin.tokenId)
-						throw new Error(
-							`StableCoin ${coin.coin.name}  does not have an underlying token`,
-						);
-					response = await this.performHTSOperation(
-						coin,
-						operation,
-						params,
-					);
-					this.logTransaction(
-						response.id ?? '',
-						this.networkService.environment,
-					);
-					return response; */
 
 				default:
 					const tokenId = coin.coin.tokenId
@@ -1759,6 +1745,26 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					`Operation not implemented through Smart Contracts`,
 				);
 		}
+	}
+
+	async sign(message: string): Promise<string> {
+		if (!(this.signerOrProvider instanceof Signer))
+			throw new Error('RPC instance is not a Signer.');
+
+		const bytesToSign = Hex.toUint8Array(message);
+		const bytesToSignHash = this.calcKeccak256(bytesToSign);
+		const bytesToSignHashHex = '0x' + Hex.fromUint8Array(bytesToSignHash);
+
+		const signature = await this.web3Provider.send('eth_sign', [
+			this.account.evmAddress,
+			bytesToSignHashHex,
+		]);
+
+		return signature.toString().slice(0, 130);
+	}
+
+	calcKeccak256(message: Uint8Array): Buffer {
+		return Buffer.from(keccak256(message));
 	}
 
 	/* private async performHTSOperation(
