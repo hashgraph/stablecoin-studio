@@ -65,11 +65,11 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 
 	async init(network?: NetworkName): Promise<string> {
 		// TODO: to ENV file ⬇️
-		const projectId = 'e8847fc2148698b9d2006253eb1c631a';
+		const projectId = '8fc26370383a50de1c3bd638d334292e';
 		const metadata: SignClientTypes.Metadata = {
 			name: 'name',
 			description: 'description',
-			url: 'https://78a6-139-47-73-174.ngrok-free.app/',
+			url: 'https://wc.hgraph.app/',
 			icons: ['icons'],
 		};
 		// TODO: END to ENV file ⬆️
@@ -87,13 +87,7 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 		// Create dApp Connector instance
 		this.dAppConnector = new DAppConnector(metadata, hwcNetwork, projectId);
 		await this.dAppConnector.init({ logger: 'debug' });
-		LogService.logTrace(this.dAppConnector);
-
-		try {
-			//await this.dAppConnector.openModal();
-		} catch (e) {
-			console.log('❌ open modal error: ', e);
-		}
+		// LogService.logTrace(this.dAppConnector);
 
 		this.eventService.emit(WalletEvents.walletInit, eventData);
 		LogService.logInfo('✅ HederaWalletConnect Initialized.');
