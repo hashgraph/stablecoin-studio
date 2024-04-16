@@ -41,6 +41,7 @@ import { DAppConnector } from '@hashgraph/hedera-wallet-connect';
 import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
 import { singleton } from 'tsyringe';
 import { QueryBus } from '../../../../core/query/QueryBus';
+import { NetworkName } from '@hashgraph/sdk/lib/client/Client';
 
 @singleton()
 export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdapter {
@@ -61,8 +62,8 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 		super(mirrorNodeAdapter, networkService);
 	}
 
-	// TODO: review
-	async init(): Promise<string> {
+	async init(network?: NetworkName): Promise<string> {
+		// TODO: to ENV file ⬇️
 		const projectId = 'e8847fc2148698b9d2006253eb1c631a';
 		const metadata: SignClientTypes.Metadata = {
 			name: 'name',
@@ -70,24 +71,35 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 			url: 'https://78a6-139-47-73-174.ngrok-free.app/',
 			icons: ['icons'],
 		};
-		this.dAppConnector = new DAppConnector(
-			metadata,
-			LedgerId.TESTNET,
-			projectId,
-		);
-		// TODO:  wondering if we need to recover account id here to pass to register and if the modal should be open here
-		try{
-			await this.dAppConnector.openModal();
-		}catch (e){
-			console.log('open modal error: ',e)
-		}
-
-		this.eventService.emit(WalletEvents.walletInit, {
+		// TODO: END to ENV file ⬆️
+		network = network || 'mainnet';
+		const hwcNetwork =
+			network === 'testnet'
+				? LedgerId.TESTNET
+				: network === 'previewnet'
+				? LedgerId.PREVIEWNET
+				: LedgerId.MAINNET;
+		const eventData = {
 			wallet: SupportedWallets.HWALLETCONNECT,
 			initData: {},
-		});
-		LogService.logTrace('Hedera WalletConnect Initialized');
-		return Promise.resolve(this.networkService.environment);
+		};
+		// Create dApp Connector instance
+		this.dAppConnector = new DAppConnector(metadata, hwcNetwork, projectId);
+		await this.dAppConnector.init({ logger: 'debug' });
+		LogService.logTrace(this.dAppConnector);
+
+		try {
+			await this.dAppConnector.openModal();
+		} catch (e) {
+			console.log('❌ open modal error: ', e);
+		}
+
+		this.eventService.emit(WalletEvents.walletInit, eventData);
+		LogService.logInfo('✅ HederaWalletConnect Initialized.');
+		LogService.logTrace(
+			`HederaWalletConnect Initialized with account: ${this.account} and network: ${network}`,
+		);
+		return network;
 	}
 
 	// TODO: review

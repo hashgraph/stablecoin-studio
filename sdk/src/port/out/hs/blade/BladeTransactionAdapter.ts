@@ -98,7 +98,10 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 			wallet: SupportedWallets.BLADE,
 		};
 		this.eventService.emit(WalletEvents.walletInit, eventData);
-
+		LogService.logInfo('✅ Blade Initialized.');
+		LogService.logTrace(
+			`Blade Initialized with account: ${this.account} and network: ${currentNetwork}`,
+		);
 		return currentNetwork;
 	}
 

@@ -104,10 +104,12 @@ export default class LogService {
 	}
 
 	public static logInfo(message: any, ...params: any[]): void {
+		console.info(message, params);
 		this.log(LogLevel.INFO, message, params);
 	}
 
 	public static logTrace(message: any, ...params: any[]): void {
+		console.log(message, params);
 		this.log(LogLevel.TRACE, message, params);
 	}
 }

@@ -39,7 +39,7 @@ import {
 import WARNING_ICON from '../assets/svg/warning.svg';
 import ERROR_ICON from '../assets/svg/error.svg';
 import { SelectController } from './Form/SelectController';
-import { useForm } from 'react-hook-form';
+import { set, useForm } from 'react-hook-form';
 import type { IMirrorRPCNode } from '../interfaces/IMirrorRPCNode';
 
 const ModalWalletConnect = () => {
@@ -82,6 +82,7 @@ const ModalWalletConnect = () => {
 	const [rejected, setRejected] = useState<boolean>(false);
 	const [hashpackSelected, setHashpackSelected] = useState<boolean>(false);
 	const [bladeSelected, setBladeSelected] = useState<boolean>(false);
+	const [hwcSelected, setHwcSelected] = useState<boolean>(false);
 	const [multiSigSelected, setMultiSigSelected] = useState<boolean>(false);
 	const availableWallets: SupportedWallets[] = useSelector(AVAILABLE_WALLETS);
 	const selectedMirrors: IMirrorRPCNode[] = useSelector(SELECTED_MIRRORS);
@@ -127,7 +128,7 @@ const ModalWalletConnect = () => {
 				);
 				if (listRPCs) rpcNode = listRPCs[0];
 			}
-			console.log('Connecting wallet', wallet, network, mirrorNode, rpcNode, hederaAccountId);
+
 			const result = await SDKService.connectWallet(
 				wallet,
 				network,
@@ -245,9 +246,19 @@ const ModalWalletConnect = () => {
 		setMultiSigSelected(true);
 	};
 
-	const handleHederaWalletConnect = () => {
-		handleWalletConnect(SupportedWallets.HWALLETCONNECT, '-');
-	}
+	const handleConnectHederaWalletConnect = () => {
+		setHwcSelected(true);
+	};
+
+	const unHandleConnectHederaWalletConnect = () => {
+		setHwcSelected(false);
+		setLoading(undefined);
+	};
+
+	const handleConnectHwcConfirmed = () => {
+		const values = getValues();
+		handleWalletConnect(SupportedWallets.HWALLETCONNECT, values.networkHwc.value);
+	};
 
 	const validateAccountId = (accountId: string) => {
 		const regex = /^\d+\.\d+\.\d+$/;
@@ -436,20 +447,29 @@ const ModalWalletConnect = () => {
 									) : (
 										<></>
 									)}
-									{!availableWallets.includes(SupportedWallets.HWALLETCONNECT) ? (
+									{SupportedWallets.HWALLETCONNECT ? (
 										<VStack
-											data-testid='walletconnect'
+											data-testid='HederaWalletConnect'
 											{...styles.providerStyle}
 											shouldWrapChildren
-											onClick={handleHederaWalletConnect}
+											onClick={handleConnectHederaWalletConnect}
 										>
-											<PairingSpinner wallet={SupportedWallets.MULTISIG}>
-												<Image src={MULTISIG_LOGO_PNG} w={20} />
-												<Text textAlign='center'>WalletConnect</Text>
+											<PairingSpinner wallet={SupportedWallets.HWALLETCONNECT}>
+												<Image src={HASHPACK_LOGO_PNG} w={20} />
+												<Text>Hedera Wallet Connect</Text>
 											</PairingSpinner>
 										</VStack>
 									) : (
-										<></>
+										<VStack data-testid='HederaWalletConnect' {...styles.providerStyle}>
+											<Link
+												href='https://github.com/hashgraph/hedera-wallet-connect/tree/main'
+												isExternal
+												_hover={{ textDecoration: 'none' }}
+											>
+												<Image src={HASHPACK_LOGO_PNG} w={20} />
+												<Text>Hedera Wallet Connect</Text>
+											</Link>
+										</VStack>
 									)}
 								</HStack>
 							</ModalFooter>
@@ -491,6 +511,51 @@ const ModalWalletConnect = () => {
 										<Button
 											data-testid='modal-notification-button-Hashpack'
 											onClick={handleConnectHashpackWalletConfirmed}
+											variant='primary'
+										>
+											{t('common.accept')}
+										</Button>
+									</HStack>
+								</VStack>
+							</ModalFooter>
+						</>
+					)}
+					{bladeSelected && (
+						<>
+							<ModalHeader p='0' justifyContent='center'>
+								<Text
+									fontSize='20px'
+									fontWeight={700}
+									textAlign='center'
+									lineHeight='16px'
+									color='brand.black'
+								>
+									{t('walletActions.selectWallet')}
+								</Text>
+							</ModalHeader>
+							<ModalFooter alignSelf='center' pt='24px' pb='0'>
+								<VStack>
+									<SelectController
+										control={control}
+										isRequired
+										name='networkBlade'
+										defaultValue='0'
+										options={networkOptions}
+										addonLeft={true}
+										overrideStyles={stylesNetworkOptions}
+										variant='unstyled'
+									/>
+									<HStack>
+										<Button
+											data-testid='modal-notification-button-Blade'
+											onClick={unHandleConnectBladeWallet}
+											variant='secondary'
+										>
+											{t('common.cancel')}
+										</Button>
+										<Button
+											data-testid='modal-notification-button-Blade'
+											onClick={handleConnectBladeWalletConfirmed}
 											variant='primary'
 										>
 											{t('common.accept')}
@@ -552,7 +617,7 @@ const ModalWalletConnect = () => {
 							</ModalFooter>
 						</>
 					)}
-					{bladeSelected && (
+					{hwcSelected && (
 						<>
 							<ModalHeader p='0' justifyContent='center'>
 								<Text
@@ -570,7 +635,7 @@ const ModalWalletConnect = () => {
 									<SelectController
 										control={control}
 										isRequired
-										name='networkBlade'
+										name='networkHwc'
 										defaultValue='0'
 										options={networkOptions}
 										addonLeft={true}
@@ -579,15 +644,15 @@ const ModalWalletConnect = () => {
 									/>
 									<HStack>
 										<Button
-											data-testid='modal-notification-button-Blade'
-											onClick={unHandleConnectBladeWallet}
+											data-testid='modal-notification-button-HederaWalletConnect'
+											onClick={unHandleConnectHederaWalletConnect}
 											variant='secondary'
 										>
 											{t('common.cancel')}
 										</Button>
 										<Button
-											data-testid='modal-notification-button-Blade'
-											onClick={handleConnectBladeWalletConfirmed}
+											data-testid='modal-notification-button-HederaWalletConnect'
+											onClick={handleConnectHwcConfirmed}
 											variant='primary'
 										>
 											{t('common.accept')}
