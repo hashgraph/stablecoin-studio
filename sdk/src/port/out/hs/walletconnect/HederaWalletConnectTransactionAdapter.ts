@@ -42,6 +42,7 @@ import TransactionResponse from '../../../../domain/context/transaction/Transact
 import { singleton } from 'tsyringe';
 import { QueryBus } from '../../../../core/query/QueryBus';
 import { NetworkName } from '@hashgraph/sdk/lib/client/Client';
+import { HederaId } from '../../../../domain/context/shared/HederaId.js';
 
 @singleton()
 export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdapter {
@@ -89,7 +90,7 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 		LogService.logTrace(this.dAppConnector);
 
 		try {
-			await this.dAppConnector.openModal();
+			//await this.dAppConnector.openModal();
 		} catch (e) {
 			console.log('❌ open modal error: ', e);
 		}
@@ -103,20 +104,36 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 	}
 
 	// TODO: review
-	async register(account: Account): Promise<InitializationData> {
+	async register(): Promise<InitializationData> {
 		Injectable.registerTransactionHandler(this);
 		LogService.logTrace('WalletConnect Registered as handler');
 
-		//this.dAppConnector?.openModal()
+		await this.dAppConnector?.connectQR();
+
+		const walletConnectSigners = this.dAppConnector?.signers;
+
+		if (!walletConnectSigners) {
+			window.alert('no signers');
+			throw new Error();
+		}
+
+		const accountId = walletConnectSigners[0].getAccountId().toString();
+		window.alert(accountId);
 
 		const accountMirror = await this.mirrorNodeAdapter.getAccountInfo(
-			account.id,
+			accountId,
 		);
 
-		this.account = account;
+		window.alert(JSON.stringify(accountMirror));
+
+		this.account.id = new HederaId(accountId);
+		window.alert(JSON.stringify(this.account.id));
+
 		this.account.publicKey = accountMirror.publicKey;
+		window.alert(JSON.stringify(this.account.publicKey));
 
 		this.network = this.networkService.environment;
+		window.alert(this.network);
 
 		const eventData: WalletPairedEvent = {
 			wallet: SupportedWallets.HWALLETCONNECT,
@@ -166,7 +183,7 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 	}
 
 	getAccount(): Account {
-		throw new Error('Method not implemented.');
+		return this.account;
 	}
 	sign(message: string | Transaction): Promise<string> {
 		throw new Error('Method not implemented.');

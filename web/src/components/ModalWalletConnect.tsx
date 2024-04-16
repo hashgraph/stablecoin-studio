@@ -28,6 +28,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import BLADE_LOGO_PNG from '../assets/png/bladeLogo.png';
 import MULTISIG_LOGO_PNG from '../assets/png/multisigLogo.png';
 import HASHPACK_LOGO_PNG from '../assets/png/hashpackLogo.png';
+import WALLETCONNECT_LOGO_PNG from '../assets/png/WCLogo.png';
 import METAMASK_LOGO from '../assets/svg/MetaMask_Fox.svg';
 import SDKService from '../services/SDKService';
 import {
@@ -333,121 +334,125 @@ const ModalWalletConnect = () => {
 					p='50'
 					maxW='1000px'
 				>
-					{!error && !rejected && !hashpackSelected && !bladeSelected && !multiSigSelected && (
-						<>
-							<ModalHeader p='0' justifyContent='center'>
-								<Text
-									data-testid='title'
-									fontSize='20px'
-									fontWeight={700}
-									textAlign='center'
-									lineHeight='16px'
-									color='brand.black'
-								>
-									{t('walletActions.selectWallet')}
-								</Text>
-							</ModalHeader>
-							<ModalFooter p='0' justifyContent='center'>
-								<HStack
-									spacing={10}
-									pt={8}
-									w='full'
-									justifyContent={'center'}
-									alignItems={'stretch'}
-								>
-									{availableWallets.includes(SupportedWallets.HASHPACK) ? (
-										<VStack
-											data-testid='Hashpack'
-											{...styles.providerStyle}
-											shouldWrapChildren
-											onClick={handleConnectHashpackWallet}
-										>
-											<PairingSpinner wallet={SupportedWallets.HASHPACK}>
-												<Image src={HASHPACK_LOGO_PNG} w={20} />
-												<Text>Hashpack</Text>
-											</PairingSpinner>
-										</VStack>
-									) : (
-										<VStack data-testid='Hashpack' {...styles.providerStyle}>
-											<Link
-												href='https://www.hashpack.app/download'
-												isExternal
-												_hover={{ textDecoration: 'none' }}
-											>
-												<Image src={HASHPACK_LOGO_PNG} w={20} />
-												<Text>Hashpack</Text>
-											</Link>
-										</VStack>
-									)}
-									{availableWallets.includes(SupportedWallets.METAMASK) ? (
-										<VStack
-											data-testid='Metamask'
-											{...styles.providerStyle}
-											shouldWrapChildren
-											onClick={handleConnectMetamaskWallet}
-										>
-											<PairingSpinner wallet={SupportedWallets.METAMASK}>
-												<Image src={METAMASK_LOGO} w={20} />
-												<Text textAlign='center'>Metamask</Text>
-											</PairingSpinner>
-										</VStack>
-									) : (
-										<VStack data-testid='Metamask' {...styles.providerStyle}>
-											<Link
-												href='https://metamask.io/download/'
-												isExternal
-												_hover={{ textDecoration: 'none' }}
-											>
-												<Image src={METAMASK_LOGO} w={20} />
-												<Text textAlign='center'>Metamask</Text>
-											</Link>
-										</VStack>
-									)}
-									{isChrome ? (
-										availableWallets.includes(SupportedWallets.BLADE) ? (
+					{!error &&
+						!rejected &&
+						!hashpackSelected &&
+						!bladeSelected &&
+						!multiSigSelected &&
+						!hwcSelected && (
+							<>
+								<ModalHeader p='0' justifyContent='center'>
+									<Text
+										data-testid='title'
+										fontSize='20px'
+										fontWeight={700}
+										textAlign='center'
+										lineHeight='16px'
+										color='brand.black'
+									>
+										{t('walletActions.selectWallet')}
+									</Text>
+								</ModalHeader>
+								<ModalFooter p='0' justifyContent='center'>
+									<HStack
+										spacing={10}
+										pt={8}
+										w='full'
+										justifyContent={'center'}
+										alignItems={'stretch'}
+									>
+										{availableWallets.includes(SupportedWallets.HASHPACK) ? (
 											<VStack
-												data-testid='Blade'
+												data-testid='Hashpack'
 												{...styles.providerStyle}
 												shouldWrapChildren
-												onClick={handleConnectBladeWallet}
+												onClick={handleConnectHashpackWallet}
 											>
-												<PairingSpinner wallet={SupportedWallets.BLADE}>
-													<Image src={BLADE_LOGO_PNG} w={20} />
-													<Text textAlign='center'>Blade</Text>
+												<PairingSpinner wallet={SupportedWallets.HASHPACK}>
+													<Image src={HASHPACK_LOGO_PNG} w={20} />
+													<Text>Hashpack</Text>
 												</PairingSpinner>
 											</VStack>
 										) : (
-											<VStack data-testid='Blade' {...styles.providerStyle}>
+											<VStack data-testid='Hashpack' {...styles.providerStyle}>
 												<Link
-													href='https://bladewallet.io/'
+													href='https://www.hashpack.app/download'
 													isExternal
 													_hover={{ textDecoration: 'none' }}
 												>
-													<Image src={BLADE_LOGO_PNG} w={20} />
-													<Text textAlign='center'>Blade</Text>
+													<Image src={HASHPACK_LOGO_PNG} w={20} />
+													<Text>Hashpack</Text>
 												</Link>
 											</VStack>
-										)
-									) : (
-										//* Blade is not supported in this browser
-										<></>
-									)}
-									{!availableWallets.includes(SupportedWallets.MULTISIG) ? (
-										<VStack
-											data-testid='Multisig'
-											{...styles.providerStyle}
-											shouldWrapChildren
-											onClick={handleMultiSigMode}
-										>
-											<PairingSpinner wallet={SupportedWallets.MULTISIG}>
-												<Image src={MULTISIG_LOGO_PNG} w={20} />
-												<Text textAlign='center'>Multisig</Text>
-											</PairingSpinner>
-										</VStack>
-									) : (
-										<></>
-									)}
-									{SupportedWallets.HWALLETCONNECT ? (
+										)}
+										{availableWallets.includes(SupportedWallets.METAMASK) ? (
+											<VStack
+												data-testid='Metamask'
+												{...styles.providerStyle}
+												shouldWrapChildren
+												onClick={handleConnectMetamaskWallet}
+											>
+												<PairingSpinner wallet={SupportedWallets.METAMASK}>
+													<Image src={METAMASK_LOGO} w={20} />
+													<Text textAlign='center'>Metamask</Text>
+												</PairingSpinner>
+											</VStack>
+										) : (
+											<VStack data-testid='Metamask' {...styles.providerStyle}>
+												<Link
+													href='https://metamask.io/download/'
+													isExternal
+													_hover={{ textDecoration: 'none' }}
+												>
+													<Image src={METAMASK_LOGO} w={20} />
+													<Text textAlign='center'>Metamask</Text>
+												</Link>
+											</VStack>
+										)}
+										{isChrome ? (
+											availableWallets.includes(SupportedWallets.BLADE) ? (
+												<VStack
+													data-testid='Blade'
+													{...styles.providerStyle}
+													shouldWrapChildren
+													onClick={handleConnectBladeWallet}
+												>
+													<PairingSpinner wallet={SupportedWallets.BLADE}>
+														<Image src={BLADE_LOGO_PNG} w={20} />
+														<Text textAlign='center'>Blade</Text>
+													</PairingSpinner>
+												</VStack>
+											) : (
+												<VStack data-testid='Blade' {...styles.providerStyle}>
+													<Link
+														href='https://bladewallet.io/'
+														isExternal
+														_hover={{ textDecoration: 'none' }}
+													>
+														<Image src={BLADE_LOGO_PNG} w={20} />
+														<Text textAlign='center'>Blade</Text>
+													</Link>
+												</VStack>
+											)
+										) : (
+											//* Blade is not supported in this browser
+											<></>
+										)}
+										{!availableWallets.includes(SupportedWallets.MULTISIG) ? (
+											<VStack
+												data-testid='Multisig'
+												{...styles.providerStyle}
+												shouldWrapChildren
+												onClick={handleMultiSigMode}
+											>
+												<PairingSpinner wallet={SupportedWallets.MULTISIG}>
+													<Image src={MULTISIG_LOGO_PNG} w={20} />
+													<Text textAlign='center'>Multisig</Text>
+												</PairingSpinner>
+											</VStack>
+										) : (
+											<></>
+										)}
 										<VStack
 											data-testid='HederaWalletConnect'
 											{...styles.providerStyle}
@@ -455,26 +460,15 @@ const ModalWalletConnect = () => {
 											onClick={handleConnectHederaWalletConnect}
 										>
 											<PairingSpinner wallet={SupportedWallets.HWALLETCONNECT}>
-												<Image src={HASHPACK_LOGO_PNG} w={20} />
-												<Text>Hedera Wallet Connect</Text>
+												<Image src={WALLETCONNECT_LOGO_PNG} w={20} />
+												<Text>Hedera WC</Text>
 											</PairingSpinner>
 										</VStack>
-									) : (
-										<VStack data-testid='HederaWalletConnect' {...styles.providerStyle}>
-											<Link
-												href='https://github.com/hashgraph/hedera-wallet-connect/tree/main'
-												isExternal
-												_hover={{ textDecoration: 'none' }}
-											>
-												<Image src={HASHPACK_LOGO_PNG} w={20} />
-												<Text>Hedera Wallet Connect</Text>
-											</Link>
-										</VStack>
-									)}
-								</HStack>
-							</ModalFooter>
-						</>
-					)}
+										)
+									</HStack>
+								</ModalFooter>
+							</>
+						)}
 					{hashpackSelected && (
 						<>
 							<ModalHeader p='0' justifyContent='center'>
