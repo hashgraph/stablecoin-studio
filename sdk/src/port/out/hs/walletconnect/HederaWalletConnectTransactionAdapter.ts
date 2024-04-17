@@ -41,6 +41,7 @@ import Account from '../../../../domain/context/account/Account';
 import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
 import { Environment } from '../../../../domain/context/network/Environment';
 import { SupportedWallets } from '../../../../domain/context/network/Wallet';
+import HWCSettings from '../../../../domain/context/hwalletconnectsettings/HWCSettings.js';
 
 @singleton()
 /**
@@ -50,6 +51,8 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 	public account: Account;
 	protected network: Environment;
 	protected dAppConnector: DAppConnector | undefined;
+	protected projectId: string;
+	protected dappMetadata: SignClientTypes.Metadata;
 
 	constructor(
 		@lazyInject(EventService)
@@ -62,6 +65,13 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 		public readonly queryBus: QueryBus,
 	) {
 		super(mirrorNodeAdapter, networkService);
+		this.projectId = '';
+		this.dappMetadata = {
+			name: '',
+			description: '',
+			url: '',
+			icons: [],
+		};
 	}
 
 	/**
@@ -92,9 +102,22 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 	 *
 	 * @returns A promise that resolves to an object containing the account information.
 	 */
-	public async register(): Promise<InitializationData> {
+	public async register(
+		hWCSettings: HWCSettings,
+	): Promise<InitializationData> {
 		Injectable.registerTransactionHandler(this);
 		LogService.logTrace('Hedera WalletConnect registered as handler');
+
+		if (!hWCSettings)
+			throw new Error('hedera wallet conenct settings not set');
+
+		this.projectId = hWCSettings.projectId ?? '';
+		this.dappMetadata = {
+			name: hWCSettings.dappName ?? '',
+			description: hWCSettings.dappDescription ?? '',
+			url: hWCSettings.dappURL ?? '',
+			icons: [],
+		};
 
 		await this.connectWalletConnect();
 
@@ -114,25 +137,16 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 		const currentNetwork = network ?? this.networkService.environment;
 
 		try {
-			// TODO: to ENV file ⬇️
-			const projectId = '8fc26370383a50de1c3bd638d334292e';
-			const metadata: SignClientTypes.Metadata = {
-				name: 'name',
-				description: 'description',
-				url: 'https://wc.hgraph.app/',
-				icons: ['icons'],
-			};
-			// TODO: END to ENV file ⬆️
 			const hwcNetwork = this.getLedgerId(currentNetwork);
 			// Create dApp Connector instance
 			this.dAppConnector = new DAppConnector(
-				metadata,
+				this.dappMetadata,
 				hwcNetwork,
-				projectId,
+				this.projectId,
 			);
 			await this.dAppConnector.init({ logger: 'debug' });
 			LogService.logTrace(
-				`✅ HWC Initialized with network: ${currentNetwork} and projectId: ${projectId}`,
+				`✅ HWC Initialized with network: ${currentNetwork} and projectId: ${this.projectId}`,
 			);
 		} catch (error: any) {
 			LogService.logTrace(
@@ -271,6 +285,14 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 	}
 	sign(message: string | Transaction): Promise<string> {
 		throw new Error('Method not implemented.');
+	}
+
+	getWCMetadata(): SignClientTypes.Metadata {
+		return this.dappMetadata;
+	}
+
+	getProjectId(): string {
+		return this.projectId;
 	}
 
 	private getLedgerId(network: string): LedgerId {

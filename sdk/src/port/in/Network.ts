@@ -208,6 +208,9 @@ class NetworkInPort implements INetworkInPort {
 			? RequestMapper.mapAccount(req.account)
 			: undefined;
 		const custodialSettings = this.getCustodialSettings(req);
+		const hwcSettings = req.hwcSettings
+			? RequestMapper.hwcRequestToHWCSettings(req.hwcSettings)
+			: undefined;
 		if (
 			req.wallet == SupportedWallets.HASHPACK ||
 			req.wallet == SupportedWallets.BLADE
@@ -244,6 +247,7 @@ class NetworkInPort implements INetworkInPort {
 				req.wallet,
 				account,
 				custodialSettings,
+				hwcSettings,
 			),
 		);
 		return res.payload;

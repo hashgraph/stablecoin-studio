@@ -96,6 +96,9 @@ const ModalWalletConnect = () => {
 		mode: 'onChange',
 	});
 
+	const isHWCProjectID =
+		!!process.env.REACT_APP_PROJECT_ID && process.env.REACT_APP_PROJECT_ID.trim() !== '';
+
 	const handleWalletConnect = async (
 		wallet: SupportedWallets,
 		network: string,
@@ -453,17 +456,21 @@ const ModalWalletConnect = () => {
 										) : (
 											<></>
 										)}
-										<VStack
-											data-testid='HederaWalletConnect'
-											{...styles.providerStyle}
-											shouldWrapChildren
-											onClick={handleConnectHederaWalletConnect}
-										>
-											<PairingSpinner wallet={SupportedWallets.HWALLETCONNECT}>
-												<Image src={WALLETCONNECT_LOGO_PNG} w={20} />
-												<Text>Hedera WC</Text>
-											</PairingSpinner>
-										</VStack>
+										{isHWCProjectID ? (
+											<VStack
+												data-testid='HederaWalletConnect'
+												{...styles.providerStyle}
+												shouldWrapChildren
+												onClick={handleConnectHederaWalletConnect}
+											>
+												<PairingSpinner wallet={SupportedWallets.HWALLETCONNECT}>
+													<Image src={WALLETCONNECT_LOGO_PNG} w={20} />
+													<Text>Hedera WC</Text>
+												</PairingSpinner>
+											</VStack>
+										) : (
+											<></>
+										)}
 										)
 									</HStack>
 								</ModalFooter>

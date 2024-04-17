@@ -45,7 +45,6 @@ import type {
 	StableCoinCapabilities,
 	StableCoinListViewModel,
 	StableCoinViewModel,
-	SupportedWallets,
 	UpdateCustomFeesRequest,
 	UpdateRequest,
 	UpdateReserveAddressRequest,
@@ -72,6 +71,7 @@ import {
 	SignTransactionRequest,
 	StableCoin,
 	SubmitTransactionRequest,
+	SupportedWallets,
 } from '@hashgraph/stablecoin-npm-sdk';
 import { type IMirrorRPCNode } from '../interfaces/IMirrorRPCNode';
 import type { IConsensusNodes } from '../interfaces/IConsensusNodes';
@@ -143,6 +143,24 @@ export class SDKService {
 			}
 		}
 
+		let hwcSettings;
+
+		if (wallet === SupportedWallets.HWALLETCONNECT) {
+			const projectId = process.env.REACT_APP_PROJECT_ID ?? '';
+			const dappName = process.env.REACT_APP_DAPP_NAME ?? '';
+			const dappDescription = process.env.REACT_APP_DAPP_DESCRIPTION ?? '';
+			const dappURL = process.env.REACT_APP_DAPP_URL ?? '';
+
+			if (projectId) {
+				hwcSettings = {
+					projectId: projectId,
+					dappName: dappName,
+					dappDescription: dappDescription,
+					dappURL: dappURL,
+				};
+			}
+		}
+
 		this.initData = await Network.connect(
 			new ConnectRequest({
 				account: hederaAccount ? { accountId: hederaAccount } : undefined,
@@ -151,6 +169,7 @@ export class SDKService {
 				rpcNode: _rpcNode,
 				wallet,
 				consensusNodes,
+				hwcSettings: hwcSettings,
 			}),
 		);
 
