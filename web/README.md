@@ -67,7 +67,8 @@ The ENV file contains the following parameters:
 - **REACT_APP_FACTORIES**: This var is only required if you want to create a new stablecoin. The var must be a JSON array with a factory proxy id in Hedera format `0.0.XXXXX` per environment. Regarding this, your can find the factories proxy's contract ids depending on the Stablecoin Studio versión [here](./../FACTORY_VERSION.md).
 - **REACT_APP_MIRROR_NODE**: This var is required if you want to create a new stablecoin. The var must be a unique mirror node service for each Hedera network, and this is the service which would be used when the UI starts. The service is configured by the environment and the base url properties, and, optionally, can also have an api key and a http header through which the api key is provided.
 - **REACT_APP_RPC_NODE**: This var is required if you want to create a new stablecoin. The var must be a unique rpc node service for Hedera network, and this is the service which would be used when the UI starts. The service is configured using the same properties than the mirror node. You can check the available JSON-RPC relays [here](https://github.com/hashgraph/stablecoin-studio/blob/main/README.md#JSON-RPC-Relays).
-- **REACT_APP_BACKEND_URL**: This var is only required if you want to enable multisignature functionality. It is the backend rest api endpoint.
+- **REACT_APP_BACKEND_URL**: This variable is only required if you want to enable multisignature functionality. It corresponds to the backend REST API endpoint.
+  > **Important:** If **REACT_APP_BACKEND_URL** is not set, the multisignature option will not be activated and therefore will not be displayed on the web interface.
 - **REACT_APP_CONSENSUS_NODES**: This var is only required if you want to enable multisignature functionality. It is a list of consensus nodes per environment. When generating a multisignature transaction the first consensus node of the environment will be added to the transaction.
 
 ```bash
