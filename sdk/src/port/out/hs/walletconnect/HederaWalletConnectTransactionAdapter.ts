@@ -42,6 +42,7 @@ import TransactionResponse from '../../../../domain/context/transaction/Transact
 import { singleton } from 'tsyringe';
 import { QueryBus } from '../../../../core/query/QueryBus';
 import { NetworkName } from '@hashgraph/sdk/lib/client/Client';
+import { HederaId } from '../../../../domain/context/shared/HederaId.js';
 
 @singleton()
 export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdapter {
@@ -63,78 +64,122 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 	}
 
 	async init(network?: NetworkName): Promise<string> {
-		// TODO: to ENV file ⬇️
-		const projectId = '8fc26370383a50de1c3bd638d334292e';
-		const metadata: SignClientTypes.Metadata = {
-			name: 'name',
-			description: 'description',
-			url: 'https://wc.hgraph.app/',
-			icons: ['icons'],
-		};
-		// TODO: END to ENV file ⬆️
-		network = network || 'mainnet';
-		const hwcNetwork =
-			network === 'testnet'
-				? LedgerId.TESTNET
-				: network === 'previewnet'
-				? LedgerId.PREVIEWNET
-				: LedgerId.MAINNET;
+		const currentNetwork = await this.connectWalletConnect(false, network);
+
 		const eventData = {
-			wallet: SupportedWallets.HWALLETCONNECT,
-			initData: {},
-		};
-		// Create dApp Connector instance
-		this.dAppConnector = new DAppConnector(metadata, hwcNetwork, projectId);
-		await this.dAppConnector.init({ logger: 'debug' });
-		// LogService.logTrace(this.dAppConnector);
-
-		this.eventService.emit(WalletEvents.walletInit, eventData);
-		LogService.logInfo('✅ HederaWalletConnect Initialized.');
-		LogService.logTrace(
-			`HederaWalletConnect Initialized with account: ${this.account} and network: ${network}`,
-		);
-		return network;
-	}
-
-	// TODO: review
-	async register(account: Account): Promise<InitializationData> {
-		Injectable.registerTransactionHandler(this);
-		LogService.logTrace('WalletConnect Registered as handler');
-
-		// await this.dAppConnector?.openModal();
-		await this.dAppConnector?.connectQR();
-
-		console.log('Register: ', this.dAppConnector?.signers[0]);
-
-		const accountMirror = await this.mirrorNodeAdapter.getAccountInfo(
-			account.id,
-		);
-
-		this.account = account;
-		this.account.publicKey = accountMirror.publicKey;
-
-		this.network = this.networkService.environment;
-
-		const eventData: WalletPairedEvent = {
-			wallet: SupportedWallets.HWALLETCONNECT,
-			data: {
+			initData: {
 				account: this.account,
 				pairing: '',
 				topic: '',
 			},
-			network: {
-				name: this.networkService.environment,
-				recognized: true,
-				factoryId: this.networkService.configuration
-					? this.networkService.configuration.factoryAddress
-					: '',
-			},
+			wallet: SupportedWallets.HWALLETCONNECT,
 		};
-		this.eventService.emit(WalletEvents.walletPaired, eventData);
-		LogService.logTrace('WalletConnect registered as handler: ', eventData);
+		this.eventService.emit(WalletEvents.walletInit, eventData);
+		LogService.logInfo('✅ Wallet Connect Initialized.');
+		LogService.logTrace(
+			`Wallet Connect Initialized with account: ${this.account} and network: ${currentNetwork}`,
+		);
+		return currentNetwork;
+	}
+
+	// TODO: review
+	async register(): Promise<InitializationData> {
+		Injectable.registerTransactionHandler(this);
+		LogService.logTrace('WalletConnect Registered as handler');
+
+		await this.connectWalletConnect(true);
+
 		return Promise.resolve({
 			account: this.getAccount(),
 		});
+	}
+
+	async connectWalletConnect(pair = true, network?: string): Promise<string> {
+		const currentNetwork = network ?? this.networkService.environment;
+
+		try {
+			const projectId = '8fc26370383a50de1c3bd638d334292e';
+			const metadata: SignClientTypes.Metadata = {
+				name: 'name',
+				description: 'description',
+				url: 'https://wc.hgraph.app/',
+				icons: ['icons'],
+			};
+			// TODO: END to ENV file ⬆️
+			const hwcNetwork =
+				currentNetwork === 'testnet'
+					? LedgerId.TESTNET
+					: currentNetwork === 'previewnet'
+					? LedgerId.PREVIEWNET
+					: LedgerId.MAINNET;
+			const eventData = {
+				wallet: SupportedWallets.HWALLETCONNECT,
+				initData: {},
+			};
+			// Create dApp Connector instance
+			this.dAppConnector = new DAppConnector(
+				metadata,
+				hwcNetwork,
+				projectId,
+			);
+			await this.dAppConnector.init({ logger: 'debug' });
+
+			this.eventService.emit(WalletEvents.walletInit, eventData);
+			LogService.logInfo('✅ HederaWalletConnect Initialized.');
+			LogService.logTrace(
+				`HederaWalletConnect Initialized with account: ${this.account} and network: ${currentNetwork}`,
+			);
+		} catch (error: any) {
+			LogService.logTrace('Error initializing Wallet Connect', error);
+			return currentNetwork;
+		}
+
+		if (pair) {
+			await this.dAppConnector?.connectQR();
+
+			const walletConnectSigners = this.dAppConnector?.signers;
+
+			if (!walletConnectSigners) {
+				throw new Error('No signers retrieved from wallet connect');
+			}
+
+			const accountId = walletConnectSigners[0].getAccountId().toString();
+
+			const accountMirror = await this.mirrorNodeAdapter.getAccountInfo(
+				accountId,
+			);
+
+			this.account = new Account({
+				id: accountId,
+				publicKey: accountMirror.publicKey,
+				evmAddress: accountMirror.accountEvmAddress,
+			});
+
+			this.network = this.networkService.environment;
+
+			const eventData: WalletPairedEvent = {
+				wallet: SupportedWallets.HWALLETCONNECT,
+				data: {
+					account: this.account,
+					pairing: '',
+					topic: '',
+				},
+				network: {
+					name: this.networkService.environment,
+					recognized: true,
+					factoryId: this.networkService.configuration
+						? this.networkService.configuration.factoryAddress
+						: '',
+				},
+			};
+			this.eventService.emit(WalletEvents.walletPaired, eventData);
+			LogService.logTrace(
+				'WalletConnect registered as handler: ',
+				eventData,
+			);
+		}
+
+		return currentNetwork;
 	}
 
 	// async function hedera_signAndExecuteTransaction(_: Event) {
@@ -163,7 +208,7 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 	}
 
 	getAccount(): Account {
-		throw new Error('Method not implemented.');
+		return this.account;
 	}
 	sign(message: string | Transaction): Promise<string> {
 		throw new Error('Method not implemented.');
