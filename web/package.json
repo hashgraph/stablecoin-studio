@@ -13,7 +13,7 @@
 		"cleanCache": "react-app-rewired test --clearCache",
 		"eject": "react-app-rewired eject",
 		"lint": "eslint . --ext .ts --ext .mts",
-		"prettier": "prettier --config .prettierrc --write .",
+		"prettier": "prettier --config .prettierrc --write . --fix",
 		"prettierCheck": "prettier --config .prettierrc --check",
 		"pre-commit": "npm run lint && npm run prettier",
 		"prepack": "npm run build"

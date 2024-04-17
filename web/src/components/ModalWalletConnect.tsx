@@ -93,6 +93,8 @@ const ModalWalletConnect = () => {
 	const { control, getValues } = useForm({
 		mode: 'onChange',
 	});
+	const isMultiSigBackendConfigured =
+		!!process.env.REACT_APP_BACKEND_URL && process.env.REACT_APP_BACKEND_URL.trim() !== '';
 
 	const handleWalletConnect = async (
 		wallet: SupportedWallets,
@@ -417,7 +419,8 @@ const ModalWalletConnect = () => {
 										//* Blade is not supported in this browser
 										<></>
 									)}
-									{!availableWallets.includes(SupportedWallets.MULTISIG) ? (
+									{!availableWallets.includes(SupportedWallets.MULTISIG) &&
+									isMultiSigBackendConfigured ? (
 										<VStack
 											data-testid='Multisig'
 											{...styles.providerStyle}
