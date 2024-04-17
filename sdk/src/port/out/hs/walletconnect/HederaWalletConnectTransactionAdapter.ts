@@ -18,33 +18,35 @@
  *
  */
 
+import { singleton } from 'tsyringe';
+import { LedgerId, Transaction } from '@hashgraph/sdk';
+import { NetworkName } from '@hashgraph/sdk/lib/client/Client';
+import { DAppConnector } from '@hashgraph/hedera-wallet-connect';
+import { SignClientTypes } from '@walletconnect/types';
 import { HederaTransactionAdapter } from '../HederaTransactionAdapter';
 import { TransactionType } from '../../TransactionResponseEnums';
-import { LedgerId, Transaction } from '@hashgraph/sdk';
-import Account from '../../../../domain/context/account/Account';
-import { Environment } from '../../../../domain/context/network/Environment';
-import { lazyInject } from '../../../../core/decorator/LazyInjectDecorator';
-import EventService from '../../../../app/service/event/EventService';
-import NetworkService from '../../../../app/service/NetworkService';
+import { InitializationData } from '../../TransactionAdapter';
 import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter';
-import { BackendAdapter } from '../../backend/BackendAdapter';
 import {
 	WalletEvents,
 	WalletPairedEvent,
 } from '../../../../app/service/event/WalletEvent';
-import { SupportedWallets } from '../../../../domain/context/network/Wallet';
 import LogService from '../../../../app/service/LogService';
-import { InitializationData } from '../../TransactionAdapter';
+import EventService from '../../../../app/service/event/EventService';
+import NetworkService from '../../../../app/service/NetworkService';
+import { lazyInject } from '../../../../core/decorator/LazyInjectDecorator';
 import Injectable from '../../../../core/Injectable';
-import { SignClientTypes } from '@walletconnect/types';
-import { DAppConnector } from '@hashgraph/hedera-wallet-connect';
-import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
-import { singleton } from 'tsyringe';
 import { QueryBus } from '../../../../core/query/QueryBus';
-import { NetworkName } from '@hashgraph/sdk/lib/client/Client';
+import Account from '../../../../domain/context/account/Account';
+import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
+import { Environment } from '../../../../domain/context/network/Environment';
+import { SupportedWallets } from '../../../../domain/context/network/Wallet';
 import HWCSettings from '../../../../domain/context/hwalletconnectsettings/HWCSettings.js';
 
 @singleton()
+/**
+ * Represents a transaction adapter for Hedera Wallet Connect.
+ */
 export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdapter {
 	public account: Account;
 	protected network: Environment;
@@ -72,8 +74,14 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 		};
 	}
 
-	async init(network?: NetworkName): Promise<string> {
-		const currentNetwork = await this.connectWalletConnect(false, network);
+	/**
+	 * Initializes the Hedera Wallet Connect Transaction Adapter.
+	 *
+	 * @param network - Optional parameter specifying the network name.
+	 * @returns A promise that resolves to the current network name.
+	 */
+	public async init(network?: NetworkName): Promise<string> {
+		const currentNetwork = network ?? this.networkService.environment;
 
 		const eventData = {
 			initData: {
@@ -84,17 +92,21 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 			wallet: SupportedWallets.HWALLETCONNECT,
 		};
 		this.eventService.emit(WalletEvents.walletInit, eventData);
-		LogService.logInfo('✅ Wallet Connect Initialized.');
-		LogService.logTrace(
-			`Wallet Connect Initialized with account: ${this.account} and network: ${currentNetwork}`,
-		);
+		LogService.logInfo('✅ Hedera Wallet Connect Handler Initialized');
 		return currentNetwork;
 	}
 
-	// TODO: review
-	async register(hWCSettings: HWCSettings): Promise<InitializationData> {
+	/**
+	 * Registers the Hedera WalletConnect transaction adapter.
+	 * This method registers the transaction handler and connects to WalletConnect.
+	 *
+	 * @returns A promise that resolves to an object containing the account information.
+	 */
+	public async register(
+		hWCSettings: HWCSettings,
+	): Promise<InitializationData> {
 		Injectable.registerTransactionHandler(this);
-		LogService.logTrace('WalletConnect Registered as handler');
+		LogService.logTrace('Hedera WalletConnect registered as handler');
 
 		if (!hWCSettings)
 			throw new Error('hedera wallet conenct settings not set');
@@ -107,29 +119,25 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 			icons: [],
 		};
 
-		await this.connectWalletConnect(true);
+		await this.connectWalletConnect();
 
 		return Promise.resolve({
 			account: this.getAccount(),
 		});
 	}
 
-	async connectWalletConnect(pair = true, network?: string): Promise<string> {
+	/**
+	 * Connects to the Hedera WalletConnect.
+	 *
+	 * @param network - Optional. The network to connect to. If not provided, the default network from the network service will be used.
+	 * @returns A promise that resolves to a string representing the current network.
+	 * @throws If there is an error initializing the Hedera WalletConnect or retrieving account information.
+	 */
+	public async connectWalletConnect(network?: string): Promise<string> {
 		const currentNetwork = network ?? this.networkService.environment;
 
 		try {
-			// TODO: END to ENV file ⬆️
-			const hwcNetwork =
-				currentNetwork === 'testnet'
-					? LedgerId.TESTNET
-					: currentNetwork === 'previewnet'
-					? LedgerId.PREVIEWNET
-					: LedgerId.MAINNET;
-			const eventData = {
-				wallet: SupportedWallets.HWALLETCONNECT,
-				initData: {},
-			};
-
+			const hwcNetwork = this.getLedgerId(currentNetwork);
 			// Create dApp Connector instance
 			this.dAppConnector = new DAppConnector(
 				this.dappMetadata,
@@ -137,63 +145,114 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 				this.projectId,
 			);
 			await this.dAppConnector.init({ logger: 'debug' });
-
-			this.eventService.emit(WalletEvents.walletInit, eventData);
-			LogService.logInfo('✅ HederaWalletConnect Initialized.');
 			LogService.logTrace(
-				`HederaWalletConnect Initialized with account: ${this.account} and network: ${currentNetwork}`,
+				`✅ HWC Initialized with network: ${currentNetwork} and projectId: ${this.projectId}`,
 			);
 		} catch (error: any) {
-			LogService.logTrace('Error initializing Wallet Connect', error);
+			LogService.logTrace(
+				'❌ Error initializing HWC with network: ${currentNetwork} and projectId: ${projectId}',
+				error,
+			);
 			return currentNetwork;
 		}
 
-		if (pair) {
-			await this.dAppConnector?.connectQR();
-
-			const walletConnectSigners = this.dAppConnector?.signers;
-
-			if (!walletConnectSigners) {
-				throw new Error('No signers retrieved from wallet connect');
-			}
-
-			const accountId = walletConnectSigners[0].getAccountId().toString();
-
-			const accountMirror = await this.mirrorNodeAdapter.getAccountInfo(
-				accountId,
-			);
-
-			this.account = new Account({
-				id: accountId,
-				publicKey: accountMirror.publicKey,
-				evmAddress: accountMirror.accountEvmAddress,
-			});
-
-			this.network = this.networkService.environment;
-
-			const eventData: WalletPairedEvent = {
-				wallet: SupportedWallets.HWALLETCONNECT,
-				data: {
-					account: this.account,
-					pairing: '',
-					topic: '',
-				},
-				network: {
-					name: this.networkService.environment,
-					recognized: true,
-					factoryId: this.networkService.configuration
-						? this.networkService.configuration.factoryAddress
-						: '',
-				},
-			};
-			this.eventService.emit(WalletEvents.walletPaired, eventData);
-			LogService.logTrace(
-				'WalletConnect registered as handler: ',
-				eventData,
+		LogService.logTrace('🔗 Pairing with Hedera WalletConnect...');
+		// Scan QR code or use WalletConnect URI to connect
+		await this.dAppConnector.connectQR();
+		// await this.dAppConnector.openModal(); // TODO check
+		// Get signers from WalletConnect
+		const walletConnectSigners = this.dAppConnector.signers;
+		if (!walletConnectSigners) {
+			throw new Error(
+				`❌ No signers retrieved from wallet connect. Signers: ${walletConnectSigners}`,
 			);
 		}
+		// Get account ID from signers
+		const accountId = walletConnectSigners[0].getAccountId().toString();
+		if (!accountId) {
+			throw new Error(
+				`❌ No account ID retrieved from signers. Account ID: ${accountId}`,
+			);
+		}
+		// Get account info from Mirror Node
+		const accountMirror = await this.mirrorNodeAdapter.getAccountInfo(
+			accountId,
+		);
+		if (!accountMirror) {
+			throw new Error(
+				`❌ No account info retrieved from Mirror Node. Account ID: ${accountId}`,
+			);
+		}
+		// Create account object and set network
+		this.account = new Account({
+			id: accountId,
+			publicKey: accountMirror.publicKey,
+			evmAddress: accountMirror.accountEvmAddress,
+		});
+		this.network = this.networkService.environment;
+		LogService.logInfo(
+			`✅ Hedera WalletConnect paired with account: ${accountId}`,
+		);
+		const eventData: WalletPairedEvent = {
+			wallet: SupportedWallets.HWALLETCONNECT,
+			data: {
+				account: this.account,
+				pairing: '',
+				topic: '',
+			},
+			network: {
+				name: this.networkService.environment,
+				recognized: true,
+				factoryId: this.networkService.configuration
+					? this.networkService.configuration.factoryAddress
+					: '',
+			},
+		};
+		this.eventService.emit(WalletEvents.walletPaired, eventData);
 
 		return currentNetwork;
+	}
+
+	/**
+	 * Stops the Hedera WalletConnect connection.
+	 * @returns A promise that resolves to a boolean indicating whether the stop operation was successful.
+	 */
+	public async stop(): Promise<boolean> {
+		try {
+			await this.dAppConnector?.disconnectAll();
+			this.dAppConnector = undefined;
+			LogService.logInfo(
+				`🛑 🏁 Hedera WalletConnect stopped successfully`,
+			);
+			this.eventService.emit(WalletEvents.walletDisconnect, {
+				wallet: SupportedWallets.HWALLETCONNECT,
+			});
+			return Promise.resolve(true);
+		} catch (error: any) {
+			if (
+				(error.message as string).includes('No active session') ||
+				(error.message as string).includes('No matching key')
+			) {
+				LogService.logInfo(
+					`🔍 No active session found for Hedera WalletConnect`,
+				);
+			} else {
+				LogService.logError(
+					`❌ Error stopping Hedera WalletConnect: ${error.message}`,
+				);
+			}
+			return Promise.resolve(false);
+		}
+	}
+
+	/**
+	 * Restarts the transaction adapter with the specified network.
+	 * @param network The network name to initialize the adapter with.
+	 * @returns A promise that resolves when the adapter has been restarted.
+	 */
+	public async restart(network: NetworkName): Promise<void> {
+		await this.stop();
+		await this.init(network);
 	}
 
 	// async function hedera_signAndExecuteTransaction(_: Event) {
@@ -212,7 +271,7 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 	// 	return await dAppConnector!.signAndExecuteTransaction(params)
 	// }
 
-	async signAndSendTransaction(
+	public async signAndSendTransaction(
 		t: Transaction,
 		transactionType: TransactionType,
 		nameFunction?: string | undefined,
@@ -234,5 +293,16 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 
 	getProjectId(): string {
 		return this.projectId;
+	}
+
+	private getLedgerId(network: string): LedgerId {
+		switch (network) {
+			case 'testnet':
+				return LedgerId.TESTNET;
+			case 'previewnet':
+				return LedgerId.PREVIEWNET;
+			default:
+				return LedgerId.MAINNET;
+		}
 	}
 }
