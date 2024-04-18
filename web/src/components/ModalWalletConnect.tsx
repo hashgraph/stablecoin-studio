@@ -342,30 +342,6 @@ const ModalWalletConnect = () => {
 									justifyContent={'center'}
 									alignItems={'stretch'}
 								>
-									{availableWallets.includes(SupportedWallets.HASHPACK) ? (
-										<VStack
-											data-testid='Hashpack'
-											{...styles.providerStyle}
-											shouldWrapChildren
-											onClick={handleConnectHashpackWallet}
-										>
-											<PairingSpinner wallet={SupportedWallets.HASHPACK}>
-												<Image src={HASHPACK_LOGO_PNG} w={20} />
-												<Text>Hashpack</Text>
-											</PairingSpinner>
-										</VStack>
-									) : (
-										<VStack data-testid='Hashpack' {...styles.providerStyle}>
-											<Link
-												href='https://www.hashpack.app/download'
-												isExternal
-												_hover={{ textDecoration: 'none' }}
-											>
-												<Image src={HASHPACK_LOGO_PNG} w={20} />
-												<Text>Hashpack</Text>
-											</Link>
-										</VStack>
-									)}
 									{availableWallets.includes(SupportedWallets.METAMASK) ? (
 										<VStack
 											data-testid='Metamask'
