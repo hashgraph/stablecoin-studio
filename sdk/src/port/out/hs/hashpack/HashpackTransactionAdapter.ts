@@ -154,8 +154,8 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 				this.account.id.toString(),
 			),
 		);
-		this.signer = this.hashConnectSigner;
-		await this.getAccountKey();
+		// this.signer = this.hashConnectSigner;
+		// await this.getAccountKey();
 	}
 
 	async register(): Promise<InitializationData> {
@@ -231,7 +231,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 				nameFunction,
 				t,
 			);
-			await this.getAccountKey(); // Ensure we have the public key)
+			// await this.getAccountKey(); // Ensure we have the public key)
 			let signedT = t;
 			if (!t.isFrozen()) {
 				signedT = await t.freezeWithSigner(this.signer);
@@ -300,20 +300,20 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 		}
 	}
 
-	async getAccountKey(): Promise<HPublicKey> {
-		if (this.hashConnectSigner?.getAccountKey) {
-			return this.hashConnectSigner.getAccountKey();
-		}
-		this.hashConnectSigner = await this.hc.getSignerWithAccountKey(
-			this.provider,
-		);
-		this.signer = this.hashConnectSigner as unknown as Signer;
-		if (this.hashConnectSigner.getAccountKey) {
-			return this.hashConnectSigner.getAccountKey();
-		} else {
-			throw new SigningError('Public key is empty');
-		}
-	}
+	// async getAccountKey(): Promise<HPublicKey> {
+	// 	if (this.hashConnectSigner?.getAccountKey) {
+	// 		return this.hashConnectSigner.getAccountKey();
+	// 	}
+	// 	this.hashConnectSigner = await this.hc.getSignerWithAccountKey(
+	// 		this.provider,
+	// 	);
+	// 	this.signer = this.hashConnectSigner as unknown as Signer;
+	// 	if (this.hashConnectSigner.getAccountKey) {
+	// 		return this.hashConnectSigner.getAccountKey();
+	// 	} else {
+	// 		throw new SigningError('Public key is empty');
+	// 	}
+	// }
 
 	getAccount(): Account {
 		if (this.account) return this.account;

@@ -69,19 +69,24 @@ export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
 		abi?: any[] | undefined,
 	): Promise<TransactionResponse<any, Error>> {
 		const publicKeys: string[] = [];
-
 		const accountId: AccountId = AccountId.fromString(
 			this.account.id.toString(),
 		);
+
 		t.setTransactionValidDuration(180);
 		t._freezeWithAccountId(accountId);
 
-		let client: Client = Client.forTestnet();
-
-		if (this.networkService.environment == previewnet) {
-			client = Client.forPreviewnet();
-		} else if (this.networkService.environment == mainnet) {
-			client = Client.forMainnet();
+		let client: Client;
+		switch (this.networkService.environment) {
+			case previewnet:
+				client = Client.forPreviewnet();
+				break;
+			case mainnet:
+				client = Client.forMainnet();
+				break;
+			default:
+				client = Client.forTestnet();
+				break;
 		}
 
 		if (

@@ -19,9 +19,34 @@
  */
 
 import { singleton } from 'tsyringe';
-import { LedgerId, Transaction } from '@hashgraph/sdk';
+import {
+	LedgerId,
+	TokenAssociateTransaction,
+	TokenBurnTransaction,
+	TokenCreateTransaction,
+	TokenDeleteTransaction,
+	TokenFeeScheduleUpdateTransaction,
+	TokenFreezeTransaction,
+	TokenGrantKycTransaction,
+	TokenMintTransaction,
+	TokenPauseTransaction,
+	TokenRevokeKycTransaction,
+	TokenUnfreezeTransaction,
+	TokenUnpauseTransaction,
+	TokenWipeTransaction,
+	Transaction,
+	TransactionResponse as HTransactionResponse,
+	TransferTransaction,
+	Signer,
+	AccountId,
+} from '@hashgraph/sdk';
 import { NetworkName } from '@hashgraph/sdk/lib/client/Client';
-import { DAppConnector } from '@hashgraph/hedera-wallet-connect';
+import {
+	DAppConnector,
+	SignAndExecuteTransactionParams,
+	SignTransactionParams,
+	transactionToBase64String,
+} from '@hashgraph/hedera-wallet-connect';
 import { SignClientTypes } from '@walletconnect/types';
 import { HederaTransactionAdapter } from '../HederaTransactionAdapter';
 import { TransactionType } from '../../TransactionResponseEnums';
@@ -42,6 +67,7 @@ import TransactionResponse from '../../../../domain/context/transaction/Transact
 import { Environment } from '../../../../domain/context/network/Environment';
 import { SupportedWallets } from '../../../../domain/context/network/Wallet';
 import HWCSettings from '../../../../domain/context/hwalletconnectsettings/HWCSettings.js';
+import { HashpackTransactionResponseAdapter } from '../hashpack/HashpackTransactionResponseAdapter';
 
 @singleton()
 /**
@@ -49,6 +75,7 @@ import HWCSettings from '../../../../domain/context/hwalletconnectsettings/HWCSe
  */
 export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdapter {
 	public account: Account;
+	public signer: Signer;
 	protected network: Environment;
 	protected dAppConnector: DAppConnector | undefined;
 	protected projectId: string;
@@ -183,7 +210,9 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 				`❌ No account info retrieved from Mirror Node. Account ID: ${accountId}`,
 			);
 		}
+
 		// Create account object and set network
+		this.signer = this.dAppConnector.signers[0];
 		this.account = new Account({
 			id: accountId,
 			publicKey: accountMirror.publicKey,
@@ -276,15 +305,102 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 		transactionType: TransactionType,
 		nameFunction?: string | undefined,
 		abi?: any[] | undefined,
-	): Promise<TransactionResponse<any, Error>> {
-		throw new Error('Method not implemented.');
+	): Promise<TransactionResponse> {
+		if (!this.dAppConnector) {
+			throw new Error('Hedera WalletConnect not initialized');
+		}
+		if (!this.account) {
+			throw new Error('Account not set');
+		}
+		if (
+			!this.signer ||
+			!this.dAppConnector.signers ||
+			this.dAppConnector.signers.length === 0
+		) {
+			throw new Error('No signers found');
+		}
+
+		if (!t.isFrozen()) {
+			LogService.logTrace(`🔒 Freezing transaction...`);
+			t._freezeWithAccountId(
+				AccountId.fromString(this.account.id.toString()),
+			);
+		}
+
+		const params: SignAndExecuteTransactionParams = {
+			transactionList: transactionToBase64String(t),
+			signerAccountId: this.account.id.toString(),
+		};
+
+		const signParams: SignTransactionParams = {
+			transactionBody: transactionToBase64String(t),
+			signerAccountId: this.account.id.toString(),
+		};
+
+		try {
+			LogService.logInfo(`🔏 Signing and sending transaction...`);
+			// const signedTx = await this.dAppConnector.signTransaction(
+			// 	signParams,
+			// );
+			let transactionResponse: any;
+			if (
+				t instanceof TokenCreateTransaction ||
+				t instanceof TokenWipeTransaction ||
+				t instanceof TokenBurnTransaction ||
+				t instanceof TokenMintTransaction ||
+				t instanceof TokenPauseTransaction ||
+				t instanceof TokenUnpauseTransaction ||
+				t instanceof TokenDeleteTransaction ||
+				t instanceof TokenFreezeTransaction ||
+				t instanceof TokenUnfreezeTransaction ||
+				t instanceof TokenGrantKycTransaction ||
+				t instanceof TokenRevokeKycTransaction ||
+				t instanceof TransferTransaction ||
+				t instanceof TokenFeeScheduleUpdateTransaction ||
+				t instanceof TokenAssociateTransaction
+			) {
+				transactionResponse =
+					await this.dAppConnector.signAndExecuteTransaction(params);
+				LogService.logInfo(
+					`✅ Transaction signed and sent 0. Response: ${transactionResponse}`,
+				);
+				// transactionResponse = await this.dAppConnector.executeTransaction({
+				// 	signed: transactionToBase64String(signedTx),
+				// });
+			} else {
+				transactionResponse =
+					await this.dAppConnector.signAndExecuteTransaction(params);
+				LogService.logInfo(
+					`✅ Transaction signed and sent 1. Response: ${transactionResponse}`,
+				);
+			}
+			LogService.logInfo(
+				`✅ Transaction signed and sent. Response: ${transactionResponse}`,
+			);
+			return HashpackTransactionResponseAdapter.manageResponse(
+				this.networkService.environment,
+				this.signer,
+				transactionResponse,
+				transactionType,
+				nameFunction,
+				abi,
+			);
+		} catch (error: any) {
+			const errorMessage = `❌ Error signing and sending transaction: ${JSON.stringify(
+				error,
+				null,
+				2,
+			)}`;
+			LogService.logError(errorMessage);
+			throw new Error(errorMessage);
+		}
 	}
 
 	getAccount(): Account {
 		return this.account;
 	}
 	sign(message: string | Transaction): Promise<string> {
-		throw new Error('Method not implemented.');
+		throw new Error('👷‍♂️ sign method not implemented.');
 	}
 
 	getWCMetadata(): SignClientTypes.Metadata {
