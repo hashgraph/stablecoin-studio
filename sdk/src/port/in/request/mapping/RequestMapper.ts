@@ -28,6 +28,7 @@ import PublicKey from '../../../../domain/context/account/PublicKey.js';
 import {
 	FireblocksConfigRequest,
 	DFNSConfigRequest,
+	HWCRequestSettings,
 } from '../ConnectRequest.js';
 import {
 	RequestAccount,
@@ -37,6 +38,7 @@ import {
 import ValidatedRequest from '../validation/ValidatedRequest.js';
 import DfnsSettings from '../../../../domain/context/custodialwalletsettings/DfnsSettings.js';
 import FireblocksSettings from '../../../../domain/context/custodialwalletsettings/FireblocksSettings.js';
+import HWCSettings from '../../../../domain/context/hwalletconnectsettings/HWCSettings.js';
 
 export default class RequestMapper {
 	public static isPublicKey = (val: any): val is RequestPublicKey => {
@@ -214,6 +216,17 @@ export default class RequestMapper {
 			req.assetId,
 			req.vaultAccountId,
 			req.hederaAccountId,
+		);
+	}
+
+	public static hwcRequestToHWCSettings(
+		req: HWCRequestSettings,
+	): HWCSettings {
+		return new HWCSettings(
+			req.projectId,
+			req.dappName,
+			req.dappDescription,
+			req.dappURL,
 		);
 	}
 }

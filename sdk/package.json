@@ -72,6 +72,7 @@
 		"@hashgraph/cryptography": "1.4.3",
 		"@hashgraph/hashconnect": "file:./../hashconnect/lib",
 		"@hashgraph/hedera-custodians-integration": "1.2.5",
+		"@hashgraph/hedera-wallet-connect": "^1.0.6",
 		"@hashgraph/hethers": "^1.2.5",
 		"@hashgraph/sdk": "2.38.0",
 		"@hashgraph/stablecoin-npm-contracts": "file:./../contracts",

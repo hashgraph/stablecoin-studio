@@ -133,6 +133,7 @@ const Router = () => {
 			level: process.env.REACT_APP_LOG_LEVEL ?? 'ERROR',
 			transports: new LoggerTransports.Console(),
 		};
+		console.info('📃 SDK LogService Level: ', SDK.log.level);
 		await SDKService.init({
 			walletFound,
 			walletPaired,

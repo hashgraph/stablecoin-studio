@@ -60,7 +60,7 @@ import {
 } from '@hashgraph/stablecoin-npm-contracts';
 import { ethers } from 'ethers';
 import Hex from '../../core/Hex.js';
-import { HederaWalletConnectTransactionAdapter } from '../../port/out/hs/walletConnect/HederaWalletConnectTransactionAdapter.js';
+import { HederaWalletConnectTransactionAdapter } from '../../port/out/hs/walletconnect/HederaWalletConnectTransactionAdapter.js';
 
 export const EVM_ADDRESS_REGEX = /0x[a-fA-F0-9]{40}$/;
 

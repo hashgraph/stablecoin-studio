@@ -19,12 +19,12 @@
  */
 
 import {
-	registry,
 	container,
-	InjectionToken,
-	ValueProvider,
-	DependencyContainer,
 	delay,
+	DependencyContainer,
+	InjectionToken,
+	registry,
+	ValueProvider,
 } from 'tsyringe';
 import { GetStableCoinQueryHandler } from '../app/usecase/query/stablecoin/get/GetStableCoinQueryHandler.js';
 import RPCTransactionAdapter from '../port/out/rpc/RPCTransactionAdapter.js';
@@ -108,7 +108,7 @@ import { SubmitCommandHandler } from '../app/usecase/command/stablecoin/backend/
 import { RemoveCommandHandler } from '../app/usecase/command/stablecoin/backend/remove/RemoveCommandHandler.js';
 import { SetBackendCommandHandler } from '../app/usecase/command/network/setBackend/SetBackendCommandHandler.js';
 import { GetTransactionsQueryHandler } from '../app/usecase/query/stablecoin/backend/getTransactions/GetTransactionsQueryHandler.js';
-import { HederaWalletConnectTransactionAdapter } from '../port/out/hs/walletConnect/HederaWalletConnectTransactionAdapter.js';
+import { HederaWalletConnectTransactionAdapter } from '../port/out/hs/walletconnect/HederaWalletConnectTransactionAdapter.js';
 
 export const TOKENS = {
 	COMMAND_HANDLER: Symbol('CommandHandler'),

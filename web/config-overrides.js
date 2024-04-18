@@ -16,11 +16,16 @@ module.exports = function override(config) {
 	});
 	config.resolve.fallback = fallback;
 	config.plugins = (config.plugins || []).concat([
+		// TODO : Review this to ignore the warnings
+		// new webpack.IgnorePlugin({
+		// 	resourceRegExp: /^@hashgraph\/hedera-wallet-connect$/
+		// }),
 		new webpack.ProvidePlugin({
 			process: 'process/browser',
 			Buffer: ['buffer', 'Buffer'],
 		}),
 	]);
+
 	config.ignoreWarnings = [/Failed to parse source map/]; // this is a temporary solution until the source map issue in react-scripts is fixed
 	return config;
 };
