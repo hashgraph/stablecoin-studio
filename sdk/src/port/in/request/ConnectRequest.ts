@@ -50,6 +50,13 @@ export interface FireblocksConfigRequest {
 	hederaAccountId: string;
 }
 
+export type HWCRequestSettings = {
+	projectId: string;
+	dappName: string;
+	dappDescription: string;
+	dappURL: string;
+};
+
 export type CustodialSettings = DFNSConfigRequest | FireblocksConfigRequest;
 
 export default class ConnectRequest
@@ -64,6 +71,7 @@ export default class ConnectRequest
 	wallet: SupportedWallets;
 	custodialWalletSettings?: CustodialSettings;
 	consensusNodes?: ConsensusNode[];
+	hwcSettings?: HWCRequestSettings;
 
 	constructor({
 		account,
@@ -73,6 +81,7 @@ export default class ConnectRequest
 		wallet,
 		custodialWalletSettings,
 		consensusNodes,
+		hwcSettings,
 	}: {
 		account?: RequestAccount;
 		network: Environment;
@@ -81,6 +90,7 @@ export default class ConnectRequest
 		wallet: SupportedWallets;
 		custodialWalletSettings?: CustodialSettings;
 		consensusNodes?: ConsensusNode[];
+		hwcSettings?: HWCRequestSettings;
 	}) {
 		super({
 			account: Validation.checkAccount(),
@@ -93,5 +103,6 @@ export default class ConnectRequest
 		this.wallet = wallet;
 		this.custodialWalletSettings = custodialWalletSettings;
 		this.consensusNodes = consensusNodes;
+		this.hwcSettings = hwcSettings;
 	}
 }

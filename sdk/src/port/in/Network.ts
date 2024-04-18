@@ -57,6 +57,7 @@ import SetBackendRequest from './request/SetBackendRequest.js';
 import { SetBackendCommand } from '../../app/usecase/command/network/setBackend/SetBackendCommand.js';
 import BackendEndpoint from '../../domain/context/network/BackendEndpoint.js';
 import { ConsensusNode } from '../../domain/context/network/ConsensusNodes.js';
+import { HederaWalletConnectTransactionAdapter } from '../out/hs/walletconnect/HederaWalletConnectTransactionAdapter';
 
 export { InitializationData, SupportedWallets };
 
@@ -162,7 +163,6 @@ class NetworkInPort implements INetworkInPort {
 						factoryAddress: req.configuration.factoryAddress,
 					}),
 				);
-
 		if (req.backend)
 			await this.setBackend(
 				new SetBackendRequest({ url: req.backend.url }),
@@ -184,6 +184,8 @@ class NetworkInPort implements INetworkInPort {
 				wallets.push(SupportedWallets.DFNS);
 			} else if (val instanceof MultiSigTransactionAdapter) {
 				wallets.push(SupportedWallets.MULTISIG);
+			} else if (val instanceof HederaWalletConnectTransactionAdapter) {
+				wallets.push(SupportedWallets.HWALLETCONNECT);
 			} else {
 				wallets.push(SupportedWallets.CLIENT);
 			}
@@ -206,6 +208,9 @@ class NetworkInPort implements INetworkInPort {
 			? RequestMapper.mapAccount(req.account)
 			: undefined;
 		const custodialSettings = this.getCustodialSettings(req);
+		const hwcSettings = req.hwcSettings
+			? RequestMapper.hwcRequestToHWCSettings(req.hwcSettings)
+			: undefined;
 		if (
 			req.wallet == SupportedWallets.HASHPACK ||
 			req.wallet == SupportedWallets.BLADE
@@ -220,6 +225,7 @@ class NetworkInPort implements INetworkInPort {
 				}
 			}
 		}
+		// TODO: check this, when should be select the network when wallet connect mode(?)
 		console.log(
 			'SetNetworkCommand',
 			req.network,
@@ -241,6 +247,7 @@ class NetworkInPort implements INetworkInPort {
 				req.wallet,
 				account,
 				custodialSettings,
+				hwcSettings,
 			),
 		);
 		return res.payload;
