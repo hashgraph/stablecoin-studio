@@ -20,7 +20,9 @@
 
 import { singleton } from 'tsyringe';
 import {
+	AccountId,
 	LedgerId,
+	Signer,
 	TokenAssociateTransaction,
 	TokenBurnTransaction,
 	TokenCreateTransaction,
@@ -35,16 +37,13 @@ import {
 	TokenUnpauseTransaction,
 	TokenWipeTransaction,
 	Transaction,
-	TransactionResponse as HTransactionResponse,
 	TransferTransaction,
-	Signer,
-	AccountId,
 } from '@hashgraph/sdk';
 import { NetworkName } from '@hashgraph/sdk/lib/client/Client';
 import {
 	DAppConnector,
+	HederaChainId,
 	SignAndExecuteTransactionParams,
-	SignTransactionParams,
 	transactionToBase64String,
 } from '@hashgraph/hedera-wallet-connect';
 import { SignClientTypes } from '@walletconnect/types';
@@ -52,10 +51,7 @@ import { HederaTransactionAdapter } from '../HederaTransactionAdapter';
 import { TransactionType } from '../../TransactionResponseEnums';
 import { InitializationData } from '../../TransactionAdapter';
 import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter';
-import {
-	WalletEvents,
-	WalletPairedEvent,
-} from '../../../../app/service/event/WalletEvent';
+import { WalletEvents, WalletPairedEvent } from '../../../../app/service/event/WalletEvent';
 import LogService from '../../../../app/service/LogService';
 import EventService from '../../../../app/service/event/EventService';
 import NetworkService from '../../../../app/service/NetworkService';
@@ -80,6 +76,7 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 	protected dAppConnector: DAppConnector | undefined;
 	protected projectId: string;
 	protected dappMetadata: SignClientTypes.Metadata;
+	private chainId: HederaChainId;
 
 	constructor(
 		@lazyInject(EventService)
@@ -109,6 +106,24 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 	 */
 	public async init(network?: NetworkName): Promise<string> {
 		const currentNetwork = network ?? this.networkService.environment;
+
+		// TODO:  SWITCH TO CHAINIDs
+		switch (currentNetwork) {
+			case 'testnet':
+				this.chainId = HederaChainId.Testnet;
+				break;
+			case 'previewnet':
+				this.chainId = HederaChainId.Previewnet;
+				break;
+			case 'mainnet':
+				this.chainId = HederaChainId.Mainnet;
+				break;
+			default:
+				throw new Error(
+					`❌ Invalid network name: ${currentNetwork}. Must be 'testnet', 'previewnet', or 'mainnet'`,
+				);
+				break;
+		}
 
 		const eventData = {
 			initData: {
@@ -165,11 +180,21 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 
 		try {
 			const hwcNetwork = this.getLedgerId(currentNetwork);
+			console.log('hwcNetwork', hwcNetwork);
 			// Create dApp Connector instance
+			// metadata,
+			// 	LedgerId.TESTNET,
+			// 	projectId,
+			// 	Object.values(HederaJsonRpcMethod),
+			// 	[HederaSessionEvent.ChainChanged, HederaSessionEvent.AccountsChanged],
+			// 	[HederaChainId.TESTNET],
 			this.dAppConnector = new DAppConnector(
 				this.dappMetadata,
-				hwcNetwork,
+				LedgerId.TESTNET,
 				this.projectId,
+				// Object.values(HederaJsonRpcMethod), TODO: UNNECESARY
+				// [HederaSessionEvent.ChainChanged, HederaSessionEvent.AccountsChanged],
+				// [HederaChainId.Testnet],
 			);
 			await this.dAppConnector.init({ logger: 'debug' });
 			LogService.logTrace(
@@ -320,24 +345,43 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 			throw new Error('No signers found');
 		}
 
+		// async function hedera_signAndExecuteTransaction(_: Event) {
+		// 	const transaction = new TransferTransaction()
+		// 		.setTransactionId(TransactionId.generate(getState('sign-send-from')))
+		// 		.addHbarTransfer(getState('sign-send-from'), new Hbar(-getState('sign-send-amount')))
+		// 		.addHbarTransfer(getState('sign-send-to'), new Hbar(+getState('sign-send-amount')))
+		//
+		// 	const params: SignAndExecuteTransactionParams = {
+		// 		transactionList: transactionToBase64String(transaction),
+		// 		signerAccountId: 'hedera:testnet:' + getState('sign-send-from'),
+		// 	}
+		//
+		// 	console.log(params)
+		//
+		// 	return await dAppConnector!.signAndExecuteTransaction(params)
+		// }
+
 		if (!t.isFrozen()) {
+			console.log('🔒 Freezing transaction...');
 			LogService.logTrace(`🔒 Freezing transaction...`);
 			t._freezeWithAccountId(
 				AccountId.fromString(this.account.id.toString()),
 			);
 		}
-
+		// TODO: use chainId
 		const params: SignAndExecuteTransactionParams = {
 			transactionList: transactionToBase64String(t),
-			signerAccountId: this.account.id.toString(),
+			signerAccountId: 'hedera:testnet:' + this.account.id.toString(),
 		};
 
-		const signParams: SignTransactionParams = {
-			transactionBody: transactionToBase64String(t),
-			signerAccountId: this.account.id.toString(),
-		};
+		// const nodeAccountID = AccountId.fromString(this.account.id.toString())
+		// const signParams: SignTransactionParams = {
+		// 	transactionBody: transactionToTransactionBody(t, nodeAccountID),
+		// 	signerAccountId: this.account.id.toString(),
+		// };
 
 		try {
+			console.log('🔏 Signing and sending transaction...');
 			LogService.logInfo(`🔏 Signing and sending transaction...`);
 			// const signedTx = await this.dAppConnector.signTransaction(
 			// 	signParams,
@@ -368,15 +412,18 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 				// 	signed: transactionToBase64String(signedTx),
 				// });
 			} else {
+				// TODO : ENTRA AQUI
 				transactionResponse =
-					await this.dAppConnector.signAndExecuteTransaction(params);
-				LogService.logInfo(
-					`✅ Transaction signed and sent 1. Response: ${transactionResponse}`,
-				);
+					await this.dAppConnector!.signAndExecuteTransaction(params);
+
+				// LogService.logInfo(
+				// 	`✅ Transaction signed and sent 1. Response: ${transactionResponse}`,
+				// );
 			}
 			LogService.logInfo(
 				`✅ Transaction signed and sent. Response: ${transactionResponse}`,
 			);
+			console.log('transactionResponse', transactionResponse);
 			return HashpackTransactionResponseAdapter.manageResponse(
 				this.networkService.environment,
 				this.signer,
