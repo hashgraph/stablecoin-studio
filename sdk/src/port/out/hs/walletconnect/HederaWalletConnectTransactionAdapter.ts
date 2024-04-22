@@ -19,26 +19,7 @@
  */
 
 import { singleton } from 'tsyringe';
-import {
-	AccountId,
-	LedgerId,
-	Signer,
-	TokenAssociateTransaction,
-	TokenBurnTransaction,
-	TokenCreateTransaction,
-	TokenDeleteTransaction,
-	TokenFeeScheduleUpdateTransaction,
-	TokenFreezeTransaction,
-	TokenGrantKycTransaction,
-	TokenMintTransaction,
-	TokenPauseTransaction,
-	TokenRevokeKycTransaction,
-	TokenUnfreezeTransaction,
-	TokenUnpauseTransaction,
-	TokenWipeTransaction,
-	Transaction,
-	TransferTransaction,
-} from '@hashgraph/sdk';
+import { AccountId, LedgerId, Signer, Transaction } from '@hashgraph/sdk';
 import { NetworkName } from '@hashgraph/sdk/lib/client/Client';
 import {
 	DAppConnector,
@@ -51,10 +32,7 @@ import { HederaTransactionAdapter } from '../HederaTransactionAdapter';
 import { TransactionType } from '../../TransactionResponseEnums';
 import { InitializationData } from '../../TransactionAdapter';
 import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter';
-import {
-	WalletEvents,
-	WalletPairedEvent,
-} from '../../../../app/service/event/WalletEvent';
+import { WalletEvents, WalletPairedEvent } from '../../../../app/service/event/WalletEvent';
 import LogService from '../../../../app/service/LogService';
 import EventService from '../../../../app/service/event/EventService';
 import NetworkService from '../../../../app/service/NetworkService';
@@ -67,6 +45,7 @@ import { Environment } from '../../../../domain/context/network/Environment';
 import { SupportedWallets } from '../../../../domain/context/network/Wallet';
 import HWCSettings from '../../../../domain/context/hwalletconnectsettings/HWCSettings.js';
 import { HashpackTransactionResponseAdapter } from '../hashpack/HashpackTransactionResponseAdapter';
+import { TransactionResponse as HTransactionResponse } from '@hashgraph/sdk/lib/exports';
 
 @singleton()
 /**
@@ -113,12 +92,15 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 		// TODO:  SWITCH TO CHAINIDs
 		switch (currentNetwork) {
 			case 'testnet':
+				console.log('testnet')
 				this.chainId = HederaChainId.Testnet;
 				break;
 			case 'previewnet':
+				console.log('previewnet')
 				this.chainId = HederaChainId.Previewnet;
 				break;
 			case 'mainnet':
+				console.log('mainnet')
 				this.chainId = HederaChainId.Mainnet;
 				break;
 			default:
@@ -374,8 +356,10 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 		// TODO: use chainId
 		const params: SignAndExecuteTransactionParams = {
 			transactionList: transactionToBase64String(t),
-			signerAccountId: 'hedera:testnet:' + this.account.id.toString(),
+			signerAccountId: `${this.chainId}:${this.account.id.toString()}`,
 		};
+
+		console.log('params', params);
 
 		// const nodeAccountID = AccountId.fromString(this.account.id.toString())
 		// const signParams: SignTransactionParams = {
@@ -389,43 +373,48 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 			// const signedTx = await this.dAppConnector.signTransaction(
 			// 	signParams,
 			// );
-			let transactionResponse: any;
-			if (
-				t instanceof TokenCreateTransaction ||
-				t instanceof TokenWipeTransaction ||
-				t instanceof TokenBurnTransaction ||
-				t instanceof TokenMintTransaction ||
-				t instanceof TokenPauseTransaction ||
-				t instanceof TokenUnpauseTransaction ||
-				t instanceof TokenDeleteTransaction ||
-				t instanceof TokenFreezeTransaction ||
-				t instanceof TokenUnfreezeTransaction ||
-				t instanceof TokenGrantKycTransaction ||
-				t instanceof TokenRevokeKycTransaction ||
-				t instanceof TransferTransaction ||
-				t instanceof TokenFeeScheduleUpdateTransaction ||
-				t instanceof TokenAssociateTransaction
-			) {
-				transactionResponse =
-					await this.dAppConnector.signAndExecuteTransaction(params);
-				LogService.logInfo(
-					`✅ Transaction signed and sent 0. Response: ${transactionResponse}`,
-				);
-				// transactionResponse = await this.dAppConnector.executeTransaction({
-				// 	signed: transactionToBase64String(signedTx),
-				// });
-			} else {
-				// TODO : ENTRA AQUI
-				transactionResponse =
-					await this.dAppConnector!.signAndExecuteTransaction(params);
+			// let transactionResponse: any;
+			// if (
+			// 	t instanceof TokenCreateTransaction ||
+			// 	t instanceof TokenWipeTransaction ||
+			// 	t instanceof TokenBurnTransaction ||
+			// 	t instanceof TokenMintTransaction ||
+			// 	t instanceof TokenPauseTransaction ||
+			// 	t instanceof TokenUnpauseTransaction ||
+			// 	t instanceof TokenDeleteTransaction ||
+			// 	t instanceof TokenFreezeTransaction ||
+			// 	t instanceof TokenUnfreezeTransaction ||
+			// 	t instanceof TokenGrantKycTransaction ||
+			// 	t instanceof TokenRevokeKycTransaction ||
+			// 	t instanceof TransferTransaction ||
+			// 	t instanceof TokenFeeScheduleUpdateTransaction ||
+			// 	t instanceof TokenAssociateTransaction
+			// ) {
+			// 	transactionResponse =
+			// 		await this.dAppConnector.signAndExecuteTransaction(params);
+			// 	LogService.logInfo(
+			// 		`✅ Transaction signed and sent 0. Response: ${transactionResponse}`,
+			// 	);
+			// 	// transactionResponse = await this.dAppConnector.executeTransaction({
+			// 	// 	signed: transactionToBase64String(signedTx),
+			// 	// });
+			// } else {
+			// 	// TODO : ENTRA AQUI
+			// 	transactionResponse =
+			// 		await this.dAppConnector!.signAndExecuteTransaction(params);
+			//
+			// 	// LogService.logInfo(
+			// 	// 	`✅ Transaction signed and sent 1. Response: ${transactionResponse}`,
+			// 	// );
+			// }
+			const transactionResponseRaw = await this.dAppConnector!.signAndExecuteTransaction(params);
+			const transactionJson = transactionResponseRaw.result;
+			const transactionResponse = HTransactionResponse.fromJSON(transactionJson);
 
-				// LogService.logInfo(
-				// 	`✅ Transaction signed and sent 1. Response: ${transactionResponse}`,
-				// );
-			}
 			LogService.logInfo(
 				`✅ Transaction signed and sent. Response: ${transactionResponse}`,
 			);
+
 			console.log('transactionResponse', transactionResponse);
 			return HashpackTransactionResponseAdapter.manageResponse(
 				this.networkService.environment,
