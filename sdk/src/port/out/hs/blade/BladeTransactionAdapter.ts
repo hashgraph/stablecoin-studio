@@ -65,6 +65,7 @@ import { HashpackTransactionResponseAdapter } from '../hashpack/HashpackTransact
 import { QueryBus } from '../../../../core/query/QueryBus.js';
 import { AccountIdNotValid } from '../../../../domain/context/account/error/AccountIdNotValid.js';
 import { GetAccountInfoQuery } from '../../../../app/usecase/query/account/info/GetAccountInfoQuery.js';
+import { SDK } from '../../../in';
 import Hex from '../../../../core/Hex.js';
 
 @singleton()
@@ -102,14 +103,24 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 		return currentNetwork;
 	}
 
-	private async setSigner(): Promise<void> {
-		this.signer = this.bc.getSigner();
+	private setSigner(): void {
+		this.signer = this.bc.getSigners()[0];
+	}
+
+	private async killSession(): Promise<void> {
+		if (!this.bc) return;
+
+		try {
+			await this.bc.killSession();
+		} catch (e) {
+			// ignore
+		}
 	}
 
 	async register(): Promise<InitializationData> {
 		Injectable.registerTransactionHandler(this);
 		LogService.logTrace('Blade Registered as handler');
-		this.connectBlade(true);
+		await this.connectBlade(true);
 
 		return Promise.resolve({
 			account: this.account,
@@ -119,17 +130,10 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 	async connectBlade(pair = true, network?: string): Promise<string> {
 		const currentNetwork = network ?? this.networkService.environment;
 		try {
-			this.bc = await BladeConnector.init(
-				ConnectorStrategy.EXTENSION, // preferred strategy is optional
-				{
-					// dApp metadata options are optional, but are highly recommended to use
-					name: 'Stablecoin Studio',
-					description:
-						'Stablecoin Studio is an open-source SDK that makes it easy for web3 stablecoin platforms, institutional issuers, enterprises, and payment providers to build stablecoin applications on the Hedera network.',
-					url: 'https://hedera.com/stablecoin-studio',
-					icons: [],
-				},
-			);
+			this.bc = await BladeConnector.init(ConnectorStrategy.AUTO, {
+				...SDK.appMetadata,
+				icons: [],
+			});
 		} catch (error: any) {
 			LogService.logTrace('Error initializing Blade', error);
 			return currentNetwork;
@@ -147,12 +151,10 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 				currentNetwork == 'testnet'
 					? HederaNetwork.Testnet
 					: HederaNetwork.Mainnet;
-			const params = {
+			const pairedAccountIds = await this.bc.createSession({
 				network: bladeNetwork,
-				dAppCode: 'SomeAwesomeDApp', // optional while testing, request specific one by contacting us
-			};
+			});
 
-			const pairedAccountIds = await this.bc.createSession(params);
 			if (pairedAccountIds) {
 				const accountInfo = await this.getAccountInfo(
 					pairedAccountIds[0],
@@ -189,7 +191,7 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 	}
 
 	async stop(): Promise<boolean> {
-		if (this.bc) await this.bc.killSession();
+		await this.killSession();
 
 		LogService.logTrace('Blade stopped');
 		this.eventService.emit(WalletEvents.walletDisconnect, {
@@ -262,7 +264,7 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 	getAccount(): Account {
 		if (this.account) return this.account;
 		throw new RuntimeError(
-			'There are no accounts currently paired with HashPack!',
+			'There are no accounts currently paired with Blade!',
 		);
 	}
 
