@@ -126,13 +126,14 @@ const Router = () => {
 		SDK.appMetadata = {
 			name: 'Hedera Stablecoin',
 			description: 'An hedera dApp',
-			icon: process.env.REACT_APP_ICON_URL ?? '',
+			icon: 'https://dashboard-assets.dappradar.com/document/15402/hashpack-dapp-defi-hedera-logo-166x166_696a701b42fd20aaa41f2591ef2339c7.png',
 			url: '',
 		};
 		SDK.log = {
 			level: process.env.REACT_APP_LOG_LEVEL ?? 'ERROR',
 			transports: new LoggerTransports.Console(),
 		};
+		console.info('📃 SDK LogService Level: ', SDK.log.level);
 		await SDKService.init({
 			walletFound,
 			walletPaired,
