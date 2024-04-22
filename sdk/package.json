@@ -1,6 +1,6 @@
 {
 	"name": "@hashgraph/stablecoin-npm-sdk",
-	"version": "1.18.1",
+	"version": "1.19.0",
 	"description": "stablecoin studio SDK",
 	"main": "./build/cjs/src/index.js",
 	"module": "./build/esm/src/index.js",
@@ -45,6 +45,7 @@
 		"typescript": "^4.9.4"
 	},
 	"scripts": {
+		"execute:createMultisig": "node build/cjs/scripts/CreateMultisigAccount.js",
 		"start": "node build/src/index.js",
 		"clean": "rimraf coverage build",
 		"prebuild": "npm run lint",
@@ -72,6 +73,7 @@
 		"@hashgraph/cryptography": "1.4.3",
 		"@hashgraph/hashconnect": "file:./../hashconnect/lib",
 		"@hashgraph/hedera-custodians-integration": "1.2.5",
+		"@hashgraph/hedera-wallet-connect": "^1.0.6",
 		"@hashgraph/hethers": "^1.2.5",
 		"@hashgraph/sdk": "2.40.0",
 		"@hashgraph/stablecoin-npm-contracts": "file:./../contracts",

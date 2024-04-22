@@ -131,17 +131,6 @@ Under the current implementation, all stablecoins may choose to implement a proo
 
 > A proof of reserve is, in very simple terms, an external feed that provides the backing of the tokens in real world. This may be FIAT or other assets.
 
-## Multisignature functionality
-
-The Stablecoin solution enables the management of a stablecoin through a multi-key account, where the admin key is configured as either a key list or a threshold key.
-
-When an operation (cash-in, burn, ...) is carried out using the _multisig_ mode, the corresponding transaction will not be directly submitted to the Hedera DLT, instead, it will be temporarily stored in a backend waiting for the multisig account key owners to sign it. Once it has been signed by all the required keys it will be available for submission.
-
-It's crucial to note that there is a time constraint for multisig transactions: they must be signed and submitted within three minutes of their initiation. If this timeframe is not met, the Hedera DLT will consider these transactions as expired and reject them.
-
-> The functionality has a limitation: Complex keys must have only one level, in other words, key list and threshold keys must contain only ED25519/ECDSA keys, they cannot contain firther key lists and/or threshold keys.
-
-
 ### Setting up a proof of reserve
 
 During setup, it is possible to link an existing data feed by providing the smart contract's address, or create a new one based on our implementation. If a reserve was created during the stablecoin deployment, it will also be possible to edit the amount of the reserve.
@@ -159,6 +148,42 @@ Therefore, three options exist
 In any case, the reserve address can be edited after creation. However, changing the amount in the reserve can only be performed when the reserve smart contract was deployed during the stablecoin creation.
 
 For more information about the SDK and the methods to perform these operations, visit to the [docs](https://github.com/hashgraph/stablecoin-studio/tree/main/sdk#reserve-data-feed).
+
+## Multisignature functionality
+
+Hedera allows for the creation of accounts with complex key structures (__multi-key accounts__), enabling configurations that require multiple signatures from different ED25519 or ECDSA keys to authorize transactions. 
+
+These accounts can use simple multi-signature setups or more sophisticated threshold key arrangements, where a specific number of approvals from a designated group of key holders is necessary to execute transactions. This functionality is ideal for enhancing security and governance in applications requiring collective decision-making.
+
+For more information about this type of account please check the official Hedera documentation about [key structures](https://docs.hedera.com/hedera/core-concepts/keys-and-signatures#key-structures).
+
+> If you need to deploy a brand new multikey account you can use our [script](https://github.com/hashgraph/stablecoin-studio/tree/main/sdk/scripts/CreateMultisigAccount.ts). Follow the instructions in the script itself (comment section at the begining)
+
+The Stablecoin solution enables the management of a stablecoin through multi-key accounts.
+
+When an operation (cash-in, burn, ...) is carried out using the _multisig_ mode, the corresponding transaction will not be directly submitted to the Hedera DLT, instead, it will be temporarily stored in a backend waiting for the multisig account key owners to sign it. Once it has been signed by all the required keys it will be available for submission.
+
+It's crucial to note that there is a time constraint for multisig transactions: they must be signed and submitted within three minutes of their initiation. If this timeframe is not met, the Hedera DLT will consider these transactions as expired and reject them.
+
+> The functionality has a limitation: Complex keys must have only one level, in other words, key list and threshold keys must contain only ED25519/ECDSA keys, they cannot contain further key lists and/or threshold keys.
+
+### Steps to deploy a multisig-managed stablecoin
+
+If you wish to deploy a stablecoin and fully manage it with a multisig account the steps to follow are:
+- Using a single key account, deploy a stablecoin assigning all roles and the proxy admin ownership to the multisig account
+- Once the stablecoin is deployed, assign the "admin" role to the multisig account. 
+> The admin role is the only one that cannot be assigned automatically during the initial deployment
+- Remove the admin role from the single key account used to deploy the stablecoin
+> The admin role is automatically assigned to the deploying account
+- Connect to the stablecoin platform using the multisig account and manually import the deployed stablecoin
+> Since the deployment was carried out by another account, the multisig account was not associated to the token, that is the reason why you need to import it manually. It you associate your multisig account to the stablecoin's hedera token, you will not need to import it anymore.
+
+### Importing a multisig account key into a Wallet
+
+In order to manage a stablecoin using a multisig account we will need to, **for every single key _K_** in the multisig account's key list / threshold key, do as follows:
+- Create a single key account _A_ and set _K_ as its admin key
+- Import _A_ into Hashpack/Blade/Metamask/... depending on whether _K_ is an ED25519 or ECDSA key
+- Whenever we want to sign a multisig transaction using _K_, we will log into the wallet we used to import _A_ and carry out the signature.
 
 # Architecture
 
