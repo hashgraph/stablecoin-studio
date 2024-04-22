@@ -69,6 +69,7 @@ The ENV file contains the following parameters:
 - **REACT_APP_RPC_NODE**: This var is required if you want to create a new stablecoin. The var must be a unique rpc node service for Hedera network, and this is the service which would be used when the UI starts. The service is configured using the same properties than the mirror node. You can check the available JSON-RPC relays [here](https://github.com/hashgraph/stablecoin-studio/blob/main/README.md#JSON-RPC-Relays).
 - **REACT_APP_BACKEND_URL**: This var is only required if you want to enable multisignature functionality. It is the backend rest api endpoint.
 - **REACT_APP_CONSENSUS_NODES**: This var is only required if you want to enable multisignature functionality. It is a list of consensus nodes per environment. When generating a multisignature transaction the first consensus node of the environment will be added to the transaction.
+- **REACT_APP_ICON**: url of the application icon to be displayed on wallets when connecting.
 
 ```bash
 REACT_APP_FACTORIES='[{"Environment":"mainnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.1234567"},{"Environment":"testnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.3950554"},{"Environment":"previewnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.239703"}]'
