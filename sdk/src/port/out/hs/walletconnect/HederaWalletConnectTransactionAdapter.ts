@@ -51,7 +51,10 @@ import { HederaTransactionAdapter } from '../HederaTransactionAdapter';
 import { TransactionType } from '../../TransactionResponseEnums';
 import { InitializationData } from '../../TransactionAdapter';
 import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter';
-import { WalletEvents, WalletPairedEvent } from '../../../../app/service/event/WalletEvent';
+import {
+	WalletEvents,
+	WalletPairedEvent,
+} from '../../../../app/service/event/WalletEvent';
 import LogService from '../../../../app/service/LogService';
 import EventService from '../../../../app/service/event/EventService';
 import NetworkService from '../../../../app/service/NetworkService';
