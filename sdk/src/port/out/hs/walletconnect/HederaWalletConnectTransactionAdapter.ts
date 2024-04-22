@@ -44,7 +44,9 @@ import {
 	DAppConnector,
 	HederaChainId,
 	SignAndExecuteTransactionParams,
+	SignTransactionParams,
 	transactionToBase64String,
+	transactionToTransactionBody,
 } from '@hashgraph/hedera-wallet-connect';
 import { SignClientTypes } from '@walletconnect/types';
 import { HederaTransactionAdapter } from '../HederaTransactionAdapter';
@@ -67,6 +69,7 @@ import { Environment } from '../../../../domain/context/network/Environment';
 import { SupportedWallets } from '../../../../domain/context/network/Wallet';
 import HWCSettings from '../../../../domain/context/hwalletconnectsettings/HWCSettings.js';
 import { HashpackTransactionResponseAdapter } from '../hashpack/HashpackTransactionResponseAdapter';
+import { SigningError } from '../error/SigningError';
 
 @singleton()
 /**
@@ -449,8 +452,80 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 	getAccount(): Account {
 		return this.account;
 	}
-	sign(message: string | Transaction): Promise<string> {
-		throw new Error('👷‍♂️ sign method not implemented.');
+	async sign(message: string | Transaction): Promise<string> {
+		if (!this.dAppConnector) {
+			throw new Error('Hedera WalletConnect not initialized');
+		}
+		if (!this.account) {
+			throw new Error('Account not set');
+		}
+		if (
+			!this.signer ||
+			!this.dAppConnector.signers ||
+			this.dAppConnector.signers.length === 0
+		) {
+			throw new Error('No signers found');
+		}
+		if (!(message instanceof Transaction))
+			throw new SigningError(
+				'Hedera WalletConnect must sign a transaction not a string',
+			);
+		if (
+			!this.networkService.consensusNodes ||
+			this.networkService.consensusNodes.length == 0
+		) {
+			throw new Error(
+				'In order to create sign multisignature transactions you must set consensus nodes for the environment',
+			);
+		}
+
+		try {
+			const PublicKey_Der_Encoded =
+				this.account.publicKey?.toHederaKey().toStringDer() ?? '';
+
+			message._freezeWithAccountId(
+				AccountId.fromString(this.account.id.toString()),
+			);
+			const params: SignTransactionParams = {
+				transactionBody: transactionToBase64String(
+					transactionToTransactionBody(
+						message,
+						AccountId.fromString(
+							this.networkService.consensusNodes[0].nodeId,
+						),
+					),
+				),
+				signerAccountId: 'hedera:testnet:' + this.account.id.toString(),
+			};
+
+			const signedTx = await this.dAppConnector.signTransaction(params);
+
+			LogService.logInfo(
+				`Signed Tx: ${JSON.stringify(signedTx, null, 2)}`,
+			);
+			return 'false'; // Testing
+			// const list = signedTrans.result.getSignatures();
+			// const nodes_signature = list.get(
+			// 	this.networkService.consensusNodes[0].nodeId,
+			// );
+			// if (nodes_signature) {
+			// 	const pk_signature = nodes_signature.get(PublicKey_Der_Encoded);
+			// 	if (pk_signature) {
+			// 		return Hex.fromUint8Array(pk_signature);
+			// 	}
+			// 	throw new Error(
+			// 		'Blade no signatures found for public key : ' +
+			// 			PublicKey_Der_Encoded,
+			// 	);
+			// }
+			// throw new Error(
+			// 	'Blade no signatures found for node id : ' +
+			// 		this.networkService.consensusNodes[0].nodeId,
+			// );
+		} catch (error) {
+			LogService.logError(JSON.stringify(error, null, 2));
+			throw new SigningError(JSON.stringify(error, null, 2));
+		}
 	}
 
 	getWCMetadata(): SignClientTypes.Metadata {
