@@ -19,7 +19,7 @@
  */
 
 import { singleton } from 'tsyringe';
-import { AccountId, LedgerId, Signer, Transaction } from '@hashgraph/sdk';
+import { AccountId, LedgerId, Signer, Transaction, 	TransactionResponse as HTransactionResponse } from '@hashgraph/sdk';
 import { NetworkName } from '@hashgraph/sdk/lib/client/Client';
 import {
 	DAppConnector,
@@ -45,7 +45,6 @@ import { Environment } from '../../../../domain/context/network/Environment';
 import { SupportedWallets } from '../../../../domain/context/network/Wallet';
 import HWCSettings from '../../../../domain/context/hwalletconnectsettings/HWCSettings.js';
 import { HashpackTransactionResponseAdapter } from '../hashpack/HashpackTransactionResponseAdapter';
-import { TransactionResponse as HTransactionResponse } from '@hashgraph/sdk/lib/exports';
 
 @singleton()
 /**
@@ -407,10 +406,10 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 			// 	// 	`✅ Transaction signed and sent 1. Response: ${transactionResponse}`,
 			// 	// );
 			// }
-			const transactionResponseRaw = await this.dAppConnector!.signAndExecuteTransaction(params);
+			const transactionResponseRaw = await this.dAppConnector?.signAndExecuteTransaction(params);
 			const transactionJson = transactionResponseRaw.result;
 			const transactionResponse = HTransactionResponse.fromJSON(transactionJson);
-
+			console.log('HOLAAAAAAAAAAAAAAAA');
 			LogService.logInfo(
 				`✅ Transaction signed and sent. Response: ${transactionResponse}`,
 			);
