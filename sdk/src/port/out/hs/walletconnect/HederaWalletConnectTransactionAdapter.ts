@@ -49,6 +49,7 @@ import {
 	transactionToBase64String,
 	transactionToTransactionBody,
 	base64StringToUint8Array,
+	base64StringToSignatureMap,
 } from '@hashgraph/hedera-wallet-connect';
 import { SignClientTypes } from '@walletconnect/types';
 import { HederaTransactionAdapter } from '../HederaTransactionAdapter';
@@ -515,15 +516,25 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 					2,
 				)}`,
 			);
+
+			console.log('params : ' + JSON.stringify(params));
+
 			const signedTx = await this.dAppConnector.signTransaction(params);
+
+			console.log('signedTx : ' + JSON.stringify(signedTx));
 
 			LogService.logInfo(
 				`✅ Signed Tx: ${JSON.stringify(signedTx, null, 2)}`,
 			);
 
-			const decodedSignature = base64StringToUint8Array(
-				signedTx.result.signatureMap,
+			const decodedSignature = base64StringToSignatureMap(
+				(signedTx as any).signatureMap,
 			);
+
+			console.log(
+				'decodedSignature : ' + JSON.stringify(decodedSignature),
+			);
+
 			LogService.logInfo(
 				`✅ Decoded Signature: ${JSON.stringify(
 					decodedSignature,
@@ -531,7 +542,32 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 					2,
 				)}`,
 			);
-			const hexSignature = Hex.fromUint8Array(decodedSignature);
+
+			const signPairLength = decodedSignature.sigPair.length;
+			const signPairZero = decodedSignature.sigPair[0];
+
+			/*console.log('signPairLength : ' + signPairLength)
+			console.log('signPairZero : ' + JSON.stringify(signPairZero))
+
+			console.log('ECDSASecp256k1 : ' + signPairZero.ECDSASecp256k1)
+			console.log('ECDSA_384 : ' + signPairZero.ECDSA_384)
+			console.log('RSA_3072 : ' + signPairZero.RSA_3072)
+			console.log('contract : ' + signPairZero.contract)
+			console.log('ed25519 : ' + JSON.stringify(signPairZero.ed25519))
+			console.log('pubKeyPrefix : ' + JSON.stringify(signPairZero.pubKeyPrefix))
+
+			console.log('ed25519 string : ' + signPairZero.ed25519?.toString())
+			console.log('ed25519 at 0 : ' + signPairZero.ed25519?.at(0))
+			console.log('ed25519 byte length : ' + signPairZero.ed25519?.buffer.byteLength)
+			console.log('ed25519 byte length 2 : ' + signPairZero.ed25519?.byteLength)
+			console.log('ed25519 byte offset : ' + signPairZero.ed25519?.byteOffset)
+			console.log('ed25519 entries : ' + JSON.stringify(signPairZero.ed25519?.entries()))
+			console.log('ed25519 keys : ' + JSON.stringify(signPairZero.ed25519?.keys()))
+
+			signPairZero.ed25519?.forEach(b => console.log("b : " + b))*/
+
+			const hexSignature = Hex.fromUint8Array(signPairZero.ed25519!);
+			console.log('hexSignature : ' + hexSignature);
 			LogService.logInfo(
 				`✅ Hex Signature: ${JSON.stringify(hexSignature, null, 2)}`,
 			);
