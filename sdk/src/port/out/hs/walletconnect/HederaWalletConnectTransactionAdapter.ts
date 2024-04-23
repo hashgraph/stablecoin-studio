@@ -45,8 +45,10 @@ import {
 	HederaChainId,
 	SignAndExecuteTransactionParams,
 	SignTransactionParams,
+	transactionBodyToBase64String,
 	transactionToBase64String,
 	transactionToTransactionBody,
+	base64StringToUint8Array,
 } from '@hashgraph/hedera-wallet-connect';
 import { SignClientTypes } from '@walletconnect/types';
 import { HederaTransactionAdapter } from '../HederaTransactionAdapter';
@@ -70,6 +72,7 @@ import { SupportedWallets } from '../../../../domain/context/network/Wallet';
 import HWCSettings from '../../../../domain/context/hwalletconnectsettings/HWCSettings.js';
 import { HashpackTransactionResponseAdapter } from '../hashpack/HashpackTransactionResponseAdapter';
 import { SigningError } from '../error/SigningError';
+import Hex from '../../../../core/Hex.js';
 
 @singleton()
 /**
@@ -483,11 +486,16 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 			const PublicKey_Der_Encoded =
 				this.account.publicKey?.toHederaKey().toStringDer() ?? '';
 
-			message._freezeWithAccountId(
-				AccountId.fromString(this.account.id.toString()),
-			);
+			if (!message.isFrozen()) {
+				console.log('🔒 Freezing transaction...');
+				LogService.logTrace(`🔒 Freezing transaction...`);
+				message._freezeWithAccountId(
+					AccountId.fromString(this.account.id.toString()),
+				);
+			}
+
 			const params: SignTransactionParams = {
-				transactionBody: transactionToBase64String(
+				transactionBody: transactionBodyToBase64String(
 					transactionToTransactionBody(
 						message,
 						AccountId.fromString(
@@ -495,33 +503,39 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 						),
 					),
 				),
-				signerAccountId: 'hedera:testnet:' + this.account.id.toString(),
+				signerAccountId: `${
+					this.chainId
+				}:${this.account.id.toString()}`,
 			};
 
+			LogService.logInfo(
+				`I am going to SIGN with params: ${JSON.stringify(
+					params,
+					null,
+					2,
+				)}`,
+			);
 			const signedTx = await this.dAppConnector.signTransaction(params);
 
 			LogService.logInfo(
-				`Signed Tx: ${JSON.stringify(signedTx, null, 2)}`,
+				`✅ Signed Tx: ${JSON.stringify(signedTx, null, 2)}`,
 			);
-			return 'false'; // Testing
-			// const list = signedTrans.result.getSignatures();
-			// const nodes_signature = list.get(
-			// 	this.networkService.consensusNodes[0].nodeId,
-			// );
-			// if (nodes_signature) {
-			// 	const pk_signature = nodes_signature.get(PublicKey_Der_Encoded);
-			// 	if (pk_signature) {
-			// 		return Hex.fromUint8Array(pk_signature);
-			// 	}
-			// 	throw new Error(
-			// 		'Blade no signatures found for public key : ' +
-			// 			PublicKey_Der_Encoded,
-			// 	);
-			// }
-			// throw new Error(
-			// 	'Blade no signatures found for node id : ' +
-			// 		this.networkService.consensusNodes[0].nodeId,
-			// );
+
+			const decodedSignature = base64StringToUint8Array(
+				signedTx.result.signatureMap,
+			);
+			LogService.logInfo(
+				`✅ Decoded Signature: ${JSON.stringify(
+					decodedSignature,
+					null,
+					2,
+				)}`,
+			);
+			const hexSignature = Hex.fromUint8Array(decodedSignature);
+			LogService.logInfo(
+				`✅ Hex Signature: ${JSON.stringify(hexSignature, null, 2)}`,
+			);
+			return hexSignature;
 		} catch (error) {
 			LogService.logError(JSON.stringify(error, null, 2));
 			throw new SigningError(JSON.stringify(error, null, 2));
