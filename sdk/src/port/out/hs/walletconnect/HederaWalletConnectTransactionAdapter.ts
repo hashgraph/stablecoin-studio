@@ -19,7 +19,14 @@
  */
 
 import { singleton } from 'tsyringe';
-import { AccountId, LedgerId, Signer, Transaction, 	TransactionResponse as HTransactionResponse } from '@hashgraph/sdk';
+import {
+	AccountId,
+	LedgerId,
+	Signer,
+	Transaction,
+	TransactionResponse as HTransactionResponse,
+	TransactionResponseJSON,
+} from '@hashgraph/sdk';
 import { NetworkName } from '@hashgraph/sdk/lib/client/Client';
 import {
 	DAppConnector,
@@ -32,7 +39,10 @@ import { HederaTransactionAdapter } from '../HederaTransactionAdapter';
 import { TransactionType } from '../../TransactionResponseEnums';
 import { InitializationData } from '../../TransactionAdapter';
 import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter';
-import { WalletEvents, WalletPairedEvent } from '../../../../app/service/event/WalletEvent';
+import {
+	WalletEvents,
+	WalletPairedEvent,
+} from '../../../../app/service/event/WalletEvent';
 import LogService from '../../../../app/service/LogService';
 import EventService from '../../../../app/service/event/EventService';
 import NetworkService from '../../../../app/service/NetworkService';
@@ -41,7 +51,12 @@ import Injectable from '../../../../core/Injectable';
 import { QueryBus } from '../../../../core/query/QueryBus';
 import Account from '../../../../domain/context/account/Account';
 import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
-import { Environment } from '../../../../domain/context/network/Environment';
+import {
+	Environment,
+	mainnet,
+	previewnet,
+	testnet,
+} from '../../../../domain/context/network/Environment';
 import { SupportedWallets } from '../../../../domain/context/network/Wallet';
 import HWCSettings from '../../../../domain/context/hwalletconnectsettings/HWCSettings.js';
 import { HashpackTransactionResponseAdapter } from '../hashpack/HashpackTransactionResponseAdapter';
@@ -88,27 +103,6 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 	public async init(network?: NetworkName): Promise<string> {
 		const currentNetwork = network ?? this.networkService.environment;
 
-		// TODO:  SWITCH TO CHAINIDs
-		switch (currentNetwork) {
-			case 'testnet':
-				console.log('testnet')
-				this.chainId = HederaChainId.Testnet;
-				break;
-			case 'previewnet':
-				console.log('previewnet')
-				this.chainId = HederaChainId.Previewnet;
-				break;
-			case 'mainnet':
-				console.log('mainnet')
-				this.chainId = HederaChainId.Mainnet;
-				break;
-			default:
-				throw new Error(
-					`❌ Invalid network name: ${currentNetwork}. Must be 'testnet', 'previewnet', or 'mainnet'`,
-				);
-				break;
-		}
-
 		const eventData = {
 			initData: {
 				account: this.account,
@@ -133,6 +127,27 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 	): Promise<InitializationData> {
 		Injectable.registerTransactionHandler(this);
 		LogService.logTrace('Hedera WalletConnect registered as handler');
+
+		// TODO:  SWITCH TO CHAINIDs
+		switch (this.networkService.environment) {
+			case testnet:
+				console.log(testnet);
+				this.chainId = HederaChainId.Testnet;
+				break;
+			case previewnet:
+				console.log(previewnet);
+				this.chainId = HederaChainId.Previewnet;
+				break;
+			case mainnet:
+				console.log(mainnet);
+				this.chainId = HederaChainId.Mainnet;
+				break;
+			default:
+				throw new Error(
+					`❌ Invalid network name: ${this.networkService.environment}. Must be 'testnet', 'previewnet', or 'mainnet'`,
+				);
+				break;
+		}
 
 		if (!hWCSettings)
 			throw new Error('hedera wallet conenct settings not set');
@@ -406,10 +421,28 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 			// 	// 	`✅ Transaction signed and sent 1. Response: ${transactionResponse}`,
 			// 	// );
 			// }
-			const transactionResponseRaw = await this.dAppConnector?.signAndExecuteTransaction(params);
-			const transactionJson = transactionResponseRaw.result;
-			const transactionResponse = HTransactionResponse.fromJSON(transactionJson);
-			console.log('HOLAAAAAAAAAAAAAAAA');
+			const transactionResponseRaw =
+				await this.dAppConnector?.signAndExecuteTransaction(params);
+			console.log(
+				'transactionResponseRaw : ' +
+					JSON.stringify(transactionResponseRaw),
+			);
+
+			/*const transactionJson: TransactionResponseJSON = {
+				nodeId: (transactionResponseRaw as any).nodeId,
+				transactionHash: (transactionResponseRaw as any).transactionHash,
+				transactionId: (transactionResponseRaw as any).transactionId
+
+			};*/
+			//console.log('transactionJson : ' + JSON.stringify(transactionJson))
+
+			const transactionResponse = HTransactionResponse.fromJSON(
+				transactionResponseRaw as any as TransactionResponseJSON,
+			);
+			console.log(
+				'transactionResponse : ' + JSON.stringify(transactionResponse),
+			);
+
 			LogService.logInfo(
 				`✅ Transaction signed and sent. Response: ${transactionResponse}`,
 			);
