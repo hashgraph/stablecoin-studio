@@ -48,7 +48,6 @@ import {
 	transactionBodyToBase64String,
 	transactionToBase64String,
 	transactionToTransactionBody,
-	base64StringToUint8Array,
 	base64StringToSignatureMap,
 } from '@hashgraph/hedera-wallet-connect';
 import { SignClientTypes } from '@walletconnect/types';
@@ -456,40 +455,48 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 	getAccount(): Account {
 		return this.account;
 	}
+
+	/**
+	 * Signs a transaction using Hedera WalletConnect.
+	 * @param message - The transaction to sign.
+	 * @returns A promise that resolves to the hexadecimal signature of the signed transaction.
+	 * @throws Error if Hedera WalletConnect is not initialized, account is not set, no signers found,
+	 * the message is not an instance of Transaction, or consensus nodes are not set for the environment.
+	 * @throws SigningError if an error occurs during the signing process.
+	 */
 	async sign(message: string | Transaction): Promise<string> {
+		LogService.logInfo('🔏 Signing transaction from HWC...');
 		if (!this.dAppConnector) {
-			throw new Error('Hedera WalletConnect not initialized');
+			throw new Error('❌ Hedera WalletConnect not initialized');
 		}
 		if (!this.account) {
-			throw new Error('Account not set');
+			throw new Error('❌ Account not set');
 		}
 		if (
 			!this.signer ||
 			!this.dAppConnector.signers ||
 			this.dAppConnector.signers.length === 0
 		) {
-			throw new Error('No signers found');
+			throw new Error('❌ No signers found');
 		}
 		if (!(message instanceof Transaction))
 			throw new SigningError(
-				'Hedera WalletConnect must sign a transaction not a string',
+				'❌ Hedera WalletConnect must sign a transaction not a string',
 			);
 		if (
 			!this.networkService.consensusNodes ||
 			this.networkService.consensusNodes.length == 0
 		) {
 			throw new Error(
-				'In order to create sign multisignature transactions you must set consensus nodes for the environment',
+				'❌ In order to create sign multisignature transactions you must set consensus nodes for the environment',
 			);
 		}
 
 		try {
-			const PublicKey_Der_Encoded =
-				this.account.publicKey?.toHederaKey().toStringDer() ?? '';
-
 			if (!message.isFrozen()) {
-				console.log('🔒 Freezing transaction...');
-				LogService.logTrace(`🔒 Freezing transaction...`);
+				LogService.logTrace(
+					`🔒 Tx not frozen, freezing transaction...`,
+				);
 				message._freezeWithAccountId(
 					AccountId.fromString(this.account.id.toString()),
 				);
@@ -509,71 +516,57 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 				}:${this.account.id.toString()}`,
 			};
 
-			LogService.logInfo(
-				`I am going to SIGN with params: ${JSON.stringify(
+			LogService.logTrace(
+				`🖋️ [HWC] Signing tx with params: ${JSON.stringify(
 					params,
 					null,
 					2,
 				)}`,
 			);
-
-			console.log('params : ' + JSON.stringify(params));
-
-			const signedTx = await this.dAppConnector.signTransaction(params);
-
-			console.log('signedTx : ' + JSON.stringify(signedTx));
-
-			LogService.logInfo(
-				`✅ Signed Tx: ${JSON.stringify(signedTx, null, 2)}`,
+			const signResult = await this.dAppConnector.signTransaction(params);
+			LogService.logInfo(`✅ Transaction signed successfully!`);
+			LogService.logTrace(
+				`Signature result: ${JSON.stringify(signResult, null, 2)}`,
 			);
-
-			const decodedSignature = base64StringToSignatureMap(
-				(signedTx as any).signatureMap,
+			const decodedSignatureMap = base64StringToSignatureMap(
+				(signResult as any).signatureMap,
 			);
-
-			console.log(
-				'decodedSignature : ' + JSON.stringify(decodedSignature),
-			);
-
-			LogService.logInfo(
-				`✅ Decoded Signature: ${JSON.stringify(
-					decodedSignature,
+			LogService.logTrace(
+				`Decoded signature map: ${JSON.stringify(
+					decodedSignatureMap,
 					null,
 					2,
 				)}`,
 			);
 
-			const signPairLength = decodedSignature.sigPair.length;
-			const signPairZero = decodedSignature.sigPair[0];
+			const signaturesLength = decodedSignatureMap.sigPair.length;
+			if (signaturesLength === 0) {
+				throw new Error(`❌ No signatures found in response`);
+			}
+			const firstSignature =
+				decodedSignatureMap.sigPair[0].ed25519 ||
+				decodedSignatureMap.sigPair[0].ECDSASecp256k1 ||
+				decodedSignatureMap.sigPair[0].ECDSA_384;
+			if (!firstSignature) {
+				throw new Error(
+					`❌ No signatures found in response: ${JSON.stringify(
+						firstSignature,
+						null,
+						2,
+					)}`,
+				);
+			}
 
-			/*console.log('signPairLength : ' + signPairLength)
-			console.log('signPairZero : ' + JSON.stringify(signPairZero))
-
-			console.log('ECDSASecp256k1 : ' + signPairZero.ECDSASecp256k1)
-			console.log('ECDSA_384 : ' + signPairZero.ECDSA_384)
-			console.log('RSA_3072 : ' + signPairZero.RSA_3072)
-			console.log('contract : ' + signPairZero.contract)
-			console.log('ed25519 : ' + JSON.stringify(signPairZero.ed25519))
-			console.log('pubKeyPrefix : ' + JSON.stringify(signPairZero.pubKeyPrefix))
-
-			console.log('ed25519 string : ' + signPairZero.ed25519?.toString())
-			console.log('ed25519 at 0 : ' + signPairZero.ed25519?.at(0))
-			console.log('ed25519 byte length : ' + signPairZero.ed25519?.buffer.byteLength)
-			console.log('ed25519 byte length 2 : ' + signPairZero.ed25519?.byteLength)
-			console.log('ed25519 byte offset : ' + signPairZero.ed25519?.byteOffset)
-			console.log('ed25519 entries : ' + JSON.stringify(signPairZero.ed25519?.entries()))
-			console.log('ed25519 keys : ' + JSON.stringify(signPairZero.ed25519?.keys()))
-
-			signPairZero.ed25519?.forEach(b => console.log("b : " + b))*/
-
-			const hexSignature = Hex.fromUint8Array(signPairZero.ed25519!);
-			console.log('hexSignature : ' + hexSignature);
-			LogService.logInfo(
-				`✅ Hex Signature: ${JSON.stringify(hexSignature, null, 2)}`,
+			const hexSignature = Hex.fromUint8Array(firstSignature);
+			LogService.logTrace(
+				`Final hexadecimal signature: ${JSON.stringify(
+					hexSignature,
+					null,
+					2,
+				)}`,
 			);
 			return hexSignature;
 		} catch (error) {
-			LogService.logError(JSON.stringify(error, null, 2));
 			throw new SigningError(JSON.stringify(error, null, 2));
 		}
 	}
