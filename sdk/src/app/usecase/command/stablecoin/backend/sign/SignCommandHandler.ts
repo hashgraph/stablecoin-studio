@@ -47,6 +47,9 @@ export class SignCommandHandler implements ICommandHandler<SignCommand> {
 		const { transactionId } = command;
 		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
+		if (!account.publicKey) {
+			throw new Error('❌ 🔎 No public key found in the account');
+		}
 
 		// retrieves transansaction from Backend
 		const transaction = await this.backendAdapter.getTransaction(
@@ -57,8 +60,17 @@ export class SignCommandHandler implements ICommandHandler<SignCommand> {
 		const deserializedTransaction = Transaction.fromBytes(
 			Hex.toUint8Array(transaction.transaction_message),
 		);
+		const signedTx = deserializedTransaction._signedTransactions.get(0);
+		if (!signedTx) {
+			throw new Error(
+				'❌ 🔎 No signed transaction found in the transaction',
+			);
+		}
 		const bytesToSign =
-			deserializedTransaction._signedTransactions.get(0)!.bodyBytes!;
+			deserializedTransaction._signedTransactions.get(0).bodyBytes;
+		if (!bytesToSign) {
+			throw new Error('❌ 🔎 No bytes to sign found in the transaction');
+		}
 		const serializedBytes = Hex.fromUint8Array(bytesToSign);
 
 		// signs
@@ -77,7 +89,7 @@ export class SignCommandHandler implements ICommandHandler<SignCommand> {
 		await this.backendAdapter.signTransaction(
 			transactionId,
 			signature,
-			account.publicKey!.key,
+			account.publicKey.key,
 		);
 
 		return Promise.resolve(new SignCommandResponse(true));

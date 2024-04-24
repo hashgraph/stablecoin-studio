@@ -22,7 +22,6 @@
 import {
 	Transaction,
 	Signer,
-	PublicKey as HPublicKey,
 	TokenBurnTransaction,
 	TokenCreateTransaction,
 	TokenDeleteTransaction,

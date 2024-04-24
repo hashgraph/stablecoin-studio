@@ -23,7 +23,6 @@ import { HederaTransactionAdapter } from '../HederaTransactionAdapter.js';
 import { AccountId, Client, Transaction } from '@hashgraph/sdk';
 import Account from '../../../../domain/context/account/Account.js';
 import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
-import { TransactionType } from '../../TransactionResponseEnums.js';
 import { lazyInject } from '../../../../core/decorator/LazyInjectDecorator.js';
 import NetworkService from '../../../../app/service/NetworkService.js';
 import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter.js';
@@ -64,7 +63,7 @@ export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
 
 	async signAndSendTransaction(
 		t: Transaction,
-	): Promise<TransactionResponse<any, Error>> {
+	): Promise<TransactionResponse<unknown, Error>> {
 		const publicKeys: string[] = [];
 		const accountId: AccountId = AccountId.fromString(
 			this.account.id.toString(),
@@ -94,33 +93,38 @@ export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
 				`In order to create multisignature transactions you must set consensus nodes for the environment. Current environment: ${this.networkService.environment}`,
 			);
 		}
+		if (!this.account.multiKey) {
+			throw new Error(
+				`❌ 🔎 No multiKey found in the account ${this.account.id}`,
+			);
+		}
 
 		client.setNetwork({
 			[this.networkService.consensusNodes[0].url]:
 				this.networkService.consensusNodes[0].nodeId,
 		});
 
-		this.account.multiKey!.keys.forEach((key) => publicKeys.push(key.key));
+		this.account.multiKey.keys.forEach((key) => publicKeys.push(key.key));
 
 		const transactionDescription = await TransactionService.getDescription(
 			t,
 			this.mirrorNodeAdapter,
 		);
 
-		const trasnactionId = await this.backendAdapter.addTransaction(
+		const transactionId = await this.backendAdapter.addTransaction(
 			Hex.fromUint8Array(t.freezeWith(client).toBytes()),
 			transactionDescription,
 			this.account.id.toString(),
 			publicKeys,
-			this.account.multiKey!.threshold,
+			this.account.multiKey.threshold,
 			this.networkService.environment,
 		);
 
-		return new TransactionResponse(trasnactionId);
+		return new TransactionResponse(transactionId);
 	}
 
 	// MultiSig cannot eb used to sign anything
-	sign(message: string): Promise<string> {
+	sign(/* message: string */): Promise<string> {
 		throw new Error('Method not implemented.');
 	}
 

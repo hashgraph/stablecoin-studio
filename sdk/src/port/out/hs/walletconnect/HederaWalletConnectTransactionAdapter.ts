@@ -205,9 +205,9 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 			LogService.logTrace(
 				`✅ HWC Initialized with network: ${currentNetwork} and projectId: ${this.projectId}`,
 			);
-		} catch (error: any) {
-			LogService.logTrace(
-				'❌ Error initializing HWC with network: ${currentNetwork} and projectId: ${projectId}',
+		} catch (error) {
+			LogService.logError(
+				`❌ Error initializing HWC with network: ${currentNetwork} and projectId: ${this.projectId}`,
 				error,
 			);
 			return currentNetwork;
@@ -287,17 +287,19 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 				wallet: SupportedWallets.HWALLETCONNECT,
 			});
 			return Promise.resolve(true);
-		} catch (error: any) {
+		} catch (error) {
 			if (
-				(error.message as string).includes('No active session') ||
-				(error.message as string).includes('No matching key')
+				(error as Error).message.includes('No active session') ||
+				(error as Error).message.includes('No matching key')
 			) {
 				LogService.logInfo(
 					`🔍 No active session found for Hedera WalletConnect`,
 				);
 			} else {
 				LogService.logError(
-					`❌ Error stopping Hedera WalletConnect: ${error.message}`,
+					`❌ Error stopping Hedera WalletConnect: ${
+						(error as Error).message
+					}`,
 				);
 			}
 			return Promise.resolve(false);
@@ -334,7 +336,7 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 		t: Transaction,
 		transactionType: TransactionType,
 		nameFunction?: string | undefined,
-		abi?: any[] | undefined,
+		abi?: object[] | undefined,
 	): Promise<TransactionResponse> {
 		if (!this.dAppConnector) {
 			throw new Error('Hedera WalletConnect not initialized');
@@ -443,7 +445,7 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 			//console.log('transactionJson : ' + JSON.stringify(transactionJson))
 
 			const transactionResponse = HTransactionResponse.fromJSON(
-				transactionResponseRaw as any as TransactionResponseJSON,
+				transactionResponseRaw as unknown as TransactionResponseJSON,
 			);
 			console.log(
 				'transactionResponse : ' + JSON.stringify(transactionResponse),
@@ -462,7 +464,7 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 				nameFunction,
 				abi,
 			);
-		} catch (error: any) {
+		} catch (error) {
 			const errorMessage = `❌ Error signing and sending transaction: ${JSON.stringify(
 				error,
 				null,
@@ -550,6 +552,7 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 				`Signature result: ${JSON.stringify(signResult, null, 2)}`,
 			);
 			const decodedSignatureMap = base64StringToSignatureMap(
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				(signResult as any).signatureMap,
 			);
 			LogService.logTrace(
