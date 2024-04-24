@@ -19,13 +19,7 @@
  */
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-	Logger,
-	createLogger,
-	LoggerOptions,
-	transports,
-	format,
-} from 'winston';
+import { createLogger, LoggerOptions, transports, format } from 'winston';
 import safeStringify from 'fast-safe-stringify';
 import BaseError from '../../core/error/BaseError.js';
 import { SDK } from '../../port/in/Common.js';
@@ -50,12 +44,19 @@ export const LoggerOptionLevels: Record<LogLevel, number> = {
 };
 
 export default class LogService {
-	public static logger: Logger;
+	public static instance: LogService = new LogService();
 	public static defaultFormat = printf(
 		({ level, message, timestamp, other }) => {
 			const formatOther = (val: any[]): string => {
 				return val
-					.map((e) => (typeof e === 'object' ? safeStringify(e) : e))
+					.map((e) => {
+						switch (typeof e) {
+							case 'object':
+								return safeStringify(e);
+							default:
+								return e;
+						}
+					})
 					.join('\t');
 			};
 			return `${timestamp} - [${level}]\t${message}\t${formatOther(
@@ -64,53 +65,52 @@ export default class LogService {
 		},
 	);
 
+	private logger;
 	private readonly coreConfig: LoggerOptions = {
 		levels: LoggerOptionLevels,
 		exitOnError: false,
 	};
-
 	private readonly defaultConfig: LoggerOptions = {
-		transports: [new Console()],
+		transports: new Console(),
 		level: LogLevel.ERROR,
 		format: LogService.defaultFormat,
 	};
 
 	constructor(opts?: LoggerOptions) {
-		const config = { ...this.defaultConfig, ...opts, ...this.coreConfig };
-		LogService.logger = createLogger(config);
+		LogService.instance = this;
+		this.logger = createLogger({
+			...(opts ? { ...this.defaultConfig, ...opts } : this.defaultConfig),
+			...this.coreConfig,
+		});
 	}
 
-	public static log(level: LogLevel, message: string, params: any[]): void {
-		if (!LogService || !LogService.logger) {
-			// TODO: improve this
-			new LogService();
-		}
-		LogService.logger.log(level, message, {
+	public static log(level: LogLevel, message: any, params: any[]): void {
+		this.instance.logger.log(level, message, {
 			timestamp: new Date().toISOString(),
 			other: params,
 		});
 	}
 
-	public static logError(error: BaseError | unknown, ...params: any[]): void {
+	public static logError(error: unknown, ...params: any[]): void;
+	public static logError(error: BaseError, ...params: any[]): void {
 		if (error instanceof BaseError) {
-			LogService.log(
+			this.log(
 				LogLevel.ERROR,
 				error.toString(
-					Injectable.resolve<typeof SDK>('SDK').log.level ===
-						LogLevel.TRACE,
+					Injectable.resolve<typeof SDK>('SDK').log.level === 'TRACE',
 				),
 				params,
 			);
 		} else {
-			LogService.log(LogLevel.ERROR, error as string, params);
+			this.log(LogLevel.ERROR, error, params);
 		}
 	}
 
-	public static logInfo(message: string, ...params: any[]): void {
-		LogService.log(LogLevel.INFO, message, params);
+	public static logInfo(message: any, ...params: any[]): void {
+		this.log(LogLevel.INFO, message, params);
 	}
 
-	public static logTrace(message: string, ...params: any[]): void {
-		LogService.log(LogLevel.TRACE, message, params);
+	public static logTrace(message: any, ...params: any[]): void {
+		this.log(LogLevel.TRACE, message, params);
 	}
 }
