@@ -32,7 +32,11 @@ import {
 	DAppConnector,
 	HederaChainId,
 	SignAndExecuteTransactionParams,
+	SignTransactionParams,
+	transactionBodyToBase64String,
 	transactionToBase64String,
+	transactionToTransactionBody,
+	base64StringToSignatureMap,
 } from '@hashgraph/hedera-wallet-connect';
 import { SignClientTypes } from '@walletconnect/types';
 import { HederaTransactionAdapter } from '../HederaTransactionAdapter';
@@ -60,6 +64,8 @@ import {
 import { SupportedWallets } from '../../../../domain/context/network/Wallet';
 import HWCSettings from '../../../../domain/context/hwalletconnectsettings/HWCSettings.js';
 import { HashpackTransactionResponseAdapter } from '../hashpack/HashpackTransactionResponseAdapter';
+import { SigningError } from '../error/SigningError';
+import Hex from '../../../../core/Hex.js';
 
 @singleton()
 /**
@@ -470,8 +476,120 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 	getAccount(): Account {
 		return this.account;
 	}
-	sign(message: string | Transaction): Promise<string> {
-		throw new Error('👷‍♂️ sign method not implemented.');
+
+	/**
+	 * Signs a transaction using Hedera WalletConnect.
+	 * @param message - The transaction to sign.
+	 * @returns A promise that resolves to the hexadecimal signature of the signed transaction.
+	 * @throws Error if Hedera WalletConnect is not initialized, account is not set, no signers found,
+	 * the message is not an instance of Transaction, or consensus nodes are not set for the environment.
+	 * @throws SigningError if an error occurs during the signing process.
+	 */
+	async sign(message: string | Transaction): Promise<string> {
+		LogService.logInfo('🔏 Signing transaction from HWC...');
+		if (!this.dAppConnector) {
+			throw new Error('❌ Hedera WalletConnect not initialized');
+		}
+		if (!this.account) {
+			throw new Error('❌ Account not set');
+		}
+		if (
+			!this.signer ||
+			!this.dAppConnector.signers ||
+			this.dAppConnector.signers.length === 0
+		) {
+			throw new Error('❌ No signers found');
+		}
+		if (!(message instanceof Transaction))
+			throw new SigningError(
+				'❌ Hedera WalletConnect must sign a transaction not a string',
+			);
+		if (
+			!this.networkService.consensusNodes ||
+			this.networkService.consensusNodes.length == 0
+		) {
+			throw new Error(
+				'❌ In order to create sign multisignature transactions you must set consensus nodes for the environment',
+			);
+		}
+
+		try {
+			if (!message.isFrozen()) {
+				LogService.logTrace(
+					`🔒 Tx not frozen, freezing transaction...`,
+				);
+				message._freezeWithAccountId(
+					AccountId.fromString(this.account.id.toString()),
+				);
+			}
+
+			const params: SignTransactionParams = {
+				transactionBody: transactionBodyToBase64String(
+					transactionToTransactionBody(
+						message,
+						AccountId.fromString(
+							this.networkService.consensusNodes[0].nodeId,
+						),
+					),
+				),
+				signerAccountId: `${
+					this.chainId
+				}:${this.account.id.toString()}`,
+			};
+
+			LogService.logTrace(
+				`🖋️ [HWC] Signing tx with params: ${JSON.stringify(
+					params,
+					null,
+					2,
+				)}`,
+			);
+			const signResult = await this.dAppConnector.signTransaction(params);
+			LogService.logInfo(`✅ Transaction signed successfully!`);
+			LogService.logTrace(
+				`Signature result: ${JSON.stringify(signResult, null, 2)}`,
+			);
+			const decodedSignatureMap = base64StringToSignatureMap(
+				(signResult as any).signatureMap,
+			);
+			LogService.logTrace(
+				`Decoded signature map: ${JSON.stringify(
+					decodedSignatureMap,
+					null,
+					2,
+				)}`,
+			);
+
+			const signaturesLength = decodedSignatureMap.sigPair.length;
+			if (signaturesLength === 0) {
+				throw new Error(`❌ No signatures found in response`);
+			}
+			const firstSignature =
+				decodedSignatureMap.sigPair[0].ed25519 ||
+				decodedSignatureMap.sigPair[0].ECDSASecp256k1 ||
+				decodedSignatureMap.sigPair[0].ECDSA_384;
+			if (!firstSignature) {
+				throw new Error(
+					`❌ No signatures found in response: ${JSON.stringify(
+						firstSignature,
+						null,
+						2,
+					)}`,
+				);
+			}
+
+			const hexSignature = Hex.fromUint8Array(firstSignature);
+			LogService.logTrace(
+				`Final hexadecimal signature: ${JSON.stringify(
+					hexSignature,
+					null,
+					2,
+				)}`,
+			);
+			return hexSignature;
+		} catch (error) {
+			throw new SigningError(JSON.stringify(error, null, 2));
+		}
 	}
 
 	getWCMetadata(): SignClientTypes.Metadata {

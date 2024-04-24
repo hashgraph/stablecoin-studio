@@ -81,6 +81,10 @@ export default class LogService {
 	}
 
 	public static log(level: LogLevel, message: string, params: any[]): void {
+		if (!LogService || !LogService.logger) {
+			// TODO: improve this
+			new LogService();
+		}
 		LogService.logger.log(level, message, {
 			timestamp: new Date().toISOString(),
 			other: params,

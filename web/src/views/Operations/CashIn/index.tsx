@@ -18,7 +18,6 @@ import { useState } from 'react';
 import { BigDecimal, CashInRequest, SupportedWallets } from '@hashgraph/stablecoin-npm-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 import { propertyNotFound } from '../../../constant';
-import { formatAmount } from '../../../utils/inputHelper';
 
 const CashInOperation = () => {
 	const {
@@ -69,6 +68,7 @@ const CashInOperation = () => {
 				return;
 			}
 			await SDKService.cashIn(request);
+			console.log('CashInOperation -> handleCashIn -> request', request);
 			const requestAmount = BigDecimal.fromString(request.amount, decimals);
 			dispatch(
 				walletActions.setSelectedStableCoin({
@@ -78,7 +78,6 @@ const CashInOperation = () => {
 			);
 			onSuccess();
 		} catch (error: any) {
-			console.log(JSON.stringify(error));
 			setErrorTransactionUrl(error.transactionUrl);
 			setErrorOperation(error.message);
 			onError();
