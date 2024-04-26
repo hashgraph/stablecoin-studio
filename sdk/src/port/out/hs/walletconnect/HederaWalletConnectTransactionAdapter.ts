@@ -333,23 +333,24 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 	// }
 
 	public async signAndSendTransaction(
-		t: Transaction,
+		transaction: Transaction,
 		transactionType: TransactionType,
 		nameFunction?: string | undefined,
 		abi?: object[] | undefined,
 	): Promise<TransactionResponse> {
+		LogService.logInfo(`🔏 Signing and sending transaction from HWC...`);
 		if (!this.dAppConnector) {
-			throw new Error('Hedera WalletConnect not initialized');
+			throw new Error('❌ Hedera WalletConnect not initialized');
 		}
 		if (!this.account) {
-			throw new Error('Account not set');
+			throw new Error('❌ Account not set');
 		}
 		if (
 			!this.signer ||
 			!this.dAppConnector.signers ||
 			this.dAppConnector.signers.length === 0
 		) {
-			throw new Error('No signers found');
+			throw new Error('❌ No signers found');
 		}
 
 		// async function hedera_signAndExecuteTransaction(_: Event) {
@@ -368,21 +369,6 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 		// 	return await dAppConnector!.signAndExecuteTransaction(params)
 		// }
 
-		if (!t.isFrozen()) {
-			console.log('🔒 Freezing transaction...');
-			LogService.logTrace(`🔒 Freezing transaction...`);
-			t._freezeWithAccountId(
-				AccountId.fromString(this.account.id.toString()),
-			);
-		}
-		// TODO: use chainId
-		const params: SignAndExecuteTransactionParams = {
-			transactionList: transactionToBase64String(t),
-			signerAccountId: `${this.chainId}:${this.account.id.toString()}`,
-		};
-
-		console.log('params', params);
-
 		// const nodeAccountID = AccountId.fromString(this.account.id.toString())
 		// const signParams: SignTransactionParams = {
 		// 	transactionBody: transactionToTransactionBody(t, nodeAccountID),
@@ -390,73 +376,50 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 		// };
 
 		try {
-			console.log('🔏 Signing and sending transaction...');
-			LogService.logInfo(`🔏 Signing and sending transaction...`);
-			// const signedTx = await this.dAppConnector.signTransaction(
-			// 	signParams,
-			// );
-			// let transactionResponse: any;
-			// if (
-			// 	t instanceof TokenCreateTransaction ||
-			// 	t instanceof TokenWipeTransaction ||
-			// 	t instanceof TokenBurnTransaction ||
-			// 	t instanceof TokenMintTransaction ||
-			// 	t instanceof TokenPauseTransaction ||
-			// 	t instanceof TokenUnpauseTransaction ||
-			// 	t instanceof TokenDeleteTransaction ||
-			// 	t instanceof TokenFreezeTransaction ||
-			// 	t instanceof TokenUnfreezeTransaction ||
-			// 	t instanceof TokenGrantKycTransaction ||
-			// 	t instanceof TokenRevokeKycTransaction ||
-			// 	t instanceof TransferTransaction ||
-			// 	t instanceof TokenFeeScheduleUpdateTransaction ||
-			// 	t instanceof TokenAssociateTransaction
-			// ) {
-			// 	transactionResponse =
-			// 		await this.dAppConnector.signAndExecuteTransaction(params);
-			// 	LogService.logInfo(
-			// 		`✅ Transaction signed and sent 0. Response: ${transactionResponse}`,
-			// 	);
-			// 	// transactionResponse = await this.dAppConnector.executeTransaction({
-			// 	// 	signed: transactionToBase64String(signedTx),
-			// 	// });
-			// } else {
-			// 	// TODO : ENTRA AQUI
-			// 	transactionResponse =
-			// 		await this.dAppConnector!.signAndExecuteTransaction(params);
-			//
-			// 	// LogService.logInfo(
-			// 	// 	`✅ Transaction signed and sent 1. Response: ${transactionResponse}`,
-			// 	// );
-			// }
-			const transactionResponseRaw =
-				await this.dAppConnector?.signAndExecuteTransaction(params);
-			console.log(
-				'transactionResponseRaw : ' +
-					JSON.stringify(transactionResponseRaw),
+			if (!transaction.isFrozen()) {
+				LogService.logTrace(
+					`🔒 Tx not frozen, freezing transaction...`,
+				);
+				transaction._freezeWithAccountId(
+					AccountId.fromString(this.account.id.toString()),
+				);
+			}
+			const params: SignAndExecuteTransactionParams = {
+				transactionList: transactionToBase64String(transaction),
+				signerAccountId: `${
+					this.chainId
+				}:${this.account.id.toString()}`,
+			};
+			LogService.logTrace(
+				`🖋️ [HWC] Signing tx with params: ${JSON.stringify(
+					params,
+					null,
+					2,
+				)}`,
 			);
 
-			/*const transactionJson: TransactionResponseJSON = {
-				nodeId: (transactionResponseRaw as any).nodeId,
-				transactionHash: (transactionResponseRaw as any).transactionHash,
-				transactionId: (transactionResponseRaw as any).transactionId
-
-			};*/
-			//console.log('transactionJson : ' + JSON.stringify(transactionJson))
-
+			const transactionResponseRaw =
+				await this.dAppConnector?.signAndExecuteTransaction(params);
+			LogService.logInfo(`✅ Transaction signed and sent successfully!`);
+			LogService.logTrace(
+				`Transaction response RAW: ${JSON.stringify(
+					transactionResponseRaw,
+					null,
+					2,
+				)}`,
+			);
 			const transactionResponse = HTransactionResponse.fromJSON(
 				transactionResponseRaw as unknown as TransactionResponseJSON,
 			);
-			console.log(
-				'transactionResponse : ' + JSON.stringify(transactionResponse),
+			LogService.logTrace(
+				`Transaction response: ${JSON.stringify(
+					transactionResponse,
+					null,
+					2,
+				)}`,
 			);
 
-			LogService.logInfo(
-				`✅ Transaction signed and sent. Response: ${transactionResponse}`,
-			);
-
-			console.log('transactionResponse', transactionResponse);
-			return HashpackTransactionResponseAdapter.manageResponse(
+			return await HashpackTransactionResponseAdapter.manageResponse(
 				this.networkService.environment,
 				this.signer,
 				transactionResponse,
@@ -465,13 +428,16 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 				abi,
 			);
 		} catch (error) {
-			const errorMessage = `❌ Error signing and sending transaction: ${JSON.stringify(
-				error,
-				null,
-				2,
-			)}`;
-			LogService.logError(errorMessage);
-			throw new Error(errorMessage);
+			if (error instanceof Error) {
+				LogService.logError(error.stack);
+			}
+			throw new Error(
+				`Error signing and sending transaction: ${
+					error instanceof Object
+						? JSON.stringify(error, null, 2)
+						: error
+				}`,
+			);
 		}
 	}
 
