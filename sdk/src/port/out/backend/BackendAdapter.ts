@@ -52,6 +52,7 @@ export class BackendAdapter {
 		keyList: string[],
 		threshold: number,
 		network: Environment,
+		startDate: Date,
 	): Promise<string> {
 		try {
 			const body = {
@@ -61,10 +62,11 @@ export class BackendAdapter {
 				key_list: keyList,
 				threshold: threshold,
 				network: network,
+				start_date: startDate,
 			};
-
+			//TODO: error because url is not defined
 			const response = await this.httpClient.post(
-				'',
+				'https://localhost:3000/transactions',
 				body,
 				this.configureHeaders(),
 			);
@@ -100,7 +102,7 @@ export class BackendAdapter {
 				signature: transactionSignature,
 				public_key: publicKey,
 			};
-
+			// TODO: why url is transactionId (?)
 			const response = await this.httpClient.put(
 				`${transactionId}`,
 				body,

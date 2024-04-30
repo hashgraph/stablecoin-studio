@@ -62,7 +62,7 @@ export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
 	) {}
 
 	async execute(command: CashInCommand): Promise<CashInCommandResponse> {
-		const { amount, targetId, tokenId } = command;
+		const { amount, targetId, tokenId, startDate } = command;
 		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
 		const tokenRelationship = (
@@ -155,7 +155,7 @@ export class CashInCommandHandler implements ICommandHandler<CashInCommand> {
 			}
 		}
 
-		const res = await handler.cashin(capabilities, targetId, amountBd);
+		const res = await handler.cashin(capabilities, targetId, amountBd, startDate);
 		return Promise.resolve(
 			new CashInCommandResponse(res.error === undefined),
 		);

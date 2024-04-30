@@ -323,7 +323,7 @@ class StableCoinInPort implements IStableCoinInPort {
 
 	@LogError
 	async cashIn(request: CashInRequest): Promise<boolean> {
-		const { tokenId, amount, targetId } = request;
+		const { tokenId, amount, targetId, startDate } = request;
 		handleValidation('CashInRequest', request);
 
 		return (
@@ -332,6 +332,7 @@ class StableCoinInPort implements IStableCoinInPort {
 					amount,
 					HederaId.from(targetId),
 					HederaId.from(tokenId),
+					startDate
 				),
 			)
 		).payload;

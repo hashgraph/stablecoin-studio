@@ -29,23 +29,28 @@ export default class CashInRequest
 	amount: string;
 	targetId: string;
 	tokenId: string;
+	startDate?: string;
 
 	constructor({
 		amount,
 		targetId,
 		tokenId,
+		startDate,
 	}: {
 		amount: string;
 		targetId: string;
 		tokenId: string;
+		startDate?: string;
 	}) {
 		super({
 			amount: Validation.checkAmount(),
 			targetId: Validation.checkHederaIdFormat(),
 			tokenId: Validation.checkHederaIdFormat(),
+			startDate: startDate ? Validation.checkIsoDateFormat() : undefined
 		});
 		this.amount = amount;
 		this.targetId = targetId;
 		this.tokenId = tokenId;
+		this.startDate = startDate;
 	}
 }

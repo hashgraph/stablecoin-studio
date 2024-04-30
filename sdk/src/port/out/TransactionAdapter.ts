@@ -83,6 +83,7 @@ interface ITransactionAdapter {
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
 		amount: BigDecimal,
+		startDate?: string,
 	): Promise<TransactionResponse>;
 	burn(
 		coin: StableCoinCapabilities,
@@ -297,6 +298,7 @@ export default abstract class TransactionAdapter
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
 		amount: BigDecimal,
+		startDate?: string,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}

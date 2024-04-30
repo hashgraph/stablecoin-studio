@@ -21,7 +21,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   ArrayNotEmpty,
-  IsArray,
+  IsArray, IsDateString,
   IsIn,
   IsInt,
   IsNotEmpty,
@@ -111,6 +111,15 @@ export class CreateTransactionRequestDto {
   )
   network: Network;
 
+  @ApiProperty({
+    description: 'The start date of the transaction in ISO 8601 format',
+    example: '2023-08-01T12:00:00Z',
+    required: true,
+  })
+  @IsDateString()
+  @IsNotEmpty()
+  start_date: string;
+
   constructor(
     transaction_message: string,
     description: string,
@@ -118,6 +127,7 @@ export class CreateTransactionRequestDto {
     key_list: string[],
     threshold: number,
     network: Network,
+    start_date: string,
   ) {
     this.transaction_message = transaction_message;
     this.description = description;
@@ -125,5 +135,6 @@ export class CreateTransactionRequestDto {
     this.key_list = key_list;
     this.threshold = threshold;
     this.network = network;
+    this.start_date = start_date;
   }
 }

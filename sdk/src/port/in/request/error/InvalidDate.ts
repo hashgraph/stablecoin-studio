@@ -18,30 +18,13 @@
  *
  */
 
-import ValidatedRequest from './validation/ValidatedRequest.js';
-import Validation from './validation/Validation.js';
-export default class BurnRequest extends ValidatedRequest<BurnRequest> {
-	amount: string;
-	tokenId: string;
-	startDate?: string;
+import BaseError, { ErrorCode } from '../../../../core/error/BaseError.js';
 
-	constructor({
-					amount,
-					tokenId,
-					startDate,
-				}: {
-		amount: string;
-		tokenId: string;
-		startDate?: string;
-	}) {
-		super({
-			amount: Validation.checkAmount(),
-			tokenId: Validation.checkHederaIdFormat(),
-			startDate: startDate ? Validation.checkIsoDateFormat() : undefined
-		});
-
-		this.amount = amount;
-		this.tokenId = tokenId;
-		this.startDate = startDate;
+export class InvalidDate extends BaseError {
+	constructor(val: unknown) {
+		super(
+			ErrorCode.InvalidType,
+			`Value ${val} is not valid. Please enter a ISO format date.`,
+		);
 	}
 }

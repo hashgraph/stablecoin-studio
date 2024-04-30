@@ -279,10 +279,12 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
 		amount: BigDecimal,
+		startDate?: string,
 	): Promise<TransactionResponse> {
 		const params = new Params({
 			targetId: targetId,
 			amount: amount,
+			startDate: string,
 		});
 		return this.performOperation(
 			coin,
@@ -1331,6 +1333,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		transactionType: TransactionType,
 		nameFunction?: string,
 		abi?: any[],
+		startDate?: string,
 	): Promise<TransactionResponse>;
 
 	abstract sign(message: string | Transaction): Promise<string>;
@@ -1378,6 +1381,7 @@ class Params {
 	wipeKey?: PublicKey;
 	supplyKey?: PublicKey;
 	metadata?: string;
+	startDate?: string; //TODO: should I add startDate?
 
 	constructor({
 		proxy,
@@ -1400,6 +1404,7 @@ class Params {
 		wipeKey,
 		supplyKey,
 		metadata,
+		startDate,
 	}: {
 		proxy?: HederaId;
 		role?: string;
@@ -1421,6 +1426,7 @@ class Params {
 		wipeKey?: PublicKey;
 		supplyKey?: PublicKey;
 		metadata?: string;
+		startDate?: string;
 	}) {
 		this.proxy = proxy;
 		this.role = role;
@@ -1442,5 +1448,6 @@ class Params {
 		this.wipeKey = wipeKey;
 		this.supplyKey = supplyKey;
 		this.metadata = metadata;
+		this.startDate = startDate;
 	}
 }

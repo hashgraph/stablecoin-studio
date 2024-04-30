@@ -41,6 +41,7 @@ import ContractId from '../../../../domain/context/contract/ContractId.js';
 import InvalidDecimalRange from '../../../../domain/context/stablecoin/error/InvalidDecimalRange.js';
 import { StableCoinRole } from '../../../../domain/context/stablecoin/StableCoinRole.js';
 import { InvalidRole } from '../../../../domain/context/stablecoin/error/InvalidRole.js';
+import { InvalidDate } from '../error/InvalidDate';
 
 export default class Validation {
 	public static checkPublicKey = () => {
@@ -82,6 +83,28 @@ export default class Validation {
 			return err;
 		};
 	};
+
+	public static checkIsoDateFormat = () => {
+		return (dateStr?: string): BaseError[] => {
+			const err: BaseError[] = [];
+			if (dateStr === undefined) {
+				return err;
+			}
+
+			const iso8601Regex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(Z|[+-]\d{2}:\d{2})?$/;
+
+			if (!iso8601Regex.test(dateStr)) {
+				err.push(new InvalidDate(dateStr));
+			}
+
+			const date = new Date(dateStr);
+			if (isNaN(date.getTime())) {
+				err.push(new InvalidDate(dateStr));
+			}
+
+			return err;
+		};
+	}
 
 	public static checkNumber = <T extends string | number | bigint>({
 		max,

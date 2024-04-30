@@ -20,7 +20,7 @@
 
 import { singleton } from 'tsyringe';
 import { HederaTransactionAdapter } from '../HederaTransactionAdapter.js';
-import { AccountId, Client, Transaction } from '@hashgraph/sdk';
+import { AccountId, Client, Timestamp, Transaction, TransactionId } from '@hashgraph/sdk';
 import Account from '../../../../domain/context/account/Account.js';
 import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
 import { TransactionType } from '../../TransactionResponseEnums.js';
@@ -64,15 +64,26 @@ export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
 
 	async signAndSendTransaction(
 		t: Transaction,
-		transactionType: TransactionType,
+		transactionType: TransactionType | undefined,
 		nameFunction?: string | undefined,
 		abi?: any[] | undefined,
+		startDate?: string,// TODO: instead of this could we retrieve this from backend using a service?
 	): Promise<TransactionResponse<any, Error>> {
 		const publicKeys: string[] = [];
 
 		const accountId: AccountId = AccountId.fromString(
 			this.account.id.toString(),
 		);
+
+		// Generate a new transaction ID
+		// TODO: Replace this date with the date selected in the UI
+		const date = new Date();
+		const dateStr = startDate ? startDate : date.toISOString();
+
+		const validStart = Timestamp.fromDate(dateStr);
+		const txId = TransactionId.withValidStart(accountId, validStart);
+
+		t.setTransactionId(txId);
 		t.setTransactionValidDuration(180);
 		t._freezeWithAccountId(accountId);
 
@@ -105,16 +116,17 @@ export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
 			this.mirrorNodeAdapter,
 		);
 
-		const trasnactionId = await this.backendAdapter.addTransaction(
+		const transactionId = await this.backendAdapter.addTransaction(
 			Hex.fromUint8Array(t.freezeWith(client).toBytes()),
 			transactionDescription,
 			this.account.id.toString(),
 			publicKeys,
 			this.account.multiKey!.threshold,
 			this.networkService.environment,
+			date,
 		);
 
-		return new TransactionResponse(trasnactionId);
+		return new TransactionResponse(transactionId);
 	}
 
 	// MultiSig cannot eb used to sign anything
