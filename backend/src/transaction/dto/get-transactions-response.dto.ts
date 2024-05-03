@@ -43,7 +43,6 @@ export class GetTransactionsResponseDto {
     network: string,
     hedera_account_id: string,
     start_date: string,
-
   ) {
     this.id = id;
     this.transaction_message = transaction_message;
