@@ -18,6 +18,7 @@
  *
  */
 
+import { OptionalField } from '../../../core/decorator/OptionalDecorator.js';
 import { BaseRequest } from './BaseRequest.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
@@ -29,6 +30,8 @@ export default class CashInRequest
 	amount: string;
 	targetId: string;
 	tokenId: string;
+
+	@OptionalField()
 	startDate?: string;
 
 	constructor({
@@ -46,7 +49,14 @@ export default class CashInRequest
 			amount: Validation.checkAmount(),
 			targetId: Validation.checkHederaIdFormat(),
 			tokenId: Validation.checkHederaIdFormat(),
-			startDate: Validation.checkIsoDateFormat(),
+			startDate: (val) => {
+				if (val === undefined) {
+					return;
+				}
+
+				return Validation.checkIsoDateFormat(val);
+			},
+			// startDate: Validation.checkIsoDateFormat(),
 		});
 		this.amount = amount;
 		this.targetId = targetId;

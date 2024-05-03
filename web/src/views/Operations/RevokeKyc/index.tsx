@@ -35,7 +35,7 @@ const RevokeKycOperation = () => {
 		}),
 	);
 
-	const { t } = useTranslation(['revokeKYC', 'global', 'operations']);
+	const { t } = useTranslation(['revokeKYC', 'global', 'operations', 'multiSig']);
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
 	});
@@ -45,7 +45,7 @@ const RevokeKycOperation = () => {
 
 	const successDescription =
 		selectedWallet === SupportedWallets.MULTISIG
-			? 'MultiSig transaction has been successfully created and is now awaiting signatures. Accounts have 180 seconds to sign the transaction.'
+			? t('multiSig:opValidationMessage')
 			: t('revokeKYC:modalSuccess', {
 					account: getValues().targetAccount,
 			  });

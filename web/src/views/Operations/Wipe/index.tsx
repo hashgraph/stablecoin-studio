@@ -48,11 +48,11 @@ const WipeOperation = () => {
 		mode: 'onChange',
 	});
 
-	const { t } = useTranslation(['wipe', 'global', 'operations']);
+	const { t } = useTranslation(['wipe', 'global', 'operations', 'multiSig']);
 
 	const successDescription =
 		selectedWallet === SupportedWallets.MULTISIG
-			? 'MultiSig transaction has been successfully created and is now awaiting signatures. Accounts have 180 seconds to sign the transaction.'
+			? t('multiSig:opValidationMessage')
 			: t('wipe:modalSuccessDesc', {
 					amount: getValues().amount,
 					account: getValues().destinationAccount,

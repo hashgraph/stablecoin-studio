@@ -18,11 +18,14 @@
  *
  */
 
+import { OptionalField } from '../../../core/decorator/OptionalDecorator.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
 export default class BurnRequest extends ValidatedRequest<BurnRequest> {
 	amount: string;
 	tokenId: string;
+
+	@OptionalField()
 	startDate?: string;
 
 	constructor({
@@ -37,7 +40,14 @@ export default class BurnRequest extends ValidatedRequest<BurnRequest> {
 		super({
 			amount: Validation.checkAmount(),
 			tokenId: Validation.checkHederaIdFormat(),
-			startDate: startDate ? Validation.checkIsoDateFormat() : undefined,
+			//startDate: startDate ? Validation.checkIsoDateFormat() : undefined,
+			startDate: (val) => {
+				if (val === undefined) {
+					return;
+				}
+
+				return Validation.checkIsoDateFormat(val);
+			},
 		});
 
 		this.amount = amount;

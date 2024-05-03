@@ -34,7 +34,7 @@ const FreezeOperation = () => {
 	);
 	const selectedWallet = useSelector(LAST_WALLET_SELECTED);
 
-	const { t } = useTranslation(['freeze', 'global', 'operations']);
+	const { t } = useTranslation(['freeze', 'global', 'operations', 'multiSig']);
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
 	});
@@ -63,7 +63,7 @@ const FreezeOperation = () => {
 
 	const successDescription =
 		selectedWallet === SupportedWallets.MULTISIG
-			? 'MultiSig transaction has been successfully created and is now awaiting signatures. Accounts have 180 seconds to sign the transaction.'
+			? t('multiSig:opValidationMessage')
 			: t('freeze:modalSuccess', {
 					account: getValues().targetAccount,
 			  });

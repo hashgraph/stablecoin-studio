@@ -39,12 +39,12 @@ const RescueHBAROperation = () => {
 		mode: 'onChange',
 	});
 
-	const { t } = useTranslation(['rescueHBAR', 'global', 'operations']);
+	const { t } = useTranslation(['rescueHBAR', 'global', 'operations', 'multiSig']);
 	const selectedWallet = useSelector(LAST_WALLET_SELECTED);
 
 	const successDescription =
 		selectedWallet === SupportedWallets.MULTISIG
-			? 'MultiSig transaction has been successfully created and is now awaiting signatures. Accounts have 180 seconds to sign the transaction.'
+			? t('multiSig:opValidationMessage')
 			: t('rescueHBAR:modalSuccessDesc', {
 					amount: formatAmount({
 						amount: getValues().amount ?? undefined,

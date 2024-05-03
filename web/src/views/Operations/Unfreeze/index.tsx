@@ -35,7 +35,7 @@ const UnfreezeOperation = () => {
 		}),
 	);
 
-	const { t } = useTranslation(['unfreeze', 'global', 'operations']);
+	const { t } = useTranslation(['unfreeze', 'global', 'operations', 'multiSig']);
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
 	});
@@ -45,7 +45,7 @@ const UnfreezeOperation = () => {
 
 	const successDescription =
 		selectedWallet === SupportedWallets.MULTISIG
-			? 'MultiSig transaction has been successfully created and is now awaiting signatures. Accounts have 180 seconds to sign the transaction.'
+			? t('multiSig:opValidationMessage')
 			: t('operations:modalSuccessTitle');
 
 	const handleUnfreeze: ModalsHandlerActionsProps['onConfirm'] = async ({

@@ -35,7 +35,7 @@ const GrantKycOperation = () => {
 	);
 	const selectedWallet = useSelector(LAST_WALLET_SELECTED);
 
-	const { t } = useTranslation(['grantKYC', 'global', 'operations']);
+	const { t } = useTranslation(['grantKYC', 'global', 'operations', 'multiSig']);
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
 	});
@@ -65,7 +65,7 @@ const GrantKycOperation = () => {
 
 	const successDescription =
 		selectedWallet === SupportedWallets.MULTISIG
-			? 'MultiSig transaction has been successfully created and is now awaiting signatures. Accounts have 180 seconds to sign the transaction.'
+			? t('multiSig:opValidationMessage')
 			: t('grantKYC:modalSuccess', {
 					account: getValues().targetAccount,
 			  });

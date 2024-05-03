@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import DetailsReview from '../../../components/DetailsReview';
 import InputController from '../../../components/Form/InputController';
+import DatePickerController from '../../../components/Form/DatePickerController';
 import SDKService from '../../../services/SDKService';
 import { handleRequestValidation, validateDecimalsString } from '../../../utils/validationsHelper';
 import OperationLayout from './../OperationLayout';
@@ -18,7 +19,7 @@ import { useState } from 'react';
 import { BigDecimal, CashInRequest, SupportedWallets } from '@hashgraph/stablecoin-npm-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 import { propertyNotFound } from '../../../constant';
-import { formatAmount } from '../../../utils/inputHelper';
+import { formatAmount, formatDateTime } from '../../../utils/inputHelper';
 
 const CashInOperation = () => {
 	const {
@@ -41,6 +42,7 @@ const CashInOperation = () => {
 			amount: '0',
 			targetId: '',
 			tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
+			startDate: undefined, // '2024-05-04T14:30:00Z'
 		}),
 	);
 
@@ -48,13 +50,13 @@ const CashInOperation = () => {
 		mode: 'onChange',
 	});
 
-	const { t } = useTranslation(['cashIn', 'global', 'operations']);
+	const { t } = useTranslation(['cashIn', 'global', 'operations', 'multiSig']);
 
 	useRefreshCoinInfo();
 
 	const successDescription =
 		selectedWallet === SupportedWallets.MULTISIG
-			? 'MultiSig transaction has been successfully created and is now awaiting signatures. Accounts have 180 seconds to sign the transaction.'
+			? t('multiSig:opValidationMessage')
 			: t('operations:modalSuccessDesc');
 
 	const handleCashIn: ModalsHandlerActionsProps['onConfirm'] = async ({
@@ -137,6 +139,34 @@ const CashInOperation = () => {
 								placeholder={t('cashIn:destinationAccountPlaceholder') ?? propertyNotFound}
 								label={t('cashIn:destinationAccountLabel') ?? propertyNotFound}
 							/>
+							{selectedWallet === SupportedWallets.MULTISIG ? (
+								<DatePickerController
+									rules={{
+										required: t('global:validations.required') ?? propertyNotFound,
+										validate: {
+											validation: (value: Date) => {
+												request.startDate = formatDateTime({ dateTime: value });
+												console.log(request.startDate);
+												const res = handleRequestValidation(request.validate('startDate'));
+												console.log(res);
+												return res;
+											},
+										},
+									}}
+									isRequired
+									showTimeSelect
+									placeholderText='Select date and time'
+									dateFormat="yyyy-MM-dd'T'HH:mm:ss"
+									control={control}
+									name='startDate'
+									label={t('multiSig:startDate') ?? propertyNotFound}
+									minimumDate={new Date()}
+									timeFormat='HH:mm'
+									timeIntervals={15}
+								/>
+							) : (
+								<></>
+							)}
 						</Stack>
 					</>
 				}
@@ -155,20 +185,42 @@ const CashInOperation = () => {
 					onConfirm: handleCashIn,
 				}}
 				ModalActionChildren={
-					<DetailsReview
-						title={t('cashIn:modalAction.subtitle')}
-						details={[
-							{
-								label: t('cashIn:modalAction.destinationAccount'),
-								value: getValues().destinationAccount,
-							},
-							{
-								label: t('cashIn:modalAction.amount'),
-								value: getValues().amount,
-								valueInBold: true,
-							},
-						]}
-					/>
+					selectedWallet === SupportedWallets.MULTISIG ? (
+						<DetailsReview
+							title={t('cashIn:modalAction.subtitle')}
+							details={[
+								{
+									label: t('cashIn:modalAction.destinationAccount'),
+									value: getValues().destinationAccount,
+								},
+								{
+									label: t('cashIn:modalAction.amount'),
+									value: getValues().amount,
+									valueInBold: true,
+								},
+								{
+									label: t('multiSig:modalAction.startDate'),
+									value: formatDateTime({ dateTime: getValues().startDate }),
+									valueInBold: true,
+								},
+							]}
+						/>
+					) : (
+						<DetailsReview
+							title={t('cashIn:modalAction.subtitle')}
+							details={[
+								{
+									label: t('cashIn:modalAction.destinationAccount'),
+									value: getValues().destinationAccount,
+								},
+								{
+									label: t('cashIn:modalAction.amount'),
+									value: getValues().amount,
+									valueInBold: true,
+								},
+							]}
+						/>
+					)
 				}
 				successNotificationTitle={t('operations:modalSuccessTitle')}
 				successNotificationDescription={successDescription}

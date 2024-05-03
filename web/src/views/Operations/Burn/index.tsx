@@ -48,7 +48,7 @@ const BurnOperation = () => {
 		mode: 'onChange',
 	});
 
-	const { t } = useTranslation(['burn', 'global', 'operations']);
+	const { t } = useTranslation(['burn', 'global', 'operations', 'multiSig']);
 
 	const handleBurn: ModalsHandlerActionsProps['onConfirm'] = async ({
 		onSuccess,
@@ -80,7 +80,7 @@ const BurnOperation = () => {
 
 	const successDescription =
 		selectedWallet === SupportedWallets.MULTISIG
-			? 'MultiSig transaction has been successfully created and is now awaiting signatures. Accounts have 180 seconds to sign the transaction.'
+			? t('multiSig:opValidationMessage')
 			: t('burn:modalSuccessDesc', {
 					amount: getValues().amount,
 					account: getValues().destinationAccount,

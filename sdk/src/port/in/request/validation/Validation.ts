@@ -42,6 +42,7 @@ import InvalidDecimalRange from '../../../../domain/context/stablecoin/error/Inv
 import { StableCoinRole } from '../../../../domain/context/stablecoin/StableCoinRole.js';
 import { InvalidRole } from '../../../../domain/context/stablecoin/error/InvalidRole.js';
 import { InvalidDate } from '../error/InvalidDate';
+import { ISO_8601_REGEX } from '../../../../domain/context/shared/Date.js';
 
 export default class Validation {
 	public static checkPublicKey = () => {
@@ -84,8 +85,9 @@ export default class Validation {
 		};
 	};
 
-	public static checkIsoDateFormat = () => {
+	/*public static checkIsoDateFormat = () => {
 		return (dateStr?: string): BaseError[] => {
+			window.alert(dateStr)
 			const err: BaseError[] = [];
 			if (dateStr === undefined) {
 				return err;
@@ -105,7 +107,22 @@ export default class Validation {
 
 			return err;
 		};
-	};
+	};*/
+
+	public static checkIsoDateFormat(dateStr: string): BaseError[] {
+		const err: BaseError[] = [];
+
+		if (!ISO_8601_REGEX.test(dateStr)) {
+			err.push(new InvalidDate(dateStr));
+		}
+
+		const date = new Date(dateStr);
+		if (isNaN(date.getTime())) {
+			err.push(new InvalidDate(dateStr));
+		}
+
+		return err;
+	}
 
 	public static checkNumber = <T extends string | number | bigint>({
 		max,

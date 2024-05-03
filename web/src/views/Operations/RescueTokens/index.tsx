@@ -41,13 +41,13 @@ const RescueTokenOperation = () => {
 		mode: 'onChange',
 	});
 
-	const { t } = useTranslation(['rescueTokens', 'global', 'operations']);
+	const { t } = useTranslation(['rescueTokens', 'global', 'operations', 'multiSig']);
 
 	useRefreshCoinInfo();
 
 	const successDescription =
 		selectedWallet === SupportedWallets.MULTISIG
-			? 'MultiSig transaction has been successfully created and is now awaiting signatures. Accounts have 180 seconds to sign the transaction.'
+			? t('multiSig:opValidationMessage')
 			: t('rescueTokens:modalSuccessDesc', {
 					amount: formatAmount({
 						amount: getValues().amount ?? undefined,
