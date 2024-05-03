@@ -91,7 +91,8 @@ export default class Validation {
 				return err;
 			}
 
-			const iso8601Regex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(Z|[+-]\d{2}:\d{2})?$/;
+			const iso8601Regex =
+				/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(Z|[+-]\d{2}:\d{2})?$/;
 
 			if (!iso8601Regex.test(dateStr)) {
 				err.push(new InvalidDate(dateStr));
@@ -104,7 +105,7 @@ export default class Validation {
 
 			return err;
 		};
-	}
+	};
 
 	public static checkNumber = <T extends string | number | bigint>({
 		max,

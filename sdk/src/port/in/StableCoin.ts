@@ -332,7 +332,7 @@ class StableCoinInPort implements IStableCoinInPort {
 					amount,
 					HederaId.from(targetId),
 					HederaId.from(tokenId),
-					startDate
+					startDate,
 				),
 			)
 		).payload;

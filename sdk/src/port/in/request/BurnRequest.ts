@@ -26,10 +26,10 @@ export default class BurnRequest extends ValidatedRequest<BurnRequest> {
 	startDate?: string;
 
 	constructor({
-					amount,
-					tokenId,
-					startDate,
-				}: {
+		amount,
+		tokenId,
+		startDate,
+	}: {
 		amount: string;
 		tokenId: string;
 		startDate?: string;
@@ -37,7 +37,7 @@ export default class BurnRequest extends ValidatedRequest<BurnRequest> {
 		super({
 			amount: Validation.checkAmount(),
 			tokenId: Validation.checkHederaIdFormat(),
-			startDate: startDate ? Validation.checkIsoDateFormat() : undefined
+			startDate: startDate ? Validation.checkIsoDateFormat() : undefined,
 		});
 
 		this.amount = amount;

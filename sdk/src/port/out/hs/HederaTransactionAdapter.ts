@@ -284,7 +284,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		const params = new Params({
 			targetId: targetId,
 			amount: amount,
-			startDate: string,
+			startDate: startDate,
 		});
 		return this.performOperation(
 			coin,
@@ -1087,6 +1087,8 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			gas,
 			transactionType,
 			contractAbi,
+			undefined,
+			params?.startDate ?? undefined,
 		);
 	}
 
@@ -1274,7 +1276,13 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			default:
 				throw new Error(`Operation does not exist through HTS`);
 		}
-		return this.signAndSendTransaction(t, TransactionType.RECEIPT);
+		return this.signAndSendTransaction(
+			t,
+			TransactionType.RECEIPT,
+			undefined,
+			undefined,
+			params.startDate ?? undefined,
+		);
 	}
 
 	public async contractCall(
@@ -1285,6 +1293,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		trxType: TransactionType,
 		abi: any,
 		value?: number,
+		startDate?: string,
 	): Promise<TransactionResponse> {
 		const functionCallParameters = this.encodeFunctionCall(
 			functionName,
@@ -1303,6 +1312,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			trxType,
 			functionName,
 			abi,
+			startDate ?? undefined,
 		);
 	}
 

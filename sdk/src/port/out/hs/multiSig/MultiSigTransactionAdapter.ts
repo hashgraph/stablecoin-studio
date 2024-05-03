@@ -20,7 +20,13 @@
 
 import { singleton } from 'tsyringe';
 import { HederaTransactionAdapter } from '../HederaTransactionAdapter.js';
-import { AccountId, Client, Timestamp, Transaction, TransactionId } from '@hashgraph/sdk';
+import {
+	AccountId,
+	Client,
+	Timestamp,
+	Transaction,
+	TransactionId,
+} from '@hashgraph/sdk';
 import Account from '../../../../domain/context/account/Account.js';
 import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
 import { TransactionType } from '../../TransactionResponseEnums.js';
@@ -67,7 +73,7 @@ export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
 		transactionType: TransactionType | undefined,
 		nameFunction?: string | undefined,
 		abi?: any[] | undefined,
-		startDate?: string,// TODO: instead of this could we retrieve this from backend using a service?
+		startDate?: string, // TODO: instead of this could we retrieve this from backend using a service?
 	): Promise<TransactionResponse<any, Error>> {
 		const publicKeys: string[] = [];
 
@@ -77,8 +83,7 @@ export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
 
 		// Generate a new transaction ID
 		// TODO: Replace this date with the date selected in the UI
-		const date = new Date();
-		const dateStr = startDate ? startDate : date.toISOString();
+		const dateStr = startDate ? startDate : new Date().toISOString();
 
 		const validStart = Timestamp.fromDate(dateStr);
 		const txId = TransactionId.withValidStart(accountId, validStart);
@@ -123,7 +128,7 @@ export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
 			publicKeys,
 			this.account.multiKey!.threshold,
 			this.networkService.environment,
-			date,
+			new Date(dateStr),
 		);
 
 		return new TransactionResponse(transactionId);
