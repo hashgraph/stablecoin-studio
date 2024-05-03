@@ -41,7 +41,7 @@ export const formatDateTime = ({ dateTime }: { dateTime?: Date }) => {
 	let day = dateTime.getDate().toString();
 	if (day.length < 2) day = '0' + day;
 
-	let hour = dateTime.getHours().toString();
+	let hour = (dateTime.getHours() + dateTime.getTimezoneOffset() / 60).toString();
 	if (hour.length < 2) hour = '0' + hour;
 
 	let minute = dateTime.getMinutes().toString();
