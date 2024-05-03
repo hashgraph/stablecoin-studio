@@ -35,23 +35,23 @@ export const formatShortKey = ({ key }: { key: string }) => {
 export const formatDateTime = ({ dateTime }: { dateTime?: Date }) => {
 	if (!dateTime) return undefined;
 
-	let month = (dateTime.getMonth() + 1).toString();
+	let month = (dateTime.getUTCMonth() + 1).toString();
 	if (month.length < 2) month = '0' + month;
 
-	let day = dateTime.getDate().toString();
+	let day = dateTime.getUTCDate().toString();
 	if (day.length < 2) day = '0' + day;
 
-	let hour = (dateTime.getHours() + dateTime.getTimezoneOffset() / 60).toString();
+	let hour = dateTime.getUTCHours().toString();
 	if (hour.length < 2) hour = '0' + hour;
 
-	let minute = dateTime.getMinutes().toString();
+	let minute = dateTime.getUTCMinutes().toString();
 	if (minute.length < 2) minute = '0' + minute;
 
-	let second = dateTime.getSeconds().toString();
+	let second = dateTime.getUTCSeconds().toString();
 	if (second.length < 2) second = '0' + second;
 
 	return (
-		dateTime.getFullYear().toString() +
+		dateTime.getUTCFullYear().toString() +
 		'-' +
 		month +
 		'-' +

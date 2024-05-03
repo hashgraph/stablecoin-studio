@@ -217,7 +217,11 @@ const MultiSigTransactions = () => {
 										<Tag>{transaction.status}</Tag>
 									</Td>
 									<Td borderBottom='1px' borderColor='gray.200'>
-										<Tag>{transaction.start_date}</Tag>
+										<Tag>
+											{new Date(transaction.start_date).toDateString() +
+												' ' +
+												new Date(transaction.start_date).toLocaleTimeString()}
+										</Tag>
 									</Td>
 									<Td borderBottom='1px' borderColor='gray.200'>
 										{canSignTransaction(transaction) && (

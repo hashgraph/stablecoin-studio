@@ -146,9 +146,7 @@ const CashInOperation = () => {
 										validate: {
 											validation: (value: Date) => {
 												request.startDate = formatDateTime({ dateTime: value });
-												console.log(request.startDate);
 												const res = handleRequestValidation(request.validate('startDate'));
-												console.log(res);
 												return res;
 											},
 										},
