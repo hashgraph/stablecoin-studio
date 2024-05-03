@@ -46,7 +46,7 @@ export default class CashInRequest
 			amount: Validation.checkAmount(),
 			targetId: Validation.checkHederaIdFormat(),
 			tokenId: Validation.checkHederaIdFormat(),
-			startDate: startDate ? Validation.checkIsoDateFormat() : undefined,
+			startDate: Validation.checkIsoDateFormat(),
 		});
 		this.amount = amount;
 		this.targetId = targetId;

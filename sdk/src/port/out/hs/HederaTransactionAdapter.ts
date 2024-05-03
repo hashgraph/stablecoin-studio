@@ -284,7 +284,6 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		const params = new Params({
 			targetId: targetId,
 			amount: amount,
-			startDate: startDate,
 		});
 		return this.performOperation(
 			coin,
@@ -292,6 +291,9 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			'mint',
 			CASHIN_GAS,
 			params,
+			undefined,
+			undefined,
+			startDate,
 		);
 	}
 
@@ -962,6 +964,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		params?: Params,
 		transactionType: TransactionType = TransactionType.RECEIPT,
 		contractAbi: any = HederaTokenManager__factory.abi,
+		startDate?: string,
 	): Promise<TransactionResponse> {
 		try {
 			switch (CapabilityDecider.decide(coin, operation)) {
@@ -977,6 +980,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 						params,
 						transactionType,
 						contractAbi,
+						startDate,
 					);
 
 				case Decision.HTS:
@@ -1027,6 +1031,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		params?: Params,
 		transactionType: TransactionType = TransactionType.RECEIPT,
 		contractAbi: any = HederaTokenManager__factory.abi,
+		startDate?: string,
 	): Promise<TransactionResponse> {
 		let filteredContractParams: any[] = [];
 
@@ -1088,7 +1093,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			transactionType,
 			contractAbi,
 			undefined,
-			params?.startDate ?? undefined,
+			startDate,
 		);
 	}
 
@@ -1276,13 +1281,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			default:
 				throw new Error(`Operation does not exist through HTS`);
 		}
-		return this.signAndSendTransaction(
-			t,
-			TransactionType.RECEIPT,
-			undefined,
-			undefined,
-			params.startDate ?? undefined,
-		);
+		return this.signAndSendTransaction(t, TransactionType.RECEIPT);
 	}
 
 	public async contractCall(
@@ -1391,7 +1390,6 @@ class Params {
 	wipeKey?: PublicKey;
 	supplyKey?: PublicKey;
 	metadata?: string;
-	startDate?: string; //TODO: should I add startDate?
 
 	constructor({
 		proxy,
@@ -1414,7 +1412,6 @@ class Params {
 		wipeKey,
 		supplyKey,
 		metadata,
-		startDate,
 	}: {
 		proxy?: HederaId;
 		role?: string;
@@ -1436,7 +1433,6 @@ class Params {
 		wipeKey?: PublicKey;
 		supplyKey?: PublicKey;
 		metadata?: string;
-		startDate?: string;
 	}) {
 		this.proxy = proxy;
 		this.role = role;
@@ -1458,6 +1454,5 @@ class Params {
 		this.wipeKey = wipeKey;
 		this.supplyKey = supplyKey;
 		this.metadata = metadata;
-		this.startDate = startDate;
 	}
 }

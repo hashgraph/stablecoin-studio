@@ -64,9 +64,10 @@ export class BackendAdapter {
 				network: network,
 				start_date: startDate,
 			};
+
 			//TODO: error because url is not defined
 			const response = await this.httpClient.post(
-				'https://localhost:3000/transactions',
+				'',
 				body,
 				this.configureHeaders(),
 			);
