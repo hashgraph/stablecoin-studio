@@ -261,7 +261,7 @@ describe('Transaction Controller Test', () => {
       // Mock expected result
       // Same as service result
       const expectedResult = new Pagination<GetTransactionsResponseDto>(
-        [TransactionMock.txPending0(), TransactionMock.txPending0()],
+        [TransactionMock.txPending0DTO, TransactionMock.txPending0DTO],
         {
           currentPage: 1,
           itemCount: 2,
@@ -332,6 +332,7 @@ describe('Transaction Controller Test', () => {
               DEFAULT.signatures,
               DEFAULT.network,
               DEFAULT.hedera_account_id,
+              DEFAULT.start_date.toDateString(),
             ),
           ),
         );
@@ -347,6 +348,7 @@ describe('Transaction Controller Test', () => {
         DEFAULT.signatures,
         DEFAULT.network,
         DEFAULT.hedera_account_id,
+        DEFAULT.start_date.toDateString(),
       );
       //* 🎬 Act ⬇
       const result = await controller.getTransactionById(
@@ -378,6 +380,7 @@ function createMockGetAllByPublicKeyTxServiceResult(
     pendingTransaction.signatures,
     pendingTransaction.network,
     pendingTransaction.hedera_account_id,
+    pendingTransaction.start_date.toDateString(),
   );
   return new Pagination<GetTransactionsResponseDto>(
     [transactionResponse, transactionResponse],
