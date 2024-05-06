@@ -595,16 +595,25 @@ export default class UtilitiesService extends Service {
     // Define table for pending multisig transactions
     const table = new Table({
       style: { head: ['cyan', 'bold'] },
-      head: ['Transaction ID', 'Description', 'Status'],
-      colWidths: [40, 60, 12],
+      head: ['Transaction ID', 'Description', 'Start Date', 'Status'],
+      colWidths: [40, 60, 30, 12],
       wordWrap: true,
       wrapOnWordBoundary: true,
     });
 
     // Add pending multisig transactions to table
-    multiSigTxList.forEach((multiSigTx) =>
-      table.push([multiSigTx.id, multiSigTx.description, multiSigTx.status]),
-    );
+    multiSigTxList.forEach((multiSigTx) => {
+      const startDateLocalTimeZone =
+        new Date(multiSigTx.startDate).toDateString() +
+        ' ' +
+        new Date(multiSigTx.startDate).toLocaleTimeString();
+      table.push([
+        multiSigTx.id,
+        multiSigTx.description,
+        startDateLocalTimeZone,
+        multiSigTx.status,
+      ]);
+    });
 
     // Show table
     console.info(table.toString());
