@@ -534,6 +534,7 @@ export const english = {
         detailsContinue:
           'Press return to go back to the multi-signature transaction actions...',
       },
+      askStartDate: 'Enter the start date for the transaction',
     },
   },
   manageImportedToken: {

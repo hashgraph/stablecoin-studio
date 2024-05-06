@@ -87,6 +87,7 @@ import OwnerProxyService from '../proxy/OwnerProxyService.js';
 import ConfigurationProxyService from '../proxy/ConfigurationProxyService.js';
 import ImplementationProxyService from '../proxy/ImplementationProxyService.js';
 import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
+import { AccountType } from '../../../domain/configuration/interfaces/AccountType.js';
 
 enum tokenKeys {
   admin,
@@ -268,6 +269,7 @@ export default class OperationStableCoinService extends Service {
           tokenId: this.stableCoinId,
           targetId: '',
           amount: '',
+          startDate: undefined,
         });
 
         // Call to mint
@@ -292,6 +294,23 @@ export default class OperationStableCoinService extends Service {
               .then((val) => val.replace(',', '.'));
           },
         );
+
+        if (configAccount.type == AccountType.MultiSignature) {
+          await utilsService.handleValidation(
+            () => cashInRequest.validate('startDate'),
+            async () => {
+              const dateTime = new Date(
+                await utilsService.defaultSingleAsk(
+                  language.getText('wizard.multiSig.askStartDate'),
+                  new Date().toLocaleDateString() +
+                    ' ' +
+                    new Date().toLocaleTimeString(), // '2024-05-04T14:30:00Z'
+                ),
+              );
+              cashInRequest.startDate = utilsService.formatDateTime(dateTime);
+            },
+          );
+        }
         try {
           await new CashInStableCoinService().cashInStableCoin(cashInRequest);
         } catch (error) {
