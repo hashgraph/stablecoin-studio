@@ -1,4 +1,4 @@
-import { Heading, Text, Stack, useDisclosure } from '@chakra-ui/react';
+import { Heading, Stack, Text, useDisclosure } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -8,18 +8,15 @@ import InputController from '../../../components/Form/InputController';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
 import ModalsHandler from '../../../components/ModalsHandler';
 import SDKService from '../../../services/SDKService';
-import {
-	LAST_WALLET_SELECTED,
-	SELECTED_WALLET_COIN,
-	walletActions,
-} from '../../../store/slices/walletSlice';
+import { LAST_WALLET_SELECTED, SELECTED_WALLET_COIN, walletActions } from '../../../store/slices/walletSlice';
 
 import { handleRequestValidation, validateDecimalsString } from '../../../utils/validationsHelper';
 import OperationLayout from './../OperationLayout';
 import { BigDecimal, SupportedWallets, WipeRequest } from '@hashgraph/stablecoin-npm-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 import { propertyNotFound } from '../../../constant';
-import { formatAmount } from '../../../utils/inputHelper';
+import { formatDateTime } from '../../../utils/inputHelper';
+import DatePickerController from '../../../components/Form/DatePickerController';
 
 const WipeOperation = () => {
 	const {
@@ -40,6 +37,7 @@ const WipeOperation = () => {
 			amount: '0',
 			targetId: '',
 			tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
+			startDate: undefined,
 		}),
 	);
 	const selectedWallet = useSelector(LAST_WALLET_SELECTED);
@@ -143,6 +141,32 @@ const WipeOperation = () => {
 									request.targetId = e.target.value;
 								}}
 							/>
+							{selectedWallet === SupportedWallets.MULTISIG ? (
+								<DatePickerController
+									rules={{
+										required: t('global:validations.required') ?? propertyNotFound,
+										validate: {
+											validation: (value: Date) => {
+												request.startDate = formatDateTime({ dateTime: value });
+												const res = handleRequestValidation(request.validate('startDate'));
+												return res;
+											},
+										},
+									}}
+									isRequired
+									showTimeSelect
+									placeholderText='Select date and time'
+									dateFormat="yyyy-MM-dd'T'HH:mm:ss"
+									control={control}
+									name='startDate'
+									label={t('multiSig:startDate') ?? propertyNotFound}
+									minimumDate={new Date()}
+									timeFormat='HH:mm'
+									timeIntervals={15}
+								/>
+							) : (
+								<></>
+							)}
 						</Stack>
 					</>
 				}
@@ -163,20 +187,41 @@ const WipeOperation = () => {
 					onConfirm: handleWipe,
 				}}
 				ModalActionChildren={
-					<DetailsReview
-						title={t('wipe:modalAction.subtitle')}
-						details={[
-							{
-								label: t('wipe:modalAction.fromAccount'),
-								value: getValues().destinationAccount,
-							},
-							{
-								label: t('wipe:modalAction.amount'),
-								value: getValues().amount,
-								valueInBold: true,
-							},
-						]}
-					/>
+					selectedWallet === SupportedWallets.MULTISIG ? (
+						<DetailsReview
+							title={t('multiSig:modalAction.subtitle')}
+							details={[
+								{
+									label: t('multiSig:startDate'),
+									value: getValues().startDate,
+								},
+								{
+									label: t('wipe:modalAction.fromAccount'),
+									value: getValues().destinationAccount,
+								},
+								{
+									label: t('wipe:modalAction.amount'),
+									value: getValues().amount,
+									valueInBold: true,
+								},
+							]}
+						/>
+					) : (
+						<DetailsReview
+							title={t('wipe:modalAction.subtitle')}
+							details={[
+								{
+									label: t('wipe:modalAction.fromAccount'),
+									value: getValues().destinationAccount,
+								},
+								{
+									label: t('wipe:modalAction.amount'),
+									value: getValues().amount,
+									valueInBold: true,
+								},
+							]}
+						/>
+					)
 				}
 			/>
 		</>

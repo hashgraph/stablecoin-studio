@@ -56,7 +56,6 @@ export default class CashInRequest
 
 				return Validation.checkIsoDateFormat(val);
 			},
-			// startDate: Validation.checkIsoDateFormat(),
 		});
 		this.amount = amount;
 		this.targetId = targetId;

@@ -1,24 +1,21 @@
-import { Heading, Text, Stack, useDisclosure } from '@chakra-ui/react';
+import { Heading, Stack, Text, useDisclosure } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import DetailsReview from '../../../components/DetailsReview';
 import InputController from '../../../components/Form/InputController';
 import OperationLayout from '../OperationLayout';
-import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
+import ModalsHandler from '../../../components/ModalsHandler';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-	LAST_WALLET_SELECTED,
-	SELECTED_WALLET_COIN,
-	walletActions,
-} from '../../../store/slices/walletSlice';
+import { LAST_WALLET_SELECTED, SELECTED_WALLET_COIN, walletActions } from '../../../store/slices/walletSlice';
 import SDKService from '../../../services/SDKService';
 import { handleRequestValidation, validateDecimalsString } from '../../../utils/validationsHelper';
 import { useState } from 'react';
 import { BigDecimal, BurnRequest, SupportedWallets } from '@hashgraph/stablecoin-npm-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 import { propertyNotFound } from '../../../constant';
-import { formatAmount } from '../../../utils/inputHelper';
+import { formatDateTime } from '../../../utils/inputHelper';
+import DatePickerController from '../../../components/Form/DatePickerController';
 
 const BurnOperation = () => {
 	const {
@@ -38,6 +35,7 @@ const BurnOperation = () => {
 		new BurnRequest({
 			amount: '0',
 			tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
+			startDate: undefined,
 		}),
 	);
 	const selectedWallet = useSelector(LAST_WALLET_SELECTED);
@@ -122,6 +120,32 @@ const BurnOperation = () => {
 								label={t('burn:amountLabel') ?? propertyNotFound}
 								placeholder={t('burn:amountPlaceholder') ?? propertyNotFound}
 							/>
+							{selectedWallet === SupportedWallets.MULTISIG ? (
+								<DatePickerController
+									rules={{
+										required: t('global:validations.required') ?? propertyNotFound,
+										validate: {
+											validation: (value: Date) => {
+												request.startDate = formatDateTime({ dateTime: value });
+												const res = handleRequestValidation(request.validate('startDate'));
+												return res;
+											},
+										},
+									}}
+									isRequired
+									showTimeSelect
+									placeholderText='Select date and time'
+									dateFormat="yyyy-MM-dd'T'HH:mm:ss"
+									control={control}
+									name='startDate'
+									label={t('multiSig:startDate') ?? propertyNotFound}
+									minimumDate={new Date()}
+									timeFormat='HH:mm'
+									timeIntervals={15}
+								/>
+							) : (
+								<></>
+							)}
 						</Stack>
 					</>
 				}
@@ -142,16 +166,34 @@ const BurnOperation = () => {
 					onConfirm: handleBurn,
 				}}
 				ModalActionChildren={
-					<DetailsReview
-						title={t('burn:modalAction.subtitle')}
-						details={[
-							{
-								label: t('burn:modalAction.amount'),
-								value: getValues().amount,
-								valueInBold: true,
-							},
-						]}
-					/>
+					selectedWallet === SupportedWallets.MULTISIG ? (
+						<DetailsReview
+							title={t('burn:modalAction.subtitle')}
+							details={[
+								{
+									label: t('burn:modalAction.amount'),
+									value: getValues().amount,
+									valueInBold: true,
+								},
+								{
+									label: t('multiSig:startDate'),
+									value: formatDateTime({ dateTime: getValues().startDate }),
+									valueInBold: true,
+								},
+							]}
+						/>
+					) : (
+						<DetailsReview
+							title={t('burn:modalAction.subtitle')}
+							details={[
+								{
+									label: t('burn:modalAction.amount'),
+									value: getValues().amount,
+									valueInBold: true,
+								},
+							]}
+						/>
+					)
 				}
 			/>
 		</>

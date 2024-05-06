@@ -40,7 +40,6 @@ export default class BurnRequest extends ValidatedRequest<BurnRequest> {
 		super({
 			amount: Validation.checkAmount(),
 			tokenId: Validation.checkHederaIdFormat(),
-			//startDate: startDate ? Validation.checkIsoDateFormat() : undefined,
 			startDate: (val) => {
 				if (val === undefined) {
 					return;

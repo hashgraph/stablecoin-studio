@@ -20,14 +20,25 @@
 
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
+import { OptionalField } from '../../../core/decorator/OptionalDecorator';
 
 export default class PauseRequest extends ValidatedRequest<PauseRequest> {
 	tokenId: string;
 
-	constructor({ tokenId }: { tokenId: string }) {
+	@OptionalField()
+	startDate?: string;
+
+	constructor({ tokenId, startDate }: { tokenId: string; startDate?: string}) {
 		super({
 			tokenId: Validation.checkHederaIdFormat(),
+			startDate: (val) => {
+				if (val === undefined) {
+					return;
+				}
+				return Validation.checkIsoDateFormat(val);
+			}
 		});
 		this.tokenId = tokenId;
+		this.startDate = startDate;
 	}
 }

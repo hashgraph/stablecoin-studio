@@ -42,7 +42,7 @@ const CashInOperation = () => {
 			amount: '0',
 			targetId: '',
 			tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
-			startDate: undefined, // '2024-05-04T14:30:00Z'
+			startDate: undefined,
 		}),
 	);
 

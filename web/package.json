@@ -11,7 +11,7 @@
 		"test:watch": "react-app-rewired test --maxWorkers=50% --watchAll=true",
 		"cleanCache": "react-app-rewired test --clearCache",
 		"eject": "react-app-rewired eject",
-		"lint": "eslint . --ext .ts --ext .mts",
+		"lint": "eslint . --ext .ts --ext .mts --fix",
 		"prettier": "prettier --config .prettierrc --write .",
 		"prettierCheck": "prettier --config .prettierrc --check",
 		"pre-commit": "npm run lint && npm run prettier",
