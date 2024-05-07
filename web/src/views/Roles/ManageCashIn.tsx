@@ -3,16 +3,17 @@ import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
 import { useSelector } from 'react-redux';
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
 	CheckSupplierLimitRequest,
 	DecreaseSupplierAllowanceRequest,
 	GetSupplierAllowanceRequest,
 	IncreaseSupplierAllowanceRequest,
 	ResetSupplierAllowanceRequest,
+	SupportedWallets,
 } from '@hashgraph/stablecoin-npm-sdk';
 import { useNavigate } from 'react-router-dom';
-import { SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
+import { LAST_WALLET_SELECTED, SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
 import type { ModalsHandlerActionsProps } from '../../components/ModalsHandler';
 import ModalsHandler from '../../components/ModalsHandler';
 import SDKService from '../../services/SDKService';
@@ -25,6 +26,8 @@ import DetailsReview from '../../components/DetailsReview';
 import { RouterManager } from '../../Router/RouterManager';
 import { SelectController } from '../../components/Form/SelectController';
 import { cashinLimitOptions } from './constants';
+import DatePickerController from '../../components/Form/DatePickerController';
+import { formatDateTime } from '../../utils/inputHelper';
 
 const styles = {
 	menuList: {
@@ -54,7 +57,7 @@ const ManageCashIn = () => {
 	const [limit, setLimit] = useState<string>();
 	const [errorOperation, setErrorOperation] = useState();
 	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
-
+	const selectedWallet = useSelector(LAST_WALLET_SELECTED);
 	const navigate = useNavigate();
 
 	const { control, getValues, formState, watch } = useForm({
@@ -72,6 +75,7 @@ const ManageCashIn = () => {
 		() => supplierLimitOption === 'INCREASE' || supplierLimitOption === 'DECREASE',
 		[supplierLimitOption],
 	);
+	const isResetOperation = useMemo(() => supplierLimitOption === 'RESET', [supplierLimitOption]);
 	useEffect(() => {
 		switch (supplierLimitOption) {
 			case 'INCREASE':
@@ -80,6 +84,7 @@ const ManageCashIn = () => {
 						tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
 						targetId: '',
 						amount: '0',
+						startDate: undefined
 					}),
 				);
 				break;
@@ -89,6 +94,7 @@ const ManageCashIn = () => {
 						tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
 						targetId: '',
 						amount: '0',
+						startDate: undefined
 					}),
 				);
 				break;
@@ -98,6 +104,7 @@ const ManageCashIn = () => {
 					new ResetSupplierAllowanceRequest({
 						targetId: '',
 						tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
+						startDate: undefined
 					}),
 				);
 				break;
@@ -124,6 +131,7 @@ const ManageCashIn = () => {
 				return;
 			}
 			const values = getValues();
+			console.log('values', values);
 			switch (supplierLimitOption) {
 				case 'INCREASE':
 					await SDKService.increaseSupplierAllowance(
@@ -131,6 +139,7 @@ const ManageCashIn = () => {
 							tokenId: selectedStableCoin.tokenId.toString(),
 							targetId: values.account,
 							amount: values.amount ? values.amount.toString() : '',
+							startDate: values.startDate ? values.startDate.toISOString() : undefined
 						}),
 					);
 					break;
@@ -140,6 +149,7 @@ const ManageCashIn = () => {
 							tokenId: selectedStableCoin.tokenId.toString(),
 							targetId: values.account,
 							amount: values.amount ? values.amount.toString() : '',
+							startDate: values.startDate ? values.startDate.toISOString() : undefined
 						}),
 					);
 					break;
@@ -148,6 +158,7 @@ const ManageCashIn = () => {
 						new ResetSupplierAllowanceRequest({
 							targetId: values.account,
 							tokenId: selectedStableCoin.tokenId.toString(),
+							startDate: values.startDate ? values.startDate.toISOString() : undefined
 						}),
 					);
 					break;
@@ -299,6 +310,30 @@ const ManageCashIn = () => {
 									}
 								/>
 							)}
+							{((isResetOperation || isIncreaseOrDecreaseOperaion) && selectedWallet === SupportedWallets.MULTISIG ) && (
+									<DatePickerController
+										rules={{
+											required: t('global:validations.required') ?? propertyNotFound,
+											validate: (value: Date) => {
+												if (request && 'startDate' in request) {
+													request.startDate = formatDateTime({ dateTime: value });
+													const res = handleRequestValidation(request.validate('startDate'));
+													return res;
+												}
+											},
+										}}
+										isRequired
+										showTimeSelect
+										placeholderText='Select date and time'
+										dateFormat="yyyy-MM-dd'T'HH:mm:ss"
+										control={control}
+										name='startDate'
+										label={t('multiSig:startDate') ?? propertyNotFound}
+										minimumDate={new Date()}
+										timeFormat='HH:mm'
+										timeIntervals={15}
+									/>
+							)}
 						</Stack>
 					</>
 				}
@@ -317,7 +352,20 @@ const ManageCashIn = () => {
 					onConfirm: handleCashIn,
 				}}
 				ModalActionChildren={
+					<>
 					<DetailsReview title={t(`roles:${action}.modalActionSubtitle`)} details={getDetails()} />
+						{selectedWallet === SupportedWallets.MULTISIG && (
+							<DetailsReview
+								title={t('multiSig:startDate')}
+								details={[
+									{
+										label: t(`multiSig:startDate`),
+										value: formatDateTime({ dateTime: getValues().startDate }),
+									},
+								]}
+							/>
+						)}
+					</>
 				}
 				successNotificationTitle={t('operations:modalSuccessTitle')}
 				successNotificationDescription={

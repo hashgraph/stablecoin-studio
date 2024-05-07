@@ -154,7 +154,7 @@ const FreezeOperation = () => {
 								},
 								{
 									label: t('multiSig:modalAction.startDate'),
-									value: getValues().startDate,
+									value: formatDateTime({ dateTime: getValues().startDate }),
 								},
 							]}
 						/>
