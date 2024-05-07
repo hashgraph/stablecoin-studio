@@ -287,7 +287,6 @@ class RoleInPort implements IRole {
 		request: IncreaseSupplierAllowanceRequest,
 	): Promise<boolean> {
 		const { tokenId, amount, targetId, startDate } = request;
-		console.log('IncreaseAllowanceROLE++++++++++++', startDate);
 		handleValidation('IncreaseSupplierAllowanceRequest', request);
 
 		return (
