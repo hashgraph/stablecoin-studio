@@ -23,20 +23,26 @@ import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
 import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
 import { InvalidValue } from './error/InvalidValue.js';
+import { OptionalField } from '../../../core/decorator/OptionalDecorator';
 
 export default class RevokeMultiRolesRequest extends ValidatedRequest<RevokeMultiRolesRequest> {
 	tokenId: string;
 	roles: StableCoinRole[];
 	targetsId: string[];
 
+	@OptionalField()
+	startDate?: string;
+
 	constructor({
 		tokenId,
 		targetsId,
 		roles,
+		startDate,
 	}: {
 		tokenId: string;
 		targetsId: string[];
 		roles: StableCoinRole[];
+		startDate?: string;
 	}) {
 		super({
 			tokenId: Validation.checkHederaIdFormat(),
@@ -82,9 +88,17 @@ export default class RevokeMultiRolesRequest extends ValidatedRequest<RevokeMult
 					}
 				}
 			},
+			startDate: (val) => {
+				if (val === undefined) {
+					return;
+				}
+
+				return Validation.checkIsoDateFormat(val);
+			}
 		});
 		this.tokenId = tokenId;
 		this.targetsId = targetsId;
 		this.roles = roles;
+		this.startDate = startDate;
 	}
 }

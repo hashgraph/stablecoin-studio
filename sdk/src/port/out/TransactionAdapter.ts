@@ -78,6 +78,7 @@ interface ITransactionAdapter {
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
 		amount: BigDecimal,
+		startDate?: string,
 	): Promise<TransactionResponse>;
 	cashin(
 		coin: StableCoinCapabilities,
@@ -88,24 +89,29 @@ interface ITransactionAdapter {
 	burn(
 		coin: StableCoinCapabilities,
 		amount: BigDecimal,
+		startDate?: string,
 	): Promise<TransactionResponse>;
 	freeze(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
+		startDate?: string,
 	): Promise<TransactionResponse>;
 	unfreeze(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
+		startDate?: string,
 	): Promise<TransactionResponse>;
 	pause(coin: StableCoinCapabilities): Promise<TransactionResponse>;
 	unpause(coin: StableCoinCapabilities): Promise<TransactionResponse>;
 	rescue(
 		coin: StableCoinCapabilities,
 		amount: BigDecimal,
+		startDate?: string,
 	): Promise<TransactionResponse>;
 	rescueHBAR(
 		coin: StableCoinCapabilities,
 		amount: BigDecimal,
+		startDate?: string,
 	): Promise<TransactionResponse>;
 	delete(coin: StableCoinCapabilities): Promise<TransactionResponse>;
 	transfer(
@@ -179,6 +185,7 @@ interface RoleTransactionAdapter {
 		targetsId: HederaId[],
 		roles: StableCoinRole[],
 		amounts: BigDecimal[],
+		startDate?: string,
 	): Promise<TransactionResponse>;
 	revokeRoles(
 		coin: StableCoinCapabilities,
@@ -222,16 +229,19 @@ interface RoleTransactionAdapter {
 	resetSupplierAllowance(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
+		startDate?: string,
 	): Promise<TransactionResponse>;
 	increaseSupplierAllowance(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
 		amount: BigDecimal,
+		startDate?: string,
 	): Promise<TransactionResponse>;
 	decreaseSupplierAllowance(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
 		amount: BigDecimal,
+		startDate?: string,
 	): Promise<TransactionResponse>;
 	grantKyc(
 		coin: StableCoinCapabilities,
@@ -291,6 +301,7 @@ export default abstract class TransactionAdapter
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
 		amount: BigDecimal,
+		startDate?: string,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
@@ -305,18 +316,21 @@ export default abstract class TransactionAdapter
 	burn(
 		coin: StableCoinCapabilities,
 		amount: BigDecimal,
+		startDate?: string,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
 	freeze(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
+		startDate?: string,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
 	unfreeze(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
+		startDate?: string,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
@@ -333,12 +347,14 @@ export default abstract class TransactionAdapter
 	rescue(
 		coin: StableCoinCapabilities,
 		amount: BigDecimal,
+		startDate?: string,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
 	rescueHBAR(
 		coin: StableCoinCapabilities,
 		amount: BigDecimal,
+		startDate?: string,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
@@ -412,6 +428,7 @@ export default abstract class TransactionAdapter
 		targetsId: HederaId[],
 		roles: StableCoinRole[],
 		amounts: BigDecimal[],
+		startDate?: string,
 	): Promise<TransactionResponse> {
 		throw new Error('Method not implemented.');
 	}
@@ -419,6 +436,7 @@ export default abstract class TransactionAdapter
 		coin: StableCoinCapabilities,
 		targetsId: HederaId[],
 		roles: StableCoinRole[],
+		startDate?: string,
 	): Promise<TransactionResponse> {
 		throw new Error('Method not implemented.');
 	}
@@ -475,6 +493,7 @@ export default abstract class TransactionAdapter
 	resetSupplierAllowance(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
+		startDate?: string,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
@@ -482,6 +501,7 @@ export default abstract class TransactionAdapter
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
 		amount: BigDecimal,
+		startDate?: string,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
@@ -489,6 +509,7 @@ export default abstract class TransactionAdapter
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
 		amount: BigDecimal,
+		startDate?: string,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}

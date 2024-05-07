@@ -47,7 +47,7 @@ export class GrantMultiRolesCommandHandler
 	async execute(
 		command: GrantMultiRolesCommand,
 	): Promise<GrantMultiRolesCommandResponse> {
-		const { roles, targetsId, amounts, tokenId } = command;
+		const { roles, targetsId, amounts, tokenId, startDate } = command;
 		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
 		const capabilities = await this.stableCoinService.getCapabilities(
@@ -82,6 +82,7 @@ export class GrantMultiRolesCommandHandler
 			targetsId,
 			roles,
 			amountsFormatted,
+			startDate
 		);
 
 		return Promise.resolve(

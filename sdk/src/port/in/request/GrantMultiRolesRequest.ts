@@ -34,16 +34,21 @@ export default class GrantMultiRolesRequest extends ValidatedRequest<GrantMultiR
 	@OptionalField()
 	amounts?: string[];
 
+	@OptionalField()
+	startDate?: string;
+
 	constructor({
 		tokenId,
 		targetsId,
 		roles,
 		amounts,
+		startDate,
 	}: {
 		tokenId: string;
 		targetsId: string[];
 		roles: StableCoinRole[];
 		amounts?: string[];
+		startDate?: string;
 	}) {
 		super({
 			tokenId: Validation.checkHederaIdFormat(),
@@ -116,10 +121,18 @@ export default class GrantMultiRolesRequest extends ValidatedRequest<GrantMultiR
 					}
 				}
 			},
+			startDate: (val) => {
+				if (val === undefined) {
+					return;
+				}
+				return Validation.checkIsoDateFormat(val);
+
+			}
 		});
 		this.tokenId = tokenId;
 		this.targetsId = targetsId;
 		this.roles = roles;
 		this.amounts = amounts;
+		this.startDate = startDate;
 	}
 }

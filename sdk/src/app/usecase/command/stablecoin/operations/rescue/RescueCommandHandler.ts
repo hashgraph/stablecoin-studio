@@ -58,7 +58,7 @@ export class RescueCommandHandler implements ICommandHandler<RescueCommand> {
 	) {}
 
 	async execute(command: RescueCommand): Promise<RescueCommandResponse> {
-		const { amount, tokenId } = command;
+		const { amount, tokenId, startDate } = command;
 		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
 		const tokenRelationship = (
@@ -106,7 +106,7 @@ export class RescueCommandHandler implements ICommandHandler<RescueCommand> {
 				'The rescue amount is bigger than the treasury account balance',
 			);
 		}
-		const res = await handler.rescue(capabilities, amountBd);
+		const res = await handler.rescue(capabilities, amountBd, startDate);
 		return Promise.resolve(
 			new RescueCommandResponse(res.error === undefined),
 		);

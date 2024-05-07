@@ -45,7 +45,7 @@ export class ResetAllowanceCommandHandler
 	async execute(
 		command: ResetAllowanceCommand,
 	): Promise<ResetAllowanceCommandResponse> {
-		const { targetId, tokenId } = command;
+		const { targetId, tokenId, startDate } = command;
 		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
 		const capabilities = await this.stableCoinService.getCapabilities(
@@ -55,6 +55,7 @@ export class ResetAllowanceCommandHandler
 		const res = await handler.resetSupplierAllowance(
 			capabilities,
 			targetId,
+			startDate
 		);
 		// return Promise.resolve({ payload: res.response ?? false });
 		return Promise.resolve(

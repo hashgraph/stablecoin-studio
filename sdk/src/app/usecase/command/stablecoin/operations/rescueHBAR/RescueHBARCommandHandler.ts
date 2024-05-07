@@ -58,7 +58,7 @@ export class RescueHBARCommandHandler
 	async execute(
 		command: RescueHBARCommand,
 	): Promise<RescueHBARCommandResponse> {
-		const { amount, tokenId } = command;
+		const { amount, tokenId, startDate } = command;
 		const decimals = HBAR_DECIMALS;
 		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
@@ -89,7 +89,7 @@ export class RescueHBARCommandHandler
 			);
 		}
 
-		const res = await handler.rescueHBAR(capabilities, amountBd);
+		const res = await handler.rescueHBAR(capabilities, amountBd, startDate);
 		return Promise.resolve(
 			new RescueHBARCommandResponse(res.error === undefined),
 		);

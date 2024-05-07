@@ -44,7 +44,7 @@ export class WipeCommandHandler implements ICommandHandler<WipeCommand> {
 	) {}
 
 	async execute(command: WipeCommand): Promise<WipeCommandResponse> {
-		const { amount, targetId, tokenId } = command;
+		const { amount, targetId, tokenId, startDate } = command;
 		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
 
@@ -83,6 +83,7 @@ export class WipeCommandHandler implements ICommandHandler<WipeCommand> {
 			capabilities,
 			targetId,
 			BigDecimal.fromString(amount, capabilities.coin.decimals),
+			startDate,
 		);
 		return Promise.resolve(
 			new WipeCommandResponse(res.error === undefined),

@@ -10,6 +10,7 @@ export class FreezeCommand extends Command<FreezeCommandResponse> {
 	constructor(
 		public readonly targetId: HederaId,
 		public readonly tokenId: HederaId,
+		public readonly startDate?: string,
 	) {
 		super();
 	}

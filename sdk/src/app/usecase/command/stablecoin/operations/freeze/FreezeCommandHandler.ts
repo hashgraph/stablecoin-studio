@@ -40,7 +40,8 @@ export class FreezeCommandHandler implements ICommandHandler<FreezeCommand> {
 	) {}
 
 	async execute(command: FreezeCommand): Promise<FreezeCommandResponse> {
-		const { targetId, tokenId } = command;
+		const { targetId, tokenId, startDate } = command;
+		console.log('FreezeCommandHandler+++++++++++++++++'+ startDate)
 		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
 
@@ -61,7 +62,7 @@ export class FreezeCommandHandler implements ICommandHandler<FreezeCommand> {
 			account,
 			tokenId,
 		);
-		const res = await handler.freeze(capabilities, targetId);
+		const res = await handler.freeze(capabilities, targetId, startDate);
 		return Promise.resolve(
 			new FreezeCommandResponse(res.error === undefined),
 		);
