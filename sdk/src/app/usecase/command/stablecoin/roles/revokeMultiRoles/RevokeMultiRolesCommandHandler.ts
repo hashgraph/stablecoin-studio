@@ -69,7 +69,12 @@ export class RevokeMultiRolesCommandHandler
 			throw new AccountsIdNotExists(noExistsAccounts);
 		}
 
-		const res = await handler.revokeRoles(capabilities, targetsId, roles, startDate);
+		const res = await handler.revokeRoles(
+			capabilities,
+			targetsId,
+			roles,
+			startDate,
+		);
 
 		// return Promise.resolve({ payload: res.response ?? false });
 		return Promise.resolve(

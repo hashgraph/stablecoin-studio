@@ -154,7 +154,7 @@ const UnfreezeOperation = () => {
 								},
 								{
 									label: t('multiSig:startDate'),
-									value: formatDateTime({ dateTime: getValues().startDate }),
+									value: formatDateTime({ dateTime: getValues().startDate, isUTC: false }),
 								},
 							]}
 						/>

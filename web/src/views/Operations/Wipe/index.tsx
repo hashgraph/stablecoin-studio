@@ -8,7 +8,11 @@ import InputController from '../../../components/Form/InputController';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
 import ModalsHandler from '../../../components/ModalsHandler';
 import SDKService from '../../../services/SDKService';
-import { LAST_WALLET_SELECTED, SELECTED_WALLET_COIN, walletActions } from '../../../store/slices/walletSlice';
+import {
+	LAST_WALLET_SELECTED,
+	SELECTED_WALLET_COIN,
+	walletActions,
+} from '../../../store/slices/walletSlice';
 
 import { handleRequestValidation, validateDecimalsString } from '../../../utils/validationsHelper';
 import OperationLayout from './../OperationLayout';

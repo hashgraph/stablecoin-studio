@@ -29,7 +29,15 @@ export default class FreezeAccountStableCoinRequest extends ValidatedRequest<Fre
 	@OptionalField()
 	startDate?: string;
 
-	constructor({ tokenId, targetId, startDate }: { tokenId: string; targetId: string; startDate?: string}) {
+	constructor({
+		tokenId,
+		targetId,
+		startDate,
+	}: {
+		tokenId: string;
+		targetId: string;
+		startDate?: string;
+	}) {
 		super({
 			targetId: Validation.checkHederaIdFormat(),
 			tokenId: Validation.checkHederaIdFormat(),

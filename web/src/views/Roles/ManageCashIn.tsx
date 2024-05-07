@@ -84,7 +84,7 @@ const ManageCashIn = () => {
 						tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
 						targetId: '',
 						amount: '0',
-						startDate: undefined
+						startDate: undefined,
 					}),
 				);
 				break;
@@ -94,7 +94,7 @@ const ManageCashIn = () => {
 						tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
 						targetId: '',
 						amount: '0',
-						startDate: undefined
+						startDate: undefined,
 					}),
 				);
 				break;
@@ -104,7 +104,7 @@ const ManageCashIn = () => {
 					new ResetSupplierAllowanceRequest({
 						targetId: '',
 						tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
-						startDate: undefined
+						startDate: undefined,
 					}),
 				);
 				break;
@@ -139,7 +139,7 @@ const ManageCashIn = () => {
 							tokenId: selectedStableCoin.tokenId.toString(),
 							targetId: values.account,
 							amount: values.amount ? values.amount.toString() : '',
-							startDate: values.startDate ? values.startDate.toISOString() : undefined
+							startDate: values.startDate ? values.startDate.toISOString() : undefined,
 						}),
 					);
 					break;
@@ -149,7 +149,7 @@ const ManageCashIn = () => {
 							tokenId: selectedStableCoin.tokenId.toString(),
 							targetId: values.account,
 							amount: values.amount ? values.amount.toString() : '',
-							startDate: values.startDate ? values.startDate.toISOString() : undefined
+							startDate: values.startDate ? values.startDate.toISOString() : undefined,
 						}),
 					);
 					break;
@@ -158,7 +158,7 @@ const ManageCashIn = () => {
 						new ResetSupplierAllowanceRequest({
 							targetId: values.account,
 							tokenId: selectedStableCoin.tokenId.toString(),
-							startDate: values.startDate ? values.startDate.toISOString() : undefined
+							startDate: values.startDate ? values.startDate.toISOString() : undefined,
 						}),
 					);
 					break;
@@ -310,7 +310,8 @@ const ManageCashIn = () => {
 									}
 								/>
 							)}
-							{((isResetOperation || isIncreaseOrDecreaseOperaion) && selectedWallet === SupportedWallets.MULTISIG ) && (
+							{(isResetOperation || isIncreaseOrDecreaseOperaion) &&
+								selectedWallet === SupportedWallets.MULTISIG && (
 									<DatePickerController
 										rules={{
 											required: t('global:validations.required') ?? propertyNotFound,
@@ -333,7 +334,7 @@ const ManageCashIn = () => {
 										timeFormat='HH:mm'
 										timeIntervals={15}
 									/>
-							)}
+								)}
 						</Stack>
 					</>
 				}
@@ -353,14 +354,17 @@ const ManageCashIn = () => {
 				}}
 				ModalActionChildren={
 					<>
-					<DetailsReview title={t(`roles:${action}.modalActionSubtitle`)} details={getDetails()} />
+						<DetailsReview
+							title={t(`roles:${action}.modalActionSubtitle`)}
+							details={getDetails()}
+						/>
 						{selectedWallet === SupportedWallets.MULTISIG && (
 							<DetailsReview
 								title={t('multiSig:startDate')}
 								details={[
 									{
 										label: t(`multiSig:startDate`),
-										value: formatDateTime({ dateTime: getValues().startDate }),
+										value: formatDateTime({ dateTime: getValues().startDate, isUTC: false }),
 									},
 								]}
 							/>

@@ -51,7 +51,7 @@ export default class DecreaseSupplierAllowanceRequest extends ValidatedRequest<D
 				}
 
 				return Validation.checkIsoDateFormat(val);
-			}
+			},
 		});
 		this.tokenId = tokenId;
 		this.targetId = targetId;

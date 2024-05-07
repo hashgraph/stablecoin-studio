@@ -94,7 +94,7 @@ export default class RevokeMultiRolesRequest extends ValidatedRequest<RevokeMult
 				}
 
 				return Validation.checkIsoDateFormat(val);
-			}
+			},
 		});
 		this.tokenId = tokenId;
 		this.targetsId = targetsId;

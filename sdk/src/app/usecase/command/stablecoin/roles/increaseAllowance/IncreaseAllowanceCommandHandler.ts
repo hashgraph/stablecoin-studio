@@ -63,7 +63,7 @@ export class IncreaseAllowanceCommandHandler
 			capabilities,
 			targetId,
 			BigDecimal.fromString(amount, capabilities.coin.decimals),
-			startDate
+			startDate,
 		);
 		// return Promise.resolve({ payload: res.response });
 		return Promise.resolve(

@@ -369,7 +369,11 @@ class StableCoinInPort implements IStableCoinInPort {
 
 		return (
 			await this.commandBus.execute(
-				new RescueHBARCommand(amount, HederaId.from(tokenId), startDate),
+				new RescueHBARCommand(
+					amount,
+					HederaId.from(tokenId),
+					startDate,
+				),
 			)
 		).payload;
 	}
@@ -385,7 +389,7 @@ class StableCoinInPort implements IStableCoinInPort {
 					amount,
 					HederaId.from(targetId),
 					HederaId.from(tokenId),
-					startDate
+					startDate,
 				),
 			)
 		).payload;
@@ -499,7 +503,7 @@ class StableCoinInPort implements IStableCoinInPort {
 				new FreezeCommand(
 					HederaId.from(targetId),
 					HederaId.from(tokenId),
-					startDate
+					startDate,
 				),
 			)
 		).payload;
@@ -515,7 +519,7 @@ class StableCoinInPort implements IStableCoinInPort {
 				new UnFreezeCommand(
 					HederaId.from(targetId),
 					HederaId.from(tokenId),
-					startDate
+					startDate,
 				),
 			)
 		).payload;

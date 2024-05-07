@@ -7,7 +7,11 @@ import OperationLayout from '../OperationLayout';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
 import ModalsHandler from '../../../components/ModalsHandler';
 import { useDispatch, useSelector } from 'react-redux';
-import { LAST_WALLET_SELECTED, SELECTED_WALLET_COIN, walletActions } from '../../../store/slices/walletSlice';
+import {
+	LAST_WALLET_SELECTED,
+	SELECTED_WALLET_COIN,
+	walletActions,
+} from '../../../store/slices/walletSlice';
 import SDKService from '../../../services/SDKService';
 import { handleRequestValidation, validateDecimalsString } from '../../../utils/validationsHelper';
 import { useState } from 'react';
@@ -177,7 +181,7 @@ const BurnOperation = () => {
 								},
 								{
 									label: t('multiSig:startDate'),
-									value: formatDateTime({ dateTime: getValues().startDate }),
+									value: formatDateTime({ dateTime: getValues().startDate, isUTC: false }),
 									valueInBold: true,
 								},
 							]}

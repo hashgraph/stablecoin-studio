@@ -28,7 +28,13 @@ export default class DeleteRequest extends ValidatedRequest<DeleteRequest> {
 	@OptionalField()
 	startDate?: string;
 
-	constructor({ tokenId, startDate }: { tokenId: string; startDate?: string}) {
+	constructor({
+		tokenId,
+		startDate,
+	}: {
+		tokenId: string;
+		startDate?: string;
+	}) {
 		super({
 			tokenId: Validation.checkHederaIdFormat(),
 			startDate: (val) => {
@@ -36,7 +42,7 @@ export default class DeleteRequest extends ValidatedRequest<DeleteRequest> {
 					return;
 				}
 				return Validation.checkIsoDateFormat(val);
-			}
+			},
 		});
 		this.tokenId = tokenId;
 		this.startDate = startDate;

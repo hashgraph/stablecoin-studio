@@ -194,7 +194,7 @@ class RoleInPort implements IRole {
 					targetsIdHederaIds,
 					amounts ?? [],
 					HederaId.from(tokenId),
-					startDate
+					startDate,
 				),
 			)
 		).payload;
@@ -216,7 +216,7 @@ class RoleInPort implements IRole {
 					roles,
 					targetsIdHederaIds,
 					HederaId.from(tokenId),
-					startDate
+					startDate,
 				),
 			)
 		).payload;
@@ -276,7 +276,7 @@ class RoleInPort implements IRole {
 				new ResetAllowanceCommand(
 					HederaId.from(targetId),
 					HederaId.from(tokenId),
-					startDate
+					startDate,
 				),
 			)
 		).payload;
@@ -295,7 +295,7 @@ class RoleInPort implements IRole {
 					amount,
 					HederaId.from(targetId),
 					HederaId.from(tokenId),
-					startDate
+					startDate,
 				),
 			)
 		).payload;
@@ -314,7 +314,7 @@ class RoleInPort implements IRole {
 					amount,
 					HederaId.from(targetId),
 					HederaId.from(tokenId),
-					startDate
+					startDate,
 				),
 			)
 		).payload;

@@ -32,36 +32,26 @@ export const formatShortKey = ({ key }: { key: string }) => {
 	}
 };
 
-export const formatDateTime = ({ dateTime }: { dateTime?: Date }) => {
+export const formatDateTime = ({ dateTime, isUTC }: { dateTime?: Date; isUTC?: boolean }) => {
 	if (!dateTime) return undefined;
+	// By default, the date is formatted in UTC
+	isUTC = isUTC ?? true;
+	let year, month, day, hour, minute, second;
 
-	let month = (dateTime.getUTCMonth() + 1).toString();
-	if (month.length < 2) month = '0' + month;
-
-	let day = dateTime.getUTCDate().toString();
-	if (day.length < 2) day = '0' + day;
-
-	let hour = dateTime.getUTCHours().toString();
-	if (hour.length < 2) hour = '0' + hour;
-
-	let minute = dateTime.getUTCMinutes().toString();
-	if (minute.length < 2) minute = '0' + minute;
-
-	let second = dateTime.getUTCSeconds().toString();
-	if (second.length < 2) second = '0' + second;
-
-	return (
-		dateTime.getUTCFullYear().toString() +
-		'-' +
-		month +
-		'-' +
-		day +
-		'T' +
-		hour +
-		':' +
-		minute +
-		':' +
-		second +
-		'Z'
-	);
+	if (isUTC) {
+		year = dateTime.getUTCFullYear().toString();
+		month = (dateTime.getUTCMonth() + 1).toString().padStart(2, '0');
+		day = dateTime.getUTCDate().toString().padStart(2, '0');
+		hour = dateTime.getUTCHours().toString().padStart(2, '0');
+		minute = dateTime.getUTCMinutes().toString().padStart(2, '0');
+		second = dateTime.getUTCSeconds().toString().padStart(2, '0');
+	} else {
+		year = dateTime.getFullYear().toString();
+		month = (dateTime.getMonth() + 1).toString().padStart(2, '0');
+		day = dateTime.getDate().toString().padStart(2, '0');
+		hour = dateTime.getHours().toString().padStart(2, '0');
+		minute = dateTime.getMinutes().toString().padStart(2, '0');
+		second = dateTime.getSeconds().toString().padStart(2, '0');
+	}
+	return `${year}-${month}-${day}T${hour}:${minute}:${second}${isUTC ? 'Z' : ''}`;
 };

@@ -30,7 +30,15 @@ export default class RescueHBARRequest extends ValidatedRequest<RescueHBARReques
 	@OptionalField()
 	startDate?: string;
 
-	constructor({ tokenId, amount, startDate }: { tokenId: string; amount: string; startDate?: string}) {
+	constructor({
+		tokenId,
+		amount,
+		startDate,
+	}: {
+		tokenId: string;
+		amount: string;
+		startDate?: string;
+	}) {
 		super({
 			tokenId: Validation.checkHederaIdFormat(),
 			amount: Validation.checkAmount(false, HBAR_DECIMALS),
@@ -39,7 +47,7 @@ export default class RescueHBARRequest extends ValidatedRequest<RescueHBARReques
 					return;
 				}
 				return Validation.checkIsoDateFormat(val);
-			}
+			},
 		});
 		this.tokenId = tokenId;
 		this.amount = amount;

@@ -29,7 +29,15 @@ export default class RescueRequest extends ValidatedRequest<RescueRequest> {
 	@OptionalField()
 	startDate?: string;
 
-	constructor({ tokenId, amount, startDate }: { tokenId: string; amount: string; startDate?: string}) {
+	constructor({
+		tokenId,
+		amount,
+		startDate,
+	}: {
+		tokenId: string;
+		amount: string;
+		startDate?: string;
+	}) {
 		super({
 			tokenId: Validation.checkHederaIdFormat(),
 			amount: Validation.checkAmount(),
@@ -38,7 +46,7 @@ export default class RescueRequest extends ValidatedRequest<RescueRequest> {
 					return;
 				}
 				return Validation.checkIsoDateFormat(val);
-			}
+			},
 		});
 		this.tokenId = tokenId;
 		this.amount = amount;

@@ -82,7 +82,7 @@ export class GrantMultiRolesCommandHandler
 			targetsId,
 			roles,
 			amountsFormatted,
-			startDate
+			startDate,
 		);
 
 		return Promise.resolve(

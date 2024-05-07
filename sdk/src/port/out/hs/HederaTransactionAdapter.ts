@@ -281,7 +281,6 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		amount: BigDecimal,
 		startDate?: string,
 	): Promise<TransactionResponse> {
-		console.log('cashin'+ startDate);
 		const params = new Params({
 			targetId: targetId,
 			amount: amount,
@@ -459,7 +458,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			params,
 			undefined,
 			undefined,
-			startDate
+			startDate,
 		);
 	}
 
@@ -479,7 +478,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			params,
 			undefined,
 			undefined,
-			startDate
+			startDate,
 		);
 	}
 
@@ -655,7 +654,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			params,
 			undefined,
 			undefined,
-			startDate
+			startDate,
 		);
 	}
 
@@ -733,7 +732,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			params,
 			undefined,
 			undefined,
-			startDate
+			startDate,
 		);
 	}
 
@@ -853,7 +852,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			params,
 			undefined,
 			undefined,
-			startDate
+			startDate,
 		);
 	}
 
@@ -875,7 +874,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			params,
 			undefined,
 			undefined,
-			startDate
+			startDate,
 		);
 	}
 
@@ -895,7 +894,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			params,
 			undefined,
 			undefined,
-			startDate
+			startDate,
 		);
 	}
 

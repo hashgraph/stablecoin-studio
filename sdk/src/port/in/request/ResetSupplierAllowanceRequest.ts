@@ -29,7 +29,15 @@ export default class ResetSupplierAllowanceRequest extends ValidatedRequest<Rese
 	@OptionalField()
 	startDate?: string;
 
-	constructor({ targetId, tokenId, startDate }: { targetId: string; tokenId: string; startDate?: string }) {
+	constructor({
+		targetId,
+		tokenId,
+		startDate,
+	}: {
+		targetId: string;
+		tokenId: string;
+		startDate?: string;
+	}) {
 		super({
 			targetId: Validation.checkHederaIdFormat(),
 			tokenId: Validation.checkHederaIdFormat(),
@@ -39,7 +47,7 @@ export default class ResetSupplierAllowanceRequest extends ValidatedRequest<Rese
 				}
 
 				return Validation.checkIsoDateFormat(val);
-			}
+			},
 		});
 		this.targetId = targetId;
 		this.tokenId = tokenId;

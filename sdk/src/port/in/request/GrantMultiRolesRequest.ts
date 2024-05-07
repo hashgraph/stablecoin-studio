@@ -126,8 +126,7 @@ export default class GrantMultiRolesRequest extends ValidatedRequest<GrantMultiR
 					return;
 				}
 				return Validation.checkIsoDateFormat(val);
-
-			}
+			},
 		});
 		this.tokenId = tokenId;
 		this.targetsId = targetsId;

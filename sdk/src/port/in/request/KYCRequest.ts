@@ -29,7 +29,15 @@ export default class KYCRequest extends ValidatedRequest<KYCRequest> {
 	@OptionalField()
 	startDate?: string;
 
-	constructor({ targetId, tokenId, startDate }: { targetId: string; tokenId: string; startDate?: string}) {
+	constructor({
+		targetId,
+		tokenId,
+		startDate,
+	}: {
+		targetId: string;
+		tokenId: string;
+		startDate?: string;
+	}) {
 		super({
 			targetId: Validation.checkHederaIdFormat(),
 			tokenId: Validation.checkHederaIdFormat(),
@@ -38,7 +46,7 @@ export default class KYCRequest extends ValidatedRequest<KYCRequest> {
 					return;
 				}
 				return Validation.checkIsoDateFormat(val);
-			}
+			},
 		});
 
 		this.targetId = targetId;

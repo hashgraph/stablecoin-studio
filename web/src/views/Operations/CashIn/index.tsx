@@ -198,7 +198,7 @@ const CashInOperation = () => {
 								},
 								{
 									label: t('multiSig:modalAction.startDate'),
-									value: formatDateTime({ dateTime: getValues().startDate }),
+									value: formatDateTime({ dateTime: getValues().startDate, isUTC: false }),
 									valueInBold: true,
 								},
 							]}
