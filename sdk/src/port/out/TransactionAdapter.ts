@@ -101,7 +101,10 @@ interface ITransactionAdapter {
 		targetId: HederaId,
 		startDate?: string,
 	): Promise<TransactionResponse>;
-	pause(coin: StableCoinCapabilities): Promise<TransactionResponse>;
+	pause(
+		coin: StableCoinCapabilities,
+		startDate?: string,
+	): Promise<TransactionResponse>;
 	unpause(coin: StableCoinCapabilities): Promise<TransactionResponse>;
 	rescue(
 		coin: StableCoinCapabilities,
@@ -113,7 +116,10 @@ interface ITransactionAdapter {
 		amount: BigDecimal,
 		startDate?: string,
 	): Promise<TransactionResponse>;
-	delete(coin: StableCoinCapabilities): Promise<TransactionResponse>;
+	delete(
+		coin: StableCoinCapabilities,
+		startDate?: string,
+	): Promise<TransactionResponse>;
 	transfer(
 		coin: StableCoinCapabilities,
 		amount: BigDecimal,
@@ -336,11 +342,13 @@ export default abstract class TransactionAdapter
 	}
 	pause(
 		coin: StableCoinCapabilities,
+		startDate?: string,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
 	unpause(
 		coin: StableCoinCapabilities,
+		startDate?: string,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
@@ -360,6 +368,7 @@ export default abstract class TransactionAdapter
 	}
 	delete(
 		coin: StableCoinCapabilities,
+		startDate?: string,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}

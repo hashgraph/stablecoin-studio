@@ -404,18 +404,33 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 
 	public async pause(
 		coin: StableCoinCapabilities,
+		startDate?: string,
 	): Promise<TransactionResponse> {
-		return this.performOperation(coin, Operation.PAUSE, 'pause', PAUSE_GAS);
+		return this.performOperation(
+			coin,
+			Operation.PAUSE,
+			'pause',
+			PAUSE_GAS,
+			undefined,
+			undefined,
+			undefined,
+			startDate,
+		);
 	}
 
 	public async unpause(
 		coin: StableCoinCapabilities,
+		startDate?: string,
 	): Promise<TransactionResponse> {
 		return this.performOperation(
 			coin,
 			Operation.UNPAUSE,
 			'unpause',
 			UNPAUSE_GAS,
+			undefined,
+			undefined,
+			undefined,
+			startDate,
 		);
 	}
 
@@ -484,12 +499,17 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 
 	public async delete(
 		coin: StableCoinCapabilities,
+		startDate?: string,
 	): Promise<TransactionResponse> {
 		return this.performOperation(
 			coin,
 			Operation.DELETE,
 			'deleteToken',
 			DELETE_GAS,
+			undefined,
+			undefined,
+			undefined,
+			startDate,
 		);
 	}
 
