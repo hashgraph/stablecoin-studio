@@ -145,7 +145,7 @@ const WipeOperation = () => {
 									request.targetId = e.target.value;
 								}}
 							/>
-							{selectedWallet === SupportedWallets.MULTISIG ? (
+							{selectedWallet === SupportedWallets.MULTISIG && (
 								<DatePickerController
 									rules={{
 										required: t('global:validations.required') ?? propertyNotFound,
@@ -168,8 +168,6 @@ const WipeOperation = () => {
 									timeFormat='HH:mm'
 									timeIntervals={15}
 								/>
-							) : (
-								<></>
 							)}
 						</Stack>
 					</>

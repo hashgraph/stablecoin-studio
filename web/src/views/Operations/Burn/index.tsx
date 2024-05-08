@@ -124,7 +124,7 @@ const BurnOperation = () => {
 								label={t('burn:amountLabel') ?? propertyNotFound}
 								placeholder={t('burn:amountPlaceholder') ?? propertyNotFound}
 							/>
-							{selectedWallet === SupportedWallets.MULTISIG ? (
+							{selectedWallet === SupportedWallets.MULTISIG && (
 								<DatePickerController
 									rules={{
 										required: t('global:validations.required') ?? propertyNotFound,
@@ -147,8 +147,6 @@ const BurnOperation = () => {
 									timeFormat='HH:mm'
 									timeIntervals={15}
 								/>
-							) : (
-								<></>
 							)}
 						</Stack>
 					</>

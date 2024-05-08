@@ -102,7 +102,7 @@ const RevokeKycOperation = () => {
 								placeholder={t('revokeKYC:accountPlaceholder') ?? propertyNotFound}
 								label={t('revokeKYC:accountLabel') ?? propertyNotFound}
 							/>
-							{selectedWallet === SupportedWallets.MULTISIG ? (
+							{selectedWallet === SupportedWallets.MULTISIG && (
 								<DatePickerController
 									rules={{
 										required: t('global:validations.required') ?? propertyNotFound,
@@ -125,8 +125,6 @@ const RevokeKycOperation = () => {
 									timeFormat='HH:mm'
 									timeIntervals={15}
 								/>
-							) : (
-								<></>
 							)}
 						</Stack>
 					</>

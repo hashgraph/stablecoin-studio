@@ -100,7 +100,7 @@ const FreezeOperation = () => {
 								placeholder={t('freeze:accountPlaceholder') ?? propertyNotFound}
 								label={t('freeze:accountLabel') ?? propertyNotFound}
 							/>
-							{selectedWallet === SupportedWallets.MULTISIG ? (
+							{selectedWallet === SupportedWallets.MULTISIG && (
 								<DatePickerController
 									rules={{
 										required: t('global:validations.required') ?? propertyNotFound,
@@ -123,8 +123,6 @@ const FreezeOperation = () => {
 									timeFormat='HH:mm'
 									timeIntervals={15}
 								/>
-							) : (
-								<></>
 							)}
 						</Stack>
 					</>

@@ -112,7 +112,7 @@ const RescueHBAROperation = () => {
 								label={t('rescueHBAR:amountLabel') ?? propertyNotFound}
 								placeholder={t('rescueHBAR:amountPlaceholder') ?? propertyNotFound}
 							/>
-							{selectedWallet === SupportedWallets.MULTISIG ? (
+							{selectedWallet === SupportedWallets.MULTISIG && (
 								<DatePickerController
 									rules={{
 										required: t('global:validations.required') ?? propertyNotFound,
@@ -135,8 +135,6 @@ const RescueHBAROperation = () => {
 									timeFormat='HH:mm'
 									timeIntervals={15}
 								/>
-							) : (
-								<></>
 							)}
 						</Stack>
 					</>
