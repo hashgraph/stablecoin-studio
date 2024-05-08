@@ -459,36 +459,36 @@ class StableCoinInPort implements IStableCoinInPort {
 
 	@LogError
 	async pause(request: PauseRequest): Promise<boolean> {
-		const { tokenId } = request;
+		const { tokenId, startDate } = request;
 		handleValidation('PauseRequest', request);
 
 		return (
 			await this.commandBus.execute(
-				new PauseCommand(HederaId.from(tokenId)),
+				new PauseCommand(HederaId.from(tokenId), startDate),
 			)
 		).payload;
 	}
 
 	@LogError
 	async unPause(request: PauseRequest): Promise<boolean> {
-		const { tokenId } = request;
+		const { tokenId, startDate } = request;
 		handleValidation('PauseRequest', request);
 
 		return (
 			await this.commandBus.execute(
-				new UnPauseCommand(HederaId.from(tokenId)),
+				new UnPauseCommand(HederaId.from(tokenId), startDate),
 			)
 		).payload;
 	}
 
 	@LogError
 	async delete(request: DeleteRequest): Promise<boolean> {
-		const { tokenId } = request;
+		const { tokenId, startDate } = request;
 		handleValidation('DeleteRequest', request);
 
 		return (
 			await this.commandBus.execute(
-				new DeleteCommand(HederaId.from(tokenId)),
+				new DeleteCommand(HederaId.from(tokenId), startDate),
 			)
 		).payload;
 	}

@@ -1,10 +1,11 @@
-import { Box, Heading, Stack, HStack, Text } from '@chakra-ui/react';
+import { Box, Heading, HStack, Stack, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import BaseContainer from '../../../components/BaseContainer';
 import GridDirectAction from '../../../components/GridDirectAction';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+	LAST_WALLET_SELECTED,
 	SELECTED_TOKEN_ROLES,
 	SELECTED_WALLET_CAPABILITIES,
 	SELECTED_WALLET_COIN,
@@ -12,13 +13,14 @@ import {
 	walletActions,
 } from '../../../store/slices/walletSlice';
 import type { DirectActionProps } from '../../../components/DirectAction';
-import type { StableCoinCapabilities } from '@hashgraph/stablecoin-npm-sdk';
 import {
-	PauseRequest,
+	Access,
 	DeleteRequest,
 	Operation,
-	Access,
+	PauseRequest,
+	StableCoinCapabilities,
 	StableCoinRole,
+	SupportedWallets,
 } from '@hashgraph/stablecoin-npm-sdk';
 import type { IAccountToken } from '../../../interfaces/IAccountToken';
 import type { IExternalToken } from '../../../interfaces/IExternalToken';
@@ -27,6 +29,10 @@ import SDKService from '../../../services/SDKService';
 import { useNavigate } from 'react-router-dom';
 import { NamedRoutes } from '../../../Router/NamedRoutes';
 import { RouterManager } from '../../../Router/RouterManager';
+import DatePickerController from '../../../components/Form/DatePickerController';
+import { propertyNotFound } from '../../../constant';
+import { useForm } from 'react-hook-form';
+import { formatDateTime } from '../../../utils/inputHelper';
 
 const DangerZoneOperations = () => {
 	const { t } = useTranslation('operations');
@@ -39,7 +45,12 @@ const DangerZoneOperations = () => {
 	const capabilities: StableCoinCapabilities | undefined = useSelector(
 		SELECTED_WALLET_CAPABILITIES,
 	);
+	const selectedWallet = useSelector(LAST_WALLET_SELECTED);
 	const roles = useSelector(SELECTED_TOKEN_ROLES)!;
+
+	const { control, getValues, formState } = useForm({
+		mode: 'onChange',
+	});
 
 	const [disabledFeatures, setDisabledFeatures] = useState({
 		pause: false,
@@ -50,16 +61,21 @@ const DangerZoneOperations = () => {
 	const [errorUnpauseOperation, setErrorUnpauseOperation] = useState('');
 	const [errorDeleteOperation, setErrorDeleteOperation] = useState('');
 	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
+	const [startDate, setStartDate] = useState<string | undefined>(undefined);
 
-	const [requestPause] = useState(
+
+	const [requestPause, setRequestPause] = useState(
 		new PauseRequest({
 			tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
-		}),
+			startDate
+		})
 	);
-	const [requestDelete] = useState(
+
+	const [requestDelete, setRequestDelete] = useState(
 		new DeleteRequest({
 			tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
-		}),
+			startDate
+		})
 	);
 
 	const [isPaused, setPaused] = useState(false);
@@ -71,6 +87,18 @@ const DangerZoneOperations = () => {
 			getAvailableFeatures();
 		}
 	}, [selectedStableCoin]);
+
+	useEffect(() => {
+		setRequestPause(new PauseRequest({
+			tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
+			startDate
+		}));
+
+		setRequestDelete(new DeleteRequest({
+			tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
+			startDate
+		}));
+	}, [startDate, selectedStableCoin?.tokenId]);
 
 	const checkTokenStatus = async () => {
 		setPaused(selectedStableCoin?.paused || false);
@@ -241,6 +269,13 @@ const DangerZoneOperations = () => {
 			operationTranslate: 'delete',
 		},
 	];
+	const handleDateChange = (date: Date | [Date | null, Date | null] | null) => {
+  if (Array.isArray(date)) {
+    date = date[0];
+  }
+  setStartDate(date?.toISOString() ?? new Date().toISOString());
+	};
+
 
 	const filteredDirectActions = directActions.filter((access) => !access.isDisabled);
 
@@ -275,12 +310,38 @@ const DangerZoneOperations = () => {
 				)}
 			</HStack>
 			<BaseContainer title={t('title')}>
-				<Box p={{ base: 4, md: '128px' }}>
-					<Heading fontSize='20px' fontWeight='600' mb={14} data-testid='subtitle'>
-						{t('subtitle')}
+  <Box p={{ base: 4, md: '128px' }}>
+    {selectedWallet === SupportedWallets.MULTISIG ? (
+			<>
+					<Heading fontSize='20px' fontWeight='600' data-testid='subtitle'>
+						{t('subtitle-multiSig')}
 					</Heading>
-					<GridDirectAction directActions={filteredDirectActions} />
-				</Box>
+				<Text style={{ marginBottom: '15px', marginTop:'20px' }}>{t('subtitle-date')}:</Text>
+					<DatePickerController
+						rules={{
+							required: t('global:validations.required') ?? propertyNotFound,
+						}}
+						isRequired
+						showTimeSelect
+						placeholderText='Select date and time'
+						dateFormat="yyyy-MM-dd'T'HH:mm:ss"
+						control={control}
+						name='startDate'
+						minimumDate={new Date()}
+						timeFormat='HH:mm'
+						timeIntervals={15}
+						value={startDate ? formatDateTime({ dateTime: new Date(startDate), isUTC: false }) : ''}
+						onChangeAux={handleDateChange}
+					/>
+				<Text style={{ marginBottom: '15px', marginTop:'15px' }}>{t('subtitle')}:</Text>
+			</>
+		) : (
+			<Heading fontSize='20px' fontWeight='600' mb={14} data-testid='subtitle'>
+				{t('subtitle')}
+			</Heading>
+		)}
+		<GridDirectAction directActions={filteredDirectActions} />
+	</Box>
 			</BaseContainer>
 		</Stack>
 	);

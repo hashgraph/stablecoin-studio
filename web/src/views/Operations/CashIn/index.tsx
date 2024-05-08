@@ -139,7 +139,7 @@ const CashInOperation = () => {
 								placeholder={t('cashIn:destinationAccountPlaceholder') ?? propertyNotFound}
 								label={t('cashIn:destinationAccountLabel') ?? propertyNotFound}
 							/>
-							{selectedWallet === SupportedWallets.MULTISIG ? (
+							{selectedWallet === SupportedWallets.MULTISIG && (
 								<DatePickerController
 									rules={{
 										required: t('global:validations.required') ?? propertyNotFound,
@@ -162,8 +162,6 @@ const CashInOperation = () => {
 									timeFormat='HH:mm'
 									timeIntervals={15}
 								/>
-							) : (
-								<></>
 							)}
 						</Stack>
 					</>
