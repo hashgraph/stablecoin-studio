@@ -81,8 +81,11 @@ async function createMultisigAccount(): Promise<string> {
 
 	const newAccountReceipt = await newAccountResponse.getReceipt(client);
 	const newAccountId = newAccountReceipt.accountId;
+	if (newAccountId === null) {
+		throw new Error('newAccountId is null');
+	}
 
-	const multisigAccountId = newAccountId!.toString();
+	const multisigAccountId = newAccountId.toString();
 
 	return multisigAccountId;
 }

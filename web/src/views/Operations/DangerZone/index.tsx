@@ -63,19 +63,18 @@ const DangerZoneOperations = () => {
 	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
 	const [startDate, setStartDate] = useState<string | undefined>(undefined);
 
-
 	const [requestPause, setRequestPause] = useState(
 		new PauseRequest({
 			tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
-			startDate
-		})
+			startDate,
+		}),
 	);
 
 	const [requestDelete, setRequestDelete] = useState(
 		new DeleteRequest({
 			tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
-			startDate
-		})
+			startDate,
+		}),
 	);
 
 	const [isPaused, setPaused] = useState(false);
@@ -89,15 +88,19 @@ const DangerZoneOperations = () => {
 	}, [selectedStableCoin]);
 
 	useEffect(() => {
-		setRequestPause(new PauseRequest({
-			tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
-			startDate
-		}));
+		setRequestPause(
+			new PauseRequest({
+				tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
+				startDate,
+			}),
+		);
 
-		setRequestDelete(new DeleteRequest({
-			tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
-			startDate
-		}));
+		setRequestDelete(
+			new DeleteRequest({
+				tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
+				startDate,
+			}),
+		);
 	}, [startDate, selectedStableCoin?.tokenId]);
 
 	const checkTokenStatus = async () => {
@@ -270,12 +273,11 @@ const DangerZoneOperations = () => {
 		},
 	];
 	const handleDateChange = (date: Date | [Date | null, Date | null] | null) => {
-  if (Array.isArray(date)) {
-    date = date[0];
-  }
-  setStartDate(date?.toISOString() ?? new Date().toISOString());
+		if (Array.isArray(date)) {
+			date = date[0];
+		}
+		setStartDate(date?.toISOString() ?? new Date().toISOString());
 	};
-
 
 	const filteredDirectActions = directActions.filter((access) => !access.isDisabled);
 
@@ -310,38 +312,40 @@ const DangerZoneOperations = () => {
 				)}
 			</HStack>
 			<BaseContainer title={t('title')}>
-  <Box p={{ base: 4, md: '128px' }}>
-    {selectedWallet === SupportedWallets.MULTISIG ? (
-			<>
-					<Heading fontSize='20px' fontWeight='600' data-testid='subtitle'>
-						{t('subtitle-multiSig')}
-					</Heading>
-				<Text style={{ marginBottom: '15px', marginTop:'20px' }}>{t('subtitle-date')}:</Text>
-					<DatePickerController
-						rules={{
-							required: t('global:validations.required') ?? propertyNotFound,
-						}}
-						isRequired
-						showTimeSelect
-						placeholderText='Select date and time'
-						dateFormat="yyyy-MM-dd'T'HH:mm:ss"
-						control={control}
-						name='startDate'
-						minimumDate={new Date()}
-						timeFormat='HH:mm'
-						timeIntervals={15}
-						value={startDate ? formatDateTime({ dateTime: new Date(startDate), isUTC: false }) : ''}
-						onChangeAux={handleDateChange}
-					/>
-				<Text style={{ marginBottom: '15px', marginTop:'15px' }}>{t('subtitle')}:</Text>
-			</>
-		) : (
-			<Heading fontSize='20px' fontWeight='600' mb={14} data-testid='subtitle'>
-				{t('subtitle')}
-			</Heading>
-		)}
-		<GridDirectAction directActions={filteredDirectActions} />
-	</Box>
+				<Box p={{ base: 4, md: '128px' }}>
+					{selectedWallet === SupportedWallets.MULTISIG ? (
+						<>
+							<Heading fontSize='20px' fontWeight='600' data-testid='subtitle'>
+								{t('subtitle-multiSig')}
+							</Heading>
+							<Text style={{ marginBottom: '15px', marginTop: '20px' }}>{t('subtitle-date')}:</Text>
+							<DatePickerController
+								rules={{
+									required: t('global:validations.required') ?? propertyNotFound,
+								}}
+								isRequired
+								showTimeSelect
+								placeholderText='Select date and time'
+								dateFormat="yyyy-MM-dd'T'HH:mm:ss"
+								control={control}
+								name='startDate'
+								minimumDate={new Date()}
+								timeFormat='HH:mm'
+								timeIntervals={15}
+								value={
+									startDate ? formatDateTime({ dateTime: new Date(startDate), isUTC: false }) : ''
+								}
+								onChangeAux={handleDateChange}
+							/>
+							<Text style={{ marginBottom: '15px', marginTop: '15px' }}>{t('subtitle')}:</Text>
+						</>
+					) : (
+						<Heading fontSize='20px' fontWeight='600' mb={14} data-testid='subtitle'>
+							{t('subtitle')}
+						</Heading>
+					)}
+					<GridDirectAction directActions={filteredDirectActions} />
+				</Box>
 			</BaseContainer>
 		</Stack>
 	);

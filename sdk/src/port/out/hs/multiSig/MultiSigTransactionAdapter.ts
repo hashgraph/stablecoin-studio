@@ -29,7 +29,6 @@ import {
 } from '@hashgraph/sdk';
 import Account from '../../../../domain/context/account/Account.js';
 import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
-import { TransactionType } from '../../TransactionResponseEnums.js';
 import { lazyInject } from '../../../../core/decorator/LazyInjectDecorator.js';
 import NetworkService from '../../../../app/service/NetworkService.js';
 import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter.js';
@@ -70,11 +69,9 @@ export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
 
 	async signAndSendTransaction(
 		t: Transaction,
-		transactionType: TransactionType | undefined,
-		nameFunction?: string | undefined,
-		abi?: any[] | undefined,
 		startDate?: string, // TODO: instead of this could we retrieve this from backend using a service?
-	): Promise<TransactionResponse<any, Error>> {
+	): // eslint-disable-next-line @typescript-eslint/no-explicit-any
+	Promise<TransactionResponse<any, Error>> {
 		const publicKeys: string[] = [];
 
 		const accountId: AccountId = AccountId.fromString(
@@ -114,7 +111,11 @@ export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
 				this.networkService.consensusNodes[0].nodeId,
 		});
 
-		this.account.multiKey!.keys.forEach((key) => publicKeys.push(key.key));
+		if (!this.account.multiKey) {
+			throw new Error('MultiKey not found in the account');
+		}
+
+		this.account.multiKey.keys.forEach((key) => publicKeys.push(key.key));
 
 		const transactionDescription = await TransactionService.getDescription(
 			t,
@@ -126,7 +127,7 @@ export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
 			transactionDescription,
 			this.account.id.toString(),
 			publicKeys,
-			this.account.multiKey!.threshold,
+			this.account.multiKey.threshold,
 			this.networkService.environment,
 			new Date(dateStr),
 		);
@@ -134,8 +135,8 @@ export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
 		return new TransactionResponse(transactionId);
 	}
 
-	// MultiSig cannot eb used to sign anything
-	sign(message: string): Promise<string> {
+	// ! MultiSig cannot be used to sign anything
+	sign(): Promise<string> {
 		throw new Error('Method not implemented.');
 	}
 

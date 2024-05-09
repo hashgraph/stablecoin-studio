@@ -269,7 +269,6 @@ export default class OperationStableCoinService extends Service {
           tokenId: this.stableCoinId,
           targetId: '',
           amount: '',
-          startDate: undefined,
         });
 
         // Call to mint

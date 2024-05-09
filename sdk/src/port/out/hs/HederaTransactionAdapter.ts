@@ -1402,11 +1402,15 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	abstract getAccount(): Account;
 
 	abstract signAndSendTransaction(
-		t: Transaction,
-		transactionType: TransactionType,
-		nameFunction?: string,
-		abi?: any[],
-		startDate?: string,
+		...args:
+			| [t: Transaction, startDate?: string]
+			| [
+					t: Transaction,
+					transactionType: TransactionType,
+					nameFunction?: string,
+					abi?: any[],
+					startDate?: string,
+			  ]
 	): Promise<TransactionResponse>;
 
 	abstract sign(message: string | Transaction): Promise<string>;

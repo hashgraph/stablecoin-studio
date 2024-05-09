@@ -179,8 +179,6 @@ const WipeOperation = () => {
 				errorNotificationTitle={t('operations:modalErrorTitle')}
 				errorNotificationDescription={errorOperation}
 				errorTransactionUrl={errorTransactionUrl}
-				successNotificationTitle={t('operations:modalSuccessTitle')}
-				successNotificationDescription={successDescription}
 				modalActionProps={{
 					isOpen: isOpenModalAction,
 					onClose: onCloseModalAction,
@@ -225,6 +223,8 @@ const WipeOperation = () => {
 						/>
 					)
 				}
+				successNotificationTitle={t('operations:modalSuccessTitle')}
+				successNotificationDescription={successDescription}
 			/>
 		</>
 	);

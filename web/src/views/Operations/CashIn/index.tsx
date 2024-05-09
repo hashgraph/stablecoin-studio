@@ -19,7 +19,7 @@ import { useState } from 'react';
 import { BigDecimal, CashInRequest, SupportedWallets } from '@hashgraph/stablecoin-npm-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 import { propertyNotFound } from '../../../constant';
-import { formatAmount, formatDateTime } from '../../../utils/inputHelper';
+import { formatDateTime } from '../../../utils/inputHelper';
 
 const CashInOperation = () => {
 	const {

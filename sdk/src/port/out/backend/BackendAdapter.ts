@@ -236,7 +236,9 @@ export class BackendAdapter {
 		}
 	}
 
-	private configureHeaders(): any {
+	private configureHeaders(): {
+		headers: { [key: string]: string | undefined };
+	} {
 		const originHeaderValue = !Injectable.isWeb()
 			? 'http://localhost:3000'
 			: undefined;
