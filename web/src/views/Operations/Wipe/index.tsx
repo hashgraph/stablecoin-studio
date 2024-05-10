@@ -189,12 +189,8 @@ const WipeOperation = () => {
 				ModalActionChildren={
 					selectedWallet === SupportedWallets.MULTISIG ? (
 						<DetailsReview
-							title={t('multiSig:modalAction.subtitle')}
+							title={t('wipe:modalAction.subtitle')}
 							details={[
-								{
-									label: t('multiSig:startDate'),
-									value: getValues().startDate,
-								},
 								{
 									label: t('wipe:modalAction.fromAccount'),
 									value: getValues().destinationAccount,
@@ -203,6 +199,10 @@ const WipeOperation = () => {
 									label: t('wipe:modalAction.amount'),
 									value: getValues().amount,
 									valueInBold: true,
+								},
+								{
+									label: t('multiSig:startDate'),
+									value: formatDateTime({ dateTime: getValues().startDate, isUTC: false }),
 								},
 							]}
 						/>
