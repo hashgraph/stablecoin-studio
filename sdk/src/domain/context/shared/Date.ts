@@ -18,15 +18,5 @@
  *
  */
 
-import { Response } from './Response.js';
-
-export default class TransactionResponse<
-	T extends Response = Response,
-	X extends Error = Error,
-> {
-	constructor(
-		public readonly id?: string,
-		public response?: T,
-		public readonly error?: X,
-	) {}
-}
+export const ISO_8601_REGEX =
+	/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(Z|[+-]\d{2}:\d{2})?$/;

@@ -182,6 +182,7 @@ const MultiSigTransactions = () => {
 								<Th>Account</Th>
 								<Th>Threshold</Th>
 								<Th>Status</Th>
+								<Th>Start Date</Th>
 								<Th>Actions</Th>
 							</Tr>
 						</Thead>
@@ -214,6 +215,13 @@ const MultiSigTransactions = () => {
 									</Td>
 									<Td borderBottom='1px' borderColor='gray.200'>
 										<Tag>{transaction.status}</Tag>
+									</Td>
+									<Td borderBottom='1px' borderColor='gray.200'>
+										<Tag>
+											{new Date(transaction.start_date).toDateString() +
+												' ' +
+												new Date(transaction.start_date).toLocaleTimeString()}
+										</Tag>
 									</Td>
 									<Td borderBottom='1px' borderColor='gray.200'>
 										{canSignTransaction(transaction) && (

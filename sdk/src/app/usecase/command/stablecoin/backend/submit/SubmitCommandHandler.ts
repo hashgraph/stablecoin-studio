@@ -59,6 +59,8 @@ export class SubmitCommandHandler implements ICommandHandler<SubmitCommand> {
 			Hex.toUint8Array(transaction.transaction_message),
 		);
 
+		//TODO: check if we can set the transactionId (not database txId) before sending the transaction
+
 		for (let i = 0; i < transaction.signatures.length; i++) {
 			const publicKey_i = PublicKey.fromString(
 				transaction.signed_keys[i],

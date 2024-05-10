@@ -7,7 +7,10 @@ export class UnPauseCommandResponse implements CommandResponse {
 }
 
 export class UnPauseCommand extends Command<UnPauseCommandResponse> {
-	constructor(public readonly tokenId: HederaId) {
+	constructor(
+		public readonly tokenId: HederaId,
+		public readonly startDate?: string,
+	) {
 		super();
 	}
 }

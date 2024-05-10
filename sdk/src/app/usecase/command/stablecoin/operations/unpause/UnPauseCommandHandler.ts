@@ -38,14 +38,14 @@ export class UnPauseCommandHandler implements ICommandHandler<UnPauseCommand> {
 	) {}
 
 	async execute(command: UnPauseCommand): Promise<UnPauseCommandResponse> {
-		const { tokenId } = command;
+		const { tokenId, startDate } = command;
 		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
 		const capabilities = await this.stableCoinService.getCapabilities(
 			account,
 			tokenId,
 		);
-		const res = await handler.unpause(capabilities);
+		const res = await handler.unpause(capabilities, startDate);
 		return Promise.resolve(
 			new UnPauseCommandResponse(res.error === undefined),
 		);

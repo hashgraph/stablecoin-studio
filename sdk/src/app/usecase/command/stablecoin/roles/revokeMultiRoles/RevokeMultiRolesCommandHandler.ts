@@ -46,7 +46,7 @@ export class RevokeMultiRolesCommandHandler
 	async execute(
 		command: RevokeMultiRolesCommand,
 	): Promise<RevokeMultiRolesCommandResponse> {
-		const { roles, targetsId, tokenId } = command;
+		const { roles, targetsId, tokenId, startDate } = command;
 		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
 		const capabilities = await this.stableCoinService.getCapabilities(
@@ -69,7 +69,12 @@ export class RevokeMultiRolesCommandHandler
 			throw new AccountsIdNotExists(noExistsAccounts);
 		}
 
-		const res = await handler.revokeRoles(capabilities, targetsId, roles);
+		const res = await handler.revokeRoles(
+			capabilities,
+			targetsId,
+			roles,
+			startDate,
+		);
 
 		// return Promise.resolve({ payload: res.response ?? false });
 		return Promise.resolve(

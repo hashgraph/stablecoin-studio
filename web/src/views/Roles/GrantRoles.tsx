@@ -8,12 +8,14 @@ import {
 	Button,
 	Box,
 	HStack,
+	Divider,
 } from '@chakra-ui/react';
 import {
 	GrantRoleRequest,
 	GrantMultiRolesRequest,
 	StableCoinRole,
 	GetRolesRequest,
+	SupportedWallets,
 } from '@hashgraph/stablecoin-npm-sdk';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
@@ -30,6 +32,7 @@ import ModalsHandler from '../../components/ModalsHandler';
 import { propertyNotFound } from '../../constant';
 import { SDKService } from '../../services/SDKService';
 import {
+	LAST_WALLET_SELECTED,
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_PAIRED_ACCOUNTID,
 	walletActions,
@@ -37,6 +40,8 @@ import {
 import type { AppDispatch } from '../../store/store';
 import { handleRequestValidation, validateDecimalsString } from '../../utils/validationsHelper';
 import OperationLayout from '../Operations/OperationLayout';
+import DatePickerController from '../../components/Form/DatePickerController';
+import { formatDateTime } from '../../utils/inputHelper';
 
 interface GrantRoleForm {
 	accountId: string;
@@ -80,6 +85,7 @@ const GrantRoleOperation = ({
 	}, [watch()]);
 	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
 	const [grantRoles, setGrantRoles] = useState<GrantRoleRequest[]>([]);
+	const selectedWallet = useSelector(LAST_WALLET_SELECTED);
 
 	useEffect(() => {
 		addNewAccount();
@@ -104,6 +110,7 @@ const GrantRoleOperation = ({
 			tokenId: selectedStableCoin!.tokenId!.toString(),
 			targetsId: targets,
 			roles: rolesRequest as StableCoinRole[],
+			startDate: values.startDate ? values.startDate.toISOString() : undefined,
 		});
 		if (rolesRequest.includes(StableCoinRole.CASHIN_ROLE)) {
 			request.amounts = values.rol.map((item: GrantRoleForm) =>
@@ -375,6 +382,25 @@ const GrantRoleOperation = ({
 								{t(`roles:revokeRole.buttonAddAccount`)}
 							</Button>
 						</Flex>
+						{selectedWallet === SupportedWallets.MULTISIG ? (
+							<DatePickerController
+								rules={{
+									required: t('global:validations.required') ?? propertyNotFound,
+								}}
+								isRequired
+								showTimeSelect
+								placeholderText='Select date and time'
+								dateFormat="yyyy-MM-dd'T'HH:mm:ss"
+								control={control}
+								name='startDate'
+								label={t('multiSig:startDate') ?? propertyNotFound}
+								minimumDate={new Date()}
+								timeFormat='HH:mm'
+								timeIntervals={15}
+							/>
+						) : (
+							<></>
+						)}
 					</>
 				}
 				onConfirm={handleSubmit}
@@ -414,12 +440,22 @@ const GrantRoleOperation = ({
 						<DetailsReview
 							title={t(`roles:giveRole.modalActionSubtitleAccountSection`)}
 							details={getAccountsDetails()}
-							divider={true}
 						/>
 						<DetailsReview
 							title={t(`roles:giveRole.modalActionSubtitleRolesSection`)}
 							details={getRolesDetails()}
 						/>
+						{selectedWallet === SupportedWallets.MULTISIG && (
+							<DetailsReview
+								title={t('multiSig:startDate')}
+								details={[
+									{
+										label: t(`multiSig:startDate`),
+										value: formatDateTime({ dateTime: getValues().startDate, isUTC: false }),
+									},
+								]}
+							/>
+						)}
 					</>
 				}
 				successNotificationTitle={t(`roles:giveRole.modalSuccessTitle`)}

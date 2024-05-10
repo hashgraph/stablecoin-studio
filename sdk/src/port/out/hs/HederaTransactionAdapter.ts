@@ -279,6 +279,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
 		amount: BigDecimal,
+		startDate?: string,
 	): Promise<TransactionResponse> {
 		const params = new Params({
 			targetId: targetId,
@@ -290,6 +291,9 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			'mint',
 			CASHIN_GAS,
 			params,
+			undefined,
+			undefined,
+			startDate,
 		);
 	}
 
@@ -297,6 +301,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
 		amount: BigDecimal,
+		startDate?: string,
 	): Promise<TransactionResponse> {
 		const params = new Params({
 			targetId: targetId,
@@ -308,12 +313,16 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			'wipe',
 			WIPE_GAS,
 			params,
+			undefined,
+			undefined,
+			startDate,
 		);
 	}
 
 	public async burn(
 		coin: StableCoinCapabilities,
 		amount: BigDecimal,
+		startDate?: string,
 	): Promise<TransactionResponse> {
 		const params = new Params({
 			amount: amount,
@@ -324,6 +333,9 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			'burn',
 			BURN_GAS,
 			params,
+			undefined,
+			undefined,
+			startDate,
 		);
 	}
 
@@ -353,6 +365,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	public async freeze(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
+		startDate?: string,
 	): Promise<TransactionResponse> {
 		const params = new Params({
 			targetId: targetId,
@@ -363,12 +376,16 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			'freeze',
 			FREEZE_GAS,
 			params,
+			undefined,
+			undefined,
+			startDate,
 		);
 	}
 
 	public async unfreeze(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
+		startDate?: string,
 	): Promise<TransactionResponse> {
 		const params = new Params({
 			targetId: targetId,
@@ -379,23 +396,41 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			'unfreeze',
 			UNFREEZE_GAS,
 			params,
+			undefined,
+			undefined,
+			startDate,
 		);
 	}
 
 	public async pause(
 		coin: StableCoinCapabilities,
+		startDate?: string,
 	): Promise<TransactionResponse> {
-		return this.performOperation(coin, Operation.PAUSE, 'pause', PAUSE_GAS);
+		return this.performOperation(
+			coin,
+			Operation.PAUSE,
+			'pause',
+			PAUSE_GAS,
+			undefined,
+			undefined,
+			undefined,
+			startDate,
+		);
 	}
 
 	public async unpause(
 		coin: StableCoinCapabilities,
+		startDate?: string,
 	): Promise<TransactionResponse> {
 		return this.performOperation(
 			coin,
 			Operation.UNPAUSE,
 			'unpause',
 			UNPAUSE_GAS,
+			undefined,
+			undefined,
+			undefined,
+			startDate,
 		);
 	}
 
@@ -425,6 +460,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	public async rescue(
 		coin: StableCoinCapabilities,
 		amount: BigDecimal,
+		startDate?: string,
 	): Promise<TransactionResponse> {
 		const params = new Params({
 			amount: amount,
@@ -435,12 +471,16 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			'rescue',
 			RESCUE_GAS,
 			params,
+			undefined,
+			undefined,
+			startDate,
 		);
 	}
 
 	public async rescueHBAR(
 		coin: StableCoinCapabilities,
 		amount: BigDecimal,
+		startDate?: string,
 	): Promise<TransactionResponse> {
 		const params = new Params({
 			amount: amount,
@@ -451,17 +491,25 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			'rescueHBAR',
 			RESCUE_HBAR_GAS,
 			params,
+			undefined,
+			undefined,
+			startDate,
 		);
 	}
 
 	public async delete(
 		coin: StableCoinCapabilities,
+		startDate?: string,
 	): Promise<TransactionResponse> {
 		return this.performOperation(
 			coin,
 			Operation.DELETE,
 			'deleteToken',
 			DELETE_GAS,
+			undefined,
+			undefined,
+			undefined,
+			startDate,
 		);
 	}
 
@@ -607,6 +655,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		targetsId: HederaId[],
 		roles: StableCoinRole[],
 		amounts: BigDecimal[],
+		startDate?: string,
 	): Promise<TransactionResponse> {
 		const params = new Params({
 			roles: roles,
@@ -623,6 +672,9 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			'grantRoles',
 			gas,
 			params,
+			undefined,
+			undefined,
+			startDate,
 		);
 	}
 
@@ -682,6 +734,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		coin: StableCoinCapabilities,
 		targetsId: HederaId[],
 		roles: StableCoinRole[],
+		startDate?: string,
 	): Promise<TransactionResponse> {
 		const params = new Params({
 			roles: roles,
@@ -697,6 +750,9 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			'revokeRoles',
 			gas,
 			params,
+			undefined,
+			undefined,
+			startDate,
 		);
 	}
 
@@ -802,6 +858,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
 		amount: BigDecimal,
+		startDate?: string,
 	): Promise<TransactionResponse> {
 		const params = new Params({
 			targetId: targetId,
@@ -813,6 +870,9 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			'increaseSupplierAllowance',
 			INCREASE_SUPPLY_GAS,
 			params,
+			undefined,
+			undefined,
+			startDate,
 		);
 	}
 
@@ -820,6 +880,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
 		amount: BigDecimal,
+		startDate?: string,
 	): Promise<TransactionResponse> {
 		const params = new Params({
 			targetId: targetId,
@@ -831,12 +892,16 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			'decreaseSupplierAllowance',
 			DECREASE_SUPPLY_GAS,
 			params,
+			undefined,
+			undefined,
+			startDate,
 		);
 	}
 
 	public async resetSupplierAllowance(
 		coin: StableCoinCapabilities,
 		targetId: HederaId,
+		startDate?: string,
 	): Promise<TransactionResponse> {
 		const params = new Params({
 			targetId: targetId,
@@ -847,6 +912,9 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			'resetSupplierAllowance',
 			RESET_SUPPLY_GAS,
 			params,
+			undefined,
+			undefined,
+			startDate,
 		);
 	}
 
@@ -960,6 +1028,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		params?: Params,
 		transactionType: TransactionType = TransactionType.RECEIPT,
 		contractAbi: any = HederaTokenManager__factory.abi,
+		startDate?: string,
 	): Promise<TransactionResponse> {
 		try {
 			switch (CapabilityDecider.decide(coin, operation)) {
@@ -975,6 +1044,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 						params,
 						transactionType,
 						contractAbi,
+						startDate,
 					);
 
 				case Decision.HTS:
@@ -1025,6 +1095,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		params?: Params,
 		transactionType: TransactionType = TransactionType.RECEIPT,
 		contractAbi: any = HederaTokenManager__factory.abi,
+		startDate?: string,
 	): Promise<TransactionResponse> {
 		let filteredContractParams: any[] = [];
 
@@ -1085,6 +1156,8 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			gas,
 			transactionType,
 			contractAbi,
+			undefined,
+			startDate,
 		);
 	}
 
@@ -1283,6 +1356,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		trxType: TransactionType,
 		abi: any,
 		value?: number,
+		startDate?: string,
 	): Promise<TransactionResponse> {
 		const functionCallParameters = this.encodeFunctionCall(
 			functionName,
@@ -1301,6 +1375,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			trxType,
 			functionName,
 			abi,
+			startDate ?? undefined,
 		);
 	}
 
@@ -1327,10 +1402,15 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	abstract getAccount(): Account;
 
 	abstract signAndSendTransaction(
-		t: Transaction,
-		transactionType: TransactionType,
-		nameFunction?: string,
-		abi?: any[],
+		...args:
+			| [t: Transaction, startDate?: string]
+			| [
+					t: Transaction,
+					transactionType: TransactionType,
+					nameFunction?: string,
+					abi?: any[],
+					startDate?: string,
+			  ]
 	): Promise<TransactionResponse>;
 
 	abstract sign(message: string | Transaction): Promise<string>;

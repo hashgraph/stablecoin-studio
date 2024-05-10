@@ -11,6 +11,7 @@ export class WipeCommand extends Command<WipeCommandResponse> {
 		public readonly amount: string,
 		public readonly targetId: HederaId,
 		public readonly tokenId: HederaId,
+		public readonly startDate?: string,
 	) {
 		super();
 	}

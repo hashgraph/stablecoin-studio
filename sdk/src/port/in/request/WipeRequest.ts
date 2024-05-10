@@ -20,29 +20,43 @@
 
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
+import { OptionalField } from '../../../core/decorator/OptionalDecorator';
 
 export default class WipeRequest extends ValidatedRequest<WipeRequest> {
 	amount: string;
 	targetId: string;
 	tokenId: string;
 
+	@OptionalField()
+	startDate?: string;
+
 	constructor({
 		amount,
 		targetId,
 		tokenId,
+		startDate,
 	}: {
 		amount: string;
 		targetId: string;
 		tokenId: string;
+		startDate?: string;
 	}) {
 		super({
 			amount: Validation.checkAmount(),
 			targetId: Validation.checkHederaIdFormat(),
 			tokenId: Validation.checkHederaIdFormat(),
+			startDate: (val) => {
+				if (val === undefined) {
+					return;
+				}
+
+				return Validation.checkIsoDateFormat(val);
+			},
 		});
 
 		this.amount = amount;
 		this.targetId = targetId;
 		this.tokenId = tokenId;
+		this.startDate = startDate;
 	}
 }

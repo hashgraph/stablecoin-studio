@@ -3,11 +3,17 @@ import { CommandResponse } from '../../../../../../core/command/CommandResponse.
 import { HederaId } from '../../../../../../domain/context/shared/HederaId.js';
 
 export class PauseCommandResponse implements CommandResponse {
-	constructor(public readonly payload: boolean) {}
+	constructor(
+		public readonly payload: boolean,
+		public readonly startDate?: string,
+	) {}
 }
 
 export class PauseCommand extends Command<PauseCommandResponse> {
-	constructor(public readonly tokenId: HederaId) {
+	constructor(
+		public readonly tokenId: HederaId,
+		public readonly startDate?: string,
+	) {
 		super();
 	}
 }

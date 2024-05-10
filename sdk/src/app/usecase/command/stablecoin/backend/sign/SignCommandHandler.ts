@@ -18,6 +18,7 @@
  *
  */
 
+import LogService from '../../../../../../app/service/LogService.js';
 import Hex from '../../../../../../core/Hex.js';
 import { ICommandHandler } from '../../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerDecorator.js';
@@ -47,6 +48,11 @@ export class SignCommandHandler implements ICommandHandler<SignCommand> {
 		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
 
+		if (!account || !account.publicKey) {
+			LogService.logError('No account or public key found');
+			return Promise.resolve(new SignCommandResponse(false));
+		}
+
 		// retrieves transansaction from Backend
 		const transaction = await this.backendAdapter.getTransaction(
 			transactionId,
@@ -56,8 +62,19 @@ export class SignCommandHandler implements ICommandHandler<SignCommand> {
 		const deserializedTransaction = Transaction.fromBytes(
 			Hex.toUint8Array(transaction.transaction_message),
 		);
+		if (
+			!deserializedTransaction ||
+			!deserializedTransaction._signedTransactions
+		) {
+			LogService.logError('No transaction found');
+			return Promise.resolve(new SignCommandResponse(false));
+		}
 		const bytesToSign =
-			deserializedTransaction._signedTransactions.get(0)!.bodyBytes!;
+			deserializedTransaction._signedTransactions.get(0).bodyBytes;
+		if (!bytesToSign) {
+			LogService.logError('No bytes to sign found');
+			return Promise.resolve(new SignCommandResponse(false));
+		}
 		const serializedBytes = Hex.fromUint8Array(bytesToSign);
 
 		// signs
@@ -75,7 +92,7 @@ export class SignCommandHandler implements ICommandHandler<SignCommand> {
 		await this.backendAdapter.signTransaction(
 			transactionId,
 			signature,
-			account.publicKey!.key,
+			account.publicKey.key,
 		);
 
 		return Promise.resolve(new SignCommandResponse(true));
