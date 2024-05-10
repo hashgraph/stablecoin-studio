@@ -18,7 +18,7 @@
  *
  */
 
-import LogService from 'app/service/LogService.js';
+import LogService from '../../../../../../app/service/LogService.js';
 import Hex from '../../../../../../core/Hex.js';
 import { ICommandHandler } from '../../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerDecorator.js';
