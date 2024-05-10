@@ -61,6 +61,8 @@ describe('Transaction Controller (e2e)', () => {
         hedera_account_id: DEFAULT.hedera_account_id,
         key_list: DEFAULT.key_list,
         network: DEFAULT.network,
+        start_date: DEFAULT.start_date.toISOString(),
+
       };
       return request(app.getHttpServer())
         .post('/api/transactions')
@@ -85,6 +87,7 @@ describe('Transaction Controller (e2e)', () => {
         hedera_account_id: DEFAULT.hedera_account_id,
         key_list: DEFAULT.key_list,
         network: DEFAULT.network,
+        start_date: DEFAULT.start_date.toISOString(),
       };
       return request(app.getHttpServer())
         .post('/api/transactions')

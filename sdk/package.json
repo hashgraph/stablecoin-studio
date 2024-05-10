@@ -45,6 +45,7 @@
 		"typescript": "^4.9.4"
 	},
 	"scripts": {
+		"execute:createMultisig": "node build/cjs/scripts/CreateMultisigAccount.js",
 		"start": "node build/src/index.js",
 		"clean": "rimraf coverage build",
 		"prebuild": "npm run lint",

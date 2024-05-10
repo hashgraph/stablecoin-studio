@@ -595,16 +595,25 @@ export default class UtilitiesService extends Service {
     // Define table for pending multisig transactions
     const table = new Table({
       style: { head: ['cyan', 'bold'] },
-      head: ['Transaction ID', 'Description', 'Status'],
-      colWidths: [40, 60, 12],
+      head: ['Transaction ID', 'Description', 'Start Date', 'Status'],
+      colWidths: [40, 60, 30, 12],
       wordWrap: true,
       wrapOnWordBoundary: true,
     });
 
     // Add pending multisig transactions to table
-    multiSigTxList.forEach((multiSigTx) =>
-      table.push([multiSigTx.id, multiSigTx.description, multiSigTx.status]),
-    );
+    multiSigTxList.forEach((multiSigTx) => {
+      const startDateLocalTimeZone =
+        new Date(multiSigTx.startDate).toDateString() +
+        ' ' +
+        new Date(multiSigTx.startDate).toLocaleTimeString();
+      table.push([
+        multiSigTx.id,
+        multiSigTx.description,
+        startDateLocalTimeZone,
+        multiSigTx.status,
+      ]);
+    });
 
     // Show table
     console.info(table.toString());
@@ -866,5 +875,37 @@ export default class UtilitiesService extends Service {
         );
         break;
     }
+  }
+
+  public formatDateTime(dateTime: Date): string {
+    let month = (dateTime.getUTCMonth() + 1).toString();
+    if (month.length < 2) month = '0' + month;
+
+    let day = dateTime.getUTCDate().toString();
+    if (day.length < 2) day = '0' + day;
+
+    let hour = dateTime.getUTCHours().toString();
+    if (hour.length < 2) hour = '0' + hour;
+
+    let minute = dateTime.getUTCMinutes().toString();
+    if (minute.length < 2) minute = '0' + minute;
+
+    let second = dateTime.getUTCSeconds().toString();
+    if (second.length < 2) second = '0' + second;
+
+    return (
+      dateTime.getUTCFullYear().toString() +
+      '-' +
+      month +
+      '-' +
+      day +
+      'T' +
+      hour +
+      ':' +
+      minute +
+      ':' +
+      second +
+      'Z'
+    );
   }
 }

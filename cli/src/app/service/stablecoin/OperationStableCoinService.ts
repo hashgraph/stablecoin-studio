@@ -87,6 +87,7 @@ import OwnerProxyService from '../proxy/OwnerProxyService.js';
 import ConfigurationProxyService from '../proxy/ConfigurationProxyService.js';
 import ImplementationProxyService from '../proxy/ImplementationProxyService.js';
 import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
+import { AccountType } from '../../../domain/configuration/interfaces/AccountType.js';
 
 enum tokenKeys {
   admin,
@@ -292,6 +293,23 @@ export default class OperationStableCoinService extends Service {
               .then((val) => val.replace(',', '.'));
           },
         );
+        // If the account is multisig, ask for the start date
+        if (configAccount.type === AccountType.MultiSignature) {
+          await utilsService.handleValidation(
+            () => cashInRequest.validate('startDate'),
+            async () => {
+              const dateTime = new Date(
+                await utilsService.defaultSingleAsk(
+                  language.getText('wizard.multiSig.askStartDate'),
+                  new Date().toLocaleDateString() +
+                    ' ' +
+                    new Date().toLocaleTimeString(), // '2024-05-04T14:30:00Z'
+                ),
+              );
+              cashInRequest.startDate = utilsService.formatDateTime(dateTime);
+            },
+          );
+        }
         try {
           await new CashInStableCoinService().cashInStableCoin(cashInRequest);
         } catch (error) {
@@ -346,6 +364,7 @@ export default class OperationStableCoinService extends Service {
           );
         }
         break;
+      // * BURN
       case language.getText('wizard.stableCoinOptions.Burn'):
         await utilsService.cleanAndShowBanner();
 
@@ -370,7 +389,23 @@ export default class OperationStableCoinService extends Service {
               .then((val) => val.replace(',', '.'));
           },
         );
-
+        // If the account is multisig, ask for the start date
+        if (configAccount.type === AccountType.MultiSignature) {
+          await utilsService.handleValidation(
+            () => cashOutRequest.validate('startDate'),
+            async () => {
+              const dateTime = new Date(
+                await utilsService.defaultSingleAsk(
+                  language.getText('wizard.multiSig.askStartDate'),
+                  new Date().toLocaleDateString() +
+                    ' ' +
+                    new Date().toLocaleTimeString(), // '2024-05-04T14:30:00Z'
+                ),
+              );
+              cashOutRequest.startDate = utilsService.formatDateTime(dateTime);
+            },
+          );
+        }
         try {
           await new BurnStableCoinService().burnStableCoin(cashOutRequest);
         } catch (error) {
@@ -379,8 +414,8 @@ export default class OperationStableCoinService extends Service {
             error,
           );
         }
-
         break;
+      // * WIPE
       case language.getText('wizard.stableCoinOptions.Wipe'):
         await utilsService.cleanAndShowBanner();
 
@@ -417,6 +452,23 @@ export default class OperationStableCoinService extends Service {
               .then((val) => val.replace(',', '.'));
           },
         );
+        // If the account is multisig, ask for the start date
+        if (configAccount.type === AccountType.MultiSignature) {
+          await utilsService.handleValidation(
+            () => wipeRequest.validate('startDate'),
+            async () => {
+              const dateTime = new Date(
+                await utilsService.defaultSingleAsk(
+                  language.getText('wizard.multiSig.askStartDate'),
+                  new Date().toLocaleDateString() +
+                    ' ' +
+                    new Date().toLocaleTimeString(), // '2024-05-04T14:30:00Z'
+                ),
+              );
+              wipeRequest.startDate = utilsService.formatDateTime(dateTime);
+            },
+          );
+        }
         try {
           await new WipeStableCoinService().wipeStableCoin(wipeRequest);
         } catch (error) {
@@ -425,8 +477,8 @@ export default class OperationStableCoinService extends Service {
             error,
           );
         }
-
         break;
+      // * RESCUE
       case language.getText('wizard.stableCoinOptions.Rescue'):
         await utilsService.cleanAndShowBanner();
 
@@ -451,7 +503,23 @@ export default class OperationStableCoinService extends Service {
             rescueRequest.amount = rescuedAmount;
           },
         );
-
+        // If the account is multisig, ask for the start date
+        if (configAccount.type === AccountType.MultiSignature) {
+          await utilsService.handleValidation(
+            () => rescueRequest.validate('startDate'),
+            async () => {
+              const dateTime = new Date(
+                await utilsService.defaultSingleAsk(
+                  language.getText('wizard.multiSig.askStartDate'),
+                  new Date().toLocaleDateString() +
+                    ' ' +
+                    new Date().toLocaleTimeString(), // '2024-05-04T14:30:00Z'
+                ),
+              );
+              rescueRequest.startDate = utilsService.formatDateTime(dateTime);
+            },
+          );
+        }
         // Call to Rescue
         try {
           await new RescueStableCoinService().rescueStableCoin(rescueRequest);
@@ -462,6 +530,7 @@ export default class OperationStableCoinService extends Service {
           );
         }
         break;
+      // * RESCUE HBAR
       case language.getText('wizard.stableCoinOptions.RescueHBAR'):
         await utilsService.cleanAndShowBanner();
 
@@ -486,7 +555,24 @@ export default class OperationStableCoinService extends Service {
             rescueHBARRequest.amount = rescuedHBARAmount;
           },
         );
-
+        // If the account is multisig, ask for the start date
+        if (configAccount.type === AccountType.MultiSignature) {
+          await utilsService.handleValidation(
+            () => rescueHBARRequest.validate('startDate'),
+            async () => {
+              const dateTime = new Date(
+                await utilsService.defaultSingleAsk(
+                  language.getText('wizard.multiSig.askStartDate'),
+                  new Date().toLocaleDateString() +
+                    ' ' +
+                    new Date().toLocaleTimeString(), // '2024-05-04T14:30:00Z'
+                ),
+              );
+              rescueHBARRequest.startDate =
+                utilsService.formatDateTime(dateTime);
+            },
+          );
+        }
         // Call to Rescue HBAR
         try {
           await new RescueHBARStableCoinService().rescueHBARStableCoin(
@@ -848,6 +934,7 @@ export default class OperationStableCoinService extends Service {
         },
       )
     ) {
+      // * FREEZE
       case language.getText('freezeManagement.options.Freeze'):
         await utilsService.cleanAndShowBanner();
         utilsService.displayCurrentUserInfo(
@@ -869,6 +956,24 @@ export default class OperationStableCoinService extends Service {
             );
           },
         );
+        // If the account is multisig, ask for the start date
+        if (configAccount.type === AccountType.MultiSignature) {
+          await utilsService.handleValidation(
+            () => freezeAccountRequest.validate('startDate'),
+            async () => {
+              const dateTime = new Date(
+                await utilsService.defaultSingleAsk(
+                  language.getText('wizard.multiSig.askStartDate'),
+                  new Date().toLocaleDateString() +
+                    ' ' +
+                    new Date().toLocaleTimeString(), // '2024-05-04T14:30:00Z'
+                ),
+              );
+              freezeAccountRequest.startDate =
+                utilsService.formatDateTime(dateTime);
+            },
+          );
+        }
         try {
           await new FreezeStableCoinService().freezeAccount(
             freezeAccountRequest,
@@ -879,8 +984,8 @@ export default class OperationStableCoinService extends Service {
             error,
           );
         }
-
         break;
+      // * UNFREEZE
       case language.getText('freezeManagement.options.UnFreeze'):
         await utilsService.cleanAndShowBanner();
         utilsService.displayCurrentUserInfo(
@@ -903,6 +1008,24 @@ export default class OperationStableCoinService extends Service {
               );
           },
         );
+        // If the account is multisig, ask for the start date
+        if (configAccount.type === AccountType.MultiSignature) {
+          await utilsService.handleValidation(
+            () => unfreezeAccountRequest.validate('startDate'),
+            async () => {
+              const dateTime = new Date(
+                await utilsService.defaultSingleAsk(
+                  language.getText('wizard.multiSig.askStartDate'),
+                  new Date().toLocaleDateString() +
+                    ' ' +
+                    new Date().toLocaleTimeString(), // '2024-05-04T14:30:00Z'
+                ),
+              );
+              unfreezeAccountRequest.startDate =
+                utilsService.formatDateTime(dateTime);
+            },
+          );
+        }
         try {
           await new FreezeStableCoinService().unfreezeAccount(
             unfreezeAccountRequest,
@@ -1389,6 +1512,7 @@ export default class OperationStableCoinService extends Service {
       });
 
     const accountTarget = '0.0.0';
+    // * Roles Main Switch
     switch (
       await utilsService.defaultMultipleAsk(
         language.getText('stablecoin.askAction'),
@@ -1601,6 +1725,26 @@ export default class OperationStableCoinService extends Service {
                   increaseCashInLimitRequest.amount = increaseAmount;
                 },
               );
+
+              // If the account is multisig, ask for the start date
+              if (configAccount.type === AccountType.MultiSignature) {
+                await utilsService.handleValidation(
+                  () => increaseCashInLimitRequest.validate('startDate'),
+                  async () => {
+                    const dateTime = new Date(
+                      await utilsService.defaultSingleAsk(
+                        language.getText('wizard.multiSig.askStartDate'),
+                        new Date().toLocaleDateString() +
+                          ' ' +
+                          new Date().toLocaleTimeString(), // '2024-05-04T14:30:00Z'
+                      ),
+                    );
+                    increaseCashInLimitRequest.startDate =
+                      utilsService.formatDateTime(dateTime);
+                  },
+                );
+              }
+
               //Call to SDK
               await this.roleStableCoinService.increaseLimitSupplierRoleStableCoin(
                 increaseCashInLimitRequest,
@@ -1651,7 +1795,24 @@ export default class OperationStableCoinService extends Service {
                   decreaseCashInLimitTargetId;
               },
             );
-
+            // If the account is multisig, ask for the start date
+            if (configAccount.type === AccountType.MultiSignature) {
+              await utilsService.handleValidation(
+                () => decreaseCashInLimitRequest.validate('startDate'),
+                async () => {
+                  const dateTime = new Date(
+                    await utilsService.defaultSingleAsk(
+                      language.getText('wizard.multiSig.askStartDate'),
+                      new Date().toLocaleDateString() +
+                        ' ' +
+                        new Date().toLocaleTimeString(), // '2024-05-04T14:30:00Z'
+                    ),
+                  );
+                  decreaseCashInLimitRequest.startDate =
+                    utilsService.formatDateTime(dateTime);
+                },
+              );
+            }
             try {
               if (
                 await this.checkSupplierType(
@@ -1738,7 +1899,24 @@ export default class OperationStableCoinService extends Service {
                 resetCashInLimitRequest.targetId = resetCashInLimitTargetId;
               },
             );
-
+            // If the account is multisig, ask for the start date
+            if (configAccount.type === AccountType.MultiSignature) {
+              await utilsService.handleValidation(
+                () => resetCashInLimitRequest.validate('startDate'),
+                async () => {
+                  const dateTime = new Date(
+                    await utilsService.defaultSingleAsk(
+                      language.getText('wizard.multiSig.askStartDate'),
+                      new Date().toLocaleDateString() +
+                        ' ' +
+                        new Date().toLocaleTimeString(), // '2024-05-04T14:30:00Z'
+                    ),
+                  );
+                  resetCashInLimitRequest.startDate =
+                    utilsService.formatDateTime(dateTime);
+                },
+              );
+            }
             try {
               if (
                 await this.checkSupplierType(
@@ -1957,9 +2135,10 @@ export default class OperationStableCoinService extends Service {
   }
 
   private async grantRoles(
-    stableCoinCapabilities,
-    contractKeys,
+    stableCoinCapabilities: StableCoinCapabilities,
+    contractKeys: number[],
   ): Promise<void> {
+    const configAccount = utilsService.getCurrentAccount();
     const grantMultiRolesRequest = new GrantMultiRolesRequest({
       tokenId: this.stableCoinId,
       roles: [],
@@ -1995,8 +2174,26 @@ export default class OperationStableCoinService extends Service {
       language.getText('roleManagement.askConfirmation'),
       true,
     );
-
     if (!confirm) return;
+
+    // If the account is multisig, ask for the start date
+    if (configAccount.type === AccountType.MultiSignature) {
+      await utilsService.handleValidation(
+        () => grantMultiRolesRequest.validate('startDate'),
+        async () => {
+          const dateTime = new Date(
+            await utilsService.defaultSingleAsk(
+              language.getText('wizard.multiSig.askStartDate'),
+              new Date().toLocaleDateString() +
+                ' ' +
+                new Date().toLocaleTimeString(), // '2024-05-04T14:30:00Z'
+            ),
+          );
+          grantMultiRolesRequest.startDate =
+            utilsService.formatDateTime(dateTime);
+        },
+      );
+    }
 
     try {
       await new RoleStableCoinService().grantMultiRolesStableCoin(
@@ -2010,7 +2207,10 @@ export default class OperationStableCoinService extends Service {
     }
   }
 
-  private async revokeRoles(stableCoinCapabilities): Promise<void> {
+  private async revokeRoles(
+    stableCoinCapabilities: StableCoinCapabilities,
+  ): Promise<void> {
+    const configAccount = utilsService.getCurrentAccount();
     const revokeMultiRolesRequest = new RevokeMultiRolesRequest({
       tokenId: this.stableCoinId,
       roles: [],
@@ -2037,8 +2237,28 @@ export default class OperationStableCoinService extends Service {
       language.getText('roleManagement.askConfirmation'),
       true,
     );
+    if (!confirm) {
+      return;
+    }
 
-    if (!confirm) return;
+    // If the account is multisig, ask for the start date
+    if (configAccount.type === AccountType.MultiSignature) {
+      await utilsService.handleValidation(
+        () => revokeMultiRolesRequest.validate('startDate'),
+        async () => {
+          const dateTime = new Date(
+            await utilsService.defaultSingleAsk(
+              language.getText('wizard.multiSig.askStartDate'),
+              new Date().toLocaleDateString() +
+                ' ' +
+                new Date().toLocaleTimeString(), // '2024-05-04T14:30:00Z'
+            ),
+          );
+          revokeMultiRolesRequest.startDate =
+            utilsService.formatDateTime(dateTime);
+        },
+      );
+    }
 
     try {
       await new RoleStableCoinService().revokeMultiRolesStableCoin(
@@ -3136,7 +3356,7 @@ export default class OperationStableCoinService extends Service {
           console.log(
             colors.yellow(
               `${element[0]}: ${stableCoinViewModel[element[0]]} --> ${
-                element[1].key
+                (element[1] as { key: string }).key
               }`,
             ),
           );
@@ -3281,6 +3501,23 @@ export default class OperationStableCoinService extends Service {
             const req = new PauseRequest({
               tokenId: this.stableCoinId,
             });
+            // If the account is multisig, ask for the start date
+            if (configAccount.type === AccountType.MultiSignature) {
+              await utilsService.handleValidation(
+                () => req.validate('startDate'),
+                async () => {
+                  const dateTime = new Date(
+                    await utilsService.defaultSingleAsk(
+                      language.getText('wizard.multiSig.askStartDate'),
+                      new Date().toLocaleDateString() +
+                        ' ' +
+                        new Date().toLocaleTimeString(), // '2024-05-04T14:30:00Z'
+                    ),
+                  );
+                  req.startDate = utilsService.formatDateTime(dateTime);
+                },
+              );
+            }
             await new PauseStableCoinService().pauseStableCoin(req);
             this.stableCoinPaused = true;
           } catch (error) {
@@ -3302,6 +3539,23 @@ export default class OperationStableCoinService extends Service {
             const req = new PauseRequest({
               tokenId: this.stableCoinId,
             });
+            // If the account is multisig, ask for the start date
+            if (configAccount.type === AccountType.MultiSignature) {
+              await utilsService.handleValidation(
+                () => req.validate('startDate'),
+                async () => {
+                  const dateTime = new Date(
+                    await utilsService.defaultSingleAsk(
+                      language.getText('wizard.multiSig.askStartDate'),
+                      new Date().toLocaleDateString() +
+                        ' ' +
+                        new Date().toLocaleTimeString(), // '2024-05-04T14:30:00Z'
+                    ),
+                  );
+                  req.startDate = utilsService.formatDateTime(dateTime);
+                },
+              );
+            }
             await new PauseStableCoinService().unpauseStableCoin(req);
             this.stableCoinPaused = false;
           } catch (error) {
@@ -3323,7 +3577,23 @@ export default class OperationStableCoinService extends Service {
             const req = new DeleteRequest({
               tokenId: this.stableCoinId,
             });
-
+            // If the account is multisig, ask for the start date
+            if (configAccount.type === AccountType.MultiSignature) {
+              await utilsService.handleValidation(
+                () => req.validate('startDate'),
+                async () => {
+                  const dateTime = new Date(
+                    await utilsService.defaultSingleAsk(
+                      language.getText('wizard.multiSig.askStartDate'),
+                      new Date().toLocaleDateString() +
+                        ' ' +
+                        new Date().toLocaleTimeString(), // '2024-05-04T14:30:00Z'
+                    ),
+                  );
+                  req.startDate = utilsService.formatDateTime(dateTime);
+                },
+              );
+            }
             await new DeleteStableCoinService().deleteStableCoin(req);
             this.stableCoinDeleted = true;
             await wizardService.mainMenu();

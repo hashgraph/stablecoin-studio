@@ -1,21 +1,22 @@
-import { Heading, Text, Stack, useDisclosure } from '@chakra-ui/react';
+import { Heading, Stack, Text, useDisclosure } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import DetailsReview from '../../../components/DetailsReview';
 import InputController from '../../../components/Form/InputController';
 import OperationLayout from '../OperationLayout';
-import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
+import ModalsHandler from '../../../components/ModalsHandler';
 import { handleRequestValidation, validateDecimalsString } from '../../../utils/validationsHelper';
 import { useSelector } from 'react-redux';
 import { LAST_WALLET_SELECTED, SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
 import SDKService from '../../../services/SDKService';
 import { useState } from 'react';
-import { formatAmount } from '../../../utils/inputHelper';
+import { formatAmount, formatDateTime } from '../../../utils/inputHelper';
 
 import { RescueRequest, SupportedWallets } from '@hashgraph/stablecoin-npm-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 import { propertyNotFound } from '../../../constant';
+import DatePickerController from '../../../components/Form/DatePickerController';
 
 const RescueTokenOperation = () => {
 	const {
@@ -33,6 +34,7 @@ const RescueTokenOperation = () => {
 		new RescueRequest({
 			tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
 			amount: '0',
+			startDate: undefined,
 		}),
 	);
 	const selectedWallet = useSelector(LAST_WALLET_SELECTED);
@@ -41,13 +43,13 @@ const RescueTokenOperation = () => {
 		mode: 'onChange',
 	});
 
-	const { t } = useTranslation(['rescueTokens', 'global', 'operations']);
+	const { t } = useTranslation(['rescueTokens', 'global', 'operations', 'multiSig']);
 
 	useRefreshCoinInfo();
 
 	const successDescription =
 		selectedWallet === SupportedWallets.MULTISIG
-			? 'MultiSig transaction has been successfully created and is now awaiting signatures. Accounts have 180 seconds to sign the transaction.'
+			? t('multiSig:opValidationMessage')
 			: t('rescueTokens:modalSuccessDesc', {
 					amount: formatAmount({
 						amount: getValues().amount ?? undefined,
@@ -111,6 +113,30 @@ const RescueTokenOperation = () => {
 								label={t('rescueTokens:amountLabel') ?? propertyNotFound}
 								placeholder={t('rescueTokens:amountPlaceholder') ?? propertyNotFound}
 							/>
+							{selectedWallet === SupportedWallets.MULTISIG && (
+								<DatePickerController
+									rules={{
+										required: t('global:validations.required') ?? propertyNotFound,
+										validate: {
+											validation: (value: Date) => {
+												request.startDate = formatDateTime({ dateTime: value });
+												const res = handleRequestValidation(request.validate('startDate'));
+												return res;
+											},
+										},
+									}}
+									isRequired
+									showTimeSelect
+									placeholderText='Select date and time'
+									dateFormat="yyyy-MM-dd'T'HH:mm:ss"
+									control={control}
+									name='startDate'
+									label={t('multiSig:startDate') ?? propertyNotFound}
+									minimumDate={new Date()}
+									timeFormat='HH:mm'
+									timeIntervals={15}
+								/>
+							)}
 						</Stack>
 					</>
 				}
@@ -129,16 +155,34 @@ const RescueTokenOperation = () => {
 					onConfirm: handleRescueToken,
 				}}
 				ModalActionChildren={
-					<DetailsReview
-						title={t('rescueTokens:modalAction.subtitle')}
-						details={[
-							{
-								label: t('rescueTokens:modalAction.amount'),
-								value: getValues().amount,
-								valueInBold: true,
-							},
-						]}
-					/>
+					selectedWallet === SupportedWallets.MULTISIG ? (
+						<DetailsReview
+							title={t('rescueTokens:modalAction.subtitle')}
+							details={[
+								{
+									label: t('rescueTokens:modalAction.amount'),
+									value: getValues().amount,
+									valueInBold: true,
+								},
+								{
+									label: t('multiSig:modalAction.startDate'),
+									value: formatDateTime({ dateTime: getValues().startDate, isUTC: false }),
+									valueInBold: true,
+								},
+							]}
+						/>
+					) : (
+						<DetailsReview
+							title={t('rescueTokens:modalAction.subtitle')}
+							details={[
+								{
+									label: t('rescueTokens:modalAction.amount'),
+									value: getValues().amount,
+									valueInBold: true,
+								},
+							]}
+						/>
+					)
 				}
 				successNotificationTitle={t('operations:modalSuccessTitle')}
 				successNotificationDescription={successDescription}

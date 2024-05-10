@@ -30,6 +30,7 @@ const TRANSACTION = {
 	threshold: 2,
 	network: 'testnet',
 	originHeader: 'http://localhost:3000',
+	startDate: '2024-04-25',
 };
 
 const SIGNATURE = {
@@ -88,7 +89,8 @@ jest.mock('axios', () => {
 					body.key_list[1] == TRANSACTION.key_list[1] &&
 					body.threshold == TRANSACTION.threshold &&
 					body.network == TRANSACTION.network &&
-					config.headers.Origin == TRANSACTION.originHeader
+					config.headers.Origin == TRANSACTION.originHeader &&
+					body.startDate == new Date(TRANSACTION.startDate)
 				)
 					return {
 						status: 201,
@@ -188,6 +190,7 @@ describe('🧪 BackendAdapter test', () => {
 			TRANSACTION.key_list,
 			TRANSACTION.threshold,
 			TRANSACTION.network,
+			new Date(TRANSACTION.startDate),
 		);
 
 		expect(result).toEqual('transactionId');

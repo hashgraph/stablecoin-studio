@@ -49,7 +49,7 @@ export class BurnCommandHandler implements ICommandHandler<BurnCommand> {
 	) {}
 
 	async execute(command: BurnCommand): Promise<BurnCommandResponse> {
-		const { amount, tokenId } = command;
+		const { amount, tokenId, startDate } = command;
 		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
 		const capabilities = await this.stableCoinService.getCapabilities(
@@ -78,7 +78,7 @@ export class BurnCommandHandler implements ICommandHandler<BurnCommand> {
 			);
 		}
 
-		const res = await handler.burn(capabilities, amountBd);
+		const res = await handler.burn(capabilities, amountBd, startDate);
 		return Promise.resolve(
 			new BurnCommandResponse(res.error === undefined),
 		);

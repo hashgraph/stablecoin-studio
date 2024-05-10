@@ -222,6 +222,7 @@ export default class TransactionService {
       transaction.signatures,
       transaction.network,
       transaction.hedera_account_id,
+      transaction.start_date.toUTCString(),
     );
   }
 }

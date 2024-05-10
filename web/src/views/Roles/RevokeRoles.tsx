@@ -1,9 +1,10 @@
-import { Heading, Text, CheckboxGroup, Grid, useDisclosure, Flex, Button } from '@chakra-ui/react';
-import type { StableCoinRole } from '@hashgraph/stablecoin-npm-sdk';
+import { Button, CheckboxGroup, Flex, Grid, Heading, Text, useDisclosure } from '@chakra-ui/react';
 import {
 	GetRolesRequest,
 	RevokeMultiRolesRequest,
 	RevokeRoleRequest,
+	StableCoinRole,
+	SupportedWallets,
 } from '@hashgraph/stablecoin-npm-sdk';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
@@ -19,6 +20,7 @@ import ModalsHandler from '../../components/ModalsHandler';
 import { propertyNotFound } from '../../constant';
 import { SDKService } from '../../services/SDKService';
 import {
+	LAST_WALLET_SELECTED,
 	SELECTED_WALLET_COIN,
 	SELECTED_WALLET_PAIRED_ACCOUNTID,
 	walletActions,
@@ -27,6 +29,8 @@ import type { AppDispatch } from '../../store/store';
 import { handleRequestValidation } from '../../utils/validationsHelper';
 import OperationLayout from '../Operations/OperationLayout';
 import { roleOptions } from './constants';
+import DatePickerController from '../../components/Form/DatePickerController';
+import { formatDateTime } from '../../utils/inputHelper';
 
 const RevokeRoleOperation = () => {
 	const dispatch = useDispatch<AppDispatch>();
@@ -60,6 +64,7 @@ const RevokeRoleOperation = () => {
 	}, [watch()]);
 	const [errorTransactionUrl, setErrorTransactionUrl] = useState();
 	const [revokeRoles, setRevokeRoles] = useState<RevokeRoleRequest[]>([]);
+	const selectedWallet = useSelector(LAST_WALLET_SELECTED);
 
 	useEffect(() => {
 		addNewAccount();
@@ -94,6 +99,7 @@ const RevokeRoleOperation = () => {
 			tokenId: selectedStableCoin!.tokenId!.toString(),
 			targetsId: targets,
 			roles: rolesRequest as StableCoinRole[],
+			startDate: values.startDate ? values.startDate.toISOString() : undefined,
 		});
 
 		try {
@@ -299,6 +305,25 @@ const RevokeRoleOperation = () => {
 								{t(`roles:revokeRole.buttonAddAccount`)}
 							</Button>
 						</Flex>
+						{selectedWallet === SupportedWallets.MULTISIG ? (
+							<DatePickerController
+								rules={{
+									required: t('global:validations.required') ?? propertyNotFound,
+								}}
+								isRequired
+								showTimeSelect
+								placeholderText='Select date and time'
+								dateFormat="yyyy-MM-dd'T'HH:mm:ss"
+								control={control}
+								name='startDate'
+								label={t('multiSig:startDate') ?? propertyNotFound}
+								minimumDate={new Date()}
+								timeFormat='HH:mm'
+								timeIntervals={15}
+							/>
+						) : (
+							<></>
+						)}
 					</>
 				}
 				onConfirm={handleSubmit}
@@ -344,6 +369,17 @@ const RevokeRoleOperation = () => {
 							title={t(`roles:revokeRole.modalActionSubtitleRolesSection`)}
 							details={getRolesDetails()}
 						/>
+						{selectedWallet === SupportedWallets.MULTISIG && (
+							<DetailsReview
+								title={t('multiSig:startDate')}
+								details={[
+									{
+										label: t(`multiSig:startDate`),
+										value: formatDateTime({ dateTime: getValues().startDate, isUTC: false }),
+									},
+								]}
+							/>
+						)}
 					</>
 				}
 				successNotificationTitle={t(`roles:revokeRole.modalSuccessTitle`)}

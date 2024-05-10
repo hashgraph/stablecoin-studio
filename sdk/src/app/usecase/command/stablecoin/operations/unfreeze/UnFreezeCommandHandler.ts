@@ -42,7 +42,7 @@ export class UnFreezeCommandHandler
 	) {}
 
 	async execute(command: UnFreezeCommand): Promise<UnFreezeCommandResponse> {
-		const { targetId, tokenId } = command;
+		const { targetId, tokenId, startDate } = command;
 		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
 
@@ -63,7 +63,7 @@ export class UnFreezeCommandHandler
 			account,
 			tokenId,
 		);
-		const res = await handler.unfreeze(capabilities, targetId);
+		const res = await handler.unfreeze(capabilities, targetId, startDate);
 		return Promise.resolve(
 			new UnFreezeCommandResponse(res.error === undefined),
 		);

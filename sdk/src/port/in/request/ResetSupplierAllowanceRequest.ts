@@ -20,17 +20,37 @@
 
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
+import { OptionalField } from '../../../core/decorator/OptionalDecorator';
 
 export default class ResetSupplierAllowanceRequest extends ValidatedRequest<ResetSupplierAllowanceRequest> {
 	targetId: string;
 	tokenId: string;
 
-	constructor({ targetId, tokenId }: { targetId: string; tokenId: string }) {
+	@OptionalField()
+	startDate?: string;
+
+	constructor({
+		targetId,
+		tokenId,
+		startDate,
+	}: {
+		targetId: string;
+		tokenId: string;
+		startDate?: string;
+	}) {
 		super({
 			targetId: Validation.checkHederaIdFormat(),
 			tokenId: Validation.checkHederaIdFormat(),
+			startDate: (val) => {
+				if (val === undefined) {
+					return;
+				}
+
+				return Validation.checkIsoDateFormat(val);
+			},
 		});
 		this.targetId = targetId;
 		this.tokenId = tokenId;
+		this.startDate = startDate;
 	}
 }

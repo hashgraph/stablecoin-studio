@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import { Heading, Text, Stack, useDisclosure } from '@chakra-ui/react';
+import { Heading, Stack, Text, useDisclosure } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import DetailsReview from '../../../components/DetailsReview';
 import InputController from '../../../components/Form/InputController';
 import OperationLayout from '../OperationLayout';
-import ModalsHandler from '../../../components/ModalsHandler';
 import type { ModalsHandlerActionsProps } from '../../../components/ModalsHandler';
+import ModalsHandler from '../../../components/ModalsHandler';
 import { handleRequestValidation } from '../../../utils/validationsHelper';
 import SDKService from '../../../services/SDKService';
 import { LAST_WALLET_SELECTED, SELECTED_WALLET_COIN } from '../../../store/slices/walletSlice';
@@ -15,7 +15,8 @@ import { LAST_WALLET_SELECTED, SELECTED_WALLET_COIN } from '../../../store/slice
 import { KYCRequest, SupportedWallets } from '@hashgraph/stablecoin-npm-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 import { propertyNotFound } from '../../../constant';
-import { formatAmount } from '../../../utils/inputHelper';
+import { formatDateTime } from '../../../utils/inputHelper';
+import DatePickerController from '../../../components/Form/DatePickerController';
 
 const RevokeKycOperation = () => {
 	const {
@@ -32,10 +33,11 @@ const RevokeKycOperation = () => {
 		new KYCRequest({
 			tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
 			targetId: '',
+			startDate: undefined,
 		}),
 	);
 
-	const { t } = useTranslation(['revokeKYC', 'global', 'operations']);
+	const { t } = useTranslation(['revokeKYC', 'global', 'operations', 'multiSig']);
 	const { control, getValues, formState } = useForm({
 		mode: 'onChange',
 	});
@@ -45,7 +47,7 @@ const RevokeKycOperation = () => {
 
 	const successDescription =
 		selectedWallet === SupportedWallets.MULTISIG
-			? 'MultiSig transaction has been successfully created and is now awaiting signatures. Accounts have 180 seconds to sign the transaction.'
+			? t('multiSig:opValidationMessage')
 			: t('revokeKYC:modalSuccess', {
 					account: getValues().targetAccount,
 			  });
@@ -100,6 +102,30 @@ const RevokeKycOperation = () => {
 								placeholder={t('revokeKYC:accountPlaceholder') ?? propertyNotFound}
 								label={t('revokeKYC:accountLabel') ?? propertyNotFound}
 							/>
+							{selectedWallet === SupportedWallets.MULTISIG && (
+								<DatePickerController
+									rules={{
+										required: t('global:validations.required') ?? propertyNotFound,
+										validate: {
+											validation: (value: Date) => {
+												request.startDate = formatDateTime({ dateTime: value });
+												const res = handleRequestValidation(request.validate('startDate'));
+												return res;
+											},
+										},
+									}}
+									isRequired
+									showTimeSelect
+									placeholderText='Select date and time'
+									dateFormat="yyyy-MM-dd'T'HH:mm:ss"
+									control={control}
+									name='startDate'
+									label={t('multiSig:startDate') ?? propertyNotFound}
+									minimumDate={new Date()}
+									timeFormat='HH:mm'
+									timeIntervals={15}
+								/>
+							)}
 						</Stack>
 					</>
 				}
@@ -118,15 +144,32 @@ const RevokeKycOperation = () => {
 					onConfirm: handleRevokeKyc,
 				}}
 				ModalActionChildren={
-					<DetailsReview
-						title={t('revokeKYC:modalAction.subtitle')}
-						details={[
-							{
-								label: t('revokeKYC:modalAction.account'),
-								value: getValues().targetAccount,
-							},
-						]}
-					/>
+					selectedWallet === SupportedWallets.MULTISIG ? (
+						<DetailsReview
+							title={t('multiSig:modalAction.subtitle')}
+							details={[
+								{
+									label: t('revokeKYC:modalAction.account'),
+									value: getValues().targetAccount,
+								},
+								{
+									label: t('multiSig:modalAction.startDate'),
+									value: formatDateTime({ dateTime: getValues().startDate, isUTC: false }),
+									valueInBold: true,
+								},
+							]}
+						/>
+					) : (
+						<DetailsReview
+							title={t('revokeKYC:modalAction.subtitle')}
+							details={[
+								{
+									label: t('revokeKYC:modalAction.account'),
+									value: getValues().targetAccount,
+								},
+							]}
+						/>
+					)
 				}
 				successNotificationTitle={t('operations:modalSuccessTitle')}
 				successNotificationDescription={successDescription}

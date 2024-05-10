@@ -83,6 +83,7 @@ describe('Transaction Service Test', () => {
         key_list: pendingTransaction.key_list,
         threshold: pendingTransaction.threshold,
         network: pendingTransaction.network,
+        start_date: pendingTransaction.start_date.toDateString(),
       };
 
       const expected = TransactionMock.txPending0();
@@ -112,6 +113,7 @@ describe('Transaction Service Test', () => {
         key_list: key_list_duplicated,
         threshold: pendingTransaction.threshold,
         network: pendingTransaction.network,
+        start_date: pendingTransaction.start_date.toDateString(),
       };
 
       //* 🎬 Act ⬇
@@ -136,6 +138,7 @@ describe('Transaction Service Test', () => {
         key_list: pendingTransaction.key_list,
         threshold: new_threshold,
         network: pendingTransaction.network,
+        start_date: pendingTransaction.start_date.toDateString(),
       };
 
       //* 🎬 Act ⬇
@@ -159,6 +162,7 @@ describe('Transaction Service Test', () => {
         key_list: pendingTransaction.key_list,
         threshold: pendingTransaction.threshold,
         network: pendingTransaction.network,
+        start_date: pendingTransaction.start_date.toDateString(),
       };
 
       const expected = TransactionMock.txPending0({

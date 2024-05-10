@@ -18,15 +18,13 @@
  *
  */
 
-import { Response } from './Response.js';
+import BaseError, { ErrorCode } from '../../../../core/error/BaseError.js';
 
-export default class TransactionResponse<
-	T extends Response = Response,
-	X extends Error = Error,
-> {
-	constructor(
-		public readonly id?: string,
-		public response?: T,
-		public readonly error?: X,
-	) {}
+export class InvalidDate extends BaseError {
+	constructor(val: unknown) {
+		super(
+			ErrorCode.InvalidType,
+			`Value ${val} is not valid. Please enter a ISO format date.`,
+		);
+	}
 }
