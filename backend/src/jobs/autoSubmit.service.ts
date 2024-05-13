@@ -59,24 +59,31 @@ export default class AutoSubmitService {
         },
       );
 
-      const currentDate: Date = new Date();
-      const currentUTCDate = new Date(
-        currentDate.getTime() + currentDate.getTimezoneOffset() * 60000,
+      this.loggerService.log(
+        new LogMessageDTO(
+          '',
+          'allTransactions : ' + allTransactions.items.length,
+          null,
+        ),
       );
-      const currentUTCDate_Plus3Minutes = new Date(currentUTCDate.getTime());
-      currentUTCDate_Plus3Minutes.setSeconds(
-        currentUTCDate_Plus3Minutes.getSeconds() + 180,
+
+      const currentDate: Date = new Date();
+      const currentUTCDate_Minus_3_Minutes = new Date(currentDate.getTime());
+      currentUTCDate_Minus_3_Minutes.setSeconds(
+        currentUTCDate_Minus_3_Minutes.getSeconds() - 180,
       );
 
       const submit = allTransactions.items.filter(
         (tx) =>
           tx.status == TransactionStatus.SIGNED &&
-          new Date(tx.start_date) >= currentUTCDate &&
-          new Date(tx.start_date) < currentUTCDate_Plus3Minutes,
+          new Date(tx.start_date) <= currentDate &&
+          new Date(tx.start_date) > currentUTCDate_Minus_3_Minutes,
       );
 
       const expire = allTransactions.items.filter(
-        (tx) => new Date(tx.start_date) >= currentUTCDate_Plus3Minutes,
+        (tx) =>
+          tx.status != TransactionStatus.EXPIRED &&
+          new Date(tx.start_date) <= currentUTCDate_Minus_3_Minutes,
       );
 
       transactionsToSubmit.push(...submit);
@@ -84,8 +91,24 @@ export default class AutoSubmitService {
 
       page++;
 
-      if (page == (await allTransactions.meta.totalPages)) done = true;
+      if (page >= (await allTransactions.meta.totalPages)) done = true;
     } while (done == false);
+
+    this.loggerService.log(
+      new LogMessageDTO(
+        '',
+        'transactionsToExpire : ' + transactionsToExpire.length,
+        null,
+      ),
+    );
+
+    this.loggerService.log(
+      new LogMessageDTO(
+        '',
+        'transactionsToSubmit : ' + transactionsToSubmit.length,
+        null,
+      ),
+    );
 
     // EXPIRE TRANSACTIONS
     await transactionsToExpire.forEach(async (t) => {
