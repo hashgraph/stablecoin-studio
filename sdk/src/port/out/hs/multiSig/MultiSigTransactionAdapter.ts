@@ -49,6 +49,7 @@ import {
 import EventService from '../../../../app/service/event/EventService.js';
 import Hex from '../../../../core/Hex.js';
 import TransactionService from '../../../../app/service/TransactionService.js';
+import { TransactionType } from '../../TransactionResponseEnums';
 
 @singleton()
 export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
@@ -69,9 +70,11 @@ export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
 
 	async signAndSendTransaction(
 		t: Transaction,
+		transactionType: TransactionType,
+		nameFunction?: string,
+		abi?: never[],
 		startDate?: string,
-	): // eslint-disable-next-line @typescript-eslint/no-explicit-any
-	Promise<TransactionResponse<any, Error>> {
+	): Promise<TransactionResponse<never, Error>> {
 		const publicKeys: string[] = [];
 
 		const accountId: AccountId = AccountId.fromString(
