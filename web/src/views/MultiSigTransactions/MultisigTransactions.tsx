@@ -82,6 +82,18 @@ const MultiSigTransactions = () => {
 		fetchTransactions();
 	}, [selectedWallet, currentPage]);
 
+	const statusToBgColor = (status: string): string => {
+		switch (status) {
+			case 'PENDING':
+				return 'yellow.200';
+			case 'SIGNED':
+				return 'green.200';
+			case 'EXPIRED':
+				return 'red.200';
+		}
+		return 'gray.200';
+	};
+
 	const canSignTransaction = (transaction: MultiSigTransactionViewModel) => {
 		return (
 			publicKey && transaction.key_list.includes(publicKey) && transaction.status === 'PENDING'
@@ -214,7 +226,7 @@ const MultiSigTransactions = () => {
 										{transaction.threshold}
 									</Td>
 									<Td borderBottom='1px' borderColor='gray.200'>
-										<Tag>{transaction.status}</Tag>
+										<Tag bg={statusToBgColor(transaction.status)}>{transaction.status}</Tag>
 									</Td>
 									<Td borderBottom='1px' borderColor='gray.200'>
 										<Tag>
