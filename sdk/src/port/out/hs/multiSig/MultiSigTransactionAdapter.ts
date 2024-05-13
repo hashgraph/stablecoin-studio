@@ -69,7 +69,7 @@ export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
 
 	async signAndSendTransaction(
 		t: Transaction,
-		startDate?: string, // TODO: instead of this could we retrieve this from backend using a service?
+		startDate?: string,
 	): // eslint-disable-next-line @typescript-eslint/no-explicit-any
 	Promise<TransactionResponse<any, Error>> {
 		const publicKeys: string[] = [];
@@ -78,8 +78,6 @@ export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
 			this.account.id.toString(),
 		);
 
-		// Generate a new transaction ID
-		// TODO: Replace this date with the date selected in the UI
 		const dateStr = startDate ? startDate : new Date().toISOString();
 
 		const validStart = Timestamp.fromDate(dateStr);

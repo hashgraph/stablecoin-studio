@@ -1375,7 +1375,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			trxType,
 			functionName,
 			abi,
-			startDate ?? undefined,
+			startDate,
 		);
 	}
 
