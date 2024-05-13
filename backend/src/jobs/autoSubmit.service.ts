@@ -41,15 +41,16 @@ export default class AutoSubmitService {
     let page = 1;
     const limit = 100;
     const transactionsToSubmit = [];
+    const transactionsToExpire = [];
 
     this.loggerService.log(
       new LogMessageDTO('', 'Running auto submit job', null),
     );
 
     do {
-      const signedTransactions = await this.transactionService.getAll(
+      const allTransactions = await this.transactionService.getAll(
         null,
-        TransactionStatus.SIGNED,
+        null,
         null,
         null,
         {
@@ -67,18 +68,32 @@ export default class AutoSubmitService {
         currentUTCDate_Plus3Minutes.getSeconds() + 180,
       );
 
-      const startDateTrasnactions = signedTransactions.items.filter(
+      const submit = allTransactions.items.filter(
         (tx) =>
+          tx.status == TransactionStatus.SIGNED &&
           new Date(tx.start_date) >= currentUTCDate &&
           new Date(tx.start_date) < currentUTCDate_Plus3Minutes,
       );
 
-      transactionsToSubmit.push(...startDateTrasnactions);
+      const expire = allTransactions.items.filter(
+        (tx) => new Date(tx.start_date) >= currentUTCDate_Plus3Minutes,
+      );
+
+      transactionsToSubmit.push(...submit);
+      transactionsToExpire.push(...expire);
 
       page++;
 
-      if (page == (await signedTransactions.meta.totalPages)) done = true;
+      if (page == (await allTransactions.meta.totalPages)) done = true;
     } while (done == false);
+
+    // EXPIRE TRANSACTIONS
+    await transactionsToExpire.forEach(async (t) => {
+      await this.transactionService.updateStatus(
+        t.id,
+        TransactionStatus.EXPIRED,
+      );
+    });
 
     // SUBMIT SIGNED TRANSACTIONS TO HEDERA
     await transactionsToSubmit.forEach(async (t) => {
