@@ -82,6 +82,7 @@ export default class AutoSubmitService {
       const expire = allTransactions.items.filter(
         (tx) =>
           tx.status != TransactionStatus.EXPIRED &&
+          tx.status != TransactionStatus.ERROR &&
           new Date(tx.start_date) <= currentUTCDate_Minus_3_Minutes,
       );
 
@@ -125,6 +126,11 @@ export default class AutoSubmitService {
         await this.transactionService.delete(t.id);
         this.loggerService.log(
           new LogMessageDTO('', `Removed transaction Id : ${txId}`, null),
+        );
+      } else {
+        await this.transactionService.updateStatus(
+          t.id,
+          TransactionStatus.ERROR,
         );
       }
     });
@@ -185,9 +191,10 @@ export default class AutoSubmitService {
   ): Promise<void> {
     const transactionReceipt: TransactionReceipt | undefined =
       await transactionResponse.getReceipt(client);
-    if (transactionReceipt.status !== Status.Success)
+    if (transactionReceipt.status !== Status.Success) {
       throw new Error(
         `transactions did not succeed. Status : ${transactionReceipt.status}`,
       );
+    }
   }
 }
