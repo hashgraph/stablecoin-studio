@@ -24,6 +24,7 @@ export enum Status {
   Pending = 'PENDING',
   Signed = 'SIGNED',
   Expired = 'EXPIRED',
+  Error = 'ERROR',
 }
 
 export default class MultiSigTransaction {
