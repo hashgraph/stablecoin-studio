@@ -22,7 +22,14 @@ import { Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import TransactionService from '../transaction/transaction.service';
 import { TransactionStatus } from '../transaction/status.enum';
-import { Transaction, Client, PublicKey } from '@hashgraph/sdk';
+import {
+  Transaction,
+  Client,
+  PublicKey,
+  TransactionResponse,
+  TransactionReceipt,
+  Status,
+} from '@hashgraph/sdk';
 import { GetTransactionsResponseDto } from '../transaction/dto/get-transactions-response.dto';
 import { hexToUint8Array } from '../utils/utils';
 import { LoggerService } from '../logger/logger.service.js';
@@ -57,14 +64,6 @@ export default class AutoSubmitService {
           page,
           limit,
         },
-      );
-
-      this.loggerService.log(
-        new LogMessageDTO(
-          '',
-          'allTransactions : ' + allTransactions.items.length,
-          null,
-        ),
       );
 
       const currentDate: Date = new Date();
@@ -120,15 +119,17 @@ export default class AutoSubmitService {
 
     // SUBMIT SIGNED TRANSACTIONS TO HEDERA
     await transactionsToSubmit.forEach(async (t) => {
-      await this.submit(t);
-      await this.transactionService.delete(t.id);
-      this.loggerService.log(
-        new LogMessageDTO(
-          '',
-          `Removed transaction Id : ${t.transactionId}`,
-          null,
-        ),
-      );
+      const success = await this.submit(t);
+      if (success) {
+        await this.transactionService.delete(t.id);
+        this.loggerService.log(
+          new LogMessageDTO(
+            '',
+            `Removed transaction Id : ${t.transactionId}`,
+            null,
+          ),
+        );
+      }
     });
   }
 
@@ -149,11 +150,20 @@ export default class AutoSubmitService {
       }
 
       const submitTx = await deserializedTransaction.execute(client);
-
       this.loggerService.log(
         new LogMessageDTO(
           '',
           `Submitted transaction Id : ${submitTx.transactionId}`,
+          null,
+        ),
+      );
+
+      await this.checkReceipt(submitTx, client);
+
+      this.loggerService.log(
+        new LogMessageDTO(
+          '',
+          `transaction Id : ${submitTx.transactionId} SUCCESS`,
           null,
         ),
       );
@@ -170,5 +180,17 @@ export default class AutoSubmitService {
 
       return false;
     }
+  }
+
+  private async checkReceipt(
+    transactionResponse: TransactionResponse,
+    client: Client,
+  ): Promise<void> {
+    const transactionReceipt: TransactionReceipt | undefined =
+      await transactionResponse.getReceipt(client);
+    if (transactionReceipt.status !== Status.Success)
+      throw new Error(
+        `transactions did not succeed. Status : ${transactionReceipt.status}`,
+      );
   }
 }
