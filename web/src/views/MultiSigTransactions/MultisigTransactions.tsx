@@ -89,6 +89,8 @@ const MultiSigTransactions = () => {
 			case 'SIGNED':
 				return 'green.200';
 			case 'EXPIRED':
+				return 'orange.200';
+			case 'ERROR':
 				return 'red.200';
 		}
 		return 'gray.200';
@@ -102,7 +104,9 @@ const MultiSigTransactions = () => {
 
 	const canSendTransaction = (transaction: MultiSigTransactionViewModel) => {
 		if (selectedWallet === SupportedWallets.METAMASK) return false;
-		return transaction.signed_keys.length >= transaction.threshold;
+		return (
+			transaction.signed_keys.length >= transaction.threshold && transaction.status === 'SIGNED'
+		);
 	};
 
 	const filteredTransactions = transactions.filter((transaction) => {
