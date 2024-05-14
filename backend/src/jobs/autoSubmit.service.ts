@@ -121,13 +121,10 @@ export default class AutoSubmitService {
     await transactionsToSubmit.forEach(async (t) => {
       const success = await this.submit(t);
       if (success) {
+        const txId = t.id;
         await this.transactionService.delete(t.id);
         this.loggerService.log(
-          new LogMessageDTO(
-            '',
-            `Removed transaction Id : ${t.transactionId}`,
-            null,
-          ),
+          new LogMessageDTO('', `Removed transaction Id : ${txId}`, null),
         );
       }
     });
