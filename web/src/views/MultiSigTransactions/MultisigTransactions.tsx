@@ -96,6 +96,18 @@ const MultiSigTransactions = () => {
 		return 'gray.200';
 	};
 
+	const startDateToBgColor = (startDateString: string): string => {
+		if (startDateOK(startDateString)) return 'gray.200';
+		return 'red.200';
+	};
+
+	const startDateOK = (startDateString: string): boolean => {
+		const startDate = new Date(startDateString);
+		const currentDate = new Date();
+		if (startDate > currentDate) return false;
+		return true;
+	};
+
 	const canSignTransaction = (transaction: MultiSigTransactionViewModel) => {
 		return (
 			publicKey && transaction.key_list.includes(publicKey) && transaction.status === 'PENDING'
@@ -104,9 +116,7 @@ const MultiSigTransactions = () => {
 
 	const canSendTransaction = (transaction: MultiSigTransactionViewModel) => {
 		if (selectedWallet === SupportedWallets.METAMASK) return false;
-		const startDate = new Date(transaction.start_date);
-		const currentDate = new Date();
-		if (startDate > currentDate) return false;
+		if (!startDateOK(transaction.start_date)) return false;
 		return (
 			transaction.signed_keys.length >= transaction.threshold && transaction.status === 'SIGNED'
 		);
@@ -236,7 +246,7 @@ const MultiSigTransactions = () => {
 										<Tag bg={statusToBgColor(transaction.status)}>{transaction.status}</Tag>
 									</Td>
 									<Td borderBottom='1px' borderColor='gray.200'>
-										<Tag>
+										<Tag bg={startDateToBgColor(transaction.start_date)}>
 											{new Date(transaction.start_date).toDateString() +
 												' ' +
 												new Date(transaction.start_date).toLocaleTimeString()}
