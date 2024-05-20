@@ -104,6 +104,9 @@ const MultiSigTransactions = () => {
 
 	const canSendTransaction = (transaction: MultiSigTransactionViewModel) => {
 		if (selectedWallet === SupportedWallets.METAMASK) return false;
+		const startDate = new Date(transaction.start_date);
+		const currentDate = new Date();
+		if (startDate > currentDate) return false;
 		return (
 			transaction.signed_keys.length >= transaction.threshold && transaction.status === 'SIGNED'
 		);
