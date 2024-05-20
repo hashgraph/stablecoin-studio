@@ -170,6 +170,10 @@ export default class ManageMultiSigTxService extends Service {
     if (multiSigTx.signedKeys.includes(publicKey)) {
       actions.splice(actions.indexOf(signAction), 1);
     }
+    // Remove the "Submit" action if start date has not been reached yet
+    if (new Date(multiSigTx.startDate) > new Date()) {
+      actions.splice(actions.indexOf(submitAction), 1);
+    }
     //* Remove actions that are not allowed based on the type of Account
     // Remove the "Sign" action if the account is multisig
     if (
