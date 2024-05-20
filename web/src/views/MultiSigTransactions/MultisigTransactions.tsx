@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
 	Box,
 	Button,
+	Icon,
 	Modal,
 	ModalBody,
 	ModalCloseButton,
@@ -17,6 +18,7 @@ import {
 	Td,
 	Th,
 	Thead,
+	Tooltip,
 	Tr,
 	useDisclosure,
 } from '@chakra-ui/react';
@@ -28,7 +30,7 @@ import type {
 } from '@hashgraph/stablecoin-npm-sdk';
 
 import { GetTransactionsRequest, SupportedWallets } from '@hashgraph/stablecoin-npm-sdk';
-import { ArrowForwardIcon, DeleteIcon } from '@chakra-ui/icons';
+import { ArrowForwardIcon, DeleteIcon, InfoOutlineIcon } from '@chakra-ui/icons';
 import BaseContainer from '../../components/BaseContainer';
 import { useTranslation } from 'react-i18next';
 import MultiSigTransactionModal from './components/MultiSigTransactionModal';
@@ -211,7 +213,19 @@ const MultiSigTransactions = () => {
 								<Th>Account</Th>
 								<Th>Threshold</Th>
 								<Th>Status</Th>
-								<Th>Start Date</Th>
+								<Th>
+									<Box display='flex' alignItems='center'>
+										Start Date
+										<Tooltip
+											label='The transaction will be sent on this date if it contains all the necessary signatures'
+											aria-label='Start Date Tooltip'
+										>
+											<span>
+												<Icon as={InfoOutlineIcon} ml={2} cursor='pointer' />
+											</span>
+										</Tooltip>
+									</Box>
+								</Th>
 								<Th>Actions</Th>
 							</Tr>
 						</Thead>
