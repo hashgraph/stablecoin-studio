@@ -211,7 +211,13 @@ const MultiSigTransactions = () => {
 											aria-label='Start Date Tooltip'
 										>
 											<span>
-												<Icon as={InfoOutlineIcon} ml={2} cursor='pointer' />
+												<Icon
+													as={InfoOutlineIcon}
+													ml={2}
+													cursor='pointer'
+													position='relative'
+													top='-1px'
+												/>{' '}
 											</span>
 										</Tooltip>
 									</Box>
