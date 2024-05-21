@@ -62,7 +62,6 @@ describe('Transaction Controller (e2e)', () => {
         key_list: DEFAULT.key_list,
         network: DEFAULT.network,
         start_date: DEFAULT.start_date.toISOString(),
-
       };
       return request(app.getHttpServer())
         .post('/api/transactions')

@@ -38,7 +38,9 @@ Whenever users need to submit to the DLT network a transaction (Cash In, Freeze,
 
 - They will first add the "raw transaction" (unsigned string of bytes) to the backend's database using the backend's api.
 - After the transaction is created, key owners will have the possibility to asyncronously sign the transaction.
-- Once all the required keys have signed the transaction, anyone can retrieve the transaction and its signatures, concatenate them and submit it to the Hedera network.
+- Once all the required keys have signed the transaction, anyone can retrieve the transaction and its signatures, concatenate them and submit it to the Hedera network. (*)
+
+> (*) If the transaction is not submited by anyone yet it has been properly signed, the __scheduled job__ will pick it up and submit it automatically.
 
 # Architecture
 
@@ -56,10 +58,18 @@ The backend is made of two components:
   - _signatures_: List of signatures already added to the transaction.
   - _keyList_: List of public keys associated to the account the transaction belongs to. These are the keys that have the right to sign the transaction.
   - _signedKeys_: List of public keys that have already signed the transaction (their signatures have been added to _signatures_).
+  - _startDate_: The date and time at which the transaction can eb submitted to the DLT.
   - _status_: Current status of the transaction. There are two options:
     - PENDING: transaction signature is still in progress.
     - SIGNED: all required keys have already signed the transaction, we can submit it to the Hedera DLT.
+    - EXPIRED : all transactions that cannot be submitted to the DLT anymore. Transactions can be submitted within a 3-minute window from their startDate. After that, the transaction is considered "expired" and can no longer be submitted (it must be recreated).
+    - ERROR : a transaction that is no longer valid. Some transactions are valid when created but become invalid due to subsequent transactions submitted immediately after their creation. In such cases, the transaction status is set to "error" by the "scheduled job" when trying to submit it.
   - _threshold_: minimum number of keys that must sign the transaction before we can submit to the network (update its status to _SIGNED_).
+- **Scheduled Job**: the scheduled job is a job that runs every 30 seconds and scans the DB looking for two types of transactions.
+  - Transactions ready to submit : transactions that have been signed by all the necessary keys and we are currently within its 3-minute validity time windows (3 minutes from its start date). The scheduled job will pick these transactions and submit them to the DLT.
+    - If the transaction succeeds, it is immediatly removed frm the DB.
+    - If the transaction fails, its status is set to "ERROR"
+  - Expired Transactions : These are "pending" or "signed" transactions whose start date is more than 3 minutes ago. The scheduled job will change the status of these transactions to "expired."
 
 # Overview
 

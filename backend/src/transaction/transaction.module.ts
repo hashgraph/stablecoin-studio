@@ -29,5 +29,10 @@ import { LoggerService } from '../logger/logger.service';
   imports: [TypeOrmModule.forFeature([Transaction])],
   providers: [TransactionService, LoggerService],
   controllers: [TransactionController],
+  exports: [
+    TransactionService,
+    LoggerService,
+    TypeOrmModule.forFeature([Transaction]),
+  ],
 })
 export class TransactionModule {}

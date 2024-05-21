@@ -159,10 +159,20 @@ export default class ManageMultiSigTxService extends Service {
     // Remove the "Submit" action if the MultiSig transaction is pending
     if (multiSigTx.status === Status.Pending) {
       actions.splice(actions.indexOf(submitAction), 1);
+    } else if (
+      multiSigTx.status === Status.Expired ||
+      multiSigTx.status === Status.Error
+    ) {
+      actions.splice(actions.indexOf(submitAction), 1);
+      actions.splice(actions.indexOf(signAction), 1);
     }
     // Remove the "Sign" action if is signed with this account key
     if (multiSigTx.signedKeys.includes(publicKey)) {
       actions.splice(actions.indexOf(signAction), 1);
+    }
+    // Remove the "Submit" action if start date has not been reached yet
+    if (new Date(multiSigTx.startDate) > new Date()) {
+      actions.splice(actions.indexOf(submitAction), 1);
     }
     //* Remove actions that are not allowed based on the type of Account
     // Remove the "Sign" action if the account is multisig
