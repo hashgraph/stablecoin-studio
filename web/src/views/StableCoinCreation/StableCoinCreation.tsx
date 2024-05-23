@@ -341,11 +341,7 @@ const StableCoinCreation = () => {
 			const tokenId = createResponse.coin.tokenId.toString();
 			setToken(tokenId);
 
-			if (
-				(wallet.lastWallet === SupportedWallets.HASHPACK ||
-					wallet.lastWallet === SupportedWallets.BLADE) &&
-				createResponse?.coin.tokenId
-			) {
+			if (createResponse?.coin.tokenId) {
 				const associateRequest = new AssociateTokenRequest({
 					targetId: accountInfo.id!,
 					tokenId,
@@ -361,7 +357,7 @@ const StableCoinCreation = () => {
 				}
 			}
 
-			if (wallet.lastWallet === SupportedWallets.METAMASK) {
+			/* if (wallet.lastWallet === SupportedWallets.METAMASK) {
 				const details: any = await Promise.race([
 					SDKService.getStableCoinDetails(
 						new GetStableCoinDetailsRequest({
@@ -381,7 +377,7 @@ const StableCoinCreation = () => {
 
 				ImportTokenService.importToken(tokenId, details?.symbol!, accountInfo?.id!);
 				dispatch(getExternalTokenList(accountInfo.id!));
-			}
+			} */
 
 			setLoading(false);
 			setSuccess(true);
