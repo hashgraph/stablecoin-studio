@@ -201,6 +201,7 @@ const MultiSigTransactions = () => {
 								<Th>ID</Th>
 								<Th>Description</Th>
 								<Th>Account</Th>
+								<Th>Signatures</Th>
 								<Th>Threshold</Th>
 								<Th>Status</Th>
 								<Th>
@@ -248,6 +249,9 @@ const MultiSigTransactions = () => {
 									</Td>
 									<Td borderBottom='1px' borderColor='gray.200'>
 										{transaction.hedera_account_id}
+									</Td>
+									<Td borderBottom='1px' borderColor='gray.200'>
+										{transaction.signed_keys.length}
 									</Td>
 									<Td borderBottom='1px' borderColor='gray.200'>
 										{transaction.threshold}
