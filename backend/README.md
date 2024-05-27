@@ -65,7 +65,7 @@ The backend is made of two components:
     - EXPIRED : all transactions that cannot be submitted to the DLT anymore. Transactions can be submitted within a 3-minute window from their startDate. After that, the transaction is considered "expired" and can no longer be submitted (it must be recreated).
     - ERROR : a transaction that is no longer valid. Some transactions are valid when created but become invalid due to subsequent transactions submitted immediately after their creation. In such cases, the transaction status is set to "error" by the "scheduled job" when trying to submit it.
   - _threshold_: minimum number of keys that must sign the transaction before we can submit to the network (update its status to _SIGNED_).
-- **Scheduled Job**: the scheduled job is a job that runs every 30 seconds and scans the DB looking for two types of transactions.
+- **Scheduled Job**: the scheduled job is a job that runs every 30 seconds (by default but it can be configured in the .env file) and scans the DB looking for two types of transactions.
   - Transactions ready to submit : transactions that have been signed by all the necessary keys and we are currently within its 3-minute validity time windows (3 minutes from its start date). The scheduled job will pick these transactions and submit them to the DLT.
     - If the transaction succeeds, it is immediatly removed frm the DB.
     - If the transaction fails, its status is set to "ERROR"
@@ -267,6 +267,7 @@ There is a `.env` file that must be used to configure the backend. These are the
 - `LOG_LEVEL`: Minimum log level to be included in the loging files.
 - `FILE_NAME`: Log file name pattern and localtion.
 - `DATE_PATTERN`: Log file date pattern.
+- `AUTO_SUBMIT_JOB_FREQUENCY` : Cron format string that defines the frequency at which the auto submit job runs
 
 
 # Testing

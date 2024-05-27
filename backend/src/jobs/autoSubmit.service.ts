@@ -34,6 +34,9 @@ import { GetTransactionsResponseDto } from '../transaction/dto/get-transactions-
 import { hexToUint8Array } from '../utils/utils';
 import { LoggerService } from '../logger/logger.service.js';
 import LogMessageDTO from '../logger/dto/log-message.dto.js';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 @Injectable()
 export default class AutoSubmitService {
@@ -42,7 +45,9 @@ export default class AutoSubmitService {
     private readonly loggerService: LoggerService,
   ) {}
 
-  @Cron(CronExpression.EVERY_30_SECONDS)
+  @Cron(
+    process.env.AUTO_SUBMIT_JOB_FREQUENCY ?? CronExpression.EVERY_30_SECONDS,
+  )
   async run() {
     let done = false;
     let page = 1;
