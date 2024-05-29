@@ -86,8 +86,8 @@ export default class AutoSubmitService {
 
       const expire = allTransactions.items.filter(
         (tx) =>
-          tx.status != TransactionStatus.EXPIRED &&
-          tx.status != TransactionStatus.ERROR &&
+          (tx.status == TransactionStatus.SIGNED ||
+            tx.status == TransactionStatus.PENDING) &&
           new Date(tx.start_date) <= currentUTCDate_Minus_3_Minutes,
       );
 
@@ -127,10 +127,9 @@ export default class AutoSubmitService {
     await transactionsToSubmit.forEach(async (t) => {
       const success = await this.submit(t);
       if (success) {
-        const txId = t.id;
-        await this.transactionService.delete(t.id);
-        this.loggerService.log(
-          new LogMessageDTO('', `Removed transaction Id : ${txId}`, null),
+        await this.transactionService.updateStatus(
+          TransactionStatus.EXECUTED,
+          t.id,
         );
       } else {
         await this.transactionService.updateStatus(
