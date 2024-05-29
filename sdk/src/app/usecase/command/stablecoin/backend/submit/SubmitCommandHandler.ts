@@ -22,6 +22,7 @@ import Hex from '../../../../../../core/Hex.js';
 import { ICommandHandler } from '../../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
+import { EXECUTED } from '../../../../../../domain/context/transaction/MultiSigTransaction.js';
 import { BackendAdapter } from '../../../../../../port/out/backend/BackendAdapter.js';
 import AccountService from '../../../../../service/AccountService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
@@ -74,7 +75,7 @@ export class SubmitCommandHandler implements ICommandHandler<SubmitCommand> {
 		await handler.submit(deserializedTransaction);
 
 		// remove from the backend
-		await this.backendAdapter.deleteTransaction(transactionId);
+		await this.backendAdapter.updateTransaction(transactionId, EXECUTED);
 
 		return Promise.resolve(new SubmitCommandResponse(true));
 	}

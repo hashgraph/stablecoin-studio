@@ -18,6 +18,8 @@
  *
  */
 
+export const EXECUTED = 'EXECUTED';
+
 export class Pagination {
 	totalItems: number;
 	itemCount: number;
