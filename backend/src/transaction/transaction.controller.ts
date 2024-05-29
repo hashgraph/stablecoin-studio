@@ -142,7 +142,7 @@ export default class TransactionController {
     }
   }
 
-  @Put(':transactionId/status')
+  @Put(':transactionId/update')
   @HttpCode(HttpStatus.NO_CONTENT) // 204 No Content (successful update, no response body needed
   @ApiNoContentResponse({
     description: 'The transaction has been successfully updated.',
