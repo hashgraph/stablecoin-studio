@@ -118,8 +118,8 @@ export default class AutoSubmitService {
     // EXPIRE TRANSACTIONS
     await transactionsToExpire.forEach(async (t) => {
       await this.transactionService.updateStatus(
-        t.id,
         TransactionStatus.EXPIRED,
+        t.id,
       );
     });
 
@@ -134,8 +134,8 @@ export default class AutoSubmitService {
         );
       } else {
         await this.transactionService.updateStatus(
-          t.id,
           TransactionStatus.ERROR,
+          t.id,
         );
       }
     });

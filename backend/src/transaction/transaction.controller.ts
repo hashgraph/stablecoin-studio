@@ -41,6 +41,7 @@ import { CreateTransactionRequestDto } from './dto/create-transaction-request.dt
 import TransactionService from './transaction.service';
 import Transaction from './transaction.entity';
 import { SignTransactionRequestDto } from './dto/sign-transaction-request.dto';
+import { UpdateTransactionRequestDto } from './dto/update-transaction-request.dto';
 import { GetTransactionsResponseDto } from './dto/get-transactions-response.dto';
 import {
   ApiCreatedResponse,
@@ -104,7 +105,7 @@ export default class TransactionController {
     }
   }
 
-  @Put(':transactionId')
+  @Put(':transactionId/signature')
   @HttpCode(HttpStatus.NO_CONTENT) // 204 No Content (successful update, no response body needed
   @ApiNoContentResponse({
     description: 'The transaction has been successfully updated.',
@@ -134,6 +135,50 @@ export default class TransactionController {
         new LogMessageDTO(
           request[REQUEST_ID_HTTP_HEADER],
           'Error signing transaction',
+          error.message,
+        ),
+      );
+      throw error;
+    }
+  }
+
+  @Put(':transactionId/status')
+  @HttpCode(HttpStatus.NO_CONTENT) // 204 No Content (successful update, no response body needed
+  @ApiNoContentResponse({
+    description: 'The transaction has been successfully updated.',
+  })
+  @ApiParam({
+    name: 'transactionId',
+    description: 'The transaction ID to update',
+    example: 'e8fe7d5e-2a94-472c-bab8-e693e401134f',
+    required: true,
+  })
+  @UseFilters(HttpExceptionFilter)
+  async updateTransactionStatus(
+    @Req() request: Request,
+    @Param('transactionId') transactionId: string,
+    @Body() updateTransactionDto: UpdateTransactionRequestDto,
+  ): Promise<void> {
+    this.loggerService.log(
+      new LogMessageDTO(
+        request[REQUEST_ID_HTTP_HEADER],
+        'Update transaction status',
+        {
+          id: transactionId,
+          body: updateTransactionDto,
+        },
+      ),
+    );
+    try {
+      await this.transactionService.updateStatus(
+        updateTransactionDto.status,
+        transactionId,
+      );
+    } catch (error) {
+      this.loggerService.error(
+        new LogMessageDTO(
+          request[REQUEST_ID_HTTP_HEADER],
+          'Error updating transaction',
           error.message,
         ),
       );
