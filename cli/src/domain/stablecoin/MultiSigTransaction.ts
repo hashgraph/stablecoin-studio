@@ -21,10 +21,11 @@
 import { UUID } from 'crypto';
 
 export enum Status {
-  Pending = 'PENDING',
-  Signed = 'SIGNED',
-  Expired = 'EXPIRED',
-  Error = 'ERROR',
+  PENDING = 'PENDING',
+  SIGNED = 'SIGNED',
+  EXPIRED = 'EXPIRED',
+  ERROR = 'ERROR',
+  EXECUTED = 'EXECUTED',
 }
 
 export default class MultiSigTransaction {

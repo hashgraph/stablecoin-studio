@@ -56,7 +56,7 @@ export default class ListMultiSigTxService extends Service {
       pagination?: PaginationRequest;
       draw?: boolean;
     } = {
-      status: Status.Pending,
+      status: Status.PENDING,
       pagination: new PaginationRequest(),
       draw: false,
     },

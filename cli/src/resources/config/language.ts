@@ -510,6 +510,8 @@ export const english = {
     },
     // * Multi-Signature Transactions
     multiSig: {
+      filterTitle: 'filter transactions by status',
+      allStatusesLabel: 'All',
       listMenuTitle: 'Select a multi-signature transaction',
       txActions: {
         title: 'Multi-signature transaction actions',

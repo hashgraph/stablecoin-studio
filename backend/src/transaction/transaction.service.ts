@@ -211,8 +211,8 @@ export default class TransactionService {
   }
 
   async updateStatus(
-    transactionId: string,
     newState: TransactionStatus,
+    transactionId: string,
   ): Promise<void> {
     if (!uuidRegex.test(transactionId))
       throw new HttpException('Invalid Transaction uuid format', 400);
