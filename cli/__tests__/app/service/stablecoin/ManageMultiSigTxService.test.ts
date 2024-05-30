@@ -40,7 +40,7 @@ const TRANSACTIONS = [
     transaction_message:
       '0aef022aec020a350a1a0a0c0892d5c0af0610efaedd950312080800100018c3bf0c180012080800100018c3bf0c1880c2d72f22020878320072020a0012b2020a640a20cf8c984270cd7cd25e1bd6df1a3a22ee2d1cd53a0f7bbfdf917a8bd881b11b5e1a40e120be5fa7fa085c989e69b60b6f80218d8a49751abc84456bc8bd88ba3766101b658d45ebd7e0b742382e9bd8ad98a88f03a9d6118cad42da275531e068a50b0a640a20c539f0f94cd937b721f9bd4c0b965164622798cf8ddea6169d2cb734f70baf8e1a406cf580daa232d279badbd1bc1227531d4c98ab444a2a7ec1851af17400e01c805bf96223ad2cd7a4469f3709c0fb35b77cb217543e4741d8db92175de583cc000a640a200e3c05cf1c2a04db21d0e73f0e608d80d7043851154a4d9516e6b0ee929f7f9f1a40ff79cb99db2d5001835b7ed3c26fa8a980ee541b9a1fb1c3972a6a62dfce1bd05372fed331ee1d672dc41df5ec1c12a38104962d2fb6a80dbf12286375f59c0f',
     description: 'This transaction is for the creation of a new StableCoin',
-    status: Status.Pending,
+    status: Status.PENDING,
     threshold: 2,
     hedera_account_id: '0.0.123456',
     key_list: [
@@ -58,7 +58,7 @@ const TRANSACTIONS = [
     transaction_message:
       '0aef022aec020a350a1a0a0c0892d5c0af0610efaedd950312080800100018c3bf0c180012080800100018c3bf0c1880c2d72f22020878320072020a0012b2020a640a20cf8c984270cd7cd25e1bd6df1a3a22ee2d1cd53a0f7bbfdf917a8bd881b11b5e1a40e120be5fa7fa085c989e69b60b6f80218d8a49751abc84456bc8bd88ba3766101b658d45ebd7e0b742382e9bd8ad98a88f03a9d6118cad42da275531e068a50b0a640a20c539f0f94cd937b721f9bd4c0b965164622798cf8ddea6169d2cb734f70baf8e1a406cf580daa232d279badbd1bc1227531d4c98ab444a2a7ec1851af17400e01c805bf96223ad2cd7a4469f3709c0fb35b77cb217543e4741d8db92175de583cc000a640a200e3c05cf1c2a04db21d0e73f0e608d80d7043851154a4d9516e6b0ee929f7f9f1a40ff79cb99db2d5001835b7ed3c26fa8a980ee541b9a1fb1c3972a6a62dfce1bd05372fed331ee1d672dc41df5ec1c12a38104962d2fb6a80dbf12286375f59c0f',
     description: 'This transaction is for the creation of a new StableCoin',
-    status: Status.Pending,
+    status: Status.PENDING,
     threshold: 2,
     hedera_account_id: '0.0.123456',
     key_list: [
@@ -80,7 +80,7 @@ const TRANSACTIONS = [
     transaction_message:
       '0aef022aec020a350a1a0a0c0892d5c0af0610efaedd950312080800100018c3bf0c180012080800100018c3bf0c1880c2d72f22020878320072020a0012b2020a640a20cf8c984270cd7cd25e1bd6df1a3a22ee2d1cd53a0f7bbfdf917a8bd881b11b5e1a40e120be5fa7fa085c989e69b60b6f80218d8a49751abc84456bc8bd88ba3766101b658d45ebd7e0b742382e9bd8ad98a88f03a9d6118cad42da275531e068a50b0a640a20c539f0f94cd937b721f9bd4c0b965164622798cf8ddea6169d2cb734f70baf8e1a406cf580daa232d279badbd1bc1227531d4c98ab444a2a7ec1851af17400e01c805bf96223ad2cd7a4469f3709c0fb35b77cb217543e4741d8db92175de583cc000a640a200e3c05cf1c2a04db21d0e73f0e608d80d7043851154a4d9516e6b0ee929f7f9f1a40ff79cb99db2d5001835b7ed3c26fa8a980ee541b9a1fb1c3972a6a62dfce1bd05372fed331ee1d672dc41df5ec1c12a38104962d2fb6a80dbf12286375f59c0f',
     description: 'This transaction is for the creation of a new StableCoin',
-    status: Status.Signed,
+    status: Status.SIGNED,
     threshold: 2,
     hedera_account_id: '0.0.123456',
     key_list: [
@@ -104,7 +104,7 @@ const TRANSACTIONS = [
     transaction_message:
       '0aef022aec020a350a1a0a0c0892d5c0af0610efaedd950312080800100018c3bf0c180012080800100018c3bf0c1880c2d72f22020878320072020a0012b2020a640a20cf8c984270cd7cd25e1bd6df1a3a22ee2d1cd53a0f7bbfdf917a8bd881b11b5e1a40e120be5fa7fa085c989e69b60b6f80218d8a49751abc84456bc8bd88ba3766101b658d45ebd7e0b742382e9bd8ad98a88f03a9d6118cad42da275531e068a50b0a640a20c539f0f94cd937b721f9bd4c0b965164622798cf8ddea6169d2cb734f70baf8e1a406cf580daa232d279badbd1bc1227531d4c98ab444a2a7ec1851af17400e01c805bf96223ad2cd7a4469f3709c0fb35b77cb217543e4741d8db92175de583cc000a640a200e3c05cf1c2a04db21d0e73f0e608d80d7043851154a4d9516e6b0ee929f7f9f1a40ff79cb99db2d5001835b7ed3c26fa8a980ee541b9a1fb1c3972a6a62dfce1bd05372fed331ee1d672dc41df5ec1c12a38104962d2fb6a80dbf12286375f59c0f',
     description: 'This transaction is for the creation of a new StableCoin',
-    status: Status.Signed,
+    status: Status.SIGNED,
     threshold: 2,
     hedera_account_id: '0.0.123456',
     key_list: [
@@ -168,7 +168,7 @@ describe('Manage Multi-Signature Transactions Service', () => {
       // Return a fixed list of transactions based on status and pagination
       mocks.getTransactions = jest
         .spyOn(ListMultiSigTxService.prototype, 'get')
-        .mockImplementation(({ status = Status.Pending }) => {
+        .mockImplementation(({ status = Status.PENDING }) => {
           const filteredTransactions = TRANSACTIONS.filter(
             (tx) => tx.status === status,
           );
@@ -196,7 +196,7 @@ describe('Manage Multi-Signature Transactions Service', () => {
       //* 🗂️ Arrange
       const expectedOptions = [
         ...TRANSACTIONS.map((tx) => {
-          return tx.status === Status.Pending ? tx.id : undefined;
+          return tx.status === Status.PENDING ? tx.id : undefined;
         }),
       ];
       const expectedMultiSigTx = TRANSACTIONS.find(

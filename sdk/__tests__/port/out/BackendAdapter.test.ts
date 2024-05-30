@@ -39,6 +39,11 @@ const SIGNATURE = {
 	publicKey: 'publicKey',
 };
 
+const UPDATE = {
+	transactionId: 'transactionId',
+	status: 'EXECUTED',
+};
+
 const DELETE = {
 	transactionId: 'transactionId',
 	originHeader: 'http://localhost:3000',
@@ -111,9 +116,17 @@ jest.mock('axios', () => {
 					return {
 						status: 204,
 					};
-				return {
-					status: 400,
-				};
+				else if (
+					url == UPDATE.transactionId &&
+					body.status == UPDATE.status
+				)
+					return {
+						status: 204,
+					};
+				else
+					return {
+						status: 400,
+					};
 			}),
 			get: jest.fn((url, body) => {
 				if (url == GET_TRANSACTION.id)
@@ -201,6 +214,15 @@ describe('🧪 BackendAdapter test', () => {
 			SIGNATURE.transactionId,
 			SIGNATURE.transactionSignature,
 			SIGNATURE.publicKey,
+		);
+
+		expect(true).toBe(true);
+	}, 60_000);
+
+	it('Update transaction', async () => {
+		await backendAdapter.updateTransaction(
+			UPDATE.transactionId,
+			UPDATE.status,
 		);
 
 		expect(true).toBe(true);
