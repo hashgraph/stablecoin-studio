@@ -112,7 +112,7 @@ The front end will automatically detect how many compatible wallets are availabl
 
 ![image](https://user-images.githubusercontent.com/114951681/229089031-9f014228-68cf-4d94-b4da-448d16e884b3.png)
 
-If you choose HashPack or Blade, you will be asked to choose a network (testnet or mainnet)
+If you choose HashPack or Blade, you will be asked to choose a network (testnet or mainnet) yy
 
 ![Alt text](docs/images/disconnect.png?raw=true 'disconnect')
 
