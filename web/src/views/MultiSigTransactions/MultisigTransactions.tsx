@@ -37,6 +37,7 @@ import MultiSigTransactionModal from './components/MultiSigTransactionModal';
 import SDKService from '../../services/SDKService';
 import { useSelector } from 'react-redux';
 import { LAST_WALLET_SELECTED, SELECTED_WALLET_ACCOUNT_INFO } from '../../store/slices/walletSlice';
+import { MultisigTransactionStatusColors, MultisigTransactionStatus } from '../../constant';
 
 // @ts-ignore
 const MultiSigTransactions = () => {
@@ -85,22 +86,16 @@ const MultiSigTransactions = () => {
 	}, [selectedWallet, currentPage]);
 
 	const statusToBgColor = (status: string): string => {
-		switch (status) {
-			case 'PENDING':
-				return 'yellow.200';
-			case 'SIGNED':
-				return 'green.200';
-			case 'EXPIRED':
-				return 'orange.200';
-			case 'ERROR':
-				return 'red.200';
-		}
-		return 'gray.200';
+		const color =
+			MultisigTransactionStatusColors[status as keyof typeof MultisigTransactionStatusColors];
+		return color || 'gray.200';
 	};
 
 	const canSignTransaction = (transaction: MultiSigTransactionViewModel) => {
 		return (
-			publicKey && transaction.key_list.includes(publicKey) && transaction.status === 'PENDING'
+			publicKey &&
+			transaction.key_list.includes(publicKey) &&
+			transaction.status === MultisigTransactionStatus.PENDING
 		);
 	};
 
@@ -110,7 +105,8 @@ const MultiSigTransactions = () => {
 		const currentDate = new Date();
 		if (startDate > currentDate) return false;
 		return (
-			transaction.signed_keys.length >= transaction.threshold && transaction.status === 'SIGNED'
+			transaction.signed_keys.length >= transaction.threshold &&
+			transaction.status === MultisigTransactionStatus.SIGNED
 		);
 	};
 
@@ -128,7 +124,7 @@ const MultiSigTransactions = () => {
 						if (t.id === transactionId) {
 							return {
 								...t,
-								status: 'SIGNED',
+								status: MultisigTransactionStatus.SIGNED,
 								signed_keys: [...t.signed_keys, publicKey],
 							};
 						}
@@ -189,8 +185,11 @@ const MultiSigTransactions = () => {
 					width='auto'
 					onChange={(e) => setFilter(e.target.value)}
 				>
-					<option value='pending'>Pending</option>
-					<option value='signed'>Signed</option>
+					{Object.keys(MultisigTransactionStatusColors).map((statusKey) => (
+						<option key={statusKey} value={statusKey.toLowerCase()}>
+							{statusKey}
+						</option>
+					))}
 				</Select>
 			</Box>
 			<Box position='relative' mb='4'>
