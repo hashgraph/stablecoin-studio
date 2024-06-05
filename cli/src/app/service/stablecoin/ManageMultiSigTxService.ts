@@ -41,6 +41,24 @@ export default class ManageMultiSigTxService extends Service {
     super('Manage MultiSig Transactions Actions');
   }
 
+  public async chooseStatus(): Promise<Status | string> {
+    const statusOptions = Object.values(Status);
+    const statusListAsOptions = [
+      ...statusOptions,
+      language.getText('wizard.multiSig.allStatusesLabel'),
+    ];
+
+    const selectedOption = await utilsService.defaultMultipleAsk(
+      language.getText('wizard.multiSig.filterTitle'),
+      statusListAsOptions,
+      true,
+    );
+
+    if (selectedOption == language.getText('wizard.multiSig.allStatusesLabel'))
+      return selectedOption;
+    else return Status[selectedOption as keyof typeof Status];
+  }
+
   /**
    * Starts the process of managing MultiSig transactions.
    *
@@ -55,7 +73,7 @@ export default class ManageMultiSigTxService extends Service {
     drawTable = true,
     options,
   }: {
-    status?: Status;
+    status?: Status | string;
     paginationReq?: PaginationRequest;
     drawTable?: boolean;
     options?: {
@@ -66,10 +84,15 @@ export default class ManageMultiSigTxService extends Service {
     if (options?.clear) {
       await utilsService.cleanAndShowBanner();
     }
-    this.status = status;
+    let selectedStatus = status;
+    if (!status) selectedStatus = await this.chooseStatus();
+    this.status =
+      selectedStatus in Status
+        ? Status[selectedStatus as keyof typeof Status]
+        : undefined;
     // Get and draw the list of MultiSig transactions
     const multiSigTxListResponse = await new ListMultiSigTxService().get({
-      status,
+      status: this.status,
       draw: drawTable,
       pagination: paginationReq,
     });
@@ -98,13 +121,13 @@ export default class ManageMultiSigTxService extends Service {
         return;
       case language.getText('general.previous'):
         await this.start({
-          status,
+          status: selectedStatus,
           paginationReq: paginationRes.previous(),
         });
         return;
       case language.getText('general.next'):
         await this.start({
-          status,
+          status: selectedStatus,
           paginationReq: paginationRes.next(),
         });
         return;
@@ -112,6 +135,7 @@ export default class ManageMultiSigTxService extends Service {
         await utilsService.cleanAndShowBanner();
         // Start the actions menu for the selected MultiSig transaction
         await this.multiSigTxActions({
+          selectedStatus,
           multiSigTx: multiSigTxList.find((tx) => tx.id === selectedOption),
           publicKey,
         });
@@ -126,9 +150,11 @@ export default class ManageMultiSigTxService extends Service {
    * @returns A Promise that resolves when the action is completed.
    */
   public async multiSigTxActions({
+    selectedStatus,
     multiSigTx,
     publicKey,
   }: {
+    selectedStatus?: Status | string;
     multiSigTx: MultiSigTransaction;
     publicKey?: string;
   }): Promise<void> {
@@ -157,11 +183,12 @@ export default class ManageMultiSigTxService extends Service {
     const actions = [signAction, submitAction, removeAction, detailsAction];
     // * Remove actions that are not allowed based on the status of the MultiSig transaction
     // Remove the "Submit" action if the MultiSig transaction is pending
-    if (multiSigTx.status === Status.Pending) {
+    if (multiSigTx.status === Status.PENDING) {
       actions.splice(actions.indexOf(submitAction), 1);
     } else if (
-      multiSigTx.status === Status.Expired ||
-      multiSigTx.status === Status.Error
+      multiSigTx.status === Status.EXPIRED ||
+      multiSigTx.status === Status.ERROR ||
+      multiSigTx.status === Status.EXECUTED
     ) {
       actions.splice(actions.indexOf(submitAction), 1);
       actions.splice(actions.indexOf(signAction), 1);
@@ -195,20 +222,20 @@ export default class ManageMultiSigTxService extends Service {
     );
     switch (selectedAction) {
       case language.getText('wizard.multiSig.txActions.actions.sign'):
-        await this._sign({ multiSigTx });
+        await this._sign({ selectedStatus, multiSigTx });
         break;
       case language.getText('wizard.multiSig.txActions.actions.submit'):
-        await this._submit({ multiSigTx });
+        await this._submit({ selectedStatus, multiSigTx });
         break;
       case language.getText('wizard.multiSig.txActions.actions.remove'):
-        await this._remove({ multiSigTx });
+        await this._remove({ selectedStatus, multiSigTx });
         break;
       case language.getText('wizard.multiSig.txActions.actions.details'):
-        await this._details({ multiSigTx });
+        await this._details({ selectedStatus, multiSigTx });
         break;
       default:
         // Go Back
-        await this.start({ options: { clear: true } });
+        await this.start({ status: selectedStatus, options: { clear: true } });
         break;
     }
   }
@@ -219,8 +246,10 @@ export default class ManageMultiSigTxService extends Service {
    * @returns A Promise that resolves when the signing process is complete.
    */
   private async _sign({
+    selectedStatus,
     multiSigTx,
   }: {
+    selectedStatus?: Status | string;
     multiSigTx: MultiSigTransaction;
   }): Promise<void> {
     try {
@@ -240,7 +269,7 @@ export default class ManageMultiSigTxService extends Service {
     }
     console.info(language.getText('wizard.multiSig.txActions.signReturn'));
     await utilsService.confirmContinue();
-    await this.start({ options: { clear: true } });
+    await this.start({ status: selectedStatus, options: { clear: true } });
   }
 
   /**
@@ -249,11 +278,13 @@ export default class ManageMultiSigTxService extends Service {
    * @throws Error if the transaction is pending.
    */
   private async _submit({
+    selectedStatus,
     multiSigTx,
   }: {
+    selectedStatus?: Status | string;
     multiSigTx: MultiSigTransaction;
   }): Promise<void> {
-    if (multiSigTx.status === Status.Pending) {
+    if (multiSigTx.status === Status.PENDING) {
       throw new Error('❌ The transaction is Pending.');
     }
     try {
@@ -273,7 +304,7 @@ export default class ManageMultiSigTxService extends Service {
     }
     console.info(language.getText('wizard.multiSig.txActions.submitReturn'));
     await utilsService.confirmContinue();
-    await this.start({ options: { clear: true } });
+    await this.start({ status: selectedStatus, options: { clear: true } });
   }
 
   /**
@@ -283,8 +314,10 @@ export default class ManageMultiSigTxService extends Service {
    * @returns A Promise that resolves when the transaction is successfully removed.
    */
   private async _remove({
+    selectedStatus,
     multiSigTx,
   }: {
+    selectedStatus?: Status | string;
     multiSigTx: MultiSigTransaction;
   }): Promise<void> {
     console.info(language.getText('wizard.multiSig.txActions.removingTx'));
@@ -302,7 +335,7 @@ export default class ManageMultiSigTxService extends Service {
     }
     console.info(language.getText('wizard.multiSig.txActions.removeReturn'));
     await utilsService.confirmContinue();
-    await this.start({ options: { clear: true } });
+    await this.start({ status: selectedStatus, options: { clear: true } });
   }
 
   /**
@@ -312,8 +345,10 @@ export default class ManageMultiSigTxService extends Service {
    * @param multiSigTx - The multiSigTx object to display details for.
    */
   private async _details({
+    selectedStatus,
     multiSigTx,
   }: {
+    selectedStatus?: Status | string;
     multiSigTx: MultiSigTransaction;
   }): Promise<void> {
     console.info(JSON.stringify(multiSigTx, undefined, 2));
@@ -321,6 +356,6 @@ export default class ManageMultiSigTxService extends Service {
       language.getText('wizard.multiSig.txActions.detailsContinue'),
     );
     // When pressing "Go Back", return to the previous menu
-    await this.multiSigTxActions({ multiSigTx });
+    await this.multiSigTxActions({ selectedStatus, multiSigTx });
   }
 }

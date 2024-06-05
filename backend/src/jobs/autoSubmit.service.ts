@@ -34,6 +34,9 @@ import { GetTransactionsResponseDto } from '../transaction/dto/get-transactions-
 import { hexToUint8Array } from '../utils/utils';
 import { LoggerService } from '../logger/logger.service.js';
 import LogMessageDTO from '../logger/dto/log-message.dto.js';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 @Injectable()
 export default class AutoSubmitService {
@@ -42,7 +45,9 @@ export default class AutoSubmitService {
     private readonly loggerService: LoggerService,
   ) {}
 
-  @Cron(CronExpression.EVERY_30_SECONDS)
+  @Cron(
+    process.env.AUTO_SUBMIT_JOB_FREQUENCY ?? CronExpression.EVERY_30_SECONDS,
+  )
   async run() {
     let done = false;
     let page = 1;
@@ -81,8 +86,8 @@ export default class AutoSubmitService {
 
       const expire = allTransactions.items.filter(
         (tx) =>
-          tx.status != TransactionStatus.EXPIRED &&
-          tx.status != TransactionStatus.ERROR &&
+          (tx.status == TransactionStatus.SIGNED ||
+            tx.status == TransactionStatus.PENDING) &&
           new Date(tx.start_date) <= currentUTCDate_Minus_3_Minutes,
       );
 
@@ -113,8 +118,8 @@ export default class AutoSubmitService {
     // EXPIRE TRANSACTIONS
     await transactionsToExpire.forEach(async (t) => {
       await this.transactionService.updateStatus(
-        t.id,
         TransactionStatus.EXPIRED,
+        t.id,
       );
     });
 
@@ -122,15 +127,14 @@ export default class AutoSubmitService {
     await transactionsToSubmit.forEach(async (t) => {
       const success = await this.submit(t);
       if (success) {
-        const txId = t.id;
-        await this.transactionService.delete(t.id);
-        this.loggerService.log(
-          new LogMessageDTO('', `Removed transaction Id : ${txId}`, null),
+        await this.transactionService.updateStatus(
+          TransactionStatus.EXECUTED,
+          t.id,
         );
       } else {
         await this.transactionService.updateStatus(
-          t.id,
           TransactionStatus.ERROR,
+          t.id,
         );
       }
     });
