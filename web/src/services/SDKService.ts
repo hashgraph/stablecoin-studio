@@ -153,10 +153,10 @@ export class SDKService {
 
 			if (projectId) {
 				hwcSettings = {
-					projectId: projectId,
-					dappName: dappName,
-					dappDescription: dappDescription,
-					dappURL: dappURL,
+					projectId,
+					dappName,
+					dappDescription,
+					dappURL,
 				};
 			}
 		}
@@ -169,7 +169,7 @@ export class SDKService {
 				rpcNode: _rpcNode,
 				wallet,
 				consensusNodes,
-				hwcSettings: hwcSettings,
+				hwcSettings,
 			}),
 		);
 

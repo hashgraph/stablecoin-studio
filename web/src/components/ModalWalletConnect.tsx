@@ -449,22 +449,6 @@ const ModalWalletConnect = () => {
 										) : (
 											<></>
 										)}
-										{!availableWallets.includes(SupportedWallets.MULTISIG) &&
-										isMultiSigBackendConfigured ? (
-											<VStack
-												data-testid='Multisig'
-												{...styles.providerStyle}
-												shouldWrapChildren
-												onClick={handleMultiSigMode}
-											>
-												<PairingSpinner wallet={SupportedWallets.MULTISIG}>
-													<Image src={MULTISIG_LOGO_PNG} w={20} />
-													<Text textAlign='center'>Multisig</Text>
-												</PairingSpinner>
-											</VStack>
-										) : (
-											<></>
-										)}
 									</HStack>
 								</ModalFooter>
 							</>
