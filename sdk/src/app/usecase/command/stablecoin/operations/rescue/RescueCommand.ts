@@ -10,6 +10,7 @@ export class RescueCommand extends Command<RescueCommandResponse> {
 	constructor(
 		public readonly amount: string,
 		public readonly tokenId: HederaId,
+		public readonly startDate?: string,
 	) {
 		super();
 	}

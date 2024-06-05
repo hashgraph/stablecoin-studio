@@ -18,6 +18,7 @@
  *
  */
 
+import LogService from '../../../../../../app/service/LogService.js';
 import Hex from '../../../../../../core/Hex.js';
 import { ICommandHandler } from '../../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerDecorator.js';
@@ -49,6 +50,11 @@ export class SignCommandHandler implements ICommandHandler<SignCommand> {
 		const account = this.accountService.getCurrentAccount();
 		if (!account.publicKey) {
 			throw new Error('❌ 🔎 No public key found in the account');
+		}
+
+		if (!account || !account.publicKey) {
+			LogService.logError('No account or public key found');
+			return Promise.resolve(new SignCommandResponse(false));
 		}
 
 		// retrieves transansaction from Backend

@@ -20,7 +20,13 @@
 
 import { singleton } from 'tsyringe';
 import { HederaTransactionAdapter } from '../HederaTransactionAdapter.js';
-import { AccountId, Client, Transaction } from '@hashgraph/sdk';
+import {
+	AccountId,
+	Client,
+	Timestamp,
+	Transaction,
+	TransactionId,
+} from '@hashgraph/sdk';
 import Account from '../../../../domain/context/account/Account.js';
 import TransactionResponse from '../../../../domain/context/transaction/TransactionResponse.js';
 import { lazyInject } from '../../../../core/decorator/LazyInjectDecorator.js';
@@ -63,12 +69,22 @@ export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
 
 	async signAndSendTransaction(
 		t: Transaction,
-	): Promise<TransactionResponse<unknown, Error>> {
+		startDate?: string, // TODO: instead of this could we retrieve this from backend using a service?
+	): // eslint-disable-next-line @typescript-eslint/no-explicit-any
+	Promise<TransactionResponse<unknown, Error>> {
 		const publicKeys: string[] = [];
 		const accountId: AccountId = AccountId.fromString(
 			this.account.id.toString(),
 		);
 
+		// Generate a new transaction ID
+		// TODO: Replace this date with the date selected in the UI
+		const dateStr = startDate ? startDate : new Date().toISOString();
+
+		const validStart = Timestamp.fromDate(dateStr);
+		const txId = TransactionId.withValidStart(accountId, validStart);
+
+		t.setTransactionId(txId);
 		t.setTransactionValidDuration(180);
 		t._freezeWithAccountId(accountId);
 
@@ -118,13 +134,14 @@ export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
 			publicKeys,
 			this.account.multiKey.threshold,
 			this.networkService.environment,
+			new Date(dateStr),
 		);
 
 		return new TransactionResponse(transactionId);
 	}
 
-	// MultiSig cannot eb used to sign anything
-	sign(/* message: string */): Promise<string> {
+	// ! MultiSig cannot be used to sign anything
+	sign(): Promise<string> {
 		throw new Error('Method not implemented.');
 	}
 

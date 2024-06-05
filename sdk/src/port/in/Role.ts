@@ -179,7 +179,7 @@ class RoleInPort implements IRole {
 
 	@LogError
 	async grantMultiRoles(request: GrantMultiRolesRequest): Promise<boolean> {
-		const { tokenId, targetsId, roles, amounts } = request;
+		const { tokenId, targetsId, roles, amounts, startDate } = request;
 		handleValidation('GrantMultiRolesRequest', request);
 
 		const targetsIdHederaIds: HederaId[] = [];
@@ -194,6 +194,7 @@ class RoleInPort implements IRole {
 					targetsIdHederaIds,
 					amounts ?? [],
 					HederaId.from(tokenId),
+					startDate,
 				),
 			)
 		).payload;
@@ -201,7 +202,7 @@ class RoleInPort implements IRole {
 
 	@LogError
 	async revokeMultiRoles(request: RevokeMultiRolesRequest): Promise<boolean> {
-		const { tokenId, targetsId, roles } = request;
+		const { tokenId, targetsId, roles, startDate } = request;
 		handleValidation('HasRoleRequest', request);
 
 		const targetsIdHederaIds: HederaId[] = [];
@@ -215,6 +216,7 @@ class RoleInPort implements IRole {
 					roles,
 					targetsIdHederaIds,
 					HederaId.from(tokenId),
+					startDate,
 				),
 			)
 		).payload;
@@ -266,7 +268,7 @@ class RoleInPort implements IRole {
 	async resetAllowance(
 		request: ResetSupplierAllowanceRequest,
 	): Promise<boolean> {
-		const { tokenId, targetId } = request;
+		const { tokenId, targetId, startDate } = request;
 		handleValidation('ResetSupplierAllowanceRequest', request);
 
 		return (
@@ -274,6 +276,7 @@ class RoleInPort implements IRole {
 				new ResetAllowanceCommand(
 					HederaId.from(targetId),
 					HederaId.from(tokenId),
+					startDate,
 				),
 			)
 		).payload;
@@ -283,7 +286,7 @@ class RoleInPort implements IRole {
 	async increaseAllowance(
 		request: IncreaseSupplierAllowanceRequest,
 	): Promise<boolean> {
-		const { tokenId, amount, targetId } = request;
+		const { tokenId, amount, targetId, startDate } = request;
 		handleValidation('IncreaseSupplierAllowanceRequest', request);
 
 		return (
@@ -292,6 +295,7 @@ class RoleInPort implements IRole {
 					amount,
 					HederaId.from(targetId),
 					HederaId.from(tokenId),
+					startDate,
 				),
 			)
 		).payload;
@@ -301,7 +305,7 @@ class RoleInPort implements IRole {
 	async decreaseAllowance(
 		request: DecreaseSupplierAllowanceRequest,
 	): Promise<boolean> {
-		const { tokenId, amount, targetId } = request;
+		const { tokenId, amount, targetId, startDate } = request;
 		handleValidation('DecreaseSupplierAllowanceRequest', request);
 
 		return (
@@ -310,6 +314,7 @@ class RoleInPort implements IRole {
 					amount,
 					HederaId.from(targetId),
 					HederaId.from(tokenId),
+					startDate,
 				),
 			)
 		).payload;

@@ -35,6 +35,7 @@ export default class MultiSigTransaction {
   signedKeys: string[];
   status: Status;
   threshold: number;
+  startDate: string;
 
   constructor({
     id,
@@ -46,6 +47,7 @@ export default class MultiSigTransaction {
     signedKeys,
     status,
     threshold,
+    startDate,
   }: {
     id: UUID | string;
     message: string;
@@ -56,6 +58,7 @@ export default class MultiSigTransaction {
     signedKeys: string[];
     status: string | Status;
     threshold: number;
+    startDate: string;
   }) {
     this.id = this.validateId(id);
     this.message = this.validateMessage(message);
@@ -66,6 +69,7 @@ export default class MultiSigTransaction {
     this.signedKeys = signedKeys;
     this.status = this.validateStatus(status);
     this.threshold = this.validateThreshold(threshold, keyList);
+    this.startDate = startDate;
   }
 
   // * Validators

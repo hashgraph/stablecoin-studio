@@ -38,14 +38,14 @@ export class PauseCommandHandler implements ICommandHandler<PauseCommand> {
 	) {}
 
 	async execute(command: PauseCommand): Promise<PauseCommandResponse> {
-		const { tokenId } = command;
+		const { tokenId, startDate } = command;
 		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
 		const capabilities = await this.stableCoinService.getCapabilities(
 			account,
 			tokenId,
 		);
-		const res = await handler.pause(capabilities);
+		const res = await handler.pause(capabilities, startDate);
 		return Promise.resolve(
 			new PauseCommandResponse(res.error === undefined),
 		);

@@ -95,6 +95,8 @@ const ModalWalletConnect = () => {
 	const { control, getValues } = useForm({
 		mode: 'onChange',
 	});
+	const isMultiSigBackendConfigured =
+		!!process.env.REACT_APP_BACKEND_URL && process.env.REACT_APP_BACKEND_URL.trim() !== '';
 
 	const isHWCProjectID =
 		!!process.env.REACT_APP_PROJECT_ID && process.env.REACT_APP_PROJECT_ID.trim() !== '';
@@ -447,7 +449,22 @@ const ModalWalletConnect = () => {
 										) : (
 											<></>
 										)}
-										)
+										{!availableWallets.includes(SupportedWallets.MULTISIG) &&
+										isMultiSigBackendConfigured ? (
+											<VStack
+												data-testid='Multisig'
+												{...styles.providerStyle}
+												shouldWrapChildren
+												onClick={handleMultiSigMode}
+											>
+												<PairingSpinner wallet={SupportedWallets.MULTISIG}>
+													<Image src={MULTISIG_LOGO_PNG} w={20} />
+													<Text textAlign='center'>Multisig</Text>
+												</PairingSpinner>
+											</VStack>
+										) : (
+											<></>
+										)}
 									</HStack>
 								</ModalFooter>
 							</>

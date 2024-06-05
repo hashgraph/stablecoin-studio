@@ -12,6 +12,7 @@ export class RevokeMultiRolesCommand extends Command<RevokeMultiRolesCommandResp
 		public readonly roles: StableCoinRole[],
 		public readonly targetsId: HederaId[],
 		public readonly tokenId: HederaId,
+		public readonly startDate?: string,
 	) {
 		super();
 	}

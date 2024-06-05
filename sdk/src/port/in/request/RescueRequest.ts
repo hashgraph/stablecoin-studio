@@ -20,17 +20,36 @@
 
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
+import { OptionalField } from '../../../core/decorator/OptionalDecorator';
 
 export default class RescueRequest extends ValidatedRequest<RescueRequest> {
 	tokenId: string;
 	amount: string;
 
-	constructor({ tokenId, amount }: { tokenId: string; amount: string }) {
+	@OptionalField()
+	startDate?: string;
+
+	constructor({
+		tokenId,
+		amount,
+		startDate,
+	}: {
+		tokenId: string;
+		amount: string;
+		startDate?: string;
+	}) {
 		super({
 			tokenId: Validation.checkHederaIdFormat(),
 			amount: Validation.checkAmount(),
+			startDate: (val) => {
+				if (val === undefined) {
+					return;
+				}
+				return Validation.checkIsoDateFormat(val);
+			},
 		});
 		this.tokenId = tokenId;
 		this.amount = amount;
+		this.startDate = startDate;
 	}
 }

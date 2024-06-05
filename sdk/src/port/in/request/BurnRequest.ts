@@ -18,20 +18,39 @@
  *
  */
 
+import { OptionalField } from '../../../core/decorator/OptionalDecorator.js';
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
-
 export default class BurnRequest extends ValidatedRequest<BurnRequest> {
 	amount: string;
 	tokenId: string;
 
-	constructor({ amount, tokenId }: { amount: string; tokenId: string }) {
+	@OptionalField()
+	startDate?: string;
+
+	constructor({
+		amount,
+		tokenId,
+		startDate,
+	}: {
+		amount: string;
+		tokenId: string;
+		startDate?: string;
+	}) {
 		super({
 			amount: Validation.checkAmount(),
 			tokenId: Validation.checkHederaIdFormat(),
+			startDate: (val) => {
+				if (val === undefined) {
+					return;
+				}
+
+				return Validation.checkIsoDateFormat(val);
+			},
 		});
 
 		this.amount = amount;
 		this.tokenId = tokenId;
+		this.startDate = startDate;
 	}
 }

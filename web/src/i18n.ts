@@ -27,6 +27,7 @@ import REVOKE_KYC_EN from './translations/en/revokeKYC.json';
 import CHECK_KYC_EN from './translations/en/checkKyc.json';
 import FEES_MANAGEMENT_EN from './translations/en/feesManagement.json';
 import UPDATE_TOKEN_EN from './translations/en/updateToken.json';
+import MULTISIG_EN from './translations/en/multiSig.json';
 
 const options = {
 	order: ['localStorage', 'navigator'],
@@ -66,6 +67,7 @@ i18n
 				feesManagement: FEES_MANAGEMENT_EN,
 				updateToken: UPDATE_TOKEN_EN,
 				appSettings: APPSETTINGS_EN,
+				multiSig: MULTISIG_EN,
 			},
 			es: {
 				global: GLOBAL_ES,

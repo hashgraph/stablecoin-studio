@@ -1,6 +1,8 @@
 {
 	"title": "Operations",
 	"subtitle": "Choose an operation",
+	"subtitle-date": "Select a start date",
+	"subtitle-multiSig": "Set the start date and choose an operation",
 	"cashInOperation": "Cash in",
 	"wipeOperation": "Wipe",
 	"rescueOperation": "Rescue",

@@ -52,4 +52,10 @@ export default class Transaction {
     nullable: false,
   })
   network: Network;
+
+  @Column({
+    type: 'timestamp with time zone',
+    nullable: false,
+  })
+  start_date: Date;
 }

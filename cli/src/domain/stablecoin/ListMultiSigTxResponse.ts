@@ -79,6 +79,7 @@ export default class ListMultiSigTxResponse {
         signedKeys: multiSigTxRaw.signed_keys,
         status: multiSigTxRaw.status,
         threshold: multiSigTxRaw.threshold,
+        startDate: multiSigTxRaw.start_date,
       });
     });
 

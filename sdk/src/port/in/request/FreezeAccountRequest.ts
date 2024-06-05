@@ -20,17 +20,37 @@
 
 import ValidatedRequest from './validation/ValidatedRequest.js';
 import Validation from './validation/Validation.js';
+import { OptionalField } from '../../../core/decorator/OptionalDecorator';
 
 export default class FreezeAccountStableCoinRequest extends ValidatedRequest<FreezeAccountStableCoinRequest> {
 	tokenId: string;
 	targetId: string;
 
-	constructor({ tokenId, targetId }: { tokenId: string; targetId: string }) {
+	@OptionalField()
+	startDate?: string;
+
+	constructor({
+		tokenId,
+		targetId,
+		startDate,
+	}: {
+		tokenId: string;
+		targetId: string;
+		startDate?: string;
+	}) {
 		super({
 			targetId: Validation.checkHederaIdFormat(),
 			tokenId: Validation.checkHederaIdFormat(),
+			startDate: (val) => {
+				if (val === undefined) {
+					return;
+				}
+
+				return Validation.checkIsoDateFormat(val);
+			},
 		});
 		this.tokenId = tokenId;
 		this.targetId = targetId;
+		this.startDate = startDate;
 	}
 }

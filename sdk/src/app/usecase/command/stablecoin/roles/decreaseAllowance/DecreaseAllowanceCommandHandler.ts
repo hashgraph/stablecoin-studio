@@ -48,7 +48,7 @@ export class DecreaseAllowanceCommandHandler
 	async execute(
 		command: DecreaseAllowanceCommand,
 	): Promise<DecreaseAllowanceCommandResponse> {
-		const { amount, targetId, tokenId } = command;
+		const { amount, targetId, tokenId, startDate } = command;
 		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
 		const capabilities = await this.stableCoinService.getCapabilities(
@@ -63,6 +63,7 @@ export class DecreaseAllowanceCommandHandler
 			capabilities,
 			targetId,
 			BigDecimal.fromString(amount, capabilities.coin.decimals),
+			startDate,
 		);
 		// return Promise.resolve({ payload: res.response });
 		return Promise.resolve(

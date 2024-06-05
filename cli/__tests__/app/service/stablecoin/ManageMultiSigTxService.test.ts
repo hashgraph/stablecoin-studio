@@ -51,6 +51,7 @@ const TRANSACTIONS = [
     signed_keys: [],
     signatures: [],
     network: 'testnet',
+    start_date: '2024-06-14 09:45:00+00',
   },
   {
     id: 'e8fe7d5e-2a94-472c-bab8-e693e4011301',
@@ -72,6 +73,7 @@ const TRANSACTIONS = [
       'e120be5fa7fa085c989e69b60b6f80218d8a49751abc84456bc8bd88ba3766101b658d45ebd7e0b742382e9bd8ad98a88f03a9d6118cad42da275531e068a50b',
     ],
     network: 'testnet',
+    start_date: '2024-06-14 09:45:00+00',
   },
   {
     id: 'e8fe7d5e-2a94-472c-bab8-e693e4011302',
@@ -95,6 +97,7 @@ const TRANSACTIONS = [
       '6cf580daa232d279badbd1bc1227531d4c98ab444a2a7ec1851af17400e01c805bf96223ad2cd7a4469f3709c0fb35b77cb217543e4741d8db92175de583cc00',
     ],
     network: 'testnet',
+    start_date: '2024-06-14 09:45:00+00',
   },
   {
     id: 'e8fe7d5e-2a94-472c-bab8-e693e4011303',
@@ -120,6 +123,7 @@ const TRANSACTIONS = [
       'ff79cb99db2d5001835b7ed3c26fa8a980ee541b9a1fb1c3972a6a62dfce1bd05372fed331ee1d672dc41df5ec1c12a38104962d2fb6a80dbf12286375f59c0f',
     ],
     network: 'testnet',
+    start_date: '2024-06-14 09:45:00+00',
   },
 ];
 const DEFAULT_PAGE = 1;
@@ -233,6 +237,7 @@ describe('Manage Multi-Signature Transactions Service', () => {
             signedKeys: expectedMultiSigTx.signed_keys,
             status: expectedMultiSigTx.status,
             threshold: expectedMultiSigTx.threshold,
+            startDate: expectedMultiSigTx.start_date,
           },
           publicKey: undefined,
         }),

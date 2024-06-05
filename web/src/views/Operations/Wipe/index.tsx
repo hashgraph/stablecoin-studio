@@ -1,4 +1,4 @@
-import { Heading, Text, Stack, useDisclosure } from '@chakra-ui/react';
+import { Heading, Stack, Text, useDisclosure } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -19,7 +19,8 @@ import OperationLayout from './../OperationLayout';
 import { BigDecimal, SupportedWallets, WipeRequest } from '@hashgraph/stablecoin-npm-sdk';
 import { useRefreshCoinInfo } from '../../../hooks/useRefreshCoinInfo';
 import { propertyNotFound } from '../../../constant';
-import { formatAmount } from '../../../utils/inputHelper';
+import { formatDateTime } from '../../../utils/inputHelper';
+import DatePickerController from '../../../components/Form/DatePickerController';
 
 const WipeOperation = () => {
 	const {
@@ -40,6 +41,7 @@ const WipeOperation = () => {
 			amount: '0',
 			targetId: '',
 			tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
+			startDate: undefined,
 		}),
 	);
 	const selectedWallet = useSelector(LAST_WALLET_SELECTED);
@@ -48,11 +50,11 @@ const WipeOperation = () => {
 		mode: 'onChange',
 	});
 
-	const { t } = useTranslation(['wipe', 'global', 'operations']);
+	const { t } = useTranslation(['wipe', 'global', 'operations', 'multiSig']);
 
 	const successDescription =
 		selectedWallet === SupportedWallets.MULTISIG
-			? 'MultiSig transaction has been successfully created and is now awaiting signatures. Accounts have 180 seconds to sign the transaction.'
+			? t('multiSig:opValidationMessage')
 			: t('wipe:modalSuccessDesc', {
 					amount: getValues().amount,
 					account: getValues().destinationAccount,
@@ -143,6 +145,30 @@ const WipeOperation = () => {
 									request.targetId = e.target.value;
 								}}
 							/>
+							{selectedWallet === SupportedWallets.MULTISIG && (
+								<DatePickerController
+									rules={{
+										required: t('global:validations.required') ?? propertyNotFound,
+										validate: {
+											validation: (value: Date) => {
+												request.startDate = formatDateTime({ dateTime: value });
+												const res = handleRequestValidation(request.validate('startDate'));
+												return res;
+											},
+										},
+									}}
+									isRequired
+									showTimeSelect
+									placeholderText='Select date and time'
+									dateFormat="yyyy-MM-dd'T'HH:mm:ss"
+									control={control}
+									name='startDate'
+									label={t('multiSig:startDate') ?? propertyNotFound}
+									minimumDate={new Date()}
+									timeFormat='HH:mm'
+									timeIntervals={15}
+								/>
+							)}
 						</Stack>
 					</>
 				}
@@ -153,8 +179,6 @@ const WipeOperation = () => {
 				errorNotificationTitle={t('operations:modalErrorTitle')}
 				errorNotificationDescription={errorOperation}
 				errorTransactionUrl={errorTransactionUrl}
-				successNotificationTitle={t('operations:modalSuccessTitle')}
-				successNotificationDescription={successDescription}
 				modalActionProps={{
 					isOpen: isOpenModalAction,
 					onClose: onCloseModalAction,
@@ -163,21 +187,44 @@ const WipeOperation = () => {
 					onConfirm: handleWipe,
 				}}
 				ModalActionChildren={
-					<DetailsReview
-						title={t('wipe:modalAction.subtitle')}
-						details={[
-							{
-								label: t('wipe:modalAction.fromAccount'),
-								value: getValues().destinationAccount,
-							},
-							{
-								label: t('wipe:modalAction.amount'),
-								value: getValues().amount,
-								valueInBold: true,
-							},
-						]}
-					/>
+					selectedWallet === SupportedWallets.MULTISIG ? (
+						<DetailsReview
+							title={t('wipe:modalAction.subtitle')}
+							details={[
+								{
+									label: t('wipe:modalAction.fromAccount'),
+									value: getValues().destinationAccount,
+								},
+								{
+									label: t('wipe:modalAction.amount'),
+									value: getValues().amount,
+									valueInBold: true,
+								},
+								{
+									label: t('multiSig:startDate'),
+									value: formatDateTime({ dateTime: getValues().startDate, isUTC: false }),
+								},
+							]}
+						/>
+					) : (
+						<DetailsReview
+							title={t('wipe:modalAction.subtitle')}
+							details={[
+								{
+									label: t('wipe:modalAction.fromAccount'),
+									value: getValues().destinationAccount,
+								},
+								{
+									label: t('wipe:modalAction.amount'),
+									value: getValues().amount,
+									valueInBold: true,
+								},
+							]}
+						/>
+					)
 				}
+				successNotificationTitle={t('operations:modalSuccessTitle')}
+				successNotificationDescription={successDescription}
 			/>
 		</>
 	);

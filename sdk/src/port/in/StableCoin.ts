@@ -323,7 +323,7 @@ class StableCoinInPort implements IStableCoinInPort {
 
 	@LogError
 	async cashIn(request: CashInRequest): Promise<boolean> {
-		const { tokenId, amount, targetId } = request;
+		const { tokenId, amount, targetId, startDate } = request;
 		handleValidation('CashInRequest', request);
 
 		return (
@@ -332,6 +332,7 @@ class StableCoinInPort implements IStableCoinInPort {
 					amount,
 					HederaId.from(targetId),
 					HederaId.from(tokenId),
+					startDate,
 				),
 			)
 		).payload;
@@ -339,43 +340,47 @@ class StableCoinInPort implements IStableCoinInPort {
 
 	@LogError
 	async burn(request: BurnRequest): Promise<boolean> {
-		const { tokenId, amount } = request;
+		const { tokenId, amount, startDate } = request;
 		handleValidation('BurnRequest', request);
 
 		return (
 			await this.commandBus.execute(
-				new BurnCommand(amount, HederaId.from(tokenId)),
+				new BurnCommand(amount, HederaId.from(tokenId), startDate),
 			)
 		).payload;
 	}
 
 	@LogError
 	async rescue(request: RescueRequest): Promise<boolean> {
-		const { tokenId, amount } = request;
+		const { tokenId, amount, startDate } = request;
 		handleValidation('RescueRequest', request);
 
 		return (
 			await this.commandBus.execute(
-				new RescueCommand(amount, HederaId.from(tokenId)),
+				new RescueCommand(amount, HederaId.from(tokenId), startDate),
 			)
 		).payload;
 	}
 
 	@LogError
 	async rescueHBAR(request: RescueHBARRequest): Promise<boolean> {
-		const { tokenId, amount } = request;
+		const { tokenId, amount, startDate } = request;
 		handleValidation('RescueHBARRequest', request);
 
 		return (
 			await this.commandBus.execute(
-				new RescueHBARCommand(amount, HederaId.from(tokenId)),
+				new RescueHBARCommand(
+					amount,
+					HederaId.from(tokenId),
+					startDate,
+				),
 			)
 		).payload;
 	}
 
 	@LogError
 	async wipe(request: WipeRequest): Promise<boolean> {
-		const { tokenId, amount, targetId } = request;
+		const { tokenId, amount, targetId, startDate } = request;
 		handleValidation('WipeRequest', request);
 
 		return (
@@ -384,6 +389,7 @@ class StableCoinInPort implements IStableCoinInPort {
 					amount,
 					HederaId.from(targetId),
 					HederaId.from(tokenId),
+					startDate,
 				),
 			)
 		).payload;
@@ -453,43 +459,43 @@ class StableCoinInPort implements IStableCoinInPort {
 
 	@LogError
 	async pause(request: PauseRequest): Promise<boolean> {
-		const { tokenId } = request;
+		const { tokenId, startDate } = request;
 		handleValidation('PauseRequest', request);
 
 		return (
 			await this.commandBus.execute(
-				new PauseCommand(HederaId.from(tokenId)),
+				new PauseCommand(HederaId.from(tokenId), startDate),
 			)
 		).payload;
 	}
 
 	@LogError
 	async unPause(request: PauseRequest): Promise<boolean> {
-		const { tokenId } = request;
+		const { tokenId, startDate } = request;
 		handleValidation('PauseRequest', request);
 
 		return (
 			await this.commandBus.execute(
-				new UnPauseCommand(HederaId.from(tokenId)),
+				new UnPauseCommand(HederaId.from(tokenId), startDate),
 			)
 		).payload;
 	}
 
 	@LogError
 	async delete(request: DeleteRequest): Promise<boolean> {
-		const { tokenId } = request;
+		const { tokenId, startDate } = request;
 		handleValidation('DeleteRequest', request);
 
 		return (
 			await this.commandBus.execute(
-				new DeleteCommand(HederaId.from(tokenId)),
+				new DeleteCommand(HederaId.from(tokenId), startDate),
 			)
 		).payload;
 	}
 
 	@LogError
 	async freeze(request: FreezeAccountRequest): Promise<boolean> {
-		const { tokenId, targetId } = request;
+		const { tokenId, targetId, startDate } = request;
 		handleValidation('FreezeAccountRequest', request);
 
 		return (
@@ -497,6 +503,7 @@ class StableCoinInPort implements IStableCoinInPort {
 				new FreezeCommand(
 					HederaId.from(targetId),
 					HederaId.from(tokenId),
+					startDate,
 				),
 			)
 		).payload;
@@ -504,7 +511,7 @@ class StableCoinInPort implements IStableCoinInPort {
 
 	@LogError
 	async unFreeze(request: FreezeAccountRequest): Promise<boolean> {
-		const { tokenId, targetId } = request;
+		const { tokenId, targetId, startDate } = request;
 		handleValidation('FreezeAccountRequest', request);
 
 		return (
@@ -512,6 +519,7 @@ class StableCoinInPort implements IStableCoinInPort {
 				new UnFreezeCommand(
 					HederaId.from(targetId),
 					HederaId.from(tokenId),
+					startDate,
 				),
 			)
 		).payload;

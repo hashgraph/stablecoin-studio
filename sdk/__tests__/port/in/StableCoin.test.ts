@@ -105,6 +105,7 @@ jest.mock('../../../src/port/out/backend/BackendAdapter', () => {
 					keyList: string[],
 					threshold: number,
 					network: Environment,
+					startDate: string,
 				) => {
 					multiSigTransaction = new MultiSigTransaction(
 						'1',
@@ -117,6 +118,7 @@ jest.mock('../../../src/port/out/backend/BackendAdapter', () => {
 						[],
 						network,
 						HederaAccountId,
+						startDate,
 					);
 				},
 			),

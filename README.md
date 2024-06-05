@@ -69,7 +69,7 @@ Each stablecoin maps to an _underlying_ Hedera Token and adds the following func
 
   The Hedera Tokens' supply account has the right to change the supply of the token, it can be used to mint and burn tokens.
 
-  Stablecoins split the supply role in two, the *cash-in* and the *burn* roles which can be assigned to different accounts.
+  Stablecoins split the supply role in two, the _cash-in_ and the _burn_ roles which can be assigned to different accounts.
 
 - **Cash-in role**
 
@@ -151,7 +151,7 @@ For more information about the SDK and the methods to perform these operations, 
 
 ## Multisignature functionality
 
-Hedera allows for the creation of accounts with complex key structures (__multi-key accounts__), enabling configurations that require multiple signatures from different ED25519 or ECDSA keys to authorize transactions. 
+Hedera allows for the creation of accounts with complex key structures (**multi-key accounts**), enabling configurations that require multiple signatures from different ED25519 or ECDSA keys to authorize transactions.
 
 These accounts can use simple multi-signature setups or more sophisticated threshold key arrangements, where a specific number of approvals from a designated group of key holders is necessary to execute transactions. This functionality is ideal for enhancing security and governance in applications requiring collective decision-making.
 
@@ -165,25 +165,19 @@ When an operation (cash-in, burn, ...) is carried out using the _multisig_ mode,
 
 It's crucial to note that there is a time constraint for multisig transactions: they must be signed and submitted within three minutes of their initiation. If this timeframe is not met, the Hedera DLT will consider these transactions as expired and reject them.
 
-> The functionality has a limitation: Complex keys must have only one level, in other words, key list and threshold keys must contain only ED25519/ECDSA keys, they cannot contain further key lists and/or threshold keys.
+> The functionality has a limitation: Complex keys must have only one level, in other words, key list and threshold keys must contain only ED25519/ECDSA keys, they cannot contain firther key lists and/or threshold keys.
 
 ### Steps to deploy a multisig-managed stablecoin
 
 If you wish to deploy a stablecoin and fully manage it with a multisig account the steps to follow are:
+
 - Using a single key account, deploy a stablecoin assigning all roles and the proxy admin ownership to the multisig account
-- Once the stablecoin is deployed, assign the "admin" role to the multisig account. 
-> The admin role is the only one that cannot be assigned automatically during the initial deployment
+- Once the stablecoin is deployed, assign the "admin" role to the multisig account.
+  > The admin role is the only one that cannot be assigned automatically during the initial deployment
 - Remove the admin role from the single key account used to deploy the stablecoin
-> The admin role is automatically assigned to the deploying account
+  > The admin role is automatically assigned to the deploying account
 - Connect to the stablecoin platform using the multisig account and manually import the deployed stablecoin
-> Since the deployment was carried out by another account, the multisig account was not associated to the token, that is the reason why you need to import it manually. It you associate your multisig account to the stablecoin's hedera token, you will not need to import it anymore.
-
-### Importing a multisig account key into a Wallet
-
-In order to manage a stablecoin using a multisig account we will need to, **for every single key _K_** in the multisig account's key list / threshold key, do as follows:
-- Create a single key account _A_ and set _K_ as its admin key
-- Import _A_ into Hashpack/Blade/Metamask/... depending on whether _K_ is an ED25519 or ECDSA key
-- Whenever we want to sign a multisig transaction using _K_, we will log into the wallet we used to import _A_ and carry out the signature.
+  > Since the deployment was carried out by another account, the multisig account was not associated to the token, that is the reason why you need to import it manually. It you associate your multisig account to the stablecoin's hedera token, you will not need to import it anymore.
 
 # Architecture
 
@@ -202,7 +196,6 @@ The project is divided in 5 node modules:
 - **`/sdk`:** The SDK implementing the features to create, manage and operate stablecoins. The SDK interacts with the smart contracts and the backend REST API and exposes an API to be used by client facing applications.
 - **`/cli`:** A CLI tool for creating, managing and operating stablecoins. Uses the SDK exposed API.
 - **`/web`:** A DApp developed with React to create, manage and operate stablecoins. Uses the SDK exposed API.
-
 
 Learn more about them in their README:
 
@@ -264,14 +257,15 @@ If you are using VSCode we recommend the use of the solidity extension from nomi
 > This may not be compatible with others solidity extensions, such as this one. [vscode-solidity](https://github.com/juanfranblanco/vscode-solidity)
 
 # Deploying the stablecoin factories
+
 In order to be able to deploy any stablecoin, the `HederaTokenManager` and `StablecoinFactory` smart contracts must be deployed on the network. Whenever a new version of these contracts is needed or when the testnet is reset, new contracts must be deployed. Moreover, the address of the `StablecoinFactory` smart contract must be updated in the SDK, CLI and web modules as explained above.
 
 We provide default addresses for the factories that we have deployed for anyone to use that are updated whenever a new version is released.
 
-| Contract name  | Address      | Network    | 
-|----------------|--------------|------------|
-| FactoryAddress | 0.0.2167166  | Testnet    |
-| FactoryAddress | 0.0.XXXXXX   | Previewnet |
+| Contract name  | Address     | Network    |
+| -------------- | ----------- | ---------- |
+| FactoryAddress | 0.0.2167166 | Testnet    |
+| FactoryAddress | 0.0.XXXXXX  | Previewnet |
 
 (You can check the factorys associated to each version [here](./FACTORY_VERSION.md))
 
@@ -288,20 +282,23 @@ Whenever a testnet reset occurs, the factories must be re-deployed and the addre
 5. Create a PR to be validated and merged for the new version.
 
 # Fees
+
 All fees are subject to change. The fees below reflect a base price for the transaction or query. Transaction characteristics may increase the price from the base price shown below. The following table reflects the cost that the transaction have through the Smart Contracts.
 
-| Operation  | Dollar      | Gas    | 
-|----------------|--------------|------------|
-| Cash in | 0.01$   | 101.497    |
-| Burn | 0.005$   | 60.356 |
-| Wipe | 0.005$   | 60.692 |
-| Freeze | 0.005$  | 56.261 |
-| Unfreeze | 0.005$   | 56.262 |
-| Grant KyC | 0.005$   | 56.167 |
-| Revoke KyC | 0.005$   | 56.195 |
+| Operation  | Dollar | Gas     |
+| ---------- | ------ | ------- |
+| Cash in    | 0.01$  | 101.497 |
+| Burn       | 0.005$ | 60.356  |
+| Wipe       | 0.005$ | 60.692  |
+| Freeze     | 0.005$ | 56.261  |
+| Unfreeze   | 0.005$ | 56.262  |
+| Grant KyC  | 0.005$ | 56.167  |
+| Revoke KyC | 0.005$ | 56.195  |
 
 # JSON-RPC Relays
+
 Anyone in the community can set up their own JSON RPC relay that applications can use to deploy, query, and execute smart contracts. You can use your local RPC-relay following this [instructions](https://github.com/hashgraph/hedera-json-rpc-relay) or you can use one of the community-hosted Hedera JSON RPC relays like:
+
 - [Hashio](https://swirldslabs.com/hashio/)
 - [Arkhia](https://www.arkhia.io/features/#api-services)
 - [ValidationCloud](https://docs.validationcloud.io/v1/hedera/json-rpc-relay-api)

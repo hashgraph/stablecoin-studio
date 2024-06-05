@@ -26,14 +26,23 @@ import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  //! TODO: REVIEW THIS
-  // app.enableCors();
-  // app.enableCors({
-  //   origin: 'http://localhost:3000',
-  //   allowedHeaders:
-  //     'Origin, X-Requested-With, Content-Type, Accept, Authorization',
-  //   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-  // });
+  const allowedOrigins = process.env.ORIGIN.split(',');
+
+  app.enableCors();
+  app.enableCors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) === -1) {
+        const msg =
+          'The CORS policy for this site does not allow access from the specified Origin.';
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+    },
+    allowedHeaders:
+      'Origin, X-Requested-With, Content-Type, Accept, Authorization',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+  });
 
   const configService = app.get(ConfigService);
   app.useGlobalPipes(

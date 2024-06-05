@@ -13,6 +13,7 @@ export class GrantMultiRolesCommand extends Command<GrantMultiRolesCommandRespon
 		public readonly targetsId: HederaId[],
 		public readonly amounts: string[],
 		public readonly tokenId: HederaId,
+		public readonly startDate?: string,
 	) {
 		super();
 	}

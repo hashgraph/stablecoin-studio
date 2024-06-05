@@ -47,6 +47,7 @@ export const DEFAULT = {
     'ff79cb99db2d5001835b7ed3c26fa8a980ee541b9a1fb1c3972a6a62dfce1bd05372fed331ee1d672dc41df5ec1c12a38104962d2fb6a80dbf12286375f59c0f',
   ],
   network: Network.TESTNET,
+  start_date: new Date('2024-01-03 11:45:00+00'),
 } as TransactionMock;
 
 interface TransactionMockCommand {
@@ -73,6 +74,7 @@ export default class TransactionMock extends Transaction {
     signed_keys = DEFAULT.signed_keys,
     signatures = DEFAULT.signatures,
     network = DEFAULT.network,
+    start_date = DEFAULT.start_date,
   } = {}) {
     super();
     this.id = id;
@@ -85,6 +87,7 @@ export default class TransactionMock extends Transaction {
     this.signed_keys = signed_keys;
     this.signatures = signatures;
     this.network = network;
+    this.start_date = start_date;
   }
 
   static txPending0(command: Partial<TransactionMockCommand> = {}) {
@@ -99,9 +102,24 @@ export default class TransactionMock extends Transaction {
       signed_keys: [],
       signatures: [],
       network: Network.TESTNET,
+      start_date: DEFAULT.start_date,
       ...command,
     });
   }
+
+  static txPending0DTO = {
+    id: TransactionMock.txPending0().id,
+    transaction_message: TransactionMock.txPending0().transaction_message,
+    description: TransactionMock.txPending0().description,
+    status: TransactionMock.txPending0().status,
+    threshold: TransactionMock.txPending0().threshold,
+    hedera_account_id: TransactionMock.txPending0().hedera_account_id,
+    key_list: TransactionMock.txPending0().key_list,
+    signed_keys: TransactionMock.txPending0().signed_keys,
+    signatures: TransactionMock.txPending0().signatures,
+    network: TransactionMock.txPending0().network,
+    start_date: TransactionMock.txPending0().start_date.toDateString(),
+  };
 
   static txPending1(command: Partial<TransactionMockCommand> = {}) {
     const base = TransactionMock.txPending0();
