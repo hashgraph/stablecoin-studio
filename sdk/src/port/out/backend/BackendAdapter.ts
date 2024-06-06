@@ -105,7 +105,7 @@ export class BackendAdapter {
 			};
 			// TODO: why url is transactionId (?)
 			const response = await this.httpClient.put(
-				`${transactionId}`,
+				`${transactionId}/signature`,
 				body,
 			);
 
@@ -120,6 +120,36 @@ export class BackendAdapter {
 			} else {
 				throw new BackendError(
 					`Failed to sign transaction ${transactionId}: Unknown error`,
+				);
+			}
+		}
+	}
+
+	public async updateTransaction(
+		transactionId: string,
+		status: string,
+	): Promise<void> {
+		try {
+			const body = {
+				status: status,
+			};
+			// TODO: why url is transactionId (?)
+			const response = await this.httpClient.put(
+				`${transactionId}/update`,
+				body,
+			);
+
+			if (response.status == 204) return;
+			else
+				throw new BackendError(
+					`update transaction api call returned error ${response.status}, ${response.statusText}`,
+				);
+		} catch (error) {
+			if (error instanceof BackendError) {
+				throw error;
+			} else {
+				throw new BackendError(
+					`Failed to update transaction ${transactionId}: Unknown error`,
 				);
 			}
 		}
