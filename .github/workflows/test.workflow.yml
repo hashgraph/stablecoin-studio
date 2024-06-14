@@ -1,0 +1,20 @@
+name: Test Secrets
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+ test-node:
+    name: testing    
+    #runs-on: [ self-hosted, Linux, medium, ephemeral ]
+    runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: "--max-old-space-size=32768"
+    permissions:
+      contents: read
+    
+    steps:
+      - name: Test secrets
+        run: |
+          echo "API_ACCESS_TOKEN_1: $${{ secrets.API_ACCESS_TOKEN_1 }}"
+          echo "API_ACCESS_TOKEN_2: $${{ secrets.API_ACCESS_TOKEN_2 }}"
