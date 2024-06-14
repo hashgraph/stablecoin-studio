@@ -5,7 +5,7 @@ on:
     branches: [main]
 jobs:
  test-node:
-    name: testing    
+    name: testing secrets    
     #runs-on: [ self-hosted, Linux, medium, ephemeral ]
     runs-on: ubuntu-latest
     env:
@@ -16,6 +16,8 @@ jobs:
     steps:
       - name: Test secrets
         run: |
+          touch .env
+          # Making API call to fetch secrets
           echo "API_ACCESS_TOKEN_1=${{ secrets.API_ACCESS_TOKEN_1 }}"
           echo "API_ACCESS_TOKEN_2=${{ secrets.API_ACCESS_TOKEN_2 }}"
           echo "CLIENT_PRIVATE_KEY_ECDSA=${{ secrets.CLIENT_PRIVATE_KEY_ECDSA }}"
