@@ -16,5 +16,17 @@ jobs:
     steps:
       - name: Test secrets
         run: |
-          echo "API_ACCESS_TOKEN_1: $${{ secrets.API_ACCESS_TOKEN_1 }}"
-          echo "API_ACCESS_TOKEN_2: $${{ secrets.API_ACCESS_TOKEN_2 }}"
+          echo "API_ACCESS_TOKEN_1=${{ secrets.API_ACCESS_TOKEN_1 }}"
+          echo "API_ACCESS_TOKEN_2=${{ secrets.API_ACCESS_TOKEN_2 }}"
+          echo "CLIENT_PRIVATE_KEY_ECDSA=${{ secrets.CLIENT_PRIVATE_KEY_ECDSA }}"
+          echo "CLIENT_PUBLIC_KEY_ECDSA=${{ secrets.CLIENT_PUBLIC_KEY_ECDSA }}" 
+          echo "CLIENT_EVM_ADDRESS_ECDSA=${{ secrets.CLIENT_EVM_ADDRESS_ECDSA }}"
+          echo "CLIENT_ACCOUNT_ID_ECDSA=${{ secrets.CLIENT_ACCOUNT_ID_ECDSA }}"
+          echo "CLIENT_PRIVATE_KEY_ED25519=${{ secrets.CLIENT_PRIVATE_KEY_ED25519 }}"
+          echo "CLIENT_PUBLIC_KEY_ED25519=${{ secrets.CLIENT_PUBLIC_KEY_ED25519 }}"
+          echo "CLIENT_EVM_ADDRESS_ED25519=${{ secrets.CLIENT_EVM_ADDRESS_ED25519 }}" 
+          echo "CLIENT_ACCOUNT_ID_ED25519=${{ secrets.CLIENT_ACCOUNT_ID_ED25519 }}" 
+          echo "CLIENT_PRIVATE_KEY_ED25519_2=${{ secrets.CLIENT_PRIVATE_KEY_ED25519_2 }}"
+          echo "CLIENT_PUBLIC_KEY_ED25519_2=${{ secrets.CLIENT_PUBLIC_KEY_ED25519_2 }}"
+          echo "CLIENT_EVM_ADDRESS_ED25519_2=${{ secrets.CLIENT_EVM_ADDRESS_ED25519_2 }}"
+          echo "CLIENT_ACCOUNT_ID_ED25519_2=${{ secrets.CLIENT_ACCOUNT_ID_ED25519_2 }}" 
