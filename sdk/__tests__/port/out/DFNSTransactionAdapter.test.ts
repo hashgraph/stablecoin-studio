@@ -78,6 +78,7 @@ describe('🧪 DFNSTransactionAdapter test', () => {
 		baseUrl: DFNS_SETTINGS.baseUrl,
 		walletId: DFNS_SETTINGS.walletId,
 		hederaAccountId: DFNS_SETTINGS.hederaAccountId,
+		publicKey: DFNS_SETTINGS.publicKey,
 	};
 
 	const requestPublicKey: RequestPublicKey = {
