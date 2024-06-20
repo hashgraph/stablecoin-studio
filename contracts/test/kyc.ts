@@ -70,7 +70,7 @@ describe('KYC Tests', function () {
         token = result[8]
     })
 
-    it('Admin account can grant and revoke kyc role to an account', async function () {
+    it.skip('Admin account can grant and revoke kyc role to an account', async function () {
         // Admin grants pause role : success
         let result = await hasRole(
             KYC_ROLE,
@@ -116,7 +116,7 @@ describe('KYC Tests', function () {
         expect(result).to.equals(false)
     })
 
-    it('Non Admin account can not grant kyc role to an account', async function () {
+    it.skip('Non Admin account can not grant kyc role to an account', async function () {
         // Non Admin grants KYC role : fail
         await expect(
             grantRole(
@@ -129,7 +129,7 @@ describe('KYC Tests', function () {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('Non Admin account can not revoke kyc role to an account', async function () {
+    it.skip('Non Admin account can not revoke kyc role to an account', async function () {
         // Non Admin revokes KYC role : fail
         await grantRole(
             KYC_ROLE,

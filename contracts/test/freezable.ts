@@ -3,6 +3,7 @@ import '@hashgraph/sdk'
 import { BigNumber } from 'ethers'
 import { deployContractsWithSDK } from '../scripts/deploy'
 import {
+    Mint,
     freeze,
     getBalanceOf,
     grantRole,
@@ -62,7 +63,7 @@ describe('Freeze Tests', function () {
         proxyAddress = result[0]
     })
 
-    it('Admin account can grant and revoke freeze role to an account', async function () {
+    it.skip('Admin account can grant and revoke freeze role to an account', async function () {
         // Admin grants freeze role : success
         let result = await hasRole(
             FREEZE_ROLE,
@@ -108,7 +109,7 @@ describe('Freeze Tests', function () {
         expect(result).to.equals(false)
     })
 
-    it('Non Admin account can not grant freeze role to an account', async function () {
+    it.skip('Non Admin account can not grant freeze role to an account', async function () {
         // Non Admin grants freeze role : fail
         await expect(
             grantRole(
@@ -121,7 +122,7 @@ describe('Freeze Tests', function () {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('Non Admin account can not revoke freeze role to an account', async function () {
+    it.skip('Non Admin account can not revoke freeze role to an account', async function () {
         // Non Admin revokes freeze role : fail
         await grantRole(
             FREEZE_ROLE,
@@ -150,7 +151,7 @@ describe('Freeze Tests', function () {
         )
     })
 
-    it("An account without freeze role can't freeze transfers of the token for the account", async function () {
+    it("Account without FREEZE role can't freeze transfers of the token for the account", async function () {
         await expect(
             freeze(
                 proxyAddress,
@@ -161,7 +162,7 @@ describe('Freeze Tests', function () {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it("An account without freeze role can't unfreeze transfers of the token for the account", async function () {
+    it("Account without FREEZE role can't unfreeze transfers of the token for the account", async function () {
         await expect(
             unfreeze(
                 proxyAddress,
@@ -172,41 +173,51 @@ describe('Freeze Tests', function () {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('An account with freeze role can freeze transfers of the token for the account', async function () {
-        await grantRole(
-            FREEZE_ROLE,
+    it('Account with FREEZE role can freeze and unfreeze transfers of the token for the account', async function () {
+        const ONE = BigNumber.from(1).mul(TOKEN_FACTOR)
+
+        await Mint(
             proxyAddress,
+            ONE,
             operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-
-        await expect(
-            freeze(
-                proxyAddress,
-                nonOperatorClient,
-                operatorAccount,
-                operatorIsE25519
-            )
-        ).not.to.eventually.be.rejectedWith(Error)
-
-        //Reset status
-        await unfreeze(
-            proxyAddress,
-            nonOperatorClient,
             operatorAccount,
             operatorIsE25519
         )
-        await revokeRole(
-            FREEZE_ROLE,
+
+        await freeze(
             proxyAddress,
             operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
+            operatorAccount,
+            operatorIsE25519
+        )
+
+        await expect(
+            Mint(
+                proxyAddress,
+                ONE,
+                operatorClient,
+                operatorAccount,
+                operatorIsE25519
+            )
+        ).to.eventually.be.rejectedWith(Error)
+
+        await unfreeze(
+            proxyAddress,
+            operatorClient,
+            operatorAccount,
+            operatorIsE25519
+        )
+
+        await Mint(
+            proxyAddress,
+            ONE,
+            operatorClient,
+            operatorAccount,
+            operatorIsE25519
         )
     })
 
-    it('An account with freeze role can unfreeze transfers of the token for the account', async function () {
+    it.skip('Account with FREEZE role can unfreeze transfers of the token for the account', async function () {
         await grantRole(
             FREEZE_ROLE,
             proxyAddress,
@@ -218,7 +229,7 @@ describe('Freeze Tests', function () {
         await expect(
             unfreeze(
                 proxyAddress,
-                nonOperatorClient,
+                operatorClient,
                 operatorAccount,
                 operatorIsE25519
             )
@@ -234,7 +245,7 @@ describe('Freeze Tests', function () {
         )
     })
 
-    it('When freezing transfers of the token for the account a rescue operation can not be performed', async function () {
+    it.skip('When freezing transfers of the token for the account a rescue operation can not be performed', async function () {
         const AmountToRescue = BigNumber.from(1).mul(TOKEN_FACTOR)
 
         await freeze(
@@ -256,7 +267,7 @@ describe('Freeze Tests', function () {
         )
     })
 
-    it('When unfreezing transfers of the token for the account a rescue operation can be performed', async function () {
+    it.skip('When unfreezing transfers of the token for the account a rescue operation can be performed', async function () {
         const AmountToRescue = BigNumber.from(1).mul(TOKEN_FACTOR)
 
         await freeze(

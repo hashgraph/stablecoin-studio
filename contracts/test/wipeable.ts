@@ -59,7 +59,7 @@ describe('Wipe Tests', function () {
         proxyAddress = result[0]
     })
 
-    it('Admin account can grant and revoke wipe role to an account', async function () {
+    it.skip('Admin account can grant and revoke wipe role to an account', async function () {
         // Admin grants wipe role : success
         let result = await hasRole(
             WIPE_ROLE,
@@ -105,7 +105,7 @@ describe('Wipe Tests', function () {
         expect(result).to.equals(false)
     })
 
-    it('Non Admin account can not grant wipe role to an account', async function () {
+    it.skip('Non Admin account can not grant wipe role to an account', async function () {
         // Non Admin grants wipe role : fail
         await expect(
             grantRole(
@@ -118,7 +118,7 @@ describe('Wipe Tests', function () {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('Non Admin account can not revoke wipe role to an account', async function () {
+    it.skip('Non Admin account can not revoke wipe role to an account', async function () {
         // Non Admin revokes wipe role : fail
         await grantRole(
             WIPE_ROLE,

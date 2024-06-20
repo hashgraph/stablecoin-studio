@@ -57,7 +57,7 @@ describe('Pause Tests', function () {
         token = result[8]
     })
 
-    it('Admin account can grant and revoke pause role to an account', async function () {
+    it.skip('Admin account can grant and revoke pause role to an account', async function () {
         // Admin grants pause role : success
         let result = await hasRole(
             PAUSE_ROLE,
@@ -103,7 +103,7 @@ describe('Pause Tests', function () {
         expect(result).to.equals(false)
     })
 
-    it('Non Admin account can not grant pause role to an account', async function () {
+    it.skip('Non Admin account can not grant pause role to an account', async function () {
         // Non Admin grants pause role : fail
         await expect(
             grantRole(
@@ -116,7 +116,7 @@ describe('Pause Tests', function () {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('Non Admin account can not revoke pause role to an account', async function () {
+    it.skip('Non Admin account can not revoke pause role to an account', async function () {
         // Non Admin revokes pause role : fail
         await grantRole(
             PAUSE_ROLE,

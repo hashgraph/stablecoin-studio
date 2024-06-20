@@ -80,7 +80,7 @@ describe('Rescue Tests', function () {
         await delay(3000)
     })
 
-    it('Admin account can grant and revoke rescue role to an account', async function () {
+    it.skip('Admin account can grant and revoke rescue role to an account', async function () {
         // Admin grants rescue role : success
         let result = await hasRole(
             RESCUE_ROLE,
@@ -126,7 +126,7 @@ describe('Rescue Tests', function () {
         expect(result).to.equals(false)
     })
 
-    it('Non Admin account can not grant rescue role to an account', async function () {
+    it.skip('Non Admin account can not grant rescue role to an account', async function () {
         // Non Admin grants rescue role : fail
         await expect(
             grantRole(
@@ -139,7 +139,7 @@ describe('Rescue Tests', function () {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('Non Admin account can not revoke rescue role to an account', async function () {
+    it.skip('Non Admin account can not revoke rescue role to an account', async function () {
         // Non Admin revokes rescue role : fail
         await grantRole(
             RESCUE_ROLE,

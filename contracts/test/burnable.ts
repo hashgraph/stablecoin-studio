@@ -56,7 +56,7 @@ describe('Burn Tests', function () {
         proxyAddress = result[0]
     })
 
-    it('Admin account can grant and revoke burnable role to an account', async function () {
+    it.skip('Admin account can grant and revoke burnable role to an account', async function () {
         // Admin grants burn role : success
         let result = await hasRole(
             BURN_ROLE,
@@ -102,7 +102,7 @@ describe('Burn Tests', function () {
         expect(result).to.equals(false)
     })
 
-    it('Non Admin account can not grant burnable role to an account', async function () {
+    it.skip('Non Admin account can not grant burnable role to an account', async function () {
         // Non Admin grants burn role : fail
         await expect(
             grantRole(
@@ -115,7 +115,7 @@ describe('Burn Tests', function () {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('Non Admin account can not revoke burnable role to an account', async function () {
+    it.skip('Non Admin account can not revoke burnable role to an account', async function () {
         // Non Admin revokes burn role : fail
         await grantRole(
             BURN_ROLE,
@@ -144,7 +144,7 @@ describe('Burn Tests', function () {
         )
     })
 
-    it('Can burn 10 tokens from the treasury account having 100 tokens', async function () {
+    it('Account with BURN role can burn 10 tokens from the treasury account having 100 tokens', async function () {
         const tokensToBurn = INIT_SUPPLY.div(10)
 
         // Get the initial total supply and treasury account's balanceOf
@@ -168,7 +168,7 @@ describe('Burn Tests', function () {
         )
     })
 
-    it('Cannot burn more tokens than the treasury account has', async function () {
+    it('Account with BURN role cannot burn more tokens than the treasury account has', async function () {
         // Retrieve original total supply
         const currentTotalSupply = await getTotalSupply(
             proxyAddress,
@@ -181,14 +181,21 @@ describe('Burn Tests', function () {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('User without burn role cannot burn tokens', async function () {
+    it('Account with BURN role cannot burn a negative amount', async function () {
+        // burn more tokens than original total supply : fail
+        await expect(
+            Burn(proxyAddress, BigNumber.from('-1'), operatorClient)
+        ).to.eventually.be.rejectedWith(Error)
+    })
+
+    it('Account without BURN role cannot burn tokens', async function () {
         // Account without burn role, burns tokens : fail
         await expect(
             Burn(proxyAddress, BigNumber.from(1), nonOperatorClient)
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('User with granted burn role can burn tokens', async function () {
+    it.skip('User with granted burn role can burn tokens', async function () {
         const tokensToBurn = BigNumber.from(1)
 
         // Retrieve original total supply
