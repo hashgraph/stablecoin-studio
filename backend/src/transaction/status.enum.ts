@@ -3,4 +3,5 @@ export enum TransactionStatus {
   PENDING = 'PENDING',
   EXPIRED = 'EXPIRED',
   ERROR = 'ERROR',
+  EXECUTED = 'EXECUTED',
 }
