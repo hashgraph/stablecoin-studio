@@ -61,16 +61,14 @@ jobs:
       - name: Create contracts
         run: |
           touch .env
-          echo "TESTNET_HEDERA_OPERATOR_PRIVATEKEY=$(echo $CLIENT_PRIVATE_KEY_ED25519)" >> .env
-          echo "TESTNET_HEDERA_OPERATOR_PUBLICKEY=$(echo $CLIENT_PUBLIC_KEY_ED25519)" >> .env
+          echo "TESTNET_HEDERA_OPERATOR_PRIVATEKEY=$(echo $API_RESPONSE_1 | jq -r '.accounts[0].privateKey')" >> .env
+          echo "TESTNET_HEDERA_OPERATOR_PUBLICKEY=$(echo $API_RESPONSE_1 | jq -r '.accounts[0].publicKey')" >> .env
           echo "TESTNET_HEDERA_OPERATOR_ED25519='true'" >> .env
-          echo "TESTNET_HEDERA_OPERATOR_ACCOUNT=$(echo $CLIENT_ACCOUNT_ID_ED25519)" >> .env
-          echo "TESTNET_HEDERA_NON_OPERATOR_PRIVATEKEY=$(echo $CLIENT_PRIVATE_KEY_ECDSA)" >> .env
-          echo "TESTNET_HEDERA_NON_OPERATOR_PUBLICKEY=$(echo $CLIENT_PUBLIC_KEY_ECDSA)" >> .env
+          echo "TESTNET_HEDERA_OPERATOR_ACCOUNT=$(echo $API_RESPONSE_1 | jq -r '.accounts[0].accountNum')" >> .env
+          echo "TESTNET_HEDERA_NON_OPERATOR_PRIVATEKEY=$(echo $API_RESPONSE_1 | jq -r '.accounts[1].privateKey')" >> .env
+          echo "TESTNET_HEDERA_NON_OPERATOR_PUBLICKEY=$(echo $API_RESPONSE_1 | jq -r '.accounts[1].publicKey')" >> .env
           echo "TESTNET_HEDERA_NON_OPERATOR_ED25519='false'" >> .env
-          echo "TESTNET_HEDERA_NON_OPERATOR_ACCOUNT=$(echo $CLIENT_ACCOUNT_ID_ECDSA)" >> .env
-          echo "$TESTNET_HEDERA_OPERATOR_PRIVATEKEY"
-          echo "$TESTNET_HEDERA_NON_OPERATOR_PRIVATEKEY"
+          echo "TESTNET_HEDERA_NON_OPERATOR_ACCOUNT=$(echo $API_RESPONSE_1 | jq -r '.accounts[1].accountNum')" >> .env
         working-directory: contracts
 
       - name: Install dependencies Hashconnect
