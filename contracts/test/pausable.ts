@@ -9,7 +9,7 @@ import {
     unpause,
 } from '../scripts/contractsMethods'
 import { PAUSE_ROLE } from '../scripts/constants'
-import { associateToken } from '../scripts/utils'
+import { associateToken, dissociateToken } from '../scripts/utils'
 import { ContractId } from '@hashgraph/sdk'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
@@ -57,208 +57,39 @@ describe('Pause Tests', function () {
         token = result[8]
     })
 
-    it.skip('Admin account can grant and revoke pause role to an account', async function () {
-        // Admin grants pause role : success
-        let result = await hasRole(
-            PAUSE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-        expect(result).to.equals(false)
-
-        await grantRole(
-            PAUSE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-
-        result = await hasRole(
-            PAUSE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-        expect(result).to.equals(true)
-
-        // Admin revokes pause role : success
-        await revokeRole(
-            PAUSE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-        result = await hasRole(
-            PAUSE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-        expect(result).to.equals(false)
-    })
-
-    it.skip('Non Admin account can not grant pause role to an account', async function () {
-        // Non Admin grants pause role : fail
-        await expect(
-            grantRole(
-                PAUSE_ROLE,
-                proxyAddress,
-                nonOperatorClient,
-                nonOperatorAccount,
-                nonOperatorIsE25519
-            )
-        ).to.eventually.be.rejectedWith(Error)
-    })
-
-    it.skip('Non Admin account can not revoke pause role to an account', async function () {
-        // Non Admin revokes pause role : fail
-        await grantRole(
-            PAUSE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-        await expect(
-            revokeRole(
-                PAUSE_ROLE,
-                proxyAddress,
-                nonOperatorClient,
-                nonOperatorAccount,
-                nonOperatorIsE25519
-            )
-        ).to.eventually.be.rejectedWith(Error)
-
-        //Reset status
-        await revokeRole(
-            PAUSE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-    })
-
-    it("An account without pause role can't pause a token", async function () {
+    it("An account without PAUSE role can't pause a token", async function () {
         await expect(
             pause(proxyAddress, nonOperatorClient)
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it("An account without pause role can't unpause a token", async function () {
-        await expect(
-            unpause(proxyAddress, nonOperatorClient)
-        ).to.eventually.be.rejectedWith(Error)
-    })
-
-    it('An account with pause role can pause a token', async function () {
-        await grantRole(
-            PAUSE_ROLE,
-            proxyAddress,
-            operatorClient,
+    it("An account with PAUSE role can pause and unpause a token + An account without PAUSE role can't unpause a token", async function () {
+        await associateToken(
+            token.toString(),
             nonOperatorAccount,
-            nonOperatorIsE25519
+            nonOperatorClient
         )
+
+        await pause(proxyAddress, operatorClient)
 
         await expect(
-            pause(proxyAddress, nonOperatorClient)
-        ).not.to.eventually.be.rejectedWith(Error)
-
-        //Reset status
-        await unpause(proxyAddress, nonOperatorClient)
-        await revokeRole(
-            PAUSE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-    })
-
-    it('An account with pause role can unpause a token', async function () {
-        await grantRole(
-            PAUSE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-
-        await expect(
-            unpause(proxyAddress, nonOperatorClient)
-        ).not.to.eventually.be.rejectedWith(Error)
-
-        //Reset status
-        await revokeRole(
-            PAUSE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-    })
-
-    it('A paused token can not be used for any other operation, like associating', async function () {
-        await grantRole(
-            PAUSE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-
-        await pause(proxyAddress, nonOperatorClient)
-        await expect(
-            associateToken(
+            dissociateToken(
                 token.toString(),
                 nonOperatorAccount,
                 nonOperatorClient
             )
         ).to.eventually.be.rejectedWith(Error)
 
-        //Reset status
-        await unpause(proxyAddress, nonOperatorClient)
-        await revokeRole(
-            PAUSE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-    })
-
-    it('An unpaused token can be used for any other operation, like associating', async function () {
-        await grantRole(
-            PAUSE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-
-        await pause(proxyAddress, nonOperatorClient)
-        await unpause(proxyAddress, nonOperatorClient)
         await expect(
-            associateToken(
-                token.toString(),
-                nonOperatorAccount,
-                nonOperatorClient
-            )
-        ).not.to.eventually.be.rejectedWith(Error)
+            unpause(proxyAddress, nonOperatorClient)
+        ).to.eventually.be.rejectedWith(Error)
 
-        //Reset status
-        await revokeRole(
-            PAUSE_ROLE,
-            proxyAddress,
-            operatorClient,
+        await unpause(proxyAddress, operatorClient)
+
+        await dissociateToken(
+            token.toString(),
             nonOperatorAccount,
-            nonOperatorIsE25519
+            nonOperatorClient
         )
     })
 })
