@@ -58,6 +58,21 @@ jobs:
           echo "FACTORY_ADDRESS=0.0.2167166"  >> .env
         working-directory: sdk
 
+      - name: Create contracts
+        run: |
+          touch .env
+          echo "TESTNET_HEDERA_OPERATOR_PRIVATEKEY=$(echo $CLIENT_PRIVATE_KEY_ED25519)" >> .env
+          echo "TESTNET_HEDERA_OPERATOR_PUBLICKEY=$(echo $CLIENT_PUBLIC_KEY_ED25519)" >> .env
+          echo "TESTNET_HEDERA_OPERATOR_ED25519='true'" >> .env
+          echo "TESTNET_HEDERA_OPERATOR_ACCOUNT=$(echo $CLIENT_ACCOUNT_ID_ED25519)" >> .env
+          echo "TESTNET_HEDERA_NON_OPERATOR_PRIVATEKEY=$(echo $CLIENT_PRIVATE_KEY_ECDSA)" >> .env
+          echo "TESTNET_HEDERA_NON_OPERATOR_PUBLICKEY=$(echo $CLIENT_PUBLIC_KEY_ECDSA)" >> .env
+          echo "TESTNET_HEDERA_NON_OPERATOR_ED25519='false'" >> .env
+          echo "TESTNET_HEDERA_NON_OPERATOR_ACCOUNT=$(echo $CLIENT_ACCOUNT_ID_ECDSA)" >> .env
+          echo "$TESTNET_HEDERA_OPERATOR_PRIVATEKEY"
+          echo "$TESTNET_HEDERA_NON_OPERATOR_PRIVATEKEY"
+        working-directory: contracts
+
       - name: Install dependencies Hashconnect
         run: |
           npm ci
@@ -91,19 +106,6 @@ jobs:
       - name: Install dependencies web
         run: npm ci
         working-directory: web
-    
-      - name: Create contracts
-        run: |
-          touch .env
-          echo "TESTNET_HEDERA_OPERATOR_PRIVATEKEY=$CLIENT_PRIVATE_KEY_ED25519" >> .env
-          echo "TESTNET_HEDERA_OPERATOR_PUBLICKEY=$CLIENT_PUBLIC_KEY_ED25519" >> .env
-          echo "TESTNET_HEDERA_OPERATOR_ED25519='true'" >> .env
-          echo "TESTNET_HEDERA_OPERATOR_ACCOUNT=$CLIENT_ACCOUNT_ID_ED25519" >> .env
-          echo "TESTNET_HEDERA_NON_OPERATOR_PRIVATEKEY=$CLIENT_PRIVATE_KEY_ECDSA" >> .env
-          echo "TESTNET_HEDERA_NON_OPERATOR_PUBLICKEY=$CLIENT_PUBLIC_KEY_ECDSA" >> .env
-          echo "TESTNET_HEDERA_NON_OPERATOR_ED25519='false'" >> .env
-          echo "TESTNET_HEDERA_NON_OPERATOR_ACCOUNT=$CLIENT_ACCOUNT_ID_ECDSA" >> .env
-        working-directory: contracts
 
       - name: Test Contracts
         run: |
