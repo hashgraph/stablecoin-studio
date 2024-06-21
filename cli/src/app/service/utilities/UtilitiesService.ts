@@ -126,6 +126,7 @@ export default class UtilitiesService extends Service {
           baseUrl: account.custodial.dfns.testUrl,
           walletId: account.custodial.dfns.walletId,
           hederaAccountId: account.accountId,
+          publicKey: account.custodial.dfns.hederaAccountPublicKey,
         };
         break;
       case AccountType.MultiSignature:

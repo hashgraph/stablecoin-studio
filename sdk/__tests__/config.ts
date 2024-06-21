@@ -142,4 +142,5 @@ export const DFNS_SETTINGS = {
 	hederaAccountId: process.env.DFNS_HEDERA_ACCOUNT_ID ?? '',
 	hederaAccountPublicKey:
 		process.env.DFNS_HEDERA_ACCOUNT_CLIENT_PUBLIC_KEY_ED25519 ?? '',
+	publicKey: process.env.DFNS_HEDERA_ACCOUNT_CLIENT_PUBLIC_KEY_ED25519 ?? '',
 };
