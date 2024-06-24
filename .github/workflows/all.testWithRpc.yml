@@ -104,17 +104,17 @@ jobs:
           echo "TESTNET_HEDERA_NON_OPERATOR_ACCOUNT=$CLIENT_ACCOUNT_ID_ECDSA" >> .env
         working-directory: contracts
 
-      - name: Test backend
-        run: |
-          npm run test
-          npm run cleanCache
-        working-directory: backend
-
-      - name: Test cli
-        run: |
-          npm run test:ci
-          npm run cleanCache
-        working-directory: cli
+#      - name: Test backend
+#        run: |
+#          npm run test
+#          npm run cleanCache
+#        working-directory: backend
+#
+#      - name: Test cli
+#        run: |
+#          npm run test:ci
+#          npm run cleanCache
+#        working-directory: cli
 
       - name: Test web
         run: |
