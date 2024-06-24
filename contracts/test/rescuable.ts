@@ -45,7 +45,7 @@ let token: ContractId
 
 const HBARDecimals = 8
 const HBARFactor = BigNumber.from(10).pow(HBARDecimals)
-const HBARInitialAmount = BigNumber.from(100).mul(HBARFactor)
+const HBARInitialAmount = BigNumber.from(2).mul(HBARFactor)
 
 describe('Rescue Tests', function () {
     before(async function () {
