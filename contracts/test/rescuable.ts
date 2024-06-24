@@ -157,7 +157,7 @@ describe('Rescue Tests', function () {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it.only('Account with RESCUE role can rescue 1 HBAR', async function () {
+    it('Account with RESCUE role can rescue 1 HBAR', async function () {
         // Get the initial balance of the token owner and client
         const AmountToRescue = BigNumber.from(1).mul(HBARFactor)
         const initialTokenOwnerBalance = await getHBARBalanceOf(
