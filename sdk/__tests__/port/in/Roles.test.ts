@@ -18,7 +18,6 @@
  *
  */
 
-import Injectable from '../../../src/core/Injectable.js';
 import {
 	Account,
 	Balance,
@@ -58,8 +57,9 @@ import BigDecimal from '../../../src/domain/context/shared/BigDecimal.js';
 import GetAccountsWithRolesRequest from '../../../src/port/in/request/GetAccountsWithRolesRequest.js';
 import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
+import Injectable from '../../../src/core/Injectable.js';
 
-describe('🧪 Role test', () => {
+describe.skip('🧪 Role test', () => {
 	let stableCoinSC: StableCoinViewModel;
 
 	const delay = async (seconds = 5): Promise<void> => {

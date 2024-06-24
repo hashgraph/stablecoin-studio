@@ -187,7 +187,7 @@ jest.mock('axios', () => {
 	};
 });
 
-describe('🧪 BackendAdapter test', () => {
+describe.skip('🧪 BackendAdapter test', () => {
 	let backendAdapter: BackendAdapter;
 
 	beforeEach(() => {

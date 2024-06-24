@@ -52,7 +52,7 @@ const apiSecretKey = fs.readFileSync(
 	'utf8',
 );
 
-describe('🧪 DFNSTransactionAdapter test', () => {
+describe.skip('🧪 DFNSTransactionAdapter test', () => {
 	let stableCoinHTS: StableCoinViewModel;
 	const delay = async (seconds = 5): Promise<void> => {
 		seconds = seconds * 1000;

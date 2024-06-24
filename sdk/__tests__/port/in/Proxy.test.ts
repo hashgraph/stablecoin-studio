@@ -19,7 +19,6 @@
  */
 
 /* eslint-disable jest/no-disabled-tests */
-import Injectable from '../../../src/core/Injectable.js';
 import {
 	Account,
 	Network,
@@ -46,7 +45,6 @@ import {
 import ConnectRequest, {
 	SupportedWallets,
 } from '../../../src/port/in/request/ConnectRequest.js';
-
 import {
 	CLIENT_ACCOUNT_ED25519_2,
 	CLIENT_ACCOUNT_ED25519,
@@ -59,6 +57,7 @@ import {
 import ContractId from 'domain/context/contract/ContractId.js';
 import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
+import Injectable from '../../../src/core/Injectable.js';
 
 const mirrorNode: MirrorNode = {
 	name: MIRROR_NODE.name,

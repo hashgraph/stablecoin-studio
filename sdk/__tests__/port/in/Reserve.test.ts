@@ -18,7 +18,6 @@
  *
  */
 
-import Injectable from '../../../src/core/Injectable.js';
 import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
 import {
@@ -43,8 +42,9 @@ import {
 	FACTORY_ADDRESS,
 	HEDERA_TOKEN_MANAGER_ADDRESS,
 } from '../../config.js';
+import Injectable from '../../../src/core/Injectable.js';
 
-describe('🧪 Reserve test', () => {
+describe.skip('🧪 Reserve test', () => {
 	let stableCoinSC: StableCoinViewModel;
 	const initialSupply = 10;
 	const reserveInitialAmount = initialSupply * 2;

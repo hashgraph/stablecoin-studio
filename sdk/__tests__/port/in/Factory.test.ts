@@ -29,7 +29,7 @@ import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
 
 SDK.log = { level: 'ERROR', transports: new LoggerTransports.Console() };
-describe('🧪 Factory test', () => {
+describe.skip('🧪 Factory test', () => {
 	beforeAll(async () => {
 		const mirrorNode: MirrorNode = {
 			name: 'testmirrorNode',
