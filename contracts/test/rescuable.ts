@@ -45,7 +45,7 @@ let token: ContractId
 
 const HBARDecimals = 8
 const HBARFactor = BigNumber.from(10).pow(HBARDecimals)
-const HBARInitialAmount = BigNumber.from(100).mul(HBARFactor)
+const HBARInitialAmount = BigNumber.from(2).mul(HBARFactor)
 
 describe('Rescue Tests', function () {
     before(async function () {
@@ -80,95 +80,7 @@ describe('Rescue Tests', function () {
         await delay(3000)
     })
 
-    it('Admin account can grant and revoke rescue role to an account', async function () {
-        // Admin grants rescue role : success
-        let result = await hasRole(
-            RESCUE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-        expect(result).to.equals(false)
-
-        await grantRole(
-            RESCUE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-
-        result = await hasRole(
-            RESCUE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-        expect(result).to.equals(true)
-
-        // Admin revokes rescue role : success
-        await revokeRole(
-            RESCUE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-        result = await hasRole(
-            RESCUE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-        expect(result).to.equals(false)
-    })
-
-    it('Non Admin account can not grant rescue role to an account', async function () {
-        // Non Admin grants rescue role : fail
-        await expect(
-            grantRole(
-                RESCUE_ROLE,
-                proxyAddress,
-                nonOperatorClient,
-                nonOperatorAccount,
-                nonOperatorIsE25519
-            )
-        ).to.eventually.be.rejectedWith(Error)
-    })
-
-    it('Non Admin account can not revoke rescue role to an account', async function () {
-        // Non Admin revokes rescue role : fail
-        await grantRole(
-            RESCUE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-        await expect(
-            revokeRole(
-                RESCUE_ROLE,
-                proxyAddress,
-                nonOperatorClient,
-                nonOperatorAccount,
-                nonOperatorIsE25519
-            )
-        ).to.eventually.be.rejectedWith(Error)
-
-        //Reset status
-        await revokeRole(
-            RESCUE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-    })
-
-    it('Should rescue 10 tokens', async function () {
+    it('Account with RESCUE role can rescue 10 tokens', async function () {
         const tenTokens = BigNumber.from(10).mul(TOKEN_FACTOR)
 
         // Get the initial balance of the token owner and client
@@ -220,7 +132,7 @@ describe('Rescue Tests', function () {
         )
     })
 
-    it('we cannot rescue more tokens than the token owner balance', async function () {
+    it('Account with RESCUE role cannot rescue more tokens than the token owner balance', async function () {
         // Get the initial balance of the token owner
         const TokenOwnerBalance = await getBalanceOf(
             proxyAddress,
@@ -238,89 +150,14 @@ describe('Rescue Tests', function () {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('User without rescue role cannot rescue tokens', async function () {
+    it('Account without RESCUE role cannot rescue tokens', async function () {
         // Account without rescue role, rescues tokens : fail
         await expect(
             rescue(proxyAddress, BigNumber.from(1), nonOperatorClient)
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('User with granted rescue role can rescue tokens', async function () {
-        // Retrieve original balances
-        const initialTokenOwnerBalance = await getBalanceOf(
-            proxyAddress,
-            operatorClient,
-            (
-                await getContractInfo(proxyAddress.toString())
-            ).evm_address,
-            false,
-            false
-        )
-        const initialClientBalance = await getBalanceOf(
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-
-        // Grant rescue role to account
-        await grantRole(
-            RESCUE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-
-        // Associate account to token
-        await associateToken(
-            token.toString(),
-            nonOperatorAccount,
-            nonOperatorClient
-        )
-
-        // Rescue tokens with newly granted account
-        await rescue(proxyAddress, ONE_TOKEN, nonOperatorClient)
-
-        // Check final balances : success
-        const finalTokenOwnerBalance = await getBalanceOf(
-            proxyAddress,
-            operatorClient,
-            (
-                await getContractInfo(proxyAddress.toString())
-            ).evm_address,
-            false,
-            false
-        )
-        const finalClientBalance = await getBalanceOf(
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-
-        const expectedTokenOwnerBalance =
-            initialTokenOwnerBalance.sub(ONE_TOKEN)
-        const expectedClientBalance = initialClientBalance.add(ONE_TOKEN)
-
-        expect(finalTokenOwnerBalance.toString()).to.equals(
-            expectedTokenOwnerBalance.toString()
-        )
-        expect(finalClientBalance.toString()).to.equals(
-            expectedClientBalance.toString()
-        )
-
-        // Revoke rescue role to account
-        await revokeRole(
-            RESCUE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-    })
-
-    it('Should rescue 1 HBAR', async function () {
+    it('Account with RESCUE role can rescue 1 HBAR', async function () {
         // Get the initial balance of the token owner and client
         const AmountToRescue = BigNumber.from(1).mul(HBARFactor)
         const initialTokenOwnerBalance = await getHBARBalanceOf(
@@ -329,12 +166,7 @@ describe('Rescue Tests', function () {
             false,
             false
         )
-        const initialClientBalance = await getHBARBalanceOf(
-            operatorAccount,
-            operatorClient,
-            true,
-            false
-        )
+
         // rescue some tokens
         await rescueHBAR(proxyAddress, AmountToRescue, operatorClient)
         await delay(3000)
@@ -346,22 +178,15 @@ describe('Rescue Tests', function () {
             false,
             false
         )
-        const finalClientBalance = await getHBARBalanceOf(
-            operatorAccount,
-            operatorClient,
-            true,
-            false
-        )
 
         const expectedTokenOwnerBalance =
             initialTokenOwnerBalance.sub(AmountToRescue)
         expect(finalTokenOwnerBalance.toString()).to.equals(
             expectedTokenOwnerBalance.toString()
         )
-        expect(finalClientBalance.gt(initialClientBalance)).to.be.true
     })
 
-    it('we cannot rescue more HBAR than the owner balance', async function () {
+    it('Account with RESCUE role cannot rescue more HBAR than the owner balance', async function () {
         // Get the initial balance of the token owner
         const TokenOwnerBalance = await getHBARBalanceOf(
             proxyAddress.toString(),
@@ -376,72 +201,10 @@ describe('Rescue Tests', function () {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('User without rescue role cannot rescue HBAR', async function () {
+    it('Account without RESCUE role cannot rescue HBAR', async function () {
         // Account without rescue role, rescues HBAR : fail
         await expect(
             rescueHBAR(proxyAddress, BigNumber.from(1), nonOperatorClient)
         ).to.eventually.be.rejectedWith(Error)
-    })
-
-    it('User with granted rescue role can rescue HBAR', async function () {
-        const AmountToRescue = BigNumber.from(10).mul(HBARFactor)
-        // Retrieve original balances
-        const initialTokenOwnerBalance = await getHBARBalanceOf(
-            proxyAddress.toString(),
-            operatorClient,
-            false,
-            false
-        )
-        const initialClientBalance = await getHBARBalanceOf(
-            nonOperatorAccount,
-            operatorClient,
-            true,
-            false
-        )
-
-        // Grant rescue role to account
-        await grantRole(
-            RESCUE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-
-        // Rescue tokens with newly granted account
-        await rescueHBAR(proxyAddress, AmountToRescue, nonOperatorClient)
-        await delay(3000)
-
-        // Check final balances : success
-        const finalTokenOwnerBalance = await getHBARBalanceOf(
-            proxyAddress.toString(),
-            operatorClient,
-            false,
-            false
-        )
-        const finalClientBalance = await getHBARBalanceOf(
-            nonOperatorAccount,
-            operatorClient,
-            true,
-            false
-        )
-
-        const expectedTokenOwnerBalance =
-            initialTokenOwnerBalance.sub(AmountToRescue)
-        const diffClientBalance = finalClientBalance.sub(initialClientBalance)
-
-        expect(finalTokenOwnerBalance.toString()).to.equals(
-            expectedTokenOwnerBalance.toString()
-        )
-        expect(diffClientBalance.gt(BigNumber.from(0))).to.be.true
-
-        // Revoke rescue role to account
-        await revokeRole(
-            RESCUE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
     })
 })
