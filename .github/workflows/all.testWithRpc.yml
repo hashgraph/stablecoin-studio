@@ -17,6 +17,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608
 
+      - name: Print Environment Variables
+        run: printenv
+
       - name: Build the Docker image
         run: docker build -t rpc .
         working-directory: dockerfile
