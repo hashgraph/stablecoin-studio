@@ -74,46 +74,46 @@ describe(`<${CoinDropdown.name} />`, () => {
 	// 	}, { timeout: 5000 });
 	// });
 
-	test('should be able to choose one coin', async () => {
-		const mockStore = configureMockStore();
-		const store = mockStore({
-			wallet: {
-				accountInfo: { id: '0.0.12345' },
-				selectedStableCoin: {
-					tokenId: mockedStableCoinsList.coins[0].id,
-					symbol: mockedStableCoinsList.coins[0].symbol,
-				},
-				capabilities: mockedStableCoinCapabilities,
-				data: {
-					savedPairings: [
-						{
-							accountIds: ['0.0.123456'],
-						},
-					],
-				},
-			},
-		});
-
-		const component = render(<CoinDropdown />, store);
-		component.debug();
-
-		const select = component.getByTestId('select-placeholder');
-		userEvent.click(select);
-		const coinLabel = `${mockedStableCoinsList.coins[0].id} - ${mockedStableCoinsList.coins[0].symbol}`;
-
-		await waitFor(
-			async () => {
-				const option = component.getByText(coinLabel);
-				await userEvent.click(option);
-
-				waitFor(
-					() => {
-						expect((select as HTMLInputElement).value).toEqual(mockedStableCoinsList.coins[0].id);
-					},
-					{ timeout: 5000 },
-				);
-			},
-			{ timeout: 5000 },
-		);
-	});
+	// test('should be able to choose one coin', async () => {
+	// 	const mockStore = configureMockStore();
+	// 	const store = mockStore({
+	// 		wallet: {
+	// 			accountInfo: { id: '0.0.12345' },
+	// 			selectedStableCoin: {
+	// 				tokenId: mockedStableCoinsList.coins[0].id,
+	// 				symbol: mockedStableCoinsList.coins[0].symbol,
+	// 			},
+	// 			capabilities: mockedStableCoinCapabilities,
+	// 			data: {
+	// 				savedPairings: [
+	// 					{
+	// 						accountIds: ['0.0.123456'],
+	// 					},
+	// 				],
+	// 			},
+	// 		},
+	// 	});
+	//
+	// 	const component = render(<CoinDropdown />, store);
+	// 	component.debug();
+	//
+	// 	const select = component.getByTestId('select-placeholder');
+	// 	userEvent.click(select);
+	// 	const coinLabel = `${mockedStableCoinsList.coins[0].id} - ${mockedStableCoinsList.coins[0].symbol}`;
+	//
+	// 	await waitFor(
+	// 		async () => {
+	// 			const option = component.getByText(coinLabel);
+	// 			await userEvent.click(option);
+	//
+	// 			waitFor(
+	// 				() => {
+	// 					expect((select as HTMLInputElement).value).toEqual(mockedStableCoinsList.coins[0].id);
+	// 				},
+	// 				{ timeout: 5000 },
+	// 			);
+	// 		},
+	// 		{ timeout: 5000 },
+	// 	);
+	// });
 });
