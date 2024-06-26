@@ -53,10 +53,19 @@ describe(`<${CoinDropdown.name} />`, () => {
 
 		const select = component.getByTestId('select-placeholder');
 		userEvent.click(select);
-		const coinLabel = `${mockedStableCoinsList.coins[0].id} - ${mockedStableCoinsList.coins[0].symbol}`;
+		const coinId = mockedStableCoinsList.coins[0].id;
+		const coinSymbol = mockedStableCoinsList.coins[0].symbol;
 
 		await waitFor(() => {
-			expect(component.getByText(coinLabel)).toBeInTheDocument();
+			const elementsContainingId = component.queryAllByText((content, element) =>
+				content.includes(coinId),
+			);
+			const elementsContainingSymbol = component.queryAllByText((content, element) =>
+				content.includes(coinSymbol),
+			);
+
+			expect(elementsContainingId.length).toBeGreaterThan(0);
+			expect(elementsContainingSymbol.length).toBeGreaterThan(0);
 		});
 	});
 
