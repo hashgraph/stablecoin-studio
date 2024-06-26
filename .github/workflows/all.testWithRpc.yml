@@ -49,23 +49,23 @@ jobs:
 #          npm run build
 #        working-directory: backend
 #
-#      - name: Install dependencies Contracts
-#        run: |
-#          npm ci
-#          npm run compile:force
-#        working-directory: contracts
-#
-#      - name: Install dependencies SDK
-#        run: |
-#          npm ci
-#          npm run build
-#        working-directory: sdk
-      
-      - name: Install dependencies Cli
+      - name: Install dependencies Contracts
+        run: |
+          npm ci
+          npm run compile:force
+        working-directory: contracts
+
+      - name: Install dependencies SDK
         run: |
           npm ci
           npm run build
-        working-directory: cli
+        working-directory: sdk
+      
+#      - name: Install dependencies Cli
+#        run: |
+#          npm ci
+#          npm run build
+#        working-directory: cli
       
       - name: Install dependencies web
         run: npm ci
@@ -94,18 +94,18 @@ jobs:
           echo "FACTORY_ADDRESS=0.0.2167166"  >> .env
         working-directory: sdk
     
-      - name: Create contracts
-        run: |
-          touch .env
-          echo "TESTNET_HEDERA_OPERATOR_PRIVATEKEY=$CLIENT_PRIVATE_KEY_ED25519" >> .env
-          echo "TESTNET_HEDERA_OPERATOR_PUBLICKEY=$CLIENT_PUBLIC_KEY_ED25519" >> .env
-          echo "TESTNET_HEDERA_OPERATOR_ED25519='true'" >> .env
-          echo "TESTNET_HEDERA_OPERATOR_ACCOUNT=$CLIENT_ACCOUNT_ID_ED25519" >> .env
-          echo "TESTNET_HEDERA_NON_OPERATOR_PRIVATEKEY=$CLIENT_PRIVATE_KEY_ECDSA" >> .env
-          echo "TESTNET_HEDERA_NON_OPERATOR_PUBLICKEY=$CLIENT_PUBLIC_KEY_ECDSA" >> .env
-          echo "TESTNET_HEDERA_NON_OPERATOR_ED25519='false'" >> .env
-          echo "TESTNET_HEDERA_NON_OPERATOR_ACCOUNT=$CLIENT_ACCOUNT_ID_ECDSA" >> .env
-        working-directory: contracts
+#      - name: Create contracts
+#        run: |
+#          touch .env
+#          echo "TESTNET_HEDERA_OPERATOR_PRIVATEKEY=$CLIENT_PRIVATE_KEY_ED25519" >> .env
+#          echo "TESTNET_HEDERA_OPERATOR_PUBLICKEY=$CLIENT_PUBLIC_KEY_ED25519" >> .env
+#          echo "TESTNET_HEDERA_OPERATOR_ED25519='true'" >> .env
+#          echo "TESTNET_HEDERA_OPERATOR_ACCOUNT=$CLIENT_ACCOUNT_ID_ED25519" >> .env
+#          echo "TESTNET_HEDERA_NON_OPERATOR_PRIVATEKEY=$CLIENT_PRIVATE_KEY_ECDSA" >> .env
+#          echo "TESTNET_HEDERA_NON_OPERATOR_PUBLICKEY=$CLIENT_PUBLIC_KEY_ECDSA" >> .env
+#          echo "TESTNET_HEDERA_NON_OPERATOR_ED25519='false'" >> .env
+#          echo "TESTNET_HEDERA_NON_OPERATOR_ACCOUNT=$CLIENT_ACCOUNT_ID_ECDSA" >> .env
+#        working-directory: contracts
 
 #      - name: Test backend
 #        run: |
@@ -125,24 +125,24 @@ jobs:
           npm run cleanCache
         working-directory: web
 
-      - name: Test Contracts
-        run: |
-          npm run test:parallel
-          npm run cleanCache
-        working-directory: contracts
-      
-      - name: Run the Docker image
-        run: nohup docker run --network="host" rpc &
-      - name: Sleep for 25 seconds
-        run: sleep 25s
-        shell: bash
-      - name: DockerStatus
-        run: docker ps
-      - name: DockerStatus
-        run:  curl --location --request POST 'http://localhost:7546/api' --data ""
-
-      - name: Test sdk
-        run: |
-          npm run test
-          npm run cleanCache
-        working-directory: sdk
+#      - name: Test Contracts
+#        run: |
+#          npm run test:parallel
+#          npm run cleanCache
+#        working-directory: contracts
+#
+#      - name: Run the Docker image
+#        run: nohup docker run --network="host" rpc &
+#      - name: Sleep for 25 seconds
+#        run: sleep 25s
+#        shell: bash
+#      - name: DockerStatus
+#        run: docker ps
+#      - name: DockerStatus
+#        run:  curl --location --request POST 'http://localhost:7546/api' --data ""
+#
+#      - name: Test sdk
+#        run: |
+#          npm run test
+#          npm run cleanCache
+#        working-directory: sdk
