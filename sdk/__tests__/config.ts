@@ -143,3 +143,62 @@ export const DFNS_SETTINGS = {
 	hederaAccountPublicKey:
 		process.env.DFNS_HEDERA_ACCOUNT_CLIENT_PUBLIC_KEY_ED25519 ?? '',
 };
+
+export const URL = 'http://example.com/';
+
+export const TRANSACTION = {
+	transaction_message: 'transaction_message',
+	description: 'description',
+	hedera_account_id: '0.0.1',
+	key_list: ['key1', 'key2'],
+	threshold: 2,
+	network: 'testnet',
+	originHeader: 'http://localhost:3000',
+	startDate: '2024-04-25T00:00:00.000Z',
+};
+
+export const SIGNATURE = {
+	transactionId: 'transactionId',
+	transactionSignature: 'transactionSignature',
+	publicKey: 'publicKey',
+};
+
+export const UPDATE = {
+	transactionId: 'transactionId',
+	status: 'EXECUTED',
+};
+
+export const DELETE = {
+	transactionId: 'transactionId',
+	originHeader: 'http://localhost:3000',
+};
+
+export const GET_TRANSACTIONS = {
+	page: 1,
+	limit: 10,
+	network: 'testnet',
+	publicKey: 'publicKey',
+	status: 'status',
+	accountId: '0.0.1',
+};
+
+export const PAGINATION = {
+	totalItems: 560,
+	itemCount: 10,
+	itemsPerPage: 10,
+	totalPages: 56,
+	currentPage: 1,
+};
+
+export const GET_TRANSACTION = {
+	id: 'id',
+	transaction_message: 'transaction_message',
+	description: 'description',
+	status: 'status',
+	threshold: 3,
+	key_list: ['key_1', 'key_2'],
+	signed_keys: ['signed_key_1', 'signed_key_2'],
+	signatures: ['signature_1', 'signature_2'],
+	network: 'testnet',
+	hedera_account_id: '0.0.1',
+};

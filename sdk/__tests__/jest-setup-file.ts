@@ -25,16 +25,38 @@ import {
 	BigDecimal,
 	ContractId,
 	EvmAddress,
+	HBAR_DECIMALS,
 	HederaId,
 	InitializationData,
+	MAX_PERCENTAGE_DECIMALS,
 	Network,
 	PublicKey,
+	RequestCustomFee,
+	RequestFixedFee,
+	RequestFractionalFee,
 	StableCoinListViewModel,
 	StableCoinRole,
 	StableCoinViewModel,
+	WalletEvents,
 } from '../src/index.js';
-import { CLIENT_ACCOUNT_ED25519, CLIENT_PUBLIC_KEY_ED25519 } from './config.js';
-import { Transaction } from '@hashgraph/sdk';
+import {
+	CLIENT_ACCOUNT_ED25519,
+	CLIENT_PUBLIC_KEY_ED25519,
+	HEDERA_TOKEN_MANAGER_ADDRESS,
+	GET_TRANSACTION,
+	GET_TRANSACTIONS,
+	SIGNATURE,
+	TRANSACTION,
+	UPDATE,
+	PAGINATION,
+	DELETE,
+} from './config.js';
+import {
+	ContractExecuteTransaction,
+	CustomFee,
+	TokenFeeScheduleUpdateTransaction,
+	Transaction,
+} from '@hashgraph/sdk';
 import { TransactionType } from '../src/port/out/TransactionResponseEnums.js';
 import TransactionResponse from '../src/domain/context/transaction/TransactionResponse.js';
 import Account from '../src/domain/context/account/Account.js';
@@ -49,124 +71,47 @@ import Injectable from '../src/core/Injectable.js';
 import TransactionAdapter from '../src/port/out/TransactionAdapter.js';
 import { Environment } from '../src/domain/context/network/Environment.js';
 import { MultiSigTransaction } from '../src/domain/context/transaction/MultiSigTransaction.js';
-import { BigNumber } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
+import EventService from '../src/app/service/event/EventService.js';
+import { MirrorNodeAdapter } from '../src/port/out/mirror/MirrorNodeAdapter.js';
+import NetworkService from '../src/app/service/NetworkService.js';
 
-/*jest.mock('../src/port/out/mirror/MirrorNodeAdapter', () => {
-	const decimals = 3;
+interface token {
+	tokenId: string;
+	customFees: CustomFee[];
+}
 
-	return {
-		MirrorNodeAdapter: jest.fn().mockImplementation(() => ({
-			set: jest.fn().mockResolvedValue('mocked set'),
-			getStableCoinsList: jest.fn((accountId: HederaId) => {
-				const response: StableCoinListViewModel = {
-					coins: [{ symbol: 'A', id: accountId.toString() }],
-				};
-				return response;
-			}),
-			getTokenInfo: jest.fn((tokenId: HederaId) => {
-				const response = {
-					status: 200,
-					data: null,
-				};
-				return response;
-			}),
-			getStableCoin: jest.fn((tokenId: HederaId) => {
-				const response: StableCoinViewModel = {
-					tokenId: tokenId,
-					name: 'TestToken',
-					symbol: 'TT',
-					decimals: decimals,
-					totalSupply: BigDecimal.fromString('1000', decimals),
-					maxSupply: BigDecimal.fromString('100000', decimals),
-					initialSupply: BigDecimal.fromString('1000', decimals),
-					treasury: HederaId.from('0.0.5'),
-					proxyAddress: new ContractId('0.0.1'),
-					proxyAdminAddress: new ContractId('0.0.1'),
-					evmProxyAddress: new EvmAddress(
-						'0x0000000000000000000000000000000000000001',
-					),
-					evmProxyAdminAddress: new EvmAddress(
-						'0x0000000000000000000000000000000000000001',
-					),
-					expirationTime: '1000000',
-					freezeDefault: false,
-					autoRenewAccount: HederaId.from('0.0.5'),
-					autoRenewPeriod: 1000,
-					expirationTimestamp: 10000,
-					paused: false,
-					deleted: false,
-					adminKey: new ContractId('0.0.1'),
-					kycKey: new ContractId('0.0.1'),
-					freezeKey: new ContractId('0.0.1'),
-					wipeKey: new ContractId('0.0.1'),
-					supplyKey: new ContractId('0.0.1'),
-					pauseKey: new ContractId('0.0.1'),
-					feeScheduleKey: undefined,
-					reserveAddress: new ContractId('0.0.2'),
-					reserveAmount: BigDecimal.fromString('100000', decimals),
-					customFees: [],
-					metadata: 'nothing',
-				};
-				return response;
-			}),
-			getAccountInfo: jest.fn((accountId: HederaId | string) => {
-				const response: AccountViewModel = {
-					id: accountId.toString(),
-					accountEvmAddress: '0x001',
-					publicKey: CLIENT_PUBLIC_KEY_ED25519,
-					alias: 'anything',
-					multiKey: new MultiKey([], 0),
-				};
-				return response;
-			}),
-			getContractMemo: jest.fn((contractId: HederaId) => {
-				return 'Memo';
-			}),
-			getContractInfo: jest.fn((contractEvmAddress: string) => {
-				const response: ContractViewModel = {
-					id: '1',
-					evmAddress: contractEvmAddress,
-				};
-				return response;
-			}),
-			getAccountToken: jest.fn(
-				(targetId: HederaId, tokenId: HederaId) => {
-					const response: AccountTokenRelationViewModel = {
-						automaticAssociation: true,
-						balance: BigDecimal.fromString('1000', decimals),
-						createdTimestamp: '10000000',
-						freezeStatus: FreezeStatus.UNFROZEN,
-						kycStatus: KycStatus.GRANTED,
-						tokenId: tokenId,
-					};
-					return response;
-				},
-			),
-			getTransactionResult: jest.fn((transactionId: string) => {
-				const response: TransactionResultViewModel = {
-					result: 'resultMessage',
-				};
-				return response;
-			}),
-			getTransactionFinalError: jest.fn((transactionId: string) => {
-				const response: TransactionResultViewModel = {
-					result: 'resultMessage',
-				};
-				return response;
-			}),
-			accountToEvmAddress: jest.fn((accountId: HederaId) => {
-				const response = new EvmAddress(
-					'0x0000000000000000000000000000000000000001',
-				);
-				return response;
-			}),
-			getHBARBalance: jest.fn((accountId: HederaId | string) => {
-				const response = BigDecimal.fromString('1000', decimals);
-				return response;
-			}),
-		})),
-	};
-});*/
+const tokens = new Map<string, token>();
+
+let proxyOwner = '0x0000000000000000000000000000000000000003';
+let proxyPendingOwner = '0x0000000000000000000000000000000000000000';
+let implementation = identifiers(
+	HederaId.from(HEDERA_TOKEN_MANAGER_ADDRESS),
+)[1];
+let reserveAmount = BigNumber.from('1000');
+
+function hexToDecimal(hexString: string): number {
+	if (!/^0x[a-fA-F0-9]+$|^[a-fA-F0-9]+$/.test(hexString)) {
+		throw new Error('Invalid hexadecimal input.');
+	}
+	return parseInt(hexString, 16);
+}
+
+function identifiers(accountId: HederaId | string): string[] {
+	let id;
+	let accountEvmAddress;
+
+	if (accountId instanceof HederaId) {
+		id = accountId.toString();
+		accountEvmAddress =
+			'0x' + accountId.toHederaAddress().toSolidityAddress();
+	} else {
+		id = '0.0.' + hexToDecimal(accountId);
+		accountEvmAddress = accountId.toString();
+	}
+
+	return [id, accountEvmAddress];
+}
 
 jest.mock('../src/port/out/mirror/MirrorNodeAdapter', () => {
 	const actual = jest.requireActual(
@@ -192,6 +137,20 @@ jest.mock('../src/port/out/mirror/MirrorNodeAdapter', () => {
 		return response;
 	});
 	singletonInstance.getStableCoin = jest.fn((tokenId: HederaId) => {
+		const customFees = tokens.get(tokenId.toString())?.customFees;
+
+		const requestCustomFees: RequestCustomFee[] = [];
+
+		if (customFees) {
+			customFees.forEach((customFee) => {
+				requestCustomFees.push({
+					collectorId: customFee.feeCollectorAccountId!.toString(),
+					collectorsExempt: customFee.allCollectorsAreExempt,
+					decimals: 3,
+				});
+			});
+		}
+
 		const response: StableCoinViewModel = {
 			tokenId: tokenId,
 			name: 'TestToken',
@@ -225,16 +184,18 @@ jest.mock('../src/port/out/mirror/MirrorNodeAdapter', () => {
 			feeScheduleKey: undefined,
 			reserveAddress: new ContractId('0.0.2'),
 			reserveAmount: BigDecimal.fromString('100000', decimals),
-			customFees: [],
+			customFees: requestCustomFees,
 			metadata: 'nothing',
 		};
 		return response;
 	});
 	singletonInstance.getAccountInfo = jest.fn(
 		(accountId: HederaId | string) => {
+			const ids = identifiers(accountId);
+
 			const response: AccountViewModel = {
-				id: accountId.toString(),
-				accountEvmAddress: '0x001',
+				id: ids[0],
+				accountEvmAddress: ids[1],
 				publicKey: CLIENT_PUBLIC_KEY_ED25519,
 				alias: 'anything',
 				multiKey: new MultiKey([], 0),
@@ -243,13 +204,23 @@ jest.mock('../src/port/out/mirror/MirrorNodeAdapter', () => {
 		},
 	);
 	singletonInstance.getContractMemo = jest.fn((contractId: HederaId) => {
-		return 'Memo';
+		return '0x0000000000000000000000000000000000000001';
 	});
 	singletonInstance.getContractInfo = jest.fn(
 		(contractEvmAddress: string) => {
+			let accountId;
+
+			if (contractEvmAddress.toString().indexOf('.') !== -1) {
+				accountId = HederaId.from(contractEvmAddress);
+			} else {
+				accountId = contractEvmAddress;
+			}
+
+			const ids = identifiers(accountId);
+
 			const response: ContractViewModel = {
-				id: '1',
-				evmAddress: '0x0000000000000000000000000000000000000001',
+				id: ids[0],
+				evmAddress: ids[1],
 			};
 			return response;
 		},
@@ -284,10 +255,8 @@ jest.mock('../src/port/out/mirror/MirrorNodeAdapter', () => {
 		},
 	);
 	singletonInstance.accountToEvmAddress = jest.fn((accountId: HederaId) => {
-		const response = new EvmAddress(
-			'0x0000000000000000000000000000000000000001',
-		);
-		return response;
+		const ids = identifiers(accountId);
+		return ids[1];
 	});
 	singletonInstance.getHBARBalance = jest.fn(
 		(accountId: HederaId | string) => {
@@ -309,6 +278,7 @@ jest.mock('../src/port/out/hs/hts/HTSTransactionAdapter', () => {
 	const singletonInstance = new actual.HTSTransactionAdapter();
 
 	singletonInstance.init = jest.fn(() => 'init');
+
 	singletonInstance.register = function (account: Account) {
 		Injectable.registerTransactionHandler(this); // `this` now correctly refers to the singletonInstance
 		const response = {
@@ -329,6 +299,44 @@ jest.mock('../src/port/out/hs/hts/HTSTransactionAdapter', () => {
 		functionName: string,
 		abi: object[],
 	) {
+		if (t instanceof TokenFeeScheduleUpdateTransaction) {
+			const tokenId = (
+				t as TokenFeeScheduleUpdateTransaction
+			).tokenId!.toString();
+			const customFees = (t as TokenFeeScheduleUpdateTransaction)
+				.customFees;
+			let token = tokens.get(tokenId);
+			if (!token) {
+				token = {
+					tokenId: tokenId,
+					customFees: [],
+				};
+			}
+			token.customFees = customFees;
+			tokens.set(tokenId, token);
+		} else if (t instanceof ContractExecuteTransaction) {
+			const iface = new ethers.utils.Interface(abi);
+			const functionFragment = iface.getFunction(functionName);
+			let decoded;
+			if (t.functionParameters) {
+				decoded = iface.decodeFunctionData(
+					functionFragment,
+					t.functionParameters,
+				);
+			}
+
+			if (functionName == 'transferOwnership') {
+				proxyPendingOwner = (decoded as any).newOwner;
+			} else if (functionName == 'acceptOwnership') {
+				proxyOwner = proxyPendingOwner;
+				proxyPendingOwner =
+					'0x0000000000000000000000000000000000000000';
+			} else if (functionName == 'upgrade') {
+				implementation = (decoded as any).implementation;
+			} else if (functionName == 'setAmount') {
+				reserveAmount = (decoded as any).newValue;
+			}
+		}
 		const response = new TransactionResponse('1', null, undefined);
 		return Promise.resolve(response);
 	};
@@ -346,79 +354,87 @@ jest.mock('../src/port/out/hs/hts/HTSTransactionAdapter', () => {
 		return Promise.resolve('signedMessage');
 	};
 
+	singletonInstance.getMirrorNodeAdapter = function () {
+		return new MirrorNodeAdapter();
+	};
+
 	return {
 		HTSTransactionAdapter: jest.fn(() => singletonInstance),
 	};
 });
 
-jest.mock('../src/port/out/backend/BackendAdapter', () => {
-	let multiSigTransaction: MultiSigTransaction;
+if ('true' == process.env.MOCK_BACKEND) {
+	jest.mock('../src/port/out/backend/BackendAdapter', () => {
+		let multiSigTransaction: MultiSigTransaction;
 
-	return {
-		BackendAdapter: jest.fn().mockImplementation(() => ({
-			set: jest.fn().mockResolvedValue('mocked set'),
-			addTransaction: jest.fn(
-				(
-					transactionMessage: string,
-					description: string,
-					HederaAccountId: string,
-					keyList: string[],
-					threshold: number,
-					network: Environment,
-					startDate: string,
-				) => {
-					multiSigTransaction = new MultiSigTransaction(
-						'1',
-						transactionMessage,
-						description,
-						'pending',
-						threshold,
-						keyList,
-						[],
-						[],
-						network,
-						HederaAccountId,
-						startDate,
-					);
-				},
-			),
-			signTransaction: jest.fn(
-				(
-					transactionId: string,
-					transactionSignature: string,
-					publicKey: string,
-				) => {
-					multiSigTransaction.signed_keys.push(publicKey);
-					multiSigTransaction.signatures.push(transactionSignature);
-					if (
-						multiSigTransaction.signed_keys.length ==
-						multiSigTransaction.threshold
-					)
-						multiSigTransaction.status = 'signed';
-				},
-			),
-			deleteTransaction: jest
-				.fn()
-				.mockResolvedValue('mocked deleteTransaction'),
-			getTransactions: jest.fn(() => {
-				return {
-					transactions: [multiSigTransaction],
-					pagination: {
-						totalItems: 0,
-						itemCount: 0,
-						itemsPerPage: 10,
-						totalPages: 0,
-						currentPage: 1,
+		return {
+			BackendAdapter: jest.fn().mockImplementation(() => ({
+				set: jest.fn().mockResolvedValue('mocked set'),
+				addTransaction: jest.fn(
+					(
+						transactionMessage: string,
+						description: string,
+						HederaAccountId: string,
+						keyList: string[],
+						threshold: number,
+						network: Environment,
+						startDate: string,
+					) => {
+						multiSigTransaction = new MultiSigTransaction(
+							'1',
+							transactionMessage,
+							description,
+							'pending',
+							threshold,
+							keyList,
+							[],
+							[],
+							network,
+							HederaAccountId,
+							startDate,
+						);
 					},
-				};
-			}),
-			getTransaction: jest.fn(() => {
-				return multiSigTransaction;
-			}),
-			// Add other methods as necessary
-		})),
-	};
-});
+				),
+				signTransaction: jest.fn(
+					(
+						transactionId: string,
+						transactionSignature: string,
+						publicKey: string,
+					) => {
+						multiSigTransaction.signed_keys.push(publicKey);
+						multiSigTransaction.signatures.push(
+							transactionSignature,
+						);
+						if (
+							multiSigTransaction.signed_keys.length ==
+							multiSigTransaction.threshold
+						)
+							multiSigTransaction.status = 'signed';
+					},
+				),
+				deleteTransaction: jest
+					.fn()
+					.mockResolvedValue('mocked deleteTransaction'),
+				getTransactions: jest.fn(() => {
+					return {
+						transactions: [multiSigTransaction],
+						pagination: {
+							totalItems: 0,
+							itemCount: 0,
+							itemsPerPage: 10,
+							totalPages: 0,
+							currentPage: 1,
+						},
+					};
+				}),
+				getTransaction: jest.fn(() => {
+					return multiSigTransaction;
+				}),
+				// Add other methods as necessary
+			})),
+		};
+	});
+}
 
 jest.mock('../src/port/out/rpc/RPCQueryAdapter', () => {
 	const actual = jest.requireActual('../src/port/out/rpc/RPCQueryAdapter.ts');
@@ -442,7 +458,7 @@ jest.mock('../src/port/out/rpc/RPCQueryAdapter', () => {
 		return ContractId.from('0.0.1');
 	});
 	singletonInstance.getReserveAmount = jest.fn((address: EvmAddress) => {
-		return BigNumber.from('1000');
+		return reserveAmount;
 	});
 	singletonInstance.getReserveLatestRoundData = jest.fn(
 		(address: EvmAddress) => {
@@ -466,18 +482,18 @@ jest.mock('../src/port/out/rpc/RPCQueryAdapter', () => {
 	);
 	singletonInstance.getProxyImplementation = jest.fn(
 		(proxyAdmin: EvmAddress, proxy: EvmAddress) => {
-			return '0x0000000000000000000000000000000000000001';
+			return implementation;
 		},
 	);
 	singletonInstance.getProxyAdmin = jest.fn((proxy: EvmAddress) => {
 		return '0x0000000000000000000000000000000000000002';
 	});
 	singletonInstance.getProxyOwner = jest.fn((proxyAdmin: EvmAddress) => {
-		return '0x0000000000000000000000000000000000000003';
+		return proxyOwner;
 	});
 	singletonInstance.getProxyPendingOwner = jest.fn(
 		(proxyAdmin: EvmAddress) => {
-			return '0x0000000000000000000000000000000000000004';
+			return proxyPendingOwner;
 		},
 	);
 	singletonInstance.getAccountsWithRole = jest.fn(
@@ -504,8 +520,7 @@ jest.mock('../src/port/out/rpc/RPCQueryAdapter', () => {
 	singletonInstance.getTokenManagerList = jest.fn(
 		(factoryAddress: EvmAddress) => {
 			return [
-				'0x0000000000000000000000000000000000000001',
-				'0x0000000000000000000000000000000000000002',
+				identifiers(HederaId.from(HEDERA_TOKEN_MANAGER_ADDRESS))[1],
 			];
 		},
 	);
@@ -518,96 +533,117 @@ jest.mock('../src/port/out/rpc/RPCQueryAdapter', () => {
 	};
 });
 
-/*jest.mock('../src/port/out/rpc/RPCQueryAdapter', () => {
+jest.mock('axios', () => {
 	return {
-		RPCQueryAdapter: jest.fn().mockImplementation(() => ({
-			constructor: jest.fn(() => {}),
-			init: jest.fn(
-				(urlRpcProvider?: string, apiKey?: string) => {
-					return 'init';
-				},
-			),
-			connect: jest.fn(() => {}),
-			balanceOf: jest.fn(
-				(address: EvmAddress, target: EvmAddress) => {
-					return BigNumber.from('10');
-				},
-			),
-			getReserveAddress: jest.fn((address: EvmAddress) => {
-				return ContractId.from('0.0.1');
+		create: jest.fn(() => ({
+			post: jest.fn((url, body, config) => {
+				const expectedTransaction = TRANSACTION;
+				if (
+					url == '' &&
+					body.transaction_message ==
+						expectedTransaction.transaction_message &&
+					body.description == expectedTransaction.description &&
+					body.hedera_account_id ==
+						expectedTransaction.hedera_account_id &&
+					body.key_list.length ==
+						expectedTransaction.key_list.length &&
+					body.key_list[0] == expectedTransaction.key_list[0] &&
+					body.key_list[1] == expectedTransaction.key_list[1] &&
+					body.threshold == expectedTransaction.threshold &&
+					body.network == expectedTransaction.network &&
+					config.headers.Origin == expectedTransaction.originHeader &&
+					new Date(body.start_date).getTime() ==
+						new Date(expectedTransaction.startDate).getTime()
+				)
+					return {
+						status: 201,
+						data: {
+							transactionId: 'transactionId',
+						},
+					};
+				return {
+					status: 400,
+				};
 			}),
-			getReserveAmount: jest.fn((address: EvmAddress) => {
-				return BigNumber.from('1000');
+			put: jest.fn((url, body) => {
+				const expectedSignature = SIGNATURE;
+				const expectedUpdate = UPDATE;
+
+				if (
+					url == expectedSignature.transactionId + '/signature' &&
+					body.signature == expectedSignature.transactionSignature &&
+					body.public_key == expectedSignature.publicKey
+				)
+					return {
+						status: 204,
+					};
+				else if (
+					url == expectedUpdate.transactionId + '/update' &&
+					body.status == expectedUpdate.status
+				)
+					return {
+						status: 204,
+					};
+				else
+					return {
+						status: 400,
+					};
 			}),
-			getReserveLatestRoundData: jest.fn(
-				(address: EvmAddress) => {
-					[BigNumber.from('1000'), BigNumber.from('1000')];
-				},
-			),
-			isLimite: jest.fn(
-				(address: EvmAddress, target: EvmAddress) => {
-					return false;
-				},
-			),
-			isUnlimited: jest.fn(
-				(address: EvmAddress, target: EvmAddress) => {
-					return true;
-				},
-			),
-			getRoles: jest.fn(
-				(address: EvmAddress, target: EvmAddress) => {
-					return ['role_1', 'role_2'];
-				},
-			),
-			getProxyImplementation: jest.fn(
-				(proxyAdmin: EvmAddress, proxy: EvmAddress) => {
-					return '0x0000000000000000000000000000000000000001';
-				},
-			),
-			getProxyAdmin: jest.fn((proxy: EvmAddress) => {
-				return '0x0000000000000000000000000000000000000002';
+			get: jest.fn((url, body) => {
+				if (url == GET_TRANSACTION.id)
+					return {
+						status: 200,
+						data: GET_TRANSACTION,
+					};
+				if (
+					body.params.page == GET_TRANSACTIONS.page &&
+					body.params.limit == GET_TRANSACTIONS.limit &&
+					body.params.network == GET_TRANSACTIONS.network
+				) {
+					if (
+						!body.params.publicKey &&
+						!body.params.status &&
+						!body.params.hederaAccountId
+					)
+						return {
+							status: 200,
+							data: {
+								items: [GET_TRANSACTION],
+								meta: PAGINATION,
+							},
+						};
+
+					if (
+						body.params.publicKey == GET_TRANSACTIONS.publicKey &&
+						body.params.status == GET_TRANSACTIONS.status &&
+						body.params.hederaAccountId ==
+							GET_TRANSACTIONS.accountId
+					)
+						return {
+							status: 200,
+							data: {
+								items: [GET_TRANSACTION],
+								meta: PAGINATION,
+							},
+						};
+				}
+
+				return {
+					status: 400,
+				};
 			}),
-			getProxyOwner: jest.fn((proxyAdmin: EvmAddress) => {
-				return '0x0000000000000000000000000000000000000003';
+			delete: jest.fn((url, config) => {
+				if (
+					url == DELETE.transactionId &&
+					config.headers.Origin == DELETE.originHeader
+				)
+					return {
+						status: 200,
+					};
+				return {
+					status: 400,
+				};
 			}),
-			getProxyPendingOwner: jest.fn(
-				(proxyAdmin: EvmAddress) => {
-					return '0x0000000000000000000000000000000000000004';
-				},
-			),
-			getAccountsWithRole: jest.fn(
-				(address: EvmAddress, role: string) => {
-					return [
-						'0x0000000000000000000000000000000000000001',
-						'0x0000000000000000000000000000000000000002',
-					];
-				},
-			),
-			hasRole: jest.fn(
-				(address: EvmAddress, target: EvmAddress, role: StableCoinRole) => {
-					return true;
-				},
-			),
-			supplierAllowance: jest.fn(
-				(address: EvmAddress, target: EvmAddress) => {
-					return BigNumber.from('1000');
-				},
-			),
-			getReserveDecimals: jest.fn((address: EvmAddress) => {
-				return 3;
-			}),
-			getTokenManagerList: jest.fn(
-				(factoryAddress: EvmAddress) => {
-					return [
-						'0x0000000000000000000000000000000000000001',
-						'0x0000000000000000000000000000000000000002',
-					];
-				},
-			),
-			getMetadata: jest.fn((address: EvmAddress) => {
-				return 'metadata';
-			}),
-		})
-	)}
-	
-});*/
+		})),
+	};
+});
