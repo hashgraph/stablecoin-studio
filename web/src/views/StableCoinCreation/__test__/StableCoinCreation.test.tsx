@@ -30,7 +30,6 @@ describe(`<${StableCoinCreation.name} />`, () => {
 		expect(subtitle).toHaveTextContent(translations.common.factoryId);
 	});
 
-	// TODO:     thrown: "Exceeded timeout of 20000 ms for a test.
 	test('should have options', async () => {
 		const mockStore = configureMockStore();
 		const store = mockStore({
