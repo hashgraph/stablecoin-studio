@@ -18,6 +18,7 @@ jest.mock('react-i18next', (): any => ({
 	...jest.requireActual('react-i18next'),
 }));
 
+// To avoid sdk api calls
 jest.mock('../services/SDKService');
 window.matchMedia =
 	window.matchMedia ||
