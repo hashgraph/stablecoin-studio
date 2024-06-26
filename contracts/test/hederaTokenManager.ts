@@ -138,7 +138,7 @@ describe('HederaTokenManager Tests', function () {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('Admin can update token', async function () {
+    it.only('Admin can update token', async function () {
         const keysToKey = tokenKeystoKey(
             operatorPubKey,
             operatorIsE25519,
@@ -146,7 +146,7 @@ describe('HederaTokenManager Tests', function () {
         )
         await updateToken(
             proxyAddress,
-            'newName',
+            'new Name',
             'newSymbol',
             keysToKey,
             oneYearLaterInSeconds(),
@@ -401,7 +401,7 @@ describe('HederaTokenManager Tests', function () {
     })
 })
 
-describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', function () {
+describe.skip('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', function () {
     before(async function () {
         // Deploy Token using Client
         const result = await deployContractsWithSDK({

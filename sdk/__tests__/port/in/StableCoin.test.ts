@@ -89,11 +89,11 @@ const initialSupply = 1000;
 const maxSupply = 1000000;
 const multisigAccountId = MULTISIG_ACCOUNT_ADDRESS;
 
-let multiSigTransaction: MultiSigTransaction;
+// let multiSigTransaction: MultiSigTransaction;
 
 SDK.log = { level: 'ERROR', transports: new LoggerTransports.Console() };
 
-jest.mock('../../../src/port/out/backend/BackendAdapter', () => {
+/*jest.mock('../../../src/port/out/backend/BackendAdapter', () => {
 	return {
 		BackendAdapter: jest.fn().mockImplementation(() => ({
 			set: jest.fn().mockResolvedValue('mocked set'),
@@ -158,7 +158,7 @@ jest.mock('../../../src/port/out/backend/BackendAdapter', () => {
 			// Add other methods as necessary
 		})),
 	};
-});
+});*/
 
 describe.skip('🧪 Stablecoin test', () => {
 	let stableCoinSC: StableCoinViewModel;
