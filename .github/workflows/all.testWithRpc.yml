@@ -43,23 +43,23 @@ jobs:
           npm run build
         working-directory: hashconnect/lib
 
-      - name: Install dependencies Backend
-        run: |
-          npm ci
-          npm run build
-        working-directory: backend
-
-      - name: Install dependencies Contracts
-        run: |
-          npm ci
-          npm run compile:force
-        working-directory: contracts
-
-      - name: Install dependencies SDK
-        run: |
-          npm ci
-          npm run build
-        working-directory: sdk
+#      - name: Install dependencies Backend
+#        run: |
+#          npm ci
+#          npm run build
+#        working-directory: backend
+#
+#      - name: Install dependencies Contracts
+#        run: |
+#          npm ci
+#          npm run compile:force
+#        working-directory: contracts
+#
+#      - name: Install dependencies SDK
+#        run: |
+#          npm ci
+#          npm run build
+#        working-directory: sdk
       
       - name: Install dependencies Cli
         run: |

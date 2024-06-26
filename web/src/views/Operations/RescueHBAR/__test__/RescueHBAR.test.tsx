@@ -28,36 +28,42 @@ describe(`<${RescueHBAROperation.name} />`, () => {
 
 	// TODO:  Received element is not enabled:
 	//       <button class="chakra-button css-qvkb6r" data-testid="confirm-btn" disabled="" type="button" />
-	// test('should have a disabled confirm button that is enable when introduce valid data', async () => {
-	// 	const component = render(<RescueHBAROperation />);
-	//
-	// 	const button = component.getByTestId('confirm-btn');
-	// 	expect(button).toBeDisabled();
-	//
-	// 	const amount = component.getByTestId('amount');
-	// 	userEvent.type(amount, '10000');
-	//
-	// 	await waitFor(() => {
-	// 		expect(button).toBeEnabled();
-	// 	});
-	// });
+	test('should have a disabled confirm button that is enable when introduce valid data', async () => {
+		const component = render(<RescueHBAROperation />);
+
+		const button = component.getByTestId('confirm-btn');
+		expect(button).toBeDisabled();
+
+		const amount = component.getByTestId('amount');
+		userEvent.type(amount, '10000');
+
+		await waitFor(
+			() => {
+				expect(button).toBeEnabled();
+			},
+			{ timeout: 5000 },
+		);
+	});
 
 	// TODO: FIX THIS TEST Received element is not enabled:
 	//       <button class="chakra-button css-qvkb6r" data-testid="confirm-btn" disabled="" type="button" />
-	// test('should handle rescue hbars', async () => {
-	// 	const component = render(<RescueHBAROperation />);
-	//
-	// 	const confirmButton = component.getByTestId('confirm-btn');
-	// 	const amount = component.getByTestId('amount');
-	// 	userEvent.type(amount, '10000');
-	//
-	// 	await waitFor(() => {
-	// 		expect(confirmButton).toBeEnabled();
-	// 	});
-	//
-	// 	await userEvent.click(confirmButton);
-	//
-	// 	const confirmModalButton = component.getByTestId('modal-action-confirm-button');
-	// 	await userEvent.click(confirmModalButton);
-	// });
+	test('should handle rescue hbars', async () => {
+		const component = render(<RescueHBAROperation />);
+
+		const confirmButton = component.getByTestId('confirm-btn');
+		const amount = component.getByTestId('amount');
+		userEvent.type(amount, '10000');
+
+		await waitFor(
+			() => {
+				expect(confirmButton).toBeEnabled();
+			},
+			{ timeout: 5000 },
+		);
+
+		await userEvent.click(confirmButton);
+
+		const confirmModalButton = component.getByTestId('modal-action-confirm-button');
+		await userEvent.click(confirmModalButton);
+	});
 });
