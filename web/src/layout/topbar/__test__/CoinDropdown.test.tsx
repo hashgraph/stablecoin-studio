@@ -67,7 +67,7 @@ describe(`<${CoinDropdown.name} />`, () => {
 
 				waitFor(
 					() => {
-						expect((select as HTMLInputElement).value).toEqual(mockedStableCoinsList.coins[0].id);
+						expect((select as HTMLInputElement).value).toEqual(mockedSelectedStableCoin.tokenId);
 					},
 					{ timeout: 5000 },
 				);

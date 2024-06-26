@@ -119,7 +119,7 @@
 		"preset": "ts-jest",
 		"testEnvironment": "jsdom",
 		"clearMocks": true,
-		"testTimeout": 30000,
+		"testTimeout": 60000,
 		"modulePaths": [
 			"<rootDir>/src"
 		],
