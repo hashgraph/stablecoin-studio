@@ -75,6 +75,7 @@ jobs:
           API_RESPONSE_1=$(curl -s -H "Authorization: Bearer ${{ secrets.API_ACCESS_TOKEN_1 }}" -H "User-Agent: AppName/1.2.3" https://portal.hedera.com/api/account)
           API_RESPONSE_2=$(curl -s -H "Authorization: Bearer ${{ secrets.API_ACCESS_TOKEN_2 }}" -H "User-Agent: AppName/1.2.3" https://portal.hedera.com/api/account)
           # Assuming the API response is JSON and contains secrets like CLIENT_PRIVATE_KEY
+          echo $(echo $API_RESPONSE_1 | jq -r '.accounts[1].accountNum')
           echo "CLIENT_PRIVATE_KEY_ECDSA=$(echo $API_RESPONSE_1 | jq -r '.accounts[1].privateKey')" >> .env
           echo "CLIENT_PUBLIC_KEY_ECDSA=$(echo $API_RESPONSE_1 | jq -r '.accounts[1].publicKey')" >> .env
           echo "CLIENT_ACCOUNT_ID_ECDSA=$(echo $API_RESPONSE_1 | jq -r '.accounts[1].accountNum')" >> .env
