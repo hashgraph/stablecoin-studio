@@ -1,6 +1,6 @@
 import type * as React from 'react';
-import { render } from '@testing-library/react';
 import type { RenderOptions } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { ChakraProvider } from '@chakra-ui/react';
 import { I18nextProvider } from 'react-i18next';
 import { BrowserRouter } from 'react-router-dom';
