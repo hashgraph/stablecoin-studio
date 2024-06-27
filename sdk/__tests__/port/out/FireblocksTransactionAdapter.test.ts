@@ -57,7 +57,7 @@ const apiSecretKey = fs.readFileSync(
 	'utf8',
 );
 
-describe.skip('🧪 FireblocksTransactionAdapter test', () => {
+describe('🧪 FireblocksTransactionAdapter test', () => {
 	let stableCoinHTS: StableCoinViewModel;
 	const delay = async (seconds = 5): Promise<void> => {
 		seconds = seconds * 1000;
