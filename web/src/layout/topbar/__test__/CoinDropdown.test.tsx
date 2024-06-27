@@ -9,35 +9,36 @@ import {
 } from '../../../mocks/sdk';
 import configureMockStore from 'redux-mock-store';
 
-jest.mock('react-select', () => {
-	// eslint-disable-next-line react/display-name
-	return ({ name, options, value, onChange, onBlurAux, placeholder }: any) => {
-		function handleChange(event: any) {
-			const option = options.find((option: any) => option.value === event.currentTarget.value);
-			onChange(option);
-		}
-
-		// console.log('React Select Mock:', { name, options, value, placeholder });
-
-		return (
-			<>
-				<span data-testid='select-placeholder'>{placeholder}</span>
-				<select
-					data-testid={`select-${name}`}
-					value={value}
-					onChange={handleChange}
-					onBlur={onBlurAux}
-				>
-					{options.map(({ label, value }: any) => (
-						<option key={value} value={value}>
-							{label}
-						</option>
-					))}
-				</select>
-			</>
-		);
-	};
-});
+// TODO: review this mock, it's not working
+// jest.mock('react-select', () => {
+// 	// eslint-disable-next-line react/display-name
+// 	return ({ name, options, value, onChange, onBlurAux, placeholder }: any) => {
+// 		function handleChange(event: any) {
+// 			const option = options.find((option: any) => option.value === event.currentTarget.value);
+// 			onChange(option);
+// 		}
+//
+// 		// console.log('React Select Mock:', { name, options, value, placeholder });
+//
+// 		return (
+// 			<>
+// 				<span data-testid='select-placeholder'>{placeholder}</span>
+// 				<select
+// 					data-testid={`select-${name}`}
+// 					value={value}
+// 					onChange={handleChange}
+// 					onBlur={onBlurAux}
+// 				>
+// 					{options.map(({ label, value }: any) => (
+// 						<option key={value} value={value}>
+// 							{label}
+// 						</option>
+// 					))}
+// 				</select>
+// 			</>
+// 		);
+// 	};
+// });
 
 jest.mock('../../../Router/RouterManager', () => ({
 	RouterManager: {
@@ -53,67 +54,58 @@ describe(`<${CoinDropdown.name} />`, () => {
 		expect(component.asFragment()).toMatchSnapshot();
 	});
 
-	// test('should be able to choose click', async () => {
-	//
-	// 	const component = render(<CoinDropdown />);
-	//
-	// 	const select = component.getByTestId('select-placeholder');
-	// 	await act(async () => userEvent.click(select));
-	//
-	// 	const coinLabel = `${mockedSelectedStableCoin.tokenId} - ${mockedSelectedStableCoin.symbol}`;
-	//
-	// 	await waitFor(() => {
-	// 		expect(component.queryByText(coinLabel)).toBeInTheDocument();
-	// 	}, { timeout: 5000 });
-	//
-	// 	const option = component.getByText(coinLabel);
-	// 	await act(async () => userEvent.click(option));
-	//
-	// 	await waitFor(() => {
-	// 		expect((select as HTMLInputElement).value).toEqual(coinLabel);
-	// 	}, { timeout: 5000 });
-	// });
+	test('should be able to choose click', async () => {
+		const component = render(<CoinDropdown />);
 
-	// test('should be able to choose one coin', async () => {
-	// 	const mockStore = configureMockStore();
-	// 	const store = mockStore({
-	// 		wallet: {
-	// 			accountInfo: { id: '0.0.12345' },
-	// 			selectedStableCoin: {
-	// 				tokenId: mockedStableCoinsList.coins[0].id,
-	// 				symbol: mockedStableCoinsList.coins[0].symbol,
-	// 			},
-	// 			capabilities: mockedStableCoinCapabilities,
-	// 			data: {
-	// 				savedPairings: [
-	// 					{
-	// 						accountIds: ['0.0.123456'],
-	// 					},
-	// 				],
-	// 			},
-	// 		},
-	// 	});
-	//
-	// 	const component = render(<CoinDropdown />, store);
-	// 	component.debug();
-	//
-	// 	const select = component.getByTestId('select-placeholder');
-	// 	userEvent.click(select);
-	// 	const coinLabel = `${mockedStableCoinsList.coins[0].id} - ${mockedStableCoinsList.coins[0].symbol}`;
-	//
-	// 	await waitFor(
-	// 		async () => {
-	// 			const option = component.getByText(coinLabel);
-	// 			await userEvent.click(option);
-	//
-	// 			waitFor(
-	// 				() => {
-	// 					expect((select as HTMLInputElement).value).toEqual(mockedStableCoinsList.coins[0].id);
-	// 				},
-	// 				{ timeout: 5000 },
-	// 			);
-	// 		},
-	// 		{ timeout: 5000 },
-	// 	);
-	// });
+		const select = component.getByTestId('select-placeholder');
+		// component.debug(select, Infinity);
+		await act(async () => userEvent.click(select));
+
+		const coinLabel = `${mockedSelectedStableCoin.tokenId} - ${mockedSelectedStableCoin.symbol}`;
+
+		await waitFor(
+			() => {
+				expect(component.queryByText(coinLabel)).toBeInTheDocument();
+			},
+			{ timeout: 5000 },
+		);
+	});
+
+	test('should be able to choose one coin', async () => {
+		const mockStore = configureMockStore();
+		const store = mockStore({
+			wallet: {
+				accountInfo: { id: '0.0.12345' },
+				selectedStableCoin: {
+					tokenId: mockedStableCoinsList.coins[0].id,
+					symbol: mockedStableCoinsList.coins[0].symbol,
+				},
+				capabilities: mockedStableCoinCapabilities,
+				data: {
+					savedPairings: [
+						{
+							accountIds: ['0.0.123456'],
+						},
+					],
+				},
+			},
+		});
+
+		const component = render(<CoinDropdown />, store);
+		component.debug();
+
+		const select = component.getByTestId('select-placeholder');
+		await act(async () => userEvent.click(select));
+		const coinLabel = `${mockedStableCoinsList.coins[0].id} - ${mockedStableCoinsList.coins[0].symbol}`;
+
+		await act(async () => {
+			const option = await waitFor(() => component.getByText(coinLabel));
+			await act(async () => userEvent.click(option));
+		});
+		// component.debug(select, Infinity);
+
+		await waitFor(() => {
+			expect(select).toHaveTextContent(coinLabel);
+		});
+	});
 });

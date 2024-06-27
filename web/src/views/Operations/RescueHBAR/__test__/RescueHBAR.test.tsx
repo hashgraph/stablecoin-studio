@@ -26,8 +26,6 @@ describe(`<${RescueHBAROperation.name} />`, () => {
 		expect(component.getByTestId('amount')).toBeInTheDocument();
 	});
 
-	// TODO:  Received element is not enabled:
-	//       <button class="chakra-button css-qvkb6r" data-testid="confirm-btn" disabled="" type="button" />
 	test('should have a disabled confirm button that is enable when introduce valid data', async () => {
 		const component = render(<RescueHBAROperation />);
 
@@ -45,8 +43,6 @@ describe(`<${RescueHBAROperation.name} />`, () => {
 		);
 	});
 
-	// TODO: FIX THIS TEST Received element is not enabled:
-	//       <button class="chakra-button css-qvkb6r" data-testid="confirm-btn" disabled="" type="button" />
 	test('should handle rescue hbars', async () => {
 		const component = render(<RescueHBAROperation />);
 

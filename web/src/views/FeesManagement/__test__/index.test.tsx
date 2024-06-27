@@ -190,8 +190,6 @@ describe(`<${FeesManagement.name} />`, () => {
 		await userEvent.click(trashButton);
 	});
 
-	// TODO: Fix this test Received element is not enabled:
-	//       <button class="chakra-button css-qvkb6r" data-testid="save-btn" disabled="" type="button" />
 	test('should allow adding a new fixed fee', async () => {
 		const store = mockStore({
 			wallet: {
