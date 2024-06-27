@@ -18,6 +18,11 @@
  *
  */
 
+jest.resetModules();
+jest.unmock('../../../src/port/out/mirror/MirrorNodeAdapter.ts');
+jest.unmock('../../../src/port/out/rpc/RPCQueryAdapter.ts');
+jest.unmock('axios');
+
 import {
 	AssociateTokenRequest,
 	CreateRequest,
@@ -52,7 +57,7 @@ const apiSecretKey = fs.readFileSync(
 	'utf8',
 );
 
-describe.skip('🧪 DFNSTransactionAdapter test', () => {
+describe('🧪 DFNSTransactionAdapter test', () => {
 	let stableCoinHTS: StableCoinViewModel;
 	const delay = async (seconds = 5): Promise<void> => {
 		seconds = seconds * 1000;
@@ -105,9 +110,6 @@ describe.skip('🧪 DFNSTransactionAdapter test', () => {
 			}),
 		);
 		Injectable.resolveTransactionHandler();
-	}, 60_000);
-
-	it('DFNS should create a Stable Coin', async () => {
 		const requestCreateStableCoin = new CreateRequest({
 			name: 'TEST_ACCELERATOR_HTS',
 			symbol: 'TEST',
@@ -132,8 +134,12 @@ describe.skip('🧪 DFNSTransactionAdapter test', () => {
 		});
 
 		stableCoinHTS = (await StableCoin.create(requestCreateStableCoin)).coin;
-		expect(stableCoinHTS?.tokenId).not.toBeNull();
+
 		await delay();
+	}, 60_000);
+
+	it('DFNS should create a Stable Coin', async () => {
+		expect(stableCoinHTS?.tokenId).not.toBeNull();
 	}, 60_000);
 
 	it('DFNS should associate a token', async () => {

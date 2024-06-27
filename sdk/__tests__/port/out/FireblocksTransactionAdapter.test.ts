@@ -18,6 +18,11 @@
  *
  */
 
+jest.resetModules();
+jest.unmock('../../../src/port/out/mirror/MirrorNodeAdapter.ts');
+jest.unmock('../../../src/port/out/rpc/RPCQueryAdapter.ts');
+jest.unmock('axios');
+
 import {
 	AssociateTokenRequest,
 	CreateRequest,
@@ -52,7 +57,7 @@ const apiSecretKey = fs.readFileSync(
 	'utf8',
 );
 
-describe.skip('🧪 FireblocksTransactionAdapter test', () => {
+describe('🧪 FireblocksTransactionAdapter test', () => {
 	let stableCoinHTS: StableCoinViewModel;
 	const delay = async (seconds = 5): Promise<void> => {
 		seconds = seconds * 1000;
@@ -103,9 +108,6 @@ describe.skip('🧪 FireblocksTransactionAdapter test', () => {
 			}),
 		);
 		Injectable.resolveTransactionHandler();
-	}, 80_000);
-
-	it('Fireblocks should create a Stable Coin', async () => {
 		const requesCreateStableCoin = new CreateRequest({
 			name: 'TEST_ACCELERATOR_HTS',
 			symbol: 'TEST',
@@ -130,8 +132,11 @@ describe.skip('🧪 FireblocksTransactionAdapter test', () => {
 		});
 
 		stableCoinHTS = (await StableCoin.create(requesCreateStableCoin)).coin;
-		expect(stableCoinHTS?.tokenId).not.toBeNull();
 		await delay();
+	}, 80_000);
+
+	it('Fireblocks should create a Stable Coin', async () => {
+		expect(stableCoinHTS?.tokenId).not.toBeNull();
 	}, 80_000);
 
 	it('Fireblocks should associate a token', async () => {

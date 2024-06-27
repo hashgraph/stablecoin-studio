@@ -363,78 +363,74 @@ jest.mock('../src/port/out/hs/hts/HTSTransactionAdapter', () => {
 	};
 });
 
-if ('true' == process.env.MOCK_BACKEND) {
-	jest.mock('../src/port/out/backend/BackendAdapter', () => {
-		let multiSigTransaction: MultiSigTransaction;
+jest.mock('../src/port/out/backend/BackendAdapter', () => {
+	let multiSigTransaction: MultiSigTransaction;
 
-		return {
-			BackendAdapter: jest.fn().mockImplementation(() => ({
-				set: jest.fn().mockResolvedValue('mocked set'),
-				addTransaction: jest.fn(
-					(
-						transactionMessage: string,
-						description: string,
-						HederaAccountId: string,
-						keyList: string[],
-						threshold: number,
-						network: Environment,
-						startDate: string,
-					) => {
-						multiSigTransaction = new MultiSigTransaction(
-							'1',
-							transactionMessage,
-							description,
-							'pending',
-							threshold,
-							keyList,
-							[],
-							[],
-							network,
-							HederaAccountId,
-							startDate,
-						);
+	return {
+		BackendAdapter: jest.fn().mockImplementation(() => ({
+			set: jest.fn().mockResolvedValue('mocked set'),
+			addTransaction: jest.fn(
+				(
+					transactionMessage: string,
+					description: string,
+					HederaAccountId: string,
+					keyList: string[],
+					threshold: number,
+					network: Environment,
+					startDate: string,
+				) => {
+					multiSigTransaction = new MultiSigTransaction(
+						'1',
+						transactionMessage,
+						description,
+						'pending',
+						threshold,
+						keyList,
+						[],
+						[],
+						network,
+						HederaAccountId,
+						startDate,
+					);
+				},
+			),
+			signTransaction: jest.fn(
+				(
+					transactionId: string,
+					transactionSignature: string,
+					publicKey: string,
+				) => {
+					multiSigTransaction.signed_keys.push(publicKey);
+					multiSigTransaction.signatures.push(transactionSignature);
+					if (
+						multiSigTransaction.signed_keys.length ==
+						multiSigTransaction.threshold
+					)
+						multiSigTransaction.status = 'signed';
+				},
+			),
+			deleteTransaction: jest
+				.fn()
+				.mockResolvedValue('mocked deleteTransaction'),
+			getTransactions: jest.fn(() => {
+				return {
+					transactions: [multiSigTransaction],
+					pagination: {
+						totalItems: 0,
+						itemCount: 0,
+						itemsPerPage: 10,
+						totalPages: 0,
+						currentPage: 1,
 					},
-				),
-				signTransaction: jest.fn(
-					(
-						transactionId: string,
-						transactionSignature: string,
-						publicKey: string,
-					) => {
-						multiSigTransaction.signed_keys.push(publicKey);
-						multiSigTransaction.signatures.push(
-							transactionSignature,
-						);
-						if (
-							multiSigTransaction.signed_keys.length ==
-							multiSigTransaction.threshold
-						)
-							multiSigTransaction.status = 'signed';
-					},
-				),
-				deleteTransaction: jest
-					.fn()
-					.mockResolvedValue('mocked deleteTransaction'),
-				getTransactions: jest.fn(() => {
-					return {
-						transactions: [multiSigTransaction],
-						pagination: {
-							totalItems: 0,
-							itemCount: 0,
-							itemsPerPage: 10,
-							totalPages: 0,
-							currentPage: 1,
-						},
-					};
-				}),
-				getTransaction: jest.fn(() => {
-					return multiSigTransaction;
-				}),
-				// Add other methods as necessary
-			})),
-		};
-	});
-}
+				};
+			}),
+			getTransaction: jest.fn(() => {
+				return multiSigTransaction;
+			}),
+			// Add other methods as necessary
+		})),
+	};
+});
 
 jest.mock('../src/port/out/rpc/RPCQueryAdapter', () => {
 	const actual = jest.requireActual('../src/port/out/rpc/RPCQueryAdapter.ts');

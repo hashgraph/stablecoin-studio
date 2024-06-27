@@ -18,6 +18,8 @@
  *
  */
 
+jest.unmock('../../../src/port/out/backend/BackendAdapter');
+
 import { BackendAdapter } from '../../../src/port/out/backend/BackendAdapter.js';
 import {
 	GET_TRANSACTION,
@@ -32,10 +34,6 @@ import {
 
 describe('🧪 BackendAdapter test', () => {
 	let backendAdapter: BackendAdapter;
-
-	beforeAll(() => {
-		process.env.MOCK_BACKEND = 'false';
-	});
 
 	beforeEach(() => {
 		backendAdapter = new BackendAdapter();
