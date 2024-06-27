@@ -15,3 +15,12 @@ export const SELECTED_NETWORK_RECOGNIZED = createSelector(
 );
 
 export const SELECTED_NETWORK = createSelector([getWalletState], (wallet) => wallet.network);
+
+export const SELECTED_WALLET_PAIRED_ACCOUNT = createSelector([getWalletState], (wallet) => ({
+	accountId: wallet.data?.account?.id,
+}));
+
+export const SELECTED_WALLET_ACCOUNT_INFO = createSelector(
+	[getWalletState],
+	(wallet) => wallet.accountInfo,
+);
