@@ -176,7 +176,7 @@ describe.skip('🧪 Stablecoin test', () => {
 
 	const rpcNode: JsonRpcRelay = {
 		name: 'testrpcNode',
-		baseUrl: 'http://127.0.0.1:7546/api',
+		baseUrl: 'https://testnet.hashio.io/api',
 	};
 
 	const newConsensusNode_1: ConsensusNode = {
