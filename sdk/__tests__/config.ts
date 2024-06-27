@@ -202,3 +202,5 @@ export const GET_TRANSACTION = {
 	network: 'testnet',
 	hedera_account_id: '0.0.1',
 };
+
+export const DECIMALS = 3;

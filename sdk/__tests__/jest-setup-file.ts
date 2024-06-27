@@ -50,6 +50,7 @@ import {
 	UPDATE,
 	PAGINATION,
 	DELETE,
+	DECIMALS,
 } from './config.js';
 import {
 	ContractExecuteTransaction,
@@ -81,7 +82,15 @@ interface token {
 	customFees: CustomFee[];
 }
 
+interface allowance {
+	isUnlimited: boolean;
+	amount: string;
+}
+
 const tokens = new Map<string, token>();
+const roles = new Map<string, StableCoinRole[]>();
+const accounts_with_roles = new Map<string, string[]>();
+const suppliers = new Map<string, allowance>();
 
 let proxyOwner = '0x0000000000000000000000000000000000000003';
 let proxyPendingOwner = '0x0000000000000000000000000000000000000000';
@@ -111,6 +120,62 @@ function identifiers(accountId: HederaId | string): string[] {
 	}
 
 	return [id, accountEvmAddress];
+}
+
+function grantRole(account: string, newRole: StableCoinRole) {
+	let r = roles.get(account);
+	if (!r) r = [newRole];
+	else if (false == r.includes(newRole)) r.push(newRole);
+	roles.set(account, r);
+
+	let accounts = accounts_with_roles.get(newRole);
+	if (!accounts) accounts = [account];
+	else if (false == accounts.includes(account)) accounts.push(account);
+	accounts_with_roles.set(newRole, accounts);
+}
+
+function revokeRole(account: string, oldRole: StableCoinRole) {
+	let r = roles.get(account);
+	if (r) {
+		if (r.includes(oldRole)) {
+			r = r.filter((role) => role !== oldRole);
+			roles.set(account, r);
+
+			const accounts = accounts_with_roles.get(oldRole);
+			if (accounts) {
+				accounts?.filter((item) => item !== account);
+				accounts_with_roles.set(oldRole, accounts);
+			}
+		}
+	}
+}
+
+function grantSupplierRole(supplier: string, amount: BigDecimal) {
+	grantRole(supplier, StableCoinRole.CASHIN_ROLE);
+
+	const newAllowance: allowance = {
+		isUnlimited: false,
+		amount: amount.toString(),
+	};
+
+	suppliers.set(supplier, newAllowance);
+}
+
+function grantUnlimitedSupplierRole(supplier: string) {
+	grantRole(supplier, StableCoinRole.CASHIN_ROLE);
+
+	const newAllowance: allowance = {
+		isUnlimited: true,
+		amount: '0',
+	};
+
+	suppliers.set(supplier, newAllowance);
+}
+
+function revokeSupplierRole(supplier: string) {
+	revokeRole(supplier, StableCoinRole.CASHIN_ROLE);
+	const supplierAllowance = suppliers.get(supplier);
+	if (supplierAllowance) suppliers.delete(supplier);
 }
 
 jest.mock('../src/port/out/mirror/MirrorNodeAdapter', () => {
@@ -335,6 +400,90 @@ jest.mock('../src/port/out/hs/hts/HTSTransactionAdapter', () => {
 				implementation = (decoded as any).implementation;
 			} else if (functionName == 'setAmount') {
 				reserveAmount = (decoded as any).newValue;
+			} else if (functionName == 'grantRole') {
+				const account = (decoded as any).account;
+				const newRole = (decoded as any).role;
+				grantRole(account, newRole);
+			} else if (functionName == 'revokeRole') {
+				const account = (decoded as any).account;
+				const oldRole = (decoded as any).role;
+				revokeRole(account, oldRole);
+			} else if (functionName == 'grantRoles') {
+				const accounts = (decoded as any).accounts;
+				const newRoles = (decoded as any).roles;
+				const amounts = (decoded as any).amounts;
+
+				newRoles.forEach((newRole: StableCoinRole) => {
+					if (newRole == StableCoinRole.CASHIN_ROLE) {
+						for (let i = 0; i < accounts.length; i++) {
+							if (amounts[i] == 0)
+								grantUnlimitedSupplierRole(accounts[i]);
+							else grantSupplierRole(accounts[i], amounts[i]);
+						}
+					} else {
+						accounts.forEach((account: string) => {
+							grantRole(account, newRole);
+						});
+					}
+				});
+			} else if (functionName == 'revokeRoles') {
+				const accounts = (decoded as any).accounts;
+				const oldRoles = (decoded as any).roles;
+
+				oldRoles.forEach((oldRole: StableCoinRole) => {
+					if (oldRole == StableCoinRole.CASHIN_ROLE) {
+						accounts.forEach((account: string) => {
+							revokeSupplierRole(account);
+						});
+					} else {
+						accounts.forEach((account: string) => {
+							revokeRole(account, oldRole);
+						});
+					}
+				});
+			} else if (functionName == 'grantSupplierRole') {
+				const supplier = (decoded as any).supplier;
+				const amount = (decoded as any).amount;
+				grantSupplierRole(supplier, amount);
+			} else if (functionName == 'grantUnlimitedSupplierRole') {
+				const supplier = (decoded as any).supplier;
+				grantUnlimitedSupplierRole(supplier);
+			} else if (functionName == 'revokeSupplierRole') {
+				const supplier = (decoded as any).supplier;
+				revokeSupplierRole(supplier);
+			} else if (functionName == 'resetSupplierAllowance') {
+				const supplier = (decoded as any).supplier;
+				const supplierAllowance = suppliers.get(supplier);
+				if (supplierAllowance) {
+					supplierAllowance.amount = '0';
+					suppliers.set(supplier, supplierAllowance);
+				}
+			} else if (functionName == 'increaseSupplierAllowance') {
+				const supplier = (decoded as any).supplier;
+				const amount = (decoded as any).amount;
+				const supplierAllowance = suppliers.get(supplier);
+				if (supplierAllowance) {
+					supplierAllowance.amount = BigDecimal.fromString(
+						supplierAllowance.amount,
+					)
+						.toBigNumber()
+						.add(amount)
+						.toString();
+					suppliers.set(supplier, supplierAllowance);
+				}
+			} else if (functionName == 'decreaseSupplierAllowance') {
+				const supplier = (decoded as any).supplier;
+				const amount = (decoded as any).amount;
+				const supplierAllowance = suppliers.get(supplier);
+				if (supplierAllowance) {
+					supplierAllowance.amount = BigDecimal.fromString(
+						supplierAllowance.amount,
+					)
+						.toBigNumber()
+						.sub(amount)
+						.toString();
+					suppliers.set(supplier, supplierAllowance);
+				}
 			}
 		}
 		const response = new TransactionResponse('1', null, undefined);
@@ -463,17 +612,23 @@ jest.mock('../src/port/out/rpc/RPCQueryAdapter', () => {
 	);
 	singletonInstance.isLimited = jest.fn(
 		(address: EvmAddress, target: EvmAddress) => {
-			return false;
+			const supplierAllowance = suppliers.get(target.toString());
+			if (!supplierAllowance) return false;
+			return !supplierAllowance.isUnlimited;
 		},
 	);
 	singletonInstance.isUnlimited = jest.fn(
 		(address: EvmAddress, target: EvmAddress) => {
-			return true;
+			const supplierAllowance = suppliers.get(target.toString());
+			if (!supplierAllowance) return false;
+			return supplierAllowance.isUnlimited;
 		},
 	);
 	singletonInstance.getRoles = jest.fn(
 		(address: EvmAddress, target: EvmAddress) => {
-			return ['role_1', 'role_2'];
+			const r = roles.get(target.toString());
+			if (!r) return [];
+			return r;
 		},
 	);
 	singletonInstance.getProxyImplementation = jest.fn(
@@ -494,20 +649,24 @@ jest.mock('../src/port/out/rpc/RPCQueryAdapter', () => {
 	);
 	singletonInstance.getAccountsWithRole = jest.fn(
 		(address: EvmAddress, role: string) => {
-			return [
-				'0x0000000000000000000000000000000000000001',
-				'0x0000000000000000000000000000000000000002',
-			];
+			const accounts = accounts_with_roles.get(role);
+			if (!accounts) return [];
+			return accounts;
 		},
 	);
 	singletonInstance.hasRole = jest.fn(
 		(address: EvmAddress, target: EvmAddress, role: StableCoinRole) => {
-			return true;
+			const target_roles = roles.get(target.toString());
+			if (!target_roles) return false;
+			if (target_roles?.includes(role)) return true;
+			return false;
 		},
 	);
 	singletonInstance.supplierAllowance = jest.fn(
 		(address: EvmAddress, target: EvmAddress) => {
-			return BigNumber.from('1000');
+			const supplierAllowance = suppliers.get(target.toString());
+			if (!supplierAllowance) return 0;
+			return supplierAllowance.amount;
 		},
 	);
 	singletonInstance.getReserveDecimals = jest.fn((address: EvmAddress) => {
