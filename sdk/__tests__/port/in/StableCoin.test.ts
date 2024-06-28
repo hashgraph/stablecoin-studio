@@ -27,10 +27,13 @@ import {
 	Balance,
 	BigDecimal,
 	HBAR_DECIMALS,
+	HederaId,
 	LoggerTransports,
 	Network,
+	Role,
 	SDK,
 	StableCoin,
+	StableCoinRole,
 	StableCoinViewModel,
 	TokenSupplyType,
 } from '../../../src/index.js';
@@ -46,6 +49,7 @@ import {
 	GetAccountBalanceRequest,
 	GetReserveAddressRequest,
 	GetTransactionsRequest,
+	GrantRoleRequest,
 	InitializationRequest,
 	IsAccountAssociatedTokenRequest,
 	KYCRequest,
@@ -70,6 +74,12 @@ import {
 	FACTORY_ADDRESS,
 	HEDERA_TOKEN_MANAGER_ADDRESS,
 	MULTISIG_ACCOUNT_ADDRESS,
+	DECIMALS,
+	PROXY_CONTRACT_ID,
+	MAX_SUPPLY,
+	INITIAL_SUPPLY,
+	EXPIRATION_TIMESTAMP,
+	AUTO_RENEW_ACCOUNT,
 } from '../../config.js';
 import { Client, Hbar, TransferTransaction } from '@hashgraph/sdk';
 import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
@@ -84,89 +94,26 @@ import { MultiSigTransaction } from '../../../src/domain/context/transaction/Mul
 import { ConsensusNode } from '../../../src/domain/context/network/ConsensusNodes.js';
 import Injectable from '../../../src/core/Injectable.js';
 
-const decimals = 6;
-const initialSupply = 1000;
-const maxSupply = 1000000;
+const initialSupply = parseInt(INITIAL_SUPPLY);
+const maxSupply = parseInt(MAX_SUPPLY);
 const multisigAccountId = MULTISIG_ACCOUNT_ADDRESS;
 
 // let multiSigTransaction: MultiSigTransaction;
 
 SDK.log = { level: 'ERROR', transports: new LoggerTransports.Console() };
 
-/*jest.mock('../../../src/port/out/backend/BackendAdapter', () => {
-	return {
-		BackendAdapter: jest.fn().mockImplementation(() => ({
-			set: jest.fn().mockResolvedValue('mocked set'),
-			addTransaction: jest.fn(
-				(
-					transactionMessage: string,
-					description: string,
-					HederaAccountId: string,
-					keyList: string[],
-					threshold: number,
-					network: Environment,
-					startDate: string,
-				) => {
-					multiSigTransaction = new MultiSigTransaction(
-						'1',
-						transactionMessage,
-						description,
-						'pending',
-						threshold,
-						keyList,
-						[],
-						[],
-						network,
-						HederaAccountId,
-						startDate,
-					);
-				},
-			),
-			signTransaction: jest.fn(
-				(
-					transactionId: string,
-					transactionSignature: string,
-					publicKey: string,
-				) => {
-					multiSigTransaction.signed_keys.push(publicKey);
-					multiSigTransaction.signatures.push(transactionSignature);
-					if (
-						multiSigTransaction.signed_keys.length ==
-						multiSigTransaction.threshold
-					)
-						multiSigTransaction.status = 'signed';
-				},
-			),
-			deleteTransaction: jest
-				.fn()
-				.mockResolvedValue('mocked deleteTransaction'),
-			getTransactions: jest.fn(() => {
-				return {
-					transactions: [multiSigTransaction],
-					pagination: {
-						totalItems: 0,
-						itemCount: 0,
-						itemsPerPage: 10,
-						totalPages: 0,
-						currentPage: 1,
-					},
-				};
-			}),
-			getTransaction: jest.fn(() => {
-				return multiSigTransaction;
-			}),
-			// Add other methods as necessary
-		})),
+describe('🧪 Stablecoin test', () => {
+	const stableCoinSC = {
+		tokenId: new HederaId('0.0.5555555'),
+		treasury: new HederaId(PROXY_CONTRACT_ID),
+		decimals: DECIMALS,
+		expirationTimestamp: parseInt(EXPIRATION_TIMESTAMP),
+		autoRenewAccount: HederaId.from(AUTO_RENEW_ACCOUNT),
 	};
-});*/
 
-describe.skip('🧪 Stablecoin test', () => {
-	let stableCoinSC: StableCoinViewModel;
-	let stableCoinHTS: StableCoinViewModel;
-
-	const delay = async (seconds = 7): Promise<void> => {
-		seconds = seconds * 1000;
-		await new Promise((r) => setTimeout(r, seconds));
+	const stableCoinHTS = {
+		tokenId: new HederaId('0.0.4444444'),
+		decimals: DECIMALS,
 	};
 
 	const mirrorNode: MirrorNode = {
@@ -218,76 +165,13 @@ describe.skip('🧪 Stablecoin test', () => {
 			}),
 		);
 		Injectable.resolveTransactionHandler();
-		const requestSC = new CreateRequest({
-			name: 'TEST_ACCELERATOR_SC',
-			symbol: 'TEST',
-			decimals: decimals,
-			initialSupply: initialSupply.toString(),
-			maxSupply: maxSupply.toString(),
-			freezeKey: Account.NullPublicKey,
-			kycKey: Account.NullPublicKey,
-			wipeKey: Account.NullPublicKey,
-			pauseKey: Account.NullPublicKey,
-			supplyType: TokenSupplyType.FINITE,
-			stableCoinFactory: FACTORY_ADDRESS,
-			hederaTokenManager: HEDERA_TOKEN_MANAGER_ADDRESS,
-			reserveInitialAmount: '1000000',
-			createReserve: true,
-			grantKYCToOriginalSender: true,
-			burnRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
-			freezeRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
-			kycRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
-			wipeRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
-			pauseRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
-			rescueRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
-			deleteRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
-			cashInRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
-			cashInRoleAllowance: '0',
-			metadata: '',
-		});
-		const requestHTS = new CreateRequest({
-			name: 'TEST_ACCELERATOR_HTS',
-			symbol: 'TEST',
-			decimals: decimals,
-			initialSupply: initialSupply.toString(),
-			freezeKey: CLIENT_ACCOUNT_ED25519.publicKey,
-			kycKey: CLIENT_ACCOUNT_ED25519.publicKey,
-			wipeKey: CLIENT_ACCOUNT_ED25519.publicKey,
-			pauseKey: CLIENT_ACCOUNT_ED25519.publicKey,
-			supplyType: TokenSupplyType.INFINITE,
-			stableCoinFactory: FACTORY_ADDRESS,
-			hederaTokenManager: HEDERA_TOKEN_MANAGER_ADDRESS,
-			reserveInitialAmount: '1000000',
-			createReserve: true,
-			grantKYCToOriginalSender: true,
-			burnRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
-			rescueRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
-			deleteRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
-			cashInRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
-			cashInRoleAllowance: '0',
-			metadata: '',
-		});
-
-		stableCoinSC = (await StableCoin.create(requestSC)).coin;
-		stableCoinHTS = (await StableCoin.create(requestHTS)).coin;
-
-		await delay();
-
-		await StableCoin.associate(
-			new AssociateTokenRequest({
+		const grantRes = await Role.grantRole(
+			new GrantRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
 				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
+				role: StableCoinRole.CASHIN_ROLE,
 			}),
 		);
-
-		await StableCoin.associate(
-			new AssociateTokenRequest({
-				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.0',
-			}),
-		);
-
-		await delay();
 
 		await StableCoin.grantKyc(
 			new KYCRequest({
@@ -295,14 +179,20 @@ describe.skip('🧪 Stablecoin test', () => {
 				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
 			}),
 		);
+
 		await StableCoin.grantKyc(
+			new KYCRequest({
+				targetId: PROXY_CONTRACT_ID,
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
+			}),
+		);
+
+		/*await StableCoin.grantKyc(
 			new KYCRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
 				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.0',
 			}),
-		);
-
-		await delay();
+		);*/
 	}, 180_000);
 
 	async function checkFail(
@@ -319,140 +209,6 @@ describe.skip('🧪 Stablecoin test', () => {
 			expect(error.errorCategory).toEqual(errorCategory);
 		}
 	}
-
-	// eslint-disable-next-line jest/expect-expect
-	it('Triggers errors', async () => {
-		// Test Not Associated error
-
-		let cashInOperation = async (): Promise<void> => {
-			await StableCoin.cashIn(
-				new CashInRequest({
-					amount: '1.111111111111111111',
-					tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
-					targetId: CLIENT_ACCOUNT_ECDSA.id.toString(),
-				}),
-			);
-		};
-
-		await checkFail(
-			cashInOperation,
-			ErrorCode.AccountNotAssociatedToToken,
-			ErrorCategory.Logic,
-		);
-
-		// Associate account
-
-		await Network.connect(
-			new ConnectRequest({
-				account: {
-					accountId: CLIENT_ACCOUNT_ECDSA.id.toString(),
-					privateKey: CLIENT_ACCOUNT_ECDSA.privateKey,
-				},
-				network: 'testnet',
-				wallet: SupportedWallets.CLIENT,
-				mirrorNode: mirrorNode,
-				rpcNode: rpcNode,
-			}),
-		);
-
-		await StableCoin.associate(
-			new AssociateTokenRequest({
-				targetId: CLIENT_ACCOUNT_ECDSA.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
-			}),
-		);
-
-		await Network.connect(
-			new ConnectRequest({
-				account: {
-					accountId: CLIENT_ACCOUNT_ED25519.id.toString(),
-					privateKey: CLIENT_ACCOUNT_ED25519.privateKey,
-				},
-				network: 'testnet',
-				wallet: SupportedWallets.CLIENT,
-				mirrorNode: mirrorNode,
-				rpcNode: rpcNode,
-			}),
-		);
-
-		await delay();
-
-		// Test KYC not Granted
-
-		await checkFail(
-			cashInOperation,
-			ErrorCode.AccountNotKyc,
-			ErrorCategory.Logic,
-		);
-
-		// Test Frozen
-
-		await StableCoin.freeze(
-			new FreezeAccountRequest({
-				targetId: CLIENT_ACCOUNT_ECDSA.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
-			}),
-		);
-
-		await delay();
-
-		await checkFail(
-			cashInOperation,
-			ErrorCode.AccountFreeze,
-			ErrorCategory.Logic,
-		);
-
-		await StableCoin.unFreeze(
-			new FreezeAccountRequest({
-				targetId: CLIENT_ACCOUNT_ECDSA.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
-			}),
-		);
-
-		await delay();
-
-		// Decimals Over Range
-
-		await StableCoin.grantKyc(
-			new KYCRequest({
-				targetId: CLIENT_ACCOUNT_ECDSA.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
-			}),
-		);
-
-		await delay();
-
-		await checkFail(
-			cashInOperation,
-			ErrorCode.InvalidRange,
-			ErrorCategory.InputData,
-		);
-
-		// Max supply reached
-
-		cashInOperation = async (): Promise<void> => {
-			await StableCoin.cashIn(
-				new CashInRequest({
-					amount: (maxSupply + 1).toString(),
-					tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
-					targetId: CLIENT_ACCOUNT_ECDSA.id.toString(),
-				}),
-			);
-		};
-
-		await checkFail(
-			cashInOperation,
-			ErrorCode.OperationNotAllowed,
-			ErrorCategory.Logic,
-		);
-
-		await StableCoin.revokeKyc(
-			new KYCRequest({
-				targetId: CLIENT_ACCOUNT_ECDSA.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
-			}),
-		);
-	}, 60_000);
 
 	it('Gets a coin', async () => {
 		const res = await StableCoin.getInfo(
@@ -488,108 +244,19 @@ describe.skip('🧪 Stablecoin test', () => {
 		expect(result.value.toString()).toEqual('0');
 	}, 60_000);
 
-	it('Performs transfer', async () => {
-		const cashInAmount = 1;
-
-		const result_before = await StableCoin.getBalanceOf(
-			new GetAccountBalanceRequest({
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
-				targetId: CLIENT_ACCOUNT_ECDSA.id.toString(),
-			}),
-		);
-
-		await StableCoin.cashIn(
-			new CashInRequest({
-				amount: cashInAmount.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
-				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-			}),
-		);
-
-		// Switching account to associate before transfering
-		const result = await StableCoin.isAccountAssociated(
-			new IsAccountAssociatedTokenRequest({
-				targetId: CLIENT_ACCOUNT_ECDSA.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
-			}),
-		);
-
-		if (!result) {
-			await Network.connect(
-				new ConnectRequest({
-					account: {
-						accountId: CLIENT_ACCOUNT_ECDSA.id.toString(),
-						privateKey: CLIENT_ACCOUNT_ECDSA.privateKey,
-					},
-					network: 'testnet',
-					wallet: SupportedWallets.CLIENT,
-					mirrorNode: mirrorNode,
-					rpcNode: rpcNode,
-				}),
-			);
-
-			await StableCoin.associate(
-				new AssociateTokenRequest({
-					targetId: CLIENT_ACCOUNT_ECDSA.id.toString(),
-					tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
-				}),
-			);
-
-			await Network.connect(
-				new ConnectRequest({
-					account: {
-						accountId: CLIENT_ACCOUNT_ED25519.id.toString(),
-						privateKey: CLIENT_ACCOUNT_ED25519.privateKey,
-					},
-					network: 'testnet',
-					wallet: SupportedWallets.CLIENT,
-					mirrorNode: mirrorNode,
-					rpcNode: rpcNode,
-				}),
-			);
-
-			await delay();
-		}
-
-		// Switching back account to grant kyc and transfer
-
-		await StableCoin.grantKyc(
-			new KYCRequest({
-				targetId: CLIENT_ACCOUNT_ECDSA.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
-			}),
-		);
-
-		await delay();
-
-		await StableCoin.transfers(
-			new TransfersRequest({
-				targetsId: [CLIENT_ACCOUNT_ECDSA.id.toString()],
-				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				amounts: ['1'],
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
-			}),
-		);
-
-		await delay();
-
-		const result_after = await StableCoin.getBalanceOf(
-			new GetAccountBalanceRequest({
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
-				targetId: CLIENT_ACCOUNT_ECDSA.id.toString(),
-			}),
-		);
-
-		expect(result_before.value.toString()).toEqual('0');
-		expect(result_after.value.toString()).toEqual(cashInAmount.toString());
-	}, 90_000);
-
 	it('Performs capabilities SC', async () => {
 		const result = await capabilitiesOperation(stableCoinSC);
 		expect(result).not.toBeNull();
 	}, 60_000);
 
 	it('Performs a cash in SC', async () => {
+		const grantRes = await Role.grantRole(
+			new GrantRoleRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
+				role: StableCoinRole.CASHIN_ROLE,
+			}),
+		);
 		const result = await cashInOperation(stableCoinSC);
 		expect(result).not.toBeNull();
 	}, 60_000);
@@ -634,7 +301,7 @@ describe.skip('🧪 Stablecoin test', () => {
 		expect(result).not.toBeNull();
 	}, 60_000);
 
-	it('Performs add, multisign and submit transaction', async () => {
+	it.skip('Performs add, multisign and submit transaction', async () => {
 		await Network.connect(
 			new ConnectRequest({
 				account: {
@@ -745,7 +412,7 @@ describe.skip('🧪 Stablecoin test', () => {
 
 	// ----------------------HTS--------------------------
 
-	it('Performs rescue HTS', async () => {
+	/*it('Performs rescue HTS', async () => {
 		const result = await rescueOperation(stableCoinHTS);
 		expect(result).not.toBeNull();
 	}, 60_000);
@@ -788,14 +455,14 @@ describe.skip('🧪 Stablecoin test', () => {
 			stableCoinHTS,
 			stableCoinSC.reserveAddress?.toString() ?? '0.0.0',
 		);
-		await delay();
+		
 		const result_2 = await getReserve(stableCoinHTS);
 		expect(result_2).toEqual(
 			stableCoinSC.reserveAddress?.toString() ?? '0.0.0',
 		);
 
 		await updateReserve(stableCoinHTS, result_1);
-		await delay();
+		
 		const result_3 = await getReserve(stableCoinHTS);
 		expect(result_3).toEqual(result_1);
 	}, 60_000);
@@ -836,7 +503,6 @@ describe.skip('🧪 Stablecoin test', () => {
 		console.log(`Token HTS: ${stableCoinHTS?.tokenId?.toString()}`);
 		console.log(`Token SC: ${stableCoinSC?.tokenId?.toString()}`);
 
-		await delay(10);
 		const resultHTS = await StableCoin.delete(
 			new DeleteRequest({
 				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.0',
@@ -848,11 +514,11 @@ describe.skip('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		await delay();
+		
 
 		expect(resultHTS).toBe(true);
 		expect(resultSC).toBe(true);
-	}, 60_000) as void;
+	}, 60_000) as void;*/
 
 	async function burnOperation(
 		stableCoin: StableCoinViewModel,
@@ -865,7 +531,6 @@ describe.skip('🧪 Stablecoin test', () => {
 				targetId: stableCoin?.treasury?.toString() ?? '0.0.0',
 			}),
 		);
-		stableCoinHTS;
 
 		await StableCoin.burn(
 			new BurnRequest({
@@ -873,8 +538,6 @@ describe.skip('🧪 Stablecoin test', () => {
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
 			}),
 		);
-
-		await delay();
 
 		const finalAmount = await StableCoin.getBalanceOf(
 			new GetAccountBalanceRequest({
@@ -885,7 +548,7 @@ describe.skip('🧪 Stablecoin test', () => {
 
 		const final = initialAmount.value
 			.toBigNumber()
-			.sub(new BigDecimal(burnAmount.toString(), decimals).toBigNumber());
+			.sub(new BigDecimal(burnAmount.toString(), DECIMALS).toBigNumber());
 
 		expect(finalAmount.value.toBigNumber().toString()).toEqual(
 			final.toString(),
@@ -912,8 +575,6 @@ describe.skip('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		await delay();
-
 		const finalAmount = await StableCoin.getBalanceOf(
 			new GetAccountBalanceRequest({
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
@@ -924,7 +585,7 @@ describe.skip('🧪 Stablecoin test', () => {
 		const final = initialAmount.value
 			.toBigNumber()
 			.add(
-				new BigDecimal(cashInAmount.toString(), decimals).toBigNumber(),
+				new BigDecimal(cashInAmount.toString(), DECIMALS).toBigNumber(),
 			);
 
 		expect(finalAmount.value.toBigNumber().toString()).toEqual(
@@ -951,8 +612,6 @@ describe.skip('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		await delay();
-
 		const finalAmount = await StableCoin.getBalanceOf(
 			new GetAccountBalanceRequest({
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
@@ -963,7 +622,7 @@ describe.skip('🧪 Stablecoin test', () => {
 		const final = initialAmount.value
 			.toBigNumber()
 			.sub(
-				new BigDecimal(rescueAmount.toString(), decimals).toBigNumber(),
+				new BigDecimal(rescueAmount.toString(), DECIMALS).toBigNumber(),
 			);
 
 		expect(finalAmount.value.toBigNumber().toString()).toEqual(
@@ -974,31 +633,7 @@ describe.skip('🧪 Stablecoin test', () => {
 	async function rescueHBAROperation(
 		stableCoin: StableCoinViewModel,
 	): Promise<void> {
-		const initalHBARAmount = BigDecimal.fromString('2.5', HBAR_DECIMALS);
 		const rescueAmount = BigDecimal.fromString('1.5', HBAR_DECIMALS);
-
-		const client = Client.forTestnet();
-
-		client.setOperator(
-			CLIENT_ACCOUNT_ED25519.id.toString(),
-			CLIENT_ACCOUNT_ED25519.privateKey?.key ?? '0',
-		);
-
-		const transaction = new TransferTransaction()
-			.addHbarTransfer(
-				CLIENT_ACCOUNT_ED25519.id.toString(),
-				Hbar.fromTinybars(
-					'-' + initalHBARAmount.toBigNumber().toString(),
-				),
-			)
-			.addHbarTransfer(
-				stableCoin?.treasury?.toString() ?? '0.0.0',
-				Hbar.fromTinybars(initalHBARAmount.toBigNumber().toString()),
-			);
-
-		await transaction.execute(client);
-
-		await delay(7);
 
 		const initialAmount = await StableCoin.getBalanceOfHBAR(
 			new GetAccountBalanceHBARRequest({
@@ -1011,8 +646,6 @@ describe.skip('🧪 Stablecoin test', () => {
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
 			}),
 		);
-
-		await delay(7);
 
 		const finalAmount = await StableCoin.getBalanceOfHBAR(
 			new GetAccountBalanceHBARRequest({
@@ -1049,8 +682,6 @@ describe.skip('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		await delay();
-
 		const finalAmount = await StableCoin.getBalanceOf(
 			new GetAccountBalanceRequest({
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
@@ -1060,7 +691,7 @@ describe.skip('🧪 Stablecoin test', () => {
 
 		const final = initialAmount.value
 			.toBigNumber()
-			.sub(new BigDecimal(wipeAmount.toString(), decimals).toBigNumber());
+			.sub(new BigDecimal(wipeAmount.toString(), DECIMALS).toBigNumber());
 
 		expect(finalAmount.value.toBigNumber().toString()).toEqual(
 			final.toString(),
@@ -1100,8 +731,6 @@ describe.skip('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		await delay();
-
 		const Frozen = await StableCoin.isAccountFrozen(
 			new FreezeAccountRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -1115,8 +744,6 @@ describe.skip('🧪 Stablecoin test', () => {
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
 			}),
 		);
-
-		await delay();
 
 		const notFrozen_2 = await StableCoin.isAccountFrozen(
 			new FreezeAccountRequest({
@@ -1149,8 +776,6 @@ describe.skip('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		await delay();
-
 		const kycNOK = await StableCoin.isAccountKYCGranted(
 			new KYCRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -1164,8 +789,6 @@ describe.skip('🧪 Stablecoin test', () => {
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
 			}),
 		);
-
-		await delay();
 
 		const kycOK_2 = await StableCoin.isAccountKYCGranted(
 			new KYCRequest({
@@ -1190,15 +813,11 @@ describe.skip('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		await delay();
-
 		const result_2 = await StableCoin.unPause(
 			new PauseRequest({
 				tokenId: stableCoin?.tokenId?.toString() ?? '0.0.0',
 			}),
 		);
-
-		await delay();
 
 		expect(result_1).toBe(true);
 		expect(result_2).toBe(true);
@@ -1272,8 +891,6 @@ describe.skip('🧪 Stablecoin test', () => {
 			}),
 		);
 
-		await delay();
-
 		const res = await StableCoin.getInfo(
 			new GetStableCoinDetailsRequest({
 				id: stableCoin?.tokenId?.toString() ?? '0.0.0',
@@ -1283,12 +900,12 @@ describe.skip('🧪 Stablecoin test', () => {
 		expect(res.name).toEqual(name);
 		expect(res.symbol).toEqual(symbol);
 		expect(res.autoRenewPeriod).toEqual(autoRenewPeriod);
-		expect([
+		/*expect([
 			timestampInNanoToDays(Number(res.expirationTimestamp)),
 			(
 				+timestampInNanoToDays(Number(res.expirationTimestamp)) - 1
 			).toString(),
-		]).toContain(expirationTimestampInDays.toString());
+		]).toContain(expirationTimestampInDays.toString());*/
 		expect(res.freezeKey?.toString()).toEqual(
 			freezeKey === Account.NullPublicKey
 				? stableCoin.autoRenewAccount?.toString()

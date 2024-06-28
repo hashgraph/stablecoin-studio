@@ -51,6 +51,13 @@ import {
 	PAGINATION,
 	DELETE,
 	DECIMALS,
+	PROXY_CONTRACT_ID,
+	PROXY_ADMIN_CONTRACT_ID,
+	MAX_SUPPLY,
+	INITIAL_SUPPLY,
+	INITIAL_HBAR_SUPPLY,
+	EXPIRATION_TIMESTAMP,
+	AUTO_RENEW_ACCOUNT,
 } from './config.js';
 import {
 	ContractExecuteTransaction,
@@ -91,13 +98,37 @@ const tokens = new Map<string, token>();
 const roles = new Map<string, StableCoinRole[]>();
 const accounts_with_roles = new Map<string, string[]>();
 const suppliers = new Map<string, allowance>();
+const balances = new Map<string, string>();
+const HBAR_balances = new Map<string, string>();
+const freeze_status = new Map<string, boolean>();
+const kyc_status = new Map<string, boolean>();
+let pause_status = false;
+let delete_status = false;
+const initialSupply = INITIAL_SUPPLY;
+const maxSupply = MAX_SUPPLY;
+let totalSupply = initialSupply;
+let metadata = 'nothing';
+let TokenName = 'TokenName';
+let TokenSymbol = 'TN';
+const expirationTimestamp = EXPIRATION_TIMESTAMP;
+const adminKey = new ContractId(PROXY_CONTRACT_ID);
+let kycKey: any = new ContractId(PROXY_CONTRACT_ID);
+let freezeKey: any = new ContractId(PROXY_CONTRACT_ID);
+let wipeKey: any = new ContractId(PROXY_CONTRACT_ID);
+const supplyKey = new ContractId(PROXY_CONTRACT_ID);
+let pauseKey: any = new ContractId(PROXY_CONTRACT_ID);
+const feeScheduleKey: any = undefined;
+let autoRenewPeriod = 1000;
+const autoRenewAccount = AUTO_RENEW_ACCOUNT;
 
 let proxyOwner = '0x0000000000000000000000000000000000000003';
 let proxyPendingOwner = '0x0000000000000000000000000000000000000000';
 let implementation = identifiers(
 	HederaId.from(HEDERA_TOKEN_MANAGER_ADDRESS),
 )[1];
-let reserveAmount = BigNumber.from('1000');
+let reserveAmount = '100000000000000';
+let reserveAddress = '0x0000000000000000000000000000000000000001';
+let user_account: Account;
 
 function hexToDecimal(hexString: string): number {
 	if (!/^0x[a-fA-F0-9]+$|^[a-fA-F0-9]+$/.test(hexString)) {
@@ -178,14 +209,291 @@ function revokeSupplierRole(supplier: string) {
 	if (supplierAllowance) suppliers.delete(supplier);
 }
 
+function assignKey(value: any, id: number) {
+	switch (id) {
+		case 2:
+			kycKey = value;
+			break;
+		case 4:
+			freezeKey = value;
+			break;
+		case 8:
+			wipeKey = value;
+			break;
+		case 64:
+			pauseKey = value;
+			break;
+	}
+}
+
+function smartContractCalls(functionName: string, decoded: any) {
+	if (functionName == 'transferOwnership') {
+		proxyPendingOwner = (decoded as any).newOwner;
+	} else if (functionName == 'acceptOwnership') {
+		proxyOwner = proxyPendingOwner;
+		proxyPendingOwner = '0x0000000000000000000000000000000000000000';
+	} else if (functionName == 'upgrade') {
+		implementation = (decoded as any).implementation;
+	} else if (functionName == 'setAmount') {
+		reserveAmount = (decoded as any).newValue;
+	} else if (functionName == 'grantRole') {
+		const account = (decoded as any).account;
+		const newRole = (decoded as any).role;
+		grantRole(account, newRole);
+	} else if (functionName == 'revokeRole') {
+		const account = (decoded as any).account;
+		const oldRole = (decoded as any).role;
+		revokeRole(account, oldRole);
+	} else if (functionName == 'grantRoles') {
+		const accounts = (decoded as any).accounts;
+		const newRoles = (decoded as any).roles;
+		const amounts = (decoded as any).amounts;
+
+		newRoles.forEach((newRole: StableCoinRole) => {
+			if (newRole == StableCoinRole.CASHIN_ROLE) {
+				for (let i = 0; i < accounts.length; i++) {
+					if (amounts[i] == 0)
+						grantUnlimitedSupplierRole(accounts[i]);
+					else grantSupplierRole(accounts[i], amounts[i]);
+				}
+			} else {
+				accounts.forEach((account: string) => {
+					grantRole(account, newRole);
+				});
+			}
+		});
+	} else if (functionName == 'revokeRoles') {
+		const accounts = (decoded as any).accounts;
+		const oldRoles = (decoded as any).roles;
+
+		oldRoles.forEach((oldRole: StableCoinRole) => {
+			if (oldRole == StableCoinRole.CASHIN_ROLE) {
+				accounts.forEach((account: string) => {
+					revokeSupplierRole(account);
+				});
+			} else {
+				accounts.forEach((account: string) => {
+					revokeRole(account, oldRole);
+				});
+			}
+		});
+	} else if (functionName == 'grantSupplierRole') {
+		const supplier = (decoded as any).supplier;
+		const amount = (decoded as any).amount;
+		grantSupplierRole(supplier, amount);
+	} else if (functionName == 'grantUnlimitedSupplierRole') {
+		const supplier = (decoded as any).supplier;
+		grantUnlimitedSupplierRole(supplier);
+	} else if (functionName == 'revokeSupplierRole') {
+		const supplier = (decoded as any).supplier;
+		revokeSupplierRole(supplier);
+	} else if (functionName == 'resetSupplierAllowance') {
+		const supplier = (decoded as any).supplier;
+		const supplierAllowance = suppliers.get(supplier);
+		if (supplierAllowance) {
+			supplierAllowance.amount = '0';
+			suppliers.set(supplier, supplierAllowance);
+		}
+	} else if (functionName == 'increaseSupplierAllowance') {
+		const supplier = (decoded as any).supplier;
+		const amount = (decoded as any).amount;
+		const supplierAllowance = suppliers.get(supplier);
+		if (supplierAllowance) {
+			supplierAllowance.amount = BigDecimal.fromString(
+				supplierAllowance.amount,
+			)
+				.toBigNumber()
+				.add(amount)
+				.toString();
+			suppliers.set(supplier, supplierAllowance);
+		} else grantSupplierRole(supplier, amount);
+	} else if (functionName == 'decreaseSupplierAllowance') {
+		const supplier = (decoded as any).supplier;
+		const amount = (decoded as any).amount;
+		const supplierAllowance = suppliers.get(supplier);
+		if (supplierAllowance) {
+			supplierAllowance.amount = BigDecimal.fromString(
+				supplierAllowance.amount,
+			)
+				.toBigNumber()
+				.sub(amount)
+				.toString();
+			suppliers.set(supplier, supplierAllowance);
+		}
+	} else if (functionName == 'burn') {
+		const amount = (decoded as any).amount;
+		const account = identifiers(HederaId.from(PROXY_CONTRACT_ID))[1];
+		let treasury_balance = balances.get(account);
+		if (treasury_balance) {
+			treasury_balance = BigDecimal.fromString(treasury_balance)
+				.toBigNumber()
+				.sub(amount)
+				.toString();
+			balances.set(account, treasury_balance);
+		}
+		totalSupply = BigDecimal.fromString(totalSupply)
+			.toBigNumber()
+			.sub(amount)
+			.toString();
+	} else if (functionName == 'mint') {
+		const amount = (decoded as any).amount;
+		const account = (decoded as any).account;
+		let accountBalance = balances.get(account);
+		if (accountBalance) {
+			accountBalance = BigDecimal.fromString(accountBalance)
+				.toBigNumber()
+				.add(amount)
+				.toString();
+			balances.set(account, accountBalance);
+		} else balances.set(account, amount.toString());
+		totalSupply = BigDecimal.fromString(totalSupply)
+			.toBigNumber()
+			.add(amount)
+			.toString();
+	} else if (functionName == 'deleteToken') {
+		delete_status = true;
+	} else if (functionName == 'freeze') {
+		const account = (decoded as any).account;
+		freeze_status.set(account, true);
+	} else if (functionName == 'unfreeze') {
+		const account = (decoded as any).account;
+		freeze_status.set(account, false);
+	} else if (functionName == 'grantKyc') {
+		const account = (decoded as any).account;
+		kyc_status.set(account, true);
+	} else if (functionName == 'revokeKyc') {
+		const account = (decoded as any).account;
+		kyc_status.set(account, false);
+	} else if (functionName == 'pause') {
+		pause_status = true;
+	} else if (functionName == 'unpause') {
+		pause_status = false;
+	} else if (functionName == 'rescue') {
+		const amount = (decoded as any).amount;
+		const account = identifiers(HederaId.from(PROXY_CONTRACT_ID))[1];
+		const sender = identifiers(user_account.id)[1];
+
+		let treasury_balance = balances.get(account);
+		if (treasury_balance) {
+			treasury_balance = BigDecimal.fromString(treasury_balance)
+				.toBigNumber()
+				.sub(amount)
+				.toString();
+			balances.set(account, treasury_balance);
+		}
+
+		let accountBalance = balances.get(sender);
+		if (accountBalance) {
+			accountBalance = BigDecimal.fromString(accountBalance)
+				.toBigNumber()
+				.add(amount)
+				.toString();
+			balances.set(sender, accountBalance);
+		} else balances.set(sender, amount.toString());
+	} else if (functionName == 'rescueHBAR') {
+		const amount = (decoded as any).amount;
+		const account = identifiers(HederaId.from(PROXY_CONTRACT_ID))[1];
+		const sender = identifiers(user_account.id)[1];
+
+		let treasury_balance = HBAR_balances.get(account);
+		if (treasury_balance) {
+			treasury_balance = BigDecimal.fromString(treasury_balance)
+				.toBigNumber()
+				.sub(amount)
+				.toString();
+			HBAR_balances.set(account, treasury_balance);
+		}
+
+		let accountBalance = HBAR_balances.get(sender);
+		if (accountBalance) {
+			accountBalance = BigDecimal.fromString(accountBalance)
+				.toBigNumber()
+				.add(amount)
+				.toString();
+			HBAR_balances.set(sender, accountBalance);
+		} else HBAR_balances.set(sender, amount.toString());
+	} else if (functionName == 'updateReserveAddress') {
+		const newAddress = (decoded as any).newAddress;
+		reserveAddress = newAddress;
+	} else if (functionName == 'wipe') {
+		const amount = (decoded as any).amount;
+		const account = (decoded as any).account;
+		let accountBalance = balances.get(account);
+		if (accountBalance) {
+			accountBalance = BigDecimal.fromString(accountBalance)
+				.toBigNumber()
+				.sub(amount)
+				.toString();
+			balances.set(account, accountBalance);
+		}
+		totalSupply = BigDecimal.fromString(totalSupply)
+			.toBigNumber()
+			.sub(amount)
+			.toString();
+	} else if (functionName == 'updateToken') {
+		const updatedToken = (decoded as any).updatedToken;
+		TokenName = updatedToken.tokenName;
+		TokenSymbol = updatedToken.tokenSymbol;
+		metadata = updatedToken.tokenMetadataURI;
+		autoRenewPeriod = parseInt(updatedToken.autoRenewPeriod.toString());
+
+		const keys = updatedToken[2];
+		keys.forEach(
+			(key: {
+				publicKey: string;
+				keyType: { toString: () => string };
+			}) => {
+				if (key.publicKey == '0x')
+					assignKey(
+						HederaId.from(autoRenewAccount),
+						parseInt(key.keyType.toString()),
+					);
+			},
+		);
+	}
+}
+
+function signAndSendTransaction(
+	t: Transaction,
+	transactionType: TransactionType,
+	functionName: string,
+	abi: object[],
+) {
+	if (t instanceof TokenFeeScheduleUpdateTransaction) {
+		const tokenId = (
+			t as TokenFeeScheduleUpdateTransaction
+		).tokenId!.toString();
+		const customFees = (t as TokenFeeScheduleUpdateTransaction).customFees;
+		let token = tokens.get(tokenId);
+		if (!token) {
+			token = {
+				tokenId: tokenId,
+				customFees: [],
+			};
+		}
+		token.customFees = customFees;
+		tokens.set(tokenId, token);
+	} else if (t instanceof ContractExecuteTransaction) {
+		const iface = new ethers.utils.Interface(abi);
+		const functionFragment = iface.getFunction(functionName);
+		let decoded;
+		if (t.functionParameters) {
+			decoded = iface.decodeFunctionData(
+				functionFragment,
+				t.functionParameters,
+			);
+		}
+
+		smartContractCalls(functionName, decoded);
+	}
+}
+
 jest.mock('../src/port/out/mirror/MirrorNodeAdapter', () => {
 	const actual = jest.requireActual(
 		'../src/port/out/mirror/MirrorNodeAdapter.ts',
 	);
 
 	const singletonInstance = new actual.MirrorNodeAdapter();
-
-	const decimals = 3;
 
 	singletonInstance.set = jest.fn().mockResolvedValue('mocked set');
 	singletonInstance.getStableCoinsList = jest.fn((accountId: HederaId) => {
@@ -218,39 +526,41 @@ jest.mock('../src/port/out/mirror/MirrorNodeAdapter', () => {
 
 		const response: StableCoinViewModel = {
 			tokenId: tokenId,
-			name: 'TestToken',
-			symbol: 'TT',
-			decimals: decimals,
-			totalSupply: BigDecimal.fromString('1000', decimals),
-			maxSupply: BigDecimal.fromString('100000', decimals),
-			initialSupply: BigDecimal.fromString('1000', decimals),
-			treasury: HederaId.from('0.0.5'),
-			proxyAddress: new ContractId('0.0.1'),
-			proxyAdminAddress: new ContractId('0.0.1'),
+			name: TokenName,
+			symbol: TokenSymbol,
+			decimals: DECIMALS,
+			totalSupply: BigDecimal.fromString(totalSupply, DECIMALS),
+			maxSupply: BigDecimal.fromString(maxSupply, DECIMALS),
+			initialSupply: BigDecimal.fromString(initialSupply, DECIMALS),
+			treasury: HederaId.from(PROXY_CONTRACT_ID),
+			proxyAddress: new ContractId(PROXY_CONTRACT_ID),
+			proxyAdminAddress: new ContractId(PROXY_ADMIN_CONTRACT_ID),
 			evmProxyAddress: new EvmAddress(
-				'0x0000000000000000000000000000000000000001',
+				identifiers(HederaId.from(PROXY_CONTRACT_ID))[1],
 			),
 			evmProxyAdminAddress: new EvmAddress(
-				'0x0000000000000000000000000000000000000001',
+				identifiers(HederaId.from(PROXY_ADMIN_CONTRACT_ID))[1],
 			),
-			expirationTime: '1000000',
+			expirationTime: expirationTimestamp,
 			freezeDefault: false,
-			autoRenewAccount: HederaId.from('0.0.5'),
-			autoRenewPeriod: 1000,
-			expirationTimestamp: 10000,
-			paused: false,
-			deleted: false,
-			adminKey: new ContractId('0.0.1'),
-			kycKey: new ContractId('0.0.1'),
-			freezeKey: new ContractId('0.0.1'),
-			wipeKey: new ContractId('0.0.1'),
-			supplyKey: new ContractId('0.0.1'),
-			pauseKey: new ContractId('0.0.1'),
-			feeScheduleKey: undefined,
-			reserveAddress: new ContractId('0.0.2'),
-			reserveAmount: BigDecimal.fromString('100000', decimals),
+			autoRenewAccount: HederaId.from(autoRenewAccount),
+			autoRenewPeriod: autoRenewPeriod,
+			expirationTimestamp: parseInt(expirationTimestamp),
+			paused: pause_status,
+			deleted: delete_status,
+			adminKey: adminKey,
+			kycKey: kycKey,
+			freezeKey: freezeKey,
+			wipeKey: wipeKey,
+			supplyKey: supplyKey,
+			pauseKey: pauseKey,
+			feeScheduleKey: feeScheduleKey,
+			reserveAddress: new ContractId(
+				'0.0.' + hexToDecimal(reserveAddress),
+			),
+			reserveAmount: BigDecimal.fromString(reserveAmount, DECIMALS),
 			customFees: requestCustomFees,
-			metadata: 'nothing',
+			metadata: metadata,
 		};
 		return response;
 	});
@@ -292,12 +602,22 @@ jest.mock('../src/port/out/mirror/MirrorNodeAdapter', () => {
 	);
 	singletonInstance.getAccountToken = jest.fn(
 		(targetId: HederaId, tokenId: HederaId) => {
+			const account = identifiers(targetId)[1];
+			let balance = balances.get(account);
+			if (!balance) balance = '0';
+			const freeze = freeze_status.get(account)
+				? FreezeStatus.FROZEN
+				: FreezeStatus.UNFROZEN;
+			const kyc = kyc_status.get(account)
+				? KycStatus.GRANTED
+				: KycStatus.REVOKED;
+
 			const response: AccountTokenRelationViewModel = {
 				automaticAssociation: true,
-				balance: BigDecimal.fromString('1000', decimals),
+				balance: BigDecimal.fromString(balance, DECIMALS),
 				createdTimestamp: '10000000',
-				freezeStatus: FreezeStatus.UNFROZEN,
-				kycStatus: KycStatus.GRANTED,
+				freezeStatus: freeze,
+				kycStatus: kyc,
 				tokenId: tokenId,
 			};
 			return response;
@@ -325,8 +645,9 @@ jest.mock('../src/port/out/mirror/MirrorNodeAdapter', () => {
 	});
 	singletonInstance.getHBARBalance = jest.fn(
 		(accountId: HederaId | string) => {
-			const response = BigDecimal.fromString('1000', decimals);
-			return response;
+			const balance = HBAR_balances.get(identifiers(accountId)[1]);
+			if (balance) return BigDecimal.fromString(balance, HBAR_DECIMALS);
+			return BigDecimal.fromString('0', HBAR_DECIMALS);
 		},
 	);
 
@@ -342,9 +663,19 @@ jest.mock('../src/port/out/hs/hts/HTSTransactionAdapter', () => {
 
 	const singletonInstance = new actual.HTSTransactionAdapter();
 
-	singletonInstance.init = jest.fn(() => 'init');
+	singletonInstance.init = jest.fn(() => {
+		balances.set(
+			identifiers(HederaId.from(PROXY_CONTRACT_ID))[1],
+			initialSupply,
+		);
+		HBAR_balances.set(
+			identifiers(HederaId.from(PROXY_CONTRACT_ID))[1],
+			INITIAL_HBAR_SUPPLY,
+		);
+	});
 
 	singletonInstance.register = function (account: Account) {
+		user_account = account;
 		Injectable.registerTransactionHandler(this); // `this` now correctly refers to the singletonInstance
 		const response = {
 			account: account,
@@ -364,128 +695,7 @@ jest.mock('../src/port/out/hs/hts/HTSTransactionAdapter', () => {
 		functionName: string,
 		abi: object[],
 	) {
-		if (t instanceof TokenFeeScheduleUpdateTransaction) {
-			const tokenId = (
-				t as TokenFeeScheduleUpdateTransaction
-			).tokenId!.toString();
-			const customFees = (t as TokenFeeScheduleUpdateTransaction)
-				.customFees;
-			let token = tokens.get(tokenId);
-			if (!token) {
-				token = {
-					tokenId: tokenId,
-					customFees: [],
-				};
-			}
-			token.customFees = customFees;
-			tokens.set(tokenId, token);
-		} else if (t instanceof ContractExecuteTransaction) {
-			const iface = new ethers.utils.Interface(abi);
-			const functionFragment = iface.getFunction(functionName);
-			let decoded;
-			if (t.functionParameters) {
-				decoded = iface.decodeFunctionData(
-					functionFragment,
-					t.functionParameters,
-				);
-			}
-
-			if (functionName == 'transferOwnership') {
-				proxyPendingOwner = (decoded as any).newOwner;
-			} else if (functionName == 'acceptOwnership') {
-				proxyOwner = proxyPendingOwner;
-				proxyPendingOwner =
-					'0x0000000000000000000000000000000000000000';
-			} else if (functionName == 'upgrade') {
-				implementation = (decoded as any).implementation;
-			} else if (functionName == 'setAmount') {
-				reserveAmount = (decoded as any).newValue;
-			} else if (functionName == 'grantRole') {
-				const account = (decoded as any).account;
-				const newRole = (decoded as any).role;
-				grantRole(account, newRole);
-			} else if (functionName == 'revokeRole') {
-				const account = (decoded as any).account;
-				const oldRole = (decoded as any).role;
-				revokeRole(account, oldRole);
-			} else if (functionName == 'grantRoles') {
-				const accounts = (decoded as any).accounts;
-				const newRoles = (decoded as any).roles;
-				const amounts = (decoded as any).amounts;
-
-				newRoles.forEach((newRole: StableCoinRole) => {
-					if (newRole == StableCoinRole.CASHIN_ROLE) {
-						for (let i = 0; i < accounts.length; i++) {
-							if (amounts[i] == 0)
-								grantUnlimitedSupplierRole(accounts[i]);
-							else grantSupplierRole(accounts[i], amounts[i]);
-						}
-					} else {
-						accounts.forEach((account: string) => {
-							grantRole(account, newRole);
-						});
-					}
-				});
-			} else if (functionName == 'revokeRoles') {
-				const accounts = (decoded as any).accounts;
-				const oldRoles = (decoded as any).roles;
-
-				oldRoles.forEach((oldRole: StableCoinRole) => {
-					if (oldRole == StableCoinRole.CASHIN_ROLE) {
-						accounts.forEach((account: string) => {
-							revokeSupplierRole(account);
-						});
-					} else {
-						accounts.forEach((account: string) => {
-							revokeRole(account, oldRole);
-						});
-					}
-				});
-			} else if (functionName == 'grantSupplierRole') {
-				const supplier = (decoded as any).supplier;
-				const amount = (decoded as any).amount;
-				grantSupplierRole(supplier, amount);
-			} else if (functionName == 'grantUnlimitedSupplierRole') {
-				const supplier = (decoded as any).supplier;
-				grantUnlimitedSupplierRole(supplier);
-			} else if (functionName == 'revokeSupplierRole') {
-				const supplier = (decoded as any).supplier;
-				revokeSupplierRole(supplier);
-			} else if (functionName == 'resetSupplierAllowance') {
-				const supplier = (decoded as any).supplier;
-				const supplierAllowance = suppliers.get(supplier);
-				if (supplierAllowance) {
-					supplierAllowance.amount = '0';
-					suppliers.set(supplier, supplierAllowance);
-				}
-			} else if (functionName == 'increaseSupplierAllowance') {
-				const supplier = (decoded as any).supplier;
-				const amount = (decoded as any).amount;
-				const supplierAllowance = suppliers.get(supplier);
-				if (supplierAllowance) {
-					supplierAllowance.amount = BigDecimal.fromString(
-						supplierAllowance.amount,
-					)
-						.toBigNumber()
-						.add(amount)
-						.toString();
-					suppliers.set(supplier, supplierAllowance);
-				}
-			} else if (functionName == 'decreaseSupplierAllowance') {
-				const supplier = (decoded as any).supplier;
-				const amount = (decoded as any).amount;
-				const supplierAllowance = suppliers.get(supplier);
-				if (supplierAllowance) {
-					supplierAllowance.amount = BigDecimal.fromString(
-						supplierAllowance.amount,
-					)
-						.toBigNumber()
-						.sub(amount)
-						.toString();
-					suppliers.set(supplier, supplierAllowance);
-				}
-			}
-		}
+		signAndSendTransaction(t, transactionType, functionName, abi);
 		const response = new TransactionResponse('1', null, undefined);
 		return Promise.resolve(response);
 	};
@@ -596,14 +806,16 @@ jest.mock('../src/port/out/rpc/RPCQueryAdapter', () => {
 	});
 	singletonInstance.balanceOf = jest.fn(
 		(address: EvmAddress, target: EvmAddress) => {
-			return BigNumber.from('10');
+			const balance = balances.get(target.toString());
+			if (balance) return BigDecimal.fromString(balance, DECIMALS);
+			return BigDecimal.fromString('0', DECIMALS);
 		},
 	);
 	singletonInstance.getReserveAddress = jest.fn((address: EvmAddress) => {
-		return ContractId.from('0.0.1');
+		return new ContractId('0.0.' + hexToDecimal(reserveAddress));
 	});
 	singletonInstance.getReserveAmount = jest.fn((address: EvmAddress) => {
-		return reserveAmount;
+		return BigNumber.from(reserveAmount);
 	});
 	singletonInstance.getReserveLatestRoundData = jest.fn(
 		(address: EvmAddress) => {
@@ -670,7 +882,7 @@ jest.mock('../src/port/out/rpc/RPCQueryAdapter', () => {
 		},
 	);
 	singletonInstance.getReserveDecimals = jest.fn((address: EvmAddress) => {
-		return 3;
+		return DECIMALS;
 	});
 	singletonInstance.getTokenManagerList = jest.fn(
 		(factoryAddress: EvmAddress) => {
@@ -680,7 +892,7 @@ jest.mock('../src/port/out/rpc/RPCQueryAdapter', () => {
 		},
 	);
 	singletonInstance.getMetadata = jest.fn((address: EvmAddress) => {
-		return 'metadata';
+		return metadata;
 	});
 
 	return {
