@@ -21,7 +21,7 @@
 /* eslint-disable jest/no-disabled-tests */
 /* eslint-disable jest/expect-expect */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import Account from '../../../src/domain/context/account/Account';
+import Account from '../../../src/domain/context/account/Account.js';
 import {
 	AddFixedFeeRequest,
 	AddFractionalFeeRequest,
@@ -41,8 +41,8 @@ import {
 } from '../../../src/index';
 import ConnectRequest, {
 	SupportedWallets,
-} from '../../../src/port/in/request/ConnectRequest';
-import { HederaId, TokenSupplyType } from '../../../src';
+} from '../../../src/port/in/request/ConnectRequest.js';
+import { HederaId, TokenSupplyType } from '../../../src/index.js';
 import {
 	CLIENT_ACCOUNT_ED25519,
 	DECIMALS,
@@ -50,9 +50,9 @@ import {
 	HEDERA_TOKEN_MANAGER_ADDRESS,
 	MIRROR_NODE,
 	RPC_NODE,
-} from '../../config';
-import Injectable from '../../../src/core/Injectable';
-import StableCoinService from '../../../src/app/service/StableCoinService';
+} from '../../config.js';
+import Injectable from '../../../src/core/Injectable.js';
+import StableCoinService from '../../../src/app/service/StableCoinService.js';
 import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
 
