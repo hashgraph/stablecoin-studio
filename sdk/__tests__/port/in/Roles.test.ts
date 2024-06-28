@@ -61,8 +61,7 @@ import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
 import Injectable from '../../../src/core/Injectable.js';
 
-/* eslint-disable-next-line jest/no-focused-tests */
-describe.only('🧪 Role test', () => {
+describe('🧪 Role test', () => {
 	const stableCoinSC = {
 		tokenId: new HederaId('0.0.9999999'),
 		decimals: DECIMALS,
