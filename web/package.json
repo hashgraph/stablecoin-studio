@@ -124,7 +124,7 @@
 			"<rootDir>/src"
 		],
 		"setupFilesAfterEnv": [
-			"<rootDir>/src/test/setupTests.ts"
+			"<rootDir>/src/test/setupTests.tsx"
 		],
 		"moduleNameMapper": {
 			"^(\\.{1,2}/.*)\\.(m)?js$": "$1",
