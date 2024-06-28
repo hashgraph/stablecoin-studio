@@ -30,6 +30,7 @@ import {
 	Fees,
 	GetStableCoinDetailsRequest,
 	InitializationRequest,
+	KYCRequest,
 	Network,
 	RequestCustomFee,
 	RequestFixedFee,
@@ -44,6 +45,7 @@ import ConnectRequest, {
 import { HederaId, TokenSupplyType } from '../../../src';
 import {
 	CLIENT_ACCOUNT_ED25519,
+	DECIMALS,
 	FACTORY_ADDRESS,
 	HEDERA_TOKEN_MANAGER_ADDRESS,
 	MIRROR_NODE,
@@ -70,7 +72,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 	const stableCoinCapabilitiesHTS = {
 		coin: {
 			tokenId: new HederaId('0.0.6666666'),
-			decimals: 3,
+			decimals: DECIMALS,
 		},
 	};
 
@@ -80,6 +82,15 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 
 	beforeAll(async () => {
 		await connectAccount(CLIENT_ACCOUNT_ED25519);
+
+		await StableCoin.grantKyc(
+			new KYCRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId:
+					stableCoinCapabilitiesHTS.coin.tokenId?.toString() ??
+					'0.0.0',
+			}),
+		);
 
 		stableCoinService = Injectable.resolve(StableCoinService);
 	}, 1500000);

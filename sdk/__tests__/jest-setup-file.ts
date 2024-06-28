@@ -701,10 +701,7 @@ jest.mock('../src/port/out/hs/hts/HTSTransactionAdapter', () => {
 	};
 
 	singletonInstance.getAccount = function () {
-		const response = new Account({
-			id: '0.0.1',
-		});
-		return response;
+		return user_account;
 	};
 
 	singletonInstance.sign = function (

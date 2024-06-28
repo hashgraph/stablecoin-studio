@@ -165,7 +165,7 @@ describe('🧪 Stablecoin test', () => {
 			}),
 		);
 		Injectable.resolveTransactionHandler();
-		const grantRes = await Role.grantRole(
+		await Role.grantRole(
 			new GrantRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
 				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
