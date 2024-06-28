@@ -107,15 +107,15 @@ jobs:
           echo "TESTNET_HEDERA_NON_OPERATOR_ACCOUNT=0.0.$(echo $API_RESPONSE | jq -r '.accounts[1].accountNum')" >> .env
         working-directory: contracts
       
-      - name: Run the Docker image
-        run: nohup docker run --network="host" rpc &
-      - name: Sleep for 25 seconds
-        run: sleep 25s
-        shell: bash
-      - name: DockerStatus
-        run: docker ps
-      - name: DockerStatus
-        run:  curl --location --request POST 'http://localhost:7546/api' --data ""
+      #- name: Run the Docker image
+      #  run: nohup docker run --network="host" rpc &
+      #- name: Sleep for 25 seconds
+      #  run: sleep 25s
+      #  shell: bash
+      #- name: DockerStatus
+      #  run: docker ps
+      #- name: DockerStatus
+      #  run:  curl --location --request POST 'http://localhost:7546/api' --data ""
 
       - name: Test sdk
         run: |
