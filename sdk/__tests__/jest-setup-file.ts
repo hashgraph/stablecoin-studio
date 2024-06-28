@@ -154,10 +154,6 @@ function identifiers(accountId: HederaId | string): string[] {
 }
 
 function grantRole(account: string, newRole: StableCoinRole) {
-	console.log(
-		'--------------------------------- MOCK GRANT ROLE ------------------------------------------------------------',
-	);
-
 	let r = roles.get(account);
 	if (!r) r = [newRole];
 	else if (false == r.includes(newRole)) r.push(newRole);
@@ -167,6 +163,9 @@ function grantRole(account: string, newRole: StableCoinRole) {
 	if (!accounts) accounts = [account];
 	else if (false == accounts.includes(account)) accounts.push(account);
 	accounts_with_roles.set(newRole, accounts);
+
+	console.log('granting role : ' + newRole + ' to account : ' + account);
+	console.log('roles are : ' + roles.get(account));
 }
 
 function revokeRole(account: string, oldRole: StableCoinRole) {
@@ -183,6 +182,9 @@ function revokeRole(account: string, oldRole: StableCoinRole) {
 			}
 		}
 	}
+
+	console.log('revoking role : ' + oldRole + ' from account : ' + account);
+	console.log('roles are : ' + roles.get(account));
 }
 
 function grantSupplierRole(supplier: string, amount: BigDecimal) {
@@ -869,11 +871,9 @@ jest.mock('../src/port/out/rpc/RPCQueryAdapter', () => {
 	);
 	singletonInstance.hasRole = jest.fn(
 		(address: EvmAddress, target: EvmAddress, role: StableCoinRole) => {
-			console.log(
-				'--------------------------------- MOCK HAS ROLE ------------------------------------------------------------',
-			);
-
+			console.log('target : ' + target.toString());
 			const target_roles = roles.get(target.toString());
+			console.log('target_roles : ' + target_roles);
 			if (!target_roles) return false;
 			if (target_roles?.includes(role)) return true;
 			return false;
