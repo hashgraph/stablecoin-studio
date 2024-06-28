@@ -33,7 +33,7 @@ describe(`<${RescueTokensOperation.name} />`, () => {
 		expect(button).toBeDisabled();
 
 		const amount = component.getByTestId('amount');
-		userEvent.type(amount, '10000');
+		await userEvent.type(amount, '10000');
 
 		await waitFor(() => {
 			expect(button).toBeEnabled();
@@ -45,16 +45,16 @@ describe(`<${RescueTokensOperation.name} />`, () => {
 
 		const confirmButton = component.getByTestId('confirm-btn');
 		const amount = component.getByTestId('amount');
-		userEvent.type(amount, '10000');
+		await userEvent.type(amount, '10000');
 
 		await waitFor(() => {
 			expect(confirmButton).toBeEnabled();
 		});
 
-		userEvent.click(confirmButton);
+		await userEvent.click(confirmButton);
 
 		const confirmModalButton = await component.findByTestId('modal-action-confirm-button');
-		userEvent.click(confirmModalButton);
+		await userEvent.click(confirmModalButton);
 
 		await waitFor(() => {
 			expect(
