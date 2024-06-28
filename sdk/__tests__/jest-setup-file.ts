@@ -610,7 +610,7 @@ jest.mock('../src/port/out/mirror/MirrorNodeAdapter', () => {
 	);
 	singletonInstance.getAccountToken = jest.fn(
 		(targetId: HederaId, tokenId: HederaId) => {
-			const account = identifiers(targetId)[1];
+			const account = identifiers(targetId)[1].toUpperCase();
 			let balance = balances.get(account);
 			if (!balance) balance = '0';
 			const freeze = freeze_status.get(account)
