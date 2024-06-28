@@ -25,8 +25,8 @@ import { HederaId } from '../src/domain/context/shared/HederaId.js';
 import { config } from 'dotenv';
 config();
 
-export const MULTISIG_ACCOUNT_ADDRESS =
-	process.env.MULTISIG_ACCOUNT_ADDRESS ?? '';
+// MultiSig Account associated to keys CLIENT_PRIVATE_KEY_ECDSA and CLIENT_PRIVATE_KEY_ED25519 ---
+export const MULTISIG_ACCOUNT_ADDRESS = '0.0.3792838';
 
 export const ENVIRONMENT = 'testnet';
 

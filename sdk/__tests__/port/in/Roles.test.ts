@@ -104,6 +104,9 @@ describe('🧪 Role test', () => {
 	}, 60_000);
 
 	it('Grant & Revoke role', async () => {
+		console.log(
+			'---------------------------------GRANT & REVOKe ROLES ------------------------------------------------------------',
+		);
 		const noRole = await Role.hasRole(
 			new HasRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
