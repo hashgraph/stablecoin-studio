@@ -64,7 +64,7 @@ describe(`<${StableCoinSettings.name} />`, () => {
 		const selector = component.getByRole('combobox');
 		await act(async () => userEvent.click(selector));
 		const option = component.getAllByText('0.0.3')[1];
-		userEvent.click(option);
+		await userEvent.click(option);
 
 		const addressButton = await component.findByTestId('update-implementation-address-button');
 		expect(addressButton).toBeInTheDocument();
