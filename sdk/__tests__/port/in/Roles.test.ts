@@ -149,7 +149,6 @@ describe('🧪 Role test', () => {
 		expect(noRoleAgain).toBe(false);
 	}, 60_000);
 
-	/*
 	it('Grant & Revoke Multi role', async () => {
 		const noRole_1 = await Role.hasRole(
 			new HasRoleRequest({
@@ -665,5 +664,5 @@ describe('🧪 Role test', () => {
 		expect(accounts_After.length).toEqual(2);
 		expect(accounts_After[0]).toEqual(CLIENT_ACCOUNT_ED25519.id.toString());
 		expect(accounts_After[1]).toEqual(CLIENT_ACCOUNT_ECDSA.id.toString());
-	}, 60_000); */
+	}, 60_000);
 });

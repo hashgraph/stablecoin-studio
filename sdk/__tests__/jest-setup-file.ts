@@ -131,7 +131,7 @@ let reserveAddress = '0x0000000000000000000000000000000000000001';
 let user_account: Account;
 
 function hexToDecimal(hexString: string): number {
-	if (!/^0x[a-fA-F0-9]+$|^[a-fA-F0-9]+$/.test(hexString)) {
+	if (!/^0X[a-fA-F0-9]+$|^[a-fA-F0-9]+$/.test(hexString)) {
 		throw new Error('Invalid hexadecimal input.');
 	}
 	return parseInt(hexString, 16);
@@ -146,7 +146,7 @@ function identifiers(accountId: HederaId | string): string[] {
 		accountEvmAddress =
 			'0x' + accountId.toHederaAddress().toSolidityAddress();
 	} else {
-		id = '0.0.' + hexToDecimal(accountId);
+		id = '0.0.' + hexToDecimal(accountId.toUpperCase());
 		accountEvmAddress = accountId.toString();
 	}
 
@@ -163,9 +163,6 @@ function grantRole(account: string, newRole: StableCoinRole) {
 	if (!accounts) accounts = [account];
 	else if (false == accounts.includes(account)) accounts.push(account);
 	accounts_with_roles.set(newRole, accounts);
-
-	console.log('granting role : ' + newRole + ' to account : ' + account);
-	console.log('roles are : ' + roles.get(account));
 }
 
 function revokeRole(account: string, oldRole: StableCoinRole) {
@@ -182,9 +179,6 @@ function revokeRole(account: string, oldRole: StableCoinRole) {
 			}
 		}
 	}
-
-	console.log('revoking role : ' + oldRole + ' from account : ' + account);
-	console.log('roles are : ' + roles.get(account));
 }
 
 function grantSupplierRole(supplier: string, amount: BigDecimal) {
@@ -570,7 +564,7 @@ jest.mock('../src/port/out/mirror/MirrorNodeAdapter', () => {
 			pauseKey: pauseKey,
 			feeScheduleKey: feeScheduleKey,
 			reserveAddress: new ContractId(
-				'0.0.' + hexToDecimal(reserveAddress),
+				'0.0.' + hexToDecimal(reserveAddress.toUpperCase()),
 			),
 			reserveAmount: BigDecimal.fromString(reserveAmount, DECIMALS),
 			customFees: requestCustomFees,
@@ -823,7 +817,9 @@ jest.mock('../src/port/out/rpc/RPCQueryAdapter', () => {
 		},
 	);
 	singletonInstance.getReserveAddress = jest.fn((address: EvmAddress) => {
-		return new ContractId('0.0.' + hexToDecimal(reserveAddress));
+		return new ContractId(
+			'0.0.' + hexToDecimal(reserveAddress.toUpperCase()),
+		);
 	});
 	singletonInstance.getReserveAmount = jest.fn((address: EvmAddress) => {
 		return BigNumber.from(reserveAmount);
@@ -884,8 +880,6 @@ jest.mock('../src/port/out/rpc/RPCQueryAdapter', () => {
 	singletonInstance.hasRole = jest.fn(
 		(address: EvmAddress, target: EvmAddress, role: StableCoinRole) => {
 			const target_roles = roles.get(target.toString().toUpperCase());
-			console.log(target.toString().toUpperCase());
-			console.log(target_roles);
 			if (!target_roles) return false;
 			if (target_roles?.includes(role)) return true;
 			return false;
