@@ -131,7 +131,7 @@ let reserveAddress = '0x0000000000000000000000000000000000000001';
 let user_account: Account;
 
 function hexToDecimal(hexString: string): number {
-	if (!/^0X[a-fA-F0-9]+$|^[a-fA-F0-9]+$/.test(hexString)) {
+	if (!/^0x[a-fA-F0-9]+$|^[a-fA-F0-9]+$/.test(hexString)) {
 		throw new Error('Invalid hexadecimal input.');
 	}
 	return parseInt(hexString, 16);
@@ -146,11 +146,11 @@ function identifiers(accountId: HederaId | string): string[] {
 		accountEvmAddress =
 			'0x' + accountId.toHederaAddress().toSolidityAddress();
 	} else {
-		id = '0.0.' + hexToDecimal(accountId.toUpperCase());
+		id = '0.0.' + hexToDecimal('0x' + accountId.toUpperCase().substring(2));
 		accountEvmAddress = accountId.toString();
 	}
 
-	return [id, accountEvmAddress];
+	return [id, '0x' + accountEvmAddress.toUpperCase().substring(2)];
 }
 
 function grantRole(account: string, newRole: StableCoinRole) {
@@ -228,20 +228,24 @@ function assignKey(value: any, id: number) {
 
 function smartContractCalls(functionName: string, decoded: any) {
 	if (functionName == 'transferOwnership') {
-		proxyPendingOwner = (decoded as any).newOwner.toUpperCase();
+		proxyPendingOwner =
+			'0x' + (decoded as any).newOwner.toUpperCase().substring(2);
 	} else if (functionName == 'acceptOwnership') {
 		proxyOwner = proxyPendingOwner;
 		proxyPendingOwner = '0x0000000000000000000000000000000000000000';
 	} else if (functionName == 'upgrade') {
-		implementation = (decoded as any).implementation.toUpperCase();
+		implementation =
+			'0x' + (decoded as any).implementation.toUpperCase().substring(2);
 	} else if (functionName == 'setAmount') {
 		reserveAmount = (decoded as any).newValue;
 	} else if (functionName == 'grantRole') {
-		const account = (decoded as any).account.toUpperCase();
+		const account =
+			'0x' + (decoded as any).account.toUpperCase().substring(2);
 		const newRole = (decoded as any).role;
 		grantRole(account, newRole);
 	} else if (functionName == 'revokeRole') {
-		const account = (decoded as any).account.toUpperCase();
+		const account =
+			'0x' + (decoded as any).account.toUpperCase().substring(2);
 		const oldRole = (decoded as any).role;
 		revokeRole(account, oldRole);
 	} else if (functionName == 'grantRoles') {
@@ -253,16 +257,21 @@ function smartContractCalls(functionName: string, decoded: any) {
 			if (newRole == StableCoinRole.CASHIN_ROLE) {
 				for (let i = 0; i < accounts.length; i++) {
 					if (amounts[i] == 0)
-						grantUnlimitedSupplierRole(accounts[i].toUpperCase());
+						grantUnlimitedSupplierRole(
+							'0x' + accounts[i].toUpperCase().substring(2),
+						);
 					else
 						grantSupplierRole(
-							accounts[i].toUpperCase(),
+							'0x' + accounts[i].toUpperCase().substring(2),
 							amounts[i],
 						);
 				}
 			} else {
 				accounts.forEach((account: string) => {
-					grantRole(account.toUpperCase(), newRole);
+					grantRole(
+						'0x' + account.toUpperCase().substring(2),
+						newRole,
+					);
 				});
 			}
 		});
@@ -273,33 +282,43 @@ function smartContractCalls(functionName: string, decoded: any) {
 		oldRoles.forEach((oldRole: StableCoinRole) => {
 			if (oldRole == StableCoinRole.CASHIN_ROLE) {
 				accounts.forEach((account: string) => {
-					revokeSupplierRole(account.toUpperCase());
+					revokeSupplierRole(
+						'0x' + account.toUpperCase().substring(2),
+					);
 				});
 			} else {
 				accounts.forEach((account: string) => {
-					revokeRole(account.toUpperCase(), oldRole);
+					revokeRole(
+						'0x' + account.toUpperCase().substring(2),
+						oldRole,
+					);
 				});
 			}
 		});
 	} else if (functionName == 'grantSupplierRole') {
-		const supplier = (decoded as any).supplier.toUpperCase();
+		const supplier =
+			'0x' + (decoded as any).supplier.toUpperCase().substring(2);
 		const amount = (decoded as any).amount;
 		grantSupplierRole(supplier, amount);
 	} else if (functionName == 'grantUnlimitedSupplierRole') {
-		const supplier = (decoded as any).supplier.toUpperCase();
+		const supplier =
+			'0x' + (decoded as any).supplier.toUpperCase().substring(2);
 		grantUnlimitedSupplierRole(supplier);
 	} else if (functionName == 'revokeSupplierRole') {
-		const supplier = (decoded as any).supplier.toUpperCase();
+		const supplier =
+			'0x' + (decoded as any).supplier.toUpperCase().substring(2);
 		revokeSupplierRole(supplier);
 	} else if (functionName == 'resetSupplierAllowance') {
-		const supplier = (decoded as any).supplier.toUpperCase();
+		const supplier =
+			'0x' + (decoded as any).supplier.toUpperCase().substring(2);
 		const supplierAllowance = suppliers.get(supplier);
 		if (supplierAllowance) {
 			supplierAllowance.amount = '0';
 			suppliers.set(supplier, supplierAllowance);
 		}
 	} else if (functionName == 'increaseSupplierAllowance') {
-		const supplier = (decoded as any).supplier.toUpperCase();
+		const supplier =
+			'0x' + (decoded as any).supplier.toUpperCase().substring(2);
 		const amount = (decoded as any).amount;
 		const supplierAllowance = suppliers.get(supplier);
 		if (supplierAllowance) {
@@ -312,7 +331,8 @@ function smartContractCalls(functionName: string, decoded: any) {
 			suppliers.set(supplier, supplierAllowance);
 		} else grantSupplierRole(supplier, amount);
 	} else if (functionName == 'decreaseSupplierAllowance') {
-		const supplier = (decoded as any).supplier.toUpperCase();
+		const supplier =
+			'0x' + (decoded as any).supplier.toUpperCase().substring(2);
 		const amount = (decoded as any).amount;
 		const supplierAllowance = suppliers.get(supplier);
 		if (supplierAllowance) {
@@ -341,7 +361,8 @@ function smartContractCalls(functionName: string, decoded: any) {
 			.toString();
 	} else if (functionName == 'mint') {
 		const amount = (decoded as any).amount;
-		const account = (decoded as any).account.toUpperCase();
+		const account =
+			'0x' + (decoded as any).account.toUpperCase().substring(2);
 		let accountBalance = balances.get(account);
 		if (accountBalance) {
 			accountBalance = BigDecimal.fromString(accountBalance)
@@ -357,16 +378,20 @@ function smartContractCalls(functionName: string, decoded: any) {
 	} else if (functionName == 'deleteToken') {
 		delete_status = true;
 	} else if (functionName == 'freeze') {
-		const account = (decoded as any).account.toUpperCase();
+		const account =
+			'0x' + (decoded as any).account.toUpperCase().substring(2);
 		freeze_status.set(account, true);
 	} else if (functionName == 'unfreeze') {
-		const account = (decoded as any).account.toUpperCase();
+		const account =
+			'0x' + (decoded as any).account.toUpperCase().substring(2);
 		freeze_status.set(account, false);
 	} else if (functionName == 'grantKyc') {
-		const account = (decoded as any).account.toUpperCase();
+		const account =
+			'0x' + (decoded as any).account.toUpperCase().substring(2);
 		kyc_status.set(account, true);
 	} else if (functionName == 'revokeKyc') {
-		const account = (decoded as any).account.toUpperCase();
+		const account =
+			'0x' + (decoded as any).account.toUpperCase().substring(2);
 		kyc_status.set(account, false);
 	} else if (functionName == 'pause') {
 		pause_status = true;
@@ -374,9 +399,11 @@ function smartContractCalls(functionName: string, decoded: any) {
 		pause_status = false;
 	} else if (functionName == 'rescue') {
 		const amount = (decoded as any).amount;
-		const account = identifiers(
-			HederaId.from(PROXY_CONTRACT_ID),
-		)[1].toUpperCase();
+		const account =
+			'0x' +
+			identifiers(HederaId.from(PROXY_CONTRACT_ID))[1]
+				.toUpperCase()
+				.substring(2);
 		const sender = identifiers(user_account.id)[1];
 
 		let treasury_balance = balances.get(account);
@@ -398,10 +425,13 @@ function smartContractCalls(functionName: string, decoded: any) {
 		} else balances.set(sender, amount.toString());
 	} else if (functionName == 'rescueHBAR') {
 		const amount = (decoded as any).amount;
-		const account = identifiers(
-			HederaId.from(PROXY_CONTRACT_ID),
-		)[1].toUpperCase();
-		const sender = identifiers(user_account.id)[1].toUpperCase();
+		const account =
+			'0x' +
+			identifiers(HederaId.from(PROXY_CONTRACT_ID))[1]
+				.toUpperCase()
+				.substring(2);
+		const sender =
+			'0x' + identifiers(user_account.id)[1].toUpperCase().substring(2);
 
 		let treasury_balance = HBAR_balances.get(account);
 		if (treasury_balance) {
@@ -421,11 +451,13 @@ function smartContractCalls(functionName: string, decoded: any) {
 			HBAR_balances.set(sender, accountBalance);
 		} else HBAR_balances.set(sender, amount.toString());
 	} else if (functionName == 'updateReserveAddress') {
-		const newAddress = (decoded as any).newAddress.toUpperCase();
+		const newAddress =
+			'0x' + (decoded as any).newAddress.toUpperCase().substring(2);
 		reserveAddress = newAddress;
 	} else if (functionName == 'wipe') {
 		const amount = (decoded as any).amount;
-		const account = (decoded as any).account.toUpperCase();
+		const account =
+			'0x' + (decoded as any).account.toUpperCase().substring(2);
 		let accountBalance = balances.get(account);
 		if (accountBalance) {
 			accountBalance = BigDecimal.fromString(accountBalance)
@@ -564,7 +596,10 @@ jest.mock('../src/port/out/mirror/MirrorNodeAdapter', () => {
 			pauseKey: pauseKey,
 			feeScheduleKey: feeScheduleKey,
 			reserveAddress: new ContractId(
-				'0.0.' + hexToDecimal(reserveAddress.toUpperCase()),
+				'0.0.' +
+					hexToDecimal(
+						'0x' + reserveAddress.toUpperCase().substring(2),
+					),
 			),
 			reserveAmount: BigDecimal.fromString(reserveAmount, DECIMALS),
 			customFees: requestCustomFees,
@@ -610,7 +645,8 @@ jest.mock('../src/port/out/mirror/MirrorNodeAdapter', () => {
 	);
 	singletonInstance.getAccountToken = jest.fn(
 		(targetId: HederaId, tokenId: HederaId) => {
-			const account = identifiers(targetId)[1].toUpperCase();
+			const account =
+				'0x' + identifiers(targetId)[1].toUpperCase().substring(2);
 			let balance = balances.get(account);
 			if (!balance) balance = '0';
 			const freeze = freeze_status.get(account)
@@ -811,14 +847,17 @@ jest.mock('../src/port/out/rpc/RPCQueryAdapter', () => {
 	});
 	singletonInstance.balanceOf = jest.fn(
 		(address: EvmAddress, target: EvmAddress) => {
-			const balance = balances.get(target.toString().toUpperCase());
+			const balance = balances.get(
+				'0x' + target.toString().toUpperCase().substring(2),
+			);
 			if (balance) return BigDecimal.fromString(balance, DECIMALS);
 			return BigDecimal.fromString('0', DECIMALS);
 		},
 	);
 	singletonInstance.getReserveAddress = jest.fn((address: EvmAddress) => {
 		return new ContractId(
-			'0.0.' + hexToDecimal(reserveAddress.toUpperCase()),
+			'0.0.' +
+				hexToDecimal('0x' + reserveAddress.toUpperCase().substring(2)),
 		);
 	});
 	singletonInstance.getReserveAmount = jest.fn((address: EvmAddress) => {
@@ -832,7 +871,7 @@ jest.mock('../src/port/out/rpc/RPCQueryAdapter', () => {
 	singletonInstance.isLimited = jest.fn(
 		(address: EvmAddress, target: EvmAddress) => {
 			const supplierAllowance = suppliers.get(
-				target.toString().toUpperCase(),
+				'0x' + target.toString().toUpperCase().substring(2),
 			);
 			if (!supplierAllowance) return false;
 			return !supplierAllowance.isUnlimited;
@@ -841,7 +880,7 @@ jest.mock('../src/port/out/rpc/RPCQueryAdapter', () => {
 	singletonInstance.isUnlimited = jest.fn(
 		(address: EvmAddress, target: EvmAddress) => {
 			const supplierAllowance = suppliers.get(
-				target.toString().toUpperCase(),
+				'0x' + target.toString().toUpperCase().substring(2),
 			);
 			if (!supplierAllowance) return false;
 			return supplierAllowance.isUnlimited;
@@ -849,7 +888,9 @@ jest.mock('../src/port/out/rpc/RPCQueryAdapter', () => {
 	);
 	singletonInstance.getRoles = jest.fn(
 		(address: EvmAddress, target: EvmAddress) => {
-			const r = roles.get(target.toString().toUpperCase());
+			const r = roles.get(
+				'0x' + target.toString().toUpperCase().substring(2),
+			);
 			if (!r) return [];
 			return r;
 		},
@@ -879,7 +920,9 @@ jest.mock('../src/port/out/rpc/RPCQueryAdapter', () => {
 	);
 	singletonInstance.hasRole = jest.fn(
 		(address: EvmAddress, target: EvmAddress, role: StableCoinRole) => {
-			const target_roles = roles.get(target.toString().toUpperCase());
+			const target_roles = roles.get(
+				'0x' + target.toString().toUpperCase().substring(2),
+			);
 			if (!target_roles) return false;
 			if (target_roles?.includes(role)) return true;
 			return false;
@@ -888,7 +931,7 @@ jest.mock('../src/port/out/rpc/RPCQueryAdapter', () => {
 	singletonInstance.supplierAllowance = jest.fn(
 		(address: EvmAddress, target: EvmAddress) => {
 			const supplierAllowance = suppliers.get(
-				target.toString().toUpperCase(),
+				'0x' + target.toString().toUpperCase().substring(2),
 			);
 			if (!supplierAllowance) return 0;
 			return supplierAllowance.amount;
@@ -900,9 +943,10 @@ jest.mock('../src/port/out/rpc/RPCQueryAdapter', () => {
 	singletonInstance.getTokenManagerList = jest.fn(
 		(factoryAddress: EvmAddress) => {
 			return [
-				identifiers(
-					HederaId.from(HEDERA_TOKEN_MANAGER_ADDRESS),
-				)[1].toUpperCase(),
+				'0x' +
+					identifiers(HederaId.from(HEDERA_TOKEN_MANAGER_ADDRESS))[1]
+						.toUpperCase()
+						.substring(2),
 			];
 		},
 	);
