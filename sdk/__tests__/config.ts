@@ -94,6 +94,28 @@ export const HEDERA_ID_ACCOUNT_ED25519_2 = HederaId.from(
 	CLIENT_ACCOUNT_ID_ED25519_2,
 );
 
+export const CLIENT_PRIVATE_KEY_ECDSA_2 = new PrivateKey({
+	key: process.env.CLIENT_PRIVATE_KEY_ECDSA_2 ?? '',
+	type: 'ECDSA',
+});
+export const CLIENT_PUBLIC_KEY_ECDSA_2 = new PublicKey({
+	key: process.env.CLIENT_PUBLIC_KEY_ECDSA_2 ?? '',
+	type: 'ECDSA',
+});
+export const CLIENT_EVM_ADDRESS_ECDSA_2 =
+	process.env.CLIENT_EVM_ADDRESS_ECDSA ?? '';
+export const CLIENT_ACCOUNT_ID_ECDSA_2 =
+	process.env.CLIENT_ACCOUNT_ID_ECDSA ?? '';
+export const CLIENT_ACCOUNT_ECDSA_2: Account = new Account({
+	id: CLIENT_ACCOUNT_ID_ECDSA_2,
+	evmAddress: CLIENT_EVM_ADDRESS_ECDSA_2,
+	privateKey: CLIENT_PRIVATE_KEY_ECDSA_2,
+	publicKey: CLIENT_PUBLIC_KEY_ECDSA_2,
+});
+export const HEDERA_ID_ACCOUNT_ECDSA_2 = HederaId.from(
+	CLIENT_ACCOUNT_ID_ECDSA_2,
+);
+
 //* Smart Contracts
 export const HEDERA_TOKEN_MANAGER_ADDRESS =
 	process.env.HEDERA_TOKEN_MANAGER_ADDRESS ?? '';
@@ -118,30 +140,42 @@ export const RPC_NODE = {
 	baseUrl: process.env.RPC_NODE_BASE_URL ?? 'https://testnet.hashio.io/api',
 };
 
+const FIREBLOCKS_API_KEY = 'FIREBLOCKS_API_KEY';
+const FIREBLOCKS_API_SECRET_KEY_PATH = 'FIREBLOCKS_API_SECRET_KEY_PATH';
+const FIREBLOCKS_BASE_URL = 'FIREBLOCKS_BASE_URL';
+const FIREBLOCKS_VAULT_ACCOUNT_ID = 'FIREBLOCKS_VAULT_ACCOUNT_ID';
+const FIREBLOCKS_ASSET_ID = 'FIREBLOCKS_ASSET_ID';
+
 export const FIREBLOCKS_SETTINGS = {
-	apiKey: process.env.FIREBLOCKS_API_KEY ?? '',
-	apiSecretKeyPath: process.env.FIREBLOCKS_API_SECRET_KEY_PATH ?? '',
-	baseUrl: process.env.FIREBLOCKS_BASE_URL ?? '',
-	vaultAccountId: process.env.FIREBLOCKS_VAULT_ACCOUNT_ID ?? '',
-	assetId: process.env.FIREBLOCKS_ASSET_ID ?? '',
-	hederaAccountId: process.env.FIREBLOCKS_HEDERA_ACCOUNT_ID ?? '',
-	hederaAccountPublicKey:
-		process.env.FIREBLOCKS_HEDERA_ACCOUNT_CLIENT_PUBLIC_KEY_ED25519 ?? '',
+	apiKey: FIREBLOCKS_API_KEY ?? '',
+	apiSecretKeyPath: FIREBLOCKS_API_SECRET_KEY_PATH ?? '',
+	baseUrl: FIREBLOCKS_BASE_URL ?? '',
+	vaultAccountId: FIREBLOCKS_VAULT_ACCOUNT_ID ?? '',
+	assetId: FIREBLOCKS_ASSET_ID ?? '',
+	hederaAccountId: process.env.CLIENT_ACCOUNT_ID_ECDSA_2 ?? '',
+	hederaAccountPublicKey: process.env.CLIENT_PUBLIC_KEY_ECDSA_2 ?? '',
 };
 
+const DFNS_SERVICE_ACCOUNT_AUTHORIZATION_TOKEN =
+	'DFNS_SERVICE_ACCOUNT_AUTHORIZATION_TOKEN';
+const DFNS_SERVICE_ACCOUNT_CREDENTIAL_ID = 'DFNS_SERVICE_ACCOUNT_CREDENTIAL_ID';
+const DFNS_SERVICE_ACCOUNT_PRIVATE_KEY_PATH =
+	'DFNS_SERVICE_ACCOUNT_PRIVATE_KEY_PATH';
+const DFNS_APP_ORIGIN = 'DFNS_APP_ORIGIN';
+const DFNS_APP_ID = 'DFNS_APP_ID';
+const DFNS_BASE_URL = 'DFNS_BASE_URL';
+const DFNS_WALLET_ID = 'DFNS_WALLET_ID';
+
 export const DFNS_SETTINGS = {
-	authorizationToken:
-		process.env.DFNS_SERVICE_ACCOUNT_AUTHORIZATION_TOKEN ?? '',
-	credentialId: process.env.DFNS_SERVICE_ACCOUNT_CREDENTIAL_ID ?? '',
-	serviceAccountPrivateKeyPath:
-		process.env.DFNS_SERVICE_ACCOUNT_PRIVATE_KEY_PATH ?? '',
-	urlApplicationOrigin: process.env.DFNS_APP_ORIGIN ?? '',
-	applicationId: process.env.DFNS_APP_ID ?? '',
-	baseUrl: process.env.DFNS_BASE_URL ?? '',
-	walletId: process.env.DFNS_WALLET_ID ?? '',
-	hederaAccountId: process.env.DFNS_HEDERA_ACCOUNT_ID ?? '',
-	hederaAccountPublicKey:
-		process.env.DFNS_HEDERA_ACCOUNT_CLIENT_PUBLIC_KEY_ED25519 ?? '',
+	authorizationToken: DFNS_SERVICE_ACCOUNT_AUTHORIZATION_TOKEN,
+	credentialId: DFNS_SERVICE_ACCOUNT_CREDENTIAL_ID,
+	serviceAccountPrivateKeyPath: DFNS_SERVICE_ACCOUNT_PRIVATE_KEY_PATH,
+	urlApplicationOrigin: DFNS_APP_ORIGIN,
+	applicationId: DFNS_APP_ID,
+	baseUrl: DFNS_BASE_URL,
+	walletId: DFNS_WALLET_ID,
+	hederaAccountId: process.env.CLIENT_ACCOUNT_ID_ECDSA_2 ?? '',
+	hederaAccountPublicKey: process.env.CLIENT_PUBLIC_KEY_ECDSA_2 ?? '',
 };
 
 export const URL = 'http://example.com/';

@@ -61,6 +61,8 @@ import {
 	AUTO_RENEW_ACCOUNT,
 	RESERVE_AMOUNT,
 	RESERVE_ADDRESS,
+	DFNS_SETTINGS,
+	CLIENT_PRIVATE_KEY_ECDSA_2,
 } from './config.js';
 import {
 	ContractExecuteTransaction,
@@ -75,6 +77,7 @@ import {
 	TokenUnfreezeTransaction,
 	TokenGrantKycTransaction,
 	TokenRevokeKycTransaction,
+	Client,
 } from '@hashgraph/sdk';
 import { TransactionType } from '../src/port/out/TransactionResponseEnums.js';
 import TransactionResponse from '../src/domain/context/transaction/TransactionResponse.js';
@@ -104,6 +107,10 @@ import {
 	TOKEN_CREATION_COST_HBAR,
 } from '../src/core/Constants.js';
 import { StableCoinFactory__factory } from '@hashgraph/stablecoin-npm-contracts';
+import {
+	IStrategyConfig,
+	SignatureRequest,
+} from '@hashgraph/hedera-custodians-integration';
 
 interface token {
 	tokenId: string;
@@ -1313,5 +1320,33 @@ jest.mock('axios', () => {
 				};
 			}),
 		})),
+	};
+});
+
+jest.mock('@hashgraph/hedera-custodians-integration', () => {
+	const actual = jest.requireActual(
+		'@hashgraph/hedera-custodians-integration',
+	);
+
+	let configuration: IStrategyConfig;
+
+	return {
+		...actual,
+		CustodialWalletService: jest
+			.fn()
+			.mockImplementation((config: IStrategyConfig) => {
+				configuration = config;
+				return {
+					signTransaction: async function (
+						signatureRequest: SignatureRequest,
+					) {
+						const message = signatureRequest.getTransactionBytes();
+						const signer =
+							CLIENT_PRIVATE_KEY_ECDSA_2.toHashgraphKey();
+						const signed_Message = await signer.sign(message);
+						return signed_Message;
+					},
+				};
+			}),
 	};
 });

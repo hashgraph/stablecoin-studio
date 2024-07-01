@@ -83,6 +83,10 @@ jobs:
           echo "CLIENT_PUBLIC_KEY_ED25519=$(echo $API_RESPONSE_1 | jq -r '.accounts[0].publicKey')" >> .env
           echo "CLIENT_ACCOUNT_ID_ED25519=0.0.$(echo $API_RESPONSE_1 | jq -r '.accounts[0].accountNum')" >> .env
           echo "CLIENT_EVM_ADDRESS_ED25519=$(curl -s https://testnet.mirrornode.hedera.com/api/v1/accounts/$CLIENT_ACCOUNT_ID_ED25519)" >> .env
+          echo "CLIENT_PRIVATE_KEY_ECDSA_2=$(echo $API_RESPONSE_2 | jq -r '.accounts[1].privateKey')" >> .env
+          echo "CLIENT_PUBLIC_KEY_ECDSA_2=$(echo $API_RESPONSE_2 | jq -r '.accounts[1].publicKey')" >> .env
+          echo "CLIENT_ACCOUNT_ID_ECDSA_2=0.0.$(echo $API_RESPONSE_2 | jq -r '.accounts[1].accountNum')" >> .env
+          echo "CLIENT_EVM_ADDRESS_ECDSA_2=$(curl -s https://testnet.mirrornode.hedera.com/api/v1/accounts/$CLIENT_ACCOUNT_ID_ECDSA_2)" >> .env
           echo "CLIENT_PRIVATE_KEY_ED25519_2=$(echo $API_RESPONSE_2 | jq -r '.accounts[0].privateKey')" >> .env
           echo "CLIENT_PUBLIC_KEY_ED25519_2=$(echo $API_RESPONSE_2 | jq -r '.accounts[0].publicKey')" >> .env
           echo "CLIENT_ACCOUNT_ID_ED25519_2=0.0.$(echo $API_RESPONSE_2 | jq -r '.accounts[0].accountNum')" >> .env

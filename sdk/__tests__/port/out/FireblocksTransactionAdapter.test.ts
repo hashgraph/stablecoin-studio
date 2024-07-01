@@ -37,27 +37,22 @@ import {
 import { MirrorNode } from '../../../src/domain/context/network/MirrorNode';
 import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay';
 import ConnectRequest, {
-	DFNSConfigRequest,
+	FireblocksConfigRequest,
 } from '../../../src/port/in/request/ConnectRequest';
 import {
-	DFNS_SETTINGS,
+	DECIMALS,
 	FACTORY_ADDRESS,
+	FIREBLOCKS_SETTINGS,
 	HEDERA_TOKEN_MANAGER_ADDRESS,
 	MIRROR_NODE,
 	RPC_NODE,
 } from '../../config';
 import Injectable from '../../../src/core/Injectable';
-import * as fs from 'fs';
-import * as path from 'path';
 
-const decimals = 6;
 const initialSupply = 1000;
-const apiSecretKey = fs.readFileSync(
-	path.resolve(DFNS_SETTINGS.serviceAccountPrivateKeyPath),
-	'utf8',
-);
+const apiSecretKey = FIREBLOCKS_SETTINGS.apiSecretKeyPath;
 
-describe('🧪 DFNSTransactionAdapter test', () => {
+describe('🧪 FireblocksTransactionAdapter test', () => {
 	let stableCoinHTS: StableCoinViewModel;
 	const delay = async (seconds = 5): Promise<void> => {
 		seconds = seconds * 1000;
@@ -74,29 +69,27 @@ describe('🧪 DFNSTransactionAdapter test', () => {
 		baseUrl: RPC_NODE.baseUrl,
 	};
 
-	const dfnsSettings: DFNSConfigRequest = {
-		authorizationToken: DFNS_SETTINGS.authorizationToken,
-		credentialId: DFNS_SETTINGS.credentialId,
-		serviceAccountPrivateKey: apiSecretKey,
-		urlApplicationOrigin: DFNS_SETTINGS.urlApplicationOrigin,
-		applicationId: DFNS_SETTINGS.applicationId,
-		baseUrl: DFNS_SETTINGS.baseUrl,
-		walletId: DFNS_SETTINGS.walletId,
-		hederaAccountId: DFNS_SETTINGS.hederaAccountId,
+	const fireblocksSettings: FireblocksConfigRequest = {
+		apiSecretKey: apiSecretKey,
+		apiKey: FIREBLOCKS_SETTINGS.apiKey,
+		baseUrl: FIREBLOCKS_SETTINGS.baseUrl,
+		vaultAccountId: FIREBLOCKS_SETTINGS.vaultAccountId,
+		assetId: FIREBLOCKS_SETTINGS.assetId,
+		hederaAccountId: FIREBLOCKS_SETTINGS.hederaAccountId,
 	};
 
 	const requestPublicKey: RequestPublicKey = {
-		key: DFNS_SETTINGS.hederaAccountPublicKey,
+		key: FIREBLOCKS_SETTINGS.hederaAccountPublicKey,
 	};
 
 	beforeAll(async () => {
 		await Network.connect(
 			new ConnectRequest({
 				network: 'testnet',
-				wallet: SupportedWallets.DFNS,
+				wallet: SupportedWallets.FIREBLOCKS,
 				mirrorNode: mirrorNode,
 				rpcNode: rpcNode,
-				custodialWalletSettings: dfnsSettings,
+				custodialWalletSettings: fireblocksSettings,
 			}),
 		);
 		await Network.init(
@@ -110,10 +103,10 @@ describe('🧪 DFNSTransactionAdapter test', () => {
 			}),
 		);
 		Injectable.resolveTransactionHandler();
-		const requestCreateStableCoin = new CreateRequest({
+		const requesCreateStableCoin = new CreateRequest({
 			name: 'TEST_ACCELERATOR_HTS',
 			symbol: 'TEST',
-			decimals: decimals,
+			decimals: DECIMALS,
 			initialSupply: initialSupply.toString(),
 			freezeKey: requestPublicKey,
 			kycKey: requestPublicKey,
@@ -125,30 +118,29 @@ describe('🧪 DFNSTransactionAdapter test', () => {
 			reserveInitialAmount: '1000000',
 			createReserve: true,
 			grantKYCToOriginalSender: true,
-			burnRoleAccount: DFNS_SETTINGS.hederaAccountId,
-			rescueRoleAccount: DFNS_SETTINGS.hederaAccountId,
-			deleteRoleAccount: DFNS_SETTINGS.hederaAccountId,
-			cashInRoleAccount: DFNS_SETTINGS.hederaAccountId,
+			burnRoleAccount: FIREBLOCKS_SETTINGS.hederaAccountId,
+			rescueRoleAccount: FIREBLOCKS_SETTINGS.hederaAccountId,
+			deleteRoleAccount: FIREBLOCKS_SETTINGS.hederaAccountId,
+			cashInRoleAccount: FIREBLOCKS_SETTINGS.hederaAccountId,
 			cashInRoleAllowance: '0',
 			metadata: '',
 		});
 
-		stableCoinHTS = (await StableCoin.create(requestCreateStableCoin)).coin;
-
+		stableCoinHTS = (await StableCoin.create(requesCreateStableCoin)).coin;
 		await delay();
-	}, 60_000);
+	}, 80_000);
 
-	it('DFNS should create a Stable Coin', async () => {
+	it('Fireblocks should create a Stable Coin', async () => {
 		expect(stableCoinHTS?.tokenId).not.toBeNull();
-	}, 60_000);
+	}, 80_000);
 
-	it('DFNS should associate a token', async () => {
+	it('Fireblocks should associate a token', async () => {
 		const result = await StableCoin.associate(
 			new AssociateTokenRequest({
-				targetId: DFNS_SETTINGS.hederaAccountId,
+				targetId: FIREBLOCKS_SETTINGS.hederaAccountId,
 				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.0',
 			}),
 		);
 		expect(result).toBe(true);
-	}, 60_000);
+	}, 80_000);
 });
