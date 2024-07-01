@@ -203,7 +203,7 @@ export const GET_TRANSACTION = {
 	hedera_account_id: '0.0.1',
 };
 
-export const DECIMALS = 3;
+export const DECIMALS = 2;
 
 export const PROXY_CONTRACT_ID = '0.0.1';
 export const PROXY_ADMIN_CONTRACT_ID = '0.0.2';
@@ -212,3 +212,5 @@ export const INITIAL_SUPPLY = '1000000000';
 export const INITIAL_HBAR_SUPPLY = '10000000000000000000';
 export const EXPIRATION_TIMESTAMP = '1759047276000000000';
 export const AUTO_RENEW_ACCOUNT = '0.0.5';
+export const RESERVE_AMOUNT = '100000000000000';
+export const RESERVE_ADDRESS = '0.0.7654321';

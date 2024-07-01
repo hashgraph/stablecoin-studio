@@ -37,6 +37,7 @@ import {
 	StableCoinListViewModel,
 	StableCoinRole,
 	StableCoinViewModel,
+	TokenSupplyType,
 	WalletEvents,
 } from '../src/index.js';
 import {
@@ -58,12 +59,22 @@ import {
 	INITIAL_HBAR_SUPPLY,
 	EXPIRATION_TIMESTAMP,
 	AUTO_RENEW_ACCOUNT,
+	RESERVE_AMOUNT,
+	RESERVE_ADDRESS,
 } from './config.js';
 import {
 	ContractExecuteTransaction,
 	CustomFee,
 	TokenFeeScheduleUpdateTransaction,
 	Transaction,
+	ContractId as HContractId,
+	TokenWipeTransaction,
+	TokenPauseTransaction,
+	TokenUnpauseTransaction,
+	TokenFreezeTransaction,
+	TokenUnfreezeTransaction,
+	TokenGrantKycTransaction,
+	TokenRevokeKycTransaction,
 } from '@hashgraph/sdk';
 import { TransactionType } from '../src/port/out/TransactionResponseEnums.js';
 import TransactionResponse from '../src/domain/context/transaction/TransactionResponse.js';
@@ -83,6 +94,16 @@ import { BigNumber, ethers } from 'ethers';
 import EventService from '../src/app/service/event/EventService.js';
 import { MirrorNodeAdapter } from '../src/port/out/mirror/MirrorNodeAdapter.js';
 import NetworkService from '../src/app/service/NetworkService.js';
+import { StableCoinProps } from '../src/domain/context/stablecoin/StableCoin.js';
+import { FactoryCashinRole } from '../src/domain/context/factory/FactoryCashinRole.js';
+import { FactoryKey } from '../src/domain/context/factory/FactoryKey.js';
+import { FactoryRole } from '../src/domain/context/factory/FactoryRole.js';
+import { FactoryStableCoin } from '../src/domain/context/factory/FactoryStableCoin.js';
+import {
+	CREATE_SC_GAS,
+	TOKEN_CREATION_COST_HBAR,
+} from '../src/core/Constants.js';
+import { StableCoinFactory__factory } from '@hashgraph/stablecoin-npm-contracts';
 
 interface token {
 	tokenId: string;
@@ -126,8 +147,8 @@ let proxyPendingOwner = '0x0000000000000000000000000000000000000000';
 let implementation = identifiers(
 	HederaId.from(HEDERA_TOKEN_MANAGER_ADDRESS),
 )[1];
-let reserveAmount = '100000000000000';
-let reserveAddress = '0x0000000000000000000000000000000000000001';
+let reserveAmount = RESERVE_AMOUNT;
+let reserveAddress = RESERVE_ADDRESS;
 let user_account: Account;
 
 function hexToDecimal(hexString: string): number {
@@ -226,8 +247,48 @@ function assignKey(value: any, id: number) {
 	}
 }
 
+function wipe(account: string, amount: any) {
+	let accountBalance = balances.get(account);
+	if (accountBalance) {
+		accountBalance = BigDecimal.fromString(accountBalance)
+			.toBigNumber()
+			.sub(amount)
+			.toString();
+		balances.set(account, accountBalance);
+	}
+	totalSupply = BigDecimal.fromString(totalSupply)
+		.toBigNumber()
+		.sub(amount)
+		.toString();
+}
+
 function smartContractCalls(functionName: string, decoded: any) {
-	if (functionName == 'transferOwnership') {
+	if (functionName == 'deployStableCoin') {
+		const requestedToken = (decoded as any).requestedToken;
+
+		TokenName = requestedToken.tokenName;
+		TokenSymbol = requestedToken.tokenSymbol;
+		metadata = requestedToken.metadata;
+		proxyOwner = requestedToken.proxyAdminOwnerAccount;
+
+		const keys = requestedToken[10];
+
+		keys.forEach(
+			(key: {
+				publicKey: string;
+				keyType: { toString: () => string };
+			}) => {
+				if (key.publicKey !== '0x') {
+					const pk = new PublicKey(key.publicKey);
+					assignKey(pk, parseInt(key.keyType.toString()));
+				} else
+					assignKey(
+						new ContractId(PROXY_CONTRACT_ID),
+						parseInt(key.keyType.toString()),
+					);
+			},
+		);
+	} else if (functionName == 'transferOwnership') {
 		proxyPendingOwner =
 			'0x' + (decoded as any).newOwner.toUpperCase().substring(2);
 	} else if (functionName == 'acceptOwnership') {
@@ -453,23 +514,12 @@ function smartContractCalls(functionName: string, decoded: any) {
 	} else if (functionName == 'updateReserveAddress') {
 		const newAddress =
 			'0x' + (decoded as any).newAddress.toUpperCase().substring(2);
-		reserveAddress = newAddress;
+		reserveAddress = identifiers(newAddress)[0];
 	} else if (functionName == 'wipe') {
 		const amount = (decoded as any).amount;
 		const account =
 			'0x' + (decoded as any).account.toUpperCase().substring(2);
-		let accountBalance = balances.get(account);
-		if (accountBalance) {
-			accountBalance = BigDecimal.fromString(accountBalance)
-				.toBigNumber()
-				.sub(amount)
-				.toString();
-			balances.set(account, accountBalance);
-		}
-		totalSupply = BigDecimal.fromString(totalSupply)
-			.toBigNumber()
-			.sub(amount)
-			.toString();
+		wipe(account, amount);
 	} else if (functionName == 'updateToken') {
 		const updatedToken = (decoded as any).updatedToken;
 		TokenName = updatedToken.tokenName;
@@ -513,6 +563,38 @@ function signAndSendTransaction(
 		}
 		token.customFees = customFees;
 		tokens.set(tokenId, token);
+	} else if (t instanceof TokenWipeTransaction) {
+		const accountId = (t as TokenWipeTransaction).accountId!;
+		const amountValue = (t as TokenWipeTransaction).amount?.toString();
+
+		const account = identifiers(HederaId.from(accountId.toString()))[1];
+		const amount = BigNumber.from(amountValue);
+
+		wipe(account, amount);
+	} else if (t instanceof TokenPauseTransaction) {
+		pause_status = true;
+	} else if (t instanceof TokenUnpauseTransaction) {
+		pause_status = false;
+	} else if (t instanceof TokenFreezeTransaction) {
+		const accountId = (t as TokenFreezeTransaction).accountId!;
+		const account = identifiers(HederaId.from(accountId.toString()))[1];
+
+		freeze_status.set(account, true);
+	} else if (t instanceof TokenUnfreezeTransaction) {
+		const accountId = (t as TokenUnfreezeTransaction).accountId!;
+		const account = identifiers(HederaId.from(accountId.toString()))[1];
+
+		freeze_status.set(account, false);
+	} else if (t instanceof TokenGrantKycTransaction) {
+		const accountId = (t as TokenGrantKycTransaction).accountId!;
+		const account = identifiers(HederaId.from(accountId.toString()))[1];
+
+		kyc_status.set(account, true);
+	} else if (t instanceof TokenRevokeKycTransaction) {
+		const accountId = (t as TokenRevokeKycTransaction).accountId!;
+		const account = identifiers(HederaId.from(accountId.toString()))[1];
+
+		kyc_status.set(account, false);
 	} else if (t instanceof ContractExecuteTransaction) {
 		const iface = new ethers.utils.Interface(abi);
 		const functionFragment = iface.getFunction(functionName);
@@ -533,23 +615,25 @@ jest.mock('../src/port/out/mirror/MirrorNodeAdapter', () => {
 		'../src/port/out/mirror/MirrorNodeAdapter.ts',
 	);
 
-	const singletonInstance = new actual.MirrorNodeAdapter();
+	const MirrorNodeAdapterMock = new actual.MirrorNodeAdapter();
 
-	singletonInstance.set = jest.fn().mockResolvedValue('mocked set');
-	singletonInstance.getStableCoinsList = jest.fn((accountId: HederaId) => {
-		const response: StableCoinListViewModel = {
-			coins: [{ symbol: 'A', id: accountId.toString() }],
-		};
-		return response;
-	});
-	singletonInstance.getTokenInfo = jest.fn((tokenId: HederaId) => {
+	MirrorNodeAdapterMock.set = jest.fn().mockResolvedValue('mocked set');
+	MirrorNodeAdapterMock.getStableCoinsList = jest.fn(
+		(accountId: HederaId) => {
+			const response: StableCoinListViewModel = {
+				coins: [{ symbol: 'A', id: accountId.toString() }],
+			};
+			return response;
+		},
+	);
+	MirrorNodeAdapterMock.getTokenInfo = jest.fn((tokenId: HederaId) => {
 		const response = {
 			status: 200,
 			data: null,
 		};
 		return response;
 	});
-	singletonInstance.getStableCoin = jest.fn((tokenId: HederaId) => {
+	MirrorNodeAdapterMock.getStableCoin = jest.fn((tokenId: HederaId) => {
 		const customFees = tokens.get(tokenId.toString())?.customFees;
 
 		const requestCustomFees: RequestCustomFee[] = [];
@@ -595,19 +679,14 @@ jest.mock('../src/port/out/mirror/MirrorNodeAdapter', () => {
 			supplyKey: supplyKey,
 			pauseKey: pauseKey,
 			feeScheduleKey: feeScheduleKey,
-			reserveAddress: new ContractId(
-				'0.0.' +
-					hexToDecimal(
-						'0x' + reserveAddress.toUpperCase().substring(2),
-					),
-			),
+			reserveAddress: new ContractId(reserveAddress),
 			reserveAmount: BigDecimal.fromString(reserveAmount, DECIMALS),
 			customFees: requestCustomFees,
 			metadata: metadata,
 		};
 		return response;
 	});
-	singletonInstance.getAccountInfo = jest.fn(
+	MirrorNodeAdapterMock.getAccountInfo = jest.fn(
 		(accountId: HederaId | string) => {
 			const ids = identifiers(accountId);
 
@@ -621,10 +700,10 @@ jest.mock('../src/port/out/mirror/MirrorNodeAdapter', () => {
 			return response;
 		},
 	);
-	singletonInstance.getContractMemo = jest.fn((contractId: HederaId) => {
+	MirrorNodeAdapterMock.getContractMemo = jest.fn((contractId: HederaId) => {
 		return '0x0000000000000000000000000000000000000001';
 	});
-	singletonInstance.getContractInfo = jest.fn(
+	MirrorNodeAdapterMock.getContractInfo = jest.fn(
 		(contractEvmAddress: string) => {
 			let accountId;
 
@@ -643,7 +722,7 @@ jest.mock('../src/port/out/mirror/MirrorNodeAdapter', () => {
 			return response;
 		},
 	);
-	singletonInstance.getAccountToken = jest.fn(
+	MirrorNodeAdapterMock.getAccountToken = jest.fn(
 		(targetId: HederaId, tokenId: HederaId) => {
 			const account =
 				'0x' + identifiers(targetId)[1].toUpperCase().substring(2);
@@ -667,7 +746,7 @@ jest.mock('../src/port/out/mirror/MirrorNodeAdapter', () => {
 			return response;
 		},
 	);
-	singletonInstance.getTransactionResult = jest.fn(
+	MirrorNodeAdapterMock.getTransactionResult = jest.fn(
 		(transactionId: string) => {
 			const response: TransactionResultViewModel = {
 				result: 'resultMessage',
@@ -675,7 +754,7 @@ jest.mock('../src/port/out/mirror/MirrorNodeAdapter', () => {
 			return response;
 		},
 	);
-	singletonInstance.getTransactionFinalError = jest.fn(
+	MirrorNodeAdapterMock.getTransactionFinalError = jest.fn(
 		(transactionId: string) => {
 			const response: TransactionResultViewModel = {
 				result: 'resultMessage',
@@ -683,11 +762,13 @@ jest.mock('../src/port/out/mirror/MirrorNodeAdapter', () => {
 			return response;
 		},
 	);
-	singletonInstance.accountToEvmAddress = jest.fn((accountId: HederaId) => {
-		const ids = identifiers(accountId);
-		return ids[1];
-	});
-	singletonInstance.getHBARBalance = jest.fn(
+	MirrorNodeAdapterMock.accountToEvmAddress = jest.fn(
+		(accountId: HederaId) => {
+			const ids = identifiers(accountId);
+			return ids[1];
+		},
+	);
+	MirrorNodeAdapterMock.getHBARBalance = jest.fn(
 		(accountId: HederaId | string) => {
 			const balance = HBAR_balances.get(identifiers(accountId)[1]);
 			if (balance) return BigDecimal.fromString(balance, HBAR_DECIMALS);
@@ -696,7 +777,7 @@ jest.mock('../src/port/out/mirror/MirrorNodeAdapter', () => {
 	);
 
 	return {
-		MirrorNodeAdapter: jest.fn(() => singletonInstance),
+		MirrorNodeAdapter: jest.fn(() => MirrorNodeAdapterMock),
 	};
 });
 
@@ -705,9 +786,9 @@ jest.mock('../src/port/out/hs/hts/HTSTransactionAdapter', () => {
 		'../src/port/out/hs/hts/HTSTransactionAdapter.ts',
 	);
 
-	const singletonInstance = new actual.HTSTransactionAdapter();
+	const HTSTransactionAdapterMock = new actual.HTSTransactionAdapter();
 
-	singletonInstance.init = jest.fn(() => {
+	HTSTransactionAdapterMock.init = jest.fn(() => {
 		balances.set(
 			identifiers(HederaId.from(PROXY_CONTRACT_ID))[1],
 			initialSupply,
@@ -718,8 +799,9 @@ jest.mock('../src/port/out/hs/hts/HTSTransactionAdapter', () => {
 		);
 	});
 
-	singletonInstance.register = function (account: Account) {
+	HTSTransactionAdapterMock.register = function (account: Account) {
 		user_account = account;
+		user_account.publicKey = account.privateKey?.publicKey;
 		Injectable.registerTransactionHandler(this); // `this` now correctly refers to the singletonInstance
 		const response = {
 			account: account,
@@ -729,37 +811,194 @@ jest.mock('../src/port/out/hs/hts/HTSTransactionAdapter', () => {
 		return response;
 	};
 
-	singletonInstance.stop = function () {
+	HTSTransactionAdapterMock.stop = function () {
 		return Promise.resolve(true);
 	};
 
-	singletonInstance.signAndSendTransaction = function (
+	HTSTransactionAdapterMock.signAndSendTransaction = function (
 		t: Transaction,
 		transactionType: TransactionType,
 		functionName: string,
 		abi: object[],
 	) {
 		signAndSendTransaction(t, transactionType, functionName, abi);
-		const response = new TransactionResponse('1', null, undefined);
-		return Promise.resolve(response);
+		const tokenAddress = '0x000000000000000000000000000000000054C563';
+		const reservAddressReturned = identifiers(
+			HederaId.from(reserveAddress),
+		)[1];
+		const reserveProxyAdmin = identifiers(HederaId.from('0.0.0'))[1];
+		const response = [
+			[
+				'',
+				'',
+				'',
+				tokenAddress,
+				reservAddressReturned,
+				reserveProxyAdmin,
+			],
+		];
+		const returnedResponse = new TransactionResponse(
+			'1',
+			response,
+			undefined,
+		);
+		return Promise.resolve(returnedResponse);
 	};
 
-	singletonInstance.getAccount = function () {
+	HTSTransactionAdapterMock.getAccount = function () {
 		return user_account;
 	};
 
-	singletonInstance.sign = function (
+	HTSTransactionAdapterMock.sign = function (
 		message: string | Transaction,
 	): Promise<string> {
 		return Promise.resolve('signedMessage');
 	};
 
-	singletonInstance.getMirrorNodeAdapter = function () {
+	HTSTransactionAdapterMock.getMirrorNodeAdapter = function () {
 		return new MirrorNodeAdapter();
 	};
 
+	HTSTransactionAdapterMock.create = async function (
+		coin: StableCoinProps,
+		factory: ContractId,
+		hederaTokenManager: ContractId,
+		createReserve: boolean,
+		reserveAddress?: ContractId,
+		reserveInitialAmount?: BigDecimal,
+		proxyAdminOwnerAccount?: ContractId,
+	) {
+		const mirrorNodeAdapter = new MirrorNodeAdapter();
+		try {
+			const cashinRole: FactoryCashinRole = {
+				account:
+					coin.cashInRoleAccount == undefined ||
+					coin.cashInRoleAccount.toString() == '0.0.0'
+						? '0x0000000000000000000000000000000000000000'
+						: await this.getEVMAddress(coin.cashInRoleAccount),
+				allowance: coin.cashInRoleAllowance
+					? coin.cashInRoleAllowance.toFixedNumber()
+					: BigDecimal.ZERO.toFixedNumber(),
+			};
+			const providedKeys = [
+				coin.adminKey,
+				coin.kycKey,
+				coin.freezeKey,
+				coin.wipeKey,
+				coin.supplyKey,
+				coin.feeScheduleKey,
+				coin.pauseKey,
+			];
+
+			const keys: FactoryKey[] =
+				this.setKeysForSmartContract(providedKeys);
+
+			const providedRoles = [
+				{
+					account: coin.burnRoleAccount,
+					role: StableCoinRole.BURN_ROLE,
+				},
+				{
+					account: coin.wipeRoleAccount,
+					role: StableCoinRole.WIPE_ROLE,
+				},
+				{
+					account: coin.rescueRoleAccount,
+					role: StableCoinRole.RESCUE_ROLE,
+				},
+				{
+					account: coin.pauseRoleAccount,
+					role: StableCoinRole.PAUSE_ROLE,
+				},
+				{
+					account: coin.freezeRoleAccount,
+					role: StableCoinRole.FREEZE_ROLE,
+				},
+				{
+					account: coin.deleteRoleAccount,
+					role: StableCoinRole.DELETE_ROLE,
+				},
+				{ account: coin.kycRoleAccount, role: StableCoinRole.KYC_ROLE },
+			];
+
+			const roles = await Promise.all(
+				providedRoles
+					.filter((item) => {
+						return (
+							item.account &&
+							item.account.value !== HederaId.NULL.value
+						);
+					})
+					.map(async (item) => {
+						const role = new FactoryRole();
+						role.role = item.role;
+						role.account = await this.getEVMAddress(item.account!);
+						return role;
+					}),
+			);
+
+			const stableCoinToCreate = new FactoryStableCoin(
+				coin.name,
+				coin.symbol,
+				coin.freezeDefault ?? false,
+				coin.supplyType == TokenSupplyType.FINITE,
+				coin.maxSupply
+					? coin.maxSupply.toFixedNumber()
+					: BigDecimal.ZERO.toFixedNumber(),
+				coin.initialSupply
+					? coin.initialSupply.toFixedNumber()
+					: BigDecimal.ZERO.toFixedNumber(),
+				coin.decimals,
+				reserveAddress == undefined ||
+				reserveAddress.toString() == '0.0.0'
+					? '0x0000000000000000000000000000000000000000'
+					: (
+							await mirrorNodeAdapter.getContractInfo(
+								reserveAddress.value,
+							)
+					  ).evmAddress,
+				reserveInitialAmount
+					? reserveInitialAmount.toFixedNumber()
+					: BigDecimal.ZERO.toFixedNumber(),
+				createReserve,
+				keys,
+				roles,
+				cashinRole,
+				coin.metadata ?? '',
+				proxyAdminOwnerAccount == undefined ||
+				proxyAdminOwnerAccount.toString() == '0.0.0'
+					? '0x0000000000000000000000000000000000000000'
+					: HContractId.fromString(
+							proxyAdminOwnerAccount.value,
+					  ).toSolidityAddress(),
+			);
+			const params = [
+				stableCoinToCreate,
+				(
+					await mirrorNodeAdapter.getContractInfo(
+						hederaTokenManager.value,
+					)
+				).evmAddress,
+			];
+
+			return await this.contractCall(
+				factory.value,
+				'deployStableCoin',
+				params,
+				CREATE_SC_GAS,
+				TransactionType.RECORD,
+				StableCoinFactory__factory.abi,
+				TOKEN_CREATION_COST_HBAR,
+			);
+		} catch (error) {
+			throw new Error(
+				`Unexpected error in HederaTransactionHandler create operation: ${error}`,
+			);
+		}
+	};
+
 	return {
-		HTSTransactionAdapter: jest.fn(() => singletonInstance),
+		HTSTransactionAdapter: jest.fn(() => HTSTransactionAdapterMock),
 	};
 });
 
@@ -855,17 +1094,20 @@ jest.mock('../src/port/out/rpc/RPCQueryAdapter', () => {
 		},
 	);
 	singletonInstance.getReserveAddress = jest.fn((address: EvmAddress) => {
-		return new ContractId(
-			'0.0.' +
-				hexToDecimal('0x' + reserveAddress.toUpperCase().substring(2)),
-		);
+		return new ContractId(reserveAddress);
 	});
 	singletonInstance.getReserveAmount = jest.fn((address: EvmAddress) => {
 		return BigNumber.from(reserveAmount);
 	});
 	singletonInstance.getReserveLatestRoundData = jest.fn(
 		(address: EvmAddress) => {
-			[BigNumber.from('1000'), BigNumber.from('1000')];
+			const b: BigNumber[] = [];
+			b.push(BigNumber.from('1000'));
+			b.push(BigNumber.from(reserveAmount));
+			b.push(BigNumber.from('0'));
+			b.push(BigNumber.from('0'));
+			b.push(BigNumber.from('0'));
+			return b;
 		},
 	);
 	singletonInstance.isLimited = jest.fn(
