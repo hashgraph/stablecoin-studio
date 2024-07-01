@@ -159,10 +159,10 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 			rpcNode.baseUrl,
 		);
 
-		th.signerOrProvider = new Wallet(
-			CLIENT_ACCOUNT_ECDSA.privateKey?.key ?? '',
-			customHttpProvider,
-		);
+		const hexKey =
+			CLIENT_ACCOUNT_ECDSA.privateKey!.toHashgraphKey().toStringRaw();
+
+		th.signerOrProvider = new Wallet(hexKey, customHttpProvider);
 
 		stableCoinService = Injectable.resolve(StableCoinService);
 
