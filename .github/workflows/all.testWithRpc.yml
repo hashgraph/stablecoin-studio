@@ -128,12 +128,6 @@ jobs:
       #    npm run test
       #    npm run cleanCache
       #  working-directory: web
-
-      #- name: Test Contracts
-      #  run: |
-      #    npm run test:parallel
-      #    npm run cleanCache
-      #  working-directory: contracts
       
       - name: Run the Docker image
         run: nohup docker run --network="host" rpc &
@@ -150,3 +144,9 @@ jobs:
       #    npm run test
       #    npm run cleanCache
       #  working-directory: sdk
+
+      #- name: Test Contracts
+      #  run: |
+      #    npm run test:parallel
+      #    npm run cleanCache
+      #  working-directory: contracts
