@@ -1,0 +1,191 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<MultiSigTransactions /> should render correctly 1`] = `
+<DocumentFragment>
+  <div
+    class="chakra-stack css-16oka5y"
+  >
+    <h2
+      class="chakra-heading css-1g9h7ui"
+      data-testid="base-container-heading"
+    >
+      Multi-sig transactions
+    </h2>
+    <div
+      class="css-1eyhjq9"
+      data-testid="base-container-children"
+    >
+      <div
+        class="css-zttnu1"
+      >
+        <div
+          class="chakra-select__wrapper css-1xrhsyg"
+        >
+          <select
+            class="chakra-select css-7p9xsp"
+          >
+            <option
+              value=""
+            >
+              Filter by status
+            </option>
+            <option
+              value="signed"
+            >
+              SIGNED
+            </option>
+            <option
+              value="pending"
+            >
+              PENDING
+            </option>
+            <option
+              value="expired"
+            >
+              EXPIRED
+            </option>
+            <option
+              value="error"
+            >
+              ERROR
+            </option>
+            <option
+              value="executed"
+            >
+              EXECUTED
+            </option>
+          </select>
+          <div
+            class="chakra-select__icon-wrapper css-iohxn1"
+          >
+            <svg
+              aria-hidden="true"
+              class="chakra-select__icon"
+              focusable="false"
+              role="presentation"
+              style="width: 1em; height: 1em; color: currentColor;"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"
+                fill="currentColor"
+              />
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div
+        class="css-zmih7x"
+      >
+        <div
+          class="chakra-table__container css-2wym33"
+        >
+          <table
+            class="chakra-table css-5605sr"
+          >
+            <thead
+              class="css-iqkxbt"
+            >
+              <tr
+                class="css-0"
+              >
+                <th
+                  class="css-1zts0j"
+                >
+                  ID
+                </th>
+                <th
+                  class="css-1zts0j"
+                >
+                  Description
+                </th>
+                <th
+                  class="css-1zts0j"
+                >
+                  Account
+                </th>
+                <th
+                  class="css-1zts0j"
+                >
+                  Signatures
+                </th>
+                <th
+                  class="css-1zts0j"
+                >
+                  Threshold
+                </th>
+                <th
+                  class="css-1zts0j"
+                >
+                  Status
+                </th>
+                <th
+                  class="css-1zts0j"
+                >
+                  <div
+                    class="css-70qvj9"
+                  >
+                    Start Date
+                    <span>
+                      <svg
+                        class="chakra-icon chakra-icon css-1t4484h"
+                        focusable="false"
+                        viewBox="0 0 24 24"
+                      >
+                        <g
+                          fill="currentColor"
+                          stroke="currentColor"
+                          stroke-linecap="square"
+                          stroke-width="2"
+                        >
+                          <circle
+                            cx="12"
+                            cy="12"
+                            fill="none"
+                            r="11"
+                            stroke="currentColor"
+                          />
+                          <line
+                            fill="none"
+                            x1="11.959"
+                            x2="11.959"
+                            y1="11"
+                            y2="17"
+                          />
+                          <circle
+                            cx="11.959"
+                            cy="7"
+                            r="1"
+                            stroke="none"
+                          />
+                        </g>
+                      </svg>
+                       
+                    </span>
+                  </div>
+                </th>
+                <th
+                  class="css-1zts0j"
+                >
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody
+              class="css-0"
+            />
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+  <span
+    hidden=""
+    id="__chakra_env"
+  />
+</DocumentFragment>
+`;

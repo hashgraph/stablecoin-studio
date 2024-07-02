@@ -131,7 +131,7 @@ const ManageCashIn = () => {
 				return;
 			}
 			const values = getValues();
-			console.log('values', values);
+			// console.log('values', values);
 			switch (supplierLimitOption) {
 				case 'INCREASE':
 					await SDKService.increaseSupplierAllowance(
