@@ -23,7 +23,7 @@ import { lazyInject } from '../../../../../core/decorator/LazyInjectDecorator.js
 import { QueryHandler } from '../../../../../core/decorator/QueryHandlerDecorator.js';
 import { IQueryHandler } from '../../../../../core/query/QueryHandler.js';
 import ContractId from '../../../../../domain/context/contract/ContractId.js';
-import RPCQueryAdapter from '../../../../../port/out/rpc/RPCQueryAdapter.js';
+import { RPCQueryAdapter } from '../../../../../port/out/rpc/RPCQueryAdapter.js';
 import { MirrorNodeAdapter } from '../../../../../port/out/mirror/MirrorNodeAdapter.js';
 import EvmAddress from '../../../../../domain/context/contract/EvmAddress.js';
 import { ContractId as HContractId } from '@hashgraph/sdk';

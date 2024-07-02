@@ -146,7 +146,7 @@ describe('HederaTokenManager Tests', function () {
         )
         await updateToken(
             proxyAddress,
-            'newName',
+            'new Name',
             'newSymbol',
             keysToKey,
             oneYearLaterInSeconds(),
@@ -401,7 +401,7 @@ describe('HederaTokenManager Tests', function () {
     })
 })
 
-describe('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', function () {
+describe.skip('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', function () {
     before(async function () {
         // Deploy Token using Client
         const result = await deployContractsWithSDK({

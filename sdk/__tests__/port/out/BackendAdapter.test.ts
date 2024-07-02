@@ -18,174 +18,19 @@
  *
  */
 
+jest.unmock('../../../src/port/out/backend/BackendAdapter');
+
 import { BackendAdapter } from '../../../src/port/out/backend/BackendAdapter.js';
-
-const URL = 'http://example.com/';
-
-const TRANSACTION = {
-	transaction_message: 'transaction_message',
-	description: 'description',
-	hedera_account_id: '0.0.1',
-	key_list: ['key1', 'key2'],
-	threshold: 2,
-	network: 'testnet',
-	originHeader: 'http://localhost:3000',
-	startDate: '2024-04-25',
-};
-
-const SIGNATURE = {
-	transactionId: 'transactionId',
-	transactionSignature: 'transactionSignature',
-	publicKey: 'publicKey',
-};
-
-const UPDATE = {
-	transactionId: 'transactionId',
-	status: 'EXECUTED',
-};
-
-const DELETE = {
-	transactionId: 'transactionId',
-	originHeader: 'http://localhost:3000',
-};
-
-const GET_TRANSACTIONS = {
-	page: 1,
-	limit: 10,
-	network: 'testnet',
-	publicKey: 'publicKey',
-	status: 'status',
-	accountId: '0.0.1',
-};
-
-const PAGINATION = {
-	totalItems: 560,
-	itemCount: 10,
-	itemsPerPage: 10,
-	totalPages: 56,
-	currentPage: 1,
-};
-
-const GET_TRANSACTION = {
-	id: 'id',
-	transaction_message: 'transaction_message',
-	description: 'description',
-	status: 'status',
-	threshold: 3,
-	key_list: ['key_1', 'key_2'],
-	signed_keys: ['signed_key_1', 'signed_key_2'],
-	signatures: ['signature_1', 'signature_2'],
-	network: 'testnet',
-	hedera_account_id: '0.0.1',
-};
-
-jest.mock('axios', () => {
-	return {
-		create: jest.fn(() => ({
-			post: jest.fn((url, body, config) => {
-				if (
-					url == '' &&
-					body.transaction_message ==
-						TRANSACTION.transaction_message &&
-					body.description == TRANSACTION.description &&
-					body.hedera_account_id == TRANSACTION.hedera_account_id &&
-					body.key_list.length == TRANSACTION.key_list.length &&
-					body.key_list[0] == TRANSACTION.key_list[0] &&
-					body.key_list[1] == TRANSACTION.key_list[1] &&
-					body.threshold == TRANSACTION.threshold &&
-					body.network == TRANSACTION.network &&
-					config.headers.Origin == TRANSACTION.originHeader &&
-					body.startDate == new Date(TRANSACTION.startDate)
-				)
-					return {
-						status: 201,
-						data: {
-							transactionId: 'transactionId',
-						},
-					};
-				return {
-					status: 400,
-				};
-			}),
-			put: jest.fn((url, body) => {
-				if (
-					url == SIGNATURE.transactionId &&
-					body.signature == SIGNATURE.transactionSignature &&
-					body.public_key == SIGNATURE.publicKey
-				)
-					return {
-						status: 204,
-					};
-				else if (
-					url == UPDATE.transactionId &&
-					body.status == UPDATE.status
-				)
-					return {
-						status: 204,
-					};
-				else
-					return {
-						status: 400,
-					};
-			}),
-			get: jest.fn((url, body) => {
-				if (url == GET_TRANSACTION.id)
-					return {
-						status: 200,
-						data: GET_TRANSACTION,
-					};
-				if (
-					body.params.page == GET_TRANSACTIONS.page &&
-					body.params.limit == GET_TRANSACTIONS.limit &&
-					body.params.network == GET_TRANSACTIONS.network
-				) {
-					if (
-						!body.params.publicKey &&
-						!body.params.status &&
-						!body.params.hederaAccountId
-					)
-						return {
-							status: 200,
-							data: {
-								items: [GET_TRANSACTION],
-								meta: PAGINATION,
-							},
-						};
-
-					if (
-						body.params.publicKey == GET_TRANSACTIONS.publicKey &&
-						body.params.status == GET_TRANSACTIONS.status &&
-						body.params.hederaAccountId ==
-							GET_TRANSACTIONS.accountId
-					)
-						return {
-							status: 200,
-							data: {
-								items: [GET_TRANSACTION],
-								meta: PAGINATION,
-							},
-						};
-				}
-
-				return {
-					status: 400,
-				};
-			}),
-			delete: jest.fn((url, config) => {
-				if (
-					url == DELETE.transactionId &&
-					config.headers.Origin == DELETE.originHeader
-				)
-					return {
-						status: 200,
-					};
-				return {
-					status: 400,
-				};
-			}),
-		})),
-	};
-});
+import {
+	GET_TRANSACTION,
+	GET_TRANSACTIONS,
+	SIGNATURE,
+	TRANSACTION,
+	UPDATE,
+	PAGINATION,
+	DELETE,
+	URL,
+} from '../../config.js';
 
 describe('🧪 BackendAdapter test', () => {
 	let backendAdapter: BackendAdapter;

@@ -18,7 +18,14 @@
  *
  */
 
-import { Account, Network } from '../../../src/index.js';
+import {
+	Account,
+	AccountViewModel,
+	HederaId,
+	Network,
+	PublicKey,
+	StableCoinListViewModel,
+} from '../../../src/index.js';
 import {
 	GetAccountInfoRequest,
 	GetListStableCoinRequest,
