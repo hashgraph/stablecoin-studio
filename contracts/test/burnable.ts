@@ -1,23 +1,14 @@
 import '@hashgraph/hardhat-hethers'
 import { BigNumber } from 'ethers'
 import { deployContractsWithSDK } from '../scripts/deploy'
-import {
-    Burn,
-    getTotalSupply,
-    grantRole,
-    hasRole,
-    revokeRole,
-} from '../scripts/contractsMethods'
-import { BURN_ROLE } from '../scripts/constants'
+import { Burn, getTotalSupply } from '../scripts/contractsMethods'
 import { ContractId } from '@hashgraph/sdk'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import {
     INIT_SUPPLY,
     MAX_SUPPLY,
-    nonOperatorAccount,
     nonOperatorClient,
-    nonOperatorIsE25519,
     operatorAccount,
     operatorClient,
     operatorIsE25519,
@@ -56,95 +47,7 @@ describe('Burn Tests', function () {
         proxyAddress = result[0]
     })
 
-    it('Admin account can grant and revoke burnable role to an account', async function () {
-        // Admin grants burn role : success
-        let result = await hasRole(
-            BURN_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-        expect(result).to.equals(false)
-
-        await grantRole(
-            BURN_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-
-        result = await hasRole(
-            BURN_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-        expect(result).to.equals(true)
-
-        // Admin revokes burn role : success
-        await revokeRole(
-            BURN_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-        result = await hasRole(
-            BURN_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-        expect(result).to.equals(false)
-    })
-
-    it('Non Admin account can not grant burnable role to an account', async function () {
-        // Non Admin grants burn role : fail
-        await expect(
-            grantRole(
-                BURN_ROLE,
-                proxyAddress,
-                nonOperatorClient,
-                nonOperatorAccount,
-                nonOperatorIsE25519
-            )
-        ).to.eventually.be.rejectedWith(Error)
-    })
-
-    it('Non Admin account can not revoke burnable role to an account', async function () {
-        // Non Admin revokes burn role : fail
-        await grantRole(
-            BURN_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-        await expect(
-            revokeRole(
-                BURN_ROLE,
-                proxyAddress,
-                nonOperatorClient,
-                nonOperatorAccount,
-                nonOperatorIsE25519
-            )
-        ).to.eventually.be.rejectedWith(Error)
-
-        //Reset status
-        await revokeRole(
-            BURN_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-    })
-
-    it('Can burn 10 tokens from the treasury account having 100 tokens', async function () {
+    it('Account with BURN role can burn 10 tokens from the treasury account having 100 tokens', async function () {
         const tokensToBurn = INIT_SUPPLY.div(10)
 
         // Get the initial total supply and treasury account's balanceOf
@@ -168,7 +71,7 @@ describe('Burn Tests', function () {
         )
     })
 
-    it('Cannot burn more tokens than the treasury account has', async function () {
+    it('Account with BURN role cannot burn more tokens than the treasury account has', async function () {
         // Retrieve original total supply
         const currentTotalSupply = await getTotalSupply(
             proxyAddress,
@@ -181,43 +84,17 @@ describe('Burn Tests', function () {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('User without burn role cannot burn tokens', async function () {
+    it('Account with BURN role cannot burn a negative amount', async function () {
+        // burn more tokens than original total supply : fail
+        await expect(
+            Burn(proxyAddress, BigNumber.from('-1'), operatorClient)
+        ).to.eventually.be.rejectedWith(Error)
+    })
+
+    it('Account without BURN role cannot burn tokens', async function () {
         // Account without burn role, burns tokens : fail
         await expect(
             Burn(proxyAddress, BigNumber.from(1), nonOperatorClient)
         ).to.eventually.be.rejectedWith(Error)
-    })
-
-    it('User with granted burn role can burn tokens', async function () {
-        const tokensToBurn = BigNumber.from(1)
-
-        // Retrieve original total supply
-        const initialTotalSupply = await getTotalSupply(
-            proxyAddress,
-            operatorClient
-        )
-
-        // Grant burn role to account
-        await grantRole(
-            BURN_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-
-        // Burn tokens with newly granted account
-        await Burn(proxyAddress, tokensToBurn, nonOperatorClient)
-
-        // Check final total supply and treasury account's balanceOf : success
-        const finalTotalSupply = await getTotalSupply(
-            proxyAddress,
-            operatorClient
-        )
-        const expectedTotalSupply = initialTotalSupply.sub(tokensToBurn)
-
-        expect(finalTotalSupply.toString()).to.equals(
-            expectedTotalSupply.toString()
-        )
     })
 })

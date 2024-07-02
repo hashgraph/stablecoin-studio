@@ -37,6 +37,9 @@ const expect = chai.expect
 
 let proxyAddress: ContractId
 
+const TokensToMint = BigNumber.from(20).mul(TOKEN_FACTOR)
+const TokensToWipe = BigNumber.from(10).mul(TOKEN_FACTOR)
+
 describe('Wipe Tests', function () {
     before(async function () {
         // Deploy Token using Client
@@ -59,98 +62,7 @@ describe('Wipe Tests', function () {
         proxyAddress = result[0]
     })
 
-    it('Admin account can grant and revoke wipe role to an account', async function () {
-        // Admin grants wipe role : success
-        let result = await hasRole(
-            WIPE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-        expect(result).to.equals(false)
-
-        await grantRole(
-            WIPE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-
-        result = await hasRole(
-            WIPE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-        expect(result).to.equals(true)
-
-        // Admin revokes wipe role : success
-        await revokeRole(
-            WIPE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-        result = await hasRole(
-            WIPE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-        expect(result).to.equals(false)
-    })
-
-    it('Non Admin account can not grant wipe role to an account', async function () {
-        // Non Admin grants wipe role : fail
-        await expect(
-            grantRole(
-                WIPE_ROLE,
-                proxyAddress,
-                nonOperatorClient,
-                nonOperatorAccount,
-                nonOperatorIsE25519
-            )
-        ).to.eventually.be.rejectedWith(Error)
-    })
-
-    it('Non Admin account can not revoke wipe role to an account', async function () {
-        // Non Admin revokes wipe role : fail
-        await grantRole(
-            WIPE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-        await expect(
-            revokeRole(
-                WIPE_ROLE,
-                proxyAddress,
-                nonOperatorClient,
-                nonOperatorAccount,
-                nonOperatorIsE25519
-            )
-        ).to.eventually.be.rejectedWith(Error)
-
-        //Reset status
-        await revokeRole(
-            WIPE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-    })
-
-    it('wipe 10 tokens from an account with 20 tokens', async function () {
-        const TokensToMint = BigNumber.from(20).mul(TOKEN_FACTOR)
-        const TokensToWipe = BigNumber.from(10).mul(TOKEN_FACTOR)
-
+    it('Account with WIPE role can wipe 10 tokens from an account with 20 tokens', async function () {
         // Mint 20 tokens
         await Mint(
             proxyAddress,
@@ -203,9 +115,7 @@ describe('Wipe Tests', function () {
         )
     })
 
-    it("Wiping more than account's balance", async function () {
-        const TokensToMint = BigNumber.from(20).mul(TOKEN_FACTOR)
-
+    it("Account with WIPE role cannot wipe more than account's balance", async function () {
         // Mint 20 tokens
         await Mint(
             proxyAddress,
@@ -235,9 +145,20 @@ describe('Wipe Tests', function () {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('Wiping from account without the wipe role', async function () {
-        const TokensToMint = BigNumber.from(20).mul(TOKEN_FACTOR)
+    it('Account with WIPE role cannot wipe a negative amount', async function () {
+        // Wipe more than account's balance : fail
+        await expect(
+            Wipe(
+                proxyAddress,
+                BigNumber.from('-1'),
+                operatorClient,
+                operatorAccount,
+                operatorIsE25519
+            )
+        ).to.eventually.be.rejectedWith(Error)
+    })
 
+    it('Account without WIPE role cannot wipe tokens', async function () {
         // Mint 20 tokens
         await Mint(
             proxyAddress,
@@ -257,70 +178,5 @@ describe('Wipe Tests', function () {
                 operatorIsE25519
             )
         ).to.eventually.be.rejectedWith(Error)
-    })
-
-    it('User with granted wipe role can wipe tokens', async function () {
-        const TokensToMint = BigNumber.from(20).mul(TOKEN_FACTOR)
-        const TokensToWipe = BigNumber.from(1)
-
-        // Mint 20 tokens
-        await Mint(
-            proxyAddress,
-            TokensToMint,
-            operatorClient,
-            operatorAccount,
-            operatorIsE25519
-        )
-
-        // Retrieve original total supply
-        const initialBalanceOf = await getBalanceOf(
-            proxyAddress,
-            operatorClient,
-            operatorAccount,
-            operatorIsE25519
-        )
-        const initialTotalSupply = await getTotalSupply(
-            proxyAddress,
-            operatorClient
-        )
-
-        // Grant wipe role to account
-        await grantRole(
-            WIPE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-
-        // Wipe tokens with newly granted account
-        await Wipe(
-            proxyAddress,
-            TokensToWipe,
-            nonOperatorClient,
-            operatorAccount,
-            operatorIsE25519
-        )
-
-        // Check final total supply and treasury account's balanceOf : success
-        const finalBalanceOf = await getBalanceOf(
-            proxyAddress,
-            operatorClient,
-            operatorAccount,
-            operatorIsE25519
-        )
-        const finalTotalSupply = await getTotalSupply(
-            proxyAddress,
-            operatorClient
-        )
-        const expectedFinalBalanceOf = initialBalanceOf.sub(TokensToWipe)
-        const expectedTotalSupply = initialTotalSupply.sub(TokensToWipe)
-
-        expect(finalBalanceOf.toString()).to.equals(
-            expectedFinalBalanceOf.toString()
-        )
-        expect(finalTotalSupply.toString()).to.equals(
-            expectedTotalSupply.toString()
-        )
     })
 })

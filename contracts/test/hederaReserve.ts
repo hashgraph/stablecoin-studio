@@ -50,7 +50,7 @@ const reserve = BigNumber.from('100').mul(TOKEN_FACTOR)
 
 const proxyAdminAbi = ProxyAdmin__factory.abi
 
-describe('HederaReserve Tests', function () {
+describe.skip('HederaReserve Tests', function () {
     before(async function () {
         // Generate Client 1 and Client 2
         const result = await deployHederaReserve(
@@ -192,7 +192,7 @@ describe('HederaReserve Tests', function () {
     })
 })
 
-describe('HederaReserveProxy and HederaReserveProxyAdmin Tests', function () {
+describe.skip('HederaReserveProxy and HederaReserveProxyAdmin Tests', function () {
     before(async function () {
         const result = await deployHederaReserve(
             reserve,

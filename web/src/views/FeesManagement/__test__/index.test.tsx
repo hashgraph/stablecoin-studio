@@ -201,6 +201,7 @@ describe(`<${FeesManagement.name} />`, () => {
 		});
 
 		const component = render(<FeesManagement />, store);
+		component.debug();
 
 		const addButton = component.getByTestId('add-btn');
 		expect(addButton).toBeEnabled();
@@ -210,15 +211,15 @@ describe(`<${FeesManagement.name} />`, () => {
 		await act(async () => userEvent.click(feeTypeSelectedItem));
 
 		const amount = component.getByTestId('fees.0.amountOrPercentage');
-		await userEvent.type(amount, '1');
+		await act(async () => userEvent.type(amount, '1'));
 
 		const feeTypeSelector = component.getAllByRole('combobox')[1];
 		await act(async () => userEvent.click(feeTypeSelector));
 		const option = component.getByText('HBAR');
-		userEvent.click(option);
+		await act(async () => userEvent.click(option));
 
 		const collectorAccount = component.getByTestId('fees.0.collectorAccount');
-		userEvent.type(collectorAccount, '0.0.123456');
+		await act(async () => userEvent.type(collectorAccount, '0.0.123456'));
 
 		const saveButton = component.getByTestId('save-btn');
 		await waitFor(() => {

@@ -9,12 +9,7 @@ import type { Step } from '../../components/Stepper';
 import Stepper from '../../components/Stepper';
 import { NamedRoutes } from '../../Router/NamedRoutes';
 import { RouterManager } from '../../Router/RouterManager';
-import {
-	getStableCoinList,
-	getExternalTokenList,
-	SELECTED_WALLET_ACCOUNT_INFO,
-	SELECTED_WALLET_PAIRED_ACCOUNT,
-} from '../../store/slices/walletSlice';
+import { getStableCoinList, getExternalTokenList } from '../../store/slices/walletSlice';
 import SDKService from '../../services/SDKService';
 import ModalNotification from '../../components/ModalNotification';
 import { useDispatch, useSelector } from 'react-redux';
@@ -22,6 +17,10 @@ import type { AppDispatch } from '../../store/store';
 import ImportedTokenInfo from './ImportedTokenInfo';
 import { ImportTokenService } from '../../services/ImportTokenService';
 import { GetStableCoinDetailsRequest } from '@hashgraph/stablecoin-npm-sdk';
+import {
+	SELECTED_WALLET_ACCOUNT_INFO,
+	SELECTED_WALLET_PAIRED_ACCOUNT,
+} from '../../store/walletSelectors';
 
 const ImportedTokenCreation = () => {
 	const navigate = useNavigate();

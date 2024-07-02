@@ -20,7 +20,7 @@
 
 import { ApiProperty } from '@nestjs/swagger';
 import { IsIn, IsNotEmpty } from 'class-validator';
-import { TransactionStatus } from '../status.enum.js';
+import { TransactionStatus } from '../status.enum';
 
 export class UpdateTransactionRequestDto {
   @ApiProperty({

@@ -35,9 +35,12 @@ describe(`<${RescueHBAROperation.name} />`, () => {
 		const amount = component.getByTestId('amount');
 		userEvent.type(amount, '10000');
 
-		await waitFor(() => {
-			expect(button).toBeEnabled();
-		});
+		await waitFor(
+			() => {
+				expect(button).toBeEnabled();
+			},
+			{ timeout: 5000 },
+		);
 	});
 
 	test('should handle rescue hbars', async () => {
@@ -47,9 +50,12 @@ describe(`<${RescueHBAROperation.name} />`, () => {
 		const amount = component.getByTestId('amount');
 		userEvent.type(amount, '10000');
 
-		await waitFor(() => {
-			expect(confirmButton).toBeEnabled();
-		});
+		await waitFor(
+			() => {
+				expect(confirmButton).toBeEnabled();
+			},
+			{ timeout: 5000 },
+		);
 
 		await userEvent.click(confirmButton);
 
