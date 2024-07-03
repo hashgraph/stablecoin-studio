@@ -211,7 +211,7 @@ describe('Manage Multi-Signature Transactions Service', () => {
       //* 🕵️ Assert
       expect(mocks.cleanAndShowBanner).toHaveBeenCalledTimes(1);
       expect(mocks.getTransactions).toHaveBeenCalledTimes(1);
-      expect(mocks.defaultMultipleAsk).toHaveBeenCalledTimes(1);
+      expect(mocks.defaultMultipleAsk).toHaveBeenCalledTimes(2);
       expect(mocks.multiSigTxActions).toHaveBeenCalledTimes(1);
       expect(mocks.getTransactions).toHaveBeenCalledWith(
         expect.objectContaining({
