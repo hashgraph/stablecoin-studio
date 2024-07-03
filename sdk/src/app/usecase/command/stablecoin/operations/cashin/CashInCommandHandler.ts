@@ -35,7 +35,7 @@ import {
 	FreezeStatus,
 	KycStatus,
 } from '../../../../../../port/out/mirror/response/AccountTokenRelationViewModel.js';
-import RPCQueryAdapter from '../../../../../../port/out/rpc/RPCQueryAdapter.js';
+import { RPCQueryAdapter } from '../../../../../../port/out/rpc/RPCQueryAdapter.js';
 import { AccountFreeze } from '../../error/AccountFreeze.js';
 import { AccountNotKyc } from '../../error/AccountNotKyc.js';
 import { GetReserveAmountQuery } from '../../../../query/stablecoin/getReserveAmount/GetReserveAmountQuery.js';
