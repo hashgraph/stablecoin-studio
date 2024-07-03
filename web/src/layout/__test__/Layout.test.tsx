@@ -5,30 +5,35 @@ const layoutProps = {
 	children: <span data-testid='layout-children'>TESTING</span>,
 };
 
-describe(`<${Layout.name} />`, () => {
-	test('should render correctly', () => {
-		const component = render(<Layout {...layoutProps} />);
+const setup = () => {
+	const utils = render(<Layout {...layoutProps} />);
+	return {
+		...utils,
+	};
+};
 
+describe(`<${Layout.name} />`, () => {
+	let component: any;
+
+	beforeEach(() => {
+		component = setup();
+	});
+
+	test('should render correctly', () => {
 		expect(component.asFragment()).toMatchSnapshot();
 	});
 
 	test('should has a topbar', () => {
-		const component = render(<Layout {...layoutProps} />);
-
 		const topbar = component.getByTestId('topbar');
 		expect(topbar).toBeInTheDocument();
 	});
 
 	test('should has a sidebar', () => {
-		const component = render(<Layout {...layoutProps} />);
-
-		const topbar = component.getByTestId('sidebar');
-		expect(topbar).toBeInTheDocument();
+		const sidebar = component.getByTestId('sidebar');
+		expect(sidebar).toBeInTheDocument();
 	});
 
 	test('should render a children', () => {
-		const component = render(<Layout {...layoutProps} />);
-
 		const children = component.getByTestId('layout-children');
 		expect(children).toBeInTheDocument();
 	});

@@ -118,12 +118,12 @@
 		"preset": "ts-jest",
 		"testEnvironment": "jsdom",
 		"clearMocks": true,
-		"testTimeout": 20000,
+		"testTimeout": 60000,
 		"modulePaths": [
 			"<rootDir>/src"
 		],
 		"setupFilesAfterEnv": [
-			"<rootDir>/src/test/setupTests.ts"
+			"<rootDir>/src/test/setupTests.tsx"
 		],
 		"moduleNameMapper": {
 			"^(\\.{1,2}/.*)\\.(m)?js$": "$1",

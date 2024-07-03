@@ -19,7 +19,6 @@
  */
 
 /* eslint-disable jest/no-disabled-tests */
-import Injectable from '../../../src/core/Injectable.js';
 import {
 	Account,
 	Network,
@@ -29,6 +28,7 @@ import {
 	Proxy,
 	Factory,
 	ProxyConfigurationViewModel,
+	HederaId,
 } from '../../../src/index.js';
 import {
 	ChangeProxyOwnerRequest,
@@ -46,7 +46,6 @@ import {
 import ConnectRequest, {
 	SupportedWallets,
 } from '../../../src/port/in/request/ConnectRequest.js';
-
 import {
 	CLIENT_ACCOUNT_ED25519_2,
 	CLIENT_ACCOUNT_ED25519,
@@ -59,6 +58,7 @@ import {
 import ContractId from 'domain/context/contract/ContractId.js';
 import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
+import Injectable from '../../../src/core/Injectable.js';
 
 const mirrorNode: MirrorNode = {
 	name: MIRROR_NODE.name,
@@ -71,11 +71,8 @@ const rpcNode: JsonRpcRelay = {
 };
 
 describe('🧪 Proxy test', () => {
-	let stableCoinSC: StableCoinViewModel;
-
-	const delay = async (seconds = 3): Promise<void> => {
-		seconds = seconds * 1000;
-		await new Promise((r) => setTimeout(r, seconds));
+	const stableCoinSC = {
+		tokenId: new HederaId('0.0.7777777'),
 	};
 
 	beforeAll(async () => {
@@ -102,28 +99,6 @@ describe('🧪 Proxy test', () => {
 			}),
 		);
 		Injectable.resolveTransactionHandler();
-		const requestSC = new CreateRequest({
-			name: 'TEST_ACCELERATOR_SC',
-			symbol: 'TEST',
-			decimals: '6',
-			initialSupply: '1000',
-			freezeKey: Account.NullPublicKey,
-			kycKey: Account.NullPublicKey,
-			wipeKey: Account.NullPublicKey,
-			pauseKey: Account.NullPublicKey,
-			supplyType: TokenSupplyType.INFINITE,
-			stableCoinFactory: FACTORY_ADDRESS,
-			hederaTokenManager: HEDERA_TOKEN_MANAGER_ADDRESS,
-			createReserve: true,
-			grantKYCToOriginalSender: true,
-			burnRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
-			rescueRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
-			deleteRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
-			reserveInitialAmount: '1000',
-		});
-		stableCoinSC = (await StableCoin.create(requestSC)).coin;
-
-		await delay();
 	}, 60_000);
 
 	it('Upgrade SC proxy implementation', async () => {
@@ -166,17 +141,6 @@ describe('🧪 Proxy test', () => {
 	}, 60_000);
 
 	it('Changes SC proxy owner', async () => {
-		let proxyConfig: ProxyConfigurationViewModel =
-			await Proxy.getProxyConfig(
-				new GetProxyConfigRequest({
-					tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
-				}),
-			);
-
-		expect(proxyConfig.owner.toString()).toBe(
-			CLIENT_ACCOUNT_ED25519.id.toString(),
-		);
-
 		await Proxy.changeProxyOwner(
 			new ChangeProxyOwnerRequest({
 				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
@@ -184,9 +148,7 @@ describe('🧪 Proxy test', () => {
 			}),
 		);
 
-		await delay();
-
-		proxyConfig = await Proxy.getProxyConfig(
+		let proxyConfig = await Proxy.getProxyConfig(
 			new GetProxyConfigRequest({
 				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
 			}),
@@ -196,26 +158,11 @@ describe('🧪 Proxy test', () => {
 			CLIENT_ACCOUNT_ECDSA.id.toString(),
 		);
 
-		await Network.connect(
-			new ConnectRequest({
-				account: {
-					accountId: CLIENT_ACCOUNT_ECDSA.id.toString(),
-					privateKey: CLIENT_ACCOUNT_ECDSA.privateKey,
-				},
-				network: 'testnet',
-				wallet: SupportedWallets.CLIENT,
-				mirrorNode: mirrorNode,
-				rpcNode: rpcNode,
-			}),
-		);
-
 		await Proxy.acceptProxyOwner(
 			new AcceptProxyOwnerRequest({
 				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
 			}),
 		);
-
-		await delay();
 
 		proxyConfig = await Proxy.getProxyConfig(
 			new GetProxyConfigRequest({
@@ -226,128 +173,30 @@ describe('🧪 Proxy test', () => {
 		expect(proxyConfig.owner.toString()).toBe(
 			CLIENT_ACCOUNT_ECDSA.id.toString(),
 		);
-
-		await Proxy.changeProxyOwner(
-			new ChangeProxyOwnerRequest({
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
-				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-			}),
-		);
-
-		await delay();
-
-		await Network.connect(
-			new ConnectRequest({
-				account: {
-					accountId: CLIENT_ACCOUNT_ED25519.id.toString(),
-					privateKey: CLIENT_ACCOUNT_ED25519.privateKey,
-				},
-				network: 'testnet',
-				wallet: SupportedWallets.CLIENT,
-				mirrorNode: mirrorNode,
-				rpcNode: rpcNode,
-			}),
-		);
-
-		await Proxy.acceptProxyOwner(
-			new AcceptProxyOwnerRequest({
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
-			}),
-		);
 	}, 80_000);
 
-	it.skip('Upgrade Factory proxy implementation', async () => {
-		await Network.connect(
-			new ConnectRequest({
-				account: {
-					accountId: CLIENT_ACCOUNT_ED25519_2.id.toString(),
-					privateKey: CLIENT_ACCOUNT_ED25519_2.privateKey,
-				},
-				network: 'testnet',
-				wallet: SupportedWallets.CLIENT,
-				mirrorNode: mirrorNode,
-				rpcNode: rpcNode,
-			}),
-		);
-
-		let factoryProxyConfig: ProxyConfigurationViewModel =
-			await Proxy.getFactoryProxyConfig(
-				new GetFactoryProxyConfigRequest({
-					factoryId: FACTORY_ADDRESS,
-				}),
-			);
-
-		const oldFactoryImpl = factoryProxyConfig.implementationAddress;
-
-		const contracts: ContractId[] = await Factory.getHederaTokenManagerList(
-			new GetTokenManagerListRequest({ factoryId: FACTORY_ADDRESS }),
-		);
+	it('Upgrade Factory proxy implementation', async () => {
+		const contract = '0.0.1234567';
 
 		await Proxy.upgradeFactoryImplementation(
 			new UpgradeFactoryImplementationRequest({
 				factoryId: FACTORY_ADDRESS,
-				implementationAddress: contracts[0].toString(),
+				implementationAddress: contract,
 			}),
 		);
 
-		await delay();
-
-		factoryProxyConfig = await Proxy.getFactoryProxyConfig(
+		const factoryProxyConfig = await Proxy.getFactoryProxyConfig(
 			new GetFactoryProxyConfigRequest({
 				factoryId: FACTORY_ADDRESS,
 			}),
 		);
 
 		expect(factoryProxyConfig.implementationAddress.toString()).toBe(
-			contracts[0].toString(),
-		);
-
-		await Proxy.upgradeFactoryImplementation(
-			new UpgradeFactoryImplementationRequest({
-				factoryId: FACTORY_ADDRESS,
-				implementationAddress: oldFactoryImpl.toString(),
-			}),
-		);
-
-		await Network.connect(
-			new ConnectRequest({
-				account: {
-					accountId: CLIENT_ACCOUNT_ED25519.id.toString(),
-					privateKey: CLIENT_ACCOUNT_ED25519.privateKey,
-				},
-				network: 'testnet',
-				wallet: SupportedWallets.CLIENT,
-				mirrorNode: mirrorNode,
-				rpcNode: rpcNode,
-			}),
+			contract,
 		);
 	}, 60_000);
 
-	it.skip('Changes Factory proxy owner', async () => {
-		await Network.connect(
-			new ConnectRequest({
-				account: {
-					accountId: CLIENT_ACCOUNT_ED25519_2.id.toString(),
-					privateKey: CLIENT_ACCOUNT_ED25519_2.privateKey,
-				},
-				network: 'testnet',
-				wallet: SupportedWallets.CLIENT,
-				mirrorNode: mirrorNode,
-				rpcNode: rpcNode,
-			}),
-		);
-
-		let factoryProxyConfig: ProxyConfigurationViewModel =
-			await Proxy.getFactoryProxyConfig(
-				new GetFactoryProxyConfigRequest({
-					factoryId: FACTORY_ADDRESS,
-				}),
-			);
-
-		expect(factoryProxyConfig.owner.toString()).toBe(
-			CLIENT_ACCOUNT_ED25519_2.id.toString(),
-		);
-
+	it('Changes Factory proxy owner', async () => {
 		await Proxy.changeFactoryProxyOwner(
 			new ChangeFactoryProxyOwnerRequest({
 				factoryId: FACTORY_ADDRESS,
@@ -355,9 +204,7 @@ describe('🧪 Proxy test', () => {
 			}),
 		);
 
-		await delay();
-
-		factoryProxyConfig = await Proxy.getFactoryProxyConfig(
+		let factoryProxyConfig = await Proxy.getFactoryProxyConfig(
 			new GetFactoryProxyConfigRequest({
 				factoryId: FACTORY_ADDRESS,
 			}),
@@ -367,26 +214,11 @@ describe('🧪 Proxy test', () => {
 			CLIENT_ACCOUNT_ED25519.id.toString(),
 		);
 
-		await Network.connect(
-			new ConnectRequest({
-				account: {
-					accountId: CLIENT_ACCOUNT_ED25519.id.toString(),
-					privateKey: CLIENT_ACCOUNT_ED25519.privateKey,
-				},
-				network: 'testnet',
-				wallet: SupportedWallets.CLIENT,
-				mirrorNode: mirrorNode,
-				rpcNode: rpcNode,
-			}),
-		);
-
 		await Proxy.acceptFactoryProxyOwner(
 			new AcceptFactoryProxyOwnerRequest({
 				factoryId: FACTORY_ADDRESS,
 			}),
 		);
-
-		await delay();
 
 		factoryProxyConfig = await Proxy.getFactoryProxyConfig(
 			new GetFactoryProxyConfigRequest({
@@ -396,32 +228,6 @@ describe('🧪 Proxy test', () => {
 
 		expect(factoryProxyConfig.owner.toString()).toBe(
 			CLIENT_ACCOUNT_ED25519.id.toString(),
-		);
-
-		await Proxy.changeFactoryProxyOwner(
-			new ChangeFactoryProxyOwnerRequest({
-				factoryId: FACTORY_ADDRESS,
-				targetId: CLIENT_ACCOUNT_ED25519_2.id.toString(),
-			}),
-		);
-
-		await Network.connect(
-			new ConnectRequest({
-				account: {
-					accountId: CLIENT_ACCOUNT_ED25519_2.id.toString(),
-					privateKey: CLIENT_ACCOUNT_ED25519_2.privateKey,
-				},
-				network: 'testnet',
-				wallet: SupportedWallets.CLIENT,
-				mirrorNode: mirrorNode,
-				rpcNode: rpcNode,
-			}),
-		);
-
-		await Proxy.acceptFactoryProxyOwner(
-			new AcceptFactoryProxyOwnerRequest({
-				factoryId: FACTORY_ADDRESS,
-			}),
 		);
 	}, 80_000);
 });

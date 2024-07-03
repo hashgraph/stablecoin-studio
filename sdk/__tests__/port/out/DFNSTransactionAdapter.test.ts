@@ -18,6 +18,11 @@
  *
  */
 
+jest.resetModules();
+jest.unmock('../../../src/port/out/mirror/MirrorNodeAdapter.ts');
+jest.unmock('../../../src/port/out/rpc/RPCQueryAdapter.ts');
+jest.unmock('axios');
+
 import {
 	AssociateTokenRequest,
 	CreateRequest,
@@ -35,6 +40,7 @@ import ConnectRequest, {
 	DFNSConfigRequest,
 } from '../../../src/port/in/request/ConnectRequest';
 import {
+	DECIMALS,
 	DFNS_SETTINGS,
 	FACTORY_ADDRESS,
 	HEDERA_TOKEN_MANAGER_ADDRESS,
@@ -42,15 +48,9 @@ import {
 	RPC_NODE,
 } from '../../config';
 import Injectable from '../../../src/core/Injectable';
-import * as fs from 'fs';
-import * as path from 'path';
 
-const decimals = 6;
 const initialSupply = 1000;
-const apiSecretKey = fs.readFileSync(
-	path.resolve(DFNS_SETTINGS.serviceAccountPrivateKeyPath),
-	'utf8',
-);
+const apiSecretKey = DFNS_SETTINGS.serviceAccountPrivateKeyPath;
 
 describe('🧪 DFNSTransactionAdapter test', () => {
 	let stableCoinHTS: StableCoinViewModel;
@@ -105,13 +105,10 @@ describe('🧪 DFNSTransactionAdapter test', () => {
 			}),
 		);
 		Injectable.resolveTransactionHandler();
-	}, 60_000);
-
-	it('DFNS should create a Stable Coin', async () => {
 		const requestCreateStableCoin = new CreateRequest({
 			name: 'TEST_ACCELERATOR_HTS',
 			symbol: 'TEST',
-			decimals: decimals,
+			decimals: DECIMALS,
 			initialSupply: initialSupply.toString(),
 			freezeKey: requestPublicKey,
 			kycKey: requestPublicKey,
@@ -132,8 +129,12 @@ describe('🧪 DFNSTransactionAdapter test', () => {
 		});
 
 		stableCoinHTS = (await StableCoin.create(requestCreateStableCoin)).coin;
-		expect(stableCoinHTS?.tokenId).not.toBeNull();
+
 		await delay();
+	}, 60_000);
+
+	it('DFNS should create a Stable Coin', async () => {
+		expect(stableCoinHTS?.tokenId).not.toBeNull();
 	}, 60_000);
 
 	it('DFNS should associate a token', async () => {

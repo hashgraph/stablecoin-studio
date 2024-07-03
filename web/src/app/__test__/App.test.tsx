@@ -11,6 +11,7 @@ describe(`<${App.name} />`, () => {
 	});
 
 	test('should render correctly when is mobile', () => {
+		// eslint-disable-next-line no-import-assign
 		Object.defineProperty(reactDeviceDetect, 'isMobile', { get: () => true });
 
 		const component = render(<App />, {});
@@ -20,6 +21,7 @@ describe(`<${App.name} />`, () => {
 	});
 
 	test('should render correctly disclaimer', async () => {
+		// eslint-disable-next-line no-import-assign
 		Object.defineProperty(reactDeviceDetect, 'isMobile', { get: () => false });
 		process.env = {
 			REACT_APP_SHOW_DISCLAIMER: 'true',
