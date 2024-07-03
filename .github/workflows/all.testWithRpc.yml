@@ -129,15 +129,15 @@ jobs:
           npm run cleanCache
         working-directory: web
       
-      - name: Run the Docker image
-        run: nohup docker run --network="host" rpc &
-      - name: Sleep for 25 seconds
-        run: sleep 25s
-        shell: bash
-      - name: DockerStatus
-        run: docker ps
-      - name: DockerStatus
-        run:  curl --location --request POST 'http://localhost:7546/api' --data ""
+      #- name: Run the Docker image
+      #  run: nohup docker run --network="host" rpc &
+      #- name: Sleep for 25 seconds
+      #  run: sleep 25s
+      #  shell: bash
+      #- name: DockerStatus
+      #  run: docker ps
+      #- name: DockerStatus
+      #  run:  curl --location --request POST 'http://localhost:7546/api' --data ""
 
       - name: Test sdk
         run: |
