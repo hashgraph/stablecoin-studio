@@ -43,7 +43,7 @@ import { IConfiguration } from '../../../../src/domain/configuration/interfaces/
 import Language from '../../../../src/domain/language/Language.js';
 import { AccountType } from '../../../../src/domain/configuration/interfaces/AccountType';
 
-const language: Language = new Language();
+const language = new Language();
 
 const CONFIG_FILE_PATH = `hsca-config_test.yaml`;
 fs.openSync(CONFIG_FILE_PATH, 'w');
@@ -195,7 +195,7 @@ describe('SetFactoryService', () => {
     mocks.showSpinner = jest
       .spyOn(utilsService, 'showSpinner')
       .mockImplementation();
-    // mocks.log = jest.spyOn(console, 'log').mockImplementation();
+    mocks.log = jest.spyOn(console, 'log').mockImplementation();
     mocks.info = jest.spyOn(console, 'info').mockImplementation();
     mocks.error = jest.spyOn(console, 'warn').mockImplementation();
     mocks.error = jest.spyOn(console, 'error').mockImplementation();
