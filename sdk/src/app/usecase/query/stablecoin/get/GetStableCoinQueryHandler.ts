@@ -24,7 +24,7 @@ import { IQueryHandler } from '../../../../../core/query/QueryHandler.js';
 import EvmAddress from '../../../../../domain/context/contract/EvmAddress.js';
 import BigDecimal from '../../../../../domain/context/shared/BigDecimal.js';
 import { MirrorNodeAdapter } from '../../../../../port/out/mirror/MirrorNodeAdapter.js';
-import RPCQueryAdapter from '../../../../../port/out/rpc/RPCQueryAdapter.js';
+import { RPCQueryAdapter } from '../../../../../port/out/rpc/RPCQueryAdapter.js';
 import {
 	GetStableCoinQuery,
 	GetStableCoinQueryResponse,

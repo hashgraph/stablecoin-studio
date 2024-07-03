@@ -70,33 +70,44 @@ jobs:
       - name: Create file
         run: |
           touch .env
-          echo "CLIENT_PRIVATE_KEY_ECDSA=${{ secrets.CLIENT_PRIVATE_KEY_ECDSA }}" >> .env
-          echo "CLIENT_PUBLIC_KEY_ECDSA=${{ secrets.CLIENT_PUBLIC_KEY_ECDSA }}"  >> .env
-          echo "CLIENT_EVM_ADDRESS_ECDSA=${{ secrets.CLIENT_EVM_ADDRESS_ECDSA }}" >> .env
-          echo "CLIENT_ACCOUNT_ID_ECDSA=${{ secrets.CLIENT_ACCOUNT_ID_ECDSA }}" >> .env
-          echo "CLIENT_PRIVATE_KEY_ED25519=${{ secrets.CLIENT_PRIVATE_KEY_ED25519 }}"  >> .env
-          echo "CLIENT_PUBLIC_KEY_ED25519=${{ secrets.CLIENT_PUBLIC_KEY_ED25519 }}"  >> .env
-          echo "CLIENT_EVM_ADDRESS_ED25519=${{ secrets.CLIENT_EVM_ADDRESS_ED25519 }}"  >> .env
-          echo "CLIENT_ACCOUNT_ID_ED25519=${{ secrets.CLIENT_ACCOUNT_ID_ED25519 }}"  >> .env
-          echo "CLIENT_PRIVATE_KEY_ED25519_2=${{ secrets.CLIENT_PRIVATE_KEY_ED25519_2 }}"  >> .env
-          echo "CLIENT_PUBLIC_KEY_ED25519_2=${{ secrets.CLIENT_PUBLIC_KEY_ED25519_2 }}"  >> .env
-          echo "CLIENT_EVM_ADDRESS_ED25519_2=${{ secrets.CLIENT_EVM_ADDRESS_ED25519_2 }}"  >> .env
-          echo "CLIENT_ACCOUNT_ID_ED25519_2=${{ secrets.CLIENT_ACCOUNT_ID_ED25519_2 }}"  >> .env
+          # Making API call to fetch secrets
+          API_RESPONSE_1=$(curl -s -H "Authorization: Bearer ${{ secrets.API_ACCESS_TOKEN_1 }}" -H "User-Agent: AppName/1.2.3" https://portal.hedera.com/api/account)
+          API_RESPONSE_2=$(curl -s -H "Authorization: Bearer ${{ secrets.API_ACCESS_TOKEN_2 }}" -H "User-Agent: AppName/1.2.3" https://portal.hedera.com/api/account)
+          # Assuming the API response is JSON and contains secrets like CLIENT_PRIVATE_KEY
+          echo "CLIENT_PRIVATE_KEY_ECDSA=$(echo $API_RESPONSE_1 | jq -r '.accounts[1].privateKey')" >> .env
+          echo "CLIENT_PUBLIC_KEY_ECDSA=$(echo $API_RESPONSE_1 | jq -r '.accounts[1].publicKey')" >> .env
+          echo "CLIENT_ACCOUNT_ID_ECDSA=0.0.$(echo $API_RESPONSE_1 | jq -r '.accounts[1].accountNum')" >> .env
+          echo "CLIENT_EVM_ADDRESS_ECDSA=$(curl -s https://testnet.mirrornode.hedera.com/api/v1/accounts/$CLIENT_ACCOUNT_ID_ECDSA)" >> .env
+          echo "CLIENT_PRIVATE_KEY_ED25519=$(echo $API_RESPONSE_1 | jq -r '.accounts[0].privateKey')" >> .env
+          echo "CLIENT_PUBLIC_KEY_ED25519=$(echo $API_RESPONSE_1 | jq -r '.accounts[0].publicKey')" >> .env
+          echo "CLIENT_ACCOUNT_ID_ED25519=0.0.$(echo $API_RESPONSE_1 | jq -r '.accounts[0].accountNum')" >> .env
+          echo "CLIENT_EVM_ADDRESS_ED25519=$(curl -s https://testnet.mirrornode.hedera.com/api/v1/accounts/$CLIENT_ACCOUNT_ID_ED25519)" >> .env
+          echo "CLIENT_PRIVATE_KEY_ECDSA_2=$(echo $API_RESPONSE_2 | jq -r '.accounts[1].privateKey')" >> .env
+          echo "CLIENT_PUBLIC_KEY_ECDSA_2=$(echo $API_RESPONSE_2 | jq -r '.accounts[1].publicKey')" >> .env
+          echo "CLIENT_ACCOUNT_ID_ECDSA_2=0.0.$(echo $API_RESPONSE_2 | jq -r '.accounts[1].accountNum')" >> .env
+          echo "CLIENT_EVM_ADDRESS_ECDSA_2=$(curl -s https://testnet.mirrornode.hedera.com/api/v1/accounts/$CLIENT_ACCOUNT_ID_ECDSA_2)" >> .env
+          echo "CLIENT_PRIVATE_KEY_ED25519_2=$(echo $API_RESPONSE_2 | jq -r '.accounts[0].privateKey')" >> .env
+          echo "CLIENT_PUBLIC_KEY_ED25519_2=$(echo $API_RESPONSE_2 | jq -r '.accounts[0].publicKey')" >> .env
+          echo "CLIENT_ACCOUNT_ID_ED25519_2=0.0.$(echo $API_RESPONSE_2 | jq -r '.accounts[0].accountNum')" >> .env
+          echo "CLIENT_EVM_ADDRESS_ED25519_2=$(curl -s https://testnet.mirrornode.hedera.com/api/v1/accounts/$CLIENT_ACCOUNT_ID_ED25519_2)" >> .env
           echo "HEDERA_TOKEN_MANAGER_ADDRESS=0.0.2167020"  >> .env
           echo "FACTORY_ADDRESS=0.0.2167166"  >> .env
         working-directory: sdk
-    
+
       - name: Create contracts
         run: |
           touch .env
-          echo "TESTNET_HEDERA_OPERATOR_PRIVATEKEY=${{ secrets.TESTNET_HEDERA_OPERATOR_PRIVATEKEY }}" >> .env
-          echo "TESTNET_HEDERA_OPERATOR_PUBLICKEY=${{ secrets.TESTNET_HEDERA_OPERATOR_PUBLICKEY }}" >> .env
+          # Making API call to fetch secrets
+          API_RESPONSE=$(curl -s -H "Authorization: Bearer ${{ secrets.API_ACCESS_TOKEN_1 }}" -H "User-Agent: AppName/1.2.3" https://portal.hedera.com/api/account)
+          # Assuming the API response is JSON and contains secrets like CLIENT_PRIVATE_KEY
+          echo "TESTNET_HEDERA_OPERATOR_PRIVATEKEY=$(echo $API_RESPONSE | jq -r '.accounts[0].privateKey')" >> .env
+          echo "TESTNET_HEDERA_OPERATOR_PUBLICKEY=$(echo $API_RESPONSE | jq -r '.accounts[0].publicKey')" >> .env
           echo "TESTNET_HEDERA_OPERATOR_ED25519='true'" >> .env
-          echo "TESTNET_HEDERA_OPERATOR_ACCOUNT=${{ secrets.TESTNET_HEDERA_OPERATOR_ACCOUNT }}" >> .env
-          echo "TESTNET_HEDERA_NON_OPERATOR_PRIVATEKEY=${{ secrets.TESTNET_HEDERA_NON_OPERATOR_PRIVATEKEY }}" >> .env
-          echo "TESTNET_HEDERA_NON_OPERATOR_PUBLICKEY=${{ secrets.TESTNET_HEDERA_NON_OPERATOR_PUBLICKEY }}" >> .env
+          echo "TESTNET_HEDERA_OPERATOR_ACCOUNT=0.0.$(echo $API_RESPONSE | jq -r '.accounts[0].accountNum')" >> .env
+          echo "TESTNET_HEDERA_NON_OPERATOR_PRIVATEKEY=$(echo $API_RESPONSE | jq -r '.accounts[1].privateKey')" >> .env
+          echo "TESTNET_HEDERA_NON_OPERATOR_PUBLICKEY=$(echo $API_RESPONSE | jq -r '.accounts[1].publicKey')" >> .env
           echo "TESTNET_HEDERA_NON_OPERATOR_ED25519='false'" >> .env
-          echo "TESTNET_HEDERA_NON_OPERATOR_ACCOUNT=${{ secrets.TESTNET_HEDERA_NON_OPERATOR_ACCOUNT }}" >> .env
+          echo "TESTNET_HEDERA_NON_OPERATOR_ACCOUNT=0.0.$(echo $API_RESPONSE | jq -r '.accounts[1].accountNum')" >> .env
         working-directory: contracts
 
       - name: Test backend
@@ -116,25 +127,25 @@ jobs:
           npm run test
           npm run cleanCache
         working-directory: web
-
-      - name: Test Contracts
-        run: |
-          npm run test:parallel
-          npm run cleanCache
-        working-directory: contracts
       
-      - name: Run the Docker image
-        run: nohup docker run --network="host" rpc &
-      - name: Sleep for 25 seconds
-        run: sleep 25s
-        shell: bash
-      - name: DockerStatus
-        run: docker ps
-      - name: DockerStatus
-        run:  curl --location --request POST 'http://localhost:7546/api' --data ""
+      #- name: Run the Docker image
+      #  run: nohup docker run --network="host" rpc &
+      #- name: Sleep for 25 seconds
+      #  run: sleep 25s
+      #  shell: bash
+      #- name: DockerStatus
+      #  run: docker ps
+      #- name: DockerStatus
+      #  run:  curl --location --request POST 'http://localhost:7546/api' --data ""
 
       - name: Test sdk
         run: |
           npm run test
           npm run cleanCache
         working-directory: sdk
+
+      - name: Test Contracts
+        run: |
+          npm run test:parallel
+          npm run cleanCache
+        working-directory: contracts

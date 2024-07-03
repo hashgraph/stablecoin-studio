@@ -26,14 +26,14 @@ describe(`<${RescueTokensOperation.name} />`, () => {
 		expect(component.getByTestId('amount')).toBeInTheDocument();
 	});
 
-	test('should have a disabled confirm button that is enable when introduce valid data', async () => {
+	test('should have a disabled confirm button that is enabled when valid data is introduced', async () => {
 		const component = render(<RescueTokensOperation />);
 
 		const button = component.getByTestId('confirm-btn');
 		expect(button).toBeDisabled();
 
 		const amount = component.getByTestId('amount');
-		userEvent.type(amount, '10000');
+		await userEvent.type(amount, '10000');
 
 		await waitFor(() => {
 			expect(button).toBeEnabled();
@@ -45,7 +45,7 @@ describe(`<${RescueTokensOperation.name} />`, () => {
 
 		const confirmButton = component.getByTestId('confirm-btn');
 		const amount = component.getByTestId('amount');
-		userEvent.type(amount, '10000');
+		await userEvent.type(amount, '10000');
 
 		await waitFor(() => {
 			expect(confirmButton).toBeEnabled();
@@ -53,7 +53,22 @@ describe(`<${RescueTokensOperation.name} />`, () => {
 
 		await userEvent.click(confirmButton);
 
-		const confirmModalButton = component.getByTestId('modal-action-confirm-button');
+		const confirmModalButton = await component.findByTestId('modal-action-confirm-button');
 		await userEvent.click(confirmModalButton);
+
+		await waitFor(() => {
+			expect(
+				component.getByText((content, element) => {
+					// @ts-ignore
+					const hasText = (text) => element.textContent.includes(text);
+					const elementHasText = hasText('You have rescued');
+					// @ts-ignore
+					const childrenDontHaveText = Array.from(element.children).every(
+						(child) => !hasText(child.textContent),
+					);
+					return elementHasText && childrenDontHaveText;
+				}),
+			).toBeInTheDocument();
+		});
 	});
 });

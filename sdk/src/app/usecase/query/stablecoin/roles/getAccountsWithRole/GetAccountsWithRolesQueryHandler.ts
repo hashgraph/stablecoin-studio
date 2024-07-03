@@ -26,7 +26,7 @@ import {
 	GetAccountsWithRolesQuery,
 	GetAccountsWithRolesQueryResponse,
 } from './GetAccountsWithRolesQuery.js';
-import RPCQueryAdapter from '../../../../../../port/out/rpc/RPCQueryAdapter.js';
+import { RPCQueryAdapter } from '../../../../../../port/out/rpc/RPCQueryAdapter.js';
 import { MirrorNodeAdapter } from '../../../../../../port/out/mirror/MirrorNodeAdapter.js';
 import { HederaId } from '../../../../../../domain/context/shared/HederaId.js';
 

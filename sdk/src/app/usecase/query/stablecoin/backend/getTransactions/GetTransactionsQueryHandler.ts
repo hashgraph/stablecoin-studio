@@ -23,7 +23,7 @@ import { QueryHandler } from '../../../../../../core/decorator/QueryHandlerDecor
 import { IQueryHandler } from '../../../../../../core/query/QueryHandler.js';
 import { BackendAdapter } from '../../../../../../port/out/backend/BackendAdapter.js';
 import { MirrorNodeAdapter } from '../../../../../../port/out/mirror/MirrorNodeAdapter.js';
-import RPCQueryAdapter from '../../../../../../port/out/rpc/RPCQueryAdapter.js';
+import { RPCQueryAdapter } from '../../../../../../port/out/rpc/RPCQueryAdapter.js';
 import {
 	GetTransactionsQuery,
 	GetTransactionsQueryResponse,

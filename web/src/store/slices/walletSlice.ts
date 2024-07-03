@@ -332,8 +332,6 @@ export const SELECTED_WALLET_PAIRED_ACCOUNTID = (state: RootState) =>
 export const SELECTED_WALLET_PAIRED_ACCOUNT = (state: RootState) => ({
 	accountId: state.wallet.data?.account?.id,
 });
-export const SELECTED_WALLET_PAIRED_ACCOUNT_RECOGNIZED = (state: RootState) =>
-	state.wallet.accountRecognized;
 export const SELECTED_TOKEN_PAUSED = (state: RootState) => state.wallet.pausedToken;
 export const SELECTED_TOKEN_DELETED = (state: RootState) => state.wallet.deletedToken;
 export const SELECTED_TOKEN_RESERVE_ADDRESS = (state: RootState) =>

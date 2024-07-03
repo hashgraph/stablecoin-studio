@@ -20,11 +20,9 @@ import { NamedRoutes } from '../../Router/NamedRoutes';
 import { RouterManager } from '../../Router/RouterManager';
 import {
 	LAST_WALLET_SELECTED,
-	SELECTED_NETWORK,
 	SELECTED_NETWORK_RECOGNIZED,
-	SELECTED_WALLET_PAIRED_ACCOUNT,
 	SELECTED_WALLET_PAIRED_ACCOUNT_RECOGNIZED,
-} from '../../store/slices/walletSlice';
+} from '../../store/walletSelectors';
 import CoinDropdown from './CoinDropdown';
 import CollapsibleButton from './components/CollapsibleButton';
 import TopbarRight from './TopbarRight';
@@ -34,23 +32,19 @@ const Topbar = () => {
 	const navigate = useNavigate();
 	const [haveFactory, setHaveFactory] = useState<boolean>(true);
 	const accountRecognized = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT_RECOGNIZED);
-	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
 	const selectedWallet = useSelector(LAST_WALLET_SELECTED);
 	const [isAccountRecognized, setIsAccountRecognized] = useState<boolean>(
 		accountRecognized ?? true,
 	);
 	const networkRecognized = useSelector(SELECTED_NETWORK_RECOGNIZED);
-	const network = useSelector(SELECTED_NETWORK);
 	const [isNetworkRecognized, setIsNetworkRecognized] = useState<boolean>(
 		networkRecognized ?? true,
 	);
 
 	useEffect(() => {
-		if (accountRecognized) setIsAccountRecognized(true);
-		else setIsAccountRecognized(false);
-		if (networkRecognized) setIsNetworkRecognized(true);
-		else setIsNetworkRecognized(false);
-	}, [accountRecognized, account, networkRecognized, network]);
+		setIsAccountRecognized(accountRecognized ?? false);
+		setIsNetworkRecognized(networkRecognized ?? false);
+	}, [accountRecognized, networkRecognized]);
 
 	const handleNavigateSC = async () => {
 		const factoryId = await Network.getFactoryAddress();
