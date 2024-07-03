@@ -6,8 +6,7 @@ on:
 jobs:
   test-node:
     name: testing    
-    #runs-on: [ self-hosted, Linux, medium, ephemeral ]
-    runs-on: ubuntu-latest
+    runs-on: [ self-hosted, Linux, medium, ephemeral ]
     env:
       NODE_OPTIONS: "--max-old-space-size=32768"
     permissions:
@@ -15,19 +14,19 @@ jobs:
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
 
       - name: Build the Docker image
         run: docker build -t rpc .
         working-directory: dockerfile
 
       - name: Setup NodeJS Environment
-        uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
         with:
           node-version: 18.x      
       
       - name: Cache npm dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
