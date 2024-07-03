@@ -82,7 +82,7 @@ let proxyAdminAddress: ContractId
 let stableCoinAddress: ContractId
 const abiProxyAdmin = ProxyAdmin__factory.abi
 
-describe.only('HederaTokenManager Tests', function () {
+describe('HederaTokenManager Tests', function () {
     before(async function () {
         // Deploy Token using Client
         const result = await deployContractsWithSDK({

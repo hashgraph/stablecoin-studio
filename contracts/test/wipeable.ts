@@ -40,7 +40,7 @@ let proxyAddress: ContractId
 const TokensToMint = BigNumber.from(20).mul(TOKEN_FACTOR)
 const TokensToWipe = BigNumber.from(10).mul(TOKEN_FACTOR)
 
-describe.only('Wipe Tests', function () {
+describe('Wipe Tests', function () {
     before(async function () {
         // Deploy Token using Client
         const result = await deployContractsWithSDK({
