@@ -18,10 +18,10 @@
  *
  */
 
-import Injectable from '../../../src/core/Injectable.js';
 import {
 	Account,
 	Balance,
+	HederaId,
 	Network,
 	Role,
 	StableCoin,
@@ -51,6 +51,7 @@ import ConnectRequest, {
 import {
 	CLIENT_ACCOUNT_ECDSA,
 	CLIENT_ACCOUNT_ED25519,
+	DECIMALS,
 	FACTORY_ADDRESS,
 	HEDERA_TOKEN_MANAGER_ADDRESS,
 } from '../../config.js';
@@ -58,13 +59,12 @@ import BigDecimal from '../../../src/domain/context/shared/BigDecimal.js';
 import GetAccountsWithRolesRequest from '../../../src/port/in/request/GetAccountsWithRolesRequest.js';
 import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
+import Injectable from '../../../src/core/Injectable.js';
 
 describe('🧪 Role test', () => {
-	let stableCoinSC: StableCoinViewModel;
-
-	const delay = async (seconds = 5): Promise<void> => {
-		seconds = seconds * 1000;
-		await new Promise((r) => setTimeout(r, seconds));
+	const stableCoinSC = {
+		tokenId: new HederaId('0.0.9999999'),
+		decimals: DECIMALS,
 	};
 
 	beforeAll(async () => {
@@ -75,7 +75,7 @@ describe('🧪 Role test', () => {
 
 		const rpcNode: JsonRpcRelay = {
 			name: 'testrpcNode',
-			baseUrl: 'http://127.0.0.1:7546/api',
+			baseUrl: 'https://testnet.hashio.io/api',
 		};
 
 		await Network.connect(
@@ -101,42 +101,9 @@ describe('🧪 Role test', () => {
 			}),
 		);
 		Injectable.resolveTransactionHandler();
-		const requestSC = new CreateRequest({
-			name: 'TEST_ACCELERATOR_SC',
-			symbol: 'TEST',
-			decimals: '6',
-			initialSupply: '1000',
-			freezeKey: Account.NullPublicKey,
-			kycKey: Account.NullPublicKey,
-			wipeKey: Account.NullPublicKey,
-			pauseKey: Account.NullPublicKey,
-			supplyType: TokenSupplyType.INFINITE,
-			stableCoinFactory: FACTORY_ADDRESS,
-			hederaTokenManager: HEDERA_TOKEN_MANAGER_ADDRESS,
-			createReserve: true,
-			grantKYCToOriginalSender: true,
-			burnRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
-			rescueRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
-			deleteRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
-			reserveInitialAmount: '1000',
-		});
-		stableCoinSC = (await StableCoin.create(requestSC)).coin;
-
-		await delay();
 	}, 60_000);
 
-	it('Has role', async () => {
-		const res = await Role.hasRole(
-			new HasRoleRequest({
-				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
-				role: StableCoinRole.RESCUE_ROLE,
-			}),
-		);
-		expect(res).toBe(true);
-	}, 60_000);
-
-	it('Grant role', async () => {
+	it('Grant & Revoke role', async () => {
 		const noRole = await Role.hasRole(
 			new HasRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -151,8 +118,6 @@ describe('🧪 Role test', () => {
 				role: StableCoinRole.WIPE_ROLE,
 			}),
 		);
-
-		await delay();
 
 		const hasRole = await Role.hasRole(
 			new HasRoleRequest({
@@ -169,15 +134,22 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
-		await delay();
+		const noRoleAgain = await Role.hasRole(
+			new HasRoleRequest({
+				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
+				role: StableCoinRole.WIPE_ROLE,
+			}),
+		);
 
 		expect(revokeRes).toBe(true);
 		expect(noRole).toBe(false);
 		expect(grantRes).toBe(true);
 		expect(hasRole).toBe(true);
+		expect(noRoleAgain).toBe(false);
 	}, 60_000);
 
-	it('Grant Multi role', async () => {
+	it('Grant & Revoke Multi role', async () => {
 		const noRole_1 = await Role.hasRole(
 			new HasRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -201,8 +173,6 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
-		await delay();
-
 		const hasRole_1 = await Role.hasRole(
 			new HasRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -223,31 +193,37 @@ describe('🧪 Role test', () => {
 				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
 			}),
 		);
-		const revokeRes_1 = await Role.revokeRole(
-			new RevokeRoleRequest({
+		const revokeRes = await Role.revokeMultiRoles(
+			new RevokeMultiRolesRequest({
+				targetsId: [CLIENT_ACCOUNT_ED25519.id.toString()],
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
+				roles: [StableCoinRole.WIPE_ROLE, StableCoinRole.CASHIN_ROLE],
+			}),
+		);
+		const noRole_again_1 = await Role.hasRole(
+			new HasRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
 				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
 				role: StableCoinRole.WIPE_ROLE,
 			}),
 		);
-		const revokeRes_2 = await Role.revokeRole(
-			new RevokeRoleRequest({
+		const noRole_again_2 = await Role.hasRole(
+			new HasRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
 				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
 				role: StableCoinRole.CASHIN_ROLE,
 			}),
 		);
 
-		await delay();
-
-		expect(revokeRes_1).toBe(true);
-		expect(revokeRes_2).toBe(true);
+		expect(revokeRes).toBe(true);
 		expect(noRole_1).toBe(false);
 		expect(noRole_2).toBe(false);
 		expect(grantRes).toBe(true);
 		expect(hasRole_1).toBe(true);
 		expect(hasRole_2).toBe(true);
 		expect(isUnlimited).toBe(true);
+		expect(noRole_again_1).toBe(false);
+		expect(noRole_again_2).toBe(false);
 	}, 60_000);
 
 	it('Grant role Unlimited', async () => {
@@ -265,9 +241,6 @@ describe('🧪 Role test', () => {
 				role: StableCoinRole.CASHIN_ROLE,
 			}),
 		);
-
-		await delay();
-
 		const hasRole = await Role.hasRole(
 			new HasRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -294,8 +267,6 @@ describe('🧪 Role test', () => {
 				role: StableCoinRole.CASHIN_ROLE,
 			}),
 		);
-
-		await delay();
 
 		expect(revokeRes).toBe(true);
 		expect(noRole).toBe(false);
@@ -327,8 +298,6 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
-		await delay();
-
 		const hasRole = await Role.hasRole(
 			new HasRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -356,8 +325,6 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
-		await delay();
-
 		expect(revokeRes).toBe(true);
 		expect(noRole).toBe(false);
 		expect(grantRes).toBe(true);
@@ -366,112 +333,6 @@ describe('🧪 Role test', () => {
 		expect(allowance.value).toStrictEqual(
 			BigDecimal.fromString(AMOUNT, stableCoinSC?.decimals ?? 6),
 		);
-	}, 60_000);
-
-	it('Revoke role', async () => {
-		const grantRes = await Role.grantRole(
-			new GrantRoleRequest({
-				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
-				role: StableCoinRole.WIPE_ROLE,
-			}),
-		);
-
-		await delay();
-
-		const hasRole = await Role.hasRole(
-			new HasRoleRequest({
-				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
-				role: StableCoinRole.WIPE_ROLE,
-			}),
-		);
-		const revokeRes = await Role.revokeRole(
-			new RevokeRoleRequest({
-				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
-				role: StableCoinRole.WIPE_ROLE,
-			}),
-		);
-
-		await delay();
-
-		const noRole = await Role.hasRole(
-			new HasRoleRequest({
-				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
-				role: StableCoinRole.WIPE_ROLE,
-			}),
-		);
-		expect(grantRes).toBe(true);
-		expect(hasRole).toBe(true);
-		expect(revokeRes).toBe(true);
-		expect(noRole).toBe(false);
-	}, 60_000);
-
-	it('Revoke Multi role', async () => {
-		const grantRes_1 = await Role.grantRole(
-			new GrantRoleRequest({
-				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
-				role: StableCoinRole.WIPE_ROLE,
-			}),
-		);
-		const grantRes_2 = await Role.grantRole(
-			new GrantRoleRequest({
-				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
-				role: StableCoinRole.CASHIN_ROLE,
-			}),
-		);
-
-		await delay();
-
-		const hasRole_1 = await Role.hasRole(
-			new HasRoleRequest({
-				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
-				role: StableCoinRole.WIPE_ROLE,
-			}),
-		);
-		const hasRole_2 = await Role.hasRole(
-			new HasRoleRequest({
-				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
-				role: StableCoinRole.CASHIN_ROLE,
-			}),
-		);
-		const revokeRes = await Role.revokeMultiRoles(
-			new RevokeMultiRolesRequest({
-				targetsId: [CLIENT_ACCOUNT_ED25519.id.toString()],
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
-				roles: [StableCoinRole.WIPE_ROLE, StableCoinRole.CASHIN_ROLE],
-			}),
-		);
-
-		await delay();
-
-		const noRole_1 = await Role.hasRole(
-			new HasRoleRequest({
-				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
-				role: StableCoinRole.WIPE_ROLE,
-			}),
-		);
-		const noRole_2 = await Role.hasRole(
-			new HasRoleRequest({
-				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
-				role: StableCoinRole.CASHIN_ROLE,
-			}),
-		);
-		expect(grantRes_1).toBe(true);
-		expect(grantRes_2).toBe(true);
-		expect(hasRole_1).toBe(true);
-		expect(hasRole_2).toBe(true);
-		expect(revokeRes).toBe(true);
-		expect(noRole_1).toBe(false);
-		expect(noRole_2).toBe(false);
 	}, 60_000);
 
 	it('Revoke cashIn role', async () => {
@@ -483,8 +344,6 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
-		await delay();
-
 		const hasRole = await Role.hasRole(
 			new HasRoleRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -499,8 +358,6 @@ describe('🧪 Role test', () => {
 				role: StableCoinRole.CASHIN_ROLE,
 			}),
 		);
-
-		await delay();
 
 		const noRole = await Role.hasRole(
 			new HasRoleRequest({
@@ -547,8 +404,6 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
-		await delay();
-
 		const allowanceBefore = await Role.getAllowance(
 			new GetSupplierAllowanceRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -561,8 +416,6 @@ describe('🧪 Role test', () => {
 				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
 			}),
 		);
-
-		await delay();
 
 		const allowanceAfter = await Role.getAllowance(
 			new GetSupplierAllowanceRequest({
@@ -578,8 +431,7 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
-		await delay();
-
+		expect(revokeRes).toBe(true);
 		expect(grantRes).toBe(true);
 		expect(allowanceBefore.value).toStrictEqual(
 			BigDecimal.fromString('10', stableCoinSC?.decimals ?? 6),
@@ -588,7 +440,6 @@ describe('🧪 Role test', () => {
 		expect(allowanceAfter.value).toStrictEqual(
 			BigDecimal.fromString('0', stableCoinSC?.decimals ?? 6),
 		);
-		expect(revokeRes).toBe(true);
 	}, 60_000);
 
 	it('Increase allowance', async () => {
@@ -601,8 +452,6 @@ describe('🧪 Role test', () => {
 				amount: '10',
 			}),
 		);
-
-		await delay();
 
 		const allowanceBefore = await Role.getAllowance(
 			new GetSupplierAllowanceRequest({
@@ -618,8 +467,6 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
-		await delay();
-
 		const allowanceAfter = await Role.getAllowance(
 			new GetSupplierAllowanceRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -634,8 +481,7 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
-		await delay();
-
+		expect(revokeRes).toBe(true);
 		expect(grantRes).toBe(true);
 		expect(allowanceBefore.value).toStrictEqual(
 			BigDecimal.fromString('10', stableCoinSC?.decimals ?? 6),
@@ -644,7 +490,6 @@ describe('🧪 Role test', () => {
 		expect(allowanceAfter.value).toStrictEqual(
 			BigDecimal.fromString('20', stableCoinSC?.decimals ?? 6),
 		);
-		expect(revokeRes).toBe(true);
 	}, 80_000);
 
 	it('Decrease allowance', async () => {
@@ -657,8 +502,6 @@ describe('🧪 Role test', () => {
 				amount: '10',
 			}),
 		);
-
-		await delay();
 
 		const allowanceBefore = await Role.getAllowance(
 			new GetSupplierAllowanceRequest({
@@ -674,8 +517,6 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
-		await delay();
-
 		const allowanceAfter = await Role.getAllowance(
 			new GetSupplierAllowanceRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -689,8 +530,6 @@ describe('🧪 Role test', () => {
 				role: StableCoinRole.CASHIN_ROLE,
 			}),
 		);
-
-		await delay();
 
 		expect(revokeRes).toBe(true);
 		expect(grantRes).toBe(true);
@@ -714,8 +553,6 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
-		await delay();
-
 		const isLimited = await Role.isLimited(
 			new CheckSupplierLimitRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -735,8 +572,6 @@ describe('🧪 Role test', () => {
 				role: StableCoinRole.CASHIN_ROLE,
 			}),
 		);
-
-		await delay();
 
 		expect(revokeRes).toBe(true);
 		expect(grantRes).toBe(true);
@@ -761,8 +596,6 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
-		await delay();
-
 		const isLimited = await Role.isLimited(
 			new CheckSupplierLimitRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
@@ -782,8 +615,6 @@ describe('🧪 Role test', () => {
 				role: StableCoinRole.CASHIN_ROLE,
 			}),
 		);
-
-		await delay();
 
 		expect(revokeRes).toBe(true);
 		expect(grantRes).toBe(true);
@@ -813,8 +644,6 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
-		await delay();
-
 		const accounts_After = await Role.getAccountsWithRole(
 			new GetAccountsWithRolesRequest({
 				roleId: StableCoinRole.PAUSE_ROLE,
@@ -822,6 +651,15 @@ describe('🧪 Role test', () => {
 			}),
 		);
 
+		const revokeRes = await Role.revokeMultiRoles(
+			new RevokeMultiRolesRequest({
+				targetsId: [CLIENT_ACCOUNT_ED25519.id.toString()],
+				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
+				roles: [StableCoinRole.PAUSE_ROLE],
+			}),
+		);
+
+		expect(revokeRes).toBe(true);
 		expect(accounts_Before.length).toEqual(0);
 		expect(accounts_After.length).toEqual(2);
 		expect(accounts_After[0]).toEqual(CLIENT_ACCOUNT_ED25519.id.toString());

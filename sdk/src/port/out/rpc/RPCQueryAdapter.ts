@@ -60,7 +60,7 @@ type FactoryContract<T extends StaticConnect> = T['connect'] extends (
 	: never;
 
 @singleton()
-export default class RPCQueryAdapter {
+export class RPCQueryAdapter {
 	provider: ethers.providers.JsonRpcProvider;
 
 	constructor(

@@ -23,7 +23,7 @@ import { QueryHandler } from '../../../../../../core/decorator/QueryHandlerDecor
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
 import StableCoinService from '../../../../../service/StableCoinService.js';
 import { HasRoleQuery, HasRoleQueryResponse } from './HasRoleQuery.js';
-import RPCQueryAdapter from '../../../../../../port/out/rpc/RPCQueryAdapter.js';
+import { RPCQueryAdapter } from '../../../../../../port/out/rpc/RPCQueryAdapter.js';
 import { MirrorNodeAdapter } from '../../../../../../port/out/mirror/MirrorNodeAdapter.js';
 
 @QueryHandler(HasRoleQuery)
