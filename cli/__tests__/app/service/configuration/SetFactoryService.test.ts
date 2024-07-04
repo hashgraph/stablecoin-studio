@@ -315,7 +315,7 @@ describe('SetFactoryService', () => {
         ],
       };
       //* 🎬 Act
-      await setFactoryService.manageFactoryMenu({ recursionDepth: 0 });
+      await setFactoryService.manageFactoryMenu({ onlyOnce: true });
       //* 🕵️ Assert
       expect(mocks.defaultMultipleAsk).toHaveBeenCalledTimes(2);
       expect(mocks.defaultSingleAsk).toHaveBeenCalledTimes(1);
@@ -334,7 +334,7 @@ describe('SetFactoryService', () => {
         .mockResolvedValueOnce(NETWORKS.test);
       mocks.defaultSingleAsk.mockResolvedValue('INVALID');
       //* 🎬 Act
-      await setFactoryService.manageFactoryMenu({ recursionDepth: 0 });
+      await setFactoryService.manageFactoryMenu({ onlyOnce: true });
       //* 🕵️ Assert
       expect(mocks.defaultMultipleAsk).toHaveBeenCalledTimes(2);
       expect(mocks.defaultSingleAsk).toHaveBeenCalledTimes(3);
@@ -346,7 +346,7 @@ describe('SetFactoryService', () => {
         language.getText('wizard.manageFactoryOptions.FactoryDetails'),
       );
       //* 🎬 Act
-      await setFactoryService.manageFactoryMenu({ recursionDepth: 0 });
+      await setFactoryService.manageFactoryMenu({ onlyOnce: true });
       //* 🕵️ Assert
       expect(mocks.defaultMultipleAsk).toHaveBeenCalledTimes(1);
       expect(mocks.showMessage).toHaveBeenCalledTimes(2);
@@ -368,7 +368,7 @@ describe('SetFactoryService', () => {
         implementationAddress: '',
       };
       //* 🎬 Act
-      await setFactoryService.manageFactoryMenu({ recursionDepth: 0 });
+      await setFactoryService.manageFactoryMenu({ onlyOnce: true });
       //* 🕵️ Assert
       expect(mocks.defaultMultipleAsk).toHaveBeenCalledTimes(1);
       expect(mocks.upgradeImplementation).toHaveBeenCalledTimes(1);
@@ -389,7 +389,7 @@ describe('SetFactoryService', () => {
         .spyOn(OwnerFactoryProxyService.prototype, 'changeFactoryProxyOwner')
         .mockResolvedValueOnce(null);
       //* 🎬 Act
-      await setFactoryService.manageFactoryMenu({ recursionDepth: 0 });
+      await setFactoryService.manageFactoryMenu({ onlyOnce: true });
       //* 🕵️ Assert
       expect(mocks.defaultMultipleAsk).toHaveBeenCalledTimes(1);
       expect(mocks.defaultSingleAsk).toHaveBeenCalledTimes(1);

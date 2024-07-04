@@ -117,8 +117,8 @@ export default class SetFactoryService extends Service {
    * @throws An error if there is an issue during menu management.
    */
   public async manageFactoryMenu({
-    recursionDepth,
-  }: { recursionDepth?: number } = {}): Promise<void> {
+    onlyOnce,
+  }: { onlyOnce?: boolean } = {}): Promise<void> {
     const currentAccount = utilsService.getCurrentAccount();
     const currentMirror = utilsService.getCurrentMirror();
     const currentRPC = utilsService.getCurrentRPC();
@@ -190,16 +190,8 @@ export default class SetFactoryService extends Service {
           await utilsService.cleanAndShowBanner();
           await wizardService.configurationMenu();
       }
-      if (recursionDepth === undefined) {
-        // If unspecified, infinite recursion
+      if (!onlyOnce) {
         await this.manageFactoryMenu();
-      } else if (recursionDepth > 0) {
-        // If specified, decrement recursion depth
-        recursionDepth--;
-        await this.manageFactoryMenu({ recursionDepth });
-      } else {
-        // If recursion depth is 0, end recursion
-        return;
       }
     } catch (error) {
       await utilsService.askErrorConfirmation(undefined, error);
