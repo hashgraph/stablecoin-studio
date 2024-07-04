@@ -31,7 +31,7 @@ window.matchMedia =
 	};
 
 // TODO: FIX THIS WARNING, IT'S NOT A GOOD PRACTICE TO IGNORE WARNINGS !!!
-const originalConsoleError = console.error;
+/* const originalConsoleError = console.error;
 
 beforeAll(() => {
 	console.error = (...args: any[]) => {
@@ -50,4 +50,4 @@ beforeAll(() => {
 
 afterAll(() => {
 	console.error = originalConsoleError;
-});
+}); */
