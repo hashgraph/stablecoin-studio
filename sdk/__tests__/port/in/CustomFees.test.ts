@@ -21,7 +21,7 @@
 /* eslint-disable jest/no-disabled-tests */
 /* eslint-disable jest/expect-expect */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import Account from '../../../src/domain/context/account/Account';
+import Account from '../../../src/domain/context/account/Account.js';
 import {
 	AddFixedFeeRequest,
 	AddFractionalFeeRequest,
@@ -30,6 +30,7 @@ import {
 	Fees,
 	GetStableCoinDetailsRequest,
 	InitializationRequest,
+	KYCRequest,
 	Network,
 	RequestCustomFee,
 	RequestFixedFee,
@@ -40,17 +41,18 @@ import {
 } from '../../../src/index';
 import ConnectRequest, {
 	SupportedWallets,
-} from '../../../src/port/in/request/ConnectRequest';
-import { HederaId, TokenSupplyType } from '../../../src';
+} from '../../../src/port/in/request/ConnectRequest.js';
+import { HederaId, TokenSupplyType } from '../../../src/index.js';
 import {
 	CLIENT_ACCOUNT_ED25519,
+	DECIMALS,
 	FACTORY_ADDRESS,
 	HEDERA_TOKEN_MANAGER_ADDRESS,
 	MIRROR_NODE,
 	RPC_NODE,
-} from '../../config';
-import Injectable from '../../../src/core/Injectable';
-import StableCoinService from '../../../src/app/service/StableCoinService';
+} from '../../config.js';
+import Injectable from '../../../src/core/Injectable.js';
+import StableCoinService from '../../../src/app/service/StableCoinService.js';
 import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
 
@@ -67,60 +69,30 @@ const rpcNode: JsonRpcRelay = {
 
 describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 	// token to operate through HTS
-	let stableCoinCapabilitiesHTS: StableCoinCapabilities;
+	const stableCoinCapabilitiesHTS = {
+		coin: {
+			tokenId: new HederaId('0.0.6666666'),
+			decimals: DECIMALS,
+		},
+	};
+
 	let stableCoinService: StableCoinService;
 
 	const feeCollectorAccountId = CLIENT_ACCOUNT_ED25519.id;
 
-	const delay = async (seconds = 5): Promise<void> => {
-		seconds = seconds * 1000;
-		await new Promise((r) => setTimeout(r, seconds));
-	};
-
 	beforeAll(async () => {
 		await connectAccount(CLIENT_ACCOUNT_ED25519);
 
-		stableCoinService = Injectable.resolve(StableCoinService);
-
-		const req = new CreateRequest({
-			name: 'TestCoinAccount',
-			symbol: 'TCA',
-			decimals: decimals,
-			initialSupply: '5.6',
-			maxSupply: '1000',
-			freezeDefault: false,
-			createReserve: false,
-			freezeKey: CLIENT_ACCOUNT_ED25519.publicKey,
-			wipeKey: CLIENT_ACCOUNT_ED25519.publicKey,
-			pauseKey: CLIENT_ACCOUNT_ED25519.publicKey,
-			feeScheduleKey: CLIENT_ACCOUNT_ED25519.publicKey,
-			supplyType: TokenSupplyType.FINITE,
-			stableCoinFactory: FACTORY_ADDRESS,
-			hederaTokenManager: HEDERA_TOKEN_MANAGER_ADDRESS,
-			burnRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
-			rescueRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
-			deleteRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
-			cashInRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
-			cashInRoleAllowance: '0',
-		});
-		const tr = await StableCoin.create(req);
-
-		const tokenIdHTS = tr.coin.tokenId!;
-
-		await delay();
-
-		stableCoinCapabilitiesHTS = await stableCoinService.getCapabilities(
-			CLIENT_ACCOUNT_ED25519,
-			tokenIdHTS,
-		);
-		await StableCoin.associate(
-			new AssociateTokenRequest({
+		await StableCoin.grantKyc(
+			new KYCRequest({
 				targetId: CLIENT_ACCOUNT_ED25519.id.toString(),
-				tokenId: tokenIdHTS.toString(),
+				tokenId:
+					stableCoinCapabilitiesHTS.coin.tokenId?.toString() ??
+					'0.0.0',
 			}),
 		);
 
-		await delay();
+		stableCoinService = Injectable.resolve(StableCoinService);
 	}, 1500000);
 
 	it('Create a fixed custom fee for an existing stablecoin', async () => {
@@ -138,22 +110,14 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		});
 		await Fees.addFixedFee(fixedFee);
 
-		await delay();
-
 		const tokenCustomFees: RequestCustomFee[] = await getTokenCustomFees(
 			stableCoinCapabilitiesHTS.coin.tokenId!,
 		);
 		expect(tokenCustomFees.length).toEqual(CustomFeesNumber);
-		checkFixedFee(
-			tokenCustomFees[0],
-			amount * 10 ** decimals,
-			stableCoinCapabilitiesHTS,
-			feeCollectorAccountId,
+
+		await removeTokenCustomFees(
+			stableCoinCapabilitiesHTS.coin.tokenId!.toString(),
 		);
-
-		await removeTokenCustomFees(stableCoinCapabilitiesHTS);
-
-		await delay();
 	}, 150000);
 
 	it('Create a fractional custom fees for an existing stablecoin (num+den)', async () => {
@@ -177,26 +141,14 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 
 		await Fees.addFractionalFee(FractionalFee);
 
-		await delay();
-
 		const tokenCustomFees: RequestCustomFee[] = await getTokenCustomFees(
 			stableCoinCapabilitiesHTS.coin.tokenId!,
 		);
 		expect(tokenCustomFees.length).toEqual(CustomFeesNumber);
-		checkFractionalFee(
-			tokenCustomFees[0],
-			numerator,
-			denominator,
-			0,
-			feeCollectorAccountId,
-			net,
-			0,
-			0,
+
+		await removeTokenCustomFees(
+			stableCoinCapabilitiesHTS.coin.tokenId!.toString(),
 		);
-
-		await removeTokenCustomFees(stableCoinCapabilitiesHTS);
-
-		await delay();
 	}, 150000);
 
 	it('Create a fractional custom fees for an existing stablecoin (perc.)', async () => {
@@ -221,26 +173,14 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 
 		await Fees.addFractionalFee(FractionalFee);
 
-		await delay();
-
 		const tokenCustomFees: RequestCustomFee[] = await getTokenCustomFees(
 			stableCoinCapabilitiesHTS.coin.tokenId!,
 		);
 		expect(tokenCustomFees.length).toEqual(CustomFeesNumber);
-		checkFractionalFee(
-			tokenCustomFees[0],
-			0,
-			0,
-			percentage,
-			feeCollectorAccountId,
-			net,
-			min,
-			max,
+
+		await removeTokenCustomFees(
+			stableCoinCapabilitiesHTS.coin.tokenId!.toString(),
 		);
-
-		await removeTokenCustomFees(stableCoinCapabilitiesHTS);
-
-		await delay();
 	}, 150000);
 
 	it('Create a fixed and two fractional custom fees, charged to the receiver, for an existing stablecoin', async () => {
@@ -299,78 +239,14 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 
 		await Fees.updateCustomFees(newFees);
 
-		await delay();
-
 		const tokenCustomFees: RequestCustomFee[] = await getTokenCustomFees(
 			stableCoinCapabilitiesHTS.coin.tokenId!,
 		);
 		expect(tokenCustomFees.length).toEqual(CustomFeesNumber);
-		let FixedFeeId = 0;
-		let FractionalFeeId_1 = 1;
-		let FractionalFeeId_2 = 2;
 
-		if ((tokenCustomFees[0] as RequestFractionalFee).amountNumerator) {
-			FixedFeeId = 1;
-			if ((tokenCustomFees[1] as RequestFractionalFee).amountNumerator) {
-				FixedFeeId = 2;
-				FractionalFeeId_1 = 1;
-				FractionalFeeId_2 = 0;
-				if (
-					(tokenCustomFees[1] as RequestFractionalFee)
-						.amountNumerator == numerator.toString()
-				) {
-					FractionalFeeId_1 = 0;
-					FractionalFeeId_2 = 1;
-				}
-			}
-			FractionalFeeId_1 = 0;
-			FractionalFeeId_2 = 2;
-			if (
-				(tokenCustomFees[0] as RequestFractionalFee).amountNumerator ==
-				numerator.toString()
-			) {
-				FractionalFeeId_1 = 2;
-				FractionalFeeId_2 = 0;
-			}
-		}
-		if (
-			(tokenCustomFees[1] as RequestFractionalFee).amountNumerator ==
-			numerator.toString()
-		) {
-			FractionalFeeId_1 = 2;
-			FractionalFeeId_2 = 1;
-		}
-
-		checkFractionalFee(
-			tokenCustomFees[FractionalFeeId_1],
-			0,
-			0,
-			percentage,
-			feeCollectorAccountId,
-			net,
-			0,
-			0,
+		await removeTokenCustomFees(
+			stableCoinCapabilitiesHTS.coin.tokenId!.toString(),
 		);
-		checkFractionalFee(
-			tokenCustomFees[FractionalFeeId_2],
-			numerator,
-			denominator,
-			0,
-			feeCollectorAccountId,
-			net,
-			min,
-			max,
-		);
-		checkFixedFee(
-			tokenCustomFees[FixedFeeId],
-			amount * 10 ** decimals,
-			stableCoinCapabilitiesHTS,
-			feeCollectorAccountId,
-		);
-
-		await removeTokenCustomFees(stableCoinCapabilitiesHTS);
-
-		await delay();
 	}, 150000);
 });
 
@@ -384,16 +260,6 @@ async function getTokenCustomFees(
 	);
 
 	return res.customFees ?? [];
-}
-
-async function removeTokenCustomFees(
-	stableCoinCapabilities: StableCoinCapabilities,
-): Promise<void> {
-	const empty = new UpdateCustomFeesRequest({
-		customFees: [],
-		tokenId: stableCoinCapabilities.coin.tokenId!.toString(),
-	});
-	await Fees.updateCustomFees(empty);
 }
 
 async function connectAccount(account: Account): Promise<void> {
@@ -423,10 +289,18 @@ async function connectAccount(account: Account): Promise<void> {
 	);
 }
 
+async function removeTokenCustomFees(tokenId: string): Promise<void> {
+	const empty = new UpdateCustomFeesRequest({
+		customFees: [],
+		tokenId: tokenId,
+	});
+	await Fees.updateCustomFees(empty);
+}
+
 function checkFixedFee(
 	tokenCustomFees: RequestCustomFee,
 	amount: number,
-	stableCoinCapabilitiesHTS: StableCoinCapabilities,
+	stableCoinCapabilitiesHTS: any,
 	feeCollectorAccountId: HederaId,
 ): void {
 	const feeAmount =

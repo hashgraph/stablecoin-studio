@@ -7,6 +7,7 @@ import {
     getRoleId,
     getRoles,
     grantRole,
+    hasRole,
     revokeRole,
 } from '../scripts/contractsMethods'
 import {
@@ -29,6 +30,7 @@ import {
     INIT_SUPPLY,
     MAX_SUPPLY,
     nonOperatorAccount,
+    nonOperatorClient,
     nonOperatorIsE25519,
     operatorAccount,
     operatorClient,
@@ -66,6 +68,94 @@ describe('Roles Tests', function () {
         })
 
         proxyAddress = result[0]
+    })
+
+    it('Admin account can grant and revoke a role to an account', async function () {
+        // Admin grants burn role : success
+        let result = await hasRole(
+            BURN_ROLE,
+            proxyAddress,
+            operatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
+        expect(result).to.equals(false)
+
+        await grantRole(
+            BURN_ROLE,
+            proxyAddress,
+            operatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
+
+        result = await hasRole(
+            BURN_ROLE,
+            proxyAddress,
+            operatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
+        expect(result).to.equals(true)
+
+        // Admin revokes burn role : success
+        await revokeRole(
+            BURN_ROLE,
+            proxyAddress,
+            operatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
+        result = await hasRole(
+            BURN_ROLE,
+            proxyAddress,
+            operatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
+        expect(result).to.equals(false)
+    })
+
+    it('Non Admin account can not grant a role to an account', async function () {
+        // Non Admin grants burn role : fail
+        await expect(
+            grantRole(
+                BURN_ROLE,
+                proxyAddress,
+                nonOperatorClient,
+                nonOperatorAccount,
+                nonOperatorIsE25519
+            )
+        ).to.eventually.be.rejectedWith(Error)
+    })
+
+    it('Non Admin account can not revoke a role from an account', async function () {
+        // Non Admin revokes burn role : fail
+        await grantRole(
+            BURN_ROLE,
+            proxyAddress,
+            operatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
+        await expect(
+            revokeRole(
+                BURN_ROLE,
+                proxyAddress,
+                nonOperatorClient,
+                nonOperatorAccount,
+                nonOperatorIsE25519
+            )
+        ).to.eventually.be.rejectedWith(Error)
+
+        //Reset status
+        await revokeRole(
+            BURN_ROLE,
+            proxyAddress,
+            operatorClient,
+            nonOperatorAccount,
+            nonOperatorIsE25519
+        )
     })
 
     it('Getting roles', async function () {

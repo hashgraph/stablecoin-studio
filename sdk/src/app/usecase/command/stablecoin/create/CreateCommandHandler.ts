@@ -33,7 +33,7 @@ import { RESERVE_DECIMALS } from '../../../../../domain/context/reserve/Reserve.
 import { InvalidRequest } from '../error/InvalidRequest.js';
 import { EVM_ZERO_ADDRESS } from '../../../../../core/Constants.js';
 import { MirrorNodeAdapter } from '../../../../../port/out/mirror/MirrorNodeAdapter.js';
-import RPCQueryAdapter from '../../../../../port/out/rpc/RPCQueryAdapter.js';
+import { RPCQueryAdapter } from '../../../../../port/out/rpc/RPCQueryAdapter.js';
 import BigDecimal from '../../../../../domain/context/shared/BigDecimal.js';
 import EvmAddress from '../../../../../domain/context/contract/EvmAddress.js';
 

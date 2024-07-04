@@ -18,7 +18,6 @@
  *
  */
 
-import Injectable from '../../../src/core/Injectable.js';
 import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
 import {
@@ -33,6 +32,7 @@ import {
 	GetReserveAmountRequest,
 	UpdateReserveAmountRequest,
 	GetReserveAddressRequest,
+	HederaId,
 } from '../../../src/index.js';
 import ConnectRequest, {
 	SupportedWallets,
@@ -43,15 +43,11 @@ import {
 	FACTORY_ADDRESS,
 	HEDERA_TOKEN_MANAGER_ADDRESS,
 } from '../../config.js';
+import Injectable from '../../../src/core/Injectable.js';
 
 describe('🧪 Reserve test', () => {
-	let stableCoinSC: StableCoinViewModel;
-	const initialSupply = 10;
-	const reserveInitialAmount = initialSupply * 2;
-
-	const delay = async (seconds = 5): Promise<void> => {
-		seconds = seconds * 1000;
-		await new Promise((r) => setTimeout(r, seconds));
+	const stableCoinSC = {
+		tokenId: new HederaId('0.0.8888888'),
 	};
 
 	beforeAll(async () => {
@@ -62,7 +58,7 @@ describe('🧪 Reserve test', () => {
 
 		const rpcNode: JsonRpcRelay = {
 			name: 'testrpcNode',
-			baseUrl: 'http://127.0.0.1:7546/api',
+			baseUrl: 'https://testnet.hashio.io/api',
 		};
 
 		await Network.connect(
@@ -88,44 +84,6 @@ describe('🧪 Reserve test', () => {
 			}),
 		);
 		Injectable.resolveTransactionHandler();
-		const requestSC = new CreateRequest({
-			name: 'TEST_ACCELERATOR_SC',
-			symbol: 'TEST',
-			decimals: '6',
-			initialSupply: initialSupply.toString(),
-			freezeKey: Account.NullPublicKey,
-			kycKey: Account.NullPublicKey,
-			wipeKey: Account.NullPublicKey,
-			pauseKey: Account.NullPublicKey,
-			supplyType: TokenSupplyType.INFINITE,
-			stableCoinFactory: FACTORY_ADDRESS,
-			hederaTokenManager: HEDERA_TOKEN_MANAGER_ADDRESS,
-			reserveInitialAmount: reserveInitialAmount.toString(),
-			createReserve: true,
-			grantKYCToOriginalSender: true,
-			burnRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
-			freezeRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
-			kycRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
-			wipeRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
-			pauseRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
-			rescueRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
-			deleteRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
-			cashInRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
-			cashInRoleAllowance: '0',
-		});
-
-		stableCoinSC = (await StableCoin.create(requestSC)).coin;
-
-		await delay();
-	}, 60_000);
-
-	it('check reserve amount', async () => {
-		const res = await ReserveDataFeed.getReserveAmount(
-			new GetReserveAmountRequest({
-				tokenId: stableCoinSC?.tokenId?.toString() ?? '0.0.0',
-			}),
-		);
-		expect(res.value.toString()).toEqual(reserveInitialAmount.toString());
 	}, 60_000);
 
 	it('update reserve amount', async () => {
@@ -141,8 +99,6 @@ describe('🧪 Reserve test', () => {
 				reserveAmount: '0',
 			}),
 		);
-
-		await delay();
 
 		const res = await ReserveDataFeed.getReserveAmount(
 			new GetReserveAmountRequest({

@@ -18,6 +18,7 @@ jest.mock('react-i18next', (): any => ({
 	...jest.requireActual('react-i18next'),
 }));
 
+// To avoid sdk api calls
 jest.mock('../services/SDKService');
 window.matchMedia =
 	window.matchMedia ||
@@ -28,3 +29,25 @@ window.matchMedia =
 			removeListener: function () {},
 		};
 	};
+
+// TODO: FIX THIS WARNING, IT'S NOT A GOOD PRACTICE TO IGNORE WARNINGS !!!
+const originalConsoleError = console.error;
+
+beforeAll(() => {
+	console.error = (...args: any[]) => {
+		const message = args[0];
+		if (
+			typeof message === 'string' &&
+			((message.includes('Warning: An update to') && message.includes('not wrapped in act(...)')) ||
+				message.includes("Icon 'Icon' not found."))
+		) {
+			// do nothing
+		} else {
+			originalConsoleError(...args);
+		}
+	};
+});
+
+afterAll(() => {
+	console.error = originalConsoleError;
+});
