@@ -1,79 +1,71 @@
-name: Testing
+name: PR Test
+
 on:
   pull_request:
-  push:
     branches: [main]
+
 jobs:
   test-node:
-    name: testing    
-    runs-on: [ self-hosted, Linux, medium, ephemeral ]
+    name: testing
+    runs-on: [self-hosted, Linux, medium, ephemeral]
     env:
       NODE_OPTIONS: "--max-old-space-size=32768"
     permissions:
       contents: read
-    
+
+    strategy:
+      matrix:
+        directory:
+          - hashconnect/lib
+          - backend
+          - contracts
+          - sdk
+          - cli
+          - web
+
     steps:
       - name: Checkout repository
-        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+        uses: actions/checkout@v4.1.6
 
       - name: Build the Docker image
         run: docker build -t rpc .
         working-directory: dockerfile
 
       - name: Setup NodeJS Environment
-        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
+        uses: actions/setup-node@v4.0.2
         with:
-          node-version: 18.x      
-      
+          node-version: 18.x
+
       - name: Cache npm dependencies
-        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+        uses: actions/cache@v4.0.2
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - name: Install dependencies Hashconnect
+      - name: Determine if directory has changed
+        id: changes
+        run: |
+          if git diff --name-only HEAD^ HEAD | grep -q "^${{ matrix.directory }}/"; then
+            echo "run_tests=true" >> $GITHUB_ENV
+          else
+            echo "run_tests=false" >> $GITHUB_ENV
+          fi
+
+      - name: Install dependencies and build
+        if: env.run_tests == 'true'
         run: |
           npm ci
           npm run build
-        working-directory: hashconnect/lib
+        working-directory: ${{ matrix.directory }}
 
-      - name: Install dependencies Backend
-        run: |
-          npm ci
-          npm run build
-        working-directory: backend
-
-      - name: Install dependencies Contracts
-        run: |
-          npm ci
-          npm run compile:force
-        working-directory: contracts
-
-      - name: Install dependencies SDK
-        run: |
-          npm ci
-          npm run build
-        working-directory: sdk
-      
-      - name: Install dependencies Cli
-        run: |
-          npm ci
-          npm run build
-        working-directory: cli
-      
-      - name: Install dependencies web
-        run: npm ci
-        working-directory: web
-
-      - name: Create file
+      - name: Create file for SDK
+        if: env.run_tests == 'true' && matrix.directory == 'sdk'
         run: |
           touch .env
-          # Making API call to fetch secrets
           API_RESPONSE_1=$(curl -s -H "Authorization: Bearer ${{ secrets.API_ACCESS_TOKEN_1 }}" -H "User-Agent: AppName/1.2.3" https://portal.hedera.com/api/account)
           API_RESPONSE_2=$(curl -s -H "Authorization: Bearer ${{ secrets.API_ACCESS_TOKEN_2 }}" -H "User-Agent: AppName/1.2.3" https://portal.hedera.com/api/account)
-          # Assuming the API response is JSON and contains secrets like CLIENT_PRIVATE_KEY
           echo "CLIENT_PRIVATE_KEY_ECDSA=$(echo $API_RESPONSE_1 | jq -r '.accounts[1].privateKey')" >> .env
           echo "CLIENT_PUBLIC_KEY_ECDSA=$(echo $API_RESPONSE_1 | jq -r '.accounts[1].publicKey')" >> .env
           echo "CLIENT_ACCOUNT_ID_ECDSA=0.0.$(echo $API_RESPONSE_1 | jq -r '.accounts[1].accountNum')" >> .env
@@ -94,12 +86,11 @@ jobs:
           echo "FACTORY_ADDRESS=0.0.2167166"  >> .env
         working-directory: sdk
 
-      - name: Create contracts
+      - name: Create contracts env file
+        if: env.run_tests == 'true' && matrix.directory == 'contracts'
         run: |
           touch .env
-          # Making API call to fetch secrets
           API_RESPONSE=$(curl -s -H "Authorization: Bearer ${{ secrets.API_ACCESS_TOKEN_1 }}" -H "User-Agent: AppName/1.2.3" https://portal.hedera.com/api/account)
-          # Assuming the API response is JSON and contains secrets like CLIENT_PRIVATE_KEY
           echo "TESTNET_HEDERA_OPERATOR_PRIVATEKEY=$(echo $API_RESPONSE | jq -r '.accounts[0].privateKey')" >> .env
           echo "TESTNET_HEDERA_OPERATOR_PUBLICKEY=$(echo $API_RESPONSE | jq -r '.accounts[0].publicKey')" >> .env
           echo "TESTNET_HEDERA_OPERATOR_ED25519='true'" >> .env
@@ -110,42 +101,9 @@ jobs:
           echo "TESTNET_HEDERA_NON_OPERATOR_ACCOUNT=0.0.$(echo $API_RESPONSE | jq -r '.accounts[1].accountNum')" >> .env
         working-directory: contracts
 
-      - name: Test Contracts
+      - name: Run tests
+        if: env.run_tests == 'true'
         run: |
           npm run test
           npm run cleanCache
-        working-directory: contracts
-
-      - name: Test backend
-        run: |
-          npm run test
-          npm run cleanCache
-        working-directory: backend
-
-      - name: Test cli
-        run: |
-          npm run test:ci
-          npm run cleanCache
-        working-directory: cli
-
-      - name: Test web
-        run: |
-          npm run test
-          npm run cleanCache
-        working-directory: web
-      
-      #- name: Run the Docker image
-      #  run: nohup docker run --network="host" rpc &
-      #- name: Sleep for 25 seconds
-      #  run: sleep 25s
-      #  shell: bash
-      #- name: DockerStatus
-      #  run: docker ps
-      #- name: DockerStatus
-      #  run:  curl --location --request POST 'http://localhost:7546/api' --data ""
-
-      - name: Test sdk
-        run: |
-          npm run test
-          npm run cleanCache
-        working-directory: sdk
+        working-directory: ${{ matrix.directory }}
