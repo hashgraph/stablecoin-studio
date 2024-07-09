@@ -56,10 +56,15 @@ describe('changeProxyOwner', () => {
     await new OwnerProxyService().changeProxyOwner(req);
 
     // verify
-    expect(changeProxyOwnerMock).toHaveBeenCalled();
+    expect(changeProxyOwnerMock).toHaveBeenCalledTimes(1);
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
     expect(console.log).toHaveBeenCalledWith(
       language.getText('operation.success'),
     );
+    expect(console.log).toHaveBeenCalledTimes(2);
+    expect(console.info).toHaveBeenCalledTimes(0);
+    expect(console.warn).toHaveBeenCalledTimes(0);
+    expect(console.error).toHaveBeenCalledTimes(0);
+    expect(console.dir).toHaveBeenCalledTimes(0);
   });
 });
