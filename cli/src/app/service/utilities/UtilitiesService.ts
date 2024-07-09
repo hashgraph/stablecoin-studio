@@ -72,16 +72,19 @@ export default class UtilitiesService extends Service {
   public async initSDK(): Promise<void> {
     const account = this.getCurrentAccount();
     SDK.log = configurationService.getLogConfiguration();
-    const network = this.getCurrentNetwork();
+    const currentNetwork = this.getCurrentNetwork();
+    const mirrorNode = this.getCurrentMirror();
+    const currentBackend = this.getCurrentBackend();
+    const rpcNode = this.getCurrentRPC();
     await Network.init(
       new InitializationRequest({
-        network: network.name,
-        mirrorNode: this.getCurrentMirror(),
-        rpcNode: this.getCurrentRPC(),
-        consensusNodes: network.consensusNodes,
-        backend: this.getCurrentBackend()
+        network: currentNetwork.name,
+        mirrorNode,
+        rpcNode,
+        consensusNodes: currentNetwork.consensusNodes,
+        backend: currentBackend
           ? {
-              url: this.getCurrentBackend().endpoint,
+              url: currentBackend.endpoint,
             }
           : undefined,
       }),
@@ -139,9 +142,9 @@ export default class UtilitiesService extends Service {
         accountId: account.accountId,
         privateKey: privateKey,
       },
-      network: this.getCurrentNetwork().name,
-      mirrorNode: this.getCurrentMirror(),
-      rpcNode: this.getCurrentRPC(),
+      network: currentNetwork.name,
+      mirrorNode,
+      rpcNode: rpcNode,
       wallet: wallet,
       custodialWalletSettings: custodialWalletSettings,
     };
