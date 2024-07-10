@@ -66,16 +66,16 @@ export default class NetworkWizardService extends Service {
       configuration.mirrors = mirrors;
       configurationService.setConfiguration(configuration);
 
-      if (currentMirror.network === _network)
+      if (currentMirror.network === _network) {
         utilsService.setCurrentMirror(selectedMirror);
+      }
 
       return true;
-    } else {
-      utilsService.showMessage(
-        language.getText('configuration.mirrorNodeNotToChange'),
-      );
-      return false;
     }
+    utilsService.showMessage(
+      language.getText('configuration.mirrorNodeNotToChange'),
+    );
+    return false;
   }
 
   /**
@@ -113,12 +113,11 @@ export default class NetworkWizardService extends Service {
         utilsService.setCurrentRPC(selectedRPC);
 
       return true;
-    } else {
-      utilsService.showMessage(
-        colors.yellow(language.getText('configuration.RPCNotToChange')),
-      );
-      return false;
     }
+    utilsService.showMessage(
+      colors.yellow(language.getText('configuration.RPCNotToChange')),
+    );
+    return false;
   }
 
   /**
@@ -131,7 +130,7 @@ export default class NetworkWizardService extends Service {
     const { mirrors } = configuration;
     const lastMirror = mirrors[mirrors.length - 1];
     utilsService.setCurrentMirror(lastMirror);
-    this.setLastMirrorNodeAsSelected(_network);
+    await this.setLastMirrorNodeAsSelected(_network);
   }
 
   /**
@@ -152,9 +151,8 @@ export default class NetworkWizardService extends Service {
       });
     lastMirror.selected = true;
 
-    const defaultCfgData = configurationService.getConfiguration();
-    defaultCfgData.mirrors = mirrors;
-    configurationService.setConfiguration(defaultCfgData);
+    configuration.mirrors = mirrors;
+    configurationService.setConfiguration(configuration);
   }
 
   /**
@@ -167,7 +165,7 @@ export default class NetworkWizardService extends Service {
     const { rpcs } = configuration;
     const lastRPC = rpcs[rpcs.length - 1];
     utilsService.setCurrentRPC(lastRPC);
-    this.setLastRPCAsSelected(_network);
+    await this.setLastRPCAsSelected(_network);
   }
 
   /**
@@ -186,8 +184,7 @@ export default class NetworkWizardService extends Service {
       });
     lastRPC.selected = true;
 
-    const defaultCfgData = configurationService.getConfiguration();
-    defaultCfgData.rpcs = rpcs;
-    configurationService.setConfiguration(defaultCfgData);
+    configuration.rpcs = rpcs;
+    configurationService.setConfiguration(configuration);
   }
 }
