@@ -93,8 +93,14 @@ describe('UtilitiesService', () => {
     await utilsService.initSDK();
 
     // verify
-    expect(networkInitSpy).toHaveBeenCalled();
-    expect(networkConnectSpy).toHaveBeenCalled();
+    expect(configurationService.getLogConfiguration).toHaveBeenCalledTimes(1);
+    expect(utilsService.getCurrentAccount).toHaveBeenCalledTimes(1);
+    expect(utilsService.getCurrentNetwork).toHaveBeenCalledTimes(1);
+    expect(utilsService.getCurrentMirror).toHaveBeenCalledTimes(1);
+    expect(utilsService.getCurrentRPC).toHaveBeenCalledTimes(1);
+    expect(utilsService.getCurrentBackend).toHaveBeenCalledTimes(1);
+    expect(networkInitSpy).toHaveBeenCalledTimes(1);
+    expect(networkConnectSpy).toHaveBeenCalledTimes(1);
 
     // restore mocks
     networkInitSpy.mockRestore();

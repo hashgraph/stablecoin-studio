@@ -85,15 +85,20 @@ describe('implementationProxyService', () => {
     );
 
     // verify
-    expect(upgradeImplementationMock).toHaveBeenCalled();
-    expect(utilsServiceGetCurrentFactoryMock).toHaveBeenCalled();
-    expect(defaultMultipleAskMock).toHaveBeenCalled();
+    expect(upgradeImplementationMock).toHaveBeenCalledTimes(1);
+    expect(utilsServiceGetCurrentFactoryMock).toHaveBeenCalledTimes(1);
+    expect(defaultMultipleAskMock).toHaveBeenCalledTimes(1);
     expect(
       implementationFactoryGetHederaTokenManagerListMock,
-    ).toHaveBeenCalled();
+    ).toHaveBeenCalledTimes(1);
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
     expect(console.log).toHaveBeenCalledWith(
       language.getText('operation.success'),
     );
+    expect(console.log).toHaveBeenCalledTimes(3);
+    expect(console.info).toHaveBeenCalledTimes(0);
+    expect(console.warn).toHaveBeenCalledTimes(0);
+    expect(console.error).toHaveBeenCalledTimes(0);
+    expect(console.dir).toHaveBeenCalledTimes(0);
   });
 });
