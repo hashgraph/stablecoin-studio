@@ -28,14 +28,15 @@ import {
   AddFractionalFeeRequest,
   BurnRequest,
   CashInRequest,
+  DeleteRequest,
   FreezeAccountRequest,
   GetAccountBalanceRequest,
   GetAccountsWithRolesRequest,
   GrantMultiRolesRequest,
-  // GrantMultiRolesRequest,
   HederaId,
   KYCRequest,
   Operation,
+  PauseRequest,
   PublicKey,
   RequestCustomFee,
   RescueRequest,
@@ -1113,6 +1114,7 @@ describe(`Testing OperationStableCoinService class`, () => {
   });
 
   it('Should instance start with roles edit Increase', async () => {
+    const account = '0.0.9999999';
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockResolvedValueOnce(
@@ -1131,9 +1133,7 @@ describe(`Testing OperationStableCoinService class`, () => {
     jest
       .spyOn(OperationStableCoinService.prototype as any, 'validateTokenId')
       .mockImplementation(jest.fn());
-    jest
-      .spyOn(utilsService, 'defaultSingleAsk')
-      .mockResolvedValueOnce('0.0.12345');
+    jest.spyOn(utilsService, 'defaultSingleAsk').mockResolvedValueOnce(account);
     jest
       .spyOn(
         RoleStableCoinService.prototype as any,
@@ -1676,7 +1676,9 @@ describe(`Testing OperationStableCoinService class`, () => {
     jest.spyOn(utilsService, 'defaultConfirmAsk').mockResolvedValueOnce(true);
     jest
       .spyOn(PauseStableCoinService.prototype as any, 'pauseStableCoin')
-      .mockImplementation();
+      .mockImplementation(async (request: PauseRequest): Promise<void> => {
+        expect(request.tokenId).toEqual(tokenId);
+      });
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockResolvedValueOnce('Go back');
@@ -1704,7 +1706,9 @@ describe(`Testing OperationStableCoinService class`, () => {
     jest.spyOn(utilsService, 'defaultConfirmAsk').mockResolvedValueOnce(true);
     jest
       .spyOn(PauseStableCoinService.prototype as any, 'unpauseStableCoin')
-      .mockImplementation();
+      .mockImplementation(async (request: PauseRequest): Promise<void> => {
+        expect(request.tokenId).toEqual(tokenId);
+      });
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockResolvedValueOnce('Go back');
@@ -1732,7 +1736,9 @@ describe(`Testing OperationStableCoinService class`, () => {
     jest.spyOn(utilsService, 'defaultConfirmAsk').mockResolvedValueOnce(true);
     jest
       .spyOn(DeleteStableCoinService.prototype as any, 'deleteStableCoin')
-      .mockImplementation();
+      .mockImplementation(async (request: DeleteRequest): Promise<void> => {
+        expect(request.tokenId).toEqual(tokenId);
+      });
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockResolvedValueOnce('Go back');
