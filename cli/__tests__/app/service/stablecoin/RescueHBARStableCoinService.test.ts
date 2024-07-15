@@ -25,15 +25,16 @@ import Language from '../../../../src/domain/language/Language.js';
 
 const service = new RescueHBARStableCoinService();
 const language: Language = new Language();
+const token = '0.0.234567';
+const amount = '11';
 const request = new RescueHBARRequest({
-  tokenId: '0.0.012345',
-  amount: '10',
+  tokenId: token,
+  amount: amount,
 });
 
 describe(`Testing RescueHBARStableCoinService class`, () => {
   beforeEach(() => {
     jest.spyOn(utilsService, 'showSpinner').mockImplementation();
-    jest.spyOn(StableCoin, 'rescueHBAR').mockImplementation();
     jest.spyOn(console, 'log').mockImplementation();
   });
   afterEach(() => {
@@ -41,11 +42,21 @@ describe(`Testing RescueHBARStableCoinService class`, () => {
   });
 
   it('Should instance rescueHBARStableCoin', async () => {
+    const rescueHBARMock = jest
+      .spyOn(StableCoin, 'rescueHBAR')
+      .mockImplementation(
+        async (request: RescueHBARRequest): Promise<boolean> => {
+          expect(request.tokenId).toEqual(token);
+          expect(request.amount).toEqual(amount);
+          return false;
+        },
+      );
+
     await service.rescueHBARStableCoin(request);
 
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
-    expect(StableCoin.rescueHBAR).toHaveBeenCalledTimes(1);
+    expect(rescueHBARMock).toHaveBeenCalledTimes(1);
     expect(console.log).toHaveBeenCalledWith(
       language.getText('operation.success'),
     );

@@ -25,17 +25,20 @@ import Language from '../../../../src/domain/language/Language.js';
 
 const service = new TransfersStableCoinService();
 const language: Language = new Language();
+const token = '0.0.111111';
+const targetsId = ['0.0.22222'];
+const amounts = ['2'];
+const account_2 = '0.0.33333';
 const request = new TransfersRequest({
-  tokenId: '0.0.012345',
-  targetsId: [],
-  amounts: [],
-  targetId: '',
+  tokenId: token,
+  targetsId: targetsId,
+  amounts: amounts,
+  targetId: account_2,
 });
 
 describe(`Testing TransfersStableCoinService class`, () => {
   beforeEach(() => {
     jest.spyOn(utilsService, 'showSpinner').mockImplementation();
-    jest.spyOn(StableCoin, 'transfers').mockImplementation();
     jest.spyOn(console, 'log').mockImplementation();
   });
   afterEach(() => {
@@ -43,11 +46,30 @@ describe(`Testing TransfersStableCoinService class`, () => {
   });
 
   it('Should instance transfersStableCoin', async () => {
+    const transferMock = jest
+      .spyOn(StableCoin, 'transfers')
+      .mockImplementation(
+        async (request: TransfersRequest): Promise<boolean> => {
+          expect(request.tokenId).toEqual(token);
+          expect(request.targetsId.length).toEqual(targetsId.length);
+          expect(request.amounts.length).toEqual(amounts.length);
+          expect(request.targetId).toEqual(account_2);
+          for (let i = 0; i < targetsId.length; i++) {
+            expect(request.targetsId[i]).toEqual(targetsId[i]);
+          }
+          for (let j = 0; j < amounts.length; j++) {
+            expect(request.amounts[j]).toEqual(amounts[j]);
+          }
+
+          return false;
+        },
+      );
+
     await service.transfersStableCoin(request);
 
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
-    expect(StableCoin.transfers).toHaveBeenCalledTimes(1);
+    expect(transferMock).toHaveBeenCalledTimes(1);
     expect(console.log).toHaveBeenCalledWith(
       language.getText('operation.success'),
     );

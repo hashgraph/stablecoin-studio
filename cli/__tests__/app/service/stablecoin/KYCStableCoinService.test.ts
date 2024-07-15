@@ -26,9 +26,11 @@ import colors from 'colors';
 
 const service = new KYCStableCoinService();
 const language: Language = new Language();
+const token = '0.0.234567';
+const account = '0.0.356789';
 const request = new KYCRequest({
-  tokenId: 'tokenId',
-  targetId: 'targetId',
+  tokenId: token,
+  targetId: account,
 });
 
 describe(`Testing KYCStableCoinService class`, () => {
@@ -48,34 +50,57 @@ describe(`Testing KYCStableCoinService class`, () => {
   });
 
   it('Should instance grantKYCToAccount', async () => {
+    const GrantKYCMock = jest
+      .spyOn(StableCoin, 'grantKyc')
+      .mockImplementation(async (request: KYCRequest): Promise<boolean> => {
+        expect(request.targetId).toEqual(account);
+        expect(request.tokenId).toEqual(token);
+        return true;
+      });
+
     await service.grantKYCToAccount(request);
 
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
-    expect(StableCoin.grantKyc).toHaveBeenCalledTimes(1);
+    expect(GrantKYCMock).toHaveBeenCalledTimes(1);
     expect(console.log).toHaveBeenCalledWith(
       language.getText('operation.success'),
     );
   });
 
   it('Should instance revokeKYCFromAccount', async () => {
+    const RevokeKYCMock = jest
+      .spyOn(StableCoin, 'revokeKyc')
+      .mockImplementation(async (request: KYCRequest): Promise<boolean> => {
+        expect(request.targetId).toEqual(account);
+        expect(request.tokenId).toEqual(token);
+        return true;
+      });
+
     await service.revokeKYCFromAccount(request);
 
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
-    expect(StableCoin.revokeKyc).toHaveBeenCalledTimes(1);
+    expect(RevokeKYCMock).toHaveBeenCalledTimes(1);
     expect(console.log).toHaveBeenCalledWith(
       language.getText('operation.success'),
     );
   });
 
   it('Should instance isAccountKYCGranted', async () => {
-    jest.spyOn(StableCoin, 'isAccountKYCGranted').mockResolvedValue(false);
+    const IsKYCMock = jest
+      .spyOn(StableCoin, 'isAccountKYCGranted')
+      .mockImplementation(async (request: KYCRequest): Promise<boolean> => {
+        expect(request.targetId).toEqual(account);
+        expect(request.tokenId).toEqual(token);
+        return false;
+      });
+
     await service.isAccountKYCGranted(request);
 
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
-    expect(StableCoin.isAccountKYCGranted).toHaveBeenCalledTimes(1);
+    expect(IsKYCMock).toHaveBeenCalledTimes(1);
     expect(console.log).toHaveBeenCalledWith(
       language
         .getText('state.accountKYCNotGranted')

@@ -24,11 +24,25 @@ import OperationStableCoinService from '../../../../src/app/service/stablecoin/O
 import CapabilitiesStableCoinsService from '../../../../src/app/service/stablecoin/CapabilitiesStableCoinService.js';
 import {
   Account,
+  AddFixedFeeRequest,
+  AddFractionalFeeRequest,
+  BurnRequest,
+  CashInRequest,
+  FreezeAccountRequest,
+  GetAccountBalanceRequest,
+  GetAccountsWithRolesRequest,
+  GrantMultiRolesRequest,
+  // GrantMultiRolesRequest,
   HederaId,
+  KYCRequest,
   Operation,
   PublicKey,
+  RequestCustomFee,
+  RescueRequest,
   StableCoinRole,
   StableCoinViewModel,
+  UpdateCustomFeesRequest,
+  WipeRequest,
 } from '@hashgraph/stablecoin-npm-sdk';
 import FreezeStableCoinService from '../../../../src/app/service/stablecoin/FreezeStableCoinService.js';
 import BalanceOfStableCoinsService from '../../../../src/app/service/stablecoin/BalanceOfStableCoinService.js';
@@ -51,7 +65,10 @@ import DeleteStableCoinService from '../../../../src/app/service/stablecoin/Dele
 import ListStableCoinService from '../../../../src/app/service/stablecoin/ListStableCoinService.js';
 import { AccountType } from '../../../../src/domain/configuration/interfaces/AccountType';
 
-const service = new OperationStableCoinService('tokenId', 'memo', 'symbol');
+const tokenId = '0.0.5555555';
+const tokenMemo = 'memo';
+const tokenSymbol = 'symbol';
+const service = new OperationStableCoinService(tokenId, tokenMemo, tokenSymbol);
 const language: Language = new Language();
 const currentAccount = {
   accountId: '0.0.12345',
@@ -103,7 +120,7 @@ const coin = {
   paused: false,
   kycKey: false,
   freezeKey: false,
-  tokenId: account.id,
+  tokenId: new HederaId('0.0.5555555'),
   adminKey: 'admin',
   proxyAddress: 'admin',
 };
@@ -220,6 +237,8 @@ describe(`Testing OperationStableCoinService class`, () => {
   });
 
   it('Should instance start with CashIn', async () => {
+    const account = '0.0.12345';
+    const amount = '1';
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockResolvedValueOnce(
@@ -227,15 +246,19 @@ describe(`Testing OperationStableCoinService class`, () => {
       );
     jest
       .spyOn(utilsService, 'defaultSingleAsk')
-      .mockResolvedValueOnce('0.0.12345')
-      .mockResolvedValueOnce('1');
+      .mockResolvedValueOnce(account)
+      .mockResolvedValueOnce(amount);
     jest
       .spyOn(utilsService, 'defaultConfirmAsk')
       .mockResolvedValueOnce(false)
       .mockResolvedValueOnce(true);
     CashInStableCoinService.prototype.cashInStableCoin = jest
       .fn()
-      .mockImplementation();
+      .mockImplementation(async (request: CashInRequest): Promise<void> => {
+        expect(request.targetId).toEqual(account);
+        expect(request.tokenId).toEqual(tokenId);
+        expect(request.amount).toEqual(amount);
+      });
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockResolvedValueOnce('Go back');
@@ -266,17 +289,21 @@ describe(`Testing OperationStableCoinService class`, () => {
   });
 
   it('Should instance start with Balance', async () => {
+    const account = '0.0.7654321';
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockResolvedValueOnce(
         language.getText('wizard.stableCoinOptions.Balance'),
       );
-    jest
-      .spyOn(utilsService, 'defaultSingleAsk')
-      .mockResolvedValueOnce('0.0.12345');
+    jest.spyOn(utilsService, 'defaultSingleAsk').mockResolvedValueOnce(account);
     BalanceOfStableCoinsService.prototype.getBalanceOfStableCoin = jest
       .fn()
-      .mockImplementation();
+      .mockImplementation(
+        async (request: GetAccountBalanceRequest): Promise<void> => {
+          expect(request.targetId).toEqual(account);
+          expect(request.tokenId).toEqual(tokenId);
+        },
+      );
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockResolvedValueOnce('Go back');
@@ -288,13 +315,17 @@ describe(`Testing OperationStableCoinService class`, () => {
   });
 
   it('Should instance start with Burn', async () => {
+    const amount = '10';
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockResolvedValueOnce(language.getText('wizard.stableCoinOptions.Burn'));
-    jest.spyOn(utilsService, 'defaultSingleAsk').mockResolvedValueOnce('10');
+    jest.spyOn(utilsService, 'defaultSingleAsk').mockResolvedValueOnce(amount);
     BurnStableCoinsService.prototype.burnStableCoin = jest
       .fn()
-      .mockImplementation();
+      .mockImplementation(async (request: BurnRequest): Promise<void> => {
+        expect(request.amount).toEqual(amount);
+        expect(request.tokenId).toEqual(tokenId);
+      });
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockResolvedValueOnce('Go back');
@@ -306,16 +337,22 @@ describe(`Testing OperationStableCoinService class`, () => {
   });
 
   it('Should instance start with Wipe', async () => {
+    const account = '0.0.1111111';
+    const amount = '52';
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockResolvedValueOnce(language.getText('wizard.stableCoinOptions.Wipe'));
     jest
       .spyOn(utilsService, 'defaultSingleAsk')
-      .mockResolvedValueOnce('0.0.12345')
-      .mockResolvedValueOnce('10');
+      .mockResolvedValueOnce(account)
+      .mockResolvedValueOnce(amount);
     WipeStableCoinService.prototype.wipeStableCoin = jest
       .fn()
-      .mockImplementation();
+      .mockImplementation(async (request: WipeRequest): Promise<void> => {
+        expect(request.targetId).toEqual(account);
+        expect(request.tokenId).toEqual(tokenId);
+        expect(request.amount).toEqual(amount);
+      });
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockResolvedValueOnce('Go back');
@@ -327,15 +364,19 @@ describe(`Testing OperationStableCoinService class`, () => {
   });
 
   it('Should instance start with Rescue', async () => {
+    const amount = '3.5';
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockResolvedValueOnce(
         language.getText('wizard.stableCoinOptions.Rescue'),
       );
-    jest.spyOn(utilsService, 'defaultSingleAsk').mockResolvedValueOnce('10');
+    jest.spyOn(utilsService, 'defaultSingleAsk').mockResolvedValueOnce(amount);
     RescueStableCoinService.prototype.rescueStableCoin = jest
       .fn()
-      .mockImplementation();
+      .mockImplementation(async (request: RescueRequest): Promise<void> => {
+        expect(request.tokenId).toEqual(tokenId);
+        expect(request.amount).toEqual(amount);
+      });
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockResolvedValueOnce('Go back');
@@ -347,15 +388,20 @@ describe(`Testing OperationStableCoinService class`, () => {
   });
 
   it('Should instance start with RescueHBAR', async () => {
+    const amount = '35';
+
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockResolvedValueOnce(
         language.getText('wizard.stableCoinOptions.RescueHBAR'),
       );
-    jest.spyOn(utilsService, 'defaultSingleAsk').mockResolvedValueOnce('10');
+    jest.spyOn(utilsService, 'defaultSingleAsk').mockResolvedValueOnce(amount);
     RescueHBARStableCoinService.prototype.rescueHBARStableCoin = jest
       .fn()
-      .mockImplementation();
+      .mockImplementation(async (request: RescueRequest): Promise<void> => {
+        expect(request.tokenId).toEqual(tokenId);
+        expect(request.amount).toEqual(amount);
+      });
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockResolvedValueOnce('Go back');
@@ -367,6 +413,7 @@ describe(`Testing OperationStableCoinService class`, () => {
   });
 
   it('Should instance start with Freeze', async () => {
+    const account = '0.0.54321';
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockResolvedValueOnce(
@@ -377,12 +424,15 @@ describe(`Testing OperationStableCoinService class`, () => {
       .mockResolvedValueOnce(
         language.getText('freezeManagement.options.Freeze'),
       );
-    jest
-      .spyOn(utilsService, 'defaultSingleAsk')
-      .mockResolvedValueOnce('0.0.12345');
+    jest.spyOn(utilsService, 'defaultSingleAsk').mockResolvedValueOnce(account);
     FreezeStableCoinService.prototype.freezeAccount = jest
       .fn()
-      .mockImplementation();
+      .mockImplementation(
+        async (request: FreezeAccountRequest): Promise<void> => {
+          expect(request.tokenId).toEqual(tokenId);
+          expect(request.targetId).toEqual(account);
+        },
+      );
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockResolvedValueOnce('Go back')
@@ -404,6 +454,8 @@ describe(`Testing OperationStableCoinService class`, () => {
   });
 
   it('Should instance start with UnFreeze', async () => {
+    const account = '0.0.54321';
+
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockResolvedValueOnce(
@@ -414,12 +466,15 @@ describe(`Testing OperationStableCoinService class`, () => {
       .mockResolvedValueOnce(
         language.getText('freezeManagement.options.UnFreeze'),
       );
-    jest
-      .spyOn(utilsService, 'defaultSingleAsk')
-      .mockResolvedValueOnce('0.0.12345');
+    jest.spyOn(utilsService, 'defaultSingleAsk').mockResolvedValueOnce(account);
     FreezeStableCoinService.prototype.unfreezeAccount = jest
       .fn()
-      .mockImplementation();
+      .mockImplementation(
+        async (request: FreezeAccountRequest): Promise<void> => {
+          expect(request.tokenId).toEqual(tokenId);
+          expect(request.targetId).toEqual(account);
+        },
+      );
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockResolvedValueOnce('Go back')
@@ -441,6 +496,8 @@ describe(`Testing OperationStableCoinService class`, () => {
   });
 
   it('Should instance start with AccountFrozen', async () => {
+    const account = '0.0.54321';
+
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockResolvedValueOnce(
@@ -451,12 +508,15 @@ describe(`Testing OperationStableCoinService class`, () => {
       .mockResolvedValueOnce(
         language.getText('freezeManagement.options.AccountFrozen'),
       );
-    jest
-      .spyOn(utilsService, 'defaultSingleAsk')
-      .mockResolvedValueOnce('0.0.12345');
+    jest.spyOn(utilsService, 'defaultSingleAsk').mockResolvedValueOnce(account);
     FreezeStableCoinService.prototype.isAccountFrozenDisplay = jest
       .fn()
-      .mockImplementation();
+      .mockImplementation(
+        async (request: FreezeAccountRequest): Promise<void> => {
+          expect(request.tokenId).toEqual(tokenId);
+          expect(request.targetId).toEqual(account);
+        },
+      );
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockResolvedValueOnce('Go back')
@@ -478,6 +538,8 @@ describe(`Testing OperationStableCoinService class`, () => {
   });
 
   it('Should instance start with GrantKYC', async () => {
+    const account = '0.0.54321';
+
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockResolvedValueOnce(
@@ -488,12 +550,13 @@ describe(`Testing OperationStableCoinService class`, () => {
       .mockResolvedValueOnce(
         language.getText('kycManagement.options.GrantKYC'),
       );
-    jest
-      .spyOn(utilsService, 'defaultSingleAsk')
-      .mockResolvedValueOnce('0.0.12345');
+    jest.spyOn(utilsService, 'defaultSingleAsk').mockResolvedValueOnce(account);
     KYCStableCoinService.prototype.grantKYCToAccount = jest
       .fn()
-      .mockImplementation();
+      .mockImplementation(async (request: KYCRequest): Promise<void> => {
+        expect(request.tokenId).toEqual(tokenId);
+        expect(request.targetId).toEqual(account);
+      });
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockResolvedValueOnce('Go back')
@@ -512,6 +575,8 @@ describe(`Testing OperationStableCoinService class`, () => {
   });
 
   it('Should instance start with RevokeKYC', async () => {
+    const account = '0.0.54321';
+
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockResolvedValueOnce(
@@ -522,12 +587,13 @@ describe(`Testing OperationStableCoinService class`, () => {
       .mockResolvedValueOnce(
         language.getText('kycManagement.options.RevokeKYC'),
       );
-    jest
-      .spyOn(utilsService, 'defaultSingleAsk')
-      .mockResolvedValueOnce('0.0.12345');
+    jest.spyOn(utilsService, 'defaultSingleAsk').mockResolvedValueOnce(account);
     KYCStableCoinService.prototype.revokeKYCFromAccount = jest
       .fn()
-      .mockImplementation();
+      .mockImplementation(async (request: KYCRequest): Promise<void> => {
+        expect(request.tokenId).toEqual(tokenId);
+        expect(request.targetId).toEqual(account);
+      });
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockResolvedValueOnce('Go back')
@@ -546,6 +612,8 @@ describe(`Testing OperationStableCoinService class`, () => {
   });
 
   it('Should instance start with AccountKYCGranted', async () => {
+    const account = '0.0.54321';
+
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockResolvedValueOnce(
@@ -556,12 +624,13 @@ describe(`Testing OperationStableCoinService class`, () => {
       .mockResolvedValueOnce(
         language.getText('kycManagement.options.AccountKYCGranted'),
       );
-    jest
-      .spyOn(utilsService, 'defaultSingleAsk')
-      .mockResolvedValueOnce('0.0.12345');
+    jest.spyOn(utilsService, 'defaultSingleAsk').mockResolvedValueOnce(account);
     KYCStableCoinService.prototype.isAccountKYCGranted = jest
       .fn()
-      .mockImplementation();
+      .mockImplementation(async (request: KYCRequest): Promise<void> => {
+        expect(request.tokenId).toEqual(tokenId);
+        expect(request.targetId).toEqual(account);
+      });
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockResolvedValueOnce('Go back')
@@ -580,6 +649,12 @@ describe(`Testing OperationStableCoinService class`, () => {
   });
 
   it('Should instance start with createFixedFee', async () => {
+    const tokenIdCollected = '0.0.7654321';
+    const collectorAccount = '0.0.1234567';
+    const decimals = 3;
+    const collectorsExempt = false;
+    const amount = '11';
+
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockResolvedValueOnce(
@@ -596,20 +671,31 @@ describe(`Testing OperationStableCoinService class`, () => {
     jest.spyOn(utilsService, 'defaultConfirmAsk').mockResolvedValueOnce(false);
     jest
       .spyOn(utilsService, 'defaultSingleAsk')
-      .mockResolvedValueOnce('0.0.123456');
+      .mockResolvedValueOnce(tokenIdCollected);
     DetailsStableCoinService.prototype.getDetailsStableCoins = jest
       .fn()
-      .mockResolvedValue({ decimals: 6 });
-    jest.spyOn(utilsService, 'defaultSingleAsk').mockResolvedValueOnce('10');
+      .mockResolvedValue({ decimals: decimals });
+    jest.spyOn(utilsService, 'defaultSingleAsk').mockResolvedValueOnce(amount);
     jest
       .spyOn(utilsService, 'defaultConfirmAsk')
-      .mockResolvedValueOnce(true)
+      .mockResolvedValueOnce(collectorsExempt)
       .mockResolvedValueOnce(true);
     jest
       .spyOn(utilsService, 'defaultSingleAsk')
-      .mockResolvedValueOnce('0.0.123456');
+      .mockResolvedValueOnce(collectorAccount);
 
-    FeeStableCoinService.prototype.addFixedFee = jest.fn().mockImplementation();
+    FeeStableCoinService.prototype.addFixedFee = jest
+      .fn()
+      .mockImplementation(
+        async (request: AddFixedFeeRequest): Promise<void> => {
+          expect(request.tokenId).toEqual(tokenId);
+          expect(request.collectorId).toEqual(collectorAccount);
+          expect(request.collectorsExempt).toEqual(collectorsExempt);
+          expect(request.decimals).toEqual(decimals);
+          expect(request.tokenIdCollected).toEqual(tokenIdCollected);
+          expect(request.amount).toEqual(amount);
+        },
+      );
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockResolvedValueOnce('Go back')
@@ -628,6 +714,14 @@ describe(`Testing OperationStableCoinService class`, () => {
   });
 
   it('Should instance start with createFractionalFee Percentage', async () => {
+    const collectorAccount = '0.0.1234567';
+    const decimals = 3;
+    const collectorsExempt = false;
+    const net = false;
+    const percentage = '1';
+    const min = '2';
+    const max = '3';
+
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockResolvedValueOnce(
@@ -648,23 +742,35 @@ describe(`Testing OperationStableCoinService class`, () => {
       );
     DetailsStableCoinService.prototype.getDetailsStableCoins = jest
       .fn()
-      .mockResolvedValue({ decimals: 6 });
-    jest.spyOn(utilsService, 'defaultSingleAsk').mockResolvedValueOnce('1');
+      .mockResolvedValue({ decimals: decimals });
     jest
       .spyOn(utilsService, 'defaultSingleAsk')
-      .mockResolvedValueOnce('1')
-      .mockResolvedValueOnce('1');
+      .mockResolvedValueOnce(percentage);
+    jest
+      .spyOn(utilsService, 'defaultSingleAsk')
+      .mockResolvedValueOnce(min)
+      .mockResolvedValueOnce(max);
     jest
       .spyOn(utilsService, 'defaultConfirmAsk')
-      .mockResolvedValueOnce(true)
-      .mockResolvedValueOnce(true);
+      .mockResolvedValueOnce(net)
+      .mockResolvedValueOnce(collectorsExempt);
     jest
       .spyOn(utilsService, 'defaultSingleAsk')
-      .mockResolvedValueOnce('0.0.123456');
+      .mockResolvedValueOnce(collectorAccount);
     jest.spyOn(utilsService, 'defaultConfirmAsk').mockResolvedValueOnce(true);
     FeeStableCoinService.prototype.addFractionalFee = jest
       .fn()
-      .mockImplementation();
+      .mockImplementation(
+        async (request: AddFractionalFeeRequest): Promise<void> => {
+          expect(request.tokenId).toEqual(tokenId);
+          expect(request.collectorId).toEqual(collectorAccount);
+          expect(request.collectorsExempt).toEqual(collectorsExempt);
+          expect(request.decimals).toEqual(decimals);
+          expect(request.min).toEqual(min);
+          expect(request.max).toEqual(max);
+          expect(request.net).toEqual(net);
+        },
+      );
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockResolvedValueOnce('Go back')
@@ -683,6 +789,15 @@ describe(`Testing OperationStableCoinService class`, () => {
   });
 
   it('Should instance start with createFractionalFee Fraction', async () => {
+    const collectorAccount = '0.0.1234567';
+    const decimals = 3;
+    const collectorsExempt = true;
+    const net = false;
+    const numerator = '1';
+    const denominator = '2';
+    const min = '3';
+    const max = '4';
+
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockResolvedValueOnce(
@@ -703,26 +818,38 @@ describe(`Testing OperationStableCoinService class`, () => {
       );
     DetailsStableCoinService.prototype.getDetailsStableCoins = jest
       .fn()
-      .mockResolvedValue({ decimals: 6 });
+      .mockResolvedValue({ decimals: decimals });
     jest
       .spyOn(utilsService, 'defaultSingleAsk')
-      .mockResolvedValueOnce('1')
-      .mockResolvedValueOnce('2');
+      .mockResolvedValueOnce(numerator)
+      .mockResolvedValueOnce(denominator);
     jest
       .spyOn(utilsService, 'defaultSingleAsk')
-      .mockResolvedValueOnce('1')
-      .mockResolvedValueOnce('1');
+      .mockResolvedValueOnce(min)
+      .mockResolvedValueOnce(max);
     jest
       .spyOn(utilsService, 'defaultConfirmAsk')
-      .mockResolvedValueOnce(true)
-      .mockResolvedValueOnce(true);
+      .mockResolvedValueOnce(net)
+      .mockResolvedValueOnce(collectorsExempt);
     jest
       .spyOn(utilsService, 'defaultSingleAsk')
-      .mockResolvedValueOnce('0.0.123456');
+      .mockResolvedValueOnce(collectorAccount);
     jest.spyOn(utilsService, 'defaultConfirmAsk').mockResolvedValueOnce(true);
     FeeStableCoinService.prototype.addFractionalFee = jest
       .fn()
-      .mockImplementation();
+      .mockImplementation(
+        async (request: AddFractionalFeeRequest): Promise<void> => {
+          expect(request.tokenId).toEqual(tokenId);
+          expect(request.collectorId).toEqual(collectorAccount);
+          expect(request.collectorsExempt).toEqual(collectorsExempt);
+          expect(request.decimals).toEqual(decimals);
+          expect(request.amountNumerator).toEqual(numerator);
+          expect(request.amountDenominator).toEqual(denominator);
+          expect(request.min).toEqual(min);
+          expect(request.max).toEqual(max);
+          expect(request.net).toEqual(net);
+        },
+      );
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockResolvedValueOnce('Go back')
@@ -765,7 +892,14 @@ describe(`Testing OperationStableCoinService class`, () => {
     FeeStableCoinService.prototype.getRemainingFees = jest
       .fn()
       .mockImplementation();
-    FeeStableCoinService.prototype.updateFees = jest.fn().mockImplementation();
+    FeeStableCoinService.prototype.updateFees = jest
+      .fn()
+      .mockImplementation(
+        async (request: UpdateCustomFeesRequest): Promise<void> => {
+          expect(request.tokenId).toEqual(tokenId);
+          expect(request.customFees).toBeUndefined();
+        },
+      );
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockResolvedValueOnce('Go back')
@@ -784,11 +918,13 @@ describe(`Testing OperationStableCoinService class`, () => {
   });
 
   it('Should instance start with Fees List', async () => {
-    const customFees = {
-      collectorId: 'collectorId',
-      collectorsExempt: true,
-      decimals: 6,
-    };
+    const customFees = [
+      {
+        collectorId: 'collectorId',
+        collectorsExempt: true,
+        decimals: 6,
+      },
+    ];
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockResolvedValueOnce(
@@ -802,7 +938,20 @@ describe(`Testing OperationStableCoinService class`, () => {
       .mockResolvedValue({ customFees });
     FeeStableCoinService.prototype.getSerializedFees = jest
       .fn()
-      .mockImplementation();
+      .mockImplementation(
+        async (listOfFees: RequestCustomFee[]): Promise<void> => {
+          expect(listOfFees.length).toEqual(customFees.length);
+          for (let i = 0; i < customFees.length; i++) {
+            expect(listOfFees[i].collectorId).toEqual(
+              customFees[i].collectorId,
+            );
+            expect(listOfFees[i].collectorsExempt).toEqual(
+              customFees[i].collectorsExempt,
+            );
+            expect(listOfFees[i].decimals).toEqual(customFees[i].decimals);
+          }
+        },
+      );
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockResolvedValueOnce('Go back')
@@ -843,100 +992,17 @@ describe(`Testing OperationStableCoinService class`, () => {
       );
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
-      .mockResolvedValueOnce(
-        language.getText('wizard.CheckAccountsWithRoleOptions.CashIn'),
-      );
-    jest
-      .spyOn(utilsService, 'defaultMultipleAsk')
-      .mockResolvedValueOnce(
-        language.getText('wizard.roleManagementOptions.CheckAccountsWithRole'),
-      );
-    jest
-      .spyOn(utilsService, 'defaultMultipleAsk')
-      .mockResolvedValueOnce(
-        language.getText('wizard.CheckAccountsWithRoleOptions.Burn'),
-      );
-    jest
-      .spyOn(utilsService, 'defaultMultipleAsk')
-      .mockResolvedValueOnce(
-        language.getText('wizard.roleManagementOptions.CheckAccountsWithRole'),
-      );
-    jest
-      .spyOn(utilsService, 'defaultMultipleAsk')
-      .mockResolvedValueOnce(
-        language.getText('wizard.CheckAccountsWithRoleOptions.Wipe'),
-      );
-    jest
-      .spyOn(utilsService, 'defaultMultipleAsk')
-      .mockResolvedValueOnce(
-        language.getText('wizard.roleManagementOptions.CheckAccountsWithRole'),
-      );
-    jest
-      .spyOn(utilsService, 'defaultMultipleAsk')
-      .mockResolvedValueOnce(
-        language.getText('wizard.CheckAccountsWithRoleOptions.Rescue'),
-      );
-    jest
-      .spyOn(utilsService, 'defaultMultipleAsk')
-      .mockResolvedValueOnce(
-        language.getText('wizard.roleManagementOptions.CheckAccountsWithRole'),
-      );
-    jest
-      .spyOn(utilsService, 'defaultMultipleAsk')
-      .mockResolvedValueOnce(
-        language.getText('wizard.CheckAccountsWithRoleOptions.RescueHBAR'),
-      );
-    jest
-      .spyOn(utilsService, 'defaultMultipleAsk')
-      .mockResolvedValueOnce(
-        language.getText('wizard.roleManagementOptions.CheckAccountsWithRole'),
-      );
-    jest
-      .spyOn(utilsService, 'defaultMultipleAsk')
-      .mockResolvedValueOnce(
-        language.getText('wizard.CheckAccountsWithRoleOptions.Pause'),
-      );
-    jest
-      .spyOn(utilsService, 'defaultMultipleAsk')
-      .mockResolvedValueOnce(
-        language.getText('wizard.roleManagementOptions.CheckAccountsWithRole'),
-      );
-    jest
-      .spyOn(utilsService, 'defaultMultipleAsk')
-      .mockResolvedValueOnce(
-        language.getText('wizard.CheckAccountsWithRoleOptions.Freeze'),
-      );
-    jest
-      .spyOn(utilsService, 'defaultMultipleAsk')
-      .mockResolvedValueOnce(
-        language.getText('wizard.roleManagementOptions.CheckAccountsWithRole'),
-      );
-    jest
-      .spyOn(utilsService, 'defaultMultipleAsk')
-      .mockResolvedValueOnce(
-        language.getText('wizard.CheckAccountsWithRoleOptions.Delete'),
-      );
-    jest
-      .spyOn(utilsService, 'defaultMultipleAsk')
-      .mockResolvedValueOnce(
-        language.getText('wizard.roleManagementOptions.CheckAccountsWithRole'),
-      );
-    jest
-      .spyOn(utilsService, 'defaultMultipleAsk')
-      .mockResolvedValueOnce(
-        language.getText('wizard.CheckAccountsWithRoleOptions.KYC'),
-      );
-    jest
-      .spyOn(utilsService, 'defaultMultipleAsk')
-      .mockResolvedValueOnce(
-        language.getText('wizard.roleManagementOptions.CheckAccountsWithRole'),
-      );
-    jest
-      .spyOn(utilsService, 'defaultMultipleAsk')
       .mockResolvedValueOnce('Go back');
     RoleStableCoinService.prototype.getAccountsWithRole = jest
       .fn()
-      .mockImplementation();
+      .mockImplementation(
+        async (request: GetAccountsWithRolesRequest): Promise<void> => {
+          expect(request.tokenId).toEqual(tokenId);
+          expect(request.roleId).toEqual(
+            '0x0000000000000000000000000000000000000000000000000000000000000000',
+          );
+        },
+      );
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockResolvedValueOnce('Go back')
@@ -947,16 +1013,6 @@ describe(`Testing OperationStableCoinService class`, () => {
     jest
       .spyOn(OperationStableCoinService.prototype as any, 'roleManagementFlow')
       .mockImplementationOnce(keepFlow)
-      .mockImplementationOnce(keepFlow)
-      .mockImplementationOnce(keepFlow)
-      .mockImplementationOnce(keepFlow)
-      .mockImplementationOnce(keepFlow)
-      .mockImplementationOnce(keepFlow)
-      .mockImplementationOnce(keepFlow)
-      .mockImplementationOnce(keepFlow)
-      .mockImplementationOnce(keepFlow)
-      .mockImplementationOnce(keepFlow)
-      .mockImplementationOnce(keepFlow)
       .mockImplementation(jest.fn());
     await service.start();
 
@@ -965,6 +1021,8 @@ describe(`Testing OperationStableCoinService class`, () => {
   });
 
   it('Should instance start with roles grant', async () => {
+    const targetsId = ['0.0.1234567'];
+    const roles = ['Admin Role'];
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockResolvedValueOnce(
@@ -978,21 +1036,24 @@ describe(`Testing OperationStableCoinService class`, () => {
     jest
       .spyOn(OperationStableCoinService.prototype as any, 'validateTokenId')
       .mockImplementation(jest.fn());
-    jest
-      .spyOn(utilsService, 'checkBoxMultipleAsk')
-      .mockResolvedValue(['Admin Role']);
+    jest.spyOn(utilsService, 'checkBoxMultipleAsk').mockResolvedValue(roles);
     jest
       .spyOn(utilsService, 'defaultSingleAsk')
-      .mockResolvedValueOnce('0.0.12345');
+      .mockResolvedValueOnce(targetsId[0]);
     jest.spyOn(utilsService, 'defaultConfirmAsk').mockResolvedValueOnce(false);
-    jest.spyOn(utilsService, 'defaultSingleAsk').mockResolvedValueOnce('10');
-    jest
-      .spyOn(utilsService, 'defaultConfirmAsk')
-      .mockResolvedValueOnce(false)
-      .mockResolvedValueOnce(true);
+    jest.spyOn(utilsService, 'defaultConfirmAsk').mockResolvedValueOnce(true);
     RoleStableCoinService.prototype.grantMultiRolesStableCoin = jest
       .fn()
-      .mockImplementation();
+      .mockImplementation(
+        async (request: GrantMultiRolesRequest): Promise<void> => {
+          expect(request.tokenId).toEqual(tokenId);
+          expect(request.roles.length).toEqual(roles.length);
+          expect(request.targetsId.length).toEqual(targetsId.length);
+          for (let i = 0; i < targetsId.length; i++) {
+            expect(request.targetsId[i]).toEqual(targetsId[i]);
+          }
+        },
+      );
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockResolvedValueOnce('Go back')
