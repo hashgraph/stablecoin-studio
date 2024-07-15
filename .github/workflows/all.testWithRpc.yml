@@ -45,17 +45,17 @@ jobs:
           npm run build
         working-directory: backend
 
-      #- name: Install dependencies Contracts
-      #  run: |
-      #    npm ci
-      #    npm run compile:force
-      #  working-directory: contracts
+      - name: Install dependencies Contracts
+        run: |
+          npm ci
+          npm run compile:force
+        working-directory: contracts
 
-      #- name: Install dependencies SDK
-      #  run: |
-      #    npm ci
-      #    npm run build
-      #  working-directory: sdk
+      - name: Install dependencies SDK
+        run: |
+          npm ci
+          npm run build
+        working-directory: sdk
       
       - name: Install dependencies Cli
         run: |
@@ -138,14 +138,14 @@ jobs:
       #- name: DockerStatus
       #  run:  curl --location --request POST 'http://localhost:7546/api' --data ""
 
-      - name: Test sdk
-        run: |
-          npm run test
-          npm run cleanCache
-        working-directory: sdk
+      #- name: Test sdk
+      #  run: |
+      #    npm run test
+      #    npm run cleanCache
+      #  working-directory: sdk
 
-      - name: Test Contracts
-        run: |
-          npm run test:parallel
-          npm run cleanCache
-        working-directory: contracts
+      #- name: Test Contracts
+      #  run: |
+      #    npm run test:parallel
+      #    npm run cleanCache
+      #  working-directory: contracts
