@@ -28,6 +28,75 @@ import {
 import { AccountType } from '../../../../src/domain/configuration/interfaces/AccountType';
 import { MIRROR_NODE, RPC } from '../../../../src/core/Constants.js';
 
+const checkBox_question = 'What do you want to do?';
+const options = ['option_1', 'option_2', 'option_3'];
+const loop = false;
+const atLeastOne = false;
+const selectedOptions = ['option_1', 'option_3'];
+
+const confirm_question = 'Do you confirm?';
+const selectedConfirmation = true;
+
+const error_question = 'Error Message Question';
+const errorConfirmation = true;
+
+const confirm_continue_question = 'Do you accept?';
+const selectedContinueConfirmation = false;
+
+const password_question = 'Enter your password?';
+const selectedPassword = 'password';
+
+jest.mock('inquirer', () => {
+  const actual = jest.requireActual('inquirer');
+
+  return {
+    ...actual,
+    prompt: jest.fn().mockImplementation(async (input: any): Promise<any> => {
+      switch (input.message) {
+        case checkBox_question:
+          // eslint-disable-next-line jest/no-standalone-expect
+          expect(input.choices.length).toEqual(options.length);
+          // eslint-disable-next-line jest/no-standalone-expect
+          expect(input.loop).toEqual(loop);
+
+          for (let i = 0; i < options.length; i++) {
+            // eslint-disable-next-line jest/no-standalone-expect
+            expect(input.choices[i]).toEqual(options[i]);
+          }
+
+          return {
+            response: selectedOptions,
+          };
+
+        case confirm_question:
+          // eslint-disable-next-line jest/no-standalone-expect
+          expect(input.default()).toEqual(!selectedConfirmation);
+          return {
+            response: selectedConfirmation,
+          };
+
+        case error_question:
+          return {
+            response: errorConfirmation,
+          };
+
+        case confirm_continue_question:
+          return {
+            response: selectedContinueConfirmation,
+          };
+
+        case password_question:
+          return {
+            response: selectedPassword,
+          };
+
+        default:
+          throw new Error();
+      }
+    }),
+  };
+});
+
 describe('UtilitiesService', () => {
   const network = 'testnet';
   // mocks
@@ -56,7 +125,7 @@ describe('UtilitiesService', () => {
   };
 
   const mockCurrentMirror = {
-    name: 'testnet',
+    name: 'MirrorNodeName',
     network: network,
     baseUrl: 'https://testnet.mirrornode.com',
     apiKey: '',
@@ -64,7 +133,7 @@ describe('UtilitiesService', () => {
     selected: true,
   };
   const mockCurrentRPC = {
-    name: 'testnet',
+    name: 'RPCNodeName',
     network: network,
     baseUrl: 'https://testnet.rpc.com',
     apiKey: '',
@@ -107,6 +176,7 @@ describe('UtilitiesService', () => {
 
   let networkInitSpy;
   let networkConnectSpy;
+
   beforeEach(() => {
     networkInitSpy = jest.spyOn(Network, 'init').mockResolvedValue(undefined);
     networkConnectSpy = jest
@@ -189,5 +259,90 @@ describe('UtilitiesService', () => {
     await utilsService.configureNetwork(RPC);
     await utilsService.configureNetwork('nothing');
     expect(utilsService.showError).toHaveBeenCalledTimes(1);
+  });
+
+  it('format Date', () => {
+    const date = new Date(1987, 7, 5, 9, 5, 0);
+    const formattedDate = utilsService.formatDateTime(date);
+    expect(formattedDate).toEqual('1987-08-05T07:05:00Z');
+  });
+
+  it('display User Info', async () => {
+    await utilsService.setCurrentMirror(mockCurrentMirror);
+    await utilsService.setCurrentBackend(mockCurrentBackend);
+    await utilsService.setCurrentRPC(mockCurrentRPC);
+    const token = '0.0.2222222';
+
+    jest
+      .spyOn(utilsService, 'showMessage')
+      .mockImplementation((message: string): void => {
+        expect(message.includes(token)).toBe(true);
+        expect(message.includes(mockAccount.accountId)).toBe(true);
+        expect(message.includes(mockAccount.alias)).toBe(true);
+        expect(message.includes(mockCurrentMirror.name)).toBe(true);
+        expect(message.includes(mockCurrentBackend.endpoint)).toBe(true);
+        expect(message.includes(mockCurrentRPC.name)).toBe(true);
+        expect(message.includes(network)).toBe(true);
+      });
+
+    utilsService.displayCurrentUserInfo(mockAccount, token);
+  });
+
+  it('checkbox multiple ask', async () => {
+    const result = await utilsService.checkBoxMultipleAsk(
+      checkBox_question,
+      options,
+      loop,
+      atLeastOne,
+    );
+
+    expect(result.length).toEqual(selectedOptions.length);
+    for (let i = 0; i < selectedOptions.length; i++) {
+      expect(result[i]).toEqual(selectedOptions[i]);
+    }
+  });
+
+  it('confirm ask', async () => {
+    const result = await utilsService.defaultConfirmAsk(
+      confirm_question,
+      !selectedConfirmation,
+    );
+
+    expect(result).toEqual(selectedConfirmation);
+  });
+
+  it('confirm error ask', async () => {
+    const result = await utilsService.defaultErrorConfirm(error_question);
+
+    expect(result).toEqual(errorConfirmation);
+  });
+
+  it('confirm continue ask', async () => {
+    const result = await utilsService.confirmContinue(
+      confirm_continue_question,
+    );
+
+    expect(result).toEqual(selectedContinueConfirmation);
+  });
+
+  it('password ask', async () => {
+    const result = await utilsService.defaultPasswordAsk(password_question);
+
+    expect(result).toEqual(selectedPassword);
+  });
+
+  it('public key ask', async () => {
+    const publicKey_OK =
+      '0x0001020304050607000102030405060700010203040506070001020304050607';
+    const publicKey_Wrong = '0x123';
+
+    jest
+      .spyOn(utilsService, 'defaultSingleAsk')
+      .mockResolvedValueOnce(publicKey_Wrong)
+      .mockResolvedValueOnce(publicKey_OK);
+
+    const result = await utilsService.defaultPublicKeyAsk();
+
+    expect(result.key).toEqual(publicKey_OK.substring(2));
   });
 });
