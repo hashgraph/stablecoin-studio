@@ -262,9 +262,20 @@ describe('UtilitiesService', () => {
   });
 
   it('format Date', () => {
-    const date = new Date(1987, 7, 5, 9, 5, 0);
+    const year = 1987;
+    const month = 7;
+    const day = 5;
+    const hours = 9;
+    const minutes = 5;
+    const seconds = 0;
+    const milliseconds = 0;
+    const date = new Date(
+      Date.UTC(year, month, day, hours, minutes, seconds, milliseconds),
+    );
     const formattedDate = utilsService.formatDateTime(date);
-    expect(formattedDate).toEqual('1987-08-05T07:05:00Z');
+    expect(formattedDate).toEqual(
+      `${year}-0${month + 1}-0${day}T0${hours}:0${minutes}:0${seconds}Z`,
+    );
   });
 
   it('display User Info', async () => {
