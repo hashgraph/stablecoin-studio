@@ -19,19 +19,14 @@
  */
 
 import {
-	Account,
 	Balance,
 	HederaId,
 	Network,
 	Role,
-	StableCoin,
 	StableCoinRole,
-	StableCoinViewModel,
-	TokenSupplyType,
 } from '../../../src/index.js';
 import {
 	CheckSupplierLimitRequest,
-	CreateRequest,
 	DecreaseSupplierAllowanceRequest,
 	GetRolesRequest,
 	GetSupplierAllowanceRequest,
@@ -53,7 +48,6 @@ import {
 	CLIENT_ACCOUNT_ED25519,
 	DECIMALS,
 	FACTORY_ADDRESS,
-	HEDERA_TOKEN_MANAGER_ADDRESS,
 } from '../../config.js';
 import BigDecimal from '../../../src/domain/context/shared/BigDecimal.js';
 import GetAccountsWithRolesRequest from '../../../src/port/in/request/GetAccountsWithRolesRequest.js';
