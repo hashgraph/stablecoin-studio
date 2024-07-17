@@ -23,6 +23,7 @@
 /* eslint-disable jest/expect-expect */
 /* eslint-disable jest/no-standalone-expect */
 /* eslint-disable jest/no-disabled-tests */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 jest.resetModules();
 jest.unmock('../../../src/port/out/mirror/MirrorNodeAdapter.ts');
@@ -31,32 +32,16 @@ jest.unmock('axios');
 
 import { StableCoin } from '../../../src/domain/context/stablecoin/StableCoin.js';
 import {
-	AcceptProxyOwnerRequest,
 	AssociateTokenRequest,
-	ChangeProxyOwnerRequest,
-	ConnectRequest,
-	Factory as FactoryInPort,
-	FreezeAccountRequest,
-	GetAccountBalanceHBARRequest,
-	GetAccountBalanceRequest,
-	GetProxyConfigRequest,
 	GetStableCoinDetailsRequest,
-	GetTokenManagerListRequest,
-	HBAR_DECIMALS,
 	KYCRequest,
 	LoggerTransports,
-	Network,
-	Proxy as ProxyInPort,
-	ProxyConfigurationViewModel,
 	SDK,
 	StableCoin as StableCoinInPort,
-	SupportedWallets,
-	UpgradeImplementationRequest,
 } from '../../../src/index.js';
 import StableCoinCapabilities from '../../../src/domain/context/stablecoin/StableCoinCapabilities.js';
 import BigDecimal from '../../../src/domain/context/shared/BigDecimal.js';
 import { ethers, Wallet } from 'ethers';
-import { StableCoinRole } from '../../../src/domain/context/stablecoin/StableCoinRole.js';
 import Injectable from '../../../src/core/Injectable.js';
 import { MirrorNodeAdapter } from '../../../src/port/out/mirror/MirrorNodeAdapter.js';
 import PublicKey from '../../../src/domain/context/account/PublicKey.js';
@@ -64,7 +49,6 @@ import ContractId from '../../../src/domain/context/contract/ContractId.js';
 import { TokenSupplyType } from '../../../src/port/in/StableCoin.js';
 import {
 	CLIENT_ACCOUNT_ECDSA,
-	CLIENT_ACCOUNT_ED25519,
 	FACTORY_ADDRESS,
 	HEDERA_TOKEN_MANAGER_ADDRESS,
 	MIRROR_NODE,
@@ -72,19 +56,13 @@ import {
 } from '../../config.js';
 import Account from '../../../src/domain/context/account/Account.js';
 import NetworkService from '../../../src/app/service/NetworkService.js';
-import {
-	Client,
-	ContractId as HContractId,
-	Hbar,
-	TransferTransaction,
-} from '@hashgraph/sdk';
+import { ContractId as HContractId } from '@hashgraph/sdk';
 import StableCoinService from '../../../src/app/service/StableCoinService.js';
 import { RESERVE_DECIMALS } from '../../../src/domain/context/reserve/Reserve.js';
 import RPCTransactionAdapter from '../../../src/port/out/rpc/RPCTransactionAdapter.js';
 import { RPCQueryAdapter } from '../../../src/port/out/rpc/RPCQueryAdapter.js';
 import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
-import EvmAddress from '../../../src/domain/context/contract/EvmAddress.js';
 
 SDK.log = { level: 'ERROR', transports: new LoggerTransports.Console() };
 const mirrorNode: MirrorNode = {
@@ -107,8 +85,8 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 	let ns: NetworkService;
 	let rpcQueryAdapter: RPCQueryAdapter;
 	let stableCoinService: StableCoinService;
-	let proxyAdmin: string;
-	let proxy: string;
+	// let proxyAdmin: string;
+	// let proxy: string;
 
 	const delay = async (seconds = 4): Promise<void> => {
 		seconds = seconds * 1000;
@@ -130,8 +108,8 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 			proxyAdminOwner,
 		);
 
-		proxyAdmin = tr.response[0][1];
-		proxy = tr.response[0][0];
+		// proxyAdmin = tr.response[0][1];
+		// proxy = tr.response[0][0];
 
 		const tokenIdSC = ContractId.fromHederaContractId(
 			HContractId.fromSolidityAddress(tr.response[0][3]),

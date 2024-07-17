@@ -20,11 +20,7 @@
 
 /* eslint-disable jest/no-disabled-tests */
 import {
-	Account,
 	Network,
-	StableCoin,
-	StableCoinViewModel,
-	TokenSupplyType,
 	Proxy,
 	Factory,
 	ProxyConfigurationViewModel,
@@ -32,7 +28,6 @@ import {
 } from '../../../src/index.js';
 import {
 	ChangeProxyOwnerRequest,
-	CreateRequest,
 	GetProxyConfigRequest,
 	InitializationRequest,
 	GetTokenManagerListRequest,
@@ -47,7 +42,6 @@ import ConnectRequest, {
 	SupportedWallets,
 } from '../../../src/port/in/request/ConnectRequest.js';
 import {
-	CLIENT_ACCOUNT_ED25519_2,
 	CLIENT_ACCOUNT_ED25519,
 	CLIENT_ACCOUNT_ECDSA,
 	FACTORY_ADDRESS,

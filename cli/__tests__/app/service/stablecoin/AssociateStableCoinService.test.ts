@@ -18,13 +18,19 @@
  *
  */
 
-import { StableCoin } from '@hashgraph/stablecoin-npm-sdk';
+import {
+  AssociateTokenRequest,
+  StableCoin,
+} from '@hashgraph/stablecoin-npm-sdk';
 import AssociateStableCoinService from '../../../../src/app/service/stablecoin/AssociateStableCoinService';
 import { utilsService } from '../../../../src/index.js';
 
 const service = new AssociateStableCoinService();
 
 describe(`Testing AssociateStableCoinService class`, () => {
+  const token = '0.0.234567';
+  const account = '0.0.356789';
+
   beforeEach(() => {
     jest.spyOn(utilsService, 'showSpinner').mockImplementation();
     jest.spyOn(utilsService, 'showMessage').mockImplementation();
@@ -33,17 +39,25 @@ describe(`Testing AssociateStableCoinService class`, () => {
     jest.spyOn(console, 'warn').mockImplementation();
     jest.spyOn(console, 'error').mockImplementation();
     jest.spyOn(console, 'dir').mockImplementation();
-    jest.spyOn(StableCoin, 'associate').mockImplementation();
   });
   afterEach(() => {
     jest.restoreAllMocks();
   });
 
   it('Should instance associateStableCoin', async () => {
-    await service.associateStableCoin('0.0.12345', '0.0.12345');
+    const AssociateMock = jest
+      .spyOn(StableCoin, 'associate')
+      .mockImplementation(
+        async (request: AssociateTokenRequest): Promise<boolean> => {
+          expect(request.targetId).toEqual(account);
+          expect(request.tokenId).toEqual(token);
+          return true;
+        },
+      );
+    await service.associateStableCoin(account, token);
 
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
-    expect(StableCoin.associate).toHaveBeenCalledTimes(1);
+    expect(AssociateMock).toHaveBeenCalledTimes(1);
   });
 });

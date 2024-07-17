@@ -19,6 +19,7 @@
  */
 
 /* eslint-disable jest/no-standalone-expect */
+/* eslint-disable jest/no-commented-out-tests */
 
 import EventService from '../../../src/app/service/event/EventService.js';
 import { WalletEvents } from '../../../src/app/service/event/WalletEvent.js';
@@ -38,27 +39,20 @@ import {
 	TokenSupplyType,
 } from '../../../src/index.js';
 import {
-	AssociateTokenRequest,
 	BurnRequest,
 	CapabilitiesRequest,
 	CashInRequest,
 	CreateRequest,
-	DeleteRequest,
 	FreezeAccountRequest,
 	GetAccountBalanceHBARRequest,
 	GetAccountBalanceRequest,
 	GetReserveAddressRequest,
-	GetTransactionsRequest,
 	GrantRoleRequest,
 	InitializationRequest,
-	IsAccountAssociatedTokenRequest,
 	KYCRequest,
 	PauseRequest,
 	RescueHBARRequest,
 	RescueRequest,
-	SignTransactionRequest,
-	SubmitTransactionRequest,
-	TransfersRequest,
 	UpdateRequest,
 	UpdateReserveAddressRequest,
 	WipeRequest,
@@ -69,11 +63,9 @@ import ConnectRequest, {
 import GetStableCoinDetailsRequest from '../../../src/port/in/request/GetStableCoinDetailsRequest.js';
 import {
 	BACKEND_NODE,
-	CLIENT_ACCOUNT_ECDSA,
 	CLIENT_ACCOUNT_ED25519,
 	FACTORY_ADDRESS,
 	HEDERA_TOKEN_MANAGER_ADDRESS,
-	MULTISIG_ACCOUNT_ADDRESS,
 	DECIMALS,
 	PROXY_CONTRACT_ID,
 	MAX_SUPPLY,
@@ -83,22 +75,14 @@ import {
 	RESERVE_AMOUNT,
 	RESERVE_ADDRESS,
 } from '../../config.js';
-import { Client, Hbar, TransferTransaction } from '@hashgraph/sdk';
 import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
-import BaseError, {
-	ErrorCategory,
-	ErrorCode,
-} from '../../../src/core/error/BaseError.js';
 import BackendEndpoint from '../../../src/domain/context/network/BackendEndpoint.js';
-import { Environment } from '../../../src/domain/context/network/Environment.js';
-import { MultiSigTransaction } from '../../../src/domain/context/transaction/MultiSigTransaction.js';
-import { ConsensusNode } from '../../../src/domain/context/network/ConsensusNodes.js';
 import Injectable from '../../../src/core/Injectable.js';
 
 const initialSupply = parseInt(INITIAL_SUPPLY);
 const maxSupply = parseInt(MAX_SUPPLY);
-const multisigAccountId = MULTISIG_ACCOUNT_ADDRESS;
+// const multisigAccountId = MULTISIG_ACCOUNT_ADDRESS;
 
 // let multiSigTransaction: MultiSigTransaction;
 
@@ -113,11 +97,6 @@ describe('🧪 Stablecoin test', () => {
 		autoRenewAccount: HederaId.from(AUTO_RENEW_ACCOUNT),
 	};
 
-	/*const stableCoinHTS = {
-		tokenId: new HederaId('0.0.4444444'),
-		decimals: DECIMALS,
-	};*/
-
 	const mirrorNode: MirrorNode = {
 		name: 'testmirrorNode',
 		baseUrl: 'https://testnet.mirrornode.hedera.com/api/v1/',
@@ -128,7 +107,7 @@ describe('🧪 Stablecoin test', () => {
 		baseUrl: 'https://testnet.hashio.io/api',
 	};
 
-	const newConsensusNode_1: ConsensusNode = {
+	/*const newConsensusNode_1: ConsensusNode = {
 		url: '34.94.106.61:50211',
 		nodeId: '0.0.3',
 	};
@@ -136,7 +115,7 @@ describe('🧪 Stablecoin test', () => {
 		url: '35.237.119.55:50211',
 		nodeId: '0.0.4',
 	};
-	const consensusNodes = [newConsensusNode_1, newConsensusNode_2];
+	 const consensusNodes = [newConsensusNode_1, newConsensusNode_2];*/
 
 	const backendEndpoint: BackendEndpoint = {
 		url: BACKEND_NODE.baseUrl,
@@ -353,7 +332,7 @@ describe('🧪 Stablecoin test', () => {
 		expect(result).not.toBeNull();
 	}, 60_000);
 
-	it.skip('Performs add, multisign and submit transaction', async () => {
+	/* it.skip('Performs add, multisign and submit transaction', async () => {
 		await Network.connect(
 			new ConnectRequest({
 				account: {
@@ -460,7 +439,7 @@ describe('🧪 Stablecoin test', () => {
 		expect(trans.transactions[0].id).toEqual(
 			trans_account.transactions[0].id,
 		);
-	}, 180_000);
+	}, 180_000); */
 
 	// ----------------------HTS--------------------------
 

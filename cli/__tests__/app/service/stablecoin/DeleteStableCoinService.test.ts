@@ -25,7 +25,8 @@ import Language from '../../../../src/domain/language/Language.js';
 
 const service = new DeleteStableCoinService();
 const language: Language = new Language();
-const request = new DeleteRequest({ tokenId: '' });
+const token = '0.0.1234567';
+const request = new DeleteRequest({ tokenId: token });
 
 describe(`Testing DeleteStableCoinService class`, () => {
   beforeEach(() => {
@@ -36,18 +37,24 @@ describe(`Testing DeleteStableCoinService class`, () => {
     jest.spyOn(console, 'warn').mockImplementation();
     jest.spyOn(console, 'error').mockImplementation();
     jest.spyOn(console, 'dir').mockImplementation();
-    jest.spyOn(StableCoin, 'delete').mockImplementation();
   });
   afterEach(() => {
     jest.restoreAllMocks();
   });
 
   it('Should instance deleteStableCoin', async () => {
+    const DeleteMock = jest
+      .spyOn(StableCoin, 'delete')
+      .mockImplementation(async (request: DeleteRequest): Promise<boolean> => {
+        expect(request.tokenId).toEqual(token);
+        return true;
+      });
+
     await service.deleteStableCoin(request);
 
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
-    expect(StableCoin.delete).toHaveBeenCalledTimes(1);
+    expect(DeleteMock).toHaveBeenCalledTimes(1);
     expect(console.log).toHaveBeenCalledWith(
       language.getText('operation.success'),
     );
