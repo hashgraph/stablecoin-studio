@@ -18,7 +18,13 @@
  *
  */
 
-import { Network } from '@hashgraph/stablecoin-npm-sdk';
+import {
+  ConnectRequest,
+  InitializationData,
+  InitializationRequest,
+  Network,
+  SupportedWallets,
+} from '@hashgraph/stablecoin-npm-sdk';
 import {
   utilsService,
   configurationService,
@@ -174,8 +180,36 @@ describe('UtilitiesService', () => {
     factories: [mockCurrentFactory],
   });
 
-  let networkInitSpy;
-  let networkConnectSpy;
+  const mocks: Record<string, jest.SpyInstance> = {};
+
+  let networkInitSpy: jest.SpyInstance<
+    Promise<SupportedWallets[]>,
+    [req: InitializationRequest],
+    any
+  >;
+  let networkConnectSpy: jest.SpyInstance<
+    Promise<InitializationData>,
+    [req: ConnectRequest],
+    any
+  >;
+
+  beforeAll(() => {
+    // Mock all unwanted outputs
+    mocks.showSpinner = jest
+      .spyOn(utilsService, 'showSpinner')
+      .mockImplementation();
+    mocks.log = jest.spyOn(console, 'log').mockImplementation();
+    mocks.info = jest.spyOn(console, 'info').mockImplementation();
+    mocks.error = jest.spyOn(console, 'warn').mockImplementation();
+    mocks.error = jest.spyOn(console, 'error').mockImplementation();
+    mocks.dir = jest.spyOn(console, 'dir').mockImplementation();
+    mocks.cleanAndShowBanner = jest
+      .spyOn(utilsService, 'cleanAndShowBanner')
+      .mockImplementation();
+    mocks.showMessage = jest
+      .spyOn(utilsService, 'showMessage')
+      .mockImplementation();
+  });
 
   beforeEach(() => {
     networkInitSpy = jest.spyOn(Network, 'init').mockResolvedValue(undefined);
@@ -193,19 +227,17 @@ describe('UtilitiesService', () => {
   it('should initialize the SDK and connect to the network', async () => {
     // method call
     await expect(utilsService.initSDK()).rejects.toThrow();
-    await utilsService.setCurrentAccount(mockAccount);
+    utilsService.setCurrentAccount(mockAccount);
     await expect(utilsService.initSDK()).rejects.toThrow();
-    await utilsService.setCurrentNetwotk(mockCurrentNetwork);
+    utilsService.setCurrentNetwotk(mockCurrentNetwork);
     await expect(utilsService.initSDK()).rejects.toThrow();
-    await utilsService.setCurrentMirror(mockCurrentMirror);
+    utilsService.setCurrentMirror(mockCurrentMirror);
     await expect(utilsService.initSDK()).rejects.toThrow();
-    await utilsService.setCurrentBackend(mockCurrentBackend);
+    utilsService.setCurrentBackend(mockCurrentBackend);
     await expect(utilsService.initSDK()).rejects.toThrow();
-    await utilsService.setCurrentRPC(mockCurrentRPC);
-    await utilsService.setCurrentFactory(mockCurrentFactory);
-    await utilsService.setCurrentHederaTokenManager(
-      mockCurrentHederaTokenManager,
-    );
+    utilsService.setCurrentRPC(mockCurrentRPC);
+    utilsService.setCurrentFactory(mockCurrentFactory);
+    utilsService.setCurrentHederaTokenManager(mockCurrentHederaTokenManager);
     await utilsService.initSDK();
 
     const account = utilsService.getCurrentAccount();
@@ -242,15 +274,13 @@ describe('UtilitiesService', () => {
     jest.spyOn(utilsService, 'showError').mockImplementation();
 
     // method call
-    await utilsService.setCurrentAccount(mockAccount);
-    await utilsService.setCurrentNetwotk(mockCurrentNetwork);
-    await utilsService.setCurrentMirror(mockCurrentMirror);
-    await utilsService.setCurrentBackend(mockCurrentBackend);
-    await utilsService.setCurrentRPC(mockCurrentRPC);
-    await utilsService.setCurrentFactory(mockCurrentFactory);
-    await utilsService.setCurrentHederaTokenManager(
-      mockCurrentHederaTokenManager,
-    );
+    utilsService.setCurrentAccount(mockAccount);
+    utilsService.setCurrentNetwotk(mockCurrentNetwork);
+    utilsService.setCurrentMirror(mockCurrentMirror);
+    utilsService.setCurrentBackend(mockCurrentBackend);
+    utilsService.setCurrentRPC(mockCurrentRPC);
+    utilsService.setCurrentFactory(mockCurrentFactory);
+    utilsService.setCurrentHederaTokenManager(mockCurrentHederaTokenManager);
     await utilsService.initSDK();
 
     jest.spyOn(utilsService, 'defaultMultipleAsk').mockResolvedValue(network);
@@ -279,9 +309,9 @@ describe('UtilitiesService', () => {
   });
 
   it('display User Info', async () => {
-    await utilsService.setCurrentMirror(mockCurrentMirror);
-    await utilsService.setCurrentBackend(mockCurrentBackend);
-    await utilsService.setCurrentRPC(mockCurrentRPC);
+    utilsService.setCurrentMirror(mockCurrentMirror);
+    utilsService.setCurrentBackend(mockCurrentBackend);
+    utilsService.setCurrentRPC(mockCurrentRPC);
     const token = '0.0.2222222';
 
     jest
