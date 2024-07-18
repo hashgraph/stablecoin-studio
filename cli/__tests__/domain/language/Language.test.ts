@@ -34,14 +34,14 @@ describe(`Testing ${Language.name}.ts class`, () => {
     language = new Language();
   });
 
-  it('Should be initializate', () => {
+  it('Should be initialized', () => {
     expect(language).not.toBeNull();
   });
 
   it('Should return not null when request some text with params', () => {
     const allTexts = language.getText('general.title', { alias: 'Test' });
-
     expect(allTexts).not.toBeNull();
+    expect(allTexts.split('Test').length).toBe(2);
   });
 
   // eslint-disable-next-line jest/no-commented-out-tests
@@ -53,7 +53,7 @@ describe(`Testing ${Language.name}.ts class`, () => {
 
   it('Should return not null when request some array', () => {
     const allTexts = language.getArrayFromObject('wizard.mainOptions');
-
     expect(allTexts).not.toBeNull();
+    expect(allTexts.length).toBe(9);
   });
 });

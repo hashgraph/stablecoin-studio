@@ -25,8 +25,6 @@ import Account from '../../../src/domain/context/account/Account.js';
 import {
 	AddFixedFeeRequest,
 	AddFractionalFeeRequest,
-	AssociateTokenRequest,
-	CreateRequest,
 	Fees,
 	GetStableCoinDetailsRequest,
 	InitializationRequest,
@@ -36,18 +34,16 @@ import {
 	RequestFixedFee,
 	RequestFractionalFee,
 	StableCoin,
-	StableCoinCapabilities,
 	UpdateCustomFeesRequest,
 } from '../../../src/index';
 import ConnectRequest, {
 	SupportedWallets,
 } from '../../../src/port/in/request/ConnectRequest.js';
-import { HederaId, TokenSupplyType } from '../../../src/index.js';
+import { HederaId } from '../../../src/index.js';
 import {
 	CLIENT_ACCOUNT_ED25519,
 	DECIMALS,
 	FACTORY_ADDRESS,
-	HEDERA_TOKEN_MANAGER_ADDRESS,
 	MIRROR_NODE,
 	RPC_NODE,
 } from '../../config.js';
@@ -56,7 +52,6 @@ import StableCoinService from '../../../src/app/service/StableCoinService.js';
 import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
 
-const decimals = 6;
 const mirrorNode: MirrorNode = {
 	name: MIRROR_NODE.name,
 	baseUrl: MIRROR_NODE.baseUrl,
@@ -76,8 +71,6 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		},
 	};
 
-	let stableCoinService: StableCoinService;
-
 	const feeCollectorAccountId = CLIENT_ACCOUNT_ED25519.id;
 
 	beforeAll(async () => {
@@ -92,7 +85,7 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 			}),
 		);
 
-		stableCoinService = Injectable.resolve(StableCoinService);
+		Injectable.resolve(StableCoinService);
 	}, 1500000);
 
 	it('Create a fixed custom fee for an existing stablecoin', async () => {
@@ -297,7 +290,7 @@ async function removeTokenCustomFees(tokenId: string): Promise<void> {
 	await Fees.updateCustomFees(empty);
 }
 
-function checkFixedFee(
+/*function checkFixedFee(
 	tokenCustomFees: RequestCustomFee,
 	amount: number,
 	stableCoinCapabilitiesHTS: any,
@@ -349,4 +342,4 @@ function checkFractionalFee(
 		max.toString(),
 	);
 	expect((tokenCustomFees as RequestFractionalFee).net).toEqual(net);
-}
+}*/

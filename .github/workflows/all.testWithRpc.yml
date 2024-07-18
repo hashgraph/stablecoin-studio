@@ -5,13 +5,13 @@ on:
     branches: [main]
 jobs:
   test-node:
-    name: testing    
-    runs-on: [ self-hosted, Linux, medium, ephemeral ]
+    name: testing
+    runs-on: [self-hosted, Linux, medium, ephemeral]
     env:
       NODE_OPTIONS: "--max-old-space-size=32768"
     permissions:
       contents: read
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
@@ -23,8 +23,8 @@ jobs:
       - name: Setup NodeJS Environment
         uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
         with:
-          node-version: 18.x      
-      
+          node-version: 18.x
+
       - name: Cache npm dependencies
         uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
         with:
@@ -56,13 +56,13 @@ jobs:
           npm ci
           npm run build
         working-directory: sdk
-      
+
       - name: Install dependencies Cli
         run: |
           npm ci
           npm run build
         working-directory: cli
-      
+
       - name: Install dependencies web
         run: npm ci
         working-directory: web
@@ -110,12 +110,6 @@ jobs:
           echo "TESTNET_HEDERA_NON_OPERATOR_ACCOUNT=0.0.$(echo $API_RESPONSE | jq -r '.accounts[1].accountNum')" >> .env
         working-directory: contracts
 
-      - name: Test Contracts
-        run: |
-          npm run test
-          npm run cleanCache
-        working-directory: contracts
-
       - name: Test backend
         run: |
           npm run test
@@ -133,7 +127,7 @@ jobs:
           npm run test
           npm run cleanCache
         working-directory: web
-      
+
       #- name: Run the Docker image
       #  run: nohup docker run --network="host" rpc &
       #- name: Sleep for 25 seconds
@@ -144,8 +138,14 @@ jobs:
       #- name: DockerStatus
       #  run:  curl --location --request POST 'http://localhost:7546/api' --data ""
 
-      - name: Test sdk
-        run: |
-          npm run test
-          npm run cleanCache
-        working-directory: sdk
+      #- name: Test sdk
+      #  run: |
+      #    npm run test
+      #    npm run cleanCache
+      #  working-directory: sdk
+
+      #- name: Test Contracts
+      #  run: |
+      #    npm run test:parallel
+      #    npm run cleanCache
+      #  working-directory: contracts

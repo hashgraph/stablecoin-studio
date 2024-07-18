@@ -18,270 +18,291 @@
  *
  */
 
-import { configurationService, utilsService } from '../../../../src/index.js';
-import Language from '../../../../src/domain/language/Language.js';
-import { IConfiguration } from 'domain/configuration/interfaces/IConfiguration.js';
-import { LogOptions } from '@hashgraph/stablecoin-npm-sdk';
 import { rimraf } from 'rimraf';
+import yaml from 'js-yaml';
+import fs from 'fs-extra';
+import { LogOptions } from '@hashgraph/stablecoin-npm-sdk';
+import {
+  utilsService,
+  configurationService,
+  setConfigurationService,
+} from '../../../../src/index.js';
+import { IConfiguration } from '../../../../src/domain/configuration/interfaces/IConfiguration.js';
 import { AccountType } from '../../../../src/domain/configuration/interfaces/AccountType';
 
-const language: Language = new Language();
-const accountId = '0.0.123456';
-const testDir = 'test';
-const path = `${testDir}/hsca-config.yaml`;
+// const language: Language = new Language();
+const DEFAULT_ACCOUNTS = [
+  '0.0.123456',
+  '0.0.456789',
+  '0.0.654321',
+  '0.0.987654',
+];
+const DEFAULT_CONTRACT_IDS = ['0.0.0', '0.0.1', '0.0.22', '0.0.333'];
+const NETWORKS = {
+  test: 'testnet',
+  preview: 'previewnet',
+  main: 'mainnet',
+};
+const CONFIG_FILE_PATH = `hsca-config_test.yaml`;
 
-describe('configurationService', () => {
-  const configurationMock: IConfiguration = {
-    defaultNetwork: 'testnet',
-    networks: [],
-    accounts: [
-      {
-        accountId: '0.0.123456',
-        type: AccountType.SelfCustodial,
-        selfCustodial: {
-          privateKey: {
-            key: '01234567890abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcde',
-            type: 'ED25519',
-          },
+const CONFIG_MOCK: IConfiguration = {
+  defaultNetwork: 'testnet',
+  networks: [],
+  accounts: [
+    {
+      accountId: DEFAULT_ACCOUNTS[0],
+      type: AccountType.SelfCustodial,
+      selfCustodial: {
+        privateKey: {
+          key: '01234567890abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcde',
+          type: 'ED25519',
         },
-        network: 'testnet',
-        alias: 'test account',
-        importedTokens: [],
       },
-      {
-        accountId: '0.0.456789',
-        type: AccountType.SelfCustodial,
-        selfCustodial: {
-          privateKey: {
-            key: '0xbcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789a',
-            type: 'ED25519',
-          },
-        },
-        network: 'testnet',
-        alias: 'New account alias',
-        importedTokens: [],
-      },
-      {
-        accountId: '0.0.654321',
-        type: AccountType.SelfCustodial,
-        selfCustodial: {
-          privateKey: {
-            key: 'abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789',
-            type: 'ED25519',
-          },
-        },
-        network: 'testnet',
-        alias: 'another test account',
-        importedTokens: [],
-      },
-      {
-        accountId: '0.0.123456',
-        type: AccountType.SelfCustodial,
-        selfCustodial: {
-          privateKey: {
-            key: '01234567890abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcde',
-            type: 'ED25519',
-          },
-        },
-        network: 'testnet',
-        alias: 'test',
-        importedTokens: [],
-      },
-    ],
-    logs: {
-      path: './logs',
-      level: 'ERROR',
+      network: NETWORKS.test,
+      alias: 'test account',
+      importedTokens: [],
     },
-    rpcs: [
-      {
-        name: 'HASHIO',
-        network: 'testnet',
-        baseUrl: 'https://testnet.hashio.io/api',
-        selected: true,
+    {
+      accountId: DEFAULT_ACCOUNTS[1],
+      type: AccountType.SelfCustodial,
+      selfCustodial: {
+        privateKey: {
+          key: '0xbcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789a',
+          type: 'ED25519',
+        },
       },
-      {
-        name: 'HASHIO',
-        network: 'previewnet',
-        baseUrl: 'https://previewnet.hashio.io/api',
-        selected: true,
+      network: NETWORKS.test,
+      alias: 'New account alias',
+      importedTokens: [],
+    },
+    {
+      accountId: DEFAULT_ACCOUNTS[2],
+      type: AccountType.SelfCustodial,
+      selfCustodial: {
+        privateKey: {
+          key: 'abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789',
+          type: 'ED25519',
+        },
       },
-      {
-        name: 'HASHIO',
-        network: 'mainnet',
-        baseUrl: 'https://mainnet.hashio.io/api',
-        selected: true,
+      network: NETWORKS.test,
+      alias: 'another test account',
+      importedTokens: [],
+    },
+    {
+      accountId: DEFAULT_ACCOUNTS[3],
+      type: AccountType.SelfCustodial,
+      selfCustodial: {
+        privateKey: {
+          key: '01234567890abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcde',
+          type: 'ED25519',
+        },
       },
-    ],
-    factories: [
-      {
-        id: '0.0.13579',
-        network: 'testnet',
-      },
-      {
-        id: '0.0.02468',
-        network: 'previewnet',
-      },
-    ],
-    mirrors: [
-      {
-        name: 'HEDERA',
-        network: 'testnet',
-        baseUrl: 'https://testnet.mirrornode.hedera.com/api/v1/',
-        selected: true,
-      },
-      {
-        name: 'HEDERA',
-        network: 'previewnet',
-        baseUrl: 'https://previewnet.mirrornode.hedera.com/api/v1/',
-        selected: true,
-      },
-      {
-        name: 'HEDERA',
-        network: 'mainnet',
-        baseUrl: 'https://mainnet-public.mirrornode.hedera.com/api/v1/',
-        selected: true,
-      },
-    ],
-  };
+      network: NETWORKS.test,
+      alias: 'test',
+      importedTokens: [],
+    },
+  ],
+  logs: {
+    path: './logs',
+    level: 'ERROR',
+  },
+  rpcs: [
+    {
+      name: 'HASHIO',
+      network: NETWORKS.test,
+      baseUrl: 'https://testnet.hashio.io/api',
+      selected: true,
+    },
+    {
+      name: 'HASHIO',
+      network: NETWORKS.preview,
+      baseUrl: 'https://previewnet.hashio.io/api',
+      selected: true,
+    },
+    {
+      name: 'HASHIO',
+      network: NETWORKS.main,
+      baseUrl: 'https://mainnet.hashio.io/api',
+      selected: true,
+    },
+  ],
+  factories: [
+    {
+      id: DEFAULT_CONTRACT_IDS[0],
+      network: NETWORKS.test,
+    },
+    {
+      id: DEFAULT_CONTRACT_IDS[1],
+      network: NETWORKS.preview,
+    },
+  ],
+  mirrors: [
+    {
+      name: 'HEDERA',
+      network: NETWORKS.test,
+      baseUrl: 'https://testnet.mirrornode.hedera.com/api/v1/',
+      selected: true,
+    },
+    {
+      name: 'HEDERA',
+      network: 'previewnet',
+      baseUrl: 'https://previewnet.mirrornode.hedera.com/api/v1/',
+      selected: true,
+    },
+    {
+      name: 'HEDERA',
+      network: NETWORKS.main,
+      baseUrl: 'https://mainnet-public.mirrornode.hedera.com/api/v1/',
+      selected: true,
+    },
+  ],
+};
 
+const mocks: Record<string, jest.SpyInstance> = {};
+
+describe('Configuration Service', () => {
   beforeAll(() => {
-    jest.spyOn(console, 'log').mockImplementation();
-    jest.spyOn(console, 'info').mockImplementation();
-    jest.spyOn(console, 'warn').mockImplementation();
-    jest.spyOn(console, 'error').mockImplementation();
-    jest.spyOn(console, 'dir').mockImplementation();
+    // Mock all unwanted outputs
+    mocks.showSpinner = jest
+      .spyOn(utilsService, 'showSpinner')
+      .mockImplementation();
+    mocks.log = jest.spyOn(console, 'log').mockImplementation();
+    mocks.info = jest.spyOn(console, 'info').mockImplementation();
+    mocks.error = jest.spyOn(console, 'warn').mockImplementation();
+    mocks.error = jest.spyOn(console, 'error').mockImplementation();
+    mocks.dir = jest.spyOn(console, 'dir').mockImplementation();
+    mocks.cleanAndShowBanner = jest
+      .spyOn(utilsService, 'cleanAndShowBanner')
+      .mockImplementation();
+    mocks.showMessage = jest
+      .spyOn(utilsService, 'showMessage')
+      .mockImplementation();
+    // Not fixed, only defined
+    mocks.getDefaultConfigurationPath = jest.spyOn(
+      configurationService,
+      'getDefaultConfigurationPath',
+    );
+  });
+  afterAll(() => {
+    jest.restoreAllMocks();
+    rimraf(CONFIG_FILE_PATH);
+  });
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+  describe('Init configuration', () => {
+    beforeAll(() => {
+      mocks.getDefaultConfigurationPath.mockReturnValue(CONFIG_FILE_PATH);
+      mocks.initConfiguration = jest
+        .spyOn(setConfigurationService, 'initConfiguration')
+        .mockResolvedValue(null);
+      mocks.fsReadFile = jest.spyOn(fs, 'readFileSync').mockReturnValue('');
+    });
+    it('should init configuration with no initial configuration or a file path', async () => {
+      //* 🗂️ Arrange
+      mocks.yamlLoad = jest
+        .spyOn(yaml, 'load')
+        .mockReturnValueOnce({})
+        .mockReturnValueOnce(CONFIG_MOCK);
+      //* 🎬 Act
+      await configurationService.init();
+      //* 🕵️ Assert
+      expect(mocks.initConfiguration).toHaveBeenCalledTimes(1);
+      expect(mocks.initConfiguration).toHaveBeenCalledWith(
+        undefined,
+        undefined,
+      );
+    });
+
+    it('should init configuration with path', async () => {
+      //* 🗂️ Arrange
+      mocks.yamlLoad = jest.spyOn(yaml, 'load').mockReturnValue(CONFIG_MOCK);
+      //* 🎬 Act
+      await configurationService.init(undefined, CONFIG_FILE_PATH);
+      //* 🕵️ Assert
+      const config = configurationService.getConfiguration();
+      expect(mocks.initConfiguration).toHaveBeenCalledTimes(0);
+      expect(config).toStrictEqual(CONFIG_MOCK);
+    });
+    it('should init configuration with path and override account', async () => {
+      //* 🗂️ Arrange
+      mocks.yamlLoad = jest.spyOn(yaml, 'load').mockReturnValue(CONFIG_MOCK);
+      //* 🎬 Act
+      await configurationService.init(
+        {
+          // Override account id with ZERO account
+          accounts: [
+            { accountId: DEFAULT_ACCOUNTS[0], ...CONFIG_MOCK.accounts[0] },
+          ],
+        },
+        CONFIG_FILE_PATH,
+      );
+      //* 🕵️ Assert
+      const config = configurationService.getConfiguration();
+      expect(mocks.initConfiguration).toHaveBeenCalledTimes(0);
+      expect(config.accounts[0].accountId).toStrictEqual(DEFAULT_ACCOUNTS[0]);
+    });
   });
 
-  it('should init configuration with no initial configuration or a file path', async () => {
-    const defaultSingleAskMock = jest
-      .spyOn(utilsService, 'defaultSingleAsk')
-      .mockImplementation((question: string) => {
-        switch (question) {
-          case language.getText('configuration.askPath'):
-            return Promise.resolve(path);
+  describe('Get Configuration', () => {
+    it('should get configuration', async () => {
+      //* 🗂️ Arrange
+      // init configuration
+      mocks.yamlLoad = jest.spyOn(yaml, 'load').mockReturnValue(CONFIG_MOCK);
+      await configurationService.init(undefined, CONFIG_FILE_PATH);
+      //* 🎬 Act
+      const result: IConfiguration = configurationService.getConfiguration();
+      //* 🕵️ Assert
+      expect(result).toStrictEqual(CONFIG_MOCK);
+    });
 
-          case language.getText('configuration.askAccountId'):
-            return Promise.resolve(accountId);
-
-          case language.getText('configuration.askAlias'):
-            return Promise.resolve('test');
-
-          case language.getText('configuration.askFactoryAddress') +
-            ' | TESTNET':
-            return Promise.resolve('0.0.13579');
-
-          case language.getText('configuration.askFactoryAddress') +
-            ' | PREVIEWNET':
-            return Promise.resolve('0.0.02468');
-
-          default:
-            return Promise.resolve('');
-        }
-      });
-
-    const defaultConfirmAskMock = jest
-      .spyOn(utilsService, 'defaultConfirmAsk')
-      .mockImplementation((question: string) => {
-        switch (question) {
-          case language.getText('configuration.askCreateConfig'):
-            return Promise.resolve(true);
-
-          case language.getText('configuration.askMoreAccounts'):
-            return Promise.resolve(false);
-
-          case language.getText('configuration.askConfigurateFactories'):
-            return Promise.resolve(true);
-
-          case language.getText(
-            'configuration.askConfigurateDefaultMirrorsAndRPCs',
-          ):
-            return Promise.resolve(true);
-
-          default:
-            return Promise.resolve(false);
-        }
-      });
-
-    const defaultMultipleAskMock = jest
-      .spyOn(utilsService, 'defaultMultipleAsk')
-      .mockImplementation((question: string) => {
-        switch (question) {
-          case language.getText('configuration.askAccountType'):
-            return Promise.resolve('SELF-CUSTODIAL');
-
-          case language.getText('configuration.askPrivateKeyType'):
-            return Promise.resolve('ED25519');
-
-          case language.getText('configuration.askNetworkAccount'):
-            return Promise.resolve('testnet');
-
-          case language.getText('configuration.askNetwork'):
-            return Promise.resolve('testnet');
-
-          default:
-            return Promise.resolve('');
-        }
-      });
-
-    const defaultPasswordAskMock = jest
-      .spyOn(utilsService, 'defaultPasswordAsk')
-      .mockImplementation((question: string) => {
-        switch (question) {
-          case language.getText('configuration.askPrivateKey') +
-            ` '96|64|66|68 characters' (${accountId})`:
-            return Promise.resolve(
-              '01234567890abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcde',
-            );
-
-          default:
-            return Promise.resolve('');
-        }
-      });
-
-    await configurationService.init();
-
-    expect(configurationService).not.toBeNull();
-    expect(defaultSingleAskMock).toHaveBeenCalledTimes(5);
-    expect(defaultConfirmAskMock).toHaveBeenCalledTimes(5);
-    expect(defaultMultipleAskMock).toHaveBeenCalledTimes(4);
-    expect(defaultPasswordAskMock).toHaveBeenCalledTimes(1);
-  });
-
-  it('should init configuration with a path', async () => {
-    await configurationService.init(configurationMock, path);
-
-    expect(configurationService).not.toBeNull();
-  });
-
-  it('should get configuration and log configuration', async () => {
-    const conf: IConfiguration = configurationService.getConfiguration();
-
-    expect(configurationService).not.toBeNull();
-    expect(conf.defaultNetwork).toStrictEqual(configurationMock.defaultNetwork);
-    // expect(conf.accounts).toStrictEqual(configurationMock.accounts);
-    expect(conf.factories).toStrictEqual(configurationMock.factories);
-    expect(conf.mirrors).toStrictEqual(configurationMock.mirrors);
-    expect(conf.rpcs).toStrictEqual(configurationMock.rpcs);
-    expect(conf.logs).toStrictEqual(configurationMock.logs);
-    expect(configurationService).not.toBeNull();
-
-    const logConf: LogOptions = configurationService.getLogConfiguration();
-
-    expect(logConf.level).toStrictEqual(configurationMock.logs.level);
+    it('should get log configuration', async () => {
+      //* 🗂️ Arrange
+      // init configuration
+      mocks.yamlLoad = jest.spyOn(yaml, 'load').mockReturnValue(CONFIG_MOCK);
+      await configurationService.init(undefined, CONFIG_FILE_PATH);
+      //* 🎬 Act
+      const result: LogOptions = configurationService.getLogConfiguration();
+      //* 🕵️ Assert
+      expect(result.level).toStrictEqual(CONFIG_MOCK.logs.level);
+    });
+    it('should not get log configuration', async () => {
+      //* 🗂️ Arrange
+      // init configuration with logs undefined
+      mocks.yamlLoad = jest
+        .spyOn(yaml, 'load')
+        .mockReturnValue({ ...CONFIG_MOCK, logs: undefined });
+      await configurationService.init(undefined, CONFIG_FILE_PATH);
+      //* 🎬 Act
+      const result: LogOptions = configurationService.getLogConfiguration();
+      //* 🕵️ Assert
+      expect(result).toBeUndefined();
+    });
   });
 
   it('should show full configuration', async () => {
-    jest.spyOn(console, 'dir');
-
+    //* 🗂️ Arrange
+    const getConfigM = jest
+      .spyOn(configurationService, 'getConfiguration')
+      .mockReturnValue(CONFIG_MOCK);
+    const consoleDirM = jest.spyOn(console, 'dir');
+    //* 🎬 Act
     configurationService.showFullConfiguration();
-
-    expect(configurationService).not.toBeNull();
-    expect(console.dir).toHaveBeenCalledTimes(1);
+    //* 🕵️ Assert
+    expect(getConfigM).toHaveBeenCalledTimes(1);
+    expect(consoleDirM).toHaveBeenCalledTimes(1);
+    expect(consoleDirM).toHaveBeenCalledWith(
+      expect.objectContaining({ defaultNetwork: CONFIG_MOCK.defaultNetwork }),
+      {
+        depth: null,
+      },
+    );
   });
 
   it('should check the configurated factory id', async () => {
+    //* 🗂️ Arrange
     jest.spyOn(utilsService, 'showWarning');
-
+    //* 🎬 Act
     configurationService.logFactoryIdWarning(
       '0.0.13570',
       'factory',
@@ -293,13 +314,7 @@ describe('configurationService', () => {
         },
       ],
     );
-
-    expect(configurationService).not.toBeNull();
+    //* 🕵️ Assert
     expect(utilsService.showWarning).toHaveBeenCalledTimes(1);
-  });
-
-  afterAll(() => {
-    jest.restoreAllMocks();
-    rimraf(testDir);
   });
 });
