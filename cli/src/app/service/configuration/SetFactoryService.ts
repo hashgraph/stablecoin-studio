@@ -49,32 +49,33 @@ export default class SetFactoryService extends Service {
   }
 
   /**
-   * Function to set the factory configuration
+   * Function to configure the factories
    */
   public async configureFactories(): Promise<IFactoryConfig[]> {
     const factories: IFactoryConfig[] = [];
-    let factory_testnet = await utilsService.defaultSingleAsk(
-      language.getText('configuration.askFactoryAddress') + ' | TESTNET',
-      ZERO_ADDRESS,
-    );
-    while (!/\d\.\d\.\d/.test(factory_testnet)) {
-      console.log(language.getText('validations.wrongFormatAddress'));
+    let factory_testnet: string;
+    const HederaAccountFormat = /\d\.\d\.\d/;
+    do {
       factory_testnet = await utilsService.defaultSingleAsk(
-        language.getText('configuration.askFactoryAddress') + ' | TESTNET',
+        `${language.getText('configuration.askFactoryAddress')} | TESTNET`,
         ZERO_ADDRESS,
       );
-    }
-    let factory_previewnet = await utilsService.defaultSingleAsk(
-      language.getText('configuration.askFactoryAddress') + ' | PREVIEWNET',
-      ZERO_ADDRESS,
-    );
-    while (!/\d\.\d\.\d/.test(factory_previewnet)) {
-      console.log(language.getText('validations.wrongFormatAddress'));
+      if (!HederaAccountFormat.test(factory_testnet)) {
+        console.log(language.getText('validations.wrongFormatAddress'));
+      }
+    } while (!HederaAccountFormat.test(factory_testnet));
+
+    let factory_previewnet: string;
+    do {
       factory_previewnet = await utilsService.defaultSingleAsk(
-        language.getText('configuration.askFactoryAddress') + ' | PREVIEWNET',
+        `${language.getText('configuration.askFactoryAddress')} | PREVIEWNET`,
         ZERO_ADDRESS,
       );
-    }
+      if (!HederaAccountFormat.test(factory_previewnet)) {
+        console.log(language.getText('validations.wrongFormatAddress'));
+      }
+    } while (!HederaAccountFormat.test(factory_previewnet));
+
     factories.push({
       id: factory_testnet,
       network: 'testnet',
@@ -84,7 +85,7 @@ export default class SetFactoryService extends Service {
       network: 'previewnet',
     });
 
-    // Set a default factories
+    // Set the default factories
     const defaultCfgData = configurationService.getConfiguration();
     defaultCfgData.factories = factories;
     configurationService.setConfiguration(defaultCfgData);
@@ -105,13 +106,19 @@ export default class SetFactoryService extends Service {
    * Function to get the sdk factory address
    */
   public async getSDKFactory(): Promise<string> {
-    return await Network.getFactoryAddress();
+    return Network.getFactoryAddress();
   }
 
   /**
-   * Function to manage the factory menu
+   * Manages the factory menu.
+   *
+   * @param recursionDepth The recursion depth for the menu. Defaults to `undefined`.
+   * @returns A promise that resolves when the menu management is complete.
+   * @throws An error if there is an issue during menu management.
    */
-  public async manageFactoryMenu(): Promise<void> {
+  public async manageFactoryMenu({
+    onlyOnce,
+  }: { onlyOnce?: boolean } = {}): Promise<void> {
     const currentAccount = utilsService.getCurrentAccount();
     const currentMirror = utilsService.getCurrentMirror();
     const currentRPC = utilsService.getCurrentRPC();
@@ -134,7 +141,6 @@ export default class SetFactoryService extends Service {
         owner,
         pendingOwner,
       );
-
       const factoryAction = await utilsService.defaultMultipleAsk(
         language.getText('wizard.configurationMenuTitle'),
         filteredOptions,
@@ -184,7 +190,9 @@ export default class SetFactoryService extends Service {
           await utilsService.cleanAndShowBanner();
           await wizardService.configurationMenu();
       }
-      await this.manageFactoryMenu();
+      if (!onlyOnce) {
+        await this.manageFactoryMenu();
+      }
     } catch (error) {
       await utilsService.askErrorConfirmation(undefined, error);
     }
@@ -303,23 +311,33 @@ export default class SetFactoryService extends Service {
       },
     );
 
-    let factory = await utilsService.defaultSingleAsk(
-      language.getText('configuration.askNewFactoryAddress'),
-      ZERO_ADDRESS,
-    );
-    while (
-      !HederaAccountFormat.test(factory) ||
-      !(await this.isValidFactory(factory))
-    ) {
-      if (!HederaAccountFormat.test(factory)) {
-        console.log(language.getText('validations.wrongFormatAddress'));
-      } else {
-        console.log(language.getText('validations.wrongFactoryAddress'));
-      }
+    const MAX_RETRIES = 3;
+    let retries = 0;
+    let factory: string;
+    do {
       factory = await utilsService.defaultSingleAsk(
         language.getText('configuration.askNewFactoryAddress'),
         ZERO_ADDRESS,
       );
+      if (
+        HederaAccountFormat.test(factory) &&
+        (await this.isValidFactory(factory))
+      ) {
+        break;
+      }
+      if (!HederaAccountFormat.test(factory)) {
+        console.log(
+          language.getText('validations.wrongFormatAddress') +
+            ` Retries: ${retries}`,
+        );
+      } else {
+        console.log(language.getText('validations.wrongFactoryAddress'));
+      }
+      retries++;
+    } while (retries < MAX_RETRIES);
+
+    if (retries === MAX_RETRIES) {
+      throw new Error('Failed to configure factory after 3 retries');
     }
 
     if (factories && factories.map((val) => val.network)) {

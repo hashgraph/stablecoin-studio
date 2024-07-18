@@ -23,9 +23,10 @@ import PauseStableCoinService from '../../../../src/app/service/stablecoin/Pause
 import { utilsService } from '../../../../src/index.js';
 import Language from '../../../../src/domain/language/Language.js';
 
+const token = '0.0.234567';
 const service = new PauseStableCoinService();
 const language: Language = new Language();
-const request = new PauseRequest({ tokenId: '0.0.012345' });
+const request = new PauseRequest({ tokenId: token });
 
 describe(`Testing PauseStableCoinService class`, () => {
   beforeEach(() => {
@@ -37,24 +38,36 @@ describe(`Testing PauseStableCoinService class`, () => {
   });
 
   it('Should instance pauseStableCoin', async () => {
-    jest.spyOn(StableCoin, 'pause').mockImplementation();
+    const PauseMock = jest
+      .spyOn(StableCoin, 'pause')
+      .mockImplementation(async (request: PauseRequest): Promise<boolean> => {
+        expect(request.tokenId).toEqual(token);
+        return false;
+      });
+
     await service.pauseStableCoin(request);
 
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
-    expect(StableCoin.pause).toHaveBeenCalledTimes(1);
+    expect(PauseMock).toHaveBeenCalledTimes(1);
     expect(console.log).toHaveBeenCalledWith(
       language.getText('operation.success'),
     );
   });
 
   it('Should instance unpauseStableCoin when granted', async () => {
-    jest.spyOn(StableCoin, 'unPause').mockImplementation();
+    const UnpauseMock = jest
+      .spyOn(StableCoin, 'unPause')
+      .mockImplementation(async (request: PauseRequest): Promise<boolean> => {
+        expect(request.tokenId).toEqual(token);
+        return false;
+      });
+
     await service.unpauseStableCoin(request);
 
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
-    expect(StableCoin.unPause).toHaveBeenCalledTimes(1);
+    expect(UnpauseMock).toHaveBeenCalledTimes(1);
     expect(console.log).toHaveBeenCalledWith(
       language.getText('operation.success'),
     );

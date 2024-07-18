@@ -25,10 +25,13 @@ import Language from '../../../../src/domain/language/Language.js';
 
 const service = new BurnStableCoinService();
 const language: Language = new Language();
+const token = '0.0.234567';
+const amount = '1';
 const request = new BurnRequest({
-  tokenId: '0.0.012345',
-  amount: '',
+  tokenId: token,
+  amount: amount,
 });
+let BurnMock;
 
 describe(`Testing BurnStableCoinService class`, () => {
   beforeEach(() => {
@@ -46,11 +49,19 @@ describe(`Testing BurnStableCoinService class`, () => {
   });
 
   it('Should instance burnStableCoin', async () => {
+    BurnMock = jest
+      .spyOn(StableCoin, 'burn')
+      .mockImplementation(async (request: BurnRequest): Promise<boolean> => {
+        expect(request.amount).toEqual(amount);
+        expect(request.tokenId).toEqual(token);
+        return true;
+      });
+
     await service.burnStableCoin(request);
 
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
-    expect(StableCoin.burn).toHaveBeenCalledTimes(1);
+    expect(BurnMock).toHaveBeenCalledTimes(1);
     expect(console.log).toHaveBeenCalledWith(
       language.getText('operation.success'),
     );

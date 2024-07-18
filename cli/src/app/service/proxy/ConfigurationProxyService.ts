@@ -36,21 +36,21 @@ export default class ConfigurationProxyService extends Service {
   }
 
   public async getProxyconfiguration(
-    id: string,
+    tokenId: string,
   ): Promise<ProxyConfigurationViewModel> {
     let proxyConfig: ProxyConfigurationViewModel;
 
-    await utilsService.showSpinner(
-      Proxy.getProxyConfig(
-        new GetProxyConfigRequest({
-          tokenId: id,
-        }),
-      ).then((response) => (proxyConfig = response)),
-      {
-        text: language.getText('state.loading'),
-        successText: language.getText('state.proxyConfigCompleted') + '\n',
-      },
-    );
+    const spinnerCommand = Proxy.getProxyConfig(
+      new GetProxyConfigRequest({
+        tokenId,
+      }),
+    ).then((response) => (proxyConfig = response));
+    const spinnerOptions = {
+      text: language.getText('state.loading'),
+      successText: language.getText('state.proxyConfigCompleted') + '\n',
+    };
+
+    await utilsService.showSpinner(spinnerCommand, spinnerOptions);
 
     return proxyConfig;
   }

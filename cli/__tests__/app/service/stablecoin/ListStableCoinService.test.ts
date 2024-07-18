@@ -42,6 +42,10 @@ const listStableCoins = {
       symbol: 'TEST',
       id: 'id',
     },
+    {
+      symbol: 'TEST_2',
+      id: 'id_2',
+    },
   ],
 };
 
@@ -65,7 +69,13 @@ describe(`Testing ListStableCoinService class`, () => {
   });
 
   it('Should instance listStableCoins when true', async () => {
-    await service.listStableCoins();
+    const result = await service.listStableCoins();
+
+    expect(result.coins.length).toEqual(listStableCoins.coins.length);
+    for (let i = 0; i < listStableCoins.coins.length; i++) {
+      expect(result.coins[i].id).toEqual(listStableCoins.coins[i].id);
+      expect(result.coins[i].symbol).toEqual(listStableCoins.coins[i].symbol);
+    }
 
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);

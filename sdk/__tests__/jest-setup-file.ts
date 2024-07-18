@@ -18,6 +18,10 @@
  *
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import 'reflect-metadata';
 import MultiKey from '../src/domain/context/account/MultiKey.js';
 import {
@@ -28,20 +32,14 @@ import {
 	HBAR_DECIMALS,
 	HederaId,
 	InitializationData,
-	MAX_PERCENTAGE_DECIMALS,
-	Network,
 	PublicKey,
 	RequestCustomFee,
-	RequestFixedFee,
-	RequestFractionalFee,
 	StableCoinListViewModel,
 	StableCoinRole,
 	StableCoinViewModel,
 	TokenSupplyType,
-	WalletEvents,
 } from '../src/index.js';
 import {
-	CLIENT_ACCOUNT_ED25519,
 	CLIENT_PUBLIC_KEY_ED25519,
 	HEDERA_TOKEN_MANAGER_ADDRESS,
 	GET_TRANSACTION,
@@ -61,7 +59,6 @@ import {
 	AUTO_RENEW_ACCOUNT,
 	RESERVE_AMOUNT,
 	RESERVE_ADDRESS,
-	DFNS_SETTINGS,
 	CLIENT_PRIVATE_KEY_ECDSA_2,
 } from './config.js';
 import {
@@ -77,7 +74,6 @@ import {
 	TokenUnfreezeTransaction,
 	TokenGrantKycTransaction,
 	TokenRevokeKycTransaction,
-	Client,
 } from '@hashgraph/sdk';
 import { TransactionType } from '../src/port/out/TransactionResponseEnums.js';
 import TransactionResponse from '../src/domain/context/transaction/TransactionResponse.js';
@@ -90,13 +86,10 @@ import {
 } from '../src/port/out/mirror/response/AccountTokenRelationViewModel.js';
 import ContractViewModel from '../src/port/out/mirror/response/ContractViewModel.js';
 import Injectable from '../src/core/Injectable.js';
-import TransactionAdapter from '../src/port/out/TransactionAdapter.js';
 import { Environment } from '../src/domain/context/network/Environment.js';
 import { MultiSigTransaction } from '../src/domain/context/transaction/MultiSigTransaction.js';
 import { BigNumber, ethers } from 'ethers';
-import EventService from '../src/app/service/event/EventService.js';
 import { MirrorNodeAdapter } from '../src/port/out/mirror/MirrorNodeAdapter.js';
-import NetworkService from '../src/app/service/NetworkService.js';
 import { StableCoinProps } from '../src/domain/context/stablecoin/StableCoin.js';
 import { FactoryCashinRole } from '../src/domain/context/factory/FactoryCashinRole.js';
 import { FactoryKey } from '../src/domain/context/factory/FactoryKey.js';
@@ -181,7 +174,7 @@ function identifiers(accountId: HederaId | string): string[] {
 	return [id, '0x' + accountEvmAddress.toUpperCase().substring(2)];
 }
 
-function grantRole(account: string, newRole: StableCoinRole) {
+function grantRole(account: string, newRole: StableCoinRole): void {
 	let r = roles.get(account);
 	if (!r) r = [newRole];
 	else if (false == r.includes(newRole)) r.push(newRole);
@@ -193,7 +186,7 @@ function grantRole(account: string, newRole: StableCoinRole) {
 	accounts_with_roles.set(newRole, accounts);
 }
 
-function revokeRole(account: string, oldRole: StableCoinRole) {
+function revokeRole(account: string, oldRole: StableCoinRole): void {
 	let r = roles.get(account);
 	if (r) {
 		if (r.includes(oldRole)) {
@@ -209,7 +202,7 @@ function revokeRole(account: string, oldRole: StableCoinRole) {
 	}
 }
 
-function grantSupplierRole(supplier: string, amount: BigDecimal) {
+function grantSupplierRole(supplier: string, amount: BigDecimal): void {
 	grantRole(supplier, StableCoinRole.CASHIN_ROLE);
 
 	const newAllowance: allowance = {
@@ -220,7 +213,7 @@ function grantSupplierRole(supplier: string, amount: BigDecimal) {
 	suppliers.set(supplier, newAllowance);
 }
 
-function grantUnlimitedSupplierRole(supplier: string) {
+function grantUnlimitedSupplierRole(supplier: string): void {
 	grantRole(supplier, StableCoinRole.CASHIN_ROLE);
 
 	const newAllowance: allowance = {
@@ -231,13 +224,13 @@ function grantUnlimitedSupplierRole(supplier: string) {
 	suppliers.set(supplier, newAllowance);
 }
 
-function revokeSupplierRole(supplier: string) {
+function revokeSupplierRole(supplier: string): void {
 	revokeRole(supplier, StableCoinRole.CASHIN_ROLE);
 	const supplierAllowance = suppliers.get(supplier);
 	if (supplierAllowance) suppliers.delete(supplier);
 }
 
-function assignKey(value: any, id: number) {
+function assignKey(value: any, id: number): void {
 	switch (id) {
 		case 2:
 			kycKey = value;
@@ -254,7 +247,7 @@ function assignKey(value: any, id: number) {
 	}
 }
 
-function wipe(account: string, amount: any) {
+function wipe(account: string, amount: any): void {
 	let accountBalance = balances.get(account);
 	if (accountBalance) {
 		accountBalance = BigDecimal.fromString(accountBalance)
@@ -269,7 +262,7 @@ function wipe(account: string, amount: any) {
 		.toString();
 }
 
-function smartContractCalls(functionName: string, decoded: any) {
+function smartContractCalls(functionName: string, decoded: any): void {
 	if (functionName == 'deployStableCoin') {
 		const requestedToken = (decoded as any).requestedToken;
 
@@ -555,7 +548,7 @@ function signAndSendTransaction(
 	transactionType: TransactionType,
 	functionName: string,
 	abi: object[],
-) {
+): void {
 	if (t instanceof TokenFeeScheduleUpdateTransaction) {
 		const tokenId = (
 			t as TokenFeeScheduleUpdateTransaction
@@ -806,7 +799,9 @@ jest.mock('../src/port/out/hs/hts/HTSTransactionAdapter', () => {
 		);
 	});
 
-	HTSTransactionAdapterMock.register = function (account: Account) {
+	HTSTransactionAdapterMock.register = function (
+		account: Account,
+	): InitializationData {
 		user_account = account;
 		user_account.publicKey = account.privateKey?.publicKey;
 		Injectable.registerTransactionHandler(this); // `this` now correctly refers to the singletonInstance
@@ -818,7 +813,7 @@ jest.mock('../src/port/out/hs/hts/HTSTransactionAdapter', () => {
 		return response;
 	};
 
-	HTSTransactionAdapterMock.stop = function () {
+	HTSTransactionAdapterMock.stop = function (): Promise<boolean> {
 		return Promise.resolve(true);
 	};
 
@@ -827,7 +822,7 @@ jest.mock('../src/port/out/hs/hts/HTSTransactionAdapter', () => {
 		transactionType: TransactionType,
 		functionName: string,
 		abi: object[],
-	) {
+	): Promise<TransactionResponse> {
 		signAndSendTransaction(t, transactionType, functionName, abi);
 		const tokenAddress = '0x000000000000000000000000000000000054C563';
 		const reservAddressReturned = identifiers(
@@ -852,7 +847,7 @@ jest.mock('../src/port/out/hs/hts/HTSTransactionAdapter', () => {
 		return Promise.resolve(returnedResponse);
 	};
 
-	HTSTransactionAdapterMock.getAccount = function () {
+	HTSTransactionAdapterMock.getAccount = function (): Account {
 		return user_account;
 	};
 
@@ -862,9 +857,10 @@ jest.mock('../src/port/out/hs/hts/HTSTransactionAdapter', () => {
 		return Promise.resolve('signedMessage');
 	};
 
-	HTSTransactionAdapterMock.getMirrorNodeAdapter = function () {
-		return new MirrorNodeAdapter();
-	};
+	HTSTransactionAdapterMock.getMirrorNodeAdapter =
+		function (): MirrorNodeAdapter {
+			return new MirrorNodeAdapter();
+		};
 
 	HTSTransactionAdapterMock.create = async function (
 		coin: StableCoinProps,
@@ -874,7 +870,7 @@ jest.mock('../src/port/out/hs/hts/HTSTransactionAdapter', () => {
 		reserveAddress?: ContractId,
 		reserveInitialAmount?: BigDecimal,
 		proxyAdminOwnerAccount?: ContractId,
-	) {
+	): Promise<TransactionResponse<any, Error>> {
 		const mirrorNodeAdapter = new MirrorNodeAdapter();
 		try {
 			const cashinRole: FactoryCashinRole = {
@@ -1339,7 +1335,7 @@ jest.mock('@hashgraph/hedera-custodians-integration', () => {
 				return {
 					signTransaction: async function (
 						signatureRequest: SignatureRequest,
-					) {
+					): Promise<Uint8Array> {
 						const message = signatureRequest.getTransactionBytes();
 						const signer =
 							CLIENT_PRIVATE_KEY_ECDSA_2.toHashgraphKey();

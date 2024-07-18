@@ -320,10 +320,10 @@ describe('setMirrorNodeService', () => {
     await setMirrorNodeService.manageMirrorNodeMenu('testnet');
 
     expect(setMirrorNodeService).not.toBeNull();
-    expect(currentNetworkMock).toHaveBeenCalledTimes(2);
+    expect(currentNetworkMock).toHaveBeenCalledTimes(1);
     expect(currentAccountMock).toHaveBeenCalledTimes(5);
-    expect(currentMirrorMock).toHaveBeenCalledTimes(10);
-    expect(currentRPCMock).toHaveBeenCalledTimes(6);
+    expect(currentMirrorMock).toHaveBeenCalledTimes(9);
+    expect(currentRPCMock).toHaveBeenCalledTimes(5);
     expect(getConfigurationMock).toHaveBeenCalledTimes(11);
     expect(defaultMultipleAskMock).toHaveBeenCalledTimes(8);
     expect(defaultSingleAskMock).toHaveBeenCalledTimes(13);

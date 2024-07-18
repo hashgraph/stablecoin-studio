@@ -28,10 +28,13 @@ import BalanceOfStableCoinService from '../../../../src/app/service/stablecoin/B
 import { utilsService } from '../../../../src/index.js';
 
 const service = new BalanceOfStableCoinService();
+const token = '0.0.234567';
+const account = '0.0.356789';
 const request = new GetAccountBalanceRequest({
-  tokenId: '0.0.012345',
-  targetId: '',
+  tokenId: token,
+  targetId: account,
 });
+let BalanceMock;
 
 describe(`Testing BalanceOfStableCoinService class`, () => {
   beforeEach(() => {
@@ -51,18 +54,38 @@ describe(`Testing BalanceOfStableCoinService class`, () => {
   });
 
   it('Should instance getBalanceOfStableCoin', async () => {
+    BalanceMock = jest
+      .spyOn(StableCoin, 'getBalanceOf')
+      .mockImplementation(
+        async (request: GetAccountBalanceRequest): Promise<Balance> => {
+          expect(request.targetId).toEqual(account);
+          expect(request.tokenId).toEqual(token);
+          return new Balance(BigDecimal.fromString('10'));
+        },
+      );
+
     await service.getBalanceOfStableCoin(request);
 
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
-    expect(StableCoin.getBalanceOf).toHaveBeenCalledTimes(1);
+    expect(BalanceMock).toHaveBeenCalledTimes(1);
   });
 
   it('Should instance getBalanceOfStableCoin_2', async () => {
+    BalanceMock = jest
+      .spyOn(StableCoin, 'getBalanceOf')
+      .mockImplementation(
+        async (request: GetAccountBalanceRequest): Promise<Balance> => {
+          expect(request.targetId).toEqual(account);
+          expect(request.tokenId).toEqual(token);
+          return new Balance(BigDecimal.fromString('10'));
+        },
+      );
+
     const balance = await service.getBalanceOfStableCoin_2(request);
 
     expect(balance).toEqual('10');
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
-    expect(StableCoin.getBalanceOf).toHaveBeenCalledTimes(1);
+    expect(BalanceMock).toHaveBeenCalledTimes(1);
   });
 });

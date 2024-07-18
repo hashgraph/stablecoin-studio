@@ -278,7 +278,9 @@ export default class WizardService extends Service {
 
     await this.setSelectedAccount(account);
 
-    if (mainMenu) await this.mainMenu();
+    if (mainMenu) {
+      await this.mainMenu();
+    }
   }
 
   public async chooseLastAccount(): Promise<void> {

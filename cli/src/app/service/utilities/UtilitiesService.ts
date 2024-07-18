@@ -72,16 +72,19 @@ export default class UtilitiesService extends Service {
   public async initSDK(): Promise<void> {
     const account = this.getCurrentAccount();
     SDK.log = configurationService.getLogConfiguration();
-    const network = this.getCurrentNetwork();
+    const currentNetwork = this.getCurrentNetwork();
+    const mirrorNode = this.getCurrentMirror();
+    const currentBackend = this.getCurrentBackend();
+    const rpcNode = this.getCurrentRPC();
     await Network.init(
       new InitializationRequest({
-        network: network.name,
-        mirrorNode: this.getCurrentMirror(),
-        rpcNode: this.getCurrentRPC(),
-        consensusNodes: network.consensusNodes,
-        backend: this.getCurrentBackend()
+        network: currentNetwork.name,
+        mirrorNode,
+        rpcNode,
+        consensusNodes: currentNetwork.consensusNodes,
+        backend: currentBackend
           ? {
-              url: this.getCurrentBackend().endpoint,
+              url: currentBackend.endpoint,
             }
           : undefined,
       }),
@@ -139,9 +142,9 @@ export default class UtilitiesService extends Service {
         accountId: account.accountId,
         privateKey: privateKey,
       },
-      network: this.getCurrentNetwork().name,
-      mirrorNode: this.getCurrentMirror(),
-      rpcNode: this.getCurrentRPC(),
+      network: currentNetwork.name,
+      mirrorNode,
+      rpcNode: rpcNode,
       wallet: wallet,
       custodialWalletSettings: custodialWalletSettings,
     };
@@ -800,37 +803,47 @@ export default class UtilitiesService extends Service {
     return /\d\.\d\.\d/.test(str);
   }
 
+  /**
+   * Handles validation logic and prompts for user input until validation passes.
+   * @param validate - A function that performs the validation and returns an array of ValidationResponse objects.
+   * @param callback - A function that handles the validation response.
+   * @param consoleOutput - A boolean indicating whether to output validation errors to the console.
+   * @param checkBefore - A boolean indicating whether to perform the validation check before prompting for user input.
+   */
   public async handleValidation(
-    val: () => ValidationResponse[],
-    cll: (res: ValidationResponse[]) => Promise<void>,
-    consoleOut = true,
+    validate: () => ValidationResponse[],
+    callback: (response: ValidationResponse[]) => Promise<void>,
+    consoleOutput = true,
     checkBefore = false,
   ): Promise<void> {
-    const outputError = (res: ValidationResponse[]): void => {
-      for (let i = 0; i < res.length; i++) {
-        const validation = res[i];
-        // this.showError(`Validation failed for ${validation.name}:`);
-        for (let j = 0; j < validation.errors.length; j++) {
-          const error = validation.errors[j];
+    const outputErrors = (response: ValidationResponse[]): void => {
+      for (const validation of response) {
+        for (const error of validation.errors) {
           this.showError(`\t${error.message}`);
         }
       }
     };
 
-    let res;
-    let askCll = true;
+    let response: ValidationResponse[];
+    let askForInput = true;
 
     if (checkBefore) {
-      res = val();
-      if (res.length == 0) askCll = false;
+      response = validate();
+      if (response.length === 0) {
+        askForInput = false;
+      }
     }
 
-    while (askCll) {
-      askCll = false;
-      await cll(res ?? '');
-      res = val();
-      consoleOut && outputError(res);
-      if (res.length > 0) askCll = true;
+    while (askForInput) {
+      askForInput = false;
+      await callback(response ?? []);
+      response = validate();
+      if (consoleOutput) {
+        outputErrors(response);
+      }
+      if (response.length > 0) {
+        askForInput = true;
+      }
     }
   }
 

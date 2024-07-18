@@ -44,8 +44,9 @@ export default class ImplementationProxyService extends Service {
     currentImpl: string,
   ): Promise<void> {
     console.log(
-      language.getText('proxyConfiguration.currentImplementation') +
-        currentImpl,
+      `${language.getText(
+        'proxyConfiguration.currentImplementation',
+      )}${currentImpl}`,
     );
 
     const result = await this.askHederaTokenManagerVersion(req, currentImpl);
@@ -54,8 +55,9 @@ export default class ImplementationProxyService extends Service {
 
     await utilsService.showSpinner(Proxy.upgradeImplementation(req), {
       text: language.getText('state.loading'),
-      successText:
-        language.getText('state.upgradeImplementationCompleted') + '\n',
+      successText: `${language.getText(
+        'state.upgradeImplementationCompleted',
+      )}\n`,
     });
 
     console.log(language.getText('operation.success'));
@@ -67,13 +69,13 @@ export default class ImplementationProxyService extends Service {
     request: UpgradeImplementationRequest,
     currentImpl: string,
   ): Promise<boolean> {
-    const factory = utilsService.getCurrentFactory().id;
+    const factoryId = utilsService.getCurrentFactory().id;
 
-    const factoryListEvm = await Factory.getHederaTokenManagerList(
-      new GetTokenManagerListRequest({ factoryId: factory }),
+    const hederaTokenManagers = await Factory.getHederaTokenManagerList(
+      new GetTokenManagerListRequest({ factoryId }),
     ).then((value) => value.reverse());
 
-    const choices = factoryListEvm
+    const choices = hederaTokenManagers
       .map((item) => item.toString())
       .sort((token1, token2) =>
         +token1.split('.').slice(-1)[0] > +token2.split('.').slice(-1)[0]
@@ -82,10 +84,7 @@ export default class ImplementationProxyService extends Service {
       );
     choices.push(language.getText('stablecoin.askHederaTokenManagerOther'));
 
-    const filteredChoices = choices.filter((choice) => {
-      if (choice === currentImpl) return false;
-      return true;
-    });
+    const filteredChoices = choices.filter((choice) => choice !== currentImpl);
 
     const versionSelection = await utilsService.defaultMultipleAsk(
       language.getText('stablecoin.askHederaTokenManagerVersion'),

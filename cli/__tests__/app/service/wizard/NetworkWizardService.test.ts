@@ -67,26 +67,43 @@ describe('networkWizardService', () => {
       },
     ],
   };
+  const currentMirror = {
+    name: 'testnet-1',
+    network: 'testnet',
+    baseUrl: 'https://testnet.mirrornode.com',
+    apiKey: '',
+    headerName: '',
+    selected: true,
+  };
+  const currentRPC = {
+    name: 'rpc-1',
+    network: 'testnet',
+    baseUrl: 'https://testnet.rpcnetwork.com',
+    apiKey: '',
+    headerName: '',
+    selected: true,
+  };
+  let getConfigurationMock;
+
+  beforeEach(() => {
+    getConfigurationMock = jest
+      .spyOn(configurationService, 'getConfiguration')
+      .mockReturnValue(configurationMock);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
 
   it('should choose a mirror node network and return true', async () => {
     // mocks
-    const getConfigurationMock = jest
-      .spyOn(configurationService, 'getConfiguration')
-      .mockReturnValue(configurationMock);
     const setConfigurationMock = jest
       .spyOn(configurationService, 'setConfiguration')
       .mockImplementation();
 
     const getCurrentMirrorMock = jest
       .spyOn(utilsService, 'getCurrentMirror')
-      .mockReturnValue({
-        name: 'testnet-1',
-        network: 'testnet',
-        baseUrl: 'https://testnet.mirrornode.com',
-        apiKey: '',
-        headerName: '',
-        selected: true,
-      });
+      .mockReturnValue(currentMirror);
     const setCurrentMirrorMock = jest
       .spyOn(utilsService, 'setCurrentMirror')
       .mockImplementation();
@@ -100,11 +117,11 @@ describe('networkWizardService', () => {
     );
 
     // verify
-    expect(getConfigurationMock).toHaveBeenCalled();
-    expect(setConfigurationMock).toHaveBeenCalled();
-    expect(getCurrentMirrorMock).toHaveBeenCalled();
-    expect(setCurrentMirrorMock).toHaveBeenCalled();
-    expect(defaultMultipleAskMock).toHaveBeenCalled();
+    expect(getConfigurationMock).toHaveBeenCalledTimes(1);
+    expect(setConfigurationMock).toHaveBeenCalledTimes(1);
+    expect(getCurrentMirrorMock).toHaveBeenCalledTimes(1);
+    expect(setCurrentMirrorMock).toHaveBeenCalledTimes(1);
+    expect(defaultMultipleAskMock).toHaveBeenCalledTimes(1);
     expect(result).toBe(true);
   });
 
@@ -112,14 +129,12 @@ describe('networkWizardService', () => {
     // mocks
     configurationMock.mirrors[0].selected = true;
     configurationMock.mirrors[1].selected = true;
-
-    const getConfigurationMock = jest
-      .spyOn(configurationService, 'getConfiguration')
-      .mockReturnValue(configurationMock);
-
     const showMessageMock = jest
       .spyOn(utilsService, 'showMessage')
       .mockImplementation();
+    const getCurrentMirrorMock = jest
+      .spyOn(utilsService, 'getCurrentMirror')
+      .mockReturnValue(currentMirror);
 
     // method call
     const result = await networkWizardService.chooseMirrorNodeNetwork(
@@ -127,30 +142,21 @@ describe('networkWizardService', () => {
     );
 
     // verify
-    expect(getConfigurationMock).toHaveBeenCalled();
-    expect(showMessageMock).toHaveBeenCalled();
+    expect(getConfigurationMock).toHaveBeenCalledTimes(1);
+    expect(getCurrentMirrorMock).toHaveBeenCalledTimes(1);
+    expect(showMessageMock).toHaveBeenCalledTimes(1);
     expect(result).toBe(false);
   });
 
   it('should choose a rpc network and return true', async () => {
     // mocks
-    const getConfigurationMock = jest
-      .spyOn(configurationService, 'getConfiguration')
-      .mockReturnValue(configurationMock);
     const setConfigurationMock = jest
       .spyOn(configurationService, 'setConfiguration')
       .mockImplementation();
 
     const getCurrentRPCMock = jest
       .spyOn(utilsService, 'getCurrentRPC')
-      .mockReturnValue({
-        name: 'rpc-1',
-        network: 'testnet',
-        baseUrl: 'https://testnet.rpcnetwork.com',
-        apiKey: '',
-        headerName: '',
-        selected: true,
-      });
+      .mockReturnValue(currentRPC);
     const setCurrentRPCMock = jest
       .spyOn(utilsService, 'setCurrentRPC')
       .mockImplementation();
@@ -162,11 +168,11 @@ describe('networkWizardService', () => {
     const result = await networkWizardService.chooseRPCNetwork('testnet');
 
     // verify
-    expect(getConfigurationMock).toHaveBeenCalled();
-    expect(setConfigurationMock).toHaveBeenCalled();
-    expect(getCurrentRPCMock).toHaveBeenCalled();
-    expect(setCurrentRPCMock).toHaveBeenCalled();
-    expect(defaultMultipleAskMock).toHaveBeenCalled();
+    expect(getConfigurationMock).toHaveBeenCalledTimes(1);
+    expect(setConfigurationMock).toHaveBeenCalledTimes(1);
+    expect(getCurrentRPCMock).toHaveBeenCalledTimes(1);
+    expect(setCurrentRPCMock).toHaveBeenCalledTimes(1);
+    expect(defaultMultipleAskMock).toHaveBeenCalledTimes(1);
     expect(result).toBe(true);
   });
 
@@ -175,10 +181,9 @@ describe('networkWizardService', () => {
     configurationMock.rpcs[0].selected = true;
     configurationMock.rpcs[1].selected = true;
 
-    const getConfigurationMock = jest
-      .spyOn(configurationService, 'getConfiguration')
-      .mockReturnValue(configurationMock);
-
+    const getCurrentRPCMock = jest
+      .spyOn(utilsService, 'getCurrentRPC')
+      .mockReturnValue(currentRPC);
     const showMessageMock = jest
       .spyOn(utilsService, 'showMessage')
       .mockImplementation();
@@ -187,54 +192,52 @@ describe('networkWizardService', () => {
     const result = await networkWizardService.chooseRPCNetwork('testnet');
 
     // verify
-    expect(getConfigurationMock).toHaveBeenCalled();
-    expect(showMessageMock).toHaveBeenCalled();
+    expect(getConfigurationMock).toHaveBeenCalledTimes(1);
+    expect(getCurrentRPCMock).toHaveBeenCalledTimes(1);
+    expect(showMessageMock).toHaveBeenCalledTimes(1);
     expect(result).toBe(false);
   });
 
   it('should choose the last mirror node for the specified network', () => {
     // mocks
-    const getConfigurationMock = jest
-      .spyOn(configurationService, 'getConfiguration')
-      .mockReturnValue(configurationMock);
-
     const setCurrentMirrorMock = jest
       .spyOn(utilsService, 'setCurrentMirror')
+      .mockImplementation();
+    const setConfigurationMock = jest
+      .spyOn(configurationService, 'setConfiguration')
       .mockImplementation();
 
     // method call
     networkWizardService.chooseLastMirrorNode('testnet');
 
     // verify
-    expect(getConfigurationMock).toHaveBeenCalled();
+    expect(getConfigurationMock).toHaveBeenCalledTimes(2);
     expect(setCurrentMirrorMock).toHaveBeenCalledWith(
       configurationMock.mirrors[1],
     );
+    expect(setConfigurationMock).toHaveBeenCalledTimes(1);
   });
 
   it('should choose the last rpc for the specified network', () => {
     // mocks
-    const getConfigurationMock = jest
-      .spyOn(configurationService, 'getConfiguration')
-      .mockReturnValue(configurationMock);
-
     const setCurrentRPCMock = jest
       .spyOn(utilsService, 'setCurrentRPC')
+      .mockImplementation();
+    const setConfigurationMock = jest
+      .spyOn(configurationService, 'setConfiguration')
       .mockImplementation();
 
     // method call
     networkWizardService.chooseLastRPC('testnet');
 
     // verify
-    expect(getConfigurationMock).toHaveBeenCalled();
+    expect(getConfigurationMock).toHaveBeenCalledTimes(2);
     expect(setCurrentRPCMock).toHaveBeenCalledWith(configurationMock.rpcs[1]);
+    expect(setConfigurationMock).toHaveBeenCalledTimes(1);
   });
 
   it('should set the last mirror node of the specified network as selected', () => {
     // mocks
-    const getConfigurationMock = jest
-      .spyOn(configurationService, 'getConfiguration')
-      .mockReturnValue(configurationMock);
     const setConfigurationMock = jest
       .spyOn(configurationService, 'setConfiguration')
       .mockImplementation();
@@ -243,15 +246,12 @@ describe('networkWizardService', () => {
     networkWizardService.setLastMirrorNodeAsSelected('testnet');
 
     // verify
-    expect(getConfigurationMock).toHaveBeenCalled();
+    expect(getConfigurationMock).toHaveBeenCalledTimes(1);
     expect(setConfigurationMock).toHaveBeenCalledWith(configurationMock);
   });
 
   it('should set the last rpc of the specified network as selected', () => {
     // mocks
-    const getConfigurationMock = jest
-      .spyOn(configurationService, 'getConfiguration')
-      .mockReturnValue(configurationMock);
     const setConfigurationMock = jest
       .spyOn(configurationService, 'setConfiguration')
       .mockImplementation();
@@ -260,7 +260,7 @@ describe('networkWizardService', () => {
     networkWizardService.setLastRPCAsSelected('testnet');
 
     // verify
-    expect(getConfigurationMock).toHaveBeenCalled();
+    expect(getConfigurationMock).toHaveBeenCalledTimes(1);
     expect(setConfigurationMock).toHaveBeenCalledWith(configurationMock);
   });
 });
