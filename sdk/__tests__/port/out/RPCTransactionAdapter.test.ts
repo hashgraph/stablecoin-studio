@@ -30,6 +30,11 @@ jest.unmock('../../../src/port/out/mirror/MirrorNodeAdapter.ts');
 jest.unmock('../../../src/port/out/rpc/RPCQueryAdapter.ts');
 jest.unmock('axios');
 
+jest.resetModules();
+jest.unmock('../../../src/port/out/mirror/MirrorNodeAdapter.ts');
+jest.unmock('../../../src/port/out/rpc/RPCQueryAdapter.ts');
+jest.unmock('axios');
+
 import { StableCoin } from '../../../src/domain/context/stablecoin/StableCoin.js';
 import {
 	AssociateTokenRequest,

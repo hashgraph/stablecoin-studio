@@ -21,7 +21,6 @@
 /* eslint-disable jest/no-disabled-tests */
 /* eslint-disable jest/expect-expect */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-
 import Account from '../../../src/domain/context/account/Account.js';
 import {
 	AddFixedFeeRequest,

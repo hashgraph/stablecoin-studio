@@ -97,6 +97,11 @@ describe('🧪 Stablecoin test', () => {
 		autoRenewAccount: HederaId.from(AUTO_RENEW_ACCOUNT),
 	};
 
+	/*const stableCoinHTS = {
+		tokenId: new HederaId('0.0.4444444'),
+		decimals: DECIMALS,
+	};*/
+
 	const mirrorNode: MirrorNode = {
 		name: 'testmirrorNode',
 		baseUrl: 'https://testnet.mirrornode.hedera.com/api/v1/',
