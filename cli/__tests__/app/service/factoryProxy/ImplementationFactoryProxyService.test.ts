@@ -29,6 +29,10 @@ import Language from '../../../../src/domain/language/Language.js';
 const language: Language = new Language();
 
 describe('implementationFactoryProxyService', () => {
+  const factoryId = '0.0.123456';
+  const newImplementationAddress = '0.0.234567';
+  const currentImplementationAddress = '0.0.356789';
+
   beforeEach(() => {
     jest.spyOn(utilsService, 'showSpinner').mockImplementation();
     jest.spyOn(utilsService, 'showMessage').mockImplementation();
@@ -47,23 +51,33 @@ describe('implementationFactoryProxyService', () => {
     jest.spyOn(console, 'log');
     const upgradeFactoryImplementationMock = jest
       .spyOn(Proxy, 'upgradeFactoryImplementation')
-      .mockImplementation(() => Promise.resolve(true));
+      .mockImplementation(
+        async (
+          request: UpgradeFactoryImplementationRequest,
+        ): Promise<boolean> => {
+          expect(request.factoryId).toEqual(factoryId);
+          expect(request.implementationAddress).toEqual(
+            newImplementationAddress,
+          );
+          return true;
+        },
+      );
 
     const defaultSingleAskMock = jest
       .spyOn(utilsService, 'defaultSingleAsk')
-      .mockResolvedValue('0.0.345678');
+      .mockResolvedValue(newImplementationAddress);
 
     // create method request
     const req: UpgradeFactoryImplementationRequest =
       new UpgradeFactoryImplementationRequest({
-        factoryId: '0.0.123456',
-        implementationAddress: '0.0.234567',
+        factoryId: factoryId,
+        implementationAddress: newImplementationAddress,
       });
 
     // method call
     await new ImplementationFactoryProxyService().upgradeImplementation(
       req,
-      '0.0.456789',
+      currentImplementationAddress,
     );
 
     // verify

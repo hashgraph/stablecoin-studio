@@ -1,6 +1,6 @@
 {
     "name": "@hashgraph/stablecoin-npm-contracts",
-    "version": "1.23.0",
+    "version": "1.23.1",
     "description": "",
     "main": "./build/typechain-types/index.js",
     "module": "./build/typechain-types/index.js",
@@ -21,7 +21,7 @@
         "compile": "npx hardhat compile",
         "compile:force": "npx hardhat compile --force && npm run build",
         "test": "npx hardhat test",
-        "test:parallel": "npx hardhat test --parallel",
+        "test:parallel": "npx hardhat test",
         "cleanCache": "npx hardhat clean",
         "test:upgradable": "npx hardhat test test/upgradable.ts",
         "test:testnet": "npx hardhat test --network testnet",

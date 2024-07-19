@@ -29,9 +29,11 @@ import colors from 'colors';
 
 const service = new FreezeStableCoinService();
 const language: Language = new Language();
+const token = '0.0.234567';
+const account = '0.0.356789';
 const request = new FreezeAccountRequest({
-  tokenId: 'tokenId',
-  targetId: 'targetId',
+  tokenId: token,
+  targetId: account,
 });
 
 describe(`Testing FreezeStableCoinService class`, () => {
@@ -51,34 +53,63 @@ describe(`Testing FreezeStableCoinService class`, () => {
   });
 
   it('Should instance freezeAccount', async () => {
+    const FreezeMock = jest
+      .spyOn(StableCoin, 'freeze')
+      .mockImplementation(
+        async (request: FreezeAccountRequest): Promise<boolean> => {
+          expect(request.targetId).toEqual(account);
+          expect(request.tokenId).toEqual(token);
+          return true;
+        },
+      );
+
     await service.freezeAccount(request);
 
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
-    expect(StableCoin.freeze).toHaveBeenCalledTimes(1);
+    expect(FreezeMock).toHaveBeenCalledTimes(1);
     expect(console.log).toHaveBeenCalledWith(
       language.getText('operation.success'),
     );
   });
 
   it('Should instance unfreezeAccount', async () => {
+    const UnFreezeMock = jest
+      .spyOn(StableCoin, 'unFreeze')
+      .mockImplementation(
+        async (request: FreezeAccountRequest): Promise<boolean> => {
+          expect(request.targetId).toEqual(account);
+          expect(request.tokenId).toEqual(token);
+          return true;
+        },
+      );
+
     await service.unfreezeAccount(request);
 
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
-    expect(StableCoin.unFreeze).toHaveBeenCalledTimes(1);
+    expect(UnFreezeMock).toHaveBeenCalledTimes(1);
     expect(console.log).toHaveBeenCalledWith(
       language.getText('operation.success'),
     );
   });
 
   it('Should instance isAccountFrozenDisplay', async () => {
-    jest.spyOn(StableCoin, 'isAccountFrozen').mockResolvedValue(false);
+    const IsFrozenMock = jest
+      .spyOn(StableCoin, 'isAccountFrozen')
+      .mockImplementation(
+        async (request: FreezeAccountRequest): Promise<boolean> => {
+          expect(request.targetId).toEqual(account);
+          expect(request.tokenId).toEqual(token);
+          return false;
+        },
+      );
+
     await service.isAccountFrozenDisplay(request);
 
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
-    expect(StableCoin.isAccountFrozen).toHaveBeenCalledTimes(1);
+    expect(IsFrozenMock).toHaveBeenCalledTimes(1);
     expect(console.log).toHaveBeenCalledWith(
       language
         .getText('state.accountNotFrozen')

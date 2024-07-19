@@ -23,7 +23,7 @@ import { commanderService } from '../../../../src/index.js';
 describe(`Testing CommanderService class`, () => {
   const mockExit = jest.spyOn(process, 'exit').mockImplementation();
   jest.useFakeTimers();
-  it('Should instance', async () => {
+  it('Should instance', () => {
     commanderService.start();
 
     expect(commanderService).not.toBeNull();
