@@ -73,9 +73,9 @@ import { CommandHandlerType } from './command/CommandBus.js';
 import { QueryHandlerType } from './query/QueryBus.js';
 import { NetworkProps } from '../app/service/NetworkService.js';
 // eslint-disable-next-line jest/no-mocks-import
-import { ConcreteQueryHandler } from '../../__tests__/core/command/__mocks__/ConcreteQueryHandler.js';
+//import { ConcreteQueryHandler } from '../../__tests__/core/command/__mocks__/ConcreteQueryHandler.js';
 // eslint-disable-next-line jest/no-mocks-import
-import { ConcreteCommandHandler } from '../../__tests__/core/command/__mocks__/ConcreteCommandHandler.js';
+//import { ConcreteCommandHandler } from '../../__tests__/core/command/__mocks__/ConcreteCommandHandler.js';
 import TransactionAdapter from '../port/out/TransactionAdapter.js';
 import { RuntimeError } from './error/RuntimeError.js';
 import { HTSTransactionAdapter } from '../port/out/hs/hts/HTSTransactionAdapter.js';
@@ -118,10 +118,10 @@ export const TOKENS = {
 
 const COMMAND_HANDLERS = [
 	// Mock
-	{
+	/*{
 		token: TOKENS.COMMAND_HANDLER,
 		useClass: ConcreteCommandHandler,
-	},
+	},*/
 	// Stablecoin Creation
 	{
 		token: TOKENS.COMMAND_HANDLER,
@@ -310,10 +310,10 @@ const COMMAND_HANDLERS = [
 ];
 
 const QUERY_HANDLERS = [
-	{
+	/*{
 		token: TOKENS.QUERY_HANDLER,
 		useClass: ConcreteQueryHandler,
-	},
+	},*/
 	{
 		token: TOKENS.QUERY_HANDLER,
 		useClass: GetStableCoinQueryHandler,

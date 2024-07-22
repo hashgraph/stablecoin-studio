@@ -38,8 +38,10 @@ export default class OwnerProxyService extends Service {
   /**
    * change the proxy's owner
    */
-  public async changeProxyOwner(req: ChangeProxyOwnerRequest): Promise<void> {
-    await utilsService.showSpinner(Proxy.changeProxyOwner(req), {
+  public async changeProxyOwner(
+    request: ChangeProxyOwnerRequest,
+  ): Promise<void> {
+    await utilsService.showSpinner(Proxy.changeProxyOwner(request), {
       text: language.getText('state.loading'),
       successText: language.getText('state.changeOwnerCompleted') + '\n',
     });
@@ -52,8 +54,10 @@ export default class OwnerProxyService extends Service {
   /**
    * accept the proxy's owner
    */
-  public async acceptProxyOwner(req: AcceptProxyOwnerRequest): Promise<void> {
-    await utilsService.showSpinner(Proxy.acceptProxyOwner(req), {
+  public async acceptProxyOwner(
+    request: AcceptProxyOwnerRequest,
+  ): Promise<void> {
+    await utilsService.showSpinner(Proxy.acceptProxyOwner(request), {
       text: language.getText('state.loading'),
       successText: language.getText('state.acceptOwnerCompleted') + '\n',
     });
@@ -66,18 +70,18 @@ export default class OwnerProxyService extends Service {
   /**
    * cancel the proxy's owner
    */
-  public async cancelProxyOwner(currentTokenId: string): Promise<void> {
-    const configAccount = utilsService.getCurrentAccount();
+  public async cancelProxyOwner(tokenId: string): Promise<void> {
+    const targetId = utilsService.getCurrentAccount().accountId;
 
     const changeProxyOwnerRequest = new ChangeProxyOwnerRequest({
-      tokenId: currentTokenId,
-      targetId: configAccount.accountId,
+      tokenId,
+      targetId,
     });
 
     await this.changeProxyOwner(changeProxyOwnerRequest);
 
     const acceptProxyOwnerRequest = new AcceptProxyOwnerRequest({
-      tokenId: currentTokenId,
+      tokenId,
     });
 
     await this.acceptProxyOwner(acceptProxyOwnerRequest);

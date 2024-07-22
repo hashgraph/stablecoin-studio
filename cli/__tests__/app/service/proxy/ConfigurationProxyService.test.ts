@@ -26,7 +26,7 @@ describe('configurationProxyService', () => {
   const proxyConfigurationMock = {
     implementationAddress: new ContractId('0.0.123456'),
     owner: HederaId.from('0.0.234567'),
-    pendingOwner: HederaId.from('0.0.234567'),
+    pendingOwner: HederaId.from('0.0.345678'),
   };
 
   beforeEach(() => {
@@ -43,16 +43,22 @@ describe('configurationProxyService', () => {
       .mockImplementation(() => Promise.resolve(proxyConfigurationMock));
 
     // method call
-    const result = await new ConfigurationProxyService().getProxyconfiguration(
+    const configurationProxyService = new ConfigurationProxyService();
+    const result = await configurationProxyService.getProxyconfiguration(
       '0.0.98765',
     );
 
     // verify
     expect(getProxyConfigMock).toHaveBeenCalled();
-    expect(result.implementationAddress).toBe(
-      proxyConfigurationMock.implementationAddress,
+    expect(result.implementationAddress).toBeInstanceOf(ContractId);
+    expect(result.implementationAddress.value).toBe(
+      proxyConfigurationMock.implementationAddress.value,
     );
-    expect(result.owner).toBe(proxyConfigurationMock.owner);
-    expect(result.pendingOwner).toBe(proxyConfigurationMock.pendingOwner);
+    expect(result.owner).toBeInstanceOf(HederaId);
+    expect(result.owner.value).toBe(proxyConfigurationMock.owner.value);
+    expect(result.pendingOwner).toBeInstanceOf(HederaId);
+    expect(result.pendingOwner.value).toBe(
+      proxyConfigurationMock.pendingOwner.value,
+    );
   });
 });

@@ -70,7 +70,7 @@ function calcKeccak256(message: Uint8Array): Buffer {
   return Buffer.from(keccak256(message));
 }
 
-function hexToUint8Array(hexString: string): Uint8Array {
+export function hexToUint8Array(hexString: string): Uint8Array {
   const cleanHexString = hexString.replace(/^0x/i, '');
 
   if (!cleanHexString.match(/^[0-9a-fA-F]+$/)) {

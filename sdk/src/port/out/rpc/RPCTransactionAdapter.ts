@@ -31,6 +31,7 @@ import {
 	ProxyAdmin__factory,
 	StableCoinFactory__factory,
 	StableCoinProxyAdmin__factory,
+	IHTSToken__factory,
 } from '@hashgraph/stablecoin-npm-contracts';
 import TransactionAdapter, { InitializationData } from '../TransactionAdapter';
 import { BigNumber, ContractTransaction, ethers, Signer } from 'ethers';
@@ -84,6 +85,7 @@ import {
 	UPDATE_RESERVE_AMOUNT_GAS,
 	UPDATE_TOKEN_GAS,
 	WIPE_GAS,
+	ASSOCIATE_GAS,
 } from '../../../core/Constants.js';
 import { MetaMaskInpageProvider } from '@metamask/providers';
 import { WalletConnectError } from '../../../domain/context/network/error/WalletConnectError.js';
@@ -1239,6 +1241,42 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 			targetId: await this.getEVMAddress(targetId),
 		});
 		return this.performOperation(coin, Operation.REVOKE_KYC, params);
+	}
+
+	async associateToken(
+		tokenId: HederaId,
+		targetId: HederaId,
+	): Promise<TransactionResponse<any, Error>> {
+		try {
+			const HTSTokenEVMAddress = tokenId
+				.toHederaAddress()
+				.toSolidityAddress();
+
+			const response = await RPCTransactionResponseAdapter.manageResponse(
+				await IHTSToken__factory.connect(
+					HTSTokenEVMAddress,
+					this.signerOrProvider,
+				).associate({ gasLimit: ASSOCIATE_GAS }),
+				this.networkService.environment,
+			);
+			this.logTransaction(
+				response.id ?? '',
+				this.networkService.environment,
+			);
+			return response;
+		} catch (error) {
+			LogService.logError(error);
+			this.logTransaction(
+				(error as any).error.transactionHash ?? '',
+				this.networkService.environment,
+			);
+			throw new TransactionResponseError({
+				network: this.networkService.environment,
+				RPC_relay: true,
+				message: `Unexpected error in RPCTransactionAdapter association operation : ${error}`,
+				transactionId: (error as any).error.transactionHash,
+			});
+		}
 	}
 
 	async contractCall(

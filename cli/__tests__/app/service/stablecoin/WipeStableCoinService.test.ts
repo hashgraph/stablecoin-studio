@@ -25,16 +25,18 @@ import Language from '../../../../src/domain/language/Language.js';
 
 const service = new WipeStableCoinService();
 const language: Language = new Language();
+const token = '0.0.234567';
+const amount = '11';
+const account = '0.0.4567894';
 const request = new WipeRequest({
-  tokenId: '0.0.012345',
-  amount: '10',
-  targetId: '',
+  tokenId: token,
+  amount: amount,
+  targetId: account,
 });
 
 describe(`Testing WipeStableCoinService class`, () => {
   beforeEach(() => {
     jest.spyOn(utilsService, 'showSpinner').mockImplementation();
-    jest.spyOn(StableCoin, 'wipe').mockImplementation();
     jest.spyOn(console, 'log').mockImplementation();
   });
   afterEach(() => {
@@ -42,11 +44,20 @@ describe(`Testing WipeStableCoinService class`, () => {
   });
 
   it('Should instance wipeStableCoin', async () => {
+    const wipeMock = jest
+      .spyOn(StableCoin, 'wipe')
+      .mockImplementation(async (request: WipeRequest): Promise<boolean> => {
+        expect(request.tokenId).toEqual(token);
+        expect(request.amount).toEqual(amount);
+        expect(request.targetId).toEqual(account);
+        return false;
+      });
+
     await service.wipeStableCoin(request);
 
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
-    expect(StableCoin.wipe).toHaveBeenCalledTimes(1);
+    expect(wipeMock).toHaveBeenCalledTimes(1);
     expect(console.log).toHaveBeenCalledWith(
       language.getText('operation.success'),
     );

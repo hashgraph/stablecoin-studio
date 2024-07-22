@@ -146,7 +146,7 @@ describe('wizardService', () => {
 
     // verify
     expect(wizardService).not.toBeNull();
-    expect(configurationMenuMock).toHaveBeenCalled();
+    expect(configurationMenuMock).toHaveBeenCalledTimes(1);
   });
 
   it('should handle the main menu options', async () => {
@@ -160,7 +160,7 @@ describe('wizardService', () => {
 
     // verify
     expect(wizardService).not.toBeNull();
-    expect(mainMenuMock).toHaveBeenCalled();
+    expect(mainMenuMock).toHaveBeenCalledTimes(1);
   });
 
   it('should choose an account and call mainMenu', async () => {
@@ -182,10 +182,10 @@ describe('wizardService', () => {
     await wizardService.chooseAccount();
 
     // verify
-    expect(getConfigurationMock).toHaveBeenCalled();
-    expect(defaultMultipleAskMock).toHaveBeenCalled();
+    expect(getConfigurationMock).toHaveBeenCalledTimes(1);
+    expect(defaultMultipleAskMock).toHaveBeenCalledTimes(1);
     expect(setSelectedAccountMock).toHaveBeenCalledWith('account1 - alias1');
-    expect(mainMenuMock).toHaveBeenCalled();
+    expect(mainMenuMock).toHaveBeenCalledTimes(1);
   });
 
   it('should choose an account, log accounts not found, and call mainMenu', async () => {
@@ -208,11 +208,12 @@ describe('wizardService', () => {
     await wizardService.chooseAccount(true, 'dev');
 
     // verify
-    expect(getConfigurationMock).toHaveBeenCalled();
-    expect(defaultMultipleAskMock).toHaveBeenCalled();
+    expect(getConfigurationMock).toHaveBeenCalledTimes(1);
+    expect(defaultMultipleAskMock).toHaveBeenCalledTimes(1);
     expect(setSelectedAccountMock).toHaveBeenCalledWith('account3 - alias3');
+    expect(consoleLogMock).toHaveBeenCalledTimes(1);
     expect(consoleLogMock).toHaveBeenCalledWith(expect.any(String));
-    expect(mainMenuMock).toHaveBeenCalled();
+    expect(mainMenuMock).toHaveBeenCalledTimes(1);
   });
 
   it('should choose an account without calling mainMenu', async () => {
@@ -234,8 +235,8 @@ describe('wizardService', () => {
     await wizardService.chooseAccount(false);
 
     // verify
-    expect(getConfigurationMock).toHaveBeenCalled();
-    expect(defaultMultipleAskMock).toHaveBeenCalled();
+    expect(getConfigurationMock).toHaveBeenCalledTimes(1);
+    expect(defaultMultipleAskMock).toHaveBeenCalledTimes(1);
     expect(setSelectedAccountMock).toHaveBeenCalledWith('account2 - alias2');
     expect(mainMenuMock).not.toHaveBeenCalled();
   });
@@ -253,7 +254,7 @@ describe('wizardService', () => {
     await wizardService.chooseLastAccount();
 
     // verify
-    expect(getConfigurationMock).toHaveBeenCalled();
+    expect(getConfigurationMock).toHaveBeenCalledTimes(1);
     expect(setSelectedAccountMock).toHaveBeenCalledWith(
       configurationMock.accounts[configurationMock.accounts.length - 1],
     );
@@ -290,7 +291,7 @@ describe('wizardService', () => {
     await wizardService.setSelectedAccount('account2 - alias2');
 
     // verify
-    expect(getConfigurationMock).toHaveBeenCalled();
+    expect(getConfigurationMock).toHaveBeenCalledTimes(1);
     expect(setCurrentAccountMock).toHaveBeenCalledWith({
       accountId: 'account2',
       type: AccountType.Fireblocks,

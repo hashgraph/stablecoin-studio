@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
 	Box,
 	Button,
+	Icon,
 	Modal,
 	ModalBody,
 	ModalCloseButton,
@@ -17,6 +18,7 @@ import {
 	Td,
 	Th,
 	Thead,
+	Tooltip,
 	Tr,
 	useDisclosure,
 } from '@chakra-ui/react';
@@ -28,13 +30,14 @@ import type {
 } from '@hashgraph/stablecoin-npm-sdk';
 
 import { GetTransactionsRequest, SupportedWallets } from '@hashgraph/stablecoin-npm-sdk';
-import { ArrowForwardIcon, DeleteIcon } from '@chakra-ui/icons';
+import { ArrowForwardIcon, DeleteIcon, InfoOutlineIcon } from '@chakra-ui/icons';
 import BaseContainer from '../../components/BaseContainer';
 import { useTranslation } from 'react-i18next';
 import MultiSigTransactionModal from './components/MultiSigTransactionModal';
 import SDKService from '../../services/SDKService';
 import { useSelector } from 'react-redux';
 import { LAST_WALLET_SELECTED, SELECTED_WALLET_ACCOUNT_INFO } from '../../store/slices/walletSlice';
+import { MultisigTransactionStatusColors, MultisigTransactionStatus } from '../../constant';
 
 // @ts-ignore
 const MultiSigTransactions = () => {
@@ -82,15 +85,29 @@ const MultiSigTransactions = () => {
 		fetchTransactions();
 	}, [selectedWallet, currentPage]);
 
+	const statusToBgColor = (status: string): string => {
+		const color =
+			MultisigTransactionStatusColors[status as keyof typeof MultisigTransactionStatusColors];
+		return color || 'gray.200';
+	};
+
 	const canSignTransaction = (transaction: MultiSigTransactionViewModel) => {
 		return (
-			publicKey && transaction.key_list.includes(publicKey) && transaction.status === 'PENDING'
+			publicKey &&
+			transaction.key_list.includes(publicKey) &&
+			transaction.status === MultisigTransactionStatus.PENDING
 		);
 	};
 
 	const canSendTransaction = (transaction: MultiSigTransactionViewModel) => {
 		if (selectedWallet === SupportedWallets.METAMASK) return false;
-		return transaction.signed_keys.length >= transaction.threshold;
+		const startDate = new Date(transaction.start_date);
+		const currentDate = new Date();
+		if (startDate > currentDate) return false;
+		return (
+			transaction.signed_keys.length >= transaction.threshold &&
+			transaction.status === MultisigTransactionStatus.SIGNED
+		);
 	};
 
 	const filteredTransactions = transactions.filter((transaction) => {
@@ -107,7 +124,7 @@ const MultiSigTransactions = () => {
 						if (t.id === transactionId) {
 							return {
 								...t,
-								status: 'SIGNED',
+								status: MultisigTransactionStatus.SIGNED,
 								signed_keys: [...t.signed_keys, publicKey],
 							};
 						}
@@ -168,8 +185,11 @@ const MultiSigTransactions = () => {
 					width='auto'
 					onChange={(e) => setFilter(e.target.value)}
 				>
-					<option value='pending'>Pending</option>
-					<option value='signed'>Signed</option>
+					{Object.keys(MultisigTransactionStatusColors).map((statusKey) => (
+						<option key={statusKey} value={statusKey.toLowerCase()}>
+							{statusKey}
+						</option>
+					))}
 				</Select>
 			</Box>
 			<Box position='relative' mb='4'>
@@ -180,9 +200,28 @@ const MultiSigTransactions = () => {
 								<Th>ID</Th>
 								<Th>Description</Th>
 								<Th>Account</Th>
+								<Th>Signatures</Th>
 								<Th>Threshold</Th>
 								<Th>Status</Th>
-								<Th>Start Date</Th>
+								<Th>
+									<Box display='flex' alignItems='center'>
+										Start Date
+										<Tooltip
+											label='The transaction will be sent on this date if it contains all the necessary signatures'
+											aria-label='Start Date Tooltip'
+										>
+											<span>
+												<Icon
+													as={InfoOutlineIcon}
+													ml={2}
+													cursor='pointer'
+													position='relative'
+													top='-1px'
+												/>{' '}
+											</span>
+										</Tooltip>
+									</Box>
+								</Th>
 								<Th>Actions</Th>
 							</Tr>
 						</Thead>
@@ -211,10 +250,20 @@ const MultiSigTransactions = () => {
 										{transaction.hedera_account_id}
 									</Td>
 									<Td borderBottom='1px' borderColor='gray.200'>
+										{transaction.signed_keys.length}
+									</Td>
+									<Td borderBottom='1px' borderColor='gray.200'>
 										{transaction.threshold}
 									</Td>
 									<Td borderBottom='1px' borderColor='gray.200'>
-										<Tag>{transaction.status}</Tag>
+										<Tag bg={statusToBgColor(transaction.status)}>{transaction.status}</Tag>
+									</Td>
+									<Td borderBottom='1px' borderColor='gray.200'>
+										<Tag>
+											{new Date(transaction.start_date).toDateString() +
+												' ' +
+												new Date(transaction.start_date).toLocaleTimeString()}
+										</Tag>
 									</Td>
 									<Td borderBottom='1px' borderColor='gray.200'>
 										<Tag>

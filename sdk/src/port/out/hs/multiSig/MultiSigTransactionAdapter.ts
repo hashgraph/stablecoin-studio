@@ -49,6 +49,7 @@ import {
 import EventService from '../../../../app/service/event/EventService.js';
 import Hex from '../../../../core/Hex.js';
 import TransactionService from '../../../../app/service/TransactionService.js';
+import { TransactionType } from '../../TransactionResponseEnums';
 
 @singleton()
 export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
@@ -69,16 +70,16 @@ export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
 
 	async signAndSendTransaction(
 		t: Transaction,
-		startDate?: string, // TODO: instead of this could we retrieve this from backend using a service?
-	): // eslint-disable-next-line @typescript-eslint/no-explicit-any
-	Promise<TransactionResponse<unknown, Error>> {
+		transactionType: TransactionType,
+		nameFunction?: string,
+		abi?: never[],
+		startDate?: string,
+	): Promise<TransactionResponse<never, Error>> {
 		const publicKeys: string[] = [];
 		const accountId: AccountId = AccountId.fromString(
 			this.account.id.toString(),
 		);
 
-		// Generate a new transaction ID
-		// TODO: Replace this date with the date selected in the UI
 		const dateStr = startDate ? startDate : new Date().toISOString();
 
 		const validStart = Timestamp.fromDate(dateStr);
@@ -119,6 +120,10 @@ export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
 			[this.networkService.consensusNodes[0].url]:
 				this.networkService.consensusNodes[0].nodeId,
 		});
+
+		if (!this.account.multiKey) {
+			throw new Error('MultiKey not found in the account');
+		}
 
 		this.account.multiKey.keys.forEach((key) => publicKeys.push(key.key));
 

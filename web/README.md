@@ -113,11 +113,9 @@ The front end will automatically detect how many compatible wallets are availabl
 
 If you choose HashPack or Blade, you will be asked to choose a network (testnet or mainnet)
 
-![Alt text](docs/images/disconnect.png?raw=true 'disconnect')
 
 If you want to switch to another compatible wallet, you can do it at any time by clicking on the disconnect button (top right corner) then connecting again.
 
-![Alt text](docs/images/Multisig.png?raw=true)
 
 If you choose Multisig, you will be asked to choose a network (testnet or mainnet) and enter the multisig account id
 

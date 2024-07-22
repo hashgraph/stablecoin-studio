@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Stack, HStack, useDisclosure, Text } from '@chakra-ui/react';
+import { HStack, Stack, Text, useDisclosure } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
 import type { FieldValues } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import BaseContainer from '../../components/BaseContainer';
 import BasicDetails from './BasicDetails';
 import type { Step } from '../../components/Stepper';
@@ -16,27 +16,22 @@ import Review from './Review';
 import { OTHER_KEY_VALUE } from './components/KeySelector';
 import {
 	getStableCoinList,
-	SELECTED_WALLET_ACCOUNT_INFO,
-	SELECTED_WALLET_PAIRED_ACCOUNT,
 	SELECTED_FACTORY_ID,
-	SELECTED_WALLET,
-	getExternalTokenList,
+	SELECTED_WALLET_ACCOUNT_INFO,
 } from '../../store/slices/walletSlice';
 import SDKService from '../../services/SDKService';
 import ModalNotification from '../../components/ModalNotification';
+import type { RequestPublicKey } from '@hashgraph/stablecoin-npm-sdk';
 import {
 	Account,
 	AssociateTokenRequest,
 	CreateRequest,
 	KYCRequest,
-	GetStableCoinDetailsRequest,
-	SupportedWallets,
 } from '@hashgraph/stablecoin-npm-sdk';
-import type { RequestPublicKey } from '@hashgraph/stablecoin-npm-sdk';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch } from '../../store/store';
 import ProofOfReserve from './ProofOfReserve';
-import { ImportTokenService } from '../../services/ImportTokenService';
+import { SELECTED_WALLET_PAIRED_ACCOUNT } from '../../store/walletSelectors';
 
 const StableCoinCreation = () => {
 	const navigate = useNavigate();
@@ -46,7 +41,6 @@ const StableCoinCreation = () => {
 	const account = useSelector(SELECTED_WALLET_PAIRED_ACCOUNT);
 	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
 	const factoryId = useSelector(SELECTED_FACTORY_ID);
-	const wallet = useSelector(SELECTED_WALLET);
 
 	const form = useForm<FieldValues>({
 		mode: 'onChange',
@@ -341,11 +335,7 @@ const StableCoinCreation = () => {
 			const tokenId = createResponse.coin.tokenId.toString();
 			setToken(tokenId);
 
-			if (
-				(wallet.lastWallet === SupportedWallets.HASHPACK ||
-					wallet.lastWallet === SupportedWallets.BLADE) &&
-				createResponse?.coin.tokenId
-			) {
+			if (createResponse?.coin.tokenId) {
 				const associateRequest = new AssociateTokenRequest({
 					targetId: accountInfo.id!,
 					tokenId,
@@ -359,28 +349,6 @@ const StableCoinCreation = () => {
 					});
 					await SDKService.grantKyc(grantKYCRequest);
 				}
-			}
-
-			if (wallet.lastWallet === SupportedWallets.METAMASK) {
-				const details: any = await Promise.race([
-					SDKService.getStableCoinDetails(
-						new GetStableCoinDetailsRequest({
-							id: tokenId,
-						}),
-					),
-					new Promise((resolve, reject) => {
-						setTimeout(() => {
-							reject(new Error("Stablecoin details couldn't be obtained in a reasonable time."));
-						}, 10000);
-					}),
-				]).catch((e) => {
-					console.log(e.message);
-					onOpen();
-					throw e;
-				});
-
-				ImportTokenService.importToken(tokenId, details?.symbol!, accountInfo?.id!);
-				dispatch(getExternalTokenList(accountInfo.id!));
 			}
 
 			setLoading(false);

@@ -18,34 +18,26 @@
  *
  */
 
-import Service from '../Service.js';
 import shell from 'shelljs';
-import pkg from '../../../../package.json';
 import yaml from 'js-yaml';
 import fs from 'fs-extra';
-import { IConfiguration } from '../../../domain/configuration/interfaces/IConfiguration.js';
-import { INetworkConfig } from '../../../domain/configuration/interfaces/INetworkConfig.js';
-import { IAccountConfig } from '../../../domain/configuration/interfaces/IAccountConfig.js';
-import { IMirrorsConfig } from '../../../domain/configuration/interfaces/IMirrorsConfig.js';
-import { IRPCsConfig } from '../../../domain/configuration/interfaces/IRPCsConfig.js';
-import { utilsService } from '../../../index.js';
-import SetConfigurationService from './SetConfigurationService.js';
 import MaskData from 'maskdata';
-import { ILogConfig } from '../../../domain/configuration/interfaces/ILogConfig.js';
-import { IFactoryConfig } from '../../../domain/configuration/interfaces/IFactoryConfig.js';
 import {
   DailyRotateFile,
   DefaultLoggerFormat,
   LogOptions,
 } from '@hashgraph/stablecoin-npm-sdk';
-import BackendConfig from '../../../domain/configuration/interfaces/BackendConfig.js';
+import { utilsService, setConfigurationService } from '../../../index.js';
+import Service from '../Service.js';
+import pkg from '../../../../package.json';
+import { IConfiguration } from '../../../domain/configuration/interfaces/IConfiguration.js';
 
 /**
  * Configuration Service
  */
 export default class ConfigurationService extends Service {
   private configuration: IConfiguration;
-  private configFileName = '.hedera-stable-coin-cli.yaml';
+  private configFileName = '.hedera-stable-coin-cli.yaml'; // TODO: this should not be hardcoded
   private path = this.getDefaultConfigurationPath();
 
   constructor() {
@@ -61,8 +53,6 @@ export default class ConfigurationService extends Service {
       !fs.existsSync(this.getDefaultConfigurationPath()) ||
       !this.validateConfigurationFile()
     ) {
-      const setConfigurationService: SetConfigurationService =
-        new SetConfigurationService();
       await setConfigurationService.initConfiguration(
         path,
         overrides?.defaultNetwork,
@@ -70,11 +60,31 @@ export default class ConfigurationService extends Service {
     }
 
     this.configuration = this.setConfigFromConfigFile();
-    if (overrides?.defaultNetwork) {
-      this.configuration.defaultNetwork = overrides.defaultNetwork;
-    }
-    if (overrides?.logs) {
-      this.configuration.logs = overrides.logs;
+    if (overrides) {
+      if (overrides.defaultNetwork) {
+        this.configuration.defaultNetwork = overrides.defaultNetwork;
+      }
+      if (overrides.logs) {
+        this.configuration.logs = overrides.logs;
+      }
+      if (overrides.accounts) {
+        this.configuration.accounts = overrides.accounts;
+      }
+      if (overrides.networks) {
+        this.configuration.networks = overrides.networks;
+      }
+      if (overrides.mirrors) {
+        this.configuration.mirrors = overrides.mirrors;
+      }
+      if (overrides.rpcs) {
+        this.configuration.rpcs = overrides.rpcs;
+      }
+      if (overrides.backend) {
+        this.configuration.backend = overrides.backend;
+      }
+      if (overrides.factories) {
+        this.configuration.factories = overrides.factories;
+      }
     }
   }
 
@@ -214,19 +224,9 @@ export default class ConfigurationService extends Service {
    * Set config data from config file
    */
   public setConfigFromConfigFile(): IConfiguration {
-    const defaultConfigRaw = yaml.load(
+    const config = yaml.load(
       fs.readFileSync(this.getDefaultConfigurationPath(), 'utf8'),
-    );
-    const config: IConfiguration = {
-      defaultNetwork: defaultConfigRaw['defaultNetwork'],
-      networks: defaultConfigRaw['networks'] as unknown as INetworkConfig[],
-      accounts: defaultConfigRaw['accounts'] as unknown as IAccountConfig[],
-      mirrors: defaultConfigRaw['mirrors'] as unknown as IMirrorsConfig[],
-      rpcs: defaultConfigRaw['rpcs'] as unknown as IRPCsConfig[],
-      backend: defaultConfigRaw['backend'] as unknown as BackendConfig,
-      logs: defaultConfigRaw['logs'] as unknown as ILogConfig,
-      factories: defaultConfigRaw['factories'] as unknown as IFactoryConfig[],
-    };
+    ) as IConfiguration;
     this.setConfiguration(config);
     return config;
   }
@@ -260,6 +260,13 @@ export default class ConfigurationService extends Service {
     );
   }
 
+  /**
+   * Logs a warning if the factory ID of a target does not match the latest version of the SDK in the configuration.
+   * @param targetId - The ID of the target.
+   * @param targetName - The name of the target.
+   * @param network - The network of the target.
+   * @param arr - An optional array of objects containing IDs and networks.
+   */
   public logFactoryIdWarning(
     targetId: string,
     targetName: string,

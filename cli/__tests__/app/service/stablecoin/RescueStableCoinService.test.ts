@@ -25,9 +25,11 @@ import Language from '../../../../src/domain/language/Language.js';
 
 const service = new RescueStableCoinService();
 const language: Language = new Language();
+const token = '0.0.234567';
+const amount = '11';
 const request = new RescueRequest({
-  tokenId: '0.0.012345',
-  amount: '10',
+  tokenId: token,
+  amount: amount,
 });
 
 describe(`Testing RescueStableCoinService class`, () => {
@@ -41,11 +43,19 @@ describe(`Testing RescueStableCoinService class`, () => {
   });
 
   it('Should instance rescueStableCoin', async () => {
+    const rescueMock = jest
+      .spyOn(StableCoin, 'rescue')
+      .mockImplementation(async (request: RescueRequest): Promise<boolean> => {
+        expect(request.tokenId).toEqual(token);
+        expect(request.amount).toEqual(amount);
+        return false;
+      });
+
     await service.rescueStableCoin(request);
 
     expect(service).not.toBeNull();
     expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
-    expect(StableCoin.rescue).toHaveBeenCalledTimes(1);
+    expect(rescueMock).toHaveBeenCalledTimes(1);
     expect(console.log).toHaveBeenCalledWith(
       language.getText('operation.success'),
     );

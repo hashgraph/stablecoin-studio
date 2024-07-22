@@ -42,6 +42,7 @@ const CashInOperation = () => {
 			amount: '0',
 			targetId: '',
 			tokenId: selectedStableCoin?.tokenId?.toString() ?? '',
+			startDate: undefined,
 		}),
 	);
 

@@ -478,7 +478,7 @@ export async function deployContractsWithSDK({
             'deployStableCoin',
             parametersContractCall,
             clientSdk,
-            1700000,
+            1900000,
             StableCoinFactory__factory.abi,
             35
         )

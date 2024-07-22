@@ -210,6 +210,25 @@ export default class TransactionService {
     await this.transactionRepository.clear();
   }
 
+  async updateStatus(
+    newState: TransactionStatus,
+    transactionId: string,
+  ): Promise<void> {
+    if (!uuidRegex.test(transactionId))
+      throw new HttpException('Invalid Transaction uuid format', 400);
+
+    const transaction = await this.transactionRepository.findOne({
+      where: { id: transactionId },
+    });
+
+    if (!transaction)
+      throw new TransactionNotFoundException('Transaction not found');
+
+    transaction.status = newState;
+
+    await this.transactionRepository.save(transaction);
+  }
+
   private transformToDto(transaction: Transaction): GetTransactionsResponseDto {
     return new GetTransactionsResponseDto(
       transaction.id,

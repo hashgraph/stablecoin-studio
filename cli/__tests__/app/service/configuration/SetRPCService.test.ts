@@ -313,10 +313,10 @@ describe('setRPCNodeService', () => {
     await setRPCService.manageRPCMenu('testnet');
 
     expect(setRPCService).not.toBeNull();
-    expect(currentNetworkMock).toHaveBeenCalledTimes(2);
+    expect(currentNetworkMock).toHaveBeenCalledTimes(1);
     expect(currentAccountMock).toHaveBeenCalledTimes(5);
-    expect(currentMirrorMock).toHaveBeenCalledTimes(6);
-    expect(currentRPCMock).toHaveBeenCalledTimes(9);
+    expect(currentMirrorMock).toHaveBeenCalledTimes(5);
+    expect(currentRPCMock).toHaveBeenCalledTimes(8);
     expect(getConfigurationMock).toHaveBeenCalledTimes(11);
     expect(defaultMultipleAskMock).toHaveBeenCalledTimes(8);
     expect(defaultSingleAskMock).toHaveBeenCalledTimes(13);

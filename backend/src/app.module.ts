@@ -25,6 +25,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import Transaction from './transaction/transaction.entity';
 import { LoggerService } from './logger/logger.service';
 import { RequestIDMiddleware } from './middleware/requestId.middleware';
+import { ScheduleModule } from '@nestjs/schedule';
+import TransactionService from './transaction/transaction.service';
+import { JobsModule } from './jobs/jobs.module.js';
 
 @Module({
   imports: [
@@ -46,8 +49,10 @@ import { RequestIDMiddleware } from './middleware/requestId.middleware';
       }),
     }),
     TransactionModule,
+    ScheduleModule.forRoot(),
+    JobsModule,
   ],
-  providers: [LoggerService],
+  providers: [LoggerService, TransactionService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
