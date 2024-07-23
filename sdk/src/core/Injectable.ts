@@ -109,6 +109,7 @@ import { RemoveCommandHandler } from '../app/usecase/command/stablecoin/backend/
 import { SetBackendCommandHandler } from '../app/usecase/command/network/setBackend/SetBackendCommandHandler.js';
 import { GetTransactionsQueryHandler } from '../app/usecase/query/stablecoin/backend/getTransactions/GetTransactionsQueryHandler.js';
 import { AWSKMSTransactionAdapter } from '../port/out/hs/hts/custodial/AWSKMSTransactionAdapter.js';
+import { HederaWalletConnectTransactionAdapter } from '../port/out/hs/walletconnect/HederaWalletConnectTransactionAdapter.js';
 
 export const TOKENS = {
 	COMMAND_HANDLER: Symbol('CommandHandler'),
@@ -405,6 +406,10 @@ const TRANSACTION_HANDLER = [
 		token: TOKENS.TRANSACTION_HANDLER,
 		useClass: MultiSigTransactionAdapter,
 	},
+	{
+		token: TOKENS.TRANSACTION_HANDLER,
+		useClass: HederaWalletConnectTransactionAdapter,
+	},
 ];
 
 const defaultNetworkProps: NetworkProps = {
@@ -494,6 +499,9 @@ export default class Injectable {
 			adapters.push(Injectable.resolve(BladeTransactionAdapter));
 			adapters.push(Injectable.resolve(FireblocksTransactionAdapter));
 			adapters.push(Injectable.resolve(DFNSTransactionAdapter));
+			adapters.push(
+				Injectable.resolve(HederaWalletConnectTransactionAdapter),
+			);
 			adapters.push(Injectable.resolve(AWSKMSTransactionAdapter));
 		} else {
 			adapters.push(Injectable.resolve(HTSTransactionAdapter));

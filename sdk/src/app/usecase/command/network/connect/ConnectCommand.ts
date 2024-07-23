@@ -7,6 +7,7 @@ import { InitializationData } from '../../../../../port/out/TransactionAdapter.j
 import DfnsSettings from 'domain/context/custodialwalletsettings/DfnsSettings.js';
 import FireblocksSettings from 'domain/context/custodialwalletsettings/FireblocksSettings.js';
 import AWSKMSSettings from '../../../../../domain/context/custodialwalletsettings/AWSKMSSettings';
+import HWCSettings from '../../../../../domain/context/hwalletconnectsettings/HWCSettings.js';
 
 export class ConnectCommandResponse implements CommandResponse {
 	constructor(
@@ -24,6 +25,7 @@ export class ConnectCommand extends Command<ConnectCommandResponse> {
 			| DfnsSettings
 			| FireblocksSettings
 			| AWSKMSSettings,
+		public readonly hWCSettings?: HWCSettings,
 	) {
 		super();
 	}

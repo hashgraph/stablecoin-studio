@@ -41,6 +41,7 @@ import FireblocksSettings from '../../domain/context/custodialwalletsettings/Fir
 import DfnsSettings from '../../domain/context/custodialwalletsettings/DfnsSettings';
 import { Transaction } from '@hashgraph/sdk';
 import AWSKMSSettings from '../../domain/context/custodialwalletsettings/AWSKMSSettings';
+import HWCSettings from '../../domain/context/hwalletconnectsettings/HWCSettings.js';
 
 export interface InitializationData {
 	account?: Account;
@@ -297,7 +298,7 @@ export default abstract class TransactionAdapter
 		throw new Error('Method not implemented.');
 	}
 	register(
-		input?: Account | FireblocksSettings | DfnsSettings | AWSKMSSettings,
+		input?: Account | FireblocksSettings | DfnsSettings | AWSKMSSettings | HWCSettings,
 	): Promise<InitializationData> {
 		throw new Error('Method not implemented.');
 	}

@@ -61,6 +61,7 @@ import {
 import { ethers } from 'ethers';
 import Hex from '../../core/Hex.js';
 import { AWSKMSTransactionAdapter } from '../../port/out/hs/hts/custodial/AWSKMSTransactionAdapter';
+import { HederaWalletConnectTransactionAdapter } from '../../port/out/hs/walletconnect/HederaWalletConnectTransactionAdapter.js';
 
 export const EVM_ADDRESS_REGEX = /0x[a-fA-F0-9]{40}$/;
 
@@ -106,6 +107,10 @@ export default class TransactionService extends Service {
 				return Injectable.resolve(DFNSTransactionAdapter);
 			case SupportedWallets.MULTISIG:
 				return Injectable.resolve(MultiSigTransactionAdapter);
+			case SupportedWallets.HWALLETCONNECT:
+				return Injectable.resolve(
+					HederaWalletConnectTransactionAdapter,
+				);
 			case SupportedWallets.AWSKMS:
 				return Injectable.resolve(AWSKMSTransactionAdapter);
 			default:

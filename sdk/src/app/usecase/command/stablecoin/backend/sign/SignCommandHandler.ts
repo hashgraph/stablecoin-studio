@@ -27,6 +27,7 @@ import { BackendAdapter } from '../../../../../../port/out/backend/BackendAdapte
 import { BladeTransactionAdapter } from '../../../../../../port/out/hs/blade/BladeTransactionAdapter.js';
 import { HashpackTransactionAdapter } from '../../../../../../port/out/hs/hashpack/HashpackTransactionAdapter.js';
 import { HTSTransactionAdapter } from '../../../../../../port/out/hs/hts/HTSTransactionAdapter.js';
+import { HederaWalletConnectTransactionAdapter } from '../../../../../../port/out/hs/walletconnect/HederaWalletConnectTransactionAdapter.js';
 import AccountService from '../../../../../service/AccountService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
 import { SignCommand, SignCommandResponse } from './SignCommand.js';
@@ -47,6 +48,10 @@ export class SignCommandHandler implements ICommandHandler<SignCommand> {
 		const { transactionId } = command;
 		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
+
+		if (!account.publicKey) {
+			throw new Error('❌ 🔎 No public key found in the account');
+		}
 
 		if (!account || !account.publicKey) {
 			LogService.logError('No account or public key found');
@@ -83,7 +88,8 @@ export class SignCommandHandler implements ICommandHandler<SignCommand> {
 		if (
 			handler instanceof HashpackTransactionAdapter ||
 			handler instanceof BladeTransactionAdapter ||
-			handler instanceof HTSTransactionAdapter
+			handler instanceof HTSTransactionAdapter ||
+			handler instanceof HederaWalletConnectTransactionAdapter
 		) {
 			signature = await handler.sign(deserializedTransaction);
 		} else signature = await handler.sign(serializedBytes);
