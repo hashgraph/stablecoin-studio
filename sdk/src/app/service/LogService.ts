@@ -25,17 +25,20 @@ import BaseError from '../../core/error/BaseError.js';
 import { SDK } from '../../port/in/Common.js';
 import Injectable from '../../core/Injectable.js';
 
+// Extracted for convenience
 const { Console } = transports;
 const { printf } = format;
 
 export enum LogLevel {
 	TRACE = 'TRACE',
+	DEBUG = 'DEBUG',
 	INFO = 'INFO',
 	ERROR = 'ERROR',
 }
 
-export const LoggerOptionLevels = {
-	[LogLevel.TRACE]: 3,
+export const LoggerOptionLevels: Record<LogLevel, number> = {
+	[LogLevel.TRACE]: 5, //! we set trace and debug to 0, same level
+	[LogLevel.DEBUG]: 5,
 	[LogLevel.INFO]: 2,
 	[LogLevel.ERROR]: 0,
 };

@@ -20,6 +20,7 @@
 
 import EventEmitter from '../../../core/EventEmitter.js';
 import Service from '../Service.js';
+import LogService from '../LogService.js';
 import { EventListenerNotFound } from './error/EventListenerNotFound.js';
 import { EventNotFound } from './error/EventNotFound.js';
 import { singleton } from 'tsyringe';
@@ -80,6 +81,13 @@ export default class EventService extends Service {
 		event: E,
 		...args: Parameters<WalletEvent[E]>
 	): boolean {
+		LogService.logTrace(
+			`EventService: Emitting event ${event} with args ${JSON.stringify(
+				args,
+				undefined,
+				2,
+			)}`,
+		);
 		return this.getEventEmitter(event).emit(event, ...args);
 	}
 

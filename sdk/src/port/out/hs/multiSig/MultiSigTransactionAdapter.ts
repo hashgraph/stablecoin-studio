@@ -76,7 +76,6 @@ export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
 		startDate?: string,
 	): Promise<TransactionResponse<never, Error>> {
 		const publicKeys: string[] = [];
-
 		const accountId: AccountId = AccountId.fromString(
 			this.account.id.toString(),
 		);
@@ -90,12 +89,17 @@ export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
 		t.setTransactionValidDuration(180);
 		t._freezeWithAccountId(accountId);
 
-		let client: Client = Client.forTestnet();
-
-		if (this.networkService.environment == previewnet) {
-			client = Client.forPreviewnet();
-		} else if (this.networkService.environment == mainnet) {
-			client = Client.forMainnet();
+		let client: Client;
+		switch (this.networkService.environment) {
+			case previewnet:
+				client = Client.forPreviewnet();
+				break;
+			case mainnet:
+				client = Client.forMainnet();
+				break;
+			default:
+				client = Client.forTestnet();
+				break;
 		}
 
 		if (
@@ -103,7 +107,12 @@ export class MultiSigTransactionAdapter extends HederaTransactionAdapter {
 			this.networkService.consensusNodes.length == 0
 		) {
 			throw new Error(
-				'In order to create multisignature transactions you must set consensus nodes for the environment',
+				`In order to create multisignature transactions you must set consensus nodes for the environment. Current environment: ${this.networkService.environment}`,
+			);
+		}
+		if (!this.account.multiKey) {
+			throw new Error(
+				`❌ 🔎 No multiKey found in the account ${this.account.id}`,
 			);
 		}
 

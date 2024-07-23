@@ -71,6 +71,7 @@ const CashInOperation = () => {
 				return;
 			}
 			await SDKService.cashIn(request);
+			console.log('CashInOperation -> handleCashIn -> request', request);
 			const requestAmount = BigDecimal.fromString(request.amount, decimals);
 			dispatch(
 				walletActions.setSelectedStableCoin({
@@ -80,7 +81,6 @@ const CashInOperation = () => {
 			);
 			onSuccess();
 		} catch (error: any) {
-			console.log(JSON.stringify(error));
 			setErrorTransactionUrl(error.transactionUrl);
 			setErrorOperation(error.message);
 			onError();

@@ -40,6 +40,7 @@ import { FactoryKey } from '../../domain/context/factory/FactoryKey.js';
 import FireblocksSettings from '../../domain/context/custodialwalletsettings/FireblocksSettings';
 import DfnsSettings from '../../domain/context/custodialwalletsettings/DfnsSettings';
 import { Transaction } from '@hashgraph/sdk';
+import HWCSettings from '../../domain/context/hwalletconnectsettings/HWCSettings.js';
 
 export interface InitializationData {
 	account?: Account;
@@ -296,7 +297,7 @@ export default abstract class TransactionAdapter
 		throw new Error('Method not implemented.');
 	}
 	register(
-		input?: Account | FireblocksSettings | DfnsSettings,
+		input?: Account | FireblocksSettings | DfnsSettings | HWCSettings,
 	): Promise<InitializationData> {
 		throw new Error('Method not implemented.');
 	}

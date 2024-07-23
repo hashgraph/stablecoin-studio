@@ -70,7 +70,6 @@ The ENV file contains the following parameters:
 - **REACT_APP_BACKEND_URL**: This variable is only required if you want to enable multisignature functionality. It corresponds to the backend REST API endpoint.
   > **Important:** If **REACT_APP_BACKEND_URL** is not set, the multisignature option will not be activated and therefore will not be displayed on the web interface.
 - **REACT_APP_CONSENSUS_NODES**: This var is only required if you want to enable multisignature functionality. It is a list of consensus nodes per environment. When generating a multisignature transaction the first consensus node of the environment will be added to the transaction.
-- **REACT_APP_ICON**: url of the application icon to be displayed on wallets when connecting.
 
 ```bash
 REACT_APP_FACTORIES='[{"Environment":"mainnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.1234567"},{"Environment":"testnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.3950554"},{"Environment":"previewnet","STABLE_COIN_FACTORY_ADDRESS":"0.0.239703"}]'

@@ -33,6 +33,18 @@ import { TransactionResponseAdapter } from '../../TransactionResponseAdapter.js'
 import LogService from '../../../../app/service/LogService.js';
 
 export class HashpackTransactionResponseAdapter extends TransactionResponseAdapter {
+	/**
+	 * Manages the response of a HashPack transaction.
+	 *
+	 * @param network - The network on which the transaction was executed.
+	 * @param signer - The signer of the transaction.
+	 * @param transactionResponse - The transaction response object.
+	 * @param responseType - The type of the transaction response.
+	 * @param nameFunction - The name of the function associated with the transaction.
+	 * @param abi - The ABI (Application Binary Interface) of the contract.
+	 * @returns A Promise that resolves to a TransactionResponse object.
+	 * @throws {TransactionResponseError} If the response type is neither RECORD nor RECEIPT.
+	 */
 	public static async manageResponse(
 		network: string,
 		signer: Signer,
@@ -44,23 +56,20 @@ export class HashpackTransactionResponseAdapter extends TransactionResponseAdapt
 		abi?: object[],
 	): Promise<TransactionResponse> {
 		let results: Uint8Array = new Uint8Array();
-		LogService.logTrace(
-			'Managing HashPack Transaction response: ',
-			transactionResponse,
-			responseType,
-			nameFunction,
-		);
+		LogService.logInfo('🔎 Managing HashPack Transaction response: ');
+		LogService.logTrace(`
+			Tx response: ${transactionResponse},
+			Tx response type: ${responseType},
+			Tx function name: ${nameFunction}
+		`);
 		if (responseType === TransactionType.RECEIPT) {
+			LogService.logTrace(
+				'🧾 Creating RECEIPT response from Transaction...',
+			);
 			await this.getReceipt(network, signer, transactionResponse);
-			let transId;
+			let transId: string | undefined;
 			if (transactionResponse instanceof HTransactionResponse) {
-				if (transactionResponse?.transactionId) {
-					transId = transactionResponse?.transactionId;
-				} else {
-					transId = JSON.parse(
-						JSON.stringify(transactionResponse),
-					).response.transactionId.toString();
-				}
+				transId = transactionResponse?.transactionId?.toString();
 			} else {
 				transId = transactionResponse.id;
 			}
@@ -69,32 +78,28 @@ export class HashpackTransactionResponseAdapter extends TransactionResponseAdapt
 				responseType,
 				results,
 			);
-		}
-
-		if (responseType === TransactionType.RECORD) {
-			const transactionRecord:
-				| TransactionRecord
-				| Uint32Array
-				| Uint8Array
-				| undefined = await this.getRecord(
+		} else if (responseType === TransactionType.RECORD) {
+			const transactionRecord = await this.getRecord(
 				network,
 				signer,
 				transactionResponse,
 			);
-			let record: Uint8Array | Uint32Array | undefined;
+			let record: typeof transactionRecord;
 			if (nameFunction) {
 				if (transactionRecord instanceof TransactionRecord) {
-					record = transactionRecord?.contractFunctionResult?.bytes;
-				} else if (transactionRecord instanceof Uint32Array) {
-					record = transactionRecord;
-				} else if (transactionRecord instanceof Uint8Array) {
+					record = transactionRecord.contractFunctionResult?.bytes;
+				} else if (
+					transactionRecord instanceof Uint32Array ||
+					transactionRecord instanceof Uint8Array
+				) {
 					record = transactionRecord;
 				}
-				if (!record)
+				if (!record) {
 					throw new TransactionResponseError({
 						message: 'Invalid response type',
 						network: network,
 					});
+				}
 				results = this.decodeFunctionResult(
 					nameFunction,
 					record,
@@ -102,10 +107,15 @@ export class HashpackTransactionResponseAdapter extends TransactionResponseAdapt
 					network,
 				);
 			}
-			const transactionId =
-				transactionResponse instanceof HTransactionResponse
-					? transactionResponse.transactionId.toString()
-					: (transactionResponse as any).response.transactionId;
+			let transactionId: string;
+			if (transactionResponse instanceof HTransactionResponse) {
+				transactionId = transactionResponse.transactionId.toString();
+			} else {
+				transactionId =
+					(
+						transactionResponse as any
+					).response.transactionId?.toString() || '';
+			}
 			LogService.logTrace(
 				`Creating RECORD response from TRX (${transactionId}) from record: `,
 				record?.toString(),
@@ -124,6 +134,7 @@ export class HashpackTransactionResponseAdapter extends TransactionResponseAdapt
 			network: network,
 		});
 	}
+
 	private static async getHashconnectTransactionReceipt(
 		network: string,
 		transactionResponse: MessageTypes.TransactionResponse,

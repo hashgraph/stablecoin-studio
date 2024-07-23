@@ -266,6 +266,13 @@ const MultiSigTransactions = () => {
 										</Tag>
 									</Td>
 									<Td borderBottom='1px' borderColor='gray.200'>
+										<Tag>
+											{new Date(transaction.start_date).toDateString() +
+												' ' +
+												new Date(transaction.start_date).toLocaleTimeString()}
+										</Tag>
+									</Td>
+									<Td borderBottom='1px' borderColor='gray.200'>
 										{canSignTransaction(transaction) && (
 											<Button
 												size={'sm'}

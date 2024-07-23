@@ -99,7 +99,7 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 			wallet: SupportedWallets.BLADE,
 		};
 		this.eventService.emit(WalletEvents.walletInit, eventData);
-
+		LogService.logInfo('✅ Blade wallet handler Initialized');
 		return currentNetwork;
 	}
 
@@ -132,7 +132,7 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 		try {
 			this.bc = await BladeConnector.init(ConnectorStrategy.AUTO, {
 				...SDK.appMetadata,
-				icons: [SDK.appMetadata.icon],
+				icons: [],
 			});
 		} catch (error: any) {
 			LogService.logTrace('Error initializing Blade', error);
