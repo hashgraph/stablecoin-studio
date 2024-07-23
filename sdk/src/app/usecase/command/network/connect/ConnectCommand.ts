@@ -1,11 +1,12 @@
 import { Command } from '../../../../../core/command/Command.js';
 import { CommandResponse } from '../../../../../core/command/CommandResponse.js';
+import { InitializationData } from '../../../../../port/out/TransactionAdapter.js';
 import Account from '../../../../../domain/context/account/Account.js';
 import { Environment } from '../../../../../domain/context/network/Environment.js';
 import { SupportedWallets } from '../../../../../domain/context/network/Wallet.js';
-import { InitializationData } from '../../../../../port/out/TransactionAdapter.js';
-import DfnsSettings from 'domain/context/custodialwalletsettings/DfnsSettings.js';
-import FireblocksSettings from 'domain/context/custodialwalletsettings/FireblocksSettings.js';
+import DfnsSettings from '../../../../../domain/context/custodialwalletsettings/DfnsSettings.js';
+import FireblocksSettings from '../../../../../domain/context/custodialwalletsettings/FireblocksSettings.js';
+import HWCSettings from '../../../../../domain/context/hwalletconnectsettings/HWCSettings.js';
 
 export class ConnectCommandResponse implements CommandResponse {
 	constructor(
@@ -20,6 +21,7 @@ export class ConnectCommand extends Command<ConnectCommandResponse> {
 		public readonly wallet: SupportedWallets,
 		public readonly account?: Account,
 		public readonly custodialSettings?: DfnsSettings | FireblocksSettings,
+		public readonly hWCSettings?: HWCSettings,
 	) {
 		super();
 	}

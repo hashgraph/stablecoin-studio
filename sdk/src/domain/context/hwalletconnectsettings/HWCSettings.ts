@@ -18,21 +18,11 @@
  *
  */
 
-import Account from '../account/Account.js';
-
-export enum SupportedWallets {
-	METAMASK = 'Metamask',
-	HASHPACK = 'HashPack',
-	CLIENT = 'Client',
-	BLADE = 'Blade',
-	FIREBLOCKS = 'Fireblocks',
-	DFNS = 'DFNS',
-	MULTISIG = 'MultiSig',
-	HWALLETCONNECT = 'HederaWalletConnect',
-}
-
-export default interface Wallet {
-	type: SupportedWallets;
-	account: Account;
-	// Events...
+export default class HWCSettings {
+	constructor(
+		public projectId: string,
+		public dappName: string,
+		public dappDescription: string,
+		public dappURL: string,
+	) {}
 }
