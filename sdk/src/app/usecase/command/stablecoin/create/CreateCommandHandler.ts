@@ -136,6 +136,7 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 			reserveInitialAmount,
 			proxyAdminOwnerAccount,
 		);
+
 		try {
 			return Promise.resolve(
 				new CreateCommandResponse(

@@ -63,7 +63,7 @@ import {
 } from '../../../../domain/context/network/Environment';
 import { SupportedWallets } from '../../../../domain/context/network/Wallet';
 import HWCSettings from '../../../../domain/context/hwalletconnectsettings/HWCSettings.js';
-import { HashpackTransactionResponseAdapter } from '../hashpack/HashpackTransactionResponseAdapter';
+import { HederaTransactionResponseAdapter } from '../HederaTransactionResponseAdapter';
 import { SigningError } from '../error/SigningError';
 import Hex from '../../../../core/Hex.js';
 
@@ -400,6 +400,7 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 
 			const transactionResponseRaw =
 				await this.dAppConnector?.signAndExecuteTransaction(params);
+
 			LogService.logInfo(`✅ Transaction signed and sent successfully!`);
 			LogService.logTrace(
 				`Transaction response RAW: ${JSON.stringify(
@@ -411,6 +412,7 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 			const transactionResponse = HTransactionResponse.fromJSON(
 				transactionResponseRaw as unknown as TransactionResponseJSON,
 			);
+
 			LogService.logTrace(
 				`Transaction response: ${JSON.stringify(
 					transactionResponse,
@@ -419,7 +421,7 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 				)}`,
 			);
 
-			return await HashpackTransactionResponseAdapter.manageResponse(
+			return await HederaTransactionResponseAdapter.manageResponse(
 				this.networkService.environment,
 				this.signer,
 				transactionResponse,

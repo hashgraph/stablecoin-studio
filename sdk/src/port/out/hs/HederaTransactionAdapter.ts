@@ -227,7 +227,6 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					)
 				).evmAddress,
 			];
-
 			return await this.contractCall(
 				factory.value,
 				'deployStableCoin',

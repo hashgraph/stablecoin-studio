@@ -41,7 +41,7 @@ import {
 import InitializationRequest from './request/InitializationRequest.js';
 import Event from './Event.js';
 import RPCTransactionAdapter from '../out/rpc/RPCTransactionAdapter.js';
-import { HashpackTransactionAdapter } from '../out/hs/hashpack/HashpackTransactionAdapter.js';
+// import { HashpackTransactionAdapter } from '../out/hs/hashpack/HashpackTransactionAdapter.js';
 import { LogError } from '../../core/decorator/LogErrorDecorator.js';
 import SetConfigurationRequest from './request/SetConfigurationRequest.js';
 import { handleValidation } from './Common.js';
@@ -175,9 +175,9 @@ class NetworkInPort implements INetworkInPort {
 		for (const val of instances) {
 			if (val instanceof RPCTransactionAdapter) {
 				wallets.push(SupportedWallets.METAMASK);
-			} else if (val instanceof HashpackTransactionAdapter) {
-				wallets.push(SupportedWallets.HASHPACK);
-			} else if (val instanceof BladeTransactionAdapter) {
+			} /* else if (val instanceof HashpackTransactionAdapter) {
+				wallets.push(SupportedWallets.HASHPACK); 
+			} */ else if (val instanceof BladeTransactionAdapter) {
 				wallets.push(SupportedWallets.BLADE);
 			} else if (val instanceof FireblocksTransactionAdapter) {
 				wallets.push(SupportedWallets.FIREBLOCKS);
@@ -213,13 +213,13 @@ class NetworkInPort implements INetworkInPort {
 			? RequestMapper.hwcRequestToHWCSettings(req.hwcSettings)
 			: undefined;
 		if (
-			req.wallet == SupportedWallets.HASHPACK ||
+			// req.wallet == SupportedWallets.HASHPACK ||
 			req.wallet == SupportedWallets.BLADE
 		) {
 			const instances = Injectable.registerTransactionAdapterInstances();
 			for (const val of instances) {
 				if (
-					val instanceof HashpackTransactionAdapter ||
+					// val instanceof HashpackTransactionAdapter ||
 					val instanceof BladeTransactionAdapter
 				) {
 					await val.restart(req.network);
