@@ -645,20 +645,18 @@ export default class SetConfigurationService extends Service {
     attribute: string,
     defaultValue: string,
   ): Promise<string> {
-    let privateKeyPath = '';
+    let privateKeyPath: string;
     const pathRegExpValidator = /^(\/[^/ ]*)+\/?$/g;
 
-    while (
-      !(
-        pathRegExpValidator.test(privateKeyPath) &&
-        fs.existsSync(privateKeyPath)
-      )
-    ) {
+    do {
       privateKeyPath = await utilsService.defaultSingleAsk(
         language.getText(attribute),
         defaultValue,
       );
-    }
+    } while (
+      !pathRegExpValidator.test(privateKeyPath) ||
+      !fs.existsSync(privateKeyPath)
+    );
 
     return privateKeyPath;
   }
