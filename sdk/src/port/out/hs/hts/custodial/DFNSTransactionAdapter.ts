@@ -50,6 +50,7 @@ export class DFNSTransactionAdapter extends CustodialTransactionAdapter {
 				settings.appId,
 				settings.baseUrl,
 				settings.walletId,
+				settings.publicKey,
 			),
 		);
 	}

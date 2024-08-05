@@ -39,6 +39,7 @@ export interface DFNSConfigRequest {
 	baseUrl: string;
 	walletId: string;
 	hederaAccountId: string;
+	publicKey: string;
 }
 
 export interface FireblocksConfigRequest {
