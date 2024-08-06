@@ -203,6 +203,7 @@ export default class RequestMapper {
 			req.baseUrl,
 			req.walletId,
 			req.hederaAccountId,
+			req.publicKey,
 		);
 	}
 
