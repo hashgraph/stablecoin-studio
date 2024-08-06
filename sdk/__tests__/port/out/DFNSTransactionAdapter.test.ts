@@ -50,7 +50,6 @@ import {
 import Injectable from '../../../src/core/Injectable';
 
 const initialSupply = 1000;
-const apiSecretKey = DFNS_SETTINGS.serviceAccountPrivateKeyPath;
 
 describe('🧪 DFNSTransactionAdapter test', () => {
 	let stableCoinHTS: StableCoinViewModel;
@@ -72,12 +71,13 @@ describe('🧪 DFNSTransactionAdapter test', () => {
 	const dfnsSettings: DFNSConfigRequest = {
 		authorizationToken: DFNS_SETTINGS.authorizationToken,
 		credentialId: DFNS_SETTINGS.credentialId,
-		serviceAccountPrivateKey: apiSecretKey,
+		serviceAccountPrivateKey: DFNS_SETTINGS.serviceAccountPrivateKeyPath,
 		urlApplicationOrigin: DFNS_SETTINGS.urlApplicationOrigin,
 		applicationId: DFNS_SETTINGS.applicationId,
 		baseUrl: DFNS_SETTINGS.baseUrl,
 		walletId: DFNS_SETTINGS.walletId,
 		hederaAccountId: DFNS_SETTINGS.hederaAccountId,
+		publicKey: DFNS_SETTINGS.hederaAccountPublicKey,
 	};
 
 	const requestPublicKey: RequestPublicKey = {
