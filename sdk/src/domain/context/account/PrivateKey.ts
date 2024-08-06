@@ -18,8 +18,8 @@
  *
  */
 
-import KeyProps, { KeyType } from './KeyProps.js';
 import { PrivateKey as HPrivateKey } from '@hashgraph/sdk';
+import KeyProps, { KeyType } from './KeyProps.js';
 import PublicKey from './PublicKey.js';
 import BaseError from '../../../core/error/BaseError.js';
 

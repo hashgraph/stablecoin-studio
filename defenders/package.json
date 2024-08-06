@@ -1,6 +1,6 @@
 {
   "name": "accelerator-service",
-  "version": "1.18.0",
+  "version": "1.23.2",
   "description": "Accelerator integration with OZ Defenders",
   "license": "Apache-2.0",
   "devDependencies": {

@@ -610,6 +610,8 @@ function signAndSendTransaction(
 	}
 }
 
+// * Jest Mocks
+
 jest.mock('../src/port/out/mirror/MirrorNodeAdapter', () => {
 	const actual = jest.requireActual(
 		'../src/port/out/mirror/MirrorNodeAdapter.ts',

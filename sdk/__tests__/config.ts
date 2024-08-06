@@ -152,8 +152,8 @@ export const FIREBLOCKS_SETTINGS = {
 	baseUrl: FIREBLOCKS_BASE_URL ?? '',
 	vaultAccountId: FIREBLOCKS_VAULT_ACCOUNT_ID ?? '',
 	assetId: FIREBLOCKS_ASSET_ID ?? '',
-	hederaAccountId: process.env.CLIENT_ACCOUNT_ID_ECDSA_2 ?? '',
-	hederaAccountPublicKey: process.env.CLIENT_PUBLIC_KEY_ECDSA_2 ?? '',
+	hederaAccountId: process.env.FIREBLOCKS_HEDERA_ACCOUNT_ID ?? '',
+	hederaAccountPublicKey: process.env.FIREBLOCKS_HEDERA_PUBLIC_KEY ?? '',
 };
 
 const DFNS_SERVICE_ACCOUNT_AUTHORIZATION_TOKEN =
@@ -174,8 +174,8 @@ export const DFNS_SETTINGS = {
 	applicationId: DFNS_APP_ID,
 	baseUrl: DFNS_BASE_URL,
 	walletId: DFNS_WALLET_ID,
-	hederaAccountId: process.env.CLIENT_ACCOUNT_ID_ECDSA_2 ?? '',
-	hederaAccountPublicKey: process.env.CLIENT_PUBLIC_KEY_ECDSA_2 ?? '',
+	hederaAccountId: process.env.DFNS_HEDERA_ACCOUNT_ID ?? '',
+	hederaAccountPublicKey: process.env.DFNS_WALLET_PUBLIC_KEY ?? '',
 };
 
 export const URL = 'http://example.com/';

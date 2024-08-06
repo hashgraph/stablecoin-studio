@@ -31,6 +31,8 @@ import Service from '../Service.js';
 import Table from 'cli-table3';
 import {
   ConnectRequest,
+  DFNSConfigRequest,
+  FireblocksConfigRequest,
   InitializationRequest,
   Network,
   SDK,
@@ -92,7 +94,7 @@ export default class UtilitiesService extends Service {
     //* Connect to the network
     let privateKey: { key: string; type: string };
     let wallet: SupportedWallets;
-    let custodialWalletSettings: any;
+    let custodialWalletSettings: FireblocksConfigRequest | DFNSConfigRequest;
     switch (account.type) {
       case AccountType.SelfCustodial:
         privateKey = {
@@ -113,10 +115,21 @@ export default class UtilitiesService extends Service {
           vaultAccountId: account.custodial.fireblocks.vaultAccountId,
           assetId: account.custodial.fireblocks.assetId,
           hederaAccountId: account.accountId,
-        };
+          hederaAccountPublicKey:
+            account.custodial.fireblocks.hederaAccountPublicKey,
+        } as FireblocksConfigRequest;
         break;
       case AccountType.Dfns:
         wallet = SupportedWallets.DFNS;
+        if (!account.custodial || !account.custodial.dfns) {
+          throw new Error('DFNS settings are required');
+        }
+        if (!account.custodial.dfns.privateKeyPath) {
+          throw new Error('Private key path is required for DFNS');
+        }
+        if (!fs.existsSync(account.custodial.dfns.privateKeyPath)) {
+          throw new Error('Private key file does not exist');
+        }
         custodialWalletSettings = {
           authorizationToken: account.custodial.dfns.authorizationToken,
           credentialId: account.custodial.dfns.credentialId,
@@ -129,7 +142,8 @@ export default class UtilitiesService extends Service {
           baseUrl: account.custodial.dfns.testUrl,
           walletId: account.custodial.dfns.walletId,
           hederaAccountId: account.accountId,
-        };
+          publicKey: account.custodial.dfns.hederaAccountPublicKey,
+        } as DFNSConfigRequest;
         break;
       case AccountType.MultiSignature:
         wallet = SupportedWallets.MULTISIG;
