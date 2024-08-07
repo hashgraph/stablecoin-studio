@@ -108,6 +108,7 @@ import { SubmitCommandHandler } from '../app/usecase/command/stablecoin/backend/
 import { RemoveCommandHandler } from '../app/usecase/command/stablecoin/backend/remove/RemoveCommandHandler.js';
 import { SetBackendCommandHandler } from '../app/usecase/command/network/setBackend/SetBackendCommandHandler.js';
 import { GetTransactionsQueryHandler } from '../app/usecase/query/stablecoin/backend/getTransactions/GetTransactionsQueryHandler.js';
+import { AWSKMSTransactionAdapter } from '../port/out/hs/hts/custodial/AWSKMSTransactionAdapter.js';
 
 export const TOKENS = {
 	COMMAND_HANDLER: Symbol('CommandHandler'),
@@ -493,6 +494,7 @@ export default class Injectable {
 			adapters.push(Injectable.resolve(BladeTransactionAdapter));
 			adapters.push(Injectable.resolve(FireblocksTransactionAdapter));
 			adapters.push(Injectable.resolve(DFNSTransactionAdapter));
+			adapters.push(Injectable.resolve(AWSKMSTransactionAdapter));
 		} else {
 			adapters.push(Injectable.resolve(HTSTransactionAdapter));
 		}

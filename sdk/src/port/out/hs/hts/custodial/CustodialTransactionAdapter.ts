@@ -49,6 +49,7 @@ import {
 import Injectable from '../../../../../core/Injectable';
 import { TransactionType } from '../../../TransactionResponseEnums';
 import Hex from '../../../../../core/Hex.js';
+import AWSKMSSettings from '../../../../../domain/context/custodialwalletsettings/AWSKMSSettings';
 
 export abstract class CustodialTransactionAdapter extends HederaTransactionAdapter {
 	protected client: Client;
@@ -148,13 +149,13 @@ export abstract class CustodialTransactionAdapter extends HederaTransactionAdapt
 	}
 
 	protected abstract initCustodialWalletService(
-		settings: FireblocksSettings | DfnsSettings,
+		settings: FireblocksSettings | DfnsSettings | AWSKMSSettings,
 	): void;
 
 	protected abstract getSupportedWallet(): SupportedWallets;
 
 	async register(
-		settings: FireblocksSettings | DfnsSettings,
+		settings: FireblocksSettings | DfnsSettings | AWSKMSSettings,
 	): Promise<InitializationData> {
 		Injectable.registerTransactionHandler(this);
 		const accountMirror = await this.mirrorNodeAdapter.getAccountInfo(

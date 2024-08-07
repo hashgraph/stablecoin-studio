@@ -18,21 +18,12 @@
  *
  */
 
-import Account from '../account/Account.js';
-
-export enum SupportedWallets {
-	METAMASK = 'Metamask',
-	HASHPACK = 'HashPack',
-	CLIENT = 'Client',
-	BLADE = 'Blade',
-	FIREBLOCKS = 'Fireblocks',
-	DFNS = 'DFNS',
-	MULTISIG = 'MultiSig',
-	AWSKMS = 'AWSKMS',
-}
-
-export default interface Wallet {
-	type: SupportedWallets;
-	account: Account;
-	// Events...
+export default class AWSKMSSettings {
+	constructor(
+		public awsAccessKeyId: string,
+		public awsSecretAccessKey: string,
+		public awsRegion: string,
+		public awsKmsKeyId: string,
+		public hederaAccountId: string,
+	) {}
 }
