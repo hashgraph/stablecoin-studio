@@ -178,6 +178,20 @@ export const DFNS_SETTINGS = {
 	hederaAccountPublicKey: process.env.DFNS_WALLET_PUBLIC_KEY ?? '',
 };
 
+const AWS_KMS_ACCESS_KEY_ID = 'AWS_ACCESS_KEY_ID';
+const AWS_KMS_SECRET_ACCESS_KEY = 'AWS_SECRET_ACCESS_KEY';
+const AWS_KMS_REGION = 'AWS_KMS_REGION';
+const AWS_KMS_KEY_ID = 'AWS_KMS_KEY_ID';
+
+export const AWS_KMS_SETTINGS = {
+	accessKeyId: AWS_KMS_ACCESS_KEY_ID,
+	secretAccessKey: AWS_KMS_SECRET_ACCESS_KEY,
+	region: AWS_KMS_REGION,
+	kmsKeyId: AWS_KMS_KEY_ID,
+	hederaAccountId: process.env.AWS_KMS_HEDERA_ACCOUNT_ID ?? '',
+	hederaAccountPublicKey: process.env.AWS_KMS_HEDERA_PUBLIC_KEY ?? '',
+};
+
 export const URL = 'http://example.com/';
 
 export const TRANSACTION = {
