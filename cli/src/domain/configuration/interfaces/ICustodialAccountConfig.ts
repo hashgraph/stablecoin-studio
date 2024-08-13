@@ -20,8 +20,10 @@
 
 import { IFireblocksAccountConfig } from './IFireblocksAccountConfig';
 import { IDfnsAccountConfig } from './IDfnsAccountConfig';
+import { IAWSKMSAccountConfig } from './IAWSKMSAccountConfig';
 
 export interface ICustodialAccountConfig {
   fireblocks?: IFireblocksAccountConfig;
   dfns?: IDfnsAccountConfig;
+  awsKms?: IAWSKMSAccountConfig;
 }

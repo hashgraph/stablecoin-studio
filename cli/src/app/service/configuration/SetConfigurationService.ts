@@ -41,6 +41,7 @@ import { AccountType } from '../../../domain/configuration/interfaces/AccountTyp
 import { IPrivateKey } from '../../../domain/configuration/interfaces/IPrivateKey';
 import { IFireblocksAccountConfig } from '../../../domain/configuration/interfaces/IFireblocksAccountConfig';
 import { IDfnsAccountConfig } from '../../../domain/configuration/interfaces/IDfnsAccountConfig';
+import { IAWSKMSAccountConfig } from '../../../domain/configuration/interfaces/IAWSKMSAccountConfig';
 
 /**
  * Set Configuration Service
@@ -278,6 +279,10 @@ export default class SetConfigurationService extends Service {
       } else if (type === AccountType.Dfns) {
         accountConfig.custodial = {
           dfns: await this.askForDfnsOfAccount(),
+        };
+      } else if (type === AccountType.AWSKMS) {
+        accountConfig.custodial = {
+          awsKms: await this.askForAWSKMSAccountConfig(),
         };
       }
 
@@ -534,6 +539,7 @@ export default class SetConfigurationService extends Service {
     return baseUrl;
   }
 
+  //TODO: review public key format
   private async askForHederaAccountPublicKey(
     attribute: string,
     defaultValue: string,
@@ -683,6 +689,41 @@ export default class SetConfigurationService extends Service {
       );
     }
     return walletId;
+  }
+
+  public async askForAWSKMSAccountConfig(): Promise<IAWSKMSAccountConfig> {
+    utilsService.showMessage(language.getText('configuration.awsKms.title'));
+
+    const awsAccessKeyId = await utilsService.defaultSingleAsk(
+      language.getText('configuration.awsKms.askAccessKeyId'),
+      '',
+    );
+
+    const awsSecretAccessKey = await utilsService.defaultPasswordAsk(
+      language.getText('configuration.awsKms.askSecretAccessKey'),
+    );
+
+    const awsRegion = await utilsService.defaultSingleAsk(
+      language.getText('configuration.awsKms.askRegion'),
+      'eu-north-1',
+    );
+
+    const awsKmsKeyId = await utilsService.defaultSingleAsk(
+      language.getText('configuration.awsKms.askKmsKeyId'),
+      '',
+    );
+
+    /*const hederaAccountId = await utilsService.defaultSingleAsk(
+      language.getText('configuration.askAccountId'),
+      ZERO_ADDRESS,
+    );*/
+
+    return {
+      awsAccessKeyId,
+      awsSecretAccessKey,
+      awsRegion,
+      awsKmsKeyId,
+    };
   }
 
   /**

@@ -18,10 +18,9 @@
  *
  */
 
-export enum AccountType {
-  SelfCustodial = 'SELF-CUSTODIAL',
-  Fireblocks = 'FIREBLOCKS',
-  Dfns = 'DFNS',
-  MultiSignature = 'MULTI-SIGNATURE',
-  AWSKMS = 'AWSKMS',
+export interface IAWSKMSAccountConfig {
+  awsAccessKeyId: string;
+  awsSecretAccessKey: string;
+  awsRegion: string;
+  awsKmsKeyId: string;
 }
