@@ -739,8 +739,8 @@ export default class UtilitiesService extends Service {
                     awsSecretAccessKey: acc.custodial.awsKms.awsSecretAccessKey,
                     awsRegion: acc.custodial.awsKms.awsRegion,
                     awsKmsKeyId: acc.custodial.awsKms.awsKmsKeyId,
-                    hederaAccountId: '',
-                    hederaAccountPublicKey: '',
+                    hederaAccountPublicKey:
+                      acc.custodial.awsKms.hederaAccountPublicKey,
                   },
             },
       };

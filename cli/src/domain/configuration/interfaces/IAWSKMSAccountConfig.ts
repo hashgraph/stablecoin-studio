@@ -23,4 +23,5 @@ export interface IAWSKMSAccountConfig {
   awsSecretAccessKey: string;
   awsRegion: string;
   awsKmsKeyId: string;
+  hederaAccountPublicKey: string;
 }

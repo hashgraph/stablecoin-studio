@@ -713,16 +713,17 @@ export default class SetConfigurationService extends Service {
       '',
     );
 
-    /*const hederaAccountId = await utilsService.defaultSingleAsk(
-      language.getText('configuration.askAccountId'),
-      ZERO_ADDRESS,
-    );*/
+    const hederaAccountPublicKey = await this.askForHederaAccountPublicKey(
+      'configuration.askAccountPubKey',
+      '',
+    );
 
     return {
       awsAccessKeyId,
       awsSecretAccessKey,
       awsRegion,
       awsKmsKeyId,
+      hederaAccountPublicKey,
     };
   }
 
