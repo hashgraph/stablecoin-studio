@@ -189,7 +189,7 @@ const init = await Network.init(
 
 ## Connect SDK
 
-The next step would be to connect to the network. Currently, multiple types of connections are offered: Client (a Hedera account configured in an application configuration file), MetaMask, HashPack, Blade, fireblocks, DFNS and Multisig. These connection types are in the SupportedWallets enum.
+The next step would be to connect to the network. Currently, multiple types of connections are offered: Client (a Hedera account configured in an application configuration file), MetaMask, HashPack, Blade, fireblocks, DFNS, AWS-KMS and Multisig. These connection types are in the SupportedWallets enum.
 
 ```Typescript
 export enum SupportedWallets {
