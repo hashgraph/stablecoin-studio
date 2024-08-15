@@ -6,7 +6,7 @@ on:
 jobs:
   publish:
     name: docker
-    runs-on: [ self-hosted, Linux, medium, ephemeral ]
+    runs-on: token-studio-linux-medium
     
     permissions:
       contents: read  
