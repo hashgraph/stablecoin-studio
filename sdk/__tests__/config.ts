@@ -188,8 +188,10 @@ export const AWS_KMS_SETTINGS = {
 	secretAccessKey: AWS_KMS_SECRET_ACCESS_KEY,
 	region: AWS_KMS_REGION,
 	kmsKeyId: AWS_KMS_KEY_ID,
-	hederaAccountId: process.env.AWS_KMS_HEDERA_ACCOUNT_ID ?? '',
-	hederaAccountPublicKey: process.env.AWS_KMS_HEDERA_PUBLIC_KEY ?? '',
+	hederaAccountId: process.env.AWS_KMS_HEDERA_ACCOUNT_ID ?? '0.0.4394946', //TODO: temp solution, use the .env values instead
+	hederaAccountPublicKey:
+		process.env.AWS_KMS_HEDERA_PUBLIC_KEY ??
+		'302d300706052b8104000a03220003ee815bb9b5e53f5dbe7264a77e586127dfcb75da8c1246f5aa6ededdb13e6c21',
 };
 
 export const URL = 'http://example.com/';
