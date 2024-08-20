@@ -111,7 +111,7 @@ A config file can be manually created using the [sample file (hsca-config.sample
     - **chainId** : network chain Id.
   - **accounts** : _(Mandatory at least one)_ list of accounts.
     - **accountId** : Account's Hedera Id.
-    - **type**: Accounts types, choose between _SELF-CUSTODIAL_, _FIREBLOCKS_, _DFNS_ or _MULTI-SIGNATURE_.
+    - **type**: Accounts types, choose between _SELF-CUSTODIAL_, _FIREBLOCKS_, _DFNS_, _AWS-KMS_ or _MULTI-SIGNATURE_.
     - **network** : Network in which the account exists, choose between _mainnet_, _testnet_ and _previewnet_.
     - **alias** : Account unique alias.
     - For self-custodial accounts:
@@ -133,6 +133,12 @@ A config file can be manually created using the [sample file (hsca-config.sample
         - **testUrl** : DFNS test url.
         - **walletId** : DFNS wallet Id.
         - **hederaAccountPublicKey** : DFNS Hedera account public key.
+      - **awsKms** : AWS KMS account details.
+        - **accessKeyId** : AWS access key Id.
+        - **secretAccessKey** : AWS secret access key.
+        - **region** : AWS KMS region.
+        - **keyId** : AWS KMS key Id.
+        - **hederaAccountPublicKey** : AWS KMS Hedera account public key.
     - **importedTokens** : _(Optional)_ list of imported tokens for the account. For each imported token we must specify the token **id**, **symbol** and the list of **roles** the account's has been granted for the token.
   - **mirrors** : _(Mandatory at least one)_ list of mirror nodes.
     - **name** : Mirror node unique name.

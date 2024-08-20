@@ -23,4 +23,5 @@ export enum AccountType {
   Fireblocks = 'FIREBLOCKS',
   Dfns = 'DFNS',
   MultiSignature = 'MULTI-SIGNATURE',
+  AWSKMS = 'AWSKMS',
 }
