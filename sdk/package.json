@@ -55,7 +55,7 @@
 		"build:watch": "concurrently --kill-others --names \"ESM,CJS\" \"npx tsc -w -p tsconfig.json\" \"npx tsc -w -p tsconfig-cjs.json\"",
 		"build:release": "npm run clean && tsc -p tsconfig.release.json",
 		"lint": "eslint . --ext .ts --ext .mts",
-		"test": "NODE_OPTIONS=--max-old-space-size=16384 npx jest --coverage --forceExit",
+		"test": "npx jest --runInBand --detectOpenHandles --verbose\n",
 		"test:local": "NODE_OPTIONS=--max-old-space-size=8192 npx jest --forceExit --runInBand",
 		"cleanCache": "npx jest --clearCache",
 		"prettier": "prettier --config .prettierrc --write .",
