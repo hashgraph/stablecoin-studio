@@ -90,11 +90,10 @@ export async function transferToken(
     await checkTxResponse(txResponse, clientOperator)
 }
 
-export function oneYearLaterInSeconds(): number {
+export function oneMonthLaterInSeconds(): number {
     const currentDate: Date = new Date()
-    return Math.floor(
-        currentDate.setFullYear(currentDate.getFullYear() + 1) / 1000
-    )
+    currentDate.setMonth(currentDate.getMonth() + 1)
+    return Math.floor(currentDate.getTime() / 1000)
 }
 
 export function getClient(network?: string): Client {

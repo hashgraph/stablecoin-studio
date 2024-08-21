@@ -31,7 +31,7 @@ import {
 } from '../scripts/contractsMethods'
 import {
     getContractInfo,
-    oneYearLaterInSeconds,
+    oneMonthLaterInSeconds,
     sleep,
     toEvmAddress,
 } from '../scripts/utils'
@@ -110,7 +110,7 @@ describe('HederaTokenManager Tests', function () {
                 'newName',
                 'newSymbol',
                 keys,
-                oneYearLaterInSeconds(),
+                oneMonthLaterInSeconds(),
                 7890000,
                 TOKEN_MEMO,
                 nonOperatorClient
@@ -130,7 +130,7 @@ describe('HederaTokenManager Tests', function () {
                 'newName',
                 'newSymbol',
                 keysToKey,
-                oneYearLaterInSeconds(),
+                oneMonthLaterInSeconds(),
                 7890000,
                 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
                 operatorClient
@@ -149,7 +149,7 @@ describe('HederaTokenManager Tests', function () {
             'new Name',
             'newSymbol',
             keysToKey,
-            oneYearLaterInSeconds(),
+            oneMonthLaterInSeconds(),
             7890000,
             TOKEN_MEMO,
             operatorClient
@@ -184,7 +184,7 @@ describe('HederaTokenManager Tests', function () {
                 'newName',
                 'newSymbol',
                 keysToKey,
-                oneYearLaterInSeconds(),
+                oneMonthLaterInSeconds(),
                 7890000,
                 TOKEN_MEMO,
                 operatorClient
