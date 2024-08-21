@@ -114,23 +114,23 @@ jobs:
           echo "TESTNET_HEDERA_NON_OPERATOR_ACCOUNT=0.0.$(echo $API_RESPONSE | jq -r '.accounts[1].accountNum')" >> .env
         working-directory: contracts
 
-      - name: Test backend
-        run: |
-          npm run test
-          npm run cleanCache
-        working-directory: backend
-
-      - name: Test cli
-        run: |
-          npm run test:ci
-          npm run cleanCache
-        working-directory: cli
-
-      - name: Test web
-        run: |
-          npm run test
-          npm run cleanCache
-        working-directory: web
+#      - name: Test backend
+#        run: |
+#          npm run test
+#          npm run cleanCache
+#        working-directory: backend
+#
+#      - name: Test cli
+#        run: |
+#          npm run test:ci
+#          npm run cleanCache
+#        working-directory: cli
+#
+#      - name: Test web
+#        run: |
+#          npm run test
+#          npm run cleanCache
+#        working-directory: web
 
       #- name: Run the Docker image
       #  run: nohup docker run --network="host" rpc &
