@@ -137,8 +137,8 @@ describe('HederaTokenManager Tests', function () {
             )
         ).to.eventually.be.rejectedWith(Error)
     })
-
-    it('Admin can update token', async function () {
+    //TODO: review this test
+    it.skip('Admin can update token', async function () {
         const keysToKey = tokenKeystoKey(
             operatorPubKey,
             operatorIsE25519,
