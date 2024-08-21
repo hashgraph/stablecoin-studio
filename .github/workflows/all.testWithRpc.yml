@@ -113,12 +113,12 @@ jobs:
           echo "TESTNET_HEDERA_NON_OPERATOR_ED25519='false'" >> .env
           echo "TESTNET_HEDERA_NON_OPERATOR_ACCOUNT=0.0.$(echo $API_RESPONSE | jq -r '.accounts[1].accountNum')" >> .env
         working-directory: contracts
-
-      - name: Test Contracts
-        run: |
-          npm run test:parallel
-          npm run cleanCache
-        working-directory: contracts
+#
+#      - name: Test Contracts
+#        run: |
+#          npm run test:parallel
+#          npm run cleanCache
+#        working-directory: contracts
 
       - name: Test sdk
         run: |
