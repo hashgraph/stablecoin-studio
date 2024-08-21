@@ -24,6 +24,8 @@ import {
 	TransactionReceipt,
 	TransactionRecord,
 	Signer,
+	Client,
+	PrivateKey,
 } from '@hashgraph/sdk';
 // import { MessageTypes } from '@hashgraph/hashconnect';
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
@@ -31,6 +33,7 @@ import { TransactionResponseError } from '../error/TransactionResponseError.js';
 import { TransactionType } from '../TransactionResponseEnums.js';
 import { TransactionResponseAdapter } from '../TransactionResponseAdapter.js';
 import LogService from '../../../app/service/LogService.js';
+import TransactionRecordQuery from '@hashgraph/sdk/lib/transaction/TransactionRecordQuery';
 
 export class HederaTransactionResponseAdapter extends TransactionResponseAdapter {
 	public static async manageResponse(
@@ -51,6 +54,7 @@ export class HederaTransactionResponseAdapter extends TransactionResponseAdapter
 			nameFunction,
 		);
 		if (responseType === TransactionType.RECEIPT) {
+			console.log('RECEIPT');
 			await this.getReceipt(network, signer, transactionResponse);
 			let transId;
 			if (transactionResponse?.transactionId) {
@@ -70,6 +74,8 @@ export class HederaTransactionResponseAdapter extends TransactionResponseAdapter
 		}
 
 		if (responseType === TransactionType.RECORD) {
+			console.log('RECORD');
+
 			const transactionRecord:
 				| TransactionRecord
 				| Uint32Array
@@ -136,8 +142,21 @@ export class HederaTransactionResponseAdapter extends TransactionResponseAdapter
 		transactionResponse: HTransactionResponse,
 	): Promise<Uint32Array | undefined | Uint8Array> {
 		console.log('getRecordWithSigner');
-		const record = await transactionResponse.getRecordWithSigner(signer);
-		console.log('getRecordWithSigner : ' + JSON.stringify(record));
+
+		//TODO: stucked here
+		const client = Client.forTestnet();
+		client.setOperator(
+			signer.getAccountId(),
+			PrivateKey.fromStringED25519(
+				'302e020100300506032b657004220420f259af4b485c7539813b310065c50ae69d845673e5437ab558359af5f6e217e2',
+			),
+		);
+		const txId = transactionResponse.transactionId.toString();
+		const query = new TransactionRecordQuery();
+		query.setTransactionId(txId);
+		const record = await query.execute(client);
+		// const record = await transactionResponse.getRecordWithSigner(signer);
+		// console.log('getRecordWithSigner : ' + JSON.stringify(record));
 
 		if (!record) {
 			const transactionError = {
