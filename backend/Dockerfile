@@ -1,7 +1,7 @@
 # Source: https://dawchihliou.github.io/articles/the-last-dockerfile-you-need-for-nestjs
 # 🧑‍💻 Development
 #
-FROM node:20.11.1-alpine3.19 as development
+FROM node:20.16-alpine3.19 as development
 # add the missing shared libraries from alpine base image
 # RUN apk add --no-cache libc6-compat
 # Create app folder
@@ -26,7 +26,7 @@ USER node
 #
 # 🏡 Production Build
 #
-FROM node:20.11.1-alpine3.19 as build
+FROM node:20.16-alpine3.19 as build
 
 WORKDIR /app
 # RUN apk add --no-cache libc6-compat
@@ -56,7 +56,7 @@ USER node
 #
 # 🚀 Production Server
 #
-FROM node:20.11.1-alpine3.19 as production
+FROM node:20.16-alpine3.19 as production
 
 WORKDIR /app
 # RUN apk add --no-cache libc6-compat
