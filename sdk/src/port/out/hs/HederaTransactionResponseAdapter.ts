@@ -139,18 +139,10 @@ export class HederaTransactionResponseAdapter extends TransactionResponseAdapter
 	): Promise<Uint32Array | undefined | Uint8Array> {
 		console.log('getRecordWithSigner');
 
-		//TODO: stucked here
-		// const client = Client.forTestnet();
-		// client.setOperator(
-		// 	signer.getAccountId(),
-		// 	PrivateKey.fromStringED25519(
-		// 		'302e020100300506032b657004220420f259af4b485c7539813b310065c50ae69d845673e5437ab558359af5f6e217e2',
-		// 	),
-		// );
 		// const txId = transactionResponse.transactionId.toString();
-		// const query = new TransactionRecordQuery();
-		// query.setTransactionId(txId);
-		// const record = await query.execute(client);
+		// const query = new TransactionRecordQuery().setTransactionId(txId);
+		// const record = await query.executeWithSigner(signer);
+
 		const record = await transactionResponse.getRecordWithSigner(signer);
 		console.log('getRecordWithSigner : ' + JSON.stringify(record));
 

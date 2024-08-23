@@ -242,7 +242,9 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 		}
 
 		// Create account object and set network
-		this.signer = this.dAppConnector.signers[0];
+		this.signer = this.dAppConnector.getSigner(
+			AccountId.fromString(accountId),
+		);
 		this.account = new Account({
 			id: accountId,
 			publicKey: accountMirror.publicKey,
