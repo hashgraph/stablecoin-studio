@@ -18,8 +18,7 @@
  *
  */
 
-import axios, { AxiosRequestConfig } from 'axios';
-import { AxiosInstance } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import { singleton } from 'tsyringe';
 import StableCoinViewModel from '../../out/mirror/response/StableCoinViewModel.js';
 import AccountViewModel from '../../out/mirror/response/AccountViewModel.js';
@@ -604,6 +603,62 @@ export class MirrorNodeAdapter {
 		} catch (error) {
 			LogService.logError(error);
 			return Promise.reject<BigDecimal>(new InvalidResponse(error));
+		}
+	}
+
+	public async getConsensusTimestamp(
+		transactionId: string,
+	): Promise<string | null> {
+		const url = `${this.mirrorNodeConfig.baseUrl}transactions/${transactionId}`;
+		try {
+			const response = await this.instance.get(url);
+			const transactions = response.data.transactions;
+
+			if (!transactions || transactions.length === 0) return null;
+
+			const consensusTimestamp =
+				transactions[0]?.consensus_timestamp ?? null;
+			return consensusTimestamp;
+		} catch (error) {
+			LogService.logError(error);
+			return Promise.reject<string>(new InvalidResponse(error));
+		}
+	}
+
+	public async getContractLogData(
+		contractId: string,
+		consensusTimestamp: string,
+	): Promise<string[] | null> {
+		const url = `${this.mirrorNodeConfig.baseUrl}contracts/${contractId}/results/logs?timestamp=${consensusTimestamp}`;
+		try {
+			const res = await this.instance.get(url);
+
+			if (res.data.logs && res.data.logs.length > 0) {
+				const log = res.data.logs[0];
+				const data = log.data;
+
+				if (
+					data &&
+					data.startsWith('0x') &&
+					data.length >= 2 + 5 * 40
+				) {
+					// 2 for "0x" and 5 * 40 chars (20 bytes each)
+					const addresses: string[] = [];
+
+					for (let i = 0; i < 5; i++) {
+						const start = 2 + i * 40;
+						const end = start + 40;
+						const address = `0x${data.slice(start, end)}`;
+						addresses.push(address);
+					}
+
+					return addresses;
+				}
+			}
+			return null;
+		} catch (error) {
+			LogService.logError(error);
+			return Promise.reject<string[]>(new InvalidResponse(error));
 		}
 	}
 }
