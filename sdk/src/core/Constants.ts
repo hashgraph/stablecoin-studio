@@ -59,3 +59,5 @@ export const GET_ROLES_GAS = 120000;
 export const HAS_ROLE_GAS = 120000;
 export const GET_SUPPLY_ALLOWANCE_GAS = 120000;
 export const IS_UNLIMITED_ALLOWANCE_GAS = 120000;
+export const BYTES_32_LENGTH = 64;
+export const ADDRESS_LENGTH = 40;

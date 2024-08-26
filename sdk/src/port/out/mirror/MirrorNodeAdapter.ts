@@ -32,7 +32,11 @@ import PublicKey from '../../../domain/context/account/PublicKey.js';
 import { StableCoinMemo } from '../../../domain/context/stablecoin/StableCoinMemo.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
 import { MAX_PERCENTAGE_DECIMALS } from '../../../domain/context/fee/CustomFee.js';
-import { HBAR_DECIMALS } from '../../../core/Constants.js';
+import {
+	ADDRESS_LENGTH,
+	BYTES_32_LENGTH,
+	HBAR_DECIMALS,
+} from '../../../core/Constants.js';
 import { InvalidResponse } from './error/InvalidResponse.js';
 import { HederaId } from '../../../domain/context/shared/HederaId.js';
 import { KeyType } from '../../../domain/context/account/KeyProps.js';
@@ -609,6 +613,11 @@ export class MirrorNodeAdapter {
 	public async getConsensusTimestamp(
 		transactionId: string,
 	): Promise<string | null> {
+		if (transactionId.match(REGEX_TRANSACTION))
+			transactionId = transactionId
+				.replace('@', '-')
+				.replace(/.([^.]*)$/, '-$1');
+
 		const url = `${this.mirrorNodeConfig.baseUrl}transactions/${transactionId}`;
 		try {
 			const response = await this.instance.get(url);
@@ -640,14 +649,17 @@ export class MirrorNodeAdapter {
 				if (
 					data &&
 					data.startsWith('0x') &&
-					data.length >= 2 + 5 * 40
+					data.length >= 2 + 5 * BYTES_32_LENGTH
 				) {
-					// 2 for "0x" and 5 * 40 chars (20 bytes each)
+					// 2 for "0x" and 5 * bytes32Length chars (32 bytes each)
 					const addresses: string[] = [];
 
 					for (let i = 0; i < 5; i++) {
-						const start = 2 + i * 40;
-						const end = start + 40;
+						const start =
+							2 +
+							i * BYTES_32_LENGTH +
+							(BYTES_32_LENGTH - ADDRESS_LENGTH);
+						const end = start + ADDRESS_LENGTH;
 						const address = `0x${data.slice(start, end)}`;
 						addresses.push(address);
 					}

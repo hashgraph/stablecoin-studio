@@ -136,11 +136,14 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 			reserveInitialAmount,
 			proxyAdminOwnerAccount,
 		);
-		console.log('CreateCommandHandler: res', res);
+
+		if (!res.id)
+			throw new Error('Create Command Handler response id empty');
+		await new Promise((resolve) => setTimeout(resolve, 5000));
 		try {
 			const consensusTimestamp =
 				await this.mirrorNodeAdapter.getConsensusTimestamp(
-					(res as TransactionResponse).transactionId.toString(),
+					res.id.toString(),
 				);
 			if (!consensusTimestamp) {
 				throw new Error('Consensus timestamp not found');
