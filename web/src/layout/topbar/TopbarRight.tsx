@@ -36,7 +36,6 @@ const TopbarRight = () => {
 			<Image src={src} alt={selectedWallet} w='25px' h='25px' alignSelf='center' />
 		);
 
-		if (selectedWallet === SupportedWallets.HASHPACK) return img(HEDERA_LOGO);
 		if (selectedWallet === SupportedWallets.METAMASK) return img(METAMASK_LOGO);
 		if (selectedWallet === SupportedWallets.BLADE) return img(BLADE_LOGO);
 		if (selectedWallet === SupportedWallets.MULTISIG) return img(MULTISIG_LOGO);

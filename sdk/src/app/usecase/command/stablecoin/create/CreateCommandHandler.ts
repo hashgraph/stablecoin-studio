@@ -18,7 +18,7 @@
  *
  */
 
-import { ContractId as HContractId } from '@hashgraph/sdk';
+import { ContractId as HContractId, TransactionResponse } from '@hashgraph/sdk';
 import { ICommandHandler } from '../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../core/decorator/LazyInjectDecorator.js';
@@ -31,11 +31,14 @@ import { OperationNotAllowed } from '../error/OperationNotAllowed.js';
 import { CreateCommand, CreateCommandResponse } from './CreateCommand.js';
 import { RESERVE_DECIMALS } from '../../../../../domain/context/reserve/Reserve.js';
 import { InvalidRequest } from '../error/InvalidRequest.js';
-import { EVM_ZERO_ADDRESS } from '../../../../../core/Constants.js';
 import { MirrorNodeAdapter } from '../../../../../port/out/mirror/MirrorNodeAdapter.js';
 import { RPCQueryAdapter } from '../../../../../port/out/rpc/RPCQueryAdapter.js';
 import BigDecimal from '../../../../../domain/context/shared/BigDecimal.js';
 import EvmAddress from '../../../../../domain/context/contract/EvmAddress.js';
+import {
+	EVM_ZERO_ADDRESS,
+	TOPICS_IN_FACTORY_RESULT,
+} from '../../../../../core/Constants';
 
 @CommandHandler(CreateCommand)
 export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
@@ -136,46 +139,112 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 			reserveInitialAmount,
 			proxyAdminOwnerAccount,
 		);
+
+		if (!res.id)
+			throw new Error('Create Command Handler response id empty');
+
+		await new Promise((resolve) => setTimeout(resolve, 5000));
+
 		try {
-			return Promise.resolve(
-				new CreateCommandResponse(
-					ContractId.fromHederaContractId(
-						HContractId.fromSolidityAddress(res.response[0][3]),
-					),
-					res.response[0][4] === EVM_ZERO_ADDRESS
-						? new ContractId('0.0.0')
-						: ContractId.fromHederaContractId(
-								HContractId.fromString(
-									(
-										await this.mirrorNodeAdapter.getContractInfo(
-											res.response[0][4],
-										)
-									).id,
-								),
-						  ),
-					res.response[0][5] === EVM_ZERO_ADDRESS
-						? new ContractId('0.0.0')
-						: ContractId.fromHederaContractId(
-								HContractId.fromString(
-									(
-										await this.mirrorNodeAdapter.getContractInfo(
-											res.response[0][5],
-										)
-									).id,
-								),
-						  ),
-				),
+			const consensusTimestamp =
+				await this.mirrorNodeAdapter.getConsensusTimestamp(
+					res.id.toString(),
+				);
+			if (!consensusTimestamp) {
+				throw new Error('Consensus timestamp not found');
+			}
+
+			const data = await this.mirrorNodeAdapter.getContractLogData(
+				factory.toString(),
+				consensusTimestamp,
 			);
-		} catch (e) {
-			if (res.response == 1)
+
+			console.log(data);
+
+			if (data && data.length === TOPICS_IN_FACTORY_RESULT) {
 				return Promise.resolve(
 					new CreateCommandResponse(
-						new ContractId('0.0.0'),
-						new ContractId('0.0.0'),
-						new ContractId('0.0.0'),
+						ContractId.fromHederaContractId(
+							HContractId.fromSolidityAddress(data[3]),
+						),
+						data[4] === EVM_ZERO_ADDRESS
+							? new ContractId('0.0.0')
+							: ContractId.fromHederaContractId(
+									HContractId.fromString(
+										(
+											await this.mirrorNodeAdapter.getContractInfo(
+												data[4],
+											)
+										).id,
+									),
+							  ),
+						data[5] === EVM_ZERO_ADDRESS
+							? new ContractId('0.0.0')
+							: ContractId.fromHederaContractId(
+									HContractId.fromString(
+										(
+											await this.mirrorNodeAdapter.getContractInfo(
+												data[5],
+											)
+										).id,
+									),
+							  ),
 					),
 				);
-			else throw e;
+			} else {
+				throw new Error('Invalid data structure');
+			}
+		} catch (e) {
+			console.error(e);
+			return Promise.resolve(
+				new CreateCommandResponse(
+					new ContractId('0.0.0'),
+					new ContractId('0.0.0'),
+					new ContractId('0.0.0'),
+				),
+			);
 		}
+
+		// try {
+		// 	return Promise.resolve(
+		// 		new CreateCommandResponse(
+		// 			ContractId.fromHederaContractId(
+		// 				HContractId.fromSolidityAddress(res.response[0][3]),
+		// 			),
+		// 			res.response[0][4] === EVM_ZERO_ADDRESS
+		// 				? new ContractId('0.0.0')
+		// 				: ContractId.fromHederaContractId(
+		// 						HContractId.fromString(
+		// 							(
+		// 								await this.mirrorNodeAdapter.getContractInfo(
+		// 									res.response[0][4],
+		// 								)
+		// 							).id,
+		// 						),
+		// 				  ),
+		// 			res.response[0][5] === EVM_ZERO_ADDRESS
+		// 				? new ContractId('0.0.0')
+		// 				: ContractId.fromHederaContractId(
+		// 						HContractId.fromString(
+		// 							(
+		// 								await this.mirrorNodeAdapter.getContractInfo(
+		// 									res.response[0][5],
+		// 								)
+		// 							).id,
+		// 						),
+		// 				  ),
+		// 		),
+		// 	);
+		// } catch (e) {
+		// 	if (res.response == 1)
+		// 		return Promise.resolve(
+		// 			new CreateCommandResponse(
+		// 				new ContractId('0.0.0'),
+		// 				new ContractId('0.0.0'),
+		// 				new ContractId('0.0.0'),
+		// 			),
+		// 		);
+		// 	else throw e;
+		// }
 	}
 }

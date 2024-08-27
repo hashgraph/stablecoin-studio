@@ -471,7 +471,7 @@ const ModalWalletConnect = () => {
 									<SelectController
 										control={control}
 										isRequired
-										name='networkHashpack'
+										name='networkBlade'
 										defaultValue='0'
 										options={networkOptions}
 										addonLeft={true}
@@ -480,15 +480,15 @@ const ModalWalletConnect = () => {
 									/>
 									<HStack>
 										<Button
-											data-testid='modal-notification-button-Hashpack'
-											onClick={unHandleConnectHashpackWallet}
+											data-testid='modal-notification-button-Blade'
+											onClick={unHandleConnectBladeWallet}
 											variant='secondary'
 										>
 											{t('common.cancel')}
 										</Button>
 										<Button
-											data-testid='modal-notification-button-Hashpack'
-											onClick={handleConnectHashpackWalletConfirmed}
+											data-testid='modal-notification-button-Blade'
+											onClick={handleConnectBladeWalletConfirmed}
 											variant='primary'
 										>
 											{t('common.accept')}

@@ -18,8 +18,7 @@
  *
  */
 
-import axios, { AxiosRequestConfig } from 'axios';
-import { AxiosInstance } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import { singleton } from 'tsyringe';
 import StableCoinViewModel from '../../out/mirror/response/StableCoinViewModel.js';
 import AccountViewModel from '../../out/mirror/response/AccountViewModel.js';
@@ -33,7 +32,12 @@ import PublicKey from '../../../domain/context/account/PublicKey.js';
 import { StableCoinMemo } from '../../../domain/context/stablecoin/StableCoinMemo.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
 import { MAX_PERCENTAGE_DECIMALS } from '../../../domain/context/fee/CustomFee.js';
-import { HBAR_DECIMALS } from '../../../core/Constants.js';
+import {
+	ADDRESS_LENGTH,
+	BYTES_32_LENGTH,
+	HBAR_DECIMALS,
+	TOPICS_IN_FACTORY_RESULT,
+} from '../../../core/Constants.js';
 import { InvalidResponse } from './error/InvalidResponse.js';
 import { HederaId } from '../../../domain/context/shared/HederaId.js';
 import { KeyType } from '../../../domain/context/account/KeyProps.js';
@@ -604,6 +608,71 @@ export class MirrorNodeAdapter {
 		} catch (error) {
 			LogService.logError(error);
 			return Promise.reject<BigDecimal>(new InvalidResponse(error));
+		}
+	}
+
+	public async getConsensusTimestamp(
+		transactionId: string,
+	): Promise<string | null> {
+		if (transactionId.match(REGEX_TRANSACTION))
+			transactionId = transactionId
+				.replace('@', '-')
+				.replace(/.([^.]*)$/, '-$1');
+
+		const url = `${this.mirrorNodeConfig.baseUrl}transactions/${transactionId}`;
+		try {
+			const response = await this.instance.get(url);
+			const transactions = response.data.transactions;
+
+			if (!transactions || transactions.length === 0) return null;
+
+			const consensusTimestamp =
+				transactions[0]?.consensus_timestamp ?? null;
+			return consensusTimestamp;
+		} catch (error) {
+			LogService.logError(error);
+			return Promise.reject<string>(new InvalidResponse(error));
+		}
+	}
+
+	public async getContractLogData(
+		contractId: string,
+		consensusTimestamp: string,
+	): Promise<string[] | null> {
+		const url = `${this.mirrorNodeConfig.baseUrl}contracts/${contractId}/results/logs?timestamp=${consensusTimestamp}`;
+		try {
+			const res = await this.instance.get(url);
+
+			if (res.data.logs && res.data.logs.length > 0) {
+				const log = res.data.logs[0];
+				const data = log.data;
+
+				if (
+					data &&
+					data.startsWith('0x') &&
+					data.length >=
+						2 + TOPICS_IN_FACTORY_RESULT * BYTES_32_LENGTH
+				) {
+					// 2 for "0x" and TOPICS_IN_FACTORY_RESULT * bytes32Length chars (32 bytes each)
+					const addresses: string[] = [];
+
+					for (let i = 0; i < TOPICS_IN_FACTORY_RESULT; i++) {
+						const start =
+							2 +
+							i * BYTES_32_LENGTH +
+							(BYTES_32_LENGTH - ADDRESS_LENGTH);
+						const end = start + ADDRESS_LENGTH;
+						const address = `0x${data.slice(start, end)}`;
+						addresses.push(address);
+					}
+
+					return addresses;
+				}
+			}
+			return null;
+		} catch (error) {
+			LogService.logError(error);
+			return Promise.reject<string[]>(new InvalidResponse(error));
 		}
 	}
 }
