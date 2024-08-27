@@ -482,7 +482,7 @@ export class HashpackTransactionAdapter extends HederaTransactionAdapter {
 						this.networkService.consensusNodes[0].nodeId,
 				);
 			}
-			throw new Error('Hashpack wrong signed transaction');
+			throw new Error('Hashapck wrong signed transaction');
 		} catch (error) {
 			LogService.logError(error);
 			throw new SigningError(error);

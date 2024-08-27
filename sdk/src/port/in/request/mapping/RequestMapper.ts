@@ -27,7 +27,7 @@ import PrivateKey from '../../../../domain/context/account/PrivateKey.js';
 import PublicKey from '../../../../domain/context/account/PublicKey.js';
 import {
 	FireblocksConfigRequest,
-	DFNSConfigRequest,
+	DFNSConfigRequest, AWSKMSConfigRequest, HWCRequestSettings,
 } from '../ConnectRequest.js';
 import {
 	RequestAccount,
@@ -37,6 +37,8 @@ import {
 import ValidatedRequest from '../validation/ValidatedRequest.js';
 import DfnsSettings from '../../../../domain/context/custodialwalletsettings/DfnsSettings.js';
 import FireblocksSettings from '../../../../domain/context/custodialwalletsettings/FireblocksSettings.js';
+import AWSKMSSettings from "../../../../domain/context/custodialwalletsettings/AWSKMSSettings";
+import HWCSettings from "../../../../domain/context/hwalletconnectsettings/HWCSettings";
 
 export default class RequestMapper {
 	public static isPublicKey = (val: any): val is RequestPublicKey => {
