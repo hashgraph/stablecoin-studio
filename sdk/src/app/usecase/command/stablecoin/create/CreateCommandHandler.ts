@@ -35,7 +35,10 @@ import { MirrorNodeAdapter } from '../../../../../port/out/mirror/MirrorNodeAdap
 import { RPCQueryAdapter } from '../../../../../port/out/rpc/RPCQueryAdapter.js';
 import BigDecimal from '../../../../../domain/context/shared/BigDecimal.js';
 import EvmAddress from '../../../../../domain/context/contract/EvmAddress.js';
-import { EVM_ZERO_ADDRESS } from '../../../../../core/Constants';
+import {
+	EVM_ZERO_ADDRESS,
+	TOPICS_IN_FACTORY_RESULT,
+} from '../../../../../core/Constants';
 
 @CommandHandler(CreateCommand)
 export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
@@ -139,7 +142,9 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 
 		if (!res.id)
 			throw new Error('Create Command Handler response id empty');
+
 		await new Promise((resolve) => setTimeout(resolve, 5000));
+
 		try {
 			const consensusTimestamp =
 				await this.mirrorNodeAdapter.getConsensusTimestamp(
@@ -154,23 +159,14 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 				consensusTimestamp,
 			);
 
-			if (data && data.length === 5) {
+			console.log(data);
+
+			if (data && data.length === TOPICS_IN_FACTORY_RESULT) {
 				return Promise.resolve(
 					new CreateCommandResponse(
 						ContractId.fromHederaContractId(
-							HContractId.fromSolidityAddress(data[2]),
+							HContractId.fromSolidityAddress(data[3]),
 						),
-						data[3] === EVM_ZERO_ADDRESS
-							? new ContractId('0.0.0')
-							: ContractId.fromHederaContractId(
-									HContractId.fromString(
-										(
-											await this.mirrorNodeAdapter.getContractInfo(
-												data[3],
-											)
-										).id,
-									),
-							  ),
 						data[4] === EVM_ZERO_ADDRESS
 							? new ContractId('0.0.0')
 							: ContractId.fromHederaContractId(
@@ -178,6 +174,17 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 										(
 											await this.mirrorNodeAdapter.getContractInfo(
 												data[4],
+											)
+										).id,
+									),
+							  ),
+						data[5] === EVM_ZERO_ADDRESS
+							? new ContractId('0.0.0')
+							: ContractId.fromHederaContractId(
+									HContractId.fromString(
+										(
+											await this.mirrorNodeAdapter.getContractInfo(
+												data[5],
 											)
 										).id,
 									),

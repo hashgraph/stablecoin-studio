@@ -36,6 +36,7 @@ import {
 	ADDRESS_LENGTH,
 	BYTES_32_LENGTH,
 	HBAR_DECIMALS,
+	TOPICS_IN_FACTORY_RESULT,
 } from '../../../core/Constants.js';
 import { InvalidResponse } from './error/InvalidResponse.js';
 import { HederaId } from '../../../domain/context/shared/HederaId.js';
@@ -649,12 +650,13 @@ export class MirrorNodeAdapter {
 				if (
 					data &&
 					data.startsWith('0x') &&
-					data.length >= 2 + 5 * BYTES_32_LENGTH
+					data.length >=
+						2 + TOPICS_IN_FACTORY_RESULT * BYTES_32_LENGTH
 				) {
-					// 2 for "0x" and 5 * bytes32Length chars (32 bytes each)
+					// 2 for "0x" and TOPICS_IN_FACTORY_RESULT * bytes32Length chars (32 bytes each)
 					const addresses: string[] = [];
 
-					for (let i = 0; i < 5; i++) {
+					for (let i = 0; i < TOPICS_IN_FACTORY_RESULT; i++) {
 						const start =
 							2 +
 							i * BYTES_32_LENGTH +
