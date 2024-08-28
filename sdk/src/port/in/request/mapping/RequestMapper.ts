@@ -28,6 +28,7 @@ import PublicKey from '../../../../domain/context/account/PublicKey.js';
 import {
 	FireblocksConfigRequest,
 	DFNSConfigRequest,
+	AWSKMSConfigRequest,
 } from '../ConnectRequest.js';
 import {
 	RequestAccount,
@@ -37,6 +38,7 @@ import {
 import ValidatedRequest from '../validation/ValidatedRequest.js';
 import DfnsSettings from '../../../../domain/context/custodialwalletsettings/DfnsSettings.js';
 import FireblocksSettings from '../../../../domain/context/custodialwalletsettings/FireblocksSettings.js';
+import AWSKMSSettings from '../../../../domain/context/custodialwalletsettings/AWSKMSSettings';
 
 export default class RequestMapper {
 	public static isPublicKey = (val: any): val is RequestPublicKey => {
@@ -201,6 +203,7 @@ export default class RequestMapper {
 			req.baseUrl,
 			req.walletId,
 			req.hederaAccountId,
+			req.publicKey,
 		);
 	}
 
@@ -213,6 +216,18 @@ export default class RequestMapper {
 			req.baseUrl,
 			req.assetId,
 			req.vaultAccountId,
+			req.hederaAccountId,
+		);
+	}
+
+	public static awsKmsRequestToAwsKmsSettings(
+		req: AWSKMSConfigRequest,
+	): AWSKMSSettings {
+		return new AWSKMSSettings(
+			req.awsAccessKeyId,
+			req.awsSecretAccessKey,
+			req.awsRegion,
+			req.awsKmsKeyId,
 			req.hederaAccountId,
 		);
 	}

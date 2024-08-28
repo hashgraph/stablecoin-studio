@@ -6,7 +6,7 @@ on:
 jobs:
   test-node:
     name: testing
-    runs-on: token-studio-linux-medium
+    runs-on: ubuntu-latest
     env:
       NODE_OPTIONS: "--max-old-space-size=32768"
     permissions:
@@ -90,6 +90,10 @@ jobs:
           echo "CLIENT_PUBLIC_KEY_ED25519_2=$(echo $API_RESPONSE_2 | jq -r '.accounts[0].publicKey')" >> .env
           echo "CLIENT_ACCOUNT_ID_ED25519_2=0.0.$(echo $API_RESPONSE_2 | jq -r '.accounts[0].accountNum')" >> .env
           echo "CLIENT_EVM_ADDRESS_ED25519_2=$(curl -s https://testnet.mirrornode.hedera.com/api/v1/accounts/$CLIENT_ACCOUNT_ID_ED25519_2)" >> .env
+          echo "FIREBLOCKS_HEDERA_ACCOUNT_ID=0.0.$(echo $API_RESPONSE_2 | jq -r '.accounts[1].accountNum')" >> .env
+          echo "FIREBLOCKS_HEDERA_PUBLIC_KEY=$(echo $API_RESPONSE_2 | jq -r '.accounts[1].publicKey')" >> .env
+          echo "DFNS_HEDERA_ACCOUNT_ID=0.0.$(echo $API_RESPONSE_2 | jq -r '.accounts[1].accountNum')" >> .env
+          echo "DFNS_WALLET_PUBLIC_KEY=$(echo $API_RESPONSE_2 | jq -r '.accounts[1].publicKey')" >> .env
           echo "HEDERA_TOKEN_MANAGER_ADDRESS=0.0.2167020"  >> .env
           echo "FACTORY_ADDRESS=0.0.2167166"  >> .env
         working-directory: sdk
@@ -109,6 +113,18 @@ jobs:
           echo "TESTNET_HEDERA_NON_OPERATOR_ED25519='false'" >> .env
           echo "TESTNET_HEDERA_NON_OPERATOR_ACCOUNT=0.0.$(echo $API_RESPONSE | jq -r '.accounts[1].accountNum')" >> .env
         working-directory: contracts
+
+      - name: Test Contracts
+        run: |
+          npm run test:parallel
+          npm run cleanCache
+        working-directory: contracts
+
+      - name: Test sdk
+        run: |
+          npm run test
+          npm run cleanCache
+        working-directory: sdk
 
       - name: Test backend
         run: |
@@ -137,15 +153,3 @@ jobs:
       #  run: docker ps
       #- name: DockerStatus
       #  run:  curl --location --request POST 'http://localhost:7546/api' --data ""
-
-      - name: Test sdk
-        run: |
-          npm run test
-          npm run cleanCache
-        working-directory: sdk
-
-      - name: Test Contracts
-        run: |
-          npm run test:parallel
-          npm run cleanCache
-        working-directory: contracts

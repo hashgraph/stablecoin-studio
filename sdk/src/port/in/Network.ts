@@ -24,6 +24,7 @@ import { CommandBus } from '../../core/command/CommandBus.js';
 import { InitializationData } from '../out/TransactionAdapter.js';
 import { ConnectCommand } from '../../app/usecase/command/network/connect/ConnectCommand.js';
 import ConnectRequest, {
+	AWSKMSConfigRequest,
 	DFNSConfigRequest,
 	FireblocksConfigRequest,
 	SupportedWallets,
@@ -57,6 +58,8 @@ import SetBackendRequest from './request/SetBackendRequest.js';
 import { SetBackendCommand } from '../../app/usecase/command/network/setBackend/SetBackendCommand.js';
 import BackendEndpoint from '../../domain/context/network/BackendEndpoint.js';
 import { ConsensusNode } from '../../domain/context/network/ConsensusNodes.js';
+import { AWSKMSTransactionAdapter } from '../out/hs/hts/custodial/AWSKMSTransactionAdapter';
+import AWSKMSSettings from '../../domain/context/custodialwalletsettings/AWSKMSSettings';
 
 export { InitializationData, SupportedWallets };
 
@@ -184,6 +187,8 @@ class NetworkInPort implements INetworkInPort {
 				wallets.push(SupportedWallets.DFNS);
 			} else if (val instanceof MultiSigTransactionAdapter) {
 				wallets.push(SupportedWallets.MULTISIG);
+			} else if (val instanceof AWSKMSTransactionAdapter) {
+				wallets.push(SupportedWallets.AWSKMS);
 			} else {
 				wallets.push(SupportedWallets.CLIENT);
 			}
@@ -259,7 +264,7 @@ class NetworkInPort implements INetworkInPort {
 
 	private getCustodialSettings(
 		req: ConnectRequest,
-	): DfnsSettings | FireblocksSettings | undefined {
+	): DfnsSettings | FireblocksSettings | AWSKMSSettings | undefined {
 		if (
 			req.custodialWalletSettings &&
 			req.wallet === SupportedWallets.DFNS
@@ -273,6 +278,13 @@ class NetworkInPort implements INetworkInPort {
 		) {
 			return RequestMapper.fireblocksRequestToFireblocksSettings(
 				req.custodialWalletSettings as FireblocksConfigRequest,
+			);
+		} else if (
+			req.custodialWalletSettings &&
+			req.wallet === SupportedWallets.AWSKMS
+		) {
+			return RequestMapper.awsKmsRequestToAwsKmsSettings(
+				req.custodialWalletSettings as AWSKMSConfigRequest,
 			);
 		}
 		return undefined;

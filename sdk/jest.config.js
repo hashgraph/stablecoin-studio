@@ -10,7 +10,8 @@ module.exports = {
 		'^(\\.{1,2}/.*)\\.(m)?js$': '$1',
 	},
 	testMatch: ['**/__tests__/**/*.(test|spec).[jt]s?(x)'],
-	testPathIgnorePatterns: ['/build/', '/src_old/'],
+	testPathIgnorePatterns: ['/build/', '/src_old/', '/example/js/'], // Added to ignore /example/js/ directory in module mapping
+	modulePathIgnorePatterns: ['/example/js/'], // Added to ignore /example/js/ directory in module mapping
 	coverageDirectory: 'coverage',
 	collectCoverageFrom: [
 		'src/**/*.ts',

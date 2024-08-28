@@ -39,6 +39,7 @@ export interface DFNSConfigRequest {
 	baseUrl: string;
 	walletId: string;
 	hederaAccountId: string;
+	publicKey: string;
 }
 
 export interface FireblocksConfigRequest {
@@ -50,7 +51,18 @@ export interface FireblocksConfigRequest {
 	hederaAccountId: string;
 }
 
-export type CustodialSettings = DFNSConfigRequest | FireblocksConfigRequest;
+export interface AWSKMSConfigRequest {
+	awsAccessKeyId: string;
+	awsSecretAccessKey: string;
+	awsRegion: string;
+	awsKmsKeyId: string;
+	hederaAccountId: string;
+}
+
+export type CustodialSettings =
+	| DFNSConfigRequest
+	| FireblocksConfigRequest
+	| AWSKMSConfigRequest;
 
 export default class ConnectRequest
 	extends ValidatedRequest<ConnectRequest>

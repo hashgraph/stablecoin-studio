@@ -30,7 +30,10 @@ import {
 import Service from '../Service.js';
 import Table from 'cli-table3';
 import {
+  AWSKMSConfigRequest,
   ConnectRequest,
+  DFNSConfigRequest,
+  FireblocksConfigRequest,
   InitializationRequest,
   Network,
   SDK,
@@ -92,7 +95,10 @@ export default class UtilitiesService extends Service {
     //* Connect to the network
     let privateKey: { key: string; type: string };
     let wallet: SupportedWallets;
-    let custodialWalletSettings: any;
+    let custodialWalletSettings:
+      | FireblocksConfigRequest
+      | DFNSConfigRequest
+      | AWSKMSConfigRequest;
     switch (account.type) {
       case AccountType.SelfCustodial:
         privateKey = {
@@ -113,10 +119,21 @@ export default class UtilitiesService extends Service {
           vaultAccountId: account.custodial.fireblocks.vaultAccountId,
           assetId: account.custodial.fireblocks.assetId,
           hederaAccountId: account.accountId,
-        };
+          hederaAccountPublicKey:
+            account.custodial.fireblocks.hederaAccountPublicKey,
+        } as FireblocksConfigRequest;
         break;
       case AccountType.Dfns:
         wallet = SupportedWallets.DFNS;
+        if (!account.custodial || !account.custodial.dfns) {
+          throw new Error('DFNS settings are required');
+        }
+        if (!account.custodial.dfns.privateKeyPath) {
+          throw new Error('Private key path is required for DFNS');
+        }
+        if (!fs.existsSync(account.custodial.dfns.privateKeyPath)) {
+          throw new Error('Private key file does not exist');
+        }
         custodialWalletSettings = {
           authorizationToken: account.custodial.dfns.authorizationToken,
           credentialId: account.custodial.dfns.credentialId,
@@ -129,7 +146,18 @@ export default class UtilitiesService extends Service {
           baseUrl: account.custodial.dfns.testUrl,
           walletId: account.custodial.dfns.walletId,
           hederaAccountId: account.accountId,
-        };
+          publicKey: account.custodial.dfns.hederaAccountPublicKey,
+        } as DFNSConfigRequest;
+        break;
+      case AccountType.AWSKMS:
+        wallet = SupportedWallets.AWSKMS;
+        custodialWalletSettings = {
+          awsAccessKeyId: account.custodial.awsKms.awsAccessKeyId,
+          awsSecretAccessKey: account.custodial.awsKms.awsSecretAccessKey,
+          awsRegion: account.custodial.awsKms.awsRegion,
+          awsKmsKeyId: account.custodial.awsKms.awsKmsKeyId,
+          hederaAccountId: account.accountId,
+        } as AWSKMSConfigRequest;
         break;
       case AccountType.MultiSignature:
         wallet = SupportedWallets.MULTISIG;
@@ -169,6 +197,8 @@ export default class UtilitiesService extends Service {
       [AccountType.Fireblocks]: () =>
         !!account.custodial && !!account.custodial.fireblocks,
       [AccountType.Dfns]: () => !!account.custodial && !!account.custodial.dfns,
+      [AccountType.AWSKMS]: () =>
+        !!account.custodial && !!account.custodial.awsKms,
     };
 
     return validations[account.type]();
@@ -701,6 +731,16 @@ export default class UtilitiesService extends Service {
                       acc.custodial.dfns.hederaAccountPublicKey,
                     hederaAccountKeyType:
                       acc.custodial.dfns.hederaAccountKeyType,
+                  },
+              awsKms: !acc.custodial.awsKms
+                ? undefined
+                : {
+                    awsAccessKeyId: acc.custodial.awsKms.awsAccessKeyId,
+                    awsSecretAccessKey: acc.custodial.awsKms.awsSecretAccessKey,
+                    awsRegion: acc.custodial.awsKms.awsRegion,
+                    awsKmsKeyId: acc.custodial.awsKms.awsKmsKeyId,
+                    hederaAccountPublicKey:
+                      acc.custodial.awsKms.hederaAccountPublicKey,
                   },
             },
       };

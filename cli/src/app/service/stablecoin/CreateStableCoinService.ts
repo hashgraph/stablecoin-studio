@@ -724,6 +724,11 @@ export default class CreateStableCoinService extends Service {
               key: currentAccount.custodial.dfns.hederaAccountPublicKey,
               type: currentAccount.custodial.dfns.hederaAccountKeyType,
             });
+          case AccountType.AWSKMS:
+            return Promise.resolve({
+              key: currentAccount.custodial.awsKms.hederaAccountPublicKey,
+              type: 'ECDSA',
+            });
         }
         const privateKey: RequestPrivateKey = {
           key: currentAccount.selfCustodial.privateKey.key,

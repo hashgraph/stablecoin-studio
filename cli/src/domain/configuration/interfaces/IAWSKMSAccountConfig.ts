@@ -1,6 +1,6 @@
 /*
  *
- * Hedera Stablecoin SDK
+ * Hedera Stablecoin CLI
  *
  * Copyright (C) 2023 Hedera Hashgraph, LLC
  *
@@ -18,21 +18,10 @@
  *
  */
 
-import Account from '../account/Account.js';
-
-export enum SupportedWallets {
-	METAMASK = 'Metamask',
-	HASHPACK = 'HashPack',
-	CLIENT = 'Client',
-	BLADE = 'Blade',
-	FIREBLOCKS = 'Fireblocks',
-	DFNS = 'DFNS',
-	MULTISIG = 'MultiSig',
-	AWSKMS = 'AWSKMS',
-}
-
-export default interface Wallet {
-	type: SupportedWallets;
-	account: Account;
-	// Events...
+export interface IAWSKMSAccountConfig {
+  awsAccessKeyId: string;
+  awsSecretAccessKey: string;
+  awsRegion: string;
+  awsKmsKeyId: string;
+  hederaAccountPublicKey: string;
 }

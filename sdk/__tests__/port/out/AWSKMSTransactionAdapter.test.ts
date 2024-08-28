@@ -25,6 +25,7 @@ jest.unmock('axios');
 
 import {
 	AssociateTokenRequest,
+	AWSKMSConfigRequest,
 	CreateRequest,
 	InitializationRequest,
 	Network,
@@ -36,12 +37,10 @@ import {
 } from '../../../src';
 import { MirrorNode } from '../../../src/domain/context/network/MirrorNode';
 import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay';
-import ConnectRequest, {
-	DFNSConfigRequest,
-} from '../../../src/port/in/request/ConnectRequest';
+import ConnectRequest from '../../../src/port/in/request/ConnectRequest';
 import {
+	AWS_KMS_SETTINGS,
 	DECIMALS,
-	DFNS_SETTINGS,
 	FACTORY_ADDRESS,
 	HEDERA_TOKEN_MANAGER_ADDRESS,
 	MIRROR_NODE,
@@ -51,7 +50,7 @@ import Injectable from '../../../src/core/Injectable';
 
 const initialSupply = 1000;
 
-describe('🧪 DFNSTransactionAdapter test', () => {
+describe('🧪 AWSKMSTransactionAdapter test', () => {
 	let stableCoinHTS: StableCoinViewModel;
 	const delay = async (seconds = 5): Promise<void> => {
 		seconds = seconds * 1000;
@@ -68,30 +67,26 @@ describe('🧪 DFNSTransactionAdapter test', () => {
 		baseUrl: RPC_NODE.baseUrl,
 	};
 
-	const dfnsSettings: DFNSConfigRequest = {
-		authorizationToken: DFNS_SETTINGS.authorizationToken,
-		credentialId: DFNS_SETTINGS.credentialId,
-		serviceAccountPrivateKey: DFNS_SETTINGS.serviceAccountPrivateKeyPath,
-		urlApplicationOrigin: DFNS_SETTINGS.urlApplicationOrigin,
-		applicationId: DFNS_SETTINGS.applicationId,
-		baseUrl: DFNS_SETTINGS.baseUrl,
-		walletId: DFNS_SETTINGS.walletId,
-		hederaAccountId: DFNS_SETTINGS.hederaAccountId,
-		publicKey: DFNS_SETTINGS.hederaAccountPublicKey,
+	const awsKmsSettings: AWSKMSConfigRequest = {
+		awsAccessKeyId: AWS_KMS_SETTINGS.accessKeyId,
+		awsSecretAccessKey: AWS_KMS_SETTINGS.secretAccessKey,
+		awsRegion: AWS_KMS_SETTINGS.region,
+		awsKmsKeyId: AWS_KMS_SETTINGS.kmsKeyId,
+		hederaAccountId: AWS_KMS_SETTINGS.hederaAccountId,
 	};
 
 	const requestPublicKey: RequestPublicKey = {
-		key: DFNS_SETTINGS.hederaAccountPublicKey,
+		key: AWS_KMS_SETTINGS.hederaAccountPublicKey,
 	};
 
 	beforeAll(async () => {
 		await Network.connect(
 			new ConnectRequest({
 				network: 'testnet',
-				wallet: SupportedWallets.DFNS,
+				wallet: SupportedWallets.AWSKMS,
 				mirrorNode: mirrorNode,
 				rpcNode: rpcNode,
-				custodialWalletSettings: dfnsSettings,
+				custodialWalletSettings: awsKmsSettings,
 			}),
 		);
 		await Network.init(
@@ -120,10 +115,10 @@ describe('🧪 DFNSTransactionAdapter test', () => {
 			reserveInitialAmount: '1000000',
 			createReserve: true,
 			grantKYCToOriginalSender: true,
-			burnRoleAccount: DFNS_SETTINGS.hederaAccountId,
-			rescueRoleAccount: DFNS_SETTINGS.hederaAccountId,
-			deleteRoleAccount: DFNS_SETTINGS.hederaAccountId,
-			cashInRoleAccount: DFNS_SETTINGS.hederaAccountId,
+			burnRoleAccount: AWS_KMS_SETTINGS.hederaAccountId,
+			rescueRoleAccount: AWS_KMS_SETTINGS.hederaAccountId,
+			deleteRoleAccount: AWS_KMS_SETTINGS.hederaAccountId,
+			cashInRoleAccount: AWS_KMS_SETTINGS.hederaAccountId,
 			cashInRoleAllowance: '0',
 			metadata: '',
 		});
@@ -133,14 +128,14 @@ describe('🧪 DFNSTransactionAdapter test', () => {
 		await delay();
 	}, 60_000);
 
-	it('DFNS should create a Stable Coin', async () => {
+	it('AWS KMS should create a Stable Coin', async () => {
 		expect(stableCoinHTS?.tokenId).not.toBeNull();
 	}, 60_000);
 
-	it('DFNS should associate a token', async () => {
+	it('AWS KMS should associate a token', async () => {
 		const result = await StableCoin.associate(
 			new AssociateTokenRequest({
-				targetId: DFNS_SETTINGS.hederaAccountId,
+				targetId: AWS_KMS_SETTINGS.hederaAccountId,
 				tokenId: stableCoinHTS?.tokenId?.toString() ?? '0.0.0',
 			}),
 		);

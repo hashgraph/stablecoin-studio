@@ -76,8 +76,9 @@ export const english = {
       'Your option is not one of the default networks, do you want to create a new network? (y/n)',
     AccountsConfigurationMessage: 'You will now configure your accounts:',
     askAccountId: 'Enter the account id',
-    askAccountPubKey: 'Enter the public key (Hexadecimal format)',
-    askAccountType: `Enter the account type (${AccountType.SelfCustodial}|${AccountType.MultiSignature}|${AccountType.Fireblocks}|${AccountType.Dfns})`,
+    askAccountPubKey:
+      "Please enter the public key (Hexadecimal format, starting with '0x')",
+    askAccountType: `Enter the account type (${AccountType.SelfCustodial}|${AccountType.MultiSignature}|${AccountType.Fireblocks}|${AccountType.Dfns}|${AccountType.AWSKMS})`,
     askConfigurateFactories:
       'Do you want to config your factories? Check the documentation for more information : https://github.com/hashgraph/stablecoin-studio#deploying-the-stable-coin-factories',
     askConfigurateDefaultMirrorsAndRPCs:
@@ -176,6 +177,13 @@ export const english = {
       askAppId: 'Enter your app id',
       askTestUrl: 'Enter the DFNS API url',
       askWalletId: 'Enter your wallet id',
+    },
+    awsKms: {
+      title: 'AWS KMS account configuration',
+      askAccessKeyId: 'Enter your AWS access key id',
+      askSecretAccessKey: 'Enter your AWS secret access key',
+      askRegion: 'Enter your AWS region',
+      askKmsKeyId: 'Enter your KMS key id',
     },
   },
   stablecoin: {
@@ -507,6 +515,7 @@ export const english = {
       MULTI_SIGNATURE: AccountType.MultiSignature,
       FIREBLOCKS: AccountType.Fireblocks,
       DFNS: AccountType.Dfns,
+      AWSKMS: AccountType.AWSKMS,
     },
     // * Multi-Signature Transactions
     multiSig: {

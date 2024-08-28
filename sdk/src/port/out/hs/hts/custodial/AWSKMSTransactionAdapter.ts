@@ -19,51 +19,47 @@
  */
 
 import {
+	AWSKMSConfig,
 	CustodialWalletService,
-	DFNSConfig,
 } from '@hashgraph/hedera-custodians-integration';
 import { singleton } from 'tsyringe';
 import LogService from '../../../../../app/service/LogService';
 import { WalletEvents } from '../../../../../app/service/event/WalletEvent';
 import { SupportedWallets } from '../../../../../domain/context/network/Wallet';
-import DfnsSettings from '../../../../../domain/context/custodialwalletsettings/DfnsSettings';
 import { CustodialTransactionAdapter } from './CustodialTransactionAdapter';
+import AWSKMSSettings from '../../../../../domain/context/custodialwalletsettings/AWSKMSSettings';
 
 @singleton()
-export class DFNSTransactionAdapter extends CustodialTransactionAdapter {
+export class AWSKMSTransactionAdapter extends CustodialTransactionAdapter {
 	init(): Promise<string> {
 		this.eventService.emit(WalletEvents.walletInit, {
-			wallet: SupportedWallets.DFNS,
+			wallet: SupportedWallets.AWSKMS,
 			initData: {},
 		});
-		LogService.logTrace('DFNS Initialized');
+		LogService.logTrace('AWS KMS Initialized');
 		return Promise.resolve(this.networkService.environment);
 	}
 
-	initCustodialWalletService(settings: DfnsSettings): void {
+	initCustodialWalletService(settings: AWSKMSSettings): void {
 		this.custodialWalletService = new CustodialWalletService(
-			new DFNSConfig(
-				settings.serviceAccountSecretKey,
-				settings.serviceAccountCredentialId,
-				settings.serviceAccountAuthToken,
-				settings.appOrigin,
-				settings.appId,
-				settings.baseUrl,
-				settings.walletId,
-				settings.publicKey,
+			new AWSKMSConfig(
+				settings.awsAccessKeyId,
+				settings.awsSecretAccessKey,
+				settings.awsRegion,
+				settings.awsKmsKeyId,
 			),
 		);
 	}
 
 	getSupportedWallet(): SupportedWallets {
-		return SupportedWallets.DFNS;
+		return SupportedWallets.AWSKMS;
 	}
 
 	stop(): Promise<boolean> {
 		this.client?.close();
-		LogService.logTrace('DFNS stopped');
+		LogService.logTrace('AWS KMS stopped');
 		this.eventService.emit(WalletEvents.walletDisconnect, {
-			wallet: SupportedWallets.DFNS,
+			wallet: SupportedWallets.AWSKMS,
 		});
 		return Promise.resolve(true);
 	}
