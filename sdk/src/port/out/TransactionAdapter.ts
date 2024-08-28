@@ -298,7 +298,12 @@ export default abstract class TransactionAdapter
 		throw new Error('Method not implemented.');
 	}
 	register(
-		input?: Account | FireblocksSettings | DfnsSettings | AWSKMSSettings | HWCSettings,
+		input?:
+			| Account
+			| FireblocksSettings
+			| DfnsSettings
+			| AWSKMSSettings
+			| HWCSettings,
 	): Promise<InitializationData> {
 		throw new Error('Method not implemented.');
 	}

@@ -6,7 +6,6 @@ const cliDir = `${dir}/cli`;
 const webDir = `${dir}/web`;
 const sdkDir = `${dir}/sdk`;
 const conDir = `${dir}/contracts`;
-const hashDir = `${dir}/hashconnect/lib`;
 
 const handleError = (error, stdout, stderr) => {
   if (error) {
@@ -36,8 +35,6 @@ let option = process.argv.slice(2)[0];
 if (option) {
   npmInstall(`${dir}/${option}`, option.toUpperCase());
 } else {
-  // npmInstall(hashDir, "HASHCONNECT");
-  // npmBuild(hashDir, "HASHCONNECT");
   npmInstall(backendDir, "BACKEND");
   npmInstall(conDir, "CONTRACTS");
   npmInstall(sdkDir, "SDK");
