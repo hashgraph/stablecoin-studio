@@ -331,13 +331,17 @@ const ModalWalletConnect = () => {
 				closeOnEsc={false}
 				closeOnOverlayClick={false}
 			>
-				<ModalOverlay />
+				<ModalOverlay zIndex={88} />
+
 				<ModalContent
 					data-testid='modal-action-content'
 					alignItems='center'
 					justifyContent='center'
 					p='50'
 					maxW='1000px'
+					containerProps={{
+						zIndex: '88',
+					}}
 				>
 					{!error &&
 						!rejected &&

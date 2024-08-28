@@ -215,8 +215,7 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 
 		LogService.logTrace('🔗 Pairing with Hedera WalletConnect...');
 		// Scan QR code or use WalletConnect URI to connect
-		await this.dAppConnector.connectQR();
-		// await this.dAppConnector.openModal(); // TODO check
+		await this.dAppConnector.openModal();
 		// Get signers from WalletConnect
 		const walletConnectSigners = this.dAppConnector.signers;
 		if (!walletConnectSigners) {
