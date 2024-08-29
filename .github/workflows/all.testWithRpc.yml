@@ -33,12 +33,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - name: Install dependencies Hashconnect
-        run: |
-          npm ci
-          npm run build
-        working-directory: hashconnect/lib
-
       - name: Install dependencies Backend
         run: |
           npm ci

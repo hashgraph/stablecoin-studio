@@ -29,6 +29,7 @@ import {
 	FireblocksConfigRequest,
 	DFNSConfigRequest,
 	AWSKMSConfigRequest,
+	HWCRequestSettings,
 } from '../ConnectRequest.js';
 import {
 	RequestAccount,
@@ -39,6 +40,7 @@ import ValidatedRequest from '../validation/ValidatedRequest.js';
 import DfnsSettings from '../../../../domain/context/custodialwalletsettings/DfnsSettings.js';
 import FireblocksSettings from '../../../../domain/context/custodialwalletsettings/FireblocksSettings.js';
 import AWSKMSSettings from '../../../../domain/context/custodialwalletsettings/AWSKMSSettings';
+import HWCSettings from '../../../../domain/context/hwalletconnectsettings/HWCSettings';
 
 export default class RequestMapper {
 	public static isPublicKey = (val: any): val is RequestPublicKey => {
@@ -229,6 +231,17 @@ export default class RequestMapper {
 			req.awsRegion,
 			req.awsKmsKeyId,
 			req.hederaAccountId,
+		);
+	}
+
+	public static hwcRequestToHWCSettings(
+		req: HWCRequestSettings,
+	): HWCSettings {
+		return new HWCSettings(
+			req.projectId,
+			req.dappName,
+			req.dappDescription,
+			req.dappURL,
 		);
 	}
 }

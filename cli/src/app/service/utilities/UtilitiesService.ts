@@ -30,7 +30,6 @@ import {
 import Service from '../Service.js';
 import Table from 'cli-table3';
 import {
-  AWSKMSConfigRequest,
   ConnectRequest,
   DFNSConfigRequest,
   FireblocksConfigRequest,
@@ -95,10 +94,7 @@ export default class UtilitiesService extends Service {
     //* Connect to the network
     let privateKey: { key: string; type: string };
     let wallet: SupportedWallets;
-    let custodialWalletSettings:
-      | FireblocksConfigRequest
-      | DFNSConfigRequest
-      | AWSKMSConfigRequest;
+    let custodialWalletSettings: FireblocksConfigRequest | DFNSConfigRequest;
     switch (account.type) {
       case AccountType.SelfCustodial:
         privateKey = {
@@ -149,16 +145,6 @@ export default class UtilitiesService extends Service {
           publicKey: account.custodial.dfns.hederaAccountPublicKey,
         } as DFNSConfigRequest;
         break;
-      case AccountType.AWSKMS:
-        wallet = SupportedWallets.AWSKMS;
-        custodialWalletSettings = {
-          awsAccessKeyId: account.custodial.awsKms.awsAccessKeyId,
-          awsSecretAccessKey: account.custodial.awsKms.awsSecretAccessKey,
-          awsRegion: account.custodial.awsKms.awsRegion,
-          awsKmsKeyId: account.custodial.awsKms.awsKmsKeyId,
-          hederaAccountId: account.accountId,
-        } as AWSKMSConfigRequest;
-        break;
       case AccountType.MultiSignature:
         wallet = SupportedWallets.MULTISIG;
         break;
@@ -197,8 +183,6 @@ export default class UtilitiesService extends Service {
       [AccountType.Fireblocks]: () =>
         !!account.custodial && !!account.custodial.fireblocks,
       [AccountType.Dfns]: () => !!account.custodial && !!account.custodial.dfns,
-      [AccountType.AWSKMS]: () =>
-        !!account.custodial && !!account.custodial.awsKms,
     };
 
     return validations[account.type]();
@@ -731,16 +715,6 @@ export default class UtilitiesService extends Service {
                       acc.custodial.dfns.hederaAccountPublicKey,
                     hederaAccountKeyType:
                       acc.custodial.dfns.hederaAccountKeyType,
-                  },
-              awsKms: !acc.custodial.awsKms
-                ? undefined
-                : {
-                    awsAccessKeyId: acc.custodial.awsKms.awsAccessKeyId,
-                    awsSecretAccessKey: acc.custodial.awsKms.awsSecretAccessKey,
-                    awsRegion: acc.custodial.awsKms.awsRegion,
-                    awsKmsKeyId: acc.custodial.awsKms.awsKmsKeyId,
-                    hederaAccountPublicKey:
-                      acc.custodial.awsKms.hederaAccountPublicKey,
                   },
             },
       };

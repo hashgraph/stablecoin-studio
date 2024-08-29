@@ -291,6 +291,7 @@ class StableCoinInPort implements IStableCoinInPort {
 					: undefined,
 			),
 		);
+
 		return {
 			coin:
 				createResponse.tokenId.toString() !== ContractId.NULL.toString()
