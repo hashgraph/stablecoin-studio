@@ -209,18 +209,9 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 		const currentNetwork = network ?? this.networkService.environment;
 
 		try {
-			const hwcNetwork = this.getLedgerId(currentNetwork);
-			console.log('hwcNetwork', hwcNetwork);
-			// Create dApp Connector instance
-			// metadata,
-			// 	LedgerId.TESTNET,
-			// 	projectId,
-			// 	Object.values(HederaJsonRpcMethod),
-			// 	[HederaSessionEvent.ChainChanged, HederaSessionEvent.AccountsChanged],
-			// 	[HederaChainId.TESTNET],
 			this.dAppConnector = new DAppConnector(
 				this.dappMetadata,
-				LedgerId.TESTNET,
+				LedgerId.fromString(currentNetwork),
 				this.projectId,
 			);
 			await this.dAppConnector.init({ logger: 'debug' });
@@ -339,22 +330,6 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 		await this.init(network);
 	}
 
-	// async function hedera_signAndExecuteTransaction(_: Event) {
-	// 	const transaction = new TransferTransaction()
-	// 		.setTransactionId(TransactionId.generate(getState('sign-send-from')))
-	// 		.addHbarTransfer(getState('sign-send-from'), new Hbar(-getState('sign-send-amount')))
-	// 		.addHbarTransfer(getState('sign-send-to'), new Hbar(+getState('sign-send-amount')))
-	//
-	// 	const params: SignAndExecuteTransactionParams = {
-	// 		transactionList: transactionToBase64String(transaction),
-	// 		signerAccountId: 'hedera:testnet:' + getState('sign-send-from'),
-	// 	}
-	//
-	// 	console.log(params)
-	//
-	// 	return await dAppConnector!.signAndExecuteTransaction(params)
-	// }
-
 	public async signAndSendTransaction(
 		transaction: Transaction,
 		transactionType: TransactionType,
@@ -375,22 +350,6 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 		) {
 			throw new Error('❌ No signers found');
 		}
-
-		// async function hedera_signAndExecuteTransaction(_: Event) {
-		// 	const transaction = new TransferTransaction()
-		// 		.setTransactionId(TransactionId.generate(getState('sign-send-from')))
-		// 		.addHbarTransfer(getState('sign-send-from'), new Hbar(-getState('sign-send-amount')))
-		// 		.addHbarTransfer(getState('sign-send-to'), new Hbar(+getState('sign-send-amount')))
-		//
-		// 	const params: SignAndExecuteTransactionParams = {
-		// 		transactionList: transactionToBase64String(transaction),
-		// 		signerAccountId: 'hedera:testnet:' + getState('sign-send-from'),
-		// 	}
-		//
-		// 	console.log(params)
-		//
-		// 	return await dAppConnector!.signAndExecuteTransaction(params)
-		// }
 
 		// const nodeAccountID = AccountId.fromString(this.account.id.toString())
 		// const signParams: SignTransactionParams = {
@@ -588,23 +547,40 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 			throw new SigningError(JSON.stringify(error, null, 2));
 		}
 	}
-	//
-	// getWCMetadata(): SignClientTypes.Metadata {
-	// 	return this.dappMetadata;
-	// }
 
 	getProjectId(): string {
 		return this.projectId;
 	}
 
-	private getLedgerId(network: string): LedgerId {
-		switch (network) {
-			case 'testnet':
-				return LedgerId.TESTNET;
-			case 'previewnet':
-				return LedgerId.PREVIEWNET;
-			default:
-				return LedgerId.MAINNET;
-		}
-	}
+	// async function hedera_signAndExecuteTransaction(_: Event) {
+	// 	const transaction = new TransferTransaction()
+	// 		.setTransactionId(TransactionId.generate(getState('sign-send-from')))
+	// 		.addHbarTransfer(getState('sign-send-from'), new Hbar(-getState('sign-send-amount')))
+	// 		.addHbarTransfer(getState('sign-send-to'), new Hbar(+getState('sign-send-amount')))
+	//
+	// 	const params: SignAndExecuteTransactionParams = {
+	// 		transactionList: transactionToBase64String(transaction),
+	// 		signerAccountId: 'hedera:testnet:' + getState('sign-send-from'),
+	// 	}
+	//
+	// 	console.log(params)
+	//
+	// 	return await dAppConnector!.signAndExecuteTransaction(params)
+	// }
+
+	// async function hedera_signAndExecuteTransaction(_: Event) {
+	// 	const transaction = new TransferTransaction()
+	// 		.setTransactionId(TransactionId.generate(getState('sign-send-from')))
+	// 		.addHbarTransfer(getState('sign-send-from'), new Hbar(-getState('sign-send-amount')))
+	// 		.addHbarTransfer(getState('sign-send-to'), new Hbar(+getState('sign-send-amount')))
+	//
+	// 	const params: SignAndExecuteTransactionParams = {
+	// 		transactionList: transactionToBase64String(transaction),
+	// 		signerAccountId: 'hedera:testnet:' + getState('sign-send-from'),
+	// 	}
+	//
+	// 	console.log(params)
+	//
+	// 	return await dAppConnector!.signAndExecuteTransaction(params)
+	// }
 }
