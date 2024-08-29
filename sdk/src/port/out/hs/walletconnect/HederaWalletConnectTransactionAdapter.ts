@@ -18,6 +18,16 @@
  *
  */
 
+/*
+ * We disable the @typescript-eslint/ban-ts-comment rule for the entire file because
+ * certain TypeScript type checks need to be ignored in specific instances due to
+ * dynamic imports or third-party library integrations that do not provide complete
+ * type definitions. This allows us to proceed without ESLint raising unnecessary
+ * warnings for these cases.
+ */
+
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+
 import { singleton } from 'tsyringe';
 import {
 	AccountId,
@@ -28,17 +38,6 @@ import {
 	TransactionResponseJSON,
 } from '@hashgraph/sdk';
 import { NetworkName } from '@hashgraph/sdk/lib/client/Client';
-import {
-	DAppConnector,
-	HederaChainId,
-	SignAndExecuteTransactionParams,
-	SignTransactionParams,
-	transactionBodyToBase64String,
-	transactionToBase64String,
-	transactionToTransactionBody,
-	base64StringToSignatureMap,
-} from '@hashgraph/hedera-wallet-connect';
-import { SignClientTypes } from '@walletconnect/types';
 import { HederaTransactionAdapter } from '../HederaTransactionAdapter';
 import { TransactionType } from '../../TransactionResponseEnums';
 import { InitializationData } from '../../TransactionAdapter';
@@ -67,6 +66,29 @@ import { HederaTransactionResponseAdapter } from '../HederaTransactionResponseAd
 import { SigningError } from '../error/SigningError';
 import Hex from '../../../../core/Hex.js';
 
+let DAppConnector: typeof import('@hashgraph/hedera-wallet-connect').DAppConnector;
+let HederaChainId: typeof import('@hashgraph/hedera-wallet-connect').HederaChainId;
+// @ts-ignore
+let SignAndExecuteTransactionParams: typeof import('@hashgraph/hedera-wallet-connect').SignAndExecuteTransactionParams;
+// @ts-ignore
+let SignTransactionParams: typeof import('@hashgraph/hedera-wallet-connect').SignTransactionParams;
+let transactionBodyToBase64String: typeof import('@hashgraph/hedera-wallet-connect').transactionBodyToBase64String;
+let transactionToBase64String: typeof import('@hashgraph/hedera-wallet-connect').transactionToBase64String;
+let transactionToTransactionBody: typeof import('@hashgraph/hedera-wallet-connect').transactionToTransactionBody;
+let base64StringToSignatureMap: typeof import('@hashgraph/hedera-wallet-connect').base64StringToSignatureMap;
+
+if (typeof window !== 'undefined') {
+	const hwc = require('@hashgraph/hedera-wallet-connect');
+	DAppConnector = hwc.DAppConnector;
+	HederaChainId = hwc.HederaChainId;
+	SignAndExecuteTransactionParams = hwc.SignAndExecuteTransactionParams;
+	SignTransactionParams = hwc.SignTransactionParams;
+	transactionBodyToBase64String = hwc.transactionBodyToBase64String;
+	transactionToBase64String = hwc.transactionToBase64String;
+	transactionToTransactionBody = hwc.transactionToTransactionBody;
+	base64StringToSignatureMap = hwc.base64StringToSignatureMap;
+}
+
 @singleton()
 /**
  * Represents a transaction adapter for Hedera Wallet Connect.
@@ -75,10 +97,13 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 	public account: Account;
 	public signer: Signer;
 	protected network: Environment;
-	protected dAppConnector: DAppConnector | undefined;
 	protected projectId: string;
-	protected dappMetadata: SignClientTypes.Metadata;
-	private chainId: HederaChainId;
+	protected dAppConnector: InstanceType<typeof DAppConnector> | undefined;
+	// @ts-ignore
+	protected dappMetadata: InstanceType<
+		typeof import('@walletconnect/types').SignClientTypes.Metadata
+	>;
+	private chainId: (typeof HederaChainId)[keyof typeof HederaChainId];
 
 	constructor(
 		@lazyInject(EventService)
@@ -197,9 +222,6 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 				this.dappMetadata,
 				LedgerId.TESTNET,
 				this.projectId,
-				// Object.values(HederaJsonRpcMethod), TODO: UNNECESARY
-				// [HederaSessionEvent.ChainChanged, HederaSessionEvent.AccountsChanged],
-				// [HederaChainId.Testnet],
 			);
 			await this.dAppConnector.init({ logger: 'debug' });
 			LogService.logTrace(
@@ -385,6 +407,8 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 					AccountId.fromString(this.account.id.toString()),
 				);
 			}
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore
 			const params: SignAndExecuteTransactionParams = {
 				transactionList: transactionToBase64String(transaction),
 				signerAccountId: `${
@@ -494,6 +518,7 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 				);
 			}
 
+			// @ts-ignore
 			const params: SignTransactionParams = {
 				transactionBody: transactionBodyToBase64String(
 					transactionToTransactionBody(
@@ -563,10 +588,10 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 			throw new SigningError(JSON.stringify(error, null, 2));
 		}
 	}
-
-	getWCMetadata(): SignClientTypes.Metadata {
-		return this.dappMetadata;
-	}
+	//
+	// getWCMetadata(): SignClientTypes.Metadata {
+	// 	return this.dappMetadata;
+	// }
 
 	getProjectId(): string {
 		return this.projectId;

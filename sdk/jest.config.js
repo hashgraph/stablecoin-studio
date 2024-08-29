@@ -8,7 +8,8 @@ module.exports = {
 	preset: 'ts-jest',
 	moduleNameMapper: {
 		'^(\\.{1,2}/.*)\\.(m)?js$': '$1',
-		'@hashgraph/hedera-wallet-connect': '<rootDir>/__mocks__/hedera-wallet-connect.js',
+		'@hashgraph/hedera-wallet-connect':
+			'<rootDir>/__mocks__/hedera-wallet-connect.js',
 	},
 	testMatch: ['**/__tests__/**/*.(test|spec).[jt]s?(x)'],
 	testPathIgnorePatterns: ['/build/', '/src_old/', '/example/js/'], // Added to ignore /example/js/ directory in module mapping
