@@ -99,8 +99,8 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 	protected network: Environment;
 	protected projectId: string;
 	protected dAppConnector: InstanceType<typeof DAppConnector> | undefined;
-	// @ts-ignore
 	protected dappMetadata: InstanceType<
+		// @ts-ignore
 		typeof import('@walletconnect/types').SignClientTypes.Metadata
 	>;
 	private chainId: (typeof HederaChainId)[keyof typeof HederaChainId];
