@@ -71,10 +71,10 @@ describe(`<${walletSlice.name} />`, () => {
 		});
 
 		it('Should be able to setLastWallet', async () => {
-			store.dispatch(walletSlice.actions.setLastWallet(SupportedWallets.HASHPACK));
+			store.dispatch(walletSlice.actions.setLastWallet(SupportedWallets.BLADE));
 
-			expect(store.getState().lastWallet).toEqual(SupportedWallets.HASHPACK);
-			expect(localStorage.lastWallet).toEqual(SupportedWallets.HASHPACK);
+			expect(store.getState().lastWallet).toEqual(SupportedWallets.BLADE);
+			expect(localStorage.lastWallet).toEqual(SupportedWallets.BLADE);
 		});
 
 		it('Should be able to setData', async () => {
@@ -158,9 +158,9 @@ describe(`<${walletSlice.name} />`, () => {
 		});
 
 		it('Should be able to setHasWalletExtension', async () => {
-			store.dispatch(walletSlice.actions.setHasWalletExtension(SupportedWallets.HASHPACK));
+			store.dispatch(walletSlice.actions.setHasWalletExtension(SupportedWallets.BLADE));
 
-			expect(store.getState().foundWallets?.[0]).toEqual(SupportedWallets.HASHPACK);
+			expect(store.getState().foundWallets?.[0]).toEqual(SupportedWallets.BLADE);
 			expect(store.getState().hasWalletExtension).toEqual(true);
 		});
 

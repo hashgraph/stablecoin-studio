@@ -254,21 +254,6 @@ const Review = (props: ReviewProps) => {
 						/>
 					)}
 
-					{wallet.lastWallet === SupportedWallets.HASHPACK && (
-						<DetailsReview
-							title={t('stableCoinCreation:managementPermissions.CreatorKYCFlag')}
-							titleProps={{ fontWeight: 700, color: 'brand.secondary' }}
-							details={[
-								{
-									label: t('stableCoinCreation:managementPermissions.grantKYCToOriginalSender'),
-									value: grantKYCToOriginalSender
-										? t('stableCoinCreation:managementPermissions.CreatorGrantedKYC')
-										: t('stableCoinCreation:managementPermissions.CreatorNotGrantedKYC'),
-								},
-							]}
-						/>
-					)}
-
 					<DetailsReview
 						title={t('stableCoinCreation:managementPermissions.treasuryAccountAddress')}
 						titleProps={{ fontWeight: 700, color: 'brand.secondary' }}

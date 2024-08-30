@@ -79,7 +79,7 @@ import { NetworkProps } from '../app/service/NetworkService.js';
 import TransactionAdapter from '../port/out/TransactionAdapter.js';
 import { RuntimeError } from './error/RuntimeError.js';
 import { HTSTransactionAdapter } from '../port/out/hs/hts/HTSTransactionAdapter.js';
-import { HashpackTransactionAdapter } from '../port/out/hs/hashpack/HashpackTransactionAdapter.js';
+// import { HashpackTransactionAdapter } from '../port/out/hs/hashpack/HashpackTransactionAdapter.js';
 import { RevokeSupplierRoleCommandHandler } from '../app/usecase/command/stablecoin/roles/revokeSupplierRole/RevokeSupplierRoleCommandHandler.js';
 import { GrantSupplierRoleCommandHandler } from '../app/usecase/command/stablecoin/roles/grantSupplierRole/GrantSupplierRoleCommandHandler.js';
 import { GrantUnlimitedSupplierRoleCommandHandler } from '../app/usecase/command/stablecoin/roles/granUnlimitedSupplierRole/GrantUnlimitedSupplierRoleCommandHandler.js';
@@ -109,6 +109,7 @@ import { RemoveCommandHandler } from '../app/usecase/command/stablecoin/backend/
 import { SetBackendCommandHandler } from '../app/usecase/command/network/setBackend/SetBackendCommandHandler.js';
 import { GetTransactionsQueryHandler } from '../app/usecase/query/stablecoin/backend/getTransactions/GetTransactionsQueryHandler.js';
 import { AWSKMSTransactionAdapter } from '../port/out/hs/hts/custodial/AWSKMSTransactionAdapter.js';
+import { HederaWalletConnectTransactionAdapter } from '../port/out/hs/walletconnect/HederaWalletConnectTransactionAdapter.js';
 
 export const TOKENS = {
 	COMMAND_HANDLER: Symbol('CommandHandler'),
@@ -393,10 +394,10 @@ const TRANSACTION_HANDLER = [
 		token: TOKENS.TRANSACTION_HANDLER,
 		useClass: HTSTransactionAdapter,
 	},
-	{
+	/* {
 		token: TOKENS.TRANSACTION_HANDLER,
 		useClass: HashpackTransactionAdapter,
-	},
+	},*/
 	{
 		token: TOKENS.TRANSACTION_HANDLER,
 		useClass: BladeTransactionAdapter,
@@ -404,6 +405,10 @@ const TRANSACTION_HANDLER = [
 	{
 		token: TOKENS.TRANSACTION_HANDLER,
 		useClass: MultiSigTransactionAdapter,
+	},
+	{
+		token: TOKENS.TRANSACTION_HANDLER,
+		useClass: HederaWalletConnectTransactionAdapter,
 	},
 ];
 
@@ -489,11 +494,14 @@ export default class Injectable {
 	static registerTransactionAdapterInstances(): TransactionAdapter[] {
 		const adapters: TransactionAdapter[] = [];
 		if (this.isWeb()) {
-			adapters.push(Injectable.resolve(HashpackTransactionAdapter));
+			// adapters.push(Injectable.resolve(HashpackTransactionAdapter));
 			adapters.push(Injectable.resolve(RPCTransactionAdapter));
 			adapters.push(Injectable.resolve(BladeTransactionAdapter));
 			adapters.push(Injectable.resolve(FireblocksTransactionAdapter));
 			adapters.push(Injectable.resolve(DFNSTransactionAdapter));
+			adapters.push(
+				Injectable.resolve(HederaWalletConnectTransactionAdapter),
+			);
 			adapters.push(Injectable.resolve(AWSKMSTransactionAdapter));
 		} else {
 			adapters.push(Injectable.resolve(HTSTransactionAdapter));

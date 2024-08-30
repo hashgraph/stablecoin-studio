@@ -18,10 +18,11 @@
  *
  */
 
-import BaseError, { ErrorCode } from '../../../../../core/error/BaseError.js';
-
-export class PairingError extends BaseError {
-	constructor(val: unknown) {
-		super(ErrorCode.PairingError, `An error ocurred when pairing: ${val}`);
-	}
+export default class HWCSettings {
+	constructor(
+		public projectId: string,
+		public dappName: string,
+		public dappDescription: string,
+		public dappURL: string,
+	) {}
 }
