@@ -6,7 +6,7 @@ on:
 jobs:
   test-node:
     name: testing
-    runs-on: token-studio-linux-medium
+    runs-on: ubuntu-latest
     env:
       NODE_OPTIONS: "--max-old-space-size=32768"
     permissions:
