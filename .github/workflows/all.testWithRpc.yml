@@ -9,6 +9,8 @@ jobs:
     runs-on: token-studio-linux-medium
     env:
       NODE_OPTIONS: "--max-old-space-size=32768"
+      SDK_CPP_MEM_LIMIT: "5368709120"  # 5GB
+      AGENT_MEM_LIMIT: "1073741824" # 1GB
     permissions:
       contents: read
 
