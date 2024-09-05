@@ -26,7 +26,6 @@ jobs:
             echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> .npmrc
             cp .npmrc ./contracts/.npmrc
             cp .npmrc ./sdk/.npmrc
-            cp .npmrc ./hashconnect/lib/.npmrc
             cp .npmrc ./cli/.npmrc
         
       
@@ -38,14 +37,6 @@ jobs:
 
       - name: Publish contracts package
         run: npm run publish:contracts --access=public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-      
-      - name: Install hashconnect dependencies 
-        run: npm run install:hashconnect
-      
-      - name: Publish hashconnect package
-        run: npm run publish:hashconnect --access=public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
