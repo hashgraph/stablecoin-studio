@@ -7,7 +7,7 @@
 	"scripts": {
 		"start": "react-app-rewired start",
 		"build": "react-app-rewired build",
-		"test": "react-app-rewired test --maxWorkers=50% --watchAll=false",
+		"test": "react-app-rewired test --maxWorkers=25% --watchAll=false --runInBand --cache=false",
 		"test:watch": "react-app-rewired test --maxWorkers=50% --watchAll=true",
 		"test:update": "react-app-rewired test -u --maxWorkers=50% --watchAll=false",
 		"cleanCache": "react-app-rewired test --clearCache",
