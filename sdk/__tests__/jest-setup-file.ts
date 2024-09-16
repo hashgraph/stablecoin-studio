@@ -618,8 +618,6 @@ global.console.log = jest.fn();
 global.console.info = jest.fn();
 LogService.log = jest.fn();
 LogService.logInfo = jest.fn();
-//* Mock isWeb() method
-Injectable.isWeb = jest.fn(() => true);
 
 jest.mock('../src/port/out/mirror/MirrorNodeAdapter', () => {
 	const actual = jest.requireActual(

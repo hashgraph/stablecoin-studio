@@ -93,9 +93,7 @@ export default class LogService {
 		if (error instanceof BaseError) {
 			this.log(
 				LogLevel.ERROR,
-				error.toString(
-					Injectable.resolve<typeof SDK>('SDK').log.level === 'TRACE',
-				),
+				error.toString(this.instance.logger.level === 'TRACE'),
 				params,
 			);
 		} else {
