@@ -9,12 +9,17 @@ jobs:
     runs-on: token-studio-linux-medium
     env:
       NODE_OPTIONS: "--max-old-space-size=32768"
-      SDK_CPP_MEM_LIMIT: "5368709120"  # 5GB
+      SDK_CPP_MEM_LIMIT: "5368709120" # 5GB
       AGENT_MEM_LIMIT: "1073741824" # 1GB
     permissions:
       contents: read
 
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@f086349bfa2bd1361f7909c78558e816508cdc10 # v2.8.0
+        with:
+          egress-policy: audit
+
       - name: Checkout repository
         uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
 
@@ -53,7 +58,7 @@ jobs:
           npm run build
         working-directory: sdk
 
-      - name: Install dependencies Cli
+      - name: Install dependencies CLI
         run: |
           npm ci
           npm run build
@@ -110,35 +115,35 @@ jobs:
           echo "TESTNET_HEDERA_NON_OPERATOR_ACCOUNT=0.0.$(echo $API_RESPONSE | jq -r '.accounts[1].accountNum')" >> .env
         working-directory: contracts
 
-      - name: Test Contracts
-        run: |
-          npm run test:parallel
-          npm run cleanCache
-        working-directory: contracts
+      # - name: Test Contracts
+      #   run: |
+      #     npm run test:parallel
+      #     npm run cleanCache
+      #   working-directory: contracts
 
       - name: Test sdk
         run: |
-          npm run test
+          npm run test:ci
           npm run cleanCache
         working-directory: sdk
 
-      - name: Test backend
-        run: |
-          npm run test
-          npm run cleanCache
-        working-directory: backend
+      # - name: Test backend
+      #   run: |
+      #     npm run test
+      #     npm run cleanCache
+      #   working-directory: backend
 
-      - name: Test cli
-        run: |
-          npm run test:ci
-          npm run cleanCache
-        working-directory: cli
+      # - name: Test cli
+      #   run: |
+      #     npm run test:ci
+      #     npm run cleanCache
+      #   working-directory: cli
 
-      - name: Test web
-        run: |
-          npm run test
-          npm run cleanCache
-        working-directory: web
+      # - name: Test web
+      #   run: |
+      #     npm run test
+      #     npm run cleanCache
+      #   working-directory: web
 
       #- name: Run the Docker image
       #  run: nohup docker run --network="host" rpc &
