@@ -612,6 +612,12 @@ function signAndSendTransaction(
 
 // * Jest Mocks
 
+//* Mock console.log() and console.info() methods
+global.console.log = jest.fn();
+global.console.info = jest.fn();
+//* Mock isWeb() method
+Injectable.isWeb = jest.fn(() => true);
+
 jest.mock('../src/port/out/mirror/MirrorNodeAdapter', () => {
 	const actual = jest.requireActual(
 		'../src/port/out/mirror/MirrorNodeAdapter.ts',
