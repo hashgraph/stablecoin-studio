@@ -139,11 +139,11 @@ jobs:
       #     npm run cleanCache
       #   working-directory: cli
 
-      # - name: Test web
-      #   run: |
-      #     npm run test
-      #     npm run cleanCache
-      #   working-directory: web
+      - name: Test web
+        run: |
+          npm run test:ci
+          npm run cleanCache
+        working-directory: web
 
       #- name: Run the Docker image
       #  run: nohup docker run --network="host" rpc &
