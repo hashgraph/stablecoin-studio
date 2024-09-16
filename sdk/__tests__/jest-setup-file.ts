@@ -23,22 +23,26 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import 'reflect-metadata';
-import MultiKey from '../src/domain/context/account/MultiKey.js';
+import { BigNumber, ethers } from 'ethers';
 import {
-	AccountViewModel,
-	BigDecimal,
-	ContractId,
-	EvmAddress,
-	HBAR_DECIMALS,
-	HederaId,
-	InitializationData,
-	PublicKey,
-	RequestCustomFee,
-	StableCoinListViewModel,
-	StableCoinRole,
-	StableCoinViewModel,
-	TokenSupplyType,
-} from '../src/index.js';
+	ContractExecuteTransaction,
+	CustomFee,
+	TokenFeeScheduleUpdateTransaction,
+	Transaction,
+	ContractId as HContractId,
+	TokenWipeTransaction,
+	TokenPauseTransaction,
+	TokenUnpauseTransaction,
+	TokenFreezeTransaction,
+	TokenUnfreezeTransaction,
+	TokenGrantKycTransaction,
+	TokenRevokeKycTransaction,
+} from '@hashgraph/sdk';
+import { StableCoinFactory__factory } from '@hashgraph/stablecoin-npm-contracts';
+import {
+	IStrategyConfig,
+	SignatureRequest,
+} from '@hashgraph/hedera-custodians-integration';
 import {
 	CLIENT_PUBLIC_KEY_ED25519,
 	HEDERA_TOKEN_MANAGER_ADDRESS,
@@ -62,48 +66,45 @@ import {
 	CLIENT_PRIVATE_KEY_ECDSA_2,
 } from './config.js';
 import {
-	ContractExecuteTransaction,
-	CustomFee,
-	TokenFeeScheduleUpdateTransaction,
-	Transaction,
-	ContractId as HContractId,
-	TokenWipeTransaction,
-	TokenPauseTransaction,
-	TokenUnpauseTransaction,
-	TokenFreezeTransaction,
-	TokenUnfreezeTransaction,
-	TokenGrantKycTransaction,
-	TokenRevokeKycTransaction,
-} from '@hashgraph/sdk';
-import { TransactionType } from '../src/port/out/TransactionResponseEnums.js';
-import TransactionResponse from '../src/domain/context/transaction/TransactionResponse.js';
-import Account from '../src/domain/context/account/Account.js';
-import TransactionResultViewModel from '../src/port/out/mirror/response/TransactionResultViewModel.js';
+	AccountViewModel,
+	BigDecimal,
+	ContractId,
+	EvmAddress,
+	HBAR_DECIMALS,
+	HederaId,
+	InitializationData,
+	PublicKey,
+	RequestCustomFee,
+	StableCoinListViewModel,
+	StableCoinRole,
+	StableCoinViewModel,
+	TokenSupplyType,
+} from '../src/index.js';
+import {
+	CREATE_SC_GAS,
+	TOKEN_CREATION_COST_HBAR,
+} from '../src/core/Constants.js';
+import LogService from '../src/app/service/LogService.js';
 import {
 	AccountTokenRelationViewModel,
 	FreezeStatus,
 	KycStatus,
 } from '../src/port/out/mirror/response/AccountTokenRelationViewModel.js';
 import ContractViewModel from '../src/port/out/mirror/response/ContractViewModel.js';
+import { TransactionType } from '../src/port/out/TransactionResponseEnums.js';
+import { MirrorNodeAdapter } from '../src/port/out/mirror/MirrorNodeAdapter.js';
+import TransactionResultViewModel from '../src/port/out/mirror/response/TransactionResultViewModel.js';
+import TransactionResponse from '../src/domain/context/transaction/TransactionResponse.js';
+import MultiKey from '../src/domain/context/account/MultiKey.js';
+import Account from '../src/domain/context/account/Account.js';
 import Injectable from '../src/core/Injectable.js';
 import { Environment } from '../src/domain/context/network/Environment.js';
 import { MultiSigTransaction } from '../src/domain/context/transaction/MultiSigTransaction.js';
-import { BigNumber, ethers } from 'ethers';
-import { MirrorNodeAdapter } from '../src/port/out/mirror/MirrorNodeAdapter.js';
 import { StableCoinProps } from '../src/domain/context/stablecoin/StableCoin.js';
 import { FactoryCashinRole } from '../src/domain/context/factory/FactoryCashinRole.js';
 import { FactoryKey } from '../src/domain/context/factory/FactoryKey.js';
 import { FactoryRole } from '../src/domain/context/factory/FactoryRole.js';
 import { FactoryStableCoin } from '../src/domain/context/factory/FactoryStableCoin.js';
-import {
-	CREATE_SC_GAS,
-	TOKEN_CREATION_COST_HBAR,
-} from '../src/core/Constants.js';
-import { StableCoinFactory__factory } from '@hashgraph/stablecoin-npm-contracts';
-import {
-	IStrategyConfig,
-	SignatureRequest,
-} from '@hashgraph/hedera-custodians-integration';
 
 interface token {
 	tokenId: string;
@@ -615,6 +616,8 @@ function signAndSendTransaction(
 //* Mock console.log() and console.info() methods
 global.console.log = jest.fn();
 global.console.info = jest.fn();
+LogService.log = jest.fn();
+LogService.logInfo = jest.fn();
 //* Mock isWeb() method
 Injectable.isWeb = jest.fn(() => true);
 
