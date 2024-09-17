@@ -30,7 +30,7 @@ jobs:
       - name: Setup NodeJS Environment
         uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
         with:
-          node-version: 18.x
+          node-version: 20.x
 
       - name: Cache npm dependencies
         uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
@@ -115,11 +115,11 @@ jobs:
           echo "TESTNET_HEDERA_NON_OPERATOR_ACCOUNT=0.0.$(echo $API_RESPONSE | jq -r '.accounts[1].accountNum')" >> .env
         working-directory: contracts
 
-      # - name: Test Contracts
-      #   run: |
-      #     npm run test:parallel
-      #     npm run cleanCache
-      #   working-directory: contracts
+      - name: Test Contracts
+        run: |
+          npm run test:parallel
+          npm run cleanCache
+        working-directory: contracts
 
       - name: Test sdk
         run: |
@@ -127,17 +127,17 @@ jobs:
           npm run cleanCache
         working-directory: sdk
 
-      # - name: Test backend
-      #   run: |
-      #     npm run test
-      #     npm run cleanCache
-      #   working-directory: backend
+      - name: Test backend
+        run: |
+          npm run test:ci
+          npm run cleanCache
+        working-directory: backend
 
-      # - name: Test cli
-      #   run: |
-      #     npm run test:ci
-      #     npm run cleanCache
-      #   working-directory: cli
+      - name: Test cli
+        run: |
+          npm run test:ci
+          npm run cleanCache
+        working-directory: cli
 
       - name: Test web
         run: |
