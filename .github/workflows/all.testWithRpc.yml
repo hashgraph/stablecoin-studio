@@ -9,12 +9,17 @@ jobs:
     runs-on: token-studio-linux-medium
     env:
       NODE_OPTIONS: "--max-old-space-size=32768"
-      SDK_CPP_MEM_LIMIT: "5368709120"  # 5GB
+      SDK_CPP_MEM_LIMIT: "5368709120" # 5GB
       AGENT_MEM_LIMIT: "1073741824" # 1GB
     permissions:
       contents: read
 
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@f086349bfa2bd1361f7909c78558e816508cdc10 # v2.8.0
+        with:
+          egress-policy: audit
+
       - name: Checkout repository
         uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
 
@@ -25,7 +30,7 @@ jobs:
       - name: Setup NodeJS Environment
         uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
         with:
-          node-version: 18.x
+          node-version: 20.x
 
       - name: Cache npm dependencies
         uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
@@ -53,7 +58,7 @@ jobs:
           npm run build
         working-directory: sdk
 
-      - name: Install dependencies Cli
+      - name: Install dependencies CLI
         run: |
           npm ci
           npm run build
@@ -118,13 +123,13 @@ jobs:
 
       - name: Test sdk
         run: |
-          npm run test
+          npm run test:ci
           npm run cleanCache
         working-directory: sdk
 
       - name: Test backend
         run: |
-          npm run test
+          npm run test:ci
           npm run cleanCache
         working-directory: backend
 
@@ -136,7 +141,7 @@ jobs:
 
       - name: Test web
         run: |
-          npm run test
+          npm run test:ci
           npm run cleanCache
         working-directory: web
 
