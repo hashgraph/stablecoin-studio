@@ -56,6 +56,7 @@ import {
 import { MirrorNode } from '../../../domain/context/network/MirrorNode.js';
 import ContractViewModel from '../../out/mirror/response/ContractViewModel.js';
 import MultiKey from '../../../domain/context/account/MultiKey.js';
+import { Time } from '../../../core/Time.js';
 
 const PROTOBUF_ENCODED = 'ProtobufEncoded';
 
@@ -611,67 +612,78 @@ export class MirrorNodeAdapter {
 		}
 	}
 
-	public async getConsensusTimestamp(
+	public async getContractResults(
 		transactionId: string,
-	): Promise<string | null> {
-		if (transactionId.match(REGEX_TRANSACTION))
+		numberOfResultItems: number,
+		timeout = 15,
+		requestInterval = 2,
+	): Promise<string[] | null> {
+		if (transactionId.match(REGEX_TRANSACTION)) {
 			transactionId = transactionId
 				.replace('@', '-')
 				.replace(/.([^.]*)$/, '-$1');
-
-		const url = `${this.mirrorNodeConfig.baseUrl}transactions/${transactionId}`;
-		try {
-			const response = await this.instance.get(url);
-			const transactions = response.data.transactions;
-
-			if (!transactions || transactions.length === 0) return null;
-
-			return transactions[0]?.consensus_timestamp ?? null;
-		} catch (error) {
-			LogService.logError(error);
-			return Promise.reject<string>(new InvalidResponse(error));
 		}
-	}
+		const url = `${this.mirrorNodeConfig.baseUrl}contracts/results/${transactionId}`;
+		let call_OK = false;
+		const results: string[] = [];
 
-	public async getContractLogData(
-		contractId: string,
-		consensusTimestamp: string,
-	): Promise<string[] | null> {
-		const url = `${this.mirrorNodeConfig.baseUrl}contracts/${contractId}/results/logs?timestamp=${consensusTimestamp}`;
-		try {
-			const res = await this.instance.get(url);
+		do {
+			await Time.delay(requestInterval, 'seconds');
+			timeout = timeout - requestInterval;
+			this.instance
+				.get(url)
+				.then((response) => {
+					if (
+						response &&
+						response.status === 200 &&
+						response.data.call_result &&
+						response.data.call_result.length > 2
+					) {
+						try {
+							call_OK = true;
 
-			if (res.data.logs && res.data.logs.length > 0) {
-				const log = res.data.logs[0];
-				const data = log.data;
+							const data = response.data.call_result;
 
-				if (
-					data &&
-					data.startsWith('0x') &&
-					data.length >=
-						2 + TOPICS_IN_FACTORY_RESULT * BYTES_32_LENGTH
-				) {
-					// 2 for "0x" and TOPICS_IN_FACTORY_RESULT * bytes32Length chars (32 bytes each)
-					const addresses: string[] = [];
+							if (numberOfResultItems == 0) {
+								numberOfResultItems =
+									(data.length - 2) / BYTES_32_LENGTH;
+							}
 
-					for (let i = 0; i < TOPICS_IN_FACTORY_RESULT; i++) {
-						const start =
-							2 +
-							i * BYTES_32_LENGTH +
-							(BYTES_32_LENGTH - ADDRESS_LENGTH);
-						const end = start + ADDRESS_LENGTH;
-						const address = `0x${data.slice(start, end)}`;
-						addresses.push(address);
+							if (
+								data &&
+								data.startsWith('0x') &&
+								data.length >=
+									2 + numberOfResultItems * BYTES_32_LENGTH
+							) {
+								for (let i = 0; i < numberOfResultItems; i++) {
+									const start = 2 + i * BYTES_32_LENGTH;
+									const end = start + BYTES_32_LENGTH;
+									const result = `0x${data.slice(
+										start,
+										end,
+									)}`;
+									results.push(result);
+								}
+								return results;
+							}
+
+							return null;
+						} catch (error) {
+							LogService.logError(error);
+							return Promise.reject<string[]>(
+								new InvalidResponse(error),
+							);
+						}
 					}
+				})
+				.catch((error) => {
+					LogService.logError(
+						`Error getting contracts result for transaction ${transactionId}: ${error}`,
+					);
+				});
+		} while (timeout > 0 && !call_OK);
 
-					return addresses;
-				}
-			}
-			return null;
-		} catch (error) {
-			LogService.logError(error);
-			return Promise.reject<string[]>(new InvalidResponse(error));
-		}
+		return results;
 	}
 }
 
