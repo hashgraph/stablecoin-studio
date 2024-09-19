@@ -36,6 +36,8 @@ import { RPCQueryAdapter } from '../../../../../port/out/rpc/RPCQueryAdapter.js'
 import BigDecimal from '../../../../../domain/context/shared/BigDecimal.js';
 import EvmAddress from '../../../../../domain/context/contract/EvmAddress.js';
 import {
+	ADDRESS_LENGTH,
+	BYTES_32_LENGTH,
 	EVM_ZERO_ADDRESS,
 	TOPICS_IN_FACTORY_RESULT,
 } from '../../../../../core/Constants';
@@ -146,17 +148,21 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 		await new Promise((resolve) => setTimeout(resolve, 5000));
 
 		try {
-			const consensusTimestamp =
-				await this.mirrorNodeAdapter.getConsensusTimestamp(
-					res.id.toString(),
-				);
-			if (!consensusTimestamp) {
-				throw new Error('Consensus timestamp not found');
+			const results = await this.mirrorNodeAdapter.getContractResults(
+				res.id.toString(),
+				TOPICS_IN_FACTORY_RESULT,
+			);
+
+			console.log(`Creation event data:${JSON.stringify(results)}`); //! Remove this line
+
+			if (!results || results.length !== TOPICS_IN_FACTORY_RESULT) {
+				throw new Error('Invalid data structure');
 			}
 
-			const data = await this.mirrorNodeAdapter.getContractLogData(
-				factory.toString(),
-				consensusTimestamp,
+			const data = results.map(
+				(result) =>
+					'0x' +
+					result.substring(BYTES_32_LENGTH - ADDRESS_LENGTH + 2),
 			);
 
 			console.log(data);
