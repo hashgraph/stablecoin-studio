@@ -255,7 +255,7 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 			publicKey: accountMirror.publicKey,
 			evmAddress: accountMirror.accountEvmAddress,
 		});
-		this.network = this.networkService.environment;
+		this.network = currentNetwork;
 		LogService.logInfo(
 			`✅ Hedera WalletConnect paired with account: ${accountId}`,
 		);
@@ -267,16 +267,32 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 				topic: '',
 			},
 			network: {
-				name: this.networkService.environment,
+				name: this.network,
 				recognized: true,
-				factoryId: this.networkService.configuration
-					? this.networkService.configuration.factoryAddress
-					: '',
+				factoryId:
+					this.networkService.configuration?.factoryAddress || '',
 			},
 		};
 		this.eventService.emit(WalletEvents.walletPaired, eventData);
+		// Subscribe to HWC events
+		this.subscribe();
+		return this.network;
+	}
 
-		return currentNetwork;
+	public subscribe(): void {
+		if (!this.dAppConnector) {
+			LogService.logError(
+				`❌ Hedera WalletConnect not initialized. Cannot subscribe to events`,
+			);
+			return;
+		}
+		// Handle session deletions
+		this.dAppConnector.walletConnectClient!.on(
+			'session_delete',
+			async (event) => {
+				await this.stop();
+			},
+		);
 	}
 
 	/**

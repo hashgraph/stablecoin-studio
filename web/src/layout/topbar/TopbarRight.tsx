@@ -10,7 +10,6 @@ import {
 	SELECTED_RPC_LS,
 	SELECTED_WALLET_PAIRED,
 } from '../../store/slices/walletSlice';
-import HEDERA_LOGO from '../../assets/png/hashpackLogo.png';
 import METAMASK_LOGO from '../../assets/svg/MetaMask_Fox.svg';
 import BLADE_LOGO from '../../assets/png/bladeLogo.png';
 import MULTISIG_LOGO from '../../assets/png/multisigLogo.png';
@@ -20,6 +19,7 @@ import { SupportedWallets } from '@hashgraph/stablecoin-npm-sdk';
 import { Question } from 'phosphor-react';
 import { type ReactElement } from 'react';
 import { cleanLocalStorage } from '../../utils/cleanStorage';
+import SDKService from '../../services/SDKService';
 
 const TopbarRight = () => {
 	const initData = useSelector(SELECTED_WALLET_PAIRED);
@@ -27,6 +27,7 @@ const TopbarRight = () => {
 	const network = useSelector(SELECTED_NETWORK);
 
 	const handleDisconnect = async () => {
+		await SDKService.disconnectWallet();
 		window.location.reload();
 		cleanLocalStorage([MIRROR_LIST_LS, SELECTED_MIRROR_LS, RPC_LIST_LS, SELECTED_RPC_LS]);
 	};
