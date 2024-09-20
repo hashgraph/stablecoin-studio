@@ -56,6 +56,7 @@ export type HWCRequestSettings = {
 	dappName: string;
 	dappDescription: string;
 	dappURL: string;
+	dappIcons: string[];
 };
 
 export interface AWSKMSConfigRequest {

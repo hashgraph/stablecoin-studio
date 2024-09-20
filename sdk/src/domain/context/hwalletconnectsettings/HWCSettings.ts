@@ -24,5 +24,6 @@ export default class HWCSettings {
 		public dappName: string,
 		public dappDescription: string,
 		public dappURL: string,
+		public dappIcons: string[],
 	) {}
 }

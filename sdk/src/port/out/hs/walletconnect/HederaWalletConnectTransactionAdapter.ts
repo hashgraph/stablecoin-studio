@@ -168,7 +168,7 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 			name: hWCSettings.dappName ?? '',
 			description: hWCSettings.dappDescription ?? '',
 			url: hWCSettings.dappURL ?? '',
-			icons: [],
+			icons: hWCSettings.dappIcons,
 		};
 
 		await this.connectWalletConnect();

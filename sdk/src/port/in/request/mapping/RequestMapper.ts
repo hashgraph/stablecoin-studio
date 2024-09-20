@@ -242,6 +242,7 @@ export default class RequestMapper {
 			req.dappName,
 			req.dappDescription,
 			req.dappURL,
+			req.dappIcons,
 		);
 	}
 }
