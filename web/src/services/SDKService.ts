@@ -152,7 +152,6 @@ export class SDKService {
 				console.error('Invalid JSON in REACT_APP_DAPP_ICONS:', error);
 			}
 
-			console.log('dappIcons', dappIcons);
 			if (projectId) {
 				hwcSettings = {
 					projectId,
