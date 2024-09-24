@@ -31,6 +31,7 @@ import type {
 	GetTransactionsRequest,
 	GrantMultiRolesRequest,
 	HasRoleRequest,
+	HWCRequestSettings,
 	IncreaseSupplierAllowanceRequest,
 	InitializationData,
 	KYCRequest,
@@ -135,13 +136,21 @@ export class SDKService {
 			}
 		}
 
-		let hwcSettings;
+		let hwcSettings: HWCRequestSettings | undefined;
 
 		if (wallet === SupportedWallets.HWALLETCONNECT) {
 			const projectId = process.env.REACT_APP_PROJECT_ID ?? '';
 			const dappName = process.env.REACT_APP_DAPP_NAME ?? '';
 			const dappDescription = process.env.REACT_APP_DAPP_DESCRIPTION ?? '';
-			const dappURL = process.env.REACT_APP_DAPP_URL ?? '';
+			const dappURL = process.env.REACT_APP_DAPP_URLs ?? '';
+			let dappIcons = [];
+			try {
+				dappIcons = process.env.REACT_APP_DAPP_ICONS
+					? JSON.parse(process.env.REACT_APP_DAPP_ICONS)
+					: [];
+			} catch (error) {
+				console.error('Invalid JSON in REACT_APP_DAPP_ICONS:', error);
+			}
 
 			if (projectId) {
 				hwcSettings = {
@@ -149,6 +158,7 @@ export class SDKService {
 					dappName,
 					dappDescription,
 					dappURL,
+					dappIcons,
 				};
 			}
 		}
