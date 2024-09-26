@@ -616,7 +616,7 @@ export class MirrorNodeAdapter {
 		transactionId: string,
 		numberOfResultItems: number,
 		timeout = 30,
-		requestInterval = 4,
+		requestInterval = 3,
 	): Promise<string[] | null> {
 		if (transactionId.match(REGEX_TRANSACTION)) {
 			transactionId = transactionId
@@ -628,7 +628,6 @@ export class MirrorNodeAdapter {
 		const results: string[] = [];
 
 		do {
-			await Time.delay(requestInterval, 'seconds');
 			timeout = timeout - requestInterval;
 			this.instance
 				.get(url)
@@ -681,6 +680,7 @@ export class MirrorNodeAdapter {
 						`Error getting contracts result for transaction ${transactionId}: ${error}`,
 					);
 				});
+			await Time.delay(requestInterval, 'seconds');
 		} while (timeout > 0 && !call_OK);
 
 		return results;
