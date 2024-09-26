@@ -615,8 +615,8 @@ export class MirrorNodeAdapter {
 	public async getContractResults(
 		transactionId: string,
 		numberOfResultItems: number,
-		timeout = 15,
-		requestInterval = 2,
+		timeout = 30,
+		requestInterval = 4,
 	): Promise<string[] | null> {
 		if (transactionId.match(REGEX_TRANSACTION)) {
 			transactionId = transactionId
