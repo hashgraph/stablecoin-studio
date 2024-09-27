@@ -32,12 +32,7 @@ import PublicKey from '../../../domain/context/account/PublicKey.js';
 import { StableCoinMemo } from '../../../domain/context/stablecoin/StableCoinMemo.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
 import { MAX_PERCENTAGE_DECIMALS } from '../../../domain/context/fee/CustomFee.js';
-import {
-	ADDRESS_LENGTH,
-	BYTES_32_LENGTH,
-	HBAR_DECIMALS,
-	TOPICS_IN_FACTORY_RESULT,
-} from '../../../core/Constants.js';
+import { BYTES_32_LENGTH, HBAR_DECIMALS } from '../../../core/Constants.js';
 import { InvalidResponse } from './error/InvalidResponse.js';
 import { HederaId } from '../../../domain/context/shared/HederaId.js';
 import { KeyType } from '../../../domain/context/account/KeyProps.js';

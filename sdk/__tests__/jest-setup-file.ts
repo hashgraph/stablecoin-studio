@@ -105,6 +105,7 @@ import { FactoryCashinRole } from '../src/domain/context/factory/FactoryCashinRo
 import { FactoryKey } from '../src/domain/context/factory/FactoryKey.js';
 import { FactoryRole } from '../src/domain/context/factory/FactoryRole.js';
 import { FactoryStableCoin } from '../src/domain/context/factory/FactoryStableCoin.js';
+import { REGEX_TRANSACTION } from '../src/port/out/error/TransactionResponseError.js';
 
 interface token {
 	tokenId: string;
@@ -782,6 +783,72 @@ jest.mock('../src/port/out/mirror/MirrorNodeAdapter', () => {
 			const balance = HBAR_balances.get(identifiers(accountId)[1]);
 			if (balance) return BigDecimal.fromString(balance, HBAR_DECIMALS);
 			return BigDecimal.fromString('0', HBAR_DECIMALS);
+		},
+	);
+
+	MirrorNodeAdapterMock.getContractResults = jest.fn(
+		async (
+			transactionId: string,
+			numberOfResultItems: number,
+			timeout = 30,
+			requestInterval = 3,
+		) => {
+			// Simulate transactionId formatting
+			if (transactionId.match(REGEX_TRANSACTION)) {
+				transactionId = transactionId
+					.replace('@', '-')
+					.replace(/.([^.]*)$/, '-$1');
+			}
+
+			// Mock the behavior of retries and timeout
+			let call_OK = false;
+			const results: string[] = [];
+			const BYTES_32_LENGTH = 64; // Assuming 64 for the byte length
+
+			const mockResponseData = '0x'.padEnd(
+				2 + numberOfResultItems * BYTES_32_LENGTH,
+				'1',
+			); // Mock response with data
+
+			do {
+				timeout -= requestInterval;
+
+				if (mockResponseData && mockResponseData.length > 2) {
+					try {
+						call_OK = true;
+
+						if (numberOfResultItems == 0) {
+							numberOfResultItems =
+								(mockResponseData.length - 2) / BYTES_32_LENGTH;
+						}
+
+						if (
+							mockResponseData.startsWith('0x') &&
+							mockResponseData.length >=
+								2 + numberOfResultItems * BYTES_32_LENGTH
+						) {
+							for (let i = 0; i < numberOfResultItems; i++) {
+								const start = 2 + i * BYTES_32_LENGTH;
+								const end = start + BYTES_32_LENGTH;
+								const result = `0x${mockResponseData.slice(
+									start,
+									end,
+								)}`;
+								results.push(result);
+							}
+							return results;
+						}
+
+						return null;
+					} catch (error) {
+						return Promise.reject(new Error('InvalidResponse'));
+					}
+				}
+
+				await new Promise((r) => setTimeout(r, requestInterval * 1000)); // Simulate async delay
+			} while (timeout > 0 && !call_OK);
+
+			return results;
 		},
 	);
 
