@@ -1,0 +1,51 @@
+name: Test Contracts
+
+on:
+  pull_request:
+    paths:
+      - "contracts/**"
+  push:
+    branches: [main]
+    paths:
+      - "contracts/**"
+  env:
+    NODE_VERSION: "20.17.0" # Defaults to the latest LTS version
+
+jobs:
+  build-contracts:
+    uses: ./.github/workflows/build/build-contracts.yaml
+    with:
+      node-version: ${{ env.NODE_VERSION }}
+
+  test-contracts:
+    needs: build-contracts
+    runs-on: token-studio-linux-medium
+    container:
+      image: node:${{ env.NODE_VERSION }}-alpine3.20 # Using alpine for a smaller image
+    steps:
+      - name: Install jq
+        run: |
+          apk add jq
+        if: runner.os == 'linux'
+
+      - name: Create .env file
+        run: |
+          touch .env
+          # Making API call to fetch secrets
+          API_RESPONSE=$(curl -s -H "Authorization: Bearer ${{ secrets.API_ACCESS_TOKEN_1 }}" -H "User-Agent: AppName/1.2.3" https://portal.hedera.com/api/account)
+          # Assuming the API response is JSON and contains secrets like CLIENT_PRIVATE_KEY
+          echo "TESTNET_HEDERA_OPERATOR_PRIVATEKEY=$(echo $API_RESPONSE | jq -r '.accounts[0].privateKey')" >> .env
+          echo "TESTNET_HEDERA_OPERATOR_PUBLICKEY=$(echo $API_RESPONSE | jq -r '.accounts[0].publicKey')" >> .env
+          echo "TESTNET_HEDERA_OPERATOR_ED25519='true'" >> .env
+          echo "TESTNET_HEDERA_OPERATOR_ACCOUNT=0.0.$(echo $API_RESPONSE | jq -r '.accounts[0].accountNum')" >> .env
+          echo "TESTNET_HEDERA_NON_OPERATOR_PRIVATEKEY=$(echo $API_RESPONSE | jq -r '.accounts[1].privateKey')" >> .env
+          echo "TESTNET_HEDERA_NON_OPERATOR_PUBLICKEY=$(echo $API_RESPONSE | jq -r '.accounts[1].publicKey')" >> .env
+          echo "TESTNET_HEDERA_NON_OPERATOR_ED25519='false'" >> .env
+          echo "TESTNET_HEDERA_NON_OPERATOR_ACCOUNT=0.0.$(echo $API_RESPONSE | jq -r '.accounts[1].accountNum')" >> .env
+        working-directory: contracts
+
+      - name: Run
+        run: |
+          npm run test:parallel
+          npm run cleanCache
+        working-directory: contracts

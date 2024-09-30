@@ -1,0 +1,29 @@
+name: Build Contracts
+
+on:
+  workflow_call: # Reusable workflow
+    inputs:
+      node-version:
+        required: true
+        type: string
+        default: "20.x"
+
+jobs:
+  build-contracts:
+    runs-on: token-studio-linux-medium
+    container:
+      image: node:${{ inputs.node-version }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4.0.3
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Install and Build Contracts
+        run: |
+          npm ci
+          npm run compile:force
+        working-directory: contracts

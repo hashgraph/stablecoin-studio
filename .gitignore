@@ -20,7 +20,7 @@ npm-debug.log*
 coverage/
 
 # Transpiled files
-build/
+./build/
 
 # IDE configurations
 .vscode/

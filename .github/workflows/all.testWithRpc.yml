@@ -1,8 +1,8 @@
 name: Testing
 on:
-  pull_request:
+  # pull_request:
   push:
-    branches: [main]
+    branches: [disabled]
 jobs:
   test-node:
     name: testing
