@@ -613,11 +613,11 @@ export class MirrorNodeAdapter {
 		timeout = 30,
 		requestInterval = 3,
 	): Promise<string[] | null> {
-		if (transactionId.match(REGEX_TRANSACTION)) {
-			transactionId = transactionId
-				.replace('@', '-')
-				.replace(/.([^.]*)$/, '-$1');
-		}
+		// if (transactionId.match(REGEX_TRANSACTION)) {
+		transactionId = transactionId
+			.replace('@', '-')
+			.replace(/.([^.]*)$/, '-$1');
+		// }
 		const url = `${this.mirrorNodeConfig.baseUrl}contracts/results/${transactionId}`;
 		let call_OK = false;
 		const results: string[] = [];
@@ -673,6 +673,7 @@ export class MirrorNodeAdapter {
 				.catch((error) => {
 					LogService.logError(
 						`Error getting contracts result for transaction ${transactionId}: ${error}`,
+						`Final URL: ${url}`,
 					);
 				});
 			await Time.delay(requestInterval, 'seconds');
