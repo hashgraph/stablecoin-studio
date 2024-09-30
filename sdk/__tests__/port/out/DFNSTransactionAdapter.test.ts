@@ -48,15 +48,12 @@ import {
 	RPC_NODE,
 } from '../../config';
 import Injectable from '../../../src/core/Injectable';
+import { Time } from '../../../src/core/Time';
 
 const initialSupply = 1000;
 
 describe('🧪 DFNSTransactionAdapter test', () => {
 	let stableCoinHTS: StableCoinViewModel;
-	const delay = async (seconds = 5): Promise<void> => {
-		seconds = seconds * 1000;
-		await new Promise((r) => setTimeout(r, seconds));
-	};
 
 	const mirrorNode: MirrorNode = {
 		name: MIRROR_NODE.name,
@@ -130,7 +127,7 @@ describe('🧪 DFNSTransactionAdapter test', () => {
 
 		stableCoinHTS = (await StableCoin.create(requestCreateStableCoin)).coin;
 
-		await delay();
+		await Time.delay(5, 'seconds');
 	}, 60_000);
 
 	it('DFNS should create a Stable Coin', async () => {

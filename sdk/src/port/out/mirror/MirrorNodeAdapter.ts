@@ -32,12 +32,7 @@ import PublicKey from '../../../domain/context/account/PublicKey.js';
 import { StableCoinMemo } from '../../../domain/context/stablecoin/StableCoinMemo.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
 import { MAX_PERCENTAGE_DECIMALS } from '../../../domain/context/fee/CustomFee.js';
-import {
-	ADDRESS_LENGTH,
-	BYTES_32_LENGTH,
-	HBAR_DECIMALS,
-	TOPICS_IN_FACTORY_RESULT,
-} from '../../../core/Constants.js';
+import { BYTES_32_LENGTH, HBAR_DECIMALS } from '../../../core/Constants.js';
 import { InvalidResponse } from './error/InvalidResponse.js';
 import { HederaId } from '../../../domain/context/shared/HederaId.js';
 import { KeyType } from '../../../domain/context/account/KeyProps.js';
@@ -615,20 +610,19 @@ export class MirrorNodeAdapter {
 	public async getContractResults(
 		transactionId: string,
 		numberOfResultItems: number,
-		timeout = 15,
-		requestInterval = 2,
+		timeout = 30,
+		requestInterval = 3,
 	): Promise<string[] | null> {
-		if (transactionId.match(REGEX_TRANSACTION)) {
-			transactionId = transactionId
-				.replace('@', '-')
-				.replace(/.([^.]*)$/, '-$1');
-		}
+		// if (transactionId.match(REGEX_TRANSACTION)) {
+		transactionId = transactionId
+			.replace('@', '-')
+			.replace(/.([^.]*)$/, '-$1');
+		// }
 		const url = `${this.mirrorNodeConfig.baseUrl}contracts/results/${transactionId}`;
 		let call_OK = false;
 		const results: string[] = [];
 
 		do {
-			await Time.delay(requestInterval, 'seconds');
 			timeout = timeout - requestInterval;
 			this.instance
 				.get(url)
@@ -679,8 +673,10 @@ export class MirrorNodeAdapter {
 				.catch((error) => {
 					LogService.logError(
 						`Error getting contracts result for transaction ${transactionId}: ${error}`,
+						`Final URL: ${url}`,
 					);
 				});
+			await Time.delay(requestInterval, 'seconds');
 		} while (timeout > 0 && !call_OK);
 
 		return results;

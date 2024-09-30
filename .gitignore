@@ -40,6 +40,7 @@ build
 sdk/hedera-sc-sdk.code-workspace
 cli/hsca-config.yaml
 .env
+.secrets
 contracts/docs/
 contracts/cache/*
 contracts/typechain-types/
