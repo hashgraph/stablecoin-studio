@@ -83,12 +83,6 @@ jobs:
         run: npm ci
         working-directory: web
 
-      - name: Install jq
-        run: |
-          apt-get update
-          apt-get install -y jq
-        if: runner.os == 'linux'
-
       - name: Create file
         run: |
           touch .env
@@ -136,11 +130,11 @@ jobs:
           echo "TESTNET_HEDERA_NON_OPERATOR_ACCOUNT=0.0.$(echo $API_RESPONSE | jq -r '.accounts[1].accountNum')" >> .env
         working-directory: contracts
 
-      # - name: Test Contracts
-      #   run: |
-      #     npm run test:parallel
-      #     npm run cleanCache
-      #   working-directory: contracts
+      - name: Test Contracts
+        run: |
+          npm run test:parallel
+          npm run cleanCache
+        working-directory: contracts
 
       - name: Test sdk
         run: |

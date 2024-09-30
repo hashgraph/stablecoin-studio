@@ -794,11 +794,9 @@ jest.mock('../src/port/out/mirror/MirrorNodeAdapter', () => {
 			requestInterval = 3,
 		) => {
 			// Simulate transactionId formatting
-			if (transactionId.match(REGEX_TRANSACTION)) {
-				transactionId = transactionId
-					.replace('@', '-')
-					.replace(/.([^.]*)$/, '-$1');
-			}
+			transactionId = transactionId
+				.replace('@', '-')
+				.replace(/.([^.]*)$/, '-$1');
 
 			// Mock the behavior of retries and timeout
 			let call_OK = false;

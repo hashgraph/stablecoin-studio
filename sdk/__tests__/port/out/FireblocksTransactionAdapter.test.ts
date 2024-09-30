@@ -124,7 +124,7 @@ describe('🧪 FireblocksTransactionAdapter test', () => {
 		});
 
 		stableCoinHTS = (await StableCoin.create(requesCreateStableCoin)).coin;
-		await Time.delay(10, 'seconds');
+		await Time.delay(5, 'seconds');
 	}, 80_000);
 
 	it('Fireblocks should create a Stable Coin', async () => {
