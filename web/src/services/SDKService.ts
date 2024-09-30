@@ -31,6 +31,7 @@ import type {
 	GetTransactionsRequest,
 	GrantMultiRolesRequest,
 	HasRoleRequest,
+	HWCRequestSettings,
 	IncreaseSupplierAllowanceRequest,
 	InitializationData,
 	KYCRequest,
@@ -45,7 +46,6 @@ import type {
 	StableCoinCapabilities,
 	StableCoinListViewModel,
 	StableCoinViewModel,
-	SupportedWallets,
 	UpdateCustomFeesRequest,
 	UpdateRequest,
 	UpdateReserveAddressRequest,
@@ -72,6 +72,7 @@ import {
 	SignTransactionRequest,
 	StableCoin,
 	SubmitTransactionRequest,
+	SupportedWallets,
 } from '@hashgraph/stablecoin-npm-sdk';
 import { type IMirrorRPCNode } from '../interfaces/IMirrorRPCNode';
 import type { IConsensusNodes } from '../interfaces/IConsensusNodes';
@@ -135,6 +136,33 @@ export class SDKService {
 			}
 		}
 
+		let hwcSettings: HWCRequestSettings | undefined;
+
+		if (wallet === SupportedWallets.HWALLETCONNECT) {
+			const projectId = process.env.REACT_APP_PROJECT_ID ?? '';
+			const dappName = process.env.REACT_APP_DAPP_NAME ?? '';
+			const dappDescription = process.env.REACT_APP_DAPP_DESCRIPTION ?? '';
+			const dappURL = process.env.REACT_APP_DAPP_URLs ?? '';
+			let dappIcons = [];
+			try {
+				dappIcons = process.env.REACT_APP_DAPP_ICONS
+					? JSON.parse(process.env.REACT_APP_DAPP_ICONS)
+					: [];
+			} catch (error) {
+				console.error('Invalid JSON in REACT_APP_DAPP_ICONS:', error);
+			}
+
+			if (projectId) {
+				hwcSettings = {
+					projectId,
+					dappName,
+					dappDescription,
+					dappURL,
+					dappIcons,
+				};
+			}
+		}
+
 		this.initData = await Network.connect(
 			new ConnectRequest({
 				account: hederaAccount ? { accountId: hederaAccount } : undefined,
@@ -143,6 +171,7 @@ export class SDKService {
 				rpcNode: _rpcNode,
 				wallet,
 				consensusNodes,
+				hwcSettings,
 			}),
 		);
 

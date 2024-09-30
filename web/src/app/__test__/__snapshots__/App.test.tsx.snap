@@ -8,7 +8,7 @@ exports[`<App /> should render correctly 1`] = `
       data-testid="layout"
     >
       <div
-        class="css-1njzpr3"
+        class="css-13rwhlg"
         data-testid="topbar"
       >
         <div

@@ -67,7 +67,7 @@ const Topbar = () => {
 				color='brand.gray2'
 				alignItems='center'
 				position='relative'
-				zIndex='100'
+				zIndex='85'
 			>
 				<Box minW='80px' w='80px' textAlign='center' ml='64px' mr='64px'>
 					<Image data-testid='topbar-logo' src={LOGO_HEDERA} w='40px' h='40px' margin='auto' />

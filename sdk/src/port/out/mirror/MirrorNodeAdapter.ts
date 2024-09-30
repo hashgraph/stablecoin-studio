@@ -18,8 +18,7 @@
  *
  */
 
-import axios, { AxiosRequestConfig } from 'axios';
-import { AxiosInstance } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import { singleton } from 'tsyringe';
 import StableCoinViewModel from '../../out/mirror/response/StableCoinViewModel.js';
 import AccountViewModel from '../../out/mirror/response/AccountViewModel.js';
@@ -33,7 +32,7 @@ import PublicKey from '../../../domain/context/account/PublicKey.js';
 import { StableCoinMemo } from '../../../domain/context/stablecoin/StableCoinMemo.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
 import { MAX_PERCENTAGE_DECIMALS } from '../../../domain/context/fee/CustomFee.js';
-import { HBAR_DECIMALS } from '../../../core/Constants.js';
+import { BYTES_32_LENGTH, HBAR_DECIMALS } from '../../../core/Constants.js';
 import { InvalidResponse } from './error/InvalidResponse.js';
 import { HederaId } from '../../../domain/context/shared/HederaId.js';
 import { KeyType } from '../../../domain/context/account/KeyProps.js';
@@ -52,6 +51,7 @@ import {
 import { MirrorNode } from '../../../domain/context/network/MirrorNode.js';
 import ContractViewModel from '../../out/mirror/response/ContractViewModel.js';
 import MultiKey from '../../../domain/context/account/MultiKey.js';
+import { Time } from '../../../core/Time.js';
 
 const PROTOBUF_ENCODED = 'ProtobufEncoded';
 
@@ -605,6 +605,81 @@ export class MirrorNodeAdapter {
 			LogService.logError(error);
 			return Promise.reject<BigDecimal>(new InvalidResponse(error));
 		}
+	}
+
+	public async getContractResults(
+		transactionId: string,
+		numberOfResultItems: number,
+		timeout = 30,
+		requestInterval = 3,
+	): Promise<string[] | null> {
+		// if (transactionId.match(REGEX_TRANSACTION)) {
+		transactionId = transactionId
+			.replace('@', '-')
+			.replace(/.([^.]*)$/, '-$1');
+		// }
+		const url = `${this.mirrorNodeConfig.baseUrl}contracts/results/${transactionId}`;
+		let call_OK = false;
+		const results: string[] = [];
+
+		do {
+			timeout = timeout - requestInterval;
+			this.instance
+				.get(url)
+				.then((response) => {
+					if (
+						response &&
+						response.status === 200 &&
+						response.data.call_result &&
+						response.data.call_result.length > 2
+					) {
+						try {
+							call_OK = true;
+
+							const data = response.data.call_result;
+
+							if (numberOfResultItems == 0) {
+								numberOfResultItems =
+									(data.length - 2) / BYTES_32_LENGTH;
+							}
+
+							if (
+								data &&
+								data.startsWith('0x') &&
+								data.length >=
+									2 + numberOfResultItems * BYTES_32_LENGTH
+							) {
+								for (let i = 0; i < numberOfResultItems; i++) {
+									const start = 2 + i * BYTES_32_LENGTH;
+									const end = start + BYTES_32_LENGTH;
+									const result = `0x${data.slice(
+										start,
+										end,
+									)}`;
+									results.push(result);
+								}
+								return results;
+							}
+
+							return null;
+						} catch (error) {
+							LogService.logError(error);
+							return Promise.reject<string[]>(
+								new InvalidResponse(error),
+							);
+						}
+					}
+				})
+				.catch((error) => {
+					LogService.logError(
+						`Error getting contracts result for transaction ${transactionId}: ${error}`,
+						`Final URL: ${url}`,
+					);
+				});
+			await Time.delay(requestInterval, 'seconds');
+		} while (timeout > 0 && !call_OK);
+
+		return results;
 	}
 }
 

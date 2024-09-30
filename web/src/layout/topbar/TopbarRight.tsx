@@ -10,15 +10,16 @@ import {
 	SELECTED_RPC_LS,
 	SELECTED_WALLET_PAIRED,
 } from '../../store/slices/walletSlice';
-import HEDERA_LOGO from '../../assets/png/hashpackLogo.png';
 import METAMASK_LOGO from '../../assets/svg/MetaMask_Fox.svg';
 import BLADE_LOGO from '../../assets/png/bladeLogo.png';
 import MULTISIG_LOGO from '../../assets/png/multisigLogo.png';
+import WALLETCONNECT_LOGO from '../../assets/png/WCLogo.png';
 import TooltipCopy from '../../components/TooltipCopy';
 import { SupportedWallets } from '@hashgraph/stablecoin-npm-sdk';
 import { Question } from 'phosphor-react';
 import { type ReactElement } from 'react';
 import { cleanLocalStorage } from '../../utils/cleanStorage';
+import SDKService from '../../services/SDKService';
 
 const TopbarRight = () => {
 	const initData = useSelector(SELECTED_WALLET_PAIRED);
@@ -26,6 +27,7 @@ const TopbarRight = () => {
 	const network = useSelector(SELECTED_NETWORK);
 
 	const handleDisconnect = async () => {
+		await SDKService.disconnectWallet();
 		window.location.reload();
 		cleanLocalStorage([MIRROR_LIST_LS, SELECTED_MIRROR_LS, RPC_LIST_LS, SELECTED_RPC_LS]);
 	};
@@ -35,10 +37,10 @@ const TopbarRight = () => {
 			<Image src={src} alt={selectedWallet} w='25px' h='25px' alignSelf='center' />
 		);
 
-		if (selectedWallet === SupportedWallets.HASHPACK) return img(HEDERA_LOGO);
 		if (selectedWallet === SupportedWallets.METAMASK) return img(METAMASK_LOGO);
 		if (selectedWallet === SupportedWallets.BLADE) return img(BLADE_LOGO);
 		if (selectedWallet === SupportedWallets.MULTISIG) return img(MULTISIG_LOGO);
+		if (selectedWallet === SupportedWallets.HWALLETCONNECT) return img(WALLETCONNECT_LOGO);
 
 		return <Question size={22} color='#fdfdfc' weight='light' />;
 	};

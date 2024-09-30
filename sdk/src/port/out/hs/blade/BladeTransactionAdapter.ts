@@ -61,7 +61,7 @@ import { HederaId } from '../../../../domain/context/shared/HederaId.js';
 import { MirrorNodeAdapter } from '../../mirror/MirrorNodeAdapter.js';
 import { HederaTransactionAdapter } from '../HederaTransactionAdapter.js';
 import { SigningError } from '../error/SigningError.js';
-import { HashpackTransactionResponseAdapter } from '../hashpack/HashpackTransactionResponseAdapter.js';
+import { HederaTransactionResponseAdapter } from '../HederaTransactionResponseAdapter.js';
 import { QueryBus } from '../../../../core/query/QueryBus.js';
 import { AccountIdNotValid } from '../../../../domain/context/account/error/AccountIdNotValid.js';
 import { GetAccountInfoQuery } from '../../../../app/usecase/query/account/info/GetAccountInfoQuery.js';
@@ -219,7 +219,7 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 				signedT = await t.freezeWithSigner(this.signer);
 			}
 			const trx = await this.signer.signTransaction(signedT);
-			let hashPackTransactionResponse;
+			let bladeTransactionResponse;
 			if (
 				t instanceof TokenCreateTransaction ||
 				t instanceof TokenWipeTransaction ||
@@ -236,16 +236,16 @@ export class BladeTransactionAdapter extends HederaTransactionAdapter {
 				t instanceof TokenFeeScheduleUpdateTransaction ||
 				t instanceof TokenAssociateTransaction
 			) {
-				hashPackTransactionResponse = await t.executeWithSigner(
+				bladeTransactionResponse = await t.executeWithSigner(
 					this.signer,
 				);
 			} else {
-				hashPackTransactionResponse = await this.signer.call(trx);
+				bladeTransactionResponse = await this.signer.call(trx);
 			}
-			return HashpackTransactionResponseAdapter.manageResponse(
+			return HederaTransactionResponseAdapter.manageResponse(
 				this.networkService.environment,
 				this.signer,
-				hashPackTransactionResponse,
+				bladeTransactionResponse,
 				transactionType,
 				nameFunction,
 				abi,

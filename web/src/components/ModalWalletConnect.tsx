@@ -27,7 +27,8 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import BLADE_LOGO_PNG from '../assets/png/bladeLogo.png';
 import MULTISIG_LOGO_PNG from '../assets/png/multisigLogo.png';
-import HASHPACK_LOGO_PNG from '../assets/png/hashpackLogo.png';
+// import HASHPACK_LOGO_PNG from '../assets/png/hashpackLogo.png';
+import WALLETCONNECT_LOGO_PNG from '../assets/png/WCLogo.png';
 import METAMASK_LOGO from '../assets/svg/MetaMask_Fox.svg';
 import SDKService from '../services/SDKService';
 import {
@@ -39,7 +40,7 @@ import {
 import WARNING_ICON from '../assets/svg/warning.svg';
 import ERROR_ICON from '../assets/svg/error.svg';
 import { SelectController } from './Form/SelectController';
-import { useForm } from 'react-hook-form';
+import { set, useForm } from 'react-hook-form';
 import type { IMirrorRPCNode } from '../interfaces/IMirrorRPCNode';
 
 const ModalWalletConnect = () => {
@@ -82,6 +83,7 @@ const ModalWalletConnect = () => {
 	const [rejected, setRejected] = useState<boolean>(false);
 	const [hashpackSelected, setHashpackSelected] = useState<boolean>(false);
 	const [bladeSelected, setBladeSelected] = useState<boolean>(false);
+	const [hwcSelected, setHwcSelected] = useState<boolean>(false);
 	const [multiSigSelected, setMultiSigSelected] = useState<boolean>(false);
 	const availableWallets: SupportedWallets[] = useSelector(AVAILABLE_WALLETS);
 	const selectedMirrors: IMirrorRPCNode[] = useSelector(SELECTED_MIRRORS);
@@ -95,6 +97,9 @@ const ModalWalletConnect = () => {
 	});
 	const isMultiSigBackendConfigured =
 		!!process.env.REACT_APP_BACKEND_URL && process.env.REACT_APP_BACKEND_URL.trim() !== '';
+
+	const isHWCProjectID =
+		!!process.env.REACT_APP_PROJECT_ID && process.env.REACT_APP_PROJECT_ID.trim() !== '';
 
 	const handleWalletConnect = async (
 		wallet: SupportedWallets,
@@ -129,7 +134,7 @@ const ModalWalletConnect = () => {
 				);
 				if (listRPCs) rpcNode = listRPCs[0];
 			}
-			console.log('Connecting wallet', wallet, network, mirrorNode, rpcNode, hederaAccountId);
+
 			const result = await SDKService.connectWallet(
 				wallet,
 				network,
@@ -247,6 +252,20 @@ const ModalWalletConnect = () => {
 		setMultiSigSelected(true);
 	};
 
+	const handleConnectHederaWalletConnect = () => {
+		setHwcSelected(true);
+	};
+
+	const unHandleConnectHederaWalletConnect = () => {
+		setHwcSelected(false);
+		setLoading(undefined);
+	};
+
+	const handleConnectHwcConfirmed = () => {
+		const values = getValues();
+		handleWalletConnect(SupportedWallets.HWALLETCONNECT, values.networkHwc.value);
+	};
+
 	const validateAccountId = (accountId: string) => {
 		const regex = /^\d+\.\d+\.\d+$/;
 		return regex.test(accountId);
@@ -312,109 +331,132 @@ const ModalWalletConnect = () => {
 				closeOnEsc={false}
 				closeOnOverlayClick={false}
 			>
-				<ModalOverlay />
+				<ModalOverlay zIndex={88} />
+
 				<ModalContent
 					data-testid='modal-action-content'
 					alignItems='center'
 					justifyContent='center'
 					p='50'
 					maxW='1000px'
+					containerProps={{
+						zIndex: '88',
+					}}
 				>
-					{!error && !rejected && !hashpackSelected && !bladeSelected && !multiSigSelected && (
-						<>
-							<ModalHeader p='0' justifyContent='center'>
-								<Text
-									data-testid='title'
-									fontSize='20px'
-									fontWeight={700}
-									textAlign='center'
-									lineHeight='16px'
-									color='brand.black'
-								>
-									{t('walletActions.selectWallet')}
-								</Text>
-							</ModalHeader>
-							<ModalFooter p='0' justifyContent='center'>
-								<HStack
-									spacing={10}
-									pt={8}
-									w='full'
-									justifyContent={'center'}
-									alignItems={'stretch'}
-								>
-									{availableWallets.includes(SupportedWallets.METAMASK) ? (
-										<VStack
-											data-testid='Metamask'
-											{...styles.providerStyle}
-											shouldWrapChildren
-											onClick={handleConnectMetamaskWallet}
-										>
-											<PairingSpinner wallet={SupportedWallets.METAMASK}>
-												<Image src={METAMASK_LOGO} w={20} />
-												<Text textAlign='center'>Metamask</Text>
-											</PairingSpinner>
-										</VStack>
-									) : (
-										<VStack data-testid='Metamask' {...styles.providerStyle}>
-											<Link
-												href='https://metamask.io/download/'
-												isExternal
-												_hover={{ textDecoration: 'none' }}
-											>
-												<Image src={METAMASK_LOGO} w={20} />
-												<Text textAlign='center'>Metamask</Text>
-											</Link>
-										</VStack>
-									)}
-									{isChrome ? (
-										availableWallets.includes(SupportedWallets.BLADE) ? (
+					{!error &&
+						!rejected &&
+						!hashpackSelected &&
+						!bladeSelected &&
+						!multiSigSelected &&
+						!hwcSelected && (
+							<>
+								<ModalHeader p='0' justifyContent='center'>
+									<Text
+										data-testid='title'
+										fontSize='20px'
+										fontWeight={700}
+										textAlign='center'
+										lineHeight='16px'
+										color='brand.black'
+									>
+										{t('walletActions.selectWallet')}
+									</Text>
+								</ModalHeader>
+								<ModalFooter p='0' justifyContent='center'>
+									<HStack
+										spacing={10}
+										pt={8}
+										w='full'
+										justifyContent={'center'}
+										alignItems={'stretch'}
+									>
+										{availableWallets.includes(SupportedWallets.METAMASK) ? (
 											<VStack
-												data-testid='Blade'
+												data-testid='Metamask'
 												{...styles.providerStyle}
 												shouldWrapChildren
-												onClick={handleConnectBladeWallet}
+												onClick={handleConnectMetamaskWallet}
 											>
-												<PairingSpinner wallet={SupportedWallets.BLADE}>
-													<Image src={BLADE_LOGO_PNG} w={20} />
-													<Text textAlign='center'>Blade</Text>
+												<PairingSpinner wallet={SupportedWallets.METAMASK}>
+													<Image src={METAMASK_LOGO} w={20} />
+													<Text textAlign='center'>Metamask</Text>
 												</PairingSpinner>
 											</VStack>
 										) : (
-											<VStack data-testid='Blade' {...styles.providerStyle}>
+											<VStack data-testid='Metamask' {...styles.providerStyle}>
 												<Link
-													href='https://bladewallet.io/'
+													href='https://metamask.io/download/'
 													isExternal
 													_hover={{ textDecoration: 'none' }}
 												>
-													<Image src={BLADE_LOGO_PNG} w={20} />
-													<Text textAlign='center'>Blade</Text>
+													<Image src={METAMASK_LOGO} w={20} />
+													<Text textAlign='center'>Metamask</Text>
 												</Link>
 											</VStack>
-										)
-									) : (
-										//* Blade is not supported in this browser
-										<></>
-									)}
-									{!availableWallets.includes(SupportedWallets.MULTISIG) &&
-									isMultiSigBackendConfigured ? (
-										<VStack
-											data-testid='Multisig'
-											{...styles.providerStyle}
-											shouldWrapChildren
-											onClick={handleMultiSigMode}
-										>
-											<PairingSpinner wallet={SupportedWallets.MULTISIG}>
-												<Image src={MULTISIG_LOGO_PNG} w={20} />
-												<Text textAlign='center'>Multisig</Text>
-											</PairingSpinner>
-										</VStack>
-									) : (
-										<></>
-									)}
-								</HStack>
-							</ModalFooter>
-						</>
-					)}
+										)}
+										{isChrome ? (
+											availableWallets.includes(SupportedWallets.BLADE) ? (
+												<VStack
+													data-testid='Blade'
+													{...styles.providerStyle}
+													shouldWrapChildren
+													onClick={handleConnectBladeWallet}
+												>
+													<PairingSpinner wallet={SupportedWallets.BLADE}>
+														<Image src={BLADE_LOGO_PNG} w={20} />
+														<Text textAlign='center'>Blade</Text>
+													</PairingSpinner>
+												</VStack>
+											) : (
+												<VStack data-testid='Blade' {...styles.providerStyle}>
+													<Link
+														href='https://bladewallet.io/'
+														isExternal
+														_hover={{ textDecoration: 'none' }}
+													>
+														<Image src={BLADE_LOGO_PNG} w={20} />
+														<Text textAlign='center'>Blade</Text>
+													</Link>
+												</VStack>
+											)
+										) : (
+											//* Blade is not supported in this browser
+											<></>
+										)}
+										{!availableWallets.includes(SupportedWallets.MULTISIG) ? (
+											<VStack
+												data-testid='Multisig'
+												{...styles.providerStyle}
+												shouldWrapChildren
+												onClick={handleMultiSigMode}
+											>
+												<PairingSpinner wallet={SupportedWallets.MULTISIG}>
+													<Image src={MULTISIG_LOGO_PNG} w={20} />
+													<Text textAlign='center'>Multisig</Text>
+												</PairingSpinner>
+											</VStack>
+										) : (
+											<></>
+										)}
+										{isHWCProjectID ? (
+											<VStack
+												data-testid='HederaWalletConnect'
+												{...styles.providerStyle}
+												shouldWrapChildren
+												onClick={handleConnectHederaWalletConnect}
+											>
+												<PairingSpinner wallet={SupportedWallets.HWALLETCONNECT}>
+													<Image src={WALLETCONNECT_LOGO_PNG} w={20} />
+													<Text>Hedera WC</Text>
+												</PairingSpinner>
+											</VStack>
+										) : (
+											<></>
+										)}
+									</HStack>
+								</ModalFooter>
+							</>
+						)}
 					{hashpackSelected && (
 						<>
 							<ModalHeader p='0' justifyContent='center'>
@@ -433,7 +475,7 @@ const ModalWalletConnect = () => {
 									<SelectController
 										control={control}
 										isRequired
-										name='networkHashpack'
+										name='networkBlade'
 										defaultValue='0'
 										options={networkOptions}
 										addonLeft={true}
@@ -442,15 +484,60 @@ const ModalWalletConnect = () => {
 									/>
 									<HStack>
 										<Button
-											data-testid='modal-notification-button-Hashpack'
-											onClick={unHandleConnectHashpackWallet}
+											data-testid='modal-notification-button-Blade'
+											onClick={unHandleConnectBladeWallet}
 											variant='secondary'
 										>
 											{t('common.cancel')}
 										</Button>
 										<Button
-											data-testid='modal-notification-button-Hashpack'
-											onClick={handleConnectHashpackWalletConfirmed}
+											data-testid='modal-notification-button-Blade'
+											onClick={handleConnectBladeWalletConfirmed}
+											variant='primary'
+										>
+											{t('common.accept')}
+										</Button>
+									</HStack>
+								</VStack>
+							</ModalFooter>
+						</>
+					)}
+					{bladeSelected && (
+						<>
+							<ModalHeader p='0' justifyContent='center'>
+								<Text
+									fontSize='20px'
+									fontWeight={700}
+									textAlign='center'
+									lineHeight='16px'
+									color='brand.black'
+								>
+									{t('walletActions.selectWallet')}
+								</Text>
+							</ModalHeader>
+							<ModalFooter alignSelf='center' pt='24px' pb='0'>
+								<VStack>
+									<SelectController
+										control={control}
+										isRequired
+										name='networkBlade'
+										defaultValue='0'
+										options={networkOptions}
+										addonLeft={true}
+										overrideStyles={stylesNetworkOptions}
+										variant='unstyled'
+									/>
+									<HStack>
+										<Button
+											data-testid='modal-notification-button-Blade'
+											onClick={unHandleConnectBladeWallet}
+											variant='secondary'
+										>
+											{t('common.cancel')}
+										</Button>
+										<Button
+											data-testid='modal-notification-button-Blade'
+											onClick={handleConnectBladeWalletConfirmed}
 											variant='primary'
 										>
 											{t('common.accept')}
@@ -512,7 +599,7 @@ const ModalWalletConnect = () => {
 							</ModalFooter>
 						</>
 					)}
-					{bladeSelected && (
+					{hwcSelected && (
 						<>
 							<ModalHeader p='0' justifyContent='center'>
 								<Text
@@ -530,7 +617,7 @@ const ModalWalletConnect = () => {
 									<SelectController
 										control={control}
 										isRequired
-										name='networkBlade'
+										name='networkHwc'
 										defaultValue='0'
 										options={networkOptions}
 										addonLeft={true}
@@ -539,15 +626,15 @@ const ModalWalletConnect = () => {
 									/>
 									<HStack>
 										<Button
-											data-testid='modal-notification-button-Blade'
-											onClick={unHandleConnectBladeWallet}
+											data-testid='modal-notification-button-HederaWalletConnect'
+											onClick={unHandleConnectHederaWalletConnect}
 											variant='secondary'
 										>
 											{t('common.cancel')}
 										</Button>
 										<Button
-											data-testid='modal-notification-button-Blade'
-											onClick={handleConnectBladeWalletConfirmed}
+											data-testid='modal-notification-button-HederaWalletConnect'
+											onClick={handleConnectHwcConfirmed}
 											variant='primary'
 										>
 											{t('common.accept')}

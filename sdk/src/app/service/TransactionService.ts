@@ -22,7 +22,7 @@ import { singleton } from 'tsyringe';
 import Injectable from '../../core/Injectable.js';
 import { InvalidWalletTypeError } from '../../domain/context/network/error/InvalidWalletAccountTypeError.js';
 import { SupportedWallets } from '../../domain/context/network/Wallet.js';
-import { HashpackTransactionAdapter } from '../../port/out/hs/hashpack/HashpackTransactionAdapter.js';
+// import { HashpackTransactionAdapter } from '../../port/out/hs/hashpack/HashpackTransactionAdapter.js';
 import { HTSTransactionAdapter } from '../../port/out/hs/hts/HTSTransactionAdapter.js';
 import RPCTransactionAdapter from '../../port/out/rpc/RPCTransactionAdapter.js';
 import TransactionAdapter from '../../port/out/TransactionAdapter.js';
@@ -61,6 +61,7 @@ import {
 import { ethers } from 'ethers';
 import Hex from '../../core/Hex.js';
 import { AWSKMSTransactionAdapter } from '../../port/out/hs/hts/custodial/AWSKMSTransactionAdapter';
+import { HederaWalletConnectTransactionAdapter } from '../../port/out/hs/walletconnect/HederaWalletConnectTransactionAdapter.js';
 
 export const EVM_ADDRESS_REGEX = /0x[a-fA-F0-9]{40}$/;
 
@@ -85,11 +86,12 @@ export default class TransactionService extends Service {
 
 	static getHandlerClass(type: SupportedWallets): TransactionAdapter {
 		switch (type) {
+			/*
 			case SupportedWallets.HASHPACK:
 				if (!Injectable.isWeb()) {
 					throw new InvalidWalletTypeError(type);
 				}
-				return Injectable.resolve(HashpackTransactionAdapter);
+				return Injectable.resolve(HashpackTransactionAdapter);*/
 			case SupportedWallets.BLADE:
 				if (!Injectable.isWeb()) {
 					throw new InvalidWalletTypeError(type);
@@ -106,6 +108,10 @@ export default class TransactionService extends Service {
 				return Injectable.resolve(DFNSTransactionAdapter);
 			case SupportedWallets.MULTISIG:
 				return Injectable.resolve(MultiSigTransactionAdapter);
+			case SupportedWallets.HWALLETCONNECT:
+				return Injectable.resolve(
+					HederaWalletConnectTransactionAdapter,
+				);
 			case SupportedWallets.AWSKMS:
 				return Injectable.resolve(AWSKMSTransactionAdapter);
 			default:

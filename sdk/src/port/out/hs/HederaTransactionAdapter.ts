@@ -227,13 +227,12 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					)
 				).evmAddress,
 			];
-
 			return await this.contractCall(
 				factory.value,
 				'deployStableCoin',
 				params,
 				CREATE_SC_GAS,
-				TransactionType.RECORD,
+				TransactionType.RECEIPT,
 				StableCoinFactory__factory.abi,
 				TOKEN_CREATION_COST_HBAR,
 			);

@@ -34,7 +34,7 @@ describe(`<${StableCoinCreation.name} />`, () => {
 		const mockStore = configureMockStore();
 		const store = mockStore({
 			wallet: {
-				lastWallet: SupportedWallets.HASHPACK,
+				lastWallet: SupportedWallets.BLADE,
 				factoryId: '0.0.12345',
 				accountInfo: {
 					id: '0.0.12345',
