@@ -134,31 +134,31 @@ jobs:
       # - name: Test Contracts
       #   run: |
       #     npm run test:parallel
-      #     npm run cleanCache
+      #     npm run clean
       #   working-directory: contracts
 
       - name: Test SDK
         run: |
           npm run test:ci
-          npm run cleanCache
+          npm run clear-cache
         working-directory: sdk
 
       - name: Test backend
         run: |
           npm run test:ci
-          npm run cleanCache
+          npm run clear-cache
         working-directory: backend
 
       - name: Test CLI
         run: |
           npm run test:ci
-          npm run cleanCache
+          npm run clear-cache
         working-directory: cli
 
       - name: Test Web
         run: |
           npm run test:ci
-          npm run cleanCache
+          npm run clear-cache
         working-directory: web
 
       #- name: Run the Docker image

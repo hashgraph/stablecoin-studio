@@ -47,5 +47,5 @@ jobs:
       - name: Run
         run: |
           npm run test:parallel
-          npm run cleanCache
+          npm run clear-cache
         working-directory: contracts

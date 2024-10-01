@@ -26,5 +26,5 @@ jobs:
       - name: Run tests Web
         run: |
           npm run test:ci
-          npm run cleanCache
+          npm run clear-cache
         working-directory: web

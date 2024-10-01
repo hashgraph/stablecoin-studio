@@ -62,5 +62,5 @@ jobs:
       - name: Run SDK Tests
         run: |
           npm run test:ci
-          npm run cleanCache
+          npm run clear-cache
         working-directory: sdk

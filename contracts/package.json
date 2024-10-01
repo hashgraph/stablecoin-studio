@@ -22,7 +22,7 @@
         "compile:force": "npx hardhat compile --force && npm run build",
         "test": "npx hardhat test",
         "test:parallel": "npx hardhat test",
-        "cleanCache": "npx hardhat clean",
+        "clean": "npx hardhat clean",
         "test:upgradable": "npx hardhat test test/upgradable.ts",
         "test:testnet": "npx hardhat test --network testnet",
         "test:previewnet": "npx hardhat test --network previewnet",
