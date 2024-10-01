@@ -1,0 +1,30 @@
+name: Test Web
+
+on:
+  pull_request:
+    paths:
+      - "web/**"
+  push:
+    branches: [main]
+    paths:
+      - "web/**"
+  env:
+    NODE_VERSION: "20.17.0" # Defaults to the latest LTS version
+
+jobs:
+  build-web:
+    uses: ./.github/workflows/build/build-web.yaml
+    with:
+      node-version: ${{ env.NODE_VERSION }}
+
+  test-web:
+    needs: build-web
+    runs-on: token-studio-linux-medium
+    container:
+      image: node:${{ env.NODE_VERSION }}-alpine3.20 # Using alpine for a smaller image
+    steps:
+      - name: Run tests Web
+        run: |
+          npm run test:ci
+          npm run cleanCache
+        working-directory: web
