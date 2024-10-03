@@ -38,7 +38,6 @@ describe(`<${ModalWalletConnect.name} />`, () => {
 			wallet: {
 				foundWallets: [
 					SupportedWallets.METAMASK,
-					SupportedWallets.BLADE,
 					SupportedWallets.MULTISIG,
 				],
 				selectedMirrors: rpcNode,
