@@ -21,26 +21,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29
       # Reuse the common steps with dependency installation disabled
-      - name: Initial_Steps
+      - name: Initial steps
         uses: ./.github/actions/initial-steps
         with:
           install-dependencies: "all"
 
       - name: Create .env file
-        run: |
-          touch .env
-          # Making API call to fetch secrets
-          API_RESPONSE=$(curl -s -H "Authorization: Bearer ${{ secrets.API_ACCESS_TOKEN_1 }}" -H "User-Agent: AppName/1.2.3" https://portal.hedera.com/api/account)
-          # Assuming the API response is JSON and contains secrets like CLIENT_PRIVATE_KEY
-          echo "TESTNET_HEDERA_OPERATOR_PRIVATEKEY=$(echo $API_RESPONSE | jq -r '.accounts[0].privateKey')" >> .env
-          echo "TESTNET_HEDERA_OPERATOR_PUBLICKEY=$(echo $API_RESPONSE | jq -r '.accounts[0].publicKey')" >> .env
-          echo "TESTNET_HEDERA_OPERATOR_ED25519='true'" >> .env
-          echo "TESTNET_HEDERA_OPERATOR_ACCOUNT=0.0.$(echo $API_RESPONSE | jq -r '.accounts[0].accountNum')" >> .env
-          echo "TESTNET_HEDERA_NON_OPERATOR_PRIVATEKEY=$(echo $API_RESPONSE | jq -r '.accounts[1].privateKey')" >> .env
-          echo "TESTNET_HEDERA_NON_OPERATOR_PUBLICKEY=$(echo $API_RESPONSE | jq -r '.accounts[1].publicKey')" >> .env
-          echo "TESTNET_HEDERA_NON_OPERATOR_ED25519='false'" >> .env
-          echo "TESTNET_HEDERA_NON_OPERATOR_ACCOUNT=0.0.$(echo $API_RESPONSE | jq -r '.accounts[1].accountNum')" >> .env
-        working-directory: contracts
+        uses: ./.github/actions/create-env-file
+        with:
+          api-access-token-1: ${{ secrets.API_ACCESS_TOKEN_1 }}
+          module: "contracts"
 
       - name: Install Contracts
         run: npm ci
@@ -51,9 +41,9 @@ jobs:
         working-directory: contracts
 
       # * Actual test command
-      # - name: Run
-      #   run: npm run test:ci
-      #   working-directory: contracts
+      - name: Run
+        run: npm run test:ci
+        working-directory: contracts
 
       - name: Clean project
         run: npm run clean

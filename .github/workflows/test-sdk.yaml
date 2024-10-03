@@ -18,50 +18,20 @@ jobs:
       image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
     steps:
       # * Initial steps
-      - name: Harden Runner
-        uses: step-security/harden-runner@f086349bfa2bd1361f7909c78558e816508cdc10 # v2.8.0
-        with:
-          egress-policy: audit
-
-      - name: Install glibc in Alpine to add multi-arch support
-        run: apk add --no-cache gcompat libc6-compat
-
       - name: Checkout repository
-        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
-
-      - name: Install dependencies
-        run: apk add --no-cache python3 py3-pip make g++ curl jq
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29
+      # Reuse the common steps with dependency installation disabled
+      - name: Initial steps
+        uses: ./.github/actions/initial-steps
+        with:
+          install-dependencies: "all"
 
       - name: Create .env file
-        run: |
-          touch .env
-          # Making API call to fetch secrets
-          API_RESPONSE_1=$(curl -s -H "Authorization: Bearer ${{ secrets.API_ACCESS_TOKEN_1 }}" -H "User-Agent: AppName/1.2.3" https://portal.hedera.com/api/account)
-          API_RESPONSE_2=$(curl -s -H "Authorization: Bearer ${{ secrets.API_ACCESS_TOKEN_2 }}" -H "User-Agent: AppName/1.2.3" https://portal.hedera.com/api/account)
-          # Assuming the API response is JSON and contains secrets like CLIENT_PRIVATE_KEY
-          echo "CLIENT_PRIVATE_KEY_ECDSA=$(echo $API_RESPONSE_1 | jq -r '.accounts[1].privateKey')" >> .env
-          echo "CLIENT_PUBLIC_KEY_ECDSA=$(echo $API_RESPONSE_1 | jq -r '.accounts[1].publicKey')" >> .env
-          echo "CLIENT_ACCOUNT_ID_ECDSA=0.0.$(echo $API_RESPONSE_1 | jq -r '.accounts[1].accountNum')" >> .env
-          echo "CLIENT_EVM_ADDRESS_ECDSA=$(curl -s https://testnet.mirrornode.hedera.com/api/v1/accounts/$CLIENT_ACCOUNT_ID_ECDSA)" >> .env
-          echo "CLIENT_PRIVATE_KEY_ED25519=$(echo $API_RESPONSE_1 | jq -r '.accounts[0].privateKey')" >> .env
-          echo "CLIENT_PUBLIC_KEY_ED25519=$(echo $API_RESPONSE_1 | jq -r '.accounts[0].publicKey')" >> .env
-          echo "CLIENT_ACCOUNT_ID_ED25519=0.0.$(echo $API_RESPONSE_1 | jq -r '.accounts[0].accountNum')" >> .env
-          echo "CLIENT_EVM_ADDRESS_ED25519=$(curl -s https://testnet.mirrornode.hedera.com/api/v1/accounts/$CLIENT_ACCOUNT_ID_ED25519)" >> .env
-          echo "CLIENT_PRIVATE_KEY_ECDSA_2=$(echo $API_RESPONSE_2 | jq -r '.accounts[1].privateKey')" >> .env
-          echo "CLIENT_PUBLIC_KEY_ECDSA_2=$(echo $API_RESPONSE_2 | jq -r '.accounts[1].publicKey')" >> .env
-          echo "CLIENT_ACCOUNT_ID_ECDSA_2=0.0.$(echo $API_RESPONSE_2 | jq -r '.accounts[1].accountNum')" >> .env
-          echo "CLIENT_EVM_ADDRESS_ECDSA_2=$(curl -s https://testnet.mirrornode.hedera.com/api/v1/accounts/$CLIENT_ACCOUNT_ID_ECDSA_2)" >> .env
-          echo "CLIENT_PRIVATE_KEY_ED25519_2=$(echo $API_RESPONSE_2 | jq -r '.accounts[0].privateKey')" >> .env
-          echo "CLIENT_PUBLIC_KEY_ED25519_2=$(echo $API_RESPONSE_2 | jq -r '.accounts[0].publicKey')" >> .env
-          echo "CLIENT_ACCOUNT_ID_ED25519_2=0.0.$(echo $API_RESPONSE_2 | jq -r '.accounts[0].accountNum')" >> .env
-          echo "CLIENT_EVM_ADDRESS_ED25519_2=$(curl -s https://testnet.mirrornode.hedera.com/api/v1/accounts/$CLIENT_ACCOUNT_ID_ED25519_2)" >> .env
-          echo "FIREBLOCKS_HEDERA_ACCOUNT_ID=0.0.$(echo $API_RESPONSE_2 | jq -r '.accounts[1].accountNum')" >> .env
-          echo "FIREBLOCKS_HEDERA_PUBLIC_KEY=$(echo $API_RESPONSE_2 | jq -r '.accounts[1].publicKey')" >> .env
-          echo "DFNS_HEDERA_ACCOUNT_ID=0.0.$(echo $API_RESPONSE_2 | jq -r '.accounts[1].accountNum')" >> .env
-          echo "DFNS_WALLET_PUBLIC_KEY=$(echo $API_RESPONSE_2 | jq -r '.accounts[1].publicKey')" >> .env
-          echo "HEDERA_TOKEN_MANAGER_ADDRESS=0.0.2167020"  >> .env
-          echo "FACTORY_ADDRESS=0.0.2167166"  >> .env
-        working-directory: sdk
+        uses: ./.github/actions/create-env-file
+        with:
+          api-access-token-1: ${{ secrets.API_ACCESS_TOKEN_1 }}
+          api-access-token-2: ${{ secrets.API_ACCESS_TOKEN_2 }}
+          module: "sdk"
 
       # * Prepare other modules
       - name: Install Contracts
