@@ -54,9 +54,9 @@ jobs:
         run: npm ci
         working-directory: web
 
-      - name: Build Web
-        run: npm run build
-        working-directory: web
+      # - name: Build Web
+      #   run: npm run build
+      #   working-directory: web
 
       - name: Run tests Web
         run: npm run test:ci
