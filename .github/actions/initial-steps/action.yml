@@ -1,0 +1,26 @@
+name: Initial_Steps
+description: Common initial steps for all workflows, with optional dependency installation.
+
+inputs:
+  install-dependencies:
+    description: "Whether to install dependencies"
+    required: false
+    default: "true"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Harden Runner
+      uses: step-security/harden-runner@f086349bfa2bd1361f7909c78558e816508cdc10
+      with:
+        egress-policy: audit
+
+    - name: Install glibc in Alpine to add multi-arch support
+      run: apk add --no-cache gcompat libc6-compat
+
+    - name: Checkout repository
+      uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29
+
+    - name: Install dependencies
+      if: ${{ inputs.install-dependencies == 'true' }}
+      run: apk add --no-cache python3 py3-pip make g++ curl jq
