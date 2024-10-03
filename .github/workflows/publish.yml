@@ -41,12 +41,17 @@ jobs:
         run: npm run compile:force
         working-directory: contracts
 
+      # # ! Only for local testing, DO NOT uncomment for production
+      # - name: Set NPM registry to Verdaccio (local)
+      #   run: npm config set registry http://localhost:4873
+
       - name: Publish contracts
         run: npm run publish:contracts --access=public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   sdk:
+    needs: contracts
     runs-on: token-studio-linux-medium
     container:
       image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
@@ -87,6 +92,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   cli:
+    needs: sdk
     runs-on: token-studio-linux-medium
     container:
       image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
