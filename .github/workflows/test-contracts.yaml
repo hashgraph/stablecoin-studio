@@ -3,7 +3,12 @@ name: Test_Contracts
 on:
   pull_request:
     paths:
-      - "contracts/**"
+      - "contracts/contracts/**"
+      - "contracts/test/**"
+      - "contracts/scripts/**"
+      - "contracts/package*.json"
+      - "contracts/hardhat.config.js"
+      - "contracts/tsconfig.json"
   push:
     branches: [main]
     paths:

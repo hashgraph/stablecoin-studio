@@ -3,7 +3,10 @@ name: Test_Backend
 on:
   pull_request:
     paths:
-      - "backend/**"
+      - "backend/src/**"
+      - "backend/test/**"
+      - "backend/package*.json"
+      - "backend/tsconfig*.json"
   push:
     branches: [main]
     paths:

@@ -3,7 +3,11 @@ name: Test_CLI
 on:
   pull_request:
     paths:
-      - "cli/**"
+      - "cli/src/**"
+      - "cli/test/**"
+      - "cli/package*.json"
+      - "cli/tsconfig*.json"
+      - "cli/jest.config.js"
   push:
     branches: [main]
     paths:

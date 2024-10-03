@@ -3,7 +3,12 @@ name: Test_SDK
 on:
   pull_request:
     paths:
-      - "sdk/**"
+      - "sdk/src/**"
+      - "sdk/test/**"
+      - "sdk/scripts/**"
+      - "sdk/package*.json"
+      - "sdk/tsconfig*.json"
+      - "sdk/jest.config.js"
   push:
     branches: [main]
     paths:

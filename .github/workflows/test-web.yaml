@@ -3,7 +3,9 @@ name: Test_Web
 on:
   pull_request:
     paths:
-      - "web/**"
+      - "web/src/**"
+      - "web/package*.json"
+      - "web/tsconfig*.json"
   push:
     branches: [main]
     paths:
