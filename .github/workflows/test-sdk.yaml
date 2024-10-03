@@ -12,7 +12,7 @@ on:
 # NODE_VERSION: "20.17.0" # Fixed version for better stability
 
 jobs:
-  test-sdk:
+  main:
     runs-on: token-studio-linux-medium
     container:
       image: node:20.17.0-alpine3.20 # Using alpine for a smaller image

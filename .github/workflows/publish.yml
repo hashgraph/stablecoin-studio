@@ -1,59 +1,125 @@
-name: Publishing
+name: Publish
+
 on:
   release:
     types:
       - published
-jobs:
-  publish:
-    name: docker
-    runs-on: token-studio-linux-medium
 
+jobs:
+  contracts:
+    runs-on: token-studio-linux-medium
+    container:
+      image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
     permissions:
       contents: read
 
     steps:
-      - name: Harden Runner
-        uses: step-security/harden-runner@f086349bfa2bd1361f7909c78558e816508cdc10 # v2.8.0
-        with:
-          egress-policy: audit
-
+      # * Initial steps
       - name: Checkout repository
-        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29
 
-      - name: Setup NodeJS Environment
-        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
+      - name: Initial steps
+        uses: ./.github/actions/initial-steps
         with:
-          node-version: 20.x
+          install-dependencies: "install"
 
       - name: Create file .npmrc
         run: |
-          touch .npmrc
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> .npmrc
-          cp .npmrc ./contracts/.npmrc
-          cp .npmrc ./sdk/.npmrc
-          cp .npmrc ./cli/.npmrc
+          cat <<EOF > .npmrc
+          //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
+          EOF
+        working-directory: contracts
 
-      - name: Change references
+      - name: Change references to repo
         run: ./changeProyectsReferencesToRepo.sh
 
-      - name: Install contracts dependencies
-        run: npm run install:contracts
+      - name: Install Contracts
+        run: npm ci
+        working-directory: contracts
 
-      - name: Publish contracts package
+      - name: Build Contracts
+        run: npm run compile:force
+        working-directory: contracts
+
+      - name: Publish contracts
         run: npm run publish:contracts --access=public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Install sdk dependencies
-        run: npm run install:sdk
+  sdk:
+    runs-on: token-studio-linux-medium
+    container:
+      image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
+    permissions:
+      contents: read
+
+    steps:
+      # * Initial steps
+      - name: Checkout repository
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29
+
+      - name: Initial steps
+        uses: ./.github/actions/initial-steps
+        with:
+          install-dependencies: "none"
+
+      - name: Create file .npmrc
+        run: |
+          cat <<EOF > .npmrc
+          //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
+          EOF
+        working-directory: sdk
+
+      - name: Change references to repo
+        run: ./changeProyectsReferencesToRepo.sh
+
+      - name: Install SDK
+        run: npm ci
+        working-directory: sdk
+
+      - name: Build SDK
+        run: npm run build
+        working-directory: sdk
 
       - name: Publish sdk package
         run: npm run publish:sdk --access=public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Install cli dependencies
-        run: npm run install:cli
+  cli:
+    runs-on: token-studio-linux-medium
+    container:
+      image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
+    permissions:
+      contents: read
+
+    steps:
+      # * Initial steps
+      - name: Checkout repository
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29
+
+      - name: Initial steps
+        uses: ./.github/actions/initial-steps
+        with:
+          install-dependencies: "none"
+
+      - name: Create file .npmrc
+        run: |
+          cat <<EOF > .npmrc
+          //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
+          EOF
+        working-directory: cli
+
+      - name: Change references to repo
+        run: ./changeProyectsReferencesToRepo.sh
+
+      - name: Install CLI
+        run: npm ci
+        working-directory: cli
+
+      - name: Build CLI
+        run: npm run build
+        working-directory: cli
 
       - name: Publish cli package
         run: npm run publish:cli --access=public
