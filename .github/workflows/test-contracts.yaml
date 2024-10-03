@@ -18,11 +18,13 @@ jobs:
       image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
     steps:
       # * Initial steps
+      - name: Checkout repository
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29
       # Reuse the common steps with dependency installation disabled
       - name: Initial_Steps
         uses: ./.github/actions/initial-steps
         with:
-          install-dependencies: "true"
+          install-dependencies: "all"
 
       - name: Create .env file
         run: |

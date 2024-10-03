@@ -2,10 +2,10 @@ name: Initial_Steps
 description: Common initial steps for all workflows, with optional dependency installation.
 
 inputs:
-  install-dependencies:
+  install-dependencies: # Options: "all", "install", "none"
     description: "Whether to install dependencies"
     required: false
-    default: "true"
+    default: "all"
 
 runs:
   using: "composite"
@@ -16,11 +16,15 @@ runs:
         egress-policy: audit
 
     - name: Install glibc in Alpine to add multi-arch support
+      shell: sh
       run: apk add --no-cache gcompat libc6-compat
 
-    - name: Checkout repository
-      uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29
+    - name: Install dependencies to install contracts
+      shell: sh
+      if: ${{ inputs.install-dependencies == 'install' || inputs.install-dependencies == 'all' }}
+      run: apk add --no-cache python3 py3-pip make g++
 
-    - name: Install dependencies
-      if: ${{ inputs.install-dependencies == 'true' }}
-      run: apk add --no-cache python3 py3-pip make g++ curl jq
+    - name: Install dependencies to create ENV file
+      shell: sh
+      if: ${{ inputs.install-dependencies == 'all' }}
+      run: apk add --no-cache curl jq
