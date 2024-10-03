@@ -28,31 +28,12 @@ jobs:
           install-dependencies: "install"
 
       # * Prepare other modules
-      - name: Install Contracts
-        run: npm ci
-        working-directory: contracts
-
-      - name: Build Contracts
-        run: npm run compile:force
-        working-directory: contracts
-
-      - name: Install SDK
-        run: npm ci
-        working-directory: sdk
-
-      - name: Build SDK
-        run: npm run build
-        working-directory: sdk
+      - name: Install and build Contracts, SDK and CLI
+        uses: ./.github/actions/install-and-build
+        with:
+          module: "cli"
 
       # * Specific steps for the CLI
-      - name: Install CLI
-        run: npm ci
-        working-directory: cli
-
-      - name: Build CLI
-        run: npm run build
-        working-directory: cli
-
       - name: Run tests CLI
         run: npm run test:ci
         working-directory: cli

@@ -26,32 +26,12 @@ jobs:
           install-dependencies: "install"
 
       # * Prepare other modules
-      - name: Install Contracts
-        run: npm ci
-        working-directory: contracts
-
-      - name: Build Contracts
-        run: npm run compile:force
-        working-directory: contracts
-
-      - name: Install SDK
-        run: npm ci
-        working-directory: sdk
-
-      - name: Build SDK
-        run: npm run build
-        working-directory: sdk
+      - name: Install and build Contracts, SDK and Web
+        uses: ./.github/actions/install-and-build
+        with:
+          module: "web"
 
       # * Specific steps for the Web
-
-      - name: Install Web
-        run: npm ci
-        working-directory: web
-
-      # - name: Build Web
-      #   run: npm run build
-      #   working-directory: web
-
       - name: Run tests Web
         run: npm run test:ci
         working-directory: web
