@@ -1,4 +1,4 @@
-name: Test Web
+name: Test_Web
 
 on:
   pull_request:
@@ -8,23 +8,60 @@ on:
     branches: [main]
     paths:
       - "web/**"
-  env:
-    NODE_VERSION: "20.17.0" # Defaults to the latest LTS version
-
+  # env:
+  # NODE_VERSION: "20.17.0" # Fixed version for better stability
 jobs:
-  build-web:
-    uses: ./.github/workflows/build/build-web.yaml
-    with:
-      node-version: ${{ env.NODE_VERSION }}
-
   test-web:
-    needs: build-web
     runs-on: token-studio-linux-medium
     container:
-      image: node:${{ env.NODE_VERSION }}-alpine3.20 # Using alpine for a smaller image
+      image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
     steps:
+      # * Initial steps
+      - name: Harden Runner
+        uses: step-security/harden-runner@f086349bfa2bd1361f7909c78558e816508cdc10 # v2.8.0
+        with:
+          egress-policy: audit
+
+      - name: Install glibc in Alpine to add multi-arch support
+        run: apk add --no-cache gcompat libc6-compat
+
+      - name: Checkout repository
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+
+      - name: Install dependencies
+        run: apk add --no-cache python3 py3-pip make g++
+
+      # * Prepare other modules
+      - name: Install Contracts
+        run: npm ci
+        working-directory: contracts
+
+      - name: Build Contracts
+        run: npm run compile:force
+        working-directory: contracts
+
+      - name: Install SDK
+        run: npm ci
+        working-directory: sdk
+
+      - name: Build SDK
+        run: npm run build
+        working-directory: sdk
+
+      # * Specific steps for the Web
+
+      - name: Install Web
+        run: npm ci
+        working-directory: web
+
+      - name: Build Web
+        run: npm run build
+        working-directory: web
+
       - name: Run tests Web
-        run: |
-          npm run test:ci
-          npm run clear-cache
+        run: npm run test:ci
+        working-directory: web
+
+      - name: Clear Cache
+        run: npm run clear-cache
         working-directory: web
