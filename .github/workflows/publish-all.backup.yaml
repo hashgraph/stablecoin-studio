@@ -1,0 +1,68 @@
+name: Publishing
+on:
+  # ! Disabled this file is fot backup until publish-all.yaml is tested
+  push:
+    branches:
+      - disabled
+  # release:
+  #   types:
+  #     - published
+
+jobs:
+  publish:
+    runs-on: token-studio-linux-medium
+    container:
+      image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+
+      - name: Initial steps
+        uses: ./.github/actions/initial-steps
+        with:
+          deps-contracts-install: "true"
+          deps-change-references: "true"
+
+      - name: Create file .npmrc
+        run: |
+          cat <<EOF > .npmrc
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> .npmrc
+          # //localhost:4873/:_authToken=${{ secrets.NPM_TOKEN }} # ! Only for local testing, DO NOT uncomment for production
+          EOF
+          cp .npmrc ./contracts/.npmrc
+          cp .npmrc ./sdk/.npmrc
+          cp .npmrc ./cli/.npmrc
+
+      # # ! Only for local testing, DO NOT uncomment for production
+      # - name: Set NPM registry to Verdaccio (local)
+      #   run: npm config set registry http://localhost:4873
+
+      - name: Change references
+        run: ./changeProyectsReferencesToRepo.sh
+
+      - name: Install contracts dependencies
+        run: npm run install:contracts
+
+      - name: Publish contracts package
+        run: npm run publish:contracts --access=public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Install sdk dependencies
+        run: npm run install:sdk
+
+      - name: Publish sdk package
+        run: npm run publish:sdk --access=public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Install cli dependencies
+        run: npm run install:cli
+
+      - name: Publish cli package
+        run: npm run publish:cli --access=public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

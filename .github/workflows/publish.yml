@@ -21,14 +21,20 @@ jobs:
       - name: Initial steps
         uses: ./.github/actions/initial-steps
         with:
-          install-dependencies: "install"
+          deps-contracts-install: "true"
+          deps-change-references: "true"
 
       - name: Create file .npmrc
         run: |
           cat <<EOF > .npmrc
           //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
+          # //localhost:4873/:_authToken=${{ secrets.NPM_TOKEN }} # ! Only for local testing, DO NOT uncomment for production
           EOF
         working-directory: contracts
+
+      # # ! Only for local testing, DO NOT uncomment for production
+      # - name: Set NPM registry to Verdaccio (local)
+      #   run: npm config set registry http://localhost:4873
 
       - name: Change references to repo
         run: ./changeProyectsReferencesToRepo.sh
@@ -37,21 +43,13 @@ jobs:
         run: npm ci
         working-directory: contracts
 
-      - name: Build Contracts
-        run: npm run compile:force
-        working-directory: contracts
-
-      # # ! Only for local testing, DO NOT uncomment for production
-      # - name: Set NPM registry to Verdaccio (local)
-      #   run: npm config set registry http://localhost:4873
-
       - name: Publish contracts
         run: npm run publish:contracts --access=public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   sdk:
-    needs: contracts
+    # needs: contracts
     runs-on: token-studio-linux-medium
     container:
       image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
@@ -66,25 +64,29 @@ jobs:
       - name: Initial steps
         uses: ./.github/actions/initial-steps
         with:
-          install-dependencies: "none"
+          deps-contracts-install: "true"
+          deps-change-references: "true"
 
       - name: Create file .npmrc
         run: |
           cat <<EOF > .npmrc
           //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
+          # //localhost:4873/:_authToken=${{ secrets.NPM_TOKEN }} # ! Only for local testing, DO NOT uncomment for production
           EOF
         working-directory: sdk
+
+      # # ! Only for local testing, DO NOT uncomment for production
+      # - name: Set NPM registry to Verdaccio (local)
+      #   run: npm config set registry http://localhost:4873
 
       - name: Change references to repo
         run: ./changeProyectsReferencesToRepo.sh
 
-      - name: Install SDK
-        run: npm ci
-        working-directory: sdk
-
-      - name: Build SDK
-        run: npm run build
-        working-directory: sdk
+      # * Prepare other modules
+      - name: Install and build Contracts and SDK
+        uses: ./.github/actions/install-and-build
+        with:
+          module: "sdk"
 
       - name: Publish sdk package
         run: npm run publish:sdk --access=public
@@ -92,7 +94,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   cli:
-    needs: sdk
+    # needs: sdk
     runs-on: token-studio-linux-medium
     container:
       image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
@@ -107,25 +109,29 @@ jobs:
       - name: Initial steps
         uses: ./.github/actions/initial-steps
         with:
-          install-dependencies: "none"
+          deps-contracts-install: "true"
+          deps-change-references: "true"
 
       - name: Create file .npmrc
         run: |
           cat <<EOF > .npmrc
           //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
+          # //localhost:4873/:_authToken=${{ secrets.NPM_TOKEN }} # ! Only for local testing, DO NOT uncomment for production
           EOF
         working-directory: cli
+
+      # # ! Only for local testing, DO NOT uncomment for production
+      # - name: Set NPM registry to Verdaccio (local)
+      #   run: npm config set registry http://localhost:4873
 
       - name: Change references to repo
         run: ./changeProyectsReferencesToRepo.sh
 
-      - name: Install CLI
-        run: npm ci
-        working-directory: cli
-
-      - name: Build CLI
-        run: npm run build
-        working-directory: cli
+      # * Prepare other modules
+      - name: Install and build Contracts and SDK
+        uses: ./.github/actions/install-and-build
+        with:
+          module: "cli"
 
       - name: Publish cli package
         run: npm run publish:cli --access=public
