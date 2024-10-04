@@ -29,7 +29,7 @@ jobs:
       - name: Initial steps
         uses: ./.github/actions/initial-steps
         with:
-          install-dependencies: "install"
+          deps-contracts-install: "true"
 
       # * Prepare other modules
       - name: Install and build Contracts, SDK and CLI

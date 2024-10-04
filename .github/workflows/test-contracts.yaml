@@ -29,7 +29,8 @@ jobs:
       - name: Initial steps
         uses: ./.github/actions/initial-steps
         with:
-          install-dependencies: "all"
+          deps-contracts-install: "true"
+          deps-create-env-file: "true"
 
       - name: Create .env file
         uses: ./.github/actions/create-env-file

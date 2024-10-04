@@ -28,8 +28,6 @@ jobs:
       # Reuse the common steps with dependency installation disabled
       - name: Initial steps
         uses: ./.github/actions/initial-steps
-        with:
-          install-dependencies: "none"
 
       # * Specific steps for the Backend
       - name: Install dependencies

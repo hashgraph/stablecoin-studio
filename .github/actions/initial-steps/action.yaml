@@ -6,6 +6,18 @@ inputs:
     description: "Whether to install dependencies"
     required: false
     default: "all"
+  deps-contracts-install: # Options: "true", "false"
+    description: "Whether to install dependencies for contracts installation"
+    required: false
+    default: "false"
+  deps-create-env-file: # Options: "true", "false"
+    description: "Whether to install dependencies for creating the .env file"
+    required: false
+    default: "false"
+  deps-change-references: # Options: "true", "false"
+    description: "Whether to install dependencies for changing references to the repo. execution of 'changeProyectsReferencesToRepo.sh'"
+    required: false
+    default: "false"
 
 runs:
   using: "composite"
@@ -21,10 +33,15 @@ runs:
 
     - name: Install dependencies to install contracts
       shell: sh
-      if: ${{ inputs.install-dependencies == 'install' || inputs.install-dependencies == 'all' }}
+      if: ${{ inputs.deps-contracts-install == 'true' }}
       run: apk add --no-cache python3 py3-pip make g++
 
     - name: Install dependencies to create ENV file
       shell: sh
-      if: ${{ inputs.install-dependencies == 'all' }}
+      if: ${{ inputs.deps-create-env-file == 'true' }}
       run: apk add --no-cache curl jq
+
+    - name: Install dependencies to change references to the repo
+      shell: sh
+      if: ${{ inputs.deps-change-references == 'true' }}
+      run: apk add --no-cache bash sed
