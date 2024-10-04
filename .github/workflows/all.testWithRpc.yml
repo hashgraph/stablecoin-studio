@@ -7,8 +7,11 @@ jobs:
   test-node:
     name: testing
     runs-on: token-studio-linux-medium
+    container:
+      image: node:lts
     env:
       NODE_OPTIONS: "--max-old-space-size=32768"
+      NODE_VERSION: "20.x"
       SDK_CPP_MEM_LIMIT: "5368709120" # 5GB
       AGENT_MEM_LIMIT: "1073741824" # 1GB
     permissions:
@@ -23,14 +26,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
 
-      - name: Build the Docker image
-        run: docker build -t rpc .
-        working-directory: dockerfile
-
-      - name: Setup NodeJS Environment
-        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
+      - name: Setup Node
+        uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4.0.3
         with:
-          node-version: 20.x
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Cache npm dependencies
         uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
@@ -39,6 +38,22 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
+      - name: Install Docker
+        run: |
+          apt-get update
+          apt-get install -y docker.io
+        if: runner.os == 'linux'
+
+      - name: Install jq
+        run: |
+          apt-get update
+          apt-get install -y jq
+        if: runner.os == 'linux'
+
+      - name: Build the Docker image
+        working-directory: dockerfile
+        run: |
+          sh -c "docker build -t rpc ."
 
       - name: Install dependencies Backend
         run: |
