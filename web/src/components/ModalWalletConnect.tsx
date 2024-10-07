@@ -22,7 +22,7 @@ import {
 	SupportedWallets,
 } from '@hashgraph/stablecoin-npm-sdk';
 import type { FC, ReactNode } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import BLADE_LOGO_PNG from '../assets/png/bladeLogo.png';
@@ -40,14 +40,19 @@ import {
 import WARNING_ICON from '../assets/svg/warning.svg';
 import ERROR_ICON from '../assets/svg/error.svg';
 import { SelectController } from './Form/SelectController';
-import { set, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import type { IMirrorRPCNode } from '../interfaces/IMirrorRPCNode';
 
 const ModalWalletConnect = () => {
 	const { t } = useTranslation('global');
 	const dispatch = useDispatch();
 
-	const { onClose } = useDisclosure();
+	const { isOpen, onOpen, onClose } = useDisclosure();
+
+	useEffect(() => {
+		onOpen();
+	}, [onOpen]);
+
 	const styles = {
 		providerStyle: {
 			boxShadow: '0 0 12px 2px #E0E0E0',
@@ -264,6 +269,7 @@ const ModalWalletConnect = () => {
 	const handleConnectHwcConfirmed = () => {
 		const values = getValues();
 		handleWalletConnect(SupportedWallets.HWALLETCONNECT, values.networkHwc.value);
+		onClose();
 	};
 
 	const validateAccountId = (accountId: string) => {
@@ -324,7 +330,7 @@ const ModalWalletConnect = () => {
 	return (
 		<>
 			<Modal
-				isOpen={true}
+				isOpen={isOpen}
 				onClose={onClose}
 				size={'xl'}
 				isCentered
