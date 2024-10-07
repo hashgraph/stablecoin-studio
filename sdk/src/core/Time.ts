@@ -18,22 +18,25 @@
  *
  */
 
-import Account from '../account/Account.js';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-export enum SupportedWallets {
-	METAMASK = 'Metamask',
-	HASHPACK = 'HashPack',
-	CLIENT = 'Client',
-	BLADE = 'Blade',
-	FIREBLOCKS = 'Fireblocks',
-	DFNS = 'DFNS',
-	MULTISIG = 'MultiSig',
-	AWSKMS = 'AWSKMS',
-	HWALLETCONNECT = 'HederaWalletConnect',
-}
-
-export default interface Wallet {
-	type: SupportedWallets;
-	account: Account;
-	// Events...
+export class Time {
+	public static delay(
+		time: number,
+		unit: 'seconds' | 'milliseconds' | 'sec' | 'ms',
+	): Promise<boolean> {
+		let delayInMilliseconds: number;
+		if (unit === 'seconds' || unit === 'sec') {
+			delayInMilliseconds = time * 1000;
+		} else if (unit === 'milliseconds' || unit === 'ms') {
+			delayInMilliseconds = time;
+		} else {
+			throw new Error(
+				'Invalid time unit. Please use "seconds", "milliseconds", "sec", or "ms".',
+			);
+		}
+		return new Promise<boolean>((resolve) =>
+			setTimeout(() => resolve(true), delayInMilliseconds),
+		);
+	}
 }

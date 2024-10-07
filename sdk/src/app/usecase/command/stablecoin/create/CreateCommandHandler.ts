@@ -31,11 +31,16 @@ import { OperationNotAllowed } from '../error/OperationNotAllowed.js';
 import { CreateCommand, CreateCommandResponse } from './CreateCommand.js';
 import { RESERVE_DECIMALS } from '../../../../../domain/context/reserve/Reserve.js';
 import { InvalidRequest } from '../error/InvalidRequest.js';
-import { EVM_ZERO_ADDRESS } from '../../../../../core/Constants.js';
 import { MirrorNodeAdapter } from '../../../../../port/out/mirror/MirrorNodeAdapter.js';
 import { RPCQueryAdapter } from '../../../../../port/out/rpc/RPCQueryAdapter.js';
 import BigDecimal from '../../../../../domain/context/shared/BigDecimal.js';
 import EvmAddress from '../../../../../domain/context/contract/EvmAddress.js';
+import {
+	ADDRESS_LENGTH,
+	BYTES_32_LENGTH,
+	EVM_ZERO_ADDRESS,
+	TOPICS_IN_FACTORY_RESULT,
+} from '../../../../../core/Constants';
 
 @CommandHandler(CreateCommand)
 export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
@@ -136,46 +141,74 @@ export class CreateCommandHandler implements ICommandHandler<CreateCommand> {
 			reserveInitialAmount,
 			proxyAdminOwnerAccount,
 		);
+
+		if (!res.id)
+			throw new Error('Create Command Handler response id empty');
+
+		await new Promise((resolve) => setTimeout(resolve, 5000));
+
 		try {
-			return Promise.resolve(
-				new CreateCommandResponse(
-					ContractId.fromHederaContractId(
-						HContractId.fromSolidityAddress(res.response[0][3]),
-					),
-					res.response[0][4] === EVM_ZERO_ADDRESS
-						? new ContractId('0.0.0')
-						: ContractId.fromHederaContractId(
-								HContractId.fromString(
-									(
-										await this.mirrorNodeAdapter.getContractInfo(
-											res.response[0][4],
-										)
-									).id,
-								),
-						  ),
-					res.response[0][5] === EVM_ZERO_ADDRESS
-						? new ContractId('0.0.0')
-						: ContractId.fromHederaContractId(
-								HContractId.fromString(
-									(
-										await this.mirrorNodeAdapter.getContractInfo(
-											res.response[0][5],
-										)
-									).id,
-								),
-						  ),
-				),
+			const results = await this.mirrorNodeAdapter.getContractResults(
+				res.id.toString(),
+				TOPICS_IN_FACTORY_RESULT,
 			);
-		} catch (e) {
-			if (res.response == 1)
+
+			console.log(`Creation event data:${JSON.stringify(results)}`); //! Remove this line
+
+			if (!results || results.length !== TOPICS_IN_FACTORY_RESULT) {
+				throw new Error('Invalid data structure');
+			}
+
+			const data = results.map(
+				(result) =>
+					'0x' +
+					result.substring(BYTES_32_LENGTH - ADDRESS_LENGTH + 2),
+			);
+
+			console.log(data);
+
+			if (data && data.length === TOPICS_IN_FACTORY_RESULT) {
 				return Promise.resolve(
 					new CreateCommandResponse(
-						new ContractId('0.0.0'),
-						new ContractId('0.0.0'),
-						new ContractId('0.0.0'),
+						ContractId.fromHederaContractId(
+							HContractId.fromSolidityAddress(data[3]),
+						),
+						data[4] === EVM_ZERO_ADDRESS
+							? new ContractId('0.0.0')
+							: ContractId.fromHederaContractId(
+									HContractId.fromString(
+										(
+											await this.mirrorNodeAdapter.getContractInfo(
+												data[4],
+											)
+										).id,
+									),
+							  ),
+						data[5] === EVM_ZERO_ADDRESS
+							? new ContractId('0.0.0')
+							: ContractId.fromHederaContractId(
+									HContractId.fromString(
+										(
+											await this.mirrorNodeAdapter.getContractInfo(
+												data[5],
+											)
+										).id,
+									),
+							  ),
 					),
 				);
-			else throw e;
+			} else {
+				throw new Error('Invalid data structure');
+			}
+		} catch (e) {
+			console.error(e);
+			return Promise.resolve(
+				new CreateCommandResponse(
+					new ContractId('0.0.0'),
+					new ContractId('0.0.0'),
+					new ContractId('0.0.0'),
+				),
+			);
 		}
 	}
 }

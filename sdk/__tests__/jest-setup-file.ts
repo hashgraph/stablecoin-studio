@@ -23,22 +23,26 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import 'reflect-metadata';
-import MultiKey from '../src/domain/context/account/MultiKey.js';
+import { BigNumber, ethers } from 'ethers';
 import {
-	AccountViewModel,
-	BigDecimal,
-	ContractId,
-	EvmAddress,
-	HBAR_DECIMALS,
-	HederaId,
-	InitializationData,
-	PublicKey,
-	RequestCustomFee,
-	StableCoinListViewModel,
-	StableCoinRole,
-	StableCoinViewModel,
-	TokenSupplyType,
-} from '../src/index.js';
+	ContractExecuteTransaction,
+	CustomFee,
+	TokenFeeScheduleUpdateTransaction,
+	Transaction,
+	ContractId as HContractId,
+	TokenWipeTransaction,
+	TokenPauseTransaction,
+	TokenUnpauseTransaction,
+	TokenFreezeTransaction,
+	TokenUnfreezeTransaction,
+	TokenGrantKycTransaction,
+	TokenRevokeKycTransaction,
+} from '@hashgraph/sdk';
+import { StableCoinFactory__factory } from '@hashgraph/stablecoin-npm-contracts';
+import {
+	IStrategyConfig,
+	SignatureRequest,
+} from '@hashgraph/hedera-custodians-integration';
 import {
 	CLIENT_PUBLIC_KEY_ED25519,
 	HEDERA_TOKEN_MANAGER_ADDRESS,
@@ -62,48 +66,46 @@ import {
 	CLIENT_PRIVATE_KEY_ECDSA_2,
 } from './config.js';
 import {
-	ContractExecuteTransaction,
-	CustomFee,
-	TokenFeeScheduleUpdateTransaction,
-	Transaction,
-	ContractId as HContractId,
-	TokenWipeTransaction,
-	TokenPauseTransaction,
-	TokenUnpauseTransaction,
-	TokenFreezeTransaction,
-	TokenUnfreezeTransaction,
-	TokenGrantKycTransaction,
-	TokenRevokeKycTransaction,
-} from '@hashgraph/sdk';
-import { TransactionType } from '../src/port/out/TransactionResponseEnums.js';
-import TransactionResponse from '../src/domain/context/transaction/TransactionResponse.js';
-import Account from '../src/domain/context/account/Account.js';
-import TransactionResultViewModel from '../src/port/out/mirror/response/TransactionResultViewModel.js';
+	AccountViewModel,
+	BigDecimal,
+	ContractId,
+	EvmAddress,
+	HBAR_DECIMALS,
+	HederaId,
+	InitializationData,
+	PublicKey,
+	RequestCustomFee,
+	StableCoinListViewModel,
+	StableCoinRole,
+	StableCoinViewModel,
+	TokenSupplyType,
+} from '../src/index.js';
+import {
+	CREATE_SC_GAS,
+	TOKEN_CREATION_COST_HBAR,
+} from '../src/core/Constants.js';
+import LogService from '../src/app/service/LogService.js';
 import {
 	AccountTokenRelationViewModel,
 	FreezeStatus,
 	KycStatus,
 } from '../src/port/out/mirror/response/AccountTokenRelationViewModel.js';
 import ContractViewModel from '../src/port/out/mirror/response/ContractViewModel.js';
+import { TransactionType } from '../src/port/out/TransactionResponseEnums.js';
+import { MirrorNodeAdapter } from '../src/port/out/mirror/MirrorNodeAdapter.js';
+import TransactionResultViewModel from '../src/port/out/mirror/response/TransactionResultViewModel.js';
+import TransactionResponse from '../src/domain/context/transaction/TransactionResponse.js';
+import MultiKey from '../src/domain/context/account/MultiKey.js';
+import Account from '../src/domain/context/account/Account.js';
 import Injectable from '../src/core/Injectable.js';
 import { Environment } from '../src/domain/context/network/Environment.js';
 import { MultiSigTransaction } from '../src/domain/context/transaction/MultiSigTransaction.js';
-import { BigNumber, ethers } from 'ethers';
-import { MirrorNodeAdapter } from '../src/port/out/mirror/MirrorNodeAdapter.js';
 import { StableCoinProps } from '../src/domain/context/stablecoin/StableCoin.js';
 import { FactoryCashinRole } from '../src/domain/context/factory/FactoryCashinRole.js';
 import { FactoryKey } from '../src/domain/context/factory/FactoryKey.js';
 import { FactoryRole } from '../src/domain/context/factory/FactoryRole.js';
 import { FactoryStableCoin } from '../src/domain/context/factory/FactoryStableCoin.js';
-import {
-	CREATE_SC_GAS,
-	TOKEN_CREATION_COST_HBAR,
-} from '../src/core/Constants.js';
-import { StableCoinFactory__factory } from '@hashgraph/stablecoin-npm-contracts';
-import {
-	IStrategyConfig,
-	SignatureRequest,
-} from '@hashgraph/hedera-custodians-integration';
+import { REGEX_TRANSACTION } from '../src/port/out/error/TransactionResponseError.js';
 
 interface token {
 	tokenId: string;
@@ -612,6 +614,12 @@ function signAndSendTransaction(
 
 // * Jest Mocks
 
+//* Mock console.log() and console.info() methods
+global.console.log = jest.fn();
+global.console.info = jest.fn();
+LogService.log = jest.fn();
+LogService.logInfo = jest.fn();
+
 jest.mock('../src/port/out/mirror/MirrorNodeAdapter', () => {
 	const actual = jest.requireActual(
 		'../src/port/out/mirror/MirrorNodeAdapter.ts',
@@ -775,6 +783,70 @@ jest.mock('../src/port/out/mirror/MirrorNodeAdapter', () => {
 			const balance = HBAR_balances.get(identifiers(accountId)[1]);
 			if (balance) return BigDecimal.fromString(balance, HBAR_DECIMALS);
 			return BigDecimal.fromString('0', HBAR_DECIMALS);
+		},
+	);
+
+	MirrorNodeAdapterMock.getContractResults = jest.fn(
+		async (
+			transactionId: string,
+			numberOfResultItems: number,
+			timeout = 30,
+			requestInterval = 3,
+		) => {
+			// Simulate transactionId formatting
+			transactionId = transactionId
+				.replace('@', '-')
+				.replace(/.([^.]*)$/, '-$1');
+
+			// Mock the behavior of retries and timeout
+			let call_OK = false;
+			const results: string[] = [];
+			const BYTES_32_LENGTH = 64; // Assuming 64 for the byte length
+
+			const mockResponseData = '0x'.padEnd(
+				2 + numberOfResultItems * BYTES_32_LENGTH,
+				'1',
+			); // Mock response with data
+
+			do {
+				timeout -= requestInterval;
+
+				if (mockResponseData && mockResponseData.length > 2) {
+					try {
+						call_OK = true;
+
+						if (numberOfResultItems == 0) {
+							numberOfResultItems =
+								(mockResponseData.length - 2) / BYTES_32_LENGTH;
+						}
+
+						if (
+							mockResponseData.startsWith('0x') &&
+							mockResponseData.length >=
+								2 + numberOfResultItems * BYTES_32_LENGTH
+						) {
+							for (let i = 0; i < numberOfResultItems; i++) {
+								const start = 2 + i * BYTES_32_LENGTH;
+								const end = start + BYTES_32_LENGTH;
+								const result = `0x${mockResponseData.slice(
+									start,
+									end,
+								)}`;
+								results.push(result);
+							}
+							return results;
+						}
+
+						return null;
+					} catch (error) {
+						return Promise.reject(new Error('InvalidResponse'));
+					}
+				}
+
+				await new Promise((r) => setTimeout(r, requestInterval * 1000)); // Simulate async delay
+			} while (timeout > 0 && !call_OK);
+
+			return results;
 		},
 	);
 

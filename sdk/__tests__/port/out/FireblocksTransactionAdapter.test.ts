@@ -48,16 +48,13 @@ import {
 	RPC_NODE,
 } from '../../config';
 import Injectable from '../../../src/core/Injectable';
+import { Time } from '../../../src/core/Time';
 
 const initialSupply = 1000;
 const apiSecretKey = FIREBLOCKS_SETTINGS.apiSecretKeyPath;
 
 describe('🧪 FireblocksTransactionAdapter test', () => {
 	let stableCoinHTS: StableCoinViewModel;
-	const delay = async (seconds = 5): Promise<void> => {
-		seconds = seconds * 1000;
-		await new Promise((r) => setTimeout(r, seconds));
-	};
 
 	const mirrorNode: MirrorNode = {
 		name: MIRROR_NODE.name,
@@ -127,7 +124,7 @@ describe('🧪 FireblocksTransactionAdapter test', () => {
 		});
 
 		stableCoinHTS = (await StableCoin.create(requesCreateStableCoin)).coin;
-		await delay();
+		await Time.delay(5, 'seconds');
 	}, 80_000);
 
 	it('Fireblocks should create a Stable Coin', async () => {

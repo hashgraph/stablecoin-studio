@@ -37,7 +37,6 @@ describe(`<${ModalWalletConnect.name} />`, () => {
 		const store = mockStore({
 			wallet: {
 				foundWallets: [
-					SupportedWallets.HASHPACK,
 					SupportedWallets.METAMASK,
 					SupportedWallets.BLADE,
 					SupportedWallets.MULTISIG,

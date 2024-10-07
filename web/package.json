@@ -1,15 +1,16 @@
 {
 	"name": "@hashgraph/stablecoin-dapp",
-	"version": "1.24.0",
+	"version": "1.25.0",
 	"files": [
 		"build/"
 	],
 	"scripts": {
 		"start": "react-app-rewired start",
 		"build": "react-app-rewired build",
-		"test": "react-app-rewired test --maxWorkers=50% --watchAll=false",
+		"test": "react-app-rewired test --maxWorkers=25% --watchAll=false --cache=false",
 		"test:watch": "react-app-rewired test --maxWorkers=50% --watchAll=true",
 		"test:update": "react-app-rewired test -u --maxWorkers=50% --watchAll=false",
+		"test:ci": "react-app-rewired test --ci --runInBand --watchAll=false --cache=false",
 		"cleanCache": "react-app-rewired test --clearCache",
 		"eject": "react-app-rewired eject",
 		"lint": "eslint . --ext .ts --ext .mts --fix",
@@ -127,10 +128,9 @@
 		],
 		"moduleNameMapper": {
 			"^(\\.{1,2}/.*)\\.(m)?js$": "$1",
-			"hashconnect/dist/esm(.*)": "<rootDir>/../sdk/node_modules/@hashgraph/hashconnect/dist/cjs$1",
-			"hashconnect": "<rootDir>/../sdk/node_modules/@hashgraph/hashconnect/dist/cjs/hashconnect.js",
 			"axios": "<rootDir>/node_modules/axios/dist/node/axios.cjs",
-			"blade": "<rootDir>/../sdk/node_modules/@hashgraph/hashconnect/dist/cjs/hashconnect.js",
+			"blade": "<rootDir>/src/mocks/blade-sdk-mock.js",
+			"hedera-wallet-connect": "<rootDir>/src/mocks/hedera-wallet-connect-sdk-mock.js",
 			"fireblocks-sdk": "<rootDir>/src/mocks/fireblocks-sdk-mock.js"
 		},
 		"transform": {

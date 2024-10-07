@@ -340,7 +340,7 @@ const StableCoinCreation = () => {
 					targetId: accountInfo.id!,
 					tokenId,
 				});
-				await SDKService.associate(associateRequest);
+				const response = await SDKService.associate(associateRequest);
 
 				if (grantKYCToOriginalSender) {
 					const grantKYCRequest = new KYCRequest({
