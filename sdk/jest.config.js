@@ -14,7 +14,7 @@ module.exports = {
 	testMatch: ['**/__tests__/**/*.(test|spec).[jt]s?(x)'],
 	testPathIgnorePatterns: ['/build/', '/src_old/', '/example/js/'], // Added to ignore /example/js/ directory in module mapping
 	modulePathIgnorePatterns: ['/example/js/'], // Added to ignore /example/js/ directory in module mapping
-	coverageDirectory: 'coverage', // trigger
+	coverageDirectory: 'coverage',
 	collectCoverageFrom: [
 		'src/**/*.ts',
 		'src/**/*.mts',
