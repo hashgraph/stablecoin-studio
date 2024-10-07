@@ -12,7 +12,11 @@ on:
     branches:
       - main
     paths:
-      - "cli/**"
+      - "cli/src/**"
+      - "cli/test/**"
+      - "cli/package*.json"
+      - "cli/tsconfig*.json"
+      - "cli/jest.config.js"
 
 # env:
 # NODE_VERSION: "20.17.0" # Fixed version for better stability

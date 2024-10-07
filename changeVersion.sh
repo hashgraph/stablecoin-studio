@@ -17,12 +17,18 @@ update_version() {
   local temp_file
   temp_file=$(mktemp)
 
-  # Find and loop over all package.json and package-lock.json files (excluding node_modules and example directories)
-  find . -path ./node_modules -prune -o -name "package.json" -type f | grep -v node_modules | grep -v example | while read -r file; do
-    # Use sed to update the version in the package.json or package-lock.json file and store the result in a temp file
-    sed "s/\"version\": \".*\"/\"version\": \"$VERSION\"/g" "$file" > "$temp_file"
-    # Move the temp file back to overwrite the original file
-    mv "$temp_file" "$file"
+  # List of specific modules
+  local modules=("sdk" "contracts" "cli" "web" "backend")
+
+  # Loop through each module
+  for module in "${modules[@]}"; do
+    # Find package.json files in the specified module directories (one level deep)
+    find "./$module" -maxdepth 1 -name "package.json" -type f | while read -r file; do
+      # Use sed to update the version in the package.json and store the result in a temp file
+      sed "s/\"version\": \".*\"/\"version\": \"$VERSION\"/g" "$file" > "$temp_file"
+      # Move the temp file back to overwrite the original file
+      mv "$temp_file" "$file"
+    done
   done
 
   # Clean up temp file

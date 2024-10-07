@@ -10,7 +10,9 @@ on:
     branches:
       - main
     paths:
-      - "web/**"
+      - "web/src/**"
+      - "web/package*.json"
+      - "web/tsconfig*.json"
   # env:
   # NODE_VERSION: "20.17.0" # Fixed version for better stability
 jobs:

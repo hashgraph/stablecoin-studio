@@ -11,9 +11,10 @@ on:
     branches:
       - main
     paths:
-      - "backend/**"
-    paths-ignore:
-      - "backend/**/package.json"
+      - "backend/src/**"
+      - "backend/test/**"
+      - "backend/package*.json"
+      - "backend/tsconfig*.json"
 # env:
 # NODE_VERSION: "20.17.0" # Fixed version for better stability
 

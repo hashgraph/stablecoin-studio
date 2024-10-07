@@ -13,7 +13,12 @@ on:
     branches:
       - main
     paths:
-      - "contracts/**"
+      - "contracts/contracts/**"
+      - "contracts/test/**"
+      - "contracts/scripts/**"
+      - "contracts/package*.json"
+      - "contracts/hardhat.config.js"
+      - "contracts/tsconfig.json"
 # env:
 # NODE_VERSION: "20.17.0" # Fixed version for better stability
 
@@ -45,9 +50,9 @@ jobs:
           module: "contracts"
 
       # * Actual test command
-      # - name: Run
-      #   run: npm run test:ci
-      #   working-directory: contracts
+      - name: Run
+        run: npm run test:ci
+        working-directory: contracts
 
       - name: Clean project
         run: npm run clean
