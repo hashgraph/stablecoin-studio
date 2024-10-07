@@ -10,7 +10,8 @@ on:
       - "sdk/tsconfig*.json"
       - "sdk/jest.config.js"
   push:
-    branches: [main]
+    branches:
+      - main
     paths:
       - "sdk/**"
 # env:

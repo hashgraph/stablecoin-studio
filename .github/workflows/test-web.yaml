@@ -7,7 +7,8 @@ on:
       - "web/package*.json"
       - "web/tsconfig*.json"
   push:
-    branches: [main]
+    branches:
+      - main
     paths:
       - "web/**"
   # env:

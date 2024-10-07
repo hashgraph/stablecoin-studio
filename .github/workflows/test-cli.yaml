@@ -9,7 +9,8 @@ on:
       - "cli/tsconfig*.json"
       - "cli/jest.config.js"
   push:
-    branches: [main]
+    branches:
+      - main
     paths:
       - "cli/**"
 

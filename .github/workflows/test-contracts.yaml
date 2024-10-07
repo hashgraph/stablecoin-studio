@@ -10,7 +10,8 @@ on:
       - "contracts/hardhat.config.js"
       - "contracts/tsconfig.json"
   push:
-    branches: [main]
+    branches:
+      - main
     paths:
       - "contracts/**"
 # env:
