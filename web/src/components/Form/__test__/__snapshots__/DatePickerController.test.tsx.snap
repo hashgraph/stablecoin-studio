@@ -91,7 +91,6 @@ exports[`<DatePickerController /> .render should be disabled if disabled=true: D
             <input
               class="chakra-input css-1jo7i1r"
               disabled=""
-              id="field-:r4:"
               placeholder="datepicker-placeholder"
               value=""
             />
@@ -212,7 +211,6 @@ exports[`<DatePickerController /> .render should render the component: WithLabel
             </div>
             <input
               class="chakra-input css-1jo7i1r"
-              id="field-:r0:"
               value=""
             />
           </div>
@@ -316,10 +314,7 @@ exports[`<DatePickerController /> .render should show the error message: WithErr
               </div>
             </div>
             <input
-              aria-describedby="field-:r2:-feedback"
-              aria-invalid="true"
               class="chakra-input css-1jo7i1r"
-              id="field-:r2:"
               value=""
             />
           </div>

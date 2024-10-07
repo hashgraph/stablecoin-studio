@@ -79,7 +79,7 @@ exports[`<HandleRoles /> should render correctly on editRole action 1`] = `
                       class="css-1f43avz-a11yText-A11yText"
                     />
                     <div
-                      class=" css-17n5zh"
+                      class="css-17n5zh"
                     >
                       <div
                         class="css-3y2vuh"
@@ -91,7 +91,7 @@ exports[`<HandleRoles /> should render correctly on editRole action 1`] = `
                           Select cash in limit option
                         </span>
                         <div
-                          class=" css-svnjlw"
+                          class="css-svnjlw"
                           data-value=""
                         >
                           <input
@@ -102,8 +102,8 @@ exports[`<HandleRoles /> should render correctly on editRole action 1`] = `
                             autocapitalize="none"
                             autocomplete="off"
                             autocorrect="off"
-                            class=" css-146k1ar-input"
-                            id="field-:r10:"
+                            class="css-146k1ar-input"
+                            id="react-select-2-input"
                             role="combobox"
                             spellcheck="false"
                             tabindex="0"
@@ -113,7 +113,7 @@ exports[`<HandleRoles /> should render correctly on editRole action 1`] = `
                         </div>
                       </div>
                       <div
-                        class=" css-hfbj6y"
+                        class="css-hfbj6y"
                       >
                         <div
                           class="css-1aabyhj"
@@ -192,7 +192,6 @@ exports[`<HandleRoles /> should render correctly on editRole action 1`] = `
                       autocomplete="off"
                       class="chakra-input css-l1kxkf"
                       data-testid="account"
-                      id="field-:r11:"
                       name="account"
                       placeholder="0.0.0"
                       value=""
@@ -521,7 +520,7 @@ exports[`<HandleRoles /> should render correctly on getAccountsWithRole action 1
                     class="css-1f43avz-a11yText-A11yText"
                   />
                   <div
-                    class=" css-17n5zh"
+                    class="css-17n5zh"
                   >
                     <div
                       class="css-3y2vuh"
@@ -538,7 +537,7 @@ exports[`<HandleRoles /> should render correctly on getAccountsWithRole action 1
                         Admin
                       </div>
                       <div
-                        class=" css-svnjlw"
+                        class="css-svnjlw"
                         data-value=""
                       >
                         <input
@@ -548,8 +547,8 @@ exports[`<HandleRoles /> should render correctly on getAccountsWithRole action 1
                           autocapitalize="none"
                           autocomplete="off"
                           autocorrect="off"
-                          class=" css-146k1ar-input"
-                          id="field-:r2v:"
+                          class="css-146k1ar-input"
+                          id="react-select-3-input"
                           role="combobox"
                           spellcheck="false"
                           tabindex="0"
@@ -559,7 +558,7 @@ exports[`<HandleRoles /> should render correctly on getAccountsWithRole action 1
                       </div>
                     </div>
                     <div
-                      class=" css-hfbj6y"
+                      class="css-hfbj6y"
                     >
                       <div
                         class="css-1aabyhj"
@@ -953,7 +952,6 @@ exports[`<HandleRoles /> should render correctly on giveRole action 1`] = `
                         autocomplete="off"
                         class="chakra-input css-l1kxkf"
                         data-testid="rol.0.accountId"
-                        id="field-:ru:"
                         name="rol.0.accountId"
                         placeholder="0.0.0"
                         value=""
@@ -1571,7 +1569,6 @@ exports[`<HandleRoles /> should render correctly on revokeRole action 1`] = `
                       autocomplete="off"
                       class="chakra-input css-l1kxkf"
                       data-testid="rol.0.accountId"
-                      id="field-:r2t:"
                       name="rol.0.accountId"
                       placeholder="0.0.0"
                       value=""
