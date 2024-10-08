@@ -8,7 +8,6 @@ version=$(node -p -e "require('./package.json').version")
 packages=(
   "@hashgraph/stablecoin-npm-sdk"
   "@hashgraph/stablecoin-npm-contracts"
-  "@hashgraph/hashconnect"
 )
 
 # Function to update the version in package.json files
