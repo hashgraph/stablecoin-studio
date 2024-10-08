@@ -68,6 +68,7 @@ import RPCTransactionAdapter from '../../../src/port/out/rpc/RPCTransactionAdapt
 import { RPCQueryAdapter } from '../../../src/port/out/rpc/RPCQueryAdapter.js';
 import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
+import { Time } from '../../../src/core/Time';
 
 SDK.log = { level: 'ERROR', transports: new LoggerTransports.Console() };
 const mirrorNode: MirrorNode = {
@@ -92,11 +93,6 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 	let stableCoinService: StableCoinService;
 	// let proxyAdmin: string;
 	// let proxy: string;
-
-	const delay = async (seconds = 4): Promise<void> => {
-		seconds = seconds * 1000;
-		await new Promise((r) => setTimeout(r, seconds));
-	};
 
 	const createToken = async (
 		stablecoin: StableCoin,
@@ -183,6 +179,8 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 			CLIENT_ACCOUNT_ECDSA,
 		);
 
+		await Time.delay(5, 'seconds');
+
 		await StableCoinInPort.associate(
 			new AssociateTokenRequest({
 				targetId: CLIENT_ACCOUNT_ECDSA.id.toString(),
@@ -192,7 +190,7 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 			}),
 		);
 
-		await delay();
+		await Time.delay(5, 'seconds');
 
 		await StableCoinInPort.grantKyc(
 			new KYCRequest({
@@ -236,7 +234,7 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 			'',
 		);
 
-		await delay();
+		await Time.delay(5, 'seconds');
 
 		const res = await StableCoinInPort.getInfo(
 			new GetStableCoinDetailsRequest({

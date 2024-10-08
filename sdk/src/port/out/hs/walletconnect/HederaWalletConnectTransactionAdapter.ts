@@ -286,8 +286,9 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 			);
 			return;
 		}
+
 		// Handle session deletions
-		this.dAppConnector.walletConnectClient!.on(
+		this.dAppConnector.walletConnectClient?.on(
 			'session_delete',
 			async () => {
 				await this.stop();

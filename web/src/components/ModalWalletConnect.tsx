@@ -22,7 +22,7 @@ import {
 	SupportedWallets,
 } from '@hashgraph/stablecoin-npm-sdk';
 import type { FC, ReactNode } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import MULTISIG_LOGO_PNG from '../assets/png/multisigLogo.png';
@@ -46,7 +46,12 @@ const ModalWalletConnect = () => {
 	const { t } = useTranslation('global');
 	const dispatch = useDispatch();
 
-	const { onClose } = useDisclosure();
+	const { isOpen, onOpen, onClose } = useDisclosure();
+
+	useEffect(() => {
+		onOpen();
+	}, [onOpen]);
+
 	const styles = {
 		providerStyle: {
 			boxShadow: '0 0 12px 2px #E0E0E0',
@@ -248,6 +253,7 @@ const ModalWalletConnect = () => {
 	const handleConnectHwcConfirmed = () => {
 		const values = getValues();
 		handleWalletConnect(SupportedWallets.HWALLETCONNECT, values.networkHwc.value);
+		onClose();
 	};
 
 	const validateAccountId = (accountId: string) => {
@@ -304,7 +310,7 @@ const ModalWalletConnect = () => {
 	return (
 		<>
 			<Modal
-				isOpen={true}
+				isOpen={isOpen}
 				onClose={onClose}
 				size={'xl'}
 				isCentered

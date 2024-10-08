@@ -1,0 +1,49 @@
+name: Test_Backend
+
+on:
+  pull_request:
+    paths:
+      - "backend/src/**"
+      - "backend/test/**"
+      - "backend/package*.json"
+      - "backend/tsconfig*.json"
+  push:
+    branches:
+      - main
+    paths:
+      - "backend/src/**"
+      - "backend/test/**"
+      - "backend/package*.json"
+      - "backend/tsconfig*.json"
+# env:
+# NODE_VERSION: "20.17.0" # Fixed version for better stability
+
+jobs:
+  main:
+    runs-on: token-studio-linux-medium
+    container:
+      image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
+    steps:
+      # * Initial steps
+      - name: Checkout repository
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29
+      # Reuse the common steps with dependency installation disabled
+      - name: Initial steps
+        uses: ./.github/actions/initial-steps
+
+      # * Specific steps for the Backend
+      - name: Install dependencies
+        run: npm ci
+        working-directory: backend
+
+      - name: Build Backend
+        run: npm run build
+        working-directory: backend
+
+      - name: Run Backend Tests
+        run: npm run test:ci
+        working-directory: backend
+
+      - name: Clear Cache
+        run: npm run clear-cache
+        working-directory: backend

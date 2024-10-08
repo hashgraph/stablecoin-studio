@@ -1,6 +1,11 @@
-node_modules/
-dist/
+# Environment variables
 .env
 
-# Fix local docker
+# Node modules
+node_modules/
+
+# Build output
+dist/
+
+# Local Docker files
 my*
