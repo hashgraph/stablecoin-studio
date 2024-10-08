@@ -1,0 +1,46 @@
+name: Test_Web
+
+on:
+  pull_request:
+    paths:
+      - "web/src/**"
+      - "web/package*.json"
+      - "web/tsconfig*.json"
+  push:
+    branches:
+      - main
+    paths:
+      - "web/src/**"
+      - "web/package*.json"
+      - "web/tsconfig*.json"
+  # env:
+  # NODE_VERSION: "20.17.0" # Fixed version for better stability
+jobs:
+  main:
+    runs-on: token-studio-linux-medium
+    container:
+      image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
+    steps:
+      # * Initial steps
+      - name: Checkout repository
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29
+      # Reuse the common steps with dependency installation disabled
+      - name: Initial steps
+        uses: ./.github/actions/initial-steps
+        with:
+          deps-contracts-install: "true"
+
+      # * Prepare other modules
+      - name: Install and build Contracts, SDK and Web
+        uses: ./.github/actions/install-and-build
+        with:
+          module: "web"
+
+      # * Specific steps for the Web
+      - name: Run tests Web
+        run: npm run test:ci
+        working-directory: web
+
+      - name: Clear Cache
+        run: npm run clear-cache
+        working-directory: web

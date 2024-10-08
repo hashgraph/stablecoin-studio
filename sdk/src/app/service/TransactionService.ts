@@ -297,7 +297,7 @@ export default class TransactionService extends Service {
 			} else if (t instanceof TransferTransaction) {
 				let message = '';
 				const tokenTransfers = (t as TransferTransaction)
-					.tokenTransfers;
+					.nftTransfers;
 				for (const key of tokenTransfers.keys()) {
 					const tokenTransfer = tokenTransfers.get(key);
 					message = message + tokenTransfer?.toString() + ', ';

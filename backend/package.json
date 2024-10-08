@@ -19,7 +19,7 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "npx jest --config ./test/jest-e2e.json",
     "test:ci": "npx jest --ci --runInBand",
-    "cleanCache": "npx jest --clearCache",
+    "clear-cache": "npx jest --clearCache",
     "deleteAllTransactions": "ts-node ./src/scripts/deleteAllDBTransactions.ts",
     "pre-commit": "npm run lint && npm run prettier"
   },

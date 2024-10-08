@@ -1,36 +1,29 @@
+# Dependency directories
+node_modules/
+
+# Build and transpiled files
+build/
+coverage/
+
 # Logs
-logs
+logs/
 *.log
 npm-debug.log*
 
-# Dependencies
-node_modules/
-# package-lock.json
-
-# Coverage
-coverage
-
-# Transpiled files
-build
-
-# VS Code
-.vscode
+# IDEs and editors
+.vscode/
 !.vscode/tasks.js
-
-# JetBrains IDEs
 .idea/
 
-# Optional npm cache directory
-.npm
-
-# Optional eslint cache
+# Optional directories and files
+.npm/
 .eslintcache
-
-# Misc
 .DS_Store
 
-report.json
-
+# Configuration files
 .hsca-config*.yaml
 hsca-config.yaml
-./docs/*
+
+# Miscellaneous
+report.json
+./docs/

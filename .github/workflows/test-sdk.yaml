@@ -1,0 +1,62 @@
+name: Test_SDK
+
+on:
+  pull_request:
+    paths:
+      - "sdk/src/**"
+      - "sdk/test/**"
+      - "sdk/scripts/**"
+      - "sdk/package*.json"
+      - "sdk/tsconfig*.json"
+      - "sdk/jest.config.js"
+  push:
+    branches:
+      - main
+    paths:
+      - "sdk/src/**"
+      - "sdk/test/**"
+      - "sdk/scripts/**"
+      - "sdk/package*.json"
+      - "sdk/tsconfig*.json"
+      - "sdk/jest.config.js"
+# env:
+# NODE_VERSION: "20.17.0" # Fixed version for better stability
+
+jobs:
+  main:
+    runs-on: token-studio-linux-medium
+    container:
+      image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
+    steps:
+      # * Initial steps
+      - name: Checkout repository
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29
+      # Reuse the common steps with dependency installation disabled
+      - name: Initial steps
+        uses: ./.github/actions/initial-steps
+        with:
+          deps-contracts-install: "true"
+          deps-create-env-file: "true"
+
+      - name: Create .env file
+        uses: ./.github/actions/create-env-file
+        with:
+          api-access-token-1: ${{ secrets.API_ACCESS_TOKEN_1 }}
+          api-access-token-2: ${{ secrets.API_ACCESS_TOKEN_2 }}
+          module: "sdk"
+
+      # * Prepare other modules
+      - name: Install and build Contracts and SDK
+        uses: ./.github/actions/install-and-build
+        with:
+          module: "sdk"
+
+      # * Specific steps for the SDK
+
+      - name: Run SDK Tests
+        run: npm run test:ci
+        working-directory: sdk
+
+      - name: Clear Cache
+        run: npm run clear-cache
+        working-directory: sdk

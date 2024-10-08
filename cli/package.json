@@ -32,7 +32,7 @@
     "test:watch": "jest --watch --maxWorkers=25%",
     "test:ci": "jest --runInBand --forceExit --detectOpenHandles",
     "test:vm": "NODE_OPTIONS=--experimental-vm-modules npm run test",
-    "cleanCache": "npx jest --clearCache",
+    "clear-cache": "npx jest --clearCache",
     "prepack": "npm run build"
   },
   "keywords": [],
