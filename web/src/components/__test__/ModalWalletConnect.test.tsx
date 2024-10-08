@@ -36,10 +36,7 @@ describe(`<${ModalWalletConnect.name} />`, () => {
 
 		const store = mockStore({
 			wallet: {
-				foundWallets: [
-					SupportedWallets.METAMASK,
-					SupportedWallets.MULTISIG,
-				],
+				foundWallets: [SupportedWallets.METAMASK, SupportedWallets.MULTISIG],
 				selectedMirrors: rpcNode,
 				selectedRPCs: rpcNode,
 			},

@@ -329,90 +329,86 @@ const ModalWalletConnect = () => {
 						zIndex: '88',
 					}}
 				>
-					{!error &&
-						!rejected &&
-						!hashpackSelected &&
-						!multiSigSelected &&
-						!hwcSelected && (
-							<>
-								<ModalHeader p='0' justifyContent='center'>
-									<Text
-										data-testid='title'
-										fontSize='20px'
-										fontWeight={700}
-										textAlign='center'
-										lineHeight='16px'
-										color='brand.black'
-									>
-										{t('walletActions.selectWallet')}
-									</Text>
-								</ModalHeader>
-								<ModalFooter p='0' justifyContent='center'>
-									<HStack
-										spacing={10}
-										pt={8}
-										w='full'
-										justifyContent={'center'}
-										alignItems={'stretch'}
-									>
-										{availableWallets.includes(SupportedWallets.METAMASK) ? (
-											<VStack
-												data-testid='Metamask'
-												{...styles.providerStyle}
-												shouldWrapChildren
-												onClick={handleConnectMetamaskWallet}
+					{!error && !rejected && !hashpackSelected && !multiSigSelected && !hwcSelected && (
+						<>
+							<ModalHeader p='0' justifyContent='center'>
+								<Text
+									data-testid='title'
+									fontSize='20px'
+									fontWeight={700}
+									textAlign='center'
+									lineHeight='16px'
+									color='brand.black'
+								>
+									{t('walletActions.selectWallet')}
+								</Text>
+							</ModalHeader>
+							<ModalFooter p='0' justifyContent='center'>
+								<HStack
+									spacing={10}
+									pt={8}
+									w='full'
+									justifyContent={'center'}
+									alignItems={'stretch'}
+								>
+									{availableWallets.includes(SupportedWallets.METAMASK) ? (
+										<VStack
+											data-testid='Metamask'
+											{...styles.providerStyle}
+											shouldWrapChildren
+											onClick={handleConnectMetamaskWallet}
+										>
+											<PairingSpinner wallet={SupportedWallets.METAMASK}>
+												<Image src={METAMASK_LOGO} w={20} />
+												<Text textAlign='center'>Metamask</Text>
+											</PairingSpinner>
+										</VStack>
+									) : (
+										<VStack data-testid='Metamask' {...styles.providerStyle}>
+											<Link
+												href='https://metamask.io/download/'
+												isExternal
+												_hover={{ textDecoration: 'none' }}
 											>
-												<PairingSpinner wallet={SupportedWallets.METAMASK}>
-													<Image src={METAMASK_LOGO} w={20} />
-													<Text textAlign='center'>Metamask</Text>
-												</PairingSpinner>
-											</VStack>
-										) : (
-											<VStack data-testid='Metamask' {...styles.providerStyle}>
-												<Link
-													href='https://metamask.io/download/'
-													isExternal
-													_hover={{ textDecoration: 'none' }}
-												>
-													<Image src={METAMASK_LOGO} w={20} />
-													<Text textAlign='center'>Metamask</Text>
-												</Link>
-											</VStack>
-										)}
-										{!availableWallets.includes(SupportedWallets.MULTISIG) ? (
-											<VStack
-												data-testid='Multisig'
-												{...styles.providerStyle}
-												shouldWrapChildren
-												onClick={handleMultiSigMode}
-											>
-												<PairingSpinner wallet={SupportedWallets.MULTISIG}>
-													<Image src={MULTISIG_LOGO_PNG} w={20} />
-													<Text textAlign='center'>Multisig</Text>
-												</PairingSpinner>
-											</VStack>
-										) : (
-											<></>
-										)}
-										{isHWCProjectID ? (
-											<VStack
-												data-testid='HederaWalletConnect'
-												{...styles.providerStyle}
-												shouldWrapChildren
-												onClick={handleConnectHederaWalletConnect}
-											>
-												<PairingSpinner wallet={SupportedWallets.HWALLETCONNECT}>
-													<Image src={WALLETCONNECT_LOGO_PNG} w={20} />
-													<Text>Hedera WC</Text>
-												</PairingSpinner>
-											</VStack>
-										) : (
-											<></>
-										)}
-									</HStack>
-								</ModalFooter>
-							</>
-						)}
+												<Image src={METAMASK_LOGO} w={20} />
+												<Text textAlign='center'>Metamask</Text>
+											</Link>
+										</VStack>
+									)}
+									{!availableWallets.includes(SupportedWallets.MULTISIG) ? (
+										<VStack
+											data-testid='Multisig'
+											{...styles.providerStyle}
+											shouldWrapChildren
+											onClick={handleMultiSigMode}
+										>
+											<PairingSpinner wallet={SupportedWallets.MULTISIG}>
+												<Image src={MULTISIG_LOGO_PNG} w={20} />
+												<Text textAlign='center'>Multisig</Text>
+											</PairingSpinner>
+										</VStack>
+									) : (
+										<></>
+									)}
+									{isHWCProjectID ? (
+										<VStack
+											data-testid='HederaWalletConnect'
+											{...styles.providerStyle}
+											shouldWrapChildren
+											onClick={handleConnectHederaWalletConnect}
+										>
+											<PairingSpinner wallet={SupportedWallets.HWALLETCONNECT}>
+												<Image src={WALLETCONNECT_LOGO_PNG} w={20} />
+												<Text>Hedera WC</Text>
+											</PairingSpinner>
+										</VStack>
+									) : (
+										<></>
+									)}
+								</HStack>
+							</ModalFooter>
+						</>
+					)}
 					{hashpackSelected && (
 						<>
 							<ModalHeader p='0' justifyContent='center'>

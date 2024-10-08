@@ -290,8 +290,7 @@ export default class TransactionService extends Service {
 				kycKey : ${kycKey}, freezeKey : ${freezeKey}, feeScheduleKey : ${feeScheduleKey}, pauseKey : ${pauseKey}, wipeKey : ${wipeKey}`;
 			} else if (t instanceof TransferTransaction) {
 				let message = '';
-				const tokenTransfers = (t as TransferTransaction)
-					.tokenTransfers;
+				const tokenTransfers = (t as TransferTransaction).nftTransfers;
 				for (const key of tokenTransfers.keys()) {
 					const tokenTransfer = tokenTransfers.get(key);
 					message = message + tokenTransfer?.toString() + ', ';
