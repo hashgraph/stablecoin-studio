@@ -1,37 +1,44 @@
 name: Publishing
 on:
-  release:
-    types:
-      - published
+  # ! Disabled this file is fot backup until publish-all.yaml is tested
+  push:
+    branches:
+      - disabled
+  # release:
+  #   types:
+  #     - published
+
 jobs:
   publish:
-    name: docker
     runs-on: token-studio-linux-medium
-
+    container:
+      image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
     permissions:
       contents: read
 
     steps:
-      - name: Harden Runner
-        uses: step-security/harden-runner@f086349bfa2bd1361f7909c78558e816508cdc10 # v2.8.0
-        with:
-          egress-policy: audit
-
       - name: Checkout repository
         uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
 
-      - name: Setup NodeJS Environment
-        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
+      - name: Initial steps
+        uses: ./.github/actions/initial-steps
         with:
-          node-version: 20.x
+          deps-contracts-install: "true"
+          deps-change-references: "true"
 
       - name: Create file .npmrc
         run: |
-          touch .npmrc
+          cat <<EOF > .npmrc
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> .npmrc
+          # //localhost:4873/:_authToken=${{ secrets.NPM_TOKEN }} # ! Only for local testing, DO NOT uncomment for production
+          EOF
           cp .npmrc ./contracts/.npmrc
           cp .npmrc ./sdk/.npmrc
           cp .npmrc ./cli/.npmrc
+
+      # # ! Only for local testing, DO NOT uncomment for production
+      # - name: Set NPM registry to Verdaccio (local)
+      #   run: npm config set registry http://localhost:4873
 
       - name: Change references
         run: ./changeProyectsReferencesToRepo.sh
