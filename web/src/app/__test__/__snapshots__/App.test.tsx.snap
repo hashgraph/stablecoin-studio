@@ -62,7 +62,7 @@ exports[`<App /> should render correctly 1`] = `
                     />
                     <div
                       aria-hidden="true"
-                      class=" css-lub9qs"
+                      class="css-lub9qs"
                       data-aria-hidden="true"
                     >
                       <div
@@ -75,7 +75,7 @@ exports[`<App /> should render correctly 1`] = `
                           Choose stablecoin
                         </span>
                         <div
-                          class=" css-svnjlw"
+                          class="css-svnjlw"
                           data-value=""
                         >
                           <input
@@ -86,8 +86,8 @@ exports[`<App /> should render correctly 1`] = `
                             autocapitalize="none"
                             autocomplete="off"
                             autocorrect="off"
-                            class=" css-146k1ar-input"
-                            id="field-:r3:"
+                            class="css-146k1ar-input"
+                            id="react-select-2-input"
                             role="combobox"
                             spellcheck="false"
                             tabindex="0"
@@ -97,7 +97,7 @@ exports[`<App /> should render correctly 1`] = `
                         </div>
                       </div>
                       <div
-                        class=" css-hfbj6y"
+                        class="css-hfbj6y"
                       >
                         <div
                           class="css-1aabyhj"

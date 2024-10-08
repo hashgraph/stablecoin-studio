@@ -41,7 +41,7 @@ exports[`<undefined /> doesn't show error with showError=false: NotShowingError 
           class="css-1f43avz-a11yText-A11yText"
         />
         <div
-          class=" css-ot5r48"
+          class="css-ot5r48"
           data-invalid="true"
         >
           <div
@@ -52,7 +52,7 @@ exports[`<undefined /> doesn't show error with showError=false: NotShowingError 
               data-testid="select-placeholder"
             />
             <div
-              class=" css-svnjlw"
+              class="css-svnjlw"
               data-value=""
             >
               <input
@@ -64,8 +64,8 @@ exports[`<undefined /> doesn't show error with showError=false: NotShowingError 
                 autocapitalize="none"
                 autocomplete="off"
                 autocorrect="off"
-                class=" css-146k1ar-input"
-                id="field-:r6:"
+                class="css-146k1ar-input"
+                id="react-select-8-input"
                 role="combobox"
                 spellcheck="false"
                 tabindex="0"
@@ -75,7 +75,7 @@ exports[`<undefined /> doesn't show error with showError=false: NotShowingError 
             </div>
           </div>
           <div
-            class=" css-hfbj6y"
+            class="css-hfbj6y"
           >
             <div
               class="css-1aabyhj"
@@ -162,7 +162,7 @@ exports[`<undefined /> shows error with showErrors=true: ShowingError 1`] = `
           class="css-1f43avz-a11yText-A11yText"
         />
         <div
-          class=" css-ot5r48"
+          class="css-ot5r48"
           data-invalid="true"
         >
           <div
@@ -173,7 +173,7 @@ exports[`<undefined /> shows error with showErrors=true: ShowingError 1`] = `
               data-testid="select-placeholder"
             />
             <div
-              class=" css-svnjlw"
+              class="css-svnjlw"
               data-value=""
             >
               <input
@@ -185,8 +185,8 @@ exports[`<undefined /> shows error with showErrors=true: ShowingError 1`] = `
                 autocapitalize="none"
                 autocomplete="off"
                 autocorrect="off"
-                class=" css-146k1ar-input"
-                id="field-:r5:"
+                class="css-146k1ar-input"
+                id="react-select-7-input"
                 role="combobox"
                 spellcheck="false"
                 tabindex="0"
@@ -196,7 +196,7 @@ exports[`<undefined /> shows error with showErrors=true: ShowingError 1`] = `
             </div>
           </div>
           <div
-            class=" css-hfbj6y"
+            class="css-hfbj6y"
           >
             <div
               class="css-1aabyhj"
@@ -288,7 +288,7 @@ exports[`<undefined /> shows placeholder with default value: DefaultPlaceholder 
           class="css-1f43avz-a11yText-A11yText"
         />
         <div
-          class=" css-ot5r48"
+          class="css-ot5r48"
         >
           <div
             class="css-3y2vuh"
@@ -298,7 +298,7 @@ exports[`<undefined /> shows placeholder with default value: DefaultPlaceholder 
               data-testid="select-placeholder"
             />
             <div
-              class=" css-svnjlw"
+              class="css-svnjlw"
               data-value=""
             >
               <input
@@ -309,8 +309,8 @@ exports[`<undefined /> shows placeholder with default value: DefaultPlaceholder 
                 autocapitalize="none"
                 autocomplete="off"
                 autocorrect="off"
-                class=" css-146k1ar-input"
-                id="field-:r3:"
+                class="css-146k1ar-input"
+                id="react-select-5-input"
                 role="combobox"
                 spellcheck="false"
                 tabindex="0"
@@ -320,7 +320,7 @@ exports[`<undefined /> shows placeholder with default value: DefaultPlaceholder 
             </div>
           </div>
           <div
-            class=" css-hfbj6y"
+            class="css-hfbj6y"
           >
             <div
               class="css-1aabyhj"
@@ -406,7 +406,7 @@ exports[`<undefined /> shows placeholder with the provided value: CustomPlacehol
           class="css-1f43avz-a11yText-A11yText"
         />
         <div
-          class=" css-ot5r48"
+          class="css-ot5r48"
         >
           <div
             class="css-3y2vuh"
@@ -418,7 +418,7 @@ exports[`<undefined /> shows placeholder with the provided value: CustomPlacehol
               Value of placeholder
             </span>
             <div
-              class=" css-svnjlw"
+              class="css-svnjlw"
               data-value=""
             >
               <input
@@ -429,8 +429,8 @@ exports[`<undefined /> shows placeholder with the provided value: CustomPlacehol
                 autocapitalize="none"
                 autocomplete="off"
                 autocorrect="off"
-                class=" css-146k1ar-input"
-                id="field-:r4:"
+                class="css-146k1ar-input"
+                id="react-select-6-input"
                 role="combobox"
                 spellcheck="false"
                 tabindex="0"
@@ -440,7 +440,7 @@ exports[`<undefined /> shows placeholder with the provided value: CustomPlacehol
             </div>
           </div>
           <div
-            class=" css-hfbj6y"
+            class="css-hfbj6y"
           >
             <div
               class="css-1aabyhj"
