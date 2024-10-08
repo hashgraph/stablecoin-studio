@@ -1,0 +1,59 @@
+name: Test_Contracts
+
+on:
+  pull_request:
+    paths:
+      - "contracts/contracts/**"
+      - "contracts/test/**"
+      - "contracts/scripts/**"
+      - "contracts/package*.json"
+      - "contracts/hardhat.config.js"
+      - "contracts/tsconfig.json"
+  push:
+    branches:
+      - main
+    paths:
+      - "contracts/contracts/**"
+      - "contracts/test/**"
+      - "contracts/scripts/**"
+      - "contracts/package*.json"
+      - "contracts/hardhat.config.js"
+      - "contracts/tsconfig.json"
+# env:
+# NODE_VERSION: "20.17.0" # Fixed version for better stability
+
+jobs:
+  main:
+    runs-on: token-studio-linux-medium
+    container:
+      image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
+    steps:
+      # * Initial steps
+      - name: Checkout repository
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29
+      # Reuse the common steps with dependency installation disabled
+      - name: Initial steps
+        uses: ./.github/actions/initial-steps
+        with:
+          deps-contracts-install: "true"
+          deps-create-env-file: "true"
+
+      - name: Create .env file
+        uses: ./.github/actions/create-env-file
+        with:
+          api-access-token-1: ${{ secrets.API_ACCESS_TOKEN_1 }}
+          module: "contracts"
+
+      - name: Install and build Contracts
+        uses: ./.github/actions/install-and-build
+        with:
+          module: "contracts"
+
+      # * Actual test command
+      - name: Run
+        run: npm run test:ci
+        working-directory: contracts
+
+      - name: Clean project
+        run: npm run clean
+        working-directory: contracts

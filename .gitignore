@@ -1,50 +1,40 @@
-# Logs
-logs
-*.log
-npm-debug.log*
+# Environment files
+.env
+
+# Github Actions
+.github/.secrets*
+
+# Dependency directories
+node_modules/
+.npm/
+
+# Lock files
 package-lock.json
 
-# Dependencies
-node_modules/
+# Logs
+logs/
+*.log
+npm-debug.log*
 
-# Coverage
-coverage
+# Coverage reports
+coverage/
 
 # Transpiled files
-build
+./build/
 
-# VS Code
-.vscode
+# IDE configurations
+.vscode/
 !.vscode/tasks.js
-
-# JetBrains IDEs
 .idea/
 
-# Optional npm cache directory
-.npm
-
-# Optional eslint cache
+# Linting
 .eslintcache
 
-# Misc
+# Miscellaneous
 .DS_Store
 
 # Old files
-.old
+.old/
 
-# history
-.history
-
-# Compile contract
-**/artifacts/
-sdk/hedera-sc-sdk.code-workspace
-cli/hsca-config.yaml
-.env
-.secrets
-contracts/docs/
-contracts/cache/*
-contracts/typechain-types/
-
-custodialwalletutils/__tests__/files/dfns/secret.key
-custodialwalletutils/__tests__/files/dfns/token.txt
-custodialwalletutils/__tests__/files/fireblocks/secret.key
+# History
+.history/

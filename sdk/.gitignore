@@ -1,33 +1,36 @@
+# Dependency directories
+node_modules/
+
+# Dependency lock files
+package-lock.json
+
+# Transpiled files
+build/
+
+# Environment variables
+.env
+
+# Coverage directory
+coverage/
+
 # Logs
-logs
+logs/
 *.log
 npm-debug.log*
 
-# Dependencies
-node_modules/
-package-lock.json
+# Reports
+report.json
 
-# Coverage
-coverage
-
-# Transpiled files
-build
-
-# VS Code
-.vscode
+# IDEs and editors
+.vscode/
 !.vscode/tasks.js
-
-# JetBrains IDEs
 .idea/
 
+# OS-specific files
+.DS_Store
+
 # Optional npm cache directory
-.npm
+.npm/
 
 # Optional eslint cache
 .eslintcache
-
-# Misc
-.DS_Store
-
-report.json
-.env
