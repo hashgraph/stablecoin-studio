@@ -99,7 +99,6 @@ import { GetTokenManagerListQueryHandler } from '../app/usecase/query/factory/ge
 import { GetAccountsWithRolesQueryHandler } from '../app/usecase/query/stablecoin/roles/getAccountsWithRole/GetAccountsWithRolesQueryHandler.js';
 import { GetProxyConfigQueryHandler } from '../app/usecase/query/proxy/GetProxyConfigQueryHandler.js';
 import { GetFactoryProxyConfigQueryHandler } from '../app/usecase/query/factoryProxy/GetFactoryProxyConfigQueryHandler.js';
-import { BladeTransactionAdapter } from '../port/out/hs/blade/BladeTransactionAdapter.js';
 import { FireblocksTransactionAdapter } from '../port/out/hs/hts/custodial/FireblocksTransactionAdapter.js';
 import { DFNSTransactionAdapter } from '../port/out/hs/hts/custodial/DFNSTransactionAdapter.js';
 import { MultiSigTransactionAdapter } from '../port/out/hs/multiSig/MultiSigTransactionAdapter.js';
@@ -400,10 +399,6 @@ const TRANSACTION_HANDLER = [
 	},*/
 	{
 		token: TOKENS.TRANSACTION_HANDLER,
-		useClass: BladeTransactionAdapter,
-	},
-	{
-		token: TOKENS.TRANSACTION_HANDLER,
 		useClass: MultiSigTransactionAdapter,
 	},
 	{
@@ -496,7 +491,6 @@ export default class Injectable {
 		if (this.isWeb()) {
 			// adapters.push(Injectable.resolve(HashpackTransactionAdapter));
 			adapters.push(Injectable.resolve(RPCTransactionAdapter));
-			adapters.push(Injectable.resolve(BladeTransactionAdapter));
 			adapters.push(Injectable.resolve(FireblocksTransactionAdapter));
 			adapters.push(Injectable.resolve(DFNSTransactionAdapter));
 			adapters.push(
