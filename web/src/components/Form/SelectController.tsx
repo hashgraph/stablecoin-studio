@@ -22,10 +22,10 @@ import {
 	type SelectComponentsConfig,
 	type GroupBase,
 	type SelectInstance,
+	type Variant,
 } from 'chakra-react-select';
 import Icon from '../Icon';
 import { merge as _merge } from 'lodash';
-import type { Variant } from 'chakra-react-select/dist/types/types';
 
 export interface SelectOption {
 	value: string | number;
@@ -308,6 +308,10 @@ const SelectController = forwardRef(
 									ref={ref}
 									isDisabled={isDisabled}
 									chakraStyles={{
+										control: (baseStyle) => ({
+											...baseStyle,
+											flexWrap: 'nowrap',
+										}),
 										option: (_, state) => ({
 											// option needs to be styled like this, otherwise it doesn't let user select the options
 											...styles.option,

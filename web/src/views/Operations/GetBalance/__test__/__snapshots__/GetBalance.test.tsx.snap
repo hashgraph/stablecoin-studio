@@ -79,6 +79,7 @@ exports[`<GetBalanceOperation /> should render correctly 1`] = `
                       autocomplete="off"
                       class="chakra-input css-l1kxkf"
                       data-testid="targetAccount"
+                      id="field-:r1:"
                       name="targetAccount"
                       placeholder="0.0.0"
                       value=""

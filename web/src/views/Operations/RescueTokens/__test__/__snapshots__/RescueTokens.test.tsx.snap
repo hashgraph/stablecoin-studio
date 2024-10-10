@@ -79,6 +79,7 @@ exports[`<RescueTokenOperation /> should render correctly 1`] = `
                       autocomplete="off"
                       class="chakra-input css-l1kxkf"
                       data-testid="amount"
+                      id="field-:r1:"
                       name="amount"
                       placeholder="0"
                       value=""
