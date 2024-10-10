@@ -13,9 +13,11 @@ const baseStyle = ({ isDisabled, isInvalid, hasValue }: SelectConfigProps) => {
 			transition: 'all .1s ease-in',
 			fontSize: 'sm',
 			p: 0,
+			flexWrap: 'nowrap',
 		},
 		container: {
 			position: 'relative',
+			flexWrap: 'nowrap',
 			display: 'flex',
 			alignItems: 'center',
 			w: 'full',
@@ -61,6 +63,9 @@ const baseStyle = ({ isDisabled, isInvalid, hasValue }: SelectConfigProps) => {
 		},
 		addonLeft: {
 			paddingStart: 4,
+		},
+		control: {
+			flexWrap: 'nowrap',
 		},
 	};
 };
