@@ -123,6 +123,7 @@ exports[`<ImportedTokenCreation /> should render correctly 1`] = `
                                 autocomplete="off"
                                 class="chakra-input css-l1kxkf"
                                 data-testid="stableCoinId"
+                                id="field-:r2:"
                                 name="stableCoinId"
                                 placeholder="0.0.0"
                                 value=""
@@ -225,7 +226,7 @@ exports[`<ImportedTokenCreation /> should render correctly 1`] = `
                               </div>
                             </label>
                             <div
-                              class="css-svkhat"
+                              class="css-tjk9mf"
                             >
                               <div
                                 class="css-3qrqo0"
@@ -239,12 +240,13 @@ exports[`<ImportedTokenCreation /> should render correctly 1`] = `
                                 aria-live="polite"
                                 aria-relevant="additions text"
                                 class="css-1f43avz-a11yText-A11yText"
+                                role="log"
                               />
                               <div
-                                class="css-17n5zh"
+                                class="css-1qes2uf"
                               >
                                 <div
-                                  class="css-3y2vuh"
+                                  class="css-d7d842"
                                 >
                                   <span
                                     class="chakra-text css-4pvr19"
@@ -253,19 +255,21 @@ exports[`<ImportedTokenCreation /> should render correctly 1`] = `
                                     Select the roles
                                   </span>
                                   <div
-                                    class="css-svnjlw"
+                                    class="css-18euh9p"
                                     data-value=""
                                   >
                                     <input
+                                      aria-activedescendant=""
                                       aria-autocomplete="list"
                                       aria-describedby="react-select-2-placeholder"
                                       aria-expanded="false"
                                       aria-haspopup="true"
+                                      aria-required="false"
                                       autocapitalize="none"
                                       autocomplete="off"
                                       autocorrect="off"
-                                      class="css-146k1ar-input"
-                                      id="react-select-2-input"
+                                      class="css-10wwmqn"
+                                      id="field-:r4:"
                                       role="combobox"
                                       spellcheck="false"
                                       tabindex="0"

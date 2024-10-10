@@ -18,6 +18,7 @@ exports[`<InputNumberController /> .render should be disabled if disabled=true: 
           class="chakra-input css-l1kxkf"
           data-testid="input-test"
           disabled=""
+          id="field-:r5:"
           inputmode="numeric"
           type="text"
           value=""
@@ -67,6 +68,7 @@ exports[`<InputNumberController /> .render should render the component: WithLabe
         <input
           class="chakra-input css-l1kxkf"
           data-testid="input-test"
+          id="field-:r0:"
           inputmode="numeric"
           type="text"
           value=""
@@ -101,6 +103,7 @@ exports[`<InputNumberController /> .render should show placeholder: WithPlacehol
         <input
           class="chakra-input css-l1kxkf"
           data-testid="input-test"
+          id="field-:r4:"
           inputmode="numeric"
           placeholder="placeholder"
           type="text"
@@ -134,8 +137,11 @@ exports[`<InputNumberController /> .render should show the error message: WithEr
         data-group="true"
       >
         <input
+          aria-describedby="field-:r2:-feedback"
+          aria-invalid="true"
           class="chakra-input css-l1kxkf"
           data-testid="input-test"
+          id="field-:r2:"
           inputmode="numeric"
           type="text"
           value=""
