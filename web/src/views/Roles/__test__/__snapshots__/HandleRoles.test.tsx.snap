@@ -63,7 +63,7 @@ exports[`<HandleRoles /> should render correctly on editRole action 1`] = `
                     </div>
                   </label>
                   <div
-                    class="css-svkhat"
+                    class="css-tjk9mf"
                   >
                     <div
                       class="css-3qrqo0"
@@ -77,12 +77,13 @@ exports[`<HandleRoles /> should render correctly on editRole action 1`] = `
                       aria-live="polite"
                       aria-relevant="additions text"
                       class="css-1f43avz-a11yText-A11yText"
+                      role="log"
                     />
                     <div
-                      class=" css-17n5zh"
+                      class="css-1qes2uf"
                     >
                       <div
-                        class="css-3y2vuh"
+                        class="css-d7d842"
                       >
                         <span
                           class="chakra-text css-4pvr19"
@@ -91,18 +92,20 @@ exports[`<HandleRoles /> should render correctly on editRole action 1`] = `
                           Select cash in limit option
                         </span>
                         <div
-                          class=" css-svnjlw"
+                          class="css-18euh9p"
                           data-value=""
                         >
                           <input
+                            aria-activedescendant=""
                             aria-autocomplete="list"
                             aria-describedby="react-select-2-placeholder"
                             aria-expanded="false"
                             aria-haspopup="true"
+                            aria-required="false"
                             autocapitalize="none"
                             autocomplete="off"
                             autocorrect="off"
-                            class=" css-146k1ar-input"
+                            class="css-10wwmqn"
                             id="field-:r10:"
                             role="combobox"
                             spellcheck="false"
@@ -113,7 +116,7 @@ exports[`<HandleRoles /> should render correctly on editRole action 1`] = `
                         </div>
                       </div>
                       <div
-                        class=" css-hfbj6y"
+                        class="css-hfbj6y"
                       >
                         <div
                           class="css-1aabyhj"
@@ -505,7 +508,7 @@ exports[`<HandleRoles /> should render correctly on getAccountsWithRole action 1
                   </div>
                 </label>
                 <div
-                  class="css-vyr5r8"
+                  class="css-158h8hx"
                 >
                   <div
                     class="css-3qrqo0"
@@ -519,12 +522,13 @@ exports[`<HandleRoles /> should render correctly on getAccountsWithRole action 1
                     aria-live="polite"
                     aria-relevant="additions text"
                     class="css-1f43avz-a11yText-A11yText"
+                    role="log"
                   />
                   <div
-                    class=" css-17n5zh"
+                    class="css-1qes2uf"
                   >
                     <div
-                      class="css-3y2vuh"
+                      class="css-d7d842"
                     >
                       <span
                         class="chakra-text css-fe5bdd"
@@ -538,17 +542,19 @@ exports[`<HandleRoles /> should render correctly on getAccountsWithRole action 1
                         Admin
                       </div>
                       <div
-                        class=" css-svnjlw"
+                        class="css-18euh9p"
                         data-value=""
                       >
                         <input
+                          aria-activedescendant=""
                           aria-autocomplete="list"
                           aria-expanded="false"
                           aria-haspopup="true"
+                          aria-required="false"
                           autocapitalize="none"
                           autocomplete="off"
                           autocorrect="off"
-                          class=" css-146k1ar-input"
+                          class="css-10wwmqn"
                           id="field-:r2v:"
                           role="combobox"
                           spellcheck="false"
@@ -559,7 +565,7 @@ exports[`<HandleRoles /> should render correctly on getAccountsWithRole action 1
                       </div>
                     </div>
                     <div
-                      class=" css-hfbj6y"
+                      class="css-hfbj6y"
                     >
                       <div
                         class="css-1aabyhj"

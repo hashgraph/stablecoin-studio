@@ -1,0 +1,52 @@
+name: Test_CLI
+
+on:
+  pull_request:
+    paths:
+      - "cli/src/**"
+      - "cli/test/**"
+      - "cli/package*.json"
+      - "cli/tsconfig*.json"
+      - "cli/jest.config.js"
+  push:
+    branches:
+      - main
+    paths:
+      - "cli/src/**"
+      - "cli/test/**"
+      - "cli/package*.json"
+      - "cli/tsconfig*.json"
+      - "cli/jest.config.js"
+
+# env:
+# NODE_VERSION: "20.17.0" # Fixed version for better stability
+
+jobs:
+  main:
+    runs-on: token-studio-linux-medium
+    container:
+      image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
+    steps:
+      # * Initial steps
+      - name: Checkout repository
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29
+      # Reuse the common steps with dependency installation disabled
+      - name: Initial steps
+        uses: ./.github/actions/initial-steps
+        with:
+          deps-contracts-install: "true"
+
+      # * Prepare other modules
+      - name: Install and build Contracts, SDK and CLI
+        uses: ./.github/actions/install-and-build
+        with:
+          module: "cli"
+
+      # * Specific steps for the CLI
+      - name: Run tests CLI
+        run: npm run test:ci
+        working-directory: cli
+
+      - name: Clear Cache
+        run: npm run clear-cache
+        working-directory: cli
