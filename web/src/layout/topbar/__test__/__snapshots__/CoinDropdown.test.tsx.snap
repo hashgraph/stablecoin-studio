@@ -15,7 +15,7 @@ exports[`<CoinDropdown /> should render correctly 1`] = `
         role="group"
       >
         <div
-          class="css-frrdvf"
+          class="css-eqzlby"
         >
           <span
             class="css-1f43avz-a11yText-A11yText"
@@ -26,12 +26,13 @@ exports[`<CoinDropdown /> should render correctly 1`] = `
             aria-live="polite"
             aria-relevant="additions text"
             class="css-1f43avz-a11yText-A11yText"
+            role="log"
           />
           <div
-            class="css-lub9qs"
+            class="css-jdlxgv"
           >
             <div
-              class="css-3y2vuh"
+              class="css-d7d842"
             >
               <span
                 class="chakra-text css-4pvr19"
@@ -40,19 +41,21 @@ exports[`<CoinDropdown /> should render correctly 1`] = `
                 0.0.49319786 - TEST
               </span>
               <div
-                class="css-svnjlw"
+                class="css-18euh9p"
                 data-value=""
               >
                 <input
+                  aria-activedescendant=""
                   aria-autocomplete="list"
                   aria-describedby="react-select-2-placeholder"
                   aria-expanded="false"
                   aria-haspopup="true"
+                  aria-required="false"
                   autocapitalize="none"
                   autocomplete="off"
                   autocorrect="off"
-                  class="css-146k1ar-input"
-                  id="react-select-2-input"
+                  class="css-10wwmqn"
+                  id="field-:r1:"
                   role="combobox"
                   spellcheck="false"
                   tabindex="0"
@@ -66,31 +69,7 @@ exports[`<CoinDropdown /> should render correctly 1`] = `
             >
               <div
                 class="css-1aabyhj"
-              >
-                <svg
-                  class="chakra-icon css-1r5bg7h"
-                  fill="currentColor"
-                  focusable="false"
-                  height="1em"
-                  viewBox="0 0 256 256"
-                  width="1em"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <rect
-                    fill="none"
-                    height="256"
-                    width="256"
-                  />
-                  <polyline
-                    fill="none"
-                    points="208 96 128 176 48 96"
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="16"
-                  />
-                </svg>
-              </div>
+              />
             </div>
           </div>
           <input
@@ -98,6 +77,33 @@ exports[`<CoinDropdown /> should render correctly 1`] = `
             type="hidden"
             value=""
           />
+          <div
+            class="css-1aabyhj"
+          >
+            <svg
+              class="chakra-icon css-1r5bg7h"
+              fill="currentColor"
+              focusable="false"
+              height="1em"
+              viewBox="0 0 256 256"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect
+                fill="none"
+                height="256"
+                width="256"
+              />
+              <polyline
+                fill="none"
+                points="208 96 128 176 48 96"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="16"
+              />
+            </svg>
+          </div>
         </div>
       </div>
     </div>
