@@ -7,7 +7,6 @@
   "license": "Apache-2.0",
   "scripts": {
     "setup": "npm run install",
-    "install": "node install.js && npm run build:cli:full && npm run prepare",
     "install:backend": "cd backend && npm install",
     "install:contracts": "cd contracts && npm install",
     "install:sdk": "cd sdk && npm install",
@@ -62,6 +61,12 @@
     "@commitlint/config-conventional": "^19.1.0",
     "dotenv": "^16.3.1",
     "fs": "^0.0.1-security",
-    "husky": "^9.0.11"
-  }
+    "husky": "^9.0.11",
+    "turbo": "^2.1.3"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "packageManager": "npm@10.8.2"
 }
