@@ -27,7 +27,6 @@ import { HTSTransactionAdapter } from '../../port/out/hs/hts/HTSTransactionAdapt
 import RPCTransactionAdapter from '../../port/out/rpc/RPCTransactionAdapter.js';
 import TransactionAdapter from '../../port/out/TransactionAdapter.js';
 import Service from './Service.js';
-import { BladeTransactionAdapter } from '../../port/out/hs/blade/BladeTransactionAdapter.js';
 import { FireblocksTransactionAdapter } from '../../port/out/hs/hts/custodial/FireblocksTransactionAdapter';
 import { DFNSTransactionAdapter } from '../../port/out/hs/hts/custodial/DFNSTransactionAdapter';
 import { MultiSigTransactionAdapter } from '../../port/out/hs/multiSig/MultiSigTransactionAdapter.js';
@@ -92,11 +91,6 @@ export default class TransactionService extends Service {
 					throw new InvalidWalletTypeError(type);
 				}
 				return Injectable.resolve(HashpackTransactionAdapter);*/
-			case SupportedWallets.BLADE:
-				if (!Injectable.isWeb()) {
-					throw new InvalidWalletTypeError(type);
-				}
-				return Injectable.resolve(BladeTransactionAdapter);
 			case SupportedWallets.METAMASK:
 				if (!Injectable.isWeb()) {
 					throw new InvalidWalletTypeError(type);
@@ -296,8 +290,7 @@ export default class TransactionService extends Service {
 				kycKey : ${kycKey}, freezeKey : ${freezeKey}, feeScheduleKey : ${feeScheduleKey}, pauseKey : ${pauseKey}, wipeKey : ${wipeKey}`;
 			} else if (t instanceof TransferTransaction) {
 				let message = '';
-				const tokenTransfers = (t as TransferTransaction)
-					.tokenTransfers;
+				const tokenTransfers = (t as TransferTransaction).nftTransfers;
 				for (const key of tokenTransfers.keys()) {
 					const tokenTransfer = tokenTransfers.get(key);
 					message = message + tokenTransfer?.toString() + ', ';

@@ -1,0 +1,109 @@
+name: Create_Env_File
+description: Create .env file with secrets fetched from API for contracts or SDK
+
+inputs:
+  api-access-token-1:
+    description: "API access token for the first API call"
+    required: true
+  api-access-token-2:
+    description: "API access token for the second API call"
+    required: false
+  module:
+    description: "Whether to create .env file for contracts or SDK"
+    required: true
+    default: "contracts"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Create .env file for contracts
+      if: ${{ inputs.module == 'contracts' }}
+      shell: sh
+      run: |
+        # Making API call to fetch secrets
+        API_RESPONSE=$(curl -s -H "Authorization: Bearer ${{ inputs.api-access-token-1 }}" -H "User-Agent: AppName/1.2.3" https://portal.hedera.com/api/account)
+
+        # Extract account details
+        OPERATOR_PRIVATE_KEY=$(echo $API_RESPONSE | jq -r '.accounts[0].privateKey')
+        OPERATOR_PUBLIC_KEY=$(echo $API_RESPONSE | jq -r '.accounts[0].publicKey')
+        OPERATOR_ACCOUNT_NUM=$(echo $API_RESPONSE | jq -r '.accounts[0].accountNum')
+
+        NON_OPERATOR_PRIVATE_KEY=$(echo $API_RESPONSE | jq -r '.accounts[1].privateKey')
+        NON_OPERATOR_PUBLIC_KEY=$(echo $API_RESPONSE | jq -r '.accounts[1].publicKey')
+        NON_OPERATOR_ACCOUNT_NUM=$(echo $API_RESPONSE | jq -r '.accounts[1].accountNum')
+
+        # Write to .env file in a single block
+        cat <<EOF > .env
+        TESTNET_HEDERA_OPERATOR_PRIVATEKEY=$OPERATOR_PRIVATE_KEY
+        TESTNET_HEDERA_OPERATOR_PUBLICKEY=$OPERATOR_PUBLIC_KEY
+        TESTNET_HEDERA_OPERATOR_ED25519=true
+        TESTNET_HEDERA_OPERATOR_ACCOUNT=0.0.$OPERATOR_ACCOUNT_NUM
+        TESTNET_HEDERA_NON_OPERATOR_PRIVATEKEY=$NON_OPERATOR_PRIVATE_KEY
+        TESTNET_HEDERA_NON_OPERATOR_PUBLICKEY=$NON_OPERATOR_PUBLIC_KEY
+        TESTNET_HEDERA_NON_OPERATOR_ED25519=false
+        TESTNET_HEDERA_NON_OPERATOR_ACCOUNT=0.0.$NON_OPERATOR_ACCOUNT_NUM
+        EOF
+      working-directory: contracts
+
+    - name: Create .env file for SDK
+      if: ${{ inputs.module == 'sdk' }}
+      shell: sh
+      run: |
+        # Making API call to fetch secrets
+        API_RESPONSE_1=$(curl -s -H "Authorization: Bearer ${{ inputs.api-access-token-1 }}" -H "User-Agent: AppName/1.2.3" https://portal.hedera.com/api/account)
+        API_RESPONSE_2=$(curl -s -H "Authorization: Bearer ${{ inputs.api-access-token-2 }}" -H "User-Agent: AppName/1.2.3" https://portal.hedera.com/api/account)
+
+        # Extract account details from API_RESPONSE_1
+        CLIENT_PRIVATE_KEY_ECDSA=$(echo $API_RESPONSE_1 | jq -r '.accounts[1].privateKey')
+        CLIENT_PUBLIC_KEY_ECDSA=$(echo $API_RESPONSE_1 | jq -r '.accounts[1].publicKey')
+        CLIENT_ACCOUNT_ID_ECDSA=$(echo $API_RESPONSE_1 | jq -r '.accounts[1].accountNum')
+        CLIENT_PRIVATE_KEY_ED25519=$(echo $API_RESPONSE_1 | jq -r '.accounts[0].privateKey')
+        CLIENT_PUBLIC_KEY_ED25519=$(echo $API_RESPONSE_1 | jq -r '.accounts[0].publicKey')
+        CLIENT_ACCOUNT_ID_ED25519=$(echo $API_RESPONSE_1 | jq -r '.accounts[0].accountNum')
+
+        # Extract account details from API_RESPONSE_2
+        CLIENT_PRIVATE_KEY_ECDSA_2=$(echo $API_RESPONSE_2 | jq -r '.accounts[1].privateKey')
+        CLIENT_PUBLIC_KEY_ECDSA_2=$(echo $API_RESPONSE_2 | jq -r '.accounts[1].publicKey')
+        CLIENT_ACCOUNT_ID_ECDSA_2=$(echo $API_RESPONSE_2 | jq -r '.accounts[1].accountNum')
+        CLIENT_PRIVATE_KEY_ED25519_2=$(echo $API_RESPONSE_2 | jq -r '.accounts[0].privateKey')
+        CLIENT_PUBLIC_KEY_ED25519_2=$(echo $API_RESPONSE_2 | jq -r '.accounts[0].publicKey')
+        CLIENT_ACCOUNT_ID_ED25519_2=$(echo $API_RESPONSE_2 | jq -r '.accounts[0].accountNum')
+
+        # Fetch EVM addresses from Mirror Node API
+        CLIENT_EVM_ADDRESS_ECDSA=$(curl -s https://testnet.mirrornode.hedera.com/api/v1/accounts/0.0.$CLIENT_ACCOUNT_ID_ECDSA | jq -r '.evm_address')
+        CLIENT_EVM_ADDRESS_ED25519=$(curl -s https://testnet.mirrornode.hedera.com/api/v1/accounts/0.0.$CLIENT_ACCOUNT_ID_ED25519 | jq -r '.evm_address')
+        CLIENT_EVM_ADDRESS_ECDSA_2=$(curl -s https://testnet.mirrornode.hedera.com/api/v1/accounts/0.0.$CLIENT_ACCOUNT_ID_ECDSA_2 | jq -r '.evm_address')
+        CLIENT_EVM_ADDRESS_ED25519_2=$(curl -s https://testnet.mirrornode.hedera.com/api/v1/accounts/0.0.$CLIENT_ACCOUNT_ID_ED25519_2 | jq -r '.evm_address')
+
+        # Write to .env file
+        cat <<EOF > .env
+        CLIENT_PRIVATE_KEY_ECDSA=$CLIENT_PRIVATE_KEY_ECDSA
+        CLIENT_PUBLIC_KEY_ECDSA=$CLIENT_PUBLIC_KEY_ECDSA
+        CLIENT_ACCOUNT_ID_ECDSA=0.0.$CLIENT_ACCOUNT_ID_ECDSA
+        CLIENT_EVM_ADDRESS_ECDSA=$CLIENT_EVM_ADDRESS_ECDSA
+
+        CLIENT_PRIVATE_KEY_ED25519=$CLIENT_PRIVATE_KEY_ED25519
+        CLIENT_PUBLIC_KEY_ED25519=$CLIENT_PUBLIC_KEY_ED25519
+        CLIENT_ACCOUNT_ID_ED25519=0.0.$CLIENT_ACCOUNT_ID_ED25519
+        CLIENT_EVM_ADDRESS_ED25519=$CLIENT_EVM_ADDRESS_ED25519
+
+        CLIENT_PRIVATE_KEY_ECDSA_2=$CLIENT_PRIVATE_KEY_ECDSA_2
+        CLIENT_PUBLIC_KEY_ECDSA_2=$CLIENT_PUBLIC_KEY_ECDSA_2
+        CLIENT_ACCOUNT_ID_ECDSA_2=0.0.$CLIENT_ACCOUNT_ID_ECDSA_2
+        CLIENT_EVM_ADDRESS_ECDSA_2=$CLIENT_EVM_ADDRESS_ECDSA_2
+
+        CLIENT_PRIVATE_KEY_ED25519_2=$CLIENT_PRIVATE_KEY_ED25519_2
+        CLIENT_PUBLIC_KEY_ED25519_2=$CLIENT_PUBLIC_KEY_ED25519_2
+        CLIENT_ACCOUNT_ID_ED25519_2=0.0.$CLIENT_ACCOUNT_ID_ED25519_2
+        CLIENT_EVM_ADDRESS_ED25519_2=$CLIENT_EVM_ADDRESS_ED25519_2
+
+        FIREBLOCKS_HEDERA_ACCOUNT_ID=0.0.$CLIENT_ACCOUNT_ID_ECDSA_2
+        FIREBLOCKS_HEDERA_PUBLIC_KEY=$CLIENT_PUBLIC_KEY_ECDSA_2
+
+        DFNS_HEDERA_ACCOUNT_ID=0.0.$CLIENT_ACCOUNT_ID_ECDSA_2
+        DFNS_WALLET_PUBLIC_KEY=$CLIENT_PUBLIC_KEY_ECDSA_2
+
+        HEDERA_TOKEN_MANAGER_ADDRESS=0.0.2167020
+        FACTORY_ADDRESS=0.0.2167166
+        EOF
+      working-directory: sdk

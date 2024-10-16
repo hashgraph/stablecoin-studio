@@ -24,7 +24,6 @@ import { ICommandHandler } from '../../../../../../core/command/CommandHandler.j
 import { CommandHandler } from '../../../../../../core/decorator/CommandHandlerDecorator.js';
 import { lazyInject } from '../../../../../../core/decorator/LazyInjectDecorator.js';
 import { BackendAdapter } from '../../../../../../port/out/backend/BackendAdapter.js';
-import { BladeTransactionAdapter } from '../../../../../../port/out/hs/blade/BladeTransactionAdapter.js';
 // import { HashpackTransactionAdapter } from '../../../../../../port/out/hs/hashpack/HashpackTransactionAdapter.js';
 import { HTSTransactionAdapter } from '../../../../../../port/out/hs/hts/HTSTransactionAdapter.js';
 import { HederaWalletConnectTransactionAdapter } from '../../../../../../port/out/hs/walletconnect/HederaWalletConnectTransactionAdapter.js';
@@ -87,7 +86,6 @@ export class SignCommandHandler implements ICommandHandler<SignCommand> {
 
 		if (
 			// handler instanceof HashpackTransactionAdapter ||
-			handler instanceof BladeTransactionAdapter ||
 			handler instanceof HTSTransactionAdapter ||
 			handler instanceof HederaWalletConnectTransactionAdapter
 		) {

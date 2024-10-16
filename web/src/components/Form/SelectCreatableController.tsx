@@ -16,9 +16,8 @@ import {
 	Stack,
 	Text,
 } from '@chakra-ui/react';
-import type { GroupBase, SelectInstance } from 'chakra-react-select';
+import type { GroupBase, SelectInstance, Variant } from 'chakra-react-select';
 import { CreatableSelect } from 'chakra-react-select';
-import type { Variant } from 'chakra-react-select/dist/types/types';
 import { InfoIcon } from '@chakra-ui/icons';
 
 export type Option = { label: string | ReactNode; value: number | string };
@@ -179,6 +178,7 @@ const SelectCreatableController = ({
 								chakraStyles={{
 									control: (baseStyles) => ({
 										...baseStyles,
+										flexWrap: 'nowrap',
 										borderWidth: '0px',
 										boxShadow: 'none !important',
 									}),
@@ -186,11 +186,6 @@ const SelectCreatableController = ({
 										...baseStyles,
 										paddingRight: '0px',
 									}),
-
-									// dropdownIndicator: (baseStyles, state) => ({
-									// 	...baseStyles,
-									// 	paddingRight:'0px'
-									// }),
 								}}
 								{...props}
 							/>

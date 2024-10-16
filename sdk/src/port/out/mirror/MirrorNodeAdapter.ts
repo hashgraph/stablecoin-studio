@@ -613,11 +613,11 @@ export class MirrorNodeAdapter {
 		timeout = 30,
 		requestInterval = 3,
 	): Promise<string[] | null> {
-		// if (transactionId.match(REGEX_TRANSACTION)) {
-		transactionId = transactionId
-			.replace('@', '-')
-			.replace(/.([^.]*)$/, '-$1');
-		// }
+		if (transactionId.startsWith('0.')) {
+			transactionId = transactionId
+				.replace('@', '-')
+				.replace(/.([^.]*)$/, '-$1');
+		} // else starts with 0x and do nothing
 		const url = `${this.mirrorNodeConfig.baseUrl}contracts/results/${transactionId}`;
 		let call_OK = false;
 		const results: string[] = [];

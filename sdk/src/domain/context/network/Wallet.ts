@@ -24,7 +24,6 @@ export enum SupportedWallets {
 	METAMASK = 'Metamask',
 	HASHPACK = 'HashPack',
 	CLIENT = 'Client',
-	BLADE = 'Blade',
 	FIREBLOCKS = 'Fireblocks',
 	DFNS = 'DFNS',
 	MULTISIG = 'MultiSig',
