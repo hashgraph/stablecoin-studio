@@ -26,7 +26,7 @@ jobs:
     steps:
       # * Initial steps
       - name: Checkout repository
-        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
       # Reuse the common steps with dependency installation disabled
       - name: Initial steps
         uses: ./.github/actions/initial-steps
