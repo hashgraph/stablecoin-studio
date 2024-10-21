@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   check-versions:
     runs-on: token-studio-linux-medium
@@ -12,6 +16,11 @@ jobs:
       image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
 
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@f086349bfa2bd1361f7909c78558e816508cdc10 #v2.8.0
+        with:
+          egress-policy: audit
+
       - name: Checkout code
         uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
         with:
@@ -19,10 +28,10 @@ jobs:
 
       - name: Install bash, git and jq
         run: apk add --no-cache bash git jq
+        shell: sh
 
       - name: Get versions in PR branch
         id: pr_version
-        shell: bash # Ensure the script runs with bash
         run: |
           # Define module directories
           MODULES=("contracts" "sdk" "cli" "web" "backend")
@@ -46,7 +55,6 @@ jobs:
 
       - name: Clone main branch in a separate directory
         id: clone-main
-        shell: bash
         run: |
           git clone --depth=1 --branch=main https://github.com/hashgraph/stablecoin-studio.git main-repo
           cd main-repo
