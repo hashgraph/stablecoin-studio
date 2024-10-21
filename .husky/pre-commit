@@ -1,3 +1,5 @@
+#!/bin/bash
+
 checkPrettier () {
     npm run prettierCheck "$1" 
 
