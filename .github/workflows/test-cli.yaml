@@ -28,9 +28,14 @@ jobs:
       image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
     steps:
       # * Initial steps
+      - name: Harden Runner
+        uses: step-security/harden-runner@f086349bfa2bd1361f7909c78558e816508cdc10 #v2.8.0
+        with:
+          egress-policy: audit
+
       - name: Checkout repository
         uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
-      # Reuse the common steps with dependency installation disabled
+
       - name: Initial steps
         uses: ./.github/actions/initial-steps
         with:
