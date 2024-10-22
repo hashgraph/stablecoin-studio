@@ -1,12 +1,11 @@
 name: Publishing
 on:
-  # ! Disabled this file is fot backup until publish-all.yaml is tested
-  push:
-    branches:
-      - disabled
-  # release:
-  #   types:
-  #     - published
+  release:
+    types:
+      - published
+
+permissions:
+  contents: read
 
 jobs:
   publish:
