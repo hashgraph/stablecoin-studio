@@ -466,16 +466,20 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 		try {
 			this.ensureTransactionFrozen(message);
 
+			const transaction = transactionToTransactionBody(
+				message,
+				AccountId.fromString(
+					this.networkService.consensusNodes[0].nodeId,
+				),
+			);
+
+			if (!transaction) {
+				throw new Error('Transaction is null or undefined');
+			}
+
 			// @ts-ignore
 			const params: SignTransactionParams = {
-				transactionBody: transactionBodyToBase64String(
-					transactionToTransactionBody(
-						message,
-						AccountId.fromString(
-							this.networkService.consensusNodes[0].nodeId,
-						),
-					),
-				),
+				transactionBody: transactionBodyToBase64String(transaction),
 				signerAccountId: `${
 					this.chainId
 				}:${this.account.id.toString()}`,
