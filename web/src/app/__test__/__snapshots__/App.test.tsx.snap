@@ -59,11 +59,10 @@ exports[`<App /> should render correctly 1`] = `
                       aria-live="polite"
                       aria-relevant="additions text"
                       class="css-1f43avz-a11yText-A11yText"
-                      role="log"
                     />
                     <div
                       aria-hidden="true"
-                      class="css-jdlxgv"
+                      class=" css-pjch9m"
                       data-aria-hidden="true"
                     >
                       <div
@@ -76,20 +75,18 @@ exports[`<App /> should render correctly 1`] = `
                           Choose stablecoin
                         </span>
                         <div
-                          class="css-18euh9p"
+                          class=" css-svnjlw"
                           data-value=""
                         >
                           <input
-                            aria-activedescendant=""
                             aria-autocomplete="list"
                             aria-describedby="react-select-2-placeholder"
                             aria-expanded="false"
                             aria-haspopup="true"
-                            aria-required="false"
                             autocapitalize="none"
                             autocomplete="off"
                             autocorrect="off"
-                            class="css-10wwmqn"
+                            class=" css-146k1ar-input"
                             id="field-:r3:"
                             role="combobox"
                             spellcheck="false"
@@ -100,7 +97,7 @@ exports[`<App /> should render correctly 1`] = `
                         </div>
                       </div>
                       <div
-                        class="css-hfbj6y"
+                        class=" css-hfbj6y"
                       >
                         <div
                           class="css-1aabyhj"

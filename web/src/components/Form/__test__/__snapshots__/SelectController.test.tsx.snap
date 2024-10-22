@@ -13,8 +13,8 @@ exports[`<undefined /> doesn't show error with showError=false: NotShowingError 
       <label
         class="chakra-form__label css-1hfoxt1"
         data-invalid=""
-        for="field-:ra:"
-        id="field-:ra:-label"
+        for="field-:r6:"
+        id="field-:r6:-label"
       >
         <div
           class="chakra-stack css-84zodg"
@@ -39,10 +39,9 @@ exports[`<undefined /> doesn't show error with showError=false: NotShowingError 
           aria-live="polite"
           aria-relevant="additions text"
           class="css-1f43avz-a11yText-A11yText"
-          role="log"
         />
         <div
-          class="css-2pdf6f"
+          class=" css-1nb3atl"
           data-invalid="true"
         >
           <div
@@ -53,22 +52,20 @@ exports[`<undefined /> doesn't show error with showError=false: NotShowingError 
               data-testid="select-placeholder"
             />
             <div
-              class="css-18euh9p"
+              class=" css-svnjlw"
               data-value=""
             >
               <input
-                aria-activedescendant=""
                 aria-autocomplete="list"
                 aria-describedby="react-select-8-placeholder"
                 aria-expanded="false"
                 aria-haspopup="true"
                 aria-invalid="true"
-                aria-required="false"
                 autocapitalize="none"
                 autocomplete="off"
                 autocorrect="off"
-                class="css-10wwmqn"
-                id="field-:ra:"
+                class=" css-146k1ar-input"
+                id="field-:r6:"
                 role="combobox"
                 spellcheck="false"
                 tabindex="0"
@@ -78,7 +75,7 @@ exports[`<undefined /> doesn't show error with showError=false: NotShowingError 
             </div>
           </div>
           <div
-            class="css-hfbj6y"
+            class=" css-hfbj6y"
           >
             <div
               class="css-1aabyhj"
@@ -137,8 +134,8 @@ exports[`<undefined /> shows error with showErrors=true: ShowingError 1`] = `
       <label
         class="chakra-form__label css-1hfoxt1"
         data-invalid=""
-        for="field-:r9:"
-        id="field-:r9:-label"
+        for="field-:r5:"
+        id="field-:r5:-label"
       >
         <div
           class="chakra-stack css-84zodg"
@@ -163,10 +160,9 @@ exports[`<undefined /> shows error with showErrors=true: ShowingError 1`] = `
           aria-live="polite"
           aria-relevant="additions text"
           class="css-1f43avz-a11yText-A11yText"
-          role="log"
         />
         <div
-          class="css-2pdf6f"
+          class=" css-1nb3atl"
           data-invalid="true"
         >
           <div
@@ -177,22 +173,20 @@ exports[`<undefined /> shows error with showErrors=true: ShowingError 1`] = `
               data-testid="select-placeholder"
             />
             <div
-              class="css-18euh9p"
+              class=" css-svnjlw"
               data-value=""
             >
               <input
-                aria-activedescendant=""
                 aria-autocomplete="list"
                 aria-describedby="react-select-7-placeholder"
                 aria-expanded="false"
                 aria-haspopup="true"
                 aria-invalid="true"
-                aria-required="false"
                 autocapitalize="none"
                 autocomplete="off"
                 autocorrect="off"
-                class="css-10wwmqn"
-                id="field-:r9:"
+                class=" css-146k1ar-input"
+                id="field-:r5:"
                 role="combobox"
                 spellcheck="false"
                 tabindex="0"
@@ -202,7 +196,7 @@ exports[`<undefined /> shows error with showErrors=true: ShowingError 1`] = `
             </div>
           </div>
           <div
-            class="css-hfbj6y"
+            class=" css-hfbj6y"
           >
             <div
               class="css-1aabyhj"
@@ -243,7 +237,7 @@ exports[`<undefined /> shows error with showErrors=true: ShowingError 1`] = `
         aria-live="polite"
         class="chakra-form__error-message css-10ckq1i"
         data-testid="form-error-msg"
-        id="field-:r9:-feedback"
+        id="field-:r5:-feedback"
       />
     </div>
   </div>
@@ -266,8 +260,8 @@ exports[`<undefined /> shows placeholder with default value: DefaultPlaceholder 
     >
       <label
         class="chakra-form__label css-1hfoxt1"
-        for="field-:r7:"
-        id="field-:r7:-label"
+        for="field-:r3:"
+        id="field-:r3:-label"
       >
         <div
           class="chakra-stack css-84zodg"
@@ -292,10 +286,9 @@ exports[`<undefined /> shows placeholder with default value: DefaultPlaceholder 
           aria-live="polite"
           aria-relevant="additions text"
           class="css-1f43avz-a11yText-A11yText"
-          role="log"
         />
         <div
-          class="css-2pdf6f"
+          class=" css-1nb3atl"
         >
           <div
             class="css-d7d842"
@@ -305,21 +298,19 @@ exports[`<undefined /> shows placeholder with default value: DefaultPlaceholder 
               data-testid="select-placeholder"
             />
             <div
-              class="css-18euh9p"
+              class=" css-svnjlw"
               data-value=""
             >
               <input
-                aria-activedescendant=""
                 aria-autocomplete="list"
                 aria-describedby="react-select-5-placeholder"
                 aria-expanded="false"
                 aria-haspopup="true"
-                aria-required="false"
                 autocapitalize="none"
                 autocomplete="off"
                 autocorrect="off"
-                class="css-10wwmqn"
-                id="field-:r7:"
+                class=" css-146k1ar-input"
+                id="field-:r3:"
                 role="combobox"
                 spellcheck="false"
                 tabindex="0"
@@ -329,7 +320,7 @@ exports[`<undefined /> shows placeholder with default value: DefaultPlaceholder 
             </div>
           </div>
           <div
-            class="css-hfbj6y"
+            class=" css-hfbj6y"
           >
             <div
               class="css-1aabyhj"
@@ -387,8 +378,8 @@ exports[`<undefined /> shows placeholder with the provided value: CustomPlacehol
     >
       <label
         class="chakra-form__label css-1hfoxt1"
-        for="field-:r8:"
-        id="field-:r8:-label"
+        for="field-:r4:"
+        id="field-:r4:-label"
       >
         <div
           class="chakra-stack css-84zodg"
@@ -413,10 +404,9 @@ exports[`<undefined /> shows placeholder with the provided value: CustomPlacehol
           aria-live="polite"
           aria-relevant="additions text"
           class="css-1f43avz-a11yText-A11yText"
-          role="log"
         />
         <div
-          class="css-2pdf6f"
+          class=" css-1nb3atl"
         >
           <div
             class="css-d7d842"
@@ -428,21 +418,19 @@ exports[`<undefined /> shows placeholder with the provided value: CustomPlacehol
               Value of placeholder
             </span>
             <div
-              class="css-18euh9p"
+              class=" css-svnjlw"
               data-value=""
             >
               <input
-                aria-activedescendant=""
                 aria-autocomplete="list"
                 aria-describedby="react-select-6-placeholder"
                 aria-expanded="false"
                 aria-haspopup="true"
-                aria-required="false"
                 autocapitalize="none"
                 autocomplete="off"
                 autocorrect="off"
-                class="css-10wwmqn"
-                id="field-:r8:"
+                class=" css-146k1ar-input"
+                id="field-:r4:"
                 role="combobox"
                 spellcheck="false"
                 tabindex="0"
@@ -452,7 +440,7 @@ exports[`<undefined /> shows placeholder with the provided value: CustomPlacehol
             </div>
           </div>
           <div
-            class="css-hfbj6y"
+            class=" css-hfbj6y"
           >
             <div
               class="css-1aabyhj"
