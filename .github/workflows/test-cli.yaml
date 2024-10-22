@@ -21,11 +21,17 @@ on:
 # env:
 # NODE_VERSION: "20.17.0" # Fixed version for better stability
 
+permissions:
+  contents: read
+
 jobs:
   main:
     runs-on: token-studio-linux-medium
     container:
       image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
+    permissions:
+      contents: read
+
     steps:
       # * Initial steps
       - name: Harden Runner
