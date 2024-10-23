@@ -52,9 +52,10 @@ exports[`<Layout /> should render correctly 1`] = `
                     aria-live="polite"
                     aria-relevant="additions text"
                     class="css-1f43avz-a11yText-A11yText"
+                    role="log"
                   />
                   <div
-                    class=" css-pjch9m"
+                    class="css-jdlxgv"
                   >
                     <div
                       class="css-d7d842"
@@ -66,18 +67,20 @@ exports[`<Layout /> should render correctly 1`] = `
                         0.0.49319786 - TEST
                       </span>
                       <div
-                        class=" css-svnjlw"
+                        class="css-18euh9p"
                         data-value=""
                       >
                         <input
+                          aria-activedescendant=""
                           aria-autocomplete="list"
                           aria-describedby="react-select-2-placeholder"
                           aria-expanded="false"
                           aria-haspopup="true"
+                          aria-required="false"
                           autocapitalize="none"
                           autocomplete="off"
                           autocorrect="off"
-                          class=" css-146k1ar-input"
+                          class="css-10wwmqn"
                           id="field-:r1:"
                           role="combobox"
                           spellcheck="false"
@@ -88,7 +91,7 @@ exports[`<Layout /> should render correctly 1`] = `
                       </div>
                     </div>
                     <div
-                      class=" css-hfbj6y"
+                      class="css-hfbj6y"
                     >
                       <div
                         class="css-1aabyhj"
