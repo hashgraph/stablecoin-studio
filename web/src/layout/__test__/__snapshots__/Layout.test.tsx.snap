@@ -573,7 +573,7 @@ exports[`<Layout /> should render correctly 1`] = `
         </div>
       </div>
       <div
-        class="css-l3typs"
+        class="css-1au1el7"
       >
         <span
           data-testid="layout-children"
