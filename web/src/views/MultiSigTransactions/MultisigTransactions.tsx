@@ -193,7 +193,7 @@ const MultiSigTransactions = () => {
 				</Select>
 			</Box>
 			<Box position='relative' mb='4'>
-				<TableContainer bg='white' shadow='sm' overflow='hidden'>
+				<TableContainer bg='white' shadow='sm' overflowX='auto'>
 					<Table variant='simple'>
 						<Thead bg='#ece8ff'>
 							<Tr>
