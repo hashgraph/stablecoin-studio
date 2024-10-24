@@ -11,7 +11,6 @@ import {
 	SELECTED_WALLET_PAIRED,
 } from '../../store/slices/walletSlice';
 import METAMASK_LOGO from '../../assets/svg/MetaMask_Fox.svg';
-import BLADE_LOGO from '../../assets/png/bladeLogo.png';
 import MULTISIG_LOGO from '../../assets/png/multisigLogo.png';
 import WALLETCONNECT_LOGO from '../../assets/png/WCLogo.png';
 import TooltipCopy from '../../components/TooltipCopy';
@@ -38,7 +37,6 @@ const TopbarRight = () => {
 		);
 
 		if (selectedWallet === SupportedWallets.METAMASK) return img(METAMASK_LOGO);
-		if (selectedWallet === SupportedWallets.BLADE) return img(BLADE_LOGO);
 		if (selectedWallet === SupportedWallets.MULTISIG) return img(MULTISIG_LOGO);
 		if (selectedWallet === SupportedWallets.HWALLETCONNECT) return img(WALLETCONNECT_LOGO);
 

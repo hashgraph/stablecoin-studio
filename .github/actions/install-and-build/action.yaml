@@ -1,0 +1,56 @@
+name: Install_And_Build
+description: Install dependencies and build modules as needed
+
+inputs:
+  module:
+    description: "The module that is going to be tested"
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Install Contracts
+      shell: sh
+      run: npm ci
+      working-directory: contracts
+
+    - name: Build Contracts
+      shell: sh
+      run: npm run compile:force
+      working-directory: contracts
+
+    - name: Install SDK
+      if: ${{ inputs.module == 'sdk' || inputs.module == 'cli' || inputs.module == 'web' }}
+      shell: sh
+      run: npm ci
+      working-directory: sdk
+
+    - name: Build SDK
+      if: ${{ inputs.module == 'sdk' || inputs.module == 'cli' || inputs.module == 'web' }}
+      shell: sh
+      run: npm run build
+      working-directory: sdk
+
+    - name: Install CLI
+      if: ${{ inputs.module == 'cli' }}
+      shell: sh
+      run: npm ci
+      working-directory: cli
+
+    - name: Build CLI
+      if: ${{ inputs.module == 'cli' }}
+      shell: sh
+      run: npm run build
+      working-directory: cli
+
+    - name: Install Web
+      if: ${{ inputs.module == 'web' }}
+      shell: sh
+      run: npm ci
+      working-directory: web
+
+    # - name: Build Web
+    #   if: ${{ inputs.module == 'web' }}
+    #   shell: sh
+    #   run: npm run build
+    #   working-directory: web

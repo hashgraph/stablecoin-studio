@@ -50,8 +50,14 @@ export class HederaTransactionResponseAdapter extends TransactionResponseAdapter
 			nameFunction,
 		);
 		if (responseType === TransactionType.RECEIPT) {
-			console.log('RECEIPT');
-			await this.getReceipt(network, signer, transactionResponse);
+			// Does not block execution thread
+			this.getReceipt(network, signer, transactionResponse).then(
+				(result) => {
+					if (!result) {
+						LogService.logError('Receipt not found after timeout');
+					}
+				},
+			);
 			let transId;
 			if (transactionResponse?.transactionId) {
 				transId = transactionResponse?.transactionId;
@@ -128,8 +134,25 @@ export class HederaTransactionResponseAdapter extends TransactionResponseAdapter
 		network: string,
 		signer: Signer,
 		transactionResponse: HTransactionResponse,
-	): Promise<TransactionReceipt> {
-		return await transactionResponse.getReceiptWithSigner(signer);
+		timeout = 5,
+	): Promise<TransactionReceipt | boolean> {
+		try {
+			const receiptPromise =
+				transactionResponse.getReceiptWithSigner(signer);
+			const timeoutPromise = new Promise<TransactionReceipt | boolean>(
+				(resolve) => {
+					setTimeout(() => resolve(false), timeout * 1000);
+				},
+			);
+			return Promise.race([receiptPromise, timeoutPromise]);
+		} catch (error: any) {
+			if (error.status) {
+				if (error.status.toString() === 'SUCCESS') {
+					return true;
+				}
+			}
+			throw error;
+		}
 	}
 
 	private static async getRecord(

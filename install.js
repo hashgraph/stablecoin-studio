@@ -19,16 +19,16 @@ const npmInstall = (dir, name = "module") => {
   console.log("\tDone");
 };
 
-const npmLinkProject = (dir) => {
-  process.stdout.write(`Registering CLI as global command 'accelerator'...`);
-  execSync(`cd ${dir} && npm link`, handleError);
-  console.log("\tDone");
-};
-const npmBuild = (dir,name='module') =>{
-  process.stdout.write(`Build for ${name}...`);
-  execSync(`cd ${dir} && npm run build`, handleError);
-  console.log("\tDone");
-}
+// const npmLinkProject = (dir) => {
+//   process.stdout.write(`Registering CLI as global command 'accelerator'...`);
+//   execSync(`cd ${dir} && npm link`, handleError);
+//   console.log("\tDone");
+// };
+// const npmBuild = (dir,name='module') =>{
+//   process.stdout.write(`Build for ${name}...`);
+//   execSync(`cd ${dir} && npm run build`, handleError);
+//   console.log("\tDone");
+// }
 
 let option = process.argv.slice(2)[0];
 

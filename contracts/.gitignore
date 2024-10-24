@@ -1,51 +1,41 @@
+# Dependency directories
+node_modules/
+.npm/
+
+# Transpiled and compiled files
+build/
+artifacts/
+typechain*
+typechain-types/
+
 # Logs
-logs
+logs/
 *.log
 npm-debug.log*
 
-# Dependencies
-node_modules/
+# Coverage directories and files
+coverage/
+coverage.json
 
-# Coverage
-coverage
-
-# Transpiled files
-build
-
-# VS Code
-.vscode
+# IDE and editor directories
+.vscode/
 !.vscode/tasks.js
-
-# JetBrains IDEs
 .idea/
 
-# Optional npm cache directory
-.npm
-
-# Optional eslint cache
+# Optional cache files
 .eslintcache
 
-# Misc
+# Miscellaneous
 .DS_Store
-
-# Old files
 .old
-
-# history
 .history
-
 .env
-coverage
-coverage.json
-typechain*
 
-#Hardhat files
-cache
-artifacts
+# Hardhat files
+cache/
 
-./docs/*
-./cache/*
-./typechain-types/*
+# Documentation
+docs/
 
-#Slither
-Slither/*
+# Slither
+Slither/

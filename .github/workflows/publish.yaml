@@ -1,0 +1,157 @@
+name: Publish
+
+on:
+  release:
+    types:
+      - published
+
+permissions:
+  contents: read
+
+jobs:
+  contracts:
+    runs-on: token-studio-linux-medium
+    container:
+      image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
+    permissions:
+      contents: read
+
+    steps:
+      # * Initial steps
+      - name: Harden Runner
+        uses: step-security/harden-runner@f086349bfa2bd1361f7909c78558e816508cdc10 #v2.8.0
+        with:
+          egress-policy: audit
+
+      - name: Checkout repository
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+
+      - name: Initial steps
+        uses: ./.github/actions/initial-steps
+        with:
+          deps-contracts-install: "true"
+          deps-change-references: "true"
+
+      - name: Create file .npmrc
+        run: |
+          cat <<EOF > .npmrc
+          //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
+          # //localhost:4873/:_authToken=${{ secrets.NPM_TOKEN }} # ! Only for local testing, DO NOT uncomment for production
+          EOF
+        working-directory: contracts
+
+      # # ! Only for local testing, DO NOT uncomment for production
+      # - name: Set NPM registry to Verdaccio (local)
+      #   run: npm config set registry http://localhost:4873
+
+      - name: Change references to repo
+        run: ./changeProyectsReferencesToRepo.sh
+
+      - name: Install Contracts
+        run: npm ci
+        working-directory: contracts
+
+      - name: Publish contracts
+        run: npm run publish:contracts --access=public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  sdk:
+    # needs: contracts
+    runs-on: token-studio-linux-medium
+    container:
+      image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
+    permissions:
+      contents: read
+
+    steps:
+      # * Initial steps
+      - name: Harden Runner
+        uses: step-security/harden-runner@f086349bfa2bd1361f7909c78558e816508cdc10 #v2.8.0
+        with:
+          egress-policy: audit
+
+      - name: Checkout repository
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+
+      - name: Initial steps
+        uses: ./.github/actions/initial-steps
+        with:
+          deps-contracts-install: "true"
+          deps-change-references: "true"
+
+      - name: Create file .npmrc
+        run: |
+          cat <<EOF > .npmrc
+          //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
+          # //localhost:4873/:_authToken=${{ secrets.NPM_TOKEN }} # ! Only for local testing, DO NOT uncomment for production
+          EOF
+        working-directory: sdk
+
+      # # ! Only for local testing, DO NOT uncomment for production
+      # - name: Set NPM registry to Verdaccio (local)
+      #   run: npm config set registry http://localhost:4873
+
+      - name: Change references to repo
+        run: ./changeProyectsReferencesToRepo.sh
+
+      # * Prepare other modules
+      - name: Install and build Contracts and SDK
+        uses: ./.github/actions/install-and-build
+        with:
+          module: "sdk"
+
+      - name: Publish sdk package
+        run: npm run publish:sdk --access=public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  cli:
+    # needs: sdk
+    runs-on: token-studio-linux-medium
+    container:
+      image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
+    permissions:
+      contents: read
+
+    steps:
+      # * Initial steps
+      - name: Harden Runner
+        uses: step-security/harden-runner@f086349bfa2bd1361f7909c78558e816508cdc10 #v2.8.0
+        with:
+          egress-policy: audit
+
+      - name: Checkout repository
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+
+      - name: Initial steps
+        uses: ./.github/actions/initial-steps
+        with:
+          deps-contracts-install: "true"
+          deps-change-references: "true"
+
+      - name: Create file .npmrc
+        run: |
+          cat <<EOF > .npmrc
+          //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
+          # //localhost:4873/:_authToken=${{ secrets.NPM_TOKEN }} # ! Only for local testing, DO NOT uncomment for production
+          EOF
+        working-directory: cli
+
+      # # ! Only for local testing, DO NOT uncomment for production
+      # - name: Set NPM registry to Verdaccio (local)
+      #   run: npm config set registry http://localhost:4873
+
+      - name: Change references to repo
+        run: ./changeProyectsReferencesToRepo.sh
+
+      # * Prepare other modules
+      - name: Install and build Contracts and SDK
+        uses: ./.github/actions/install-and-build
+        with:
+          module: "cli"
+
+      - name: Publish cli package
+        run: npm run publish:cli --access=public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -1,6 +1,6 @@
 {
   "name": "@hashgraph/stablecoin-npm-cli",
-  "version": "1.25.0",
+  "version": "1.26.0",
   "description": "CLI for Hedera Stablecoin",
   "main": "./build/src/index.js",
   "bin": {
@@ -32,7 +32,7 @@
     "test:watch": "jest --watch --maxWorkers=25%",
     "test:ci": "jest --runInBand --forceExit --detectOpenHandles",
     "test:vm": "NODE_OPTIONS=--experimental-vm-modules npm run test",
-    "cleanCache": "npx jest --clearCache",
+    "clear-cache": "npx jest --clearCache",
     "prepack": "npm run build"
   },
   "keywords": [],

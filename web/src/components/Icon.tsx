@@ -1,7 +1,8 @@
-import type { As, IconProps as ChakraIconProps } from '@chakra-ui/react';
+import type { IconProps as ChakraIconProps } from '@chakra-ui/react';
 import { Icon as ChakraIcon } from '@chakra-ui/react';
 
 import * as ReactPhosphorIcons from 'phosphor-react';
+import { type ElementType } from 'react';
 
 const NameIcons = [
 	'Activity',
@@ -1065,7 +1066,7 @@ const Icon = ({ name, ...props }: IconProps) => {
 		throw new Error(`Icon '${name}' not found.`);
 	}
 
-	return <ChakraIcon as={ReactPhosphorIcons[phosphorName] as As} {...props} />;
+	return <ChakraIcon as={ReactPhosphorIcons[phosphorName] as ElementType} {...props} />;
 };
 
 export default Icon;
