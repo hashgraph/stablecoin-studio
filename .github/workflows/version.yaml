@@ -1,0 +1,97 @@
+name: Check Package Versions
+
+on:
+  pull_request:
+    branches:
+      - main
+
+defaults:
+  run:
+    shell: bash
+
+permissions:
+  contents: read
+
+jobs:
+  check-versions:
+    runs-on: token-studio-linux-medium
+    container:
+      image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
+    permissions:
+      contents: read
+
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@f086349bfa2bd1361f7909c78558e816508cdc10 #v2.8.0
+        with:
+          egress-policy: audit
+
+      - name: Checkout code
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+        with:
+          fetch-depth: 0 # Fetch full history to compare with main
+
+      - name: Install bash, git and jq
+        run: apk add --no-cache bash git jq
+        shell: sh
+
+      - name: Get versions in PR branch
+        id: pr_version
+        run: |
+          # Define module directories
+          MODULES=("contracts" "sdk" "cli" "web" "backend")
+
+          # Extract version from each module's package.json
+          pr_version=""
+          for module in "${MODULES[@]}"; do
+            if [ -f "$module/package.json" ]; then
+              version=$(jq -r '.version' "$module/package.json")
+              if [ -z "$pr_version" ]; then
+                pr_version="$version"
+              elif [ "$version" != "$pr_version" ]; then
+                echo "❌ Version mismatch detected in PR branch: $module has version $version, expected $pr_version"
+                exit 1
+              fi
+            fi
+          done
+
+          echo "All module versions in PR branch match: $pr_version"
+          echo "::set-output name=pr_version::$pr_version"
+
+      - name: Clone main branch in a separate directory
+        id: clone-main
+        run: |
+          git clone --depth=1 --branch=main https://github.com/hashgraph/stablecoin-studio.git main-repo
+          cd main-repo
+
+          # Define module directories
+          MODULES=("contracts" "sdk" "cli" "web" "backend")
+
+          # Extract version from each module's package.json in the main branch
+          main_version=""
+          for module in "${MODULES[@]}"; do
+            if [ -f "$module/package.json" ]; then
+              version=$(jq -r '.version' "$module/package.json")
+              if [ -z "$main_version" ]; then
+                main_version="$version"
+              elif [ "$version" != "$main_version" ]; then
+                echo "🔶 Version mismatch detected in main branch: $module has version $version, expected $main_version"
+              fi
+            fi
+          done
+
+          echo "All module versions in main branch match: $main_version"
+          echo "::set-output name=main_version::$main_version"
+
+      - name: Compare versions
+        run: |
+          pr_version=${{ steps.pr_version.outputs.pr_version }}
+          main_version=${{ steps.clone-main.outputs.main_version }}
+
+          # Compare PR version with the main branch version
+          if [ "$(printf '%s\n' "$main_version" "$pr_version" | sort -V | head -n 1)" = "$pr_version" ]; then
+            echo "❌ PR version ($pr_version) is not greater than main version ($main_version)"
+            exit 1
+          else
+            echo "✅ PR version ($pr_version) is greater than main version ($main_version)"
+          fi

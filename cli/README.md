@@ -56,7 +56,6 @@ Then you must install and build the following projects :
 
 1. [Contract installation](https://github.com/hashgraph/stablecoin-studio/blob/main/contracts/README.md#installation)
 2. [SDK installation](https://github.com/hashgraph/stablecoin-studio/blob/main/sdk/README.md#installation)
-3. [Hashconnect installation](https://github.com/hashgraph/stablecoin-studio/blob/main/hashconnect/lib/README.md#installation)
 
 ## Steps
 

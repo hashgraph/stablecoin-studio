@@ -49,7 +49,7 @@ const SearchSelectController = forwardRef(
 				control={control}
 				name={name}
 				isSearchable
-				addonDown={
+				addonRight={
 					isMenuOpened ? (
 						<Icon name='MagnifyingGlass' w={5} h={5} {...iconStyles} />
 					) : (

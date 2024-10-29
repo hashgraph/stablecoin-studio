@@ -9,6 +9,7 @@ import {
 	StableCoin,
 	SupportedWallets,
 } from '@hashgraph/stablecoin-npm-sdk';
+import LogService from '../../app/service/LogService.js';
 
 async function sleep(ms: number): Promise<void> {
 	return new Promise((resolve) => setTimeout(resolve, ms));
@@ -33,26 +34,32 @@ const main = async (): Promise<void> => {
 			network: 'testnet',
 			events: {
 				walletInit(data) {
-					console.log('Wallet initialized ', data);
+					LogService.logInfo('Wallet initialized ', data);
 				},
 				walletDisconnect(data) {
-					console.log('Wallet disconnected ', data);
+					LogService.logInfo('Wallet disconnected ', data);
 				},
 				walletConnectionStatusChanged(data) {
-					console.log('Wallet connection changed ', data);
+					LogService.logInfo(
+						'Wallet connection status changed ',
+						data,
+					);
 				},
 				walletPaired(data) {
-					console.log('Wallet paired ', data);
+					LogService.logInfo('Wallet paired ', data);
 					isPaired = true;
 				},
 				walletFound(data) {
-					console.log('Wallet found ', data);
+					LogService.logInfo('Wallet found ', data);
 				},
 			},
 		}),
 	);
 
-	console.log('Supported wallets ', supportedWallets);
+	LogService.logInfo(
+		'Supported wallets: ',
+		JSON.stringify(supportedWallets, null, 2),
+	);
 
 	// Make the connection to one of the supported wallets
 	const connectionData = await Network.connect(
@@ -62,7 +69,7 @@ const main = async (): Promise<void> => {
 		}),
 	);
 
-	console.log('Connection data ', connectionData);
+	LogService.logInfo('Connected to wallet: ', JSON.stringify(connectionData));
 
 	// Create a stablecoin
 	const createRequest = new CreateRequest({
@@ -102,7 +109,7 @@ const main = async (): Promise<void> => {
 	// --------
 	const createdCoin = await StableCoin.create(createRequest);
 
-	console.log('Created: ', createdCoin);
+	LogService.logInfo('Created coin: ', JSON.stringify(createdCoin, null, 2));
 };
 
 try {
