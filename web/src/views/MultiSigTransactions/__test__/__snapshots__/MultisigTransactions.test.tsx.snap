@@ -78,7 +78,7 @@ exports[`<MultiSigTransactions /> should render correctly 1`] = `
         class="css-zmih7x"
       >
         <div
-          class="chakra-table__container css-2wym33"
+          class="chakra-table__container css-64celf"
         >
           <table
             class="chakra-table css-5605sr"
