@@ -240,6 +240,7 @@ abstract contract Roles is IRoles, Initializable {
         _listOfroles.push(_FREEZE_ROLE);
         _listOfroles.push(_DELETE_ROLE);
         _listOfroles.push(_KYC_ROLE);
+        _listOfroles.push(_CUSTOM_FEES_ROLE);
     }
 
     /**
