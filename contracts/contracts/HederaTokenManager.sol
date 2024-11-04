@@ -18,7 +18,7 @@ import {Deletable} from './extensions/Deletable.sol';
 
 import {
     IHederaTokenService
-} from '@hashgraph/smart-contracts/contracts/hts-precompile/IHederaTokenService.sol';
+} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {TokenOwner} from './extensions/TokenOwner.sol';
 import {KYC} from './extensions/KYC.sol';
 import {RoleManagement} from './extensions/RoleManagement.sol';

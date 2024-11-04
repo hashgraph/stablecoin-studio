@@ -3,7 +3,7 @@ pragma solidity 0.8.16;
 
 import {
     IHederaTokenService
-} from '@hashgraph/smart-contracts/contracts/hts-precompile/IHederaTokenService.sol';
+} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {KeysLib} from '../library/KeysLib.sol';
 
 interface IHederaTokenManager {

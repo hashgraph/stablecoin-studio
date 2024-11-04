@@ -5,7 +5,7 @@ import {ICashIn} from './Interfaces/ICashIn.sol';
 import {SupplierAdmin} from './SupplierAdmin.sol';
 import {
     IHederaTokenService
-} from '@hashgraph/smart-contracts/contracts/hts-precompile/IHederaTokenService.sol';
+} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {Reserve} from './Reserve.sol';
 import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
 

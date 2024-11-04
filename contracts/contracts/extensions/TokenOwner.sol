@@ -4,7 +4,7 @@ pragma solidity 0.8.16;
 import {ITokenOwner} from './Interfaces/ITokenOwner.sol';
 import {
     HederaResponseCodes
-} from '@hashgraph/smart-contracts/contracts/hts-precompile/HederaResponseCodes.sol';
+} from '@hashgraph/smart-contracts/contracts/system-contracts/HederaResponseCodes.sol';
 import {
     IERC20Upgradeable
 } from '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
@@ -27,11 +27,8 @@ abstract contract TokenOwner is ITokenOwner, Initializable {
      * @param value The value to check
      * @param ref The ref to compare with
      */
-    modifier valueIsNotLessThan(
-        uint256 value,
-        uint256 ref,
-        bool equalAccepted
-    ) {
+    modifier valueIsNotLessThan(uint256 value, uint256 ref, bool equalAccepted)
+    {
         _valueIsNotLessThan(value, ref, equalAccepted);
         _;
     }
