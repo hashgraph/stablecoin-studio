@@ -1,24 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
+import {
+    IHederaTokenService
+} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 interface ICustomFees {
-    struct FixedFee {
-        int64 amount;
-        address tokenId;
-        bool useHbarsForPayment;
-        bool useCurrentTokenForPayment;
-        address feeCollector;
-    }
-
-    struct FractionalFee {
-        int64 numerator;
-        int64 denominator;
-        int64 minimumAmount;
-        int64 maximumAmount;
-        bool netOfTransfers;
-        address feeCollector;
-    }
-
     /**
      * @dev Emitted when token custom fees are updated
      *
@@ -33,7 +19,7 @@ interface ICustomFees {
      * @param fractionalFees The fractional fees to be added
      */
     function updateTokenCustomFees(
-        FixedFee[] calldata fixedFees,
-        FractionalFee[] calldata fractionalFees
+        IHederaTokenService.FixedFee[] calldata fixedFees,
+        IHederaTokenService.FractionalFee[] calldata fractionalFees
     ) external;
 }

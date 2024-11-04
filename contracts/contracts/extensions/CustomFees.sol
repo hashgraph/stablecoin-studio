@@ -2,12 +2,15 @@
 pragma solidity 0.8.16;
 
 import {ICustomFees} from './Interfaces/ICustomFees.sol';
+import {
+    IHederaTokenService
+} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 
 abstract contract CustomFees is ICustomFees {
     /* solhint-disable no-empty-blocks */
     function updateTokenCustomFees(
-        FixedFee[] calldata fixedFees,
-        FractionalFee[] calldata fractionalFees
+        IHederaTokenService.FixedFee[] calldata fixedFees,
+        IHederaTokenService.FractionalFee[] calldata fractionalFees
     ) external {
         // TODO: implement
     }
