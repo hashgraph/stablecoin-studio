@@ -2,7 +2,7 @@
 pragma solidity 0.8.16;
 
 interface ICustomFees {
-    struct FixedFee {
+    struct FixedFeeStruct {
         int64 amount;
         address tokenId;
         bool useHbarsForPayment;
@@ -10,7 +10,7 @@ interface ICustomFees {
         address feeCollector;
     }
 
-    struct FractionalFee {
+    struct FractionalFeeStruct {
         int64 numerator;
         int64 denominator;
         int64 minimumAmount;
@@ -33,7 +33,7 @@ interface ICustomFees {
      * @param fractionalFees The fractional fees to be added
      */
     function updateTokenCustomFees(
-        FixedFee[] calldata fixedFees,
-        FractionalFee[] calldata fractionalFees
+        FixedFeeStruct[] calldata fixedFees,
+        FractionalFeeStruct[] calldata fractionalFees
     ) external;
 }

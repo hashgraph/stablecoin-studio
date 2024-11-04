@@ -16,8 +16,8 @@ abstract contract CustomFees is ICustomFees, TokenOwner, Roles {
      * @param fractionalFees The fractional fees to be updated
      */
     function updateTokenCustomFees(
-        FixedFee[] calldata fixedFees,
-        FractionalFee[] calldata fractionalFees
+        FixedFeeStruct[] calldata fixedFees,
+        FractionalFeeStruct[] calldata fractionalFees
     )
         external
         override(ICustomFees)
