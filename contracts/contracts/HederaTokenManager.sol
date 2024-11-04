@@ -18,10 +18,11 @@ import {Deletable} from './extensions/Deletable.sol';
 
 import {
     IHederaTokenService
-} from '@hashgraph/smart-contracts/contracts/hts-precompile/IHederaTokenService.sol';
+} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {TokenOwner} from './extensions/TokenOwner.sol';
 import {KYC} from './extensions/KYC.sol';
 import {RoleManagement} from './extensions/RoleManagement.sol';
+import {CustomFees} from './extensions/CustomFees.sol';
 import {KeysLib} from './library/KeysLib.sol';
 import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
 
@@ -35,7 +36,8 @@ contract HederaTokenManager is
     Deletable,
     Rescuable,
     KYC,
-    RoleManagement
+    RoleManagement,
+    CustomFees
 {
     uint256 private constant _ADMIN_KEY_BIT = 0;
     uint256 private constant _SUPPLY_KEY_BIT = 4;

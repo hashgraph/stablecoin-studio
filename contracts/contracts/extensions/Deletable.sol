@@ -5,7 +5,7 @@ import {TokenOwner} from './TokenOwner.sol';
 import {Roles} from './Roles.sol';
 import {
     IHederaTokenService
-} from '@hashgraph/smart-contracts/contracts/hts-precompile/IHederaTokenService.sol';
+} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {IDeletable} from './Interfaces/IDeletable.sol';
 
 abstract contract Deletable is IDeletable, TokenOwner, Roles {
