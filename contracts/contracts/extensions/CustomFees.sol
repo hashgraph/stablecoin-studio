@@ -16,8 +16,8 @@ abstract contract CustomFees is ICustomFees, TokenOwner, Roles {
      * @param fractionalFees The fractional fees to be updated
      */
     function updateTokenCustomFees(
-        FixedFeeStruct[] calldata fixedFees,
-        FractionalFeeStruct[] calldata fractionalFees
+        IHederaTokenService.FixedFee[] calldata fixedFees,
+        IHederaTokenService.FractionalFee[] calldata fractionalFees
     )
         external
         override(ICustomFees)
