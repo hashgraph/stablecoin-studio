@@ -33,7 +33,7 @@ interface ICustomFees {
      * @param fractionalFees The fractional fees to be added
      */
     function updateTokenCustomFees(
-        FixedFee[] memory fixedFees,
-        FractionalFee[] memory fractionalFees
-    ) external returns (bool);
+        FixedFee[] calldata fixedFees,
+        FractionalFee[] calldata fractionalFees
+    ) external;
 }
