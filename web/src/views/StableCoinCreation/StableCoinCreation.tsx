@@ -262,6 +262,7 @@ const StableCoinCreation = () => {
 			freezeRoleAccount,
 			deleteRoleAccount,
 			kycRoleAccount,
+			feeRoleAccount,
 			cashInAllowanceType,
 			cashInAllowance,
 			hederaTokenManagerId,
@@ -326,6 +327,12 @@ const StableCoinCreation = () => {
 		);
 		request.deleteRoleAccount = formatRoleAccount(deleteRoleAccount, 'delete');
 		request.kycRoleAccount = formatKycRoleAccountByKey(kycRequired, kycKey, kycRoleAccount, 'kyc');
+		request.feeRoleAccount = formatKycRoleAccountByKey(
+			manageCustomFees,
+			feeScheduleKey,
+			feeRoleAccount,
+			'feeSchedule',
+		);
 
 		request.hederaTokenManager = hederaTokenManagerId.value;
 		try {

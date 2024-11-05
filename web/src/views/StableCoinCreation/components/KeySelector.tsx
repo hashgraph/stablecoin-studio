@@ -79,7 +79,7 @@ const KeySelector = ({ control, name, label, request }: KeySelectorProps) => {
 				control={control}
 				name={name}
 				options={availableOptions()}
-				defaultValue={name === 'feeScheduleKey' ? '0' : '1'}
+				defaultValue={'1'}
 				label={label}
 				overrideStyles={selectorStyle}
 				addonLeft={true}

@@ -43,6 +43,7 @@ const Review = (props: ReviewProps) => {
 		freezeRoleAccount,
 		deleteRoleAccount,
 		kycRoleAccount,
+		feeRoleAccount,
 		cashInAllowance,
 		cashInAllowanceType,
 		manageCustomFees,
@@ -141,6 +142,11 @@ const Review = (props: ReviewProps) => {
 		t('stableCoinCreation:managementPermissions.kyc'),
 		kycRoleAccount,
 		kycKey,
+	);
+	setKycRoleAccountInfoByKey(
+		t('stableCoinCreation:managementPermissions.feeSchedule'),
+		feeRoleAccount,
+		feeScheduleKey,
 	);
 
 	return (
