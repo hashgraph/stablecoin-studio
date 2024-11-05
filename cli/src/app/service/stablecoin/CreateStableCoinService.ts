@@ -269,7 +269,7 @@ export default class CreateStableCoinService extends Service {
         await utilsService.defaultMultipleAsk(
           language.getText('stablecoin.features.feeSchedule'),
           language.getArrayFromObject(
-            'wizard.nonSmartContractAndNoneFeatureOptions',
+            'wizard.nonNoneFeatureOptions',
           ),
         ),
       );
