@@ -18,6 +18,9 @@ export const KYC_ROLE =
     '0xdb11624602202c396fa347735a55e345a3aeb3e60f8885e1a71f1bf8d5886db7'
 export const DEFAULT_ADMIN_ROLE =
     '0x0000000000000000000000000000000000000000000000000000000000000000'
+//TODO: Mario dummy data
+export const CUSTOM_FEE_ROLE =
+    '0x2b73f0f98ad60ca619bbdee4bcd175da1127db86346339f8b718e3f8b4a006e3'
 
 export const RolesId = {
     Admin: 0,
@@ -29,6 +32,7 @@ export const RolesId = {
     Freeze: 6,
     Delete: 7,
     Kyc: 8,
+    CustomFee: 9,
 }
 
 export const GAS_LIMIT_TINY = 60000
@@ -46,6 +50,7 @@ export const FREEZE_GAS = 65000
 export const UNFREEZE_GAS = 65000
 export const GRANT_KYC_GAS = 65000
 export const REVOKE_KYC_GAS = 65000
+export const UPDATE_CUSTOM_FEES_GAS = 65000
 export const PAUSE_GAS = 65000
 export const UNPAUSE_GAS = 65000
 export const DELETE_GAS = 65000

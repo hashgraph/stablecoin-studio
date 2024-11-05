@@ -27,6 +27,7 @@ import {
 import {
     ADDRESS_ZERO,
     BURN_ROLE,
+    CUSTOM_FEE_ROLE,
     DELETE_ROLE,
     FREEZE_ROLE,
     KYC_ROLE,
@@ -757,6 +758,10 @@ async function rolestoAccountsByKeys(
         },
         {
             role: KYC_ROLE,
+            account: RoleToAccount,
+        },
+        {
+            role: CUSTOM_FEE_ROLE,
             account: RoleToAccount,
         },
     ]

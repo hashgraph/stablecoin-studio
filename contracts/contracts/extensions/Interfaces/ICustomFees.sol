@@ -21,5 +21,5 @@ interface ICustomFees {
     function updateTokenCustomFees(
         IHederaTokenService.FixedFee[] calldata fixedFees,
         IHederaTokenService.FractionalFee[] calldata fractionalFees
-    ) external;
+    ) external returns (bool);
 }
