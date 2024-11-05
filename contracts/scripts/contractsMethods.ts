@@ -31,7 +31,8 @@ import {
     GAS_LIMIT_HIGHEST,
     GAS_LIMIT_MODERATE,
     GAS_LIMIT_SMALL,
-    GAS_LIMIT_TINY, GET_CUSTOM_FEES_GAS,
+    GAS_LIMIT_TINY,
+    GET_CUSTOM_FEES_GAS,
     GET_ROLES_GAS,
     GRANT_KYC_GAS,
     GRANT_ROLES_GAS,
@@ -1403,7 +1404,7 @@ export async function updateCustomFees(
 // GET CUSTOM FEES ///////////////////////////////////////////////////
 export async function getTokenCustomFees(
     proxyAddress: ContractId,
-    client: Client,
+    client: Client
 ) {
     const result = await contractCall(
         proxyAddress,

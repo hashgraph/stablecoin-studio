@@ -8,10 +8,17 @@ interface ICustomFees {
     /**
      * @dev Emitted when token custom fees are updated
      *
+     * @param sender The caller of the function that emitted the event
      * @param token Token address
+     * @param fixedFees The fixed fees to be updated
+     * @param fractionalFees The fractional fees to be updated
      */
-    event TokenCustomFeesUpdated(address indexed token);
-
+    event TokenCustomFeesUpdated(
+        address sender,
+        address indexed token,
+        IHederaTokenService.FixedFee[] fixedFees,
+        IHederaTokenService.FractionalFee[] fractionalFees
+    );
     /**
      * @dev Update custom fees for the token
      *

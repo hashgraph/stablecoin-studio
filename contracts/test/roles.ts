@@ -12,7 +12,8 @@ import {
 } from '../scripts/contractsMethods'
 import {
     BURN_ROLE,
-    CASHIN_ROLE, CUSTOM_FEE_ROLE,
+    CASHIN_ROLE,
+    CUSTOM_FEE_ROLE,
     DEFAULT_ADMIN_ROLE,
     DELETE_ROLE,
     FREEZE_ROLE,
@@ -448,6 +449,8 @@ describe('Roles Tests', function () {
         expect(roleFreeze.toUpperCase()).to.equals(FREEZE_ROLE.toUpperCase())
         expect(roleDelete.toUpperCase()).to.equals(DELETE_ROLE.toUpperCase())
         expect(roleKyc.toUpperCase()).to.equals(KYC_ROLE.toUpperCase())
-        expect(roleCustomFees.toUpperCase()).to.equals(CUSTOM_FEE_ROLE.toUpperCase())
+        expect(roleCustomFees.toUpperCase()).to.equals(
+            CUSTOM_FEE_ROLE.toUpperCase()
+        )
     })
 })

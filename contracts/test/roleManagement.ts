@@ -191,7 +191,7 @@ describe('Role Management Tests', function () {
             DELETE_ROLE,
             DEFAULT_ADMIN_ROLE,
             KYC_ROLE,
-            CUSTOM_FEE_ROLE
+            CUSTOM_FEE_ROLE,
         ]
         const amounts: BigNumber[] = []
         const areE25519: boolean[] = []
