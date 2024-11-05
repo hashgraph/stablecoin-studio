@@ -189,3 +189,49 @@ export function fromCustomFeesToHCustomFees(
 
 	return HcustomFee;
 }
+
+export function fromHCustomFeeToSCFee(
+	customFee: HCustomFee,
+	currentTokenId: string,
+	feeCollector: string,
+): SC_FixedFee | SC_FractionalFee {
+	if (customFee instanceof HCustomFixedFee) {
+		const fee = customFee as HCustomFixedFee;
+
+		const amount = fee.amount ? fee.amount.toNumber() : 0;
+		const tokenId = fee.denominatingTokenId
+			? fee.denominatingTokenId.toSolidityAddress()
+			: '';
+		const useHbarsForPayment = fee.denominatingTokenId ? false : true;
+		const useCurrentTokenForPayment =
+			fee.denominatingTokenId!.toString() === currentTokenId
+				? true
+				: false;
+
+		return new SC_FixedFee(
+			amount,
+			tokenId,
+			useHbarsForPayment,
+			useCurrentTokenForPayment,
+			feeCollector,
+		);
+	}
+	const fee = customFee as HCustomFractionalFee;
+
+	const numerator = fee.numerator ? fee.numerator.toNumber() : 0;
+	const denominator = fee.denominator ? fee.denominator.toNumber() : 0;
+	const minimumAmount = fee.min ? fee.min.toNumber() : 0;
+	const maximumAmount = fee.max ? fee.max.toNumber() : 0;
+	const netOfTransfers = fee.assessmentMethod
+		? fee.assessmentMethod.valueOf()
+		: false;
+
+	return new SC_FractionalFee(
+		numerator,
+		denominator,
+		minimumAmount,
+		maximumAmount,
+		netOfTransfers,
+		feeCollector,
+	);
+}

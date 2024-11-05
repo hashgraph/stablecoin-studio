@@ -99,7 +99,11 @@ import { TransactionResponseError } from '../error/TransactionResponseError.js';
 import { FactoryRole } from '../../../domain/context/factory/FactoryRole.js';
 import { FactoryCashinRole } from '../../../domain/context/factory/FactoryCashinRole.js';
 import NetworkService from '../../../app/service/NetworkService.js';
-import { SC_FixedFee, SC_FractionalFee } from 'domain/context/fee/CustomFee';
+import {
+	fromHCustomFeeToSCFee,
+	SC_FixedFee,
+	SC_FractionalFee,
+} from 'domain/context/fee/CustomFee';
 
 export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	private web3 = new Web3();
@@ -1054,7 +1058,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 						transactionType,
 						contractAbi,
 						startDate,
-						coin,
+						coin.coin.tokenId!.toString(),
 					);
 
 				case Decision.HTS:
@@ -1106,7 +1110,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		transactionType: TransactionType = TransactionType.RECEIPT,
 		contractAbi: any = HederaTokenManager__factory.abi,
 		startDate?: string,
-		coin?: StableCoinCapabilities,
+		tokenId?: string,
 	): Promise<TransactionResponse> {
 		let filteredContractParams: any[] = [];
 
@@ -1136,7 +1140,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				break;
 			case 'updateTokenCustomFees':
 				const [fixedFees, fractionalFees] =
-					await this.processUpdateTokenCustomFees(params!, coin);
+					await this.processUpdateTokenCustomFees(params!, tokenId!);
 				filteredContractParams.push(fixedFees, fractionalFees);
 				break;
 
@@ -1450,73 +1454,27 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 
 	private async processUpdateTokenCustomFees(
 		params: Params,
-		coin?: StableCoinCapabilities,
+		tokenId: string,
 	): Promise<[SC_FixedFee[], SC_FractionalFee[]]> {
 		const fixedFees: SC_FixedFee[] = [];
 		const fractionalFees: SC_FractionalFee[] = [];
 		const customFees = params?.customFees ?? [];
 
 		for (const customFee of customFees) {
-			if (customFee instanceof HCustomFixedFee) {
-				const fee = customFee as HCustomFixedFee;
+			const feeCollector = customFee.feeCollectorAccountId
+				? (
+						await this.mirrorNodeAdapter.getAccountInfo(
+							customFee.feeCollectorAccountId.toString(),
+						)
+				  ).accountEvmAddress!
+				: '0x0000000000000000000000000000000000000000';
 
-				const amount = fee.amount ? fee.amount.toNumber() : 0;
-				const tokenId = fee.denominatingTokenId
-					? fee.denominatingTokenId.toSolidityAddress()
-					: '';
-				const useHbarsForPayment = fee.denominatingTokenId
-					? false
-					: true;
-				const useCurrentTokenForPayment =
-					fee.denominatingTokenId!.toString() ===
-					coin!.coin.tokenId!.toString()
-						? true
-						: false;
-				const feeCollector = fee.feeCollectorAccountId
-					? (
-							await this.mirrorNodeAdapter.getAccountInfo(
-								fee.feeCollectorAccountId.toString(),
-							)
-					  ).accountEvmAddress!
-					: '0x0000000000000000000000000000000000000000';
+			const fee = fromHCustomFeeToSCFee(customFee, tokenId, feeCollector);
 
-				const fixedFee = new SC_FixedFee(
-					amount,
-					tokenId,
-					useHbarsForPayment,
-					useCurrentTokenForPayment,
-					feeCollector,
-				);
-				fixedFees.push(fixedFee);
+			if (fee instanceof SC_FixedFee) {
+				fixedFees.push(fee);
 			} else {
-				const fee = customFee as HCustomFractionalFee;
-
-				const numerator = fee.numerator ? fee.numerator.toNumber() : 0;
-				const denominator = fee.denominator
-					? fee.denominator.toNumber()
-					: 0;
-				const minimumAmount = fee.min ? fee.min.toNumber() : 0;
-				const maximumAmount = fee.max ? fee.max.toNumber() : 0;
-				const netOfTransfers = fee.assessmentMethod
-					? fee.assessmentMethod.valueOf()
-					: false;
-				const feeCollector = fee.feeCollectorAccountId
-					? (
-							await this.mirrorNodeAdapter.getAccountInfo(
-								fee.feeCollectorAccountId.toString(),
-							)
-					  ).accountEvmAddress!
-					: '0x0000000000000000000000000000000000000000';
-
-				const fractionalFee = new SC_FractionalFee(
-					numerator,
-					denominator,
-					minimumAmount,
-					maximumAmount,
-					netOfTransfers,
-					feeCollector,
-				);
-				fractionalFees.push(fractionalFee);
+				fractionalFees.push(fee);
 			}
 		}
 
