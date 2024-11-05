@@ -25,7 +25,6 @@ chai.use(chaiAsPromised)
 const expect = chai.expect
 
 let proxyAddress: ContractId
-let token: ContractId
 
 describe('Custom Fee Tests', function () {
     before(async function () {
@@ -49,7 +48,6 @@ describe('Custom Fee Tests', function () {
         })
 
         proxyAddress = result[0]
-        token = result[8]
     })
 
     it("An account without CUSTOM_FEES role can't set custom fees for a token", async function () {
