@@ -151,6 +151,7 @@ describe('🧪 Stablecoin test', () => {
 		rescueRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
 		deleteRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
 		cashInRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
+		feeRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
 		cashInRoleAllowance: '0',
 		metadata: '',
 	});
@@ -174,6 +175,7 @@ describe('🧪 Stablecoin test', () => {
 		rescueRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
 		deleteRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
 		cashInRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
+		feeRoleAccount: CLIENT_ACCOUNT_ED25519.id.toString(),
 		cashInRoleAllowance: '0',
 		metadata: '',
 	});

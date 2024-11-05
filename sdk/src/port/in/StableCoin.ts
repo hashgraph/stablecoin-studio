@@ -250,6 +250,7 @@ class StableCoinInPort implements IStableCoinInPort {
 			deleteRoleAccount: new HederaId(req.deleteRoleAccount ?? '0.0.0'),
 			kycRoleAccount: new HederaId(req.kycRoleAccount ?? '0.0.0'),
 			cashInRoleAccount: new HederaId(req.cashInRoleAccount ?? '0.0.0'),
+			feeRoleAccount: new HederaId(req.feeRoleAccount ?? '0.0.0'),
 			cashInRoleAllowance: BigDecimal.fromString(
 				req.cashInRoleAllowance ?? '0',
 				req.decimals,

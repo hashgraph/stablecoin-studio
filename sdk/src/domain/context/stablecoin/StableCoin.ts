@@ -99,6 +99,7 @@ export interface StableCoinProps {
 	deleteRoleAccount?: HederaId;
 	kycRoleAccount?: HederaId;
 	cashInRoleAccount?: HederaId;
+	feeRoleAccount?: HederaId;
 	cashInRoleAllowance?: BigDecimal;
 	metadata?: string;
 	proxyAdminOwner?: string;
@@ -144,6 +145,7 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 	deleteRoleAccount?: HederaId;
 	kycRoleAccount?: HederaId;
 	cashInRoleAccount?: HederaId;
+	feeRoleAccount?: HederaId;
 	cashInRoleAllowance?: BigDecimal;
 	metadata?: string;
 
@@ -186,6 +188,7 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 			deleteRoleAccount,
 			kycRoleAccount,
 			cashInRoleAccount,
+			feeRoleAccount,
 			cashInRoleAllowance,
 			metadata,
 		} = params;
@@ -231,6 +234,7 @@ export class StableCoin extends BaseEntity implements StableCoinProps {
 		this.deleteRoleAccount = deleteRoleAccount ?? HederaId.from('0.0.0');
 		this.kycRoleAccount = kycRoleAccount ?? HederaId.from('0.0.0');
 		this.cashInRoleAccount = cashInRoleAccount ?? HederaId.from('0.0.0');
+		this.feeRoleAccount = feeRoleAccount ?? HederaId.from('0.0.0');
 		this.cashInRoleAllowance = cashInRoleAllowance;
 		this.metadata = metadata;
 	}
