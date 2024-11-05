@@ -26,6 +26,8 @@ import {
 	Transaction,
 	ContractId as HContractId,
 	CustomFee as HCustomFee,
+	CustomFixedFee as HCustomFixedFee,
+	CustomFractionalFee as HCustomFractionalFee,
 	Client,
 } from '@hashgraph/sdk';
 import TransactionAdapter from '../TransactionAdapter';
@@ -88,6 +90,7 @@ import {
 	CHANGE_PROXY_OWNER_GAS,
 	ACCEPT_PROXY_OWNER_GAS,
 	UPDATE_PROXY_IMPLEMENTATION_GAS,
+	UPDATE_CUSTOM_FEES_GAS,
 } from '../../../core/Constants.js';
 import LogService from '../../../app/service/LogService.js';
 import { RESERVE_DECIMALS } from '../../../domain/context/reserve/Reserve.js';
@@ -96,6 +99,11 @@ import { TransactionResponseError } from '../error/TransactionResponseError.js';
 import { FactoryRole } from '../../../domain/context/factory/FactoryRole.js';
 import { FactoryCashinRole } from '../../../domain/context/factory/FactoryCashinRole.js';
 import NetworkService from '../../../app/service/NetworkService.js';
+import {
+	fromHCustomFeeToSCFee,
+	SC_FixedFee,
+	SC_FractionalFee,
+} from '../../../domain/context/fee/CustomFee.js';
 
 export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	private web3 = new Web3();
@@ -166,6 +174,10 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					role: StableCoinRole.DELETE_ROLE,
 				},
 				{ account: coin.kycRoleAccount, role: StableCoinRole.KYC_ROLE },
+				{
+					account: coin.feeRoleAccount,
+					role: StableCoinRole.CUSTOM_FEES_ROLE,
+				},
 			];
 
 			const roles = await Promise.all(
@@ -956,9 +968,11 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		const params = new Params({
 			customFees: customFees,
 		});
-		return this.performHTSOperation(
+		return this.performOperation(
 			coin,
 			Operation.CREATE_CUSTOM_FEE,
+			'updateTokenCustomFees',
+			UPDATE_CUSTOM_FEES_GAS,
 			params,
 		);
 	}
@@ -1044,6 +1058,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 						transactionType,
 						contractAbi,
 						startDate,
+						coin.coin.tokenId!.toString(),
 					);
 
 				case Decision.HTS:
@@ -1095,6 +1110,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		transactionType: TransactionType = TransactionType.RECEIPT,
 		contractAbi: any = HederaTokenManager__factory.abi,
 		startDate?: string,
+		tokenId?: string,
 	): Promise<TransactionResponse> {
 		let filteredContractParams: any[] = [];
 
@@ -1121,6 +1137,11 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 						: -1,
 					tokenMetadataURI: params?.metadata ?? '',
 				};
+				break;
+			case 'updateTokenCustomFees':
+				const [fixedFees, fractionalFees] =
+					await this.processUpdateTokenCustomFees(params!, tokenId!);
+				filteredContractParams.push(fixedFees, fractionalFees);
 				break;
 
 			default:
@@ -1429,6 +1450,35 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				network: this.networkService.environment,
 			});
 		}
+	}
+
+	private async processUpdateTokenCustomFees(
+		params: Params,
+		tokenId: string,
+	): Promise<[SC_FixedFee[], SC_FractionalFee[]]> {
+		const fixedFees: SC_FixedFee[] = [];
+		const fractionalFees: SC_FractionalFee[] = [];
+		const customFees = params?.customFees ?? [];
+
+		for (const customFee of customFees) {
+			const feeCollector = customFee.feeCollectorAccountId
+				? (
+						await this.mirrorNodeAdapter.getAccountInfo(
+							customFee.feeCollectorAccountId.toString(),
+						)
+				  ).accountEvmAddress!
+				: '0x0000000000000000000000000000000000000000';
+
+			const fee = fromHCustomFeeToSCFee(customFee, tokenId, feeCollector);
+
+			if (fee instanceof SC_FixedFee) {
+				fixedFees.push(fee);
+			} else {
+				fractionalFees.push(fee);
+			}
+		}
+
+		return [fixedFees, fractionalFees];
 	}
 }
 

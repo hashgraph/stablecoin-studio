@@ -317,6 +317,7 @@ Creates a new stablecoin. You must use `Network.connect` first with a `Supported
 		kycRoleAccount?: string | undefined;
 		cashInRoleAccount?: string | undefined;
 		cashInRoleAllowance?: string | undefined;
+		feeRoleAccount?: string | undefined;
 		metadata?: string | undefined;
 		proxyAdminOwnerAccount?: string;
 	}

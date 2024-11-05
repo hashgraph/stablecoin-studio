@@ -996,6 +996,10 @@ jest.mock('../src/port/out/hs/hts/HTSTransactionAdapter', () => {
 					role: StableCoinRole.DELETE_ROLE,
 				},
 				{ account: coin.kycRoleAccount, role: StableCoinRole.KYC_ROLE },
+				{
+					account: coin.feeRoleAccount,
+					role: StableCoinRole.CUSTOM_FEES_ROLE,
+				},
 			];
 
 			const roles = await Promise.all(
