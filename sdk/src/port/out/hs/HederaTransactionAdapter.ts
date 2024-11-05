@@ -1137,8 +1137,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			case 'updateTokenCustomFees':
 				const [fixedFees, fractionalFees] =
 					await this.processUpdateTokenCustomFees(params!, coin);
-				filteredContractParams.push(fixedFees);
-				filteredContractParams.push(fractionalFees);
+				filteredContractParams.push(fixedFees, fractionalFees);
 				break;
 
 			default:
@@ -1455,7 +1454,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	): Promise<[SC_FixedFee[], SC_FractionalFee[]]> {
 		const fixedFees: SC_FixedFee[] = [];
 		const fractionalFees: SC_FractionalFee[] = [];
-		const customFees = params?.customFees ?? []
+		const customFees = params?.customFees ?? [];
 
 		for (const customFee of customFees) {
 			if (customFee instanceof HCustomFixedFee) {
