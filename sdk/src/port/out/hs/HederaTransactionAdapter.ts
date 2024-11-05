@@ -103,7 +103,7 @@ import {
 	fromHCustomFeeToSCFee,
 	SC_FixedFee,
 	SC_FractionalFee,
-} from 'domain/context/fee/CustomFee';
+} from '../../../domain/context/fee/CustomFee.js';
 
 export abstract class HederaTransactionAdapter extends TransactionAdapter {
 	private web3 = new Web3();
