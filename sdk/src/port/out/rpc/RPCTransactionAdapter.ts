@@ -213,6 +213,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					role: StableCoinRole.DELETE_ROLE,
 				},
 				{ account: coin.kycRoleAccount, role: StableCoinRole.KYC_ROLE },
+				{
+					account: coin.feeRoleAccount,
+					role: StableCoinRole.CUSTOM_FEES_ROLE,
+				},
 			];
 
 			const roles = await Promise.all(
