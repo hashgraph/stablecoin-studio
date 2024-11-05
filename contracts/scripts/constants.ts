@@ -31,7 +31,7 @@ export const RolesId = {
     Freeze: 6,
     Delete: 7,
     Kyc: 8,
-    CustomFee: 9,
+    CustomFees: 9,
 }
 
 export const GAS_LIMIT_TINY = 60000
