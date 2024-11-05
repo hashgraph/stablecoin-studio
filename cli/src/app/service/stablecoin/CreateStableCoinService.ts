@@ -625,7 +625,7 @@ export default class CreateStableCoinService extends Service {
         language.getText('stablecoin.initialRoles.feeSchedule'),
         currentAccountId,
         tokenToCreate,
-        'feeScheduleRoleAccount',
+        'feeRoleAccount',
       );
 
     const result: string = await this.askForAccount(
@@ -663,7 +663,7 @@ export default class CreateStableCoinService extends Service {
       | 'deleteRoleAccount'
       | 'kycRoleAccount'
       | 'cashInRoleAccount'
-      | 'feeScheduleRoleAccount',
+      | 'feeRoleAccount',
   ): Promise<string> {
     const options = [
       language.getText('stablecoin.initialRoles.options.currentAccount'),
