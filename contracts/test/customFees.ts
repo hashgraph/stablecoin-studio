@@ -50,7 +50,7 @@ describe('Custom Fee Tests', function () {
         proxyAddress = result[0]
     })
 
-    it("An account without CUSTOM_FEES role can't set custom fees for a token", async function () {
+    it("An account without CUSTOM_FEES role can't update custom fees for a token", async function () {
         const bigNumber = BigNumber.from(1)
         await expect(
             updateCustomFees(
@@ -68,7 +68,7 @@ describe('Custom Fee Tests', function () {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('An account with CUSTOM_FEES role can set custom fees for a token', async function () {
+    it('An account with CUSTOM_FEES role can update custom fees for a token', async function () {
         const bigNumber = BigNumber.from(1)
         const result = await updateCustomFees(
             proxyAddress,

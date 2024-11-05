@@ -24,6 +24,7 @@ import {
     ACCOUNT_TWO,
     BURN_ROLE,
     CASHIN_ROLE,
+    CUSTOM_FEE_ROLE,
     DEFAULT_ADMIN_ROLE,
     DELETE_ROLE,
     FREEZE_ROLE,
@@ -190,6 +191,7 @@ describe('Role Management Tests', function () {
             DELETE_ROLE,
             DEFAULT_ADMIN_ROLE,
             KYC_ROLE,
+            CUSTOM_FEE_ROLE
         ]
         const amounts: BigNumber[] = []
         const areE25519: boolean[] = []
@@ -253,6 +255,10 @@ describe('Role Management Tests', function () {
                 else if (roleIndex == RolesId.Kyc)
                     expect(result[roleIndex].toUpperCase()).to.equals(
                         KYC_ROLE.toUpperCase()
+                    )
+                else if (roleIndex == RolesId.CustomFee)
+                    expect(result[roleIndex].toUpperCase()).to.equals(
+                        CUSTOM_FEE_ROLE.toUpperCase()
                     )
                 else if (roleIndex == RolesId.Admin)
                     expect(result[roleIndex].toUpperCase()).to.equals(
@@ -333,6 +339,10 @@ describe('Role Management Tests', function () {
                 else if (i == RolesId.Kyc)
                     expect(result[i].toUpperCase()).to.equals(
                         WITHOUT_ROLE.toUpperCase()
+                    )
+                else if (i == RolesId.CustomFee)
+                    expect(result[i].toUpperCase()).to.equals(
+                        CUSTOM_FEE_ROLE.toUpperCase()
                     )
                 else if (i == RolesId.Admin)
                     expect(result[i].toUpperCase()).to.equals(

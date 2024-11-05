@@ -35,7 +35,7 @@ abstract contract CustomFees is ICustomFees, TokenOwner, Roles {
 
         bool success = _checkResponse(responseCode);
 
-        emit TokenCustomFeesUpdated(currentTokenAddress);
+        emit TokenCustomFeesUpdated(msg.sender, fixedFees, fractionalFees);
 
         return success;
     }
