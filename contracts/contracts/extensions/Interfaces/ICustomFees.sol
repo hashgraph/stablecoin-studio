@@ -14,7 +14,7 @@ interface ICustomFees {
      * @param fractionalFees The fractional fees to be updated
      */
     event TokenCustomFeesUpdated(
-        address sender,
+        address indexed sender,
         address indexed token,
         IHederaTokenService.FixedFee[] fixedFees,
         IHederaTokenService.FractionalFee[] fractionalFees
