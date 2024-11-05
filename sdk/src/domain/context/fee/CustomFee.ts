@@ -30,6 +30,53 @@ import {
 export const MAX_CUSTOM_FEES = 10;
 export const MAX_PERCENTAGE_DECIMALS = 2;
 
+export class SC_FixedFee {
+	amount: number;
+	tokenId: string;
+	useHbarsForPayment: boolean;
+	useCurrentTokenForPayment: boolean;
+	feeCollector: string;
+
+	constructor(
+		amount: number,
+		tokenId: string,
+		useHbarsForPayment: boolean,
+		useCurrentTokenForPayment: boolean,
+		feeCollector: string,
+	) {
+		this.amount = amount;
+		this.tokenId = tokenId;
+		this.useHbarsForPayment = useHbarsForPayment;
+		this.useCurrentTokenForPayment = useCurrentTokenForPayment;
+		this.feeCollector = feeCollector;
+	}
+}
+
+export class SC_FractionalFee {
+	numerator: number;
+	denominator: number;
+	minimumAmount: number;
+	maximumAmount: number;
+	netOfTransfers: boolean;
+	feeCollector: string;
+
+	constructor(
+		numerator: number,
+		denominator: number,
+		minimumAmount: number,
+		maximumAmount: number,
+		netOfTransfers: boolean,
+		feeCollector: string,
+	) {
+		this.numerator = numerator;
+		this.denominator = denominator;
+		this.minimumAmount = minimumAmount;
+		this.maximumAmount = maximumAmount;
+		this.netOfTransfers = netOfTransfers;
+		this.feeCollector = feeCollector;
+	}
+}
+
 export class CustomFee {
 	collectorId?: HederaId;
 	collectorsExempt?: boolean;

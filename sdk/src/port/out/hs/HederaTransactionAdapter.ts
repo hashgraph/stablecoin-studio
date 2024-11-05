@@ -88,6 +88,7 @@ import {
 	CHANGE_PROXY_OWNER_GAS,
 	ACCEPT_PROXY_OWNER_GAS,
 	UPDATE_PROXY_IMPLEMENTATION_GAS,
+	UPDATE_CUSTOM_FEES_GAS,
 } from '../../../core/Constants.js';
 import LogService from '../../../app/service/LogService.js';
 import { RESERVE_DECIMALS } from '../../../domain/context/reserve/Reserve.js';
@@ -960,9 +961,11 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		const params = new Params({
 			customFees: customFees,
 		});
-		return this.performHTSOperation(
+		return this.performOperation(
 			coin,
 			Operation.CREATE_CUSTOM_FEE,
+			'updateTokenCustomFees',
+			UPDATE_CUSTOM_FEES_GAS,
 			params,
 		);
 	}
