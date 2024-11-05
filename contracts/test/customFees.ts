@@ -19,14 +19,14 @@ import {
     TOKEN_SYMBOL,
 } from './shared/utils'
 import { BigNumber } from 'ethers'
-import { updateCustomFees } from '../scripts/contractsMethods'
+import {getTokenCustomFees, updateCustomFees} from '../scripts/contractsMethods'
 
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
 let proxyAddress: ContractId
 
-describe('Custom Fee Tests', function () {
+describe('Custom Fees Tests', function () {
     before(async function () {
         // Deploy Token using Client
         const result = await deployContractsWithSDK({
@@ -68,7 +68,7 @@ describe('Custom Fee Tests', function () {
         ).to.eventually.be.rejectedWith(Error)
     })
 
-    it('An account with CUSTOM_FEES role can update custom fees for a token', async function () {
+    it('An account with CUSTOM_FEES role can update custom fees for a token and fees should be updated correctly', async function () {
         const bigNumber = BigNumber.from(1)
         const result = await updateCustomFees(
             proxyAddress,
@@ -83,5 +83,9 @@ describe('Custom Fee Tests', function () {
             false
         )
         expect(result).to.be.true
+
+        const customFees = await getTokenCustomFees(proxyAddress, operatorClient)
+        expect(customFees.fixedFees[0].amount).to.equal(bigNumber.toString())
+        expect(customFees.fractionalFees[0].numerator).to.equal(bigNumber.toString())
     })
 })

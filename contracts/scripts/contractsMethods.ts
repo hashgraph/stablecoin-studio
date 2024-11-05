@@ -31,7 +31,7 @@ import {
     GAS_LIMIT_HIGHEST,
     GAS_LIMIT_MODERATE,
     GAS_LIMIT_SMALL,
-    GAS_LIMIT_TINY,
+    GAS_LIMIT_TINY, GET_CUSTOM_FEES_GAS,
     GET_ROLES_GAS,
     GRANT_KYC_GAS,
     GRANT_ROLES_GAS,
@@ -1398,6 +1398,28 @@ export async function updateCustomFees(
         UPDATE_CUSTOM_FEES_GAS,
         HederaTokenManager__factory.abi
     )
+}
+
+// GET CUSTOM FEES ///////////////////////////////////////////////////
+export async function getTokenCustomFees(
+    proxyAddress: ContractId,
+    client: Client,
+) {
+    const result = await contractCall(
+        proxyAddress,
+        'getTokenCustomFees',
+        [],
+        client,
+        GET_CUSTOM_FEES_GAS,
+        HederaTokenManager__factory.abi
+    )
+
+    const responseCode = result[0].toNumber()
+    const fixedFees = result[1]
+    const fractionalFees = result[2]
+    const royaltyFees = result[3]
+
+    return { responseCode, fixedFees, fractionalFees, royaltyFees }
 }
 
 // StableCoinFactory ///////////////////////////////////////////////////

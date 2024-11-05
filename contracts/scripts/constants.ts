@@ -50,6 +50,7 @@ export const UNFREEZE_GAS = 65000
 export const GRANT_KYC_GAS = 65000
 export const REVOKE_KYC_GAS = 65000
 export const UPDATE_CUSTOM_FEES_GAS = 65000
+export const GET_CUSTOM_FEES_GAS = 65000
 export const PAUSE_GAS = 65000
 export const UNPAUSE_GAS = 65000
 export const DELETE_GAS = 65000
