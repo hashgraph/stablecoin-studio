@@ -256,7 +256,7 @@ describe('Role Management Tests', function () {
                     expect(result[roleIndex].toUpperCase()).to.equals(
                         KYC_ROLE.toUpperCase()
                     )
-                else if (roleIndex == RolesId.CustomFee)
+                else if (roleIndex == RolesId.CustomFees)
                     expect(result[roleIndex].toUpperCase()).to.equals(
                         CUSTOM_FEES_ROLE.toUpperCase()
                     )
@@ -340,7 +340,7 @@ describe('Role Management Tests', function () {
                     expect(result[i].toUpperCase()).to.equals(
                         WITHOUT_ROLE.toUpperCase()
                     )
-                else if (i == RolesId.CustomFee)
+                else if (i == RolesId.CustomFees)
                     expect(result[i].toUpperCase()).to.equals(
                         WITHOUT_ROLE.toUpperCase()
                     )

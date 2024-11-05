@@ -285,7 +285,7 @@ describe('Roles Tests', function () {
                 expect(result[i].toUpperCase()).to.equals(
                     KYC_ROLE.toUpperCase()
                 )
-            else if (i == RolesId.CustomFee)
+            else if (i == RolesId.CustomFees)
                 expect(result[i].toUpperCase()).to.equals(
                     CUSTOM_FEES_ROLE.toUpperCase()
                 )
