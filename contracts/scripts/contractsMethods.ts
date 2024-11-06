@@ -1374,7 +1374,7 @@ export async function updateCustomFees(
     const fixedFees = [
         {
             amount: fixedFeeAmount.toString(),
-            tokenId: tokenId,
+            tokenId: tokenId.toSolidityAddress(),
             useHbarsForPayment: true,
             useCurrentTokenForPayment: false,
             feeCollector: feeCollectorAddress,
@@ -1392,7 +1392,7 @@ export async function updateCustomFees(
         },
     ]
 
-    await contractCall(
+    const result = await contractCall(
         proxyAddress,
         'updateTokenCustomFees',
         [fixedFees, fractionalFees],
@@ -1400,29 +1400,31 @@ export async function updateCustomFees(
         UPDATE_CUSTOM_FEES_GAS,
         HederaTokenManager__factory.abi
     )
+
+    return result[0]
 }
 
 // GET CUSTOM FEES ///////////////////////////////////////////////////
-export async function getTokenCustomFees(
-    proxyAddress: ContractId,
-    client: Client
-) {
-    const result = await contractCall(
-        proxyAddress,
-        'getTokenCustomFees',
-        [],
-        client,
-        GET_CUSTOM_FEES_GAS,
-        HederaTokenManager__factory.abi
-    )
-
-    const responseCode = result[0].toNumber()
-    const fixedFees = result[1]
-    const fractionalFees = result[2]
-    const royaltyFees = result[3]
-
-    return { responseCode, fixedFees, fractionalFees, royaltyFees }
-}
+// export async function getTokenCustomFees(
+//     proxyAddress: ContractId,
+//     client: Client
+// ) {
+//     const result = await contractCall(
+//         proxyAddress,
+//         'getTokenCustomFees',
+//         [],
+//         client,
+//         GET_CUSTOM_FEES_GAS,
+//         HederaTokenManager__factory.abi
+//     )
+//
+//     const responseCode = result[0].toNumber()
+//     const fixedFees = result[1]
+//     const fractionalFees = result[2]
+//     const royaltyFees = result[3]
+//
+//     return { responseCode, fixedFees, fractionalFees, royaltyFees }
+// }
 
 // StableCoinFactory ///////////////////////////////////////////////////
 export async function getHederaTokenManagerAddresses(

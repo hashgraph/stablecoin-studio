@@ -7,7 +7,7 @@ import '@primitivefi/hardhat-dodoc'
 import 'hardhat-gas-reporter'
 import '@openzeppelin/hardhat-upgrades'
 import * as dotenv from 'dotenv'
-//import './scripts/hardhatTasks'
+import './scripts/hardhatTasks'
 dotenv.config()
 
 module.exports = {

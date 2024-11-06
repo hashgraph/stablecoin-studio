@@ -39,10 +39,10 @@ import { grantKyc } from './contractsMethods'
 import { deployContract } from './contractsLifeCycle/deploy'
 import { contractCall } from './contractsLifeCycle/utils'
 
-const HEDERA_TOKEN_MANAGER_ADDRESS = '0.0.5078286'
-export const FACTORY_PROXY_ADDRESS = '0.0.5078319'
-const FACTORY_PROXY_ADMIN_ADDRESS = '0.0.5078308'
-const FACTORY_ADDRESS = '0.0.5078304'
+const HEDERA_TOKEN_MANAGER_ADDRESS = '0.0.5088823'
+export const FACTORY_PROXY_ADDRESS = '0.0.5088833'
+const FACTORY_PROXY_ADMIN_ADDRESS = '0.0.5088830'
+const FACTORY_ADDRESS = '0.0.5088827'
 
 export function initializeClients(): [
     Client,
