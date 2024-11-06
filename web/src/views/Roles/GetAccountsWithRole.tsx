@@ -89,6 +89,10 @@ const GetAccountsWithRole = () => {
 			value: StableCoinRole.KYC_ROLE,
 			label: t('roles:getAccountsWithRole.options.Kyc'),
 		},
+		{
+			value: StableCoinRole.CUSTOM_FEES_ROLE,
+			label: t('roles:getAccountsWithRole.options.Fees'),
+		},
 	];
 	const selectorStyle = {
 		wrapper: {

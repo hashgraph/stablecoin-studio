@@ -17,6 +17,7 @@ export const roleOptions = [
 	{ value: StableCoinRole.FREEZE_ROLE, label: 'Freeze' },
 	{ value: StableCoinRole.DELETE_ROLE, label: 'Delete' },
 	{ value: StableCoinRole.KYC_ROLE, label: 'KYC' },
+	{ value: StableCoinRole.CUSTOM_FEES_ROLE, label: 'Fees' },
 	{ value: StableCoinRole.DEFAULT_ADMIN_ROLE, label: 'Admin Role' },
 ];
 
