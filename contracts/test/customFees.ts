@@ -97,6 +97,7 @@ describe('Custom Fees Tests', function () {
         console.log(result)
         expect(result).to.be.true
 
+        // TODO: update
         // const customFees = await getTokenCustomFees(
         //     proxyAddress,
         //     operatorClient

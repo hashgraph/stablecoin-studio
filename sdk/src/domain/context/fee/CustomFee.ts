@@ -205,13 +205,10 @@ export function fromHCustomFeeToSCFee(
 			fee.denominatingTokenId.toString() != '0.0.0'
 				? fee.denominatingTokenId.toSolidityAddress()
 				: EVM_ZERO_ADDRESS;
-		const useHbarsForPayment = tokenId == EVM_ZERO_ADDRESS ? true : false;
+		const useHbarsForPayment = tokenId === EVM_ZERO_ADDRESS;
 		const useCurrentTokenForPayment =
-			useHbarsForPayment == true
-				? false
-				: fee.denominatingTokenId!.toString() === currentTokenId
-				? true
-				: false;
+			!useHbarsForPayment &&
+			fee.denominatingTokenId?.toString() === currentTokenId;
 
 		return new SC_FixedFee(
 			amount,
