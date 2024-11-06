@@ -18,6 +18,7 @@
  *
  */
 
+import { EVM_ZERO_ADDRESS } from '../../../core/Constants.js';
 import BigDecimal from '../shared/BigDecimal.js';
 import { HederaId } from '../shared/HederaId.js';
 import {
@@ -199,12 +200,16 @@ export function fromHCustomFeeToSCFee(
 		const fee = customFee as HCustomFixedFee;
 
 		const amount = fee.amount ? fee.amount.toNumber() : 0;
-		const tokenId = fee.denominatingTokenId
-			? fee.denominatingTokenId.toSolidityAddress()
-			: '';
-		const useHbarsForPayment = fee.denominatingTokenId ? false : true;
+		const tokenId =
+			fee.denominatingTokenId &&
+			fee.denominatingTokenId.toString() != '0.0.0'
+				? fee.denominatingTokenId.toSolidityAddress()
+				: EVM_ZERO_ADDRESS;
+		const useHbarsForPayment = tokenId == EVM_ZERO_ADDRESS ? true : false;
 		const useCurrentTokenForPayment =
-			fee.denominatingTokenId!.toString() === currentTokenId
+			useHbarsForPayment == true
+				? false
+				: fee.denominatingTokenId!.toString() === currentTokenId
 				? true
 				: false;
 
