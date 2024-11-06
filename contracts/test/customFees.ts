@@ -23,11 +23,13 @@ import {
     getTokenCustomFees,
     updateCustomFees,
 } from '../scripts/contractsMethods'
+import {associateToken} from "../scripts/utils";
 
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
 let proxyAddress: ContractId
+let token: ContractId
 
 describe('Custom Fees Tests', function () {
     before(async function () {
@@ -51,6 +53,7 @@ describe('Custom Fees Tests', function () {
         })
 
         proxyAddress = result[0]
+        token = result[8]
     })
 
     it("An account without CUSTOM_FEES role can't update custom fees for a token", async function () {
@@ -59,6 +62,7 @@ describe('Custom Fees Tests', function () {
             updateCustomFees(
                 proxyAddress,
                 nonOperatorClient,
+                token,
                 '0.0.0',
                 true,
                 bigNumber,
@@ -73,9 +77,17 @@ describe('Custom Fees Tests', function () {
 
     it('An account with CUSTOM_FEES role can update custom fees for a token and fees should be updated correctly', async function () {
         const bigNumber = BigNumber.from(1)
+
+        await associateToken(
+            token.toString(),
+            nonOperatorAccount,
+            nonOperatorClient
+        )
+
         const result = await updateCustomFees(
             proxyAddress,
             operatorClient,
+            token,
             nonOperatorAccount,
             nonOperatorIsE25519,
             bigNumber,

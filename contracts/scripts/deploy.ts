@@ -481,7 +481,7 @@ export async function deployContractsWithSDK({
             clientSdk,
             1900000,
             StableCoinFactory__factory.abi,
-            35
+            45
         )
     )[0]
 
@@ -629,7 +629,7 @@ export function tokenKeystoContract(addKyc = false) {
         kycKey: addKyc,
         freezeKey: true,
         wipeKey: true,
-        feeScheduleKey: false,
+        feeScheduleKey: true,
         pauseKey: true,
         ignored: false,
     })
@@ -654,7 +654,7 @@ export function tokenKeystoKey(
         kycKey: addKyc,
         freezeKey: true,
         wipeKey: true,
-        feeScheduleKey: false,
+        feeScheduleKey: true,
         pauseKey: true,
         ignored: false,
     })
@@ -681,7 +681,7 @@ export function allTokenKeystoKey(
         freezeKey: true,
         wipeKey: true,
         supplyKey: true,
-        feeScheduleKey: false,
+        feeScheduleKey: true,
         pauseKey: true,
         ignored: false,
     })

@@ -1356,6 +1356,7 @@ export async function revokeKyc(
 export async function updateCustomFees(
     proxyAddress: ContractId,
     client: Client,
+    tokenId: ContractId,
     accountToSetFee: string,
     accountIsED25519: boolean,
     fixedFeeAmount: BigNumber,
@@ -1373,7 +1374,7 @@ export async function updateCustomFees(
     const fixedFees = [
         {
             amount: fixedFeeAmount.toString(),
-            tokenId: feeCollectorAddress,
+            tokenId: tokenId,
             useHbarsForPayment: true,
             useCurrentTokenForPayment: false,
             feeCollector: feeCollectorAddress,
