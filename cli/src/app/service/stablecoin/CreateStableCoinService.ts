@@ -268,9 +268,7 @@ export default class CreateStableCoinService extends Service {
       const feeScheduleKey = await this.checkAnswer(
         await utilsService.defaultMultipleAsk(
           language.getText('stablecoin.features.feeSchedule'),
-          language.getArrayFromObject(
-            'wizard.nonSmartContractAndNoneFeatureOptions',
-          ),
+          language.getArrayFromObject('wizard.nonNoneFeatureOptions'),
         ),
       );
       tokenToCreate.feeScheduleKey = feeScheduleKey;
@@ -622,6 +620,14 @@ export default class CreateStableCoinService extends Service {
         'kycRoleAccount',
       );
 
+    if (tokenToCreate.feeScheduleKey == Account.NullPublicKey)
+      await this.askForAccount(
+        language.getText('stablecoin.initialRoles.feeSchedule'),
+        currentAccountId,
+        tokenToCreate,
+        'feeRoleAccount',
+      );
+
     const result: string = await this.askForAccount(
       language.getText('stablecoin.initialRoles.cashin'),
       currentAccountId,
@@ -656,7 +662,8 @@ export default class CreateStableCoinService extends Service {
       | 'freezeRoleAccount'
       | 'deleteRoleAccount'
       | 'kycRoleAccount'
-      | 'cashInRoleAccount',
+      | 'cashInRoleAccount'
+      | 'feeRoleAccount',
   ): Promise<string> {
     const options = [
       language.getText('stablecoin.initialRoles.options.currentAccount'),
