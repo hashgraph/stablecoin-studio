@@ -12,6 +12,7 @@ interface IRoles {
         FREEZE,
         DELETE,
         KYC,
+        CUSTOM_FEES,
         DEFAULT_ADMIN_ROLE
     }
 

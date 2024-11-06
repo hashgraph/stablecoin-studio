@@ -27,6 +27,7 @@ import {
 import {
     ADDRESS_ZERO,
     BURN_ROLE,
+    CUSTOM_FEES_ROLE,
     DELETE_ROLE,
     FREEZE_ROLE,
     KYC_ROLE,
@@ -38,10 +39,10 @@ import { grantKyc } from './contractsMethods'
 import { deployContract } from './contractsLifeCycle/deploy'
 import { contractCall } from './contractsLifeCycle/utils'
 
-const HEDERA_TOKEN_MANAGER_ADDRESS = '0.0.2167020'
-export const FACTORY_PROXY_ADDRESS = '0.0.2167166'
-const FACTORY_PROXY_ADMIN_ADDRESS = '0.0.2167128'
-const FACTORY_ADDRESS = '0.0.2167098'
+const HEDERA_TOKEN_MANAGER_ADDRESS = '0.0.5078286'
+export const FACTORY_PROXY_ADDRESS = '0.0.5078319'
+const FACTORY_PROXY_ADMIN_ADDRESS = '0.0.5078308'
+const FACTORY_ADDRESS = '0.0.5078304'
 
 export function initializeClients(): [
     Client,
@@ -757,6 +758,10 @@ async function rolestoAccountsByKeys(
         },
         {
             role: KYC_ROLE,
+            account: RoleToAccount,
+        },
+        {
+            role: CUSTOM_FEES_ROLE,
             account: RoleToAccount,
         },
     ]

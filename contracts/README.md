@@ -145,6 +145,7 @@ Typescript test files can be found in the `test` folder:
 -   `stableCoinFactory.ts`: tests the Factory functionality.
 -   `supplieradmin.ts`: tests the stablecoin cash-in functionality.
 -   `wipeable.ts`: tests the stablecoin wipe functionality.
+-   `customFees.ts`: tests the stablecoin custom fees functionality.
 
 ## Configuration
 

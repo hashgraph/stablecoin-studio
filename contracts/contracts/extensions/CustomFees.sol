@@ -2,19 +2,48 @@
 pragma solidity 0.8.16;
 
 import {ICustomFees} from './Interfaces/ICustomFees.sol';
+import {Roles} from './Roles.sol';
+import {TokenOwner} from './TokenOwner.sol';
 import {
     IHederaTokenService
 } from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 
-abstract contract CustomFees is ICustomFees {
-    /* solhint-disable no-empty-blocks */
+abstract contract CustomFees is ICustomFees, TokenOwner, Roles {
+    /**
+     * @dev Updates the custom fees for the token
+     *
+     * @param fixedFees The fixed fees to be updated
+     * @param fractionalFees The fractional fees to be updated
+     */
     function updateTokenCustomFees(
         IHederaTokenService.FixedFee[] calldata fixedFees,
         IHederaTokenService.FractionalFee[] calldata fractionalFees
-    ) external {
-        // TODO: implement
+    )
+        external
+        override(ICustomFees)
+        onlyRole(_getRoleId(RoleName.CUSTOM_FEES))
+        returns (bool)
+    {
+        address currentTokenAddress = _getTokenAddress();
+
+        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
+            .updateFungibleTokenCustomFees(
+                currentTokenAddress,
+                fixedFees,
+                fractionalFees
+            );
+
+        bool success = _checkResponse(responseCode);
+
+        emit TokenCustomFeesUpdated(
+            msg.sender,
+            currentTokenAddress,
+            fixedFees,
+            fractionalFees
+        );
+
+        return success;
     }
-    /* solhint-enable no-empty-blocks */
 
     /**
      * @dev This empty reserved space is put in place to allow future versions to add new
