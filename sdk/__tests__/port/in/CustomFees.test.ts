@@ -42,6 +42,7 @@ import ConnectRequest, {
 import { HederaId } from '../../../src/index.js';
 import {
 	CLIENT_ACCOUNT_ED25519,
+	CLIENT_PUBLIC_KEY_ED25519,
 	DECIMALS,
 	FACTORY_ADDRESS,
 	MIRROR_NODE,
@@ -256,12 +257,20 @@ async function getTokenCustomFees(
 }
 
 async function connectAccount(account: Account): Promise<void> {
+	const overrideAccount = {
+		...account,
+		privateKey: {
+			...account.privateKey,
+			publicKey: CLIENT_PUBLIC_KEY_ED25519,
+		},
+	} as unknown as Account;
+
 	await Network.connect(
 		new ConnectRequest({
 			account: {
-				accountId: account.id.toString(),
-				evmAddress: account.evmAddress,
-				privateKey: account.privateKey,
+				accountId: overrideAccount.id.toString(),
+				evmAddress: overrideAccount.evmAddress,
+				privateKey: overrideAccount.privateKey,
 			},
 			network: 'testnet',
 			wallet: SupportedWallets.CLIENT,
