@@ -140,7 +140,10 @@ let freezeKey: any = new ContractId(PROXY_CONTRACT_ID);
 let wipeKey: any = new ContractId(PROXY_CONTRACT_ID);
 const supplyKey = new ContractId(PROXY_CONTRACT_ID);
 let pauseKey: any = new ContractId(PROXY_CONTRACT_ID);
-const feeScheduleKey = CLIENT_PUBLIC_KEY_ED25519;
+const feeScheduleKey = new PublicKey({
+	key: '8c221b6c08dd3a893dc0d8229d502096ead484081736eea16c817d69af5eb565',
+	type: 'ED25519',
+});
 let autoRenewPeriod = 1000;
 const autoRenewAccount = AUTO_RENEW_ACCOUNT;
 

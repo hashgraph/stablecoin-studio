@@ -965,6 +965,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		coin: StableCoinCapabilities,
 		customFees: HCustomFee[],
 	): Promise<TransactionResponse<boolean, Error>> {
+		console.log('HTS customFees', customFees);
 		const params = new Params({
 			customFees: customFees,
 		});
@@ -1044,6 +1045,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		startDate?: string,
 	): Promise<TransactionResponse> {
 		try {
+			console.log('performOperation', coin, operation, operationName);
 			switch (CapabilityDecider.decide(coin, operation)) {
 				case Decision.CONTRACT:
 					if (!coin.coin.proxyAddress)

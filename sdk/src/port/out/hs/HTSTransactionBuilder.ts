@@ -281,6 +281,7 @@ export class HTSTransactionBuilder {
 		tokenId: string,
 		customFees: HCustomFee[],
 	): Transaction {
+		console.log('buildUpdateCustomFeesTransaction : customFees', customFees);
 		try {
 			return new TokenFeeScheduleUpdateTransaction({
 				tokenId: tokenId,
