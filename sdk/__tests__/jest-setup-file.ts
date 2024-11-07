@@ -141,7 +141,7 @@ let freezeKey: any = new ContractId(PROXY_CONTRACT_ID);
 let wipeKey: any = new ContractId(PROXY_CONTRACT_ID);
 const supplyKey = new ContractId(PROXY_CONTRACT_ID);
 let pauseKey: any = new ContractId(PROXY_CONTRACT_ID);
-const feeScheduleKey = CLIENT_ACCOUNT_ED25519.publicKey;
+const feeScheduleKey = CLIENT_PUBLIC_KEY_ED25519;
 let autoRenewPeriod = 1000;
 const autoRenewAccount = AUTO_RENEW_ACCOUNT;
 
@@ -878,7 +878,7 @@ jest.mock('../src/port/out/hs/hts/HTSTransactionAdapter', () => {
 		account: Account,
 	): InitializationData {
 		user_account = account;
-		user_account.publicKey = account.privateKey?.publicKey;
+		user_account.publicKey = CLIENT_PUBLIC_KEY_ED25519;
 		Injectable.registerTransactionHandler(this); // `this` now correctly refers to the singletonInstance
 		const response = {
 			account: account,
