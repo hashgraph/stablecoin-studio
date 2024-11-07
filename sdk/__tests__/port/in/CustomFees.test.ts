@@ -260,10 +260,10 @@ async function connectAccount(account: Account): Promise<void> {
 			...account.privateKey,
 			publicKey: CLIENT_PUBLIC_KEY_ED25519,
 		},
-		publicKey: CLIENT_PUBLIC_KEY_ED25519
+		publicKey: CLIENT_PUBLIC_KEY_ED25519,
 	} as unknown as Account;
 
-	console.error(`PublicKey is ${overrideAccount.privateKey?.publicKey}`)
+	console.error(`PublicKey is ${overrideAccount.privateKey?.publicKey}`);
 
 	await Network.connect(
 		new ConnectRequest({
