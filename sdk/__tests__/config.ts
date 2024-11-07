@@ -55,7 +55,7 @@ export const CLIENT_PRIVATE_KEY_ED25519 = new PrivateKey({
 	type: 'ED25519',
 });
 export const CLIENT_PUBLIC_KEY_ED25519 = new PublicKey({
-	key: '8c221b6c08dd3a893dc0d8229d502096ead484081736eea16c817d69af5eb565',
+	key: process.env.CLIENT_PUBLIC_KEY_ED25519 ?? '',
 	type: 'ED25519',
 });
 export const CLIENT_EVM_ADDRESS_ED25519 =

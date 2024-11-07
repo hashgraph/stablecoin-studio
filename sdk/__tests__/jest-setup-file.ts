@@ -140,6 +140,7 @@ let freezeKey: any = new ContractId(PROXY_CONTRACT_ID);
 let wipeKey: any = new ContractId(PROXY_CONTRACT_ID);
 const supplyKey = new ContractId(PROXY_CONTRACT_ID);
 let pauseKey: any = new ContractId(PROXY_CONTRACT_ID);
+const feeScheduleKey = CLIENT_PUBLIC_KEY_ED25519;
 let autoRenewPeriod = 1000;
 const autoRenewAccount = AUTO_RENEW_ACCOUNT;
 
@@ -687,7 +688,7 @@ jest.mock('../src/port/out/mirror/MirrorNodeAdapter', () => {
 			wipeKey: wipeKey,
 			supplyKey: supplyKey,
 			pauseKey: pauseKey,
-			feeScheduleKey: CLIENT_PUBLIC_KEY_ED25519,
+			feeScheduleKey: feeScheduleKey,
 			reserveAddress: new ContractId(reserveAddress),
 			reserveAmount: BigDecimal.fromString(reserveAmount, DECIMALS),
 			customFees: requestCustomFees,
