@@ -707,6 +707,9 @@ jest.mock('../src/port/out/mirror/MirrorNodeAdapter', () => {
 				alias: 'anything',
 				multiKey: new MultiKey([], 0),
 			};
+			console.error(
+				`The account publicKey mirror mock is ${response.publicKey?.key}`,
+			);
 			return response;
 		},
 	);

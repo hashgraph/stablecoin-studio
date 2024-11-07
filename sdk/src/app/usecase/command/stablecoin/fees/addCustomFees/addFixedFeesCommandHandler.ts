@@ -69,6 +69,9 @@ export class addFixedFeesCommandHandler
 
 		const handler = this.transactionService.getHandler();
 		const account = this.accountService.getCurrentAccount();
+		console.error(
+			`The account publicKey in the command handler is ${account.publicKey?.key}`,
+		);
 		const capabilities = await this.stableCoinService.getCapabilities(
 			account,
 			tokenId,
