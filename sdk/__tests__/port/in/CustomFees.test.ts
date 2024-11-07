@@ -52,6 +52,8 @@ import Injectable from '../../../src/core/Injectable.js';
 import StableCoinService from '../../../src/app/service/StableCoinService.js';
 import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
+import { CommandBus } from '../../../src/core/command/CommandBus.js';
+import { ConnectCommand } from '../../../src/app/usecase/command/network/connect/ConnectCommand.js';
 
 const mirrorNode: MirrorNode = {
 	name: MIRROR_NODE.name,
@@ -265,18 +267,16 @@ async function connectAccount(account: Account): Promise<void> {
 		},
 	} as unknown as Account;
 
-	await Network.connect(
-		new ConnectRequest({
-			account: {
-				accountId: overrideAccount.id.toString(),
-				evmAddress: overrideAccount.evmAddress,
-				privateKey: overrideAccount.privateKey,
-			},
-			network: 'testnet',
-			wallet: SupportedWallets.CLIENT,
-			mirrorNode: mirrorNode,
-			rpcNode: rpcNode,
-		}),
+	const command = Injectable.resolve(CommandBus);
+
+	await command.execute(
+		new ConnectCommand(
+			'testnet',
+			SupportedWallets.CLIENT,
+			overrideAccount,
+			undefined,
+			undefined,
+		),
 	);
 
 	await Network.init(
