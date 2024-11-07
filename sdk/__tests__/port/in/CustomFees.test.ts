@@ -36,13 +36,21 @@ import {
 	StableCoin,
 	UpdateCustomFeesRequest,
 } from '../../../src/index';
-import ConnectRequest, {SupportedWallets,} from '../../../src/port/in/request/ConnectRequest.js';
-import {HederaId} from '../../../src/index.js';
-import {CLIENT_ACCOUNT_ED25519, DECIMALS, FACTORY_ADDRESS, MIRROR_NODE, RPC_NODE,} from '../../config.js';
+import ConnectRequest, {
+	SupportedWallets,
+} from '../../../src/port/in/request/ConnectRequest.js';
+import { HederaId } from '../../../src/index.js';
+import {
+	CLIENT_ACCOUNT_ED25519,
+	DECIMALS,
+	FACTORY_ADDRESS,
+	MIRROR_NODE,
+	RPC_NODE,
+} from '../../config.js';
 import Injectable from '../../../src/core/Injectable.js';
 import StableCoinService from '../../../src/app/service/StableCoinService.js';
-import {MirrorNode} from '../../../src/domain/context/network/MirrorNode.js';
-import {JsonRpcRelay} from '../../../src/domain/context/network/JsonRpcRelay.js';
+import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
+import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
 
 const mirrorNode: MirrorNode = {
 	name: MIRROR_NODE.name,
