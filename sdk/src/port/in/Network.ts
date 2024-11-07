@@ -207,6 +207,7 @@ class NetworkInPort implements INetworkInPort {
 	async connect(req: ConnectRequest): Promise<InitializationData> {
 		handleValidation('ConnectRequest', req);
 		console.log('connect');
+		console.error(`Public Key connect before mapper ${JSON.stringify(req.account?.privateKey)}`);
 		const account = req.account
 			? RequestMapper.mapAccount(req.account)
 			: undefined;
@@ -228,6 +229,7 @@ class NetworkInPort implements INetworkInPort {
 				req.consensusNodes,
 			),
 		);
+		console.error(`Public Key connect after mapper ${JSON.stringify(account?.privateKey?.publicKey)}`)
 		console.log('ConnectRequest', req.wallet, account, custodialSettings);
 		const res = await this.commandBus.execute(
 			new ConnectCommand(
