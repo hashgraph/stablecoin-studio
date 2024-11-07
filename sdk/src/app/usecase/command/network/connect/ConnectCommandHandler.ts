@@ -18,6 +18,7 @@
  *
  */
 
+import { access } from 'fs';
 import { ICommandHandler } from '../../../../../core/command/CommandHandler.js';
 import { CommandHandler } from '../../../../../core/decorator/CommandHandlerDecorator.js';
 import TransactionService from '../../../../service/TransactionService.js';
@@ -28,7 +29,7 @@ export class ConnectCommandHandler implements ICommandHandler<ConnectCommand> {
 	async execute(command: ConnectCommand): Promise<ConnectCommandResponse> {
 		console.log('ConnectCommand Handler' + command.wallet);
 		const handler = TransactionService.getHandlerClass(command.wallet);
-
+		console.error(`The account publicKey in the command handler is ${command.account?.privateKey?.publicKey}`)
 		const input =
 			command.custodialSettings === undefined
 				? command.hWCSettings === undefined
