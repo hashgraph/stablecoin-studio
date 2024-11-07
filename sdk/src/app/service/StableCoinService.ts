@@ -209,7 +209,28 @@ export default class StableCoinService extends Service {
 					new Capability(Operation.REVOKE_KYC, Access.CONTRACT),
 				);
 			}
+			console.error(
+				`feeScheduleKey es publicKey: ${
+					_coin.feeScheduleKey instanceof PublicKey
+				}`,
+			);
+			console.error(
+				`feeScheduleKey es hederaId: ${
+					_coin.feeScheduleKey instanceof HederaId
+				}`,
+			);
 			if (operable && _coin.feeScheduleKey instanceof PublicKey) {
+				console.error(`publicKey method`);
+				console.error(
+					`feeScheduleKey key ${_coin.feeScheduleKey?.key.toString()}`,
+				);
+				console.error(`account public key ${account.publicKey?.key}`);
+				console.error(
+					`The validation es ${
+						_coin.feeScheduleKey?.key.toString() ===
+						account.publicKey?.key
+					}`,
+				);
 				if (
 					_coin.feeScheduleKey?.key.toString() ===
 					account.publicKey?.key
@@ -233,8 +254,10 @@ export default class StableCoinService extends Service {
 						}
 					}
 				}
+				console.error(`listCapabilities ${JSON.stringify(listCapabilities, null, 2)}`);
 			}
 			if (operable && _coin.feeScheduleKey instanceof HederaId) {
+				console.error(`HederaId method`);
 				if (_coin.customFees) {
 					if (_coin.customFees.length < MAX_CUSTOM_FEES) {
 						listCapabilities.push(
@@ -253,6 +276,7 @@ export default class StableCoinService extends Service {
 						);
 					}
 				}
+				console.error(`listCapabilities ${JSON.stringify(listCapabilities, null, 2)}`);
 			}
 
 			listCapabilities.push(
