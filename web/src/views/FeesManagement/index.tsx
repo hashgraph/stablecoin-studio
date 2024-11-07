@@ -66,35 +66,31 @@ const FeesManagement = () => {
 	const roles = useSelector(SELECTED_TOKEN_ROLES);
 	const capabilities = useSelector(SELECTED_WALLET_CAPABILITIES);
 
-	const operations = capabilities?.capabilities.map((x) => x.operation);
-
 	const hasHTSAccess = (operation: Operation) =>
 		capabilities?.capabilities.find((cap) => cap.operation === operation)?.access === Access.HTS;
 
-	const lacksCustomFeesAccess = () =>
-		!operations?.includes(Operation.CREATE_CUSTOM_FEE) &&
-		!operations?.includes(Operation.REMOVE_CUSTOM_FEE) &&
-		!roles?.includes(StableCoinRole.CUSTOM_FEES_ROLE) &&
-		!hasHTSAccess(Operation.CREATE_CUSTOM_FEE) &&
-		!hasHTSAccess(Operation.REMOVE_CUSTOM_FEE);
+	const hasSCAccess = (operation: Operation, role: StableCoinRole) => {
+		if (
+			capabilities?.capabilities.find((cap) => cap.operation === operation)?.access ===
+			Access.CONTRACT
+		) {
+			if (roles?.includes(role)) return true;
+		}
+		return false;
+	};
 
 	const isAllowed = useMemo(() => {
-		if (lastWalletSelected === SupportedWallets.METAMASK) {
-			if (hasHTSAccess(Operation.CREATE_CUSTOM_FEE) || hasHTSAccess(Operation.REMOVE_CUSTOM_FEE)) {
-				return false;
-			}
-			return !lacksCustomFeesAccess();
+		if (
+			hasSCAccess(Operation.CREATE_CUSTOM_FEE, StableCoinRole.CUSTOM_FEES_ROLE) ||
+			hasSCAccess(Operation.REMOVE_CUSTOM_FEE, StableCoinRole.CUSTOM_FEES_ROLE)
+		) {
+			return true;
 		}
 
 		if (lastWalletSelected === SupportedWallets.HWALLETCONNECT) {
-			if (
-				selectedStableCoin?.feeScheduleKey &&
-				selectedStableCoin.feeScheduleKey.key === accountInfo.publicKey?.toString()
-			) {
+			if (hasHTSAccess(Operation.CREATE_CUSTOM_FEE) || hasHTSAccess(Operation.REMOVE_CUSTOM_FEE)) {
 				return true;
 			}
-
-			return !lacksCustomFeesAccess();
 		}
 
 		return false;
