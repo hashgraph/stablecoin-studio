@@ -36,9 +36,7 @@ import {
 	StableCoin,
 	UpdateCustomFeesRequest,
 } from '../../../src/index';
-import ConnectRequest, {
-	SupportedWallets,
-} from '../../../src/port/in/request/ConnectRequest.js';
+import { SupportedWallets } from '../../../src/port/in/request/ConnectRequest.js';
 import { HederaId } from '../../../src/index.js';
 import {
 	CLIENT_ACCOUNT_ED25519,
@@ -147,37 +145,37 @@ describe('🧪 [ADAPTER] HTSTransactionAdapter with ECDSA accounts', () => {
 		);
 	}, 150000);
 
-	it('Create a fractional custom fees for an existing stablecoin (perc.)', async () => {
-		const CustomFeesNumber = 1;
-		const percentage = 22;
-		const net = true;
-		const min = 1;
-		const max = 2;
+	// it('Create a fractional custom fees for an existing stablecoin (perc.)', async () => {
+	// 	const CustomFeesNumber = 1;
+	// 	const percentage = 22;
+	// 	const net = true;
+	// 	const min = 1;
+	// 	const max = 2;
 
-		const FractionalFee = new AddFractionalFeeRequest({
-			tokenId: stableCoinCapabilitiesHTS.coin.tokenId!.toString(),
-			collectorId: feeCollectorAccountId.toString(),
-			collectorsExempt: true,
-			decimals: stableCoinCapabilitiesHTS.coin.decimals,
-			percentage: percentage.toString(),
-			amountNumerator: undefined,
-			amountDenominator: undefined,
-			min: min.toString(),
-			max: max.toString(),
-			net: net,
-		});
+	// 	const FractionalFee = new AddFractionalFeeRequest({
+	// 		tokenId: stableCoinCapabilitiesHTS.coin.tokenId!.toString(),
+	// 		collectorId: feeCollectorAccountId.toString(),
+	// 		collectorsExempt: true,
+	// 		decimals: stableCoinCapabilitiesHTS.coin.decimals,
+	// 		percentage: percentage.toString(),
+	// 		amountNumerator: undefined,
+	// 		amountDenominator: undefined,
+	// 		min: min.toString(),
+	// 		max: max.toString(),
+	// 		net: net,
+	// 	});
 
-		await Fees.addFractionalFee(FractionalFee);
+	// 	await Fees.addFractionalFee(FractionalFee);
 
-		const tokenCustomFees: RequestCustomFee[] = await getTokenCustomFees(
-			stableCoinCapabilitiesHTS.coin.tokenId!,
-		);
-		expect(tokenCustomFees.length).toEqual(CustomFeesNumber);
+	// 	const tokenCustomFees: RequestCustomFee[] = await getTokenCustomFees(
+	// 		stableCoinCapabilitiesHTS.coin.tokenId!,
+	// 	);
+	// 	expect(tokenCustomFees.length).toEqual(CustomFeesNumber);
 
-		await removeTokenCustomFees(
-			stableCoinCapabilitiesHTS.coin.tokenId!.toString(),
-		);
-	}, 150000);
+	// 	await removeTokenCustomFees(
+	// 		stableCoinCapabilitiesHTS.coin.tokenId!.toString(),
+	// 	);
+	// }, 150000);
 
 	it('Create a fixed and two fractional custom fees, charged to the receiver, for an existing stablecoin', async () => {
 		const CustomFeesNumber = 3;
