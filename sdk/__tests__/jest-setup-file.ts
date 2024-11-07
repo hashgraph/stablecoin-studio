@@ -65,6 +65,11 @@ import {
 	RESERVE_ADDRESS,
 	CLIENT_PRIVATE_KEY_ECDSA_2,
 	CLIENT_PRIVATE_KEY_ED25519,
+	CLIENT_PUBLIC_KEY_ECDSA,
+	CLIENT_PRIVATE_KEY_ECDSA,
+	CLIENT_PUBLIC_KEY_ED25519_2,
+	CLIENT_PRIVATE_KEY_ED25519_2,
+	CLIENT_PUBLIC_KEY_ECDSA_2,
 } from './config.js';
 import {
 	AccountViewModel,
@@ -880,8 +885,22 @@ jest.mock('../src/port/out/hs/hts/HTSTransactionAdapter', () => {
 	HTSTransactionAdapterMock.register = function (
 		account: Account,
 	): InitializationData {
-		console.error(`El public key es: ${CLIENT_PUBLIC_KEY_ED25519}`)
-		console.error(`El private key es: ${CLIENT_PRIVATE_KEY_ED25519}`)
+		console.error(`El public key ED25519 es: ${CLIENT_PUBLIC_KEY_ED25519}`);
+		console.error(
+			`El private key ED25519 es: ${CLIENT_PRIVATE_KEY_ED25519}`,
+		);
+		console.error(`El public key ECDSA es: ${CLIENT_PUBLIC_KEY_ECDSA}`);
+		console.error(`El private key ECDSA es: ${CLIENT_PRIVATE_KEY_ECDSA}`);
+		console.error(
+			`El public key ED25519 2 es: ${CLIENT_PUBLIC_KEY_ED25519_2}`,
+		);
+		console.error(
+			`El private key ED25519 2 es: ${CLIENT_PRIVATE_KEY_ED25519_2}`,
+		);
+		console.error(`El public key ECDSA 2 es: ${CLIENT_PUBLIC_KEY_ECDSA_2}`);
+		console.error(
+			`El private key ECDSA 2 es: ${CLIENT_PRIVATE_KEY_ECDSA_2}`,
+		);
 		console.error(`HTSTransactionAdapter id ${account.id}`);
 		console.error(
 			`HTSTransactionAdapter private Key ${account.privateKey?.key}`,
