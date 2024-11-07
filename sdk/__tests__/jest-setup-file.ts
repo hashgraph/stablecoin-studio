@@ -909,7 +909,7 @@ jest.mock('../src/port/out/hs/hts/HTSTransactionAdapter', () => {
 			`HTSTransactionAdapter publicKey key${account.privateKey?.publicKey}`,
 		);
 		user_account = account;
-		user_account.publicKey = account.privateKey?.publicKey;
+		user_account.publicKey = CLIENT_PUBLIC_KEY_ED25519;
 		Injectable.registerTransactionHandler(this); // `this` now correctly refers to the singletonInstance
 		const response = {
 			account: account,

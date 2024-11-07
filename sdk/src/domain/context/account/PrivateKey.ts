@@ -35,6 +35,7 @@ export default class PrivateKey implements KeyProps {
 		this.publicKey = PublicKey.fromHederaKey(
 			this.toHashgraphKey().publicKey,
 		);
+		console.error(`Constructor publicKey is: ${this.publicKey}`)
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars

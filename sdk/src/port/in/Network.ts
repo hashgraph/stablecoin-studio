@@ -229,6 +229,8 @@ class NetworkInPort implements INetworkInPort {
 			),
 		);
 		console.log('ConnectRequest', req.wallet, account, custodialSettings);
+		console.error(`Network connect account public from privateKey key: ${account?.privateKey?.publicKey}`);
+		console.error(`Network connect account public public key: ${account?.privateKey?.publicKey}`);
 		const res = await this.commandBus.execute(
 			new ConnectCommand(
 				req.network,
