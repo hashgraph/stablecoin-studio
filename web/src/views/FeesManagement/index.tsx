@@ -8,7 +8,13 @@ import InputController from '../../components/Form/InputController';
 import { propertyNotFound } from '../../constant';
 import { SelectController } from '../../components/Form/SelectController';
 import Icon from '../../components/Icon';
-import { SELECTED_WALLET_COIN } from '../../store/slices/walletSlice';
+import {
+	SELECTED_WALLET_COIN,
+	LAST_WALLET_SELECTED,
+	SELECTED_WALLET_ACCOUNT_INFO,
+	SELECTED_TOKEN_ROLES,
+	SELECTED_WALLET_CAPABILITIES,
+} from '../../store/slices/walletSlice';
 import NoFeesManagement from './components/NoFeesManagement';
 import {
 	AddFixedFeeRequest,
@@ -17,6 +23,10 @@ import {
 	GetStableCoinDetailsRequest,
 	HBAR_DECIMALS,
 	MAX_CUSTOM_FEES,
+	SupportedWallets,
+	Operation,
+	Access,
+	StableCoinRole,
 } from '@hashgraph/stablecoin-npm-sdk';
 import type {
 	RequestFractionalFee,
@@ -51,6 +61,44 @@ const FeesManagement = () => {
 	});
 
 	const selectedStableCoin = useSelector(SELECTED_WALLET_COIN);
+	const lastWalletSelected = useSelector(LAST_WALLET_SELECTED);
+	const accountInfo = useSelector(SELECTED_WALLET_ACCOUNT_INFO);
+	const roles = useSelector(SELECTED_TOKEN_ROLES);
+	const capabilities = useSelector(SELECTED_WALLET_CAPABILITIES);
+
+	const operations = capabilities?.capabilities.map((x) => x.operation);
+
+	const hasHTSAccess = (operation: Operation) =>
+		capabilities?.capabilities.find((cap) => cap.operation === operation)?.access === Access.HTS;
+
+	const lacksCustomFeesAccess = () =>
+		!operations?.includes(Operation.CREATE_CUSTOM_FEE) &&
+		!operations?.includes(Operation.REMOVE_CUSTOM_FEE) &&
+		!roles?.includes(StableCoinRole.CUSTOM_FEES_ROLE) &&
+		!hasHTSAccess(Operation.CREATE_CUSTOM_FEE) &&
+		!hasHTSAccess(Operation.REMOVE_CUSTOM_FEE);
+
+	const isAllowed = useMemo(() => {
+		if (lastWalletSelected === SupportedWallets.METAMASK) {
+			if (hasHTSAccess(Operation.CREATE_CUSTOM_FEE) || hasHTSAccess(Operation.REMOVE_CUSTOM_FEE)) {
+				return false;
+			}
+			return !lacksCustomFeesAccess();
+		}
+
+		if (lastWalletSelected === SupportedWallets.HWALLETCONNECT) {
+			if (
+				selectedStableCoin?.feeScheduleKey &&
+				selectedStableCoin.feeScheduleKey.key === accountInfo.publicKey?.toString()
+			) {
+				return true;
+			}
+
+			return !lacksCustomFeesAccess();
+		}
+
+		return false;
+	}, [lastWalletSelected, capabilities, accountInfo]);
 
 	const isMaxFees = useMemo(() => fees.length >= MAX_CUSTOM_FEES, [fees]);
 
@@ -426,6 +474,7 @@ const FeesManagement = () => {
 		}
 	};
 	const columnsSizes = '1fr 1fr 1.5fr 0.5fr 0.5fr 1fr 1fr 1fr 0.2fr';
+
 	return (
 		<BaseContainer title={t('feesManagement:title')}>
 			{selectedStableCoin && selectedStableCoin.feeScheduleKey && (
@@ -703,7 +752,7 @@ const FeesManagement = () => {
 							data-testid='add-btn'
 							variant='primary'
 							onClick={handleAddNewRow}
-							isDisabled={isMaxFees}
+							isDisabled={isMaxFees || !isAllowed}
 						>
 							{t('updateTokenFees.addRowButtonText')}
 						</Button>
@@ -711,7 +760,7 @@ const FeesManagement = () => {
 							data-testid='save-btn'
 							variant='primary'
 							onClick={handleSubmit(handleUpdateTokenFees)}
-							isDisabled={!formState.isValid}
+							isDisabled={!formState.isValid || !isAllowed}
 						>
 							{t('updateTokenFees.saveChangesButtonText')}
 						</Button>
