@@ -434,7 +434,7 @@ describe('Roles Tests', function () {
         const roleCustomFees = await getRoleId(
             proxyAddress,
             operatorClient,
-            RolesId.Kyc
+            RolesId.CustomFees
         )
 
         // Checking

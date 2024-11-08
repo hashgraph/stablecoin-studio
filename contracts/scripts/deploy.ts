@@ -345,6 +345,7 @@ export type DeployParameters = {
     createReserve?: boolean
     grantKYCToOriginalSender?: boolean
     addKyc?: boolean
+    addFeeSchedule?: boolean
     allRolesToCreator?: boolean
     RolesToAccount?: string
     isRolesToAccountE25519?: boolean
@@ -369,6 +370,7 @@ export async function deployContractsWithSDK({
     createReserve = true,
     grantKYCToOriginalSender = false,
     addKyc = false,
+    addFeeSchedule = false,
     allRolesToCreator = true,
     RolesToAccount = '',
     isRolesToAccountE25519 = false,
@@ -444,7 +446,7 @@ export async function deployContractsWithSDK({
         reserveInitialAmount: initialAmountDataFeed,
         createReserve,
         keys: allToContract
-            ? tokenKeystoContract(addKyc)
+            ? tokenKeystoContract(addKyc, addFeeSchedule)
             : tokenKeystoKey(publicKey, isED25519Type),
         roles: await rolestoAccountsByKeys(
             allToContract,
@@ -624,12 +626,12 @@ function fixKeys(): any {
     }
 }
 
-export function tokenKeystoContract(addKyc = false) {
+export function tokenKeystoContract(addKyc = false, addFeeSchedule = false) {
     const keyType = generateKeyType({
         kycKey: addKyc,
         freezeKey: true,
         wipeKey: true,
-        feeScheduleKey: true,
+        feeScheduleKey: addFeeSchedule,
         pauseKey: true,
         ignored: false,
     })
@@ -647,14 +649,15 @@ export function tokenKeystoContract(addKyc = false) {
 export function tokenKeystoKey(
     publicKey: string,
     isED25519: boolean,
-    addKyc = true
+    addKyc = true,
+    addFeeSchedule = true
 ) {
     const PK = PublicKey.fromString(publicKey).toBytesRaw()
     const keyType = generateKeyType({
         kycKey: addKyc,
         freezeKey: true,
         wipeKey: true,
-        feeScheduleKey: true,
+        feeScheduleKey: addFeeSchedule,
         pauseKey: true,
         ignored: false,
     })
@@ -672,7 +675,8 @@ export function tokenKeystoKey(
 export function allTokenKeystoKey(
     publicKey: string,
     isED25519: boolean,
-    addKyc = true
+    addKyc = true,
+    addFeeSchedule = true
 ) {
     const PK = PublicKey.fromString(publicKey).toBytesRaw()
     const keyType = generateKeyType({
@@ -681,7 +685,7 @@ export function allTokenKeystoKey(
         freezeKey: true,
         wipeKey: true,
         supplyKey: true,
-        feeScheduleKey: true,
+        feeScheduleKey: addFeeSchedule,
         pauseKey: true,
         ignored: false,
     })

@@ -39,6 +39,7 @@
         "test:stableCoinFactory": "npx hardhat test test/stableCoinFactory.ts",
         "test:reserve": "npx hardhat test test/reserve.ts",
         "test:kyc": "npx hardhat test test/kyc.ts",
+        "test:customFees": "npx hardhat test test/customFees.ts",
         "test:hederaReserve": "npx hardhat test test/hederaReserve.ts",
         "test:testnet:roles": "npx hardhat test --network testnet test/roles.ts",
         "test:testnet:roleManagement": "npx hardhat test --network testnet test/roleManagement.ts",

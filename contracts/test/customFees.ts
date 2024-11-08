@@ -45,8 +45,7 @@ describe('Custom Fees Tests', function () {
             initialAmountDataFeed: INIT_SUPPLY.add(
                 BigNumber.from('100000')
             ).toString(),
-            grantKYCToOriginalSender: true,
-            addKyc: true,
+            addFeeSchedule: true,
         })
 
         proxyAddress = result[0]
