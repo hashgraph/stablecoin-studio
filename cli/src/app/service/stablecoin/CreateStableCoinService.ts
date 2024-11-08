@@ -295,6 +295,8 @@ export default class CreateStableCoinService extends Service {
         tokenToCreate.freezeRoleAccount = currentAccount.accountId;
       if (tokenToCreate.kycKey == Account.NullPublicKey)
         tokenToCreate.kycRoleAccount = currentAccount.accountId;
+      if (tokenToCreate.feeScheduleKey == Account.NullPublicKey)
+        tokenToCreate.feeRoleAccount = currentAccount.accountId;
     }
 
     // Proof of Reserve
@@ -408,6 +410,7 @@ export default class CreateStableCoinService extends Service {
       freezeRole: tokenToCreate.freezeRoleAccount,
       deleteRole: tokenToCreate.deleteRoleAccount,
       kycRole: tokenToCreate.kycRoleAccount,
+      feeRole: tokenToCreate.feeRoleAccount,
       cashinRole: tokenToCreate.cashInRoleAccount,
       cashinAllowance: tokenToCreate.cashInRoleAllowance,
       metadata: tokenToCreate.metadata,

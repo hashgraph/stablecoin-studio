@@ -465,6 +465,7 @@ export const english = {
       Freeze: 'Freeze',
       Delete: 'Delete',
       KYC: 'KYC',
+      Fees: 'Fees',
       ...goBack,
     },
 
