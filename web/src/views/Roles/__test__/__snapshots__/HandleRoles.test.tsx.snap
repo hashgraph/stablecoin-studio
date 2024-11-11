@@ -1508,6 +1508,28 @@ exports[`<HandleRoles /> should render correctly on revokeRole action 1`] = `
               </label>
               <label
                 class="chakra-checkbox css-1577qb8"
+                data-testid="fees"
+              >
+                <input
+                  aria-invalid="false"
+                  class="chakra-checkbox__input"
+                  id="fees"
+                  style="border: 0px; clip: rect(0px, 0px, 0px, 0px); height: 1px; width: 1px; margin: -1px; padding: 0px; overflow: hidden; white-space: nowrap; position: absolute;"
+                  type="checkbox"
+                  value=""
+                />
+                <span
+                  aria-hidden="true"
+                  class="chakra-checkbox__control css-1ydjfm6"
+                />
+                <span
+                  class="chakra-checkbox__label css-6x44c9"
+                >
+                  Fees
+                </span>
+              </label>
+              <label
+                class="chakra-checkbox css-1577qb8"
                 data-testid="admin role"
               >
                 <input

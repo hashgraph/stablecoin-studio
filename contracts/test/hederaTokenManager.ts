@@ -46,6 +46,7 @@ import {
     ADDRESS_ZERO,
     BURN_ROLE,
     CASHIN_ROLE,
+    CUSTOM_FEES_ROLE,
     DEFAULT_ADMIN_ROLE,
     DELETE_ROLE,
     FREEZE_ROLE,
@@ -276,6 +277,10 @@ describe('HederaTokenManager Tests', function () {
                 expect(resultOperatorAccount[i].toUpperCase()).to.equals(
                     WITHOUT_ROLE.toUpperCase()
                 )
+            else if (i == RolesId.CustomFees)
+                expect(resultOperatorAccount[i].toUpperCase()).to.equals(
+                    WITHOUT_ROLE.toUpperCase()
+                )
             else if (i == RolesId.Admin)
                 expect(resultOperatorAccount[i].toUpperCase()).to.equals(
                     DEFAULT_ADMIN_ROLE.toUpperCase()
@@ -318,6 +323,10 @@ describe('HederaTokenManager Tests', function () {
             else if (i == RolesId.Kyc)
                 expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
                     KYC_ROLE.toUpperCase()
+                )
+            else if (i == RolesId.CustomFees)
+                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
+                    CUSTOM_FEES_ROLE.toUpperCase()
                 )
             else if (i == RolesId.Admin)
                 expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(

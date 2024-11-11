@@ -4,7 +4,26 @@ import translations from '../../../translations/en/feesManagement.json';
 import configureMockStore from 'redux-mock-store';
 import userEvent from '@testing-library/user-event';
 import { act, waitFor } from '@testing-library/react';
-import { RequestFractionalFee, RequestFixedFee } from '@hashgraph/stablecoin-npm-sdk';
+import {
+	RequestFractionalFee,
+	RequestFixedFee,
+	SupportedWallets,
+	Operation,
+	Access,
+} from '@hashgraph/stablecoin-npm-sdk';
+
+const commonWalletSliceProps = {
+	lastWallet: SupportedWallets.HWALLETCONNECT,
+	capabilities: {
+		coin: {},
+		capabilities: [
+			{
+				operation: Operation.CREATE_CUSTOM_FEE,
+				access: Access.HTS,
+			},
+		],
+	},
+};
 
 const mockStore = configureMockStore();
 
@@ -197,6 +216,7 @@ describe(`<${FeesManagement.name} />`, () => {
 					tokenId: '0.0.0',
 					feeScheduleKey: 'feeScheduleKey',
 				},
+				...commonWalletSliceProps,
 			},
 		});
 
@@ -236,6 +256,7 @@ describe(`<${FeesManagement.name} />`, () => {
 					tokenId: '0.0.0',
 					feeScheduleKey: 'feeScheduleKey',
 				},
+				...commonWalletSliceProps,
 			},
 		});
 

@@ -108,6 +108,16 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 
 			if (
 				!(
+					operations?.includes(Operation.CREATE_CUSTOM_FEE) &&
+					getAccessByOperation(Operation.CREATE_CUSTOM_FEE) === Access.CONTRACT
+				) &&
+				option.label === 'Fees'
+			) {
+				return false;
+			}
+
+			if (
+				!(
 					operations?.includes(Operation.ROLE_ADMIN_MANAGEMENT) &&
 					getAccessByOperation(Operation.ROLE_ADMIN_MANAGEMENT) === Access.CONTRACT
 				) &&
@@ -131,7 +141,6 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 	}
 
 	useRefreshCoinInfo();
-
 	return (
 		<>
 			{action === 'revokeRole' && <RevokeRoleOperation />}

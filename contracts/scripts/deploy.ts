@@ -27,6 +27,7 @@ import {
 import {
     ADDRESS_ZERO,
     BURN_ROLE,
+    CUSTOM_FEES_ROLE,
     DELETE_ROLE,
     FREEZE_ROLE,
     KYC_ROLE,
@@ -38,10 +39,10 @@ import { grantKyc } from './contractsMethods'
 import { deployContract } from './contractsLifeCycle/deploy'
 import { contractCall } from './contractsLifeCycle/utils'
 
-const HEDERA_TOKEN_MANAGER_ADDRESS = '0.0.2167020'
-export const FACTORY_PROXY_ADDRESS = '0.0.2167166'
-const FACTORY_PROXY_ADMIN_ADDRESS = '0.0.2167128'
-const FACTORY_ADDRESS = '0.0.2167098'
+const HEDERA_TOKEN_MANAGER_ADDRESS = '0.0.5088823'
+export const FACTORY_PROXY_ADDRESS = '0.0.5088833'
+const FACTORY_PROXY_ADMIN_ADDRESS = '0.0.5088830'
+const FACTORY_ADDRESS = '0.0.5088827'
 
 export function initializeClients(): [
     Client,
@@ -344,6 +345,7 @@ export type DeployParameters = {
     createReserve?: boolean
     grantKYCToOriginalSender?: boolean
     addKyc?: boolean
+    addFeeSchedule?: boolean
     allRolesToCreator?: boolean
     RolesToAccount?: string
     isRolesToAccountE25519?: boolean
@@ -368,6 +370,7 @@ export async function deployContractsWithSDK({
     createReserve = true,
     grantKYCToOriginalSender = false,
     addKyc = false,
+    addFeeSchedule = false,
     allRolesToCreator = true,
     RolesToAccount = '',
     isRolesToAccountE25519 = false,
@@ -443,7 +446,7 @@ export async function deployContractsWithSDK({
         reserveInitialAmount: initialAmountDataFeed,
         createReserve,
         keys: allToContract
-            ? tokenKeystoContract(addKyc)
+            ? tokenKeystoContract(addKyc, addFeeSchedule)
             : tokenKeystoKey(publicKey, isED25519Type),
         roles: await rolestoAccountsByKeys(
             allToContract,
@@ -480,7 +483,7 @@ export async function deployContractsWithSDK({
             clientSdk,
             1900000,
             StableCoinFactory__factory.abi,
-            35
+            45
         )
     )[0]
 
@@ -623,12 +626,12 @@ function fixKeys(): any {
     }
 }
 
-export function tokenKeystoContract(addKyc = false) {
+export function tokenKeystoContract(addKyc = false, addFeeSchedule = false) {
     const keyType = generateKeyType({
         kycKey: addKyc,
         freezeKey: true,
         wipeKey: true,
-        feeScheduleKey: false,
+        feeScheduleKey: addFeeSchedule,
         pauseKey: true,
         ignored: false,
     })
@@ -646,14 +649,15 @@ export function tokenKeystoContract(addKyc = false) {
 export function tokenKeystoKey(
     publicKey: string,
     isED25519: boolean,
-    addKyc = true
+    addKyc = true,
+    addFeeSchedule = true
 ) {
     const PK = PublicKey.fromString(publicKey).toBytesRaw()
     const keyType = generateKeyType({
         kycKey: addKyc,
         freezeKey: true,
         wipeKey: true,
-        feeScheduleKey: false,
+        feeScheduleKey: addFeeSchedule,
         pauseKey: true,
         ignored: false,
     })
@@ -671,7 +675,8 @@ export function tokenKeystoKey(
 export function allTokenKeystoKey(
     publicKey: string,
     isED25519: boolean,
-    addKyc = true
+    addKyc = true,
+    addFeeSchedule = true
 ) {
     const PK = PublicKey.fromString(publicKey).toBytesRaw()
     const keyType = generateKeyType({
@@ -680,7 +685,7 @@ export function allTokenKeystoKey(
         freezeKey: true,
         wipeKey: true,
         supplyKey: true,
-        feeScheduleKey: false,
+        feeScheduleKey: addFeeSchedule,
         pauseKey: true,
         ignored: false,
     })
@@ -757,6 +762,10 @@ async function rolestoAccountsByKeys(
         },
         {
             role: KYC_ROLE,
+            account: RoleToAccount,
+        },
+        {
+            role: CUSTOM_FEES_ROLE,
             account: RoleToAccount,
         },
     ]

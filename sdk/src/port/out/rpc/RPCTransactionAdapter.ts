@@ -23,7 +23,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';
-import { ContractId as HContractId } from '@hashgraph/sdk';
+import {
+	ContractId as HContractId,
+	CustomFee as HCustomFee,
+	CustomFixedFee as HCustomFixedFee,
+	CustomFractionalFee as HCustomFractionalFee,
+} from '@hashgraph/sdk';
 import {
 	HederaReserve__factory,
 	HederaTokenManager__factory,
@@ -86,6 +91,7 @@ import {
 	UPDATE_TOKEN_GAS,
 	WIPE_GAS,
 	ASSOCIATE_GAS,
+	UPDATE_CUSTOM_FEES_GAS,
 } from '../../../core/Constants.js';
 import { MetaMaskInpageProvider } from '@metamask/providers';
 import { WalletConnectError } from '../../../domain/context/network/error/WalletConnectError.js';
@@ -126,6 +132,11 @@ import {
 } from '../../../domain/context/factory/Factories.js';
 import Hex from '../../../core/Hex.js';
 import { keccak256 } from 'ethereum-cryptography/keccak';
+import {
+	fromHCustomFeeToSCFee,
+	SC_FixedFee,
+	SC_FractionalFee,
+} from '../../../domain/context/fee/CustomFee.js';
 
 // eslint-disable-next-line no-var
 declare var ethereum: MetaMaskInpageProvider;
@@ -213,6 +224,10 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					role: StableCoinRole.DELETE_ROLE,
 				},
 				{ account: coin.kycRoleAccount, role: StableCoinRole.KYC_ROLE },
+				{
+					account: coin.feeRoleAccount,
+					role: StableCoinRole.CUSTOM_FEES_ROLE,
+				},
 			];
 
 			const roles = await Promise.all(
@@ -1243,6 +1258,43 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		return this.performOperation(coin, Operation.REVOKE_KYC, params);
 	}
 
+	async updateCustomFees(
+		coin: StableCoinCapabilities,
+		customFees: HCustomFee[],
+	): Promise<TransactionResponse<boolean, Error>> {
+		const fixedFees: SC_FixedFee[] = [];
+		const fractionalFees: SC_FractionalFee[] = [];
+
+		for (const customFee of customFees) {
+			const feeCollector = customFee.feeCollectorAccountId
+				? (
+						await this.mirrorNodeAdapter.getAccountInfo(
+							customFee.feeCollectorAccountId.toString(),
+						)
+				  ).accountEvmAddress!
+				: '0x0000000000000000000000000000000000000000';
+
+			const fee = fromHCustomFeeToSCFee(
+				customFee,
+				coin.coin.tokenId!.toString(),
+				feeCollector,
+			);
+
+			if (fee instanceof SC_FixedFee) {
+				fixedFees.push(fee);
+			} else {
+				fractionalFees.push(fee);
+			}
+		}
+
+		const params = new Params({
+			fixedFees: fixedFees,
+			fractionalFees: fractionalFees,
+		});
+
+		return this.performOperation(coin, Operation.CREATE_CUSTOM_FEE, params);
+	}
+
 	async associateToken(
 		tokenId: HederaId,
 		targetId: HederaId,
@@ -1778,6 +1830,21 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					this.networkService.environment,
 				);
 
+			case Operation.CREATE_CUSTOM_FEE:
+				return RPCTransactionResponseAdapter.manageResponse(
+					await HederaTokenManager__factory.connect(
+						evmProxy,
+						this.signerOrProvider,
+					).updateTokenCustomFees(
+						params!.fixedFees!,
+						params!.fractionalFees!,
+						{
+							gasLimit: UPDATE_CUSTOM_FEES_GAS,
+						},
+					),
+					this.networkService.environment,
+				);
+
 			default:
 				throw new Error(
 					`Operation not implemented through Smart Contracts`,
@@ -1998,6 +2065,8 @@ class Params {
 	wipeKey?: PublicKey;
 	supplyKey?: PublicKey;
 	metadata?: string;
+	fixedFees?: SC_FixedFee[];
+	fractionalFees?: SC_FractionalFee[];
 
 	constructor({
 		role,
@@ -2014,6 +2083,8 @@ class Params {
 		wipeKey,
 		supplyKey,
 		metadata,
+		fixedFees,
+		fractionalFees,
 	}: {
 		role?: string;
 		targetId?: string;
@@ -2029,6 +2100,8 @@ class Params {
 		wipeKey?: PublicKey;
 		supplyKey?: PublicKey;
 		metadata?: string;
+		fixedFees?: SC_FixedFee[];
+		fractionalFees?: SC_FractionalFee[];
 	}) {
 		this.role = role;
 		this.targetId = targetId;
@@ -2044,5 +2117,7 @@ class Params {
 		this.wipeKey = wipeKey;
 		this.supplyKey = supplyKey;
 		this.metadata = metadata;
+		this.fixedFees = fixedFees;
+		this.fractionalFees = fractionalFees;
 	}
 }

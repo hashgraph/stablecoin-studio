@@ -64,6 +64,7 @@ import {
 	RESERVE_AMOUNT,
 	RESERVE_ADDRESS,
 	CLIENT_PRIVATE_KEY_ECDSA_2,
+	CLIENT_ACCOUNT_ED25519,
 } from './config.js';
 import {
 	AccountViewModel,
@@ -140,7 +141,7 @@ let freezeKey: any = new ContractId(PROXY_CONTRACT_ID);
 let wipeKey: any = new ContractId(PROXY_CONTRACT_ID);
 const supplyKey = new ContractId(PROXY_CONTRACT_ID);
 let pauseKey: any = new ContractId(PROXY_CONTRACT_ID);
-const feeScheduleKey: any = undefined;
+const feeScheduleKey = CLIENT_PUBLIC_KEY_ED25519;
 let autoRenewPeriod = 1000;
 const autoRenewAccount = AUTO_RENEW_ACCOUNT;
 
@@ -996,6 +997,10 @@ jest.mock('../src/port/out/hs/hts/HTSTransactionAdapter', () => {
 					role: StableCoinRole.DELETE_ROLE,
 				},
 				{ account: coin.kycRoleAccount, role: StableCoinRole.KYC_ROLE },
+				{
+					account: coin.feeRoleAccount,
+					role: StableCoinRole.CUSTOM_FEES_ROLE,
+				},
 			];
 
 			const roles = await Promise.all(

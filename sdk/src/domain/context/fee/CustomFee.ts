@@ -18,6 +18,7 @@
  *
  */
 
+import { EVM_ZERO_ADDRESS } from '../../../core/Constants.js';
 import BigDecimal from '../shared/BigDecimal.js';
 import { HederaId } from '../shared/HederaId.js';
 import {
@@ -29,6 +30,53 @@ import {
 
 export const MAX_CUSTOM_FEES = 10;
 export const MAX_PERCENTAGE_DECIMALS = 2;
+
+export class SC_FixedFee {
+	amount: number;
+	tokenId: string;
+	useHbarsForPayment: boolean;
+	useCurrentTokenForPayment: boolean;
+	feeCollector: string;
+
+	constructor(
+		amount: number,
+		tokenId: string,
+		useHbarsForPayment: boolean,
+		useCurrentTokenForPayment: boolean,
+		feeCollector: string,
+	) {
+		this.amount = amount;
+		this.tokenId = tokenId;
+		this.useHbarsForPayment = useHbarsForPayment;
+		this.useCurrentTokenForPayment = useCurrentTokenForPayment;
+		this.feeCollector = feeCollector;
+	}
+}
+
+export class SC_FractionalFee {
+	numerator: number;
+	denominator: number;
+	minimumAmount: number;
+	maximumAmount: number;
+	netOfTransfers: boolean;
+	feeCollector: string;
+
+	constructor(
+		numerator: number,
+		denominator: number,
+		minimumAmount: number,
+		maximumAmount: number,
+		netOfTransfers: boolean,
+		feeCollector: string,
+	) {
+		this.numerator = numerator;
+		this.denominator = denominator;
+		this.minimumAmount = minimumAmount;
+		this.maximumAmount = maximumAmount;
+		this.netOfTransfers = netOfTransfers;
+		this.feeCollector = feeCollector;
+	}
+}
 
 export class CustomFee {
 	collectorId?: HederaId;
@@ -141,4 +189,51 @@ export function fromCustomFeesToHCustomFees(
 	}
 
 	return HcustomFee;
+}
+
+export function fromHCustomFeeToSCFee(
+	customFee: HCustomFee,
+	currentTokenId: string,
+	feeCollector: string,
+): SC_FixedFee | SC_FractionalFee {
+	if (customFee instanceof HCustomFixedFee) {
+		const fee = customFee as HCustomFixedFee;
+
+		const amount = fee.amount ? fee.amount.toNumber() : 0;
+		const tokenId =
+			fee.denominatingTokenId &&
+			fee.denominatingTokenId.toString() != '0.0.0'
+				? fee.denominatingTokenId.toSolidityAddress()
+				: EVM_ZERO_ADDRESS;
+		const useHbarsForPayment = tokenId === EVM_ZERO_ADDRESS;
+		const useCurrentTokenForPayment =
+			!useHbarsForPayment &&
+			fee.denominatingTokenId?.toString() === currentTokenId;
+
+		return new SC_FixedFee(
+			amount,
+			tokenId,
+			useHbarsForPayment,
+			useCurrentTokenForPayment,
+			feeCollector,
+		);
+	}
+	const fee = customFee as HCustomFractionalFee;
+
+	const numerator = fee.numerator ? fee.numerator.toNumber() : 0;
+	const denominator = fee.denominator ? fee.denominator.toNumber() : 0;
+	const minimumAmount = fee.min ? fee.min.toNumber() : 0;
+	const maximumAmount = fee.max ? fee.max.toNumber() : 0;
+	const netOfTransfers = fee.assessmentMethod
+		? fee.assessmentMethod.valueOf()
+		: false;
+
+	return new SC_FractionalFee(
+		numerator,
+		denominator,
+		minimumAmount,
+		maximumAmount,
+		netOfTransfers,
+		feeCollector,
+	);
 }

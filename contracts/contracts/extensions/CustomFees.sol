@@ -1,32 +1,41 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.16;
 
-import {TokenOwner} from './TokenOwner.sol';
+import {ICustomFees} from './Interfaces/ICustomFees.sol';
 import {Roles} from './Roles.sol';
+import {TokenOwner} from './TokenOwner.sol';
 import {
     IHederaTokenService
 } from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
-import {IDeletable} from './Interfaces/IDeletable.sol';
 
-abstract contract Deletable is IDeletable, TokenOwner, Roles {
+abstract contract CustomFees is ICustomFees, TokenOwner, Roles {
     /**
-     * @dev Deletes the token
+     * @dev Updates the custom fees for the token
      *
+     * @param fixedFees The fixed fees to be updated
+     * @param fractionalFees The fractional fees to be updated
      */
-    function deleteToken()
+    function updateTokenCustomFees(
+        IHederaTokenService.FixedFee[] calldata fixedFees,
+        IHederaTokenService.FractionalFee[] calldata fractionalFees
+    )
         external
-        override(IDeletable)
-        onlyRole(_getRoleId(RoleName.DELETE))
+        override(ICustomFees)
+        onlyRole(_getRoleId(RoleName.CUSTOM_FEES))
         returns (bool)
     {
         address currentTokenAddress = _getTokenAddress();
 
         int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
-            .deleteToken(currentTokenAddress);
+            .updateFungibleTokenCustomFees(
+                currentTokenAddress,
+                fixedFees,
+                fractionalFees
+            );
 
         bool success = _checkResponse(responseCode);
 
-        emit TokenDeleted(currentTokenAddress);
+        emit TokenCustomFeesUpdated(msg.sender, currentTokenAddress);
 
         return success;
     }

@@ -169,6 +169,7 @@ describe('🧪 [ADAPTER] RPCTransactionAdapter', () => {
 			pauseRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
 			deleteRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
 			kycRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
+			feeRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
 			cashInRoleAccount: CLIENT_ACCOUNT_ECDSA.id,
 			cashInRoleAllowance: BigDecimal.ZERO,
 			metadata: '',

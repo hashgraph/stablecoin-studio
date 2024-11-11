@@ -46,9 +46,7 @@ const Sidebar = () => {
 			icon: 'Receipt',
 			title: t('sidebar.feesManagement'),
 			route: NamedRoutes.FeesManagement,
-			isHidden:
-				lastWalletSelected === SupportedWallets.METAMASK ||
-				(selectedStableCoin && !selectedStableCoin.feeScheduleKey),
+			isHidden: selectedStableCoin && !selectedStableCoin.feeScheduleKey,
 		},
 		{
 			icon: 'File',

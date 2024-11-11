@@ -254,6 +254,7 @@ export const english = {
       delete: 'Choose the DELETE admin account',
       kyc: 'Choose the KYC admin account',
       cashin: 'Choose the CASHIN admin account',
+      feeSchedule: 'Choose the FEE SCHEDULE admin account',
       options: {
         currentAccount: 'Current User Account',
         otherAccount: 'Other Account',
@@ -464,6 +465,7 @@ export const english = {
       Freeze: 'Freeze',
       Delete: 'Delete',
       KYC: 'KYC',
+      Fees: 'Fees',
       ...goBack,
     },
 
