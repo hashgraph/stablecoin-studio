@@ -7,7 +7,7 @@ on:
       - "contracts/test/**"
       - "contracts/scripts/**"
       - "contracts/package*.json"
-      - "contracts/hardhat.config.js"
+      - "contracts/hardhat.config.ts"
       - "contracts/tsconfig.json"
   push:
     branches:
@@ -17,7 +17,7 @@ on:
       - "contracts/test/**"
       - "contracts/scripts/**"
       - "contracts/package*.json"
-      - "contracts/hardhat.config.js"
+      - "contracts/hardhat.config.ts"
       - "contracts/tsconfig.json"
 # env:
 # NODE_VERSION: "20.17.0" # Fixed version for better stability
