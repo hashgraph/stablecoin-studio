@@ -95,6 +95,14 @@ abstract contract Roles is IRoles, Initializable {
         0xdb11624602202c396fa347735a55e345a3aeb3e60f8885e1a71f1bf8d5886db7;
 
     /**
+     * @dev Role that allows to update custom fees for the token
+     *
+     * keccak256("CUSTOM_FEES_ROLE");
+     */
+    bytes32 private constant _CUSTOM_FEES_ROLE =
+        0x6db8586688d24c6a6367d21f709d650b12a2a61dd75e834bd8cd90fd6afa794b;
+
+    /**
      * @dev Array containing all roles
      *
      */
@@ -232,6 +240,7 @@ abstract contract Roles is IRoles, Initializable {
         _listOfroles.push(_FREEZE_ROLE);
         _listOfroles.push(_DELETE_ROLE);
         _listOfroles.push(_KYC_ROLE);
+        _listOfroles.push(_CUSTOM_FEES_ROLE);
     }
 
     /**

@@ -1,14 +1,7 @@
 import '@hashgraph/hardhat-hethers'
 import '@hashgraph/sdk'
 import { deployContractsWithSDK } from '../scripts/deploy'
-import {
-    grantRole,
-    hasRole,
-    pause,
-    revokeRole,
-    unpause,
-} from '../scripts/contractsMethods'
-import { PAUSE_ROLE } from '../scripts/constants'
+import { pause, unpause } from '../scripts/contractsMethods'
 import { associateToken, dissociateToken } from '../scripts/utils'
 import { ContractId } from '@hashgraph/sdk'
 import chai from 'chai'
@@ -18,7 +11,6 @@ import {
     MAX_SUPPLY,
     nonOperatorAccount,
     nonOperatorClient,
-    nonOperatorIsE25519,
     operatorAccount,
     operatorClient,
     operatorIsE25519,

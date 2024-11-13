@@ -1,30 +1,38 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-    AccountId,
     AccountBalanceQuery,
-    TransferTransaction,
-    Hbar,
+    AccountId,
     Client,
     ContractId,
+    Hbar,
+    TransferTransaction,
 } from '@hashgraph/sdk'
 
 import {
-    StableCoinProxyAdmin__factory,
+    HederaReserve__factory,
     HederaTokenManager__factory,
     ITransparentUpgradeableProxy__factory,
-    HederaReserve__factory,
     StableCoinFactory__factory,
+    StableCoinProxyAdmin__factory,
 } from '../typechain-types'
 
-import { toEvmAddress, getContractInfo } from './utils'
+import { getContractInfo, toEvmAddress } from './utils'
 import { contractCall } from './contractsLifeCycle/utils'
 import {
+    ACCEPT_PROXY_OWNER,
     BALANCE_OF_GAS,
     BURN_GAS,
     CASHIN_GAS,
+    CHANGE_PROXY_OWNER,
     DECREASE_SUPPLY_GAS,
     DELETE_GAS,
     FREEZE_GAS,
+    GAS_LIMIT_HIGH,
+    GAS_LIMIT_HIGHEST,
+    GAS_LIMIT_MODERATE,
+    GAS_LIMIT_SMALL,
+    GAS_LIMIT_TINY,
+    GET_CUSTOM_FEES_GAS,
     GET_ROLES_GAS,
     GRANT_KYC_GAS,
     GRANT_ROLES_GAS,
@@ -38,15 +46,9 @@ import {
     REVOKE_ROLES_GAS,
     UNFREEZE_GAS,
     UNPAUSE_GAS,
+    UPDATE_CUSTOM_FEES_GAS,
     UPDATE_TOKEN_GAS,
     WIPE_GAS,
-    CHANGE_PROXY_OWNER,
-    GAS_LIMIT_TINY,
-    GAS_LIMIT_HIGH,
-    GAS_LIMIT_MODERATE,
-    GAS_LIMIT_HIGHEST,
-    ACCEPT_PROXY_OWNER,
-    GAS_LIMIT_SMALL,
 } from './constants'
 
 import { BigNumber } from 'ethers'
@@ -1349,6 +1351,80 @@ export async function revokeKyc(
     )
     if (result[0] != true) throw Error
 }
+
+// CUSTOM FEES ///////////////////////////////////////////////////
+export async function updateCustomFees(
+    proxyAddress: ContractId,
+    client: Client,
+    tokenId: ContractId,
+    accountToSetFee: string,
+    accountIsED25519: boolean,
+    fixedFeeAmount: BigNumber,
+    fractionalNumerator: BigNumber,
+    fractionalDenominator: BigNumber,
+    fractionalMinimum: BigNumber,
+    fractionalMaximum: BigNumber,
+    netOfTransfers: boolean
+) {
+    const feeCollectorAddress = await toEvmAddress(
+        accountToSetFee,
+        accountIsED25519
+    )
+
+    const fixedFees = [
+        {
+            amount: fixedFeeAmount.toString(),
+            tokenId: tokenId.toSolidityAddress(),
+            useHbarsForPayment: true,
+            useCurrentTokenForPayment: false,
+            feeCollector: feeCollectorAddress,
+        },
+    ]
+
+    const fractionalFees = [
+        {
+            numerator: fractionalNumerator.toString(),
+            denominator: fractionalDenominator.toString(),
+            minimumAmount: fractionalMinimum.toString(),
+            maximumAmount: fractionalMaximum.toString(),
+            netOfTransfers: netOfTransfers,
+            feeCollector: feeCollectorAddress,
+        },
+    ]
+
+    const result = await contractCall(
+        proxyAddress,
+        'updateTokenCustomFees',
+        [fixedFees, fractionalFees],
+        client,
+        UPDATE_CUSTOM_FEES_GAS,
+        HederaTokenManager__factory.abi
+    )
+
+    return result[0]
+}
+
+// GET CUSTOM FEES ///////////////////////////////////////////////////
+// export async function getTokenCustomFees(
+//     proxyAddress: ContractId,
+//     client: Client
+// ) {
+//     const result = await contractCall(
+//         proxyAddress,
+//         'getTokenCustomFees',
+//         [],
+//         client,
+//         GET_CUSTOM_FEES_GAS,
+//         HederaTokenManager__factory.abi
+//     )
+//
+//     const responseCode = result[0].toNumber()
+//     const fixedFees = result[1]
+//     const fractionalFees = result[2]
+//     const royaltyFees = result[3]
+//
+//     return { responseCode, fixedFees, fractionalFees, royaltyFees }
+// }
 
 // StableCoinFactory ///////////////////////////////////////////////////
 export async function getHederaTokenManagerAddresses(

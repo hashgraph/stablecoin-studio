@@ -113,6 +113,7 @@ export default class OperationStableCoinService extends Service {
   private stableCoinDeleted;
   private hasKycKey;
   private hasFreezeKey;
+  private hasFeeScheduleKey;
   private isFrozen;
 
   // private tokenUpdate: IManagedFeatures = undefined;
@@ -213,6 +214,8 @@ export default class OperationStableCoinService extends Service {
     this.stableCoinDeleted = capabilitiesStableCoin.coin.deleted;
     this.stableCoinPaused = capabilitiesStableCoin.coin.paused;
     this.hasKycKey = capabilitiesStableCoin.coin.kycKey !== undefined;
+    this.hasFeeScheduleKey =
+      capabilitiesStableCoin.coin.feeScheduleKey !== undefined;
     this.hasFreezeKey = capabilitiesStableCoin.coin.freezeKey !== undefined;
 
     const freezeAccountRequest = new FreezeAccountRequest({
@@ -638,6 +641,30 @@ export default class OperationStableCoinService extends Service {
       tokenIsDeleted,
     );
   }
+
+  public hasHTSAccess = (
+    operation: Operation,
+    stableCoinCapabilities: StableCoinCapabilities,
+  ) =>
+    stableCoinCapabilities?.capabilities.find(
+      (cap) => cap.operation === operation,
+    )?.access === Access.HTS;
+
+  public hasSCAccess = (
+    operation: Operation,
+    role: StableCoinRole,
+    stableCoinCapabilities: StableCoinCapabilities,
+    roles: string[],
+  ) => {
+    if (
+      stableCoinCapabilities?.capabilities.find(
+        (cap) => cap.operation === operation,
+      )?.access === Access.CONTRACT
+    ) {
+      if (roles?.includes(role)) return true;
+    }
+    return false;
+  };
 
   private async sendTokens(sender: string): Promise<void> {
     const getAccountBalanceRequest = new GetAccountBalanceRequest({
@@ -1092,9 +1119,9 @@ export default class OperationStableCoinService extends Service {
       this.stableCoinPaused,
       this.stableCoinDeleted,
     );
-    const capabilities: Operation[] = stableCoinCapabilities.capabilities.map(
-      (a) => a.operation,
-    );
+
+    const roles: string[] = await this.getRolesAccount();
+
     const detailsStableCoin =
       await new DetailsStableCoinService().getDetailsStableCoins(
         this.stableCoinId,
@@ -1106,13 +1133,35 @@ export default class OperationStableCoinService extends Service {
       .filter((option) => {
         switch (option) {
           case language.getText('feeManagement.options.Create'):
+            return (
+              this.hasHTSAccess(
+                Operation.CREATE_CUSTOM_FEE,
+                stableCoinCapabilities,
+              ) ||
+              this.hasSCAccess(
+                Operation.CREATE_CUSTOM_FEE,
+                StableCoinRole.CUSTOM_FEES_ROLE,
+                stableCoinCapabilities,
+                roles,
+              )
+            );
+            break;
           case language.getText('feeManagement.options.Remove'):
+            return (
+              this.hasHTSAccess(
+                Operation.REMOVE_CUSTOM_FEE,
+                stableCoinCapabilities,
+              ) ||
+              this.hasSCAccess(
+                Operation.REMOVE_CUSTOM_FEE,
+                StableCoinRole.CUSTOM_FEES_ROLE,
+                stableCoinCapabilities,
+                roles,
+              )
+            );
+            break;
           case language.getText('feeManagement.options.List'):
-            const showCustomFee: boolean =
-              option == language.getText('feeManagement.options.Create')
-                ? capabilities.includes(Operation.CREATE_CUSTOM_FEE)
-                : capabilities.includes(Operation.REMOVE_CUSTOM_FEE);
-            return showCustomFee;
+            return this.hasFeeScheduleKey;
             break;
         }
         // TODO DELETE STABLECOIN
@@ -1596,6 +1645,10 @@ export default class OperationStableCoinService extends Service {
 
           case language.getText('wizard.CheckAccountsWithRoleOptions.KYC'):
             await this.getAccountsWithRole(StableCoinRole.KYC_ROLE);
+            break;
+
+          case language.getText('wizard.CheckAccountsWithRoleOptions.Fees'):
+            await this.getAccountsWithRole(StableCoinRole.CUSTOM_FEES_ROLE);
             break;
 
           default:
@@ -2331,8 +2384,7 @@ export default class OperationStableCoinService extends Service {
             capabilities.includes(Operation.DELETE))) ||
         option === language.getText('wizard.stableCoinOptions.RoleMgmt') ||
         (option === language.getText('wizard.stableCoinOptions.FeesMgmt') &&
-          (capabilities.includes(Operation.CREATE_CUSTOM_FEE) ||
-            capabilities.includes(Operation.REMOVE_CUSTOM_FEE))) ||
+          this.hasFeeScheduleKey) ||
         (option === language.getText('wizard.stableCoinOptions.Details') &&
           !this.stableCoinDeleted) ||
         (option === language.getText('wizard.stableCoinOptions.Balance') &&
@@ -2725,6 +2777,16 @@ export default class OperationStableCoinService extends Service {
           name: 'KYC Role',
           value: StableCoinRole.KYC_ROLE,
           id: tokenKeys.kyc,
+        },
+      },
+      {
+        role: {
+          availability:
+            capabilities.includes(Operation.CREATE_CUSTOM_FEE) ||
+            capabilities.includes(Operation.REMOVE_CUSTOM_FEE),
+          name: 'Fees Role',
+          value: StableCoinRole.CUSTOM_FEES_ROLE,
+          id: tokenKeys.feeSchedule,
         },
       },
       {

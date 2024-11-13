@@ -88,6 +88,14 @@ const ManagementPermissions = ({
 		}
 	}, [watch('kycRequired')]);
 
+	useEffect(() => {
+		if (!isManageCustomFees) {
+			request.feeRoleAccount = undefined;
+			setValue('feeScheduleKey', undefined);
+			setValue('feeRoleAccount', undefined);
+		}
+	}, [watch('manageCustomFees')]);
+
 	const keys = [
 		{
 			name: 'wipeKey',
@@ -410,6 +418,15 @@ const ManagementPermissions = ({
 									control={control}
 									name={'kycRoleAccount'}
 									label={t('stableCoinCreation:managementPermissions.kyc')}
+									request={request}
+								/>
+							)}
+							{isManageCustomFees === true && watch('feeScheduleKey')?.value === 2 && (
+								<RoleSelector
+									key={'feeScheduleRole'}
+									control={control}
+									name={'feeRoleAccount'}
+									label={t('stableCoinCreation:managementPermissions.feeSchedule')}
 									request={request}
 								/>
 							)}

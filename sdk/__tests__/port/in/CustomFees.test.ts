@@ -42,6 +42,7 @@ import ConnectRequest, {
 import { HederaId } from '../../../src/index.js';
 import {
 	CLIENT_ACCOUNT_ED25519,
+	CLIENT_PUBLIC_KEY_ED25519,
 	DECIMALS,
 	FACTORY_ADDRESS,
 	MIRROR_NODE,
@@ -51,6 +52,8 @@ import Injectable from '../../../src/core/Injectable.js';
 import StableCoinService from '../../../src/app/service/StableCoinService.js';
 import { MirrorNode } from '../../../src/domain/context/network/MirrorNode.js';
 import { JsonRpcRelay } from '../../../src/domain/context/network/JsonRpcRelay.js';
+import { CommandBus } from '../../../src/core/command/CommandBus.js';
+import { ConnectCommand } from '../../../src/app/usecase/command/network/connect/ConnectCommand.js';
 
 const mirrorNode: MirrorNode = {
 	name: MIRROR_NODE.name,
@@ -256,18 +259,24 @@ async function getTokenCustomFees(
 }
 
 async function connectAccount(account: Account): Promise<void> {
-	await Network.connect(
-		new ConnectRequest({
-			account: {
-				accountId: account.id.toString(),
-				evmAddress: account.evmAddress,
-				privateKey: account.privateKey,
-			},
-			network: 'testnet',
-			wallet: SupportedWallets.CLIENT,
-			mirrorNode: mirrorNode,
-			rpcNode: rpcNode,
-		}),
+	const overrideAccount = {
+		...account,
+		privateKey: {
+			...account.privateKey,
+			publicKey: CLIENT_PUBLIC_KEY_ED25519,
+		},
+	} as unknown as Account;
+
+	const command = Injectable.resolve(CommandBus);
+
+	await command.execute(
+		new ConnectCommand(
+			'testnet',
+			SupportedWallets.CLIENT,
+			overrideAccount,
+			undefined,
+			undefined,
+		),
 	);
 
 	await Network.init(

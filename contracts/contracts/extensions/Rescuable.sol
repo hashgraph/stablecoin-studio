@@ -6,7 +6,7 @@ import {Roles} from './Roles.sol';
 import {IRescuable} from './Interfaces/IRescuable.sol';
 import {
     IHederaTokenService
-} from '@hashgraph/smart-contracts/contracts/hts-precompile/IHederaTokenService.sol';
+} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {
     ReentrancyGuard
 } from '@openzeppelin/contracts/security/ReentrancyGuard.sol';

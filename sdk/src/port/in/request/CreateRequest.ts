@@ -110,6 +110,9 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 	cashInRoleAccount?: string | undefined;
 
 	@OptionalField()
+	feeRoleAccount?: string | undefined;
+
+	@OptionalField()
 	cashInRoleAllowance?: string | undefined;
 
 	@OptionalField()
@@ -145,6 +148,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		deleteRoleAccount,
 		kycRoleAccount,
 		cashInRoleAccount,
+		feeRoleAccount,
 		cashInRoleAllowance,
 		metadata,
 		proxyAdminOwnerAccount,
@@ -175,6 +179,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		deleteRoleAccount?: string;
 		kycRoleAccount?: string;
 		cashInRoleAccount?: string;
+		feeRoleAccount?: string;
 		cashInRoleAllowance?: string;
 		metadata?: string;
 		proxyAdminOwnerAccount?: string;
@@ -309,6 +314,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 			deleteRoleAccount: Validation.checkHederaIdFormat(true),
 			kycRoleAccount: Validation.checkHederaIdFormat(true),
 			cashInRoleAccount: Validation.checkHederaIdFormat(true),
+			feeRoleAccount: Validation.checkHederaIdFormat(true),
 			cashInRoleAllowance: (val) => {
 				if (val === undefined || val === '') {
 					return;
@@ -354,6 +360,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 		this.deleteRoleAccount = deleteRoleAccount;
 		this.kycRoleAccount = kycRoleAccount;
 		this.cashInRoleAccount = cashInRoleAccount;
+		this.feeRoleAccount = feeRoleAccount;
 		this.cashInRoleAllowance = cashInRoleAllowance;
 		this.metadata = metadata;
 		this.proxyAdminOwnerAccount = proxyAdminOwnerAccount;

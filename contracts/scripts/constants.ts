@@ -18,6 +18,8 @@ export const KYC_ROLE =
     '0xdb11624602202c396fa347735a55e345a3aeb3e60f8885e1a71f1bf8d5886db7'
 export const DEFAULT_ADMIN_ROLE =
     '0x0000000000000000000000000000000000000000000000000000000000000000'
+export const CUSTOM_FEES_ROLE =
+    '0x6db8586688d24c6a6367d21f709d650b12a2a61dd75e834bd8cd90fd6afa794b'
 
 export const RolesId = {
     Admin: 0,
@@ -29,6 +31,7 @@ export const RolesId = {
     Freeze: 6,
     Delete: 7,
     Kyc: 8,
+    CustomFees: 9,
 }
 
 export const GAS_LIMIT_TINY = 60000
@@ -37,7 +40,7 @@ export const GAS_LIMIT_MODERATE = 1800000
 export const GAS_LIMIT_HIGH = 4800000
 export const GAS_LIMIT_HIGHEST = 7800000
 export const CREATE_SC_GAS = 1900000
-export const CASHIN_GAS = 120000
+export const CASHIN_GAS = 140000
 export const BURN_GAS = 70000
 export const WIPE_GAS = 70000
 export const RESCUE_GAS = 70000
@@ -46,6 +49,8 @@ export const FREEZE_GAS = 65000
 export const UNFREEZE_GAS = 65000
 export const GRANT_KYC_GAS = 65000
 export const REVOKE_KYC_GAS = 65000
+export const UPDATE_CUSTOM_FEES_GAS = 65000
+export const GET_CUSTOM_FEES_GAS = 65000
 export const PAUSE_GAS = 65000
 export const UNPAUSE_GAS = 65000
 export const DELETE_GAS = 65000
