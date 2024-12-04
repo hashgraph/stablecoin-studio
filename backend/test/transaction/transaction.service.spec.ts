@@ -28,6 +28,7 @@ import { SignTransactionRequestDto } from '../../src/transaction/dto/sign-transa
 import TransactionMock, { DEFAULT } from './transaction.mock';
 import { LoggerService } from '../../src/logger/logger.service';
 import { TransactionStatus } from '../../src/transaction/status.enum';
+import { Client } from '@hashgraph/sdk';
 
 describe('Transaction Service Test', () => {
   let service: TransactionService;
@@ -204,6 +205,10 @@ describe('Transaction Service Test', () => {
           }),
         ),
       );
+
+      //Mock Client
+      jest.spyOn(Client, 'forName').mockReturnValueOnce(new Client());
+
       // Mock expected result
       const expected = new TransactionMock({
         id: signTransactionCommand.txId,
@@ -250,6 +255,10 @@ describe('Transaction Service Test', () => {
           }),
         ),
       );
+
+      //Mock Client
+      jest.spyOn(Client, 'forName').mockReturnValueOnce(new Client());
+
       // Mock expected result
       const expected = new TransactionMock({
         id: signTransactionCommand.txId,
