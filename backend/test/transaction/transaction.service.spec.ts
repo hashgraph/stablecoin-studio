@@ -67,6 +67,9 @@ describe('Transaction Service Test', () => {
       .mockImplementation((transaction) =>
         Promise.resolve(transaction as Transaction),
       );
+
+    //Mock Client
+    jest.spyOn(Client, 'forName').mockReturnValueOnce(new Client());
   });
 
   it('should be defined', () => {
@@ -205,10 +208,6 @@ describe('Transaction Service Test', () => {
           }),
         ),
       );
-
-      //Mock Client
-      jest.spyOn(Client, 'forName').mockReturnValueOnce(new Client());
-
       // Mock expected result
       const expected = new TransactionMock({
         id: signTransactionCommand.txId,
@@ -255,10 +254,6 @@ describe('Transaction Service Test', () => {
           }),
         ),
       );
-
-      //Mock Client
-      jest.spyOn(Client, 'forName').mockReturnValueOnce(new Client());
-
       // Mock expected result
       const expected = new TransactionMock({
         id: signTransactionCommand.txId,
