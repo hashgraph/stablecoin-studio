@@ -30,7 +30,7 @@ import { HederaWalletConnectTransactionAdapter } from '../../../../../../port/ou
 import AccountService from '../../../../../service/AccountService.js';
 import TransactionService from '../../../../../service/TransactionService.js';
 import { SignCommand, SignCommandResponse } from './SignCommand.js';
-import { Transaction } from '@hashgraph/sdk';
+import { Client, Transaction } from '@hashgraph/sdk';
 
 @CommandHandler(SignCommand)
 export class SignCommandHandler implements ICommandHandler<SignCommand> {
@@ -65,7 +65,7 @@ export class SignCommandHandler implements ICommandHandler<SignCommand> {
 		// extracts bytes to sign
 		const deserializedTransaction = Transaction.fromBytes(
 			Hex.toUint8Array(transaction.transaction_message),
-		);
+		).freezeWith(Client.forName(transaction.network));
 		if (
 			!deserializedTransaction ||
 			!deserializedTransaction._signedTransactions
