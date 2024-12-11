@@ -7,7 +7,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "setup": "npm run install",
-    "install": "node install.js && npm run build:cli:full && npm run prepare",
+    "install:all": "npm install && npm run build:cli:full && npm run prepare",
     "install:backend": "cd backend && npm install",
     "install:contracts": "cd contracts && npm install",
     "install:sdk": "cd sdk && npm install",
@@ -63,5 +63,12 @@
     "dotenv": "^16.3.1",
     "fs": "^0.0.1-security",
     "husky": "^9.0.11"
-  }
+  },
+  "workspaces":[
+    "backend",
+    "contracts",
+    "sdk",
+    "cli",
+    "web"
+  ]
 }

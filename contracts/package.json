@@ -74,7 +74,7 @@
         "test:previewnet:hederaReserve": "npx hardhat test --network previewnet test/hederaReserve.ts",
         "clean": "npx hardhat clean",
         "size": "npx hardhat size-contracts",
-        "build": "rimraf build && npx tsc -p tsconfig.json",
+        "build": "rimraf build && tsc -p tsconfig.json",
         "lint:sol": "solhint 'contracts/**/*.sol'",
         "lint:ts": "npx eslint . --ext .ts",
         "lint": "npm run lint:sol && npm run lint:ts",
@@ -95,7 +95,7 @@
         "@chainlink/contracts": "^0.5.1",
         "@hashgraph/hardhat-hethers": "1.0.3",
         "@hashgraph/hethers": "1.2.2",
-        "@hashgraph/sdk": "^2.51.0",
+        "@hashgraph/sdk": "2.51.0",
         "@nomicfoundation/hardhat-chai-matchers": "^1.0.3",
         "@nomicfoundation/hardhat-network-helpers": "^1.0.6",
         "@nomicfoundation/hardhat-toolbox": "^2.0.0",
@@ -120,7 +120,7 @@
         "solhint-plugin-prettier": "^0.0.5",
         "ts-node": "^10.9.1",
         "typechain": "8.1.0",
-        "typescript": "^4.9.5"
+        "typescript": "4.9.5"
     },
     "dependencies": {
         "@chainlink/contracts": "^0.5.1",
