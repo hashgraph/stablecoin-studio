@@ -5,16 +5,16 @@ on:
     paths:
       - "backend/src/**"
       - "backend/test/**"
-      - "backend/package*.json"
       - "backend/tsconfig*.json"
+      - "package*.json"
   push:
     branches:
       - main
     paths:
       - "backend/src/**"
       - "backend/test/**"
-      - "backend/package*.json"
       - "backend/tsconfig*.json"
+      - "package*.json"
 # env:
 # NODE_VERSION: "20.17.0" # Fixed version for better stability
 
