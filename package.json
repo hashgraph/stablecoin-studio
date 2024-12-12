@@ -6,7 +6,7 @@
   "author": "",
   "license": "Apache-2.0",
   "scripts": {
-    "setup": "npm run install",
+    "setup": "npm run install:all",
     "install:all": "npm install && npm run build:cli:full && npm run prepare",
     "install:backend": "cd backend && npm install",
     "install:contracts": "cd contracts && npm install",
