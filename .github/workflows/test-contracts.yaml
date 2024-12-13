@@ -43,6 +43,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
 
+      # * Install all dependencies
+      - name: Install all dependencies
+        run: npm ci
+
       - name: Initial steps
         uses: ./.github/actions/initial-steps
         with:
