@@ -117,6 +117,7 @@
         "hardhat-gas-reporter": "^1.0.9",
         "prettier": "^2.8.2",
         "prettier-plugin-solidity": "^1.1.1",
+        "rimraf": "^4.1.1",
         "solhint-plugin-prettier": "^0.0.5",
         "ts-node": "^10.9.1",
         "typechain": "8.1.0",
