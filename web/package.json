@@ -130,7 +130,7 @@
 		],
 		"moduleNameMapper": {
 			"^(\\.{1,2}/.*)\\.(m)?js$": "$1",
-			"axios": "<rootDir>/node_modules/axios/dist/node/axios.cjs",
+			"axios": "<rootDir>/../node_modules/axios/dist/node/axios.cjs",
 			"blade": "<rootDir>/src/mocks/blade-sdk-mock.js",
 			"hedera-wallet-connect": "<rootDir>/src/mocks/hedera-wallet-connect-sdk-mock.js",
 			"fireblocks-sdk": "<rootDir>/src/mocks/fireblocks-sdk-mock.js"
