@@ -55,7 +55,7 @@ jobs:
 
       # * Specific steps for the CLI
       - name: Run tests CLI
-        run: npm run test:ci --workspace=backend
+        run: npm run test:ci --workspace=cli
 
       - name: Clear Cache
-        run: npm run clear-cache --workspace=backend
+        run: npm run clear-cache --workspace=cli
