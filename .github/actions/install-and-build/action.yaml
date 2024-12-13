@@ -11,36 +11,36 @@ runs:
   steps:
     - name: Install Contracts
       shell: sh
-      run: npm ci --ignore-scripts --workspace=contracts
+      run: npm ci --workspace=contracts
 
     - name: Build Contracts
       shell: sh
-      run: npm run compile:force --ignore-scripts --workspace=contracts
+      run: npm run compile:force --workspace=contracts
 
     - name: Install SDK
       if: ${{ inputs.module == 'sdk' || inputs.module == 'cli' || inputs.module == 'web' }}
       shell: sh
-      run: npm ci --ignore-scripts --workspace=sdk
+      run: npm ci --workspace=sdk
 
     - name: Build SDK
       if: ${{ inputs.module == 'sdk' || inputs.module == 'cli' || inputs.module == 'web' }}
       shell: sh
-      run: npm run build --ignore-scripts --workspace=sdk
+      run: npm run build --workspace=sdk
 
     - name: Install CLI
       if: ${{ inputs.module == 'cli' }}
       shell: sh
-      run: npm ci --ignore-scripts --workspace=cli
+      run: npm ci --workspace=cli
 
     - name: Build CLI
       if: ${{ inputs.module == 'cli' }}
       shell: sh
-      run: npm run build --ignore-scripts --workspace=cli
+      run: npm run build --workspace=cli
 
     - name: Install Web
       if: ${{ inputs.module == 'web' }}
       shell: sh
-      run: npm ci --ignore-scripts --workspace=web
+      run: npm ci --workspace=web
 
     # - name: Build Web
     #   if: ${{ inputs.module == 'web' }}
