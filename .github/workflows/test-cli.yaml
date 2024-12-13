@@ -5,7 +5,7 @@ on:
     paths:
       - "cli/src/**"
       - "cli/test/**"
-      - "cli/package*.json"
+      - "package*.json"
       - "cli/tsconfig*.json"
       - "cli/jest.config.js"
   push:
@@ -14,7 +14,7 @@ on:
     paths:
       - "cli/src/**"
       - "cli/test/**"
-      - "cli/package*.json"
+      - "package*.json"
       - "cli/tsconfig*.json"
       - "cli/jest.config.js"
 
@@ -55,9 +55,7 @@ jobs:
 
       # * Specific steps for the CLI
       - name: Run tests CLI
-        run: npm run test:ci
-        working-directory: cli
+        run: npm run test:ci --workspace=backend
 
       - name: Clear Cache
-        run: npm run clear-cache
-        working-directory: cli
+        run: npm run clear-cache --workspace=backend

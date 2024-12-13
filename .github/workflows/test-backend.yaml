@@ -45,16 +45,12 @@ jobs:
       # * Specific steps for the Backend
       - name: Install dependencies
         run: npm ci
-        # working-directory: backend
 
       - name: Build Backend
         run: npm run build --workspace=backend
-        # working-directory: backend
 
       - name: Run Backend Tests
         run: npm run test:ci --workspace=backend
-        # working-directory: backend
 
       - name: Clear Cache
         run: npm run clear-cache --workspace=backend
-        # working-directory: backend
