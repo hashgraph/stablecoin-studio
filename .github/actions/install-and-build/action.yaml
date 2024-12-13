@@ -18,12 +18,12 @@ runs:
       run: npm run compile:force --workspace=contracts
 
     - name: Install SDK
-      if: ${{ inputs.module == 'sdk' || inputs.module == 'cli' || inputs.module == 'web' }}
+      if: ${{ inputs.module == 'sdk' }}
       shell: sh
       run: npm ci --workspace=sdk
 
     - name: Build SDK
-      if: ${{ inputs.module == 'sdk' || inputs.module == 'cli' || inputs.module == 'web' }}
+      if: ${{ inputs.module == 'sdk' }}
       shell: sh
       run: npm run build --workspace=sdk
 
