@@ -11,7 +11,7 @@ runs:
   steps:
     - name: Install Contracts
       shell: sh
-      run: npm ci --workspace=contracts
+      run: npm ci --ignore-scripts --workspace=contracts
 
     - name: Build Contracts
       shell: sh
