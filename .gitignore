@@ -9,7 +9,7 @@ node_modules/
 .npm/
 
 # Lock files
-package-lock.json
+# package-lock.json
 
 # Logs
 logs/

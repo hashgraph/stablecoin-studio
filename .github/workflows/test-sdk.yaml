@@ -6,7 +6,7 @@ on:
       - "sdk/src/**"
       - "sdk/test/**"
       - "sdk/scripts/**"
-      - "sdk/package*.json"
+      - "package*.json"
       - "sdk/tsconfig*.json"
       - "sdk/jest.config.js"
   push:
@@ -16,7 +16,7 @@ on:
       - "sdk/src/**"
       - "sdk/test/**"
       - "sdk/scripts/**"
-      - "sdk/package*.json"
+      - "package*.json"
       - "sdk/tsconfig*.json"
       - "sdk/jest.config.js"
 # env:
@@ -65,9 +65,7 @@ jobs:
       # * Specific steps for the SDK
 
       - name: Run SDK Tests
-        run: npm run test:ci
-        working-directory: sdk
+        run: npm run test:ci --workspace=sdk
 
       - name: Clear Cache
-        run: npm run clear-cache
-        working-directory: sdk
+        run: npm run clear-cache --workspace=sdk
