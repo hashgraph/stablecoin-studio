@@ -48,7 +48,7 @@
     "prettier:cli": "npm run prettier --workspace=cli",
     "prettier:contracts": "npm run prettier --workspace=contracts",
     "prettier:custodialwalletutils": "cd custodialwalletutils && npm run prettier",
-    "prepare": "husky install",
+    "prepare": "husky install --workspace=contracts",
     "commitlint": "commitlint --edit"
   },
   "dependencies": {
@@ -62,7 +62,6 @@
     "@commitlint/config-conventional": "^19.1.0",
     "dotenv": "^16.3.1",
     "fs": "^0.0.1-security",
-    "husky": "^9.0.11",
     "rimraf": "^4.1.1"
   },
   "workspaces":[
