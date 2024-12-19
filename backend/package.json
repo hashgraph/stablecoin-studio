@@ -1,6 +1,6 @@
 {
   "name": "@hashgraph/stablecoin-npm-backend",
-  "version": "1.27.0",
+  "version": "1.27.1",
   "description": "",
   "author": "",
   "license": "Apache-2.0",
@@ -24,7 +24,7 @@
     "pre-commit": "npm run lint && npm run prettier"
   },
   "dependencies": {
-    "@hashgraph/sdk": "^2.43.0",
+    "@hashgraph/sdk": "2.51.0",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.2.0",
     "@nestjs/core": "^10.0.0",

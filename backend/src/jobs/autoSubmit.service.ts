@@ -146,7 +146,7 @@ export default class AutoSubmitService {
 
       let deserializedTransaction = Transaction.fromBytes(
         hexToUint8Array(transaction.transaction_message),
-      );
+      ).freezeWith(client);
 
       for (let i = 0; i < transaction.signatures.length; i++) {
         const publicKey_i = PublicKey.fromString(transaction.signed_keys[i]);

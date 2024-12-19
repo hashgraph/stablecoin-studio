@@ -55,7 +55,7 @@ export default class LogService {
 					.join('\t');
 			};
 			return `${timestamp} - [${level}]\t${message}\t${formatOther(
-				other,
+				other as any,
 			)}`;
 		},
 	);

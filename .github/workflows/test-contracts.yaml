@@ -6,7 +6,7 @@ on:
       - "contracts/contracts/**"
       - "contracts/test/**"
       - "contracts/scripts/**"
-      - "contracts/package*.json"
+      - "package*.json"
       - "contracts/hardhat.config.ts"
       - "contracts/tsconfig.json"
   push:
@@ -16,7 +16,7 @@ on:
       - "contracts/contracts/**"
       - "contracts/test/**"
       - "contracts/scripts/**"
-      - "contracts/package*.json"
+      - "package*.json"
       - "contracts/hardhat.config.ts"
       - "contracts/tsconfig.json"
 # env:
@@ -62,9 +62,7 @@ jobs:
 
       # * Actual test command
       - name: Run
-        run: npm run test:ci
-        working-directory: contracts
+        run: npm run test:ci --workspace=contracts
 
       - name: Clean project
-        run: npm run clean
-        working-directory: contracts
+        run: npm run clean --workspace=contracts

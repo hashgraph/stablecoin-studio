@@ -31,7 +31,11 @@ import {
 } from 'nestjs-typeorm-paginate';
 import { GetTransactionsResponseDto } from './dto/get-transactions-response.dto';
 import { uuidRegex } from '../common/regexp';
-import { removeDuplicates, verifySignature } from '../utils/utils';
+import {
+  hexToUint8Array,
+  removeDuplicates,
+  verifySignature,
+} from '../utils/utils';
 import {
   InvalidSignatureException,
   MessageAlreadySignedException,
@@ -40,6 +44,7 @@ import {
 } from '../common/exceptions/domain-exceptions';
 import { TransactionStatus } from './status.enum';
 import { Network } from './network.enum';
+import { Client, Transaction as TransactionSdk } from '@hashgraph/sdk';
 
 @Injectable()
 export default class TransactionService {
@@ -90,10 +95,14 @@ export default class TransactionService {
     if (!transaction.key_list.includes(signTransactionDto.public_key))
       throw new UnauthorizedKeyException('Unauthorized Key');
 
+    const deserializedTransaction = TransactionSdk
+      .fromBytes(hexToUint8Array(transaction.transaction_message))
+      .freezeWith(Client.forName(transaction.network));
+
     if (
       !verifySignature(
         signTransactionDto.public_key,
-        transaction.transaction_message,
+        deserializedTransaction,
         signTransactionDto.signature,
       )
     )

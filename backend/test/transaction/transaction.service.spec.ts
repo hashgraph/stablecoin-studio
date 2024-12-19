@@ -28,6 +28,7 @@ import { SignTransactionRequestDto } from '../../src/transaction/dto/sign-transa
 import TransactionMock, { DEFAULT } from './transaction.mock';
 import { LoggerService } from '../../src/logger/logger.service';
 import { TransactionStatus } from '../../src/transaction/status.enum';
+import { Client } from '@hashgraph/sdk';
 
 describe('Transaction Service Test', () => {
   let service: TransactionService;
@@ -66,6 +67,9 @@ describe('Transaction Service Test', () => {
       .mockImplementation((transaction) =>
         Promise.resolve(transaction as Transaction),
       );
+
+    //Mock Client
+    jest.spyOn(Client, 'forName').mockReturnValueOnce(new Client());
   });
 
   it('should be defined', () => {

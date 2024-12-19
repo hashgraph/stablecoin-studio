@@ -27,11 +27,8 @@ abstract contract TokenOwner is ITokenOwner, Initializable {
      * @param value The value to check
      * @param ref The ref to compare with
      */
-    modifier valueIsNotLessThan(
-        uint256 value,
-        uint256 ref,
-        bool equalAccepted
-    ) {
+    modifier valueIsNotLessThan(uint256 value, uint256 ref, bool equalAccepted)
+    {
         _valueIsNotLessThan(value, ref, equalAccepted);
         _;
     }

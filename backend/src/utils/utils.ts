@@ -25,13 +25,14 @@ import { Transaction } from '@hashgraph/sdk';
 
 export function verifySignature(
   publicKeyHex: string,
-  messageHex: string,
+  message: string | Transaction,
   signatureHex: string,
 ): boolean {
-  // extracts bytes to sign
-  const deserializedTransaction = Transaction.fromBytes(
-    hexToUint8Array(messageHex),
-  );
+  const deserializedTransaction: Transaction =
+    message instanceof Transaction
+      ? message
+      : Transaction.fromBytes(hexToUint8Array(message));
+
   const bytesToSign =
     deserializedTransaction._signedTransactions.get(0)!.bodyBytes!;
 
