@@ -1,6 +1,6 @@
 {
     "name": "@hashgraph/stablecoin-npm-contracts",
-    "version": "1.27.0",
+    "version": "1.27.1",
     "description": "",
     "main": "./build/typechain-types/index.js",
     "module": "./build/typechain-types/index.js",
@@ -74,7 +74,7 @@
         "test:previewnet:hederaReserve": "npx hardhat test --network previewnet test/hederaReserve.ts",
         "clean": "npx hardhat clean",
         "size": "npx hardhat size-contracts",
-        "build": "rimraf build && npx tsc -p tsconfig.json",
+        "build": "rimraf build && tsc -p tsconfig.json",
         "lint:sol": "solhint 'contracts/**/*.sol'",
         "lint:ts": "npx eslint . --ext .ts",
         "lint": "npm run lint:sol && npm run lint:ts",
@@ -110,6 +110,7 @@
         "@typescript-eslint/eslint-plugin": "^5.38.1",
         "@typescript-eslint/parser": "^5.38.1",
         "chai": "^4.3.6",
+        "husky": "^9.0.11",
         "eslint": "^8.24.0",
         "hardhat": "^2.13.0",
         "hardhat-abi-exporter": "^2.10.0",
@@ -117,10 +118,11 @@
         "hardhat-gas-reporter": "^1.0.9",
         "prettier": "^2.8.2",
         "prettier-plugin-solidity": "^1.1.1",
+        "rimraf": "^4.1.1",
         "solhint-plugin-prettier": "^0.0.5",
         "ts-node": "^10.9.1",
         "typechain": "8.1.0",
-        "typescript": "^4.9.5"
+        "typescript": "4.9.5"
     },
     "dependencies": {
         "@chainlink/contracts": "^0.5.1",

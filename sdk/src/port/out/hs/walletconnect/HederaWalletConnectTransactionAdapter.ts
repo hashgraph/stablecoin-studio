@@ -466,19 +466,9 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 		try {
 			this.ensureTransactionFrozen(message);
 
-			const transaction = transactionToTransactionBody(
-				message,
-				AccountId.fromString(
-					this.networkService.consensusNodes[0].nodeId,
-				),
-			);
-			if (!transaction) {
-				throw new Error('Transaction is null or undefined');
-			}
-
 			// @ts-ignore
 			const params: SignTransactionParams = {
-				transactionBody: transactionBodyToBase64String(transaction),
+				transaction: message,
 				signerAccountId: `${
 					this.chainId
 				}:${this.account.id.toString()}`,
@@ -497,26 +487,26 @@ export class HederaWalletConnectTransactionAdapter extends HederaTransactionAdap
 			LogService.logTrace(
 				`Signature result: ${JSON.stringify(signResult, null, 2)}`,
 			);
-			const decodedSignatureMap = base64StringToSignatureMap(
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				(signResult as any).signatureMap,
-			);
+
+			const signatureMap = signResult._signedTransactions.current.sigMap;
+
 			LogService.logTrace(
 				`Decoded signature map: ${JSON.stringify(
-					decodedSignatureMap,
+					signatureMap,
 					null,
 					2,
 				)}`,
 			);
 
-			const signaturesLength = decodedSignatureMap.sigPair.length;
-			if (signaturesLength === 0) {
+			if (!signatureMap?.sigPair?.length) {
 				throw new Error(`❌ No signatures found in response`);
 			}
+
 			const firstSignature =
-				decodedSignatureMap.sigPair[0].ed25519 ||
-				decodedSignatureMap.sigPair[0].ECDSASecp256k1 ||
-				decodedSignatureMap.sigPair[0].ECDSA_384;
+				signatureMap.sigPair[0]?.ed25519 ||
+				signatureMap.sigPair[0]?.ECDSASecp256k1 ||
+				signatureMap.sigPair[0]?.ECDSA_384;
+
 			if (!firstSignature) {
 				throw new Error(
 					`❌ No signatures found in response: ${JSON.stringify(

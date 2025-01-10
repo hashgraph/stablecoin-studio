@@ -219,7 +219,7 @@ Learn more about them in their README:
 In a terminal:
 
 ```
-npm install
+npm run install:all
 ```
 
 This will install the dependencies in all projects and sets up the links between them.
