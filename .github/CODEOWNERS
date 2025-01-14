@@ -11,23 +11,23 @@
 # NOTE: Must be placed last to ensure enforcement over all other rules
 
 # Protection Rules for Github Configuration Files and Actions Workflows
-/.github/                                               @hashgraph/devops-ci @hashgraph/release-engineering-managers @hashgraph/iobuilders-hedera 
-/.github/workflows/                                     @hashgraph/devops-ci @hashgraph/devops-ci-committers @hashgraph/iobuilders-hedera 
+/.github/                                               @hashgraph/platform-ci @hashgraph/release-engineering-managers @hashgraph/iobuilders-hedera
+/.github/workflows/                                     @hashgraph/platform-ci @hashgraph/platform-ci-committers @hashgraph/iobuilders-hedera
 
 # Codacy Tool Configurations
-/config/                                                @hashgraph/devops-ci @hashgraph/release-engineering-managers @hashgraph/iobuilders-hedera 
-.remarkrc                                               @hashgraph/devops-ci @hashgraph/release-engineering-managers @hashgraph/iobuilders-hedera 
+/config/                                                @hashgraph/platform-ci @hashgraph/release-engineering-managers @hashgraph/iobuilders-hedera
+.remarkrc                                               @hashgraph/platform-ci @hashgraph/release-engineering-managers @hashgraph/iobuilders-hedera
 
 # Self-protection for root CODEOWNERS files (this file should not exist and should definitely require approval)
 /CODEOWNERS                                             @hashgraph/release-engineering-managers
 
 # Protect the repository root files
-/README.md                                              @hashgraph/devops-ci @hashgraph/release-engineering-managers @hashgraph/iobuilders-hedera 
+/README.md                                              @hashgraph/platform-ci @hashgraph/release-engineering-managers @hashgraph/iobuilders-hedera
 **/LICENSE                                              @hashgraph/release-engineering-managers
 
 # CodeCov configuration
-**/codecov.yml                                          @hashgraph/devops-ci @hashgraph/release-engineering-managers @hashgraph/iobuilders-hedera 
+**/codecov.yml                                          @hashgraph/platform-ci @hashgraph/release-engineering-managers @hashgraph/iobuilders-hedera
 
 # Git Ignore definitions
-**/.gitignore                                           @hashgraph/devops-ci @hashgraph/release-engineering-managers @hashgraph/iobuilders-hedera 
-**/.gitignore.*                                         @hashgraph/devops-ci @hashgraph/release-engineering-managers @hashgraph/iobuilders-hedera 
+**/.gitignore                                           @hashgraph/platform-ci @hashgraph/release-engineering-managers @hashgraph/iobuilders-hedera
+**/.gitignore.*                                         @hashgraph/platform-ci @hashgraph/release-engineering-managers @hashgraph/iobuilders-hedera
