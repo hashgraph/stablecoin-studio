@@ -33,38 +33,10 @@ export const [
     clientTwoIsED25519Type,
 ] = initializeClients()
 export const operatorClient = getOperatorClient(clientOne, clientTwo, clientId)
-export const nonOperatorClient = getNonOperatorClient(
-    clientOne,
-    clientTwo,
-    clientId
-)
-export const operatorAccount = getOperatorAccount(
-    clientOneAccount,
-    clientTwoAccount,
-    clientId
-)
-export const nonOperatorAccount = getNonOperatorAccount(
-    clientOneAccount,
-    clientTwoAccount,
-    clientId
-)
-export const operatorPriKey = getOperatorPrivateKey(
-    clientOnePrivateKey,
-    clientTwoPrivateKey,
-    clientId
-)
-export const operatorPubKey = getOperatorPublicKey(
-    clientOnePublicKey,
-    clientTwoPublicKey,
-    clientId
-)
-export const operatorIsE25519 = getOperatorE25519(
-    clientOneIsED25519Type,
-    clientTwoIsED25519Type,
-    clientId
-)
-export const nonOperatorIsE25519 = getNonOperatorE25519(
-    clientOneIsED25519Type,
-    clientTwoIsED25519Type,
-    clientId
-)
+export const nonOperatorClient = getNonOperatorClient(clientOne, clientTwo, clientId)
+export const operatorAccount = getOperatorAccount(clientOneAccount, clientTwoAccount, clientId)
+export const nonOperatorAccount = getNonOperatorAccount(clientOneAccount, clientTwoAccount, clientId)
+export const operatorPriKey = getOperatorPrivateKey(clientOnePrivateKey, clientTwoPrivateKey, clientId)
+export const operatorPubKey = getOperatorPublicKey(clientOnePublicKey, clientTwoPublicKey, clientId)
+export const operatorIsE25519 = getOperatorE25519(clientOneIsED25519Type, clientTwoIsED25519Type, clientId)
+export const nonOperatorIsE25519 = getNonOperatorE25519(clientOneIsED25519Type, clientTwoIsED25519Type, clientId)

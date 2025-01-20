@@ -25,42 +25,18 @@ export const deployFactory = async () => {
         clientTwoIsED25519Type,
     ] = initializeClients()
 
-    const operatorAccount = getOperatorAccount(
-        clientOneAccount,
-        clientTwoAccount,
-        clientId
-    )
-    const operatorPriKey = getOperatorPrivateKey(
-        clientOnePrivateKey,
-        clientTwoPrivateKey,
-        clientId
-    )
-    const operatorIsE25519 = getOperatorE25519(
-        clientOneIsED25519Type,
-        clientTwoIsED25519Type,
-        clientId
-    )
+    const operatorAccount = getOperatorAccount(clientOneAccount, clientTwoAccount, clientId)
+    const operatorPriKey = getOperatorPrivateKey(clientOnePrivateKey, clientTwoPrivateKey, clientId)
+    const operatorIsE25519 = getOperatorE25519(clientOneIsED25519Type, clientTwoIsED25519Type, clientId)
     // Deploy Token using Client
     const clientSdk = getClient()
-    clientSdk.setOperator(
-        operatorAccount,
-        toHashgraphKey(operatorPriKey, operatorIsE25519)
-    )
-    const resultTokenManager = await deployHederaTokenManager(
-        clientSdk,
-        operatorPriKey
-    )
+    clientSdk.setOperator(operatorAccount, toHashgraphKey(operatorPriKey, operatorIsE25519))
+    const resultTokenManager = await deployHederaTokenManager(clientSdk, operatorPriKey)
     const initializeFactory = {
         admin: await toEvmAddress(operatorAccount, operatorIsE25519),
-        tokenManager: (await getContractInfo(resultTokenManager.toString()))
-            .evm_address,
+        tokenManager: (await getContractInfo(resultTokenManager.toString())).evm_address,
     }
-    const result = await dp(
-        initializeFactory,
-        clientSdk,
-        operatorPriKey,
-        operatorIsE25519
-    )
+    const result = await dp(initializeFactory, clientSdk, operatorPriKey, operatorIsE25519)
 
     const tokenManager = resultTokenManager
     const proxyAddress = result[0]

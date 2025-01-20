@@ -1,12 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-    Client,
-    ContractFunctionParameters,
-    ContractId,
-    PrivateKey,
-    PublicKey,
-    TokenSupplyType,
-} from '@hashgraph/sdk'
+import { Client, ContractFunctionParameters, ContractId, PrivateKey, PublicKey, TokenSupplyType } from '@hashgraph/sdk'
 import { BigNumber } from 'ethers'
 import {
     HederaReserve__factory,
@@ -16,14 +9,7 @@ import {
     StableCoinProxyAdmin__factory,
     TransparentUpgradeableProxy__factory,
 } from '../typechain-types'
-import {
-    associateToken,
-    deployContractSDK,
-    getClient,
-    getContractInfo,
-    sleep,
-    toEvmAddress,
-} from './utils'
+import { associateToken, deployContractSDK, getClient, getContractInfo, sleep, toEvmAddress } from './utils'
 import {
     ADDRESS_ZERO,
     BURN_ROLE,
@@ -54,7 +40,7 @@ export function initializeClients(): [
     string,
     string,
     string,
-    boolean
+    boolean,
 ] {
     const hre = require('hardhat')
     const hreConfig = hre.network.config
@@ -62,22 +48,15 @@ export function initializeClients(): [
     const clientOneAccount: string = hreConfig.accounts[0].account
     const clientOnePrivateKey: string = hreConfig.accounts[0].privateKey
     const clientOnePublicKey: string = hreConfig.accounts[0].publicKey
-    const clientOneIsED25519: boolean =
-        hreConfig.accounts[0].isED25519Type === 'true'
-    clientOne.setOperator(
-        clientOneAccount,
-        toHashgraphKey(clientOnePrivateKey, clientOneIsED25519)
-    )
+    const clientOneIsED25519: boolean = hreConfig.accounts[0].isED25519Type === 'true'
+    clientOne.setOperator(clientOneAccount, toHashgraphKey(clientOnePrivateKey, clientOneIsED25519))
 
     const clientTwo = getClient()
     const clientTwoAccount: string = hreConfig.accounts[1].account
     const clientTwoPrivateKey: string = hreConfig.accounts[1].privateKey
     const clientTwoPublicKey: string = hreConfig.accounts[1].publicKey
     const clientTwoIsED25519 = hreConfig.accounts[1].isED25519Type === 'true'
-    clientTwo.setOperator(
-        clientTwoAccount,
-        toHashgraphKey(clientTwoPrivateKey, clientTwoIsED25519)
-    )
+    clientTwo.setOperator(clientTwoAccount, toHashgraphKey(clientTwoPrivateKey, clientTwoIsED25519))
 
     return [
         clientOne,
@@ -94,72 +73,38 @@ export function initializeClients(): [
 }
 
 export function toHashgraphKey(privateKey: string, isED25519: boolean) {
-    return isED25519
-        ? PrivateKey.fromStringED25519(privateKey)
-        : PrivateKey.fromStringECDSA(privateKey)
+    return isED25519 ? PrivateKey.fromStringED25519(privateKey) : PrivateKey.fromStringECDSA(privateKey)
 }
 
-export function getOperatorClient(
-    clientOne: Client,
-    clientTwo: Client,
-    clientId: number
-) {
+export function getOperatorClient(clientOne: Client, clientTwo: Client, clientId: number) {
     return clientId == 1 ? clientOne : clientTwo
 }
 
-export function getOperatorAccount(
-    clientOneAccount: string,
-    clientTwoAccount: string,
-    clientId: number
-) {
+export function getOperatorAccount(clientOneAccount: string, clientTwoAccount: string, clientId: number) {
     return clientId == 1 ? clientOneAccount : clientTwoAccount
 }
 
-export function getOperatorPrivateKey(
-    clientOnePrivateKey: string,
-    clientTwoPrivateKey: string,
-    clientId: number
-) {
+export function getOperatorPrivateKey(clientOnePrivateKey: string, clientTwoPrivateKey: string, clientId: number) {
     return clientId == 1 ? clientOnePrivateKey : clientTwoPrivateKey
 }
 
-export function getOperatorE25519(
-    clientOneIsED25519Type: boolean,
-    clientTwoIsED25519Type: boolean,
-    clientId: number
-) {
+export function getOperatorE25519(clientOneIsED25519Type: boolean, clientTwoIsED25519Type: boolean, clientId: number) {
     return clientId == 1 ? clientOneIsED25519Type : clientTwoIsED25519Type
 }
 
-export function getOperatorPublicKey(
-    clientOnePublicKey: string,
-    clientTwoPublicKey: string,
-    clientId: number
-) {
+export function getOperatorPublicKey(clientOnePublicKey: string, clientTwoPublicKey: string, clientId: number) {
     return clientId == 1 ? clientOnePublicKey : clientTwoPublicKey
 }
 
-export function getNonOperatorClient(
-    clientOne: Client,
-    clientTwo: Client,
-    clientId: number
-) {
+export function getNonOperatorClient(clientOne: Client, clientTwo: Client, clientId: number) {
     return clientId == 2 ? clientOne : clientTwo
 }
 
-export function getNonOperatorAccount(
-    clientOneAccount: string,
-    clientTwoAccount: string,
-    clientId: number
-) {
+export function getNonOperatorAccount(clientOneAccount: string, clientTwoAccount: string, clientId: number) {
     return clientId == 2 ? clientOneAccount : clientTwoAccount
 }
 
-export function getNonOperatorPrivateKey(
-    clientOnePrivateKey: string,
-    clientTwoPrivateKey: string,
-    clientId: number
-) {
+export function getNonOperatorPrivateKey(clientOnePrivateKey: string, clientTwoPrivateKey: string, clientId: number) {
     return clientId == 2 ? clientOnePrivateKey : clientTwoPrivateKey
 }
 
@@ -171,32 +116,19 @@ export function getNonOperatorE25519(
     return clientId == 2 ? clientOneIsED25519Type : clientTwoIsED25519Type
 }
 
-export function getNonOperatorPublicKey(
-    clientOnePublicKey: string,
-    clientTwoPublicKey: string,
-    clientId: number
-) {
+export function getNonOperatorPublicKey(clientOnePublicKey: string, clientTwoPublicKey: string, clientId: number) {
     return clientId == 2 ? clientOnePublicKey : clientTwoPublicKey
 }
 
-export async function deployHederaTokenManager(
-    clientOperator: Client,
-    privateKey: string
-) {
+export async function deployHederaTokenManager(clientOperator: Client, privateKey: string) {
     // Deploying Factory logic
     console.log(`Deploying HederaTokenManager. please wait...`)
-    const hederaTokenManager = await deployContract(
-        HederaTokenManager__factory,
-        privateKey,
-        clientOperator
-    )
+    const hederaTokenManager = await deployContract(HederaTokenManager__factory, privateKey, clientOperator)
 
     await sleep(5000)
 
     console.log(
-        `HederaTokenManager logic deployed ${
-            (await getContractInfo(hederaTokenManager.toString())).evm_address
-        }`
+        `HederaTokenManager logic deployed ${(await getContractInfo(hederaTokenManager.toString())).evm_address}`
     )
 
     return hederaTokenManager
@@ -226,11 +158,7 @@ export async function updateProxy(
         ProxyAdmin__factory.abi
     )
 }
-export async function getProxyImpl(
-    clientOperator: Client,
-    proxyadmin: string,
-    transparent: string
-) {
+export async function getProxyImpl(clientOperator: Client, proxyadmin: string, transparent: string) {
     // Deploying Factory logic
     console.log(`Getting implementation from proxy please wait...`)
     console.log('ProxyAdmin :' + proxyadmin)
@@ -254,29 +182,16 @@ export async function deployFactory(
     // Deploying Factory logic
     console.log(`Deploying Contract Factory. please wait...`)
 
-    const factory = await deployContractSDK(
-        StableCoinFactory__factory,
-        privateKey,
-        clientOperator
-    )
+    const factory = await deployContractSDK(StableCoinFactory__factory, privateKey, clientOperator)
 
-    console.log(
-        `Contract Factory deployed ${
-            (await getContractInfo(factory.toString())).evm_address
-        }`
-    )
+    console.log(`Contract Factory deployed ${(await getContractInfo(factory.toString())).evm_address}`)
 
     // Deploying Factory Proxy Admin
     console.log(`Deploying Contract Factory Proxy Admin. please wait...`)
 
-    const AccountEvmAddress = await toEvmAddress(
-        clientOperator.operatorAccountId!.toString(),
-        isED25519Type
-    )
+    const AccountEvmAddress = await toEvmAddress(clientOperator.operatorAccountId!.toString(), isED25519Type)
 
-    const paramsProxyAdmin = new ContractFunctionParameters().addAddress(
-        AccountEvmAddress
-    )
+    const paramsProxyAdmin = new ContractFunctionParameters().addAddress(AccountEvmAddress)
 
     const factoryProxyAdmin = await deployContractSDK(
         StableCoinProxyAdmin__factory,
@@ -286,9 +201,7 @@ export async function deployFactory(
     )
 
     console.log(
-        `Contract Factory Proxy Admin deployed ${
-            (await getContractInfo(factoryProxyAdmin.toString())).evm_address
-        }`
+        `Contract Factory Proxy Admin deployed ${(await getContractInfo(factoryProxyAdmin.toString())).evm_address}`
     )
 
     // Deploying Factory Proxy
@@ -296,9 +209,7 @@ export async function deployFactory(
 
     const params = new ContractFunctionParameters()
         .addAddress((await getContractInfo(factory.toString())).evm_address)
-        .addAddress(
-            (await getContractInfo(factoryProxyAdmin.toString())).evm_address
-        )
+        .addAddress((await getContractInfo(factoryProxyAdmin.toString())).evm_address)
         .addBytes(new Uint8Array([]))
 
     const factoryProxy = await deployContractSDK(
@@ -319,11 +230,7 @@ export async function deployFactory(
         StableCoinFactory__factory.abi
     )
 
-    console.log(
-        `Contract Factory Proxy deployed ${
-            (await getContractInfo(factoryProxyAdmin.toString())).evm_address
-        }`
-    )
+    console.log(`Contract Factory Proxy deployed ${(await getContractInfo(factoryProxyAdmin.toString())).evm_address}`)
 
     return [factoryProxy, factoryProxyAdmin, factory]
 }
@@ -379,9 +286,7 @@ export async function deployContractsWithSDK({
 }: DeployParameters): Promise<ContractId[]> {
     const AccountEvmAddress = await toEvmAddress(account, isED25519Type)
 
-    console.log(
-        `Creating token  (${name},${symbol},${decimals},${initialSupply},${maxSupply},${memo},${freeze})`
-    )
+    console.log(`Creating token  (${name},${symbol},${decimals},${initialSupply},${maxSupply},${memo},${freeze})`)
 
     console.log(`With user account  (${account}, ${AccountEvmAddress})`)
 
@@ -395,31 +300,20 @@ export async function deployContractsWithSDK({
 
     // Deploying HederaTokenManager or using an already deployed one
     if (!HEDERA_TOKEN_MANAGER_ADDRESS) {
-        hederaTokenManager = await deployHederaTokenManager(
-            clientSdk,
-            privateKey
-        )
+        hederaTokenManager = await deployHederaTokenManager(clientSdk, privateKey)
     } else {
         hederaTokenManager = ContractId.fromString(HEDERA_TOKEN_MANAGER_ADDRESS)
     }
 
-    console.log(
-        `Using the HederaTokenManager logic contract at ${hederaTokenManager}.`
-    )
+    console.log(`Using the HederaTokenManager logic contract at ${hederaTokenManager}.`)
 
     // Deploying a Factory or using an already deployed one
     if (!FACTORY_ADDRESS) {
         const initializeFactory = {
             admin: AccountEvmAddress,
-            tokenManager: (await getContractInfo(hederaTokenManager.toString()))
-                .evm_address,
+            tokenManager: (await getContractInfo(hederaTokenManager.toString())).evm_address,
         }
-        const result = await deployFactory(
-            initializeFactory,
-            clientSdk,
-            privateKey,
-            isED25519Type
-        )
+        const result = await deployFactory(initializeFactory, clientSdk, privateKey, isED25519Type)
         f_proxyAddress = result[0]
         f_proxyAdminAddress = result[1]
         f_address = result[2]
@@ -435,19 +329,14 @@ export async function deployContractsWithSDK({
         tokenName: name,
         tokenSymbol: symbol,
         freeze: freeze,
-        supplyType:
-            maxSupply !== null
-                ? TokenSupplyType.Finite
-                : TokenSupplyType.Infinite,
+        supplyType: maxSupply !== null ? TokenSupplyType.Finite : TokenSupplyType.Infinite,
         tokenMaxSupply: maxSupply,
         tokenInitialSupply: initialSupply,
         tokenDecimals: decimals,
         reserveAddress,
         reserveInitialAmount: initialAmountDataFeed,
         createReserve,
-        keys: allToContract
-            ? tokenKeystoContract(addKyc, addFeeSchedule)
-            : tokenKeystoKey(publicKey, isED25519Type),
+        keys: allToContract ? tokenKeystoContract(addKyc, addFeeSchedule) : tokenKeystoKey(publicKey, isED25519Type),
         roles: await rolestoAccountsByKeys(
             allToContract,
             allRolesToCreator,
@@ -468,10 +357,7 @@ export async function deployContractsWithSDK({
         proxyAdminOwnerAccount: proxyAdminOwnerAccount,
     }
 
-    const parametersContractCall = [
-        tokenObject,
-        (await getContractInfo(hederaTokenManager.toString())).evm_address,
-    ]
+    const parametersContractCall = [tokenObject, (await getContractInfo(hederaTokenManager.toString())).evm_address]
 
     console.log(`Deploying stableCoin... please wait.`)
 
@@ -489,20 +375,12 @@ export async function deployContractsWithSDK({
 
     console.log(`Associating token... please wait.`)
 
-    await associateToken(
-        ContractId.fromSolidityAddress(proxyContract[3]).toString(),
-        account,
-        clientSdk
-    )
+    await associateToken(ContractId.fromSolidityAddress(proxyContract[3]).toString(), account, clientSdk)
 
     if (grantKYCToOriginalSender) {
         console.log(`Granting KYC to Original Sender... please wait.`)
         await grantKyc(
-            ContractId.fromString(
-                (
-                    await getContractInfo(proxyContract[0])
-                ).contract_id
-            ),
+            ContractId.fromString((await getContractInfo(proxyContract[0])).contract_id),
             account,
             isED25519Type,
             clientSdk
@@ -519,9 +397,7 @@ export async function deployContractsWithSDK({
 
     try {
         console.log(
-            `Proxy Admin created: ${proxyContract[1]} , ${
-                (await getContractInfo(proxyContract[1])).contract_id
-            }`
+            `Proxy Admin created: ${proxyContract[1]} , ${(await getContractInfo(proxyContract[1])).contract_id}`
         )
     } catch (error) {
         console.log(error)
@@ -529,9 +405,7 @@ export async function deployContractsWithSDK({
 
     try {
         console.log(
-            `Implementation created: ${proxyContract[2]} , ${
-                (await getContractInfo(proxyContract[2])).contract_id
-            }`
+            `Implementation created: ${proxyContract[2]} , ${(await getContractInfo(proxyContract[2])).contract_id}`
         )
     } catch (error) {
         console.log(error)
@@ -547,21 +421,13 @@ export async function deployContractsWithSDK({
         console.log(error)
     }
 
-    console.log(
-        `Factory Proxy: ${
-            (await getContractInfo(f_proxyAddress.toString())).evm_address
-        }, ${f_proxyAddress}`
-    )
+    console.log(`Factory Proxy: ${(await getContractInfo(f_proxyAddress.toString())).evm_address}, ${f_proxyAddress}`)
     console.log(
         `Factory Proxy Admin: ${
             (await getContractInfo(f_proxyAdminAddress.toString())).evm_address
         }, ${f_proxyAdminAddress}`
     )
-    console.log(
-        `Factory Implementation: ${
-            (await getContractInfo(f_address.toString())).evm_address
-        }, ${f_address}`
-    )
+    console.log(`Factory Implementation: ${(await getContractInfo(f_address.toString())).evm_address}, ${f_address}`)
 
     try {
         console.log(
@@ -583,34 +449,20 @@ export async function deployContractsWithSDK({
         console.log(error)
     }
     return [
-        ContractId.fromString(
-            await getHederaIdFromSolidityAddress(proxyContract[0])
-        ),
-        ContractId.fromString(
-            await getHederaIdFromSolidityAddress(proxyContract[1])
-        ),
-        ContractId.fromString(
-            await getHederaIdFromSolidityAddress(proxyContract[2])
-        ),
+        ContractId.fromString(await getHederaIdFromSolidityAddress(proxyContract[0])),
+        ContractId.fromString(await getHederaIdFromSolidityAddress(proxyContract[1])),
+        ContractId.fromString(await getHederaIdFromSolidityAddress(proxyContract[2])),
         f_proxyAddress,
         f_proxyAdminAddress,
         f_address,
-        ContractId.fromString(
-            await getHederaIdFromSolidityAddress(proxyContract[4])
-        ),
-        ContractId.fromString(
-            await getHederaIdFromSolidityAddress(proxyContract[5])
-        ),
+        ContractId.fromString(await getHederaIdFromSolidityAddress(proxyContract[4])),
+        ContractId.fromString(await getHederaIdFromSolidityAddress(proxyContract[5])),
         ContractId.fromSolidityAddress(proxyContract[3]),
     ]
 }
 
-async function getHederaIdFromSolidityAddress(
-    solidityAddress: string
-): Promise<string> {
-    return solidityAddress != ADDRESS_ZERO
-        ? (await getContractInfo(solidityAddress)).contract_id
-        : '0.0.0'
+async function getHederaIdFromSolidityAddress(solidityAddress: string): Promise<string> {
+    return solidityAddress != ADDRESS_ZERO ? (await getContractInfo(solidityAddress)).contract_id : '0.0.0'
 }
 
 function fixKeys(): any {
@@ -646,12 +498,7 @@ export function tokenKeystoContract(addKyc = false, addFeeSchedule = false) {
     ]
 }
 
-export function tokenKeystoKey(
-    publicKey: string,
-    isED25519: boolean,
-    addKyc = true,
-    addFeeSchedule = true
-) {
+export function tokenKeystoKey(publicKey: string, isED25519: boolean, addKyc = true, addFeeSchedule = true) {
     const PK = PublicKey.fromString(publicKey).toBytesRaw()
     const keyType = generateKeyType({
         kycKey: addKyc,
@@ -672,12 +519,7 @@ export function tokenKeystoKey(
     ]
 }
 
-export function allTokenKeystoKey(
-    publicKey: string,
-    isED25519: boolean,
-    addKyc = true,
-    addFeeSchedule = true
-) {
+export function allTokenKeystoKey(publicKey: string, isED25519: boolean, addKyc = true, addFeeSchedule = true) {
     const PK = PublicKey.fromString(publicKey).toBytesRaw()
     const keyType = generateKeyType({
         adminKey: true,
@@ -803,20 +645,11 @@ export async function deployHederaReserve(
         clientOperator
     )
 
-    const hederaReserve = await deployContractSDK(
-        HederaReserve__factory,
-        privateKeyOperatorEd25519,
-        clientOperator
-    )
+    const hederaReserve = await deployContractSDK(HederaReserve__factory, privateKeyOperatorEd25519, clientOperator)
 
     const params = new ContractFunctionParameters()
-        .addAddress(
-            (await getContractInfo(hederaReserve.toString())).evm_address
-        )
-        .addAddress(
-            (await getContractInfo(hederaReserveProxyAdmin.toString()))
-                .evm_address
-        )
+        .addAddress((await getContractInfo(hederaReserve.toString())).evm_address)
+        .addAddress((await getContractInfo(hederaReserveProxyAdmin.toString())).evm_address)
         .addBytes(new Uint8Array([]))
 
     const hederaReserveProxy = await deployContractSDK(

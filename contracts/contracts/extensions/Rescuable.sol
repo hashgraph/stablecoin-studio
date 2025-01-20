@@ -1,15 +1,11 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.16;
+pragma solidity 0.8.18;
 
 import {TokenOwner} from './TokenOwner.sol';
 import {Roles} from './Roles.sol';
 import {IRescuable} from './Interfaces/IRescuable.sol';
-import {
-    IHederaTokenService
-} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
-import {
-    ReentrancyGuard
-} from '@openzeppelin/contracts/security/ReentrancyGuard.sol';
+import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
+import {ReentrancyGuard} from '@openzeppelin/contracts/security/ReentrancyGuard.sol';
 import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
 
 abstract contract Rescuable is ReentrancyGuard, IRescuable, TokenOwner, Roles {
@@ -27,22 +23,17 @@ abstract contract Rescuable is ReentrancyGuard, IRescuable, TokenOwner, Roles {
         override(IRescuable)
         onlyRole(_getRoleId(RoleName.RESCUE))
         amountIsNotNegative(amount, false)
-        valueIsNotGreaterThan(
-            SafeCast.toUint256(amount),
-            _balanceOf(address(this)),
-            true
-        )
+        valueIsNotGreaterThan(SafeCast.toUint256(amount), _balanceOf(address(this)), true)
         returns (bool)
     {
         address currentTokenAddress = _getTokenAddress();
 
-        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
-            .transferToken(
-                currentTokenAddress,
-                address(this),
-                msg.sender,
-                amount
-            );
+        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS).transferToken(
+            currentTokenAddress,
+            address(this),
+            msg.sender,
+            amount
+        );
 
         bool success = _checkResponse(responseCode);
 

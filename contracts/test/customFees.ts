@@ -42,9 +42,7 @@ describe('Custom Fees Tests', function () {
             privateKey: operatorPriKey,
             publicKey: operatorPubKey,
             isED25519Type: operatorIsE25519,
-            initialAmountDataFeed: INIT_SUPPLY.add(
-                BigNumber.from('100000')
-            ).toString(),
+            initialAmountDataFeed: INIT_SUPPLY.add(BigNumber.from('100000')).toString(),
             addFeeSchedule: true,
         })
 
@@ -74,11 +72,7 @@ describe('Custom Fees Tests', function () {
     it('An account with CUSTOM_FEES role can update custom fees for a token and fees should be updated correctly', async function () {
         const bigNumberOne = BigNumber.from(1)
 
-        await associateToken(
-            token.toString(),
-            nonOperatorAccount,
-            nonOperatorClient
-        )
+        await associateToken(token.toString(), nonOperatorAccount, nonOperatorClient)
 
         const result = await updateCustomFees(
             proxyAddress,

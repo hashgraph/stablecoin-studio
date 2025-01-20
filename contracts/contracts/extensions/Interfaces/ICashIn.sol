@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.16;
+pragma solidity 0.8.18;
 
 interface ICashIn {
     /**
@@ -10,12 +10,7 @@ interface ICashIn {
      * @param amount The number of tokens to mint
      * @param account Account address
      */
-    event TokensMinted(
-        address indexed minter,
-        address indexed token,
-        int64 amount,
-        address indexed account
-    );
+    event TokensMinted(address indexed minter, address indexed token, int64 amount, address indexed account);
 
     /**
      * @dev Creates an `amount` of tokens and transfers them to an `account`, increasing

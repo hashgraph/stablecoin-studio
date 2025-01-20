@@ -1,15 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-    Client,
-    ContractCreateFlow,
-    ContractFunctionParameters,
-    ContractId,
-    PrivateKey,
-} from '@hashgraph/sdk'
-import {
-    ProxyAdmin__factory,
-    TransparentUpgradeableProxy__factory,
-} from '../../typechain-types'
+import { Client, ContractCreateFlow, ContractFunctionParameters, ContractId, PrivateKey } from '@hashgraph/sdk'
+import { ProxyAdmin__factory, TransparentUpgradeableProxy__factory } from '../../typechain-types'
 import { contractCall } from './utils'
 
 const GasContractInitialize = 130000
@@ -21,9 +12,7 @@ export async function deployContract(
     constructorParameters?: any,
     contractMemo?: string
 ): Promise<ContractId> {
-    const transaction = new ContractCreateFlow()
-        .setBytecode(factory.bytecode)
-        .setGas(500_000)
+    const transaction = new ContractCreateFlow().setBytecode(factory.bytecode).setGas(500_000)
     //.setAdminKey(Key)
     if (contractMemo) {
         transaction.setContractMemo(contractMemo)
@@ -32,9 +21,7 @@ export async function deployContract(
         transaction.setConstructorParameters(constructorParameters)
     }
 
-    const contractCreateSign = await transaction.sign(
-        PrivateKey.fromStringED25519(privateKey)
-    )
+    const contractCreateSign = await transaction.sign(PrivateKey.fromStringED25519(privateKey))
 
     const txResponse = await contractCreateSign.execute(clientOperator)
     const receipt = await txResponse.getReceipt(clientOperator)
@@ -43,11 +30,7 @@ export async function deployContract(
     if (!contractId) {
         throw Error('Error deploying contract')
     }
-    console.log(
-        ` ${
-            factory.name
-        } - contractId ${contractId} -contractId ${contractId?.toSolidityAddress()}   `
-    )
+    console.log(` ${factory.name} - contractId ${contractId} -contractId ${contractId?.toSolidityAddress()}   `)
     return contractId
 }
 
@@ -60,19 +43,11 @@ export async function deployUpgradableContract(
 ): Promise<ContractId[]> {
     console.log(`Deploying proxy admin. please wait...`)
 
-    const ProxyAdmin = await deployContract(
-        ProxyAdmin__factory,
-        privateKeyOperator,
-        clientOperator
-    )
+    const ProxyAdmin = await deployContract(ProxyAdmin__factory, privateKeyOperator, clientOperator)
 
     console.log(`Deploying logic. please wait...`)
 
-    const Logic = await deployContract(
-        factory,
-        privateKeyOperator,
-        clientOperator
-    )
+    const Logic = await deployContract(factory, privateKeyOperator, clientOperator)
 
     console.log(`Deploying proxy. please wait...`)
 
@@ -81,24 +56,12 @@ export async function deployUpgradableContract(
         .addAddress(ProxyAdmin.toSolidityAddress())
         .addBytes(new Uint8Array([]))
 
-    const Proxy = await deployContract(
-        TransparentUpgradeableProxy__factory,
-        privateKeyOperator,
-        clientOperator,
-        params
-    )
+    const Proxy = await deployContract(TransparentUpgradeableProxy__factory, privateKeyOperator, clientOperator, params)
 
     if (init_params) {
         console.log(`Initializing the proxy. please wait...`)
 
-        await contractCall(
-            Proxy,
-            'initialize',
-            init_params,
-            clientOperator,
-            GasContractInitialize,
-            factory.abi
-        )
+        await contractCall(Proxy, 'initialize', init_params, clientOperator, GasContractInitialize, factory.abi)
     }
 
     return [Proxy, ProxyAdmin, Logic]

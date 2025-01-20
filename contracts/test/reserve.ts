@@ -37,12 +37,8 @@ const MAX_SUPPLY_TWO_DECIMALS = BigNumber.from(1000).mul(TWO_TOKEN_FACTOR)
 const INIT_SUPPLY_THREE_DECIMALS = BigNumber.from(100).mul(THREE_TOKEN_FACTOR)
 const MAX_SUPPLY_THREE_DECIMALS = BigNumber.from(1000).mul(THREE_TOKEN_FACTOR)
 const TOKEN_MEMO = 'Hedera Accelerator Stablecoin'
-const INIT_RESERVE_100 = BigNumber.from(10)
-    .pow(RESERVE_DECIMALS)
-    .mul(BigNumber.from(100))
-const INIT_RESERVE_1000 = BigNumber.from(10)
-    .pow(RESERVE_DECIMALS)
-    .mul(BigNumber.from(1000))
+const INIT_RESERVE_100 = BigNumber.from(10).pow(RESERVE_DECIMALS).mul(BigNumber.from(100))
+const INIT_RESERVE_1000 = BigNumber.from(10).pow(RESERVE_DECIMALS).mul(BigNumber.from(1000))
 
 let proxyAddress: ContractId
 let hederaReserveProxy: ContractId
@@ -76,25 +72,14 @@ describe('Reserve Tests', function () {
     it('Get datafeed', async () => {
         const datafeed = await getReserveAddress(proxyAddress, operatorClient)
         expect(datafeed.toUpperCase()).not.to.equals(
-            '0x' +
-                (
-                    await getContractInfo(hederaReserveProxy.toString())
-                ).evm_address.toUpperCase()
+            '0x' + (await getContractInfo(hederaReserveProxy.toString())).evm_address.toUpperCase()
         )
     })
 
     it('Update datafeed', async () => {
-        const beforeDataFeed = await getReserveAddress(
-            proxyAddress,
-            operatorClient
-        )
-        const beforeReserve = await getReserveAmount(
-            proxyAddress,
-            operatorClient
-        )
-        const newReserve = beforeReserve.add(
-            BigNumber.from('100').mul(THREE_TOKEN_FACTOR)
-        )
+        const beforeDataFeed = await getReserveAddress(proxyAddress, operatorClient)
+        const beforeReserve = await getReserveAmount(proxyAddress, operatorClient)
+        const newReserve = beforeReserve.add(BigNumber.from('100').mul(THREE_TOKEN_FACTOR))
         const [newDataFeed] = await deployHederaReserve(
             newReserve,
             operatorAccount,
@@ -110,14 +95,8 @@ describe('Reserve Tests', function () {
             operatorClient,
             AccountId.fromString(operatorAccount).toSolidityAddress()
         )
-        const afterDataFeed = await getReserveAddress(
-            proxyAddress,
-            operatorClient
-        )
-        const afterReserve = await getReserveAmount(
-            proxyAddress,
-            operatorClient
-        )
+        const afterDataFeed = await getReserveAddress(proxyAddress, operatorClient)
+        const afterReserve = await getReserveAmount(proxyAddress, operatorClient)
 
         expect(beforeDataFeed).not.to.equals(afterDataFeed)
         expect(beforeReserve).not.to.equals(afterReserve)
@@ -150,46 +129,24 @@ describe('Reserve Tests with reserve and token with same Decimals', function () 
         const AmountToMint = BigNumber.from(10).mul(TWO_TOKEN_FACTOR)
 
         // Get the initial reserve amount
-        const initialReserve = await getReserveAmount(
-            proxyAddress,
-            operatorClient
-        )
+        const initialReserve = await getReserveAmount(proxyAddress, operatorClient)
 
         // Cashin tokens to previously associated account
-        await Mint(
-            proxyAddress,
-            AmountToMint,
-            operatorClient,
-            operatorAccount,
-            operatorIsE25519
-        )
+        await Mint(proxyAddress, AmountToMint, operatorClient, operatorAccount, operatorIsE25519)
 
         // Check the reserve account : success
-        const finalReserve = (
-            await getReserveAmount(proxyAddress, operatorClient)
-        ).sub(AmountToMint)
+        const finalReserve = (await getReserveAmount(proxyAddress, operatorClient)).sub(AmountToMint)
 
         const expectedTotalReserve = initialReserve.sub(AmountToMint)
-        expect(finalReserve.toString()).to.equals(
-            expectedTotalReserve.toString()
-        )
+        expect(finalReserve.toString()).to.equals(expectedTotalReserve.toString())
     })
 
     it('Can not mint more tokens than reserve', async function () {
         // Retrieve current reserve amount
-        const totalReserve = await getReserveAmount(
-            proxyAddress,
-            operatorClient
-        )
+        const totalReserve = await getReserveAmount(proxyAddress, operatorClient)
         // Cashin more tokens than reserve amount: fail
         await expect(
-            Mint(
-                proxyAddress,
-                totalReserve.add(1),
-                operatorClient,
-                operatorAccount,
-                operatorIsE25519
-            )
+            Mint(proxyAddress, totalReserve.add(1), operatorClient, operatorAccount, operatorIsE25519)
         ).to.eventually.be.rejectedWith(Error)
     })
 })
@@ -219,46 +176,24 @@ describe('Reserve Tests with reserve decimals higher than token decimals', funct
         const AmountToMint = BigNumber.from(10).mul(ONE_TOKEN_FACTOR)
 
         // Get the initial reserve amount
-        const initialReserve = await getReserveAmount(
-            proxyAddress,
-            operatorClient
-        )
+        const initialReserve = await getReserveAmount(proxyAddress, operatorClient)
 
         // Cashin tokens to previously associated account
-        await Mint(
-            proxyAddress,
-            AmountToMint,
-            operatorClient,
-            operatorAccount,
-            operatorIsE25519
-        )
+        await Mint(proxyAddress, AmountToMint, operatorClient, operatorAccount, operatorIsE25519)
 
         // Check the reserve account : success
-        const finalReserve = (
-            await getReserveAmount(proxyAddress, operatorClient)
-        ).sub(AmountToMint)
+        const finalReserve = (await getReserveAmount(proxyAddress, operatorClient)).sub(AmountToMint)
 
         const expectedTotalReserve = initialReserve.sub(AmountToMint)
-        expect(finalReserve.toString()).to.equals(
-            expectedTotalReserve.toString()
-        )
+        expect(finalReserve.toString()).to.equals(expectedTotalReserve.toString())
     })
 
     it('Can not mint more tokens than reserve', async function () {
         // Retrieve current reserve amount
-        const totalReserve = await getReserveAmount(
-            proxyAddress,
-            operatorClient
-        )
+        const totalReserve = await getReserveAmount(proxyAddress, operatorClient)
         // Cashin more tokens than reserve amount: fail
         await expect(
-            Mint(
-                proxyAddress,
-                totalReserve.add(1),
-                operatorClient,
-                operatorAccount,
-                operatorIsE25519
-            )
+            Mint(proxyAddress, totalReserve.add(1), operatorClient, operatorAccount, operatorIsE25519)
         ).to.eventually.be.rejectedWith(Error)
     })
 })
@@ -288,46 +223,24 @@ describe('Reserve Tests with reserve decimals lower than token decimals', functi
         const AmountToMint = BigNumber.from(10).mul(THREE_TOKEN_FACTOR)
 
         // Get the initial reserve amount
-        const initialReserve = await getReserveAmount(
-            proxyAddress,
-            operatorClient
-        )
+        const initialReserve = await getReserveAmount(proxyAddress, operatorClient)
 
         // Cashin tokens to previously associated account
-        await Mint(
-            proxyAddress,
-            AmountToMint,
-            operatorClient,
-            operatorAccount,
-            operatorIsE25519
-        )
+        await Mint(proxyAddress, AmountToMint, operatorClient, operatorAccount, operatorIsE25519)
 
         // Check the reserve account : success
-        const finalReserve = (
-            await getReserveAmount(proxyAddress, operatorClient)
-        ).sub(AmountToMint)
+        const finalReserve = (await getReserveAmount(proxyAddress, operatorClient)).sub(AmountToMint)
 
         const expectedTotalReserve = initialReserve.sub(AmountToMint)
-        expect(finalReserve.toString()).to.equals(
-            expectedTotalReserve.toString()
-        )
+        expect(finalReserve.toString()).to.equals(expectedTotalReserve.toString())
     })
 
     it('Can not mint more tokens than reserve', async function () {
         // Retrieve current reserve amount
-        const totalReserve = await getReserveAmount(
-            proxyAddress,
-            operatorClient
-        )
+        const totalReserve = await getReserveAmount(proxyAddress, operatorClient)
         // Cashin more tokens than reserve amount: fail
         await expect(
-            Mint(
-                proxyAddress,
-                totalReserve.add(1),
-                operatorClient,
-                operatorAccount,
-                operatorIsE25519
-            )
+            Mint(proxyAddress, totalReserve.add(1), operatorClient, operatorAccount, operatorIsE25519)
         ).to.eventually.be.rejectedWith(Error)
     })
 })

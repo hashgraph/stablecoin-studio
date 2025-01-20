@@ -1,11 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { BigNumber } from 'ethers'
-import {
-    allTokenKeystoKey,
-    deployContractsWithSDK,
-    tokenKeystoContract,
-    tokenKeystoKey,
-} from '../scripts/deploy'
+import { allTokenKeystoKey, deployContractsWithSDK, tokenKeystoContract, tokenKeystoKey } from '../scripts/deploy'
 import {
     acceptOwnership_SCF,
     admin,
@@ -29,17 +24,9 @@ import {
     upgrade,
     upgradeTo,
 } from '../scripts/contractsMethods'
-import {
-    getContractInfo,
-    oneMonthLaterInSeconds,
-    sleep,
-    toEvmAddress,
-} from '../scripts/utils'
+import { getContractInfo, oneMonthLaterInSeconds, sleep, toEvmAddress } from '../scripts/utils'
 import { ContractId } from '@hashgraph/sdk'
-import {
-    ITransparentUpgradeableProxy__factory,
-    ProxyAdmin__factory,
-} from '../typechain-types'
+import { ITransparentUpgradeableProxy__factory, ProxyAdmin__factory } from '../typechain-types'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import {
@@ -120,11 +107,7 @@ describe('HederaTokenManager Tests', function () {
     })
 
     it('Admin cannot update token if metadata more than 100 chars', async function () {
-        const keysToKey = tokenKeystoKey(
-            operatorPubKey,
-            operatorIsE25519,
-            false
-        )
+        const keysToKey = tokenKeystoKey(operatorPubKey, operatorIsE25519, false)
         await expect(
             updateToken(
                 proxyAddress,
@@ -140,11 +123,7 @@ describe('HederaTokenManager Tests', function () {
     })
     //TODO: review this test
     it.skip('Admin can update token', async function () {
-        const keysToKey = tokenKeystoKey(
-            operatorPubKey,
-            operatorIsE25519,
-            false
-        )
+        const keysToKey = tokenKeystoKey(operatorPubKey, operatorIsE25519, false)
         await updateToken(
             proxyAddress,
             'new Name',
@@ -161,24 +140,11 @@ describe('HederaTokenManager Tests', function () {
         expect(newMetadata).to.equal(TOKEN_MEMO)
 
         const keysToContract = tokenKeystoContract(false)
-        await updateToken(
-            proxyAddress,
-            TOKEN_NAME,
-            TOKEN_SYMBOL,
-            keysToContract,
-            0,
-            7776000,
-            '',
-            operatorClient
-        )
+        await updateToken(proxyAddress, TOKEN_NAME, TOKEN_SYMBOL, keysToContract, 0, 7776000, '', operatorClient)
     })
 
     it('Admin and supply token keys cannot be updated', async function () {
-        const keysToKey = allTokenKeystoKey(
-            operatorPubKey,
-            operatorIsE25519,
-            false
-        )
+        const keysToKey = allTokenKeystoKey(operatorPubKey, operatorIsE25519, false)
         await expect(
             updateToken(
                 proxyAddress,
@@ -228,12 +194,7 @@ describe('HederaTokenManager Tests', function () {
             nonOperatorIsE25519
         )
 
-        const resultOperatorAccount = await getRoles(
-            newProxyAddress,
-            operatorClient,
-            operatorAccount,
-            operatorIsE25519
-        )
+        const resultOperatorAccount = await getRoles(newProxyAddress, operatorClient, operatorAccount, operatorIsE25519)
         const isUnlimitedOperator = await isUnlimitedSupplierAllowance(
             newProxyAddress,
             operatorClient,
@@ -246,96 +207,50 @@ describe('HederaTokenManager Tests', function () {
 
         for (let i = 0; i < resultOperatorAccount.length; i++) {
             if (i == RolesId.Cashin)
-                expect(resultOperatorAccount[i].toUpperCase()).to.equals(
-                    WITHOUT_ROLE.toUpperCase()
-                )
+                expect(resultOperatorAccount[i].toUpperCase()).to.equals(WITHOUT_ROLE.toUpperCase())
             else if (i == RolesId.Burn)
-                expect(resultOperatorAccount[i].toUpperCase()).to.equals(
-                    WITHOUT_ROLE.toUpperCase()
-                )
+                expect(resultOperatorAccount[i].toUpperCase()).to.equals(WITHOUT_ROLE.toUpperCase())
             else if (i == RolesId.Delete)
-                expect(resultOperatorAccount[i].toUpperCase()).to.equals(
-                    WITHOUT_ROLE.toUpperCase()
-                )
+                expect(resultOperatorAccount[i].toUpperCase()).to.equals(WITHOUT_ROLE.toUpperCase())
             else if (i == RolesId.Freeze)
-                expect(resultOperatorAccount[i].toUpperCase()).to.equals(
-                    WITHOUT_ROLE.toUpperCase()
-                )
+                expect(resultOperatorAccount[i].toUpperCase()).to.equals(WITHOUT_ROLE.toUpperCase())
             else if (i == RolesId.Wipe)
-                expect(resultOperatorAccount[i].toUpperCase()).to.equals(
-                    WITHOUT_ROLE.toUpperCase()
-                )
+                expect(resultOperatorAccount[i].toUpperCase()).to.equals(WITHOUT_ROLE.toUpperCase())
             else if (i == RolesId.Rescue)
-                expect(resultOperatorAccount[i].toUpperCase()).to.equals(
-                    WITHOUT_ROLE.toUpperCase()
-                )
+                expect(resultOperatorAccount[i].toUpperCase()).to.equals(WITHOUT_ROLE.toUpperCase())
             else if (i == RolesId.Pause)
-                expect(resultOperatorAccount[i].toUpperCase()).to.equals(
-                    WITHOUT_ROLE.toUpperCase()
-                )
+                expect(resultOperatorAccount[i].toUpperCase()).to.equals(WITHOUT_ROLE.toUpperCase())
             else if (i == RolesId.Kyc)
-                expect(resultOperatorAccount[i].toUpperCase()).to.equals(
-                    WITHOUT_ROLE.toUpperCase()
-                )
+                expect(resultOperatorAccount[i].toUpperCase()).to.equals(WITHOUT_ROLE.toUpperCase())
             else if (i == RolesId.CustomFees)
-                expect(resultOperatorAccount[i].toUpperCase()).to.equals(
-                    WITHOUT_ROLE.toUpperCase()
-                )
+                expect(resultOperatorAccount[i].toUpperCase()).to.equals(WITHOUT_ROLE.toUpperCase())
             else if (i == RolesId.Admin)
-                expect(resultOperatorAccount[i].toUpperCase()).to.equals(
-                    DEFAULT_ADMIN_ROLE.toUpperCase()
-                )
-            else
-                expect(resultOperatorAccount[i].toUpperCase()).to.equals(
-                    WITHOUT_ROLE.toUpperCase()
-                )
+                expect(resultOperatorAccount[i].toUpperCase()).to.equals(DEFAULT_ADMIN_ROLE.toUpperCase())
+            else expect(resultOperatorAccount[i].toUpperCase()).to.equals(WITHOUT_ROLE.toUpperCase())
         }
 
         for (let i = 0; i < resultNonOperatorAccount.length; i++) {
             if (i == RolesId.Cashin)
-                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
-                    CASHIN_ROLE.toUpperCase()
-                )
+                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(CASHIN_ROLE.toUpperCase())
             else if (i == RolesId.Burn)
-                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
-                    BURN_ROLE.toUpperCase()
-                )
+                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(BURN_ROLE.toUpperCase())
             else if (i == RolesId.Delete)
-                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
-                    DELETE_ROLE.toUpperCase()
-                )
+                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(DELETE_ROLE.toUpperCase())
             else if (i == RolesId.Freeze)
-                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
-                    FREEZE_ROLE.toUpperCase()
-                )
+                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(FREEZE_ROLE.toUpperCase())
             else if (i == RolesId.Wipe)
-                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
-                    WIPE_ROLE.toUpperCase()
-                )
+                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(WIPE_ROLE.toUpperCase())
             else if (i == RolesId.Rescue)
-                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
-                    RESCUE_ROLE.toUpperCase()
-                )
+                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(RESCUE_ROLE.toUpperCase())
             else if (i == RolesId.Pause)
-                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
-                    PAUSE_ROLE.toUpperCase()
-                )
+                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(PAUSE_ROLE.toUpperCase())
             else if (i == RolesId.Kyc)
-                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
-                    KYC_ROLE.toUpperCase()
-                )
+                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(KYC_ROLE.toUpperCase())
             else if (i == RolesId.CustomFees)
-                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
-                    CUSTOM_FEES_ROLE.toUpperCase()
-                )
+                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(CUSTOM_FEES_ROLE.toUpperCase())
             else if (i == RolesId.Admin)
-                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
-                    WITHOUT_ROLE.toUpperCase()
-                )
-            else
-                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(
-                    WITHOUT_ROLE.toUpperCase()
-                )
+                expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(WITHOUT_ROLE.toUpperCase())
+            else expect(resultNonOperatorAccount[i].toUpperCase()).to.equals(WITHOUT_ROLE.toUpperCase())
         }
     })
 
@@ -343,22 +258,14 @@ describe('HederaTokenManager Tests', function () {
         // We retreive the Token basic params
         const retrievedTokenName = await name(proxyAddress, operatorClient)
         const retrievedTokenSymbol = await symbol(proxyAddress, operatorClient)
-        const retrievedTokenDecimals = await decimals(
-            proxyAddress,
-            operatorClient
-        )
-        const retrievedTokenTotalSupply = await getTotalSupply(
-            proxyAddress,
-            operatorClient
-        )
+        const retrievedTokenDecimals = await decimals(proxyAddress, operatorClient)
+        const retrievedTokenTotalSupply = await getTotalSupply(proxyAddress, operatorClient)
 
         // We check their values : success
         expect(retrievedTokenName).to.equals(TOKEN_NAME)
         expect(retrievedTokenSymbol).to.equals(TOKEN_SYMBOL)
         expect(retrievedTokenDecimals).to.equals(TOKEN_DECIMALS)
-        expect(retrievedTokenTotalSupply.toString()).to.equals(
-            INIT_SUPPLY.toString()
-        )
+        expect(retrievedTokenTotalSupply.toString()).to.equals(INIT_SUPPLY.toString())
     })
 
     it('Check initialize can only be run once', async function () {
@@ -366,47 +273,25 @@ describe('HederaTokenManager Tests', function () {
         const TokenAddress = await getTokenAddress(proxyAddress, operatorClient)
 
         // Initiliaze : fail
-        await expect(
-            initialize(proxyAddress, operatorClient, TokenAddress)
-        ).to.eventually.be.rejectedWith(Error)
+        await expect(initialize(proxyAddress, operatorClient, TokenAddress)).to.eventually.be.rejectedWith(Error)
     })
 
     it('Mint token throw error format number incorrrect', async () => {
-        const initialTotalSupply = await getTotalSupply(
-            proxyAddress,
-            operatorClient
-        )
+        const initialTotalSupply = await getTotalSupply(proxyAddress, operatorClient)
 
         await expect(
-            Mint(
-                proxyAddress,
-                BigNumber.from(1),
-                operatorClient,
-                operatorAccount,
-                operatorIsE25519
-            )
+            Mint(proxyAddress, BigNumber.from(1), operatorClient, operatorAccount, operatorIsE25519)
         ).to.eventually.be.rejectedWith(Error)
 
-        const afterErrorTotalSupply = await getTotalSupply(
-            proxyAddress,
-            operatorClient
-        )
+        const afterErrorTotalSupply = await getTotalSupply(proxyAddress, operatorClient)
 
         expect(initialTotalSupply).to.equal(afterErrorTotalSupply)
 
-        await Mint(
-            proxyAddress,
-            BigNumber.from(1).mul(TOKEN_FACTOR),
-            operatorClient,
-            operatorAccount,
-            operatorIsE25519
-        )
+        await Mint(proxyAddress, BigNumber.from(1).mul(TOKEN_FACTOR), operatorClient, operatorAccount, operatorIsE25519)
 
         const totalSupply = await getTotalSupply(proxyAddress, operatorClient)
 
-        expect(totalSupply).to.equal(
-            initialTotalSupply.add(BigNumber.from(1).mul(TOKEN_FACTOR))
-        )
+        expect(totalSupply).to.equal(initialTotalSupply.add(BigNumber.from(1).mul(TOKEN_FACTOR)))
     })
 })
 
@@ -449,17 +334,11 @@ describe.skip('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', 
         })
 
         // We retreive the HederaTokenManagerProxy admin and implementation
-        const ownerAccount = await owner(
-            abiProxyAdmin,
-            result[1],
-            operatorClient
-        )
+        const ownerAccount = await owner(abiProxyAdmin, result[1], operatorClient)
 
         // We check their values : success
         expect(ownerAccount.toUpperCase()).to.equals(
-            (
-                await toEvmAddress(operatorAccount, operatorIsE25519)
-            ).toUpperCase()
+            (await toEvmAddress(operatorAccount, operatorIsE25519)).toUpperCase()
         )
     })
 
@@ -476,24 +355,15 @@ describe.skip('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', 
             publicKey: operatorPubKey,
             isED25519Type: operatorIsE25519,
             initialAmountDataFeed: INIT_SUPPLY.toString(),
-            proxyAdminOwnerAccount: await toEvmAddress(
-                nonOperatorAccount,
-                nonOperatorIsE25519
-            ),
+            proxyAdminOwnerAccount: await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519),
         })
 
         // We retreive the HederaTokenManagerProxy admin and implementation
-        const ownerAccount = await owner(
-            abiProxyAdmin,
-            result[1],
-            operatorClient
-        )
+        const ownerAccount = await owner(abiProxyAdmin, result[1], operatorClient)
 
         // We check their values : success
         expect(ownerAccount.toUpperCase()).to.equals(
-            (
-                await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)
-            ).toUpperCase()
+            (await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)).toUpperCase()
         )
     })
 
@@ -503,45 +373,31 @@ describe.skip('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', 
             abiProxyAdmin,
             proxyAdminAddress,
             operatorClient,
-            (
-                await getContractInfo(proxyAddress.toString())
-            ).evm_address
+            (await getContractInfo(proxyAddress.toString())).evm_address
         )
         const admin = await getProxyAdmin(
             abiProxyAdmin,
             proxyAdminAddress,
             operatorClient,
-            (
-                await getContractInfo(proxyAddress.toString())
-            ).evm_address
+            (await getContractInfo(proxyAddress.toString())).evm_address
         )
 
         // We check their values : success
         expect(implementation.toUpperCase()).to.equals(
-            (
-                await getContractInfo(stableCoinAddress.toString())
-            ).evm_address.toUpperCase()
+            (await getContractInfo(stableCoinAddress.toString())).evm_address.toUpperCase()
         )
         expect(admin.toUpperCase()).to.equals(
-            (
-                await getContractInfo(proxyAdminAddress.toString())
-            ).evm_address.toUpperCase()
+            (await getContractInfo(proxyAdminAddress.toString())).evm_address.toUpperCase()
         )
     })
 
     it('Retrieve proxy admin owner', async function () {
         // We retreive the HederaTokenManagerProxy admin and implementation
-        const ownerAccount = await owner(
-            abiProxyAdmin,
-            proxyAdminAddress,
-            operatorClient
-        )
+        const ownerAccount = await owner(abiProxyAdmin, proxyAdminAddress, operatorClient)
 
         // We check their values : success
         expect(ownerAccount.toUpperCase()).to.equals(
-            (
-                await toEvmAddress(operatorAccount, operatorIsE25519)
-            ).toUpperCase()
+            (await toEvmAddress(operatorAccount, operatorIsE25519)).toUpperCase()
         )
     })
 
@@ -569,9 +425,7 @@ describe.skip('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', 
                 abiProxyAdmin,
                 proxyAddress,
                 operatorClient,
-                (
-                    await getContractInfo(newImplementationContract.toString())
-                ).evm_address
+                (await getContractInfo(newImplementationContract.toString())).evm_address
             )
         ).to.eventually.be.rejectedWith(Error)
     })
@@ -612,12 +466,8 @@ describe.skip('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', 
                 abiProxyAdmin,
                 proxyAdminAddress,
                 nonOperatorClient,
-                (
-                    await getContractInfo(newImplementationContract.toString())
-                ).evm_address,
-                (
-                    await getContractInfo(proxyAddress.toString())
-                ).evm_address
+                (await getContractInfo(newImplementationContract.toString())).evm_address,
+                (await getContractInfo(proxyAddress.toString())).evm_address
             )
         ).to.eventually.be.rejectedWith(Error)
     })
@@ -659,12 +509,8 @@ describe.skip('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', 
             abiProxyAdmin,
             proxyAdminAddress,
             operatorClient,
-            (
-                await getContractInfo(newImplementationContract.toString())
-            ).evm_address,
-            (
-                await getContractInfo(proxyAddress.toString())
-            ).evm_address
+            (await getContractInfo(newImplementationContract.toString())).evm_address,
+            (await getContractInfo(proxyAddress.toString())).evm_address
         )
 
         // Check new implementation address
@@ -672,14 +518,10 @@ describe.skip('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', 
             abiProxyAdmin,
             proxyAdminAddress,
             operatorClient,
-            (
-                await getContractInfo(proxyAddress.toString())
-            ).evm_address
+            (await getContractInfo(proxyAddress.toString())).evm_address
         )
         expect(implementation.toUpperCase()).to.equals(
-            (
-                await getContractInfo(newImplementationContract.toString())
-            ).evm_address.toUpperCase()
+            (await getContractInfo(newImplementationContract.toString())).evm_address.toUpperCase()
         )
 
         // reset
@@ -687,12 +529,8 @@ describe.skip('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', 
             abiProxyAdmin,
             proxyAdminAddress,
             operatorClient,
-            (
-                await getContractInfo(stableCoinAddress.toString())
-            ).evm_address,
-            (
-                await getContractInfo(proxyAddress.toString())
-            ).evm_address
+            (await getContractInfo(stableCoinAddress.toString())).evm_address,
+            (await getContractInfo(proxyAddress.toString())).evm_address
         )
     })
 
@@ -713,23 +551,13 @@ describe.skip('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', 
                 abiProxyAdmin,
                 proxyAdminAddress,
                 operatorClient,
-                (
-                    await getContractInfo(proxyAddress.toString())
-                ).evm_address
+                (await getContractInfo(proxyAddress.toString())).evm_address
             )
         ).to.eventually.be.rejectedWith(Error)
 
         // Check that proxy admin has been changed
-        const _admin = await admin(
-            ITransparentUpgradeableProxy__factory.abi,
-            proxyAddress,
-            operatorClient
-        )
-        expect(_admin.toUpperCase()).to.equals(
-            (
-                await toEvmAddress(operatorAccount, operatorIsE25519)
-            ).toUpperCase()
-        )
+        const _admin = await admin(ITransparentUpgradeableProxy__factory.abi, proxyAddress, operatorClient)
+        expect(_admin.toUpperCase()).to.equals((await toEvmAddress(operatorAccount, operatorIsE25519)).toUpperCase())
 
         // reset
         await changeAdmin(
@@ -742,9 +570,7 @@ describe.skip('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', 
             ITransparentUpgradeableProxy__factory.abi,
             proxyAddress,
             nonOperatorClient,
-            (
-                await getContractInfo(proxyAddress.toString())
-            ).evm_address
+            (await getContractInfo(proxyAddress.toString())).evm_address
         )
     })
 
@@ -775,24 +601,12 @@ describe.skip('HederaTokenManagerProxy and HederaTokenManagerProxyAdmin Tests', 
         await acceptOwnership_SCF(proxyAdminAddress, nonOperatorClient)
 
         // Check
-        const ownerAccount = await owner(
-            abiProxyAdmin,
-            proxyAdminAddress,
-            operatorClient
-        )
+        const ownerAccount = await owner(abiProxyAdmin, proxyAdminAddress, operatorClient)
         expect(ownerAccount.toUpperCase()).to.equals(
-            (
-                await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)
-            ).toUpperCase()
+            (await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)).toUpperCase()
         )
 
         // reset
-        await transferOwnership(
-            abiProxyAdmin,
-            proxyAdminAddress,
-            nonOperatorClient,
-            operatorAccount,
-            operatorIsE25519
-        )
+        await transferOwnership(abiProxyAdmin, proxyAdminAddress, nonOperatorClient, operatorAccount, operatorIsE25519)
     })
 })

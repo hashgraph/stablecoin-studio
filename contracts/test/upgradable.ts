@@ -53,29 +53,13 @@ describe.skip('Upgradable Tests', function () {
             clientTwoIsED25519Type,
         ] = initializeClients()
 
-        operatorAccount = getOperatorAccount(
-            clientOneAccount,
-            clientTwoAccount,
-            clientId
-        )
+        operatorAccount = getOperatorAccount(clientOneAccount, clientTwoAccount, clientId)
 
         operatorClient = getOperatorClient(clientOne, clientTwo, clientId)
 
-        operatorPriKey = getOperatorPrivateKey(
-            clientOnePrivateKey,
-            clientTwoPrivateKey,
-            clientId
-        )
-        operatorPubKey = getOperatorPublicKey(
-            clientOnePublicKey,
-            clientTwoPublicKey,
-            clientId
-        )
-        operatorIsE25519 = getOperatorE25519(
-            clientOneIsED25519Type,
-            clientTwoIsED25519Type,
-            clientId
-        )
+        operatorPriKey = getOperatorPrivateKey(clientOnePrivateKey, clientTwoPrivateKey, clientId)
+        operatorPubKey = getOperatorPublicKey(clientOnePublicKey, clientTwoPublicKey, clientId)
+        operatorIsE25519 = getOperatorE25519(clientOneIsED25519Type, clientTwoIsED25519Type, clientId)
 
         // Deploy Token using Client
         const result = await deployContractsWithSDK({
@@ -106,9 +90,7 @@ describe.skip('Upgradable Tests', function () {
             operatorClient,
             operatorPriKey,
             proxyAdminAddress,
-            (
-                await getContractInfo(proxyAddress.toString())
-            ).evm_address,
+            (await getContractInfo(proxyAddress.toString())).evm_address,
             undefined,
             false,
             true

@@ -27,15 +27,11 @@ import FileId from '@hashgraph/sdk/lib/file/FileId'
 
 const SuccessStatus = 22
 
-export const sleep = (ms: number) =>
-    new Promise((resolve) => setTimeout(resolve, ms))
+export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 export const clientId = 1
 
-async function checkTxResponse(
-    txResponse: TransactionResponse,
-    clientOperator: Client
-) {
+async function checkTxResponse(txResponse: TransactionResponse, clientOperator: Client) {
     const receipt = await txResponse.getReceipt(clientOperator)
 
     //Get the transaction consensus status
@@ -46,11 +42,7 @@ async function checkTxResponse(
     }
 }
 
-export async function associateToken(
-    tokenId: string,
-    targetId: string,
-    clientOperator: Client
-) {
+export async function associateToken(tokenId: string, targetId: string, clientOperator: Client) {
     const txResponse = await new TokenAssociateTransaction()
         .setTokenIds([tokenId])
         .setAccountId(targetId)
@@ -59,11 +51,7 @@ export async function associateToken(
     await checkTxResponse(txResponse, clientOperator)
 }
 
-export async function dissociateToken(
-    tokenId: string,
-    targetId: string,
-    clientOperator: Client
-) {
+export async function dissociateToken(tokenId: string, targetId: string, clientOperator: Client) {
     const txResponse = await new TokenDissociateTransaction()
         .setTokenIds([tokenId])
         .setAccountId(targetId)
@@ -72,19 +60,10 @@ export async function dissociateToken(
     await checkTxResponse(txResponse, clientOperator)
 }
 
-export async function transferToken(
-    tokenId: string,
-    targetId: string,
-    amount: BigNumber,
-    clientOperator: Client
-) {
+export async function transferToken(tokenId: string, targetId: string, amount: BigNumber, clientOperator: Client) {
     const txResponse = await new TransferTransaction()
         .addTokenTransfer(tokenId, targetId, amount.toNumber())
-        .addTokenTransfer(
-            tokenId,
-            clientOperator.operatorAccountId!.toString(),
-            -1 * amount.toNumber()
-        )
+        .addTokenTransfer(tokenId, clientOperator.operatorAccountId!.toString(), -1 * amount.toNumber())
         .execute(clientOperator)
 
     await checkTxResponse(txResponse, clientOperator)
@@ -147,15 +126,11 @@ export async function createToken(
     }
     transaction.freezeWith(clientSdk)
 
-    const transactionSign = await transaction.sign(
-        PrivateKey.fromStringED25519(privateKey)
-    )
+    const transactionSign = await transaction.sign(PrivateKey.fromStringED25519(privateKey))
     const txResponse = await transactionSign.execute(clientSdk)
     const receipt = await txResponse.getReceipt(clientSdk)
     const tokenId = receipt.tokenId
-    console.log(
-        `Token ${name} created tokenId ${tokenId} - tokenAddress ${tokenId?.toSolidityAddress()}   `
-    )
+    console.log(`Token ${name} created tokenId ${tokenId} - tokenAddress ${tokenId?.toSolidityAddress()}   `)
     return tokenId
 }
 
@@ -167,9 +142,7 @@ export async function deployContractSDK(
     adminKey?: PrivateKey,
     contractMemo?: string
 ): Promise<ContractId> {
-    const transaction = new ContractCreateFlow()
-        .setBytecode(factory.bytecode)
-        .setGas(500_000)
+    const transaction = new ContractCreateFlow().setBytecode(factory.bytecode).setGas(500_000)
     //.setAdminKey(Key)
     if (contractMemo) {
         transaction.setContractMemo(contractMemo)
@@ -178,9 +151,7 @@ export async function deployContractSDK(
         transaction.setConstructorParameters(constructorParameters)
     }
 
-    const contractCreateSign = await transaction.sign(
-        PrivateKey.fromStringED25519(privateKey)
-    )
+    const contractCreateSign = await transaction.sign(PrivateKey.fromStringED25519(privateKey))
 
     const txResponse = await contractCreateSign.execute(clientOperator)
     await sleep(2000)
@@ -198,13 +169,9 @@ export async function deployContractSDK(
     return contractId
 }
 
-export async function toEvmAddress(
-    accountId: string,
-    isE25519: boolean
-): Promise<string> {
+export async function toEvmAddress(accountId: string, isE25519: boolean): Promise<string> {
     try {
-        if (isE25519)
-            return '0x' + AccountId.fromString(accountId).toSolidityAddress()
+        if (isE25519) return '0x' + AccountId.fromString(accountId).toSolidityAddress()
 
         const URI_BASE = `${getHederaNetworkMirrorNodeURL()}/api/v1/`
         const url = URI_BASE + 'accounts/' + accountId
@@ -232,8 +199,7 @@ export async function getContractInfo(contractId: string): Promise<IContract> {
         i++
     } while ((!res || (res && res.status !== 200)) && i < retry)
 
-    if (!res || res.status !== 200)
-        throw new Error(`Error retrieving the Evm Address (${contractId})`)
+    if (!res || res.status !== 200) throw new Error(`Error retrieving the Evm Address (${contractId})`)
     return res.data
 }
 
@@ -312,9 +278,7 @@ async function createFile(
     signingPrivateKey: PrivateKey,
     clientOperator: Client
 ): Promise<FileId> {
-    const fileCreateTx = new FileCreateTransaction()
-        .setKeys([signingPrivateKey])
-        .freezeWith(clientOperator)
+    const fileCreateTx = new FileCreateTransaction().setKeys([signingPrivateKey]).freezeWith(clientOperator)
     const fileSign = await fileCreateTx.sign(signingPrivateKey)
     const fileSubmit = await fileSign.execute(clientOperator)
     const fileCreateRx = await fileSubmit.getReceipt(clientOperator)

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.16;
+pragma solidity 0.8.18;
 
 interface IReserve {
     /**
@@ -8,10 +8,7 @@ interface IReserve {
      * @param previousAddress The previous reserve address
      * @param newAddress The new reserve address
      */
-    event ReserveAddressChanged(
-        address indexed previousAddress,
-        address indexed newAddress
-    );
+    event ReserveAddressChanged(address indexed previousAddress, address indexed newAddress);
 
     /**
      * @dev Emitted when the provided `amount` is bigger than the current reserve

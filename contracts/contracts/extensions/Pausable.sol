@@ -1,28 +1,20 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.16;
+pragma solidity 0.8.18;
 
 import {TokenOwner} from './TokenOwner.sol';
 import {Roles} from './Roles.sol';
 import {IPausable} from './Interfaces/IPausable.sol';
-import {
-    IHederaTokenService
-} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
+import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 
 abstract contract Pausable is IPausable, TokenOwner, Roles {
     /**
      * @dev Pauses the token in order to prevent it from being involved in any kind of operation
      *
      */
-    function pause()
-        external
-        override(IPausable)
-        onlyRole(_getRoleId(RoleName.PAUSE))
-        returns (bool)
-    {
+    function pause() external override(IPausable) onlyRole(_getRoleId(RoleName.PAUSE)) returns (bool) {
         address currentTokenAddress = _getTokenAddress();
 
-        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
-            .pauseToken(currentTokenAddress);
+        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS).pauseToken(currentTokenAddress);
 
         bool success = _checkResponse(responseCode);
 
@@ -35,16 +27,10 @@ abstract contract Pausable is IPausable, TokenOwner, Roles {
      * @dev Unpauses the token in order to allow it to be involved in any kind of operation
      *
      */
-    function unpause()
-        external
-        override(IPausable)
-        onlyRole(_getRoleId(RoleName.PAUSE))
-        returns (bool)
-    {
+    function unpause() external override(IPausable) onlyRole(_getRoleId(RoleName.PAUSE)) returns (bool) {
         address currentTokenAddress = _getTokenAddress();
 
-        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
-            .unpauseToken(currentTokenAddress);
+        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS).unpauseToken(currentTokenAddress);
 
         bool success = _checkResponse(responseCode);
 

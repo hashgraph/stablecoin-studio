@@ -42,9 +42,7 @@ describe('Freeze Tests', function () {
                 privateKey: operatorPriKey,
                 publicKey: operatorPubKey,
                 isED25519Type: operatorIsE25519,
-                initialAmountDataFeed: INIT_SUPPLY.add(
-                    BigNumber.from('100000')
-                ).toString(),
+                initialAmountDataFeed: INIT_SUPPLY.add(BigNumber.from('100000')).toString(),
             }),
         ])
 
@@ -53,63 +51,25 @@ describe('Freeze Tests', function () {
 
     it("Account without FREEZE role can't freeze transfers of the token for the account", async function () {
         await expect(
-            freeze(
-                proxyAddress,
-                nonOperatorClient,
-                operatorAccount,
-                operatorIsE25519
-            )
+            freeze(proxyAddress, nonOperatorClient, operatorAccount, operatorIsE25519)
         ).to.eventually.be.rejectedWith(Error)
     })
 
     it("Account with FREEZE role can freeze and unfreeze transfers of the token for the account + Account without FREEZE role can't unfreeze transfers of the token for the account", async function () {
-        await Mint(
-            proxyAddress,
-            ONE_TOKEN,
-            operatorClient,
-            operatorAccount,
-            operatorIsE25519
-        )
+        await Mint(proxyAddress, ONE_TOKEN, operatorClient, operatorAccount, operatorIsE25519)
 
-        await freeze(
-            proxyAddress,
-            operatorClient,
-            operatorAccount,
-            operatorIsE25519
-        )
+        await freeze(proxyAddress, operatorClient, operatorAccount, operatorIsE25519)
 
         await expect(
-            Mint(
-                proxyAddress,
-                ONE_TOKEN,
-                operatorClient,
-                operatorAccount,
-                operatorIsE25519
-            )
+            Mint(proxyAddress, ONE_TOKEN, operatorClient, operatorAccount, operatorIsE25519)
         ).to.eventually.be.rejectedWith(Error)
 
         await expect(
-            unfreeze(
-                proxyAddress,
-                nonOperatorClient,
-                operatorAccount,
-                operatorIsE25519
-            )
+            unfreeze(proxyAddress, nonOperatorClient, operatorAccount, operatorIsE25519)
         ).to.eventually.be.rejectedWith(Error)
 
-        await unfreeze(
-            proxyAddress,
-            operatorClient,
-            operatorAccount,
-            operatorIsE25519
-        )
+        await unfreeze(proxyAddress, operatorClient, operatorAccount, operatorIsE25519)
 
-        await Mint(
-            proxyAddress,
-            ONE_TOKEN,
-            operatorClient,
-            operatorAccount,
-            operatorIsE25519
-        )
+        await Mint(proxyAddress, ONE_TOKEN, operatorClient, operatorAccount, operatorIsE25519)
     })
 })

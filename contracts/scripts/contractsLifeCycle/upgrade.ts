@@ -75,21 +75,11 @@ export async function upgradeContract(
     }
 
     // Deploying new implementation
-    console.log(
-        `Deploying New ${newImpl__factory.name} Implementation. please wait...`
-    )
+    console.log(`Deploying New ${newImpl__factory.name} Implementation. please wait...`)
 
-    const newImpl = await deployContract(
-        newImpl__factory,
-        privateKey,
-        clientOperator
-    )
+    const newImpl = await deployContract(newImpl__factory, privateKey, clientOperator)
 
-    console.log(
-        `New ${
-            newImpl__factory.name
-        } Implementation deployed ${newImpl.toSolidityAddress()}`
-    )
+    console.log(`New ${newImpl__factory.name} Implementation deployed ${newImpl.toSolidityAddress()}`)
 
     // Upgrading transparent proxy contract
     if (call)
@@ -148,13 +138,7 @@ async function upgradeTransparentProxy(
         using proxy Admin ${proxyAdminAddress.toSolidityAddress()}. 
         please wait...`)
 
-    await upgrade(
-        proxyAdminAbi,
-        proxyAdminAddress,
-        client,
-        newImplementationContract,
-        proxyAddress
-    )
+    await upgrade(proxyAdminAbi, proxyAdminAddress, client, newImplementationContract, proxyAddress)
 
     console.log('Upgrade OK')
 }
@@ -168,21 +152,12 @@ async function upgradeAndCallTransparentProxy(
     data: any
 ) {
     console.log(`Upgrading and Calling Transparent Proxy ${proxyAddress}
-        implementation to ${newImplementationContract} with data ${JSON.stringify(
-        data
-    )} 
+        implementation to ${newImplementationContract} with data ${JSON.stringify(data)} 
         using proxy Admin ${proxyAdminAddress.toSolidityAddress()}. 
         please wait...`)
 
     const params = [proxyAddress, newImplementationContract, data]
-    await contractCall(
-        proxyAdminAddress,
-        'upgradeAndCall',
-        params,
-        client,
-        1800000,
-        proxyAdminAbi
-    )
+    await contractCall(proxyAdminAddress, 'upgradeAndCall', params, client, 1800000, proxyAdminAbi)
 
     console.log('Upgrade and call OK')
 }

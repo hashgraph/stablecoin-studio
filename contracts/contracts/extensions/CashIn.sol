@@ -1,11 +1,9 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.16;
+pragma solidity 0.8.18;
 
 import {ICashIn} from './Interfaces/ICashIn.sol';
 import {SupplierAdmin} from './SupplierAdmin.sol';
-import {
-    IHederaTokenService
-} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
+import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {Reserve} from './Reserve.sol';
 import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
 
@@ -36,15 +34,15 @@ abstract contract CashIn is ICashIn, SupplierAdmin, Reserve {
 
         uint256 balance = _balanceOf(address(this));
 
-        (int64 responseCode, , ) = IHederaTokenService(_PRECOMPILED_ADDRESS)
-            .mintToken(currentTokenAddress, amount, new bytes[](0));
+        (int64 responseCode, , ) = IHederaTokenService(_PRECOMPILED_ADDRESS).mintToken(
+            currentTokenAddress,
+            amount,
+            new bytes[](0)
+        );
 
         bool success = _checkResponse(responseCode);
 
-        if (
-            !((_balanceOf(address(this)) - balance) ==
-                SafeCast.toUint256(amount))
-        ) {
+        if (!((_balanceOf(address(this)) - balance) == SafeCast.toUint256(amount))) {
             // solhint-disable-next-line custom-errors
             revert('The smart contract is not the treasury account');
         }

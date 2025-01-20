@@ -4,12 +4,10 @@ module.exports = {
     tabWidth: 4,
     semi: false,
     singleQuote: true,
+    printWidth: 120,
     overrides: [
         {
-            files: 'contracts/**/*.sol',
-            options: {
-                compiler: '0.8.16',
-            },
+            files: '*.sol',
         },
     ],
 }

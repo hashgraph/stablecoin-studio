@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.16;
+pragma solidity 0.8.18;
 
 import {IRoleManagement} from './Interfaces/IRoleManagement.sol';
 import {SupplierAdmin} from './SupplierAdmin.sol';
@@ -21,14 +21,9 @@ abstract contract RoleManagement is IRoleManagement, SupplierAdmin {
 
         for (uint256 i = 0; i < roles.length; i++) {
             if (roles[i] == cashInRole) {
-                if (accounts.length != amounts.length)
-                    revert ArraysLengthNotEqual(
-                        accounts.length,
-                        amounts.length
-                    );
+                if (accounts.length != amounts.length) revert ArraysLengthNotEqual(accounts.length, amounts.length);
                 for (uint256 j = 0; j < accounts.length; j++) {
-                    if (amounts[j] != 0)
-                        _grantSupplierRole(accounts[j], amounts[j]);
+                    if (amounts[j] != 0) _grantSupplierRole(accounts[j], amounts[j]);
                     else _grantUnlimitedSupplierRole(accounts[j]);
                 }
             } else {

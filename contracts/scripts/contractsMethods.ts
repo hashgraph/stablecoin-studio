@@ -1,12 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-    AccountBalanceQuery,
-    AccountId,
-    Client,
-    ContractId,
-    Hbar,
-    TransferTransaction,
-} from '@hashgraph/sdk'
+import { AccountBalanceQuery, AccountId, Client, ContractId, Hbar, TransferTransaction } from '@hashgraph/sdk'
 
 import {
     HederaReserve__factory,
@@ -57,15 +50,8 @@ export function delay(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-export async function getHBARBalanceOf(
-    Id: string,
-    client: Client,
-    isAccount = true,
-    isSolidityAddress = false
-) {
-    const IdToQuery = isSolidityAddress
-        ? AccountId.fromSolidityAddress(Id!).toString()
-        : Id!
+export async function getHBARBalanceOf(Id: string, client: Client, isAccount = true, isSolidityAddress = false) {
+    const IdToQuery = isSolidityAddress ? AccountId.fromSolidityAddress(Id!).toString() : Id!
     const query = isAccount
         ? new AccountBalanceQuery().setAccountId(IdToQuery!)
         : new AccountBalanceQuery().setContractId(IdToQuery!)
@@ -85,14 +71,8 @@ export async function transferHBAR(
         ? AccountId.fromSolidityAddress(receiver!).toString()
         : receiver!
     const transaction = new TransferTransaction()
-        .addHbarTransfer(
-            senderAccountId!,
-            Hbar.fromTinybars(amount.mul(-1).toString())
-        )
-        .addHbarTransfer(
-            receivedAccountId!,
-            Hbar.fromTinybars(amount.toString())
-        )
+        .addHbarTransfer(senderAccountId!, Hbar.fromTinybars(amount.mul(-1).toString()))
+        .addHbarTransfer(receivedAccountId!, Hbar.fromTinybars(amount.toString()))
 
     await transaction.execute(client)
 }
@@ -122,10 +102,7 @@ export async function revokeRole(
     accountToRevokeRoleFrom: string,
     isE25519: boolean
 ) {
-    const params: string[] = [
-        ROLE,
-        await toEvmAddress(accountToRevokeRoleFrom, isE25519),
-    ]
+    const params: string[] = [ROLE, await toEvmAddress(accountToRevokeRoleFrom, isE25519)]
     await contractCall(
         proxyAddress,
         'revokeRole',
@@ -143,10 +120,7 @@ export async function hasRole(
     accountToCheckRoleFrom: string,
     isE25519: boolean
 ): Promise<boolean> {
-    const params: string[] = [
-        ROLE,
-        await toEvmAddress(accountToCheckRoleFrom, isE25519),
-    ]
+    const params: string[] = [ROLE, await toEvmAddress(accountToCheckRoleFrom, isE25519)]
     const result = await contractCall(
         proxyAddress,
         'hasRole',
@@ -194,9 +168,7 @@ export async function getBalanceOf(
     isE25519: boolean,
     parse = true
 ) {
-    const params = parse
-        ? [await toEvmAddress(accountToGetBalanceOf, isE25519)]
-        : [accountToGetBalanceOf]
+    const params = parse ? [await toEvmAddress(accountToGetBalanceOf, isE25519)] : [accountToGetBalanceOf]
     const result = await contractCall(
         proxyAddress,
         'balanceOf',
@@ -208,10 +180,7 @@ export async function getBalanceOf(
     return BigNumber.from(result[0])
 }
 
-export async function name(
-    proxyAddress: ContractId,
-    client: Client
-): Promise<string> {
+export async function name(proxyAddress: ContractId, client: Client): Promise<string> {
     const params: string[] = []
     const result = await contractCall(
         proxyAddress,
@@ -224,10 +193,7 @@ export async function name(
     return result[0]
 }
 
-export async function symbol(
-    proxyAddress: ContractId,
-    client: Client
-): Promise<string> {
+export async function symbol(proxyAddress: ContractId, client: Client): Promise<string> {
     const params: string[] = []
     const result = await contractCall(
         proxyAddress!,
@@ -240,10 +206,7 @@ export async function symbol(
     return result[0]
 }
 
-export async function decimals(
-    proxyAddress: ContractId,
-    client: Client
-): Promise<number> {
+export async function decimals(proxyAddress: ContractId, client: Client): Promise<number> {
     const params: string[] = []
     const result = await contractCall(
         proxyAddress!,
@@ -256,20 +219,9 @@ export async function decimals(
     return Number(result[0])
 }
 
-export async function initialize(
-    proxyAddress: ContractId,
-    client: Client,
-    newTokenAddress: string
-) {
+export async function initialize(proxyAddress: ContractId, client: Client, newTokenAddress: string) {
     const params = [newTokenAddress]
-    await contractCall(
-        proxyAddress,
-        'initialize',
-        params,
-        client,
-        GAS_LIMIT_TINY,
-        HederaTokenManager__factory.abi
-    )
+    await contractCall(proxyAddress, 'initialize', params, client, GAS_LIMIT_TINY, HederaTokenManager__factory.abi)
 }
 
 export async function updateToken(
@@ -302,10 +254,7 @@ export async function updateToken(
     return response[0]
 }
 
-export async function getMetadata(
-    proxyAddress: ContractId,
-    client: Client
-): Promise<string> {
+export async function getMetadata(proxyAddress: ContractId, client: Client): Promise<string> {
     const params: string[] = []
     const result = await contractCall(
         proxyAddress,
@@ -326,82 +275,30 @@ export async function upgradeTo(
     newImplementationContract: string
 ) {
     const params = [newImplementationContract]
-    await contractCall(
-        proxyAddress,
-        'upgradeTo',
-        params,
-        client,
-        UPDATE_TOKEN_GAS,
-        proxyAbi
-    )
+    await contractCall(proxyAddress, 'upgradeTo', params, client, UPDATE_TOKEN_GAS, proxyAbi)
 }
 
-export async function changeAdmin(
-    proxyAbi: any,
-    proxyAddress: ContractId,
-    client: Client,
-    newAdminAccount: string
-) {
+export async function changeAdmin(proxyAbi: any, proxyAddress: ContractId, client: Client, newAdminAccount: string) {
     const params = [newAdminAccount]
-    await contractCall(
-        proxyAddress,
-        'changeAdmin',
-        params,
-        client,
-        CHANGE_PROXY_OWNER,
-        proxyAbi
-    )
+    await contractCall(proxyAddress, 'changeAdmin', params, client, CHANGE_PROXY_OWNER, proxyAbi)
 }
 
-export async function admin(
-    proxyAbi: any,
-    proxyAddress: ContractId,
-    client: Client
-): Promise<string> {
+export async function admin(proxyAbi: any, proxyAddress: ContractId, client: Client): Promise<string> {
     const params: string[] = []
-    const result = await contractCall(
-        proxyAddress,
-        'admin',
-        params,
-        client,
-        GAS_LIMIT_TINY,
-        proxyAbi
-    )
+    const result = await contractCall(proxyAddress, 'admin', params, client, GAS_LIMIT_TINY, proxyAbi)
     return result[0]
 }
 
 // HederaTokenManagerProxyAdmin ///////////////////////////////////////////////////
-export async function owner(
-    proxyAdminAbi: any,
-    proxyAdminAddress: ContractId,
-    client: Client
-): Promise<string> {
+export async function owner(proxyAdminAbi: any, proxyAdminAddress: ContractId, client: Client): Promise<string> {
     const params: string[] = []
-    const result = await contractCall(
-        proxyAdminAddress,
-        'owner',
-        params,
-        client,
-        GAS_LIMIT_TINY,
-        proxyAdminAbi
-    )
+    const result = await contractCall(proxyAdminAddress, 'owner', params, client, GAS_LIMIT_TINY, proxyAdminAbi)
     return result[0]
 }
 
-export async function pendingOwner(
-    proxyAdminAbi: any,
-    proxyAdminAddress: ContractId,
-    client: Client
-): Promise<string> {
+export async function pendingOwner(proxyAdminAbi: any, proxyAdminAddress: ContractId, client: Client): Promise<string> {
     const params: string[] = []
-    const result = await contractCall(
-        proxyAdminAddress,
-        'pendingOwner',
-        params,
-        client,
-        GAS_LIMIT_TINY,
-        proxyAdminAbi
-    )
+    const result = await contractCall(proxyAdminAddress, 'pendingOwner', params, client, GAS_LIMIT_TINY, proxyAdminAbi)
     return result[0]
 }
 
@@ -413,14 +310,7 @@ export async function upgrade(
     proxyAddress: string
 ) {
     const params = [proxyAddress, newImplementationContract]
-    await contractCall(
-        proxyAdminAddress,
-        'upgrade',
-        params,
-        client,
-        GAS_LIMIT_MODERATE,
-        proxyAdminAbi
-    )
+    await contractCall(proxyAdminAddress, 'upgrade', params, client, GAS_LIMIT_MODERATE, proxyAdminAbi)
 }
 
 export async function changeProxyAdmin(
@@ -435,14 +325,7 @@ export async function changeProxyAdmin(
         (await getContractInfo(proxyAddress.toString())).evm_address,
         await toEvmAddress(newAdminAccount, isE25519),
     ]
-    await contractCall(
-        proxyAdminAddress,
-        'changeProxyAdmin',
-        params,
-        client,
-        CHANGE_PROXY_OWNER,
-        proxyAdminAbi
-    )
+    await contractCall(proxyAdminAddress, 'changeProxyAdmin', params, client, CHANGE_PROXY_OWNER, proxyAdminAbi)
 }
 
 export async function transferOwnership(
@@ -453,30 +336,12 @@ export async function transferOwnership(
     isE25519: boolean
 ) {
     const params = [await toEvmAddress(newOwnerAccount, isE25519)]
-    await contractCall(
-        proxyAdminAddress,
-        'transferOwnership',
-        params,
-        client,
-        CHANGE_PROXY_OWNER,
-        proxyAdminAbi
-    )
+    await contractCall(proxyAdminAddress, 'transferOwnership', params, client, CHANGE_PROXY_OWNER, proxyAdminAbi)
 }
 
-export async function acceptOwnership(
-    proxyAdminAbi: any,
-    proxyAdminAddress: ContractId,
-    client: Client
-) {
+export async function acceptOwnership(proxyAdminAbi: any, proxyAdminAddress: ContractId, client: Client) {
     const params: string[] = []
-    await contractCall(
-        proxyAdminAddress,
-        'acceptOwnership',
-        params,
-        client,
-        ACCEPT_PROXY_OWNER,
-        proxyAdminAbi
-    )
+    await contractCall(proxyAdminAddress, 'acceptOwnership', params, client, ACCEPT_PROXY_OWNER, proxyAdminAbi)
 }
 
 export async function getProxyImplementation(
@@ -504,23 +369,12 @@ export async function getProxyAdmin(
     proxyAddress: string
 ): Promise<string> {
     const params = [proxyAddress]
-    const result = await contractCall(
-        proxyAdminAddress,
-        'getProxyAdmin',
-        params,
-        client,
-        GAS_LIMIT_TINY,
-        proxyAdminAbi
-    )
+    const result = await contractCall(proxyAdminAddress, 'getProxyAdmin', params, client, GAS_LIMIT_TINY, proxyAdminAbi)
     return result[0]
 }
 
 // StableCoinProxy ///////////////////////////////////////////////////
-export async function upgradeTo_SCF(
-    proxyAddress: ContractId,
-    client: Client,
-    newImplementationContract: string
-) {
+export async function upgradeTo_SCF(proxyAddress: ContractId, client: Client, newImplementationContract: string) {
     const params = [newImplementationContract]
     await contractCall(
         proxyAddress,
@@ -532,11 +386,7 @@ export async function upgradeTo_SCF(
     )
 }
 
-export async function changeAdmin_SCF(
-    proxyAddress: ContractId,
-    client: Client,
-    newAdminAccount: string
-) {
+export async function changeAdmin_SCF(proxyAddress: ContractId, client: Client, newAdminAccount: string) {
     const params = [newAdminAccount]
     await contractCall(
         proxyAddress,
@@ -548,10 +398,7 @@ export async function changeAdmin_SCF(
     )
 }
 
-export async function admin_SCF(
-    proxyAddress: ContractId,
-    client: Client
-): Promise<string> {
+export async function admin_SCF(proxyAddress: ContractId, client: Client): Promise<string> {
     const params: string[] = []
     const result = await contractCall(
         proxyAddress,
@@ -565,10 +412,7 @@ export async function admin_SCF(
 }
 
 // StableCoinProxyAdmin ///////////////////////////////////////////////////
-export async function owner_SCF(
-    proxyAdminAddress: ContractId,
-    client: Client
-): Promise<string> {
+export async function owner_SCF(proxyAdminAddress: ContractId, client: Client): Promise<string> {
     const params: string[] = []
     const result = await contractCall(
         proxyAdminAddress,
@@ -581,10 +425,7 @@ export async function owner_SCF(
     return result[0]
 }
 
-export async function pendingOwner_SCF(
-    proxyAdminAddress: ContractId,
-    client: Client
-): Promise<string> {
+export async function pendingOwner_SCF(proxyAdminAddress: ContractId, client: Client): Promise<string> {
     const params: string[] = []
     const result = await contractCall(
         proxyAdminAddress,
@@ -652,10 +493,7 @@ export async function transferOwnership_SCF(
     )
 }
 
-export async function acceptOwnership_SCF(
-    proxyAdminAddress: ContractId,
-    client: Client
-) {
+export async function acceptOwnership_SCF(proxyAdminAddress: ContractId, client: Client) {
     const params: string[] = []
     await contractCall(
         proxyAdminAddress,
@@ -702,10 +540,7 @@ export async function getProxyAdmin_SCF(
 }
 
 // TokenOwner ///////////////////////////////////////////////////
-export async function getTokenAddress(
-    proxyAddress: ContractId,
-    client: Client
-): Promise<string> {
+export async function getTokenAddress(proxyAddress: ContractId, client: Client): Promise<string> {
     const params: string[] = []
     const response = await contractCall(
         proxyAddress,
@@ -719,11 +554,7 @@ export async function getTokenAddress(
 }
 
 // Burnable ///////////////////////////////////////////////////
-export async function Burn(
-    proxyAddress: ContractId,
-    amountOfTokenToBurn: BigNumber,
-    clientBurningToken: Client
-) {
+export async function Burn(proxyAddress: ContractId, amountOfTokenToBurn: BigNumber, clientBurningToken: Client) {
     const params = [amountOfTokenToBurn.toString()]
     const result = await contractCall(
         proxyAddress,
@@ -745,9 +576,7 @@ export async function Mint(
     isE25519: boolean,
     parse = true
 ) {
-    const param_1: string = parse
-        ? await toEvmAddress(clientToAssignTokensTo, isE25519)
-        : clientToAssignTokensTo
+    const param_1: string = parse ? await toEvmAddress(clientToAssignTokensTo, isE25519) : clientToAssignTokensTo
 
     const params: string[] = [param_1, amountOfTokenToMint.toString()]
     const result = await contractCall(
@@ -769,10 +598,7 @@ export async function Wipe(
     accountToWipeFrom: string,
     isE25519: boolean
 ) {
-    const params = [
-        await toEvmAddress(accountToWipeFrom, isE25519),
-        amountOfTokenToWipe.toString(),
-    ]
+    const params = [await toEvmAddress(accountToWipeFrom, isE25519), amountOfTokenToWipe.toString()]
     const result = await contractCall(
         proxyAddress,
         'wipe',
@@ -785,10 +611,7 @@ export async function Wipe(
 }
 
 // Pausable ///////////////////////////////////////////////////
-export async function pause(
-    proxyAddress: ContractId,
-    clientPausingToken: Client
-) {
+export async function pause(proxyAddress: ContractId, clientPausingToken: Client) {
     const params: string[] = []
     const result = await contractCall(
         proxyAddress,
@@ -801,10 +624,7 @@ export async function pause(
     if (result[0] != true) throw Error
 }
 
-export async function unpause(
-    proxyAddress: ContractId,
-    clientPausingToken: Client
-) {
+export async function unpause(proxyAddress: ContractId, clientPausingToken: Client) {
     const params: string[] = []
     const result = await contractCall(
         proxyAddress,
@@ -855,10 +675,7 @@ export async function unfreeze(
 }
 
 // Deletable ///////////////////////////////////////////////////
-export async function deleteToken(
-    proxyAddress: ContractId,
-    clientDeletingToken: Client
-) {
+export async function deleteToken(proxyAddress: ContractId, clientDeletingToken: Client) {
     const params: string[] = []
     const result = await contractCall(
         proxyAddress,
@@ -872,11 +689,7 @@ export async function deleteToken(
 }
 
 // Rescueable ///////////////////////////////////////////////////
-export async function rescue(
-    proxyAddress: ContractId,
-    amountOfTokenToRescue: BigNumber,
-    clientRescueingToken: Client
-) {
+export async function rescue(proxyAddress: ContractId, amountOfTokenToRescue: BigNumber, clientRescueingToken: Client) {
     const params = [amountOfTokenToRescue.toString()]
     const result = await contractCall(
         proxyAddress,
@@ -925,11 +738,7 @@ export async function getRoles(
     return result[0]
 }
 
-export async function getRoleId(
-    proxyAddress: ContractId,
-    client: Client,
-    roleName: number
-): Promise<string> {
+export async function getRoleId(proxyAddress: ContractId, client: Client, roleName: number): Promise<string> {
     const params = [roleName]
     const result = await contractCall(
         proxyAddress,
@@ -958,9 +767,7 @@ export async function grantRoles(
 
     const accountsToGrantRolesTo_EVM: string[] = []
     for (let i = 0; i < accountsToGrantRolesTo.length; i++) {
-        accountsToGrantRolesTo_EVM.push(
-            await toEvmAddress(accountsToGrantRolesTo[i], areE25519[i])
-        )
+        accountsToGrantRolesTo_EVM.push(await toEvmAddress(accountsToGrantRolesTo[i], areE25519[i]))
     }
 
     const params = [ROLES, accountsToGrantRolesTo_EVM, cashInLimits_Strings]
@@ -984,9 +791,7 @@ export async function revokeRoles(
 ) {
     const accountsToRevokeRolesFrom_EVM: string[] = []
     for (let i = 0; i < accountsToRevokeRolesFrom.length; i++) {
-        accountsToRevokeRolesFrom_EVM.push(
-            await toEvmAddress(accountsToRevokeRolesFrom[i], areE25519[i])
-        )
+        accountsToRevokeRolesFrom_EVM.push(await toEvmAddress(accountsToRevokeRolesFrom[i], areE25519[i]))
     }
 
     const params = [ROLES, accountsToRevokeRolesFrom_EVM]
@@ -1009,10 +814,7 @@ export async function decreaseSupplierAllowance(
     accountToDecreaseFrom: string,
     isE25519: boolean
 ) {
-    const params = [
-        await toEvmAddress(accountToDecreaseFrom, isE25519),
-        amountToDecrease.toString(),
-    ]
+    const params = [await toEvmAddress(accountToDecreaseFrom, isE25519), amountToDecrease.toString()]
     await contractCall(
         proxyAddress,
         'decreaseSupplierAllowance',
@@ -1030,10 +832,7 @@ export async function grantSupplierRole(
     accountToGrantRoleTo: string,
     isE25519: boolean
 ) {
-    const params: string[] = [
-        await toEvmAddress(accountToGrantRoleTo, isE25519),
-        cashInLimit.toString(),
-    ]
+    const params: string[] = [await toEvmAddress(accountToGrantRoleTo, isE25519), cashInLimit.toString()]
     await contractCall(
         proxyAddress,
         'grantSupplierRole',
@@ -1068,10 +867,7 @@ export async function increaseSupplierAllowance(
     accountToIncreaseTo: string,
     isE25519: boolean
 ) {
-    const params = [
-        await toEvmAddress(accountToIncreaseTo, isE25519),
-        amountToIncrease.toString(),
-    ]
+    const params = [await toEvmAddress(accountToIncreaseTo, isE25519), amountToIncrease.toString()]
     await contractCall(
         proxyAddress,
         'increaseSupplierAllowance',
@@ -1153,10 +949,7 @@ export async function getSupplierAllowance(
 }
 
 // Reserve ///////////////////////////////////////////////////
-export async function getReserveAmount(
-    proxyAddress: ContractId,
-    operatorClient: Client
-) {
+export async function getReserveAmount(proxyAddress: ContractId, operatorClient: Client) {
     const params: string[] = []
     const result = await contractCall(
         proxyAddress,
@@ -1169,10 +962,7 @@ export async function getReserveAmount(
     return BigNumber.from(result[0])
 }
 
-export async function getReserveAddress(
-    proxyAddress: ContractId,
-    operatorClient: Client
-): Promise<string> {
+export async function getReserveAddress(proxyAddress: ContractId, operatorClient: Client): Promise<string> {
     const params: string[] = []
     const result = await contractCall(
         proxyAddress,
@@ -1185,14 +975,8 @@ export async function getReserveAddress(
     return result[0]
 }
 
-export async function updateDataFeed(
-    dataFeed: ContractId,
-    proxyAddress: ContractId,
-    operatorClient: Client
-) {
-    const params: string[] = [
-        (await getContractInfo(dataFeed.toString())).evm_address,
-    ]
+export async function updateDataFeed(dataFeed: ContractId, proxyAddress: ContractId, operatorClient: Client) {
+    const params: string[] = [(await getContractInfo(dataFeed.toString())).evm_address]
     await contractCall(
         proxyAddress,
         'updateReserveAddress',
@@ -1280,10 +1064,7 @@ export async function descriptionHederaReserve(
     )
     return result[0]
 }
-export async function versionHederaReserve(
-    hederaReserveProxy: ContractId,
-    operatorClient: Client
-): Promise<BigNumber> {
+export async function versionHederaReserve(hederaReserveProxy: ContractId, operatorClient: Client): Promise<BigNumber> {
     const params: string[] = []
     const result = await contractCall(
         hederaReserveProxy,
@@ -1319,9 +1100,7 @@ export async function grantKyc(
     accountIsED25519: boolean,
     client: Client
 ) {
-    const params: string[] = [
-        await toEvmAddress(accountToGrantKyc, accountIsED25519),
-    ]
+    const params: string[] = [await toEvmAddress(accountToGrantKyc, accountIsED25519)]
     const result = await contractCall(
         proxyAddress,
         'grantKyc',
@@ -1338,9 +1117,7 @@ export async function revokeKyc(
     accountIsED25519: boolean,
     client: Client
 ) {
-    const params: string[] = [
-        await toEvmAddress(accountToGrantKyc, accountIsED25519),
-    ]
+    const params: string[] = [await toEvmAddress(accountToGrantKyc, accountIsED25519)]
     const result = await contractCall(
         proxyAddress,
         'revokeKyc',
@@ -1366,10 +1143,7 @@ export async function updateCustomFees(
     fractionalMaximum: BigNumber,
     netOfTransfers: boolean
 ) {
-    const feeCollectorAddress = await toEvmAddress(
-        accountToSetFee,
-        accountIsED25519
-    )
+    const feeCollectorAddress = await toEvmAddress(accountToSetFee, accountIsED25519)
 
     const fixedFees = [
         {
@@ -1427,10 +1201,7 @@ export async function updateCustomFees(
 // }
 
 // StableCoinFactory ///////////////////////////////////////////////////
-export async function getHederaTokenManagerAddresses(
-    stableCoinFactoryProxy: ContractId,
-    client: Client
-) {
+export async function getHederaTokenManagerAddresses(stableCoinFactoryProxy: ContractId, client: Client) {
     const result = await contractCall(
         stableCoinFactoryProxy,
         'getHederaTokenManagerAddress',
@@ -1502,10 +1273,7 @@ export async function removeHederaTokenManagerVersion(
     )
 }
 
-export async function getAdminStableCoinFactory(
-    stableCoinFactoryProxy: ContractId,
-    client: Client
-): Promise<string> {
+export async function getAdminStableCoinFactory(stableCoinFactoryProxy: ContractId, client: Client): Promise<string> {
     const result = await contractCall(
         stableCoinFactoryProxy,
         'getAdmin',

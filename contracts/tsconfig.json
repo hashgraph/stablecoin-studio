@@ -1,18 +1,24 @@
 {
-  "compilerOptions": {
-    "target": "ES2020",
-    "module": "NodeNext",
-    "moduleResolution": "node",
-    "declaration": true,
-    "rootDir": ".",
-    "outDir": "./build",
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "skipLibCheck": true,
-    "baseUrl": "./build",
-    "strictPropertyInitialization": false
-  },
-  "exclude": ["build/**/*", "node_modules"],
+    "compilerOptions": {
+        "target": "ES2020",
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
+        "declaration": true,
+        "rootDir": ".",
+        "outDir": "./build",
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "strict": true,
+        "skipLibCheck": true,
+        "baseUrl": "./",
+        "strictPropertyInitialization": false,
+        "paths": {
+            "@configuration": ["configuration/index"],
+            "@typechain": ["typechain-types/*", "typechain-types/index.ts"],
+            "@scripts": ["scripts/index"],
+            "@tasks": ["tasks/index"]
+        }
+    },
+    "exclude": ["build/**/*", "node_modules"]
 }

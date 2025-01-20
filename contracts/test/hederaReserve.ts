@@ -22,10 +22,7 @@ import {
 } from '../scripts/contractsMethods'
 import { getContractInfo, toEvmAddress } from '../scripts/utils'
 import { AccountId, ContractId } from '@hashgraph/sdk'
-import {
-    ITransparentUpgradeableProxy__factory,
-    ProxyAdmin__factory,
-} from '../typechain-types'
+import { ITransparentUpgradeableProxy__factory, ProxyAdmin__factory } from '../typechain-types'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import {
@@ -93,10 +90,7 @@ describe.skip('HederaReserve Tests', function () {
         )
         await setAmountHederaReserve(ONE, proxyAddress, nonOperatorClient)
 
-        const amount = await latestRoundDataDataHederaReserve(
-            proxyAddress,
-            nonOperatorClient
-        )
+        const amount = await latestRoundDataDataHederaReserve(proxyAddress, nonOperatorClient)
         expect(amount).to.equals(ONE.toString())
 
         //RESET
@@ -106,10 +100,7 @@ describe.skip('HederaReserve Tests', function () {
             nonOperatorClient
         )
         await setAmountHederaReserve(reserve, proxyAddress, operatorClient)
-        const amountReset = await latestRoundDataDataHederaReserve(
-            proxyAddress,
-            operatorClient
-        )
+        const amountReset = await latestRoundDataDataHederaReserve(proxyAddress, operatorClient)
         expect(amountReset).to.equals(reserve.toString())
     })
 
@@ -125,69 +116,40 @@ describe.skip('HederaReserve Tests', function () {
 
     it('Update reserve throw error client no isAdmin', async function () {
         expect(
-            setAmountHederaReserve(
-                BigNumber.from(1),
-                proxyAddress,
-                nonOperatorClient
-            )
+            setAmountHederaReserve(BigNumber.from(1), proxyAddress, nonOperatorClient)
         ).to.eventually.be.rejectedWith(Error)
     })
 
     it('Update reserve', async function () {
-        const beforeUpdateAmount = await latestRoundDataDataHederaReserve(
-            proxyAddress,
-            operatorClient
-        )
-        await setAmountHederaReserve(
-            BigNumber.from(1),
-            proxyAddress,
-            operatorClient
-        )
-        const afterUpdateAmount = await latestRoundDataDataHederaReserve(
-            proxyAddress,
-            operatorClient
-        )
+        const beforeUpdateAmount = await latestRoundDataDataHederaReserve(proxyAddress, operatorClient)
+        await setAmountHederaReserve(BigNumber.from(1), proxyAddress, operatorClient)
+        const afterUpdateAmount = await latestRoundDataDataHederaReserve(proxyAddress, operatorClient)
         expect(beforeUpdateAmount).not.to.equals(afterUpdateAmount)
         expect(afterUpdateAmount).to.equals(BigNumber.from(1).toString())
 
         //RESET
         await setAmountHederaReserve(reserve, proxyAddress, operatorClient)
-        const amountReset = await latestRoundDataDataHederaReserve(
-            proxyAddress,
-            operatorClient
-        )
+        const amountReset = await latestRoundDataDataHederaReserve(proxyAddress, operatorClient)
         expect(amountReset).to.equals(reserve.toString())
     })
 
     it('Get decimals', async function () {
-        const decimals = await decimalsHederaReserve(
-            proxyAddress,
-            operatorClient
-        )
+        const decimals = await decimalsHederaReserve(proxyAddress, operatorClient)
         expect(decimals).to.equals('2')
     })
 
     it('Get description', async function () {
-        const decimals = await descriptionHederaReserve(
-            proxyAddress,
-            operatorClient
-        )
+        const decimals = await descriptionHederaReserve(proxyAddress, operatorClient)
         expect(decimals).to.equals('Example Hedera Reserve for ChainLink')
     })
 
     it('Get version', async function () {
-        const decimals = await versionHederaReserve(
-            proxyAddress,
-            operatorClient
-        )
+        const decimals = await versionHederaReserve(proxyAddress, operatorClient)
         expect(decimals).to.equals('1')
     })
 
     it('Get latestRoundData', async function () {
-        const amountReset = await latestRoundDataDataHederaReserve(
-            proxyAddress,
-            operatorClient
-        )
+        const amountReset = await latestRoundDataDataHederaReserve(proxyAddress, operatorClient)
         expect(amountReset).to.equals(reserve.toString())
     })
 })
@@ -212,45 +174,31 @@ describe.skip('HederaReserveProxy and HederaReserveProxyAdmin Tests', function (
             proxyAdminAbi,
             proxyAdminAddress,
             operatorClient,
-            (
-                await getContractInfo(proxyAddress.toString())
-            ).evm_address
+            (await getContractInfo(proxyAddress.toString())).evm_address
         )
         const admin = await getProxyAdmin(
             proxyAdminAbi,
             proxyAdminAddress,
             operatorClient,
-            (
-                await getContractInfo(proxyAddress.toString())
-            ).evm_address
+            (await getContractInfo(proxyAddress.toString())).evm_address
         )
 
         // We check their values : success
         expect(implementation.toUpperCase()).to.equals(
-            (
-                await getContractInfo(hederaReserveAddress.toString())
-            ).evm_address.toUpperCase()
+            (await getContractInfo(hederaReserveAddress.toString())).evm_address.toUpperCase()
         )
         expect(admin.toUpperCase()).to.equals(
-            (
-                await getContractInfo(proxyAdminAddress.toString())
-            ).evm_address.toUpperCase()
+            (await getContractInfo(proxyAdminAddress.toString())).evm_address.toUpperCase()
         )
     })
 
     it('Retrieve proxy admin owner', async function () {
         // We retreive the HederaReserveProxy admin and implementation
-        const ownerAccount = await owner(
-            proxyAdminAbi,
-            proxyAdminAddress,
-            operatorClient
-        )
+        const ownerAccount = await owner(proxyAdminAbi, proxyAdminAddress, operatorClient)
 
         // We check their values : success
         expect(ownerAccount.toUpperCase()).to.equals(
-            (
-                await toEvmAddress(operatorAccount, operatorIsE25519)
-            ).toUpperCase()
+            (await toEvmAddress(operatorAccount, operatorIsE25519)).toUpperCase()
         )
     })
 
@@ -272,9 +220,7 @@ describe.skip('HederaReserveProxy and HederaReserveProxyAdmin Tests', function (
                 proxyAdminAbi,
                 proxyAddress,
                 operatorClient,
-                (
-                    await getContractInfo(newImplementationContract.toString())
-                ).evm_address
+                (await getContractInfo(newImplementationContract.toString())).evm_address
             )
         ).to.eventually.be.rejectedWith(Error)
     })
@@ -308,12 +254,8 @@ describe.skip('HederaReserveProxy and HederaReserveProxyAdmin Tests', function (
                 proxyAdminAbi,
                 proxyAdminAddress,
                 nonOperatorClient,
-                (
-                    await getContractInfo(newImplementationContract.toString())
-                ).evm_address,
-                (
-                    await getContractInfo(proxyAddress.toString())
-                ).evm_address
+                (await getContractInfo(newImplementationContract.toString())).evm_address,
+                (await getContractInfo(proxyAddress.toString())).evm_address
             )
         ).to.eventually.be.rejectedWith(Error)
     })
@@ -349,12 +291,8 @@ describe.skip('HederaReserveProxy and HederaReserveProxyAdmin Tests', function (
             proxyAdminAbi,
             proxyAdminAddress,
             operatorClient,
-            (
-                await getContractInfo(newImplementationContract.toString())
-            ).evm_address,
-            (
-                await getContractInfo(proxyAddress.toString())
-            ).evm_address
+            (await getContractInfo(newImplementationContract.toString())).evm_address,
+            (await getContractInfo(proxyAddress.toString())).evm_address
         )
 
         // Check new implementation address
@@ -362,14 +300,10 @@ describe.skip('HederaReserveProxy and HederaReserveProxyAdmin Tests', function (
             proxyAdminAbi,
             proxyAdminAddress,
             operatorClient,
-            (
-                await getContractInfo(proxyAddress.toString())
-            ).evm_address
+            (await getContractInfo(proxyAddress.toString())).evm_address
         )
         expect(implementation.toUpperCase()).to.equals(
-            (
-                await getContractInfo(newImplementationContract.toString())
-            ).evm_address.toUpperCase()
+            (await getContractInfo(newImplementationContract.toString())).evm_address.toUpperCase()
         )
 
         // reset
@@ -377,12 +311,8 @@ describe.skip('HederaReserveProxy and HederaReserveProxyAdmin Tests', function (
             proxyAdminAbi,
             proxyAdminAddress,
             operatorClient,
-            (
-                await getContractInfo(hederaReserveAddress.toString())
-            ).evm_address,
-            (
-                await getContractInfo(proxyAddress.toString())
-            ).evm_address
+            (await getContractInfo(hederaReserveAddress.toString())).evm_address,
+            (await getContractInfo(proxyAddress.toString())).evm_address
         )
     })
 
@@ -403,23 +333,13 @@ describe.skip('HederaReserveProxy and HederaReserveProxyAdmin Tests', function (
                 proxyAdminAbi,
                 proxyAdminAddress,
                 operatorClient,
-                (
-                    await getContractInfo(proxyAddress.toString())
-                ).evm_address
+                (await getContractInfo(proxyAddress.toString())).evm_address
             )
         ).to.eventually.be.rejectedWith(Error)
 
         // Check that proxy admin has been changed
-        const _admin = await admin(
-            ITransparentUpgradeableProxy__factory.abi,
-            proxyAddress,
-            operatorClient
-        )
-        expect(_admin.toUpperCase()).to.equals(
-            (
-                await toEvmAddress(operatorAccount, operatorIsE25519)
-            ).toUpperCase()
-        )
+        const _admin = await admin(ITransparentUpgradeableProxy__factory.abi, proxyAddress, operatorClient)
+        expect(_admin.toUpperCase()).to.equals((await toEvmAddress(operatorAccount, operatorIsE25519)).toUpperCase())
 
         // reset
         await changeAdmin(
@@ -432,9 +352,7 @@ describe.skip('HederaReserveProxy and HederaReserveProxyAdmin Tests', function (
             ITransparentUpgradeableProxy__factory.abi,
             proxyAddress,
             nonOperatorClient,
-            (
-                await getContractInfo(proxyAdminAddress.toString())
-            ).evm_address
+            (await getContractInfo(proxyAdminAddress.toString())).evm_address
         )
     })
 
@@ -462,24 +380,12 @@ describe.skip('HederaReserveProxy and HederaReserveProxyAdmin Tests', function (
         )
 
         // Check
-        const ownerAccount = await owner(
-            proxyAdminAbi,
-            proxyAdminAddress,
-            operatorClient
-        )
+        const ownerAccount = await owner(proxyAdminAbi, proxyAdminAddress, operatorClient)
         expect(ownerAccount.toUpperCase()).to.equals(
-            (
-                await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)
-            ).toUpperCase()
+            (await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)).toUpperCase()
         )
 
         // reset
-        await transferOwnership(
-            proxyAdminAbi,
-            proxyAdminAddress,
-            nonOperatorClient,
-            operatorAccount,
-            operatorIsE25519
-        )
+        await transferOwnership(proxyAdminAbi, proxyAdminAddress, nonOperatorClient, operatorAccount, operatorIsE25519)
     })
 })

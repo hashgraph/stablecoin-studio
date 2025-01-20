@@ -69,21 +69,12 @@ let newFactoryProxyAddress = FACTORY_PROXY_ADDRESS
 
 describe('StableCoinFactory Tests', function () {
     before(async function () {
-        const resultTokenManager = await deployHederaTokenManager(
-            operatorClient,
-            operatorPriKey
-        )
+        const resultTokenManager = await deployHederaTokenManager(operatorClient, operatorPriKey)
         const initializeFactory = {
             admin: await toEvmAddress(operatorAccount, operatorIsE25519),
-            tokenManager: (await getContractInfo(resultTokenManager.toString()))
-                .evm_address,
+            tokenManager: (await getContractInfo(resultTokenManager.toString())).evm_address,
         }
-        const result = await deployFactory(
-            initializeFactory,
-            operatorClient,
-            operatorPriKey,
-            operatorIsE25519
-        )
+        const result = await deployFactory(initializeFactory, operatorClient, operatorPriKey, operatorIsE25519)
 
         newFactoryProxyAddress = result[0].toString()
     })
@@ -101,9 +92,7 @@ describe('StableCoinFactory Tests', function () {
             privateKey: operatorPriKey,
             publicKey: operatorPubKey,
             isED25519Type: operatorIsE25519,
-            initialAmountDataFeed: INIT_SUPPLY.add(
-                BigNumber.from('100000')
-            ).toString(),
+            initialAmountDataFeed: INIT_SUPPLY.add(BigNumber.from('100000')).toString(),
         })
     })
 
@@ -121,9 +110,7 @@ describe('StableCoinFactory Tests', function () {
             publicKey: operatorPubKey,
             isED25519Type: operatorIsE25519,
             allToContract: false,
-            initialAmountDataFeed: INIT_SUPPLY.add(
-                BigNumber.from('100000')
-            ).toString(),
+            initialAmountDataFeed: INIT_SUPPLY.add(BigNumber.from('100000')).toString(),
         })
     })
 
@@ -294,11 +281,10 @@ describe('StableCoinFactory Tests', function () {
     })
 
     it('Get hederaTokenManager addresses', async function () {
-        const addressArray: Array<string> =
-            await getHederaTokenManagerAddresses(
-                ContractId.fromString(newFactoryProxyAddress),
-                operatorClient
-            )
+        const addressArray: Array<string> = await getHederaTokenManagerAddresses(
+            ContractId.fromString(newFactoryProxyAddress),
+            operatorClient
+        )
         expect(addressArray.length).to.greaterThan(0)
     })
 
@@ -307,54 +293,34 @@ describe('StableCoinFactory Tests', function () {
             ContractId.fromString(newFactoryProxyAddress),
             operatorClient
         )
-        const operatorEvmAddress = await toEvmAddress(
-            operatorAccount,
-            operatorIsE25519
-        )
+        const operatorEvmAddress = await toEvmAddress(operatorAccount, operatorIsE25519)
 
-        expect(addressArray.toUpperCase()).to.equals(
-            operatorEvmAddress.toUpperCase()
-        )
+        expect(addressArray.toUpperCase()).to.equals(operatorEvmAddress.toUpperCase())
     })
 
     it('Add new hederaTokenManager address', async function () {
-        const newAddress = await deployHederaTokenManager(
-            operatorClient,
-            operatorPriKey
-        )
+        const newAddress = await deployHederaTokenManager(operatorClient, operatorPriKey)
         await addHederaTokenManagerVersion(
             ContractId.fromString(newFactoryProxyAddress),
             operatorClient,
-            (
-                await getContractInfo(newAddress.toString())
-            ).evm_address
+            (await getContractInfo(newAddress.toString())).evm_address
         )
-        const addressArray: Array<string> =
-            await getHederaTokenManagerAddresses(
-                ContractId.fromString(newFactoryProxyAddress),
-                operatorClient
-            )
+        const addressArray: Array<string> = await getHederaTokenManagerAddresses(
+            ContractId.fromString(newFactoryProxyAddress),
+            operatorClient
+        )
 
-        expect(addressArray.at(-1)?.toUpperCase()).to.be.equal(
-            '0X' + newAddress.toSolidityAddress().toUpperCase()
-        )
+        expect(addressArray.at(-1)?.toUpperCase()).to.be.equal('0X' + newAddress.toSolidityAddress().toUpperCase())
     })
 
     it('Add new hederaTokenManager address, throw error address is zero', async function () {
         expect(
-            addHederaTokenManagerVersion(
-                ContractId.fromString(newFactoryProxyAddress),
-                operatorClient,
-                ADDRESS_ZERO
-            )
+            addHederaTokenManagerVersion(ContractId.fromString(newFactoryProxyAddress), operatorClient, ADDRESS_ZERO)
         ).to.eventually.be.rejectedWith(Error)
     })
 
     it('Add new hederaTokenManager address throw error client no isAdmin', async function () {
-        const newAddress = await deployHederaTokenManager(
-            operatorClient,
-            operatorPriKey
-        )
+        const newAddress = await deployHederaTokenManager(operatorClient, operatorPriKey)
         expect(
             addHederaTokenManagerVersion(
                 ContractId.fromString(newFactoryProxyAddress),
@@ -365,10 +331,9 @@ describe('StableCoinFactory Tests', function () {
     })
 
     it('Edit hederaTokenManager address', async function () {
-        const newAddress = await deployHederaTokenManager(
-            operatorClient,
-            operatorPriKey
-        ).then((value) => '0x' + value.toSolidityAddress())
+        const newAddress = await deployHederaTokenManager(operatorClient, operatorPriKey).then(
+            (value) => '0x' + value.toSolidityAddress()
+        )
 
         const index = 0
 
@@ -378,15 +343,12 @@ describe('StableCoinFactory Tests', function () {
             index,
             newAddress
         )
-        const addressArray: Array<string> =
-            await getHederaTokenManagerAddresses(
-                ContractId.fromString(newFactoryProxyAddress),
-                operatorClient
-            )
-
-        expect(addressArray.at(index)?.toUpperCase()).to.be.equal(
-            newAddress.toUpperCase()
+        const addressArray: Array<string> = await getHederaTokenManagerAddresses(
+            ContractId.fromString(newFactoryProxyAddress),
+            operatorClient
         )
+
+        expect(addressArray.at(index)?.toUpperCase()).to.be.equal(newAddress.toUpperCase())
     })
 
     it('Edit hederaTokenManager address, throw error address is zero', async function () {
@@ -401,10 +363,9 @@ describe('StableCoinFactory Tests', function () {
     })
 
     it('Edit hederaTokenManager address throw error client no isAdmin', async function () {
-        const newAddress = await deployHederaTokenManager(
-            operatorClient,
-            operatorPriKey
-        ).then((value) => '0x' + value.toSolidityAddress())
+        const newAddress = await deployHederaTokenManager(operatorClient, operatorPriKey).then(
+            (value) => '0x' + value.toSolidityAddress()
+        )
         expect(
             editHederaTokenManagerVersion(
                 ContractId.fromString(newFactoryProxyAddress),
@@ -416,15 +377,8 @@ describe('StableCoinFactory Tests', function () {
     })
 
     it('Change admin stablecoinFactory', async function () {
-        const newAdmin = await toEvmAddress(
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-        await changeAdminStablecoinFactory(
-            ContractId.fromString(newFactoryProxyAddress),
-            operatorClient,
-            newAdmin
-        )
+        const newAdmin = await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)
+        await changeAdminStablecoinFactory(ContractId.fromString(newFactoryProxyAddress), operatorClient, newAdmin)
 
         const checkNewAdmin = await getAdminStableCoinFactory(
             ContractId.fromString(newFactoryProxyAddress),
@@ -435,11 +389,7 @@ describe('StableCoinFactory Tests', function () {
 
         const realAdmin = await toEvmAddress(operatorAccount, operatorIsE25519)
 
-        await changeAdminStablecoinFactory(
-            ContractId.fromString(newFactoryProxyAddress),
-            nonOperatorClient,
-            realAdmin
-        )
+        await changeAdminStablecoinFactory(ContractId.fromString(newFactoryProxyAddress), nonOperatorClient, realAdmin)
 
         const checkRealAdmin = await getAdminStableCoinFactory(
             ContractId.fromString(newFactoryProxyAddress),
@@ -451,64 +401,38 @@ describe('StableCoinFactory Tests', function () {
 
     it('Change admin, throw error address is zero', async function () {
         expect(
-            changeAdminStablecoinFactory(
-                ContractId.fromString(newFactoryProxyAddress),
-                operatorClient,
-                ADDRESS_ZERO
-            )
+            changeAdminStablecoinFactory(ContractId.fromString(newFactoryProxyAddress), operatorClient, ADDRESS_ZERO)
         ).to.eventually.be.rejectedWith(Error)
     })
 
     it('Change admin, throw error client no isAdmin', async function () {
-        const newAdmin = await toEvmAddress(
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
+        const newAdmin = await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)
         expect(
-            changeAdminStablecoinFactory(
-                ContractId.fromString(newFactoryProxyAddress),
-                nonOperatorClient,
-                newAdmin
-            )
+            changeAdminStablecoinFactory(ContractId.fromString(newFactoryProxyAddress), nonOperatorClient, newAdmin)
         ).to.eventually.be.rejectedWith(Error)
     })
 
     it('Remove hederaTokenManager address', async function () {
         const index = 0
 
-        await removeHederaTokenManagerVersion(
+        await removeHederaTokenManagerVersion(ContractId.fromString(newFactoryProxyAddress), operatorClient, index)
+        const addressArray: Array<string> = await getHederaTokenManagerAddresses(
             ContractId.fromString(newFactoryProxyAddress),
-            operatorClient,
-            index
+            operatorClient
         )
-        const addressArray: Array<string> =
-            await getHederaTokenManagerAddresses(
-                ContractId.fromString(newFactoryProxyAddress),
-                operatorClient
-            )
 
-        expect(addressArray.at(index)?.toUpperCase()).to.be.equal(
-            ADDRESS_ZERO.toUpperCase()
-        )
+        expect(addressArray.at(index)?.toUpperCase()).to.be.equal(ADDRESS_ZERO.toUpperCase())
     })
 
     it('Remove hederaTokenManager address, throw error index no exists', async function () {
         expect(
-            removeHederaTokenManagerVersion(
-                ContractId.fromString(newFactoryProxyAddress),
-                operatorClient,
-                10
-            )
+            removeHederaTokenManagerVersion(ContractId.fromString(newFactoryProxyAddress), operatorClient, 10)
         ).to.eventually.be.rejectedWith(Error)
     })
 
     it('Remove hederaTokenManager address throw error client no isAdmin', async function () {
         expect(
-            removeHederaTokenManagerVersion(
-                ContractId.fromString(newFactoryProxyAddress),
-                nonOperatorClient,
-                0
-            )
+            removeHederaTokenManagerVersion(ContractId.fromString(newFactoryProxyAddress), nonOperatorClient, 0)
         ).to.eventually.be.rejectedWith(Error)
     })
 })
@@ -517,25 +441,13 @@ describe('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', functio
     before(async function () {
         // Deploy Token using Client
         clientSdk = getClient()
-        clientSdk.setOperator(
-            operatorAccount,
-            toHashgraphKey(operatorPriKey, operatorIsE25519)
-        )
-        const hederaTokenManager = await deployHederaTokenManager(
-            clientSdk,
-            operatorPriKey
-        )
+        clientSdk.setOperator(operatorAccount, toHashgraphKey(operatorPriKey, operatorIsE25519))
+        const hederaTokenManager = await deployHederaTokenManager(clientSdk, operatorPriKey)
         const initializeFactory = {
             admin: await toEvmAddress(operatorAccount, operatorIsE25519),
-            tokenManager: (await getContractInfo(hederaTokenManager.toString()))
-                .evm_address,
+            tokenManager: (await getContractInfo(hederaTokenManager.toString())).evm_address,
         }
-        const result = await deployFactory(
-            initializeFactory,
-            clientSdk,
-            operatorPriKey,
-            operatorIsE25519
-        )
+        const result = await deployFactory(initializeFactory, clientSdk, operatorPriKey, operatorIsE25519)
 
         proxyAddress = result[0]
         proxyAdminAddress = result[1]
@@ -547,28 +459,20 @@ describe('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', functio
         const implementation = await getProxyImplementation_SCF(
             proxyAdminAddress,
             operatorClient,
-            (
-                await getContractInfo(proxyAddress.toString())
-            ).evm_address
+            (await getContractInfo(proxyAddress.toString())).evm_address
         )
         const admin = await getProxyAdmin_SCF(
             proxyAdminAddress,
             operatorClient,
-            (
-                await getContractInfo(proxyAddress.toString())
-            ).evm_address
+            (await getContractInfo(proxyAddress.toString())).evm_address
         )
 
         // We check their values : success
         expect(implementation.toUpperCase()).to.equals(
-            (
-                await getContractInfo(factoryAddress.toString())
-            ).evm_address.toUpperCase()
+            (await getContractInfo(factoryAddress.toString())).evm_address.toUpperCase()
         )
         expect(admin.toUpperCase()).to.equals(
-            (
-                await getContractInfo(proxyAdminAddress.toString())
-            ).evm_address.toUpperCase()
+            (await getContractInfo(proxyAdminAddress.toString())).evm_address.toUpperCase()
         )
     })
 
@@ -578,29 +482,18 @@ describe('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', functio
 
         // We check their values : success
         expect(ownerAccount.toUpperCase()).to.equals(
-            (
-                await toEvmAddress(operatorAccount, operatorIsE25519)
-            ).toUpperCase()
+            (await toEvmAddress(operatorAccount, operatorIsE25519)).toUpperCase()
         )
     })
 
     it('Upgrade Proxy implementation without the proxy admin', async function () {
         // Deploy a new contract
-        const hederaTokenManager = await deployHederaTokenManager(
-            clientSdk,
-            operatorPriKey
-        )
+        const hederaTokenManager = await deployHederaTokenManager(clientSdk, operatorPriKey)
         const initializeFactory = {
             admin: await toEvmAddress(operatorAccount, operatorIsE25519),
-            tokenManager: (await getContractInfo(hederaTokenManager.toString()))
-                .evm_address,
+            tokenManager: (await getContractInfo(hederaTokenManager.toString())).evm_address,
         }
-        const result = await deployFactory(
-            initializeFactory,
-            clientSdk,
-            operatorPriKey,
-            operatorIsE25519
-        )
+        const result = await deployFactory(initializeFactory, clientSdk, operatorPriKey, operatorIsE25519)
 
         const newImplementationContract = result[2]
 
@@ -609,9 +502,7 @@ describe('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', functio
             upgradeTo_SCF(
                 proxyAddress,
                 operatorClient,
-                (
-                    await getContractInfo(newImplementationContract.toString())
-                ).evm_address
+                (await getContractInfo(newImplementationContract.toString())).evm_address
             )
         ).to.eventually.be.rejectedWith(Error)
     })
@@ -628,22 +519,13 @@ describe('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', functio
     })
 
     it('Upgrade Proxy implementation with the proxy admin but without the owner account', async function () {
-        const hederaTokenManager = await deployHederaTokenManager(
-            clientSdk,
-            operatorPriKey
-        )
+        const hederaTokenManager = await deployHederaTokenManager(clientSdk, operatorPriKey)
         const initializeFactory = {
             admin: await toEvmAddress(operatorAccount, operatorIsE25519),
-            tokenManager: (await getContractInfo(hederaTokenManager.toString()))
-                .evm_address,
+            tokenManager: (await getContractInfo(hederaTokenManager.toString())).evm_address,
         }
         // Deploy a new contract
-        const result = await deployFactory(
-            initializeFactory,
-            clientSdk,
-            operatorPriKey,
-            operatorIsE25519
-        )
+        const result = await deployFactory(initializeFactory, clientSdk, operatorPriKey, operatorIsE25519)
 
         const newImplementationContract = result[2]
 
@@ -652,12 +534,8 @@ describe('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', functio
             upgrade_SCF(
                 proxyAdminAddress,
                 nonOperatorClient,
-                (
-                    await getContractInfo(newImplementationContract.toString())
-                ).evm_address,
-                (
-                    await getContractInfo(proxyAddress.toString())
-                ).evm_address
+                (await getContractInfo(newImplementationContract.toString())).evm_address,
+                (await getContractInfo(proxyAddress.toString())).evm_address
             )
         ).to.eventually.be.rejectedWith(Error)
     })
@@ -676,22 +554,13 @@ describe('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', functio
     })
 
     it('Upgrade Proxy implementation with the proxy admin and the owner account', async function () {
-        const hederaTokenManager = await deployHederaTokenManager(
-            clientSdk,
-            operatorPriKey
-        )
+        const hederaTokenManager = await deployHederaTokenManager(clientSdk, operatorPriKey)
         const initializeFactory = {
             admin: await toEvmAddress(operatorAccount, operatorIsE25519),
-            tokenManager: (await getContractInfo(hederaTokenManager.toString()))
-                .evm_address,
+            tokenManager: (await getContractInfo(hederaTokenManager.toString())).evm_address,
         }
         // Deploy a new contract
-        const result = await deployFactory(
-            initializeFactory,
-            clientSdk,
-            operatorPriKey,
-            operatorIsE25519
-        )
+        const result = await deployFactory(initializeFactory, clientSdk, operatorPriKey, operatorIsE25519)
 
         const newImplementationContract = result[2]
 
@@ -699,115 +568,70 @@ describe('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', functio
         await upgrade_SCF(
             proxyAdminAddress,
             operatorClient,
-            (
-                await getContractInfo(newImplementationContract.toString())
-            ).evm_address,
-            (
-                await getContractInfo(proxyAddress.toString())
-            ).evm_address
+            (await getContractInfo(newImplementationContract.toString())).evm_address,
+            (await getContractInfo(proxyAddress.toString())).evm_address
         )
 
         // Check new implementation address
         const implementation = await getProxyImplementation_SCF(
             proxyAdminAddress,
             operatorClient,
-            (
-                await getContractInfo(proxyAddress.toString())
-            ).evm_address
+            (await getContractInfo(proxyAddress.toString())).evm_address
         )
         expect(implementation.toUpperCase()).to.equals(
-            (
-                await getContractInfo(newImplementationContract.toString())
-            ).evm_address.toUpperCase()
+            (await getContractInfo(newImplementationContract.toString())).evm_address.toUpperCase()
         )
 
         // reset
         await upgrade_SCF(
             proxyAdminAddress,
             operatorClient,
-            (
-                await getContractInfo(factoryAddress.toString())
-            ).evm_address,
-            (
-                await getContractInfo(proxyAddress.toString())
-            ).evm_address
+            (await getContractInfo(factoryAddress.toString())).evm_address,
+            (await getContractInfo(proxyAddress.toString())).evm_address
         )
     })
 
     it('Change Proxy admin with the proxy admin and the owner account', async function () {
         // Owner changes admin : success
-        await changeProxyAdmin_SCF(
-            proxyAdminAddress,
-            operatorClient,
-            operatorAccount,
-            proxyAddress,
-            operatorIsE25519
-        )
+        await changeProxyAdmin_SCF(proxyAdminAddress, operatorClient, operatorAccount, proxyAddress, operatorIsE25519)
 
         // Now we cannot get the admin using the Proxy admin contract.
         await expect(
             getProxyAdmin_SCF(
                 proxyAdminAddress,
                 operatorClient,
-                (
-                    await getContractInfo(proxyAddress.toString())
-                ).evm_address
+                (await getContractInfo(proxyAddress.toString())).evm_address
             )
         ).to.eventually.be.rejectedWith(Error)
 
         // Check that proxy admin has been changed
         const _admin = await admin_SCF(proxyAddress, operatorClient)
-        expect(_admin.toUpperCase()).to.equals(
-            (
-                await toEvmAddress(operatorAccount, operatorIsE25519)
-            ).toUpperCase()
-        )
+        expect(_admin.toUpperCase()).to.equals((await toEvmAddress(operatorAccount, operatorIsE25519)).toUpperCase())
 
         // reset
-        await changeAdmin_SCF(
-            proxyAddress,
-            operatorClient,
-            await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)
-        )
+        await changeAdmin_SCF(proxyAddress, operatorClient, await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519))
         await changeAdmin_SCF(
             proxyAddress,
             nonOperatorClient,
-            (
-                await getContractInfo(proxyAdminAddress.toString())
-            ).evm_address
+            (await getContractInfo(proxyAdminAddress.toString())).evm_address
         )
     })
 
     it('Transfers Proxy admin owner without the owner account', async function () {
         // Non Owner transfers owner : fail
         await expect(
-            transferOwnership_SCF(
-                proxyAdminAddress,
-                nonOperatorClient,
-                nonOperatorAccount,
-                nonOperatorIsE25519
-            )
+            transferOwnership_SCF(proxyAdminAddress, nonOperatorClient, nonOperatorAccount, nonOperatorIsE25519)
         ).to.eventually.be.rejectedWith(Error)
     })
 
     it('Transfers Proxy admin owner with the owner account', async function () {
         // Owner transfers owner : success
-        await transferOwnership_SCF(
-            proxyAdminAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
+        await transferOwnership_SCF(proxyAdminAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519)
 
         // Check
-        const pendingOwnerAccount = await pendingOwner_SCF(
-            proxyAdminAddress,
-            operatorClient
-        )
+        const pendingOwnerAccount = await pendingOwner_SCF(proxyAdminAddress, operatorClient)
         expect(pendingOwnerAccount.toUpperCase()).to.equals(
-            (
-                await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)
-            ).toUpperCase()
+            (await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)).toUpperCase()
         )
 
         // Accept owner change
@@ -816,18 +640,11 @@ describe('StableCoinFactoryProxy and StableCoinFactoryProxyAdmin Tests', functio
         // Check
         const ownerAccount = await owner_SCF(proxyAdminAddress, operatorClient)
         expect(ownerAccount.toUpperCase()).to.equals(
-            (
-                await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)
-            ).toUpperCase()
+            (await toEvmAddress(nonOperatorAccount, nonOperatorIsE25519)).toUpperCase()
         )
 
         // reset
-        await transferOwnership_SCF(
-            proxyAdminAddress,
-            nonOperatorClient,
-            operatorAccount,
-            operatorIsE25519
-        )
+        await transferOwnership_SCF(proxyAdminAddress, nonOperatorClient, operatorAccount, operatorIsE25519)
 
         await acceptOwnership_SCF(proxyAdminAddress, operatorClient)
     })

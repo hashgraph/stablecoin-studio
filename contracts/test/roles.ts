@@ -3,13 +3,7 @@ import '@hashgraph/hardhat-hethers'
 import '@hashgraph/sdk'
 import { BigNumber } from 'ethers'
 import { deployContractsWithSDK } from '../scripts/deploy'
-import {
-    getRoleId,
-    getRoles,
-    grantRole,
-    hasRole,
-    revokeRole,
-} from '../scripts/contractsMethods'
+import { getRoleId, getRoles, grantRole, hasRole, revokeRole } from '../scripts/contractsMethods'
 import {
     BURN_ROLE,
     CASHIN_ROLE,
@@ -63,9 +57,7 @@ describe('Roles Tests', function () {
             privateKey: operatorPriKey,
             publicKey: operatorPubKey,
             isED25519Type: operatorIsE25519,
-            initialAmountDataFeed: INIT_SUPPLY.add(
-                BigNumber.from('100000')
-            ).toString(),
+            initialAmountDataFeed: INIT_SUPPLY.add(BigNumber.from('100000')).toString(),
         })
 
         proxyAddress = result[0]
@@ -73,311 +65,89 @@ describe('Roles Tests', function () {
 
     it('Admin account can grant and revoke a role to an account', async function () {
         // Admin grants burn role : success
-        let result = await hasRole(
-            BURN_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
+        let result = await hasRole(BURN_ROLE, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519)
         expect(result).to.equals(false)
 
-        await grantRole(
-            BURN_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
+        await grantRole(BURN_ROLE, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519)
 
-        result = await hasRole(
-            BURN_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
+        result = await hasRole(BURN_ROLE, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519)
         expect(result).to.equals(true)
 
         // Admin revokes burn role : success
-        await revokeRole(
-            BURN_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-        result = await hasRole(
-            BURN_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
+        await revokeRole(BURN_ROLE, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519)
+        result = await hasRole(BURN_ROLE, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519)
         expect(result).to.equals(false)
     })
 
     it('Non Admin account can not grant a role to an account', async function () {
         // Non Admin grants burn role : fail
         await expect(
-            grantRole(
-                BURN_ROLE,
-                proxyAddress,
-                nonOperatorClient,
-                nonOperatorAccount,
-                nonOperatorIsE25519
-            )
+            grantRole(BURN_ROLE, proxyAddress, nonOperatorClient, nonOperatorAccount, nonOperatorIsE25519)
         ).to.eventually.be.rejectedWith(Error)
     })
 
     it('Non Admin account can not revoke a role from an account', async function () {
         // Non Admin revokes burn role : fail
-        await grantRole(
-            BURN_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
+        await grantRole(BURN_ROLE, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519)
         await expect(
-            revokeRole(
-                BURN_ROLE,
-                proxyAddress,
-                nonOperatorClient,
-                nonOperatorAccount,
-                nonOperatorIsE25519
-            )
+            revokeRole(BURN_ROLE, proxyAddress, nonOperatorClient, nonOperatorAccount, nonOperatorIsE25519)
         ).to.eventually.be.rejectedWith(Error)
 
         //Reset status
-        await revokeRole(
-            BURN_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
+        await revokeRole(BURN_ROLE, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519)
     })
 
     it('Getting roles', async function () {
         // Checking roles
-        let result = await getRoles(
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
+        let result = await getRoles(proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519)
 
         result.forEach((role: string) => {
             expect(role.toUpperCase()).to.equals(WITHOUT_ROLE.toUpperCase())
         })
 
         // Assigning roles
-        await grantRole(
-            DEFAULT_ADMIN_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-        await grantRole(
-            CASHIN_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-        await grantRole(
-            BURN_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-        await grantRole(
-            DELETE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-        await grantRole(
-            FREEZE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-        await grantRole(
-            PAUSE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-        await grantRole(
-            RESCUE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-        await grantRole(
-            WIPE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-        await grantRole(
-            KYC_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-        await grantRole(
-            CUSTOM_FEES_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
+        await grantRole(DEFAULT_ADMIN_ROLE, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519)
+        await grantRole(CASHIN_ROLE, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519)
+        await grantRole(BURN_ROLE, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519)
+        await grantRole(DELETE_ROLE, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519)
+        await grantRole(FREEZE_ROLE, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519)
+        await grantRole(PAUSE_ROLE, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519)
+        await grantRole(RESCUE_ROLE, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519)
+        await grantRole(WIPE_ROLE, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519)
+        await grantRole(KYC_ROLE, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519)
+        await grantRole(CUSTOM_FEES_ROLE, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519)
 
         // Checking roles
-        result = await getRoles(
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
+        result = await getRoles(proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519)
 
         for (let i = 0; i < result.length; i++) {
-            if (i == RolesId.Cashin)
-                expect(result[i].toUpperCase()).to.equals(
-                    CASHIN_ROLE.toUpperCase()
-                )
-            else if (i == RolesId.Burn)
-                expect(result[i].toUpperCase()).to.equals(
-                    BURN_ROLE.toUpperCase()
-                )
-            else if (i == RolesId.Delete)
-                expect(result[i].toUpperCase()).to.equals(
-                    DELETE_ROLE.toUpperCase()
-                )
-            else if (i == RolesId.Freeze)
-                expect(result[i].toUpperCase()).to.equals(
-                    FREEZE_ROLE.toUpperCase()
-                )
-            else if (i == RolesId.Wipe)
-                expect(result[i].toUpperCase()).to.equals(
-                    WIPE_ROLE.toUpperCase()
-                )
-            else if (i == RolesId.Rescue)
-                expect(result[i].toUpperCase()).to.equals(
-                    RESCUE_ROLE.toUpperCase()
-                )
-            else if (i == RolesId.Pause)
-                expect(result[i].toUpperCase()).to.equals(
-                    PAUSE_ROLE.toUpperCase()
-                )
-            else if (i == RolesId.Kyc)
-                expect(result[i].toUpperCase()).to.equals(
-                    KYC_ROLE.toUpperCase()
-                )
-            else if (i == RolesId.CustomFees)
-                expect(result[i].toUpperCase()).to.equals(
-                    CUSTOM_FEES_ROLE.toUpperCase()
-                )
-            else if (i == RolesId.Admin)
-                expect(result[i].toUpperCase()).to.equals(
-                    DEFAULT_ADMIN_ROLE.toUpperCase()
-                )
-            else
-                expect(result[i].toUpperCase()).to.equals(
-                    WITHOUT_ROLE.toUpperCase()
-                )
+            if (i == RolesId.Cashin) expect(result[i].toUpperCase()).to.equals(CASHIN_ROLE.toUpperCase())
+            else if (i == RolesId.Burn) expect(result[i].toUpperCase()).to.equals(BURN_ROLE.toUpperCase())
+            else if (i == RolesId.Delete) expect(result[i].toUpperCase()).to.equals(DELETE_ROLE.toUpperCase())
+            else if (i == RolesId.Freeze) expect(result[i].toUpperCase()).to.equals(FREEZE_ROLE.toUpperCase())
+            else if (i == RolesId.Wipe) expect(result[i].toUpperCase()).to.equals(WIPE_ROLE.toUpperCase())
+            else if (i == RolesId.Rescue) expect(result[i].toUpperCase()).to.equals(RESCUE_ROLE.toUpperCase())
+            else if (i == RolesId.Pause) expect(result[i].toUpperCase()).to.equals(PAUSE_ROLE.toUpperCase())
+            else if (i == RolesId.Kyc) expect(result[i].toUpperCase()).to.equals(KYC_ROLE.toUpperCase())
+            else if (i == RolesId.CustomFees) expect(result[i].toUpperCase()).to.equals(CUSTOM_FEES_ROLE.toUpperCase())
+            else if (i == RolesId.Admin) expect(result[i].toUpperCase()).to.equals(DEFAULT_ADMIN_ROLE.toUpperCase())
+            else expect(result[i].toUpperCase()).to.equals(WITHOUT_ROLE.toUpperCase())
         }
 
         // Revoking roles
-        await revokeRole(
-            CASHIN_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-        await revokeRole(
-            BURN_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-        await revokeRole(
-            PAUSE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-        await revokeRole(
-            RESCUE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-        await revokeRole(
-            WIPE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-        await revokeRole(
-            FREEZE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-        await revokeRole(
-            DELETE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-        await revokeRole(
-            KYC_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-        await revokeRole(
-            CUSTOM_FEES_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
-        await revokeRole(
-            DEFAULT_ADMIN_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
+        await revokeRole(CASHIN_ROLE, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519)
+        await revokeRole(BURN_ROLE, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519)
+        await revokeRole(PAUSE_ROLE, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519)
+        await revokeRole(RESCUE_ROLE, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519)
+        await revokeRole(WIPE_ROLE, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519)
+        await revokeRole(FREEZE_ROLE, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519)
+        await revokeRole(DELETE_ROLE, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519)
+        await revokeRole(KYC_ROLE, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519)
+        await revokeRole(CUSTOM_FEES_ROLE, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519)
+        await revokeRole(DEFAULT_ADMIN_ROLE, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519)
 
         // Checking roles
-        result = await getRoles(
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
+        result = await getRoles(proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519)
 
         result.forEach((role: string) => {
             expect(role.toUpperCase()).to.equals(WITHOUT_ROLE.toUpperCase())
@@ -386,61 +156,19 @@ describe('Roles Tests', function () {
 
     it('Getting roles Id', async function () {
         // Retrieving roles
-        const roleAdmin = await getRoleId(
-            proxyAddress,
-            operatorClient,
-            RolesId.Admin
-        )
-        const roleCashin = await getRoleId(
-            proxyAddress,
-            operatorClient,
-            RolesId.Cashin
-        )
-        const roleBurn = await getRoleId(
-            proxyAddress,
-            operatorClient,
-            RolesId.Burn
-        )
-        const rolePause = await getRoleId(
-            proxyAddress,
-            operatorClient,
-            RolesId.Pause
-        )
-        const roleWipe = await getRoleId(
-            proxyAddress,
-            operatorClient,
-            RolesId.Wipe
-        )
-        const roleRescue = await getRoleId(
-            proxyAddress,
-            operatorClient,
-            RolesId.Rescue
-        )
-        const roleFreeze = await getRoleId(
-            proxyAddress,
-            operatorClient,
-            RolesId.Freeze
-        )
-        const roleDelete = await getRoleId(
-            proxyAddress,
-            operatorClient,
-            RolesId.Delete
-        )
-        const roleKyc = await getRoleId(
-            proxyAddress,
-            operatorClient,
-            RolesId.Kyc
-        )
-        const roleCustomFees = await getRoleId(
-            proxyAddress,
-            operatorClient,
-            RolesId.CustomFees
-        )
+        const roleAdmin = await getRoleId(proxyAddress, operatorClient, RolesId.Admin)
+        const roleCashin = await getRoleId(proxyAddress, operatorClient, RolesId.Cashin)
+        const roleBurn = await getRoleId(proxyAddress, operatorClient, RolesId.Burn)
+        const rolePause = await getRoleId(proxyAddress, operatorClient, RolesId.Pause)
+        const roleWipe = await getRoleId(proxyAddress, operatorClient, RolesId.Wipe)
+        const roleRescue = await getRoleId(proxyAddress, operatorClient, RolesId.Rescue)
+        const roleFreeze = await getRoleId(proxyAddress, operatorClient, RolesId.Freeze)
+        const roleDelete = await getRoleId(proxyAddress, operatorClient, RolesId.Delete)
+        const roleKyc = await getRoleId(proxyAddress, operatorClient, RolesId.Kyc)
+        const roleCustomFees = await getRoleId(proxyAddress, operatorClient, RolesId.CustomFees)
 
         // Checking
-        expect(roleAdmin.toUpperCase()).to.equals(
-            DEFAULT_ADMIN_ROLE.toUpperCase()
-        )
+        expect(roleAdmin.toUpperCase()).to.equals(DEFAULT_ADMIN_ROLE.toUpperCase())
         expect(roleCashin.toUpperCase()).to.equals(CASHIN_ROLE.toUpperCase())
         expect(roleBurn.toUpperCase()).to.equals(BURN_ROLE.toUpperCase())
         expect(rolePause.toUpperCase()).to.equals(PAUSE_ROLE.toUpperCase())
@@ -449,8 +177,6 @@ describe('Roles Tests', function () {
         expect(roleFreeze.toUpperCase()).to.equals(FREEZE_ROLE.toUpperCase())
         expect(roleDelete.toUpperCase()).to.equals(DELETE_ROLE.toUpperCase())
         expect(roleKyc.toUpperCase()).to.equals(KYC_ROLE.toUpperCase())
-        expect(roleCustomFees.toUpperCase()).to.equals(
-            CUSTOM_FEES_ROLE.toUpperCase()
-        )
+        expect(roleCustomFees.toUpperCase()).to.equals(CUSTOM_FEES_ROLE.toUpperCase())
     })
 })

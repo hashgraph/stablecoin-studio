@@ -50,38 +50,22 @@ describe('Pause Tests', function () {
     })
 
     it("An account without PAUSE role can't pause a token", async function () {
-        await expect(
-            pause(proxyAddress, nonOperatorClient)
-        ).to.eventually.be.rejectedWith(Error)
+        await expect(pause(proxyAddress, nonOperatorClient)).to.eventually.be.rejectedWith(Error)
     })
 
     it("An account with PAUSE role can pause and unpause a token + An account without PAUSE role can't unpause a token", async function () {
-        await associateToken(
-            token.toString(),
-            nonOperatorAccount,
-            nonOperatorClient
-        )
+        await associateToken(token.toString(), nonOperatorAccount, nonOperatorClient)
 
         await pause(proxyAddress, operatorClient)
 
         await expect(
-            dissociateToken(
-                token.toString(),
-                nonOperatorAccount,
-                nonOperatorClient
-            )
+            dissociateToken(token.toString(), nonOperatorAccount, nonOperatorClient)
         ).to.eventually.be.rejectedWith(Error)
 
-        await expect(
-            unpause(proxyAddress, nonOperatorClient)
-        ).to.eventually.be.rejectedWith(Error)
+        await expect(unpause(proxyAddress, nonOperatorClient)).to.eventually.be.rejectedWith(Error)
 
         await unpause(proxyAddress, operatorClient)
 
-        await dissociateToken(
-            token.toString(),
-            nonOperatorAccount,
-            nonOperatorClient
-        )
+        await dissociateToken(token.toString(), nonOperatorAccount, nonOperatorClient)
     })
 })

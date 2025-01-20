@@ -61,21 +61,13 @@ describe('Rescue Tests', function () {
             privateKey: operatorPriKey,
             publicKey: operatorPubKey,
             isED25519Type: operatorIsE25519,
-            initialAmountDataFeed: INIT_SUPPLY.add(
-                BigNumber.from('100000')
-            ).toString(),
+            initialAmountDataFeed: INIT_SUPPLY.add(BigNumber.from('100000')).toString(),
         })
 
         proxyAddress = result[0]
         token = result[8]
 
-        await transferHBAR(
-            operatorAccount,
-            proxyAddress.toString(),
-            HBARInitialAmount,
-            operatorClient,
-            false
-        )
+        await transferHBAR(operatorAccount, proxyAddress.toString(), HBARInitialAmount, operatorClient, false)
 
         await delay(3000)
     })
@@ -87,18 +79,11 @@ describe('Rescue Tests', function () {
         const initialTokenOwnerBalance = await getBalanceOf(
             proxyAddress,
             operatorClient,
-            (
-                await getContractInfo(proxyAddress.toString())
-            ).evm_address,
+            (await getContractInfo(proxyAddress.toString())).evm_address,
             false,
             false
         )
-        const initialClientBalance = await getBalanceOf(
-            proxyAddress,
-            operatorClient,
-            operatorAccount,
-            operatorIsE25519
-        )
+        const initialClientBalance = await getBalanceOf(proxyAddress, operatorClient, operatorAccount, operatorIsE25519)
 
         // rescue some tokens
         await rescue(proxyAddress, tenTokens, operatorClient)
@@ -107,29 +92,17 @@ describe('Rescue Tests', function () {
         const finalTokenOwnerBalance = await getBalanceOf(
             proxyAddress,
             operatorClient,
-            (
-                await getContractInfo(proxyAddress.toString())
-            ).evm_address,
+            (await getContractInfo(proxyAddress.toString())).evm_address,
             false,
             false
         )
-        const finalClientBalance = await getBalanceOf(
-            proxyAddress,
-            operatorClient,
-            operatorAccount,
-            operatorIsE25519
-        )
+        const finalClientBalance = await getBalanceOf(proxyAddress, operatorClient, operatorAccount, operatorIsE25519)
 
-        const expectedTokenOwnerBalance =
-            initialTokenOwnerBalance.sub(tenTokens)
+        const expectedTokenOwnerBalance = initialTokenOwnerBalance.sub(tenTokens)
         const expectedClientBalance = initialClientBalance.add(tenTokens)
 
-        expect(finalTokenOwnerBalance.toString()).to.equals(
-            expectedTokenOwnerBalance.toString()
-        )
-        expect(finalClientBalance.toString()).to.equals(
-            expectedClientBalance.toString()
-        )
+        expect(finalTokenOwnerBalance.toString()).to.equals(expectedTokenOwnerBalance.toString())
+        expect(finalClientBalance.toString()).to.equals(expectedClientBalance.toString())
     })
 
     it('Account with RESCUE role cannot rescue more tokens than the token owner balance', async function () {
@@ -137,74 +110,52 @@ describe('Rescue Tests', function () {
         const TokenOwnerBalance = await getBalanceOf(
             proxyAddress,
             operatorClient,
-            (
-                await getContractInfo(proxyAddress.toString())
-            ).evm_address,
+            (await getContractInfo(proxyAddress.toString())).evm_address,
             false,
             false
         )
 
         // Rescue TokenOwnerBalance + 1 : fail
-        await expect(
-            rescue(proxyAddress, TokenOwnerBalance.add(1), operatorClient)
-        ).to.eventually.be.rejectedWith(Error)
+        await expect(rescue(proxyAddress, TokenOwnerBalance.add(1), operatorClient)).to.eventually.be.rejectedWith(
+            Error
+        )
     })
 
     it('Account without RESCUE role cannot rescue tokens', async function () {
         // Account without rescue role, rescues tokens : fail
-        await expect(
-            rescue(proxyAddress, BigNumber.from(1), nonOperatorClient)
-        ).to.eventually.be.rejectedWith(Error)
+        await expect(rescue(proxyAddress, BigNumber.from(1), nonOperatorClient)).to.eventually.be.rejectedWith(Error)
     })
 
     it('Account with RESCUE role can rescue 1 HBAR', async function () {
         // Get the initial balance of the token owner and client
         const AmountToRescue = BigNumber.from(1).mul(HBARFactor)
-        const initialTokenOwnerBalance = await getHBARBalanceOf(
-            proxyAddress.toString(),
-            operatorClient,
-            false,
-            false
-        )
+        const initialTokenOwnerBalance = await getHBARBalanceOf(proxyAddress.toString(), operatorClient, false, false)
 
         // rescue some tokens
         await rescueHBAR(proxyAddress, AmountToRescue, operatorClient)
         await delay(3000)
 
         // check new balances : success
-        const finalTokenOwnerBalance = await getHBARBalanceOf(
-            proxyAddress.toString(),
-            operatorClient,
-            false,
-            false
-        )
+        const finalTokenOwnerBalance = await getHBARBalanceOf(proxyAddress.toString(), operatorClient, false, false)
 
-        const expectedTokenOwnerBalance =
-            initialTokenOwnerBalance.sub(AmountToRescue)
-        expect(finalTokenOwnerBalance.toString()).to.equals(
-            expectedTokenOwnerBalance.toString()
-        )
+        const expectedTokenOwnerBalance = initialTokenOwnerBalance.sub(AmountToRescue)
+        expect(finalTokenOwnerBalance.toString()).to.equals(expectedTokenOwnerBalance.toString())
     })
 
     it('Account with RESCUE role cannot rescue more HBAR than the owner balance', async function () {
         // Get the initial balance of the token owner
-        const TokenOwnerBalance = await getHBARBalanceOf(
-            proxyAddress.toString(),
-            operatorClient,
-            false,
-            false
-        )
+        const TokenOwnerBalance = await getHBARBalanceOf(proxyAddress.toString(), operatorClient, false, false)
 
         // Rescue TokenOwnerBalance + 1 : fail
-        await expect(
-            rescueHBAR(proxyAddress, TokenOwnerBalance.add(1), operatorClient)
-        ).to.eventually.be.rejectedWith(Error)
+        await expect(rescueHBAR(proxyAddress, TokenOwnerBalance.add(1), operatorClient)).to.eventually.be.rejectedWith(
+            Error
+        )
     })
 
     it('Account without RESCUE role cannot rescue HBAR', async function () {
         // Account without rescue role, rescues HBAR : fail
-        await expect(
-            rescueHBAR(proxyAddress, BigNumber.from(1), nonOperatorClient)
-        ).to.eventually.be.rejectedWith(Error)
+        await expect(rescueHBAR(proxyAddress, BigNumber.from(1), nonOperatorClient)).to.eventually.be.rejectedWith(
+            Error
+        )
     })
 })

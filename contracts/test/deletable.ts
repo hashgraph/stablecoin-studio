@@ -2,13 +2,7 @@ import '@hashgraph/hardhat-hethers'
 import '@hashgraph/sdk'
 import { BigNumber } from 'ethers'
 import { deployContractsWithSDK } from '../scripts/deploy'
-import {
-    deleteToken,
-    grantRole,
-    hasRole,
-    Mint,
-    revokeRole,
-} from '../scripts/contractsMethods'
+import { deleteToken, grantRole, hasRole, Mint, revokeRole } from '../scripts/contractsMethods'
 import { DELETE_ROLE } from '../scripts/constants'
 import { ContractId } from '@hashgraph/sdk'
 import chai from 'chai'
@@ -57,43 +51,23 @@ describe('Delete Tests', function () {
     })
 
     it("Account without DELETE role can't delete a token", async function () {
-        await expect(
-            deleteToken(proxyAddress, nonOperatorClient)
-        ).to.eventually.be.rejectedWith(Error)
+        await expect(deleteToken(proxyAddress, nonOperatorClient)).to.eventually.be.rejectedWith(Error)
     })
 
     it('Account with DELETE role can delete a token', async function () {
         const ONE = BigNumber.from(1).mul(TOKEN_FACTOR)
         // We first grant delete role to account
-        await grantRole(
-            DELETE_ROLE,
-            proxyAddress,
-            operatorClient,
-            nonOperatorAccount,
-            nonOperatorIsE25519
-        )
+        await grantRole(DELETE_ROLE, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519)
 
         // We check that the token exists by minting 1
-        await Mint(
-            proxyAddress,
-            ONE,
-            operatorClient,
-            operatorAccount,
-            operatorIsE25519
-        )
+        await Mint(proxyAddress, ONE, operatorClient, operatorAccount, operatorIsE25519)
 
         // Delete the token
         await deleteToken(proxyAddress, nonOperatorClient)
 
         // We check that the token does not exist by unsucessfully trying to mint 1
         await expect(
-            Mint(
-                proxyAddress,
-                ONE,
-                operatorClient,
-                operatorAccount,
-                operatorIsE25519
-            )
+            Mint(proxyAddress, ONE, operatorClient, operatorAccount, operatorIsE25519)
         ).to.eventually.be.rejectedWith(Error)
 
         //The status CANNOT BE revertedsince we deleted the token
