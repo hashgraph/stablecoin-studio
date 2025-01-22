@@ -1,5 +1,5 @@
 import { ValidationOptions } from '@openzeppelin/upgrades-core'
-import { upgradeContract } from '../scripts/contractsLifeCycle/upgrade'
+import { upgradeContract } from '../scripts/upgrade'
 import { HederaTokenManager__factory } from '../typechain-types'
 import { Client, ContractId } from '@hashgraph/sdk'
 import {

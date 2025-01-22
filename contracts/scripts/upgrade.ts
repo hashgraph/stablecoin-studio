@@ -3,12 +3,12 @@ import { upgrades } from 'hardhat'
 import { Client, ContractId, AccountId } from '@hashgraph/sdk'
 import { deployContract } from './deploy'
 import { ValidationOptions } from '@openzeppelin/upgrades-core'
-import { ProxyAdmin__factory } from '../../typechain-types'
+import { ProxyAdmin__factory } from '../typechain-types'
 import { contractCall } from './utils'
 import { ContractFactory, utils } from 'ethers'
-import { GAS_LIMIT_TINY } from '../constants'
+import { GAS_LIMIT_TINY } from './constants'
 import axios from 'axios'
-import { upgrade } from '../contractsMethods'
+import { upgrade } from './contractsMethods'
 
 export async function validateUpgrade(
     oldImpl__bytecode: string,

@@ -17,9 +17,14 @@ export const NETWORKS = ['hardhat', 'local', 'previewnet', 'testnet', 'mainnet']
 
 export const DEPLOY_TYPES = ['proxy', 'direct'] as const
 
-export const CONTRACT_NAMES_WITH_PROXY = ['Factory']
+export const CONTRACT_NAMES_WITH_PROXY = ['StableCoinFactory']
 
-export const CONTRACT_NAMES = [...CONTRACT_NAMES_WITH_PROXY, 'HederaTokenManager'] as const
+export const CONTRACT_NAMES = [
+    ...CONTRACT_NAMES_WITH_PROXY,
+    'HederaTokenManager',
+    'StableCoinProxyAdmin',
+    'TransparentUpgradeableProxy',
+] as const
 
 export const LOCAL_DEFAULT_ENDPOINTS = {
     jsonRpc: 'http://localhost:7546',

@@ -5,4 +5,4 @@ export * from './constants'
 export { default as EnvNotFoundError } from './errors/EnvNotFoundError'
 
 // * Main Class
-export { default as Configuration, Network } from './Configuration'
+export { default as Configuration, Network, DeployedContract, ContractName } from './Configuration'

@@ -1,9 +1,8 @@
 import '@hashgraph/hardhat-hethers'
 import '@hashgraph/sdk'
-import { BigNumber } from 'ethers'
+import { BigNumber, Wallet } from 'ethers'
 import { deployContractsWithSDK } from '../scripts/deploy'
-import { deleteToken, grantRole, hasRole, Mint, revokeRole } from '../scripts/contractsMethods'
-import { DELETE_ROLE } from '../scripts/constants'
+import { deleteToken, grantRole, Mint } from '../scripts/contractsMethods'
 import { ContractId } from '@hashgraph/sdk'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
@@ -24,6 +23,8 @@ import {
     TOKEN_NAME,
     TOKEN_SYMBOL,
 } from './shared/utils'
+import { ROLES } from '@scripts'
+import { ethers } from 'hardhat'
 
 chai.use(chaiAsPromised)
 const expect = chai.expect
@@ -57,7 +58,7 @@ describe('Delete Tests', function () {
     it('Account with DELETE role can delete a token', async function () {
         const ONE = BigNumber.from(1).mul(TOKEN_FACTOR)
         // We first grant delete role to account
-        await grantRole(DELETE_ROLE, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519)
+        await grantRole(ROLES.delete.hash, proxyAddress, operatorClient, nonOperatorAccount, nonOperatorIsE25519)
 
         // We check that the token exists by minting 1
         await Mint(proxyAddress, ONE, operatorClient, operatorAccount, operatorIsE25519)
