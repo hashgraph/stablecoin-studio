@@ -1,3 +1,4 @@
+import { Wallet, Signer, Event } from 'ethers'
 import { Configuration, Network } from '@configuration'
 import {
     CouldNotFindWalletError,
@@ -6,20 +7,22 @@ import {
     ValidateTxResponseCommand,
     ValidateTxResponseResult,
 } from '@scripts'
-import { Wallet, Signer, Event } from 'ethers'
-import { Result } from 'ethers/lib/utils'
 
 export async function getFullWalletFromSigner(signer: Signer): Promise<Wallet> {
     if (!signer.provider) {
         throw new SignerWithoutProviderError()
     }
+    // If the signer is a wallet, return it
+    if (signer instanceof Wallet && signer.privateKey) {
+        return signer as Wallet
+    }
     const network: Network = (await signer.provider.getNetwork()).name as Network
-    Configuration.privateKeys[network].forEach(async (privateKey: string) => {
+    for (const privateKey of Configuration.privateKeys[network]) {
         const wallet = new Wallet(privateKey, signer.provider)
         if (wallet.address === (await signer.getAddress())) {
             return wallet
         }
-    })
+    }
     throw new CouldNotFindWalletError()
 }
 
