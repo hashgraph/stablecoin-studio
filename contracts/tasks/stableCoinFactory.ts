@@ -1,9 +1,7 @@
 import { task, types } from 'hardhat/config'
-import AddHederaTokenManagerVersionCommand from './commands/AddHederaTokenManagerVersionCommand'
 import { StableCoinFactory__factory } from '@typechain'
 import { GAS_LIMIT, MESSAGES, validateTxResponse, ValidateTxResponseCommand } from '@scripts'
-import GetTokenManagerQuery from './queries/GetTokenManagerQuery'
-import { EditHederaTokenManagerAddressCommand } from '@tasks'
+import { AddHederaTokenManagerVersionCommand, EditHederaTokenManagerAddressCommand, GetTokenManagerQuery } from '@tasks'
 
 task('addHederaTokenManagerVersion', 'Add a new version TokenManager in factory')
     .addParam('factoryProxyAddress', 'The proxy factory address', undefined, types.string, false)
