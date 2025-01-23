@@ -5,17 +5,17 @@ interface AddHederaTokenManagerVersionBaseParams {
     tokenManagerAddress: string
 }
 
-interface AddHederaTokenManagerVersionCommandParams
+export interface AddHederaTokenManagerVersionCommandParams
     extends WithSignerCommandParams,
         AddHederaTokenManagerVersionBaseParams {}
 
-interface ConstructurParams extends WithSignerConstructorParams, AddHederaTokenManagerVersionBaseParams {}
+export interface ConstructurParams extends WithSignerConstructorParams, AddHederaTokenManagerVersionBaseParams {}
 
 export default class AddHederaTokenManagerVersionCommand extends WithSignerCommand {
     public readonly factoryProxyAddress: string
     public readonly tokenManagerAddress: string
 
-    private constructor({ factoryProxyAddress, tokenManagerAddress, ...args }: ConstructurParams) {
+    protected constructor({ factoryProxyAddress, tokenManagerAddress, ...args }: ConstructurParams) {
         super(args)
         this.factoryProxyAddress = factoryProxyAddress
         this.tokenManagerAddress = tokenManagerAddress
@@ -25,11 +25,11 @@ export default class AddHederaTokenManagerVersionCommand extends WithSignerComma
         args: AddHederaTokenManagerVersionCommandParams
     ): Promise<AddHederaTokenManagerVersionCommand> {
         const { factoryProxyAddress, tokenManagerAddress, ...signerArgs } = args
-        const withSignerResult = await WithSignerCommand.newInstance(signerArgs)
+        const parentCommand = await WithSignerCommand.newInstance(signerArgs)
         return new AddHederaTokenManagerVersionCommand({
             factoryProxyAddress,
             tokenManagerAddress,
-            ...withSignerResult,
+            ...parentCommand,
         })
     }
 }

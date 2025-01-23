@@ -1,4 +1,3 @@
-import { AddHederaTokenManagerVersionCommand } from '@tasks'
 import { constants } from 'ethers'
 
 // * Ethereum
@@ -63,6 +62,8 @@ export const GAS_LIMIT = {
         initialize: 130_000,
         deployStableCoin: 1_900_000,
         addHederaTokenManagerVersion: 4_800_000,
+        editHederaTokenManagerAddress: 4_800_000,
+        getHederaTokenManagerAddress: 4_800_000,
     },
     proxyAdmin: {
         upgrade: 150_000,
@@ -149,6 +150,14 @@ export const MESSAGES = {
             initialize: '❌ Failed to initialize StableCoinFactory.',
             deployStableCoin: '❌ Failed to deploy StableCoin.',
             addHederaTokenManagerVersion: '❌ Failed to add HederaTokenManager version.',
+            editHederaTokenManagerAddress: '❌ Failed to edit HederaTokenManager address.',
+        },
+        success: {
+            deploy: '✅ StableCoinFactory deployed successfully.',
+            initialize: '✅ StableCoinFactory initialized successfully.',
+            deployStableCoin: '✅ StableCoin deployed successfully.',
+            addHederaTokenManagerVersion: '✅ HederaTokenManager version added successfully.',
+            editHederaTokenManagerAddress: '✅ HederaTokenManager address edited successfully.',
         },
     },
 }

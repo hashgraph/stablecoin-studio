@@ -1,8 +1,5 @@
 import '@hashgraph/hardhat-hethers'
 import { BigNumber } from 'ethers'
-import { deployContractsWithSDK } from '../scripts/deploy'
-import { Burn, getTotalSupply } from '../scripts/contractsMethods'
-import { ContractId } from '@hashgraph/sdk'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import {
