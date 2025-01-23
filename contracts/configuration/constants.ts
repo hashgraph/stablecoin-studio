@@ -38,7 +38,7 @@ export const HEDERA_DEFAULT_ENDPOINTS = (network: Network) => {
 export const MESSAGES = {
     error: {
         envNotFound: [
-            'Environment variable "',
+            '❌ Environment variable "',
             '" is not defined. Please set the "',
             '" environment variable.',
         ] as const,
