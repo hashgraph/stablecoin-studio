@@ -31,12 +31,13 @@ export async function deployFullInfrastructure({
     useDeployed,
     grantKYCToOriginalSender,
 }: DeployFullInfrastructureCommand): Promise<DeployFullInfrastructureResult> {
-    console.log(MESSAGES.deploy.info.deployingFullInfrastructure)
+    console.log(MESSAGES.deploy.info.deployFullInfrastructure)
     // * Deploy HederaTokenManager or get deployed HederaTokenManager
     const { contract: hederaTokenManager } = await deployContractWithFactory(
         new DeployContractWithFactoryCommand({
             factory: new HederaTokenManager__factory(),
             signer: wallet,
+            withProxy: false,
             deployedContract: useDeployed ? Configuration.contracts.HedetaTokenManager.addresses?.[network] : undefined,
             overrides: {
                 gasLimit: GAS_LIMIT.hederaTokenManager.deploy,
@@ -93,10 +94,10 @@ export async function deployFullInfrastructure({
         })
     }
     const deployedScEventData = confirmationEvent.args as IStableCoinFactory.DeployedStableCoinStructOutput
-    console.log(MESSAGES.deploy.info.allSuccess)
+    console.log(MESSAGES.deploy.success.deployFullInfrastructure)
 
     // * Associate token
-    console.log(MESSAGES.deploy.info.associating)
+    console.log(MESSAGES.deploy.info.associate)
     const associateResponse = await hederaTokenManager.associate()
     await validateTxResponse(
         new ValidateTxResponseCommand({
@@ -104,10 +105,10 @@ export async function deployFullInfrastructure({
             errorMessage: MESSAGES.hederaTokenManager.error.associate,
         })
     )
-    console.log(MESSAGES.deploy.info.associated)
+    console.log(MESSAGES.deploy.success.associate)
 
     // * Grant KYC to original sender
-    console.log(MESSAGES.deploy.info.grantingKyc)
+    console.log(MESSAGES.deploy.info.grantKyc)
     if (grantKYCToOriginalSender) {
         const grantKYCResponse = await hederaTokenManager
             .attach(deployedScEventData.stableCoinProxy)
@@ -119,7 +120,7 @@ export async function deployFullInfrastructure({
             })
         )
     }
-    console.log(MESSAGES.deploy.info.kycGranted)
+    console.log(MESSAGES.deploy.success.grantKyc)
 
     return new DeployFullInfrastructureResult({
         stableCoinFactoryDeployment: {

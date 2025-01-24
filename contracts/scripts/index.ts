@@ -31,3 +31,6 @@ export * from './blockchain'
 
 // * Token Keys
 export * from './tokenKeys'
+
+// * Deploy
+export * from './deploy'

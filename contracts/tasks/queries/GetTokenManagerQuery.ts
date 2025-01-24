@@ -1,11 +1,9 @@
-interface GetTokenManagerQueryParams {
-    factoryProxyAddress: string
-}
+import { BaseStableCoinFactoryQuery, BaseStableCoinFactoryQueryParams } from '@tasks'
 
-export default class GetTokenManagerQuery {
-    public readonly factoryProxyAddress: string
+type GetTokenManagerQueryParams = BaseStableCoinFactoryQueryParams
 
-    private constructor({ factoryProxyAddress }: GetTokenManagerQueryParams) {
-        this.factoryProxyAddress = factoryProxyAddress
+export default class GetTokenManagerQuery extends BaseStableCoinFactoryQuery {
+    constructor({ factoryProxyAddress }: GetTokenManagerQueryParams) {
+        super({ factoryProxyAddress })
     }
 }

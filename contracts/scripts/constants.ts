@@ -54,16 +54,18 @@ export const GAS_LIMIT = {
     high: 10_000_000,
     max: 30_000_000,
     hederaTokenManager: {
-        deploy: 500_000,
+        deploy: 5_000_000,
         grantKyc: 65_000,
     },
     stableCoinFactory: {
-        deploy: 500_000,
+        deploy: 5_000_000,
         initialize: 130_000,
         deployStableCoin: 1_900_000,
         addHederaTokenManagerVersion: 4_800_000,
         editHederaTokenManagerAddress: 4_800_000,
+        removeHederaTokenManagerAddress: 4_800_000, // Added gas limit for removeHederaTokenManagerAddress
         getHederaTokenManagerAddress: 4_800_000,
+        getAdmin: 4_800_000,
     },
     proxyAdmin: {
         upgrade: 150_000,
@@ -125,19 +127,28 @@ export const MESSAGES = {
     },
     deploy: {
         info: {
-            deployingFullInfrastructure: '🚀 Deploying full infrastructure...',
-            associating: '🔗 Associating token...',
-            associated: '🔗 Token associated!',
-            grantingKyc: '🔐 Granting KYC...',
-            kycGranted: '🔐 KYC granted!',
-            success: '✅ Contract deployed successfully!',
-            allSuccess: '🎉 All contracts deployed successfully!',
+            deployFullInfrastructure: '🚀 Deploying full infrastructure...',
+            associate: '🔗 Associating token...',
+            grantKyc: '🔐 Granting KYC...',
+        },
+        success: {
+            deployFullInfrastructure: '🎉 Full infrastructure deployed successfully.',
+            associate: '✅ Token associated successfully.',
+            grantKyc: '✅ KYC granted successfully.',
         },
         error: {
             deploy: '❌ Failed to deploy contract.',
         },
     },
     hederaTokenManager: {
+        info: {
+            deploy: '🚀 Deploying HederaTokenManager...',
+        },
+        success: {
+            deploy: '✅ HederaTokenManager deployed successfully.',
+            associate: '✅ Token associated successfully.',
+            grantKyc: '✅ KYC granted successfully.',
+        },
         error: {
             deploy: '❌ Failed to deploy HederaTokenManager.',
             associate: '❌ Failed to associate token.',
@@ -145,12 +156,9 @@ export const MESSAGES = {
         },
     },
     stableCoinFactory: {
-        error: {
-            deploy: '❌ Failed to deploy StableCoinFactory.',
-            initialize: '❌ Failed to initialize StableCoinFactory.',
-            deployStableCoin: '❌ Failed to deploy StableCoin.',
-            addHederaTokenManagerVersion: '❌ Failed to add HederaTokenManager version.',
-            editHederaTokenManagerAddress: '❌ Failed to edit HederaTokenManager address.',
+        info: {
+            deploy: '🚀 Deploying StableCoinFactory...',
+            initialize: '🚀 Initializing StableCoinFactory...',
         },
         success: {
             deploy: '✅ StableCoinFactory deployed successfully.',
@@ -158,6 +166,15 @@ export const MESSAGES = {
             deployStableCoin: '✅ StableCoin deployed successfully.',
             addHederaTokenManagerVersion: '✅ HederaTokenManager version added successfully.',
             editHederaTokenManagerAddress: '✅ HederaTokenManager address edited successfully.',
+            removeHederaTokenManagerAddress: '✅ HederaTokenManager address removed successfully.', // Added success message for removeHederaTokenManagerAddress
+        },
+        error: {
+            deploy: '❌ Failed to deploy StableCoinFactory.',
+            initialize: '❌ Failed to initialize StableCoinFactory.',
+            deployStableCoin: '❌ Failed to deploy StableCoin.',
+            addHederaTokenManagerVersion: '❌ Failed to add HederaTokenManager version.',
+            editHederaTokenManagerAddress: '❌ Failed to edit HederaTokenManager address.',
+            removeHederaTokenManagerAddress: '❌ Failed to remove HederaTokenManager address.', // Added error message for removeHederaTokenManagerAddress
         },
     },
 }

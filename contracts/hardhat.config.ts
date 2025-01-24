@@ -7,7 +7,7 @@ import 'hardhat-gas-reporter'
 import '@openzeppelin/hardhat-upgrades'
 import '@primitivefi/hardhat-dodoc'
 import { Configuration, GAS_LIMIT } from '@configuration'
-//import '@tasks'
+import '@tasks'
 
 const config: HardhatUserConfig = {
     solidity: {
