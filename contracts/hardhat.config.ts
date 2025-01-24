@@ -9,7 +9,9 @@ import '@primitivefi/hardhat-dodoc'
 import { Configuration, GAS_LIMIT } from '@configuration'
 import '@tasks'
 
-const config: HardhatUserConfig = {
+export const configuration = new Configuration()
+
+const hardhatConfig: HardhatUserConfig = {
     solidity: {
         version: '0.8.18',
         settings: {
@@ -27,20 +29,20 @@ const config: HardhatUserConfig = {
             blockGasLimit: GAS_LIMIT.max,
         },
         local: {
-            url: Configuration.endpoints.local.jsonRpc,
-            accounts: Configuration.privateKeys.local,
+            url: configuration.endpoints.local.jsonRpc,
+            accounts: configuration.privateKeys.local,
         },
         previewnet: {
-            url: Configuration.endpoints.previewnet.jsonRpc,
-            accounts: Configuration.privateKeys.previewnet,
+            url: configuration.endpoints.previewnet.jsonRpc,
+            accounts: configuration.privateKeys.previewnet,
         },
         testnet: {
-            url: Configuration.endpoints.testnet.jsonRpc,
-            accounts: Configuration.privateKeys.testnet,
+            url: configuration.endpoints.testnet.jsonRpc,
+            accounts: configuration.privateKeys.testnet,
         },
         mainnet: {
-            url: Configuration.endpoints.mainnet.jsonRpc,
-            accounts: Configuration.privateKeys.mainnet,
+            url: configuration.endpoints.mainnet.jsonRpc,
+            accounts: configuration.privateKeys.mainnet,
         },
     },
     contractSizer: {
@@ -58,4 +60,4 @@ const config: HardhatUserConfig = {
     },
 }
 
-export default config
+export default hardhatConfig

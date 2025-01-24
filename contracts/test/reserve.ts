@@ -21,7 +21,7 @@ import {
     operatorPubKey,
     TOKEN_NAME,
     TOKEN_SYMBOL,
-} from './shared/utils'
+} from './shared'
 
 chai.use(chaiAsPromised)
 const expect = chai.expect

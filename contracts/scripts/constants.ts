@@ -56,6 +56,7 @@ export const GAS_LIMIT = {
     hederaTokenManager: {
         deploy: 5_000_000,
         grantKyc: 65_000,
+        burn: 70_000,
     },
     stableCoinFactory: {
         deploy: 5_000_000,
@@ -78,7 +79,6 @@ export const GAS_LIMIT_HIGH = 4800000
 export const GAS_LIMIT_HIGHEST = 7800000
 export const CREATE_SC_GAS = 1900000
 export const CASHIN_GAS = 140000
-export const BURN_GAS = 70000
 export const WIPE_GAS = 70000
 export const RESCUE_GAS = 70000
 export const RESCUE_HBAR_GAS = 70000

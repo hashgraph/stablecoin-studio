@@ -1,5 +1,7 @@
 import { ethers } from 'hardhat'
 import { Contract, ContractFactory, ContractTransaction } from 'ethers'
+import { Configuration } from '@configuration'
+import { configuration } from 'hardhat.config'
 import {
     HederaTokenManager__factory,
     IStableCoinFactory,
@@ -7,7 +9,6 @@ import {
     StableCoinFactory__factory,
     TransparentUpgradeableProxy__factory,
 } from '@typechain'
-import { Configuration } from '@configuration'
 import {
     MESSAGES,
     GAS_LIMIT,
@@ -38,7 +39,7 @@ export async function deployFullInfrastructure({
             factory: new HederaTokenManager__factory(),
             signer: wallet,
             withProxy: false,
-            deployedContract: useDeployed ? Configuration.contracts.HedetaTokenManager.addresses?.[network] : undefined,
+            deployedContract: useDeployed ? configuration.contracts.HedetaTokenManager.addresses?.[network] : undefined,
             overrides: {
                 gasLimit: GAS_LIMIT.hederaTokenManager.deploy,
             },
@@ -55,7 +56,7 @@ export async function deployFullInfrastructure({
             factory: new StableCoinFactory__factory(),
             signer: wallet,
             withProxy: true,
-            deployedContract: useDeployed ? Configuration.contracts.StableCoinFactory.addresses?.[network] : undefined,
+            deployedContract: useDeployed ? configuration.contracts.StableCoinFactory.addresses?.[network] : undefined,
             overrides: {
                 gasLimit: GAS_LIMIT.stableCoinFactory.deploy,
             },
@@ -244,7 +245,7 @@ export async function deployContract({ name, signer, args }: DeployContractComma
     console.log(`${name} deployed at ${contract.address}`)
 
     // if no proxy, return the contract (BREAK)
-    if (Configuration.contracts[name].deployType !== 'proxy') {
+    if (configuration.contracts[name].deployType !== 'proxy') {
         return new DeployContractResult({
             name,
             contract,

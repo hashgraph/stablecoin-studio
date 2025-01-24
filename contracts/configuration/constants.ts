@@ -13,7 +13,10 @@ export const SUFIXES = {
     mirror: '_MIRROR_NODE_ENDPOINT',
 }
 
-export const NETWORKS = ['hardhat', 'local', 'previewnet', 'testnet', 'mainnet'] as const
+export const NETWORK_LIST = {
+    name: ['hardhat', 'local', 'previewnet', 'testnet', 'mainnet'] as const,
+    chainId: [1337, 298, 297, 296, 295] as const,
+}
 
 export const DEPLOY_TYPES = ['proxy', 'direct'] as const
 

@@ -34,7 +34,7 @@ import {
     operatorIsE25519,
     operatorPriKey,
     TOKEN_FACTOR,
-} from './shared/utils'
+} from './shared'
 
 chai.use(chaiAsPromised)
 const expect = chai.expect

@@ -12,7 +12,10 @@ export { default as ErrorMessageCommand } from './commands/ErrorMessageCommand'
 export { default as ValidateTxResponseCommand } from './commands/ValidateTxResponseCommand'
 export { default as DeployContractCommand } from './commands/DeployContractCommand'
 export { default as DeployContractWithFactoryCommand } from './commands/DeployContractWithFactoryCommand'
-export { default as DeployFullInfrastructureCommand } from './commands/DeployFullInfrastructureCommand'
+export {
+    default as DeployFullInfrastructureCommand,
+    DeployFullInfrastructureCommandNewParams,
+} from './commands/DeployFullInfrastructureCommand'
 export { default as GenerateKeyTypeCommand } from './commands/GenerateKeyTypeCommand'
 export { default as TokenKeysToContractCommand } from './commands/TokenKeysToContractCommand'
 export { default as TokenKeysToKeyCommand } from './commands/TokenKeysToKeyCommand'

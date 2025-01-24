@@ -17,7 +17,7 @@ import {
     TOKEN_MEMO,
     TOKEN_NAME,
     TOKEN_SYMBOL,
-} from './shared/utils'
+} from './shared'
 import { BigNumber } from 'ethers'
 import { updateCustomFees } from '../scripts/contractsMethods'
 import { associateToken } from '../scripts/utils'

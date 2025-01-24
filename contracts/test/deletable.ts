@@ -22,7 +22,7 @@ import {
     TOKEN_MEMO,
     TOKEN_NAME,
     TOKEN_SYMBOL,
-} from './shared/utils'
+} from './shared'
 import { ROLES } from '@scripts'
 import { ethers } from 'hardhat'
 

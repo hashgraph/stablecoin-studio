@@ -27,7 +27,7 @@ interface DeployFullInfrastructureCommandParamsCommmon {
     grantKYCToOriginalSender?: boolean
 }
 
-interface DeployFullInfrastructureCommandNewParams extends DeployFullInfrastructureCommandParamsCommmon {
+export interface DeployFullInfrastructureCommandNewParams extends DeployFullInfrastructureCommandParamsCommmon {
     signer: SignerWithAddress
     tokenInformation: TokenInformation
     allToContract?: boolean
