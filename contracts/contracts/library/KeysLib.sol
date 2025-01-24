@@ -1,9 +1,7 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.16;
+pragma solidity 0.8.18;
 
-import {
-    IHederaTokenService
-} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
+import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 
 library KeysLib {
     struct KeysStruct {
@@ -30,8 +28,7 @@ library KeysLib {
     ) internal pure returns (IHederaTokenService.KeyValue memory) {
         // If the Public Key is empty we assume the user has chosen the proxy
         IHederaTokenService.KeyValue memory key;
-        if (publicKey.length == 0)
-            key.delegatableContractId = stableCoinProxyAddress;
+        if (publicKey.length == 0) key.delegatableContractId = stableCoinProxyAddress;
         else if (isED25519) key.ed25519 = publicKey;
         else key.ECDSA_secp256k1 = publicKey;
 
@@ -44,10 +41,7 @@ library KeysLib {
      * @param keyBitIndex The key bit index
      * @param keyType The key type
      */
-    function containsKey(
-        uint256 keyBitIndex,
-        uint256 keyType
-    ) internal pure returns (bool) {
+    function containsKey(uint256 keyBitIndex, uint256 keyType) internal pure returns (bool) {
         return (bytes32(keyType) & bytes32(1 << keyBitIndex)) != 0;
     }
 }

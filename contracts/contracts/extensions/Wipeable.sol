@@ -1,12 +1,10 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.16;
+pragma solidity 0.8.18;
 
 import {TokenOwner} from './TokenOwner.sol';
 import {Roles} from './Roles.sol';
 import {IWipeable} from './Interfaces/IWipeable.sol';
-import {
-    IHederaTokenService
-} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
+import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
 
 abstract contract Wipeable is IWipeable, TokenOwner, Roles {
@@ -30,17 +28,16 @@ abstract contract Wipeable is IWipeable, TokenOwner, Roles {
         onlyRole(_getRoleId(RoleName.WIPE))
         addressIsNotZero(account)
         amountIsNotNegative(amount, false)
-        valueIsNotGreaterThan(
-            SafeCast.toUint256(amount),
-            _balanceOf(account),
-            true
-        )
+        valueIsNotGreaterThan(SafeCast.toUint256(amount), _balanceOf(account), true)
         returns (bool)
     {
         address currentTokenAddress = _getTokenAddress();
 
-        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
-            .wipeTokenAccount(currentTokenAddress, account, amount);
+        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS).wipeTokenAccount(
+            currentTokenAddress,
+            account,
+            amount
+        );
 
         bool success = _checkResponse(responseCode);
 

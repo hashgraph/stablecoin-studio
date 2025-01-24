@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.16;
+pragma solidity 0.8.18;
 
 interface ISupplierAdmin {
     /**
@@ -65,9 +65,7 @@ interface ISupplierAdmin {
      * @return uint256 The number of tokens allowed to be minted
      *
      */
-    function getSupplierAllowance(
-        address supplier
-    ) external view returns (uint256);
+    function getSupplierAllowance(address supplier) external view returns (uint256);
 
     /**
      * @dev Validate if the address account `supplier' has unlimited supplier's allowance
@@ -76,9 +74,7 @@ interface ISupplierAdmin {
      * @return bool True if is unlimited supplier's allowance
      *
      */
-    function isUnlimitedSupplierAllowance(
-        address supplier
-    ) external view returns (bool);
+    function isUnlimitedSupplierAllowance(address supplier) external view returns (bool);
 
     /**
      * @dev  Gives `SUPPLIER ROLE' permissions to perform supplier's allowance and sets the `amount`
@@ -118,10 +114,7 @@ interface ISupplierAdmin {
      * @param supplier The address of the supplier
      * @param amount The amount to add to the supplier's current minting allowance
      */
-    function increaseSupplierAllowance(
-        address supplier,
-        uint256 amount
-    ) external;
+    function increaseSupplierAllowance(address supplier, uint256 amount) external;
 
     /**
      * @dev Decreases the supplier allowance of the `supplier`, reducing the `amount` that the supplier can mint
@@ -129,8 +122,5 @@ interface ISupplierAdmin {
      * @param supplier The address of the supplier
      * @param amount The amount to subtract from the supplier's current supplier allowance
      */
-    function decreaseSupplierAllowance(
-        address supplier,
-        uint256 amount
-    ) external;
+    function decreaseSupplierAllowance(address supplier, uint256 amount) external;
 }

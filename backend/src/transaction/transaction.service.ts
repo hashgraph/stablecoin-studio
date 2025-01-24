@@ -95,9 +95,9 @@ export default class TransactionService {
     if (!transaction.key_list.includes(signTransactionDto.public_key))
       throw new UnauthorizedKeyException('Unauthorized Key');
 
-    const deserializedTransaction = TransactionSdk
-      .fromBytes(hexToUint8Array(transaction.transaction_message))
-      .freezeWith(Client.forName(transaction.network));
+    const deserializedTransaction = TransactionSdk.fromBytes(
+      hexToUint8Array(transaction.transaction_message),
+    ).freezeWith(Client.forName(transaction.network));
 
     if (
       !verifySignature(

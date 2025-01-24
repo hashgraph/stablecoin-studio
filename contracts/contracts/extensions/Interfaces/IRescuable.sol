@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.16;
+pragma solidity 0.8.18;
 
 interface IRescuable {
     /**
@@ -12,11 +12,7 @@ interface IRescuable {
      * @param tokenId The token that was rescuedp
      * @param amount The amount of the token that was rescued
      */
-    event TokenRescued(
-        address indexed rescuer,
-        address indexed tokenId,
-        int64 amount
-    );
+    event TokenRescued(address indexed rescuer, address indexed tokenId, int64 amount);
 
     /**
      * @dev Emitted when `value` HBARs are moved from contract account (`from`) to
