@@ -27,6 +27,9 @@ const hardhatConfig: HardhatUserConfig = {
         hardhat: {
             chainId: 1337,
             blockGasLimit: GAS_LIMIT.max,
+            accounts: {
+                mnemonic: configuration.mnemonic.hardhat.phrase,
+            },
         },
         local: {
             url: configuration.endpoints.local.jsonRpc,

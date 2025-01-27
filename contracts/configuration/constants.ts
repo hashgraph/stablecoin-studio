@@ -4,10 +4,15 @@ export const EMPTY_STRING = ''
 
 export const DEFAULD_CHAR_INDEX = '#'
 
+export const DEFAULT_MNEMONIC_PATH = "m/44'/60'/0'/0"
+export const DEFAULT_MNEMONIC_LOCALE = 'en'
+export const DEFAULT_MNEMONIC_COUNT = 20
+
 export const SUFIXES = {
     typechainFactory: '__factory',
     proxy: '_PROXY',
     proxyAdmin: '_PROXY_ADMIN',
+    mnemonic: '_MNEMONIC',
     privateKey: `_PRIVATE_KEY_${DEFAULD_CHAR_INDEX}`,
     jsonRpc: '_JSON_RPC_ENDPOINT',
     mirror: '_MIRROR_NODE_ENDPOINT',
