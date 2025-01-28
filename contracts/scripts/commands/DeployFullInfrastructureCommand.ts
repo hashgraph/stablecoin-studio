@@ -1,5 +1,5 @@
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
-import { DEFAULT_DECIMALS, Network } from '@configuration'
+import { DEFAULT_DECIMALS, NetworkName } from '@configuration'
 import { IStableCoinFactory } from '@typechain'
 import { ADDRESS_ZERO, NUMBER_ZERO } from 'scripts/constants'
 import {
@@ -11,7 +11,7 @@ import {
     tokenKeystoContract,
 } from '@scripts'
 import { Wallet } from 'ethers'
-import { TokenSupplyType } from '@hashgraph/sdk'
+import { NetworkChainId, NetworkNameByChainId } from 'configuration/Configuration'
 
 export interface TokenInformation {
     name: string
@@ -45,13 +45,13 @@ export interface DeployFullInfrastructureCommandNewParams extends DeployFullInfr
 
 interface DeployFullInfrastructureCommandParams extends DeployFullInfrastructureCommandParamsCommmon {
     wallet: Wallet
-    network: Network
+    network: NetworkName
     tokenStruct: IStableCoinFactory.TokenStructStruct
 }
 
 export default class DeployFullInfrastructureCommand {
     public readonly wallet: Wallet
-    public readonly network: Network
+    public readonly network: NetworkName
     public readonly tokenStruct: IStableCoinFactory.TokenStructStruct
     public readonly useDeployed: boolean = true
     public readonly grantKYCToOriginalSender: boolean = false
@@ -89,7 +89,9 @@ export default class DeployFullInfrastructureCommand {
         if (!signer.provider) {
             throw new SignerWithoutProviderError()
         }
-        const network = (await signer.provider.getNetwork()).name as Network
+        const network = NetworkNameByChainId[
+            (await signer.provider.getNetwork()).chainId as NetworkChainId
+        ] as NetworkName
         const wallet = await getFullWalletFromSigner(signer)
 
         const keys = allToContract

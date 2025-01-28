@@ -20,15 +20,15 @@ import { Mnemonic } from 'ethers/lib/utils'
 // Load the `.env` file
 dotenv.config()
 
-export type NetworName = (typeof NETWORK_LIST.name)[number]
+export type NetworkName = (typeof NETWORK_LIST.name)[number]
 export type NetworkChainId = (typeof NETWORK_LIST.chainId)[number]
 
-export const NetworkNameByChainId: Record<NetworkChainId, NetworName> = NETWORK_LIST.chainId.reduce(
+export const NetworkNameByChainId: Record<NetworkChainId, NetworkName> = NETWORK_LIST.chainId.reduce(
     (result, chainId, index) => {
         result[chainId] = NETWORK_LIST.name[index]
         return result
     },
-    {} as Record<NetworkChainId, NetworName>
+    {} as Record<NetworkChainId, NetworkName>
 )
 
 export type DeployType = (typeof DEPLOY_TYPES)[number]
@@ -53,32 +53,32 @@ export interface ContractConfig {
     name: ContractName
     factoryName: ContractFactoryName
     deployType: DeployType
-    addresses?: Record<NetworName, DeployedContract>
+    addresses?: Record<NetworkName, DeployedContract>
 }
 
 export default class Configuration {
-    private _mnemonic: Record<NetworName, Mnemonic>
-    private _privateKeys: Record<NetworName, string[]>
-    private _endpoints: Record<NetworName, Endpoints>
+    private _mnemonic: Record<NetworkName, Mnemonic>
+    private _privateKeys: Record<NetworkName, string[]>
+    private _endpoints: Record<NetworkName, Endpoints>
     private _contracts: Record<ContractName, ContractConfig>
 
     constructor() {
-        this._initMnemonic()
-        this._initPrivateKeys()
-        this._initEndpoints()
-        this._initContracts()
+        this._mnemonic = this._initMnemonic()
+        this._privateKeys = this._initPrivateKeys()
+        this._endpoints = this._initEndpoints()
+        this._contracts = this._initContracts()
     }
 
     // * Public methods
-    get mnemonic(): Record<NetworName, Mnemonic> {
+    get mnemonic(): Record<NetworkName, Mnemonic> {
         return this._mnemonic
     }
 
-    get privateKeys(): Record<NetworName, string[]> {
+    get privateKeys(): Record<NetworkName, string[]> {
         return this._privateKeys
     }
 
-    get endpoints(): Record<NetworName, Endpoints> {
+    get endpoints(): Record<NetworkName, Endpoints> {
         return this._endpoints
     }
 
@@ -86,9 +86,13 @@ export default class Configuration {
         return this._contracts
     }
 
+    set contracts(contracts: Record<ContractName, ContractConfig>) {
+        this._contracts = contracts
+    }
+
     // * Private methods
-    private _initMnemonic() {
-        this._mnemonic = NETWORK_LIST.name.reduce(
+    private _initMnemonic(): Record<NetworkName, Mnemonic> {
+        return NETWORK_LIST.name.reduce(
             (result, network) => {
                 const phrase = Configuration._getEnvironmentVariable({
                     name: `${network.toUpperCase()}${SUFIXES.mnemonic}`,
@@ -103,12 +107,12 @@ export default class Configuration {
                 }
                 return result
             },
-            {} as Record<NetworName, Mnemonic>
+            {} as Record<NetworkName, Mnemonic>
         )
     }
 
-    private _initPrivateKeys() {
-        this._privateKeys = NETWORK_LIST.name.reduce(
+    private _initPrivateKeys(): Record<NetworkName, string[]> {
+        return NETWORK_LIST.name.reduce(
             (result, network) => {
                 const privateKeys = Configuration._getEnvironmentVariableList({
                     name: `${network.toUpperCase()}${SUFIXES.privateKey}`,
@@ -128,12 +132,12 @@ export default class Configuration {
                 result[network] = privateKeys
                 return result
             },
-            {} as Record<NetworName, string[]>
+            {} as Record<NetworkName, string[]>
         )
     }
 
-    private _initEndpoints() {
-        this._endpoints = NETWORK_LIST.name.reduce(
+    private _initEndpoints(): Record<NetworkName, Endpoints> {
+        return NETWORK_LIST.name.reduce(
             (result, network) => {
                 result[network] = {
                     jsonRpc: Configuration._getEnvironmentVariable({
@@ -153,20 +157,19 @@ export default class Configuration {
                 }
                 return result
             },
-            {} as Record<NetworName, Endpoints>
+            {} as Record<NetworkName, Endpoints>
         )
     }
 
-    private _initContracts() {
-        this._contracts = CONTRACT_NAMES.reduce(
+    private _initContracts(): Record<ContractName, ContractConfig> {
+        const contractNamesWithProxy: ContractName[] = CONTRACT_NAMES_WITH_PROXY.slice()
+        return CONTRACT_NAMES.reduce(
             (result, contractName) => {
                 result[contractName] = {
                     name: contractName,
                     factoryName: `${contractName}${SUFIXES.typechainFactory}`,
-                    deployType: CONTRACT_NAMES_WITH_PROXY.includes(contractName) ? DEPLOY_TYPES[0] : DEPLOY_TYPES[1],
-                    addresses: Configuration._getDeployedAddresses({
-                        contractName,
-                    }),
+                    deployType: contractNamesWithProxy.includes(contractName) ? DEPLOY_TYPES[0] : DEPLOY_TYPES[1],
+                    addresses: Configuration._getDeployedAddresses({ contractName }),
                 }
                 return result
             },
@@ -174,23 +177,12 @@ export default class Configuration {
         )
     }
 
-    /**
-     * Retrieves the deployed contract addresses for a given contract name across different networks.
-     *
-     * @param {Object} params - The parameters object.
-     * @param {ContractName} params.contractName - The name of the contract to get deployed addresses for.
-     * @returns {Record<NetworName, DeployedContract>} An object mapping each network to its deployed contract details.
-     *
-     * The function iterates over all available networks and fetches the contract address, proxy address,
-     * and proxy admin address from environment variables. If the contract address is found, it adds the
-     * details to the returned object.
-     */
     private static _getDeployedAddresses({
         contractName,
     }: {
         contractName: ContractName
-    }): Record<NetworName, DeployedContract> {
-        const deployedAddresses: Record<NetworName, DeployedContract> = {} as Record<NetworName, DeployedContract>
+    }): Record<NetworkName, DeployedContract> {
+        const deployedAddresses: Record<NetworkName, DeployedContract> = {} as Record<NetworkName, DeployedContract>
 
         NETWORK_LIST.name.forEach((network) => {
             const address = Configuration._getEnvironmentVariable({
@@ -211,9 +203,7 @@ export default class Configuration {
                 deployedAddresses[network] = {
                     address,
                     ...(proxyAddress !== EMPTY_STRING && { proxyAddress }),
-                    ...(proxyAdminAddress !== EMPTY_STRING && {
-                        proxyAdminAddress,
-                    }),
+                    ...(proxyAdminAddress !== EMPTY_STRING && { proxyAdminAddress }),
                 }
             }
         })

@@ -1,10 +1,11 @@
 import { expect } from 'chai'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
-import { ethers } from 'hardhat'
+import { ethers, network } from 'hardhat'
 import { BigNumber } from 'ethers'
 import { HederaTokenManager, HederaTokenManager__factory } from '@typechain'
-import { validateTxResponse, ValidateTxResponseCommand } from '@scripts'
+import { delay, validateTxResponse, ValidateTxResponseCommand } from '@scripts'
 import { deployFullInfrastructureInTests, INIT_SUPPLY, GAS_LIMIT } from '@test/shared'
+import { NetworkName } from '@configuration'
 
 describe('Burn Tests', () => {
     let proxyAddress: string
@@ -15,14 +16,17 @@ describe('Burn Tests', () => {
 
     before(async () => {
         // Disable | Mock console.log()
-        console.log = () => {} // eslint-disable-line
+        // console.log = () => {} // eslint-disable-line
         // * Deploy StableCoin Token
         console.info('Deploying full infrastructure...')
         ;[operator, nonOperator] = await ethers.getSigners()
-        // if ((network.name as Network) === NETWORK_LIST.name[0]) {
+        // if ((network.name as NetworkName) === NETWORK_LIST.name[0]) {
         //     await deployPrecompiledHederaTokenServiceMock(hre, signer)
         // }
-        ;({ proxyAddress } = await deployFullInfrastructureInTests({ signer: operator }))
+        ;({ proxyAddress } = await deployFullInfrastructureInTests({
+            signer: operator,
+            network: network.name as NetworkName,
+        }))
         hederaTokenManager = HederaTokenManager__factory.connect(proxyAddress, operator)
     })
 
@@ -39,7 +43,7 @@ describe('Burn Tests', () => {
         await validateTxResponse(
             new ValidateTxResponseCommand({ txResponse: burnResponse, confirmationEvent: 'TokensBurned' })
         )
-
+        await delay({ time: 500, unit: 'ms' })
         // check new total supply and balance of treasury account : success
         const finalTotalSupply = await hederaTokenManager.totalSupply()
         const expectedTotalSupply = initialTotalSupply.sub(tokensToBurn)

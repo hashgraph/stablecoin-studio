@@ -1,8 +1,10 @@
 import { BigNumber } from 'ethers'
-import { deployFullInfrastructure, DeployFullInfrastructureCommand } from '@scripts'
+import { deployFullInfrastructure, DeployFullInfrastructureCommand, DeployFullInfrastructureResult } from '@scripts'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { MockHtsBurn__factory } from '@typechain'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
+import { configuration } from 'hardhat.config'
+import { DeployedContract, NetworkName } from '@configuration'
 
 export { GAS_LIMIT } from '@scripts'
 export const TOKEN_DECIMALS = 6
@@ -38,16 +40,20 @@ export async function deployPrecompiledHederaTokenServiceMock(
     console.log(`Mock contract deployed to ${targetAddress}`)
 }
 
+let deployedResult: DeployFullInfrastructureResult | undefined
+
 export async function deployFullInfrastructureInTests({
     signer,
+    network,
     addFeeSchedule,
 }: {
     signer: SignerWithAddress
+    network: NetworkName
     addFeeSchedule?: boolean
 }) {
     const command = await DeployFullInfrastructureCommand.newInstance({
         signer,
-        useDeployed: false,
+        useDeployed: deployedResult ? true : false,
         tokenInformation: {
             name: TOKEN_NAME,
             symbol: TOKEN_SYMBOL,
@@ -61,7 +67,20 @@ export async function deployFullInfrastructureInTests({
         addFeeSchedule,
     })
 
-    const { stableCoinDeployment } = await deployFullInfrastructure(command)
+    deployedResult = await deployFullInfrastructure(command)
+
+    let newContracts = configuration.contracts
+    newContracts.HederaTokenManager.addresses = {
+        [network]: {
+            address: deployedResult.hederaTokenManagerAddress,
+        },
+    } as Record<NetworkName, DeployedContract>
+    newContracts.StableCoinFactory.addresses = {
+        [network]: deployedResult.stableCoinFactoryDeployment,
+    } as Record<NetworkName, DeployedContract>
+    configuration.contracts = newContracts
+
+    const { stableCoinDeployment } = deployedResult
     return {
         proxyAddress: stableCoinDeployment.proxyAddress,
         tokenAddress: stableCoinDeployment.tokenAddress,

@@ -1,5 +1,5 @@
 import { Wallet, Signer, Event } from 'ethers'
-import { Network } from '@configuration'
+import { NetworkName } from '@configuration'
 import { configuration } from 'hardhat.config'
 import {
     CouldNotFindWalletError,
@@ -19,7 +19,7 @@ export async function getFullWalletFromSigner(signer: Signer): Promise<Wallet> {
         return signer as Wallet
     }
     const chainId = (await signer.provider.getNetwork()).chainId as NetworkChainId
-    const network: Network = NetworkNameByChainId[chainId]
+    const network: NetworkName = NetworkNameByChainId[chainId]
     for (const privateKey of configuration.privateKeys[network]) {
         const wallet = new Wallet(privateKey, signer.provider)
         if (wallet.address === (await signer.getAddress())) {

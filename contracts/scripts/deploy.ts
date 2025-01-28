@@ -39,7 +39,8 @@ export async function deployFullInfrastructure({
             factory: new HederaTokenManager__factory(),
             signer: wallet,
             withProxy: false,
-            deployedContract: useDeployed ? configuration.contracts.HedetaTokenManager.addresses?.[network] : undefined,
+            deployedContract: useDeployed ? configuration.contracts.HederaTokenManager.addresses?.[network] : undefined,
+            // deployedContract: undefined,
             overrides: {
                 gasLimit: GAS_LIMIT.hederaTokenManager.deploy,
             },
@@ -67,16 +68,18 @@ export async function deployFullInfrastructure({
         throw new Error(MESSAGES.stableCoinFactory.error.deploy)
     }
     console.log(MESSAGES.stableCoinFactory.success.deploy)
-    const initResponse = await stableCoinFactory.initialize(wallet.address, hederaTokenManager.address, {
-        gasLimit: GAS_LIMIT.stableCoinFactory.initialize,
-    })
-    await validateTxResponse(
-        new ValidateTxResponseCommand({
-            txResponse: initResponse,
-            errorMessage: MESSAGES.stableCoinFactory.error.initialize,
+    if (!useDeployed || !configuration.contracts.StableCoinFactory.addresses?.[network]) {
+        const initResponse = await stableCoinFactory.initialize(wallet.address, hederaTokenManager.address, {
+            gasLimit: GAS_LIMIT.stableCoinFactory.initialize,
         })
-    )
-    console.log(MESSAGES.stableCoinFactory.success.initialize)
+        await validateTxResponse(
+            new ValidateTxResponseCommand({
+                txResponse: initResponse,
+                errorMessage: MESSAGES.stableCoinFactory.error.initialize,
+            })
+        )
+        console.log(MESSAGES.stableCoinFactory.success.initialize)
+    }
 
     // * Deploy new StableCoin using the Factory
     console.log(MESSAGES.stableCoinFactory.info.deployStableCoin)
@@ -184,7 +187,7 @@ export async function deployContractWithFactory<
         return new DeployContractWithFactoryResult({
             address: implementationContract.address,
             contract: implementationContract,
-            receipt: await txResponseList[0].wait(),
+            receipt: await txResponseList[0]?.wait(),
         })
     }
 
@@ -224,7 +227,7 @@ export async function deployContractWithFactory<
         contract: factory.connect(signer).attach(proxyAddress) as C,
         proxyAddress: proxyAddress,
         proxyAdminAddress: proxyAdminAddress,
-        receipt: await txResponseList[0].wait(),
+        receipt: await txResponseList[0]?.wait(),
     })
 }
 
