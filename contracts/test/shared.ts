@@ -38,7 +38,13 @@ export async function deployPrecompiledHederaTokenServiceMock(
     console.log(`Mock contract deployed to ${targetAddress}`)
 }
 
-export async function deployFullInfrastructureInTests(signer: SignerWithAddress) {
+export async function deployFullInfrastructureInTests({
+    signer,
+    addFeeSchedule,
+}: {
+    signer: SignerWithAddress
+    addFeeSchedule?: boolean
+}) {
     const command = await DeployFullInfrastructureCommand.newInstance({
         signer,
         useDeployed: false,
@@ -52,8 +58,12 @@ export async function deployFullInfrastructureInTests(signer: SignerWithAddress)
             freeze: false,
         },
         initialAmountDataFeed: INITIAL_AMOUNT_DATA_FEED,
+        addFeeSchedule,
     })
 
     const { stableCoinDeployment } = await deployFullInfrastructure(command)
-    return stableCoinDeployment.proxyAddress
+    return {
+        proxyAddress: stableCoinDeployment.proxyAddress,
+        tokenAddress: stableCoinDeployment.tokenAddress,
+    }
 }

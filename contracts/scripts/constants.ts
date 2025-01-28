@@ -58,6 +58,7 @@ export const GAS_LIMIT = {
         associate: 900_000,
         grantKyc: 65_000,
         burn: 70_000,
+        updateCustomFees: 65_000n,
     },
     stableCoinFactory: {
         deploy: 5_000_000,

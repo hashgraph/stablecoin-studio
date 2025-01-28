@@ -1,27 +1,32 @@
 import { expect } from 'chai'
+import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { ethers } from 'hardhat'
 import { BigNumber } from 'ethers'
-import { deployFullInfrastructureInTests, INIT_SUPPLY, GAS_LIMIT } from '@test/shared'
 import { HederaTokenManager, HederaTokenManager__factory } from '@typechain'
 import { validateTxResponse, ValidateTxResponseCommand } from '@scripts'
+import { deployFullInfrastructureInTests, INIT_SUPPLY, GAS_LIMIT } from '@test/shared'
 
-let proxyAddress: string
-let hederaTokenManager: HederaTokenManager
+describe('Burn Tests', () => {
+    let proxyAddress: string
+    let hederaTokenManager: HederaTokenManager
 
-describe('Burn Tests', function () {
-    before(async function () {
+    let operator: SignerWithAddress
+    let nonOperator: SignerWithAddress
+
+    before(async () => {
         // Disable | Mock console.log()
-        // console.log = () => {}
+        console.log = () => {} // eslint-disable-line
         // * Deploy StableCoin Token
-        const [signer] = await ethers.getSigners()
+        console.info('Deploying full infrastructure...')
+        ;[operator, nonOperator] = await ethers.getSigners()
         // if ((network.name as Network) === NETWORK_LIST.name[0]) {
         //     await deployPrecompiledHederaTokenServiceMock(hre, signer)
         // }
-        proxyAddress = await deployFullInfrastructureInTests(signer)
-        hederaTokenManager = HederaTokenManager__factory.connect(proxyAddress, signer)
+        ;({ proxyAddress } = await deployFullInfrastructureInTests({ signer: operator }))
+        hederaTokenManager = HederaTokenManager__factory.connect(proxyAddress, operator)
     })
 
-    it('Account with BURN role can burn 10 tokens from the treasury account having 100 tokens', async function () {
+    it('Account with BURN role can burn 10 tokens from the treasury account having 100 tokens', async () => {
         const tokensToBurn = INIT_SUPPLY.div(10)
 
         // Get the initial total supply and treasury account's balanceOf
@@ -31,7 +36,9 @@ describe('Burn Tests', function () {
         const burnResponse = await hederaTokenManager.burn(tokensToBurn, {
             gasLimit: GAS_LIMIT.hederaTokenManager.burn,
         })
-        await validateTxResponse(new ValidateTxResponseCommand({ txResponse: burnResponse }))
+        await validateTxResponse(
+            new ValidateTxResponseCommand({ txResponse: burnResponse, confirmationEvent: 'TokensBurned' })
+        )
 
         // check new total supply and balance of treasury account : success
         const finalTotalSupply = await hederaTokenManager.totalSupply()
@@ -40,7 +47,7 @@ describe('Burn Tests', function () {
         expect(finalTotalSupply.toString()).to.equals(expectedTotalSupply.toString())
     })
 
-    it('Account with BURN role cannot burn more tokens than the treasury account has', async function () {
+    it('Account with BURN role cannot burn more tokens than the treasury account has', async () => {
         // Retrieve original total supply
         const currentTotalSupply = await hederaTokenManager.totalSupply()
 
@@ -53,9 +60,9 @@ describe('Burn Tests', function () {
         )
     })
 
-    it('Account with BURN role cannot burn a negative amount', async function () {
+    it('Account with BURN role cannot burn a negative amount', async () => {
         // burn a negative amount of tokens : fail
-        const response = await hederaTokenManager.burn(BigNumber.from('-1'), {
+        const response = await hederaTokenManager.burn(-1n, {
             gasLimit: GAS_LIMIT.hederaTokenManager.burn,
         })
         await expect(validateTxResponse(new ValidateTxResponseCommand({ txResponse: response }))).to.be.rejectedWith(
@@ -63,8 +70,7 @@ describe('Burn Tests', function () {
         )
     })
 
-    it('Account without BURN role cannot burn tokens', async function () {
-        const [_, nonOperator] = await ethers.getSigners()
+    it('Account without BURN role cannot burn tokens', async () => {
         const nonOperatorHederaTokenManager = HederaTokenManager__factory.connect(proxyAddress, nonOperator)
 
         // Account without burn role, burns tokens : fail
