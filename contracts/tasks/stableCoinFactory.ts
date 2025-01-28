@@ -1,5 +1,4 @@
 import { task, types } from 'hardhat/config'
-import { HederaTokenManager__factory, StableCoinFactory__factory } from '@typechain'
 import {
     AddHederaTokenManagerVersionCommand,
     DeployStableCoinFactoryCommand,
@@ -22,6 +21,7 @@ task('addHederaTokenManagerVersion', 'Add a new version TokenManager in factory'
     .addOptionalParam('signerPosition', 'The index of the signer in the Hardhat signers array', undefined, types.int)
     .setAction(async (args: Omit<AddHederaTokenManagerVersionCommand, keyof typeof hre>, hre) => {
         // Inlined to avoid circular dependency
+        const { StableCoinFactory__factory } = await import('@typechain')
         const { GAS_LIMIT, MESSAGES, validateTxResponse, ValidateTxResponseCommand } = await import('@scripts')
         const { factoryProxyAddress, tokenManagerAddress, signer } =
             await AddHederaTokenManagerVersionCommand.newInstance({
@@ -59,6 +59,7 @@ task('editHederaTokenManagerAddress', 'Edit TokenManager address in factory')
     .addOptionalParam('signerPosition', 'The index of the signer in the Hardhat signers array', undefined, types.int)
     .setAction(async (args: Omit<EditHederaTokenManagerAddressCommand, keyof typeof hre>, hre) => {
         // Inlined to avoid circular dependency
+        const { StableCoinFactory__factory } = await import('@typechain')
         const { GAS_LIMIT, MESSAGES, validateTxResponse, ValidateTxResponseCommand } = await import('@scripts')
         const { factoryProxyAddress, tokenManagerAddress, index, signer } =
             await EditHederaTokenManagerAddressCommand.newInstance({
@@ -93,6 +94,7 @@ task('removeHederaTokenManagerAddress', 'Remove TokenManager address in factory'
     .addOptionalParam('signerPosition', 'The index of the signer in the Hardhat signers array', undefined, types.int)
     .setAction(async (args: Omit<RemoveHederaTokenManagerAddressCommand, keyof typeof hre>, hre) => {
         // Inlined to avoid circular dependency
+        const { StableCoinFactory__factory } = await import('@typechain')
         const { GAS_LIMIT, MESSAGES, validateTxResponse, ValidateTxResponseCommand } = await import('@scripts')
         const { factoryProxyAddress, index, signer } = await RemoveHederaTokenManagerAddressCommand.newInstance({
             hre,
@@ -126,6 +128,7 @@ task('deploy-stablecoin-factory', 'Deploy a new StableCoinFactory')
     .setAction(async (args: Omit<DeployStableCoinFactoryCommand, keyof typeof hre>, hre) => {
         console.log(`Executing deploy-stablecoin-factory in ${hre.network.name} network...`)
         // Inlined to avoid circular dependency
+        const { HederaTokenManager__factory, StableCoinFactory__factory } = await import('@typechain')
         const {
             GAS_LIMIT,
             MESSAGES,
@@ -198,6 +201,7 @@ task('get-hedera-token-manager', 'Get TokenManager list in factory')
     .setAction(async ({ factoryProxyAddress }: GetTokenManagerQuery, hre) => {
         console.log(`Getting TokenManager list in factory ${factoryProxyAddress}...`)
         // Inlined to avoid circular dependency
+        const { StableCoinFactory__factory } = await import('@typechain')
         const { GAS_LIMIT } = await import('@scripts')
         const stableCoinFactory = StableCoinFactory__factory.connect(factoryProxyAddress, hre.ethers.provider)
         const tokenManagerAddressList: string[] = await stableCoinFactory.getHederaTokenManagerAddress({
@@ -218,6 +222,7 @@ task(
     .setAction(async ({ factoryProxyAddress }: GetStableCoinFactoryAdminQuery, hre) => {
         console.log(`Getting StableCoinFactory admin account for ${factoryProxyAddress}...`)
         // Inlined to avoid circular dependency
+        const { StableCoinFactory__factory } = await import('@typechain')
         const { GAS_LIMIT } = await import('@scripts')
         const stableCoinFactory = StableCoinFactory__factory.connect(factoryProxyAddress, hre.ethers.provider)
         const factoryAdmin = await stableCoinFactory.getAdmin({

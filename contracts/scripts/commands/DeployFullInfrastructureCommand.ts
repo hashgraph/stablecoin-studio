@@ -1,5 +1,5 @@
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
-import { Network } from '@configuration'
+import { DEFAULT_DECIMALS, Network } from '@configuration'
 import { IStableCoinFactory } from '@typechain'
 import { ADDRESS_ZERO, NUMBER_ZERO } from 'scripts/constants'
 import {
@@ -11,11 +11,12 @@ import {
     tokenKeystoContract,
 } from '@scripts'
 import { Wallet } from 'ethers'
+import { TokenSupplyType } from '@hashgraph/sdk'
 
 export interface TokenInformation {
     name: string
     symbol: string
-    decimals: number
+    decimals?: number
     initialSupply: string
     maxSupply?: string
     memo: string
@@ -98,7 +99,7 @@ export default class DeployFullInfrastructureCommand {
         const tokenStruct = {
             tokenName: tokenInformation.name,
             tokenSymbol: tokenInformation.symbol,
-            tokenDecimals: tokenInformation.decimals,
+            tokenDecimals: tokenInformation.decimals || DEFAULT_DECIMALS,
             tokenInitialSupply: tokenInformation.initialSupply,
             supplyType: tokenInformation.maxSupply ? true : false, // true = FINITE, false = INFINITE (default)
             tokenMaxSupply: tokenInformation.maxSupply || NUMBER_ZERO,

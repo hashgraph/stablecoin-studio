@@ -1,17 +1,18 @@
 {
     "compilerOptions": {
         "target": "ES2022",
-        "module": "CommonJS",
+        "module": "commonjs",
         "declaration": true,
-        "rootDir": ".",
-        "outDir": "./build",
-        "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
+        "allowSyntheticDefaultImports": true,
+        "skipLibCheck": true, // Skip type checking all .d.ts files.
+        "importHelpers": true,
+        "alwaysStrict": true,
         "strict": true,
-        "skipLibCheck": true,
+        "outDir": "./build",
+        "resolveJsonModule": true,
         "baseUrl": "./",
-        "strictPropertyInitialization": false,
         "paths": {
             "@configuration": ["configuration/index"],
             "@hardhat-configuration": ["hardhat-config"],

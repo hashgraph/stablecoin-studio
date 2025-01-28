@@ -43,7 +43,7 @@ export async function validateTxResponse({
             txHash: txResponse.hash,
         })
     }
-    if (confirmationEvent) {
+    if (confirmationEventName) {
         const confirmationEventList = txReceipt.events?.filter((event) => {
             return event.event === confirmationEventName
         })

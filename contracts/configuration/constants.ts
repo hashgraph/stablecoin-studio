@@ -3,6 +3,9 @@ import { Network } from '@configuration'
 export const EMPTY_STRING = ''
 
 export const DEFAULD_CHAR_INDEX = '#'
+export const DEFAULT_DECIMALS = 6
+
+export const DEFAULT_EVM_VERSION = 'london'
 
 export const DEFAULT_MNEMONIC_PATH = "m/44'/60'/0'/0"
 export const DEFAULT_MNEMONIC_LOCALE = 'en'

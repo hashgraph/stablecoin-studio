@@ -6,7 +6,7 @@ import 'hardhat-contract-sizer'
 import 'hardhat-gas-reporter'
 import '@openzeppelin/hardhat-upgrades'
 import '@primitivefi/hardhat-dodoc'
-import { Configuration, GAS_LIMIT } from '@configuration'
+import { Configuration, DEFAULT_EVM_VERSION, GAS_LIMIT, NETWORK_LIST } from '@configuration'
 import '@tasks'
 
 export const configuration = new Configuration()
@@ -19,31 +19,52 @@ const hardhatConfig: HardhatUserConfig = {
                 enabled: true,
                 runs: 200,
             },
-            evmVersion: 'istanbul',
+            evmVersion: DEFAULT_EVM_VERSION,
         },
     },
     defaultNetwork: 'hardhat',
     networks: {
         hardhat: {
-            chainId: 1337,
+            chainId: NETWORK_LIST.chainId[0],
+            hardfork: DEFAULT_EVM_VERSION,
             blockGasLimit: GAS_LIMIT.max,
             accounts: {
                 mnemonic: configuration.mnemonic.hardhat.phrase,
             },
+            allowUnlimitedContractSize: true,
+            enableRip7212: true,
+            forking: {
+                url: configuration.endpoints.local.jsonRpc,
+                blockNumber: 4053,
+                enabled: true,
+            },
+            // initialDate: '2025-01-27T00:00:00Z',
+            // chainId: 29,
         },
         local: {
+            chainId: NETWORK_LIST.chainId[1],
+            hardfork: DEFAULT_EVM_VERSION,
             url: configuration.endpoints.local.jsonRpc,
             accounts: configuration.privateKeys.local,
+            blockGasLimit: GAS_LIMIT.max,
+            timeout: 60000, // Increase to 60 seconds
         },
         previewnet: {
+            chainId: NETWORK_LIST.chainId[2],
+            hardfork: DEFAULT_EVM_VERSION,
             url: configuration.endpoints.previewnet.jsonRpc,
             accounts: configuration.privateKeys.previewnet,
+            timeout: 60000, // Increase to 60 seconds
         },
         testnet: {
+            chainId: NETWORK_LIST.chainId[3],
+            hardfork: DEFAULT_EVM_VERSION,
             url: configuration.endpoints.testnet.jsonRpc,
             accounts: configuration.privateKeys.testnet,
+            timeout: 60000, // Increase to 60 seconds
         },
         mainnet: {
+            chainId: NETWORK_LIST.chainId[4],
             url: configuration.endpoints.mainnet.jsonRpc,
             accounts: configuration.privateKeys.mainnet,
         },

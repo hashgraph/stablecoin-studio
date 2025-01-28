@@ -193,10 +193,6 @@ contract HederaTokenManager is
         emit TokenUpdated(currentTokenAddress, updatedToken);
     }
 
-    function associate() external returns (int64 responseCode) {
-        return IHederaTokenService(_PRECOMPILED_ADDRESS).associateToken(msg.sender, _getTokenAddress());
-    }
-
     /**
      * @dev Grants initial roles to the SC creator
      *

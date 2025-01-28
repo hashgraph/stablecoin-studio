@@ -1,9 +1,9 @@
 import { ethers } from 'hardhat'
 import { Contract, ContractFactory, ContractTransaction } from 'ethers'
-import { Configuration } from '@configuration'
 import { configuration } from 'hardhat.config'
 import {
     HederaTokenManager__factory,
+    IHRC__factory,
     IStableCoinFactory,
     ProxyAdmin__factory,
     StableCoinFactory__factory,
@@ -45,26 +45,28 @@ export async function deployFullInfrastructure({
             },
         })
     )
+    console.log(MESSAGES.hederaTokenManager.success.deploy)
 
     // * Deploy Factory or get deployed Factory
+    const deployStableCoinFactoryCommand = new DeployContractWithFactoryCommand({
+        factory: new StableCoinFactory__factory(),
+        signer: wallet,
+        withProxy: true,
+        deployedContract: useDeployed ? configuration.contracts.StableCoinFactory.addresses?.[network] : undefined,
+        overrides: {
+            gasLimit: GAS_LIMIT.stableCoinFactory.deploy,
+        },
+    })
     const {
         contract: stableCoinFactory,
         proxyAddress: sCFactoryProxyAddress,
         proxyAdminAddress: sCFactoryProxyAdminAddress,
-    } = await deployContractWithFactory(
-        new DeployContractWithFactoryCommand({
-            factory: new StableCoinFactory__factory(),
-            signer: wallet,
-            withProxy: true,
-            deployedContract: useDeployed ? configuration.contracts.StableCoinFactory.addresses?.[network] : undefined,
-            overrides: {
-                gasLimit: GAS_LIMIT.stableCoinFactory.deploy,
-            },
-        })
-    )
+    } = await deployContractWithFactory(deployStableCoinFactoryCommand)
+
     if (!sCFactoryProxyAddress || !sCFactoryProxyAdminAddress) {
         throw new Error(MESSAGES.stableCoinFactory.error.deploy)
     }
+    console.log(MESSAGES.stableCoinFactory.success.deploy)
     const initResponse = await stableCoinFactory.initialize(wallet.address, hederaTokenManager.address, {
         gasLimit: GAS_LIMIT.stableCoinFactory.initialize,
     })
@@ -74,8 +76,10 @@ export async function deployFullInfrastructure({
             errorMessage: MESSAGES.stableCoinFactory.error.initialize,
         })
     )
+    console.log(MESSAGES.stableCoinFactory.success.initialize)
 
     // * Deploy new StableCoin using the Factory
+    console.log(MESSAGES.stableCoinFactory.info.deployStableCoin)
     const deployScResponse = await stableCoinFactory.deployStableCoin(tokenStruct, hederaTokenManager.address, {
         gasLimit: GAS_LIMIT.stableCoinFactory.deployStableCoin,
         value: VALUE.stableCoinFactory.deployStableCoin,
@@ -87,29 +91,32 @@ export async function deployFullInfrastructure({
             confirmationEvent: 'Deployed',
         })
     )
-    if (!confirmationEvent) {
+    if (!confirmationEvent || !confirmationEvent.args) {
         // Should never happen because is checked in validateTxResponse
         throw new TransactionReceiptError({
-            errorMessage: MESSAGES.stableCoinFactory.error.deployStableCoin,
             txHash: deployScResponse.hash,
+            errorMessage: MESSAGES.stableCoinFactory.error.deployStableCoin,
         })
     }
-    const deployedScEventData = confirmationEvent.args as IStableCoinFactory.DeployedStableCoinStructOutput
+    const deployedScEventData = confirmationEvent.args
+        .deployedStableCoin as IStableCoinFactory.DeployedStableCoinStructOutput
     console.log(MESSAGES.deploy.success.deployFullInfrastructure)
 
     // * Associate token
-    console.log(MESSAGES.deploy.info.associate)
-    const associateResponse = await hederaTokenManager.associate()
+    console.log(MESSAGES.hederaTokenManager.info.associate)
+    const associateResponse = await IHRC__factory.connect(deployedScEventData.tokenAddress, wallet).associate({
+        gasLimit: GAS_LIMIT.hederaTokenManager.associate,
+    })
     await validateTxResponse(
         new ValidateTxResponseCommand({
             txResponse: associateResponse,
             errorMessage: MESSAGES.hederaTokenManager.error.associate,
         })
     )
-    console.log(MESSAGES.deploy.success.associate)
+    console.log(MESSAGES.hederaTokenManager.success.associate)
 
     // * Grant KYC to original sender
-    console.log(MESSAGES.deploy.info.grantKyc)
+    console.log(MESSAGES.hederaTokenManager.info.grantKyc)
     if (grantKYCToOriginalSender) {
         const grantKYCResponse = await hederaTokenManager
             .attach(deployedScEventData.stableCoinProxy)
@@ -121,9 +128,10 @@ export async function deployFullInfrastructure({
             })
         )
     }
-    console.log(MESSAGES.deploy.success.grantKyc)
+    console.log(MESSAGES.hederaTokenManager.success.grantKyc)
 
     return new DeployFullInfrastructureResult({
+        hederaTokenManagerAddress: hederaTokenManager.address,
         stableCoinFactoryDeployment: {
             address: stableCoinFactory.address,
             proxyAddress: sCFactoryProxyAddress,
@@ -183,7 +191,7 @@ export async function deployContractWithFactory<
     if (deployedContract?.proxyAdminAddress) {
         proxyAdminAddress = deployedContract.proxyAdminAddress
     } else {
-        const proxyAdmin = await new ProxyAdmin__factory(signer).deploy()
+        const proxyAdmin = await new ProxyAdmin__factory(signer).deploy(overrides)
         txResponseList.push(proxyAdmin.deployTransaction)
         proxyAdminAddress = proxyAdmin.address
     }
@@ -194,7 +202,8 @@ export async function deployContractWithFactory<
         const proxy = await new TransparentUpgradeableProxy__factory(signer).deploy(
             implementationContract.address,
             proxyAdminAddress,
-            '0x'
+            '0x',
+            overrides
         )
         txResponseList.push(proxy.deployTransaction)
         proxyAddress = proxy.address

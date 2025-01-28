@@ -52,9 +52,10 @@ export const GAS_LIMIT = {
     default: 3_000_000,
     low: 1_000_000,
     high: 10_000_000,
-    max: 30_000_000,
+    max: 15_000_000,
     hederaTokenManager: {
         deploy: 5_000_000,
+        associate: 900_000,
         grantKyc: 65_000,
         burn: 70_000,
     },
@@ -112,7 +113,7 @@ export const IS_UNLIMITED_ALLOWANCE_GAS = 120000
 // * Values (Payable Amounts)
 export const VALUE = {
     stableCoinFactory: {
-        deployStableCoin: 45,
+        deployStableCoin: 45_000_000_000_000_000_000n,
     },
 }
 
@@ -128,13 +129,9 @@ export const MESSAGES = {
     deploy: {
         info: {
             deployFullInfrastructure: '🚀 Deploying full infrastructure...',
-            associate: '🔗 Associating token...',
-            grantKyc: '🔐 Granting KYC...',
         },
         success: {
             deployFullInfrastructure: '🎉 Full infrastructure deployed successfully.',
-            associate: '✅ Token associated successfully.',
-            grantKyc: '✅ KYC granted successfully.',
         },
         error: {
             deploy: '❌ Failed to deploy contract.',
@@ -143,6 +140,8 @@ export const MESSAGES = {
     hederaTokenManager: {
         info: {
             deploy: '🚀 Deploying HederaTokenManager...',
+            associate: '🔗 Associating token...',
+            grantKyc: '🔐 Granting KYC...',
         },
         success: {
             deploy: '✅ HederaTokenManager deployed successfully.',
@@ -159,6 +158,10 @@ export const MESSAGES = {
         info: {
             deploy: '🚀 Deploying StableCoinFactory...',
             initialize: '🚀 Initializing StableCoinFactory...',
+            deployStableCoin: '🚀 Deploying StableCoin...',
+            addHederaTokenManagerVersion: '🚀 Adding HederaTokenManager version...',
+            editHederaTokenManagerAddress: '✏️ Editing HederaTokenManager address...',
+            removeHederaTokenManagerAddress: '🗑️ Removing HederaTokenManager address...',
         },
         success: {
             deploy: '✅ StableCoinFactory deployed successfully.',

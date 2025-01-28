@@ -1,6 +1,8 @@
 import { BigNumber } from 'ethers'
 import { deployFullInfrastructure, DeployFullInfrastructureCommand } from '@scripts'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
+import { MockHtsBurn__factory } from '@typechain'
+import { HardhatRuntimeEnvironment } from 'hardhat/types'
 
 export { GAS_LIMIT } from '@scripts'
 export const TOKEN_DECIMALS = 6
@@ -13,7 +15,30 @@ export const MAX_SUPPLY = BigNumber.from(1_000).mul(TOKEN_FACTOR)
 export const ONE_TOKEN = BigNumber.from(1).mul(TOKEN_FACTOR)
 export const INITIAL_AMOUNT_DATA_FEED = INIT_SUPPLY.add(BigNumber.from(100_000)).toString()
 
-export const deployFullInfrastructureInTests = async (signer: SignerWithAddress) => {
+export async function deployPrecompiledHederaTokenServiceMock(
+    hre: HardhatRuntimeEnvironment,
+    signer: SignerWithAddress
+) {
+    // Impersonate the Hedera Token Service precompiled address
+    await hre.network.provider.request({
+        method: 'hardhat_impersonateAccount',
+        params: ['0x0000000000000000000000000000000000000167'],
+    })
+
+    const mockedHederaTokenService = await new MockHtsBurn__factory(signer).deploy()
+    await mockedHederaTokenService.deployed()
+    // Force deployment to the target address
+    const targetAddress = '0x0000000000000000000000000000000000000167'
+
+    await hre.network.provider.send('hardhat_setCode', [
+        targetAddress,
+        await hre.ethers.provider.getCode(mockedHederaTokenService.address),
+    ])
+
+    console.log(`Mock contract deployed to ${targetAddress}`)
+}
+
+export async function deployFullInfrastructureInTests(signer: SignerWithAddress) {
     const command = await DeployFullInfrastructureCommand.newInstance({
         signer,
         useDeployed: false,
@@ -26,10 +51,9 @@ export const deployFullInfrastructureInTests = async (signer: SignerWithAddress)
             memo: TOKEN_MEMO,
             freeze: false,
         },
+        initialAmountDataFeed: INITIAL_AMOUNT_DATA_FEED,
     })
 
-    const {
-        stableCoinDeployment: { proxyAddress },
-    } = await deployFullInfrastructure(command)
-    return proxyAddress
+    const { stableCoinDeployment } = await deployFullInfrastructure(command)
+    return stableCoinDeployment.proxyAddress
 }

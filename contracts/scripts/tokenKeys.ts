@@ -30,7 +30,7 @@ export function tokenKeystoContract({ addKyc, addFeeSchedule }: TokenKeysToContr
         {
             keyType: keyType,
             publicKey: '0x',
-            isED25519: false,
+            isEd25519: false,
         },
     ]
 }
@@ -145,7 +145,7 @@ function fixKeys(): any {
     return {
         keyType: keyType,
         publicKey: '0x',
-        isED25519: false,
+        isEd25519: false,
     }
 }
 
