@@ -61,5 +61,5 @@ export const GAS_LIMIT = {
     max: 15_000_000,
     default: 1_000_000,
     low: 100_000,
-    high: 3_000_000,
+    high: 5_000_000,
 }

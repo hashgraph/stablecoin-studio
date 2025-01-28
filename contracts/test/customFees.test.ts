@@ -1,10 +1,10 @@
 import { expect } from 'chai'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { ethers, network } from 'hardhat'
+import { NetworkName } from '@configuration'
 import { HederaTokenManager, HederaTokenManager__factory, IHederaTokenService, IHRC__factory } from '@typechain'
 import { ADDRESS_ZERO, MESSAGES, validateTxResponse, ValidateTxResponseCommand } from '@scripts'
 import { deployFullInfrastructureInTests, GAS_LIMIT } from '@test/shared'
-import { NetworkName } from '@configuration'
 
 describe('Custom Fees Tests', function () {
     let proxyAddress: string
@@ -19,7 +19,7 @@ describe('Custom Fees Tests', function () {
 
     before(async function () {
         // Disable | Mock console.log()
-        // console.log = () => {} // eslint-disable-line
+        console.log = () => {} // eslint-disable-line
         // * Deploy StableCoin Token
         console.info('Deploying full infrastructure...')
         ;[operator, nonOperator] = await ethers.getSigners()

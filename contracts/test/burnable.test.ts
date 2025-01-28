@@ -16,7 +16,7 @@ describe('Burn Tests', () => {
 
     before(async () => {
         // Disable | Mock console.log()
-        // console.log = () => {} // eslint-disable-line
+        console.log = () => {} // eslint-disable-line
         // * Deploy StableCoin Token
         console.info('Deploying full infrastructure...')
         ;[operator, nonOperator] = await ethers.getSigners()

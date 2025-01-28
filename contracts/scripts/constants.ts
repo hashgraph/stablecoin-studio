@@ -1,4 +1,5 @@
 import { constants } from 'ethers'
+import { GAS_LIMIT as CONF_GAS_LIMIT } from '@configuration'
 
 // * Ethereum
 export const ADDRESS_ZERO = constants.AddressZero
@@ -49,29 +50,29 @@ export const ROLES = {
 
 // * Gas
 export const GAS_LIMIT = {
-    default: 3_000_000,
-    low: 1_000_000,
-    high: 10_000_000,
-    max: 15_000_000,
+    ...CONF_GAS_LIMIT,
     hederaTokenManager: {
-        deploy: 5_000_000,
-        associate: 900_000,
-        grantKyc: 65_000,
-        burn: 70_000,
+        deploy: 5_000_000n,
+        associate: 800_000n,
+        grantKyc: 65_000n,
+        burn: 70_000n,
         updateCustomFees: 65_000n,
+        deleteToken: 65_000n,
+        grantRole: 150_000n,
+        mint: 70_000n,
     },
     stableCoinFactory: {
-        deploy: 5_000_000,
-        initialize: 130_000,
-        deployStableCoin: 1_900_000,
-        addHederaTokenManagerVersion: 4_800_000,
-        editHederaTokenManagerAddress: 4_800_000,
-        removeHederaTokenManagerAddress: 4_800_000, // Added gas limit for removeHederaTokenManagerAddress
-        getHederaTokenManagerAddress: 4_800_000,
-        getAdmin: 4_800_000,
+        deploy: 5_000_000n,
+        initialize: 130_000n,
+        deployStableCoin: 1_900_000n,
+        addHederaTokenManagerVersion: 4_800_000n,
+        editHederaTokenManagerAddress: 4_800_000n,
+        removeHederaTokenManagerAddress: 4_800_000n, // Added gas limit for removeHederaTokenManagerAddress
+        getHederaTokenManagerAddress: 4_800_000n,
+        getAdmin: 4_800_000n,
     },
     proxyAdmin: {
-        upgrade: 150_000,
+        upgrade: 150_000n,
     },
 }
 export const GAS_LIMIT_TINY = 60000
@@ -80,19 +81,15 @@ export const GAS_LIMIT_MODERATE = 1800000
 export const GAS_LIMIT_HIGH = 4800000
 export const GAS_LIMIT_HIGHEST = 7800000
 export const CREATE_SC_GAS = 1900000
-export const CASHIN_GAS = 140000
 export const WIPE_GAS = 70000
 export const RESCUE_GAS = 70000
 export const RESCUE_HBAR_GAS = 70000
 export const FREEZE_GAS = 65000
 export const UNFREEZE_GAS = 65000
 export const REVOKE_KYC_GAS = 65000
-export const UPDATE_CUSTOM_FEES_GAS = 65000
 export const GET_CUSTOM_FEES_GAS = 65000
 export const PAUSE_GAS = 65000
 export const UNPAUSE_GAS = 65000
-export const DELETE_GAS = 65000
-export const GRANT_ROLES_GAS = 150000
 export const REVOKE_ROLES_GAS = 85000
 export const MAX_ROLES_GAS = 7000000
 export const INCREASE_SUPPLY_GAS = 80000
