@@ -62,7 +62,7 @@ jobs:
 
       # * Actual test command
       - name: Run
-        run: npm run test:ci --workspace=contracts
+        run: npm run test:ci --workspace=contracts -- --network testnet
 
       - name: Clean project
         run: npm run clean --workspace=contracts

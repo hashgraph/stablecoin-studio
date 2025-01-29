@@ -29,7 +29,7 @@ const hardhatConfig: HardhatUserConfig = {
             hardfork: DEFAULT_EVM_VERSION,
             blockGasLimit: GAS_LIMIT.max,
             accounts: {
-                mnemonic: configuration.mnemonic.hardhat.phrase,
+                mnemonic: configuration.mnemonic.hardhat?.phrase || undefined,
             },
             allowUnlimitedContractSize: true,
             enableRip7212: true,
