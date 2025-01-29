@@ -6,14 +6,15 @@ import { HederaTokenManager, HederaTokenManager__factory, IHederaTokenService, I
 import { ADDRESS_ZERO, MESSAGES, validateTxResponse, ValidateTxResponseCommand } from '@scripts'
 import { deployFullInfrastructureInTests, GAS_LIMIT } from '@test/shared'
 
-describe('Custom Fees Tests', function () {
+describe('➡️ Custom Fees Tests', function () {
+    // Contracts
     let proxyAddress: string
     let tokenAddress: string
     let hederaTokenManager: HederaTokenManager
-
+    // Accounts
     let operator: SignerWithAddress
     let nonOperator: SignerWithAddress
-
+    // Custom Fees
     let fixedFees: IHederaTokenService.FixedFeeStruct[]
     let fractionalFees: IHederaTokenService.FractionalFeeStruct[]
 
@@ -21,7 +22,7 @@ describe('Custom Fees Tests', function () {
         // Disable | Mock console.log()
         console.log = () => {} // eslint-disable-line
         // * Deploy StableCoin Token
-        console.info('Deploying full infrastructure...')
+        console.info('  🏗️ Deploying full infrastructure...')
         ;[operator, nonOperator] = await ethers.getSigners()
         // if ((network.name as NetworkName) === NETWORK_LIST.name[0]) {
         //     await deployPrecompiledHederaTokenServiceMock(hre, signer)

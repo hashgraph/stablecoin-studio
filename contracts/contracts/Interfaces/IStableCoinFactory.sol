@@ -2,7 +2,7 @@
 pragma solidity 0.8.18;
 
 import {IHederaTokenManager} from './IHederaTokenManager.sol';
-import {KeysLib} from '../library/KeysLib.sol';
+import {KeysLib, KeysStruct} from '../library/KeysLib.sol';
 
 interface IStableCoinFactory {
     struct TokenStruct {
@@ -16,7 +16,7 @@ interface IStableCoinFactory {
         address reserveAddress;
         int256 reserveInitialAmount;
         bool createReserve;
-        KeysLib.KeysStruct[] keys;
+        KeysStruct[] keys;
         IHederaTokenManager.RolesStruct[] roles;
         IHederaTokenManager.CashinRoleStruct cashinRole;
         string metadata;

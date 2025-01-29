@@ -1,4 +1,3 @@
-import { BytesLike } from 'ethers'
 import {
     AllTokenKeysToKeyCommand,
     GenerateKeyTypeCommand,
@@ -6,14 +5,15 @@ import {
     TokenKeysToContractCommand,
     TokenKeysToKeyCommand,
 } from '@scripts'
+import { BigNumber, BytesLike } from 'ethers'
 
 export interface KeysStruct {
-    keyType: number
+    keyType: BigNumber
     publicKey: BytesLike
     isEd25519: boolean
 }
 
-export function tokenKeystoContract({ addKyc, addFeeSchedule }: TokenKeysToContractCommand): KeysStruct[] {
+export function tokenKeysToContract({ addKyc, addFeeSchedule }: TokenKeysToContractCommand): KeysStruct[] {
     const keyType = generateKeyType(
         new GenerateKeyTypeCommand({
             kycKey: addKyc,
@@ -57,7 +57,7 @@ export function tokenKeysToKey({ publicKey, isEd25519, addKyc, addFeeSchedule }:
     ]
 }
 
-export function allTokenKeystoKey({
+export function allTokenKeysToKey({
     publicKey,
     isEd25519,
     addKyc,
@@ -134,7 +134,7 @@ export function rolesToAccounts({
     ]
 }
 
-function fixKeys(): any {
+function fixKeys(): KeysStruct {
     const keyType = generateKeyType(
         new GenerateKeyTypeCommand({
             adminKey: true,
@@ -173,8 +173,8 @@ function generateKeyType({
     feeScheduleKey,
     pauseKey,
     ignored,
-}: GenerateKeyTypeCommand): number {
-    return (
+}: GenerateKeyTypeCommand) {
+    const number =
         (adminKey ? 1 : 0) |
         (kycKey ? 2 : 0) |
         (freezeKey ? 4 : 0) |
@@ -183,5 +183,5 @@ function generateKeyType({
         (feeScheduleKey ? 32 : 0) |
         (pauseKey ? 64 : 0) |
         (ignored ? 128 : 0)
-    )
+    return BigNumber.from(number)
 }

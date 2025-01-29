@@ -3,7 +3,7 @@ import { BaseTokenKeysCommand, BaseTokenKeysCommandParams } from '@scripts'
 
 interface TokenKeysToKeyCommandParams extends BaseTokenKeysCommandParams {
     publicKey: BytesLike
-    isEd25519: boolean
+    isEd25519?: boolean
 }
 
 export default class TokenKeysToContractCommand extends BaseTokenKeysCommand {

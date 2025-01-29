@@ -15,3 +15,9 @@ export async function delay({
     }
     return new Promise<boolean>((resolve) => setTimeout(() => resolve(true), delayInMilliseconds))
 }
+
+export function getOneMonthFromNowInSeconds(): number {
+    const secondsInOneMonth = 30 * 24 * 60 * 60 // Assuming 30 days in a month
+    const currentTimeInSeconds = Math.floor(Date.now() / 1000)
+    return currentTimeInSeconds + secondsInOneMonth
+}

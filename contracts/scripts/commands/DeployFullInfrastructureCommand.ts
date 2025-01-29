@@ -1,5 +1,5 @@
-import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
-import { DEFAULT_DECIMALS, NetworkName } from '@configuration'
+import { Signer, Wallet } from 'ethers'
+import { DEFAULT_DECIMALS, NetworkName, NetworkNameByChainId } from '@configuration'
 import { IStableCoinFactory } from '@typechain'
 import { ADDRESS_ZERO, NUMBER_ZERO } from 'scripts/constants'
 import {
@@ -8,10 +8,9 @@ import {
     getFullWalletFromSigner,
     rolesToAccounts,
     tokenKeysToKey,
-    tokenKeystoContract,
+    tokenKeysToContract,
 } from '@scripts'
-import { Wallet } from 'ethers'
-import { NetworkChainId, NetworkNameByChainId } from 'configuration/Configuration'
+import { NetworkChainId } from '@configuration'
 
 export interface TokenInformation {
     name: string
@@ -29,7 +28,7 @@ interface DeployFullInfrastructureCommandParamsCommmon {
 }
 
 export interface DeployFullInfrastructureCommandNewParams extends DeployFullInfrastructureCommandParamsCommmon {
-    signer: SignerWithAddress
+    signer: Signer
     tokenInformation: TokenInformation
     allToContract?: boolean
     reserveAddress?: string
@@ -89,13 +88,14 @@ export default class DeployFullInfrastructureCommand {
         if (!signer.provider) {
             throw new SignerWithoutProviderError()
         }
+        const signerAddress = await signer.getAddress()
         const network = NetworkNameByChainId[
             (await signer.provider.getNetwork()).chainId as NetworkChainId
         ] as NetworkName
         const wallet = await getFullWalletFromSigner(signer)
 
         const keys = allToContract
-            ? tokenKeystoContract({ addKyc, addFeeSchedule })
+            ? tokenKeysToContract({ addKyc, addFeeSchedule })
             : tokenKeysToKey(new TokenKeysToKeyCommand({ publicKey: wallet.publicKey, isEd25519: false }))
 
         const tokenStruct = {
@@ -112,16 +112,16 @@ export default class DeployFullInfrastructureCommand {
             keys: keys.map((key) => ({
                 keyType: key.keyType,
                 publicKey: key.publicKey,
-                isED25519: key.isEd25519,
+                isEd25519: key.isEd25519,
             })),
             roles: rolesToAccounts({
                 allToContract,
                 allRolesToCreator,
-                CreatorAccount: signer.address,
+                CreatorAccount: signerAddress,
                 RolesToAccount,
             }),
             cashinRole: {
-                account: allToContract ? (allRolesToCreator ? signer.address : RolesToAccount) : ADDRESS_ZERO,
+                account: allToContract ? (allRolesToCreator ? signerAddress : RolesToAccount) : ADDRESS_ZERO,
                 allowance: NUMBER_ZERO,
             },
             metadata: initialMetadata,

@@ -1,7 +1,14 @@
-import { BigNumber } from 'ethers'
-import { deployFullInfrastructure, DeployFullInfrastructureCommand, DeployFullInfrastructureResult } from '@scripts'
+import { BigNumber, Wallet } from 'ethers'
+import {
+    deployFullInfrastructure,
+    DeployFullInfrastructureCommand,
+    DeployFullInfrastructureResult,
+    NUMBER_ZERO,
+    tokenKeysToContract,
+    TokenKeysToContractCommand,
+} from '@scripts'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
-import { MockHtsBurn__factory } from '@typechain'
+import { IHederaTokenManager, MockHtsBurn__factory } from '@typechain'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { configuration } from 'hardhat.config'
 import { DeployedContract, NetworkName } from '@configuration'
@@ -16,6 +23,19 @@ export const INIT_SUPPLY = BigNumber.from(100).mul(TOKEN_FACTOR)
 export const MAX_SUPPLY = BigNumber.from(1_000).mul(TOKEN_FACTOR)
 export const ONE_TOKEN = BigNumber.from(1).mul(TOKEN_FACTOR)
 export const INITIAL_AMOUNT_DATA_FEED = INIT_SUPPLY.add(BigNumber.from(100_000)).toString()
+
+export const AUTO_RENEW_PERIOD = BigNumber.from(7776000)
+export const OTHER_AUTO_RENEW_PERIOD = BigNumber.from(7884000)
+export const DEFAULT_UPDATE_TOKEN_STRUCT = {
+    tokenName: TOKEN_NAME,
+    tokenSymbol: TOKEN_SYMBOL,
+    keys: tokenKeysToContract(
+        new TokenKeysToContractCommand({ addKyc: false })
+    ) as IHederaTokenManager.UpdateTokenStructStructOutput['keys'],
+    second: NUMBER_ZERO,
+    autoRenewPeriod: AUTO_RENEW_PERIOD,
+    tokenMetadataURI: '',
+} as IHederaTokenManager.UpdateTokenStructStructOutput
 
 export async function deployPrecompiledHederaTokenServiceMock(
     hre: HardhatRuntimeEnvironment,
@@ -45,10 +65,16 @@ let deployedResult: DeployFullInfrastructureResult | undefined
 export async function deployFullInfrastructureInTests({
     signer,
     network,
+    initialAmountDataFeed = INITIAL_AMOUNT_DATA_FEED,
+    allRolesToCreator,
+    RolesToAccount,
     addFeeSchedule,
 }: {
-    signer: SignerWithAddress
+    signer: SignerWithAddress | Wallet
     network: NetworkName
+    initialAmountDataFeed?: string
+    allRolesToCreator?: boolean
+    RolesToAccount?: string
     addFeeSchedule?: boolean
 }) {
     const command = await DeployFullInfrastructureCommand.newInstance({
@@ -63,7 +89,9 @@ export async function deployFullInfrastructureInTests({
             memo: TOKEN_MEMO,
             freeze: false,
         },
-        initialAmountDataFeed: INITIAL_AMOUNT_DATA_FEED,
+        initialAmountDataFeed,
+        allRolesToCreator,
+        RolesToAccount,
         addFeeSchedule,
     })
 

@@ -7,10 +7,11 @@ import { delay, validateTxResponse, ValidateTxResponseCommand } from '@scripts'
 import { deployFullInfrastructureInTests, INIT_SUPPLY, GAS_LIMIT } from '@test/shared'
 import { NetworkName } from '@configuration'
 
-describe('Burn Tests', () => {
+describe('➡️ Burn Tests', () => {
+    // Contracts
     let proxyAddress: string
     let hederaTokenManager: HederaTokenManager
-
+    // Accounts
     let operator: SignerWithAddress
     let nonOperator: SignerWithAddress
 
@@ -18,7 +19,7 @@ describe('Burn Tests', () => {
         // Disable | Mock console.log()
         console.log = () => {} // eslint-disable-line
         // * Deploy StableCoin Token
-        console.info('Deploying full infrastructure...')
+        console.info('  🏗️ Deploying full infrastructure...')
         ;[operator, nonOperator] = await ethers.getSigners()
         // if ((network.name as NetworkName) === NETWORK_LIST.name[0]) {
         //     await deployPrecompiledHederaTokenServiceMock(hre, signer)

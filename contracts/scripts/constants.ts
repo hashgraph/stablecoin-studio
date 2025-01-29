@@ -46,6 +46,10 @@ export const ROLES = {
         id: 9,
         hash: '0x6db8586688d24c6a6367d21f709d650b12a2a61dd75e834bd8cd90fd6afa794b',
     },
+    withoutRole: {
+        id: -1,
+        hash: '0xe11b25922c3ff9f0f0a34f0b8929ac96a1f215b99dcb08c2891c220cf3a7e8cc',
+    },
 }
 
 // * Gas
@@ -53,13 +57,26 @@ export const GAS_LIMIT = {
     ...CONF_GAS_LIMIT,
     hederaTokenManager: {
         deploy: 5_000_000n,
+        initialize: 60_000n,
         associate: 800_000n,
         grantKyc: 65_000n,
         burn: 70_000n,
         updateCustomFees: 65_000n,
         deleteToken: 65_000n,
         grantRole: 150_000n,
-        mint: 70_000n,
+        mint: 140_000n,
+        freeze: 65_000n,
+        unfreeze: 65_000n,
+        updateToken: 120_000n,
+        // Read
+        getMetadata: 60_000n,
+        getRoles: 120_000n,
+        isUnlimitedSupplierAllowance: 60_000n,
+        name: 60_000n,
+        symbol: 60_000n,
+        decimals: 60_000n,
+        totalSupply: 60_000n,
+        getTokenAddress: 1_800_000n,
     },
     stableCoinFactory: {
         deploy: 5_000_000n,
@@ -75,17 +92,10 @@ export const GAS_LIMIT = {
         upgrade: 150_000n,
     },
 }
-export const GAS_LIMIT_TINY = 60000
-export const GAS_LIMIT_SMALL = 130000
-export const GAS_LIMIT_MODERATE = 1800000
-export const GAS_LIMIT_HIGH = 4800000
-export const GAS_LIMIT_HIGHEST = 7800000
-export const CREATE_SC_GAS = 1900000
+
 export const WIPE_GAS = 70000
 export const RESCUE_GAS = 70000
 export const RESCUE_HBAR_GAS = 70000
-export const FREEZE_GAS = 65000
-export const UNFREEZE_GAS = 65000
 export const REVOKE_KYC_GAS = 65000
 export const GET_CUSTOM_FEES_GAS = 65000
 export const PAUSE_GAS = 65000
@@ -96,14 +106,12 @@ export const INCREASE_SUPPLY_GAS = 80000
 export const DECREASE_SUPPLY_GAS = 50000
 export const RESET_SUPPLY_GAS = 45000
 export const UPDATE_RESERVE_ADDRESS_GAS = 45000
-export const UPDATE_TOKEN_GAS = 120000
 export const UPDATE_RESERVE_AMOUNT_GAS = 40000
 export const CHANGE_PROXY_OWNER = 50000
 export const ACCEPT_PROXY_OWNER = 40000
 export const BALANCE_OF_GAS = 120000
 export const GET_RESERVE_ADDRESS_GAS = 120000
 export const GET_RESERVE_AMOUNT_GAS = 120000
-export const GET_ROLES_GAS = 120000
 export const HAS_ROLE_GAS = 120000
 export const GET_SUPPLY_ALLOWANCE_GAS = 120000
 export const IS_UNLIMITED_ALLOWANCE_GAS = 120000

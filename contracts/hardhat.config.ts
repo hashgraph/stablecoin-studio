@@ -22,9 +22,9 @@ const hardhatConfig: HardhatUserConfig = {
             evmVersion: DEFAULT_EVM_VERSION,
         },
     },
-    defaultNetwork: 'hardhat',
+    defaultNetwork: NETWORK_LIST.name[1],
     networks: {
-        hardhat: {
+        [NETWORK_LIST.name[0]]: {
             chainId: NETWORK_LIST.chainId[0],
             hardfork: DEFAULT_EVM_VERSION,
             blockGasLimit: GAS_LIMIT.max,
@@ -41,7 +41,7 @@ const hardhatConfig: HardhatUserConfig = {
             // initialDate: '2025-01-27T00:00:00Z',
             // chainId: 29,
         },
-        local: {
+        [NETWORK_LIST.name[1]]: {
             chainId: NETWORK_LIST.chainId[1],
             hardfork: DEFAULT_EVM_VERSION,
             url: configuration.endpoints.local.jsonRpc,
@@ -49,21 +49,21 @@ const hardhatConfig: HardhatUserConfig = {
             blockGasLimit: GAS_LIMIT.max,
             timeout: 60000, // Increase to 60 seconds
         },
-        previewnet: {
+        [NETWORK_LIST.name[2]]: {
             chainId: NETWORK_LIST.chainId[2],
             hardfork: DEFAULT_EVM_VERSION,
             url: configuration.endpoints.previewnet.jsonRpc,
             accounts: configuration.privateKeys.previewnet,
             timeout: 60000, // Increase to 60 seconds
         },
-        testnet: {
+        [NETWORK_LIST.name[3]]: {
             chainId: NETWORK_LIST.chainId[3],
             hardfork: DEFAULT_EVM_VERSION,
             url: configuration.endpoints.testnet.jsonRpc,
             accounts: configuration.privateKeys.testnet,
             timeout: 60000, // Increase to 60 seconds
         },
-        mainnet: {
+        [NETWORK_LIST.name[4]]: {
             chainId: NETWORK_LIST.chainId[4],
             url: configuration.endpoints.mainnet.jsonRpc,
             accounts: configuration.privateKeys.mainnet,

@@ -2,7 +2,7 @@
 pragma solidity 0.8.18;
 
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
-import {KeysLib} from '../library/KeysLib.sol';
+import {KeysLib, KeysStruct} from '../library/KeysLib.sol';
 
 interface IHederaTokenManager {
     struct InitializeStruct {
@@ -29,7 +29,7 @@ interface IHederaTokenManager {
     struct UpdateTokenStruct {
         string tokenName;
         string tokenSymbol;
-        KeysLib.KeysStruct[] keys;
+        KeysStruct[] keys;
         int64 second;
         int64 autoRenewPeriod;
         string tokenMetadataURI;

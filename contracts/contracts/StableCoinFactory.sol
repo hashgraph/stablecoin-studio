@@ -283,7 +283,7 @@ contract StableCoinFactory is IStableCoinFactory, Initializable {
                 key: KeysLib.generateKey(
                     requestedToken.keys[i].publicKey,
                     stableCoinProxyAddress,
-                    requestedToken.keys[i].isED25519
+                    requestedToken.keys[i].isEd25519
                 )
             });
         }

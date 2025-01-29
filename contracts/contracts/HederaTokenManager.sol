@@ -177,7 +177,7 @@ contract HederaTokenManager is
 
             hederaKeys[i] = IHederaTokenService.TokenKey({
                 keyType: updatedToken.keys[i].keyType,
-                key: KeysLib.generateKey(updatedToken.keys[i].publicKey, address(this), updatedToken.keys[i].isED25519)
+                key: KeysLib.generateKey(updatedToken.keys[i].publicKey, address(this), updatedToken.keys[i].isEd25519)
             });
         }
 
