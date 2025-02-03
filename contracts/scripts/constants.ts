@@ -59,6 +59,7 @@ export const GAS_LIMIT = {
         deploy: 5_000_000n,
         initialize: 60_000n,
         associate: 800_000n,
+        dissociate: 800_000n,
         grantKyc: 65_000n,
         revokeKyc: 65_000n,
         burn: 70_000n,
@@ -69,6 +70,8 @@ export const GAS_LIMIT = {
         freeze: 65_000n,
         unfreeze: 65_000n,
         updateToken: 120_000n,
+        pause: 65_000n,
+        unpause: 65_000n,
         // Read
         getMetadata: 60_000n,
         getRoles: 120_000n,
@@ -98,8 +101,6 @@ export const WIPE_GAS = 70000
 export const RESCUE_GAS = 70000
 export const RESCUE_HBAR_GAS = 70000
 export const GET_CUSTOM_FEES_GAS = 65000
-export const PAUSE_GAS = 65000
-export const UNPAUSE_GAS = 65000
 export const REVOKE_ROLES_GAS = 85000
 export const MAX_ROLES_GAS = 7000000
 export const INCREASE_SUPPLY_GAS = 80000
@@ -157,6 +158,7 @@ export const MESSAGES = {
         error: {
             deploy: '❌ Failed to deploy HederaTokenManager.',
             associate: '❌ Failed to associate token.',
+            dissociate: '❌ Failed to dissociate token.',
             grantKyc: '❌ Failed to grant KYC.',
         },
     },

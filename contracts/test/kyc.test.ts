@@ -3,7 +3,7 @@ import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { ethers, network } from 'hardhat'
 import { NetworkName } from '@configuration'
 import { HederaTokenManager, HederaTokenManager__factory } from '@typechain'
-import { ADDRESS_ZERO, delay, MESSAGES, validateTxResponse, ValidateTxResponseCommand } from '@scripts'
+import { ADDRESS_ZERO, MESSAGES, ValidateTxResponseCommand } from '@scripts'
 import { deployFullInfrastructureInTests, GAS_LIMIT, ONE_TOKEN } from '@test/shared'
 
 describe('➡️ KYC Tests', function () {
