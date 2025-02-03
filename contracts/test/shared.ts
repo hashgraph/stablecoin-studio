@@ -69,6 +69,8 @@ export async function deployFullInfrastructureInTests({
     allRolesToCreator,
     RolesToAccount,
     addFeeSchedule,
+    grantKYCToOriginalSender,
+    addKyc,
 }: {
     signer: SignerWithAddress | Wallet
     network: NetworkName
@@ -76,6 +78,8 @@ export async function deployFullInfrastructureInTests({
     allRolesToCreator?: boolean
     RolesToAccount?: string
     addFeeSchedule?: boolean
+    grantKYCToOriginalSender?: boolean
+    addKyc?: boolean
 }) {
     const command = await DeployFullInfrastructureCommand.newInstance({
         signer,
@@ -93,6 +97,8 @@ export async function deployFullInfrastructureInTests({
         allRolesToCreator,
         RolesToAccount,
         addFeeSchedule,
+        grantKYCToOriginalSender,
+        addKyc,
     })
 
     deployedResult = await deployFullInfrastructure(command)

@@ -16,7 +16,7 @@ describe('➡️ KYC Tests', function () {
 
     before(async function () {
         // Disable | Mock console.log()
-        // console.log = () => {} // eslint-disable-line
+        console.log = () => {} // eslint-disable-line
         // * Deploy StableCoin Token
         console.info('  🏗️ Deploying full infrastructure...')
         ;[operator, nonOperator] = await ethers.getSigners()
@@ -26,7 +26,8 @@ describe('➡️ KYC Tests', function () {
         ;({ proxyAddress } = await deployFullInfrastructureInTests({
             signer: operator,
             network: network.name as NetworkName,
-            addFeeSchedule: true,
+            addKyc: true,
+            grantKYCToOriginalSender: true,
         }))
         hederaTokenManager = HederaTokenManager__factory.connect(proxyAddress, operator)
     })
@@ -49,7 +50,7 @@ describe('➡️ KYC Tests', function () {
             gasLimit: GAS_LIMIT.hederaTokenManager.mint,
         })
         await new ValidateTxResponseCommand({ txResponse: mintResponse, confirmationEvent: 'TokensMinted' }).execute()
-        console.log('Mint ok')
+
         // Should not be able to revoke KYC from an account without KYC role
         const nonOperatorRevokeResponse = await hederaTokenManager.connect(nonOperator).revokeKyc(operator.address, {
             gasLimit: GAS_LIMIT.hederaTokenManager.revokeKyc,
@@ -68,7 +69,6 @@ describe('➡️ KYC Tests', function () {
             txResponse: revokeResponse,
             confirmationEvent: 'RevokeTokenKyc',
         }).execute()
-        console.log('Revoke ok')
 
         // Should NOT be able to mint more tokens
         const revokedMintResponse = await hederaTokenManager.mint(operator.address, ONE_TOKEN, {
@@ -86,7 +86,6 @@ describe('➡️ KYC Tests', function () {
             txResponse: grantResponse,
             confirmationEvent: 'GrantTokenKyc',
         }).execute()
-        console.log('Grant ok')
 
         // Should be able to mint more tokens again
         const grantedMintResponse = await hederaTokenManager.mint(operator.address, ONE_TOKEN, {
@@ -96,7 +95,6 @@ describe('➡️ KYC Tests', function () {
             txResponse: grantedMintResponse,
             confirmationEvent: 'TokensMinted',
         }).execute()
-        console.log('Mint ok')
     })
 
     it('An account with KYC role can`t grant and revoke kyc to the zero account for a token', async function () {

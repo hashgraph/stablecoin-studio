@@ -4,7 +4,7 @@ import { ethers, network } from 'hardhat'
 import { NetworkName } from '@configuration'
 import { HederaTokenManager, HederaTokenManager__factory, IHRC__factory } from '@typechain'
 import { MESSAGES, ValidateTxResponseCommand } from '@scripts'
-import { deployFullInfrastructureInTests, GAS_LIMIT } from '@test/shared'
+import { deployFullInfrastructureInTests, GAS_LIMIT, INIT_SUPPLY } from '@test/shared'
 
 describe('Pause Tests', function () {
     // Contracts
@@ -27,6 +27,7 @@ describe('Pause Tests', function () {
         ;({ proxyAddress, tokenAddress } = await deployFullInfrastructureInTests({
             signer: operator,
             network: network.name as NetworkName,
+            initialAmountDataFeed: INIT_SUPPLY.toString(),
         }))
         hederaTokenManager = HederaTokenManager__factory.connect(proxyAddress, operator)
     })
@@ -39,6 +40,7 @@ describe('Pause Tests', function () {
     })
 
     it("An account with PAUSE role can pause and unpause a token + An account without PAUSE role can't unpause a token", async function () {
+        // Associate token to nonOperator account
         const associateResponse = await IHRC__factory.connect(tokenAddress, nonOperator).associate({
             gasLimit: GAS_LIMIT.hederaTokenManager.associate,
         })
@@ -47,10 +49,12 @@ describe('Pause Tests', function () {
             errorMessage: MESSAGES.hederaTokenManager.error.associate,
         }).execute()
 
+        // Pause token
         const pauseResponse = await hederaTokenManager.pause({ gasLimit: GAS_LIMIT.hederaTokenManager.pause })
         await new ValidateTxResponseCommand({ txResponse: pauseResponse, confirmationEvent: 'TokenPaused' }).execute()
 
         //! Dissociate should fail?? It IS working
+        // // Dissociate token from nonOperator account should fail
         // const dissociatePausedResponse = await IHRC__factory.connect(tokenAddress, nonOperator).dissociate({
         //     gasLimit: GAS_LIMIT.hederaTokenManager.dissociate,
         // })
@@ -62,6 +66,7 @@ describe('Pause Tests', function () {
         //     }).execute()
         // ).to.be.rejectedWith(Error)
 
+        // Unpause token from nonOperator account should fail
         const nonOperatorUnpauseResponse = await hederaTokenManager.connect(nonOperator).unpause({
             gasLimit: GAS_LIMIT.hederaTokenManager.unpause,
         })
@@ -71,12 +76,14 @@ describe('Pause Tests', function () {
             }).execute()
         ).to.be.rejectedWith(Error)
 
+        // Unpause token from operator account
         const unpauseResponse = await hederaTokenManager.unpause({ gasLimit: GAS_LIMIT.hederaTokenManager.unpause })
         await new ValidateTxResponseCommand({
             txResponse: unpauseResponse,
             confirmationEvent: 'TokenUnpaused',
         }).execute()
 
+        // Dissociate token from nonOperator account should pass
         const dissociateUnpausedResponse = await IHRC__factory.connect(tokenAddress, nonOperator).dissociate({
             gasLimit: GAS_LIMIT.hederaTokenManager.dissociate,
         })
