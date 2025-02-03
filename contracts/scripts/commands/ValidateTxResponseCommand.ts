@@ -1,5 +1,5 @@
 import { ContractTransaction } from 'ethers'
-import { ErrorMessageCommand } from '@scripts'
+import { ErrorMessageCommand, validateTxResponse } from '@scripts'
 
 interface ValidateTxResponseCommandParams {
     txResponse: ContractTransaction
@@ -18,5 +18,9 @@ export default class ValidateTxResponseCommand extends ErrorMessageCommand {
         this.txResponse = txResponse
         this.confirmationEvent = confirmationEvent
         this.confirmations = confirmations
+    }
+
+    async execute() {
+        return await validateTxResponse(this)
     }
 }

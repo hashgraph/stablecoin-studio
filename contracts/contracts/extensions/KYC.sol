@@ -33,7 +33,7 @@ abstract contract KYC is IKYC, TokenOwner, Roles {
      */
     function revokeKyc(
         address account
-    ) external override(IKYC) onlyRole(_getRoleId(RoleName.KYC)) addressIsNotZero(account) returns (bool) {
+    ) external onlyRole(_getRoleId(RoleName.KYC)) addressIsNotZero(account) returns (bool) {
         address currentTokenAddress = _getTokenAddress();
 
         int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS).revokeTokenKyc(currentTokenAddress, account);

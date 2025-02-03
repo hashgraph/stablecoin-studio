@@ -21,7 +21,7 @@ interface ITokenOwner {
      *
      * @param code The code to check
      */
-    error ResponseCodeInvalid(int256 code);
+    error ResponseCodeInvalid(int64 code);
 
     /**
      * @dev Emitted when the provided `value` is not greater than `ref`

@@ -60,6 +60,7 @@ export const GAS_LIMIT = {
         initialize: 60_000n,
         associate: 800_000n,
         grantKyc: 65_000n,
+        revokeKyc: 65_000n,
         burn: 70_000n,
         updateCustomFees: 65_000n,
         deleteToken: 65_000n,
@@ -96,7 +97,6 @@ export const GAS_LIMIT = {
 export const WIPE_GAS = 70000
 export const RESCUE_GAS = 70000
 export const RESCUE_HBAR_GAS = 70000
-export const REVOKE_KYC_GAS = 65000
 export const GET_CUSTOM_FEES_GAS = 65000
 export const PAUSE_GAS = 65000
 export const UNPAUSE_GAS = 65000
