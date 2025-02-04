@@ -3,7 +3,7 @@ import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { ethers, network } from 'hardhat'
 import { NetworkName } from '@configuration'
 import { HederaTokenManager, HederaTokenManager__factory } from '@typechain'
-import { ROLES, ValidateTxResponseCommand } from '@scripts'
+import { delay, ROLES, ValidateTxResponseCommand } from '@scripts'
 import { deployFullInfrastructureInTests, GAS_LIMIT } from '@test/shared'
 import { ContractTransaction } from 'ethers'
 
@@ -114,7 +114,9 @@ describe('➡️ Roles Tests', function () {
             txResponse: revokeRoleResponse,
             confirmationEvent: 'RoleRevoked',
         }).execute()
+
         // Non operator has not burn role
+        await delay({ time: 1, unit: 'sec' })
         hasBurnRole = await hederaTokenManager.hasRole(ROLES.burn.hash, nonOperator.address, {
             gasLimit: GAS_LIMIT.hederaTokenManager.hasRole,
         })

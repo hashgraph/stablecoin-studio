@@ -188,6 +188,7 @@ describe('➡️ Role Management Tests', function () {
         await new ValidateTxResponseCommand({ txResponse }).execute()
 
         // Check roles and cash in allowances
+        await delay({ time: 1, unit: 'sec' })
         for (let i = 0; i < randomAccountList.length; i++) {
             const roles = await hederaTokenManager.getRoles(randomAccountList[i], {
                 gasLimit: GAS_LIMIT.hederaTokenManager.getRoles,
