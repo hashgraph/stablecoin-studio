@@ -334,4 +334,6 @@ contract HederaTokenManager is
 
         emit MetadataSet(msg.sender, metadata);
     }
+
+    receive() external payable {}
 }

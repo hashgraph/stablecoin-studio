@@ -12,6 +12,7 @@ import { IHederaTokenManager, MockHtsBurn__factory } from '@typechain'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { configuration } from 'hardhat.config'
 import { DeployedContract, NetworkName } from '@configuration'
+import { parseUnits } from 'ethers/lib/utils'
 
 export { GAS_LIMIT } from '@scripts'
 export const TOKEN_DECIMALS = 6
@@ -22,7 +23,14 @@ export const TOKEN_FACTOR = BigNumber.from(10).pow(TOKEN_DECIMALS)
 export const INIT_SUPPLY = BigNumber.from(100).mul(TOKEN_FACTOR)
 export const MAX_SUPPLY = BigNumber.from(1_000).mul(TOKEN_FACTOR)
 export const ONE_TOKEN = BigNumber.from(1).mul(TOKEN_FACTOR)
+export const TEN_TOKENS = BigNumber.from(10).mul(TOKEN_FACTOR)
 export const INITIAL_AMOUNT_DATA_FEED = INIT_SUPPLY.add(BigNumber.from(100_000)).toString()
+
+export const HBAR_DECIMALS = 8
+export const HBAR_FACTOR = BigNumber.from(10).pow(HBAR_DECIMALS)
+export const HBAR_INITIAL_AMOUNT = BigNumber.from(2).mul(HBAR_FACTOR)
+export const ONE_HBAR = parseUnits('1', 'ether') // Amount in HBAR (1 HBAR = 1 ether unit)
+export const TWO_HBAR = parseUnits('2', 'ether') // Amount in HBAR (1 HBAR = 1 ether unit)
 
 export const AUTO_RENEW_PERIOD = BigNumber.from(7776000)
 export const OTHER_AUTO_RENEW_PERIOD = BigNumber.from(7884000)

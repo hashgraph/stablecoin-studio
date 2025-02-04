@@ -55,6 +55,7 @@ export const ROLES = {
 // * Gas
 export const GAS_LIMIT = {
     ...CONF_GAS_LIMIT,
+    transfer: 60_000n,
     hederaTokenManager: {
         deploy: 5_000_000n,
         initialize: 60_000n,
@@ -66,21 +67,26 @@ export const GAS_LIMIT = {
         updateCustomFees: 65_000n,
         deleteToken: 65_000n,
         grantRole: 150_000n,
+        revokeRole: 85_000n,
         mint: 140_000n,
         freeze: 65_000n,
         unfreeze: 65_000n,
         updateToken: 120_000n,
         pause: 65_000n,
         unpause: 65_000n,
+        rescue: 70_000n,
+        rescueHBAR: 70_000n,
         // Read
         getMetadata: 60_000n,
         getRoles: 120_000n,
+        hasRole: 120_000n,
         isUnlimitedSupplierAllowance: 60_000n,
         name: 60_000n,
         symbol: 60_000n,
         decimals: 60_000n,
         totalSupply: 60_000n,
         getTokenAddress: 1_800_000n,
+        balanceOf: 120_000n,
     },
     stableCoinFactory: {
         deploy: 5_000_000n,
@@ -98,10 +104,8 @@ export const GAS_LIMIT = {
 }
 
 export const WIPE_GAS = 70000
-export const RESCUE_GAS = 70000
 export const RESCUE_HBAR_GAS = 70000
 export const GET_CUSTOM_FEES_GAS = 65000
-export const REVOKE_ROLES_GAS = 85000
 export const MAX_ROLES_GAS = 7000000
 export const INCREASE_SUPPLY_GAS = 80000
 export const DECREASE_SUPPLY_GAS = 50000
@@ -110,10 +114,8 @@ export const UPDATE_RESERVE_ADDRESS_GAS = 45000
 export const UPDATE_RESERVE_AMOUNT_GAS = 40000
 export const CHANGE_PROXY_OWNER = 50000
 export const ACCEPT_PROXY_OWNER = 40000
-export const BALANCE_OF_GAS = 120000
 export const GET_RESERVE_ADDRESS_GAS = 120000
 export const GET_RESERVE_AMOUNT_GAS = 120000
-export const HAS_ROLE_GAS = 120000
 export const GET_SUPPLY_ALLOWANCE_GAS = 120000
 export const IS_UNLIMITED_ALLOWANCE_GAS = 120000
 

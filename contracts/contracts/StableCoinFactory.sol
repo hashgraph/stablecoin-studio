@@ -150,7 +150,9 @@ contract StableCoinFactory is IStableCoinFactory, Initializable {
             requestedToken.metadata
         );
 
-        address tokenAddress = HederaTokenManager(address(stableCoinProxy)).initialize{value: msg.value}(initInfo);
+        address tokenAddress = HederaTokenManager(payable(address(stableCoinProxy))).initialize{value: msg.value}(
+            initInfo
+        );
 
         // Return event
         DeployedStableCoin memory deployedStableCoin = DeployedStableCoin(
