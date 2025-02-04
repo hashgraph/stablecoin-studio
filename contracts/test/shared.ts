@@ -125,6 +125,7 @@ export async function deployFullInfrastructureInTests({
     const { stableCoinDeployment } = deployedResult
     return {
         proxyAddress: stableCoinDeployment.proxyAddress,
+        proxyAdminAddress: stableCoinDeployment.proxyAdminAddress,
         tokenAddress: stableCoinDeployment.tokenAddress,
     }
 }

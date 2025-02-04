@@ -68,8 +68,11 @@ export const GAS_LIMIT = {
         deleteToken: 65_000n,
         grantRole: 150_000n,
         grantRoles: 7_800_000n,
+        grantSupplierRole: 7_800_000n,
+        grantUnlimitedSupplierRole: 7_800_000n,
         revokeRole: 85_000n,
         revokeRoles: 7_800_000n,
+        revokeSupplierRole: 7_800_000n,
         mint: 140_000n,
         freeze: 65_000n,
         unfreeze: 65_000n,
@@ -78,6 +81,10 @@ export const GAS_LIMIT = {
         unpause: 65_000n,
         rescue: 70_000n,
         rescueHBAR: 70_000n,
+        wipe: 70_000n,
+        increaseSupplierAllowance: 80_000n,
+        decreaseSupplierAllowance: 50_000n,
+        resetSupplierAllowance: 45_000n,
         // Read
         getMetadata: 60_000n,
         getRoles: 120_000n,
@@ -107,13 +114,9 @@ export const GAS_LIMIT = {
     },
 }
 
-export const WIPE_GAS = 70000
 export const RESCUE_HBAR_GAS = 70000
 export const GET_CUSTOM_FEES_GAS = 65000
 export const MAX_ROLES_GAS = 7000000
-export const INCREASE_SUPPLY_GAS = 80000
-export const DECREASE_SUPPLY_GAS = 50000
-export const RESET_SUPPLY_GAS = 45000
 export const UPDATE_RESERVE_ADDRESS_GAS = 45000
 export const UPDATE_RESERVE_AMOUNT_GAS = 40000
 export const CHANGE_PROXY_OWNER = 50000
