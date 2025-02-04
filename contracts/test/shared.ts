@@ -12,7 +12,7 @@ import { IHederaTokenManager, MockHtsBurn__factory } from '@typechain'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { configuration } from 'hardhat.config'
 import { DeployedContract, NetworkName } from '@configuration'
-import { parseUnits } from 'ethers/lib/utils'
+import { computeAddress, parseUnits } from 'ethers/lib/utils'
 
 export { GAS_LIMIT } from '@scripts'
 export const TOKEN_DECIMALS = 6
@@ -127,4 +127,12 @@ export async function deployFullInfrastructureInTests({
         proxyAddress: stableCoinDeployment.proxyAddress,
         tokenAddress: stableCoinDeployment.tokenAddress,
     }
+}
+
+export function randomAccountAddressList(length: number = 3): string[] {
+    const addresses: string[] = []
+    for (let i = 0; i < length; i++) {
+        addresses.push(computeAddress(Wallet.createRandom().privateKey))
+    }
+    return addresses
 }

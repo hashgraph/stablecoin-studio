@@ -67,7 +67,9 @@ export const GAS_LIMIT = {
         updateCustomFees: 65_000n,
         deleteToken: 65_000n,
         grantRole: 150_000n,
+        grantRoles: 7_800_000n,
         revokeRole: 85_000n,
+        revokeRoles: 7_800_000n,
         mint: 140_000n,
         freeze: 65_000n,
         unfreeze: 65_000n,
@@ -80,6 +82,7 @@ export const GAS_LIMIT = {
         getMetadata: 60_000n,
         getRoles: 120_000n,
         hasRole: 120_000n,
+        getAccountsWithRole: 120_000n,
         isUnlimitedSupplierAllowance: 60_000n,
         name: 60_000n,
         symbol: 60_000n,
@@ -87,6 +90,7 @@ export const GAS_LIMIT = {
         totalSupply: 60_000n,
         getTokenAddress: 1_800_000n,
         balanceOf: 120_000n,
+        getSupplierAllowance: 120_000n,
     },
     stableCoinFactory: {
         deploy: 5_000_000n,
@@ -116,7 +120,6 @@ export const CHANGE_PROXY_OWNER = 50000
 export const ACCEPT_PROXY_OWNER = 40000
 export const GET_RESERVE_ADDRESS_GAS = 120000
 export const GET_RESERVE_AMOUNT_GAS = 120000
-export const GET_SUPPLY_ALLOWANCE_GAS = 120000
 export const IS_UNLIMITED_ALLOWANCE_GAS = 120000
 
 // * Values (Payable Amounts)
