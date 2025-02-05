@@ -39,7 +39,7 @@
         "test:supplieradmin": "npx hardhat test test/supplieradmin.test.ts",
         "test:wipeable": "npx hardhat test test/wipeable.test.ts",
         "test:stableCoinFactory": "npx hardhat test test/stableCoinFactory.ts",
-        "test:reserve": "npx hardhat test test/reserve.ts",
+        "test:reserve": "npx hardhat test test/reserve.test.ts",
         "test:hederaReserve": "npx hardhat test test/hederaReserve.test.ts",
         "clean": "npx hardhat clean",
         "clean:all": "rimraf artifacts cache coverage node_modules build typechain-types && npm run clean",

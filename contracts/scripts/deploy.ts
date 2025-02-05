@@ -145,6 +145,8 @@ export async function deployFullInfrastructure({
             address: deployedScEventData.stableCoinContractAddress,
             proxyAddress: deployedScEventData.stableCoinProxy,
             proxyAdminAddress: deployedScEventData.stableCoinProxyAdmin,
+            reserveProxyAddress: deployedScEventData.reserveProxy,
+            reserveProxyAdminAddress: deployedScEventData.reserveProxyAdmin,
         },
         stableCoinCreator: wallet.address,
         KycGranted: grantKYCToOriginalSender,

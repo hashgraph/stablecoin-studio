@@ -5,8 +5,8 @@ interface TupDeployment {
 }
 interface StableCoinDeployment extends TupDeployment {
     tokenAddress: string
-    reserveProxy?: string
-    reserveProxyAdmin?: string
+    reserveProxyAddress?: string
+    reserveProxyAdminAddress?: string
 }
 interface DeployFullInfrastructureResultParams {
     hederaTokenManagerAddress: string
