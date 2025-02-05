@@ -63,3 +63,8 @@ export const GAS_LIMIT = {
     low: 100_000,
     high: 5_000_000,
 }
+
+// By https://docs.hedera.com/hedera/tutorials/smart-contracts/hscs-workshop/hardhat#tinybars-vs-weibars
+export const WEIBARS_PER_TINYBAR = 10_000_000_000n // 10^10 (10 billion)
+export const TINYBARS_PER_HBAR = 100_000_000n // 10^8 (100 million)
+export const WEIBARS_PER_HBAR = WEIBARS_PER_TINYBAR * TINYBARS_PER_HBAR // 10^18 (1 quintillion)
