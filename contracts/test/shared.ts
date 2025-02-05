@@ -122,11 +122,12 @@ export async function deployFullInfrastructureInTests({
     } as Record<NetworkName, DeployedContract>
     configuration.contracts = newContracts
 
-    const { stableCoinDeployment } = deployedResult
+    const { stableCoinDeployment, stableCoinFactoryDeployment } = deployedResult
     return {
         proxyAddress: stableCoinDeployment.proxyAddress,
         proxyAdminAddress: stableCoinDeployment.proxyAdminAddress,
         tokenAddress: stableCoinDeployment.tokenAddress,
+        factoryProxyAddress: stableCoinFactoryDeployment.proxyAddress,
     }
 }
 

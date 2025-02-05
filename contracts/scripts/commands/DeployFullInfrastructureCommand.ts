@@ -89,9 +89,7 @@ export default class DeployFullInfrastructureCommand {
             throw new SignerWithoutProviderError()
         }
         const signerAddress = await signer.getAddress()
-        const network = NetworkNameByChainId[
-            (await signer.provider.getNetwork()).chainId as NetworkChainId
-        ] as NetworkName
+        const network = NetworkNameByChainId[(await signer.provider.getNetwork()).chainId as NetworkChainId]
         const wallet = await getFullWalletFromSigner(signer)
 
         const keys = allToContract

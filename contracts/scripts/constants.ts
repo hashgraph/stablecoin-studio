@@ -109,6 +109,8 @@ export const GAS_LIMIT = {
         addHederaTokenManagerVersion: 4_800_000n,
         editHederaTokenManagerAddress: 4_800_000n,
         removeHederaTokenManagerAddress: 4_800_000n, // Added gas limit for removeHederaTokenManagerAddress
+        changeAdmin: 4_800_000n,
+        // Read
         getHederaTokenManagerAddress: 4_800_000n,
         getAdmin: 4_800_000n,
     },

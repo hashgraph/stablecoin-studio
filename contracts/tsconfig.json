@@ -15,7 +15,7 @@
         "baseUrl": "./",
         "paths": {
             "@configuration": ["configuration/index"],
-            "@hardhat-configuration": ["hardhat-config"],
+            "@hardhat-configuration": ["hardhat.config"],
             "@typechain": ["typechain-types/*", "typechain-types/index.ts"],
             "@scripts": ["scripts/index"],
             "@tasks": ["tasks/index"],
