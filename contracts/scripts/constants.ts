@@ -112,6 +112,16 @@ export const GAS_LIMIT = {
     proxyAdmin: {
         upgrade: 150_000n,
     },
+    hederaReserve: {
+        initialize: 130_000n,
+        setAdmin: 1_800_000n,
+        setAmount: 60_000n,
+        // Read
+        latestRoundData: 60_000n,
+        decimals: 60_000n,
+        description: 60_000n,
+        version: 60_000n,
+    },
 }
 
 export const RESCUE_HBAR_GAS = 70000
