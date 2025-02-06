@@ -54,7 +54,7 @@ import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRol
 import Account from '../../../domain/context/account/Account.js';
 import { MirrorNodeAdapter } from '../mirror/MirrorNodeAdapter.js';
 import { HederaId } from '../../../domain/context/shared/HederaId.js';
-import { FactoryKey } from '../../../domain/context/factory/FactoryKey.js';
+import { KeysStruct } from '../../../domain/context/factory/FactoryKey.js';
 import { FactoryStableCoin } from '../../../domain/context/factory/FactoryStableCoin.js';
 import {
 	CREATE_SC_GAS,
@@ -145,7 +145,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				coin.pauseKey,
 			];
 
-			const keys: FactoryKey[] =
+			const keys: KeysStruct[] =
 				this.setKeysForSmartContract(providedKeys);
 
 			const providedRoles = [

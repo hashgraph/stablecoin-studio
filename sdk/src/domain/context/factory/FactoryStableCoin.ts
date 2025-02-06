@@ -19,7 +19,7 @@
  */
 
 import { FactoryCashinRole } from './FactoryCashinRole.js';
-import { FactoryKey } from './FactoryKey.js';
+import { KeysStruct } from './FactoryKey.js';
 import { FactoryRole } from './FactoryRole.js';
 
 export class FactoryStableCoin {
@@ -91,7 +91,7 @@ export class FactoryStableCoin {
 	/**
 	 * Token Keys
 	 */
-	public keys: FactoryKey[];
+	public keys: KeysStruct[];
 
 	/**
 	 * Roles
@@ -127,7 +127,7 @@ export class FactoryStableCoin {
 		reserveInitialAmount: string,
 		createReserve: boolean,
 		// grantKYCToOriginalSender: boolean,
-		keys: FactoryKey[],
+		keys: KeysStruct[],
 		roles: FactoryRole[],
 		cashinRole: FactoryCashinRole,
 		metadata: string,
