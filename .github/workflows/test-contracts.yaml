@@ -30,6 +30,7 @@ jobs:
     runs-on: token-studio-linux-medium
     container:
       image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
+      options: --privileged
     permissions:
       contents: read
 
@@ -57,12 +58,13 @@ jobs:
           sleep 5  # Wait for Docker to start
           docker version  # Ensure Docker is running
 
-      - name: Clone Hedera Local Node
-        run: npm install @hashgraph/hedera-local -g && hedera start --detached
+      - name: Install Hedera Local Network
+        run: npm install -g @hashgraph/hedera-local
 
-      # - name: Install dependencies
-      #   working-directory: hedera-local-node
-      #   run: hedera start --detached
+      - name: Start Hedera Local Network
+        run: |
+          docker volume create hedera-local-data
+          hedera start --detached --data-path /var/lib/docker/volumes/hedera-local-data
 
       - name: Create .env file
         uses: ./.github/actions/create-env-file
@@ -74,10 +76,6 @@ jobs:
         uses: ./.github/actions/install-and-build
         with:
           module: "contracts"
-
-      # * Install hedera-local
-      - name: Install @hashgraph/hedera-local
-        run: npm install -g @hashgraph/hedera-local
 
       # * Set up environment variables
       - name: Set environment variables

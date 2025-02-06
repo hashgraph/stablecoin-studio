@@ -16,6 +16,7 @@
     "start": "clear && ./node_modules/.bin/tsc && node ./build/src/index.js",
     "start:wizard": "clear && echo 𝌗 Starting Stablecoin CLI 𝌗 ... && ./node_modules/.bin/tsc && clear && node ./build/src/index.js wizard -cp './hsca-config.yaml' -n 'testnet'",
     "clean": "rimraf coverage build tmp",
+    "clean:modules": "rimraf node_modules",
     "prebuild": "npm run lint",
     "postbuild": "shx cp src/resources/config/.hedera-stable-coin-cli.yaml build/src/resources/config/.hedera-stable-coin-cli.yaml",
     "build": "./node_modules/.bin/tsc -p tsconfig.json",

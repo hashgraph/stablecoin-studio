@@ -42,6 +42,7 @@
         "test:upgradable": "npx hardhat test test/upgradable.test.ts",
         "test:wipeable": "npx hardhat test test/wipeable.test.ts",
         "clean": "npx hardhat clean",
+        "clean:modules": "rimraf node_modules",
         "clean:all": "rimraf artifacts cache coverage node_modules build typechain-types && npm run clean",
         "size": "npx hardhat size-contracts",
         "lint:sol": "solhint 'contracts/**/*.sol'",
