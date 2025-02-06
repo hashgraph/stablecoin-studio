@@ -433,6 +433,7 @@ describe('StableCoinFactory Tests', function () {
         })
         await new ValidateTxResponseCommand({ txResponse: changeAdminResponse }).execute()
 
+        await delay({ time: 1, unit: 'sec' })
         const adminAddress = await factory.getAdmin({
             gasLimit: GAS_LIMIT.stableCoinFactory.getAdmin,
         })
@@ -444,6 +445,7 @@ describe('StableCoinFactory Tests', function () {
         })
         await new ValidateTxResponseCommand({ txResponse: resetResponse }).execute()
 
+        await delay({ time: 1, unit: 'sec' })
         const adminAddressReset = await factory.getAdmin({
             gasLimit: GAS_LIMIT.stableCoinFactory.getAdmin,
         })

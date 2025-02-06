@@ -49,6 +49,29 @@ jobs:
           deps-contracts-install: "true"
           deps-create-env-file: "true"
 
+      # * Install Docker
+      - name: Install Docker
+        run: |
+          apk add --no-cache docker docker-cli docker-compose git
+          dockerd > /dev/null 2>&1 &
+          sleep 5  # Wait for Docker to start
+          docker version  # Ensure Docker is running
+
+      - name: Clone Hedera Local Node
+        run: git clone https://github.com/hashgraph/hedera-local-node.git
+
+      - name: Install dependencies
+        working-directory: hedera-local-node
+        run: npm install
+
+      - name: Stop any running instances
+        working-directory: hedera-local-node
+        run: npm run stop || true
+
+      - name: Start Hedera Local Node
+        working-directory: hedera-local-node
+        run: npm run start
+
       - name: Create .env file
         uses: ./.github/actions/create-env-file
         with:
@@ -60,9 +83,37 @@ jobs:
         with:
           module: "contracts"
 
+      # * Install hedera-local
+      - name: Install @hashgraph/hedera-local
+        run: npm install -g @hashgraph/hedera-local
+
+      # * Set up environment variables
+      - name: Set environment variables
+        run: |
+          echo "LOCAL_PRIVATE_KEY_0=0x105d050185ccb907fba04dd92d8de9e32c18305e097ab41dadda21489a211524" >> $GITHUB_ENV
+          echo "LOCAL_PRIVATE_KEY_1=0x2e1d968b041d84dd120a5860cee60cd83f9374ef527ca86996317ada3d0d03e7" >> $GITHUB_ENV
+          echo "LOCAL_PRIVATE_KEY_2=0x45a5a7108a18dd5013cf2d5857a28144beadc9c70b3bdbd914e38df4e804b8d8" >> $GITHUB_ENV
+          echo "LOCAL_PRIVATE_KEY_3=0x6e9d61a325be3f6675cf8b7676c70e4a004d2308e3e182370a41f5653d52c6bd" >> $GITHUB_ENV
+          echo "LOCAL_PRIVATE_KEY_4=0x0b58b1bd44469ac9f813b5aeaf6213ddaea26720f0b2f133d08b6f234130a64f" >> $GITHUB_ENV
+          echo "LOCAL_JSON_RPC_ENDPOINT=http://localhost:7546" >> $GITHUB_ENV
+          echo "LOCAL_MIRROR_NODE_ENDPOINT=http://localhost:5551" >> $GITHUB_ENV
+
+      # * Wait for network to be ready
+      - name: Wait for Hedera Local Network
+        run: |
+          echo "Waiting for Hedera Local to start..."
+          for i in {1..30}; do
+            if curl -s http://localhost:7546/health | grep "ok"; then
+              echo "Hedera Local is ready!"
+              break
+            fi
+            echo "Still waiting..."
+            sleep 5
+          done
+
       # * Actual test command
       - name: Run
-        run: npm run test:ci --workspace=contracts -- --network testnet
+        run: npm run test:ci --workspace=contracts -- --network local
 
       - name: Clean project
         run: npm run clean --workspace=contracts
