@@ -99,10 +99,10 @@ export default class DeployFullInfrastructureCommand {
         const tokenStruct = {
             tokenName: tokenInformation.name,
             tokenSymbol: tokenInformation.symbol,
-            tokenDecimals: tokenInformation.decimals || DEFAULT_DECIMALS,
+            tokenDecimals: tokenInformation.decimals ?? DEFAULT_DECIMALS,
             tokenInitialSupply: tokenInformation.initialSupply,
             supplyType: tokenInformation.maxSupply ? true : false, // true = FINITE, false = INFINITE (default)
-            tokenMaxSupply: tokenInformation.maxSupply || NUMBER_ZERO,
+            tokenMaxSupply: tokenInformation.maxSupply ?? NUMBER_ZERO,
             freeze: tokenInformation.freeze,
             reserveAddress,
             reserveInitialAmount: initialAmountDataFeed,
