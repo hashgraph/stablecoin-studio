@@ -11,9 +11,8 @@ runs:
   steps:
     - name: Install Dependencies
       shell: sh
-      run: | 
+      run: |
         npm ci
-        npm ci --workspaces
 
     - name: Build Contracts
       shell: sh
