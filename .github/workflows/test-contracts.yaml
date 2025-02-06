@@ -58,11 +58,11 @@ jobs:
           docker version  # Ensure Docker is running
 
       - name: Clone Hedera Local Node
-        run: npm install @hashgraph/hedera-local -g
+        run: npm install @hashgraph/hedera-local -g && hedera start --detached
 
-      - name: Install dependencies
-        working-directory: hedera-local-node
-        run: hedera start --detached
+      # - name: Install dependencies
+      #   working-directory: hedera-local-node
+      #   run: hedera start --detached
 
       - name: Create .env file
         uses: ./.github/actions/create-env-file
