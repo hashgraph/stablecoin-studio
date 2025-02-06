@@ -38,6 +38,8 @@ const toReserve = (amount: BigNumber) => {
 describe('StableCoinFactory Tests', function () {
     // Contracts
     let factoryProxyAddress: string
+    let factoryProxyAdminAddress: string
+    let factoryAddress: string
     let factory: StableCoinFactory
     let hederaTokenManager: HederaTokenManager
     // Accounts
@@ -51,22 +53,36 @@ describe('StableCoinFactory Tests', function () {
         ;[operator, nonOperator] = await ethers.getSigners()
         // Use deployed factory or deploy a new one
         const chainId = (await ethers.provider.getNetwork()).chainId as NetworkChainId
-        factoryProxyAddress =
-            configuration.contracts.StableCoinFactory.addresses?.[NetworkNameByChainId[chainId]]?.proxyAddress ??
-            (
-                await deployFullInfrastructureInTests({
+        const networkName = NetworkNameByChainId[chainId]
+        if (configuration.contracts.StableCoinFactory.addresses?.[networkName]?.proxyAddress) {
+            factoryProxyAddress = configuration.contracts.StableCoinFactory.addresses[networkName].proxyAddress!
+        } else {
+            // eslint-disable-next-line
+            ;({ factoryAddress, factoryProxyAddress, factoryProxyAdminAddress } = await deployFullInfrastructureInTests(
+                {
                     signer: operator,
                     network: network.name as NetworkName,
-                })
-            ).factoryProxyAddress
+                }
+            ))
+        }
         factory = StableCoinFactory__factory.connect(factoryProxyAddress, operator)
+        // Set Configuration contract
+        configuration.setContractAddressList({
+            contractName: 'StableCoinFactory',
+            network: networkName,
+            addresses: {
+                proxyAddress: factoryProxyAddress,
+                proxyAdminAddress: factoryProxyAdminAddress,
+                address: factoryAddress,
+            },
+        })
     })
 
     it('Create StableCoin setting all token keys to the Proxy', async function () {
         // Deploy Token using Client
         const command = await DeployFullInfrastructureCommand.newInstance({
             signer: operator,
-            useDeployed: false,
+            useDeployed: true,
             tokenInformation: {
                 name: TOKEN_NAME,
                 symbol: TOKEN_SYMBOL,
@@ -85,7 +101,7 @@ describe('StableCoinFactory Tests', function () {
         // Deploy Token using Client
         const command = await DeployFullInfrastructureCommand.newInstance({
             signer: operator,
-            useDeployed: false,
+            useDeployed: true,
             tokenInformation: {
                 name: TOKEN_NAME,
                 symbol: TOKEN_SYMBOL,
@@ -105,7 +121,7 @@ describe('StableCoinFactory Tests', function () {
         // Deploy Token using Client
         const command = await DeployFullInfrastructureCommand.newInstance({
             signer: operator,
-            useDeployed: false,
+            useDeployed: true,
             tokenInformation: {
                 name: TOKEN_NAME,
                 symbol: TOKEN_SYMBOL,

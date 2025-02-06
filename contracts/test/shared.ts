@@ -128,6 +128,8 @@ export async function deployFullInfrastructureInTests({
         proxyAdminAddress: stableCoinDeployment.proxyAdminAddress,
         tokenAddress: stableCoinDeployment.tokenAddress,
         factoryProxyAddress: stableCoinFactoryDeployment.proxyAddress,
+        factoryProxyAdminAddress: stableCoinFactoryDeployment.proxyAdminAddress,
+        factoryAddress: stableCoinFactoryDeployment.address,
     }
 }
 

@@ -90,6 +90,21 @@ export default class Configuration {
         this._contracts = contracts
     }
 
+    public setContractAddressList({
+        contractName,
+        network,
+        addresses,
+    }: {
+        contractName: ContractName
+        network: NetworkName
+        addresses: DeployedContract
+    }): void {
+        this._contracts[contractName].addresses = {
+            ...this._contracts[contractName].addresses,
+            [network]: addresses,
+        } as Record<NetworkName, DeployedContract>
+    }
+
     // * Private methods
     private _initMnemonic(): Record<NetworkName, Mnemonic> {
         return NETWORK_LIST.name.reduce(

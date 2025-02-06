@@ -6,6 +6,7 @@ import {
     TokenKeysToKeyCommand,
 } from '@scripts'
 import { BigNumber, BytesLike } from 'ethers'
+import { computePublicKey } from 'ethers/lib/utils'
 
 export interface KeysStruct {
     keyType: BigNumber
@@ -46,12 +47,14 @@ export function tokenKeysToKey({ publicKey, isEd25519, addKyc, addFeeSchedule }:
             ignored: false,
         })
     )
+    // Hedera stores the COMPRESSED public key
+    const compressed = true
 
     return [
         fixKeys(),
         {
             keyType: keyType,
-            publicKey,
+            publicKey: isEd25519 ? publicKey : computePublicKey(publicKey, true),
             isEd25519,
         },
     ]
