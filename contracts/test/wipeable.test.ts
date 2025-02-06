@@ -3,7 +3,7 @@ import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { ethers, network } from 'hardhat'
 import { NetworkName } from '@configuration'
 import { HederaTokenManager, HederaTokenManager__factory } from '@typechain'
-import { validateTxResponse, ValidateTxResponseCommand } from '@scripts'
+import { delay, validateTxResponse, ValidateTxResponseCommand } from '@scripts'
 import { deployFullInfrastructureInTests, GAS_LIMIT, ONE_TOKEN } from '@test/shared'
 import { BigNumber } from 'ethers'
 
@@ -77,6 +77,7 @@ describe('➡️ Wipe Tests', function () {
         )
 
         // Get the current balance for account
+        await delay({ time: 1, unit: 'sec' })
         const currentBalance = await hederaTokenManager.balanceOf(operator.address)
 
         // Wipe more than account's balance : fail

@@ -31,7 +31,7 @@
         "test:freezable": "npx hardhat test test/freezable.test.ts",
         "test:hederaReserve": "npx hardhat test test/hederaReserve.test.ts",
         "test:hederaTokenManager": "npx hardhat test test/hederaTokenManager.test.ts",
-        "test:kyc": "npx hardhat test test/kyc.test.ts",
+        "test:kyc": "npx hardhat test test/00_kyc.test.ts",
         "test:pausable": "npx hardhat test test/pausable.test.ts",
         "test:rescuable": "npx hardhat test test/rescuable.test.ts",
         "test:reserve": "npx hardhat test test/reserve.test.ts",
