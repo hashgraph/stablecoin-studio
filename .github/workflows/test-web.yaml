@@ -49,4 +49,4 @@ jobs:
         run: npm run test:ci --workspace=web
 
       - name: Clear Cache
-        run: npm run clear-cache --workspace=web
+        run: npm run clear:cache --workspace=web
