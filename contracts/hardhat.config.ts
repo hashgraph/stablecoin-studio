@@ -32,12 +32,12 @@ const hardhatConfig: HardhatUserConfig = {
                 mnemonic: configuration.mnemonic.hardhat?.phrase || undefined,
             },
             allowUnlimitedContractSize: true,
-            enableRip7212: true,
-            forking: {
-                url: configuration.endpoints.local.jsonRpc,
-                blockNumber: 4053,
-                enabled: true,
-            },
+            // enableRip7212: true,
+            // forking: {
+            //     url: configuration.endpoints.local.jsonRpc,
+            //     blockNumber: 4053,
+            //     enabled: true,
+            // },
             // initialDate: '2025-01-27T00:00:00Z',
             // chainId: 29,
         },
@@ -47,21 +47,21 @@ const hardhatConfig: HardhatUserConfig = {
             url: configuration.endpoints.local.jsonRpc,
             accounts: configuration.privateKeys.local,
             blockGasLimit: GAS_LIMIT.max,
-            timeout: 60000, // Increase to 60 seconds
+            timeout: 60_000, // Increase to 60 seconds
         },
         [NETWORK_LIST.name[2]]: {
             chainId: NETWORK_LIST.chainId[2],
             hardfork: DEFAULT_EVM_VERSION,
             url: configuration.endpoints.previewnet.jsonRpc,
             accounts: configuration.privateKeys.previewnet,
-            timeout: 60000, // Increase to 60 seconds
+            timeout: 120_000, // Increase to 120 seconds
         },
         [NETWORK_LIST.name[3]]: {
             chainId: NETWORK_LIST.chainId[3],
             hardfork: DEFAULT_EVM_VERSION,
             url: configuration.endpoints.testnet.jsonRpc,
             accounts: configuration.privateKeys.testnet,
-            timeout: 60000, // Increase to 60 seconds
+            timeout: 120_000, // Increase to 120 seconds
         },
         [NETWORK_LIST.name[4]]: {
             chainId: NETWORK_LIST.chainId[4],

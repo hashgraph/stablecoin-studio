@@ -1,5 +1,5 @@
 import { ethers } from 'hardhat'
-import { Contract, ContractFactory, ContractTransaction } from 'ethers'
+import { Contract, ContractFactory, ContractReceipt, ContractTransaction } from 'ethers'
 import { configuration } from 'hardhat.config'
 import {
     HederaTokenManager__factory,
@@ -167,29 +167,24 @@ export async function deployContractWithFactory<
     let implementationContract: C
     let proxyAddress: string | undefined
     let proxyAdminAddress: string | undefined
-    const txResponseList: ContractTransaction[] = []
+    let implementationReceipt: ContractReceipt | undefined
 
     if (deployedContract?.address) {
         implementationContract = factory.attach(deployedContract.address) as C
     } else {
         implementationContract = (await factory.connect(signer).deploy(...args, overrides)) as C
-        txResponseList.push(implementationContract.deployTransaction)
+        ;({ txReceipt: implementationReceipt } = await new ValidateTxResponseCommand({
+            txResponse: implementationContract.deployTransaction,
+            errorMessage: MESSAGES.deploy.error.deploy,
+        }).execute())
+        implementationReceipt = await implementationContract.deployTransaction.wait()
     }
 
     if (!withProxy) {
-        await validateTxResponseList(
-            txResponseList.map(
-                (txResponse) =>
-                    new ValidateTxResponseCommand({
-                        txResponse,
-                        errorMessage: MESSAGES.deploy.error.deploy,
-                    })
-            )
-        )
         return new DeployContractWithFactoryResult({
             address: implementationContract.address,
             contract: implementationContract,
-            receipt: await txResponseList[0]?.wait(),
+            receipt: implementationReceipt,
         })
     }
 
@@ -197,7 +192,10 @@ export async function deployContractWithFactory<
         proxyAdminAddress = deployedContract.proxyAdminAddress
     } else {
         const proxyAdmin = await new ProxyAdmin__factory(signer).deploy(overrides)
-        txResponseList.push(proxyAdmin.deployTransaction)
+        await new ValidateTxResponseCommand({
+            txResponse: proxyAdmin.deployTransaction,
+            errorMessage: MESSAGES.deploy.error.deploy,
+        }).execute()
         proxyAdminAddress = proxyAdmin.address
     }
 
@@ -210,26 +208,19 @@ export async function deployContractWithFactory<
             '0x',
             overrides
         )
-        txResponseList.push(proxy.deployTransaction)
+        await new ValidateTxResponseCommand({
+            txResponse: proxy.deployTransaction,
+            errorMessage: MESSAGES.deploy.error.deploy,
+        }).execute()
         proxyAddress = proxy.address
     }
-
-    await validateTxResponseList(
-        txResponseList.map(
-            (txResponse) =>
-                new ValidateTxResponseCommand({
-                    txResponse,
-                    errorMessage: MESSAGES.deploy.error.deploy,
-                })
-        )
-    )
 
     return new DeployContractWithFactoryResult({
         address: implementationContract.address,
         contract: factory.connect(signer).attach(proxyAddress) as C,
         proxyAddress: proxyAddress,
         proxyAdminAddress: proxyAdminAddress,
-        receipt: await txResponseList[0]?.wait(),
+        receipt: implementationReceipt,
     })
 }
 
