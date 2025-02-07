@@ -30,7 +30,6 @@ jobs:
     runs-on: token-studio-linux-medium
     container:
       image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
-      options: --privileged
     permissions:
       contents: read
 
@@ -49,22 +48,6 @@ jobs:
         with:
           deps-contracts-install: "true"
           deps-create-env-file: "true"
-
-      # * Install Docker
-      - name: Install Docker
-        run: |
-          apk add --no-cache docker docker-cli docker-compose git
-          dockerd > /dev/null 2>&1 &
-          sleep 5  # Wait for Docker to start
-          docker version  # Ensure Docker is running
-
-      - name: Install Hedera Local Network
-        run: npm install -g @hashgraph/hedera-local
-
-      - name: Start Hedera Local Network
-        run: |
-          docker volume create hedera-local-data
-          hedera start --detached --data-path /var/lib/docker/volumes/hedera-local-data
 
       - name: Create .env file
         uses: ./.github/actions/create-env-file
@@ -87,23 +70,12 @@ jobs:
           echo "LOCAL_PRIVATE_KEY_4=0x0b58b1bd44469ac9f813b5aeaf6213ddaea26720f0b2f133d08b6f234130a64f" >> $GITHUB_ENV
           echo "LOCAL_JSON_RPC_ENDPOINT=http://localhost:7546" >> $GITHUB_ENV
           echo "LOCAL_MIRROR_NODE_ENDPOINT=http://localhost:5551" >> $GITHUB_ENV
-
-      # * Wait for network to be ready
-      - name: Wait for Hedera Local Network
-        run: |
-          echo "Waiting for Hedera Local to start..."
-          for i in {1..30}; do
-            if curl -s http://localhost:7546/health | grep "ok"; then
-              echo "Hedera Local is ready!"
-              break
-            fi
-            echo "Still waiting..."
-            sleep 5
-          done
+          echo "TESTNET_JSON_RPC_ENDPOINT=https://296.rpc.thirdweb.com" >> $GITHUB_ENV
+          echo "TESTNET_MIRROR_NODE_ENDPOINT=https://testnet.mirrornode.hedera.com" >> $GITHUB_ENV
 
       # * Actual test command
       - name: Run
-        run: npm run test:ci --workspace=contracts -- --network local
+        run: npm run test:ci --workspace=contracts -- --network testnet
 
       - name: Clean project
         run: npm run clean --workspace=contracts

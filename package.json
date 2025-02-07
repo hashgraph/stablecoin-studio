@@ -11,7 +11,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "setup": "npm run install:all",
-    "install:all": "npm install --workspaces && npm run build --workspaces && npm run prepare",
+    "install:all": "npm install && npm run build --workspaces && npm run prepare",
     "install:backend": "npm install --workspace=backend",
     "install:contracts": "npm install --workspace=contracts",
     "install:sdk": "npm install --workspace=sdk",

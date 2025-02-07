@@ -24,13 +24,9 @@ runs:
         API_RESPONSE=$(curl -s -H "Authorization: Bearer ${{ inputs.api-access-token-1 }}" -H "User-Agent: AppName/1.2.3" https://portal.hedera.com/api/account)
 
         # Extract account details
-        OPERATOR_PRIVATE_KEY=$(echo $API_RESPONSE | jq -r '.accounts[0].privateKey')
-        OPERATOR_PUBLIC_KEY=$(echo $API_RESPONSE | jq -r '.accounts[0].publicKey')
-        OPERATOR_ACCOUNT_NUM=$(echo $API_RESPONSE | jq -r '.accounts[0].accountNum')
-
-        NON_OPERATOR_PRIVATE_KEY=$(echo $API_RESPONSE | jq -r '.accounts[1].privateKey')
-        NON_OPERATOR_PUBLIC_KEY=$(echo $API_RESPONSE | jq -r '.accounts[1].publicKey')
-        NON_OPERATOR_ACCOUNT_NUM=$(echo $API_RESPONSE | jq -r '.accounts[1].accountNum')
+        TESTNET_PRIVATE_KEY_0=$(echo $API_RESPONSE | jq -r '.accounts[1].privateKey')
+        # TODO: Check another ECDSA
+        TESTNET_PRIVATE_KEY_1='0x9334bd92abf436c1872287d049def238401f5d7f54a2f21cb7b4ec3f0efe017f'
 
         # Write to .env file in a single block
         cat <<EOF > .env
