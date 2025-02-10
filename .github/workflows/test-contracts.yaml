@@ -19,8 +19,18 @@ on:
       - "package*.json"
       - "contracts/hardhat.config.ts"
       - "contracts/tsconfig.json"
-# env:
-# NODE_VERSION: "20.17.0" # Fixed version for better stability
+env:
+  # Local (Right now using testnet)
+  LOCAL_PRIVATE_KEY_0: "0x105d050185ccb907fba04dd92d8de9e32c18305e097ab41dadda21489a211524"
+  LOCAL_PRIVATE_KEY_1: "0x2e1d968b041d84dd120a5860cee60cd83f9374ef527ca86996317ada3d0d03e7"
+  LOCAL_PRIVATE_KEY_2: "0x45a5a7108a18dd5013cf2d5857a28144beadc9c70b3bdbd914e38df4e804b8d8"
+  LOCAL_PRIVATE_KEY_3: "0x6e9d61a325be3f6675cf8b7676c70e4a004d2308e3e182370a41f5653d52c6bd"
+  LOCAL_PRIVATE_KEY_4: "0x0b58b1bd44469ac9f813b5aeaf6213ddaea26720f0b2f133d08b6f234130a64f"
+  LOCAL_JSON_RPC_ENDPOINT: "http://localhost:7546"
+  LOCAL_MIRROR_NODE_ENDPOINT: "http://localhost:5551"
+  # Tesnet
+  TESTNET_JSON_RPC_ENDPOINT: "https://296.rpc.thirdweb.com"
+  TESTNET_MIRROR_NODE_ENDPOINT: "https://testnet.mirrornode.hedera.com"
 
 permissions:
   contents: read
@@ -49,29 +59,17 @@ jobs:
           deps-contracts-install: "true"
           deps-create-env-file: "true"
 
-      - name: Create .env file
+      - name: Export ENV variables for contracts
         uses: ./.github/actions/create-env-file
         with:
           api-access-token-1: ${{ secrets.API_ACCESS_TOKEN_1 }}
+          api-access-token-2: ${{ secrets.API_ACCESS_TOKEN_2 }}
           module: "contracts"
 
       - name: Install and build Contracts
         uses: ./.github/actions/install-and-build
         with:
           module: "contracts"
-
-      # * Set up environment variables
-      - name: Set environment variables
-        run: |
-          echo "LOCAL_PRIVATE_KEY_0=0x105d050185ccb907fba04dd92d8de9e32c18305e097ab41dadda21489a211524" >> $GITHUB_ENV
-          echo "LOCAL_PRIVATE_KEY_1=0x2e1d968b041d84dd120a5860cee60cd83f9374ef527ca86996317ada3d0d03e7" >> $GITHUB_ENV
-          echo "LOCAL_PRIVATE_KEY_2=0x45a5a7108a18dd5013cf2d5857a28144beadc9c70b3bdbd914e38df4e804b8d8" >> $GITHUB_ENV
-          echo "LOCAL_PRIVATE_KEY_3=0x6e9d61a325be3f6675cf8b7676c70e4a004d2308e3e182370a41f5653d52c6bd" >> $GITHUB_ENV
-          echo "LOCAL_PRIVATE_KEY_4=0x0b58b1bd44469ac9f813b5aeaf6213ddaea26720f0b2f133d08b6f234130a64f" >> $GITHUB_ENV
-          echo "LOCAL_JSON_RPC_ENDPOINT=http://localhost:7546" >> $GITHUB_ENV
-          echo "LOCAL_MIRROR_NODE_ENDPOINT=http://localhost:5551" >> $GITHUB_ENV
-          echo "TESTNET_JSON_RPC_ENDPOINT=https://296.rpc.thirdweb.com" >> $GITHUB_ENV
-          echo "TESTNET_MIRROR_NODE_ENDPOINT=https://testnet.mirrornode.hedera.com" >> $GITHUB_ENV
 
       # * Actual test command
       - name: Run
