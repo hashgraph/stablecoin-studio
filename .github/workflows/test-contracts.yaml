@@ -59,12 +59,10 @@ jobs:
       #     deps-contracts-install: "true"
       #     deps-create-env-file: "true"
 
-      - name: checks
+      - name: Install Node.js and npm
         run: |
-          cat /etc/os-release
-          docker --version
-          npm --version
-          node --version
+          curl -fsSL https://deb.nodesource.com/setup_lts.x | bash -
+          apt-get install -y nodejs
 
       - name: Install Docker and Docker Compose
         run: |
