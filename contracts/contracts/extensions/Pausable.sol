@@ -4,6 +4,7 @@ pragma solidity 0.8.18;
 import {TokenOwner} from './TokenOwner.sol';
 import {Roles} from './Roles.sol';
 import {IPausable} from './Interfaces/IPausable.sol';
+// solhint-disable-next-line max-line-length
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 
 abstract contract Pausable is IPausable, TokenOwner, Roles {

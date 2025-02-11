@@ -2,7 +2,7 @@
 pragma solidity 0.8.18;
 
 import {IHederaTokenManager} from './IHederaTokenManager.sol';
-import {KeysLib, KeysStruct} from '../library/KeysLib.sol';
+import {KeysStruct} from '../library/KeysLib.sol';
 
 interface IStableCoinFactory {
     struct TokenStruct {

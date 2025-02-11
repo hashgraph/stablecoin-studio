@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.18;
 
+// solhint-disable-next-line max-line-length
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
+
 interface ICustomFees {
     /**
      * @dev Emitted when token custom fees are updated
@@ -10,6 +12,7 @@ interface ICustomFees {
      * @param token Token address
      */
     event TokenCustomFeesUpdated(address indexed sender, address indexed token);
+
     /**
      * @dev Update custom fees for the token
      *

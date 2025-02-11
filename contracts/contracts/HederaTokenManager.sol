@@ -2,6 +2,7 @@
 pragma solidity 0.8.18;
 
 import {IERC20Upgradeable} from '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
+// solhint-disable-next-line max-line-length
 import {IERC20MetadataUpgradeable} from '@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol';
 import {IHederaTokenManager} from './Interfaces/IHederaTokenManager.sol';
 import {CashIn} from './extensions/CashIn.sol';
@@ -12,6 +13,7 @@ import {Freezable} from './extensions/Freezable.sol';
 import {Rescuable} from './extensions/Rescuable.sol';
 import {Deletable} from './extensions/Deletable.sol';
 
+// solhint-disable-next-line max-line-length
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {TokenOwner} from './extensions/TokenOwner.sol';
 import {KYC} from './extensions/KYC.sol';

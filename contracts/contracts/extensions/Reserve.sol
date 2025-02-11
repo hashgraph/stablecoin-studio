@@ -63,7 +63,7 @@ abstract contract Reserve is IReserve, TokenOwner, Roles {
         if (_reserveAddress == address(0)) return true;
         int256 reserveAmount = _getReserveAmount();
         assert(reserveAmount >= 0);
-        uint256 currentReserve = uint(reserveAmount);
+        uint256 currentReserve = uint256(reserveAmount);
         uint8 reserveDecimals = AggregatorV3Interface(_reserveAddress).decimals();
         uint8 tokenDecimals = _decimals();
         uint256 totalSupply = _totalSupply();

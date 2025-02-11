@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.18;
 
+// solhint-disable-next-line max-line-length
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
-import {KeysLib, KeysStruct} from '../library/KeysLib.sol';
+import {KeysStruct} from '../library/KeysLib.sol';
 
 interface IHederaTokenManager {
     struct InitializeStruct {

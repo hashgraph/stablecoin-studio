@@ -4,6 +4,7 @@ pragma solidity 0.8.18;
 import {ICustomFees} from './Interfaces/ICustomFees.sol';
 import {Roles} from './Roles.sol';
 import {TokenOwner} from './TokenOwner.sol';
+// solhint-disable-next-line max-line-length
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 
 abstract contract CustomFees is ICustomFees, TokenOwner, Roles {

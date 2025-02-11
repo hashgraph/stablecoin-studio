@@ -13,6 +13,11 @@ interface ICashIn {
     event TokensMinted(address indexed minter, address indexed token, int64 amount, address indexed account);
 
     /**
+     * @dev Throws if the caller is not the treasury account
+     */
+    error TheSmartContractIsNotTheTreasuryAccount();
+
+    /**
      * @dev Creates an `amount` of tokens and transfers them to an `account`, increasing
      * the total supply
      *

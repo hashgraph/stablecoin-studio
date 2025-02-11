@@ -5,6 +5,7 @@ import {ITokenOwner} from './Interfaces/ITokenOwner.sol';
 import {HederaResponseCodes} from '@hashgraph/smart-contracts/contracts/system-contracts/HederaResponseCodes.sol';
 import {IERC20Upgradeable} from '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
 import {Initializable} from '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
+// solhint-disable-next-line max-line-length
 import {IERC20MetadataUpgradeable} from '@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol';
 
 abstract contract TokenOwner is ITokenOwner, Initializable {
