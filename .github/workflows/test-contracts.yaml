@@ -38,10 +38,12 @@ permissions:
 jobs:
   main:
     runs-on: token-studio-linux-medium
-    container:
-      image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
+    # container:
+    #   image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
     permissions:
-      contents: read
+      contents: write
+      actions: write
+      deployments: write
 
     steps:
       # * Initial steps
@@ -53,11 +55,48 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
 
-      - name: Initial steps
-        uses: ./.github/actions/initial-steps
-        with:
-          deps-contracts-install: "true"
-          deps-create-env-file: "true"
+      # - name: Initial steps
+      #   uses: ./.github/actions/initial-steps
+      #   with:
+      #     deps-contracts-install: "true"
+      #     deps-create-env-file: "true"
+
+      - name: Install Docker and Docker Compose
+        run: |
+          # Set environment variable to make it non-interactive
+          export DEBIAN_FRONTEND=noninteractive
+
+          # Install dependencies
+          apt-get update -y
+          apt-get install -y --no-install-recommends apt-utils
+          apt-get install -y ca-certificates curl gnupg lsb-release jq systemctl
+
+          # Add Docker's official GPG key and repository
+          install -m 0755 -d /etc/apt/keyrings
+          curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
+          chmod a+r /etc/apt/keyrings/docker.asc
+          echo \
+          "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
+          $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+          tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+          # Update the package index
+          apt-get update
+
+          # Install Docker and Docker Compose from Docker repository
+          apt-get install -y --no-install-recommends docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+      - name: checks
+        run: |
+          cat /etc/os-release
+          docker --version
+          npm --version
+          node --version
+
+      - name: Install and run Hedera Local Network
+        run: |
+          npm install @hashgraph/hedera-local -g
+          hedera start --detached
 
       - name: Export ENV variables for contracts
         uses: ./.github/actions/create-env-file
@@ -73,7 +112,12 @@ jobs:
 
       # * Actual test command
       - name: Run
-        run: npm run test:ci --workspace=contracts -- --network testnet
+        run: npm run test:ci --workspace=contracts -- --network local
+
+      - name: Stop Hedera Local Network
+        if: always()
+        run: hedera stop
 
       - name: Clean project
+        if: always()
         run: npm run clean --workspace=contracts
