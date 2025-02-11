@@ -2,6 +2,9 @@ name: Initial_Steps
 description: Common initial steps for all workflows, with optional dependency installation.
 
 inputs:
+  module: # Options: "contracts", "sdk", "web", "cli", "backend"
+    description: "The module to install dependencies for"
+    required: false
   docker-engine-ubuntu: # Options: "true", "false"
     description: "Whether to install Docker and Docker Compose from Docker repository"
     required: false
@@ -20,6 +23,7 @@ runs:
   steps:
     - name: Install glibc in Alpine to add multi-arch support
       shell: sh
+      if: ${{ inputs.module != 'contracts' }}
       run: apk add --no-cache gcompat libc6-compat
 
     - name: Install docker on ubuntu based images
