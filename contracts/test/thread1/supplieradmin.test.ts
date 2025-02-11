@@ -335,7 +335,7 @@ describe('➡️ Supplier Admin Tests - (Unlimited)', function () {
         })
         await validateTxResponse(new ValidateTxResponseCommand({ txResponse: mintResponse }))
 
-        await delay({ time: 1, unit: 'sec' })
+        await delay({ time: 1.5, unit: 'sec' })
         // Check balance of account and total supply : success
         const finalTotalSupply = await hederaTokenManager.totalSupply()
         const finalBalanceOf = await hederaTokenManager.balanceOf(operator.address)
@@ -360,7 +360,7 @@ describe('➡️ Supplier Admin Tests - (Unlimited)', function () {
         await validateTxResponse(new ValidateTxResponseCommand({ txResponse: mintResponse }))
 
         // Check balance of account and total supply : success
-        await delay({ time: 1, unit: 'sec' })
+        await delay({ time: 1.5, unit: 'sec' })
         const finalTotalSupply = await hederaTokenManager.totalSupply()
         const finalBalanceOf = await hederaTokenManager.balanceOf(nonOperator.address)
         const expectedTotalSupply = initialTotalSupply.add(AmountToMint)

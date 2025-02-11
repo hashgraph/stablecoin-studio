@@ -44,8 +44,8 @@ describe('➡️ Burn Tests', () => {
         await validateTxResponse(
             new ValidateTxResponseCommand({ txResponse: burnResponse, confirmationEvent: 'TokensBurned' })
         )
-        await delay({ time: 500, unit: 'ms' })
         // check new total supply and balance of treasury account : success
+        await delay({ time: 1, unit: 'sec' })
         const finalTotalSupply = await hederaTokenManager.totalSupply()
         const expectedTotalSupply = initialTotalSupply.sub(tokensToBurn)
 
