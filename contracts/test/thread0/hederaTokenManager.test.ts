@@ -9,6 +9,7 @@ import {
     DeployFullInfrastructureCommand,
     getFullWalletFromSigner,
     getOneMonthFromNowInSeconds,
+    MESSAGES,
     ROLES,
     tokenKeysToKey,
     TokenKeysToKeyCommand,
@@ -41,7 +42,7 @@ describe('➡️ HederaTokenManager Tests', function () {
         // Disable | Mock console.log()
         console.log = () => {} // eslint-disable-line
         // * Deploy StableCoin Token
-        console.info('  🏗️ Deploying full infrastructure...')
+        console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
         const [operatorSigner, nonOperatorSigner] = await ethers.getSigners()
         operator = await getFullWalletFromSigner(operatorSigner)
         nonOperator = await getFullWalletFromSigner(nonOperatorSigner)

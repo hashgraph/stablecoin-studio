@@ -3,7 +3,7 @@ import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { ethers, network } from 'hardhat'
 import { NetworkName } from '@configuration'
 import { HederaTokenManager, HederaTokenManager__factory, IHederaTokenService, IHRC__factory } from '@typechain'
-import { ADDRESS_ZERO, MESSAGES, validateTxResponse, ValidateTxResponseCommand } from '@scripts'
+import { ADDRESS_ZERO, delay, MESSAGES, validateTxResponse, ValidateTxResponseCommand } from '@scripts'
 import { deployFullInfrastructureInTests, GAS_LIMIT } from '@test/shared'
 
 describe('➡️ Custom Fees Tests', function () {
@@ -22,7 +22,7 @@ describe('➡️ Custom Fees Tests', function () {
         // Disable | Mock console.log()
         console.log = () => {} // eslint-disable-line
         // * Deploy StableCoin Token
-        console.info('  🏗️ Deploying full infrastructure...')
+        console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
         ;[operator, nonOperator] = await ethers.getSigners()
         // if ((network.name as NetworkName) === NETWORK_LIST.name[0]) {
         //     await deployPrecompiledHederaTokenServiceMock(hre, signer)
@@ -79,6 +79,7 @@ describe('➡️ Custom Fees Tests', function () {
             })
         )
         // Change fee collector to nonOperator
+        await delay({ time: 1, unit: 'sec' })
         fixedFees[0].feeCollector = nonOperator.address
         fractionalFees[0].feeCollector = nonOperator.address
 

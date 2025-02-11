@@ -8,6 +8,7 @@ import {
     deployContractWithFactory,
     DeployContractWithFactoryCommand,
     GAS_LIMIT,
+    MESSAGES,
     ValidateTxResponseCommand,
 } from '@scripts'
 import { ethers } from 'hardhat'
@@ -25,7 +26,7 @@ describe.skip('HederaReserve Tests', function () {
         // Disable | Mock console.log()
         console.log = () => {} // eslint-disable-line
         // * Deploy StableCoin Token
-        console.info('  🏗️ Deploying full infrastructure...')
+        console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
         ;[operator, nonOperator] = await ethers.getSigners()
 
         // Deploy HederaReserve

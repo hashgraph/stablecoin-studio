@@ -1,5 +1,6 @@
 import { constants } from 'ethers'
 import { GAS_LIMIT as CONF_GAS_LIMIT } from '@configuration'
+import { deployFullInfrastructureInTests } from '@test/shared'
 
 // * Ethereum
 export const ADDRESS_ZERO = constants.AddressZero
@@ -148,6 +149,7 @@ export const MESSAGES = {
     deploy: {
         info: {
             deployFullInfrastructure: '🚀 Deploying full infrastructure...',
+            deployFullInfrastructureInTests: '🏗️ Deploying full infrastructure or using previously deployed...',
         },
         success: {
             deployFullInfrastructure: '🎉 Full infrastructure deployed successfully.',

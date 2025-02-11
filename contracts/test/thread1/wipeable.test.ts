@@ -3,7 +3,7 @@ import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { ethers, network } from 'hardhat'
 import { NetworkName } from '@configuration'
 import { HederaTokenManager, HederaTokenManager__factory } from '@typechain'
-import { delay, validateTxResponse, ValidateTxResponseCommand } from '@scripts'
+import { delay, MESSAGES, validateTxResponse, ValidateTxResponseCommand } from '@scripts'
 import { deployFullInfrastructureInTests, GAS_LIMIT, ONE_TOKEN } from '@test/shared'
 import { BigNumber } from 'ethers'
 
@@ -19,7 +19,7 @@ describe('➡️ Wipe Tests', function () {
         // Disable | Mock console.log()
         console.log = () => {} // eslint-disable-line
         // * Deploy StableCoin Token
-        console.info('  🏗️ Deploying full infrastructure...')
+        console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
         ;[operator, nonOperator] = await ethers.getSigners()
         // if ((network.name as NetworkName) === NETWORK_LIST.name[0]) {
         //     await deployPrecompiledHederaTokenServiceMock(hre, signer)
@@ -44,6 +44,7 @@ describe('➡️ Wipe Tests', function () {
         )
 
         // Get the initial total supply and account's balanceOf
+        await delay({ time: 1, unit: 'sec' })
         const initialTotalSupply = await hederaTokenManager.totalSupply()
         const initialBalanceOf = await hederaTokenManager.balanceOf(operator.address)
 
@@ -56,6 +57,7 @@ describe('➡️ Wipe Tests', function () {
         )
 
         // Check balance of account and total supply : success
+        await delay({ time: 1, unit: 'sec' })
         const finalTotalSupply = await hederaTokenManager.totalSupply()
         const finalBalanceOf = await hederaTokenManager.balanceOf(operator.address)
         const expectedTotalSupply = initialTotalSupply.sub(tokensToWipe)

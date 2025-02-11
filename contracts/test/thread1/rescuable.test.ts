@@ -4,7 +4,7 @@ import { ethers, network } from 'hardhat'
 import { TransactionRequest } from '@ethersproject/abstract-provider'
 import { WEIBARS_PER_TINYBAR, NetworkName } from '@configuration'
 import { HederaTokenManager, HederaTokenManager__factory } from '@typechain'
-import { delay, ValidateTxResponseCommand } from '@scripts'
+import { delay, MESSAGES, ValidateTxResponseCommand } from '@scripts'
 import { deployFullInfrastructureInTests, GAS_LIMIT, ONE_HBAR, ONE_TOKEN, TEN_TOKENS, TWO_HBAR } from '@test/shared'
 
 describe('➡️ Rescue Tests', function () {
@@ -20,7 +20,7 @@ describe('➡️ Rescue Tests', function () {
         // Disable | Mock console.log()
         console.log = () => {} // eslint-disable-line
         // * Deploy StableCoin Token
-        console.info('  🏗️ Deploying full infrastructure...')
+        console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
         ;[operator, nonOperator] = await ethers.getSigners()
         // if ((network.name as NetworkName) === NETWORK_LIST.name[0]) {
         //     await deployPrecompiledHederaTokenServiceMock(hre, signer)

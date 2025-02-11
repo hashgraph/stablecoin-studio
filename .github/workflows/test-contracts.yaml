@@ -36,7 +36,7 @@ permissions:
   contents: read
 
 jobs:
-  main:
+  thread0:
     runs-on: token-studio-linux-medium
     # container:
     #   image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
@@ -109,7 +109,90 @@ jobs:
 
       # * Actual test command
       - name: Run
-        run: npm run test:ci --workspace=contracts -- --network local
+        run: npm run test:ci:thread0 --workspace=contracts -- --network local
+
+      - name: Stop Hedera Local Network
+        if: always()
+        run: hedera stop
+
+      - name: Clean project
+        if: always()
+        run: npm run clean --workspace=contracts
+
+  thread1:
+    runs-on: token-studio-linux-medium
+    # container:
+    #   image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
+    permissions:
+      contents: read
+
+    steps:
+      # * Initial steps
+      - name: Harden Runner
+        uses: step-security/harden-runner@f086349bfa2bd1361f7909c78558e816508cdc10 #v2.8.0
+        with:
+          egress-policy: audit
+
+      - name: Checkout repository
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+
+      # - name: Initial steps
+      #   uses: ./.github/actions/initial-steps
+      #   with:
+      #     deps-contracts-install: "true"
+      #     deps-create-env-file: "true"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+
+      - name: Install Docker and Docker Compose
+        run: |
+          # Add Docker's official GPG key:
+          sudo apt-get update
+          sudo apt-get install ca-certificates curl
+          sudo install -m 0755 -d /etc/apt/keyrings
+          sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+          sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+          # Add the repository to Apt sources:
+          echo \
+            "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+            $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
+            sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+          sudo apt-get update
+
+          # Install Docker and Docker Compose from Docker repository
+          sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+      - name: checks
+        run: |
+          cat /etc/os-release
+          docker --version
+          npm --version
+          node --version
+
+      - name: Install and run Hedera Local Network
+        run: |
+          npm install @hashgraph/hedera-local -g
+          hedera start --detached
+
+      - name: Export ENV variables for contracts
+        uses: ./.github/actions/create-env-file
+        with:
+          api-access-token-1: ${{ secrets.API_ACCESS_TOKEN_1 }}
+          api-access-token-2: ${{ secrets.API_ACCESS_TOKEN_2 }}
+          module: "contracts"
+
+      - name: Install and build Contracts
+        uses: ./.github/actions/install-and-build
+        with:
+          module: "contracts"
+
+      # * Actual test command
+      - name: Run
+        run: npm run test:ci:thread1 --workspace=contracts -- --network local
 
       - name: Stop Hedera Local Network
         if: always()

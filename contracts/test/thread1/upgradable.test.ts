@@ -3,7 +3,7 @@ import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { ethers, network } from 'hardhat'
 import { NetworkName } from '@configuration'
 import { HederaTokenManager, HederaTokenManager__factory } from '@typechain'
-import { validateTxResponse, ValidateTxResponseCommand } from '@scripts'
+import { MESSAGES, validateTxResponse, ValidateTxResponseCommand } from '@scripts'
 import { deployFullInfrastructureInTests, GAS_LIMIT, ONE_TOKEN } from '@test/shared'
 
 //TODO: why skip?
@@ -20,7 +20,7 @@ describe.skip('➡️ Upgrade Tests (Skipped)', function () {
         // Disable | Mock console.log()
         console.log = () => {} // eslint-disable-line
         // * Deploy StableCoin Token
-        console.info('  🏗️ Deploying full infrastructure...')
+        console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
         ;[operator, nonOperator] = await ethers.getSigners()
         // if ((network.name as NetworkName) === NETWORK_LIST.name[0]) {
         //     await deployPrecompiledHederaTokenServiceMock(hre, signer)

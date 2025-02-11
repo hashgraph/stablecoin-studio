@@ -8,6 +8,7 @@ import {
     DeployContractWithFactoryCommand,
     deployFullInfrastructure,
     DeployFullInfrastructureCommand,
+    MESSAGES,
     ValidateTxResponseCommand,
 } from '@scripts'
 import { GAS_LIMIT, TOKEN_NAME, TOKEN_SYMBOL } from '@test/shared'
@@ -41,7 +42,7 @@ describe('➡️ Reserve Tests', function () {
         console.log = () => {} // eslint-disable-line
         ;[operator, nonOperator] = await ethers.getSigners()
         // * Deploy StableCoin Token
-        console.info('  🏗️ Deploying full infrastructure...')
+        console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
 
         // Deploy Full Infrastructure
         const deployCommand = await DeployFullInfrastructureCommand.newInstance({
@@ -135,7 +136,7 @@ describe('Reserve Tests with reserve and token with same Decimals', function () 
         // Disable | Mock console.log()
         console.log = () => {} // eslint-disable-line
         // * Deploy StableCoin Token
-        console.info('  🏗️ Deploying full infrastructure...')
+        console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
         ;[operator, nonOperator] = await ethers.getSigners()
 
         // Deploy Full Infrastructure
@@ -214,7 +215,7 @@ describe('Reserve Tests with reserve decimals higher than token decimals', funct
         // Disable | Mock console.log()
         console.log = () => {} // eslint-disable-line
         // * Deploy StableCoin Token
-        console.info('  🏗️ Deploying full infrastructure...')
+        console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
         ;[operator, nonOperator] = await ethers.getSigners()
 
         // Deploy Full Infrastructure
@@ -291,7 +292,7 @@ describe('Reserve Tests with reserve decimals lower than token decimals', functi
         // Disable | Mock console.log()
         console.log = () => {} // eslint-disable-line
         // * Deploy StableCoin Token
-        console.info('  🏗️ Deploying full infrastructure...')
+        console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
         ;[operator, nonOperator] = await ethers.getSigners()
 
         // Deploy Full Infrastructure

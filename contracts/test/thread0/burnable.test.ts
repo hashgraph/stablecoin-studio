@@ -3,7 +3,7 @@ import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { ethers, network } from 'hardhat'
 import { BigNumber } from 'ethers'
 import { HederaTokenManager, HederaTokenManager__factory } from '@typechain'
-import { delay, validateTxResponse, ValidateTxResponseCommand } from '@scripts'
+import { delay, MESSAGES, validateTxResponse, ValidateTxResponseCommand } from '@scripts'
 import { deployFullInfrastructureInTests, INIT_SUPPLY, GAS_LIMIT } from '@test/shared'
 import { NetworkName } from '@configuration'
 
@@ -19,7 +19,7 @@ describe('➡️ Burn Tests', () => {
         // Disable | Mock console.log()
         console.log = () => {} // eslint-disable-line
         // * Deploy StableCoin Token
-        console.info('  🏗️ Deploying full infrastructure...')
+        console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
         ;[operator, nonOperator] = await ethers.getSigners()
         // if ((network.name as NetworkName) === NETWORK_LIST.name[0]) {
         //     await deployPrecompiledHederaTokenServiceMock(hre, signer)

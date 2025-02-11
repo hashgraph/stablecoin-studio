@@ -20,7 +20,7 @@ describe('➡️ KYC Tests', function () {
         // Get Signers
         ;[operator, nonOperator] = await ethers.getSigners()
         // * Deploy StableCoin Token
-        console.info('  🏗️ Deploying full infrastructure...')
+        console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
         ;({ proxyAddress } = await deployFullInfrastructureInTests({
             signer: operator,
             network: network.name as NetworkName,

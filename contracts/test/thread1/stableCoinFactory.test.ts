@@ -16,6 +16,7 @@ import {
     DeployContractWithFactoryCommand,
     deployFullInfrastructure,
     DeployFullInfrastructureCommand,
+    MESSAGES,
     ValidateTxResponseCommand,
 } from '@scripts'
 import {
@@ -49,7 +50,7 @@ describe('StableCoinFactory Tests', function () {
         // Disable | Mock console.log()
         console.log = () => {} // eslint-disable-line
         // * Deploy StableCoin Token
-        console.info('  🏗️ Deploying full infrastructure...')
+        console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
         ;[operator, nonOperator] = await ethers.getSigners()
         // Use deployed factory or deploy a new one
         const chainId = (await ethers.provider.getNetwork()).chainId as NetworkChainId
