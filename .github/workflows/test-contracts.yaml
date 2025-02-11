@@ -59,6 +59,13 @@ jobs:
       #     deps-contracts-install: "true"
       #     deps-create-env-file: "true"
 
+      - name: checks
+        run: |
+          cat /etc/os-release
+          docker --version
+          npm --version
+          node --version
+
       - name: Install Docker and Docker Compose
         run: |
           # Add Docker's official GPG key:
