@@ -71,7 +71,7 @@ jobs:
 
           # Add Docker's official GPG key and repository
           sudo install -m 0755 -d /etc/apt/keyrings
-          curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
+          sudo curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
           sudo chmod a+r /etc/apt/keyrings/docker.asc
           echo \
           "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
@@ -83,6 +83,10 @@ jobs:
 
           # Install Docker and Docker Compose from Docker repository
           sudo apt install -y --no-install-recommends docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+          # Add user to docker group
+          sudo usermod -aG docker $USER
+          newgrp docker
 
       - name: checks
         run: |
