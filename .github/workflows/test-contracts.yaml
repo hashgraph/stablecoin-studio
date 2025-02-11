@@ -83,10 +83,6 @@ jobs:
           # Install Docker and Docker Compose from Docker repository
           sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
-          # Add user to docker group
-          sudo usermod -aG docker $USER
-          newgrp docker
-
       - name: checks
         run: |
           cat /etc/os-release
