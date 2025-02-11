@@ -61,7 +61,7 @@ jobs:
 
       - name: Install Node.js and npm
         run: |
-          curl -fsSL https://deb.nodesource.com/setup_lts.x | bash -
+          sudo curl -fsSL https://deb.nodesource.com/setup_lts.x | bash -
           sudo apt-get install -y nodejs
 
       - name: Install Docker and Docker Compose
