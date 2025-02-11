@@ -35,12 +35,11 @@ describe('➡️ Reserve Tests', function () {
     let hederaTokenManager: HederaTokenManager
     // Accounts
     let operator: SignerWithAddress
-    let nonOperator: SignerWithAddress
 
     before(async function () {
         // Disable | Mock console.log()
         console.log = () => {} // eslint-disable-line
-        ;[operator, nonOperator] = await ethers.getSigners()
+        ;[operator] = await ethers.getSigners()
         // * Deploy StableCoin Token
         console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
 
@@ -126,18 +125,16 @@ describe('➡️ Reserve Tests', function () {
 describe('Reserve Tests with reserve and token with same Decimals', function () {
     // Contracts
     let proxyAddress: string
-    let hederaReserveProxyAdminAddress: string
     let hederaTokenManager: HederaTokenManager
     // Accounts
     let operator: SignerWithAddress
-    let nonOperator: SignerWithAddress
 
     before(async function () {
         // Disable | Mock console.log()
         console.log = () => {} // eslint-disable-line
         // * Deploy StableCoin Token
         console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
-        ;[operator, nonOperator] = await ethers.getSigners()
+        ;[operator] = await ethers.getSigners()
 
         // Deploy Full Infrastructure
         const deployCommand = await DeployFullInfrastructureCommand.newInstance({
@@ -157,7 +154,6 @@ describe('Reserve Tests with reserve and token with same Decimals', function () 
         const deployResult = await deployFullInfrastructure(deployCommand)
 
         proxyAddress = deployResult.stableCoinDeployment.proxyAddress
-        hederaReserveProxyAdminAddress = deployResult.stableCoinDeployment.reserveProxyAddress!
         hederaTokenManager = HederaTokenManager__factory.connect(proxyAddress, operator)
     })
 
@@ -205,18 +201,16 @@ describe('Reserve Tests with reserve and token with same Decimals', function () 
 describe('Reserve Tests with reserve decimals higher than token decimals', function () {
     // Contracts
     let proxyAddress: string
-    let hederaReserveProxyAdminAddress: string
     let hederaTokenManager: HederaTokenManager
     // Accounts
     let operator: SignerWithAddress
-    let nonOperator: SignerWithAddress
 
     before(async function () {
         // Disable | Mock console.log()
         console.log = () => {} // eslint-disable-line
         // * Deploy StableCoin Token
         console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
-        ;[operator, nonOperator] = await ethers.getSigners()
+        ;[operator] = await ethers.getSigners()
 
         // Deploy Full Infrastructure
         const deployCommand = await DeployFullInfrastructureCommand.newInstance({
@@ -236,7 +230,6 @@ describe('Reserve Tests with reserve decimals higher than token decimals', funct
         const deployResult = await deployFullInfrastructure(deployCommand)
 
         proxyAddress = deployResult.stableCoinDeployment.proxyAddress
-        hederaReserveProxyAdminAddress = deployResult.stableCoinDeployment.reserveProxyAddress!
         hederaTokenManager = HederaTokenManager__factory.connect(proxyAddress, operator)
     })
 
@@ -282,18 +275,16 @@ describe('Reserve Tests with reserve decimals higher than token decimals', funct
 describe('Reserve Tests with reserve decimals lower than token decimals', function () {
     // Contracts
     let proxyAddress: string
-    let hederaReserveProxy: string
     let hederaTokenManager: HederaTokenManager
     // Accounts
     let operator: SignerWithAddress
-    let nonOperator: SignerWithAddress
 
     before(async function () {
         // Disable | Mock console.log()
         console.log = () => {} // eslint-disable-line
         // * Deploy StableCoin Token
         console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
-        ;[operator, nonOperator] = await ethers.getSigners()
+        ;[operator] = await ethers.getSigners()
 
         // Deploy Full Infrastructure
         const deployCommand = await DeployFullInfrastructureCommand.newInstance({
@@ -313,7 +304,6 @@ describe('Reserve Tests with reserve decimals lower than token decimals', functi
         const deployResult = await deployFullInfrastructure(deployCommand)
 
         proxyAddress = deployResult.stableCoinDeployment.proxyAddress
-        hederaReserveProxy = deployResult.stableCoinDeployment.reserveProxyAddress!
         hederaTokenManager = HederaTokenManager__factory.connect(proxyAddress, operator)
     })
 

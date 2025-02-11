@@ -1,6 +1,5 @@
 import { constants } from 'ethers'
 import { GAS_LIMIT as CONF_GAS_LIMIT } from '@configuration'
-import { deployFullInfrastructureInTests } from '@test/shared'
 
 // * Ethereum
 export const ADDRESS_ZERO = constants.AddressZero

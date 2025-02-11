@@ -54,7 +54,7 @@ export function tokenKeysToKey({ publicKey, isEd25519, addKyc, addFeeSchedule }:
         fixKeys(),
         {
             keyType: keyType,
-            publicKey: isEd25519 ? publicKey : computePublicKey(publicKey, true),
+            publicKey: isEd25519 ? publicKey : computePublicKey(publicKey, compressed),
             isEd25519,
         },
     ]

@@ -1,5 +1,5 @@
 import { ethers } from 'hardhat'
-import { Contract, ContractFactory, ContractReceipt, ContractTransaction } from 'ethers'
+import { Contract, ContractFactory, ContractReceipt } from 'ethers'
 import { configuration } from 'hardhat.config'
 import {
     HederaTokenManager__factory,
@@ -18,7 +18,6 @@ import {
     DeployContractWithFactoryResult,
     DeployFullInfrastructureCommand,
     ValidateTxResponseCommand,
-    validateTxResponseList,
     validateTxResponse,
     VALUE,
     TransactionReceiptError,

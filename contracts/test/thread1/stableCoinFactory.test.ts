@@ -476,11 +476,12 @@ describe('StableCoinFactory Tests', function () {
         const removeResponse = await factory.removeHederaTokenManagerAddress(index, {
             gasLimit: GAS_LIMIT.stableCoinFactory.removeHederaTokenManagerAddress,
         })
+        await new ValidateTxResponseCommand({ txResponse: removeResponse }).execute()
 
+        await delay({ time: 1, unit: 'sec' })
         const addressList = await factory.getHederaTokenManagerAddress({
             gasLimit: GAS_LIMIT.stableCoinFactory.getHederaTokenManagerAddress,
         })
-        await delay({ time: 1, unit: 'sec' })
         expect(addressList[index].toUpperCase()).to.be.equal(ADDRESS_ZERO.toUpperCase())
     })
 

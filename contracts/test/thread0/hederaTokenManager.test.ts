@@ -267,6 +267,7 @@ describe('➡️ HederaTokenManager Tests', function () {
         })
 
         const initStruct = {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             token: tokenAddress as any, //! imposible to test...
             initialTotalSupply: deployCommand.tokenStruct.tokenInitialSupply,
             tokenDecimals: deployCommand.tokenStruct.tokenDecimals,
