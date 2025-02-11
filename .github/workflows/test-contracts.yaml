@@ -64,7 +64,7 @@ jobs:
       - name: Initial steps
         uses: ./.github/actions/initial-steps
         with:
-          deps-contracts-install: "true"
+          docker-engine-ubuntu: "true"
           # deps-create-env-file: "true" # Needed for testnet
 
       - name: Install and run Hedera Local Network
