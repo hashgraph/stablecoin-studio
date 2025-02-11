@@ -35,9 +35,12 @@ env:
 permissions:
   contents: read
 
+# ! It does NOT work if running locally using ACT (file sharing issue)
+
 jobs:
   thread0:
     runs-on: token-studio-linux-medium
+    # ! Cannot use container with Hedera Local Network
     # container:
     #   image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
     permissions:
@@ -53,54 +56,29 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
 
-      # - name: Initial steps
-      #   uses: ./.github/actions/initial-steps
-      #   with:
-      #     deps-contracts-install: "true"
-      #     deps-create-env-file: "true"
-
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a #v4.2.0
         with:
           node-version: "20.x"
 
-      - name: Install Docker and Docker Compose
-        run: |
-          # Add Docker's official GPG key:
-          sudo apt-get update
-          sudo apt-get install ca-certificates curl
-          sudo install -m 0755 -d /etc/apt/keyrings
-          sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-          sudo chmod a+r /etc/apt/keyrings/docker.asc
-
-          # Add the repository to Apt sources:
-          echo \
-            "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
-            $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
-            sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-          sudo apt-get update
-
-          # Install Docker and Docker Compose from Docker repository
-          sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-
-      - name: checks
-        run: |
-          cat /etc/os-release
-          docker --version
-          npm --version
-          node --version
+      - name: Initial steps
+        uses: ./.github/actions/initial-steps
+        with:
+          deps-contracts-install: "true"
+          # deps-create-env-file: "true" # Needed for testnet
 
       - name: Install and run Hedera Local Network
         run: |
           npm install @hashgraph/hedera-local -g
           hedera start --detached
 
-      - name: Export ENV variables for contracts
-        uses: ./.github/actions/create-env-file
-        with:
-          api-access-token-1: ${{ secrets.API_ACCESS_TOKEN_1 }}
-          api-access-token-2: ${{ secrets.API_ACCESS_TOKEN_2 }}
-          module: "contracts"
+      # Needed for testnet
+      # - name: Export ENV variables for contracts
+      #   uses: ./.github/actions/create-env-file
+      #   with:
+      #     api-access-token-1: ${{ secrets.API_ACCESS_TOKEN_1 }}
+      #     api-access-token-2: ${{ secrets.API_ACCESS_TOKEN_2 }}
+      #     module: "contracts"
 
       - name: Install and build Contracts
         uses: ./.github/actions/install-and-build
@@ -121,6 +99,7 @@ jobs:
 
   thread1:
     runs-on: token-studio-linux-medium
+    # ! Cannot use container with Hedera Local Network
     # container:
     #   image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
     permissions:
@@ -136,54 +115,29 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
 
-      # - name: Initial steps
-      #   uses: ./.github/actions/initial-steps
-      #   with:
-      #     deps-contracts-install: "true"
-      #     deps-create-env-file: "true"
-
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a #v4.2.0
         with:
           node-version: "20.x"
 
-      - name: Install Docker and Docker Compose
-        run: |
-          # Add Docker's official GPG key:
-          sudo apt-get update
-          sudo apt-get install ca-certificates curl
-          sudo install -m 0755 -d /etc/apt/keyrings
-          sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-          sudo chmod a+r /etc/apt/keyrings/docker.asc
-
-          # Add the repository to Apt sources:
-          echo \
-            "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
-            $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
-            sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-          sudo apt-get update
-
-          # Install Docker and Docker Compose from Docker repository
-          sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-
-      - name: checks
-        run: |
-          cat /etc/os-release
-          docker --version
-          npm --version
-          node --version
+      - name: Initial steps
+        uses: ./.github/actions/initial-steps
+        with:
+          deps-contracts-install: "true"
+          # deps-create-env-file: "true" # Needed for testnet
 
       - name: Install and run Hedera Local Network
         run: |
           npm install @hashgraph/hedera-local -g
           hedera start --detached
 
-      - name: Export ENV variables for contracts
-        uses: ./.github/actions/create-env-file
-        with:
-          api-access-token-1: ${{ secrets.API_ACCESS_TOKEN_1 }}
-          api-access-token-2: ${{ secrets.API_ACCESS_TOKEN_2 }}
-          module: "contracts"
+      # Needed for testnet
+      # - name: Export ENV variables for contracts
+      #   uses: ./.github/actions/create-env-file
+      #   with:
+      #     api-access-token-1: ${{ secrets.API_ACCESS_TOKEN_1 }}
+      #     api-access-token-2: ${{ secrets.API_ACCESS_TOKEN_2 }}
+      #     module: "contracts"
 
       - name: Install and build Contracts
         uses: ./.github/actions/install-and-build
