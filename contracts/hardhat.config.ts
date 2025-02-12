@@ -31,15 +31,20 @@ const hardhatConfig: HardhatUserConfig = {
             accounts: {
                 mnemonic: configuration.mnemonic.hardhat?.phrase || undefined,
             },
-            allowUnlimitedContractSize: true,
+            // * Forking (not working when precompiled contracts are used)
+            // accounts: configuration.privateKeys.testnet.map((key) => ({
+            //     privateKey: key,
+            //     balance: '10000000000000000000000000',
+            // })),
+            // // allowUnlimitedContractSize: true,
             // enableRip7212: true,
             // forking: {
-            //     url: configuration.endpoints.local.jsonRpc,
-            //     blockNumber: 4053,
-            //     enabled: true,
+            // url: configuration.endpoints.testnet.jsonRpc,
+            // // blockNumber: 4053,
+            // enabled: true,
             // },
             // initialDate: '2025-01-27T00:00:00Z',
-            // chainId: 29,
+            // chainId: NETWORK_LIST.chainId[3],
         },
         [NETWORK_LIST.name[1]]: {
             chainId: NETWORK_LIST.chainId[1],
