@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.16;
+pragma solidity 0.8.18;
 
-import {
-    IHederaTokenService
-} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
-import {KeysLib} from '../library/KeysLib.sol';
+// solhint-disable-next-line max-line-length
+import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
+import {KeysStruct} from '../library/KeysLib.sol';
 
 interface IHederaTokenManager {
     struct InitializeStruct {
@@ -31,7 +30,7 @@ interface IHederaTokenManager {
     struct UpdateTokenStruct {
         string tokenName;
         string tokenSymbol;
-        KeysLib.KeysStruct[] keys;
+        KeysStruct[] keys;
         int64 second;
         int64 autoRenewPeriod;
         string tokenMetadataURI;
@@ -46,12 +45,7 @@ interface IHederaTokenManager {
     * @param amount Transfered amount
 
     */
-    event TokenTransfer(
-        address indexed token,
-        address indexed sender,
-        address indexed receiver,
-        int64 amount
-    );
+    event TokenTransfer(address indexed token, address indexed sender, address indexed receiver, int64 amount);
 
     /**
      * @dev Emitted when token updated
@@ -59,10 +53,7 @@ interface IHederaTokenManager {
      * @param token Token address
      * @param updateTokenStruct Struct containing updated token data
      */
-    event TokenUpdated(
-        address indexed token,
-        UpdateTokenStruct updateTokenStruct
-    );
+    event TokenUpdated(address indexed token, UpdateTokenStruct updateTokenStruct);
 
     /**
      * @dev Emitted when a new metadata was set

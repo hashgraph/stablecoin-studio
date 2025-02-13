@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.16;
+pragma solidity 0.8.18;
 
 import {ISupplierAdmin} from './Interfaces/ISupplierAdmin.sol';
 import {TokenOwner} from './TokenOwner.sol';
@@ -16,9 +16,7 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
      * @return The number of tokens allowed to be minted
      *
      */
-    function getSupplierAllowance(
-        address supplier
-    ) external view override(ISupplierAdmin) returns (uint256) {
+    function getSupplierAllowance(address supplier) external view override(ISupplierAdmin) returns (uint256) {
         return _supplierAllowances[supplier];
     }
 
@@ -29,9 +27,7 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
      * @return True if is unlimited supplier's allowance
      *
      */
-    function isUnlimitedSupplierAllowance(
-        address supplier
-    ) external view override(ISupplierAdmin) returns (bool) {
+    function isUnlimitedSupplierAllowance(address supplier) external view override(ISupplierAdmin) returns (bool) {
         return _unlimitedSupplierAllowances[supplier];
     }
 
@@ -66,12 +62,7 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
      */
     function grantUnlimitedSupplierRole(
         address supplier
-    )
-        external
-        override(ISupplierAdmin)
-        onlyRole(_getRoleId(RoleName.ADMIN))
-        addressIsNotZero(supplier)
-    {
+    ) external override(ISupplierAdmin) onlyRole(_getRoleId(RoleName.ADMIN)) addressIsNotZero(supplier) {
         _grantUnlimitedSupplierRole(supplier);
     }
 
@@ -84,12 +75,7 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
      */
     function revokeSupplierRole(
         address supplier
-    )
-        external
-        override(ISupplierAdmin)
-        onlyRole(_getRoleId(RoleName.ADMIN))
-        addressIsNotZero(supplier)
-    {
+    ) external override(ISupplierAdmin) onlyRole(_getRoleId(RoleName.ADMIN)) addressIsNotZero(supplier) {
         _revokeSupplierRole(supplier);
     }
 
@@ -102,22 +88,12 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
      */
     function resetSupplierAllowance(
         address supplier
-    )
-        external
-        override(ISupplierAdmin)
-        onlyRole(_getRoleId(RoleName.ADMIN))
-        addressIsNotZero(supplier)
-    {
+    ) external override(ISupplierAdmin) onlyRole(_getRoleId(RoleName.ADMIN)) addressIsNotZero(supplier) {
         uint256 oldAllowance = _supplierAllowances[supplier];
         uint256 newAllowance = 0;
         _supplierAllowances[supplier] = newAllowance;
 
-        emit SupplierAllowanceReset(
-            msg.sender,
-            supplier,
-            oldAllowance,
-            newAllowance
-        );
+        emit SupplierAllowanceReset(msg.sender, supplier, oldAllowance, newAllowance);
     }
 
     /**
@@ -139,19 +115,12 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
         addressIsNotZero(supplier)
         valueIsNotLessThan(amount, 0, false)
     {
-        if (_unlimitedSupplierAllowances[supplier])
-            revert AccountHasUnlimitedSupplierAllowance(supplier);
+        if (_unlimitedSupplierAllowances[supplier]) revert AccountHasUnlimitedSupplierAllowance(supplier);
         uint256 oldAllowance = _supplierAllowances[supplier];
         uint256 newAllowance = oldAllowance + amount;
         _supplierAllowances[supplier] = newAllowance;
 
-        emit SupplierAllowanceIncreased(
-            msg.sender,
-            supplier,
-            amount,
-            oldAllowance,
-            newAllowance
-        );
+        emit SupplierAllowanceIncreased(msg.sender, supplier, amount, oldAllowance, newAllowance);
     }
 
     /**
@@ -173,8 +142,7 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
         addressIsNotZero(supplier)
         valueIsNotLessThan(amount, 0, false)
     {
-        if (_unlimitedSupplierAllowances[supplier])
-            revert AccountHasUnlimitedSupplierAllowance(supplier);
+        if (_unlimitedSupplierAllowances[supplier]) revert AccountHasUnlimitedSupplierAllowance(supplier);
         _decreaseSupplierAllowance(supplier, amount);
     }
 
@@ -185,23 +153,14 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
      * @param supplier The address of the supplier
      * @param amount The amount to check whether exceeds current supplier allowance
      */
-    function _decreaseSupplierAllowance(
-        address supplier,
-        uint256 amount
-    ) internal {
+    function _decreaseSupplierAllowance(address supplier, uint256 amount) internal {
         uint256 oldAllowance = _supplierAllowances[supplier];
         if (amount > oldAllowance) revert GreaterThan(amount, oldAllowance);
 
         uint256 newAllowance = oldAllowance - amount;
         _supplierAllowances[supplier] = newAllowance;
 
-        emit SupplierAllowanceDecreased(
-            msg.sender,
-            supplier,
-            amount,
-            oldAllowance,
-            newAllowance
-        );
+        emit SupplierAllowanceDecreased(msg.sender, supplier, amount, oldAllowance, newAllowance);
     }
 
     /**
@@ -240,8 +199,7 @@ abstract contract SupplierAdmin is ISupplierAdmin, TokenOwner, Roles {
      *
      */
     function _grantSupplierRole(address supplier, uint256 amount) internal {
-        if (_unlimitedSupplierAllowances[supplier])
-            revert AccountHasUnlimitedSupplierAllowance(supplier);
+        if (_unlimitedSupplierAllowances[supplier]) revert AccountHasUnlimitedSupplierAllowance(supplier);
         _supplierAllowances[supplier] = amount;
         _grantRole(_getRoleId(RoleName.CASHIN), supplier);
     }

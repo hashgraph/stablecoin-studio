@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.16;
+pragma solidity 0.8.18;
 
 import {TokenOwner} from './TokenOwner.sol';
 import {Roles} from './Roles.sol';
-import {
-    IHederaTokenService
-} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
+// solhint-disable-next-line max-line-length
+import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {IKYC} from './Interfaces/IKYC.sol';
 
 abstract contract KYC is IKYC, TokenOwner, Roles {
@@ -16,17 +15,10 @@ abstract contract KYC is IKYC, TokenOwner, Roles {
      */
     function grantKyc(
         address account
-    )
-        external
-        override(IKYC)
-        onlyRole(_getRoleId(RoleName.KYC))
-        addressIsNotZero(account)
-        returns (bool)
-    {
+    ) external override(IKYC) onlyRole(_getRoleId(RoleName.KYC)) addressIsNotZero(account) returns (bool) {
         address currentTokenAddress = _getTokenAddress();
 
-        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
-            .grantTokenKyc(currentTokenAddress, account);
+        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS).grantTokenKyc(currentTokenAddress, account);
 
         bool success = _checkResponse(responseCode);
 
@@ -42,17 +34,10 @@ abstract contract KYC is IKYC, TokenOwner, Roles {
      */
     function revokeKyc(
         address account
-    )
-        external
-        override(IKYC)
-        onlyRole(_getRoleId(RoleName.KYC))
-        addressIsNotZero(account)
-        returns (bool)
-    {
+    ) external onlyRole(_getRoleId(RoleName.KYC)) addressIsNotZero(account) returns (bool) {
         address currentTokenAddress = _getTokenAddress();
 
-        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
-            .revokeTokenKyc(currentTokenAddress, account);
+        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS).revokeTokenKyc(currentTokenAddress, account);
 
         bool success = _checkResponse(responseCode);
 

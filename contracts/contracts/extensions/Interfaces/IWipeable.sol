@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.16;
+pragma solidity 0.8.18;
 
 interface IWipeable {
     /**
@@ -9,12 +9,7 @@ interface IWipeable {
      * @param account The address of the account where to wipe the token
      * @param amount The number of tokens to wipe
      */
-    event TokensWiped(
-        address indexed wiper,
-        address indexed token,
-        address indexed account,
-        int64 amount
-    );
+    event TokensWiped(address indexed wiper, address indexed token, address indexed account, int64 amount);
 
     /**
      * @dev Operation to wipe a token `amount` from `account`

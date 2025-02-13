@@ -36,12 +36,13 @@ import { MirrorNodeAdapter } from './mirror/MirrorNodeAdapter.js';
 import { Environment } from '../../domain/context/network/Environment.js';
 import LogService from '../../app/service/LogService.js';
 import PublicKey from '../../domain/context/account/PublicKey.js';
-import { FactoryKey } from '../../domain/context/factory/FactoryKey.js';
+import { KeysStruct } from '../../domain/context/factory/FactoryKey.js';
 import FireblocksSettings from '../../domain/context/custodialwalletsettings/FireblocksSettings';
 import DfnsSettings from '../../domain/context/custodialwalletsettings/DfnsSettings';
 import { Transaction } from '@hashgraph/sdk';
 import AWSKMSSettings from '../../domain/context/custodialwalletsettings/AWSKMSSettings';
 import HWCSettings from '../../domain/context/hwalletconnectsettings/HWCSettings.js';
+import { BigNumber } from 'ethers';
 
 export interface InitializationData {
 	account?: Account;
@@ -588,39 +589,39 @@ export default abstract class TransactionAdapter
 		return parameter;
 	}
 
-	setKeysForSmartContract(providedKeys: any[]): FactoryKey[] {
-		const keys: FactoryKey[] = [];
+	setKeysForSmartContract(providedKeys: any[]): KeysStruct[] {
+		const keys: KeysStruct[] = [];
 
 		providedKeys.forEach((providedKey, index) => {
 			if (providedKey) {
-				const key = new FactoryKey();
+				const key = new KeysStruct();
 				switch (index) {
 					case 0: {
-						key.keyType = 1; // admin
+						key.keyType = BigNumber.from(1); // admin
 						break;
 					}
 					case 1: {
-						key.keyType = 2; // kyc
+						key.keyType = BigNumber.from(2); // kyc
 						break;
 					}
 					case 2: {
-						key.keyType = 4; // freeze
+						key.keyType = BigNumber.from(4); // freeze
 						break;
 					}
 					case 3: {
-						key.keyType = 8; // wipe
+						key.keyType = BigNumber.from(8); // wipe
 						break;
 					}
 					case 4: {
-						key.keyType = 16; // supply
+						key.keyType = BigNumber.from(16); // supply
 						break;
 					}
 					case 5: {
-						key.keyType = 32; // fee schedule
+						key.keyType = BigNumber.from(32); // fee schedule
 						break;
 					}
 					case 6: {
-						key.keyType = 64; // pause
+						key.keyType = BigNumber.from(64); // pause
 						break;
 					}
 				}
@@ -631,7 +632,7 @@ export default abstract class TransactionAdapter
 						: HPublicKey.fromString(
 								providedKeyCasted.key,
 						  ).toBytesRaw();
-				key.isED25519 = providedKeyCasted.type === 'ED25519';
+				key.isEd25519 = providedKeyCasted.type === 'ED25519';
 				keys.push(key);
 			}
 		});

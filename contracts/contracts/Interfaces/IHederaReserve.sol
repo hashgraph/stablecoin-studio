@@ -1,9 +1,7 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.16;
+pragma solidity 0.8.18;
 
-import {
-    AggregatorV3Interface
-} from '@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol';
+import {AggregatorV3Interface} from '@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol';
 
 interface IHederaReserve is AggregatorV3Interface {
     /**
@@ -33,9 +31,21 @@ interface IHederaReserve is AggregatorV3Interface {
     /**
      * @dev Emitted when the provided `addr` is 0
      *
-     * @param addr The address to check
+     * @param account The address to check
      */
-    error AddressZero(address addr);
+    error AddressZero(address account);
+
+    /**
+     * @dev Emitted when the calling account is not the admin
+     *
+     * @param account The address that tried to change the reserve
+     */
+    error OnlyAdmin(address account);
+
+    /**
+     * @dev Emitted when the function is not implemented
+     */
+    error NotImplemented();
 
     /**
      *  @dev Sets a new reserve amount

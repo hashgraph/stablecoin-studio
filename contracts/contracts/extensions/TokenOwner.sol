@@ -1,19 +1,12 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.16;
+pragma solidity 0.8.18;
 
 import {ITokenOwner} from './Interfaces/ITokenOwner.sol';
-import {
-    HederaResponseCodes
-} from '@hashgraph/smart-contracts/contracts/system-contracts/HederaResponseCodes.sol';
-import {
-    IERC20Upgradeable
-} from '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
-import {
-    Initializable
-} from '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
-import {
-    IERC20MetadataUpgradeable
-} from '@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol';
+import {HederaResponseCodes} from '@hashgraph/smart-contracts/contracts/system-contracts/HederaResponseCodes.sol';
+import {IERC20Upgradeable} from '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
+import {Initializable} from '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
+// solhint-disable-next-line max-line-length
+import {IERC20MetadataUpgradeable} from '@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol';
 
 abstract contract TokenOwner is ITokenOwner, Initializable {
     // Hedera HTS precompiled contract
@@ -27,8 +20,7 @@ abstract contract TokenOwner is ITokenOwner, Initializable {
      * @param value The value to check
      * @param ref The ref to compare with
      */
-    modifier valueIsNotLessThan(uint256 value, uint256 ref, bool equalAccepted)
-    {
+    modifier valueIsNotLessThan(uint256 value, uint256 ref, bool equalAccepted) {
         _valueIsNotLessThan(value, ref, equalAccepted);
         _;
     }
@@ -39,11 +31,7 @@ abstract contract TokenOwner is ITokenOwner, Initializable {
      * @param value The value to check
      * @param ref The ref to compare with
      */
-    modifier valueIsNotGreaterThan(
-        uint256 value,
-        uint256 ref,
-        bool equalAccepted
-    ) {
+    modifier valueIsNotGreaterThan(uint256 value, uint256 ref, bool equalAccepted) {
         _valueIsNotGreaterThan(value, ref, equalAccepted);
         _;
     }
@@ -75,13 +63,8 @@ abstract contract TokenOwner is ITokenOwner, Initializable {
      * @param value The value to check
      * @param ref The ref to compare with
      */
-    function _valueIsNotLessThan(
-        uint256 value,
-        uint256 ref,
-        bool equalAccepted
-    ) private pure {
-        if (equalAccepted ? value < ref : value <= ref)
-            revert LessThan(value, ref);
+    function _valueIsNotLessThan(uint256 value, uint256 ref, bool equalAccepted) private pure {
+        if (equalAccepted ? value < ref : value <= ref) revert LessThan(value, ref);
     }
 
     /**
@@ -90,13 +73,8 @@ abstract contract TokenOwner is ITokenOwner, Initializable {
      * @param value The value to check
      * @param ref The ref to compare with
      */
-    function _valueIsNotGreaterThan(
-        uint256 value,
-        uint256 ref,
-        bool equalAccepted
-    ) private pure {
-        if (equalAccepted ? value > ref : value >= ref)
-            revert GreaterThan(value, ref);
+    function _valueIsNotGreaterThan(uint256 value, uint256 ref, bool equalAccepted) private pure {
+        if (equalAccepted ? value > ref : value >= ref) revert GreaterThan(value, ref);
     }
 
     /**
@@ -105,12 +83,8 @@ abstract contract TokenOwner is ITokenOwner, Initializable {
      * @param amount The value to check
      * @param zeroAccepted A flag that indicates if zero value is accepted or not
      */
-    function _amountIsNotNegative(
-        int256 amount,
-        bool zeroAccepted
-    ) private pure {
-        if (zeroAccepted ? amount < 0 : amount <= 0)
-            revert NegativeAmount(amount);
+    function _amountIsNotNegative(int256 amount, bool zeroAccepted) private pure {
+        if (zeroAccepted ? amount < 0 : amount <= 0) revert NegativeAmount(amount);
     }
 
     /**
@@ -127,9 +101,7 @@ abstract contract TokenOwner is ITokenOwner, Initializable {
      *
      * @param initTokenAddress The token address value
      */
-    function __tokenOwnerInit(
-        address initTokenAddress
-    ) internal onlyInitializing {
+    function __tokenOwnerInit(address initTokenAddress) internal onlyInitializing {
         _tokenAddress = initTokenAddress;
     }
 
@@ -147,8 +119,7 @@ abstract contract TokenOwner is ITokenOwner, Initializable {
      * @param responseCode The Hedera response code to transform
      */
     function _checkResponse(int64 responseCode) internal pure returns (bool) {
-        if (responseCode != HederaResponseCodes.SUCCESS)
-            revert ResponseCodeInvalid(responseCode);
+        if (responseCode != HederaResponseCodes.SUCCESS) revert ResponseCodeInvalid(responseCode);
         return true;
     }
 
@@ -173,9 +144,7 @@ abstract contract TokenOwner is ITokenOwner, Initializable {
      *
      * @param account The address of the account to be consulted
      */
-    function _balanceOf(
-        address account
-    ) internal view virtual returns (uint256);
+    function _balanceOf(address account) internal view virtual returns (uint256);
 
     /**
      * @dev Transfers an amount of tokens from and account to another account
@@ -189,12 +158,7 @@ abstract contract TokenOwner is ITokenOwner, Initializable {
      * @dev Returns the token address
      *
      */
-    function getTokenAddress()
-        external
-        view
-        override(ITokenOwner)
-        returns (address)
-    {
+    function getTokenAddress() external view override(ITokenOwner) returns (address) {
         return _getTokenAddress();
     }
 

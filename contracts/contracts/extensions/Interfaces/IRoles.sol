@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.16;
+pragma solidity 0.8.18;
 
 interface IRoles {
     enum RoleName {
@@ -23,11 +23,7 @@ interface IRoles {
      * @param account The account for which the role is to be granted
      * @param sender The caller of the function that emitted the event
      */
-    event RoleGranted(
-        bytes32 indexed role,
-        address indexed account,
-        address indexed sender
-    );
+    event RoleGranted(bytes32 indexed role, address indexed account, address indexed sender);
 
     /**
      * @dev Emitted when a role is revoked from an account
@@ -36,11 +32,7 @@ interface IRoles {
      * @param account The account for which the role is to be revoked
      * @param sender The caller of the function that emitted the event
      */
-    event RoleRevoked(
-        bytes32 indexed role,
-        address indexed account,
-        address indexed sender
-    );
+    event RoleRevoked(bytes32 indexed role, address indexed account, address indexed sender);
 
     /**
      * @dev Emitted when the provided account is not granted the role

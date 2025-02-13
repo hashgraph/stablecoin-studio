@@ -1,10 +1,8 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.16;
+pragma solidity 0.8.18;
 
 import {IHederaReserve} from './Interfaces/IHederaReserve.sol';
-import {
-    Initializable
-} from '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
+import {Initializable} from '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 
 contract HederaReserve is IHederaReserve, Initializable {
     uint8 private constant _DECIMALS = 2;
@@ -18,11 +16,7 @@ contract HederaReserve is IHederaReserve, Initializable {
      *
      */
     modifier isAdmin() {
-        // solhint-disable-next-line custom-errors
-        require(
-            _admin == msg.sender,
-            'Only administrator can change the reserve'
-        );
+        if (_admin != msg.sender) revert OnlyAdmin(msg.sender);
         _;
     }
 
@@ -49,10 +43,7 @@ contract HederaReserve is IHederaReserve, Initializable {
      *
      *  @param initialReserve The initial amount to be on the reserve
      */
-    function initialize(
-        int256 initialReserve,
-        address admin
-    ) external initializer checkAddressIsNotZero(admin) {
+    function initialize(int256 initialReserve, address admin) external initializer checkAddressIsNotZero(admin) {
         _reserveAmount = initialReserve;
         _admin = admin;
         emit ReserveInitialized(initialReserve);
@@ -73,9 +64,7 @@ contract HederaReserve is IHederaReserve, Initializable {
      *
      *  @param admin The new admin
      */
-    function setAdmin(
-        address admin
-    ) external isAdmin checkAddressIsNotZero(admin) {
+    function setAdmin(address admin) external isAdmin checkAddressIsNotZero(admin) {
         emit AdminChanged(_admin, admin);
         _admin = admin;
     }
@@ -124,8 +113,7 @@ contract HederaReserve is IHederaReserve, Initializable {
             uint80 /* answeredInRound */
         )
     {
-        // solhint-disable-next-line custom-errors
-        revert('Not implemented');
+        revert NotImplemented();
     }
 
     /**
@@ -134,13 +122,7 @@ contract HederaReserve is IHederaReserve, Initializable {
     function latestRoundData()
         external
         view
-        returns (
-            uint80 roundId,
-            int256 answer,
-            uint256 startedAt,
-            uint256 updatedAt,
-            uint80 answeredInRound
-        )
+        returns (uint80 roundId, int256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound)
     {
         return (
             _ROUND_ID,

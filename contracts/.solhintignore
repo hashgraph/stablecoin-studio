@@ -1,7 +1,5 @@
 node_modules/
-contracts/hts-precompile/HederaResponseCodes.sol
-contracts/hts-precompile/HederaTokenService.sol
-contracts/hts-precompile/IHederaTokenService.sol
+contracts/MockHederaTokenService.sol
 export/
 deployments/
 artifacts/

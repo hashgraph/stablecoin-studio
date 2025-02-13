@@ -1,12 +1,11 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.16;
+pragma solidity 0.8.18;
 
 import {ICustomFees} from './Interfaces/ICustomFees.sol';
 import {Roles} from './Roles.sol';
 import {TokenOwner} from './TokenOwner.sol';
-import {
-    IHederaTokenService
-} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
+// solhint-disable-next-line max-line-length
+import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 
 abstract contract CustomFees is ICustomFees, TokenOwner, Roles {
     /**
@@ -18,20 +17,14 @@ abstract contract CustomFees is ICustomFees, TokenOwner, Roles {
     function updateTokenCustomFees(
         IHederaTokenService.FixedFee[] calldata fixedFees,
         IHederaTokenService.FractionalFee[] calldata fractionalFees
-    )
-        external
-        override(ICustomFees)
-        onlyRole(_getRoleId(RoleName.CUSTOM_FEES))
-        returns (bool)
-    {
+    ) external override(ICustomFees) onlyRole(_getRoleId(RoleName.CUSTOM_FEES)) returns (bool) {
         address currentTokenAddress = _getTokenAddress();
 
-        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
-            .updateFungibleTokenCustomFees(
-                currentTokenAddress,
-                fixedFees,
-                fractionalFees
-            );
+        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS).updateFungibleTokenCustomFees(
+            currentTokenAddress,
+            fixedFees,
+            fractionalFees
+        );
 
         bool success = _checkResponse(responseCode);
 

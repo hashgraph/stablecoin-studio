@@ -19,17 +19,30 @@ on:
       - "package*.json"
       - "contracts/hardhat.config.ts"
       - "contracts/tsconfig.json"
-# env:
-# NODE_VERSION: "20.17.0" # Fixed version for better stability
+env:
+  # Local (Right now using testnet)
+  LOCAL_PRIVATE_KEY_0: "0x105d050185ccb907fba04dd92d8de9e32c18305e097ab41dadda21489a211524"
+  LOCAL_PRIVATE_KEY_1: "0x2e1d968b041d84dd120a5860cee60cd83f9374ef527ca86996317ada3d0d03e7"
+  LOCAL_PRIVATE_KEY_2: "0x45a5a7108a18dd5013cf2d5857a28144beadc9c70b3bdbd914e38df4e804b8d8"
+  LOCAL_PRIVATE_KEY_3: "0x6e9d61a325be3f6675cf8b7676c70e4a004d2308e3e182370a41f5653d52c6bd"
+  LOCAL_PRIVATE_KEY_4: "0x0b58b1bd44469ac9f813b5aeaf6213ddaea26720f0b2f133d08b6f234130a64f"
+  LOCAL_JSON_RPC_ENDPOINT: "http://localhost:7546"
+  LOCAL_MIRROR_NODE_ENDPOINT: "http://localhost:5551"
+  # Tesnet
+  TESTNET_JSON_RPC_ENDPOINT: "https://296.rpc.thirdweb.com"
+  TESTNET_MIRROR_NODE_ENDPOINT: "https://testnet.mirrornode.hedera.com"
 
 permissions:
   contents: read
 
+# ! It does NOT work if running locally using ACT (file sharing issue)
+
 jobs:
-  main:
+  thread0:
     runs-on: token-studio-linux-medium
-    container:
-      image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
+    # ! Cannot use container with Hedera Local Network
+    # container:
+    #   image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
     permissions:
       contents: read
 
@@ -43,17 +56,30 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
 
+      - name: Setup Node.js
+        uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a #v4.2.0
+        with:
+          node-version: "20.x"
+
       - name: Initial steps
         uses: ./.github/actions/initial-steps
         with:
-          deps-contracts-install: "true"
-          deps-create-env-file: "true"
-
-      - name: Create .env file
-        uses: ./.github/actions/create-env-file
-        with:
-          api-access-token-1: ${{ secrets.API_ACCESS_TOKEN_1 }}
           module: "contracts"
+          docker-engine-ubuntu: "true"
+          # deps-create-env-file: "true" # Needed for testnet
+
+      - name: Install and run Hedera Local Network
+        run: |
+          npm install @hashgraph/hedera-local -g
+          hedera start --detached
+
+      # Needed for testnet
+      # - name: Export ENV variables for contracts
+      #   uses: ./.github/actions/create-env-file
+      #   with:
+      #     api-access-token-1: ${{ secrets.API_ACCESS_TOKEN_1 }}
+      #     api-access-token-2: ${{ secrets.API_ACCESS_TOKEN_2 }}
+      #     module: "contracts"
 
       - name: Install and build Contracts
         uses: ./.github/actions/install-and-build
@@ -62,7 +88,72 @@ jobs:
 
       # * Actual test command
       - name: Run
-        run: npm run test:ci --workspace=contracts
+        run: npm run test:ci:thread0 --workspace=contracts -- --network local
+
+      - name: Stop Hedera Local Network
+        if: always()
+        run: hedera stop
 
       - name: Clean project
+        if: always()
+        run: npm run clean --workspace=contracts
+
+  thread1:
+    runs-on: token-studio-linux-medium
+    # ! Cannot use container with Hedera Local Network
+    # container:
+    #   image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
+    permissions:
+      contents: read
+
+    steps:
+      # * Initial steps
+      - name: Harden Runner
+        uses: step-security/harden-runner@f086349bfa2bd1361f7909c78558e816508cdc10 #v2.8.0
+        with:
+          egress-policy: audit
+
+      - name: Checkout repository
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a #v4.2.0
+        with:
+          node-version: "20.x"
+
+      - name: Initial steps
+        uses: ./.github/actions/initial-steps
+        with:
+          module: "contracts"
+          deps-contracts-install: "true"
+          # deps-create-env-file: "true" # Needed for testnet
+
+      - name: Install and run Hedera Local Network
+        run: |
+          npm install @hashgraph/hedera-local -g
+          hedera start --detached
+
+      # Needed for testnet
+      # - name: Export ENV variables for contracts
+      #   uses: ./.github/actions/create-env-file
+      #   with:
+      #     api-access-token-1: ${{ secrets.API_ACCESS_TOKEN_1 }}
+      #     api-access-token-2: ${{ secrets.API_ACCESS_TOKEN_2 }}
+      #     module: "contracts"
+
+      - name: Install and build Contracts
+        uses: ./.github/actions/install-and-build
+        with:
+          module: "contracts"
+
+      # * Actual test command
+      - name: Run
+        run: npm run test:ci:thread1 --workspace=contracts -- --network local
+
+      - name: Stop Hedera Local Network
+        if: always()
+        run: hedera stop
+
+      - name: Clean project
+        if: always()
         run: npm run clean --workspace=contracts

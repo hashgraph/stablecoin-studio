@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.16;
+pragma solidity 0.8.18;
 
 import {TokenOwner} from './TokenOwner.sol';
 import {Roles} from './Roles.sol';
-import {
-    IHederaTokenService
-} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
+// solhint-disable-next-line max-line-length
+import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {IFreezable} from './Interfaces/IFreezable.sol';
 
 abstract contract Freezable is IFreezable, TokenOwner, Roles {
@@ -16,17 +15,10 @@ abstract contract Freezable is IFreezable, TokenOwner, Roles {
      */
     function freeze(
         address account
-    )
-        external
-        override(IFreezable)
-        onlyRole(_getRoleId(RoleName.FREEZE))
-        addressIsNotZero(account)
-        returns (bool)
-    {
+    ) external override(IFreezable) onlyRole(_getRoleId(RoleName.FREEZE)) addressIsNotZero(account) returns (bool) {
         address currentTokenAddress = _getTokenAddress();
 
-        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
-            .freezeToken(currentTokenAddress, account);
+        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS).freezeToken(currentTokenAddress, account);
 
         bool success = _checkResponse(responseCode);
 
@@ -42,17 +34,10 @@ abstract contract Freezable is IFreezable, TokenOwner, Roles {
      */
     function unfreeze(
         address account
-    )
-        external
-        override(IFreezable)
-        onlyRole(_getRoleId(RoleName.FREEZE))
-        addressIsNotZero(account)
-        returns (bool)
-    {
+    ) external override(IFreezable) onlyRole(_getRoleId(RoleName.FREEZE)) addressIsNotZero(account) returns (bool) {
         address currentTokenAddress = _getTokenAddress();
 
-        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
-            .unfreezeToken(currentTokenAddress, account);
+        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS).unfreezeToken(currentTokenAddress, account);
 
         bool success = _checkResponse(responseCode);
 

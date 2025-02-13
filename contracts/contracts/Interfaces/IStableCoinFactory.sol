@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.16;
+pragma solidity 0.8.18;
 
 import {IHederaTokenManager} from './IHederaTokenManager.sol';
-import {KeysLib} from '../library/KeysLib.sol';
+import {KeysStruct} from '../library/KeysLib.sol';
 
 interface IStableCoinFactory {
     struct TokenStruct {
@@ -16,7 +16,7 @@ interface IStableCoinFactory {
         address reserveAddress;
         int256 reserveInitialAmount;
         bool createReserve;
-        KeysLib.KeysStruct[] keys;
+        KeysStruct[] keys;
         IHederaTokenManager.RolesStruct[] roles;
         IHederaTokenManager.CashinRoleStruct cashinRole;
         string metadata;
@@ -51,10 +51,7 @@ interface IStableCoinFactory {
      * @param oldAddress The old HederaTokenManager contract address
      * @param newAddress The new HederaTokenManager contract address
      */
-    event HederaTokenManagerAddressEdited(
-        address indexed oldAddress,
-        address indexed newAddress
-    );
+    event HederaTokenManagerAddressEdited(address indexed oldAddress, address indexed newAddress);
 
     /**
      * @dev Emitted when the address of a HederaTokenManager contract is removed
@@ -62,10 +59,7 @@ interface IStableCoinFactory {
      * @param index The index of the array for which the HederaTokenManager contract address to be removed
      * @param addressRemoved The HederaTokenManager contract address to be removed
      */
-    event HederaTokenManagerAddressRemoved(
-        uint256 index,
-        address indexed addressRemoved
-    );
+    event HederaTokenManagerAddressRemoved(uint256 index, address indexed addressRemoved);
 
     /**
      * @dev Emitted when the address of a HederaTokenManager contract is removed from the array
@@ -119,10 +113,7 @@ interface IStableCoinFactory {
      * @dev Gets the HederaTokenManager contract address
      *
      */
-    function getHederaTokenManagerAddress()
-        external
-        view
-        returns (address[] memory);
+    function getHederaTokenManagerAddress() external view returns (address[] memory);
 
     /**
      * @dev Adds a new stablecoin to contract addresses
@@ -137,10 +128,7 @@ interface IStableCoinFactory {
      * @param index The index of the address
      * @param newAddress The new address
      */
-    function editHederaTokenManagerAddress(
-        uint256 index,
-        address newAddress
-    ) external;
+    function editHederaTokenManagerAddress(uint256 index, address newAddress) external;
 
     /**
      * @dev Changes the admin address

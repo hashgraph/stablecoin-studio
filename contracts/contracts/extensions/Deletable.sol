@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.16;
+pragma solidity 0.8.18;
 
 import {TokenOwner} from './TokenOwner.sol';
 import {Roles} from './Roles.sol';
-import {
-    IHederaTokenService
-} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
+// solhint-disable-next-line max-line-length
+import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {IDeletable} from './Interfaces/IDeletable.sol';
 
 abstract contract Deletable is IDeletable, TokenOwner, Roles {
@@ -13,16 +12,10 @@ abstract contract Deletable is IDeletable, TokenOwner, Roles {
      * @dev Deletes the token
      *
      */
-    function deleteToken()
-        external
-        override(IDeletable)
-        onlyRole(_getRoleId(RoleName.DELETE))
-        returns (bool)
-    {
+    function deleteToken() external override(IDeletable) onlyRole(_getRoleId(RoleName.DELETE)) returns (bool) {
         address currentTokenAddress = _getTokenAddress();
 
-        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
-            .deleteToken(currentTokenAddress);
+        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS).deleteToken(currentTokenAddress);
 
         bool success = _checkResponse(responseCode);
 
