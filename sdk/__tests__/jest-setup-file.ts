@@ -103,7 +103,7 @@ import { Environment } from '../src/domain/context/network/Environment.js';
 import { MultiSigTransaction } from '../src/domain/context/transaction/MultiSigTransaction.js';
 import { StableCoinProps } from '../src/domain/context/stablecoin/StableCoin.js';
 import { FactoryCashinRole } from '../src/domain/context/factory/FactoryCashinRole.js';
-import { FactoryKey } from '../src/domain/context/factory/FactoryKey.js';
+import { KeysStruct } from '../src/domain/context/factory/FactoryKey.js';
 import { FactoryRole } from '../src/domain/context/factory/FactoryRole.js';
 import { FactoryStableCoin } from '../src/domain/context/factory/FactoryStableCoin.js';
 import { REGEX_TRANSACTION } from '../src/port/out/error/TransactionResponseError.js';
@@ -968,7 +968,7 @@ jest.mock('../src/port/out/hs/hts/HTSTransactionAdapter', () => {
 				coin.pauseKey,
 			];
 
-			const keys: FactoryKey[] =
+			const keys: KeysStruct[] =
 				this.setKeysForSmartContract(providedKeys);
 
 			const providedRoles = [

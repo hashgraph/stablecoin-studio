@@ -33,10 +33,10 @@ import {
 	HederaReserve__factory,
 	HederaTokenManager__factory,
 	IHederaTokenService__factory,
+	IHRC__factory,
 	ProxyAdmin__factory,
 	StableCoinFactory__factory,
 	StableCoinProxyAdmin__factory,
-	IHTSToken__factory,
 } from '@hashgraph/stablecoin-npm-contracts';
 import TransactionAdapter, { InitializationData } from '../TransactionAdapter';
 import { BigNumber, ContractTransaction, ethers, Signer } from 'ethers';
@@ -61,7 +61,7 @@ import ContractId from '../../../domain/context/contract/ContractId.js';
 import { StableCoinProps } from '../../../domain/context/stablecoin/StableCoin.js';
 import { TokenSupplyType } from '../../../domain/context/stablecoin/TokenSupply.js';
 import { FactoryStableCoin } from '../../../domain/context/factory/FactoryStableCoin.js';
-import { FactoryKey } from '../../../domain/context/factory/FactoryKey.js';
+import { KeysStruct } from '../../../domain/context/factory/FactoryKey.js';
 import PublicKey from '../../../domain/context/account/PublicKey.js';
 import {
 	ACCEPT_PROXY_OWNER_GAS,
@@ -195,7 +195,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				coin.pauseKey,
 			];
 
-			const keys: FactoryKey[] =
+			const keys: KeysStruct[] =
 				this.setKeysForSmartContract(providedKeys);
 
 			const providedRoles = [
@@ -1305,7 +1305,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				.toSolidityAddress();
 
 			const response = await RPCTransactionResponseAdapter.manageResponse(
-				await IHTSToken__factory.connect(
+				await IHRC__factory.connect(
 					HTSTokenEVMAddress,
 					this.signerOrProvider,
 				).associate({ gasLimit: ASSOCIATE_GAS }),

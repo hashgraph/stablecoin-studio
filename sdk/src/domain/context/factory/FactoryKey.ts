@@ -18,9 +18,10 @@
  *
  */
 
-export class FactoryKey {
-	public keyType: number;
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	public publicKey: any;
-	public isED25519: boolean;
+import { BigNumber, BytesLike } from 'ethers';
+
+export class KeysStruct {
+	public keyType: BigNumber;
+	public publicKey: BytesLike;
+	public isEd25519: boolean;
 }
