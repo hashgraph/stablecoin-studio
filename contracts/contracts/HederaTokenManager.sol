@@ -1,12 +1,9 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.16;
+pragma solidity 0.8.18;
 
-import {
-    IERC20Upgradeable
-} from '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
-import {
-    IERC20MetadataUpgradeable
-} from '@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol';
+import {IERC20Upgradeable} from '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
+// solhint-disable-next-line max-line-length
+import {IERC20MetadataUpgradeable} from '@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol';
 import {IHederaTokenManager} from './Interfaces/IHederaTokenManager.sol';
 import {CashIn} from './extensions/CashIn.sol';
 import {Burnable} from './extensions/Burnable.sol';
@@ -16,9 +13,8 @@ import {Freezable} from './extensions/Freezable.sol';
 import {Rescuable} from './extensions/Rescuable.sol';
 import {Deletable} from './extensions/Deletable.sol';
 
-import {
-    IHederaTokenService
-} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
+// solhint-disable-next-line max-line-length
+import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {TokenOwner} from './extensions/TokenOwner.sol';
 import {KYC} from './extensions/KYC.sol';
 import {RoleManagement} from './extensions/RoleManagement.sol';
@@ -83,13 +79,8 @@ contract HederaTokenManager is
         __rolesInit();
         _grantInitialRoles(init.originalSender, init.roles, init.cashinRole);
 
-        (int64 responseCode, address createdTokenAddress) = IHederaTokenService(
-            _PRECOMPILED_ADDRESS
-        ).createFungibleToken{value: msg.value}(
-            init.token,
-            init.initialTotalSupply,
-            init.tokenDecimals
-        );
+        (int64 responseCode, address createdTokenAddress) = IHederaTokenService(_PRECOMPILED_ADDRESS)
+            .createFungibleToken{value: msg.value}(init.token, init.initialTotalSupply, init.tokenDecimals);
 
         _checkResponse(responseCode);
 
@@ -143,9 +134,7 @@ contract HederaTokenManager is
      *
      * @return uint256 The number number tokens that an account has
      */
-    function balanceOf(
-        address account
-    ) external view override(IHederaTokenManager) returns (uint256) {
+    function balanceOf(address account) external view override(IHederaTokenManager) returns (uint256) {
         return _balanceOf(account);
     }
 
@@ -169,50 +158,37 @@ contract HederaTokenManager is
         IHederaTokenService.HederaToken memory hederaToken;
 
         // Token Keys
-        IHederaTokenService.TokenKey[]
-            memory hederaKeys = new IHederaTokenService.TokenKey[](
-                updatedToken.keys.length
-            );
+        IHederaTokenService.TokenKey[] memory hederaKeys = new IHederaTokenService.TokenKey[](updatedToken.keys.length);
 
         for (uint256 i = 0; i < updatedToken.keys.length; i++) {
             // we avoid the admin key to be updated
             if (
-                KeysLib.containsKey(
-                    _ADMIN_KEY_BIT,
-                    updatedToken.keys[i].keyType
-                ) && updatedToken.keys[i].publicKey.length != 0
+                KeysLib.containsKey(_ADMIN_KEY_BIT, updatedToken.keys[i].keyType) &&
+                updatedToken.keys[i].publicKey.length != 0
             ) {
                 revert AdminKeyUpdateError();
             }
 
             // we avoid the supply key to be updated
             if (
-                KeysLib.containsKey(
-                    _SUPPLY_KEY_BIT,
-                    updatedToken.keys[i].keyType
-                ) && updatedToken.keys[i].publicKey.length != 0
+                KeysLib.containsKey(_SUPPLY_KEY_BIT, updatedToken.keys[i].keyType) &&
+                updatedToken.keys[i].publicKey.length != 0
             ) {
                 revert SupplyKeyUpdateError();
             }
 
             hederaKeys[i] = IHederaTokenService.TokenKey({
                 keyType: updatedToken.keys[i].keyType,
-                key: KeysLib.generateKey(
-                    updatedToken.keys[i].publicKey,
-                    address(this),
-                    updatedToken.keys[i].isED25519
-                )
+                key: KeysLib.generateKey(updatedToken.keys[i].publicKey, address(this), updatedToken.keys[i].isEd25519)
             });
         }
 
-        hederaToken = _updateHederaTokenInfo(
-            updatedToken,
-            hederaKeys,
-            currentTokenAddress
-        );
+        hederaToken = _updateHederaTokenInfo(updatedToken, hederaKeys, currentTokenAddress);
 
-        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
-            .updateTokenInfo(currentTokenAddress, hederaToken);
+        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS).updateTokenInfo(
+            currentTokenAddress,
+            hederaToken
+        );
 
         _checkResponse(responseCode);
 
@@ -238,8 +214,7 @@ contract HederaTokenManager is
 
         // granting cashin role
         if (cashinRole.account != address(0)) {
-            if (cashinRole.allowance > 0)
-                _grantSupplierRole(cashinRole.account, cashinRole.allowance);
+            if (cashinRole.allowance > 0) _grantSupplierRole(cashinRole.account, cashinRole.allowance);
             else _grantUnlimitedSupplierRole(cashinRole.account);
         }
 
@@ -252,9 +227,7 @@ contract HederaTokenManager is
      *
      * @param originalSender address of the original sender
      */
-    function _transferFundsBackToOriginalSender(
-        address originalSender
-    ) private onlyInitializing {
+    function _transferFundsBackToOriginalSender(address originalSender) private onlyInitializing {
         uint256 currentBalance = address(this).balance;
         if (currentBalance == 0) return;
         (bool s, ) = originalSender.call{value: currentBalance}('');
@@ -268,9 +241,7 @@ contract HederaTokenManager is
      *
      * @return uint256 The number number tokens that an account has
      */
-    function _balanceOf(
-        address account
-    ) internal view override(TokenOwner) returns (uint256) {
+    function _balanceOf(address account) internal view override(TokenOwner) returns (uint256) {
         return IERC20Upgradeable(_getTokenAddress()).balanceOf(account);
     }
 
@@ -285,17 +256,17 @@ contract HederaTokenManager is
     )
         internal
         override(TokenOwner)
-        valueIsNotGreaterThan(
-            uint256(SafeCast.toUint256(amount)),
-            _balanceOf(address(this)),
-            true
-        )
+        valueIsNotGreaterThan(uint256(SafeCast.toUint256(amount)), _balanceOf(address(this)), true)
     {
         if (to != address(this)) {
             address currentTokenAddress = _getTokenAddress();
 
-            int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS)
-                .transferToken(currentTokenAddress, address(this), to, amount);
+            int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS).transferToken(
+                currentTokenAddress,
+                address(this),
+                to,
+                amount
+            );
 
             _checkResponse(responseCode);
 
@@ -319,14 +290,11 @@ contract HederaTokenManager is
     ) private returns (IHederaTokenService.HederaToken memory) {
         IHederaTokenService.Expiry memory expiry;
         if (updatedToken.second >= 0) expiry.second = updatedToken.second;
-        if (updatedToken.autoRenewPeriod >= 0)
-            expiry.autoRenewPeriod = updatedToken.autoRenewPeriod;
+        if (updatedToken.autoRenewPeriod >= 0) expiry.autoRenewPeriod = updatedToken.autoRenewPeriod;
 
         IHederaTokenService.HederaToken memory hederaTokenInfo;
-        if (bytes(updatedToken.tokenName).length > 0)
-            hederaTokenInfo.name = updatedToken.tokenName;
-        if (bytes(updatedToken.tokenSymbol).length > 0)
-            hederaTokenInfo.symbol = updatedToken.tokenSymbol;
+        if (bytes(updatedToken.tokenName).length > 0) hederaTokenInfo.name = updatedToken.tokenName;
+        if (bytes(updatedToken.tokenSymbol).length > 0) hederaTokenInfo.symbol = updatedToken.tokenSymbol;
         hederaTokenInfo.tokenKeys = hederaKeys;
         hederaTokenInfo.memo = _getTokenInfo(currentTokenAddress);
         hederaTokenInfo.expiry = expiry;
@@ -341,15 +309,9 @@ contract HederaTokenManager is
      *
      * @return string The memo of the token
      */
-    function _getTokenInfo(
-        address tokenAddress
-    ) private returns (string memory) {
-        (
-            int64 responseCode,
-            IHederaTokenService.TokenInfo memory info
-        ) = IHederaTokenService(_PRECOMPILED_ADDRESS).getTokenInfo(
-                tokenAddress
-            );
+    function _getTokenInfo(address tokenAddress) private returns (string memory) {
+        (int64 responseCode, IHederaTokenService.TokenInfo memory info) = IHederaTokenService(_PRECOMPILED_ADDRESS)
+            .getTokenInfo(tokenAddress);
 
         _checkResponse(responseCode);
 
@@ -374,4 +336,6 @@ contract HederaTokenManager is
 
         emit MetadataSet(msg.sender, metadata);
     }
+
+    receive() external payable {}
 }

@@ -16,33 +16,24 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Create .env file for contracts
+    - name: Export ENV variables for contracts
       if: ${{ inputs.module == 'contracts' }}
       shell: sh
       run: |
         # Making API call to fetch secrets
-        API_RESPONSE=$(curl -s -H "Authorization: Bearer ${{ inputs.api-access-token-1 }}" -H "User-Agent: AppName/1.2.3" https://portal.hedera.com/api/account)
+        API_RESPONSE_1=$(curl -s -H "Authorization: Bearer ${{ inputs.api-access-token-1 }}" -H "User-Agent: AppName/1.2.3" https://portal.hedera.com/api/account)
+        API_RESPONSE_2=$(curl -s -H "Authorization: Bearer ${{ inputs.api-access-token-2 }}" -H "User-Agent: AppName/1.2.3" https://portal.hedera.com/api/account)
 
-        # Extract account details
-        OPERATOR_PRIVATE_KEY=$(echo $API_RESPONSE | jq -r '.accounts[0].privateKey')
-        OPERATOR_PUBLIC_KEY=$(echo $API_RESPONSE | jq -r '.accounts[0].publicKey')
-        OPERATOR_ACCOUNT_NUM=$(echo $API_RESPONSE | jq -r '.accounts[0].accountNum')
+        # Extract private keys in DER
+        TESTNET_PRIVATE_KEY_0_DER=$(echo $API_RESPONSE_1 | jq -r '.accounts[1].privateKey')
+        TESTNET_PRIVATE_KEY_1_DER=$(echo $API_RESPONSE_2 | jq -r '.accounts[1].privateKey')
 
-        NON_OPERATOR_PRIVATE_KEY=$(echo $API_RESPONSE | jq -r '.accounts[1].privateKey')
-        NON_OPERATOR_PUBLIC_KEY=$(echo $API_RESPONSE | jq -r '.accounts[1].publicKey')
-        NON_OPERATOR_ACCOUNT_NUM=$(echo $API_RESPONSE | jq -r '.accounts[1].accountNum')
+        # Remove DER header and add 0x prefix
+        TESTNET_PRIVATE_KEY_0="0x$(echo $TESTNET_PRIVATE_KEY_0_DER | tail -c 65)"  # Strip first 26 bytes (52 hex characters)
+        TESTNET_PRIVATE_KEY_1="0x$(echo $TESTNET_PRIVATE_KEY_1_DER | tail -c 65)"  # Strip first 26 bytes (52 hex characters)
+        echo "TESTNET_PRIVATE_KEY_0=$TESTNET_PRIVATE_KEY_0" >> $GITHUB_ENV
+        echo "TESTNET_PRIVATE_KEY_1=$TESTNET_PRIVATE_KEY_1" >> $GITHUB_ENV
 
-        # Write to .env file in a single block
-        cat <<EOF > .env
-        TESTNET_HEDERA_OPERATOR_PRIVATEKEY=$OPERATOR_PRIVATE_KEY
-        TESTNET_HEDERA_OPERATOR_PUBLICKEY=$OPERATOR_PUBLIC_KEY
-        TESTNET_HEDERA_OPERATOR_ED25519=true
-        TESTNET_HEDERA_OPERATOR_ACCOUNT=0.0.$OPERATOR_ACCOUNT_NUM
-        TESTNET_HEDERA_NON_OPERATOR_PRIVATEKEY=$NON_OPERATOR_PRIVATE_KEY
-        TESTNET_HEDERA_NON_OPERATOR_PUBLICKEY=$NON_OPERATOR_PUBLIC_KEY
-        TESTNET_HEDERA_NON_OPERATOR_ED25519=false
-        TESTNET_HEDERA_NON_OPERATOR_ACCOUNT=0.0.$NON_OPERATOR_ACCOUNT_NUM
-        EOF
       working-directory: contracts
 
     - name: Create .env file for SDK

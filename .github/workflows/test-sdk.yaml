@@ -19,8 +19,8 @@ on:
       - "package*.json"
       - "sdk/tsconfig*.json"
       - "sdk/jest.config.js"
-# env:
-# NODE_VERSION: "20.17.0" # Fixed version for better stability
+env:
+  RPC_NODE_BASE_URL: "https://296.rpc.thirdweb.com"
 
 permissions:
   contents: read

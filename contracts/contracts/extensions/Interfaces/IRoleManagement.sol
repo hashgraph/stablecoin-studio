@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.16;
+pragma solidity 0.8.18;
 
 interface IRoleManagement {
     /**
@@ -17,11 +17,7 @@ interface IRoleManagement {
      * @param accounts The list of accounts to grant the roles to
      * @param amounts The list of allowances for the accounts in case the "cashin" role must be provided
      */
-    function grantRoles(
-        bytes32[] calldata roles,
-        address[] calldata accounts,
-        uint256[] calldata amounts
-    ) external;
+    function grantRoles(bytes32[] calldata roles, address[] calldata accounts, uint256[] calldata amounts) external;
 
     /**
      * @dev Revoke the provided "roles" from all the "accounts"
@@ -29,8 +25,5 @@ interface IRoleManagement {
      * @param roles The list of roles to revoke
      * @param accounts The list of accounts to revoke the roles from
      */
-    function revokeRoles(
-        bytes32[] calldata roles,
-        address[] calldata accounts
-    ) external;
+    function revokeRoles(bytes32[] calldata roles, address[] calldata accounts) external;
 }
