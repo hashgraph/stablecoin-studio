@@ -376,7 +376,10 @@ export class MirrorNodeAdapter {
 							: undefined,
 					});
 				} else {
-					account.multiKey = MultiKey.fromProtobuf(res.data.key.key);
+					const key = res.data.key.key;
+					if (MultiKey.isMultiKey(key)) {
+						account.multiKey = MultiKey.fromProtobuf(key);
+					}
 				}
 			}
 
