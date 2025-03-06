@@ -33,9 +33,18 @@ export default class MultiKey {
 		this.threshold = threshold;
 	}
 
-	public static fromProtobuf(protobuf: string): MultiKey {
+	private static decodeProtobufKey(protobuf: string): proto.Key {
 		const uint8Array = Hex.toUint8Array(protobuf);
-		const decoded_key = proto.Key.decode(uint8Array);
+		return proto.Key.decode(uint8Array);
+	}
+
+	public static isMultiKey(protobuf: string): boolean {
+		const decodedKey = this.decodeProtobufKey(protobuf);
+		return !!(decodedKey.keyList || decodedKey.thresholdKey);
+	}
+
+	public static fromProtobuf(protobuf: string): MultiKey {
+		const decoded_key = this.decodeProtobufKey(protobuf);
 
 		if (decoded_key.keyList) {
 			if (!decoded_key.keyList.keys)

@@ -17,12 +17,28 @@ module.exports = function override(config) {
 		process: false,
 	});
 	config.resolve.fallback = fallback;
-	config.plugins = (config.plugins || []).concat([
-		new webpack.ProvidePlugin({
-			process: 'process/browser',
-			Buffer: ['buffer', 'Buffer'],
-		}),
-	]);
+	config.plugins = (config.plugins || [])
+		.concat([
+			new webpack.ProvidePlugin({
+				process: 'process/browser',
+				Buffer: ['buffer', 'Buffer'],
+			}),
+		])
+		.concat([
+			new webpack.NormalModuleReplacementPlugin(/node:/, (resource) => {
+				const mod = resource.request.replace(/^node:/, '');
+				switch (mod) {
+					case 'buffer':
+						resource.request = 'buffer';
+						break;
+					case 'stream':
+						resource.request = 'readable-stream';
+						break;
+					default:
+						throw new Error(`Not found ${mod}`);
+				}
+			}),
+		]);
 	config.ignoreWarnings = [/Failed to parse source map/]; // this is a temporary solution until the source map issue in react-scripts is fixed
 	return config;
 };
