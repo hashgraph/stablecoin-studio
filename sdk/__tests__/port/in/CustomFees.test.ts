@@ -36,9 +36,7 @@ import {
 	StableCoin,
 	UpdateCustomFeesRequest,
 } from '../../../src/index';
-import ConnectRequest, {
-	SupportedWallets,
-} from '../../../src/port/in/request/ConnectRequest.js';
+import { SupportedWallets } from '../../../src/port/in/request/ConnectRequest.js';
 import { HederaId } from '../../../src/index.js';
 import {
 	CLIENT_ACCOUNT_ED25519,

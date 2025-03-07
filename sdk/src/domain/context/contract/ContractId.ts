@@ -1,6 +1,9 @@
-import { DelegateContractId, ContractId as HContractId } from '@hashgraph/sdk';
+import {
+	DelegateContractId,
+	ContractId as HContractId,
+	Long,
+} from '@hashgraph/sdk';
 import { proto } from '@hashgraph/proto';
-import Long from 'long';
 import InvalidKeyForContract from './error/InvalidKeyForContract.js';
 import BaseError from '../../../core/error/BaseError.js';
 import CheckStrings from '../../../core/checks/strings/CheckStrings.js';

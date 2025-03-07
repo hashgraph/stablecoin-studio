@@ -26,9 +26,8 @@ import {
 	Transaction,
 	ContractId as HContractId,
 	CustomFee as HCustomFee,
-	CustomFixedFee as HCustomFixedFee,
-	CustomFractionalFee as HCustomFractionalFee,
 	Client,
+	Long,
 } from '@hashgraph/sdk';
 import TransactionAdapter from '../TransactionAdapter';
 import TransactionResponse from '../../../domain/context/transaction/TransactionResponse.js';

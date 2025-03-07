@@ -1,6 +1,6 @@
 {
     "name": "@hashgraph/stablecoin-npm-contracts",
-    "version": "1.27.3",
+    "version": "1.27.4",
     "description": "",
     "main": "./build/typechain-types/index.js",
     "module": "./build/typechain-types/index.js",
@@ -82,7 +82,7 @@
         "chai-as-promised": "^7.1.1",
         "dotenv": "^16.0.3",
         "eslint": "^8.24.0",
-        "ethers": "5.7.2",
+        "ethers": "5.8.0",
         "hardhat": "^2.13.0",
         "hardhat-abi-exporter": "^2.10.0",
         "hardhat-contract-sizer": "^2.6.1",

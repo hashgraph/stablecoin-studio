@@ -40,8 +40,8 @@ import {
 	TokenFeeScheduleUpdateTransaction,
 	TokenUpdateTransaction,
 	Timestamp,
+	Long,
 } from '@hashgraph/sdk';
-import Long from 'long';
 import LogService from '../../../app/service/LogService.js';
 import { TransactionBuildingError } from './error/TransactionBuildingError.js';
 
