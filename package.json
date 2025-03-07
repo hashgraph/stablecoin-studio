@@ -30,7 +30,7 @@
     "publish:cli": "npm publish --workspace=cli",
     "publish:web": "npm publish --workspace=web",
     "clean": "concurrently \"npm run --silent clean:all:build\" \"npm run --silent clean:all:modules\" > '/dev/null' 2>&1",
-    "clean:all:modules": "concurrently \"npm run clean:sdk:modules\" \"npm run clean:backend:modules\" \"npm run clean:cli:modules\" \"npm run clean:web:modules\" \"npm run clean:contracts:modules\"",
+    "clean:all:modules": "concurrently \"npx --yes rimraf node_modules\" \"npm run clean:sdk:modules\" \"npm run clean:backend:modules\" \"npm run clean:cli:modules\" \"npm run clean:web:modules\" \"npm run clean:contracts:modules\"",
     "clean:sdk:modules": "npm run clean:modules --workspace=sdk",
     "clean:backend:modules": "npm run clean:modules --workspace=backend",
     "clean:cli:modules": "npm run clean:modules --workspace=cli",
@@ -67,6 +67,14 @@
   },
   "dependencies": {
     "husky": "^9.1.7"
+  },
+  "overrides": {
+    "@walletconnect/web3wallet": {
+      "dependencies": {
+        "@walletconnect/utils": "2.19.0"
+      }
+    },
+    "@walletconnect/utils": "2.19.0"
   },
   "workspaces": [
     "backend",

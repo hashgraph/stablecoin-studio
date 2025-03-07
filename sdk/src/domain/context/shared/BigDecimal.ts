@@ -18,9 +18,13 @@
  *
  */
 
-import { FixedFormat, parseFixed } from '@ethersproject/bignumber';
-import { BigNumber, FixedNumber } from '@hashgraph/hethers';
-import Long from 'long';
+import {
+	BigNumber,
+	FixedFormat,
+	FixedNumber,
+	parseFixed,
+} from '@ethersproject/bignumber';
+import { Long } from '@hashgraph/sdk';
 import CheckNums from '../../../core/checks/numbers/CheckNums.js';
 
 export type BigDecimalFormat = string | number | FixedFormat | undefined;
