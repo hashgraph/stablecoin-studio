@@ -20,6 +20,12 @@ update_version() {
   # List of specific modules
   local modules=("sdk" "contracts" "cli" "web" "backend")
 
+  # Update the root package.json
+  if [ -f "package.json" ]; then
+    sed "s/\"version\": \".*\"/\"version\": \"$VERSION\"/g" "package.json" > "$temp_file"
+    mv "$temp_file" "package.json"
+  fi
+
   # Loop through each module
   for module in "${modules[@]}"; do
     # Find package.json files in the specified module directories (one level deep)
