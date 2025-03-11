@@ -1,12 +1,9 @@
 import { Heading, Stack, VStack } from '@chakra-ui/react';
 import type { UseFormReturn } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
-import { SupportedWallets } from '@hashgraph/stablecoin-npm-sdk';
 import DetailsReview from '../../components/DetailsReview';
 import { OTHER_KEY_VALUE } from './components/KeySelector';
 import { OTHER_ACCOUNT_VALUE } from './components/RoleSelector';
-import { SELECTED_WALLET } from '../../store/slices/walletSlice';
 
 interface ReviewProps {
 	form: UseFormReturn;
@@ -15,8 +12,6 @@ interface ReviewProps {
 const Review = (props: ReviewProps) => {
 	const { form } = props;
 	const { t } = useTranslation(['global', 'stableCoinCreation']);
-
-	const wallet = useSelector(SELECTED_WALLET);
 
 	const { getValues } = form;
 	const {
@@ -50,7 +45,6 @@ const Review = (props: ReviewProps) => {
 		feeScheduleKey,
 		reserveAddress,
 		reserveInitialAmount,
-		grantKYCToOriginalSender,
 		currentAccountAsProxyAdminOwner,
 		proxyAdminOwnerAccount,
 	} = getValues();

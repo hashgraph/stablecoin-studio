@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
 	Box,
 	Button,
@@ -23,11 +23,7 @@ import {
 	useDisclosure,
 } from '@chakra-ui/react';
 // @ts-ignore
-import type {
-	AccountViewModel,
-	MultiSigTransactionsViewModel,
-	MultiSigTransactionViewModel,
-} from '@hashgraph/stablecoin-npm-sdk';
+import type { AccountViewModel, MultiSigTransactionViewModel } from '@hashgraph/stablecoin-npm-sdk';
 
 import { GetTransactionsRequest, SupportedWallets } from '@hashgraph/stablecoin-npm-sdk';
 import { ArrowForwardIcon, DeleteIcon, InfoOutlineIcon } from '@chakra-ui/icons';

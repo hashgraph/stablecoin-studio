@@ -1,9 +1,9 @@
 import { Button, CheckboxGroup, Flex, Grid, Heading, Text, useDisclosure } from '@chakra-ui/react';
+import type { StableCoinRole } from '@hashgraph/stablecoin-npm-sdk';
 import {
 	GetRolesRequest,
 	RevokeMultiRolesRequest,
 	RevokeRoleRequest,
-	StableCoinRole,
 	SupportedWallets,
 } from '@hashgraph/stablecoin-npm-sdk';
 import React, { useEffect, useMemo, useState } from 'react';
