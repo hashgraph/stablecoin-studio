@@ -8,7 +8,6 @@ import {
 	Button,
 	Box,
 	HStack,
-	Divider,
 } from '@chakra-ui/react';
 import {
 	GrantRoleRequest,

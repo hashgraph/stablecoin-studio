@@ -26,7 +26,6 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import MULTISIG_LOGO_PNG from '../assets/png/multisigLogo.png';
-// import HASHPACK_LOGO_PNG from '../assets/png/hashpackLogo.png';
 import WALLETCONNECT_LOGO_PNG from '../assets/png/WCLogo.png';
 import METAMASK_LOGO from '../assets/svg/MetaMask_Fox.svg';
 import SDKService from '../services/SDKService';
@@ -85,7 +84,7 @@ const ModalWalletConnect = () => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [error, setError] = useState<any>();
 	const [rejected, setRejected] = useState<boolean>(false);
-	const [hashpackSelected, setHashpackSelected] = useState<boolean>(false);
+	const [hashpackSelected] = useState<boolean>(false);
 	const [hwcSelected, setHwcSelected] = useState<boolean>(false);
 	const [multiSigSelected, setMultiSigSelected] = useState<boolean>(false);
 	const availableWallets: SupportedWallets[] = useSelector(AVAILABLE_WALLETS);
@@ -98,8 +97,6 @@ const ModalWalletConnect = () => {
 	const { control, getValues } = useForm({
 		mode: 'onChange',
 	});
-	const isMultiSigBackendConfigured =
-		!!process.env.REACT_APP_BACKEND_URL && process.env.REACT_APP_BACKEND_URL.trim() !== '';
 
 	const isHWCProjectID =
 		!!process.env.REACT_APP_PROJECT_ID && process.env.REACT_APP_PROJECT_ID.trim() !== '';
@@ -208,20 +205,6 @@ const ModalWalletConnect = () => {
 			throw e;
 		});
 		return factoryProxyConfig;
-	};
-
-	const handleConnectHashpackWallet = () => {
-		setHashpackSelected(true);
-	};
-
-	const unHandleConnectHashpackWallet = () => {
-		setHashpackSelected(false);
-		setLoading(undefined);
-	};
-
-	const handleConnectHashpackWalletConfirmed = () => {
-		const values = getValues();
-		handleWalletConnect(SupportedWallets.HASHPACK, values.networkHashpack.value);
 	};
 
 	const networkOptions = [{ value: 'testnet', label: 'Testnet' }];

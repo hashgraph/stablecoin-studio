@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
 import { useSelector } from 'react-redux';
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
 	CheckSupplierLimitRequest,
 	DecreaseSupplierAllowanceRequest,

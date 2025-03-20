@@ -13,12 +13,12 @@ import {
 	walletActions,
 } from '../../../store/slices/walletSlice';
 import type { DirectActionProps } from '../../../components/DirectAction';
+import type { StableCoinCapabilities } from '@hashgraph/stablecoin-npm-sdk';
 import {
 	Access,
 	DeleteRequest,
 	Operation,
 	PauseRequest,
-	StableCoinCapabilities,
 	StableCoinRole,
 	SupportedWallets,
 } from '@hashgraph/stablecoin-npm-sdk';
@@ -48,7 +48,7 @@ const DangerZoneOperations = () => {
 	const selectedWallet = useSelector(LAST_WALLET_SELECTED);
 	const roles = useSelector(SELECTED_TOKEN_ROLES)!;
 
-	const { control, getValues, formState } = useForm({
+	const { control } = useForm({
 		mode: 'onChange',
 	});
 
