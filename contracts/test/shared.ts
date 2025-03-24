@@ -8,7 +8,7 @@ import {
     TokenKeysToContractCommand,
 } from '@scripts'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
-import { IHederaTokenManager, MockHtsBurn__factory } from '@typechain'
+import { IHederaTokenManager } from '@typechain'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { configuration } from 'hardhat.config'
 import { DeployedContract, NetworkName } from '@configuration'
@@ -44,29 +44,6 @@ export const DEFAULT_UPDATE_TOKEN_STRUCT = {
     autoRenewPeriod: AUTO_RENEW_PERIOD,
     tokenMetadataURI: '',
 } as IHederaTokenManager.UpdateTokenStructStructOutput
-
-export async function deployPrecompiledHederaTokenServiceMock(
-    hre: HardhatRuntimeEnvironment,
-    signer: SignerWithAddress
-) {
-    // Impersonate the Hedera Token Service precompiled address
-    await hre.network.provider.request({
-        method: 'hardhat_impersonateAccount',
-        params: ['0x0000000000000000000000000000000000000167'],
-    })
-
-    const mockedHederaTokenService = await new MockHtsBurn__factory(signer).deploy()
-    await mockedHederaTokenService.deployed()
-    // Force deployment to the target address
-    const targetAddress = '0x0000000000000000000000000000000000000167'
-
-    await hre.network.provider.send('hardhat_setCode', [
-        targetAddress,
-        await hre.ethers.provider.getCode(mockedHederaTokenService.address),
-    ])
-
-    console.log(`Mock contract deployed to ${targetAddress}`)
-}
 
 let deployedResult: DeployFullInfrastructureResult | undefined
 
