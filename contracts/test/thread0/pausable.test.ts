@@ -21,9 +21,7 @@ describe('Pause Tests', function () {
         // * Deploy StableCoin Token
         console.info(MESSAGES.deploy.info.deployFullInfrastructureInTests)
         ;[operator, nonOperator] = await ethers.getSigners()
-        // if ((network.name as NetworkName) === NETWORK_LIST.name[0]) {
-        //     await deployPrecompiledHederaTokenServiceMock(hre, signer)
-        // }
+        // * Deploy contracts
         ;({ proxyAddress, tokenAddress } = await deployFullInfrastructureInTests({
             signer: operator,
             network: network.name as NetworkName,

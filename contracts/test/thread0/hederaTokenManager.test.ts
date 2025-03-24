@@ -46,9 +46,7 @@ describe('➡️ HederaTokenManager Tests', function () {
         const [operatorSigner, nonOperatorSigner] = await ethers.getSigners()
         operator = await getFullWalletFromSigner(operatorSigner)
         nonOperator = await getFullWalletFromSigner(nonOperatorSigner)
-        // if ((network.name as NetworkName) === NETWORK_LIST.name[0]) {
-        //     await deployPrecompiledHederaTokenServiceMock(hre, signer)
-        // }
+        // * Deploy contracts
         ;({ proxyAddress } = await deployFullInfrastructureInTests({
             signer: operator,
             network: network.name as NetworkName,
