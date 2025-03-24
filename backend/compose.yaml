@@ -4,8 +4,8 @@ services:
   # Uses base image from node and maps local needed files to the container
   backend:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: backend/Dockerfile
       target: development
     container_name: ${CONTAINER_BACK_NAME} # This is the name of the container
     image: multisig-back:latest # This is the name of the image that will be created
