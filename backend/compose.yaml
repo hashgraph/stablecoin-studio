@@ -1,17 +1,20 @@
 version: '3.9'
 
 services:
+  # Uses base image from node and maps local needed files to the container
   backend:
     build:
-      context: ..  # Set build context to the parent directory
-      dockerfile: backend/Dockerfile  # Dockerfile is inside the backend folder
+      context: ..
+      dockerfile: backend/Dockerfile
       target: development
-    container_name: ${CONTAINER_BACK_NAME}
-    image: multisig-back:latest
+    container_name: ${CONTAINER_BACK_NAME} # This is the name of the container
+    image: multisig-back:latest # This is the name of the image that will be created
     restart: unless-stopped
     volumes:
       - .:/app
-      - /app/node_modules  # Ensure node_modules is not overridden
+      # This ensures that the NestJS container manages the node_modules folder
+      # rather than synchronizes it with the host machine
+      - /app/node_modules
       - log:/var/lib/logs
     ports:
       - '${SERVER_PORT}:${SERVER_PORT}'
