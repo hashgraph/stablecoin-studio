@@ -106,7 +106,6 @@ jobs:
         run: |
           ./changeProjectsReferencesToRepo.sh
           cd sdk
-        working-directory: ..
 
       # * Prepare other modules
       - name: Install and build Contracts and SDK
@@ -163,7 +162,6 @@ jobs:
         run: |
           ./changeProjectsReferencesToRepo.sh
           cd cli
-        working-directory: ..
 
       # * Prepare other modules
       - name: Install and build Contracts and SDK
