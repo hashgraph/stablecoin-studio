@@ -60,7 +60,7 @@ jobs:
       - name: Change references to repo
         run: |
           pwd
-          ls . | grep changeProjectsReferencesToRepo.sh
+          ls -lF . | grep changeProjectsReferencesToRepo.sh
           ./changeProjectsReferencesToRepo.sh
 
       - name: Install Contracts
