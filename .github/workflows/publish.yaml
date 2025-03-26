@@ -45,11 +45,6 @@ jobs:
           EOF
         working-directory: contracts
 
-      - name: Check npm authentication
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm whoami
-
       # ! Only for local testing, DO NOT uncomment for production
       - name: Set NPM registry to Verdaccio (local)
         run: npm config set registry http://localhost:4873
@@ -101,11 +96,6 @@ jobs:
           //localhost:4873/:_authToken=${NODE_AUTH_TOKEN} # ! Only for local testing, DO NOT uncomment for production
           EOF
         working-directory: sdk
-
-      - name: Check npm authentication
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm whoami
 
       # ! Only for local testing, DO NOT uncomment for production
       - name: Set NPM registry to Verdaccio (local)
@@ -161,14 +151,9 @@ jobs:
           EOF
         working-directory: cli
 
-      - name: Check npm authentication
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm whoami
-
-      # # ! Only for local testing, DO NOT uncomment for production
-      # - name: Set NPM registry to Verdaccio (local)
-      #   run: npm config set registry http://localhost:4873
+      # ! Only for local testing, DO NOT uncomment for production
+      - name: Set NPM registry to Verdaccio (local)
+        run: npm config set registry http://localhost:4873
 
       - name: Change references to repo
         run: ./changeProjectsReferencesToRepo.sh
