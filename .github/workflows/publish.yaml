@@ -38,7 +38,7 @@ jobs:
         run: |
           cat << 'EOF' > .npmrc
           # //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
-          https://localhost:4873/:_authToken=${NODE_AUTH_TOKEN} # ! Only for local testing, DO NOT uncomment for production
+          //localhost:4873/:_authToken=${NODE_AUTH_TOKEN} # ! Only for local testing, DO NOT uncomment for production
           EOF
         working-directory: contracts
 
