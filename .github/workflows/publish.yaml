@@ -7,6 +7,8 @@ on:
 
 permissions:
   contents: read
+  id-token: write  # Required for npm authentication in some setups
+  packages: write  # Required for publishing packages
 
 jobs:
   contracts:
@@ -33,12 +35,19 @@ jobs:
           deps-change-references: "true"
 
       - name: Create file .npmrc
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           cat <<EOF > .npmrc
-          //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
-          # //localhost:4873/:_authToken=${{ secrets.NPM_TOKEN }} # ! Only for local testing, DO NOT uncomment for production
+          //registry.npmjs.org/:_authToken=${secrets.NODE_AUTH_TOKEN}
+          # //localhost:4873/:_authToken=${secrets.NODE_AUTH_TOKEN} # ! Only for local testing, DO NOT uncomment for production
           EOF
         working-directory: contracts
+
+      - name: Check npm authentication
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm whoami
 
       # # ! Only for local testing, DO NOT uncomment for production
       # - name: Set NPM registry to Verdaccio (local)
@@ -52,9 +61,9 @@ jobs:
         working-directory: contracts
 
       - name: Publish contracts
-        run: npm run publish:contracts --access=public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm run publish:contracts --access=public
 
   sdk:
     # needs: contracts
@@ -81,12 +90,19 @@ jobs:
           deps-change-references: "true"
 
       - name: Create file .npmrc
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           cat <<EOF > .npmrc
-          //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
-          # //localhost:4873/:_authToken=${{ secrets.NPM_TOKEN }} # ! Only for local testing, DO NOT uncomment for production
+          //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
+          # //localhost:4873/:_authToken=${NODE_AUTH_TOKEN} # ! Only for local testing, DO NOT uncomment for production
           EOF
         working-directory: sdk
+
+      - name: Check npm authentication
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm whoami
 
       # # ! Only for local testing, DO NOT uncomment for production
       # - name: Set NPM registry to Verdaccio (local)
@@ -102,9 +118,9 @@ jobs:
           module: "sdk"
 
       - name: Publish sdk package
-        run: npm run publish:sdk --access=public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm run publish:sdk --access=public
 
   cli:
     # needs: sdk
@@ -131,12 +147,19 @@ jobs:
           deps-change-references: "true"
 
       - name: Create file .npmrc
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           cat <<EOF > .npmrc
-          //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
-          # //localhost:4873/:_authToken=${{ secrets.NPM_TOKEN }} # ! Only for local testing, DO NOT uncomment for production
+          //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
+          # //localhost:4873/:_authToken=${NODE_AUTH_TOKEN} # ! Only for local testing, DO NOT uncomment for production
           EOF
         working-directory: cli
+
+      - name: Check npm authentication
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm whoami
 
       # # ! Only for local testing, DO NOT uncomment for production
       # - name: Set NPM registry to Verdaccio (local)
@@ -152,6 +175,6 @@ jobs:
           module: "cli"
 
       - name: Publish cli package
-        run: npm run publish:cli --access=public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm run publish:cli --access=public
