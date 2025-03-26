@@ -38,7 +38,9 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           cat << 'EOF' > .npmrc
+          # @hashgraph:registry=https://registry.npmjs.org/
           # //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
+          @hashgraph:registry=http://localhost:4873/      # ! Only for local testing, DO NOT uncomment for production
           //localhost:4873/:_authToken=${NODE_AUTH_TOKEN} # ! Only for local testing, DO NOT uncomment for production
           EOF
         working-directory: contracts
@@ -93,7 +95,9 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           cat << 'EOF' > .npmrc
+          # @hashgraph:registry=https://registry.npmjs.org/
           # //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
+          @hashgraph:registry=http://localhost:4873/      # ! Only for local testing, DO NOT uncomment for production
           //localhost:4873/:_authToken=${NODE_AUTH_TOKEN} # ! Only for local testing, DO NOT uncomment for production
           EOF
         working-directory: sdk
@@ -150,7 +154,9 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           cat << 'EOF' > .npmrc
+          # @hashgraph:registry=https://registry.npmjs.org/
           # //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
+          @hashgraph:registry=http://localhost:4873/      # ! Only for local testing, DO NOT uncomment for production
           //localhost:4873/:_authToken=${NODE_AUTH_TOKEN} # ! Only for local testing, DO NOT uncomment for production
           EOF
         working-directory: cli
