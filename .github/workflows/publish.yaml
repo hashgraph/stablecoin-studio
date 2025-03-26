@@ -7,8 +7,6 @@ on:
 
 permissions:
   contents: read
-  id-token: write  # Required for npm authentication in some setups
-  packages: write  # Required for publishing packages
 
 jobs:
   contracts:
@@ -38,9 +36,9 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          cat <<EOF > .npmrc
-          //registry.npmjs.org/:_authToken=${secrets.NODE_AUTH_TOKEN}
-          # //localhost:4873/:_authToken=${secrets.NODE_AUTH_TOKEN} # ! Only for local testing, DO NOT uncomment for production
+          cat << 'EOF' > .npmrc
+          //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
+          # //localhost:4873/:_authToken=${NODE_AUTH_TOKEN} # ! Only for local testing, DO NOT uncomment for production
           EOF
         working-directory: contracts
 
@@ -54,7 +52,7 @@ jobs:
       #   run: npm config set registry http://localhost:4873
 
       - name: Change references to repo
-        run: ./changeProyectsReferencesToRepo.sh
+        run: ./changeProjectsReferencesToRepo.sh
 
       - name: Install Contracts
         run: npm ci
@@ -93,7 +91,7 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          cat <<EOF > .npmrc
+          cat << 'EOF' > .npmrc
           //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
           # //localhost:4873/:_authToken=${NODE_AUTH_TOKEN} # ! Only for local testing, DO NOT uncomment for production
           EOF
@@ -109,7 +107,7 @@ jobs:
       #   run: npm config set registry http://localhost:4873
 
       - name: Change references to repo
-        run: ./changeProyectsReferencesToRepo.sh
+        run: ./changeProjectsReferencesToRepo.sh
 
       # * Prepare other modules
       - name: Install and build Contracts and SDK
@@ -150,7 +148,7 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          cat <<EOF > .npmrc
+          cat << 'EOF' > .npmrc
           //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
           # //localhost:4873/:_authToken=${NODE_AUTH_TOKEN} # ! Only for local testing, DO NOT uncomment for production
           EOF
@@ -166,7 +164,7 @@ jobs:
       #   run: npm config set registry http://localhost:4873
 
       - name: Change references to repo
-        run: ./changeProyectsReferencesToRepo.sh
+        run: ./changeProjectsReferencesToRepo.sh
 
       # * Prepare other modules
       - name: Install and build Contracts and SDK
