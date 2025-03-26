@@ -58,10 +58,7 @@ jobs:
         working-directory: contracts
 
       - name: Change references to repo
-        run: |
-          pwd
-          ls -lF . | grep changeProjectsReferencesToRepo.sh
-          ./changeProjectsReferencesToRepo.sh
+        run: ./changeProjectsReferencesToRepo.sh
 
       - name: Install Contracts
         run: npm ci
@@ -72,7 +69,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           DRY_RUN: ${{ inputs.dry-run }}
         run: |
-          if [ "$DRY_RUN" == "true" ]; then
+          if [[ "$DRY_RUN" == "true" ]]; then
             npm run publish:contracts --access=public --dry-run
           else
             npm run publish:contracts --access=public
@@ -116,11 +113,7 @@ jobs:
         working-directory: sdk
 
       - name: Change references to repo
-        run: |
-          pwd
-          ls . | grep changeProjectsReferencesToRepo.sh
-          ./changeProjectsReferencesToRepo.sh
-          cd sdk
+        run: ./changeProjectsReferencesToRepo.sh
 
       # * Prepare other modules
       - name: Install and build Contracts and SDK
@@ -133,11 +126,12 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           DRY_RUN: ${{ inputs.dry-run }}
         run: |
-          if [ "$DRY_RUN" == "true" ]; then
+          if [[ "$DRY_RUN" == "true" ]]; then
             npm run publish:sdk --access=public --dry-run
           else
             npm run publish:sdk --access=public
           fi
+        working-directory: sdk
 
   cli:
     # needs: sdk
@@ -177,11 +171,7 @@ jobs:
         working-directory: cli
 
       - name: Change references to repo
-        run: |
-          pwd
-          ls . | grep changeProjectsReferencesToRepo.sh
-          ./changeProjectsReferencesToRepo.sh
-          cd cli
+        run: ./changeProjectsReferencesToRepo.sh
 
       # * Prepare other modules
       - name: Install and build Contracts and SDK
@@ -194,8 +184,9 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           DRY_RUN: ${{ inputs.dry-run }}
         run: |
-          if [ "$DRY_RUN" == "true" ]; then
+          if [[ "$DRY_RUN" == "true" ]]; then
             npm run publish:cli --access=public --dry-run
           else
             npm run publish:cli --access=public
           fi
+        working-directory: cli
