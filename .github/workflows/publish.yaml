@@ -5,6 +5,12 @@ on:
     types:
       - published
   workflow_dispatch:
+    inputs:
+      dry-run:
+        description: "Run npm publish with dry-run flag"
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -27,27 +33,21 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
 
-      - name: Initial steps
-        uses: ./.github/actions/initial-steps
+      - name: Setup NPM
+        uses: actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e # v4.3.0
         with:
-          deps-contracts-install: "true"
-          deps-change-references: "true"
+          node-version: '20'
+          token: ${{ secrets.NPM_TOKEN }}
 
       - name: Create file .npmrc
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           cat << 'EOF' > .npmrc
-          # @hashgraph:registry=https://registry.npmjs.org/
-          # //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
-          @hashgraph:registry=http://localhost:4873/      # ! Only for local testing, DO NOT uncomment for production
-          //localhost:4873/:_authToken=${NODE_AUTH_TOKEN} # ! Only for local testing, DO NOT uncomment for production
+          @hashgraph:registry=https://registry.npmjs.org/
+          //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
           EOF
         working-directory: contracts
-
-      # ! Only for local testing, DO NOT uncomment for production
-      - name: Set NPM registry to Verdaccio (local)
-        run: npm config set registry http://localhost:4873
 
       - name: Change references to repo
         run: ./changeProjectsReferencesToRepo.sh
@@ -59,7 +59,13 @@ jobs:
       - name: Publish contracts
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm run publish:contracts --access=public
+          DRY_RUN: ${{ inputs.dry-run }}
+        run: |
+          if [ "$DRY_RUN" == "true" ]; then
+            npm run publish:contracts --access=public --dry-run
+          else
+            npm run publish:contracts --access=public
+          fi
 
   sdk:
     # needs: contracts
@@ -79,27 +85,21 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
 
-      - name: Initial steps
-        uses: ./.github/actions/initial-steps
+      - name: Setup NPM
+        uses: actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e # v4.3.0
         with:
-          deps-contracts-install: "true"
-          deps-change-references: "true"
+          node-version: '20'
+          token: ${{ secrets.NPM_TOKEN }}
 
       - name: Create file .npmrc
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           cat << 'EOF' > .npmrc
-          # @hashgraph:registry=https://registry.npmjs.org/
-          # //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
-          @hashgraph:registry=http://localhost:4873/      # ! Only for local testing, DO NOT uncomment for production
-          //localhost:4873/:_authToken=${NODE_AUTH_TOKEN} # ! Only for local testing, DO NOT uncomment for production
+          @hashgraph:registry=https://registry.npmjs.org/
+          //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
           EOF
         working-directory: sdk
-
-      # ! Only for local testing, DO NOT uncomment for production
-      - name: Set NPM registry to Verdaccio (local)
-        run: npm config set registry http://localhost:4873
 
       - name: Change references to repo
         run: ./changeProjectsReferencesToRepo.sh
@@ -113,7 +113,13 @@ jobs:
       - name: Publish sdk package
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm run publish:sdk --access=public
+          DRY_RUN: ${{ inputs.dry-run }}
+        run: |
+          if [ "$DRY_RUN" == "true" ]; then
+            npm run publish:sdk --access=public --dry-run
+          else
+            npm run publish:sdk --access=public
+          fi
 
   cli:
     # needs: sdk
@@ -133,27 +139,21 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
 
-      - name: Initial steps
-        uses: ./.github/actions/initial-steps
+      - name: Setup NPM
+        uses: actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e # v4.3.0
         with:
-          deps-contracts-install: "true"
-          deps-change-references: "true"
+          node-version: '20'
+          token: ${{ secrets.NPM_TOKEN }}
 
       - name: Create file .npmrc
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           cat << 'EOF' > .npmrc
-          # @hashgraph:registry=https://registry.npmjs.org/
-          # //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
-          @hashgraph:registry=http://localhost:4873/      # ! Only for local testing, DO NOT uncomment for production
-          //localhost:4873/:_authToken=${NODE_AUTH_TOKEN} # ! Only for local testing, DO NOT uncomment for production
+          @hashgraph:registry=https://registry.npmjs.org/
+          //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
           EOF
         working-directory: cli
-
-      # ! Only for local testing, DO NOT uncomment for production
-      - name: Set NPM registry to Verdaccio (local)
-        run: npm config set registry http://localhost:4873
 
       - name: Change references to repo
         run: ./changeProjectsReferencesToRepo.sh
@@ -167,4 +167,10 @@ jobs:
       - name: Publish cli package
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm run publish:cli --access=public
+          DRY_RUN: ${{ inputs.dry-run }}
+        run: |
+          if [ "$DRY_RUN" == "true" ]; then
+            npm run publish:cli --access=public --dry-run
+          else
+            npm run publish:cli --access=public
+          fi
