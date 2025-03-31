@@ -22,41 +22,7 @@ abstract contract HoldManagement is IHoldManagement, Roles, TokenOwner {
 
     function createHold(Hold calldata _hold) external override returns (bool success_, uint256 holdId_) {
         address tokenHolder = msg.sender;
-        address currentTokenAddress = _getTokenAddress();
-
-        _requireValidHold(_hold);
-
-        holdId_ = holdDataStorage.nextHoldIdByAccount[tokenHolder];
-        holdDataStorage.nextHoldIdByAccount[tokenHolder]++;
-
-        // Transfer tokens from holder to this contract
-        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS).transferToken(
-            currentTokenAddress,
-            tokenHolder,
-            address(this),
-            int64(uint64(_hold.amount))
-        );
-        require(_checkResponse(responseCode), 'HoldManagement: TRANSFER_FAILED');
-
-        // Store the hold
-        HoldData memory newHoldData = HoldData({
-            id: holdId_,
-            amount: _hold.amount,
-            expirationTimestamp: _hold.expirationTimestamp,
-            escrow: _hold.escrow,
-            to: _hold.to,
-            data: _hold.data,
-            operatorData: ''
-        });
-
-        holdDataStorage.holdsByAccountAndId[tokenHolder][holdId_] = newHoldData;
-        holdDataStorage.holdIdsByAccount[tokenHolder].add(holdId_);
-        holdDataStorage.totalHeldAmount += _hold.amount;
-        holdDataStorage.totalHeldAmountByAccount[tokenHolder] += _hold.amount;
-
-        emit HoldCreated(msg.sender, tokenHolder, holdId_, _hold, '');
-
-        return (true, holdId_);
+        (success_, holdId_) = _createHoldInternal(tokenHolder, _hold, '');
     }
 
     function controllerCreateHold(
@@ -69,22 +35,41 @@ abstract contract HoldManagement is IHoldManagement, Roles, TokenOwner {
         addressIsNotZero(_from)
         returns (bool success_, uint256 holdId_)
     {
+        (success_, holdId_) = _createHoldInternal(_from, _hold, _operatorData);
+    }
+
+    function _createHoldInternal(
+        address _tokenHolder,
+        Hold calldata _hold,
+        bytes memory _operatorData
+    )
+        internal
+        validExpiration(_hold.expirationTimestamp)
+        nonZeroEscrow(_hold.escrow)
+        amountIsNotNegative(_hold.amount)
+        returns (bool success_, uint256 holdId_)
+    {
         address currentTokenAddress = _getTokenAddress();
 
-        _requireValidHold(_hold);
+        holdId_ = holdDataStorage.nextHoldIdByAccount[_tokenHolder];
+        holdDataStorage.nextHoldIdByAccount[_tokenHolder]++;
 
-        holdId_ = holdDataStorage.nextHoldIdByAccount[_from];
-        holdDataStorage.nextHoldIdByAccount[_from]++;
-
-        // Transfer tokens from holder to this contract
-        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS).transferToken(
+        // Wipe tokens from holder
+        int responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS).wipeTokenAccount(
             currentTokenAddress,
-            _from,
-            address(this),
+            _tokenHolder,
             int64(uint64(_hold.amount))
         );
-        require(_checkResponse(responseCode), 'HoldManagement: TRANSFER_FAILED');
+        require(_checkResponse(responseCode), 'HoldManagement: WIPE_FAILED');
 
+        // Mint tokens to this contract
+        responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS).mintToken(
+            currentTokenAddress,
+            int64(uint64(_hold.amount))
+        );
+        require(_checkResponse(responseCode), 'HoldManagement: MINT_FAILED');
+
+        // Register hold
         HoldData memory newHoldData = HoldData({
             id: holdId_,
             amount: _hold.amount,
@@ -95,12 +80,13 @@ abstract contract HoldManagement is IHoldManagement, Roles, TokenOwner {
             operatorData: _operatorData
         });
 
-        holdDataStorage.holdsByAccountAndId[_from][holdId_] = newHoldData;
-        holdDataStorage.holdIdsByAccount[_from].add(holdId_);
+        holdDataStorage.holdsByAccountAndId[_tokenHolder][holdId_] = newHoldData;
+        holdDataStorage.holdIdsByAccount[_tokenHolder].add(holdId_);
         holdDataStorage.totalHeldAmount += _hold.amount;
-        holdDataStorage.totalHeldAmountByAccount[_from] += _hold.amount;
+        holdDataStorage.totalHeldAmountByAccount[_tokenHolder] += _hold.amount;
 
-        emit HoldCreated(msg.sender, _from, holdId_, _hold, _operatorData);
+        emit HoldCreated(msg.sender, _tokenHolder, holdId_, _hold, _operatorData);
+
         return (true, holdId_);
     }
 
@@ -268,8 +254,13 @@ abstract contract HoldManagement is IHoldManagement, Roles, TokenOwner {
         );
     }
 
-    function _requireValidHold(Hold memory hold) internal view amountIsNotNegative(hold.amount, false){
-        require(hold.expirationTimestamp > block.timestamp, 'HoldManagement: INVALID_EXPIRATION');
-        require(hold.escrow != address(0), 'HoldManagement: INVALID_ESCROW');
+    modifier validExpiration(uint256 expiration) {
+        require(expiration > block.timestamp, 'HoldManagement: INVALID_EXPIRATION');
+        _;
+    }
+
+    modifier nonZeroEscrow(address escrow) {
+        require(escrow != address(0), 'HoldManagement: INVALID_ESCROW');
+        _;
     }
 }
