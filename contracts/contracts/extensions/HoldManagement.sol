@@ -98,9 +98,7 @@ abstract contract HoldManagement is IHoldManagement, Roles, TokenOwner {
         holdId_ = holdDataStorage.nextHoldIdByAccount[_tokenHolder];
         holdDataStorage.nextHoldIdByAccount[_tokenHolder]++;
 
-        if (!_wipeAndMintTokens(currentTokenAddress, _tokenHolder, _hold.amount)) {
-            revert TransferFailed();
-        }
+        _wipeAndMintTokens(currentTokenAddress, _tokenHolder, _hold.amount);
 
         _registerHold(_tokenHolder, holdId_, _hold, _operatorData);
 
@@ -196,7 +194,7 @@ abstract contract HoldManagement is IHoldManagement, Roles, TokenOwner {
     }
 
     function _wipeAndMintTokens(address tokenAddress, address tokenHolder, uint256 amount) internal returns (bool) {
-        int responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS).wipeTokenAccount(
+        int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS).wipeTokenAccount(
             tokenAddress,
             tokenHolder,
             int64(uint64(amount))
