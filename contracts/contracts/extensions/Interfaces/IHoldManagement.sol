@@ -88,7 +88,7 @@ interface IHoldManagement {
      * @return success_ Whether the operation was successful.
      * @return holdId_ The unique identifier of the newly created Hold.
      */
-    function controllerCreateHold(
+    function createHoldByController(
         address _from,
         Hold calldata _hold,
         bytes calldata _operatorData

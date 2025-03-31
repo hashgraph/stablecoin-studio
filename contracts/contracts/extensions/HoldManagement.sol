@@ -20,12 +20,33 @@ abstract contract HoldManagement is IHoldManagement, Roles, TokenOwner {
 
     HoldDataStorage private holdDataStorage;
 
+    modifier validExpiration(uint256 expiration) {
+        require(expiration > block.timestamp, 'HoldManagement: INVALID_EXPIRATION');
+        _;
+    }
+
+    modifier validAmount(uint256 holdAmount, uint256 requestedAmount) {
+        require(holdAmount >= requestedAmount, 'HoldManagement: INSUFFICIENT_HOLD_AMOUNT');
+        _;
+    }
+
+    modifier nonExpired(uint256 expirationTimestamp) {
+        require(expirationTimestamp >= block.timestamp, 'HoldManagement: HOLD_EXPIRED');
+        _;
+    }
+
+    modifier isEscrow(address escrow) {
+        require(escrow == msg.sender, 'HoldManagement: INVALID_ESCROW');
+        _;
+    }
+
+
     function createHold(Hold calldata _hold) external override returns (bool success_, uint256 holdId_) {
         address tokenHolder = msg.sender;
         (success_, holdId_) = _createHoldInternal(tokenHolder, _hold, '');
     }
 
-    function controllerCreateHold(
+    function createHoldByController(
         address _from,
         Hold calldata _hold,
         bytes calldata _operatorData
@@ -45,7 +66,7 @@ abstract contract HoldManagement is IHoldManagement, Roles, TokenOwner {
     )
         internal
         validExpiration(_hold.expirationTimestamp)
-        nonZeroEscrow(_hold.escrow)
+        addressIsNotZero(_hold.escrow)
         amountIsNotNegative(_hold.amount)
         returns (bool success_, uint256 holdId_)
     {
@@ -94,15 +115,21 @@ abstract contract HoldManagement is IHoldManagement, Roles, TokenOwner {
         HoldIdentifier calldata _holdIdentifier,
         address _to,
         uint256 _amount
-    ) external override returns (bool success_) {
+    )
+        external
+        override
+        amountIsNotNegative(_amount, false)
+        validAmount(
+            holdDataStorage.holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].amount,
+            _amount
+        )
+        nonExpired(holdDataStorage.holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].expirationTimestamp)
+        isEscrow(holdDataStorage.holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].escrow)
+        returns (bool success_)
+    {
         HoldData storage holdData = holdDataStorage.holdsByAccountAndId[_holdIdentifier.tokenHolder][
             _holdIdentifier.holdId
         ];
-
-        require(_amount > 0, 'HoldManagement: INVALID_AMOUNT');
-        require(holdData.amount >= _amount, 'HoldManagement: INSUFFICIENT_HOLD_AMOUNT');
-        require(block.timestamp <= holdData.expirationTimestamp, 'HoldManagement: HOLD_EXPIRED');
-        require(msg.sender == holdData.escrow, 'HoldManagement: ONLY_ESCROW_CAN_EXECUTE');
 
         if (holdData.to != address(0)) {
             require(holdData.to == _to, 'HoldManagement: INVALID_DESTINATION');
@@ -119,36 +146,32 @@ abstract contract HoldManagement is IHoldManagement, Roles, TokenOwner {
         );
         require(_checkResponse(responseCode), 'HoldManagement: TRANSFER_FAILED');
 
-        // Update hold
-        holdData.amount -= _amount;
-        holdDataStorage.totalHeldAmount -= _amount;
-        holdDataStorage.totalHeldAmountByAccount[_holdIdentifier.tokenHolder] -= _amount;
-
-        if (holdData.amount == 0) {
-            holdDataStorage.holdIdsByAccount[_holdIdentifier.tokenHolder].remove(_holdIdentifier.holdId);
-            delete holdDataStorage.holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId];
-        }
+        _decreaseHoldAmount(_holdIdentifier.tokenHolder, _holdIdentifier.holdId, _amount);
 
         emit HoldExecuted(_holdIdentifier.tokenHolder, _holdIdentifier.holdId, _amount, _to);
         return true;
     }
 
-    function releaseHold(HoldIdentifier calldata _holdIdentifier, uint256 _amount) external returns (bool success_) {
+    function releaseHold(
+        HoldIdentifier calldata _holdIdentifier,
+        uint256 _amount
+    )
+        external
+        validAmount(
+            holdDataStorage.holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].amount,
+            _amount
+        )
+        nonExpired(holdDataStorage.holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].expirationTimestamp)
+        isEscrow(holdDataStorage.holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].escrow)
+        returns (bool success_)
+    {
         address tokenHolder = msg.sender;
 
         HoldData storage holdData = holdDataStorage.holdsByAccountAndId[tokenHolder][_holdIdentifier.holdId];
 
-        //Checks
-        require(holdData.amount >= _amount, 'HoldManagement: INSUFFICIENT_AMOUNT');
-        require(holdData.expirationTimestamp >= block.timestamp, 'HoldManagement: HOLD_EXPIRED');
-        require(holdData.escrow == msg.sender, 'HoldManagement: ONLY_ESCROW_CAN_RELEASE');
+        _decreaseHoldAmount(tokenHolder, _holdIdentifier.holdId, _amount);
 
-        //Decrease hold amount
-        holdData.amount -= _amount;
-        holdDataStorage.totalHeldAmount -= _amount;
-        holdDataStorage.totalHeldAmountByAccount[tokenHolder] -= _amount;
-
-        //transfer to original token tokenHolder
+        //transfer to original tokenHolder
         address currentTokenAddress = _getTokenAddress();
         int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS).transferToken(
             currentTokenAddress,
@@ -157,9 +180,6 @@ abstract contract HoldManagement is IHoldManagement, Roles, TokenOwner {
             int64(uint64(_amount))
         );
         require(_checkResponse(responseCode), 'HoldManagement: TRANSFER_FAILED');
-
-        //Remove hold
-        holdDataStorage.holdIdsByAccount[tokenHolder].remove(_holdIdentifier.holdId);
 
         //Emit event
         emit HoldReleased(tokenHolder, _holdIdentifier.holdId, _amount, address(0));
@@ -205,11 +225,9 @@ abstract contract HoldManagement is IHoldManagement, Roles, TokenOwner {
 
         require(holdData.expirationTimestamp <= block.timestamp, 'HoldManagement: HOLD_NOT_EXPIRED');
 
-        //Decrease hold amount
-        holdDataStorage.totalHeldAmount -= holdData.amount;
-        holdDataStorage.totalHeldAmountByAccount[_holdIdentifier.tokenHolder] -= holdData.amount;
+        _decreaseHoldAmount(_holdIdentifier.tokenHolder, _holdIdentifier.holdId, holdData.amount);
 
-        //transfer to original token tokenHolder
+        //transfer to original tokenHolder
         address currentTokenAddress = _getTokenAddress();
         int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS).transferToken(
             currentTokenAddress,
@@ -218,13 +236,25 @@ abstract contract HoldManagement is IHoldManagement, Roles, TokenOwner {
             int64(uint64(holdData.amount))
         );
         require(_checkResponse(responseCode), 'HoldManagement: TRANSFER_FAILED');
-        //Remove hold
-        holdDataStorage.holdIdsByAccount[_holdIdentifier.tokenHolder].remove(_holdIdentifier.holdId);
 
         //Emit event
         emit HoldReclaimed(msg.sender, _holdIdentifier.tokenHolder, holdData.id);
         return true;
     }
+
+    function _decreaseHoldAmount(address tokenHolder, uint256 holdId, uint256 amount) internal {
+        HoldData storage hold = holdDataStorage.holdsByAccountAndId[tokenHolder][holdId];
+
+        hold.amount -= amount;
+        holdDataStorage.totalHeldAmount -= amount;
+        holdDataStorage.totalHeldAmountByAccount[tokenHolder] -= amount;
+
+        if (hold.amount == 0) {
+            holdDataStorage.holdIdsByAccount[tokenHolder].remove(holdId);
+            delete holdDataStorage.holdsByAccountAndId[tokenHolder][holdId];
+        }
+    }
+
 
     function getHoldFor(
         HoldIdentifier calldata _holdIdentifier
@@ -252,15 +282,5 @@ abstract contract HoldManagement is IHoldManagement, Roles, TokenOwner {
             holdData.data,
             holdData.operatorData
         );
-    }
-
-    modifier validExpiration(uint256 expiration) {
-        require(expiration > block.timestamp, 'HoldManagement: INVALID_EXPIRATION');
-        _;
-    }
-
-    modifier nonZeroEscrow(address escrow) {
-        require(escrow != address(0), 'HoldManagement: INVALID_ESCROW');
-        _;
     }
 }
