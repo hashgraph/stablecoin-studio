@@ -1,14 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.18;
 
-import {TokenOwner} from './TokenOwner.sol';
-import {Roles} from './Roles.sol';
+import '@chainlink/contracts/src/v0.8/VRFCoordinatorV2.sol';
+import {IBurnable} from './Interfaces/IBurnable.sol';
 // solhint-disable-next-line max-line-length
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
-import {IBurnable} from './Interfaces/IBurnable.sol';
+import {Roles} from './Roles.sol';
 import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
+import {TokenOwner} from './TokenOwner.sol';
+import {HoldBaseManagement} from './HoldBaseManagement.sol';
+import {HoldManagement} from './HoldManagement.sol';
 
-abstract contract Burnable is IBurnable, TokenOwner, Roles {
+abstract contract Burnable is IBurnable, HoldManagement {
     /**
      * @dev Burns an `amount` of tokens owned by the treasury account
      *
@@ -22,6 +25,7 @@ abstract contract Burnable is IBurnable, TokenOwner, Roles {
         onlyRole(_getRoleId(RoleName.BURN))
         amountIsNotNegative(amount, false)
         valueIsNotGreaterThan(SafeCast.toUint256(amount), _balanceOf(address(this)), true)
+        isHoldActive
         returns (bool)
     {
         address currentTokenAddress = _getTokenAddress();

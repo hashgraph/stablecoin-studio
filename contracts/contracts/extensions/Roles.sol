@@ -91,6 +91,13 @@ abstract contract Roles is IRoles, Initializable {
     bytes32 private constant _CUSTOM_FEES_ROLE = 0x6db8586688d24c6a6367d21f709d650b12a2a61dd75e834bd8cd90fd6afa794b;
 
     /**
+     * @dev Role that allows to create holds
+     *
+     * keccak256("HOLD_CREATOR_ROLE");
+     */
+    bytes32 private constant _HOLD_CREATOR_ROLE = 0xa0edc074322e33cf8b82b4182ff2827f0fef9412190f0e8417c2669a1e8747e4;
+
+    /**
      * @dev Array containing all roles
      *
      */
@@ -210,6 +217,7 @@ abstract contract Roles is IRoles, Initializable {
         _listOfroles.push(_DELETE_ROLE);
         _listOfroles.push(_KYC_ROLE);
         _listOfroles.push(_CUSTOM_FEES_ROLE);
+        _listOfroles.push(_HOLD_CREATOR_ROLE);
     }
 
     /**
