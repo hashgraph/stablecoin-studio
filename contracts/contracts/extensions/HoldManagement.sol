@@ -19,6 +19,7 @@ abstract contract HoldManagement is IHoldManagement, Roles, TokenOwner {
     error TransferFailed();
     error WipeFailed();
     error MintFailed();
+    error TokenKeyMissing(string keyType);
 
     struct HoldDataStorage {
         uint256 totalHeldAmount;
@@ -65,7 +66,43 @@ abstract contract HoldManagement is IHoldManagement, Roles, TokenOwner {
         _;
     }
 
-    function createHold(Hold calldata _hold) external override returns (bool success_, uint256 holdId_) {
+    modifier hasContractAdminKey() {
+        address token = _getTokenAddress();
+        (int64 rc, KeyValue memory adminKey) = IHederaTokenService.getTokenKey(token, 0); // adminKey
+        if (!_checkResponse(rc) || adminKey.contractId != address(this)) {
+            revert TokenKeyMissing('Admin key');
+        }
+        _;
+    }
+
+    modifier hasContractWipeKey() {
+        address token = _getTokenAddress();
+        (int64 rc, KeyValue memory wipeKey) = IHederaTokenService.getTokenKey(token, 3); // wipeKey
+        if (!_checkResponse(rc) || wipeKey.contractId != address(this)) {
+            revert TokenKeyMissing('Wipe key');
+        }
+        _;
+    }
+
+    modifier hasContractSupplyKey() {
+        address token = _getTokenAddress();
+        (int64 rc, KeyValue memory supplyKey) = IHederaTokenService.getTokenKey(token, 4); // supplyKey
+        if (!_checkResponse(rc) || supplyKey.contractId != address(this)) {
+            revert TokenKeyMissing('Supply key');
+        }
+        _;
+    }
+
+    function createHold(
+        Hold calldata _hold
+    )
+        external
+        override
+        hasContractAdminKey
+        hasContractSupplyKey
+        hasContractWipeKey
+        returns (bool success_, uint256 holdId_)
+    {
         address tokenHolder = msg.sender;
         (success_, holdId_) = _createHoldInternal(tokenHolder, _hold, '');
     }
