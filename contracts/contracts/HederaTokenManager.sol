@@ -21,13 +21,11 @@ import {RoleManagement} from './extensions/RoleManagement.sol';
 import {CustomFees} from './extensions/CustomFees.sol';
 import {KeysLib} from './library/KeysLib.sol';
 import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
-import {HoldManagement} from "./extensions/HoldManagement.sol";
 
 contract HederaTokenManager is
     IHederaTokenManager,
     CashIn,
     Burnable,
-    HoldManagement,
     Wipeable,
     Pausable,
     Freezable,

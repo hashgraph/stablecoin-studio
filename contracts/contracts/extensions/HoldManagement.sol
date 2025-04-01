@@ -4,88 +4,21 @@ pragma solidity 0.8.18;
 import '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import '@openzeppelin/contracts/utils/structs/EnumerableSet.sol';
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
-import {IHoldManagement} from './Interfaces/IHoldManagement.sol';
 import {Roles} from './Roles.sol';
 import {TokenOwner} from './TokenOwner.sol';
+import {HoldBaseManagement} from './HoldBaseManagement.sol';
 
-abstract contract HoldManagement is TokenOwner, Roles, IHoldManagement {
+abstract contract HoldManagement is HoldBaseManagement, TokenOwner, Roles {
+    //TODO: llevarme errorres a la interfaz
+
     using EnumerableSet for EnumerableSet.UintSet;
-
-    /// @notice Thrown when hold amount is less than the requested amount
-    /// @param required The amount requested for the operation
-    /// @param available The actual amount available in the hold
-    error InsufficientHoldAmount(uint256 required, uint256 available);
-
-    /// @notice Thrown when provided expiration time is invalid
-    /// @param provided The provided expiration timestamp
-    /// @param current The current timestamp
-    error InvalidExpiration(uint256 provided, uint256 current);
-
-    /// @notice Thrown when a hold does not exist for the given account and ID
-    /// @param tokenHolder The address of the token holder
-    /// @param holdId The ID of the hold
-    error HoldNotFound(address tokenHolder, uint256 holdId);
-
-    /// @notice Thrown when someone other than the designated escrow tries to execute operations
-    /// @param caller The address of the caller
-    /// @param escrow The address of the authorized escrow
-    error UnauthorizedEscrow(address caller, address escrow);
-
-    /// @notice Thrown when trying to reclaim a hold that has not yet expired
-    /// @param expirationTime The expiration timestamp of the hold
-    error HoldNotExpired(uint256 expirationTime);
-
-    /// @notice Thrown when trying to execute a hold to an invalid destination
-    /// @param expected The expected destination address
-    /// @param provided The provided destination address
-    error InvalidDestination(address expected, address provided);
-
-    /// @notice Thrown when a token transfer operation fails
-    error TransferFailed();
-
-    /// @notice Thrown when a token wipe operation fails
-    error WipeFailed();
-
-    /// @notice Thrown when a token mint operation fails
-    error MintFailed();
-
-    /// @notice Thrown when a required token key is missing
-    /// @param keyType The type of key that is missing
-    error TokenKeyMissing(string keyType);
-
-    /// @notice Thrown when attempting an operation that requires no active holds
-    error HoldActive();
-
-    /**
-     * @dev Storage structure for hold data
-     */
-    struct HoldDataStorage {
-        uint256 totalHeldAmount;
-        mapping(address => uint256) totalHeldAmountByAccount;
-        mapping(address => mapping(uint256 => HoldData)) holdsByAccountAndId;
-        mapping(address => EnumerableSet.UintSet) holdIdsByAccount;
-        mapping(address => uint256) nextHoldIdByAccount;
-    }
-
-    HoldDataStorage private _holdDataStorage;
-
-    /**
-     * @dev Modifier to check if the expiration timestamp is valid
-     * @param expiration The expiration timestamp to validate
-     */
-    modifier validExpiration(uint256 expiration) {
-        if (expiration <= block.timestamp) {
-            revert InvalidExpiration(expiration, block.timestamp);
-        }
-        _;
-    }
 
     /**
      * @dev Modifier to check if the hold has sufficient amount for the requested operation
      * @param holdAmount The amount currently held
      * @param requestedAmount The amount requested for the operation
      */
-    modifier validAmount(uint256 holdAmount, uint256 requestedAmount) {
+    modifier validAmount(int64 holdAmount, int64 requestedAmount) {
         if (holdAmount < requestedAmount) {
             revert InsufficientHoldAmount(requestedAmount, holdAmount);
         }
@@ -129,44 +62,62 @@ abstract contract HoldManagement is TokenOwner, Roles, IHoldManagement {
      * @dev Modifier to check if the contract has the admin key for the token
      */
     modifier hasContractAdminKey() {
+        _checkHasContractAdminKey();
+        _;
+    }
+
+    function _checkHasContractAdminKey() private {
         address token = _getTokenAddress();
-        (int64 rc, IHederaTokenService.KeyValue memory adminKey) = IHederaTokenService.getTokenKey(token, 0); // adminKey
+        (int64 rc, IHederaTokenService.KeyValue memory adminKey) = IHederaTokenService(_PRECOMPILED_ADDRESS)
+            .getTokenKey(token, 0); // adminKey
         if (!_checkResponse(rc) || adminKey.contractId != address(this)) {
             revert TokenKeyMissing('Admin key');
         }
-        _;
     }
 
     /**
      * @dev Modifier to check if the contract has the wipe key for the token
      */
     modifier hasContractWipeKey() {
+        _checkHasContractWipeKey();
+        _;
+    }
+
+    function _checkHasContractWipeKey() private {
         address token = _getTokenAddress();
-        (int64 rc, IHederaTokenService.KeyValue memory wipeKey) = IHederaTokenService.getTokenKey(token, 3); // wipeKey
+        (int64 rc, IHederaTokenService.KeyValue memory wipeKey) = IHederaTokenService(_PRECOMPILED_ADDRESS).getTokenKey(
+            token,
+            3
+        ); // wipeKey
         if (!_checkResponse(rc) || wipeKey.contractId != address(this)) {
             revert TokenKeyMissing('Wipe key');
         }
-        _;
     }
 
     /**
      * @dev Modifier to check if the contract has the supply key for the token
      */
     modifier hasContractSupplyKey() {
-        address token = _getTokenAddress();
-        (int64 rc, IHederaTokenService.KeyValue memory supplyKey) = IHederaTokenService.getTokenKey(token, 4); // supplyKey
-        if (!_checkResponse(rc) || supplyKey.contractId != address(this)) {
-            revert TokenKeyMissing('Supply key');
-        }
+        _checkHasContractSupplyKey();
         _;
     }
 
+    function _checkHasContractSupplyKey() private {
+        address token = _getTokenAddress();
+        (int64 rc, IHederaTokenService.KeyValue memory supplyKey) = IHederaTokenService(_PRECOMPILED_ADDRESS)
+            .getTokenKey(token, 4); // supplyKey
+        if (!_checkResponse(rc) || supplyKey.contractId != address(this)) {
+            revert TokenKeyMissing('Supply key');
+        }
+    }
+
     /**
-     * @dev Modifier to check if there are no active holds
+     * @dev Modifier to check if the expiration timestamp is valid
+     * @param expiration The expiration timestamp to validate
      */
-    modifier isHoldActive() {
-        if (_holdDataStorage.totalHeldAmount > 0) {
-            revert HoldActive();
+    modifier validExpiration(uint256 expiration) {
+        if (expiration <= block.timestamp) {
+            revert InvalidExpiration(expiration, block.timestamp);
         }
         _;
     }
@@ -181,19 +132,18 @@ abstract contract HoldManagement is TokenOwner, Roles, IHoldManagement {
     function createHold(
         Hold calldata _hold
     )
-    external
-    override
-    hasContractAdminKey
-    hasContractSupplyKey
-    hasContractWipeKey
-    validExpiration(_hold.expirationTimestamp)
-    addressIsNotZero(_hold.escrow)
-    addressIsNotZero(_hold.to)
-    amountIsNotNegative(_hold.amount)
-    returns (bool success_, uint256 holdId_)
+        external
+        override
+        hasContractAdminKey
+        hasContractSupplyKey
+        hasContractWipeKey
+        validExpiration(_hold.expirationTimestamp)
+            addressIsNotZero(_hold.escrow)
+        addressIsNotZero(_hold.to)
+        amountIsNotNegative(_hold.amount, false)
+        returns (bool success_, uint256 holdId_)
     {
-        address tokenHolder = msg.sender;
-        (success_, holdId_) = _createHoldInternal(tokenHolder, _hold, '');
+        (success_, holdId_) = _createHoldInternal(msg.sender, _hold, '');
     }
 
     /**
@@ -210,20 +160,21 @@ abstract contract HoldManagement is TokenOwner, Roles, IHoldManagement {
         Hold calldata _hold,
         bytes calldata _operatorData
     )
-    external
-    hasContractAdminKey
-    hasContractSupplyKey
-    hasContractWipeKey
-    validExpiration(_hold.expirationTimestamp)
-    addressIsNotZero(_hold.escrow)
-    amountIsNotNegative(_hold.amount)
-    onlyRole(_getRoleId(RoleName.HOLD_CREATOR_ROLE))
+        external
+        hasContractAdminKey
+        hasContractSupplyKey
+        hasContractWipeKey
+        validExpiration(_hold.expirationTimestamp)
+        addressIsNotZero(_hold.escrow)
     addressIsNotZero(_from)
     addressIsNotZero(_hold.to)
-    returns (bool success_, uint256 holdId_)
+    onlyRole(_getRoleId(RoleName.HOLD_CREATOR_ROLE))
+    amountIsNotNegative(_hold.amount, false)
+returns (bool success_, uint256 holdId_)
     {
         (success_, holdId_) = _createHoldInternal(_from, _hold, _operatorData);
     }
+
 
     /**
      * @dev Internal function to create a hold
@@ -261,26 +212,25 @@ abstract contract HoldManagement is TokenOwner, Roles, IHoldManagement {
     function executeHold(
         HoldIdentifier calldata _holdIdentifier,
         address _to,
-        uint256 _amount
+        int64 _amount
     )
-    external
-    override
-    validHold(_holdIdentifier)
-    amountIsNotNegative(_amount, false)
-    validAmount(
-    _holdDataStorage.holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].amount,
-    _amount
-    )
-    nonExpired(
-    _holdDataStorage
-    .holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].expirationTimestamp
-    )
-    isEscrow(_holdDataStorage.holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].escrow)
-    returns (bool success_)
+        external
+        validHold(_holdIdentifier)
+        amountIsNotNegative(int256(_amount), false)
+        validAmount(
+            _holdDataStorage.holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].amount,
+            _amount
+        )
+        nonExpired(
+            _holdDataStorage
+            .holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].expirationTimestamp
+        )
+        isEscrow(_holdDataStorage.holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].escrow)
+        returns (bool success_)
     {
         HoldData storage holdData = _holdDataStorage.holdsByAccountAndId[_holdIdentifier.tokenHolder][
-                        _holdIdentifier.holdId
-            ];
+            _holdIdentifier.holdId
+        ];
 
         if (holdData.to != address(0) && holdData.to != _to) {
             revert InvalidDestination(holdData.to, _to);
@@ -305,20 +255,20 @@ abstract contract HoldManagement is TokenOwner, Roles, IHoldManagement {
      */
     function releaseHold(
         HoldIdentifier calldata _holdIdentifier,
-        uint256 _amount
+        int64 _amount
     )
-    external
-    validHold(_holdIdentifier)
-    validAmount(
-    _holdDataStorage.holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].amount,
-    _amount
-    )
-    nonExpired(
-    _holdDataStorage
-    .holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].expirationTimestamp
-    )
-    isEscrow(_holdDataStorage.holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].escrow)
-    returns (bool success_)
+        external
+        validHold(_holdIdentifier)
+        validAmount(
+            _holdDataStorage.holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].amount,
+            _amount
+        )
+        nonExpired(
+            _holdDataStorage
+            .holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].expirationTimestamp
+        )
+        isEscrow(_holdDataStorage.holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].escrow)
+        returns (bool success_)
     {
         address tokenHolder = msg.sender;
 
@@ -342,21 +292,20 @@ abstract contract HoldManagement is TokenOwner, Roles, IHoldManagement {
         HoldIdentifier calldata _holdIdentifier
     ) external validHold(_holdIdentifier) returns (bool success_) {
         HoldData storage holdData = _holdDataStorage.holdsByAccountAndId[_holdIdentifier.tokenHolder][
-                        _holdIdentifier.holdId
-            ];
+            _holdIdentifier.holdId
+        ];
 
         if (holdData.expirationTimestamp > block.timestamp) {
             revert HoldNotExpired(holdData.expirationTimestamp);
         }
 
-        uint256 amount = holdData.amount;
-        _decreaseHoldAmount(_holdIdentifier.tokenHolder, _holdIdentifier.holdId, amount);
+        _decreaseHoldAmount(_holdIdentifier.tokenHolder, _holdIdentifier.holdId, holdData.amount);
 
-        if (!_transferTokens(address(this), _holdIdentifier.tokenHolder, amount)) {
+        if (!_transferTokens(address(this), _holdIdentifier.tokenHolder, holdData.amount)) {
             revert TransferFailed();
         }
 
-        emit HoldReclaimed(msg.sender, _holdIdentifier.tokenHolder, holdData.id);
+        emit HoldReclaimed(msg.sender, _holdIdentifier.tokenHolder, holdData.id, holdData.amount);
         return true;
     }
 
@@ -367,15 +316,20 @@ abstract contract HoldManagement is TokenOwner, Roles, IHoldManagement {
      * @param amount The amount of tokens to wipe and mint
      * @return Whether the operation was successful
      */
-    function _wipeAndMintTokens(address tokenAddress, address tokenHolder, uint256 amount) internal returns (bool) {
+    function _wipeAndMintTokens(address tokenAddress, address tokenHolder, int64 amount) internal returns (bool) {
+        int64 mintedAmount = int64(uint64(amount));
+
         int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS).wipeTokenAccount(
             tokenAddress,
             tokenHolder,
-            int64(uint64(amount))
+            mintedAmount
         );
+
         if (!_checkResponse(responseCode)) revert WipeFailed();
 
-        responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS).mintToken(tokenAddress, int64(uint64(amount)));
+        bytes[] memory metadata;
+
+        (responseCode, , ) = IHederaTokenService(_PRECOMPILED_ADDRESS).mintToken(tokenAddress, mintedAmount, metadata);
         if (!_checkResponse(responseCode)) revert MintFailed();
 
         return true;
@@ -388,13 +342,13 @@ abstract contract HoldManagement is TokenOwner, Roles, IHoldManagement {
      * @param amount The amount of tokens to transfer
      * @return Whether the operation was successful
      */
-    function _transferTokens(address from, address to, uint256 amount) internal returns (bool) {
+    function _transferTokens(address from, address to, int64 amount) internal returns (bool) {
         address currentTokenAddress = _getTokenAddress();
         int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS).transferToken(
             currentTokenAddress,
             from,
             to,
-            int64(uint64(amount))
+            amount
         );
         return _checkResponse(responseCode);
     }
@@ -434,7 +388,7 @@ abstract contract HoldManagement is TokenOwner, Roles, IHoldManagement {
      * @param holdId The ID of the hold
      * @param amount The amount to decrease
      */
-    function _decreaseHoldAmount(address tokenHolder, uint256 holdId, uint256 amount) internal {
+    function _decreaseHoldAmount(address tokenHolder, uint256 holdId, int64 amount) internal {
         HoldData storage hold = _holdDataStorage.holdsByAccountAndId[tokenHolder][holdId];
 
         hold.amount -= amount;
@@ -451,7 +405,7 @@ abstract contract HoldManagement is TokenOwner, Roles, IHoldManagement {
      * @notice Gets the total amount of tokens currently on hold
      * @return amount_ The total held amount
      */
-    function getHeldAmount() external view returns (uint256 amount_) {
+    function getHeldAmount() external view returns (int64 amount_) {
         return _holdDataStorage.totalHeldAmount;
     }
 
@@ -460,7 +414,7 @@ abstract contract HoldManagement is TokenOwner, Roles, IHoldManagement {
      * @param _tokenHolder The address of the token holder
      * @return amount_ The held amount for the specified address
      */
-    function getHeldAmountFor(address _tokenHolder) external view returns (uint256 amount_) {
+    function getHeldAmountFor(address _tokenHolder) external view returns (int64 amount_) {
         return _holdDataStorage.totalHeldAmountByAccount[_tokenHolder];
     }
 
@@ -511,21 +465,21 @@ abstract contract HoldManagement is TokenOwner, Roles, IHoldManagement {
     function getHoldFor(
         HoldIdentifier calldata _holdIdentifier
     )
-    external
-    view
-    validHold(_holdIdentifier)
-    returns (
-        uint256 amount_,
-        uint256 expirationTimestamp_,
-        address escrow_,
-        address destination_,
-        bytes memory data_,
-        bytes memory operatorData_
-    )
+        external
+        view
+        validHold(_holdIdentifier)
+        returns (
+            int64 amount_,
+            uint256 expirationTimestamp_,
+            address escrow_,
+            address destination_,
+            bytes memory data_,
+            bytes memory operatorData_
+        )
     {
         HoldData storage holdData = _holdDataStorage.holdsByAccountAndId[_holdIdentifier.tokenHolder][
-                        _holdIdentifier.holdId
-            ];
+            _holdIdentifier.holdId
+        ];
 
         return (
             holdData.amount,

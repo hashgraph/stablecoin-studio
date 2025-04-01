@@ -8,8 +8,10 @@ import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-c
 import {Roles} from './Roles.sol';
 import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
 import {TokenOwner} from './TokenOwner.sol';
+import {HoldBaseManagement} from './HoldBaseManagement.sol';
+import {HoldManagement} from './HoldManagement.sol';
 
-abstract contract Burnable is TokenOwner, Roles, IBurnable {
+abstract contract Burnable is IBurnable, HoldManagement {
     /**
      * @dev Burns an `amount` of tokens owned by the treasury account
      *

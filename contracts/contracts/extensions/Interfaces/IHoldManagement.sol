@@ -1,9 +1,52 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.18;
 
-import '../HoldManagement.sol';
-
 interface IHoldManagement {
+    /// @notice Thrown when provided expiration time is invalid
+    /// @param provided The provided expiration timestamp
+    /// @param current The current timestamp
+    error InvalidExpiration(uint256 provided, uint256 current);
+
+    /// @notice Thrown when hold amount is less than the requested amount
+    /// @param required The amount requested for the operation
+    /// @param available The actual amount available in the hold
+    error InsufficientHoldAmount(int64 required, int64 available);
+
+    /// @notice Thrown when a hold does not exist for the given account and ID
+    /// @param tokenHolder The address of the token holder
+    /// @param holdId The ID of the hold
+    error HoldNotFound(address tokenHolder, uint256 holdId);
+
+    /// @notice Thrown when someone other than the designated escrow tries to execute operations
+    /// @param caller The address of the caller
+    /// @param escrow The address of the authorized escrow
+    error UnauthorizedEscrow(address caller, address escrow);
+
+    /// @notice Thrown when trying to reclaim a hold that has not yet expired
+    /// @param expirationTime The expiration timestamp of the hold
+    error HoldNotExpired(uint256 expirationTime);
+
+    /// @notice Thrown when trying to execute a hold to an invalid destination
+    /// @param expected The expected destination address
+    /// @param provided The provided destination address
+    error InvalidDestination(address expected, address provided);
+
+    /// @notice Thrown when a token transfer operation fails
+    error TransferFailed();
+
+    /// @notice Thrown when a token wipe operation fails
+    error WipeFailed();
+
+    /// @notice Thrown when a token mint operation fails
+    error MintFailed();
+
+    /// @notice Thrown when a required token key is missing
+    /// @param keyType The type of key that is missing
+    error TokenKeyMissing(string keyType);
+
+    /// @notice Thrown when attempting an operation that requires no active holds
+    error HoldActive();
+
     // ----- Structs -----
 
     struct HoldIdentifier {
@@ -11,7 +54,7 @@ interface IHoldManagement {
         uint256 holdId;
     }
     struct Hold {
-        uint256 amount;
+        int64 amount;
         uint256 expirationTimestamp;
         address escrow;
         address to;
@@ -19,7 +62,7 @@ interface IHoldManagement {
     }
     struct HoldData {
         uint256 id;
-        uint256 amount;
+        int64 amount;
         uint256 expirationTimestamp;
         address escrow;
         address to;
@@ -51,7 +94,7 @@ interface IHoldManagement {
      * @param amount The amount of tokens involved in the Hold execution.
      * @param to The destination address receiving the tokens.
      */
-    event HoldExecuted(address indexed tokenHolder, uint256 holdId, uint256 amount, address to);
+    event HoldExecuted(address indexed tokenHolder, uint256 holdId, int64 amount, address to);
 
     /**
      * @dev Emitted when the Hold is released (funds unlocked without being executed).
@@ -59,7 +102,7 @@ interface IHoldManagement {
      * @param holdId The unique identifier of the Hold released.
      * @param amount The amount of tokens that were released.
      */
-    event HoldReleased(address indexed tokenHolder, uint256 holdId, uint256 amount);
+    event HoldReleased(address indexed tokenHolder, uint256 holdId, int64 amount);
 
     /**
      * @dev Emitted when a Hold is reclaimed (canceled) by the operator.
@@ -68,7 +111,7 @@ interface IHoldManagement {
      * @param holdId The unique identifier of the Hold reclaimed.
      * @param amount The amount of tokens reclaimed from the Hold.
      */
-    event HoldReclaimed(address indexed operator, address indexed tokenHolder, uint256 holdId, uint256 amount);
+    event HoldReclaimed(address indexed operator, address indexed tokenHolder, uint256 holdId, int64 amount);
 
     // ----- Functions -----
 
@@ -104,7 +147,7 @@ interface IHoldManagement {
     function executeHold(
         HoldIdentifier calldata _holdIdentifier,
         address _to,
-        uint256 _amount
+        int64 _amount
     ) external returns (bool success_);
 
     /**
@@ -113,7 +156,7 @@ interface IHoldManagement {
      * @param _amount The amount of tokens to release.
      * @return success_ Whether the operation was successful.
      */
-    function releaseHold(HoldIdentifier calldata _holdIdentifier, uint256 _amount) external returns (bool success_);
+    function releaseHold(HoldIdentifier calldata _holdIdentifier, int64 _amount) external returns (bool success_);
 
     /**
      * @dev Allows the operator to reclaim the funds from an active Hold.
@@ -126,14 +169,14 @@ interface IHoldManagement {
      * @dev Retrieves the total amount of tokens held in all Holds across the system.
      * @return amount_ The total held token amount.
      */
-    function getHeldAmount() external view returns (uint256 amount_);
+    function getHeldAmount() external view returns (int64 amount_);
 
     /**
      * @dev Retrieves the total amount of tokens held by a specific user.
      * @param _tokenHolder The address of the token holder.
      * @return amount_ The total held token amount for the user.
      */
-    function getHeldAmountFor(address _tokenHolder) external view returns (uint256 amount_);
+    function getHeldAmountFor(address _tokenHolder) external view returns (int64 amount_);
 
     /**
      * @dev Retrieves the number of Holds specific to a token holder.
@@ -171,7 +214,7 @@ interface IHoldManagement {
         external
         view
         returns (
-            uint256 amount_,
+            int64 amount_,
             uint256 expirationTimestamp_,
             address escrow_,
             address destination_,
