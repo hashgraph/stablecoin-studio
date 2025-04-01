@@ -10,8 +10,6 @@ import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
 import {TokenOwner} from './TokenOwner.sol';
 
 abstract contract Burnable is IBurnable, TokenOwner, Roles {
-    error BurnExceedsUnlockedBalance();
-
     /**
      * @dev Burns an `amount` of tokens owned by the treasury account
      *
