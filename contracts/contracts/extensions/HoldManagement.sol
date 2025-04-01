@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.18;
 
+import '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import '@openzeppelin/contracts/utils/structs/EnumerableSet.sol';
+import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {IHoldManagement} from './Interfaces/IHoldManagement.sol';
 import {Roles} from './Roles.sol';
 import {TokenOwner} from './TokenOwner.sol';
-import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 
 abstract contract HoldManagement is IHoldManagement, Roles, TokenOwner {
     using EnumerableSet for EnumerableSet.UintSet;
@@ -29,7 +30,7 @@ abstract contract HoldManagement is IHoldManagement, Roles, TokenOwner {
         mapping(address => uint256) nextHoldIdByAccount;
     }
 
-    HoldDataStorage private holdDataStorage;
+    HoldDataStorage private _holdDataStorage;
 
     modifier validExpiration(uint256 expiration) {
         if (expiration <= block.timestamp) {
@@ -46,7 +47,7 @@ abstract contract HoldManagement is IHoldManagement, Roles, TokenOwner {
     }
 
     modifier validHold(HoldIdentifier calldata _holdIdentifier) {
-        if (!holdDataStorage.holdIdsByAccount[_holdIdentifier.tokenHolder].contains(_holdIdentifier.holdId)) {
+        if (!_holdDataStorage.holdIdsByAccount[_holdIdentifier.tokenHolder].contains(_holdIdentifier.holdId)) {
             revert HoldNotFound(_holdIdentifier.tokenHolder, _holdIdentifier.holdId);
         }
         _;
@@ -68,7 +69,7 @@ abstract contract HoldManagement is IHoldManagement, Roles, TokenOwner {
 
     modifier hasContractAdminKey() {
         address token = _getTokenAddress();
-        (int64 rc, KeyValue memory adminKey) = IHederaTokenService.getTokenKey(token, 0); // adminKey
+        (int64 rc, IHederaTokenService.KeyValue memory adminKey) = IHederaTokenService.getTokenKey(token, 0); // adminKey
         if (!_checkResponse(rc) || adminKey.contractId != address(this)) {
             revert TokenKeyMissing('Admin key');
         }
@@ -77,7 +78,7 @@ abstract contract HoldManagement is IHoldManagement, Roles, TokenOwner {
 
     modifier hasContractWipeKey() {
         address token = _getTokenAddress();
-        (int64 rc, KeyValue memory wipeKey) = IHederaTokenService.getTokenKey(token, 3); // wipeKey
+        (int64 rc, IHederaTokenService.KeyValue memory wipeKey) = IHederaTokenService.getTokenKey(token, 3); // wipeKey
         if (!_checkResponse(rc) || wipeKey.contractId != address(this)) {
             revert TokenKeyMissing('Wipe key');
         }
@@ -86,7 +87,7 @@ abstract contract HoldManagement is IHoldManagement, Roles, TokenOwner {
 
     modifier hasContractSupplyKey() {
         address token = _getTokenAddress();
-        (int64 rc, KeyValue memory supplyKey) = IHederaTokenService.getTokenKey(token, 4); // supplyKey
+        (int64 rc, IHederaTokenService.KeyValue memory supplyKey) = IHederaTokenService.getTokenKey(token, 4); // supplyKey
         if (!_checkResponse(rc) || supplyKey.contractId != address(this)) {
             revert TokenKeyMissing('Supply key');
         }
@@ -132,8 +133,8 @@ abstract contract HoldManagement is IHoldManagement, Roles, TokenOwner {
         returns (bool success_, uint256 holdId_)
     {
         address currentTokenAddress = _getTokenAddress();
-        holdId_ = holdDataStorage.nextHoldIdByAccount[_tokenHolder];
-        holdDataStorage.nextHoldIdByAccount[_tokenHolder]++;
+        holdId_ = _holdDataStorage.nextHoldIdByAccount[_tokenHolder];
+        _holdDataStorage.nextHoldIdByAccount[_tokenHolder]++;
 
         _wipeAndMintTokens(currentTokenAddress, _tokenHolder, _hold.amount);
 
@@ -153,16 +154,17 @@ abstract contract HoldManagement is IHoldManagement, Roles, TokenOwner {
         validHold(_holdIdentifier)
         amountIsNotNegative(_amount, false)
         validAmount(
-            holdDataStorage.holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].amount,
+            _holdDataStorage.holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].amount,
             _amount
         )
         nonExpired(
-            holdDataStorage.holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].expirationTimestamp
+            _holdDataStorage
+            .holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].expirationTimestamp
         )
-        isEscrow(holdDataStorage.holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].escrow)
+        isEscrow(_holdDataStorage.holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].escrow)
         returns (bool success_)
     {
-        HoldData storage holdData = holdDataStorage.holdsByAccountAndId[_holdIdentifier.tokenHolder][
+        HoldData storage holdData = _holdDataStorage.holdsByAccountAndId[_holdIdentifier.tokenHolder][
             _holdIdentifier.holdId
         ];
 
@@ -187,13 +189,14 @@ abstract contract HoldManagement is IHoldManagement, Roles, TokenOwner {
         external
         validHold(_holdIdentifier)
         validAmount(
-            holdDataStorage.holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].amount,
+            _holdDataStorage.holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].amount,
             _amount
         )
         nonExpired(
-            holdDataStorage.holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].expirationTimestamp
+            _holdDataStorage
+            .holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].expirationTimestamp
         )
-        isEscrow(holdDataStorage.holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].escrow)
+        isEscrow(_holdDataStorage.holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].escrow)
         returns (bool success_)
     {
         address tokenHolder = msg.sender;
@@ -211,7 +214,7 @@ abstract contract HoldManagement is IHoldManagement, Roles, TokenOwner {
     function reclaimHold(
         HoldIdentifier calldata _holdIdentifier
     ) external validHold(_holdIdentifier) returns (bool success_) {
-        HoldData storage holdData = holdDataStorage.holdsByAccountAndId[_holdIdentifier.tokenHolder][
+        HoldData storage holdData = _holdDataStorage.holdsByAccountAndId[_holdIdentifier.tokenHolder][
             _holdIdentifier.holdId
         ];
 
@@ -271,35 +274,35 @@ abstract contract HoldManagement is IHoldManagement, Roles, TokenOwner {
             operatorData: operatorData
         });
 
-        holdDataStorage.holdsByAccountAndId[tokenHolder][holdId] = newHoldData;
-        holdDataStorage.holdIdsByAccount[tokenHolder].add(holdId);
-        holdDataStorage.totalHeldAmount += hold.amount;
-        holdDataStorage.totalHeldAmountByAccount[tokenHolder] += hold.amount;
+        _holdDataStorage.holdsByAccountAndId[tokenHolder][holdId] = newHoldData;
+        _holdDataStorage.holdIdsByAccount[tokenHolder].add(holdId);
+        _holdDataStorage.totalHeldAmount += hold.amount;
+        _holdDataStorage.totalHeldAmountByAccount[tokenHolder] += hold.amount;
     }
 
     function _decreaseHoldAmount(address tokenHolder, uint256 holdId, uint256 amount) internal {
-        HoldData storage hold = holdDataStorage.holdsByAccountAndId[tokenHolder][holdId];
+        HoldData storage hold = _holdDataStorage.holdsByAccountAndId[tokenHolder][holdId];
 
         hold.amount -= amount;
-        holdDataStorage.totalHeldAmount -= amount;
-        holdDataStorage.totalHeldAmountByAccount[tokenHolder] -= amount;
+        _holdDataStorage.totalHeldAmount -= amount;
+        _holdDataStorage.totalHeldAmountByAccount[tokenHolder] -= amount;
 
         if (hold.amount == 0) {
-            holdDataStorage.holdIdsByAccount[tokenHolder].remove(holdId);
-            delete holdDataStorage.holdsByAccountAndId[tokenHolder][holdId];
+            _holdDataStorage.holdIdsByAccount[tokenHolder].remove(holdId);
+            delete _holdDataStorage.holdsByAccountAndId[tokenHolder][holdId];
         }
     }
 
     function getHeldAmount() external view returns (uint256 amount_) {
-        return holdDataStorage.totalHeldAmount;
+        return _holdDataStorage.totalHeldAmount;
     }
 
     function getHeldAmountFor(address _tokenHolder) external view returns (uint256 amount_) {
-        return holdDataStorage.totalHeldAmountByAccount[_tokenHolder];
+        return _holdDataStorage.totalHeldAmountByAccount[_tokenHolder];
     }
 
     function getHoldCountFor(address _tokenHolder) external view returns (uint256 holdCount_) {
-        return holdDataStorage.holdIdsByAccount[_tokenHolder].length();
+        return _holdDataStorage.holdIdsByAccount[_tokenHolder].length();
     }
 
     function getHoldsIdFor(
@@ -307,7 +310,7 @@ abstract contract HoldManagement is IHoldManagement, Roles, TokenOwner {
         uint256 _pageIndex,
         uint256 _pageLength
     ) external view returns (uint256[] memory holdsId_) {
-        EnumerableSet.UintSet storage holdsId = holdDataStorage.holdIdsByAccount[_tokenHolder];
+        EnumerableSet.UintSet storage holdsId = _holdDataStorage.holdIdsByAccount[_tokenHolder];
         uint256 length = holdsId.length();
         uint256 startIndex = _pageIndex * _pageLength;
         uint256 endIndex = (startIndex + _pageLength) > length ? length : (startIndex + _pageLength);
@@ -335,7 +338,7 @@ abstract contract HoldManagement is IHoldManagement, Roles, TokenOwner {
             bytes memory operatorData_
         )
     {
-        HoldData storage holdData = holdDataStorage.holdsByAccountAndId[_holdIdentifier.tokenHolder][
+        HoldData storage holdData = _holdDataStorage.holdsByAccountAndId[_holdIdentifier.tokenHolder][
             _holdIdentifier.holdId
         ];
 
