@@ -21,12 +21,13 @@ import {RoleManagement} from './extensions/RoleManagement.sol';
 import {CustomFees} from './extensions/CustomFees.sol';
 import {KeysLib} from './library/KeysLib.sol';
 import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
-import {HoldManagement} from './extensions/HoldManagement.sol';
+import {HoldManagement} from "./extensions/HoldManagement.sol";
 
 contract HederaTokenManager is
     IHederaTokenManager,
     CashIn,
     Burnable,
+    HoldManagement,
     Wipeable,
     Pausable,
     Freezable,
@@ -34,8 +35,7 @@ contract HederaTokenManager is
     Rescuable,
     KYC,
     RoleManagement,
-    CustomFees,
-    HoldManagement
+    CustomFees
 {
     uint256 private constant _ADMIN_KEY_BIT = 0;
     uint256 private constant _SUPPLY_KEY_BIT = 4;

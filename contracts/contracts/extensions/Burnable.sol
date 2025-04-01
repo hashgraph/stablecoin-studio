@@ -9,7 +9,7 @@ import {Roles} from './Roles.sol';
 import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
 import {TokenOwner} from './TokenOwner.sol';
 
-abstract contract Burnable is IBurnable, TokenOwner, Roles {
+abstract contract Burnable is TokenOwner, Roles, IBurnable {
     /**
      * @dev Burns an `amount` of tokens owned by the treasury account
      *
@@ -23,7 +23,7 @@ abstract contract Burnable is IBurnable, TokenOwner, Roles {
         onlyRole(_getRoleId(RoleName.BURN))
         amountIsNotNegative(amount, false)
         valueIsNotGreaterThan(SafeCast.toUint256(amount), _balanceOf(address(this)), true)
-        valueIsNotGreaterThan(SafeCast.toUint256(amount), address(this).balance, true)
+        isHoldActive
         returns (bool)
     {
         address currentTokenAddress = _getTokenAddress();
