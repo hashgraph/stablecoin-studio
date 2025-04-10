@@ -1,16 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.18;
 
-import '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
-import '@openzeppelin/contracts/utils/structs/EnumerableSet.sol';
+// solhint-disable max-line-length
+import {IHoldManagement} from './Interfaces/IHoldManagement.sol';
+import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
+import {EnumerableSet} from '@openzeppelin/contracts/utils/structs/EnumerableSet.sol';
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {Roles} from './Roles.sol';
 import {TokenOwner} from './TokenOwner.sol';
 import {HoldBaseManagement} from './HoldBaseManagement.sol';
+// solhint-enable max-line-length
 
-abstract contract HoldManagement is HoldBaseManagement, TokenOwner, Roles {
-    //TODO: llevarme errorres a la interfaz
-
+contract HoldManagement is HoldBaseManagement, TokenOwner, Roles, IHoldManagement {
     using EnumerableSet for EnumerableSet.UintSet;
 
     /**
@@ -30,7 +31,7 @@ abstract contract HoldManagement is HoldBaseManagement, TokenOwner, Roles {
      * @param _holdIdentifier The identifier of the hold
      */
     modifier validHold(HoldIdentifier calldata _holdIdentifier) {
-        if (!_holdDataStorage.holdIdsByAccount[_holdIdentifier.tokenHolder].contains(_holdIdentifier.holdId)) {
+        if (!_holdDataStorage().holdIdsByAccount[_holdIdentifier.tokenHolder].contains(_holdIdentifier.holdId)) {
             revert HoldNotFound(_holdIdentifier.tokenHolder, _holdIdentifier.holdId);
         }
         _;
@@ -138,7 +139,7 @@ abstract contract HoldManagement is HoldBaseManagement, TokenOwner, Roles {
         hasContractSupplyKey
         hasContractWipeKey
         validExpiration(_hold.expirationTimestamp)
-            addressIsNotZero(_hold.escrow)
+        addressIsNotZero(_hold.escrow)
         addressIsNotZero(_hold.to)
         amountIsNotNegative(_hold.amount, false)
         returns (bool success_, uint256 holdId_)
@@ -166,15 +167,14 @@ abstract contract HoldManagement is HoldBaseManagement, TokenOwner, Roles {
         hasContractWipeKey
         validExpiration(_hold.expirationTimestamp)
         addressIsNotZero(_hold.escrow)
-    addressIsNotZero(_from)
-    addressIsNotZero(_hold.to)
-    onlyRole(_getRoleId(RoleName.HOLD_CREATOR_ROLE))
-    amountIsNotNegative(_hold.amount, false)
-returns (bool success_, uint256 holdId_)
+        addressIsNotZero(_from)
+        addressIsNotZero(_hold.to)
+        onlyRole(_getRoleId(RoleName.HOLD_CREATOR_ROLE))
+        amountIsNotNegative(_hold.amount, false)
+        returns (bool success_, uint256 holdId_)
     {
         (success_, holdId_) = _createHoldInternal(_from, _hold, _operatorData);
     }
-
 
     /**
      * @dev Internal function to create a hold
@@ -190,8 +190,9 @@ returns (bool success_, uint256 holdId_)
         bytes memory _operatorData
     ) internal returns (bool success_, uint256 holdId_) {
         address currentTokenAddress = _getTokenAddress();
-        holdId_ = _holdDataStorage.nextHoldIdByAccount[_tokenHolder];
-        _holdDataStorage.nextHoldIdByAccount[_tokenHolder]++;
+        HoldDataStorage storage holdDataStorage = _holdDataStorage();
+        holdId_ = holdDataStorage.nextHoldIdByAccount[_tokenHolder];
+        holdDataStorage.nextHoldIdByAccount[_tokenHolder]++;
 
         _wipeAndMintTokens(currentTokenAddress, _tokenHolder, _hold.amount);
 
@@ -218,17 +219,17 @@ returns (bool success_, uint256 holdId_)
         validHold(_holdIdentifier)
         amountIsNotNegative(int256(_amount), false)
         validAmount(
-            _holdDataStorage.holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].amount,
+            _holdDataStorage().holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].amount,
             _amount
         )
         nonExpired(
             _holdDataStorage
             .holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].expirationTimestamp
         )
-        isEscrow(_holdDataStorage.holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].escrow)
+        isEscrow(_holdDataStorage().holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].escrow)
         returns (bool success_)
     {
-        HoldData storage holdData = _holdDataStorage.holdsByAccountAndId[_holdIdentifier.tokenHolder][
+        HoldData storage holdData = _holdDataStorage().holdsByAccountAndId[_holdIdentifier.tokenHolder][
             _holdIdentifier.holdId
         ];
 
@@ -260,14 +261,14 @@ returns (bool success_, uint256 holdId_)
         external
         validHold(_holdIdentifier)
         validAmount(
-            _holdDataStorage.holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].amount,
+            _holdDataStorage().holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].amount,
             _amount
         )
         nonExpired(
             _holdDataStorage
             .holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].expirationTimestamp
         )
-        isEscrow(_holdDataStorage.holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].escrow)
+        isEscrow(_holdDataStorage().holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].escrow)
         returns (bool success_)
     {
         address tokenHolder = msg.sender;
@@ -291,7 +292,7 @@ returns (bool success_, uint256 holdId_)
     function reclaimHold(
         HoldIdentifier calldata _holdIdentifier
     ) external validHold(_holdIdentifier) returns (bool success_) {
-        HoldData storage holdData = _holdDataStorage.holdsByAccountAndId[_holdIdentifier.tokenHolder][
+        HoldData storage holdData = _holdDataStorage().holdsByAccountAndId[_holdIdentifier.tokenHolder][
             _holdIdentifier.holdId
         ];
 
@@ -366,7 +367,8 @@ returns (bool success_, uint256 holdId_)
         Hold calldata hold,
         bytes memory operatorData
     ) internal {
-        HoldData memory newHoldData = HoldData({
+        HoldDataStorage storage holdDataStorage = _holdDataStorage();
+        holdDataStorage.holdsByAccountAndId[tokenHolder][holdId] = HoldData({
             id: holdId,
             amount: hold.amount,
             expirationTimestamp: hold.expirationTimestamp,
@@ -375,11 +377,9 @@ returns (bool success_, uint256 holdId_)
             data: hold.data,
             operatorData: operatorData
         });
-
-        _holdDataStorage.holdsByAccountAndId[tokenHolder][holdId] = newHoldData;
-        _holdDataStorage.holdIdsByAccount[tokenHolder].add(holdId);
-        _holdDataStorage.totalHeldAmount += hold.amount;
-        _holdDataStorage.totalHeldAmountByAccount[tokenHolder] += hold.amount;
+        holdDataStorage.holdIdsByAccount[tokenHolder].add(holdId);
+        holdDataStorage.totalHeldAmount += hold.amount;
+        holdDataStorage.totalHeldAmountByAccount[tokenHolder] += hold.amount;
     }
 
     /**
@@ -389,15 +389,16 @@ returns (bool success_, uint256 holdId_)
      * @param amount The amount to decrease
      */
     function _decreaseHoldAmount(address tokenHolder, uint256 holdId, int64 amount) internal {
-        HoldData storage hold = _holdDataStorage.holdsByAccountAndId[tokenHolder][holdId];
+        HoldDataStorage storage holdDataStorage = _holdDataStorage();
+        HoldData storage hold = holdDataStorage.holdsByAccountAndId[tokenHolder][holdId];
 
         hold.amount -= amount;
-        _holdDataStorage.totalHeldAmount -= amount;
-        _holdDataStorage.totalHeldAmountByAccount[tokenHolder] -= amount;
+        holdDataStorage.totalHeldAmount -= amount;
+        holdDataStorage.totalHeldAmountByAccount[tokenHolder] -= amount;
 
         if (hold.amount == 0) {
-            _holdDataStorage.holdIdsByAccount[tokenHolder].remove(holdId);
-            delete _holdDataStorage.holdsByAccountAndId[tokenHolder][holdId];
+            holdDataStorage.holdIdsByAccount[tokenHolder].remove(holdId);
+            delete holdDataStorage.holdsByAccountAndId[tokenHolder][holdId];
         }
     }
 
@@ -406,7 +407,7 @@ returns (bool success_, uint256 holdId_)
      * @return amount_ The total held amount
      */
     function getHeldAmount() external view returns (int64 amount_) {
-        return _holdDataStorage.totalHeldAmount;
+        return _holdDataStorage().totalHeldAmount;
     }
 
     /**
@@ -415,7 +416,7 @@ returns (bool success_, uint256 holdId_)
      * @return amount_ The held amount for the specified address
      */
     function getHeldAmountFor(address _tokenHolder) external view returns (int64 amount_) {
-        return _holdDataStorage.totalHeldAmountByAccount[_tokenHolder];
+        return _holdDataStorage().totalHeldAmountByAccount[_tokenHolder];
     }
 
     /**
@@ -424,7 +425,7 @@ returns (bool success_, uint256 holdId_)
      * @return holdCount_ The number of holds
      */
     function getHoldCountFor(address _tokenHolder) external view returns (uint256 holdCount_) {
-        return _holdDataStorage.holdIdsByAccount[_tokenHolder].length();
+        return _holdDataStorage().holdIdsByAccount[_tokenHolder].length();
     }
 
     /**
@@ -439,7 +440,7 @@ returns (bool success_, uint256 holdId_)
         uint256 _pageIndex,
         uint256 _pageLength
     ) external view returns (uint256[] memory holdsId_) {
-        EnumerableSet.UintSet storage holdsId = _holdDataStorage.holdIdsByAccount[_tokenHolder];
+        EnumerableSet.UintSet storage holdsId = _holdDataStorage().holdIdsByAccount[_tokenHolder];
         uint256 length = holdsId.length();
         uint256 startIndex = _pageIndex * _pageLength;
         uint256 endIndex = (startIndex + _pageLength) > length ? length : (startIndex + _pageLength);
@@ -477,7 +478,7 @@ returns (bool success_, uint256 holdId_)
             bytes memory operatorData_
         )
     {
-        HoldData storage holdData = _holdDataStorage.holdsByAccountAndId[_holdIdentifier.tokenHolder][
+        HoldData storage holdData = _holdDataStorage().holdsByAccountAndId[_holdIdentifier.tokenHolder][
             _holdIdentifier.holdId
         ];
 

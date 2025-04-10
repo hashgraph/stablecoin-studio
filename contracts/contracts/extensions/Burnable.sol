@@ -1,14 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.18;
 
-import '@chainlink/contracts/src/v0.8/VRFCoordinatorV2.sol';
 import {IBurnable} from './Interfaces/IBurnable.sol';
 // solhint-disable-next-line max-line-length
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
-import {Roles} from './Roles.sol';
 import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
-import {TokenOwner} from './TokenOwner.sol';
-import {HoldBaseManagement} from './HoldBaseManagement.sol';
 import {HoldManagement} from './HoldManagement.sol';
 
 abstract contract Burnable is IBurnable, HoldManagement {

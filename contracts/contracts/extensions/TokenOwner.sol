@@ -4,15 +4,18 @@ pragma solidity 0.8.18;
 import {ITokenOwner} from './Interfaces/ITokenOwner.sol';
 import {HederaResponseCodes} from '@hashgraph/smart-contracts/contracts/system-contracts/HederaResponseCodes.sol';
 import {IERC20Upgradeable} from '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
-import {Initializable} from '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
+import {Initializable} from '../core/Initializable.sol';
 // solhint-disable-next-line max-line-length
 import {IERC20MetadataUpgradeable} from '@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol';
+import {_TOKEN_OWNER_STORAGE_POSITION} from '../constants/storagePositions.sol';
 
 abstract contract TokenOwner is ITokenOwner, Initializable {
     // Hedera HTS precompiled contract
     address internal constant _PRECOMPILED_ADDRESS = address(0x167);
-    // HTS Token this contract owns
-    address private _tokenAddress;
+    struct TokenOwnerStorage {
+        // HTS Token this contract owns
+        address tokenAddress;
+    }
 
     /**
      * @dev Checks that value is not less than ref
@@ -102,7 +105,7 @@ abstract contract TokenOwner is ITokenOwner, Initializable {
      * @param initTokenAddress The token address value
      */
     function __tokenOwnerInit(address initTokenAddress) internal onlyInitializing {
-        _tokenAddress = initTokenAddress;
+        _tokenOwnerStorage().tokenAddress = initTokenAddress;
     }
 
     /**
@@ -110,7 +113,7 @@ abstract contract TokenOwner is ITokenOwner, Initializable {
      *
      */
     function _getTokenAddress() internal view returns (address) {
-        return _tokenAddress;
+        return _tokenOwnerStorage().tokenAddress;
     }
 
     /**
@@ -128,7 +131,7 @@ abstract contract TokenOwner is ITokenOwner, Initializable {
      *
      */
     function _totalSupply() internal view returns (uint256) {
-        return IERC20Upgradeable(_tokenAddress).totalSupply();
+        return IERC20Upgradeable(_tokenOwnerStorage().tokenAddress).totalSupply();
     }
 
     /**
@@ -136,7 +139,7 @@ abstract contract TokenOwner is ITokenOwner, Initializable {
      *
      */
     function _decimals() internal view returns (uint8) {
-        return IERC20MetadataUpgradeable(_tokenAddress).decimals();
+        return IERC20MetadataUpgradeable(_tokenOwnerStorage().tokenAddress).decimals();
     }
 
     /**
@@ -162,10 +165,11 @@ abstract contract TokenOwner is ITokenOwner, Initializable {
         return _getTokenAddress();
     }
 
-    /**
-     * @dev This empty reserved space is put in place to allow future versions to add new
-     * variables without shifting down storage in the inheritance chain.
-     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
-     */
-    uint256[49] private __gap;
+    function _tokenOwnerStorage() private pure returns (TokenOwnerStorage storage tokenOwnerStorage_) {
+        bytes32 position = _TOKEN_OWNER_STORAGE_POSITION;
+        // solhint-disable-next-line no-inline-assembly
+        assembly {
+            tokenOwnerStorage_.slot := position
+        }
+    }
 }
