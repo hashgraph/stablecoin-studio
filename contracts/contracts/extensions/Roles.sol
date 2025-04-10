@@ -1,118 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.18;
 
+import {ADMIN_ROLE} from '../constants/roles.sol';
 import {IRoles} from './Interfaces/IRoles.sol';
+import {RolesWrapper} from './RolesWrapper.sol';
 
-import {Initializable} from '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
-
-abstract contract Roles is IRoles, Initializable {
-    struct MemberData {
-        bool active;
-        uint256 pos;
-    }
-
-    struct RoleData {
-        mapping(address => MemberData) members;
-        address[] accounts;
-    }
-
-    mapping(bytes32 => RoleData) private _roles;
-
-    bytes32 public constant ADMIN_ROLE = 0x00;
-
-    /**
-     * @dev Role that allows to mint token
-     *
-     * keccak_256("CASHIN_ROLE")
-     */
-    bytes32 private constant _CASHIN_ROLE = 0x53300d27a2268d3ff3ecb0ec8e628321ecfba1a08aed8b817e8acf589a52d25c;
-
-    /**
-     * @dev Role that allows to burn token
-     *
-     * keccak_256("BURN_ROLE")
-     */
-    bytes32 private constant _BURN_ROLE = 0xe97b137254058bd94f28d2f3eb79e2d34074ffb488d042e3bc958e0a57d2fa22;
-
-    /**
-     * @dev Role that allows to wipe token
-     *
-     * keccak_256("WIPE_ROLE")
-     */
-    bytes32 private constant _WIPE_ROLE = 0x515f99f4e5a381c770462a8d9879a01f0fd4a414a168a2404dab62a62e1af0c3;
-
-    /**
-     * @dev Role that allows to rescue both tokens and hbar
-     *
-     * keccak256("RESCUE_ROLE");
-     */
-    bytes32 private constant _RESCUE_ROLE = 0x43f433f336cda92fbbe5bfbdd344a9fd79b2ef138cd6e6fc49d55e2f54e1d99a;
-
-    /**
-     * @dev Role that allows to pause the token
-     *
-     * keccak256("PAUSE_ROLE");
-     */
-    bytes32 private constant _PAUSE_ROLE = 0x139c2898040ef16910dc9f44dc697df79363da767d8bc92f2e310312b816e46d;
-
-    /**
-     * @dev Role that allows to pause the token
-     *
-     * keccak256("FREEZE_ROLE");
-     */
-    bytes32 private constant _FREEZE_ROLE = 0x5789b43a60de35bcedee40618ae90979bab7d1315fd4b079234241bdab19936d;
-
-    /**
-     * @dev Role that allows to pause the token
-     *
-     * keccak256("DELETE_ROLE");
-     */
-    bytes32 private constant _DELETE_ROLE = 0x2b73f0f98ad60ca619bbdee4bcd175da1127db86346339f8b718e3f8b4a006e2;
-
-    /**
-     * @dev Chain to include in array positions for roles don't available for an account
-     *
-     * keccak256("WITHOUT_ROLE");
-     */
-    bytes32 private constant _WITHOUT_ROLE = 0xe11b25922c3ff9f0f0a34f0b8929ac96a1f215b99dcb08c2891c220cf3a7e8cc;
-
-    /**
-     * @dev Role that allows to grant or revoke KYC to an account for the token
-     *
-     * keccak256("KYC_ROLE");
-     */
-    bytes32 private constant _KYC_ROLE = 0xdb11624602202c396fa347735a55e345a3aeb3e60f8885e1a71f1bf8d5886db7;
-
-    /**
-     * @dev Role that allows to update custom fees for the token
-     *
-     * keccak256("CUSTOM_FEES_ROLE");
-     */
-    bytes32 private constant _CUSTOM_FEES_ROLE = 0x6db8586688d24c6a6367d21f709d650b12a2a61dd75e834bd8cd90fd6afa794b;
-
-    /**
-     * @dev Role that allows to create holds
-     *
-     * keccak256("HOLD_CREATOR_ROLE");
-     */
-    bytes32 private constant _HOLD_CREATOR_ROLE = 0xa0edc074322e33cf8b82b4182ff2827f0fef9412190f0e8417c2669a1e8747e4;
-
-    /**
-     * @dev Array containing all roles
-     *
-     */
-    bytes32[] private _listOfroles;
-
-    /**
-     * @dev Checks if a roles is granted for the calling account
-     *
-     * @param role The role to check if is granted for the calling account
-     */
-    modifier onlyRole(bytes32 role) {
-        _checkRole(role);
-        _;
-    }
-
+// TODO: RolesFacet
+contract Roles is IRoles, RolesWrapper {
     /**
      * @dev Checks if the account has been granted a role
      *
@@ -129,7 +23,7 @@ abstract contract Roles is IRoles, Initializable {
      * @param role The role that the accounts have to be granted
      */
     function getAccountsWithRole(bytes32 role) external view returns (address[] memory) {
-        return _roles[role].accounts;
+        return _getAccountsWithRole(role);
     }
 
     /**
@@ -138,7 +32,7 @@ abstract contract Roles is IRoles, Initializable {
      * @param role The role that the accounts have to be granted
      */
     function getNumberOfAccountsWithRole(bytes32 role) external view returns (uint256) {
-        return _roles[role].accounts.length;
+        return _getNumberOfAccountsWithRole(role);
     }
 
     /**
@@ -173,15 +67,7 @@ abstract contract Roles is IRoles, Initializable {
      * @param account The account address
      */
     function getRoles(address account) external view override(IRoles) returns (bytes32[] memory rolesToReturn) {
-        uint256 rolesLength = _listOfroles.length;
-
-        rolesToReturn = new bytes32[](rolesLength);
-
-        for (uint256 index; index < rolesLength; index++) {
-            bytes32 role = _listOfroles[index];
-
-            rolesToReturn[index] = _hasRole(role, account) ? role : _WITHOUT_ROLE;
-        }
+        return _getRoles(account);
     }
 
     /**
@@ -192,97 +78,4 @@ abstract contract Roles is IRoles, Initializable {
     function getRoleId(RoleName role) external view override(IRoles) returns (bytes32) {
         return _getRoleId(role);
     }
-
-    /**
-     * @dev Returns a role bytes32 representation
-     *
-     * @param role The role we want to retrieve the bytes32 for
-     */
-    function _getRoleId(RoleName role) internal view returns (bytes32) {
-        return _listOfroles[uint256(role)];
-    }
-
-    /**
-     * @dev Populates the array of existing roles
-     *
-     */
-    function __rolesInit() internal onlyInitializing {
-        _listOfroles.push(ADMIN_ROLE);
-        _listOfroles.push(_CASHIN_ROLE);
-        _listOfroles.push(_BURN_ROLE);
-        _listOfroles.push(_WIPE_ROLE);
-        _listOfroles.push(_RESCUE_ROLE);
-        _listOfroles.push(_PAUSE_ROLE);
-        _listOfroles.push(_FREEZE_ROLE);
-        _listOfroles.push(_DELETE_ROLE);
-        _listOfroles.push(_KYC_ROLE);
-        _listOfroles.push(_CUSTOM_FEES_ROLE);
-        _listOfroles.push(_HOLD_CREATOR_ROLE);
-    }
-
-    /**
-     * @dev Checks if a role is granted to an account
-     *
-     * @param role The role to check if is granted
-     * @param account The account for which the role is checked for
-     */
-    function _hasRole(bytes32 role, address account) private view returns (bool) {
-        return _roles[role].members[account].active;
-    }
-
-    /**
-     * @dev Grants a role to an account
-     *
-     * @param role The role to be granted
-     * @param account The account for which the role will be granted
-     */
-    function _grantRole(bytes32 role, address account) internal {
-        if (_hasRole(role, account)) return;
-        _roles[role].members[account] = MemberData(true, _roles[role].accounts.length);
-        _roles[role].accounts.push(account);
-
-        emit RoleGranted(role, account, msg.sender);
-    }
-
-    /**
-     * @dev Revokes a role from an account
-     *
-     * @param role The role to be revoked
-     * @param account The account for which the role will be revoked
-     */
-    function _revokeRole(bytes32 role, address account) internal {
-        if (!_hasRole(role, account)) return;
-
-        uint256 position = _roles[role].members[account].pos;
-        uint256 lastIndex = _roles[role].accounts.length - 1;
-
-        if (position < lastIndex) {
-            address accountToMove = _roles[role].accounts[lastIndex];
-
-            _roles[role].accounts[position] = accountToMove;
-
-            _roles[role].members[accountToMove].pos = position;
-        }
-
-        _roles[role].accounts.pop();
-        delete (_roles[role].members[account]);
-        emit RoleRevoked(role, account, msg.sender);
-    }
-
-    /**
-     * @dev Checks if a role is granted to the calling account
-     *
-     * @param role The role to check if is granted
-     */
-    function _checkRole(bytes32 role) private view {
-        if (_hasRole(role, msg.sender)) return;
-        revert AccountHasNoRole(msg.sender, role);
-    }
-
-    /**
-     * @dev This empty reserved space is put in place to allow future versions to add new
-     * variables without shifting down storage in the inheritance chain.
-     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
-     */
-    uint256[48] private __gap;
 }
