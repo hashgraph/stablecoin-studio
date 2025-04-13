@@ -53,7 +53,10 @@ jobs:
         working-directory: contracts
 
       - name: Change references to repo
-        run: chmod +x ${GITHUB_WORKSPACE}/changeProjectsRefrencesToRepo.sh; ls -alF; ${GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh
+        run:  |
+          ls -alF
+          chmod +x ${GITHUB_WORKSPACE}/changeProjectsRefrencesToRepo.sh
+          {GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh/changeProjectsReferencesToRepo.sh
 
       - name: Install Contracts
         run: npm ci
@@ -108,7 +111,10 @@ jobs:
         working-directory: sdk
 
       - name: Change references to repo
-        run: chmod +x ${GITHUB_WORKSPACE}/changeProjectsRefrencesToRepo.sh; ls -alF; ${GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh
+        run:  |
+          ls -alF
+          chmod +x ${GITHUB_WORKSPACE}/changeProjectsRefrencesToRepo.sh
+          {GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh/changeProjectsReferencesToRepo.sh
 
       # * Prepare other modules
       - name: Install and build Contracts and SDK
@@ -166,7 +172,10 @@ jobs:
         working-directory: cli
 
       - name: Change references to repo
-        run: ${GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh
+        run: |
+          ls -alF
+          chmod +x ${GITHUB_WORKSPACE}/changeProjectsRefrencesToRepo.sh
+          {GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh
 
       # * Prepare other modules
       - name: Install and build Contracts and SDK
