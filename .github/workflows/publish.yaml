@@ -55,7 +55,7 @@ jobs:
       - name: Change references to repo
         run:  |
           ls -alF ${GITHUB_WORKSPACE}
-          chmod +x ${GITHUB_WORKSPACE}/changeProjectsRefrencesToRepo.sh
+          chmod +x ${GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh
           {GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh
 
       - name: Install Contracts
@@ -113,7 +113,7 @@ jobs:
       - name: Change references to repo
         run:  |
           ls -alF ${GITHUB_WORKSPACE}
-          chmod +x ${GITHUB_WORKSPACE}/changeProjectsRefrencesToRepo.sh
+          chmod +x ${GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh
           {GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh
 
       # * Prepare other modules
@@ -174,7 +174,7 @@ jobs:
       - name: Change references to repo
         run: |
           ls -alF ${GITHUB_WORKSPACE}
-          chmod +x ${GITHUB_WORKSPACE}/changeProjectsRefrencesToRepo.sh
+          chmod +x ${GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh
           {GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh
 
       # * Prepare other modules
