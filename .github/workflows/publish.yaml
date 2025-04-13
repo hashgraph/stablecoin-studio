@@ -73,7 +73,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           DRY_RUN: ${{ inputs.dry_run }}
         run: |
-          if [[ "${DRY_RUN}" == "true" ]]; then
+          if [ "${DRY_RUN}" == "true" ]; then
             npm run publish:contracts --access=public --dry-run
           else
             npm run publish:contracts --access=public
@@ -139,7 +139,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           DRY_RUN: ${{ inputs.dry_run }}
         run: |
-          if [[ "${DRY_RUN}" == "true" ]]; then
+          if [ "${DRY_RUN}" == "true" ]; then
             npm run publish:sdk --access=public --dry-run
           else
             npm run publish:sdk --access=public
@@ -206,7 +206,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           DRY_RUN: ${{ inputs.dry_run }}
         run: |
-          if [[ "${DRY_RUN}" == "true" ]]; then
+          if [ "${DRY_RUN}" == "true" ]; then
             npm run publish:cli --access=public --dry-run
           else
             npm run publish:cli --access=public
