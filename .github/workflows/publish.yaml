@@ -54,7 +54,7 @@ jobs:
 
       - name: Change references to repo
         run:  |
-          ls -alF
+          ls -alF ${GITHUB_WORKSPACE}
           chmod +x ${GITHUB_WORKSPACE}/changeProjectsRefrencesToRepo.sh
           {GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh/changeProjectsReferencesToRepo.sh
 
@@ -112,7 +112,7 @@ jobs:
 
       - name: Change references to repo
         run:  |
-          ls -alF
+          ls -alF ${GITHUB_WORKSPACE}
           chmod +x ${GITHUB_WORKSPACE}/changeProjectsRefrencesToRepo.sh
           {GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh/changeProjectsReferencesToRepo.sh
 
@@ -173,7 +173,7 @@ jobs:
 
       - name: Change references to repo
         run: |
-          ls -alF
+          ls -alF ${GITHUB_WORKSPACE}
           chmod +x ${GITHUB_WORKSPACE}/changeProjectsRefrencesToRepo.sh
           {GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh
 
