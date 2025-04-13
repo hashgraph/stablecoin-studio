@@ -6,11 +6,11 @@ on:
       - published
   workflow_dispatch:
     inputs:
-      dry-run:
+      dry_run:
         description: "Run npm publish with dry-run flag"
         required: false
-        type: boolean
-        default: false
+        type: string
+        default: 'false'
 
 permissions:
   contents: read
@@ -71,9 +71,9 @@ jobs:
       - name: Publish contracts
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          DRY_RUN: ${{ inputs.dry-run }}
+          DRY_RUN: ${{ inputs.dry_run }}
         run: |
-          if [[ "$DRY_RUN" == "true" ]]; then
+          if [[ "${DRY_RUN}" == "true" ]]; then
             npm run publish:contracts --access=public --dry-run
           else
             npm run publish:contracts --access=public
@@ -137,9 +137,9 @@ jobs:
       - name: Publish sdk package
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          DRY_RUN: ${{ inputs.dry-run }}
+          DRY_RUN: ${{ inputs.dry_run }}
         run: |
-          if [[ "$DRY_RUN" == "true" ]]; then
+          if [[ "${DRY_RUN}" == "true" ]]; then
             npm run publish:sdk --access=public --dry-run
           else
             npm run publish:sdk --access=public
@@ -204,9 +204,9 @@ jobs:
       - name: Publish cli package
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          DRY_RUN: ${{ inputs.dry-run }}
+          DRY_RUN: ${{ inputs.dry_run }}
         run: |
-          if [[ "$DRY_RUN" == "true" ]]; then
+          if [[ "${DRY_RUN}" == "true" ]]; then
             npm run publish:cli --access=public --dry-run
           else
             npm run publish:cli --access=public
