@@ -54,7 +54,7 @@ jobs:
 
       - name: Change references to repo
         run: |
-          ./changeProjectsReferencesToRepo.sh
+          changeProjectsReferencesToRepo.sh
         working-directory: ${{ github.workspace }}
 
       - name: Install Contracts
@@ -111,7 +111,7 @@ jobs:
 
       - name: Change references to repo
         run: |
-          ./changeProjectsReferencesToRepo.sh
+          changeProjectsReferencesToRepo.sh
         working-directory: ${{ github.workspace }}
         
         
@@ -173,7 +173,7 @@ jobs:
 
       - name: Change references to repo
         run: |
-          ./changeProjectsReferencesToRepo.sh
+          changeProjectsReferencesToRepo.sh
         working-directory: ${{ github.workspace }}
 
       # * Prepare other modules
