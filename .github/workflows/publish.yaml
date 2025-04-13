@@ -53,9 +53,7 @@ jobs:
         working-directory: contracts
 
       - name: Change references to repo
-        run: |
-          changeProjectsReferencesToRepo.sh
-        working-directory: ${{ github.workspace }}
+        run: ${{ github.workspace }}/changeProjectsReferencesToRepo.sh
 
       - name: Install Contracts
         run: npm ci
@@ -110,11 +108,7 @@ jobs:
         working-directory: sdk
 
       - name: Change references to repo
-        run: |
-          changeProjectsReferencesToRepo.sh
-        working-directory: ${{ github.workspace }}
-        
-        
+        run: ${{ github.workspace }}/changeProjectsReferencesToRepo.sh
 
       # * Prepare other modules
       - name: Install and build Contracts and SDK
@@ -172,9 +166,7 @@ jobs:
         working-directory: cli
 
       - name: Change references to repo
-        run: |
-          changeProjectsReferencesToRepo.sh
-        working-directory: ${{ github.workspace }}
+        run: ${{ github.workspace }}/changeProjectsReferencesToRepo.sh
 
       # * Prepare other modules
       - name: Install and build Contracts and SDK
