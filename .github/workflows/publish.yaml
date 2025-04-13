@@ -12,10 +12,6 @@ on:
         type: boolean
         default: false
 
-defaults:
-  run:
-    shell: bash
-
 permissions:
   contents: read
 
@@ -46,6 +42,9 @@ jobs:
           node-version: '20'
           token: ${{ secrets.NPM_TOKEN }}
 
+      - name: Install bash
+        run: apk add --no-cache bash
+
       - name: Create file .npmrc
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -55,16 +54,19 @@ jobs:
           //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
           EOF
         working-directory: contracts
+        shell: bash
 
       - name: Change references to repo
         run:  |
           ls -alF ${GITHUB_WORKSPACE}
           chmod +x ${GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh
           ${GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh
+        shell: bash
 
       - name: Install Contracts
         run: npm ci
         working-directory: contracts
+        shell: bash
 
       - name: Publish contracts
         env:
@@ -76,6 +78,7 @@ jobs:
           else
             npm run publish:contracts --access=public
           fi
+        shell: bash
 
   sdk:
     # needs: contracts
@@ -98,6 +101,9 @@ jobs:
           ref: ${{ inputs.ref }}
           fetch-depth: '0'
 
+      - name: Install bash
+        run: apk add --no-cache bash
+
       - name: Setup NPM
         uses: actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e # v4.3.0
         with:
@@ -113,12 +119,14 @@ jobs:
           //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
           EOF
         working-directory: sdk
+        shell: bash
 
       - name: Change references to repo
         run:  |
           ls -alF ${GITHUB_WORKSPACE}
           chmod +x ${GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh
           ${GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh
+        shell: bash
 
       # * Prepare other modules
       - name: Install and build Contracts and SDK
@@ -137,6 +145,7 @@ jobs:
             npm run publish:sdk --access=public
           fi
         working-directory: sdk
+        shell: bash
 
   cli:
     # needs: sdk
@@ -159,6 +168,9 @@ jobs:
           ref: ${{ inputs.ref }}
           fetch-depth: '0'
 
+      - name: Install bash
+        run: apk add --no-cache bash
+
       - name: Setup NPM
         uses: actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e # v4.3.0
         with:
@@ -174,12 +186,14 @@ jobs:
           //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
           EOF
         working-directory: cli
+        shell: bash
 
       - name: Change references to repo
         run: |
           ls -alF ${GITHUB_WORKSPACE}
           chmod +x ${GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh
           ${GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh
+        shell: bash
 
       # * Prepare other modules
       - name: Install and build Contracts and SDK
@@ -198,3 +212,4 @@ jobs:
             npm run publish:cli --access=public
           fi
         working-directory: cli
+        shell: bash
