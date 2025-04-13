@@ -55,7 +55,7 @@ jobs:
       - name: Change references to repo
         run: |
           ls -alF
-          ../changeProjectsReferencesToRepo.sh
+          ./changeProjectsReferencesToRepo.sh
 
       - name: Install Contracts
         run: npm ci
@@ -112,7 +112,7 @@ jobs:
       - name: Change references to repo
         run: | 
           ls -alF
-          ../changeProjectsReferencesToRepo.sh
+          ./changeProjectsReferencesToRepo.sh
         
         
 
@@ -174,7 +174,7 @@ jobs:
       - name: Change references to repo
         run: |
           ls -alF
-          ../changeProjectsReferencesToRepo.sh
+          ./changeProjectsReferencesToRepo.sh
 
       # * Prepare other modules
       - name: Install and build Contracts and SDK
