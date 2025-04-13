@@ -56,7 +56,7 @@ jobs:
         run:  |
           ls -alF ${GITHUB_WORKSPACE}
           chmod +x ${GITHUB_WORKSPACE}/changeProjectsRefrencesToRepo.sh
-          {GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh/changeProjectsReferencesToRepo.sh
+          {GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh
 
       - name: Install Contracts
         run: npm ci
@@ -114,7 +114,7 @@ jobs:
         run:  |
           ls -alF ${GITHUB_WORKSPACE}
           chmod +x ${GITHUB_WORKSPACE}/changeProjectsRefrencesToRepo.sh
-          {GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh/changeProjectsReferencesToRepo.sh
+          {GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh
 
       # * Prepare other modules
       - name: Install and build Contracts and SDK
