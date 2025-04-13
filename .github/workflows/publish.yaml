@@ -53,7 +53,9 @@ jobs:
         working-directory: contracts
 
       - name: Change references to repo
-        run: ../changeProjectsReferencesToRepo.sh
+        run: |
+          ls -alF
+          ../changeProjectsReferencesToRepo.sh
 
       - name: Install Contracts
         run: npm ci
@@ -108,7 +110,11 @@ jobs:
         working-directory: sdk
 
       - name: Change references to repo
-        run: ../changeProjectsReferencesToRepo.sh
+        run: | 
+          ls -alF
+          ../changeProjectsReferencesToRepo.sh
+        
+        
 
       # * Prepare other modules
       - name: Install and build Contracts and SDK
@@ -166,7 +172,9 @@ jobs:
         working-directory: cli
 
       - name: Change references to repo
-        run: ../changeProjectsReferencesToRepo.sh
+        run: |
+          ls -alF
+          ../changeProjectsReferencesToRepo.sh
 
       # * Prepare other modules
       - name: Install and build Contracts and SDK
