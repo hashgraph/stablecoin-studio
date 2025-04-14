@@ -6,11 +6,15 @@ on:
       - published
   workflow_dispatch:
     inputs:
-      dry-run:
+      dry-run-enabled:
         description: "Run npm publish with dry-run flag"
         required: false
         type: boolean
         default: false
+
+defaults:
+  run:
+    shell: bash
 
 permissions:
   contents: read
@@ -19,7 +23,7 @@ jobs:
   contracts:
     runs-on: token-studio-linux-medium
     container:
-      image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
+      image: node@sha256:db5dd2f30cb82a8bdbd16acd4a8f3f2789f5b24f6ce43f98aa041be848c82e45 # node:20.17.0-bookworm
     permissions:
       contents: read
 
@@ -53,7 +57,8 @@ jobs:
         working-directory: contracts
 
       - name: Change references to repo
-        run: ./changeProjectsReferencesToRepo.sh
+        run:  |
+          ${GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh
 
       - name: Install Contracts
         run: npm ci
@@ -62,19 +67,23 @@ jobs:
       - name: Publish contracts
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          DRY_RUN: ${{ inputs.dry-run }}
+          DRY_RUN: ${{ inputs.dry-run-enabled }}
         run: |
-          if [[ "$DRY_RUN" == "true" ]]; then
-            npm run publish:contracts --access=public --dry-run
-          else
-            npm run publish:contracts --access=public
+          echo "DRY_RUN is set to: '${DRY_RUN}'"
+          
+          ARGS=("--access=public")
+          if [[ "${DRY_RUN}" == "true" ]]; then
+            ARGS+=("--dry-run")
           fi
+
+          npm run publish:contracts -- "${ARGS[@]}"
+        working-directory: ${{ github.workspace }}
 
   sdk:
     # needs: contracts
     runs-on: token-studio-linux-medium
     container:
-      image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
+      image: node@sha256:db5dd2f30cb82a8bdbd16acd4a8f3f2789f5b24f6ce43f98aa041be848c82e45 # node:20.17.0-bookworm
     permissions:
       contents: read
 
@@ -108,7 +117,8 @@ jobs:
         working-directory: sdk
 
       - name: Change references to repo
-        run: ./changeProjectsReferencesToRepo.sh
+        run:  |
+          ${GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh
 
       # * Prepare other modules
       - name: Install and build Contracts and SDK
@@ -119,20 +129,23 @@ jobs:
       - name: Publish sdk package
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          DRY_RUN: ${{ inputs.dry-run }}
+          DRY_RUN: ${{ inputs.dry-run-enabled }}
         run: |
-          if [[ "$DRY_RUN" == "true" ]]; then
-            npm run publish:sdk --access=public --dry-run
-          else
-            npm run publish:sdk --access=public
+          echo "DRY_RUN is set to: '${DRY_RUN}'"
+          
+          ARGS=("--access=public")
+          if [[ "${DRY_RUN}" == "true" ]]; then
+            ARGS+=("--dry-run")
           fi
-        working-directory: sdk
+
+          npm run publish:sdk -- "${ARGS[@]}"
+        working-directory: ${{ github.workspace }}
 
   cli:
     # needs: sdk
     runs-on: token-studio-linux-medium
     container:
-      image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
+      image: node@sha256:db5dd2f30cb82a8bdbd16acd4a8f3f2789f5b24f6ce43f98aa041be848c82e45 # node:20.17.0-bookworm
     permissions:
       contents: read
 
@@ -166,7 +179,8 @@ jobs:
         working-directory: cli
 
       - name: Change references to repo
-        run: ./changeProjectsReferencesToRepo.sh
+        run: |
+          ${GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh
 
       # * Prepare other modules
       - name: Install and build Contracts and SDK
@@ -177,11 +191,14 @@ jobs:
       - name: Publish cli package
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          DRY_RUN: ${{ inputs.dry-run }}
+          DRY_RUN: ${{ inputs.dry-run-enabled }}
         run: |
-          if [[ "$DRY_RUN" == "true" ]]; then
-            npm run publish:cli --access=public --dry-run
-          else
-            npm run publish:cli --access=public
+          echo "DRY_RUN is set to: '${DRY_RUN}'"
+          
+          ARGS=("--access=public")
+          if [[ "${DRY_RUN}" == "true" ]]; then
+            ARGS+=("--dry-run")
           fi
-        working-directory: cli
+
+          npm run publish:cli -- "${ARGS[@]}"
+        working-directory: ${{ github.workspace }}
