@@ -23,7 +23,7 @@ jobs:
   contracts:
     runs-on: token-studio-linux-medium
     container:
-      image: node@sha256:sha256:db5dd2f30cb82a8bdbd16acd4a8f3f2789f5b24f6ce43f98aa041be848c82e45 # node:20.17.0-bookworm
+      image: node@sha256:db5dd2f30cb82a8bdbd16acd4a8f3f2789f5b24f6ce43f98aa041be848c82e45 # node:20.17.0-bookworm
     permissions:
       contents: read
 
@@ -84,7 +84,7 @@ jobs:
     # needs: contracts
     runs-on: token-studio-linux-medium
     container:
-      image: node@sha256:sha256:db5dd2f30cb82a8bdbd16acd4a8f3f2789f5b24f6ce43f98aa041be848c82e45 # node:20.17.0-bookworm
+      image: node@sha256:db5dd2f30cb82a8bdbd16acd4a8f3f2789f5b24f6ce43f98aa041be848c82e45 # node:20.17.0-bookworm
     permissions:
       contents: read
 
@@ -148,7 +148,7 @@ jobs:
     # needs: sdk
     runs-on: token-studio-linux-medium
     container:
-      image: node@sha256:sha256:db5dd2f30cb82a8bdbd16acd4a8f3f2789f5b24f6ce43f98aa041be848c82e45 # node:20.17.0-bookworm
+      image: node@sha256:db5dd2f30cb82a8bdbd16acd4a8f3f2789f5b24f6ce43f98aa041be848c82e45 # node:20.17.0-bookworm
     permissions:
       contents: read
 
