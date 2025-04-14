@@ -12,6 +12,10 @@ on:
         type: string
         default: 'false'
 
+defaults:
+  run:
+    shell: bash
+
 permissions:
   contents: read
 
@@ -19,7 +23,7 @@ jobs:
   contracts:
     runs-on: token-studio-linux-medium
     container:
-      image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
+      image: node@sha256:sha256:db5dd2f30cb82a8bdbd16acd4a8f3f2789f5b24f6ce43f98aa041be848c82e45 # node:20.17.0-bookworm
     permissions:
       contents: read
 
@@ -54,39 +58,33 @@ jobs:
           //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
           EOF
         working-directory: contracts
-        shell: bash
 
       - name: Change references to repo
         run:  |
           ls -alF ${GITHUB_WORKSPACE}
           chmod +x ${GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh
           ${GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh
-        shell: bash
 
       - name: Install Contracts
         run: npm ci
         working-directory: contracts
-        shell: bash
 
       - name: Publish contracts
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           DRY_RUN: ${{ inputs.dry_run }}
         run: |
-          bash -c '
             if [[ "${DRY_RUN}" == "true" ]]; then
               npm run publish:cli --access=public --dry-run
             else
               npm run publish:cli --access=public
             fi
-          '
-        shell: bash
 
   sdk:
     # needs: contracts
     runs-on: token-studio-linux-medium
     container:
-      image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
+      image: node@sha256:sha256:db5dd2f30cb82a8bdbd16acd4a8f3f2789f5b24f6ce43f98aa041be848c82e45 # node:20.17.0-bookworm
     permissions:
       contents: read
 
@@ -121,14 +119,12 @@ jobs:
           //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
           EOF
         working-directory: sdk
-        shell: bash
 
       - name: Change references to repo
         run:  |
           ls -alF ${GITHUB_WORKSPACE}
           chmod +x ${GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh
           ${GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh
-        shell: bash
 
       # * Prepare other modules
       - name: Install and build Contracts and SDK
@@ -149,13 +145,12 @@ jobs:
             fi
           '
         working-directory: sdk
-        shell: bash
 
   cli:
     # needs: sdk
     runs-on: token-studio-linux-medium
     container:
-      image: node:20.17.0-alpine3.20 # Using alpine for a smaller image
+      image: node@sha256:sha256:db5dd2f30cb82a8bdbd16acd4a8f3f2789f5b24f6ce43f98aa041be848c82e45 # node:20.17.0-bookworm
     permissions:
       contents: read
 
@@ -190,14 +185,12 @@ jobs:
           //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
           EOF
         working-directory: cli
-        shell: bash
 
       - name: Change references to repo
         run: |
           ls -alF ${GITHUB_WORKSPACE}
           chmod +x ${GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh
           ${GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh
-        shell: bash
 
       # * Prepare other modules
       - name: Install and build Contracts and SDK
@@ -218,4 +211,3 @@ jobs:
             fi
           '
         working-directory: cli
-        shell: bash
