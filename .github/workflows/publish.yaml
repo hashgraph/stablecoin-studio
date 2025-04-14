@@ -80,7 +80,7 @@ jobs:
             ARGS="--access=public"
           fi
 
-          npm run publish:contracts "${ARGS}"
+          npm run publish:contracts -- "${ARGS}"
         working-directory: ${{ github.workspace }}
 
   sdk:
@@ -146,7 +146,7 @@ jobs:
             ARGS="--access=public"
           fi
 
-          npm run publish:sdk "${ARGS}"
+          npm run publish:sdk -- "${ARGS}"
         working-directory: ${{ github.workspace }}
 
   cli:
@@ -212,5 +212,5 @@ jobs:
             ARGS="--access=public"
           fi
 
-          npm run publish:cli "${ARGS}"
+          npm run publish:cli -- "${ARGS}"
         working-directory: ${{ github.workspace }}
