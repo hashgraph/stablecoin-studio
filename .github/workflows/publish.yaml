@@ -192,7 +192,9 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           DRY_RUN: ${{ inputs.dry_run }}
         run: |
-            if [[ "${DRY_RUN}" == "true" ]]; then
+          echo "DRY_RUN is set to: '${DRY_RUN}'"
+          
+          if [[ "${DRY_RUN}" == "true" ]]; then
               npm run publish:cli --access=public --dry-run
             else
               npm run publish:cli --access=public
