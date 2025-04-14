@@ -137,13 +137,11 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           DRY_RUN: ${{ inputs.dry_run }}
         run: |
-          bash -c '
             if [[ "${DRY_RUN}" == "true" ]]; then
               npm run publish:cli --access=public --dry-run
             else
               npm run publish:cli --access=public
             fi
-          '
         working-directory: sdk
 
   cli:
@@ -203,11 +201,9 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           DRY_RUN: ${{ inputs.dry_run }}
         run: |
-          bash -c '
             if [[ "${DRY_RUN}" == "true" ]]; then
               npm run publish:cli --access=public --dry-run
             else
               npm run publish:cli --access=public
             fi
-          '
         working-directory: cli
