@@ -6,7 +6,7 @@ on:
       - published
   workflow_dispatch:
     inputs:
-      dry_run:
+      dry-run-enabled:
         description: "Run npm publish with dry-run flag"
         required: false
         type: boolean
@@ -58,7 +58,6 @@ jobs:
 
       - name: Change references to repo
         run:  |
-          ls -alF ${GITHUB_WORKSPACE}
           chmod +x ${GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh
           ${GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh
 
@@ -69,7 +68,7 @@ jobs:
       - name: Publish contracts
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          DRY_RUN: ${{ inputs.dry_run }}
+          DRY_RUN: ${{ inputs.dry-run-enabled }}
         run: |
           echo "DRY_RUN is set to: '${DRY_RUN}'"
           
@@ -120,7 +119,6 @@ jobs:
 
       - name: Change references to repo
         run:  |
-          ls -alF ${GITHUB_WORKSPACE}
           chmod +x ${GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh
           ${GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh
 
@@ -133,7 +131,7 @@ jobs:
       - name: Publish sdk package
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          DRY_RUN: ${{ inputs.dry_run }}
+          DRY_RUN: ${{ inputs.dry-run-enabled }}
         run: |
           echo "DRY_RUN is set to: '${DRY_RUN}'"
           
@@ -184,7 +182,6 @@ jobs:
 
       - name: Change references to repo
         run: |
-          ls -alF ${GITHUB_WORKSPACE}
           chmod +x ${GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh
           ${GITHUB_WORKSPACE}/changeProjectsReferencesToRepo.sh
 
@@ -197,7 +194,7 @@ jobs:
       - name: Publish cli package
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          DRY_RUN: ${{ inputs.dry_run }}
+          DRY_RUN: ${{ inputs.dry-run-enabled }}
         run: |
           echo "DRY_RUN is set to: '${DRY_RUN}'"
           
