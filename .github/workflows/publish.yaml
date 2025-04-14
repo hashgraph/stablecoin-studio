@@ -71,11 +71,17 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           DRY_RUN: ${{ inputs.dry_run }}
         run: |
-            if [[ "${DRY_RUN}" == "true" ]]; then
-              npm run publish:cli --access=public --dry-run
-            else
-              npm run publish:cli --access=public
-            fi
+          echo "DRY_RUN is set to: '${DRY_RUN}'"
+
+          ARGS=""
+          if [[ "${DRY_RUN}" == "true" ]]; then
+            ARGS="--access=public --dry-run"
+          else
+            ARGS="--access=public"
+          fi
+
+          npm run publish "${ARGS}"
+        working-directory: contracts
 
   sdk:
     # needs: contracts
@@ -131,11 +137,16 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           DRY_RUN: ${{ inputs.dry_run }}
         run: |
-            if [[ "${DRY_RUN}" == "true" ]]; then
-              npm run publish:cli --access=public --dry-run
-            else
-              npm run publish:cli --access=public
-            fi
+          echo "DRY_RUN is set to: '${DRY_RUN}'"
+
+          ARGS=""
+          if [[ "${DRY_RUN}" == "true" ]]; then
+            ARGS="--access=public --dry-run"
+          else
+            ARGS="--access=public"
+          fi
+
+          npm run publish "${ARGS}"
         working-directory: sdk
 
   cli:
@@ -193,10 +204,13 @@ jobs:
           DRY_RUN: ${{ inputs.dry_run }}
         run: |
           echo "DRY_RUN is set to: '${DRY_RUN}'"
-          
+          ARGS=""
+
           if [[ "${DRY_RUN}" == "true" ]]; then
-              npm run publish:cli --access=public --dry-run
-            else
-              npm run publish:cli --access=public
-            fi
+            ARGS="--access=public --dry-run"
+          else
+            ARGS="--access=public"
+          fi
+
+          npm run publish "${ARGS}"
         working-directory: cli
