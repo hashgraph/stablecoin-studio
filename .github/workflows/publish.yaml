@@ -9,8 +9,8 @@ on:
       dry_run:
         description: "Run npm publish with dry-run flag"
         required: false
-        type: string
-        default: 'false'
+        type: boolean
+        default: false
 
 defaults:
   run:
