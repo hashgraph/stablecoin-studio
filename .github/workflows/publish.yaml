@@ -72,15 +72,13 @@ jobs:
           DRY_RUN: ${{ inputs.dry_run }}
         run: |
           echo "DRY_RUN is set to: '${DRY_RUN}'"
-
-          ARGS=""
+          
+          ARGS=("--access=public")
           if [[ "${DRY_RUN}" == "true" ]]; then
-            ARGS="--access=public --dry-run"
-          else
-            ARGS="--access=public"
+            ARGS+=("--dry-run")
           fi
 
-          npm run publish:contracts -- "${ARGS}"
+          npm run publish:contracts -- "${ARGS[@]}"
         working-directory: ${{ github.workspace }}
 
   sdk:
@@ -138,15 +136,13 @@ jobs:
           DRY_RUN: ${{ inputs.dry_run }}
         run: |
           echo "DRY_RUN is set to: '${DRY_RUN}'"
-
-          ARGS=""
+          
+          ARGS=("--access=public")
           if [[ "${DRY_RUN}" == "true" ]]; then
-            ARGS="--access=public --dry-run"
-          else
-            ARGS="--access=public"
+            ARGS+=("--dry-run")
           fi
 
-          npm run publish:sdk -- "${ARGS}"
+          npm run publish:sdk -- "${ARGS[@]}"
         working-directory: ${{ github.workspace }}
 
   cli:
@@ -204,13 +200,11 @@ jobs:
           DRY_RUN: ${{ inputs.dry_run }}
         run: |
           echo "DRY_RUN is set to: '${DRY_RUN}'"
-          ARGS=""
-
+          
+          ARGS=("--access=public")
           if [[ "${DRY_RUN}" == "true" ]]; then
-            ARGS="--access=public --dry-run"
-          else
-            ARGS="--access=public"
+            ARGS+=("--dry-run")
           fi
 
-          npm run publish:cli -- "${ARGS}"
+          npm run publish:cli -- "${ARGS[@]}"
         working-directory: ${{ github.workspace }}
