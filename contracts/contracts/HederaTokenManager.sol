@@ -1,40 +1,18 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.18;
 
-import {IERC20Upgradeable} from '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
-// solhint-disable-next-line max-line-length
-import {IERC20MetadataUpgradeable} from '@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol';
 import {IHederaTokenManager} from './Interfaces/IHederaTokenManager.sol';
-import {CashIn} from './extensions/CashIn.sol';
-import {Burnable} from './extensions/Burnable.sol';
-import {Wipeable} from './extensions/Wipeable.sol';
-import {Pausable} from './extensions/Pausable.sol';
-import {Freezable} from './extensions/Freezable.sol';
-import {Rescuable} from './extensions/Rescuable.sol';
-import {Deletable} from './extensions/Deletable.sol';
-
+import {_HEDERA_TOKEN_MANAGER_RESOLVER_KEY} from './constants/resolverKeys.sol';
+import {SupplierAdminStorageWrapper} from './extensions/SupplierAdminStorageWrapper.sol';
+import {ReserveStorageWrapper} from './extensions/ReserveStorageWrapper.sol';
+import {IRoles} from './extensions/Interfaces/IRoles.sol';
 // solhint-disable-next-line max-line-length
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
-import {TokenOwner} from './extensions/TokenOwner.sol';
-import {KYC} from './extensions/KYC.sol';
-import {RoleManagement} from './extensions/RoleManagement.sol';
-import {CustomFees} from './extensions/CustomFees.sol';
 import {KeysLib} from './library/KeysLib.sol';
-import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
+// solhint-disable-next-line max-line-length
+import {IERC20MetadataUpgradeable} from '@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol';
 
-contract HederaTokenManager is
-    IHederaTokenManager,
-    CashIn,
-    Burnable,
-    Wipeable,
-    Pausable,
-    Freezable,
-    Deletable,
-    Rescuable,
-    KYC,
-    RoleManagement,
-    CustomFees
-{
+contract HederaTokenManager is IHederaTokenManager, ReserveStorageWrapper, SupplierAdminStorageWrapper {
     uint256 private constant _ADMIN_KEY_BIT = 0;
     uint256 private constant _SUPPLY_KEY_BIT = 4;
     // HTS token metadata
@@ -54,7 +32,7 @@ contract HederaTokenManager is
      * @dev Constructor required to avoid Initializer attack on logic contract
      */
     constructor() {
-        _disableInitializers();
+        _disableInitializers(_HEDERA_TOKEN_MANAGER_RESOLVER_KEY);
     }
 
     /**
@@ -69,7 +47,7 @@ contract HederaTokenManager is
     )
         external
         payable
-        initializer
+        initializer(_HEDERA_TOKEN_MANAGER_RESOLVER_KEY)
         addressIsNotZero(init.originalSender)
         lessThan100(init.tokenMetadataURI)
         returns (address)
@@ -149,7 +127,7 @@ contract HederaTokenManager is
         external
         override(IHederaTokenManager)
         lessThan100(updatedToken.tokenMetadataURI)
-        onlyRole(_getRoleId(RoleName.ADMIN))
+        onlyRole(_getRoleId(IRoles.RoleName.ADMIN))
     {
         _setMetadata(updatedToken.tokenMetadataURI);
 
@@ -206,10 +184,14 @@ contract HederaTokenManager is
         address originalSender,
         RolesStruct[] memory roles,
         CashinRoleStruct memory cashinRole
-    ) private onlyInitializing {
+    ) private {
+        uint256 length = roles.length;
         // granting all roles except cashin role
-        for (uint256 i = 0; i < roles.length; i++) {
+        for (uint256 i; i < length; ) {
             _grantRole(roles[i].role, roles[i].account);
+            unchecked {
+                ++i;
+            }
         }
 
         // granting cashin role
@@ -219,7 +201,7 @@ contract HederaTokenManager is
         }
 
         // granting admin role, always to the SC creator
-        _grantRole(_getRoleId(RoleName.ADMIN), originalSender);
+        _grantRole(_getRoleId(IRoles.RoleName.ADMIN), originalSender);
     }
 
     /**
@@ -227,51 +209,11 @@ contract HederaTokenManager is
      *
      * @param originalSender address of the original sender
      */
-    function _transferFundsBackToOriginalSender(address originalSender) private onlyInitializing {
+    function _transferFundsBackToOriginalSender(address originalSender) private {
         uint256 currentBalance = address(this).balance;
         if (currentBalance == 0) return;
         (bool s, ) = originalSender.call{value: currentBalance}('');
         if (!s) revert RefundingError(currentBalance);
-    }
-
-    /**
-     * @dev Returns the number tokens that an account has
-     *
-     * @param account The address of the account to be consulted
-     *
-     * @return uint256 The number number tokens that an account has
-     */
-    function _balanceOf(address account) internal view override(TokenOwner) returns (uint256) {
-        return IERC20Upgradeable(_getTokenAddress()).balanceOf(account);
-    }
-
-    /**
-     * @dev Transfers an amount of tokens from and account to another account
-     *
-     * @param to The address the tokens are transferred to
-     */
-    function _transfer(
-        address to,
-        int64 amount
-    )
-        internal
-        override(TokenOwner)
-        valueIsNotGreaterThan(uint256(SafeCast.toUint256(amount)), _balanceOf(address(this)), true)
-    {
-        if (to != address(this)) {
-            address currentTokenAddress = _getTokenAddress();
-
-            int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS).transferToken(
-                currentTokenAddress,
-                address(this),
-                to,
-                amount
-            );
-
-            _checkResponse(responseCode);
-
-            emit TokenTransfer(currentTokenAddress, address(this), to, amount);
-        }
     }
 
     /**

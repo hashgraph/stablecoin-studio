@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.18;
 
+import {IRoles} from './Interfaces/IRoles.sol';
 import {IRoleManagement} from './Interfaces/IRoleManagement.sol';
 import {SupplierAdmin} from './SupplierAdmin.sol';
 
@@ -16,8 +17,8 @@ abstract contract RoleManagement is IRoleManagement, SupplierAdmin {
         bytes32[] calldata roles,
         address[] calldata accounts,
         uint256[] calldata amounts
-    ) external override(IRoleManagement) onlyRole(_getRoleId(RoleName.ADMIN)) {
-        bytes32 cashInRole = _getRoleId(RoleName.CASHIN);
+    ) external override(IRoleManagement) onlyRole(_getRoleId(IRoles.RoleName.ADMIN)) {
+        bytes32 cashInRole = _getRoleId(IRoles.RoleName.CASHIN);
 
         for (uint256 i = 0; i < roles.length; i++) {
             if (roles[i] == cashInRole) {
@@ -43,8 +44,8 @@ abstract contract RoleManagement is IRoleManagement, SupplierAdmin {
     function revokeRoles(
         bytes32[] calldata roles,
         address[] calldata accounts
-    ) external override(IRoleManagement) onlyRole(_getRoleId(RoleName.ADMIN)) {
-        bytes32 cashInRole = _getRoleId(RoleName.CASHIN);
+    ) external override(IRoleManagement) onlyRole(_getRoleId(IRoles.RoleName.ADMIN)) {
+        bytes32 cashInRole = _getRoleId(IRoles.RoleName.CASHIN);
 
         for (uint256 i = 0; i < roles.length; i++) {
             if (roles[i] == cashInRole) {
@@ -58,11 +59,4 @@ abstract contract RoleManagement is IRoleManagement, SupplierAdmin {
             }
         }
     }
-
-    /**
-     * @dev This empty reserved space is put in place to allow future versions to add new
-     * variables without shifting down storage in the inheritance chain.
-     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
-     */
-    uint256[50] private __gap;
 }
