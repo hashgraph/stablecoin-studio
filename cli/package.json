@@ -1,6 +1,6 @@
 {
   "name": "@hashgraph/stablecoin-npm-cli",
-  "version": "1.27.7",
+  "version": "1.27.8",
   "description": "CLI for Hedera Stablecoin",
   "main": "./build/src/index.js",
   "bin": {
