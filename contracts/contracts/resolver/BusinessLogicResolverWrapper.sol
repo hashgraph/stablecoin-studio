@@ -20,7 +20,6 @@ abstract contract BusinessLogicResolverWrapper is IBusinessLogicResolverWrapper 
         mapping(bytes32 => uint256) businessLogicVersionIndex;
         // version to status
         mapping(uint256 => IBusinessLogicResolver.VersionStatus) versionStatuses;
-        bool initialized;
     }
 
     modifier validVersion(uint256 _version) {

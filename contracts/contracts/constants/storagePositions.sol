@@ -15,8 +15,14 @@ bytes32 constant _INITIALIZABLE_STORAGE_POSITION = 0xa58f1fcb40822c09091f9fa7b9f
 // keccak256('stablecoin.studio.token.owner.storage');
 bytes32 constant _TOKEN_OWNER_STORAGE_POSITION = 0xffe23b303bca7e4ba4a81747cce9a4b7900868fa595989c506407085297c6003;
 
+// keccak256('stablecoin.studio.supplier.admin.storage');
+bytes32 constant _SUPPLIER_ADMIN_STORAGE_POSITION = 0x6aeead5f5a9da2342a659622dd2971feb9a9000a665af02c7ef943d47be290d3;
+
 // keccak256('stablecoin.studio.roles.storage');
 bytes32 constant _ROLES_STORAGE_POSITION = 0x6aeead5f5a9da2342a659622dd2971feb9a9000a665af02c7ef943d47be290d3;
+
+// keccak256('stablecoin.studio.reserve.storage');
+bytes32 constant _RESERVE_STORAGE_POSITION = 0x6cd87a21205e289ae515ee48016344e9ace2d151ff855d378d0e3af7aa75e271;
 
 // keccak256('stablecoin.studio.hold.storage');
 bytes32 constant _HOLD_STORAGE_POSITION = 0x55eb875db6f21625db342149ef0f0b78f6afec1625e2c812812e031b05ee4bd1;

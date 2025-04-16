@@ -1,22 +1,22 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.18;
 
-import {IBusinessLogicResolver} from './interfaces//IBusinessLogicResolver.sol';
+import {IBusinessLogicResolver} from './interfaces/IBusinessLogicResolver.sol';
 import {DiamondCutManager} from './diamondCutManager/DiamondCutManager.sol';
+import {Initializable} from '../core/Initializable.sol';
 import {ADMIN_ROLE} from '../constants/roles.sol';
+import {_BUSINESS_LOGIC_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 
-contract BusinessLogicResolver is IBusinessLogicResolver, DiamondCutManager {
+contract BusinessLogicResolver is IBusinessLogicResolver, DiamondCutManager, Initializable {
     error Unimplemented();
     // solhint-disable-next-line func-name-mixedcase
     function initialize_BusinessLogicResolver()
         external
         override
-        onlyUninitialized(_businessLogicResolverStorage().initialized)
+        initializer(_BUSINESS_LOGIC_RESOLVER_KEY)
         returns (bool success_)
     {
-        _grantRole(ADMIN_ROLE, _msgSender());
-
-        _businessLogicResolverStorage().initialized = true;
+        _grantRole(ADMIN_ROLE, msg.sender);
         success_ = true;
     }
 

@@ -8,10 +8,10 @@ import {EnumerableSet} from '@openzeppelin/contracts/utils/structs/EnumerableSet
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {Roles} from './Roles.sol';
 import {TokenOwner} from './TokenOwner.sol';
-import {HoldBaseManagement} from './HoldBaseManagement.sol';
+import {HoldManagementStorageWrapper} from './HoldManagementStorageWrapper.sol';
 // solhint-enable max-line-length
 
-contract HoldManagement is HoldBaseManagement, TokenOwner, Roles, IHoldManagement {
+contract HoldManagement is HoldManagementStorageWrapper, TokenOwner, Roles, IHoldManagement {
     using EnumerableSet for EnumerableSet.UintSet;
 
     /**
@@ -223,7 +223,7 @@ contract HoldManagement is HoldBaseManagement, TokenOwner, Roles, IHoldManagemen
             _amount
         )
         nonExpired(
-            _holdDataStorage
+            _holdDataStorage()
             .holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].expirationTimestamp
         )
         isEscrow(_holdDataStorage().holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].escrow)
@@ -265,7 +265,7 @@ contract HoldManagement is HoldBaseManagement, TokenOwner, Roles, IHoldManagemen
             _amount
         )
         nonExpired(
-            _holdDataStorage
+            _holdDataStorage()
             .holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].expirationTimestamp
         )
         isEscrow(_holdDataStorage().holdsByAccountAndId[_holdIdentifier.tokenHolder][_holdIdentifier.holdId].escrow)

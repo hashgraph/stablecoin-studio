@@ -5,7 +5,7 @@ import {IHoldManagement} from './Interfaces/IHoldManagement.sol';
 import {EnumerableSet} from '@openzeppelin/contracts/utils/structs/EnumerableSet.sol';
 import {_HOLD_STORAGE_POSITION} from '../constants/storagePositions.sol';
 
-abstract contract HoldBaseManagement {
+abstract contract HoldManagementStorageWrapper {
     /**
      * @dev Storage structure for hold data
      */
@@ -31,7 +31,7 @@ abstract contract HoldBaseManagement {
         bytes32 position = _HOLD_STORAGE_POSITION;
         // solhint-disable-next-line no-inline-assembly
         assembly {
-            tokenOwnerStorage_.slot := position
+            holdDataStorage_.slot := position
         }
     }
 }

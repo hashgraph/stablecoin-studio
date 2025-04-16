@@ -2,13 +2,14 @@
 pragma solidity 0.8.18;
 
 import {ICashIn} from './Interfaces/ICashIn.sol';
-import {SupplierAdmin} from './SupplierAdmin.sol';
+import {IRoles} from './Interfaces/IRoles.sol';
+import {SupplierAdminStorageWrapper} from './SupplierAdminStorageWrapper.sol';
 // solhint-disable-next-line max-line-length
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
-import {Reserve} from './Reserve.sol';
+import {ReserveStorageWrapper} from './ReserveStorageWrapper.sol';
 import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
 
-abstract contract CashIn is ICashIn, SupplierAdmin, Reserve {
+abstract contract CashIn is ICashIn, SupplierAdminStorageWrapper, ReserveStorageWrapper {
     /**
      * @dev Creates an `amount` of tokens and transfers them to an `account`, increasing
      * the total supply
@@ -22,13 +23,13 @@ abstract contract CashIn is ICashIn, SupplierAdmin, Reserve {
     )
         external
         override(ICashIn)
-        onlyRole(_getRoleId(RoleName.CASHIN))
+        onlyRole(_getRoleId(IRoles.RoleName.CASHIN))
         checkReserveIncrease(SafeCast.toUint256(amount))
         addressIsNotZero(account)
         amountIsNotNegative(amount, false)
         returns (bool)
     {
-        if (!_unlimitedSupplierAllowances[msg.sender])
+        if (!_supplierAdminStorage().unlimitedSupplierAllowances[msg.sender])
             _decreaseSupplierAllowance(msg.sender, SafeCast.toUint256(amount));
 
         address currentTokenAddress = _getTokenAddress();
@@ -53,11 +54,4 @@ abstract contract CashIn is ICashIn, SupplierAdmin, Reserve {
 
         return success;
     }
-
-    /**
-     * @dev This empty reserved space is put in place to allow future versions to add new
-     * variables without shifting down storage in the inheritance chain.
-     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
-     */
-    uint256[50] private __gap;
 }

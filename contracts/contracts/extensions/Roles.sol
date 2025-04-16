@@ -3,10 +3,10 @@ pragma solidity 0.8.18;
 
 import {ADMIN_ROLE} from '../constants/roles.sol';
 import {IRoles} from './Interfaces/IRoles.sol';
-import {RolesWrapper} from './RolesWrapper.sol';
+import {RolesStorageWrapper} from './RolesStorageWrapper.sol';
 
 // TODO: RolesFacet
-contract Roles is IRoles, RolesWrapper {
+contract Roles is IRoles, RolesStorageWrapper {
     /**
      * @dev Checks if the account has been granted a role
      *

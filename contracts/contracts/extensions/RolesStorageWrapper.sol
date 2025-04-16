@@ -5,9 +5,8 @@ import {IRoles} from './Interfaces/IRoles.sol';
 // solhint-disable-next-line max-line-length
 import {ADMIN_ROLE, _CASHIN_ROLE, _BURN_ROLE, _WIPE_ROLE, _RESCUE_ROLE, _PAUSE_ROLE, _FREEZE_ROLE, _DELETE_ROLE, _WITHOUT_ROLE, _KYC_ROLE, _CUSTOM_FEES_ROLE, _HOLD_CREATOR_ROLE} from '../constants/roles.sol';
 import {_ROLES_STORAGE_POSITION} from '../constants/storagePositions.sol';
-import {Initializable} from '../core/Initializable.sol';
 
-abstract contract RolesWrapper is Initializable {
+abstract contract RolesStorageWrapper {
     struct MemberData {
         bool active;
         uint256 pos;
@@ -27,6 +26,25 @@ abstract contract RolesWrapper is Initializable {
         bytes32[] listOfRoles;
     }
 
+    // TODO: Better at interface
+    /**
+     * @dev Emitted when a role is granted to an account
+     *
+     * @param role The role to be granted
+     * @param account The account for which the role is to be granted
+     * @param sender The caller of the function that emitted the event
+     */
+    event RoleGranted(bytes32 indexed role, address indexed account, address indexed sender);
+
+    /**
+     * @dev Emitted when a role is revoked from an account
+     *
+     * @param role The role to be revoked
+     * @param account The account for which the role is to be revoked
+     * @param sender The caller of the function that emitted the event
+     */
+    event RoleRevoked(bytes32 indexed role, address indexed account, address indexed sender);
+
     /**
      * @dev Checks if a roles is granted for the calling account
      *
@@ -41,7 +59,7 @@ abstract contract RolesWrapper is Initializable {
      * @dev Populates the array of existing roles
      *
      */
-    function __rolesInit() internal onlyInitializing {
+    function __rolesInit() internal {
         bytes32[] storage listOfRoles = _rolesStorage().listOfRoles;
         listOfRoles.push(ADMIN_ROLE);
         listOfRoles.push(_CASHIN_ROLE);
@@ -78,7 +96,7 @@ abstract contract RolesWrapper is Initializable {
         rolesStorage.roles[role].members[account] = MemberData(true, rolesStorage.roles[role].accounts.length);
         rolesStorage.roles[role].accounts.push(account);
 
-        emit IRoles.RoleGranted(role, account, msg.sender);
+        emit RoleGranted(role, account, msg.sender);
     }
 
     /**
@@ -104,7 +122,7 @@ abstract contract RolesWrapper is Initializable {
 
         rolesStorage.roles[role].accounts.pop();
         delete (rolesStorage.roles[role].members[account]);
-        emit IRoles.RoleRevoked(role, account, msg.sender);
+        emit RoleRevoked(role, account, msg.sender);
     }
 
     function _getAccountsWithRole(bytes32 role) internal view returns (address[] memory) {
