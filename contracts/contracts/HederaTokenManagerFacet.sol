@@ -11,12 +11,18 @@ import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-c
 import {KeysLib} from './library/KeysLib.sol';
 // solhint-disable-next-line max-line-length
 import {IERC20MetadataUpgradeable} from '@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol';
+import {HederaTokenManagerStorageWrapper} from './HederaTokenManagerStorageWrapper.sol';
+import {IStaticFunctionSelectors} from './resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
 
-contract HederaTokenManager is IHederaTokenManager, ReserveStorageWrapper, SupplierAdminStorageWrapper {
+contract HederaTokenManagerFacet is
+    IStaticFunctionSelectors,
+    IHederaTokenManager,
+    HederaTokenManagerStorageWrapper,
+    ReserveStorageWrapper,
+    SupplierAdminStorageWrapper
+{
     uint256 private constant _ADMIN_KEY_BIT = 0;
     uint256 private constant _SUPPLY_KEY_BIT = 4;
-    // HTS token metadata
-    string private _metadata;
 
     /**
      * @dev Checks that an string is not longer than 100 characters
@@ -265,7 +271,7 @@ contract HederaTokenManager is IHederaTokenManager, ReserveStorageWrapper, Suppl
      *
      */
     function getMetadata() external view returns (string memory) {
-        return _metadata;
+        return _hederaTokenManagerDataStorage().metadata;
     }
 
     /**
@@ -274,9 +280,32 @@ contract HederaTokenManager is IHederaTokenManager, ReserveStorageWrapper, Suppl
      * @param metadata The metadata to set
      */
     function _setMetadata(string calldata metadata) private {
-        _metadata = metadata;
+        _hederaTokenManagerDataStorage().metadata = metadata;
 
         emit MetadataSet(msg.sender, metadata);
+    }
+
+    function getStaticResolverKey() external pure override returns (bytes32 staticResolverKey_) {
+        staticResolverKey_ = _HEDERA_TOKEN_MANAGER_RESOLVER_KEY;
+    }
+
+    function getStaticFunctionSelectors() external pure override returns (bytes4[] memory staticFunctionSelectors_) {
+        uint256 selectorIndex;
+        staticFunctionSelectors_ = new bytes4[](8);
+        staticFunctionSelectors_[selectorIndex++] = this.initialize.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.name.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.symbol.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.decimals.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.totalSupply.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.balanceOf.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.updateToken.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.getMetadata.selector;
+    }
+
+    function getStaticInterfaceIds() external pure override returns (bytes4[] memory staticInterfaceIds_) {
+        staticInterfaceIds_ = new bytes4[](1);
+        uint256 selectorsIndex;
+        staticInterfaceIds_[selectorsIndex++] = type(IHederaTokenManager).interfaceId;
     }
 
     receive() external payable {}
