@@ -2,31 +2,22 @@
 pragma solidity 0.8.18;
 
 import {IHederaReserve} from './Interfaces/IHederaReserve.sol';
-import {Initializable} from '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
+import {Common} from './core/Common.sol';
+import {_HEDERA_RESERVE_RESOLVER_KEY} from './constants/resolverKeys.sol';
+import {HederaReserveStorageWrapper} from './HederaReserveStorageWrapper.sol';
+import {IStaticFunctionSelectors} from './resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
 
-contract HederaReserve is IHederaReserve, Initializable {
+contract HederaReserveFacet is IStaticFunctionSelectors, IHederaReserve, HederaReserveStorageWrapper, Common {
     uint8 private constant _DECIMALS = 2;
     uint80 private constant _ROUND_ID = 0;
     uint256 private constant _VERSION_ID = 1;
-    int256 private _reserveAmount;
-    address private _admin;
 
     /**
      * @dev Checks if the calling account is the HederaReserve contract admin
      *
      */
     modifier isAdmin() {
-        if (_admin != msg.sender) revert OnlyAdmin(msg.sender);
-        _;
-    }
-
-    /**
-     * @dev Checks if an addres does not equals to the zero address
-     *
-     * @param addr The address to compare with the zero address
-     */
-    modifier checkAddressIsNotZero(address addr) {
-        _checkAddressIsNotZero(addr);
+        if (_hederaReserveDataStorage().admin != msg.sender) revert OnlyAdmin(msg.sender);
         _;
     }
 
@@ -35,7 +26,7 @@ contract HederaReserve is IHederaReserve, Initializable {
      *
      */
     constructor() {
-        _disableInitializers();
+        _disableInitializers(_HEDERA_RESERVE_RESOLVER_KEY);
     }
 
     /**
@@ -43,9 +34,13 @@ contract HederaReserve is IHederaReserve, Initializable {
      *
      *  @param initialReserve The initial amount to be on the reserve
      */
-    function initialize(int256 initialReserve, address admin) external initializer checkAddressIsNotZero(admin) {
-        _reserveAmount = initialReserve;
-        _admin = admin;
+    function initialize(
+        int256 initialReserve,
+        address admin
+    ) external initializer(_HEDERA_RESERVE_RESOLVER_KEY) addressIsNotZero(admin) {
+        HederaReserveDataStorage storage hederaReserveDataStorage = _hederaReserveDataStorage();
+        hederaReserveDataStorage.reserveAmount = initialReserve;
+        hederaReserveDataStorage.admin = admin;
         emit ReserveInitialized(initialReserve);
     }
 
@@ -55,8 +50,9 @@ contract HederaReserve is IHederaReserve, Initializable {
      *  @param newValue The new value of the reserve
      */
     function setAmount(int256 newValue) external isAdmin {
-        emit AmountChanged(_reserveAmount, newValue);
-        _reserveAmount = newValue;
+        HederaReserveDataStorage storage hederaReserveDataStorage = _hederaReserveDataStorage();
+        emit AmountChanged(hederaReserveDataStorage.reserveAmount, newValue);
+        hederaReserveDataStorage.reserveAmount = newValue;
     }
 
     /**
@@ -64,9 +60,10 @@ contract HederaReserve is IHederaReserve, Initializable {
      *
      *  @param admin The new admin
      */
-    function setAdmin(address admin) external isAdmin checkAddressIsNotZero(admin) {
-        emit AdminChanged(_admin, admin);
-        _admin = admin;
+    function setAdmin(address admin) external isAdmin addressIsNotZero(admin) {
+        HederaReserveDataStorage storage hederaReserveDataStorage = _hederaReserveDataStorage();
+        emit AdminChanged(hederaReserveDataStorage.admin, admin);
+        hederaReserveDataStorage.admin = admin;
     }
 
     /**
@@ -126,19 +123,33 @@ contract HederaReserve is IHederaReserve, Initializable {
     {
         return (
             _ROUND_ID,
-            _reserveAmount,
+            _hederaReserveDataStorage().reserveAmount,
             block.timestamp, // solhint-disable-line not-rely-on-time
             block.timestamp, // solhint-disable-line not-rely-on-time
             _ROUND_ID
         );
     }
 
-    /**
-     * @dev Checks if an address does not equal to the zero address
-     *
-     * @param addr The address to be compared with the zero address
-     */
-    function _checkAddressIsNotZero(address addr) private pure {
-        if (addr == address(0)) revert AddressZero(addr);
+    function getStaticResolverKey() external pure override returns (bytes32 staticResolverKey_) {
+        staticResolverKey_ = _HEDERA_RESERVE_RESOLVER_KEY;
+    }
+
+    function getStaticFunctionSelectors() external pure override returns (bytes4[] memory staticFunctionSelectors_) {
+        uint256 selectorIndex;
+        staticFunctionSelectors_ = new bytes4[](8);
+        staticFunctionSelectors_[selectorIndex++] = this.initialize.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.setAmount.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.setAdmin.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.decimals.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.description.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.version.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.getRoundData.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.latestRoundData.selector;
+    }
+
+    function getStaticInterfaceIds() external pure override returns (bytes4[] memory staticInterfaceIds_) {
+        staticInterfaceIds_ = new bytes4[](1);
+        uint256 selectorsIndex;
+        staticInterfaceIds_[selectorsIndex++] = type(IHederaReserve).interfaceId;
     }
 }
