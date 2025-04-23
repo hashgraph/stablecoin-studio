@@ -2,11 +2,11 @@
 pragma solidity 0.8.18;
 
 import {ADMIN_ROLE} from '../../constants/roles.sol';
-import {Roles} from '../../extensions/Roles.sol';
+import {RolesFacet} from '../../extensions/RolesFacet.sol';
 import {DiamondCutManagerWrapper} from './DiamondCutManagerWrapper.sol';
 import {IDiamondLoupe} from '../interfaces/resolverProxy/IDiamondLoupe.sol';
 
-abstract contract DiamondCutManager is Roles, DiamondCutManagerWrapper {
+abstract contract DiamondCutManager is RolesFacet, DiamondCutManagerWrapper {
     modifier validateConfigurationId(bytes32 _configurationId) {
         _checkConfigurationId(_configurationId);
         _;

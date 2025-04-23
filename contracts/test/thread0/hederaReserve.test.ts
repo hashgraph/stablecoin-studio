@@ -144,7 +144,7 @@ describe.skip('HederaReserve Tests', function () {
         const description = await hederaReserve.description({
             gasLimit: GAS_LIMIT.hederaReserve.description,
         })
-        expect(description).to.equals('Example Hedera Reserve for ChainLink')
+        expect(description).to.equals('Example Hedera ReserveFacet.sol for ChainLink')
     })
 
     it('Get version', async function () {

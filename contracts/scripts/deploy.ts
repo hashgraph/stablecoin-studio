@@ -117,7 +117,7 @@ export async function deployFullInfrastructure({
     )
     console.log(MESSAGES.hederaTokenManager.success.associate)
 
-    // * Grant KYC to original sender
+    // * Grant KYCFacet.sol to original sender
     console.log(MESSAGES.hederaTokenManager.info.grantKyc)
     if (grantKYCToOriginalSender) {
         const grantKYCResponse = await hederaTokenManager

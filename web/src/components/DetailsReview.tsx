@@ -57,7 +57,7 @@ export interface DetailsReviewProps {
 	getStableCoinDetails?: () => Promise<void>;
 }
 
-const allowedKeys = ['KYC key', 'Freeze key', 'Wipe key', 'Pause key', 'Fee schedule key'];
+const allowedKeys = ['KYCFacet.sol key', 'Freeze key', 'Wipe key', 'Pause key', 'Fee schedule key'];
 
 let fieldsCanEdit = [
 	{
@@ -217,8 +217,8 @@ const DetailsReview = ({
 				);
 			fieldsCanEdit.find((fields) => fields.id === 'Wipe key') &&
 				setValue('wipe key', formatDetailToKey(details.find((item) => item.label === 'Wipe key')!));
-			fieldsCanEdit.find((fields) => fields.id === 'KYC key') &&
-				setValue('kyc key', formatDetailToKey(details.find((item) => item.label === 'KYC key')!));
+			fieldsCanEdit.find((fields) => fields.id === 'KYCFacet.sol key') &&
+				setValue('kyc key', formatDetailToKey(details.find((item) => item.label === 'KYCFacet.sol key')!));
 			fieldsCanEdit.find((fields) => fields.id === 'Fee schedule key') &&
 				setValue(
 					'fee schedule key',

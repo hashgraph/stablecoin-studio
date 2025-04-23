@@ -83,7 +83,7 @@ contract StableCoinFactory is IStableCoinFactory, Initializable {
         checkAddressIsNotZero(stableCoinContractAddress)
         returns (DeployedStableCoin memory)
     {
-        // Reserve
+        // ReserveFacet.sol
         address reserveAddress = requestedToken.reserveAddress;
         address reserveProxy;
         address reserveProxyAdmin;

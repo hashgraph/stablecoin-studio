@@ -3,10 +3,10 @@ pragma solidity 0.8.18;
 
 import {IRoles} from './Interfaces/IRoles.sol';
 import {IRoleManagement} from './Interfaces/IRoleManagement.sol';
-import {SupplierAdmin} from './SupplierAdmin.sol';
+import {SupplierAdminFacet} from './SupplierAdminFacet.sol';
 import {_ROLE_MANAGEMENT_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 
-contract RoleManagement is IRoleManagement, SupplierAdmin {
+contract RoleManagementFacet is IRoleManagement, SupplierAdminFacet {
     /**
      * @dev Grant the provided "roles" to all the "accounts", if CASHIN then "amounts" are the allowances
      *

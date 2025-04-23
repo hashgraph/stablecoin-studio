@@ -202,12 +202,12 @@ export const english = {
     askDoSomething: 'What do you want to do?',
     askOptionalProps:
       'Do you want to configure the initial supply, max supply, decimals or add some metadata?',
-    askReserve: 'Do you want to link the stablecoin to a Proof-of-Reserve?',
+    askReserve: 'Do you want to link the stablecoin to a Proof-of-ReserveFacet.sol?',
     askExistingReserve:
-      'Do you want to link it to an already existing Proof-of-Reserve?',
+      'Do you want to link it to an already existing Proof-of-ReserveFacet.sol?',
     askReserveAddress:
-      'Enter the Proof-of-Reserve Feed you wish to link your stablecoin to',
-    askReserveInitialAmount: 'Enter the Proof-of-Reserve Feed initial amount',
+      'Enter the Proof-of-ReserveFacet.sol Feed you wish to link your stablecoin to',
+    askReserveInitialAmount: 'Enter the Proof-of-ReserveFacet.sol Feed initial amount',
     askProxyAdminOwner:
       'Do you want to use your current account as the proxy admin owner?',
     askProxyAdminOwnerAccount: 'Enter the proxy admin owner account',
@@ -222,7 +222,7 @@ export const english = {
       'Should the smart contract be used for all roles management?',
     askRolesManagedBy:
       'You will be the admin for the keys that you have assigned to the Smart Contract, do you want to change the admin for one of these features?',
-    askKYC: 'Do you want to enable KYC?',
+    askKYC: 'Do you want to enable KYCFacet.sol?',
     askCustomFees: 'Do you want to add custom fees?',
     askHederaTokenManagerOther: 'Other',
     askHederaTokenManagerVersion:
@@ -233,7 +233,7 @@ export const english = {
       admin: 'Enter the admin key',
       supply: 'Enter the supply key',
       keyError: 'The provided key has a wrong format. Please, enter it again.',
-      KYC: 'Enter the KYC key',
+      KYC: 'Enter the KYCFacet.sol key',
       freeze: 'Enter the freeze key',
       wipe: 'Enter the wipe key',
       pause: 'Enter the pause key',
@@ -252,7 +252,7 @@ export const english = {
       pause: 'Choose the PAUSE admin account',
       freeze: 'Choose the FREEZE admin account',
       delete: 'Choose the DELETE admin account',
-      kyc: 'Choose the KYC admin account',
+      kyc: 'Choose the KYCFacet.sol admin account',
       cashin: 'Choose the CASHIN admin account',
       feeSchedule: 'Choose the FEE SCHEDULE admin account',
       options: {
@@ -273,7 +273,7 @@ export const english = {
     askWipeAmount: 'How many tokens do you want to wipe?',
     askRescueAmount: 'How many tokens do you want to rescue?',
     askRescueHBARAmount: 'How many HBAR do you want to rescue?',
-    askGrantKYCToSender: 'Do you want to grant KYC to your current account?',
+    askGrantKYCToSender: 'Do you want to grant KYCFacet.sol to your current account?',
     askTargetAccount: 'What is the target account?',
     askAccountToBalance:
       'For which account would you like to get the balance of?',
@@ -368,10 +368,10 @@ export const english = {
     unfreezeAccount: 'Which account do you want to unfreeze?',
     checkAccountFrozen:
       'which account do you want to know if it is frozen for the token?',
-    grantKYCToAccount: 'Which account do you want to grant KYC to?',
-    revokeKYCFromAccount: 'Which account do you want to revoke KYC from?',
+    grantKYCToAccount: 'Which account do you want to grant KYCFacet.sol to?',
+    revokeKYCFromAccount: 'Which account do you want to revoke KYCFacet.sol from?',
     checkAccountKYCGranted:
-      'which account do you want to know if it has been granted the KYC for the token?',
+      'which account do you want to know if it has been granted the KYCFacet.sol for the token?',
     returnOption: {
       ...returnToMainMenu,
     },
@@ -385,7 +385,7 @@ export const english = {
       Rescue: 'Rescue',
       RescueHBAR: 'Rescue HBAR',
       FreezeMgmt: 'Freeze Management',
-      KYCMgmt: 'KYC Management',
+      KYCMgmt: 'KYCFacet.sol Management',
       FeesMgmt: 'Fees management',
       RoleMgmt: 'Role management',
       Configuration: 'Configuration',
@@ -589,12 +589,12 @@ export const english = {
     accountNotFrozen:
       'The account ${address} is unfrozen for the ${token} token',
     accountFrozen: 'The account ${address} is frozen for the ${token} token',
-    KYCGranted: 'Account KYC granted',
-    KYCRevoked: 'Account KYC revoked',
+    KYCGranted: 'Account KYCFacet.sol granted',
+    KYCRevoked: 'Account KYCFacet.sol revoked',
     accountKYCGranted:
-      'The account ${address} has KYC granted for the ${token} token',
+      'The account ${address} has KYCFacet.sol granted for the ${token} token',
     accountKYCNotGranted:
-      'The account ${address} has not KYC granted for the ${token} token',
+      'The account ${address} has not KYCFacet.sol granted for the ${token} token',
     customFeeCreated: 'Custom fee created',
     customFeesRemoved: 'Custom fees removed',
     transferCompleted: 'Transfer completed',
@@ -752,9 +752,9 @@ export const english = {
   },
   kycManagement: {
     options: {
-      GrantKYC: 'Grant KYC to an account',
-      RevokeKYC: 'Revoke KYC from an account',
-      AccountKYCGranted: 'Check KYC status from an account',
+      GrantKYC: 'Grant KYCFacet.sol to an account',
+      RevokeKYC: 'Revoke KYCFacet.sol from an account',
+      AccountKYCGranted: 'Check KYCFacet.sol status from an account',
     },
   },
   freezeManagement: {

@@ -44,6 +44,6 @@ export const StableCoinRoleLabel = new Map<StableCoinRole, string>([
 	[StableCoinRole.DELETE_ROLE, 'Delete'],
 	[StableCoinRole.DEFAULT_ADMIN_ROLE, 'Admin'],
 	[StableCoinRole.WITHOUT_ROLE, 'Without'],
-	[StableCoinRole.KYC_ROLE, 'KYC'],
+	[StableCoinRole.KYC_ROLE, 'KYCFacet.sol'],
 	[StableCoinRole.CUSTOM_FEES_ROLE, 'Custom Fees'],
 ]);

@@ -107,7 +107,7 @@ describe(`<${HandleRoles.name} />`, () => {
 		});
 	});
 
-	test('cancel button should redirect to Roles view', async () => {
+	test('cancel button should redirect to RolesFacet.sol view', async () => {
 		const component = render(<HandleRoles action='giveRole' />);
 
 		const anything = expect.any(Function);

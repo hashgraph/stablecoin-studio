@@ -6,8 +6,7 @@ import {IRoles} from './Interfaces/IRoles.sol';
 import {RolesStorageWrapper} from './RolesStorageWrapper.sol';
 import {_ROLES_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 
-// TODO: RolesFacet
-contract Roles is IRoles, RolesStorageWrapper {
+contract RolesFacet is IRoles, RolesStorageWrapper {
     /**
      * @dev Checks if the account has been granted a role
      *

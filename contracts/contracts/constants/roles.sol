@@ -60,7 +60,7 @@ bytes32 constant _DELETE_ROLE = 0x2b73f0f98ad60ca619bbdee4bcd175da1127db86346339
 bytes32 constant _WITHOUT_ROLE = 0xe11b25922c3ff9f0f0a34f0b8929ac96a1f215b99dcb08c2891c220cf3a7e8cc;
 
 /**
- * @dev Role that allows to grant or revoke KYC to an account for the token
+ * @dev Role that allows to grant or revoke KYCFacet.sol to an account for the token
  *
  * keccak256("KYC_ROLE");
  */

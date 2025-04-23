@@ -81,7 +81,7 @@ describe(`<${DetailsReview.name} />`, () => {
 				hashScanURL: 'url',
 			},
 			{
-				label: 'KYC key',
+				label: 'KYCFacet.sol key',
 				value: 123,
 			},
 		];

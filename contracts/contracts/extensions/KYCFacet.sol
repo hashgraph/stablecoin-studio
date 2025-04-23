@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.18;
 
-import {TokenOwner} from './TokenOwner.sol';
-import {Roles} from './Roles.sol';
+import {TokenOwnerFacet} from './TokenOwnerFacet.sol';
+import {RolesFacet} from './RolesFacet.sol';
 // solhint-disable-next-line max-line-length
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {IKYC} from './Interfaces/IKYC.sol';
 import {_KYC_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 
-contract KYC is IKYC, TokenOwner, Roles {
+contract KYCFacet is IKYC, TokenOwnerFacet, RolesFacet {
     /**
-     * @dev Grants KYC to account for the token
+     * @dev Grants KYCFacet.sol to account for the token
      *
-     * @param account The account to which the KYC will be granted
+     * @param account The account to which the KYCFacet.sol will be granted
      */
     function grantKyc(
         address account
@@ -29,9 +29,9 @@ contract KYC is IKYC, TokenOwner, Roles {
     }
 
     /**
-     * @dev Revokes KYC to account for the token
+     * @dev Revokes KYCFacet.sol to account for the token
      *
-     * @param account The account to which the KYC will be revoked
+     * @param account The account to which the KYCFacet.sol will be revoked
      */
     function revokeKyc(
         address account

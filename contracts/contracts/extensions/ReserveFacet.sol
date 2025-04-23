@@ -6,7 +6,7 @@ import {IRoles} from './Interfaces/IRoles.sol';
 import {ReserveStorageWrapper} from './ReserveStorageWrapper.sol';
 import {_RESERVE_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 
-contract Reserve is IReserve, ReserveStorageWrapper {
+contract ReserveFacet is IReserve, ReserveStorageWrapper {
     /**
      * @dev Gets the current reserve amount
      *

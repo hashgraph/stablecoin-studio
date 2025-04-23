@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.18;
 
-import {TokenOwner} from './TokenOwner.sol';
-import {Roles} from './Roles.sol';
+import {TokenOwnerFacet} from './TokenOwnerFacet.sol';
+import {RolesFacet} from './RolesFacet.sol';
 // solhint-disable-next-line max-line-length
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {IDeletable} from './Interfaces/IDeletable.sol';
 import {_DELETABLE_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 
-contract Deletable is IDeletable, TokenOwner, Roles {
+contract DeletableFacet is IDeletable, TokenOwnerFacet, RolesFacet {
     /**
      * @dev Deletes the token
      *

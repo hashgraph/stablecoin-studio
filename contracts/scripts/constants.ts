@@ -4,7 +4,7 @@ import { GAS_LIMIT as CONF_GAS_LIMIT } from '@configuration'
 // * Ethereum
 export const ADDRESS_ZERO = constants.AddressZero
 export const NUMBER_ZERO = constants.Zero
-// * Roles
+// * RolesFacet.sol
 export const ROLES = {
     defaultAdmin: {
         id: 0,
@@ -161,18 +161,18 @@ export const MESSAGES = {
         info: {
             deploy: '🚀 Deploying HederaTokenManager...',
             associate: '🔗 Associating token...',
-            grantKyc: '🔐 Granting KYC...',
+            grantKyc: '🔐 Granting KYCFacet.sol...',
         },
         success: {
             deploy: '✅ HederaTokenManager deployed successfully.',
             associate: '✅ Token associated successfully.',
-            grantKyc: '✅ KYC granted successfully.',
+            grantKyc: '✅ KYCFacet.sol granted successfully.',
         },
         error: {
             deploy: '❌ Failed to deploy HederaTokenManager.',
             associate: '❌ Failed to associate token.',
             dissociate: '❌ Failed to dissociate token.',
-            grantKyc: '❌ Failed to grant KYC.',
+            grantKyc: '❌ Failed to grant KYCFacet.sol.',
         },
     },
     stableCoinFactory: {

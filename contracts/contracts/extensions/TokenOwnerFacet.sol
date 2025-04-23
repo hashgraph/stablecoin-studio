@@ -5,7 +5,7 @@ import {ITokenOwner} from './Interfaces/ITokenOwner.sol';
 import {TokenOwnerStorageWrapper} from './TokenOwnerStorageWrapper.sol';
 import {_TOKEN_OWNER_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 
-contract TokenOwner is ITokenOwner, TokenOwnerStorageWrapper {
+contract TokenOwnerFacet is ITokenOwner, TokenOwnerStorageWrapper {
     /**
      * @dev Returns the token address
      *

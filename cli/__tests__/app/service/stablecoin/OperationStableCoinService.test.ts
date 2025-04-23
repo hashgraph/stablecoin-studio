@@ -237,13 +237,13 @@ describe(`Testing OperationStableCoinService class`, () => {
     expect(utilsService.cleanAndShowBanner).toHaveBeenCalled();
   });
 
-  it('Should instance start with CashIn', async () => {
+  it('Should instance start with CashInFacet.sol', async () => {
     const account = '0.0.12345';
     const amount = '1';
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
       .mockResolvedValueOnce(
-        language.getText('wizard.stableCoinOptions.CashIn'),
+        language.getText('wizard.stableCoinOptions.CashInFacet.sol'),
       );
     jest
       .spyOn(utilsService, 'defaultSingleAsk')

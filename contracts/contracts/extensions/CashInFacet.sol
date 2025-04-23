@@ -12,7 +12,7 @@ import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
 import {_CASH_IN_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 
 
-contract CashIn is ICashIn, SupplierAdminStorageWrapper, ReserveStorageWrapper {
+contract CashInFacet is ICashIn, SupplierAdminStorageWrapper, ReserveStorageWrapper {
     /**
      * @dev Creates an `amount` of tokens and transfers them to an `account`, increasing
      * the total supply

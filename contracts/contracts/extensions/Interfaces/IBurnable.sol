@@ -3,7 +3,7 @@ pragma solidity 0.8.18;
 
 interface IBurnable {
     /**
-     * @dev Emitted when the `amount` tokens are burned from TokenOwner
+     * @dev Emitted when the `amount` tokens are burned from TokenOwnerFacet.sol
      *
      * @param burner The caller of the function that emitted the event
      * @param token Token address
