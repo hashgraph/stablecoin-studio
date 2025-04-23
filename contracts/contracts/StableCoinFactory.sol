@@ -6,7 +6,6 @@ import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-c
 import {HederaTokenManager, IHederaTokenManager} from './HederaTokenManager.sol';
 import {HederaReserve} from './HederaReserve.sol';
 import {IStableCoinFactory} from './Interfaces/IStableCoinFactory.sol';
-import {IBusinessLogicResolver} from './resolver/interfaces/IBusinessLogicResolver.sol';
 import {Strings} from '@openzeppelin/contracts/utils/Strings.sol';
 import {Initializable} from '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import {KeysLib} from './library/KeysLib.sol';
