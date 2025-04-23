@@ -2,14 +2,16 @@
 pragma solidity 0.8.18;
 
 // solhint-disable-next-line max-line-length
-import {HoldManagement} from './HoldManagement.sol';
+import {HoldManagementStorageWrapper} from './HoldManagementStorageWrapper.sol';
+import {Roles} from './Roles.sol';
 import {IBurnable} from './Interfaces/IBurnable.sol';
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
 import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
 import {BURNABLE_RESOLVER_KEY} from '../constants/resolverKeys.sol';
+import {TokenOwner} from './TokenOwner.sol';
 
-contract Burnable is IBurnable, HoldManagement { //holdmanagementstoragewrapper
+contract Burnable is IBurnable, HoldManagementStorageWrapper, Roles, TokenOwner {
 
     /**
      * @dev Burns an `amount` of tokens owned by the treasury account
