@@ -50,8 +50,9 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          echo "@hashgraph:registry=https://registry.npmjs.org/" > .npmrc
-          echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" >> .npmrc
+          cat << 'EOF' > .npmrc
+          //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
+          EOF
         working-directory: contracts
 
       - name: Change references to repo
@@ -108,8 +109,9 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          echo "@hashgraph:registry=https://registry.npmjs.org/" > .npmrc
-          echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" >> .npmrc
+          cat << 'EOF' > .npmrc
+          //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
+          EOF
         working-directory: sdk
 
       - name: Change references to repo
@@ -168,8 +170,9 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          echo "@hashgraph:registry=https://registry.npmjs.org/" > .npmrc
-          echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" >> .npmrc
+          cat << 'EOF' > .npmrc
+          //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
+          EOF
         working-directory: cli
 
       - name: Change references to repo
