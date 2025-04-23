@@ -517,5 +517,4 @@ contract HoldManagementFacet is HoldManagementStorageWrapper, TokenOwnerFacet, R
         uint256 selectorsIndex;
         staticInterfaceIds_[selectorsIndex++] = type(IHoldManagement).interfaceId;
     }
-
 }

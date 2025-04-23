@@ -11,7 +11,6 @@ import {ReserveStorageWrapper} from './ReserveStorageWrapper.sol';
 import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
 import {_CASH_IN_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 
-
 contract CashInFacet is ICashIn, SupplierAdminStorageWrapper, ReserveStorageWrapper {
     /**
      * @dev Creates an `amount` of tokens and transfers them to an `account`, increasing

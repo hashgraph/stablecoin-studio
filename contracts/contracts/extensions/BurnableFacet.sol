@@ -12,7 +12,6 @@ import {BURNABLE_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 import {TokenOwnerFacet} from './TokenOwnerFacet.sol';
 
 contract BurnableFacet is IBurnable, HoldManagementStorageWrapper, RolesFacet, TokenOwnerFacet {
-
     /**
      * @dev Burns an `amount` of tokens owned by the treasury account
      *

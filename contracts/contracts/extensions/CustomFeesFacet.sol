@@ -8,7 +8,6 @@ import {TokenOwnerFacet} from './TokenOwnerFacet.sol';
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {_CUSTOM_FEES_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 
-
 contract CustomFeesFacet is ICustomFees, TokenOwnerFacet, RolesFacet {
     /**
      * @dev Updates the custom fees for the token

@@ -51,6 +51,4 @@ bytes32 constant _KYC_RESOLVER_KEY = 0x876bfbb41f089e97e6f7ad59e0371477bfdde664b
 // keccak256('stablecoin.studio.supplier.admin.resolver.key');
 bytes32 constant _SUPPLIER_ADMIN_RESOLVER_KEY = 0x8b5890e21b47ca19527875d9cb25c0f6fdac78fb63be40408faca599a4fedb0c;
 
-
-
 // solhint-enable max-line-length

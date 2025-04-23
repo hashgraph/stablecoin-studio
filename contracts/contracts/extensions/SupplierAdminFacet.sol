@@ -167,6 +167,4 @@ contract SupplierAdminFacet is ISupplierAdmin, SupplierAdminStorageWrapper {
         uint256 selectorsIndex;
         staticInterfaceIds_[selectorsIndex++] = type(ISupplierAdmin).interfaceId;
     }
-
-
 }

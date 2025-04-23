@@ -52,5 +52,4 @@ contract ReserveFacet is IReserve, ReserveStorageWrapper {
         uint256 selectorsIndex;
         staticInterfaceIds_[selectorsIndex++] = type(IReserve).interfaceId;
     }
-
 }
