@@ -4,12 +4,15 @@ pragma solidity 0.8.18;
 import {ICashIn} from './Interfaces/ICashIn.sol';
 import {IRoles} from './Interfaces/IRoles.sol';
 import {SupplierAdminStorageWrapper} from './SupplierAdminStorageWrapper.sol';
+import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
 // solhint-disable-next-line max-line-length
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {ReserveStorageWrapper} from './ReserveStorageWrapper.sol';
 import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
+import {_CASH_IN_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 
-abstract contract CashIn is ICashIn, SupplierAdminStorageWrapper, ReserveStorageWrapper {
+
+contract CashIn is ICashIn, SupplierAdminStorageWrapper, ReserveStorageWrapper {
     /**
      * @dev Creates an `amount` of tokens and transfers them to an `account`, increasing
      * the total supply
@@ -53,5 +56,21 @@ abstract contract CashIn is ICashIn, SupplierAdminStorageWrapper, ReserveStorage
         emit TokensMinted(msg.sender, currentTokenAddress, amount, account);
 
         return success;
+    }
+
+    function getStaticResolverKey() external pure override returns (bytes32 staticResolverKey_) {
+        staticResolverKey_ = _CASH_IN_RESOLVER_KEY;
+    }
+
+    function getStaticFunctionSelectors() external pure override returns (bytes4[] memory staticFunctionSelectors_) {
+        uint256 selectorIndex;
+        staticFunctionSelectors_ = new bytes4[](1);
+        staticFunctionSelectors_[selectorIndex++] = this.mint.selector;
+    }
+
+    function getStaticInterfaceIds() external pure override returns (bytes4[] memory staticInterfaceIds_) {
+        staticInterfaceIds_ = new bytes4[](1);
+        uint256 selectorsIndex;
+        staticInterfaceIds_[selectorsIndex++] = type(ICashIn).interfaceId;
     }
 }

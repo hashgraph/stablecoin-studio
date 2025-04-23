@@ -8,8 +8,9 @@ import {IRescuable} from './Interfaces/IRescuable.sol';
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {ReentrancyGuard} from '@openzeppelin/contracts/security/ReentrancyGuard.sol';
 import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
+import {_RESCUABLE_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 
-abstract contract Rescuable is ReentrancyGuard, IRescuable, TokenOwner, Roles {
+contract Rescuable is ReentrancyGuard, IRescuable, TokenOwner, Roles {
     /**
      * @dev Rescues `value` `tokenId` from contractTokenOwner to rescuer
      *
@@ -68,10 +69,20 @@ abstract contract Rescuable is ReentrancyGuard, IRescuable, TokenOwner, Roles {
         return sent;
     }
 
-    /**
-     * @dev This empty reserved space is put in place to allow future versions to add new
-     * variables without shifting down storage in the inheritance chain.
-     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
-     */
-    uint256[50] private __gap;
+    function getStaticResolverKey() external pure override returns (bytes32 staticResolverKey_) {
+        staticResolverKey_ = _RESCUABLE_RESOLVER_KEY;
+    }
+
+    function getStaticFunctionSelectors() external pure override returns (bytes4[] memory staticFunctionSelectors_) {
+        uint256 selectorIndex;
+        staticFunctionSelectors_ = new bytes4[](2);
+        staticFunctionSelectors_[selectorIndex++] = this.rescue.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.rescueHBAR.selector;
+    }
+
+    function getStaticInterfaceIds() external pure override returns (bytes4[] memory staticInterfaceIds_) {
+        staticInterfaceIds_ = new bytes4[](1);
+        uint256 selectorsIndex;
+        staticInterfaceIds_[selectorsIndex++] = type(IRescuable).interfaceId;
+    }
 }

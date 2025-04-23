@@ -4,8 +4,9 @@ pragma solidity 0.8.18;
 import {ISupplierAdmin} from './Interfaces/ISupplierAdmin.sol';
 import {IRoles} from './Interfaces/IRoles.sol';
 import {SupplierAdminStorageWrapper} from './SupplierAdminStorageWrapper.sol';
+import {_SUPPLIER_ADMIN_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 
-abstract contract SupplierAdmin is ISupplierAdmin, SupplierAdminStorageWrapper {
+contract SupplierAdmin is ISupplierAdmin, SupplierAdminStorageWrapper {
     /**
      * @dev Return number of tokens allowed to be minted of the address account `supplier`.
      *
@@ -144,4 +145,28 @@ abstract contract SupplierAdmin is ISupplierAdmin, SupplierAdminStorageWrapper {
             revert AccountHasUnlimitedSupplierAllowance(supplier);
         _decreaseSupplierAllowance(supplier, amount);
     }
+
+    function getStaticResolverKey() external pure override returns (bytes32 staticResolverKey_) {
+        staticResolverKey_ = _SUPPLIER_ADMIN_RESOLVER_KEY;
+    }
+
+    function getStaticFunctionSelectors() external pure override returns (bytes4[] memory staticFunctionSelectors_) {
+        uint256 selectorIndex;
+        staticFunctionSelectors_ = new bytes4[](7);
+        staticFunctionSelectors_[selectorIndex++] = this.getSupplierAllowance.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.isUnlimitedSupplierAllowance.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.grantSupplierRole.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.grantUnlimitedSupplierRole.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.revokeSupplierRole.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.resetSupplierAllowance.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.increaseSupplierAllowance.selector;
+    }
+
+    function getStaticInterfaceIds() external pure override returns (bytes4[] memory staticInterfaceIds_) {
+        staticInterfaceIds_ = new bytes4[](1);
+        uint256 selectorsIndex;
+        staticInterfaceIds_[selectorsIndex++] = type(ISupplierAdmin).interfaceId;
+    }
+
+
 }

@@ -6,8 +6,9 @@ import {Roles} from './Roles.sol';
 // solhint-disable-next-line max-line-length
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {IDeletable} from './Interfaces/IDeletable.sol';
+import {_DELETABLE_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 
-abstract contract Deletable is IDeletable, TokenOwner, Roles {
+contract Deletable is IDeletable, TokenOwner, Roles {
     /**
      * @dev Deletes the token
      *
@@ -24,10 +25,17 @@ abstract contract Deletable is IDeletable, TokenOwner, Roles {
         return success;
     }
 
-    /**
-     * @dev This empty reserved space is put in place to allow future versions to add new
-     * variables without shifting down storage in the inheritance chain.
-     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
-     */
-    uint256[50] private __gap;
+    function getStaticResolverKey() external pure override returns (bytes32 staticResolverKey_) {
+        staticResolverKey_ = _DELETABLE_RESOLVER_KEY;
+    }
+    function getStaticFunctionSelectors() external pure override returns (bytes4[] memory staticFunctionSelectors_) {
+        uint256 selectorIndex;
+        staticFunctionSelectors_ = new bytes4[](1);
+        staticFunctionSelectors_[selectorIndex++] = this.deleteToken.selector;
+    }
+    function getStaticInterfaceIds() external pure override returns (bytes4[] memory staticInterfaceIds_) {
+        staticInterfaceIds_ = new bytes4[](1);
+        uint256 selectorsIndex;
+        staticInterfaceIds_[selectorsIndex++] = type(IDeletable).interfaceId;
+    }
 }

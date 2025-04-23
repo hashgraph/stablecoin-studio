@@ -4,8 +4,9 @@ pragma solidity 0.8.18;
 import {IReserve} from './Interfaces/IReserve.sol';
 import {IRoles} from './Interfaces/IRoles.sol';
 import {ReserveStorageWrapper} from './ReserveStorageWrapper.sol';
+import {_RESERVE_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 
-abstract contract Reserve is IReserve, ReserveStorageWrapper {
+contract Reserve is IReserve, ReserveStorageWrapper {
     /**
      * @dev Gets the current reserve amount
      *
@@ -34,4 +35,22 @@ abstract contract Reserve is IReserve, ReserveStorageWrapper {
     function getReserveAddress() external view override(IReserve) returns (address) {
         return _reserveStorage().reserveAddress;
     }
+
+    function getStaticResolverKey() external pure override returns (bytes32 staticResolverKey_) {
+        staticResolverKey_ = _RESERVE_RESOLVER_KEY;
+    }
+
+    function getStaticFunctionSelectors() external pure override returns (bytes4[] memory staticFunctionSelectors_) {
+        uint256 selectorIndex;
+        staticFunctionSelectors_ = new bytes4[](2);
+        staticFunctionSelectors_[selectorIndex++] = this.getReserveAmount.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.updateReserveAddress.selector;
+    }
+
+    function getStaticInterfaceIds() external pure override returns (bytes4[] memory staticInterfaceIds_) {
+        staticInterfaceIds_ = new bytes4[](1);
+        uint256 selectorsIndex;
+        staticInterfaceIds_[selectorsIndex++] = type(IReserve).interfaceId;
+    }
+
 }

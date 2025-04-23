@@ -1,13 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.18;
 
-import {IBurnable} from './Interfaces/IBurnable.sol';
 // solhint-disable-next-line max-line-length
-import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
-import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
 import {HoldManagement} from './HoldManagement.sol';
+import {IBurnable} from './Interfaces/IBurnable.sol';
+import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
+import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
+import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
+import {BURNABLE_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 
-abstract contract Burnable is IBurnable, HoldManagement {
+contract Burnable is IBurnable, HoldManagement { //holdmanagementstoragewrapper
+
     /**
      * @dev Burns an `amount` of tokens owned by the treasury account
      *
@@ -39,10 +42,19 @@ abstract contract Burnable is IBurnable, HoldManagement {
         return success;
     }
 
-    /**
-     * @dev This empty reserved space is put in place to allow future versions to add new
-     * variables without shifting down storage in the inheritance chain.
-     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
-     */
-    uint256[50] private __gap;
+    function getStaticResolverKey() external pure override returns (bytes32 staticResolverKey_) {
+        staticResolverKey_ = _BURNABLE_RESOLVER_KEY;
+    }
+
+    function getStaticFunctionSelectors() external pure override returns (bytes4[] memory staticFunctionSelectors_) {
+        uint256 selectorIndex;
+        staticFunctionSelectors_ = new bytes4[](1);
+        staticFunctionSelectors_[selectorIndex++] = this.burn.selector;
+    }
+
+    function getStaticInterfaceIds() external pure override returns (bytes4[] memory staticInterfaceIds_) {
+        staticInterfaceIds_ = new bytes4[](1);
+        uint256 selectorsIndex;
+        staticInterfaceIds_[selectorsIndex++] = type(IBurnable).interfaceId;
+    }
 }

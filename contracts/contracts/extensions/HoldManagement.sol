@@ -9,6 +9,7 @@ import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-c
 import {Roles} from './Roles.sol';
 import {TokenOwner} from './TokenOwner.sol';
 import {HoldManagementStorageWrapper} from './HoldManagementStorageWrapper.sol';
+import {_HOLD_MANAGEMENT_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 // solhint-enable max-line-length
 
 contract HoldManagement is HoldManagementStorageWrapper, TokenOwner, Roles, IHoldManagement {
@@ -491,4 +492,30 @@ contract HoldManagement is HoldManagementStorageWrapper, TokenOwner, Roles, IHol
             holdData.operatorData
         );
     }
+
+    function getStaticResolverKey() external pure override returns (bytes32 staticResolverKey_) {
+        staticResolverKey_ = _HOLD_MANAGEMENT_RESOLVER_KEY;
+    }
+
+    function getStaticFunctionSelectors() external pure override returns (bytes4[] memory staticFunctionSelectors_) {
+        uint256 selectorIndex;
+        staticFunctionSelectors_ = new bytes4[](10);
+        staticFunctionSelectors_[selectorIndex++] = this.createHold.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.createHoldByController.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.executeHold.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.releaseHold.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.reclaimHold.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.getHeldAmount.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.getHeldAmountFor.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.getHoldCountFor.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.getHoldsIdFor.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.getHoldFor.selector;
+    }
+
+    function getStaticInterfaceIds() external pure override returns (bytes4[] memory staticInterfaceIds_) {
+        staticInterfaceIds_ = new bytes4[](1);
+        uint256 selectorsIndex;
+        staticInterfaceIds_[selectorsIndex++] = type(IHoldManagement).interfaceId;
+    }
+
 }

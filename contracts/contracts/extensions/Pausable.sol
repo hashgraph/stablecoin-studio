@@ -6,8 +6,9 @@ import {Roles} from './Roles.sol';
 import {IPausable} from './Interfaces/IPausable.sol';
 // solhint-disable-next-line max-line-length
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
+import {_PAUSABLE_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 
-abstract contract Pausable is IPausable, TokenOwner, Roles {
+contract Pausable is IPausable, TokenOwner, Roles {
     /**
      * @dev Pauses the token in order to prevent it from being involved in any kind of operation
      *
@@ -40,10 +41,20 @@ abstract contract Pausable is IPausable, TokenOwner, Roles {
         return success;
     }
 
-    /**
-     * @dev This empty reserved space is put in place to allow future versions to add new
-     * variables without shifting down storage in the inheritance chain.
-     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
-     */
-    uint256[50] private __gap;
+    function getStaticResolverKey() external pure override returns (bytes32 staticResolverKey_) {
+        staticResolverKey_ = _PAUSABLE_RESOLVER_KEY;
+    }
+
+    function getStaticFunctionSelectors() external pure override returns (bytes4[] memory staticFunctionSelectors_) {
+        uint256 selectorIndex;
+        staticFunctionSelectors_ = new bytes4[](2);
+        staticFunctionSelectors_[selectorIndex++] = this.pause.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.unpause.selector;
+    }
+
+    function getStaticInterfaceIds() external pure override returns (bytes4[] memory staticInterfaceIds_) {
+        staticInterfaceIds_ = new bytes4[](1);
+        uint256 selectorsIndex;
+        staticInterfaceIds_[selectorsIndex++] = type(IPausable).interfaceId;
+    }
 }

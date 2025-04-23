@@ -4,8 +4,9 @@ pragma solidity 0.8.18;
 import {IRoles} from './Interfaces/IRoles.sol';
 import {IRoleManagement} from './Interfaces/IRoleManagement.sol';
 import {SupplierAdmin} from './SupplierAdmin.sol';
+import {_ROLE_MANAGEMENT_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 
-abstract contract RoleManagement is IRoleManagement, SupplierAdmin {
+contract RoleManagement is IRoleManagement, SupplierAdmin {
     /**
      * @dev Grant the provided "roles" to all the "accounts", if CASHIN then "amounts" are the allowances
      *
@@ -59,4 +60,18 @@ abstract contract RoleManagement is IRoleManagement, SupplierAdmin {
             }
         }
     }
+
+    function getStaticResolverKey() external pure override returns (bytes32 staticResolverKey_) {
+        staticResolverKey_ = _ROLE_MANAGEMENT_RESOLVER_KEY;
+    }
+    function getStaticFunctionSelectors() external pure override returns (bytes4[] memory staticFunctionSelectors_) {
+        uint256 selectorIndex;
+        staticFunctionSelectors_ = new bytes4[](2);
+        staticFunctionSelectors_[selectorIndex++] = this.grantRoles.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.revokeRoles.selector;
+    }
+    function getStaticInterfaceIds() external pure override returns (bytes4[] memory staticInterfaceIds_) {
+        staticInterfaceIds_ = new bytes4[](1);
+        uint256 selectorsIndex;
+        staticInterfaceIds_[selectorsIndex++] = type(IRoleManagement).interfaceId;
 }
