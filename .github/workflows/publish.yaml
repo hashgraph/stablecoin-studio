@@ -53,7 +53,6 @@ jobs:
           cat << 'EOF' > .npmrc
           //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
           EOF
-        working-directory: contracts
 
       - name: Change references to repo
         run:  |
@@ -76,7 +75,6 @@ jobs:
           fi
 
           npm run publish:contracts -- "${ARGS[@]}"
-        working-directory: ${{ github.workspace }}
 
   sdk:
     # needs: contracts
@@ -112,7 +110,6 @@ jobs:
           cat << 'EOF' > .npmrc
           //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
           EOF
-        working-directory: sdk
 
       - name: Change references to repo
         run:  |
@@ -137,7 +134,6 @@ jobs:
           fi
 
           npm run publish:sdk -- "${ARGS[@]}"
-        working-directory: ${{ github.workspace }}
 
   cli:
     # needs: sdk
@@ -173,7 +169,6 @@ jobs:
           cat << 'EOF' > .npmrc
           //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
           EOF
-        working-directory: cli
 
       - name: Change references to repo
         run: |
@@ -198,4 +193,3 @@ jobs:
           fi
 
           npm run publish:cli -- "${ARGS[@]}"
-        working-directory: ${{ github.workspace }}
