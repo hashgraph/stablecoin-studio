@@ -4,23 +4,21 @@ pragma solidity 0.8.18;
 // solhint-disable-next-line max-line-length
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {HederaTokenManager, IHederaTokenManager} from './HederaTokenManager.sol';
-import {TransparentUpgradeableProxy} from '@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol';
-import {ProxyAdmin} from '@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol';
 import {HederaReserve} from './HederaReserve.sol';
 import {IStableCoinFactory} from './Interfaces/IStableCoinFactory.sol';
+import {IBusinessLogicResolver} from './resolver/interfaces/IBusinessLogicResolver.sol';
 import {Strings} from '@openzeppelin/contracts/utils/Strings.sol';
 import {Initializable} from '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import {KeysLib} from './library/KeysLib.sol';
 import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
 import {AggregatorV3Interface} from '@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol';
-import {StableCoinProxyAdmin} from './proxies/StableCoinProxyAdmin.sol';
+import {ResolverProxy} from './resolver/resolverProxy/ResolverProxy.sol';
 
 contract StableCoinFactory is IStableCoinFactory, Initializable {
     // Hedera HTS precompiled contract
     address private constant _PRECOMPILED_ADDRESS = address(0x167);
     string private constant _MEMO_1 = '{"p":"';
-    string private constant _MEMO_2 = '","a":"';
-    string private constant _MEMO_3 = '"}';
+    string private constant _MEMO_2 = '"}';
     int64 private constant _DEFAULT_AUTO_RENEW_PERIOD = 90 days;
 
     address private _admin;
@@ -83,90 +81,16 @@ contract StableCoinFactory is IStableCoinFactory, Initializable {
         checkAddressIsNotZero(stableCoinContractAddress)
         returns (DeployedStableCoin memory)
     {
-        // Reserve
-        address reserveAddress = requestedToken.reserveAddress;
-        address reserveProxy;
-        address reserveProxyAdmin;
+        address reserveAddress = _handleReserve(requestedToken);
+        address stableCoinProxy = _deployStableCoinProxy(requestedToken);
+        address tokenAddress = _initializeToken(requestedToken, stableCoinProxy, reserveAddress);
 
-        if (requestedToken.createReserve) {
-            HederaReserve reserveContract = new HederaReserve();
-            _validationReserveInitialAmount(
-                reserveContract.decimals(),
-                requestedToken.reserveInitialAmount,
-                requestedToken.tokenDecimals,
-                requestedToken.tokenInitialSupply
-            );
-
-            reserveProxyAdmin = address(new ProxyAdmin());
-            ProxyAdmin(reserveProxyAdmin).transferOwnership(msg.sender);
-
-            reserveProxy = address(
-                new TransparentUpgradeableProxy(address(reserveContract), address(reserveProxyAdmin), '')
-            );
-
-            HederaReserve(reserveProxy).initialize(requestedToken.reserveInitialAmount, msg.sender);
-            reserveAddress = reserveProxy;
-        } else if (reserveAddress != address(0)) {
-            (, int256 reserveInitialAmount, , , ) = AggregatorV3Interface(reserveAddress).latestRoundData();
-
-            _validationReserveInitialAmount(
-                AggregatorV3Interface(reserveAddress).decimals(),
-                reserveInitialAmount,
-                requestedToken.tokenDecimals,
-                requestedToken.tokenInitialSupply
-            );
-        }
-
-        // Deploy Proxy Admin
-        StableCoinProxyAdmin stableCoinProxyAdmin;
-        if (requestedToken.proxyAdminOwnerAccount != address(0)) {
-            stableCoinProxyAdmin = new StableCoinProxyAdmin(requestedToken.proxyAdminOwnerAccount);
-        } else {
-            stableCoinProxyAdmin = new StableCoinProxyAdmin(msg.sender);
-        }
-
-        // Deploy Proxy
-        TransparentUpgradeableProxy stableCoinProxy = new TransparentUpgradeableProxy(
-            stableCoinContractAddress,
-            address(stableCoinProxyAdmin),
-            ''
-        );
-
-        // Create Token
-        IHederaTokenService.HederaToken memory token = _createToken(
-            requestedToken,
-            address(stableCoinProxy),
-            address(stableCoinProxyAdmin)
-        );
-
-        // Initialize Proxy
-        IHederaTokenManager.InitializeStruct memory initInfo = IHederaTokenManager.InitializeStruct(
-            token,
-            requestedToken.tokenInitialSupply,
-            requestedToken.tokenDecimals,
-            msg.sender,
-            reserveAddress,
-            requestedToken.roles,
-            requestedToken.cashinRole,
-            requestedToken.metadata
-        );
-
-        address tokenAddress = HederaTokenManager(payable(address(stableCoinProxy))).initialize{value: msg.value}(
-            initInfo
-        );
-
-        // Return event
         DeployedStableCoin memory deployedStableCoin = DeployedStableCoin(
-            address(stableCoinProxy),
-            address(stableCoinProxyAdmin),
-            stableCoinContractAddress,
+            stableCoinProxy,
             tokenAddress,
-            reserveAddress,
-            reserveProxyAdmin
+            reserveAddress
         );
-
         emit Deployed(deployedStableCoin);
-
         return deployedStableCoin;
     }
 
@@ -253,24 +177,16 @@ contract StableCoinFactory is IStableCoinFactory, Initializable {
      *
      * @param requestedToken The token struct
      * @param stableCoinProxyAddress The address of the stablecoin proxy
-     * @param stableCoinProxyAdminAddress The address of the stablecoin proxy admin
      *
      * @return token The deployed token
      */
     function _createToken(
         TokenStruct memory requestedToken,
-        address stableCoinProxyAddress,
-        address stableCoinProxyAdminAddress
+        address stableCoinProxyAddress
     ) private pure returns (IHederaTokenService.HederaToken memory) {
         // token Memo
         string memory tokenMemo = string(
-            abi.encodePacked(
-                _MEMO_1,
-                Strings.toHexString(stableCoinProxyAddress),
-                _MEMO_2,
-                Strings.toHexString(stableCoinProxyAdminAddress),
-                _MEMO_3
-            )
+            abi.encodePacked(_MEMO_1, Strings.toHexString(stableCoinProxyAddress), _MEMO_2)
         );
 
         // Token Expiry
@@ -340,5 +256,98 @@ contract StableCoinFactory is IStableCoinFactory, Initializable {
      */
     function _edit(uint256 index, address newAddress) private {
         _hederaTokenManagerAddress[index] = newAddress;
+    }
+
+    /**
+     * @dev Handle reserve information if present
+     *
+     * @param requestedToken The token struct
+     *
+     * @return reserve address
+     */
+    function _handleReserve(TokenStruct calldata requestedToken) private returns (address) {
+        address reserveAddress = requestedToken.reserveAddress;
+        if (!requestedToken.createReserve && reserveAddress == address(0)) {
+            return address(0);
+        }
+
+        if (requestedToken.createReserve) {
+            HederaReserve reserveContract = new HederaReserve();
+            _validationReserveInitialAmount(
+                reserveContract.decimals(),
+                requestedToken.reserveInitialAmount,
+                requestedToken.tokenDecimals,
+                requestedToken.tokenInitialSupply
+            );
+
+            address reserveProxy = address(
+                new ResolverProxy(
+                    IBusinessLogicResolver(reserveAddress),
+                    requestedToken.reserveConfigurationId.key,
+                    requestedToken.reserveConfigurationId.version,
+                    requestedToken.roles
+                )
+            );
+            HederaReserve(reserveProxy).initialize(requestedToken.reserveInitialAmount, msg.sender);
+            return reserveProxy;
+        }
+
+        (, int256 reserveInitialAmount, , , ) = AggregatorV3Interface(reserveAddress).latestRoundData();
+        _validationReserveInitialAmount(
+            AggregatorV3Interface(reserveAddress).decimals(),
+            reserveInitialAmount,
+            requestedToken.tokenDecimals,
+            requestedToken.tokenInitialSupply
+        );
+        return reserveAddress;
+    }
+
+    /**
+     * @dev Deploy stable coin proxy
+     *
+     * @param requestedToken The token struct
+     *
+     * @return resolver proxy address
+     */
+    function _deployStableCoinProxy(TokenStruct calldata requestedToken) private returns (address) {
+        return
+            address(
+                new ResolverProxy(
+                    requestedToken.businessLogicResolverContractId,
+                    requestedToken.stableCoinConfigurationId.key,
+                    requestedToken.stableCoinConfigurationId.version,
+                    requestedToken.roles
+                )
+            );
+    }
+
+    /**
+     * @dev Initialize the stable coin token
+     *
+     * @param requestedToken The token struct
+     * @param stableCoinProxy Stable Coin Proxy address
+     * @param reserveAddress Reserve address
+     *
+     * @return hedera token manager address
+     */
+    function _initializeToken(
+        TokenStruct calldata requestedToken,
+        address stableCoinProxy,
+        address reserveAddress
+    ) private returns (address) {
+        IHederaTokenService.HederaToken memory token = _createToken(requestedToken, stableCoinProxy);
+
+        IHederaTokenManager.InitializeStruct memory initInfo = IHederaTokenManager.InitializeStruct(
+            token,
+            requestedToken.tokenInitialSupply,
+            requestedToken.tokenDecimals,
+            msg.sender,
+            reserveAddress,
+            requestedToken.roles,
+            requestedToken.cashinRole,
+            requestedToken.metadata
+        );
+
+        return HederaTokenManager(payable(stableCoinProxy)).initialize{value: msg.value}(initInfo);
     }
 }

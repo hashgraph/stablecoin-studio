@@ -27,4 +27,7 @@ bytes32 constant _RESERVE_STORAGE_POSITION = 0x6cd87a21205e289ae515ee48016344e9a
 // keccak256('stablecoin.studio.hold.storage');
 bytes32 constant _HOLD_STORAGE_POSITION = 0x55eb875db6f21625db342149ef0f0b78f6afec1625e2c812812e031b05ee4bd1;
 
+// keccak256('stablecoin.studio.resolverProxy.storage');
+bytes32 constant _RESOLVER_PROXY_STORAGE_POSITION = 0x72d4cc0a3f672d627d7746733345a3b1cc00ee12f57141f1dd5e005c8ceaec5e;
+
 // solhint-enable max-line-length
