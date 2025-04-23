@@ -279,10 +279,9 @@ contract StableCoinFactory is IStableCoinFactory, Initializable {
                 requestedToken.tokenDecimals,
                 requestedToken.tokenInitialSupply
             );
-
             address reserveProxy = address(
                 new ResolverProxy(
-                    IBusinessLogicResolver(reserveAddress),
+                    businessLogicResolverContractId,
                     requestedToken.reserveConfigurationId.key,
                     requestedToken.reserveConfigurationId.version,
                     requestedToken.roles
