@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.18;
 
-import {TokenOwnerFacet} from './TokenOwnerFacet.sol';
-import {RolesFacet} from './RolesFacet.sol';
+import {TokenOwnerStorageWrapper} from './TokenOwnerStorageWrapper.sol';
+import {RolesStorageWrapper} from './RolesStorageWrapper.sol';
 // solhint-disable-next-line max-line-length
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {IKYC} from './Interfaces/IKYC.sol';
 import {_KYC_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 
-contract KYCFacet is IKYC, TokenOwnerFacet, RolesFacet {
+contract KYCFacet is IKYC, TokenOwnerStorageWrapper, RolesStorageWrapper {
     /**
      * @dev Grants KYCFacet.sol to account for the token
      *

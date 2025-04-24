@@ -6,13 +6,18 @@ import {IHoldManagement} from './Interfaces/IHoldManagement.sol';
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {EnumerableSet} from '@openzeppelin/contracts/utils/structs/EnumerableSet.sol';
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
-import {RolesFacet} from './RolesFacet.sol';
-import {TokenOwnerFacet} from './TokenOwnerFacet.sol';
+import {RolesStorageWrapper} from './RolesStorageWrapper.sol';
+import {TokenOwnerStorageWrapper} from './TokenOwnerStorageWrapper.sol';
 import {HoldManagementStorageWrapper} from './HoldManagementStorageWrapper.sol';
 import {_HOLD_MANAGEMENT_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 // solhint-enable max-line-length
 
-contract HoldManagementFacet is HoldManagementStorageWrapper, TokenOwnerFacet, RolesFacet, IHoldManagement {
+contract HoldManagementFacet is
+    IHoldManagement,
+    HoldManagementStorageWrapper,
+    TokenOwnerStorageWrapper,
+    RolesStorageWrapper
+{
     using EnumerableSet for EnumerableSet.UintSet;
 
     /**

@@ -3,15 +3,15 @@ pragma solidity 0.8.18;
 
 // solhint-disable-next-line max-line-length
 import {HoldManagementStorageWrapper} from './HoldManagementStorageWrapper.sol';
-import {RolesFacet} from './RolesFacet.sol';
 import {IBurnable} from './Interfaces/IBurnable.sol';
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
 import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
 import {BURNABLE_RESOLVER_KEY} from '../constants/resolverKeys.sol';
-import {TokenOwnerFacet} from './TokenOwnerFacet.sol';
+import {RolesStorageWrapper} from './RolesStorageWrapper.sol';
+import {TokenOwnerStorageWrapper} from './TokenOwnerStorageWrapper.sol';
 
-contract BurnableFacet is IBurnable, HoldManagementStorageWrapper, RolesFacet, TokenOwnerFacet {
+contract BurnableFacet is IBurnable, HoldManagementStorageWrapper, RolesStorageWrapper, TokenOwnerStorageWrapper {
     /**
      * @dev Burns an `amount` of tokens owned by the treasury account
      *

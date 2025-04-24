@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.18;
 
-import {TokenOwnerFacet} from './TokenOwnerFacet.sol';
-import {RolesFacet} from './RolesFacet.sol';
+import {TokenOwnerStorageWrapper} from './TokenOwnerStorageWrapper.sol';
+import {RolesStorageWrapper} from './RolesStorageWrapper.sol';
 // solhint-disable-next-line max-line-length
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {IFreezable} from './Interfaces/IFreezable.sol';
 import {_FREEZABLE_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 
-contract FreezableFacet is IFreezable, TokenOwnerFacet, RolesFacet {
+contract FreezableFacet is IFreezable, TokenOwnerStorageWrapper, RolesStorageWrapper {
     /**
      * @dev Freezes transfers of the token for the `account`
      *

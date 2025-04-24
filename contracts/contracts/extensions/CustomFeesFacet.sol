@@ -2,13 +2,13 @@
 pragma solidity 0.8.18;
 
 import {ICustomFees} from './Interfaces/ICustomFees.sol';
-import {RolesFacet} from './RolesFacet.sol';
-import {TokenOwnerFacet} from './TokenOwnerFacet.sol';
+import {TokenOwnerStorageWrapper} from './TokenOwnerStorageWrapper.sol';
+import {RolesStorageWrapper} from './RolesStorageWrapper.sol';
 // solhint-disable-next-line max-line-length
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {_CUSTOM_FEES_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 
-contract CustomFeesFacet is ICustomFees, TokenOwnerFacet, RolesFacet {
+contract CustomFeesFacet is ICustomFees, TokenOwnerStorageWrapper, RolesStorageWrapper {
     /**
      * @dev Updates the custom fees for the token
      *
