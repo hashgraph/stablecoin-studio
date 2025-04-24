@@ -10,9 +10,9 @@ import {_KYC_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 
 contract KYCFacet is IKYC, TokenOwnerStorageWrapper, RolesStorageWrapper {
     /**
-     * @dev Grants KYCFacet.sol to account for the token
+     * @dev Grants KYC to account for the token
      *
-     * @param account The account to which the KYCFacet.sol will be granted
+     * @param account The account to which the KYC will be granted
      */
     function grantKyc(
         address account
@@ -29,9 +29,9 @@ contract KYCFacet is IKYC, TokenOwnerStorageWrapper, RolesStorageWrapper {
     }
 
     /**
-     * @dev Revokes KYCFacet.sol to account for the token
+     * @dev Revokes KYC to account for the token
      *
-     * @param account The account to which the KYCFacet.sol will be revoked
+     * @param account The account to which the KYC will be revoked
      */
     function revokeKyc(
         address account
