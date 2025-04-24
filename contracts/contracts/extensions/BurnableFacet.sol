@@ -12,7 +12,13 @@ import {TokenOwnerStorageWrapper} from './TokenOwnerStorageWrapper.sol';
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
 
-contract BurnableFacet is IBurnable, IStaticFunctionSelectors, HoldManagementStorageWrapper, RolesStorageWrapper, TokenOwnerStorageWrapper {
+contract BurnableFacet is
+    IBurnable,
+    IStaticFunctionSelectors,
+    HoldManagementStorageWrapper,
+    RolesStorageWrapper,
+    TokenOwnerStorageWrapper
+{
     /**
      * @dev Burns an `amount` of tokens owned by the treasury account
      *

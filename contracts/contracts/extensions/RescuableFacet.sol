@@ -12,7 +12,13 @@ import {_RESCUABLE_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 import {IRoles} from './Interfaces/IRoles.sol';
 import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
 
-contract RescuableFacet is ReentrancyGuard, IRescuable, IStaticFunctionSelectors, TokenOwnerStorageWrapper, RolesStorageWrapper {
+contract RescuableFacet is
+    ReentrancyGuard,
+    IRescuable,
+    IStaticFunctionSelectors,
+    TokenOwnerStorageWrapper,
+    RolesStorageWrapper
+{
     /**
      * @dev Rescues `value` `tokenId` from contractTokenOwner to rescuer
      *

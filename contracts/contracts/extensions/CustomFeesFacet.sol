@@ -10,7 +10,6 @@ import {_CUSTOM_FEES_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 import {IRoles} from './Interfaces/IRoles.sol';
 import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
 
-
 contract CustomFeesFacet is ICustomFees, IStaticFunctionSelectors, TokenOwnerStorageWrapper, RolesStorageWrapper {
     /**
      * @dev Updates the custom fees for the token

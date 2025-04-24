@@ -18,7 +18,13 @@ contract FreezableFacet is IFreezable, IStaticFunctionSelectors, TokenOwnerStora
      */
     function freeze(
         address account
-    ) external override(IFreezable) onlyRole(_getRoleId(IRoles.RoleName.FREEZE)) addressIsNotZero(account) returns (bool) {
+    )
+        external
+        override(IFreezable)
+        onlyRole(_getRoleId(IRoles.RoleName.FREEZE))
+        addressIsNotZero(account)
+        returns (bool)
+    {
         address currentTokenAddress = _getTokenAddress();
 
         int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS).freezeToken(currentTokenAddress, account);
@@ -37,7 +43,13 @@ contract FreezableFacet is IFreezable, IStaticFunctionSelectors, TokenOwnerStora
      */
     function unfreeze(
         address account
-    ) external override(IFreezable) onlyRole(_getRoleId(IRoles.RoleName.FREEZE)) addressIsNotZero(account) returns (bool) {
+    )
+        external
+        override(IFreezable)
+        onlyRole(_getRoleId(IRoles.RoleName.FREEZE))
+        addressIsNotZero(account)
+        returns (bool)
+    {
         address currentTokenAddress = _getTokenAddress();
 
         int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS).unfreezeToken(currentTokenAddress, account);
