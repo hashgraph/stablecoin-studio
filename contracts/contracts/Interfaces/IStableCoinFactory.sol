@@ -3,8 +3,14 @@ pragma solidity 0.8.18;
 
 import {IHederaTokenManager} from './IHederaTokenManager.sol';
 import {KeysStruct} from '../library/KeysLib.sol';
+import {IBusinessLogicResolver} from '../resolver/interfaces/IBusinessLogicResolver.sol';
 
 interface IStableCoinFactory {
+    struct ResolverProxyConfiguration {
+        bytes32 key;
+        uint256 version;
+    }
+
     struct TokenStruct {
         string tokenName;
         string tokenSymbol;
@@ -20,16 +26,15 @@ interface IStableCoinFactory {
         IHederaTokenManager.RolesStruct[] roles;
         IHederaTokenManager.CashinRoleStruct cashinRole;
         string metadata;
-        address proxyAdminOwnerAccount;
+        IBusinessLogicResolver businessLogicResolverContractId;
+        ResolverProxyConfiguration stableCoinConfigurationId;
+        ResolverProxyConfiguration reserveConfigurationId;
     }
 
     struct DeployedStableCoin {
         address stableCoinProxy;
-        address stableCoinProxyAdmin;
-        address stableCoinContractAddress;
         address tokenAddress;
         address reserveProxy;
-        address reserveProxyAdmin;
     }
 
     /**

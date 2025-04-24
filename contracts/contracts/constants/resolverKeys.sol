@@ -60,4 +60,13 @@ bytes32 constant _HEDERA_RESERVE_RESOLVER_KEY = 0x4d643a5d89820c8022463999841f25
 // keccak256('stablecoin.studio.stable.coin.factory.resolver.key');
 bytes32 constant _STABLE_COIN_FACTORY_RESOLVER_KEY = 0xe247059558103a0a091268413ba572d3342126d4c1f4755215dde0765f8ca949;
 
+// keccak256('stablecoin.studio.standard.diamond.loupe.resolverKey')
+bytes32 constant _DIAMOND_LOUPE_RESOLVER_KEY = 0xaf1e22eff76611c014015c9e4feee3706f134b01bc698e2bc76dfc8332fae1c1;
+
+// keccak256('stablecoin.studio.standard.diamond.resolverKey')
+bytes32 constant _DIAMOND_RESOLVER_KEY = 0xe7c2bf92f4ac789767b12cd9a8999cefe03a996756776d504061864072f843d3;
+
+// keccak256('stablecoin.studio.standard.diamond.cut.resolverKey')
+bytes32 constant _DIAMOND_CUT_RESOLVER_KEY = 0xec97912280645fb8759d3503d74d0034275fcd2435a3eebfb862e6dff89dccee;
+
 // solhint-enable max-line-length

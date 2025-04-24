@@ -36,4 +36,7 @@ bytes32 constant _HEDERA_TOKEN_MANAGER_STORAGE_POSITION = 0x2cda914265c33036d130
 // keccak256('stablecoin.studio.stable.coin.factory.storage');
 bytes32 constant _STABLE_COIN_FACTORY_STORAGE_POSITION = 0xb0e6750e851c57435b04114f257b158c4b5f3ed0ea8aa4cc132d1cbcbe0b79e6;
 
+// keccak256('stablecoin.studio.resolverProxy.storage');
+bytes32 constant _RESOLVER_PROXY_STORAGE_POSITION = 0x72d4cc0a3f672d627d7746733345a3b1cc00ee12f57141f1dd5e005c8ceaec5e;
+
 // solhint-enable max-line-length
