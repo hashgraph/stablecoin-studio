@@ -2,7 +2,7 @@
 
 # Stablecoin Studio
 
-[![License](https://img.shields.io/badge/license-apache2-blue.svg)](LICENSE)
+[![License](https://img.shields.io/github/license/hashgraph/stablecoin-studio)](LICENSE.md)
 
 </div>
 
