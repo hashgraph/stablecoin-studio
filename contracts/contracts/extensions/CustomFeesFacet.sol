@@ -2,12 +2,13 @@
 pragma solidity 0.8.18;
 
 import {ICustomFees} from './Interfaces/ICustomFees.sol';
-import {Roles} from './Roles.sol';
-import {TokenOwner} from './TokenOwner.sol';
+import {TokenOwnerStorageWrapper} from './TokenOwnerStorageWrapper.sol';
+import {RolesStorageWrapper} from './RolesStorageWrapper.sol';
 // solhint-disable-next-line max-line-length
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
+import {_CUSTOM_FEES_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 
-abstract contract CustomFees is ICustomFees, TokenOwner, Roles {
+contract CustomFeesFacet is ICustomFees, TokenOwnerStorageWrapper, RolesStorageWrapper {
     /**
      * @dev Updates the custom fees for the token
      *
@@ -33,10 +34,19 @@ abstract contract CustomFees is ICustomFees, TokenOwner, Roles {
         return success;
     }
 
-    /**
-     * @dev This empty reserved space is put in place to allow future versions to add new
-     * variables without shifting down storage in the inheritance chain.
-     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
-     */
-    uint256[50] private __gap;
+    function getStaticResolverKey() external pure override returns (bytes32 staticResolverKey_) {
+        staticResolverKey_ = _CUSTOM_FEES_RESOLVER_KEY;
+    }
+
+    function getStaticFunctionSelectors() external pure override returns (bytes4[] memory staticFunctionSelectors_) {
+        uint256 selectorIndex;
+        staticFunctionSelectors_ = new bytes4[](1);
+        staticFunctionSelectors_[selectorIndex++] = this.updateTokenCustomFees.selector;
+    }
+
+    function getStaticInterfaceIds() external pure override returns (bytes4[] memory staticInterfaceIds_) {
+        staticInterfaceIds_ = new bytes4[](1);
+        uint256 selectorsIndex;
+        staticInterfaceIds_[selectorsIndex++] = type(ICustomFees).interfaceId;
+    }
 }

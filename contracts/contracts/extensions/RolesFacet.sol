@@ -4,9 +4,9 @@ pragma solidity 0.8.18;
 import {ADMIN_ROLE} from '../constants/roles.sol';
 import {IRoles} from './Interfaces/IRoles.sol';
 import {RolesStorageWrapper} from './RolesStorageWrapper.sol';
+import {_ROLES_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 
-// TODO: RolesFacet
-contract Roles is IRoles, RolesStorageWrapper {
+contract RolesFacet is IRoles, RolesStorageWrapper {
     /**
      * @dev Checks if the account has been granted a role
      *
@@ -77,5 +77,25 @@ contract Roles is IRoles, RolesStorageWrapper {
      */
     function getRoleId(RoleName role) external view override(IRoles) returns (bytes32) {
         return _getRoleId(role);
+    }
+
+    function getStaticResolverKey() external pure override returns (bytes32 staticResolverKey_) {
+        staticResolverKey_ = _ROLES_RESOLVER_KEY;
+    }
+
+    function getStaticFunctionSelectors() external pure override returns (bytes4[] memory staticFunctionSelectors_) {
+        uint256 selectorIndex;
+        staticFunctionSelectors_ = new bytes4[](5);
+        staticFunctionSelectors_[selectorIndex++] = this.hasRole.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.getAccountsWithRole.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.getNumberOfAccountsWithRole.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.grantRole.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.revokeRole.selector;
+    }
+
+    function getStaticInterfaceIds() external pure override returns (bytes4[] memory staticInterfaceIds_) {
+        staticInterfaceIds_ = new bytes4[](1);
+        uint256 selectorsIndex;
+        staticInterfaceIds_[selectorsIndex++] = type(IRoles).interfaceId;
     }
 }

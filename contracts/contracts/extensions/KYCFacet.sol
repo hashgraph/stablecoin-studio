@@ -1,13 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.18;
 
-import {TokenOwner} from './TokenOwner.sol';
-import {Roles} from './Roles.sol';
+import {TokenOwnerStorageWrapper} from './TokenOwnerStorageWrapper.sol';
+import {RolesStorageWrapper} from './RolesStorageWrapper.sol';
 // solhint-disable-next-line max-line-length
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {IKYC} from './Interfaces/IKYC.sol';
+import {_KYC_RESOLVER_KEY} from '../constants/resolverKeys.sol';
 
-abstract contract KYC is IKYC, TokenOwner, Roles {
+contract KYCFacet is IKYC, TokenOwnerStorageWrapper, RolesStorageWrapper {
     /**
      * @dev Grants KYC to account for the token
      *
@@ -46,10 +47,20 @@ abstract contract KYC is IKYC, TokenOwner, Roles {
         return success;
     }
 
-    /**
-     * @dev This empty reserved space is put in place to allow future versions to add new
-     * variables without shifting down storage in the inheritance chain.
-     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
-     */
-    uint256[50] private __gap;
+    function getStaticResolverKey() external pure override returns (bytes32 staticResolverKey_) {
+        staticResolverKey_ = _KYC_RESOLVER_KEY;
+    }
+
+    function getStaticFunctionSelectors() external pure override returns (bytes4[] memory staticFunctionSelectors_) {
+        uint256 selectorIndex;
+        staticFunctionSelectors_ = new bytes4[](2);
+        staticFunctionSelectors_[selectorIndex++] = this.grantKyc.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.revokeKyc.selector;
+    }
+
+    function getStaticInterfaceIds() external pure override returns (bytes4[] memory staticInterfaceIds_) {
+        staticInterfaceIds_ = new bytes4[](1);
+        uint256 selectorsIndex;
+        staticInterfaceIds_[selectorsIndex++] = type(IKYC).interfaceId;
+    }
 }
