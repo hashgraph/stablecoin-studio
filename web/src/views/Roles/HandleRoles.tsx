@@ -101,7 +101,7 @@ const HandleRoles = ({ action }: HandleRolesProps) => {
 					operations?.includes(Operation.GRANT_KYC) &&
 					getAccessByOperation(Operation.GRANT_KYC) === Access.CONTRACT
 				) &&
-				option.label === 'KYCFacet.sol'
+				option.label === 'KYC'
 			) {
 				return false;
 			}

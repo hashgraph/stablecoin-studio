@@ -135,7 +135,7 @@ describe(`Testing ManageImportedTokenService class`, () => {
     // ManagedFeatures
     jest.spyOn(utilsService, 'defaultConfirmAsk').mockResolvedValueOnce(true);
 
-    // KYCFacet.sol
+    // KYC
     jest.spyOn(utilsService, 'defaultConfirmAsk').mockResolvedValueOnce(true);
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
@@ -144,7 +144,7 @@ describe(`Testing ManageImportedTokenService class`, () => {
       );
     jest.spyOn(utilsService, 'defaultConfirmAsk').mockResolvedValueOnce(true);
 
-    // CustomFeesFacet.sol
+    // CustomFees
     jest.spyOn(utilsService, 'defaultConfirmAsk').mockResolvedValueOnce(true);
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
@@ -157,7 +157,7 @@ describe(`Testing ManageImportedTokenService class`, () => {
     // RolesManagement
     jest.spyOn(utilsService, 'defaultConfirmAsk').mockResolvedValueOnce(false);
 
-    // ReserveFacet.sol
+    // Reserve
     jest.spyOn(utilsService, 'defaultConfirmAsk').mockResolvedValueOnce(true);
     jest.spyOn(utilsService, 'defaultConfirmAsk').mockResolvedValueOnce(true);
     jest
@@ -281,7 +281,7 @@ describe(`Testing ManageImportedTokenService class`, () => {
         language.getText('wizard.featureOptions.SmartContract'),
       );
 
-    // KYCFacet.sol
+    // KYC
     jest.spyOn(utilsService, 'defaultConfirmAsk').mockResolvedValueOnce(true);
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
@@ -290,7 +290,7 @@ describe(`Testing ManageImportedTokenService class`, () => {
       );
     jest.spyOn(utilsService, 'defaultConfirmAsk').mockResolvedValueOnce(false);
 
-    // CustomFeesFacet.sol
+    // CustomFees
     jest.spyOn(utilsService, 'defaultConfirmAsk').mockResolvedValueOnce(true);
     jest
       .spyOn(utilsService, 'defaultMultipleAsk')
@@ -347,7 +347,7 @@ describe(`Testing ManageImportedTokenService class`, () => {
       .mockResolvedValueOnce('0.0.1234');
     jest.spyOn(utilsService, 'defaultSingleAsk').mockResolvedValueOnce('10'); //cashin
 
-    // ReserveFacet.sol
+    // Reserve
     jest.spyOn(utilsService, 'defaultConfirmAsk').mockResolvedValueOnce(true);
     jest.spyOn(utilsService, 'defaultConfirmAsk').mockResolvedValueOnce(false);
     jest.spyOn(utilsService, 'defaultSingleAsk').mockResolvedValueOnce('10');

@@ -29,7 +29,7 @@ import colors from 'colors';
  */
 export default class KYCStableCoinService extends Service {
   constructor() {
-    super('KYCFacet.sol Stablecoin');
+    super('KYC Stablecoin');
   }
 
   public async grantKYCToAccount(req: KYCRequest): Promise<void> {

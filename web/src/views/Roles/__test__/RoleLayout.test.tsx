@@ -94,7 +94,7 @@ describe(`<${RoleLayout.name} />`, () => {
 		expect(defaultProps.onConfirm).not.toHaveBeenCalled();
 	});
 
-	test('Cancel button redirect to RolesFacet.sol view', async () => {
+	test('Cancel button redirect to Roles view', async () => {
 		const component = factoryComponent();
 		const anything = expect.any(Function);
 

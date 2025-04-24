@@ -244,14 +244,14 @@ export default class CreateStableCoinService extends Service {
       tokenToCreate.pauseKey = pauseKey;
     }
 
-    // KYCFacet.sol
+    // KYC
     const kyc = await this.askForKYC();
     let grantKYCToOriginalSender = false;
 
     if (kyc) {
       const KYCKey = await this.checkAnswer(
         await utilsService.defaultMultipleAsk(
-          language.getText('stablecoin.features.KYCFacet.sol'),
+          language.getText('stablecoin.features.KYC'),
           language.getArrayFromObject('wizard.nonNoneFeatureOptions'),
         ),
       );
@@ -299,7 +299,7 @@ export default class CreateStableCoinService extends Service {
         tokenToCreate.feeRoleAccount = currentAccount.accountId;
     }
 
-    // Proof of ReserveFacet.sol
+    // Proof of Reserve
     let reserve = false;
     let existingReserve = false;
     reserve = await this.askForReserve();
@@ -401,7 +401,7 @@ export default class CreateStableCoinService extends Service {
           ? '-'
           : existingReserve
           ? tokenToCreate.reserveAddress
-          : 'Proof of ReserveFacet.sol Feed initial amount : ' +
+          : 'Proof of Reserve Feed initial amount : ' +
             tokenToCreate.reserveInitialAmount,
       burnRole: tokenToCreate.burnRoleAccount,
       wipeRole: tokenToCreate.wipeRoleAccount,

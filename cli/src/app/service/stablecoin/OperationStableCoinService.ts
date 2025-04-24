@@ -260,7 +260,7 @@ export default class OperationStableCoinService extends Service {
         await this.sendTokens(currentAccount.accountId);
 
         break;
-      case language.getText('wizard.stableCoinOptions.CashInFacet.sol'):
+      case language.getText('wizard.stableCoinOptions.CashIn'):
         await utilsService.cleanAndShowBanner();
 
         utilsService.displayCurrentUserInfo(
@@ -1561,7 +1561,7 @@ export default class OperationStableCoinService extends Service {
       });
 
     const accountTarget = '0.0.0';
-    // * RolesFacet.sol Main Switch
+    // * Roles Main Switch
     switch (
       await utilsService.defaultMultipleAsk(
         language.getText('stablecoin.askAction'),
@@ -1609,7 +1609,7 @@ export default class OperationStableCoinService extends Service {
             await this.getAccountsWithRole(StableCoinRole.DEFAULT_ADMIN_ROLE);
             break;
 
-          case language.getText('wizard.CheckAccountsWithRoleOptions.CashInFacet.sol'):
+          case language.getText('wizard.CheckAccountsWithRoleOptions.CashIn'):
             await this.getAccountsWithRole(StableCoinRole.CASHIN_ROLE);
             break;
 
@@ -1643,7 +1643,7 @@ export default class OperationStableCoinService extends Service {
             await this.getAccountsWithRole(StableCoinRole.DELETE_ROLE);
             break;
 
-          case language.getText('wizard.CheckAccountsWithRoleOptions.KYCFacet.sol'):
+          case language.getText('wizard.CheckAccountsWithRoleOptions.KYC'):
             await this.getAccountsWithRole(StableCoinRole.KYC_ROLE);
             break;
 
@@ -2365,7 +2365,7 @@ export default class OperationStableCoinService extends Service {
           !this.stableCoinDeleted &&
           !this.stableCoinPaused &&
           !this.isFrozen) ||
-        (option === language.getText('wizard.stableCoinOptions.CashInFacet.sol') &&
+        (option === language.getText('wizard.stableCoinOptions.CashIn') &&
           capabilities.includes(Operation.CASH_IN)) ||
         (option === language.getText('wizard.stableCoinOptions.Burn') &&
           capabilities.includes(Operation.BURN)) ||
@@ -2400,9 +2400,9 @@ export default class OperationStableCoinService extends Service {
       ? capabilitiesFilter.filter((option) => {
           if (
             option === language.getText('wizard.stableCoinOptions.Send') ||
-            (option === language.getText('wizard.stableCoinOptions.CashInFacet.sol') &&
+            (option === language.getText('wizard.stableCoinOptions.CashIn') &&
               roles.includes(StableCoinRole.CASHIN_ROLE)) ||
-            (option === language.getText('wizard.stableCoinOptions.CashInFacet.sol') &&
+            (option === language.getText('wizard.stableCoinOptions.CashIn') &&
               this.isOperationAccess(
                 stableCoinCapabilities,
                 Operation.CASH_IN,
@@ -2774,7 +2774,7 @@ export default class OperationStableCoinService extends Service {
       {
         role: {
           availability: capabilities.includes(Operation.GRANT_KYC),
-          name: 'KYCFacet.sol Role',
+          name: 'KYC Role',
           value: StableCoinRole.KYC_ROLE,
           id: tokenKeys.kyc,
         },

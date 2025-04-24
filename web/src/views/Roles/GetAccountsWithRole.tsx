@@ -59,7 +59,7 @@ const GetAccountsWithRole = () => {
 		},
 		{
 			value: StableCoinRole.CASHIN_ROLE,
-			label: t('roles:getAccountsWithRole.options.CashInFacet.sol'),
+			label: t('roles:getAccountsWithRole.options.CashIn'),
 		},
 		{
 			value: StableCoinRole.FREEZE_ROLE,

@@ -37,7 +37,7 @@ import ConnectRequest, {
 import { CLIENT_ACCOUNT_ED25519, FACTORY_ADDRESS } from '../../config.js';
 import Injectable from '../../../src/core/Injectable.js';
 
-describe('🧪 ReserveFacet.sol test', () => {
+describe('🧪 Reserve test', () => {
 	const stableCoinSC = {
 		tokenId: new HederaId('0.0.8888888'),
 	};

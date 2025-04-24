@@ -69,12 +69,12 @@ export class FactoryStableCoin {
 	// public treasuryAddress: string;
 
 	/**
-	 * ReserveFacet.sol contract
+	 * Reserve contract
 	 */
 	public reserveAddress: string;
 
 	/**
-	 * ReserveFacet.sol initial amount
+	 * Reserve initial amount
 	 */
 	public reserveInitialAmount: string;
 
@@ -84,7 +84,7 @@ export class FactoryStableCoin {
 	public createReserve: boolean;
 
 	/**
-	 * Grant KYCFacet.sol Original Sender or not
+	 * Grant KYC Original Sender or not
 	 */
 	// public grantKYCToOriginalSender: boolean;
 
@@ -94,7 +94,7 @@ export class FactoryStableCoin {
 	public keys: KeysStruct[];
 
 	/**
-	 * RolesFacet.sol
+	 * Roles
 	 */
 	public roles: FactoryRole[];
 

@@ -58,7 +58,7 @@ const CheckKycOperation = () => {
 				SDKService.isAccountKYCGranted(request),
 				new Promise((resolve, reject) => {
 					setTimeout(() => {
-						reject(new Error("Account KYCFacet.sol information couldn't be obtained in a reasonable time."));
+						reject(new Error("Account KYC information couldn't be obtained in a reasonable time."));
 					}, 10000);
 				}),
 			]).catch((e) => {
