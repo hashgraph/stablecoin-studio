@@ -4,14 +4,14 @@ pragma solidity 0.8.18;
 import {ICashIn} from './Interfaces/ICashIn.sol';
 import {IRoles} from './Interfaces/IRoles.sol';
 import {SupplierAdminStorageWrapper} from './SupplierAdminStorageWrapper.sol';
-import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
 // solhint-disable-next-line max-line-length
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {ReserveStorageWrapper} from './ReserveStorageWrapper.sol';
 import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
 import {_CASH_IN_RESOLVER_KEY} from '../constants/resolverKeys.sol';
+import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
 
-contract CashInFacet is ICashIn, SupplierAdminStorageWrapper, ReserveStorageWrapper {
+contract CashInFacet is ICashIn, IStaticFunctionSelectors, SupplierAdminStorageWrapper, ReserveStorageWrapper {
     /**
      * @dev Creates an `amount` of tokens and transfers them to an `account`, increasing
      * the total supply

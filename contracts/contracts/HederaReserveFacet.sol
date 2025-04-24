@@ -13,15 +13,6 @@ contract HederaReserveFacet is IStaticFunctionSelectors, IHederaReserve, HederaR
     uint256 private constant _VERSION_ID = 1;
 
     /**
-     * @dev Checks if the calling account is the HederaReserve contract admin
-     *
-     */
-    modifier isAdmin() {
-        _checkIsAdmin();
-        _;
-    }
-
-    /**
      * @dev Constructor required to avoid Initializer attack on logic contract
      *
      */
@@ -49,7 +40,7 @@ contract HederaReserveFacet is IStaticFunctionSelectors, IHederaReserve, HederaR
      *
      *  @param newValue The new value of the reserve
      */
-    function setAmount(int256 newValue) external isAdmin {
+    function setAmount(int256 newValue) external isAdmin(_hederaReserveDataStorage().admin) {
         HederaReserveDataStorage storage hederaReserveDataStorage = _hederaReserveDataStorage();
         emit AmountChanged(hederaReserveDataStorage.reserveAmount, newValue);
         hederaReserveDataStorage.reserveAmount = newValue;
@@ -60,7 +51,7 @@ contract HederaReserveFacet is IStaticFunctionSelectors, IHederaReserve, HederaR
      *
      *  @param admin The new admin
      */
-    function setAdmin(address admin) external isAdmin addressIsNotZero(admin) {
+    function setAdmin(address admin) external isAdmin(_hederaReserveDataStorage().admin) addressIsNotZero(admin) {
         HederaReserveDataStorage storage hederaReserveDataStorage = _hederaReserveDataStorage();
         emit AdminChanged(hederaReserveDataStorage.admin, admin);
         hederaReserveDataStorage.admin = admin;
@@ -128,14 +119,6 @@ contract HederaReserveFacet is IStaticFunctionSelectors, IHederaReserve, HederaR
             block.timestamp, // solhint-disable-line not-rely-on-time
             _ROUND_ID
         );
-    }
-
-    /**
-     * @dev Internal function to check if the caller is the admin
-     *
-     */
-    function _checkIsAdmin() private view {
-        if (_hederaReserveDataStorage().admin != msg.sender) revert OnlyAdmin(msg.sender);
     }
 
     function getStaticResolverKey() external pure override returns (bytes32 staticResolverKey_) {

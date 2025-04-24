@@ -51,6 +51,15 @@ abstract contract Common is Initializable, ICommon {
     }
 
     /**
+     * @dev Checks if the calling account is the contract admin
+     *
+     */
+    modifier isAdmin(address addr) {
+        _checkIsAdmin(addr);
+        _;
+    }
+
+    /**
      * @dev Checks that value is not less than ref
      *
      * @param value The value to check
@@ -97,5 +106,13 @@ abstract contract Common is Initializable, ICommon {
     function _checkResponse(int64 responseCode) internal pure returns (bool) {
         if (responseCode != HederaResponseCodes.SUCCESS) revert ResponseCodeInvalid(responseCode);
         return true;
+    }
+
+    /**
+     * @dev Reverts if the caller is not the specified admin
+     * @param admin The address of the admin to check against
+     */
+    function _checkIsAdmin(address admin) internal view {
+        if (admin != msg.sender) revert OnlyAdmin(msg.sender);
     }
 }

@@ -9,8 +9,10 @@ import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-c
 import {ReentrancyGuard} from '@openzeppelin/contracts/security/ReentrancyGuard.sol';
 import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
 import {_RESCUABLE_RESOLVER_KEY} from '../constants/resolverKeys.sol';
+import {IRoles} from './Interfaces/IRoles.sol';
+import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
 
-contract RescuableFacet is ReentrancyGuard, IRescuable, TokenOwnerStorageWrapper, RolesStorageWrapper {
+contract RescuableFacet is ReentrancyGuard, IRescuable, IStaticFunctionSelectors, TokenOwnerStorageWrapper, RolesStorageWrapper {
     /**
      * @dev Rescues `value` `tokenId` from contractTokenOwner to rescuer
      *
@@ -23,7 +25,7 @@ contract RescuableFacet is ReentrancyGuard, IRescuable, TokenOwnerStorageWrapper
     )
         external
         override(IRescuable)
-        onlyRole(_getRoleId(RoleName.RESCUE))
+        onlyRole(_getRoleId(IRoles.RoleName.RESCUE))
         amountIsNotNegative(amount, false)
         valueIsNotGreaterThan(SafeCast.toUint256(amount), _balanceOf(address(this)), true)
         returns (bool)
@@ -56,7 +58,7 @@ contract RescuableFacet is ReentrancyGuard, IRescuable, TokenOwnerStorageWrapper
     )
         external
         override(IRescuable)
-        onlyRole(_getRoleId(RoleName.RESCUE))
+        onlyRole(_getRoleId(IRoles.RoleName.RESCUE))
         valueIsNotGreaterThan(amount, address(this).balance, true)
         nonReentrant
         returns (bool)

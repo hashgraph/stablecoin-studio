@@ -5,8 +5,9 @@ import {IReserve} from './Interfaces/IReserve.sol';
 import {IRoles} from './Interfaces/IRoles.sol';
 import {ReserveStorageWrapper} from './ReserveStorageWrapper.sol';
 import {_RESERVE_RESOLVER_KEY} from '../constants/resolverKeys.sol';
+import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
 
-contract ReserveFacet is IReserve, ReserveStorageWrapper {
+contract ReserveFacet is IReserve, IStaticFunctionSelectors, ReserveStorageWrapper {
     /**
      * @dev Gets the current reserve amount
      *

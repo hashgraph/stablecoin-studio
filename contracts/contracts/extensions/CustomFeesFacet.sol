@@ -7,8 +7,11 @@ import {RolesStorageWrapper} from './RolesStorageWrapper.sol';
 // solhint-disable-next-line max-line-length
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {_CUSTOM_FEES_RESOLVER_KEY} from '../constants/resolverKeys.sol';
+import {IRoles} from './Interfaces/IRoles.sol';
+import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
 
-contract CustomFeesFacet is ICustomFees, TokenOwnerStorageWrapper, RolesStorageWrapper {
+
+contract CustomFeesFacet is ICustomFees, IStaticFunctionSelectors, TokenOwnerStorageWrapper, RolesStorageWrapper {
     /**
      * @dev Updates the custom fees for the token
      *
@@ -18,7 +21,7 @@ contract CustomFeesFacet is ICustomFees, TokenOwnerStorageWrapper, RolesStorageW
     function updateTokenCustomFees(
         IHederaTokenService.FixedFee[] calldata fixedFees,
         IHederaTokenService.FractionalFee[] calldata fractionalFees
-    ) external override(ICustomFees) onlyRole(_getRoleId(RoleName.CUSTOM_FEES)) returns (bool) {
+    ) external override(ICustomFees) onlyRole(_getRoleId(IRoles.RoleName.CUSTOM_FEES)) returns (bool) {
         address currentTokenAddress = _getTokenAddress();
 
         int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS).updateFungibleTokenCustomFees(

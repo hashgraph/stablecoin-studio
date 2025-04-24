@@ -39,15 +39,6 @@ contract StableCoinFactoryFacet is
     }
 
     /**
-     * @dev Checks if the calling account is the admin of the stablecoin
-     *
-     */
-    modifier isAdmin() {
-        _checkIsAdmin();
-        _;
-    }
-
-    /**
      * @dev Initialize the contract
      *
      * @param admin The address of the admin
@@ -178,7 +169,12 @@ contract StableCoinFactoryFacet is
      */
     function addHederaTokenManagerVersion(
         address newAddress
-    ) external override(IStableCoinFactory) isAdmin addressIsNotZero(newAddress) {
+    )
+        external
+        override(IStableCoinFactory)
+        isAdmin(_stableCoinFactoryDataStorage().admin)
+        addressIsNotZero(newAddress)
+    {
         _stableCoinFactoryDataStorage().hederaTokenManagerAddress.push(newAddress);
         emit HederaTokenManagerAddressAdded(newAddress);
     }
@@ -201,7 +197,12 @@ contract StableCoinFactoryFacet is
     function editHederaTokenManagerAddress(
         uint256 index,
         address newAddress
-    ) external override(IStableCoinFactory) isAdmin addressIsNotZero(newAddress) {
+    )
+        external
+        override(IStableCoinFactory)
+        isAdmin(_stableCoinFactoryDataStorage().admin)
+        addressIsNotZero(newAddress)
+    {
         address oldAddress = _stableCoinFactoryDataStorage().hederaTokenManagerAddress[index];
         _edit(index, newAddress);
         emit HederaTokenManagerAddressEdited(oldAddress, newAddress);
@@ -212,7 +213,9 @@ contract StableCoinFactoryFacet is
      *
      * @param index The index of the address
      */
-    function removeHederaTokenManagerAddress(uint256 index) external override(IStableCoinFactory) isAdmin {
+    function removeHederaTokenManagerAddress(
+        uint256 index
+    ) external override(IStableCoinFactory) isAdmin(_stableCoinFactoryDataStorage().admin) {
         address addressRemoved = _stableCoinFactoryDataStorage().hederaTokenManagerAddress[index];
         _edit(index, address(0));
         emit HederaTokenManagerAddressRemoved(index, addressRemoved);
@@ -225,7 +228,12 @@ contract StableCoinFactoryFacet is
      */
     function changeAdmin(
         address newAddress
-    ) external override(IStableCoinFactory) isAdmin addressIsNotZero(newAddress) {
+    )
+        external
+        override(IStableCoinFactory)
+        isAdmin(_stableCoinFactoryDataStorage().admin)
+        addressIsNotZero(newAddress)
+    {
         StableCoinFactoryDataStorage storage stableCoinFactoryDataStorage = _stableCoinFactoryDataStorage();
         address oldAdmin = stableCoinFactoryDataStorage.admin;
         stableCoinFactoryDataStorage.admin = newAddress;
@@ -333,14 +341,6 @@ contract StableCoinFactoryFacet is
      */
     function _edit(uint256 index, address newAddress) private {
         _stableCoinFactoryDataStorage().hederaTokenManagerAddress[index] = newAddress;
-    }
-
-    /**
-     * @dev Internal function to check if the caller is the admin
-     *
-     */
-    function _checkIsAdmin() private view {
-        if (_stableCoinFactoryDataStorage().admin != msg.sender) revert OnlyAdministratorFunction(msg.sender);
     }
 
     function getStaticResolverKey() external pure override returns (bytes32 staticResolverKey_) {

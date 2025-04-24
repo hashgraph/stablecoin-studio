@@ -3,6 +3,13 @@ pragma solidity 0.8.18;
 
 interface ICommon {
     /**
+     * @dev Emitted when the calling account is not the admin
+     *
+     * @param account The address that tried to change the reserve
+     */
+    error OnlyAdmin(address account);
+
+    /**
      * @dev Emitted when the provided `amount` is less than 0
      *
      * @param amount The value to check

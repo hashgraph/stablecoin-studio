@@ -5,8 +5,9 @@ import {IRoles} from './Interfaces/IRoles.sol';
 import {IRoleManagement} from './Interfaces/IRoleManagement.sol';
 import {SupplierAdminStorageWrapper} from './SupplierAdminStorageWrapper.sol';
 import {_ROLE_MANAGEMENT_RESOLVER_KEY} from '../constants/resolverKeys.sol';
+import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
 
-contract RoleManagementFacet is IRoleManagement, SupplierAdminStorageWrapper {
+contract RoleManagementFacet is IRoleManagement, IStaticFunctionSelectors, SupplierAdminStorageWrapper {
     /**
      * @dev Grant the provided "roles" to all the "accounts", if CASHIN then "amounts" are the allowances
      *
@@ -74,4 +75,5 @@ contract RoleManagementFacet is IRoleManagement, SupplierAdminStorageWrapper {
         staticInterfaceIds_ = new bytes4[](1);
         uint256 selectorsIndex;
         staticInterfaceIds_[selectorsIndex++] = type(IRoleManagement).interfaceId;
+    }
 }

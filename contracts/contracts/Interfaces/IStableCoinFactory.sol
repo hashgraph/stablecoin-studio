@@ -77,13 +77,6 @@ interface IStableCoinFactory {
     event HederaTokenManagerAddressAdded(address indexed newHederaTokenManager);
 
     /**
-     * @dev Emitted when a function is called by the Factory non administrator account
-     *
-     * @param addr The account trying to execute the function
-     */
-    error OnlyAdministratorFunction(address addr);
-
-    /**
      * @dev Deploys a stablecoin
      *
      * @param requestedToken The information provided to create the stablecoin's token

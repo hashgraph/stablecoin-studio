@@ -33,6 +33,9 @@ bytes32 constant _RESERVE_RESOLVER_KEY = 0x0da06131b2f743d07f58167098b1ac9b281f4
 // keccak256('stablecoin.studio.role.management.resolver.key');
 bytes32 constant _ROLE_MANAGEMENT_RESOLVER_KEY = 0x62605c8d18aa98b06b7c9dc0903a23450a60889c13a9c10e631f6203bd499be9;
 
+// keccak256('stablecoin.studio.role.resolver.key');
+bytes32 constant _ROLES_RESOLVER_KEY = 0xd4408b4f5b6c8488e6b89c9cd1aba76ff1dd23cbd95a4b7c24737fc3700125ce;
+
 // keccak256('stablecoin.studio.wipeable.resolver.key');
 bytes32 constant _WIPEABLE_RESOLVER_KEY = 0x5a3ba81c8e311e23f2b91f81706bac8a8cc9903178a3016f90f99e18be9ec5ae;
 
