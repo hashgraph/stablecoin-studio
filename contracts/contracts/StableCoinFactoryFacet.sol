@@ -11,7 +11,6 @@ import {KeysLib} from './library/KeysLib.sol';
 import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
 import {AggregatorV3Interface} from '@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol';
 import {ResolverProxy} from './resolver/resolverProxy/ResolverProxy.sol';
-import {StableCoinProxyAdmin} from './proxies/StableCoinProxyAdmin.sol';
 import {Common} from './core/Common.sol';
 import {_STABLE_COIN_FACTORY_RESOLVER_KEY} from './constants/resolverKeys.sol';
 import {StableCoinFactoryStorageWrapper} from './StableCoinFactoryStorageWrapper.sol';
@@ -259,29 +258,6 @@ contract StableCoinFactoryFacet is
         _stableCoinFactoryDataStorage().hederaTokenManagerAddress[index] = newAddress;
     }
 
-    function getStaticResolverKey() external pure override returns (bytes32 staticResolverKey_) {
-        staticResolverKey_ = _STABLE_COIN_FACTORY_RESOLVER_KEY;
-    }
-
-    function getStaticFunctionSelectors() external pure override returns (bytes4[] memory staticFunctionSelectors_) {
-        uint256 selectorIndex;
-        staticFunctionSelectors_ = new bytes4[](8);
-        staticFunctionSelectors_[selectorIndex++] = this.initialize.selector;
-        staticFunctionSelectors_[selectorIndex++] = this.deployStableCoin.selector;
-        staticFunctionSelectors_[selectorIndex++] = this.addHederaTokenManagerVersion.selector;
-        staticFunctionSelectors_[selectorIndex++] = this.getHederaTokenManagerAddress.selector;
-        staticFunctionSelectors_[selectorIndex++] = this.editHederaTokenManagerAddress.selector;
-        staticFunctionSelectors_[selectorIndex++] = this.removeHederaTokenManagerAddress.selector;
-        staticFunctionSelectors_[selectorIndex++] = this.changeAdmin.selector;
-        staticFunctionSelectors_[selectorIndex++] = this.getAdmin.selector;
-    }
-
-    function getStaticInterfaceIds() external pure override returns (bytes4[] memory staticInterfaceIds_) {
-        staticInterfaceIds_ = new bytes4[](1);
-        uint256 selectorsIndex;
-        staticInterfaceIds_[selectorsIndex++] = type(IStableCoinFactory).interfaceId;
-    }
-
     /**
      * @dev Handle reserve information if present
      *
@@ -296,7 +272,7 @@ contract StableCoinFactoryFacet is
         }
 
         if (requestedToken.createReserve) {
-            HederaReserve reserveContract = new HederaReserve();
+            HederaReserveFacet reserveContract = new HederaReserveFacet();
             _validationReserveInitialAmount(
                 reserveContract.decimals(),
                 requestedToken.reserveInitialAmount,
@@ -311,7 +287,7 @@ contract StableCoinFactoryFacet is
                     requestedToken.roles
                 )
             );
-            HederaReserve(reserveProxy).initialize(requestedToken.reserveInitialAmount, msg.sender);
+            HederaReserveFacet(reserveProxy).initialize(requestedToken.reserveInitialAmount, msg.sender);
             return reserveProxy;
         }
 
@@ -371,6 +347,29 @@ contract StableCoinFactoryFacet is
             requestedToken.metadata
         );
 
-        return HederaTokenManager(payable(stableCoinProxy)).initialize{value: msg.value}(initInfo);
+        return HederaTokenManagerFacet(payable(stableCoinProxy)).initialize{value: msg.value}(initInfo);
+    }
+
+    function getStaticResolverKey() external pure override returns (bytes32 staticResolverKey_) {
+        staticResolverKey_ = _STABLE_COIN_FACTORY_RESOLVER_KEY;
+    }
+
+    function getStaticFunctionSelectors() external pure override returns (bytes4[] memory staticFunctionSelectors_) {
+        uint256 selectorIndex;
+        staticFunctionSelectors_ = new bytes4[](8);
+        staticFunctionSelectors_[selectorIndex++] = this.initialize.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.deployStableCoin.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.addHederaTokenManagerVersion.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.getHederaTokenManagerAddress.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.editHederaTokenManagerAddress.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.removeHederaTokenManagerAddress.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.changeAdmin.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.getAdmin.selector;
+    }
+
+    function getStaticInterfaceIds() external pure override returns (bytes4[] memory staticInterfaceIds_) {
+        staticInterfaceIds_ = new bytes4[](1);
+        uint256 selectorsIndex;
+        staticInterfaceIds_[selectorsIndex++] = type(IStableCoinFactory).interfaceId;
     }
 }
