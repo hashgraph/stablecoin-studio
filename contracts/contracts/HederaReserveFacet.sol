@@ -17,7 +17,7 @@ contract HederaReserveFacet is IStaticFunctionSelectors, IHederaReserve, HederaR
      *
      */
     modifier isAdmin() {
-        if (_hederaReserveDataStorage().admin != msg.sender) revert OnlyAdmin(msg.sender);
+        _checkIsAdmin();
         _;
     }
 
@@ -128,6 +128,14 @@ contract HederaReserveFacet is IStaticFunctionSelectors, IHederaReserve, HederaR
             block.timestamp, // solhint-disable-line not-rely-on-time
             _ROUND_ID
         );
+    }
+
+    /**
+     * @dev Internal function to check if the caller is the admin
+     *
+     */
+    function _checkIsAdmin() private view {
+        if (_hederaReserveDataStorage().admin != msg.sender) revert OnlyAdmin(msg.sender);
     }
 
     function getStaticResolverKey() external pure override returns (bytes32 staticResolverKey_) {

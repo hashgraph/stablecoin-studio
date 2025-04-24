@@ -43,7 +43,7 @@ contract StableCoinFactoryFacet is
      *
      */
     modifier isAdmin() {
-        if (_stableCoinFactoryDataStorage().admin != msg.sender) revert OnlyAdministratorFunction(msg.sender);
+        _checkIsAdmin();
         _;
     }
 
@@ -333,6 +333,14 @@ contract StableCoinFactoryFacet is
      */
     function _edit(uint256 index, address newAddress) private {
         _stableCoinFactoryDataStorage().hederaTokenManagerAddress[index] = newAddress;
+    }
+
+    /**
+     * @dev Internal function to check if the caller is the admin
+     *
+     */
+    function _checkIsAdmin() private view {
+        if (_stableCoinFactoryDataStorage().admin != msg.sender) revert OnlyAdministratorFunction(msg.sender);
     }
 
     function getStaticResolverKey() external pure override returns (bytes32 staticResolverKey_) {
