@@ -18,17 +18,7 @@
  *
  */
 
-import { Query } from '../../../../core/query/Query.js';
-import { QueryResponse } from '../../../../core/query/QueryResponse.js';
-import { HederaId } from '../../../../domain/context/shared/HederaId.js';
-import ProxyConfigurationViewModel from '../../../../port/out/rpc/response/ProxyConfigurationViewModel.js';
-
-export class GetProxyConfigQueryResponse implements QueryResponse {
-	constructor(public readonly payload: ProxyConfigurationViewModel) {}
-}
-
-export class GetProxyConfigQuery extends Query<GetProxyConfigQueryResponse> {
-	constructor(public readonly tokenId: HederaId) {
-		super();
-	}
+export class ResolverProxyConfiguration {
+	public key: string;
+	public version: number;
 }

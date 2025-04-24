@@ -43,6 +43,7 @@ import { StableCoinRole } from '../../../../domain/context/stablecoin/StableCoin
 import { InvalidRole } from '../../../../domain/context/stablecoin/error/InvalidRole.js';
 import { InvalidDate } from '../error/InvalidDate';
 import { ISO_8601_REGEX } from '../../../../domain/context/shared/Date.js';
+import { InvalidBytes32 } from '../error/InvalidBytes32.js';
 
 export default class Validation {
 	public static checkPublicKey = () => {
@@ -341,6 +342,17 @@ export default class Validation {
 
 			if (valueDecimals > decimals) {
 				err.push(new InvalidDecimalRange(val, 0, decimals));
+			}
+			return err;
+		};
+	};
+
+	public static checkBytes32Format = () => {
+		return (val: any): BaseError[] => {
+			const bytes32RegEx = /^0x[a-fA-F0-9]{64}$/;
+			const err: BaseError[] = [];
+			if (!bytes32RegEx.exec(val)) {
+				err.push(new InvalidBytes32(val));
 			}
 			return err;
 		};

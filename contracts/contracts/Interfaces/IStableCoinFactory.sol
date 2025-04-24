@@ -85,12 +85,8 @@ interface IStableCoinFactory {
      * @dev Deploys a stablecoin
      *
      * @param requestedToken The information provided to create the stablecoin's token
-     * @param stableCoinContractAddress The address of the HederaTokenManager contract to create the stablecoin
      */
-    function deployStableCoin(
-        TokenStruct calldata requestedToken,
-        address stableCoinContractAddress
-    ) external payable returns (DeployedStableCoin memory);
+    function deployStableCoin(TokenStruct calldata requestedToken) external payable returns (DeployedStableCoin memory);
 
     /**
      * @dev Gets the HederaTokenManager contract address

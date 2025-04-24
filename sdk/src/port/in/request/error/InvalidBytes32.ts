@@ -18,16 +18,10 @@
  *
  */
 
-import { Command } from '../../../../../core/command/Command.js';
-import { CommandResponse } from '../../../../../core/command/CommandResponse.js';
-import { HederaId } from '../../../../../domain/context/shared/HederaId.js';
+import BaseError, { ErrorCode } from '../../../../core/error/BaseError.js';
 
-export class AcceptOwnerCommandResponse implements CommandResponse {
-	constructor(public readonly payload: boolean) {}
-}
-
-export class AcceptOwnerCommand extends Command<AcceptOwnerCommandResponse> {
-	constructor(public readonly tokenId: HederaId) {
-		super();
+export class InvalidBytes32 extends BaseError {
+	constructor(value: string) {
+		super(ErrorCode.InvalidBytes32, `Bytes32 ${value} is not valid`);
 	}
 }
