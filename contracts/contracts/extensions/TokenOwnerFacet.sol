@@ -4,8 +4,9 @@ pragma solidity 0.8.18;
 import {ITokenOwner} from './Interfaces/ITokenOwner.sol';
 import {TokenOwnerStorageWrapper} from './TokenOwnerStorageWrapper.sol';
 import {_TOKEN_OWNER_RESOLVER_KEY} from '../constants/resolverKeys.sol';
+import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
 
-contract TokenOwnerFacet is ITokenOwner, TokenOwnerStorageWrapper {
+contract TokenOwnerFacet is ITokenOwner, IStaticFunctionSelectors, TokenOwnerStorageWrapper {
     /**
      * @dev Returns the token address
      *

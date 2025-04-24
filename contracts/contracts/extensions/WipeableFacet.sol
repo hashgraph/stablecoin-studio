@@ -8,8 +8,10 @@ import {IWipeable} from './Interfaces/IWipeable.sol';
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
 import {_WIPEABLE_RESOLVER_KEY} from '../constants/resolverKeys.sol';
+import {IRoles} from './Interfaces/IRoles.sol';
+import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
 
-contract WipeableFacet is IWipeable, TokenOwnerStorageWrapper, RolesStorageWrapper {
+contract WipeableFacet is IWipeable, IStaticFunctionSelectors, TokenOwnerStorageWrapper, RolesStorageWrapper {
     /**
      * @dev Operation to wipe a token amount (`amount`) from account (`account`).
      *
@@ -27,7 +29,7 @@ contract WipeableFacet is IWipeable, TokenOwnerStorageWrapper, RolesStorageWrapp
     )
         external
         override(IWipeable)
-        onlyRole(_getRoleId(RoleName.WIPE))
+        onlyRole(_getRoleId(IRoles.RoleName.WIPE))
         addressIsNotZero(account)
         amountIsNotNegative(amount, false)
         valueIsNotGreaterThan(SafeCast.toUint256(amount), _balanceOf(account), true)

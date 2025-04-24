@@ -7,8 +7,10 @@ import {RolesStorageWrapper} from './RolesStorageWrapper.sol';
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {IFreezable} from './Interfaces/IFreezable.sol';
 import {_FREEZABLE_RESOLVER_KEY} from '../constants/resolverKeys.sol';
+import {IRoles} from './Interfaces/IRoles.sol';
+import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
 
-contract FreezableFacet is IFreezable, TokenOwnerStorageWrapper, RolesStorageWrapper {
+contract FreezableFacet is IFreezable, IStaticFunctionSelectors, TokenOwnerStorageWrapper, RolesStorageWrapper {
     /**
      * @dev Freezes transfers of the token for the `account`
      *
@@ -16,7 +18,13 @@ contract FreezableFacet is IFreezable, TokenOwnerStorageWrapper, RolesStorageWra
      */
     function freeze(
         address account
-    ) external override(IFreezable) onlyRole(_getRoleId(RoleName.FREEZE)) addressIsNotZero(account) returns (bool) {
+    )
+        external
+        override(IFreezable)
+        onlyRole(_getRoleId(IRoles.RoleName.FREEZE))
+        addressIsNotZero(account)
+        returns (bool)
+    {
         address currentTokenAddress = _getTokenAddress();
 
         int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS).freezeToken(currentTokenAddress, account);
@@ -35,7 +43,13 @@ contract FreezableFacet is IFreezable, TokenOwnerStorageWrapper, RolesStorageWra
      */
     function unfreeze(
         address account
-    ) external override(IFreezable) onlyRole(_getRoleId(RoleName.FREEZE)) addressIsNotZero(account) returns (bool) {
+    )
+        external
+        override(IFreezable)
+        onlyRole(_getRoleId(IRoles.RoleName.FREEZE))
+        addressIsNotZero(account)
+        returns (bool)
+    {
         address currentTokenAddress = _getTokenAddress();
 
         int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS).unfreezeToken(currentTokenAddress, account);

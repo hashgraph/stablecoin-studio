@@ -7,8 +7,10 @@ import {RolesStorageWrapper} from './RolesStorageWrapper.sol';
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {IKYC} from './Interfaces/IKYC.sol';
 import {_KYC_RESOLVER_KEY} from '../constants/resolverKeys.sol';
+import {IRoles} from './Interfaces/IRoles.sol';
+import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
 
-contract KYCFacet is IKYC, TokenOwnerStorageWrapper, RolesStorageWrapper {
+contract KYCFacet is IKYC, IStaticFunctionSelectors, TokenOwnerStorageWrapper, RolesStorageWrapper {
     /**
      * @dev Grants KYC to account for the token
      *
@@ -16,7 +18,7 @@ contract KYCFacet is IKYC, TokenOwnerStorageWrapper, RolesStorageWrapper {
      */
     function grantKyc(
         address account
-    ) external override(IKYC) onlyRole(_getRoleId(RoleName.KYC)) addressIsNotZero(account) returns (bool) {
+    ) external override(IKYC) onlyRole(_getRoleId(IRoles.RoleName.KYC)) addressIsNotZero(account) returns (bool) {
         address currentTokenAddress = _getTokenAddress();
 
         int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS).grantTokenKyc(currentTokenAddress, account);
@@ -35,7 +37,7 @@ contract KYCFacet is IKYC, TokenOwnerStorageWrapper, RolesStorageWrapper {
      */
     function revokeKyc(
         address account
-    ) external onlyRole(_getRoleId(RoleName.KYC)) addressIsNotZero(account) returns (bool) {
+    ) external onlyRole(_getRoleId(IRoles.RoleName.KYC)) addressIsNotZero(account) returns (bool) {
         address currentTokenAddress = _getTokenAddress();
 
         int64 responseCode = IHederaTokenService(_PRECOMPILED_ADDRESS).revokeTokenKyc(currentTokenAddress, account);

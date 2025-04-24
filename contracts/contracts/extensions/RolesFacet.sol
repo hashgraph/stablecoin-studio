@@ -5,8 +5,9 @@ import {ADMIN_ROLE} from '../constants/roles.sol';
 import {IRoles} from './Interfaces/IRoles.sol';
 import {RolesStorageWrapper} from './RolesStorageWrapper.sol';
 import {_ROLES_RESOLVER_KEY} from '../constants/resolverKeys.sol';
+import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
 
-contract RolesFacet is IRoles, RolesStorageWrapper {
+contract RolesFacet is IRoles, IStaticFunctionSelectors, RolesStorageWrapper {
     /**
      * @dev Checks if the account has been granted a role
      *

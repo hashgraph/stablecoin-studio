@@ -3,19 +3,27 @@ pragma solidity 0.8.18;
 
 // solhint-disable-next-line max-line-length
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
-import {HederaTokenManager, IHederaTokenManager} from './HederaTokenManager.sol';
+import {HederaTokenManagerFacet, IHederaTokenManager} from './HederaTokenManagerFacet.sol';
 import {TransparentUpgradeableProxy} from '@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol';
 import {ProxyAdmin} from '@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol';
-import {HederaReserve} from './HederaReserve.sol';
+import {HederaReserveFacet} from './HederaReserveFacet.sol';
 import {IStableCoinFactory} from './Interfaces/IStableCoinFactory.sol';
 import {Strings} from '@openzeppelin/contracts/utils/Strings.sol';
-import {Initializable} from '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import {KeysLib} from './library/KeysLib.sol';
 import {SafeCast} from '@openzeppelin/contracts/utils/math/SafeCast.sol';
 import {AggregatorV3Interface} from '@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol';
 import {StableCoinProxyAdmin} from './proxies/StableCoinProxyAdmin.sol';
+import {Common} from './core/Common.sol';
+import {_STABLE_COIN_FACTORY_RESOLVER_KEY} from './constants/resolverKeys.sol';
+import {StableCoinFactoryStorageWrapper} from './StableCoinFactoryStorageWrapper.sol';
+import {IStaticFunctionSelectors} from './resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
 
-contract StableCoinFactory is IStableCoinFactory, Initializable {
+contract StableCoinFactoryFacet is
+    IStaticFunctionSelectors,
+    IStableCoinFactory,
+    StableCoinFactoryStorageWrapper,
+    Common
+{
     // Hedera HTS precompiled contract
     address private constant _PRECOMPILED_ADDRESS = address(0x167);
     string private constant _MEMO_1 = '{"p":"';
@@ -23,33 +31,11 @@ contract StableCoinFactory is IStableCoinFactory, Initializable {
     string private constant _MEMO_3 = '"}';
     int64 private constant _DEFAULT_AUTO_RENEW_PERIOD = 90 days;
 
-    address private _admin;
-    address[] private _hederaTokenManagerAddress;
-
     /**
      * @dev Constructor required to avoid Initializer attack on logic contract
      */
     constructor() {
-        _disableInitializers();
-    }
-
-    /**
-     * @dev Checks if the calling account is the admin of the stablecoin
-     *
-     */
-    modifier isAdmin() {
-        if (_admin != msg.sender) revert OnlyAdministratorFunction(msg.sender);
-        _;
-    }
-
-    /**
-     * @dev Checks if an addres does not equals to the zero address
-     *
-     * @param addr The address to compare with the zero address
-     */
-    modifier checkAddressIsNotZero(address addr) {
-        _checkAddressIsNotZero(addr);
-        _;
+        _disableInitializers(_STABLE_COIN_FACTORY_RESOLVER_KEY);
     }
 
     /**
@@ -61,9 +47,15 @@ contract StableCoinFactory is IStableCoinFactory, Initializable {
     function initialize(
         address admin,
         address hederaTokenManager
-    ) external initializer checkAddressIsNotZero(admin) checkAddressIsNotZero(hederaTokenManager) {
-        _admin = admin;
-        _hederaTokenManagerAddress.push(hederaTokenManager);
+    )
+        external
+        initializer(_STABLE_COIN_FACTORY_RESOLVER_KEY)
+        addressIsNotZero(admin)
+        addressIsNotZero(hederaTokenManager)
+    {
+        StableCoinFactoryDataStorage storage stableCoinFactoryDataStorage = _stableCoinFactoryDataStorage();
+        stableCoinFactoryDataStorage.admin = admin;
+        stableCoinFactoryDataStorage.hederaTokenManagerAddress.push(hederaTokenManager);
         emit StableCoinFactoryInitialized();
     }
 
@@ -80,7 +72,7 @@ contract StableCoinFactory is IStableCoinFactory, Initializable {
         external
         payable
         override(IStableCoinFactory)
-        checkAddressIsNotZero(stableCoinContractAddress)
+        addressIsNotZero(stableCoinContractAddress)
         returns (DeployedStableCoin memory)
     {
         // Reserve
@@ -89,7 +81,7 @@ contract StableCoinFactory is IStableCoinFactory, Initializable {
         address reserveProxyAdmin;
 
         if (requestedToken.createReserve) {
-            HederaReserve reserveContract = new HederaReserve();
+            HederaReserveFacet reserveContract = new HederaReserveFacet();
             _validationReserveInitialAmount(
                 reserveContract.decimals(),
                 requestedToken.reserveInitialAmount,
@@ -104,7 +96,7 @@ contract StableCoinFactory is IStableCoinFactory, Initializable {
                 new TransparentUpgradeableProxy(address(reserveContract), address(reserveProxyAdmin), '')
             );
 
-            HederaReserve(reserveProxy).initialize(requestedToken.reserveInitialAmount, msg.sender);
+            HederaReserveFacet(reserveProxy).initialize(requestedToken.reserveInitialAmount, msg.sender);
             reserveAddress = reserveProxy;
         } else if (reserveAddress != address(0)) {
             (, int256 reserveInitialAmount, , , ) = AggregatorV3Interface(reserveAddress).latestRoundData();
@@ -151,7 +143,7 @@ contract StableCoinFactory is IStableCoinFactory, Initializable {
             requestedToken.metadata
         );
 
-        address tokenAddress = HederaTokenManager(payable(address(stableCoinProxy))).initialize{value: msg.value}(
+        address tokenAddress = HederaTokenManagerFacet(payable(address(stableCoinProxy))).initialize{value: msg.value}(
             initInfo
         );
 
@@ -177,8 +169,13 @@ contract StableCoinFactory is IStableCoinFactory, Initializable {
      */
     function addHederaTokenManagerVersion(
         address newAddress
-    ) external override(IStableCoinFactory) isAdmin checkAddressIsNotZero(newAddress) {
-        _hederaTokenManagerAddress.push(newAddress);
+    )
+        external
+        override(IStableCoinFactory)
+        isAdmin(_stableCoinFactoryDataStorage().admin)
+        addressIsNotZero(newAddress)
+    {
+        _stableCoinFactoryDataStorage().hederaTokenManagerAddress.push(newAddress);
         emit HederaTokenManagerAddressAdded(newAddress);
     }
 
@@ -188,7 +185,7 @@ contract StableCoinFactory is IStableCoinFactory, Initializable {
      * @return The stablecoin contract addresses
      */
     function getHederaTokenManagerAddress() external view returns (address[] memory) {
-        return _hederaTokenManagerAddress;
+        return _stableCoinFactoryDataStorage().hederaTokenManagerAddress;
     }
 
     /**
@@ -200,8 +197,13 @@ contract StableCoinFactory is IStableCoinFactory, Initializable {
     function editHederaTokenManagerAddress(
         uint256 index,
         address newAddress
-    ) external override(IStableCoinFactory) isAdmin checkAddressIsNotZero(newAddress) {
-        address oldAddress = _hederaTokenManagerAddress[index];
+    )
+        external
+        override(IStableCoinFactory)
+        isAdmin(_stableCoinFactoryDataStorage().admin)
+        addressIsNotZero(newAddress)
+    {
+        address oldAddress = _stableCoinFactoryDataStorage().hederaTokenManagerAddress[index];
         _edit(index, newAddress);
         emit HederaTokenManagerAddressEdited(oldAddress, newAddress);
     }
@@ -211,8 +213,10 @@ contract StableCoinFactory is IStableCoinFactory, Initializable {
      *
      * @param index The index of the address
      */
-    function removeHederaTokenManagerAddress(uint256 index) external override(IStableCoinFactory) isAdmin {
-        address addressRemoved = _hederaTokenManagerAddress[index];
+    function removeHederaTokenManagerAddress(
+        uint256 index
+    ) external override(IStableCoinFactory) isAdmin(_stableCoinFactoryDataStorage().admin) {
+        address addressRemoved = _stableCoinFactoryDataStorage().hederaTokenManagerAddress[index];
         _edit(index, address(0));
         emit HederaTokenManagerAddressRemoved(index, addressRemoved);
     }
@@ -224,9 +228,15 @@ contract StableCoinFactory is IStableCoinFactory, Initializable {
      */
     function changeAdmin(
         address newAddress
-    ) external override(IStableCoinFactory) isAdmin checkAddressIsNotZero(newAddress) {
-        address oldAdmin = _admin;
-        _admin = newAddress;
+    )
+        external
+        override(IStableCoinFactory)
+        isAdmin(_stableCoinFactoryDataStorage().admin)
+        addressIsNotZero(newAddress)
+    {
+        StableCoinFactoryDataStorage storage stableCoinFactoryDataStorage = _stableCoinFactoryDataStorage();
+        address oldAdmin = stableCoinFactoryDataStorage.admin;
+        stableCoinFactoryDataStorage.admin = newAddress;
         emit AdminChanged(oldAdmin, newAddress);
     }
 
@@ -236,16 +246,7 @@ contract StableCoinFactory is IStableCoinFactory, Initializable {
      * @return The admin address
      */
     function getAdmin() external view returns (address) {
-        return _admin;
-    }
-
-    /**
-     * @dev Throws if the address is zero
-     *
-     * @param addr The address to validate
-     */
-    function _checkAddressIsNotZero(address addr) private pure {
-        if (addr == address(0)) revert AddressZero(addr);
+        return _stableCoinFactoryDataStorage().admin;
     }
 
     /**
@@ -333,12 +334,35 @@ contract StableCoinFactory is IStableCoinFactory, Initializable {
     }
 
     /**
-     * @dev Edit _hederaTokenManagerAddress array at the given index
+     * @dev Edit hederaTokenManagerAddress storage array at the given index
      *
      * @param index The new index
      * @param newAddress The new address
      */
     function _edit(uint256 index, address newAddress) private {
-        _hederaTokenManagerAddress[index] = newAddress;
+        _stableCoinFactoryDataStorage().hederaTokenManagerAddress[index] = newAddress;
+    }
+
+    function getStaticResolverKey() external pure override returns (bytes32 staticResolverKey_) {
+        staticResolverKey_ = _STABLE_COIN_FACTORY_RESOLVER_KEY;
+    }
+
+    function getStaticFunctionSelectors() external pure override returns (bytes4[] memory staticFunctionSelectors_) {
+        uint256 selectorIndex;
+        staticFunctionSelectors_ = new bytes4[](8);
+        staticFunctionSelectors_[selectorIndex++] = this.initialize.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.deployStableCoin.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.addHederaTokenManagerVersion.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.getHederaTokenManagerAddress.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.editHederaTokenManagerAddress.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.removeHederaTokenManagerAddress.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.changeAdmin.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.getAdmin.selector;
+    }
+
+    function getStaticInterfaceIds() external pure override returns (bytes4[] memory staticInterfaceIds_) {
+        staticInterfaceIds_ = new bytes4[](1);
+        uint256 selectorsIndex;
+        staticInterfaceIds_[selectorsIndex++] = type(IStableCoinFactory).interfaceId;
     }
 }

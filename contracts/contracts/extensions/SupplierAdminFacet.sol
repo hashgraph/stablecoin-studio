@@ -5,8 +5,9 @@ import {ISupplierAdmin} from './Interfaces/ISupplierAdmin.sol';
 import {IRoles} from './Interfaces/IRoles.sol';
 import {SupplierAdminStorageWrapper} from './SupplierAdminStorageWrapper.sol';
 import {_SUPPLIER_ADMIN_RESOLVER_KEY} from '../constants/resolverKeys.sol';
+import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
 
-contract SupplierAdminFacet is ISupplierAdmin, SupplierAdminStorageWrapper {
+contract SupplierAdminFacet is ISupplierAdmin, IStaticFunctionSelectors, SupplierAdminStorageWrapper {
     /**
      * @dev Return number of tokens allowed to be minted of the address account `supplier`.
      *

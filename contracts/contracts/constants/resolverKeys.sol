@@ -33,6 +33,9 @@ bytes32 constant _RESERVE_RESOLVER_KEY = 0x0da06131b2f743d07f58167098b1ac9b281f4
 // keccak256('stablecoin.studio.role.management.resolver.key');
 bytes32 constant _ROLE_MANAGEMENT_RESOLVER_KEY = 0x62605c8d18aa98b06b7c9dc0903a23450a60889c13a9c10e631f6203bd499be9;
 
+// keccak256('stablecoin.studio.role.resolver.key');
+bytes32 constant _ROLES_RESOLVER_KEY = 0xd4408b4f5b6c8488e6b89c9cd1aba76ff1dd23cbd95a4b7c24737fc3700125ce;
+
 // keccak256('stablecoin.studio.wipeable.resolver.key');
 bytes32 constant _WIPEABLE_RESOLVER_KEY = 0x5a3ba81c8e311e23f2b91f81706bac8a8cc9903178a3016f90f99e18be9ec5ae;
 
@@ -50,5 +53,11 @@ bytes32 constant _KYC_RESOLVER_KEY = 0x876bfbb41f089e97e6f7ad59e0371477bfdde664b
 
 // keccak256('stablecoin.studio.supplier.admin.resolver.key');
 bytes32 constant _SUPPLIER_ADMIN_RESOLVER_KEY = 0x8b5890e21b47ca19527875d9cb25c0f6fdac78fb63be40408faca599a4fedb0c;
+
+// keccak256('stablecoin.studio.hedera.reserve.resolver.key');
+bytes32 constant _HEDERA_RESERVE_RESOLVER_KEY = 0x4d643a5d89820c8022463999841f258da664811d5988318b8ce368f829e28b03;
+
+// keccak256('stablecoin.studio.stable.coin.factory.resolver.key');
+bytes32 constant _STABLE_COIN_FACTORY_RESOLVER_KEY = 0xe247059558103a0a091268413ba572d3342126d4c1f4755215dde0765f8ca949;
 
 // solhint-enable max-line-length
