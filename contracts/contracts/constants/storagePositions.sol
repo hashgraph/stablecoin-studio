@@ -27,6 +27,15 @@ bytes32 constant _RESERVE_STORAGE_POSITION = 0x6cd87a21205e289ae515ee48016344e9a
 // keccak256('stablecoin.studio.hold.storage');
 bytes32 constant _HOLD_STORAGE_POSITION = 0x55eb875db6f21625db342149ef0f0b78f6afec1625e2c812812e031b05ee4bd1;
 
+// keccak256('stablecoin.studio.hedera.reserve.storage');
+bytes32 constant _HEDERA_RESERVE_STORAGE_POSITION = 0xbed633dbd0bacd43d3399872bf1a59f5d8a56ae8e7638cd27a49cc24ecec5630;
+
+// keccak256('stablecoin.studio.hedera.token.manager.storage');
+bytes32 constant _HEDERA_TOKEN_MANAGER_STORAGE_POSITION = 0x2cda914265c33036d1307ed1b571d768e7de95eca85438426d874f373d3ef895;
+
+// keccak256('stablecoin.studio.stable.coin.factory.storage');
+bytes32 constant _STABLE_COIN_FACTORY_STORAGE_POSITION = 0xb0e6750e851c57435b04114f257b158c4b5f3ed0ea8aa4cc132d1cbcbe0b79e6;
+
 // keccak256('stablecoin.studio.resolverProxy.storage');
 bytes32 constant _RESOLVER_PROXY_STORAGE_POSITION = 0x72d4cc0a3f672d627d7746733345a3b1cc00ee12f57141f1dd5e005c8ceaec5e;
 

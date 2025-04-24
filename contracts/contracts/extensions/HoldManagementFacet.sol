@@ -6,12 +6,21 @@ import {IHoldManagement} from './Interfaces/IHoldManagement.sol';
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
 import {EnumerableSet} from '@openzeppelin/contracts/utils/structs/EnumerableSet.sol';
 import {IHederaTokenService} from '@hashgraph/smart-contracts/contracts/system-contracts/hedera-token-service/IHederaTokenService.sol';
-import {Roles} from './Roles.sol';
-import {TokenOwner} from './TokenOwner.sol';
+import {RolesStorageWrapper} from './RolesStorageWrapper.sol';
+import {TokenOwnerStorageWrapper} from './TokenOwnerStorageWrapper.sol';
 import {HoldManagementStorageWrapper} from './HoldManagementStorageWrapper.sol';
+import {_HOLD_MANAGEMENT_RESOLVER_KEY} from '../constants/resolverKeys.sol';
+import {IRoles} from './Interfaces/IRoles.sol';
+import {IStaticFunctionSelectors} from '../resolver/interfaces/resolverProxy/IStaticFunctionSelectors.sol';
 // solhint-enable max-line-length
 
-contract HoldManagement is HoldManagementStorageWrapper, TokenOwner, Roles, IHoldManagement {
+contract HoldManagementFacet is
+    IHoldManagement,
+    IStaticFunctionSelectors,
+    HoldManagementStorageWrapper,
+    TokenOwnerStorageWrapper,
+    RolesStorageWrapper
+{
     using EnumerableSet for EnumerableSet.UintSet;
 
     /**
@@ -169,7 +178,7 @@ contract HoldManagement is HoldManagementStorageWrapper, TokenOwner, Roles, IHol
         addressIsNotZero(_hold.escrow)
         addressIsNotZero(_from)
         addressIsNotZero(_hold.to)
-        onlyRole(_getRoleId(RoleName.HOLD_CREATOR_ROLE))
+        onlyRole(_getRoleId(IRoles.RoleName.HOLD_CREATOR_ROLE))
         amountIsNotNegative(_hold.amount, false)
         returns (bool success_, uint256 holdId_)
     {
@@ -490,5 +499,30 @@ contract HoldManagement is HoldManagementStorageWrapper, TokenOwner, Roles, IHol
             holdData.data,
             holdData.operatorData
         );
+    }
+
+    function getStaticResolverKey() external pure override returns (bytes32 staticResolverKey_) {
+        staticResolverKey_ = _HOLD_MANAGEMENT_RESOLVER_KEY;
+    }
+
+    function getStaticFunctionSelectors() external pure override returns (bytes4[] memory staticFunctionSelectors_) {
+        uint256 selectorIndex;
+        staticFunctionSelectors_ = new bytes4[](10);
+        staticFunctionSelectors_[selectorIndex++] = this.createHold.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.createHoldByController.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.executeHold.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.releaseHold.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.reclaimHold.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.getHeldAmount.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.getHeldAmountFor.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.getHoldCountFor.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.getHoldsIdFor.selector;
+        staticFunctionSelectors_[selectorIndex++] = this.getHoldFor.selector;
+    }
+
+    function getStaticInterfaceIds() external pure override returns (bytes4[] memory staticInterfaceIds_) {
+        staticInterfaceIds_ = new bytes4[](1);
+        uint256 selectorsIndex;
+        staticInterfaceIds_[selectorsIndex++] = type(IHoldManagement).interfaceId;
     }
 }
