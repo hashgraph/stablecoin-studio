@@ -28,7 +28,7 @@ const TOKEN_MEMO = 'Hedera Accelerator Stablecoin'
 const INIT_RESERVE_100 = BigNumber.from(10).pow(RESERVE_DECIMALS).mul(BigNumber.from(100))
 const INIT_RESERVE_1000 = BigNumber.from(10).pow(RESERVE_DECIMALS).mul(BigNumber.from(1000))
 
-describe('➡️ ReserveFacet.sol Tests', function () {
+describe('➡️ Reserve Tests', function () {
     // Contracts
     let proxyAddress: string
     let hederaReserveProxyAdminAddress: string
@@ -122,7 +122,7 @@ describe('➡️ ReserveFacet.sol Tests', function () {
     })
 })
 
-describe('ReserveFacet.sol Tests with reserve and token with same Decimals', function () {
+describe('Reserve Tests with reserve and token with same Decimals', function () {
     // Contracts
     let proxyAddress: string
     let hederaTokenManager: HederaTokenManager
@@ -198,7 +198,7 @@ describe('ReserveFacet.sol Tests with reserve and token with same Decimals', fun
     })
 })
 
-describe('ReserveFacet.sol Tests with reserve decimals higher than token decimals', function () {
+describe('Reserve Tests with reserve decimals higher than token decimals', function () {
     // Contracts
     let proxyAddress: string
     let hederaTokenManager: HederaTokenManager
@@ -272,7 +272,7 @@ describe('ReserveFacet.sol Tests with reserve decimals higher than token decimal
     })
 })
 
-describe('ReserveFacet.sol Tests with reserve decimals lower than token decimals', function () {
+describe('Reserve Tests with reserve decimals lower than token decimals', function () {
     // Contracts
     let proxyAddress: string
     let hederaTokenManager: HederaTokenManager

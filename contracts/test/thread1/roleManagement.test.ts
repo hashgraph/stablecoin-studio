@@ -66,7 +66,7 @@ describe('➡️ Role Management Tests', function () {
         }
     })
 
-    it('Admin grants roles to multiple accounts including CashInFacet.sol role', async function () {
+    it('Admin grants roles to multiple accounts including CashIn role', async function () {
         // Check initial roles for random accounts
         for (const account of randomAccountList) {
             const roleList = await hederaTokenManager.getRoles(account, {
@@ -158,7 +158,7 @@ describe('➡️ Role Management Tests', function () {
         }
     })
 
-    it('Admin revokes roles from multiple accounts including CashInFacet.sol role', async function () {
+    it('Admin revokes roles from multiple accounts including CashIn role', async function () {
         const rolesToRevoke = [
             ROLES.burn.hash,
             ROLES.pause.hash,
@@ -211,7 +211,7 @@ describe('➡️ Role Management Tests', function () {
         }
     })
 
-    it('Admin Cannot grant CashInFacet.sol role without allowances', async function () {
+    it('Admin Cannot grant CashIn role without allowances', async function () {
         // Granting roles with cash in but without allowances
         const Roles = [ROLES.cashin.hash]
         const amounts: BigNumber[] = []

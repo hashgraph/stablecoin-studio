@@ -6,7 +6,7 @@ import { HederaTokenManager, HederaTokenManager__factory } from '@typechain'
 import { ADDRESS_ZERO, MESSAGES, ValidateTxResponseCommand } from '@scripts'
 import { deployFullInfrastructureInTests, GAS_LIMIT, ONE_TOKEN } from '@test/shared'
 
-describe('➡️ KYCFacet.sol Tests', function () {
+describe('➡️ KYC Tests', function () {
     // Contracts
     let proxyAddress: string
     let hederaTokenManager: HederaTokenManager
@@ -30,7 +30,7 @@ describe('➡️ KYCFacet.sol Tests', function () {
         hederaTokenManager = HederaTokenManager__factory.connect(proxyAddress, operator)
     })
 
-    it("An account without KYCFacet.sol role can't grant kyc to an account for a token", async function () {
+    it("An account without KYC role can't grant kyc to an account for a token", async function () {
         const response = await hederaTokenManager
             .connect(nonOperator)
             .grantKyc(operator.address, { gasLimit: GAS_LIMIT.hederaTokenManager.grantKyc })
@@ -42,14 +42,14 @@ describe('➡️ KYCFacet.sol Tests', function () {
         ).to.be.rejectedWith(Error)
     })
 
-    it("An account with KYCFacet.sol role can grant and revoke kyc to an account for a token + An account without KYCFacet.sol role can't revoke kyc to an account for a token", async function () {
-        // Should be able to mint tokens before granting KYCFacet.sol
+    it("An account with KYC role can grant and revoke kyc to an account for a token + An account without KYC role can't revoke kyc to an account for a token", async function () {
+        // Should be able to mint tokens before granting KYC
         const mintResponse = await hederaTokenManager.mint(operator.address, ONE_TOKEN, {
             gasLimit: GAS_LIMIT.hederaTokenManager.mint,
         })
         await new ValidateTxResponseCommand({ txResponse: mintResponse, confirmationEvent: 'TokensMinted' }).execute()
 
-        // Should not be able to revoke KYCFacet.sol from an account without KYCFacet.sol role
+        // Should not be able to revoke KYC from an account without KYC role
         const nonOperatorRevokeResponse = await hederaTokenManager.connect(nonOperator).revokeKyc(operator.address, {
             gasLimit: GAS_LIMIT.hederaTokenManager.revokeKyc,
         })
@@ -59,7 +59,7 @@ describe('➡️ KYCFacet.sol Tests', function () {
             }).execute()
         ).to.be.rejectedWith(Error)
 
-        // Should be able to revoke KYCFacet.sol from an account with KYCFacet.sol role
+        // Should be able to revoke KYC from an account with KYC role
         const revokeResponse = await hederaTokenManager.revokeKyc(operator.address, {
             gasLimit: GAS_LIMIT.hederaTokenManager.revokeKyc,
         })
@@ -76,7 +76,7 @@ describe('➡️ KYCFacet.sol Tests', function () {
             Error
         )
 
-        // Should be able to grant KYCFacet.sol to an account with KYCFacet.sol role
+        // Should be able to grant KYC to an account with KYC role
         const grantResponse = await hederaTokenManager.grantKyc(operator.address, {
             gasLimit: GAS_LIMIT.hederaTokenManager.grantKyc,
         })
@@ -95,7 +95,7 @@ describe('➡️ KYCFacet.sol Tests', function () {
         }).execute()
     })
 
-    it('An account with KYCFacet.sol role can`t grant and revoke kyc to the zero account for a token', async function () {
+    it('An account with KYC role can`t grant and revoke kyc to the zero account for a token', async function () {
         const grantResponse = await hederaTokenManager.grantKyc(ADDRESS_ZERO, {
             gasLimit: GAS_LIMIT.hederaTokenManager.grantKyc,
         })

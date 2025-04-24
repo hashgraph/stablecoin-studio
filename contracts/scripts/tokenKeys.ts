@@ -158,7 +158,7 @@ function fixKeys(): KeysStruct {
  *
  * @param {Object} params - The parameters object.
  * @param {boolean} [params.adminKey=false] - Indicates if the admin key is present.
- * @param {boolean} [params.kycKey=false] - Indicates if the KYCFacet.sol key is present.
+ * @param {boolean} [params.kycKey=false] - Indicates if the KYC key is present.
  * @param {boolean} [params.freezeKey=false] - Indicates if the freeze key is present.
  * @param {boolean} [params.wipeKey=false] - Indicates if the wipe key is present.
  * @param {boolean} [params.supplyKey=false] - Indicates if the supply key is present.

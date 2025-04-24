@@ -274,7 +274,7 @@ describe('StableCoinFactory Tests', function () {
     })
 
     it('Create StableCoin setting an initial supply over the reserve, when the reserve is provided and not deployed, expect it to fail', async function () {
-        // first deploy Hedera ReserveFacet.sol
+        // first deploy Hedera Reserve
         const { contract: newHederaReserve } = await deployContractWithFactory(
             new DeployContractWithFactoryCommand({
                 signer: operator,

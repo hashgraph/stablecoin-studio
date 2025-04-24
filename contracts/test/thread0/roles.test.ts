@@ -7,7 +7,7 @@ import { delay, MESSAGES, ROLES, ValidateTxResponseCommand } from '@scripts'
 import { deployFullInfrastructureInTests, GAS_LIMIT } from '@test/shared'
 import { ContractTransaction } from 'ethers'
 
-describe('➡️ RolesFacet.sol Tests', function () {
+describe('➡️ Roles Tests', function () {
     // Contracts
     let proxyAddress: string
     let hederaTokenManager: HederaTokenManager
