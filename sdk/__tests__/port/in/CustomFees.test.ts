@@ -44,6 +44,7 @@ import {
 	DECIMALS,
 	FACTORY_ADDRESS,
 	MIRROR_NODE,
+	RESOLVER_ADDRESS,
 	RPC_NODE,
 } from '../../config.js';
 import Injectable from '../../../src/core/Injectable.js';
@@ -282,6 +283,7 @@ async function connectAccount(account: Account): Promise<void> {
 			network: 'testnet',
 			configuration: {
 				factoryAddress: FACTORY_ADDRESS,
+				resolverAddress: RESOLVER_ADDRESS,
 			},
 			mirrorNode: mirrorNode,
 			rpcNode: rpcNode,

@@ -207,7 +207,6 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 						return role;
 					}),
 			);
-
 			const stableCoinToCreate = new FactoryStableCoin(
 				coin.name,
 				coin.symbol,
@@ -236,7 +235,9 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 				roles,
 				cashinRole,
 				coin.metadata ?? '',
-				resolver.toString(),
+				(
+					await this.mirrorNodeAdapter.getContractInfo(resolver.value)
+				).evmAddress,
 				stableCoinConfigurationId,
 				reserveConfigurationId,
 			);

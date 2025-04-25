@@ -34,7 +34,11 @@ import ConnectRequest, {
 	SupportedWallets,
 } from '../../../src/port/in/request/ConnectRequest.js';
 
-import { CLIENT_ACCOUNT_ED25519, FACTORY_ADDRESS } from '../../config.js';
+import {
+	CLIENT_ACCOUNT_ED25519,
+	FACTORY_ADDRESS,
+	RESOLVER_ADDRESS,
+} from '../../config.js';
 import Injectable from '../../../src/core/Injectable.js';
 
 describe('🧪 Reserve test', () => {
@@ -70,6 +74,7 @@ describe('🧪 Reserve test', () => {
 				network: 'testnet',
 				configuration: {
 					factoryAddress: FACTORY_ADDRESS,
+					resolverAddress: RESOLVER_ADDRESS,
 				},
 				mirrorNode: mirrorNode,
 				rpcNode: rpcNode,

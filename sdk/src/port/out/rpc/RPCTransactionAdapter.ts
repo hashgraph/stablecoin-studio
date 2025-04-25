@@ -306,7 +306,9 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 				roles,
 				cashinRole,
 				coin.metadata ?? '',
-				resolver.toString(),
+				(
+					await this.mirrorNodeAdapter.getContractInfo(resolver.value)
+				).evmAddress,
 				stableCoinConfigurationId,
 				reserveConfigurationId,
 			);
