@@ -28,14 +28,15 @@ export const NETWORK_LIST = {
 
 export const DEPLOY_TYPES = ['proxy', 'direct'] as const
 
-export const CONTRACT_NAMES_WITH_PROXY = ['StableCoinFactory', 'BusinessLogicResolver']
+export const CONTRACT_NAMES_WITH_PROXY = ['BusinessLogicResolver']
 
 export const CONTRACT_NAMES = [
-    'StableCoinFactory',
-    'BusinessLogicResolver',
     'TransparentUpgradeableProxy',
     'ProxyAdmin',
+    'BusinessLogicResolver',
+    // * ⬇️ Diamond Facets
     'DiamondFacet',
+    'StableCoinFactoryFacet',
     'HederaTokenManagerFacet',
     'HederaReserveFacet',
     'BurnableFacet',

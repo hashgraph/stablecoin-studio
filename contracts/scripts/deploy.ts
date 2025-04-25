@@ -14,12 +14,15 @@ import {
     HoldManagementFacet__factory,
     KYCFacet__factory,
     PausableFacet__factory,
+    ProxyAdmin__factory,
     RescuableFacet__factory,
     ReserveFacet__factory,
     RoleManagementFacet__factory,
     RolesFacet__factory,
+    StableCoinFactoryFacet__factory,
     SupplierAdminFacet__factory,
     TokenOwnerFacet__factory,
+    TransparentUpgradeableProxy__factory,
     WipeableFacet__factory,
 } from '@typechain'
 import {
@@ -189,6 +192,14 @@ export async function deployScsContractList({
             deployedContract: useDeployed ? configuration.contracts.DiamondFacet.addresses?.[network] : undefined,
             overrides,
         }),
+        stableCoinFactoryFacet: new DeployContractWithFactoryCommand({
+            factory: new StableCoinFactoryFacet__factory(),
+            signer,
+            deployedContract: useDeployed
+                ? configuration.contracts.StableCoinFactoryFacet.addresses?.[network]
+                : undefined,
+            overrides,
+        }),
         hederaTokenManagerFacet: new DeployContractWithFactoryCommand({
             factory: new HederaTokenManagerFacet__factory(),
             signer,
@@ -316,6 +327,10 @@ export async function deployScsContractList({
         }),
         diamondFacet: await deployContractWithFactory(commands.diamondFacet).then((result) => {
             console.log('DiamondFacet has been deployed successfully')
+            return result
+        }),
+        stableCoinFactoryFacet: await deployContractWithFactory(commands.stableCoinFactoryFacet).then((result) => {
+            console.log('StableCoinFactoryFacet has been deployed successfully')
             return result
         }),
         hederaTokenManagerFacet: await deployContractWithFactory(commands.hederaTokenManagerFacet).then((result) => {

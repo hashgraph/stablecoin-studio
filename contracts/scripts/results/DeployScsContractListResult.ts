@@ -2,6 +2,7 @@ import { Signer } from 'ethers'
 import {
     BusinessLogicResolver,
     DiamondFacet,
+    StableCoinFactoryFacet,
     HederaTokenManagerFacet,
     HederaReserveFacet,
     BurnableFacet,
@@ -25,6 +26,7 @@ import { DeployContractWithFactoryResult } from '@scripts'
 export interface DeployScsContractListResultParams {
     businessLogicResolver: DeployContractWithFactoryResult<BusinessLogicResolver>
     diamondFacet: DeployContractWithFactoryResult<DiamondFacet>
+    stableCoinFactoryFacet: DeployContractWithFactoryResult<StableCoinFactoryFacet>
     hederaTokenManagerFacet: DeployContractWithFactoryResult<HederaTokenManagerFacet>
     hederaReserveFacet: DeployContractWithFactoryResult<HederaReserveFacet>
     burnableFacet: DeployContractWithFactoryResult<BurnableFacet>
@@ -48,6 +50,7 @@ export interface DeployScsContractListResultParams {
 export default class DeployAtsContractsResult {
     public readonly businessLogicResolver: DeployContractWithFactoryResult<BusinessLogicResolver>
     public readonly diamondFacet: DeployContractWithFactoryResult<DiamondFacet>
+    public readonly stableCoinFactoryFacet: DeployContractWithFactoryResult<StableCoinFactoryFacet>
     public readonly hederaTokenManagerFacet: DeployContractWithFactoryResult<HederaTokenManagerFacet>
     public readonly hederaReserveFacet: DeployContractWithFactoryResult<HederaReserveFacet>
     public readonly burnableFacet: DeployContractWithFactoryResult<BurnableFacet>
@@ -71,6 +74,7 @@ export default class DeployAtsContractsResult {
         businessLogicResolver,
         diamondFacet,
         hederaTokenManagerFacet,
+        stableCoinFactoryFacet,
         hederaReserveFacet,
         burnableFacet,
         cashInFacet,
@@ -92,6 +96,7 @@ export default class DeployAtsContractsResult {
         this.businessLogicResolver = businessLogicResolver
         this.diamondFacet = diamondFacet
         this.hederaTokenManagerFacet = hederaTokenManagerFacet
+        this.stableCoinFactoryFacet = stableCoinFactoryFacet
         this.hederaReserveFacet = hederaReserveFacet
         this.burnableFacet = burnableFacet
         this.cashInFacet = cashInFacet
