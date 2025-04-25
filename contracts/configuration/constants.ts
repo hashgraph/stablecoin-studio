@@ -28,14 +28,31 @@ export const NETWORK_LIST = {
 
 export const DEPLOY_TYPES = ['proxy', 'direct'] as const
 
-export const CONTRACT_NAMES_WITH_PROXY = ['StableCoinFactory'] as const
+export const CONTRACT_NAMES_WITH_PROXY = ['StableCoinFactory', 'BusinessLogicResolver']
 
 export const CONTRACT_NAMES = [
-    ...CONTRACT_NAMES_WITH_PROXY,
-    'HederaTokenManager',
-    'StableCoinProxyAdmin',
-    'ProxyAdmin',
+    'StableCoinFactory',
+    'BusinessLogicResolver',
     'TransparentUpgradeableProxy',
+    'ProxyAdmin',
+    'DiamondFacet',
+    'HederaTokenManagerFacet',
+    'HederaReserveFacet',
+    'BurnableFacet',
+    'CashInFacet',
+    'CustomFeesFacet',
+    'DeletableFacet',
+    'FreezableFacet',
+    'HoldManagementFacet',
+    'KYCFacet',
+    'PausableFacet',
+    'RescuableFacet',
+    'ReserveFacet',
+    'RoleManagementFacet',
+    'RolesFacet',
+    'SupplierAdminFacet',
+    'TokenOwnerFacet',
+    'WipeableFacet',
 ] as const
 
 export const LOCAL_DEFAULT_ENDPOINTS = {

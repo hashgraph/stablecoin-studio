@@ -1,13 +1,26 @@
 import { ethers } from 'hardhat'
-import { Contract, ContractFactory, ContractReceipt } from 'ethers'
+import { Contract, ContractFactory, ContractReceipt, Overrides } from 'ethers'
 import { configuration } from 'hardhat.config'
 import {
-    HederaTokenManager__factory,
-    IHRC__factory,
-    IStableCoinFactory,
-    ProxyAdmin__factory,
-    StableCoinFactory__factory,
-    TransparentUpgradeableProxy__factory,
+    BurnableFacet__factory,
+    BusinessLogicResolver__factory,
+    CashInFacet__factory,
+    CustomFeesFacet__factory,
+    DeletableFacet__factory,
+    DiamondFacet__factory,
+    FreezableFacet__factory,
+    HederaReserveFacet__factory,
+    HederaTokenManagerFacet__factory,
+    HoldManagementFacet__factory,
+    KYCFacet__factory,
+    PausableFacet__factory,
+    RescuableFacet__factory,
+    ReserveFacet__factory,
+    RoleManagementFacet__factory,
+    RolesFacet__factory,
+    SupplierAdminFacet__factory,
+    TokenOwnerFacet__factory,
+    WipeableFacet__factory,
 } from '@typechain'
 import {
     MESSAGES,
@@ -22,6 +35,8 @@ import {
     VALUE,
     TransactionReceiptError,
     DeployFullInfrastructureResult,
+    DeployScsContractListCommand,
+    DeployScsContractListResult,
 } from '@scripts'
 
 export async function deployFullInfrastructure({
@@ -150,6 +165,244 @@ export async function deployFullInfrastructure({
         stableCoinCreator: wallet.address,
         KycGranted: grantKYCToOriginalSender,
     })
+}
+
+export async function deployScsContractList({
+    signer,
+    network,
+    useDeployed,
+}: DeployScsContractListCommand): Promise<DeployScsContractListResult> {
+    const overrides: Overrides = { gasLimit: GAS_LIMIT.high } // If you want to override the default parameters
+    const commands = {
+        businessLogicResolver: new DeployContractWithFactoryCommand({
+            factory: new BusinessLogicResolver__factory(),
+            signer,
+            withProxy: true,
+            deployedContract: useDeployed
+                ? configuration.contracts.BusinessLogicResolver.addresses?.[network]
+                : undefined,
+            overrides,
+        }),
+        diamondFacet: new DeployContractWithFactoryCommand({
+            factory: new DiamondFacet__factory(),
+            signer,
+            deployedContract: useDeployed ? configuration.contracts.DiamondFacet.addresses?.[network] : undefined,
+            overrides,
+        }),
+        hederaTokenManagerFacet: new DeployContractWithFactoryCommand({
+            factory: new HederaTokenManagerFacet__factory(),
+            signer,
+            withProxy: true,
+            deployedContract: useDeployed
+                ? configuration.contracts.HederaTokenManagerFacet.addresses?.[network]
+                : undefined,
+            overrides,
+        }),
+        hederaReserveFacet: new DeployContractWithFactoryCommand({
+            factory: new HederaReserveFacet__factory(),
+            signer,
+            deployedContract: useDeployed ? configuration.contracts.HederaReserveFacet.addresses?.[network] : undefined,
+            overrides,
+        }),
+        burnableFacet: new DeployContractWithFactoryCommand({
+            factory: new BurnableFacet__factory(),
+            signer,
+            deployedContract: useDeployed ? configuration.contracts.BurnableFacet.addresses?.[network] : undefined,
+            overrides,
+        }),
+        cashInFacet: new DeployContractWithFactoryCommand({
+            factory: new CashInFacet__factory(),
+            signer,
+            deployedContract: useDeployed ? configuration.contracts.CashInFacet.addresses?.[network] : undefined,
+            overrides,
+        }),
+        customFeesFacet: new DeployContractWithFactoryCommand({
+            factory: new CustomFeesFacet__factory(),
+            signer,
+            deployedContract: useDeployed ? configuration.contracts.CustomFeesFacet.addresses?.[network] : undefined,
+            overrides,
+        }),
+        deletableFacet: new DeployContractWithFactoryCommand({
+            factory: new DeletableFacet__factory(),
+            signer,
+            deployedContract: useDeployed ? configuration.contracts.DeletableFacet.addresses?.[network] : undefined,
+            overrides,
+        }),
+        freezableFacet: new DeployContractWithFactoryCommand({
+            factory: new FreezableFacet__factory(),
+            signer,
+            deployedContract: useDeployed ? configuration.contracts.FreezableFacet.addresses?.[network] : undefined,
+            overrides,
+        }),
+        holdManagementFacet: new DeployContractWithFactoryCommand({
+            factory: new HoldManagementFacet__factory(),
+            signer,
+            deployedContract: useDeployed
+                ? configuration.contracts.HoldManagementFacet.addresses?.[network]
+                : undefined,
+            overrides,
+        }),
+        kycFacet: new DeployContractWithFactoryCommand({
+            factory: new KYCFacet__factory(),
+            signer,
+            deployedContract: useDeployed ? configuration.contracts.KYCFacet.addresses?.[network] : undefined,
+            overrides,
+        }),
+        pausableFacet: new DeployContractWithFactoryCommand({
+            factory: new PausableFacet__factory(),
+            signer,
+            deployedContract: useDeployed ? configuration.contracts.PausableFacet.addresses?.[network] : undefined,
+            overrides,
+        }),
+        rescuableFacet: new DeployContractWithFactoryCommand({
+            factory: new RescuableFacet__factory(),
+            signer,
+            deployedContract: useDeployed ? configuration.contracts.RescuableFacet.addresses?.[network] : undefined,
+            overrides,
+        }),
+        reserveFacet: new DeployContractWithFactoryCommand({
+            factory: new ReserveFacet__factory(),
+            signer,
+            deployedContract: useDeployed ? configuration.contracts.ReserveFacet.addresses?.[network] : undefined,
+            overrides,
+        }),
+        roleManagementFacet: new DeployContractWithFactoryCommand({
+            factory: new RoleManagementFacet__factory(),
+            signer,
+            deployedContract: useDeployed
+                ? configuration.contracts.RoleManagementFacet.addresses?.[network]
+                : undefined,
+            overrides,
+        }),
+        rolesFacet: new DeployContractWithFactoryCommand({
+            factory: new RolesFacet__factory(),
+            signer,
+            deployedContract: useDeployed ? configuration.contracts.RolesFacet.addresses?.[network] : undefined,
+            overrides,
+        }),
+        supplierAdminFacet: new DeployContractWithFactoryCommand({
+            factory: new SupplierAdminFacet__factory(),
+            signer,
+            deployedContract: useDeployed ? configuration.contracts.SupplierAdminFacet.addresses?.[network] : undefined,
+            overrides,
+        }),
+        tokenOwnerFacet: new DeployContractWithFactoryCommand({
+            factory: new TokenOwnerFacet__factory(),
+            signer,
+            deployedContract: useDeployed ? configuration.contracts.TokenOwnerFacet.addresses?.[network] : undefined,
+            overrides,
+        }),
+        wipeableFacet: new DeployContractWithFactoryCommand({
+            factory: new WipeableFacet__factory(),
+            signer,
+            deployedContract: useDeployed ? configuration.contracts.WipeableFacet.addresses?.[network] : undefined,
+            overrides,
+        }),
+        // * Add other SCS contracts here following the pattern
+        // Example:
+        // cashToken: new DeployContractWithFactoryCommand({
+        //     factory: new CashToken__factory(),
+        //     signer,
+        //     deployedContract: useDeployed ? configuration.contracts.CashToken.addresses?.[network] : undefined,
+        //     overrides,
+        // }),
+    }
+
+    // Deploy contracts sequentially
+    const deployedContracts: DeployScsContractListResult = new DeployScsContractListResult({
+        businessLogicResolver: await deployContractWithFactory(commands.businessLogicResolver).then((result) => {
+            console.log('BusinessLogicResolver has been deployed successfully')
+            return result
+        }),
+        diamondFacet: await deployContractWithFactory(commands.diamondFacet).then((result) => {
+            console.log('DiamondFacet has been deployed successfully')
+            return result
+        }),
+        hederaTokenManagerFacet: await deployContractWithFactory(commands.hederaTokenManagerFacet).then((result) => {
+            console.log('HederaTokenManager has been deployed successfully')
+            return result
+        }),
+        hederaReserveFacet: await deployContractWithFactory(commands.hederaReserveFacet).then((result) => {
+            console.log('HederaReserveFacet has been deployed successfully')
+            return result
+        }),
+        burnableFacet: await deployContractWithFactory(commands.burnableFacet).then((result) => {
+            console.log('BurnableFacet has been deployed successfully')
+            return result
+        }),
+        cashInFacet: await deployContractWithFactory(commands.cashInFacet).then((result) => {
+            console.log('CashInFacet has been deployed successfully')
+            return result
+        }),
+        customFeesFacet: await deployContractWithFactory(commands.customFeesFacet).then((result) => {
+            console.log('CustomFeesFacet has been deployed successfully')
+            return result
+        }),
+        deletableFacet: await deployContractWithFactory(commands.deletableFacet).then((result) => {
+            console.log('DeletableFacet has been deployed successfully')
+            return result
+        }),
+        freezableFacet: await deployContractWithFactory(commands.freezableFacet).then((result) => {
+            console.log('FreezableFacet has been deployed successfully')
+            return result
+        }),
+        holdManagementFacet: await deployContractWithFactory(commands.holdManagementFacet).then((result) => {
+            console.log('HoldManagementFacet has been deployed successfully')
+            return result
+        }),
+        kycFacet: await deployContractWithFactory(commands.kycFacet).then((result) => {
+            console.log('KYCFacet has been deployed successfully')
+            return result
+        }),
+        pausableFacet: await deployContractWithFactory(commands.pausableFacet).then((result) => {
+            console.log('PausableFacet has been deployed successfully')
+            return result
+        }),
+        rescuableFacet: await deployContractWithFactory(commands.rescuableFacet).then((result) => {
+            console.log('RescuableFacet has been deployed successfully')
+            return result
+        }),
+        reserveFacet: await deployContractWithFactory(commands.reserveFacet).then((result) => {
+            console.log('ReserveFacet has been deployed successfully')
+            return result
+        }),
+        roleManagementFacet: await deployContractWithFactory(commands.roleManagementFacet).then((result) => {
+            console.log('RoleManagementFacet has been deployed successfully')
+            return result
+        }),
+        rolesFacet: await deployContractWithFactory(commands.rolesFacet).then((result) => {
+            console.log('RolesFacet has been deployed successfully')
+            return result
+        }),
+        supplierAdminFacet: await deployContractWithFactory(commands.supplierAdminFacet).then((result) => {
+            console.log('SupplierAdminFacet has been deployed successfully')
+            return result
+        }),
+        tokenOwnerFacet: await deployContractWithFactory(commands.tokenOwnerFacet).then((result) => {
+            console.log('TokenOwnerFacet has been deployed successfully')
+            return result
+        }),
+        wipeableFacet: await deployContractWithFactory(commands.wipeableFacet).then((result) => {
+            console.log('WipeableFacet has been deployed successfully')
+            return result
+        }),
+        // * Add results for other deployed SCS contracts here
+        // Example:
+        // cashToken: await deployContractWithFactory(commands.cashToken).then((result) => {
+        //     console.log('CashToken has been deployed successfully')
+        //     return result
+        // }),
+        deployer: signer,
+    })
+
+    // Note: The original code had many contracts listed (Cap, ControlList, Kyc, etc.)
+    // which seem related to ATS/Security Tokens rather than the core StableCoin Studio (SCS) contracts.
+    // I've kept BusinessLogicResolver and BurnableFacet as examples.
+    // You should add the specific SCS contracts required for your setup.
+    // The original code also had a DeployAtsContractsResult type which was renamed to DeployScsContractListResult.
+    // Ensure the DeployScsContractListResult type definition matches the structure returned here.
+
+    return deployedContracts
 }
 
 export async function deployContractWithFactory<

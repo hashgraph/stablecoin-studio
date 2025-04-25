@@ -12,6 +12,7 @@ export { default as ErrorMessageCommand } from './commands/ErrorMessageCommand'
 export { default as ValidateTxResponseCommand } from './commands/ValidateTxResponseCommand'
 export { default as DeployContractCommand } from './commands/DeployContractCommand'
 export { default as DeployContractWithFactoryCommand } from './commands/DeployContractWithFactoryCommand'
+export { default as DeployScsContractListCommand } from './commands/DeployScsContractListCommand'
 export {
     default as DeployFullInfrastructureCommand,
     DeployFullInfrastructureCommandNewParams,
@@ -27,6 +28,7 @@ export { default as AllTokenKeysToKeyCommand } from './commands/AllTokenKeysToKe
 export { default as ValidateTxResponseResult } from './results/ValidateTxResponseResult'
 export { default as DeployContractResult } from './results/DeployContractResult'
 export { default as DeployContractWithFactoryResult } from './results/DeployContractWithFactoryResult'
+export { default as DeployScsContractListResult } from './results/DeployScsContractListResult'
 export { default as DeployFullInfrastructureResult } from './results/DeployFullInfrastructureResult'
 
 // * Blockchain

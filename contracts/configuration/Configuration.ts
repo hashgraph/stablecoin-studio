@@ -177,19 +177,18 @@ export default class Configuration {
     }
 
     private _initContracts(): Record<ContractName, ContractConfig> {
-        const contractNamesWithProxy: ContractName[] = CONTRACT_NAMES_WITH_PROXY.slice()
-        return CONTRACT_NAMES.reduce(
-            (result, contractName) => {
-                result[contractName] = {
-                    name: contractName,
-                    factoryName: `${contractName}${SUFIXES.typechainFactory}`,
-                    deployType: contractNamesWithProxy.includes(contractName) ? DEPLOY_TYPES[0] : DEPLOY_TYPES[1],
-                    addresses: Configuration._getDeployedAddresses({ contractName }),
-                }
-                return result
-            },
-            {} as Record<ContractName, ContractConfig>
-        )
+        const contracts: Record<ContractName, ContractConfig> = {} as Record<ContractName, ContractConfig>
+        CONTRACT_NAMES.forEach((contractName) => {
+            contracts[contractName] = {
+                name: contractName,
+                factoryName: `${contractName}__factory`,
+                deployType: CONTRACT_NAMES_WITH_PROXY.includes(contractName) ? 'proxy' : 'direct',
+                addresses: Configuration._getDeployedAddresses({
+                    contractName,
+                }),
+            }
+        })
+        return contracts
     }
 
     private static _getDeployedAddresses({

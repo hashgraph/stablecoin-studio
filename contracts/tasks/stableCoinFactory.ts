@@ -19,7 +19,7 @@ task('addHederaTokenManagerVersion', 'Add a new version TokenManager in factory'
         types.string
     )
     .addOptionalParam('signerPosition', 'The index of the signer in the Hardhat signers array', undefined, types.int)
-    .setAction(async (args: Omit<AddHederaTokenManagerVersionCommand, keyof typeof hre>, hre) => {
+    .setAction(async (args: AddHederaTokenManagerVersionCommand, hre) => {
         // Inlined to avoid circular dependency
         const { StableCoinFactory__factory } = await import('@typechain')
         const { GAS_LIMIT, MESSAGES, validateTxResponse, ValidateTxResponseCommand } = await import('@scripts')
