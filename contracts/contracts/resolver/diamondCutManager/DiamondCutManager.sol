@@ -4,7 +4,7 @@ pragma solidity 0.8.18;
 import {ADMIN_ROLE} from '../../constants/roles.sol';
 import {RolesStorageWrapper} from '../../extensions/RolesStorageWrapper.sol';
 import {DiamondCutManagerWrapper} from './DiamondCutManagerWrapper.sol';
-import {IDiamondLoupe} from '../interfaces/resolverProxy/IDiamondLoupe.sol';
+import {IResolverLoupe} from '../interfaces/resolverProxy/IResolverLoupe.sol';
 
 abstract contract DiamondCutManager is RolesStorageWrapper, DiamondCutManagerWrapper {
     modifier validateConfigurationId(bytes32 _configurationId) {
@@ -110,7 +110,7 @@ abstract contract DiamondCutManager is RolesStorageWrapper, DiamondCutManagerWra
         uint256 _version,
         uint256 _pageIndex,
         uint256 _pageLength
-    ) external view override returns (IDiamondLoupe.Facet[] memory facets_) {
+    ) external view override returns (IResolverLoupe.ResolverFacet[] memory facets_) {
         facets_ = _getFacetsByConfigurationIdAndVersion(
             _diamondCutManagerStorage(),
             _configurationId,
@@ -197,7 +197,7 @@ abstract contract DiamondCutManager is RolesStorageWrapper, DiamondCutManagerWra
         bytes32 _configurationId,
         uint256 _version,
         bytes32 _facetId
-    ) external view override returns (IDiamondLoupe.Facet memory facet_) {
+    ) external view override returns (IResolverLoupe.ResolverFacet memory facet_) {
         facet_ = _getFacetByConfigurationIdVersionAndFacetId(
             _diamondCutManagerStorage(),
             _configurationId,
