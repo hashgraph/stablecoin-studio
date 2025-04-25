@@ -44,6 +44,19 @@ import {
 	HederaTokenManagerFacet__factory,
 	HederaReserveFacet__factory,
 	StableCoinFactoryFacet__factory,
+	RolesFacet__factory,
+	RoleManagementFacet__factory,
+	CashInFacet__factory,
+	WipeableFacet__factory,
+	BurnableFacet__factory,
+	FreezableFacet__factory,
+	PausableFacet__factory,
+	RescuableFacet__factory,
+	DeletableFacet__factory,
+	ReserveFacet__factory,
+	SupplierAdminFacet__factory,
+	KYCFacet__factory,
+	CustomFeesFacet__factory,
 } from '@hashgraph/stablecoin-npm-contracts';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 import { TransactionType } from '../TransactionResponseEnums.js';
@@ -306,7 +319,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			CASHIN_GAS,
 			params,
 			undefined,
-			undefined,
+			CashInFacet__factory.abi,
 			startDate,
 		);
 	}
@@ -328,7 +341,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			WIPE_GAS,
 			params,
 			undefined,
-			undefined,
+			WipeableFacet__factory.abi,
 			startDate,
 		);
 	}
@@ -348,7 +361,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			BURN_GAS,
 			params,
 			undefined,
-			undefined,
+			BurnableFacet__factory.abi,
 			startDate,
 		);
 	}
@@ -391,7 +404,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			FREEZE_GAS,
 			params,
 			undefined,
-			undefined,
+			FreezableFacet__factory.abi,
 			startDate,
 		);
 	}
@@ -411,7 +424,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			UNFREEZE_GAS,
 			params,
 			undefined,
-			undefined,
+			FreezableFacet__factory.abi,
 			startDate,
 		);
 	}
@@ -427,7 +440,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			PAUSE_GAS,
 			undefined,
 			undefined,
-			undefined,
+			PausableFacet__factory.abi,
 			startDate,
 		);
 	}
@@ -443,7 +456,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			UNPAUSE_GAS,
 			undefined,
 			undefined,
-			undefined,
+			PausableFacet__factory.abi,
 			startDate,
 		);
 	}
@@ -486,7 +499,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			RESCUE_GAS,
 			params,
 			undefined,
-			undefined,
+			RescuableFacet__factory.abi,
 			startDate,
 		);
 	}
@@ -506,7 +519,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			RESCUE_HBAR_GAS,
 			params,
 			undefined,
-			undefined,
+			RescuableFacet__factory.abi,
 			startDate,
 		);
 	}
@@ -522,7 +535,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			DELETE_GAS,
 			undefined,
 			undefined,
-			undefined,
+			DeletableFacet__factory.abi,
 			startDate,
 		);
 	}
@@ -536,6 +549,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			GET_RESERVE_ADDRESS_GAS,
 			undefined,
 			TransactionType.RECORD,
+			ReserveFacet__factory.abi,
 		);
 
 		transactionResponse.response =
@@ -556,6 +570,8 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			'updateReserveAddress',
 			UPDATE_RESERVE_ADDRESS_GAS,
 			params,
+			TransactionType.RECEIPT,
+			ReserveFacet__factory.abi,
 		);
 	}
 
@@ -568,6 +584,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			GET_RESERVE_AMOUNT_GAS,
 			undefined,
 			TransactionType.RECORD,
+			ReserveFacet__factory.abi,
 		);
 
 		transactionResponse.response = BigDecimal.fromStringFixed(
@@ -610,6 +627,8 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			'grantRole',
 			GRANT_ROLES_GAS,
 			params,
+			TransactionType.RECEIPT,
+			RolesFacet__factory.abi,
 		);
 	}
 
@@ -636,7 +655,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			gas,
 			params,
 			undefined,
-			undefined,
+			RoleManagementFacet__factory.abi,
 			startDate,
 		);
 	}
@@ -654,6 +673,8 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			'grantUnlimitedSupplierRole',
 			GRANT_ROLES_GAS,
 			params,
+			TransactionType.RECEIPT,
+			SupplierAdminFacet__factory.abi,
 		);
 	}
 
@@ -672,6 +693,8 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			'grantSupplierRole',
 			GRANT_ROLES_GAS,
 			params,
+			TransactionType.RECEIPT,
+			SupplierAdminFacet__factory.abi,
 		);
 	}
 
@@ -690,6 +713,8 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			'revokeRole',
 			REVOKE_ROLES_GAS,
 			params,
+			TransactionType.RECEIPT,
+			RolesFacet__factory.abi,
 		);
 	}
 
@@ -714,7 +739,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			gas,
 			params,
 			undefined,
-			undefined,
+			RoleManagementFacet__factory.abi,
 			startDate,
 		);
 	}
@@ -732,6 +757,8 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			'revokeSupplierRole',
 			REVOKE_ROLES_GAS,
 			params,
+			TransactionType.RECEIPT,
+			SupplierAdminFacet__factory.abi,
 		);
 	}
 
@@ -751,6 +778,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			HAS_ROLE_GAS,
 			params,
 			TransactionType.RECORD,
+			RolesFacet__factory.abi,
 		);
 		transactionResponse.response = transactionResponse.response[0];
 		return transactionResponse;
@@ -769,6 +797,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			GET_ROLES_GAS,
 			params,
 			TransactionType.RECORD,
+			RolesFacet__factory.abi,
 		);
 		transactionResponse.response = transactionResponse.response[0].filter(
 			(value: string) => value !== StableCoinRole.WITHOUT_ROLE,
@@ -790,6 +819,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			GET_SUPPLY_ALLOWANCE_GAS,
 			params,
 			TransactionType.RECORD,
+			SupplierAdminFacet__factory.abi,
 		);
 		transactionResponse.response = BigDecimal.fromStringFixed(
 			transactionResponse.response[0].toString(),
@@ -812,6 +842,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			IS_UNLIMITED_ALLOWANCE_GAS,
 			params,
 			TransactionType.RECORD,
+			SupplierAdminFacet__factory.abi,
 		);
 		transactionResponse.response = transactionResponse.response[0];
 		return transactionResponse;
@@ -834,7 +865,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			INCREASE_SUPPLY_GAS,
 			params,
 			undefined,
-			undefined,
+			SupplierAdminFacet__factory.abi,
 			startDate,
 		);
 	}
@@ -856,7 +887,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			DECREASE_SUPPLY_GAS,
 			params,
 			undefined,
-			undefined,
+			SupplierAdminFacet__factory.abi,
 			startDate,
 		);
 	}
@@ -876,7 +907,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			RESET_SUPPLY_GAS,
 			params,
 			undefined,
-			undefined,
+			SupplierAdminFacet__factory.abi,
 			startDate,
 		);
 	}
@@ -894,6 +925,8 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			'grantKyc',
 			GRANT_KYC_GAS,
 			params,
+			TransactionType.RECEIPT,
+			KYCFacet__factory.abi,
 		);
 	}
 
@@ -910,6 +943,8 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			'revokeKyc',
 			REVOKE_KYC_GAS,
 			params,
+			TransactionType.RECEIPT,
+			KYCFacet__factory.abi,
 		);
 	}
 
@@ -927,6 +962,8 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 			'updateTokenCustomFees',
 			UPDATE_CUSTOM_FEES_GAS,
 			params,
+			TransactionType.RECEIPT,
+			CustomFeesFacet__factory.abi,
 		);
 	}
 
@@ -1004,6 +1041,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 						throw new Error(
 							`StableCoin ${coin.coin.name} does not have a proxy address`,
 						);
+					console.log('estoy aqui contract');
 					return await this.performSmartContractOperation(
 						coin.coin.proxyAddress!.value,
 						operationName,
@@ -1016,6 +1054,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					);
 
 				case Decision.HTS:
+					console.log('estoy aqui hts');
 					if (!coin.coin.tokenId)
 						throw new Error(
 							`StableCoin ${coin.coin.name} does not have an underlying token`,
@@ -1038,6 +1077,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					);
 			}
 		} catch (error) {
+			console.log(error);
 			LogService.logError(error);
 			const transactionId: string =
 				(error as any).error?.transactionId.toString() ??
@@ -1123,6 +1163,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					);
 				}
 		}
+		console.log('antes del contract call');
 		return await this.contractCall(
 			contractAddress,
 			operationName,
@@ -1332,6 +1373,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		value?: number,
 		startDate?: string,
 	): Promise<TransactionResponse> {
+		console.log('dentro del contract call');
 		const functionCallParameters = this.encodeFunctionCall(
 			functionName,
 			parameters,
