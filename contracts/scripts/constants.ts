@@ -236,10 +236,4 @@ export const EVENTS = {
         registered: 'BusinessLogicsRegistered',
         configurationCreated: 'DiamondBatchConfigurationCreated',
     },
-    equity: {
-        deployed: 'EquityDeployed',
-    },
-    bond: {
-        deployed: 'BondDeployed',
-    },
 }

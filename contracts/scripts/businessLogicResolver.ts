@@ -4,7 +4,6 @@ import {
     IDiamondCutManager__factory,
     IStaticFunctionSelectors__factory,
 } from '@typechain'
-import { IStaticFunctionSelectors } from '@typechain'
 import {
     CreateConfigurationsForDeployedContractsCommand,
     CreateConfigurationsForDeployedContractsResult,
@@ -23,25 +22,6 @@ import { Signer } from 'ethers'
 export interface BusinessLogicRegistryData {
     businessLogicKey: string
     businessLogicAddress: string
-}
-
-export interface DeployedBusinessLogics {
-    businessLogicResolver: IStaticFunctionSelectors
-    stableCoinFactoryFacet: IStaticFunctionSelectors
-    burnableFacet: IStaticFunctionSelectors
-    cashInFacet: IStaticFunctionSelectors
-    customFeesFacet: IStaticFunctionSelectors
-    deletableFacet: IStaticFunctionSelectors
-    freezableFacet: IStaticFunctionSelectors
-    holdManagementFacet: IStaticFunctionSelectors
-    kycFacet: IStaticFunctionSelectors
-    pausableFacet: IStaticFunctionSelectors
-    reserveFacet: IStaticFunctionSelectors
-    roleManagementFacet: IStaticFunctionSelectors
-    rolesFacet: IStaticFunctionSelectors
-    supplierAdminFacet: IStaticFunctionSelectors
-    tokenOwnerFacet: IStaticFunctionSelectors
-    wipeableFacet: IStaticFunctionSelectors
 }
 
 export interface FacetConfiguration {
