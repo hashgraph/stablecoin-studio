@@ -1,9 +1,13 @@
 import { constants } from 'ethers'
 import { GAS_LIMIT as CONF_GAS_LIMIT } from '@configuration'
 
+// * General
+export const CONFIG_ID = '0x0000000000000000000000000000000000000000000000000000000000000001'
+
 // * Ethereum
 export const ADDRESS_ZERO = constants.AddressZero
 export const NUMBER_ZERO = constants.Zero
+
 // * Roles
 export const ROLES = {
     defaultAdmin: {
@@ -56,6 +60,9 @@ export const ROLES = {
 export const GAS_LIMIT = {
     ...CONF_GAS_LIMIT,
     transfer: 60_000n,
+    initialize: {
+        businessLogicResolver: 8_000_000,
+    },
     hederaTokenManager: {
         deploy: 5_000_000n,
         initialize: 60_000n,
@@ -126,6 +133,11 @@ export const GAS_LIMIT = {
         decimals: 60_000n,
         description: 60_000n,
         version: 60_000n,
+    },
+    businessLogicResolver: {
+        getStaticResolverKey: 60_000,
+        registerBusinessLogics: 7_800_000,
+        createConfiguration: 15_000_000,
     },
 }
 
@@ -200,5 +212,28 @@ export const MESSAGES = {
             editHederaTokenManagerAddress: '❌ Failed to edit HederaTokenManager address.',
             removeHederaTokenManagerAddress: '❌ Failed to remove HederaTokenManager address.', // Added error message for removeHederaTokenManagerAddress
         },
+    },
+    businessLogicResolver: {
+        info: {
+            initializing: 'Initializing business logic resolver. please wait...',
+            registering: 'Registering business logics. please wait...',
+            creatingConfigurations: 'Creating configurations. please wait...',
+            configured: 'Business logic resolver configured successfully',
+        },
+        error: {
+            notFound: 'Business logic resolver not found',
+            proxyNotFound: 'Business logic resolver proxy not found',
+            initializing: 'Error initializing business logic resolver',
+            registering: 'Error registering business logics',
+            creatingConfigurations: 'Error creating configurations',
+        },
+    },
+}
+
+// * Events
+export const EVENTS = {
+    businessLogicResolver: {
+        registered: 'BusinessLogicsRegistered',
+        configurationCreated: 'DiamondBatchConfigurationCreated',
     },
 }
