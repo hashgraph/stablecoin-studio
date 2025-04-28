@@ -59,3 +59,6 @@ export * from './time'
 
 // * BusinessLogicResolver
 export * from './businessLogicResolver'
+
+// * Resolver Diamond Cut
+export * from './resolverDiamondCut'
