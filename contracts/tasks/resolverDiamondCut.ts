@@ -21,8 +21,8 @@ import {
 } from '@typechain'
 
 task('createConfiguration', 'Create a new configuration')
-    .addPositionalParam('resolverAddress', 'The resolver proxy admin address', undefined, types.string)
-    .addPositionalParam('facetsAddress', 'The facets addressess', undefined, types.string)
+    .addPositionalParam('resolverAddress', 'The resolver address', undefined, types.string)
+    .addPositionalParam('facetsAddress', 'The facets addresses', undefined, types.string)
     .addOptionalParam('privatekey', 'The private key of the account in raw hexadecimal format', undefined, types.string)
     .addOptionalParam(
         'signeraddress',
