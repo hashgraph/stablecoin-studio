@@ -44,10 +44,12 @@ export class SetConfigurationCommandHandler
 	): Promise<SetConfigurationCommandResponse> {
 		this.networkService.configuration = {
 			factoryAddress: command.factoryAddress,
+			resolverAddress: command.resolverAddress,
 		};
 		return Promise.resolve(
 			new SetConfigurationCommandResponse(
 				this.networkService.configuration.factoryAddress,
+				this.networkService.configuration.resolverAddress,
 			),
 		);
 	}

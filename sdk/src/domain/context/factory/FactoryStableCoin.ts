@@ -21,6 +21,7 @@
 import { FactoryCashinRole } from './FactoryCashinRole.js';
 import { KeysStruct } from './FactoryKey.js';
 import { FactoryRole } from './FactoryRole.js';
+import { ResolverProxyConfiguration } from './ResolverProxyConfiguration.js';
 
 export class FactoryStableCoin {
 	/**
@@ -109,9 +110,19 @@ export class FactoryStableCoin {
 	public metadata: string;
 
 	/**
-	 * Timelock Address
+	 * Business Logic Resolver address
 	 */
-	public proxyAdminOwnerAccount: string;
+	public businessLogicResolverContractId: string;
+
+	/**
+	 * StableCoin Configuration Id
+	 */
+	public stableCoinConfigurationId: ResolverProxyConfiguration;
+
+	/**
+	 * Reserve Configuration Id
+	 */
+	public reserveConfigurationId: ResolverProxyConfiguration;
 
 	constructor(
 		tokenName: string,
@@ -131,7 +142,9 @@ export class FactoryStableCoin {
 		roles: FactoryRole[],
 		cashinRole: FactoryCashinRole,
 		metadata: string,
-		proxyAdminOwnerAccount: string,
+		businessLogicResolverContractId: string,
+		stableCoinConfigurationId: ResolverProxyConfiguration,
+		reserveConfigurationId: ResolverProxyConfiguration,
 	) {
 		this.tokenName = tokenName;
 		this.tokenSymbol = tokenSymbol;
@@ -150,6 +163,8 @@ export class FactoryStableCoin {
 		this.roles = roles;
 		this.cashinRole = cashinRole;
 		this.metadata = metadata;
-		this.proxyAdminOwnerAccount = proxyAdminOwnerAccount;
+		this.businessLogicResolverContractId = businessLogicResolverContractId;
+		this.stableCoinConfigurationId = stableCoinConfigurationId;
+		this.reserveConfigurationId = reserveConfigurationId;
 	}
 }

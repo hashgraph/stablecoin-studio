@@ -54,17 +54,20 @@ export interface NetworkData {
 	name?: Environment;
 	recognized?: boolean;
 	factoryId?: string;
+	resolverId?: string;
 }
 
 interface ITransactionAdapter {
 	create(
 		coin: StableCoin,
 		factory: ContractId,
-		hederaTokenManager: ContractId,
 		createReserve: boolean,
+		resolver: ContractId,
+		configId: string,
+		configVersion: number,
+		proxyOwnerAccount: ContractId,
 		reserveAddress?: ContractId,
 		reserveInitialAmount?: BigDecimal,
-		proxyAdminOwnerAccount?: ContractId,
 	): Promise<TransactionResponse>;
 	init(): Promise<Environment>;
 	register(account?: Account): Promise<InitializationData>;
@@ -163,16 +166,6 @@ interface ITransactionAdapter {
 		wipeKey: PublicKey | undefined,
 		metadata: string | undefined,
 	): Promise<TransactionResponse>;
-	upgradeImplementation(
-		proxy: HederaId,
-		proxyAdminId: HederaId,
-		implementationId: ContractId,
-	): Promise<TransactionResponse>;
-	changeOwner(
-		proxyAdminId: HederaId,
-		targetId: HederaId,
-	): Promise<TransactionResponse>;
-	acceptOwner(proxyAdminId: HederaId): Promise<TransactionResponse>;
 	getMirrorNodeAdapter(): MirrorNodeAdapter;
 	sign(message: string | Transaction): Promise<string>;
 	submit(t: Transaction): Promise<TransactionResponse>;
@@ -287,11 +280,13 @@ export default abstract class TransactionAdapter
 	create(
 		coin: StableCoin,
 		factory: ContractId,
-		hederaTokenManager: ContractId,
 		createReserve: boolean,
+		resolver: ContractId,
+		configId: string,
+		configVersion: number,
+		proxyOwnerAccount: ContractId,
 		reserveAddress?: ContractId,
 		reserveInitialAmount?: BigDecimal,
-		proxyAdminOwnerAccount?: ContractId,
 	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
@@ -557,26 +552,6 @@ export default abstract class TransactionAdapter
 	}
 
 	getMirrorNodeAdapter(): MirrorNodeAdapter {
-		throw new Error('Method not implemented.');
-	}
-
-	upgradeImplementation(
-		proxy: HederaId,
-		proxyAdminId: HederaId,
-		implementationId: ContractId,
-	): Promise<TransactionResponse<any, Error>> {
-		throw new Error('Method not implemented.');
-	}
-	changeOwner(
-		proxyAdminId: HederaId,
-		targetId: HederaId,
-	): Promise<TransactionResponse<any, Error>> {
-		throw new Error('Method not implemented.');
-	}
-
-	acceptOwner(
-		proxyAdminId: HederaId,
-	): Promise<TransactionResponse<any, Error>> {
 		throw new Error('Method not implemented.');
 	}
 

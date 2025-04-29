@@ -60,18 +60,10 @@ contract StableCoinFactoryFacet is
      * @dev Deploys a stablecoin
      *
      * @param requestedToken The information provided to create the stablecoin's token
-     * @param stableCoinContractAddress The address of the HederaTokenManager contract to create the stablecoin
      */
     function deployStableCoin(
-        TokenStruct calldata requestedToken,
-        address stableCoinContractAddress
-    )
-        external
-        payable
-        override(IStableCoinFactory)
-        addressIsNotZero(stableCoinContractAddress)
-        returns (DeployedStableCoin memory)
-    {
+        TokenStruct calldata requestedToken
+    ) external payable override(IStableCoinFactory) returns (DeployedStableCoin memory) {
         address reserveAddress = _handleReserve(requestedToken);
         address stableCoinProxy = _deployStableCoinProxy(requestedToken);
         address tokenAddress = _initializeToken(requestedToken, stableCoinProxy, reserveAddress);

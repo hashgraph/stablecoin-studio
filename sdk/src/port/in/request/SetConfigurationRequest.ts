@@ -24,11 +24,14 @@ import Configuration from '../../../domain/context/network/Configuration.js';
 
 export default class SetConfigurationRequest extends ValidatedRequest<SetConfigurationRequest> {
 	factoryAddress: string;
+	resolverAddress: string;
 
 	constructor(props: Configuration) {
 		super({
 			factoryAddress: Validation.checkContractId(),
+			resolverAddress: Validation.checkContractId(),
 		});
 		this.factoryAddress = props.factoryAddress;
+		this.resolverAddress = props.resolverAddress;
 	}
 }

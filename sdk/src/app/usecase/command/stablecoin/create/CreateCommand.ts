@@ -45,10 +45,12 @@ export class CreateCommand extends Command<CreateCommandResponse> {
 		public readonly coin: StableCoinProps,
 		public readonly createReserve: boolean,
 		public readonly factory?: ContractId,
-		public readonly hederaTokenManager?: ContractId,
 		public readonly reserveAddress?: ContractId,
 		public readonly reserveInitialAmount?: BigDecimal,
-		public readonly proxyAdminOwnerAccount?: ContractId,
+		public readonly proxyOwnerAccount?: ContractId,
+		public readonly resolver?: ContractId,
+		public readonly configId?: string,
+		public readonly configVersion?: number,
 	) {
 		super();
 	}
