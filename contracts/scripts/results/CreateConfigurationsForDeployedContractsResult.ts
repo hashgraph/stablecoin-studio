@@ -4,12 +4,12 @@ interface CreateConfigurationsForDeployedContractsResultParams {
 }
 
 export default class CreateConfigurationsForDeployedContractsResult {
-    public facetIdList: string[]
-    public facetVersionList: number[]
+    public commonFacetIdList: string[]
+    public commonFacetVersionList: number[]
 
     constructor({ facetIdList, facetVersionList }: CreateConfigurationsForDeployedContractsResultParams) {
-        this.facetIdList = facetIdList
-        this.facetVersionList = facetVersionList
+        this.commonFacetIdList = facetIdList
+        this.commonFacetVersionList = facetVersionList
     }
 
     public static empty(): CreateConfigurationsForDeployedContractsResult {

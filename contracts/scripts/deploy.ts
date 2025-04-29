@@ -24,6 +24,8 @@ import {
     TokenOwnerFacet__factory,
     TransparentUpgradeableProxy__factory,
     WipeableFacet__factory,
+    IStableCoinFactory,
+    IHRC__factory,
 } from '@typechain'
 import {
     MESSAGES,
@@ -40,67 +42,31 @@ import {
     DeployFullInfrastructureResult,
     DeployScsContractListCommand,
     DeployScsContractListResult,
+    BusinessLogicResolverNotFound,
+    CreateConfigurationsForDeployedContractsResult,
+    RegisterDeployedContractBusinessLogicsCommand,
+    registerDeployedContractBusinessLogics,
+    CreateConfigurationsForDeployedContractsCommand,
+    createConfigurationsForDeployedContracts,
+    DeployStableCoinCommand,
+    ADDRESS_ZERO,
 } from '@scripts'
+import Environment from '@environment'
 
-export async function deployFullInfrastructure({
+export let environment = Environment.empty()
+
+export async function deployStableCoin({
     wallet,
-    network,
     tokenStruct,
-    useDeployed,
+    businessLogicResolverAddress,
     grantKYCToOriginalSender,
-}: DeployFullInfrastructureCommand): Promise<DeployFullInfrastructureResult> {
-    console.log(MESSAGES.deploy.info.deployFullInfrastructure)
-    // * Deploy HederaTokenManager or get deployed HederaTokenManager
-    const { contract: hederaTokenManager } = await deployContractWithFactory(
-        new DeployContractWithFactoryCommand({
-            factory: new HederaTokenManager__factory(),
-            signer: wallet,
-            withProxy: false,
-            deployedContract: useDeployed ? configuration.contracts.HederaTokenManager.addresses?.[network] : undefined,
-            // deployedContract: undefined,
-            overrides: {
-                gasLimit: GAS_LIMIT.hederaTokenManager.deploy,
-            },
-        })
-    )
-    console.log(MESSAGES.hederaTokenManager.success.deploy)
-
-    // * Deploy Factory or get deployed Factory
-    const deployStableCoinFactoryCommand = new DeployContractWithFactoryCommand({
-        factory: new StableCoinFactory__factory(),
-        signer: wallet,
-        withProxy: true,
-        deployedContract: useDeployed ? configuration.contracts.StableCoinFactory.addresses?.[network] : undefined,
-        overrides: {
-            gasLimit: GAS_LIMIT.stableCoinFactory.deploy,
-        },
-    })
-    const {
-        contract: stableCoinFactory,
-        proxyAddress: sCFactoryProxyAddress,
-        proxyAdminAddress: sCFactoryProxyAdminAddress,
-    } = await deployContractWithFactory(deployStableCoinFactoryCommand)
-
-    if (!sCFactoryProxyAddress || !sCFactoryProxyAdminAddress) {
-        throw new Error(MESSAGES.stableCoinFactory.error.deploy)
-    }
-    console.log(MESSAGES.stableCoinFactory.success.deploy)
-    if (!useDeployed || !configuration.contracts.StableCoinFactory.addresses?.[network]) {
-        const initResponse = await stableCoinFactory.initialize(wallet.address, hederaTokenManager.address, {
-            gasLimit: GAS_LIMIT.stableCoinFactory.initialize,
-        })
-        await validateTxResponse(
-            new ValidateTxResponseCommand({
-                txResponse: initResponse,
-                errorMessage: MESSAGES.stableCoinFactory.error.initialize,
-            })
-        )
-        console.log(MESSAGES.stableCoinFactory.success.initialize)
-    }
-
+    useEnvironment,
+}: DeployStableCoinCommand) {
+    const kycFacet = KYCFacet__factory.connect(ADDRESS_ZERO, wallet)
+    const stableCoinFactory = StableCoinFactoryFacet__factory.connect(businessLogicResolverAddress, wallet)
     // * Deploy new StableCoin using the Factory
     console.log(MESSAGES.stableCoinFactory.info.deployStableCoin)
-    const deployScResponse = await stableCoinFactory.deployStableCoin(tokenStruct, hederaTokenManager.address, {
+    const deployScResponse = await stableCoinFactory.deployStableCoin(tokenStruct, {
         gasLimit: GAS_LIMIT.stableCoinFactory.deployStableCoin,
         value: VALUE.stableCoinFactory.deployStableCoin,
     })
@@ -120,9 +86,8 @@ export async function deployFullInfrastructure({
     }
     const deployedScEventData = confirmationEvent.args
         .deployedStableCoin as IStableCoinFactory.DeployedStableCoinStructOutput
-    console.log(MESSAGES.deploy.success.deployFullInfrastructure)
 
-    // * Associate token
+    // * Associate token to deployer directly
     console.log(MESSAGES.hederaTokenManager.info.associate)
     const associateResponse = await IHRC__factory.connect(deployedScEventData.tokenAddress, wallet).associate({
         gasLimit: GAS_LIMIT.hederaTokenManager.associate,
@@ -138,7 +103,7 @@ export async function deployFullInfrastructure({
     // * Grant KYC to original sender
     console.log(MESSAGES.hederaTokenManager.info.grantKyc)
     if (grantKYCToOriginalSender) {
-        const grantKYCResponse = await hederaTokenManager
+        const grantKYCResponse = await kycFacet
             .attach(deployedScEventData.stableCoinProxy)
             .grantKyc(wallet.address, { gasLimit: GAS_LIMIT.hederaTokenManager.grantKyc })
         await validateTxResponse(
@@ -150,23 +115,96 @@ export async function deployFullInfrastructure({
     }
     console.log(MESSAGES.hederaTokenManager.success.grantKyc)
 
+    if (useEnvironment) {
+        const { stableCoinProxy, reserveProxy, tokenAddress } = deployedScEventData
+        if (!environment.initialized) {
+            environment = new Environment({
+                businessLogicResolver: BusinessLogicResolver__factory.connect(businessLogicResolverAddress, wallet),
+                stableCoinProxyAddress: stableCoinProxy,
+                reserveProxyAddress: reserveProxy,
+                tokenAddress: tokenAddress,
+            })
+        } else {
+            Object.assign(environment, {
+                stableCoinProxyAddress: stableCoinProxy,
+                reserveProxyAddress: reserveProxy,
+                tokenAddress: tokenAddress,
+            })
+        }
+    }
+}
+
+export async function deployFullInfrastructure({
+    signer,
+    network,
+    useDeployed,
+    useEnvironment,
+    partialBatchDeploy,
+}: DeployFullInfrastructureCommand): Promise<DeployFullInfrastructureResult> {
+    console.log(MESSAGES.deploy.info.deployFullInfrastructure)
+    if (useEnvironment && environment.initialized) {
+        return environment.toDeployAtsFullInfrastructureResult()
+    }
+    const usingDeployed = useDeployed && configuration.contracts.BusinessLogicResolver.addresses?.[network]
+
+    // * Deploy all contracts
+    const deployCommand = await DeployScsContractListCommand.newInstance({
+        signer,
+        useDeployed,
+    })
+    const { deployer, ...deployedContractList } = await deployScsContractList(deployCommand)
+
+    // * Check if BusinessLogicResolver is deployed correctly
+    const resolver = deployedContractList.businessLogicResolver
+    if (!resolver.address || !resolver.proxyAddress || !resolver.proxyAdminAddress) {
+        throw new BusinessLogicResolverNotFound()
+    }
+
+    let facetLists = CreateConfigurationsForDeployedContractsResult.empty()
+    if (!usingDeployed) {
+        // * Initialize BusinessLogicResolver
+        console.log(MESSAGES.businessLogicResolver.info.initializing)
+        const initResponse = await resolver.contract.initialize_BusinessLogicResolver({
+            gasLimit: GAS_LIMIT.initialize.businessLogicResolver,
+        })
+        await validateTxResponse(
+            new ValidateTxResponseCommand({
+                txResponse: initResponse,
+                errorMessage: MESSAGES.businessLogicResolver.error.initializing,
+            })
+        )
+        // * Register business logic contracts
+        console.log(MESSAGES.businessLogicResolver.info.registering)
+
+        const registerCommand = new RegisterDeployedContractBusinessLogicsCommand({
+            deployedContractList,
+            signer,
+        })
+        await registerDeployedContractBusinessLogics(registerCommand)
+
+        // * Create configurations for all Securities (EquityUSA, BondUSA)
+        console.log(MESSAGES.businessLogicResolver.info.creatingConfigurations)
+        const createCommand = new CreateConfigurationsForDeployedContractsCommand({
+            deployedContractList,
+            signer,
+        })
+        facetLists = await createConfigurationsForDeployedContracts(partialBatchDeploy, createCommand)
+    }
+    console.log(MESSAGES.businessLogicResolver.info.configured)
+    console.log(MESSAGES.deploy.success.deployFullInfrastructure)
+
+    // * Update Environment
+    environment = new Environment({
+        commonFacetIdList: facetLists.commonFacetIdList,
+        commonFacetVersionList: facetLists.commonFacetVersionList,
+        businessLogicResolver: resolver.contract,
+        deployedContracts: { deployer, ...deployedContractList },
+    })
+
     return new DeployFullInfrastructureResult({
-        hederaTokenManagerAddress: hederaTokenManager.address,
-        stableCoinFactoryDeployment: {
-            address: stableCoinFactory.address,
-            proxyAddress: sCFactoryProxyAddress,
-            proxyAdminAddress: sCFactoryProxyAdminAddress,
-        },
-        stableCoinDeployment: {
-            tokenAddress: deployedScEventData.tokenAddress,
-            address: deployedScEventData.stableCoinContractAddress,
-            proxyAddress: deployedScEventData.stableCoinProxy,
-            proxyAdminAddress: deployedScEventData.stableCoinProxyAdmin,
-            reserveProxyAddress: deployedScEventData.reserveProxy,
-            reserveProxyAdminAddress: deployedScEventData.reserveProxyAdmin,
-        },
-        stableCoinCreator: wallet.address,
-        KycGranted: grantKYCToOriginalSender,
+        ...deployedContractList,
+        deployer,
+        facetLists,
     })
 }
 

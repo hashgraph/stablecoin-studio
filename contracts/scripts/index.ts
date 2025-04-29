@@ -6,6 +6,7 @@ export { default as TransactionReceiptError } from './errors/TransactionReceiptE
 export { default as SignerWithoutProviderError } from './errors/SignerWithoutProviderError'
 export { default as CouldNotFindWalletError } from './errors/CouldNotFindWalletError'
 export { default as BusinessLogicResolverProxyNotFound } from './errors/BusinessLogicResolverProxyNotFound'
+export { default as BusinessLogicResolverNotFound } from './errors/BusinessLogicResolverNotFound'
 
 // * Commands
 export { default as BaseTokenKeysCommand, BaseTokenKeysCommandParams } from './commands/base/BaseTokenKeysCommand'
@@ -18,6 +19,7 @@ export {
     default as DeployFullInfrastructureCommand,
     DeployFullInfrastructureCommandNewParams,
 } from './commands/DeployFullInfrastructureCommand'
+export { default as DeployStableCoinCommand } from './commands/DeployStableCoinCommand'
 export { default as GenerateKeyTypeCommand } from './commands/GenerateKeyTypeCommand'
 export { default as TokenKeysToContractCommand } from './commands/TokenKeysToContractCommand'
 export { default as TokenKeysToKeyCommand } from './commands/TokenKeysToKeyCommand'
@@ -39,7 +41,10 @@ export { default as GetFacetsByConfigurationIdAndVersionQuery } from './queries/
 export { default as ValidateTxResponseResult } from './results/ValidateTxResponseResult'
 export { default as DeployContractResult } from './results/DeployContractResult'
 export { default as DeployContractWithFactoryResult } from './results/DeployContractWithFactoryResult'
-export { default as DeployScsContractListResult } from './results/DeployScsContractListResult'
+export {
+    default as DeployScsContractListResult,
+    DeployScsContractListResultParams,
+} from './results/DeployScsContractListResult'
 export { default as DeployFullInfrastructureResult } from './results/DeployFullInfrastructureResult'
 export { default as GetFacetsByConfigurationIdAndVersionResult } from './results/GetFacetsByConfigurationIdAndVersionResult'
 export { default as DeployScsContractsResult } from './results/DeployScsContractsResult'
