@@ -101,6 +101,10 @@ import { SetBackendCommandHandler } from '../app/usecase/command/network/setBack
 import { GetTransactionsQueryHandler } from '../app/usecase/query/stablecoin/backend/getTransactions/GetTransactionsQueryHandler.js';
 import { AWSKMSTransactionAdapter } from '../port/out/hs/hts/custodial/AWSKMSTransactionAdapter.js';
 import { HederaWalletConnectTransactionAdapter } from '../port/out/hs/walletconnect/HederaWalletConnectTransactionAdapter.js';
+import { GetConfigInfoQueryHandler } from '../app/usecase/query/stablecoin/management/getConfigInfo/GetConfigInfoQueryHandler.js';
+import { UpdateConfigVersionCommandHandler } from '../app/usecase/command/stablecoin/management/updateConfigVersion/updateConfigVersionCommandHandler.js';
+import { UpdateConfigCommandHandler } from '../app/usecase/command/stablecoin/management/updateConfig/updateConfigCommandHandler.js';
+import { UpdateResolverCommandHandler } from '../app/usecase/command/stablecoin/management/updateResolver/updateResolverCommandHandler.js';
 
 export const TOKENS = {
 	COMMAND_HANDLER: Symbol('CommandHandler'),
@@ -275,6 +279,18 @@ const COMMAND_HANDLERS = [
 		token: TOKENS.COMMAND_HANDLER,
 		useClass: RemoveCommandHandler,
 	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: UpdateConfigVersionCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: UpdateConfigCommandHandler,
+	},
+	{
+		token: TOKENS.COMMAND_HANDLER,
+		useClass: UpdateResolverCommandHandler,
+	},
 ];
 
 const QUERY_HANDLERS = [
@@ -341,6 +357,10 @@ const QUERY_HANDLERS = [
 	{
 		token: TOKENS.QUERY_HANDLER,
 		useClass: GetTransactionsQueryHandler,
+	},
+	{
+		token: TOKENS.QUERY_HANDLER,
+		useClass: GetConfigInfoQueryHandler,
 	},
 ];
 

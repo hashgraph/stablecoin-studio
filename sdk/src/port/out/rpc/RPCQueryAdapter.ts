@@ -36,6 +36,7 @@ import {
 	ReserveFacet__factory,
 	SupplierAdminFacet__factory,
 	RolesFacet__factory,
+	DiamondFacet__factory,
 } from '@hashgraph/stablecoin-npm-contracts';
 import { StableCoinRole } from '../../../domain/context/stablecoin/StableCoinRole.js';
 import ContractId from '../../../domain/context/contract/ContractId.js';
@@ -238,5 +239,20 @@ export class RPCQueryAdapter {
 			HederaTokenManagerFacet,
 			address.toString(),
 		).getMetadata();
+	}
+
+	async getConfigInfo(
+		address: EvmAddress,
+	): Promise<[string, string, number]> {
+		LogService.logTrace(`Getting config info for ${address.toString()}`);
+		const configInfo = await this.connect(
+			DiamondFacet__factory,
+			address.toString(),
+		).getConfigInfo();
+		return [
+			configInfo.resolver_.toString(),
+			configInfo.configurationId_,
+			configInfo.version_.toNumber(),
+		];
 	}
 }
