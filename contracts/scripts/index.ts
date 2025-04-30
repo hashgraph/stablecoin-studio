@@ -53,6 +53,9 @@ export { default as CreateConfigurationsForDeployedContractsResult } from './res
 // * Blockchain
 export * from './blockchain'
 
+// * Hedera functions
+export * from './hedera'
+
 // * Token Keys
 export * from './tokenKeys'
 

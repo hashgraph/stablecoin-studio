@@ -13,10 +13,10 @@ export interface DeployScsContractListCommandParams extends DeployAtsContractsCo
 }
 
 export default class DeployScsContractListCommand {
-    public readonly useDeployed: boolean
-    public readonly useEnvironment: boolean = false
     public readonly signer: Signer
     public readonly network: NetworkName
+    public readonly useDeployed: boolean
+    public readonly useEnvironment: boolean = false
     public readonly partialBatchDeploy: boolean = false
 
     constructor({
