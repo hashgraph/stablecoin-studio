@@ -192,8 +192,8 @@ export async function createConfigurationsForDeployedContracts(
 
     await processFacetLists(
         CONFIG_ID,
-        result.facetIdList,
-        result.facetVersionList,
+        result.commonFacetIdList,
+        result.commonFacetVersionList,
         businessLogicResolverProxyAddress,
         signer,
         partialBatchDeploy
@@ -208,11 +208,11 @@ async function fetchFacetResolverKeys(
 ): Promise<void> {
     const resolverKeyMap = new Map<string, string>()
 
-    result.facetIdList = await Promise.all(
+    result.commonFacetIdList = await Promise.all(
         facetAddressList.map((address) => getResolverKey(address, signer, resolverKeyMap))
     )
 
-    result.facetVersionList = Array(result.facetIdList.length).fill(1)
+    result.commonFacetVersionList = Array(result.commonFacetIdList.length).fill(1)
 }
 
 async function getResolverKey(address: string, signer: Signer, keyMap: Map<string, string>): Promise<string> {

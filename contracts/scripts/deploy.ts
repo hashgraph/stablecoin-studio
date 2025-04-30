@@ -155,8 +155,12 @@ export async function deployFullInfrastructure({
     const { deployer, ...deployedContractList } = await deployScsContractList(deployCommand)
 
     // * Check if BusinessLogicResolver is deployed correctly
-    const resolver = deployedContractList.businessLogicResolver
-    if (!resolver.address || !resolver.proxyAddress || !resolver.proxyAdminAddress) {
+    const businessLogicResolver = deployedContractList.businessLogicResolver
+    if (
+        !businessLogicResolver.address ||
+        !businessLogicResolver.proxyAddress ||
+        !businessLogicResolver.proxyAdminAddress
+    ) {
         throw new BusinessLogicResolverNotFound()
     }
 
@@ -164,7 +168,7 @@ export async function deployFullInfrastructure({
     if (!usingDeployed) {
         // * Initialize BusinessLogicResolver
         console.log(MESSAGES.businessLogicResolver.info.initializing)
-        const initResponse = await resolver.contract.initialize_BusinessLogicResolver({
+        const initResponse = await businessLogicResolver.contract.initialize_BusinessLogicResolver({
             gasLimit: GAS_LIMIT.initialize.businessLogicResolver,
         })
         await validateTxResponse(
@@ -197,7 +201,7 @@ export async function deployFullInfrastructure({
     environment = new Environment({
         commonFacetIdList: facetLists.commonFacetIdList,
         commonFacetVersionList: facetLists.commonFacetVersionList,
-        businessLogicResolver: resolver.contract,
+        businessLogicResolver: businessLogicResolver.contract,
         deployedContracts: { deployer, ...deployedContractList },
     })
 

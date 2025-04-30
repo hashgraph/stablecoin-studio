@@ -25,8 +25,11 @@ export { default as GetResolverBusinessLogicsQuery } from './queries/GetResolver
 // * Utils
 export * from './utils'
 
+// * Deploy
+export * from './deploy'
+
 // * Stable Coin Factory
-export * from './stableCoinFactory'
+// export * from './stableCoinFactory'
 
 // * Business Logic Resolver
 export * from './businessLogicResolver'

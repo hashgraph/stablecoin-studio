@@ -33,6 +33,7 @@ export const CONTRACT_NAMES_WITH_PROXY = ['BusinessLogicResolver']
 export const CONTRACT_NAMES = [
     'TransparentUpgradeableProxy',
     'ProxyAdmin',
+    'Factory',
     'BusinessLogicResolver',
     // * ⬇️ Diamond Facets
     'DiamondFacet',

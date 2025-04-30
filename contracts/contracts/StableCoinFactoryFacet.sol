@@ -29,10 +29,6 @@ contract StableCoinFactoryFacet is IStaticFunctionSelectors, IStableCoinFactory,
         _disableInitializers(_STABLE_COIN_FACTORY_RESOLVER_KEY);
     }
 
-    function initialize() external initializer(_STABLE_COIN_FACTORY_RESOLVER_KEY) {
-        emit StableCoinFactoryInitialized();
-    }
-
     function deployStableCoin(
         TokenStruct calldata requestedToken
     ) external payable override(IStableCoinFactory) returns (DeployedStableCoin memory) {
@@ -224,7 +220,6 @@ contract StableCoinFactoryFacet is IStaticFunctionSelectors, IStableCoinFactory,
     function getStaticFunctionSelectors() external pure override returns (bytes4[] memory staticFunctionSelectors_) {
         uint256 selectorIndex;
         staticFunctionSelectors_ = new bytes4[](8);
-        staticFunctionSelectors_[selectorIndex++] = this.initialize.selector;
         staticFunctionSelectors_[selectorIndex++] = this.deployStableCoin.selector;
     }
 

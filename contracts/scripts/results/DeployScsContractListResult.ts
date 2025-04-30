@@ -47,7 +47,7 @@ export interface DeployScsContractListResultParams {
     deployer?: Signer
 }
 
-export default class DeployAtsContractsResult {
+export default class DeployScsContractListResult {
     public readonly businessLogicResolver: DeployContractWithFactoryResult<BusinessLogicResolver>
     public readonly diamondFacet: DeployContractWithFactoryResult<DiamondFacet>
     public readonly stableCoinFactoryFacet: DeployContractWithFactoryResult<StableCoinFactoryFacet>

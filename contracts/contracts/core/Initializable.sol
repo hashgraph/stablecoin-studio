@@ -50,8 +50,7 @@ abstract contract Initializable {
     }
 
     function _preInitializer(bytes32 _facetKey) private view {
-        if (!AddressUpgradeable.isContract(msg.sender) || _isInitialized(_facetKey))
-            revert ContractIsAlreadyInitialized(_facetKey);
+        if (_isInitialized(_facetKey)) revert ContractIsAlreadyInitialized(_facetKey);
     }
     function _postInitializer(bytes32 _facetKey) private {
         _initializableStorage().initialized[_facetKey] = true;
