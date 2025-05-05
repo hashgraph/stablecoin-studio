@@ -26,7 +26,7 @@ interface IStableCoinFactory {
         IHederaTokenManager.RolesStruct[] roles;
         IHederaTokenManager.CashinRoleStruct cashinRole;
         string metadata;
-        IBusinessLogicResolver businessLogicResolverContractId;
+        IBusinessLogicResolver businessLogicResolverAddress;
         ResolverProxyConfiguration stableCoinConfigurationId;
         ResolverProxyConfiguration reserveConfigurationId;
     }

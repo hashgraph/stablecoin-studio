@@ -26,15 +26,15 @@ export default class DeployAllCommand extends WithSignerCommand {
         this.useEnvironment = useEnvironment
         this.partialBatchDeploy = partialBatchDeploy
     }
-}
 
-export async function newInstance(args: DeployAllCommandParams): Promise<DeployAllCommand> {
-    const { useDeployed, useEnvironment, partialBatchDeploy, ...signerArgs } = args
-    const parentCommand = await WithSignerCommand.newInstance(signerArgs)
-    return new DeployAllCommand({
-        useDeployed,
-        useEnvironment,
-        partialBatchDeploy,
-        ...parentCommand,
-    })
+    static async newInstance(args: DeployAllCommandParams): Promise<DeployAllCommand> {
+        const { useDeployed, useEnvironment, partialBatchDeploy, ...signerArgs } = args
+        const parentCommand = await WithSignerCommand.newInstance(signerArgs)
+        return new DeployAllCommand({
+            useDeployed,
+            useEnvironment,
+            partialBatchDeploy,
+            ...parentCommand,
+        })
+    }
 }

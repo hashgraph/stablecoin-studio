@@ -1,9 +1,7 @@
 import { NetworkName } from '@configuration'
 
 export const EMPTY_STRING = ''
-
 export const DEFAULD_CHAR_INDEX = '#'
-export const DEFAULT_DECIMALS = 6
 
 export const DEFAULT_EVM_VERSION = 'london'
 

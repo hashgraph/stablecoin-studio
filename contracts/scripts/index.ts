@@ -46,6 +46,7 @@ export {
     DeployScsContractListResultParams,
 } from './results/DeployScsContractListResult'
 export { default as DeployFullInfrastructureResult } from './results/DeployFullInfrastructureResult'
+export { default as DeployStableCoinResult } from './results/DeployStableCoinResult'
 export { default as GetFacetsByConfigurationIdAndVersionResult } from './results/GetFacetsByConfigurationIdAndVersionResult'
 export { default as DeployScsContractsResult } from './results/DeployScsContractsResult'
 export { default as CreateConfigurationsForDeployedContractsResult } from './results/CreateConfigurationsForDeployedContractsResult'

@@ -50,6 +50,7 @@ import {
     createConfigurationsForDeployedContracts,
     DeployStableCoinCommand,
     ADDRESS_ZERO,
+    DeployStableCoinResult,
 } from '@scripts'
 import Environment from '@environment'
 
@@ -121,17 +122,24 @@ export async function deployStableCoin({
             environment = new Environment({
                 businessLogicResolver: BusinessLogicResolver__factory.connect(businessLogicResolverAddress, wallet),
                 stableCoinProxyAddress: stableCoinProxy,
-                reserveProxyAddress: reserveProxy,
                 tokenAddress: tokenAddress,
+                reserveProxyAddress: reserveProxy,
             })
         } else {
             Object.assign(environment, {
                 stableCoinProxyAddress: stableCoinProxy,
-                reserveProxyAddress: reserveProxy,
                 tokenAddress: tokenAddress,
+                reserveProxyAddress: reserveProxy,
             })
         }
     }
+    console.log(MESSAGES.stableCoinFactory.success.deployStableCoin)
+    return new DeployStableCoinResult({
+        stableCoinProxyAddress: deployedScEventData.stableCoinProxy,
+        tokenAddress: deployedScEventData.tokenAddress,
+        reserveProxyAddress: deployedScEventData.reserveProxy,
+        receipt: await deployScResponse.wait(),
+    })
 }
 
 export async function deployFullInfrastructure({
@@ -364,83 +372,83 @@ export async function deployScsContractList({
     // Deploy contracts sequentially
     const deployedContracts: DeployScsContractListResult = new DeployScsContractListResult({
         businessLogicResolver: await deployContractWithFactory(commands.businessLogicResolver).then((result) => {
-            console.log('BusinessLogicResolver has been deployed successfully')
+            console.log('✓ BusinessLogicResolver has been deployed successfully')
             return result
         }),
         diamondFacet: await deployContractWithFactory(commands.diamondFacet).then((result) => {
-            console.log('DiamondFacet has been deployed successfully')
+            console.log('✓ DiamondFacet has been deployed successfully')
             return result
         }),
         stableCoinFactoryFacet: await deployContractWithFactory(commands.stableCoinFactoryFacet).then((result) => {
-            console.log('StableCoinFactoryFacet has been deployed successfully')
+            console.log('✓ StableCoinFactoryFacet has been deployed successfully')
             return result
         }),
         hederaTokenManagerFacet: await deployContractWithFactory(commands.hederaTokenManagerFacet).then((result) => {
-            console.log('HederaTokenManager has been deployed successfully')
+            console.log('✓ HederaTokenManager has been deployed successfully')
             return result
         }),
         hederaReserveFacet: await deployContractWithFactory(commands.hederaReserveFacet).then((result) => {
-            console.log('HederaReserveFacet has been deployed successfully')
+            console.log('✓ HederaReserveFacet has been deployed successfully')
             return result
         }),
         burnableFacet: await deployContractWithFactory(commands.burnableFacet).then((result) => {
-            console.log('BurnableFacet has been deployed successfully')
+            console.log('✓ BurnableFacet has been deployed successfully')
             return result
         }),
         cashInFacet: await deployContractWithFactory(commands.cashInFacet).then((result) => {
-            console.log('CashInFacet has been deployed successfully')
+            console.log('✓ CashInFacet has been deployed successfully')
             return result
         }),
         customFeesFacet: await deployContractWithFactory(commands.customFeesFacet).then((result) => {
-            console.log('CustomFeesFacet has been deployed successfully')
+            console.log('✓ CustomFeesFacet has been deployed successfully')
             return result
         }),
         deletableFacet: await deployContractWithFactory(commands.deletableFacet).then((result) => {
-            console.log('DeletableFacet has been deployed successfully')
+            console.log('✓ DeletableFacet has been deployed successfully')
             return result
         }),
         freezableFacet: await deployContractWithFactory(commands.freezableFacet).then((result) => {
-            console.log('FreezableFacet has been deployed successfully')
+            console.log('✓ FreezableFacet has been deployed successfully')
             return result
         }),
         holdManagementFacet: await deployContractWithFactory(commands.holdManagementFacet).then((result) => {
-            console.log('HoldManagementFacet has been deployed successfully')
+            console.log('✓ HoldManagementFacet has been deployed successfully')
             return result
         }),
         kycFacet: await deployContractWithFactory(commands.kycFacet).then((result) => {
-            console.log('KYCFacet has been deployed successfully')
+            console.log('✓ KYCFacet has been deployed successfully')
             return result
         }),
         pausableFacet: await deployContractWithFactory(commands.pausableFacet).then((result) => {
-            console.log('PausableFacet has been deployed successfully')
+            console.log('✓ PausableFacet has been deployed successfully')
             return result
         }),
         rescuableFacet: await deployContractWithFactory(commands.rescuableFacet).then((result) => {
-            console.log('RescuableFacet has been deployed successfully')
+            console.log('✓ RescuableFacet has been deployed successfully')
             return result
         }),
         reserveFacet: await deployContractWithFactory(commands.reserveFacet).then((result) => {
-            console.log('ReserveFacet has been deployed successfully')
+            console.log('✓ ReserveFacet has been deployed successfully')
             return result
         }),
         roleManagementFacet: await deployContractWithFactory(commands.roleManagementFacet).then((result) => {
-            console.log('RoleManagementFacet has been deployed successfully')
+            console.log('✓ RoleManagementFacet has been deployed successfully')
             return result
         }),
         rolesFacet: await deployContractWithFactory(commands.rolesFacet).then((result) => {
-            console.log('RolesFacet has been deployed successfully')
+            console.log('✓ RolesFacet has been deployed successfully')
             return result
         }),
         supplierAdminFacet: await deployContractWithFactory(commands.supplierAdminFacet).then((result) => {
-            console.log('SupplierAdminFacet has been deployed successfully')
+            console.log('✓ SupplierAdminFacet has been deployed successfully')
             return result
         }),
         tokenOwnerFacet: await deployContractWithFactory(commands.tokenOwnerFacet).then((result) => {
-            console.log('TokenOwnerFacet has been deployed successfully')
+            console.log('✓ TokenOwnerFacet has been deployed successfully')
             return result
         }),
         wipeableFacet: await deployContractWithFactory(commands.wipeableFacet).then((result) => {
-            console.log('WipeableFacet has been deployed successfully')
+            console.log('✓ WipeableFacet has been deployed successfully')
             return result
         }),
         // * Add results for other deployed SCS contracts here

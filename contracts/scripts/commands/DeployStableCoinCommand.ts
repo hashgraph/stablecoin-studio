@@ -1,22 +1,25 @@
-import { Signer, Wallet } from 'ethers'
-import { DEFAULT_DECIMALS } from '@configuration'
+import { BigNumber, Signer, Wallet } from 'ethers'
 import { IStableCoinFactory } from '@typechain'
-import { ADDRESS_ZERO, NUMBER_ZERO } from 'scripts/constants'
 import {
+    DEFAULT_TOKEN,
+    ADDRESS_ZERO,
+    NUMBER_ZERO,
     SignerWithoutProviderError,
     TokenKeysToKeyCommand,
     getFullWalletFromSigner,
     rolesToAccounts,
     tokenKeysToKey,
     tokenKeysToContract,
+    RESERVE_CONFIG_ID,
+    STABLECOIN_CONFIG_ID,
 } from '@scripts'
 
 export interface TokenInformation {
     name: string
     symbol: string
     decimals?: number
-    initialSupply: string
-    maxSupply?: string
+    initialSupply: BigNumber
+    maxSupply?: BigNumber
     memo: string
     freeze: boolean
 }
@@ -40,9 +43,9 @@ export interface DeployStableCoinCommandNewParams extends DeployStableCoinComman
     rolesToAccount?: string
     initialMetadata?: string
     proxyAdminOwnerAccount?: string
-    businessLogicResolverContractId: string
-    stableCoinConfigurationId: IStableCoinFactory.ResolverProxyConfigurationStruct
-    reserveConfigurationId: IStableCoinFactory.ResolverProxyConfigurationStruct
+    businessLogicResolverAddress: string
+    stableCoinConfigurationId?: IStableCoinFactory.ResolverProxyConfigurationStruct
+    reserveConfigurationId?: IStableCoinFactory.ResolverProxyConfigurationStruct
 }
 
 interface DeployStableCoinCommandParams extends DeployStableCoinCommandParamsCommon {
@@ -75,21 +78,19 @@ export default class DeployStableCoinCommand {
         signer,
         businessLogicResolverAddress,
         grantKYCToOriginalSender = false,
+        useEnvironment = false,
         tokenInformation,
         allToContract = true,
-        reserveAddress = ADDRESS_ZERO,
         initialAmountDataFeed,
         createReserve = true,
+        reserveAddress = ADDRESS_ZERO,
         addKyc = false,
         addFeeSchedule = false,
         allRolesToCreator = true,
         rolesToAccount = '',
         initialMetadata = 'test',
-        proxyAdminOwnerAccount = ADDRESS_ZERO,
-        businessLogicResolverContractId,
         stableCoinConfigurationId,
         reserveConfigurationId,
-        useEnvironment = false,
     }: DeployStableCoinCommandNewParams) {
         if (!signer.provider) {
             throw new SignerWithoutProviderError()
@@ -104,7 +105,7 @@ export default class DeployStableCoinCommand {
         const tokenStruct: IStableCoinFactory.TokenStructStruct = {
             tokenName: tokenInformation.name,
             tokenSymbol: tokenInformation.symbol,
-            tokenDecimals: tokenInformation.decimals ?? DEFAULT_DECIMALS,
+            tokenDecimals: tokenInformation.decimals ?? DEFAULT_TOKEN.decimals,
             tokenInitialSupply: tokenInformation.initialSupply,
             supplyType: Boolean(tokenInformation.maxSupply), // true = FINITE, false = INFINITE (default)
             tokenMaxSupply: tokenInformation.maxSupply ?? NUMBER_ZERO,
@@ -128,9 +129,15 @@ export default class DeployStableCoinCommand {
                 allowance: NUMBER_ZERO,
             },
             metadata: initialMetadata,
-            businessLogicResolverContractId,
-            stableCoinConfigurationId,
-            reserveConfigurationId,
+            businessLogicResolverAddress,
+            stableCoinConfigurationId: stableCoinConfigurationId ?? {
+                key: STABLECOIN_CONFIG_ID,
+                version: 0,
+            },
+            reserveConfigurationId: reserveConfigurationId ?? {
+                key: RESERVE_CONFIG_ID,
+                version: 0,
+            },
         }
 
         return new DeployStableCoinCommand({

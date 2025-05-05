@@ -144,7 +144,7 @@ contract StableCoinFactoryFacet is IStaticFunctionSelectors, IStableCoinFactory,
             );
             address reserveProxy = address(
                 new ResolverProxy(
-                    requestedToken.businessLogicResolverContractId,
+                    requestedToken.businessLogicResolverAddress,
                     requestedToken.reserveConfigurationId.key,
                     requestedToken.reserveConfigurationId.version,
                     requestedToken.roles
@@ -175,7 +175,7 @@ contract StableCoinFactoryFacet is IStaticFunctionSelectors, IStableCoinFactory,
         return
             address(
                 new ResolverProxy(
-                    requestedToken.businessLogicResolverContractId,
+                    requestedToken.businessLogicResolverAddress,
                     requestedToken.stableCoinConfigurationId.key,
                     requestedToken.stableCoinConfigurationId.version,
                     requestedToken.roles

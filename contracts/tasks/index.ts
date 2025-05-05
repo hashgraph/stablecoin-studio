@@ -5,6 +5,7 @@ export {
     WithSignerConstructorParams,
 } from './commands/base/WithSignerCommand'
 export { default as DeployAllCommand } from './commands/DeployAllCommand'
+export { default as DeployStableCoinCommand } from './commands/DeployStableCoinCommand'
 export { default as AddHederaTokenManagerVersionCommand } from './commands/AddHederaTokenManagerVersionCommand'
 export { default as EditHederaTokenManagerAddressCommand } from './commands/EditHederaTokenManagerAddressCommand'
 export { default as RemoveHederaTokenManagerAddressCommand } from './commands/RemoveHederaTokenManagerAddressCommand'

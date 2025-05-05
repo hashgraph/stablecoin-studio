@@ -1,5 +1,6 @@
-import { constants } from 'ethers'
+import { BigNumber, constants } from 'ethers'
 import { GAS_LIMIT as CONF_GAS_LIMIT } from '@configuration'
+import { parseUnits } from 'ethers/lib/utils'
 
 // * General
 export const CONFIG_ID = '0x0000000000000000000000000000000000000000000000000000000000000001'
@@ -7,6 +8,14 @@ export const CONFIG_ID = '0x0000000000000000000000000000000000000000000000000000
 // * Ethereum
 export const ADDRESS_ZERO = constants.AddressZero
 export const NUMBER_ZERO = constants.Zero
+export const STABLECOIN_CONFIG_ID = '0x0000000000000000000000000000000000000000000000000000000000000001'
+export const RESERVE_CONFIG_ID = '0x0000000000000000000000000000000000000000000000000000000000000002'
+
+// * Hedera
+export const HBAR_DECIMALS = 8
+export const HBAR_FACTOR = BigNumber.from(10).pow(HBAR_DECIMALS)
+export const ONE_HBAR = parseUnits('1', 'ether') // Amount in HBAR (1 HBAR = 1 ether unit)
+export const TWO_HBAR = parseUnits('2', 'ether') // Amount in HBAR (1 HBAR = 1 ether unit)
 
 // * Roles
 export const ROLES = {
@@ -237,3 +246,24 @@ export const EVENTS = {
         configurationCreated: 'DiamondBatchConfigurationCreated',
     },
 }
+
+// * Default Values
+export const DEFAULT_TOKEN = (() => {
+    const decimals = 6
+    const tokenFactor = BigNumber.from(10).pow(decimals)
+    return {
+        memo: 'Example Token Memo',
+        name: 'ExampleToken',
+        symbol: 'EXMPL',
+        decimals,
+        tokenFactor,
+        initialSupply: tokenFactor.mul(100),
+        maxSupply: tokenFactor.mul(1_000),
+        initialAmountDataFeed: tokenFactor.mul(100_000).toString(),
+        additionalData: 'Some additional data here',
+        freeze: false,
+    }
+})()
+
+export const ONE_TOKEN = DEFAULT_TOKEN.tokenFactor
+export const TEN_TOKENS = DEFAULT_TOKEN.tokenFactor.mul(10)
