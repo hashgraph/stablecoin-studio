@@ -207,6 +207,29 @@ export async function deployFullInfrastructure({
         facetLists = await createConfigurationsForDeployedContracts(partialBatchDeploy, createCommand)
     }
     console.log(MESSAGES.businessLogicResolver.info.configured)
+    // * Deploy ResolverProxy for StableCoinFactory
+    const resolverProxyDeployCommand = await DeployContractCommand.newInstance({
+        factory: new ResolverProxy__factory(),
+        signer,
+        deployType: 'direct',
+        deployedContract: useDeployed ? configuration.contracts.StableCoinFactoryFacet.addresses?.[network] : undefined,
+        args: [
+            businessLogicResolver.proxyAddress,
+            CONFIG_ID.stableCoinFactory,
+            DEFAULT_CONFIG_VERSION,
+            [
+                {
+                    role: ROLES.defaultAdmin.hash,
+                    account: await signer.getAddress(),
+                },
+            ],
+        ],
+        overrides: {
+            gasLimit: GAS_LIMIT.resolverProxy.deploy,
+        },
+    })
+    const stableCoinFactoryResolverProxy = await deployContract(resolverProxyDeployCommand)
+
     console.log(MESSAGES.deploy.success.deployFullInfrastructure)
 
     // * Update Environment
@@ -218,7 +241,7 @@ export async function deployFullInfrastructure({
         reserveFacetIdList: facetLists.reserveFacetIdList,
         reserveFacetVersionList: facetLists.reserveFacetVersionList,
         businessLogicResolver: businessLogicResolver.contract,
-        stableCoinFactoryProxyAddress: deployedContractList.stableCoinFactoryFacet.proxyAddress,
+        stableCoinFactoryProxyAddress: stableCoinFactoryResolverProxy.address,
         deployedContracts: { deployer, ...deployedContractList },
     })
 
@@ -235,7 +258,7 @@ export async function deployScsContractList({
     useDeployed,
 }: DeployScsContractListCommand): Promise<DeployScsContractListResult> {
     const overrides: Overrides = { gasLimit: GAS_LIMIT.high } // If you want to override the default parameters
-    const independentDeployCommands = {
+    const deployCommands = {
         businessLogicResolver: await DeployContractCommand.newInstance({
             factory: new BusinessLogicResolver__factory(),
             signer,
@@ -252,9 +275,17 @@ export async function deployScsContractList({
             deployedContract: useDeployed ? configuration.contracts.DiamondFacet.addresses?.[network] : undefined,
             overrides,
         }),
-        // ! This one depends on the BusinessLogicResolver
-        // stableCoinFactoryFacet: await DeployContractCommand.newInstance({
-        // }),
+        stableCoinFactoryFacet: await DeployContractCommand.newInstance({
+            factory: new StableCoinFactoryFacet__factory(),
+            signer,
+            deployType: 'direct',
+            deployedContract: useDeployed
+                ? configuration.contracts.StableCoinFactoryFacet.addresses?.[network]
+                : undefined,
+            overrides: {
+                gasLimit: GAS_LIMIT.stableCoinFactory.deploy,
+            },
+        }),
         hederaTokenManagerFacet: await DeployContractCommand.newInstance({
             factory: new HederaTokenManagerFacet__factory(),
             signer,
@@ -391,121 +422,91 @@ export async function deployScsContractList({
         // }),
     }
 
-    // * Deploy contracts that must be deployed before others due to dependencies
-    const businessLogicResolverDeployResult = await deployContract(
-        independentDeployCommands.businessLogicResolver
-    ).then((result) => {
-        console.log('✓ BusinessLogicResolver has been deployed successfully')
-        return result
-    })
-
-    // * Add dependent deploy commands here
-    const commands = {
-        ...independentDeployCommands,
-        stableCoinFactoryFacet: await DeployContractCommand.newInstance({
-            factory: new StableCoinFactoryFacet__factory(),
-            signer,
-            deployType: 'resolverProxy',
-            deployedContract: useDeployed
-                ? configuration.contracts.StableCoinFactoryFacet.addresses?.[network]
-                : undefined,
-            businessLogicResolverAddress: businessLogicResolverDeployResult.proxyAddress,
-            configurationId: CONFIG_ID.stableCoinFactory,
-            configurationVersion: DEFAULT_CONFIG_VERSION,
-            rolesStruct: [
-                {
-                    role: ROLES.defaultAdmin.hash,
-                    account: await signer.getAddress(),
-                },
-            ],
-            overrides: {
-                gasLimit: GAS_LIMIT.stableCoinFactory.deploy,
-            },
-        }),
-    }
-
     // Deploy contracts sequentially
     const deployedContracts: DeployScsContractListResult = new DeployScsContractListResult({
-        businessLogicResolver: businessLogicResolverDeployResult,
-        diamondFacet: await deployContract(commands.diamondFacet).then((result) => {
-            console.log('✓ DiamondFacet has been deployed successfully')
+        businessLogicResolver: await deployContract(deployCommands.businessLogicResolver).then((result) => {
+            console.log('✓ BusinessLogicResolver has been deployed successfully')
             return result
         }),
-        stableCoinFactoryFacet: await deployContract(commands.stableCoinFactoryFacet).then((result) => {
+        stableCoinFactoryFacet: await deployContract(deployCommands.stableCoinFactoryFacet).then((result) => {
             console.log('✓ StableCoinFactoryFacet has been deployed successfully')
             return result
         }),
-        hederaTokenManagerFacet: await deployContract(commands.hederaTokenManagerFacet).then((result) => {
+        diamondFacet: await deployContract(deployCommands.diamondFacet).then((result) => {
+            console.log('✓ DiamondFacet has been deployed successfully')
+            return result
+        }),
+        hederaTokenManagerFacet: await deployContract(deployCommands.hederaTokenManagerFacet).then((result) => {
             console.log('✓ HederaTokenManager has been deployed successfully')
             return result
         }),
-        hederaReserveFacet: await deployContract(commands.hederaReserveFacet).then((result) => {
+        hederaReserveFacet: await deployContract(deployCommands.hederaReserveFacet).then((result) => {
             console.log('✓ HederaReserveFacet has been deployed successfully')
             return result
         }),
-        burnableFacet: await deployContract(commands.burnableFacet).then((result) => {
+        burnableFacet: await deployContract(deployCommands.burnableFacet).then((result) => {
             console.log('✓ BurnableFacet has been deployed successfully')
             return result
         }),
-        cashInFacet: await deployContract(commands.cashInFacet).then((result) => {
+        cashInFacet: await deployContract(deployCommands.cashInFacet).then((result) => {
             console.log('✓ CashInFacet has been deployed successfully')
             return result
         }),
-        customFeesFacet: await deployContract(commands.customFeesFacet).then((result) => {
+        customFeesFacet: await deployContract(deployCommands.customFeesFacet).then((result) => {
             console.log('✓ CustomFeesFacet has been deployed successfully')
             return result
         }),
-        deletableFacet: await deployContract(commands.deletableFacet).then((result) => {
+        deletableFacet: await deployContract(deployCommands.deletableFacet).then((result) => {
             console.log('✓ DeletableFacet has been deployed successfully')
             return result
         }),
-        freezableFacet: await deployContract(commands.freezableFacet).then((result) => {
+        freezableFacet: await deployContract(deployCommands.freezableFacet).then((result) => {
             console.log('✓ FreezableFacet has been deployed successfully')
             return result
         }),
-        holdManagementFacet: await deployContract(commands.holdManagementFacet).then((result) => {
+        holdManagementFacet: await deployContract(deployCommands.holdManagementFacet).then((result) => {
             console.log('✓ HoldManagementFacet has been deployed successfully')
             return result
         }),
-        kycFacet: await deployContract(commands.kycFacet).then((result) => {
+        kycFacet: await deployContract(deployCommands.kycFacet).then((result) => {
             console.log('✓ KYCFacet has been deployed successfully')
             return result
         }),
-        pausableFacet: await deployContract(commands.pausableFacet).then((result) => {
+        pausableFacet: await deployContract(deployCommands.pausableFacet).then((result) => {
             console.log('✓ PausableFacet has been deployed successfully')
             return result
         }),
-        rescuableFacet: await deployContract(commands.rescuableFacet).then((result) => {
+        rescuableFacet: await deployContract(deployCommands.rescuableFacet).then((result) => {
             console.log('✓ RescuableFacet has been deployed successfully')
             return result
         }),
-        reserveFacet: await deployContract(commands.reserveFacet).then((result) => {
+        reserveFacet: await deployContract(deployCommands.reserveFacet).then((result) => {
             console.log('✓ ReserveFacet has been deployed successfully')
             return result
         }),
-        roleManagementFacet: await deployContract(commands.roleManagementFacet).then((result) => {
+        roleManagementFacet: await deployContract(deployCommands.roleManagementFacet).then((result) => {
             console.log('✓ RoleManagementFacet has been deployed successfully')
             return result
         }),
-        rolesFacet: await deployContract(commands.rolesFacet).then((result) => {
+        rolesFacet: await deployContract(deployCommands.rolesFacet).then((result) => {
             console.log('✓ RolesFacet has been deployed successfully')
             return result
         }),
-        supplierAdminFacet: await deployContract(commands.supplierAdminFacet).then((result) => {
+        supplierAdminFacet: await deployContract(deployCommands.supplierAdminFacet).then((result) => {
             console.log('✓ SupplierAdminFacet has been deployed successfully')
             return result
         }),
-        tokenOwnerFacet: await deployContract(commands.tokenOwnerFacet).then((result) => {
+        tokenOwnerFacet: await deployContract(deployCommands.tokenOwnerFacet).then((result) => {
             console.log('✓ TokenOwnerFacet has been deployed successfully')
             return result
         }),
-        wipeableFacet: await deployContract(commands.wipeableFacet).then((result) => {
+        wipeableFacet: await deployContract(deployCommands.wipeableFacet).then((result) => {
             console.log('✓ WipeableFacet has been deployed successfully')
             return result
         }),
         // * Add results for other deployed SCS contracts here
         // Example:
-        // cashToken: await deployContract(commands.cashToken).then((result) => {
+        // cashToken: await deployContract(deployCommands.cashToken).then((result) => {
         //     console.log('CashToken has been deployed successfully')
         //     return result
         // }),
