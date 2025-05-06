@@ -20,7 +20,6 @@
             "@scripts": ["scripts/index"],
             "@environment": ["scripts/Environment"],
             "@tasks": ["tasks/index"],
-
             "@test/shared": ["test/shared"]
         }
     },

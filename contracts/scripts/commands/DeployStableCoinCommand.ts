@@ -10,8 +10,8 @@ import {
     rolesToAccounts,
     tokenKeysToKey,
     tokenKeysToContract,
-    RESERVE_CONFIG_ID,
-    STABLECOIN_CONFIG_ID,
+    CONFIG_ID,
+    DEFAULT_CONFIG_VERSION,
 } from '@scripts'
 
 export interface TokenInformation {
@@ -131,12 +131,12 @@ export default class DeployStableCoinCommand {
             metadata: initialMetadata,
             businessLogicResolverAddress,
             stableCoinConfigurationId: stableCoinConfigurationId ?? {
-                key: STABLECOIN_CONFIG_ID,
-                version: 0,
+                key: CONFIG_ID.stableCoin,
+                version: DEFAULT_CONFIG_VERSION,
             },
             reserveConfigurationId: reserveConfigurationId ?? {
-                key: RESERVE_CONFIG_ID,
-                version: 0,
+                key: CONFIG_ID.reserve,
+                version: DEFAULT_CONFIG_VERSION,
             },
         }
 

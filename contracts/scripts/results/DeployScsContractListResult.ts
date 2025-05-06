@@ -21,53 +21,53 @@ import {
     TokenOwnerFacet,
     WipeableFacet,
 } from '@typechain'
-import { DeployContractWithFactoryResult } from '@scripts'
+import { DeployContractResult } from '@scripts'
 
 export interface DeployScsContractListResultParams {
-    businessLogicResolver: DeployContractWithFactoryResult<BusinessLogicResolver>
-    diamondFacet: DeployContractWithFactoryResult<DiamondFacet>
-    stableCoinFactoryFacet: DeployContractWithFactoryResult<StableCoinFactoryFacet>
-    hederaTokenManagerFacet: DeployContractWithFactoryResult<HederaTokenManagerFacet>
-    hederaReserveFacet: DeployContractWithFactoryResult<HederaReserveFacet>
-    burnableFacet: DeployContractWithFactoryResult<BurnableFacet>
-    cashInFacet: DeployContractWithFactoryResult<CashInFacet>
-    customFeesFacet: DeployContractWithFactoryResult<CustomFeesFacet>
-    deletableFacet: DeployContractWithFactoryResult<DeletableFacet>
-    freezableFacet: DeployContractWithFactoryResult<FreezableFacet>
-    holdManagementFacet: DeployContractWithFactoryResult<HoldManagementFacet>
-    kycFacet: DeployContractWithFactoryResult<KYCFacet>
-    pausableFacet: DeployContractWithFactoryResult<PausableFacet>
-    rescuableFacet: DeployContractWithFactoryResult<RescuableFacet>
-    reserveFacet: DeployContractWithFactoryResult<ReserveFacet>
-    roleManagementFacet: DeployContractWithFactoryResult<RoleManagementFacet>
-    rolesFacet: DeployContractWithFactoryResult<RolesFacet>
-    supplierAdminFacet: DeployContractWithFactoryResult<SupplierAdminFacet>
-    tokenOwnerFacet: DeployContractWithFactoryResult<TokenOwnerFacet>
-    wipeableFacet: DeployContractWithFactoryResult<WipeableFacet>
+    businessLogicResolver: DeployContractResult<BusinessLogicResolver>
+    diamondFacet: DeployContractResult<DiamondFacet>
+    stableCoinFactoryFacet: DeployContractResult<StableCoinFactoryFacet>
+    hederaTokenManagerFacet: DeployContractResult<HederaTokenManagerFacet>
+    hederaReserveFacet: DeployContractResult<HederaReserveFacet>
+    burnableFacet: DeployContractResult<BurnableFacet>
+    cashInFacet: DeployContractResult<CashInFacet>
+    customFeesFacet: DeployContractResult<CustomFeesFacet>
+    deletableFacet: DeployContractResult<DeletableFacet>
+    freezableFacet: DeployContractResult<FreezableFacet>
+    holdManagementFacet: DeployContractResult<HoldManagementFacet>
+    kycFacet: DeployContractResult<KYCFacet>
+    pausableFacet: DeployContractResult<PausableFacet>
+    rescuableFacet: DeployContractResult<RescuableFacet>
+    reserveFacet: DeployContractResult<ReserveFacet>
+    roleManagementFacet: DeployContractResult<RoleManagementFacet>
+    rolesFacet: DeployContractResult<RolesFacet>
+    supplierAdminFacet: DeployContractResult<SupplierAdminFacet>
+    tokenOwnerFacet: DeployContractResult<TokenOwnerFacet>
+    wipeableFacet: DeployContractResult<WipeableFacet>
     deployer?: Signer
 }
 
 export default class DeployScsContractListResult {
-    public readonly businessLogicResolver: DeployContractWithFactoryResult<BusinessLogicResolver>
-    public readonly diamondFacet: DeployContractWithFactoryResult<DiamondFacet>
-    public readonly stableCoinFactoryFacet: DeployContractWithFactoryResult<StableCoinFactoryFacet>
-    public readonly hederaTokenManagerFacet: DeployContractWithFactoryResult<HederaTokenManagerFacet>
-    public readonly hederaReserveFacet: DeployContractWithFactoryResult<HederaReserveFacet>
-    public readonly burnableFacet: DeployContractWithFactoryResult<BurnableFacet>
-    public readonly cashInFacet: DeployContractWithFactoryResult<CashInFacet>
-    public readonly customFeesFacet: DeployContractWithFactoryResult<CustomFeesFacet>
-    public readonly deletableFacet: DeployContractWithFactoryResult<DeletableFacet>
-    public readonly freezableFacet: DeployContractWithFactoryResult<FreezableFacet>
-    public readonly holdManagementFacet: DeployContractWithFactoryResult<HoldManagementFacet>
-    public readonly kycFacet: DeployContractWithFactoryResult<KYCFacet>
-    public readonly pausableFacet: DeployContractWithFactoryResult<PausableFacet>
-    public readonly rescuableFacet: DeployContractWithFactoryResult<RescuableFacet>
-    public readonly reserveFacet: DeployContractWithFactoryResult<ReserveFacet>
-    public readonly roleManagementFacet: DeployContractWithFactoryResult<RoleManagementFacet>
-    public readonly rolesFacet: DeployContractWithFactoryResult<RolesFacet>
-    public readonly supplierAdminFacet: DeployContractWithFactoryResult<SupplierAdminFacet>
-    public readonly tokenOwnerFacet: DeployContractWithFactoryResult<TokenOwnerFacet>
-    public readonly wipeableFacet: DeployContractWithFactoryResult<WipeableFacet>
+    public readonly businessLogicResolver: DeployContractResult<BusinessLogicResolver>
+    public readonly diamondFacet: DeployContractResult<DiamondFacet>
+    public readonly stableCoinFactoryFacet: DeployContractResult<StableCoinFactoryFacet>
+    public readonly hederaTokenManagerFacet: DeployContractResult<HederaTokenManagerFacet>
+    public readonly hederaReserveFacet: DeployContractResult<HederaReserveFacet>
+    public readonly burnableFacet: DeployContractResult<BurnableFacet>
+    public readonly cashInFacet: DeployContractResult<CashInFacet>
+    public readonly customFeesFacet: DeployContractResult<CustomFeesFacet>
+    public readonly deletableFacet: DeployContractResult<DeletableFacet>
+    public readonly freezableFacet: DeployContractResult<FreezableFacet>
+    public readonly holdManagementFacet: DeployContractResult<HoldManagementFacet>
+    public readonly kycFacet: DeployContractResult<KYCFacet>
+    public readonly pausableFacet: DeployContractResult<PausableFacet>
+    public readonly rescuableFacet: DeployContractResult<RescuableFacet>
+    public readonly reserveFacet: DeployContractResult<ReserveFacet>
+    public readonly roleManagementFacet: DeployContractResult<RoleManagementFacet>
+    public readonly rolesFacet: DeployContractResult<RolesFacet>
+    public readonly supplierAdminFacet: DeployContractResult<SupplierAdminFacet>
+    public readonly tokenOwnerFacet: DeployContractResult<TokenOwnerFacet>
+    public readonly wipeableFacet: DeployContractResult<WipeableFacet>
     public readonly deployer?: Signer
 
     constructor({

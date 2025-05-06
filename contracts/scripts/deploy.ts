@@ -1,5 +1,4 @@
-import { ethers } from 'hardhat'
-import { Contract, ContractFactory, ContractReceipt, Overrides } from 'ethers'
+import { Contract, ContractFactory, Overrides } from 'ethers'
 import { configuration } from 'hardhat.config'
 import {
     BurnableFacet__factory,
@@ -26,14 +25,12 @@ import {
     WipeableFacet__factory,
     IStableCoinFactory,
     IHRC__factory,
+    ResolverProxy__factory,
 } from '@typechain'
 import {
     MESSAGES,
     GAS_LIMIT,
-    DeployContractCommand,
     DeployContractResult,
-    DeployContractWithFactoryCommand,
-    DeployContractWithFactoryResult,
     DeployFullInfrastructureCommand,
     ValidateTxResponseCommand,
     validateTxResponse,
@@ -51,6 +48,13 @@ import {
     DeployStableCoinCommand,
     ADDRESS_ZERO,
     DeployStableCoinResult,
+    CONFIG_ID,
+    ROLES,
+    DeployContractDirectCommand,
+    DeployContractWithTupCommand,
+    DeployContractWithResolverProxyCommand,
+    DEFAULT_CONFIG_VERSION,
+    DeployContractCommand,
 } from '@scripts'
 import Environment from '@environment'
 
@@ -151,7 +155,7 @@ export async function deployFullInfrastructure({
 }: DeployFullInfrastructureCommand): Promise<DeployFullInfrastructureResult> {
     console.log(MESSAGES.deploy.info.deployFullInfrastructure)
     if (useEnvironment && environment.initialized) {
-        return environment.toDeployAtsFullInfrastructureResult()
+        return environment.toDeployScsFullInfrastructureResult()
     }
     const usingDeployed = useDeployed && configuration.contracts.BusinessLogicResolver.addresses?.[network]
 
@@ -207,9 +211,14 @@ export async function deployFullInfrastructure({
 
     // * Update Environment
     environment = new Environment({
-        commonFacetIdList: facetLists.commonFacetIdList,
-        commonFacetVersionList: facetLists.commonFacetVersionList,
+        stableCoinFactoryFacetIdList: facetLists.stableCoinFactoryFacetIdList,
+        stableCoinFactoryFacetVersionList: facetLists.stableCoinFactoryFacetVersionList,
+        stableCoinFacetIdList: facetLists.stableCoinFacetIdList,
+        stableCoinFacetVersionList: facetLists.stableCoinFacetVersionList,
+        reserveFacetIdList: facetLists.reserveFacetIdList,
+        reserveFacetVersionList: facetLists.reserveFacetVersionList,
         businessLogicResolver: businessLogicResolver.contract,
+        stableCoinFactoryProxyAddress: deployedContractList.stableCoinFactoryFacet.proxyAddress,
         deployedContracts: { deployer, ...deployedContractList },
     })
 
@@ -226,234 +235,277 @@ export async function deployScsContractList({
     useDeployed,
 }: DeployScsContractListCommand): Promise<DeployScsContractListResult> {
     const overrides: Overrides = { gasLimit: GAS_LIMIT.high } // If you want to override the default parameters
-    const commands = {
-        businessLogicResolver: new DeployContractWithFactoryCommand({
+    const independentDeployCommands = {
+        businessLogicResolver: await DeployContractCommand.newInstance({
             factory: new BusinessLogicResolver__factory(),
             signer,
-            withProxy: true,
+            deployType: 'tup',
             deployedContract: useDeployed
                 ? configuration.contracts.BusinessLogicResolver.addresses?.[network]
                 : undefined,
-            overrides,
+            overrides: { gasLimit: GAS_LIMIT.businessLogicResolver.deploy },
         }),
-        diamondFacet: new DeployContractWithFactoryCommand({
+        diamondFacet: await DeployContractCommand.newInstance({
             factory: new DiamondFacet__factory(),
             signer,
+            deployType: 'direct',
             deployedContract: useDeployed ? configuration.contracts.DiamondFacet.addresses?.[network] : undefined,
             overrides,
         }),
-        stableCoinFactoryFacet: new DeployContractWithFactoryCommand({
-            factory: new StableCoinFactoryFacet__factory(),
-            signer,
-            deployedContract: useDeployed
-                ? configuration.contracts.StableCoinFactoryFacet.addresses?.[network]
-                : undefined,
-            overrides,
-        }),
-        hederaTokenManagerFacet: new DeployContractWithFactoryCommand({
+        // ! This one depends on the BusinessLogicResolver
+        // stableCoinFactoryFacet: await DeployContractCommand.newInstance({
+        // }),
+        hederaTokenManagerFacet: await DeployContractCommand.newInstance({
             factory: new HederaTokenManagerFacet__factory(),
             signer,
-            withProxy: true,
+            deployType: 'direct',
             deployedContract: useDeployed
                 ? configuration.contracts.HederaTokenManagerFacet.addresses?.[network]
                 : undefined,
             overrides,
         }),
-        hederaReserveFacet: new DeployContractWithFactoryCommand({
+        hederaReserveFacet: await DeployContractCommand.newInstance({
             factory: new HederaReserveFacet__factory(),
             signer,
+            deployType: 'direct',
             deployedContract: useDeployed ? configuration.contracts.HederaReserveFacet.addresses?.[network] : undefined,
             overrides,
         }),
-        burnableFacet: new DeployContractWithFactoryCommand({
+        burnableFacet: await DeployContractCommand.newInstance({
             factory: new BurnableFacet__factory(),
             signer,
+            deployType: 'direct',
             deployedContract: useDeployed ? configuration.contracts.BurnableFacet.addresses?.[network] : undefined,
             overrides,
         }),
-        cashInFacet: new DeployContractWithFactoryCommand({
+        cashInFacet: await DeployContractCommand.newInstance({
             factory: new CashInFacet__factory(),
             signer,
+            deployType: 'direct',
             deployedContract: useDeployed ? configuration.contracts.CashInFacet.addresses?.[network] : undefined,
             overrides,
         }),
-        customFeesFacet: new DeployContractWithFactoryCommand({
+        customFeesFacet: await DeployContractCommand.newInstance({
             factory: new CustomFeesFacet__factory(),
             signer,
+            deployType: 'direct',
             deployedContract: useDeployed ? configuration.contracts.CustomFeesFacet.addresses?.[network] : undefined,
             overrides,
         }),
-        deletableFacet: new DeployContractWithFactoryCommand({
+        deletableFacet: await DeployContractCommand.newInstance({
             factory: new DeletableFacet__factory(),
             signer,
+            deployType: 'direct',
             deployedContract: useDeployed ? configuration.contracts.DeletableFacet.addresses?.[network] : undefined,
             overrides,
         }),
-        freezableFacet: new DeployContractWithFactoryCommand({
+        freezableFacet: await DeployContractCommand.newInstance({
             factory: new FreezableFacet__factory(),
             signer,
+            deployType: 'direct',
             deployedContract: useDeployed ? configuration.contracts.FreezableFacet.addresses?.[network] : undefined,
             overrides,
         }),
-        holdManagementFacet: new DeployContractWithFactoryCommand({
+        holdManagementFacet: await DeployContractCommand.newInstance({
             factory: new HoldManagementFacet__factory(),
             signer,
+            deployType: 'direct',
             deployedContract: useDeployed
                 ? configuration.contracts.HoldManagementFacet.addresses?.[network]
                 : undefined,
             overrides,
         }),
-        kycFacet: new DeployContractWithFactoryCommand({
+        kycFacet: await DeployContractCommand.newInstance({
             factory: new KYCFacet__factory(),
             signer,
+            deployType: 'direct',
             deployedContract: useDeployed ? configuration.contracts.KYCFacet.addresses?.[network] : undefined,
             overrides,
         }),
-        pausableFacet: new DeployContractWithFactoryCommand({
+        pausableFacet: await DeployContractCommand.newInstance({
             factory: new PausableFacet__factory(),
             signer,
+            deployType: 'direct',
             deployedContract: useDeployed ? configuration.contracts.PausableFacet.addresses?.[network] : undefined,
             overrides,
         }),
-        rescuableFacet: new DeployContractWithFactoryCommand({
+        rescuableFacet: await DeployContractCommand.newInstance({
             factory: new RescuableFacet__factory(),
             signer,
+            deployType: 'direct',
             deployedContract: useDeployed ? configuration.contracts.RescuableFacet.addresses?.[network] : undefined,
             overrides,
         }),
-        reserveFacet: new DeployContractWithFactoryCommand({
+        reserveFacet: await DeployContractCommand.newInstance({
             factory: new ReserveFacet__factory(),
             signer,
+            deployType: 'direct',
             deployedContract: useDeployed ? configuration.contracts.ReserveFacet.addresses?.[network] : undefined,
             overrides,
         }),
-        roleManagementFacet: new DeployContractWithFactoryCommand({
+        roleManagementFacet: await DeployContractCommand.newInstance({
             factory: new RoleManagementFacet__factory(),
             signer,
+            deployType: 'direct',
             deployedContract: useDeployed
                 ? configuration.contracts.RoleManagementFacet.addresses?.[network]
                 : undefined,
             overrides,
         }),
-        rolesFacet: new DeployContractWithFactoryCommand({
+        rolesFacet: await DeployContractCommand.newInstance({
             factory: new RolesFacet__factory(),
             signer,
+            deployType: 'direct',
             deployedContract: useDeployed ? configuration.contracts.RolesFacet.addresses?.[network] : undefined,
             overrides,
         }),
-        supplierAdminFacet: new DeployContractWithFactoryCommand({
+        supplierAdminFacet: await DeployContractCommand.newInstance({
             factory: new SupplierAdminFacet__factory(),
             signer,
+            deployType: 'direct',
             deployedContract: useDeployed ? configuration.contracts.SupplierAdminFacet.addresses?.[network] : undefined,
             overrides,
         }),
-        tokenOwnerFacet: new DeployContractWithFactoryCommand({
+        tokenOwnerFacet: await DeployContractCommand.newInstance({
             factory: new TokenOwnerFacet__factory(),
             signer,
+            deployType: 'direct',
             deployedContract: useDeployed ? configuration.contracts.TokenOwnerFacet.addresses?.[network] : undefined,
             overrides,
         }),
-        wipeableFacet: new DeployContractWithFactoryCommand({
+        wipeableFacet: await DeployContractCommand.newInstance({
             factory: new WipeableFacet__factory(),
             signer,
+            deployType: 'direct',
             deployedContract: useDeployed ? configuration.contracts.WipeableFacet.addresses?.[network] : undefined,
             overrides,
         }),
         // * Add other SCS contracts here following the pattern
         // Example:
-        // cashToken: new DeployContractWithFactoryCommand({
+        // cashToken: new deployContractCommand({
         //     factory: new CashToken__factory(),
         //     signer,
+        //     deployType: 'direct',
         //     deployedContract: useDeployed ? configuration.contracts.CashToken.addresses?.[network] : undefined,
         //     overrides,
         // }),
     }
 
+    // * Deploy contracts that must be deployed before others due to dependencies
+    const businessLogicResolverDeployResult = await deployContract(
+        independentDeployCommands.businessLogicResolver
+    ).then((result) => {
+        console.log('✓ BusinessLogicResolver has been deployed successfully')
+        return result
+    })
+
+    // * Add dependent deploy commands here
+    const commands = {
+        ...independentDeployCommands,
+        stableCoinFactoryFacet: await DeployContractCommand.newInstance({
+            factory: new StableCoinFactoryFacet__factory(),
+            signer,
+            deployType: 'resolverProxy',
+            deployedContract: useDeployed
+                ? configuration.contracts.StableCoinFactoryFacet.addresses?.[network]
+                : undefined,
+            businessLogicResolverAddress: businessLogicResolverDeployResult.proxyAddress,
+            configurationId: CONFIG_ID.stableCoinFactory,
+            configurationVersion: DEFAULT_CONFIG_VERSION,
+            rolesStruct: [
+                {
+                    role: ROLES.defaultAdmin.hash,
+                    account: await signer.getAddress(),
+                },
+            ],
+            overrides: {
+                gasLimit: GAS_LIMIT.stableCoinFactory.deploy,
+            },
+        }),
+    }
+
     // Deploy contracts sequentially
     const deployedContracts: DeployScsContractListResult = new DeployScsContractListResult({
-        businessLogicResolver: await deployContractWithFactory(commands.businessLogicResolver).then((result) => {
-            console.log('✓ BusinessLogicResolver has been deployed successfully')
-            return result
-        }),
-        diamondFacet: await deployContractWithFactory(commands.diamondFacet).then((result) => {
+        businessLogicResolver: businessLogicResolverDeployResult,
+        diamondFacet: await deployContract(commands.diamondFacet).then((result) => {
             console.log('✓ DiamondFacet has been deployed successfully')
             return result
         }),
-        stableCoinFactoryFacet: await deployContractWithFactory(commands.stableCoinFactoryFacet).then((result) => {
+        stableCoinFactoryFacet: await deployContract(commands.stableCoinFactoryFacet).then((result) => {
             console.log('✓ StableCoinFactoryFacet has been deployed successfully')
             return result
         }),
-        hederaTokenManagerFacet: await deployContractWithFactory(commands.hederaTokenManagerFacet).then((result) => {
+        hederaTokenManagerFacet: await deployContract(commands.hederaTokenManagerFacet).then((result) => {
             console.log('✓ HederaTokenManager has been deployed successfully')
             return result
         }),
-        hederaReserveFacet: await deployContractWithFactory(commands.hederaReserveFacet).then((result) => {
+        hederaReserveFacet: await deployContract(commands.hederaReserveFacet).then((result) => {
             console.log('✓ HederaReserveFacet has been deployed successfully')
             return result
         }),
-        burnableFacet: await deployContractWithFactory(commands.burnableFacet).then((result) => {
+        burnableFacet: await deployContract(commands.burnableFacet).then((result) => {
             console.log('✓ BurnableFacet has been deployed successfully')
             return result
         }),
-        cashInFacet: await deployContractWithFactory(commands.cashInFacet).then((result) => {
+        cashInFacet: await deployContract(commands.cashInFacet).then((result) => {
             console.log('✓ CashInFacet has been deployed successfully')
             return result
         }),
-        customFeesFacet: await deployContractWithFactory(commands.customFeesFacet).then((result) => {
+        customFeesFacet: await deployContract(commands.customFeesFacet).then((result) => {
             console.log('✓ CustomFeesFacet has been deployed successfully')
             return result
         }),
-        deletableFacet: await deployContractWithFactory(commands.deletableFacet).then((result) => {
+        deletableFacet: await deployContract(commands.deletableFacet).then((result) => {
             console.log('✓ DeletableFacet has been deployed successfully')
             return result
         }),
-        freezableFacet: await deployContractWithFactory(commands.freezableFacet).then((result) => {
+        freezableFacet: await deployContract(commands.freezableFacet).then((result) => {
             console.log('✓ FreezableFacet has been deployed successfully')
             return result
         }),
-        holdManagementFacet: await deployContractWithFactory(commands.holdManagementFacet).then((result) => {
+        holdManagementFacet: await deployContract(commands.holdManagementFacet).then((result) => {
             console.log('✓ HoldManagementFacet has been deployed successfully')
             return result
         }),
-        kycFacet: await deployContractWithFactory(commands.kycFacet).then((result) => {
+        kycFacet: await deployContract(commands.kycFacet).then((result) => {
             console.log('✓ KYCFacet has been deployed successfully')
             return result
         }),
-        pausableFacet: await deployContractWithFactory(commands.pausableFacet).then((result) => {
+        pausableFacet: await deployContract(commands.pausableFacet).then((result) => {
             console.log('✓ PausableFacet has been deployed successfully')
             return result
         }),
-        rescuableFacet: await deployContractWithFactory(commands.rescuableFacet).then((result) => {
+        rescuableFacet: await deployContract(commands.rescuableFacet).then((result) => {
             console.log('✓ RescuableFacet has been deployed successfully')
             return result
         }),
-        reserveFacet: await deployContractWithFactory(commands.reserveFacet).then((result) => {
+        reserveFacet: await deployContract(commands.reserveFacet).then((result) => {
             console.log('✓ ReserveFacet has been deployed successfully')
             return result
         }),
-        roleManagementFacet: await deployContractWithFactory(commands.roleManagementFacet).then((result) => {
+        roleManagementFacet: await deployContract(commands.roleManagementFacet).then((result) => {
             console.log('✓ RoleManagementFacet has been deployed successfully')
             return result
         }),
-        rolesFacet: await deployContractWithFactory(commands.rolesFacet).then((result) => {
+        rolesFacet: await deployContract(commands.rolesFacet).then((result) => {
             console.log('✓ RolesFacet has been deployed successfully')
             return result
         }),
-        supplierAdminFacet: await deployContractWithFactory(commands.supplierAdminFacet).then((result) => {
+        supplierAdminFacet: await deployContract(commands.supplierAdminFacet).then((result) => {
             console.log('✓ SupplierAdminFacet has been deployed successfully')
             return result
         }),
-        tokenOwnerFacet: await deployContractWithFactory(commands.tokenOwnerFacet).then((result) => {
+        tokenOwnerFacet: await deployContract(commands.tokenOwnerFacet).then((result) => {
             console.log('✓ TokenOwnerFacet has been deployed successfully')
             return result
         }),
-        wipeableFacet: await deployContractWithFactory(commands.wipeableFacet).then((result) => {
+        wipeableFacet: await deployContract(commands.wipeableFacet).then((result) => {
             console.log('✓ WipeableFacet has been deployed successfully')
             return result
         }),
         // * Add results for other deployed SCS contracts here
         // Example:
-        // cashToken: await deployContractWithFactory(commands.cashToken).then((result) => {
+        // cashToken: await deployContract(commands.cashToken).then((result) => {
         //     console.log('CashToken has been deployed successfully')
         //     return result
         // }),
@@ -468,77 +520,6 @@ export async function deployScsContractList({
     // Ensure the DeployScsContractListResult type definition matches the structure returned here.
 
     return deployedContracts
-}
-
-export async function deployContractWithFactory<
-    F extends ContractFactory,
-    C extends Contract = ReturnType<F['attach']>,
->({
-    factory,
-    signer,
-    args,
-    overrides,
-    withProxy,
-    deployedContract,
-}: DeployContractWithFactoryCommand<F>): Promise<DeployContractWithFactoryResult<C>> {
-    let implementationContract: C
-    let proxyAddress: string | undefined
-    let proxyAdminAddress: string | undefined
-    let implementationReceipt: ContractReceipt | undefined
-
-    if (deployedContract?.address) {
-        implementationContract = factory.attach(deployedContract.address) as C
-    } else {
-        implementationContract = (await factory.connect(signer).deploy(...args, overrides)) as C
-        ;({ txReceipt: implementationReceipt } = await new ValidateTxResponseCommand({
-            txResponse: implementationContract.deployTransaction,
-            errorMessage: MESSAGES.deploy.error.deploy,
-        }).execute())
-        implementationReceipt = await implementationContract.deployTransaction.wait()
-    }
-
-    if (!withProxy) {
-        return new DeployContractWithFactoryResult({
-            address: implementationContract.address,
-            contract: implementationContract,
-            receipt: implementationReceipt,
-        })
-    }
-
-    if (deployedContract?.proxyAdminAddress) {
-        proxyAdminAddress = deployedContract.proxyAdminAddress
-    } else {
-        const proxyAdmin = await new ProxyAdmin__factory(signer).deploy(overrides)
-        await new ValidateTxResponseCommand({
-            txResponse: proxyAdmin.deployTransaction,
-            errorMessage: MESSAGES.deploy.error.deploy,
-        }).execute()
-        proxyAdminAddress = proxyAdmin.address
-    }
-
-    if (deployedContract?.proxyAddress) {
-        proxyAddress = deployedContract.proxyAddress
-    } else {
-        const proxy = await new TransparentUpgradeableProxy__factory(signer).deploy(
-            implementationContract.address,
-            proxyAdminAddress,
-            '0x',
-            overrides
-        )
-        await new ValidateTxResponseCommand({
-            txResponse: proxy.deployTransaction,
-            errorMessage: MESSAGES.deploy.error.deploy,
-        }).execute()
-        proxyAddress = proxy.address
-    }
-
-    return new DeployContractWithFactoryResult({
-        address: implementationContract.address,
-        contract: factory.connect(signer).attach(proxyAddress) as C,
-        proxyAddress: proxyAddress,
-        proxyAdminAddress: proxyAdminAddress,
-        receipt: implementationReceipt,
-    })
 }
 
 /**
@@ -557,55 +538,168 @@ export async function deployContractWithFactory<
  *   args: [arg1, arg2],
  * });
  */
-export async function deployContract({ name, signer, args }: DeployContractCommand): Promise<DeployContractResult> {
-    console.log(`Deploying ${name}. please wait...`)
-
-    const contractFactory = await ethers.getContractFactory(name, signer)
-    const contract = await contractFactory.deploy(...args)
-    const receipt = contract.deployTransaction.wait()
-
-    console.log(`${name} deployed at ${contract.address}`)
-
-    // if no proxy, return the contract (BREAK)
-    if (configuration.contracts[name].deployType !== 'proxy') {
-        return new DeployContractResult({
+export async function deployContract<F extends ContractFactory, C extends Contract = ReturnType<F['attach']>>({
+    name,
+    factory,
+    signer,
+    args,
+    deployType,
+    deployedContract,
+    overrides,
+    ...withResolverProxyParams
+}: DeployContractCommand<F>): Promise<DeployContractResult<C>> {
+    if (deployedContract) {
+        const contract = factory.attach(
+            deployedContract.proxyAddress ? deployedContract.proxyAddress : deployedContract.address
+        ) as C
+        return new DeployContractResult<C>({
             name,
             contract,
-            address: contract.address,
-            receipt: await receipt,
+            address: deployedContract.address,
+            proxyAddress: deployedContract.proxyAddress,
+            proxyAdminAddress: deployedContract.proxyAdminAddress,
+            receipt: undefined,
         })
     }
+    if (deployType === 'direct') {
+        const deployCommand = await DeployContractDirectCommand.newInstance({
+            name,
+            factory,
+            signer,
+            args,
+            overrides,
+        })
+        return _deployContractDirect(deployCommand)
+    }
+    if (deployType === 'tup') {
+        const deployCommand = await DeployContractWithTupCommand.newInstance({
+            name,
+            factory,
+            signer,
+            args,
+            overrides,
+        })
+        return _deployContractWithTup(deployCommand)
+    }
+    if (deployType === 'resolverProxy') {
+        const deployCommand = await DeployContractWithResolverProxyCommand.newInstance({
+            name,
+            factory,
+            signer,
+            args,
+            overrides,
+            ...withResolverProxyParams,
+        })
+        return _deployContractWithResolverProxy(deployCommand)
+    }
+    throw new Error(`Unknown deployType for contract ${name}: ${deployType}`)
+}
+
+async function _deployContractDirect<F extends ContractFactory, C extends Contract = ReturnType<F['attach']>>({
+    name,
+    factory,
+    args,
+    overrides,
+}: DeployContractDirectCommand<F>): Promise<DeployContractResult<C>> {
+    console.log(`Deploying ${name}. please wait...`)
+    const contract = (await factory.deploy(...args, overrides)) as C
+    const receipt = await contract.deployTransaction.wait()
+    console.log(`${name} deployed at ${contract.address}`)
+    return new DeployContractResult<C>({
+        name,
+        contract,
+        address: contract.address,
+        receipt,
+        proxyAddress: undefined,
+        proxyAdminAddress: undefined,
+    })
+}
+
+async function _deployContractWithTup<F extends ContractFactory, C extends Contract = ReturnType<F['attach']>>({
+    name,
+    factory,
+    signer,
+    args,
+    overrides,
+}: DeployContractWithTupCommand<F>): Promise<DeployContractResult<C>> {
+    console.log(`Deploying ${name}. please wait...`)
+    const contract = (await factory.deploy(...args, overrides)) as C
+    const receipt = contract.deployTransaction.wait()
+    console.log(`${name} deployed at ${contract.address}`)
 
     console.log(`Deploying ${name} Proxy Admin. please wait...`)
-
-    const { address: proxyAdminAddress } = await deployContract(
-        new DeployContractCommand({
-            name: 'ProxyAdmin',
-            signer,
-            args: [],
-        })
-    )
-
+    const deployPaCommand = await DeployContractDirectCommand.newInstance({
+        name: 'ProxyAdmin',
+        factory: new ProxyAdmin__factory(),
+        signer,
+        args: [],
+        overrides: {
+            gasLimit: GAS_LIMIT.proxyAdmin.deploy,
+        },
+    })
+    const { address: proxyAdminAddress } = await _deployContractDirect(deployPaCommand)
     console.log(`${name} Proxy Admin deployed at ${proxyAdminAddress}`)
 
     console.log(`Deploying ${name} Proxy. please wait...`)
-
-    const { address: proxyAddress } = await deployContract(
-        new DeployContractCommand({
-            name: 'TransparentUpgradeableProxy',
-            signer,
-            args: [contract.address, proxyAdminAddress, '0x'],
-        })
-    )
-
+    const deployProxyCommand = await DeployContractDirectCommand.newInstance<TransparentUpgradeableProxy__factory>({
+        name: 'TransparentUpgradeableProxy',
+        factory: new TransparentUpgradeableProxy__factory(),
+        signer,
+        args: [contract.address, proxyAdminAddress, '0x'],
+        overrides: {
+            gasLimit: GAS_LIMIT.tup.deploy,
+        },
+    })
+    const { address: proxyAddress } = await _deployContractDirect(deployProxyCommand)
     console.log(`${name} Proxy deployed at ${proxyAddress}`)
 
     return new DeployContractResult({
         name,
         address: contract.address,
-        contract,
+        contract: factory.attach(proxyAddress) as C,
         proxyAddress,
         proxyAdminAddress,
+        receipt: await receipt,
+    })
+}
+
+async function _deployContractWithResolverProxy<
+    F extends ContractFactory,
+    C extends Contract = ReturnType<F['attach']>,
+>({
+    name,
+    factory,
+    signer,
+    args,
+    overrides,
+    businessLogicResolverAddress,
+    configurationId,
+    configurationVersion,
+    rolesStruct,
+}: DeployContractWithResolverProxyCommand<F>): Promise<DeployContractResult<C>> {
+    console.log(`Deploying ${name}. please wait...`)
+    const contract = await factory.deploy(...args, overrides)
+    const receipt = contract.deployTransaction.wait()
+    console.log(`${name} deployed at ${contract.address}`)
+
+    console.log(`Deploying ${name} Resolver Proxy. please wait...`)
+    const deployProxyCommand = await DeployContractDirectCommand.newInstance({
+        name: 'ResolverProxy',
+        factory: new ResolverProxy__factory(),
+        signer,
+        args: [businessLogicResolverAddress, configurationId, configurationVersion, rolesStruct],
+        overrides: {
+            gasLimit: GAS_LIMIT.resolverProxy.deploy,
+        },
+    })
+    const { address: resolverProxyAddress } = await _deployContractDirect(deployProxyCommand)
+    console.log(`${name} Resolver Proxy deployed at ${resolverProxyAddress}`)
+
+    return new DeployContractResult({
+        name,
+        address: contract.address,
+        proxyAddress: resolverProxyAddress,
+        contract: factory.attach(resolverProxyAddress) as C,
         receipt: await receipt,
     })
 }

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.18;
 
-import {IHederaTokenManager} from './IHederaTokenManager.sol';
+import {IHederaTokenManager, RolesStruct} from './IHederaTokenManager.sol';
 import {KeysStruct} from '../library/KeysLib.sol';
 import {IBusinessLogicResolver} from '../resolver/interfaces/IBusinessLogicResolver.sol';
 
@@ -23,7 +23,7 @@ interface IStableCoinFactory {
         int256 reserveInitialAmount;
         bool createReserve;
         KeysStruct[] keys;
-        IHederaTokenManager.RolesStruct[] roles;
+        RolesStruct[] roles;
         IHederaTokenManager.CashinRoleStruct cashinRole;
         string metadata;
         IBusinessLogicResolver businessLogicResolverAddress;

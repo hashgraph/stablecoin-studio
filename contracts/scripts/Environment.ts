@@ -2,9 +2,14 @@ import { DeployFullInfrastructureResult, DeployScsContractListResult } from '@sc
 import { BusinessLogicResolver } from '@typechain'
 
 interface NewEnvironmentParams {
-    commonFacetIdList?: string[]
-    commonFacetVersionList?: number[]
+    stableCoinFactoryFacetIdList?: string[]
+    stableCoinFactoryFacetVersionList?: number[]
+    stableCoinFacetIdList?: string[]
+    stableCoinFacetVersionList?: number[]
+    reserveFacetIdList?: string[]
+    reserveFacetVersionList?: number[]
     businessLogicResolver?: BusinessLogicResolver
+    stableCoinFactoryProxyAddress?: string
     stableCoinProxyAddress?: string
     reserveProxyAddress?: string
     tokenAddress?: string
@@ -12,26 +17,43 @@ interface NewEnvironmentParams {
 }
 
 export default class Environment {
+    public stableCoinFactoryFacetIdList?: string[]
+    public stableCoinFactoryFacetVersionList?: number[]
+    public stableCoinFacetIdList?: string[]
+    public stableCoinFacetVersionList?: number[]
+    public reserveFacetIdList?: string[]
+    public reserveFacetVersionList?: number[]
     public commonFacetIdList?: string[]
     public commonFacetVersionList?: number[]
     public businessLogicResolver?: BusinessLogicResolver
+    public stableCoinFactoryProxyAddress?: string
     public stableCoinProxyAddress?: string
     public reserveProxyAddress?: string
     public tokenAddress?: string
     public deployedContracts?: DeployScsContractListResult
 
     constructor({
-        commonFacetIdList,
-        commonFacetVersionList,
+        stableCoinFactoryFacetIdList,
+        stableCoinFactoryFacetVersionList,
+        stableCoinFacetIdList,
+        stableCoinFacetVersionList,
+        reserveFacetIdList,
+        reserveFacetVersionList,
         businessLogicResolver,
+        stableCoinFactoryProxyAddress,
         stableCoinProxyAddress,
         reserveProxyAddress,
         tokenAddress,
         deployedContracts,
     }: NewEnvironmentParams) {
-        this.commonFacetIdList = commonFacetIdList
-        this.commonFacetVersionList = commonFacetVersionList
+        this.stableCoinFactoryFacetIdList = stableCoinFactoryFacetIdList
+        this.stableCoinFactoryFacetVersionList = stableCoinFactoryFacetVersionList
+        this.stableCoinFacetIdList = stableCoinFacetIdList
+        this.stableCoinFacetVersionList = stableCoinFacetVersionList
+        this.reserveFacetIdList = reserveFacetIdList
+        this.reserveFacetVersionList = reserveFacetVersionList
         this.businessLogicResolver = businessLogicResolver
+        this.stableCoinFactoryProxyAddress = stableCoinFactoryProxyAddress
         this.stableCoinProxyAddress = stableCoinProxyAddress
         this.reserveProxyAddress = reserveProxyAddress
         this.tokenAddress = tokenAddress
@@ -42,13 +64,25 @@ export default class Environment {
         return new Environment({})
     }
 
-    public toDeployAtsFullInfrastructureResult(): DeployFullInfrastructureResult {
-        const { commonFacetIdList, commonFacetVersionList, deployedContracts } = this._validateInitialization()
+    public toDeployScsFullInfrastructureResult(): DeployFullInfrastructureResult {
+        const {
+            stableCoinFactoryFacetIdList,
+            stableCoinFactoryFacetVersionList,
+            stableCoinFacetIdList,
+            stableCoinFacetVersionList,
+            reserveFacetIdList,
+            reserveFacetVersionList,
+            deployedContracts,
+        } = this._validateInitialization()
 
         return new DeployFullInfrastructureResult({
             facetLists: {
-                commonFacetIdList,
-                commonFacetVersionList,
+                stableCoinFactoryFacetIdList,
+                stableCoinFactoryFacetVersionList,
+                stableCoinFacetIdList,
+                stableCoinFacetVersionList,
+                reserveFacetIdList,
+                reserveFacetVersionList,
             },
             ...deployedContracts,
         })
@@ -65,16 +99,24 @@ export default class Environment {
 
     private _validateInitialization() {
         if (
-            !this.commonFacetIdList ||
-            !this.commonFacetVersionList ||
+            !this.stableCoinFactoryFacetIdList ||
+            !this.stableCoinFactoryFacetVersionList ||
+            !this.stableCoinFacetIdList ||
+            !this.stableCoinFacetVersionList ||
+            !this.reserveFacetIdList ||
+            !this.reserveFacetVersionList ||
             !this.businessLogicResolver ||
             !this.deployedContracts
         ) {
             throw new Error('Environment must be initialized')
         }
         return {
-            commonFacetIdList: this.commonFacetIdList,
-            commonFacetVersionList: this.commonFacetVersionList,
+            stableCoinFactoryFacetIdList: this.stableCoinFactoryFacetIdList,
+            stableCoinFactoryFacetVersionList: this.stableCoinFactoryFacetVersionList,
+            stableCoinFacetIdList: this.stableCoinFacetIdList,
+            stableCoinFacetVersionList: this.stableCoinFacetVersionList,
+            reserveFacetIdList: this.reserveFacetIdList,
+            reserveFacetVersionList: this.reserveFacetVersionList,
             businessLogicResolver: this.businessLogicResolver,
             deployedContracts: this.deployedContracts,
         }

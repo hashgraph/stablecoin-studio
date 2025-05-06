@@ -5,8 +5,10 @@ import {
     IStaticFunctionSelectors__factory,
 } from '@typechain'
 import {
+    CONFIG_ID,
     CreateConfigurationsForDeployedContractsCommand,
     CreateConfigurationsForDeployedContractsResult,
+    EVENTS,
     GAS_LIMIT,
     GetFacetsByConfigurationIdAndVersionQuery,
     GetFacetsByConfigurationIdAndVersionResult,
@@ -16,7 +18,7 @@ import {
     validateTxResponse,
     ValidateTxResponseCommand,
 } from '@scripts'
-import { CONFIG_ID, EVENTS } from './constants'
+
 import { Signer } from 'ethers'
 
 export interface BusinessLogicRegistryData {
@@ -184,16 +186,47 @@ async function processFacetLists(
 
 export async function createConfigurationsForDeployedContracts(
     partialBatchDeploy: boolean,
-    { contractAddressList, businessLogicResolverProxyAddress, signer }: CreateConfigurationsForDeployedContractsCommand
+    {
+        stableCoinFactoryAddressList,
+        stableCoinAddressList,
+        reserveAddressList,
+        businessLogicResolverProxyAddress,
+        signer,
+    }: CreateConfigurationsForDeployedContractsCommand
 ): Promise<CreateConfigurationsForDeployedContractsResult> {
     const result = CreateConfigurationsForDeployedContractsResult.empty()
 
-    await fetchFacetResolverKeys(result, signer, contractAddressList)
+    await fetchFacetResolverKeys(
+        result,
+        signer,
+        stableCoinFactoryAddressList,
+        stableCoinAddressList,
+        reserveAddressList
+    )
 
+    // * StableCoinFactory
     await processFacetLists(
-        CONFIG_ID,
-        result.commonFacetIdList,
-        result.commonFacetVersionList,
+        CONFIG_ID.stableCoinFactory,
+        result.stableCoinFactoryFacetIdList,
+        result.stableCoinFactoryFacetVersionList,
+        businessLogicResolverProxyAddress,
+        signer,
+        partialBatchDeploy
+    )
+    // * StableCoin
+    await processFacetLists(
+        CONFIG_ID.stableCoin,
+        result.stableCoinFacetIdList,
+        result.stableCoinFacetVersionList,
+        businessLogicResolverProxyAddress,
+        signer,
+        partialBatchDeploy
+    )
+    // * Reserve
+    await processFacetLists(
+        CONFIG_ID.reserve,
+        result.reserveFacetIdList,
+        result.reserveFacetVersionList,
         businessLogicResolverProxyAddress,
         signer,
         partialBatchDeploy
@@ -204,15 +237,25 @@ export async function createConfigurationsForDeployedContracts(
 async function fetchFacetResolverKeys(
     result: CreateConfigurationsForDeployedContractsResult,
     signer: Signer,
-    facetAddressList: string[]
+    stableCoinFactoryAddressList: string[],
+    stableCoinAddressList: string[],
+    reserveAddressList: string[]
 ): Promise<void> {
     const resolverKeyMap = new Map<string, string>()
 
-    result.commonFacetIdList = await Promise.all(
-        facetAddressList.map((address) => getResolverKey(address, signer, resolverKeyMap))
+    result.stableCoinFactoryFacetIdList = await Promise.all(
+        stableCoinFactoryAddressList.map((address) => getResolverKey(address, signer, resolverKeyMap))
+    )
+    result.stableCoinFacetIdList = await Promise.all(
+        stableCoinAddressList.map((address) => getResolverKey(address, signer, resolverKeyMap))
+    )
+    result.reserveFacetIdList = await Promise.all(
+        reserveAddressList.map((address) => getResolverKey(address, signer, resolverKeyMap))
     )
 
-    result.commonFacetVersionList = Array(result.commonFacetIdList.length).fill(1)
+    result.stableCoinFactoryFacetVersionList = Array(result.stableCoinFactoryFacetIdList.length).fill(1)
+    result.stableCoinFacetVersionList = Array(result.stableCoinFacetIdList.length).fill(1)
+    result.reserveFacetVersionList = Array(result.reserveFacetIdList.length).fill(1)
 }
 
 async function getResolverKey(address: string, signer: Signer, keyMap: Map<string, string>): Promise<string> {

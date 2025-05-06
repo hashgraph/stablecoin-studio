@@ -3,13 +3,16 @@ import { GAS_LIMIT as CONF_GAS_LIMIT } from '@configuration'
 import { parseUnits } from 'ethers/lib/utils'
 
 // * General
-export const CONFIG_ID = '0x0000000000000000000000000000000000000000000000000000000000000001'
+export const CONFIG_ID = {
+    stableCoinFactory: '0x0000000000000000000000000000000000000000000000000000000000000001',
+    stableCoin: '0x0000000000000000000000000000000000000000000000000000000000000002',
+    reserve: '0x0000000000000000000000000000000000000000000000000000000000000003',
+}
+export const DEFAULT_CONFIG_VERSION = 1
 
 // * Ethereum
 export const ADDRESS_ZERO = constants.AddressZero
 export const NUMBER_ZERO = constants.Zero
-export const STABLECOIN_CONFIG_ID = '0x0000000000000000000000000000000000000000000000000000000000000001'
-export const RESERVE_CONFIG_ID = '0x0000000000000000000000000000000000000000000000000000000000000002'
 
 // * Hedera
 export const HBAR_DECIMALS = 8
@@ -131,6 +134,15 @@ export const GAS_LIMIT = {
         getAdmin: 4_800_000n,
     },
     proxyAdmin: {
+        deploy: 2_000_000n,
+        upgrade: 150_000n,
+    },
+    tup: {
+        deploy: 500_000n,
+        upgrade: 150_000n,
+    },
+    resolverProxy: {
+        deploy: 2_000_000n,
         upgrade: 150_000n,
     },
     hederaReserve: {
@@ -144,6 +156,7 @@ export const GAS_LIMIT = {
         version: 60_000n,
     },
     businessLogicResolver: {
+        deploy: 5_000_000n,
         getStaticResolverKey: 60_000,
         registerBusinessLogics: 7_800_000,
         createConfiguration: 15_000_000,
@@ -164,6 +177,11 @@ export const MESSAGES = {
             validateTxResponse: ['❌ Failed to validate transaction response.', ' Transaction Hash: '],
             signerWithoutProvider: '❌ Signer is missing a provider.',
             couldNotFindWallet: '🔍 Could not find wallet for signer.',
+            businessLogicResolverAddressRequired: '❌ Business logic resolver address is required.',
+            configurationIdRequired: '❌ Configuration ID is required.',
+            configurationVersionRequired: '❌ Configuration version is required.',
+            rolesStructRequired: '❌ Roles struct is required.',
+            nameOrFactoryRequired: '❌ Name or factory parameters are required.',
         },
     },
     deploy: {

@@ -24,14 +24,16 @@ export const NETWORK_LIST = {
     chainId: [1337, 298, 297, 296, 295] as const,
 }
 
-export const DEPLOY_TYPES = ['proxy', 'direct'] as const
+export const DEPLOY_TYPES = ['tup', 'resolverProxy', 'direct'] as const
 
-export const CONTRACT_NAMES_WITH_PROXY = ['BusinessLogicResolver']
+export const CONTRACT_NAMES_WITH_TUP = ['BusinessLogicResolver']
+
+export const CONTRACT_NAMES_WITH_RESOLVER_PROXY = ['StableCoinFactoryFacet']
 
 export const CONTRACT_NAMES = [
     'TransparentUpgradeableProxy',
     'ProxyAdmin',
-    'Factory',
+    'ResolverProxy',
     'BusinessLogicResolver',
     // * ⬇️ Diamond Facets
     'DiamondFacet',

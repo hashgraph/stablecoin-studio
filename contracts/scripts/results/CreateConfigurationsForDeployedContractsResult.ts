@@ -1,21 +1,44 @@
 interface CreateConfigurationsForDeployedContractsResultParams {
-    facetIdList: string[]
-    facetVersionList: number[]
+    stableCoinFactoryFacetIdList: string[]
+    stableCoinFactoryFacetVersionList: number[]
+    stableCoinFacetIdList: string[]
+    stableCoinFacetVersionList: number[]
+    reserveFacetIdList: string[]
+    reserveFacetVersionList: number[]
 }
 
 export default class CreateConfigurationsForDeployedContractsResult {
-    public commonFacetIdList: string[]
-    public commonFacetVersionList: number[]
+    public stableCoinFactoryFacetIdList: string[]
+    public stableCoinFactoryFacetVersionList: number[]
+    public stableCoinFacetIdList: string[]
+    public stableCoinFacetVersionList: number[]
+    public reserveFacetIdList: string[]
+    public reserveFacetVersionList: number[]
 
-    constructor({ facetIdList, facetVersionList }: CreateConfigurationsForDeployedContractsResultParams) {
-        this.commonFacetIdList = facetIdList
-        this.commonFacetVersionList = facetVersionList
+    constructor({
+        stableCoinFactoryFacetIdList,
+        stableCoinFactoryFacetVersionList,
+        stableCoinFacetIdList,
+        stableCoinFacetVersionList,
+        reserveFacetIdList,
+        reserveFacetVersionList,
+    }: CreateConfigurationsForDeployedContractsResultParams) {
+        this.stableCoinFactoryFacetIdList = stableCoinFactoryFacetIdList
+        this.stableCoinFactoryFacetVersionList = stableCoinFactoryFacetVersionList
+        this.stableCoinFacetIdList = stableCoinFacetIdList
+        this.stableCoinFacetVersionList = stableCoinFacetVersionList
+        this.reserveFacetIdList = reserveFacetIdList
+        this.reserveFacetVersionList = reserveFacetVersionList
     }
 
     public static empty(): CreateConfigurationsForDeployedContractsResult {
         return new CreateConfigurationsForDeployedContractsResult({
-            facetIdList: [],
-            facetVersionList: [],
+            stableCoinFactoryFacetIdList: [],
+            stableCoinFactoryFacetVersionList: [],
+            stableCoinFacetIdList: [],
+            stableCoinFacetVersionList: [],
+            reserveFacetIdList: [],
+            reserveFacetVersionList: [],
         })
     }
 }
