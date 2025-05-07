@@ -247,11 +247,13 @@ describe('SetResolverAndFactoryService', () => {
         .spyOn(Network, 'getResolverAddress')
         .mockReturnValue(DEFAULT_CONTRACT_IDS[4]);
       //* 🎬 Act
-      await setResolverAndFactoryService.getSDKFactory();
-      await setResolverAndFactoryService.getSDKResolver();
+      const factory = await setResolverAndFactoryService.getSDKFactory();
+      const resolver = await setResolverAndFactoryService.getSDKResolver();
       //* 🕵️ Assert
       expect(getFactoryAddressMock).toHaveBeenCalledTimes(1);
       expect(getResolverAddressMock).toHaveBeenCalledTimes(1);
+      expect(factory).toBe(DEFAULT_CONTRACT_IDS[4]);
+      expect(resolver).toBe(DEFAULT_CONTRACT_IDS[4]);
     });
   });
 });
