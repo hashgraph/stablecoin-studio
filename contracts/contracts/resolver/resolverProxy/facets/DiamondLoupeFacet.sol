@@ -3,14 +3,16 @@ pragma solidity 0.8.18;
 
 import {ResolverProxyUnstructured} from '../unstructured/ResolverProxyUnstructured.sol';
 import {IDiamondLoupe} from '../../interfaces/resolverProxy/IDiamondLoupe.sol';
+import {IResolverLoupe} from '../../interfaces/resolverProxy/IResolverLoupe.sol';
+import {IStaticFunctionSelectors} from '../../interfaces/resolverProxy/IStaticFunctionSelectors.sol';
 import {IERC165} from '@openzeppelin/contracts/utils/introspection/IERC165.sol';
 import {_DIAMOND_LOUPE_RESOLVER_KEY} from '../../../constants/resolverKeys.sol';
 
 // HACK: I think that Loupe and Cut implementation should be only one contract.
-contract DiamondLoupeFacet is IDiamondLoupe, IERC165, ResolverProxyUnstructured {
-    function getFacets() external view override returns (Facet[] memory facets_) {
+contract DiamondLoupeFacet is IResolverLoupe, IERC165, ResolverProxyUnstructured {
+    function getFacets() external view override returns (ResolverFacet[] memory resolverFacets_) {
         ResolverProxyStorage storage ds = _resolverProxyStorage();
-        facets_ = _getFacets(ds, 0, _getFacetsLength(ds));
+        resolverFacets_ = _getResolverFacets(ds, 0, _getFacetsLength(ds));
     }
 
     function getFacetsLength() external view override returns (uint256 facetsLength_) {
@@ -20,8 +22,8 @@ contract DiamondLoupeFacet is IDiamondLoupe, IERC165, ResolverProxyUnstructured 
     function getFacetsByPage(
         uint256 _pageIndex,
         uint256 _pageLength
-    ) external view override returns (Facet[] memory facets_) {
-        facets_ = _getFacets(_resolverProxyStorage(), _pageIndex, _pageLength);
+    ) external view override returns (ResolverFacet[] memory resolverFacets) {
+        resolverFacets = _getResolverFacets(_resolverProxyStorage(), _pageIndex, _pageLength);
     }
 
     function getFacetSelectors(bytes32 _facetId) external view override returns (bytes4[] memory facetSelectors_) {
@@ -69,12 +71,32 @@ contract DiamondLoupeFacet is IDiamondLoupe, IERC165, ResolverProxyUnstructured 
         facetId_ = _getFacetIdBySelector(_resolverProxyStorage(), _selector);
     }
 
-    function getFacet(bytes32 _facetId) external view override returns (Facet memory facet_) {
-        facet_ = _getFacet(_resolverProxyStorage(), _facetId);
+    function getFacet(bytes32 _facetId) external view override returns (ResolverFacet memory resolverFacet_) {
+        resolverFacet_ = _getFacet(_resolverProxyStorage(), _facetId);
     }
 
     function getFacetAddress(bytes4 _selector) external view override returns (address facetAddress_) {
         facetAddress_ = _getFacetAddress(_resolverProxyStorage(), _selector);
+    }
+
+    function facets() external view override returns (Facet[] memory facets_) {
+        ResolverProxyStorage storage ds = _resolverProxyStorage();
+        facets_ = _mapFacets(_getResolverFacets(ds, 0, _getFacetsLength(ds)));
+    }
+
+    function facetFunctionSelectors(address _facet) external view returns (bytes4[] memory facetFunctionSelectors_) {
+        bytes32 facetId = IStaticFunctionSelectors(_facet).getStaticResolverKey();
+        ResolverProxyStorage storage ds = _resolverProxyStorage();
+        facetFunctionSelectors_ = _getFacetSelectors(ds, facetId, 0, _getFacetSelectorsLength(ds, facetId));
+    }
+
+    function facetAddresses() external view override returns (address[] memory facetAddresses_) {
+        ResolverProxyStorage storage ds = _resolverProxyStorage();
+        facetAddresses_ = _getFacetAddresses(ds, 0, _getFacetsLength(ds));
+    }
+
+    function facetAddress(bytes4 _functionSelector) external view returns (address facetAddress_) {
+        facetAddress_ = _getFacetAddress(_resolverProxyStorage(), _functionSelector);
     }
 
     // This implements ERC-165.
@@ -118,5 +140,20 @@ contract DiamondLoupeFacet is IDiamondLoupe, IERC165, ResolverProxyUnstructured 
         uint256 selectorsIndex;
         staticInterfaceIds_[selectorsIndex++] = type(IDiamondLoupe).interfaceId;
         staticInterfaceIds_[selectorsIndex++] = type(IERC165).interfaceId;
+    }
+
+    function _mapFacets(ResolverFacet[] memory _resolverFacets) private pure returns (Facet[] memory facets_) {
+        uint256 length = _resolverFacets.length;
+        facets_ = new Facet[](length);
+        for (uint256 index; index < length; ) {
+            facets_[index] = _mapFacet(_resolverFacets[index]);
+            unchecked {
+                ++index;
+            }
+        }
+    }
+
+    function _mapFacet(ResolverFacet memory _resolverFacet) private pure returns (Facet memory facet_) {
+        facet_ = Facet({facetAddress: _resolverFacet.addr, functionSelectors: _resolverFacet.selectors});
     }
 }

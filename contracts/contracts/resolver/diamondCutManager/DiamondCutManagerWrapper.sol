@@ -4,7 +4,7 @@ pragma solidity 0.8.18;
 import {LibCommon} from '../../core/LibCommon.sol';
 import {IDiamondCutManager} from '../interfaces/diamondCutManager/IDiamondCutManager.sol';
 import {IStaticFunctionSelectors} from '../interfaces/resolverProxy/IStaticFunctionSelectors.sol';
-import {IDiamondLoupe} from '../interfaces/resolverProxy/IDiamondLoupe.sol';
+import {IResolverLoupe} from '../interfaces/resolverProxy/IResolverLoupe.sol';
 import {BusinessLogicResolverWrapper} from '../BusinessLogicResolverWrapper.sol';
 import {_DIAMOND_CUT_MANAGER_STORAGE_POSITION} from '../../constants/storagePositions.sol';
 
@@ -226,13 +226,13 @@ abstract contract DiamondCutManagerWrapper is IDiamondCutManager, BusinessLogicR
         uint256 _version,
         uint256 _pageIndex,
         uint256 _pageLength
-    ) internal view returns (IDiamondLoupe.Facet[] memory facets_) {
+    ) internal view returns (IResolverLoupe.ResolverFacet[] memory facets_) {
         bytes32[] memory facetIds = _dcms.facetIds[
             _buildHash(_configurationId, _resolveVersion(_dcms, _configurationId, _version))
         ];
         (uint256 start, uint256 end) = LibCommon.getStartAndEnd(_pageIndex, _pageLength);
         uint256 size = LibCommon.getSize(start, end, facetIds.length);
-        facets_ = new IDiamondLoupe.Facet[](size);
+        facets_ = new IResolverLoupe.ResolverFacet[](size);
         uint256 version = _resolveVersion(_dcms, _configurationId, _version);
         for (uint256 index; index < size; ) {
             facets_[index] = _getFacetByConfigurationIdVersionAndFacetId(
@@ -328,13 +328,13 @@ abstract contract DiamondCutManagerWrapper is IDiamondCutManager, BusinessLogicR
         bytes32 _configurationId,
         uint256 _version,
         bytes32 _facetId
-    ) internal view returns (IDiamondLoupe.Facet memory facet_) {
+    ) internal view returns (IResolverLoupe.ResolverFacet memory facet_) {
         bytes32 facetIdHash = _buildHash(
             _configurationId,
             _resolveVersion(_dcms, _configurationId, _version),
             _facetId
         );
-        facet_ = IDiamondLoupe.Facet({
+        facet_ = IResolverLoupe.ResolverFacet({
             id: _facetId,
             addr: _dcms.addr[facetIdHash],
             selectors: _dcms.selectors[facetIdHash],

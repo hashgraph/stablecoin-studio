@@ -2,10 +2,10 @@
 pragma solidity 0.8.18;
 
 import {IBusinessLogicResolver} from '../../interfaces/IBusinessLogicResolver.sol';
-import {IDiamondLoupe} from '../../interfaces/resolverProxy/IDiamondLoupe.sol';
 import {RolesStorageWrapper} from '../../../extensions/RolesStorageWrapper.sol';
 import {_RESOLVER_PROXY_STORAGE_POSITION} from '../../../constants/storagePositions.sol';
 import {IHederaTokenManager} from '../../../Interfaces/IHederaTokenManager.sol';
+import {IResolverLoupe} from '../../interfaces/resolverProxy/IResolverLoupe.sol';
 
 // Remember to add the loupe functions from DiamondLoupeFacet.sol.sol to the resolverProxy.
 // The loupe functions are required by the EIP2535 ResolverProxys standard
@@ -53,19 +53,19 @@ abstract contract ResolverProxyUnstructured is RolesStorageWrapper {
         }
     }
 
-    function _getFacetsLength(ResolverProxyStorage storage _ds) internal view returns (uint256 facetsLength_) {
-        facetsLength_ = _ds.resolver.getFacetsLengthByConfigurationIdAndVersion(
+    function _getFacetsLength(ResolverProxyStorage storage _ds) internal view returns (uint256 resolverFacetsLength_) {
+        resolverFacetsLength_ = _ds.resolver.getFacetsLengthByConfigurationIdAndVersion(
             _ds.resolverProxyConfigurationId,
             _ds.version
         );
     }
 
-    function _getFacets(
+    function _getResolverFacets(
         ResolverProxyStorage storage _ds,
         uint256 _pageIndex,
         uint256 _pageLength
-    ) internal view returns (IDiamondLoupe.Facet[] memory facets_) {
-        facets_ = _ds.resolver.getFacetsByConfigurationIdAndVersion(
+    ) internal view returns (IResolverLoupe.ResolverFacet[] memory resolverFacets_) {
+        resolverFacets_ = _ds.resolver.getFacetsByConfigurationIdAndVersion(
             _ds.resolverProxyConfigurationId,
             _ds.version,
             _pageIndex,
@@ -139,8 +139,8 @@ abstract contract ResolverProxyUnstructured is RolesStorageWrapper {
     function _getFacet(
         ResolverProxyStorage storage _ds,
         bytes32 _facetId
-    ) internal view returns (IDiamondLoupe.Facet memory facet_) {
-        facet_ = _ds.resolver.getFacetByConfigurationIdVersionAndFacetId(
+    ) internal view returns (IResolverLoupe.ResolverFacet memory resolverFacet_) {
+        resolverFacet_ = _ds.resolver.getFacetByConfigurationIdVersionAndFacetId(
             _ds.resolverProxyConfigurationId,
             _ds.version,
             _facetId

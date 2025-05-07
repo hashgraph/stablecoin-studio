@@ -7,6 +7,7 @@ import {_DIAMOND_RESOLVER_KEY} from '../../../constants/resolverKeys.sol';
 import {IDiamond} from '../../interfaces/resolverProxy/IDiamond.sol';
 import {IDiamondCut} from '../../interfaces/resolverProxy/IDiamondCut.sol';
 import {IDiamondLoupe} from '../../interfaces/resolverProxy/IDiamondLoupe.sol';
+import {IResolverLoupe} from '../../interfaces/resolverProxy/IResolverLoupe.sol';
 import {IERC165} from '@openzeppelin/contracts/utils/introspection/IERC165.sol';
 import {IStaticFunctionSelectors} from '../../interfaces/resolverProxy/IStaticFunctionSelectors.sol';
 
@@ -28,7 +29,7 @@ contract DiamondFacet is IDiamond, DiamondCutFacet, DiamondLoupeFacet {
         override(IStaticFunctionSelectors, DiamondCutFacet, DiamondLoupeFacet)
         returns (bytes4[] memory staticFunctionSelectors_)
     {
-        staticFunctionSelectors_ = new bytes4[](18);
+        staticFunctionSelectors_ = new bytes4[](22);
         uint256 selectorsIndex;
         staticFunctionSelectors_[selectorsIndex++] = this.updateConfigVersion.selector;
         staticFunctionSelectors_[selectorsIndex++] = this.updateConfig.selector;
@@ -47,6 +48,10 @@ contract DiamondFacet is IDiamond, DiamondCutFacet, DiamondLoupeFacet {
         staticFunctionSelectors_[selectorsIndex++] = this.getFacetIdBySelector.selector;
         staticFunctionSelectors_[selectorsIndex++] = this.getFacet.selector;
         staticFunctionSelectors_[selectorsIndex++] = this.getFacetAddress.selector;
+        staticFunctionSelectors_[selectorsIndex++] = this.facets.selector;
+        staticFunctionSelectors_[selectorsIndex++] = this.facetFunctionSelectors.selector;
+        staticFunctionSelectors_[selectorsIndex++] = this.facetAddresses.selector;
+        staticFunctionSelectors_[selectorsIndex++] = this.facetAddress.selector;
         staticFunctionSelectors_[selectorsIndex++] = this.supportsInterface.selector;
     }
 
@@ -56,11 +61,12 @@ contract DiamondFacet is IDiamond, DiamondCutFacet, DiamondLoupeFacet {
         override(IStaticFunctionSelectors, DiamondCutFacet, DiamondLoupeFacet)
         returns (bytes4[] memory staticInterfaceIds_)
     {
-        staticInterfaceIds_ = new bytes4[](4);
+        staticInterfaceIds_ = new bytes4[](5);
         uint256 selectorsIndex;
         staticInterfaceIds_[selectorsIndex++] = type(IDiamond).interfaceId;
         staticInterfaceIds_[selectorsIndex++] = type(IDiamondCut).interfaceId;
         staticInterfaceIds_[selectorsIndex++] = type(IDiamondLoupe).interfaceId;
+        staticInterfaceIds_[selectorsIndex++] = type(IResolverLoupe).interfaceId;
         staticInterfaceIds_[selectorsIndex++] = type(IERC165).interfaceId;
     }
 }

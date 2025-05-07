@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.18;
 
-import {IDiamondLoupe} from '../resolverProxy/IDiamondLoupe.sol';
+import {IResolverLoupe} from '../resolverProxy/IResolverLoupe.sol';
 
 /// @title Resolver Proxy Manager
 /// @notice This contract is used to manage configurations of resolverProxy's.
@@ -138,7 +138,7 @@ interface IDiamondCutManager {
         uint256 _version,
         uint256 _pageIndex,
         uint256 _pageLength
-    ) external view returns (IDiamondLoupe.Facet[] memory facets_);
+    ) external view returns (IResolverLoupe.ResolverFacet[] memory facets_);
 
     function getFacetSelectorsLengthByConfigurationIdVersionAndFacetId(
         bytes32 _configurationId,
@@ -195,7 +195,7 @@ interface IDiamondCutManager {
         bytes32 _configurationId,
         uint256 _version,
         bytes32 _facetId
-    ) external view returns (IDiamondLoupe.Facet memory facet_);
+    ) external view returns (IResolverLoupe.ResolverFacet memory facet_);
 
     /// @notice Returns the facet address.
     /// @param _configurationId key to filter the facets.
