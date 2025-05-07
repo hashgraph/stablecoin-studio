@@ -37,6 +37,4 @@ export interface IConfiguration {
   logs?: ILogConfig;
   factories?: IFactoryConfig[];
   resolvers?: IResolversConfig[];
-  configId?: string;
-  configVersion?: number;
 }

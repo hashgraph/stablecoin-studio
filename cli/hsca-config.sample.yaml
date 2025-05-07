@@ -79,5 +79,3 @@ resolvers:
     network: testnet
   - id: 0.0.XXXXXX
     network: previewnet
-configId: <bytes32 of the config Id>
-configVersion: <verison number>
