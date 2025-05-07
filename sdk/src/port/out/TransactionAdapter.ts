@@ -65,7 +65,7 @@ interface ITransactionAdapter {
 		resolver: ContractId,
 		configId: string,
 		configVersion: number,
-		proxyOwnerAccount: ContractId,
+		proxyOwnerAccount: HederaId,
 		reserveAddress?: ContractId,
 		reserveInitialAmount?: BigDecimal,
 	): Promise<TransactionResponse>;
@@ -165,6 +165,21 @@ interface ITransactionAdapter {
 		pauseKey: PublicKey | undefined,
 		wipeKey: PublicKey | undefined,
 		metadata: string | undefined,
+	): Promise<TransactionResponse>;
+	updateConfigVersion(
+		coin: StableCoinCapabilities,
+		configVersion: number,
+	): Promise<TransactionResponse>;
+	updateResolver(
+		coin: StableCoinCapabilities,
+		resolver: ContractId,
+		configVersion: number,
+		configId: string,
+	): Promise<TransactionResponse>;
+	updateConfig(
+		coin: StableCoinCapabilities,
+		configId: string,
+		configVersion: number,
 	): Promise<TransactionResponse>;
 	getMirrorNodeAdapter(): MirrorNodeAdapter;
 	sign(message: string | Transaction): Promise<string>;
@@ -284,7 +299,7 @@ export default abstract class TransactionAdapter
 		resolver: ContractId,
 		configId: string,
 		configVersion: number,
-		proxyOwnerAccount: ContractId,
+		proxyOwnerAccount: HederaId,
 		reserveAddress?: ContractId,
 		reserveInitialAmount?: BigDecimal,
 	): Promise<TransactionResponse<any, Error>> {
@@ -550,12 +565,40 @@ export default abstract class TransactionAdapter
 	): Promise<TransactionResponse<string[], Error>> {
 		throw new Error('Method not implemented.');
 	}
-
+	updateConfigVersion(
+		coin: StableCoinCapabilities,
+		configVersion: number,
+	): Promise<TransactionResponse> {
+		throw new Error('Method not implemented.');
+	}
+	updateResolver(
+		coin: StableCoinCapabilities,
+		resolver: ContractId,
+		configVersion: number,
+		configId: string,
+	): Promise<TransactionResponse> {
+		throw new Error('Method not implemented.');
+	}
+	updateConfig(
+		coin: StableCoinCapabilities,
+		configId: string,
+		configVersion: number,
+	): Promise<TransactionResponse> {
+		throw new Error('Method not implemented.');
+	}
 	getMirrorNodeAdapter(): MirrorNodeAdapter {
 		throw new Error('Method not implemented.');
 	}
 
 	async getEVMAddress(parameter: any): Promise<any> {
+		if (parameter instanceof ContractId) {
+			const test = (
+				await this.getMirrorNodeAdapter().getContractInfo(
+					parameter.toString(),
+				)
+			).evmAddress.toString();
+			return test;
+		}
 		if (parameter instanceof HederaId) {
 			return (
 				await this.getMirrorNodeAdapter().accountToEvmAddress(parameter)

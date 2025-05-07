@@ -57,6 +57,7 @@ import {
 	SupplierAdminFacet__factory,
 	KYCFacet__factory,
 	CustomFeesFacet__factory,
+	DiamondFacet__factory,
 } from '@hashgraph/stablecoin-npm-contracts';
 import BigDecimal from '../../../domain/context/shared/BigDecimal.js';
 import { TransactionType } from '../TransactionResponseEnums.js';
@@ -99,6 +100,9 @@ import {
 	WIPE_GAS,
 	MAX_ROLES_GAS,
 	UPDATE_CUSTOM_FEES_GAS,
+	UPDATE_CONFIG_VERSION_GAS,
+	UPDATE_CONFIG_GAS,
+	UPDATE_RESOLVER_GAS,
 } from '../../../core/Constants.js';
 import LogService from '../../../app/service/LogService.js';
 import { RESERVE_DECIMALS } from '../../../domain/context/reserve/Reserve.js';
@@ -131,7 +135,7 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		resolver: ContractId,
 		configId: string,
 		configVersion: number,
-		proxyOwnerAccount: ContractId,
+		proxyOwnerAccount: HederaId,
 		reserveAddress?: ContractId,
 		reserveInitialAmount?: BigDecimal,
 	): Promise<TransactionResponse<any, Error>> {
@@ -967,6 +971,66 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		);
 	}
 
+	public async updateConfigVersion(
+		coin: StableCoinCapabilities,
+		configVersion: number,
+	): Promise<TransactionResponse> {
+		const params = new Params({
+			configVersion: configVersion,
+		});
+		return this.performOperation(
+			coin,
+			Operation.UPDATE_CONFIG_VERSION,
+			'updateConfigVersion',
+			UPDATE_CONFIG_VERSION_GAS,
+			params,
+			TransactionType.RECEIPT,
+			DiamondFacet__factory.abi,
+		);
+	}
+
+	public async updateConfig(
+		coin: StableCoinCapabilities,
+		configId: string,
+		configVersion: number,
+	): Promise<TransactionResponse> {
+		const params = new Params({
+			configId: configId,
+			configVersion: configVersion,
+		});
+		return this.performOperation(
+			coin,
+			Operation.UPDATE_CONFIG,
+			'updateConfig',
+			UPDATE_CONFIG_GAS,
+			params,
+			TransactionType.RECEIPT,
+			DiamondFacet__factory.abi,
+		);
+	}
+
+	public async updateResolver(
+		coin: StableCoinCapabilities,
+		resolver: ContractId,
+		configVersion: number,
+		configId: string,
+	): Promise<TransactionResponse> {
+		const params = new Params({
+			resolver: resolver,
+			configId: configId,
+			configVersion: configVersion,
+		});
+		return this.performOperation(
+			coin,
+			Operation.UPDATE_RESOLVER,
+			'updateResolver',
+			UPDATE_RESOLVER_GAS,
+			params,
+			TransactionType.RECEIPT,
+			DiamondFacet__factory.abi,
+		);
+	}
+
 	public async transfers(
 		coin: StableCoinCapabilities,
 		amounts: BigDecimal[],
@@ -1041,7 +1105,6 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 						throw new Error(
 							`StableCoin ${coin.coin.name} does not have a proxy address`,
 						);
-					console.log('estoy aqui contract');
 					return await this.performSmartContractOperation(
 						coin.coin.proxyAddress!.value,
 						operationName,
@@ -1054,7 +1117,6 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					);
 
 				case Decision.HTS:
-					console.log('estoy aqui hts');
 					if (!coin.coin.tokenId)
 						throw new Error(
 							`StableCoin ${coin.coin.name} does not have an underlying token`,
@@ -1077,7 +1139,6 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					);
 			}
 		} catch (error) {
-			console.log(error);
 			LogService.logError(error);
 			const transactionId: string =
 				(error as any).error?.transactionId.toString() ??
@@ -1163,7 +1224,6 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 					);
 				}
 		}
-		console.log('antes del contract call');
 		return await this.contractCall(
 			contractAddress,
 			operationName,
@@ -1373,7 +1433,6 @@ export abstract class HederaTransactionAdapter extends TransactionAdapter {
 		value?: number,
 		startDate?: string,
 	): Promise<TransactionResponse> {
-		console.log('dentro del contract call');
 		const functionCallParameters = this.encodeFunctionCall(
 			functionName,
 			parameters,
@@ -1499,6 +1558,9 @@ class Params {
 	wipeKey?: PublicKey;
 	supplyKey?: PublicKey;
 	metadata?: string;
+	resolver?: ContractId;
+	configId?: string;
+	configVersion?: number;
 
 	constructor({
 		proxy,
@@ -1521,6 +1583,9 @@ class Params {
 		wipeKey,
 		supplyKey,
 		metadata,
+		resolver,
+		configId,
+		configVersion,
 	}: {
 		proxy?: HederaId;
 		role?: string;
@@ -1542,6 +1607,9 @@ class Params {
 		wipeKey?: PublicKey;
 		supplyKey?: PublicKey;
 		metadata?: string;
+		resolver?: ContractId;
+		configId?: string;
+		configVersion?: number;
 	}) {
 		this.proxy = proxy;
 		this.role = role;
@@ -1563,5 +1631,8 @@ class Params {
 		this.wipeKey = wipeKey;
 		this.supplyKey = supplyKey;
 		this.metadata = metadata;
+		this.resolver = resolver;
+		this.configId = configId;
+		this.configVersion = configVersion;
 	}
 }

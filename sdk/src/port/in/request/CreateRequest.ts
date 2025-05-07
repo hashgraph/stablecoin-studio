@@ -332,7 +332,7 @@ export default class CreateRequest extends ValidatedRequest<CreateRequest> {
 				);
 			},
 			metadata: Validation.checkString({ max: 100, emptyCheck: false }),
-			proxyOwnerAccount: Validation.checkContractId(),
+			proxyOwnerAccount: Validation.checkHederaIdFormat(),
 			configId: Validation.checkBytes32Format(),
 			configVersion: Validation.checkNumber(),
 		});

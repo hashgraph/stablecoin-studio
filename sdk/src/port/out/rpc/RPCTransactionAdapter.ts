@@ -34,6 +34,7 @@ import {
 	CashInFacet__factory,
 	CustomFeesFacet__factory,
 	DeletableFacet__factory,
+	DiamondFacet__factory,
 	FreezableFacet__factory,
 	HederaReserveFacet__factory,
 	HederaTokenManagerFacet__factory,
@@ -100,6 +101,9 @@ import {
 	WIPE_GAS,
 	ASSOCIATE_GAS,
 	UPDATE_CUSTOM_FEES_GAS,
+	UPDATE_CONFIG_VERSION_GAS,
+	UPDATE_CONFIG_GAS,
+	UPDATE_RESOLVER_GAS,
 } from '../../../core/Constants.js';
 import { MetaMaskInpageProvider } from '@metamask/providers';
 import { WalletConnectError } from '../../../domain/context/network/error/WalletConnectError.js';
@@ -185,7 +189,7 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 		resolver: ContractId,
 		configId: string,
 		configVersion: number,
-		proxyOwnerAccount: ContractId,
+		proxyOwnerAccount: HederaId,
 		reserveAddress?: ContractId,
 		reserveInitialAmount?: BigDecimal,
 	): Promise<TransactionResponse<any, Error>> {
@@ -522,6 +526,46 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 
 	async delete(coin: StableCoinCapabilities): Promise<TransactionResponse> {
 		return this.performOperation(coin, Operation.DELETE);
+	}
+
+	async updateConfigVersion(
+		coin: StableCoinCapabilities,
+		configVersion: number,
+	): Promise<TransactionResponse> {
+		const params = new Params({
+			configVersion: configVersion,
+		});
+		return this.performOperation(
+			coin,
+			Operation.UPDATE_CONFIG_VERSION,
+			params,
+		);
+	}
+
+	async updateConfig(
+		coin: StableCoinCapabilities,
+		configId: string,
+		configVersion: number,
+	): Promise<TransactionResponse> {
+		const params = new Params({
+			configId: configId,
+			configVersion: configVersion,
+		});
+		return this.performOperation(coin, Operation.UPDATE_CONFIG, params);
+	}
+
+	async updateResolver(
+		coin: StableCoinCapabilities,
+		resolver: ContractId,
+		configVersion: number,
+		configId: string,
+	): Promise<TransactionResponse> {
+		const params = new Params({
+			resolver: await this.getEVMAddress(resolver),
+			configVersion: configVersion,
+			configId: configId,
+		});
+		return this.performOperation(coin, Operation.UPDATE_RESOLVER, params);
 	}
 
 	public async getReserveAddress(
@@ -1807,6 +1851,41 @@ export default class RPCTransactionAdapter extends TransactionAdapter {
 					),
 					this.networkService.environment,
 				);
+			case Operation.UPDATE_CONFIG_VERSION:
+				return RPCTransactionResponseAdapter.manageResponse(
+					await DiamondFacet__factory.connect(
+						evmProxy,
+						this.signerOrProvider,
+					).updateConfigVersion(params!.configVersion!, {
+						gasLimit: UPDATE_CONFIG_VERSION_GAS,
+					}),
+					this.networkService.environment,
+				);
+			case Operation.UPDATE_CONFIG:
+				return RPCTransactionResponseAdapter.manageResponse(
+					await DiamondFacet__factory.connect(
+						evmProxy,
+						this.signerOrProvider,
+					).updateConfig(params!.configId!, params!.configVersion!, {
+						gasLimit: UPDATE_CONFIG_GAS,
+					}),
+					this.networkService.environment,
+				);
+			case Operation.UPDATE_RESOLVER:
+				return RPCTransactionResponseAdapter.manageResponse(
+					await DiamondFacet__factory.connect(
+						evmProxy,
+						this.signerOrProvider,
+					).updateResolver(
+						params!.resolver!,
+						params!.configId!,
+						params!.configVersion!,
+						{
+							gasLimit: UPDATE_RESOLVER_GAS,
+						},
+					),
+					this.networkService.environment,
+				);
 
 			default:
 				throw new Error(
@@ -2030,6 +2109,9 @@ class Params {
 	metadata?: string;
 	fixedFees?: SC_FixedFee[];
 	fractionalFees?: SC_FractionalFee[];
+	configId?: string;
+	configVersion?: number;
+	resolver?: string;
 
 	constructor({
 		role,
@@ -2048,6 +2130,9 @@ class Params {
 		metadata,
 		fixedFees,
 		fractionalFees,
+		configId,
+		configVersion,
+		resolver,
 	}: {
 		role?: string;
 		targetId?: string;
@@ -2065,6 +2150,9 @@ class Params {
 		metadata?: string;
 		fixedFees?: SC_FixedFee[];
 		fractionalFees?: SC_FractionalFee[];
+		configId?: string;
+		configVersion?: number;
+		resolver?: string;
 	}) {
 		this.role = role;
 		this.targetId = targetId;
@@ -2082,5 +2170,8 @@ class Params {
 		this.metadata = metadata;
 		this.fixedFees = fixedFees;
 		this.fractionalFees = fractionalFees;
+		this.configId = configId;
+		this.configVersion = configVersion;
+		this.resolver = resolver;
 	}
 }

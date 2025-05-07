@@ -151,6 +151,9 @@ let proxyPendingOwner = '0x0000000000000000000000000000000000000000';
 let reserveAmount = RESERVE_AMOUNT;
 let reserveAddress = RESERVE_ADDRESS;
 let user_account: Account;
+let configVersion: number;
+let configId: string;
+let resolverAddress: string;
 
 function hexToDecimal(hexString: string): number {
 	if (!/^0x[a-fA-F0-9]+$|^[a-fA-F0-9]+$/.test(hexString)) {
@@ -518,6 +521,18 @@ function smartContractCalls(functionName: string, decoded: any): void {
 		const account =
 			'0x' + (decoded as any).account.toUpperCase().substring(2);
 		wipe(account, amount);
+	} else if (functionName == 'updateConfigVersion') {
+		const version = (decoded as any)._newVersion as BigNumber;
+		configVersion = version.toNumber();
+	} else if (functionName == 'updateConfig') {
+		configId = (decoded as any)._newConfigurationId;
+		const version = (decoded as any)._newVersion as BigNumber;
+		configVersion = version.toNumber();
+	} else if (functionName == 'updateResolver') {
+		resolverAddress = (decoded as any)._newResolver;
+		configId = (decoded as any)._newConfigurationId;
+		const version = (decoded as any)._newVersion as BigNumber;
+		configVersion = version.toNumber();
 	} else if (functionName == 'updateToken') {
 		const updatedToken = (decoded as any).updatedToken;
 		TokenName = updatedToken.tokenName;
@@ -935,7 +950,7 @@ jest.mock('../src/port/out/hs/hts/HTSTransactionAdapter', () => {
 		resolver: ContractId,
 		configId: string,
 		configVersion: number,
-		proxyOwnerAccount: ContractId,
+		proxyOwnerAccount: HederaId,
 		reserveAddress?: ContractId,
 		reserveInitialAmount?: BigDecimal,
 	): Promise<TransactionResponse<any, Error>> {
@@ -1269,6 +1284,10 @@ jest.mock('../src/port/out/rpc/RPCQueryAdapter', () => {
 	);
 	singletonInstance.getMetadata = jest.fn((address: EvmAddress) => {
 		return metadata;
+	});
+
+	singletonInstance.getConfigInfo = jest.fn(async (address: EvmAddress) => {
+		return [resolverAddress, configId, configVersion];
 	});
 
 	return {

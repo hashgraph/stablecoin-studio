@@ -23,6 +23,7 @@ import { CommandResponse } from '../../../../../core/command/CommandResponse.js'
 import ContractId from '../../../../../domain/context/contract/ContractId.js';
 import { StableCoinProps } from '../../../../../domain/context/stablecoin/StableCoin.js';
 import BigDecimal from '../../../../../domain/context/shared/BigDecimal.js';
+import { HederaId } from '../../../../../domain/context/shared/HederaId.js';
 
 export class CreateCommandResponse implements CommandResponse {
 	public readonly tokenId: ContractId;
@@ -47,7 +48,7 @@ export class CreateCommand extends Command<CreateCommandResponse> {
 		public readonly factory?: ContractId,
 		public readonly reserveAddress?: ContractId,
 		public readonly reserveInitialAmount?: BigDecimal,
-		public readonly proxyOwnerAccount?: ContractId,
+		public readonly proxyOwnerAccount?: HederaId,
 		public readonly resolver?: ContractId,
 		public readonly configId?: string,
 		public readonly configVersion?: number,

@@ -68,6 +68,10 @@ import SignTransactionRequest from './SignTransactionRequest.js';
 import SubmitTransactionRequest from './SubmitTransactionRequest.js';
 import RemoveTransactionRequest from './RemoveTransactionRequest.js';
 import GetTransactionsRequest from './GetTransactionsRequest.js';
+import UpdateConfigRequest from './UpdateConfigRequest.js';
+import UpdateConfigVersionRequest from './UpdateConfigVersionRequest.js';
+import UpdateResolverRequest from './UpdateResolverRequest.js';
+import GetConfigInfoRequest from './GetConfigInfoRequest.js';
 
 export * from './ConnectRequest.js';
 export * from './BaseRequest.js';
@@ -122,4 +126,8 @@ export {
 	SubmitTransactionRequest,
 	RemoveTransactionRequest,
 	GetTransactionsRequest,
+	UpdateConfigRequest,
+	UpdateConfigVersionRequest,
+	UpdateResolverRequest,
+	GetConfigInfoRequest,
 };

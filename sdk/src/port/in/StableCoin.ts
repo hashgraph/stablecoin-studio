@@ -282,9 +282,7 @@ class StableCoinInPort implements IStableCoinInPort {
 							RESERVE_DECIMALS,
 					  )
 					: undefined,
-				proxyOwnerAccount
-					? new ContractId(proxyOwnerAccount)
-					: undefined,
+				proxyOwnerAccount ? new HederaId(proxyOwnerAccount) : undefined,
 				resolver ? new ContractId(resolver) : undefined,
 				configId,
 				configVersion,
