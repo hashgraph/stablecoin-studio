@@ -128,7 +128,7 @@ export async function registerBusinessLogics({
         new ValidateTxResponseCommand({
             txResponse: response,
             confirmationEvent: EVENTS.businessLogicResolver.registered,
-            errorMessage: MESSAGES.businessLogicResolver.error.registering,
+            errorMessage: MESSAGES.businessLogicResolver.error.register,
         })
     )
 }
@@ -155,7 +155,7 @@ async function sendBatchConfiguration(
         new ValidateTxResponseCommand({
             txResponse,
             confirmationEvent: EVENTS.businessLogicResolver.configurationCreated,
-            errorMessage: MESSAGES.businessLogicResolver.error.creatingConfigurations,
+            errorMessage: MESSAGES.businessLogicResolver.error.createConfigurations,
         })
     )
 }

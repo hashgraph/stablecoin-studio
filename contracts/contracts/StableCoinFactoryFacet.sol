@@ -129,12 +129,13 @@ contract StableCoinFactoryFacet is IStaticFunctionSelectors, IStableCoinFactory,
      * @return reserve address
      */
     function _handleReserve(TokenStruct calldata requestedToken) private returns (address) {
+        bool createReserve = requestedToken.createReserve;
         address reserveAddress = requestedToken.reserveAddress;
-        if (!requestedToken.createReserve && reserveAddress == address(0)) {
+        if (!createReserve && reserveAddress == address(0)) {
             return address(0);
         }
 
-        if (requestedToken.createReserve) {
+        if (createReserve) {
             HederaReserveFacet reserveContract = new HederaReserveFacet();
             _validationReserveInitialAmount(
                 reserveContract.decimals(),

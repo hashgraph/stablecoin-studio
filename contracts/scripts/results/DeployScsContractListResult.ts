@@ -48,27 +48,27 @@ export interface DeployScsContractListResultParams {
 }
 
 export default class DeployScsContractListResult {
-    public readonly businessLogicResolver: DeployContractResult<BusinessLogicResolver>
-    public readonly diamondFacet: DeployContractResult<DiamondFacet>
-    public readonly stableCoinFactoryFacet: DeployContractResult<StableCoinFactoryFacet>
-    public readonly hederaTokenManagerFacet: DeployContractResult<HederaTokenManagerFacet>
-    public readonly hederaReserveFacet: DeployContractResult<HederaReserveFacet>
-    public readonly burnableFacet: DeployContractResult<BurnableFacet>
-    public readonly cashInFacet: DeployContractResult<CashInFacet>
-    public readonly customFeesFacet: DeployContractResult<CustomFeesFacet>
-    public readonly deletableFacet: DeployContractResult<DeletableFacet>
-    public readonly freezableFacet: DeployContractResult<FreezableFacet>
-    public readonly holdManagementFacet: DeployContractResult<HoldManagementFacet>
-    public readonly kycFacet: DeployContractResult<KYCFacet>
-    public readonly pausableFacet: DeployContractResult<PausableFacet>
-    public readonly rescuableFacet: DeployContractResult<RescuableFacet>
-    public readonly reserveFacet: DeployContractResult<ReserveFacet>
-    public readonly roleManagementFacet: DeployContractResult<RoleManagementFacet>
-    public readonly rolesFacet: DeployContractResult<RolesFacet>
-    public readonly supplierAdminFacet: DeployContractResult<SupplierAdminFacet>
-    public readonly tokenOwnerFacet: DeployContractResult<TokenOwnerFacet>
-    public readonly wipeableFacet: DeployContractResult<WipeableFacet>
-    public readonly deployer?: Signer
+    public businessLogicResolver: DeployContractResult<BusinessLogicResolver>
+    public diamondFacet: DeployContractResult<DiamondFacet>
+    public stableCoinFactoryFacet: DeployContractResult<StableCoinFactoryFacet>
+    public hederaTokenManagerFacet: DeployContractResult<HederaTokenManagerFacet>
+    public hederaReserveFacet: DeployContractResult<HederaReserveFacet>
+    public burnableFacet: DeployContractResult<BurnableFacet>
+    public cashInFacet: DeployContractResult<CashInFacet>
+    public customFeesFacet: DeployContractResult<CustomFeesFacet>
+    public deletableFacet: DeployContractResult<DeletableFacet>
+    public freezableFacet: DeployContractResult<FreezableFacet>
+    public holdManagementFacet: DeployContractResult<HoldManagementFacet>
+    public kycFacet: DeployContractResult<KYCFacet>
+    public pausableFacet: DeployContractResult<PausableFacet>
+    public rescuableFacet: DeployContractResult<RescuableFacet>
+    public reserveFacet: DeployContractResult<ReserveFacet>
+    public roleManagementFacet: DeployContractResult<RoleManagementFacet>
+    public rolesFacet: DeployContractResult<RolesFacet>
+    public supplierAdminFacet: DeployContractResult<SupplierAdminFacet>
+    public tokenOwnerFacet: DeployContractResult<TokenOwnerFacet>
+    public wipeableFacet: DeployContractResult<WipeableFacet>
+    public deployer?: Signer
 
     constructor({
         businessLogicResolver,

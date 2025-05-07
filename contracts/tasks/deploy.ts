@@ -157,33 +157,13 @@ task(
             })
         )
 
-        result.businessLogicResolver
-        result.stableCoinFactoryFacet
-        result.hederaTokenManagerFacet
-        result.diamondFacet
-        result.reserveFacet
-        result.burnableFacet
-        result.cashInFacet
-        result.customFeesFacet
-        result.deletableFacet
-        result.freezableFacet
-        result.hederaReserveFacet
-        result.kycFacet
-        result.holdManagementFacet
-        result.pausableFacet
-        result.rescuableFacet
-        result.roleManagementFacet
-        result.rolesFacet
-        result.supplierAdminFacet
-        result.tokenOwnerFacet
-        result.wipeableFacet
-
         // * Display the deployed addresses
         const addressList = {
             'Business Logic Resolver Proxy': result.businessLogicResolver.proxyAddress,
             'Business Logic Resolver Proxy Admin': result.businessLogicResolver.proxyAdminAddress,
             'Business Logic Resolver': result.businessLogicResolver.address,
             'Stable Coin Factory Facet': result.stableCoinFactoryFacet.address,
+            'Stable Coin Factory Proxy': result.stableCoinFactoryFacet.proxyAddress,
             'Hedera Token Manager Facet': result.hederaTokenManagerFacet.address,
             'Diamond Facet': result.diamondFacet.address,
             'Reserve Facet': result.reserveFacet.address,

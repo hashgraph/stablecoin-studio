@@ -71,6 +71,7 @@ export async function deployStableCoin({
     const stableCoinFactory = StableCoinFactoryFacet__factory.connect(businessLogicResolverAddress, wallet)
     // * Deploy new StableCoin using the Factory
     console.log(MESSAGES.stableCoinFactory.info.deployStableCoin)
+    console.log(tokenStruct)
     const deployScResponse = await stableCoinFactory.deployStableCoin(tokenStruct, {
         gasLimit: GAS_LIMIT.stableCoinFactory.deployStableCoin,
         value: VALUE.stableCoinFactory.deployStableCoin,
@@ -179,34 +180,36 @@ export async function deployFullInfrastructure({
     let facetLists = CreateConfigurationsForDeployedContractsResult.empty()
     if (!usingDeployed) {
         // * Initialize BusinessLogicResolver
-        console.log(MESSAGES.businessLogicResolver.info.initializing)
+        console.log(MESSAGES.businessLogicResolver.info.initialize)
         const initResponse = await businessLogicResolver.contract.initialize_BusinessLogicResolver({
             gasLimit: GAS_LIMIT.initialize.businessLogicResolver,
         })
         await validateTxResponse(
             new ValidateTxResponseCommand({
                 txResponse: initResponse,
-                errorMessage: MESSAGES.businessLogicResolver.error.initializing,
+                errorMessage: MESSAGES.businessLogicResolver.error.initialize,
             })
         )
+        console.log(MESSAGES.businessLogicResolver.success.initialize)
         // * Register business logic contracts
-        console.log(MESSAGES.businessLogicResolver.info.registering)
+        console.log(MESSAGES.businessLogicResolver.info.register)
 
         const registerCommand = new RegisterDeployedContractBusinessLogicsCommand({
             deployedContractList,
             signer,
         })
         await registerDeployedContractBusinessLogics(registerCommand)
-
+        console.log(MESSAGES.businessLogicResolver.success.register)
         // * Create configurations for all Securities (EquityUSA, BondUSA)
-        console.log(MESSAGES.businessLogicResolver.info.creatingConfigurations)
+        console.log(MESSAGES.businessLogicResolver.info.createConfigurations)
         const createCommand = new CreateConfigurationsForDeployedContractsCommand({
             deployedContractList,
             signer,
         })
         facetLists = await createConfigurationsForDeployedContracts(partialBatchDeploy, createCommand)
     }
-    console.log(MESSAGES.businessLogicResolver.info.configured)
+    console.log(MESSAGES.businessLogicResolver.success.createConfigurations)
+    console.log(MESSAGES.stableCoinFactory.info.deployResolverProxy)
     // * Deploy ResolverProxy for StableCoinFactory
     const resolverProxyDeployCommand = await DeployContractCommand.newInstance({
         factory: new ResolverProxy__factory(),
@@ -229,21 +232,26 @@ export async function deployFullInfrastructure({
         },
     })
     const stableCoinFactoryResolverProxy = await deployContract(resolverProxyDeployCommand)
+    console.log(MESSAGES.stableCoinFactory.info.deployResolverProxy)
+    // Store the proxy address in the deployed contract list
+    deployedContractList.stableCoinFactoryFacet.proxyAddress = stableCoinFactoryResolverProxy.address
 
     console.log(MESSAGES.deploy.success.deployFullInfrastructure)
 
     // * Update Environment
-    environment = new Environment({
-        stableCoinFactoryFacetIdList: facetLists.stableCoinFactoryFacetIdList,
-        stableCoinFactoryFacetVersionList: facetLists.stableCoinFactoryFacetVersionList,
-        stableCoinFacetIdList: facetLists.stableCoinFacetIdList,
-        stableCoinFacetVersionList: facetLists.stableCoinFacetVersionList,
-        reserveFacetIdList: facetLists.reserveFacetIdList,
-        reserveFacetVersionList: facetLists.reserveFacetVersionList,
-        businessLogicResolver: businessLogicResolver.contract,
-        stableCoinFactoryProxyAddress: stableCoinFactoryResolverProxy.address,
-        deployedContracts: { deployer, ...deployedContractList },
-    })
+    if (useEnvironment) {
+        environment = new Environment({
+            stableCoinFactoryFacetIdList: facetLists.stableCoinFactoryFacetIdList,
+            stableCoinFactoryFacetVersionList: facetLists.stableCoinFactoryFacetVersionList,
+            stableCoinFacetIdList: facetLists.stableCoinFacetIdList,
+            stableCoinFacetVersionList: facetLists.stableCoinFacetVersionList,
+            reserveFacetIdList: facetLists.reserveFacetIdList,
+            reserveFacetVersionList: facetLists.reserveFacetVersionList,
+            businessLogicResolver: businessLogicResolver.contract,
+            stableCoinFactoryProxyAddress: stableCoinFactoryResolverProxy.address,
+            deployedContracts: { deployer, ...deployedContractList },
+        })
+    }
 
     return new DeployFullInfrastructureResult({
         ...deployedContractList,

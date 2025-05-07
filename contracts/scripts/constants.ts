@@ -219,6 +219,7 @@ export const MESSAGES = {
             deploy: '🚀 Deploying StableCoinFactory...',
             initialize: '🚀 Initializing StableCoinFactory...',
             deployStableCoin: '🚀 Deploying StableCoin...',
+            deployResolverProxy: '🚀 Deploying StableCoin Resolver Proxy...',
             addHederaTokenManagerVersion: '🚀 Adding HederaTokenManager version...',
             editHederaTokenManagerAddress: '✏️ Editing HederaTokenManager address...',
             removeHederaTokenManagerAddress: '🗑️ Removing HederaTokenManager address...',
@@ -227,6 +228,7 @@ export const MESSAGES = {
             deploy: '✅ StableCoinFactory deployed successfully.',
             initialize: '✅ StableCoinFactory initialized successfully.',
             deployStableCoin: '✅ StableCoin deployed successfully.',
+            deployResolverProxy: '✅ StableCoin Resolver Proxy deployed successfully.',
             addHederaTokenManagerVersion: '✅ HederaTokenManager version added successfully.',
             editHederaTokenManagerAddress: '✅ HederaTokenManager address edited successfully.',
             removeHederaTokenManagerAddress: '✅ HederaTokenManager address removed successfully.', // Added success message for removeHederaTokenManagerAddress
@@ -242,17 +244,21 @@ export const MESSAGES = {
     },
     businessLogicResolver: {
         info: {
-            initializing: 'Initializing business logic resolver. please wait...',
-            registering: 'Registering business logics. please wait...',
-            creatingConfigurations: 'Creating configurations. please wait...',
-            configured: 'Business logic resolver configured successfully',
+            initialize: 'Initializing business logic resolver...',
+            register: 'Registering business logics...',
+            createConfigurations: 'Creating configurations...',
+        },
+        success: {
+            initialize: '✅ Business logic resolver initialized successfully',
+            register: '✅ Business logics registered successfully',
+            createConfigurations: '✅ Configurations created successfully',
         },
         error: {
             notFound: 'Business logic resolver not found',
             proxyNotFound: 'Business logic resolver proxy not found',
-            initializing: 'Error initializing business logic resolver',
-            registering: 'Error registering business logics',
-            creatingConfigurations: 'Error creating configurations',
+            initialize: 'Error initializing business logic resolver',
+            register: 'Error registering business logics',
+            createConfigurations: 'Error creating configurations',
         },
     },
 }

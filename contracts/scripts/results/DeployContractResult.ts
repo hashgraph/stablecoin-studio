@@ -2,12 +2,12 @@ import { Contract, ContractReceipt } from 'ethers'
 import { ContractName } from '@configuration'
 
 export default class DeployContractResult<C extends Contract> {
-    public readonly name: ContractName
-    public readonly address: string
-    public readonly contract: C
-    public readonly proxyAddress?: string
-    public readonly proxyAdminAddress?: string
-    public readonly receipt?: ContractReceipt
+    public name: ContractName
+    public address: string
+    public contract: C
+    public proxyAddress?: string
+    public proxyAdminAddress?: string
+    public receipt?: ContractReceipt
 
     constructor({
         name,
