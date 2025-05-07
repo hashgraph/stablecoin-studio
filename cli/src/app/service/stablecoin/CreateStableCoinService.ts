@@ -23,9 +23,7 @@ import { utilsService } from '../../../index.js';
 import {
   Account,
   CreateRequest,
-  Factory,
   GetPublicKeyRequest,
-  GetTokenManagerListRequest,
   KYCRequest,
   RequestAccount,
   RequestPrivateKey,
@@ -38,7 +36,7 @@ import {
 import { IManagedFeatures } from '../../../domain/configuration/interfaces/IManagedFeatures.js';
 import Service from '../Service.js';
 import SetConfigurationService from '../configuration/SetConfigurationService.js';
-import SetFactoryService from '../configuration/SetFactoryService.js';
+import SetResolverAndFactoryService from '../configuration/SetResolverAndFactoryService.js';
 import AssociateStableCoinService from './AssociateStableCoinService.js';
 import KYCStableCoinService from './KYCStableCoinService.js';
 import { AccountType } from '../../../domain/configuration/interfaces/AccountType';
@@ -71,7 +69,8 @@ export default class CreateStableCoinService extends Service {
     const setConfigurationService: SetConfigurationService =
       new SetConfigurationService();
 
-    const factoryService: SetFactoryService = new SetFactoryService();
+    const resolverAndFactoryService: SetResolverAndFactoryService =
+      new SetResolverAndFactoryService();
 
     if (!utilsService.isAccountConfigValid(currentAccount)) {
       await setConfigurationService.initConfiguration(
@@ -81,9 +80,14 @@ export default class CreateStableCoinService extends Service {
     }
     if (
       utilsService.getCurrentFactory().id !==
-      (await factoryService.getSDKFactory())
+        (await resolverAndFactoryService.getSDKFactory()) ||
+      utilsService.getCurrentResolver().id !==
+        (await resolverAndFactoryService.getSDKResolver())
     ) {
-      await factoryService.setSDKFactory(utilsService.getCurrentFactory().id);
+      await resolverAndFactoryService.setSDKResolverAndFactory(
+        utilsService.getCurrentFactory().id,
+        utilsService.getCurrentResolver().id,
+      );
     }
     let createdToken;
 
@@ -143,6 +147,8 @@ export default class CreateStableCoinService extends Service {
       symbol: '',
       decimals: 6,
       createReserve: false,
+      configId: '',
+      configVersion: 1,
     });
 
     // Name
@@ -163,6 +169,29 @@ export default class CreateStableCoinService extends Service {
         tokenToCreate.symbol = await utilsService.defaultSingleAsk(
           language.getText('stablecoin.askSymbol'),
           tokenToCreate.symbol || 'HDC',
+        );
+      },
+    );
+
+    // Resolver config
+    await utilsService.handleValidation(
+      () => tokenToCreate.validate('configId'),
+      async () => {
+        tokenToCreate.configId = await utilsService.defaultSingleAsk(
+          language.getText('stablecoin.askConfigId'),
+          tokenToCreate.configId ||
+            '0x0000000000000000000000000000000000000000000000000000000000000001',
+        );
+      },
+    );
+    await utilsService.handleValidation(
+      () => tokenToCreate.validate('configVersion'),
+      async () => {
+        tokenToCreate.configVersion = Number(
+          await utilsService.defaultSingleAsk(
+            language.getText('stablecoin.askConfigId'),
+            tokenToCreate.configVersion.toString() || '1',
+          ),
         );
       },
     );
@@ -230,6 +259,8 @@ export default class CreateStableCoinService extends Service {
         ? TokenSupplyType.INFINITE
         : TokenSupplyType.FINITE,
       maxSupply: tokenToCreate.maxSupply,
+      configId: tokenToCreate.configId,
+      configVersion: tokenToCreate.configVersion,
     });
 
     if (managedBySC) {
@@ -328,35 +359,13 @@ export default class CreateStableCoinService extends Service {
       }
     }
 
-    // ProxyAdminOwner
-    let proxyAdminOwnerAccount = false;
-    proxyAdminOwnerAccount = await this.askProxyAdminOwner();
-
-    if (!proxyAdminOwnerAccount) {
-      await utilsService.handleValidation(
-        () => tokenToCreate.validate('proxyAdminOwnerAccount'),
-        async () => {
-          tokenToCreate.proxyAdminOwnerAccount =
-            await utilsService.defaultSingleAsk(
-              language.getText('stablecoin.askProxyAdminOwnerAccount'),
-              tokenToCreate.proxyAdminOwnerAccount || '0.0.0',
-            );
-        },
-      );
-    }
-
-    // ASK HederaTokenManager version
     tokenToCreate.stableCoinFactory = utilsService.getCurrentFactory().id;
 
-    await this.askHederaTokenManagerVersion(
-      tokenToCreate.stableCoinFactory,
-      tokenToCreate,
-    );
-
     const stableCoinResume = {
-      hederaTokenManager: tokenToCreate.hederaTokenManager,
       name: tokenToCreate.name,
       symbol: tokenToCreate.symbol,
+      configId: tokenToCreate.configId,
+      configVersion: tokenToCreate.configVersion,
       decimals: tokenToCreate.decimals,
       initialSupply: initialSupply === '' ? undefined : initialSupply,
       supplyType: supplyType
@@ -414,10 +423,6 @@ export default class CreateStableCoinService extends Service {
       cashinRole: tokenToCreate.cashInRoleAccount,
       cashinAllowance: tokenToCreate.cashInRoleAllowance,
       metadata: tokenToCreate.metadata,
-      proxyAdminOwnerAccount:
-        tokenToCreate.proxyAdminOwnerAccount === undefined
-          ? currentAccount.accountId
-          : tokenToCreate.proxyAdminOwnerAccount,
     };
     console.log(stableCoinResume);
     if (
@@ -440,41 +445,6 @@ export default class CreateStableCoinService extends Service {
     );
   }
 
-  private async askHederaTokenManagerVersion(
-    factory: string,
-    request: CreateRequest,
-  ): Promise<void> {
-    const factoryListEvm = await Factory.getHederaTokenManagerList(
-      new GetTokenManagerListRequest({ factoryId: factory }),
-    ).then((value) => value.reverse());
-
-    const choices = factoryListEvm
-      .map((item) => item.toString())
-      .sort((token1, token2) =>
-        +token1.split('.').slice(-1)[0] > +token2.split('.').slice(-1)[0]
-          ? -1
-          : 1,
-      );
-    choices.push(language.getText('stablecoin.askHederaTokenManagerOther'));
-
-    const versionSelection = await utilsService.defaultMultipleAsk(
-      language.getText('stablecoin.askHederaTokenManagerVersion'),
-      choices,
-    );
-
-    if (versionSelection === choices[choices.length - 1]) {
-      await utilsService.handleValidation(
-        () => request.validate('hederaTokenManager'),
-        async () => {
-          request.hederaTokenManager = await utilsService.defaultSingleAsk(
-            language.getText('stablecoin.askHederaTokenManagerImplementation'),
-            '0.0.0',
-          );
-        },
-      );
-    } else request.hederaTokenManager = versionSelection;
-  }
-
   private async askForOptionalProps(): Promise<boolean> {
     return await utilsService.defaultConfirmAsk(
       language.getText('stablecoin.askOptionalProps'),
@@ -492,13 +462,6 @@ export default class CreateStableCoinService extends Service {
   private async askForExistingReserve(): Promise<boolean> {
     return await utilsService.defaultConfirmAsk(
       language.getText('stablecoin.askExistingReserve'),
-      true,
-    );
-  }
-
-  private async askProxyAdminOwner(): Promise<boolean> {
-    return await utilsService.defaultConfirmAsk(
-      language.getText('stablecoin.askProxyAdminOwner'),
       true,
     );
   }

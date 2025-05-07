@@ -20,7 +20,6 @@
 
 import {
   BigDecimal,
-  Proxy,
   StableCoin,
   HederaId,
   ContractId,
@@ -42,11 +41,7 @@ const mockedSelectedStableCoin = {
   totalSupply: BigDecimal.fromString('1000.', 6),
   maxSupply: BigDecimal.fromString('1000', 6),
   proxyAddress: new ContractId('0.0.49319785'),
-  proxyAdminAddress: new ContractId('0.0.49319785'),
   evmProxyAddress: new EvmAddress('0000000000000000000000000000000002f08f69'),
-  evmProxyAdminAddress: new EvmAddress(
-    '0000000000000000000000000000000002f08f69',
-  ),
   treasury: HederaId.from('0.0.49319785'),
   paused: false,
   deleted: false,
@@ -71,6 +66,9 @@ const mockedSelectedStableCoin = {
   expirationTimestamp: 1687791349,
   metadata: 'metadata',
   feeScheduleKey: new PublicKey('publicKey'),
+  configId:
+    '0x0000000000000000000000000000000000000000000000000000000000000001',
+  configVersion: 1,
 };
 
 describe(`Testing DetailsStableCoinService class`, () => {
@@ -100,19 +98,12 @@ describe(`Testing DetailsStableCoinService class`, () => {
   });
 
   it('Should instance getDetailsStableCoins show in true', async () => {
-    const implementationAddress = new ContractId('0.0.123456');
-    const owner = HederaId.from('0.0.234567');
-    const pendingOwner = HederaId.from('0.0.234567');
     jest.spyOn(console, 'log');
-    jest
-      .spyOn(Proxy, 'getProxyConfig')
-      .mockResolvedValue({ implementationAddress, owner, pendingOwner });
     const respDetail = await service.getDetailsStableCoins(id);
 
     expect(service).not.toBeNull();
-    expect(utilsService.showSpinner).toHaveBeenCalledTimes(2);
+    expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
     expect(StableCoin.getInfo).toHaveBeenCalledTimes(1);
-    expect(Proxy.getProxyConfig).toHaveBeenCalledTimes(1);
     expect(console.log).toHaveBeenCalled();
     expect(respDetail.name).toEqual(mockedSelectedStableCoin.name);
   });
@@ -127,13 +118,9 @@ describe(`Testing DetailsStableCoinService class`, () => {
       totalSupply: BigDecimal.fromString('1000.', 6),
       maxSupply: BigDecimal.fromString('1000', 6),
       proxyAddress: new ContractId('0.0.49319785'),
-      proxyAdminAddress: new ContractId('0.0.49319785'),
       reserveAddress: new ContractId('0.0.49319785'),
       reserveAmount: BigDecimal.fromString('1000.', 6),
       evmProxyAddress: new EvmAddress(
-        '0000000000000000000000000000000002f08f69',
-      ),
-      evmProxyAdminAddress: new EvmAddress(
         '0000000000000000000000000000000002f08f69',
       ),
       treasury: HederaId.from('0.0.49319785'),
@@ -153,19 +140,12 @@ describe(`Testing DetailsStableCoinService class`, () => {
       expirationTimestamp: undefined,
     };
     jest.spyOn(StableCoin, 'getInfo').mockResolvedValue(mockedStableCoin);
-    const implementationAddress = new ContractId('0.0.123456');
-    const owner = HederaId.from('0.0.234567');
-    const pendingOwner = HederaId.from('0.0.234567');
     jest.spyOn(console, 'log');
-    jest
-      .spyOn(Proxy, 'getProxyConfig')
-      .mockResolvedValue({ implementationAddress, owner, pendingOwner });
     const respDetail = await service.getDetailsStableCoins(id);
 
     expect(service).not.toBeNull();
-    expect(utilsService.showSpinner).toHaveBeenCalledTimes(2);
+    expect(utilsService.showSpinner).toHaveBeenCalledTimes(1);
     expect(StableCoin.getInfo).toHaveBeenCalledTimes(1);
-    expect(Proxy.getProxyConfig).toHaveBeenCalledTimes(1);
     expect(console.log).toHaveBeenCalled();
     expect(respDetail.name).toEqual(mockedSelectedStableCoin.name);
   });

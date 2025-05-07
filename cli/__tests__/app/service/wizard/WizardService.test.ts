@@ -111,6 +111,10 @@ describe('wizardService', () => {
       { id: '1', network: 'dev' },
       { id: '2', network: 'testnet' },
     ],
+    resolvers: [
+      { id: '1', network: 'dev' },
+      { id: '2', network: 'testnet' },
+    ],
     mirrors: [
       {
         name: 'mirror-1',
@@ -280,8 +284,8 @@ describe('wizardService', () => {
     const setCurrentBackendMock = jest
       .spyOn(utilsService, 'setCurrentBackend')
       .mockImplementation();
-    const setCurrentFactoryMock = jest
-      .spyOn(utilsService, 'setCurrentFactory')
+    const setCurrentFactoryAndResolverMock = jest
+      .spyOn(utilsService, 'setCurrentResolverAndFactory')
       .mockImplementation();
     const setNetworkMock = jest
       .spyOn(Network, 'setNetwork')
@@ -332,10 +336,13 @@ describe('wizardService', () => {
     expect(setCurrentBackendMock).toHaveBeenCalledWith({
       endpoint: configurationMock.backend.endpoint,
     });
-    expect(setCurrentFactoryMock).toHaveBeenCalledWith({
-      id: '2',
-      network: 'testnet',
-    });
+    expect(setCurrentFactoryAndResolverMock).toHaveBeenCalledWith(
+      {
+        id: '2',
+        network: 'testnet',
+      },
+      { id: '2', network: 'testnet' },
+    );
     expect(setNetworkMock).toHaveBeenCalledWith(expect.any(Object));
   });
 });

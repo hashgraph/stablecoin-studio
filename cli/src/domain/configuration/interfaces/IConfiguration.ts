@@ -25,6 +25,7 @@ import { IFactoryConfig } from './IFactoryConfig.js';
 import { IMirrorsConfig } from './IMirrorsConfig.js';
 import { IRPCsConfig } from './IRPCsConfig.js';
 import BackendConfig from './BackendConfig.js';
+import { IResolversConfig } from './IResolverConfig.js';
 
 export interface IConfiguration {
   defaultNetwork?: string;
@@ -35,4 +36,7 @@ export interface IConfiguration {
   backend?: BackendConfig;
   logs?: ILogConfig;
   factories?: IFactoryConfig[];
+  resolvers?: IResolversConfig[];
+  configId?: string;
+  configVersion?: number;
 }

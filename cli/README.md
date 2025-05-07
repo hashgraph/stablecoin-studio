@@ -158,18 +158,23 @@ A config file can be manually created using the [sample file (hsca-config.sample
   - **logs** :
     - **path** : log file path. Typically './logs'
     - **level** : log level ERROR, TRACE, ...
+  - **resolvers** : list of resolvers, at most one per network.
+    - **id** : Resolver Id.
+    - **network** : Network where the resolver exists, choose between mainnet, testnet and previewnet.
   - **factories** : list of factories, at most one per network.
     - **id** : Factory Id.
     - **network** : Network where the factory exists, choose between mainnet, testnet and previewnet.
 
-## Factories 
+## Factories and resolvers
 
-We provide default addresses for the factories that we have deployed for anyone to use that are updated whenever a new version is released.
+We provide default addresses for the factories and resolvers that we have deployed for anyone to use that are updated whenever a new version is released.
 
-| Contract name  | Address      | Network    |
-| -------------- | ------------ | ---------- |
-| FactoryAddress | 0.0.14455068 | Testnet    |
-| FactoryAddress | 0.0.XXXXXX   | Previewnet |
+| Contract name   | Address      | Network    |
+| --------------- | ------------ | ---------- |
+| FactoryAddress  | 0.0.14455068 | Testnet    |
+| FactoryAddress  | 0.0.XXXXXX   | Previewnet |
+| ResolverAddress | 0.0.14455068 | Testnet    |
+| ResolverAddress | 0.0.XXXXXX   | Previewnet |
 
 ## CLI flow
 

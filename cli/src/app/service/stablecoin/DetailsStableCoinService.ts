@@ -25,9 +25,6 @@ import {
   GetStableCoinDetailsRequest,
   StableCoin,
   StableCoinViewModel,
-  Proxy,
-  GetProxyConfigRequest,
-  ProxyConfigurationViewModel,
 } from '@hashgraph/stablecoin-npm-sdk';
 import FeeStableCoinService from './FeeStableCoinService.js';
 
@@ -68,20 +65,6 @@ export default class DetailsStableCoinService extends Service {
       },
     );
     if (show) {
-      let proxyConfig: ProxyConfigurationViewModel;
-
-      await utilsService.showSpinner(
-        Proxy.getProxyConfig(
-          new GetProxyConfigRequest({
-            tokenId: id,
-          }),
-        ).then((response) => (proxyConfig = response)),
-        {
-          text: language.getText('state.loading'),
-          successText: language.getText('state.proxyConfigCompleted') + '\n',
-        },
-      );
-
       const reserveData = respDetail.reserveAddress
         ? {
             reserveAddress: respDetail?.reserveAddress.toString(),
@@ -96,13 +79,7 @@ export default class DetailsStableCoinService extends Service {
         maxSupply: respDetail.maxSupply.toString(),
         totalSupply: respDetail.totalSupply.toString(),
         proxyAddress: respDetail.proxyAddress.toString(),
-        proxyAdminAddress: respDetail.proxyAdminAddress.toString(),
         evmProxyAddress: respDetail.evmProxyAddress.toString(),
-        evmProxyAdminAddress: respDetail.evmProxyAdminAddress.toString(),
-        proxyImplementationAddress:
-          proxyConfig.implementationAddress.toString(),
-        proxyOwner: proxyConfig.owner.toString(),
-        proxyPendingOwner: proxyConfig.pendingOwner.toString(),
         treasury: respDetail.treasury.toString(),
         autoRenewPeriod: respDetail?.autoRenewPeriod
           ? `${respDetail.autoRenewPeriod / 24 / 3600} days`
