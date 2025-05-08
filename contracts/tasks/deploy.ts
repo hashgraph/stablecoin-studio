@@ -1,6 +1,6 @@
 import { task, types } from 'hardhat/config'
-import { NetworkName } from '@configuration'
-import { DeployAllCommand, DeployStableCoinCommand } from '@tasks'
+import { CONTRACT_NAMES, ContractName, NetworkName } from '@configuration'
+import { DeployAllCommand, DeployCommand, DeployStableCoinCommand, NotInContractNameListError } from '@tasks'
 
 task('deployStableCoin', 'Deploy new stable coin')
     .addOptionalParam('tokenName', 'The name of the token to deploy', undefined, types.string)
@@ -61,6 +61,7 @@ task('deployStableCoin', 'Deploy new stable coin')
             DEFAULT_TOKEN,
             deployStableCoin,
             DeployStableCoinCommand: DeployScCommandScripts,
+            addressToHederaId,
         } = await import('@scripts')
         const network = hre.network.name as NetworkName
         const {
@@ -129,16 +130,41 @@ task('deployStableCoin', 'Deploy new stable coin')
                 : undefined,
         })
 
-        console.log(deployScCommand)
-
         // * Deploy the stable coin
         const result = await deployStableCoin(deployScCommand)
 
-        console.log('\n 🟢 Deployed Stable Coin:')
-        console.log(`   --> Stable Coin Proxy Address: ${result.stableCoinProxyAddress}`)
-        console.log(`   --> Stable Coin Token Address: ${result.tokenAddress}`)
-        console.log(`   --> Stable Coin Reserve Proxy Address: ${result.reserveProxyAddress}`)
-        console.log(`   --> Transaction Hash: ${result.receipt?.transactionHash}`)
+        // Prepare contract ID list with resolved Hedera IDs
+        const contractIdList = {
+            stableCoinProxyAddress: await addressToHederaId({
+                address: result.stableCoinProxyAddress,
+                network,
+            }),
+            tokenAddress: await addressToHederaId({
+                address: result.tokenAddress,
+                network,
+            }),
+            reserveProxyAddress: result.reserveProxyAddress
+                ? await addressToHederaId({
+                      address: result.reserveProxyAddress,
+                      network,
+                  })
+                : undefined,
+        }
+
+        // Display deployment results
+        console.log('\n 🟢 Stable Coin deployed successfully: ')
+        console.log(
+            `   --> Stable Coin Proxy Address: ${result.stableCoinProxyAddress} (${contractIdList.stableCoinProxyAddress})`
+        )
+        console.log(`   --> Stable Coin Token Address: ${result.tokenAddress} (${contractIdList.tokenAddress})`)
+        if (result.reserveProxyAddress) {
+            console.log(
+                `   --> Stable Coin Reserve Proxy Address: ${result.reserveProxyAddress} (${contractIdList.reserveProxyAddress})`
+            )
+        }
+        if (result.receipt?.transactionHash) {
+            console.log(`   --> Transaction Hash: ${result.receipt.transactionHash}`)
+        }
     })
 
 task(
@@ -157,20 +183,23 @@ task(
     .addOptionalParam('signerPosition', 'The index of the signer in the Hardhat signers array', undefined, types.int)
     .setAction(async (args: DeployAllCommand, hre) => {
         // Inlined to avoid circular dependency
-        const { deployFullInfrastructure, DeployFullInfrastructureCommand, addresstoHederaId } = await import(
-            '@scripts'
-        )
+        const {
+            deployFullInfrastructure,
+            DeployFullInfrastructureCommand,
+            addressToHederaId: addresstoHederaId,
+        } = await import('@scripts')
+        const network = hre.network.name as NetworkName
         const { useDeployed, partialBatchDeploy, signer } = await DeployAllCommand.newInstance({
             ...args,
             hre,
         })
-        console.log(`Executing deployAll on ${hre.network.name} ...`)
+        console.log(`Executing deployAll on ${network} ...`)
 
         // * Deploy the full infrastructure
         const result = await deployFullInfrastructure(
             new DeployFullInfrastructureCommand({
                 signer: signer,
-                network: hre.network.name as NetworkName,
+                network: network,
                 useDeployed: useDeployed,
                 useEnvironment: false,
                 partialBatchDeploy: partialBatchDeploy,
@@ -180,10 +209,10 @@ task(
         // * Display the deployed addresses
         const addressList = {
             'Business Logic Resolver': result.businessLogicResolver.address,
-            'Business Logic Resolver Proxy': result.businessLogicResolver.proxyAddress,
+            '*** Business Logic Resolver Proxy': result.businessLogicResolver.proxyAddress, // * Important for Interactions
             'Business Logic Resolver Proxy Admin': result.businessLogicResolver.proxyAdminAddress,
             'Stable Coin Factory Facet': result.stableCoinFactoryFacet.address,
-            'Stable Coin Factory Facet Proxy': result.stableCoinFactoryFacet.proxyAddress,
+            '*** Stable Coin Factory Facet Proxy': result.stableCoinFactoryFacet.proxyAddress, // * Important for Interactions (deployed in deployStableCoin)
             'Hedera Token Manager Facet': result.hederaTokenManagerFacet.address,
             'Diamond Facet': result.diamondFacet.address,
             'Reserve Facet': result.reserveFacet.address,
@@ -204,63 +233,59 @@ task(
             'Wipeable Facet': result.wipeableFacet.address,
         }
 
-        console.log('\n 🟢 Deployed SCS Contract List:')
+        console.log('\n 🟢 StableCoin Studio Smart Contracts deployed successfully:')
         for (const [key, address] of Object.entries(addressList)) {
             if (!address) {
                 continue
             }
             const contractId = await addresstoHederaId({
                 address,
-                network: hre.network.name as NetworkName,
+                network,
             })
             console.log(`   --> ${key}: ${address} (${contractId})`)
         }
     })
 
-// task('deploy', 'Deploy new contract')
-//     .addPositionalParam('contractName', 'The name of the contract to deploy', undefined, types.string)
-//     .addOptionalParam('privateKey', 'The private key of the account in raw hexadecimal format', undefined, types.string)
-//     .addOptionalParam(
-//         'signerAddress',
-//         'The address of the signer to select from the Hardhat signers array',
-//         undefined,
-//         types.string
-//     )
-//     .addOptionalParam('signerPosition', 'The index of the signer in the Hardhat signers array', undefined, types.int)
-//     .setAction(async (args: DeployArgs, hre) => {
-//         // Inlined to avoid circular dependency
-//         const { deployContract, DeployContractCommand, addressListToHederaIdList } = await import('@scripts')
-//         const network = hre.network.name as Network
-//         console.log(`Executing deploy on ${network} ...`)
-//         if (!CONTRACT_NAMES.includes(args.contractName as ContractName)) {
-//             throw new Error(`Contract name ${args.contractName} is not in the list of deployable contracts`)
-//         }
-//         const contractName = args.contractName as ContractName
-//         const { signer }: GetSignerResult = await hre.run('getSigner', {
-//             privateKey: args.privateKey,
-//             signerAddress: args.signerAddress,
-//             signerPosition: args.signerPosition,
-//         })
-//         console.log(`Using signer: ${signer.address}`)
-//         // * Deploy the contract
-//         const { proxyAdminAddress, proxyAddress, address } = await deployContract(
-//             new DeployContractCommand({
-//                 name: contractName,
-//                 signer,
-//             })
-//         )
+// TODO: add all features. Now only deploys basic contracts without proxy, no args etc...
+task('deploy', 'Deploy new contract')
+    .addOptionalParam('contractName', 'The name of the contract to deploy', undefined, types.string)
+    .addOptionalParam('privateKey', 'The private key of the account in raw hexadecimal format', undefined, types.string)
+    .addOptionalParam(
+        'signerAddress',
+        'The address of the signer to select from the Hardhat signers array',
+        undefined,
+        types.string
+    )
+    .addOptionalParam('signerPosition', 'The index of the signer in the Hardhat signers array', undefined, types.int)
+    .setAction(async (args: DeployCommand, hre) => {
+        // Inlined to avoid circular dependency
+        const { deployContract, DeployContractCommand, addressListToHederaIdList } = await import('@scripts')
+        const network = hre.network.name as NetworkName
+        console.log(`Executing deploy on ${network} ...`)
+        if (!CONTRACT_NAMES.includes(args.contractName as ContractName)) {
+            throw new NotInContractNameListError(args.contractName)
+        }
+        const { contractName, signer } = await DeployCommand.newInstance({ ...args, hre })
+        // * Deploy the contract
+        const deployCommand = await DeployContractCommand.newInstance({
+            name: contractName,
+            deployType: 'direct',
+            signer,
+        })
+        console.log(deployCommand)
+        const { proxyAdminAddress, proxyAddress, address } = await deployContract(deployCommand)
 
-//         const [contractId, proxyContractId, proxyAdminContractId] = await addressListToHederaIdList({
-//             addressList: [address, proxyAddress, proxyAdminAddress].filter((addr): addr is string => !!addr),
-//             network,
-//         })
+        const [contractId, proxyContractId, proxyAdminContractId] = await addressListToHederaIdList({
+            addressList: [address, proxyAddress, proxyAdminAddress].filter((addr): addr is string => !!addr),
+            network,
+        })
 
-//         console.log('\n 🟢 Deployed Contract:')
-//         if (proxyAdminAddress) {
-//             console.log(`Proxy Admin: ${proxyAdminAddress} (${proxyAdminContractId})`)
-//         }
-//         if (proxyAddress) {
-//             console.log(`Proxy: ${proxyAddress} (${proxyContractId})`)
-//         }
-//         console.log(`Implementation: ${address} (${contractId}) for ${contractName}`)
-//     })
+        console.log('\n 🟢 Deployed Contract:')
+        if (proxyAdminAddress) {
+            console.log(`Proxy Admin: ${proxyAdminAddress} (${proxyAdminContractId})`)
+        }
+        if (proxyAddress) {
+            console.log(`Proxy: ${proxyAddress} (${proxyContractId})`)
+        }
+        console.log(`Implementation: ${address} (${contractId}) for ${contractName}`)
+    })

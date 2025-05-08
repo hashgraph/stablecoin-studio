@@ -92,7 +92,6 @@ export async function deployStableCoin({
     }
     const deployedScEventData = confirmationEvent.args
         .deployedStableCoin as IStableCoinFactory.DeployedStableCoinStructOutput
-    console.log(`Deployed StableCoin: ${deployedScEventData.stableCoinProxy}`)
     // * Associate token to deployer directly
     console.log(MESSAGES.hederaTokenManager.info.associate)
     const associateResponse = await IHRC__factory.connect(deployedScEventData.tokenAddress, wallet).associate({
@@ -212,7 +211,7 @@ export async function deployFullInfrastructure({
         facetLists = await createConfigurationsForDeployedContracts(partialBatchDeploy, createCommand)
     }
     console.log(MESSAGES.businessLogicResolver.success.createConfigurations)
-    console.log(MESSAGES.stableCoinFactory.info.deployResolverProxy)
+    console.log(MESSAGES.stableCoinFactory.info.deployFactoryResolverProxy)
     // * Deploy ResolverProxy for StableCoinFactory
     const resolverProxyDeployCommand = await DeployContractCommand.newInstance({
         factory: new ResolverProxy__factory(),
@@ -235,7 +234,7 @@ export async function deployFullInfrastructure({
         },
     })
     const stableCoinFactoryResolverProxy = await deployContract(resolverProxyDeployCommand)
-    console.log(MESSAGES.stableCoinFactory.success.deployResolverProxy)
+    console.log(MESSAGES.stableCoinFactory.success.deployFactoryResolverProxy)
     // Store the proxy address in the deployed contract list
     deployedContractList.stableCoinFactoryFacet.proxyAddress = stableCoinFactoryResolverProxy.address
 
@@ -613,10 +612,8 @@ async function _deployContractDirect<F extends ContractFactory, C extends Contra
     args,
     overrides,
 }: DeployContractDirectCommand<F>): Promise<DeployContractResult<C>> {
-    console.log(`Deploying ${name}. please wait...`)
     const contract = (await factory.deploy(...args, overrides)) as C
     const receipt = await contract.deployTransaction.wait()
-    console.log(`${name} deployed at ${contract.address}`)
     return new DeployContractResult<C>({
         name,
         contract,
@@ -634,25 +631,20 @@ async function _deployContractWithTup<F extends ContractFactory, C extends Contr
     args,
     overrides,
 }: DeployContractWithTupCommand<F>): Promise<DeployContractResult<C>> {
-    console.log(`Deploying ${name}. please wait...`)
     const contract = (await factory.deploy(...args, overrides)) as C
     const receipt = contract.deployTransaction.wait()
-    console.log(`${name} deployed at ${contract.address}`)
 
-    console.log(`Deploying ${name} Proxy Admin. please wait...`)
     const deployPaCommand = await DeployContractDirectCommand.newInstance({
         name: 'ProxyAdmin',
         factory: new ProxyAdmin__factory(),
         signer,
-        args: [],
+        args: undefined,
         overrides: {
             gasLimit: GAS_LIMIT.proxyAdmin.deploy,
         },
     })
     const { address: proxyAdminAddress } = await _deployContractDirect(deployPaCommand)
-    console.log(`${name} Proxy Admin deployed at ${proxyAdminAddress}`)
 
-    console.log(`Deploying ${name} Proxy. please wait...`)
     const deployProxyCommand = await DeployContractDirectCommand.newInstance<TransparentUpgradeableProxy__factory>({
         name: 'TransparentUpgradeableProxy',
         factory: new TransparentUpgradeableProxy__factory(),
@@ -663,7 +655,6 @@ async function _deployContractWithTup<F extends ContractFactory, C extends Contr
         },
     })
     const { address: proxyAddress } = await _deployContractDirect(deployProxyCommand)
-    console.log(`${name} Proxy deployed at ${proxyAddress}`)
 
     return new DeployContractResult({
         name,
@@ -689,12 +680,9 @@ async function _deployContractWithResolverProxy<
     configurationVersion,
     rolesStruct,
 }: DeployContractWithResolverProxyCommand<F>): Promise<DeployContractResult<C>> {
-    console.log(`Deploying ${name}. please wait...`)
     const contract = await factory.deploy(...args, overrides)
     const receipt = contract.deployTransaction.wait()
-    console.log(`${name} deployed at ${contract.address}`)
 
-    console.log(`Deploying ${name} Resolver Proxy. please wait...`)
     const deployProxyCommand = await DeployContractDirectCommand.newInstance({
         name: 'ResolverProxy',
         factory: new ResolverProxy__factory(),
@@ -705,7 +693,6 @@ async function _deployContractWithResolverProxy<
         },
     })
     const { address: resolverProxyAddress } = await _deployContractDirect(deployProxyCommand)
-    console.log(`${name} Resolver Proxy deployed at ${resolverProxyAddress}`)
 
     return new DeployContractResult({
         name,

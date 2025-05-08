@@ -1,8 +1,8 @@
 import axios from 'axios'
+import { ContractId } from '@hashgraph/sdk'
 import { NetworkName } from '@configuration'
-import { ADDRESS_ZERO } from './constants'
-import { delay } from '@scripts'
 import { configuration } from '@hardhat-configuration'
+import { ADDRESS_ZERO, delay } from '@scripts'
 
 interface IAccount {
     evm_address: string
@@ -22,11 +22,10 @@ export async function addressListToHederaIdList({
     addressList: string[]
     network: NetworkName
 }): Promise<string[]> {
-    return Promise.all(addressList.map((address) => addresstoHederaId({ address, network })))
+    return Promise.all(addressList.map((address) => addressToHederaId({ address, network })))
 }
-
-export async function addresstoHederaId({
-    address: address,
+export async function addressToHederaId({
+    address,
     network,
 }: {
     address: string
@@ -36,15 +35,20 @@ export async function addresstoHederaId({
         return '0.0.0'
     }
 
-    const url = `accounts/${address}`
-    const res = await getFromMirrorNode<IAccount>({
-        url,
-        network,
-    })
-    if (!res) {
-        throw new Error(`Error retrieving account information for ${address}`)
+    // If EVM pure address, fetch account info from mirror node
+    if (!address.startsWith('0x0000')) {
+        const res = await getFromMirrorNode<IAccount>({
+            url: `accounts/${address}`,
+            network,
+        })
+        if (!res) {
+            throw new Error(`Error retrieving account information for ${address}`)
+        }
+        return res.account
     }
-    return res.account
+
+    // If generated EVM address (alias), convert to Hedera ContractId
+    return ContractId.fromEvmAddress(0, 0, address).toString()
 }
 
 async function getFromMirrorNode<T>({

@@ -76,7 +76,7 @@ export default class DeployContractCommand<F extends ContractFactory> extends De
         rolesStruct,
         ...parentParams
     }: DeployContractCommandNewParams<F>): Promise<DeployContractCommand<F>> {
-        const { name, factory, signer, args = [], overrides } = await super.newInstance(parentParams)
+        const { name, factory, signer, args, overrides } = await super.newInstance(parentParams)
         return new DeployContractCommand<F>({
             name,
             factory,

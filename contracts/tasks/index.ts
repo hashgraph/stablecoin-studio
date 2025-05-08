@@ -1,9 +1,14 @@
+// * Constants
+export * from './constants'
+// * Errors
+export { default as NotInContractNameListError } from './errors/NotInContractNameListError'
 // * Commands
 export {
     default as WithSignerCommand,
     WithSignerCommandParams,
     WithSignerConstructorParams,
 } from './commands/base/WithSignerCommand'
+export { default as DeployCommand } from './commands/DeployCommand'
 export { default as DeployAllCommand } from './commands/DeployAllCommand'
 export { default as DeployStableCoinCommand } from './commands/DeployStableCoinCommand'
 export { default as AddHederaTokenManagerVersionCommand } from './commands/AddHederaTokenManagerVersionCommand'

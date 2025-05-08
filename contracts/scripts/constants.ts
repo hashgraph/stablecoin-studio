@@ -219,7 +219,7 @@ export const MESSAGES = {
             deploy: '🚀 Deploying StableCoinFactory...',
             initialize: '🚀 Initializing StableCoinFactory...',
             deployStableCoin: '🚀 Deploying StableCoin...',
-            deployResolverProxy: '🚀 Deploying StableCoin Resolver Proxy...',
+            deployFactoryResolverProxy: '🚀 Deploying StableCoinFactory Resolver Proxy...',
             addHederaTokenManagerVersion: '🚀 Adding HederaTokenManager version...',
             editHederaTokenManagerAddress: '✏️ Editing HederaTokenManager address...',
             removeHederaTokenManagerAddress: '🗑️ Removing HederaTokenManager address...',
@@ -228,7 +228,7 @@ export const MESSAGES = {
             deploy: '✅ StableCoinFactory deployed successfully.',
             initialize: '✅ StableCoinFactory initialized successfully.',
             deployStableCoin: '✅ StableCoin deployed successfully.',
-            deployResolverProxy: '✅ StableCoin Resolver Proxy deployed successfully.',
+            deployFactoryResolverProxy: '✅ StableCoinFactory Resolver Proxy deployed successfully.',
             addHederaTokenManagerVersion: '✅ HederaTokenManager version added successfully.',
             editHederaTokenManagerAddress: '✅ HederaTokenManager address edited successfully.',
             removeHederaTokenManagerAddress: '✅ HederaTokenManager address removed successfully.', // Added success message for removeHederaTokenManagerAddress

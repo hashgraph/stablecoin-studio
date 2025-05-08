@@ -23,10 +23,10 @@ export default class DeployContractDirectCommand<F extends ContractFactory> {
     public readonly name: ContractName
     public readonly factory: F
     public readonly signer: Signer
-    public readonly args: Array<any> = []
-    public readonly overrides?: Overrides
+    public readonly args: Array<any>
+    public readonly overrides: Overrides
 
-    constructor({ name, factory, signer, args = [], overrides }: DeployContractDirectCommandParams<F>) {
+    constructor({ name, factory, signer, args = [], overrides = {} }: DeployContractDirectCommandParams<F>) {
         this.name = name
         this.factory = factory
         this.signer = signer
@@ -38,7 +38,7 @@ export default class DeployContractDirectCommand<F extends ContractFactory> {
         name,
         factory,
         signer,
-        args = [],
+        args,
         overrides,
     }: DeployContractDirectCommandNewParams<F>): Promise<DeployContractDirectCommand<F>> {
         if (!name && !factory) {
